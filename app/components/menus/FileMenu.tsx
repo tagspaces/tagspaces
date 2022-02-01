@@ -35,7 +35,7 @@ import RenameFile from '@material-ui/icons/FormatTextdirectionLToR';
 import DeleteForever from '@material-ui/icons/DeleteForever';
 import i18n from '-/services/i18n';
 import AppConfig from '-/config';
-import PlatformIO from '-/services/platform-io';
+import PlatformIO from '-/services/platform-facade';
 import {
   generateFileName,
   getAllPropertiesPromise,
@@ -359,20 +359,6 @@ const FileMenu = (props: Props) => {
         </MenuItem>
       );
     }
-    if (selectedEntries.length === 1) {
-      menuItems.push(
-        <MenuItem
-          key="copySharingLink"
-          data-tid="copyFileSharingLink"
-          onClick={copySharingLink}
-        >
-          <ListItemIcon>
-            <ShareIcon />
-          </ListItemIcon>
-          <ListItemText primary={i18n.t('core:copySharingLink')} />
-        </MenuItem>
-      );
-    }
     menuItems.push(
       <MenuItem
         key="fileMenuDeleteFile"
@@ -383,6 +369,21 @@ const FileMenu = (props: Props) => {
           <DeleteForever />
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:deleteEntry')} />
+      </MenuItem>
+    );
+  }
+
+  if (selectedEntries.length === 1) {
+    menuItems.push(
+      <MenuItem
+        key="copySharingLink"
+        data-tid="copyFileSharingLink"
+        onClick={copySharingLink}
+      >
+        <ListItemIcon>
+          <ShareIcon />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:copySharingLink')} />
       </MenuItem>
     );
   }

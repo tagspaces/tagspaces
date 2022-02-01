@@ -47,7 +47,7 @@ export default merge(baseConfig, {
       openAnalyzer: process.env.OPEN_ANALYZER === 'true'
     }),
 
-    new webpack.NormalModuleReplacementPlugin(
+    /* new webpack.NormalModuleReplacementPlugin(
       /(.*)_PLATFORMIO_(\.*)/,
       resource => {
         resource.request = resource.request.replace(
@@ -55,9 +55,9 @@ export default merge(baseConfig, {
           `${targetPlatform}`
         );
       }
-    ),
+    ), */
 
-    new webpack.NormalModuleReplacementPlugin(
+    /* new webpack.NormalModuleReplacementPlugin(
       /(.*)_PDFDISTLIB_(\.*)/,
       resource => {
         resource.request = resource.request.replace(
@@ -65,7 +65,7 @@ export default merge(baseConfig, {
           `pdfjs-dist/webpack`
         );
       }
-    ),
+    ), */
 
     /**
      * Create global constants which can be configured at compile time.

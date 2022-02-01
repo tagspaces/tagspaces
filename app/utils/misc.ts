@@ -23,7 +23,8 @@ import { TS } from '-/tagspaces.namespace';
 export const locationType = {
   TYPE_LOCAL: '0',
   TYPE_CLOUD: '1',
-  TYPE_AMPLIFY: '2'
+  TYPE_AMPLIFY: '2',
+  TYPE_WEBDAV: '3'
 };
 
 export function prepareTagGroupForExport(tagGroup: TS.TagGroup): TS.TagGroup {

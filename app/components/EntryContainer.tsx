@@ -50,7 +50,7 @@ import { Split } from 'ts-react-splitter';
 import EntryProperties from '-/components/EntryProperties';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import AppConfig from '-/config';
-import PlatformIO from '-/services/platform-io';
+import PlatformIO from '-/services/platform-facade';
 import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
 import i18n from '-/services/i18n';
 import {
@@ -113,6 +113,7 @@ const styles: any = (theme: any) => ({
     color: 'white',
     backgroundColor: AppConfig.defaultFileColor,
     padding: '2px 5px 0px 5px',
+    textShadow: '1px 1px #8f8f8f',
     minHeight: 18,
     fontSize: 13,
     marginLeft: 3,
@@ -786,6 +787,20 @@ const EntryContainer = (props: Props) => {
             <RefreshIcon />
           </IconButton>
         </Tooltip>
+        {props.isDesktopMode && (
+          <Tooltip title={i18n.t('core:openInFullWidth')}>
+            <IconButton
+              data-tid="openInFullWidthTID"
+              aria-label={i18n.t('core:openInFullWidth')}
+              onClick={() => {
+                props.toggleEntryFullWidth();
+                closePanel();
+              }}
+            >
+              <ExpandIcon />
+            </IconButton>
+          </Tooltip>
+        )}
         {!props.isReadOnlyMode && (
           <Tooltip title={i18n.t('core:deleteDirectory')}>
             <IconButton
@@ -814,6 +829,18 @@ const EntryContainer = (props: Props) => {
   // console.log('filePropsHeight: ' + filePropsHeight);
 
   const renderPanels = () => {
+    const closeButton = (
+      <Tooltip title={i18n.t('core:closeEntry')}>
+        <IconButton
+          onClick={startClosingFile}
+          aria-label={i18n.t('core:closeEntry')}
+          data-tid="fileContainerCloseOpenedFile"
+        >
+          <CloseIcon />
+        </IconButton>
+      </Tooltip>
+    );
+
     const toolbarButtons = () => {
       if (openedFile.path) {
         return (
@@ -874,7 +901,6 @@ const EntryContainer = (props: Props) => {
                 ) : (
                   <Button
                     disabled
-                    title={openedFile.url || openedFile.path}
                     aria-label={i18n.t('core:toggleEntryProperties')}
                     className={classes.entryNameButton}
                   >
@@ -897,70 +923,50 @@ const EntryContainer = (props: Props) => {
                   </Button>
                 )}
               </Box>
-              {editingSupported && openedFile.editMode && (
-                <div className={classes.entryCloseSection}>
-                  <IconButton
-                    disabled={false}
-                    onClick={startSavingFile}
-                    title={i18n.t('core:saveFile')}
-                    aria-label={i18n.t('core:saveFile')}
-                    data-tid="fileContainerSaveFile"
-                  >
-                    <SaveIcon />
-                  </IconButton>
-                  <IconButton
-                    onClick={reloadDocument}
-                    title="Preview"
-                    aria-label={i18n.t('core:cancelEditing')}
-                  >
-                    <BackIcon />
-                  </IconButton>
-                  <IconButton
-                    onClick={startClosingFile}
-                    title={i18n.t('core:closeEntry')}
-                    aria-label={i18n.t('core:closeEntry')}
-                    data-tid="fileContainerCloseOpenedFile"
-                  >
-                    <CloseIcon />
-                  </IconButton>
-                </div>
-              )}
-              {editingSupported && !openedFile.editMode && (
-                <div className={classes.entryCloseSection}>
-                  <Button
-                    disabled={false}
-                    size="small"
-                    variant="outlined"
-                    color="primary"
-                    onClick={editFile}
-                    title={i18n.t('core:editFile')}
-                    aria-label={i18n.t('core:editFile')}
-                    data-tid="fileContainerEditFile"
-                  >
-                    {i18n.t('core:edit')}
-                  </Button>
-                  <IconButton
-                    onClick={startClosingFile}
-                    title={i18n.t('core:closeEntry')}
-                    aria-label={i18n.t('core:closeEntry')}
-                    data-tid="fileContainerCloseOpenedFile"
-                  >
-                    <CloseIcon />
-                  </IconButton>
-                </div>
-              )}
-              {!editingSupported && (
-                <div className={classes.entryCloseSection}>
-                  <IconButton
-                    onClick={startClosingFile}
-                    title={i18n.t('core:closeEntry')}
-                    aria-label={i18n.t('core:closeEntry')}
-                    data-tid="fileContainerCloseOpenedFile"
-                  >
-                    <CloseIcon />
-                  </IconButton>
-                </div>
-              )}
+              <div className={classes.entryCloseSection}>
+                {editingSupported && openedFile.editMode && (
+                  <>
+                    <Tooltip title={i18n.t('core:saveFile')}>
+                      <IconButton
+                        disabled={false}
+                        onClick={startSavingFile}
+                        aria-label={i18n.t('core:saveFile')}
+                        data-tid="fileContainerSaveFile"
+                      >
+                        <SaveIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Preview">
+                      <IconButton
+                        onClick={reloadDocument}
+                        aria-label={i18n.t('core:cancelEditing')}
+                      >
+                        <BackIcon />
+                      </IconButton>
+                    </Tooltip>
+                    {closeButton}
+                  </>
+                )}
+                {editingSupported && !openedFile.editMode && (
+                  <>
+                    <Tooltip title={i18n.t('core:editFile')}>
+                      <Button
+                        disabled={false}
+                        size="small"
+                        variant="outlined"
+                        color="primary"
+                        onClick={editFile}
+                        aria-label={i18n.t('core:editFile')}
+                        data-tid="fileContainerEditFile"
+                      >
+                        {i18n.t('core:edit')}
+                      </Button>
+                    </Tooltip>
+                    {closeButton}
+                  </>
+                )}
+                {!editingSupported && closeButton}
+              </div>
             </Box>
             {entryProperties}
           </Box>
@@ -1022,6 +1028,7 @@ const EntryContainer = (props: Props) => {
           fileViewer={fileViewer}
           fileViewerContainer={fileViewerContainer}
           toggleFullScreen={toggleFullScreen}
+          currentTheme={props.settings.currentTheme}
         />
       </Split>
     );

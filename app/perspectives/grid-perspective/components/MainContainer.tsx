@@ -60,7 +60,7 @@ import MainToolbar from './MainToolbar';
 import SortingMenu from './SortingMenu';
 import GridOptionsMenu from './GridOptionsMenu';
 import { getLocation, getLocations } from '-/reducers/locations';
-import PlatformIO from '-/services/platform-io';
+import PlatformIO from '-/services/platform-facade';
 import { getLocationPath } from '-/utils/paths';
 import GridPagination from '-/perspectives/grid-perspective/components/GridPagination';
 import GridSettingsDialog from '-/perspectives/grid-perspective/components/GridSettingsDialog';
@@ -113,7 +113,6 @@ const GridPerspective = (props: Props) => {
 
   const [mouseX, setMouseX] = useState<number>(undefined);
   const [mouseY, setMouseY] = useState<number>(undefined);
-  const allFilesSelected = useRef<boolean>(false);
   // const selectedEntry = useRef<FileSystemEntry>(undefined);
   const selectedEntryPath = useRef<string>(undefined);
   const selectedTag = useRef<TS.Tag | null>(null);
@@ -348,26 +347,33 @@ const GridPerspective = (props: Props) => {
 
   const clearSelection = () => {
     props.setSelectedEntries([]);
-    allFilesSelected.current = false;
     // props.setLastSelectedEntry(null);
     // selectedEntry.current = undefined;
     selectedEntryPath.current = undefined;
   };
 
+  const {
+    classes,
+    selectedEntries,
+    loadParentDirectoryContent,
+    theme,
+    currentDirectoryPath
+  } = props;
+
+  const someFileSelected = selectedEntries.length > 1;
+
   const toggleSelectAllFiles = () => {
-    if (selectedEntries.length > 0) {
-      // && allFilesSelected.current) {
+    if (someFileSelected) {
       clearSelection();
     } else {
       const selectedEntries = [];
       props.directoryContent.map(entry => {
-        if (entry.isFile) {
-          selectedEntries.push(entry);
-        }
+        // if (entry.isFile) {
+        selectedEntries.push(entry);
+        // }
         return true;
       });
       props.setSelectedEntries(selectedEntries);
-      allFilesSelected.current = true;
     }
   };
 
@@ -668,11 +674,18 @@ const GridPerspective = (props: Props) => {
     setDirContextMenuAnchorEl(event.currentTarget);
   };
 
+  const onClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    if (props.selectedEntries.length > 0) {
+      props.setSelectedEntries([]);
+    }
+  };
+
   const getSelEntryPath = () => {
     if (props.lastSelectedEntry) {
       return props.lastSelectedEntry.path;
     }
-    return props.currentDirectoryPath;
+    return currentDirectoryPath;
   };
 
   const keyBindingHandlers = {
@@ -701,7 +714,6 @@ const GridPerspective = (props: Props) => {
     }
   };
 
-  const { classes, selectedEntries, loadParentDirectoryContent, theme } = props;
   const selectedFilePaths = selectedEntries
     ? selectedEntries
         .filter(fsEntry => fsEntry.isFile)
@@ -722,6 +734,7 @@ const GridPerspective = (props: Props) => {
   } else if (entrySize === 'big') {
     entryWidth = 300;
   }
+
   return (
     <div
       style={{
@@ -735,17 +748,17 @@ const GridPerspective = (props: Props) => {
         selectedEntries={selectedEntries}
         loadParentDirectoryContent={loadParentDirectoryContent}
         toggleSelectAllFiles={toggleSelectAllFiles}
-        allFilesSelected={
-          allFilesSelected.current && selectedEntries.length > 0
-        }
+        someFileSelected={someFileSelected}
         handleLayoutSwitch={handleLayoutSwitch}
         openAddRemoveTagsDialog={openAddRemoveTagsDialog}
         fileOperationsEnabled={fileOperationsEnabled()}
         openMoveCopyFilesDialog={openMoveCopyFilesDialog}
         openDeleteFileDialog={openDeleteFileDialog}
+        openFsEntry={props.openFsEntry}
         handleSortingMenu={handleSortingMenu}
         handleExportCsvMenu={handleExportCsvMenu}
         openSettings={openSettings}
+        directoryPath={currentDirectoryPath}
       />
       <GlobalHotKeys
         keyMap={keyMap}
@@ -775,6 +788,7 @@ const GridPerspective = (props: Props) => {
           currentPage={1}
           currentLocationPath={locationPath}
           currentDirectoryPath={props.currentDirectoryPath}
+          onClick={onClick}
           onContextMenu={onContextMenu}
         />
       </GlobalHotKeys>

@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { MutableRefObject } from 'react';
 import {
   DragSource,
   DropTarget,
@@ -30,7 +30,7 @@ import DragItemTypes from './DragItemTypes';
 import TagContainer from './TagContainer';
 import { TS } from '-/tagspaces.namespace';
 import { extractTags } from '-/utils/paths';
-import PlatformIO from '-/services/platform-io';
+import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/config';
 
 const boxSource = {
@@ -202,7 +202,7 @@ interface Props {
   connectDragPreview?: ConnectDragPreview;
   deleteIcon?: Object;
   selectedEntries: Array<TS.FileSystemEntry>;
-  tagContainerRef?: string;
+  tagContainerRef?: MutableRefObject<HTMLSpanElement>;
   reorderTags?: boolean;
 }
 

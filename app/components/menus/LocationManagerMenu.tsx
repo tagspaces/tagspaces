@@ -93,7 +93,7 @@ const LocationManagerMenu = (props: Props) => {
     </MenuItem>
   );
 
-  if (!AppConfig.isCordovaAndroid) {
+  if (!AppConfig.locationsReadOnly) {
     // https://trello.com/c/z6ESlqxz/697-exports-to-json-or-csv-do-not-work-on-android
     menuItems.push(
       <MenuItem
@@ -118,30 +118,30 @@ const LocationManagerMenu = (props: Props) => {
         />
       </MenuItem>
     );
+    menuItems.push(
+      <MenuItem
+        disabled={!Pro}
+        key="locationManagerMenuImportLocations"
+        data-tid="locationManagerMenuImportLocationsTID"
+        onClick={() => {
+          setLocationManagerMenuAnchorEl(null);
+          props.importLocations();
+        }}
+      >
+        <ListItemIcon>
+          <ExportImportIcon />
+        </ListItemIcon>
+        <ListItemText
+          primary={
+            <>
+              {i18n.t('core:importLocationTitle')}
+              <ProLabel />
+            </>
+          }
+        />
+      </MenuItem>
+    );
   }
-  menuItems.push(
-    <MenuItem
-      disabled={!Pro}
-      key="locationManagerMenuImportLocations"
-      data-tid="locationManagerMenuImportLocationsTID"
-      onClick={() => {
-        setLocationManagerMenuAnchorEl(null);
-        props.importLocations();
-      }}
-    >
-      <ListItemIcon>
-        <ExportImportIcon />
-      </ListItemIcon>
-      <ListItemText
-        primary={
-          <>
-            {i18n.t('core:importLocationTitle')}
-            <ProLabel />
-          </>
-        }
-      />
-    </MenuItem>
-  );
 
   menuItems.push(
     <MenuItem

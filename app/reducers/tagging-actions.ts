@@ -36,7 +36,7 @@ import {
   generateFileName
 } from '-/services/utils-io';
 import { formatDateTime4Tag, isGeoTag } from '-/utils/misc';
-import PlatformIO from '../services/platform-io';
+import PlatformIO from '../services/platform-facade';
 import { Pro } from '../pro';
 import GlobalSearch from '../services/search-index';
 import { getPersistTagsInSidecarFile } from './settings';
@@ -739,17 +739,6 @@ const actions = {
   ) => {
     const { settings } = getState();
 
-    if (!Pro || !Pro.Indexer || !Pro.Indexer.collectTagsFromIndex) {
-      dispatch(
-        AppActions.showNotification(
-          i18n.t('core:thisFunctionalityIsAvailableInPro'),
-          'error',
-          true
-        )
-      );
-      return true;
-    }
-
     if (GlobalSearch.index.length < 1) {
       dispatch(
         AppActions.showNotification(
@@ -761,7 +750,7 @@ const actions = {
       return true;
     }
 
-    const uniqueTags = Pro.Indexer.collectTagsFromIndex(
+    const uniqueTags = collectTagsFromIndex(
       GlobalSearch.index,
       tagGroup,
       settings
@@ -817,6 +806,37 @@ function generateTagValue(tag) {
     }
   }
   return tagTitle;
+}
+
+function collectTagsFromIndex(
+  locationIndex: any,
+  tagGroup: any,
+  settings: any
+) {
+  const uniqueTags = [];
+  const defaultTagColor = settings.tagBackgroundColor;
+  const defaultTagTextColor = settings.tagTextColor;
+  locationIndex.map(entry => {
+    if (entry.tags && entry.tags.length > 0) {
+      entry.tags.map(tag => {
+        if (
+          uniqueTags.findIndex(obj => obj.title === tag.title) < 0 && // element not already added
+          tagGroup.children.findIndex(obj => obj.title === tag.title) < 0 && // element not already added
+          !/^(?:\d+~\d+|\d+)$/.test(tag.title) && // skip adding of tag containing only digits
+          !isGeoTag(tag.title) // skip adding of tag containing geo information
+        ) {
+          uniqueTags.push({
+            ...tag,
+            color: tag.color || defaultTagColor,
+            textcolor: tag.textcolor || defaultTagTextColor
+          });
+        }
+        return true;
+      });
+    }
+    return true;
+  });
+  return uniqueTags;
 }
 
 export default actions;

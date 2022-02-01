@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Button from '@material-ui/core/Button';
@@ -31,7 +31,7 @@ import i18n from '-/services/i18n';
 import { actions as AppActions } from '-/reducers/app';
 import { joinPaths } from '-/utils/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import PlatformIO from '-/services/platform-io';
+import PlatformIO from '-/services/platform-facade';
 
 interface Props {
   open: boolean;
@@ -43,11 +43,16 @@ interface Props {
 
 const CreateDirectoryDialog = (props: Props) => {
   const [inputError, setInputError] = useState(false);
+  const isFirstRun = useRef(true);
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [name, setName] = useState('');
   const { open, onClose, fullScreen } = props;
 
   useEffect(() => {
+    if (isFirstRun.current) {
+      isFirstRun.current = false;
+      return;
+    }
     handleValidation();
   });
 

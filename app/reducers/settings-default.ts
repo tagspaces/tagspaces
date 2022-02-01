@@ -46,6 +46,11 @@ export function findAvailableExtensions() {
       extensionType: 'viewer'
     },
     {
+      extensionId: '@tagspaces/extensions/ebook-viewer',
+      extensionName: 'eBook Viewer',
+      extensionType: 'viewer'
+    },
+    {
       extensionId: '@tagspaces/extensions/html-editor',
       extensionName: 'HTML Editor',
       extensionType: 'editor'
@@ -254,7 +259,7 @@ export default {
     },
     {
       iso: 'zh_TW',
-      title: '台灣 (Chinese Taiwan BIG5)'
+      title: '台灣 (Chinese Taiwan)'
     },
     {
       iso: 'hu',
@@ -271,6 +276,10 @@ export default {
     {
       iso: 'nb',
       title: 'Bokmål (Norwegian)'
+    },
+    {
+      iso: 'fr_CA',
+      title: 'français canadien (Canadian French)'
     }
   ],
   keyBindings: keyBindings(AppConfig.isMacLike),
@@ -315,6 +324,11 @@ export default {
       color: ''
     },
     {
+      type: 'epub',
+      viewer: '@tagspaces/extensions/ebook-viewer',
+      color: ''
+    },
+    {
       type: 'flac',
       viewer: '@tagspaces/extensions/media-player',
       color: ''
@@ -333,6 +347,12 @@ export default {
       type: 'h',
       viewer: '@tagspaces/extensions/text-editor',
       editor: '@tagspaces/extensions/text-editor',
+      color: ''
+    },
+    {
+      type: 'htm',
+      viewer: '@tagspaces/extensions/html-viewer',
+      editor: '@tagspaces/extensions/html-editor',
       color: ''
     },
     {
@@ -441,6 +461,11 @@ export default {
     },
     {
       type: 'mp4',
+      viewer: '@tagspaces/extensions/media-player',
+      color: '#c5e4f9'
+    },
+    {
+      type: 'm4a',
       viewer: '@tagspaces/extensions/media-player',
       color: '#c5e4f9'
     },

@@ -200,7 +200,7 @@ export default merge(baseConfig, {
       filename: 'style.css'
     }),
 
-    new webpack.NormalModuleReplacementPlugin(
+    /* new webpack.NormalModuleReplacementPlugin(
       /(.*)_PLATFORMIO_(\.*)/,
       resource => {
         resource.request = resource.request.replace(
@@ -208,9 +208,9 @@ export default merge(baseConfig, {
           `${targetPlatform}`
         );
       }
-    ),
+    ), */
 
-    new webpack.NormalModuleReplacementPlugin(
+    /* new webpack.NormalModuleReplacementPlugin(
       /(.*)_PDFDISTLIB_(\.*)/,
       resource => {
         resource.request = resource.request.replace(
@@ -218,7 +218,7 @@ export default merge(baseConfig, {
           `pdfjs-dist`
         );
       }
-    ),
+    ), */
 
     new BundleAnalyzerPlugin({
       analyzerMode:

@@ -65,9 +65,9 @@ Get the TagSpaces source code by cloning its repository:
 
     $ git clone https://github.com/tagspaces/tagspaces.git
 
-Go to the folder where the code was cloned and select the branch you want to test. Use the the **master** branch for the last officially released version or the branch **develop** for a kind of a nightly build, containing the changes we are preparing for the next release of the application.
+Go to the folder where the code was cloned to and select the branch you want to test. Use the **master** branch for the last officially released version or the branch **develop** for a kind of a nightly build, containing the changes we are preparing for the next release of the application.
 
-Switch to folder where you have cloned the repository:
+Switch to the folder where you have cloned the repository:
 
     $ cd tagspaces
 
@@ -83,11 +83,11 @@ The last command will automatically build the application with webpack. Now it i
 
     $ yarn install-ext-node
 
-Starting from v4 of the application, there is a WS running locally in a separate process, which is responsible for the search index creation and the generation of the thumbnails for the most of images format. In order the main application to communicate with the WS a key is needed. It should be defined in the `.env` file located in `app` folder. This is an example for an .env file.
+Starting from v4 of the application, a web service is running locally as a separate process. The web service is responsible for the search index creation and the generation of the thumbnails for most of the images formats. A key is required in order for the main application to communicate with the web server. It should be defined in the `.env` file located in `app` folder. This is an example for an .env file.
 
-    key=a_custom_key
+    KEY=a_custom_key
 
-Having a custom key, ensures that another instance of TagSpaces will not communicate with the WS of the initial instance, since it is always running on the same port.
+Having a custom key, ensures that another instance of TagSpaces will not communicate with the web service of the initial instance, since it is always running on the same port.
 
 Now you are ready and can build and start (bs) the application with:
 
@@ -99,7 +99,7 @@ If you want to try the development mode, you can start it by:
 
 This will start a development server in background, which watches for changes in background and refreshes the application automatically once you have done some changes in the source code.
 
-## Package the app for Windows, Linux and Mac OS
+## Package for Windows, Linux and macOS
 
 Building of the packages can be accomplished with the integrated yarn scripts:
 
@@ -114,6 +114,18 @@ $ yarn package-mac-arm64
 ```
 
 The commands will create packages for Windows, Linux, Mac OS and Mac OS with the M1 processor respectively. Do not forget to run the `yarn build` script before packaging.
+
+## Package the  Android
+
+Building of the packages for Android can be accomplished with the integrated yarn scripts:
+
+```bash
+$ yarn version-meta
+
+$ yarn prepare-cordova
+
+$ yarn package-android
+```
 
 ## Start the web version locally
 

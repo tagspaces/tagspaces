@@ -41,7 +41,7 @@ import { formatDateTime4Tag } from '-/utils/misc';
 import AppConfig from '-/config';
 import TaggingActions from '-/reducers/tagging-actions';
 import { actions as AppActions } from '-/reducers/app';
-import PlatformIO from '-/services/platform-io';
+import PlatformIO from '-/services/platform-facade';
 
 const styles = theme => ({
   root: {

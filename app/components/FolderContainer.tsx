@@ -43,6 +43,7 @@ import {
   getDirectoryContent,
   getSearchResultCount,
   isReadOnlyMode,
+  isLoading,
   getCurrentLocationPath,
   getCurrentDirectoryPerspective,
   OpenedEntry,
@@ -64,6 +65,8 @@ import {
   actions as LocationIndexActions,
   getSearchQuery
 } from '-/reducers/location-index';
+import Links from '-/links';
+import PlatformIO from '-/services/platform-facade';
 
 const GridPerspective = React.lazy(() =>
   import(
@@ -177,6 +180,7 @@ interface Props {
   loadParentDirectoryContent: () => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   isReadOnlyMode: boolean;
+  isLoading: boolean;
   isDesktopMode: boolean;
   showNotification: (content: string) => void;
   toggleDrawer?: () => void;
@@ -194,6 +198,7 @@ interface Props {
   searchQuery: TS.SearchQuery;
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   openCurrentDirectory: () => void;
+  openURLExternally?: (url: string, skipConfirmation: boolean) => void;
 }
 
 const FolderContainer = (props: Props) => {
@@ -243,7 +248,41 @@ const FolderContainer = (props: Props) => {
   );
 
   const switchPerspective = (perspectiveId: string) => {
-    props.setCurrentDirectoryPerspective(perspectiveId);
+    if (Pro) {
+      props.setCurrentDirectoryPerspective(perspectiveId);
+      return;
+    }
+    if (perspectiveId === perspectives.GALLERY) {
+      const openPersDocs = window.confirm(
+        'Gallery is part of TagSpaces Pro. Do you want to learn more about this perspective?'
+      );
+      if (openPersDocs) {
+        props.openURLExternally(
+          Links.documentationLinks.galleryPerspective,
+          true
+        );
+      }
+    } else if (perspectiveId === perspectives.MAPIQUE) {
+      const openPersDocs = window.confirm(
+        'Mapique is part of TagSpaces Pro. Do you want to learn more about this perspective?'
+      );
+      if (openPersDocs) {
+        props.openURLExternally(
+          Links.documentationLinks.mapiquePerspective,
+          true
+        );
+      }
+    } else if (perspectiveId === perspectives.KANBAN) {
+      const openPersDocs = window.confirm(
+        'Kanban is part of TagSpaces Pro. Do you want to learn more about this perspective?'
+      );
+      if (openPersDocs) {
+        props.openURLExternally(
+          Links.documentationLinks.kanbanPerspective,
+          true
+        );
+      }
+    }
   };
 
   const showWelcomePanel =
@@ -347,7 +386,8 @@ const FolderContainer = (props: Props) => {
     setSelectedEntries,
     openDirectory,
     reflectCreateEntry,
-    openFsEntry
+    openFsEntry,
+    isLoading
   } = props;
 
   /* let searchResultCounterText = searchResultCount + ' ' + i18n.t('entries');
@@ -471,16 +511,13 @@ const FolderContainer = (props: Props) => {
                 anchorEl={anchorSearch}
                 onClose={() => setAnchorSearch(null)}
                 anchorOrigin={{
-                  vertical: 'top',
+                  vertical: 'bottom',
                   horizontal: 'right'
-                }}
-                style={{
-                  marginLeft: -8
                 }}
                 PaperProps={{
                   style: {
                     overflow: 'hidden',
-                    height: 820
+                    height: 720
                   }
                 }}
                 transformOrigin={{
@@ -538,6 +575,38 @@ const FolderContainer = (props: Props) => {
             width: '100%'
           }}
         >
+          {isLoading && PlatformIO.haveObjectStoreSupport() && (
+            <div
+              style={{
+                position: 'absolute',
+                zIndex: 1000,
+                height: '100%',
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderRadius: 10,
+                backdropFilter: 'grayscale(1)'
+                // backdropFilter: 'blur(2px)',
+                // backgroundColor: '#fafafa33' // red: '#eb585882' '#d9d9d980'
+              }}
+            >
+              <div className="lds-ellipsis">
+                <div
+                  style={{ backgroundColor: theme.palette.primary.main }}
+                ></div>
+                <div
+                  style={{ backgroundColor: theme.palette.primary.main }}
+                ></div>
+                <div
+                  style={{ backgroundColor: theme.palette.primary.main }}
+                ></div>
+                <div
+                  style={{ backgroundColor: theme.palette.primary.main }}
+                ></div>
+              </div>
+            </div>
+          )}
           {renderPerspective()}
           {isRenameEntryDialogOpened && (
             <RenameEntryDialog
@@ -548,7 +617,7 @@ const FolderContainer = (props: Props) => {
           )}
         </div>
       </div>
-      {Pro && props.isDesktopMode && !showWelcomePanel && (
+      {props.isDesktopMode && !showWelcomePanel && (
         <ToggleButtonGroup
           value={currentPerspective}
           size="small"
@@ -614,7 +683,8 @@ function mapStateToProps(state) {
     isDesktopMode: getDesktopMode(state),
     isReadOnlyMode: isReadOnlyMode(state),
     progress: getProgress(state),
-    searchQuery: getSearchQuery(state)
+    searchQuery: getSearchQuery(state),
+    isLoading: isLoading(state)
   };
 }
 
@@ -639,7 +709,8 @@ function mapActionCreatorsToProps(dispatch) {
       updateCurrentDirEntry: AppActions.updateCurrentDirEntry,
       setCurrentDirectoryColor: AppActions.setCurrentDirectoryColor,
       setSearchQuery: LocationIndexActions.setSearchQuery,
-      openCurrentDirectory: AppActions.openCurrentDirectory
+      openCurrentDirectory: AppActions.openCurrentDirectory,
+      openURLExternally: AppActions.openURLExternally
     },
     dispatch
   );
@@ -647,6 +718,8 @@ function mapActionCreatorsToProps(dispatch) {
 
 const areEqual = (prevProp: Props, nextProp: Props) =>
   // nextProp.rightPanelWidth === prevProp.rightPanelWidth &&
+  nextProp.isLoading === prevProp.isLoading &&
+  nextProp.settings.currentTheme === prevProp.settings.currentTheme &&
   nextProp.drawerOpened === prevProp.drawerOpened &&
   nextProp.isDesktopMode === prevProp.isDesktopMode &&
   nextProp.currentDirectoryPath === prevProp.currentDirectoryPath &&

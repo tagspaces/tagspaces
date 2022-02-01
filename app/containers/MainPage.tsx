@@ -76,7 +76,7 @@ import AppConfig from '../config';
 import i18n from '../services/i18n';
 import LoadingLazy from '../components/LoadingLazy';
 import withDnDContext from '-/containers/withDnDContext';
-import { CustomDragLayer } from '-/components/CustomDragLayer';
+import CustomDragLayer from '-/components/CustomDragLayer';
 import IOActions from '-/reducers/io-actions';
 import FileUploadDialog from '-/components/dialogs/FileUploadDialog';
 import ProgressDialog from '-/components/dialogs/ProgressDialog';
@@ -402,11 +402,20 @@ const MainPage = (props: Props) => {
   const keyBindingHandlers = {
     openParentDirectory: props.loadParentDirectoryContent,
     toggleShowHiddenEntries: props.toggleShowUnixHiddenEntries,
-    showFolderNavigator: props.openLocationManagerPanel,
-    showTagLibrary: props.openTagLibraryPanel,
+    showFolderNavigator: () => {
+      props.openLocationManagerPanel();
+      setDrawerOpened(true);
+    },
+    showTagLibrary: () => {
+      props.openTagLibraryPanel();
+      setDrawerOpened(true);
+    },
     openSearch: () => props.setSearchQuery({ textQuery: '' }), // props.openSearchPanel,
     closeSearch: () => props.setSearchQuery({}),
-    showHelp: props.openHelpFeedbackPanel
+    showHelp: () => {
+      props.openHelpFeedbackPanel();
+      setDrawerOpened(true);
+    }
   };
 
   const keyMap = {

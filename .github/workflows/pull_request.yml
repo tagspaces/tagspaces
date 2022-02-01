@@ -84,6 +84,7 @@ jobs:
       - name: Checkout TagspacesPro
         uses: actions/checkout@v2
         with:
+          ref: TSN759---Fully-migrate-the-electron-and-cordova-platforms-to-new-the-tagspaces-platform
           repository: tagspaces/tagspacespro
           token: ${{ secrets.CHECKOUT_TSPRO  }}
           path: extensions/tagspacespro

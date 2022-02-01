@@ -38,7 +38,7 @@ import {
 import TagContainerDnd from '-/components/TagContainerDnd';
 import TagContainer from '-/components/TagContainer';
 import i18n from '-/services/i18n';
-import PlatformIO from '-/services/platform-io';
+import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/config';
 import EntryIcon from '-/components/EntryIcon';
 import { TS } from '-/tagspaces.namespace';
@@ -143,7 +143,13 @@ const CellContent = (props: Props) => {
   tagTitles = tagTitles.substring(0, tagTitles.length - 2);
   const tagPlaceholder =
     tagTitles.length > 0 ? (
-      <IconButton title={tagTitles} onClick={() => openFsEntry(fsEntry)}>
+      <IconButton
+        title={tagTitles}
+        onClick={e => {
+          e.stopPropagation();
+          openFsEntry(fsEntry);
+        }}
+      >
         <TagIcon />
       </IconButton>
     ) : null;
@@ -211,6 +217,7 @@ const CellContent = (props: Props) => {
             className={classes.gridFileExtension}
             style={{
               backgroundColor: fsEntryColor,
+              textShadow: '1px 1px #8f8f8f',
               maxWidth: fsEntry.isFile ? 50 : 100
             }}
             noWrap={true}
@@ -249,6 +256,15 @@ const CellContent = (props: Props) => {
     } else if (entrySize === 'big') {
       tmbSize = 100;
     }
+    const backgroundColor = selected
+      ? theme.palette.primary.light
+      : fsEntryBgColor;
+
+    const entrySizeFormatted =
+      fsEntry.isFile && formatFileSize(fsEntry.size) + ' - ';
+    const entryLMDTFormatted =
+      fsEntry.isFile && fsEntry.lmdt && formatDateTime(fsEntry.lmdt, true);
+
     return (
       <Grid
         container
@@ -257,9 +273,8 @@ const CellContent = (props: Props) => {
         title={fsEntry.isIgnored && i18n.t('core:ignoredFolder')}
         style={{
           opacity: fsEntry.isIgnored ? 0.3 : 1,
-          backgroundColor: selected
-            ? theme.palette.primary.light
-            : theme.palette.background.default
+          backgroundColor: backgroundColor,
+          borderRadius: 5
         }}
       >
         <Grid
@@ -288,7 +303,8 @@ const CellContent = (props: Props) => {
               }
             }}
             style={{
-              backgroundColor: fsEntryColor
+              backgroundColor: fsEntryColor,
+              alignSelf: entrySize === 'small' ? 'center' : 'auto'
             }}
           >
             {fsEntry.isFile ? fsEntry.extension : <FolderIcon />}
@@ -308,6 +324,9 @@ const CellContent = (props: Props) => {
             style={{
               display: 'flex'
             }}
+            title={
+              fsEntry.isFile ? entrySizeFormatted + entryLMDTFormatted : ''
+            }
           >
             <Typography style={{ wordBreak: 'break-all', alignSelf: 'center' }}>
               {entryTitle}
@@ -328,7 +347,7 @@ const CellContent = (props: Props) => {
               variant="body2"
             >
               <span title={fsEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
-                {fsEntry.isFile && formatFileSize(fsEntry.size) + ' - '}
+                {entrySizeFormatted}
               </span>
               <span
                 title={
@@ -337,9 +356,7 @@ const CellContent = (props: Props) => {
                   formatDateTime(fsEntry.lmdt, true)
                 }
               >
-                {fsEntry.isFile &&
-                  fsEntry.lmdt &&
-                  formatDateTime(fsEntry.lmdt, false)}
+                {entryLMDTFormatted}
               </span>
               <span title={i18n.t('core:entryDescription')}>{description}</span>
             </Typography>
@@ -436,11 +453,12 @@ const CellContent = (props: Props) => {
       }}
       onContextMenu={event => handleGridContextMenu(event, fsEntry)}
       onDoubleClick={event => handleGridCellDblClick(event, fsEntry)}
-      onClick={event =>
+      onClick={event => {
+        event.stopPropagation();
         AppConfig.isCordovaiOS // TODO DoubleClick not fired in Cordova IOS
           ? handleGridCellDblClick(event, fsEntry)
-          : handleGridCellClick(event, fsEntry)
-      }
+          : handleGridCellClick(event, fsEntry);
+      }}
     >
       {gridCell}
     </Paper>

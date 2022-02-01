@@ -29,7 +29,7 @@ import {
   actions as LocationActions,
   getLocations
 } from '../reducers/locations';
-import { actions as AppActions } from '../reducers/app';
+import { actions as AppActions, isLoading } from '../reducers/app';
 import {
   getPersistTagsInSidecarFile,
   isDesktopMode
@@ -40,6 +40,7 @@ import LoadingLazy from '-/components/LoadingLazy';
 import LocationView from '-/components/LocationView';
 import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
+import PlatformIO from '-/services/platform-facade';
 
 const CreateEditLocationDialog = React.lazy(() =>
   import(
@@ -68,6 +69,8 @@ interface Props {
   isPersistTagsInSidecar: boolean;
   reduceHeightBy: number;
   toggleLocationDialog: () => void;
+  isLoading: boolean;
+  show: boolean;
 }
 
 type SubFolder = {
@@ -122,15 +125,29 @@ const LocationManager = (props: Props) => {
     props.moveLocation(result.draggableId, result.destination.index);
   };
 
-  const { classes, reduceHeightBy } = props;
+  const { classes, reduceHeightBy, isLoading, show } = props;
   return (
     <div
       className={classes.panel}
       style={{
-        display: 'flex',
+        display: show ? 'flex' : 'none',
         flexDirection: 'column'
       }}
     >
+      {isLoading && PlatformIO.haveObjectStoreSupport() && (
+        <div
+          style={{
+            position: 'absolute',
+            zIndex: 1000,
+            height: 'calc(100% - 180px)',
+            width: 310,
+            backdropFilter: 'grayscale(1)'
+            // backgroundColor: 'red'
+            // backdropFilter: 'blur(2px)',
+            // backgroundColor: '#fafafaAA' // red: '#eb585882' '#d9d9d980'
+          }}
+        ></div>
+      )}
       <LocationManagerMenu
         importLocations={() => {
           fileInputRef.current.click();
@@ -258,6 +275,7 @@ function mapStateToProps(state) {
   return {
     locations: getLocations(state),
     isDesktop: isDesktopMode(state),
+    isLoading: isLoading(state),
     isPersistTagsInSidecar: getPersistTagsInSidecarFile(state)
   };
 }

@@ -63,7 +63,7 @@ export default merge(baseConfig, {
       NODE_ENV: 'development'
     }),
 
-    new webpack.NormalModuleReplacementPlugin(
+    /* new webpack.NormalModuleReplacementPlugin(
       /(.*)_PLATFORMIO_(\.*)/,
       resource => {
         resource.request = resource.request.replace(
@@ -71,9 +71,9 @@ export default merge(baseConfig, {
           `${targetPlatform}`
         );
       }
-    ),
+    ), */
 
-    new webpack.NormalModuleReplacementPlugin(
+    /* new webpack.NormalModuleReplacementPlugin(
       /(.*)_PDFDISTLIB_(\.*)/,
       resource => {
         resource.request = resource.request.replace(
@@ -81,7 +81,7 @@ export default merge(baseConfig, {
           `pdfjs-dist/webpack`
         );
       }
-    ),
+    ), */
 
     new webpack.LoaderOptionsPlugin({
       debug: true,

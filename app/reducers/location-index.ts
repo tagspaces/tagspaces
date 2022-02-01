@@ -29,7 +29,7 @@ import {
 import Search from '../services/search';
 import { actions as AppActions } from './app';
 import i18n from '../services/i18n';
-import PlatformIO from '../services/platform-io';
+import PlatformIO from '../services/platform-facade';
 import GlobalSearch from '../services/search-index';
 import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
@@ -297,36 +297,6 @@ export const actions = {
         console.warn('Resolution is faled!', e);
       });
   },
-  // loadDirectoryIndex: (
-  //   directoryPath: string,
-  //   isCurrentLocation: boolean = true
-  // ) => (dispatch: (actions: Object) => void) => {
-  //   dispatch(actions.startDirectoryIndexing());
-  //   dispatch(
-  //     AppActions.showNotification(i18n.t('core:loadingIndex'), 'default', true)
-  //   );
-  //   if (Pro && Pro.Indexer.loadIndex) {
-  //     Pro.Indexer.loadIndex(directoryPath, PlatformIO.getDirSeparator())
-  //       .then(directoryIndex => {
-  //         if (isCurrentLocation) {
-  //           // Load index only if current location
-  //           GlobalSearch.index = directoryIndex;
-  //         }
-  //         dispatch(actions.indexDirectorySuccess());
-  //         return true;
-  //       })
-  //       .catch(err => {
-  //         dispatch(actions.indexDirectoryFailure(err));
-  //         dispatch(
-  //           AppActions.showNotification(
-  //             i18n.t('core:loadingIndexFailed'),
-  //             'warning',
-  //             true
-  //           )
-  //         );
-  //       });
-  //   }
-  // },
   clearDirectoryIndex: () => ({
     type: types.INDEX_DIRECTORY_CLEAR
   }),
@@ -386,12 +356,6 @@ export const actions = {
       ) {
         const currentPath = getLocationPath(currentLocation);
         console.log('Start creating index for : ' + currentPath);
-        /* if (currentLocation.persistIndex && Pro && Pro.Indexer.loadIndex) {
-          GlobalSearch.index = await Pro.Indexer.loadIndex( // TODO move this
-            currentPath,
-            PlatformIO.getDirSeparator()
-          );
-        } else { */
         GlobalSearch.index = await createDirectoryIndex(
           {
             path: currentPath,

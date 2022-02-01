@@ -432,7 +432,7 @@ const CreateEditLocationDialog = (props: Props) => {
                   data-tid="localLocation"
                   value={locationType.TYPE_LOCAL}
                   control={<Radio />}
-                  label="Local"
+                  label={i18n.t('core:localLocation')}
                 />
                 <FormControlLabel
                   data-tid="objectStorageLocation"
@@ -441,7 +441,8 @@ const CreateEditLocationDialog = (props: Props) => {
                   title={i18n.t('core:objectStorageTitle')}
                   label={
                     <>
-                      {i18n.t('core:objectStorage')}
+                      {i18n.t('core:objectStorage') +
+                        ' (AWS, MinIO, Wasabi ...)'}
                       <ProLabel />
                     </>
                   }

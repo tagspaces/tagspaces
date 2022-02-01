@@ -39,7 +39,7 @@ import NewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import ShareIcon from '@material-ui/icons/Link';
 import RenameFolderIcon from '@material-ui/icons/FormatTextdirectionLToR';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
-import SettingsIcon from '@material-ui/icons/Settings';
+import PropertiesIcon from '@material-ui/icons/Info';
 import { Progress } from 'aws-sdk/clients/s3';
 import ImageIcon from '@material-ui/icons/Image';
 import { Pro } from '../../pro';
@@ -54,7 +54,7 @@ import {
   normalizePath,
   generateSharingLink
 } from '-/utils/paths';
-import PlatformIO from '-/services/platform-io';
+import PlatformIO from '-/services/platform-facade';
 import { formatDateTime4Tag } from '-/utils/misc';
 import {
   actions as AppActions,
@@ -206,7 +206,7 @@ const DirectoryMenu = (props: Props) => {
       }
     } else if (perspectiveId === perspectives.GALLERY) {
       const openPersDocs = window.confirm(
-        'Gallery is part of the PRO version. Do you want to learn more about this perspective?'
+        'Gallery is part of TagSpaces Pro. Do you want to learn more about this perspective?'
       );
       if (openPersDocs) {
         props.openURLExternally(
@@ -216,7 +216,7 @@ const DirectoryMenu = (props: Props) => {
       }
     } else if (perspectiveId === perspectives.MAPIQUE) {
       const openPersDocs = window.confirm(
-        'Mapique is part of the PRO version. Do you want to learn more about this perspective?'
+        'Mapique is part of TagSpaces Pro. Do you want to learn more about this perspective?'
       );
       if (openPersDocs) {
         props.openURLExternally(
@@ -226,7 +226,7 @@ const DirectoryMenu = (props: Props) => {
       }
     } else if (perspectiveId === perspectives.KANBAN) {
       const openPersDocs = window.confirm(
-        'Kanban is part of the PRO version. Do you want to learn more about this perspective?'
+        'Kanban is part of TagSpaces Pro. Do you want to learn more about this perspective?'
       );
       if (openPersDocs) {
         props.openURLExternally(
@@ -705,7 +705,7 @@ Do you want to continue?`)
         onClick={showProperties}
       >
         <ListItemIcon>
-          <SettingsIcon />
+          <PropertiesIcon />
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:directoryPropertiesTitle')} />
       </MenuItem>

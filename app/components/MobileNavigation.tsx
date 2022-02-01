@@ -42,6 +42,8 @@ import CardContent from '@material-ui/core/CardContent';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
 import CloseIcon from '@material-ui/icons/Close';
 import ProTeaser from '../assets/images/spacerocket_undraw.svg';
+import ProTeaserImage from '-/assets/images/pro-teaser.svg';
+import ProTextLogo from '../assets/images/text-logo-pro.svg';
 import { Pro } from '-/pro';
 import CustomLogo from './CustomLogo';
 import TagLibrary from '../components/TagLibrary';
@@ -62,6 +64,8 @@ import LoadingLazy from './LoadingLazy';
 import { actions as SettingsActions, isFirstRun } from '../reducers/settings';
 import Links from '-/links';
 import StoredSearches from '-/components/StoredSearches';
+import Popover from '@material-ui/core/Popover';
+import UserDetailsPopover from '-/components/UserDetailsPopover';
 
 const styles: any = (theme: any) => ({
   selectedButton: {
@@ -112,6 +116,7 @@ interface Props {
 const MobileNavigation = (props: Props) => {
   const [isProTeaserVisible, setIsProTeaserVisible] = useState<boolean>(false);
   const [showTeaserBanner, setShowTeaserBanner] = useState<boolean>(true);
+  const [anchorUser, setAnchorUser] = useState<HTMLButtonElement | null>(null);
 
   const toggleProTeaser = () => {
     setIsProTeaserVisible(!isProTeaserVisible);
@@ -210,9 +215,10 @@ const MobileNavigation = (props: Props) => {
             </Button>
           </Tooltip>
         </ButtonGroup>
-        {props.isLocationManagerPanelOpened && (
-          <LocationManager reduceHeightBy={180} />
-        )}
+        <LocationManager
+          reduceHeightBy={180}
+          show={props.isLocationManagerPanelOpened}
+        />
         {props.isTagLibraryPanelOpened && <TagLibrary reduceHeightBy={180} />}
         {props.isSearchPanelOpened && <StoredSearches reduceHeightBy={120} />}
         {props.isHelpFeedbackPanelOpened && (
@@ -256,13 +262,17 @@ const MobileNavigation = (props: Props) => {
                   <CloseIcon fontSize="small" />
                 </IconButton>
               </Typography>
-              <Typography variant="h6" component="h2" color="textPrimary">
-                TagSpaces Pro
-              </Typography>
-              <img style={{ maxHeight: 60 }} src={ProTeaser} alt="" />
+              <br />
+              <img style={{ height: 35 }} src={ProTextLogo} alt="" />
+              <br />
+              <img style={{ maxHeight: 60 }} src={ProTeaserImage} alt="" />
             </CardContent>
             <CardActions
-              style={{ flexDirection: 'row', justifyContent: 'center' }}
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                marginTop: -10
+              }}
             >
               <Button
                 size="small"
@@ -272,7 +282,7 @@ const MobileNavigation = (props: Props) => {
                   toggleProTeaser();
                 }}
               >
-                Learn More
+                {i18n.t('showMeMore')}
               </Button>
               <Button
                 size="small"
@@ -282,7 +292,7 @@ const MobileNavigation = (props: Props) => {
                   openURLExternally(Links.links.productsOverview, true);
                 }}
               >
-                Get It
+                {i18n.t('getItNow')}
               </Button>
             </CardActions>
           </>
@@ -349,19 +359,50 @@ const MobileNavigation = (props: Props) => {
                   : classes.button
               }
             >
-              {user ? <AccountCircleIcon /> : <HelpIcon />}
+              <HelpIcon />
             </ToggleButton>
           </Tooltip>
         </ToggleButtonGroup>
-        <Tooltip title={i18n.t('core:switchTheme')}>
-          <IconButton
-            data-tid="switchTheme"
-            onClick={switchTheme}
-            style={{ marginTop: -15, marginRight: 2 }}
-          >
-            <ThemingIcon className={classes.buttonIcon} />
-          </IconButton>
-        </Tooltip>
+        {user ? (
+          <>
+            <Tooltip title={i18n.t('core:userAccount')}>
+              <IconButton
+                data-tid="accountCircleIconTID"
+                onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
+                  setAnchorUser(event.currentTarget)
+                }
+                style={{ marginTop: -15, marginRight: 2 }}
+              >
+                <AccountCircleIcon className={classes.buttonIcon} />
+              </IconButton>
+            </Tooltip>
+            <Popover
+              open={Boolean(anchorUser)}
+              anchorEl={anchorUser}
+              onClose={() => setAnchorUser(null)}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'center'
+              }}
+              transformOrigin={{
+                vertical: 'bottom',
+                horizontal: 'center'
+              }}
+            >
+              <UserDetailsPopover onClose={() => setAnchorUser(null)} />
+            </Popover>
+          </>
+        ) : (
+          <Tooltip title={i18n.t('core:switchTheme')}>
+            <IconButton
+              data-tid="switchTheme"
+              onClick={switchTheme}
+              style={{ marginTop: -15, marginRight: 2 }}
+            >
+              <ThemingIcon className={classes.buttonIcon} />
+            </IconButton>
+          </Tooltip>
+        )}
         {isProTeaserVisible && (
           <ProTeaserDialogAsync
             open={isProTeaserVisible}

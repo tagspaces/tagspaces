@@ -33,7 +33,7 @@ import {
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import TaggingActions from './tagging-actions';
-import PlatformIO from '-/services/platform-io';
+import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
 
@@ -214,11 +214,11 @@ const actions = {
         reader.onload = async (event: any) => {
           await readerLoaded(event, inx, filePath);
         };
-        if (AppConfig.isWeb && PlatformIO.isMinio()) {
-          reader.readAsBinaryString(file);
-        } else {
-          reader.readAsArrayBuffer(file);
-        }
+        // if (AppConfig.isWeb && PlatformIO.isMinio()) {
+        //   reader.readAsBinaryString(file);
+        // } else {
+        reader.readAsArrayBuffer(file);
+        // }
         /* else if (AppConfig.isCordova) {
           reader.readAsDataURL(file);
         } */
@@ -240,24 +240,28 @@ const actions = {
           const result = event.currentTarget
             ? event.currentTarget.result
             : event.target.result;
-          const fsEntry: TS.FileSystemEntry = await PlatformIO.saveBinaryFilePromise(
-            fileTargetPath,
-            result,
-            true,
-            onUploadProgress
-          );
-          if (fsEntry) {
-            dispatch(
-              AppActions.showNotification(
-                'File ' + fileTargetPath + ' successfully imported.',
-                'default',
-                true
-              )
+          try {
+            const fsEntry: TS.FileSystemEntry = await PlatformIO.saveBinaryFilePromise(
+              fileTargetPath,
+              result,
+              true,
+              onUploadProgress
             );
-            fsEntries.push(fsEntry);
-            // dispatch(AppActions.reflectCreateEntry(fileTargetPath, true));
-          } else {
-            console.error('Save to file ' + fileTargetPath + ' failed ');
+            if (fsEntry) {
+              dispatch(
+                AppActions.showNotification(
+                  'File ' + fileTargetPath + ' successfully imported.',
+                  'default',
+                  true
+                )
+              );
+              fsEntries.push(fsEntry);
+              // dispatch(AppActions.reflectCreateEntry(fileTargetPath, true));
+            }
+          } catch (error) {
+            console.error(
+              'Uploading ' + fileTargetPath + ' failed with ' + error
+            );
             dispatch(
               AppActions.showNotification(
                 'Importing file ' + fileTargetPath + ' failed.',

@@ -44,7 +44,7 @@ import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
 import TransparentBackground from '-/components/TransparentBackground';
 import { BetaLabel } from '-/components/HelperComponents';
 import AppConfig from '-/config';
-import PlatformIO from '-/services/platform-io';
+import PlatformIO from '-/services/platform-facade';
 
 const styles: any = {
   root: {

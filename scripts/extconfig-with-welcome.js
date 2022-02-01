@@ -1,7 +1,5 @@
 window.ExtLogoURL = 'assets/images/text-logo-dev.svg';
 window.ExtShowAdvancedSearch = false;
-window.ExtSidebarColor = '#3bc8ff';
-window.ExtSidebarSelectionColor = '#85d5f5';
 window.ExtLightThemeLightColor = '#a6def4';
 window.ExtLightThemeMainColor = '#3bc8ff';
 window.ExtDarkThemeLightColor = '#a6def4';

@@ -19,6 +19,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
+import Tooltip from '@material-ui/core/Tooltip';
 import Pagination from '@material-ui/lab/Pagination';
 import i18n from '-/services/i18n';
 import {
@@ -26,6 +27,7 @@ import {
   getSearchResultCount,
   isLoading
 } from '-/reducers/app';
+import EntryIcon from '-/components/EntryIcon';
 import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
 
@@ -45,7 +47,8 @@ interface Props {
   currentLocationPath: string;
   currentDirectoryPath: string;
   searchResultCount: number;
-  onContextMenu: (e: React.MouseEvent<HTMLDivElement>) => void;
+  onContextMenu: (event: React.MouseEvent<HTMLDivElement>) => void;
+  onClick: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 const GridPagination = (props: Props) => {
@@ -62,6 +65,7 @@ const GridPagination = (props: Props) => {
     currentPage
   } = props;
   let { files } = props;
+  const allFilesCount = files.length;
   const containerEl = useRef(null);
   const [page, setPage] = useState(currentPage);
 
@@ -98,8 +102,11 @@ const GridPagination = (props: Props) => {
   return (
     <div
       ref={containerEl}
-      onContextMenu={(e: React.MouseEvent<HTMLDivElement>) =>
-        props.onContextMenu(e)
+      onContextMenu={(event: React.MouseEvent<HTMLDivElement>) =>
+        props.onContextMenu(event)
+      }
+      onClick={(event: React.MouseEvent<HTMLDivElement>) =>
+        props.onClick(event)
       }
       style={{
         height: '100%',
@@ -117,48 +124,77 @@ const GridPagination = (props: Props) => {
         {files.map((entry, index, dArray) =>
           renderCell(entry, index === dArray.length - 1)
         )}
-        {isAppLoading && (
-          <Typography
-            style={{ padding: 15, color: theme.palette.text.primary }}
-          >
-            {i18n.t('core:loading')}
-          </Typography>
-        )}
         {!isAppLoading && files.length < 1 && directories.length < 1 && (
-          <Typography
-            style={{ padding: 15, color: theme.palette.text.primary }}
-          >
-            {i18n.t('core:noFileFolderFound')}
-          </Typography>
+          <div style={{ textAlign: 'center' }}>
+            <EntryIcon isFile={false} />
+            <Typography
+              style={{ padding: 15, color: theme.palette.text.secondary }}
+            >
+              {i18n.t('core:noFileFolderFound')}
+            </Typography>
+            <Typography style={{ color: theme.palette.text.secondary }}>
+              {i18n.t('core:dragAndDropToImport')}
+            </Typography>
+          </div>
         )}
         {!isAppLoading &&
           files.length < 1 &&
           directories.length >= 1 &&
           !showDirectories && (
-            <Typography
-              style={{ padding: 15, color: theme.palette.text.primary }}
-            >
-              {i18n.t('core:noFileButFoldersFound')}
-            </Typography>
+            <div style={{ textAlign: 'center' }}>
+              <EntryIcon isFile={false} />
+              <Typography
+                style={{ padding: 15, color: theme.palette.text.secondary }}
+              >
+                {i18n.t('core:noFileButFoldersFound')}
+              </Typography>
+              <Typography style={{ color: theme.palette.text.secondary }}>
+                {i18n.t('core:dragAndDropToImport')}
+              </Typography>
+            </div>
           )}
       </div>
       {showPagination && (
-        <Pagination
-          style={{
-            left: 15,
-            bottom: 65,
-            zIndex: 1100,
-            position: 'absolute',
-            backgroundColor: theme.palette.background.default,
-            opacity: 0.97,
-            border: '1px solid lightgray',
-            borderRadius: 5,
-            padding: 3
-          }}
-          count={paginationCount}
-          page={page}
-          onChange={handleChange}
-        />
+        <Tooltip
+          title={
+            directories.length +
+            ' folder(s) and ' +
+            allFilesCount +
+            ' file(s) found'
+          }
+        >
+          <Pagination
+            style={{
+              left: 15,
+              bottom: 65,
+              zIndex: 1100,
+              position: 'absolute',
+              backgroundColor: theme.palette.background.default,
+              opacity: 0.97,
+              border: '1px solid lightgray',
+              borderRadius: 5,
+              padding: 3
+            }}
+            count={paginationCount}
+            page={page}
+            onChange={handleChange}
+          />
+        </Tooltip>
+      )}
+      {!showPagination && (directories.length > 0 || files.length > 0) && (
+        <div style={{ padding: 15, bottom: 10 }}>
+          <Typography
+            style={{
+              fontSize: '0.9rem',
+              color: theme.palette.text.secondary
+            }}
+          >
+            {directories.length +
+              ' folder(s) and ' +
+              allFilesCount +
+              ' file(s) found'}
+          </Typography>
+        </div>
       )}
     </div>
   );

@@ -20,7 +20,7 @@ import semver from 'semver';
 import { v1 as uuidv1 } from 'uuid';
 import i18n from '-/services/i18n';
 import defaultSettings from './settings-default';
-import PlatformIO from '-/services/platform-io';
+import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/config';
 import Links from '-/links';
 import versionMeta from '-/version.json';

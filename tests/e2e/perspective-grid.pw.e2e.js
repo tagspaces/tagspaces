@@ -163,11 +163,11 @@ describe('TST50 - Perspective Grid', () => {
   });
 
   // This scenario includes "Add tags" && "Remove tags" to be fulfilled
-  test('TST5005 - Add tags to the selected files [web,minio,electron]', async () => {
+  test('TST5005/TST5006 - Add/Remove tags to the selected files [web,minio,electron]', async () => {
     //click on hide directories
     await showDirectories(false);
 
-    const selectedIds = await selectRowFiles([0, 1, 2]);
+    let selectedIds = await selectRowFiles([0, 1, 2]);
 
     const tags = ['test-tag1', 'test-tag2'];
     await AddRemoveTagsToSelectedFiles(tags);
@@ -184,18 +184,12 @@ describe('TST50 - Perspective Grid', () => {
         true
       );
     }
-  });
-
-  /**
-   * TODO merge with TST5005
-   */
-  test('TST5006 - Remove tags from selected files [web,minio,electron]', async () => {
     //click on hide directories
     await showDirectories(false);
 
-    const selectedIds = await selectRowFiles([0, 1, 2]);
+    selectedIds = await selectRowFiles([0, 1, 2]);
 
-    const tags = ['test-tag1', 'test-tag2'];
+    // tags = ['test-tag1', 'test-tag2'];
     await AddRemoveTagsToSelectedFiles(tags, false);
 
     for (let i = 0; i < selectedIds.length; i++) {

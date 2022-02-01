@@ -27,7 +27,7 @@ import {
 } from '@tagspaces/tagspaces-platforms/indexer';
 import { saveAs } from 'file-saver';
 import micromatch from 'micromatch';
-import PlatformIO from './platform-io';
+import PlatformIO from './platform-facade';
 import AppConfig from '../config';
 import {
   extractTagsAsObjects,
@@ -241,7 +241,7 @@ export function prepareDirectoryContent(
   );
   const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
 
-  function useGenerateThumbnails() {
+  function genThumbnails() {
     if (
       directoryPath.endsWith(AppConfig.dirSeparator + AppConfig.metaFolder) ||
       directoryPath.endsWith(
@@ -264,7 +264,7 @@ export function prepareDirectoryContent(
     dirEntries,
     isCloudLocation,
     settings.showUnixHiddenEntries,
-    generateThumbnails && useGenerateThumbnails(),
+    generateThumbnails && genThumbnails(),
     true,
     undefined,
     settings.enableWS
@@ -501,8 +501,8 @@ export function createDirectoryIndex(
   const dirPath = cleanTrailingDirSeparator(directoryPath);
   if (
     enableWS &&
-    PlatformIO.isWorkerAvailable() &&
-    !PlatformIO.haveObjectStoreSupport()
+    !PlatformIO.haveObjectStoreSupport() &&
+    PlatformIO.isWorkerAvailable()
   ) {
     // Start indexing in worker if not in the object store mode
     return PlatformIO.createDirectoryIndexInWorker(
@@ -680,6 +680,9 @@ export async function loadJSONFile(filePath: string) {
 export function loadJSONString(jsonContent: string) {
   let jsonObject;
   let json;
+  if (!jsonContent) {
+    return;
+  }
   const UTF8_BOM = '\ufeff';
   if (jsonContent.indexOf(UTF8_BOM) === 0) {
     json = jsonContent.substring(1, jsonContent.length);
@@ -689,7 +692,7 @@ export function loadJSONString(jsonContent: string) {
   try {
     jsonObject = JSON.parse(json);
   } catch (err) {
-    console.error('Error parsing meta json file: ' + json, err);
+    console.log('Error parsing meta json file: ' + json, err);
   }
   return jsonObject;
 }
@@ -1077,7 +1080,7 @@ export function setFolderThumbnailPromise(filePath: string): Promise<string> {
     PlatformIO.getDirSeparator()
   );
   return PlatformIO.copyFilePromise(
-    getThumbFileLocationForFile(filePath, PlatformIO.getDirSeparator()),
+    getThumbFileLocationForFile(filePath, PlatformIO.getDirSeparator(), false),
     getThumbFileLocationForDirectory(
       directoryPath,
       PlatformIO.getDirSeparator()

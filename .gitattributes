@@ -1,5 +1,7 @@
 * text eol=lf
 *.png binary
 *.jpg binary
+*.gif binary
 *.ico binary
 *.icns binary
+*.mp4 binary

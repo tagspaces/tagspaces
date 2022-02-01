@@ -287,44 +287,44 @@ const ObjectStoreForm = (props: Props) => {
         </FormControl>
       </Grid>
       <Grid item xs={12}>
-        <FormControl fullWidth={true} error={cloudErrorRegion}>
-          <Autocomplete
-            options={regions}
-            value={region}
-            freeSolo
-            onChange={handleRegionChange}
-            onInputChange={handleRegionChange}
-            placeholder={i18n.t('core:regionSearch')}
-            renderInput={params => (
-              <TextField
-                {...params}
-                label={i18n.t('core:regionSearch')}
-                margin="normal"
-              />
-            )}
+        <FormControl fullWidth={true}>
+          <InputLabel htmlFor="endpointURL">
+            {i18n.t('core:endpointURL')}
+          </InputLabel>
+          <Input
+            margin="dense"
+            name="endpointURL"
+            fullWidth={true}
+            data-tid="endpointURL"
+            placeholder={i18n.t('s3serviceURL')}
+            onChange={event => setEndpointURL(event.target.value)}
+            value={endpointURL}
           />
-          {/* {state.cloudErrorRegion && (
-          <FormHelperText>{i18n.t('core:invalidRegion')}</FormHelperText>
+          {/* {state.cloudErrorId && (
+          <FormHelperText>{i18n.t('core:missingId')}</FormHelperText>
           )} */}
         </FormControl>
       </Grid>
       {showAdvancedMode && (
         <Grid item xs={12}>
-          <FormControl fullWidth={true}>
-            <InputLabel htmlFor="endpointURL">
-              {i18n.t('core:endpointURL')}
-            </InputLabel>
-            <Input
-              margin="dense"
-              name="endpointURL"
-              fullWidth={true}
-              data-tid="endpointURL"
-              placeholder="Advanced setting, could be left empty"
-              onChange={event => setEndpointURL(event.target.value)}
-              value={endpointURL}
+          <FormControl fullWidth={true} error={cloudErrorRegion}>
+            <Autocomplete
+              options={regions}
+              value={region}
+              freeSolo
+              onChange={handleRegionChange}
+              onInputChange={handleRegionChange}
+              placeholder={i18n.t('core:regionSearch')}
+              renderInput={params => (
+                <TextField
+                  {...params}
+                  label={i18n.t('core:regionSearch')}
+                  margin="normal"
+                />
+              )}
             />
-            {/* {state.cloudErrorId && (
-          <FormHelperText>{i18n.t('core:missingId')}</FormHelperText>
+            {/* {state.cloudErrorRegion && (
+          <FormHelperText>{i18n.t('core:invalidRegion')}</FormHelperText>
           )} */}
           </FormControl>
         </Grid>

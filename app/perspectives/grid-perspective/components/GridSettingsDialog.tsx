@@ -278,7 +278,7 @@ const GridSettingsDialog = (props: Props) => {
             <MenuItem value={50}>50</MenuItem>
             <MenuItem value={100}>100</MenuItem>
             <MenuItem value={500}>500</MenuItem>
-            <MenuItem value={undefined}>{i18n.t('core:unlimited')}</MenuItem>
+            <MenuItem value={1000}>1000</MenuItem>
           </Select>
           <FormHelperText>{i18n.t('core:pageLimitHelp')}</FormHelperText>
         </FormControl>

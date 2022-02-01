@@ -18,7 +18,7 @@
 
 import { v1 as uuidv1 } from 'uuid';
 import { getLocation, getDefaultLocationId } from './locations';
-import PlatformIO from '../services/platform-io';
+import PlatformIO from '../services/platform-facade';
 import AppConfig from '../config';
 import {
   deleteFilesPromise,
@@ -117,7 +117,8 @@ export const types = {
   REFLECT_CREATE_ENTRY: 'APP/REFLECT_CREATE_ENTRY',
   // REFLECT_UPDATE_SIDECARTAGS: 'APP/REFLECT_UPDATE_SIDECARTAGS',
   // REFLECT_UPDATE_SIDECARMETA: 'APP/REFLECT_UPDATE_SIDECARMETA',
-  UPDATE_CURRENTDIR_ENTRY: 'APP/UPDATE_CURRENTDIR_ENTRY'
+  UPDATE_CURRENTDIR_ENTRY: 'APP/UPDATE_CURRENTDIR_ENTRY',
+  SET_ISLOADING: 'APP/SET_ISLOADING'
 };
 export const perspectives = {
   DEFAULT: 'default',
@@ -218,7 +219,14 @@ export const initialState = {
   locationManagerPanelOpened: showLocations,
   tagLibraryPanelOpened: showTagLibrary,
   searchPanelOpened: showSearch,
-  helpFeedbackPanelOpened: false
+  helpFeedbackPanelOpened: false,
+  user: window.ExtDemoUser
+    ? {
+        attributes: window.ExtDemoUser,
+        associateSoftwareToken: () => {},
+        verifySoftwareToken: () => {}
+      }
+    : undefined
 };
 
 // The state described here will not be persisted
@@ -429,6 +437,12 @@ export default (state: any = initialState, action: any) => {
         }
       };
     }
+    case types.SET_ISLOADING: {
+      return {
+        ...state,
+        isLoading: action.isLoading
+      };
+    }
     case types.SET_GENERATING_THUMBNAILS: {
       return {
         ...state,
@@ -492,7 +506,8 @@ export default (state: any = initialState, action: any) => {
         return {
           ...state,
           currentDirectoryEntries: newDirectoryEntries,
-          openedFiles: newOpenedFiles
+          openedFiles: newOpenedFiles,
+          isEntryInFullWidth: false
         };
       }
       return state;
@@ -875,6 +890,10 @@ export const actions = {
   openSearchPanel: () => ({ type: types.OPEN_SEARCH_PANEL }),
   openHelpFeedbackPanel: () => ({ type: types.OPEN_HELPFEEDBACK_PANEL }),
   closeAllVerticalPanels: () => ({ type: types.CLOSE_ALLVERTICAL_PANELS }),
+  setIsLoading: (isLoading: boolean) => ({
+    type: types.SET_ISLOADING,
+    isLoading
+  }),
   loadParentDirectoryContent: () => (
     dispatch: (actions: Object) => void,
     getState: () => any
@@ -882,6 +901,8 @@ export const actions = {
     const state = getState();
     const { currentDirectoryPath } = state.app;
     const currentLocationPath = normalizePath(getCurrentLocationPath(state));
+
+    dispatch(actions.setIsLoading(true));
 
     if (currentDirectoryPath) {
       const parentDirectory = extractParentDirectoryPath(
@@ -899,6 +920,7 @@ export const actions = {
             true
           )
         );
+        dispatch(actions.setIsLoading(false));
       }
     } else {
       dispatch(
@@ -908,6 +930,7 @@ export const actions = {
           true
         )
       );
+      dispatch(actions.setIsLoading(false));
     }
   },
   loadDirectoryContentInt: (
@@ -926,6 +949,11 @@ export const actions = {
       getState(),
       getState().app.currentLocationId
     );
+    /* PlatformIO.enableWebdavSupport({   TODO use this to enable webdav support for location the same like objectstore
+      username: 'webdav',
+      password: '1234',
+      port: 8080
+    }); */
     PlatformIO.listDirectoryPromise(
       directoryPath,
       ['extractThumbPath', 'extractThumbURL'],
@@ -957,6 +985,8 @@ export const actions = {
   ) => async (dispatch: (actions: Object) => void, getState: () => any) => {
     // console.debug('loadDirectoryContent:' + directoryPath);
     window.walkCanceled = false;
+
+    dispatch(actions.setIsLoading(true));
 
     const state = getState();
     const { selectedEntries } = state.app;
@@ -1415,6 +1445,16 @@ export const actions = {
       Pro.Watcher.stopWatching();
     }
     if (location.type === locationType.TYPE_CLOUD) {
+      if (!Pro) {
+        dispatch(
+          actions.showNotification(
+            i18n.t('core:thisFunctionalityIsAvailableInPro'),
+            'warning',
+            true
+          )
+        );
+        return;
+      }
       PlatformIO.enableObjectStoreSupport(location)
         .then(() => {
           dispatch(
@@ -1828,7 +1868,11 @@ export const actions = {
         // Delete sidecar file and thumb
         deleteFilesPromise([
           getMetaFileLocationForFile(filePath, PlatformIO.getDirSeparator()),
-          getThumbFileLocationForFile(filePath, PlatformIO.getDirSeparator())
+          getThumbFileLocationForFile(
+            filePath,
+            PlatformIO.getDirSeparator(),
+            false
+          )
         ])
           .then(() => {
             console.log(
@@ -1877,10 +1921,15 @@ export const actions = {
             )
           ],
           [
-            getThumbFileLocationForFile(filePath, PlatformIO.getDirSeparator()),
+            getThumbFileLocationForFile(
+              filePath,
+              PlatformIO.getDirSeparator(),
+              false
+            ),
             getThumbFileLocationForFile(
               newFilePath,
-              PlatformIO.getDirSeparator()
+              PlatformIO.getDirSeparator(),
+              false
             )
           ]
         ])
@@ -1952,6 +2001,7 @@ export const actions = {
         .then((fsEntry: TS.FileSystemEntry) => {
           if (fsEntry.isFile) {
             dispatch(actions.openFsEntry(fsEntry));
+            dispatch(actions.setEntryFullWidth(true));
           } else {
             dispatch(actions.loadDirectoryContent(fsEntry.path, false));
           }
@@ -1993,6 +2043,7 @@ export const actions = {
                 .then((fsEntry: TS.FileSystemEntry) => {
                   if (fsEntry) {
                     dispatch(actions.openFsEntry(fsEntry));
+                    dispatch(actions.setEntryFullWidth(true));
                   }
                   return true;
                 })
@@ -2045,6 +2096,7 @@ export const actions = {
                 .then((fsEntry: TS.FileSystemEntry) => {
                   if (fsEntry) {
                     dispatch(actions.openFsEntry(fsEntry));
+                    dispatch(actions.setEntryFullWidth(true));
                   }
                   return true;
                 })
@@ -2196,7 +2248,9 @@ export const getOpenedFiles = (state: any) => state.app.openedFiles;
 export const getNotificationStatus = (state: any) =>
   state.app.notificationStatus;
 export const getSearchResultCount = (state: any) =>
-  state.app.currentDirectoryEntries.length;
+  Object.keys(state.locationIndex.searchQuery).length === 0
+    ? 0
+    : state.app.currentDirectoryEntries.length;
 export const getCurrentLocationId = (state: any) => state.app.currentLocationId;
 export const isEntryInFullWidth = (state: any) => state.app.isEntryInFullWidth;
 export const isLoading = (state: any) => state.app.isLoading;
