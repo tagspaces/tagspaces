@@ -19,8 +19,6 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
 import { v1 as uuidv1 } from 'uuid';
-// @ts-ignore
-import { marked } from 'marked';
 import L from 'leaflet';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
@@ -34,7 +32,6 @@ import ShareIcon from '@material-ui/icons/Link';
 import Tooltip from '@material-ui/core/Tooltip';
 import LocationIcon from '@material-ui/icons/WorkOutline';
 import CloudLocationIcon from '@material-ui/icons/CloudQueue';
-import DOMPurify from 'dompurify';
 import Select from '@material-ui/core/Select';
 import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -60,7 +57,7 @@ import TagDropContainer from './TagDropContainer';
 import ColorPickerDialog from './dialogs/ColorPickerDialog';
 import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
 import i18n from '../services/i18n';
-import { enhanceOpenedEntry } from '-/services/utils-io';
+import { enhanceOpenedEntry, convertMarkDown } from '-/services/utils-io';
 import { formatFileSize, parseGeoLocation } from '-/utils/misc';
 import {
   extractContainingDirectoryPath,
@@ -218,45 +215,6 @@ const EntryProperties = (props: Props) => {
     // printWin.close();
     return true;
   };
-
-  const customRenderer = new marked.Renderer();
-  customRenderer.link = (href, title, text) => `
-      <a href="#"
-        title="${href}"
-        onClick="event.preventDefault(); event.stopPropagation(); window.postMessage(JSON.stringify({ command: 'openLinkExternally', link: '${href}' }), '*'); return false;">
-        ${text}
-      </a>`;
-
-  customRenderer.image = (href, title, text) => {
-    let sourceUrl = href;
-    const dirSep = PlatformIO.getDirSeparator();
-    if (
-      !sourceUrl.startsWith('http') &&
-      directoryPath &&
-      directoryPath !== dirSep
-    ) {
-      sourceUrl = directoryPath.endsWith(dirSep)
-        ? directoryPath + sourceUrl
-        : directoryPath + dirSep + sourceUrl;
-    }
-    if (PlatformIO.haveObjectStoreSupport()) {
-      sourceUrl = PlatformIO.getURLforPath(sourceUrl);
-    }
-    return `<img src="${sourceUrl}" style="max-width: 100%">
-        ${text}
-    </img>`;
-  };
-
-  marked.setOptions({
-    renderer: customRenderer,
-    pedantic: false,
-    gfm: true,
-    tables: true,
-    breaks: false,
-    smartLists: true,
-    smartypants: false,
-    xhtml: true
-  });
 
   const entryName = props.openedEntry.isFile
     ? extractFileName(props.openedEntry.path, PlatformIO.getDirSeparator())
@@ -641,8 +599,7 @@ const EntryProperties = (props: Props) => {
       PlatformIO.getURLforPath(currentEntry.path, linkValidityDuration),
       currentSignedLink => {
         if (currentSignedLink && currentSignedLink.length > 1) {
-          objectStorageLinkRef.current.select();
-          document.execCommand('copy');
+          const promise = navigator.clipboard.writeText(currentSignedLink);
           props.showNotification(i18n.t('Link copied to clipboard'));
         }
       }
@@ -650,7 +607,7 @@ const EntryProperties = (props: Props) => {
   }
 
   const sanitizedDescription = currentEntry.description
-    ? marked.parse(DOMPurify.sanitize(currentEntry.description))
+    ? convertMarkDown(currentEntry.description, directoryPath)
     : i18n.t('core:addMarkdownDescription');
 
   // @ts-ignore
@@ -1153,8 +1110,9 @@ const EntryProperties = (props: Props) => {
                       <Button
                         color="primary"
                         onClick={() => {
-                          sharingLinkRef.current.select();
-                          document.execCommand('copy');
+                          const promise = navigator.clipboard.writeText(
+                            sharingLink
+                          );
                           props.showNotification(
                             i18n.t('Link copied to clipboard')
                           );
