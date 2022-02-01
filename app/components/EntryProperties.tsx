@@ -19,7 +19,8 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
 import { v1 as uuidv1 } from 'uuid';
-import marked from 'marked';
+// @ts-ignore
+import { marked } from 'marked';
 import L from 'leaflet';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
@@ -649,7 +650,7 @@ const EntryProperties = (props: Props) => {
   }
 
   const sanitizedDescription = currentEntry.description
-    ? marked(DOMPurify.sanitize(currentEntry.description))
+    ? marked.parse(DOMPurify.sanitize(currentEntry.description))
     : i18n.t('core:addMarkdownDescription');
 
   // @ts-ignore

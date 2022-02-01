@@ -17,7 +17,8 @@
  */
 
 import { v1 as uuidv1 } from 'uuid';
-import marked from 'marked';
+// @ts-ignore
+import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import {
   loadIndex,
@@ -1140,7 +1141,7 @@ export function loadFileContentPromise(
 
 export function removeMarkDown(mdContent) {
   if (!mdContent) return '';
-  let result = marked(DOMPurify.sanitize(mdContent));
+  let result = marked.parse(DOMPurify.sanitize(mdContent));
   const span = document.createElement('span');
   span.innerHTML = result;
   result = span.textContent || span.innerText;
