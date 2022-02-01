@@ -66,6 +66,7 @@ import {
   actions as SettingsActions,
   isDesktopMode,
   getKeyBindingObject,
+  getTagColor,
   getMapTileServer
 } from '-/reducers/settings';
 import TaggingActions from '-/reducers/tagging-actions';
@@ -178,6 +179,7 @@ interface Props {
   currentDirectoryPath: string | null;
   isDesktopMode: boolean;
   tileServer: TS.MapTileServer;
+  defaultTagColor?: string;
 }
 
 const EntryContainer = (props: Props) => {
@@ -815,7 +817,38 @@ const EntryContainer = (props: Props) => {
     </div>
   );
 
-  const { classes, keyBindings, theme } = props;
+  const previewTags = () => {
+    if (!openedFile.tags || openedFile.tags.length < 1) {
+      return;
+    }
+    let tagNames = i18n.t('core:searchTags') + ': ';
+    openedFile.tags.forEach(tag => {
+      tagNames = tagNames + tag.title + '; ';
+    });
+    const firstTagColor = openedFile.tags[0].color || defaultTagColor;
+    let secondTagColor = defaultTagColor;
+    if (openedFile.tags[1] && openedFile.tags[1].color) {
+      secondTagColor = openedFile.tags[1].color;
+    }
+    return (
+      <Tooltip title={tagNames}>
+        <span
+          style={{
+            width: 15,
+            height: 15,
+            marginTop: 13,
+            marginLeft: 5,
+            borderRadius: 6,
+            boxShadow: '4px 0px 0px 0px ' + secondTagColor,
+            backgroundColor: firstTagColor
+          }}
+        />
+      </Tooltip>
+    );
+  };
+
+  const { classes, keyBindings, theme, defaultTagColor } = props;
+
   const fileTitle: string = openedFile.path
     ? extractTitle(
         openedFile.path,
@@ -922,6 +955,7 @@ const EntryContainer = (props: Props) => {
                     </Box>
                   </Button>
                 )}
+                {previewTags()}
               </Box>
               <div className={classes.entryCloseSection}>
                 {editingSupported && openedFile.editMode && (
@@ -1155,6 +1189,7 @@ const EntryContainer = (props: Props) => {
 function mapStateToProps(state) {
   return {
     settings: state.settings,
+    defaultTagColor: getTagColor(state),
     isReadOnlyMode: isReadOnlyMode(state),
     keyBindings: getKeyBindingObject(state),
     isDesktopMode: isDesktopMode(state),
