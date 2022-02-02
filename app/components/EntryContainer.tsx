@@ -885,7 +885,7 @@ const EntryContainer = (props: Props) => {
               flex: '1 1 100%',
               display: 'flex',
               backgroundColor: theme.palette.background.default,
-              height: filePropsHeight || 'initial'
+              height: filePropsHeight || '100%'
             }}
           >
             <Box
