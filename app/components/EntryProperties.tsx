@@ -610,6 +610,8 @@ const EntryProperties = (props: Props) => {
     ? convertMarkDown(currentEntry.description, directoryPath)
     : i18n.t('core:addMarkdownDescription');
 
+  const showLinkForDownloading = isCloudLocation && currentEntry.isFile;
+
   // @ts-ignore
   return (
     <div className={classes.entryProperties}>
@@ -1070,7 +1072,7 @@ const EntryProperties = (props: Props) => {
           </FormControl>
         </Grid>
 
-        <Grid item xs={isCloudLocation ? 6 : 12}>
+        <Grid item xs={showLinkForDownloading ? 6 : 12}>
           <Typography
             variant="caption"
             className={classNames(classes.header)}
@@ -1128,7 +1130,7 @@ const EntryProperties = (props: Props) => {
           </FormControl>
         </Grid>
 
-        {isCloudLocation && (
+        {showLinkForDownloading && (
           <Grid item xs={6}>
             <Typography
               variant="caption"
