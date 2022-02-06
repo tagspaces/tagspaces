@@ -344,7 +344,7 @@
   "tagLibrary": "Tag library",
   "fileSavedSuccessfully": "File saved successfully",
   "errorSavingFile": "Error saving file",
-  "doYouWantToDeleteFile": "Do you want to delete the file",
+  "doYouWantToDeleteFile": "Do you want to delete the file?",
   "checkForNewVersion": "Check for new version",
   "getNewVersion": "Get new version {{newVersion}}",
   "currentlyFileChangedSaveOrClose": "Currently opened file was changed, please first save or close it.",
