@@ -21,8 +21,10 @@ import { connect } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
 import Pagination from '@material-ui/lab/Pagination';
+import { bindActionCreators } from 'redux';
 import i18n from '-/services/i18n';
 import {
+  actions as AppActions,
   getCurrentDirectoryColor,
   getSearchResultCount,
   isLoading
@@ -30,6 +32,12 @@ import {
 import EntryIcon from '-/components/EntryIcon';
 import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
+import { getMetaForEntry } from '-/services/utils-io';
+import {
+  getMetaFileLocationForDir,
+  getMetaFileLocationForFile
+} from '-/utils/paths';
+import PlatformIO from '-/services/platform-facade';
 
 interface Props {
   className: string;
@@ -49,6 +57,7 @@ interface Props {
   searchResultCount: number;
   onContextMenu: (event: React.MouseEvent<HTMLDivElement>) => void;
   onClick: (event: React.MouseEvent<HTMLDivElement>) => void;
+  updateCurrentDirEntries: (dirEntries: TS.FileSystemEntry[]) => void;
 }
 
 const GridPagination = (props: Props) => {
@@ -62,13 +71,96 @@ const GridPagination = (props: Props) => {
     isAppLoading,
     currentDirectoryColor,
     gridPageLimit,
-    currentPage
+    currentPage,
+    files
   } = props;
-  let { files } = props;
   const allFilesCount = files.length;
+  const showPagination = gridPageLimit && files.length > gridPageLimit;
+  const paginationCount = showPagination
+    ? Math.ceil(allFilesCount / gridPageLimit)
+    : 10;
+
   const containerEl = useRef(null);
+  const entriesUpdated = useRef([]);
   const [page, setPage] = useState(currentPage);
 
+  let pageFiles = [];
+  if (showPagination) {
+    const start = (page - 1) * gridPageLimit;
+    pageFiles = files.slice(start, start + gridPageLimit);
+  }
+
+  useEffect(() => {
+    // updateDirEntries();
+    updateFileEntries();
+  }, [
+    page,
+    props.currentLocationPath,
+    props.currentDirectoryPath,
+    props.searchResultCount
+  ]);
+
+  const updateDirEntries = () => {
+    const metaPromises: Promise<any>[] = directories.map(entry => {
+      if (!checkEntryExist(entry.path)) {
+        const metaFilePath = getMetaFileLocationForDir(
+          entry.path,
+          PlatformIO.getDirSeparator()
+        );
+        return getMetaForEntry(entry, metaFilePath);
+      }
+      return Promise.resolve({ [entry.path]: undefined });
+    });
+    updateEntries(metaPromises);
+  };
+
+  const updateFileEntries = () => {
+    const metaPromises: Promise<any>[] = pageFiles.map(entry => {
+      if (!checkEntryExist(entry.path)) {
+        const metaFilePath = getMetaFileLocationForFile(
+          entry.path,
+          PlatformIO.getDirSeparator()
+        );
+        return getMetaForEntry(entry, metaFilePath);
+      }
+      return Promise.resolve({ [entry.path]: undefined });
+    });
+    updateEntries(metaPromises);
+  };
+
+  const updateEntries = metaPromises => {
+    Promise.all(metaPromises)
+      .then(entries => {
+        updateCurrentDirEntries(entries);
+        entriesUpdated.current = entries;
+        return entries;
+      })
+      .catch(err => {
+        console.error('err updateEntries:', err);
+      });
+  };
+
+  const updateCurrentDirEntries = entries => {
+    const entriesEnhanced = [];
+    entries.forEach(entry => {
+      for (const [key, value] of Object.entries(entry)) {
+        if (value) {
+          // !checkEntryExist(key)) {
+          entriesEnhanced.push(value);
+        }
+      }
+    });
+    if (entriesEnhanced.length > 0) {
+      props.updateCurrentDirEntries(entriesEnhanced);
+    }
+  };
+
+  const checkEntryExist = path => {
+    const index = entriesUpdated.current.findIndex(
+      objUpdated => Object.keys(objUpdated).indexOf(path) > -1
+    );
+    return index > -1;
+  };
   useEffect(() => {
     if (page !== currentPage) {
       setPage(props.currentPage);
@@ -89,17 +181,8 @@ const GridPagination = (props: Props) => {
     }
   };
 
-  let paginationCount = 10;
-
-  let showPagination = false;
-  if (gridPageLimit && files.length > gridPageLimit) {
-    paginationCount = Math.ceil(files.length / gridPageLimit);
-    const start = (page - 1) * gridPageLimit;
-    files = files.slice(start, start + gridPageLimit);
-    showPagination = true;
-  }
-
   return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions,jsx-a11y/no-static-element-interactions
     <div
       ref={containerEl}
       onContextMenu={(event: React.MouseEvent<HTMLDivElement>) =>
@@ -121,10 +204,10 @@ const GridPagination = (props: Props) => {
         data-tid="perspectiveGridFileTable"
       >
         {page === 1 && directories.map(entry => renderCell(entry))}
-        {files.map((entry, index, dArray) =>
+        {pageFiles.map((entry, index, dArray) =>
           renderCell(entry, index === dArray.length - 1)
         )}
-        {!isAppLoading && files.length < 1 && directories.length < 1 && (
+        {!isAppLoading && pageFiles.length < 1 && directories.length < 1 && (
           <div style={{ textAlign: 'center' }}>
             <EntryIcon isFile={false} />
             <Typography
@@ -138,7 +221,7 @@ const GridPagination = (props: Props) => {
           </div>
         )}
         {!isAppLoading &&
-          files.length < 1 &&
+          pageFiles.length < 1 &&
           directories.length >= 1 &&
           !showDirectories && (
             <div style={{ textAlign: 'center' }}>
@@ -181,7 +264,7 @@ const GridPagination = (props: Props) => {
           />
         </Tooltip>
       )}
-      {!showPagination && (directories.length > 0 || files.length > 0) && (
+      {!showPagination && (directories.length > 0 || pageFiles.length > 0) && (
         <div style={{ padding: 15, bottom: 10 }}>
           <Typography
             style={{
@@ -208,4 +291,20 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(GridPagination);
+function mapActionCreatorsToProps(dispatch) {
+  return bindActionCreators(
+    {
+      updateCurrentDirEntries: AppActions.updateCurrentDirEntries
+    },
+    dispatch
+  );
+}
+
+const areEqual = (prevProp: Props, nextProp: Props) =>
+  JSON.stringify(nextProp.files) === JSON.stringify(prevProp.files) &&
+  JSON.stringify(nextProp.directories) === JSON.stringify(prevProp.directories);
+
+export default connect(
+  mapStateToProps,
+  mapActionCreatorsToProps
+)(React.memo(GridPagination, areEqual));

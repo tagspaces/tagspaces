@@ -158,7 +158,11 @@ export function getMetaFileLocationForDir(
   metaFile: string = AppConfig.metaFolderFile
 ) {
   const metaFolder = getMetaDirectoryPath(entryPath, dirSeparator);
-  return metaFolder + dirSeparator + metaFile;
+  return (
+    metaFolder +
+    (metaFolder.endsWith(dirSeparator) ? '' : dirSeparator) +
+    metaFile
+  );
 }
 
 export function extractFileName(

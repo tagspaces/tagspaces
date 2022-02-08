@@ -118,6 +118,7 @@ export const types = {
   // REFLECT_UPDATE_SIDECARTAGS: 'APP/REFLECT_UPDATE_SIDECARTAGS',
   // REFLECT_UPDATE_SIDECARMETA: 'APP/REFLECT_UPDATE_SIDECARMETA',
   UPDATE_CURRENTDIR_ENTRY: 'APP/UPDATE_CURRENTDIR_ENTRY',
+  UPDATE_CURRENTDIR_ENTRIES: 'APP/UPDATE_CURRENTDIR_ENTRIES',
   SET_ISLOADING: 'APP/SET_ISLOADING'
 };
 export const perspectives = {
@@ -609,6 +610,21 @@ export default (state: any = initialState, action: any) => {
         })
       };
     } */
+    case types.UPDATE_CURRENTDIR_ENTRIES: {
+      const newDirEntries = [...state.currentDirectoryEntries];
+      for (let i = 0; i < newDirEntries.length; i += 1) {
+        const dirEntry = action.dirEntries.find(
+          entry => entry.path === newDirEntries[i].path
+        );
+        if (dirEntry) {
+          newDirEntries[i] = dirEntry;
+        }
+      }
+      return {
+        ...state,
+        currentDirectoryEntries: newDirEntries,
+      };
+    }
     case types.UPDATE_CURRENTDIR_ENTRY: {
       return {
         ...state,
@@ -954,9 +970,12 @@ export const actions = {
       password: '1234',
       port: 8080
     }); */
+    const mode = PlatformIO.haveObjectStoreSupport()
+      ? []
+      : ['extractThumbPath', 'extractThumbURL'];
     PlatformIO.listDirectoryPromise(
       directoryPath,
-      ['extractThumbPath', 'extractThumbURL'],
+      mode,
       currentLocation ? currentLocation.ignorePatternPaths : []
     )
       .then(results => {
@@ -1823,6 +1842,10 @@ export const actions = {
     type: types.UPDATE_CURRENTDIR_ENTRY,
     path,
     entry
+  }),
+  updateCurrentDirEntries: (dirEntries: TS.FileSystemEntry[]) => ({
+    type: types.UPDATE_CURRENTDIR_ENTRIES,
+    dirEntries
   }),
   /**
    * @param path
