@@ -72,6 +72,7 @@ export const types = {
   LOAD_DIRECTORY_SUCCESS: 'APP/LOAD_DIRECTORY_SUCCESS',
   LOAD_DIRECTORY_FAILURE: 'APP/LOAD_DIRECTORY_FAILURE',
   CLEAR_DIRECTORY_CONTENT: 'APP/CLEAR_DIRECTORY_CONTENT',
+  // LOAD_PAGE_CONTENT: 'APP/LOAD_PAGE_CONTENT',
   SET_SEARCH_RESULTS: 'APP/SET_SEARCH_RESULTS',
   APPEND_SEARCH_RESULTS: 'APP/APPEND_SEARCH_RESULTS',
   OPEN_FILE: 'APP/OPEN_FILE',
@@ -275,6 +276,7 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         currentDirectoryEntries: action.directoryContent,
+        pageEntries: [],
         currentDirectoryColor: action.directoryMeta
           ? action.directoryMeta.color || ''
           : '',
@@ -293,6 +295,21 @@ export default (state: any = initialState, action: any) => {
         currentDirectoryPath: ''
       };
     }
+    /* case types.LOAD_PAGE_CONTENT: {
+      const newPageEntries = [...state.pageEntries];
+      for (let i = 0; i < action.pageEntries.length; i += 1) {
+        const index = newPageEntries.findIndex(
+          entry => entry.path === action.pageEntries[i].path
+        );
+        if (index === -1) {
+          newPageEntries.push(action.pageEntries[i]);
+        }
+      }
+      return {
+        ...state,
+        pageEntries: newPageEntries
+      };
+    } */
     case types.SET_CURRENLOCATIONID: {
       return {
         ...state,
@@ -620,9 +637,21 @@ export default (state: any = initialState, action: any) => {
           newDirEntries[i] = dirEntry;
         }
       }
+
+      /* const newPageEntries = [...state.pageEntries];
+      for (const [path, value] of Object.entries(newPageEntries)) {
+        const pageEntry = action.pageEntries.findIndex(
+          entry => entry.path === newPageEntries[i].path
+        );
+        if (pageEntry) {
+          newPageEntries[i] = pageEntry;
+        }
+      } */
+
       return {
         ...state,
         currentDirectoryEntries: newDirEntries,
+        pageEntries: action.pageEntries
       };
     }
     case types.UPDATE_CURRENTDIR_ENTRY: {
@@ -1000,7 +1029,8 @@ export const actions = {
   },
   loadDirectoryContent: (
     directoryPath: string,
-    generateThumbnails: boolean
+    generateThumbnails: boolean,
+    loadDirMeta: boolean = false
   ) => async (dispatch: (actions: Object) => void, getState: () => any) => {
     // console.debug('loadDirectoryContent:' + directoryPath);
     window.walkCanceled = false;
@@ -1012,28 +1042,34 @@ export const actions = {
     if (selectedEntries.length > 0) {
       dispatch(actions.setSelectedEntries([]));
     }
-    try {
-      const fsEntryMeta = await loadMetaDataPromise(
-        normalizePath(directoryPath) + PlatformIO.getDirSeparator()
-      );
-      // console.debug('Loading meta succeeded for:' + directoryPath);
-      dispatch(
-        actions.loadDirectoryContentInt(
-          directoryPath,
-          generateThumbnails,
-          fsEntryMeta
-        )
-      );
-      /* if (fsEntryMeta.color) { // TODO rethink this states changes are expensive
-          dispatch(actions.setCurrentDirectoryColor(fsEntryMeta.color));
-        }
-        if (fsEntryMeta.perspective) {
-          dispatch(actions.setCurrentDirPerspective(fsEntryMeta.perspective));
-        } */
+    if (loadDirMeta) {
+      try {
+        const fsEntryMeta = await loadMetaDataPromise(
+          normalizePath(directoryPath) + PlatformIO.getDirSeparator()
+        );
+        // console.debug('Loading meta succeeded for:' + directoryPath);
+        dispatch(
+          actions.loadDirectoryContentInt(
+            directoryPath,
+            generateThumbnails,
+            fsEntryMeta
+          )
+        );
+        /* if (fsEntryMeta.color) { // TODO rethink this states changes are expensive
+            dispatch(actions.setCurrentDirectoryColor(fsEntryMeta.color));
+          }
+          if (fsEntryMeta.perspective) {
+            dispatch(actions.setCurrentDirPerspective(fsEntryMeta.perspective));
+          } */
 
-      // return true;
-    } catch (err) {
-      console.debug('Error loading meta of:' + directoryPath + ' ' + err);
+        // return true;
+      } catch (err) {
+        console.debug('Error loading meta of:' + directoryPath + ' ' + err);
+        dispatch(
+          actions.loadDirectoryContentInt(directoryPath, generateThumbnails)
+        );
+      }
+    } else {
       dispatch(
         actions.loadDirectoryContentInt(directoryPath, generateThumbnails)
       );
@@ -1843,9 +1879,13 @@ export const actions = {
     path,
     entry
   }),
-  updateCurrentDirEntries: (dirEntries: TS.FileSystemEntry[]) => ({
+  updateCurrentDirEntries: (
+    dirEntries: TS.FileSystemEntry[],
+    pageEntries: any
+  ) => ({
     type: types.UPDATE_CURRENTDIR_ENTRIES,
-    dirEntries
+    dirEntries,
+    pageEntries
   }),
   /**
    * @param path
@@ -2193,6 +2233,7 @@ export const actions = {
 export const currentUser = (state: any) => state.app.user;
 export const getDirectoryContent = (state: any) =>
   state.app.currentDirectoryEntries;
+export const getPageEntries = (state: any) => state.app.pageEntries;
 export const getCurrentDirectoryColor = (state: any) =>
   state.app.currentDirectoryColor;
 export const getCurrentDirectoryPerspective = (state: any) =>

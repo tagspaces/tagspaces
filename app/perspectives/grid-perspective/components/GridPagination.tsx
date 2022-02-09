@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useReducer } from 'react';
 import { connect } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -26,6 +26,7 @@ import i18n from '-/services/i18n';
 import {
   actions as AppActions,
   getCurrentDirectoryColor,
+  getPageEntries,
   getSearchResultCount,
   isLoading
 } from '-/reducers/app';
@@ -35,7 +36,8 @@ import { TS } from '-/tagspaces.namespace';
 import { getMetaForEntry } from '-/services/utils-io';
 import {
   getMetaFileLocationForDir,
-  getMetaFileLocationForFile
+  getMetaFileLocationForFile,
+  getThumbFileLocationForFile
 } from '-/utils/paths';
 import PlatformIO from '-/services/platform-facade';
 
@@ -47,6 +49,7 @@ interface Props {
   directories: Array<TS.FileSystemEntry>;
   showDirectories: boolean;
   files: Array<TS.FileSystemEntry>;
+  pageEntries: Array<TS.FileSystemEntry>;
   renderCell: (entry: TS.FileSystemEntry, isLast?: boolean) => void;
   currentDirectoryColor: string;
   isAppLoading: boolean;
@@ -57,7 +60,10 @@ interface Props {
   searchResultCount: number;
   onContextMenu: (event: React.MouseEvent<HTMLDivElement>) => void;
   onClick: (event: React.MouseEvent<HTMLDivElement>) => void;
-  updateCurrentDirEntries: (dirEntries: TS.FileSystemEntry[]) => void;
+  updateCurrentDirEntries: (
+    dirEntries: TS.FileSystemEntry[],
+    pageEntries: any
+  ) => void;
 }
 
 const GridPagination = (props: Props) => {
@@ -72,7 +78,8 @@ const GridPagination = (props: Props) => {
     currentDirectoryColor,
     gridPageLimit,
     currentPage,
-    files
+    files,
+    pageEntries
   } = props;
   const allFilesCount = files.length;
   const showPagination = gridPageLimit && files.length > gridPageLimit;
@@ -81,28 +88,66 @@ const GridPagination = (props: Props) => {
     : 10;
 
   const containerEl = useRef(null);
-  const entriesUpdated = useRef([]);
-  const [page, setPage] = useState(currentPage);
+  // const entriesUpdated = useRef([]);
+  const page = useRef<number>(currentPage);
+  // const [page, setPage] = useState(currentPage);
 
-  let pageFiles = [];
+  let pageFiles;
   if (showPagination) {
-    const start = (page - 1) * gridPageLimit;
+    const start = (page.current - 1) * gridPageLimit;
     pageFiles = files.slice(start, start + gridPageLimit);
+  } else {
+    pageFiles = files;
   }
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
 
   useEffect(() => {
-    // updateDirEntries();
-    updateFileEntries();
+    // page.current = currentPage;
+    const dirEntriesPromises = getDirEntriesPromises();
+    const fileEntriesPromises = getFileEntriesPromises();
+    const thumbs = getThumbs();
+    updateEntries([...dirEntriesPromises, ...thumbs, ...fileEntriesPromises]);
+  }, [page.current, files]);
+
+  useEffect(() => {
+    page.current = currentPage;
+    /* if (page !== currentPage) {
+      setPage(props.currentPage);
+    } */
+    if (containerEl && containerEl.current) {
+      containerEl.current.scrollTop = 0;
+    }
   }, [
-    page,
     props.currentLocationPath,
     props.currentDirectoryPath,
     props.searchResultCount
   ]);
 
-  const updateDirEntries = () => {
-    const metaPromises: Promise<any>[] = directories.map(entry => {
-      if (!checkEntryExist(entry.path)) {
+  const setThumbs = (entry: TS.FileSystemEntry): TS.FileSystemEntry => {
+    const thumbEntry = {...entry};
+    let thumbPath = getThumbFileLocationForFile(entry.path, '/', false);
+    if (thumbPath && thumbPath.startsWith('/')) {
+      thumbPath = thumbPath.substring(1);
+    }
+
+    thumbPath = PlatformIO.getURLforPath(thumbPath, 604800);
+    if (thumbPath) {
+      thumbEntry.thumbPath = thumbPath;
+    }
+    return thumbEntry;
+  }
+
+  const getThumbs = (): Promise<any>[] =>
+    pageFiles.map(entry => Promise.resolve({ [entry.path]: setThumbs(entry) }));
+
+  const getDirEntriesPromises = (): Promise<any>[] =>
+    directories.map(entry => {
+      if (
+        !checkEntryExist(entry.path) &&
+        entry.path.indexOf(
+          AppConfig.metaFolder + PlatformIO.getDirSeparator()
+        ) === -1
+      ) {
         const metaFilePath = getMetaFileLocationForDir(
           entry.path,
           PlatformIO.getDirSeparator()
@@ -111,28 +156,30 @@ const GridPagination = (props: Props) => {
       }
       return Promise.resolve({ [entry.path]: undefined });
     });
-    updateEntries(metaPromises);
-  };
 
-  const updateFileEntries = () => {
-    const metaPromises: Promise<any>[] = pageFiles.map(entry => {
-      if (!checkEntryExist(entry.path)) {
+  const getFileEntriesPromises = (): Promise<any>[] =>
+    pageFiles.map(entry => {
+      if (
+        !checkEntryExist(entry.path) &&
+        entry.path.indexOf(
+          AppConfig.metaFolder + PlatformIO.getDirSeparator()
+        ) === -1
+      ) {
         const metaFilePath = getMetaFileLocationForFile(
           entry.path,
           PlatformIO.getDirSeparator()
         );
+        // TODO check if metaFilePath exist in listMetaDirectory content
         return getMetaForEntry(entry, metaFilePath);
       }
       return Promise.resolve({ [entry.path]: undefined });
     });
-    updateEntries(metaPromises);
-  };
 
   const updateEntries = metaPromises => {
     Promise.all(metaPromises)
       .then(entries => {
         updateCurrentDirEntries(entries);
-        entriesUpdated.current = entries;
+        // entriesUpdated.current = entries;
         return entries;
       })
       .catch(err => {
@@ -151,31 +198,21 @@ const GridPagination = (props: Props) => {
       }
     });
     if (entriesEnhanced.length > 0) {
-      props.updateCurrentDirEntries(entriesEnhanced);
+      props.updateCurrentDirEntries(entriesEnhanced, entries);
     }
   };
 
   const checkEntryExist = path => {
-    const index = entriesUpdated.current.findIndex(
+    const index = pageEntries.findIndex(
       objUpdated => Object.keys(objUpdated).indexOf(path) > -1
     );
     return index > -1;
   };
-  useEffect(() => {
-    if (page !== currentPage) {
-      setPage(props.currentPage);
-    }
-    if (containerEl && containerEl.current) {
-      containerEl.current.scrollTop = 0;
-    }
-  }, [
-    props.currentLocationPath,
-    props.currentDirectoryPath,
-    props.searchResultCount
-  ]);
 
   const handleChange = (event, value) => {
-    setPage(value);
+    // setPage(value);
+    page.current = value;
+    forceUpdate();
     if (containerEl && containerEl.current) {
       containerEl.current.scrollTop = 0;
     }
@@ -203,7 +240,7 @@ const GridPagination = (props: Props) => {
         style={style}
         data-tid="perspectiveGridFileTable"
       >
-        {page === 1 && directories.map(entry => renderCell(entry))}
+        {page.current === 1 && directories.map(entry => renderCell(entry))}
         {pageFiles.map((entry, index, dArray) =>
           renderCell(entry, index === dArray.length - 1)
         )}
@@ -259,7 +296,7 @@ const GridPagination = (props: Props) => {
               padding: 3
             }}
             count={paginationCount}
-            page={page}
+            page={page.current}
             onChange={handleChange}
           />
         </Tooltip>
@@ -287,7 +324,8 @@ function mapStateToProps(state) {
   return {
     isAppLoading: isLoading(state),
     currentDirectoryColor: getCurrentDirectoryColor(state),
-    searchResultCount: getSearchResultCount(state)
+    searchResultCount: getSearchResultCount(state),
+    pageEntries: getPageEntries(state)
   };
 }
 

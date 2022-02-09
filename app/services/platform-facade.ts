@@ -174,6 +174,9 @@ export default class PlatformFacade {
   ): Promise<Array<any>> =>
     platformListDirectoryPromise(path, mode, ignorePatterns);
 
+  /* static listMetaDirectoryPromise = (path: string): Promise<Array<any>> =>
+    platformListMetaDirectoryPromise(path); */
+
   static listObjectStoreDir = (
     param: Object,
     mode = ['extractThumbPath'],
