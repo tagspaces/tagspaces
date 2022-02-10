@@ -102,11 +102,12 @@ const GridPagination = (props: Props) => {
   const [, forceUpdate] = useReducer(x => x + 1, 0);
 
   useEffect(() => {
-    // page.current = currentPage;
-    const dirEntriesPromises = getDirEntriesPromises();
-    const fileEntriesPromises = getFileEntriesPromises();
-    const thumbs = getThumbs();
-    updateEntries([...dirEntriesPromises, ...thumbs, ...fileEntriesPromises]);
+    if (PlatformIO.haveObjectStoreSupport()) {
+      const dirEntriesPromises = getDirEntriesPromises();
+      const fileEntriesPromises = getFileEntriesPromises();
+      const thumbs = getThumbs();
+      updateEntries([...dirEntriesPromises, ...thumbs, ...fileEntriesPromises]);
+    }
   }, [page.current, files]);
 
   useEffect(() => {
@@ -124,7 +125,7 @@ const GridPagination = (props: Props) => {
   ]);
 
   const setThumbs = (entry: TS.FileSystemEntry): TS.FileSystemEntry => {
-    const thumbEntry = {...entry};
+    const thumbEntry = { ...entry };
     let thumbPath = getThumbFileLocationForFile(entry.path, '/', false);
     if (thumbPath && thumbPath.startsWith('/')) {
       thumbPath = thumbPath.substring(1);
@@ -135,7 +136,7 @@ const GridPagination = (props: Props) => {
       thumbEntry.thumbPath = thumbPath;
     }
     return thumbEntry;
-  }
+  };
 
   const getThumbs = (): Promise<any>[] =>
     pageFiles.map(entry => Promise.resolve({ [entry.path]: setThumbs(entry) }));
