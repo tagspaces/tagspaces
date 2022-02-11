@@ -310,7 +310,7 @@
     "less-loader": "^4.0.5",
     "lint-staged": "^8.1.0",
     "mini-css-extract-plugin": "^0.5.0",
-    "node-sass": "^6.0.1",
+    "node-sass": "^7.0.0",
     "npm": "^6.14.15",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
     "playwright": "^1.16.3",
