@@ -133,6 +133,7 @@ const styles: any = (theme: any) => ({
     whiteSpace: 'nowrap'
   },
   entryCloseSection: {
+    zIndex: 1,
     position: 'absolute',
     right: 0,
     backgroundColor: theme.palette.background.default,
