@@ -771,7 +771,6 @@ const GridPerspective = (props: Props) => {
             layoutType === 'grid' ? classes.gridContainer : classes.rowContainer
           }
           style={{
-            marginTop: 53,
             gridTemplateColumns:
               layoutType === 'grid'
                 ? 'repeat(auto-fit,minmax(' + entryWidth + 'px,1fr))'

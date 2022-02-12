@@ -110,11 +110,30 @@ const GridPagination = (props: Props) => {
       }
       style={{
         height: '100%',
+        paddingTop: 53,
         // @ts-ignore
         overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
         backgroundColor: currentDirectoryColor || 'transparent'
       }}
     >
+      <Typography
+        style={{
+          display: 'block',
+          padding: 10,
+          paddingTop: 0,
+          borderRadius: 5,
+          marginBottom: 5,
+          maxHeight: 200,
+          overflow: 'auto',
+          color: theme.palette.text.primary
+        }}
+        role="button"
+        id="descriptionArea"
+        dangerouslySetInnerHTML={{
+          // eslint-disable-next-line no-nested-ternary
+          __html: '<h2>Title</h2>some text dafsad<br />adfsadf'
+        }}
+      />
       <div
         className={className}
         style={style}
