@@ -74,11 +74,11 @@ export default (theme: any): any => ({
   },
   gridCellTags: {
     padding: 0,
-    zIndex: 100,
+    paddingTop: 2,
     maxHeight: 100,
     overflowY: 'auto',
-    overflowX: 'hidden'
-    // opacity: 0.9
+    overflowX: 'hidden',
+    position: 'relative'
   },
   gridCellDescription: {
     padding: 2,

@@ -20,12 +20,10 @@ import React from 'react';
 import classNames from 'classnames';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 import FolderIcon from '@material-ui/icons/Folder';
 import SelectedIcon from '@material-ui/icons/CheckBox';
 import UnSelectedIcon from '@material-ui/icons/CheckBoxOutlineBlank';
-import TagIcon from '@material-ui/icons/LocalOfferOutlined';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { formatFileSize, formatDateTime } from '-/utils/misc';
@@ -37,12 +35,14 @@ import {
 } from '-/services/utils-io';
 import TagContainerDnd from '-/components/TagContainerDnd';
 import TagContainer from '-/components/TagContainer';
+import TagsPreview from '-/components/TagsPreview';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/config';
 import EntryIcon from '-/components/EntryIcon';
 import { TS } from '-/tagspaces.namespace';
 import TaggingActions from '-/reducers/tagging-actions';
+import { getTagColor } from '-/reducers/settings';
 
 const maxDescriptionPreviewLength = 100;
 
@@ -71,6 +71,7 @@ interface Props {
   handleGridCellClick: (event: Object, fsEntry: TS.FileSystemEntry) => void;
   editTagForEntry?: (path: string, tag: TS.Tag) => void;
   reorderTags: boolean;
+  defaultTagColor?: string;
 }
 
 const CellContent = (props: Props) => {
@@ -95,7 +96,8 @@ const CellContent = (props: Props) => {
     openFsEntry,
     selectEntry,
     deselectEntry,
-    isLast
+    isLast,
+    defaultTagColor
   } = props;
   const entryTitle = extractTitle(
     fsEntry.name,
@@ -141,18 +143,9 @@ const CellContent = (props: Props) => {
     });
   }
   tagTitles = tagTitles.substring(0, tagTitles.length - 2);
-  const tagPlaceholder =
-    tagTitles.length > 0 ? (
-      <IconButton
-        title={tagTitles}
-        onClick={e => {
-          e.stopPropagation();
-          openFsEntry(fsEntry);
-        }}
-      >
-        <TagIcon />
-      </IconButton>
-    ) : null;
+  const tagPlaceholder = (
+    <TagsPreview tags={entryTags} defaultTagColor={defaultTagColor} />
+  );
 
   function renderGridCell() {
     return (
@@ -467,6 +460,7 @@ const CellContent = (props: Props) => {
 
 function mapStateToProps(state) {
   return {
+    defaultTagColor: getTagColor(state),
     reorderTags: state.settings.reorderTags
   };
 }
