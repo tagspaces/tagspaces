@@ -486,11 +486,13 @@
   "cancelIndexing": "색인화 취소",
   "getLatestVersionPro": "구매 확인 이메일의 링크에서 최신 버전을 다운로드하십시오.",
   "noFileButFoldersFound": "일부 폴더를 찾았습니다! 퍼스펙티브 도구 모음에서 폴더 가시성을 켜서 보세요.",
+  "dragAndDropToImport": "Drag and drop files here to copy or upload them.",
   "selectTags": "태그 선택",
   "location": "위치",
   "locationId": "위치 ID",
   "folder": "폴더",
   "globalSearch": "글로벌",
+  "localLocation": "Local - pointing to a local folder",
   "objectStorage": "Object Storage",
   "objectStorageTitle": "Amazon S3 compliant object storage",
   "endpointURL": "종료 URL",
@@ -628,5 +630,9 @@
   "showMeMore": "Show me more",
   "achieveMore": "Achieve more with",
   "contactUs": "Contact us",
+  "sessionToken": "Session Token",
+  "s3serviceURL": "URL of the S3 service",
+  "print": "인쇄",
+  "advancedSearch": "고급 검색",
   "-": "-"
 }
