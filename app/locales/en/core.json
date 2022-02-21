@@ -634,5 +634,6 @@
   "s3serviceURL": "URL of the S3 service",
   "print": "Print",
   "advancedSearch": "Advanced Search",
+  "new": "New",
   "-": "-"
 }
