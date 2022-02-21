@@ -84,6 +84,7 @@ export default (theme: any): any => ({
     padding: 2,
     margin: 2,
     backgroundColor: theme.palette.background.paper,
+    borderRadius: 5,
     opacity: 0.6,
     wordBreak: 'break-word',
     display: 'block'
