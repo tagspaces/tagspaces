@@ -17,17 +17,22 @@
  */
 
 import React from 'react';
+import { connect } from 'react-redux';
 import Tooltip from '@material-ui/core/Tooltip';
 import { TS } from '-/tagspaces.namespace';
+import { getAllTags, getTagColors } from '-/reducers/taglibrary';
+import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import i18n from '-/services/i18n';
 
 interface Props {
   tags: Array<TS.Tag>;
-  defaultTagColor?: string;
+  allTags?: Array<TS.Tag>;
+  defaultTextColor?: string;
+  defaultBackgroundColor?: string;
 }
 
 const TagsPreview = (props: Props) => {
-  const { tags, defaultTagColor } = props;
+  const { tags, allTags, defaultBackgroundColor, defaultTextColor } = props;
   if (!tags || tags.length < 1) {
     return <></>;
   }
@@ -35,13 +40,17 @@ const TagsPreview = (props: Props) => {
   tags.forEach(tag => {
     tagNames = tagNames + tag.title + ' ';
   });
-  const firstTagColor = tags[0].color || defaultTagColor;
-  let secondTagColor = defaultTagColor;
+
+  const tag1Colors = getTagColors(allTags, tags[0].title);
+  const firstTagColor =
+    tags[0].color || tag1Colors.color || defaultBackgroundColor;
+  let secondTagColor = defaultBackgroundColor;
   let moreThanOne = false;
   if (tags[1]) {
     moreThanOne = true;
+    const tag2Colors = getTagColors(allTags, tags[1].title);
     if (tags[1].color) {
-      secondTagColor = tags[1].color;
+      secondTagColor = tags[1].color || tag2Colors.color;
     }
   }
   return (
@@ -49,7 +58,7 @@ const TagsPreview = (props: Props) => {
       <span
         style={{
           display: 'inline-block',
-          width: 15,
+          width: 18,
           height: 15,
           marginLeft: 5,
           borderRadius: 7,
@@ -57,7 +66,8 @@ const TagsPreview = (props: Props) => {
           boxShadow: moreThanOne ? '4px 0px 0px 0px ' + secondTagColor : 'none',
           backgroundColor: firstTagColor,
           fontSize: 11,
-          color: 'white',
+          lineHeight: '16px',
+          color: tag1Colors.textcolor || defaultTextColor,
           textAlign: 'center'
         }}
       >
@@ -66,4 +76,12 @@ const TagsPreview = (props: Props) => {
     </Tooltip>
   );
 };
-export default TagsPreview;
+
+function mapStateToProps(state) {
+  return {
+    allTags: getAllTags(state),
+    defaultBackgroundColor: getTagColor(state),
+    defaultTextColor: getTagTextColor(state)
+  };
+}
+export default connect(mapStateToProps)(TagsPreview);

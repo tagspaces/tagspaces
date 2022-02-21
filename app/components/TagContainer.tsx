@@ -23,7 +23,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import PlaceIcon from '@material-ui/icons/Place';
 import DateIcon from '@material-ui/icons/DateRange';
 import RemoveTagIcon from '@material-ui/icons/Close';
-import { getAllTags } from '-/reducers/taglibrary';
+import { getAllTags, getTagColors } from '-/reducers/taglibrary';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import { isGeoTag, formatDateTime } from '-/utils/misc';
 import { isDateTimeTag, convertToDateTime, convertToDate } from '-/utils/dates';
@@ -68,8 +68,6 @@ const TagContainer = (props: Props) => {
     addTags,
     tagMode
   } = props;
-  let textColor = tag.textcolor || defaultTextColor;
-  let backgroundColor = tag.color || defaultBackgroundColor;
   let { title } = tag;
 
   // Check if tag is plus code
@@ -82,15 +80,10 @@ const TagContainer = (props: Props) => {
     isTagDate = !isTagGeo && isDateTimeTag(title);
   }
 
-  // TODO move this in reducer
-  allTags.some((currentTag: TS.Tag) => {
-    if (currentTag.title === title) {
-      textColor = currentTag.textcolor;
-      backgroundColor = currentTag.color;
-      return true;
-    }
-    return false;
-  });
+  const tagColors = getTagColors(allTags, title);
+  const textColor = tag.textcolor || tagColors.textcolor || defaultTextColor;
+  const backgroundColor =
+    tag.color || tagColors.color || defaultBackgroundColor;
 
   let tid = 'tagContainer_';
   if (title && title.length > 0) {

@@ -71,7 +71,6 @@ interface Props {
   handleGridCellClick: (event: Object, fsEntry: TS.FileSystemEntry) => void;
   editTagForEntry?: (path: string, tag: TS.Tag) => void;
   reorderTags: boolean;
-  defaultTagColor?: string;
 }
 
 const CellContent = (props: Props) => {
@@ -96,8 +95,7 @@ const CellContent = (props: Props) => {
     openFsEntry,
     selectEntry,
     deselectEntry,
-    isLast,
-    defaultTagColor
+    isLast
   } = props;
   const entryTitle = extractTitle(
     fsEntry.name,
@@ -143,9 +141,7 @@ const CellContent = (props: Props) => {
     });
   }
   tagTitles = tagTitles.substring(0, tagTitles.length - 2);
-  const tagPlaceholder = (
-    <TagsPreview tags={entryTags} defaultTagColor={defaultTagColor} />
-  );
+  const tagPlaceholder = <TagsPreview tags={entryTags} />;
 
   function renderGridCell() {
     return (
@@ -460,7 +456,6 @@ const CellContent = (props: Props) => {
 
 function mapStateToProps(state) {
   return {
-    defaultTagColor: getTagColor(state),
     reorderTags: state.settings.reorderTags
   };
 }

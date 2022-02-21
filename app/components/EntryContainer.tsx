@@ -67,7 +67,6 @@ import {
   actions as SettingsActions,
   isDesktopMode,
   getKeyBindingObject,
-  getTagColor,
   getMapTileServer
 } from '-/reducers/settings';
 import TaggingActions from '-/reducers/tagging-actions';
@@ -182,7 +181,6 @@ interface Props {
   currentDirectoryPath: string | null;
   isDesktopMode: boolean;
   tileServer: TS.MapTileServer;
-  defaultTagColor?: string;
 }
 
 const EntryContainer = (props: Props) => {
@@ -820,7 +818,7 @@ const EntryContainer = (props: Props) => {
     </div>
   );
 
-  const { classes, keyBindings, theme, defaultTagColor } = props;
+  const { classes, keyBindings, theme } = props;
 
   const fileTitle: string = openedFile.path
     ? extractTitle(
@@ -928,10 +926,7 @@ const EntryContainer = (props: Props) => {
                     </Box>
                   </Button>
                 )}
-                <TagsPreview
-                  tags={openedFile.tags}
-                  defaultTagColor={defaultTagColor}
-                />
+                <TagsPreview tags={openedFile.tags} />
               </Box>
               <div className={classes.entryCloseSection}>
                 {editingSupported && openedFile.editMode && (
@@ -1165,7 +1160,6 @@ const EntryContainer = (props: Props) => {
 function mapStateToProps(state) {
   return {
     settings: state.settings,
-    defaultTagColor: getTagColor(state),
     isReadOnlyMode: isReadOnlyMode(state),
     keyBindings: getKeyBindingObject(state),
     isDesktopMode: isDesktopMode(state),
