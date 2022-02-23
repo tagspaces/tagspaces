@@ -47,6 +47,9 @@ export const supportedImgs = [
 ];
 export const supportedContainers = [
   'zip',
+  'pages',
+  'key',
+  'numbers',
   'epub',
   'docx',
   'pptx',
