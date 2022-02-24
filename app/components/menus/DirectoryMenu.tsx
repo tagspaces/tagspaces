@@ -190,16 +190,18 @@ const DirectoryMenu = (props: Props) => {
 
   function switchPerspective(perspectiveId) {
     onClose();
-    if (Pro) {
+    if (
+      Pro ||
+      perspectiveId === PerspectiveIDs.DEFAULT ||
+      perspectiveId === PerspectiveIDs.LIST
+    ) {
       if (props.switchPerspective) {
         props.switchPerspective(perspectiveId);
       } else {
         props.setCurrentDirectoryPerspective(perspectiveId);
       }
     } else if (perspectiveId === PerspectiveIDs.GALLERY) {
-      const openPersDocs = window.confirm(
-        'Gallery is part of TagSpaces Pro. Do you want to learn more about this perspective?'
-      );
+      const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
       if (openPersDocs) {
         props.openURLExternally(
           Links.documentationLinks.galleryPerspective,
@@ -207,9 +209,7 @@ const DirectoryMenu = (props: Props) => {
         );
       }
     } else if (perspectiveId === PerspectiveIDs.MAPIQUE) {
-      const openPersDocs = window.confirm(
-        'Mapique is part of TagSpaces Pro. Do you want to learn more about this perspective?'
-      );
+      const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
       if (openPersDocs) {
         props.openURLExternally(
           Links.documentationLinks.mapiquePerspective,
@@ -217,9 +217,15 @@ const DirectoryMenu = (props: Props) => {
         );
       }
     } else if (perspectiveId === PerspectiveIDs.KANBAN) {
-      const openPersDocs = window.confirm(
-        'Kanban is part of TagSpaces Pro. Do you want to learn more about this perspective?'
-      );
+      const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
+      if (openPersDocs) {
+        props.openURLExternally(
+          Links.documentationLinks.kanbanPerspective,
+          true
+        );
+      }
+    } else if (perspectiveId === PerspectiveIDs.WIKI) {
+      const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
       if (openPersDocs) {
         props.openURLExternally(
           Links.documentationLinks.kanbanPerspective,

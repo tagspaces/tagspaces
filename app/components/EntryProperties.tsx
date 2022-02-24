@@ -1215,16 +1215,19 @@ const EntryProperties = (props: Props) => {
                 </Typography>
               </div>
             </div>
-            <FormControl fullWidth={true} className={classes.formControl}>
-              <Select
-                data-tid="changePerspectiveTID"
-                defaultValue={perspectiveDefault}
-                onChange={changePerspective}
-                input={<Input id="changePerspectiveId" />}
-              >
-                {perspectiveSelectorMenuItems}
-              </Select>
-            </FormControl>
+            <ProTooltip tooltip={i18n.t('core:choosePerspective')}>
+              <FormControl fullWidth={true} className={classes.formControl}>
+                <Select
+                  disabled={!Pro}
+                  data-tid="changePerspectiveTID"
+                  defaultValue={perspectiveDefault}
+                  onChange={changePerspective}
+                  input={<Input id="changePerspectiveId" />}
+                >
+                  {perspectiveSelectorMenuItems}
+                </Select>
+              </FormControl>
+            </ProTooltip>
           </Grid>
         )}
 

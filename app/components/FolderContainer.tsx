@@ -443,52 +443,43 @@ const FolderContainer = (props: Props) => {
 
   const switchPerspective = (perspectiveId: string) => {
     if (
+      Pro ||
       perspectiveId === PerspectiveIDs.DEFAULT ||
       perspectiveId === PerspectiveIDs.LIST
     ) {
       props.setCurrentDirectoryPerspective(perspectiveId);
       return;
     } else if (perspectiveId === PerspectiveIDs.GALLERY) {
-      if (Pro) {
-        props.setCurrentDirectoryPerspective(perspectiveId);
-      } else {
-        const openPersDocs = window.confirm(
-          'Gallery is part of TagSpaces Pro. Do you want to learn more about this perspective?'
+      const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
+      if (openPersDocs) {
+        props.openURLExternally(
+          Links.documentationLinks.galleryPerspective,
+          true
         );
-        if (openPersDocs) {
-          props.openURLExternally(
-            Links.documentationLinks.galleryPerspective,
-            true
-          );
-        }
       }
     } else if (perspectiveId === PerspectiveIDs.MAPIQUE) {
-      if (Pro) {
-        props.setCurrentDirectoryPerspective(perspectiveId);
-      } else {
-        const openPersDocs = window.confirm(
-          'Mapique is part of TagSpaces Pro. Do you want to learn more about this perspective?'
+      const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
+      if (openPersDocs) {
+        props.openURLExternally(
+          Links.documentationLinks.mapiquePerspective,
+          true
         );
-        if (openPersDocs) {
-          props.openURLExternally(
-            Links.documentationLinks.mapiquePerspective,
-            true
-          );
-        }
       }
     } else if (perspectiveId === PerspectiveIDs.KANBAN) {
-      if (Pro) {
-        props.setCurrentDirectoryPerspective(perspectiveId);
-      } else {
-        const openPersDocs = window.confirm(
-          'Kanban is part of TagSpaces Pro. Do you want to learn more about this perspective?'
+      const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
+      if (openPersDocs) {
+        props.openURLExternally(
+          Links.documentationLinks.kanbanPerspective,
+          true
         );
-        if (openPersDocs) {
-          props.openURLExternally(
-            Links.documentationLinks.kanbanPerspective,
-            true
-          );
-        }
+      }
+    } else if (perspectiveId === PerspectiveIDs.WIKI) {
+      const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
+      if (openPersDocs) {
+        props.openURLExternally(
+          Links.documentationLinks.kanbanPerspective,
+          true
+        );
       }
     }
   };
