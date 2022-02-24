@@ -32,9 +32,6 @@ import Badge from '@material-ui/core/Badge';
 import { withStyles } from '@material-ui/core/styles';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import DefaultPerspectiveIcon from '@material-ui/icons/GridOn';
-import GalleryPerspectiveIcon from '@material-ui/icons/Camera';
-import MapiquePerspectiveIcon from '@material-ui/icons/Map';
 import LocationMenu from './menus/LocationMenu';
 import i18n from '../services/i18n';
 import { getMaxSearchResults, getDesktopMode } from '-/reducers/settings';
@@ -47,7 +44,6 @@ import {
   getCurrentLocationPath,
   getCurrentDirectoryPerspective,
   OpenedEntry,
-  perspectives,
   getSelectedEntries,
   getProgress
 } from '../reducers/app';
@@ -67,6 +63,7 @@ import {
 } from '-/reducers/location-index';
 import Links from '-/links';
 import PlatformIO from '-/services/platform-facade';
+import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
 
 const GridPerspective = React.lazy(() =>
   import(
@@ -79,10 +76,19 @@ const GridPerspectiveAsync = props => (
   </React.Suspense>
 );
 
+const ListPerspective = React.lazy(() =>
+  import(/* webpackChunkName: "ListPerspective" */ '../perspectives/list/')
+);
+const ListPerspectiveAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <ListPerspective {...props} />
+  </React.Suspense>
+);
+
 let GalleryPerspective = React.Fragment;
 if (Pro && Pro.Perspectives && Pro.Perspectives.GalleryPerspective) {
   // GalleryPerspective = React.lazy(() => import(/* webpackChunkName: "GalleryPerspective" */ '../node_modules/@tagspaces/pro/modules/perspectives/gallery'));
-  // eslint-disable-next-line prefer-destructuring
+
   GalleryPerspective = Pro.Perspectives.GalleryPerspective;
 }
 const GalleryPerspectiveAsync = props => (
@@ -94,7 +100,6 @@ const GalleryPerspectiveAsync = props => (
 let MapiquePerspective = React.Fragment;
 if (Pro && Pro.Perspectives && Pro.Perspectives.MapiquePerspective) {
   // MapiquePerspective = React.lazy(() => import(/* webpackChunkName: "MapiquePerspective" */ '../node_modules/@tagspaces/pro/modules/perspectives/mapique'));
-  // eslint-disable-next-line prefer-destructuring
   MapiquePerspective = Pro.Perspectives.MapiquePerspective;
 }
 const MapiquePerspectiveAsync = props => (
@@ -117,12 +122,21 @@ const TreeVizPerspectiveAsync = props => (
 
 let KanBanPerspective = React.Fragment;
 if (Pro && Pro.Perspectives && Pro.Perspectives.KanBanPerspective) {
-  // eslint-disable-next-line prefer-destructuring
   KanBanPerspective = Pro.Perspectives.KanBanPerspective;
 }
 const KanBanPerspectiveAsync = props => (
   <React.Suspense fallback={<LoadingLazy />}>
     <KanBanPerspective {...props} />
+  </React.Suspense>
+);
+
+let WikiPerspective = React.Fragment;
+if (Pro && Pro.Perspectives && Pro.Perspectives.WikiPerspective) {
+  WikiPerspective = Pro.Perspectives.WikiPerspective;
+}
+const WikiPerspectiveAsync = props => (
+  <React.Suspense fallback={<LoadingLazy />}>
+    <WikiPerspective {...props} />
   </React.Suspense>
 );
 
@@ -247,44 +261,6 @@ const FolderContainer = (props: Props) => {
     null
   );
 
-  const switchPerspective = (perspectiveId: string) => {
-    if (Pro) {
-      props.setCurrentDirectoryPerspective(perspectiveId);
-      return;
-    }
-    if (perspectiveId === perspectives.GALLERY) {
-      const openPersDocs = window.confirm(
-        'Gallery is part of TagSpaces Pro. Do you want to learn more about this perspective?'
-      );
-      if (openPersDocs) {
-        props.openURLExternally(
-          Links.documentationLinks.galleryPerspective,
-          true
-        );
-      }
-    } else if (perspectiveId === perspectives.MAPIQUE) {
-      const openPersDocs = window.confirm(
-        'Mapique is part of TagSpaces Pro. Do you want to learn more about this perspective?'
-      );
-      if (openPersDocs) {
-        props.openURLExternally(
-          Links.documentationLinks.mapiquePerspective,
-          true
-        );
-      }
-    } else if (perspectiveId === perspectives.KANBAN) {
-      const openPersDocs = window.confirm(
-        'Kanban is part of TagSpaces Pro. Do you want to learn more about this perspective?'
-      );
-      if (openPersDocs) {
-        props.openURLExternally(
-          Links.documentationLinks.kanbanPerspective,
-          true
-        );
-      }
-    }
-  };
-
   const showWelcomePanel =
     !props.currentDirectoryPath && props.directoryContent.length < 1;
 
@@ -296,11 +272,27 @@ const FolderContainer = (props: Props) => {
         <React.Fragment />
       );
     }
-    if (
-      Pro &&
-      props.currentDirectoryPerspective ===
-        Pro.Perspectives.AvailablePerspectives.GALLERY
-    ) {
+    if (props.currentDirectoryPerspective === PerspectiveIDs.LIST) {
+      return (
+        <ListPerspectiveAsync
+          directoryContent={props.directoryContent}
+          loadDirectoryContent={props.loadDirectoryContent}
+          openFsEntry={props.openFsEntry}
+          openRenameEntryDialog={() => setIsRenameEntryDialogOpened(true)}
+          loadParentDirectoryContent={props.loadParentDirectoryContent}
+          renameFile={props.renameFile}
+          openDirectory={props.openDirectory}
+          showInFileManager={props.showInFileManager}
+          currentDirectoryPath={props.currentDirectoryPath}
+          addTags={props.addTags}
+          editTagForEntry={props.editTagForEntry}
+          removeTags={props.removeTags}
+          removeAllTags={props.removeAllTags}
+          windowWidth={props.windowWidth}
+        />
+      );
+    }
+    if (Pro && props.currentDirectoryPerspective === PerspectiveIDs.GALLERY) {
       return (
         <GalleryPerspectiveAsync
           directoryContent={props.directoryContent}
@@ -311,11 +303,7 @@ const FolderContainer = (props: Props) => {
         />
       );
     }
-    if (
-      Pro &&
-      props.currentDirectoryPerspective ===
-        Pro.Perspectives.AvailablePerspectives.MAPIQUE
-    ) {
+    if (Pro && props.currentDirectoryPerspective === PerspectiveIDs.MAPIQUE) {
       return (
         <MapiquePerspectiveAsync
           directoryContent={props.directoryContent}
@@ -326,11 +314,7 @@ const FolderContainer = (props: Props) => {
         />
       );
     }
-    if (
-      Pro &&
-      props.currentDirectoryPerspective ===
-        Pro.Perspectives.AvailablePerspectives.KANBAN
-    ) {
+    if (Pro && props.currentDirectoryPerspective === PerspectiveIDs.KANBAN) {
       return (
         <KanBanPerspectiveAsync
           directoryContent={props.directoryContent}
@@ -348,6 +332,26 @@ const FolderContainer = (props: Props) => {
           removeAllTags={props.removeAllTags}
           windowWidth={props.windowWidth}
           switchPerspective={switchPerspective}
+        />
+      );
+    }
+    if (Pro && props.currentDirectoryPerspective === PerspectiveIDs.WIKI) {
+      return (
+        <WikiPerspectiveAsync
+          directoryContent={props.directoryContent}
+          loadDirectoryContent={props.loadDirectoryContent}
+          openFsEntry={props.openFsEntry}
+          openRenameEntryDialog={() => setIsRenameEntryDialogOpened(true)}
+          loadParentDirectoryContent={props.loadParentDirectoryContent}
+          renameFile={props.renameFile}
+          openDirectory={props.openDirectory}
+          showInFileManager={props.showInFileManager}
+          currentDirectoryPath={props.currentDirectoryPath}
+          addTags={props.addTags}
+          editTagForEntry={props.editTagForEntry}
+          removeTags={props.removeTags}
+          removeAllTags={props.removeAllTags}
+          windowWidth={props.windowWidth}
         />
       );
     }
@@ -399,7 +403,7 @@ const FolderContainer = (props: Props) => {
   } */
 
   const currentPerspective =
-    currentDirectoryPerspective || perspectives.DEFAULT;
+    currentDirectoryPerspective || PerspectiveIDs.DEFAULT;
 
   function CircularProgressWithLabel(prop) {
     return (
@@ -436,6 +440,75 @@ const FolderContainer = (props: Props) => {
     }
     return 100;
   };
+
+  const switchPerspective = (perspectiveId: string) => {
+    if (
+      perspectiveId === PerspectiveIDs.DEFAULT ||
+      perspectiveId === PerspectiveIDs.LIST
+    ) {
+      props.setCurrentDirectoryPerspective(perspectiveId);
+      return;
+    } else if (perspectiveId === PerspectiveIDs.GALLERY) {
+      if (Pro) {
+        props.setCurrentDirectoryPerspective(perspectiveId);
+      } else {
+        const openPersDocs = window.confirm(
+          'Gallery is part of TagSpaces Pro. Do you want to learn more about this perspective?'
+        );
+        if (openPersDocs) {
+          props.openURLExternally(
+            Links.documentationLinks.galleryPerspective,
+            true
+          );
+        }
+      }
+    } else if (perspectiveId === PerspectiveIDs.MAPIQUE) {
+      if (Pro) {
+        props.setCurrentDirectoryPerspective(perspectiveId);
+      } else {
+        const openPersDocs = window.confirm(
+          'Mapique is part of TagSpaces Pro. Do you want to learn more about this perspective?'
+        );
+        if (openPersDocs) {
+          props.openURLExternally(
+            Links.documentationLinks.mapiquePerspective,
+            true
+          );
+        }
+      }
+    } else if (perspectiveId === PerspectiveIDs.KANBAN) {
+      if (Pro) {
+        props.setCurrentDirectoryPerspective(perspectiveId);
+      } else {
+        const openPersDocs = window.confirm(
+          'Kanban is part of TagSpaces Pro. Do you want to learn more about this perspective?'
+        );
+        if (openPersDocs) {
+          props.openURLExternally(
+            Links.documentationLinks.kanbanPerspective,
+            true
+          );
+        }
+      }
+    }
+  };
+
+  const perspectiveToggleButtons = [];
+  AvailablePerspectives.forEach(perspective => {
+    if (perspective.beta === false) {
+      perspectiveToggleButtons.push(
+        <ToggleButton
+          value={perspective.id}
+          aria-label={perspective.id}
+          onClick={() => switchPerspective(perspective.id)}
+        >
+          <Tooltip arrow title={perspective.title}>
+            <div style={{ display: 'flex' }}>{perspective.icon}</div>
+          </Tooltip>
+        </ToggleButton>
+      );
+    }
+  });
 
   return (
     <div data-tid="folderContainerTID" style={{ position: 'relative' }}>
@@ -632,39 +705,7 @@ const FolderContainer = (props: Props) => {
             backgroundColor: theme.palette.background.default
           }}
         >
-          <ToggleButton
-            value={perspectives.DEFAULT}
-            aria-label={perspectives.DEFAULT}
-            onClick={() => switchPerspective(perspectives.DEFAULT)}
-          >
-            <Tooltip arrow title="Switch to default perspective">
-              <div style={{ display: 'flex' }}>
-                <DefaultPerspectiveIcon />
-              </div>
-            </Tooltip>
-          </ToggleButton>
-          <ToggleButton
-            value={perspectives.GALLERY}
-            aria-label={perspectives.GALLERY}
-            onClick={() => switchPerspective(perspectives.GALLERY)}
-          >
-            <Tooltip arrow title="Switch to Gallery perspective">
-              <div style={{ display: 'flex' }}>
-                <GalleryPerspectiveIcon />
-              </div>
-            </Tooltip>
-          </ToggleButton>
-          <ToggleButton
-            value={perspectives.MAPIQUE}
-            aria-label={perspectives.MAPIQUE}
-            onClick={() => switchPerspective(perspectives.MAPIQUE)}
-          >
-            <Tooltip arrow title="Switch to Mapique perspective">
-              <div style={{ display: 'flex' }}>
-                <MapiquePerspectiveIcon />
-              </div>
-            </Tooltip>
-          </ToggleButton>
+          {perspectiveToggleButtons}
         </ToggleButtonGroup>
       )}
     </div>

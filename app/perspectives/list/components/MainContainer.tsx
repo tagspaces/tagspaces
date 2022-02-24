@@ -34,7 +34,7 @@ import {
   locationType,
   sortByCriteria
 } from '-/utils/misc';
-import styles from './styles.css';
+import styles from '-/perspectives/grid-perspective/components/styles.css';
 import FileMenu from '-/components/menus/FileMenu';
 import DirectoryMenu from '-/components/menus/DirectoryMenu';
 import EntryTagMenu from '-/components/menus/EntryTagMenu';
@@ -55,10 +55,10 @@ import {
   isReadOnlyMode
 } from '-/reducers/app';
 import TaggingActions from '-/reducers/tagging-actions';
-import CellContent from './CellContent';
-import MainToolbar from './MainToolbar';
-import SortingMenu from './SortingMenu';
-import GridOptionsMenu from './GridOptionsMenu';
+import CellContent from '-/perspectives/grid-perspective/components/CellContent';
+import MainToolbar from '-/perspectives/grid-perspective/components/MainToolbar';
+import SortingMenu from '-/perspectives/grid-perspective/components/SortingMenu';
+import GridOptionsMenu from '-/perspectives/grid-perspective/components/GridOptionsMenu';
 import { getLocation, getLocations } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-facade';
 import { getLocationPath } from '-/utils/paths';
@@ -154,7 +154,7 @@ const GridPerspective = (props: Props) => {
   //     ? settings.layoutType
   //     : defaultSettings.layoutType
   // );
-  const [layoutType, setLayoutType] = useState<string>('grid');
+  const [layoutType, setLayoutType] = useState<string>('row');
   const [singleClickAction, setSingleClickAction] = useState<string>(
     settings && settings.singleClickAction
       ? settings.singleClickAction

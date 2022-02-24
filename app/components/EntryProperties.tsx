@@ -37,12 +37,8 @@ import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
 import ClearColorIcon from '@material-ui/icons/Backspace';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
-import DefaultPerspectiveIcon from '@material-ui/icons/GridOn';
 import LayersClearIcon from '@material-ui/icons/LayersClear';
 import ListItemText from '@material-ui/core/ListItemText';
-import GalleryPerspectiveIcon from '@material-ui/icons/Camera';
-import MapiquePerspectiveIcon from '@material-ui/icons/Map';
-import KanBanPerspectiveIcon from '@material-ui/icons/Dashboard';
 import {
   AttributionControl,
   Map,
@@ -76,7 +72,7 @@ import {
   replaceThumbnailURLPromise,
   getThumbnailURLPromise
 } from '-/services/thumbsgenerator';
-import { OpenedEntry, perspectives } from '-/reducers/app';
+import { OpenedEntry } from '-/reducers/app';
 import { savePerspective } from '-/utils/metaoperations';
 import MarkerIcon from '-/assets/icons/marker-icon.png';
 import Marker2xIcon from '-/assets/icons/marker-icon-2x.png';
@@ -86,6 +82,7 @@ import { TS } from '-/tagspaces.namespace';
 import NoTileServer from '-/components/NoTileServer';
 import InfoIcon from '-/components/InfoIcon';
 import { ProTooltip } from '-/components/HelperComponents';
+import { AvailablePerspectives } from '-/perspectives';
 
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
@@ -522,31 +519,6 @@ const EntryProperties = (props: Props) => {
     perspectiveDefault = 'unspecified'; // perspectives.DEFAULT;
   }
 
-  function getMenuItem(perspective) {
-    let icon;
-    if (perspective === perspectives.DEFAULT) {
-      icon = <DefaultPerspectiveIcon />;
-    } else if (perspective === perspectives.GALLERY) {
-      icon = <GalleryPerspectiveIcon />;
-    } else if (perspective === perspectives.MAPIQUE) {
-      icon = <MapiquePerspectiveIcon />;
-    } else if (perspective === perspectives.KANBAN) {
-      icon = <KanBanPerspectiveIcon />;
-    }
-    return (
-      <MenuItem key={perspective} value={perspective}>
-        <div style={{ display: 'flex' }}>
-          <ListItemIcon style={{ paddingLeft: 3, paddingTop: 3 }}>
-            {icon}
-          </ListItemIcon>
-          <ListItemText>
-            {perspective.charAt(0).toUpperCase() + perspective.slice(1)}
-          </ListItemText>
-        </div>
-      </MenuItem>
-    );
-  }
-
   const iconFileMarker = new L.Icon({
     iconUrl: MarkerIcon,
     iconRetinaUrl: Marker2xIcon,
@@ -611,6 +583,40 @@ const EntryProperties = (props: Props) => {
     : i18n.t('core:addMarkdownDescription');
 
   const showLinkForDownloading = isCloudLocation && currentEntry.isFile;
+
+  const perspectiveSelectorMenuItems = [];
+  perspectiveSelectorMenuItems.push(
+    <MenuItem style={{ display: 'flex' }} key="unspecified" value="unspecified">
+      <div style={{ display: 'flex' }}>
+        <ListItemIcon style={{ paddingLeft: 3, paddingTop: 3 }}>
+          <LayersClearIcon />
+        </ListItemIcon>
+        <ListItemText>{i18n.t('core:unspecified')}</ListItemText>
+      </div>
+    </MenuItem>
+  );
+
+  AvailablePerspectives.forEach(perspective => {
+    let includePerspective = perspective.beta === false;
+    if (!Pro && perspective.pro === true) {
+      includePerspective = false;
+    }
+    if (Pro && perspective.beta === false) {
+      includePerspective = true;
+    }
+    if (includePerspective) {
+      perspectiveSelectorMenuItems.push(
+        <MenuItem key={perspective.key} value={perspective.id}>
+          <div style={{ display: 'flex' }}>
+            <ListItemIcon style={{ paddingLeft: 3, paddingTop: 3 }}>
+              {perspective.icon}
+            </ListItemIcon>
+            <ListItemText>{perspective.title}</ListItemText>
+          </div>
+        </MenuItem>
+      );
+    }
+  });
 
   // @ts-ignore
   return (
@@ -1216,25 +1222,7 @@ const EntryProperties = (props: Props) => {
                 onChange={changePerspective}
                 input={<Input id="changePerspectiveId" />}
               >
-                <MenuItem
-                  style={{ display: 'flex' }}
-                  key="unspecified"
-                  value="unspecified"
-                >
-                  <div style={{ display: 'flex' }}>
-                    <ListItemIcon style={{ paddingLeft: 3, paddingTop: 3 }}>
-                      <LayersClearIcon />
-                    </ListItemIcon>
-                    <ListItemText>{i18n.t('core:unspecified')}</ListItemText>
-                  </div>
-                </MenuItem>
-                {Object.values(perspectives).map(perspective =>
-                  getMenuItem(perspective)
-                )}
-                {/* {Pro &&
-                  Object.values(
-                    Pro.Perspectives.AvailablePerspectives
-                  ).map(perspective => getMenuItem(perspective))} */}
+                {perspectiveSelectorMenuItems}
               </Select>
             </FormControl>
           </Grid>
@@ -1269,7 +1257,10 @@ const EntryProperties = (props: Props) => {
               )}
           </div>
           <div className={classes.fluidGrid}>
-            <div className={classes.gridItem}>
+            <div
+              className={classes.gridItem}
+              title={i18n.t('core:changeThumbnail')}
+            >
               {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events */}
               <div
                 className={classes.header}

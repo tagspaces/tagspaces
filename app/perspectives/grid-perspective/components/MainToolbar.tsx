@@ -140,7 +140,7 @@ const MainToolbar = (props: Props) => {
           <PropertiesIcon />
         </IconButton>
       </Tooltip>
-      {layoutType === 'row' ? (
+      {/* {layoutType === 'row' ? (
         <Tooltip title={i18n.t('core:switchToGridView')}>
           <IconButton
             aria-label={i18n.t('core:switchToGridView')}
@@ -164,7 +164,7 @@ const MainToolbar = (props: Props) => {
             <ViewListIcon />
           </IconButton>
         </Tooltip>
-      )}
+      )} */}
       {!isReadOnlyMode && (
         <Tooltip title={i18n.t('core:tagSelectedEntries')}>
           <span>
