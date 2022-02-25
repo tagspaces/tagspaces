@@ -185,6 +185,8 @@ export const initialState = {
   currentLocationId: null,
   currentDirectoryPath: '',
   currentDirectoryColor: '',
+  currentDirectoryDescription: '',
+  currentDirectoryTags: [],
   currentDirectoryEntries: [],
   isReadOnlyMode: false,
   searchResults: [],
@@ -270,6 +272,12 @@ export default (state: any = initialState, action: any) => {
         currentDirectoryEntries: action.directoryContent,
         currentDirectoryColor: action.directoryMeta
           ? action.directoryMeta.color || ''
+          : '',
+        currentDirectoryTags: action.directoryMeta
+          ? action.directoryMeta.tags || []
+          : '',
+        currentDirectoryDescription: action.directoryMeta
+          ? action.directoryMeta.description || ''
           : '',
         currentDirectoryPerspective:
           action.directoryMeta && action.directoryMeta.perspective
@@ -2166,6 +2174,10 @@ export const getDirectoryContent = (state: any) =>
   state.app.currentDirectoryEntries;
 export const getCurrentDirectoryColor = (state: any) =>
   state.app.currentDirectoryColor;
+export const getCurrentDirectoryDescription = (state: any) =>
+  state.app.currentDirectoryDescription;
+export const getCurrentDirectoryTags = (state: any) =>
+  state.app.currentDirectoryTags;
 export const getCurrentDirectoryPerspective = (state: any) =>
   state.app.currentDirectoryPerspective;
 export const getDirectoryPath = (state: any) => state.app.currentDirectoryPath;
