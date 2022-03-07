@@ -620,7 +620,7 @@ Do you want to continue?`)
           key={perspective.key}
           data-tid={perspective.key}
           onClick={() => switchPerspective(perspective.id)}
-          title={perspective.tooltip}
+          // title={perspective.tooltip}
         >
           <ListItemIcon>{perspective.icon}</ListItemIcon>
           <ListItemText

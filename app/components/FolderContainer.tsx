@@ -34,7 +34,11 @@ import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import LocationMenu from './menus/LocationMenu';
 import i18n from '../services/i18n';
-import { getMaxSearchResults, getDesktopMode } from '-/reducers/settings';
+import {
+  getMaxSearchResults,
+  getDesktopMode,
+  getKeyBindingObject
+} from '-/reducers/settings';
 import {
   actions as AppActions,
   getDirectoryContent,
@@ -213,6 +217,7 @@ interface Props {
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   openCurrentDirectory: () => void;
   openURLExternally?: (url: string, skipConfirmation: boolean) => void;
+  keyBindings: Array<any>;
 }
 
 const FolderContainer = (props: Props) => {
@@ -391,7 +396,8 @@ const FolderContainer = (props: Props) => {
     openDirectory,
     reflectCreateEntry,
     openFsEntry,
-    isLoading
+    isLoading,
+    keyBindings
   } = props;
 
   /* let searchResultCounterText = searchResultCount + ' ' + i18n.t('entries');
@@ -543,20 +549,29 @@ const FolderContainer = (props: Props) => {
                 openSearchPanel();
               }}
             /> */}
-          <CustomButton
-            data-tid="toggleSearch"
-            onClick={() => {
-              if (isSearchVisible) {
-                props.setSearchQuery({});
-                props.openCurrentDirectory();
-              } else {
-                setSearchVisible(!isSearchVisible);
-              }
-              return true;
-            }}
+          <Tooltip
+            title={
+              i18n.t('showSearch')
+              // +
+              // ' - ' +
+              // keyBindings['openSearch'].toUpperCase()
+            }
           >
-            <SearchIcon />
-          </CustomButton>
+            <CustomButton
+              data-tid="toggleSearch"
+              onClick={() => {
+                if (isSearchVisible) {
+                  props.setSearchQuery({});
+                  props.openCurrentDirectory();
+                } else {
+                  setSearchVisible(!isSearchVisible);
+                }
+                return true;
+              }}
+            >
+              <SearchIcon />
+            </CustomButton>
+          </Tooltip>
           {isSearchVisible ? (
             <>
               <SearchInline />
@@ -716,7 +731,8 @@ function mapStateToProps(state) {
     isReadOnlyMode: isReadOnlyMode(state),
     progress: getProgress(state),
     searchQuery: getSearchQuery(state),
-    isLoading: isLoading(state)
+    isLoading: isLoading(state),
+    keyBindings: getKeyBindingObject(state)
   };
 }
 

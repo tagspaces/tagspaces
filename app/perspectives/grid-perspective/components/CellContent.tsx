@@ -21,6 +21,7 @@ import classNames from 'classnames';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
+import Tooltip from '@material-ui/core/Tooltip';
 import FolderIcon from '@material-ui/icons/Folder';
 import SelectedIcon from '@material-ui/icons/CheckBox';
 import UnSelectedIcon from '@material-ui/icons/CheckBoxOutlineBlank';
@@ -182,53 +183,56 @@ const CellContent = (props: Props) => {
             {showTags && entryTags ? renderTags(entryTags) : tagPlaceholder}
           </div>
           {description && (
-            <Typography
-              id="gridCellDescription"
-              className={classes.gridCellDescription}
-              title={i18n.t('core:filePropertiesDescription')}
-              variant="caption"
-            >
-              {description}
-            </Typography>
+            <Tooltip title={i18n.t('core:entryDescription')}>
+              <Typography
+                id="gridCellDescription"
+                className={classes.gridCellDescription}
+                variant="caption"
+              >
+                {description}
+              </Typography>
+            </Tooltip>
           )}
         </div>
-        <Typography
-          className={classes.gridCellTitle}
-          data-tid={'fsEntryName_' + fsEntry.name}
-          title={fsEntry.path}
-          noWrap={true}
-          variant="body1"
-        >
-          {entryTitle}
-        </Typography>
-        <div className={classes.gridDetails}>
+        <Tooltip title={fsEntry.path}>
           <Typography
-            className={classes.gridFileExtension}
-            style={{
-              backgroundColor: fsEntryColor,
-              textShadow: '1px 1px #8f8f8f',
-              maxWidth: fsEntry.isFile ? 50 : 100
-            }}
+            className={classes.gridCellTitle}
+            data-tid={'fsEntryName_' + fsEntry.name}
             noWrap={true}
-            variant="button"
-            title={fsEntry.path}
+            variant="body1"
           >
-            {fsEntry.isFile ? fsEntry.extension : i18n.t('core:folder')}
+            {entryTitle}
           </Typography>
+        </Tooltip>
+        <div className={classes.gridDetails}>
+          <Tooltip title={fsEntry.path}>
+            <Typography
+              className={classes.gridFileExtension}
+              style={{
+                backgroundColor: fsEntryColor,
+                textShadow: '1px 1px #8f8f8f',
+                maxWidth: fsEntry.isFile ? 50 : 100
+              }}
+              noWrap={true}
+              variant="button"
+            >
+              {fsEntry.isFile ? fsEntry.extension : i18n.t('core:folder')}
+            </Typography>
+          </Tooltip>
           {fsEntry.isFile && fsEntry.lmdt && (
             <Typography className={classes.gridSizeDate} variant="caption">
-              <span
+              <Tooltip
                 title={
                   i18n.t('core:modifiedDate') +
                   ': ' +
                   formatDateTime(fsEntry.lmdt, true)
                 }
               >
-                {formatDateTime(fsEntry.lmdt, false)}
-              </span>
-              <span title={fsEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
-                {' | ' + formatFileSize(fsEntry.size)}
-              </span>
+                <span>{formatDateTime(fsEntry.lmdt, false)}</span>
+              </Tooltip>
+              <Tooltip title={fsEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
+                <span>{' | ' + formatFileSize(fsEntry.size)}</span>
+              </Tooltip>
             </Typography>
           )}
         </div>
@@ -278,32 +282,33 @@ const CellContent = (props: Props) => {
             display: 'flex'
           }}
         >
-          <div
-            data-tid="rowCellTID"
-            className={classes.rowFileExtension}
-            role="presentation"
-            title={fsEntry.path}
-            onClick={e => {
-              e.stopPropagation();
-              if (selected) {
-                deselectEntry(fsEntry);
-              } else {
-                selectEntry(fsEntry);
-              }
-            }}
-            style={{
-              backgroundColor: fsEntryColor,
-              alignSelf: entrySize === 'small' ? 'center' : 'auto'
-            }}
-          >
-            {fsEntry.isFile ? fsEntry.extension : <FolderIcon />}
-            {entrySize !== 'small' &&
-              (selected ? (
-                <SelectedIcon style={{ paddingTop: 5 }} />
-              ) : (
-                <UnSelectedIcon style={{ paddingTop: 5 }} />
-              ))}
-          </div>
+          <Tooltip title={fsEntry.path}>
+            <div
+              data-tid="rowCellTID"
+              className={classes.rowFileExtension}
+              role="presentation"
+              onClick={e => {
+                e.stopPropagation();
+                if (selected) {
+                  deselectEntry(fsEntry);
+                } else {
+                  selectEntry(fsEntry);
+                }
+              }}
+              style={{
+                backgroundColor: fsEntryColor,
+                alignSelf: entrySize === 'small' ? 'center' : 'auto'
+              }}
+            >
+              {fsEntry.isFile ? fsEntry.extension : <FolderIcon />}
+              {entrySize !== 'small' &&
+                (selected ? (
+                  <SelectedIcon style={{ paddingTop: 5 }} />
+                ) : (
+                  <UnSelectedIcon style={{ paddingTop: 5 }} />
+                ))}
+            </div>
+          </Tooltip>
         </Grid>
         {entrySize === 'small' ? (
           <Grid
@@ -313,15 +318,20 @@ const CellContent = (props: Props) => {
             style={{
               display: 'flex'
             }}
-            title={
-              fsEntry.isFile ? entrySizeFormatted + entryLMDTFormatted : ''
-            }
           >
-            <Typography style={{ wordBreak: 'break-all', alignSelf: 'center' }}>
-              {entryTitle}
-              &nbsp;
-              {showTags && entryTags ? renderTags(entryTags) : tagPlaceholder}
-            </Typography>
+            <Tooltip
+              title={
+                fsEntry.isFile ? entrySizeFormatted + entryLMDTFormatted : ''
+              }
+            >
+              <Typography
+                style={{ wordBreak: 'break-all', alignSelf: 'center' }}
+              >
+                {entryTitle}
+                &nbsp;
+                {showTags && entryTags ? renderTags(entryTags) : tagPlaceholder}
+              </Typography>
+            </Tooltip>
           </Grid>
         ) : (
           <Grid item xs zeroMinWidth>
@@ -335,19 +345,21 @@ const CellContent = (props: Props) => {
               }}
               variant="body2"
             >
-              <span title={fsEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
-                {entrySizeFormatted}
-              </span>
-              <span
+              <Tooltip title={fsEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
+                <span>{entrySizeFormatted}</span>
+              </Tooltip>
+              <Tooltip
                 title={
                   i18n.t('core:modifiedDate') +
                   ': ' +
                   formatDateTime(fsEntry.lmdt, true)
                 }
               >
-                {entryLMDTFormatted}
-              </span>
-              <span title={i18n.t('core:entryDescription')}>{description}</span>
+                <span>{entryLMDTFormatted}</span>
+              </Tooltip>
+              <Tooltip title={i18n.t('core:entryDescription')}>
+                <span>{description}</span>
+              </Tooltip>
             </Typography>
           </Grid>
         )}

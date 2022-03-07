@@ -41,6 +41,7 @@ import {
   actions as LocationIndexActions,
   getSearchQuery
 } from '-/reducers/location-index';
+import { getKeyBindingObject } from '-/reducers/settings';
 import { getAllPropertiesPromise } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { actions as AppActions } from '-/reducers/app';
@@ -66,6 +67,7 @@ interface Props {
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   openCurrentDirectory: () => void;
   directoryPath: string;
+  keyBindings: Array<any>;
 }
 
 const MainToolbar = (props: Props) => {
@@ -83,7 +85,8 @@ const MainToolbar = (props: Props) => {
     openDeleteFileDialog,
     fileOperationsEnabled,
     handleSortingMenu,
-    openSettings
+    openSettings,
+    keyBindings
   } = props;
 
   function showProperties() {
@@ -104,7 +107,13 @@ const MainToolbar = (props: Props) => {
 
   return (
     <Toolbar className={classes.topToolbar} data-tid="perspectiveGridToolbar">
-      <Tooltip title={i18n.t('core:toggleSelectAllFiles')}>
+      <Tooltip
+        title={
+          i18n.t('core:toggleSelectAllFiles') +
+          ' - ' +
+          keyBindings['selectAll'].toUpperCase()
+        }
+      >
         <IconButton
           data-tid="gridPerspectiveSelectAllFiles"
           onClick={toggleSelectAllFiles}
@@ -112,7 +121,13 @@ const MainToolbar = (props: Props) => {
           {someFileSelected ? <SelectAllIcon /> : <DeSelectAllIcon />}
         </IconButton>
       </Tooltip>
-      <Tooltip title={i18n.t('core:navigateToParentDirectory')}>
+      <Tooltip
+        title={
+          i18n.t('core:navigateToParentDirectory') +
+          ' - ' +
+          keyBindings['openParentDirectory'].toUpperCase()
+        }
+      >
         <IconButton
           aria-label={i18n.t('core:navigateToParentDirectory')}
           data-tid="gridPerspectiveOnBackButton"
@@ -166,45 +181,51 @@ const MainToolbar = (props: Props) => {
         </Tooltip>
       )} */}
       {!isReadOnlyMode && (
-        <Tooltip title={i18n.t('core:tagSelectedEntries')}>
-          <span>
-            <IconButton
-              aria-label={i18n.t('core:tagSelectedEntries')}
-              data-tid="gridPerspectiveAddRemoveTags"
-              disabled={selectedEntries.length < 1}
-              onClick={openAddRemoveTagsDialog}
-            >
-              <TagIcon />
-            </IconButton>
-          </span>
+        <Tooltip
+          title={
+            i18n.t('core:tagSelectedEntries') +
+            ' - ' +
+            keyBindings['addRemoveTags'].toUpperCase()
+          }
+        >
+          <IconButton
+            aria-label={i18n.t('core:tagSelectedEntries')}
+            data-tid="gridPerspectiveAddRemoveTags"
+            disabled={selectedEntries.length < 1}
+            onClick={openAddRemoveTagsDialog}
+          >
+            <TagIcon />
+          </IconButton>
         </Tooltip>
       )}
       {!isReadOnlyMode && (
         <Tooltip title={i18n.t('core:copyMoveSelectedEntries')}>
-          <span>
-            <IconButton
-              aria-label={i18n.t('core:copyMoveSelectedEntries')}
-              data-tid="gridPerspectiveCopySelectedFiles"
-              disabled={!fileOperationsEnabled}
-              onClick={openMoveCopyFilesDialog}
-            >
-              <CopyIcon />
-            </IconButton>
-          </span>
+          <IconButton
+            aria-label={i18n.t('core:copyMoveSelectedEntries')}
+            data-tid="gridPerspectiveCopySelectedFiles"
+            disabled={!fileOperationsEnabled}
+            onClick={openMoveCopyFilesDialog}
+          >
+            <CopyIcon />
+          </IconButton>
         </Tooltip>
       )}
       {!isReadOnlyMode && (
-        <Tooltip title={i18n.t('core:deleteSelectedEntries')}>
-          <span>
-            <IconButton
-              aria-label={i18n.t('core:deleteSelectedEntries')}
-              data-tid="gridPerspectiveDeleteMultipleFiles"
-              disabled={!fileOperationsEnabled}
-              onClick={openDeleteFileDialog}
-            >
-              <DeleteIcon />
-            </IconButton>
-          </span>
+        <Tooltip
+          title={
+            i18n.t('core:deleteSelectedEntries') +
+            ' - ' +
+            keyBindings['deleteDocument'].toUpperCase()
+          }
+        >
+          <IconButton
+            aria-label={i18n.t('core:deleteSelectedEntries')}
+            data-tid="gridPerspectiveDeleteMultipleFiles"
+            disabled={!fileOperationsEnabled}
+            onClick={openDeleteFileDialog}
+          >
+            <DeleteIcon />
+          </IconButton>
         </Tooltip>
       )}
       <Tooltip title={i18n.t('core:sort')}>
@@ -245,7 +266,8 @@ const MainToolbar = (props: Props) => {
 
 function mapStateToProps(state) {
   return {
-    searchQuery: getSearchQuery(state)
+    searchQuery: getSearchQuery(state),
+    keyBindings: getKeyBindingObject(state)
   };
 }
 function mapDispatchToProps(dispatch) {
