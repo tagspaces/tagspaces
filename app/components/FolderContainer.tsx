@@ -551,7 +551,7 @@ const FolderContainer = (props: Props) => {
             /> */}
           <Tooltip
             title={
-              i18n.t('showSearch')
+              i18n.t('showSearch') + ' (CTRL/⌘+SHIFT+F)'
               // +
               // ' - ' +
               // keyBindings['openSearch'].toUpperCase()

@@ -380,7 +380,7 @@ const SearchInline = (props: Props) => {
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
-              <Tooltip title={i18n.t('clearSearch')}>
+              <Tooltip title={i18n.t('clearSearch') + ' (ESC)'}>
                 <IconButton
                   id="clearSearchID"
                   onClick={clearSearch}

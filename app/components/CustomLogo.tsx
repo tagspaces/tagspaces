@@ -61,11 +61,7 @@ if (AppConfig.customLogo) {
 
 const CustomLogo = (props: Props) => (
   <Tooltip title={i18n.t('core:aboutTitle')}>
-    <AppVersionBadge
-      onClick={props.toggleAboutDialog}
-      badgeContent={'v' + versionMeta.version}
-      color="primary"
-    >
+    <AppVersionBadge badgeContent={'v' + versionMeta.version} color="primary">
       <IconButton
         onClick={props.toggleAboutDialog}
         style={{ padding: 0, paddingLeft: 5, height: 50 }}

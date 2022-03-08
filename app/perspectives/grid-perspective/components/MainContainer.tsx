@@ -233,8 +233,10 @@ const GridPerspective = (props: Props) => {
       selectionContainsDirectories = selectedEntries.some(
         entry => !entry.isFile
       );
+      return !selectionContainsDirectories;
+    } else {
+      return false;
     }
-    return !selectionContainsDirectories;
   };
 
   const folderOperationsEnabled = () => {

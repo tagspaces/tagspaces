@@ -110,8 +110,9 @@ const MainToolbar = (props: Props) => {
       <Tooltip
         title={
           i18n.t('core:toggleSelectAllFiles') +
-          ' - ' +
-          keyBindings['selectAll'].toUpperCase()
+          ' (' +
+          keyBindings['selectAll'].toUpperCase() +
+          ')'
         }
       >
         <IconButton
@@ -124,8 +125,9 @@ const MainToolbar = (props: Props) => {
       <Tooltip
         title={
           i18n.t('core:navigateToParentDirectory') +
-          ' - ' +
-          keyBindings['openParentDirectory'].toUpperCase()
+          ' (' +
+          keyBindings['openParentDirectory'].toUpperCase() +
+          ')'
         }
       >
         <IconButton
@@ -184,8 +186,9 @@ const MainToolbar = (props: Props) => {
         <Tooltip
           title={
             i18n.t('core:tagSelectedEntries') +
-            ' - ' +
-            keyBindings['addRemoveTags'].toUpperCase()
+            ' (' +
+            keyBindings['addRemoveTags'].toUpperCase() +
+            ')'
           }
         >
           <IconButton
@@ -214,8 +217,9 @@ const MainToolbar = (props: Props) => {
         <Tooltip
           title={
             i18n.t('core:deleteSelectedEntries') +
-            ' - ' +
-            keyBindings['deleteDocument'].toUpperCase()
+            ' (' +
+            keyBindings['deleteDocument'].toUpperCase() +
+            ')'
           }
         >
           <IconButton
