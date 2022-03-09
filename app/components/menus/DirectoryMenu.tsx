@@ -34,6 +34,7 @@ import NewFileIcon from '@material-ui/icons/InsertDriveFile';
 import ShareIcon from '@material-ui/icons/Link';
 import RenameFolderIcon from '@material-ui/icons/FormatTextdirectionLToR';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import NewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import PropertiesIcon from '@material-ui/icons/Info';
 import { Progress } from 'aws-sdk/clients/s3';
 import ImageIcon from '@material-ui/icons/Image';
@@ -521,6 +522,18 @@ Do you want to continue?`)
           <NewFileIcon />
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:newFileNote')} />
+      </MenuItem>
+    );
+    menuItems.push(
+      <MenuItem
+        key="newSubDirectory"
+        data-tid="newSubDirectory"
+        onClick={showCreateDirectoryDialog}
+      >
+        <ListItemIcon>
+          <NewFolderIcon />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:newSubdirectory')} />
       </MenuItem>
     );
     menuItems.push(
