@@ -309,6 +309,7 @@ const SearchPopover = (props: Props) => {
     }
     props.setSearchQuery({
       ...searchQuery,
+      searchBoxing: searchBoxing.current,
       showUnixHiddenEntries: props.showUnixHiddenEntries
     });
   };
