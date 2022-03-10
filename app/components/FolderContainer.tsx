@@ -576,16 +576,17 @@ const FolderContainer = (props: Props) => {
           {isSearchVisible ? (
             <>
               <SearchInline />
-              <CustomButton
-                id="advancedButton"
-                title={i18n.t('core:advancedSearch')}
-                data-tid="advancedSearch"
-                onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
-                  setAnchorSearch(event.currentTarget)
-                }
-              >
-                <AdvancedSearchIcon />
-              </CustomButton>
+              <Tooltip title={i18n.t('core:advancedSearch')}>
+                <CustomButton
+                  id="advancedButton"
+                  data-tid="advancedSearch"
+                  onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
+                    setAnchorSearch(event.currentTarget)
+                  }
+                >
+                  <AdvancedSearchIcon />
+                </CustomButton>
+              </Tooltip>
               <Popover
                 open={Boolean(anchorSearch)}
                 anchorEl={anchorSearch}
