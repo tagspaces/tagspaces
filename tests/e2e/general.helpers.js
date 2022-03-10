@@ -464,7 +464,7 @@ export async function selectAllFiles() {
 }
 
 export async function selectFilesByID(arrEntryIds = []) {
-  await clickOn('[data-tid=gridPerspectiveSwitchLayoutToRow]');
+  await clickOn('[data-tid=openListPerspective]');
   for (let i = 0; i < arrEntryIds.length; i++) {
     await clickOn(
       'div[data-entry-id="' + arrEntryIds[i] + '"] div[data-tid=rowCellTID]'
@@ -475,7 +475,7 @@ export async function selectFilesByID(arrEntryIds = []) {
     entry = await entry.$('[data-tid=rowCellTID]');
     await entry.click();*/
   }
-  await clickOn('[data-tid=gridPerspectiveSwitchLayoutToGrid]');
+  await clickOn('[data-tid=openDefaultPerspective]');
 }
 
 /**
@@ -484,7 +484,7 @@ export async function selectFilesByID(arrEntryIds = []) {
  * @returns {Promise<*>}
  */
 export async function selectRowFiles(arrIndex = []) {
-  await clickOn('[data-tid=gridPerspectiveSwitchLayoutToRow]');
+  await clickOn('[data-tid=openListPerspective]');
   // const filesList = await global.client.$('[data-tid=perspectiveGridFileTable]');
   const filesList = await global.client.$$('[data-tid=rowCellTID]');
   const arrElements = [];
@@ -523,7 +523,7 @@ export async function selectRowFiles(arrIndex = []) {
       }
     }
   }
-  await clickOn('[data-tid=gridPerspectiveSwitchLayoutToGrid]');
+  await clickOn('[data-tid=openDefaultPerspective]');
   return arrElements;
 }
 

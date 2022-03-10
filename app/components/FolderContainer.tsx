@@ -497,6 +497,7 @@ const FolderContainer = (props: Props) => {
         <ToggleButton
           value={perspective.id}
           aria-label={perspective.id}
+          data-tid={perspective.key}
           onClick={() => switchPerspective(perspective.id)}
         >
           <Tooltip arrow title={perspective.title}>
