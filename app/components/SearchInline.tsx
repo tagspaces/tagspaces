@@ -19,13 +19,19 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
+import {
+  withStyles,
+  Theme,
+  createStyles,
+  makeStyles
+} from '@material-ui/core/styles';
 import ClearSearchIcon from '@material-ui/icons/CancelOutlined';
 import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
 import { actions as AppActions, getDirectoryPath } from '../reducers/app';
 import {
   actions as LocationIndexActions,
@@ -46,6 +52,7 @@ import {
   removeAllTagsFromSearchQuery
 } from '-/utils/misc';
 import useFirstRender from '-/utils/useFirstRender';
+import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
 
 // type PropsClasses = Record<keyof StyleProps, string>;
 
@@ -75,7 +82,8 @@ const MainSearchField = withStyles((theme: Theme) =>
       },
       '& .MuiInputBase-root': {
         borderRadius: 7,
-        paddingRight: 5
+        paddingRight: 5,
+        paddingLeft: 5
       },
       '& .Mui-focused': {
         color:
@@ -106,6 +114,15 @@ const MainSearchField = withStyles((theme: Theme) =>
   })
 )(TextField);
 
+const useStyles = makeStyles(theme => ({
+  customWidth: {
+    maxWidth: 500
+  },
+  noMaxWidth: {
+    maxWidth: 'none'
+  }
+}));
+
 const SearchInline = (props: Props) => {
   // const [, forceUpdate] = useReducer(x => x + 1, 0);
   const textQuery = useRef<string>(props.searchQuery.textQuery);
@@ -116,9 +133,13 @@ const SearchInline = (props: Props) => {
       : FileTypeGroups.any
   );
 
-  const searchBoxing = useRef<'location' | 'folder' | 'global'>(
-    props.searchQuery.searchBoxing ? props.searchQuery.searchBoxing : 'location'
+  // const searchBoxing = useRef<'location' | 'folder' | 'global'>(
+  //   props.searchQuery.searchBoxing ? props.searchQuery.searchBoxing : 'location'
+  // );
+  const [searchBoxing, setSearchBoxing] = useState(
+    props.searchQuery.searchBoxing || 'location'
   );
+
   const searchType = useRef<'fuzzy' | 'semistrict' | 'strict'>(
     props.searchQuery.searchType ? props.searchQuery.searchType : 'fuzzy'
   );
@@ -171,6 +192,13 @@ const SearchInline = (props: Props) => {
     }
   }, [props.currentDirectory]);
 
+  let searchBoxingName = i18n.t('location');
+  if (searchBoxing === 'global') {
+    searchBoxingName = i18n.t('globalSearch');
+  } else if (searchBoxing === 'folder') {
+    searchBoxingName = i18n.t('folder');
+  }
+
   useEffect(() => {
     if (Object.keys(props.searchQuery).length > 0) {
       let emptySearch: boolean = true;
@@ -221,7 +249,8 @@ const SearchInline = (props: Props) => {
         (textQueryMask.current ? ' ' + textQueryMask.current.trim() : '');
       // }
       if (props.searchQuery.searchBoxing) {
-        searchBoxing.current = props.searchQuery.searchBoxing;
+        setSearchBoxing(props.searchQuery.searchBoxing);
+        // searchBoxing.current = props.searchQuery.searchBoxing;
         emptySearch = false;
       }
       if (props.searchQuery.fileTypes) {
@@ -252,7 +281,7 @@ const SearchInline = (props: Props) => {
         emptySearch = false;
       }
       if (!emptySearch) {
-        if (searchBoxing.current === 'global') {
+        if (searchBoxing === 'global') {
           props.searchAllLocations(searchQuery);
         } else {
           props.searchLocationIndex(searchQuery);
@@ -260,6 +289,16 @@ const SearchInline = (props: Props) => {
       }
     }
   }, [props.searchQuery]);
+
+  const toggleSearchBoxing = () => {
+    if (searchBoxing === 'location') {
+      setSearchBoxing('folder');
+    } else if (searchBoxing === 'folder') {
+      setSearchBoxing('global');
+    } else {
+      setSearchBoxing('location');
+    }
+  };
 
   const clickSearchButton = () => {
     executeSearch();
@@ -275,7 +314,7 @@ const SearchInline = (props: Props) => {
 
   const clearSearch = () => {
     textQuery.current = '';
-    searchBoxing.current = 'location';
+    setSearchBoxing('location');
     searchType.current = 'fuzzy';
     fileTypes.current = FileTypeGroups.any;
     lastModified.current = '';
@@ -328,7 +367,7 @@ const SearchInline = (props: Props) => {
       tagsOR,
       tagsNOT,
       // @ts-ignore
-      searchBoxing: searchBoxing.current,
+      searchBoxing: searchBoxing,
       searchType: searchType.current,
       fileTypes: fileTypes.current,
       lastModified: lastModified.current,
@@ -348,6 +387,7 @@ const SearchInline = (props: Props) => {
   };
 
   const { indexing } = props;
+  const classes = useStyles();
 
   return (
     <div
@@ -356,44 +396,111 @@ const SearchInline = (props: Props) => {
         whiteSpace: 'nowrap'
       }}
     >
-      <MainSearchField
-        fullWidth
-        id="textQuery"
-        name="textQuery"
-        defaultValue={textQuery.current}
-        variant="outlined"
-        onChange={event => {
-          textQuery.current = event.target.value;
-          // rerender
-          // forceUpdate();
-        }}
-        size="small"
-        style={{
-          marginTop: 10,
-          width: 'calc(100% - 80px)'
-        }}
-        inputRef={mainSearchField}
-        margin="dense"
-        autoFocus
-        onKeyDown={startSearch}
-        title={i18n.t('core:searchWordsWithInterval')}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
-              <Tooltip title={i18n.t('clearSearch') + ' (ESC)'}>
-                <IconButton
-                  id="clearSearchID"
-                  onClick={clearSearch}
-                  size="small"
-                  edge="end"
+      <Tooltip
+        arrow
+        disableFocusListener
+        // disableHoverListener
+        classes={{ tooltip: classes.customWidth }}
+        title={
+          <>
+            The search query consists of a tag part and a word. The tag part has
+            this options:
+            <br />
+            &bull; + will add only entries having this tag in the search results
+            (logical AND)
+            <br />
+            &bull; | will include all entries having this tag in the search
+            results (logical OR)
+            <br />
+            &bull; - will exclude entries having this tags from the search
+            results
+            <br />
+            Example queries:
+            <br />
+            "italy +beach -sunset" - will find all files and folders having
+            italy in their name and the tag beach but not sunset
+            <br />
+            "|beach |sunset" - will find all files and folder having the tags
+            beach or sunset
+          </>
+        }
+      >
+        <MainSearchField
+          fullWidth
+          id="textQuery"
+          name="textQuery"
+          defaultValue={textQuery.current}
+          variant="outlined"
+          onChange={event => {
+            textQuery.current = event.target.value;
+            // rerender
+            // forceUpdate();
+          }}
+          size="small"
+          style={{
+            marginTop: 10,
+            width: 'calc(100% - 80px)'
+          }}
+          inputRef={mainSearchField}
+          margin="dense"
+          autoFocus
+          onKeyDown={startSearch}
+          placeholder={i18n.t('core:searchWordsWithInterval')}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start" style={{ marginRight: 0 }}>
+                <Tooltip
+                  arrow
+                  title={
+                    <>
+                      {i18n.t('searchScope')}:
+                      <br />
+                      &bull; {i18n.t('location')} -{' '}
+                      {i18n.t('searchPlaceholder')}
+                      <br />
+                      &bull; {i18n.t('folder')} -{' '}
+                      {i18n.t('searchCurrentFolderWithSubFolders')}
+                      <br />
+                      &bull; {i18n.t('globalSearch')} -{' '}
+                      {i18n.t('searchInAllLocationTooltip')} (
+                      {i18n.t('betaStatus')})<br />
+                    </>
+                  }
                 >
-                  <ClearSearchIcon />
-                </IconButton>
-              </Tooltip>
-            </InputAdornment>
-          )
-        }}
-      />
+                  <Typography
+                    variant="overline"
+                    display="block"
+                    onClick={toggleSearchBoxing}
+                    style={{
+                      border: '1px solid gray',
+                      borderRadius: 5,
+                      lineHeight: 'inherit',
+                      paddingLeft: 3,
+                      paddingRight: 3
+                    }}
+                  >
+                    {searchBoxingName}
+                  </Typography>
+                </Tooltip>
+              </InputAdornment>
+            ),
+            endAdornment: (
+              <InputAdornment position="end">
+                <Tooltip title={i18n.t('clearSearch') + ' (ESC)'}>
+                  <IconButton
+                    id="clearSearchID"
+                    onClick={clearSearch}
+                    size="small"
+                    edge="end"
+                  >
+                    <ClearSearchIcon />
+                  </IconButton>
+                </Tooltip>
+              </InputAdornment>
+            )
+          }}
+        />
+      </Tooltip>
       <Tooltip title={indexing ? i18n.t('searchDisabledWhileIndexing') : ''}>
         <Button
           id="searchButton"
