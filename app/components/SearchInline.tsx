@@ -26,6 +26,7 @@ import {
   makeStyles
 } from '@material-ui/core/styles';
 import ClearSearchIcon from '@material-ui/icons/CancelOutlined';
+import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
 import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
@@ -46,6 +47,7 @@ import {
 import i18n from '../services/i18n';
 import { FileTypeGroups } from '-/services/search';
 import { TS } from '-/tagspaces.namespace';
+import { Pro } from '../pro';
 import {
   escapeRegExp,
   parseTextQuery,
@@ -116,7 +118,7 @@ const MainSearchField = withStyles((theme: Theme) =>
 
 const useStyles = makeStyles(theme => ({
   customWidth: {
-    maxWidth: 500
+    maxWidth: 550
   },
   noMaxWidth: {
     maxWidth: 'none'
@@ -170,22 +172,8 @@ const SearchInline = (props: Props) => {
 
   const firstRender = useFirstRender();
 
-  /* useEffect(() => {
-    // https://github.com/mui-org/material-ui/issues/1594
-    const timeout = setTimeout(() => {
-      if (mainSearchField && mainSearchField.current) {
-        mainSearchField.current.focus();
-      }
-    }, 100);
-
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, []); */
-
   useEffect(() => {
     if (!firstRender) {
-      // mainSearchField.current.value = '';
       if (Object.keys(props.searchQuery).length > 0) {
         props.setSearchQuery({});
       }
@@ -293,7 +281,7 @@ const SearchInline = (props: Props) => {
   const toggleSearchBoxing = () => {
     if (searchBoxing === 'location') {
       setSearchBoxing('folder');
-    } else if (searchBoxing === 'folder') {
+    } else if (searchBoxing === 'folder' && Pro) {
       setSearchBoxing('global');
     } else {
       setSearchBoxing('location');
@@ -396,111 +384,120 @@ const SearchInline = (props: Props) => {
         whiteSpace: 'nowrap'
       }}
     >
-      <Tooltip
-        arrow
-        disableFocusListener
-        // disableHoverListener
-        classes={{ tooltip: classes.customWidth }}
-        title={
-          <>
-            The search query consists of a tag part and a word. The tag part has
-            this options:
-            <br />
-            &bull; + will add only entries having this tag in the search results
-            (logical AND)
-            <br />
-            &bull; | will include all entries having this tag in the search
-            results (logical OR)
-            <br />
-            &bull; - will exclude entries having this tags from the search
-            results
-            <br />
-            Example queries:
-            <br />
-            "italy +beach -sunset" - will find all files and folders having
-            italy in their name and the tag beach but not sunset
-            <br />
-            "|beach |sunset" - will find all files and folder having the tags
-            beach or sunset
-          </>
-        }
-      >
-        <MainSearchField
-          fullWidth
-          id="textQuery"
-          name="textQuery"
-          defaultValue={textQuery.current}
-          variant="outlined"
-          onChange={event => {
-            textQuery.current = event.target.value;
-            // rerender
-            // forceUpdate();
-          }}
-          size="small"
-          style={{
-            marginTop: 10,
-            width: 'calc(100% - 80px)'
-          }}
-          inputRef={mainSearchField}
-          margin="dense"
-          autoFocus
-          onKeyDown={startSearch}
-          placeholder={i18n.t('core:searchWordsWithInterval')}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start" style={{ marginRight: 0 }}>
-                <Tooltip
-                  arrow
-                  title={
-                    <>
-                      {i18n.t('searchScope')}:
-                      <br />
-                      &bull; {i18n.t('location')} -{' '}
-                      {i18n.t('searchPlaceholder')}
-                      <br />
-                      &bull; {i18n.t('folder')} -{' '}
-                      {i18n.t('searchCurrentFolderWithSubFolders')}
-                      <br />
-                      &bull; {i18n.t('globalSearch')} -{' '}
-                      {i18n.t('searchInAllLocationTooltip')} (
-                      {i18n.t('betaStatus')})<br />
-                    </>
-                  }
+      <MainSearchField
+        fullWidth
+        id="textQuery"
+        name="textQuery"
+        defaultValue={textQuery.current}
+        variant="outlined"
+        onChange={event => {
+          textQuery.current = event.target.value;
+        }}
+        size="small"
+        style={{
+          marginTop: 10,
+          width: 'calc(100% - 80px)'
+        }}
+        inputRef={mainSearchField}
+        margin="dense"
+        autoFocus
+        onKeyDown={startSearch}
+        placeholder={i18n.t('core:searchWordsWithInterval')}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start" style={{ marginRight: 0 }}>
+              <Tooltip
+                arrow
+                classes={{ tooltip: classes.customWidth }}
+                title={
+                  <span style={{ fontSize: 14 }}>
+                    {i18n.t('searchScope')}:
+                    <br />
+                    &bull; {i18n.t('location')} - {i18n.t('searchPlaceholder')}
+                    <br />
+                    &bull; {i18n.t('folder')} -{' '}
+                    {i18n.t('searchCurrentFolderWithSubFolders')}
+                    <br />
+                    &bull; {i18n.t('globalSearch')} -{' '}
+                    {i18n.t('searchInAllLocationTooltip')} (
+                    {i18n.t('betaStatus')})<br />
+                  </span>
+                }
+              >
+                <Typography
+                  variant="overline"
+                  display="block"
+                  onClick={toggleSearchBoxing}
+                  style={{
+                    border: '1px solid gray',
+                    borderRadius: 5,
+                    lineHeight: 'inherit',
+                    paddingLeft: 3,
+                    paddingRight: 3
+                  }}
                 >
-                  <Typography
-                    variant="overline"
-                    display="block"
-                    onClick={toggleSearchBoxing}
-                    style={{
-                      border: '1px solid gray',
-                      borderRadius: 5,
-                      lineHeight: 'inherit',
-                      paddingLeft: 3,
-                      paddingRight: 3
-                    }}
-                  >
-                    {searchBoxingName}
-                  </Typography>
-                </Tooltip>
-              </InputAdornment>
-            ),
-            endAdornment: (
-              <InputAdornment position="end">
-                <Tooltip title={i18n.t('clearSearch') + ' (ESC)'}>
-                  <IconButton
-                    id="clearSearchID"
-                    onClick={clearSearch}
-                    size="small"
-                    edge="end"
-                  >
-                    <ClearSearchIcon />
-                  </IconButton>
-                </Tooltip>
-              </InputAdornment>
-            )
-          }}
-        />
-      </Tooltip>
+                  {searchBoxingName}
+                </Typography>
+              </Tooltip>
+            </InputAdornment>
+          ),
+          endAdornment: (
+            <InputAdornment position="end">
+              <Tooltip
+                arrow
+                classes={{ tooltip: classes.customWidth }}
+                title={
+                  <span style={{ fontSize: 14 }}>
+                    The search query consists of a tag part and a search term.
+                    This term is optional and can be a single word. The tag part
+                    can have one or more tags preceded by the following symbols:
+                    <ul>
+                      <li>
+                        + will add only entries having this tag in the search
+                        results (logical AND)
+                      </li>
+                      <li>
+                        | will include all entries having this tag in the search
+                        results (logical OR)
+                      </li>
+                      <li>
+                        - will exclude entries having this tags from the search
+                        results
+                      </li>
+                    </ul>
+                    Example queries:
+                    <ul>
+                      <li>
+                        "italy +beach -sunset" - will find all files and folders
+                        having italy in their name and the tag beach but not
+                        sunset
+                      </li>
+                      <li>
+                        "|beach |sunset" - will find all files and folder having
+                        the tags beach or sunset
+                      </li>
+                    </ul>
+                  </span>
+                }
+              >
+                <IconButton size="small" edge="end">
+                  <HelpOutlineIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title={i18n.t('clearSearch') + ' (ESC)'}>
+                <IconButton
+                  id="clearSearchID"
+                  onClick={clearSearch}
+                  size="small"
+                  edge="end"
+                >
+                  <ClearSearchIcon />
+                </IconButton>
+              </Tooltip>
+            </InputAdornment>
+          )
+        }}
+      />
       <Tooltip title={indexing ? i18n.t('searchDisabledWhileIndexing') : ''}>
         <Button
           id="searchButton"
