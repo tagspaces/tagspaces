@@ -19,10 +19,6 @@ import {
 } from './general.helpers';
 import { renameFolder } from './test-utils';
 
-// export const firstFile = '/span';
-// export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
-// const newDirectoryName = 'newDirectory';
-
 describe('TST01 - Folder management', () => {
   beforeEach(async () => {
     if (global.isMinio) {

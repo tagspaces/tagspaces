@@ -475,7 +475,7 @@ export async function selectFilesByID(arrEntryIds = []) {
     entry = await entry.$('[data-tid=rowCellTID]');
     await entry.click();*/
   }
-  await clickOn('[data-tid=openDefaultPerspective]');
+  await clickOn('[data-tid=gridPerspectiveContainer]');
 }
 
 /**
@@ -523,7 +523,7 @@ export async function selectRowFiles(arrIndex = []) {
       }
     }
   }
-  await clickOn('[data-tid=openDefaultPerspective]');
+  await clickOn('[data-tid=gridPerspectiveContainer]');
   return arrElements;
 }
 
