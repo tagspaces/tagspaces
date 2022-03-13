@@ -35,6 +35,12 @@ import {
 } from './general.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
+// import { defaultSettings as listDefaultSettings } from '../../app/perspectives/list/index';
+// import { defaultSettings as gridDefaultSettings } from '../../app/perspectives/grid-perspective/index';
+// import {
+//   GridPerspectiveMeta,
+//   ListPerspectiveMeta
+// } from '../../app/perspectives/index';
 
 const testTagName = 'testTag'; // TODO fix camelCase tag name
 
@@ -439,20 +445,30 @@ describe('TST50** - Right button on a file', () => {
   test('TST5039 - Changing the Perspective View [web,minio,electron]', async () => {
     // await isDisplayed('[data-tid=perspectiveGridFileTable]', true);
     // await global.client.screenshot({ path: 'screenshotTST5039.png' });
-    const grid = await global.client.waitForSelector(
-      '[data-tid=perspectiveGridFileTable]'
+
+    // const grid = await global.client.waitForSelector(
+    //   '[data-tid=perspectiveGridFileTable]'
+    // );
+    // let gridStyle = await grid.getAttribute('style');
+    // expect(gridStyle).toContain(
+    //   'margin-top: 53px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));'
+    // );
+    // await clickOn('[data-tid=openListPerspective]');
+    // // check perspective view
+    // gridStyle = await grid.getAttribute('style');
+    // expect(gridStyle).toContain('grid-template-columns: none;');
+
+    await expectElementExist(
+      // '[data-tid=' + gridDefaultSettings.testID + ']',
+      '[data-tid=gridPerspectiveContainer]',
+      true
     );
-    let gridStyle = await grid.getAttribute('style');
-
-    expect(gridStyle).toContain(
-      'margin-top: 53px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));'
+    await clickOn('[data-tid=openListPerspective]'); // openListPerspective
+    await expectElementExist(
+      // '[data-tid=' + listDefaultSettings.testID + ']',
+      '[data-tid=listPerspectiveContainer]',
+      true
     );
-
-    await clickOn('[data-tid=openListPerspective]');
-    // check perspective view
-
-    gridStyle = await grid.getAttribute('style');
-    expect(gridStyle).toContain('grid-template-columns: none;');
   });
 
   test('TST5040 - Create file [TST5040,web,minio,electron]', async () => {

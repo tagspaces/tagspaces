@@ -741,6 +741,7 @@ const GridPerspective = (props: Props) => {
       style={{
         height: 'calc(100% - 48px)'
       }}
+      data-tid={defaultSettings.testID}
     >
       <MainToolbar
         classes={classes}

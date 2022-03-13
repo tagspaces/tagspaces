@@ -15,6 +15,7 @@ export { default } from './components/MainContainer';
 // }
 
 export const defaultSettings = {
+  testID: 'listPerspectiveContainer',
   settingsKey: 'tsPerspectiveList',
   orderBy: true,
   sortBy: 'byName',

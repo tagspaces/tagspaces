@@ -39,8 +39,7 @@ export const GridPerspectiveMeta = {
   pro: false,
   beta: false,
   icon: <GridPerspectiveIcon />,
-  title: 'Grid Perspective',
-  tooltip: 'Switch to Grid perspective'
+  title: 'Grid Perspective'
 };
 
 export const ListPerspectiveMeta = {
@@ -49,8 +48,7 @@ export const ListPerspectiveMeta = {
   pro: false,
   beta: false,
   icon: <ListPerspectiveIcon />,
-  title: 'List Perspective',
-  tooltip: 'Switch to List perspective'
+  title: 'List Perspective'
 };
 
 export const WikiPerspectiveMeta = {
@@ -59,8 +57,7 @@ export const WikiPerspectiveMeta = {
   pro: true,
   beta: true,
   icon: <WikiPerspectiveIcon />,
-  title: 'Wiki Perspective',
-  tooltip: 'Switch to Wiki perspective'
+  title: 'Wiki Perspective'
 };
 
 export const MapiquePerspectiveMeta = {
@@ -69,8 +66,7 @@ export const MapiquePerspectiveMeta = {
   pro: true,
   beta: false,
   icon: <MapiquePerspectiveIcon />,
-  title: 'Mapique Perspective',
-  tooltip: 'Switch to Mapique perspective'
+  title: 'Mapique Perspective'
 };
 
 export const KanbanPerspectiveMeta = {
@@ -79,8 +75,7 @@ export const KanbanPerspectiveMeta = {
   pro: true,
   beta: true,
   icon: <KanbanPerspectiveIcon />,
-  title: 'Kanban Perspective',
-  tooltip: 'Switch to Kanban perspective'
+  title: 'Kanban Perspective'
 };
 
 export const GalleryPerspectiveMeta = {
@@ -89,8 +84,7 @@ export const GalleryPerspectiveMeta = {
   pro: true,
   beta: false,
   icon: <GalleryPerspectiveIcon />,
-  title: 'Gallery Perspective',
-  tooltip: 'Switch to Gallery perspective'
+  title: 'Gallery Perspective'
 };
 
 export const AvailablePerspectives = [];
