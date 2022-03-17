@@ -169,8 +169,7 @@ export async function setInputKeys(tid, value, delay = 50) {
     });
     return oldValue;
   }
-    return await setSelectorKeys('[data-tid=' + tid + ']', value);
-
+  return await setSelectorKeys('[data-tid=' + tid + ']', value);
 }
 
 export async function setSelectorKeys(selector, value) {
@@ -251,10 +250,9 @@ export async function getGridFileName(fileIndex) {
       const fileExt = await getElementText(fileExtElem);
       return fileName + '.' + fileExt.toLowerCase();
     }
-      console.log(
-        "Can't find getGridFileName:" + fileIndex + ' filesList is empty'
-      );
-
+    console.log(
+      "Can't find getGridFileName:" + fileIndex + ' filesList is empty'
+    );
   } catch (e) {
     console.log("Can't find getGridFileName:" + fileIndex, e);
   }
@@ -342,8 +340,7 @@ export async function getGridElement(fileIndex = 0) {
       file = await file.$('div');
       return file;
     }
-      console.log("Can't getGridElement:" + fileIndex + ' filesList is empty');
-
+    console.log("Can't getGridElement:" + fileIndex + ' filesList is empty');
   }
   return undefined;
 }
@@ -491,7 +488,6 @@ export async function selectFilesByID(arrEntryIds = []) {
  * @returns {Promise<*>}
  */
 export async function selectRowFiles(arrIndex = []) {
-
   await clickOn('[data-tid=openListPerspective]');
   await setGridOptions(false, 'gridPerspectiveEntrySizeNormal');
   // const filesList = await global.client.$('[data-tid=perspectiveGridFileTable]');

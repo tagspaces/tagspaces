@@ -1,10 +1,10 @@
 {
   "webDependencies": {
-    "@tagspaces/extensions": "1.0.22"
+    "@tagspaces/extensions": "1.0.23"
   },
   "nodeDependencies": {
     "@tagspaces/tagspaces-ws": "1.2.1",
-    "@tagspaces/extensions": "1.0.22",
+    "@tagspaces/extensions": "1.0.23",
     "sharp": "^0.29.3"
   }
 }

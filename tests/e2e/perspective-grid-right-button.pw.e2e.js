@@ -203,7 +203,6 @@ describe('TST50** - Right button on a file', () => {
    * todo search not work
    */
   test('TST5024 - Show files with a given tag (tag menu)', async () => {
-
     await selectRowFiles([0, 1, 2]);
     await AddRemoveTagsToSelectedFiles([testTagName], true);
     await showFilesWithTag(testTagName);
