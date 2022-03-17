@@ -335,6 +335,26 @@ export function prepareDirectoryContent(
   );
 }
 
+export function orderByMetaArray(arr, metaArray) {
+  const arrLength = arr.length;
+  return arr.sort((a, b) => {
+    let indexA = metaArray.findIndex(
+      metaFiles => metaFiles.name === a.name
+    );
+    let indexB = metaArray.findIndex(
+      metaFiles => metaFiles.name === b.name
+    );
+    // set new files last; dirs first
+    if (indexA === -1) {
+      indexA = !a.isFile ? arrLength * -1 : arrLength;
+    }
+    if (indexB === -1) {
+      indexB = !b.isFile ? arrLength * -1 : arrLength;
+    }
+    return indexA - indexB;
+  });
+}
+
 export function findExtensionPathForId(extensionId: string): string {
   const extensionPath = 'node_modules/' + extensionId;
   return extensionPath;
