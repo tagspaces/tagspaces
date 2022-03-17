@@ -455,6 +455,7 @@ const SearchInline = (props: Props) => {
                 <Tooltip
                   arrow
                   classes={{ tooltip: classes.customWidth }}
+                  interactive
                   title={
                     <span style={{ fontSize: 14 }}>
                       {i18n.t('searchScope')}:
