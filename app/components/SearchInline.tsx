@@ -41,6 +41,7 @@ import {
   getSearchQuery
 } from '../reducers/location-index';
 import {
+  isDesktopMode,
   getMaxSearchResults,
   getShowUnixHiddenEntries
 } from '-/reducers/settings';
@@ -73,6 +74,7 @@ interface Props {
   maxSearchResults: number;
   indexing: boolean;
   showUnixHiddenEntries: boolean;
+  isDesktopMode: boolean;
 }
 
 const MainSearchField = withStyles((theme: Theme) =>
@@ -341,6 +343,50 @@ const SearchInline = (props: Props) => {
     return query;
   };
 
+  const classes = useStyles();
+  const HelpTooltip = classes => (
+    <Tooltip
+      arrow
+      classes={{ tooltip: classes.customWidth }}
+      interactive
+      title={
+        <span style={{ fontSize: 14 }}>
+          The search query consists of a tag part and a search term. This term
+          is optional and can be a single word. The tag part can have one or
+          more tags preceded by the following symbols:
+          <ul>
+            <li>
+              + will add only entries having this tag in the search results
+              (logical AND)
+            </li>
+            <li>
+              | will include all entries having this tag in the search results
+              (logical OR)
+            </li>
+            <li>
+              - will exclude entries having this tags from the search results
+            </li>
+          </ul>
+          Example queries:
+          <ul>
+            <li>
+              "italy +beach -sunset" - will find all files and folders having
+              italy in their name and the tag beach but not sunset
+            </li>
+            <li>
+              "|beach |sunset" - will find all files and folder having the tags
+              beach or sunset
+            </li>
+          </ul>
+        </span>
+      }
+    >
+      <IconButton size="small" edge="end">
+        <HelpOutlineIcon />
+      </IconButton>
+    </Tooltip>
+  );
+
   const executeSearch = () => {
     let query = textQuery.current;
     const tagsAND = parseTextQuery(textQuery.current, '+');
@@ -374,8 +420,7 @@ const SearchInline = (props: Props) => {
     props.setSearchQuery(searchQuery);
   };
 
-  const { indexing } = props;
-  const classes = useStyles();
+  const { indexing, isDesktopMode } = props;
 
   return (
     <div
@@ -406,84 +451,49 @@ const SearchInline = (props: Props) => {
         InputProps={{
           startAdornment: (
             <InputAdornment position="start" style={{ marginRight: 0 }}>
-              <Tooltip
-                arrow
-                classes={{ tooltip: classes.customWidth }}
-                title={
-                  <span style={{ fontSize: 14 }}>
-                    {i18n.t('searchScope')}:
-                    <br />
-                    &bull; {i18n.t('location')} - {i18n.t('searchPlaceholder')}
-                    <br />
-                    &bull; {i18n.t('folder')} -{' '}
-                    {i18n.t('searchCurrentFolderWithSubFolders')}
-                    <br />
-                    &bull; {i18n.t('globalSearch')} -{' '}
-                    {i18n.t('searchInAllLocationTooltip')} (
-                    {i18n.t('betaStatus')})<br />
-                  </span>
-                }
-              >
-                <Typography
-                  variant="overline"
-                  display="block"
-                  onClick={toggleSearchBoxing}
-                  style={{
-                    border: '1px solid gray',
-                    borderRadius: 5,
-                    lineHeight: 'inherit',
-                    paddingLeft: 3,
-                    paddingRight: 3
-                  }}
+              {isDesktopMode ? (
+                <Tooltip
+                  arrow
+                  classes={{ tooltip: classes.customWidth }}
+                  title={
+                    <span style={{ fontSize: 14 }}>
+                      {i18n.t('searchScope')}:
+                      <br />
+                      &bull; {i18n.t('location')} -{' '}
+                      {i18n.t('searchPlaceholder')}
+                      <br />
+                      &bull; {i18n.t('folder')} -{' '}
+                      {i18n.t('searchCurrentFolderWithSubFolders')}
+                      <br />
+                      &bull; {i18n.t('globalSearch')} -{' '}
+                      {i18n.t('searchInAllLocationTooltip')} (
+                      {i18n.t('betaStatus')})<br />
+                    </span>
+                  }
                 >
-                  {searchBoxingName}
-                </Typography>
-              </Tooltip>
+                  <Typography
+                    variant="overline"
+                    display="block"
+                    onClick={toggleSearchBoxing}
+                    style={{
+                      border: '1px solid gray',
+                      borderRadius: 5,
+                      lineHeight: 'inherit',
+                      paddingLeft: 3,
+                      paddingRight: 3
+                    }}
+                  >
+                    {searchBoxingName}
+                  </Typography>
+                </Tooltip>
+              ) : (
+                <HelpTooltip classes={classes} />
+              )}
             </InputAdornment>
           ),
           endAdornment: (
             <InputAdornment position="end">
-              <Tooltip
-                arrow
-                classes={{ tooltip: classes.customWidth }}
-                title={
-                  <span style={{ fontSize: 14 }}>
-                    The search query consists of a tag part and a search term.
-                    This term is optional and can be a single word. The tag part
-                    can have one or more tags preceded by the following symbols:
-                    <ul>
-                      <li>
-                        + will add only entries having this tag in the search
-                        results (logical AND)
-                      </li>
-                      <li>
-                        | will include all entries having this tag in the search
-                        results (logical OR)
-                      </li>
-                      <li>
-                        - will exclude entries having this tags from the search
-                        results
-                      </li>
-                    </ul>
-                    Example queries:
-                    <ul>
-                      <li>
-                        "italy +beach -sunset" - will find all files and folders
-                        having italy in their name and the tag beach but not
-                        sunset
-                      </li>
-                      <li>
-                        "|beach |sunset" - will find all files and folder having
-                        the tags beach or sunset
-                      </li>
-                    </ul>
-                  </span>
-                }
-              >
-                <IconButton size="small" edge="end">
-                  <HelpOutlineIcon />
-                </IconButton>
-              </Tooltip>
+              {isDesktopMode && <HelpTooltip classes={classes} />}
               <Tooltip title={i18n.t('clearSearch') + ' (ESC)'}>
                 <IconButton
                   id="clearSearchID"
@@ -523,6 +533,7 @@ function mapStateToProps(state) {
   return {
     indexing: isIndexing(state),
     searchQuery: getSearchQuery(state),
+    isDesktopMode: isDesktopMode(state),
     currentDirectory: getDirectoryPath(state),
     indexedEntriesCount: getIndexedEntriesCount(state),
     maxSearchResults: getMaxSearchResults(state),
