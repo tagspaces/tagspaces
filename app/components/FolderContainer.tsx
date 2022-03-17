@@ -49,7 +49,8 @@ import {
   getCurrentDirectoryPerspective,
   OpenedEntry,
   getSelectedEntries,
-  getProgress
+  getProgress,
+  getCurrentDirectoryFiles
 } from '../reducers/app';
 import TaggingActions from '../reducers/tagging-actions';
 import LoadingLazy from '../components/LoadingLazy';
@@ -183,6 +184,7 @@ interface Props {
   windowHeight: number;
   windowWidth: number;
   directoryContent: Array<Object>;
+  currentDirectoryFiles: Array<any>;
   currentDirectoryPath: string | null;
   searchResultCount: number;
   addTags: () => void;
@@ -323,6 +325,7 @@ const FolderContainer = (props: Props) => {
       return (
         <KanBanPerspectiveAsync
           directoryContent={props.directoryContent}
+          currentDirectoryFiles={props.currentDirectoryFiles}
           loadDirectoryContent={props.loadDirectoryContent}
           openFsEntry={props.openFsEntry}
           openRenameEntryDialog={() => setIsRenameEntryDialogOpened(true)}
@@ -725,6 +728,7 @@ function mapStateToProps(state) {
     settings: state.settings,
     selectedEntries: getSelectedEntries(state),
     directoryContent: getDirectoryContent(state),
+    currentDirectoryFiles: getCurrentDirectoryFiles(state),
     currentDirectoryPerspective: getCurrentDirectoryPerspective(state),
     searchResultCount: getSearchResultCount(state),
     currentLocationPath: getCurrentLocationPath(state),
