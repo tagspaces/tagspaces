@@ -48,6 +48,7 @@ import RefreshIcon from '@material-ui/icons/Refresh';
 import Box from '@material-ui/core/Box';
 import { Split } from 'ts-react-splitter';
 import EntryProperties from '-/components/EntryProperties';
+import TagsPreview from '-/components/TagsPreview';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import AppConfig from '-/config';
 import PlatformIO from '-/services/platform-facade';
@@ -106,6 +107,7 @@ const styles: any = (theme: any) => ({
     flexDirection: 'row',
     flex: '1 1',
     display: 'flex',
+    alignItems: 'center',
     overflowX: AppConfig.isFirefox ? 'auto' : 'overlay',
     paddingRight: 100
   },
@@ -132,6 +134,7 @@ const styles: any = (theme: any) => ({
     whiteSpace: 'nowrap'
   },
   entryCloseSection: {
+    zIndex: 1,
     position: 'absolute',
     right: 0,
     backgroundColor: theme.palette.background.default,
@@ -816,6 +819,7 @@ const EntryContainer = (props: Props) => {
   );
 
   const { classes, keyBindings, theme } = props;
+
   const fileTitle: string = openedFile.path
     ? extractTitle(
         openedFile.path,
@@ -852,7 +856,7 @@ const EntryContainer = (props: Props) => {
               flex: '1 1 100%',
               display: 'flex',
               backgroundColor: theme.palette.background.default,
-              height: filePropsHeight || 'initial'
+              height: filePropsHeight || '100%'
             }}
           >
             <Box
@@ -922,6 +926,7 @@ const EntryContainer = (props: Props) => {
                     </Box>
                   </Button>
                 )}
+                <TagsPreview tags={openedFile.tags} />
               </Box>
               <div className={classes.entryCloseSection}>
                 {editingSupported && openedFile.editMode && (

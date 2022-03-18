@@ -486,11 +486,13 @@
   "cancelIndexing": "Indexierung stoppen",
   "getLatestVersionPro": "Bitte laden Sie die aktuellste Version vom Link in der E-Mail zur Kaufbestätigung.",
   "noFileButFoldersFound": "Some folders found! Turn on the folder visibility from the perspective's toolbar to view them.",
+  "dragAndDropToImport": "Drag and drop files here to copy or upload them.",
   "selectTags": "Schlagwörter auswählen",
   "location": "Ort",
   "locationId": "Ort-Id",
   "folder": "Verzeichnis",
   "globalSearch": "Global",
+  "localLocation": "Local - pointing to a local folder",
   "objectStorage": "Object Storage",
   "objectStorageTitle": "Amazon S3 compliant object storage",
   "endpointURL": "Endpunkt-URL",
@@ -628,5 +630,9 @@
   "showMeMore": "Mehr anzeigen",
   "achieveMore": "Erreiche mehr mit",
   "contactUs": "Kontaktieren Sie uns",
+  "sessionToken": "Session Token",
+  "s3serviceURL": "URL of the S3 service",
+  "print": "Drucken",
+  "advancedSearch": "Erweiterte Suche",
   "-": "-"
 }

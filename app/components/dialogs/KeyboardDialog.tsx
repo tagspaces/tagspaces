@@ -80,7 +80,7 @@ const KeyboardDialog = (props: Props) => {
               <ListItem key={shortcutKey}>
                 <ListItemText primary={i18n.t('core:' + shortcutKey)} />
                 <ListItemSecondaryAction className={props.classes.shortcutKey}>
-                  {props.keyBindings[shortcutKey]}
+                  {props.keyBindings[shortcutKey].toUpperCase()}
                 </ListItemSecondaryAction>
               </ListItem>
             ))}

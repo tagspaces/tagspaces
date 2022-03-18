@@ -19,7 +19,6 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
 import { v1 as uuidv1 } from 'uuid';
-import marked from 'marked';
 import L from 'leaflet';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
@@ -33,18 +32,13 @@ import ShareIcon from '@material-ui/icons/Link';
 import Tooltip from '@material-ui/core/Tooltip';
 import LocationIcon from '@material-ui/icons/WorkOutline';
 import CloudLocationIcon from '@material-ui/icons/CloudQueue';
-import DOMPurify from 'dompurify';
 import Select from '@material-ui/core/Select';
 import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
 import ClearColorIcon from '@material-ui/icons/Backspace';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
-import DefaultPerspectiveIcon from '@material-ui/icons/GridOn';
 import LayersClearIcon from '@material-ui/icons/LayersClear';
 import ListItemText from '@material-ui/core/ListItemText';
-import GalleryPerspectiveIcon from '@material-ui/icons/Camera';
-import MapiquePerspectiveIcon from '@material-ui/icons/Map';
-import KanBanPerspectiveIcon from '@material-ui/icons/Dashboard';
 import {
   AttributionControl,
   Map,
@@ -59,7 +53,7 @@ import TagDropContainer from './TagDropContainer';
 import ColorPickerDialog from './dialogs/ColorPickerDialog';
 import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
 import i18n from '../services/i18n';
-import { enhanceOpenedEntry } from '-/services/utils-io';
+import { enhanceOpenedEntry, convertMarkDown } from '-/services/utils-io';
 import { formatFileSize, parseGeoLocation } from '-/utils/misc';
 import {
   extractContainingDirectoryPath,
@@ -78,7 +72,7 @@ import {
   replaceThumbnailURLPromise,
   getThumbnailURLPromise
 } from '-/services/thumbsgenerator';
-import { OpenedEntry, perspectives } from '-/reducers/app';
+import { OpenedEntry } from '-/reducers/app';
 import { savePerspective } from '-/utils/metaoperations';
 import MarkerIcon from '-/assets/icons/marker-icon.png';
 import Marker2xIcon from '-/assets/icons/marker-icon-2x.png';
@@ -88,6 +82,7 @@ import { TS } from '-/tagspaces.namespace';
 import NoTileServer from '-/components/NoTileServer';
 import InfoIcon from '-/components/InfoIcon';
 import { ProTooltip } from '-/components/HelperComponents';
+import { AvailablePerspectives } from '-/perspectives';
 
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
@@ -217,45 +212,6 @@ const EntryProperties = (props: Props) => {
     // printWin.close();
     return true;
   };
-
-  const customRenderer = new marked.Renderer();
-  customRenderer.link = (href, title, text) => `
-      <a href="#"
-        title="${href}"
-        onClick="event.preventDefault(); event.stopPropagation(); window.postMessage(JSON.stringify({ command: 'openLinkExternally', link: '${href}' }), '*'); return false;">
-        ${text}
-      </a>`;
-
-  customRenderer.image = (href, title, text) => {
-    let sourceUrl = href;
-    const dirSep = PlatformIO.getDirSeparator();
-    if (
-      !sourceUrl.startsWith('http') &&
-      directoryPath &&
-      directoryPath !== dirSep
-    ) {
-      sourceUrl = directoryPath.endsWith(dirSep)
-        ? directoryPath + sourceUrl
-        : directoryPath + dirSep + sourceUrl;
-    }
-    if (PlatformIO.haveObjectStoreSupport()) {
-      sourceUrl = PlatformIO.getURLforPath(sourceUrl);
-    }
-    return `<img src="${sourceUrl}" style="max-width: 100%">
-        ${text}
-    </img>`;
-  };
-
-  marked.setOptions({
-    renderer: customRenderer,
-    pedantic: false,
-    gfm: true,
-    tables: true,
-    breaks: false,
-    smartLists: true,
-    smartypants: false,
-    xhtml: true
-  });
 
   const entryName = props.openedEntry.isFile
     ? extractFileName(props.openedEntry.path, PlatformIO.getDirSeparator())
@@ -563,31 +519,6 @@ const EntryProperties = (props: Props) => {
     perspectiveDefault = 'unspecified'; // perspectives.DEFAULT;
   }
 
-  function getMenuItem(perspective) {
-    let icon;
-    if (perspective === perspectives.DEFAULT) {
-      icon = <DefaultPerspectiveIcon />;
-    } else if (perspective === perspectives.GALLERY) {
-      icon = <GalleryPerspectiveIcon />;
-    } else if (perspective === perspectives.MAPIQUE) {
-      icon = <MapiquePerspectiveIcon />;
-    } else if (perspective === perspectives.KANBAN) {
-      icon = <KanBanPerspectiveIcon />;
-    }
-    return (
-      <MenuItem key={perspective} value={perspective}>
-        <div style={{ display: 'flex' }}>
-          <ListItemIcon style={{ paddingLeft: 3, paddingTop: 3 }}>
-            {icon}
-          </ListItemIcon>
-          <ListItemText>
-            {perspective.charAt(0).toUpperCase() + perspective.slice(1)}
-          </ListItemText>
-        </div>
-      </MenuItem>
-    );
-  }
-
   const iconFileMarker = new L.Icon({
     iconUrl: MarkerIcon,
     iconRetinaUrl: Marker2xIcon,
@@ -640,8 +571,7 @@ const EntryProperties = (props: Props) => {
       PlatformIO.getURLforPath(currentEntry.path, linkValidityDuration),
       currentSignedLink => {
         if (currentSignedLink && currentSignedLink.length > 1) {
-          objectStorageLinkRef.current.select();
-          document.execCommand('copy');
+          const promise = navigator.clipboard.writeText(currentSignedLink);
           props.showNotification(i18n.t('Link copied to clipboard'));
         }
       }
@@ -649,8 +579,44 @@ const EntryProperties = (props: Props) => {
   }
 
   const sanitizedDescription = currentEntry.description
-    ? marked(DOMPurify.sanitize(currentEntry.description))
+    ? convertMarkDown(currentEntry.description, directoryPath)
     : i18n.t('core:addMarkdownDescription');
+
+  const showLinkForDownloading = isCloudLocation && currentEntry.isFile;
+
+  const perspectiveSelectorMenuItems = [];
+  perspectiveSelectorMenuItems.push(
+    <MenuItem style={{ display: 'flex' }} key="unspecified" value="unspecified">
+      <div style={{ display: 'flex' }}>
+        <ListItemIcon style={{ paddingLeft: 3, paddingTop: 3 }}>
+          <LayersClearIcon />
+        </ListItemIcon>
+        <ListItemText>{i18n.t('core:unspecified')}</ListItemText>
+      </div>
+    </MenuItem>
+  );
+
+  AvailablePerspectives.forEach(perspective => {
+    let includePerspective = perspective.beta === false;
+    if (!Pro && perspective.pro === true) {
+      includePerspective = false;
+    }
+    if (Pro && perspective.beta === false) {
+      includePerspective = true;
+    }
+    if (includePerspective) {
+      perspectiveSelectorMenuItems.push(
+        <MenuItem key={perspective.key} value={perspective.id}>
+          <div style={{ display: 'flex' }}>
+            <ListItemIcon style={{ paddingLeft: 3, paddingTop: 3 }}>
+              {perspective.icon}
+            </ListItemIcon>
+            <ListItemText>{perspective.title}</ListItemText>
+          </div>
+        </MenuItem>
+      );
+    }
+  });
 
   // @ts-ignore
   return (
@@ -1112,7 +1078,7 @@ const EntryProperties = (props: Props) => {
           </FormControl>
         </Grid>
 
-        <Grid item xs={isCloudLocation ? 6 : 12}>
+        <Grid item xs={showLinkForDownloading ? 6 : 12}>
           <Typography
             variant="caption"
             className={classNames(classes.header)}
@@ -1152,8 +1118,9 @@ const EntryProperties = (props: Props) => {
                       <Button
                         color="primary"
                         onClick={() => {
-                          sharingLinkRef.current.select();
-                          document.execCommand('copy');
+                          const promise = navigator.clipboard.writeText(
+                            sharingLink
+                          );
                           props.showNotification(
                             i18n.t('Link copied to clipboard')
                           );
@@ -1169,7 +1136,7 @@ const EntryProperties = (props: Props) => {
           </FormControl>
         </Grid>
 
-        {isCloudLocation && (
+        {showLinkForDownloading && (
           <Grid item xs={6}>
             <Typography
               variant="caption"
@@ -1248,34 +1215,19 @@ const EntryProperties = (props: Props) => {
                 </Typography>
               </div>
             </div>
-            <FormControl fullWidth={true} className={classes.formControl}>
-              <Select
-                data-tid="changePerspectiveTID"
-                defaultValue={perspectiveDefault}
-                onChange={changePerspective}
-                input={<Input id="changePerspectiveId" />}
-              >
-                <MenuItem
-                  style={{ display: 'flex' }}
-                  key="unspecified"
-                  value="unspecified"
+            <ProTooltip tooltip={i18n.t('core:choosePerspective')}>
+              <FormControl fullWidth={true} className={classes.formControl}>
+                <Select
+                  disabled={!Pro}
+                  data-tid="changePerspectiveTID"
+                  defaultValue={perspectiveDefault}
+                  onChange={changePerspective}
+                  input={<Input id="changePerspectiveId" />}
                 >
-                  <div style={{ display: 'flex' }}>
-                    <ListItemIcon style={{ paddingLeft: 3, paddingTop: 3 }}>
-                      <LayersClearIcon />
-                    </ListItemIcon>
-                    <ListItemText>{i18n.t('core:unspecified')}</ListItemText>
-                  </div>
-                </MenuItem>
-                {Object.values(perspectives).map(perspective =>
-                  getMenuItem(perspective)
-                )}
-                {/* {Pro &&
-                  Object.values(
-                    Pro.Perspectives.AvailablePerspectives
-                  ).map(perspective => getMenuItem(perspective))} */}
-              </Select>
-            </FormControl>
+                  {perspectiveSelectorMenuItems}
+                </Select>
+              </FormControl>
+            </ProTooltip>
           </Grid>
         )}
 
@@ -1308,7 +1260,10 @@ const EntryProperties = (props: Props) => {
               )}
           </div>
           <div className={classes.fluidGrid}>
-            <div className={classes.gridItem}>
+            <div
+              className={classes.gridItem}
+              title={i18n.t('core:changeThumbnail')}
+            >
               {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events */}
               <div
                 className={classes.header}

@@ -17,7 +17,8 @@
  */
 
 import { v1 as uuidv1 } from 'uuid';
-import marked from 'marked';
+// @ts-ignore
+import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import {
   loadIndex,
@@ -1140,9 +1141,52 @@ export function loadFileContentPromise(
 
 export function removeMarkDown(mdContent) {
   if (!mdContent) return '';
-  let result = marked(DOMPurify.sanitize(mdContent));
+  let result = marked.parse(DOMPurify.sanitize(mdContent));
   const span = document.createElement('span');
   span.innerHTML = result;
   result = span.textContent || span.innerText;
   return result;
+}
+
+export function convertMarkDown(mdContent: string, directoryPath: string) {
+  const customRenderer = new marked.Renderer();
+  customRenderer.link = (href, title, text) => `
+      <a href="#"
+        title="${href}"
+        onClick="event.preventDefault(); event.stopPropagation(); window.postMessage(JSON.stringify({ command: 'openLinkExternally', link: '${href}' }), '*'); return false;">
+        ${text}
+      </a>`;
+
+  customRenderer.image = (href, title, text) => {
+    let sourceUrl = href;
+    const dirSep = PlatformIO.getDirSeparator();
+    if (
+      !sourceUrl.startsWith('http') &&
+      directoryPath &&
+      directoryPath !== dirSep
+    ) {
+      sourceUrl = directoryPath.endsWith(dirSep)
+        ? directoryPath + sourceUrl
+        : directoryPath + dirSep + sourceUrl;
+    }
+    if (PlatformIO.haveObjectStoreSupport()) {
+      sourceUrl = PlatformIO.getURLforPath(sourceUrl);
+    }
+    return `<img src="${sourceUrl}" style="max-width: 100%">
+        ${text}
+    </img>`;
+  };
+
+  marked.setOptions({
+    renderer: customRenderer,
+    pedantic: false,
+    gfm: true,
+    tables: true,
+    breaks: false,
+    smartLists: true,
+    smartypants: false,
+    xhtml: true
+  });
+
+  return marked.parse(DOMPurify.sanitize(mdContent));
 }
