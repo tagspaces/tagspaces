@@ -19,6 +19,7 @@
 import React, { useState } from 'react';
 import { emphasize, withStyles, Theme } from '@material-ui/core/styles';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
+import Tooltip from '@material-ui/core/Tooltip';
 import Chip from '@material-ui/core/Chip';
 import ExpandMoreIcon from '@material-ui/icons/MoreVert';
 import PlatformIO from '../services/platform-facade';
@@ -169,36 +170,40 @@ export default function PathBreadcrumbs(props: Props) {
         {/* <LocationMenu /> */}
         {pathParts.length > 0 &&
           pathParts.map(pathPart => (
-            <StyledBreadcrumb
-              key={pathPart}
-              component="a"
-              href="#"
-              label={extractShortDirectoryName(
-                pathPart,
-                PlatformIO.getDirSeparator()
-              )}
-              onClick={() => loadDirectoryContent(pathPart, false)}
-              title={'Navigate to: ' + pathPart}
-            />
+            <Tooltip title={i18n.t('core:navigateTo') + ' ' + pathPart}>
+              <StyledBreadcrumb
+                key={pathPart}
+                component="a"
+                href="#"
+                label={extractShortDirectoryName(
+                  pathPart,
+                  PlatformIO.getDirSeparator()
+                )}
+                onClick={() => loadDirectoryContent(pathPart, false)}
+              />
+            </Tooltip>
           ))}
         {props.currentDirectoryPath && (
-          <StyledBreadcrumb
-            data-tid="folderContainerOpenDirMenu"
+          <Tooltip
             title={
               i18n.t('core:openDirectoryMenu') +
               ' - ' +
               (currentDirectoryPath || '')
             }
-            label={extractShortDirectoryName(
-              normalizePath(normalizedCurrentDirPath),
-              '/'
-            )}
-            deleteIcon={<ExpandMoreIcon />}
-            //onClick={handleClick}
-            onDelete={openDirectoryMenu}
-            onClick={openDirectoryMenu}
-            onContextMenu={openDirectoryMenu}
-          />
+          >
+            <StyledBreadcrumb
+              data-tid="folderContainerOpenDirMenu"
+              label={extractShortDirectoryName(
+                normalizePath(normalizedCurrentDirPath),
+                '/'
+              )}
+              deleteIcon={<ExpandMoreIcon />}
+              //onClick={handleClick}
+              onDelete={openDirectoryMenu}
+              onClick={openDirectoryMenu}
+              onContextMenu={openDirectoryMenu}
+            />
+          </Tooltip>
         )}
       </NoWrapBreadcrumb>
       <DirectoryMenu

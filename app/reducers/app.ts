@@ -60,6 +60,7 @@ import {
   isGlobalKeyBindingEnabled
 } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
+import { PerspectiveIDs } from '-/perspectives';
 
 export const types = {
   DEVICE_ONLINE: 'APP/DEVICE_ONLINE',
@@ -121,13 +122,6 @@ export const types = {
   UPDATE_CURRENTDIR_ENTRY: 'APP/UPDATE_CURRENTDIR_ENTRY',
   UPDATE_CURRENTDIR_ENTRIES: 'APP/UPDATE_CURRENTDIR_ENTRIES',
   SET_ISLOADING: 'APP/SET_ISLOADING'
-};
-export const perspectives = {
-  DEFAULT: 'default',
-  GALLERY: 'gallery',
-  // TREEVIZ: 'treeviz',
-  MAPIQUE: 'mapique',
-  KANBAN: 'kanban'
 };
 
 export const NotificationTypes = {
@@ -193,6 +187,8 @@ export const initialState = {
   currentLocationId: null,
   currentDirectoryPath: '',
   currentDirectoryColor: '',
+  currentDirectoryDescription: '',
+  currentDirectoryTags: [],
   currentDirectoryEntries: [],
   isReadOnlyMode: false,
   searchResults: [],
@@ -279,6 +275,12 @@ export default (state: any = initialState, action: any) => {
         pageEntries: [],
         currentDirectoryColor: action.directoryMeta
           ? action.directoryMeta.color || ''
+          : '',
+        currentDirectoryTags: action.directoryMeta
+          ? action.directoryMeta.tags || []
+          : '',
+        currentDirectoryDescription: action.directoryMeta
+          ? action.directoryMeta.description || ''
           : '',
         currentDirectoryPerspective:
           action.directoryMeta && action.directoryMeta.perspective
@@ -1544,7 +1546,7 @@ export const actions = {
       dispatch(actions.loadDirectoryContent(getLocationPath(location), true));
       if (Pro && Pro.Watcher && location.watchForChanges) {
         const perspective = getCurrentDirectoryPerspective(getState());
-        const depth = perspective === perspectives.KANBAN ? 3 : 1;
+        const depth = perspective === PerspectiveIDs.KANBAN ? 3 : 1;
         Pro.Watcher.watchFolder(
           getLocationPath(location),
           dispatch,
@@ -2236,6 +2238,10 @@ export const getDirectoryContent = (state: any) =>
 export const getPageEntries = (state: any) => state.app.pageEntries;
 export const getCurrentDirectoryColor = (state: any) =>
   state.app.currentDirectoryColor;
+export const getCurrentDirectoryDescription = (state: any) =>
+  state.app.currentDirectoryDescription;
+export const getCurrentDirectoryTags = (state: any) =>
+  state.app.currentDirectoryTags;
 export const getCurrentDirectoryPerspective = (state: any) =>
   state.app.currentDirectoryPerspective;
 export const getDirectoryPath = (state: any) => state.app.currentDirectoryPath;

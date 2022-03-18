@@ -634,5 +634,10 @@
   "s3serviceURL": "URL of the S3 service",
   "print": "Print",
   "advancedSearch": "Advanced Search",
+  "new": "New",
+  "perspectiveInPro": "This perspective is part of TagSpaces Pro. Do you want to learn more about it?",
+  "currentLocation": "Current Location",
+  "navigateTo": "Navigate to",
+  "searchScope": "Search Scope",
   "-": "-"
 }

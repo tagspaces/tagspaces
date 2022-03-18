@@ -30,15 +30,11 @@ import AddExistingFileIcon from '@material-ui/icons/ExitToApp';
 import ImportTagsIcon from '@material-ui/icons/FindInPage';
 import OpenFolderNativelyIcon from '@material-ui/icons/Launch';
 import AutoRenew from '@material-ui/icons/Autorenew';
-import DefaultPerspectiveIcon from '@material-ui/icons/GridOn';
-import GalleryPerspectiveIcon from '@material-ui/icons/Camera';
-import MapiquePerspectiveIcon from '@material-ui/icons/Map';
-import KanBanPerspectiveIcon from '@material-ui/icons/Dashboard';
 import NewFileIcon from '@material-ui/icons/InsertDriveFile';
-import NewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import ShareIcon from '@material-ui/icons/Link';
 import RenameFolderIcon from '@material-ui/icons/FormatTextdirectionLToR';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import NewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import PropertiesIcon from '@material-ui/icons/Info';
 import { Progress } from 'aws-sdk/clients/s3';
 import ImageIcon from '@material-ui/icons/Image';
@@ -56,11 +52,7 @@ import {
 } from '-/utils/paths';
 import PlatformIO from '-/services/platform-facade';
 import { formatDateTime4Tag } from '-/utils/misc';
-import {
-  actions as AppActions,
-  getSelectedEntries,
-  perspectives
-} from '-/reducers/app';
+import { actions as AppActions, getSelectedEntries } from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
 import TaggingActions from '-/reducers/tagging-actions';
 import { getAllPropertiesPromise } from '-/services/utils-io';
@@ -70,6 +62,7 @@ import FileUploadContainer, {
 import { TS } from '-/tagspaces.namespace';
 import { ProLabel, BetaLabel } from '-/components/HelperComponents';
 import Links from '-/links';
+import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
 
 interface Props {
   open: boolean;
@@ -198,36 +191,42 @@ const DirectoryMenu = (props: Props) => {
 
   function switchPerspective(perspectiveId) {
     onClose();
-    if (Pro) {
+    if (
+      Pro ||
+      perspectiveId === PerspectiveIDs.DEFAULT ||
+      perspectiveId === PerspectiveIDs.LIST
+    ) {
       if (props.switchPerspective) {
         props.switchPerspective(perspectiveId);
       } else {
         props.setCurrentDirectoryPerspective(perspectiveId);
       }
-    } else if (perspectiveId === perspectives.GALLERY) {
-      const openPersDocs = window.confirm(
-        'Gallery is part of TagSpaces Pro. Do you want to learn more about this perspective?'
-      );
+    } else if (perspectiveId === PerspectiveIDs.GALLERY) {
+      const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
       if (openPersDocs) {
         props.openURLExternally(
           Links.documentationLinks.galleryPerspective,
           true
         );
       }
-    } else if (perspectiveId === perspectives.MAPIQUE) {
-      const openPersDocs = window.confirm(
-        'Mapique is part of TagSpaces Pro. Do you want to learn more about this perspective?'
-      );
+    } else if (perspectiveId === PerspectiveIDs.MAPIQUE) {
+      const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
       if (openPersDocs) {
         props.openURLExternally(
           Links.documentationLinks.mapiquePerspective,
           true
         );
       }
-    } else if (perspectiveId === perspectives.KANBAN) {
-      const openPersDocs = window.confirm(
-        'Kanban is part of TagSpaces Pro. Do you want to learn more about this perspective?'
-      );
+    } else if (perspectiveId === PerspectiveIDs.KANBAN) {
+      const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
+      if (openPersDocs) {
+        props.openURLExternally(
+          Links.documentationLinks.kanbanPerspective,
+          true
+        );
+      }
+    } else if (perspectiveId === PerspectiveIDs.WIKI) {
+      const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
       if (openPersDocs) {
         props.openURLExternally(
           Links.documentationLinks.kanbanPerspective,
@@ -515,18 +514,6 @@ Do you want to continue?`)
   if (!isReadOnlyMode && !props.perspectiveMode) {
     menuItems.push(
       <MenuItem
-        key="newSubDirectory"
-        data-tid="newSubDirectory"
-        onClick={showCreateDirectoryDialog}
-      >
-        <ListItemIcon>
-          <NewFolderIcon />
-        </ListItemIcon>
-        <ListItemText primary={i18n.t('core:newSubdirectory')} />
-      </MenuItem>
-    );
-    menuItems.push(
-      <MenuItem
         key="createNewFile"
         data-tid="createNewFile"
         onClick={createNewFile}
@@ -535,6 +522,18 @@ Do you want to continue?`)
           <NewFileIcon />
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:newFileNote')} />
+      </MenuItem>
+    );
+    menuItems.push(
+      <MenuItem
+        key="newSubDirectory"
+        data-tid="newSubDirectory"
+        onClick={showCreateDirectoryDialog}
+      >
+        <ListItemIcon>
+          <NewFolderIcon />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:newSubdirectory')} />
       </MenuItem>
     );
     menuItems.push(
@@ -618,82 +617,35 @@ Do you want to continue?`)
   }
   if (!props.perspectiveMode) {
     menuItems.push(<Divider key="divider2" />);
-    menuItems.push(
-      <MenuItem
-        key="openDefaultPerspective"
-        data-tid="openDefaultPerspective"
-        onClick={() => switchPerspective(perspectives.DEFAULT)}
-        title="Switch to default perspective"
-      >
-        <ListItemIcon>
-          <DefaultPerspectiveIcon />
-        </ListItemIcon>
-        <ListItemText primary="Default Perspective" />
-      </MenuItem>
-    );
-    menuItems.push(
-      <Tooltip title="Switch to Gallery perspective">
+    AvailablePerspectives.forEach(perspective => {
+      let badge = <></>;
+      if (!Pro && perspective.pro) {
+        badge = <ProLabel />;
+      }
+      if (!Pro && perspective.beta) {
+        badge = <BetaLabel />;
+      }
+      if (Pro && perspective.beta) {
+        badge = <BetaLabel />;
+      }
+      menuItems.push(
         <MenuItem
-          key="openGalleryPerspective"
-          data-tid="openGalleryPerspective"
-          onClick={() => switchPerspective(perspectives.GALLERY)}
+          key={perspective.key}
+          data-tid={perspective.key}
+          onClick={() => switchPerspective(perspective.id)}
         >
-          <ListItemIcon>
-            <GalleryPerspectiveIcon />
-          </ListItemIcon>
+          <ListItemIcon>{perspective.icon}</ListItemIcon>
           <ListItemText
             primary={
               <>
-                Gallery Perspective
-                <ProLabel />
+                {perspective.title}
+                {badge}
               </>
             }
           />
         </MenuItem>
-      </Tooltip>
-    );
-    menuItems.push(
-      <Tooltip title="Switch to Mapique perspective">
-        <MenuItem
-          key="openMapiquePerspective"
-          data-tid="openMapiquePerspective"
-          onClick={() => switchPerspective(perspectives.MAPIQUE)}
-        >
-          <ListItemIcon>
-            <MapiquePerspectiveIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary={
-              <>
-                Mapique Perspective
-                <ProLabel />
-              </>
-            }
-          />
-        </MenuItem>
-      </Tooltip>
-    );
-    menuItems.push(
-      <Tooltip title="Switch to Kanban perspective">
-        <MenuItem
-          key="openKanBanPerspective"
-          data-tid="openKanBanPerspectiveTID"
-          onClick={() => switchPerspective(perspectives.KANBAN)}
-        >
-          <ListItemIcon>
-            <KanBanPerspectiveIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary={
-              <>
-                Kanban Perspective
-                {Pro ? <BetaLabel /> : <ProLabel />}
-              </>
-            }
-          />
-        </MenuItem>
-      </Tooltip>
-    );
+      );
+    });
   }
 
   if (selectedEntries.length < 2) {

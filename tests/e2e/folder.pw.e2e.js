@@ -18,10 +18,6 @@ import {
 import { renameFolder } from './test-utils';
 import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
 
-// export const firstFile = '/span';
-// export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
-// const newDirectoryName = 'newDirectory';
-
 describe('TST01 - Folder management', () => {
   beforeAll(async () => {
     await startTestingApp('extconfig-with-welcome.js');

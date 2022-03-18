@@ -15,11 +15,11 @@ export { default } from './components/MainContainer';
 // }
 
 export const defaultSettings = {
-  testID: 'gridPerspectiveContainer',
-  settingsKey: 'tsPerspectiveGrid',
+  testID: 'listPerspectiveContainer',
+  settingsKey: 'tsPerspectiveList',
   orderBy: true,
   sortBy: 'byName',
-  layoutType: 'grid', // list grid
+  layoutType: 'row', // row grid
   singleClickAction: 'openInternal', // openInternal openExternal
   entrySize: 'small', // small, normal, big
   thumbnailMode: 'contain', // cover contain

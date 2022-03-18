@@ -48,6 +48,7 @@ import RefreshIcon from '@material-ui/icons/Refresh';
 import Box from '@material-ui/core/Box';
 import { Split } from 'ts-react-splitter';
 import EntryProperties from '-/components/EntryProperties';
+import TagsPreview from '-/components/TagsPreview';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import AppConfig from '-/config';
 import PlatformIO from '-/services/platform-facade';
@@ -66,7 +67,6 @@ import {
   actions as SettingsActions,
   isDesktopMode,
   getKeyBindingObject,
-  getTagColor,
   getMapTileServer
 } from '-/reducers/settings';
 import TaggingActions from '-/reducers/tagging-actions';
@@ -107,6 +107,7 @@ const styles: any = (theme: any) => ({
     flexDirection: 'row',
     flex: '1 1',
     display: 'flex',
+    alignItems: 'center',
     overflowX: AppConfig.isFirefox ? 'auto' : 'overlay',
     paddingRight: 100
   },
@@ -133,6 +134,7 @@ const styles: any = (theme: any) => ({
     whiteSpace: 'nowrap'
   },
   entryCloseSection: {
+    zIndex: 1,
     position: 'absolute',
     right: 0,
     backgroundColor: theme.palette.background.default,
@@ -179,7 +181,6 @@ interface Props {
   currentDirectoryPath: string | null;
   isDesktopMode: boolean;
   tileServer: TS.MapTileServer;
-  defaultTagColor?: string;
 }
 
 const EntryContainer = (props: Props) => {
@@ -817,37 +818,7 @@ const EntryContainer = (props: Props) => {
     </div>
   );
 
-  const previewTags = () => {
-    if (!openedFile.tags || openedFile.tags.length < 1) {
-      return;
-    }
-    let tagNames = i18n.t('core:searchTags') + ': ';
-    openedFile.tags.forEach(tag => {
-      tagNames = tagNames + tag.title + '; ';
-    });
-    const firstTagColor = openedFile.tags[0].color || defaultTagColor;
-    let secondTagColor = defaultTagColor;
-    if (openedFile.tags[1] && openedFile.tags[1].color) {
-      secondTagColor = openedFile.tags[1].color;
-    }
-    return (
-      <Tooltip title={tagNames}>
-        <span
-          style={{
-            width: 15,
-            height: 15,
-            marginTop: 13,
-            marginLeft: 5,
-            borderRadius: 6,
-            boxShadow: '4px 0px 0px 0px ' + secondTagColor,
-            backgroundColor: firstTagColor
-          }}
-        />
-      </Tooltip>
-    );
-  };
-
-  const { classes, keyBindings, theme, defaultTagColor } = props;
+  const { classes, keyBindings, theme } = props;
 
   const fileTitle: string = openedFile.path
     ? extractTitle(
@@ -955,7 +926,7 @@ const EntryContainer = (props: Props) => {
                     </Box>
                   </Button>
                 )}
-                {previewTags()}
+                <TagsPreview tags={openedFile.tags} />
               </Box>
               <div className={classes.entryCloseSection}>
                 {editingSupported && openedFile.editMode && (
@@ -1189,7 +1160,6 @@ const EntryContainer = (props: Props) => {
 function mapStateToProps(state) {
   return {
     settings: state.settings,
-    defaultTagColor: getTagColor(state),
     isReadOnlyMode: isReadOnlyMode(state),
     keyBindings: getKeyBindingObject(state),
     isDesktopMode: isDesktopMode(state),
