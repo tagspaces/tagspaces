@@ -50,7 +50,8 @@ import {
   OpenedEntry,
   getSelectedEntries,
   getProgress,
-  getCurrentDirectoryFiles
+  getCurrentDirectoryFiles,
+  getCurrentDirectoryDirs
 } from '../reducers/app';
 import TaggingActions from '../reducers/tagging-actions';
 import LoadingLazy from '../components/LoadingLazy';
@@ -185,6 +186,7 @@ interface Props {
   windowWidth: number;
   directoryContent: Array<Object>;
   currentDirectoryFiles: Array<any>;
+  currentDirectoryDirs: Array<any>;
   currentDirectoryPath: string | null;
   searchResultCount: number;
   addTags: () => void;
@@ -326,6 +328,7 @@ const FolderContainer = (props: Props) => {
         <KanBanPerspectiveAsync
           directoryContent={props.directoryContent}
           currentDirectoryFiles={props.currentDirectoryFiles}
+          currentDirectoryDirs={props.currentDirectoryDirs}
           loadDirectoryContent={props.loadDirectoryContent}
           openFsEntry={props.openFsEntry}
           openRenameEntryDialog={() => setIsRenameEntryDialogOpened(true)}
@@ -457,7 +460,6 @@ const FolderContainer = (props: Props) => {
       perspectiveId === PerspectiveIDs.LIST
     ) {
       props.setCurrentDirectoryPerspective(perspectiveId);
-      return;
     } else if (perspectiveId === PerspectiveIDs.GALLERY) {
       const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
       if (openPersDocs) {
@@ -676,18 +678,10 @@ const FolderContainer = (props: Props) => {
               }}
             >
               <div className="lds-ellipsis">
-                <div
-                  style={{ backgroundColor: theme.palette.primary.main }}
-                ></div>
-                <div
-                  style={{ backgroundColor: theme.palette.primary.main }}
-                ></div>
-                <div
-                  style={{ backgroundColor: theme.palette.primary.main }}
-                ></div>
-                <div
-                  style={{ backgroundColor: theme.palette.primary.main }}
-                ></div>
+                <div style={{ backgroundColor: theme.palette.primary.main }} />
+                <div style={{ backgroundColor: theme.palette.primary.main }} />
+                <div style={{ backgroundColor: theme.palette.primary.main }} />
+                <div style={{ backgroundColor: theme.palette.primary.main }} />
               </div>
             </div>
           )}
@@ -729,6 +723,7 @@ function mapStateToProps(state) {
     selectedEntries: getSelectedEntries(state),
     directoryContent: getDirectoryContent(state),
     currentDirectoryFiles: getCurrentDirectoryFiles(state),
+    currentDirectoryDirs: getCurrentDirectoryDirs(state),
     currentDirectoryPerspective: getCurrentDirectoryPerspective(state),
     searchResultCount: getSearchResultCount(state),
     currentLocationPath: getCurrentLocationPath(state),

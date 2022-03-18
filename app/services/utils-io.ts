@@ -335,6 +335,39 @@ export function prepareDirectoryContent(
   );
 }
 
+export function orderDirectories(directories, metaArray) {
+  // if (sortBy === 'custom') {
+  try {
+    // const metaDirData = await loadMetaDataPromise(currentLocationPath);
+    if (metaArray && metaArray.length > 0) {
+      // return orderByMetaArray(directories, metaDirData.dirs);
+      const arrLength = directories.length;
+      return directories.sort((a, b) => {
+        let indexA = metaArray.findIndex(
+          meta => meta.path === a.path
+          // meta => meta.path === Object.keys(a)[0]
+        );
+        let indexB = metaArray.findIndex(
+          meta => meta.path === b.path
+          // meta => meta.path === Object.keys(b)[0]
+        );
+        // set new dirs last
+        if (indexA === -1) {
+          indexA = arrLength;
+        }
+        if (indexB === -1) {
+          indexB = arrLength;
+        }
+        return indexA - indexB;
+      });
+    }
+  } catch (e) {
+    console.log('error loadMetaDataPromise:', e);
+  }
+  // }
+  return directories;
+}
+
 export function orderByMetaArray(arr, metaArray) {
   const arrLength = arr.length;
   return arr.sort((a, b) => {
