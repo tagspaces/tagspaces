@@ -371,12 +371,8 @@ export function orderDirectories(directories, metaArray) {
 export function orderByMetaArray(arr, metaArray) {
   const arrLength = arr.length;
   return arr.sort((a, b) => {
-    let indexA = metaArray.findIndex(
-      metaFiles => metaFiles.name === a.name
-    );
-    let indexB = metaArray.findIndex(
-      metaFiles => metaFiles.name === b.name
-    );
+    let indexA = metaArray.findIndex(metaFiles => metaFiles.name === a.name);
+    let indexB = metaArray.findIndex(metaFiles => metaFiles.name === b.name);
     // set new files last; dirs first
     if (indexA === -1) {
       indexA = !a.isFile ? arrLength * -1 : arrLength;
