@@ -287,6 +287,18 @@ export default (state: any = initialState, action: any) => {
             ? action.directoryMeta.perspective
             : state.currentDirectoryPerspective,
         currentDirectoryPath: directoryPath,
+        /**
+         * used for reorder files in KanBan
+         */
+        currentDirectoryFiles: action.directoryMeta
+          ? action.directoryMeta.files
+          : [],
+        /**
+         * used for reorder dirs in KanBan
+         */
+        currentDirectoryDirs: action.directoryMeta
+          ? action.directoryMeta.dirs
+          : [],
         isLoading: action.showIsLoading || false
       };
     }
@@ -2236,6 +2248,10 @@ export const currentUser = (state: any) => state.app.user;
 export const getDirectoryContent = (state: any) =>
   state.app.currentDirectoryEntries;
 export const getPageEntries = (state: any) => state.app.pageEntries;
+export const getCurrentDirectoryFiles = (state: any) =>
+  state.app.currentDirectoryFiles;
+export const getCurrentDirectoryDirs = (state: any) =>
+  state.app.currentDirectoryDirs;
 export const getCurrentDirectoryColor = (state: any) =>
   state.app.currentDirectoryColor;
 export const getCurrentDirectoryDescription = (state: any) =>
