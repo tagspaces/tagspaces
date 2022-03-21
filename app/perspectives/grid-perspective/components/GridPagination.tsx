@@ -102,12 +102,21 @@ const GridPagination = (props: Props) => {
   const [, forceUpdate] = useReducer(x => x + 1, 0);
 
   useEffect(() => {
-    if (PlatformIO.haveObjectStoreSupport()) {
-      const dirEntriesPromises = getDirEntriesPromises();
-      const fileEntriesPromises = getFileEntriesPromises();
-      const thumbs = getThumbs();
-      updateEntries([...dirEntriesPromises, ...thumbs, ...fileEntriesPromises]);
-    }
+    // if (PlatformIO.haveObjectStoreSupport()) {
+    PlatformIO.listMetaDirectoryPromise(props.currentDirectoryPath)
+      .then(meta => {
+        const dirEntriesPromises = getDirEntriesPromises();
+        const fileEntriesPromises = getFileEntriesPromises(meta);
+        const thumbs = getThumbs(meta);
+        updateEntries([
+          ...dirEntriesPromises,
+          ...thumbs,
+          ...fileEntriesPromises
+        ]);
+        return true;
+      })
+      .catch(ex => console.error(ex));
+    // }
   }, [page.current, files]);
 
   useEffect(() => {
@@ -124,64 +133,77 @@ const GridPagination = (props: Props) => {
     props.searchResultCount
   ]);
 
-  const setThumbs = (entry: TS.FileSystemEntry): TS.FileSystemEntry => {
+  const setThumbs = (
+    entry: TS.FileSystemEntry,
+    meta: Array<string>
+  ): TS.FileSystemEntry => {
     const thumbEntry = { ...entry };
     let thumbPath = getThumbFileLocationForFile(entry.path, '/', false);
-    if (thumbPath && thumbPath.startsWith('/')) {
-      thumbPath = thumbPath.substring(1);
-    }
-
-    thumbPath = PlatformIO.getURLforPath(thumbPath, 604800);
-    if (thumbPath) {
+    if (meta.some(metaFile => thumbPath.endsWith(metaFile))) {
       thumbEntry.thumbPath = thumbPath;
+      if (PlatformIO.haveObjectStoreSupport()) {
+        if (thumbPath && thumbPath.startsWith('/')) {
+          thumbPath = thumbPath.substring(1);
+        }
+
+        thumbPath = PlatformIO.getURLforPath(thumbPath, 604800);
+        if (thumbPath) {
+          thumbEntry.thumbPath = thumbPath;
+        }
+      }
     }
     return thumbEntry;
   };
 
-  const getThumbs = (): Promise<any>[] =>
-    pageFiles.map(entry => Promise.resolve({ [entry.path]: setThumbs(entry) }));
+  const getThumbs = (meta: Array<string>): Promise<any>[] =>
+    pageFiles.map(entry =>
+      Promise.resolve({ [entry.path]: setThumbs(entry, meta) })
+    );
 
   const getDirEntriesPromises = (): Promise<any>[] =>
     directories.map(entry => {
+      const metaFilePath = getMetaFileLocationForDir(
+        entry.path,
+        PlatformIO.getDirSeparator()
+      );
       if (
+        // meta.some(metaFile => metaFilePath.endsWith(metaFile)) &&
         !checkEntryExist(entry.path) &&
         entry.path.indexOf(
           AppConfig.metaFolder + PlatformIO.getDirSeparator()
         ) === -1
       ) {
-        const metaFilePath = getMetaFileLocationForDir(
-          entry.path,
-          PlatformIO.getDirSeparator()
-        );
         return getMetaForEntry(entry, metaFilePath);
       }
       return Promise.resolve({ [entry.path]: undefined });
     });
 
-  const getFileEntriesPromises = (): Promise<any>[] =>
+  const getFileEntriesPromises = (meta: Array<string>): Promise<any>[] =>
     pageFiles.map(entry => {
+      const metaFilePath = getMetaFileLocationForFile(
+        entry.path,
+        PlatformIO.getDirSeparator()
+      );
       if (
+        // TODO check if metaFilePath exist in listMetaDirectory content
+        meta.some(metaFile => metaFilePath.endsWith(metaFile)) &&
         !checkEntryExist(entry.path) &&
         entry.path.indexOf(
           AppConfig.metaFolder + PlatformIO.getDirSeparator()
         ) === -1
       ) {
-        const metaFilePath = getMetaFileLocationForFile(
-          entry.path,
-          PlatformIO.getDirSeparator()
-        );
-        // TODO check if metaFilePath exist in listMetaDirectory content
         return getMetaForEntry(entry, metaFilePath);
       }
       return Promise.resolve({ [entry.path]: undefined });
     });
 
   const updateEntries = metaPromises => {
-    Promise.all(metaPromises)
+    const catchHandler = error => undefined;
+    Promise.all(metaPromises.map(promise => promise.catch(catchHandler)))
       .then(entries => {
-        updateCurrentDirEntries(entries);
+        updateCurrentDirEntries(entries.filter(entry => entry !== undefined));
         // entriesUpdated.current = entries;
-        return entries;
+        return true;
       })
       .catch(err => {
         console.error('err updateEntries:', err);

@@ -1013,12 +1013,12 @@ export const actions = {
       password: '1234',
       port: 8080
     }); */
-    const mode = PlatformIO.haveObjectStoreSupport()
+    /* const mode = PlatformIO.haveObjectStoreSupport()
       ? []
-      : ['extractThumbPath', 'extractThumbURL'];
+      : ['extractThumbPath', 'extractThumbURL']; */
     PlatformIO.listDirectoryPromise(
       directoryPath,
-      mode,
+      [], // mode,
       currentLocation ? currentLocation.ignorePatternPaths : []
     )
       .then(results => {
