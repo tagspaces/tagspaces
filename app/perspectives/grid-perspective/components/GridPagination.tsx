@@ -110,8 +110,8 @@ const GridPagination = (props: Props) => {
         const thumbs = getThumbs(meta);
         updateEntries([
           ...dirEntriesPromises,
-          ...thumbs,
-          ...fileEntriesPromises
+          ...fileEntriesPromises,
+          ...thumbs
         ]);
         return true;
       })

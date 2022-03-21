@@ -210,7 +210,7 @@ export function enhanceEntry(entry: any): TS.FileSystemEntry {
   if (sidecarPerspective) {
     enhancedEntry.perspective = sidecarPerspective;
   }
-  // console.log('Enhancing ' + entry.path); console.log(enhancedEntry);
+  // console.log('Enhancing ' + entry.path + ':' + JSON.stringify(enhancedEntry));
   return enhancedEntry;
 }
 
