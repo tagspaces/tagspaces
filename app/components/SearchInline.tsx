@@ -25,7 +25,7 @@ import {
   createStyles,
   makeStyles
 } from '@material-ui/core/styles';
-import ClearSearchIcon from '@material-ui/icons/CancelOutlined';
+import ClearSearchIcon from '@material-ui/icons/Close';
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
 import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -382,7 +382,7 @@ const SearchInline = (props: Props) => {
       }
     >
       <IconButton size="small" edge="end">
-        <HelpOutlineIcon />
+        <HelpOutlineIcon style={{ color: 'lightgray' }} />
       </IconButton>
     </Tooltip>
   );
@@ -447,7 +447,7 @@ const SearchInline = (props: Props) => {
         margin="dense"
         autoFocus
         onKeyDown={startSearch}
-        placeholder={i18n.t('core:searchWordsWithInterval')}
+        placeholder={i18n.t('core:searchTitle')}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start" style={{ marginRight: 0 }}>

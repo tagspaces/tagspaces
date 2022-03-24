@@ -545,39 +545,6 @@ const FolderContainer = (props: Props) => {
           >
             <MenuIcon />
           </CustomButton>
-          {/* <CounterBadge
-              showZero={true}
-              title={searchResultCounterText}
-              badgeContent={searchResultCount}
-              color="secondary"
-              max={maxSearchResults - 1}
-              onClick={() => {
-                openSearchPanel();
-              }}
-            /> */}
-          <Tooltip
-            title={
-              i18n.t('showSearch') + ' (CTRL/⌘+SHIFT+F)'
-              // +
-              // ' - ' +
-              // keyBindings['openSearch'].toUpperCase()
-            }
-          >
-            <CustomButton
-              data-tid="toggleSearch"
-              onClick={() => {
-                if (isSearchVisible) {
-                  props.setSearchQuery({});
-                  props.openCurrentDirectory();
-                } else {
-                  setSearchVisible(!isSearchVisible);
-                }
-                return true;
-              }}
-            >
-              <SearchIcon />
-            </CustomButton>
-          </Tooltip>
           {isSearchVisible ? (
             <>
               <SearchInline />
@@ -623,6 +590,29 @@ const FolderContainer = (props: Props) => {
                   flexDirection: 'column'
                 }}
               />
+              <Tooltip
+                title={
+                  i18n.t('showSearch') + ' (CTRL/⌘+SHIFT+F)'
+                  // +
+                  // ' - ' +
+                  // keyBindings['openSearch'].toUpperCase()
+                }
+              >
+                <CustomButton
+                  data-tid="toggleSearch"
+                  onClick={() => {
+                    if (isSearchVisible) {
+                      props.setSearchQuery({});
+                      props.openCurrentDirectory();
+                    } else {
+                      setSearchVisible(!isSearchVisible);
+                    }
+                    return true;
+                  }}
+                >
+                  <SearchIcon />
+                </CustomButton>
+              </Tooltip>
               {props.progress && props.progress.length > 0 && (
                 <CustomButton
                   id="progressButton"
