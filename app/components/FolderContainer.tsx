@@ -602,14 +602,13 @@ const FolderContainer = (props: Props) => {
               >
                 <MainSearchField
                   fullWidth
-                  id="textQuery"
-                  name="textQuery"
+                  data-tid="toggleSearch"
                   defaultValue=""
                   variant="outlined"
                   size="small"
                   style={{
                     marginTop: 10,
-                    width: 'calc(200px)'
+                    width: 200
                   }}
                   onKeyDown={() => setSearchVisible(!isSearchVisible)}
                   onClick={() => setSearchVisible(!isSearchVisible)}
