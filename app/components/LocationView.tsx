@@ -302,7 +302,7 @@ const LocationView = (props: Props) => {
           </Tooltip>
         </ListItemIcon>
         {isCloudLocation && !AppConfig.isElectron ? (
-          { LocationTitle }
+          <>{LocationTitle}</>
         ) : (
           <TargetMoveFileBox
             accepts={[DragItemTypes.FILE]}
