@@ -209,6 +209,41 @@ const LocationView = (props: Props) => {
     }
   };
 
+  let locationNameTitle = getLocationPath(location);
+  if (isCloudLocation && location.bucketName) {
+    if (location.endpointURL) {
+      locationNameTitle = location.endpointURL + ' - ' + location.bucketName;
+    } else if (location.region) {
+      locationNameTitle = location.region + ' - ' + location.bucketName;
+    }
+  }
+
+  const LocationTitle = (
+    <Tooltip title={locationNameTitle}>
+      <div
+        style={{
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          maxWidth: 240
+        }}
+      >
+        <Typography
+          variant="inherit"
+          style={{
+            paddingLeft: 5,
+            paddingRight: 5
+          }}
+          className={props.classes.header}
+          data-tid="locationTitleElement"
+          noWrap
+        >
+          {location.name}
+        </Typography>
+      </div>
+    </Tooltip>
+  );
+
   return (
     /* <div key={location.uuid}> */
     <>
@@ -233,7 +268,6 @@ const LocationView = (props: Props) => {
             ? props.classes.listItemSelected
             : props.classes.listItem
         }
-        title={getLocationPath(location)}
         button
         onClick={handleLocationClick}
         onContextMenu={event => handleLocationContextMenuClick(event)}
@@ -249,42 +283,26 @@ const LocationView = (props: Props) => {
           }}
           onClick={handleLocationIconClick}
         >
-          {isCloudLocation ? (
-            <CloudLocationIcon
-              style={{
-                cursor: 'pointer'
-              }}
-              className={props.classes.icon}
-            />
-          ) : (
-            <LocationIcon
-              style={{
-                cursor: 'pointer'
-              }}
-              className={props.classes.icon}
-            />
-          )}
+          <Tooltip title={i18n.t('clickToExpand')} arrow placement="top">
+            {isCloudLocation ? (
+              <CloudLocationIcon
+                style={{
+                  cursor: 'pointer'
+                }}
+                className={props.classes.icon}
+              />
+            ) : (
+              <LocationIcon
+                style={{
+                  cursor: 'pointer'
+                }}
+                className={props.classes.icon}
+              />
+            )}
+          </Tooltip>
         </ListItemIcon>
-
         {isCloudLocation && !AppConfig.isElectron ? (
-          <div
-            style={{
-              maxWidth: 250
-            }}
-          >
-            <Typography
-              variant="inherit"
-              style={{
-                paddingLeft: 5,
-                paddingRight: 5
-              }}
-              className={props.classes.header}
-              data-tid="locationTitleElement"
-              noWrap
-            >
-              {location.name}
-            </Typography>
-          </div>
+          <>{LocationTitle}</>
         ) : (
           <TargetMoveFileBox
             accepts={[DragItemTypes.FILE]}
@@ -292,24 +310,7 @@ const LocationView = (props: Props) => {
             path={getLocationPath(location)}
             location={location}
           >
-            <div
-              style={{
-                maxWidth: 250
-              }}
-            >
-              <Typography
-                variant="inherit"
-                style={{
-                  paddingLeft: 5,
-                  paddingRight: 5
-                }}
-                className={props.classes.header}
-                data-tid="locationTitleElement"
-                noWrap
-              >
-                {location.name}
-              </Typography>
-            </div>
+            {LocationTitle}
           </TargetMoveFileBox>
         )}
         <ListItemSecondaryAction>

@@ -25,6 +25,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Popover from '@material-ui/core/Popover';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import SearchIcon from '@material-ui/icons/Search';
 import AdvancedSearchIcon from '@material-ui/icons/Tune';
 import MenuIcon from '@material-ui/icons/MenuOpen';
@@ -70,6 +71,7 @@ import {
 import Links from '-/links';
 import PlatformIO from '-/services/platform-facade';
 import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
+import MainSearchField from '-/components/MainSearchField';
 
 const GridPerspective = React.lazy(() =>
   import(
@@ -545,39 +547,6 @@ const FolderContainer = (props: Props) => {
           >
             <MenuIcon />
           </CustomButton>
-          {/* <CounterBadge
-              showZero={true}
-              title={searchResultCounterText}
-              badgeContent={searchResultCount}
-              color="secondary"
-              max={maxSearchResults - 1}
-              onClick={() => {
-                openSearchPanel();
-              }}
-            /> */}
-          <Tooltip
-            title={
-              i18n.t('showSearch') + ' (CTRL/⌘+SHIFT+F)'
-              // +
-              // ' - ' +
-              // keyBindings['openSearch'].toUpperCase()
-            }
-          >
-            <CustomButton
-              data-tid="toggleSearch"
-              onClick={() => {
-                if (isSearchVisible) {
-                  props.setSearchQuery({});
-                  props.openCurrentDirectory();
-                } else {
-                  setSearchVisible(!isSearchVisible);
-                }
-                return true;
-              }}
-            >
-              <SearchIcon />
-            </CustomButton>
-          </Tooltip>
           {isSearchVisible ? (
             <>
               <SearchInline />
@@ -623,6 +592,42 @@ const FolderContainer = (props: Props) => {
                   flexDirection: 'column'
                 }}
               />
+              <Tooltip
+                title={
+                  i18n.t('showSearch') + ' (CTRL/⌘ + SHIFT + F)'
+                  // +
+                  // ' - ' +
+                  // keyBindings['openSearch'].toUpperCase()
+                }
+              >
+                <MainSearchField
+                  fullWidth
+                  data-tid="toggleSearch"
+                  defaultValue=""
+                  variant="outlined"
+                  size="small"
+                  style={{
+                    marginTop: 10,
+                    width: 200
+                  }}
+                  onKeyDown={() => setSearchVisible(!isSearchVisible)}
+                  onClick={() => setSearchVisible(!isSearchVisible)}
+                  margin="dense"
+                  placeholder={i18n.t('core:searchTitle')}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment
+                        position="start"
+                        style={{ marginRight: 0 }}
+                      >
+                        <IconButton size="small" edge="end">
+                          <SearchIcon />
+                        </IconButton>
+                      </InputAdornment>
+                    )
+                  }}
+                />
+              </Tooltip>
               {props.progress && props.progress.length > 0 && (
                 <CustomButton
                   id="progressButton"

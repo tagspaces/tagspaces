@@ -666,7 +666,7 @@ const SearchPopover = (props: Props) => {
                 onClick={clearSearch}
                 id="resetSearchButton"
               >
-                <CancelSearchIcon />
+                {i18n.t('resetBtn')}
               </Button>
             </Tooltip>
           </ButtonGroup>

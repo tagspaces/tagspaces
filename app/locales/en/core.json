@@ -639,5 +639,6 @@
   "currentLocation": "Current Location",
   "navigateTo": "Navigate to",
   "searchScope": "Search Scope",
+  "clickToExpand": "Click to load sub folders",
   "-": "-"
 }
