@@ -17,6 +17,7 @@
  */
 
 import { v1 as uuidv1 } from 'uuid';
+import micromatch from 'micromatch';
 import { getLocation, getDefaultLocationId } from './locations';
 import PlatformIO from '../services/platform-facade';
 import AppConfig from '../config';
@@ -313,8 +314,8 @@ export default (state: any = initialState, action: any) => {
       };
     }
     /* case types.SET_LAST_SELECTED_ENTRY: {
-      return { ...state, lastSelectedEntry: action.entryPath };
-    } */
+       return { ...state, lastSelectedEntry: action.entryPath };
+     } */
     case types.SET_SELECTED_ENTRIES: {
       return { ...state, selectedEntries: action.selectedEntries };
     }
@@ -598,31 +599,31 @@ export default (state: any = initialState, action: any) => {
       };
     }
     /* case types.REFLECT_UPDATE_SIDECARTAGS: {
-      return {
-        ...state,
-        currentDirectoryEntries: state.currentDirectoryEntries.map(entry => {
-          if (entry.path !== action.path) {
-            return entry;
-          }
-          return {
-            ...entry,
-            tags: [
-              ...entry.tags.filter(tag => tag.type === 'plain'),
-              ...action.tags
-            ]
-          };
-        }),
-        openedFiles: state.openedFiles.map(entry => {
-          if (entry.path !== action.path) {
-            return entry;
-          }
-          return {
-            ...entry,
-            shouldReload: true
-          };
-        })
-      };
-    } */
+       return {
+         ...state,
+         currentDirectoryEntries: state.currentDirectoryEntries.map(entry => {
+           if (entry.path !== action.path) {
+             return entry;
+           }
+           return {
+             ...entry,
+             tags: [
+               ...entry.tags.filter(tag => tag.type === 'plain'),
+               ...action.tags
+             ]
+           };
+         }),
+         openedFiles: state.openedFiles.map(entry => {
+           if (entry.path !== action.path) {
+             return entry;
+           }
+           return {
+             ...entry,
+             shouldReload: true
+           };
+         })
+       };
+     } */
     case types.UPDATE_CURRENTDIR_ENTRY: {
       return {
         ...state,
@@ -632,21 +633,21 @@ export default (state: any = initialState, action: any) => {
           }
           if (action.entry.tags && action.entry.tags.length > 0) {
             /* const tags = [...entry.tags]; // .filter(tag => tag.type === 'plain')];
-            action.entry.tags.map(tag => {
-              if (!entry.tags.some(oldTag => oldTag.title === tag.title)) {
-                tags.push(tag);
-              }
-              return true;
-            }); */
+             action.entry.tags.map(tag => {
+               if (!entry.tags.some(oldTag => oldTag.title === tag.title)) {
+                 tags.push(tag);
+               }
+               return true;
+             }); */
 
             return {
               ...entry,
               ...action.entry
               // tags
               /* tags: [
-                ...entry.tags.filter(tag => tag.type === 'plain'),
-                ...action.entry.tags
-              ] */
+                 ...entry.tags.filter(tag => tag.type === 'plain'),
+                 ...action.entry.tags
+               ] */
             };
           }
           return {
@@ -657,28 +658,28 @@ export default (state: any = initialState, action: any) => {
       };
     }
     /* case types.REFLECT_UPDATE_SIDECARMETA: {
-      return {
-        ...state,
-        currentDirectoryEntries: state.currentDirectoryEntries.map(entry => {
-          if (entry.path !== action.path) {
-            return entry;
-          }
-          return {
-            ...entry,
-            ...action.entryMeta
-          };
-        }),
-        openedFiles: state.openedFiles.map(entry => {
-          if (entry.path !== action.path) {
-            return entry;
-          }
-          return {
-            ...entry,
-            shouldReload: true
-          };
-        })
-      };
-    } */
+       return {
+         ...state,
+         currentDirectoryEntries: state.currentDirectoryEntries.map(entry => {
+           if (entry.path !== action.path) {
+             return entry;
+           }
+           return {
+             ...entry,
+             ...action.entryMeta
+           };
+         }),
+         openedFiles: state.openedFiles.map(entry => {
+           if (entry.path !== action.path) {
+             return entry;
+           }
+           return {
+             ...entry,
+             shouldReload: true
+           };
+         })
+       };
+     } */
     case types.CLOSE_ALL_FILES: {
       clearURLParam('tsepath');
       return {
@@ -954,9 +955,9 @@ export const actions = {
   ) => (dispatch: (actions: Object) => void, getState: () => any) => {
     const { settings } = getState();
     /* const { currentDirectoryPath } = getState().app;
-    if (currentDirectoryPath !== directoryPath) {
-      dispatch(actions.loadDirectorySuccessInt(directoryPath, [], true)); // this is to reset directoryContent (it will reset color too)
-    } */
+     if (currentDirectoryPath !== directoryPath) {
+       dispatch(actions.loadDirectorySuccessInt(directoryPath, [], true)); // this is to reset directoryContent (it will reset color too)
+     } */
     // dispatch(actions.setCurrentDirectoryColor('')); // this is to reset color only
     dispatch(actions.showNotification(i18n.t('core:loading'), 'info', false));
     const currentLocation: TS.Location = getLocation(
@@ -964,29 +965,35 @@ export const actions = {
       getState().app.currentLocationId
     );
     /* PlatformIO.enableWebdavSupport({   TODO use this to enable webdav support for location the same like objectstore
-      username: 'webdav',
-      password: '1234',
-      port: 8080
-    }); */
+       username: 'webdav',
+       password: '1234',
+       port: 8080
+     }); */
+    const ignorePatterns = currentLocation
+      ? currentLocation.ignorePatternPaths
+      : [];
     PlatformIO.listDirectoryPromise(
       directoryPath,
       ['extractThumbPath', 'extractThumbURL'],
-      currentLocation ? currentLocation.ignorePatternPaths : []
+      ignorePatterns
     )
       .then(results => {
-        if (results !== undefined) {
-          // console.debug('app listDirectoryPromise resolved:' + results.length);
-          prepareDirectoryContent(
-            results,
-            directoryPath,
-            settings,
-            dispatch,
-            getState,
-            fsEntryMeta,
-            generateThumbnails
-          );
+        if (results == undefined) {
+          return true;
         }
-        return true;
+        results = results.filter(
+          entry => !micromatch.isMatch(entry.path, ignorePatterns)
+        );
+
+        prepareDirectoryContent(
+          results,
+          directoryPath,
+          settings,
+          dispatch,
+          getState,
+          fsEntryMeta,
+          generateThumbnails
+        );
       })
       .catch(error => {
         // console.timeEnd('listDirectoryPromise');
@@ -1020,11 +1027,11 @@ export const actions = {
         )
       );
       /* if (fsEntryMeta.color) { // TODO rethink this states changes are expensive
-          dispatch(actions.setCurrentDirectoryColor(fsEntryMeta.color));
-        }
-        if (fsEntryMeta.perspective) {
-          dispatch(actions.setCurrentDirPerspective(fsEntryMeta.perspective));
-        } */
+           dispatch(actions.setCurrentDirectoryColor(fsEntryMeta.color));
+         }
+         if (fsEntryMeta.perspective) {
+           dispatch(actions.setCurrentDirPerspective(fsEntryMeta.perspective));
+         } */
 
       // return true;
     } catch (err) {
@@ -1048,18 +1055,18 @@ export const actions = {
     //  openedFiles && openedFiles.length > 0 && openedFiles[0].path;
     // updateHistory(currentLocation, directoryPath, entryPath);
     /* const { selectedEntries } = getState().app;
-    if (selectedEntries.length > 0) {
-      // check and remove obsolete selectedEntries
-      const newSelectedEntries = selectedEntries.filter(
-        (entry: FileSystemEntry) =>
-          directoryContent.some(
-            (fsEntry: FileSystemEntry) => fsEntry.path === entry.path
-          )
-      );
-      if (newSelectedEntries.length !== selectedEntries.length) {
-        dispatch(actions.setSelectedEntries(newSelectedEntries));
-      }
-    } */
+     if (selectedEntries.length > 0) {
+       // check and remove obsolete selectedEntries
+       const newSelectedEntries = selectedEntries.filter(
+         (entry: FileSystemEntry) =>
+           directoryContent.some(
+             (fsEntry: FileSystemEntry) => fsEntry.path === entry.path
+           )
+       );
+       if (newSelectedEntries.length !== selectedEntries.length) {
+         dispatch(actions.setSelectedEntries(newSelectedEntries));
+       }
+     } */
     dispatch(actions.hideNotifications());
     dispatch(
       actions.loadDirectorySuccessInt(
@@ -1110,32 +1117,32 @@ export const actions = {
     isGeneratingThumbs
   }),
   /* setGeneratingThumbnails: (isGeneratingThumbs: boolean) => (
-    dispatch: (actions: Object) => void
-  ) => {
-    dispatch(actions.hideNotifications());
-    if (isGeneratingThumbs) {
-      dispatch(
-        actions.showNotification(
-          i18n.t('core:loadingOrGeneratingThumbnails'),
-          'info',
-          true
-        )
-      );
-    } else {
-      console.log('Thumbnail generation ready');
-      // dispatch(
-      //   actions.showNotification(
-      //     i18n.t('Thumbnail ready'),
-      //     'info',
-      //     true
-      //   )
-      // );
-    }
-  }, */
+     dispatch: (actions: Object) => void
+   ) => {
+     dispatch(actions.hideNotifications());
+     if (isGeneratingThumbs) {
+       dispatch(
+         actions.showNotification(
+           i18n.t('core:loadingOrGeneratingThumbnails'),
+           'info',
+           true
+         )
+       );
+     } else {
+       console.log('Thumbnail generation ready');
+       // dispatch(
+       //   actions.showNotification(
+       //     i18n.t('Thumbnail ready'),
+       //     'info',
+       //     true
+       //   )
+       // );
+     }
+   }, */
   /* setLastSelectedEntry: (entryPath: string | null) => ({
-    type: types.SET_LAST_SELECTED_ENTRY,
-    entryPath
-  }), */
+     type: types.SET_LAST_SELECTED_ENTRY,
+     entryPath
+   }), */
   setCurrentDirectoryColor: (color: string) => ({
     type: types.SET_CURRENDIRECTORYCOLOR,
     color
@@ -1574,9 +1581,9 @@ export const actions = {
     file: fsEntry
   }),
   /* setFileDragged: (isFileDragged: boolean) => ({
-    type: types.SET_FILEDRAGGED,
-    isFileDragged
-  }), */
+     type: types.SET_FILEDRAGGED,
+     isFileDragged
+   }), */
   setReadOnlyMode: (isReadOnlyMode: boolean) => ({
     type: types.SET_READONLYMODE,
     isReadOnlyMode
@@ -1622,8 +1629,8 @@ export const actions = {
             }
 
             /* if (fsEntryMeta.changed !== undefined) {
-              entryForOpening.changed = fsEntryMeta.changed;
-            } */
+               entryForOpening.changed = fsEntryMeta.changed;
+             } */
             if (fsEntryMeta.editMode !== undefined) {
               entryForOpening.editMode = fsEntryMeta.editMode;
             }
