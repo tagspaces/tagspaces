@@ -23,7 +23,7 @@ import LayersClearIcon from '@material-ui/icons/LayersClear';
 import ListItemText from '@material-ui/core/ListItemText';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import { AvailablePerspectives } from '-/perspectives';
+import { AvailablePerspectives, PerspectiveIDs } from '-/perspectives';
 import i18n from '../services/i18n';
 import { Pro } from '-/pro';
 
@@ -32,7 +32,11 @@ const PerspectiveSelector = props => {
 
   const perspectiveSelectorMenuItems = [];
   perspectiveSelectorMenuItems.push(
-    <MenuItem style={{ display: 'flex' }} key="unspecified" value="unspecified">
+    <MenuItem
+      style={{ display: 'flex' }}
+      key={PerspectiveIDs.UNSPECIFIED}
+      value={PerspectiveIDs.UNSPECIFIED}
+    >
       <div style={{ display: 'flex' }}>
         <ListItemIcon style={{ paddingLeft: 3, paddingTop: 3 }}>
           <LayersClearIcon />

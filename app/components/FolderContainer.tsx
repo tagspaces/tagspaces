@@ -38,7 +38,8 @@ import i18n from '../services/i18n';
 import {
   getMaxSearchResults,
   getDesktopMode,
-  getKeyBindingObject
+  getKeyBindingObject,
+  getDefaultPerspective
 } from '-/reducers/settings';
 import {
   actions as AppActions,
@@ -211,6 +212,7 @@ interface Props {
   drawerOpened: boolean;
   setCurrentDirectoryPerspective: (perspective: string) => void;
   maxSearchResults: number;
+  defaultPerspective: string;
   currentDirectoryPerspective: string;
   currentLocationPath: string;
   openedFiles: Array<OpenedEntry>;
@@ -272,8 +274,36 @@ const FolderContainer = (props: Props) => {
     null
   );
 
-  const showWelcomePanel =
-    !props.currentDirectoryPath && props.directoryContent.length < 1;
+  const {
+    currentDirectoryPath = '',
+    loadDirectoryContent,
+    directoryContent,
+    // searchResultCount,
+    classes,
+    // maxSearchResults,
+    toggleDrawer,
+    drawerOpened,
+    isDesktopMode,
+    theme,
+    currentDirectoryPerspective,
+    currentLocationPath,
+    setSelectedEntries,
+    openDirectory,
+    reflectCreateEntry,
+    openFsEntry,
+    isLoading,
+    keyBindings,
+    defaultPerspective
+  } = props;
+
+  let currentPerspective =
+    currentDirectoryPerspective || defaultPerspective || PerspectiveIDs.GRID;
+
+  if (currentPerspective === PerspectiveIDs.UNSPECIFIED) {
+    currentPerspective = defaultPerspective;
+  }
+
+  const showWelcomePanel = !currentDirectoryPath && directoryContent.length < 1;
 
   const renderPerspective = () => {
     if (showWelcomePanel) {
@@ -283,7 +313,7 @@ const FolderContainer = (props: Props) => {
         <React.Fragment />
       );
     }
-    if (props.currentDirectoryPerspective === PerspectiveIDs.LIST) {
+    if (currentPerspective === PerspectiveIDs.LIST) {
       return (
         <ListPerspectiveAsync
           directoryContent={props.directoryContent}
@@ -303,7 +333,7 @@ const FolderContainer = (props: Props) => {
         />
       );
     }
-    if (Pro && props.currentDirectoryPerspective === PerspectiveIDs.GALLERY) {
+    if (Pro && currentPerspective === PerspectiveIDs.GALLERY) {
       return (
         <GalleryPerspectiveAsync
           directoryContent={props.directoryContent}
@@ -314,7 +344,7 @@ const FolderContainer = (props: Props) => {
         />
       );
     }
-    if (Pro && props.currentDirectoryPerspective === PerspectiveIDs.MAPIQUE) {
+    if (Pro && currentPerspective === PerspectiveIDs.MAPIQUE) {
       return (
         <MapiquePerspectiveAsync
           directoryContent={props.directoryContent}
@@ -325,7 +355,7 @@ const FolderContainer = (props: Props) => {
         />
       );
     }
-    if (Pro && props.currentDirectoryPerspective === PerspectiveIDs.KANBAN) {
+    if (Pro && currentPerspective === PerspectiveIDs.KANBAN) {
       return (
         <KanBanPerspectiveAsync
           directoryContent={props.directoryContent}
@@ -348,7 +378,7 @@ const FolderContainer = (props: Props) => {
         />
       );
     }
-    if (Pro && props.currentDirectoryPerspective === PerspectiveIDs.WIKI) {
+    if (Pro && currentPerspective === PerspectiveIDs.WIKI) {
       return (
         <WikiPerspectiveAsync
           directoryContent={props.directoryContent}
@@ -387,37 +417,6 @@ const FolderContainer = (props: Props) => {
       />
     );
   };
-
-  const {
-    currentDirectoryPath = '',
-    loadDirectoryContent,
-    // searchResultCount,
-    classes,
-    // maxSearchResults,
-    toggleDrawer,
-    drawerOpened,
-    isDesktopMode,
-    theme,
-    currentDirectoryPerspective,
-    currentLocationPath,
-    setSelectedEntries,
-    openDirectory,
-    reflectCreateEntry,
-    openFsEntry,
-    isLoading,
-    keyBindings
-  } = props;
-
-  /* let searchResultCounterText = searchResultCount + ' ' + i18n.t('entries');
-  if (searchResultCount >= maxSearchResults) {
-    searchResultCounterText =
-      'Max. search count reached, showing only the first ' +
-      searchResultCount +
-      ' entries.';
-  } */
-
-  const currentPerspective =
-    currentDirectoryPerspective || PerspectiveIDs.DEFAULT;
 
   function CircularProgressWithLabel(prop) {
     return (
@@ -458,7 +457,7 @@ const FolderContainer = (props: Props) => {
   const switchPerspective = (perspectiveId: string) => {
     if (
       Pro ||
-      perspectiveId === PerspectiveIDs.DEFAULT ||
+      perspectiveId === PerspectiveIDs.GRID ||
       perspectiveId === PerspectiveIDs.LIST
     ) {
       props.setCurrentDirectoryPerspective(perspectiveId);
@@ -738,7 +737,8 @@ function mapStateToProps(state) {
     progress: getProgress(state),
     searchQuery: getSearchQuery(state),
     isLoading: isLoading(state),
-    keyBindings: getKeyBindingObject(state)
+    keyBindings: getKeyBindingObject(state),
+    defaultPerspective: getDefaultPerspective(state)
   };
 }
 

@@ -41,10 +41,12 @@ import {
   getSettings
 } from '-/reducers/settings';
 import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
+import PerspectiveSelector from '-/components/PerspectiveSelector';
 import TransparentBackground from '-/components/TransparentBackground';
 import { BetaLabel } from '-/components/HelperComponents';
 import AppConfig from '-/config';
 import PlatformIO from '-/services/platform-facade';
+import { PerspectiveIDs } from '-/perspectives';
 
 const styles: any = {
   root: {
@@ -79,6 +81,7 @@ interface Props {
   setAddTagsToLibrary: (addTagsToLibrary: boolean) => void;
   setUseGenerateThumbnails: (useGenerateThumbnails: boolean) => void;
   setTagDelimiter: (tagDelimiter: string) => void;
+  setDefaultPerspective: (defaultPerspective: string) => void;
   setMaxSearchResult: (maxResult: string) => void;
 }
 
@@ -107,6 +110,16 @@ const SettingsGeneral = (props: Props) => {
   const handleMaxSearchResult = event => {
     props.setMaxSearchResult(event.target.value);
   };
+
+  const changePerspective = (event: any) => {
+    const perspective = event.target.value;
+    props.setDefaultPerspective(perspective);
+  };
+
+  let defaultPerspective = PerspectiveIDs.UNSPECIFIED;
+  if (props.settings.defaultPerspective) {
+    defaultPerspective = props.settings.defaultPerspective;
+  }
 
   const { classes, persistTagsInSidecarFile } = props;
 
@@ -152,6 +165,14 @@ const SettingsGeneral = (props: Props) => {
               </MenuItem>
             ))}
           </Select>
+        </ListItem>
+        <ListItem className={classes.listItem}>
+          <ListItemText primary={i18n.t('Default Perspective')} />
+          <PerspectiveSelector
+            onChange={changePerspective}
+            defaultValue={defaultPerspective}
+            testId="changePerspectiveInSettingsTID"
+          />
         </ListItem>
         <ListItem
           className={classes.listItem}

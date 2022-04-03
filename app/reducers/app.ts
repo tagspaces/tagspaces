@@ -976,6 +976,9 @@ export const actions = {
       .then(results => {
         if (results !== undefined) {
           // console.debug('app listDirectoryPromise resolved:' + results.length);
+          dispatch(
+            actions.setCurrentDirectoryPerspective(PerspectiveIDs.UNSPECIFIED)
+          );
           prepareDirectoryContent(
             results,
             directoryPath,

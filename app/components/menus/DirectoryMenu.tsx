@@ -193,7 +193,7 @@ const DirectoryMenu = (props: Props) => {
     onClose();
     if (
       Pro ||
-      perspectiveId === PerspectiveIDs.DEFAULT ||
+      perspectiveId === PerspectiveIDs.GRID ||
       perspectiveId === PerspectiveIDs.LIST
     ) {
       if (props.switchPerspective) {
