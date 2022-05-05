@@ -640,5 +640,10 @@
   "navigateTo": "Navigate to",
   "searchScope": "Search Scope",
   "clickToExpand": "Click to load sub folders",
+  "EXIFGeo": "GPS Position",
+  "EXIFDateTime": "Date of Creation",
+  "IPTCDescription": "Description",
+  "IPTCTags": "Tags",
+  "exifDialogTitle": "Import Exif information",
   "-": "-"
 }
