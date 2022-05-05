@@ -382,7 +382,7 @@ const CreateEditLocationDialog = (props: Props) => {
       : props.isPersistTagsInSidecar;
 
   const disableLocationTypeSwitch: boolean =
-    !Pro || AppConfig.isWeb || props.location !== undefined;
+    !Pro /* || AppConfig.isWeb */ || props.location !== undefined;
 
   return (
     <Dialog
