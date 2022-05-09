@@ -1,7 +1,7 @@
 // "afterSign": "./afterSignHook.js",
 
 require('dotenv').config();
-console.log(process.env);
+// console.log(process.env);
 const fs = require('fs');
 const path = require('path');
 var electron_notarize = require('electron-notarize');
