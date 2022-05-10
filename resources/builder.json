@@ -23,11 +23,7 @@
     "sign": false
   },
   "win": {
-    "target": [
-      "nsis",
-      // "portable",
-      "zip"
-    ],
+    "target": ["nsis", "zip"],
     "icon": "resources/icon.ico"
   },
   "mac": {
