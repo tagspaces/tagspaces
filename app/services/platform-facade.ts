@@ -213,15 +213,16 @@ export default class PlatformFacade {
         dirPath.endsWith('\\' + AppConfig.metaFolder)
       ) {
         // hide .ts folder on Windows
-        const winattr = import('winattr');
-        // @ts-ignore
-        winattr.set(dirPath, { hidden: true }, err => {
-          if (err) {
-            console.warn('Error setting hidden attr. to dir: ' + dirPath);
-          } else {
-            console.log('Success setting hidden attr. to dir: ' + dirPath);
-          }
+        import('winattr').then(winattr => {
+          winattr.set(dirPath, { hidden: true }, err => {
+            if (err) {
+              console.warn('Error setting hidden attr. to dir: ' + dirPath);
+            } else {
+              console.log('Success setting hidden attr. to dir: ' + dirPath);
+            }
+          });
         });
+        // @ts-ignore
         // return new Promise(resolve => {
         //   winattr.set(dirPath, { hidden: true }, err => {
         //     resolve(dirPath);
