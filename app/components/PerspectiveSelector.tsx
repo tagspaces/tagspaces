@@ -70,7 +70,6 @@ const PerspectiveSelector = props => {
 
   return (
     <Select
-      disabled={!Pro}
       data-tid={testId}
       defaultValue={defaultValue}
       onChange={onChange}
