@@ -120,7 +120,6 @@ const ImportExportTagGroupsDialog = (props: Props) => {
           />
         </FormGroup>
       </FormControl>
-      {/* @ts-ignore */}
       <TagGroupContainer taggroup={tagGroup}>
         {tagGroup.children &&
           tagGroup.children.map((tag: TS.Tag) => (

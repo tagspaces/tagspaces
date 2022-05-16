@@ -222,7 +222,6 @@ export default class PlatformFacade {
             }
           });
         });
-        // @ts-ignore
         // return new Promise(resolve => {
         //   winattr.set(dirPath, { hidden: true }, err => {
         //     resolve(dirPath);

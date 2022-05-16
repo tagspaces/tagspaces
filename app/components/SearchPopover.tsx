@@ -446,7 +446,6 @@ const SearchPopover = (props: Props) => {
       tagsAND,
       tagsOR,
       tagsNOT,
-      // @ts-ignore
       searchBoxing: searchBoxing.current,
       searchType: searchType.current,
       fileTypes: fileTypes.current,
@@ -504,7 +503,6 @@ const SearchPopover = (props: Props) => {
       tagsAND,
       tagsOR,
       tagsNOT,
-      // @ts-ignore
       searchBoxing: searchBoxing.current,
       searchType: searchType.current,
       fileTypes: fileTypes.current,

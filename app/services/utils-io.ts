@@ -17,7 +17,6 @@
  */
 
 import { v1 as uuidv1 } from 'uuid';
-// @ts-ignore
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import {

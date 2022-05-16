@@ -663,7 +663,6 @@ const MainPage = (props: Props) => {
         </style>
         {props.isDesktopMode || (AppConfig.isAmplify && !props.user) ? (
           <TargetFileBox
-            // @ts-ignore
             accepts={[FILE]}
             onDrop={handleFileDrop}
           >

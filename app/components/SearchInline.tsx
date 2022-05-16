@@ -68,7 +68,7 @@ interface Props {
   maxSearchResults: number;
   indexing: boolean;
   showUnixHiddenEntries: boolean;
-  isDesktopMode: boolean;
+  isDesktop: boolean;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -297,10 +297,10 @@ const SearchInline = (props: Props) => {
   };
 
   const classes = useStyles();
-  const HelpTooltip = classes => (
+  const HelpTooltip = hClasses => (
     <Tooltip
       arrow
-      classes={{ tooltip: classes.customWidth }}
+      classes={{ tooltip: hClasses.customWidth }}
       interactive
       title={
         <span style={{ fontSize: 14 }}>
@@ -353,8 +353,7 @@ const SearchInline = (props: Props) => {
       tagsAND,
       tagsOR,
       tagsNOT,
-      // @ts-ignore
-      searchBoxing: searchBoxing,
+      searchBoxing,
       searchType: searchType.current,
       fileTypes: fileTypes.current,
       lastModified: lastModified.current,
@@ -373,7 +372,7 @@ const SearchInline = (props: Props) => {
     props.setSearchQuery(searchQuery);
   };
 
-  const { indexing, isDesktopMode } = props;
+  const { indexing, isDesktop } = props;
 
   return (
     <div
@@ -404,7 +403,7 @@ const SearchInline = (props: Props) => {
         InputProps={{
           startAdornment: (
             <InputAdornment position="start" style={{ marginRight: 0 }}>
-              {isDesktopMode ? (
+              {isDesktop ? (
                 <Tooltip
                   arrow
                   classes={{ tooltip: classes.customWidth }}
@@ -447,7 +446,7 @@ const SearchInline = (props: Props) => {
           ),
           endAdornment: (
             <InputAdornment position="end">
-              {isDesktopMode && <HelpTooltip classes={classes} />}
+              {isDesktop && <HelpTooltip classes={classes} />}
               <Tooltip title={i18n.t('clearSearch') + ' (ESC)'}>
                 <IconButton
                   id="clearSearchID"
@@ -487,7 +486,7 @@ function mapStateToProps(state) {
   return {
     indexing: isIndexing(state),
     searchQuery: getSearchQuery(state),
-    isDesktopMode: isDesktopMode(state),
+    isDesktop: isDesktopMode(state),
     currentDirectory: getDirectoryPath(state),
     indexedEntriesCount: getIndexedEntriesCount(state),
     maxSearchResults: getMaxSearchResults(state),

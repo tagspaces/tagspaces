@@ -136,7 +136,6 @@ const StoredSearches = (props: Props) => {
   const { reduceHeightBy } = props;
 
   return (
-    // @ts-ignore
     <div
       style={{
         paddingTop: 0,

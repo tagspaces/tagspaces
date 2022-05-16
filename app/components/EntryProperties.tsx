@@ -580,7 +580,6 @@ const EntryProperties = (props: Props) => {
 
   const showLinkForDownloading = isCloudLocation && currentEntry.isFile;
 
-  // @ts-ignore
   return (
     <div className={classes.entryProperties}>
       <Grid container>
@@ -679,7 +678,6 @@ const EntryProperties = (props: Props) => {
             <div className={classes.gridItem} />
           </div>
           <div className={classes.gridItem}>
-            {/* @ts-ignore */}
             <TagDropContainer entryPath={currentEntry.path}>
               <TagsSelect
                 dataTid="PropertiesTagsSelectTID"
