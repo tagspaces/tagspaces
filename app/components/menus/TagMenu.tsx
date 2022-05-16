@@ -47,6 +47,7 @@ interface Props {
   showDeleteTagDialog: () => void;
   maxSearchResults: number;
   selectedEntries: Array<any>;
+  isReadOnlyMode: boolean;
   addTags: (
     paths: Array<string>,
     tags: Array<TS.Tag>,
@@ -55,36 +56,48 @@ interface Props {
 }
 
 const TagMenu = (props: Props) => {
+  const {
+    isReadOnlyMode,
+    selectedTag,
+    setSearchQuery,
+    onClose,
+    showEditTagDialog,
+    maxSearchResults,
+    selectedEntries,
+    addTags,
+    anchorEl,
+    open
+  } = props;
+
   function showFilesWithThisTag() {
-    if (props.selectedTag) {
-      // props.openSearchPanel();
-      props.setSearchQuery({
-        tagsAND: [props.selectedTag],
-        maxSearchResults: props.maxSearchResults
+    if (selectedTag) {
+      setSearchQuery({
+        tagsAND: [selectedTag],
+        maxSearchResults: maxSearchResults
       });
     }
-    props.onClose();
+    onClose();
   }
 
-  function showEditTagDialog() {
-    props.onClose();
-    props.showEditTagDialog();
+  function showEditTagMenuDialog() {
+    onClose();
+    showEditTagDialog();
   }
 
   function showDeleteTagDialog() {
-    props.onClose();
-    props.showDeleteTagDialog();
+    onClose();
+    showDeleteTagDialog();
   }
 
   function applyTag() {
-    const selectedEntryPaths = props.selectedEntries.map(entry => entry.path);
-    props.addTags(selectedEntryPaths, [props.selectedTag]);
-    props.onClose();
+    const selectedEntryPaths = selectedEntries.map(entry => entry.path);
+    addTags(selectedEntryPaths, [selectedTag]);
+    onClose();
   }
 
   return (
     <div style={{ overflowY: 'hidden' }}>
-      <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
+      <Menu anchorEl={anchorEl} open={open} onClose={onClose}>
         <MenuItem
           data-tid="showFilesWithThisTag"
           onClick={showFilesWithThisTag}
@@ -94,7 +107,7 @@ const TagMenu = (props: Props) => {
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:showFilesWithThisTag')} />
         </MenuItem>
-        {props.selectedEntries && props.selectedEntries.length > 0 && (
+        {selectedEntries && selectedEntries.length > 0 && !isReadOnlyMode && (
           <MenuItem data-tid="applyTagTID" onClick={applyTag}>
             <ListItemIcon>
               <ApplyTagIcon />
@@ -103,7 +116,7 @@ const TagMenu = (props: Props) => {
           </MenuItem>
         )}
         {!isTagLibraryReadOnly && (
-          <MenuItem data-tid="editTagDialog" onClick={showEditTagDialog}>
+          <MenuItem data-tid="editTagDialog" onClick={showEditTagMenuDialog}>
             <ListItemIcon>
               <Edit />
             </ListItemIcon>
