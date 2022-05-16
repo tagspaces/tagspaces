@@ -4329,10 +4329,10 @@
   dependencies:
     defer-to-connect "^1.0.1"
 
-"@tagspaces/tagspaces-platforms@1.4.1":
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/@tagspaces/tagspaces-platforms/-/tagspaces-platforms-1.4.1.tgz#f9b9577d28c07cb86afc9ac0a6f2cde190721b0b"
-  integrity sha512-AMNH2vot0LsN5/p+BRufqd8366/5/GzudBS2Rnz4vFayysvdpfHadf962iK4kL/z36a7Du/qlYFPDBHJ5p4Bbg==
+"@tagspaces/tagspaces-platforms@1.4.2":
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/@tagspaces/tagspaces-platforms/-/tagspaces-platforms-1.4.2.tgz#ae562e1bf79e807cf0623e05b0591a78501a3e59"
+  integrity sha512-UqsOeq3tDFq11fI7w/eiwyfcqO44d1HYilEazf5x3Lul7IptAir+wt3iZnCu6VnWzWa+dJn7glHXA2RcNXcD0g==
 
 "@testim/chrome-version@^1.0.7":
   version "1.0.7"
@@ -6577,15 +6577,10 @@ caniuse-db@^1.0.30000935:
   resolved "https://registry.npmjs.org/caniuse-db/-/caniuse-db-1.0.30001125.tgz"
   integrity sha512-MN6D6aNZV8AGq5erwkaonrHBGe2dwkkQIqsPAuU6DtqqSngw6rhUhRhbSZib6cS9mrS0OSB2gmioaMrcz0tZSQ==
 
-caniuse-lite@^1.0.0, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001254:
-  version "1.0.30001255"
-  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001255.tgz"
-  integrity sha512-F+A3N9jTZL882f/fg/WWVnKSu6IOo3ueLz4zwaOPbPYHNmM/ZaDUyzyJwS1mZhX7Ex5jqTyW599Gdelh5PDYLQ==
-
-caniuse-lite@^1.0.30001280:
-  version "1.0.30001283"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001283.tgz#8573685bdae4d733ef18f78d44ba0ca5fe9e896b"
-  integrity sha512-9RoKo841j1GQFSJz/nCXOj0sD7tHBtlowjYlrqIUS812x9/emfBLBt6IyMz1zIaYc/eRL8Cs6HPUVi2Hzq4sIg==
+caniuse-lite@^1.0.0, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001254, caniuse-lite@^1.0.30001280:
+  version "1.0.30001340"
+  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001340.tgz"
+  integrity sha512-jUNz+a9blQTQVu4uFcn17uAD8IDizPzQkIKh3LCJfg9BkyIqExYYdyc/ZSlWUSKb8iYiXxKsxbv4zYSvkqjrxw==
 
 capture-exit@^2.0.0:
   version "2.0.0"
