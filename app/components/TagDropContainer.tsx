@@ -25,6 +25,7 @@ interface Props {
   canDrop: boolean;
   isOver: boolean;
   connectDropTarget: (param: Object) => void;
+  entryPath: string;
 }
 
 const boxTarget = {

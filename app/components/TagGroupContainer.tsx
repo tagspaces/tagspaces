@@ -19,16 +19,18 @@
 import React from 'react';
 import { DropTarget } from 'react-dnd';
 import DragItemTypes from './DragItemTypes';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   children: Array<Object>;
   canDrop: boolean;
   isOver: boolean;
   connectDropTarget: (param: Object) => void;
+  taggroup: TS.TagGroup;
 }
 
 const boxTarget = {
-  drop(props) {
+  drop(props: Props) {
     return { tagGroupId: props.taggroup.uuid };
   }
 };

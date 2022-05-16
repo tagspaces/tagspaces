@@ -679,6 +679,7 @@ const EntryProperties = (props: Props) => {
             <div className={classes.gridItem} />
           </div>
           <div className={classes.gridItem}>
+            {/* @ts-ignore */}
             <TagDropContainer entryPath={currentEntry.path}>
               <TagsSelect
                 dataTid="PropertiesTagsSelectTID"
