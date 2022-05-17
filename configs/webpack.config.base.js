@@ -4,6 +4,8 @@
 
 import path from 'path';
 import webpack from 'webpack';
+
+const { ESBuildPlugin } = require('esbuild-loader');
 // import { dependencies } from '../package.json';
 
 export default {
@@ -25,20 +27,29 @@ export default {
         // include: [/app/],
         use: [
           {
-            loader: 'babel-loader',
+            loader: 'esbuild-loader',
             options: {
-              cacheDirectory: true
-            }
-          },
-          {
-            loader: 'ts-loader',
-            options: {
-              transpileOnly: true,
-              experimentalWatchApi: true
+              loader: 'tsx', // Or 'ts' if you don't need tsx
+              tsconfigRaw: require('../tsconfig.esbuild.json'),
+              target: 'es2015'
             }
           }
         ]
       }
+      /* {
+        test: /\.css$/i,
+        use: [
+          'style-loader',
+          'css-loader',
+          {
+            loader: 'esbuild-loader',
+            options: {
+              loader: 'css',
+              minify: true
+            }
+          }
+        ]
+      } */
     ]
   },
 
@@ -60,8 +71,8 @@ export default {
   plugins: [
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'production'
-    })
-
+    }),
+    new ESBuildPlugin()
     // new webpack.NamedModulesPlugin()
   ]
 };

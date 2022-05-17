@@ -5,8 +5,8 @@
 import path from 'path';
 import webpack from 'webpack';
 import merge from 'webpack-merge';
-import TerserPlugin from 'terser-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+import { ESBuildMinifyPlugin } from 'esbuild-loader';
 import baseConfig from './webpack.config.base';
 // import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 
@@ -32,10 +32,9 @@ export default merge(baseConfig, {
     minimizer: process.env.E2E_BUILD
       ? []
       : [
-          new TerserPlugin({
-            parallel: true,
-            sourceMap: true,
-            cache: true
+          new ESBuildMinifyPlugin({
+            target: 'es2015',
+            css: true // Apply minification to CSS assets
           })
         ]
   },

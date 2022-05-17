@@ -5,10 +5,9 @@
 import path from 'path';
 import webpack from 'webpack';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import merge from 'webpack-merge';
-import TerserPlugin from 'terser-webpack-plugin';
+import { ESBuildMinifyPlugin } from 'esbuild-loader';
 import baseConfig from './webpack.config.base';
 // import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 
@@ -179,18 +178,9 @@ export default merge(baseConfig, {
     minimizer: process.env.E2E_BUILD
       ? []
       : [
-          new TerserPlugin({
-            parallel: true,
-            sourceMap: true,
-            cache: true
-          }),
-          new OptimizeCSSAssetsPlugin({
-            cssProcessorOptions: {
-              map: {
-                inline: false,
-                annotation: true
-              }
-            }
+          new ESBuildMinifyPlugin({
+            target: 'es2015',
+            css: true // Apply minification to CSS assets
           })
         ]
   },

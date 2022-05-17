@@ -281,6 +281,7 @@
     "electron-notarize": "^1.2.1",
     "enzyme": "^2.8.2",
     "enzyme-to-json": "^1.5.1",
+    "esbuild-loader": "^2.19.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-config-prettier": "^3.3.0",

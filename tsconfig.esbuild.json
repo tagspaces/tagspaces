@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "target": "esnext",
+    "baseUrl": "./",
+    "rootDir": "./",
+    "jsx": "react",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noUnusedLocals": false,
+    "allowSyntheticDefaultImports": true,
+    "pretty": true,
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "lib": ["esnext", "dom"],
+    "paths": {
+      "-/*": ["app/*"]
+    }
+  },
+  "include": [
+    "app/**/*.ts",
+    "app/**/*.tsx",
+    "extensions/tagspacespro/**/*.ts",
+    "extensions/tagspacespro/**/*.tsx"
+  ]
+}
