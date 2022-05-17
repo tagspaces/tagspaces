@@ -190,6 +190,7 @@ interface Props {
     autohide?: boolean
   ) => void;
   reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => void;
+  loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
   uploadFilesAPI: (
     files: Array<File>,
     destination: string,
@@ -386,7 +387,40 @@ function MainPage(props: Props) {
     setDrawerOpened(prevOpen => !prevOpen);
   };
 
-  const handleMoveFiles = (files: Array<File>) => {
+  const handleMoveCopyFiles = (files: Array<File>, move = false) => {
+    const promises = [];
+    for (const file of files) {
+      if (move) {
+        promises.push(
+          PlatformIO.renameFilePromise(
+            file.path,
+            props.directoryPath + AppConfig.dirSeparator + file.name
+          )
+            .then(() => true)
+            .catch(error => {
+              console.log('renameFilePromise', error);
+            })
+        );
+      } else {
+        promises.push(
+          PlatformIO.copyFilePromise(
+            file.path,
+            props.directoryPath + AppConfig.dirSeparator + file.name
+          )
+            .then(() => true)
+            .catch(error => {
+              console.log('copyFilePromise', error);
+            })
+        );
+      }
+    }
+    Promise.all(promises)
+      .then(() => props.loadDirectoryContent(props.directoryPath, true))
+      .catch(error => {
+        console.log('promises', error);
+      });
+  };
+  /* const handleMoveFiles = (files: Array<File>) => {
     handleCopyFiles(files)
       .then(success => {
         if (AppConfig.isElectron && success) {
@@ -403,7 +437,7 @@ function MainPage(props: Props) {
       .catch(error => {
         console.log('handleCopyFiles', error);
       });
-  };
+  }; */
 
   const handleCopyFiles = files => {
     if (props.isReadOnlyMode) {
@@ -574,11 +608,11 @@ function MainPage(props: Props) {
         fullScreen={false}
         selectedFiles={moveCopyDialogOpened}
         handleMoveFiles={files => {
-          handleMoveFiles(files);
+          handleMoveCopyFiles(files, true);
           setMoveCopyDialogOpened(undefined);
         }}
         handleCopyFiles={files => {
-          handleCopyFiles(files);
+          handleMoveCopyFiles(files, false);
           setMoveCopyDialogOpened(undefined);
         }}
       />
@@ -729,8 +763,11 @@ function MainPage(props: Props) {
           <TargetFileBox
             accepts={[FILE]}
             onDrop={(item: any) => {
-              setMoveCopyDialogOpened(item.files);
-              // handleFileDrop
+              if (AppConfig.isElectron) {
+                setMoveCopyDialogOpened(item.files);
+              } else {
+                handleCopyFiles(item.files);
+              }
             }}
           >
             <CustomDragLayer />
@@ -837,6 +874,7 @@ function mapDispatchToProps(dispatch) {
       setMainVerticalSplitSize: SettingsActions.setMainVerticalSplitSize,
       showNotification: AppActions.showNotification,
       reflectCreateEntries: AppActions.reflectCreateEntries,
+      loadDirectoryContent: AppActions.loadDirectoryContent,
       openLocationManagerPanel: AppActions.openLocationManagerPanel,
       openTagLibraryPanel: AppActions.openTagLibraryPanel,
       // openSearchPanel: AppActions.openSearchPanel,
