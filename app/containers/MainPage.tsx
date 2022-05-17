@@ -86,6 +86,8 @@ import { TS } from '-/tagspaces.namespace';
 import PageNotification from '-/containers/PageNotification';
 import listen from '-/containers/RendererListener';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
+import MoveCopyFilesDialog from '-/components/dialogs/MoveOrCopyFilesDialog';
+import PlatformIO from '-/services/platform-facade';
 
 const drawerWidth = 320;
 const body = document.getElementsByTagName('body')[0];
@@ -208,90 +210,106 @@ const CreateEditLocationDialog = React.lazy(() =>
     /* webpackChunkName: "CreateEditLocationDialog" */ '../components/dialogs/CreateEditLocationDialog'
   )
 );
-const CreateEditLocationDialogAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <CreateEditLocationDialog {...props} />
-  </React.Suspense>
-);
+function CreateEditLocationDialogAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <CreateEditLocationDialog {...props} />
+    </React.Suspense>
+  );
+}
 
 const AboutDialog = React.lazy(() =>
   import(
     /* webpackChunkName: "AboutDialog" */ '../components/dialogs/AboutDialog'
   )
 );
-const AboutDialogAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <AboutDialog {...props} />
-  </React.Suspense>
-);
+function AboutDialogAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <AboutDialog {...props} />
+    </React.Suspense>
+  );
+}
 
 const LicenseDialog = React.lazy(() =>
   import(
     /* webpackChunkName: "LicenseDialog" */ '../components/dialogs/LicenseDialog'
   )
 );
-const LicenseDialogAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <LicenseDialog {...props} />
-  </React.Suspense>
-);
+function LicenseDialogAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <LicenseDialog {...props} />
+    </React.Suspense>
+  );
+}
 
 const KeyboardDialog = React.lazy(() =>
   import(
     /* webpackChunkName: "KeyboardDialog" */ '../components/dialogs/KeyboardDialog'
   )
 );
-const KeyboardDialogAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <KeyboardDialog {...props} />
-  </React.Suspense>
-);
+function KeyboardDialogAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <KeyboardDialog {...props} />
+    </React.Suspense>
+  );
+}
 
 const ThirdPartyLibsDialog = React.lazy(() =>
   import(
     /* webpackChunkName: "ThirdPartyLibsDialog" */ '../components/dialogs/ThirdPartyLibsDialog'
   )
 );
-const ThirdPartyLibsDialogAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <ThirdPartyLibsDialog {...props} />
-  </React.Suspense>
-);
+function ThirdPartyLibsDialogAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <ThirdPartyLibsDialog {...props} />
+    </React.Suspense>
+  );
+}
 
 const OnboardingDialog = React.lazy(() =>
   import(
     /* webpackChunkName: "OnboardingDialog" */ '../components/dialogs/OnboardingDialog'
   )
 );
-const OnboardingDialogAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <OnboardingDialog {...props} />
-  </React.Suspense>
-);
+function OnboardingDialogAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <OnboardingDialog {...props} />
+    </React.Suspense>
+  );
+}
 
 const EditEntryTagDialog = React.lazy(() =>
   import(
     /* webpackChunkName: "EditEntryTagDialog" */ '../components/dialogs/EditEntryTagDialog'
   )
 );
-const EditEntryTagDialogAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <EditEntryTagDialog {...props} />
-  </React.Suspense>
-);
+function EditEntryTagDialogAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <EditEntryTagDialog {...props} />
+    </React.Suspense>
+  );
+}
 
 const OpenLinkDialog = React.lazy(() =>
   import(
     /* webpackChunkName: "OpenLinkDialog" */ '../components/dialogs/OpenLinkDialog'
   )
 );
-const OpenLinkDialogAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <OpenLinkDialog {...props} />
-  </React.Suspense>
-);
+function OpenLinkDialogAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <OpenLinkDialog {...props} />
+    </React.Suspense>
+  );
+}
 
-const MainPage = (props: Props) => {
+function MainPage(props: Props) {
   // const [percent, setPercent] = React.useState<number | undefined>(undefined);
   const percent = useRef<number | undefined>(undefined);
   const selectedDirectoryPath = useRef<string>('');
@@ -314,6 +332,9 @@ const MainPage = (props: Props) => {
   });
 
   const [drawerOpened, setDrawerOpened] = useState<boolean>(true);
+  const [moveCopyDialogOpened, setMoveCopyDialogOpened] = useState<any>(
+    undefined
+  );
   // const [rightPanelWidth, setRightPanelWidth] = useState<number>(0);
 
   useEffect(() => {
@@ -365,17 +386,35 @@ const MainPage = (props: Props) => {
     setDrawerOpened(prevOpen => !prevOpen);
   };
 
-  const handleFileDrop = (item, monitor) => {
+  const handleMoveFiles = (files: Array<File>) => {
+    handleCopyFiles(files)
+      .then(success => {
+        if (AppConfig.isElectron && success) {
+          for (const file of files) {
+            PlatformIO.deleteFilePromise(file.path)
+              .then(() => true)
+              .catch(error => {
+                console.log('deleteFilePromise', error);
+              });
+          }
+        }
+        return true;
+      })
+      .catch(error => {
+        console.log('handleCopyFiles', error);
+      });
+  };
+
+  const handleCopyFiles = files => {
     if (props.isReadOnlyMode) {
       props.showNotification(
         i18n.t('core:dndDisabledReadOnlyMode'),
         'error',
         true
       );
-      return;
+      return Promise.reject(i18n.t('core:dndDisabledReadOnlyMode'));
     }
-    if (monitor) {
-      const { files } = monitor.getItem();
+    if (files) {
       console.log('Dropped files: ' + JSON.stringify(files));
       if (!props.directoryPath) {
         props.showNotification(
@@ -383,20 +422,25 @@ const MainPage = (props: Props) => {
           'error',
           true
         );
-      } else {
-        props.resetProgress();
-        props
-          .uploadFilesAPI(files, props.directoryPath, props.onUploadProgress)
-          .then(fsEntries => {
-            props.reflectCreateEntries(fsEntries);
-            return true;
-          })
-          .catch(error => {
-            console.log('uploadFiles', error);
-          });
-        props.toggleUploadDialog();
+        return Promise.reject(
+          new Error(
+            'Importing files failed, because no folder is opened in TagSpaces!'
+          )
+        );
       }
+      props.resetProgress();
+      return props
+        .uploadFilesAPI(files, props.directoryPath, props.onUploadProgress)
+        .then(fsEntries => {
+          props.reflectCreateEntries(fsEntries);
+          props.toggleUploadDialog();
+          return true;
+        })
+        .catch(error => {
+          console.log('uploadFiles', error);
+        });
     }
+    return Promise.reject(new Error('on files'));
   };
 
   const keyBindingHandlers = {
@@ -476,13 +520,17 @@ const MainPage = (props: Props) => {
       percent.current = undefined;
       initialPrimarySize = '100%';
       minSecondarySize = '0%';
-      renderSplitter = () => null;
+      renderSplitter = function() {
+        return null;
+      };
     }
     if (props.isEntryInFullWidth) {
       percent.current = undefined;
       initialPrimarySize = '0%';
       minPrimarySize = '0%';
-      renderSplitter = () => null;
+      renderSplitter = function() {
+        return null;
+      };
     }
     return (
       <Split
@@ -518,6 +566,22 @@ const MainPage = (props: Props) => {
       keyMap={keyMap}
       style={{ height: '100%' }}
     >
+      <MoveCopyFilesDialog
+        open={moveCopyDialogOpened !== undefined}
+        onClose={() => {
+          setMoveCopyDialogOpened(undefined);
+        }}
+        fullScreen={false}
+        selectedFiles={moveCopyDialogOpened}
+        handleMoveFiles={files => {
+          handleMoveFiles(files);
+          setMoveCopyDialogOpened(undefined);
+        }}
+        handleCopyFiles={files => {
+          handleCopyFiles(files);
+          setMoveCopyDialogOpened(undefined);
+        }}
+      />
       {props.isLocationDialogOpened && (
         <CreateEditLocationDialogAsync
           open={props.isLocationDialogOpened}
@@ -662,7 +726,13 @@ const MainPage = (props: Props) => {
           `}
         </style>
         {props.isDesktopMode || (AppConfig.isAmplify && !props.user) ? (
-          <TargetFileBox accepts={[FILE]} onDrop={handleFileDrop}>
+          <TargetFileBox
+            accepts={[FILE]}
+            onDrop={(item: any) => {
+              setMoveCopyDialogOpened(item.files);
+              // handleFileDrop
+            }}
+          >
             <CustomDragLayer />
             <Drawer variant="persistent" anchor="left" open={drawerOpened}>
               <MobileNavigation width={drawerWidth} />
@@ -695,7 +765,7 @@ const MainPage = (props: Props) => {
       </div>
     </HotKeys>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {
