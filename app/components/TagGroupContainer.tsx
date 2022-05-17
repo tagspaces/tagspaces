@@ -16,8 +16,8 @@
  *
  */
 
-import React, { ReactNode, useRef } from "react";
-import { DropTargetMonitor, useDrop } from "react-dnd";
+import React, { ReactNode, useRef } from 'react';
+import { DropTargetMonitor, useDrop } from 'react-dnd';
 import DragItemTypes from './DragItemTypes';
 import { TS } from '-/tagspaces.namespace';
 
@@ -37,7 +37,7 @@ const TagGroupContainer = (props: Props) => {
         handlerId: monitor.getHandlerId(),
         isActive,
         canDrop: monitor.canDrop(),
-        tagGroupId: props.taggroup.uuid,
+        tagGroupId: props.taggroup.uuid
       };
     },
     drop() {
