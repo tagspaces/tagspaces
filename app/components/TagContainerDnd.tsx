@@ -90,7 +90,11 @@ const boxTarget = {
   }, */
   hover(props, monitor) {
     const dragItem = monitor.getItem();
-    if (props.tagGroup && dragItem.sourceTagGroupId === props.tagGroup.uuid) {
+    if (
+      props.reorderTags &&
+      props.tagGroup &&
+      dragItem.sourceTagGroupId === props.tagGroup.uuid
+    ) {
       // sort tagGroups tags
       const dragIndex = dragItem.index;
       const hoverIndex = props.index;

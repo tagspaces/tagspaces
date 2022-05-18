@@ -25,6 +25,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Popover from '@material-ui/core/Popover';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import SearchIcon from '@material-ui/icons/Search';
 import AdvancedSearchIcon from '@material-ui/icons/Tune';
 import MenuIcon from '@material-ui/icons/MenuOpen';
@@ -37,7 +38,8 @@ import i18n from '../services/i18n';
 import {
   getMaxSearchResults,
   getDesktopMode,
-  getKeyBindingObject
+  getKeyBindingObject,
+  getDefaultPerspective
 } from '-/reducers/settings';
 import {
   actions as AppActions,
@@ -49,7 +51,9 @@ import {
   getCurrentDirectoryPerspective,
   OpenedEntry,
   getSelectedEntries,
-  getProgress
+  getProgress,
+  getCurrentDirectoryFiles,
+  getCurrentDirectoryDirs
 } from '../reducers/app';
 import TaggingActions from '../reducers/tagging-actions';
 import LoadingLazy from '../components/LoadingLazy';
@@ -68,6 +72,7 @@ import {
 import Links from '-/links';
 import PlatformIO from '-/services/platform-facade';
 import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
+import MainSearchField from '-/components/MainSearchField';
 
 const GridPerspective = React.lazy(() =>
   import(
@@ -183,6 +188,8 @@ interface Props {
   windowHeight: number;
   windowWidth: number;
   directoryContent: Array<Object>;
+  currentDirectoryFiles: Array<any>;
+  currentDirectoryDirs: Array<any>;
   currentDirectoryPath: string | null;
   searchResultCount: number;
   addTags: () => void;
@@ -205,6 +212,7 @@ interface Props {
   drawerOpened: boolean;
   setCurrentDirectoryPerspective: (perspective: string) => void;
   maxSearchResults: number;
+  defaultPerspective: string;
   currentDirectoryPerspective: string;
   currentLocationPath: string;
   openedFiles: Array<OpenedEntry>;
@@ -266,8 +274,36 @@ const FolderContainer = (props: Props) => {
     null
   );
 
-  const showWelcomePanel =
-    !props.currentDirectoryPath && props.directoryContent.length < 1;
+  const {
+    currentDirectoryPath = '',
+    loadDirectoryContent,
+    directoryContent,
+    // searchResultCount,
+    classes,
+    // maxSearchResults,
+    toggleDrawer,
+    drawerOpened,
+    isDesktopMode,
+    theme,
+    currentDirectoryPerspective,
+    currentLocationPath,
+    setSelectedEntries,
+    openDirectory,
+    reflectCreateEntry,
+    openFsEntry,
+    isLoading,
+    keyBindings,
+    defaultPerspective
+  } = props;
+
+  let currentPerspective =
+    currentDirectoryPerspective || defaultPerspective || PerspectiveIDs.GRID;
+
+  if (currentPerspective === PerspectiveIDs.UNSPECIFIED) {
+    currentPerspective = defaultPerspective;
+  }
+
+  const showWelcomePanel = !currentDirectoryPath && directoryContent.length < 1;
 
   const renderPerspective = () => {
     if (showWelcomePanel) {
@@ -277,7 +313,7 @@ const FolderContainer = (props: Props) => {
         <React.Fragment />
       );
     }
-    if (props.currentDirectoryPerspective === PerspectiveIDs.LIST) {
+    if (currentPerspective === PerspectiveIDs.LIST) {
       return (
         <ListPerspectiveAsync
           directoryContent={props.directoryContent}
@@ -297,7 +333,7 @@ const FolderContainer = (props: Props) => {
         />
       );
     }
-    if (Pro && props.currentDirectoryPerspective === PerspectiveIDs.GALLERY) {
+    if (Pro && currentPerspective === PerspectiveIDs.GALLERY) {
       return (
         <GalleryPerspectiveAsync
           directoryContent={props.directoryContent}
@@ -308,7 +344,7 @@ const FolderContainer = (props: Props) => {
         />
       );
     }
-    if (Pro && props.currentDirectoryPerspective === PerspectiveIDs.MAPIQUE) {
+    if (Pro && currentPerspective === PerspectiveIDs.MAPIQUE) {
       return (
         <MapiquePerspectiveAsync
           directoryContent={props.directoryContent}
@@ -319,10 +355,12 @@ const FolderContainer = (props: Props) => {
         />
       );
     }
-    if (Pro && props.currentDirectoryPerspective === PerspectiveIDs.KANBAN) {
+    if (Pro && currentPerspective === PerspectiveIDs.KANBAN) {
       return (
         <KanBanPerspectiveAsync
           directoryContent={props.directoryContent}
+          currentDirectoryFiles={props.currentDirectoryFiles}
+          currentDirectoryDirs={props.currentDirectoryDirs}
           loadDirectoryContent={props.loadDirectoryContent}
           openFsEntry={props.openFsEntry}
           openRenameEntryDialog={() => setIsRenameEntryDialogOpened(true)}
@@ -340,7 +378,7 @@ const FolderContainer = (props: Props) => {
         />
       );
     }
-    if (Pro && props.currentDirectoryPerspective === PerspectiveIDs.WIKI) {
+    if (Pro && currentPerspective === PerspectiveIDs.WIKI) {
       return (
         <WikiPerspectiveAsync
           directoryContent={props.directoryContent}
@@ -379,37 +417,6 @@ const FolderContainer = (props: Props) => {
       />
     );
   };
-
-  const {
-    currentDirectoryPath = '',
-    loadDirectoryContent,
-    // searchResultCount,
-    classes,
-    // maxSearchResults,
-    toggleDrawer,
-    drawerOpened,
-    isDesktopMode,
-    theme,
-    currentDirectoryPerspective,
-    currentLocationPath,
-    setSelectedEntries,
-    openDirectory,
-    reflectCreateEntry,
-    openFsEntry,
-    isLoading,
-    keyBindings
-  } = props;
-
-  /* let searchResultCounterText = searchResultCount + ' ' + i18n.t('entries');
-  if (searchResultCount >= maxSearchResults) {
-    searchResultCounterText =
-      'Max. search count reached, showing only the first ' +
-      searchResultCount +
-      ' entries.';
-  } */
-
-  const currentPerspective =
-    currentDirectoryPerspective || PerspectiveIDs.DEFAULT;
 
   function CircularProgressWithLabel(prop) {
     return (
@@ -450,11 +457,10 @@ const FolderContainer = (props: Props) => {
   const switchPerspective = (perspectiveId: string) => {
     if (
       Pro ||
-      perspectiveId === PerspectiveIDs.DEFAULT ||
+      perspectiveId === PerspectiveIDs.GRID ||
       perspectiveId === PerspectiveIDs.LIST
     ) {
       props.setCurrentDirectoryPerspective(perspectiveId);
-      return;
     } else if (perspectiveId === PerspectiveIDs.GALLERY) {
       const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
       if (openPersDocs) {
@@ -540,39 +546,6 @@ const FolderContainer = (props: Props) => {
           >
             <MenuIcon />
           </CustomButton>
-          {/* <CounterBadge
-              showZero={true}
-              title={searchResultCounterText}
-              badgeContent={searchResultCount}
-              color="secondary"
-              max={maxSearchResults - 1}
-              onClick={() => {
-                openSearchPanel();
-              }}
-            /> */}
-          <Tooltip
-            title={
-              i18n.t('showSearch') + ' (CTRL/⌘+SHIFT+F)'
-              // +
-              // ' - ' +
-              // keyBindings['openSearch'].toUpperCase()
-            }
-          >
-            <CustomButton
-              data-tid="toggleSearch"
-              onClick={() => {
-                if (isSearchVisible) {
-                  props.setSearchQuery({});
-                  props.openCurrentDirectory();
-                } else {
-                  setSearchVisible(!isSearchVisible);
-                }
-                return true;
-              }}
-            >
-              <SearchIcon />
-            </CustomButton>
-          </Tooltip>
           {isSearchVisible ? (
             <>
               <SearchInline />
@@ -618,6 +591,42 @@ const FolderContainer = (props: Props) => {
                   flexDirection: 'column'
                 }}
               />
+              <Tooltip
+                title={
+                  i18n.t('showSearch') + ' (CTRL/⌘ + SHIFT + F)'
+                  // +
+                  // ' - ' +
+                  // keyBindings['openSearch'].toUpperCase()
+                }
+              >
+                <MainSearchField
+                  fullWidth
+                  data-tid="toggleSearch"
+                  defaultValue=""
+                  variant="outlined"
+                  size="small"
+                  style={{
+                    marginTop: 10,
+                    width: 200
+                  }}
+                  onKeyDown={() => setSearchVisible(!isSearchVisible)}
+                  onClick={() => setSearchVisible(!isSearchVisible)}
+                  margin="dense"
+                  placeholder={i18n.t('core:searchTitle')}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment
+                        position="start"
+                        style={{ marginRight: 0 }}
+                      >
+                        <IconButton size="small" edge="end">
+                          <SearchIcon />
+                        </IconButton>
+                      </InputAdornment>
+                    )
+                  }}
+                />
+              </Tooltip>
               {props.progress && props.progress.length > 0 && (
                 <CustomButton
                   id="progressButton"
@@ -673,18 +682,10 @@ const FolderContainer = (props: Props) => {
               }}
             >
               <div className="lds-ellipsis">
-                <div
-                  style={{ backgroundColor: theme.palette.primary.main }}
-                ></div>
-                <div
-                  style={{ backgroundColor: theme.palette.primary.main }}
-                ></div>
-                <div
-                  style={{ backgroundColor: theme.palette.primary.main }}
-                ></div>
-                <div
-                  style={{ backgroundColor: theme.palette.primary.main }}
-                ></div>
+                <div style={{ backgroundColor: theme.palette.primary.main }} />
+                <div style={{ backgroundColor: theme.palette.primary.main }} />
+                <div style={{ backgroundColor: theme.palette.primary.main }} />
+                <div style={{ backgroundColor: theme.palette.primary.main }} />
               </div>
             </div>
           )}
@@ -725,6 +726,8 @@ function mapStateToProps(state) {
     settings: state.settings,
     selectedEntries: getSelectedEntries(state),
     directoryContent: getDirectoryContent(state),
+    currentDirectoryFiles: getCurrentDirectoryFiles(state),
+    currentDirectoryDirs: getCurrentDirectoryDirs(state),
     currentDirectoryPerspective: getCurrentDirectoryPerspective(state),
     searchResultCount: getSearchResultCount(state),
     currentLocationPath: getCurrentLocationPath(state),
@@ -734,7 +737,8 @@ function mapStateToProps(state) {
     progress: getProgress(state),
     searchQuery: getSearchQuery(state),
     isLoading: isLoading(state),
-    keyBindings: getKeyBindingObject(state)
+    keyBindings: getKeyBindingObject(state),
+    defaultPerspective: getDefaultPerspective(state)
   };
 }
 

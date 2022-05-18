@@ -426,7 +426,7 @@ const GridPerspective = (props: Props) => {
     if (props.currentLocation.type === locationType.TYPE_CLOUD) {
       PlatformIO.enableObjectStoreSupport(props.currentLocation)
         .then(() => {
-          openLocation(fsEntry);
+          doubleClickAction(fsEntry);
           return true;
         })
         .catch(error => {
@@ -434,14 +434,15 @@ const GridPerspective = (props: Props) => {
         });
     } else if (props.currentLocation.type === locationType.TYPE_LOCAL) {
       PlatformIO.disableObjectStoreSupport();
-      openLocation(fsEntry);
+      doubleClickAction(fsEntry);
     }
   };
 
-  const openLocation = (fsEntry: TS.FileSystemEntry) => {
+  const doubleClickAction = (fsEntry: TS.FileSystemEntry) => {
     if (fsEntry.isFile) {
       props.setSelectedEntries([fsEntry]);
-      props.openFsEntry(fsEntry);
+      props.openFileNatively(fsEntry.path);
+      // props.openFsEntry(fsEntry);
     } else {
       console.log('Handle Grid cell db click, selected path : ', fsEntry.path);
       props.loadDirectoryContent(fsEntry.path, true);

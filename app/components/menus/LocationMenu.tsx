@@ -28,7 +28,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListSubHeader from '@material-ui/core/ListSubheader';
 import Tooltip from '@material-ui/core/Tooltip';
 import { withTheme } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import i18n from '-/services/i18n';
 import { getLocations } from '-/reducers/locations';
@@ -78,27 +78,28 @@ const LocationMenu = (props: Props) => {
     >
       <Tooltip
         title={
-          currentLocation &&
-          i18n.t('currentLocation') + ': ' + currentLocation.name
+          currentLocation
+            ? i18n.t('currentLocation') + ': ' + currentLocation.name
+            : i18n.t('core:pleaseOpenLocation')
         }
       >
-        <Button
+        <IconButton
           data-tid="folderContainerLocationChooser"
           id="locationMenuButton"
           onClick={event => setLocationChooserMenuAnchorEl(event.currentTarget)}
           style={{
-            marginTop: 5,
-            paddingRight: 0,
-            paddingLeft: 0,
-            marginRight: 5,
-            borderRadius: 15
+            // paddingRight: 0,
+            // paddingLeft: 0,
+            // marginRight: 5,
+            fontSize: theme.typography.fontSize,
+            borderRadius: 10
           }}
         >
           {currentLocation
             ? locationIcon // this.state.currentLocation.name
             : i18n.t('core:pleaseOpenLocation')}
           <ArrowDropDownIcon />
-        </Button>
+        </IconButton>
       </Tooltip>
       {Boolean(locationChooserMenuAnchorEl) && (
         <Menu

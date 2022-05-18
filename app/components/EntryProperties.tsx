@@ -33,12 +33,8 @@ import Tooltip from '@material-ui/core/Tooltip';
 import LocationIcon from '@material-ui/icons/WorkOutline';
 import CloudLocationIcon from '@material-ui/icons/CloudQueue';
 import Select from '@material-ui/core/Select';
-import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
 import ClearColorIcon from '@material-ui/icons/Backspace';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import LayersClearIcon from '@material-ui/icons/LayersClear';
-import ListItemText from '@material-ui/core/ListItemText';
 import {
   AttributionControl,
   Map,
@@ -82,7 +78,7 @@ import { TS } from '-/tagspaces.namespace';
 import NoTileServer from '-/components/NoTileServer';
 import InfoIcon from '-/components/InfoIcon';
 import { ProTooltip } from '-/components/HelperComponents';
-import { AvailablePerspectives } from '-/perspectives';
+import PerspectiveSelector from '-/components/PerspectiveSelector';
 
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
@@ -583,40 +579,6 @@ const EntryProperties = (props: Props) => {
     : i18n.t('core:addMarkdownDescription');
 
   const showLinkForDownloading = isCloudLocation && currentEntry.isFile;
-
-  const perspectiveSelectorMenuItems = [];
-  perspectiveSelectorMenuItems.push(
-    <MenuItem style={{ display: 'flex' }} key="unspecified" value="unspecified">
-      <div style={{ display: 'flex' }}>
-        <ListItemIcon style={{ paddingLeft: 3, paddingTop: 3 }}>
-          <LayersClearIcon />
-        </ListItemIcon>
-        <ListItemText>{i18n.t('core:unspecified')}</ListItemText>
-      </div>
-    </MenuItem>
-  );
-
-  AvailablePerspectives.forEach(perspective => {
-    let includePerspective = perspective.beta === false;
-    if (!Pro && perspective.pro === true) {
-      includePerspective = false;
-    }
-    if (Pro && perspective.beta === false) {
-      includePerspective = true;
-    }
-    if (includePerspective) {
-      perspectiveSelectorMenuItems.push(
-        <MenuItem key={perspective.key} value={perspective.id}>
-          <div style={{ display: 'flex' }}>
-            <ListItemIcon style={{ paddingLeft: 3, paddingTop: 3 }}>
-              {perspective.icon}
-            </ListItemIcon>
-            <ListItemText>{perspective.title}</ListItemText>
-          </div>
-        </MenuItem>
-      );
-    }
-  });
 
   // @ts-ignore
   return (
@@ -1217,15 +1179,11 @@ const EntryProperties = (props: Props) => {
             </div>
             <ProTooltip tooltip={i18n.t('core:choosePerspective')}>
               <FormControl fullWidth={true} className={classes.formControl}>
-                <Select
-                  disabled={!Pro}
-                  data-tid="changePerspectiveTID"
-                  defaultValue={perspectiveDefault}
+                <PerspectiveSelector
                   onChange={changePerspective}
-                  input={<Input id="changePerspectiveId" />}
-                >
-                  {perspectiveSelectorMenuItems}
-                </Select>
+                  defaultValue={perspectiveDefault}
+                  testId="changePerspectiveTID"
+                />
               </FormControl>
             </ProTooltip>
           </Grid>

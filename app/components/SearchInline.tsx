@@ -19,19 +19,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import {
-  withStyles,
-  Theme,
-  createStyles,
-  makeStyles
-} from '@material-ui/core/styles';
-import ClearSearchIcon from '@material-ui/icons/CancelOutlined';
+import { makeStyles } from '@material-ui/core/styles';
+import ClearSearchIcon from '@material-ui/icons/Close';
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
 import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { actions as AppActions, getDirectoryPath } from '../reducers/app';
 import {
@@ -45,7 +39,7 @@ import {
   getMaxSearchResults,
   getShowUnixHiddenEntries
 } from '-/reducers/settings';
-import i18n from '../services/i18n';
+import i18n from '-/services/i18n';
 import { FileTypeGroups } from '-/services/search';
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '../pro';
@@ -55,7 +49,7 @@ import {
   removeAllTagsFromSearchQuery
 } from '-/utils/misc';
 import useFirstRender from '-/utils/useFirstRender';
-import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
+import MainSearchField from '-/components/MainSearchField';
 
 // type PropsClasses = Record<keyof StyleProps, string>;
 
@@ -76,47 +70,6 @@ interface Props {
   showUnixHiddenEntries: boolean;
   isDesktopMode: boolean;
 }
-
-const MainSearchField = withStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      overflow: 'hidden',
-      '& input': {
-        padding: 6
-      },
-      '& .MuiInputBase-root': {
-        borderRadius: 7,
-        paddingRight: 5,
-        paddingLeft: 5
-      },
-      '& .Mui-focused': {
-        color:
-          theme.palette.type === 'light'
-            ? theme.palette.grey[900]
-            : theme.palette.grey[200],
-        backgroundColor:
-          theme.palette.type === 'light'
-            ? theme.palette.grey[200]
-            : theme.palette.grey[900]
-        // backgroundColor: 'gray',
-        // outline: '2px solid red',
-        // border: 'none',
-        // boxShadow: 'none'
-      },
-      // '&$focused': {
-      //   outline: 'none',
-      //   boxShadow: '0 0 0 4px rgba(21, 156, 228, 0.4)'
-      // },
-      '&:hover': {
-        backgroundColor: theme.palette.background.paper
-        // boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`
-      }
-      // '&:active': {
-      //   backgroundColor: theme.palette.background.paper
-      // }
-    }
-  })
-)(TextField);
 
 const useStyles = makeStyles(theme => ({
   customWidth: {
@@ -382,7 +335,7 @@ const SearchInline = (props: Props) => {
       }
     >
       <IconButton size="small" edge="end">
-        <HelpOutlineIcon />
+        <HelpOutlineIcon style={{ color: 'lightgray' }} />
       </IconButton>
     </Tooltip>
   );
@@ -447,7 +400,7 @@ const SearchInline = (props: Props) => {
         margin="dense"
         autoFocus
         onKeyDown={startSearch}
-        placeholder={i18n.t('core:searchWordsWithInterval')}
+        placeholder={i18n.t('core:searchTitle')}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start" style={{ marginRight: 0 }}>

@@ -2,6 +2,7 @@
   "appId": "org.tagspaces.desktopapp",
   "asar": true,
   "asarUnpack": "**/node_modules/sharp/**/*",
+  "afterSign": "scripts/afterSign.js",
   "includeSubNodeModules": true,
   "files": [
     "dist/",
@@ -18,16 +19,19 @@
   ],
   "copyright": "Copyright © 2022 TagSpaces UG (haftungsbeschraenkt)",
   "artifactName": "${name}-${os}-${arch}-${version}.${ext}",
+  "dmg": {
+    "sign": false
+  },
   "win": {
-    "target": [
-      "nsis",
-      // "portable",
-      "zip"
-    ],
+    "target": ["nsis", "zip"],
     "icon": "resources/icon.ico"
   },
   "mac": {
     "target": ["zip", "dmg"],
+    "hardenedRuntime": true,
+    "gatekeeperAssess": false,
+    "entitlements": "resources/entitlements.mac.plist",
+    "entitlementsInherit": "resources/entitlements.mac.plist",
     "icon": "resources/icon.icns"
   },
   "linux": {

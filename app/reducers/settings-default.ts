@@ -18,6 +18,7 @@
 
 import AppConfig from '../config';
 import keyBindings from '-/reducers/keybindings-default';
+import { PerspectiveIDs } from '-/perspectives';
 
 let desktopMode = !AppConfig.isMobile;
 if (window.ExtDisplayMode && window.ExtDisplayMode === 'mobile') {
@@ -169,6 +170,7 @@ export default {
   tagBackgroundColor: '#61DD61',
   currentTheme: 'light',
   geoTaggingFormat: 'pluscodes',
+  defaultPerspective: PerspectiveIDs.GRID,
   enableGlobalKeyboardShortcuts: true,
   zoomFactor: 1,
   lastPublishedVersion: '',
