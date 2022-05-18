@@ -215,5 +215,4 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
-// @ts-ignore
 export default connect(undefined, mapDispatchToProps)(LocationContextMenu);

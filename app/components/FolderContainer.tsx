@@ -633,7 +633,6 @@ const FolderContainer = (props: Props) => {
                   title={i18n.t('core:progress')}
                   data-tid="uploadProgress"
                   onClick={() => props.toggleUploadDialog()}
-                  // @ts-ignore
                   className={[classes.button, classes.upgradeButton].join(' ')}
                 >
                   <CircularProgressWithLabel value={getProgressValue()} />

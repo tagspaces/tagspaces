@@ -1,11 +1,19 @@
 {
-  "parser": "babel-eslint",
+  "root": true,
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "sourceType": "module",
-    "allowImportExportEverywhere": true
+    "ecmaVersion": 2020,
+    "project": "./tsconfig.json"
   },
-  "extends": ["airbnb", "prettier", "prettier/react", "react-app"],
+  "extends": [
+    "airbnb",
+    "prettier",
+    "react-app",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
   "env": {
+    "es6": true,
     "browser": true,
     "node": true
   },
@@ -53,5 +61,16 @@
     "react/jsx-boolean-value": "off",
     "react/prop-types": ["off"]
   },
-  "plugins": ["import", "promise", "compat", "react"]
+  "plugins": [
+    "import",
+    "promise",
+    "compat",
+    "react",
+    "@typescript-eslint",
+    "eslint-plugin-node"
+  ],
+  "globals": {
+    "global": false,
+    "Promise": false
+  }
 }

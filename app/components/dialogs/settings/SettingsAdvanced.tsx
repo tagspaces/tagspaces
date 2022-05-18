@@ -290,5 +290,4 @@ function mapActionCreatorsToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
-  // @ts-ignore
 )(withStyles(styles, { withTheme: true })(SettingsAdvanced));

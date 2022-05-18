@@ -580,7 +580,6 @@ const EntryProperties = (props: Props) => {
 
   const showLinkForDownloading = isCloudLocation && currentEntry.isFile;
 
-  // @ts-ignore
   return (
     <div className={classes.entryProperties}>
       <Grid container>

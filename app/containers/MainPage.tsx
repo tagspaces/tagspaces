@@ -662,11 +662,7 @@ const MainPage = (props: Props) => {
           `}
         </style>
         {props.isDesktopMode || (AppConfig.isAmplify && !props.user) ? (
-          <TargetFileBox
-            // @ts-ignore
-            accepts={[FILE]}
-            onDrop={handleFileDrop}
-          >
+          <TargetFileBox accepts={[FILE]} onDrop={handleFileDrop}>
             <CustomDragLayer />
             <Drawer variant="persistent" anchor="left" open={drawerOpened}>
               <MobileNavigation width={drawerWidth} />
