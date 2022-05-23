@@ -46,10 +46,10 @@ interface Props {
   classes?: any;
   children: ReactNode;
   accepts: Array<string>;
-  onDrop: (item, monitor) => void;
+  onDrop: (item) => void;
 }
 
-const TargetFileBox = (props: Props) => {
+function TargetFileBox(props: Props) {
   const ref = useRef<HTMLDivElement>(null);
 
   const [collectedProps, drop] = useDrop({
@@ -62,7 +62,7 @@ const TargetFileBox = (props: Props) => {
       };
     },
     drop(item, monitor) {
-      return props.onDrop(collectedProps, monitor);
+      return props.onDrop(item); // collectedProps, monitor);
     }
   });
 
@@ -81,6 +81,6 @@ const TargetFileBox = (props: Props) => {
       {children}
     </div>
   );
-};
+}
 
 export default withStyles(styles, { withTheme: true })(TargetFileBox);
