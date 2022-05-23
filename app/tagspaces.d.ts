@@ -56,6 +56,7 @@ declare interface Window {
   plugins?: any; // needed for Cordova
   resolveLocalFileSystemURL?: any; // needed for Cordova
   device?: any; // needed for Cordova
+  electron: { startDrag: (fileName: string) => void };
 }
 
 declare interface NodeModule {

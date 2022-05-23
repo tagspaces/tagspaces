@@ -500,7 +500,8 @@ async function createAppWindow() {
       spellcheck: true,
       nodeIntegration: true,
       webviewTag: true,
-      contextIsolation: false
+      contextIsolation: true,
+      preload: path.join(__dirname, 'preload.js')
     }
   });
 
