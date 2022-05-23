@@ -62,6 +62,7 @@ const TagMenu = (props: Props) => {
     setSearchQuery,
     onClose,
     showEditTagDialog,
+    showDeleteTagDialog,
     maxSearchResults,
     selectedEntries,
     addTags,
@@ -84,7 +85,7 @@ const TagMenu = (props: Props) => {
     showEditTagDialog();
   }
 
-  function showDeleteTagDialog() {
+  function openDeleteTagDialog() {
     onClose();
     showDeleteTagDialog();
   }
@@ -124,7 +125,7 @@ const TagMenu = (props: Props) => {
           </MenuItem>
         )}
         {!isTagLibraryReadOnly && (
-          <MenuItem data-tid="deleteTagDialog" onClick={showDeleteTagDialog}>
+          <MenuItem data-tid="deleteTagDialog" onClick={openDeleteTagDialog}>
             <ListItemIcon>
               <DeleteIcon />
             </ListItemIcon>
