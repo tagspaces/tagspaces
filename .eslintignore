@@ -30,23 +30,19 @@ node_modules
 # OSX
 .DS_Store
 
-# App packaged
-app/main.prod.js
-app/main.prod.js.map
-app/style.css
-app/style.css.map
-app/dist
-app/node_modules
-
-web
-cordova
-dll
-main.js
-main.js.map
+release/app/dist
+release/build
+.erb/dll
 
 .idea
 npm-debug.log.*
-__snapshots__
+*.css.d.ts
+*.sass.d.ts
+*.scss.d.ts
+
+# eslint ignores hidden directories by default:
+# https://github.com/eslint/eslint/issues/8429
+!.erb
 
 extensions
 cordova

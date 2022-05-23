@@ -16,34 +16,29 @@ build/Release
 .eslintcache
 
 # Dependency directory
+# https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
 node_modules
-app/node_modules
 
 # OSX
 .DS_Store
+
+
+release/app/dist
+release/build
+.erb/dll
 
 # flow-typed
 flow-typed/npm/*
 !flow-typed/npm/module_vx.x.x.js
 
-# App packaged
-release
-app/main.prod.js
-app/main.prod.js.map
-app/bundle.js
-app/bundle.js.map
-app/style.css
-app/style.css.map
-app/package-lock.json
-dist
-dll
-main.js
-main.js.map
 
 .idea
 *.iml
 .vscode
 npm-debug.log.*
+*.css.d.ts
+*.sass.d.ts
+*.scss.d.ts
 
 # Cordova files
 cordova/node_modules/*

@@ -1,0 +1,23 @@
+{
+  "name": "tagspaces",
+  "productName": "TagSpaces",
+  "version": "4.4.3",
+  "description": "Offline file organizer and browser with tagging support.",
+  "homepage": "https://www.tagspaces.org",
+  "license": "AGPL-3.0",
+  "author": {
+    "name": "TagSpaces UG (haftungsbeschraenkt)",
+    "email": "info@tagspaces.org",
+    "url": "https://www.tagspaces.org"
+  },
+  "main": "./dist/main/main.js",
+  "scripts": {
+    "electron-rebuild": "node -r ts-node/register ../../.erb/scripts/electron-rebuild.js",
+    "postinstall": "npm run electron-rebuild && npm run link-modules",
+    "link-modules": "node -r ts-node/register ../../.erb/scripts/link-modules.ts"
+  },
+  "dependencies": {
+    "@tagspaces/tagspaces-ws": "1.2.1",
+    "sharp": "^0.29.3"
+  }
+}
