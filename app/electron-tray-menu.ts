@@ -17,7 +17,6 @@
  */
 
 import { app, Menu, nativeImage, Tray } from 'electron';
-import AppConfig from '-/config';
 
 let tray = null;
 
@@ -90,7 +89,7 @@ export default function buildTrayIconMenu(mainPageProps: any, i18n, isMacLike) {
 
   let icon = nativeImage.createFromDataURL(icon2x);
   if (!tray) {
-    if (AppConfig.isElectron && AppConfig.isMacLike) {
+    if (process.platform === 'darwin') {
       icon = nativeImage.createFromDataURL(icon1x);
       icon.addRepresentation({
         scaleFactor: 2.0,
