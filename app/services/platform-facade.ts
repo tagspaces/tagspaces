@@ -207,8 +207,7 @@ export default class PlatformFacade {
     return platformCreateDirectoryPromise(dirPath).then(result => {
       PlatformFacade.deignoreByWatcher(dirPath);
       if (
-        process &&
-        process.platform &&
+        AppConfig.isElectron &&
         AppConfig.isWin &&
         dirPath.endsWith('\\' + AppConfig.metaFolder)
       ) {
@@ -222,16 +221,6 @@ export default class PlatformFacade {
             }
           });
         });
-        // return new Promise(resolve => {
-        //   winattr.set(dirPath, { hidden: true }, err => {
-        //     resolve(dirPath);
-        //     if (err) {
-        //       console.warn('Error setting hidden attr. to dir: ' + dirPath);
-        //     } else {
-        //       console.log('Success setting hidden attr. to dir: ' + dirPath);
-        //     }
-        //   });
-        // });
         return true;
       }
       return result;

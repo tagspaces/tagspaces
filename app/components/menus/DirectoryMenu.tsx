@@ -578,7 +578,11 @@ Do you want to continue?`)
     );
   }
 
-  if (selectedEntries.length < 2 && process.platform === 'darwin') {
+  if (
+    selectedEntries.length < 2 &&
+    AppConfig.isElectron &&
+    AppConfig.isMacLike
+  ) {
     menuItems.push(
       <MenuItem
         key="importMacTags"
