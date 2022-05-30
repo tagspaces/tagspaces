@@ -50,7 +50,7 @@ if (process.env.PD_PLATFORM === 'electron') {
 if (
   install &&
   shell.exec(
-    'yarn upgrade @tagspaces/tagspaces-platforms@' +
+    'npm install @tagspaces/tagspaces-platforms@' +
       packageJson.dependencies['@tagspaces/tagspaces-platforms']
   ).code !== 0
 ) {

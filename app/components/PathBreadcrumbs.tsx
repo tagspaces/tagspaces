@@ -28,6 +28,7 @@ import i18n from '../services/i18n';
 import DirectoryMenu from './menus/DirectoryMenu';
 import { TS } from '-/tagspaces.namespace';
 
+// @ts-ignore
 const StyledBreadcrumb = withStyles((theme: Theme) => ({
   root: {
     backgroundColor: emphasize(theme.palette.background.default, 0.06),
