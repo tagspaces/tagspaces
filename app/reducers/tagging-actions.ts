@@ -633,17 +633,14 @@ const actions = {
     dispatch: (action) => Promise<boolean>
   ) => {
     for (const path of paths) {
-      console.debug('removeAllTags:' + path);
       // eslint-disable-next-line no-await-in-loop
       const resultMeta = await dispatch(
         actions.removeAllTagsFromMetaData(path)
       );
-      console.debug('resultMeta:' + resultMeta);
       // eslint-disable-next-line no-await-in-loop
       const resultName = await dispatch(
         actions.removeAllTagsFromFilename(path)
       );
-      console.debug('resultName:' + resultName);
     }
   },
   removeAllTagsFromFilename: (path: string) => (
