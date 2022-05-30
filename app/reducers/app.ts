@@ -1554,9 +1554,9 @@ export const actions = {
   }),
   showNotification: (
     text: string,
-    notificationType: string = 'default',
-    autohide: boolean = true,
-    tid: string = 'notificationTID'
+    notificationType = 'default',
+    autohide = true,
+    tid = 'notificationTID'
   ) => ({
     type: types.SET_NOTIFICATION,
     visible: true,
@@ -1849,7 +1849,7 @@ export const actions = {
   reflectUpdateSidecarTags: (
     path: string,
     tags: Array<TS.Tag>,
-    updateIndex: boolean = true
+    updateIndex = true
   ) => (dispatch: (actions: Object) => void, getState: () => any) => {
     const { openedFiles, selectedEntries } = getState().app;
     /**
@@ -1914,8 +1914,8 @@ export const actions = {
       });
   },
   renameFile: (filePath: string, newFilePath: string) => (
-    dispatch: (actions: Object) => void
-  ) =>
+    dispatch: (action) => void
+  ): Promise<boolean> =>
     PlatformIO.renameFilePromise(filePath, newFilePath)
       .then(result => {
         const newFilePathFromPromise = result[1];
@@ -1968,6 +1968,7 @@ export const actions = {
                 ' with ' +
                 err
             );
+            return false;
           });
         return true;
       })
@@ -1980,7 +1981,8 @@ export const actions = {
             true
           )
         );
-        throw error;
+        return false;
+        // throw error;
       }),
   openFileNatively: (selectedFile?: string) => (
     dispatch: (actions: Object) => void,
@@ -2145,7 +2147,7 @@ export const actions = {
       console.log('Not supported URL format: ' + decodedURI);
     }
   },
-  openURLExternally: (url: string, skipConfirmation: boolean = false) => () => {
+  openURLExternally: (url: string, skipConfirmation = false) => () => {
     if (skipConfirmation) {
       PlatformIO.openUrl(url);
     } else if (
