@@ -135,11 +135,11 @@ const GridPagination = (props: Props) => {
 
   const setThumbs = (
     entry: TS.FileSystemEntry,
-    meta: Array<string>
+    meta: Array<any>
   ): TS.FileSystemEntry => {
     const thumbEntry = { ...entry };
     let thumbPath = getThumbFileLocationForFile(entry.path, '/', false);
-    if (meta.some(metaFile => thumbPath.endsWith(metaFile))) {
+    if (meta.some(metaFile => thumbPath.endsWith(metaFile.path))) {
       thumbEntry.thumbPath = thumbPath;
       if (PlatformIO.haveObjectStoreSupport()) {
         if (thumbPath && thumbPath.startsWith('/')) {
@@ -155,7 +155,7 @@ const GridPagination = (props: Props) => {
     return thumbEntry;
   };
 
-  const getThumbs = (meta: Array<string>): Promise<any>[] =>
+  const getThumbs = (meta: Array<any>): Promise<any>[] =>
     pageFiles.map(entry =>
       Promise.resolve({ [entry.path]: setThumbs(entry, meta) })
     );
@@ -178,15 +178,15 @@ const GridPagination = (props: Props) => {
       return Promise.resolve({ [entry.path]: undefined });
     });
 
-  const getFileEntriesPromises = (meta: Array<string>): Promise<any>[] =>
+  const getFileEntriesPromises = (meta: Array<any>): Promise<any>[] =>
     pageFiles.map(entry => {
       const metaFilePath = getMetaFileLocationForFile(
         entry.path,
         PlatformIO.getDirSeparator()
       );
       if (
-        // TODO check if metaFilePath exist in listMetaDirectory content
-        meta.some(metaFile => metaFilePath.endsWith(metaFile)) &&
+        // check if metaFilePath exist in listMetaDirectory content
+        meta.some(metaFile => metaFilePath.endsWith(metaFile.path)) &&
         !checkEntryExist(entry.path) &&
         entry.path.indexOf(
           AppConfig.metaFolder + PlatformIO.getDirSeparator()
