@@ -17,9 +17,6 @@
  */
 
 import { app, Menu, nativeImage, Tray } from 'electron';
-// import TrayIcon2x from '-/assets/icons/trayIcon@2x.png';
-// import TrayIcon from '-/assets/icons/trayIcon.png';
-// import TrayIcon3x from '-/assets/icons/trayIcon@3x.png';
 
 let tray = null;
 
@@ -90,25 +87,6 @@ export default function buildTrayIconMenu(mainPageProps: any, i18n, isMacLike) {
     }
   ];
 
-  /* let nImage;
-
-  if (process.platform === 'win32') {
-    nImage = nativeImage.createFromDataURL(TrayIcon2x);
-  } else if (process.platform === 'darwin') {
-    nImage = nativeImage.createFromDataURL(TrayIcon);
-    nImage.addRepresentation({
-      scaleFactor: 2.0,
-      dataURL: TrayIcon2x
-    });
-    nImage.addRepresentation({
-      scaleFactor: 3.0,
-      dataURL: TrayIcon3x
-    });
-  } else {
-    nImage = nativeImage.createFromDataURL(TrayIcon2x);
-  } */
-
-  // const tray = new Tray(nImage);
   let icon = nativeImage.createFromDataURL(icon2x);
   if (!tray) {
     if (process.platform === 'darwin') {

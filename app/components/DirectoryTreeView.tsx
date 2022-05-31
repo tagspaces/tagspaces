@@ -256,7 +256,6 @@ const DirectoryTreeView = forwardRef(
       // const { settings } = getState();
       return new Promise((resolve, reject) => {
         PlatformIO.listDirectoryPromise(subFolder.path, [])
-          // @ts-ignore
           .then(dirEntries => {
             if (dirEntries !== undefined) {
               // console.debug('listDirectoryPromise resolved:' + dirEntries.length);
@@ -383,7 +382,6 @@ const DirectoryTreeView = forwardRef(
     };
 
     if (isExpanded && data != undefined) {
-      // @ts-ignore
       return (
         <Table
           key={props.location.uuid}

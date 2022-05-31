@@ -24,7 +24,8 @@ import ListPerspectiveIcon from '@material-ui/icons/ViewList';
 import GridPerspectiveIcon from '@material-ui/icons/ViewModule';
 
 export const PerspectiveIDs = {
-  DEFAULT: 'default',
+  UNSPECIFIED: 'unspecified',
+  GRID: 'grid',
   LIST: 'list',
   GALLERY: 'gallery',
   // TREEVIZ: 'treeviz',
@@ -34,7 +35,7 @@ export const PerspectiveIDs = {
 };
 
 export const GridPerspectiveMeta = {
-  id: PerspectiveIDs.DEFAULT,
+  id: PerspectiveIDs.GRID,
   key: 'openDefaultPerspective',
   pro: false,
   beta: false,

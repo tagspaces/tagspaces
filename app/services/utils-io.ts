@@ -17,7 +17,6 @@
  */
 
 import { v1 as uuidv1 } from 'uuid';
-// @ts-ignore
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import {
@@ -408,7 +407,7 @@ export function findExtensionPathForId(extensionId: string): string {
 export function findExtensionsForEntry(
   supportedFileTypes: Array<any>,
   entryPath: string,
-  isFile: boolean = true
+  isFile = true
 ): OpenedEntry {
   const fileExtension = extractFileExtension(
     entryPath,
@@ -551,7 +550,7 @@ function persistIndex(param: string | any, directoryIndex: any) {
 
 export function createDirectoryIndex(
   param: string | any,
-  extractText: boolean = false,
+  extractText = false,
   ignorePatterns: Array<string> = [],
   enableWS = true
   // disableIndexing = true,
@@ -776,13 +775,18 @@ export function deleteFilesPromise(filePathList: Array<string>) {
 }
 
 export function renameFilesPromise(renameJobs: Array<Array<string>>) {
-  const fileRenamePromises = [];
+  return Promise.all(
+    renameJobs.map(renameJob =>
+      PlatformIO.renameFilePromise(renameJob[0], renameJob[1])
+    )
+  );
+  /* const fileRenamePromises = [];
   renameJobs.forEach(renameJob => {
     fileRenamePromises.push(
       PlatformIO.renameFilePromise(renameJob[0], renameJob[1])
     );
   });
-  return Promise.all(fileRenamePromises);
+  return Promise.all(fileRenamePromises); */
 }
 
 export function copyFilesPromise(copyJobs: Array<Array<string>>) {
@@ -793,10 +797,7 @@ export function copyFilesPromise(copyJobs: Array<Array<string>>) {
   return Promise.all(ioJobPromises);
 }
 
-export async function loadSubFolders(
-  path: string,
-  loadHidden: boolean = false
-) {
+export async function loadSubFolders(path: string, loadHidden = false) {
   const folderContent = await PlatformIO.listDirectoryPromise(path, []); // 'extractThumbPath']);
   const subfolders = [];
   let i = 0;

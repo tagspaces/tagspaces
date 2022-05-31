@@ -63,6 +63,7 @@ import {
 } from '@tagspaces/tagspaces-platforms/platform-io';
 import { Pro } from '../pro';
 import { TS } from '-/tagspaces.namespace';
+import AppConfig from '-/config';
 
 let token: string;
 
@@ -209,19 +210,23 @@ export default class PlatformFacade {
 
     return platformCreateDirectoryPromise(dirPath).then(result => {
       PlatformFacade.deignoreByWatcher(dirPath);
-      /* if (AppConfig.isWin && dirPath.endsWith("\\" + AppConfig.metaFolder)) {
-      // hide .ts folder on Windows
-        return new Promise((resolve, reject) => {
-          winattr.set(dirPath, { hidden: true }, (err) => {
-            resolve(dirPath);
+      if (
+        AppConfig.isElectron &&
+        AppConfig.isWin &&
+        dirPath.endsWith('\\' + AppConfig.metaFolder)
+      ) {
+        // hide .ts folder on Windows
+        import('winattr').then(winattr => {
+          winattr.set(dirPath, { hidden: true }, err => {
             if (err) {
-              console.warn("Error setting hidden attr. to dir: " + dirPath);
+              console.warn('Error setting hidden attr. to dir: ' + dirPath);
             } else {
-              console.log("Success setting hidden attr. to dir: " + dirPath);
+              console.log('Success setting hidden attr. to dir: ' + dirPath);
             }
           });
         });
-      } */
+        return true;
+      }
       return result;
     });
   };

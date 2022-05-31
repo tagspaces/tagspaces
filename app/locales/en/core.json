@@ -640,5 +640,11 @@
   "navigateTo": "Navigate to",
   "searchScope": "Search Scope",
   "clickToExpand": "Click to load sub folders",
+  "exifGeo": "Import EXIF latitude and longitude as geo-tag",
+  "exifDateTime": "Import EXIF image shooting date and times as date tag",
+  "iptcDescription": "Import IPTC description as file description",
+  "iptcKeywords": "Import IPTC keywords as tags",
+  "exifDialogTitle": "Import EXIF/IPTC information as tags",
+  "exifDialogExplanation": "This functionality will traverse all JPG files from the current folder and import the data from the selected EXIF/IPTC fields as tags",
   "-": "-"
 }

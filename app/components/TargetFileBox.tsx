@@ -16,8 +16,8 @@
  *
  */
 
-import React from 'react';
-import { DropTarget } from 'react-dnd';
+import React, { ReactNode, useRef } from 'react';
+import { DropTargetMonitor, useDrop } from 'react-dnd';
 import { withStyles } from '@material-ui/core/styles/index';
 import i18n from '../services/i18n';
 
@@ -42,49 +42,45 @@ const styles: any = (theme: any) => ({
   }
 });
 
-const boxTarget = {
-  /**
-   * http://react-dnd.github.io/react-dnd/docs/api/drop-target
-   */
-  drop(props, monitor) {
-    // component)
-    //  return component.props.onDrop(props, monitor);
-    return props.onDrop(props, monitor);
-  }
-};
-
 interface Props {
   classes?: any;
-  canDrop: boolean;
-  isOver: boolean;
-  connectDropTarget: any;
-  children: Object;
+  children: ReactNode;
+  accepts: Array<string>;
+  onDrop: (item) => void;
 }
 
-const TargetFileBox = (props: Props) => {
-  const { classes, canDrop, isOver, connectDropTarget, children } = props;
-  const dragContent =
-    canDrop && isOver ? (
-      <div className={classes.dropzone}>{i18n.t('core:releaseToDrop')}</div>
-    ) : (
-      undefined
-    );
-  return connectDropTarget(
-    <div style={{ height: '100%' }}>
+function TargetFileBox(props: Props) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  const [collectedProps, drop] = useDrop({
+    accept: props.accepts,
+    collect(monitor: DropTargetMonitor) {
+      const isActive = monitor.isOver({ shallow: true }) && monitor.canDrop();
+      return {
+        handlerId: monitor.getHandlerId(),
+        isActive
+      };
+    },
+    drop(item, monitor) {
+      return props.onDrop(item); // collectedProps, monitor);
+    }
+  });
+
+  drop(ref);
+
+  const { isActive } = collectedProps;
+  const { classes, children } = props;
+  const dragContent = isActive ? (
+    <div className={classes.dropzone}>{i18n.t('core:releaseToDrop')}</div>
+  ) : (
+    undefined
+  );
+  return (
+    <div ref={ref} style={{ height: '100%' }}>
       {dragContent}
       {children}
     </div>
   );
-};
+}
 
-export default withStyles(styles, { withTheme: true })(
-  DropTarget(
-    props => props.accepts,
-    boxTarget,
-    (connect, monitor) => ({
-      connectDropTarget: connect.dropTarget(),
-      isOver: monitor.isOver(),
-      canDrop: monitor.canDrop()
-    })
-  )(TargetFileBox)
-);
+export default withStyles(styles, { withTheme: true })(TargetFileBox);

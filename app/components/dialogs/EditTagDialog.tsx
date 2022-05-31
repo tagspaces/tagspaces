@@ -168,7 +168,7 @@ const EditTagDialog = (props: Props) => {
               <time>
                 {format(
                   new Date(props.selectedTag.modified_date),
-                  'yyyy-mm-dd'
+                  'yyyy-MM-dd'
                 )}
               </time>
             </div>

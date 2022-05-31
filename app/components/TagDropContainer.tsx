@@ -16,42 +16,62 @@
  *
  */
 
-import React from 'react';
-import { DropTarget } from 'react-dnd';
+import React, { ReactNode, useRef } from 'react';
+import { DropTargetMonitor, useDrop } from 'react-dnd';
 import DragItemTypes from './DragItemTypes';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
-  children: Array<Object>;
-  canDrop: boolean;
-  isOver: boolean;
-  connectDropTarget: (param: Object) => void;
+  children: ReactNode;
+  entryPath: string;
+  selectedEntries?: Array<TS.FileSystemEntry>;
 }
 
-const boxTarget = {
-  drop(props, monitor) {
-    return {
-      selectedEntries: props.selectedEntries,
-      entryPath: props.entryPath
-    };
-  }
-};
+interface DragItem {
+  index: number;
+  sourceTagGroupId: string;
+  tag: TS.Tag;
+}
 
 const TagDropContainer = (props: Props) => {
-  const { canDrop, isOver, connectDropTarget } = props;
-  const isActive = canDrop && isOver;
+  const ref = useRef<HTMLDivElement>(null);
+
+  const [collectedProps, drop] = useDrop({
+    accept: DragItemTypes.TAG,
+    collect(monitor: DropTargetMonitor) {
+      const isActive = monitor.isOver({ shallow: true }) && monitor.canDrop();
+      return {
+        handlerId: monitor.getHandlerId(),
+        isActive,
+        canDrop: monitor.canDrop(),
+        selectedEntries: props.selectedEntries,
+        entryPath: props.entryPath
+      };
+    },
+    drop(item: DragItem, monitor: DropTargetMonitor) {
+      // console.log('DROP: ', item);
+      // console.log('DROP: ', monitor.canDrop());
+      return {
+        selectedEntries: collectedProps.selectedEntries,
+        entryPath: collectedProps.entryPath
+      };
+    }
+  });
+
+  drop(ref);
 
   let border = '2px solid transparent';
   let backgroundColor = 'transparent';
-  if (isActive) {
+  if (collectedProps.isActive) {
     border = '2px solid #f7cf00';
     backgroundColor = '#f7cf00';
-  } else if (canDrop) {
+  } else if (collectedProps.canDrop) {
     border = '2px solid lightgray';
     backgroundColor = 'lightgray';
   }
-
-  return connectDropTarget(
+  return (
     <div
+      ref={ref}
       style={{
         border,
         backgroundColor,
@@ -63,9 +83,4 @@ const TagDropContainer = (props: Props) => {
   );
 };
 
-export default DropTarget(DragItemTypes.TAG, boxTarget, (connect, monitor) => ({
-  connectDropTarget: connect.dropTarget(),
-  isOver: monitor.isOver(),
-  canDrop: monitor.canDrop()
-  // @ts-ignore
-}))(TagDropContainer);
+export default TagDropContainer;

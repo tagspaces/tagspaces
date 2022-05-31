@@ -40,6 +40,7 @@ export const types = {
   SET_MAX_SEARCH_RESULT: 'SETTINGS/SET_MAX_SEARCH_RESULT',
   SET_CHECKFORUPDATES: 'SETTINGS/SET_CHECKFORUPDATES',
   SET_REORDER_TAGS: 'SETTINGS/SET_REORDER_TAGS',
+  SET_DEFAULTPERSPECTIVE: 'SETTINGS/SET_DEFAULTPERSPECTIVE',
   SET_USEDEFAULTLOCATION: 'SETTINGS/SET_USEDEFAULTLOCATION',
   SET_COLOREDFILEEXTENSION: 'SETTINGS/SET_COLOREDFILEEXTENSION',
   SET_SHOWTAGAREAONSTARTUP: 'SETTINGS/SET_SHOWTAGAREAONSTARTUP',
@@ -141,6 +142,9 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_MAX_SEARCH_RESULT: {
       return { ...state, maxSearchResult: action.maxSearchResult };
+    }
+    case types.SET_DEFAULTPERSPECTIVE: {
+      return { ...state, defaultPerspective: action.defaultPerspective };
     }
     case types.SET_DESKTOPMODE: {
       return { ...state, desktopMode: action.desktopMode };
@@ -466,6 +470,10 @@ export const actions = {
     type: types.SET_USEDEFAULTLOCATION,
     useDefaultLocation
   }),
+  setDefaultPerspective: (defaultPerspective: string) => ({
+    type: types.SET_DEFAULTPERSPECTIVE,
+    defaultPerspective
+  }),
   setColoredFileExtension: (coloredFileExtension: boolean) => ({
     type: types.SET_COLOREDFILEEXTENSION,
     coloredFileExtension
@@ -660,6 +668,8 @@ export const getShowUnixHiddenEntries = (state: any) =>
   state.settings.showUnixHiddenEntries;
 export const getUseDefaultLocation = (state: any) =>
   state.settings.useDefaultLocation;
+export const getDefaultPerspective = (state: any) =>
+  state.settings.defaultPerspective;
 export const getColoredFileExtension = (state: any) =>
   state.settings.coloredFileExtension;
 export const getShowTagAreaOnStartup = (state: any) =>

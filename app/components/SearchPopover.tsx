@@ -104,6 +104,7 @@ interface Props {
 const useStyles = makeStyles<Theme, StyleProps>(styles);
 
 const SearchPopover = (props: Props) => {
+  // @ts-ignore
   const classes: PropsClasses = useStyles({} as StyleProps);
   const [, forceUpdate] = useReducer(x => x + 1, 0);
   const textQuery = useRef<string>(props.searchQuery.textQuery);
@@ -445,7 +446,6 @@ const SearchPopover = (props: Props) => {
       tagsAND,
       tagsOR,
       tagsNOT,
-      // @ts-ignore
       searchBoxing: searchBoxing.current,
       searchType: searchType.current,
       fileTypes: fileTypes.current,
@@ -503,7 +503,6 @@ const SearchPopover = (props: Props) => {
       tagsAND,
       tagsOR,
       tagsNOT,
-      // @ts-ignore
       searchBoxing: searchBoxing.current,
       searchType: searchType.current,
       fileTypes: fileTypes.current,

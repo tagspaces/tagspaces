@@ -334,5 +334,4 @@ function mapActionCreatorsToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
-  // @ts-ignore
 )(withMobileDialog()(OnboardingDialog));
