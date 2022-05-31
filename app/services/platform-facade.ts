@@ -38,6 +38,7 @@ import {
   platformCreateThumbnailsInWorker,
   platformGetURLforPath,
   platformListDirectoryPromise,
+  platformListMetaDirectoryPromise,
   platformListObjectStoreDir,
   platformSaveFilePromise,
   platformGetPropertiesPromise,
@@ -174,6 +175,9 @@ export default class PlatformFacade {
     ignorePatterns: Array<string> = []
   ): Promise<Array<any>> =>
     platformListDirectoryPromise(path, mode, ignorePatterns);
+
+  static listMetaDirectoryPromise = (path: string): Promise<Array<any>> =>
+    platformListMetaDirectoryPromise(path);
 
   static listObjectStoreDir = (
     param: Object,

@@ -73,6 +73,7 @@ export const types = {
   LOAD_DIRECTORY_SUCCESS: 'APP/LOAD_DIRECTORY_SUCCESS',
   LOAD_DIRECTORY_FAILURE: 'APP/LOAD_DIRECTORY_FAILURE',
   CLEAR_DIRECTORY_CONTENT: 'APP/CLEAR_DIRECTORY_CONTENT',
+  // LOAD_PAGE_CONTENT: 'APP/LOAD_PAGE_CONTENT',
   SET_SEARCH_RESULTS: 'APP/SET_SEARCH_RESULTS',
   APPEND_SEARCH_RESULTS: 'APP/APPEND_SEARCH_RESULTS',
   OPEN_FILE: 'APP/OPEN_FILE',
@@ -119,6 +120,7 @@ export const types = {
   // REFLECT_UPDATE_SIDECARTAGS: 'APP/REFLECT_UPDATE_SIDECARTAGS',
   // REFLECT_UPDATE_SIDECARMETA: 'APP/REFLECT_UPDATE_SIDECARMETA',
   UPDATE_CURRENTDIR_ENTRY: 'APP/UPDATE_CURRENTDIR_ENTRY',
+  UPDATE_CURRENTDIR_ENTRIES: 'APP/UPDATE_CURRENTDIR_ENTRIES',
   SET_ISLOADING: 'APP/SET_ISLOADING'
 };
 
@@ -270,6 +272,7 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         currentDirectoryEntries: action.directoryContent,
+        pageEntries: [],
         currentDirectoryColor: action.directoryMeta
           ? action.directoryMeta.color || ''
           : '',
@@ -306,6 +309,21 @@ export default (state: any = initialState, action: any) => {
         currentDirectoryPath: ''
       };
     }
+    /* case types.LOAD_PAGE_CONTENT: {
+      const newPageEntries = [...state.pageEntries];
+      for (let i = 0; i < action.pageEntries.length; i += 1) {
+        const index = newPageEntries.findIndex(
+          entry => entry.path === action.pageEntries[i].path
+        );
+        if (index === -1) {
+          newPageEntries.push(action.pageEntries[i]);
+        }
+      }
+      return {
+        ...state,
+        pageEntries: newPageEntries
+      };
+    } */
     case types.SET_CURRENLOCATIONID: {
       return {
         ...state,
@@ -623,6 +641,33 @@ export default (state: any = initialState, action: any) => {
         })
       };
     } */
+    case types.UPDATE_CURRENTDIR_ENTRIES: {
+      const newDirEntries = [...state.currentDirectoryEntries];
+      for (let i = 0; i < newDirEntries.length; i += 1) {
+        const dirEntry = action.dirEntries.find(
+          entry => entry.path === newDirEntries[i].path
+        );
+        if (dirEntry) {
+          newDirEntries[i] = dirEntry;
+        }
+      }
+
+      /* const newPageEntries = [...state.pageEntries];
+      for (const [path, value] of Object.entries(newPageEntries)) {
+        const pageEntry = action.pageEntries.findIndex(
+          entry => entry.path === newPageEntries[i].path
+        );
+        if (pageEntry) {
+          newPageEntries[i] = pageEntry;
+        }
+      } */
+
+      return {
+        ...state,
+        currentDirectoryEntries: newDirEntries,
+        pageEntries: action.pageEntries
+      };
+    }
     case types.UPDATE_CURRENTDIR_ENTRY: {
       return {
         ...state,
@@ -968,9 +1013,12 @@ export const actions = {
       password: '1234',
       port: 8080
     }); */
+    /* const mode = PlatformIO.haveObjectStoreSupport()
+      ? []
+      : ['extractThumbPath', 'extractThumbURL']; */
     PlatformIO.listDirectoryPromise(
       directoryPath,
-      ['extractThumbPath', 'extractThumbURL'],
+      [], // mode,
       currentLocation ? currentLocation.ignorePatternPaths : []
     )
       .then(results => {
@@ -998,7 +1046,8 @@ export const actions = {
   },
   loadDirectoryContent: (
     directoryPath: string,
-    generateThumbnails: boolean
+    generateThumbnails: boolean,
+    loadDirMeta: boolean = false
   ) => async (dispatch: (actions: Object) => void, getState: () => any) => {
     // console.debug('loadDirectoryContent:' + directoryPath);
     window.walkCanceled = false;
@@ -1010,28 +1059,34 @@ export const actions = {
     if (selectedEntries.length > 0) {
       dispatch(actions.setSelectedEntries([]));
     }
-    try {
-      const fsEntryMeta = await loadMetaDataPromise(
-        normalizePath(directoryPath) + PlatformIO.getDirSeparator()
-      );
-      // console.debug('Loading meta succeeded for:' + directoryPath);
-      dispatch(
-        actions.loadDirectoryContentInt(
-          directoryPath,
-          generateThumbnails,
-          fsEntryMeta
-        )
-      );
-      /* if (fsEntryMeta.color) { // TODO rethink this states changes are expensive
-          dispatch(actions.setCurrentDirectoryColor(fsEntryMeta.color));
-        }
-        if (fsEntryMeta.perspective) {
-          dispatch(actions.setCurrentDirPerspective(fsEntryMeta.perspective));
-        } */
+    if (loadDirMeta) {
+      try {
+        const fsEntryMeta = await loadMetaDataPromise(
+          normalizePath(directoryPath) + PlatformIO.getDirSeparator()
+        );
+        // console.debug('Loading meta succeeded for:' + directoryPath);
+        dispatch(
+          actions.loadDirectoryContentInt(
+            directoryPath,
+            generateThumbnails,
+            fsEntryMeta
+          )
+        );
+        /* if (fsEntryMeta.color) { // TODO rethink this states changes are expensive
+            dispatch(actions.setCurrentDirectoryColor(fsEntryMeta.color));
+          }
+          if (fsEntryMeta.perspective) {
+            dispatch(actions.setCurrentDirPerspective(fsEntryMeta.perspective));
+          } */
 
-      // return true;
-    } catch (err) {
-      console.debug('Error loading meta of:' + directoryPath + ' ' + err);
+        // return true;
+      } catch (err) {
+        console.debug('Error loading meta of:' + directoryPath + ' ' + err);
+        dispatch(
+          actions.loadDirectoryContentInt(directoryPath, generateThumbnails)
+        );
+      }
+    } else {
       dispatch(
         actions.loadDirectoryContentInt(directoryPath, generateThumbnails)
       );
@@ -1841,6 +1896,14 @@ export const actions = {
     path,
     entry
   }),
+  updateCurrentDirEntries: (
+    dirEntries: TS.FileSystemEntry[],
+    pageEntries: any
+  ) => ({
+    type: types.UPDATE_CURRENTDIR_ENTRIES,
+    dirEntries,
+    pageEntries
+  }),
   /**
    * @param path
    * @param tags
@@ -2189,6 +2252,7 @@ export const actions = {
 export const currentUser = (state: any) => state.app.user;
 export const getDirectoryContent = (state: any) =>
   state.app.currentDirectoryEntries;
+export const getPageEntries = (state: any) => state.app.pageEntries;
 export const getCurrentDirectoryFiles = (state: any) =>
   state.app.currentDirectoryFiles;
 export const getCurrentDirectoryDirs = (state: any) =>

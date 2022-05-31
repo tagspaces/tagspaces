@@ -139,6 +139,22 @@ export function enhanceDirectoryContent(
   };
 }
 
+export async function getMetaForEntry(
+  entry: TS.FileSystemEntry,
+  metaFilePath: string
+): Promise<any> {
+  const meta: TS.FileSystemEntryMeta = await loadJSONFile(metaFilePath);
+  if (meta) {
+    const entryEnhanced = enhanceEntry({ ...entry, meta });
+    return { [entry.path]: entryEnhanced };
+  }
+  return Promise.resolve({ [entry.path]: undefined });
+}
+
+/**
+ * TODO enhance only entries from the current page
+ * @param entry
+ */
 export function enhanceEntry(entry: any): TS.FileSystemEntry {
   let fileNameTags = [];
   if (entry.isFile) {
@@ -193,7 +209,7 @@ export function enhanceEntry(entry: any): TS.FileSystemEntry {
   if (sidecarPerspective) {
     enhancedEntry.perspective = sidecarPerspective;
   }
-  // console.log('Enhancing ' + entry.path); console.log(enhancedEntry);
+  // console.log('Enhancing ' + entry.path + ':' + JSON.stringify(enhancedEntry));
   return enhancedEntry;
 }
 
