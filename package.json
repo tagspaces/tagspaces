@@ -148,7 +148,7 @@
     "@material-ui/icons": "^4.11.3",
     "@material-ui/lab": "^4.0.0-alpha.61",
     "@material-ui/pickers": "^3.3.10",
-    "@tagspaces/tagspaces-platforms": "^1.3.9",
+    "@tagspaces/tagspaces-platforms": "^1.3.16",
     "aws-amplify": "^4.3.8",
     "aws-sdk": "^2.1036.0",
     "babel-polyfill": "^6.26.0",
@@ -159,7 +159,7 @@
     "coordinate-parser": "^1.0.7",
     "core-js": "3.19.1",
     "crypto-js": "^4.1.1",
-    "csv-stringify": "^6.0.5",
+    "csv-stringify": "^6.1.0",
     "date-fns": "^2.26.0",
     "dompurify": "^2.3.3",
     "electron-debug": "^3.2.0",
@@ -339,13 +339,11 @@
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.3",
     "webpack-merge": "^5.7.3",
-    "worker-loader": "^2.0.0",
-    "yarn": "^1.22.17"
+    "worker-loader": "^2.0.0"
   },
   "devEngines": {
     "node": ">=8.x",
-    "npm": ">=5.x",
-    "yarn": ">=1.6.0"
+    "npm": ">=5.x"
   },
   "jest-junit": {
     "suiteNameTemplate": "{filepath}",

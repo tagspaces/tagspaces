@@ -55,11 +55,10 @@ const persistTagsInSidecarFile = state => {
 };
 
 const actions = {
-  addTags: (
-    paths: Array<string>,
-    tags: Array<TS.Tag>,
-    updateIndex: boolean = true
-  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
+  addTags: (paths: Array<string>, tags: Array<TS.Tag>, updateIndex = true) => (
+    dispatch: (action) => void,
+    getState: () => any
+  ) => {
     const { settings, taglibrary } = getState();
     let defaultTagLocation;
     if (settings.geoTaggingFormat.toLowerCase() === 'mgrs') {
@@ -163,7 +162,7 @@ const actions = {
   addTagsToEntry: (
     path: string,
     tags: Array<TS.Tag>,
-    updateIndex: boolean = true
+    updateIndex = true
   ) => async (dispatch: (actions: Object) => void, getState: () => any) => {
     const { settings } = getState();
     const entryProperties = await PlatformIO.getPropertiesPromise(path);
@@ -630,26 +629,62 @@ const actions = {
       }
     }
   },
-  removeAllTags: (paths: Array<string>) => (
-    dispatch: (actions: Object) => void
+  removeAllTags: (paths: Array<string>) => async (
+    dispatch: (action) => Promise<boolean>
   ) => {
-    paths.map(path => {
-      dispatch(actions.removeAllTagsFromEntry(path));
-      return true;
-    });
+    for (const path of paths) {
+      // eslint-disable-next-line no-await-in-loop
+      const resultMeta = await dispatch(
+        actions.removeAllTagsFromMetaData(path)
+      );
+      // eslint-disable-next-line no-await-in-loop
+      const resultName = await dispatch(
+        actions.removeAllTagsFromFilename(path)
+      );
+    }
   },
-  removeAllTagsFromEntry: (path: string) => (
-    dispatch: (actions: Object) => void,
+  removeAllTagsFromFilename: (path: string) => (
+    dispatch: (action) => Promise<boolean>,
     getState: () => any
-  ) => {
+  ): Promise<boolean> => {
     const { settings } = getState();
+    // Tags in file name case, check is file
+    const extractedTags = extractTags(
+      path,
+      settings.tagDelimiter,
+      PlatformIO.getDirSeparator()
+    );
+    if (extractedTags.length > 0) {
+      const fileTitle = extractTitle(path, false, PlatformIO.getDirSeparator());
+      let fileExt = extractFileExtension(path, PlatformIO.getDirSeparator());
+      const containingDirectoryPath = extractContainingDirectoryPath(
+        path,
+        PlatformIO.getDirSeparator()
+      );
+      if (fileExt.length > 0) {
+        fileExt = '.' + fileExt;
+      }
+      const newFilePath =
+        (containingDirectoryPath
+          ? containingDirectoryPath + PlatformIO.getDirSeparator()
+          : '') +
+        fileTitle +
+        fileExt;
+      return dispatch(AppActions.renameFile(path, newFilePath));
+    }
+    return Promise.resolve(true);
+  },
+  removeAllTagsFromMetaData: (path: string) => (
+    dispatch: (action) => void,
+    getState: () => any
+  ): Promise<boolean> =>
     loadMetaDataPromise(path)
       .then(fsEntryMeta => {
         const updatedFsEntryMeta = {
           ...fsEntryMeta,
           tags: []
         };
-        saveMetaDataPromise(path, updatedFsEntryMeta)
+        return saveMetaDataPromise(path, updatedFsEntryMeta)
           .then(() => {
             // TODO rethink this updateCurrentDirEntry and not need for KanBan
             dispatch(AppActions.reflectUpdateSidecarTags(path, []));
@@ -657,7 +692,6 @@ const actions = {
             if (openedFiles.find(obj => obj.path === path)) {
               dispatch(AppActions.updateOpenedFile(path, { tags: [] }));
             }
-            removeAllTagsFromFilename();
             return true;
           })
           .catch(err => {
@@ -671,47 +705,14 @@ const actions = {
                 true
               )
             );
-            removeAllTagsFromFilename();
+            return false;
           });
-        return true;
       })
       .catch(error => {
         console.warn('Could not find meta file for ' + path + ' with ' + error);
         // dispatch(AppActions.showNotification('Adding tags failed', 'error', true));
-        removeAllTagsFromFilename();
-      });
-
-    function removeAllTagsFromFilename() {
-      // Tags in file name case, check is file
-      const extractedTags = extractTags(
-        path,
-        settings.tagDelimiter,
-        PlatformIO.getDirSeparator()
-      );
-      if (extractedTags.length > 0) {
-        const fileTitle = extractTitle(
-          path,
-          false,
-          PlatformIO.getDirSeparator()
-        );
-        let fileExt = extractFileExtension(path, PlatformIO.getDirSeparator());
-        const containingDirectoryPath = extractContainingDirectoryPath(
-          path,
-          PlatformIO.getDirSeparator()
-        );
-        if (fileExt.length > 0) {
-          fileExt = '.' + fileExt;
-        }
-        const newFilePath =
-          (containingDirectoryPath
-            ? containingDirectoryPath + PlatformIO.getDirSeparator()
-            : '') +
-          fileTitle +
-          fileExt;
-        dispatch(AppActions.renameFile(path, newFilePath));
-      }
-    }
-  },
+        return false;
+      }),
   // smart tagging -> PRO
   addDateTag: (paths: Array<string>) => () =>
     // dispatch: (actions: Object) => void
