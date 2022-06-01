@@ -46,16 +46,27 @@ if (process.env.PD_PLATFORM === 'electron') {
     install = true;
   }
 }
+shell.exec('npm -v');
 
 if (
   install &&
   shell.exec(
     'npm install @tagspaces/tagspaces-platforms@' +
-      packageJson.dependencies['@tagspaces/tagspaces-platforms']
+      stripFromStart(
+        packageJson.dependencies['@tagspaces/tagspaces-platforms'],
+        '^'
+      )
   ).code !== 0
 ) {
   shell.echo('Error: Install ' + process.env.PD_PLATFORM + ' platform failed');
   shell.exit(1);
+}
+
+function stripFromStart(input, character) {
+  if (input.startsWith(character)) {
+    return input.substr(character.length);
+  }
+  return input;
 }
 
 /* if (process.env.PD_PLATFORM === 'electron') {

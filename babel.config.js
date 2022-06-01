@@ -15,7 +15,10 @@ function getElectronVersion() {
 }*/
 const packageJson = require('./package.json');
 
-const electronVersion = parseInt(/\d+/.exec(packageJson.devDependencies.electron), 10);
+const electronVersion = parseInt(
+  /\d+/.exec(packageJson.devDependencies.electron),
+  10
+);
 
 const developmentEnvironments = ['development', 'test'];
 
