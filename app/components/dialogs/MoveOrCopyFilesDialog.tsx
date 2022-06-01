@@ -76,14 +76,14 @@ function MoveCopyFilesDialog(props: Props) {
         </Button>
         <Button
           onClick={() => props.handleMoveFiles(props.selectedFiles)}
-          data-tid="confirmMoveFiles"
+          data-tid="confirmMoveFilesTID"
           color="primary"
         >
           {i18n.t('core:moveFilesButton')}
         </Button>
         <Button
           onClick={() => props.handleCopyFiles(props.selectedFiles)}
-          data-tid="confirmCopyFiles"
+          data-tid="confirmCopyFilesTID"
           color="primary"
         >
           {i18n.t('core:copyFilesButton')}

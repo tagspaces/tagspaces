@@ -242,9 +242,10 @@ describe('TST50 - Perspective Grid', () => {
     await clickOn('[data-tid=gridPerspectiveCopySelectedFiles]');
     await setInputKeys('targetPathInput', copyLocationPath);
     await clickOn('[data-tid=confirmCopyFiles]');
-    await waitForNotification();
+    //await waitForNotification();
 
     await global.client.dblclick(selectorFolder);
+    await global.client.waitForSelector(selectorFile);
     await expectElementExist(selectorFile, true);
     // const firstFileName = await getGridFileName(0);
     // expect(firstFileName).toBe(sampleFileName);
@@ -291,7 +292,7 @@ describe('TST50 - Perspective Grid', () => {
 
     await clickOn('[data-tid=gridPerspectiveDeleteMultipleFiles]');
     await clickOn('[data-tid=confirmDeleteFileDialog]');
-    await waitForNotification();
+    // await waitForNotification();
 
     for (let i = 0; i < selectedIds.length; i++) {
       await expectElementExist(
