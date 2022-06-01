@@ -325,7 +325,7 @@
     "rimraf": "^2.6.3",
     "sass-loader": "^7.1.0",
     "serve-static": "^1.14.1",
-    "sharp": "^0.29.2",
+    "sharp": "^0.30.5",
     "shelljs": "^0.8.4",
     "shx": "^0.3.2",
     "sinon": "^2.3.1",
