@@ -1202,9 +1202,8 @@ export const actions = {
     type: types.SET_CURRENDIRECTORYPERSPECTIVE,
     perspective
   }),
-  setSelectedEntries: (selectedEntries: Array<Object>) => (
-    dispatch: (actions: Object) => void,
-    getState: () => any
+  setSelectedEntries: (selectedEntries: Array<TS.FileSystemEntry>) => (
+    dispatch: (action) => void
   ) => {
     // const { openedFiles } = getState().app;
     // skip select other file if its have openedFiles in editMode
@@ -1212,7 +1211,7 @@ export const actions = {
     dispatch(actions.setSelectedEntriesInt(selectedEntries));
     // }
   },
-  setSelectedEntriesInt: (selectedEntries: Array<Object>) => ({
+  setSelectedEntriesInt: (selectedEntries: Array<TS.FileSystemEntry>) => ({
     type: types.SET_SELECTED_ENTRIES,
     selectedEntries
   }),

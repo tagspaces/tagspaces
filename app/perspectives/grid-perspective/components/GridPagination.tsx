@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useState, useEffect, useRef, useReducer } from 'react';
+import React, { useEffect, useRef, useReducer } from 'react';
 import { connect } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -43,7 +43,7 @@ import PlatformIO from '-/services/platform-facade';
 
 interface Props {
   className: string;
-  style: Object;
+  style;
   theme: any;
   // gridRef: Object;
   directories: Array<TS.FileSystemEntry>;
@@ -64,9 +64,13 @@ interface Props {
     dirEntries: TS.FileSystemEntry[],
     pageEntries: any
   ) => void;
+  // eslint-disable-next-line react/no-unused-prop-types
+  settings; // cache only
+  // eslint-disable-next-line react/no-unused-prop-types
+  selectedEntries; // cache only
 }
 
-const GridPagination = (props: Props) => {
+function GridPagination(props: Props) {
   const {
     className,
     style,
@@ -341,7 +345,7 @@ const GridPagination = (props: Props) => {
       )}
     </div>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {
@@ -363,7 +367,11 @@ function mapActionCreatorsToProps(dispatch) {
 
 const areEqual = (prevProp: Props, nextProp: Props) =>
   JSON.stringify(nextProp.files) === JSON.stringify(prevProp.files) &&
-  JSON.stringify(nextProp.directories) === JSON.stringify(prevProp.directories);
+  JSON.stringify(nextProp.directories) ===
+    JSON.stringify(prevProp.directories) &&
+  JSON.stringify(nextProp.settings) === JSON.stringify(prevProp.settings) &&
+  JSON.stringify(nextProp.selectedEntries) ===
+    JSON.stringify(prevProp.selectedEntries);
 
 export default connect(
   mapStateToProps,

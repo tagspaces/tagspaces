@@ -71,19 +71,22 @@ function MoveCopyFilesDialog(props: Props) {
         </List>
       </DialogContent>
       <DialogActions>
-        <Button data-tid="closeMoveCopyDialog" onClick={() => props.onClose()}>
+        <Button
+          data-tid="closeMoveOrCopyDialog"
+          onClick={() => props.onClose()}
+        >
           {i18n.t('core:cancel')}
         </Button>
         <Button
           onClick={() => props.handleMoveFiles(props.selectedFiles)}
-          data-tid="confirmMoveFiles"
+          data-tid="confirmMoveFilesTID"
           color="primary"
         >
           {i18n.t('core:moveFilesButton')}
         </Button>
         <Button
           onClick={() => props.handleCopyFiles(props.selectedFiles)}
-          data-tid="confirmCopyFiles"
+          data-tid="confirmCopyFilesTID"
           color="primary"
         >
           {i18n.t('core:copyFilesButton')}
