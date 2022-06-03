@@ -17,6 +17,7 @@
  */
 
 import { Progress } from 'aws-sdk/clients/s3';
+import { Simulate } from 'react-dom/test-utils';
 import { actions as AppActions } from './app';
 import {
   extractFileName,
@@ -36,6 +37,7 @@ import TaggingActions from './tagging-actions';
 import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
+import error = Simulate.error;
 
 const actions = {
   extractContent: (
@@ -182,7 +184,7 @@ const actions = {
     files: Array<File>,
     targetPath: string,
     onUploadProgress?: (progress: Progress, response: any) => void
-  ) => (dispatch: (actions: Object) => void) => {
+  ) => (dispatch: (action) => any) => {
     if (AppConfig.isElectron || AppConfig.isCordovaiOS) {
       const arrFiles = [];
       for (let i = 0; i < files.length; i += 1) {
@@ -191,6 +193,28 @@ const actions = {
       return dispatch(
         actions.uploadFiles(arrFiles, targetPath, onUploadProgress)
       );
+    }
+    if (
+      AppConfig.isWeb &&
+      PlatformIO.haveObjectStoreSupport() &&
+      files.some(file => file.size > 5 * 1024 * 1024)
+    ) {
+      const fsEntries = [];
+      for (let i = 0; i < files.length; i += 1) {
+        let filePath =
+          normalizePath(targetPath) +
+          PlatformIO.getDirSeparator() +
+          decodeURIComponent(files[i].name);
+        if (filePath.startsWith('\\') || filePath.startsWith('/')) {
+          filePath = filePath.substr(1);
+        }
+        fsEntries.push(
+          dispatch(
+            actions.uploadFileByMultiPart(files[i], filePath, onUploadProgress)
+          )
+        );
+      }
+      return Promise.resolve(Promise.all(fsEntries));
     }
 
     return new Promise(async resolve => {
@@ -214,9 +238,9 @@ const actions = {
         reader.onload = async (event: any) => {
           await readerLoaded(event, inx, filePath);
         };
-        // if (AppConfig.isWeb && PlatformIO.isMinio()) {
-        //   reader.readAsBinaryString(file);
-        // } else {
+        /* if (AppConfig.isWeb && PlatformIO.isMinio()) {
+          reader.readAsBinaryString(file);
+        } else { */
         reader.readAsArrayBuffer(file);
         // }
         /* else if (AppConfig.isCordova) {
@@ -243,7 +267,7 @@ const actions = {
           try {
             const fsEntry: TS.FileSystemEntry = await PlatformIO.saveBinaryFilePromise(
               fileTargetPath,
-              result,
+              new Uint8Array(result),
               true,
               onUploadProgress
             );
@@ -258,9 +282,9 @@ const actions = {
               fsEntries.push(fsEntry);
               // dispatch(AppActions.reflectCreateEntry(fileTargetPath, true));
             }
-          } catch (error) {
+          } catch (err) {
             console.error(
-              'Uploading ' + fileTargetPath + ' failed with ' + error
+              'Uploading ' + fileTargetPath + ' failed with ' + err
             );
             dispatch(
               AppActions.showNotification(
@@ -282,7 +306,48 @@ const actions = {
       }
     });
   },
-
+  /**
+   * @param file
+   * @param fileTargetPath
+   * @param onUploadProgress
+   * return Promise<TS.FileSystemEntry>
+   */
+  uploadFileByMultiPart: (
+    file,
+    fileTargetPath,
+    onUploadProgress?: (progress: Progress, response) => void
+  ) => (dispatch: (action) => void) =>
+    PlatformIO.uploadFileByMultiPart(
+      fileTargetPath,
+      file,
+      false,
+      onUploadProgress
+    )
+      .then(fsEntry => {
+        if (fsEntry) {
+          dispatch(
+            AppActions.showNotification(
+              'File ' + fileTargetPath + ' successfully imported.',
+              'default',
+              true
+            )
+          );
+          return fsEntry;
+          // dispatch(AppActions.reflectCreateEntry(fileTargetPath, true));
+        }
+        console.error('Uploading ' + fileTargetPath + ' failed with ' + error);
+        dispatch(
+          AppActions.showNotification(
+            'Importing file ' + fileTargetPath + ' failed.',
+            'error',
+            true
+          )
+        );
+        return undefined;
+      })
+      .catch(err =>
+        dispatch(AppActions.showNotification(err.message, 'default', true))
+      ),
   /**
    * use with Electron only!
    * @param paths
