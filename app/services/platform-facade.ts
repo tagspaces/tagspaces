@@ -46,6 +46,7 @@ import {
   platformGetFileContentPromise,
   platformSaveTextFilePromise,
   platformSaveBinaryFilePromise,
+  platformUploadFileByMultiPart,
   platformCreateDirectoryPromise,
   platformCopyFilePromise,
   platformRenameFilePromise,
@@ -375,6 +376,28 @@ export default class PlatformFacade {
     return platformSaveBinaryFilePromise(
       filePath,
       content,
+      overwrite,
+      onUploadProgress
+    ).then(succeeded => {
+      PlatformFacade.deignoreByWatcher(filePath);
+      return succeeded;
+    });
+  };
+
+  static uploadFileByMultiPart = (
+    filePath: string,
+    file: File,
+    overwrite: boolean,
+    onUploadProgress?: (
+      progress: any, // ManagedUpload.Progress,
+      response: any // AWS.Response<AWS.S3.PutObjectOutput, AWS.AWSError>
+    ) => void
+  ): Promise<TS.FileSystemEntry> => {
+    PlatformFacade.ignoreByWatcher(filePath);
+
+    return platformUploadFileByMultiPart(
+      filePath,
+      file,
       overwrite,
       onUploadProgress
     ).then(succeeded => {
