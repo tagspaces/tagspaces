@@ -243,7 +243,7 @@ const actions = {
           try {
             const fsEntry: TS.FileSystemEntry = await PlatformIO.saveBinaryFilePromise(
               fileTargetPath,
-              result,
+              new Uint8Array(result),
               true,
               onUploadProgress
             );
