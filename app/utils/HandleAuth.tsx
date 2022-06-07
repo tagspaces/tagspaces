@@ -40,6 +40,7 @@ const HandleAuth = (props: Props) => {
 
         // authData.signInUserSession.idToken.payload['custom:tenant']
         // TODO AuthState.SignedIn is called twice after login
+        // https://github.com/aws-amplify/amplify-js/issues/6330#issuecomment-779495321
         // @ts-ignore
         if (username.current !== authData.username && queries) {
           fetchTenant()
@@ -59,7 +60,7 @@ const HandleAuth = (props: Props) => {
         username.current = authData.username;
         // @ts-ignore
         props.loggedIn(authData);
-      } else if (nextAuthState === AuthState.SignedOut) {
+      } else { // if (nextAuthState === AuthState.SignedOut) {
         username.current = undefined;
         props.loggedIn(undefined);
       }
