@@ -26,6 +26,7 @@ import i18n from '-/services/i18n';
 import {
   actions as AppActions,
   getCurrentDirectoryColor,
+  getIsMetaLoaded,
   getPageEntries,
   getSearchResultCount,
   isLoading
@@ -42,6 +43,8 @@ import {
 import PlatformIO from '-/services/platform-facade';
 
 interface Props {
+  isMetaLoaded: boolean;
+  setIsMetaLoaded: (isLoaded: boolean) => void;
   className: string;
   style;
   theme: any;
@@ -106,21 +109,22 @@ function GridPagination(props: Props) {
   const [, forceUpdate] = useReducer(x => x + 1, 0);
 
   useEffect(() => {
-    // if (PlatformIO.haveObjectStoreSupport()) {
-    PlatformIO.listMetaDirectoryPromise(props.currentDirectoryPath)
-      .then(meta => {
-        const dirEntriesPromises = getDirEntriesPromises();
-        const fileEntriesPromises = getFileEntriesPromises(meta);
-        const thumbs = getThumbs(meta);
-        updateEntries([
-          ...dirEntriesPromises,
-          ...fileEntriesPromises,
-          ...thumbs
-        ]);
-        return true;
-      })
-      .catch(ex => console.error(ex));
-    // }
+    if (!props.isMetaLoaded) {
+      PlatformIO.listMetaDirectoryPromise(props.currentDirectoryPath)
+        .then(meta => {
+          props.setIsMetaLoaded(true);
+          const dirEntriesPromises = getDirEntriesPromises();
+          const fileEntriesPromises = getFileEntriesPromises(meta);
+          const thumbs = getThumbs(meta);
+          updateEntries([
+            ...dirEntriesPromises,
+            ...fileEntriesPromises,
+            ...thumbs
+          ]);
+          return true;
+        })
+        .catch(ex => console.error(ex));
+    }
   }, [page.current, files]);
 
   useEffect(() => {
@@ -352,14 +356,16 @@ function mapStateToProps(state) {
     isAppLoading: isLoading(state),
     currentDirectoryColor: getCurrentDirectoryColor(state),
     searchResultCount: getSearchResultCount(state),
-    pageEntries: getPageEntries(state)
+    pageEntries: getPageEntries(state),
+    isMetaLoaded: getIsMetaLoaded(state)
   };
 }
 
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
-      updateCurrentDirEntries: AppActions.updateCurrentDirEntries
+      updateCurrentDirEntries: AppActions.updateCurrentDirEntries,
+      setIsMetaLoaded: AppActions.setIsMetaLoaded
     },
     dispatch
   );

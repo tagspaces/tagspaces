@@ -88,6 +88,7 @@ export const types = {
   SET_CURRENLOCATIONID: 'APP/SET_CURRENLOCATIONID',
   SET_CURRENDIRECTORYCOLOR: 'APP/SET_CURRENDIRECTORYCOLOR',
   SET_CURRENDIRECTORYPERSPECTIVE: 'APP/SET_CURRENDIRECTORYPERSPECTIVE',
+  SET_IS_META_LOADED: 'APP/SET_IS_META_LOADED',
   SET_LAST_SELECTED_ENTRY: 'APP/SET_LAST_SELECTED_ENTRY',
   SET_SELECTED_ENTRIES: 'APP/SET_SELECTED_ENTRIES',
   SET_FILEDRAGGED: 'APP/SET_FILEDRAGGED',
@@ -345,6 +346,12 @@ export default (state: any = initialState, action: any) => {
     case types.SET_CURRENDIRECTORYPERSPECTIVE: {
       if (state.currentDirectoryPerspective !== action.perspective) {
         return { ...state, currentDirectoryPerspective: action.perspective };
+      }
+      return state;
+    }
+    case types.SET_IS_META_LOADED: {
+      if (state.isMetaLoaded !== action.isMetaLoaded) {
+        return { ...state, isMetaLoaded: action.isMetaLoaded };
       }
       return state;
     }
@@ -1027,6 +1034,7 @@ export const actions = {
           dispatch(
             actions.setCurrentDirectoryPerspective(PerspectiveIDs.UNSPECIFIED)
           );
+          dispatch(actions.setIsMetaLoaded(false));
           prepareDirectoryContent(
             results,
             directoryPath,
@@ -1201,6 +1209,10 @@ export const actions = {
   setCurrentDirectoryPerspective: (perspective: string) => ({
     type: types.SET_CURRENDIRECTORYPERSPECTIVE,
     perspective
+  }),
+  setIsMetaLoaded: (isMetaLoaded: boolean) => ({
+    type: types.SET_IS_META_LOADED,
+    isMetaLoaded
   }),
   setSelectedEntries: (selectedEntries: Array<TS.FileSystemEntry>) => (
     dispatch: (action) => void
@@ -2249,6 +2261,7 @@ export const actions = {
 
 // Selectors
 export const currentUser = (state: any) => state.app.user;
+export const getIsMetaLoaded = (state: any) => state.app.isMetaLoaded;
 export const getDirectoryContent = (state: any) =>
   state.app.currentDirectoryEntries;
 export const getPageEntries = (state: any) => state.app.pageEntries;
