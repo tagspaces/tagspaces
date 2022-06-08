@@ -1,7 +1,9 @@
 /* eslint global-require: off */
-const execa = require('execa');
+//const execa = require('execa');
+const fs = require('fs-extra');
+const path = require('path');
 
-function getElectronVersion() {
+/*function getElectronVersion() {
   const { stdout } = execa.sync('electron', ['--version'], {
     env: { ELECTRON_RUN_AS_NODE: true }
   });
@@ -12,6 +14,10 @@ function getElectronVersion() {
       .trim()
       .slice(1)
   );
+}*/
+function getElectronVersion() {
+  const packageJson = fs.readFileSync(path.join(__dirname, 'package.json'), 'utf8');
+  return JSON.parse(packageJson).devDependencies['electron'];
 }
 
 const developmentEnvironments = ['development', 'test'];
