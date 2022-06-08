@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useEffect, useRef, useReducer } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -106,7 +106,7 @@ function GridPagination(props: Props) {
   } else {
     pageFiles = files;
   }
-  const [, forceUpdate] = useReducer(x => x + 1, 0);
+  // const [, forceUpdate] = useReducer(x => x + 1, 0);
 
   useEffect(() => {
     if (!props.isMetaLoaded) {
@@ -125,7 +125,7 @@ function GridPagination(props: Props) {
         })
         .catch(ex => console.error(ex));
     }
-  }, [page.current, files]);
+  }, [page.current, files, props.isMetaLoaded]);
 
   useEffect(() => {
     page.current = currentPage;
@@ -243,7 +243,8 @@ function GridPagination(props: Props) {
   const handleChange = (event, value) => {
     // setPage(value);
     page.current = value;
-    forceUpdate();
+    props.setIsMetaLoaded(false);
+    // forceUpdate();
     if (containerEl && containerEl.current) {
       containerEl.current.scrollTop = 0;
     }
@@ -372,6 +373,7 @@ function mapActionCreatorsToProps(dispatch) {
 }
 
 const areEqual = (prevProp: Props, nextProp: Props) =>
+  nextProp.isMetaLoaded === prevProp.isMetaLoaded &&
   JSON.stringify(nextProp.files) === JSON.stringify(prevProp.files) &&
   JSON.stringify(nextProp.directories) ===
     JSON.stringify(prevProp.directories) &&
