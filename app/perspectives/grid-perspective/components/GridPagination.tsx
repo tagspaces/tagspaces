@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useEffect, useRef, useReducer } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -26,6 +26,7 @@ import i18n from '-/services/i18n';
 import {
   actions as AppActions,
   getCurrentDirectoryColor,
+  getIsMetaLoaded,
   getPageEntries,
   getSearchResultCount,
   isLoading
@@ -42,6 +43,8 @@ import {
 import PlatformIO from '-/services/platform-facade';
 
 interface Props {
+  isMetaLoaded: boolean;
+  setIsMetaLoaded: (isLoaded: boolean) => void;
   className: string;
   style;
   theme: any;
@@ -103,25 +106,26 @@ function GridPagination(props: Props) {
   } else {
     pageFiles = files;
   }
-  const [, forceUpdate] = useReducer(x => x + 1, 0);
+  // const [, forceUpdate] = useReducer(x => x + 1, 0);
 
   useEffect(() => {
-    // if (PlatformIO.haveObjectStoreSupport()) {
-    PlatformIO.listMetaDirectoryPromise(props.currentDirectoryPath)
-      .then(meta => {
-        const dirEntriesPromises = getDirEntriesPromises();
-        const fileEntriesPromises = getFileEntriesPromises(meta);
-        const thumbs = getThumbs(meta);
-        updateEntries([
-          ...dirEntriesPromises,
-          ...fileEntriesPromises,
-          ...thumbs
-        ]);
-        return true;
-      })
-      .catch(ex => console.error(ex));
-    // }
-  }, [page.current, files]);
+    if (!props.isMetaLoaded) {
+      PlatformIO.listMetaDirectoryPromise(props.currentDirectoryPath)
+        .then(meta => {
+          props.setIsMetaLoaded(true);
+          const dirEntriesPromises = getDirEntriesPromises();
+          const fileEntriesPromises = getFileEntriesPromises(meta);
+          const thumbs = getThumbs(meta);
+          updateEntries([
+            ...dirEntriesPromises,
+            ...fileEntriesPromises,
+            ...thumbs
+          ]);
+          return true;
+        })
+        .catch(ex => console.error(ex));
+    }
+  }, [page.current, files, props.isMetaLoaded]);
 
   useEffect(() => {
     page.current = currentPage;
@@ -239,7 +243,8 @@ function GridPagination(props: Props) {
   const handleChange = (event, value) => {
     // setPage(value);
     page.current = value;
-    forceUpdate();
+    props.setIsMetaLoaded(false);
+    // forceUpdate();
     if (containerEl && containerEl.current) {
       containerEl.current.scrollTop = 0;
     }
@@ -352,20 +357,23 @@ function mapStateToProps(state) {
     isAppLoading: isLoading(state),
     currentDirectoryColor: getCurrentDirectoryColor(state),
     searchResultCount: getSearchResultCount(state),
-    pageEntries: getPageEntries(state)
+    pageEntries: getPageEntries(state),
+    isMetaLoaded: getIsMetaLoaded(state)
   };
 }
 
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
-      updateCurrentDirEntries: AppActions.updateCurrentDirEntries
+      updateCurrentDirEntries: AppActions.updateCurrentDirEntries,
+      setIsMetaLoaded: AppActions.setIsMetaLoaded
     },
     dispatch
   );
 }
 
 const areEqual = (prevProp: Props, nextProp: Props) =>
+  nextProp.isMetaLoaded === prevProp.isMetaLoaded &&
   JSON.stringify(nextProp.files) === JSON.stringify(prevProp.files) &&
   JSON.stringify(nextProp.directories) ===
     JSON.stringify(prevProp.directories) &&
