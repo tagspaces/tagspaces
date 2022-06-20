@@ -59,7 +59,8 @@ import {
   platformOpenUrl,
   platformSelectFileDialog,
   platformSelectDirectoryDialog,
-  platformShareFiles
+  platformShareFiles,
+  platformCreateIndex
 } from '@tagspaces/tagspaces-platforms/platform-io';
 import { Pro } from '../pro';
 import { TS } from '-/tagspaces.namespace';
@@ -443,4 +444,20 @@ export default class PlatformFacade {
   static shareFiles = (files: Array<string>): void => {
     platformShareFiles(files);
   };
+
+  static createIndex(
+    param: any,
+    mode: string[],
+    ignorePatterns: Array<string>,
+    listDirectoryPromise,
+    loadTextFilePromise
+  ) {
+    return platformCreateIndex(
+      param,
+      mode,
+      ignorePatterns,
+      listDirectoryPromise,
+      loadTextFilePromise
+    );
+  }
 }

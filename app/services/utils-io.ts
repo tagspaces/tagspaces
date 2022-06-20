@@ -22,7 +22,6 @@ import DOMPurify from 'dompurify';
 import {
   loadIndex,
   enhanceDirectoryIndex,
-  createIndex,
   getMetaIndexFilePath
 } from '@tagspaces/tagspaces-platforms/indexer';
 import { saveAs } from 'file-saver';
@@ -593,7 +592,7 @@ export function createDirectoryIndex(
   if (extractText) {
     mode.push('extractTextContent');
   }
-  return createIndex(
+  return PlatformIO.createIndex(
     param,
     mode,
     ignorePatterns,
