@@ -60,7 +60,7 @@ beforeEach(async () => {
       }
     }*/
 
-    await closeWelcomePlaywright();
+    // await closeWelcomePlaywright();
 
     if (global.isWeb) {
       await global.client.evaluate(() => {

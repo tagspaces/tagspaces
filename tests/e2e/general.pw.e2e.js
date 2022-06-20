@@ -105,6 +105,7 @@ describe('TST51 - Perspective Grid', () => {
   });
 
   it('TST0503 - Create TEXT file [electron,web]', async () => {
+    await takeScreenshot('TST0503 start test');
     await createNewDirectory();
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
