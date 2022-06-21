@@ -399,7 +399,10 @@ export const actions = {
                   : entry.path;
                 // eslint-disable-next-line no-param-reassign
                 entry.thumbPath = PlatformIO.getURLforPath(
-                  getThumbFileLocationForFile(thumbPath, '/')
+                  getThumbFileLocationForFile(
+                    thumbPath,
+                    PlatformIO.getDirSeparator()
+                  )
                 );
               }
             });
