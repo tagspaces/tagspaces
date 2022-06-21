@@ -112,6 +112,7 @@ describe('TST51 - Perspective Grid', () => {
       true,
       2000
     );
+    await takeScreenshot('TST0503 create folder');
     await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
 
     // create new file
