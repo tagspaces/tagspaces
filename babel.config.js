@@ -16,7 +16,10 @@ const path = require('path');
   );
 }*/
 function getElectronVersion() {
-  const packageJson = fs.readFileSync(path.join(__dirname, 'package.json'), 'utf8');
+  const packageJson = fs.readFileSync(
+    path.join(__dirname, 'package.json'),
+    'utf8'
+  );
   return JSON.parse(packageJson).devDependencies['electron'];
 }
 

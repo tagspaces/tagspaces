@@ -7,6 +7,7 @@ import {
   isDisplayed,
   selectorFile,
   setInputKeys,
+  takeScreenshot,
   waitForNotification
 } from './general.helpers';
 
@@ -109,6 +110,7 @@ export async function createPwLocation(
       await global.client.check('[data-tid=locationIsDefault] input');
     }
     await global.client.click('[data-tid=confirmLocationCreation]');
+    await takeScreenshot('after createPwLocation');
   }
 }
 

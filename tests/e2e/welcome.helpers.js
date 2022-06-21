@@ -35,6 +35,6 @@ export async function closeWelcomePlaywright() {
       await global.client.click('[data-tid=agreeLicenseDialog]');
     }
   } catch (e) {
-    console.log('closeOnboardingDialog not exist');
+    //console.log('closeOnboardingDialog not exist');
   }
 }
