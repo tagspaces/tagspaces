@@ -146,7 +146,11 @@ function GridPagination(props: Props) {
     meta: Array<any>
   ): TS.FileSystemEntry => {
     const thumbEntry = { ...entry };
-    let thumbPath = getThumbFileLocationForFile(entry.path, '/', false);
+    let thumbPath = getThumbFileLocationForFile(
+      entry.path,
+      PlatformIO.getDirSeparator(),
+      false
+    );
     if (meta.some(metaFile => thumbPath.endsWith(metaFile.path))) {
       thumbEntry.thumbPath = thumbPath;
       if (PlatformIO.haveObjectStoreSupport()) {
