@@ -63,9 +63,7 @@ interface Props {
   searchResultCount: number;
   onContextMenu: (event: React.MouseEvent<HTMLDivElement>) => void;
   onClick: (event: React.MouseEvent<HTMLDivElement>) => void;
-  updateCurrentDirEntries: (
-    dirEntries: TS.FileSystemEntry[]
-  ) => void;
+  updateCurrentDirEntries: (dirEntries: TS.FileSystemEntry[]) => void;
   // eslint-disable-next-line react/no-unused-prop-types
   settings; // cache only
   // eslint-disable-next-line react/no-unused-prop-types
@@ -175,7 +173,7 @@ function GridPagination(props: Props) {
 
   const getDirEntriesPromises = (): Promise<any>[] =>
     directories.map(async entry => {
-      if (entry.path.endsWith(AppConfig.metaFolder)) {
+      if (entry.name === AppConfig.metaFolder) {
         return Promise.resolve({ [entry.path]: undefined });
       }
       const meta = await PlatformIO.listMetaDirectoryPromise(entry.path);
@@ -189,7 +187,10 @@ function GridPagination(props: Props) {
       );
       let enhancedEntry;
       if (meta.some(metaFile => thumbDirPath.endsWith(metaFile.path))) {
-        enhancedEntry = { ...entry, thumbPath: thumbDirPath };
+        const thumbPath = PlatformIO.haveObjectStoreSupport()
+          ? PlatformIO.getURLforPath(thumbDirPath)
+          : thumbDirPath;
+        enhancedEntry = { ...entry, thumbPath };
       }
       if (
         meta.some(metaFile => metaFilePath.endsWith(metaFile.path)) &&
