@@ -49,9 +49,8 @@ import {
   extractParentDirectoryPath,
   extractTagsAsObjects,
   normalizePath,
-  extractContainingDirectoryPath,
-  getLocationPath
-} from '-/utils/paths';
+  extractContainingDirectoryPath
+} from '@tagspaces/tagspaces-platforms/paths';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import { actions as LocationIndexActions } from './location-index';
@@ -1552,7 +1551,10 @@ export const actions = {
           dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
           dispatch(actions.changeLocation(location));
           dispatch(
-            actions.loadDirectoryContent(getLocationPath(location), false)
+            actions.loadDirectoryContent(
+              PlatformIO.getLocationPath(location),
+              false
+            )
           );
           return true;
         })
@@ -1571,12 +1573,14 @@ export const actions = {
       PlatformIO.disableObjectStoreSupport();
       dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
       dispatch(actions.changeLocation(location));
-      dispatch(actions.loadDirectoryContent(getLocationPath(location), true));
+      dispatch(
+        actions.loadDirectoryContent(PlatformIO.getLocationPath(location), true)
+      );
       if (Pro && Pro.Watcher && location.watchForChanges) {
         const perspective = getCurrentDirectoryPerspective(getState());
         const depth = perspective === PerspectiveIDs.KANBAN ? 3 : 1;
         Pro.Watcher.watchFolder(
-          getLocationPath(location),
+          PlatformIO.getLocationPath(location),
           dispatch,
           actions,
           depth
@@ -2154,7 +2158,7 @@ export const actions = {
             }
           } else {
             // local files case
-            const locationPath = getLocationPath(targetLocation);
+            const locationPath = PlatformIO.getLocationPath(targetLocation);
             if (directoryPath && directoryPath.length > 0) {
               if (
                 directoryPath.includes('../') ||
@@ -2289,7 +2293,7 @@ export const getCurrentLocationPath = (state: any) => {
         state.app.currentLocationId &&
         location.uuid === state.app.currentLocationId
       ) {
-        return getLocationPath(location);
+        return PlatformIO.getLocationPath(location);
       }
     }
   }

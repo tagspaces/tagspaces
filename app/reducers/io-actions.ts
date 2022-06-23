@@ -23,7 +23,7 @@ import {
   getMetaFileLocationForFile,
   getThumbFileLocationForFile,
   normalizePath
-} from '-/utils/paths';
+} from '@tagspaces/tagspaces-platforms/paths';
 import {
   copyFilesPromise,
   enhanceEntry,

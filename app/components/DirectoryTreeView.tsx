@@ -24,7 +24,6 @@ import DragItemTypes from '-/components/DragItemTypes';
 import AppConfig from '-/config';
 import PlatformIO from '-/services/platform-facade';
 import TargetTableMoveFileBox from '-/components/TargetTableMoveFileBox';
-import { getLocationPath } from '-/utils/paths';
 import { TS } from '-/tagspaces.namespace';
 
 interface Props {
@@ -202,7 +201,7 @@ const DirectoryTreeView = forwardRef(
         uuid: location.uuid,
         name: location.name,
         type: location.type,
-        path: getLocationPath(location)
+        path: PlatformIO.getLocationPath(location)
       };
       getDirectoriesTree(subFolder)
         .then(children => {

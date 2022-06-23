@@ -24,9 +24,8 @@ import {
   extractFileExtension,
   extractFileName,
   extractTagsAsObjects,
-  getLocationPath,
   getThumbFileLocationForFile
-} from '-/utils/paths';
+} from '@tagspaces/tagspaces-platforms/paths';
 import Search from '../services/search';
 import { actions as AppActions } from './app';
 import i18n from '../services/i18n';
@@ -230,7 +229,7 @@ export const actions = {
           .then(() => {
             dispatch(
               actions.createDirectoryIndex(
-                getLocationPath(location),
+                PlatformIO.getLocationPath(location),
                 location.fullTextIndex,
                 isCurrentLocation,
                 location.uuid
@@ -245,7 +244,7 @@ export const actions = {
         PlatformIO.disableObjectStoreSupport();
         dispatch(
           actions.createDirectoryIndex(
-            getLocationPath(location),
+            PlatformIO.getLocationPath(location),
             location.fullTextIndex,
             isCurrentLocation,
             location.uuid
@@ -263,7 +262,7 @@ export const actions = {
     const allLocations = getLocations(state);
 
     const promises = allLocations.map((location: TS.Location) => {
-      const nextPath = getLocationPath(location);
+      const nextPath = PlatformIO.getLocationPath(location);
       return (
         createDirectoryIndex(
           { path: nextPath, location: location.uuid },
@@ -354,7 +353,7 @@ export const actions = {
             GlobalSearch.index.length < 1 ||
             indexAge > maxIndexAge))
       ) {
-        const currentPath = getLocationPath(currentLocation);
+        const currentPath = PlatformIO.getLocationPath(currentLocation);
         console.log('Start creating index for : ' + currentPath);
         GlobalSearch.index = await createDirectoryIndex(
           {
@@ -377,7 +376,7 @@ export const actions = {
       ) {
         GlobalSearch.index = await loadIndex(
           {
-            path: getLocationPath(currentLocation),
+            path: PlatformIO.getLocationPath(currentLocation),
             locationID: currentLocation.uuid,
             ...(isCloudLocation && { bucketName: currentLocation.bucketName })
           },
@@ -462,7 +461,7 @@ export const actions = {
             maxSearchResultReached = true;
             return Promise.resolve();
           }
-          const nextPath = getLocationPath(location);
+          const nextPath = PlatformIO.getLocationPath(location);
           let directoryIndex = [];
           let indexExist = false;
           const isCloudLocation = location.type === locationType.TYPE_CLOUD;

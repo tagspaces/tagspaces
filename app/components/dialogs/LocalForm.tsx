@@ -27,7 +27,7 @@ import FolderIcon from '@material-ui/icons/Folder';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Grid from '@material-ui/core/Grid';
 import i18n from '-/services/i18n';
-import { extractDirectoryName } from '-/utils/paths';
+import { extractDirectoryName } from '@tagspaces/tagspaces-platforms/paths';
 import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/config';
 

@@ -23,10 +23,10 @@ import { GlobalHotKeys } from 'react-hotkeys';
 import { withStyles } from '@material-ui/core/styles';
 import {
   isObj,
-  isVisibleOnScreen,
   locationType,
   sortByCriteria
 } from '@tagspaces/tagspaces-platforms/misc';
+import { isVisibleOnScreen } from '-/utils/dom';
 import { actions as TagLibraryActions } from '-/reducers/taglibrary';
 import {
   getSupportedFileTypes,
@@ -61,7 +61,6 @@ import SortingMenu from '-/perspectives/grid-perspective/components/SortingMenu'
 import GridOptionsMenu from '-/perspectives/grid-perspective/components/GridOptionsMenu';
 import { getLocation, getLocations } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-facade';
-import { getLocationPath } from '-/utils/paths';
 import GridPagination from '-/perspectives/grid-perspective/components/GridPagination';
 import GridSettingsDialog from '-/perspectives/grid-perspective/components/GridSettingsDialog';
 import AddTagToTagGroupDialog from '-/components/dialogs/AddTagToTagGroupDialog';
@@ -715,7 +714,7 @@ function GridPerspective(props: Props) {
   );
   const sortedFiles = sortedDirContentMemoized.filter(entry => entry.isFile);
   const locationPath = props.currentLocation
-    ? getLocationPath(props.currentLocation)
+    ? PlatformIO.getLocationPath(props.currentLocation)
     : '';
   let entryWidth = 200;
   if (entrySize === 'small') {

@@ -53,7 +53,6 @@ import LocalForm from './LocalForm';
 import useFirstRender from '-/utils/useFirstRender';
 import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
-import { getLocationPath } from '-/utils/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import InfoIcon from '-/components/InfoIcon';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
@@ -61,6 +60,7 @@ import { actions as LocationActions } from '-/reducers/locations';
 import { getPersistTagsInSidecarFile } from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
+import PlatformIO from "-/services/platform-facade";
 
 const styles: any = theme => ({
   formControl: {
@@ -779,7 +779,7 @@ function CreateEditLocationDialog(props: Props) {
                 onClose={() => setIgnorePatternDialogOpen(false)}
                 ignorePatternPaths={ignorePatternPaths}
                 setIgnorePatternPaths={setIgnorePatternPaths}
-                locationPath={getLocationPath(location)}
+                locationPath={PlatformIO.getLocationPath(location)}
               />
             )}
           </>

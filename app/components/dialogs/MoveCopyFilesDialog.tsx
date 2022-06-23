@@ -40,7 +40,7 @@ import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/config';
 import IOActions from '-/reducers/io-actions';
-import { extractFileName } from '-/utils/paths';
+import { extractFileName } from '@tagspaces/tagspaces-platforms/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {

@@ -1,6 +1,6 @@
-import { TS } from '-/tagspaces.namespace';
-import { getLocationPath } from '-/utils/paths';
 import { locationType } from '@tagspaces/tagspaces-platforms/misc';
+import { TS } from '-/tagspaces.namespace';
+import PlatformIO from "-/services/platform-facade";
 
 export function isVisibleOnScreen(element: any) {
   const rectangle = element.getBoundingClientRect();
@@ -52,7 +52,7 @@ export function updateHistory(
 
     if (currentLocation && currentLocation.uuid) {
       urlParams += 'tslid=' + encodeURIComponent(currentLocation.uuid);
-      currentLocationPath = getLocationPath(currentLocation);
+      currentLocationPath = PlatformIO.getLocationPath(currentLocation);
     }
 
     if (currentDirectory && currentDirectory.length > 0) {

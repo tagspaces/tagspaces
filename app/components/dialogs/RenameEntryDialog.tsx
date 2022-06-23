@@ -32,7 +32,7 @@ import {
   extractContainingDirectoryPath,
   extractDirectoryName,
   extractFileName
-} from '-/utils/paths';
+} from '@tagspaces/tagspaces-platforms/paths';
 import { actions as AppActions, getLastSelectedEntry } from '-/reducers/app';
 import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/config';

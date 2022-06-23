@@ -25,6 +25,7 @@ import {
   platformEnableWebdavSupport,
   platformDisableWebdavSupport,
   platformWatchDirectory,
+  platformGetLocationPath,
   platformSetLanguage,
   platformIsWorkerAvailable,
   platformSetZoomFactorElectron,
@@ -86,6 +87,9 @@ export default class PlatformFacade {
   static isMinio = (): boolean => platformIsMinio();
 
   static getDirSeparator = (): string => platformGetDirSeparator();
+
+  static getLocationPath = (location: TS.Location): string =>
+    platformGetLocationPath(location);
 
   static setLanguage = (language: string): void => {
     platformSetLanguage(language);

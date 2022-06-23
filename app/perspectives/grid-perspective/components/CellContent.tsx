@@ -31,7 +31,7 @@ import {
   formatFileSize,
   formatDateTime
 } from '@tagspaces/tagspaces-platforms/misc';
-import { extractTagsAsObjects, extractTitle } from '-/utils/paths';
+import { extractTagsAsObjects, extractTitle } from '@tagspaces/tagspaces-platforms/paths';
 import {
   findBackgroundColorForFolder,
   findColorForEntry,

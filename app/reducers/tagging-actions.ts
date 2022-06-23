@@ -30,7 +30,7 @@ import {
   extractTags,
   extractTitle,
   extractContainingDirectoryPath
-} from '-/utils/paths';
+} from '@tagspaces/tagspaces-platforms/paths';
 import {
   loadMetaDataPromise,
   saveMetaDataPromise,

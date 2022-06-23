@@ -25,7 +25,7 @@ import {
   normalizePath,
   getMetaDirectoryPath,
   encodeFileName
-} from '-/utils/paths';
+} from '@tagspaces/tagspaces-platforms/paths';
 import AppConfig from '../config';
 import PlatformIO from '../services/platform-facade';
 import { Pro } from '../pro';

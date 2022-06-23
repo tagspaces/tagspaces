@@ -50,7 +50,7 @@ import {
   getThumbFileLocationForDirectory,
   normalizePath,
   generateSharingLink
-} from '-/utils/paths';
+} from '@tagspaces/tagspaces-platforms/paths';
 import PlatformIO from '-/services/platform-facade';
 import { actions as AppActions, getSelectedEntries } from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';

@@ -43,7 +43,7 @@ import {
   extractDirectoryName,
   getThumbFileLocationForFile,
   getThumbFileLocationForDirectory
-} from '-/utils/paths';
+} from '@tagspaces/tagspaces-platforms/paths';
 import i18n from '../services/i18n';
 import versionMeta from '../version.json';
 import { OpenedEntry, actions as AppActions } from '-/reducers/app';

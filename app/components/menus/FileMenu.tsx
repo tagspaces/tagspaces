@@ -49,7 +49,7 @@ import {
   extractParentDirectoryPath,
   extractTags,
   generateSharingLink
-} from '-/utils/paths';
+} from '@tagspaces/tagspaces-platforms/paths';
 import { TS } from '-/tagspaces.namespace';
 // import AddIcon from '@material-ui/icons/Add';
 

@@ -59,7 +59,7 @@ import {
   extractFileName,
   extractDirectoryName,
   generateSharingLink
-} from '-/utils/paths';
+} from '@tagspaces/tagspaces-platforms/paths';
 import AppConfig from '../config';
 import { Pro } from '../pro';
 import PlatformIO from '../services/platform-facade';

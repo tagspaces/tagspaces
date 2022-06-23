@@ -62,7 +62,7 @@ import {
   baseName,
   extractFileName,
   extractDirectoryName
-} from '-/utils/paths';
+} from '@tagspaces/tagspaces-platforms/paths';
 // import { buffer } from '@tagspaces/tagspaces-platforms/misc';
 import {
   actions as SettingsActions,

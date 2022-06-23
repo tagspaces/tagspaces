@@ -29,7 +29,7 @@ import { getEmptyImage } from 'react-dnd-html5-backend';
 import DragItemTypes from './DragItemTypes';
 import TagContainer from './TagContainer';
 import { TS } from '-/tagspaces.namespace';
-import { extractTags } from '-/utils/paths';
+import { extractTags } from '@tagspaces/tagspaces-platforms/paths';
 import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/config';
 

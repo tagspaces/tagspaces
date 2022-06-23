@@ -49,7 +49,6 @@ import DirectoryTreeView, {
 } from '-/components/DirectoryTreeView';
 import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import LocationContextMenu from '-/components/menus/LocationContextMenu';
-import { getLocationPath } from '-/utils/paths';
 import { TS } from '-/tagspaces.namespace';
 
 interface Props {
@@ -105,7 +104,7 @@ function LocationView(props: Props) {
   const handleLocationClick = () => {
     if (location.uuid === props.currentLocationId) {
       // the same location click
-      props.loadDirectoryContent(getLocationPath(location), true); // false);
+      props.loadDirectoryContent(PlatformIO.getLocationPath(location), true); // false);
     } else {
       // this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
       props.setSelectedEntries([]);
@@ -209,7 +208,7 @@ function LocationView(props: Props) {
     }
   };
 
-  let locationNameTitle = getLocationPath(location);
+  let locationNameTitle = PlatformIO.getLocationPath(location);
   if (isCloudLocation && location.bucketName) {
     if (location.endpointURL) {
       locationNameTitle = location.endpointURL + ' - ' + location.bucketName;
@@ -307,7 +306,7 @@ function LocationView(props: Props) {
           <TargetMoveFileBox
             accepts={[DragItemTypes.FILE]}
             onDrop={handleFileMoveDrop}
-            path={getLocationPath(location)}
+            path={PlatformIO.getLocationPath(location)}
             location={location}
           >
             {LocationTitle}

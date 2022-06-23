@@ -39,7 +39,7 @@ import {
   getMetaFileLocationForDir,
   getMetaFileLocationForFile,
   getThumbFileLocationForFile
-} from '-/utils/paths';
+} from '@tagspaces/tagspaces-platforms/paths';
 import PlatformIO from '-/services/platform-facade';
 
 interface Props {

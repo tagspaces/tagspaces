@@ -35,9 +35,9 @@ import { actions as LocationActions } from '-/reducers/locations';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import i18n from '-/services/i18n';
 import { actions as AppActions } from '-/reducers/app';
-import { getLocationPath } from '-/utils/paths';
 import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
+import PlatformIO from "-/services/platform-facade";
 
 interface Props {
   setEditLocationDialogOpened: (open: boolean) => void;
@@ -87,7 +87,7 @@ function LocationContextMenu(props: Props) {
 
   const showInFileManager = () => {
     props.setLocationDirectoryContextMenuAnchorEl(null);
-    props.showInFileManager(getLocationPath(props.selectedLocation));
+    props.showInFileManager(PlatformIO.getLocationPath(props.selectedLocation));
     // props.openDirectory(selectedLocation.path || selectedLocation.paths[0]);
   };
 
