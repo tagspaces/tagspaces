@@ -27,7 +27,6 @@ import {
   actions as AppActions,
   getCurrentDirectoryColor,
   getIsMetaLoaded,
-  getPageEntries,
   getSearchResultCount,
   isLoading
 } from '-/reducers/app';
@@ -38,6 +37,7 @@ import { getMetaForEntry } from '-/services/utils-io';
 import {
   getMetaFileLocationForDir,
   getMetaFileLocationForFile,
+  getThumbFileLocationForDirectory,
   getThumbFileLocationForFile
 } from '-/utils/paths';
 import PlatformIO from '-/services/platform-facade';
@@ -52,7 +52,7 @@ interface Props {
   directories: Array<TS.FileSystemEntry>;
   showDirectories: boolean;
   files: Array<TS.FileSystemEntry>;
-  pageEntries: Array<TS.FileSystemEntry>;
+  // pageEntries: Array<TS.FileSystemEntry>;
   renderCell: (entry: TS.FileSystemEntry, isLast?: boolean) => void;
   currentDirectoryColor: string;
   isAppLoading: boolean;
@@ -63,10 +63,7 @@ interface Props {
   searchResultCount: number;
   onContextMenu: (event: React.MouseEvent<HTMLDivElement>) => void;
   onClick: (event: React.MouseEvent<HTMLDivElement>) => void;
-  updateCurrentDirEntries: (
-    dirEntries: TS.FileSystemEntry[],
-    pageEntries: any
-  ) => void;
+  updateCurrentDirEntries: (dirEntries: TS.FileSystemEntry[]) => void;
   // eslint-disable-next-line react/no-unused-prop-types
   settings; // cache only
   // eslint-disable-next-line react/no-unused-prop-types
@@ -85,8 +82,7 @@ function GridPagination(props: Props) {
     currentDirectoryColor,
     gridPageLimit,
     currentPage,
-    files,
-    pageEntries
+    files
   } = props;
   const allFilesCount = files.length;
   const showPagination = gridPageLimit && files.length > gridPageLimit;
@@ -97,6 +93,7 @@ function GridPagination(props: Props) {
   const containerEl = useRef(null);
   // const entriesUpdated = useRef([]);
   const page = useRef<number>(currentPage);
+  const metaLoadedLock = useRef<boolean>(false);
   // const [page, setPage] = useState(currentPage);
 
   let pageFiles;
@@ -109,9 +106,11 @@ function GridPagination(props: Props) {
   // const [, forceUpdate] = useReducer(x => x + 1, 0);
 
   useEffect(() => {
-    if (!props.isMetaLoaded) {
+    if (!props.isMetaLoaded && !metaLoadedLock.current) {
+      metaLoadedLock.current = true;
       PlatformIO.listMetaDirectoryPromise(props.currentDirectoryPath)
         .then(meta => {
+          metaLoadedLock.current = false;
           props.setIsMetaLoaded(true);
           const dirEntriesPromises = getDirEntriesPromises();
           const fileEntriesPromises = getFileEntriesPromises(meta);
@@ -125,7 +124,7 @@ function GridPagination(props: Props) {
         })
         .catch(ex => console.error(ex));
     }
-  }, [page.current, files, props.isMetaLoaded]);
+  }, [page.current, props.isMetaLoaded, files]);
 
   useEffect(() => {
     page.current = currentPage;
@@ -173,21 +172,36 @@ function GridPagination(props: Props) {
     );
 
   const getDirEntriesPromises = (): Promise<any>[] =>
-    directories.map(entry => {
+    directories.map(async entry => {
+      if (entry.name === AppConfig.metaFolder) {
+        return Promise.resolve({ [entry.path]: undefined });
+      }
+      const meta = await PlatformIO.listMetaDirectoryPromise(entry.path);
       const metaFilePath = getMetaFileLocationForDir(
         entry.path,
         PlatformIO.getDirSeparator()
       );
+      const thumbDirPath = getThumbFileLocationForDirectory(
+        entry.path,
+        PlatformIO.getDirSeparator()
+      );
+      let enhancedEntry;
+      if (meta.some(metaFile => thumbDirPath.endsWith(metaFile.path))) {
+        const thumbPath = PlatformIO.haveObjectStoreSupport()
+          ? PlatformIO.getURLforPath(thumbDirPath)
+          : thumbDirPath;
+        enhancedEntry = { ...entry, thumbPath };
+      }
       if (
-        // meta.some(metaFile => metaFilePath.endsWith(metaFile)) &&
-        !checkEntryExist(entry.path) &&
+        meta.some(metaFile => metaFilePath.endsWith(metaFile.path)) &&
+        // !checkEntryExist(entry.path) &&
         entry.path.indexOf(
           AppConfig.metaFolder + PlatformIO.getDirSeparator()
         ) === -1
       ) {
-        return getMetaForEntry(entry, metaFilePath);
+        return getMetaForEntry(enhancedEntry || entry, metaFilePath);
       }
-      return Promise.resolve({ [entry.path]: undefined });
+      return Promise.resolve({ [entry.path]: enhancedEntry });
     });
 
   const getFileEntriesPromises = (meta: Array<any>): Promise<any>[] =>
@@ -199,7 +213,7 @@ function GridPagination(props: Props) {
       if (
         // check if metaFilePath exist in listMetaDirectory content
         meta.some(metaFile => metaFilePath.endsWith(metaFile.path)) &&
-        !checkEntryExist(entry.path) &&
+        // !checkEntryExist(entry.path) &&
         entry.path.indexOf(
           AppConfig.metaFolder + PlatformIO.getDirSeparator()
         ) === -1
@@ -213,7 +227,7 @@ function GridPagination(props: Props) {
     const catchHandler = error => undefined;
     Promise.all(metaPromises.map(promise => promise.catch(catchHandler)))
       .then(entries => {
-        updateCurrentDirEntries(entries.filter(entry => entry !== undefined));
+        updateCurrentDirEntries(entries); // .filter(entry => entry !== undefined));
         // entriesUpdated.current = entries;
         return true;
       })
@@ -233,16 +247,16 @@ function GridPagination(props: Props) {
       }
     });
     if (entriesEnhanced.length > 0) {
-      props.updateCurrentDirEntries(entriesEnhanced, entries);
+      props.updateCurrentDirEntries(entriesEnhanced);
     }
   };
 
-  const checkEntryExist = path => {
+  /* const checkEntryExist = path => {
     const index = pageEntries.findIndex(
       objUpdated => Object.keys(objUpdated).indexOf(path) > -1
     );
     return index > -1;
-  };
+  }; */
 
   const handleChange = (event, value) => {
     // setPage(value);
@@ -361,7 +375,7 @@ function mapStateToProps(state) {
     isAppLoading: isLoading(state),
     currentDirectoryColor: getCurrentDirectoryColor(state),
     searchResultCount: getSearchResultCount(state),
-    pageEntries: getPageEntries(state),
+    // pageEntries: getPageEntries(state),
     isMetaLoaded: getIsMetaLoaded(state)
   };
 }
