@@ -18,7 +18,7 @@ interface Props {
   addLocations: (locations: Array<TS.Location>, override: boolean) => void;
   importTagGroups: (tagGroups: Array<TS.TagGroup>, replace: boolean) => void;
 }
-const HandleAuth = (props: Props) => {
+function HandleAuth(props: Props) {
   const username = useRef(undefined);
 
   React.useEffect(() => {
@@ -116,7 +116,7 @@ const HandleAuth = (props: Props) => {
       });
 
   return null;
-};
+}
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(

@@ -41,7 +41,7 @@ interface Props {
   createDirectory: (directoryPath: string) => void;
 }
 
-const CreateDirectoryDialog = (props: Props) => {
+function CreateDirectoryDialog(props: Props) {
   const [inputError, setInputError] = useState(false);
   const isFirstRun = useRef(true);
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
@@ -149,7 +149,7 @@ const CreateDirectoryDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(

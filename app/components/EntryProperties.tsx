@@ -45,12 +45,13 @@ import {
   withLeaflet
 } from 'react-leaflet';
 import { IconButton } from '@material-ui/core';
+import { formatFileSize } from '@tagspaces/tagspaces-platforms/misc';
 import TagDropContainer from './TagDropContainer';
 import ColorPickerDialog from './dialogs/ColorPickerDialog';
 import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
 import i18n from '../services/i18n';
 import { enhanceOpenedEntry, convertMarkDown } from '-/services/utils-io';
-import { formatFileSize, parseGeoLocation } from '-/utils/misc';
+import { parseGeoLocation } from '-/utils/geo';
 import {
   extractContainingDirectoryPath,
   getThumbFileLocationForFile,
@@ -180,7 +181,7 @@ interface Props {
   tileServer: TS.MapTileServer;
 }
 
-const EntryProperties = (props: Props) => {
+function EntryProperties(props: Props) {
   // const EntryProperties = React.memo((props: Props) => {
   const fileNameRef = useRef<HTMLInputElement>(null);
   const sharingLinkRef = useRef<HTMLInputElement>(null);
@@ -790,7 +791,7 @@ const EntryProperties = (props: Props) => {
           </div>
           <FormControl fullWidth={true} className={classes.formControl}>
             {editDescription !== undefined ? (
-              <React.Fragment>
+              <>
                 <TextField
                   multiline
                   inputRef={fileDescriptionRef}
@@ -822,7 +823,7 @@ const EntryProperties = (props: Props) => {
                     [Link text](http://...)
                   </span>
                 </Typography>
-              </React.Fragment>
+              </>
             ) : (
               <Typography
                 style={{
@@ -1261,7 +1262,7 @@ const EntryProperties = (props: Props) => {
       )}
     </div>
   );
-};
+}
 
 export default withLeaflet(
   withStyles(styles, { withTheme: true })(EntryProperties)

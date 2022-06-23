@@ -21,7 +21,7 @@ import {
   formatDateTime4Tag,
   extend,
   prepareTagGroupForExport
-} from '-/utils/misc';
+} from '@tagspaces/tagspaces-platforms/misc';
 import { parseNewTags, saveAsTextFile } from '-/services/utils-io';
 import versionMeta from '../version.json';
 import defaultTagLibrary from './taglibrary-default';
@@ -708,7 +708,7 @@ export const actions = {
     fromIndex,
     toIndex
   }),
-  importTagGroups: (entries: Array<TS.TagGroup>, replace: boolean = false) => ({
+  importTagGroups: (entries: Array<TS.TagGroup>, replace = false) => ({
     type: types.IMPORT_TAGGROUP,
     entries,
     replace

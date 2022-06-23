@@ -27,7 +27,10 @@ import SelectedIcon from '@material-ui/icons/CheckBox';
 import UnSelectedIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { formatFileSize, formatDateTime } from '-/utils/misc';
+import {
+  formatFileSize,
+  formatDateTime
+} from '@tagspaces/tagspaces-platforms/misc';
 import { extractTagsAsObjects, extractTitle } from '-/utils/paths';
 import {
   findBackgroundColorForFolder,
@@ -74,7 +77,7 @@ interface Props {
   reorderTags: boolean;
 }
 
-const CellContent = (props: Props) => {
+function CellContent(props: Props) {
   const {
     selected,
     fsEntry,
@@ -265,7 +268,7 @@ const CellContent = (props: Props) => {
         title={fsEntry.isIgnored && i18n.t('core:ignoredFolder')}
         style={{
           opacity: fsEntry.isIgnored ? 0.3 : 1,
-          backgroundColor: backgroundColor,
+          backgroundColor,
           borderRadius: 5
         }}
       >
@@ -462,7 +465,7 @@ const CellContent = (props: Props) => {
       {gridCell}
     </Paper>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

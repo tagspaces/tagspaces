@@ -44,7 +44,7 @@ interface Props {
   deleteTileServer: (uuid: string) => void;
 }
 
-const MapTileServerDialog = (props: Props) => {
+function MapTileServerDialog(props: Props) {
   const name = useRef<string>(props.tileServer.name);
   const serverURL = useRef<string>(props.tileServer.serverURL);
   const serverInfo = useRef<string>(props.tileServer.serverInfo);
@@ -206,7 +206,7 @@ const MapTileServerDialog = (props: Props) => {
       {renderActions()}
     </Dialog>
   );
-};
+}
 
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(

@@ -31,7 +31,7 @@ interface Props {
   defaultBackgroundColor?: string;
 }
 
-const TagsPreview = (props: Props) => {
+function TagsPreview(props: Props) {
   const { tags, allTags, defaultBackgroundColor, defaultTextColor } = props;
   if (!tags || tags.length < 1) {
     return <></>;
@@ -75,7 +75,7 @@ const TagsPreview = (props: Props) => {
       </span>
     </Tooltip>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

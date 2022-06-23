@@ -26,6 +26,10 @@ import {
 } from '@tagspaces/tagspaces-platforms/indexer';
 import { saveAs } from 'file-saver';
 import micromatch from 'micromatch';
+import {
+  locationType,
+  prepareTagForExport
+} from '@tagspaces/tagspaces-platforms/misc';
 import PlatformIO from './platform-facade';
 import AppConfig from '../config';
 import {
@@ -45,7 +49,6 @@ import versionMeta from '../version.json';
 import { OpenedEntry, actions as AppActions } from '-/reducers/app';
 import { getLocation } from '-/reducers/locations';
 import { TS } from '-/tagspaces.namespace';
-import { locationType, prepareTagForExport } from '-/utils/misc';
 import {
   getThumbnailURLPromise,
   supportedContainers,

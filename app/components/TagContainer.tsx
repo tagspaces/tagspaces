@@ -23,9 +23,10 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import PlaceIcon from '@material-ui/icons/Place';
 import DateIcon from '@material-ui/icons/DateRange';
 import RemoveTagIcon from '@material-ui/icons/Close';
+import { formatDateTime } from '@tagspaces/tagspaces-platforms/misc';
 import { getAllTags, getTagColors } from '-/reducers/taglibrary';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
-import { isGeoTag, formatDateTime } from '-/utils/misc';
+import { isGeoTag } from '-/utils/geo';
 import { isDateTimeTag, convertToDateTime, convertToDate } from '-/utils/dates';
 import { TS } from '-/tagspaces.namespace';
 
@@ -52,7 +53,7 @@ interface Props {
   reorderTags?: boolean;
 }
 
-const TagContainer = (props: Props) => {
+function TagContainer(props: Props) {
   const {
     tag,
     deleteIcon,
@@ -241,7 +242,7 @@ const TagContainer = (props: Props) => {
       </Button>
     </div>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

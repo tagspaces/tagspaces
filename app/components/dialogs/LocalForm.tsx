@@ -44,7 +44,7 @@ interface Props {
   newuuid: string;
 }
 
-const LocalForm = (props: Props) => {
+function LocalForm(props: Props) {
   const {
     errorTextPath,
     errorTextName,
@@ -149,6 +149,6 @@ const LocalForm = (props: Props) => {
       )}
     </Grid>
   );
-};
+}
 
 export default LocalForm;

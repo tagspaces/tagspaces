@@ -21,6 +21,12 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { GlobalHotKeys } from 'react-hotkeys';
 import { withStyles } from '@material-ui/core/styles';
+import {
+  isObj,
+  isVisibleOnScreen,
+  locationType,
+  sortByCriteria
+} from '@tagspaces/tagspaces-platforms/misc';
 import { actions as TagLibraryActions } from '-/reducers/taglibrary';
 import {
   getSupportedFileTypes,
@@ -28,12 +34,6 @@ import {
   getKeyBindingObject
   // isDesktopMode
 } from '-/reducers/settings';
-import {
-  isObj,
-  isVisibleOnScreen,
-  locationType,
-  sortByCriteria
-} from '-/utils/misc';
 import styles from '-/perspectives/grid-perspective/components/styles.css';
 import FileMenu from '-/components/menus/FileMenu';
 import DirectoryMenu from '-/components/menus/DirectoryMenu';
@@ -108,7 +108,7 @@ interface Props {
   toggleDeleteMultipleEntriesDialog: () => void;
 }
 
-const GridPerspective = (props: Props) => {
+function GridPerspective(props: Props) {
   let settings = JSON.parse(localStorage.getItem(defaultSettings.settingsKey)); // loading settings
 
   const [mouseX, setMouseX] = useState<number>(undefined);
@@ -912,7 +912,7 @@ const GridPerspective = (props: Props) => {
       )}
     </div>
   );
-};
+}
 
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(

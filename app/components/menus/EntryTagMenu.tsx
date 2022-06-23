@@ -48,7 +48,7 @@ interface Props {
   isReadOnlyMode?: boolean;
 }
 
-const EntryTagMenu = (props: Props) => {
+function EntryTagMenu(props: Props) {
   const [isDeleteTagDialogOpened, setIsDeleteTagDialogOpened] = useState(false);
 
   function showEditTagDialog() {
@@ -162,7 +162,7 @@ const EntryTagMenu = (props: Props) => {
       />
     </div>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

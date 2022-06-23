@@ -55,7 +55,7 @@ interface Props {
   ) => void;
 }
 
-const TagMenu = (props: Props) => {
+function TagMenu(props: Props) {
   const {
     isReadOnlyMode,
     selectedTag,
@@ -74,7 +74,7 @@ const TagMenu = (props: Props) => {
     if (selectedTag) {
       setSearchQuery({
         tagsAND: [selectedTag],
-        maxSearchResults: maxSearchResults
+        maxSearchResults
       });
     }
     onClose();
@@ -135,7 +135,7 @@ const TagMenu = (props: Props) => {
       </Menu>
     </div>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

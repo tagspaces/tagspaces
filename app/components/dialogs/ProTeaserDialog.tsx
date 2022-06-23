@@ -298,7 +298,7 @@ slidesEN['persistentThumbs'] = {
   pictureHeight: 200
 };
 
-const Slide = (props: SlideProps) => {
+function Slide(props: SlideProps) {
   const {
     title,
     description,
@@ -365,7 +365,7 @@ const Slide = (props: SlideProps) => {
             loop
             controls
             style={{ width: '100%', marginBottom: 15 }}
-          ></video>
+          />
         )}
         <br />
         {ctaTitle && openURL && (
@@ -382,9 +382,9 @@ const Slide = (props: SlideProps) => {
       </div>
     </div>
   );
-};
+}
 
-const ProTeaserDialog = (props: Props) => {
+function ProTeaserDialog(props: Props) {
   const [activeStep, setActiveStep] = useState<number>(0);
 
   const maxSteps = 8;
@@ -466,6 +466,6 @@ const ProTeaserDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 export default withMobileDialog()(ProTeaserDialog);

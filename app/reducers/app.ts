@@ -17,6 +17,16 @@
  */
 
 import { v1 as uuidv1 } from 'uuid';
+import {
+  formatDateTime4Tag,
+  locationType
+} from '@tagspaces/tagspaces-platforms/misc';
+import {
+  getURLParameter,
+  clearURLParam,
+  updateHistory,
+  clearAllURLParams
+} from '-/utils/dom';
 import { getLocation, getDefaultLocationId } from './locations';
 import PlatformIO from '../services/platform-facade';
 import AppConfig from '../config';
@@ -42,14 +52,6 @@ import {
   extractContainingDirectoryPath,
   getLocationPath
 } from '-/utils/paths';
-import {
-  formatDateTime4Tag,
-  getURLParameter,
-  clearURLParam,
-  updateHistory,
-  clearAllURLParams,
-  locationType
-} from '-/utils/misc';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import { actions as LocationIndexActions } from './location-index';
@@ -1055,7 +1057,7 @@ export const actions = {
   loadDirectoryContent: (
     directoryPath: string,
     generateThumbnails: boolean,
-    loadDirMeta: boolean = false
+    loadDirMeta = false
   ) => async (dispatch: (actions: Object) => void, getState: () => any) => {
     // console.debug('loadDirectoryContent:' + directoryPath);
     window.walkCanceled = false;

@@ -17,6 +17,7 @@
  */
 
 // import EXIF from 'exif-js';
+import { base64ToArrayBuffer } from '@tagspaces/tagspaces-platforms/misc';
 import {
   extractFileExtension,
   extractContainingDirectoryPath,
@@ -25,7 +26,6 @@ import {
   getMetaDirectoryPath,
   encodeFileName
 } from '-/utils/paths';
-import { base64ToArrayBuffer } from '-/utils/misc';
 import AppConfig from '../config';
 import PlatformIO from '../services/platform-facade';
 import { Pro } from '../pro';

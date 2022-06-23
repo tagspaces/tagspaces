@@ -26,7 +26,7 @@ interface Props {
   style: any;
 }
 
-const PerspectiveManager = (props: Props) => {
+function PerspectiveManager(props: Props) {
   const { classes } = props;
 
   return (
@@ -35,6 +35,6 @@ const PerspectiveManager = (props: Props) => {
     </div>
   );
   //         <Button onClick={() => history.push('/login')}>Login</Button>
-};
+}
 
 export default withStyles(styles)(PerspectiveManager);

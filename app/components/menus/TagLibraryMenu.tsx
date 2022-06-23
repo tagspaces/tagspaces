@@ -52,7 +52,7 @@ interface Props {
   refreshTagsFromLocation: () => void;
 }
 
-const TagLibraryMenu = (props: Props) => {
+function TagLibraryMenu(props: Props) {
   const fileInput = useRef<HTMLInputElement>(null);
   const tagGroupsImported = useRef([]);
   // const [tagGroups, setTagGroups] = useState(null);
@@ -194,6 +194,6 @@ const TagLibraryMenu = (props: Props) => {
       />
     </div>
   );
-};
+}
 
 export default TagLibraryMenu;

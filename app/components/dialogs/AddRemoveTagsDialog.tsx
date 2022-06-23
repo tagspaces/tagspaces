@@ -59,7 +59,7 @@ function PaperComponent(props: PaperProps) {
   );
 }
 
-const AddRemoveTagsDialog = (props: Props) => {
+function AddRemoveTagsDialog(props: Props) {
   const [newlyAddedTags, setNewlyAddedTags] = useState<Array<TS.Tag>>([]);
 
   const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
@@ -193,6 +193,6 @@ const AddRemoveTagsDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 export default withMobileDialog()(AddRemoveTagsDialog);

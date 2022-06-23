@@ -49,7 +49,7 @@ interface Props {
 //   return true;
 // }
 
-const LicenseDialog = (props: Props) => {
+function LicenseDialog(props: Props) {
   const { fullScreen, open, onClose } = props;
   // let licenseElement;
   // function printLicense() {
@@ -102,6 +102,6 @@ const LicenseDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 export default withMobileDialog()(LicenseDialog);

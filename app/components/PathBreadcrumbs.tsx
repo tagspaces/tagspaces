@@ -198,7 +198,7 @@ export default function PathBreadcrumbs(props: Props) {
                 '/'
               )}
               deleteIcon={<ExpandMoreIcon />}
-              //onClick={handleClick}
+              // onClick={handleClick}
               onDelete={openDirectoryMenu}
               onClick={openDirectoryMenu}
               onContextMenu={openDirectoryMenu}

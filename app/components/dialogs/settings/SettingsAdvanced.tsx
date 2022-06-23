@@ -78,7 +78,7 @@ interface Props {
   setGeoTaggingFormat: (geoTaggingFormat: string) => void;
 }
 
-const SettingsAdvanced = (props: Props) => {
+function SettingsAdvanced(props: Props) {
   const [tileServerDialog, setTileServerDialog] = useState<any>(undefined);
 
   const handleEditTileServerClick = (
@@ -263,7 +263,7 @@ const SettingsAdvanced = (props: Props) => {
       )}
     </div>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

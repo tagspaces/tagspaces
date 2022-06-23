@@ -26,7 +26,7 @@ interface Props {
   taggroup: TS.TagGroup;
 }
 
-const TagGroupContainer = (props: Props) => {
+function TagGroupContainer(props: Props) {
   const ref = useRef<HTMLDivElement>(null);
 
   const [collectedProps, drop] = useDrop({
@@ -76,6 +76,6 @@ const TagGroupContainer = (props: Props) => {
       {props.children}
     </div>
   );
-};
+}
 
 export default TagGroupContainer;

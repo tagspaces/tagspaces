@@ -70,7 +70,7 @@ interface Props {
   keyBindings: Array<any>;
 }
 
-const MainToolbar = (props: Props) => {
+function MainToolbar(props: Props) {
   const {
     classes,
     selectedEntries,
@@ -266,7 +266,7 @@ const MainToolbar = (props: Props) => {
       </Tooltip>
     </Toolbar>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

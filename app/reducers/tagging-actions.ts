@@ -17,6 +17,7 @@
  */
 import OpenLocationCode from 'open-location-code-typescript';
 import mgrs from 'mgrs';
+import { formatDateTime4Tag } from '@tagspaces/tagspaces-platforms/misc';
 import i18n from '../services/i18n';
 import {
   actions as AppActions,
@@ -35,7 +36,7 @@ import {
   saveMetaDataPromise,
   generateFileName
 } from '-/services/utils-io';
-import { formatDateTime4Tag, isGeoTag } from '-/utils/misc';
+import { isGeoTag } from '-/utils/geo';
 import PlatformIO from '../services/platform-facade';
 import { Pro } from '../pro';
 import GlobalSearch from '../services/search-index';

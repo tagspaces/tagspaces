@@ -64,7 +64,7 @@ interface Props {
   onClose: () => void;
 }
 
-const OnboardingDialog = (props: Props) => {
+function OnboardingDialog(props: Props) {
   const [activeStep, setActiveStep] = useState(0);
   const { fullScreen, open, onClose } = props;
 
@@ -309,7 +309,7 @@ const OnboardingDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

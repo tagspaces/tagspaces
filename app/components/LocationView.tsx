@@ -31,6 +31,7 @@ import LocationIcon from '@material-ui/icons/WorkOutline';
 import CloudLocationIcon from '@material-ui/icons/CloudQueue';
 import DefaultLocationIcon from '@material-ui/icons/Highlight';
 import { Progress } from 'aws-sdk/clients/s3';
+import { locationType } from '@tagspaces/tagspaces-platforms/misc';
 import styles from './SidePanels.css';
 import {
   actions as AppActions,
@@ -50,7 +51,6 @@ import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import LocationContextMenu from '-/components/menus/LocationContextMenu';
 import { getLocationPath } from '-/utils/paths';
 import { TS } from '-/tagspaces.namespace';
-import { locationType } from '-/utils/misc';
 
 interface Props {
   classes: any;
@@ -84,7 +84,7 @@ interface Props {
   changeLocation: (loc: TS.Location) => void;
 }
 
-const LocationView = (props: Props) => {
+function LocationView(props: Props) {
   const directoryTreeRef = useRef<DirectoryTreeViewRef>(null);
   const [
     locationDirectoryContextMenuAnchorEl,
@@ -343,7 +343,7 @@ const LocationView = (props: Props) => {
       />
     </>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

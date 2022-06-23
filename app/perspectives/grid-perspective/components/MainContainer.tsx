@@ -21,6 +21,12 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { GlobalHotKeys } from 'react-hotkeys';
 import { withStyles } from '@material-ui/core/styles';
+import {
+  isObj,
+  isVisibleOnScreen,
+  locationType,
+  sortByCriteria
+} from '@tagspaces/tagspaces-platforms/misc';
 import { actions as TagLibraryActions } from '-/reducers/taglibrary';
 import {
   getSupportedFileTypes,
@@ -28,12 +34,6 @@ import {
   getKeyBindingObject
   // isDesktopMode
 } from '-/reducers/settings';
-import {
-  isObj,
-  isVisibleOnScreen,
-  locationType,
-  sortByCriteria
-} from '-/utils/misc';
 import styles from './styles.css';
 import FileMenu from '-/components/menus/FileMenu';
 import DirectoryMenu from '-/components/menus/DirectoryMenu';

@@ -19,13 +19,13 @@
 import React, { useState, forwardRef, useImperativeHandle, Ref } from 'react';
 import Table from 'rc-table';
 import FolderIcon from '@material-ui/icons/FolderOpen';
+import { locationType } from '@tagspaces/tagspaces-platforms/misc';
 import DragItemTypes from '-/components/DragItemTypes';
 import AppConfig from '-/config';
 import PlatformIO from '-/services/platform-facade';
 import TargetTableMoveFileBox from '-/components/TargetTableMoveFileBox';
 import { getLocationPath } from '-/utils/paths';
 import { TS } from '-/tagspaces.namespace';
-import { locationType } from '-/utils/misc';
 
 interface Props {
   classes: any;
@@ -59,19 +59,17 @@ const DirectoryTreeView = forwardRef(
         if (isExpanded && data[location.uuid] !== undefined) {
           setData(undefined); // comment this to use cached data after expand
           setExpanded(false);
-        } else {
-          if (location.type === locationType.TYPE_CLOUD) {
-            PlatformIO.enableObjectStoreSupport(location)
-              .then(() => {
-                loadSubDirectories(location);
-              })
-              .catch(error => {
-                console.log('enableObjectStoreSupport', error);
-              });
-          } else if (location.type === locationType.TYPE_LOCAL) {
-            PlatformIO.disableObjectStoreSupport();
-            loadSubDirectories(location);
-          }
+        } else if (location.type === locationType.TYPE_CLOUD) {
+          PlatformIO.enableObjectStoreSupport(location)
+            .then(() => {
+              loadSubDirectories(location);
+            })
+            .catch(error => {
+              console.log('enableObjectStoreSupport', error);
+            });
+        } else if (location.type === locationType.TYPE_LOCAL) {
+          PlatformIO.disableObjectStoreSupport();
+          loadSubDirectories(location);
         }
       },
       closeLocation() {
@@ -80,18 +78,18 @@ const DirectoryTreeView = forwardRef(
           setExpanded(false);
         }
       }
-      /*removeLocation() {
+      /* removeLocation() {
         setData(undefined);
-      }*/
+      } */
     }));
 
-    /*const changeLocation = (location: Location) => {
+    /* const changeLocation = (location: Location) => {
     const dirsTree = data;
     dirsTree[location.uuid] = undefined;
     setData(dirsTree);
-  };*/
+  }; */
 
-    /*const renderBodyCell = props => (
+    /* const renderBodyCell = props => (
     <td {...props}>
       <TargetMoveFileBox
         // @ts-ignore
@@ -101,7 +99,7 @@ const DirectoryTreeView = forwardRef(
         {props.children}
       </TargetMoveFileBox>
     </td>
-  );*/
+  ); */
 
     const renderBodyRow = props => {
       if (
@@ -117,9 +115,8 @@ const DirectoryTreeView = forwardRef(
             {...props}
           />
         );
-      } else {
-        return <tr {...props} />;
       }
+      return <tr {...props} />;
     };
 
     const renderNameColumnAction = field => {
@@ -230,7 +227,7 @@ const DirectoryTreeView = forwardRef(
             }
           } else if (location.path === undefined) {
             // if is Location
-            //setData({});
+            // setData({});
           }
           return true;
         })
@@ -252,9 +249,9 @@ const DirectoryTreeView = forwardRef(
       children?: Array<SubFolder>;
     };
 
-    const getDirectoriesTree = (subFolder: SubFolder) => {
+    const getDirectoriesTree = (subFolder: SubFolder) =>
       // const { settings } = getState();
-      return new Promise((resolve, reject) => {
+      new Promise((resolve, reject) => {
         PlatformIO.listDirectoryPromise(subFolder.path, [])
           .then(dirEntries => {
             if (dirEntries !== undefined) {
@@ -301,7 +298,6 @@ const DirectoryTreeView = forwardRef(
             reject();
           });
       });
-    };
 
     /**
      * https://codereview.stackexchange.com/questions/47932/recursion-vs-iteration-of-tree-structure
@@ -397,7 +393,7 @@ const DirectoryTreeView = forwardRef(
           data={data[props.location.uuid]}
           columns={columns}
           indentSize={20}
-          expandable={{ onExpand: onExpand }}
+          expandable={{ onExpand }}
           // expandIcon={this.CustomExpandIcon}
           // expandIconAsCell
           // @ts-ignore

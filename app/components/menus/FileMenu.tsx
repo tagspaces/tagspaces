@@ -33,6 +33,7 @@ import ImageIcon from '@material-ui/icons/Image';
 import ShareIcon from '@material-ui/icons/Link';
 import RenameFile from '@material-ui/icons/FormatTextdirectionLToR';
 import DeleteForever from '@material-ui/icons/DeleteForever';
+import { formatDateTime4Tag } from '@tagspaces/tagspaces-platforms/misc';
 import i18n from '-/services/i18n';
 import AppConfig from '-/config';
 import PlatformIO from '-/services/platform-facade';
@@ -50,7 +51,6 @@ import {
   generateSharingLink
 } from '-/utils/paths';
 import { TS } from '-/tagspaces.namespace';
-import { formatDateTime4Tag } from '-/utils/misc';
 // import AddIcon from '@material-ui/icons/Add';
 
 interface Props {
@@ -79,7 +79,7 @@ interface Props {
   locations: Array<TS.Location>;
 }
 
-const FileMenu = (props: Props) => {
+function FileMenu(props: Props) {
   const {
     selectedEntries,
     isReadOnlyMode,
@@ -407,6 +407,6 @@ const FileMenu = (props: Props) => {
       </Menu>
     </div>
   );
-};
+}
 
 export default FileMenu;

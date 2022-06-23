@@ -56,7 +56,7 @@ interface Props {
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
 
-const StoredSearches = (props: Props) => {
+function StoredSearches(props: Props) {
   const [saveSearchDialogOpened, setSaveSearchDialogOpened] = useState<
     TS.SearchQuery
   >(undefined);
@@ -276,7 +276,7 @@ const StoredSearches = (props: Props) => {
       )}
     </div>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

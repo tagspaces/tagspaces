@@ -17,6 +17,7 @@
  */
 
 import { loadIndex, hasIndex } from '@tagspaces/tagspaces-platforms/indexer';
+import { locationType } from '@tagspaces/tagspaces-platforms/misc';
 import { getLocation, getLocationByPath, getLocations } from './locations';
 import { createDirectoryIndex } from '-/services/utils-io';
 import {
@@ -33,7 +34,6 @@ import PlatformIO from '../services/platform-facade';
 import GlobalSearch from '../services/search-index';
 import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
-import { locationType } from '-/utils/misc';
 
 export const types = {
   SET_SEARCH_QUERY: 'SET_SEARCH_QUERY',
@@ -187,7 +187,7 @@ export const actions = {
   createDirectoryIndex: (
     directoryPath: string,
     extractText: boolean,
-    isCurrentLocation: boolean = true,
+    isCurrentLocation = true,
     locationID: string = undefined,
     ignorePatterns: Array<string> = []
   ) => (dispatch: (actions: Object) => void, getState: () => any) => {
@@ -254,7 +254,7 @@ export const actions = {
       }
     }
   },
-  createLocationsIndexes: (extractText: boolean = true) => (
+  createLocationsIndexes: (extractText = true) => (
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {

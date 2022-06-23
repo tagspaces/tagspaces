@@ -50,7 +50,7 @@ interface Props {
   saveTagInLocation: boolean;
 }
 
-const EditTagGroupDialog = (props: Props) => {
+function EditTagGroupDialog(props: Props) {
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
   const [displayTextColorPicker, setDisplayTextColorPicker] = useState<boolean>(
     false
@@ -306,7 +306,7 @@ const EditTagGroupDialog = (props: Props) => {
       {renderActions()}
     </Dialog>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

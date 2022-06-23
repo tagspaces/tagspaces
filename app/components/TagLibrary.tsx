@@ -103,7 +103,7 @@ interface Props {
   reduceHeightBy: number;
 }
 
-const TagLibrary = (props: Props) => {
+function TagLibrary(props: Props) {
   const tagContainerRef = useRef<HTMLSpanElement>(null);
   const [
     tagGroupMenuAnchorEl,
@@ -465,7 +465,7 @@ const TagLibrary = (props: Props) => {
       </div>
     </div>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

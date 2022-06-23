@@ -42,7 +42,7 @@ interface Props {
   clearUploadDialog: () => void;
 }
 
-const FileUploadDialog = (props: Props) => {
+function FileUploadDialog(props: Props) {
   const { open = false, onClose } = props;
 
   function LinearProgressWithLabel(prop) {
@@ -172,7 +172,7 @@ const FileUploadDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

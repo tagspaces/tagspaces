@@ -79,7 +79,7 @@ interface Props {
   children: Object;
   currentTheme: string;
 }
-const App = (props: Props) => {
+function App(props: Props) {
   let theme;
   switch (props.currentTheme) {
     case 'light': {
@@ -101,7 +101,7 @@ const App = (props: Props) => {
       <I18nextProvider i18n={i18n}>{props.children}</I18nextProvider>
     </ThemeProvider>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

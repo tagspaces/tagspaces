@@ -49,6 +49,8 @@ import FormControl from '@material-ui/core/FormControl';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import { mergeWithExtractedTags } from '@tagspaces/tagspaces-platforms/misc';
+import HelpIcon from '@material-ui/icons/Help';
 import TagsSelect from './TagsSelect';
 import { actions as AppActions, getDirectoryPath } from '../reducers/app';
 import {
@@ -66,16 +68,11 @@ import i18n from '../services/i18n';
 import { FileTypeGroups } from '-/services/search';
 import { Pro } from '../pro';
 import { formatDateTime, extractTimePeriod } from '-/utils/dates';
-import {
-  mergeWithExtractedTags,
-  parseGeoLocation,
-  parseLatLon
-} from '-/utils/misc';
+import { parseGeoLocation, parseLatLon } from '-/utils/geo';
 import AppConfig from '-/config';
 import { getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
-import HelpIcon from '@material-ui/icons/Help';
 import Links from '-/links';
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
@@ -103,7 +100,7 @@ interface Props {
 
 const useStyles = makeStyles<Theme, StyleProps>(styles);
 
-const SearchPopover = (props: Props) => {
+function SearchPopover(props: Props) {
   // @ts-ignore
   const classes: PropsClasses = useStyles({} as StyleProps);
   const [, forceUpdate] = useReducer(x => x + 1, 0);
@@ -151,7 +148,7 @@ const SearchPopover = (props: Props) => {
 
   useEffect(() => {
     textQuery.current = props.searchQuery.textQuery;
-    /*if (props.searchQuery.fileTypes) {
+    /* if (props.searchQuery.fileTypes) {
       fileTypes.current = props.searchQuery.fileTypes;
     }
     if (props.searchQuery.searchBoxing) {
@@ -174,7 +171,7 @@ const SearchPopover = (props: Props) => {
     }
     if (props.searchQuery.fileSize) {
       fileSize.current = props.searchQuery.fileSize;
-    }*/
+    } */
   }, [props.searchQuery]);
 
   const handleFileTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -423,7 +420,7 @@ const SearchPopover = (props: Props) => {
     props.onClose();
   };
 
-  const saveSearch = (isNew: boolean = true) => {
+  const saveSearch = (isNew = true) => {
     const tagsAND = mergeWithExtractedTags(
       textQuery.current,
       props.searchQuery.tagsAND,
@@ -1024,7 +1021,7 @@ const SearchPopover = (props: Props) => {
       </div>
     </div>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

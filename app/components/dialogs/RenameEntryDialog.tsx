@@ -47,7 +47,7 @@ interface Props {
   renameDirectory: (directoryPath: string, newDirectoryName: string) => void;
 }
 
-const RenameEntryDialog = (props: Props) => {
+function RenameEntryDialog(props: Props) {
   const [inputError, setInputError] = useState<boolean>(false);
   const disableConfirmButton = useRef<boolean>(true);
 
@@ -218,7 +218,7 @@ const RenameEntryDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

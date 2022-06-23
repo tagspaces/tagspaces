@@ -28,10 +28,10 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Dialog from '@material-ui/core/Dialog';
+import { isFunc } from '@tagspaces/tagspaces-platforms/misc';
 import TagGroupContainer from '../TagGroupContainer';
 import TagContainer from '../TagContainer';
 import i18n from '-/services/i18n';
-import { isFunc } from '-/utils/misc';
 import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
@@ -57,7 +57,7 @@ interface Props {
   exportTagGroups: (taggroup: any) => void;
 }
 
-const ImportExportTagGroupsDialog = (props: Props) => {
+function ImportExportTagGroupsDialog(props: Props) {
   // const [selectedAll, setSelectedAll] = useState<boolean>(true);
   const selectedAll = useRef(true);
   const [tagGroupList, setTagGroupList] = useState<Array<any>>(
@@ -176,7 +176,7 @@ const ImportExportTagGroupsDialog = (props: Props) => {
       {renderActions()}
     </Dialog>
   );
-};
+}
 
 export default withMobileDialog()(
   withStyles(styles)(ImportExportTagGroupsDialog)

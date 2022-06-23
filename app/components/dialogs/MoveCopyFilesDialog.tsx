@@ -52,7 +52,7 @@ interface Props {
   selectedFiles: Array<string>;
 }
 
-const MoveCopyFilesDialog = (props: Props) => {
+function MoveCopyFilesDialog(props: Props) {
   const [inputError, setInputError] = useState(false);
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [targetPath, setTargetPath] = useState('');
@@ -189,7 +189,7 @@ const MoveCopyFilesDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(

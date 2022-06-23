@@ -52,7 +52,7 @@ interface Props {
   createLocationsIndexes: () => void;
 }
 
-const LocationManagerMenu = (props: Props) => {
+function LocationManagerMenu(props: Props) {
   const [
     locationManagerMenuAnchorEl,
     setLocationManagerMenuAnchorEl
@@ -218,7 +218,7 @@ const LocationManagerMenu = (props: Props) => {
       </Menu>
     </>
   );
-};
+}
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(

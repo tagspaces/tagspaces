@@ -47,11 +47,13 @@ const CreateEditLocationDialog = React.lazy(() =>
     /* webpackChunkName: "CreateEditLocationDialog" */ './dialogs/CreateEditLocationDialog'
   )
 );
-const CreateEditLocationDialogAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <CreateEditLocationDialog {...props} />
-  </React.Suspense>
-);
+function CreateEditLocationDialogAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <CreateEditLocationDialog {...props} />
+    </React.Suspense>
+  );
+}
 
 interface Props {
   classes?: any;
@@ -80,7 +82,7 @@ type SubFolder = {
   children?: Array<SubFolder>;
 };
 
-const LocationManager = (props: Props) => {
+function LocationManager(props: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedLocation, setSelectedLocation] = useState<TS.Location>(null);
   const [isEditLocationDialogOpened, setEditLocationDialogOpened] = useState<
@@ -146,7 +148,7 @@ const LocationManager = (props: Props) => {
             // backdropFilter: 'blur(2px)',
             // backgroundColor: '#fafafaAA' // red: '#eb585882' '#d9d9d980'
           }}
-        ></div>
+        />
       )}
       <LocationManagerMenu
         importLocations={() => {
@@ -269,7 +271,7 @@ const LocationManager = (props: Props) => {
       )}
     </div>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

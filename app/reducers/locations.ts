@@ -17,7 +17,10 @@
  */
 
 import { v1 as uuidv1 } from 'uuid';
-import { immutablySwapItems, locationType } from '-/utils/misc';
+import {
+  immutablySwapItems,
+  locationType
+} from '@tagspaces/tagspaces-platforms/misc';
 import { actions as AppActions } from '-/reducers/app';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
@@ -169,7 +172,7 @@ export const actions = {
       })
       .catch(ex => console.error(ex));
   },
-  addLocation: (location: TS.Location, openAfterCreate: boolean = true) => (
+  addLocation: (location: TS.Location, openAfterCreate = true) => (
     dispatch: (actions: Object) => void
   ) => {
     dispatch(actions.createLocation(location));
@@ -181,10 +184,10 @@ export const actions = {
    * @param arrLocations
    * @param override = true - if location exist override else skip
    */
-  addLocations: (
-    arrLocations: Array<TS.Location>,
-    override: boolean = true
-  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
+  addLocations: (arrLocations: Array<TS.Location>, override = true) => (
+    dispatch: (actions: Object) => void,
+    getState: () => any
+  ) => {
     arrLocations.forEach((newLocation: TS.Location, idx, array) => {
       const { locations } = getState();
       const locationExist: boolean = locations.some(
@@ -212,7 +215,7 @@ export const actions = {
     type: types.MOVE_DOWN_LOCATION,
     uuid
   }),
-  editLocation: (location: TS.Location, openAfterEdit: boolean = true) => (
+  editLocation: (location: TS.Location, openAfterEdit = true) => (
     dispatch: (actions: Object) => void
   ) => {
     dispatch(actions.changeLocation(location));

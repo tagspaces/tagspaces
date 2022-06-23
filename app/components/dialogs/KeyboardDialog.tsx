@@ -55,7 +55,7 @@ interface Props {
   onClose: () => void;
 }
 
-const KeyboardDialog = (props: Props) => {
+function KeyboardDialog(props: Props) {
   const { open, onClose, fullScreen } = props;
   return (
     <Dialog
@@ -97,7 +97,7 @@ const KeyboardDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

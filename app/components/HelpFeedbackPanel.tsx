@@ -55,7 +55,7 @@ interface Props {
   reduceHeightBy?: number;
 }
 
-const HelpFeedbackPanel = (props: Props) => {
+function HelpFeedbackPanel(props: Props) {
   const {
     classes,
     openURLExternally,
@@ -235,6 +235,6 @@ const HelpFeedbackPanel = (props: Props) => {
       </List>
     </div>
   );
-};
+}
 
 export default withStyles(styles, { withTheme: true })(HelpFeedbackPanel);

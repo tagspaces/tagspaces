@@ -33,7 +33,7 @@ interface Props {
   fullScreen: boolean;
 }
 
-const ThirdPartyLibsDialog = (props: Props) => {
+function ThirdPartyLibsDialog(props: Props) {
   const { open, onClose, fullScreen } = props;
   return (
     <Dialog
@@ -62,6 +62,6 @@ const ThirdPartyLibsDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 export default withMobileDialog()(ThirdPartyLibsDialog);
