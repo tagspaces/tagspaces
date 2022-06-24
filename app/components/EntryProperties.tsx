@@ -54,13 +54,13 @@ import {
   extractDirectoryName,
   generateSharingLink
 } from '@tagspaces/tagspaces-platforms/paths';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import TagDropContainer from './TagDropContainer';
 import ColorPickerDialog from './dialogs/ColorPickerDialog';
 import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
 import i18n from '../services/i18n';
 import { enhanceOpenedEntry, convertMarkDown } from '-/services/utils-io';
 import { parseGeoLocation } from '-/utils/geo';
-import AppConfig from '../config';
 import { Pro } from '../pro';
 import PlatformIO from '../services/platform-facade';
 import TagsSelect from './TagsSelect';

@@ -34,6 +34,7 @@ import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import MobileStepper from '@material-ui/core/MobileStepper';
 import Dialog from '@material-ui/core/Dialog';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import NavigationV3 from '-/assets/images/navigation-v3.png';
 import BrowserExtension from '-/assets/images/collectcontent.svg';
 import WizardFinished from '-/assets/images/computer-desk.svg';
@@ -47,7 +48,6 @@ import {
   actions as SettingsActions
 } from '-/reducers/settings';
 import { actions as AppActions } from '-/reducers/app';
-import AppConfig from '-/config';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Links from '-/links';
 

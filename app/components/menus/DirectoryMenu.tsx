@@ -39,11 +39,7 @@ import PropertiesIcon from '@material-ui/icons/Info';
 import { Progress } from 'aws-sdk/clients/s3';
 import ImageIcon from '@material-ui/icons/Image';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-platforms/misc';
-import { Pro } from '../../pro';
-import CreateDirectoryDialog from '../dialogs/CreateDirectoryDialog';
-// import RenameDirectoryDialog from '../dialogs/RenameDirectoryDialog';
-import AppConfig from '-/config';
-import i18n from '-/services/i18n';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import {
   extractContainingDirectoryPath,
   extractDirectoryName,
@@ -51,6 +47,10 @@ import {
   normalizePath,
   generateSharingLink
 } from '@tagspaces/tagspaces-platforms/paths';
+import { Pro } from '../../pro';
+import CreateDirectoryDialog from '../dialogs/CreateDirectoryDialog';
+// import RenameDirectoryDialog from '../dialogs/RenameDirectoryDialog';
+import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
 import { actions as AppActions, getSelectedEntries } from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';

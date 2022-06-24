@@ -29,10 +29,10 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Dialog from '@material-ui/core/Dialog';
 import { isFunc } from '@tagspaces/tagspaces-platforms/misc';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import TagGroupContainer from '../TagGroupContainer';
 import TagContainer from '../TagContainer';
 import i18n from '-/services/i18n';
-import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 

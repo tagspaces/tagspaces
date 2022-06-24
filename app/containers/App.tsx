@@ -20,9 +20,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { I18nextProvider } from 'react-i18next'; // as we build ourself via webpack
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '../services/i18n';
 import { getCurrentTheme } from '-/reducers/settings';
-import AppConfig from '-/config';
 
 const lightTheme = createTheme({
   palette: {

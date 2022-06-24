@@ -23,6 +23,7 @@ import IconButton from '@material-ui/core/IconButton';
 import { withStyles } from '@material-ui/core/styles';
 import Badge from '@material-ui/core/Badge';
 import Tooltip from '@material-ui/core/Tooltip';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import { Pro } from '../pro';
 import TextLogoIcon from '../assets/images/text-logo.svg';
 import WebLogoIcon from '../assets/images/text-logo-web.svg';
@@ -30,7 +31,6 @@ import LogoIcon from '../assets/images/icon100x100.svg';
 import { actions as AppActions } from '../reducers/app';
 import i18n from '../services/i18n';
 import versionMeta from '../version.json';
-import AppConfig from '-/config';
 
 const AppVersionBadge = withStyles(theme => ({
   badge: {

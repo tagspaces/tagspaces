@@ -26,6 +26,7 @@ import {
   locationType,
   sortByCriteria
 } from '@tagspaces/tagspaces-platforms/misc';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import { isVisibleOnScreen } from '-/utils/dom';
 import { actions as TagLibraryActions } from '-/reducers/taglibrary';
 import {
@@ -43,7 +44,6 @@ import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
 import MoveCopyFilesDialog from '-/components/dialogs/MoveCopyFilesDialog';
 import TargetMoveFileBox from '-/components/TargetMoveFileBox';
 import FileSourceDnd from '-/components/FileSourceDnd';
-import AppConfig from '-/config';
 import DragItemTypes from '-/components/DragItemTypes';
 import TagDropContainer from '-/components/TagDropContainer';
 import IOActions from '-/reducers/io-actions';

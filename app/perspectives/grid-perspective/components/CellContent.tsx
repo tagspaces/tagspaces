@@ -32,6 +32,7 @@ import {
   formatDateTime
 } from '@tagspaces/tagspaces-platforms/misc';
 import { extractTagsAsObjects, extractTitle } from '@tagspaces/tagspaces-platforms/paths';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import {
   findBackgroundColorForFolder,
   findColorForEntry,
@@ -42,11 +43,10 @@ import TagContainer from '-/components/TagContainer';
 import TagsPreview from '-/components/TagsPreview';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
-import AppConfig from '-/config';
 import EntryIcon from '-/components/EntryIcon';
 import { TS } from '-/tagspaces.namespace';
 import TaggingActions from '-/reducers/tagging-actions';
-import { getTagColor } from '-/reducers/settings';
+// import { getTagColor } from '-/reducers/settings';
 
 const maxDescriptionPreviewLength = 100;
 

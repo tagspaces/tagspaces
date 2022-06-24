@@ -48,13 +48,7 @@ import RefreshIcon from '@material-ui/icons/Refresh';
 import Box from '@material-ui/core/Box';
 import { Split } from 'ts-react-splitter';
 import { buffer } from '@tagspaces/tagspaces-platforms/misc';
-import EntryProperties from '-/components/EntryProperties';
-import TagsPreview from '-/components/TagsPreview';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import AppConfig from '-/config';
-import PlatformIO from '-/services/platform-facade';
-import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
-import i18n from '-/services/i18n';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import {
   extractContainingDirectoryPath,
   extractTitle,
@@ -63,6 +57,12 @@ import {
   extractFileName,
   extractDirectoryName
 } from '@tagspaces/tagspaces-platforms/paths';
+import EntryProperties from '-/components/EntryProperties';
+import TagsPreview from '-/components/TagsPreview';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import PlatformIO from '-/services/platform-facade';
+import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
+import i18n from '-/services/i18n';
 // import { buffer } from '@tagspaces/tagspaces-platforms/misc';
 import {
   actions as SettingsActions,

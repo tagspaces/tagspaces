@@ -16,7 +16,7 @@
  *
  */
 import { BaseCSSProperties } from '@material-ui/core/styles/withStyles';
-import AppConfig from '-/config';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 
 export interface StyleProps {
   panel: BaseCSSProperties;

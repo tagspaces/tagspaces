@@ -26,10 +26,10 @@ import IconButton from '@material-ui/core/IconButton';
 import FolderIcon from '@material-ui/icons/Folder';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Grid from '@material-ui/core/Grid';
-import i18n from '-/services/i18n';
 import { extractDirectoryName } from '@tagspaces/tagspaces-platforms/paths';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
-import AppConfig from '-/config';
 
 interface Props {
   showAdvancedMode: boolean;

@@ -28,6 +28,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import ArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import ArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import Typography from '@material-ui/core/Typography';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import {
   actions as LocationIndexActions,
   getSearchQuery
@@ -39,7 +40,6 @@ import { actions as SearchActions, getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
 import SearchMenu from '-/components/menus/SearchMenu';
 import { actions as AppActions } from '-/reducers/app';
-import AppConfig from '-/config';
 
 interface Props {
   style?: any;

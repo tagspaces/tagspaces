@@ -31,6 +31,7 @@ import withMobileDialog from '@material-ui/core/withMobileDialog';
 import { v1 as uuidv1 } from 'uuid';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
 import { extend } from '@tagspaces/tagspaces-platforms/misc';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import ConfirmDialog from '../ConfirmDialog';
 import SettingsGeneral from '../settings/SettingsGeneral';
 import SettingsKeyBindings from '../settings/SettingsKeyBindings';
@@ -38,7 +39,6 @@ import SettingsFileTypes from '../settings/SettingsFileTypes';
 import i18n from '-/services/i18n';
 import { actions, getSupportedFileTypes } from '-/reducers/settings';
 import { clearAllURLParams } from '-/utils/dom';
-import AppConfig from '-/config';
 import SettingsAdvanced from '-/components/dialogs/settings/SettingsAdvanced';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 

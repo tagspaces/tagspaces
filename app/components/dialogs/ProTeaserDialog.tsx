@@ -26,21 +26,21 @@ import Typography from '@material-ui/core/Typography';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import MobileStepper from '@material-ui/core/MobileStepper';
 import Dialog from '@material-ui/core/Dialog';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import ProTeaserImage from '-/assets/images/pro-teaser.svg';
 import ThumbsImage from '-/assets/images/thumbnails-undraw.svg';
-import PerspectivesImage from '-/assets/images/perspectives-undraw.svg';
+// import PerspectivesImage from '-/assets/images/perspectives-undraw.svg';
 import CloudImage from '-/assets/images/aws-s3-in-tagspaces.png';
 import SearchImage from '-/assets/images/search-undraw.svg';
 import MapImage from '-/assets/images/mapique-perspective.jpg';
 import GalleryImage from '-/assets/images/gallery-perspective.jpg';
 import CustomFolderColor from '-/assets/images/custom-folder-color.jpg';
 import EntryDescription from '-/assets/images/entry-description.jpg';
-import AnnotateImage from '-/assets/images/annotate-undraw.svg';
+// import AnnotateImage from '-/assets/images/annotate-undraw.svg';
 import EnterpriseImage from '-/assets/images/world-undraw.svg';
 import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Links from '-/links';
-import AppConfig from '-/config';
 
 interface Props {
   open: boolean;

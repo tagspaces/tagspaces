@@ -32,6 +32,7 @@ import CloudLocationIcon from '@material-ui/icons/CloudQueue';
 import DefaultLocationIcon from '@material-ui/icons/Highlight';
 import { Progress } from 'aws-sdk/clients/s3';
 import { locationType } from '@tagspaces/tagspaces-platforms/misc';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import styles from './SidePanels.css';
 import {
   actions as AppActions,
@@ -39,7 +40,6 @@ import {
   isReadOnlyMode
 } from '../reducers/app';
 import i18n from '../services/i18n';
-import AppConfig from '../config';
 import PlatformIO from '../services/platform-facade';
 import TargetMoveFileBox from './TargetMoveFileBox';
 import DragItemTypes from './DragItemTypes';

@@ -25,6 +25,7 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Collapse from '@material-ui/core/Collapse';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import TagContainerDnd from './TagContainerDnd';
 import TagContainer from './TagContainer';
 import ConfirmDialog from './dialogs/ConfirmDialog';
@@ -54,7 +55,6 @@ import {
   isReadOnlyMode
 } from '../reducers/app';
 import SmartTags from '../reducers/smart-tags';
-import AppConfig from '-/config';
 import EditTagDialog from '-/components/dialogs/EditTagDialog';
 import { TS } from '-/tagspaces.namespace';
 import { getLocations } from '-/reducers/locations';

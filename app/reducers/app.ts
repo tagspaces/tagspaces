@@ -21,25 +21,7 @@ import {
   formatDateTime4Tag,
   locationType
 } from '@tagspaces/tagspaces-platforms/misc';
-import {
-  getURLParameter,
-  clearURLParam,
-  updateHistory,
-  clearAllURLParams
-} from '-/utils/dom';
-import { getLocation, getDefaultLocationId } from './locations';
-import PlatformIO from '../services/platform-facade';
-import AppConfig from '../config';
-import {
-  deleteFilesPromise,
-  loadMetaDataPromise,
-  renameFilesPromise,
-  getAllPropertiesPromise,
-  prepareDirectoryContent,
-  findExtensionsForEntry,
-  getNextFile,
-  getPrevFile
-} from '-/services/utils-io';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import {
   extractFileExtension,
   extractDirectoryName,
@@ -51,6 +33,24 @@ import {
   normalizePath,
   extractContainingDirectoryPath
 } from '@tagspaces/tagspaces-platforms/paths';
+import {
+  getURLParameter,
+  clearURLParam,
+  updateHistory,
+  clearAllURLParams
+} from '-/utils/dom';
+import { getLocation, getDefaultLocationId } from './locations';
+import PlatformIO from '../services/platform-facade';
+import {
+  deleteFilesPromise,
+  loadMetaDataPromise,
+  renameFilesPromise,
+  getAllPropertiesPromise,
+  prepareDirectoryContent,
+  findExtensionsForEntry,
+  getNextFile,
+  getPrevFile
+} from '-/services/utils-io';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import { actions as LocationIndexActions } from './location-index';

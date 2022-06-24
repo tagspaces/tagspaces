@@ -20,20 +20,20 @@ import { Progress } from 'aws-sdk/clients/s3';
 import {
   enhanceEntry,
   loadJSONString
-} from '@tagspaces/tagspaces-platforms/utils-io';
+} from '@tagspaces/tagspaces-platforms/utils-common';
 import {
   extractFileName,
   getMetaFileLocationForFile,
   getThumbFileLocationForFile,
   normalizePath
 } from '@tagspaces/tagspaces-platforms/paths';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import { actions as AppActions } from './app';
 import { copyFilesPromise, renameFilesPromise } from '-/services/utils-io';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import TaggingActions from './tagging-actions';
 import PlatformIO from '-/services/platform-facade';
-import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
 
 const actions = {

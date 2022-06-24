@@ -27,15 +27,15 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
-import i18n from '-/services/i18n';
 import {
   extractContainingDirectoryPath,
   extractDirectoryName,
   extractFileName
 } from '@tagspaces/tagspaces-platforms/paths';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import i18n from '-/services/i18n';
 import { actions as AppActions, getLastSelectedEntry } from '-/reducers/app';
 import PlatformIO from '-/services/platform-facade';
-import AppConfig from '-/config';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {

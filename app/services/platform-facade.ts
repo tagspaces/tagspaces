@@ -63,9 +63,9 @@ import {
   platformShareFiles,
   platformCreateIndex
 } from '@tagspaces/tagspaces-platforms/platform-io';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import { Pro } from '../pro';
 import { TS } from '-/tagspaces.namespace';
-import AppConfig from '-/config';
 
 let token: string;
 

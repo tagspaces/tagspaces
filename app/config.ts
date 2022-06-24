@@ -1,4 +1,5 @@
-/**
+/*
+/!**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
  *
@@ -14,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- */
+ *!/
 const isCordovaiOS =
   /^file:\/{3}[^\/]/i.test(window.location.href) &&
   /ios|iphone|ipod|ipad/i.test(navigator.userAgent);
@@ -100,3 +101,4 @@ const AppConfig = {
 };
 
 export default AppConfig;
+*/

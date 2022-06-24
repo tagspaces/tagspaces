@@ -27,7 +27,7 @@ import {
 import {
   enhanceEntry,
   loadJSONString
-} from '@tagspaces/tagspaces-platforms/utils-io';
+} from '@tagspaces/tagspaces-platforms/utils-common';
 import { saveAs } from 'file-saver';
 import {
   locationType,
@@ -45,8 +45,8 @@ import {
   getThumbFileLocationForFile,
   getThumbFileLocationForDirectory
 } from '@tagspaces/tagspaces-platforms/paths';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import PlatformIO from './platform-facade';
-import AppConfig from '../config';
 import i18n from '../services/i18n';
 import versionMeta from '../version.json';
 import { OpenedEntry, actions as AppActions } from '-/reducers/app';

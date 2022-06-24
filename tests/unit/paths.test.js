@@ -1,4 +1,4 @@
-import AppConfig from '../../app/config';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 
 const {
   baseName,

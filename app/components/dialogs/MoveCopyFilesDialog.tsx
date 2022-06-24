@@ -36,11 +36,11 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Typography from '@material-ui/core/Typography';
 import Dialog from '@material-ui/core/Dialog';
 import IconButton from '@material-ui/core/IconButton';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import { extractFileName } from '@tagspaces/tagspaces-platforms/paths';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
-import AppConfig from '-/config';
 import IOActions from '-/reducers/io-actions';
-import { extractFileName } from '@tagspaces/tagspaces-platforms/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {

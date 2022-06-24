@@ -33,6 +33,7 @@ import Switch from '@material-ui/core/Switch';
 import Select from '@material-ui/core/Select';
 import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '-/services/i18n';
 import {
   actions as SettingsActions,
@@ -45,7 +46,6 @@ import MapTileServerDialog from '-/components/dialogs/settings/MapTileServerDial
 import { Pro } from '-/pro';
 import { ProLabel } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
-import AppConfig from '-/config';
 
 const styles: any = {
   root: {

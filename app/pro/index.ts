@@ -16,7 +16,7 @@
  *
  */
 
-import AppConfig from '-/config';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 
 let tsPro;
 

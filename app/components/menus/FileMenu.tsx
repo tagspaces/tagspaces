@@ -34,15 +34,7 @@ import ShareIcon from '@material-ui/icons/Link';
 import RenameFile from '@material-ui/icons/FormatTextdirectionLToR';
 import DeleteForever from '@material-ui/icons/DeleteForever';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-platforms/misc';
-import i18n from '-/services/i18n';
-import AppConfig from '-/config';
-import PlatformIO from '-/services/platform-facade';
-import {
-  generateFileName,
-  getAllPropertiesPromise,
-  setFolderThumbnailPromise
-} from '-/services/utils-io';
-import { Pro } from '-/pro';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import {
   extractContainingDirectoryPath,
   extractFileName,
@@ -50,6 +42,14 @@ import {
   extractTags,
   generateSharingLink
 } from '@tagspaces/tagspaces-platforms/paths';
+import i18n from '-/services/i18n';
+import PlatformIO from '-/services/platform-facade';
+import {
+  generateFileName,
+  getAllPropertiesPromise,
+  setFolderThumbnailPromise
+} from '-/services/utils-io';
+import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
 // import AddIcon from '@material-ui/icons/Add';
 

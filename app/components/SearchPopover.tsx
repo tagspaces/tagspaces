@@ -51,6 +51,7 @@ import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import { mergeWithExtractedTags } from '@tagspaces/tagspaces-platforms/misc';
 import HelpIcon from '@material-ui/icons/Help';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import TagsSelect from './TagsSelect';
 import { actions as AppActions, getDirectoryPath } from '../reducers/app';
 import {
@@ -69,7 +70,6 @@ import { FileTypeGroups } from '-/services/search';
 import { Pro } from '../pro';
 import { formatDateTime, extractTimePeriod } from '-/utils/dates';
 import { parseGeoLocation, parseLatLon } from '-/utils/geo';
-import AppConfig from '-/config';
 import { getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';

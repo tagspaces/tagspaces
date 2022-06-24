@@ -43,7 +43,7 @@ import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
 import MoveCopyFilesDialog from '-/components/dialogs/MoveCopyFilesDialog';
 import TargetMoveFileBox from '-/components/TargetMoveFileBox';
 import FileSourceDnd from '-/components/FileSourceDnd';
-import AppConfig from '-/config';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import DragItemTypes from '-/components/DragItemTypes';
 import TagDropContainer from '-/components/TagDropContainer';
 import IOActions from '-/reducers/io-actions';

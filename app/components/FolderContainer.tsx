@@ -33,6 +33,7 @@ import Badge from '@material-ui/core/Badge';
 import { withStyles } from '@material-ui/core/styles';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import LocationMenu from './menus/LocationMenu';
 import i18n from '../services/i18n';
 import {
@@ -58,7 +59,6 @@ import {
 import TaggingActions from '../reducers/tagging-actions';
 import LoadingLazy from '../components/LoadingLazy';
 import { Pro } from '../pro';
-import AppConfig from '-/config';
 import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
 import { TS } from '-/tagspaces.namespace';
 import PathBreadcrumbs from './PathBreadcrumbs';

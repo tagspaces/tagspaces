@@ -18,20 +18,20 @@
 
 import { loadIndex, hasIndex } from '@tagspaces/tagspaces-platforms/indexer';
 import { locationType } from '@tagspaces/tagspaces-platforms/misc';
-import { getLocation, getLocationByPath, getLocations } from './locations';
-import { createDirectoryIndex } from '-/services/utils-io';
 import {
   extractFileExtension,
   extractFileName,
   extractTagsAsObjects,
   getThumbFileLocationForFile
 } from '@tagspaces/tagspaces-platforms/paths';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import { getLocation, getLocationByPath, getLocations } from './locations';
+import { createDirectoryIndex } from '-/services/utils-io';
 import Search from '../services/search';
 import { actions as AppActions } from './app';
 import i18n from '../services/i18n';
 import PlatformIO from '../services/platform-facade';
 import GlobalSearch from '../services/search-index';
-import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
 
 export const types = {

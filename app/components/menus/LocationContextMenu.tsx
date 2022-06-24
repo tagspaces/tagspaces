@@ -31,11 +31,11 @@ import CloseIcon from '@material-ui/icons/Close';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { locationType } from '@tagspaces/tagspaces-platforms/misc';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import { actions as LocationActions } from '-/reducers/locations';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import i18n from '-/services/i18n';
 import { actions as AppActions } from '-/reducers/app';
-import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
 import PlatformIO from "-/services/platform-facade";
 

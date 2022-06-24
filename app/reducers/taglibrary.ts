@@ -22,10 +22,10 @@ import {
   extend,
   prepareTagGroupForExport
 } from '@tagspaces/tagspaces-platforms/misc';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import { parseNewTags, saveAsTextFile } from '-/services/utils-io';
 import versionMeta from '../version.json';
 import defaultTagLibrary from './taglibrary-default';
-import AppConfig from '../config';
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
 

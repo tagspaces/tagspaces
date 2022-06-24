@@ -34,6 +34,7 @@ import InfoIcon from '@material-ui/icons/InfoOutlined';
 import CheckIcon from '@material-ui/icons/Check';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '-/services/i18n';
 import {
   actions as SettingsActions,
@@ -44,7 +45,6 @@ import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
 import PerspectiveSelector from '-/components/PerspectiveSelector';
 import TransparentBackground from '-/components/TransparentBackground';
 import { BetaLabel } from '-/components/HelperComponents';
-import AppConfig from '-/config';
 import PlatformIO from '-/services/platform-facade';
 import { PerspectiveIDs } from '-/perspectives';
 

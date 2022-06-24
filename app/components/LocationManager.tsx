@@ -22,6 +22,7 @@ import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { List } from '@material-ui/core';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import styles from './SidePanels.css';
 import LocationManagerMenu from './menus/LocationManagerMenu';
 import ConfirmDialog from './dialogs/ConfirmDialog';
@@ -35,7 +36,6 @@ import {
   isDesktopMode
 } from '-/reducers/settings';
 import i18n from '../services/i18n';
-import AppConfig from '../config';
 import LoadingLazy from '-/components/LoadingLazy';
 import LocationView from '-/components/LocationView';
 import { Pro } from '-/pro';
