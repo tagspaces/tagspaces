@@ -17,19 +17,18 @@
  */
 
 import { Progress } from 'aws-sdk/clients/s3';
-import { actions as AppActions } from './app';
+import {
+  enhanceEntry,
+  loadJSONString
+} from '@tagspaces/tagspaces-platforms/utils-io';
 import {
   extractFileName,
   getMetaFileLocationForFile,
   getThumbFileLocationForFile,
   normalizePath
 } from '@tagspaces/tagspaces-platforms/paths';
-import {
-  copyFilesPromise,
-  enhanceEntry,
-  loadJSONString,
-  renameFilesPromise
-} from '-/services/utils-io';
+import { actions as AppActions } from './app';
+import { copyFilesPromise, renameFilesPromise } from '-/services/utils-io';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import TaggingActions from './tagging-actions';
@@ -458,7 +457,11 @@ const actions = {
                   }
                 }
                 if (file.meta) {
-                  return enhanceEntry(file);
+                  return enhanceEntry(
+                    file,
+                    AppConfig.tagDelimiter,
+                    PlatformIO.getDirSeparator()
+                  );
                 }
                 return file;
               })

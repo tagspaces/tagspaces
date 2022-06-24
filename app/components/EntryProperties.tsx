@@ -46,12 +46,6 @@ import {
 } from 'react-leaflet';
 import { IconButton } from '@material-ui/core';
 import { formatFileSize } from '@tagspaces/tagspaces-platforms/misc';
-import TagDropContainer from './TagDropContainer';
-import ColorPickerDialog from './dialogs/ColorPickerDialog';
-import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
-import i18n from '../services/i18n';
-import { enhanceOpenedEntry, convertMarkDown } from '-/services/utils-io';
-import { parseGeoLocation } from '-/utils/geo';
 import {
   extractContainingDirectoryPath,
   getThumbFileLocationForFile,
@@ -60,6 +54,12 @@ import {
   extractDirectoryName,
   generateSharingLink
 } from '@tagspaces/tagspaces-platforms/paths';
+import TagDropContainer from './TagDropContainer';
+import ColorPickerDialog from './dialogs/ColorPickerDialog';
+import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
+import i18n from '../services/i18n';
+import { enhanceOpenedEntry, convertMarkDown } from '-/services/utils-io';
+import { parseGeoLocation } from '-/utils/geo';
 import AppConfig from '../config';
 import { Pro } from '../pro';
 import PlatformIO from '../services/platform-facade';
@@ -176,7 +176,7 @@ interface Props {
   removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
   removeAllTags: (paths: Array<string>) => void;
   isReadOnlyMode: boolean;
-  currentDirectoryPath: string | null;
+  // currentDirectoryPath: string | null;
   tagDelimiter: string;
   tileServer: TS.MapTileServer;
 }
@@ -509,8 +509,6 @@ function EntryProperties(props: Props) {
 
   let perspectiveDefault;
   if (currentEntry.perspective) {
-    perspectiveDefault = currentEntry.perspective;
-  } else if (currentEntry.perspective) {
     perspectiveDefault = currentEntry.perspective; // props.perspective;
   } else {
     perspectiveDefault = 'unspecified'; // perspectives.DEFAULT;
@@ -1222,7 +1220,7 @@ function EntryProperties(props: Props) {
               className={classes.gridItem}
               title={i18n.t('core:changeThumbnail')}
             >
-              {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events */}
+              {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/control-has-associated-label */}
               <div
                 className={classes.header}
                 onClick={toggleThumbFilesDialog}
