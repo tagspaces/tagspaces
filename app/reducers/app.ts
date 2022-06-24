@@ -274,7 +274,7 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         currentDirectoryEntries: action.directoryContent,
-        pageEntries: [],
+        // pageEntries: [],
         currentDirectoryColor: action.directoryMeta
           ? action.directoryMeta.color || ''
           : '',
@@ -311,21 +311,6 @@ export default (state: any = initialState, action: any) => {
         currentDirectoryPath: ''
       };
     }
-    /* case types.LOAD_PAGE_CONTENT: {
-      const newPageEntries = [...state.pageEntries];
-      for (let i = 0; i < action.pageEntries.length; i += 1) {
-        const index = newPageEntries.findIndex(
-          entry => entry.path === action.pageEntries[i].path
-        );
-        if (index === -1) {
-          newPageEntries.push(action.pageEntries[i]);
-        }
-      }
-      return {
-        ...state,
-        pageEntries: newPageEntries
-      };
-    } */
     case types.SET_CURRENLOCATIONID: {
       return {
         ...state,
@@ -660,20 +645,9 @@ export default (state: any = initialState, action: any) => {
         }
       }
 
-      /* const newPageEntries = [...state.pageEntries];
-      for (const [path, value] of Object.entries(newPageEntries)) {
-        const pageEntry = action.pageEntries.findIndex(
-          entry => entry.path === newPageEntries[i].path
-        );
-        if (pageEntry) {
-          newPageEntries[i] = pageEntry;
-        }
-      } */
-
       return {
         ...state,
-        currentDirectoryEntries: newDirEntries,
-        pageEntries: action.pageEntries
+        currentDirectoryEntries: newDirEntries
       };
     }
     case types.UPDATE_CURRENTDIR_ENTRY: {
@@ -1035,7 +1009,6 @@ export const actions = {
           dispatch(
             actions.setCurrentDirectoryPerspective(PerspectiveIDs.UNSPECIFIED)
           );
-          dispatch(actions.setIsMetaLoaded(false));
           prepareDirectoryContent(
             results,
             directoryPath,
@@ -1136,6 +1109,7 @@ export const actions = {
         directoryMeta
       )
     );
+    dispatch(actions.setIsMetaLoaded(false));
   },
   loadDirectorySuccessInt: (
     directoryPath: string,
@@ -1913,13 +1887,9 @@ export const actions = {
     path,
     entry
   }),
-  updateCurrentDirEntries: (
-    dirEntries: TS.FileSystemEntry[],
-    pageEntries: any
-  ) => ({
+  updateCurrentDirEntries: (dirEntries: TS.FileSystemEntry[]) => ({
     type: types.UPDATE_CURRENTDIR_ENTRIES,
-    dirEntries,
-    pageEntries
+    dirEntries
   }),
   /**
    * @param path
@@ -2270,7 +2240,7 @@ export const currentUser = (state: any) => state.app.user;
 export const getIsMetaLoaded = (state: any) => state.app.isMetaLoaded;
 export const getDirectoryContent = (state: any) =>
   state.app.currentDirectoryEntries;
-export const getPageEntries = (state: any) => state.app.pageEntries;
+// export const getPageEntries = (state: any) => state.app.pageEntries;
 export const getCurrentDirectoryFiles = (state: any) =>
   state.app.currentDirectoryFiles;
 export const getCurrentDirectoryDirs = (state: any) =>

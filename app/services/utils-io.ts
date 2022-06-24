@@ -150,7 +150,7 @@ export function enhanceDirectoryContent(
 
 export async function getMetaForEntry(
   entry: TS.FileSystemEntry,
-  metaFilePath: string
+  metaFilePath: string,
 ): Promise<any> {
   const meta: TS.FileSystemEntryMeta = await loadJSONFile(metaFilePath);
   if (meta) {
