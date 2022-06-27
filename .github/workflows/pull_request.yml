@@ -48,7 +48,7 @@ jobs:
           node-version: '14.x'
       - name: Running npm install, prettier and type checks
         run: |
-          npm install --check-files --cache-folder .ycache
+          npm install
           npm run prettier-check
           npm run type-check
       - name: Run Unit tests
@@ -98,7 +98,7 @@ jobs:
           node-version: '14.x'
       - name: Running npm install, prettier and type checks
         run: |
-          npm install --check-files --cache-folder .ycache
+          npm install
           npm run prettier-check
           npm run type-check
       - name: Run Unit tests
