@@ -86,7 +86,7 @@ import { TS } from '-/tagspaces.namespace';
 import PageNotification from '-/containers/PageNotification';
 import listen from '-/containers/RendererListener';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
-import MoveCopyFilesDialog from '-/components/dialogs/MoveOrCopyFilesDialog';
+import MoveOrCopyFilesDialog from '-/components/dialogs/MoveOrCopyFilesDialog';
 import PlatformIO from '-/services/platform-facade';
 
 const drawerWidth = 320;
@@ -600,7 +600,7 @@ function MainPage(props: Props) {
       keyMap={keyMap}
       style={{ height: '100%' }}
     >
-      <MoveCopyFilesDialog
+      <MoveOrCopyFilesDialog
         open={moveCopyDialogOpened !== undefined}
         onClose={() => {
           setMoveCopyDialogOpened(undefined);
@@ -763,7 +763,7 @@ function MainPage(props: Props) {
           <TargetFileBox
             accepts={[FILE]}
             onDrop={(item: any) => {
-              if (AppConfig.isElectron) {
+              if (AppConfig.isElectron && !PlatformIO.haveObjectStoreSupport()) {
                 setMoveCopyDialogOpened(item.files);
               } else {
                 handleCopyFiles(item.files);
