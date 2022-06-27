@@ -89,11 +89,11 @@ beforeEach(async () => {
   }
 });
 
-afterEach(async () => {
-  //   // takeScreenshot();
-  //   // await clearLocalStorage();
-  // testDataRefresh();
-  /*if (global.context) {
+// afterEach(async () => {
+//   // takeScreenshot();
+//   // await clearLocalStorage();
+// testDataRefresh();
+/*if (global.context) {
     if (jasmine.currentTest && jasmine.currentTest.status !== 'disabled') {
       // console.log('specDone Done' + JSON.stringify(result));
       // if (jasmine.previousTest && jasmine.previousTest.status === 'failed') {
@@ -106,5 +106,5 @@ afterEach(async () => {
       //}
     }
   }*/
-  // await clearStorage();
-});
+// await clearStorage();
+// });

@@ -25,8 +25,8 @@ import { actions as TagLibraryActions } from '-/reducers/taglibrary';
 import {
   getSupportedFileTypes,
   getDesktopMode,
-  getKeyBindingObject,
-  isDesktopMode
+  getKeyBindingObject
+  // isDesktopMode
 } from '-/reducers/settings';
 import {
   isObj,
@@ -104,14 +104,12 @@ interface Props {
   ) => void;
   currentLocation: TS.Location;
   locations: Array<TS.Location>;
-  isDesktopMode: boolean;
+  // isDesktopMode: boolean;
   toggleDeleteMultipleEntriesDialog: () => void;
 }
 
 const GridPerspective = (props: Props) => {
-  const settings = JSON.parse(
-    localStorage.getItem(defaultSettings.settingsKey)
-  ); // loading settings
+  let settings = JSON.parse(localStorage.getItem(defaultSettings.settingsKey)); // loading settings
 
   const [mouseX, setMouseX] = useState<number>(undefined);
   const [mouseY, setMouseY] = useState<number>(undefined);
@@ -199,22 +197,20 @@ const GridPerspective = (props: Props) => {
     makeFirstSelectedEntryVisible();
   }, [props.selectedEntries]);
 
+  settings = {
+    showDirectories,
+    showTags,
+    layoutType,
+    orderBy,
+    sortBy,
+    singleClickAction,
+    entrySize,
+    thumbnailMode,
+    gridPageLimit
+  };
+
   useEffect(() => {
-    const settingsObj = {
-      showDirectories,
-      showTags,
-      layoutType,
-      orderBy,
-      sortBy,
-      singleClickAction,
-      entrySize,
-      thumbnailMode,
-      gridPageLimit
-    };
-    localStorage.setItem(
-      defaultSettings.settingsKey,
-      JSON.stringify(settingsObj)
-    );
+    localStorage.setItem(defaultSettings.settingsKey, JSON.stringify(settings));
   }, [
     showDirectories,
     showTags,
@@ -786,6 +782,8 @@ const GridPerspective = (props: Props) => {
           currentDirectoryPath={props.currentDirectoryPath}
           onClick={onClick}
           onContextMenu={onContextMenu}
+          settings={settings}
+          selectedEntries={props.selectedEntries}
         />
       </GlobalHotKeys>
       {isAddRemoveTagsDialogOpened && (
@@ -945,7 +943,7 @@ function mapStateToProps(state) {
     keyBindings: getKeyBindingObject(state),
     currentLocation: getLocation(state, state.app.currentLocationId),
     locations: getLocations(state),
-    isDesktopMode: isDesktopMode(state),
+    // isDesktopMode: isDesktopMode(state),
     isDeleteMultipleEntriesDialogOpened: isDeleteMultipleEntriesDialogOpened(
       state
     )

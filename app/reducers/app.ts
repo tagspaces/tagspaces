@@ -88,6 +88,7 @@ export const types = {
   SET_CURRENLOCATIONID: 'APP/SET_CURRENLOCATIONID',
   SET_CURRENDIRECTORYCOLOR: 'APP/SET_CURRENDIRECTORYCOLOR',
   SET_CURRENDIRECTORYPERSPECTIVE: 'APP/SET_CURRENDIRECTORYPERSPECTIVE',
+  SET_IS_META_LOADED: 'APP/SET_IS_META_LOADED',
   SET_LAST_SELECTED_ENTRY: 'APP/SET_LAST_SELECTED_ENTRY',
   SET_SELECTED_ENTRIES: 'APP/SET_SELECTED_ENTRIES',
   SET_FILEDRAGGED: 'APP/SET_FILEDRAGGED',
@@ -272,7 +273,7 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         currentDirectoryEntries: action.directoryContent,
-        pageEntries: [],
+        // pageEntries: [],
         currentDirectoryColor: action.directoryMeta
           ? action.directoryMeta.color || ''
           : '',
@@ -309,21 +310,6 @@ export default (state: any = initialState, action: any) => {
         currentDirectoryPath: ''
       };
     }
-    /* case types.LOAD_PAGE_CONTENT: {
-      const newPageEntries = [...state.pageEntries];
-      for (let i = 0; i < action.pageEntries.length; i += 1) {
-        const index = newPageEntries.findIndex(
-          entry => entry.path === action.pageEntries[i].path
-        );
-        if (index === -1) {
-          newPageEntries.push(action.pageEntries[i]);
-        }
-      }
-      return {
-        ...state,
-        pageEntries: newPageEntries
-      };
-    } */
     case types.SET_CURRENLOCATIONID: {
       return {
         ...state,
@@ -345,6 +331,12 @@ export default (state: any = initialState, action: any) => {
     case types.SET_CURRENDIRECTORYPERSPECTIVE: {
       if (state.currentDirectoryPerspective !== action.perspective) {
         return { ...state, currentDirectoryPerspective: action.perspective };
+      }
+      return state;
+    }
+    case types.SET_IS_META_LOADED: {
+      if (state.isMetaLoaded !== action.isMetaLoaded) {
+        return { ...state, isMetaLoaded: action.isMetaLoaded };
       }
       return state;
     }
@@ -652,20 +644,9 @@ export default (state: any = initialState, action: any) => {
         }
       }
 
-      /* const newPageEntries = [...state.pageEntries];
-      for (const [path, value] of Object.entries(newPageEntries)) {
-        const pageEntry = action.pageEntries.findIndex(
-          entry => entry.path === newPageEntries[i].path
-        );
-        if (pageEntry) {
-          newPageEntries[i] = pageEntry;
-        }
-      } */
-
       return {
         ...state,
-        currentDirectoryEntries: newDirEntries,
-        pageEntries: action.pageEntries
+        currentDirectoryEntries: newDirEntries
       };
     }
     case types.UPDATE_CURRENTDIR_ENTRY: {
@@ -1127,6 +1108,7 @@ export const actions = {
         directoryMeta
       )
     );
+    dispatch(actions.setIsMetaLoaded(false));
   },
   loadDirectorySuccessInt: (
     directoryPath: string,
@@ -1202,9 +1184,12 @@ export const actions = {
     type: types.SET_CURRENDIRECTORYPERSPECTIVE,
     perspective
   }),
-  setSelectedEntries: (selectedEntries: Array<Object>) => (
-    dispatch: (actions: Object) => void,
-    getState: () => any
+  setIsMetaLoaded: (isMetaLoaded: boolean) => ({
+    type: types.SET_IS_META_LOADED,
+    isMetaLoaded
+  }),
+  setSelectedEntries: (selectedEntries: Array<TS.FileSystemEntry>) => (
+    dispatch: (action) => void
   ) => {
     // const { openedFiles } = getState().app;
     // skip select other file if its have openedFiles in editMode
@@ -1212,7 +1197,7 @@ export const actions = {
     dispatch(actions.setSelectedEntriesInt(selectedEntries));
     // }
   },
-  setSelectedEntriesInt: (selectedEntries: Array<Object>) => ({
+  setSelectedEntriesInt: (selectedEntries: Array<TS.FileSystemEntry>) => ({
     type: types.SET_SELECTED_ENTRIES,
     selectedEntries
   }),
@@ -1896,13 +1881,9 @@ export const actions = {
     path,
     entry
   }),
-  updateCurrentDirEntries: (
-    dirEntries: TS.FileSystemEntry[],
-    pageEntries: any
-  ) => ({
+  updateCurrentDirEntries: (dirEntries: TS.FileSystemEntry[]) => ({
     type: types.UPDATE_CURRENTDIR_ENTRIES,
-    dirEntries,
-    pageEntries
+    dirEntries
   }),
   /**
    * @param path
@@ -2250,9 +2231,10 @@ export const actions = {
 
 // Selectors
 export const currentUser = (state: any) => state.app.user;
+export const getIsMetaLoaded = (state: any) => state.app.isMetaLoaded;
 export const getDirectoryContent = (state: any) =>
   state.app.currentDirectoryEntries;
-export const getPageEntries = (state: any) => state.app.pageEntries;
+// export const getPageEntries = (state: any) => state.app.pageEntries;
 export const getCurrentDirectoryFiles = (state: any) =>
   state.app.currentDirectoryFiles;
 export const getCurrentDirectoryDirs = (state: any) =>

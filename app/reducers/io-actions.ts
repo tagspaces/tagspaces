@@ -101,8 +101,16 @@ const actions = {
             getMetaFileLocationForFile(job[1], PlatformIO.getDirSeparator())
           ]);
           moveMetaJobs.push([
-            getThumbFileLocationForFile(job[0], PlatformIO.getDirSeparator()),
-            getThumbFileLocationForFile(job[1], PlatformIO.getDirSeparator())
+            getThumbFileLocationForFile(
+              job[0],
+              PlatformIO.getDirSeparator(),
+              false
+            ),
+            getThumbFileLocationForFile(
+              job[1],
+              PlatformIO.getDirSeparator(),
+              false
+            )
           ]);
           renameFilesPromise(moveMetaJobs)
             .then(() => {
@@ -149,8 +157,16 @@ const actions = {
             getMetaFileLocationForFile(job[1], PlatformIO.getDirSeparator())
           ]);
           copyMetaJobs.push([
-            getThumbFileLocationForFile(job[0], PlatformIO.getDirSeparator()),
-            getThumbFileLocationForFile(job[1], PlatformIO.getDirSeparator())
+            getThumbFileLocationForFile(
+              job[0],
+              PlatformIO.getDirSeparator(),
+              false
+            ),
+            getThumbFileLocationForFile(
+              job[1],
+              PlatformIO.getDirSeparator(),
+              false
+            )
           ]);
           copyFilesPromise(copyMetaJobs)
             .then(() => {
@@ -243,7 +259,7 @@ const actions = {
           try {
             const fsEntry: TS.FileSystemEntry = await PlatformIO.saveBinaryFilePromise(
               fileTargetPath,
-              result,
+              new Uint8Array(result),
               true,
               onUploadProgress
             );
