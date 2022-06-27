@@ -1,5 +1,5 @@
 import Search from '../../app/services/search';
-import { FileTypeGroups } from '../../app/services/search';
+// import { FileTypeGroups } from '../../app/services/search';
 
 const testEntries = require('./tsi.json');
 

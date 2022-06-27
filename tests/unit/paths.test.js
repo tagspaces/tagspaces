@@ -5,7 +5,7 @@ const {
   extractFileExtension,
   getMetaDirectoryPath,
   getMetaFileLocationForFile
-} = require('../../app/utils/paths');
+} = require('@tagspaces/tagspaces-platforms/paths');
 
 const dirSeparatorUnix = '/';
 const dirSeparatorWin = '\\';
