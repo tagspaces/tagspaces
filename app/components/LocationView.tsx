@@ -185,6 +185,7 @@ const LocationView = (props: Props) => {
           PlatformIO.enableObjectStoreSupport(targetLocation)
             .then(() => {
               props.resetProgress();
+              props.toggleUploadDialog();
               props
                 .uploadFiles(arrPath, targetPath, props.onUploadProgress)
                 .then((fsEntries: Array<TS.FileSystemEntry>) => {
@@ -194,7 +195,6 @@ const LocationView = (props: Props) => {
                 .catch(error => {
                   console.log('uploadFiles', error);
                 });
-              props.toggleUploadDialog();
               return true;
             })
             .catch(error => {

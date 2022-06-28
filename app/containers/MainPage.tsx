@@ -463,11 +463,11 @@ function MainPage(props: Props) {
         );
       }
       props.resetProgress();
+      props.toggleUploadDialog();
       return props
         .uploadFilesAPI(files, props.directoryPath, props.onUploadProgress)
         .then(fsEntries => {
           props.reflectCreateEntries(fsEntries);
-          props.toggleUploadDialog();
           return true;
         })
         .catch(error => {
