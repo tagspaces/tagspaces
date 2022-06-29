@@ -415,7 +415,7 @@ function MainPage(props: Props) {
       }
     }
     Promise.all(promises)
-      .then(() => props.loadDirectoryContent(props.directoryPath, true))
+      .then(() => props.loadDirectoryContent(props.directoryPath, true, true))
       .catch(error => {
         console.log('promises', error);
       });

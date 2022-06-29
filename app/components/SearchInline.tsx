@@ -58,7 +58,7 @@ interface Props {
   searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
   createLocationsIndexes: () => void;
   searchAllLocations: (searchQuery: TS.SearchQuery) => void;
-  loadDirectoryContent: (path: string, generateThumbnails: boolean, loadDirMeta?: boolean) => void;
+  // loadDirectoryContent: (path: string, generateThumbnails: boolean, loadDirMeta?: boolean) => void;
   openURLExternally: (url: string) => void;
   searchQuery: TS.SearchQuery; // () => any;
   openCurrentDirectory: () => void;
@@ -80,7 +80,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const SearchInline = (props: Props) => {
+function SearchInline(props: Props) {
   // const [, forceUpdate] = useReducer(x => x + 1, 0);
   const textQuery = useRef<string>(props.searchQuery.textQuery);
   const textQueryMask = useRef<string>('');
@@ -144,7 +144,7 @@ const SearchInline = (props: Props) => {
 
   useEffect(() => {
     if (Object.keys(props.searchQuery).length > 0) {
-      let emptySearch: boolean = true;
+      let emptySearch = true;
       textQueryMask.current = '';
 
       if (props.searchQuery.tagsAND && props.searchQuery.tagsAND.length > 0) {
@@ -480,7 +480,7 @@ const SearchInline = (props: Props) => {
       </Tooltip>
     </div>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {
@@ -501,7 +501,7 @@ function mapDispatchToProps(dispatch) {
       setSearchQuery: LocationIndexActions.setSearchQuery,
       searchLocationIndex: LocationIndexActions.searchLocationIndex,
       createLocationsIndexes: LocationIndexActions.createLocationsIndexes,
-      loadDirectoryContent: AppActions.loadDirectoryContent,
+      // loadDirectoryContent: AppActions.loadDirectoryContent,
       openURLExternally: AppActions.openURLExternally,
       openCurrentDirectory: AppActions.openCurrentDirectory
     },
