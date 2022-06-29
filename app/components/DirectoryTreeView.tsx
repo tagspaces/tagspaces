@@ -29,7 +29,11 @@ import { locationType } from '-/utils/misc';
 
 interface Props {
   classes: any;
-  loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
+  loadDirectoryContent: (
+    path: string,
+    generateThumbnails: boolean,
+    loadDirMeta?: boolean
+  ) => void;
   location: TS.Location;
   data?: any;
   isReadOnlyMode?: boolean;
@@ -169,7 +173,8 @@ const DirectoryTreeView = forwardRef(
           .then(() => {
             loadSubDirectories(subDir);
             props.changeLocation(subDir);
-            props.loadDirectoryContent(subDir.path, true);
+            props.loadDirectoryContent(subDir.path, true, true);
+            return true;
           })
           .catch(error => {
             console.log('enableObjectStoreSupport', error);
@@ -178,7 +183,7 @@ const DirectoryTreeView = forwardRef(
         PlatformIO.disableObjectStoreSupport();
         loadSubDirectories(subDir);
         props.changeLocation(subDir);
-        props.loadDirectoryContent(subDir.path, true);
+        props.loadDirectoryContent(subDir.path, true, true);
       }
     };
 

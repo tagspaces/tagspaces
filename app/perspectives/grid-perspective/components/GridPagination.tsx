@@ -68,6 +68,7 @@ interface Props {
   settings; // cache only
   // eslint-disable-next-line react/no-unused-prop-types
   selectedEntries; // cache only
+  // setMetaForCurrentDir: (metaFiles: Array<any>) => void;
 }
 
 function GridPagination(props: Props) {
@@ -112,6 +113,7 @@ function GridPagination(props: Props) {
         .then(meta => {
           metaLoadedLock.current = false;
           props.setIsMetaLoaded(true);
+          // props.setMetaForCurrentDir(meta);
           const dirEntriesPromises = getDirEntriesPromises();
           const fileEntriesPromises = getFileEntriesPromises(meta);
           const thumbs = getThumbs(meta);
@@ -383,6 +385,7 @@ function mapStateToProps(state) {
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
+      // setMetaForCurrentDir: AppActions.setMetaForCurrentDir,
       updateCurrentDirEntries: AppActions.updateCurrentDirEntries,
       setIsMetaLoaded: AppActions.setIsMetaLoaded
     },
@@ -397,7 +400,9 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
     JSON.stringify(prevProp.directories) &&
   JSON.stringify(nextProp.settings) === JSON.stringify(prevProp.settings) &&
   JSON.stringify(nextProp.selectedEntries) ===
-    JSON.stringify(prevProp.selectedEntries);
+    JSON.stringify(prevProp.selectedEntries) &&
+  JSON.stringify(nextProp.currentDirectoryColor) ===
+    JSON.stringify(prevProp.currentDirectoryColor);
 
 export default connect(
   mapStateToProps,

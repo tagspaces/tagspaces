@@ -85,7 +85,7 @@ type PropsClasses = Record<keyof StyleProps, string>;
 interface Props {
   style?: any;
   theme?: any;
-  loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
+  loadDirectoryContent: (path: string, generateThumbnails: boolean, loadDirMeta?: boolean) => void;
   openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   hideDrawer?: () => void;
   searchQuery: TS.SearchQuery; // () => any;
@@ -395,7 +395,7 @@ const SearchPopover = (props: Props) => {
 
   function openCurrentDirectory() {
     if (props.currentDirectory) {
-      props.loadDirectoryContent(props.currentDirectory, false);
+      props.loadDirectoryContent(props.currentDirectory, false, true);
     } else {
       props.setSearchResults([]);
     }

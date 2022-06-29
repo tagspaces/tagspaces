@@ -190,7 +190,7 @@ interface Props {
     autohide?: boolean
   ) => void;
   reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => void;
-  loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
+  loadDirectoryContent: (path: string, generateThumbnails: boolean, loadDirMeta?: boolean) => void;
   uploadFilesAPI: (
     files: Array<File>,
     destination: string,
@@ -415,7 +415,7 @@ function MainPage(props: Props) {
       }
     }
     Promise.all(promises)
-      .then(() => props.loadDirectoryContent(props.directoryPath, true))
+      .then(() => props.loadDirectoryContent(props.directoryPath, true, true))
       .catch(error => {
         console.log('promises', error);
       });
