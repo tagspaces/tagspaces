@@ -29,7 +29,7 @@ import { locationType } from '-/utils/misc';
 
 interface Props {
   classes: any;
-  loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
+  loadDirectoryContent: (path: string, generateThumbnails: boolean, loadDirMeta?: boolean) => void;
   location: TS.Location;
   data?: any;
   isReadOnlyMode?: boolean;

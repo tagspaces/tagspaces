@@ -936,7 +936,7 @@ export const actions = {
     type: types.SET_ISLOADING,
     isLoading
   }),
-  setMetaForCurrentDir: (metaFiles: Array<any>) => (
+  /* setMetaForCurrentDir: (metaFiles: Array<any>) => (
     dispatch: (action: any) => void,
     getState: () => any
   ) => {
@@ -977,7 +977,7 @@ export const actions = {
           console.error(err);
         });
     }
-  },
+  }, */
   loadParentDirectoryContent: () => (
     dispatch: (actions: Object) => void,
     getState: () => any
@@ -1072,8 +1072,8 @@ export const actions = {
   loadDirectoryContent: (
     directoryPath: string,
     generateThumbnails: boolean,
-    loadDirMeta: boolean = false
-  ) => async (dispatch: (actions: Object) => void, getState: () => any) => {
+    loadDirMeta = false
+  ) => async (dispatch: (action: any) => void, getState: () => any) => {
     // console.debug('loadDirectoryContent:' + directoryPath);
     window.walkCanceled = false;
 
@@ -1086,9 +1086,14 @@ export const actions = {
     }
     if (loadDirMeta) {
       try {
-        const fsEntryMeta = await loadMetaDataPromise(
-          normalizePath(directoryPath) + PlatformIO.getDirSeparator()
+        const metaFilePath = getMetaFileLocationForDir(
+          directoryPath,
+          PlatformIO.getDirSeparator()
         );
+        const fsEntryMeta = await loadJSONFile(metaFilePath);
+        /* const fsEntryMeta = await loadMetaDataPromise(
+          normalizePath(directoryPath) + PlatformIO.getDirSeparator()
+        ); */
         // console.debug('Loading meta succeeded for:' + directoryPath);
         dispatch(
           actions.loadDirectoryContentInt(
@@ -1097,14 +1102,6 @@ export const actions = {
             fsEntryMeta
           )
         );
-        /* if (fsEntryMeta.color) { // TODO rethink this states changes are expensive
-            dispatch(actions.setCurrentDirectoryColor(fsEntryMeta.color));
-          }
-          if (fsEntryMeta.perspective) {
-            dispatch(actions.setCurrentDirPerspective(fsEntryMeta.perspective));
-          } */
-
-        // return true;
       } catch (err) {
         console.debug('Error loading meta of:' + directoryPath + ' ' + err);
         dispatch(

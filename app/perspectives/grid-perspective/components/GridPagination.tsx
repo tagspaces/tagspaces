@@ -68,7 +68,7 @@ interface Props {
   settings; // cache only
   // eslint-disable-next-line react/no-unused-prop-types
   selectedEntries; // cache only
-  setMetaForCurrentDir: (metaFiles: Array<any>) => void;
+  // setMetaForCurrentDir: (metaFiles: Array<any>) => void;
 }
 
 function GridPagination(props: Props) {
@@ -113,7 +113,7 @@ function GridPagination(props: Props) {
         .then(meta => {
           metaLoadedLock.current = false;
           props.setIsMetaLoaded(true);
-          props.setMetaForCurrentDir(meta);
+          // props.setMetaForCurrentDir(meta);
           const dirEntriesPromises = getDirEntriesPromises();
           const fileEntriesPromises = getFileEntriesPromises(meta);
           const thumbs = getThumbs(meta);
@@ -385,7 +385,7 @@ function mapStateToProps(state) {
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
-      setMetaForCurrentDir: AppActions.setMetaForCurrentDir,
+      // setMetaForCurrentDir: AppActions.setMetaForCurrentDir,
       updateCurrentDirEntries: AppActions.updateCurrentDirEntries,
       setIsMetaLoaded: AppActions.setIsMetaLoaded
     },
