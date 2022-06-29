@@ -26,6 +26,7 @@ import i18n from '-/services/i18n';
 import {
   actions as AppActions,
   getCurrentDirectoryColor,
+  getCurrentDirectoryPerspective,
   getIsMetaLoaded,
   getSearchResultCount,
   isLoading
@@ -33,7 +34,7 @@ import {
 import EntryIcon from '-/components/EntryIcon';
 import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
-import { getMetaForEntry } from '-/services/utils-io';
+import { getMetaForEntry, loadJSONFile } from '-/services/utils-io';
 import {
   getMetaFileLocationForDir,
   getMetaFileLocationForFile,
@@ -41,6 +42,7 @@ import {
   getThumbFileLocationForFile
 } from '-/utils/paths';
 import PlatformIO from '-/services/platform-facade';
+import { PerspectiveIDs } from '-/perspectives';
 
 interface Props {
   isMetaLoaded: boolean;
@@ -55,6 +57,7 @@ interface Props {
   // pageEntries: Array<TS.FileSystemEntry>;
   renderCell: (entry: TS.FileSystemEntry, isLast?: boolean) => void;
   currentDirectoryColor: string;
+  currentDirectoryPerspective: string;
   isAppLoading: boolean;
   currentPage: number;
   gridPageLimit: number;
@@ -68,6 +71,8 @@ interface Props {
   settings; // cache only
   // eslint-disable-next-line react/no-unused-prop-types
   selectedEntries; // cache only
+  setCurrentDirectoryColor: (color: string) => void;
+  setCurrentDirectoryPerspective: (perspective: string) => void;
 }
 
 function GridPagination(props: Props) {
@@ -112,6 +117,7 @@ function GridPagination(props: Props) {
         .then(meta => {
           metaLoadedLock.current = false;
           props.setIsMetaLoaded(true);
+          setMetaForCurrentDir(meta);
           const dirEntriesPromises = getDirEntriesPromises();
           const fileEntriesPromises = getFileEntriesPromises(meta);
           const thumbs = getThumbs(meta);
@@ -139,6 +145,38 @@ function GridPagination(props: Props) {
     props.currentDirectoryPath,
     props.searchResultCount
   ]);
+
+  const setMetaForCurrentDir = (metaFiles: Array<any>) => {
+    if (
+      metaFiles.some(metaFile => metaFile.path === AppConfig.metaFolderFile)
+      // && !props.currentDirectoryColor
+    ) {
+      const metaFilePath = getMetaFileLocationForDir(
+        props.currentDirectoryPath,
+        PlatformIO.getDirSeparator()
+      );
+      loadJSONFile(metaFilePath)
+        .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
+          if (
+            fsEntryMeta.color &&
+            props.currentDirectoryColor !== fsEntryMeta.color
+          ) {
+            props.setCurrentDirectoryColor(fsEntryMeta.color);
+          }
+          if (
+            fsEntryMeta.perspective &&
+            fsEntryMeta.perspective !== PerspectiveIDs.UNSPECIFIED &&
+            props.currentDirectoryPerspective !== fsEntryMeta.perspective
+          ) {
+            props.setCurrentDirectoryPerspective(fsEntryMeta.perspective);
+          }
+          return fsEntryMeta;
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    }
+  };
 
   const setThumbs = (
     entry: TS.FileSystemEntry,
@@ -373,6 +411,7 @@ function GridPagination(props: Props) {
 function mapStateToProps(state) {
   return {
     isAppLoading: isLoading(state),
+    currentDirectoryPerspective: getCurrentDirectoryPerspective(state),
     currentDirectoryColor: getCurrentDirectoryColor(state),
     searchResultCount: getSearchResultCount(state),
     // pageEntries: getPageEntries(state),
@@ -383,6 +422,8 @@ function mapStateToProps(state) {
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
+      setCurrentDirectoryPerspective: AppActions.setCurrentDirectoryPerspective,
+      setCurrentDirectoryColor: AppActions.setCurrentDirectoryColor,
       updateCurrentDirEntries: AppActions.updateCurrentDirEntries,
       setIsMetaLoaded: AppActions.setIsMetaLoaded
     },
@@ -397,7 +438,9 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
     JSON.stringify(prevProp.directories) &&
   JSON.stringify(nextProp.settings) === JSON.stringify(prevProp.settings) &&
   JSON.stringify(nextProp.selectedEntries) ===
-    JSON.stringify(prevProp.selectedEntries);
+    JSON.stringify(prevProp.selectedEntries) &&
+  JSON.stringify(nextProp.currentDirectoryColor) ===
+    JSON.stringify(prevProp.currentDirectoryColor);
 
 export default connect(
   mapStateToProps,
