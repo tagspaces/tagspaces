@@ -28,7 +28,8 @@ import {
   prepareDirectoryContent,
   findExtensionsForEntry,
   getNextFile,
-  getPrevFile
+  getPrevFile,
+  loadJSONFile
 } from '-/services/utils-io';
 import {
   extractFileExtension,
@@ -40,7 +41,8 @@ import {
   extractTagsAsObjects,
   normalizePath,
   extractContainingDirectoryPath,
-  getLocationPath
+  getLocationPath,
+  getMetaFileLocationForDir
 } from '-/utils/paths';
 import {
   formatDateTime4Tag,
@@ -934,6 +936,48 @@ export const actions = {
     type: types.SET_ISLOADING,
     isLoading
   }),
+  setMetaForCurrentDir: (metaFiles: Array<any>) => (
+    dispatch: (action: any) => void,
+    getState: () => any
+  ) => {
+    const state = getState();
+    const {
+      currentDirectoryPath,
+      currentDirectoryColor,
+      currentDirectoryPerspective
+    } = state.app;
+    if (
+      metaFiles.some(metaFile => metaFile.path === AppConfig.metaFolderFile)
+      // && !props.currentDirectoryColor
+    ) {
+      const metaFilePath = getMetaFileLocationForDir(
+        currentDirectoryPath,
+        PlatformIO.getDirSeparator()
+      );
+      loadJSONFile(metaFilePath)
+        .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
+          if (
+            fsEntryMeta.color &&
+            currentDirectoryColor !== fsEntryMeta.color
+          ) {
+            dispatch(actions.setCurrentDirectoryColor(fsEntryMeta.color));
+          }
+          if (
+            fsEntryMeta.perspective &&
+            fsEntryMeta.perspective !== PerspectiveIDs.UNSPECIFIED &&
+            currentDirectoryPerspective !== fsEntryMeta.perspective
+          ) {
+            dispatch(
+              actions.setCurrentDirectoryPerspective(fsEntryMeta.perspective)
+            );
+          }
+          return fsEntryMeta;
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    }
+  },
   loadParentDirectoryContent: () => (
     dispatch: (actions: Object) => void,
     getState: () => any
