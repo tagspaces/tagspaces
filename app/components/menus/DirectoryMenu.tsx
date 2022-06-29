@@ -164,12 +164,12 @@ const DirectoryMenu = (props: Props) => {
 
   function reloadDirectory() {
     onClose();
-    props.loadDirectoryContent(props.directoryPath, true);
+    props.loadDirectoryContent(props.directoryPath, true, true);
   }
 
   function openDirectory() {
     onClose();
-    props.loadDirectoryContent(props.directoryPath, true);
+    props.loadDirectoryContent(props.directoryPath, true, true);
   }
 
   function showProperties() {
