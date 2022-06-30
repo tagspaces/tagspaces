@@ -85,7 +85,11 @@ type PropsClasses = Record<keyof StyleProps, string>;
 interface Props {
   style?: any;
   theme?: any;
-  loadDirectoryContent: (path: string, generateThumbnails: boolean, loadDirMeta?: boolean) => void;
+  loadDirectoryContent: (
+    path: string,
+    generateThumbnails: boolean,
+    loadDirMeta?: boolean
+  ) => void;
   openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   hideDrawer?: () => void;
   searchQuery: TS.SearchQuery; // () => any;

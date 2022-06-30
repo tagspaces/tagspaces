@@ -201,7 +201,11 @@ interface Props {
   showInFileManager: () => void;
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   reflectCreateEntry: (path: string, isFile: boolean) => void;
-  loadDirectoryContent: (path: string, generateThumbnails: boolean, loadDirMeta?: boolean) => void;
+  loadDirectoryContent: (
+    path: string,
+    generateThumbnails: boolean,
+    loadDirMeta?: boolean
+  ) => void;
   loadParentDirectoryContent: () => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   isReadOnlyMode: boolean;

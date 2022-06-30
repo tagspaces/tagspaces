@@ -56,7 +56,11 @@ const NoWrapBreadcrumb = withStyles({
 interface Props {
   currentDirectoryPath: string;
   currentLocationPath: string;
-  loadDirectoryContent: (path: string, generateThumbnails: boolean, loadDirMeta?: boolean) => void;
+  loadDirectoryContent: (
+    path: string,
+    generateThumbnails: boolean,
+    loadDirMeta?: boolean
+  ) => void;
   switchPerspective: (perspectiveId: string) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   openDirectory: () => void;

@@ -83,7 +83,11 @@ interface Props {
   openNextFile: () => any;
   openPrevFile: () => any;
   openRenameEntryDialog: () => void;
-  loadDirectoryContent: (path: string, generateThumbnails: boolean, loadDirMeta?: boolean) => void;
+  loadDirectoryContent: (
+    path: string,
+    generateThumbnails: boolean,
+    loadDirMeta?: boolean
+  ) => void;
   openDirectory: (path: string) => void;
   showInFileManager: (path: string) => void;
   openFileNatively: (path?: string) => void;

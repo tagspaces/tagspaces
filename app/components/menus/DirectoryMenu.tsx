@@ -70,7 +70,11 @@ interface Props {
   onClose: (param?: any) => void;
   anchorEl: Element;
   directoryPath: string;
-  loadDirectoryContent: (path: string, generateThumbnails: boolean, loadDirMeta?: boolean) => void;
+  loadDirectoryContent: (
+    path: string,
+    generateThumbnails: boolean,
+    loadDirMeta?: boolean
+  ) => void;
   openDirectory: (path: string) => void;
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   reflectCreateEntry?: (path: string, isFile: boolean) => void;

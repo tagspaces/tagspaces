@@ -57,7 +57,11 @@ interface Props {
   location: TS.Location;
   currentLocationId: string;
   openLocation: (location: TS.Location) => void;
-  loadDirectoryContent: (path: string, generateThumbnails: boolean, loadDirMeta?: boolean) => void;
+  loadDirectoryContent: (
+    path: string,
+    generateThumbnails: boolean,
+    loadDirMeta?: boolean
+  ) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   hideDrawer: () => void;
   isReadOnlyMode: boolean;

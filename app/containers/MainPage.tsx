@@ -190,7 +190,11 @@ interface Props {
     autohide?: boolean
   ) => void;
   reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => void;
-  loadDirectoryContent: (path: string, generateThumbnails: boolean, loadDirMeta?: boolean) => void;
+  loadDirectoryContent: (
+    path: string,
+    generateThumbnails: boolean,
+    loadDirMeta?: boolean
+  ) => void;
   uploadFilesAPI: (
     files: Array<File>,
     destination: string,
@@ -763,7 +767,10 @@ function MainPage(props: Props) {
           <TargetFileBox
             accepts={[FILE]}
             onDrop={(item: any) => {
-              if (AppConfig.isElectron && !PlatformIO.haveObjectStoreSupport()) {
+              if (
+                AppConfig.isElectron &&
+                !PlatformIO.haveObjectStoreSupport()
+              ) {
                 setMoveCopyDialogOpened(item.files);
               } else {
                 handleCopyFiles(item.files);
