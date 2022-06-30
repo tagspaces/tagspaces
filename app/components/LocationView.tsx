@@ -56,7 +56,7 @@ interface Props {
   location: TS.Location;
   currentLocationId: string;
   openLocation: (location: TS.Location) => void;
-  loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
+  loadDirectoryContent: (path: string, generateThumbnails: boolean, loadDirMeta?: boolean) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   hideDrawer: () => void;
   isReadOnlyMode: boolean;
@@ -184,6 +184,7 @@ function LocationView(props: Props) {
           PlatformIO.enableObjectStoreSupport(targetLocation)
             .then(() => {
               props.resetProgress();
+              props.toggleUploadDialog();
               props
                 .uploadFiles(arrPath, targetPath, props.onUploadProgress)
                 .then((fsEntries: Array<TS.FileSystemEntry>) => {
@@ -193,7 +194,6 @@ function LocationView(props: Props) {
                 .catch(error => {
                   console.log('uploadFiles', error);
                 });
-              props.toggleUploadDialog();
               return true;
             })
             .catch(error => {

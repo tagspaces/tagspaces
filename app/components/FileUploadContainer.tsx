@@ -84,7 +84,7 @@ const FileUploadContainer = forwardRef(
       // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
       // const file = selection.currentTarget.files[0];
       props.resetProgress();
-
+      props.toggleUploadDialog();
       props
         .uploadFilesAPI(
           Array.from(selection.currentTarget.files),
@@ -98,7 +98,6 @@ const FileUploadContainer = forwardRef(
         .catch(error => {
           console.log('uploadFiles', error);
         });
-      props.toggleUploadDialog();
     }
 
     return (

@@ -178,6 +178,7 @@ function CreateDialog(props: Props) {
     // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
     // const file = selection.currentTarget.files[0];
     props.resetProgress();
+    props.toggleUploadDialog();
     props
       .uploadFilesAPI(
         Array.from(selection.currentTarget.files),
@@ -191,7 +192,6 @@ function CreateDialog(props: Props) {
       .catch(error => {
         console.log('uploadFiles', error);
       });
-    props.toggleUploadDialog();
     props.onClose();
 
     /* const filePath =

@@ -82,7 +82,7 @@ interface Props {
   openNextFile: () => any;
   openPrevFile: () => any;
   openRenameEntryDialog: () => void;
-  loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
+  loadDirectoryContent: (path: string, generateThumbnails: boolean, loadDirMeta?: boolean) => void;
   openDirectory: (path: string) => void;
   showInFileManager: (path: string) => void;
   openFileNatively: (path?: string) => void;
@@ -433,7 +433,7 @@ function GridPerspective(props: Props) {
       props.openFsEntry(fsEntry);
     } else {
       console.log('Handle Grid cell db click, selected path : ', fsEntry.path);
-      props.loadDirectoryContent(fsEntry.path, true);
+      props.loadDirectoryContent(fsEntry.path, true, true);
     }
   };
 

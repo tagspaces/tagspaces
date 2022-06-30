@@ -1,33 +1,39 @@
 [main]
 host = https://www.transifex.com
 
-[tagspaces.corejson]
+[o:tagspaces:p:tagspaces:r:corejson]
 file_filter = app/locales/<lang>/core.json
+source_file = app/locales/en/core.json
 source_lang = en
-type = KEYVALUEJSON
+type        = KEYVALUEJSON
 
-[tagspaces.nsviewerimagejson]
-file_filter = extensions/extensions/image-viewer/locales/<lang>/ns.viewerImage.json
-source_lang = en
-type = KEYVALUEJSON
-
-[tagspaces.nsviewermdjson]
-file_filter = extensions/extensions/md-viewer/locales/<lang>/ns.viewerMD.json
-source_lang = en
-type = KEYVALUEJSON
-
-[tagspaces.nsviewerhtmljson]
-file_filter = extensions/extensions/html-viewer/locales/<lang>/ns.viewerHTML.json
-source_lang = en
-type = KEYVALUEJSON
-
-[tagspaces.nsviewermhtmljson]
-file_filter = extensions/extensions/mhtml-viewer/locales/<lang>/ns.viewerMHTML.json
-source_lang = en
-type = KEYVALUEJSON
-
-[tagspaces.nseditortextjson]
+[o:tagspaces:p:tagspaces:r:nseditortextjson]
 file_filter = extensions/extensions/text-editor/locales/<lang>/ns.editorText.json
+source_file = extensions/extensions/text-editor/locales/en/ns.editorText.json
 source_lang = en
-type = KEYVALUEJSON
+type        = KEYVALUEJSON
+
+[o:tagspaces:p:tagspaces:r:nsviewerhtmljson]
+file_filter = extensions/extensions/html-viewer/locales/<lang>/ns.viewerHTML.json
+source_file = extensions/extensions/html-viewer/locales/en/ns.viewerHTML.json
+source_lang = en
+type        = KEYVALUEJSON
+
+[o:tagspaces:p:tagspaces:r:nsviewerimagejson]
+file_filter = extensions/extensions/image-viewer/locales/<lang>/ns.viewerImage.json
+source_file = extensions/extensions/image-viewer/locales/en/ns.viewerImage.json
+source_lang = en
+type        = KEYVALUEJSON
+
+[o:tagspaces:p:tagspaces:r:nsviewermdjson]
+file_filter = extensions/extensions/md-viewer/locales/<lang>/ns.viewerMD.json
+source_file = extensions/extensions/md-viewer/locales/en/ns.viewerMD.json
+source_lang = en
+type        = KEYVALUEJSON
+
+[o:tagspaces:p:tagspaces:r:nsviewermhtmljson]
+file_filter = extensions/extensions/mhtml-viewer/locales/<lang>/ns.viewerMHTML.json
+source_file = extensions/extensions/mhtml-viewer/locales/en/ns.viewerMHTML.json
+source_lang = en
+type        = KEYVALUEJSON
 

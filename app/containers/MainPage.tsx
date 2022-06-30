@@ -86,7 +86,7 @@ import { TS } from '-/tagspaces.namespace';
 import PageNotification from '-/containers/PageNotification';
 import listen from '-/containers/RendererListener';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
-import MoveCopyFilesDialog from '-/components/dialogs/MoveOrCopyFilesDialog';
+import MoveOrCopyFilesDialog from '-/components/dialogs/MoveOrCopyFilesDialog';
 import PlatformIO from '-/services/platform-facade';
 
 const drawerWidth = 320;
@@ -190,7 +190,7 @@ interface Props {
     autohide?: boolean
   ) => void;
   reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => void;
-  loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
+  loadDirectoryContent: (path: string, generateThumbnails: boolean, loadDirMeta?: boolean) => void;
   uploadFilesAPI: (
     files: Array<File>,
     destination: string,
@@ -415,7 +415,7 @@ function MainPage(props: Props) {
       }
     }
     Promise.all(promises)
-      .then(() => props.loadDirectoryContent(props.directoryPath, true))
+      .then(() => props.loadDirectoryContent(props.directoryPath, true, true))
       .catch(error => {
         console.log('promises', error);
       });
@@ -463,11 +463,11 @@ function MainPage(props: Props) {
         );
       }
       props.resetProgress();
+      props.toggleUploadDialog();
       return props
         .uploadFilesAPI(files, props.directoryPath, props.onUploadProgress)
         .then(fsEntries => {
           props.reflectCreateEntries(fsEntries);
-          props.toggleUploadDialog();
           return true;
         })
         .catch(error => {
@@ -600,7 +600,7 @@ function MainPage(props: Props) {
       keyMap={keyMap}
       style={{ height: '100%' }}
     >
-      <MoveCopyFilesDialog
+      <MoveOrCopyFilesDialog
         open={moveCopyDialogOpened !== undefined}
         onClose={() => {
           setMoveCopyDialogOpened(undefined);
@@ -763,7 +763,7 @@ function MainPage(props: Props) {
           <TargetFileBox
             accepts={[FILE]}
             onDrop={(item: any) => {
-              if (AppConfig.isElectron) {
+              if (AppConfig.isElectron && !PlatformIO.haveObjectStoreSupport()) {
                 setMoveCopyDialogOpened(item.files);
               } else {
                 handleCopyFiles(item.files);
