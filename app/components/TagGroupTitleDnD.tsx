@@ -49,7 +49,7 @@ interface Props {
   connectDropTarget: ConnectDropTarget;
 }
 
-const TagGroupTitleDnD = (props: Props) => {
+function TagGroupTitleDnD(props: Props) {
   const handleTagGroupTitleClick = (event: Object, tagGroup) => {
     props.toggleTagGroup(tagGroup.uuid);
   };
@@ -147,7 +147,7 @@ const TagGroupTitleDnD = (props: Props) => {
     return tagGroupTitle;
   }
   return connectDropTarget(connectDragSource(tagGroupTitle));
-};
+}
 
 const boxSource = {
   beginDrag(props) {

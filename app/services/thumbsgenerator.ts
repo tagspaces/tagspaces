@@ -24,9 +24,9 @@ import {
   normalizePath,
   getMetaDirectoryPath,
   encodeFileName
-} from '-/utils/paths';
-import { base64ToArrayBuffer } from '-/utils/misc';
-import AppConfig from '../config';
+} from '@tagspaces/tagspaces-platforms/paths';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import { base64ToArrayBuffer } from '-/utils/dom';
 import PlatformIO from '../services/platform-facade';
 import { Pro } from '../pro';
 
@@ -100,25 +100,23 @@ export const supportedVideos = ['ogv', 'mp4', 'webm', 'm4v', 'mkv', 'lrv'];
 const maxFileSize = 30 * 1024 * 1024;
 
 function saveThumbnailPromise(filePath, dataURL) {
-  return new Promise((resolve, reject) => {
-    if (!dataURL || dataURL.length < 7) {
-      // data:,
-      return reject('Invalid dataURL');
-    }
-    const baseString = dataURL.split(',').pop();
-    const content = base64ToArrayBuffer(baseString);
-    PlatformIO.saveBinaryFilePromise(filePath, content, true)
-      .then(() => resolve(filePath))
-      .catch(error => {
-        console.warn(
-          'Saving thumbnail for ' +
-            filePath +
-            ' failed with ' +
-            JSON.stringify(error)
-        );
-        return reject('Saving tmb failed for: ' + filePath);
-      });
-  });
+  if (!dataURL || dataURL.length < 7) {
+    // data:,
+    return Promise.reject(new Error('Invalid dataURL'));
+  }
+  const baseString = dataURL.split(',').pop();
+  const content = base64ToArrayBuffer(baseString);
+  return PlatformIO.saveBinaryFilePromise(filePath, content, true)
+    .then(() => filePath)
+    .catch(error => {
+      console.warn(
+        'Saving thumbnail for ' +
+          filePath +
+          ' failed with ' +
+          JSON.stringify(error)
+      );
+      return Promise.reject(new Error('Saving tmb failed for: ' + filePath));
+    });
 }
 
 function getThumbFileLocation(filePath: string) {

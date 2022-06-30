@@ -36,13 +36,13 @@ import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
 import EditIcon from '@material-ui/icons/Edit';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '-/services/i18n';
-import { isGeoTag } from '-/utils/misc';
+import { isGeoTag } from '-/utils/geo';
 import { Pro } from '-/pro';
 import { getSelectedEntries, getSelectedTag } from '-/reducers/app';
 import TaggingActions from '-/reducers/tagging-actions';
 import { isDateTimeTag } from '-/utils/dates';
-import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
 import useValidation from '-/utils/useValidation';
 import { getMapTileServer } from '-/reducers/settings';
@@ -71,7 +71,7 @@ interface Props {
 const GeoTagEditor = Pro && Pro.UI ? Pro.UI.GeoTagEditor : React.Fragment;
 const DateTagEditor = Pro && Pro.UI ? Pro.UI.DateTagEditor : React.Fragment;
 
-const EditEntryTagDialog = (props: Props) => {
+function EditEntryTagDialog(props: Props) {
   const [showAdvancedMode, setShowAdvancedMode] = useState<boolean>(false);
   const [title, setTitle] = useState(
     props.selectedTag && props.selectedTag.title
@@ -253,7 +253,7 @@ const EditEntryTagDialog = (props: Props) => {
       {renderActions()}
     </Dialog>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

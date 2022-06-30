@@ -7,7 +7,7 @@ export interface Props {
   path: string;
 }
 
-export const FilesDragPreview = (props: Props) => {
+export function FilesDragPreview(props: Props) {
   const { entries, path } = props;
   return (
     <Chip
@@ -17,6 +17,6 @@ export const FilesDragPreview = (props: Props) => {
       color="primary"
     />
   );
-};
+}
 const areEqual = (prevProp, nextProp) => nextProp.path === prevProp.path;
 export default React.memo(FilesDragPreview, areEqual);

@@ -111,7 +111,7 @@ interface Props {
   setEndpointURL: (string) => void;
   setNewUuid: (string) => void;
 }
-const ObjectStoreForm = (props: Props) => {
+function ObjectStoreForm(props: Props) {
   const {
     setShowSecretAccessKey,
     cloudErrorTextName,
@@ -349,6 +349,6 @@ const ObjectStoreForm = (props: Props) => {
       )}
     </Grid>
   );
-};
+}
 
 export default withStyles(undefined, { withTheme: true })(ObjectStoreForm);

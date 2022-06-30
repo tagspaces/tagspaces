@@ -29,6 +29,8 @@ import { NativeTypes } from 'react-dnd-html5-backend';
 import { Progress } from 'aws-sdk/clients/s3';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
 import { Split } from 'ts-react-splitter';
+import { buffer } from '@tagspaces/tagspaces-platforms/misc';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import MobileNavigation from '../components/MobileNavigation';
 import FolderContainer from '../components/FolderContainer';
 import EntryContainer from '../components/EntryContainer';
@@ -70,9 +72,7 @@ import {
   currentUser,
   isLocationDialogOpened
 } from '../reducers/app';
-import { buffer } from '-/utils/misc';
 import TargetFileBox from '../components/TargetFileBox';
-import AppConfig from '../config';
 import i18n from '../services/i18n';
 import LoadingLazy from '../components/LoadingLazy';
 import withDnDContext from '-/containers/withDnDContext';

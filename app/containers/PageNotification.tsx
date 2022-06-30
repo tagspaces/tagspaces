@@ -67,7 +67,7 @@ const TSNotification = withStyles((theme: Theme) =>
   })
 )(Snackbar);
 
-const PageNotification = (props: Props) => {
+function PageNotification(props: Props) {
   const skipRelease = () => {
     props.setUpdateAvailable(false);
   };
@@ -179,7 +179,7 @@ const PageNotification = (props: Props) => {
       />
     </>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

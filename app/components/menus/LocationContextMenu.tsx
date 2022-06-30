@@ -30,14 +30,14 @@ import OpenFolderNativelyIcon from '@material-ui/icons/Launch';
 import CloseIcon from '@material-ui/icons/Close';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { locationType } from '@tagspaces/tagspaces-platforms/misc';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import { actions as LocationActions } from '-/reducers/locations';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import i18n from '-/services/i18n';
 import { actions as AppActions } from '-/reducers/app';
-import { getLocationPath } from '-/utils/paths';
-import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
-import { locationType } from '-/utils/misc';
+import PlatformIO from "-/services/platform-facade";
 
 interface Props {
   setEditLocationDialogOpened: (open: boolean) => void;
@@ -53,7 +53,7 @@ interface Props {
   setLocationDirectoryContextMenuAnchorEl: (el: HTMLElement) => void;
 }
 
-const LocationContextMenu = (props: Props) => {
+function LocationContextMenu(props: Props) {
   const indexLocation = () => {
     props.setLocationDirectoryContextMenuAnchorEl(null);
     props.createLocationIndex(props.selectedLocation);
@@ -87,7 +87,7 @@ const LocationContextMenu = (props: Props) => {
 
   const showInFileManager = () => {
     props.setLocationDirectoryContextMenuAnchorEl(null);
-    props.showInFileManager(getLocationPath(props.selectedLocation));
+    props.showInFileManager(PlatformIO.getLocationPath(props.selectedLocation));
     // props.openDirectory(selectedLocation.path || selectedLocation.paths[0]);
   };
 
@@ -200,7 +200,7 @@ const LocationContextMenu = (props: Props) => {
       {menuItems}
     </Menu>
   );
-};
+}
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(

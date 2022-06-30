@@ -27,15 +27,15 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
-import i18n from '-/services/i18n';
 import {
   extractContainingDirectoryPath,
   extractDirectoryName,
   extractFileName
-} from '-/utils/paths';
+} from '@tagspaces/tagspaces-platforms/paths';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import i18n from '-/services/i18n';
 import { actions as AppActions, getLastSelectedEntry } from '-/reducers/app';
 import PlatformIO from '-/services/platform-facade';
-import AppConfig from '-/config';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {
@@ -47,7 +47,7 @@ interface Props {
   renameDirectory: (directoryPath: string, newDirectoryName: string) => void;
 }
 
-const RenameEntryDialog = (props: Props) => {
+function RenameEntryDialog(props: Props) {
   const [inputError, setInputError] = useState<boolean>(false);
   const disableConfirmButton = useRef<boolean>(true);
 
@@ -218,7 +218,7 @@ const RenameEntryDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

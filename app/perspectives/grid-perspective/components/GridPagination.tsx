@@ -22,6 +22,13 @@ import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
 import Pagination from '@material-ui/lab/Pagination';
 import { bindActionCreators } from 'redux';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import {
+  getMetaFileLocationForDir,
+  getMetaFileLocationForFile,
+  getThumbFileLocationForDirectory,
+  getThumbFileLocationForFile
+} from '@tagspaces/tagspaces-platforms/paths';
 import i18n from '-/services/i18n';
 import {
   actions as AppActions,
@@ -31,15 +38,8 @@ import {
   isLoading
 } from '-/reducers/app';
 import EntryIcon from '-/components/EntryIcon';
-import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
 import { getMetaForEntry } from '-/services/utils-io';
-import {
-  getMetaFileLocationForDir,
-  getMetaFileLocationForFile,
-  getThumbFileLocationForDirectory,
-  getThumbFileLocationForFile
-} from '-/utils/paths';
 import PlatformIO from '-/services/platform-facade';
 
 interface Props {

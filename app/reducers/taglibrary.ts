@@ -21,11 +21,11 @@ import {
   formatDateTime4Tag,
   extend,
   prepareTagGroupForExport
-} from '-/utils/misc';
+} from '@tagspaces/tagspaces-platforms/misc';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import { parseNewTags, saveAsTextFile } from '-/services/utils-io';
 import versionMeta from '../version.json';
 import defaultTagLibrary from './taglibrary-default';
-import AppConfig from '../config';
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
 
@@ -708,7 +708,7 @@ export const actions = {
     fromIndex,
     toIndex
   }),
-  importTagGroups: (entries: Array<TS.TagGroup>, replace: boolean = false) => ({
+  importTagGroups: (entries: Array<TS.TagGroup>, replace = false) => ({
     type: types.IMPORT_TAGGROUP,
     entries,
     replace

@@ -33,15 +33,14 @@ import EmailIcon from '@material-ui/icons/Email';
 import IssueIcon from '@material-ui/icons/BugReport';
 import TranslationIcon from '@material-ui/icons/Translate';
 import NewFeatureIcon from '@material-ui/icons/Gesture';
-import SocialIcon from '@material-ui/icons/ThumbUp';
+// import SocialIcon from '@material-ui/icons/ThumbUp';
 import TwitterIcon from '@material-ui/icons/Twitter';
 import KeyShortcutsIcon from '@material-ui/icons/Keyboard';
 import ProTeaserIcon from '@material-ui/icons/FlightTakeoff';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import styles from './SidePanels.css';
 import i18n from '../services/i18n';
-import { Pro } from '-/pro';
 import Links from '-/links';
-import AppConfig from '-/config';
 
 interface Props {
   classes?: any;
@@ -55,7 +54,7 @@ interface Props {
   reduceHeightBy?: number;
 }
 
-const HelpFeedbackPanel = (props: Props) => {
+function HelpFeedbackPanel(props: Props) {
   const {
     classes,
     openURLExternally,
@@ -235,6 +234,6 @@ const HelpFeedbackPanel = (props: Props) => {
       </List>
     </div>
   );
-};
+}
 
 export default withStyles(styles, { withTheme: true })(HelpFeedbackPanel);

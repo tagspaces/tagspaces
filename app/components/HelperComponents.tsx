@@ -22,30 +22,35 @@ import Typography from '@material-ui/core/Typography';
 import i18n from '../services/i18n';
 import { Pro } from '-/pro';
 
-export const BetaLabel = () => (
-  <Tooltip arrow placement="top" title={i18n.t('featureInBetaStatus')}>
-    <Typography style={{ display: 'initial' }}>
-      <sup style={{ marginLeft: 5, textTransform: 'uppercase' }}>
-        {i18n.t('betaStatus')}
-      </sup>
-    </Typography>
-  </Tooltip>
-);
-
-export const ProLabel = () =>
-  !Pro && (
-    <Tooltip
-      arrow
-      placement="top"
-      title={i18n.t('thisFunctionalityIsAvailableInPro')}
-    >
+export function BetaLabel() {
+  return (
+    <Tooltip arrow placement="top" title={i18n.t('featureInBetaStatus')}>
       <Typography style={{ display: 'initial' }}>
-        <sup style={{ marginLeft: 5 }}>PRO</sup>
+        <sup style={{ marginLeft: 5, textTransform: 'uppercase' }}>
+          {i18n.t('betaStatus')}
+        </sup>
       </Typography>
     </Tooltip>
   );
+}
 
-export const ProTooltip = props => {
+export function ProLabel() {
+  return (
+    !Pro && (
+      <Tooltip
+        arrow
+        placement="top"
+        title={i18n.t('thisFunctionalityIsAvailableInPro')}
+      >
+        <Typography style={{ display: 'initial' }}>
+          <sup style={{ marginLeft: 5 }}>PRO</sup>
+        </Typography>
+      </Tooltip>
+    )
+  );
+}
+
+export function ProTooltip(props) {
   const { tooltip } = props;
   const proTooltip = tooltip && tooltip;
   const noProTooltip = tooltip
@@ -56,4 +61,4 @@ export const ProTooltip = props => {
       <span {...props} />
     </Tooltip>
   );
-};
+}

@@ -84,7 +84,7 @@ interface Props {
   // removeTags: (paths: Array<string>, tags: Array<Tag>) => void;
 }
 
-const TagsSelect = (props: Props) => {
+function TagsSelect(props: Props) {
   const [tagMenuAnchorEl, setTagMenuAnchorEl] = useState<null | HTMLElement>(
     null
   );
@@ -229,7 +229,7 @@ const TagsSelect = (props: Props) => {
       )}
     </div>
   );
-};
+}
 
 const mapStateToProps = state => ({
   allTags: getAllTags(state),

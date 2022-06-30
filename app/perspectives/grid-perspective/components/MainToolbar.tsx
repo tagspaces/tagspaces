@@ -34,9 +34,9 @@ import PropertiesIcon from '@material-ui/icons/Info';
 import ExportIcon from '@material-ui/icons/AssignmentReturn';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
-import AppConfig from '-/config';
 import {
   actions as LocationIndexActions,
   getSearchQuery
@@ -70,7 +70,7 @@ interface Props {
   keyBindings: Array<any>;
 }
 
-const MainToolbar = (props: Props) => {
+function MainToolbar(props: Props) {
   const {
     classes,
     selectedEntries,
@@ -266,7 +266,7 @@ const MainToolbar = (props: Props) => {
       </Tooltip>
     </Toolbar>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

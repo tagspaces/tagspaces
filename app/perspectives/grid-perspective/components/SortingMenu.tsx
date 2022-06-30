@@ -34,7 +34,7 @@ interface Props {
   orderBy: null | boolean;
 }
 
-const SortingMenu = (props: Props) => {
+function SortingMenu(props: Props) {
   const { open, onClose, sortBy, orderBy, handleSortBy, anchorEl } = props;
 
   return (
@@ -113,6 +113,6 @@ const SortingMenu = (props: Props) => {
       </MenuItem>
     </Menu>
   );
-};
+}
 
 export default SortingMenu;

@@ -50,7 +50,7 @@ interface Props {
   openSettings: () => void;
 }
 
-const GridOptionsMenu = (props: Props) => {
+function GridOptionsMenu(props: Props) {
   const {
     open,
     onClose,
@@ -223,6 +223,6 @@ const GridOptionsMenu = (props: Props) => {
       </MenuItem>
     </Menu>
   );
-};
+}
 
 export default GridOptionsMenu;

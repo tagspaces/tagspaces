@@ -26,12 +26,12 @@ import {
 } from 'react-dnd';
 
 import { getEmptyImage } from 'react-dnd-html5-backend';
+import { extractTags } from '@tagspaces/tagspaces-platforms/paths';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import DragItemTypes from './DragItemTypes';
 import TagContainer from './TagContainer';
 import { TS } from '-/tagspaces.namespace';
-import { extractTags } from '-/utils/paths';
 import PlatformIO from '-/services/platform-facade';
-import AppConfig from '-/config';
 
 const boxSource = {
   // Expected the drag source specification to only have some of the following keys: canDrag, beginDrag, isDragging, endDrag

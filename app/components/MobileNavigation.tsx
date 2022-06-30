@@ -41,6 +41,7 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
 import CloseIcon from '@material-ui/icons/Close';
+import Popover from '@material-ui/core/Popover';
 import ProTeaser from '../assets/images/spacerocket_undraw.svg';
 import ProTeaserImage from '-/assets/images/pro-teaser.svg';
 import ProTextLogo from '../assets/images/text-logo-pro.svg';
@@ -64,7 +65,6 @@ import LoadingLazy from './LoadingLazy';
 import { actions as SettingsActions, isFirstRun } from '../reducers/settings';
 import Links from '-/links';
 import StoredSearches from '-/components/StoredSearches';
-import Popover from '@material-ui/core/Popover';
 import UserDetailsPopover from '-/components/UserDetailsPopover';
 
 const styles: any = (theme: any) => ({
@@ -76,11 +76,13 @@ const styles: any = (theme: any) => ({
 const ProTeaserDialog = React.lazy(() =>
   import(/* webpackChunkName: "ProTeaserDialog" */ './dialogs/ProTeaserDialog')
 );
-const ProTeaserDialogAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <ProTeaserDialog {...props} />
-  </React.Suspense>
-);
+function ProTeaserDialogAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <ProTeaserDialog {...props} />
+    </React.Suspense>
+  );
+}
 
 interface Props {
   classes: any;
@@ -113,7 +115,7 @@ interface Props {
   theme: any;
 }
 
-const MobileNavigation = (props: Props) => {
+function MobileNavigation(props: Props) {
   const [isProTeaserVisible, setIsProTeaserVisible] = useState<boolean>(false);
   const [showTeaserBanner, setShowTeaserBanner] = useState<boolean>(true);
   const [anchorUser, setAnchorUser] = useState<HTMLButtonElement | null>(null);
@@ -414,7 +416,7 @@ const MobileNavigation = (props: Props) => {
       </div>
     </div>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

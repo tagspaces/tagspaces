@@ -22,7 +22,7 @@ import {
   getMetaFileLocationForDir,
   extractFileName,
   extractFileExtension
-} from '-/utils/paths';
+} from '@tagspaces/tagspaces-platforms/paths';
 import AppConfig from '../config';
 import { TS } from '-/tagspaces.namespace';
 

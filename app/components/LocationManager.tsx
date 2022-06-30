@@ -22,6 +22,7 @@ import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { List } from '@material-ui/core';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import styles from './SidePanels.css';
 import LocationManagerMenu from './menus/LocationManagerMenu';
 import ConfirmDialog from './dialogs/ConfirmDialog';
@@ -35,7 +36,6 @@ import {
   isDesktopMode
 } from '-/reducers/settings';
 import i18n from '../services/i18n';
-import AppConfig from '../config';
 import LoadingLazy from '-/components/LoadingLazy';
 import LocationView from '-/components/LocationView';
 import { Pro } from '-/pro';
@@ -47,11 +47,13 @@ const CreateEditLocationDialog = React.lazy(() =>
     /* webpackChunkName: "CreateEditLocationDialog" */ './dialogs/CreateEditLocationDialog'
   )
 );
-const CreateEditLocationDialogAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <CreateEditLocationDialog {...props} />
-  </React.Suspense>
-);
+function CreateEditLocationDialogAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <CreateEditLocationDialog {...props} />
+    </React.Suspense>
+  );
+}
 
 interface Props {
   classes?: any;
@@ -80,7 +82,7 @@ type SubFolder = {
   children?: Array<SubFolder>;
 };
 
-const LocationManager = (props: Props) => {
+function LocationManager(props: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedLocation, setSelectedLocation] = useState<TS.Location>(null);
   const [isEditLocationDialogOpened, setEditLocationDialogOpened] = useState<
@@ -146,7 +148,7 @@ const LocationManager = (props: Props) => {
             // backdropFilter: 'blur(2px)',
             // backgroundColor: '#fafafaAA' // red: '#eb585882' '#d9d9d980'
           }}
-        ></div>
+        />
       )}
       <LocationManagerMenu
         importLocations={() => {
@@ -269,7 +271,7 @@ const LocationManager = (props: Props) => {
       )}
     </div>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

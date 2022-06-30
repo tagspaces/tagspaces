@@ -94,7 +94,7 @@ export default function SplitButton(props: Props) {
               }}
             >
               <Paper>
-                {/*<ClickAwayListener onClickAway={handleClose}>*/}
+                {/* <ClickAwayListener onClickAway={handleClose}> */}
                 <MenuList id="split-button-menu">
                   {options.map((option, index) => (
                     <MenuItem
@@ -107,7 +107,7 @@ export default function SplitButton(props: Props) {
                     </MenuItem>
                   ))}
                 </MenuList>
-                {/*</ClickAwayListener>*/}
+                {/* </ClickAwayListener> */}
               </Paper>
             </Grow>
           )}

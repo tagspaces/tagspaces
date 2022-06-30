@@ -24,6 +24,7 @@ import TextField from '@material-ui/core/TextField';
 import Switch from '@material-ui/core/Switch';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import { isStr } from '@tagspaces/tagspaces-platforms/misc';
 import PlatformIO from '-/services/platform-facade';
 import i18n from '-/services/i18n';
 import {
@@ -32,7 +33,6 @@ import {
   isGlobalKeyBindingEnabled
 } from '-/reducers/settings';
 import DefaultSettings from '-/reducers/settings-default';
-import { isStr } from '-/utils/misc';
 
 const styles: any = (theme: any) => ({
   root: {
@@ -56,7 +56,7 @@ interface Props {
   globalKeyBindingEnabled: boolean;
 }
 
-const SettingsKeyBindings = (props: Props) => {
+function SettingsKeyBindings(props: Props) {
   const {
     keyBindings,
     classes,
@@ -98,7 +98,7 @@ const SettingsKeyBindings = (props: Props) => {
       })}
     </form>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

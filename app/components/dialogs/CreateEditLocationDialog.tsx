@@ -45,15 +45,14 @@ import CheckIcon from '@material-ui/icons/Check';
 import RemoveIcon from '@material-ui/icons/RemoveCircleOutline';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { locationType } from '@tagspaces/tagspaces-platforms/misc';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 import ObjectStoreForm from './ObjectStoreForm';
 import LocalForm from './LocalForm';
 import useFirstRender from '-/utils/useFirstRender';
-import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
-import { locationType } from '-/utils/misc';
-import { getLocationPath } from '-/utils/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import InfoIcon from '-/components/InfoIcon';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
@@ -61,6 +60,7 @@ import { actions as LocationActions } from '-/reducers/locations';
 import { getPersistTagsInSidecarFile } from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
+import PlatformIO from "-/services/platform-facade";
 
 const styles: any = theme => ({
   formControl: {
@@ -81,7 +81,7 @@ interface Props {
   createLocationIndex: (location: TS.Location) => void;
 }
 
-const CreateEditLocationDialog = (props: Props) => {
+function CreateEditLocationDialog(props: Props) {
   const IgnorePatternDialog =
     Pro && Pro.UI ? Pro.UI.IgnorePatternDialog : false;
   const { location } = props;
@@ -209,7 +209,7 @@ const CreateEditLocationDialog = (props: Props) => {
    * @param checkOnly - switch to set errors or only to check validation
    * return true - have errors; false - no errors
    */
-  const validateObjectStore = (checkOnly: boolean = false): boolean => {
+  const validateObjectStore = (checkOnly = false): boolean => {
     if (!storeName || storeName.length === 0) {
       if (checkOnly) return true;
       setCloudErrorTextName(true);
@@ -237,7 +237,7 @@ const CreateEditLocationDialog = (props: Props) => {
    * @param checkOnly - switch to set errors or only to check validation
    * return true - have errors; false - no errors
    */
-  const validateLocal = (checkOnly: boolean = false): boolean => {
+  const validateLocal = (checkOnly = false): boolean => {
     if (!name || name.length === 0) {
       if (checkOnly) return true;
       setErrorTextName(true);
@@ -779,7 +779,7 @@ const CreateEditLocationDialog = (props: Props) => {
                 onClose={() => setIgnorePatternDialogOpen(false)}
                 ignorePatternPaths={ignorePatternPaths}
                 setIgnorePatternPaths={setIgnorePatternPaths}
-                locationPath={getLocationPath(location)}
+                locationPath={PlatformIO.getLocationPath(location)}
               />
             )}
           </>
@@ -809,7 +809,7 @@ const CreateEditLocationDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

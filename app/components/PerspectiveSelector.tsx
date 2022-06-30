@@ -27,7 +27,7 @@ import { AvailablePerspectives, PerspectiveIDs } from '-/perspectives';
 import i18n from '../services/i18n';
 import { Pro } from '-/pro';
 
-const PerspectiveSelector = props => {
+function PerspectiveSelector(props) {
   const { defaultValue, onChange, testId } = props;
 
   const perspectiveSelectorMenuItems = [];
@@ -78,6 +78,6 @@ const PerspectiveSelector = props => {
       {perspectiveSelectorMenuItems}
     </Select>
   );
-};
+}
 
 export default PerspectiveSelector;

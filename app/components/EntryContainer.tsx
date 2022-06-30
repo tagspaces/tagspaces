@@ -47,13 +47,8 @@ import { withStyles } from '@material-ui/core/styles';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import Box from '@material-ui/core/Box';
 import { Split } from 'ts-react-splitter';
-import EntryProperties from '-/components/EntryProperties';
-import TagsPreview from '-/components/TagsPreview';
-import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import AppConfig from '-/config';
-import PlatformIO from '-/services/platform-facade';
-import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
-import i18n from '-/services/i18n';
+import { buffer } from '@tagspaces/tagspaces-platforms/misc';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import {
   extractContainingDirectoryPath,
   extractTitle,
@@ -61,8 +56,14 @@ import {
   baseName,
   extractFileName,
   extractDirectoryName
-} from '-/utils/paths';
-// import { buffer } from '-/utils/misc';
+} from '@tagspaces/tagspaces-platforms/paths';
+import EntryProperties from '-/components/EntryProperties';
+import TagsPreview from '-/components/TagsPreview';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import PlatformIO from '-/services/platform-facade';
+import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
+import i18n from '-/services/i18n';
+// import { buffer } from '@tagspaces/tagspaces-platforms/misc';
 import {
   actions as SettingsActions,
   isDesktopMode,
@@ -79,7 +80,6 @@ import {
 import useEventListener from '-/utils/useEventListener';
 import { TS } from '-/tagspaces.namespace';
 import FileView from '-/components/FileView';
-import { buffer } from '-/utils/misc';
 
 const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
 // const openedSplitSize = AppConfig.isElectron ? 560 : 360;
@@ -183,7 +183,7 @@ interface Props {
   tileServer: TS.MapTileServer;
 }
 
-const EntryContainer = (props: Props) => {
+function EntryContainer(props: Props) {
   // const [percent, setPercent] = React.useState<number | undefined>(undefined);
   const percent = useRef<number | undefined>(undefined);
   const openedFile = props.openedFiles[0];
@@ -217,7 +217,7 @@ const EntryContainer = (props: Props) => {
     HTMLDivElement
   >(null);
 
-  const fileChanged = useRef<Boolean>(false);
+  const fileChanged = useRef<boolean>(false);
 
   useEventListener('message', e => {
     if (typeof e.data === 'string') {
@@ -1155,7 +1155,7 @@ const EntryContainer = (props: Props) => {
       {renderPanels()}
     </GlobalHotKeys>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

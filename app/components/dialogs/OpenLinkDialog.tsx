@@ -37,7 +37,7 @@ interface Props {
   openLink: (linkURL: string) => void;
 }
 
-const OpenLinkDialog = (props: Props) => {
+function OpenLinkDialog(props: Props) {
   const [inputError, setInputError] = useState(false);
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [linkURL, setLinkURL] = useState('');
@@ -134,7 +134,7 @@ const OpenLinkDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(

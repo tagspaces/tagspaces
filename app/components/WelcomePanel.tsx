@@ -82,7 +82,7 @@ interface Props {
   isDesktopMode: boolean;
 }
 
-const WelcomePanel = (props: Props) => {
+function WelcomePanel(props: Props) {
   const { classes, openURLExternally, toggleKeysDialog, isDesktopMode } = props;
   return (
     <div className={classes.mainPanel}>
@@ -197,7 +197,7 @@ const WelcomePanel = (props: Props) => {
       </List>
     </div>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

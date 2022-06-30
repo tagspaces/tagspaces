@@ -38,20 +38,20 @@ import NewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import PropertiesIcon from '@material-ui/icons/Info';
 import { Progress } from 'aws-sdk/clients/s3';
 import ImageIcon from '@material-ui/icons/Image';
-import { Pro } from '../../pro';
-import CreateDirectoryDialog from '../dialogs/CreateDirectoryDialog';
-// import RenameDirectoryDialog from '../dialogs/RenameDirectoryDialog';
-import AppConfig from '-/config';
-import i18n from '-/services/i18n';
+import { formatDateTime4Tag } from '@tagspaces/tagspaces-platforms/misc';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import {
   extractContainingDirectoryPath,
   extractDirectoryName,
   getThumbFileLocationForDirectory,
   normalizePath,
   generateSharingLink
-} from '-/utils/paths';
+} from '@tagspaces/tagspaces-platforms/paths';
+import { Pro } from '../../pro';
+import CreateDirectoryDialog from '../dialogs/CreateDirectoryDialog';
+// import RenameDirectoryDialog from '../dialogs/RenameDirectoryDialog';
+import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
-import { formatDateTime4Tag } from '-/utils/misc';
 import { actions as AppActions, getSelectedEntries } from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
 import TaggingActions from '-/reducers/tagging-actions';
@@ -114,7 +114,7 @@ interface Props {
   locations?: Array<TS.Location>;
 }
 
-const DirectoryMenu = (props: Props) => {
+function DirectoryMenu(props: Props) {
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
 
   const {
@@ -709,7 +709,7 @@ Do you want to continue?`)
       />
     </div>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

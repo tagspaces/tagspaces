@@ -80,7 +80,7 @@ interface Props {
   // setShowDirectories: (check: boolean) => void;
 }
 
-const GridSettingsDialog = (props: Props) => {
+function GridSettingsDialog(props: Props) {
   const {
     open,
     onClose,
@@ -302,6 +302,6 @@ const GridSettingsDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 export default withStyles(styles, { withTheme: true })(GridSettingsDialog);
