@@ -224,13 +224,16 @@ export const initialState = {
   user: window.ExtDemoUser
     ? {
         attributes: window.ExtDemoUser,
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         associateSoftwareToken: () => {},
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         verifySoftwareToken: () => {}
       }
     : undefined
 };
 
 // The state described here will not be persisted
+// eslint-disable-next-line default-param-last
 export default (state: any = initialState, action: any) => {
   switch (action.type) {
     case types.LOGIN_SUCCESS: {
@@ -494,6 +497,7 @@ export default (state: any = initialState, action: any) => {
       const dirEntries = [...state.currentDirectoryEntries];
       dirEntries.map(entry => {
         if (entry.path === action.filePath) {
+          // eslint-disable-next-line no-param-reassign
           entry.thumbPath = action.thumbUrl;
         }
         return true;
@@ -781,7 +785,7 @@ function disableBackGestureMac() {
 
 export const actions = {
   loggedIn: user => ({ type: types.LOGIN_SUCCESS, user }),
-  initApp: () => (dispatch: (actions: Object) => void, getState: () => any) => {
+  initApp: () => (dispatch: (action) => void, getState: () => any) => {
     disableBackGestureMac();
 
     dispatch(SettingsActions.setZoomRestoreApp());
@@ -841,9 +845,7 @@ export const actions = {
     abort
   }),
   resetProgress: () => ({ type: types.RESET_PROGRESS }),
-  onUploadProgress: (progress, abort) => (
-    dispatch: (actions: Object) => void
-  ) => {
+  onUploadProgress: (progress, abort) => (dispatch: (action) => void) => {
     const progressPercentage = Math.round(
       (progress.loaded / progress.total) * 100
     );
@@ -852,7 +854,7 @@ export const actions = {
     dispatch(actions.setProgress(progress.key, progressPercentage, abort));
   },
   showCreateDirectoryDialog: () => (
-    dispatch: (actions: Object) => void,
+    dispatch: (action) => void,
     getState: () => any
   ) => {
     const { app } = getState();
@@ -869,7 +871,7 @@ export const actions = {
     }
   },
   showCreateFileDialog: () => (
-    dispatch: (actions: Object) => void,
+    dispatch: (action) => void,
     getState: () => any
   ) => {
     const { app } = getState();
@@ -910,7 +912,7 @@ export const actions = {
     type: types.TOGGLE_UPLOAD_DIALOG
   }),
   clearUploadDialog: () => (
-    dispatch: (actions: Object) => void,
+    dispatch: (action) => void,
     getState: () => any
   ) => {
     // const currentLocation: Location = getState().locations.find(location => location.uuid === getCurrentLocationId(getState()))
@@ -979,7 +981,7 @@ export const actions = {
     }
   }, */
   loadParentDirectoryContent: () => (
-    dispatch: (actions: Object) => void,
+    dispatch: (action) => void,
     getState: () => any
   ) => {
     const state = getState();
@@ -1021,7 +1023,7 @@ export const actions = {
     directoryPath: string,
     generateThumbnails: boolean,
     fsEntryMeta?: TS.FileSystemEntryMeta
-  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
+  ) => (dispatch: (action) => void, getState: () => any) => {
     const { settings } = getState();
     /* const { currentDirectoryPath } = getState().app;
     if (currentDirectoryPath !== directoryPath) {
@@ -1073,7 +1075,7 @@ export const actions = {
     directoryPath: string,
     generateThumbnails: boolean,
     loadDirMeta = false
-  ) => async (dispatch: (action: any) => void, getState: () => any) => {
+  ) => async (dispatch: (action) => void, getState: () => any) => {
     // console.debug('loadDirectoryContent:' + directoryPath);
     window.walkCanceled = false;
 
@@ -1116,9 +1118,9 @@ export const actions = {
   },
   loadDirectorySuccess: (
     directoryPath: string,
-    directoryContent: Array<Object>,
+    directoryContent: Array<any>,
     directoryMeta?: TS.FileSystemEntryMeta
-  ) => (dispatch: (actions: Object) => void) => {
+  ) => (dispatch: (action) => void) => {
     // const currentLocation: Location = getLocation(
     //  getState(),
     //  getState().app.currentLocationId
@@ -1153,7 +1155,7 @@ export const actions = {
   },
   loadDirectorySuccessInt: (
     directoryPath: string,
-    directoryContent: Array<Object>,
+    directoryContent: Array<any>,
     showIsLoading?: boolean,
     directoryMeta?: TS.FileSystemEntryMeta
   ) => ({
@@ -1164,7 +1166,7 @@ export const actions = {
     showIsLoading
   }),
   loadDirectoryFailure: (directoryPath: string, error?: any) => (
-    dispatch: (actions: Object) => void
+    dispatch: (action) => void
   ) => {
     console.warn('Error loading directory: ' + error);
     dispatch(actions.hideNotifications());
@@ -1243,7 +1245,7 @@ export const actions = {
     selectedEntries
   }),
   deleteDirectory: (directoryPath: string) => (
-    dispatch: (actions: Object) => void,
+    dispatch: (action) => void,
     getState: () => any
   ) => {
     const { settings } = getState();
@@ -1310,7 +1312,7 @@ export const actions = {
     PlatformIO.showInFileManager(filePath);
   },
   renameDirectory: (directoryPath: string, newDirectoryName: string) => (
-    dispatch: (actions: Object) => void,
+    dispatch: (action) => void,
     getState: () => any
   ) =>
     PlatformIO.renameDirectoryPromise(directoryPath, newDirectoryName)
@@ -1358,9 +1360,7 @@ export const actions = {
         );
         throw error;
       }),
-  createDirectory: (directoryPath: string) => (
-    dispatch: (actions: Object) => void
-  ) => {
+  createDirectory: (directoryPath: string) => (dispatch: (action) => void) => {
     PlatformIO.createDirectoryPromise(directoryPath)
       .then(result => {
         if (result !== undefined && result.dirPath !== undefined) {
@@ -1396,10 +1396,7 @@ export const actions = {
         // dispatch stopLoadingAnimation
       });
   },
-  createFile: () => (
-    dispatch: (actions: Object) => void,
-    getState: () => any
-  ) => {
+  createFile: () => (dispatch: (action) => void, getState: () => any) => {
     const { app } = getState();
     if (app.currentDirectoryPath) {
       const filePath =
@@ -1461,7 +1458,7 @@ export const actions = {
     fileName: string,
     content: string,
     fileType: 'md' | 'txt' | 'html'
-  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
+  ) => (dispatch: (action) => void, getState: () => any) => {
     const fileNameAndExt = fileName + '.' + fileType;
     const filePath =
       normalizePath(targetPath) + PlatformIO.getDirSeparator() + fileNameAndExt;
@@ -1501,11 +1498,11 @@ export const actions = {
         );
       });
   },
-  setSearchResults: (searchResults: Array<Object> | []) => ({
+  setSearchResults: (searchResults: Array<any> | []) => ({
     type: types.SET_SEARCH_RESULTS,
     searchResults
   }),
-  appendSearchResults: (searchResults: Array<Object> | []) => ({
+  appendSearchResults: (searchResults: Array<any> | []) => ({
     type: types.APPEND_SEARCH_RESULTS,
     searchResults
   }),
@@ -1514,7 +1511,7 @@ export const actions = {
     locationId
   }),
   changeLocation: (location: TS.Location) => (
-    dispatch: (actions: Object) => void,
+    dispatch: (action) => void,
     getState: () => any
   ) => {
     const { currentLocationId } = getState().app;
@@ -1524,7 +1521,7 @@ export const actions = {
     }
   },
   openLocationById: (locationId: string) => (
-    dispatch: (actions: Object) => void,
+    dispatch: (action) => void,
     getState: () => any
   ) => {
     const { locations } = getState();
@@ -1536,7 +1533,7 @@ export const actions = {
     });
   },
   openLocation: (location: TS.Location) => (
-    dispatch: (actions: Object) => void,
+    dispatch: (action) => void,
     getState: () => any
   ) => {
     if (Pro && Pro.Watcher) {
@@ -1603,7 +1600,7 @@ export const actions = {
     }
   },
   closeLocation: (locationId: string) => (
-    dispatch: (actions: Object) => void,
+    dispatch: (action) => void,
     getState: () => any
   ) => {
     const { locations } = getState();
@@ -1624,7 +1621,7 @@ export const actions = {
       });
     }
   },
-  closeAllLocations: () => (dispatch: (actions: Object) => void) => {
+  closeAllLocations: () => (dispatch: (action) => void) => {
     // location needed evtl. to unwatch many loc. root folders if available
     dispatch(actions.setCurrentLocationId(null));
     dispatch(actions.clearDirectoryContent());
@@ -1671,7 +1668,7 @@ export const actions = {
     isReadOnlyMode
   }),
   reflectUpdateOpenedFileContent: (entryPath: string) => (
-    dispatch: (actions: Object) => void,
+    dispatch: (action) => void,
     getState: () => any
   ) => {
     const { openedFiles } = getState().app;
@@ -1689,7 +1686,7 @@ export const actions = {
     entryPath: string,
     fsEntryMeta: any // FileSystemEntryMeta,
     // isFile: boolean = true
-  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
+  ) => (dispatch: (action) => void, getState: () => any) => {
     const { openedFiles } = getState().app;
     if (openedFiles && openedFiles.length > 0) {
       PlatformIO.getPropertiesPromise(entryPath)
@@ -1743,7 +1740,7 @@ export const actions = {
     }
   },
   openFsEntry: (fsEntry?: TS.FileSystemEntry) => (
-    dispatch: (actions: Object) => void,
+    dispatch: (action) => void,
     getState: () => any
   ) => {
     if (fsEntry === undefined) {
@@ -1837,7 +1834,7 @@ export const actions = {
     isFullWidth
   }),
   openNextFile: (path?: string) => (
-    dispatch: (actions: Object) => void,
+    dispatch: (action) => void,
     getState: () => any
   ) => {
     const lastSelectedEntry = getLastSelectedEntry(getState());
@@ -1854,7 +1851,7 @@ export const actions = {
     }
   },
   openPrevFile: (path?: string) => (
-    dispatch: (actions: Object) => void,
+    dispatch: (action) => void,
     getState: () => any
   ) => {
     const lastSelectedEntry = getLastSelectedEntry(getState());
@@ -1874,9 +1871,7 @@ export const actions = {
     type: types.REFLECT_DELETE_ENTRY,
     path
   }),
-  reflectDeleteEntry: (path: string) => (
-    dispatch: (actions: Object) => void
-  ) => {
+  reflectDeleteEntry: (path: string) => (dispatch: (action) => void) => {
     dispatch(actions.reflectDeleteEntryInt(path));
     dispatch(LocationIndexActions.reflectDeleteEntry(path));
   },
@@ -1885,13 +1880,13 @@ export const actions = {
     newEntry
   }),
   reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => (
-    dispatch: (actions: Object) => void
+    dispatch: (action) => void
   ) => {
     fsEntries.map(entry => dispatch(actions.reflectCreateEntryInt(entry))); // TODO remove map and set state once
     dispatch(actions.setSelectedEntries(fsEntries));
   },
   reflectCreateEntry: (path: string, isFile: boolean) => (
-    dispatch: (actions: Object) => void
+    dispatch: (action) => void
   ) => {
     const newEntry = {
       uuid: uuidv1(),
@@ -1916,13 +1911,13 @@ export const actions = {
     newPath
   }),
   reflectRenameEntry: (path: string, newPath: string) => (
-    dispatch: (actions: Object) => void
+    dispatch: (action) => void
   ) => {
     dispatch(actions.reflectRenameEntryInt(path, newPath));
     dispatch(LocationIndexActions.reflectRenameEntry(path, newPath));
     dispatch(actions.setSelectedEntries([]));
   },
-  updateCurrentDirEntry: (path: string, entry: Object) => ({
+  updateCurrentDirEntry: (path: string, entry: any) => ({
     type: types.UPDATE_CURRENTDIR_ENTRY,
     path,
     entry
@@ -1940,7 +1935,7 @@ export const actions = {
     path: string,
     tags: Array<TS.Tag>,
     updateIndex = true
-  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
+  ) => (dispatch: (action) => void, getState: () => any) => {
     const { openedFiles, selectedEntries } = getState().app;
     /**
      * if its have openedFiles updateCurrentDirEntry is called from FolderContainer (useEffect -> ... if (openedFile.changed)
@@ -1957,7 +1952,7 @@ export const actions = {
     }
   },
   deleteFile: (filePath: string) => (
-    dispatch: (actions: Object) => void,
+    dispatch: (action) => void,
     getState: () => any
   ) => {
     const { settings } = getState();
@@ -2075,7 +2070,7 @@ export const actions = {
         // throw error;
       }),
   openFileNatively: (selectedFile?: string) => (
-    dispatch: (actions: Object) => void,
+    dispatch: (action) => void,
     getState: () => any
   ) => {
     if (selectedFile === undefined) {
@@ -2096,7 +2091,7 @@ export const actions = {
     }
   },
   openLink: (url: string) => (
-    dispatch: (actions: Object) => void,
+    dispatch: (action) => void,
     getState: () => any
   ) => {
     const decodedURI = decodeURI(url);
@@ -2246,7 +2241,7 @@ export const actions = {
       PlatformIO.openUrl(url);
     }
   },
-  saveFile: () => (dispatch: (actions: Object) => void) => {
+  saveFile: () => (dispatch: (action) => void) => {
     dispatch(
       actions.showNotification(
         i18n.t('core:notImplementedYet'),
@@ -2256,14 +2251,14 @@ export const actions = {
     );
   },
   isCurrentLocation: (uuid: string) => (
-    dispatch: (actions: Object) => void,
+    dispatch: (action) => void,
     getState: () => any
   ) => {
     const { currentLocationId } = getState().app;
     return currentLocationId === uuid;
   },
   openCurrentDirectory: () => (
-    dispatch: (actions: Object) => void,
+    dispatch: (action) => void,
     getState: () => any
   ) => {
     const { currentDirectoryPath } = getState().app;
