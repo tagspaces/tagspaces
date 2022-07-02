@@ -47,6 +47,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { locationType } from '@tagspaces/tagspaces-platforms/misc';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import { InputLabel, MenuItem, Select } from '@material-ui/core';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 import ObjectStoreForm from './ObjectStoreForm';
@@ -60,7 +61,8 @@ import { actions as LocationActions } from '-/reducers/locations';
 import { getPersistTagsInSidecarFile } from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
-import PlatformIO from "-/services/platform-facade";
+import PlatformIO from '-/services/platform-facade';
+import WebdavForm from '-/components/dialogs/WebdavForm';
 
 const styles: any = theme => ({
   formControl: {
@@ -89,10 +91,20 @@ function CreateEditLocationDialog(props: Props) {
   const [showSecretAccessKey, setShowSecretAccessKey] = useState<boolean>(
     false
   );
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [errorTextPath, setErrorTextPath] = useState<boolean>(false);
   const [errorTextName, setErrorTextName] = useState<boolean>(false);
   const [name, setName] = useState<string>(
     location && location.name ? location.name : ''
+  );
+  const [userName, setUserName] = useState<string>(
+    location && location.userName ? location.userName : ''
+  );
+  const [password, setPassword] = useState<string>(
+    location && location.password ? location.password : ''
+  );
+  const [host, setHost] = useState<string>(
+    location && location.host ? location.host : ''
   );
   let defaultIndexAge = AppConfig.maxIndexAge;
   if (location && location.maxIndexAge && location.maxIndexAge > 0) {
@@ -359,6 +371,27 @@ function CreateEditLocationDialog(props: Props) {
         setRegion={setRegion}
       />
     );
+  } else if (type === locationType.TYPE_WEBDAV) {
+    content = (
+      <WebdavForm
+        showAdvancedMode={showAdvancedMode}
+        errorTextPath={errorTextPath}
+        errorTextName={errorTextName}
+        errorTextId={false}
+        setName={setName}
+        setUserName={setUserName}
+        setPassword={setPassword}
+        setHost={setHost}
+        setNewUuid={setNewUuid}
+        host={host}
+        name={name}
+        newuuid={newuuid}
+        userName={userName}
+        password={password}
+        setShowPassword={setShowPassword}
+        showPassword={showPassword}
+      />
+    );
   } else {
     content = (
       <LocalForm
@@ -413,44 +446,57 @@ function CreateEditLocationDialog(props: Props) {
           overflow: AppConfig.isFirefox ? 'auto' : 'overlay'
         }}
       >
-        <Grid container spacing={2}>
-          <Grid item xs={2} style={{ marginTop: 10, textAlign: 'left' }}>
-            <Typography>{i18n.t('core:locationType')}</Typography>
-          </Grid>
-          <Grid item xs={10}>
-            <FormControl disabled={disableLocationTypeSwitch}>
-              <RadioGroup
-                aria-label={i18n.t('core:locationType')}
-                name="type"
-                value={type}
-                onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                  setType(event.target.value)
-                }
-                row
-              >
-                <FormControlLabel
-                  data-tid="localLocation"
-                  value={locationType.TYPE_LOCAL}
-                  control={<Radio />}
-                  label={i18n.t('core:localLocation')}
-                />
-                <FormControlLabel
-                  data-tid="objectStorageLocation"
-                  value={locationType.TYPE_CLOUD}
-                  control={<Radio />}
-                  title={i18n.t('core:objectStorageTitle')}
-                  label={
-                    <>
-                      {i18n.t('core:objectStorage') +
-                        ' (AWS, MinIO, Wasabi ...)'}
-                      <ProLabel />
-                    </>
-                  }
-                />
-              </RadioGroup>
-            </FormControl>
-          </Grid>
-        </Grid>
+        <FormControl disabled={disableLocationTypeSwitch} fullWidth>
+          <InputLabel id="locationLabelID">
+            {i18n.t('core:locationType')}
+          </InputLabel>
+          <Select
+            labelId="locationLabelID"
+            id="locationTypeID"
+            value={type}
+            label={i18n.t('core:locationType')}
+            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+              setType(event.target.value)
+            }
+          >
+            {Object.keys(locationType)
+              .filter(lType => lType !== 'TYPE_AMPLIFY')
+              .map(lType => (
+                <MenuItem key={lType} value={locationType[lType]}>
+                  {i18n.t('core:' + lType) +
+                    (lType === 'TYPE_CLOUD' ? ' (AWS, MinIO, Wasabi ...)' : '')}
+                </MenuItem>
+              ))}
+          </Select>
+          {/* <RadioGroup
+            aria-label={i18n.t('core:locationType')}
+            name="type"
+            value={type}
+            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+              setType(event.target.value)
+            }
+            row
+          >
+            <FormControlLabel
+              data-tid="localLocation"
+              value={locationType.TYPE_LOCAL}
+              control={<Radio />}
+              label={i18n.t('core:localLocation')}
+            />
+            <FormControlLabel
+              data-tid="objectStorageLocation"
+              value={locationType.TYPE_CLOUD}
+              control={<Radio />}
+              title={i18n.t('core:objectStorageTitle')}
+              label={
+                <>
+                  {i18n.t('core:objectStorage') + ' (AWS, MinIO, Wasabi ...)'}
+                  <ProLabel />
+                </>
+              }
+            />
+          </RadioGroup> */}
+        </FormControl>
         {content}
         <FormGroup style={{ marginTop: 10 }}>
           <FormControlLabel

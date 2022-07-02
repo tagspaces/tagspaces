@@ -37,7 +37,7 @@ import { actions as LocationIndexActions } from '-/reducers/location-index';
 import i18n from '-/services/i18n';
 import { actions as AppActions } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
-import PlatformIO from "-/services/platform-facade";
+import PlatformIO from '-/services/platform-facade';
 
 interface Props {
   setEditLocationDialogOpened: (open: boolean) => void;
