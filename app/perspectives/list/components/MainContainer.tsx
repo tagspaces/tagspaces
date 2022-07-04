@@ -425,6 +425,9 @@ function GridPerspective(props: Props) {
         .catch(error => {
           console.log('enableObjectStoreSupport', error);
         });
+    } else if (props.currentLocation.type === locationType.TYPE_WEBDAV) {
+      PlatformIO.enableWebdavSupport(props.currentLocation);
+      doubleClickAction(fsEntry);
     } else if (props.currentLocation.type === locationType.TYPE_LOCAL) {
       PlatformIO.disableObjectStoreSupport();
       doubleClickAction(fsEntry);

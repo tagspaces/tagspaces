@@ -76,8 +76,9 @@ export default class PlatformFacade {
   static disableObjectStoreSupport = (): void =>
     platformDisableObjectStoreSupport();
 
-  static enableWebdavSupport = (webDavConfig: any): void =>
+  static enableWebdavSupport = (webDavConfig: any): void => {
     platformEnableWebdavSupport(webDavConfig);
+  };
 
   static disableWebdavSupport = (): void => platformDisableWebdavSupport();
 

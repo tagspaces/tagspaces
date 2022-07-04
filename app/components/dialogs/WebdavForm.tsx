@@ -23,48 +23,38 @@ import FormControl from '@material-ui/core/FormControl';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import IconButton from '@material-ui/core/IconButton';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import Grid from '@material-ui/core/Grid';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import i18n from '-/services/i18n';
 
 interface Props {
-  showAdvancedMode: boolean;
-  errorTextPath: boolean;
   errorTextName: boolean;
-  errorTextId: boolean;
+  webdavErrorUrl: boolean;
   setUserName: (string) => void;
   setPassword: (string) => void;
   setName: (string) => void;
-  setHost: (string) => void;
-  setNewUuid: (string) => void;
+  setEndpointURL: (string) => void;
   userName: string;
   password: string;
   showPassword: boolean;
   setShowPassword: (boolean) => void;
-  host: string;
+  endpointURL: string;
   name: string;
-  newuuid: string;
 }
 
 function WebdavForm(props: Props) {
   const {
-    errorTextPath,
     errorTextName,
-    errorTextId,
+    webdavErrorUrl,
     setName,
     setUserName,
     setPassword,
-    setHost,
-    setNewUuid,
+    setEndpointURL,
     userName,
     password,
-    host,
+    endpointURL,
     name,
-    newuuid,
-    showAdvancedMode,
     showPassword,
     setShowPassword
   } = props;
@@ -72,9 +62,26 @@ function WebdavForm(props: Props) {
   return (
     <Grid container spacing={2}>
       <Grid item xs={12}>
+        <FormControl fullWidth={true} error={errorTextName}>
+          <InputLabel htmlFor="name">
+            {i18n.t('core:createLocationName')}
+          </InputLabel>
+          <Input
+            required
+            margin="dense"
+            name="name"
+            inputProps={{ autoCorrect: 'off' }}
+            onChange={event => setName(event.target.value)}
+            value={name}
+            data-tid="locationName"
+            fullWidth={true}
+          />
+        </FormControl>
+      </Grid>
+      <Grid item xs={12}>
         <FormControl fullWidth={true}>
           <InputLabel htmlFor="userNameId">
-            {i18n.t('core:userNameId')}
+            {i18n.t('core:userName')}
           </InputLabel>
           <Input
             margin="dense"
@@ -113,63 +120,21 @@ function WebdavForm(props: Props) {
         </FormControl>
       </Grid>
       <Grid item xs={12}>
-        <FormControl fullWidth={true} error={errorTextPath}>
-          <InputLabel htmlFor="host">{i18n.t('core:webdavHost')}</InputLabel>
-          <Input
-            required
-            autoFocus
-            margin="dense"
-            name="host"
-            fullWidth={true}
-            inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
-            data-tid="webdavHostTID"
-            onChange={event => setHost(event.target.value)}
-            value={host}
-            placeholder="Enter a webdav host"
-          />
-          {AppConfig.isCordovaAndroid && (
-            <FormHelperText>
-              Examples: http://my.host:8899/local/webdav
-            </FormHelperText>
-          )}
-        </FormControl>
-      </Grid>
-      <Grid item xs={12}>
-        <FormControl fullWidth={true} error={errorTextName}>
-          <InputLabel htmlFor="path">
-            {i18n.t('core:createLocationName')}
+        <FormControl fullWidth={true} error={webdavErrorUrl}>
+          <InputLabel htmlFor="endpointURL">
+            {i18n.t('core:endpointURL')}
           </InputLabel>
           <Input
-            required
             margin="dense"
-            name="name"
-            inputProps={{ autoCorrect: 'off' }}
-            onChange={event => setName(event.target.value)}
-            value={name}
-            data-tid="locationName"
+            name="endpointURL"
             fullWidth={true}
+            data-tid="endpointURL"
+            placeholder={i18n.t('webdavServiceURL')}
+            onChange={event => setEndpointURL(event.target.value)}
+            value={endpointURL}
           />
         </FormControl>
       </Grid>
-      {showAdvancedMode && (
-        <Grid item xs={12}>
-          <FormControl fullWidth={true} error={errorTextId}>
-            <InputLabel htmlFor="newuuid">
-              {i18n.t('core:locationId')}
-            </InputLabel>
-            <Input
-              required
-              margin="dense"
-              name="newuuid"
-              fullWidth={true}
-              data-tid="newuuid"
-              placeholder="Unique location identifier"
-              onChange={event => setNewUuid(event.target.value)}
-              value={newuuid}
-            />
-          </FormControl>
-        </Grid>
-      )}
     </Grid>
   );
 }

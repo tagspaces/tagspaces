@@ -1581,7 +1581,12 @@ export const actions = {
           PlatformIO.disableObjectStoreSupport();
         });
     } else {
-      PlatformIO.disableObjectStoreSupport();
+      if (location.type === locationType.TYPE_WEBDAV) {
+        PlatformIO.enableWebdavSupport(location);
+      } else {
+        PlatformIO.disableObjectStoreSupport();
+        PlatformIO.disableWebdavSupport();
+      }
       dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
       dispatch(actions.changeLocation(location));
       dispatch(

@@ -32,30 +32,22 @@ import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
 
 interface Props {
-  showAdvancedMode: boolean;
   errorTextPath: boolean;
   errorTextName: boolean;
-  errorTextId: boolean;
   setName: (string) => void;
   setPath: (string) => void;
-  setNewUuid: (string) => void;
   path: string;
   name: string;
-  newuuid: string;
 }
 
 function LocalForm(props: Props) {
   const {
     errorTextPath,
     errorTextName,
-    errorTextId,
     setName,
     setPath,
-    setNewUuid,
     path,
     name,
-    newuuid,
-    showAdvancedMode
   } = props;
 
   const openDirectory = () => {
@@ -79,6 +71,23 @@ function LocalForm(props: Props) {
 
   return (
     <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <FormControl fullWidth={true} error={errorTextName}>
+          <InputLabel htmlFor="path">
+            {i18n.t('core:createLocationName')}
+          </InputLabel>
+          <Input
+            required
+            margin="dense"
+            name="name"
+            inputProps={{ autoCorrect: 'off' }}
+            onChange={event => setName(event.target.value)}
+            value={name}
+            data-tid="locationName"
+            fullWidth={true}
+          />
+        </FormControl>
+      </Grid>
       <Grid item xs={12}>
         <FormControl fullWidth={true} error={errorTextPath}>
           <InputLabel htmlFor="path">
@@ -111,42 +120,6 @@ function LocalForm(props: Props) {
           )}
         </FormControl>
       </Grid>
-      <Grid item xs={12}>
-        <FormControl fullWidth={true} error={errorTextName}>
-          <InputLabel htmlFor="path">
-            {i18n.t('core:createLocationName')}
-          </InputLabel>
-          <Input
-            required
-            margin="dense"
-            name="name"
-            inputProps={{ autoCorrect: 'off' }}
-            onChange={event => setName(event.target.value)}
-            value={name}
-            data-tid="locationName"
-            fullWidth={true}
-          />
-        </FormControl>
-      </Grid>
-      {showAdvancedMode && (
-        <Grid item xs={12}>
-          <FormControl fullWidth={true} error={errorTextId}>
-            <InputLabel htmlFor="newuuid">
-              {i18n.t('core:locationId')}
-            </InputLabel>
-            <Input
-              required
-              margin="dense"
-              name="newuuid"
-              fullWidth={true}
-              data-tid="newuuid"
-              placeholder="Unique location identifier"
-              onChange={event => setNewUuid(event.target.value)}
-              value={newuuid}
-            />
-          </FormControl>
-        </Grid>
-      )}
     </Grid>
   );
 }

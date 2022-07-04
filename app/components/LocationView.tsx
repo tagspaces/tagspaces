@@ -184,7 +184,7 @@ function LocationView(props: Props) {
       if (monitor && targetPath !== undefined && targetLocation !== undefined) {
         // TODO handle monitor -> isOver and change folder icon
         console.log('Dropped files: ' + path);
-        if (targetLocation.type === locationType.TYPE_CLOUD) {
+        if (targetLocation.type === locationType.TYPE_CLOUD) {  // TODO Webdav
           PlatformIO.enableObjectStoreSupport(targetLocation)
             .then(() => {
               props.resetProgress();

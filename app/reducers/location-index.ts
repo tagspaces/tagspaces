@@ -240,6 +240,16 @@ export const actions = {
           .catch(() => {
             PlatformIO.disableObjectStoreSupport();
           });
+      } else if (location.type === locationType.TYPE_WEBDAV) {
+        PlatformIO.enableWebdavSupport(location);
+        dispatch(
+          actions.createDirectoryIndex(
+            PlatformIO.getLocationPath(location),
+            location.fullTextIndex,
+            isCurrentLocation,
+            location.uuid
+          )
+        );
       } else if (location.type === locationType.TYPE_LOCAL) {
         PlatformIO.disableObjectStoreSupport();
         dispatch(
