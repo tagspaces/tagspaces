@@ -129,6 +129,7 @@ function CreateEditLocationDialog(props: Props) {
   const [endpointURL, setEndpointURL] = useState<string>(
     location ? location.endpointURL : ''
   );
+  const [authType, setAuthType] = useState<string>('password');
   const [isDefault, setIsDefault] = useState<boolean>(
     location ? location.isDefault : false
   );
@@ -322,9 +323,11 @@ function CreateEditLocationDialog(props: Props) {
         loc = {
           uuid: props.location ? props.location.uuid : newuuid,
           type,
+          authType,
           name,
           username,
           password,
+          secretAccessKey,
           endpointURL,
           isDefault,
           isReadOnly,
@@ -419,6 +422,10 @@ function CreateEditLocationDialog(props: Props) {
         setShowPassword={setShowPassword}
         showPassword={showPassword}
         webdavErrorUrl={webdavErrorUrl}
+        authType={authType}
+        setAuthType={setAuthType}
+        secretAccessKey={secretAccessKey}
+        setSecretAccessKey={setSecretAccessKey}
       />
     );
   } else {
