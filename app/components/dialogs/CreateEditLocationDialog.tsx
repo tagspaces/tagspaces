@@ -622,6 +622,7 @@ function CreateEditLocationDialog(props: Props) {
         </Accordion>
         <Accordion>
           <AccordionSummary
+            data-tid="switchAdvancedModeTID"
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panelAdvanced-content"
             id="panelAdvanced-header"
