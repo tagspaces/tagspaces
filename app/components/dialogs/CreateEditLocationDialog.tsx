@@ -52,7 +52,7 @@ import {
   MenuItem,
   Select
 } from '@material-ui/core';
-import ExpandMoreIcon from '@material-ui/icons/MoreVert';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 import ObjectStoreForm from './ObjectStoreForm';
@@ -475,7 +475,8 @@ function CreateEditLocationDialog(props: Props) {
       </DialogTitle>
       <DialogContent
         style={{
-          overflow: AppConfig.isFirefox ? 'auto' : 'overlay'
+          overflow: AppConfig.isFirefox ? 'auto' : 'overlay',
+          minHeight: 200
         }}
       >
         <Accordion defaultExpanded>
@@ -895,7 +896,7 @@ function CreateEditLocationDialog(props: Props) {
           </AccordionDetails>
         </Accordion>
       </DialogContent>
-      <DialogActions style={{ justifyContent: 'space-between' }}>
+      <DialogActions>
         {/* <Button
           data-tid="switchAdvancedModeTID"
           onClick={() => setShowAdvancedMode(!showAdvancedMode)}
