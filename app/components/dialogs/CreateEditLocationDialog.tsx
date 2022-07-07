@@ -447,7 +447,7 @@ function CreateEditLocationDialog(props: Props) {
       : props.isPersistTagsInSidecar;
 
   const disableLocationTypeSwitch: boolean =
-    !Pro || AppConfig.isWeb || props.location !== undefined;
+    !Pro || props.location !== undefined; // || AppConfig.isWeb
 
   return (
     <Dialog
@@ -502,9 +502,11 @@ function CreateEditLocationDialog(props: Props) {
                     setType(event.target.value)
                   }
                 >
-                  <MenuItem key="TYPE_LOCAL" value={locationType.TYPE_LOCAL}>
-                    {i18n.t('core:localLocation')}
-                  </MenuItem>
+                  {!AppConfig.isWeb && (
+                    <MenuItem key="TYPE_LOCAL" value={locationType.TYPE_LOCAL}>
+                      {i18n.t('core:localLocation')}
+                    </MenuItem>
+                  )}
                   <MenuItem key="TYPE_CLOUD" value={locationType.TYPE_CLOUD}>
                     {i18n.t('core:objectStorage') + ' (AWS, MinIO, Wasabi ...)'}
                   </MenuItem>

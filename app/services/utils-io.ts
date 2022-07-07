@@ -210,6 +210,7 @@ export function prepareDirectoryContent(
 
   function genThumbnails() {
     if (
+      !directoryPath ||
       directoryPath.endsWith(AppConfig.dirSeparator + AppConfig.metaFolder) ||
       directoryPath.endsWith(
         AppConfig.dirSeparator + AppConfig.metaFolder + AppConfig.dirSeparator
@@ -1066,7 +1067,7 @@ export function convertMarkDown(mdContent: string, directoryPath: string) {
         ? directoryPath + sourceUrl
         : directoryPath + dirSep + sourceUrl;
     }
-    if (PlatformIO.haveObjectStoreSupport()) {
+    if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
       sourceUrl = PlatformIO.getURLforPath(sourceUrl);
     }
     return `<img src="${sourceUrl}" style="max-width: 100%">

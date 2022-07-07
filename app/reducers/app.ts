@@ -1793,7 +1793,7 @@ export const actions = {
       fsEntry.path,
       fsEntry.isFile
     );
-    if (PlatformIO.haveObjectStoreSupport()) {
+    if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
       const cleanedPath = fsEntry.path.startsWith('/')
         ? fsEntry.path.substr(1)
         : fsEntry.path;

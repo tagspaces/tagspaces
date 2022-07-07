@@ -154,7 +154,7 @@ function GridPagination(props: Props) {
     );
     if (meta.some(metaFile => thumbPath.endsWith(metaFile.path))) {
       thumbEntry.thumbPath = thumbPath;
-      if (PlatformIO.haveObjectStoreSupport()) {
+      if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
         if (thumbPath && thumbPath.startsWith('/')) {
           thumbPath = thumbPath.substring(1);
         }
@@ -189,7 +189,7 @@ function GridPagination(props: Props) {
       );
       let enhancedEntry;
       if (meta.some(metaFile => thumbDirPath.endsWith(metaFile.path))) {
-        const thumbPath = PlatformIO.haveObjectStoreSupport()
+        const thumbPath = PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()
           ? PlatformIO.getURLforPath(thumbDirPath)
           : thumbDirPath;
         enhancedEntry = { ...entry, thumbPath };
