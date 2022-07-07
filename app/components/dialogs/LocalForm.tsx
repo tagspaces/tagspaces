@@ -41,14 +41,7 @@ interface Props {
 }
 
 function LocalForm(props: Props) {
-  const {
-    errorTextPath,
-    errorTextName,
-    setName,
-    setPath,
-    path,
-    name,
-  } = props;
+  const { errorTextPath, errorTextName, setName, setPath, path, name } = props;
 
   const openDirectory = () => {
     PlatformIO.selectDirectoryDialog()

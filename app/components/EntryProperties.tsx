@@ -351,7 +351,10 @@ function EntryProperties(props: Props) {
 
   const setThumb = (filePath, thumbFilePath) => {
     if (filePath !== undefined) {
-      if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
+      if (
+        PlatformIO.haveObjectStoreSupport() ||
+        PlatformIO.haveWebDavSupport()
+      ) {
         const thumbUrl = PlatformIO.getURLforPath(thumbFilePath);
         props.updateThumbnailUrl(currentEntry.path, thumbUrl);
         return Promise.resolve(true);

@@ -86,8 +86,7 @@ export default class PlatformFacade {
   static haveObjectStoreSupport = (): boolean =>
     platformHaveObjectStoreSupport();
 
-  static haveWebDavSupport = (): boolean =>
-    platformHaveWebDavSupport();
+  static haveWebDavSupport = (): boolean => platformHaveWebDavSupport();
 
   static isMinio = (): boolean => platformIsMinio();
 
