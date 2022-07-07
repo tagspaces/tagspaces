@@ -509,40 +509,12 @@ function CreateEditLocationDialog(props: Props) {
                     </MenuItem>
                   )}
                   <MenuItem key="TYPE_CLOUD" value={locationType.TYPE_CLOUD}>
-                    {i18n.t('core:objectStorage') + ' (AWS, MinIO, Wasabi ...)'}
+                    {i18n.t('core:objectStorage') + ' (AWS, MinIO, Wasabi,...)'}
                   </MenuItem>
                   <MenuItem key="TYPE_WEBDAV" value={locationType.TYPE_WEBDAV}>
-                    {i18n.t('core:TYPE_WEBDAV')}
+                    {i18n.t('core:webdavLocation') + ' (experimental)'}
                   </MenuItem>
                 </Select>
-                {/* <RadioGroup
-            aria-label={i18n.t('core:locationType')}
-            name="type"
-            value={type}
-            onChange={(event: ChangeEvent<HTMLInputElement>) =>
-              setType(event.target.value)
-            }
-            row
-          >
-            <FormControlLabel
-              data-tid="localLocation"
-              value={locationType.TYPE_LOCAL}
-              control={<Radio />}
-              label={i18n.t('core:localLocation')}
-            />
-            <FormControlLabel
-              data-tid="objectStorageLocation"
-              value={locationType.TYPE_CLOUD}
-              control={<Radio />}
-              title={i18n.t('core:objectStorageTitle')}
-              label={
-                <>
-                  {i18n.t('core:objectStorage') + ' (AWS, MinIO, Wasabi ...)'}
-                  <ProLabel />
-                </>
-              }
-            />
-          </RadioGroup> */}
               </FormControl>
               {content}
               <FormControlLabel
