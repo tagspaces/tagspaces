@@ -476,7 +476,8 @@ function CreateEditLocationDialog(props: Props) {
       <DialogContent
         style={{
           overflow: AppConfig.isFirefox ? 'auto' : 'overlay',
-          minHeight: 200
+          minHeight: 200,
+          padding: 8
         }}
       >
         <Accordion defaultExpanded>
@@ -640,7 +641,7 @@ function CreateEditLocationDialog(props: Props) {
             <Typography>{i18n.t('core:switchAdvanced')}</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <FormGroup>
+            <FormGroup style={{ width: '100%' }}>
               <FormControl fullWidth={true}>
                 <InputLabel htmlFor="newuuid">
                   {i18n.t('core:locationId')}
@@ -855,16 +856,16 @@ function CreateEditLocationDialog(props: Props) {
                     </Typography>
                   }
                 />
-                <List
-                  style={{
-                    padding: 5,
-                    backgroundColor: '#d3d3d34a',
-                    borderRadius: 10
-                  }}
-                  dense
-                >
-                  {ignorePatternPaths &&
-                    ignorePatternPaths.map(ignorePatternPath => (
+                {ignorePatternPaths && ignorePatternPaths.length && (
+                  <List
+                    style={{
+                      padding: 5,
+                      backgroundColor: '#d3d3d34a',
+                      borderRadius: 10
+                    }}
+                    dense
+                  >
+                    {ignorePatternPaths.map(ignorePatternPath => (
                       <ListItem style={{ padding: 0 }}>
                         <ListItemText primary={ignorePatternPath} />
                         <ListItemIcon
@@ -883,7 +884,8 @@ function CreateEditLocationDialog(props: Props) {
                         </ListItemIcon>
                       </ListItem>
                     ))}
-                </List>
+                  </List>
+                )}
                 {IgnorePatternDialog && isIgnorePatternDialogOpen && (
                   <IgnorePatternDialog
                     open={isIgnorePatternDialogOpen}
