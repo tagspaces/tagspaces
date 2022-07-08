@@ -497,7 +497,11 @@ Do you want to continue?`)
 
   if (
     selectedEntries.length < 2 &&
-    !(PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb)
+    !(
+      PlatformIO.haveObjectStoreSupport() ||
+      PlatformIO.haveWebDavSupport() ||
+      AppConfig.isWeb
+    )
   ) {
     menuItems.push(
       <MenuItem

@@ -149,7 +149,9 @@ function MoveCopyFilesDialog(props: Props) {
             }}
             value={targetPath}
             endAdornment={
-              PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb ? (
+              PlatformIO.haveObjectStoreSupport() ||
+              PlatformIO.haveWebDavSupport() ||
+              AppConfig.isWeb ? (
                 undefined
               ) : (
                 <InputAdornment position="end" style={{ height: 33 }}>

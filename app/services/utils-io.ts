@@ -114,6 +114,7 @@ export function enhanceDirectoryContent(
       // Enable thumb generation by
       !AppConfig.isWeb && // not in webdav mode
       !PlatformIO.haveObjectStoreSupport() && // not in object store mode
+      !PlatformIO.haveWebDavSupport() && // not in webdav mode
       enhancedEntry.isFile && // only for files
       useGenerateThumbnails // enabled in the settings
     ) {
@@ -519,6 +520,7 @@ export function createDirectoryIndex(
   if (
     enableWS &&
     !PlatformIO.haveObjectStoreSupport() &&
+    !PlatformIO.haveWebDavSupport() &&
     PlatformIO.isWorkerAvailable()
   ) {
     // Start indexing in worker if not in the object store mode
