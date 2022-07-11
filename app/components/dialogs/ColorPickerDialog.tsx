@@ -72,7 +72,7 @@ const styles = {
   }
 };
 
-const ColorPickerDialog = (props: Props) => {
+function ColorPickerDialog(props: Props) {
   const [color, setColor] = useState(undefined);
   const [colorHex, setColorHex] = useState(undefined);
   const { open = false, onClose } = props;
@@ -139,6 +139,6 @@ const ColorPickerDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 export default withStyles(styles)(ColorPickerDialog);

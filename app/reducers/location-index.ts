@@ -17,23 +17,22 @@
  */
 
 import { loadIndex, hasIndex } from '@tagspaces/tagspaces-platforms/indexer';
-import { getLocation, getLocationByPath, getLocations } from './locations';
-import { createDirectoryIndex } from '-/services/utils-io';
+import { locationType } from '@tagspaces/tagspaces-platforms/misc';
 import {
   extractFileExtension,
   extractFileName,
   extractTagsAsObjects,
-  getLocationPath,
   getThumbFileLocationForFile
-} from '-/utils/paths';
+} from '@tagspaces/tagspaces-platforms/paths';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import { getLocation, getLocationByPath, getLocations } from './locations';
+import { createDirectoryIndex } from '-/services/utils-io';
 import Search from '../services/search';
 import { actions as AppActions } from './app';
 import i18n from '../services/i18n';
 import PlatformIO from '../services/platform-facade';
 import GlobalSearch from '../services/search-index';
-import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
-import { locationType } from '-/utils/misc';
 
 export const types = {
   SET_SEARCH_QUERY: 'SET_SEARCH_QUERY',
@@ -187,7 +186,7 @@ export const actions = {
   createDirectoryIndex: (
     directoryPath: string,
     extractText: boolean,
-    isCurrentLocation: boolean = true,
+    isCurrentLocation = true,
     locationID: string = undefined,
     ignorePatterns: Array<string> = []
   ) => (dispatch: (actions: Object) => void, getState: () => any) => {
@@ -230,7 +229,7 @@ export const actions = {
           .then(() => {
             dispatch(
               actions.createDirectoryIndex(
-                getLocationPath(location),
+                PlatformIO.getLocationPath(location),
                 location.fullTextIndex,
                 isCurrentLocation,
                 location.uuid
@@ -241,11 +240,21 @@ export const actions = {
           .catch(() => {
             PlatformIO.disableObjectStoreSupport();
           });
+      } else if (location.type === locationType.TYPE_WEBDAV) {
+        PlatformIO.enableWebdavSupport(location);
+        dispatch(
+          actions.createDirectoryIndex(
+            PlatformIO.getLocationPath(location),
+            location.fullTextIndex,
+            isCurrentLocation,
+            location.uuid
+          )
+        );
       } else if (location.type === locationType.TYPE_LOCAL) {
         PlatformIO.disableObjectStoreSupport();
         dispatch(
           actions.createDirectoryIndex(
-            getLocationPath(location),
+            PlatformIO.getLocationPath(location),
             location.fullTextIndex,
             isCurrentLocation,
             location.uuid
@@ -254,7 +263,7 @@ export const actions = {
       }
     }
   },
-  createLocationsIndexes: (extractText: boolean = true) => (
+  createLocationsIndexes: (extractText = true) => (
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
@@ -263,7 +272,7 @@ export const actions = {
     const allLocations = getLocations(state);
 
     const promises = allLocations.map((location: TS.Location) => {
-      const nextPath = getLocationPath(location);
+      const nextPath = PlatformIO.getLocationPath(location);
       return (
         createDirectoryIndex(
           { path: nextPath, location: location.uuid },
@@ -354,7 +363,7 @@ export const actions = {
             GlobalSearch.index.length < 1 ||
             indexAge > maxIndexAge))
       ) {
-        const currentPath = getLocationPath(currentLocation);
+        const currentPath = PlatformIO.getLocationPath(currentLocation);
         console.log('Start creating index for : ' + currentPath);
         GlobalSearch.index = await createDirectoryIndex(
           {
@@ -377,7 +386,7 @@ export const actions = {
       ) {
         GlobalSearch.index = await loadIndex(
           {
-            path: getLocationPath(currentLocation),
+            path: PlatformIO.getLocationPath(currentLocation),
             locationID: currentLocation.uuid,
             ...(isCloudLocation && { bucketName: currentLocation.bucketName })
           },
@@ -462,7 +471,7 @@ export const actions = {
             maxSearchResultReached = true;
             return Promise.resolve();
           }
-          const nextPath = getLocationPath(location);
+          const nextPath = PlatformIO.getLocationPath(location);
           let directoryIndex = [];
           let indexExist = false;
           const isCloudLocation = location.type === locationType.TYPE_CLOUD;

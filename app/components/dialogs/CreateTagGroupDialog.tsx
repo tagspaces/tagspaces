@@ -52,7 +52,7 @@ interface Props {
 
 const defaultTagGroupLocation = 'TAG_LIBRARY';
 
-const CreateTagGroupDialog = (props: Props) => {
+function CreateTagGroupDialog(props: Props) {
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
   const [displayTextColorPicker, setDisplayTextColorPicker] = useState<boolean>(
     false
@@ -303,7 +303,7 @@ const CreateTagGroupDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

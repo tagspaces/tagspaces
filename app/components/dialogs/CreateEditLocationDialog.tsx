@@ -29,9 +29,6 @@ import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
 import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
 import Tooltip from '@material-ui/core/Tooltip';
 import Dialog from '@material-ui/core/Dialog';
 import List from '@material-ui/core/List';
@@ -45,15 +42,23 @@ import CheckIcon from '@material-ui/icons/Check';
 import RemoveIcon from '@material-ui/icons/RemoveCircleOutline';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { locationType } from '@tagspaces/tagspaces-platforms/misc';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  InputLabel,
+  MenuItem,
+  Select
+} from '@material-ui/core';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 import ObjectStoreForm from './ObjectStoreForm';
 import LocalForm from './LocalForm';
 import useFirstRender from '-/utils/useFirstRender';
-import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
-import { locationType } from '-/utils/misc';
-import { getLocationPath } from '-/utils/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import InfoIcon from '-/components/InfoIcon';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
@@ -61,6 +66,8 @@ import { actions as LocationActions } from '-/reducers/locations';
 import { getPersistTagsInSidecarFile } from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
+import PlatformIO from '-/services/platform-facade';
+import WebdavForm from '-/components/dialogs/WebdavForm';
 
 const styles: any = theme => ({
   formControl: {
@@ -81,18 +88,24 @@ interface Props {
   createLocationIndex: (location: TS.Location) => void;
 }
 
-const CreateEditLocationDialog = (props: Props) => {
+function CreateEditLocationDialog(props: Props) {
   const IgnorePatternDialog =
     Pro && Pro.UI ? Pro.UI.IgnorePatternDialog : false;
   const { location } = props;
-  const [showAdvancedMode, setShowAdvancedMode] = useState<boolean>(false);
   const [showSecretAccessKey, setShowSecretAccessKey] = useState<boolean>(
     false
   );
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [errorTextPath, setErrorTextPath] = useState<boolean>(false);
   const [errorTextName, setErrorTextName] = useState<boolean>(false);
   const [name, setName] = useState<string>(
     location && location.name ? location.name : ''
+  );
+  const [username, setUserName] = useState<string>(
+    location && location.username ? location.username : ''
+  );
+  const [password, setPassword] = useState<string>(
+    location && location.password ? location.password : ''
   );
   let defaultIndexAge = AppConfig.maxIndexAge;
   if (location && location.maxIndexAge && location.maxIndexAge > 0) {
@@ -116,6 +129,7 @@ const CreateEditLocationDialog = (props: Props) => {
   const [endpointURL, setEndpointURL] = useState<string>(
     location ? location.endpointURL : ''
   );
+  const [authType, setAuthType] = useState<string>('password');
   const [isDefault, setIsDefault] = useState<boolean>(
     location ? location.isDefault : false
   );
@@ -164,6 +178,7 @@ const CreateEditLocationDialog = (props: Props) => {
     location ? location.uuid : uuidv1()
   );
   const [cloudErrorTextName, setCloudErrorTextName] = useState<boolean>(false);
+  const [webdavErrorUrl, setWebdavErrorUrl] = useState<boolean>(false);
   const [cloudErrorAccessKey, setCloudErrorAccessKey] = useState<boolean>(
     false
   );
@@ -209,7 +224,7 @@ const CreateEditLocationDialog = (props: Props) => {
    * @param checkOnly - switch to set errors or only to check validation
    * return true - have errors; false - no errors
    */
-  const validateObjectStore = (checkOnly: boolean = false): boolean => {
+  const validateObjectStore = (checkOnly = false): boolean => {
     if (!storeName || storeName.length === 0) {
       if (checkOnly) return true;
       setCloudErrorTextName(true);
@@ -237,7 +252,7 @@ const CreateEditLocationDialog = (props: Props) => {
    * @param checkOnly - switch to set errors or only to check validation
    * return true - have errors; false - no errors
    */
-  const validateLocal = (checkOnly: boolean = false): boolean => {
+  const validateLocal = (checkOnly = false): boolean => {
     if (!name || name.length === 0) {
       if (checkOnly) return true;
       setErrorTextName(true);
@@ -253,9 +268,28 @@ const CreateEditLocationDialog = (props: Props) => {
     return false;
   };
 
+  const validateWebdav = (checkOnly = false): boolean => {
+    if (!name || name.length === 0) {
+      if (checkOnly) return true;
+      setErrorTextName(true);
+    } else if (!checkOnly) {
+      setErrorTextName(false);
+    }
+    if (!endpointURL || endpointURL.length === 0) {
+      if (checkOnly) return true;
+      setWebdavErrorUrl(true);
+    } else if (!checkOnly) {
+      setWebdavErrorUrl(false);
+    }
+    return false;
+  };
+
   const disableConfirmButton = () => {
     if (type === locationType.TYPE_LOCAL) {
       return errorTextName || errorTextPath || validateLocal(true);
+    }
+    if (type === locationType.TYPE_WEBDAV) {
+      return errorTextName || validateWebdav(true);
     }
     return (
       cloudErrorTextName ||
@@ -277,6 +311,24 @@ const CreateEditLocationDialog = (props: Props) => {
           name,
           path,
           paths: [path],
+          isDefault,
+          isReadOnly,
+          disableIndexing,
+          fullTextIndex,
+          watchForChanges,
+          maxIndexAge,
+          ignorePatternPaths
+        };
+      } else if (type === locationType.TYPE_WEBDAV) {
+        loc = {
+          uuid: props.location ? props.location.uuid : newuuid,
+          type,
+          authType,
+          name,
+          username,
+          password,
+          secretAccessKey,
+          endpointURL,
           isDefault,
           isReadOnly,
           disableIndexing,
@@ -335,8 +387,6 @@ const CreateEditLocationDialog = (props: Props) => {
         cloudErrorSecretAccessKey={cloudErrorSecretAccessKey}
         cloudErrorBucketName={false}
         cloudErrorRegion={false}
-        errorTextId={false}
-        showAdvancedMode={showAdvancedMode}
         showSecretAccessKey={showSecretAccessKey}
         storeName={storeName}
         storePath={storePath}
@@ -347,7 +397,6 @@ const CreateEditLocationDialog = (props: Props) => {
         bucketName={bucketName}
         region={region}
         endpointURL={endpointURL}
-        newuuid={newuuid}
         setStoreName={setStoreName}
         setStorePath={setStorePath}
         setAccessKeyId={setAccessKeyId}
@@ -355,23 +404,39 @@ const CreateEditLocationDialog = (props: Props) => {
         setSessionToken={setSessionToken}
         setBucketName={setBucketName}
         setEndpointURL={setEndpointURL}
-        setNewUuid={setNewUuid}
         setRegion={setRegion}
+      />
+    );
+  } else if (type === locationType.TYPE_WEBDAV) {
+    content = (
+      <WebdavForm
+        errorTextName={errorTextName}
+        setName={setName}
+        setUserName={setUserName}
+        setPassword={setPassword}
+        setEndpointURL={setEndpointURL}
+        endpointURL={endpointURL}
+        name={name}
+        userName={username}
+        password={password}
+        setShowPassword={setShowPassword}
+        showPassword={showPassword}
+        webdavErrorUrl={webdavErrorUrl}
+        authType={authType}
+        setAuthType={setAuthType}
+        secretAccessKey={secretAccessKey}
+        setSecretAccessKey={setSecretAccessKey}
       />
     );
   } else {
     content = (
       <LocalForm
-        showAdvancedMode={showAdvancedMode}
         errorTextPath={errorTextPath}
         errorTextName={errorTextName}
-        errorTextId={false}
         setName={setName}
         setPath={setPath}
-        setNewUuid={setNewUuid}
         path={path}
         name={name}
-        newuuid={newuuid}
       />
     );
   }
@@ -382,7 +447,7 @@ const CreateEditLocationDialog = (props: Props) => {
       : props.isPersistTagsInSidecar;
 
   const disableLocationTypeSwitch: boolean =
-    !Pro || AppConfig.isWeb || props.location !== undefined;
+    !Pro || props.location !== undefined; // || AppConfig.isWeb
 
   return (
     <Dialog
@@ -410,383 +475,405 @@ const CreateEditLocationDialog = (props: Props) => {
       </DialogTitle>
       <DialogContent
         style={{
-          overflow: AppConfig.isFirefox ? 'auto' : 'overlay'
+          overflow: AppConfig.isFirefox ? 'auto' : 'overlay',
+          minHeight: 200,
+          padding: 8
         }}
       >
-        <Grid container spacing={2}>
-          <Grid item xs={2} style={{ marginTop: 10, textAlign: 'left' }}>
-            <Typography>{i18n.t('core:locationType')}</Typography>
-          </Grid>
-          <Grid item xs={10}>
-            <FormControl disabled={disableLocationTypeSwitch}>
-              <RadioGroup
-                aria-label={i18n.t('core:locationType')}
-                name="type"
-                value={type}
-                onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                  setType(event.target.value)
-                }
-                row
-              >
-                <FormControlLabel
-                  data-tid="localLocation"
-                  value={locationType.TYPE_LOCAL}
-                  control={<Radio />}
-                  label={i18n.t('core:localLocation')}
-                />
-                <FormControlLabel
-                  data-tid="objectStorageLocation"
-                  value={locationType.TYPE_CLOUD}
-                  control={<Radio />}
-                  title={i18n.t('core:objectStorageTitle')}
-                  label={
-                    <>
-                      {i18n.t('core:objectStorage') +
-                        ' (AWS, MinIO, Wasabi ...)'}
-                      <ProLabel />
-                    </>
-                  }
-                />
-              </RadioGroup>
-            </FormControl>
-          </Grid>
-        </Grid>
-        {content}
-        <FormGroup style={{ marginTop: 10 }}>
-          <FormControlLabel
-            className={classes.formControl}
-            labelPlacement="start"
-            style={{ justifyContent: 'space-between' }}
-            control={
-              <Switch
-                data-tid="locationIsDefault"
-                name="isDefault"
-                checked={isDefault}
-                onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                  setIsDefault(event.target.checked)
-                }
-              />
-            }
-            label={i18n.t('core:startupLocation')}
-          />
-          <FormControlLabel
-            className={classes.formControl}
-            labelPlacement="start"
-            style={{ justifyContent: 'space-between' }}
-            control={
-              <Switch
-                disabled={!Pro}
-                data-tid="changeFullTextIndex"
-                name="fullTextIndex"
-                checked={fullTextIndex}
-                onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                  setFullTextIndex(event.target.checked);
-                  if (event.target.checked) {
-                    setFullTextIndexConfirmDialogOpened(true);
-                  }
-                }}
-              />
-            }
-            label={
-              <>
-                {i18n.t('core:createFullTextIndex')}
-                {Pro ? <BetaLabel /> : <ProLabel />}
-              </>
-            }
-          />
-          {isFullTextIndexConfirmDialogOpened && location && (
-            <ConfirmDialog
-              open={isFullTextIndexConfirmDialogOpened}
-              onClose={() => {
-                setFullTextIndexConfirmDialogOpened(false);
-              }}
-              title={i18n.t('core:confirm')}
-              content={i18n.t('core:fullTextIndexRegenerate')}
-              confirmCallback={result => {
-                if (result) {
-                  props.createLocationIndex(location);
-                } else {
-                  setFullTextIndexConfirmDialogOpened(false);
-                }
-              }}
-              cancelDialogTID="cancelSaveBeforeCloseDialog"
-              confirmDialogTID="confirmSaveBeforeCloseDialog"
-              confirmDialogContentTID="confirmDialogContent"
-            />
-          )}
-          <FormControlLabel
-            className={classes.formControl}
-            labelPlacement="start"
-            style={{ justifyContent: 'space-between' }}
-            control={
-              <Switch
-                disabled={!Pro || type === locationType.TYPE_CLOUD}
-                data-tid="changeWatchForChanges"
-                name="watchForChanges"
-                checked={watchForChanges}
-                onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                  setWatchForChanges(event.target.checked)
-                }
-              />
-            }
-            label={
-              <>
-                {i18n.t('core:watchForChangesInLocation')}
-                <ProLabel />
-              </>
-            }
-          />
-          {showAdvancedMode && (
-            <FormControlLabel
-              className={classes.formControl}
-              labelPlacement="start"
-              style={{ justifyContent: 'space-between' }}
-              control={
-                <Switch
-                  disabled={!Pro}
-                  data-tid="changeReadOnlyMode"
-                  name="isReadOnly"
-                  checked={isReadOnly}
+        <Accordion defaultExpanded>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panelGeneral-content"
+            id="panelGeneral-header"
+          >
+            <Typography>{i18n.t('core:switchGeneral')}</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <FormGroup>
+              <FormControl disabled={disableLocationTypeSwitch} fullWidth>
+                <InputLabel id="locationLabelID">
+                  {i18n.t('core:locationType')}
+                </InputLabel>
+                <Select
+                  labelId="locationLabelID"
+                  id="locationTypeID"
+                  value={type}
+                  label={i18n.t('core:locationType')}
                   onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                    setIsReadOnly(event.target.checked)
+                    setType(event.target.value)
                   }
-                />
-              }
-              label={
-                <>
-                  {i18n.t('core:readonlyModeSwitch')}
-                  <ProLabel />
-                </>
-              }
-            />
-          )}
-          {showAdvancedMode && (
-            <FormControlLabel
-              className={classes.formControl}
-              labelPlacement="start"
-              style={{ justifyContent: 'space-between' }}
-              control={
-                <Switch
-                  disabled={!Pro}
-                  data-tid="disableIndexingTID"
-                  name="disableIndexing"
-                  checked={disableIndexing}
-                  onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                    setIndexDisable(event.target.checked)
-                  }
-                />
-              }
-              label={
-                <>
-                  {i18n.t('core:disableIndexing')}
-                  <ProLabel />
-                </>
-              }
-            />
-          )}
-        </FormGroup>
-        {showAdvancedMode && (
-          <FormControlLabel
-            className={classes.formControl}
-            labelPlacement="start"
-            style={{ justifyContent: 'space-between' }}
-            control={
-              <Input
-                name="maxIndexAge"
-                style={{
-                  maxWidth: 70,
-                  marginLeft: 15,
-                  marginBottom: 15
-                }}
-                type="number"
-                data-tid="maxIndexAgeTID"
-                inputProps={{ min: 0 }}
-                value={maxIndexAge / (1000 * 60)}
-                onChange={event => changeMaxIndexAge(event.target.value)}
-              />
-            }
-            label={
-              <Typography>
-                {i18n.t('core:maxIndexAge')}
-                <InfoIcon tooltip={i18n.t('core:maxIndexAgeHelp')} />
-              </Typography>
-            }
-          />
-        )}
-        {showAdvancedMode &&
-          (AppConfig.useSidecarsForFileTaggingDisableSetting ? (
-            <FormControlLabel
-              className={classes.formControl}
-              labelPlacement="start"
-              style={{ justifyContent: 'space-between' }}
-              control={
-                <Button size="small" variant="outlined" disabled>
-                  {currentTagsSetting
-                    ? i18n.t('core:useSidecarFile')
-                    : i18n.t('core:renameFile')}
-                </Button>
-              }
-              label={
-                <Typography variant="caption" display="block" gutterBottom>
-                  {i18n.t('core:fileTaggingSetting')}
-                </Typography>
-              }
-            />
-          ) : (
-            <FormControlLabel
-              labelPlacement="top"
-              className={classes.formControl}
-              style={{ alignItems: 'start', marginBottom: 10 }}
-              control={
-                <ToggleButtonGroup
-                  value={persistTagsInSidecarFile}
-                  size="small"
-                  exclusive
                 >
-                  <ToggleButton
-                    value={null}
-                    data-tid="settingsSetPersistTagsDefault"
-                    onClick={() => setPersistTagsInSidecarFile(null)}
-                  >
-                    <Tooltip
-                      arrow
-                      title={
-                        <Typography color="inherit">
-                          {i18n.t('core:useDefaultTaggingType')}:{' '}
-                          <b>
-                            {currentTagsSetting
-                              ? i18n.t('core:useSidecarFile')
-                              : i18n.t('core:renameFile')}
-                          </b>
-                        </Typography>
-                      }
-                    >
-                      <div style={{ display: 'flex' }}>
-                        {persistTagsInSidecarFile === null && <CheckIcon />}
-                        &nbsp;{i18n.t('core:default')}&nbsp;&nbsp;
-                      </div>
-                    </Tooltip>
-                  </ToggleButton>
-                  <ToggleButton
-                    value={false}
-                    data-tid="settingsSetPersistTagsInFileName"
-                    onClick={() => setPersistTagsInSidecarFile(false)}
-                  >
-                    <Tooltip
-                      arrow
-                      title={
-                        <Typography color="inherit">
-                          {i18n.t('core:tagsInFilenameExplanation')}
-                        </Typography>
-                      }
-                    >
-                      <div style={{ display: 'flex' }}>
-                        {persistTagsInSidecarFile !== null &&
-                          !persistTagsInSidecarFile && <CheckIcon />}
-                        &nbsp;{i18n.t('core:renameFile')}&nbsp;&nbsp;
-                      </div>
-                    </Tooltip>
-                  </ToggleButton>
-                  <ToggleButton
-                    value={true}
-                    data-tid="settingsSetPersistTagsInSidecarFile"
-                    onClick={() => setPersistTagsInSidecarFile(true)}
-                  >
-                    <Tooltip
-                      arrow
-                      title={
-                        <Typography color="inherit">
-                          {i18n.t('core:tagsInSidecarFileExplanation')}
-                        </Typography>
-                      }
-                    >
-                      <div style={{ display: 'flex' }}>
-                        {persistTagsInSidecarFile !== null &&
-                          persistTagsInSidecarFile && <CheckIcon />}
-                        &nbsp;{i18n.t('core:useSidecarFile')}&nbsp;&nbsp;
-                      </div>
-                    </Tooltip>
-                  </ToggleButton>
-                </ToggleButtonGroup>
-              }
-              label={
-                <Typography gutterBottom>
-                  {i18n.t('core:fileTaggingSetting')}
-                </Typography>
-              }
-            />
-          ))}
-        {showAdvancedMode && (
-          <>
-            <FormControlLabel
-              className={classes.formControl}
-              disabled={!Pro}
-              labelPlacement="start"
-              style={{ justifyContent: 'space-between' }}
-              control={
-                <ProTooltip tooltip={i18n.t('ignorePatternDialogTitle')}>
-                  <Button
-                    color="primary"
-                    disabled={!Pro}
-                    onClick={() => {
-                      setIgnorePatternDialogOpen(true);
-                    }}
-                  >
-                    {i18n.t('addEntryTags')}
-                  </Button>
-                </ProTooltip>
-              }
-              label={
-                <Typography>
-                  {i18n.t('core:ignorePatterns')}
-                  <InfoIcon tooltip={i18n.t('core:ignorePatternsHelp')} />
-                  <ProLabel />
-                </Typography>
-              }
-            />
-            <List
-              style={{
-                padding: 5,
-                backgroundColor: '#d3d3d34a',
-                borderRadius: 10
-              }}
-              dense
-            >
-              {ignorePatternPaths &&
-                ignorePatternPaths.map(ignorePatternPath => (
-                  <ListItem style={{ padding: 0 }}>
-                    <ListItemText primary={ignorePatternPath} />
-                    <ListItemIcon
-                      style={{ minWidth: 0 }}
-                      title={i18n.t('core:ignorePatternRemove')}
-                      onClick={() => {
-                        const array = [...ignorePatternPaths];
-                        const index = array.indexOf(ignorePatternPath);
-                        if (index !== -1) {
-                          array.splice(index, 1);
-                          setIgnorePatternPaths(array);
-                        }
-                      }}
-                    >
-                      <RemoveIcon />
-                    </ListItemIcon>
-                  </ListItem>
-                ))}
-            </List>
-            {IgnorePatternDialog && isIgnorePatternDialogOpen && (
-              <IgnorePatternDialog
-                open={isIgnorePatternDialogOpen}
-                onClose={() => setIgnorePatternDialogOpen(false)}
-                ignorePatternPaths={ignorePatternPaths}
-                setIgnorePatternPaths={setIgnorePatternPaths}
-                locationPath={getLocationPath(location)}
+                  {!AppConfig.isWeb && (
+                    <MenuItem key="TYPE_LOCAL" value={locationType.TYPE_LOCAL}>
+                      {i18n.t('core:localLocation')}
+                    </MenuItem>
+                  )}
+                  <MenuItem key="TYPE_CLOUD" value={locationType.TYPE_CLOUD}>
+                    {i18n.t('core:objectStorage') + ' (AWS, MinIO, Wasabi,...)'}
+                  </MenuItem>
+                  <MenuItem key="TYPE_WEBDAV" value={locationType.TYPE_WEBDAV}>
+                    {i18n.t('core:webdavLocation') + ' (experimental)'}
+                  </MenuItem>
+                </Select>
+              </FormControl>
+              {content}
+              <FormControlLabel
+                className={classes.formControl}
+                labelPlacement="start"
+                style={{ justifyContent: 'space-between' }}
+                control={
+                  <Switch
+                    data-tid="locationIsDefault"
+                    name="isDefault"
+                    checked={isDefault}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                      setIsDefault(event.target.checked)
+                    }
+                  />
+                }
+                label={i18n.t('core:startupLocation')}
               />
-            )}
-          </>
-        )}
+              <FormControlLabel
+                className={classes.formControl}
+                labelPlacement="start"
+                style={{ justifyContent: 'space-between' }}
+                control={
+                  <Switch
+                    disabled={!Pro}
+                    data-tid="changeFullTextIndex"
+                    name="fullTextIndex"
+                    checked={fullTextIndex}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                      setFullTextIndex(event.target.checked);
+                      if (event.target.checked) {
+                        setFullTextIndexConfirmDialogOpened(true);
+                      }
+                    }}
+                  />
+                }
+                label={
+                  <>
+                    {i18n.t('core:createFullTextIndex')}
+                    {Pro ? <BetaLabel /> : <ProLabel />}
+                  </>
+                }
+              />
+              {isFullTextIndexConfirmDialogOpened && location && (
+                <ConfirmDialog
+                  open={isFullTextIndexConfirmDialogOpened}
+                  onClose={() => {
+                    setFullTextIndexConfirmDialogOpened(false);
+                  }}
+                  title={i18n.t('core:confirm')}
+                  content={i18n.t('core:fullTextIndexRegenerate')}
+                  confirmCallback={result => {
+                    if (result) {
+                      props.createLocationIndex(location);
+                    } else {
+                      setFullTextIndexConfirmDialogOpened(false);
+                    }
+                  }}
+                  cancelDialogTID="cancelSaveBeforeCloseDialog"
+                  confirmDialogTID="confirmSaveBeforeCloseDialog"
+                  confirmDialogContentTID="confirmDialogContent"
+                />
+              )}
+              <FormControlLabel
+                className={classes.formControl}
+                labelPlacement="start"
+                style={{ justifyContent: 'space-between' }}
+                control={
+                  <Switch
+                    disabled={!Pro || type === locationType.TYPE_CLOUD}
+                    data-tid="changeWatchForChanges"
+                    name="watchForChanges"
+                    checked={watchForChanges}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                      setWatchForChanges(event.target.checked)
+                    }
+                  />
+                }
+                label={
+                  <>
+                    {i18n.t('core:watchForChangesInLocation')}
+                    <ProLabel />
+                  </>
+                }
+              />
+            </FormGroup>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion>
+          <AccordionSummary
+            data-tid="switchAdvancedModeTID"
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panelAdvanced-content"
+            id="panelAdvanced-header"
+          >
+            <Typography>{i18n.t('core:switchAdvanced')}</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <FormGroup style={{ width: '100%' }}>
+              <FormControl fullWidth={true}>
+                <InputLabel htmlFor="newuuid">
+                  {i18n.t('core:locationId')}
+                </InputLabel>
+                <Input
+                  required
+                  margin="dense"
+                  name="newuuid"
+                  fullWidth={true}
+                  data-tid="newuuid"
+                  placeholder="Unique location identifier"
+                  onChange={event => setNewUuid(event.target.value)}
+                  value={newuuid}
+                />
+              </FormControl>
+              <FormControlLabel
+                className={classes.formControl}
+                labelPlacement="start"
+                style={{ justifyContent: 'space-between' }}
+                control={
+                  <Switch
+                    disabled={!Pro}
+                    data-tid="changeReadOnlyMode"
+                    name="isReadOnly"
+                    checked={isReadOnly}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                      setIsReadOnly(event.target.checked)
+                    }
+                  />
+                }
+                label={
+                  <>
+                    {i18n.t('core:readonlyModeSwitch')}
+                    <ProLabel />
+                  </>
+                }
+              />
+              <FormControlLabel
+                className={classes.formControl}
+                labelPlacement="start"
+                style={{ justifyContent: 'space-between' }}
+                control={
+                  <Switch
+                    disabled={!Pro}
+                    data-tid="disableIndexingTID"
+                    name="disableIndexing"
+                    checked={disableIndexing}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                      setIndexDisable(event.target.checked)
+                    }
+                  />
+                }
+                label={
+                  <>
+                    {i18n.t('core:disableIndexing')}
+                    <ProLabel />
+                  </>
+                }
+              />
+              <FormControlLabel
+                className={classes.formControl}
+                labelPlacement="start"
+                style={{ justifyContent: 'space-between' }}
+                control={
+                  <Input
+                    name="maxIndexAge"
+                    style={{
+                      maxWidth: 70,
+                      marginLeft: 15,
+                      marginBottom: 15
+                    }}
+                    type="number"
+                    data-tid="maxIndexAgeTID"
+                    inputProps={{ min: 0 }}
+                    value={maxIndexAge / (1000 * 60)}
+                    onChange={event => changeMaxIndexAge(event.target.value)}
+                  />
+                }
+                label={
+                  <Typography>
+                    {i18n.t('core:maxIndexAge')}
+                    <InfoIcon tooltip={i18n.t('core:maxIndexAgeHelp')} />
+                  </Typography>
+                }
+              />
+              {AppConfig.useSidecarsForFileTaggingDisableSetting ? (
+                <FormControlLabel
+                  className={classes.formControl}
+                  labelPlacement="start"
+                  style={{ justifyContent: 'space-between' }}
+                  control={
+                    <Button size="small" variant="outlined" disabled>
+                      {currentTagsSetting
+                        ? i18n.t('core:useSidecarFile')
+                        : i18n.t('core:renameFile')}
+                    </Button>
+                  }
+                  label={
+                    <Typography variant="caption" display="block" gutterBottom>
+                      {i18n.t('core:fileTaggingSetting')}
+                    </Typography>
+                  }
+                />
+              ) : (
+                <FormControlLabel
+                  labelPlacement="top"
+                  className={classes.formControl}
+                  style={{ alignItems: 'start', marginBottom: 10 }}
+                  control={
+                    <ToggleButtonGroup
+                      value={persistTagsInSidecarFile}
+                      size="small"
+                      exclusive
+                    >
+                      <ToggleButton
+                        value={null}
+                        data-tid="settingsSetPersistTagsDefault"
+                        onClick={() => setPersistTagsInSidecarFile(null)}
+                      >
+                        <Tooltip
+                          arrow
+                          title={
+                            <Typography color="inherit">
+                              {i18n.t('core:useDefaultTaggingType')}:{' '}
+                              <b>
+                                {currentTagsSetting
+                                  ? i18n.t('core:useSidecarFile')
+                                  : i18n.t('core:renameFile')}
+                              </b>
+                            </Typography>
+                          }
+                        >
+                          <div style={{ display: 'flex' }}>
+                            {persistTagsInSidecarFile === null && <CheckIcon />}
+                            &nbsp;{i18n.t('core:default')}&nbsp;&nbsp;
+                          </div>
+                        </Tooltip>
+                      </ToggleButton>
+                      <ToggleButton
+                        value={false}
+                        data-tid="settingsSetPersistTagsInFileName"
+                        onClick={() => setPersistTagsInSidecarFile(false)}
+                      >
+                        <Tooltip
+                          arrow
+                          title={
+                            <Typography color="inherit">
+                              {i18n.t('core:tagsInFilenameExplanation')}
+                            </Typography>
+                          }
+                        >
+                          <div style={{ display: 'flex' }}>
+                            {persistTagsInSidecarFile !== null &&
+                              !persistTagsInSidecarFile && <CheckIcon />}
+                            &nbsp;{i18n.t('core:renameFile')}&nbsp;&nbsp;
+                          </div>
+                        </Tooltip>
+                      </ToggleButton>
+                      <ToggleButton
+                        value={true}
+                        data-tid="settingsSetPersistTagsInSidecarFile"
+                        onClick={() => setPersistTagsInSidecarFile(true)}
+                      >
+                        <Tooltip
+                          arrow
+                          title={
+                            <Typography color="inherit">
+                              {i18n.t('core:tagsInSidecarFileExplanation')}
+                            </Typography>
+                          }
+                        >
+                          <div style={{ display: 'flex' }}>
+                            {persistTagsInSidecarFile !== null &&
+                              persistTagsInSidecarFile && <CheckIcon />}
+                            &nbsp;{i18n.t('core:useSidecarFile')}&nbsp;&nbsp;
+                          </div>
+                        </Tooltip>
+                      </ToggleButton>
+                    </ToggleButtonGroup>
+                  }
+                  label={
+                    <Typography gutterBottom>
+                      {i18n.t('core:fileTaggingSetting')}
+                    </Typography>
+                  }
+                />
+              )}
+              <>
+                <FormControlLabel
+                  className={classes.formControl}
+                  disabled={!Pro}
+                  labelPlacement="start"
+                  style={{ justifyContent: 'space-between' }}
+                  control={
+                    <ProTooltip tooltip={i18n.t('ignorePatternDialogTitle')}>
+                      <Button
+                        color="primary"
+                        disabled={!Pro}
+                        onClick={() => {
+                          setIgnorePatternDialogOpen(true);
+                        }}
+                      >
+                        {i18n.t('addEntryTags')}
+                      </Button>
+                    </ProTooltip>
+                  }
+                  label={
+                    <Typography>
+                      {i18n.t('core:ignorePatterns')}
+                      <InfoIcon tooltip={i18n.t('core:ignorePatternsHelp')} />
+                      <ProLabel />
+                    </Typography>
+                  }
+                />
+                {ignorePatternPaths && ignorePatternPaths.length && (
+                  <List
+                    style={{
+                      padding: 5,
+                      backgroundColor: '#d3d3d34a',
+                      borderRadius: 10
+                    }}
+                    dense
+                  >
+                    {ignorePatternPaths.map(ignorePatternPath => (
+                      <ListItem style={{ padding: 0 }}>
+                        <ListItemText primary={ignorePatternPath} />
+                        <ListItemIcon
+                          style={{ minWidth: 0 }}
+                          title={i18n.t('core:ignorePatternRemove')}
+                          onClick={() => {
+                            const array = [...ignorePatternPaths];
+                            const index = array.indexOf(ignorePatternPath);
+                            if (index !== -1) {
+                              array.splice(index, 1);
+                              setIgnorePatternPaths(array);
+                            }
+                          }}
+                        >
+                          <RemoveIcon />
+                        </ListItemIcon>
+                      </ListItem>
+                    ))}
+                  </List>
+                )}
+                {IgnorePatternDialog && isIgnorePatternDialogOpen && (
+                  <IgnorePatternDialog
+                    open={isIgnorePatternDialogOpen}
+                    onClose={() => setIgnorePatternDialogOpen(false)}
+                    ignorePatternPaths={ignorePatternPaths}
+                    setIgnorePatternPaths={setIgnorePatternPaths}
+                    locationPath={PlatformIO.getLocationPath(location)}
+                  />
+                )}
+              </>
+            </FormGroup>
+          </AccordionDetails>
+        </Accordion>
       </DialogContent>
-      <DialogActions style={{ justifyContent: 'space-between' }}>
-        <Button
+      <DialogActions>
+        {/* <Button
           data-tid="switchAdvancedModeTID"
           onClick={() => setShowAdvancedMode(!showAdvancedMode)}
           style={{ marginLeft: 10 }}
@@ -794,22 +881,20 @@ const CreateEditLocationDialog = (props: Props) => {
           {showAdvancedMode
             ? i18n.t('core:switchSimpleMode')
             : i18n.t('core:switchAdvancedMode')}
+        </Button> */}
+        <Button onClick={() => onClose()}>{i18n.t('core:cancel')}</Button>
+        <Button
+          disabled={disableConfirmButton()}
+          onClick={onConfirm}
+          data-tid="confirmLocationCreation"
+          color="primary"
+        >
+          {i18n.t('core:ok')}
         </Button>
-        <div>
-          <Button onClick={() => onClose()}>{i18n.t('core:cancel')}</Button>
-          <Button
-            disabled={disableConfirmButton()}
-            onClick={onConfirm}
-            data-tid="confirmLocationCreation"
-            color="primary"
-          >
-            {i18n.t('core:ok')}
-          </Button>
-        </div>
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

@@ -23,7 +23,10 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Chip from '@material-ui/core/Chip';
 import ExpandMoreIcon from '@material-ui/icons/MoreVert';
 import PlatformIO from '../services/platform-facade';
-import { normalizePath, extractShortDirectoryName } from '-/utils/paths';
+import {
+  normalizePath,
+  extractShortDirectoryName
+} from '@tagspaces/tagspaces-platforms/paths';
 import i18n from '../services/i18n';
 import DirectoryMenu from './menus/DirectoryMenu';
 import { TS } from '-/tagspaces.namespace';
@@ -57,7 +60,11 @@ const NoWrapBreadcrumb = withStyles({
 interface Props {
   currentDirectoryPath: string;
   currentLocationPath: string;
-  loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
+  loadDirectoryContent: (
+    path: string,
+    generateThumbnails: boolean,
+    loadDirMeta?: boolean
+  ) => void;
   switchPerspective: (perspectiveId: string) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   openDirectory: () => void;
@@ -199,7 +206,7 @@ export default function PathBreadcrumbs(props: Props) {
                 '/'
               )}
               deleteIcon={<ExpandMoreIcon />}
-              //onClick={handleClick}
+              // onClick={handleClick}
               onDelete={openDirectoryMenu}
               onClick={openDirectoryMenu}
               onContextMenu={openDirectoryMenu}

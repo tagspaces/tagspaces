@@ -19,13 +19,13 @@ import { persistCombineReducers, PersistConfig } from 'redux-persist';
 import getStoredStateMigrateV4 from 'redux-persist/lib/integration/getStoredStateMigrateV4';
 // import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import storage from 'redux-persist/lib/storage';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import settings from './settings';
 import app from './app';
 import locations from './locations';
 import taglibrary from './taglibrary';
 import locationIndex from './location-index';
 import searches from './searches';
-import AppConfig from '-/config';
 
 const externalLocations = window.ExtLocations || false;
 const externalTagLibrary = window.ExtTagLibrary || false;

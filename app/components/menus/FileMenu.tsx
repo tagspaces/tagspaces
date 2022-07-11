@@ -33,8 +33,16 @@ import ImageIcon from '@material-ui/icons/Image';
 import ShareIcon from '@material-ui/icons/Link';
 import RenameFile from '@material-ui/icons/FormatTextdirectionLToR';
 import DeleteForever from '@material-ui/icons/DeleteForever';
+import { formatDateTime4Tag } from '@tagspaces/tagspaces-platforms/misc';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import {
+  extractContainingDirectoryPath,
+  extractFileName,
+  extractParentDirectoryPath,
+  extractTags,
+  generateSharingLink
+} from '@tagspaces/tagspaces-platforms/paths';
 import i18n from '-/services/i18n';
-import AppConfig from '-/config';
 import PlatformIO from '-/services/platform-facade';
 import {
   generateFileName,
@@ -42,15 +50,7 @@ import {
   setFolderThumbnailPromise
 } from '-/services/utils-io';
 import { Pro } from '-/pro';
-import {
-  extractContainingDirectoryPath,
-  extractFileName,
-  extractParentDirectoryPath,
-  extractTags,
-  generateSharingLink
-} from '-/utils/paths';
 import { TS } from '-/tagspaces.namespace';
-import { formatDateTime4Tag } from '-/utils/misc';
 // import AddIcon from '@material-ui/icons/Add';
 
 interface Props {
@@ -64,7 +64,11 @@ interface Props {
   openMoveCopyFilesDialog: () => void;
   openAddRemoveTagsDialog: () => void;
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
-  loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
+  loadDirectoryContent: (
+    path: string,
+    generateThumbnails: boolean,
+    loadDirMeta?: boolean
+  ) => void;
   openFileNatively: (path: string) => void;
   showInFileManager: (path: string) => void;
   showNotification: (
@@ -79,7 +83,7 @@ interface Props {
   locations: Array<TS.Location>;
 }
 
-const FileMenu = (props: Props) => {
+function FileMenu(props: Props) {
   const {
     selectedEntries,
     isReadOnlyMode,
@@ -266,7 +270,7 @@ const FileMenu = (props: Props) => {
     );
   }
   if (
-    !(PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb) &&
+    !(PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport() || AppConfig.isWeb) &&
     selectedEntries.length < 2
   ) {
     menuItems.push(
@@ -407,6 +411,6 @@ const FileMenu = (props: Props) => {
       </Menu>
     </div>
   );
-};
+}
 
 export default FileMenu;

@@ -41,7 +41,7 @@ interface Props {
   selectedTagGroupEntry: TS.TagGroup;
 }
 
-const EditTagDialog = (props: Props) => {
+function EditTagDialog(props: Props) {
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
   const [displayTextColorPicker, setDisplayTextColorPicker] = useState<boolean>(
     false
@@ -252,6 +252,6 @@ const EditTagDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 export default EditTagDialog;

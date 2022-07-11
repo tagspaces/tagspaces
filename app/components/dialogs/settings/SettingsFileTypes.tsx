@@ -29,7 +29,7 @@ import Button from '@material-ui/core/Button';
 import Select from '@material-ui/core/Select';
 import ColorPickerDialog from '../ColorPickerDialog';
 import { findAvailableExtensions } from '-/reducers/settings-default';
-// import { sortBy } from '-/utils/misc';
+// import { sortBy } from '@tagspaces/tagspaces-platforms/misc';
 import i18n from '-/services/i18n';
 import TransparentBackground from '../../TransparentBackground';
 
@@ -69,7 +69,7 @@ interface Props {
   onRemoveItem: Function;
 }
 
-const SettingsFileTypes = (props: Props) => {
+function SettingsFileTypes(props: Props) {
   const [isColorPickerVisible, setColorPickerVisible] = useState<boolean>(
     false
   );
@@ -242,6 +242,6 @@ const SettingsFileTypes = (props: Props) => {
       ))}
     </div>
   );
-};
+}
 
 export default withStyles(styles)(SettingsFileTypes);

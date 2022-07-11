@@ -22,6 +22,13 @@ import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
 import Pagination from '@material-ui/lab/Pagination';
 import { bindActionCreators } from 'redux';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import {
+  getMetaFileLocationForDir,
+  getMetaFileLocationForFile,
+  getThumbFileLocationForDirectory,
+  getThumbFileLocationForFile
+} from '@tagspaces/tagspaces-platforms/paths';
 import i18n from '-/services/i18n';
 import {
   actions as AppActions,
@@ -31,15 +38,8 @@ import {
   isLoading
 } from '-/reducers/app';
 import EntryIcon from '-/components/EntryIcon';
-import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
 import { getMetaForEntry } from '-/services/utils-io';
-import {
-  getMetaFileLocationForDir,
-  getMetaFileLocationForFile,
-  getThumbFileLocationForDirectory,
-  getThumbFileLocationForFile
-} from '-/utils/paths';
 import PlatformIO from '-/services/platform-facade';
 
 interface Props {
@@ -68,6 +68,7 @@ interface Props {
   settings; // cache only
   // eslint-disable-next-line react/no-unused-prop-types
   selectedEntries; // cache only
+  // setMetaForCurrentDir: (metaFiles: Array<any>) => void;
 }
 
 function GridPagination(props: Props) {
@@ -112,6 +113,7 @@ function GridPagination(props: Props) {
         .then(meta => {
           metaLoadedLock.current = false;
           props.setIsMetaLoaded(true);
+          // props.setMetaForCurrentDir(meta);
           const dirEntriesPromises = getDirEntriesPromises();
           const fileEntriesPromises = getFileEntriesPromises(meta);
           const thumbs = getThumbs(meta);
@@ -152,7 +154,10 @@ function GridPagination(props: Props) {
     );
     if (meta.some(metaFile => thumbPath.endsWith(metaFile.path))) {
       thumbEntry.thumbPath = thumbPath;
-      if (PlatformIO.haveObjectStoreSupport()) {
+      if (
+        PlatformIO.haveObjectStoreSupport() ||
+        PlatformIO.haveWebDavSupport()
+      ) {
         if (thumbPath && thumbPath.startsWith('/')) {
           thumbPath = thumbPath.substring(1);
         }
@@ -187,9 +192,10 @@ function GridPagination(props: Props) {
       );
       let enhancedEntry;
       if (meta.some(metaFile => thumbDirPath.endsWith(metaFile.path))) {
-        const thumbPath = PlatformIO.haveObjectStoreSupport()
-          ? PlatformIO.getURLforPath(thumbDirPath)
-          : thumbDirPath;
+        const thumbPath =
+          PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()
+            ? PlatformIO.getURLforPath(thumbDirPath)
+            : thumbDirPath;
         enhancedEntry = { ...entry, thumbPath };
       }
       if (
@@ -383,6 +389,7 @@ function mapStateToProps(state) {
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
+      // setMetaForCurrentDir: AppActions.setMetaForCurrentDir,
       updateCurrentDirEntries: AppActions.updateCurrentDirEntries,
       setIsMetaLoaded: AppActions.setIsMetaLoaded
     },
@@ -397,7 +404,9 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
     JSON.stringify(prevProp.directories) &&
   JSON.stringify(nextProp.settings) === JSON.stringify(prevProp.settings) &&
   JSON.stringify(nextProp.selectedEntries) ===
-    JSON.stringify(prevProp.selectedEntries);
+    JSON.stringify(prevProp.selectedEntries) &&
+  JSON.stringify(nextProp.currentDirectoryColor) ===
+    JSON.stringify(prevProp.currentDirectoryColor);
 
 export default connect(
   mapStateToProps,

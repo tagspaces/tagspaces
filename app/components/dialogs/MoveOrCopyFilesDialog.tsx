@@ -39,7 +39,7 @@ interface Props {
   handleCopyFiles: (files: Array<File>) => void;
 }
 
-function MoveCopyFilesDialog(props: Props) {
+function MoveOrCopyFilesDialog(props: Props) {
   const { open, onClose, fullScreen } = props;
 
   return (
@@ -96,4 +96,4 @@ function MoveCopyFilesDialog(props: Props) {
   );
 }
 
-export default MoveCopyFilesDialog;
+export default MoveOrCopyFilesDialog;

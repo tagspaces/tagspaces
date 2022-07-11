@@ -21,6 +21,12 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { GlobalHotKeys } from 'react-hotkeys';
 import { withStyles } from '@material-ui/core/styles';
+import {
+  isObj,
+  locationType,
+  sortByCriteria
+} from '@tagspaces/tagspaces-platforms/misc';
+import { isVisibleOnScreen } from '-/utils/dom';
 import { actions as TagLibraryActions } from '-/reducers/taglibrary';
 import {
   getSupportedFileTypes,
@@ -28,12 +34,6 @@ import {
   getKeyBindingObject
   // isDesktopMode
 } from '-/reducers/settings';
-import {
-  isObj,
-  isVisibleOnScreen,
-  locationType,
-  sortByCriteria
-} from '-/utils/misc';
 import styles from '-/perspectives/grid-perspective/components/styles.css';
 import FileMenu from '-/components/menus/FileMenu';
 import DirectoryMenu from '-/components/menus/DirectoryMenu';
@@ -43,7 +43,7 @@ import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
 import MoveCopyFilesDialog from '-/components/dialogs/MoveCopyFilesDialog';
 import TargetMoveFileBox from '-/components/TargetMoveFileBox';
 import FileSourceDnd from '-/components/FileSourceDnd';
-import AppConfig from '-/config';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import DragItemTypes from '-/components/DragItemTypes';
 import TagDropContainer from '-/components/TagDropContainer';
 import IOActions from '-/reducers/io-actions';
@@ -61,7 +61,6 @@ import SortingMenu from '-/perspectives/grid-perspective/components/SortingMenu'
 import GridOptionsMenu from '-/perspectives/grid-perspective/components/GridOptionsMenu';
 import { getLocation, getLocations } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-facade';
-import { getLocationPath } from '-/utils/paths';
 import GridPagination from '-/perspectives/grid-perspective/components/GridPagination';
 import GridSettingsDialog from '-/perspectives/grid-perspective/components/GridSettingsDialog';
 import AddTagToTagGroupDialog from '-/components/dialogs/AddTagToTagGroupDialog';
@@ -83,7 +82,11 @@ interface Props {
   openNextFile: () => any;
   openPrevFile: () => any;
   openRenameEntryDialog: () => void;
-  loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
+  loadDirectoryContent: (
+    path: string,
+    generateThumbnails: boolean,
+    loadDirMeta?: boolean
+  ) => void;
   openDirectory: (path: string) => void;
   showInFileManager: (path: string) => void;
   openFileNatively: (path?: string) => void;
@@ -108,7 +111,7 @@ interface Props {
   toggleDeleteMultipleEntriesDialog: () => void;
 }
 
-const GridPerspective = (props: Props) => {
+function GridPerspective(props: Props) {
   let settings = JSON.parse(localStorage.getItem(defaultSettings.settingsKey)); // loading settings
 
   const [mouseX, setMouseX] = useState<number>(undefined);
@@ -422,6 +425,9 @@ const GridPerspective = (props: Props) => {
         .catch(error => {
           console.log('enableObjectStoreSupport', error);
         });
+    } else if (props.currentLocation.type === locationType.TYPE_WEBDAV) {
+      PlatformIO.enableWebdavSupport(props.currentLocation);
+      doubleClickAction(fsEntry);
     } else if (props.currentLocation.type === locationType.TYPE_LOCAL) {
       PlatformIO.disableObjectStoreSupport();
       doubleClickAction(fsEntry);
@@ -435,7 +441,7 @@ const GridPerspective = (props: Props) => {
       // props.openFsEntry(fsEntry);
     } else {
       console.log('Handle Grid cell db click, selected path : ', fsEntry.path);
-      props.loadDirectoryContent(fsEntry.path, true);
+      props.loadDirectoryContent(fsEntry.path, true, true);
     }
   };
 
@@ -715,7 +721,7 @@ const GridPerspective = (props: Props) => {
   );
   const sortedFiles = sortedDirContentMemoized.filter(entry => entry.isFile);
   const locationPath = props.currentLocation
-    ? getLocationPath(props.currentLocation)
+    ? PlatformIO.getLocationPath(props.currentLocation)
     : '';
   let entryWidth = 200;
   if (entrySize === 'small') {
@@ -912,7 +918,7 @@ const GridPerspective = (props: Props) => {
       )}
     </div>
   );
-};
+}
 
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(

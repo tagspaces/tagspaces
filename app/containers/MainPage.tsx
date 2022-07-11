@@ -29,6 +29,8 @@ import { NativeTypes } from 'react-dnd-html5-backend';
 import { Progress } from 'aws-sdk/clients/s3';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
 import { Split } from 'ts-react-splitter';
+import { buffer } from '@tagspaces/tagspaces-platforms/misc';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import MobileNavigation from '../components/MobileNavigation';
 import FolderContainer from '../components/FolderContainer';
 import EntryContainer from '../components/EntryContainer';
@@ -70,9 +72,7 @@ import {
   currentUser,
   isLocationDialogOpened
 } from '../reducers/app';
-import { buffer } from '-/utils/misc';
 import TargetFileBox from '../components/TargetFileBox';
-import AppConfig from '../config';
 import i18n from '../services/i18n';
 import LoadingLazy from '../components/LoadingLazy';
 import withDnDContext from '-/containers/withDnDContext';
@@ -86,7 +86,7 @@ import { TS } from '-/tagspaces.namespace';
 import PageNotification from '-/containers/PageNotification';
 import listen from '-/containers/RendererListener';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
-import MoveCopyFilesDialog from '-/components/dialogs/MoveOrCopyFilesDialog';
+import MoveOrCopyFilesDialog from '-/components/dialogs/MoveOrCopyFilesDialog';
 import PlatformIO from '-/services/platform-facade';
 
 const drawerWidth = 320;
@@ -190,7 +190,11 @@ interface Props {
     autohide?: boolean
   ) => void;
   reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => void;
-  loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
+  loadDirectoryContent: (
+    path: string,
+    generateThumbnails: boolean,
+    loadDirMeta?: boolean
+  ) => void;
   uploadFilesAPI: (
     files: Array<File>,
     destination: string,
@@ -415,7 +419,7 @@ function MainPage(props: Props) {
       }
     }
     Promise.all(promises)
-      .then(() => props.loadDirectoryContent(props.directoryPath, true))
+      .then(() => props.loadDirectoryContent(props.directoryPath, true, true))
       .catch(error => {
         console.log('promises', error);
       });
@@ -463,11 +467,11 @@ function MainPage(props: Props) {
         );
       }
       props.resetProgress();
+      props.toggleUploadDialog();
       return props
         .uploadFilesAPI(files, props.directoryPath, props.onUploadProgress)
         .then(fsEntries => {
           props.reflectCreateEntries(fsEntries);
-          props.toggleUploadDialog();
           return true;
         })
         .catch(error => {
@@ -600,7 +604,7 @@ function MainPage(props: Props) {
       keyMap={keyMap}
       style={{ height: '100%' }}
     >
-      <MoveCopyFilesDialog
+      <MoveOrCopyFilesDialog
         open={moveCopyDialogOpened !== undefined}
         onClose={() => {
           setMoveCopyDialogOpened(undefined);
@@ -763,7 +767,11 @@ function MainPage(props: Props) {
           <TargetFileBox
             accepts={[FILE]}
             onDrop={(item: any) => {
-              if (AppConfig.isElectron) {
+              if (
+                AppConfig.isElectron &&
+                !PlatformIO.haveObjectStoreSupport() &&
+                !PlatformIO.haveWebDavSupport()
+              ) {
                 setMoveCopyDialogOpened(item.files);
               } else {
                 handleCopyFiles(item.files);

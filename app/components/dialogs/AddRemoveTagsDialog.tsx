@@ -33,7 +33,10 @@ import Typography from '@material-ui/core/Typography';
 import Dialog from '@material-ui/core/Dialog';
 import TagsSelect from '../TagsSelect';
 import i18n from '-/services/i18n';
-import { extractFileName, extractDirectoryName } from '-/utils/paths';
+import {
+  extractFileName,
+  extractDirectoryName
+} from '@tagspaces/tagspaces-platforms/paths';
 import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
@@ -59,7 +62,7 @@ function PaperComponent(props: PaperProps) {
   );
 }
 
-const AddRemoveTagsDialog = (props: Props) => {
+function AddRemoveTagsDialog(props: Props) {
   const [newlyAddedTags, setNewlyAddedTags] = useState<Array<TS.Tag>>([]);
 
   const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
@@ -193,6 +196,6 @@ const AddRemoveTagsDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 export default withMobileDialog()(AddRemoveTagsDialog);

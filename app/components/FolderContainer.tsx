@@ -33,6 +33,7 @@ import Badge from '@material-ui/core/Badge';
 import { withStyles } from '@material-ui/core/styles';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import LocationMenu from './menus/LocationMenu';
 import i18n from '../services/i18n';
 import {
@@ -58,7 +59,6 @@ import {
 import TaggingActions from '../reducers/tagging-actions';
 import LoadingLazy from '../components/LoadingLazy';
 import { Pro } from '../pro';
-import AppConfig from '-/config';
 import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
 import { TS } from '-/tagspaces.namespace';
 import PathBreadcrumbs from './PathBreadcrumbs';
@@ -76,23 +76,27 @@ import MainSearchField from '-/components/MainSearchField';
 
 const GridPerspective = React.lazy(() =>
   import(
-    /* webpackChunkName: "GridPerspective" */ '../perspectives/grid-perspective/'
+    /* webpackChunkName: "GridPerspective" */ '../perspectives/grid-perspective'
   )
 );
-const GridPerspectiveAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <GridPerspective {...props} />
-  </React.Suspense>
-);
+function GridPerspectiveAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <GridPerspective {...props} />
+    </React.Suspense>
+  );
+}
 
 const ListPerspective = React.lazy(() =>
-  import(/* webpackChunkName: "ListPerspective" */ '../perspectives/list/')
+  import(/* webpackChunkName: "ListPerspective" */ '../perspectives/list')
 );
-const ListPerspectiveAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <ListPerspective {...props} />
-  </React.Suspense>
-);
+function ListPerspectiveAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <ListPerspective {...props} />
+    </React.Suspense>
+  );
+}
 
 let GalleryPerspective = React.Fragment;
 if (Pro && Pro.Perspectives && Pro.Perspectives.GalleryPerspective) {
@@ -100,22 +104,26 @@ if (Pro && Pro.Perspectives && Pro.Perspectives.GalleryPerspective) {
 
   GalleryPerspective = Pro.Perspectives.GalleryPerspective;
 }
-const GalleryPerspectiveAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <GalleryPerspective {...props} />
-  </React.Suspense>
-);
+function GalleryPerspectiveAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <GalleryPerspective {...props} />
+    </React.Suspense>
+  );
+}
 
 let MapiquePerspective = React.Fragment;
 if (Pro && Pro.Perspectives && Pro.Perspectives.MapiquePerspective) {
   // MapiquePerspective = React.lazy(() => import(/* webpackChunkName: "MapiquePerspective" */ '../node_modules/@tagspaces/pro/modules/perspectives/mapique'));
   MapiquePerspective = Pro.Perspectives.MapiquePerspective;
 }
-const MapiquePerspectiveAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <MapiquePerspective {...props} />
-  </React.Suspense>
-);
+function MapiquePerspectiveAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <MapiquePerspective {...props} />
+    </React.Suspense>
+  );
+}
 
 /* let TreeVizPerspective = React.Fragment;
 if (Pro && Pro.Perspectives && Pro.Perspectives.TreeVizPerspective) {
@@ -133,30 +141,36 @@ let KanBanPerspective = React.Fragment;
 if (Pro && Pro.Perspectives && Pro.Perspectives.KanBanPerspective) {
   KanBanPerspective = Pro.Perspectives.KanBanPerspective;
 }
-const KanBanPerspectiveAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <KanBanPerspective {...props} />
-  </React.Suspense>
-);
+function KanBanPerspectiveAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <KanBanPerspective {...props} />
+    </React.Suspense>
+  );
+}
 
 let WikiPerspective = React.Fragment;
 if (Pro && Pro.Perspectives && Pro.Perspectives.WikiPerspective) {
   WikiPerspective = Pro.Perspectives.WikiPerspective;
 }
-const WikiPerspectiveAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <WikiPerspective {...props} />
-  </React.Suspense>
-);
+function WikiPerspectiveAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <WikiPerspective {...props} />
+    </React.Suspense>
+  );
+}
 
 const WelcomePanel = React.lazy(() =>
   import(/* webpackChunkName: "WelcomePanel" */ './WelcomePanel')
 );
-const WelcomePanelAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <WelcomePanel {...props} />
-  </React.Suspense>
-);
+function WelcomePanelAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <WelcomePanel {...props} />
+    </React.Suspense>
+  );
+}
 
 const CounterBadge: any = withStyles(theme => ({
   badge: {
@@ -201,7 +215,11 @@ interface Props {
   showInFileManager: () => void;
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   reflectCreateEntry: (path: string, isFile: boolean) => void;
-  loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
+  loadDirectoryContent: (
+    path: string,
+    generateThumbnails: boolean,
+    loadDirMeta?: boolean
+  ) => void;
   loadParentDirectoryContent: () => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   isReadOnlyMode: boolean;
@@ -228,7 +246,7 @@ interface Props {
   keyBindings: Array<any>;
 }
 
-const FolderContainer = (props: Props) => {
+function FolderContainer(props: Props) {
   useEffect(() => {
     setSearchVisible(false);
   }, [props.currentDirectoryPath]);
@@ -307,11 +325,7 @@ const FolderContainer = (props: Props) => {
 
   const renderPerspective = () => {
     if (showWelcomePanel) {
-      return AppConfig.showWelcomePanel ? (
-        <WelcomePanelAsync />
-      ) : (
-        <React.Fragment />
-      );
+      return AppConfig.showWelcomePanel ? <WelcomePanelAsync /> : <></>;
     }
     if (currentPerspective === PerspectiveIDs.LIST) {
       return (
@@ -664,30 +678,40 @@ const FolderContainer = (props: Props) => {
             width: '100%'
           }}
         >
-          {isLoading && PlatformIO.haveObjectStoreSupport() && (
-            <div
-              style={{
-                position: 'absolute',
-                zIndex: 1000,
-                height: '100%',
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                borderRadius: 10,
-                backdropFilter: 'grayscale(1)'
-                // backdropFilter: 'blur(2px)',
-                // backgroundColor: '#fafafa33' // red: '#eb585882' '#d9d9d980'
-              }}
-            >
-              <div className="lds-ellipsis">
-                <div style={{ backgroundColor: theme.palette.primary.main }} />
-                <div style={{ backgroundColor: theme.palette.primary.main }} />
-                <div style={{ backgroundColor: theme.palette.primary.main }} />
-                <div style={{ backgroundColor: theme.palette.primary.main }} />
+          {isLoading &&
+            (PlatformIO.haveObjectStoreSupport() ||
+              PlatformIO.haveWebDavSupport()) && (
+              <div
+                style={{
+                  position: 'absolute',
+                  zIndex: 1000,
+                  height: '100%',
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: 10,
+                  backdropFilter: 'grayscale(1)'
+                  // backdropFilter: 'blur(2px)',
+                  // backgroundColor: '#fafafa33' // red: '#eb585882' '#d9d9d980'
+                }}
+              >
+                <div className="lds-ellipsis">
+                  <div
+                    style={{ backgroundColor: theme.palette.primary.main }}
+                  />
+                  <div
+                    style={{ backgroundColor: theme.palette.primary.main }}
+                  />
+                  <div
+                    style={{ backgroundColor: theme.palette.primary.main }}
+                  />
+                  <div
+                    style={{ backgroundColor: theme.palette.primary.main }}
+                  />
+                </div>
               </div>
-            </div>
-          )}
+            )}
           {renderPerspective()}
           {isRenameEntryDialogOpened && (
             <RenameEntryDialog
@@ -718,7 +742,7 @@ const FolderContainer = (props: Props) => {
       )}
     </div>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

@@ -51,7 +51,7 @@ if (buildID && buildID.length >= 11) {
 const productName = versionMeta.name + (Pro ? ' Pro' : '');
 document.title = productName + ' ' + versionMeta.version;
 
-const AboutDialog = (props: Props) => {
+function AboutDialog(props: Props) {
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [newVersion, setNewVersion] = useState('');
   const { open, onClose, fullScreen } = props;
@@ -235,6 +235,6 @@ const AboutDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 export default withMobileDialog()(AboutDialog);

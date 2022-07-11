@@ -34,7 +34,7 @@ interface Props {
   currentTheme: string;
 }
 
-const FileView = (props: Props) => {
+function FileView(props: Props) {
   const {
     openedFile,
     theme,
@@ -135,7 +135,7 @@ const FileView = (props: Props) => {
       />
     </div>
   );
-};
+}
 
 const areEqual = (prevProp, nextProp) =>
   nextProp.openedFile.path === prevProp.openedFile.path &&

@@ -6,10 +6,10 @@ export interface Props {
   tag: TS.Tag;
 }
 
-const TagDragPreview = (props: Props) => {
+function TagDragPreview(props: Props) {
   const { tag } = props;
   return <TagContainer tag={tag} isDragging={true} />;
-};
+}
 const areEqual = (prevProp, nextProp) =>
   nextProp.tag.title === prevProp.tag.title;
 export default React.memo(TagDragPreview, areEqual);

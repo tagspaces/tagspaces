@@ -43,7 +43,7 @@ interface Props {
   onClose: () => void;
 }
 
-const ConfirmDialog = (props: Props) => {
+function ConfirmDialog(props: Props) {
   const { open, onClose, confirmCallback } = props;
 
   function onConfirm(result) {
@@ -95,7 +95,7 @@ const ConfirmDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 ConfirmDialog.defaultProps = {
   cancelDialogTID: 'confirmDialogCancelButton',

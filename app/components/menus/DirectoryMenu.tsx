@@ -38,20 +38,20 @@ import NewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import PropertiesIcon from '@material-ui/icons/Info';
 import { Progress } from 'aws-sdk/clients/s3';
 import ImageIcon from '@material-ui/icons/Image';
-import { Pro } from '../../pro';
-import CreateDirectoryDialog from '../dialogs/CreateDirectoryDialog';
-// import RenameDirectoryDialog from '../dialogs/RenameDirectoryDialog';
-import AppConfig from '-/config';
-import i18n from '-/services/i18n';
+import { formatDateTime4Tag } from '@tagspaces/tagspaces-platforms/misc';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import {
   extractContainingDirectoryPath,
   extractDirectoryName,
   getThumbFileLocationForDirectory,
   normalizePath,
   generateSharingLink
-} from '-/utils/paths';
+} from '@tagspaces/tagspaces-platforms/paths';
+import { Pro } from '../../pro';
+import CreateDirectoryDialog from '../dialogs/CreateDirectoryDialog';
+// import RenameDirectoryDialog from '../dialogs/RenameDirectoryDialog';
+import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
-import { formatDateTime4Tag } from '-/utils/misc';
 import { actions as AppActions, getSelectedEntries } from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
 import TaggingActions from '-/reducers/tagging-actions';
@@ -70,7 +70,11 @@ interface Props {
   onClose: (param?: any) => void;
   anchorEl: Element;
   directoryPath: string;
-  loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
+  loadDirectoryContent: (
+    path: string,
+    generateThumbnails: boolean,
+    loadDirMeta?: boolean
+  ) => void;
   openDirectory: (path: string) => void;
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   reflectCreateEntry?: (path: string, isFile: boolean) => void;
@@ -110,7 +114,7 @@ interface Props {
   locations?: Array<TS.Location>;
 }
 
-const DirectoryMenu = (props: Props) => {
+function DirectoryMenu(props: Props) {
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
 
   const {
@@ -164,12 +168,12 @@ const DirectoryMenu = (props: Props) => {
 
   function reloadDirectory() {
     onClose();
-    props.loadDirectoryContent(props.directoryPath, true);
+    props.loadDirectoryContent(props.directoryPath, true, true);
   }
 
   function openDirectory() {
     onClose();
-    props.loadDirectoryContent(props.directoryPath, true);
+    props.loadDirectoryContent(props.directoryPath, true, true);
   }
 
   function showProperties() {
@@ -493,7 +497,11 @@ Do you want to continue?`)
 
   if (
     selectedEntries.length < 2 &&
-    !(PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb)
+    !(
+      PlatformIO.haveObjectStoreSupport() ||
+      PlatformIO.haveWebDavSupport() ||
+      AppConfig.isWeb
+    )
   ) {
     menuItems.push(
       <MenuItem
@@ -705,7 +713,7 @@ Do you want to continue?`)
       />
     </div>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

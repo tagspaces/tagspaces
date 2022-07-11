@@ -36,11 +36,11 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Typography from '@material-ui/core/Typography';
 import Dialog from '@material-ui/core/Dialog';
 import IconButton from '@material-ui/core/IconButton';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import { extractFileName } from '@tagspaces/tagspaces-platforms/paths';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
-import AppConfig from '-/config';
 import IOActions from '-/reducers/io-actions';
-import { extractFileName } from '-/utils/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {
@@ -52,7 +52,7 @@ interface Props {
   selectedFiles: Array<string>;
 }
 
-const MoveCopyFilesDialog = (props: Props) => {
+function MoveCopyFilesDialog(props: Props) {
   const [inputError, setInputError] = useState(false);
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [targetPath, setTargetPath] = useState('');
@@ -149,7 +149,9 @@ const MoveCopyFilesDialog = (props: Props) => {
             }}
             value={targetPath}
             endAdornment={
-              PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb ? (
+              PlatformIO.haveObjectStoreSupport() ||
+              PlatformIO.haveWebDavSupport() ||
+              AppConfig.isWeb ? (
                 undefined
               ) : (
                 <InputAdornment position="end" style={{ height: 33 }}>
@@ -189,7 +191,7 @@ const MoveCopyFilesDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(

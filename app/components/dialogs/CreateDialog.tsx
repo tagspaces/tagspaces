@@ -34,11 +34,11 @@ import { withStyles } from '@material-ui/core/styles';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import Dialog from '@material-ui/core/Dialog';
 import { Progress } from 'aws-sdk/clients/s3';
+import { formatDateTime4Tag } from '@tagspaces/tagspaces-platforms/misc';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '-/services/i18n';
 import { getKeyBindingObject } from '-/reducers/settings';
 import { actions as AppActions } from '-/reducers/app';
-import AppConfig from '-/config';
-import { formatDateTime4Tag } from '-/utils/misc';
 import IOActions from '-/reducers/io-actions';
 import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
@@ -90,7 +90,7 @@ interface Props {
   resetProgress: () => void;
 }
 
-const CreateDialog = (props: Props) => {
+function CreateDialog(props: Props) {
   let fileInput: HTMLInputElement;
   const fileName =
     'note' +
@@ -178,6 +178,7 @@ const CreateDialog = (props: Props) => {
     // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
     // const file = selection.currentTarget.files[0];
     props.resetProgress();
+    props.toggleUploadDialog();
     props
       .uploadFilesAPI(
         Array.from(selection.currentTarget.files),
@@ -191,7 +192,6 @@ const CreateDialog = (props: Props) => {
       .catch(error => {
         console.log('uploadFiles', error);
       });
-    props.toggleUploadDialog();
     props.onClose();
 
     /* const filePath =
@@ -385,7 +385,7 @@ const CreateDialog = (props: Props) => {
       </DialogContent>
     </Dialog>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

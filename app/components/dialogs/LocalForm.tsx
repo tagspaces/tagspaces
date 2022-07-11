@@ -26,37 +26,22 @@ import IconButton from '@material-ui/core/IconButton';
 import FolderIcon from '@material-ui/icons/Folder';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Grid from '@material-ui/core/Grid';
+import { extractDirectoryName } from '@tagspaces/tagspaces-platforms/paths';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '-/services/i18n';
-import { extractDirectoryName } from '-/utils/paths';
 import PlatformIO from '-/services/platform-facade';
-import AppConfig from '-/config';
 
 interface Props {
-  showAdvancedMode: boolean;
   errorTextPath: boolean;
   errorTextName: boolean;
-  errorTextId: boolean;
   setName: (string) => void;
   setPath: (string) => void;
-  setNewUuid: (string) => void;
   path: string;
   name: string;
-  newuuid: string;
 }
 
-const LocalForm = (props: Props) => {
-  const {
-    errorTextPath,
-    errorTextName,
-    errorTextId,
-    setName,
-    setPath,
-    setNewUuid,
-    path,
-    name,
-    newuuid,
-    showAdvancedMode
-  } = props;
+function LocalForm(props: Props) {
+  const { errorTextPath, errorTextName, setName, setPath, path, name } = props;
 
   const openDirectory = () => {
     PlatformIO.selectDirectoryDialog()
@@ -79,6 +64,23 @@ const LocalForm = (props: Props) => {
 
   return (
     <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <FormControl fullWidth={true} error={errorTextName}>
+          <InputLabel htmlFor="path">
+            {i18n.t('core:createLocationName')}
+          </InputLabel>
+          <Input
+            required
+            margin="dense"
+            name="name"
+            inputProps={{ autoCorrect: 'off' }}
+            onChange={event => setName(event.target.value)}
+            value={name}
+            data-tid="locationName"
+            fullWidth={true}
+          />
+        </FormControl>
+      </Grid>
       <Grid item xs={12}>
         <FormControl fullWidth={true} error={errorTextPath}>
           <InputLabel htmlFor="path">
@@ -111,44 +113,8 @@ const LocalForm = (props: Props) => {
           )}
         </FormControl>
       </Grid>
-      <Grid item xs={12}>
-        <FormControl fullWidth={true} error={errorTextName}>
-          <InputLabel htmlFor="path">
-            {i18n.t('core:createLocationName')}
-          </InputLabel>
-          <Input
-            required
-            margin="dense"
-            name="name"
-            inputProps={{ autoCorrect: 'off' }}
-            onChange={event => setName(event.target.value)}
-            value={name}
-            data-tid="locationName"
-            fullWidth={true}
-          />
-        </FormControl>
-      </Grid>
-      {showAdvancedMode && (
-        <Grid item xs={12}>
-          <FormControl fullWidth={true} error={errorTextId}>
-            <InputLabel htmlFor="newuuid">
-              {i18n.t('core:locationId')}
-            </InputLabel>
-            <Input
-              required
-              margin="dense"
-              name="newuuid"
-              fullWidth={true}
-              data-tid="newuuid"
-              placeholder="Unique location identifier"
-              onChange={event => setNewUuid(event.target.value)}
-              value={newuuid}
-            />
-          </FormControl>
-        </Grid>
-      )}
     </Grid>
   );
-};
+}
 
 export default LocalForm;

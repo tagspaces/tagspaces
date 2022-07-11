@@ -18,10 +18,10 @@
 
 import semver from 'semver';
 import { v1 as uuidv1 } from 'uuid';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '-/services/i18n';
 import defaultSettings from './settings-default';
 import PlatformIO from '-/services/platform-facade';
-import AppConfig from '-/config';
 import Links from '-/links';
 import versionMeta from '-/version.json';
 import { actions as AppActions } from './app';
@@ -404,18 +404,12 @@ export default (state: any = defaultSettings, action: any) => {
 };
 
 export const actions = {
-  addTileServers: (
-    tileServer: TS.MapTileServer,
-    isDefault: boolean = false
-  ) => ({
+  addTileServers: (tileServer: TS.MapTileServer, isDefault = false) => ({
     type: types.ADD_MAPTILE_SERVER,
     tileServer,
     isDefault
   }),
-  editTileServers: (
-    tileServer: TS.MapTileServer,
-    isDefault: boolean = false
-  ) => ({
+  editTileServers: (tileServer: TS.MapTileServer, isDefault = false) => ({
     type: types.EDIT_MAPTILE_SERVER,
     tileServer,
     isDefault
@@ -698,9 +692,9 @@ export const getKeyBindings = (state: any) => state.settings.keyBindings;
 export const getKeyBindingObject = (state: any) =>
   generateKeyBindingObject(state.settings.keyBindings);
 export const getSupportedFileTypes = (state: any) =>
-  state.settings.supportedFileTypes.sort((a, b) => {
-    return a.type > b.type ? 1 : a.type < b.type ? -1 : 0;
-  });
+  state.settings.supportedFileTypes.sort((a, b) =>
+    a.type > b.type ? 1 : a.type < b.type ? -1 : 0
+  );
 export const getTagColor = (state: any) => state.settings.tagBackgroundColor;
 export const getTagTextColor = (state: any) => state.settings.tagTextColor;
 export const getCurrentTheme = (state: any) => state.settings.currentTheme;

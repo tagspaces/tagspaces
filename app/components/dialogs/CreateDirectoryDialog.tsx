@@ -29,7 +29,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
 import i18n from '-/services/i18n';
 import { actions as AppActions } from '-/reducers/app';
-import { joinPaths } from '-/utils/paths';
+import { joinPaths } from '@tagspaces/tagspaces-platforms/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import PlatformIO from '-/services/platform-facade';
 
@@ -41,7 +41,7 @@ interface Props {
   createDirectory: (directoryPath: string) => void;
 }
 
-const CreateDirectoryDialog = (props: Props) => {
+function CreateDirectoryDialog(props: Props) {
   const [inputError, setInputError] = useState(false);
   const isFirstRun = useRef(true);
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
@@ -149,7 +149,7 @@ const CreateDirectoryDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(

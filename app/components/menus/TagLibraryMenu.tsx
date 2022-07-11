@@ -25,9 +25,9 @@ import ImportExportIcon from '@material-ui/icons/ImportExport';
 import HelpIcon from '@material-ui/icons/Help';
 import AddIcon from '@material-ui/icons/Add';
 import ReloadIcon from '@material-ui/icons/Sync';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import ImportExportTagGroupsDialog from '../dialogs/ImportExportTagGroupsDialog';
 import i18n from '-/services/i18n';
-import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
 import Links from '-/links';
 import { ProLabel, ProTooltip } from '-/components/HelperComponents';
@@ -52,7 +52,7 @@ interface Props {
   refreshTagsFromLocation: () => void;
 }
 
-const TagLibraryMenu = (props: Props) => {
+function TagLibraryMenu(props: Props) {
   const fileInput = useRef<HTMLInputElement>(null);
   const tagGroupsImported = useRef([]);
   // const [tagGroups, setTagGroups] = useState(null);
@@ -194,6 +194,6 @@ const TagLibraryMenu = (props: Props) => {
       />
     </div>
   );
-};
+}
 
 export default TagLibraryMenu;

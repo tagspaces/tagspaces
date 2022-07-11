@@ -45,12 +45,7 @@ import {
   withLeaflet
 } from 'react-leaflet';
 import { IconButton } from '@material-ui/core';
-import TagDropContainer from './TagDropContainer';
-import ColorPickerDialog from './dialogs/ColorPickerDialog';
-import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
-import i18n from '../services/i18n';
-import { enhanceOpenedEntry, convertMarkDown } from '-/services/utils-io';
-import { formatFileSize, parseGeoLocation } from '-/utils/misc';
+import { formatFileSize } from '@tagspaces/tagspaces-platforms/misc';
 import {
   extractContainingDirectoryPath,
   getThumbFileLocationForFile,
@@ -58,8 +53,14 @@ import {
   extractFileName,
   extractDirectoryName,
   generateSharingLink
-} from '-/utils/paths';
-import AppConfig from '../config';
+} from '@tagspaces/tagspaces-platforms/paths';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import TagDropContainer from './TagDropContainer';
+import ColorPickerDialog from './dialogs/ColorPickerDialog';
+import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
+import i18n from '../services/i18n';
+import { enhanceOpenedEntry, convertMarkDown } from '-/services/utils-io';
+import { parseGeoLocation } from '-/utils/geo';
 import { Pro } from '../pro';
 import PlatformIO from '../services/platform-facade';
 import TagsSelect from './TagsSelect';
@@ -175,12 +176,12 @@ interface Props {
   removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
   removeAllTags: (paths: Array<string>) => void;
   isReadOnlyMode: boolean;
-  currentDirectoryPath: string | null;
+  // currentDirectoryPath: string | null;
   tagDelimiter: string;
   tileServer: TS.MapTileServer;
 }
 
-const EntryProperties = (props: Props) => {
+function EntryProperties(props: Props) {
   // const EntryProperties = React.memo((props: Props) => {
   const fileNameRef = useRef<HTMLInputElement>(null);
   const sharingLinkRef = useRef<HTMLInputElement>(null);
@@ -350,7 +351,10 @@ const EntryProperties = (props: Props) => {
 
   const setThumb = (filePath, thumbFilePath) => {
     if (filePath !== undefined) {
-      if (PlatformIO.haveObjectStoreSupport()) {
+      if (
+        PlatformIO.haveObjectStoreSupport() ||
+        PlatformIO.haveWebDavSupport()
+      ) {
         const thumbUrl = PlatformIO.getURLforPath(thumbFilePath);
         props.updateThumbnailUrl(currentEntry.path, thumbUrl);
         return Promise.resolve(true);
@@ -478,7 +482,7 @@ const EntryProperties = (props: Props) => {
     );
   }
   let url;
-  if (PlatformIO.haveObjectStoreSupport()) {
+  if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
     url = PlatformIO.getURLforPath(thumbPath);
   } else {
     url = thumbPath + '?' + new Date().getTime();
@@ -508,8 +512,6 @@ const EntryProperties = (props: Props) => {
 
   let perspectiveDefault;
   if (currentEntry.perspective) {
-    perspectiveDefault = currentEntry.perspective;
-  } else if (currentEntry.perspective) {
     perspectiveDefault = currentEntry.perspective; // props.perspective;
   } else {
     perspectiveDefault = 'unspecified'; // perspectives.DEFAULT;
@@ -790,7 +792,7 @@ const EntryProperties = (props: Props) => {
           </div>
           <FormControl fullWidth={true} className={classes.formControl}>
             {editDescription !== undefined ? (
-              <React.Fragment>
+              <>
                 <TextField
                   multiline
                   inputRef={fileDescriptionRef}
@@ -822,7 +824,7 @@ const EntryProperties = (props: Props) => {
                     [Link text](http://...)
                   </span>
                 </Typography>
-              </React.Fragment>
+              </>
             ) : (
               <Typography
                 style={{
@@ -1221,7 +1223,7 @@ const EntryProperties = (props: Props) => {
               className={classes.gridItem}
               title={i18n.t('core:changeThumbnail')}
             >
-              {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events */}
+              {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/control-has-associated-label */}
               <div
                 className={classes.header}
                 onClick={toggleThumbFilesDialog}
@@ -1261,7 +1263,7 @@ const EntryProperties = (props: Props) => {
       )}
     </div>
   );
-};
+}
 
 export default withLeaflet(
   withStyles(styles, { withTheme: true })(EntryProperties)

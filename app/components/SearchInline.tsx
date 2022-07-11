@@ -27,6 +27,11 @@ import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Typography from '@material-ui/core/Typography';
+import {
+  escapeRegExp,
+  parseTextQuery,
+  removeAllTagsFromSearchQuery
+} from '@tagspaces/tagspaces-platforms/misc';
 import { actions as AppActions, getDirectoryPath } from '../reducers/app';
 import {
   actions as LocationIndexActions,
@@ -43,11 +48,6 @@ import i18n from '-/services/i18n';
 import { FileTypeGroups } from '-/services/search';
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '../pro';
-import {
-  escapeRegExp,
-  parseTextQuery,
-  removeAllTagsFromSearchQuery
-} from '-/utils/misc';
 import useFirstRender from '-/utils/useFirstRender';
 import MainSearchField from '-/components/MainSearchField';
 
@@ -58,7 +58,7 @@ interface Props {
   searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
   createLocationsIndexes: () => void;
   searchAllLocations: (searchQuery: TS.SearchQuery) => void;
-  loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
+  // loadDirectoryContent: (path: string, generateThumbnails: boolean, loadDirMeta?: boolean) => void;
   openURLExternally: (url: string) => void;
   searchQuery: TS.SearchQuery; // () => any;
   openCurrentDirectory: () => void;
@@ -80,7 +80,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const SearchInline = (props: Props) => {
+function SearchInline(props: Props) {
   // const [, forceUpdate] = useReducer(x => x + 1, 0);
   const textQuery = useRef<string>(props.searchQuery.textQuery);
   const textQueryMask = useRef<string>('');
@@ -144,7 +144,7 @@ const SearchInline = (props: Props) => {
 
   useEffect(() => {
     if (Object.keys(props.searchQuery).length > 0) {
-      let emptySearch: boolean = true;
+      let emptySearch = true;
       textQueryMask.current = '';
 
       if (props.searchQuery.tagsAND && props.searchQuery.tagsAND.length > 0) {
@@ -297,48 +297,50 @@ const SearchInline = (props: Props) => {
   };
 
   const classes = useStyles();
-  const HelpTooltip = hClasses => (
-    <Tooltip
-      arrow
-      classes={{ tooltip: hClasses.customWidth }}
-      interactive
-      title={
-        <span style={{ fontSize: 14 }}>
-          The search query consists of a tag part and a search term. This term
-          is optional and can be a single word. The tag part can have one or
-          more tags preceded by the following symbols:
-          <ul>
-            <li>
-              + will add only entries having this tag in the search results
-              (logical AND)
-            </li>
-            <li>
-              | will include all entries having this tag in the search results
-              (logical OR)
-            </li>
-            <li>
-              - will exclude entries having this tags from the search results
-            </li>
-          </ul>
-          Example queries:
-          <ul>
-            <li>
-              "italy +beach -sunset" - will find all files and folders having
-              italy in their name and the tag beach but not sunset
-            </li>
-            <li>
-              "|beach |sunset" - will find all files and folder having the tags
-              beach or sunset
-            </li>
-          </ul>
-        </span>
-      }
-    >
-      <IconButton size="small" edge="end">
-        <HelpOutlineIcon style={{ color: 'lightgray' }} />
-      </IconButton>
-    </Tooltip>
-  );
+  function HelpTooltip(hClasses) {
+    return (
+      <Tooltip
+        arrow
+        classes={{ tooltip: hClasses.customWidth }}
+        interactive
+        title={
+          <span style={{ fontSize: 14 }}>
+            The search query consists of a tag part and a search term. This term
+            is optional and can be a single word. The tag part can have one or
+            more tags preceded by the following symbols:
+            <ul>
+              <li>
+                + will add only entries having this tag in the search results
+                (logical AND)
+              </li>
+              <li>
+                | will include all entries having this tag in the search results
+                (logical OR)
+              </li>
+              <li>
+                - will exclude entries having this tags from the search results
+              </li>
+            </ul>
+            Example queries:
+            <ul>
+              <li>
+                "italy +beach -sunset" - will find all files and folders having
+                italy in their name and the tag beach but not sunset
+              </li>
+              <li>
+                "|beach |sunset" - will find all files and folder having the
+                tags beach or sunset
+              </li>
+            </ul>
+          </span>
+        }
+      >
+        <IconButton size="small" edge="end">
+          <HelpOutlineIcon style={{ color: 'lightgray' }} />
+        </IconButton>
+      </Tooltip>
+    );
+  }
 
   const executeSearch = () => {
     let query = textQuery.current;
@@ -480,7 +482,7 @@ const SearchInline = (props: Props) => {
       </Tooltip>
     </div>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {
@@ -501,7 +503,7 @@ function mapDispatchToProps(dispatch) {
       setSearchQuery: LocationIndexActions.setSearchQuery,
       searchLocationIndex: LocationIndexActions.searchLocationIndex,
       createLocationsIndexes: LocationIndexActions.createLocationsIndexes,
-      loadDirectoryContent: AppActions.loadDirectoryContent,
+      // loadDirectoryContent: AppActions.loadDirectoryContent,
       openURLExternally: AppActions.openURLExternally,
       openCurrentDirectory: AppActions.openCurrentDirectory
     },

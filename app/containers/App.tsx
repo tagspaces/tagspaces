@@ -20,9 +20,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { I18nextProvider } from 'react-i18next'; // as we build ourself via webpack
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '../services/i18n';
 import { getCurrentTheme } from '-/reducers/settings';
-import AppConfig from '-/config';
 
 const lightTheme = createTheme({
   palette: {
@@ -79,7 +79,7 @@ interface Props {
   children: Object;
   currentTheme: string;
 }
-const App = (props: Props) => {
+function App(props: Props) {
   let theme;
   switch (props.currentTheme) {
     case 'light': {
@@ -101,7 +101,7 @@ const App = (props: Props) => {
       <I18nextProvider i18n={i18n}>{props.children}</I18nextProvider>
     </ThemeProvider>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

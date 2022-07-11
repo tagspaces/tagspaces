@@ -38,7 +38,7 @@ interface Props {
   exportSearches: () => void;
 }
 
-const SearchMenu = (props: Props) => {
+function SearchMenu(props: Props) {
   const menuItems = [];
   menuItems.push(
     <MenuItem
@@ -109,6 +109,6 @@ const SearchMenu = (props: Props) => {
       </Menu>
     </div>
   );
-};
+}
 
 export default SearchMenu;

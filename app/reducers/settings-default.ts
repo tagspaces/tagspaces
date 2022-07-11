@@ -16,7 +16,7 @@
  *
  */
 
-import AppConfig from '../config';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import keyBindings from '-/reducers/keybindings-default';
 import { PerspectiveIDs } from '-/perspectives';
 

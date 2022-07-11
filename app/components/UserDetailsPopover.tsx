@@ -29,12 +29,11 @@ import Button from '@material-ui/core/Button';
 import Auth from '@aws-amplify/auth';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { withStyles } from '@material-ui/core/styles';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { clearAllURLParams } from '-/utils/dom';
 import i18n from '-/services/i18n';
 import styles from '-/components/SidePanels.css';
 import { Pro } from '-/pro';
-import { clearAllURLParams } from '-/utils/misc';
 
 interface Props {
   classes?: any;
@@ -44,7 +43,7 @@ interface Props {
   onClose: () => void;
 }
 
-const UserDetailsPopover = (props: Props) => {
+function UserDetailsPopover(props: Props) {
   const [isSetupTOTPOpened, setSetupTOTPOpened] = useState<boolean>(false);
   const SetupTOTPDialog = Pro && Pro.UI ? Pro.UI.SetupTOTPDialog : false;
 
@@ -190,7 +189,7 @@ const UserDetailsPopover = (props: Props) => {
       </Box>
     </div>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

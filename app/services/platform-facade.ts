@@ -18,6 +18,7 @@
 
 import {
   platformHaveObjectStoreSupport,
+  platformHaveWebDavSupport,
   platformIsMinio,
   platformGetDirSeparator,
   platformEnableObjectStoreSupport,
@@ -25,6 +26,7 @@ import {
   platformEnableWebdavSupport,
   platformDisableWebdavSupport,
   platformWatchDirectory,
+  platformGetLocationPath,
   platformSetLanguage,
   platformIsWorkerAvailable,
   platformSetZoomFactorElectron,
@@ -62,9 +64,9 @@ import {
   platformShareFiles,
   platformCreateIndex
 } from '@tagspaces/tagspaces-platforms/platform-io';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import { Pro } from '../pro';
 import { TS } from '-/tagspaces.namespace';
-import AppConfig from '-/config';
 
 let token: string;
 
@@ -75,17 +77,23 @@ export default class PlatformFacade {
   static disableObjectStoreSupport = (): void =>
     platformDisableObjectStoreSupport();
 
-  static enableWebdavSupport = (webDavConfig: any): void =>
+  static enableWebdavSupport = (webDavConfig: any): void => {
     platformEnableWebdavSupport(webDavConfig);
+  };
 
   static disableWebdavSupport = (): void => platformDisableWebdavSupport();
 
   static haveObjectStoreSupport = (): boolean =>
     platformHaveObjectStoreSupport();
 
+  static haveWebDavSupport = (): boolean => platformHaveWebDavSupport();
+
   static isMinio = (): boolean => platformIsMinio();
 
   static getDirSeparator = (): string => platformGetDirSeparator();
+
+  static getLocationPath = (location: TS.Location): string =>
+    platformGetLocationPath(location);
 
   static setLanguage = (language: string): void => {
     platformSetLanguage(language);

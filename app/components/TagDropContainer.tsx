@@ -33,7 +33,7 @@ interface DragItem {
   tag: TS.Tag;
 }
 
-const TagDropContainer = (props: Props) => {
+function TagDropContainer(props: Props) {
   const ref = useRef<HTMLDivElement>(null);
 
   const [collectedProps, drop] = useDrop({
@@ -81,6 +81,6 @@ const TagDropContainer = (props: Props) => {
       {props.children}
     </div>
   );
-};
+}
 
 export default TagDropContainer;

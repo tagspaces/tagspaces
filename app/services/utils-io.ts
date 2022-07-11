@@ -24,10 +24,15 @@ import {
   enhanceDirectoryIndex,
   getMetaIndexFilePath
 } from '@tagspaces/tagspaces-platforms/indexer';
+import {
+  enhanceEntry,
+  loadJSONString
+} from '@tagspaces/tagspaces-platforms/utils-common';
 import { saveAs } from 'file-saver';
-import micromatch from 'micromatch';
-import PlatformIO from './platform-facade';
-import AppConfig from '../config';
+import {
+  locationType,
+  prepareTagForExport
+} from '@tagspaces/tagspaces-platforms/misc';
 import {
   extractTagsAsObjects,
   extractFileExtension,
@@ -39,13 +44,14 @@ import {
   extractDirectoryName,
   getThumbFileLocationForFile,
   getThumbFileLocationForDirectory
-} from '-/utils/paths';
+} from '@tagspaces/tagspaces-platforms/paths';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import PlatformIO from './platform-facade';
 import i18n from '../services/i18n';
 import versionMeta from '../version.json';
 import { OpenedEntry, actions as AppActions } from '-/reducers/app';
 import { getLocation } from '-/reducers/locations';
 import { TS } from '-/tagspaces.namespace';
-import { locationType, prepareTagForExport } from '-/utils/misc';
 import {
   getThumbnailURLPromise,
   supportedContainers,
@@ -98,12 +104,17 @@ export function enhanceDirectoryContent(
       return true;
     }
 
-    const enhancedEntry = enhanceEntry(entry);
+    const enhancedEntry = enhanceEntry(
+      entry,
+      AppConfig.tagDelimiter,
+      PlatformIO.getDirSeparator()
+    );
     directoryContent.push(enhancedEntry);
     if (
       // Enable thumb generation by
       !AppConfig.isWeb && // not in webdav mode
       !PlatformIO.haveObjectStoreSupport() && // not in object store mode
+      !PlatformIO.haveWebDavSupport() && // not in webdav mode
       enhancedEntry.isFile && // only for files
       useGenerateThumbnails // enabled in the settings
     ) {
@@ -144,72 +155,14 @@ export async function getMetaForEntry(
 ): Promise<any> {
   const meta: TS.FileSystemEntryMeta = await loadJSONFile(metaFilePath);
   if (meta) {
-    const entryEnhanced = enhanceEntry({ ...entry, meta });
-    return { [entry.path]: entryEnhanced };
-  }
-  return Promise.resolve({ [entry.path]: undefined });
-}
-
-/**
- * TODO enhance only entries from the current page
- * @param entry
- */
-export function enhanceEntry(entry: any): TS.FileSystemEntry {
-  let fileNameTags = [];
-  if (entry.isFile) {
-    fileNameTags = extractTagsAsObjects(
-      entry.name,
+    const entryEnhanced = enhanceEntry(
+      { ...entry, meta },
       AppConfig.tagDelimiter,
       PlatformIO.getDirSeparator()
     );
+    return { [entry.path]: entryEnhanced };
   }
-  let sidecarDescription;
-  let sidecarColor;
-  let sidecarPerspective;
-  let sidecarTags = [];
-  if (entry.meta) {
-    sidecarDescription = entry.meta.description;
-    sidecarColor = entry.meta.color;
-    sidecarPerspective = entry.meta.perspective;
-    sidecarTags = entry.meta.tags || [];
-    sidecarTags.map(tag => {
-      tag.type = 'sidecar';
-      if (tag.id) {
-        delete tag.id;
-      }
-      return true;
-    });
-  }
-  const enhancedEntry: TS.FileSystemEntry = {
-    uuid: uuidv1(),
-    name: entry.name,
-    isFile: entry.isFile,
-    extension: entry.isFile
-      ? extractFileExtension(entry.name, PlatformIO.getDirSeparator())
-      : '',
-    tags: [...sidecarTags, ...fileNameTags],
-    size: entry.size,
-    lmdt: entry.lmdt,
-    path: entry.path,
-    isIgnored: entry.isIgnored
-  };
-  if (sidecarDescription) {
-    enhancedEntry.description = sidecarDescription;
-  }
-  if (entry && entry.thumbPath) {
-    enhancedEntry.thumbPath = entry.thumbPath;
-  }
-  if (entry && entry.textContent) {
-    enhancedEntry.textContent = entry.textContent;
-  }
-  if (sidecarColor) {
-    enhancedEntry.color = sidecarColor;
-  }
-  if (sidecarPerspective) {
-    enhancedEntry.perspective = sidecarPerspective;
-  }
-  // console.log('Enhancing ' + entry.path + ':' + JSON.stringify(enhancedEntry));
-  return enhancedEntry;
+  return Promise.resolve({ [entry.path]: undefined });
 }
 
 export function enhanceOpenedEntry(
@@ -258,6 +211,7 @@ export function prepareDirectoryContent(
 
   function genThumbnails() {
     if (
+      !directoryPath ||
       directoryPath.endsWith(AppConfig.dirSeparator + AppConfig.metaFolder) ||
       directoryPath.endsWith(
         AppConfig.dirSeparator + AppConfig.metaFolder + AppConfig.dirSeparator
@@ -566,6 +520,7 @@ export function createDirectoryIndex(
   if (
     enableWS &&
     !PlatformIO.haveObjectStoreSupport() &&
+    !PlatformIO.haveWebDavSupport() &&
     PlatformIO.isWorkerAvailable()
   ) {
     // Start indexing in worker if not in the object store mode
@@ -613,98 +568,6 @@ export function createDirectoryIndex(
     });
 }
 
-export function walkDirectory(
-  path: string,
-  options: Object = {},
-  fileCallback: any,
-  dirCallback: any,
-  ignorePatterns: Array<string> = []
-) {
-  if (ignorePatterns.length > 0 && micromatch.isMatch(path, ignorePatterns)) {
-    return;
-  }
-  const mergedOptions = {
-    recursive: false,
-    skipMetaFolder: true,
-    skipDotHiddenFolder: false,
-    skipDotHiddenFiles: false,
-    loadMetaDate: true,
-    ...options
-  };
-  return (
-    PlatformIO.listDirectoryPromise(path, [])
-      // @ts-ignore
-      .then(entries => {
-        if (window.walkCanceled || entries === undefined) {
-          return false;
-        }
-
-        return Promise.all(
-          entries.map(entry => {
-            if (window.walkCanceled) {
-              return false;
-            }
-
-            if (
-              ignorePatterns.length > 0 &&
-              micromatch.isMatch(entry.path, ignorePatterns)
-            ) {
-              return false;
-            }
-
-            if (entry.isFile) {
-              if (
-                fileCallback &&
-                (!mergedOptions.skipDotHiddenFiles ||
-                  !entry.name.startsWith('.'))
-              ) {
-                fileCallback(entry);
-              }
-              return entry;
-            }
-
-            if (
-              dirCallback &&
-              (!mergedOptions.skipDotHiddenFolder ||
-                !entry.name.startsWith('.')) &&
-              (!mergedOptions.skipMetaFolder ||
-                entry.name !== AppConfig.metaFolder)
-            ) {
-              dirCallback(entry);
-            }
-
-            if (mergedOptions.recursive) {
-              if (
-                mergedOptions.skipDotHiddenFolder &&
-                entry.name.startsWith('.')
-              ) {
-                return entry;
-              }
-              if (
-                mergedOptions.skipMetaFolder &&
-                entry.name === AppConfig.metaFolder
-              ) {
-                return entry;
-              }
-              return walkDirectory(
-                entry.path,
-                mergedOptions,
-                fileCallback,
-                dirCallback,
-                ignorePatterns
-              );
-            }
-            return entry;
-          })
-        );
-      })
-      .catch(err => {
-        console.warn('Error walking directory ' + err);
-        return err;
-      })
-  );
-}
-
 export async function getAllPropertiesPromise(
   entryPath: string
 ): Promise<TS.FileSystemEntry> {
@@ -719,7 +582,11 @@ export async function getAllPropertiesPromise(
     if (metaFileProps.isFile) {
       entryProps.meta = await loadJSONFile(metaFilePath);
     }
-    return enhanceEntry(entryProps);
+    return enhanceEntry(
+      entryProps,
+      AppConfig.tagDelimiter,
+      PlatformIO.getDirSeparator()
+    );
   }
   console.warn('Error getting props for ' + entryPath);
   return entryProps;
@@ -729,36 +596,6 @@ export async function loadJSONFile(filePath: string) {
   // console.debug('loadJSONFile:' + filePath);
   const jsonContent = await PlatformIO.loadTextFilePromise(filePath);
   return loadJSONString(jsonContent);
-  /* const UTF8_BOM = '\ufeff';
-  if (jsonContent.indexOf(UTF8_BOM) === 0) {
-    jsonContent = jsonContent.substring(1, jsonContent.length);
-  }
-  try {
-    jsonObject = JSON.parse(jsonContent);
-  } catch (err) {
-    console.warn('Error parsing meta json file for ' + filePath + ' - ' + err);
-  }
-  return jsonObject; */
-}
-
-export function loadJSONString(jsonContent: string) {
-  let jsonObject;
-  let json;
-  if (!jsonContent) {
-    return;
-  }
-  const UTF8_BOM = '\ufeff';
-  if (jsonContent.indexOf(UTF8_BOM) === 0) {
-    json = jsonContent.substring(1, jsonContent.length);
-  } else {
-    json = jsonContent;
-  }
-  try {
-    jsonObject = JSON.parse(json);
-  } catch (err) {
-    console.log('Error parsing meta json file: ' + json, err);
-  }
-  return jsonObject;
 }
 
 export function saveAsTextFile(blob: any, filename: string) {
@@ -1127,9 +964,7 @@ export async function saveMetaDataPromise(
     const content = JSON.stringify(cleanedMetaData);
     return PlatformIO.saveTextFilePromise(metaFilePath, content, true);
   }
-  return new Promise((resolve, reject) =>
-    reject(new Error('file not found' + path))
-  );
+  return Promise.reject(new Error('file not found' + path));
 }
 
 /**
@@ -1197,7 +1032,7 @@ export function loadFileContentPromise(
       if (response) {
         resolve(response);
       } else {
-        reject('loadFileContentPromise error');
+        reject(new Error('loadFileContentPromise error'));
       }
     };
     xhr.send();
@@ -1234,7 +1069,7 @@ export function convertMarkDown(mdContent: string, directoryPath: string) {
         ? directoryPath + sourceUrl
         : directoryPath + dirSep + sourceUrl;
     }
-    if (PlatformIO.haveObjectStoreSupport()) {
+    if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
       sourceUrl = PlatformIO.getURLforPath(sourceUrl);
     }
     return `<img src="${sourceUrl}" style="max-width: 100%">

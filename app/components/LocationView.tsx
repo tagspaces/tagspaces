@@ -31,6 +31,8 @@ import LocationIcon from '@material-ui/icons/WorkOutline';
 import CloudLocationIcon from '@material-ui/icons/CloudQueue';
 import DefaultLocationIcon from '@material-ui/icons/Highlight';
 import { Progress } from 'aws-sdk/clients/s3';
+import { locationType } from '@tagspaces/tagspaces-platforms/misc';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import styles from './SidePanels.css';
 import {
   actions as AppActions,
@@ -38,7 +40,6 @@ import {
   isReadOnlyMode
 } from '../reducers/app';
 import i18n from '../services/i18n';
-import AppConfig from '../config';
 import PlatformIO from '../services/platform-facade';
 import TargetMoveFileBox from './TargetMoveFileBox';
 import DragItemTypes from './DragItemTypes';
@@ -48,16 +49,18 @@ import DirectoryTreeView, {
 } from '-/components/DirectoryTreeView';
 import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import LocationContextMenu from '-/components/menus/LocationContextMenu';
-import { getLocationPath } from '-/utils/paths';
 import { TS } from '-/tagspaces.namespace';
-import { locationType } from '-/utils/misc';
 
 interface Props {
   classes: any;
   location: TS.Location;
   currentLocationId: string;
   openLocation: (location: TS.Location) => void;
-  loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
+  loadDirectoryContent: (
+    path: string,
+    generateThumbnails: boolean,
+    loadDirMeta?: boolean
+  ) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   hideDrawer: () => void;
   isReadOnlyMode: boolean;
@@ -84,7 +87,7 @@ interface Props {
   changeLocation: (loc: TS.Location) => void;
 }
 
-const LocationView = (props: Props) => {
+function LocationView(props: Props) {
   const directoryTreeRef = useRef<DirectoryTreeViewRef>(null);
   const [
     locationDirectoryContextMenuAnchorEl,
@@ -105,7 +108,7 @@ const LocationView = (props: Props) => {
   const handleLocationClick = () => {
     if (location.uuid === props.currentLocationId) {
       // the same location click
-      props.loadDirectoryContent(getLocationPath(location), true); // false);
+      props.loadDirectoryContent(PlatformIO.getLocationPath(location), true); // false);
     } else {
       // this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
       props.setSelectedEntries([]);
@@ -182,9 +185,11 @@ const LocationView = (props: Props) => {
         // TODO handle monitor -> isOver and change folder icon
         console.log('Dropped files: ' + path);
         if (targetLocation.type === locationType.TYPE_CLOUD) {
+          // TODO Webdav
           PlatformIO.enableObjectStoreSupport(targetLocation)
             .then(() => {
               props.resetProgress();
+              props.toggleUploadDialog();
               props
                 .uploadFiles(arrPath, targetPath, props.onUploadProgress)
                 .then((fsEntries: Array<TS.FileSystemEntry>) => {
@@ -194,7 +199,6 @@ const LocationView = (props: Props) => {
                 .catch(error => {
                   console.log('uploadFiles', error);
                 });
-              props.toggleUploadDialog();
               return true;
             })
             .catch(error => {
@@ -209,7 +213,7 @@ const LocationView = (props: Props) => {
     }
   };
 
-  let locationNameTitle = getLocationPath(location);
+  let locationNameTitle = PlatformIO.getLocationPath(location);
   if (isCloudLocation && location.bucketName) {
     if (location.endpointURL) {
       locationNameTitle = location.endpointURL + ' - ' + location.bucketName;
@@ -307,7 +311,7 @@ const LocationView = (props: Props) => {
           <TargetMoveFileBox
             accepts={[DragItemTypes.FILE]}
             onDrop={handleFileMoveDrop}
-            path={getLocationPath(location)}
+            path={PlatformIO.getLocationPath(location)}
             location={location}
           >
             {LocationTitle}
@@ -343,7 +347,7 @@ const LocationView = (props: Props) => {
       />
     </>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

@@ -57,7 +57,7 @@ interface Props {
   maxSearchResults: number;
 }
 
-const TagGroupMenu = (props: Props) => {
+function TagGroupMenu(props: Props) {
   function handleCollectTags() {
     props.onClose();
 
@@ -172,7 +172,7 @@ const TagGroupMenu = (props: Props) => {
       </Menu>
     </div>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

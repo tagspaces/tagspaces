@@ -33,7 +33,7 @@ import IconButton from '@material-ui/core/IconButton';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import AppConfig from '-/config';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '-/services/i18n';
 import { Pro } from '../../pro';
 import { actions as AppActions } from '-/reducers/app';
@@ -52,7 +52,7 @@ interface Props {
   createLocationsIndexes: () => void;
 }
 
-const LocationManagerMenu = (props: Props) => {
+function LocationManagerMenu(props: Props) {
   const [
     locationManagerMenuAnchorEl,
     setLocationManagerMenuAnchorEl
@@ -218,7 +218,7 @@ const LocationManagerMenu = (props: Props) => {
       </Menu>
     </>
   );
-};
+}
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(

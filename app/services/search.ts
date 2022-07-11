@@ -19,9 +19,8 @@
 
 import Fuse from 'fuse.js';
 import jmespath from '@gorillastack/jmespath';
-import OpenLocationCode from 'open-location-code-typescript';
 import i18n from 'i18next';
-import { isGeoTag, parseGeoLocation } from '-/utils/misc';
+import { parseGeoLocation } from '-/utils/geo';
 import { extractTimePeriod } from '-/utils/dates';
 import { Pro } from '../pro';
 import { TS } from '-/tagspaces.namespace';
