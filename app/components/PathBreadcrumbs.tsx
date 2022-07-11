@@ -23,7 +23,10 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Chip from '@material-ui/core/Chip';
 import ExpandMoreIcon from '@material-ui/icons/MoreVert';
 import PlatformIO from '../services/platform-facade';
-import { normalizePath, extractShortDirectoryName } from '@tagspaces/tagspaces-platforms/paths';
+import {
+  normalizePath,
+  extractShortDirectoryName
+} from '@tagspaces/tagspaces-platforms/paths';
 import i18n from '../services/i18n';
 import DirectoryMenu from './menus/DirectoryMenu';
 import { TS } from '-/tagspaces.namespace';

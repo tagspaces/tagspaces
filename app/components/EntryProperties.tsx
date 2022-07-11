@@ -351,7 +351,10 @@ function EntryProperties(props: Props) {
 
   const setThumb = (filePath, thumbFilePath) => {
     if (filePath !== undefined) {
-      if (PlatformIO.haveObjectStoreSupport()) {
+      if (
+        PlatformIO.haveObjectStoreSupport() ||
+        PlatformIO.haveWebDavSupport()
+      ) {
         const thumbUrl = PlatformIO.getURLforPath(thumbFilePath);
         props.updateThumbnailUrl(currentEntry.path, thumbUrl);
         return Promise.resolve(true);
@@ -479,7 +482,7 @@ function EntryProperties(props: Props) {
     );
   }
   let url;
-  if (PlatformIO.haveObjectStoreSupport()) {
+  if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
     url = PlatformIO.getURLforPath(thumbPath);
   } else {
     url = thumbPath + '?' + new Date().getTime();

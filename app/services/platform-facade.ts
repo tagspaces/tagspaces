@@ -18,6 +18,7 @@
 
 import {
   platformHaveObjectStoreSupport,
+  platformHaveWebDavSupport,
   platformIsMinio,
   platformGetDirSeparator,
   platformEnableObjectStoreSupport,
@@ -76,13 +77,16 @@ export default class PlatformFacade {
   static disableObjectStoreSupport = (): void =>
     platformDisableObjectStoreSupport();
 
-  static enableWebdavSupport = (webDavConfig: any): void =>
+  static enableWebdavSupport = (webDavConfig: any): void => {
     platformEnableWebdavSupport(webDavConfig);
+  };
 
   static disableWebdavSupport = (): void => platformDisableWebdavSupport();
 
   static haveObjectStoreSupport = (): boolean =>
     platformHaveObjectStoreSupport();
+
+  static haveWebDavSupport = (): boolean => platformHaveWebDavSupport();
 
   static isMinio = (): boolean => platformIsMinio();
 

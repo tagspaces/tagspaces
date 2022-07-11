@@ -769,7 +769,8 @@ function MainPage(props: Props) {
             onDrop={(item: any) => {
               if (
                 AppConfig.isElectron &&
-                !PlatformIO.haveObjectStoreSupport()
+                !PlatformIO.haveObjectStoreSupport() &&
+                !PlatformIO.haveWebDavSupport()
               ) {
                 setMoveCopyDialogOpened(item.files);
               } else {

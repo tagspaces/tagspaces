@@ -88,8 +88,6 @@ interface Props {
   cloudErrorSecretAccessKey: boolean;
   cloudErrorBucketName: boolean;
   cloudErrorRegion: boolean;
-  errorTextId: boolean;
-  showAdvancedMode: boolean;
   showSecretAccessKey: boolean;
   storeName: string;
   storePath: string;
@@ -99,7 +97,6 @@ interface Props {
   bucketName: string;
   region: string;
   endpointURL: string;
-  newuuid: string;
   setStoreName: (string) => void;
   setStorePath: (string) => void;
   setAccessKeyId: (string) => void;
@@ -109,7 +106,6 @@ interface Props {
   setBucketName: (string) => void;
   setRegion: (string) => void;
   setEndpointURL: (string) => void;
-  setNewUuid: (string) => void;
 }
 function ObjectStoreForm(props: Props) {
   const {
@@ -120,8 +116,6 @@ function ObjectStoreForm(props: Props) {
     cloudErrorSecretAccessKey,
     cloudErrorBucketName,
     cloudErrorRegion,
-    errorTextId,
-    showAdvancedMode,
     showSecretAccessKey,
     storeName,
     storePath,
@@ -131,7 +125,6 @@ function ObjectStoreForm(props: Props) {
     bucketName,
     region,
     endpointURL,
-    newuuid,
     setStoreName,
     setStorePath,
     setAccessKeyId,
@@ -139,7 +132,6 @@ function ObjectStoreForm(props: Props) {
     setSessionToken,
     setBucketName,
     setEndpointURL,
-    setNewUuid,
     setRegion
   } = props;
 
@@ -247,24 +239,22 @@ function ObjectStoreForm(props: Props) {
           )} */}
         </FormControl>
       </Grid>
-      {showAdvancedMode && (
-        <Grid item xs={12}>
-          <FormControl fullWidth={true}>
-            <InputLabel htmlFor="sessionToken">
-              {i18n.t('core:sessionToken')}
-            </InputLabel>
-            <Input
-              margin="dense"
-              name="sessionToken"
-              fullWidth={true}
-              data-tid="sessionTokenTID"
-              inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
-              onChange={event => setSessionToken(event.target.value)}
-              value={sessionToken}
-            />
-          </FormControl>
-        </Grid>
-      )}
+      <Grid item xs={12}>
+        <FormControl fullWidth={true}>
+          <InputLabel htmlFor="sessionToken">
+            {i18n.t('core:sessionToken')}
+          </InputLabel>
+          <Input
+            margin="dense"
+            name="sessionToken"
+            fullWidth={true}
+            data-tid="sessionTokenTID"
+            inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
+            onChange={event => setSessionToken(event.target.value)}
+            value={sessionToken}
+          />
+        </FormControl>
+      </Grid>
       <Grid item xs={12}>
         <FormControl fullWidth={true} error={cloudErrorBucketName}>
           <InputLabel htmlFor="bucketName">
@@ -305,48 +295,25 @@ function ObjectStoreForm(props: Props) {
           )} */}
         </FormControl>
       </Grid>
-      {showAdvancedMode && (
-        <Grid item xs={12}>
-          <FormControl fullWidth={true} error={cloudErrorRegion}>
-            <Autocomplete
-              options={regions}
-              value={region}
-              freeSolo
-              onChange={handleRegionChange}
-              onInputChange={handleRegionChange}
-              placeholder={i18n.t('core:regionSearch')}
-              renderInput={params => (
-                <TextField
-                  {...params}
-                  label={i18n.t('core:regionSearch')}
-                  margin="normal"
-                />
-              )}
-            />
-            {/* {state.cloudErrorRegion && (
-          <FormHelperText>{i18n.t('core:invalidRegion')}</FormHelperText>
-          )} */}
-          </FormControl>
-        </Grid>
-      )}
-      {showAdvancedMode && (
-        <Grid item xs={12}>
-          <FormControl fullWidth={true} error={errorTextId}>
-            <InputLabel htmlFor="newuuid">
-              {i18n.t('core:locationId')}
-            </InputLabel>
-            <Input
-              margin="dense"
-              name="newuuid"
-              fullWidth={true}
-              data-tid="newuuid"
-              placeholder="Advanced setting"
-              onChange={event => setNewUuid(event.target.value)}
-              value={newuuid}
-            />
-          </FormControl>
-        </Grid>
-      )}
+      <Grid item xs={12}>
+        <FormControl fullWidth={true} error={cloudErrorRegion}>
+          <Autocomplete
+            options={regions}
+            value={region}
+            freeSolo
+            onChange={handleRegionChange}
+            onInputChange={handleRegionChange}
+            placeholder={i18n.t('core:regionSearch')}
+            renderInput={params => (
+              <TextField
+                {...params}
+                label={i18n.t('core:regionSearch')}
+                margin="normal"
+              />
+            )}
+          />
+        </FormControl>
+      </Grid>
     </Grid>
   );
 }

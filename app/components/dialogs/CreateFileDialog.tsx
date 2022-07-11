@@ -274,7 +274,7 @@ function CreateFileDialog(props: Props) {
             value={selectedDirectoryPath.current}
             onChange={handleFileChange}
             endAdornment={
-              PlatformIO.haveObjectStoreSupport() ? (
+              PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport() ? (
                 undefined
               ) : (
                 <InputAdornment position="end" style={{ height: 32 }}>

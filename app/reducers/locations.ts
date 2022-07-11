@@ -223,6 +223,10 @@ export const actions = {
       // disableObjectStoreSupport to revoke objectStoreAPI cached object
       PlatformIO.disableObjectStoreSupport();
     }
+    if (PlatformIO.haveWebDavSupport()) {
+      // disableWebdavSupport to revoke cached object
+      PlatformIO.disableWebdavSupport();
+    }
     if (openAfterEdit) {
       /**
        * check if location uuid is changed

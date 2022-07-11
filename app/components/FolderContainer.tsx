@@ -678,30 +678,40 @@ function FolderContainer(props: Props) {
             width: '100%'
           }}
         >
-          {isLoading && PlatformIO.haveObjectStoreSupport() && (
-            <div
-              style={{
-                position: 'absolute',
-                zIndex: 1000,
-                height: '100%',
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                borderRadius: 10,
-                backdropFilter: 'grayscale(1)'
-                // backdropFilter: 'blur(2px)',
-                // backgroundColor: '#fafafa33' // red: '#eb585882' '#d9d9d980'
-              }}
-            >
-              <div className="lds-ellipsis">
-                <div style={{ backgroundColor: theme.palette.primary.main }} />
-                <div style={{ backgroundColor: theme.palette.primary.main }} />
-                <div style={{ backgroundColor: theme.palette.primary.main }} />
-                <div style={{ backgroundColor: theme.palette.primary.main }} />
+          {isLoading &&
+            (PlatformIO.haveObjectStoreSupport() ||
+              PlatformIO.haveWebDavSupport()) && (
+              <div
+                style={{
+                  position: 'absolute',
+                  zIndex: 1000,
+                  height: '100%',
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: 10,
+                  backdropFilter: 'grayscale(1)'
+                  // backdropFilter: 'blur(2px)',
+                  // backgroundColor: '#fafafa33' // red: '#eb585882' '#d9d9d980'
+                }}
+              >
+                <div className="lds-ellipsis">
+                  <div
+                    style={{ backgroundColor: theme.palette.primary.main }}
+                  />
+                  <div
+                    style={{ backgroundColor: theme.palette.primary.main }}
+                  />
+                  <div
+                    style={{ backgroundColor: theme.palette.primary.main }}
+                  />
+                  <div
+                    style={{ backgroundColor: theme.palette.primary.main }}
+                  />
+                </div>
               </div>
-            </div>
-          )}
+            )}
           {renderPerspective()}
           {isRenameEntryDialogOpened && (
             <RenameEntryDialog

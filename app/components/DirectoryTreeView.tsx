@@ -70,8 +70,12 @@ const DirectoryTreeView = forwardRef(
             .catch(error => {
               console.log('enableObjectStoreSupport', error);
             });
+        } else if (location.type === locationType.TYPE_WEBDAV) {
+          PlatformIO.enableWebdavSupport(location);
+          loadSubDirectories(location);
         } else if (location.type === locationType.TYPE_LOCAL) {
           PlatformIO.disableObjectStoreSupport();
+          PlatformIO.disableWebdavSupport();
           loadSubDirectories(location);
         }
       },

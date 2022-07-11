@@ -33,7 +33,10 @@ import Typography from '@material-ui/core/Typography';
 import Dialog from '@material-ui/core/Dialog';
 import TagsSelect from '../TagsSelect';
 import i18n from '-/services/i18n';
-import { extractFileName, extractDirectoryName } from '@tagspaces/tagspaces-platforms/paths';
+import {
+  extractFileName,
+  extractDirectoryName
+} from '@tagspaces/tagspaces-platforms/paths';
 import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';

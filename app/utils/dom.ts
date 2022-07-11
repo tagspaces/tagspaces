@@ -1,6 +1,6 @@
 import { locationType } from '@tagspaces/tagspaces-platforms/misc';
 import { TS } from '-/tagspaces.namespace';
-import PlatformIO from "-/services/platform-facade";
+import PlatformIO from '-/services/platform-facade';
 
 export function isVisibleOnScreen(element: any) {
   const rectangle = element.getBoundingClientRect();

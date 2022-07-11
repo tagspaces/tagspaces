@@ -114,6 +114,7 @@ export function enhanceDirectoryContent(
       // Enable thumb generation by
       !AppConfig.isWeb && // not in webdav mode
       !PlatformIO.haveObjectStoreSupport() && // not in object store mode
+      !PlatformIO.haveWebDavSupport() && // not in webdav mode
       enhancedEntry.isFile && // only for files
       useGenerateThumbnails // enabled in the settings
     ) {
@@ -210,6 +211,7 @@ export function prepareDirectoryContent(
 
   function genThumbnails() {
     if (
+      !directoryPath ||
       directoryPath.endsWith(AppConfig.dirSeparator + AppConfig.metaFolder) ||
       directoryPath.endsWith(
         AppConfig.dirSeparator + AppConfig.metaFolder + AppConfig.dirSeparator
@@ -518,6 +520,7 @@ export function createDirectoryIndex(
   if (
     enableWS &&
     !PlatformIO.haveObjectStoreSupport() &&
+    !PlatformIO.haveWebDavSupport() &&
     PlatformIO.isWorkerAvailable()
   ) {
     // Start indexing in worker if not in the object store mode
@@ -1066,7 +1069,7 @@ export function convertMarkDown(mdContent: string, directoryPath: string) {
         ? directoryPath + sourceUrl
         : directoryPath + dirSep + sourceUrl;
     }
-    if (PlatformIO.haveObjectStoreSupport()) {
+    if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
       sourceUrl = PlatformIO.getURLforPath(sourceUrl);
     }
     return `<img src="${sourceUrl}" style="max-width: 100%">

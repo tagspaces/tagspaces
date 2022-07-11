@@ -425,8 +425,12 @@ function GridPerspective(props: Props) {
         .catch(error => {
           console.log('enableObjectStoreSupport', error);
         });
+    } else if (props.currentLocation.type === locationType.TYPE_WEBDAV) {
+      PlatformIO.enableWebdavSupport(props.currentLocation);
+      openLocation(fsEntry);
     } else if (props.currentLocation.type === locationType.TYPE_LOCAL) {
       PlatformIO.disableObjectStoreSupport();
+      PlatformIO.disableWebdavSupport();
       openLocation(fsEntry);
     }
   };

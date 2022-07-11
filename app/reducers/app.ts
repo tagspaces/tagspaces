@@ -1581,7 +1581,12 @@ export const actions = {
           PlatformIO.disableObjectStoreSupport();
         });
     } else {
-      PlatformIO.disableObjectStoreSupport();
+      if (location.type === locationType.TYPE_WEBDAV) {
+        PlatformIO.enableWebdavSupport(location);
+      } else {
+        PlatformIO.disableObjectStoreSupport();
+        PlatformIO.disableWebdavSupport();
+      }
       dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
       dispatch(actions.changeLocation(location));
       dispatch(
@@ -1788,7 +1793,7 @@ export const actions = {
       fsEntry.path,
       fsEntry.isFile
     );
-    if (PlatformIO.haveObjectStoreSupport()) {
+    if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
       const cleanedPath = fsEntry.path.startsWith('/')
         ? fsEntry.path.substr(1)
         : fsEntry.path;

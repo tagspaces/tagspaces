@@ -136,20 +136,22 @@ function LocationManager(props: Props) {
         flexDirection: 'column'
       }}
     >
-      {isLoading && PlatformIO.haveObjectStoreSupport() && (
-        <div
-          style={{
-            position: 'absolute',
-            zIndex: 1000,
-            height: 'calc(100% - 180px)',
-            width: 310,
-            backdropFilter: 'grayscale(1)'
-            // backgroundColor: 'red'
-            // backdropFilter: 'blur(2px)',
-            // backgroundColor: '#fafafaAA' // red: '#eb585882' '#d9d9d980'
-          }}
-        />
-      )}
+      {isLoading &&
+        (PlatformIO.haveObjectStoreSupport() ||
+          PlatformIO.haveWebDavSupport()) && (
+          <div
+            style={{
+              position: 'absolute',
+              zIndex: 1000,
+              height: 'calc(100% - 180px)',
+              width: 310,
+              backdropFilter: 'grayscale(1)'
+              // backgroundColor: 'red'
+              // backdropFilter: 'blur(2px)',
+              // backgroundColor: '#fafafaAA' // red: '#eb585882' '#d9d9d980'
+            }}
+          />
+        )}
       <LocationManagerMenu
         importLocations={() => {
           fileInputRef.current.click();
