@@ -35,6 +35,7 @@ function configureStore(initialState) {
     // document.dispatchEvent(new Event('storeLoaded'));
     // console.log('Store rehydrated.');
     setTimeout(() => {
+      // @ts-ignore
       PlatformIO.setLanguage(store.getState().settings.interfaceLanguage);
     }, 500);
   });

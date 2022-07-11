@@ -67,6 +67,7 @@ const configureStore = initialState => {
   const persistor = persistStore(store, null, () => {
     // languageChanged event is not handled in main process on store loaded (App is not ready)
     setTimeout(() => {
+      // @ts-ignore
       PlatformIO.setLanguage(store.getState().settings.interfaceLanguage);
     }, 500);
     // document.dispatchEvent(new Event('storeLoaded'));

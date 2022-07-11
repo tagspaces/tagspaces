@@ -37,7 +37,7 @@ if (!requiredByDLLConfig && !(fs.existsSync(dll) && fs.existsSync(manifest))) {
       'The DLL files are missing. Sit back while we build them for you with "yarn build-dll"'
     )
   );
-  execSync('yarn build-dll');
+  execSync('npm run build-dll');
 }
 
 export default merge(baseConfig, {

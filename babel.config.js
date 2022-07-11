@@ -1,9 +1,7 @@
 /* eslint global-require: off */
-//const execa = require('execa');
-const fs = require('fs-extra');
-const path = require('path');
+/*const execa = require('execa');
 
-/*function getElectronVersion() {
+function getElectronVersion() {
   const { stdout } = execa.sync('electron', ['--version'], {
     env: { ELECTRON_RUN_AS_NODE: true }
   });
@@ -15,13 +13,12 @@ const path = require('path');
       .slice(1)
   );
 }*/
-function getElectronVersion() {
-  const packageJson = fs.readFileSync(
-    path.join(__dirname, 'package.json'),
-    'utf8'
-  );
-  return JSON.parse(packageJson).devDependencies['electron'];
-}
+const packageJson = require('./package.json');
+
+const electronVersion = parseInt(
+  /\d+/.exec(packageJson.devDependencies.electron),
+  10
+);
 
 const developmentEnvironments = ['development', 'test'];
 
@@ -47,7 +44,7 @@ module.exports = api => {
         require('@babel/preset-env'),
         {
           targets: {
-            electron: getElectronVersion() /* require('electron/package.json').version */
+            electron: electronVersion // require('electron/package.json').version   // getElectronVersion()
           },
           useBuiltIns: 'usage',
           corejs: '3.0.0'
