@@ -634,7 +634,11 @@ function EntryContainer(props: Props) {
             </IconButton>
           </Tooltip>
         )}
-        {!(PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport() || AppConfig.isWeb) && (
+        {!(
+          PlatformIO.haveObjectStoreSupport() ||
+          PlatformIO.haveWebDavSupport() ||
+          AppConfig.isWeb
+        ) && (
           <Tooltip title={i18n.t('core:openFileExternally')}>
             <IconButton
               aria-label={i18n.t('core:openFileExternally')}
@@ -772,7 +776,11 @@ function EntryContainer(props: Props) {
   const renderFolderToolbar = () => (
     <div className={props.classes.toolbar2}>
       <div className={props.classes.flexLeft}>
-        {!(PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport() || AppConfig.isWeb) && (
+        {!(
+          PlatformIO.haveObjectStoreSupport() ||
+          PlatformIO.haveWebDavSupport() ||
+          AppConfig.isWeb
+        ) && (
           <Tooltip title={i18n.t('core:openDirectoryExternally')}>
             <IconButton
               aria-label={i18n.t('core:openDirectoryExternally')}

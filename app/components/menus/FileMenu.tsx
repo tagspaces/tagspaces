@@ -270,7 +270,11 @@ function FileMenu(props: Props) {
     );
   }
   if (
-    !(PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport() || AppConfig.isWeb) &&
+    !(
+      PlatformIO.haveObjectStoreSupport() ||
+      PlatformIO.haveWebDavSupport() ||
+      AppConfig.isWeb
+    ) &&
     selectedEntries.length < 2
   ) {
     menuItems.push(
