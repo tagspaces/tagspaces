@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       command:
-        description: 'Command to execute e2e tests default: yarn test-playwright-web-headless'
+        description: 'Command to execute e2e tests default: npm run test-playwright-web-headless'
         required: true
         default: 'test-playwright-web-headless'
 
@@ -29,13 +29,13 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '14.x'
-      - name: Running yarn install, prettier and type checks
+      - name: Running npm install, prettier and type checks
         run: |
-          yarn install --check-files --cache-folder .ycache
-          yarn prettier-check
-          yarn type-check
+          npm install
+          npm run prettier-check
+          npm run type-check
       - name: Run Unit tests
-        run: yarn test-unit
+        run: npm run test-unit
       - uses: suisei-cn/actions-download-file@v1
         id: minio
         name: Download the Minio.exe
@@ -44,9 +44,9 @@ jobs:
           target: tests/bin/
       - name: Run Electron tests
         run: |
-          yarn install-ext-node
-          yarn build-e2e
-          yarn ${{ github.event.inputs.command }}
+          npm run install-ext-node
+          npm run build-e2e
+          npm run ${{ github.event.inputs.command }}
       - uses: actions/upload-artifact@v2
         if: always()
         with:

@@ -28,13 +28,13 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '14.x'
-      - name: Running yarn install, prettier and type checks
+      - name: Running npm install, prettier and type checks
         run: |
-          yarn install --check-files --cache-folder .ycache
-          yarn prettier-check
-          yarn type-check
+          npm install
+          npm run prettier-check
+          npm run type-check
       - name: Run Unit tests
-        run: yarn test-unit
+        run: npm run test-unit
       - uses: suisei-cn/actions-download-file@v1
         id: minio
         name: Download the Minio
@@ -43,9 +43,9 @@ jobs:
           target: tests/bin/
       - name: Run Electron tests
         run: |
-          yarn install-ext-web
-          yarn build-e2e-web
-          yarn test-playwright-web-headless
+          npm run install-ext-web
+          npm run build-e2e-web
+          npm run test-playwright-web-headless
       - uses: IgnusG/jest-report-action@v2.3.3
         if: always() # Run regardless of whether other steps failed
         with:
