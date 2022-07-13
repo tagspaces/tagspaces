@@ -1,5 +1,7 @@
 #! /usr/bin/env node
-
+/**
+ * write the package.json file from package-template.json
+ */
 const fs = require('fs-extra');
 const path = require('path');
 const pkg = require('../app/package.json');
