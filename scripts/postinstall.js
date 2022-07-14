@@ -63,9 +63,19 @@ const cmd =
     packageJson.dependencies['@tagspaces/tagspaces-platforms'],
     '^'
   );
-if (install && shell.exec(cmd).code !== 0) {
-  shell.echo('Error: Install ' + process.env.PD_PLATFORM + ' platform failed');
-  shell.exit(1);
+if (install) {
+  if (shell.exec(cmd).code !== 0) {
+    shell.echo(
+      'Error: Install ' + process.env.PD_PLATFORM + ' platform failed'
+    );
+    shell.exit(1);
+  }
+  const cmd2 =
+    'npm run-script --prefix ./node_modules/@tagspaces/tagspaces-platforms postinstall';
+  if (shell.exec(cmd2).code !== 0) {
+    shell.echo('Error: PostInstall ' + process.env.PD_PLATFORM + ' platform');
+    shell.exit(1);
+  }
 }
 
 function stripFromStart(input, character) {
