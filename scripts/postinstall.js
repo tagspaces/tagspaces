@@ -3,8 +3,13 @@ const pathLib = require('path');
 const shell = require('shelljs');
 const packageJson = require('../package.json');
 
+/**
+ * check only if index.js exist - TODO check installed version
+ * @deprecated TODO replace this from @tagspaces/dynamic-packages-loading
+ * @param npmPackage
+ * @returns {boolean}
+ */
 function isInstalled(npmPackage) {
-  // TODO check installed version
   try {
     const path = require.resolve('@tagspaces/tagspaces-platforms');
     if (
@@ -48,16 +53,17 @@ if (process.env.PD_PLATFORM === 'electron') {
 }
 shell.exec('npm -v');
 
-if (
-  install &&
-  shell.exec(
-    'npm install @tagspaces/tagspaces-platforms@' +
-      stripFromStart(
-        packageJson.dependencies['@tagspaces/tagspaces-platforms'],
-        '^'
-      )
-  ).code !== 0
-) {
+/**
+ * If the installed tagspaces-platforms changed (with deleted node_modules) npm install will not update it -> change version or delete the tagspaces-platforms folder
+ * @type {string}
+ */
+const cmd =
+  'npm install @tagspaces/tagspaces-platforms@' + // --force --foreground-scripts
+  stripFromStart(
+    packageJson.dependencies['@tagspaces/tagspaces-platforms'],
+    '^'
+  );
+if (install && shell.exec(cmd).code !== 0) {
   shell.echo('Error: Install ' + process.env.PD_PLATFORM + ' platform failed');
   shell.exit(1);
 }
