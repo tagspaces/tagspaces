@@ -5,7 +5,7 @@ const packageJson = require('../package.json');
 
 /**
  * check only if index.js exist - TODO check installed version
- * @deprecated TODO replace this from @tagspaces/dynamic-packages-loading
+ * TODO rethink to replace this from @tagspaces/dynamic-packages-loading
  * @param npmPackage
  * @returns {boolean}
  */
@@ -57,24 +57,28 @@ shell.exec('npm -v');
  * If the installed tagspaces-platforms changed (with deleted node_modules) npm install will not update it -> change version or delete the tagspaces-platforms folder
  * @type {string}
  */
-const cmd =
-  'npm install @tagspaces/tagspaces-platforms@' + // --force --foreground-scripts
-  stripFromStart(
-    packageJson.dependencies['@tagspaces/tagspaces-platforms'],
-    '^'
-  );
+
 if (install) {
+  const cmd =
+    'npm install @tagspaces/tagspaces-platforms@' + // --force --foreground-scripts
+    stripFromStart(
+      packageJson.dependencies['@tagspaces/tagspaces-platforms'],
+      '^'
+    );
   if (shell.exec(cmd).code !== 0) {
     shell.echo(
       'Error: Install ' + process.env.PD_PLATFORM + ' platform failed'
     );
     shell.exit(1);
   }
-  const cmd2 =
-    'npm run-script --prefix ./node_modules/@tagspaces/tagspaces-platforms postinstall';
-  if (shell.exec(cmd2).code !== 0) {
-    shell.echo('Error: PostInstall ' + process.env.PD_PLATFORM + ' platform');
-    shell.exit(1);
+  // fix: npm postinstall and install scripts not runs automatically on windows after 'npm install' with npm v8
+  if (process.platform === 'win32') {
+    const cmd2 =
+      'npm run-script --prefix ./node_modules/@tagspaces/tagspaces-platforms install';
+    if (shell.exec(cmd2).code !== 0) {
+      shell.echo('Error: PostInstall ' + process.env.PD_PLATFORM + ' platform');
+      shell.exit(1);
+    }
   }
 }
 
