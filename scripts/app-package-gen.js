@@ -1,5 +1,6 @@
 #! /usr/bin/env node
 /**
+ * @deprecated (replaced by @tagspaces/dynamic-packages-loading)
  * write the package.json file from package-template.json
  */
 const fs = require('fs-extra');
