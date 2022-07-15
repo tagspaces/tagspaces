@@ -84,7 +84,7 @@
     "postinstall-cordova-check": "cross-env PD_PLATFORM=cordova node scripts/postinstall.js",
     "postinstall-node-check": "cross-env PD_PLATFORM=node node scripts/postinstall.js",
     "postinstall-electron-check": "cross-env PD_PLATFORM=electron node scripts/postinstall.js",
-    "postinstall-electron-debug": "cross-env PD_PLATFORM=electron npm install --foreground-scripts @tagspaces/tagspaces-platforms@1.3.44",
+    "postinstall-electron-debug": "cross-env PD_PLATFORM=electron npm install --foreground-scripts @tagspaces/tagspaces-platforms@1.3.45",
     "postinstall-web-check": "cross-env PD_PLATFORM=web node scripts/postinstall.js",
     "precommit": "lint-staged",
     "prepare": "husky install",

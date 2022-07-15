@@ -71,15 +71,15 @@ if (install) {
     );
     shell.exit(1);
   }
-  // fix: npm postinstall and install scripts not runs automatically on windows after 'npm install' with npm v8
-  if (process.platform === 'win32') {
-    const cmd2 =
-      'npm run-script --prefix ./node_modules/@tagspaces/tagspaces-platforms install';
-    if (shell.exec(cmd2).code !== 0) {
-      shell.echo('Error: PostInstall ' + process.env.PD_PLATFORM + ' platform');
-      shell.exit(1);
-    }
+  // fix: npm postinstall and install scripts not runs automatically after 'npm install' with npm v8
+  // if (process.platform === 'win32') {
+  const cmd2 =
+    'npm run-script --prefix ./node_modules/@tagspaces/tagspaces-platforms install';
+  if (shell.exec(cmd2).code !== 0) {
+    shell.echo('Error: PostInstall ' + process.env.PD_PLATFORM + ' platform');
+    shell.exit(1);
   }
+  // }
 }
 
 function stripFromStart(input, character) {
