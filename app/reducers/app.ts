@@ -1019,12 +1019,28 @@ export const actions = {
       dispatch(actions.setIsLoading(false));
     }
   },
+  updateCurrentDirectoryPerspective: (perspective: string) => (
+    dispatch: (action) => void,
+    getState: () => any
+  ) => {
+    const { currentDirectoryPerspective } = getState();
+    if (perspective) {
+      if (currentDirectoryPerspective !== perspective) {
+        dispatch(actions.setCurrentDirectoryPerspective(perspective));
+      }
+    } else if (currentDirectoryPerspective !== PerspectiveIDs.UNSPECIFIED) {
+      dispatch(
+        actions.setCurrentDirectoryPerspective(PerspectiveIDs.UNSPECIFIED)
+      );
+    }
+  },
   loadDirectoryContentInt: (
     directoryPath: string,
     generateThumbnails: boolean,
     fsEntryMeta?: TS.FileSystemEntryMeta
   ) => (dispatch: (action) => void, getState: () => any) => {
     const { settings } = getState();
+
     /* const { currentDirectoryPath } = getState().app;
     if (currentDirectoryPath !== directoryPath) {
       dispatch(actions.loadDirectorySuccessInt(directoryPath, [], true)); // this is to reset directoryContent (it will reset color too)
@@ -1035,25 +1051,19 @@ export const actions = {
       getState(),
       getState().app.currentLocationId
     );
-    /* PlatformIO.enableWebdavSupport({   TODO use this to enable webdav support for location the same like objectstore
-      username: 'webdav',
-      password: '1234',
-      port: 8080
-    }); */
-    /* const mode = PlatformIO.haveObjectStoreSupport()
-      ? []
-      : ['extractThumbPath', 'extractThumbURL']; */
+
     PlatformIO.listDirectoryPromise(
       directoryPath,
-      [], // mode,
+      fsEntryMeta &&
+        fsEntryMeta.perspective &&
+        fsEntryMeta.perspective === PerspectiveIDs.GALLERY
+        ? ['extractThumbPath']
+        : [], // mode,
       currentLocation ? currentLocation.ignorePatternPaths : []
     )
       .then(results => {
         if (results !== undefined) {
           // console.debug('app listDirectoryPromise resolved:' + results.length);
-          dispatch(
-            actions.setCurrentDirectoryPerspective(PerspectiveIDs.UNSPECIFIED)
-          );
           prepareDirectoryContent(
             results,
             directoryPath,
@@ -1064,11 +1074,21 @@ export const actions = {
             generateThumbnails
           );
         }
+        dispatch(
+          actions.updateCurrentDirectoryPerspective(
+            fsEntryMeta ? fsEntryMeta.perspective : undefined
+          )
+        );
         return true;
       })
       .catch(error => {
         // console.timeEnd('listDirectoryPromise');
         dispatch(actions.loadDirectoryFailure(directoryPath, error)); // Currently this is never called, due the promise always resolve
+        dispatch(
+          actions.updateCurrentDirectoryPerspective(
+            fsEntryMeta ? fsEntryMeta.perspective : undefined
+          )
+        );
       });
   },
   loadDirectoryContent: (
