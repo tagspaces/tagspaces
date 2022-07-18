@@ -39,7 +39,7 @@ import i18n from '../services/i18n';
 import {
   getMaxSearchResults,
   getDesktopMode,
-  getKeyBindingObject,
+  // getKeyBindingObject,
   getDefaultPerspective
 } from '-/reducers/settings';
 import {
@@ -47,7 +47,6 @@ import {
   getDirectoryContent,
   getSearchResultCount,
   isReadOnlyMode,
-  isLoading,
   getCurrentLocationPath,
   getCurrentDirectoryPerspective,
   OpenedEntry,
@@ -70,9 +69,9 @@ import {
   getSearchQuery
 } from '-/reducers/location-index';
 import Links from '-/links';
-import PlatformIO from '-/services/platform-facade';
 import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
 import MainSearchField from '-/components/MainSearchField';
+import LoadingAnimation from '-/components/LoadingAnimation';
 
 const GridPerspective = React.lazy(() =>
   import(
@@ -223,7 +222,6 @@ interface Props {
   loadParentDirectoryContent: () => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   isReadOnlyMode: boolean;
-  isLoading: boolean;
   isDesktopMode: boolean;
   showNotification: (content: string) => void;
   toggleDrawer?: () => void;
@@ -243,7 +241,7 @@ interface Props {
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   openCurrentDirectory: () => void;
   openURLExternally?: (url: string, skipConfirmation: boolean) => void;
-  keyBindings: Array<any>;
+  // keyBindings: Array<any>;
 }
 
 function FolderContainer(props: Props) {
@@ -309,8 +307,7 @@ function FolderContainer(props: Props) {
     openDirectory,
     reflectCreateEntry,
     openFsEntry,
-    isLoading,
-    keyBindings,
+    // keyBindings,
     defaultPerspective
   } = props;
 
@@ -325,7 +322,7 @@ function FolderContainer(props: Props) {
 
   const renderPerspective = () => {
     if (showWelcomePanel) {
-      return AppConfig.showWelcomePanel ? <WelcomePanelAsync /> : <></>;
+      return AppConfig.showWelcomePanel ? <WelcomePanelAsync /> : null;
     }
     if (currentPerspective === PerspectiveIDs.LIST) {
       return (
@@ -678,40 +675,7 @@ function FolderContainer(props: Props) {
             width: '100%'
           }}
         >
-          {isLoading &&
-            (PlatformIO.haveObjectStoreSupport() ||
-              PlatformIO.haveWebDavSupport()) && (
-              <div
-                style={{
-                  position: 'absolute',
-                  zIndex: 1000,
-                  height: '100%',
-                  width: '100%',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  borderRadius: 10,
-                  backdropFilter: 'grayscale(1)'
-                  // backdropFilter: 'blur(2px)',
-                  // backgroundColor: '#fafafa33' // red: '#eb585882' '#d9d9d980'
-                }}
-              >
-                <div className="lds-ellipsis">
-                  <div
-                    style={{ backgroundColor: theme.palette.primary.main }}
-                  />
-                  <div
-                    style={{ backgroundColor: theme.palette.primary.main }}
-                  />
-                  <div
-                    style={{ backgroundColor: theme.palette.primary.main }}
-                  />
-                  <div
-                    style={{ backgroundColor: theme.palette.primary.main }}
-                  />
-                </div>
-              </div>
-            )}
+          <LoadingAnimation />
           {renderPerspective()}
           {isRenameEntryDialogOpened && (
             <RenameEntryDialog
@@ -759,8 +723,7 @@ function mapStateToProps(state) {
     isReadOnlyMode: isReadOnlyMode(state),
     progress: getProgress(state),
     searchQuery: getSearchQuery(state),
-    isLoading: isLoading(state),
-    keyBindings: getKeyBindingObject(state),
+    // keyBindings: getKeyBindingObject(state),
     defaultPerspective: getDefaultPerspective(state)
   };
 }
@@ -795,14 +758,14 @@ function mapActionCreatorsToProps(dispatch) {
 
 const areEqual = (prevProp: Props, nextProp: Props) =>
   // nextProp.rightPanelWidth === prevProp.rightPanelWidth &&
-  nextProp.isLoading === prevProp.isLoading &&
   nextProp.settings.currentTheme === prevProp.settings.currentTheme &&
   nextProp.drawerOpened === prevProp.drawerOpened &&
   nextProp.isDesktopMode === prevProp.isDesktopMode &&
   nextProp.currentDirectoryPath === prevProp.currentDirectoryPath &&
   nextProp.currentDirectoryPerspective ===
     prevProp.currentDirectoryPerspective &&
-  nextProp.currentLocationPath === prevProp.currentLocationPath &&
+  /* this props is set before currentDirectoryEntries is loaded and will reload FolderContainer
+  nextProp.currentLocationPath === prevProp.currentLocationPath &&  */
   JSON.stringify(nextProp.directoryContent) ===
     JSON.stringify(prevProp.directoryContent) &&
   JSON.stringify(nextProp.openedFiles) ===
