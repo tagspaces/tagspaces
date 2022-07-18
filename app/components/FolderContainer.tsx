@@ -38,7 +38,7 @@ import i18n from '../services/i18n';
 import {
   getMaxSearchResults,
   getDesktopMode,
-  getKeyBindingObject,
+  // getKeyBindingObject,
   getDefaultPerspective
 } from '-/reducers/settings';
 import {
@@ -46,7 +46,6 @@ import {
   getDirectoryContent,
   getSearchResultCount,
   isReadOnlyMode,
-  isLoading,
   getCurrentLocationPath,
   getCurrentDirectoryPerspective,
   OpenedEntry,
@@ -70,29 +69,33 @@ import {
   getSearchQuery
 } from '-/reducers/location-index';
 import Links from '-/links';
-import PlatformIO from '-/services/platform-facade';
 import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
 import MainSearchField from '-/components/MainSearchField';
+import LoadingAnimation from '-/components/LoadingAnimation';
 
 const GridPerspective = React.lazy(() =>
   import(
-    /* webpackChunkName: "GridPerspective" */ '../perspectives/grid-perspective/'
+    /* webpackChunkName: "GridPerspective" */ '../perspectives/grid-perspective'
   )
 );
-const GridPerspectiveAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <GridPerspective {...props} />
-  </React.Suspense>
-);
+function GridPerspectiveAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <GridPerspective {...props} />
+    </React.Suspense>
+  );
+}
 
 const ListPerspective = React.lazy(() =>
-  import(/* webpackChunkName: "ListPerspective" */ '../perspectives/list/')
+  import(/* webpackChunkName: "ListPerspective" */ '../perspectives/list')
 );
-const ListPerspectiveAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <ListPerspective {...props} />
-  </React.Suspense>
-);
+function ListPerspectiveAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <ListPerspective {...props} />
+    </React.Suspense>
+  );
+}
 
 let GalleryPerspective = React.Fragment;
 if (Pro && Pro.Perspectives && Pro.Perspectives.GalleryPerspective) {
@@ -100,22 +103,26 @@ if (Pro && Pro.Perspectives && Pro.Perspectives.GalleryPerspective) {
 
   GalleryPerspective = Pro.Perspectives.GalleryPerspective;
 }
-const GalleryPerspectiveAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <GalleryPerspective {...props} />
-  </React.Suspense>
-);
+function GalleryPerspectiveAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <GalleryPerspective {...props} />
+    </React.Suspense>
+  );
+}
 
 let MapiquePerspective = React.Fragment;
 if (Pro && Pro.Perspectives && Pro.Perspectives.MapiquePerspective) {
   // MapiquePerspective = React.lazy(() => import(/* webpackChunkName: "MapiquePerspective" */ '../node_modules/@tagspaces/pro/modules/perspectives/mapique'));
   MapiquePerspective = Pro.Perspectives.MapiquePerspective;
 }
-const MapiquePerspectiveAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <MapiquePerspective {...props} />
-  </React.Suspense>
-);
+function MapiquePerspectiveAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <MapiquePerspective {...props} />
+    </React.Suspense>
+  );
+}
 
 /* let TreeVizPerspective = React.Fragment;
 if (Pro && Pro.Perspectives && Pro.Perspectives.TreeVizPerspective) {
@@ -133,30 +140,36 @@ let KanBanPerspective = React.Fragment;
 if (Pro && Pro.Perspectives && Pro.Perspectives.KanBanPerspective) {
   KanBanPerspective = Pro.Perspectives.KanBanPerspective;
 }
-const KanBanPerspectiveAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <KanBanPerspective {...props} />
-  </React.Suspense>
-);
+function KanBanPerspectiveAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <KanBanPerspective {...props} />
+    </React.Suspense>
+  );
+}
 
 let WikiPerspective = React.Fragment;
 if (Pro && Pro.Perspectives && Pro.Perspectives.WikiPerspective) {
   WikiPerspective = Pro.Perspectives.WikiPerspective;
 }
-const WikiPerspectiveAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <WikiPerspective {...props} />
-  </React.Suspense>
-);
+function WikiPerspectiveAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <WikiPerspective {...props} />
+    </React.Suspense>
+  );
+}
 
 const WelcomePanel = React.lazy(() =>
   import(/* webpackChunkName: "WelcomePanel" */ './WelcomePanel')
 );
-const WelcomePanelAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <WelcomePanel {...props} />
-  </React.Suspense>
-);
+function WelcomePanelAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <WelcomePanel {...props} />
+    </React.Suspense>
+  );
+}
 
 const CounterBadge: any = withStyles(theme => ({
   badge: {
@@ -209,7 +222,6 @@ interface Props {
   loadParentDirectoryContent: () => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   isReadOnlyMode: boolean;
-  isLoading: boolean;
   isDesktopMode: boolean;
   showNotification: (content: string) => void;
   toggleDrawer?: () => void;
@@ -229,10 +241,10 @@ interface Props {
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   openCurrentDirectory: () => void;
   openURLExternally?: (url: string, skipConfirmation: boolean) => void;
-  keyBindings: Array<any>;
+  // keyBindings: Array<any>;
 }
 
-const FolderContainer = (props: Props) => {
+function FolderContainer(props: Props) {
   useEffect(() => {
     setSearchVisible(false);
   }, [props.currentDirectoryPath]);
@@ -295,8 +307,7 @@ const FolderContainer = (props: Props) => {
     openDirectory,
     reflectCreateEntry,
     openFsEntry,
-    isLoading,
-    keyBindings,
+    // keyBindings,
     defaultPerspective
   } = props;
 
@@ -311,11 +322,7 @@ const FolderContainer = (props: Props) => {
 
   const renderPerspective = () => {
     if (showWelcomePanel) {
-      return AppConfig.showWelcomePanel ? (
-        <WelcomePanelAsync />
-      ) : (
-        <React.Fragment />
-      );
+      return AppConfig.showWelcomePanel ? <WelcomePanelAsync /> : null;
     }
     if (currentPerspective === PerspectiveIDs.LIST) {
       return (
@@ -668,30 +675,7 @@ const FolderContainer = (props: Props) => {
             width: '100%'
           }}
         >
-          {isLoading && PlatformIO.haveObjectStoreSupport() && (
-            <div
-              style={{
-                position: 'absolute',
-                zIndex: 1000,
-                height: '100%',
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                borderRadius: 10,
-                backdropFilter: 'grayscale(1)'
-                // backdropFilter: 'blur(2px)',
-                // backgroundColor: '#fafafa33' // red: '#eb585882' '#d9d9d980'
-              }}
-            >
-              <div className="lds-ellipsis">
-                <div style={{ backgroundColor: theme.palette.primary.main }} />
-                <div style={{ backgroundColor: theme.palette.primary.main }} />
-                <div style={{ backgroundColor: theme.palette.primary.main }} />
-                <div style={{ backgroundColor: theme.palette.primary.main }} />
-              </div>
-            </div>
-          )}
+          <LoadingAnimation />
           {renderPerspective()}
           {isRenameEntryDialogOpened && (
             <RenameEntryDialog
@@ -722,7 +706,7 @@ const FolderContainer = (props: Props) => {
       )}
     </div>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {
@@ -739,8 +723,7 @@ function mapStateToProps(state) {
     isReadOnlyMode: isReadOnlyMode(state),
     progress: getProgress(state),
     searchQuery: getSearchQuery(state),
-    isLoading: isLoading(state),
-    keyBindings: getKeyBindingObject(state),
+    // keyBindings: getKeyBindingObject(state),
     defaultPerspective: getDefaultPerspective(state)
   };
 }
@@ -775,14 +758,14 @@ function mapActionCreatorsToProps(dispatch) {
 
 const areEqual = (prevProp: Props, nextProp: Props) =>
   // nextProp.rightPanelWidth === prevProp.rightPanelWidth &&
-  nextProp.isLoading === prevProp.isLoading &&
   nextProp.settings.currentTheme === prevProp.settings.currentTheme &&
   nextProp.drawerOpened === prevProp.drawerOpened &&
   nextProp.isDesktopMode === prevProp.isDesktopMode &&
   nextProp.currentDirectoryPath === prevProp.currentDirectoryPath &&
   nextProp.currentDirectoryPerspective ===
     prevProp.currentDirectoryPerspective &&
-  nextProp.currentLocationPath === prevProp.currentLocationPath &&
+  /* this props is set before currentDirectoryEntries is loaded and will reload FolderContainer
+  nextProp.currentLocationPath === prevProp.currentLocationPath &&  */
   JSON.stringify(nextProp.directoryContent) ===
     JSON.stringify(prevProp.directoryContent) &&
   JSON.stringify(nextProp.openedFiles) ===
