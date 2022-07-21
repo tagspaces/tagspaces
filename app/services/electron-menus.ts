@@ -60,6 +60,15 @@ export default function buildDesktopMenu(props: any, i18n) {
           type: 'separator'
         },
         {
+          label: i18n.t('print'),
+          accelerator: 'CmdOrCtrl+p',
+          click: (item, focusedWindow) => {
+            if (focusedWindow.webContents && focusedWindow.webContents.print) {
+              focusedWindow.webContents.print();
+            }
+          }
+        },
+        {
           type: 'separator'
         },
         {
@@ -120,7 +129,7 @@ export default function buildDesktopMenu(props: any, i18n) {
         },
         {
           label: i18n.t('showSearch'),
-          click: props.openSearchPanel
+          click: props.openSearch
         },
         {
           label: i18n.t('showDevTools'),
@@ -158,7 +167,7 @@ export default function buildDesktopMenu(props: any, i18n) {
         },
         {
           label: i18n.t('zoomIn'),
-          accelerator: 'CmdOrCtrl+Plus',
+          accelerator: 'CmdOrCtrl+Shift+Plus',
           click: props.setZoomInApp
         },
         {
@@ -210,17 +219,6 @@ export default function buildDesktopMenu(props: any, i18n) {
             props.openURLExternally({
               url: Links.links.changelogURL,
               skipConfirm: true
-            });
-          }
-        },
-        {
-          type: 'separator'
-        },
-        {
-          label: '&' + i18n.t('likeUsOnFacebook'),
-          click: () => {
-            props.openURLExternally({
-              url: Links.links.facebook
             });
           }
         },

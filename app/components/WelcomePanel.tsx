@@ -33,7 +33,7 @@ import IssueIcon from '@material-ui/icons/BugReport';
 import TranslationIcon from '@material-ui/icons/Translate';
 import NewFeatureIcon from '@material-ui/icons/Gesture';
 import SocialIcon from '@material-ui/icons/ThumbUp';
-import Social2Icon from '@material-ui/icons/Mood';
+import TwitterIcon from '@material-ui/icons/Twitter';
 import KeyShortcutsIcon from '@material-ui/icons/Keyboard';
 import WelcomeBackground from '../assets/images/background.png';
 import WelcomeLogo from '../assets/images/welcome-logo.png';
@@ -82,7 +82,7 @@ interface Props {
   isDesktopMode: boolean;
 }
 
-const WelcomePanel = (props: Props) => {
+function WelcomePanel(props: Props) {
   const { classes, openURLExternally, toggleKeysDialog, isDesktopMode } = props;
   return (
     <div className={classes.mainPanel}>
@@ -100,7 +100,7 @@ const WelcomePanel = (props: Props) => {
         >
           <img src={WelcomeLogo} alt="Organize your files" />
         </div>
-        <ListItem
+        {/* <ListItem
           button
           onClick={() => {
             const button = document.getElementById(
@@ -112,7 +112,7 @@ const WelcomePanel = (props: Props) => {
           <Button startIcon={<LocationIcon />}>
             {i18n.t('core:chooseLocation')}
           </Button>
-        </ListItem>
+        </ListItem> */}
         <ListItem
           button
           onClick={() =>
@@ -182,42 +182,22 @@ const WelcomePanel = (props: Props) => {
           </Button>
         </ListItem>
         <ListItem button onClick={() => openURLExternally(Links.links.twitter)}>
-          <Button startIcon={<Social2Icon />}>
+          <Button startIcon={<TwitterIcon />}>
             {i18n.t('core:followOnTwitter')}
           </Button>
         </ListItem>
-        <ListItem
+        {/* <ListItem
           button
           onClick={() => openURLExternally(Links.links.facebook)}
         >
           <Button startIcon={<SocialIcon />}>
             {i18n.t('core:likeUsOnFacebook')}
           </Button>
-        </ListItem>
-        {/* {AppConfig.isWeb && (
-          <ListItem
-            button
-            onClick={() => {
-              // @ts-ignore
-              const newHref = window.location.href.replace(
-                'http://',
-                'http://' +
-                  new Date().getTime() +
-                  ':' +
-                  new Date().getTime() +
-                  '@'
-              );
-              // @ts-ignore
-              window.location.href = newHref;
-            }}
-          >
-            <Button startIcon={<LogoutIcon />}>{i18n.t('core:Logout')}</Button>
-          </ListItem>
-        )} */}
+        </ListItem> */}
       </List>
     </div>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

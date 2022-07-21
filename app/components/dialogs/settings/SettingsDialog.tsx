@@ -28,16 +28,17 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
-import uuidv1 from 'uuid';
+import { v1 as uuidv1 } from 'uuid';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
+import { extend } from '@tagspaces/tagspaces-platforms/misc';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import ConfirmDialog from '../ConfirmDialog';
 import SettingsGeneral from '../settings/SettingsGeneral';
 import SettingsKeyBindings from '../settings/SettingsKeyBindings';
 import SettingsFileTypes from '../settings/SettingsFileTypes';
 import i18n from '-/services/i18n';
 import { actions, getSupportedFileTypes } from '-/reducers/settings';
-import { clearAllURLParams, extend } from '-/utils/misc';
-import AppConfig from '-/config';
+import { clearAllURLParams } from '-/utils/dom';
 import SettingsAdvanced from '-/components/dialogs/settings/SettingsAdvanced';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
@@ -56,7 +57,7 @@ interface Props {
   supportedFileTypes?: Array<any>;
 }
 
-const SettingsDialog = (props: Props) => {
+function SettingsDialog(props: Props) {
   const [items, setItems] = useStateWithCallbackLazy<Array<any>>([]);
   const [currentTab, setCurrentTab] = useState<number>(0);
   const [selectedItem, setSelectedItem] = useState<any>({});
@@ -337,7 +338,7 @@ const SettingsDialog = (props: Props) => {
       {renderActions()}
     </Dialog>
   );
-};
+}
 
 const mapStateToProps = state => ({
   supportedFileTypes: getSupportedFileTypes(state)

@@ -30,35 +30,29 @@ import AddExistingFileIcon from '@material-ui/icons/ExitToApp';
 import ImportTagsIcon from '@material-ui/icons/FindInPage';
 import OpenFolderNativelyIcon from '@material-ui/icons/Launch';
 import AutoRenew from '@material-ui/icons/Autorenew';
-import DefaultPerspectiveIcon from '@material-ui/icons/GridOn';
-import GalleryPerspectiveIcon from '@material-ui/icons/Camera';
-import MapiquePerspectiveIcon from '@material-ui/icons/Map';
-import KanBanPerspectiveIcon from '@material-ui/icons/Dashboard';
 import NewFileIcon from '@material-ui/icons/InsertDriveFile';
-import NewFolderIcon from '@material-ui/icons/CreateNewFolder';
+import ShareIcon from '@material-ui/icons/Link';
 import RenameFolderIcon from '@material-ui/icons/FormatTextdirectionLToR';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
-import SettingsIcon from '@material-ui/icons/Settings';
+import NewFolderIcon from '@material-ui/icons/CreateNewFolder';
+import PropertiesIcon from '@material-ui/icons/Info';
 import { Progress } from 'aws-sdk/clients/s3';
 import ImageIcon from '@material-ui/icons/Image';
-import { Pro } from '../../pro';
-import CreateDirectoryDialog from '../dialogs/CreateDirectoryDialog';
-// import RenameDirectoryDialog from '../dialogs/RenameDirectoryDialog';
-import AppConfig from '-/config';
-import i18n from '-/services/i18n';
+import { formatDateTime4Tag } from '@tagspaces/tagspaces-platforms/misc';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import {
   extractContainingDirectoryPath,
   extractDirectoryName,
   getThumbFileLocationForDirectory,
-  normalizePath
-} from '-/utils/paths';
-import PlatformIO from '-/services/platform-io';
-import { formatDateTime4Tag } from '-/utils/misc';
-import {
-  actions as AppActions,
-  getSelectedEntries,
-  perspectives
-} from '-/reducers/app';
+  normalizePath,
+  generateSharingLink
+} from '@tagspaces/tagspaces-platforms/paths';
+import { Pro } from '../../pro';
+import CreateDirectoryDialog from '../dialogs/CreateDirectoryDialog';
+// import RenameDirectoryDialog from '../dialogs/RenameDirectoryDialog';
+import i18n from '-/services/i18n';
+import PlatformIO from '-/services/platform-facade';
+import { actions as AppActions, getSelectedEntries } from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
 import TaggingActions from '-/reducers/tagging-actions';
 import { getAllPropertiesPromise } from '-/services/utils-io';
@@ -68,6 +62,7 @@ import FileUploadContainer, {
 import { TS } from '-/tagspaces.namespace';
 import { ProLabel, BetaLabel } from '-/components/HelperComponents';
 import Links from '-/links';
+import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
 
 interface Props {
   open: boolean;
@@ -75,7 +70,11 @@ interface Props {
   onClose: (param?: any) => void;
   anchorEl: Element;
   directoryPath: string;
-  loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
+  loadDirectoryContent: (
+    path: string,
+    generateThumbnails: boolean,
+    loadDirMeta?: boolean
+  ) => void;
   openDirectory: (path: string) => void;
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   reflectCreateEntry?: (path: string, isFile: boolean) => void;
@@ -92,8 +91,8 @@ interface Props {
   perspectiveMode?: boolean;
   showNotification?: (
     text: string,
-    notificationType: string,
-    autohide: boolean
+    notificationType?: string,
+    autohide?: boolean
   ) => void;
   isReadOnlyMode?: boolean;
   toggleUploadDialog: () => void;
@@ -111,10 +110,56 @@ interface Props {
   mouseX?: number;
   mouseY?: number;
   openURLExternally?: (url: string, skipConfirmation: boolean) => void;
+  currentLocation?: TS.Location;
+  locations?: Array<TS.Location>;
 }
 
-const DirectoryMenu = (props: Props) => {
+function DirectoryMenu(props: Props) {
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
+
+  const {
+    selectedEntries,
+    isReadOnlyMode,
+    currentLocation,
+    locations,
+    showNotification,
+    onClose
+  } = props;
+
+  function copySharingLink() {
+    onClose();
+    if (selectedEntries.length === 1) {
+      const entryFromIndex = selectedEntries[0].locationID;
+      const locationID = entryFromIndex
+        ? selectedEntries[0].locationID
+        : currentLocation.uuid;
+      let relativePath = selectedEntries[0].path;
+      const tmpLoc = locations.find(location => location.uuid === locationID);
+      const locationPath = tmpLoc.path;
+      if (
+        locationPath &&
+        relativePath &&
+        relativePath.startsWith(locationPath)
+      ) {
+        // remove location path from entry path if possible
+        relativePath = relativePath.substr(locationPath.length);
+      }
+      const sharingLink = generateSharingLink(
+        locationID,
+        undefined,
+        relativePath
+      );
+      navigator.clipboard
+        .writeText(sharingLink)
+        .then(() => {
+          showNotification(i18n.t('core:sharingLinkCopied'));
+          return true;
+        })
+        .catch(() => {
+          showNotification(i18n.t('core:sharingLinkFailed'));
+        });
+    }
+  }
 
   const [
     isCreateDirectoryDialogOpened,
@@ -122,17 +167,17 @@ const DirectoryMenu = (props: Props) => {
   ] = useState(false);
 
   function reloadDirectory() {
-    props.onClose();
-    props.loadDirectoryContent(props.directoryPath, false);
+    onClose();
+    props.loadDirectoryContent(props.directoryPath, true, true);
   }
 
   function openDirectory() {
-    props.onClose();
-    props.loadDirectoryContent(props.directoryPath, true);
+    onClose();
+    props.loadDirectoryContent(props.directoryPath, true, true);
   }
 
   function showProperties() {
-    props.onClose();
+    onClose();
     getAllPropertiesPromise(props.directoryPath)
       .then((fsEntry: TS.FileSystemEntry) => {
         props.openFsEntry(fsEntry);
@@ -149,37 +194,43 @@ const DirectoryMenu = (props: Props) => {
   }
 
   function switchPerspective(perspectiveId) {
-    props.onClose();
-    if (Pro) {
+    onClose();
+    if (
+      Pro ||
+      perspectiveId === PerspectiveIDs.GRID ||
+      perspectiveId === PerspectiveIDs.LIST
+    ) {
       if (props.switchPerspective) {
         props.switchPerspective(perspectiveId);
       } else {
         props.setCurrentDirectoryPerspective(perspectiveId);
       }
-    } else if (perspectiveId === perspectives.GALLERY) {
-      const openPersDocs = window.confirm(
-        'Gallery is part of the PRO version. Do you want to learn more about this perspective?'
-      );
+    } else if (perspectiveId === PerspectiveIDs.GALLERY) {
+      const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
       if (openPersDocs) {
         props.openURLExternally(
           Links.documentationLinks.galleryPerspective,
           true
         );
       }
-    } else if (perspectiveId === perspectives.MAPIQUE) {
-      const openPersDocs = window.confirm(
-        'Mapique is part of the PRO version. Do you want to learn more about this perspective?'
-      );
+    } else if (perspectiveId === PerspectiveIDs.MAPIQUE) {
+      const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
       if (openPersDocs) {
         props.openURLExternally(
           Links.documentationLinks.mapiquePerspective,
           true
         );
       }
-    } else if (perspectiveId === perspectives.KANBAN) {
-      const openPersDocs = window.confirm(
-        'Kanban is part of the PRO version. Do you want to learn more about this perspective?'
-      );
+    } else if (perspectiveId === PerspectiveIDs.KANBAN) {
+      const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
+      if (openPersDocs) {
+        props.openURLExternally(
+          Links.documentationLinks.kanbanPerspective,
+          true
+        );
+      }
+    } else if (perspectiveId === PerspectiveIDs.WIKI) {
+      const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
       if (openPersDocs) {
         props.openURLExternally(
           Links.documentationLinks.kanbanPerspective,
@@ -190,7 +241,7 @@ const DirectoryMenu = (props: Props) => {
   }
 
   function showDeleteDirectoryDialog() {
-    props.onClose();
+    onClose();
     props.setSelectedEntries([
       { isFile: false, name: props.directoryPath, path: props.directoryPath }
     ]);
@@ -198,32 +249,32 @@ const DirectoryMenu = (props: Props) => {
   }
 
   function showRenameDirectoryDialog() {
-    props.onClose();
+    onClose();
     props.openRenameDirectoryDialog();
   }
 
   function showCreateDirectoryDialog() {
-    props.onClose();
+    onClose();
     setIsCreateDirectoryDialogOpened(true);
   }
 
   function createNewFile() {
-    props.onClose();
+    onClose();
     props.toggleCreateFileDialog();
   }
 
   function showInFileManager() {
-    props.onClose();
+    onClose();
     props.openDirectory(props.directoryPath);
   }
 
   function addExistingFile() {
-    props.onClose();
+    onClose();
     fileUploadContainerRef.current.onFileUpload();
   }
 
   function importMacTags() {
-    props.onClose();
+    onClose();
     if (Pro && Pro.MacTagsImport && Pro.MacTagsImport.importTags) {
       if (
         !confirm(`Experimental feature\n
@@ -331,7 +382,7 @@ Do you want to continue?`)
   // }
 
   function cameraTakePicture() {
-    props.onClose();
+    onClose();
     // @ts-ignore
     navigator.camera.getPicture(onCameraSuccess, onFail, {
       // quality: 50,
@@ -344,7 +395,7 @@ Do you want to continue?`)
   }
 
   function setFolderThumbnail() {
-    props.onClose();
+    onClose();
     const parentDirectoryPath = extractContainingDirectoryPath(
       props.directoryPath,
       PlatformIO.getDirSeparator()
@@ -385,7 +436,7 @@ Do you want to continue?`)
 
   const menuItems = [];
 
-  if (props.selectedEntries.length < 2) {
+  if (selectedEntries.length < 2) {
     if (props.perspectiveMode) {
       menuItems.push(
         <MenuItem
@@ -413,7 +464,7 @@ Do you want to continue?`)
         </MenuItem>
       );
     }
-    if (!props.isReadOnlyMode) {
+    if (!isReadOnlyMode) {
       menuItems.push(
         <MenuItem
           key="renameDirectory"
@@ -429,7 +480,7 @@ Do you want to continue?`)
     }
   }
 
-  if (!props.isReadOnlyMode) {
+  if (!isReadOnlyMode) {
     menuItems.push(
       <MenuItem
         key="deleteDirectory"
@@ -445,8 +496,12 @@ Do you want to continue?`)
   }
 
   if (
-    props.selectedEntries.length < 2 &&
-    !(PlatformIO.haveObjectStoreSupport() || AppConfig.isWeb)
+    selectedEntries.length < 2 &&
+    !(
+      PlatformIO.haveObjectStoreSupport() ||
+      PlatformIO.haveWebDavSupport() ||
+      AppConfig.isWeb
+    )
   ) {
     menuItems.push(
       <MenuItem
@@ -464,19 +519,7 @@ Do you want to continue?`)
   if (!props.perspectiveMode) {
     menuItems.push(<Divider key="divider1" />);
   }
-  if (!props.isReadOnlyMode && !props.perspectiveMode) {
-    menuItems.push(
-      <MenuItem
-        key="newSubDirectory"
-        data-tid="newSubDirectory"
-        onClick={showCreateDirectoryDialog}
-      >
-        <ListItemIcon>
-          <NewFolderIcon />
-        </ListItemIcon>
-        <ListItemText primary={i18n.t('core:newSubdirectory')} />
-      </MenuItem>
-    );
+  if (!isReadOnlyMode && !props.perspectiveMode) {
     menuItems.push(
       <MenuItem
         key="createNewFile"
@@ -487,6 +530,18 @@ Do you want to continue?`)
           <NewFileIcon />
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:newFileNote')} />
+      </MenuItem>
+    );
+    menuItems.push(
+      <MenuItem
+        key="newSubDirectory"
+        data-tid="newSubDirectory"
+        onClick={showCreateDirectoryDialog}
+      >
+        <ListItemIcon>
+          <NewFolderIcon />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:newSubdirectory')} />
       </MenuItem>
     );
     menuItems.push(
@@ -502,7 +557,7 @@ Do you want to continue?`)
       </MenuItem>
     );
   }
-  if (Pro && props.perspectiveMode && props.selectedEntries.length < 2) {
+  if (Pro && props.perspectiveMode && selectedEntries.length < 2) {
     menuItems.push(
       <MenuItem
         key="setAsThumb"
@@ -516,8 +571,26 @@ Do you want to continue?`)
       </MenuItem>
     );
   }
+  if (selectedEntries.length === 1) {
+    menuItems.push(
+      <MenuItem
+        key="copySharingLink"
+        data-tid="copyDirectorySharingLink"
+        onClick={copySharingLink}
+      >
+        <ListItemIcon>
+          <ShareIcon />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:copySharingLink')} />
+      </MenuItem>
+    );
+  }
 
-  if (props.selectedEntries.length < 2 && process.platform === 'darwin') {
+  if (
+    selectedEntries.length < 2 &&
+    AppConfig.isElectron &&
+    AppConfig.isMacLike
+  ) {
     menuItems.push(
       <MenuItem
         key="importMacTags"
@@ -556,85 +629,38 @@ Do you want to continue?`)
   }
   if (!props.perspectiveMode) {
     menuItems.push(<Divider key="divider2" />);
-    menuItems.push(
-      <MenuItem
-        key="openDefaultPerspective"
-        data-tid="openDefaultPerspective"
-        onClick={() => switchPerspective(perspectives.DEFAULT)}
-        title="Switch to default perspective"
-      >
-        <ListItemIcon>
-          <DefaultPerspectiveIcon />
-        </ListItemIcon>
-        <ListItemText primary="Default Perspective" />
-      </MenuItem>
-    );
-    menuItems.push(
-      <Tooltip title="Switch to Gallery perspective">
+    AvailablePerspectives.forEach(perspective => {
+      let badge = <></>;
+      if (!Pro && perspective.pro) {
+        badge = <ProLabel />;
+      }
+      if (!Pro && perspective.beta) {
+        badge = <BetaLabel />;
+      }
+      if (Pro && perspective.beta) {
+        badge = <BetaLabel />;
+      }
+      menuItems.push(
         <MenuItem
-          key="openGalleryPerspective"
-          data-tid="openGalleryPerspective"
-          onClick={() => switchPerspective(perspectives.GALLERY)}
+          key={perspective.key}
+          data-tid={perspective.key}
+          onClick={() => switchPerspective(perspective.id)}
         >
-          <ListItemIcon>
-            <GalleryPerspectiveIcon />
-          </ListItemIcon>
+          <ListItemIcon>{perspective.icon}</ListItemIcon>
           <ListItemText
             primary={
               <>
-                Gallery Perspective
-                <ProLabel />
+                {perspective.title}
+                {badge}
               </>
             }
           />
         </MenuItem>
-      </Tooltip>
-    );
-    menuItems.push(
-      <Tooltip title="Switch to Mapique perspective">
-        <MenuItem
-          key="openMapiquePerspective"
-          data-tid="openMapiquePerspective"
-          onClick={() => switchPerspective(perspectives.MAPIQUE)}
-        >
-          <ListItemIcon>
-            <MapiquePerspectiveIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary={
-              <>
-                Mapique Perspective
-                <ProLabel />
-              </>
-            }
-          />
-        </MenuItem>
-      </Tooltip>
-    );
-    menuItems.push(
-      <Tooltip title="Switch to Kanban perspective">
-        <MenuItem
-          key="openKanBanPerspective"
-          data-tid="openKanBanPerspectiveTID"
-          onClick={() => switchPerspective(perspectives.KANBAN)}
-        >
-          <ListItemIcon>
-            <KanBanPerspectiveIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary={
-              <>
-                Kanban Perspective
-                {Pro ? <BetaLabel /> : <ProLabel />}
-              </>
-            }
-          />
-        </MenuItem>
-      </Tooltip>
-    );
+      );
+    });
   }
 
-  if (props.selectedEntries.length < 2) {
+  if (selectedEntries.length < 2) {
     menuItems.push(<Divider key="divider3" />);
     menuItems.push(
       <MenuItem
@@ -643,7 +669,7 @@ Do you want to continue?`)
         onClick={showProperties}
       >
         <ListItemIcon>
-          <SettingsIcon />
+          <PropertiesIcon />
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:directoryPropertiesTitle')} />
       </MenuItem>
@@ -687,7 +713,7 @@ Do you want to continue?`)
       />
     </div>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

@@ -34,11 +34,12 @@ import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import MobileStepper from '@material-ui/core/MobileStepper';
 import Dialog from '@material-ui/core/Dialog';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import NavigationV3 from '-/assets/images/navigation-v3.png';
-import BrowserExtension from '-/assets/images/collecting-undraw.svg';
-import WizardFinished from '-/assets/images/balloons-undraw.svg';
-import ChooseTagging from '-/assets/images/internals-undraw.svg';
-import NewLook from '-/assets/images/welcome-undraw.svg';
+import BrowserExtension from '-/assets/images/collectcontent.svg';
+import WizardFinished from '-/assets/images/computer-desk.svg';
+import ChooseTagging from '-/assets/images/abacus.svg';
+import NewLook from '-/assets/images/desktop.svg';
 import i18n from '-/services/i18n';
 import {
   isFirstRun,
@@ -47,7 +48,6 @@ import {
   actions as SettingsActions
 } from '-/reducers/settings';
 import { actions as AppActions } from '-/reducers/app';
-import AppConfig from '-/config';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Links from '-/links';
 
@@ -64,11 +64,11 @@ interface Props {
   onClose: () => void;
 }
 
-const OnboardingDialog = (props: Props) => {
+function OnboardingDialog(props: Props) {
   const [activeStep, setActiveStep] = useState(0);
   const { fullScreen, open, onClose } = props;
 
-  const maxSteps = 5;
+  const maxSteps = 4;
 
   function handleNext() {
     setActiveStep(step => step + 1);
@@ -119,11 +119,11 @@ const OnboardingDialog = (props: Props) => {
               {i18n.t('core:welcomeToTagSpaces')}
             </Typography>
             <img
-              style={{ maxHeight: 300, marginTop: 15 }}
+              style={{ maxHeight: 300, marginTop: 15, marginBottom: 40 }}
               src={NewLook}
               alt=""
             />
-            <Typography variant="h6">Try our interface themes</Typography>
+            <Typography variant="h6">Try our our dark theme!</Typography>
             <Typography variant="h6">&nbsp;</Typography>
             <ToggleButtonGroup
               value={props.currentTheme}
@@ -137,7 +137,7 @@ const OnboardingDialog = (props: Props) => {
               <ToggleButton value="dark">Dark</ToggleButton>
             </ToggleButtonGroup>
           </div>
-          <div
+          {/* <div
             style={{
               textAlign: 'center'
             }}
@@ -148,7 +148,7 @@ const OnboardingDialog = (props: Props) => {
               src={NavigationV3}
               alt=""
             />
-          </div>
+          </div> */}
           <div
             style={{
               textAlign: 'center'
@@ -159,9 +159,8 @@ const OnboardingDialog = (props: Props) => {
             </Typography>
             <Typography variant="h5">&nbsp;</Typography>
             <Typography variant="body1">
-              Core functionality of the application the ability to add tags to
-              files and folders. Here you can choose how tags will attached to
-              files.
+              Core functionality of the application the tagging of files and
+              folders. Here you can choose how tags will attached to files.
             </Typography>
             <FormControl
               style={{ marginTop: 20, marginBottom: 20 }}
@@ -216,8 +215,8 @@ const OnboardingDialog = (props: Props) => {
             </FormControl>
             <Typography variant="body1">
               You can always revise you decision and change the tagging method.
-              But tags already tagged by renaming the files will stay renamed
-              and the created sidecar file containing tags will stay.
+              But files already tagged with the renaming method will stay
+              renamed and the created sidecar file with the tags will stay.
             </Typography>
           </div>
           <div
@@ -226,19 +225,20 @@ const OnboardingDialog = (props: Props) => {
             }}
           >
             <Typography variant="h5">
-              Collect web content in Chrome, Edge and Firefox
+              Collect web pages, create bookmarks or take screenshot from
+              websites directly in your web browser.
             </Typography>
             <img
-              style={{ maxHeight: 300, marginTop: 15 }}
+              style={{ maxHeight: 300, marginTop: 15, marginBottom: 20 }}
               src={BrowserExtension}
               alt=""
             />
             <Typography variant="h6">
-              We have a web clipper extension for your browser.
+              Check out our web clipper browser extension for Chrome, Edge and
+              Firefox.
             </Typography>
             <Typography variant="h6">
-              It is open source and available for free in the official browser
-              stores.
+              It is available for free in the official browser stores.
             </Typography>
             <Button
               style={{ marginTop: 20 }}
@@ -309,7 +309,7 @@ const OnboardingDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {
@@ -334,5 +334,4 @@ function mapActionCreatorsToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
-  // @ts-ignore
 )(withMobileDialog()(OnboardingDialog));

@@ -16,11 +16,23 @@
  *
  */
 
-import uuidv1 from 'uuid';
+import { v1 as uuidv1 } from 'uuid';
+import { marked } from 'marked';
+import DOMPurify from 'dompurify';
+import {
+  loadIndex,
+  enhanceDirectoryIndex,
+  getMetaIndexFilePath
+} from '@tagspaces/tagspaces-platforms/indexer';
+import {
+  enhanceEntry,
+  loadJSONString
+} from '@tagspaces/tagspaces-platforms/utils-common';
 import { saveAs } from 'file-saver';
-import micromatch from 'micromatch';
-import PlatformIO from './platform-io';
-import AppConfig from '../config';
+import {
+  locationType,
+  prepareTagForExport
+} from '@tagspaces/tagspaces-platforms/misc';
 import {
   extractTagsAsObjects,
   extractFileExtension,
@@ -32,14 +44,38 @@ import {
   extractDirectoryName,
   getThumbFileLocationForFile,
   getThumbFileLocationForDirectory
-} from '-/utils/paths';
+} from '@tagspaces/tagspaces-platforms/paths';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import PlatformIO from './platform-facade';
 import i18n from '../services/i18n';
 import versionMeta from '../version.json';
-import { getThumbnailURLPromise } from '-/services/thumbsgenerator';
 import { OpenedEntry, actions as AppActions } from '-/reducers/app';
 import { getLocation } from '-/reducers/locations';
 import { TS } from '-/tagspaces.namespace';
-import { locationType, prepareTagForExport } from '-/utils/misc';
+import {
+  getThumbnailURLPromise,
+  supportedContainers,
+  supportedImgs,
+  supportedText,
+  supportedVideos,
+  supportedMisc
+} from '-/services/thumbsgenerator';
+
+const supportedImgsWS = [
+  'jpg',
+  'jpeg',
+  'jif',
+  'jfif',
+  'png',
+  'gif',
+  'svg',
+  'tif',
+  'tiff',
+  'ico',
+  'webp',
+  'avif'
+  // 'bmp' currently electron main processed: https://github.com/lovell/sharp/issues/806
+];
 
 export function enhanceDirectoryContent(
   dirEntries,
@@ -47,12 +83,13 @@ export function enhanceDirectoryContent(
   showUnixHiddenEntries,
   useGenerateThumbnails,
   showDirs = true,
-  limit = undefined
+  limit = undefined,
+  enableWS = true
 ) {
   const directoryContent = [];
   const tmbGenerationPromises = [];
   const tmbGenerationList = [];
-  const isWorkerAvailable = PlatformIO.isWorkerAvailable();
+  const isWorkerAvailable = enableWS && PlatformIO.isWorkerAvailable();
 
   dirEntries.map(entry => {
     if (!showUnixHiddenEntries && entry.name.startsWith('.')) {
@@ -67,20 +104,39 @@ export function enhanceDirectoryContent(
       return true;
     }
 
-    const enhancedEntry = enhanceEntry(entry);
+    const enhancedEntry = enhanceEntry(
+      entry,
+      AppConfig.tagDelimiter,
+      PlatformIO.getDirSeparator()
+    );
     directoryContent.push(enhancedEntry);
     if (
       // Enable thumb generation by
       !AppConfig.isWeb && // not in webdav mode
       !PlatformIO.haveObjectStoreSupport() && // not in object store mode
+      !PlatformIO.haveWebDavSupport() && // not in webdav mode
       enhancedEntry.isFile && // only for files
       useGenerateThumbnails // enabled in the settings
     ) {
-      const isPDF = enhancedEntry.path.endsWith('.pdf');
-      if (isWorkerAvailable && !isPDF) {
+      // const isPDF = enhancedEntry.path.endsWith('.pdf');
+      if (
+        isWorkerAvailable &&
+        supportedImgsWS.includes(enhancedEntry.extension)
+      ) {
+        // !isPDF) {
         tmbGenerationList.push(enhancedEntry.path);
-      } else {
+      } else if (
+        supportedImgs.includes(enhancedEntry.extension) ||
+        supportedContainers.includes(enhancedEntry.extension) ||
+        supportedText.includes(enhancedEntry.extension) ||
+        supportedMisc.includes(enhancedEntry.extension) ||
+        supportedVideos.includes(enhancedEntry.extension)
+      ) {
         tmbGenerationPromises.push(getThumbnailURLPromise(enhancedEntry.path));
+      } else {
+        console.log(
+          'Unsupported thumbgeneration ext:' + enhancedEntry.extension
+        );
       }
     }
     return true;
@@ -93,87 +149,47 @@ export function enhanceDirectoryContent(
   };
 }
 
-export function enhanceEntry(entry: any): TS.FileSystemEntry {
-  let fileNameTags = [];
-  if (entry.isFile) {
-    fileNameTags = extractTagsAsObjects(
-      entry.name,
+export async function getMetaForEntry(
+  entry: TS.FileSystemEntry,
+  metaFilePath: string
+): Promise<any> {
+  const meta: TS.FileSystemEntryMeta = await loadJSONFile(metaFilePath);
+  if (meta) {
+    const entryEnhanced = enhanceEntry(
+      { ...entry, meta },
       AppConfig.tagDelimiter,
       PlatformIO.getDirSeparator()
     );
+    return { [entry.path]: entryEnhanced };
   }
-  let sidecarDescription;
-  let sidecarColor;
-  let sidecarPerspective;
-  let sidecarTags = [];
-  if (entry.meta) {
-    sidecarDescription = entry.meta.description;
-    sidecarColor = entry.meta.color;
-    sidecarPerspective = entry.meta.perspective;
-    sidecarTags = entry.meta.tags || [];
-    sidecarTags.map(tag => {
-      tag.type = 'sidecar';
-      if (tag.id) {
-        delete tag.id;
-      }
-      return true;
-    });
-  }
-  const enhancedEntry: TS.FileSystemEntry = {
-    uuid: uuidv1(),
-    name: entry.name,
-    isFile: entry.isFile,
-    extension: entry.isFile
-      ? extractFileExtension(entry.name, PlatformIO.getDirSeparator())
-      : '',
-    tags: [...sidecarTags, ...fileNameTags],
-    size: entry.size,
-    lmdt: entry.lmdt,
-    path: entry.path,
-    isIgnored: entry.isIgnored
-  };
-  if (sidecarDescription) {
-    enhancedEntry.description = sidecarDescription;
-  }
-  if (entry && entry.thumbPath) {
-    enhancedEntry.thumbPath = entry.thumbPath;
-  }
-  if (entry && entry.textContent) {
-    enhancedEntry.textContent = entry.textContent;
-  }
-  if (sidecarColor) {
-    enhancedEntry.color = sidecarColor;
-  }
-  if (sidecarPerspective) {
-    enhancedEntry.perspective = sidecarPerspective;
-  }
-  // console.log('Enhancing ' + entry.path); console.log(enhancedEntry);
-  return enhancedEntry;
+  return Promise.resolve({ [entry.path]: undefined });
 }
 
 export function enhanceOpenedEntry(
   entry: OpenedEntry,
   tagDelimiter
 ): OpenedEntry {
-  const fineNameTags = extractTagsAsObjects(
-    entry.path,
-    tagDelimiter,
-    PlatformIO.getDirSeparator()
-  );
-  if (fineNameTags.length > 0) {
-    if (entry.tags && entry.tags.length > 0) {
-      const uniqueTags = entry.tags.filter(
-        tag => fineNameTags.findIndex(obj => obj.title === tag.title) === -1
-      );
+  if (entry.isFile) {
+    const fineNameTags = extractTagsAsObjects(
+      entry.path,
+      tagDelimiter,
+      PlatformIO.getDirSeparator()
+    );
+    if (fineNameTags.length > 0) {
+      if (entry.tags && entry.tags.length > 0) {
+        const uniqueTags = entry.tags.filter(
+          tag => fineNameTags.findIndex(obj => obj.title === tag.title) === -1
+        );
+        return {
+          ...entry,
+          tags: [...uniqueTags, ...fineNameTags]
+        };
+      }
       return {
         ...entry,
-        tags: [...uniqueTags, ...fineNameTags]
+        tags: fineNameTags
       };
     }
-    return {
-      ...entry,
-      tags: fineNameTags
-    };
   }
   return entry;
 }
@@ -193,7 +209,16 @@ export function prepareDirectoryContent(
   );
   const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
 
-  function useGenerateThumbnails() {
+  function genThumbnails() {
+    if (
+      !directoryPath ||
+      directoryPath.endsWith(AppConfig.dirSeparator + AppConfig.metaFolder) ||
+      directoryPath.endsWith(
+        AppConfig.dirSeparator + AppConfig.metaFolder + AppConfig.dirSeparator
+      )
+    ) {
+      return false; // dont generate thumbnails in meta folder
+    }
     if (AppConfig.useGenerateThumbnails !== undefined) {
       return AppConfig.useGenerateThumbnails;
     }
@@ -208,7 +233,10 @@ export function prepareDirectoryContent(
     dirEntries,
     isCloudLocation,
     settings.showUnixHiddenEntries,
-    generateThumbnails && useGenerateThumbnails()
+    generateThumbnails && genThumbnails(),
+    true,
+    undefined,
+    settings.enableWS
   );
 
   function handleTmbGenerationResults(results) {
@@ -241,16 +269,24 @@ export function prepareDirectoryContent(
     );
   }
 
-  if (generateThumbnails) {
-    dispatch(AppActions.setGeneratingThumbnails(false));
+  if (
+    generateThumbnails &&
+    (tmbGenerationList.length > 0 || tmbGenerationPromises.length > 0)
+  ) {
+    dispatch(AppActions.setGeneratingThumbnails(true));
     if (tmbGenerationList.length > 0) {
-      dispatch(AppActions.setGeneratingThumbnails(true));
       PlatformIO.createThumbnailsInWorker(tmbGenerationList)
         .then(handleTmbGenerationResults)
-        .catch(handleTmbGenerationFailed);
+        .catch(() => {
+          // WS error handle
+          Promise.all(
+            tmbGenerationList.map(tmbPath => getThumbnailURLPromise(tmbPath))
+          )
+            .then(handleTmbGenerationResults)
+            .catch(handleTmbGenerationFailed);
+        });
     }
     if (tmbGenerationPromises.length > 0) {
-      dispatch(AppActions.setGeneratingThumbnails(true));
       Promise.all(tmbGenerationPromises)
         .then(handleTmbGenerationResults)
         .catch(handleTmbGenerationFailed);
@@ -267,6 +303,55 @@ export function prepareDirectoryContent(
   );
 }
 
+export function orderDirectories(directories, metaArray) {
+  // if (sortBy === 'custom') {
+  try {
+    // const metaDirData = await loadMetaDataPromise(currentLocationPath);
+    if (metaArray && metaArray.length > 0) {
+      // return orderByMetaArray(directories, metaDirData.dirs);
+      const arrLength = directories.length;
+      return directories.sort((a, b) => {
+        let indexA = metaArray.findIndex(
+          meta => meta.path === a.path
+          // meta => meta.path === Object.keys(a)[0]
+        );
+        let indexB = metaArray.findIndex(
+          meta => meta.path === b.path
+          // meta => meta.path === Object.keys(b)[0]
+        );
+        // set new dirs last
+        if (indexA === -1) {
+          indexA = arrLength;
+        }
+        if (indexB === -1) {
+          indexB = arrLength;
+        }
+        return indexA - indexB;
+      });
+    }
+  } catch (e) {
+    console.log('error loadMetaDataPromise:', e);
+  }
+  // }
+  return directories;
+}
+
+export function orderByMetaArray(arr, metaArray) {
+  const arrLength = arr.length;
+  return arr.sort((a, b) => {
+    let indexA = metaArray.findIndex(metaFiles => metaFiles.name === a.name);
+    let indexB = metaArray.findIndex(metaFiles => metaFiles.name === b.name);
+    // set new files last; dirs first
+    if (indexA === -1) {
+      indexA = !a.isFile ? arrLength * -1 : arrLength;
+    }
+    if (indexB === -1) {
+      indexB = !b.isFile ? arrLength * -1 : arrLength;
+    }
+    return indexA - indexB;
+  });
+}
+
 export function findExtensionPathForId(extensionId: string): string {
   const extensionPath = 'node_modules/' + extensionId;
   return extensionPath;
@@ -275,7 +360,7 @@ export function findExtensionPathForId(extensionId: string): string {
 export function findExtensionsForEntry(
   supportedFileTypes: Array<any>,
   entryPath: string,
-  isFile: boolean = true
+  isFile = true
 ): OpenedEntry {
   const fileExtension = extractFileExtension(
     entryPath,
@@ -289,7 +374,7 @@ export function findExtensionsForEntry(
     viewingExtensionPath,
     viewingExtensionId: '',
     isFile,
-    changed: false,
+    // changed: false,
     lmdt: 0,
     size: 0
   };
@@ -387,166 +472,100 @@ export function getPrevFile(
   return prevFile;
 }
 
+/**
+ * persistIndex based on location - S3 or Native
+ * @param param
+ * @param directoryIndex
+ */
+function persistIndex(param: string | any, directoryIndex: any) {
+  let directoryPath;
+  if (typeof param === 'object' && param !== null) {
+    directoryPath = param.path;
+  } else {
+    directoryPath = param;
+  }
+  const folderIndexPath = getMetaIndexFilePath(directoryPath);
+  return PlatformIO.saveTextFilePlatform(
+    { ...param, path: folderIndexPath },
+    JSON.stringify(directoryIndex), // relativeIndex),
+    true
+  )
+    .then(() => {
+      console.log(
+        'Index persisted for: ' + directoryPath + ' to ' + folderIndexPath
+      );
+      return true;
+    })
+    .catch(err => {
+      console.error('Error saving the index for ' + folderIndexPath, err);
+    });
+}
+
 export function createDirectoryIndex(
-  directoryPath: string,
-  extractText: boolean = false,
-  ignorePatterns: Array<string>
+  param: string | any,
+  extractText = false,
+  ignorePatterns: Array<string> = [],
+  enableWS = true
+  // disableIndexing = true,
 ): Promise<Array<TS.FileSystemEntry>> {
+  let directoryPath;
+  let locationID;
+  if (typeof param === 'object' && param !== null) {
+    directoryPath = param.path;
+    ({ locationID } = param);
+  } else {
+    directoryPath = param;
+  }
   const dirPath = cleanTrailingDirSeparator(directoryPath);
-  if (PlatformIO.isWorkerAvailable() && !PlatformIO.haveObjectStoreSupport()) {
+  if (
+    enableWS &&
+    !PlatformIO.haveObjectStoreSupport() &&
+    !PlatformIO.haveWebDavSupport() &&
+    PlatformIO.isWorkerAvailable()
+  ) {
     // Start indexing in worker if not in the object store mode
     return PlatformIO.createDirectoryIndexInWorker(
       dirPath,
       extractText,
       ignorePatterns
-    );
+    ).then(succeeded => {
+      if (succeeded) {
+        return loadIndex({ path: dirPath, locationID });
+      }
+      return undefined;
+    });
   }
 
-  const SearchIndex = [];
-
-  // eslint-disable-next-line compat/compat
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      let counter = 0;
-      console.time('createDirectoryIndex');
-      walkDirectory(
-        dirPath,
-        {
-          recursive: true,
-          skipMetaFolder: true,
-          skipDotHiddenFolder: true,
-          extractText
-        },
-        fileEntry => {
-          counter += 1;
-          if (counter > AppConfig.indexerLimit) {
-            console.warn('Walk canceled by ' + AppConfig.indexerLimit);
-            window.walkCanceled = true;
-          }
-          SearchIndex.push(enhanceEntry(fileEntry));
-        },
-        directoryEntry => {
-          if (directoryEntry.name !== AppConfig.metaFolder) {
-            counter += 1;
-            SearchIndex.push(enhanceEntry(directoryEntry));
-          }
-        },
-        ignorePatterns
-      )
-        .then(() => {
-          // entries - can be used for further processing
-          window.walkCanceled = false;
-          console.log(
-            'Directory index created ' +
-              dirPath +
-              ' containing ' +
-              SearchIndex.length
-          );
-          console.timeEnd('createDirectoryIndex');
-          resolve(SearchIndex);
-          return true;
-        })
-        .catch(err => {
-          window.walkCanceled = false;
-          console.timeEnd('createDirectoryIndex');
-          console.warn('Error creating index: ' + err);
-          reject(err);
-        });
-    }, 2000);
-  });
-}
-
-export function walkDirectory(
-  path: string,
-  options: Object = {},
-  fileCallback: any,
-  dirCallback: any,
-  ignorePatterns: Array<string> = []
-) {
-  if (ignorePatterns.length > 0 && micromatch.isMatch(path, ignorePatterns)) {
-    return;
+  let listDirectoryPromise;
+  let loadTextFilePromise;
+  if (PlatformIO.haveObjectStoreSupport()) {
+    listDirectoryPromise = PlatformIO.listObjectStoreDir;
+    // eslint-disable-next-line prefer-destructuring
+    loadTextFilePromise = PlatformIO.loadTextFilePromise;
   }
-  const mergedOptions = {
-    recursive: false,
-    skipMetaFolder: true,
-    skipDotHiddenFolder: false,
-    skipDotHiddenFiles: false,
-    loadMetaDate: true,
-    extractText: false,
-    ...options
-  };
-  return (
-    PlatformIO.listDirectoryPromise(path, false, mergedOptions.extractText)
-      // @ts-ignore
-      .then(entries => {
-        if (window.walkCanceled || entries === undefined) {
-          return false;
+  const mode = ['extractThumbPath'];
+  if (extractText) {
+    mode.push('extractTextContent');
+  }
+  return PlatformIO.createIndex(
+    param,
+    mode,
+    ignorePatterns,
+    listDirectoryPromise,
+    loadTextFilePromise
+  )
+    .then(directoryIndex =>
+      persistIndex(param, directoryIndex).then(success => {
+        if (success) {
+          console.log('Index generated in folder: ' + directoryPath);
+          return enhanceDirectoryIndex(param, directoryIndex, locationID);
         }
-
-        return Promise.all(
-          entries.map(entry => {
-            if (window.walkCanceled) {
-              return false;
-            }
-
-            if (
-              ignorePatterns.length > 0 &&
-              micromatch.isMatch(entry.path, ignorePatterns)
-            ) {
-              return false;
-            }
-
-            if (entry.isFile) {
-              if (
-                fileCallback &&
-                (!mergedOptions.skipDotHiddenFiles ||
-                  !entry.name.startsWith('.'))
-              ) {
-                fileCallback(entry);
-              }
-              return entry;
-            }
-
-            if (
-              dirCallback &&
-              (!mergedOptions.skipDotHiddenFolder ||
-                !entry.name.startsWith('.')) &&
-              (!mergedOptions.skipMetaFolder ||
-                entry.name !== AppConfig.metaFolder)
-            ) {
-              dirCallback(entry);
-            }
-
-            if (mergedOptions.recursive) {
-              if (
-                mergedOptions.skipDotHiddenFolder &&
-                entry.name.startsWith('.')
-              ) {
-                return entry;
-              }
-              if (
-                mergedOptions.skipMetaFolder &&
-                entry.name === AppConfig.metaFolder
-              ) {
-                return entry;
-              }
-              return walkDirectory(
-                entry.path,
-                mergedOptions,
-                fileCallback,
-                dirCallback,
-                ignorePatterns
-              );
-            }
-            return entry;
-          })
-        );
+        return undefined;
       })
-      .catch(err => {
-        console.warn('Error walking directory ' + err);
-        return err;
-      })
-  );
+    )
+    .catch(err => {
+      console.error('Error creating index: ', err);
+    });
 }
 
 export async function getAllPropertiesPromise(
@@ -563,7 +582,11 @@ export async function getAllPropertiesPromise(
     if (metaFileProps.isFile) {
       entryProps.meta = await loadJSONFile(metaFilePath);
     }
-    return enhanceEntry(entryProps);
+    return enhanceEntry(
+      entryProps,
+      AppConfig.tagDelimiter,
+      PlatformIO.getDirSeparator()
+    );
   }
   console.warn('Error getting props for ' + entryPath);
   return entryProps;
@@ -573,33 +596,6 @@ export async function loadJSONFile(filePath: string) {
   // console.debug('loadJSONFile:' + filePath);
   const jsonContent = await PlatformIO.loadTextFilePromise(filePath);
   return loadJSONString(jsonContent);
-  /* const UTF8_BOM = '\ufeff';
-  if (jsonContent.indexOf(UTF8_BOM) === 0) {
-    jsonContent = jsonContent.substring(1, jsonContent.length);
-  }
-  try {
-    jsonObject = JSON.parse(jsonContent);
-  } catch (err) {
-    console.warn('Error parsing meta json file for ' + filePath + ' - ' + err);
-  }
-  return jsonObject; */
-}
-
-export function loadJSONString(jsonContent: string) {
-  let jsonObject;
-  let json;
-  const UTF8_BOM = '\ufeff';
-  if (jsonContent.indexOf(UTF8_BOM) === 0) {
-    json = jsonContent.substring(1, jsonContent.length);
-  } else {
-    json = jsonContent;
-  }
-  try {
-    jsonObject = JSON.parse(json);
-  } catch (err) {
-    console.error('Error parsing meta json file: ' + json, err);
-  }
-  return jsonObject;
 }
 
 export function saveAsTextFile(blob: any, filename: string) {
@@ -615,13 +611,18 @@ export function deleteFilesPromise(filePathList: Array<string>) {
 }
 
 export function renameFilesPromise(renameJobs: Array<Array<string>>) {
-  const fileRenamePromises = [];
+  return Promise.all(
+    renameJobs.map(renameJob =>
+      PlatformIO.renameFilePromise(renameJob[0], renameJob[1])
+    )
+  );
+  /* const fileRenamePromises = [];
   renameJobs.forEach(renameJob => {
     fileRenamePromises.push(
       PlatformIO.renameFilePromise(renameJob[0], renameJob[1])
     );
   });
-  return Promise.all(fileRenamePromises);
+  return Promise.all(fileRenamePromises); */
 }
 
 export function copyFilesPromise(copyJobs: Array<Array<string>>) {
@@ -632,11 +633,8 @@ export function copyFilesPromise(copyJobs: Array<Array<string>>) {
   return Promise.all(ioJobPromises);
 }
 
-export async function loadSubFolders(
-  path: string,
-  loadHidden: boolean = false
-) {
-  const folderContent = await PlatformIO.listDirectoryPromise(path, true);
+export async function loadSubFolders(path: string, loadHidden = false) {
+  const folderContent = await PlatformIO.listDirectoryPromise(path, []); // 'extractThumbPath']);
   const subfolders = [];
   let i = 0;
   let isHidden = false;
@@ -807,6 +805,7 @@ export function loadMetaDataPromise(
         );
         return loadJSONFile(metaFilePath).then(metaData => ({
           ...metaData,
+          isFile: true,
           description: metaData.description || '',
           color: metaData.color || '',
           tags: metaData.tags || [],
@@ -822,6 +821,7 @@ export function loadMetaDataPromise(
       return loadJSONFile(metaFilePath).then(metaData => ({
         ...metaData,
         id: metaData.id || uuidv1(),
+        isFile: false,
         description: metaData.description || '',
         color: metaData.color || '',
         perspective: metaData.perspective || '',
@@ -964,9 +964,7 @@ export async function saveMetaDataPromise(
     const content = JSON.stringify(cleanedMetaData);
     return PlatformIO.saveTextFilePromise(metaFilePath, content, true);
   }
-  return new Promise((resolve, reject) =>
-    reject(new Error('file not found' + path))
-  );
+  return Promise.reject(new Error('file not found' + path));
 }
 
 /**
@@ -983,7 +981,7 @@ export function setFolderThumbnailPromise(filePath: string): Promise<string> {
     PlatformIO.getDirSeparator()
   );
   return PlatformIO.copyFilePromise(
-    getThumbFileLocationForFile(filePath, PlatformIO.getDirSeparator()),
+    getThumbFileLocationForFile(filePath, PlatformIO.getDirSeparator(), false),
     getThumbFileLocationForDirectory(
       directoryPath,
       PlatformIO.getDirSeparator()
@@ -992,26 +990,32 @@ export function setFolderThumbnailPromise(filePath: string): Promise<string> {
   ).then(() => directoryPath);
 }
 
-export function findColorForFileEntry(
-  fileExtension: string,
-  isFile: boolean,
+export function findBackgroundColorForFolder(fsEntry: TS.FileSystemEntry) {
+  if (!fsEntry.isFile) {
+    if (fsEntry.color) {
+      return fsEntry.color;
+    }
+  }
+  return 'transparent';
+}
+
+export function findColorForEntry(
+  fsEntry: TS.FileSystemEntry,
   supportedFileTypes: Array<any>
 ): string {
-  if (!isFile) {
+  if (!fsEntry.isFile) {
     return AppConfig.defaultFolderColor;
   }
-  let color = AppConfig.defaultFileColor;
-  if (fileExtension !== undefined) {
-    supportedFileTypes.map(fileType => {
-      if (fileType.type.toLowerCase() === fileExtension.toLowerCase()) {
-        if (fileType.color) {
-          color = fileType.color;
-        }
-      }
-      return true;
-    });
+  if (fsEntry.extension !== undefined) {
+    const fileType = supportedFileTypes.find(
+      type => type.type.toLowerCase() === fsEntry.extension.toLowerCase()
+    );
+
+    if (fileType && fileType.color) {
+      return fileType.color;
+    }
   }
-  return color;
+  return AppConfig.defaultFileColor;
 }
 
 export function loadFileContentPromise(
@@ -1028,9 +1032,61 @@ export function loadFileContentPromise(
       if (response) {
         resolve(response);
       } else {
-        reject('loadFileContentPromise error');
+        reject(new Error('loadFileContentPromise error'));
       }
     };
     xhr.send();
   });
+}
+
+export function removeMarkDown(mdContent) {
+  if (!mdContent) return '';
+  let result = marked.parse(DOMPurify.sanitize(mdContent));
+  const span = document.createElement('span');
+  span.innerHTML = result;
+  result = span.textContent || span.innerText;
+  return result;
+}
+
+export function convertMarkDown(mdContent: string, directoryPath: string) {
+  const customRenderer = new marked.Renderer();
+  customRenderer.link = (href, title, text) => `
+      <a href="#"
+        title="${href}"
+        onClick="event.preventDefault(); event.stopPropagation(); window.postMessage(JSON.stringify({ command: 'openLinkExternally', link: '${href}' }), '*'); return false;">
+        ${text}
+      </a>`;
+
+  customRenderer.image = (href, title, text) => {
+    let sourceUrl = href;
+    const dirSep = PlatformIO.getDirSeparator();
+    if (
+      !sourceUrl.startsWith('http') &&
+      directoryPath &&
+      directoryPath !== dirSep
+    ) {
+      sourceUrl = directoryPath.endsWith(dirSep)
+        ? directoryPath + sourceUrl
+        : directoryPath + dirSep + sourceUrl;
+    }
+    if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
+      sourceUrl = PlatformIO.getURLforPath(sourceUrl);
+    }
+    return `<img src="${sourceUrl}" style="max-width: 100%">
+        ${text}
+    </img>`;
+  };
+
+  marked.setOptions({
+    renderer: customRenderer,
+    pedantic: false,
+    gfm: true,
+    tables: true,
+    breaks: false,
+    smartLists: true,
+    smartypants: false,
+    xhtml: true
+  });
+
+  return marked.parse(DOMPurify.sanitize(mdContent));
 }

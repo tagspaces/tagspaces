@@ -23,12 +23,12 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import Dialog from '@material-ui/core/Dialog';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
-import AppConfig from '-/config';
 import LicenseContent from '-/LICENSE.txt';
-import PlatformIO from '-/services/platform-io';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import PlatformIO from '-/services/platform-facade';
+// import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {
   open: boolean;
@@ -49,7 +49,7 @@ interface Props {
 //   return true;
 // }
 
-const LicenseDialog = (props: Props) => {
+function LicenseDialog(props: Props) {
   const { fullScreen, open, onClose } = props;
   // let licenseElement;
   // function printLicense() {
@@ -102,6 +102,6 @@ const LicenseDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 export default withMobileDialog()(LicenseDialog);

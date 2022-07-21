@@ -20,39 +20,40 @@ import React, { useEffect, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { List } from '@material-ui/core';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import styles from './SidePanels.css';
 import LocationManagerMenu from './menus/LocationManagerMenu';
 import ConfirmDialog from './dialogs/ConfirmDialog';
-import CustomLogo from './CustomLogo';
 import {
   actions as LocationActions,
   getLocations
 } from '../reducers/locations';
-import { actions as AppActions } from '../reducers/app';
+import { actions as AppActions, isLoading } from '../reducers/app';
 import {
   getPersistTagsInSidecarFile,
   isDesktopMode
 } from '-/reducers/settings';
 import i18n from '../services/i18n';
-import AppConfig from '../config';
 import LoadingLazy from '-/components/LoadingLazy';
 import LocationView from '-/components/LocationView';
 import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
+import PlatformIO from '-/services/platform-facade';
 
 const CreateEditLocationDialog = React.lazy(() =>
   import(
     /* webpackChunkName: "CreateEditLocationDialog" */ './dialogs/CreateEditLocationDialog'
   )
 );
-const CreateEditLocationDialogAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <CreateEditLocationDialog {...props} />
-  </React.Suspense>
-);
+function CreateEditLocationDialogAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <CreateEditLocationDialog {...props} />
+    </React.Suspense>
+  );
+}
 
 interface Props {
   classes?: any;
@@ -62,13 +63,16 @@ interface Props {
   openURLExternally: (path: string) => void;
   toggleOpenLinkDialog: () => void;
   setDefaultLocations: () => void;
-  addLocation: (location: TS.Location, openAfterCreate?: boolean) => void;
   addLocations: (locations: Array<TS.Location>) => void;
   editLocation: () => void;
   removeLocation: (location: TS.Location) => void;
   moveLocation: (uuid: string, position: number) => void;
   isDesktop: boolean;
   isPersistTagsInSidecar: boolean;
+  reduceHeightBy: number;
+  toggleLocationDialog: () => void;
+  isLoading: boolean;
+  show: boolean;
 }
 
 type SubFolder = {
@@ -78,13 +82,9 @@ type SubFolder = {
   children?: Array<SubFolder>;
 };
 
-const LocationManager = (props: Props) => {
+function LocationManager(props: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedLocation, setSelectedLocation] = useState<TS.Location>(null);
-  const [
-    isCreateLocationDialogOpened,
-    setCreateLocationDialogOpened
-  ] = useState<boolean>(false);
   const [isEditLocationDialogOpened, setEditLocationDialogOpened] = useState<
     boolean
   >(false);
@@ -118,20 +118,6 @@ const LocationManager = (props: Props) => {
     target.value = null;
   }
 
-  /* const getItemStyle = (isDragging, draggableStyle) => ({
-    // some basic styles to make the items look a bit nicer
-    userSelect: 'none',
-    // change background colour if dragging
-    background: isDragging ? 'lightgreen' : 'transparent',
-
-    // styles we need to apply on draggables
-    ...draggableStyle
-  });
-
-  const getListStyle = isDraggingOver => ({
-    background: isDraggingOver ? 'lightblue' : 'transparent',
-  }); */
-
   const onDragEnd = result => {
     // dropped outside the list
     if (!result.destination) {
@@ -141,11 +127,31 @@ const LocationManager = (props: Props) => {
     props.moveLocation(result.draggableId, result.destination.index);
   };
 
-  const { classes, isDesktop } = props;
+  const { classes, reduceHeightBy, isLoading, show } = props;
   return (
-    <div className={classes.panel} style={props.style}>
-      <CustomLogo />
-
+    <div
+      className={classes.panel}
+      style={{
+        display: show ? 'flex' : 'none',
+        flexDirection: 'column'
+      }}
+    >
+      {isLoading &&
+        (PlatformIO.haveObjectStoreSupport() ||
+          PlatformIO.haveWebDavSupport()) && (
+          <div
+            style={{
+              position: 'absolute',
+              zIndex: 1000,
+              height: 'calc(100% - 180px)',
+              width: 310,
+              backdropFilter: 'grayscale(1)'
+              // backgroundColor: 'red'
+              // backdropFilter: 'blur(2px)',
+              // backgroundColor: '#fafafaAA' // red: '#eb585882' '#d9d9d980'
+            }}
+          />
+        )}
       <LocationManagerMenu
         importLocations={() => {
           fileInputRef.current.click();
@@ -154,129 +160,66 @@ const LocationManager = (props: Props) => {
         exportLocations={() => setExportLocationsDialogOpened(true)}
         classes={classes}
         openURLExternally={props.openURLExternally}
-        showCreateLocationDialog={() => {
-          setCreateLocationDialogOpened(true);
-        }}
+        showCreateLocationDialog={props.toggleLocationDialog}
         toggleOpenLinkDialog={props.toggleOpenLinkDialog}
       />
-      {!AppConfig.locationsReadOnly && (
-        <div
-          style={{
-            width: '100%',
-            textAlign: 'center',
-            marginBottom: 10
-          }}
-        >
-          <Button
-            data-tid="createNewLocation"
-            onClick={() => setCreateLocationDialogOpened(true)}
-            title={i18n.t('core:createLocationTitle')}
-            className={classes.mainActionButton}
-            size="small"
-            variant="outlined"
-            color="primary"
-            style={{ width: '95%' }}
-          >
-            {/* <CreateLocationIcon className={classNames(classes.leftIcon)} /> */}
-            {i18n.t('core:createLocationTitle')}
-          </Button>
-        </div>
-      )}
-      <div>
-        {isCreateLocationDialogOpened && (
-          <CreateEditLocationDialogAsync
-            open={isCreateLocationDialogOpened}
-            onClose={() => setCreateLocationDialogOpened(false)}
-            addLocation={props.addLocation}
-            isPersistTagsInSidecar={props.isPersistTagsInSidecar}
-          />
-        )}
-        {isEditLocationDialogOpened && (
-          <CreateEditLocationDialogAsync
-            open={isEditLocationDialogOpened}
-            onClose={() => setEditLocationDialogOpened(false)}
-            location={selectedLocation}
-            editLocation={props.editLocation}
-            isPersistTagsInSidecar={props.isPersistTagsInSidecar}
-          />
-        )}
-        {isDeleteLocationDialogOpened && (
-          <ConfirmDialog
-            open={isDeleteLocationDialogOpened}
-            onClose={() => setDeleteLocationDialogOpened(false)}
-            title={i18n.t('core:deleteLocationTitleAlert')}
-            content={i18n.t('core:deleteLocationContentAlert', {
-              locationName: selectedLocation ? selectedLocation.name : ''
-            })}
-            confirmCallback={result => {
-              if (result && selectedLocation) {
-                props.removeLocation(selectedLocation);
-              }
-            }}
-            cancelDialogTID="cancelDeleteLocationDialog"
-            confirmDialogTID="confirmDeleteLocationDialog"
-          />
-        )}
-        <List
-          className={classes.locationListArea}
-          data-tid="locationList"
-          style={{
-            maxHeight: isDesktop
-              ? 'calc(100vh - 175px)'
-              : 'calc(100vh - 225px)',
-            // @ts-ignore
-            overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
-          }}
-        >
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="droppable">
-              {(provided, snapshot) => (
-                <div
-                  {...provided.droppableProps}
-                  ref={provided.innerRef}
-                  /* style={getListStyle(snapshot.isDraggingOver)} */
-                >
-                  {props.locations.map((location, index) => (
-                    <Draggable
-                      key={location.uuid}
-                      draggableId={location.uuid}
-                      index={index}
-                    >
-                      {(prov, snap) => (
-                        <div
-                          ref={prov.innerRef}
-                          {...prov.draggableProps}
-                          {...prov.dragHandleProps}
-                          /* style={getItemStyle(
+      <List
+        className={classes.locationListArea}
+        data-tid="locationList"
+        style={{
+          height: 'calc(100% - ' + reduceHeightBy + 'px)',
+          // @ts-ignore
+          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+        }}
+      >
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="droppable">
+            {(provided, snapshot) => (
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                /* style={getListStyle(snapshot.isDraggingOver)} */
+              >
+                {props.locations.map((location, index) => (
+                  <Draggable
+                    key={location.uuid}
+                    draggableId={location.uuid}
+                    index={index}
+                  >
+                    {(prov, snap) => (
+                      <div
+                        ref={prov.innerRef}
+                        {...prov.draggableProps}
+                        {...prov.dragHandleProps}
+                        /* style={getItemStyle(
                             snap.isDragging,
                             prov.draggableProps.style
                           )} */
-                        >
-                          <LocationView
-                            key={location.uuid}
-                            classes={props.classes}
-                            location={location}
-                            hideDrawer={props.hideDrawer}
-                            setEditLocationDialogOpened={
-                              setEditLocationDialogOpened
-                            }
-                            setDeleteLocationDialogOpened={
-                              setDeleteLocationDialogOpened
-                            }
-                            selectedLocation={selectedLocation}
-                            setSelectedLocation={setSelectedLocation}
-                          />
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
-        </List>
-      </div>
+                      >
+                        <LocationView
+                          key={location.uuid}
+                          classes={props.classes}
+                          location={location}
+                          hideDrawer={props.hideDrawer}
+                          setEditLocationDialogOpened={
+                            setEditLocationDialogOpened
+                          }
+                          setDeleteLocationDialogOpened={
+                            setDeleteLocationDialogOpened
+                          }
+                          selectedLocation={selectedLocation}
+                          setSelectedLocation={setSelectedLocation}
+                        />
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </List>
       <input
         style={{ display: 'none' }}
         ref={fileInputRef}
@@ -284,6 +227,32 @@ const LocationManager = (props: Props) => {
         type="file"
         onChange={handleFileInputChange}
       />
+      {isEditLocationDialogOpened && (
+        <CreateEditLocationDialogAsync
+          open={isEditLocationDialogOpened}
+          onClose={() => setEditLocationDialogOpened(false)}
+          location={selectedLocation}
+          editLocation={props.editLocation}
+          isPersistTagsInSidecar={props.isPersistTagsInSidecar}
+        />
+      )}
+      {isDeleteLocationDialogOpened && (
+        <ConfirmDialog
+          open={isDeleteLocationDialogOpened}
+          onClose={() => setDeleteLocationDialogOpened(false)}
+          title={i18n.t('core:deleteLocationTitleAlert')}
+          content={i18n.t('core:deleteLocationContentAlert', {
+            locationName: selectedLocation ? selectedLocation.name : ''
+          })}
+          confirmCallback={result => {
+            if (result && selectedLocation) {
+              props.removeLocation(selectedLocation);
+            }
+          }}
+          cancelDialogTID="cancelDeleteLocationDialog"
+          confirmDialogTID="confirmDeleteLocationDialog"
+        />
+      )}
       {ExportLocationsDialog && isExportLocationsDialogOpened && (
         <ExportLocationsDialog
           open={isExportLocationsDialogOpened}
@@ -304,12 +273,13 @@ const LocationManager = (props: Props) => {
       )}
     </div>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {
     locations: getLocations(state),
     isDesktop: isDesktopMode(state),
+    isLoading: isLoading(state),
     isPersistTagsInSidecar: getPersistTagsInSidecarFile(state)
   };
 }
@@ -318,13 +288,13 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
       setDefaultLocations: LocationActions.setDefaultLocations,
-      addLocation: LocationActions.addLocation,
       addLocations: LocationActions.addLocations,
       editLocation: LocationActions.editLocation,
       removeLocation: LocationActions.removeLocation,
       moveLocation: LocationActions.moveLocation,
       toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
-      openURLExternally: AppActions.openURLExternally
+      openURLExternally: AppActions.openURLExternally,
+      toggleLocationDialog: AppActions.toggleLocationDialog
     },
     dispatch
   );

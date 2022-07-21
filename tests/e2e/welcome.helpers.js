@@ -1,4 +1,4 @@
-import { clickOn, isDisplayed } from './general.helpers';
+import { clickOn } from './general.helpers';
 
 export async function closeWelcome() {
   const nextButton = await global.client.$('[data-tid=nextStepOnboarding]');
@@ -15,15 +15,26 @@ export async function closeWelcome() {
 }
 
 export async function closeWelcomePlaywright() {
-  if (await isDisplayed('[data-tid=closeOnboardingDialog]', true, 3000)) {
-    await global.client.click('[data-tid=closeOnboardingDialog]');
-    /*
-    await global.client.click('[data-tid=nextStepOnboarding]');
-    await global.client.click('[data-tid=nextStepOnboarding]');
-    await global.client.click('[data-tid=nextStepOnboarding]');
-    await global.client.click('[data-tid=nextStepOnboarding]');
-    await global.client.click('[data-tid=startTagSpacesAfterOnboarding]');
-    */
-    await global.client.click('[data-tid=agreeLicenseDialog]');
+  try {
+    const el = await global.client.waitForSelector(
+      '[data-tid=closeOnboardingDialog]',
+      {
+        timeout: 3000,
+        state: 'visible'
+      }
+    );
+    if (el) {
+      await el.click();
+      /*
+      await global.client.click('[data-tid=nextStepOnboarding]');
+      await global.client.click('[data-tid=nextStepOnboarding]');
+      await global.client.click('[data-tid=nextStepOnboarding]');
+      await global.client.click('[data-tid=nextStepOnboarding]');
+      await global.client.click('[data-tid=startTagSpacesAfterOnboarding]');
+      */
+      await global.client.click('[data-tid=agreeLicenseDialog]');
+    }
+  } catch (e) {
+    //console.log('closeOnboardingDialog not exist');
   }
 }

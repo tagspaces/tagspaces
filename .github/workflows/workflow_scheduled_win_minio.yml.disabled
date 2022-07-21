@@ -27,7 +27,7 @@ jobs:
           path: tests/testdata
       - uses: actions/setup-node@v2
         with:
-          node-version: '12.x'
+          node-version: '16.x'
       - name: Running yarn install, prettier and type checks
         run: |
           yarn install --check-files --cache-folder .ycache
@@ -43,7 +43,7 @@ jobs:
           target: tests/bin/
       - name: Run Electron tests
         run: |
-          yarn install-ext
+          yarn install-ext-node
           yarn build-main
           yarn build-e2e
           yarn test-e2e-electron-minio

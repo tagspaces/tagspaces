@@ -38,7 +38,7 @@ interface Props {
   selectedTagGroupEntry: TS.TagGroup;
 }
 
-const CreateTagsDialog = (props: Props) => {
+function CreateTagsDialog(props: Props) {
   const [inputError, setInputError] = useState<boolean>(false);
   const [tagTitle, setTagTitle] = useState<string>('');
 
@@ -131,6 +131,6 @@ const CreateTagsDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 export default CreateTagsDialog;

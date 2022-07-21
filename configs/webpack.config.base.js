@@ -4,6 +4,7 @@
 
 import path from 'path';
 import webpack from 'webpack';
+const Dotenv = require('dotenv-webpack');
 // import { dependencies } from '../package.json';
 
 export default {
@@ -60,8 +61,15 @@ export default {
   plugins: [
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'production'
+    }),
+    new Dotenv({
+      path: path.join(
+        __dirname,
+        '..',
+        'node_modules',
+        '@tagspaces/tagspaces-platforms/node_modules/@tagspaces/tagspaces-common/default.env'
+      )
     })
-
     // new webpack.NamedModulesPlugin()
   ]
 };

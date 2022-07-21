@@ -16,23 +16,25 @@
  *
  */
 
-import EXIF from 'exif-js';
+// import EXIF from 'exif-js';
 import {
   extractFileExtension,
   extractContainingDirectoryPath,
   extractFileName,
   normalizePath,
-  getMetaDirectoryPath
-} from '../utils/paths';
-import { base64ToArrayBuffer } from '../utils/misc';
-import AppConfig from '../config';
-import PlatformIO from '../services/platform-io';
+  getMetaDirectoryPath,
+  encodeFileName
+} from '@tagspaces/tagspaces-platforms/paths';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import { base64ToArrayBuffer } from '-/utils/dom';
+import PlatformIO from '../services/platform-facade';
 import { Pro } from '../pro';
 
 const maxSize = AppConfig.maxThumbSize;
 const bgColor = AppConfig.thumbBgColor;
 
-const supportedImgs = [
+export const supportedMisc = ['url', 'html'];
+export const supportedImgs = [
   'jpg',
   'jpeg',
   'jif',
@@ -43,8 +45,11 @@ const supportedImgs = [
   'webp',
   'bmp'
 ];
-const supportedContainers = [
-  // 'zip', // disable ZIP tmb generation due to potential performance issues on large files
+export const supportedContainers = [
+  'zip',
+  'pages',
+  'key',
+  'numbers',
   'epub',
   'docx',
   'pptx',
@@ -63,9 +68,10 @@ const supportedContainers = [
   'odp',
   'odg',
   'ods',
-  'odt'
+  'odt',
+  'pdf'
 ];
-const supportedText = [
+export const supportedText = [
   'txt',
   'md',
   'coffee',
@@ -90,29 +96,27 @@ const supportedText = [
   'sql',
   'mhtml'
 ];
-const supportedVideos = ['ogv', 'mp4', 'webm', 'm4v', 'mkv', 'lrv'];
+export const supportedVideos = ['ogv', 'mp4', 'webm', 'm4v', 'mkv', 'lrv'];
 const maxFileSize = 30 * 1024 * 1024;
 
 function saveThumbnailPromise(filePath, dataURL) {
-  return new Promise((resolve, reject) => {
-    if (!dataURL || dataURL.length < 7) {
-      // data:,
-      return reject('Invalid dataURL');
-    }
-    const baseString = dataURL.split(',').pop();
-    const content = base64ToArrayBuffer(baseString);
-    PlatformIO.saveBinaryFilePromise(filePath, content, true)
-      .then(() => resolve(filePath))
-      .catch(error => {
-        console.warn(
-          'Saving thumbnail for ' +
-            filePath +
-            ' failed with ' +
-            JSON.stringify(error)
-        );
-        return reject('Saving tmb failed for: ' + filePath);
-      });
-  });
+  if (!dataURL || dataURL.length < 7) {
+    // data:,
+    return Promise.reject(new Error('Invalid dataURL'));
+  }
+  const baseString = dataURL.split(',').pop();
+  const content = base64ToArrayBuffer(baseString);
+  return PlatformIO.saveBinaryFilePromise(filePath, content, true)
+    .then(() => filePath)
+    .catch(error => {
+      console.warn(
+        'Saving thumbnail for ' +
+          filePath +
+          ' failed with ' +
+          JSON.stringify(error)
+      );
+      return Promise.reject(new Error('Saving tmb failed for: ' + filePath));
+    });
 }
 
 function getThumbFileLocation(filePath: string) {
@@ -217,7 +221,7 @@ export function createThumbnailPromise(
     );
     const normalizedFileDirectory = normalizePath(fileDirectory);
     if (normalizedFileDirectory.endsWith(AppConfig.metaFolder)) {
-      resolve(); // prevent creating thumbs in meta/.ts folder
+      resolve(undefined); // prevent creating thumbs in meta/.ts folder
       return true;
     }
     const stats = await PlatformIO.getPropertiesPromise(metaDirectory); // TODO In cordova this check is too expensive for dirs like /.ts (replace it with checkDirExist)
@@ -232,16 +236,16 @@ export function createThumbnailPromise(
             .then(() => resolve(thumbFilePath))
             .catch(err => {
               console.warn('Thumb saving failed ' + err + ' for ' + filePath);
-              resolve();
+              resolve(undefined);
             });
           return true;
         }
-        resolve();
+        resolve(undefined);
         return true;
       })
       .catch(err => {
         console.warn('Thumb generation failed ' + err + ' for ' + filePath);
-        resolve();
+        resolve(undefined);
       });
     return true;
   });
@@ -253,37 +257,42 @@ export function generateThumbnailPromise(fileURL: string, fileSize: number) {
     PlatformIO.getDirSeparator()
   ).toLowerCase();
 
+  const fileURLEscaped = encodeFileName(fileURL, PlatformIO.getDirSeparator());
+
   if (supportedImgs.indexOf(ext) >= 0) {
     if (fileSize && fileSize < maxFileSize) {
-      return generateImageThumbnail(fileURL);
+      return generateImageThumbnail(fileURLEscaped);
     }
   } else if (Pro && ext === 'pdf') {
-    return Pro.ThumbsGenerator.generatePDFThumbnail(fileURL, maxSize);
+    return Pro.ThumbsGenerator.generatePDFThumbnail(fileURLEscaped, maxSize);
   } else if (Pro && ext === 'html') {
-    return Pro.ThumbsGenerator.generateHtmlThumbnail(fileURL, maxSize);
+    return Pro.ThumbsGenerator.generateHtmlThumbnail(fileURLEscaped, maxSize);
   } else if (Pro && ext === 'url') {
-    return Pro.ThumbsGenerator.generateUrlThumbnail(fileURL, maxSize);
+    return Pro.ThumbsGenerator.generateUrlThumbnail(fileURLEscaped, maxSize);
   } else if (Pro && ext === 'tiff') {
-    return Pro.ThumbsGenerator.generateTiffThumbnail(fileURL, maxSize);
+    return Pro.ThumbsGenerator.generateTiffThumbnail(fileURLEscaped, maxSize);
   } else if (Pro && ext === 'mp3') {
     if (fileSize && fileSize < maxFileSize) {
       // return Pro.ThumbsGenerator.generateMp3Thumbnail(fileURL, maxSize);
     }
   } else if (Pro && supportedText.indexOf(ext) >= 0) {
-    return Pro.ThumbsGenerator.generateTextThumbnail(fileURL, maxSize);
+    return Pro.ThumbsGenerator.generateTextThumbnail(fileURLEscaped, maxSize);
   } else if (Pro && supportedContainers.indexOf(ext) >= 0) {
     if (fileSize && fileSize < maxFileSize) {
       return Pro.ThumbsGenerator.generateZipContainerImageThumbnail(
-        fileURL,
+        fileURLEscaped,
         maxSize,
         supportedImgs
       );
     }
   } else if (supportedVideos.indexOf(ext) >= 0) {
     if (Pro) {
-      return Pro.ThumbsGenerator.generateVideoThumbnail(fileURL, maxSize);
+      return Pro.ThumbsGenerator.generateVideoThumbnail(
+        fileURLEscaped,
+        maxSize
+      );
     }
-    return generateVideoThumbnail(fileURL);
+    return generateVideoThumbnail(fileURLEscaped);
   }
   return generateDefaultThumbnail();
 }

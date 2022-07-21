@@ -26,14 +26,15 @@ import CloudLocationIcon from '@material-ui/icons/CloudQueue';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListSubHeader from '@material-ui/core/ListSubheader';
+import Tooltip from '@material-ui/core/Tooltip';
 import { withTheme } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import { locationType } from '@tagspaces/tagspaces-platforms/misc';
 import i18n from '-/services/i18n';
 import { getLocations } from '-/reducers/locations';
 import { actions as AppActions, getCurrentLocationId } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
-import { locationType } from '-/utils/misc';
 
 interface Props {
   currentLocationId: string | null;
@@ -43,7 +44,7 @@ interface Props {
   openLocation: (location: TS.Location) => void;
 }
 
-const LocationMenu = (props: Props) => {
+function LocationMenu(props: Props) {
   const [
     locationChooserMenuAnchorEl,
     setLocationChooserMenuAnchorEl
@@ -75,18 +76,31 @@ const LocationMenu = (props: Props) => {
         backgroundColor: theme.palette.background.default
       }}
     >
-      <Button
-        data-tid="folderContainerLocationChooser"
-        id="locationMenuButton"
-        onClick={event => setLocationChooserMenuAnchorEl(event.currentTarget)}
-        title={currentLocation && currentLocation.name}
-        style={{ paddingRight: 0, paddingLeft: 11 }}
+      <Tooltip
+        title={
+          currentLocation
+            ? i18n.t('currentLocation') + ': ' + currentLocation.name
+            : i18n.t('core:pleaseOpenLocation')
+        }
       >
-        {currentLocation
-          ? locationIcon // this.state.currentLocation.name
-          : i18n.t('core:pleaseOpenLocation')}
-        <ArrowDropDownIcon />
-      </Button>
+        <IconButton
+          data-tid="folderContainerLocationChooser"
+          id="locationMenuButton"
+          onClick={event => setLocationChooserMenuAnchorEl(event.currentTarget)}
+          style={{
+            // paddingRight: 0,
+            // paddingLeft: 0,
+            // marginRight: 5,
+            fontSize: theme.typography.fontSize,
+            borderRadius: 10
+          }}
+        >
+          {currentLocation
+            ? locationIcon // this.state.currentLocation.name
+            : i18n.t('core:pleaseOpenLocation')}
+          <ArrowDropDownIcon />
+        </IconButton>
+      </Tooltip>
       {Boolean(locationChooserMenuAnchorEl) && (
         <Menu
           id="simple-menu"
@@ -132,7 +146,7 @@ const LocationMenu = (props: Props) => {
       )}
     </div>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

@@ -19,6 +19,7 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
@@ -27,6 +28,7 @@ import { getLastPublishedVersion } from '-/reducers/settings';
 import {
   actions as AppActions,
   getNotificationStatus,
+  isGeneratingThumbs,
   isUpdateAvailable
 } from '../reducers/app';
 import {
@@ -40,6 +42,7 @@ import Links from '-/links';
 interface Props {
   notificationStatus: any;
   isIndexing: boolean;
+  isGeneratingThumbs: boolean;
   showNotification: (
     text: string,
     notificationType?: string,
@@ -50,10 +53,21 @@ interface Props {
   isUpdateAvailable: boolean;
   lastPublishedVersion: string;
   setUpdateAvailable: (isUpdateAvailable: boolean) => void;
+  setGeneratingThumbnails: (isGenerating: boolean) => void;
   openURLExternally: (url: string, skipConfirm: boolean) => void;
 }
 
-const PageNotification = (props: Props) => {
+const TSNotification = withStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      '& .MuiSnackbarContent-root': {
+        borderRadius: 10
+      }
+    }
+  })
+)(Snackbar);
+
+function PageNotification(props: Props) {
   const skipRelease = () => {
     props.setUpdateAvailable(false);
   };
@@ -77,7 +91,7 @@ const PageNotification = (props: Props) => {
 
   return (
     <>
-      <Snackbar
+      <TSNotification
         data-tid={props.notificationStatus.tid}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         open={props.notificationStatus.visible}
@@ -96,23 +110,25 @@ const PageNotification = (props: Props) => {
           </IconButton>
         ]}
       />
-      {/* <Snackbar
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        open={props.isGeneratingThumbs}
-        autoHideDuration={undefined}
-        message={i18n.t('core:loadingOrGeneratingThumbnails')}
-        action={[
-          <IconButton
-            key="closeButton"
-            aria-label={i18n.t('core:closeButton')}
-            color="inherit"
-            onClick={() => props.setGeneratingThumbnails(false)}
-          >
-            <CloseIcon />
-          </IconButton>
-        ]}
-      /> */}
-      <Snackbar
+      {props.isGeneratingThumbs && (
+        <TSNotification
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          open={props.isGeneratingThumbs}
+          autoHideDuration={undefined}
+          message={i18n.t('core:loadingOrGeneratingThumbnails')}
+          action={[
+            <IconButton
+              key="closeButton"
+              aria-label={i18n.t('core:closeButton')}
+              color="inherit"
+              onClick={() => props.setGeneratingThumbnails(false)}
+            >
+              <CloseIcon />
+            </IconButton>
+          ]}
+        />
+      )}
+      <TSNotification
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         open={props.isIndexing}
         autoHideDuration={undefined}
@@ -129,7 +145,7 @@ const PageNotification = (props: Props) => {
           </Button>
         ]}
       />
-      <Snackbar
+      <TSNotification
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         open={props.isUpdateAvailable}
         autoHideDuration={undefined}
@@ -163,14 +179,15 @@ const PageNotification = (props: Props) => {
       />
     </>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {
     notificationStatus: getNotificationStatus(state),
     isIndexing: isIndexing(state),
     isUpdateAvailable: isUpdateAvailable(state),
-    lastPublishedVersion: getLastPublishedVersion(state)
+    lastPublishedVersion: getLastPublishedVersion(state),
+    isGeneratingThumbs: isGeneratingThumbs(state)
   };
 }
 
@@ -181,6 +198,7 @@ function mapDispatchToProps(dispatch) {
       hideNotifications: AppActions.hideNotifications,
       cancelDirectoryIndexing: LocationIndexActions.cancelDirectoryIndexing,
       setUpdateAvailable: AppActions.setUpdateAvailable,
+      setGeneratingThumbnails: AppActions.setGeneratingThumbnails,
       openURLExternally: AppActions.openURLExternally
     },
     dispatch
@@ -191,6 +209,7 @@ const areEqual = (prevProp, nextProp) =>
   JSON.stringify(nextProp.notificationStatus) ===
     JSON.stringify(prevProp.notificationStatus) &&
   nextProp.isIndexing === prevProp.isIndexing &&
+  nextProp.isGeneratingThumbs === prevProp.isGeneratingThumbs &&
   nextProp.isUpdateAvailable === prevProp.isUpdateAvailable;
 
 export default connect(

@@ -30,10 +30,21 @@ import SelectAllIcon from '@material-ui/icons/CheckBox';
 import DeSelectAllIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CopyIcon from '@material-ui/icons/FileCopy';
 import DeleteIcon from '@material-ui/icons/Delete';
+import PropertiesIcon from '@material-ui/icons/Info';
 import ExportIcon from '@material-ui/icons/AssignmentReturn';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
-import AppConfig from '-/config';
+import {
+  actions as LocationIndexActions,
+  getSearchQuery
+} from '-/reducers/location-index';
+import { getKeyBindingObject } from '-/reducers/settings';
+import { getAllPropertiesPromise } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
+import { actions as AppActions } from '-/reducers/app';
 
 interface Props {
   classes: any;
@@ -41,8 +52,9 @@ interface Props {
   selectedEntries: Array<Object>;
   loadParentDirectoryContent: () => void;
   toggleSelectAllFiles: (event: any) => void;
-  allFilesSelected: boolean;
+  someFileSelected: boolean;
   handleLayoutSwitch: (event: Object) => void;
+  openFsEntry: (fsEntry?: TS.FileSystemEntry) => void;
   openAddRemoveTagsDialog: () => void;
   fileOperationsEnabled: boolean;
   openMoveCopyFilesDialog: () => void;
@@ -50,16 +62,20 @@ interface Props {
   handleSortingMenu: (event: Object) => void;
   handleExportCsvMenu: () => void;
   layoutType: string;
-  isDesktopMode: boolean;
   openSettings: () => void;
+  searchQuery: TS.SearchQuery;
+  setSearchQuery: (searchQuery: TS.SearchQuery) => void;
+  openCurrentDirectory: () => void;
+  directoryPath: string;
+  keyBindings: Array<any>;
 }
 
-const MainToolbar = (props: Props) => {
+function MainToolbar(props: Props) {
   const {
     classes,
     selectedEntries,
     toggleSelectAllFiles,
-    allFilesSelected,
+    someFileSelected,
     loadParentDirectoryContent,
     layoutType,
     handleLayoutSwitch,
@@ -69,32 +85,79 @@ const MainToolbar = (props: Props) => {
     openDeleteFileDialog,
     fileOperationsEnabled,
     handleSortingMenu,
-    isDesktopMode,
-    openSettings
+    openSettings,
+    keyBindings
   } = props;
+
+  function showProperties() {
+    getAllPropertiesPromise(props.directoryPath)
+      .then((fsEntry: TS.FileSystemEntry) => {
+        props.openFsEntry(fsEntry);
+        return true;
+      })
+      .catch(error =>
+        console.warn(
+          'Error getting properties for entry: ' +
+            props.directoryPath +
+            ' - ' +
+            error
+        )
+      );
+  }
 
   return (
     <Toolbar className={classes.topToolbar} data-tid="perspectiveGridToolbar">
-      <Tooltip title={i18n.t('core:toggleSelectAllFiles')}>
+      <Tooltip
+        title={
+          i18n.t('core:toggleSelectAllFiles') +
+          ' (' +
+          keyBindings['selectAll'].toUpperCase() +
+          ')'
+        }
+      >
         <IconButton
           data-tid="gridPerspectiveSelectAllFiles"
           onClick={toggleSelectAllFiles}
         >
-          {allFilesSelected ? <SelectAllIcon /> : <DeSelectAllIcon />}
+          {someFileSelected ? <SelectAllIcon /> : <DeSelectAllIcon />}
         </IconButton>
       </Tooltip>
-      {isDesktopMode && (
-        <Tooltip title={i18n.t('core:navigateToParentDirectory')}>
-          <IconButton
-            aria-label={i18n.t('core:navigateToParentDirectory')}
-            data-tid="gridPerspectiveOnBackButton"
-            onClick={loadParentDirectoryContent}
-          >
-            <ParentDirIcon />
-          </IconButton>
-        </Tooltip>
-      )}
-      {layoutType === 'row' ? (
+      <Tooltip
+        title={
+          i18n.t('core:navigateToParentDirectory') +
+          ' (' +
+          keyBindings['openParentDirectory'].toUpperCase() +
+          ')'
+        }
+      >
+        <IconButton
+          aria-label={i18n.t('core:navigateToParentDirectory')}
+          data-tid="gridPerspectiveOnBackButton"
+          onClick={() => {
+            if (
+              props.searchQuery &&
+              Object.keys(props.searchQuery).length > 0
+            ) {
+              props.setSearchQuery({});
+              props.openCurrentDirectory();
+            } else {
+              loadParentDirectoryContent();
+            }
+          }}
+        >
+          <ParentDirIcon />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title={i18n.t('core:directoryPropertiesTitle')}>
+        <IconButton
+          aria-label={i18n.t('core:directoryPropertiesTitle')}
+          data-tid="openFolderProperties"
+          onClick={showProperties}
+        >
+          <PropertiesIcon />
+        </IconButton>
+      </Tooltip>
+      {/* {layoutType === 'row' ? (
         <Tooltip title={i18n.t('core:switchToGridView')}>
           <IconButton
             aria-label={i18n.t('core:switchToGridView')}
@@ -118,47 +181,55 @@ const MainToolbar = (props: Props) => {
             <ViewListIcon />
           </IconButton>
         </Tooltip>
-      )}
+      )} */}
       {!isReadOnlyMode && (
-        <Tooltip title={i18n.t('core:tagSelectedEntries')}>
-          <span>
-            <IconButton
-              aria-label={i18n.t('core:tagSelectedEntries')}
-              data-tid="gridPerspectiveAddRemoveTags"
-              disabled={selectedEntries.length < 1}
-              onClick={openAddRemoveTagsDialog}
-            >
-              <TagIcon />
-            </IconButton>
-          </span>
+        <Tooltip
+          title={
+            i18n.t('core:tagSelectedEntries') +
+            ' (' +
+            keyBindings['addRemoveTags'].toUpperCase() +
+            ')'
+          }
+        >
+          <IconButton
+            aria-label={i18n.t('core:tagSelectedEntries')}
+            data-tid="gridPerspectiveAddRemoveTags"
+            disabled={selectedEntries.length < 1}
+            onClick={openAddRemoveTagsDialog}
+          >
+            <TagIcon />
+          </IconButton>
         </Tooltip>
       )}
       {!isReadOnlyMode && (
         <Tooltip title={i18n.t('core:copyMoveSelectedEntries')}>
-          <span>
-            <IconButton
-              aria-label={i18n.t('core:copyMoveSelectedEntries')}
-              data-tid="gridPerspectiveCopySelectedFiles"
-              disabled={!fileOperationsEnabled}
-              onClick={openMoveCopyFilesDialog}
-            >
-              <CopyIcon />
-            </IconButton>
-          </span>
+          <IconButton
+            aria-label={i18n.t('core:copyMoveSelectedEntries')}
+            data-tid="gridPerspectiveCopySelectedFiles"
+            disabled={!fileOperationsEnabled}
+            onClick={openMoveCopyFilesDialog}
+          >
+            <CopyIcon />
+          </IconButton>
         </Tooltip>
       )}
       {!isReadOnlyMode && (
-        <Tooltip title={i18n.t('core:deleteSelectedEntries')}>
-          <span>
-            <IconButton
-              aria-label={i18n.t('core:deleteSelectedEntries')}
-              data-tid="gridPerspectiveDeleteMultipleFiles"
-              disabled={!fileOperationsEnabled}
-              onClick={openDeleteFileDialog}
-            >
-              <DeleteIcon />
-            </IconButton>
-          </span>
+        <Tooltip
+          title={
+            i18n.t('core:deleteSelectedEntries') +
+            ' (' +
+            keyBindings['deleteDocument'].toUpperCase() +
+            ')'
+          }
+        >
+          <IconButton
+            aria-label={i18n.t('core:deleteSelectedEntries')}
+            data-tid="gridPerspectiveDeleteMultipleFiles"
+            disabled={!fileOperationsEnabled}
+            onClick={openDeleteFileDialog}
+          >
+            <DeleteIcon />
+          </IconButton>
         </Tooltip>
       )}
       <Tooltip title={i18n.t('core:sort')}>
@@ -195,6 +266,22 @@ const MainToolbar = (props: Props) => {
       </Tooltip>
     </Toolbar>
   );
-};
+}
 
-export default MainToolbar;
+function mapStateToProps(state) {
+  return {
+    searchQuery: getSearchQuery(state),
+    keyBindings: getKeyBindingObject(state)
+  };
+}
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(
+    {
+      setSearchQuery: LocationIndexActions.setSearchQuery,
+      openCurrentDirectory: AppActions.openCurrentDirectory
+    },
+    dispatch
+  );
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MainToolbar);

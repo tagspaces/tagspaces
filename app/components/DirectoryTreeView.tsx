@@ -19,17 +19,20 @@
 import React, { useState, forwardRef, useImperativeHandle, Ref } from 'react';
 import Table from 'rc-table';
 import FolderIcon from '@material-ui/icons/FolderOpen';
+import { locationType } from '@tagspaces/tagspaces-platforms/misc';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import DragItemTypes from '-/components/DragItemTypes';
-import AppConfig from '-/config';
-import PlatformIO from '-/services/platform-io';
+import PlatformIO from '-/services/platform-facade';
 import TargetTableMoveFileBox from '-/components/TargetTableMoveFileBox';
-import { getLocationPath } from '-/utils/paths';
 import { TS } from '-/tagspaces.namespace';
-import { locationType } from '-/utils/misc';
 
 interface Props {
   classes: any;
-  loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
+  loadDirectoryContent: (
+    path: string,
+    generateThumbnails: boolean,
+    loadDirMeta?: boolean
+  ) => void;
   location: TS.Location;
   data?: any;
   isReadOnlyMode?: boolean;
@@ -59,21 +62,21 @@ const DirectoryTreeView = forwardRef(
         if (isExpanded && data[location.uuid] !== undefined) {
           setData(undefined); // comment this to use cached data after expand
           setExpanded(false);
-        } else {
-          if (location.type === locationType.TYPE_CLOUD) {
-            PlatformIO.enableObjectStoreSupport(location)
-              .then(() => {
-                loadSubDirectories(location, 1);
-                props.loadDirectoryContent(getLocationPath(location), true);
-              })
-              .catch(error => {
-                console.log('enableObjectStoreSupport', error);
-              });
-          } else if (location.type === locationType.TYPE_LOCAL) {
-            PlatformIO.disableObjectStoreSupport();
-            loadSubDirectories(location, 1);
-            props.loadDirectoryContent(getLocationPath(location), true);
-          }
+        } else if (location.type === locationType.TYPE_CLOUD) {
+          PlatformIO.enableObjectStoreSupport(location)
+            .then(() => {
+              loadSubDirectories(location);
+            })
+            .catch(error => {
+              console.log('enableObjectStoreSupport', error);
+            });
+        } else if (location.type === locationType.TYPE_WEBDAV) {
+          PlatformIO.enableWebdavSupport(location);
+          loadSubDirectories(location);
+        } else if (location.type === locationType.TYPE_LOCAL) {
+          PlatformIO.disableObjectStoreSupport();
+          PlatformIO.disableWebdavSupport();
+          loadSubDirectories(location);
         }
       },
       closeLocation() {
@@ -82,18 +85,18 @@ const DirectoryTreeView = forwardRef(
           setExpanded(false);
         }
       }
-      /*removeLocation() {
+      /* removeLocation() {
         setData(undefined);
-      }*/
+      } */
     }));
 
-    /*const changeLocation = (location: Location) => {
+    /* const changeLocation = (location: Location) => {
     const dirsTree = data;
     dirsTree[location.uuid] = undefined;
     setData(dirsTree);
-  };*/
+  }; */
 
-    /*const renderBodyCell = props => (
+    /* const renderBodyCell = props => (
     <td {...props}>
       <TargetMoveFileBox
         // @ts-ignore
@@ -103,7 +106,7 @@ const DirectoryTreeView = forwardRef(
         {props.children}
       </TargetMoveFileBox>
     </td>
-  );*/
+  ); */
 
     const renderBodyRow = props => {
       if (
@@ -119,16 +122,20 @@ const DirectoryTreeView = forwardRef(
             {...props}
           />
         );
-      } else {
-        return <tr {...props} />;
       }
+      return <tr {...props} />;
     };
 
     const renderNameColumnAction = field => {
       const children = (
-        <span style={{ fontSize: 15, marginLeft: 5 }} title={field}>
+        <span style={{ fontSize: 15 }} title={field}>
           <FolderIcon
-            style={{ marginTop: 0, marginBottom: -8 }}
+            style={{
+              marginTop: 0,
+              marginLeft: 3,
+              marginRight: 6,
+              marginBottom: -8
+            }}
             className={props.classes.icon}
           />
           {field && field.length > 25 ? field.substr(0, 25) + '...' : field}
@@ -156,7 +163,7 @@ const DirectoryTreeView = forwardRef(
       // console.log('onExpand', expanded + JSON.stringify(record));
       if (expanded) {
         // this.onRowClick(record);
-        loadSubDirectories(record, 1);
+        loadSubDirectories(record);
       }
     };
 
@@ -164,18 +171,19 @@ const DirectoryTreeView = forwardRef(
       if (subDir.type === locationType.TYPE_CLOUD) {
         PlatformIO.enableObjectStoreSupport(subDir)
           .then(() => {
-            loadSubDirectories(subDir, 1);
+            loadSubDirectories(subDir);
             props.changeLocation(subDir);
-            props.loadDirectoryContent(subDir.path, true);
+            props.loadDirectoryContent(subDir.path, true, true);
+            return true;
           })
           .catch(error => {
             console.log('enableObjectStoreSupport', error);
           });
       } else if (subDir.type === locationType.TYPE_LOCAL) {
         PlatformIO.disableObjectStoreSupport();
-        loadSubDirectories(subDir, 1);
+        loadSubDirectories(subDir);
         props.changeLocation(subDir);
-        props.loadDirectoryContent(subDir.path, true);
+        props.loadDirectoryContent(subDir.path, true, true);
       }
     };
 
@@ -190,7 +198,7 @@ const DirectoryTreeView = forwardRef(
       }
     ];
 
-    const loadSubDirectories = (location: TS.Location, deepLevel: number) => {
+    const loadSubDirectories = (location: TS.Location) => {
       const subFolder = {
         ...(location.accessKeyId && { accessKeyId: location.accessKeyId }),
         ...(location.bucketName && { bucketName: location.bucketName }),
@@ -202,9 +210,9 @@ const DirectoryTreeView = forwardRef(
         uuid: location.uuid,
         name: location.name,
         type: location.type,
-        path: getLocationPath(location)
+        path: PlatformIO.getLocationPath(location)
       };
-      getDirectoriesTree(subFolder, deepLevel)
+      getDirectoriesTree(subFolder)
         .then(children => {
           if (children instanceof Array) {
             if (location.uuid) {
@@ -227,7 +235,7 @@ const DirectoryTreeView = forwardRef(
             }
           } else if (location.path === undefined) {
             // if is Location
-            //setData({});
+            // setData({});
           }
           return true;
         })
@@ -249,63 +257,55 @@ const DirectoryTreeView = forwardRef(
       children?: Array<SubFolder>;
     };
 
-    const getDirectoriesTree = (subFolder: SubFolder, deepLevel: number) =>
+    const getDirectoriesTree = (subFolder: SubFolder) =>
       // const { settings } = getState();
-      PlatformIO.listDirectoryPromise(subFolder.path, true)
-        // @ts-ignore
-        .then(dirEntries => {
-          if (dirEntries !== undefined) {
-            // console.debug('listDirectoryPromise resolved:' + dirEntries.length);
-            const directoryContent = [];
-            dirEntries.map(entry => {
-              if (
-                entry.name === AppConfig.metaFolder ||
-                entry.name.endsWith('/' + AppConfig.metaFolder) ||
-                (!props.showUnixHiddenEntries && entry.name.startsWith('.'))
-              ) {
+      new Promise((resolve, reject) => {
+        PlatformIO.listDirectoryPromise(subFolder.path, [])
+          .then(dirEntries => {
+            if (dirEntries !== undefined) {
+              // console.debug('listDirectoryPromise resolved:' + dirEntries.length);
+              const directoryContent = [];
+              dirEntries.map(entry => {
+                if (
+                  entry.name === AppConfig.metaFolder ||
+                  entry.name.endsWith('/' + AppConfig.metaFolder) ||
+                  (!props.showUnixHiddenEntries && entry.name.startsWith('.'))
+                ) {
+                  return true;
+                }
+                // const enhancedEntry = enhanceEntry(entry);
+                if (!entry.isFile) {
+                  // eslint-disable-next-line no-param-reassign
+                  if (subFolder.accessKeyId) {
+                    entry.accessKeyId = subFolder.accessKeyId;
+                  }
+                  if (subFolder.bucketName) {
+                    entry.bucketName = subFolder.bucketName;
+                  }
+                  if (subFolder.region) {
+                    entry.region = subFolder.region;
+                  }
+                  if (subFolder.endpointURL) {
+                    entry.endpointURL = subFolder.endpointURL;
+                  }
+                  if (subFolder.secretAccessKey) {
+                    entry.secretAccessKey = subFolder.secretAccessKey;
+                  }
+                  entry.uuid = subFolder.uuid;
+                  entry.type = subFolder.type;
+                  entry.children = []; // assuming there are sub folders
+                  directoryContent.push(entry);
+                }
                 return true;
-              }
-              // const enhancedEntry = enhanceEntry(entry);
-              if (!entry.isFile) {
-                // eslint-disable-next-line no-param-reassign
-                if (subFolder.accessKeyId) {
-                  entry.accessKeyId = subFolder.accessKeyId;
-                }
-                if (subFolder.bucketName) {
-                  entry.bucketName = subFolder.bucketName;
-                }
-                if (subFolder.region) {
-                  entry.region = subFolder.region;
-                }
-                if (subFolder.endpointURL) {
-                  entry.endpointURL = subFolder.endpointURL;
-                }
-                if (subFolder.secretAccessKey) {
-                  entry.secretAccessKey = subFolder.secretAccessKey;
-                }
-                entry.uuid = subFolder.uuid;
-                entry.type = subFolder.type;
-                directoryContent.push(entry);
-              }
-              return true;
-            });
-            if (directoryContent.length > 0) {
-              // eslint-disable-next-line no-param-reassign
-              subFolder.children = directoryContent;
-              if (deepLevel > 0) {
-                const promisesArr = [];
-                directoryContent.map(directory =>
-                  promisesArr.push(getDirectoriesTree(directory, deepLevel - 1))
-                );
-                return Promise.all(promisesArr);
-              }
+              });
+              resolve(directoryContent);
             }
-          }
-          return subFolder;
-        })
-        .catch(error => {
-          console.debug('getDirectoriesTree', error);
-        });
+          })
+          .catch(error => {
+            console.debug('getDirectoriesTree', error);
+            reject();
+          });
+      });
 
     /**
      * https://codereview.stackexchange.com/questions/47932/recursion-vs-iteration-of-tree-structure
@@ -386,7 +386,6 @@ const DirectoryTreeView = forwardRef(
     };
 
     if (isExpanded && data != undefined) {
-      // @ts-ignore
       return (
         <Table
           key={props.location.uuid}
@@ -402,7 +401,7 @@ const DirectoryTreeView = forwardRef(
           data={data[props.location.uuid]}
           columns={columns}
           indentSize={20}
-          expandable={{ onExpand: onExpand }}
+          expandable={{ onExpand }}
           // expandIcon={this.CustomExpandIcon}
           // expandIconAsCell
           // @ts-ignore

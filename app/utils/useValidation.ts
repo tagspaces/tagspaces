@@ -7,7 +7,7 @@ export default function useValidation() {
    * @param errorKey
    * @param add; if false = remove it
    */
-  const setError = (errorKey: string, add: boolean = true): void => {
+  const setError = (errorKey: string, add = true): void => {
     if (add) {
       if (errorInput.length === 0) {
         setErrorInput([errorKey]);

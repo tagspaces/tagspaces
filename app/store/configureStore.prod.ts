@@ -21,7 +21,7 @@ import { persistStore } from 'redux-persist';
 import thunk from 'redux-thunk';
 import rootReducer from '../reducers';
 import onlineListener from '../services/onlineListener';
-import PlatformIO from '-/services/platform-io';
+import PlatformIO from '-/services/platform-facade';
 
 const enhancer = compose(
   applyMiddleware(thunk) // , router)
@@ -35,6 +35,7 @@ function configureStore(initialState) {
     // document.dispatchEvent(new Event('storeLoaded'));
     // console.log('Store rehydrated.');
     setTimeout(() => {
+      // @ts-ignore
       PlatformIO.setLanguage(store.getState().settings.interfaceLanguage);
     }, 500);
   });

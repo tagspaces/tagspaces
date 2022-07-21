@@ -21,7 +21,10 @@ export namespace TS {
     uuid: string;
     newuuid?: string;
     name: string;
-    type: string;
+    type: string; // 0 - local; 1 - S3; 2 - amplify; 3 - webdav
+    authType?: string; // none,password,digest,token
+    username?: string;
+    password?: string;
     accessKeyId?: string;
     secretAccessKey?: string;
     sessionToken?: string;
@@ -37,7 +40,7 @@ export namespace TS {
     isReadOnly?: boolean;
     isNotEditable?: boolean;
     watchForChanges?: boolean;
-    persistIndex?: boolean;
+    disableIndexing?: boolean;
     fullTextIndex?: boolean;
     maxIndexAge?: number;
     persistTagsInSidecarFile?: boolean;
@@ -126,6 +129,7 @@ export namespace TS {
   interface FileSystemEntryMeta {
     id?: string;
     description?: string;
+    isFile?: boolean;
     tags?: Array<TS.Tag>;
     tagGroups?: Array<TS.TagGroup>;
     color?: string;

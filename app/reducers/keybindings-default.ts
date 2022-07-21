@@ -57,6 +57,10 @@ export default function keyBindings(isMacLike) {
       command: 'up'
     },
     {
+      name: 'Escape',
+      command: 'Escape'
+    },
+    {
       name: 'showHelp',
       command: 'f1'
     },
@@ -94,11 +98,11 @@ export default function keyBindings(isMacLike) {
     },
     {
       name: 'zoomIn',
-      command: (isMacLike ? 'command' : 'ctrl') + '+'
+      command: (isMacLike ? 'command' : 'ctrl') + '+shift+'
     },
     {
       name: 'zoomOut',
-      command: (isMacLike ? 'command' : 'ctrl') + '-'
+      command: (isMacLike ? 'command' : 'ctrl') + '+-'
     }
   ];
 }

@@ -16,8 +16,8 @@
  *
  */
 
-import React, { useCallback, useState } from 'react';
-import uuidv1 from 'uuid';
+import React, { useState } from 'react';
+import { v1 as uuidv1 } from 'uuid';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
@@ -84,7 +84,7 @@ interface Props {
   // removeTags: (paths: Array<string>, tags: Array<Tag>) => void;
 }
 
-const TagsSelect = (props: Props) => {
+function TagsSelect(props: Props) {
   const [tagMenuAnchorEl, setTagMenuAnchorEl] = useState<null | HTMLElement>(
     null
   );
@@ -99,21 +99,31 @@ const TagsSelect = (props: Props) => {
     if (reason === 'select-option') {
       props.handleChange(props.tagSearchType, selectedTags, reason);
     } else if (reason === 'create-option') {
-      if (
-        selectedTags &&
-        selectedTags.length &&
-        isValidNewOption(selectedTags[selectedTags.length - 1], selectedTags)
-      ) {
-        const newTag: TS.Tag = {
-          id: uuidv1(),
-          title: '' + selectedTags[selectedTags.length - 1],
-          color: defaultBackgroundColor,
-          textcolor: defaultTextColor
-        };
-        props.allTags.push(newTag);
+      if (selectedTags && selectedTags.length) {
+        const tagsInput = '' + selectedTags[selectedTags.length - 1];
+        let tags = tagsInput
+          .split(' ')
+          .join(',')
+          .split(','); // handle spaces around commas
+        tags = [...new Set(tags)]; // remove duplicates
+        tags = tags.filter(tag => tag && tag.length > 0); // zero length tags
+
+        const newTags = [];
+        tags.map(tag => {
+          const newTag: TS.Tag = {
+            id: uuidv1(),
+            title: '' + tag,
+            color: defaultBackgroundColor,
+            textcolor: defaultTextColor
+          };
+          if (isValidNewOption(newTag.title, selectedTags)) {
+            newTags.push(newTag);
+            props.allTags.push(newTag);
+          }
+        });
         selectedTags.pop();
-        const newTags = [...selectedTags, newTag];
-        props.handleChange(props.tagSearchType, newTags, reason);
+        const allNewTags = [...selectedTags, ...newTags];
+        props.handleChange(props.tagSearchType, allNewTags, reason);
       }
     } else if (reason === 'remove-value') {
       props.handleChange(props.tagSearchType, selectedTags, reason);
@@ -147,28 +157,22 @@ const TagsSelect = (props: Props) => {
 
   const tags = props.tags ? props.tags : [];
 
-  const handleTagMenu = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>, tag) => {
-      setTagMenuAnchorEl(event.currentTarget);
-      setSelectedTag(tag);
-    },
-    [tags]
-  );
+  const handleTagMenu = (event: React.ChangeEvent<HTMLInputElement>, tag) => {
+    setTagMenuAnchorEl(event.currentTarget);
+    setSelectedTag(tag);
+  };
 
-  const handleRemoveTag = useCallback(
-    (event, cTag: Array<TS.Tag>) => {
-      /* const reducedTags = [...tags];
+  const handleRemoveTag = (event, cTag: Array<TS.Tag>) => {
+    /* const reducedTags = [...tags];
       for (let i = 0; i < reducedTags.length; i += 1) {
         if (reducedTags[i].title === cTag.title) {
           reducedTags.splice(i, 1);
         }
       } */
-      if (cTag.length > 0) {
-        handleTagChange(event, cTag, 'remove-value');
-      }
-    },
-    [tags]
-  );
+    if (cTag.length > 0) {
+      handleTagChange(event, cTag, 'remove-value');
+    }
+  };
 
   const handleCloseTagMenu = () => {
     setTagMenuAnchorEl(null);
@@ -225,7 +229,7 @@ const TagsSelect = (props: Props) => {
       )}
     </div>
   );
-};
+}
 
 const mapStateToProps = state => ({
   allTags: getAllTags(state),

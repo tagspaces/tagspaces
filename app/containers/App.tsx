@@ -19,12 +19,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { I18nextProvider } from 'react-i18next'; // as we build ourself via webpack
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import { createTheme, ThemeProvider } from '@material-ui/core/styles';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '../services/i18n';
 import { getCurrentTheme } from '-/reducers/settings';
-import AppConfig from '-/config';
 
-const lightTheme = createMuiTheme({
+const lightTheme = createTheme({
   palette: {
     type: 'light', // Switching the dark mode on is a single property value change.
     primary: {
@@ -41,7 +41,7 @@ const lightTheme = createMuiTheme({
   }
 });
 
-const darkTheme = createMuiTheme({
+const darkTheme = createTheme({
   palette: {
     type: 'dark',
     primary: {
@@ -79,7 +79,7 @@ interface Props {
   children: Object;
   currentTheme: string;
 }
-const App = (props: Props) => {
+function App(props: Props) {
   let theme;
   switch (props.currentTheme) {
     case 'light': {
@@ -101,7 +101,7 @@ const App = (props: Props) => {
       <I18nextProvider i18n={i18n}>{props.children}</I18nextProvider>
     </ThemeProvider>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

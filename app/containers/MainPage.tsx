@@ -16,18 +16,21 @@
  *
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useReducer, useRef, useState } from 'react';
+import clsx from 'clsx';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import { translate } from 'react-i18next';
-import SplitPane from 'react-split-pane';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+import Drawer from '@material-ui/core/Drawer';
 import { HotKeys } from 'react-hotkeys';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { Progress } from 'aws-sdk/clients/s3';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
-import VerticalNavigation from '../components/VerticalNavigation';
+import { Split } from 'ts-react-splitter';
+import { buffer } from '@tagspaces/tagspaces-platforms/misc';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import MobileNavigation from '../components/MobileNavigation';
 import FolderContainer from '../components/FolderContainer';
 import EntryContainer from '../components/EntryContainer';
@@ -37,7 +40,6 @@ import CreateFileDialog from '../components/dialogs/CreateDialog';
 import {
   getDesktopMode,
   getKeyBindingObject,
-  getLeftVerticalSplitSize,
   getMainVerticalSplitSize,
   actions as SettingsActions
 } from '../reducers/settings';
@@ -67,15 +69,14 @@ import {
   OpenedEntry,
   isDeleteMultipleEntriesDialogOpened,
   getSelectedEntries,
-  currentUser
+  currentUser,
+  isLocationDialogOpened
 } from '../reducers/app';
-import { buffer } from '-/utils/misc';
 import TargetFileBox from '../components/TargetFileBox';
-import AppConfig from '../config';
 import i18n from '../services/i18n';
 import LoadingLazy from '../components/LoadingLazy';
 import withDnDContext from '-/containers/withDnDContext';
-import { CustomDragLayer } from '-/components/CustomDragLayer';
+import CustomDragLayer from '-/components/CustomDragLayer';
 import IOActions from '-/reducers/io-actions';
 import FileUploadDialog from '-/components/dialogs/FileUploadDialog';
 import ProgressDialog from '-/components/dialogs/ProgressDialog';
@@ -84,12 +85,12 @@ import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { TS } from '-/tagspaces.namespace';
 import PageNotification from '-/containers/PageNotification';
 import listen from '-/containers/RendererListener';
+import { actions as LocationIndexActions } from '-/reducers/location-index';
+import MoveOrCopyFilesDialog from '-/components/dialogs/MoveOrCopyFilesDialog';
+import PlatformIO from '-/services/platform-facade';
 
-const initialSplitSize = 44;
-const drawerWidth = 300;
+const drawerWidth = 320;
 const body = document.getElementsByTagName('body')[0];
-// const showOneColumnThreshold = 600;
-// const bufferedMainSplitResize = buffer({ timeout: 50, id: 'buffered-mainsplit-resize' });
 const bufferedLeftSplitResize = buffer({
   timeout: 300,
   id: 'buffered-leftsplit-resize'
@@ -97,31 +98,23 @@ const bufferedLeftSplitResize = buffer({
 
 const styles: any = (theme: any) => ({
   content: {
-    width: '100%',
-    marginLeft: drawerWidth,
+    height: '100%',
     flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
+    padding: 0,
+    paddingLeft: drawerWidth,
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
-    }),
-    [theme.breakpoints.up('sm')]: {
-      content: {
-        height: 'calc(100% - 64px)',
-        marginTop: 64
-      }
-    }
+    })
   },
   contentShift: {
-    marginLeft: 0,
+    height: '100%',
+    padding: 0,
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen
-    })
-  },
-  drawerPaper: {
-    height: '100%',
-    width: drawerWidth
+    }),
+    marginLeft: 0
   }
 });
 
@@ -131,7 +124,7 @@ interface Props {
   isDesktopMode: boolean;
   openedFiles: Array<OpenedEntry>;
   isGeneratingThumbs: boolean;
-  setGeneratingThumbnails: (isGenerating: boolean) => void;
+  // setGeneratingThumbnails: (isGenerating: boolean) => void;
   isEntryInFullWidth: boolean;
   classes: any;
   theme: any;
@@ -141,6 +134,7 @@ interface Props {
   isCreateDirectoryOpened: boolean;
   toggleCreateDirectoryDialog: () => void;
   isAboutDialogOpened: boolean;
+  isLocationDialogOpened: boolean;
   isKeysDialogOpened: boolean;
   isLicenseDialogOpened: boolean;
   isThirdPartyLibsDialogOpened: boolean;
@@ -167,6 +161,7 @@ interface Props {
   toggleLicenseDialog: () => void; // needed by electron-menus
   toggleThirdPartyLibsDialog: () => void; // neede by electron-menus
   toggleAboutDialog: () => void; // needed by electron-menus
+  toggleLocationDialog: () => void; // needed by electron-menus
   toggleOnboardingDialog: () => void; // needed by electron-menus
   // setLastSelectedEntry: (path: string) => void; // needed by electron-menus
   setSelectedEntries: (selectedEntries: Array<Object>) => void; // needed by electron-menus
@@ -176,13 +171,12 @@ interface Props {
   openPrevFile: (path?: string) => void; // needed by electron-menus
   openLocationManagerPanel: () => void;
   openTagLibraryPanel: () => void;
-  openSearchPanel: () => void;
+  // openSearchPanel: () => void;
   openHelpFeedbackPanel: () => void;
   closeAllVerticalPanels: () => void;
   leftSplitSize: number;
   mainSplitSize: any;
   toggleShowUnixHiddenEntries: () => void;
-  setLeftVerticalSplitSize: (splitSize: number) => void;
   setMainVerticalSplitSize: (splitSize: string) => void;
   isLocationManagerPanelOpened: boolean;
   isOpenLinkDialogOpened: boolean;
@@ -196,6 +190,11 @@ interface Props {
     autohide?: boolean
   ) => void;
   reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => void;
+  loadDirectoryContent: (
+    path: string,
+    generateThumbnails: boolean,
+    loadDirMeta?: boolean
+  ) => void;
   uploadFilesAPI: (
     files: Array<File>,
     destination: string,
@@ -208,6 +207,20 @@ interface Props {
   deleteFile: (path: string) => void;
   deleteDirectory: (path: string) => void;
   user: CognitoUserInterface;
+  setSearchQuery: (searchQuery: TS.SearchQuery) => void;
+}
+
+const CreateEditLocationDialog = React.lazy(() =>
+  import(
+    /* webpackChunkName: "CreateEditLocationDialog" */ '../components/dialogs/CreateEditLocationDialog'
+  )
+);
+function CreateEditLocationDialogAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <CreateEditLocationDialog {...props} />
+    </React.Suspense>
+  );
 }
 
 const AboutDialog = React.lazy(() =>
@@ -215,97 +228,101 @@ const AboutDialog = React.lazy(() =>
     /* webpackChunkName: "AboutDialog" */ '../components/dialogs/AboutDialog'
   )
 );
-const AboutDialogAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <AboutDialog {...props} />
-  </React.Suspense>
-);
+function AboutDialogAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <AboutDialog {...props} />
+    </React.Suspense>
+  );
+}
 
 const LicenseDialog = React.lazy(() =>
   import(
     /* webpackChunkName: "LicenseDialog" */ '../components/dialogs/LicenseDialog'
   )
 );
-const LicenseDialogAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <LicenseDialog {...props} />
-  </React.Suspense>
-);
+function LicenseDialogAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <LicenseDialog {...props} />
+    </React.Suspense>
+  );
+}
 
 const KeyboardDialog = React.lazy(() =>
   import(
     /* webpackChunkName: "KeyboardDialog" */ '../components/dialogs/KeyboardDialog'
   )
 );
-const KeyboardDialogAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <KeyboardDialog {...props} />
-  </React.Suspense>
-);
+function KeyboardDialogAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <KeyboardDialog {...props} />
+    </React.Suspense>
+  );
+}
 
 const ThirdPartyLibsDialog = React.lazy(() =>
   import(
     /* webpackChunkName: "ThirdPartyLibsDialog" */ '../components/dialogs/ThirdPartyLibsDialog'
   )
 );
-const ThirdPartyLibsDialogAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <ThirdPartyLibsDialog {...props} />
-  </React.Suspense>
-);
+function ThirdPartyLibsDialogAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <ThirdPartyLibsDialog {...props} />
+    </React.Suspense>
+  );
+}
 
 const OnboardingDialog = React.lazy(() =>
   import(
     /* webpackChunkName: "OnboardingDialog" */ '../components/dialogs/OnboardingDialog'
   )
 );
-const OnboardingDialogAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <OnboardingDialog {...props} />
-  </React.Suspense>
-);
+function OnboardingDialogAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <OnboardingDialog {...props} />
+    </React.Suspense>
+  );
+}
 
 const EditEntryTagDialog = React.lazy(() =>
   import(
     /* webpackChunkName: "EditEntryTagDialog" */ '../components/dialogs/EditEntryTagDialog'
   )
 );
-const EditEntryTagDialogAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <EditEntryTagDialog {...props} />
-  </React.Suspense>
-);
+function EditEntryTagDialogAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <EditEntryTagDialog {...props} />
+    </React.Suspense>
+  );
+}
 
 const OpenLinkDialog = React.lazy(() =>
   import(
     /* webpackChunkName: "OpenLinkDialog" */ '../components/dialogs/OpenLinkDialog'
   )
 );
-const OpenLinkDialogAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <OpenLinkDialog {...props} />
-  </React.Suspense>
-);
+function OpenLinkDialogAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <OpenLinkDialog {...props} />
+    </React.Suspense>
+  );
+}
 
-// let showVerticalPanel = true;
-// if (window.ExtDefaultVerticalPanel === 'none') {
-//   showVerticalPanel = false;
-// }
-
-const MainPage = (props: Props) => {
-  // useTraceUpdate(props);
-  /* const [selectedDirectoryPath, setSelectedDirectoryPath] = useState<string>(
-    ''
-  ); */
+function MainPage(props: Props) {
+  // const [percent, setPercent] = React.useState<number | undefined>(undefined);
+  const percent = useRef<number | undefined>(undefined);
   const selectedDirectoryPath = useRef<string>('');
   const setSelectedDirectoryPath = (path: string) => {
     selectedDirectoryPath.current = path;
   };
-  // const [isManagementPanelVisible, setManagementPanelVisible] = useState<
-  //   boolean
-  // >(showVerticalPanel || !props.isEntryInFullWidth);
-  // const [mainSplitSize, setMainSplitSize] = useState<any>('100%');
-  // const [isDrawerOpened, setDrawerOpened] = useState<boolean>(true);
+  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+
   const width =
     window.innerWidth ||
     document.documentElement.clientWidth ||
@@ -319,6 +336,12 @@ const MainPage = (props: Props) => {
     height
   });
 
+  const [drawerOpened, setDrawerOpened] = useState<boolean>(true);
+  const [moveCopyDialogOpened, setMoveCopyDialogOpened] = useState<any>(
+    undefined
+  );
+  // const [rightPanelWidth, setRightPanelWidth] = useState<number>(0);
+
   useEffect(() => {
     if (!AppConfig.isCordova) {
       updateDimensions();
@@ -327,41 +350,15 @@ const MainPage = (props: Props) => {
   }, []);
 
   useEffect(() => {
+    // setPercent(undefined);
     if (props.isEntryInFullWidth) {
-      props.closeAllVerticalPanels();
-    } else {
-      showDrawer();
+      setDrawerOpened(false); // !props.isEntryInFullWidth);
     }
   }, [props.isEntryInFullWidth]);
 
-  const getMainSplitSize = () => {
-    if (props.openedFiles.length === 0) {
-      return '100%';
-    }
-
-    if (props.isEntryInFullWidth) {
-      return '0%';
-    }
-    const width =
-      window.innerWidth ||
-      document.documentElement.clientWidth ||
-      body.clientWidth;
-    const height =
-      window.innerHeight ||
-      document.documentElement.clientHeight ||
-      body.clientHeight;
-    if (height > width) {
-      return '0%';
-    }
-
-    return props.mainSplitSize;
-  };
-
-  const isManagementPanelVisible = () =>
-    props.isLocationManagerPanelOpened ||
-    props.isTagLibraryPanelOpened ||
-    props.isSearchPanelOpened ||
-    props.isHelpFeedbackPanelOpened;
+  useEffect(() => {
+    updateDimensions();
+  }, [props.openedFiles]);
 
   useEventListener('resize', () => {
     if (!AppConfig.isCordova) {
@@ -370,62 +367,92 @@ const MainPage = (props: Props) => {
   });
 
   const updateDimensions = () => {
-    const width =
+    const w =
       window.innerWidth ||
       document.documentElement.clientWidth ||
       body.clientWidth;
-    const height =
+    const h =
       window.innerHeight ||
       document.documentElement.clientHeight ||
       body.clientHeight;
 
     // console.log('Width: ' + width + ' Height: ' + height);
-    setDimensions({ width, height });
+    setDimensions({ width: w, height: h });
 
-    if (props.openedFiles.length > 0) {
-      const isFillWidth = height > width;
+    if (props.openedFiles.length > 0 && !props.isEntryInFullWidth) {
+      const isFillWidth = h > w;
       if (isFillWidth !== props.isEntryInFullWidth) {
         props.setEntryFullWidth(isFillWidth);
       }
     }
+  };
 
-    // Hide folder container on windows resize or on mobile
-    // Disable due a bug with the full width functionality
-    /* if (this.props.isFileOpened) {
-      if (width > showOneColumnThreshold) {
-        // TODO hide management panel
-        this.setState({
-          mainSplitSize: this.props.mainSplitSize
-        });
+  const toggleDrawer = () => {
+    setDrawerOpened(prevOpen => !prevOpen);
+  };
+
+  const handleMoveCopyFiles = (files: Array<File>, move = false) => {
+    const promises = [];
+    for (const file of files) {
+      if (move) {
+        promises.push(
+          PlatformIO.renameFilePromise(
+            file.path,
+            props.directoryPath + AppConfig.dirSeparator + file.name
+          )
+            .then(() => true)
+            .catch(error => {
+              console.log('renameFilePromise', error);
+            })
+        );
       } else {
-        this.setState({
-          mainSplitSize: '0%'
-        });
+        promises.push(
+          PlatformIO.copyFilePromise(
+            file.path,
+            props.directoryPath + AppConfig.dirSeparator + file.name
+          )
+            .then(() => true)
+            .catch(error => {
+              console.log('copyFilePromise', error);
+            })
+        );
       }
-    } */
+    }
+    Promise.all(promises)
+      .then(() => props.loadDirectoryContent(props.directoryPath, true, true))
+      .catch(error => {
+        console.log('promises', error);
+      });
   };
+  /* const handleMoveFiles = (files: Array<File>) => {
+    handleCopyFiles(files)
+      .then(success => {
+        if (AppConfig.isElectron && success) {
+          for (const file of files) {
+            PlatformIO.deleteFilePromise(file.path)
+              .then(() => true)
+              .catch(error => {
+                console.log('deleteFilePromise', error);
+              });
+          }
+        }
+        return true;
+      })
+      .catch(error => {
+        console.log('handleCopyFiles', error);
+      });
+  }; */
 
-  const showDrawer = () => {
-    /* if (
-      !props.isLocationManagerPanelOpened && // TODO this is true in Cordova on closed Locations && LocationManagerPanel
-      !props.isSearchPanelOpened &&
-      !props.isTagLibraryPanelOpened
-    ) { */
-    props.openLocationManagerPanel();
-    // setDrawerOpened(true);
-  };
-
-  const handleFileDrop = (item, monitor) => {
+  const handleCopyFiles = files => {
     if (props.isReadOnlyMode) {
       props.showNotification(
         i18n.t('core:dndDisabledReadOnlyMode'),
         'error',
         true
       );
-      return;
+      return Promise.reject(i18n.t('core:dndDisabledReadOnlyMode'));
     }
-    if (monitor) {
-      const { files } = monitor.getItem();
+    if (files) {
       console.log('Dropped files: ' + JSON.stringify(files));
       if (!props.directoryPath) {
         props.showNotification(
@@ -433,30 +460,44 @@ const MainPage = (props: Props) => {
           'error',
           true
         );
-      } else {
-        props.resetProgress();
-        props
-          .uploadFilesAPI(files, props.directoryPath, props.onUploadProgress)
-          .then(fsEntries => {
-            props.reflectCreateEntries(fsEntries);
-            return true;
-          })
-          .catch(error => {
-            console.log('uploadFiles', error);
-          });
-        props.toggleUploadDialog();
+        return Promise.reject(
+          new Error(
+            'Importing files failed, because no folder is opened in TagSpaces!'
+          )
+        );
       }
+      props.resetProgress();
+      props.toggleUploadDialog();
+      return props
+        .uploadFilesAPI(files, props.directoryPath, props.onUploadProgress)
+        .then(fsEntries => {
+          props.reflectCreateEntries(fsEntries);
+          return true;
+        })
+        .catch(error => {
+          console.log('uploadFiles', error);
+        });
     }
+    return Promise.reject(new Error('on files'));
   };
 
   const keyBindingHandlers = {
     openParentDirectory: props.loadParentDirectoryContent,
     toggleShowHiddenEntries: props.toggleShowUnixHiddenEntries,
-    showFolderNavigator: props.openLocationManagerPanel,
-    showTagLibrary: props.openTagLibraryPanel,
-    openSearch: props.openSearchPanel,
-    showHelp: props.openHelpFeedbackPanel
-    // openDevTools: props.openDevTools TODO Impl
+    showFolderNavigator: () => {
+      props.openLocationManagerPanel();
+      setDrawerOpened(true);
+    },
+    showTagLibrary: () => {
+      props.openTagLibraryPanel();
+      setDrawerOpened(true);
+    },
+    openSearch: () => props.setSearchQuery({ textQuery: '' }), // props.openSearchPanel,
+    closeSearch: () => props.setSearchQuery({}),
+    showHelp: () => {
+      props.openHelpFeedbackPanel();
+      setDrawerOpened(true);
+    }
   };
 
   const keyMap = {
@@ -465,18 +506,8 @@ const MainPage = (props: Props) => {
     showFolderNavigator: props.keyBindings.showFolderNavigator,
     showTagLibrary: props.keyBindings.showTagLibrary,
     openSearch: props.keyBindings.openSearch,
+    closeSearch: props.keyBindings.Escape,
     showHelp: props.keyBindings.showHelp
-    // openDevTools: props.keyBindings.openDevTools
-  };
-
-  const handleSplitSizeChange = size => {
-    if (size > 0 && dimensions.width) {
-      const sizeInPercent =
-        // @ts-ignore
-        parseInt((size * 100) / dimensions.width, 10) + '%';
-      // setMainSplitSize(sizeInPercent);
-      props.setMainVerticalSplitSize(sizeInPercent);
-    }
   };
 
   const {
@@ -487,6 +518,7 @@ const MainPage = (props: Props) => {
     toggleLicenseDialog,
     toggleThirdPartyLibsDialog,
     toggleAboutDialog,
+    toggleLocationDialog,
     toggleCreateDirectoryDialog,
     toggleCreateFileDialog,
     toggleUploadDialog,
@@ -495,12 +527,105 @@ const MainPage = (props: Props) => {
     toggleOpenLinkDialog,
     setFirstRun,
     openURLExternally,
-    directoryPath
+    directoryPath,
+    mainSplitSize,
+    openedFiles,
+    classes
   } = props;
   const { FILE } = NativeTypes;
 
+  const isFileOpened = openedFiles.length > 0;
+
+  const setPercent = (p: number | undefined) => {
+    percent.current = p;
+    if (p !== undefined) {
+      bufferedLeftSplitResize(() => {
+        if (props.mainSplitSize !== p + '%') {
+          props.setMainVerticalSplitSize(p + '%');
+        }
+      });
+    }
+    forceUpdate();
+  };
+
+  const renderContainers = () => {
+    let initialPrimarySize = mainSplitSize;
+    let minPrimarySize = '250px';
+    let minSecondarySize = '250px';
+    let renderSplitter;
+
+    if (!isFileOpened) {
+      percent.current = undefined;
+      initialPrimarySize = '100%';
+      minSecondarySize = '0%';
+      renderSplitter = function() {
+        return null;
+      };
+    }
+    if (props.isEntryInFullWidth) {
+      percent.current = undefined;
+      initialPrimarySize = '0%';
+      minPrimarySize = '0%';
+      renderSplitter = function() {
+        return null;
+      };
+    }
+    return (
+      <Split
+        initialPrimarySize={initialPrimarySize}
+        minPrimarySize={minPrimarySize}
+        minSecondarySize={minSecondarySize}
+        renderSplitter={renderSplitter}
+        percent={percent.current}
+        setPercent={setPercent}
+      >
+        <FolderContainer
+          windowHeight={dimensions.height}
+          windowWidth={dimensions.width}
+          toggleDrawer={toggleDrawer}
+          drawerOpened={drawerOpened}
+          openedFiles={openedFiles}
+          currentDirectoryPath={directoryPath}
+        />
+        {isFileOpened && (
+          <EntryContainer
+            key="EntryContainerID"
+            openedFiles={openedFiles}
+            currentDirectoryPath={directoryPath}
+          />
+        )}
+      </Split>
+    );
+  };
+
   return (
-    <HotKeys handlers={keyBindingHandlers} keyMap={keyMap}>
+    <HotKeys
+      handlers={keyBindingHandlers}
+      keyMap={keyMap}
+      style={{ height: '100%' }}
+    >
+      <MoveOrCopyFilesDialog
+        open={moveCopyDialogOpened !== undefined}
+        onClose={() => {
+          setMoveCopyDialogOpened(undefined);
+        }}
+        fullScreen={false}
+        selectedFiles={moveCopyDialogOpened}
+        handleMoveFiles={files => {
+          handleMoveCopyFiles(files, true);
+          setMoveCopyDialogOpened(undefined);
+        }}
+        handleCopyFiles={files => {
+          handleMoveCopyFiles(files, false);
+          setMoveCopyDialogOpened(undefined);
+        }}
+      />
+      {props.isLocationDialogOpened && (
+        <CreateEditLocationDialogAsync
+          open={props.isLocationDialogOpened}
+          onClose={toggleLocationDialog}
+        />
+      )}
       {props.isAboutDialogOpened && (
         <AboutDialogAsync
           open={props.isAboutDialogOpened}
@@ -618,92 +743,74 @@ const MainPage = (props: Props) => {
         />
       )}
       <PageNotification />
-      {props.isDesktopMode || (AppConfig.isAmplify && !props.user) ? (
-        <TargetFileBox
-          // @ts-ignore
-          accepts={[FILE]}
-          onDrop={handleFileDrop}
-        >
-          <CustomDragLayer />
-          <SplitPane
-            split="vertical"
-            minSize={200}
-            maxSize={450}
-            resizerStyle={{ backgroundColor: theme.palette.divider }}
-            defaultSize={props.leftSplitSize}
-            size={
-              isManagementPanelVisible()
-                ? props.leftSplitSize
-                : initialSplitSize
-            }
-            onChange={size => {
-              bufferedLeftSplitResize(() =>
-                props.setLeftVerticalSplitSize(size)
-              );
+      <div
+        style={{
+          backgroundColor: theme.palette.background.default,
+          height: '100%'
+        }}
+      >
+        {/* --default-splitter-line-hover-color: green !important; */}
+        <style>
+          {`
+              .default-splitter {
+                --default-splitter-line-margin: 4px !important;
+                --default-splitter-line-size: 1px !important;
+                --default-splitter-line-color: ${theme.palette.divider} !important;
+              }
+
+              .react-split .split-container.vertical .splitter {
+                background-color: ${theme.palette.background.default};
+              }
+          `}
+        </style>
+        {props.isDesktopMode || (AppConfig.isAmplify && !props.user) ? (
+          <TargetFileBox
+            accepts={[FILE]}
+            onDrop={(item: any) => {
+              if (
+                AppConfig.isElectron &&
+                !PlatformIO.haveObjectStoreSupport() &&
+                !PlatformIO.haveWebDavSupport()
+              ) {
+                setMoveCopyDialogOpened(item.files);
+              } else {
+                handleCopyFiles(item.files);
+              }
             }}
           >
-            <VerticalNavigation />
-            <SplitPane
-              split="vertical"
-              minSize="200"
-              resizerStyle={{ backgroundColor: theme.palette.divider }}
-              size={getMainSplitSize()}
-              onChange={handleSplitSizeChange}
+            <CustomDragLayer />
+            <Drawer variant="persistent" anchor="left" open={drawerOpened}>
+              <MobileNavigation width={drawerWidth} />
+            </Drawer>
+            <main
+              className={clsx(classes.content, {
+                [classes.contentShift]: !drawerOpened
+              })}
             >
-              <FolderContainer
-                windowHeight={dimensions.height}
-                windowWidth={dimensions.width}
-                openedFiles={props.openedFiles}
-                currentDirectoryPath={props.directoryPath}
+              {renderContainers()}
+            </main>
+          </TargetFileBox>
+        ) : (
+          <>
+            <SwipeableDrawer
+              open={drawerOpened}
+              onClose={() => setDrawerOpened(false)}
+              onOpen={() => setDrawerOpened(true)}
+              hysteresis={0.1}
+              disableBackdropTransition={!AppConfig.isIOS}
+            >
+              <MobileNavigation
+                width={drawerWidth}
+                hideDrawer={() => props.closeAllVerticalPanels()}
               />
-              {props.openedFiles.length > 0 && (
-                <EntryContainer
-                  openedFiles={props.openedFiles}
-                  currentDirectoryPath={props.directoryPath}
-                />
-              )}
-            </SplitPane>
-          </SplitPane>
-        </TargetFileBox>
-      ) : (
-        <React.Fragment>
-          <SwipeableDrawer
-            open={isManagementPanelVisible()}
-            onClose={() => props.closeAllVerticalPanels()}
-            onOpen={showDrawer}
-            hysteresis={0.1}
-            disableBackdropTransition={!AppConfig.isIOS}
-          >
-            <MobileNavigation
-              hideDrawer={() => props.closeAllVerticalPanels()}
-            />
-          </SwipeableDrawer>
-          <SplitPane
-            split="vertical"
-            minSize="200"
-            resizerStyle={{ backgroundColor: theme.palette.divider }}
-            size={getMainSplitSize()}
-            onChange={handleSplitSizeChange}
-          >
-            <FolderContainer
-              windowHeight={dimensions.height}
-              windowWidth={dimensions.width}
-              showDrawer={showDrawer}
-              openedFiles={props.openedFiles}
-              currentDirectoryPath={props.directoryPath}
-            />
-            {props.openedFiles.length > 0 && (
-              <EntryContainer
-                openedFiles={props.openedFiles}
-                currentDirectoryPath={props.directoryPath}
-              />
-            )}
-          </SplitPane>
-        </React.Fragment>
-      )}
+            </SwipeableDrawer>
+            {renderContainers()}
+          </>
+        )}
+      </div>
     </HotKeys>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {
@@ -712,6 +819,7 @@ function mapStateToProps(state) {
     isCreateFileDialogOpened: isCreateFileDialogOpened(state),
     isSettingsDialogOpened: isSettingsDialogOpened(state),
     isAboutDialogOpened: isAboutDialogOpened(state),
+    isLocationDialogOpened: isLocationDialogOpened(state),
     isKeysDialogOpened: isKeysDialogOpened(state),
     isOnboardingDialogOpened: isOnboardingDialogOpened(state),
     isLicenseDialogOpened: isLicenseDialogOpened(state),
@@ -725,7 +833,6 @@ function mapStateToProps(state) {
     isEntryInFullWidth: isEntryInFullWidth(state),
     isDesktopMode: getDesktopMode(state),
     keyBindings: getKeyBindingObject(state),
-    leftSplitSize: getLeftVerticalSplitSize(state),
     mainSplitSize: getMainVerticalSplitSize(state),
     isLocationManagerPanelOpened: isLocationManagerPanelOpened(state),
     isTagLibraryPanelOpened: isTagLibraryPanelOpened(state),
@@ -761,23 +868,24 @@ function mapDispatchToProps(dispatch) {
       toggleLicenseDialog: AppActions.toggleLicenseDialog,
       toggleThirdPartyLibsDialog: AppActions.toggleThirdPartyLibsDialog,
       toggleAboutDialog: AppActions.toggleAboutDialog,
+      toggleLocationDialog: AppActions.toggleLocationDialog,
       toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
       toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
       setSelectedEntries: AppActions.setSelectedEntries,
-      setGeneratingThumbnails: AppActions.setGeneratingThumbnails,
+      // setGeneratingThumbnails: AppActions.setGeneratingThumbnails,
       openFsEntry: AppActions.openFsEntry,
       openURLExternally: AppActions.openURLExternally,
       setEntryFullWidth: AppActions.setEntryFullWidth,
       openNextFile: AppActions.openNextFile,
       openPrevFile: AppActions.openPrevFile,
       toggleShowUnixHiddenEntries: SettingsActions.toggleShowUnixHiddenEntries,
-      setLeftVerticalSplitSize: SettingsActions.setLeftVerticalSplitSize,
       setMainVerticalSplitSize: SettingsActions.setMainVerticalSplitSize,
       showNotification: AppActions.showNotification,
       reflectCreateEntries: AppActions.reflectCreateEntries,
+      loadDirectoryContent: AppActions.loadDirectoryContent,
       openLocationManagerPanel: AppActions.openLocationManagerPanel,
       openTagLibraryPanel: AppActions.openTagLibraryPanel,
-      openSearchPanel: AppActions.openSearchPanel,
+      // openSearchPanel: AppActions.openSearchPanel,
       openHelpFeedbackPanel: AppActions.openHelpFeedbackPanel,
       closeAllVerticalPanels: AppActions.closeAllVerticalPanels,
       toggleDeleteMultipleEntriesDialog:
@@ -785,13 +893,16 @@ function mapDispatchToProps(dispatch) {
       setFirstRun: SettingsActions.setFirstRun,
       uploadFilesAPI: IOActions.uploadFilesAPI,
       deleteDirectory: AppActions.deleteDirectory,
-      deleteFile: AppActions.deleteFile
+      deleteFile: AppActions.deleteFile,
+      setSearchQuery: LocationIndexActions.setSearchQuery
     },
     dispatch
   );
 }
 
 const areEqual = (prevProp, nextProp) =>
+  /* JSON.stringify(nextProp.theme.palette) ===
+    JSON.stringify(prevProp.theme.palette) && */
   nextProp.directoryPath === prevProp.directoryPath &&
   nextProp.isAboutDialogOpened === prevProp.isAboutDialogOpened &&
   nextProp.isCreateDirectoryOpened === prevProp.isCreateDirectoryOpened &&
@@ -804,6 +915,7 @@ const areEqual = (prevProp, nextProp) =>
   nextProp.isHelpFeedbackPanelOpened === prevProp.isHelpFeedbackPanelOpened &&
   nextProp.isKeysDialogOpened === prevProp.isKeysDialogOpened &&
   nextProp.isLicenseDialogOpened === prevProp.isLicenseDialogOpened &&
+  nextProp.isLocationDialogOpened === prevProp.isLocationDialogOpened &&
   nextProp.isLocationManagerPanelOpened ===
     prevProp.isLocationManagerPanelOpened &&
   nextProp.isOnboardingDialogOpened === prevProp.isOnboardingDialogOpened &&
@@ -817,8 +929,6 @@ const areEqual = (prevProp, nextProp) =>
     prevProp.isThirdPartyLibsDialogOpened &&
   nextProp.isUploadProgressDialogOpened ===
     prevProp.isUploadProgressDialogOpened &&
-  nextProp.leftSplitSize === prevProp.leftSplitSize &&
-  nextProp.mainSplitSize === prevProp.mainSplitSize &&
   JSON.stringify(nextProp.selectedEntries) ===
     JSON.stringify(prevProp.selectedEntries) &&
   JSON.stringify(nextProp.openedFiles) === JSON.stringify(prevProp.openedFiles);
@@ -829,7 +939,7 @@ export default withDnDContext(
     mapDispatchToProps
   )(
     translate(['core'], { wait: true })(
-      withStyles(styles, { withTheme: true })(React.memo(MainPage, areEqual))
+      React.memo(withStyles(styles, { withTheme: true })(MainPage), areEqual)
     )
   )
 );

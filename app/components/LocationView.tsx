@@ -31,6 +31,8 @@ import LocationIcon from '@material-ui/icons/WorkOutline';
 import CloudLocationIcon from '@material-ui/icons/CloudQueue';
 import DefaultLocationIcon from '@material-ui/icons/Highlight';
 import { Progress } from 'aws-sdk/clients/s3';
+import { locationType } from '@tagspaces/tagspaces-platforms/misc';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import styles from './SidePanels.css';
 import {
   actions as AppActions,
@@ -38,8 +40,7 @@ import {
   isReadOnlyMode
 } from '../reducers/app';
 import i18n from '../services/i18n';
-import AppConfig from '../config';
-import PlatformIO from '../services/platform-io';
+import PlatformIO from '../services/platform-facade';
 import TargetMoveFileBox from './TargetMoveFileBox';
 import DragItemTypes from './DragItemTypes';
 import IOActions from '../reducers/io-actions';
@@ -48,16 +49,18 @@ import DirectoryTreeView, {
 } from '-/components/DirectoryTreeView';
 import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import LocationContextMenu from '-/components/menus/LocationContextMenu';
-import { getLocationPath } from '-/utils/paths';
 import { TS } from '-/tagspaces.namespace';
-import { locationType } from '-/utils/misc';
 
 interface Props {
   classes: any;
   location: TS.Location;
   currentLocationId: string;
   openLocation: (location: TS.Location) => void;
-  loadDirectoryContent: (path: string, generateThumbnails: boolean) => void;
+  loadDirectoryContent: (
+    path: string,
+    generateThumbnails: boolean,
+    loadDirMeta?: boolean
+  ) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   hideDrawer: () => void;
   isReadOnlyMode: boolean;
@@ -84,7 +87,7 @@ interface Props {
   changeLocation: (loc: TS.Location) => void;
 }
 
-const LocationView = (props: Props) => {
+function LocationView(props: Props) {
   const directoryTreeRef = useRef<DirectoryTreeViewRef>(null);
   const [
     locationDirectoryContextMenuAnchorEl,
@@ -94,13 +97,18 @@ const LocationView = (props: Props) => {
   const { location } = props;
   const isCloudLocation = location.type === locationType.TYPE_CLOUD;
 
-  const handleLocationClick = () => {
+  const handleLocationIconClick = event => {
+    event.preventDefault();
+    event.stopPropagation();
     if (directoryTreeRef.current) {
       directoryTreeRef.current.changeLocation(location);
     }
+  };
+
+  const handleLocationClick = () => {
     if (location.uuid === props.currentLocationId) {
       // the same location click
-      props.loadDirectoryContent(getLocationPath(location), false);
+      props.loadDirectoryContent(PlatformIO.getLocationPath(location), true); // false);
     } else {
       // this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
       props.setSelectedEntries([]);
@@ -177,9 +185,11 @@ const LocationView = (props: Props) => {
         // TODO handle monitor -> isOver and change folder icon
         console.log('Dropped files: ' + path);
         if (targetLocation.type === locationType.TYPE_CLOUD) {
+          // TODO Webdav
           PlatformIO.enableObjectStoreSupport(targetLocation)
             .then(() => {
               props.resetProgress();
+              props.toggleUploadDialog();
               props
                 .uploadFiles(arrPath, targetPath, props.onUploadProgress)
                 .then((fsEntries: Array<TS.FileSystemEntry>) => {
@@ -189,7 +199,6 @@ const LocationView = (props: Props) => {
                 .catch(error => {
                   console.log('uploadFiles', error);
                 });
-              props.toggleUploadDialog();
               return true;
             })
             .catch(error => {
@@ -203,6 +212,41 @@ const LocationView = (props: Props) => {
       }
     }
   };
+
+  let locationNameTitle = PlatformIO.getLocationPath(location);
+  if (isCloudLocation && location.bucketName) {
+    if (location.endpointURL) {
+      locationNameTitle = location.endpointURL + ' - ' + location.bucketName;
+    } else if (location.region) {
+      locationNameTitle = location.region + ' - ' + location.bucketName;
+    }
+  }
+
+  const LocationTitle = (
+    <Tooltip title={locationNameTitle}>
+      <div
+        style={{
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          maxWidth: 240
+        }}
+      >
+        <Typography
+          variant="inherit"
+          style={{
+            paddingLeft: 5,
+            paddingRight: 5
+          }}
+          className={props.classes.header}
+          data-tid="locationTitleElement"
+          noWrap
+        >
+          {location.name}
+        </Typography>
+      </div>
+    </Tooltip>
+  );
 
   return (
     /* <div key={location.uuid}> */
@@ -228,9 +272,8 @@ const LocationView = (props: Props) => {
             ? props.classes.listItemSelected
             : props.classes.listItem
         }
-        title={getLocationPath(location)}
         button
-        onClick={() => handleLocationClick()}
+        onClick={handleLocationClick}
         onContextMenu={event => handleLocationContextMenuClick(event)}
       >
         <ListItemIcon
@@ -239,60 +282,39 @@ const LocationView = (props: Props) => {
           //   this.loadSubDirectories(location, 1);
           // }}
           style={{
-            minWidth: 'auto'
+            minWidth: 'auto',
+            cursor: 'pointer'
           }}
+          onClick={handleLocationIconClick}
         >
-          {isCloudLocation ? (
-            <CloudLocationIcon className={props.classes.icon} />
-          ) : (
-            <LocationIcon className={props.classes.icon} />
-          )}
+          <Tooltip title={i18n.t('clickToExpand')} arrow placement="top">
+            {isCloudLocation ? (
+              <CloudLocationIcon
+                style={{
+                  cursor: 'pointer'
+                }}
+                className={props.classes.icon}
+              />
+            ) : (
+              <LocationIcon
+                style={{
+                  cursor: 'pointer'
+                }}
+                className={props.classes.icon}
+              />
+            )}
+          </Tooltip>
         </ListItemIcon>
-
         {isCloudLocation && !AppConfig.isElectron ? (
-          <div
-            style={{
-              maxWidth: 250
-            }}
-          >
-            <Typography
-              variant="inherit"
-              style={{
-                paddingLeft: 5,
-                paddingRight: 5
-              }}
-              className={props.classes.header}
-              data-tid="locationTitleElement"
-              noWrap
-            >
-              {location.name}
-            </Typography>
-          </div>
+          <>{LocationTitle}</>
         ) : (
           <TargetMoveFileBox
             accepts={[DragItemTypes.FILE]}
             onDrop={handleFileMoveDrop}
-            path={getLocationPath(location)}
+            path={PlatformIO.getLocationPath(location)}
             location={location}
           >
-            <div
-              style={{
-                maxWidth: 250
-              }}
-            >
-              <Typography
-                variant="inherit"
-                style={{
-                  paddingLeft: 5,
-                  paddingRight: 5
-                }}
-                className={props.classes.header}
-                data-tid="locationTitleElement"
-                noWrap
-              >
-                {location.name}
-              </Typography>
-            </div>
+            {LocationTitle}
           </TargetMoveFileBox>
         )}
         <ListItemSecondaryAction>
@@ -325,7 +347,7 @@ const LocationView = (props: Props) => {
       />
     </>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

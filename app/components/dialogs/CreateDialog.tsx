@@ -21,26 +21,28 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
-import NoteFileIcon from '@material-ui/icons/DescriptionOutlined';
+import HTMLFileIcon from '@material-ui/icons/PhotoAlbumOutlined';
 import TextFileIcon from '@material-ui/icons/InsertDriveFileOutlined';
-import MarkdownFileIcon from '@material-ui/icons/GetAppOutlined';
+import MarkdownFileIcon from '@material-ui/icons/DescriptionOutlined';
 import AddFileIcon from '@material-ui/icons/NoteAddOutlined';
-import DialogActions from '@material-ui/core/DialogActions';
+import Typography from '@material-ui/core/Typography';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Avatar from '@material-ui/core/Avatar';
 import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import Dialog from '@material-ui/core/Dialog';
 import { Progress } from 'aws-sdk/clients/s3';
+import { formatDateTime4Tag } from '@tagspaces/tagspaces-platforms/misc';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '-/services/i18n';
 import { getKeyBindingObject } from '-/reducers/settings';
 import { actions as AppActions } from '-/reducers/app';
-import AppConfig from '-/config';
-import { formatDateTime4Tag } from '-/utils/misc';
 import IOActions from '-/reducers/io-actions';
 import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import Spacer from '-/components/Spacer';
 
 const styles: any = () => ({
   root: {
@@ -58,7 +60,8 @@ const styles: any = () => ({
   createButton: {
     minHeight: 100,
     width: '100%',
-    textAlign: 'center'
+    textAlign: 'center',
+    textTransform: 'none'
   }
 });
 
@@ -87,7 +90,7 @@ interface Props {
   resetProgress: () => void;
 }
 
-const CreateDialog = (props: Props) => {
+function CreateDialog(props: Props) {
   let fileInput: HTMLInputElement;
   const fileName =
     'note' +
@@ -175,6 +178,7 @@ const CreateDialog = (props: Props) => {
     // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
     // const file = selection.currentTarget.files[0];
     props.resetProgress();
+    props.toggleUploadDialog();
     props
       .uploadFilesAPI(
         Array.from(selection.currentTarget.files),
@@ -188,7 +192,6 @@ const CreateDialog = (props: Props) => {
       .catch(error => {
         console.log('uploadFiles', error);
       });
-    props.toggleUploadDialog();
     props.onClose();
 
     /* const filePath =
@@ -270,7 +273,7 @@ const CreateDialog = (props: Props) => {
         }
       }}
     >
-      <DialogTitle style={{ alignSelf: 'center' }}>
+      <DialogTitle>
         {i18n.t('createNewContent')}
         <DialogCloseButton onClose={onClose} />
       </DialogTitle>
@@ -280,54 +283,92 @@ const CreateDialog = (props: Props) => {
         data-tid="keyboardShortCutsDialog"
       >
         <Grid className={classes.grid} container spacing={1}>
-          <Grid item xs>
+          <Grid item xs={12}>
             <Button
-              onClick={createRichTextFile}
-              className={classes.createButton}
-              title={i18n.t('createNoteTitle')}
-              data-tid="createRichTextFileButton"
-            >
-              <div>
-                <NoteFileIcon />
-              </div>
-              <div>
-                <Container>{i18n.t('createNote')}</Container>
-              </div>
-            </Button>
-          </Grid>
-          <Grid item xs>
-            <Button
-              onClick={createTextFile}
-              className={classes.createButton}
-              title={i18n.t('createTextFileTitle')}
-              data-tid="createTextFileButton"
-            >
-              <TextFileIcon />
-              <Container>{i18n.t('createTextFile')}</Container>
-            </Button>
-          </Grid>
-        </Grid>
-        <Grid className={classes.grid} container spacing={1}>
-          <Grid item xs>
-            <Button
+              variant="outlined"
               onClick={createMarkdownFile}
               className={classes.createButton}
-              title={i18n.t('createMarkdownTitle')}
+              // title={i18n.t('createMarkdownTitle')}
               data-tid="createMarkdownButton"
             >
-              <MarkdownFileIcon />
-              <Container>{i18n.t('createMarkdown')}</Container>
+              <Avatar>
+                <MarkdownFileIcon />
+              </Avatar>
+              <Container>
+                <Typography variant="button" display="block" gutterBottom>
+                  {i18n.t('createMarkdown')}
+                </Typography>
+                <Spacer height={10} />
+                <Typography variant="caption" display="block" gutterBottom>
+                  {i18n.t('createMarkdownTitle')}
+                </Typography>
+              </Container>
             </Button>
           </Grid>
-          <Grid item xs>
+          <Grid item xs={12}>
             <Button
+              variant="outlined"
+              onClick={createRichTextFile}
+              className={classes.createButton}
+              // title={i18n.t('createNoteTitle')}
+              data-tid="createRichTextFileButton"
+            >
+              <Avatar>
+                <HTMLFileIcon />
+              </Avatar>
+              <Container>
+                <Typography variant="button" display="block" gutterBottom>
+                  {i18n.t('createRichTextFile')}
+                </Typography>
+                <Spacer height={10} />
+                <Typography variant="caption" display="block" gutterBottom>
+                  {i18n.t('createNoteTitle')}
+                </Typography>
+              </Container>
+            </Button>
+          </Grid>
+          <Grid item xs={12}>
+            <Button
+              variant="outlined"
+              onClick={createTextFile}
+              className={classes.createButton}
+              // title={i18n.t('createTextFileTitle')}
+              data-tid="createTextFileButton"
+            >
+              <Avatar>
+                <TextFileIcon />
+              </Avatar>
+              <Container>
+                <Typography variant="button" display="block" gutterBottom>
+                  {i18n.t('createTextFile')}
+                </Typography>
+                <Spacer height={10} />
+                <Typography variant="caption" display="block" gutterBottom>
+                  {i18n.t('createTextFileTitle')}
+                </Typography>
+              </Container>
+            </Button>
+          </Grid>
+          <Grid item xs={12}>
+            <Button
+              variant="outlined"
               onClick={addFile}
               className={classes.createButton}
-              title={i18n.t('addFilesTitle')}
+              // title={i18n.t('addFilesTitle')}
               data-tid="addFilesButton"
             >
-              <AddFileIcon />
-              <Container>{i18n.t('addFiles')}</Container>
+              <Avatar>
+                <AddFileIcon />
+              </Avatar>
+              <Container>
+                <Typography variant="button" display="block" gutterBottom>
+                  {i18n.t('addFiles')}
+                </Typography>
+                <Spacer height={10} />
+                <Typography variant="caption" display="block" gutterBottom>
+                  {i18n.t('addFilesTitle')}
+                </Typography>
+              </Container>
             </Button>
           </Grid>
         </Grid>
@@ -342,18 +383,9 @@ const CreateDialog = (props: Props) => {
           onChange={handleFileInputChange}
         />
       </DialogContent>
-      <DialogActions style={{ alignSelf: 'center' }}>
-        <Button
-          data-tid="closeKeyboardDialog"
-          onClick={onClose}
-          color="primary"
-        >
-          {i18n.t('core:close')}
-        </Button>
-      </DialogActions>
     </Dialog>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

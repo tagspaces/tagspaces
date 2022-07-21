@@ -56,7 +56,7 @@ cordova/platforms/android/assets/www/*
 cordova/platforms/android/app/src/main/assets/www/*
 cordova/plugins/**/*
 
-extensions/*
+extensions
 
 app/yarn.lock
 
@@ -79,7 +79,10 @@ web/node_modules
 web/LICENSE.txt
 web/third-party.txt
 web/sw-config.js
+web/EULA.txt
 
+.env
+app/config
 app/extconfig*
 web/extconfig*
 cordova/www/extconfig.js
@@ -113,3 +116,5 @@ cordova/platforms/ios/www/yarn.lock
 cordova/platforms/ios/www/package.json
 junit.xml
 test-reports/*
+
+/app/**main.prod.js**

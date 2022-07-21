@@ -17,29 +17,39 @@
  */
 
 import React from 'react';
-import removeMd from 'remove-markdown';
 import classNames from 'classnames';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
+import Tooltip from '@material-ui/core/Tooltip';
 import FolderIcon from '@material-ui/icons/Folder';
 import SelectedIcon from '@material-ui/icons/CheckBox';
 import UnSelectedIcon from '@material-ui/icons/CheckBoxOutlineBlank';
-import TagIcon from '@material-ui/icons/LocalOfferOutlined';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { formatFileSize, formatDateTime } from '-/utils/misc';
-import { extractTagsAsObjects, extractTitle } from '-/utils/paths';
-import { findColorForFileEntry } from '-/services/utils-io';
+import {
+  formatFileSize,
+  formatDateTime
+} from '@tagspaces/tagspaces-platforms/misc';
+import {
+  extractTagsAsObjects,
+  extractTitle
+} from '@tagspaces/tagspaces-platforms/paths';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import {
+  findBackgroundColorForFolder,
+  findColorForEntry,
+  removeMarkDown
+} from '-/services/utils-io';
 import TagContainerDnd from '-/components/TagContainerDnd';
 import TagContainer from '-/components/TagContainer';
+import TagsPreview from '-/components/TagsPreview';
 import i18n from '-/services/i18n';
-import PlatformIO from '-/services/platform-io';
-import { AppConfig } from '-/config';
+import PlatformIO from '-/services/platform-facade';
 import EntryIcon from '-/components/EntryIcon';
 import { TS } from '-/tagspaces.namespace';
 import TaggingActions from '-/reducers/tagging-actions';
+// import { getTagColor } from '-/reducers/settings';
 
 const maxDescriptionPreviewLength = 100;
 
@@ -67,9 +77,10 @@ interface Props {
   handleGridCellDblClick: (event: Object, fsEntry: TS.FileSystemEntry) => void;
   handleGridCellClick: (event: Object, fsEntry: TS.FileSystemEntry) => void;
   editTagForEntry?: (path: string, tag: TS.Tag) => void;
+  reorderTags: boolean;
 }
 
-const CellContent = (props: Props) => {
+function CellContent(props: Props) {
   const {
     selected,
     fsEntry,
@@ -99,9 +110,10 @@ const CellContent = (props: Props) => {
     PlatformIO.getDirSeparator()
   );
 
-  let description = removeMd(fsEntry.description);
+  let { description } = fsEntry;
 
-  if (description.length > maxDescriptionPreviewLength) {
+  description = removeMarkDown(description);
+  if (description && description.length > maxDescriptionPreviewLength) {
     description = description.substr(0, maxDescriptionPreviewLength) + '...';
   }
 
@@ -109,17 +121,17 @@ const CellContent = (props: Props) => {
     description = ' | ' + description;
   }
 
-  const fsEntryColor = findColorForFileEntry(
-    fsEntry.extension,
-    fsEntry.isFile,
-    supportedFileTypes
-  );
+  const fsEntryColor = findColorForEntry(fsEntry, supportedFileTypes);
+  const fsEntryBgColor = findBackgroundColorForFolder(fsEntry);
 
-  const fileNameTags = extractTagsAsObjects(
-    fsEntry.name,
-    AppConfig.tagDelimiter,
-    PlatformIO.getDirSeparator()
-  );
+  let fileNameTags = [];
+  if (fsEntry.isFile) {
+    fileNameTags = extractTagsAsObjects(
+      fsEntry.name,
+      AppConfig.tagDelimiter,
+      PlatformIO.getDirSeparator()
+    );
+  }
 
   const fsEntryTags = fsEntry.tags ? fsEntry.tags : [];
   const sideCarTagsTitles = fsEntryTags.map(tag => tag.title);
@@ -136,17 +148,13 @@ const CellContent = (props: Props) => {
     });
   }
   tagTitles = tagTitles.substring(0, tagTitles.length - 2);
-  const tagPlaceholder =
-    tagTitles.length > 0 ? (
-      <IconButton title={tagTitles} onClick={() => openFsEntry(fsEntry)}>
-        <TagIcon />
-      </IconButton>
-    ) : null;
+  const tagPlaceholder = <TagsPreview tags={entryTags} />;
 
   function renderGridCell() {
     return (
       <div
         style={{
+          backgroundColor: fsEntryBgColor,
           opacity: fsEntry.isIgnored ? 0.3 : 1
         }}
       >
@@ -165,7 +173,6 @@ const CellContent = (props: Props) => {
               src={fsEntry.thumbPath}
               // @ts-ignore
               onError={i => (i.target.style.display = 'none')}
-              // @ts-ignore
               loading="lazy"
               style={{
                 objectFit: thumbnailMode,
@@ -180,53 +187,57 @@ const CellContent = (props: Props) => {
           <div id="gridCellTags" className={classes.gridCellTags}>
             {showTags && entryTags ? renderTags(entryTags) : tagPlaceholder}
           </div>
-          {description.length > 0 && (
-            <Typography
-              id="gridCellDescription"
-              className={classes.gridCellDescription}
-              title={i18n.t('core:filePropertiesDescription')}
-              variant="caption"
-            >
-              {description}
-            </Typography>
+          {description && (
+            <Tooltip title={i18n.t('core:entryDescription')}>
+              <Typography
+                id="gridCellDescription"
+                className={classes.gridCellDescription}
+                variant="caption"
+              >
+                {description}
+              </Typography>
+            </Tooltip>
           )}
         </div>
-        <Typography
-          className={classes.gridCellTitle}
-          data-tid={'fsEntryName_' + fsEntry.name}
-          title={fsEntry.path}
-          noWrap={true}
-          variant="body1"
-        >
-          {entryTitle}
-        </Typography>
-        <div className={classes.gridDetails}>
+        <Tooltip title={fsEntry.path}>
           <Typography
-            className={classes.gridFileExtension}
-            style={{
-              backgroundColor: fsEntryColor,
-              maxWidth: fsEntry.isFile ? 50 : 100
-            }}
+            className={classes.gridCellTitle}
+            data-tid={'fsEntryName_' + fsEntry.name}
             noWrap={true}
-            variant="button"
-            title={fsEntry.path}
+            variant="body1"
           >
-            {fsEntry.isFile ? fsEntry.extension : i18n.t('core:folder')}
+            {entryTitle}
           </Typography>
+        </Tooltip>
+        <div className={classes.gridDetails}>
+          <Tooltip title={fsEntry.path}>
+            <Typography
+              className={classes.gridFileExtension}
+              style={{
+                backgroundColor: fsEntryColor,
+                textShadow: '1px 1px #8f8f8f',
+                maxWidth: fsEntry.isFile ? 50 : 100
+              }}
+              noWrap={true}
+              variant="button"
+            >
+              {fsEntry.isFile ? fsEntry.extension : i18n.t('core:folder')}
+            </Typography>
+          </Tooltip>
           {fsEntry.isFile && fsEntry.lmdt && (
             <Typography className={classes.gridSizeDate} variant="caption">
-              <span
+              <Tooltip
                 title={
                   i18n.t('core:modifiedDate') +
                   ': ' +
                   formatDateTime(fsEntry.lmdt, true)
                 }
               >
-                {formatDateTime(fsEntry.lmdt, false)}
-              </span>
-              <span title={fsEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
-                {' | ' + formatFileSize(fsEntry.size)}
-              </span>
+                <span>{formatDateTime(fsEntry.lmdt, false)}</span>
+              </Tooltip>
+              <Tooltip title={fsEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
+                <span>{' | ' + formatFileSize(fsEntry.size)}</span>
+              </Tooltip>
             </Typography>
           )}
         </div>
@@ -243,6 +254,15 @@ const CellContent = (props: Props) => {
     } else if (entrySize === 'big') {
       tmbSize = 100;
     }
+    const backgroundColor = selected
+      ? theme.palette.primary.light
+      : fsEntryBgColor;
+
+    const entrySizeFormatted =
+      fsEntry.isFile && formatFileSize(fsEntry.size) + ' - ';
+    const entryLMDTFormatted =
+      fsEntry.isFile && fsEntry.lmdt && formatDateTime(fsEntry.lmdt, true);
+
     return (
       <Grid
         container
@@ -251,9 +271,8 @@ const CellContent = (props: Props) => {
         title={fsEntry.isIgnored && i18n.t('core:ignoredFolder')}
         style={{
           opacity: fsEntry.isIgnored ? 0.3 : 1,
-          backgroundColor: selected
-            ? theme.palette.primary.light
-            : theme.palette.background.default
+          backgroundColor,
+          borderRadius: 5
         }}
       >
         <Grid
@@ -268,31 +287,33 @@ const CellContent = (props: Props) => {
             display: 'flex'
           }}
         >
-          <div
-            data-tid="rowCellTID"
-            className={classes.rowFileExtension}
-            role="presentation"
-            title={fsEntry.path}
-            onClick={e => {
-              e.stopPropagation();
-              if (selected) {
-                deselectEntry(fsEntry);
-              } else {
-                selectEntry(fsEntry);
-              }
-            }}
-            style={{
-              backgroundColor: fsEntryColor
-            }}
-          >
-            {fsEntry.isFile ? fsEntry.extension : <FolderIcon />}
-            {entrySize !== 'small' &&
-              (selected ? (
-                <SelectedIcon style={{ paddingTop: 5 }} />
-              ) : (
-                <UnSelectedIcon style={{ paddingTop: 5 }} />
-              ))}
-          </div>
+          <Tooltip title={fsEntry.path}>
+            <div
+              data-tid="rowCellTID"
+              className={classes.rowFileExtension}
+              role="presentation"
+              onClick={e => {
+                e.stopPropagation();
+                if (selected) {
+                  deselectEntry(fsEntry);
+                } else {
+                  selectEntry(fsEntry);
+                }
+              }}
+              style={{
+                backgroundColor: fsEntryColor,
+                alignSelf: entrySize === 'small' ? 'center' : 'auto'
+              }}
+            >
+              {fsEntry.isFile ? fsEntry.extension : <FolderIcon />}
+              {entrySize !== 'small' &&
+                (selected ? (
+                  <SelectedIcon style={{ paddingTop: 5 }} />
+                ) : (
+                  <UnSelectedIcon style={{ paddingTop: 5 }} />
+                ))}
+            </div>
+          </Tooltip>
         </Grid>
         {entrySize === 'small' ? (
           <Grid
@@ -303,11 +324,19 @@ const CellContent = (props: Props) => {
               display: 'flex'
             }}
           >
-            <Typography style={{ wordBreak: 'break-all', alignSelf: 'center' }}>
-              {entryTitle}
-              &nbsp;
-              {showTags && entryTags ? renderTags(entryTags) : tagPlaceholder}
-            </Typography>
+            <Tooltip
+              title={
+                fsEntry.isFile ? entrySizeFormatted + entryLMDTFormatted : ''
+              }
+            >
+              <Typography
+                style={{ wordBreak: 'break-all', alignSelf: 'center' }}
+              >
+                {entryTitle}
+                &nbsp;
+                {showTags && entryTags ? renderTags(entryTags) : tagPlaceholder}
+              </Typography>
+            </Tooltip>
           </Grid>
         ) : (
           <Grid item xs zeroMinWidth>
@@ -321,21 +350,21 @@ const CellContent = (props: Props) => {
               }}
               variant="body2"
             >
-              <span title={fsEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
-                {fsEntry.isFile && formatFileSize(fsEntry.size) + ' - '}
-              </span>
-              <span
+              <Tooltip title={fsEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
+                <span>{entrySizeFormatted}</span>
+              </Tooltip>
+              <Tooltip
                 title={
                   i18n.t('core:modifiedDate') +
                   ': ' +
                   formatDateTime(fsEntry.lmdt, true)
                 }
               >
-                {fsEntry.isFile &&
-                  fsEntry.lmdt &&
-                  formatDateTime(fsEntry.lmdt, false)}
-              </span>
-              <span title={i18n.t('core:entryDescription')}>{description}</span>
+                <span>{entryLMDTFormatted}</span>
+              </Tooltip>
+              <Tooltip title={i18n.t('core:entryDescription')}>
+                <span>{description}</span>
+              </Tooltip>
             </Typography>
           </Grid>
         )}
@@ -347,10 +376,11 @@ const CellContent = (props: Props) => {
               src={fsEntry.thumbPath}
               // @ts-ignore
               onError={i => (i.target.style.display = 'none')}
-              // @ts-ignore
               loading="lazy"
               style={{
                 objectFit: thumbnailMode,
+                paddingRight: 4,
+                paddingTop: 4,
                 height: tmbSize,
                 width: tmbSize
               }}
@@ -384,6 +414,7 @@ const CellContent = (props: Props) => {
           handleTagMenu={handleTagMenu}
           selectedEntries={selectedEntries}
           editTagForEntry={props.editTagForEntry}
+          reorderTags={props.reorderTags}
         />
       );
 
@@ -427,16 +458,23 @@ const CellContent = (props: Props) => {
       }}
       onContextMenu={event => handleGridContextMenu(event, fsEntry)}
       onDoubleClick={event => handleGridCellDblClick(event, fsEntry)}
-      onClick={event =>
+      onClick={event => {
+        event.stopPropagation();
         AppConfig.isCordovaiOS // TODO DoubleClick not fired in Cordova IOS
           ? handleGridCellDblClick(event, fsEntry)
-          : handleGridCellClick(event, fsEntry)
-      }
+          : handleGridCellClick(event, fsEntry);
+      }}
     >
       {gridCell}
     </Paper>
   );
-};
+}
+
+function mapStateToProps(state) {
+  return {
+    reorderTags: state.settings.reorderTags
+  };
+}
 
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
@@ -447,4 +485,4 @@ function mapActionCreatorsToProps(dispatch) {
   );
 }
 
-export default connect(undefined, mapActionCreatorsToProps)(CellContent);
+export default connect(mapStateToProps, mapActionCreatorsToProps)(CellContent);

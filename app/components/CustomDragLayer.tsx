@@ -1,7 +1,7 @@
 import React from 'react';
 import { XYCoord, useDragLayer } from 'react-dnd';
 import { FilesDragPreview } from './FilesDragPreview';
-import { TagDragPreview } from './TagDragPreview';
+import TagDragPreview from './TagDragPreview';
 import DragItemTypes from '-/components/DragItemTypes';
 
 const layerStyles: React.CSSProperties = {
@@ -36,7 +36,7 @@ function getItemStyles(
 
 export interface CustomDragLayerProps {}
 
-export const CustomDragLayer: React.FC<CustomDragLayerProps> = props => {
+const CustomDragLayer: React.FC<CustomDragLayerProps> = props => {
   const {
     itemType,
     isDragging,
@@ -78,3 +78,5 @@ export const CustomDragLayer: React.FC<CustomDragLayerProps> = props => {
     </div>
   );
 };
+
+export default React.memo(CustomDragLayer);

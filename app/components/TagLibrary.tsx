@@ -25,6 +25,7 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Collapse from '@material-ui/core/Collapse';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import TagContainerDnd from './TagContainerDnd';
 import TagContainer from './TagContainer';
 import ConfirmDialog from './dialogs/ConfirmDialog';
@@ -34,7 +35,6 @@ import CreateTagsDialog from './dialogs/CreateTagsDialog';
 import EditTagGroupDialog from './dialogs/EditTagGroupDialog';
 import TagGroupContainer from './TagGroupContainer';
 import TagMenu from './menus/TagMenu';
-import CustomLogo from './CustomLogo';
 import TagLibraryMenu from './menus/TagLibraryMenu';
 import TagGroupMenu from './menus/TagGroupMenu';
 import {
@@ -55,7 +55,6 @@ import {
   isReadOnlyMode
 } from '../reducers/app';
 import SmartTags from '../reducers/smart-tags';
-import { AppConfig } from '-/config';
 import EditTagDialog from '-/components/dialogs/EditTagDialog';
 import { TS } from '-/tagspaces.namespace';
 import { getLocations } from '-/reducers/locations';
@@ -65,7 +64,7 @@ import TagGroupTitleDnD from '-/components/TagGroupTitleDnD';
 interface Props {
   classes?: any;
   style?: any;
-  isReadOnlyMode: boolean;
+  isReadOnly: boolean;
   tagTextColor: string;
   tagBackgroundColor: string;
   tagGroups: Array<TS.TagGroup>;
@@ -101,9 +100,10 @@ interface Props {
   locations: Array<TS.Location>;
   saveTagInLocation: boolean;
   moveTagGroup: (tagGroupUuid: TS.Uuid, position: number) => void;
+  reduceHeightBy: number;
 }
 
-const TagLibrary = (props: Props) => {
+function TagLibrary(props: Props) {
   const tagContainerRef = useRef<HTMLSpanElement>(null);
   const [
     tagGroupMenuAnchorEl,
@@ -260,7 +260,7 @@ const TagLibrary = (props: Props) => {
           >
             {tagGroup.children &&
               tagGroup.children.map((tag: TS.Tag, idx) => {
-                if (props.isReadOnlyMode) {
+                if (props.isReadOnly) {
                   return (
                     <TagContainer
                       key={tagGroup.uuid + tag.title}
@@ -300,11 +300,23 @@ const TagLibrary = (props: Props) => {
     }
   }
 
-  const { tagGroups, classes, allTags, showNotification } = props;
+  const {
+    tagGroups,
+    classes,
+    allTags,
+    showNotification,
+    isReadOnly,
+    reduceHeightBy
+  } = props;
 
   return (
-    <div className={classes.panel} style={props.style}>
-      <CustomLogo />
+    <div
+      className={classes.panel}
+      style={{
+        display: 'flex',
+        flexDirection: 'column'
+      }}
+    >
       <div className={classes.toolbar}>
         <Typography
           className={classNames(classes.panelTitle, classes.header)}
@@ -344,7 +356,6 @@ const TagLibrary = (props: Props) => {
       )}
       {isCreateTagGroupDialogOpened && (
         <CreateTagGroupDialog
-          // key={uuidv1()}
           open={isCreateTagGroupDialogOpened}
           onClose={() => setIsCreateTagGroupDialogOpened(false)}
           createTagGroup={props.createTagGroup}
@@ -354,7 +365,6 @@ const TagLibrary = (props: Props) => {
       )}
       {isCreateTagDialogOpened && (
         <CreateTagsDialog
-          // key={uuidv1()}
           open={isCreateTagDialogOpened}
           onClose={() => setIsCreateTagDialogOpened(false)}
           addTag={props.addTag}
@@ -406,6 +416,7 @@ const TagLibrary = (props: Props) => {
           onClose={() => setTagMenuAnchorEl(null)}
           showEditTagDialog={() => setIsEditTagDialogOpened(true)}
           showDeleteTagDialog={() => setIsDeleteTagDialogOpened(true)}
+          isReadOnlyMode={isReadOnly}
           selectedTag={selectedTag}
         />
       )}
@@ -435,7 +446,16 @@ const TagLibrary = (props: Props) => {
           confirmDialogTID="confirmDeleteTagDialogTagMenu"
         />
       )}
-      <div className={classes.taggroupsArea} data-tid="tagLibraryTagGroupList">
+      <div
+        style={{
+          paddingTop: 0,
+          marginTop: 0,
+          height: 'calc(100% - ' + reduceHeightBy + 'px)',
+          // @ts-ignore
+          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+        }}
+        data-tid="tagLibraryTagGroupList"
+      >
         {AppConfig.showSmartTags && (
           <div style={{ paddingTop: 0, paddingBottom: 0 }}>
             {SmartTags(i18n).map(renderTagGroup)}
@@ -445,7 +465,7 @@ const TagLibrary = (props: Props) => {
       </div>
     </div>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {
@@ -454,7 +474,7 @@ function mapStateToProps(state) {
     tagTextColor: getTagTextColor(state),
     selectedEntries: getSelectedEntries(state),
     allTags: getAllTags(state),
-    isReadOnlyMode: isReadOnlyMode(state),
+    isReadOnly: isReadOnlyMode(state),
     tagGroupCollapsed: state.settings.tagGroupCollapsed,
     locations: getLocations(state),
     saveTagInLocation: state.settings.saveTagInLocation

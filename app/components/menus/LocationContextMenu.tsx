@@ -30,26 +30,20 @@ import OpenFolderNativelyIcon from '@material-ui/icons/Launch';
 import CloseIcon from '@material-ui/icons/Close';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { locationType } from '@tagspaces/tagspaces-platforms/misc';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import { actions as LocationActions } from '-/reducers/locations';
-import PlatformIO from '-/services/platform-io';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import i18n from '-/services/i18n';
 import { actions as AppActions } from '-/reducers/app';
-import { getLocationPath } from '-/utils/paths';
-import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
-import { locationType } from '-/utils/misc';
+import PlatformIO from '-/services/platform-facade';
 
 interface Props {
   setEditLocationDialogOpened: (open: boolean) => void;
   setDeleteLocationDialogOpened: (open: boolean) => void;
-  createDirectoryIndex: (
-    path: string,
-    fullTextIndex: boolean,
-    isCurrentLocation: boolean
-  ) => void;
+  createLocationIndex: (location: TS.Location) => void;
   selectedLocation: TS.Location;
-  isCurrentLocation: (uuid: string) => boolean;
   moveLocationUp: (locationId: string) => void;
   moveLocationDown: (locationId: string) => void;
   showInFileManager: (path: string) => void;
@@ -59,37 +53,10 @@ interface Props {
   setLocationDirectoryContextMenuAnchorEl: (el: HTMLElement) => void;
 }
 
-const LocationContextMenu = (props: Props) => {
+function LocationContextMenu(props: Props) {
   const indexLocation = () => {
     props.setLocationDirectoryContextMenuAnchorEl(null);
-    const { createDirectoryIndex, selectedLocation } = props;
-    /* const isCurrentLocation =
-          selectedLocation &&
-          selectedLocation.uuid &&
-          selectedLocation.uuid === currentLocationId; */
-    const isCurrentLocation =
-      selectedLocation && props.isCurrentLocation(selectedLocation.uuid);
-    if (selectedLocation.type === locationType.TYPE_CLOUD) {
-      PlatformIO.enableObjectStoreSupport(selectedLocation)
-        .then(() => {
-          createDirectoryIndex(
-            getLocationPath(selectedLocation),
-            selectedLocation.fullTextIndex,
-            isCurrentLocation
-          );
-          return true;
-        })
-        .catch(() => {
-          PlatformIO.disableObjectStoreSupport();
-        });
-    } else if (selectedLocation.type === locationType.TYPE_LOCAL) {
-      PlatformIO.disableObjectStoreSupport();
-      createDirectoryIndex(
-        getLocationPath(selectedLocation),
-        selectedLocation.fullTextIndex,
-        isCurrentLocation
-      );
-    }
+    props.createLocationIndex(props.selectedLocation);
   };
 
   const { selectedLocation } = props;
@@ -120,7 +87,7 @@ const LocationContextMenu = (props: Props) => {
 
   const showInFileManager = () => {
     props.setLocationDirectoryContextMenuAnchorEl(null);
-    props.showInFileManager(getLocationPath(props.selectedLocation));
+    props.showInFileManager(PlatformIO.getLocationPath(props.selectedLocation));
     // props.openDirectory(selectedLocation.path || selectedLocation.paths[0]);
   };
 
@@ -233,13 +200,12 @@ const LocationContextMenu = (props: Props) => {
       {menuItems}
     </Menu>
   );
-};
+}
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      createDirectoryIndex: LocationIndexActions.createDirectoryIndex,
-      isCurrentLocation: AppActions.isCurrentLocation,
+      createLocationIndex: LocationIndexActions.createLocationIndex,
       moveLocationUp: LocationActions.moveLocationUp,
       moveLocationDown: LocationActions.moveLocationDown,
       showInFileManager: AppActions.showInFileManager,
@@ -249,5 +215,4 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
-// @ts-ignore
 export default connect(undefined, mapDispatchToProps)(LocationContextMenu);

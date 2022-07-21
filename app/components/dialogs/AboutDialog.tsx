@@ -51,7 +51,7 @@ if (buildID && buildID.length >= 11) {
 const productName = versionMeta.name + (Pro ? ' Pro' : '');
 document.title = productName + ' ' + versionMeta.version;
 
-const AboutDialog = (props: Props) => {
+function AboutDialog(props: Props) {
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [newVersion, setNewVersion] = useState('');
   const { open, onClose, fullScreen } = props;
@@ -117,7 +117,7 @@ const AboutDialog = (props: Props) => {
             'Build on: ' +
             versionMeta.buildTime +
             '\nPlatform: ' +
-            navigator.appVersion
+            navigator.userAgent
           }
         >
           <Typography variant="subtitle1">
@@ -133,17 +133,17 @@ const AboutDialog = (props: Props) => {
             {productName}
             &nbsp;
           </strong>
-          is made possible by the TagSpaces(github.com/tagspaces) open source
-          project and other
+          is made possible by the TagSpaces project and other open source
+          software listed in the:
+          <br />
           <Button
             size="small"
             color="primary"
-            style={{ marginLeft: 10 }}
+            style={{ marginLeft: -5 }}
             onClick={props.toggleThirdPartyLibsDialog}
           >
-            open source software
+            Software Acknowledgements
           </Button>
-          .
           <br />
           {!Pro && (
             <span>
@@ -235,6 +235,6 @@ const AboutDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 export default withMobileDialog()(AboutDialog);

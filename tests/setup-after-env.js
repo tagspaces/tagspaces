@@ -61,7 +61,17 @@ beforeEach(async () => {
     }*/
 
     await closeWelcomePlaywright();
-    await clearStorage();
+
+    if (global.isWeb) {
+      await global.client.evaluate(() => {
+        window.history.pushState('', document.title, window.location.pathname);
+        localStorage.clear();
+      });
+      await global.client.reload();
+    } else {
+      await clearStorage();
+    }
+
     await closeWelcomePlaywright();
   } else {
     if (jasmine.currentTest && jasmine.currentTest.status !== 'disabled') {
@@ -79,11 +89,11 @@ beforeEach(async () => {
   }
 });
 
-afterEach(async () => {
-  //   // takeScreenshot();
-  //   // await clearLocalStorage();
-  // testDataRefresh();
-  /*if (global.context) {
+// afterEach(async () => {
+//   // takeScreenshot();
+//   // await clearLocalStorage();
+// testDataRefresh();
+/*if (global.context) {
     if (jasmine.currentTest && jasmine.currentTest.status !== 'disabled') {
       // console.log('specDone Done' + JSON.stringify(result));
       // if (jasmine.previousTest && jasmine.previousTest.status === 'failed') {
@@ -96,5 +106,5 @@ afterEach(async () => {
       //}
     }
   }*/
-  // await clearStorage();
-});
+// await clearStorage();
+// });

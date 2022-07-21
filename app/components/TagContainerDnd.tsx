@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { MutableRefObject } from 'react';
 import {
   DragSource,
   DropTarget,
@@ -26,9 +26,12 @@ import {
 } from 'react-dnd';
 
 import { getEmptyImage } from 'react-dnd-html5-backend';
+import { extractTags } from '@tagspaces/tagspaces-platforms/paths';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import DragItemTypes from './DragItemTypes';
 import TagContainer from './TagContainer';
 import { TS } from '-/tagspaces.namespace';
+import PlatformIO from '-/services/platform-facade';
 
 const boxSource = {
   // Expected the drag source specification to only have some of the following keys: canDrag, beginDrag, isDragging, endDrag
@@ -87,7 +90,11 @@ const boxTarget = {
   }, */
   hover(props, monitor) {
     const dragItem = monitor.getItem();
-    if (props.tagGroup && dragItem.sourceTagGroupId === props.tagGroup.uuid) {
+    if (
+      props.reorderTags &&
+      props.tagGroup &&
+      dragItem.sourceTagGroupId === props.tagGroup.uuid
+    ) {
       // sort tagGroups tags
       const dragIndex = dragItem.index;
       const hoverIndex = props.index;
@@ -131,7 +138,7 @@ const boxTarget = {
       // but it's good here for the sake of performance
       // to avoid expensive index searches.
       dragItem.index = hoverIndex;
-    } else if (props.entryPath) {
+    } else if (props.reorderTags && props.entryPath) {
       // sort fileSystemEntries tags
       const dragIndex = dragItem.index;
       const hoverIndex = props.index;
@@ -143,6 +150,31 @@ const boxTarget = {
       if (dragItem.tag.type !== props.tag.type) {
         return;
       }
+      // Skip smart tags drop into another tag
+      if (dragItem.tag.functionality !== undefined) {
+        return;
+      }
+      // Skip reorder from TagGroup source
+      if (dragItem.sourceTagGroupId !== undefined) {
+        return;
+      }
+      // Skip reorder on DnD Tag from an other file
+      if (dragItem.tag.type === 'plain') {
+        const extractedTags = extractTags(
+          props.entryPath,
+          AppConfig.tagDelimiter,
+          PlatformIO.getDirSeparator()
+        );
+        if (
+          extractedTags.length > 0 &&
+          !extractedTags.includes(dragItem.tag.title)
+        ) {
+          return;
+        }
+      } else {
+        // TODO check if sidecar tag exist in file (reorder only if exist)
+      }
+
       dragItem.tag.position = hoverIndex;
       props.editTagForEntry(props.entryPath, dragItem.tag);
 
@@ -174,7 +206,8 @@ interface Props {
   connectDragPreview?: ConnectDragPreview;
   deleteIcon?: Object;
   selectedEntries: Array<TS.FileSystemEntry>;
-  tagContainerRef?: string;
+  tagContainerRef?: MutableRefObject<HTMLSpanElement>;
+  reorderTags?: boolean;
 }
 
 const TagContainerDnd = (props: Props) => {
@@ -190,7 +223,8 @@ const TagContainerDnd = (props: Props) => {
     connectDropTarget,
     addTags,
     tagMode,
-    tagContainerRef
+    tagContainerRef,
+    reorderTags
   } = props;
 
   // Use empty image as a drag preview so browsers don't draw it
@@ -214,6 +248,7 @@ const TagContainerDnd = (props: Props) => {
           entryPath={entryPath}
           isDragging={isDragging}
           selectedEntries={selectedEntries}
+          reorderTags={reorderTags}
         />
       </span>
     )

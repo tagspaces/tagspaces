@@ -33,13 +33,12 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import i18n from '-/services/i18n';
-import { Pro } from '-/pro';
 import { getMaxSearchResults } from '-/reducers/settings';
-import { actions as AppActions } from '-/reducers/app';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { TS } from '-/tagspaces.namespace';
 import InfoIcon from '-/components/InfoIcon';
 import { ProLabel } from '-/components/HelperComponents';
+
 interface Props {
   classes?: any;
   anchorEl: Element;
@@ -54,12 +53,11 @@ interface Props {
   sortTagGroup: (tagGroupId: string) => void;
   collectTagsFromLocation: (tagGroup: TS.TagGroup) => void;
   handleCloseTagGroupMenu: () => void;
-  searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
-  openSearchPanel: () => void;
+  setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   maxSearchResults: number;
 }
 
-const TagGroupMenu = (props: Props) => {
+function TagGroupMenu(props: Props) {
   function handleCollectTags() {
     props.onClose();
 
@@ -92,8 +90,8 @@ const TagGroupMenu = (props: Props) => {
 
   function showFilesWithTags() {
     if (props.selectedTagGroupEntry) {
-      props.openSearchPanel();
-      props.searchLocationIndex({
+      // props.openSearchPanel();
+      props.setSearchQuery({
         tagsOR: props.selectedTagGroupEntry.children,
         maxSearchResults: props.maxSearchResults
       });
@@ -168,18 +166,13 @@ const TagGroupMenu = (props: Props) => {
             <CollectTagsIcon />
           </ListItemIcon>
           <ListItemText
-            primary={
-              <>
-                {i18n.t('core:collectTagsFromLocation')}
-                <ProLabel />
-              </>
-            }
+            primary={<>{i18n.t('core:collectTagsFromLocation')}</>}
           />
         </MenuItem>
       </Menu>
     </div>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {
@@ -190,8 +183,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      openSearchPanel: AppActions.openSearchPanel,
-      searchLocationIndex: LocationIndexActions.searchLocationIndex
+      setSearchQuery: LocationIndexActions.setSearchQuery
     },
     dispatch
   );

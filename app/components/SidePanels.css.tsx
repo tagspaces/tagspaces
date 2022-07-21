@@ -15,18 +15,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-import AppConfig from '../config';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 
 export default (theme: any) =>
   ({
     panel: {
       height: '100%',
-      // maxHeight: '100%',
       paddingLeft: 5,
-      paddingRight: 5,
-      // paddingBottom: 50,
-      // overflowY: 'hidden',
-      backgroundColor: theme.palette.background.default
+      paddingRight: 5
     },
     fontIcon: {
       color: theme.palette.text.primary
@@ -38,23 +34,8 @@ export default (theme: any) =>
       margin: theme.spacing(1)
     },
     locationListArea: {
-      // paddingRight: 10, // place for scroll
       paddingTop: 0,
       marginTop: 0,
-      overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
-    },
-    helpFeedbackArea: {
-      paddingTop: 0,
-      marginTop: 0,
-      height: 'calc(100% - 110px)',
-      maxHeight: 'calc(100% - 110px)',
-      overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
-    },
-    taggroupsArea: {
-      paddingTop: 0,
-      marginTop: 0,
-      height: 'calc(100% - 110px)',
-      maxHeight: 'calc(100% - 110px)',
       overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
     },
     searchArea: {

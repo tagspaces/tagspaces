@@ -15,9 +15,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-export const Links = {
+const Links = {
   links: {
-    checkNewVersionURL: 'https://www.tagspaces.org/releases/tagspaces.json',
+    checkNewVersionURL: 'https://updates.tagspaces.org/releases/',
     productsOverview: 'https://www.tagspaces.org/products/',
     productProObjectStore:
       'https://www.tagspaces.org/products/pro/#connectingObjectStorage',
@@ -27,13 +27,15 @@ export const Links = {
       'https://www.tagspaces.org/products/pro/#fileFolderMeta',
     productProThumbnailsGeneration:
       'https://www.tagspaces.org/products/pro/#thumbnailsGeneration',
+    productProFolderColor:
+      'https://docs.tagspaces.org/annotations/#custom-folder-colors',
     productProGeoTagging: 'https://www.tagspaces.org/usecases/geotagging/',
     productPro: 'https://www.tagspaces.org/products/pro/',
     productEnterprise: 'https://www.tagspaces.org/products/enterprise/',
     downloadURL: 'https://www.tagspaces.org/downloads/',
     changelogURL: 'https://www.tagspaces.org/whatsnew/',
     imprintURL: 'https://www.tagspaces.org/about/imprint/',
-    privacyURL: 'https://www.tagspaces.org/about/privacy/',
+    privacyURL: 'https://www.tagspaces.org/legal/privacy-app/',
     suggestFeature: 'https://trello.com/b/TGeG5bi9',
     reportIssue: 'https://github.com/tagspaces/tagspaces/issues/',
     helpTranslating: 'https://www.transifex.com/tagspaces/tagspaces/',
@@ -48,12 +50,12 @@ export const Links = {
   },
   documentationLinks: {
     general: 'https://docs.tagspaces.org/',
-    perspectives: 'https://docs.tagspaces.org/browsing-files/',
-    defaultPerspective: 'https://docs.tagspaces.org/perspectives/grid/',
-    mapiquePerspective: 'https://docs.tagspaces.org/perspectives/mapique/',
-    treevizPerspective: 'https://docs.tagspaces.org/perspectives/treeviz/',
-    galleryPerspective: 'https://docs.tagspaces.org/perspectives/gallery/',
-    kanbanPerspective: 'https://docs.tagspaces.org/perspectives/kanban/',
+    perspectives: 'https://docs.tagspaces.org/browsing-files',
+    defaultPerspective: 'https://docs.tagspaces.org/perspectives/grid',
+    mapiquePerspective: 'https://docs.tagspaces.org/perspectives/mapique',
+    treevizPerspective: 'https://docs.tagspaces.org/perspectives/treeviz',
+    galleryPerspective: 'https://docs.tagspaces.org/perspectives/gallery',
+    kanbanPerspective: 'https://docs.tagspaces.org/perspectives/kanban',
     locations: 'https://docs.tagspaces.org/ui/locations',
     taglibrary: 'https://docs.tagspaces.org/ui/taglibrary',
     search: 'https://docs.tagspaces.org/search',

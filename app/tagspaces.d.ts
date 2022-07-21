@@ -20,6 +20,7 @@ declare module '*.json';
 declare module '*.md';
 declare module '*.txt';
 declare module '*.png';
+declare module '*.jpg';
 declare module '*.svg';
 declare module '*.woff';
 declare module '*.woff2';
@@ -41,8 +42,6 @@ declare interface Window {
   ExtIsAmplify?: boolean;
   ExtUseSidecarsForFileTagging?: boolean;
   ExtSaveLocationsInBrowser?: boolean;
-  ExtSidebarColor?: string;
-  ExtSidebarSelectionColor?: string;
   ExtLightThemeLightColor?: string;
   ExtLightThemeMainColor?: string;
   ExtDarkThemeLightColor?: string;
@@ -51,6 +50,8 @@ declare interface Window {
   ExtShowSmartTags?: string;
   ExtShowAdvancedSearch?: string;
   ExtUseGenerateThumbnails?: boolean;
+  ExtGeoTaggingFormat?: string;
+  ExtDemoUser?: any;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: any;
   plugins?: any; // needed for Cordova
   resolveLocalFileSystemURL?: any; // needed for Cordova

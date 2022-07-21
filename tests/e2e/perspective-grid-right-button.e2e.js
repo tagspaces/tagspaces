@@ -427,7 +427,7 @@ describe('TST50** - Right button on a file', () => {
       'grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));'
     );
 
-    await clickOn('[data-tid=gridPerspectiveSwitchLayoutToRow]');
+    await clickOn('[data-tid=openListPerspective]');
     // check perspective view
 
     gridStyle = await grid.getAttribute('style');

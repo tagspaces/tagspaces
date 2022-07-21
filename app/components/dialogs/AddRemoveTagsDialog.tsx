@@ -17,8 +17,10 @@
  */
 
 import React, { useState } from 'react';
+import Draggable from 'react-draggable';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import Button from '@material-ui/core/Button';
+import Paper, { PaperProps } from '@material-ui/core/Paper';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -31,8 +33,11 @@ import Typography from '@material-ui/core/Typography';
 import Dialog from '@material-ui/core/Dialog';
 import TagsSelect from '../TagsSelect';
 import i18n from '-/services/i18n';
-import { extractFileName, extractDirectoryName } from '-/utils/paths';
-import PlatformIO from '-/services/platform-io';
+import {
+  extractFileName,
+  extractDirectoryName
+} from '@tagspaces/tagspaces-platforms/paths';
+import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
@@ -46,7 +51,18 @@ interface Props {
   removeAllTags: (paths: Array<string>) => void;
 }
 
-const AddRemoveTagsDialog = (props: Props) => {
+function PaperComponent(props: PaperProps) {
+  return (
+    <Draggable
+      handle="#draggable-dialog-title"
+      cancel={'[class*="MuiDialogContent-root"]'}
+    >
+      <Paper {...props} />
+    </Draggable>
+  );
+}
+
+function AddRemoveTagsDialog(props: Props) {
   const [newlyAddedTags, setNewlyAddedTags] = useState<Array<TS.Tag>>([]);
 
   const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
@@ -109,8 +125,9 @@ const AddRemoveTagsDialog = (props: Props) => {
       onClose={onClose}
       keepMounted
       scroll="paper"
+      PaperComponent={fullScreen ? Paper : PaperComponent}
     >
-      <DialogTitle>
+      <DialogTitle id="draggable-dialog-title">
         {i18n.t('core:tagOperationTitle')}
         <DialogCloseButton onClose={onClose} />
       </DialogTitle>
@@ -179,6 +196,6 @@ const AddRemoveTagsDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 export default withMobileDialog()(AddRemoveTagsDialog);

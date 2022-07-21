@@ -25,7 +25,7 @@ interface Props {
   tooltip?: string;
 }
 
-const InfoIcon = (props: Props) => {
+function InfoIcon(props: Props) {
   const { tooltip } = props;
   return (
     <Tooltip arrow title={tooltip}>
@@ -34,6 +34,6 @@ const InfoIcon = (props: Props) => {
       </IconButton>
     </Tooltip>
   );
-};
+}
 
 export default InfoIcon;

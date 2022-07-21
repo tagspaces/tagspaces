@@ -2,9 +2,9 @@
 
 [![Join the chat at https://gitter.im/tagspaces/tagspaces](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/tagspaces/tagspaces?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Github All Releases](https://img.shields.io/github/downloads/tagspaces/tagspaces/total.svg)]()
 
-**TagSpaces** is a free, non-locking, open source application for organizing and managing your local files with the help of tags. It features note taking and some to-do app capabilities. The application is available for Windows, Linux, Mac OS and Android. We provide a web clipper extension for Firefox and Chrome for easy collecting of online content as local files.
+**TagSpaces** is a free, no vendor lock-in, open source application for organizing, annotating and managing local files with the help of tags. It features advanced note taking functionalities and some capabilities of to-do apps. The application is available for Windows, Linux, Mac OS and Android. We provide a web clipper extension for Firefox, Edge and Chrome for easy collecting of online content in the form of local files.
 
-![TagSpaces Start Screen](https://raw.githubusercontent.com/tagspaces/documentation/master/static/media/v3/tagspaces-v3-themes.jpg)
+![tagspaces-screenshot ubuntu v4 0](https://user-images.githubusercontent.com/1249777/139649315-7d5b40cc-5c18-450a-8de8-414c26adad1e.png)
 
 More information about can be found from the following sources:
 
@@ -50,6 +50,7 @@ The native Windows, Linux and Mac OS versions of TagSpaces are built with [Elect
     ./node_modules....... after yarn install, you will find here the external dependencies of the application
     ./resources.......... contains images and other files needed for the application building
     ./scripts............ contains js script needed for the yarn/npm tasks
+    ./test............... contains unit and e2e tests of the app
     ./web................ contains assets needed for the web version of the app
 
 ## How to run TagSpaces from the source code?
@@ -64,9 +65,9 @@ Get the TagSpaces source code by cloning its repository:
 
     $ git clone https://github.com/tagspaces/tagspaces.git
 
-Go to the folder where the code was cloned and select the branch you want to test. Use the the **master** branch for the last officially released version or the branch **develop** for a kind of a nightly build, containing the changes we are preparing for the next release of the application.
+Go to the folder where the code was cloned to and select the branch you want to test. Use the **master** branch for the last officially released version or the branch **develop** for a kind of a nightly build, containing the changes we are preparing for the next release of the application.
 
-Switch to folder where you have cloned the repository:
+Switch to the folder where you have cloned the repository:
 
     $ cd tagspaces
 
@@ -78,15 +79,17 @@ and install the project dependencies:
 
     $ yarn install
 
-**Note:** If you experience any errors with the above command, please try this command first before filing a bug report:
-
-    $ yarn install
-
 The last command will automatically build the application with webpack. Now it is time to install all the TagSpaces extensions:
 
-    $ yarn install-ext
+    $ yarn install-ext-node
 
-Now you are ready and can build/start (bs) the application with:
+Starting from v4 of the application, a web service is running locally as a separate process. The web service is responsible for the search index creation and the generation of the thumbnails for most of the images formats. A key is required in order for the main application to communicate with the web server. It should be defined in the `.env` file located in `app` folder. This is an example for an .env file.
+
+    KEY=a_custom_key
+
+Having a custom key, ensures that another instance of TagSpaces will not communicate with the web service of the initial instance, since it is always running on the same port.
+
+Now you are ready and can build and start (bs) the application with:
 
     $ yarn bs
 
@@ -96,7 +99,7 @@ If you want to try the development mode, you can start it by:
 
 This will start a development server in background, which watches for changes in background and refreshes the application automatically once you have done some changes in the source code.
 
-## Package the app for Windows, Linux and Mac OS
+## Package for Windows, Linux and macOS
 
 Building of the packages can be accomplished with the integrated yarn scripts:
 
@@ -106,9 +109,23 @@ $ yarn package-win
 $ yarn package-linux
 
 $ yarn package-mac
+
+$ yarn package-mac-arm64
 ```
 
-For creating the packages for Windows, Linux and Mac OS respectively.
+The commands will create packages for Windows, Linux, Mac OS and Mac OS with the M1 processor respectively. Do not forget to run the `yarn build` script before packaging.
+
+## Package the  Android
+
+Building of the packages for Android can be accomplished with the integrated yarn scripts:
+
+```bash
+$ yarn version-meta
+
+$ yarn prepare-cordova
+
+$ yarn package-android
+```
 
 ## Start the web version locally
 
@@ -156,7 +173,6 @@ If you are having troubles using TagSpaces or have found a bug please [open a ti
 ## Known issues
 
 - TagSpaces is not suitable for searching in locations containing more than 100000 files.
-- TagSpaces has performance issue displaying folders directly containing more than 1000 files. There is no such problem if the files are distributed in sub folders.
 
 ## Feeds
 
@@ -165,4 +181,4 @@ If you are having troubles using TagSpaces or have found a bug please [open a ti
 
 ## License
 
-TagSpaces' source code is licensed under the AGPL (GNU Affero General Public License) Version 3. The license text is available in the [LICENSE](LICENSE.txt) file.
+This project is dual-licensed under the [AGPL](LICENSE.txt) (GNU Affero General Public License) Version 3 for FOSS projects and under a commercial license for independent software vendors and resellers. If you want to modify this application under different conditions, feel free to contact us.

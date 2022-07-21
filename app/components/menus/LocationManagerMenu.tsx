@@ -26,18 +26,20 @@ import ExportImportIcon from '@material-ui/icons/SwapHoriz';
 import OpenLinkIcon from '@material-ui/icons/Link';
 import HelpIcon from '@material-ui/icons/Help';
 import CloseIcon from '@material-ui/icons/Close';
+import UpdateIndexIcon from '@material-ui/icons/Update';
 import classNames from 'classnames';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import AppConfig from '-/config';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '-/services/i18n';
 import { Pro } from '../../pro';
 import { actions as AppActions } from '-/reducers/app';
 import Links from '-/links';
 import { ProLabel } from '-/components/HelperComponents';
+import { actions as LocationIndexActions } from '-/reducers/location-index';
 
 interface Props {
   classes: any;
@@ -47,9 +49,10 @@ interface Props {
   toggleOpenLinkDialog: () => void;
   closeAllLocations: () => void;
   openURLExternally: (url: string, skipConfirmation?: boolean) => void;
+  createLocationsIndexes: () => void;
 }
 
-const LocationManagerMenu = (props: Props) => {
+function LocationManagerMenu(props: Props) {
   const [
     locationManagerMenuAnchorEl,
     setLocationManagerMenuAnchorEl
@@ -90,7 +93,7 @@ const LocationManagerMenu = (props: Props) => {
     </MenuItem>
   );
 
-  if (!AppConfig.isCordovaAndroid) {
+  if (!AppConfig.locationsReadOnly) {
     // https://trello.com/c/z6ESlqxz/697-exports-to-json-or-csv-do-not-work-on-android
     menuItems.push(
       <MenuItem
@@ -115,30 +118,30 @@ const LocationManagerMenu = (props: Props) => {
         />
       </MenuItem>
     );
+    menuItems.push(
+      <MenuItem
+        disabled={!Pro}
+        key="locationManagerMenuImportLocations"
+        data-tid="locationManagerMenuImportLocationsTID"
+        onClick={() => {
+          setLocationManagerMenuAnchorEl(null);
+          props.importLocations();
+        }}
+      >
+        <ListItemIcon>
+          <ExportImportIcon />
+        </ListItemIcon>
+        <ListItemText
+          primary={
+            <>
+              {i18n.t('core:importLocationTitle')}
+              <ProLabel />
+            </>
+          }
+        />
+      </MenuItem>
+    );
   }
-  menuItems.push(
-    <MenuItem
-      disabled={!Pro}
-      key="locationManagerMenuImportLocations"
-      data-tid="locationManagerMenuImportLocationsTID"
-      onClick={() => {
-        setLocationManagerMenuAnchorEl(null);
-        props.importLocations();
-      }}
-    >
-      <ListItemIcon>
-        <ExportImportIcon />
-      </ListItemIcon>
-      <ListItemText
-        primary={
-          <>
-            {i18n.t('core:importLocationTitle')}
-            <ProLabel />
-          </>
-        }
-      />
-    </MenuItem>
-  );
 
   menuItems.push(
     <MenuItem
@@ -153,6 +156,22 @@ const LocationManagerMenu = (props: Props) => {
         <CloseIcon />
       </ListItemIcon>
       <ListItemText primary={i18n.t('core:closeAllLocations')} />
+    </MenuItem>
+  );
+
+  menuItems.push(
+    <MenuItem
+      key="updateAllLocationIndexes"
+      data-tid="updateAllLocationIndexes"
+      onClick={() => {
+        setLocationManagerMenuAnchorEl(null);
+        props.createLocationsIndexes();
+      }}
+    >
+      <ListItemIcon>
+        <UpdateIndexIcon />
+      </ListItemIcon>
+      <ListItemText primary={i18n.t('core:updateAllLocationIndexes')} />
     </MenuItem>
   );
 
@@ -199,12 +218,13 @@ const LocationManagerMenu = (props: Props) => {
       </Menu>
     </>
   );
-};
+}
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      closeAllLocations: AppActions.closeAllLocations
+      closeAllLocations: AppActions.closeAllLocations,
+      createLocationsIndexes: LocationIndexActions.createLocationsIndexes
     },
     dispatch
   );

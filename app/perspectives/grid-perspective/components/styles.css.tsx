@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-import AppConfig from '-/config';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 
 export default (theme: any): any => ({
   gridContainer: {
@@ -60,12 +60,13 @@ export default (theme: any): any => ({
     backgroundColor: theme.palette.primary.light + ' !important'
   },
   selectedRowCell: {
-    borderRadius: 0,
     border: '1px solid' + theme.palette.primary.main + ' !important'
   },
   gridCellThumb: {
     backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center'
+    backgroundPosition: 'center',
+    borderRadius: 5,
+    marginBottom: 5
   },
   gridCellTitle: {
     padding: 5,
@@ -73,23 +74,24 @@ export default (theme: any): any => ({
   },
   gridCellTags: {
     padding: 0,
-    zIndex: 100,
+    paddingTop: 2,
     maxHeight: 100,
     overflowY: 'auto',
-    overflowX: 'hidden'
-    // opacity: 0.9
+    overflowX: 'hidden',
+    position: 'relative'
   },
   gridCellDescription: {
     padding: 2,
     margin: 2,
     backgroundColor: theme.palette.background.paper,
+    borderRadius: 5,
     opacity: 0.6,
     wordBreak: 'break-word',
     display: 'block'
   },
   gridFileExtension: {
     padding: 5,
-    paddingTop: 3,
+    paddingTop: 1,
     paddingBottom: 7,
     fontSize: 13,
     marginRight: 5,

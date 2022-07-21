@@ -20,6 +20,7 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import ShowEntriesWithTagIcon from '@material-ui/icons/SearchOutlined';
+import ApplyTagIcon from '@material-ui/icons/LocalOfferOutlined';
 import Edit from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/DeleteForever';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -29,7 +30,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import i18n from '-/services/i18n';
 import { getMaxSearchResults } from '-/reducers/settings';
-import { actions as AppActions, getSelectedEntries } from '-/reducers/app';
+import { getSelectedEntries } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import TaggingActions from '-/reducers/tagging-actions';
 
@@ -41,12 +42,12 @@ interface Props {
   open?: boolean;
   onClose: () => void;
   selectedTag?: TS.Tag;
-  searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
-  openSearchPanel: () => void;
+  setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   showEditTagDialog: () => void;
   showDeleteTagDialog: () => void;
   maxSearchResults: number;
   selectedEntries: Array<any>;
+  isReadOnlyMode: boolean;
   addTags: (
     paths: Array<string>,
     tags: Array<TS.Tag>,
@@ -54,37 +55,50 @@ interface Props {
   ) => void;
 }
 
-const TagMenu = (props: Props) => {
+function TagMenu(props: Props) {
+  const {
+    isReadOnlyMode,
+    selectedTag,
+    setSearchQuery,
+    onClose,
+    showEditTagDialog,
+    showDeleteTagDialog,
+    maxSearchResults,
+    selectedEntries,
+    addTags,
+    anchorEl,
+    open
+  } = props;
+
   function showFilesWithThisTag() {
-    if (props.selectedTag) {
-      props.openSearchPanel();
-      props.searchLocationIndex({
-        tagsAND: [props.selectedTag],
-        maxSearchResults: props.maxSearchResults
+    if (selectedTag) {
+      setSearchQuery({
+        tagsAND: [selectedTag],
+        maxSearchResults
       });
     }
-    props.onClose();
+    onClose();
   }
 
-  function showEditTagDialog() {
-    props.onClose();
-    props.showEditTagDialog();
+  function showEditTagMenuDialog() {
+    onClose();
+    showEditTagDialog();
   }
 
-  function showDeleteTagDialog() {
-    props.onClose();
-    props.showDeleteTagDialog();
+  function openDeleteTagDialog() {
+    onClose();
+    showDeleteTagDialog();
   }
 
   function applyTag() {
-    const selectedEntryPaths = props.selectedEntries.map(entry => entry.path);
-    props.addTags(selectedEntryPaths, [props.selectedTag]);
-    props.onClose();
+    const selectedEntryPaths = selectedEntries.map(entry => entry.path);
+    addTags(selectedEntryPaths, [selectedTag]);
+    onClose();
   }
 
   return (
     <div style={{ overflowY: 'hidden' }}>
-      <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
+      <Menu anchorEl={anchorEl} open={open} onClose={onClose}>
         <MenuItem
           data-tid="showFilesWithThisTag"
           onClick={showFilesWithThisTag}
@@ -94,16 +108,16 @@ const TagMenu = (props: Props) => {
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:showFilesWithThisTag')} />
         </MenuItem>
-        {props.selectedEntries && props.selectedEntries.length > 0 && (
+        {selectedEntries && selectedEntries.length > 0 && !isReadOnlyMode && (
           <MenuItem data-tid="applyTagTID" onClick={applyTag}>
             <ListItemIcon>
-              <ShowEntriesWithTagIcon />
+              <ApplyTagIcon />
             </ListItemIcon>
             <ListItemText primary={i18n.t('core:applyTag')} />
           </MenuItem>
         )}
         {!isTagLibraryReadOnly && (
-          <MenuItem data-tid="editTagDialog" onClick={showEditTagDialog}>
+          <MenuItem data-tid="editTagDialog" onClick={showEditTagMenuDialog}>
             <ListItemIcon>
               <Edit />
             </ListItemIcon>
@@ -111,7 +125,7 @@ const TagMenu = (props: Props) => {
           </MenuItem>
         )}
         {!isTagLibraryReadOnly && (
-          <MenuItem data-tid="deleteTagDialog" onClick={showDeleteTagDialog}>
+          <MenuItem data-tid="deleteTagDialog" onClick={openDeleteTagDialog}>
             <ListItemIcon>
               <DeleteIcon />
             </ListItemIcon>
@@ -121,7 +135,7 @@ const TagMenu = (props: Props) => {
       </Menu>
     </div>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {
@@ -133,8 +147,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      openSearchPanel: AppActions.openSearchPanel,
-      searchLocationIndex: LocationIndexActions.searchLocationIndex,
+      setSearchQuery: LocationIndexActions.setSearchQuery,
       addTags: TaggingActions.addTags
     },
     dispatch

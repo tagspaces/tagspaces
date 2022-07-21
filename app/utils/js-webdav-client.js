@@ -1,3 +1,4 @@
+/*
 (function(root, factory) {
   if (typeof module === 'object' && typeof module.exports === 'object') {
     var v = factory(exports);
@@ -22,7 +23,7 @@
   // https://github.com/Microsoft/TypeScript/issues/5844#issuecomment-161425239
   Object.defineProperty(exports, '__esModule', { value: true });
 
-  /*
+  /!*
    * Copyright ©2012 SARA bv, The Netherlands
    *
    * This file is part of js-webdav-client.
@@ -39,33 +40,33 @@
    *
    * You should have received a copy of the GNU Lesser General Public License
    * along with js-webdav-client.  If not, see <http://www.gnu.org/licenses/>.
-   */
+   *!/
   ('use strict');
 
-  /**
+  /!**
    * A webDAV client library for JavaScript
    * @author Niek Bosch
-   */
+   *!/
 
   // Create the namespace if that's not done yet
   if (nl === undefined) {
-    /** @namespace */
+    /!** @namespace *!/
     var nl = {};
   }
   if (nl.sara === undefined) {
-    /** @namespace */
+    /!** @namespace *!/
     nl.sara = {};
   }
   if (nl.sara.webdav === undefined) {
-    /** @namespace The entire library is in this namespace. */
+    /!** @namespace The entire library is in this namespace. *!/
     nl.sara.webdav = {};
   }
   if (nl.sara.webdav.codec === undefined) {
-    /** @namespace Holds all the standard codecs for converting properties */
+    /!** @namespace Holds all the standard codecs for converting properties *!/
     nl.sara.webdav.codec = {};
   }
 
-  /*
+  /!*
    * Copyright ©2012 SARA bv, The Netherlands
    *
    * This file is part of js-webdav-client.
@@ -82,7 +83,7 @@
    *
    * You should have received a copy of the GNU Lesser General Public License
    * along with js-webdav-client.  If not, see <http://www.gnu.org/licenses/>.
-   */
+   *!/
   ('use strict');
 
   // If nl.sara.webdav.Exception is already defined, we have a namespace clash!
@@ -90,13 +91,13 @@
     throw 'Class name nl.sara.webdav.Exception already taken, could not load JavaScript library for WebDAV connectivity.';
   }
 
-  /**
+  /!**
    * @class An exception
    * @param  {String}  [message]  Optional; A human readable message
    * @param  {Number}  [code]     Optional; The error code. It is best to use the class constants to set this.
    * @property  {String}  message  The exception message
    * @property  {Number}  code     The exception code
-   */
+   *!/
   nl.sara.webdav.Exception = function(message, code) {
     // First define public attributes
     Object.defineProperty(this, 'message', {
@@ -121,9 +122,9 @@
     }
   };
 
-  /**#@+
+  /!**#@+
    * Declaration of the error code constants
-   */
+   *!/
   nl.sara.webdav.Exception.WRONG_TYPE = 1;
   nl.sara.webdav.Exception.NAMESPACE_TAKEN = 2;
   nl.sara.webdav.Exception.UNEXISTING_PROPERTY = 3;
@@ -132,21 +133,21 @@
   nl.sara.webdav.Exception.MISSING_REQUIRED_PARAMETER = 6;
   nl.sara.webdav.Exception.AJAX_ERROR = 7;
   nl.sara.webdav.Exception.NOT_IMPLEMENTED = 8;
-  /**#@-*/
+  /!**#@-*!/
 
   //########################## DEFINE PUBLIC METHODS #############################
-  /**
+  /!**
    * Overloads the default toString() method so it returns the message of this exception
    *
    * @returns  {String}  A string representation of this property
-   */
+   *!/
   nl.sara.webdav.Exception.prototype.toString = function() {
     return this.message;
   };
 
   // End of library
 
-  /*
+  /!*
    * Copyright ©2012 SARA bv, The Netherlands
    *
    * This file is part of js-webdav-client.
@@ -163,7 +164,7 @@
    *
    * You should have received a copy of the GNU Lesser General Public License
    * along with js-webdav-client.  If not, see <http://www.gnu.org/licenses/>.
-   */
+   *!/
   ('use strict');
 
   // If nl.sara.webdav.Ie is already defined, we have a namespace clash!
@@ -171,28 +172,28 @@
     throw 'Class name nl.sara.webdav.Ie already taken, could not load JavaScript library for WebDAV connectivity.';
   }
 
-  /**
+  /!**
    * @class This class holds all IE hacks
-   */
+   *!/
   nl.sara.webdav.Ie = {};
 
-  /**
+  /!**
    * Although this library has no intent to work in IE older than versions 9, it should work in IE and sometimes requires some special attention for this wonderful browser
    *
    * @var  Boolean  True if the current browser is IE
-   */
+   *!/
   nl.sara.webdav.Ie.isIE = false;
-  /*@cc_on
+  /!*@cc_on
 nl.sara.webdav.Ie.isIE = true;
-@*/
+@*!/
 
   //########################## DEFINE PUBLIC METHODS #############################
-  /**
+  /!**
    * Returns the localName of a DOM Node object
    *
    * @param    {Node}    node  The node to determine the localname for
    * @returns  {String}        The local name
-   */
+   *!/
   nl.sara.webdav.Ie.getLocalName = function(node) {
     if (nl.sara.webdav.Ie.isIE && node.baseName) {
       return node.baseName;
@@ -203,7 +204,7 @@ nl.sara.webdav.Ie.isIE = true;
 
   // End of library
 
-  /*
+  /!*
    * Copyright ©2012 SARA bv, The Netherlands
    *
    * This file is part of js-webdav-client.
@@ -220,7 +221,7 @@ nl.sara.webdav.Ie.isIE = true;
    *
    * You should have received a copy of the GNU Lesser General Public License
    * along with js-webdav-client.  If not, see <http://www.gnu.org/licenses/>.
-   */
+   *!/
   ('use strict');
 
   // If nl.sara.webdav.Client is already defined, we have a namespace clash!
@@ -231,7 +232,7 @@ nl.sara.webdav.Ie.isIE = true;
     );
   }
 
-  /**
+  /!**
    * @class Connection to a WebDAV server
    *
    * @param  {Array}  [config]  A configuration object. It can contain the following fields:
@@ -250,7 +251,7 @@ nl.sara.webdav.Ie.isIE = true;
    *                            a username and password, you will have to use the
    *                            config array, you cannot pass them as extra normal
    *                            parameters.
-   */
+   *!/
   nl.sara.webdav.Client = function(config, useHTTPS, port, defaultHeaders) {
     // First define private attributes
     Object.defineProperty(this, '_baseUrl', {
@@ -319,24 +320,24 @@ nl.sara.webdav.Ie.isIE = true;
     }
   };
 
-  /**#@+
+  /!**#@+
    * Class constant
-   */
+   *!/
   nl.sara.webdav.Client.PROPNAME = 1;
   nl.sara.webdav.Client.ALLPROP = 2;
   nl.sara.webdav.Client.INFINITY = 'infinity';
   nl.sara.webdav.Client.FAIL_ON_OVERWRITE = 3;
   nl.sara.webdav.Client.TRUNCATE_ON_OVERWRITE = 4;
   nl.sara.webdav.Client.SILENT_OVERWRITE = 5;
-  /**#@-*/
+  /!**#@-*!/
 
   //########################## DEFINE PUBLIC METHODS #############################
-  /**
+  /!**
    * Converts a path to the full url (i.e. appends the protocol and host part)
    *
    * @param   {String}  path  The path on the server
    * @returns {String}        The full url to the path
-   */
+   *!/
   nl.sara.webdav.Client.prototype.getUrl = function(path) {
     if (path.substring(0, 1) !== '/') {
       path = '/' + path;
@@ -348,7 +349,7 @@ nl.sara.webdav.Ie.isIE = true;
     }
   };
 
-  /**
+  /!**
    * Perform a WebDAV PROPFIND request
    *
    * @param    {String}                         path             The path get a PROPFIND for
@@ -358,7 +359,7 @@ nl.sara.webdav.Ie.isIE = true;
    * @param    {nl.sara.webdav.Property[]}      [include]        Optional; An array with Property objects used for the <include> element. This is only used for ALLPROP requests. When omitted, no <include> element is send. See RFC 4918.
    * @param    {Array}                          headers          Optional; Additional headers to set
    * @returns  {nl.sara.webdav.Client}                           The client itself for chaining methods
-   */
+   *!/
   nl.sara.webdav.Client.prototype.propfind = function(
     path,
     callback,
@@ -499,7 +500,7 @@ nl.sara.webdav.Ie.isIE = true;
     return this;
   };
 
-  /**
+  /!**
    * Perform a WebDAV PROPPATCH request
    *
    * @param    {String}                         path        The path do a PROPPATCH on
@@ -508,7 +509,7 @@ nl.sara.webdav.Ie.isIE = true;
    * @param    {nl.sara.webdav.Property[]}      [delProps]  Optional; The properties to delete. If not set, setProps should be set.
    * @param    {Array}                          headers     Optional; Additional headers to set
    * @returns  {nl.sara.webdav.Client}                      The client itself for chaining methods
-   */
+   *!/
   nl.sara.webdav.Client.prototype.proppatch = function(
     path,
     callback,
@@ -613,7 +614,7 @@ nl.sara.webdav.Ie.isIE = true;
     return this;
   };
 
-  /**
+  /!**
    * Perform a WebDAV MKCOL request
    *
    * @param    {String}                         path                                              The path to perform MKCOL on
@@ -622,7 +623,7 @@ nl.sara.webdav.Ie.isIE = true;
    * @param    {String}                         [contenttype='application/xml; charset="utf-8"']  Optional; the content type of the body (i.e. value for the Content-Type header). If omitted, but body is specified, then 'application/xml; charset="utf-8"' is assumed
    * @param    {Array}                          headers                                           Optional; Additional headers to set
    * @returns  {nl.sara.webdav.Client}                                                            The client itself for chaining methods
-   */
+   *!/
   nl.sara.webdav.Client.prototype.mkcol = function(
     path,
     callback,
@@ -663,7 +664,7 @@ nl.sara.webdav.Ie.isIE = true;
     return this;
   };
 
-  /**
+  /!**
    * Perform a WebDAV DELETE request
    *
    * Because 'delete' is an operator in JavaScript, I had to name this method
@@ -674,7 +675,7 @@ nl.sara.webdav.Ie.isIE = true;
    * @param    {Function(status,body,headers)}  callback  Querying the server is done asynchronously, this callback function is called when the results are in
    * @param    {Array}                          headers   Optional; Additional headers to set
    * @returns  {nl.sara.webdav.Client}                    The client itself for chaining methods
-   */
+   *!/
   nl.sara.webdav.Client.prototype.remove = function(path, callback, headers) {
     if (path === undefined || callback === undefined) {
       throw new nl.sara.webdav.Exception(
@@ -699,14 +700,14 @@ nl.sara.webdav.Ie.isIE = true;
     return this;
   };
 
-  /**
+  /!**
    * Perform a WebDAV GET request
    *
    * @param    {String}                    path      The path to GET
    * @param    {Function(status,content)}  callback  Querying the server is done asynchronously, this callback function is called when the results are in
    * @param    {Array}                     headers   Optional; Additional headers to set
    * @returns  {nl.sara.webdav.Client}               The client itself for chaining methods
-   */
+   *!/
   nl.sara.webdav.Client.prototype.get = function(path, callback, headers) {
     if (path === undefined || callback === undefined) {
       throw new nl.sara.webdav.Exception(
@@ -732,14 +733,14 @@ nl.sara.webdav.Ie.isIE = true;
     return this;
   };
 
-  /**
+  /!**
    * Perform a WebDAV HEAD request
    *
    * @param    {String}                         path      The path to perform HEAD on
    * @param    {Function(status,body,headers)}  callback  Querying the server is done asynchronously, this callback function is called when the results are in
    * @param    {Array}                          headers   Optional; Additional headers to set
    * @returns  {nl.sara.webdav.Client}                    The client itself for chaining methods
-   */
+   *!/
   nl.sara.webdav.Client.prototype.head = function(path, callback, headers) {
     if (path === undefined || callback === undefined) {
       throw new nl.sara.webdav.Exception(
@@ -765,7 +766,7 @@ nl.sara.webdav.Ie.isIE = true;
     return this;
   };
 
-  /**
+  /!**
    * Perform a WebDAV PUT request
    *
    * @param    {String}                         path           The path to perform PUT on
@@ -774,7 +775,7 @@ nl.sara.webdav.Ie.isIE = true;
    * @param    {String}                         [contenttype]  Optional; the content type of the body (i.e. value for the Content-Type header).
    * @param    {Array}                          headers        Optional; Additional headers to set
    * @returns  {nl.sara.webdav.Client}                         The client itself for chaining methods
-   */
+   *!/
   nl.sara.webdav.Client.prototype.put = function(
     path,
     callback,
@@ -812,7 +813,7 @@ nl.sara.webdav.Ie.isIE = true;
     return this;
   };
 
-  /**
+  /!**
    * Perform a WebDAV OPTIONS request
    *
    * @param    {String}                         path                                               The path to perform OPTIONS on
@@ -821,7 +822,7 @@ nl.sara.webdav.Ie.isIE = true;
    * @param    {String}                         [contenttype='application/x-www-form-urlencoded']  Optional; the content type of the body (i.e. value for the Content-Type header). If omitted, but body is specified, then 'application/x-www-form-urlencoded' is assumed
    * @param    {Array}                          headers                                            Optional; Additional headers to set
    * @returns  {nl.sara.webdav.Client}                                                             The client itself for chaining methods
-   */
+   *!/
   nl.sara.webdav.Client.prototype.options = function(
     path,
     callback,
@@ -869,7 +870,7 @@ nl.sara.webdav.Ie.isIE = true;
     return this;
   };
 
-  /**
+  /!**
    * Perform a WebDAV POST request
    *
    * @param    {String}                         path                                               The path to perform POST on
@@ -878,7 +879,7 @@ nl.sara.webdav.Ie.isIE = true;
    * @param    {String}                         [contenttype='application/x-www-form-urlencoded']  Optional; the content type of the body (i.e. value for the Content-Type header). If omitted, but body is specified, then 'application/x-www-form-urlencoded' is assumed
    * @param    {Array}                          headers                                            Optional; Additional headers to set
    * @returns  {nl.sara.webdav.Client}                                                             The client itself for chaining methods
-   */
+   *!/
   nl.sara.webdav.Client.prototype.post = function(
     path,
     callback,
@@ -926,7 +927,7 @@ nl.sara.webdav.Ie.isIE = true;
     return this;
   };
 
-  /**
+  /!**
    * Perform a WebDAV COPY request
    *
    * @param    {String}                         path                              The path to perform COPY on
@@ -936,7 +937,7 @@ nl.sara.webdav.Ie.isIE = true;
    * @param    {String}                         [depth]                           Optional; Should be '0' or 'infinity'. This is used in case of a collection; 0 means only copy the collection itself, infinity means copy also everything contained in the collection
    * @param    {Array}                          headers                           Optional; Additional headers to set
    * @returns  {nl.sara.webdav.Client}                                            The client itself for chaining methods
-   */
+   *!/
   nl.sara.webdav.Client.prototype.copy = function(
     path,
     callback,
@@ -990,7 +991,7 @@ nl.sara.webdav.Ie.isIE = true;
     return this;
   };
 
-  /**
+  /!**
    * Perform a WebDAV MOVE request
    *
    * @param    {String}                         path                              The path to perform MOVE on
@@ -999,7 +1000,7 @@ nl.sara.webdav.Ie.isIE = true;
    * @param    {Number}                         [overwriteMode=SILENT_OVERWRITE]  Optional; Specify what to do when destination resource already exists. Should be either FAIL_ON_OVERWRITE, TRUNCATE_ON_OVERWRITE or SILENT_OVERWRITE. The default is SILENT_OVERWRITE.
    * @param    {Array}                          headers                           Optional; Additional headers to set
    * @returns  {nl.sara.webdav.Client}                                            The client itself for chaining methods
-   */
+   *!/
   nl.sara.webdav.Client.prototype.move = function(
     path,
     callback,
@@ -1045,7 +1046,7 @@ nl.sara.webdav.Ie.isIE = true;
     return this;
   };
 
-  /**
+  /!**
    * Perform a WebDAV LOCK request
    *
    * @param    {String}                         path      The path to perform LOCK on
@@ -1053,7 +1054,7 @@ nl.sara.webdav.Ie.isIE = true;
    * @param    {Document}                       body      Optional; The (XML DOM) document to parse and send as the request body
    * @param    {Array}                          headers   Optional; Additional headers to set
    * @returns  {nl.sara.webdav.Client}                    The client itself for chaining methods
-   */
+   *!/
   nl.sara.webdav.Client.prototype.lock = function(
     path,
     callback,
@@ -1100,7 +1101,7 @@ nl.sara.webdav.Ie.isIE = true;
     return this;
   };
 
-  /**
+  /!**
    * Perform a WebDAV UNLOCK request
    *
    * @param    {String}                         path       The path to perform UNLOCK on
@@ -1108,7 +1109,7 @@ nl.sara.webdav.Ie.isIE = true;
    * @param    {String}                         lockToken  The lock token to unlock
    * @param    {Array}                          headers    Optional; Additional headers to set
    * @returns  {nl.sara.webdav.Client}                     The client itself for chaining methods
-   */
+   *!/
   nl.sara.webdav.Client.prototype.unlock = function(
     path,
     callback,
@@ -1144,7 +1145,7 @@ nl.sara.webdav.Ie.isIE = true;
     return this;
   };
 
-  /**
+  /!**
    * Prepares a XMLHttpRequest object to be used for an AJAX request
    *
    * @static
@@ -1153,14 +1154,14 @@ nl.sara.webdav.Ie.isIE = true;
    * @param    {Function(status,body,headers)}  callback  Querying the server is done asynchronously, this callback function is called when the results are in
    * @param    {Array}                          headers   Additional headers to set
    * @returns  {XMLHttpRequest}                           A prepared XMLHttpRequest
-   */
+   *!/
   nl.sara.webdav.Client.prototype.getAjax = function(
     method,
     url,
     callback,
     headers
   ) {
-    var /** @type XMLHttpRequest */ ajax =
+    var /!** @type XMLHttpRequest *!/ ajax =
         typeof Components !== 'undefined' &&
         typeof Components.classes !== 'undefined'
           ? Components.classes[
@@ -1190,14 +1191,14 @@ nl.sara.webdav.Ie.isIE = true;
     return ajax;
   };
 
-  /**
+  /!**
    * AJAX request handler. Parses Multistatus (if available) and call a user specified callback function
    *
    * @static
    * @param    {XMLHttpRequest}                 ajax      The XMLHttpRequest object which performed the request
    * @param    {Function(status,body,headers)}  callback  Querying the server is done asynchronously, this callback function is called when the results are in
    * @returns  {void}
-   */
+   *!/
   nl.sara.webdav.Client.ajaxHandler = function(ajax, callback) {
     if (ajax.readyState === 4) {
       //if request has completed
@@ -1227,7 +1228,7 @@ nl.sara.webdav.Ie.isIE = true;
 
   // End of library
 
-  /*
+  /!*
    * Copyright ©2012 SARA bv, The Netherlands
    *
    * This file is part of js-webdav-client.
@@ -1244,7 +1245,7 @@ nl.sara.webdav.Ie.isIE = true;
    *
    * You should have received a copy of the GNU Lesser General Public License
    * along with js-webdav-client.  If not, see <http://www.gnu.org/licenses/>.
-   */
+   *!/
   ('use strict');
 
   // If nl.sara.webdav.Codec is already defined, we have a namespace clash!
@@ -1255,7 +1256,7 @@ nl.sara.webdav.Ie.isIE = true;
     );
   }
 
-  /**
+  /!**
    * @class A codec transcodes the xml to a custom Javascript object
    *
    * @param  {String}                    [namespace]  Optional; The namespace of the property to transcode
@@ -1266,7 +1267,7 @@ nl.sara.webdav.Ie.isIE = true;
    * @property  {String}                    tagname    The tag name of the property to transcode
    * @property  {function(mixed[,xmlDoc])}  toXML      Function which should return a Document with the NodeList of the documentElement as the value of this property
    * @property  {function(NodeList)}        fromXML    Functions which should return a representation of xmlvalue
-   */
+   *!/
   nl.sara.webdav.Codec = function(namespace, tagname, toXML, fromXML) {
     // First define public attributes
     Object.defineProperty(this, 'namespace', {
@@ -1312,7 +1313,7 @@ nl.sara.webdav.Ie.isIE = true;
 
   // End of file
 
-  /*
+  /!*
    * Copyright ©2012 SARA bv, The Netherlands
    *
    * This file is part of js-webdav-client.
@@ -1329,7 +1330,7 @@ nl.sara.webdav.Ie.isIE = true;
    *
    * You should have received a copy of the GNU Lesser General Public License
    * along with js-webdav-client.  If not, see <http://www.gnu.org/licenses/>.
-   */
+   *!/
   ('use strict');
 
   // If nl.sara.webdav.Multistatus is already defined, we have a namespace clash!
@@ -1340,12 +1341,12 @@ nl.sara.webdav.Ie.isIE = true;
     );
   }
 
-  /**
+  /!**
    * @class WebDAV Multistatus response body
    *
    * @param  {Node}  [xmlNode]  Optional; the xmlNode describing the multistatus object (should be compliant with RFC 4918)
    * @property  {String}  responsedescription  The response description
-   */
+   *!/
   nl.sara.webdav.Multistatus = function(xmlNode) {
     // First define private attributes
     Object.defineProperty(this, '_responses', {
@@ -1420,12 +1421,12 @@ nl.sara.webdav.Ie.isIE = true;
   };
 
   //########################## DEFINE PUBLIC METHODS #############################
-  /**
+  /!**
    * Adds a Response
    *
    * @param    {nl.sara.webdav.Response}     response  The response
    * @returns  {nl.sara.webdav.Multistatus}            The multistatus itself for chaining methods
-   */
+   *!/
   nl.sara.webdav.Multistatus.prototype.addResponse = function(response) {
     if (
       !nl.sara.webdav.Ie.isIE &&
@@ -1441,28 +1442,28 @@ nl.sara.webdav.Ie.isIE = true;
     return this;
   };
 
-  /**
+  /!**
    * Gets a Response
    *
    * @param    {String}    name           The name of the response to get
    * @returns  {nl.sara.webdav.Response}  The value of the WebDAV property or undefined if the WebDAV property doesn't exist
-   */
+   *!/
   nl.sara.webdav.Multistatus.prototype.getResponse = function(name) {
     return this._responses[name];
   };
 
-  /**
+  /!**
    * Gets the response names
    *
    * @returns  {String[]}  The names of the different responses
-   */
+   *!/
   nl.sara.webdav.Multistatus.prototype.getResponseNames = function() {
     return Object.keys(this._responses);
   };
 
   // End of library
 
-  /*
+  /!*
    * Copyright ©2012 SARA bv, The Netherlands
    *
    * This file is part of js-webdav-client.
@@ -1479,7 +1480,7 @@ nl.sara.webdav.Ie.isIE = true;
    *
    * You should have received a copy of the GNU Lesser General Public License
    * along with js-webdav-client.  If not, see <http://www.gnu.org/licenses/>.
-   */
+   *!/
   ('use strict');
 
   // If nl.sara.webdav.Property is already defined, we have a namespace clash!
@@ -1490,7 +1491,7 @@ nl.sara.webdav.Ie.isIE = true;
     );
   }
 
-  /**
+  /!**
    * @class a WebDAV property
    *
    * @param  {Node}      [xmlNode]              Optional; The xmlNode describing the propstat object (should be compliant with RFC 4918)
@@ -1502,7 +1503,7 @@ nl.sara.webdav.Ie.isIE = true;
    * @property  {NodeList}  xmlvalue             A NodeList with the value of this property
    * @property  {Number}    status               The (HTTP) status code
    * @property  {String}    responsedescription  The response description
-   */
+   *!/
   nl.sara.webdav.Property = function(
     xmlNode,
     status,
@@ -1592,7 +1593,7 @@ nl.sara.webdav.Ie.isIE = true;
     });
 
     //########################## DEFINE PUBLIC METHODS #############################
-    /**
+    /!**
      * Adds functions to encode or decode properties
      *
      * This allows exact control in how Property.xmlvalue is parsed when
@@ -1605,7 +1606,7 @@ nl.sara.webdav.Ie.isIE = true;
      *
      * @param    {nl.sara.webdav.Codec}  codec  The codec to add
      * @returns  {void}
-     */
+     *!/
     nl.sara.webdav.Property.addCodec = function(codec) {
       if (typeof codec.namespace !== 'string') {
         throw new nl.sara.webdav.Exception(
@@ -1628,7 +1629,7 @@ nl.sara.webdav.Ie.isIE = true;
       };
     };
 
-    /**
+    /!**
      * Sets a new value and rebuilds xmlvalue
      *
      * If a codec for this property is specified, it will use this codec to
@@ -1637,7 +1638,7 @@ nl.sara.webdav.Ie.isIE = true;
      *
      * @param   {mixed}  value  The object to base the xmlvalue on
      * @return  {void}
-     */
+     *!/
     nl.sara.webdav.Property.prototype.setValueAndRebuildXml = function(value) {
       // Call codec to automatically create correct 'xmlvalue'
       var xmlDoc = document.implementation.createDocument(
@@ -1665,7 +1666,7 @@ nl.sara.webdav.Ie.isIE = true;
       }
     };
 
-    /**
+    /!**
      * Parses the xmlvalue
      *
      * If a codec for this property is specified, it will use this codec to parse
@@ -1675,7 +1676,7 @@ nl.sara.webdav.Ie.isIE = true;
      * codec. If no codec is specified and at least one node in xmlvalue is not a
      * text or CDATA node, it will return undefined. If xmlvalue is empty, it will
      * return null.
-     */
+     *!/
     nl.sara.webdav.Property.prototype.getParsedValue = function() {
       // Call codec to automatically create correct 'value'
       if (this._xmlvalue.length > 0) {
@@ -1708,12 +1709,12 @@ nl.sara.webdav.Ie.isIE = true;
     };
   })(); // Ends the static scope
 
-  /**
+  /!**
    * Adds an error to this property
    *
    * @param    {Node}      error  The Node which represents the error
    * @returns  {Property}         Itself for chaining multiple methods
-   */
+   *!/
   nl.sara.webdav.Property.prototype.addError = function(error) {
     if (!nl.sara.webdav.Ie.isIE && !(error instanceof Node)) {
       throw new nl.sara.webdav.Exception(
@@ -1725,27 +1726,27 @@ nl.sara.webdav.Ie.isIE = true;
     return this;
   };
 
-  /**
+  /!**
    * Returns all errors
    *
    * @returns {array} An array of Node representing the error
-   */
+   *!/
   nl.sara.webdav.Property.prototype.getErrors = function() {
     return this._errors;
   };
 
-  /**
+  /!**
    * Overloads the default toString() method so it returns the value of this property
    *
    * @returns  {String}  A string representation of this property
-   */
+   *!/
   nl.sara.webdav.Property.prototype.toString = function() {
     return this.getParsedValue();
   };
 
   // End of Property
 
-  /*
+  /!*
    * Copyright ©2012 SARA bv, The Netherlands
    *
    * This file is part of js-webdav-client.
@@ -1762,7 +1763,7 @@ nl.sara.webdav.Ie.isIE = true;
    *
    * You should have received a copy of the GNU Lesser General Public License
    * along with js-webdav-client.  If not, see <http://www.gnu.org/licenses/>.
-   */
+   *!/
   ('use strict');
 
   // If nl.sara.webdav.Response is already defined, we have a namespace clash!
@@ -1773,7 +1774,7 @@ nl.sara.webdav.Ie.isIE = true;
     );
   }
 
-  /**
+  /!**
    * @class a WebDAV response
    *
    * @param  {Node}  [xmlNode]  Optional; the xmlNode describing the response object (should be compliant with RFC 4918)
@@ -1782,7 +1783,7 @@ nl.sara.webdav.Ie.isIE = true;
    * @property  {String}  error                The error text
    * @property  {String}  responsedescription  The response description
    * @property  {String}  location             In case of a 3XX response, the value that would normally be in the 'Location' header
-   */
+   *!/
   nl.sara.webdav.Response = function(xmlNode) {
     // First define private attributes
     Object.defineProperty(this, '_namespaces', {
@@ -1914,12 +1915,12 @@ nl.sara.webdav.Ie.isIE = true;
   };
 
   //########################## DEFINE PUBLIC METHODS #############################
-  /**
+  /!**
    * Adds a WebDAV property
    *
    * @param    {nl.sara.webdav.Property}  property  The property
    * @returns  {nl.sara.webdav.Response}            The response itself for chaining methods
-   */
+   *!/
   nl.sara.webdav.Response.prototype.addProperty = function(property) {
     if (
       !nl.sara.webdav.Ie.isIE &&
@@ -1942,13 +1943,13 @@ nl.sara.webdav.Ie.isIE = true;
     return this;
   };
 
-  /**
+  /!**
    * Gets a WebDAV property
    *
    * @param    {String}                   namespace  The namespace of the WebDAV property
    * @param    {String}                   prop       The WebDAV property to get
    * @returns  {nl.sara.webdav.Property}             The value of the WebDAV property or undefined if the WebDAV property doesn't exist
-   */
+   *!/
   nl.sara.webdav.Response.prototype.getProperty = function(namespace, prop) {
     if (
       this._namespaces[namespace] === undefined ||
@@ -1959,21 +1960,21 @@ nl.sara.webdav.Ie.isIE = true;
     return this._namespaces[namespace][prop];
   };
 
-  /**
+  /!**
    * Gets the namespace names
    *
    * @returns  {String[]}  The names of the different namespaces
-   */
+   *!/
   nl.sara.webdav.Response.prototype.getNamespaceNames = function() {
     return Object.keys(this._namespaces);
   };
 
-  /**
+  /!**
    * Gets the property names of a namespace
    *
    * @param    {String}    namespace  The namespace of the WebDAV property
    * @returns  {String[]}             The names of the different properties of a namespace
-   */
+   *!/
   nl.sara.webdav.Response.prototype.getPropertyNames = function(namespace) {
     if (this._namespaces[namespace] === undefined) {
       return new Array();
@@ -1983,7 +1984,7 @@ nl.sara.webdav.Ie.isIE = true;
 
   // End of library
 
-  /*
+  /!*
    * Copyright ©2014 SARA bv, The Netherlands
    *
    * This file is part of js-webdav-client.
@@ -2000,7 +2001,7 @@ nl.sara.webdav.Ie.isIE = true;
    *
    * You should have received a copy of the GNU Lesser General Public License
    * along with js-webdav-client.  If not, see <http://www.gnu.org/licenses/>.
-   */
+   *!/
   ('use strict');
 
   // If nl.sara.webdav.codec.Principal_collection_setCodec is already defined, we have a namespace clash!
@@ -2011,10 +2012,10 @@ nl.sara.webdav.Ie.isIE = true;
     );
   }
 
-  /**
+  /!**
    * @class Adds a codec that converts DAV: principal-collection-setCodec to an array with the uri's object
    * @augments nl.sara.webdav.Codec
-   */
+   *!/
   nl.sara.webdav.codec.Principal_collection_setCodec = new nl.sara.webdav.Codec();
   nl.sara.webdav.codec.Principal_collection_setCodec.namespace = 'DAV:';
   nl.sara.webdav.codec.Principal_collection_setCodec.tagname =
@@ -2063,7 +2064,7 @@ nl.sara.webdav.Ie.isIE = true;
   );
 
   // End of file
-  /*
+  /!*
    * Copyright ©2014 SARA bv, The Netherlands
    *
    * This file is part of js-webdav-client.
@@ -2080,7 +2081,7 @@ nl.sara.webdav.Ie.isIE = true;
    *
    * You should have received a copy of the GNU Lesser General Public License
    * along with js-webdav-client.  If not, see <http://www.gnu.org/licenses/>.
-   */
+   *!/
   ('use strict');
 
   // If nl.sara.webdav.codec.Inherited_acl_setCodec is already defined, we have a namespace clash!
@@ -2091,10 +2092,10 @@ nl.sara.webdav.Ie.isIE = true;
     );
   }
 
-  /**
+  /!**
    * @class Adds a codec that converts DAV: inherited-acl-set to an array with the uri's object
    * @augments nl.sara.webdav.Codec
-   */
+   *!/
   nl.sara.webdav.codec.Inherited_acl_setCodec = new nl.sara.webdav.Codec();
   nl.sara.webdav.codec.Inherited_acl_setCodec.namespace = 'DAV:';
   nl.sara.webdav.codec.Inherited_acl_setCodec.tagname = 'inherited-acl-set';
@@ -2107,7 +2108,7 @@ nl.sara.webdav.Ie.isIE = true;
   nl.sara.webdav.Property.addCodec(nl.sara.webdav.codec.Inherited_acl_setCodec);
 
   // End of file
-  /*
+  /!*
    * Copyright ©2012 SARA bv, The Netherlands
    *
    * This file is part of js-webdav-client.
@@ -2124,7 +2125,7 @@ nl.sara.webdav.Ie.isIE = true;
    *
    * You should have received a copy of the GNU Lesser General Public License
    * along with js-webdav-client.  If not, see <http://www.gnu.org/licenses/>.
-   */
+   *!/
   ('use strict');
 
   // If nl.sara.webdav.Ace is already defined, we have a namespace clash!
@@ -2135,7 +2136,7 @@ nl.sara.webdav.Ie.isIE = true;
     );
   }
 
-  /**
+  /!**
    * @class WebDAV property
    *
    * @param  {Node}  [xmlNode]  Optional; the xmlNode describing the ace object (should be compliant with RFC 3744)
@@ -2144,7 +2145,7 @@ nl.sara.webdav.Ie.isIE = true;
    * @property  {Boolean}  isprotected      Whether this ACE is protected. Default is false.
    * @property  {Number}   grantdeny        Grant or deny ACE? Is one of the class constants GRANT or DENY.
    * @property  {mixed}    inherited        False if the ACE is not inherited, else a String with the path to the parent collection from which this ACE is inherited.
-   */
+   *!/
   nl.sara.webdav.Ace = function(xmlNode) {
     // First define private attributes
     Object.defineProperty(this, '_namespaces', {
@@ -2321,16 +2322,16 @@ nl.sara.webdav.Ie.isIE = true;
     }
   };
 
-  /**#@+
+  /!**#@+
    * Class constant
-   */
+   *!/
   nl.sara.webdav.Ace.GRANT = 1;
   nl.sara.webdav.Ace.DENY = 2;
   nl.sara.webdav.Ace.ALL = 3;
   nl.sara.webdav.Ace.AUTHENTICATED = 4;
   nl.sara.webdav.Ace.UNAUTHENTICATED = 5;
   nl.sara.webdav.Ace.SELF = 6;
-  /**#@-*/
+  /!**#@-*!/
 
   //######################### DEFINE PUBLIC ATTRIBUTES ###########################
   Object.defineProperty(nl.sara.webdav.Ace.prototype, 'principal', {
@@ -2408,12 +2409,12 @@ nl.sara.webdav.Ie.isIE = true;
   });
 
   //########################## DEFINE PUBLIC METHODS #############################
-  /**
+  /!**
    * Adds a WebDAV privilege
    *
    * @param    {nl.sara.webdav.Privilege}  privilege  The privilege to add
    * @returns  {nl.sara.webdav.Ace}                   The ace itself for chaining methods
-   */
+   *!/
   nl.sara.webdav.Ace.prototype.addPrivilege = function(privilege) {
     if (
       !nl.sara.webdav.Ie.isIE &&
@@ -2440,13 +2441,13 @@ nl.sara.webdav.Ie.isIE = true;
     return this;
   };
 
-  /**
+  /!**
    * Gets a WebDAV privilege
    *
    * @param    {String}                    namespace  The namespace of the privilege
    * @param    {String}                    privilege  The privilege to get
    * @returns  {nl.sara.webdav.Privilege}             The value of the privilege or undefined if the privilege doesn't exist
-   */
+   *!/
   nl.sara.webdav.Ace.prototype.getPrivilege = function(namespace, privilege) {
     if (
       this._namespaces[namespace] === undefined ||
@@ -2457,21 +2458,21 @@ nl.sara.webdav.Ie.isIE = true;
     return this._namespaces[namespace][privilege];
   };
 
-  /**
+  /!**
    * Gets the namespace names
    *
    * @returns  {String[]}  The names of the different namespaces
-   */
+   *!/
   nl.sara.webdav.Ace.prototype.getNamespaceNames = function() {
     return Object.keys(this._namespaces);
   };
 
-  /**
+  /!**
    * Gets the privilege names of a namespace
    *
    * @param    {String}    namespace  The namespace of the privilege
    * @returns  {String[]}             The names of the different privilege of a namespace
-   */
+   *!/
   nl.sara.webdav.Ace.prototype.getPrivilegeNames = function(namespace) {
     if (this._namespaces[namespace] === undefined) {
       return new Array();
@@ -2481,7 +2482,7 @@ nl.sara.webdav.Ie.isIE = true;
 
   // End of library
 
-  /*
+  /!*
    * Copyright ©2012 SARA bv, The Netherlands
    *
    * This file is part of js-webdav-client.
@@ -2498,7 +2499,7 @@ nl.sara.webdav.Ie.isIE = true;
    *
    * You should have received a copy of the GNU Lesser General Public License
    * along with js-webdav-client.  If not, see <http://www.gnu.org/licenses/>.
-   */
+   *!/
   ('use strict');
 
   // If nl.sara.webdav.Acl is already defined, we have a namespace clash!
@@ -2509,11 +2510,11 @@ nl.sara.webdav.Ie.isIE = true;
     );
   }
 
-  /**
+  /!**
    * @class Access Control List
    *
    * @param  {Node}  [xmlNode]  Optional; the xmlNode describing the acl object (should be compliant with RFC 3744)
-   */
+   *!/
   nl.sara.webdav.Acl = function(xmlNode) {
     // First define private attributes
     Object.defineProperty(this, '_aces', {
@@ -2551,13 +2552,13 @@ nl.sara.webdav.Ie.isIE = true;
   };
 
   //########################## DEFINE PUBLIC METHODS #############################
-  /**
+  /!**
    * Adds an ACE
    *
    * @param    {nl.sara.webdav.Ace}  ace       The ACE to add
    * @param    {Number}              position  Optional; The position to add this ACE. If the position is lower than 1, 0 is assumed, of the position is higher than the current length of the ACL or not specified, the ACE is appended to the end.
    * @returns  {nl.sara.webdav.Acl}            The ACL itself for chaining methods
-   */
+   *!/
   nl.sara.webdav.Acl.prototype.addAce = function(ace, position) {
     if (!nl.sara.webdav.Ie.isIE && !(ace instanceof nl.sara.webdav.Ace)) {
       throw new nl.sara.webdav.Exception(
@@ -2578,21 +2579,21 @@ nl.sara.webdav.Ie.isIE = true;
     return this;
   };
 
-  /**
+  /!**
    * Gets the ACL as an array
    *
    * @returns  {nl.sara.webdav.Ace[]}  An array of the ACE's in this ACL
-   */
+   *!/
   nl.sara.webdav.Acl.prototype.getAces = function() {
     return this._aces;
   };
 
-  /**
+  /!**
    * Gets one ACE from a certain position
    *
    * @param    {Number}              position  The position of the ACE
    * @returns  {nl.sara.webdav.Ace}            The ACE
-   */
+   *!/
   nl.sara.webdav.Acl.prototype.getAce = function(position) {
     position = Number(position);
     if (position < 0 || position >= this.getLength()) {
@@ -2604,18 +2605,18 @@ nl.sara.webdav.Ie.isIE = true;
     return this._aces[position];
   };
 
-  /**
+  /!**
    * Gets the length of the ACL
    *
    * @returns  {Number}  The length of the ACL
-   */
+   *!/
   nl.sara.webdav.Acl.prototype.getLength = function() {
     return this._aces.length;
   };
 
   // End of library
 
-  /*
+  /!*
    * Copyright ©2012 SARA bv, The Netherlands
    *
    * This file is part of js-webdav-client.
@@ -2632,7 +2633,7 @@ nl.sara.webdav.Ie.isIE = true;
    *
    * You should have received a copy of the GNU Lesser General Public License
    * along with js-webdav-client.  If not, see <http://www.gnu.org/licenses/>.
-   */
+   *!/
   ('use strict');
 
   // If nl.sara.webdav.codec.AclCodec is already defined, we have a namespace clash!
@@ -2643,10 +2644,10 @@ nl.sara.webdav.Ie.isIE = true;
     );
   }
 
-  /**
+  /!**
    * @class Adds a codec that converts DAV: acl to an nl.sara.webdav.Acl object
    * @augments nl.sara.webdav.Codec
-   */
+   *!/
   nl.sara.webdav.codec.AclCodec = new nl.sara.webdav.Codec();
   nl.sara.webdav.codec.AclCodec.namespace = 'DAV:';
   nl.sara.webdav.codec.AclCodec.tagname = 'acl';
@@ -2776,7 +2777,7 @@ nl.sara.webdav.Ie.isIE = true;
 
   // End of file
 
-  /*
+  /!*
    * Copyright ©2012 SARA bv, The Netherlands
    *
    * This file is part of js-webdav-client.
@@ -2793,14 +2794,14 @@ nl.sara.webdav.Ie.isIE = true;
    *
    * You should have received a copy of the GNU Lesser General Public License
    * along with js-webdav-client.  If not, see <http://www.gnu.org/licenses/>.
-   */
+   *!/
   ('use strict');
 
-  /**
+  /!**
    * This plugin adds acl capabilities to the WebDAV client class
-   */
+   *!/
 
-  /**
+  /!**
    * Perform a WebDAV ACL request
    *
    * @param    {String}                         path      The path to perform ACL on
@@ -2808,7 +2809,7 @@ nl.sara.webdav.Ie.isIE = true;
    * @param    {nl.sara.webdav.Acl}             acl       The ACL to submit
    * @param    {Array}                          headers   Optional; Additional headers to set
    * @returns  {nl.sara.webdav.Client}                    The client itself for chaining methods
-   */
+   *!/
   nl.sara.webdav.Client.prototype.acl = function(path, callback, acl, headers) {
     if (path === undefined || callback === undefined) {
       throw new nl.sara.webdav.Exception(
@@ -2856,7 +2857,7 @@ nl.sara.webdav.Ie.isIE = true;
     return this;
   };
 
-  /**
+  /!**
    * Perform a WebDAV REPORT request
    *
    * @param    {String}                         path         The path to perform REPORT on
@@ -2864,7 +2865,7 @@ nl.sara.webdav.Ie.isIE = true;
    * @param    {Document}                       body         The (XML DOM) document to parse and send as the request body
    * @param    {Array}                          headers      Optional; Additional headers to set
    * @returns  {nl.sara.webdav.Client}                       The client itself for chaining methods
-   */
+   *!/
   nl.sara.webdav.Client.prototype.report = function(
     path,
     callback,
@@ -2916,7 +2917,7 @@ nl.sara.webdav.Ie.isIE = true;
 
   // End of library
 
-  /*
+  /!*
    * Copyright ©2014 SURFsara bv, The Netherlands
    *
    * This file is part of js-webdav-client.
@@ -2933,7 +2934,7 @@ nl.sara.webdav.Ie.isIE = true;
    *
    * You should have received a copy of the GNU Lesser General Public License
    * along with js-webdav-client.  If not, see <http://www.gnu.org/licenses/>.
-   */
+   *!/
   ('use strict');
 
   // If nl.sara.webdav.codec.Current_user_privilege_setCodec is already defined, we have a namespace clash!
@@ -2944,10 +2945,10 @@ nl.sara.webdav.Ie.isIE = true;
     );
   }
 
-  /**
+  /!**
    * @class Adds a codec that converts DAV: current-user-privilege-set to an array of privileges
    * @augments nl.sara.webdav.Codec
-   */
+   *!/
   nl.sara.webdav.codec.Current_user_privilege_setCodec = new nl.sara.webdav.Codec();
   nl.sara.webdav.codec.Current_user_privilege_setCodec.namespace = 'DAV:';
   nl.sara.webdav.codec.Current_user_privilege_setCodec.tagname =
@@ -2986,7 +2987,7 @@ nl.sara.webdav.Ie.isIE = true;
   );
 
   // End of file
-  /*
+  /!*
    * Copyright ©2012 SARA bv, The Netherlands
    *
    * This file is part of js-webdav-client.
@@ -3003,7 +3004,7 @@ nl.sara.webdav.Ie.isIE = true;
    *
    * You should have received a copy of the GNU Lesser General Public License
    * along with js-webdav-client.  If not, see <http://www.gnu.org/licenses/>.
-   */
+   *!/
   ('use strict');
 
   // If nl.sara.webdav.Privilege is already defined, we have a namespace clash!
@@ -3014,14 +3015,14 @@ nl.sara.webdav.Ie.isIE = true;
     );
   }
 
-  /**
+  /!**
    * @class WebDAV ACL privilege
    *
    * @param  {Node}  [xmlNode]  Optional; the xmlNode describing the privilege object
    * @property  {String}    namespace  The namespace
    * @property  {String}    tagname    The tag name
    * @property  {NodeList}  xmlvalue   A NodeList with the value of this privilege
-   */
+   *!/
   nl.sara.webdav.Privilege = function(xmlNode) {
     // First define private attributes
     Object.defineProperty(this, '_xmlvalue', {
@@ -3077,7 +3078,7 @@ nl.sara.webdav.Ie.isIE = true;
     });
 
     //########################## DEFINE PUBLIC METHODS #############################
-    /**
+    /!**
      * Adds functions to encode or decode properties
      *
      * This allows exact control in how Privilege.xmlvalue is parsed when
@@ -3090,7 +3091,7 @@ nl.sara.webdav.Ie.isIE = true;
      *
      * @param    {nl.sara.webdav.Codec}  codec  The codec to add
      * @returns  {void}
-     */
+     *!/
     nl.sara.webdav.Privilege.addCodec = function(codec) {
       if (typeof codec.namespace !== 'string') {
         throw new nl.sara.webdav.Exception(
@@ -3113,7 +3114,7 @@ nl.sara.webdav.Ie.isIE = true;
       };
     };
 
-    /**
+    /!**
      * Sets a new value and rebuilds xmlvalue
      *
      * If a codec for this privilege is specified, it will use this codec to
@@ -3122,7 +3123,7 @@ nl.sara.webdav.Ie.isIE = true;
      *
      * @param   {mixed}  value  The object to base the xmlvalue on
      * @return  {void}
-     */
+     *!/
     nl.sara.webdav.Privilege.prototype.setValueAndRebuildXml = function(value) {
       // Call codec to automatically create correct 'xmlvalue'
       var xmlDoc = document.implementation.createDocument(
@@ -3150,7 +3151,7 @@ nl.sara.webdav.Ie.isIE = true;
       }
     };
 
-    /**
+    /!**
      * Parses the xmlvalue
      *
      * If a codec for this privilege is specified, it will use this codec to parse
@@ -3160,7 +3161,7 @@ nl.sara.webdav.Ie.isIE = true;
      * codec. If no codec is specified and at least one node in xmlvalue is not a
      * text or CDATA node, it will return undefined. If xmlvalue is empty, it will
      * return null.
-     */
+     *!/
     nl.sara.webdav.Privilege.prototype.getParsedValue = function() {
       // Call codec to automatically create correct 'value'
       if (this._xmlvalue.length > 0) {
@@ -3193,18 +3194,18 @@ nl.sara.webdav.Ie.isIE = true;
     };
   })(); // Ends the static scope
 
-  /**
+  /!**
    * Overloads the default toString() method so it returns the value of this privilege
    *
    * @returns  {String}  A string representation of this privilege
-   */
+   *!/
   nl.sara.webdav.Privilege.prototype.toString = function() {
     return this.getParsedValue();
   };
 
   // End of library
 
-  /*
+  /!*
    * Copyright ©2012 SARA bv, The Netherlands
    *
    * This file is part of js-webdav-client.
@@ -3221,7 +3222,7 @@ nl.sara.webdav.Ie.isIE = true;
    *
    * You should have received a copy of the GNU Lesser General Public License
    * along with js-webdav-client.  If not, see <http://www.gnu.org/licenses/>.
-   */
+   *!/
   ('use strict');
 
   // If nl.sara.webdav.codec.CreationdateCodec is already defined, we have a namespace clash!
@@ -3232,10 +3233,10 @@ nl.sara.webdav.Ie.isIE = true;
     );
   }
 
-  /**
+  /!**
    * @class Adds a codec that converts DAV: creationdate to a Date object
    * @augments nl.sara.webdav.Codec
-   */
+   *!/
   nl.sara.webdav.codec.CreationdateCodec = new nl.sara.webdav.Codec();
   nl.sara.webdav.codec.CreationdateCodec.namespace = 'DAV:';
   nl.sara.webdav.codec.CreationdateCodec.tagname = 'creationdate';
@@ -3260,7 +3261,7 @@ nl.sara.webdav.Ie.isIE = true;
   nl.sara.webdav.Property.addCodec(nl.sara.webdav.codec.CreationdateCodec);
 
   // End of file
-  /*
+  /!*
    * Copyright ©2012 SARA bv, The Netherlands
    *
    * This file is part of js-webdav-client.
@@ -3277,7 +3278,7 @@ nl.sara.webdav.Ie.isIE = true;
    *
    * You should have received a copy of the GNU Lesser General Public License
    * along with js-webdav-client.  If not, see <http://www.gnu.org/licenses/>.
-   */
+   *!/
   ('use strict');
 
   // If nl.sara.webdav.codec.GetcontentlengthCodec is already defined, we have a namespace clash!
@@ -3288,10 +3289,10 @@ nl.sara.webdav.Ie.isIE = true;
     );
   }
 
-  /**
+  /!**
    * @class Adds a codec that converts DAV: getcontentlength to an integer
    * @augments nl.sara.webdav.Codec
-   */
+   *!/
   nl.sara.webdav.codec.GetcontentlengthCodec = new nl.sara.webdav.Codec();
   nl.sara.webdav.codec.GetcontentlengthCodec.namespace = 'DAV:';
   nl.sara.webdav.codec.GetcontentlengthCodec.tagname = 'getcontentlength';
@@ -3316,7 +3317,7 @@ nl.sara.webdav.Ie.isIE = true;
   nl.sara.webdav.Property.addCodec(nl.sara.webdav.codec.GetcontentlengthCodec);
 
   // End of file
-  /*
+  /!*
    * Copyright ©2012 SARA bv, The Netherlands
    *
    * This file is part of js-webdav-client.
@@ -3333,7 +3334,7 @@ nl.sara.webdav.Ie.isIE = true;
    *
    * You should have received a copy of the GNU Lesser General Public License
    * along with js-webdav-client.  If not, see <http://www.gnu.org/licenses/>.
-   */
+   *!/
   ('use strict');
 
   // If nl.sara.webdav.codec.GetlastmodifiedCodec is already defined, we have a namespace clash!
@@ -3344,10 +3345,10 @@ nl.sara.webdav.Ie.isIE = true;
     );
   }
 
-  /**
+  /!**
    * @class Adds a codec that converts DAV: getlastmodified to a Date object
    * @augments nl.sara.webdav.Codec
-   */
+   *!/
   nl.sara.webdav.codec.GetlastmodifiedCodec = new nl.sara.webdav.Codec();
   nl.sara.webdav.codec.GetlastmodifiedCodec.namespace = 'DAV:';
   nl.sara.webdav.codec.GetlastmodifiedCodec.tagname = 'getlastmodified';
@@ -3409,7 +3410,7 @@ nl.sara.webdav.Ie.isIE = true;
   nl.sara.webdav.Property.addCodec(nl.sara.webdav.codec.GetlastmodifiedCodec);
 
   // End of file
-  /*
+  /!*
    * Copyright ©2012 SARA bv, The Netherlands
    *
    * This file is part of js-webdav-client.
@@ -3426,7 +3427,7 @@ nl.sara.webdav.Ie.isIE = true;
    *
    * You should have received a copy of the GNU Lesser General Public License
    * along with js-webdav-client.  If not, see <http://www.gnu.org/licenses/>.
-   */
+   *!/
   ('use strict');
 
   // If nl.sara.webdav.codec.OwnerCodec is already defined, we have a namespace clash!
@@ -3437,10 +3438,10 @@ nl.sara.webdav.Ie.isIE = true;
     );
   }
 
-  /**
+  /!**
    * @class Adds a codec that converts DAV: owner to a Date object
    * @augments nl.sara.webdav.Codec
-   */
+   *!/
   nl.sara.webdav.codec.OwnerCodec = new nl.sara.webdav.Codec();
   nl.sara.webdav.codec.OwnerCodec.namespace = 'DAV:';
   nl.sara.webdav.codec.OwnerCodec.tagname = 'owner';
@@ -3477,7 +3478,7 @@ nl.sara.webdav.Ie.isIE = true;
   nl.sara.webdav.Property.addCodec(nl.sara.webdav.codec.OwnerCodec);
 
   // End of file
-  /*
+  /!*
    * Copyright ©2012 SARA bv, The Netherlands
    *
    * This file is part of js-webdav-client.
@@ -3494,7 +3495,7 @@ nl.sara.webdav.Ie.isIE = true;
    *
    * You should have received a copy of the GNU Lesser General Public License
    * along with js-webdav-client.  If not, see <http://www.gnu.org/licenses/>.
-   */
+   *!/
   ('use strict');
 
   // If it isn't done yet: create a namespace for all the default codecs
@@ -3510,17 +3511,17 @@ nl.sara.webdav.Ie.isIE = true;
     );
   }
 
-  /**
+  /!**
    * @class Adds a codec that converts DAV: resourcetype to a Date object
    * @augments nl.sara.webdav.Codec
-   */
+   *!/
   nl.sara.webdav.codec.ResourcetypeCodec = new nl.sara.webdav.Codec();
   nl.sara.webdav.codec.ResourcetypeCodec.namespace = 'DAV:';
   nl.sara.webdav.codec.ResourcetypeCodec.tagname = 'resourcetype';
 
-  /**
+  /!**
    * Class constants are a way to specify what the resource type is
-   */
+   *!/
   nl.sara.webdav.codec.ResourcetypeCodec.COLLECTION = 1;
   nl.sara.webdav.codec.ResourcetypeCodec.UNSPECIFIED = 2;
   nl.sara.webdav.codec.ResourcetypeCodec.PRINCIPAL = 4;
@@ -3560,3 +3561,4 @@ nl.sara.webdav.Ie.isIE = true;
   exports = nl;
   return exports;
 });
+*/

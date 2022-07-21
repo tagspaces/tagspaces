@@ -38,7 +38,7 @@ describe('TST13 - Settings Key Bindings [electron]', () => {
     } else {
       await global.client.keyboard.press('Control+KeyF');
     }
-    await expectElementExist('[data-tid=searchMenu]', true);
+    await expectElementExist('#textQuery', true);
   });
 
   it('TST1312 - Test rename file [electron]', async () => {

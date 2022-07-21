@@ -29,35 +29,22 @@ import Button from '@material-ui/core/Button';
 import Select from '@material-ui/core/Select';
 import ColorPickerDialog from '../ColorPickerDialog';
 import { findAvailableExtensions } from '-/reducers/settings-default';
-// import { sortBy } from '-/utils/misc';
+// import { sortBy } from '@tagspaces/tagspaces-platforms/misc';
 import i18n from '-/services/i18n';
 import TransparentBackground from '../../TransparentBackground';
 
 const styles: any = (theme: any) => ({
-  root: {
-    background: theme.palette.background.paper
-  },
   fileExtension: {
-    width: '15%',
-    padding: '0 12px 0 0'
-  },
-  fileType: {
-    paddingBottom: 0,
-    paddingTop: 0,
-    paddingRight: 0,
+    width: 60,
     padding: '0 12px 0 0'
   },
   fileOpener: {
-    width: '25%',
+    width: '35%',
     padding: '0 12px 0 0'
   },
   fileTypeColorDialog: {
-    width: '15%',
+    width: 60,
     padding: '0 12px 0 0'
-  },
-  fileTypeColorDialogButton: {
-    width: '100px',
-    padding: '0 10px 0 0'
   },
   colorChooserButton: {
     maxWidth: 30,
@@ -82,7 +69,7 @@ interface Props {
   onRemoveItem: Function;
 }
 
-const SettingsFileTypes = (props: Props) => {
+function SettingsFileTypes(props: Props) {
   const [isColorPickerVisible, setColorPickerVisible] = useState<boolean>(
     false
   );
@@ -117,10 +104,6 @@ const SettingsFileTypes = (props: Props) => {
     isValidationInProgress = false
   } = props;
 
-  /* const modifiedItems = !isComponentActive
-      ? sortBy(items, 'type', 'string', 'asc')
-      : items; */
-
   return (
     <div className={classes.root}>
       <ColorPickerDialog
@@ -134,10 +117,9 @@ const SettingsFileTypes = (props: Props) => {
         <ListItem
           data-id={item.id}
           key={item.id}
-          className={classes.fileType}
           style={{
-            borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
-            padding: '16px 0',
+            padding: 0,
+            paddingBottom: 15,
             alignItems: 'flex-end'
           }}
         >
@@ -228,14 +210,15 @@ const SettingsFileTypes = (props: Props) => {
                 ))}
             </Select>
           </FormControl>
-          <FormControl className={classes.fileTypeColorDialogButton}>
+          <FormControl style={{ width: 50, padding: 0 }}>
             <TransparentBackground>
               <Button
                 data-tid="settingsFileTypes_openColorPicker_"
                 className={classes.colorChooserButton}
                 style={{
                   backgroundColor: `${item.color}`,
-                  minWidth: '100px',
+                  minWidth: 50,
+                  maxWidth: 50,
                   cursor: 'pointer'
                 }}
                 onClick={() => {
@@ -259,6 +242,6 @@ const SettingsFileTypes = (props: Props) => {
       ))}
     </div>
   );
-};
+}
 
 export default withStyles(styles)(SettingsFileTypes);

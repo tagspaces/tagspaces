@@ -1,11 +1,38 @@
 {
-  "parser": "babel-eslint",
+  "root": true,
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "sourceType": "module",
-    "allowImportExportEverywhere": true
+    "ecmaVersion": 2020
   },
-  "extends": ["airbnb", "prettier", "prettier/react"],
+  "overrides": [
+    {
+      "files": [
+        "*.ts", "*.tsx"
+      ], // Your TypeScript files extension
+
+      // As mentioned in the comments, you should extend TypeScript plugins here,
+      // instead of extending them outside the `overrides`.
+      // If you don't want to extend any rules, you don't need an `extends` attribute.
+      "extends": [
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking"
+      ],
+
+      "parserOptions": {
+        "project": [
+          "./tsconfig.json"
+        ] // Specify it only for TypeScript files
+      }
+    }
+  ],
+  "extends": [
+    "airbnb",
+    "prettier",
+    "react-app",
+    "eslint:recommended"
+  ],
   "env": {
+    "es6": true,
     "browser": true,
     "node": true
   },
@@ -53,5 +80,16 @@
     "react/jsx-boolean-value": "off",
     "react/prop-types": ["off"]
   },
-  "plugins": ["import", "promise", "compat", "react"]
+  "plugins": [
+    "import",
+    "promise",
+    "compat",
+    "react",
+    "@typescript-eslint",
+    "eslint-plugin-node"
+  ],
+  "globals": {
+    "global": false,
+    "Promise": false
+  }
 }

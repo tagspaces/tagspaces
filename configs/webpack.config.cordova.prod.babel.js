@@ -10,11 +10,11 @@ import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import merge from 'webpack-merge';
 import TerserPlugin from 'terser-webpack-plugin';
 import baseConfig from './webpack.config.base';
-import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
+// import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 
 const targetPlatform = 'cordova-io'; // electron-io | webdav-io | cordova-io | process.env.APP_TARGET ||
 
-CheckNodeEnv('production');
+// CheckNodeEnv('production');
 export default merge(baseConfig, {
   devtool: 'source-map', // 'inline-source-map',
 
@@ -220,7 +220,7 @@ export default merge(baseConfig, {
       filename: 'style.css'
     }),
 
-    new webpack.NormalModuleReplacementPlugin(
+    /* new webpack.NormalModuleReplacementPlugin(
       /(.*)_PLATFORMIO_(\.*)/,
       resource => {
         resource.request = resource.request.replace(
@@ -228,9 +228,9 @@ export default merge(baseConfig, {
           `${targetPlatform}`
         );
       }
-    ),
+    ), */
 
-    new webpack.NormalModuleReplacementPlugin(
+    /* new webpack.NormalModuleReplacementPlugin(
       /(.*)_PDFDISTLIB_(\.*)/,
       resource => {
         resource.request = resource.request.replace(
@@ -238,7 +238,7 @@ export default merge(baseConfig, {
           `pdfjs-dist`
         );
       }
-    ),
+    ), */
 
     new BundleAnalyzerPlugin({
       analyzerMode:

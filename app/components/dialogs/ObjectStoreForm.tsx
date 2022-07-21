@@ -88,8 +88,6 @@ interface Props {
   cloudErrorSecretAccessKey: boolean;
   cloudErrorBucketName: boolean;
   cloudErrorRegion: boolean;
-  errorTextId: boolean;
-  showAdvancedMode: boolean;
   showSecretAccessKey: boolean;
   storeName: string;
   storePath: string;
@@ -99,7 +97,6 @@ interface Props {
   bucketName: string;
   region: string;
   endpointURL: string;
-  newuuid: string;
   setStoreName: (string) => void;
   setStorePath: (string) => void;
   setAccessKeyId: (string) => void;
@@ -109,9 +106,8 @@ interface Props {
   setBucketName: (string) => void;
   setRegion: (string) => void;
   setEndpointURL: (string) => void;
-  setNewUuid: (string) => void;
 }
-const ObjectStoreForm = (props: Props) => {
+function ObjectStoreForm(props: Props) {
   const {
     setShowSecretAccessKey,
     cloudErrorTextName,
@@ -120,8 +116,6 @@ const ObjectStoreForm = (props: Props) => {
     cloudErrorSecretAccessKey,
     cloudErrorBucketName,
     cloudErrorRegion,
-    errorTextId,
-    showAdvancedMode,
     showSecretAccessKey,
     storeName,
     storePath,
@@ -131,7 +125,6 @@ const ObjectStoreForm = (props: Props) => {
     bucketName,
     region,
     endpointURL,
-    newuuid,
     setStoreName,
     setStorePath,
     setAccessKeyId,
@@ -139,7 +132,6 @@ const ObjectStoreForm = (props: Props) => {
     setSessionToken,
     setBucketName,
     setEndpointURL,
-    setNewUuid,
     setRegion
   } = props;
 
@@ -247,24 +239,22 @@ const ObjectStoreForm = (props: Props) => {
           )} */}
         </FormControl>
       </Grid>
-      {showAdvancedMode && (
-        <Grid item xs={12}>
-          <FormControl fullWidth={true}>
-            <InputLabel htmlFor="sessionToken">
-              {i18n.t('core:sessionToken')}
-            </InputLabel>
-            <Input
-              margin="dense"
-              name="sessionToken"
-              fullWidth={true}
-              data-tid="sessionTokenTID"
-              inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
-              onChange={event => setSessionToken(event.target.value)}
-              value={sessionToken}
-            />
-          </FormControl>
-        </Grid>
-      )}
+      <Grid item xs={12}>
+        <FormControl fullWidth={true}>
+          <InputLabel htmlFor="sessionToken">
+            {i18n.t('core:sessionToken')}
+          </InputLabel>
+          <Input
+            margin="dense"
+            name="sessionToken"
+            fullWidth={true}
+            data-tid="sessionTokenTID"
+            inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
+            onChange={event => setSessionToken(event.target.value)}
+            value={sessionToken}
+          />
+        </FormControl>
+      </Grid>
       <Grid item xs={12}>
         <FormControl fullWidth={true} error={cloudErrorBucketName}>
           <InputLabel htmlFor="bucketName">
@@ -287,6 +277,25 @@ const ObjectStoreForm = (props: Props) => {
         </FormControl>
       </Grid>
       <Grid item xs={12}>
+        <FormControl fullWidth={true}>
+          <InputLabel htmlFor="endpointURL">
+            {i18n.t('core:endpointURL')}
+          </InputLabel>
+          <Input
+            margin="dense"
+            name="endpointURL"
+            fullWidth={true}
+            data-tid="endpointURL"
+            placeholder={i18n.t('s3serviceURL')}
+            onChange={event => setEndpointURL(event.target.value)}
+            value={endpointURL}
+          />
+          {/* {state.cloudErrorId && (
+          <FormHelperText>{i18n.t('core:missingId')}</FormHelperText>
+          )} */}
+        </FormControl>
+      </Grid>
+      <Grid item xs={12}>
         <FormControl fullWidth={true} error={cloudErrorRegion}>
           <Autocomplete
             options={regions}
@@ -303,52 +312,10 @@ const ObjectStoreForm = (props: Props) => {
               />
             )}
           />
-          {/* {state.cloudErrorRegion && (
-          <FormHelperText>{i18n.t('core:invalidRegion')}</FormHelperText>
-          )} */}
         </FormControl>
       </Grid>
-      {showAdvancedMode && (
-        <Grid item xs={12}>
-          <FormControl fullWidth={true}>
-            <InputLabel htmlFor="endpointURL">
-              {i18n.t('core:endpointURL')}
-            </InputLabel>
-            <Input
-              margin="dense"
-              name="endpointURL"
-              fullWidth={true}
-              data-tid="endpointURL"
-              placeholder="Advanced setting, could be left empty"
-              onChange={event => setEndpointURL(event.target.value)}
-              value={endpointURL}
-            />
-            {/* {state.cloudErrorId && (
-          <FormHelperText>{i18n.t('core:missingId')}</FormHelperText>
-          )} */}
-          </FormControl>
-        </Grid>
-      )}
-      {showAdvancedMode && (
-        <Grid item xs={12}>
-          <FormControl fullWidth={true} error={errorTextId}>
-            <InputLabel htmlFor="newuuid">
-              {i18n.t('core:locationId')}
-            </InputLabel>
-            <Input
-              margin="dense"
-              name="newuuid"
-              fullWidth={true}
-              data-tid="newuuid"
-              placeholder="Advanced setting"
-              onChange={event => setNewUuid(event.target.value)}
-              value={newuuid}
-            />
-          </FormControl>
-        </Grid>
-      )}
     </Grid>
   );
-};
+}
 
 export default withStyles(undefined, { withTheme: true })(ObjectStoreForm);

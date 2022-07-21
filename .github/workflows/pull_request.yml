@@ -31,7 +31,8 @@ jobs:
   e2eTestsWin:
     name: Test Desktop App Windows
     runs-on: windows-latest
-
+    env:
+      PD_PLATFORM: node
     steps:
       - name: Checking out default branch
         uses: actions/checkout@v2
@@ -44,26 +45,26 @@ jobs:
           path: tests/testdata
       - uses: actions/setup-node@v2
         with:
-          node-version: '12.x'
-      - name: Running yarn install, prettier and type checks
+          node-version: '16.x'
+      - name: Running npm install, prettier and type checks
         run: |
-          yarn install --check-files --cache-folder .ycache
-          yarn prettier-check
-          yarn type-check
+          npm install
+          npm run prepare-node
+          npm run prettier-check
+          npm run type-check
       - name: Run Unit tests
-        run: yarn test-unit
+        run: npm run test-unit
       - name: Run Electron tests
         run: |
-          yarn install-ext
-          yarn build-e2e
-          yarn test-playwright
+          npm run build-e2e
+          npm run test-playwright
       - uses: IgnusG/jest-report-action@v2.3.3
         if: always() # Run regardless of whether other steps failed
         with:
           access-token: ${{ secrets.GITHUB_TOKEN }}
           check-name: Report Desktop App Windows
           working-directory: tests
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: test-artifacts
@@ -73,6 +74,8 @@ jobs:
   e2eTestsWebWin:
     name: Test Web App Windows
     runs-on: windows-latest
+    env:
+      PD_PLATFORM: web
     steps:
       - name: Checking out default branch
         uses: actions/checkout@v2
@@ -81,6 +84,7 @@ jobs:
       - name: Checkout TagspacesPro
         uses: actions/checkout@v2
         with:
+          ref: develop
           repository: tagspaces/tagspacespro
           token: ${{ secrets.CHECKOUT_TSPRO  }}
           path: extensions/tagspacespro
@@ -91,14 +95,14 @@ jobs:
           path: tests/testdata
       - uses: actions/setup-node@v2
         with:
-          node-version: '12.x'
-      - name: Running yarn install, prettier and type checks
+          node-version: '16.x'
+      - name: Running npm install, prettier and type checks
         run: |
-          yarn install --check-files --cache-folder .ycache
-          yarn prettier-check
-          yarn type-check
+          npm install
+          npm run prettier-check
+          npm run type-check
       - name: Run Unit tests
-        run: yarn test-unit
+        run: npm run test-unit
       - uses: suisei-cn/actions-download-file@v1
         id: minio
         name: Download the Minio.exe
@@ -107,16 +111,16 @@ jobs:
           target: tests/bin/
       - name: Run Electron tests
         run: |
-          yarn install-ext
-          yarn build-e2e
-          yarn test-playwright-web-headless
+          npm run install-ext-web
+          npm run build-e2e-web
+          npm run test-playwright-web-headless
       - uses: IgnusG/jest-report-action@v2.3.3
         if: always() # Run regardless of whether other steps failed
         with:
           access-token: ${{ secrets.GITHUB_TOKEN }}
           check-name: Report Web App Windows
           working-directory: tests
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: test-artifacts-web

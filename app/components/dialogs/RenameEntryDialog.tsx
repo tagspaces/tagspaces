@@ -27,15 +27,15 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Dialog from '@material-ui/core/Dialog';
-import i18n from '-/services/i18n';
 import {
   extractContainingDirectoryPath,
   extractDirectoryName,
   extractFileName
-} from '-/utils/paths';
+} from '@tagspaces/tagspaces-platforms/paths';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import i18n from '-/services/i18n';
 import { actions as AppActions, getLastSelectedEntry } from '-/reducers/app';
-import PlatformIO from '-/services/platform-io';
-import AppConfig from '-/config';
+import PlatformIO from '-/services/platform-facade';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {
@@ -47,7 +47,7 @@ interface Props {
   renameDirectory: (directoryPath: string, newDirectoryName: string) => void;
 }
 
-const RenameEntryDialog = (props: Props) => {
+function RenameEntryDialog(props: Props) {
   const [inputError, setInputError] = useState<boolean>(false);
   const disableConfirmButton = useRef<boolean>(true);
 
@@ -120,7 +120,7 @@ const RenameEntryDialog = (props: Props) => {
   const handleValidation = () => {
     const initValid = disableConfirmButton.current;
     if (name.current.length > 0) {
-      const rg1 = /^[^#\\/:*?"<>|]+$/; // forbidden characters # \ / : * ? " < > |
+      const rg1 = /^[^#\\/*?"<>|]+$/; // forbidden characters # \ / * ? " < > |
       if (isFile) {
         // https://stackoverflow.com/a/11101624/2285631
         const rg2 = /^\./; // cannot start with dot (.)
@@ -218,7 +218,7 @@ const RenameEntryDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {

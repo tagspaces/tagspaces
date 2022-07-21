@@ -22,7 +22,6 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import HelpIcon from '@material-ui/icons/Help';
-import UpdateIndexIcon from '@material-ui/icons/Update';
 import ExportImportIcon from '@material-ui/icons/SwapHoriz';
 import i18n from '-/services/i18n';
 import { Pro } from '../../pro';
@@ -37,26 +36,10 @@ interface Props {
   openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   importSearches: () => void;
   exportSearches: () => void;
-  createLocationsIndexes: () => void;
 }
 
-const SearchMenu = (props: Props) => {
+function SearchMenu(props: Props) {
   const menuItems = [];
-  menuItems.push(
-    <MenuItem
-      key="updateAllLocationIndexes"
-      data-tid="updateAllLocationIndexes"
-      onClick={() => {
-        props.onClose();
-        props.createLocationsIndexes();
-      }}
-    >
-      <ListItemIcon>
-        <UpdateIndexIcon />
-      </ListItemIcon>
-      <ListItemText primary={i18n.t('core:updateAllLocationIndexes')} />
-    </MenuItem>
-  );
   menuItems.push(
     <MenuItem
       disabled={!Pro}
@@ -126,6 +109,6 @@ const SearchMenu = (props: Props) => {
       </Menu>
     </div>
   );
-};
+}
 
 export default SearchMenu;

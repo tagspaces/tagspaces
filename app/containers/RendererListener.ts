@@ -16,7 +16,7 @@
  *
  */
 
-import AppConfig from '-/config';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 
 export default function listen(props) {
   let ipcRenderer;
@@ -31,7 +31,7 @@ export default function listen(props) {
           props.toggleCreateFileDialog();
           break;
         case 'open-search':
-          props.openSearchPanel();
+          props.setSearchQuery({ textQuery: '' });
           break;
         case 'open-location-manager-panel':
           props.openLocationManagerPanel();

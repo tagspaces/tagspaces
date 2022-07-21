@@ -16,7 +16,7 @@
  *
  */
 
-import { immutablySwapItems } from '-/utils/misc';
+import { immutablySwapItems } from '@tagspaces/tagspaces-platforms/misc';
 import { TS } from '-/tagspaces.namespace';
 
 export const initialState = [];
@@ -103,10 +103,10 @@ export const actions = {
     type: types.ADD_SEARCH,
     search
   }),
-  addSearches: (
-    arrSearches: Array<TS.SearchQuery>,
-    override: boolean = true
-  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
+  addSearches: (arrSearches: Array<TS.SearchQuery>, override = true) => (
+    dispatch: (actions: Object) => void,
+    getState: () => any
+  ) => {
     arrSearches.forEach((newSearch: TS.SearchQuery) => {
       const { searches } = getState();
       const searchExist: boolean = searches.some(

@@ -18,8 +18,7 @@
 
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
-import uuidv1 from 'uuid';
-import marked from 'marked';
+import { v1 as uuidv1 } from 'uuid';
 import L from 'leaflet';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
@@ -33,18 +32,9 @@ import ShareIcon from '@material-ui/icons/Link';
 import Tooltip from '@material-ui/core/Tooltip';
 import LocationIcon from '@material-ui/icons/WorkOutline';
 import CloudLocationIcon from '@material-ui/icons/CloudQueue';
-import DOMPurify from 'dompurify';
 import Select from '@material-ui/core/Select';
-import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
 import ClearColorIcon from '@material-ui/icons/Backspace';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import DefaultPerspectiveIcon from '@material-ui/icons/GridOn';
-import LayersClearIcon from '@material-ui/icons/LayersClear';
-import ListItemText from '@material-ui/core/ListItemText';
-import GalleryPerspectiveIcon from '@material-ui/icons/Camera';
-import MapiquePerspectiveIcon from '@material-ui/icons/Map';
-import KanBanPerspectiveIcon from '@material-ui/icons/Dashboard';
 import {
   AttributionControl,
   Map,
@@ -54,31 +44,32 @@ import {
   TileLayer,
   withLeaflet
 } from 'react-leaflet';
-import OpenLocationCode from 'open-location-code-typescript';
 import { IconButton } from '@material-ui/core';
-import TagDropContainer from './TagDropContainer';
-import ColorPickerDialog from './dialogs/ColorPickerDialog';
-import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
-import i18n from '../services/i18n';
-import { enhanceOpenedEntry } from '-/services/utils-io';
-import { formatFileSize, isPlusCode } from '-/utils/misc';
+import { formatFileSize } from '@tagspaces/tagspaces-platforms/misc';
 import {
   extractContainingDirectoryPath,
   getThumbFileLocationForFile,
   getThumbFileLocationForDirectory,
   extractFileName,
-  extractDirectoryName
-} from '-/utils/paths';
-import AppConfig from '../config';
+  extractDirectoryName,
+  generateSharingLink
+} from '@tagspaces/tagspaces-platforms/paths';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import TagDropContainer from './TagDropContainer';
+import ColorPickerDialog from './dialogs/ColorPickerDialog';
+import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
+import i18n from '../services/i18n';
+import { enhanceOpenedEntry, convertMarkDown } from '-/services/utils-io';
+import { parseGeoLocation } from '-/utils/geo';
 import { Pro } from '../pro';
-import PlatformIO from '../services/platform-io';
+import PlatformIO from '../services/platform-facade';
 import TagsSelect from './TagsSelect';
 import TransparentBackground from './TransparentBackground';
 import {
   replaceThumbnailURLPromise,
   getThumbnailURLPromise
 } from '-/services/thumbsgenerator';
-import { OpenedEntry, perspectives } from '-/reducers/app';
+import { OpenedEntry } from '-/reducers/app';
 import { savePerspective } from '-/utils/metaoperations';
 import MarkerIcon from '-/assets/icons/marker-icon.png';
 import Marker2xIcon from '-/assets/icons/marker-icon-2x.png';
@@ -88,6 +79,7 @@ import { TS } from '-/tagspaces.namespace';
 import NoTileServer from '-/components/NoTileServer';
 import InfoIcon from '-/components/InfoIcon';
 import { ProTooltip } from '-/components/HelperComponents';
+import PerspectiveSelector from '-/components/PerspectiveSelector';
 
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
@@ -145,11 +137,7 @@ const styles: any = (theme: any) => ({
   button: {
     position: 'relative',
     padding: '8px 12px 6px 8px',
-    margin: '0 10px 0 0',
-    cursor: 'pointer'
-  },
-  buttonIcon: {
-    cursor: 'pointer'
+    margin: '0'
   },
   fluidGrid: {
     width: '100%',
@@ -188,53 +176,39 @@ interface Props {
   removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
   removeAllTags: (paths: Array<string>) => void;
   isReadOnlyMode: boolean;
-  currentDirectoryPath: string | null;
+  // currentDirectoryPath: string | null;
   tagDelimiter: string;
   tileServer: TS.MapTileServer;
 }
 
-const EntryProperties = (props: Props) => {
+function EntryProperties(props: Props) {
   // const EntryProperties = React.memo((props: Props) => {
   const fileNameRef = useRef<HTMLInputElement>(null);
   const sharingLinkRef = useRef<HTMLInputElement>(null);
   const objectStorageLinkRef = useRef<HTMLInputElement>(null);
   const fileDescriptionRef = useRef<HTMLInputElement>(null);
 
-  const parentDirectoryPath = extractContainingDirectoryPath(
-    props.openedEntry.path,
-    PlatformIO.getDirSeparator()
-  );
+  const directoryPath = props.openedEntry.isFile
+    ? extractContainingDirectoryPath(
+        props.openedEntry.path,
+        PlatformIO.getDirSeparator()
+      )
+    : props.openedEntry.path;
 
-  const customRenderer = new marked.Renderer();
-  customRenderer.link = (href, title, text) => `
-      <a href="#"
-        title="${href}"
-        onClick="event.preventDefault(); event.stopPropagation(); window.postMessage(JSON.stringify({ command: 'openLinkExternally', link: '${href}' }), '*'); return false;">
-        ${text}
-      </a>`;
-
-  customRenderer.image = (href, title, text) => {
-    let sourceUrl = href;
-    if (!sourceUrl.startsWith('http')) {
-      sourceUrl =
-        parentDirectoryPath + PlatformIO.getDirSeparator() + sourceUrl;
-    }
-    return `<img src="${sourceUrl}"
-    >
-        ${text}
-    </img>`;
+  const printHTML = html => {
+    const printWin = window.open('', 'PRINT', 'height=400,width=600');
+    printWin.document.write(
+      '<html><head><title>' + entryName + ' description</title>'
+    );
+    printWin.document.write('</head><body >');
+    printWin.document.write(sanitizedDescription);
+    printWin.document.write('</body></html>');
+    printWin.document.close(); // necessary for IE >= 10
+    printWin.focus(); // necessary for IE >= 10*/
+    printWin.print();
+    // printWin.close();
+    return true;
   };
-
-  marked.setOptions({
-    renderer: customRenderer,
-    pedantic: false,
-    gfm: true,
-    tables: true,
-    breaks: false,
-    smartLists: true,
-    smartypants: false,
-    xhtml: true
-  });
 
   const entryName = props.openedEntry.isFile
     ? extractFileName(props.openedEntry.path, PlatformIO.getDirSeparator())
@@ -342,10 +316,7 @@ const EntryProperties = (props: Props) => {
       Pro.MetaOperations.saveDescription(currentEntry.path, editDescription)
         .then(entryMeta => {
           setEditDescription(undefined);
-          props.updateOpenedFile(currentEntry.path, {
-            ...entryMeta,
-            changed: true
-          });
+          props.updateOpenedFile(currentEntry.path, entryMeta);
           return true;
         })
         .catch(error => {
@@ -380,7 +351,10 @@ const EntryProperties = (props: Props) => {
 
   const setThumb = (filePath, thumbFilePath) => {
     if (filePath !== undefined) {
-      if (PlatformIO.haveObjectStoreSupport()) {
+      if (
+        PlatformIO.haveObjectStoreSupport() ||
+        PlatformIO.haveWebDavSupport()
+      ) {
         const thumbUrl = PlatformIO.getURLforPath(thumbFilePath);
         props.updateThumbnailUrl(currentEntry.path, thumbUrl);
         return Promise.resolve(true);
@@ -433,10 +407,7 @@ const EntryProperties = (props: Props) => {
     Pro.MetaOperations.saveColor(currentEntry.path, color)
       .then(entryMeta => {
         // if (props.entryPath === props.currentDirectoryPath) {
-        props.updateOpenedFile(currentEntry.path, {
-          ...entryMeta,
-          changed: true
-        });
+        props.updateOpenedFile(currentEntry.path, entryMeta);
         /* } else {
           setCurrentEntry({ ...currentEntry, color });
         } */
@@ -471,7 +442,7 @@ const EntryProperties = (props: Props) => {
       if (!value) {
         // no tags left in the select element
         props.removeAllTags([currentEntry.path]); // TODO return promise
-        props.updateOpenedFile(currentEntry.path, { tags: [], changed: true });
+        props.updateOpenedFile(currentEntry.path, { tags: [] });
       } else {
         props.removeTags([currentEntry.path], value);
       }
@@ -501,7 +472,8 @@ const EntryProperties = (props: Props) => {
   if (currentEntry.isFile) {
     thumbPath = getThumbFileLocationForFile(
       currentEntry.path,
-      PlatformIO.getDirSeparator()
+      PlatformIO.getDirSeparator(),
+      false
     );
   } else {
     thumbPath = getThumbFileLocationForDirectory(
@@ -510,7 +482,7 @@ const EntryProperties = (props: Props) => {
     );
   }
   let url;
-  if (PlatformIO.haveObjectStoreSupport()) {
+  if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
     url = PlatformIO.getURLforPath(thumbPath);
   } else {
     url = thumbPath + '?' + new Date().getTime();
@@ -529,10 +501,7 @@ const EntryProperties = (props: Props) => {
     const perspective = event.target.value;
     savePerspective(currentEntry.path, perspective)
       .then((entryMeta: TS.FileSystemEntryMeta) => {
-        props.updateOpenedFile(currentEntry.path, {
-          ...entryMeta,
-          changed: true
-        });
+        props.updateOpenedFile(currentEntry.path, entryMeta);
         return true;
       })
       .catch(error => {
@@ -543,36 +512,9 @@ const EntryProperties = (props: Props) => {
 
   let perspectiveDefault;
   if (currentEntry.perspective) {
-    perspectiveDefault = currentEntry.perspective;
-  } else if (currentEntry.perspective) {
     perspectiveDefault = currentEntry.perspective; // props.perspective;
   } else {
     perspectiveDefault = 'unspecified'; // perspectives.DEFAULT;
-  }
-
-  function getMenuItem(perspective) {
-    let icon;
-    if (perspective === perspectives.DEFAULT) {
-      icon = <DefaultPerspectiveIcon />;
-    } else if (perspective === perspectives.GALLERY) {
-      icon = <GalleryPerspectiveIcon />;
-    } else if (perspective === perspectives.MAPIQUE) {
-      icon = <MapiquePerspectiveIcon />;
-    } else if (perspective === perspectives.KANBAN) {
-      icon = <KanBanPerspectiveIcon />;
-    }
-    return (
-      <MenuItem key={perspective} value={perspective}>
-        <div style={{ display: 'flex' }}>
-          <ListItemIcon style={{ paddingLeft: 3, paddingTop: 3 }}>
-            {icon}
-          </ListItemIcon>
-          <ListItemText>
-            {perspective.charAt(0).toUpperCase() + perspective.slice(1)}
-          </ListItemText>
-        </div>
-      </MenuItem>
-    );
   }
 
   const iconFileMarker = new L.Icon({
@@ -592,11 +534,9 @@ const EntryProperties = (props: Props) => {
     }
     if (tags) {
       for (let i = 0; i < tags.length; i += 1) {
-        if (isPlusCode(tags[i].title)) {
-          const coord = OpenLocationCode.decode(tags[i].title);
-          const lat = Number(coord.latitudeCenter.toFixed(7));
-          const lng = Number(coord.longitudeCenter.toFixed(7));
-          return { lat, lng };
+        const location = parseGeoLocation(tags[i].title);
+        if (location !== undefined) {
+          return location;
         }
       }
     }
@@ -604,12 +544,22 @@ const EntryProperties = (props: Props) => {
 
   const geoLocation: any = getGeoLocation(currentEntry.tags);
 
-  let sharingLink = window.location.href;
-  if (sharingLink.indexOf('?') > 0) {
-    const sharingURL = new URL(sharingLink);
+  let sharingLink = '';
+  if (window.location.href.indexOf('?') > 0) {
+    const sharingURL = new URL(window.location.href);
     const params = new URLSearchParams(sharingURL.search);
-    params.delete('tsdpath');
-    sharingLink = 'ts:?' + params;
+    if (params.has('tslid')) {
+      const locationId = params.get('tslid');
+      if (currentEntry.isFile && params.has('tsepath')) {
+        const entryPath = params.get('tsepath');
+        sharingLink = generateSharingLink(locationId, entryPath);
+      } else if (!currentEntry.isFile) {
+        const dirPath = params.has('tsepath')
+          ? params.get('tsepath')
+          : currentEntry.path;
+        sharingLink = generateSharingLink(locationId, undefined, dirPath);
+      }
+    }
   }
 
   const isCloudLocation = currentEntry.url && currentEntry.url.length > 5;
@@ -619,15 +569,19 @@ const EntryProperties = (props: Props) => {
       PlatformIO.getURLforPath(currentEntry.path, linkValidityDuration),
       currentSignedLink => {
         if (currentSignedLink && currentSignedLink.length > 1) {
-          objectStorageLinkRef.current.select();
-          document.execCommand('copy');
+          const promise = navigator.clipboard.writeText(currentSignedLink);
           props.showNotification(i18n.t('Link copied to clipboard'));
         }
       }
     );
   }
 
-  // @ts-ignore
+  const sanitizedDescription = currentEntry.description
+    ? convertMarkDown(currentEntry.description, directoryPath)
+    : i18n.t('core:addMarkdownDescription');
+
+  const showLinkForDownloading = isCloudLocation && currentEntry.isFile;
+
   return (
     <div className={classes.entryProperties}>
       <Grid container>
@@ -813,6 +767,14 @@ const EntryProperties = (props: Props) => {
                       {i18n.t('core:cancel')}
                     </Button>
                   )}
+                  {editDescription === undefined && (
+                    <Button
+                      className={classes.button}
+                      onClick={() => printHTML(sanitizedDescription)}
+                    >
+                      {i18n.t('core:print')}
+                    </Button>
+                  )}
                   <ProTooltip tooltip={i18n.t('editDescription')}>
                     <Button
                       color="primary"
@@ -830,13 +792,15 @@ const EntryProperties = (props: Props) => {
           </div>
           <FormControl fullWidth={true} className={classes.formControl}>
             {editDescription !== undefined ? (
-              <React.Fragment>
+              <>
                 <TextField
                   multiline
                   inputRef={fileDescriptionRef}
                   style={{
                     padding: 10,
                     borderRadius: 5,
+                    maxHeight: 400,
+                    overflow: 'auto',
                     backgroundColor: 'rgba(255, 216, 115, 0.20)'
                   }}
                   id="textarea"
@@ -860,7 +824,7 @@ const EntryProperties = (props: Props) => {
                     [Link text](http://...)
                   </span>
                 </Typography>
-              </React.Fragment>
+              </>
             ) : (
               <Typography
                 style={{
@@ -869,7 +833,8 @@ const EntryProperties = (props: Props) => {
                   borderRadius: 5,
                   backgroundColor: 'rgba(255, 216, 115, 0.20)',
                   marginBottom: 5,
-
+                  maxHeight: 400,
+                  overflow: 'auto',
                   color: currentEntry.description
                     ? theme.palette.text.primary
                     : theme.palette.text.disabled
@@ -878,9 +843,7 @@ const EntryProperties = (props: Props) => {
                 id="descriptionArea"
                 dangerouslySetInnerHTML={{
                   // eslint-disable-next-line no-nested-ternary
-                  __html: currentEntry.description
-                    ? marked(DOMPurify.sanitize(currentEntry.description))
-                    : i18n.t('core:addMarkdownDescription')
+                  __html: sanitizedDescription
                 }}
                 onDoubleClick={() => {
                   if (!currentEntry.editMode && editName === undefined) {
@@ -1078,7 +1041,7 @@ const EntryProperties = (props: Props) => {
           </FormControl>
         </Grid>
 
-        <Grid item xs={isCloudLocation ? 6 : 12}>
+        <Grid item xs={showLinkForDownloading ? 6 : 12}>
           <Typography
             variant="caption"
             className={classNames(classes.header)}
@@ -1118,8 +1081,9 @@ const EntryProperties = (props: Props) => {
                       <Button
                         color="primary"
                         onClick={() => {
-                          sharingLinkRef.current.select();
-                          document.execCommand('copy');
+                          const promise = navigator.clipboard.writeText(
+                            sharingLink
+                          );
                           props.showNotification(
                             i18n.t('Link copied to clipboard')
                           );
@@ -1135,7 +1099,7 @@ const EntryProperties = (props: Props) => {
           </FormControl>
         </Grid>
 
-        {isCloudLocation && (
+        {showLinkForDownloading && (
           <Grid item xs={6}>
             <Typography
               variant="caption"
@@ -1214,34 +1178,15 @@ const EntryProperties = (props: Props) => {
                 </Typography>
               </div>
             </div>
-            <FormControl fullWidth={true} className={classes.formControl}>
-              <Select
-                data-tid="changePerspectiveTID"
-                defaultValue={perspectiveDefault}
-                onChange={changePerspective}
-                input={<Input id="changePerspectiveId" />}
-              >
-                <MenuItem
-                  style={{ display: 'flex' }}
-                  key="unspecified"
-                  value="unspecified"
-                >
-                  <div style={{ display: 'flex' }}>
-                    <ListItemIcon style={{ paddingLeft: 3, paddingTop: 3 }}>
-                      <LayersClearIcon />
-                    </ListItemIcon>
-                    <ListItemText>{i18n.t('core:unspecified')}</ListItemText>
-                  </div>
-                </MenuItem>
-                {Object.values(perspectives).map(perspective =>
-                  getMenuItem(perspective)
-                )}
-                {/* {Pro &&
-                  Object.values(
-                    Pro.Perspectives.AvailablePerspectives
-                  ).map(perspective => getMenuItem(perspective))} */}
-              </Select>
-            </FormControl>
+            <ProTooltip tooltip={i18n.t('core:choosePerspective')}>
+              <FormControl fullWidth={true} className={classes.formControl}>
+                <PerspectiveSelector
+                  onChange={changePerspective}
+                  defaultValue={perspectiveDefault}
+                  testId="changePerspectiveTID"
+                />
+              </FormControl>
+            </ProTooltip>
           </Grid>
         )}
 
@@ -1274,19 +1219,24 @@ const EntryProperties = (props: Props) => {
               )}
           </div>
           <div className={classes.fluidGrid}>
-            <div className={classes.gridItem}>
-              {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events */}
+            <div
+              className={classes.gridItem}
+              title={i18n.t('core:changeThumbnail')}
+            >
+              {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/control-has-associated-label */}
               <div
                 className={classes.header}
                 onClick={toggleThumbFilesDialog}
                 role="button"
                 tabIndex={0}
                 style={{
-                  backgroundSize: 'cover',
+                  backgroundSize: 'contain',
+                  backgroundRepeat: 'no-repeat',
                   backgroundImage: thumbPathUrl,
                   backgroundPosition: 'center',
-                  height: 100,
-                  width: 100,
+                  minHeight: AppConfig.maxThumbSize,
+                  maxHeight: AppConfig.maxThumbSize,
+                  maxWidth: AppConfig.maxThumbSize,
                   display: 'block',
                   marginBottom: 5
                 }}
@@ -1313,7 +1263,7 @@ const EntryProperties = (props: Props) => {
       )}
     </div>
   );
-};
+}
 
 export default withLeaflet(
   withStyles(styles, { withTheme: true })(EntryProperties)

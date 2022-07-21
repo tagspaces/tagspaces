@@ -46,7 +46,7 @@ interface Props {
   tagGroups: Array<TS.TagGroup>;
 }
 
-const AddTagToTagGroupDialog = (props: Props) => {
+function AddTagToTagGroupDialog(props: Props) {
   const [tagGroup, setTagGroup] = useState<string>(undefined);
 
   const handleTagGroupChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -127,7 +127,7 @@ const AddTagToTagGroupDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 const mapStateToProps = state => ({
   tagGroups: getTagGroups(state),

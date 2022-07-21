@@ -16,23 +16,23 @@
  *
  */
 
-import { getLocation, getLocations } from './locations';
-import { createDirectoryIndex } from '-/services/utils-io';
-import { Pro } from '../pro';
+import { loadIndex, hasIndex } from '@tagspaces/tagspaces-platforms/indexer';
+import { locationType } from '@tagspaces/tagspaces-platforms/misc';
 import {
   extractFileExtension,
   extractFileName,
   extractTagsAsObjects,
-  getLocationPath
-} from '-/utils/paths';
+  getThumbFileLocationForFile
+} from '@tagspaces/tagspaces-platforms/paths';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import { getLocation, getLocationByPath, getLocations } from './locations';
+import { createDirectoryIndex } from '-/services/utils-io';
 import Search from '../services/search';
 import { actions as AppActions } from './app';
 import i18n from '../services/i18n';
-import PlatformIO from '../services/platform-io';
+import PlatformIO from '../services/platform-facade';
 import GlobalSearch from '../services/search-index';
-import AppConfig from '-/config';
 import { TS } from '-/tagspaces.namespace';
-import { locationType } from '-/utils/misc';
 
 export const types = {
   SET_SEARCH_QUERY: 'SET_SEARCH_QUERY',
@@ -186,31 +186,84 @@ export const actions = {
   createDirectoryIndex: (
     directoryPath: string,
     extractText: boolean,
-    isCurrentLocation: boolean = true,
+    isCurrentLocation = true,
+    locationID: string = undefined,
     ignorePatterns: Array<string> = []
-  ) => (dispatch: (actions: Object) => void) => {
+  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
+    const { settings } = getState();
     dispatch(actions.startDirectoryIndexing());
-    createDirectoryIndex(directoryPath, extractText, ignorePatterns)
+    createDirectoryIndex(
+      { path: directoryPath, locationID },
+      extractText,
+      ignorePatterns,
+      settings.enableWS
+    )
       .then(directoryIndex => {
         if (isCurrentLocation) {
           // Load index only if current location
           GlobalSearch.index = directoryIndex;
         }
         dispatch(actions.indexDirectorySuccess());
-        if (Pro && Pro.Indexer) {
+        /* if (Pro && Pro.Indexer) {
           Pro.Indexer.persistIndex(
             directoryPath,
             directoryIndex,
             PlatformIO.getDirSeparator()
           );
-        }
+        } */
         return true;
       })
       .catch(err => {
         dispatch(actions.indexDirectoryFailure(err));
       });
   },
-  createLocationsIndexes: (extractText: boolean = true) => (
+  createLocationIndex: (location: TS.Location) => (
+    dispatch: (actions: Object) => void,
+    getState: () => any
+  ) => {
+    if (location) {
+      const { currentLocationId } = getState().app;
+      const isCurrentLocation = currentLocationId === location.uuid;
+      if (location.type === locationType.TYPE_CLOUD) {
+        PlatformIO.enableObjectStoreSupport(location)
+          .then(() => {
+            dispatch(
+              actions.createDirectoryIndex(
+                PlatformIO.getLocationPath(location),
+                location.fullTextIndex,
+                isCurrentLocation,
+                location.uuid
+              )
+            );
+            return true;
+          })
+          .catch(() => {
+            PlatformIO.disableObjectStoreSupport();
+          });
+      } else if (location.type === locationType.TYPE_WEBDAV) {
+        PlatformIO.enableWebdavSupport(location);
+        dispatch(
+          actions.createDirectoryIndex(
+            PlatformIO.getLocationPath(location),
+            location.fullTextIndex,
+            isCurrentLocation,
+            location.uuid
+          )
+        );
+      } else if (location.type === locationType.TYPE_LOCAL) {
+        PlatformIO.disableObjectStoreSupport();
+        dispatch(
+          actions.createDirectoryIndex(
+            PlatformIO.getLocationPath(location),
+            location.fullTextIndex,
+            isCurrentLocation,
+            location.uuid
+          )
+        );
+      }
+    }
+  },
+  createLocationsIndexes: (extractText = true) => (
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
@@ -218,14 +271,16 @@ export const actions = {
     dispatch(actions.startDirectoryIndexing());
     const allLocations = getLocations(state);
 
-    const promises = allLocations.map(location => {
-      const nextPath = getLocationPath(location);
-      return createDirectoryIndex(
-        nextPath,
-        extractText,
-        location.ignorePatternPaths
-      )
-        .then(directoryIndex => {
+    const promises = allLocations.map((location: TS.Location) => {
+      const nextPath = PlatformIO.getLocationPath(location);
+      return (
+        createDirectoryIndex(
+          { path: nextPath, location: location.uuid },
+          extractText,
+          location.ignorePatternPaths,
+          state.settings.enableWS
+        )
+          /* .then(directoryIndex => {
           if (Pro && Pro.Indexer) {
             Pro.Indexer.persistIndex(
               nextPath,
@@ -234,10 +289,11 @@ export const actions = {
             );
           }
           return true;
-        })
-        .catch(err => {
-          dispatch(actions.indexDirectoryFailure(err));
-        });
+        }) */
+          .catch(err => {
+            dispatch(actions.indexDirectoryFailure(err));
+          })
+      );
     });
 
     Promise.all(promises)
@@ -250,36 +306,6 @@ export const actions = {
         console.warn('Resolution is faled!', e);
       });
   },
-  // loadDirectoryIndex: (
-  //   directoryPath: string,
-  //   isCurrentLocation: boolean = true
-  // ) => (dispatch: (actions: Object) => void) => {
-  //   dispatch(actions.startDirectoryIndexing());
-  //   dispatch(
-  //     AppActions.showNotification(i18n.t('core:loadingIndex'), 'default', true)
-  //   );
-  //   if (Pro && Pro.Indexer.loadIndex) {
-  //     Pro.Indexer.loadIndex(directoryPath, PlatformIO.getDirSeparator())
-  //       .then(directoryIndex => {
-  //         if (isCurrentLocation) {
-  //           // Load index only if current location
-  //           GlobalSearch.index = directoryIndex;
-  //         }
-  //         dispatch(actions.indexDirectorySuccess());
-  //         return true;
-  //       })
-  //       .catch(err => {
-  //         dispatch(actions.indexDirectoryFailure(err));
-  //         dispatch(
-  //           AppActions.showNotification(
-  //             i18n.t('core:loadingIndexFailed'),
-  //             'warning',
-  //             true
-  //           )
-  //         );
-  //       });
-  //   }
-  // },
   clearDirectoryIndex: () => ({
     type: types.INDEX_DIRECTORY_CLEAR
   }),
@@ -288,11 +314,19 @@ export const actions = {
     getState: () => any
   ) => {
     const state = getState();
-    const currentLocation: TS.Location = getLocation(
+    let currentLocation: TS.Location = getLocation(
       state,
       state.app.currentLocationId
     );
     window.walkCanceled = false;
+    if (!currentLocation) {
+      if (searchQuery.currentDirectory) {
+        currentLocation = getLocationByPath(
+          state,
+          searchQuery.currentDirectory
+        );
+      }
+    }
     if (!currentLocation) {
       dispatch(
         AppActions.showNotification(
@@ -303,6 +337,7 @@ export const actions = {
       );
       return;
     }
+
     const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
     dispatch(
       AppActions.showNotification(
@@ -312,7 +347,6 @@ export const actions = {
         'TIDSearching'
       )
     );
-    dispatch(actions.setSearchQuery(searchQuery));
     setTimeout(async () => {
       // Workaround used to show the start search notification
       const currentTime = new Date().getTime();
@@ -323,34 +357,42 @@ export const actions = {
         ? currentLocation.maxIndexAge
         : AppConfig.maxIndexAge;
       if (
-        GlobalSearch.index.length < 1 ||
         searchQuery.forceIndexing ||
-        indexAge > maxIndexAge
+        (!currentLocation.disableIndexing &&
+          (!GlobalSearch.index ||
+            GlobalSearch.index.length < 1 ||
+            indexAge > maxIndexAge))
       ) {
-        const currentPath = getLocationPath(currentLocation);
+        const currentPath = PlatformIO.getLocationPath(currentLocation);
         console.log('Start creating index for : ' + currentPath);
-        if (currentLocation.persistIndex && Pro && Pro.Indexer.loadIndex) {
-          GlobalSearch.index = await Pro.Indexer.loadIndex(
-            currentPath,
-            PlatformIO.getDirSeparator()
-          );
-        } else {
-          GlobalSearch.index = await createDirectoryIndex(
-            currentPath,
-            currentLocation.fullTextIndex,
-            currentLocation.ignorePatternPaths
-          );
-          if (Pro && Pro.Indexer && Pro.Indexer.persistIndex) {
-            Pro.Indexer.persistIndex(
-              currentPath,
-              GlobalSearch.index,
-              PlatformIO.getDirSeparator()
-            );
-          }
-        }
+        GlobalSearch.index = await createDirectoryIndex(
+          {
+            path: currentPath,
+            locationID: currentLocation.uuid,
+            ...(isCloudLocation && { bucketName: currentLocation.bucketName })
+          },
+          currentLocation.fullTextIndex,
+          currentLocation.ignorePatternPaths,
+          state.settings.enableWS
+        );
+
         if (GlobalSearch.index && GlobalSearch.index.length > 0) {
           GlobalSearch.indexLoadedOn = new Date().getTime();
         }
+      } else if (
+        isCloudLocation ||
+        !GlobalSearch.index ||
+        GlobalSearch.index.length === 0
+      ) {
+        GlobalSearch.index = await loadIndex(
+          {
+            path: PlatformIO.getLocationPath(currentLocation),
+            locationID: currentLocation.uuid,
+            ...(isCloudLocation && { bucketName: currentLocation.bucketName })
+          },
+          PlatformIO.getDirSeparator(),
+          PlatformIO.loadTextFilePromise
+        );
       }
       Search.searchLocationIndex(GlobalSearch.index, searchQuery)
         .then(searchResults => {
@@ -358,10 +400,19 @@ export const actions = {
             searchResults.forEach((entry: TS.FileSystemEntry) => {
               if (
                 entry.thumbPath &&
-                entry.thumbPath.length > 1 &&
-                !entry.thumbPath.startsWith('http')
+                entry.thumbPath.length > 1
+                // !entry.thumbPath.startsWith('http')
               ) {
-                entry.thumbPath = PlatformIO.getURLforPath(entry.thumbPath);
+                const thumbPath = entry.path.startsWith('/')
+                  ? entry.path.substring(1)
+                  : entry.path;
+                // eslint-disable-next-line no-param-reassign
+                entry.thumbPath = PlatformIO.getURLforPath(
+                  getThumbFileLocationForFile(
+                    thumbPath,
+                    PlatformIO.getDirSeparator()
+                  )
+                );
               }
             });
           }
@@ -369,12 +420,13 @@ export const actions = {
           dispatch(AppActions.hideNotifications());
           return true;
         })
-        .catch(() => {
+        .catch(err => {
           dispatch(AppActions.setSearchResults([]));
-          dispatch(AppActions.hideNotifications());
+          // dispatch(AppActions.hideNotifications());
+          console.error('Searching Index failed: ', err);
           dispatch(
             AppActions.showNotification(
-              i18n.t('core:searchingFailed'),
+              i18n.t('core:searchingFailed') + ' ' + err.message,
               'warning',
               true
             )
@@ -417,12 +469,11 @@ export const actions = {
           // cancel search if max search result count reached
           if (searchResultCount >= searchQuery.maxSearchResults) {
             maxSearchResultReached = true;
-            Promise.resolve();
-            return true;
+            return Promise.resolve();
           }
-          const nextPath = getLocationPath(location);
+          const nextPath = PlatformIO.getLocationPath(location);
           let directoryIndex = [];
-          let hasIndex = false;
+          let indexExist = false;
           const isCloudLocation = location.type === locationType.TYPE_CLOUD;
           console.log('Searching in: ' + nextPath);
           dispatch(
@@ -436,28 +487,47 @@ export const actions = {
           if (isCloudLocation) {
             await PlatformIO.enableObjectStoreSupport(location);
           }
-          if (Pro && Pro.Indexer && Pro.Indexer.hasIndex) {
-            hasIndex = await Pro.Indexer.hasIndex(nextPath);
-          }
-          if (searchQuery.forceIndexing || !hasIndex) {
+          // if (Pro && Pro.Indexer && Pro.Indexer.hasIndex) {
+          indexExist = await hasIndex(
+            nextPath,
+            PlatformIO.getPropertiesPromise
+          ); // , PlatformIO.getDirSeparator());
+
+          if (
+            searchQuery.forceIndexing ||
+            (!location.disableIndexing && !indexExist)
+          ) {
             console.log('Creating index for : ' + nextPath);
             directoryIndex = await createDirectoryIndex(
-              nextPath,
+              {
+                path: nextPath,
+                locationID: location.uuid,
+                ...(isCloudLocation && { bucketName: location.bucketName })
+              },
               location.fullTextIndex,
-              location.ignorePatternPaths
+              location.ignorePatternPaths,
+              state.settings.enableWS
             );
-            if (Pro && Pro.Indexer && Pro.Indexer.persistIndex) {
+            /* if (Pro && Pro.Indexer && Pro.Indexer.persistIndex) {
               Pro.Indexer.persistIndex(
                 nextPath,
                 directoryIndex,
                 PlatformIO.getDirSeparator()
               );
-            }
-          } else if (Pro && Pro.Indexer && Pro.Indexer.loadIndex) {
+            } */
+          } else {
+            // if (Pro && Pro.Indexer && Pro.Indexer.loadIndex) {
             console.log('Loading index for : ' + nextPath);
-            directoryIndex = await Pro.Indexer.loadIndex(
-              nextPath,
-              PlatformIO.getDirSeparator()
+            directoryIndex = await loadIndex(
+              {
+                path: nextPath,
+                locationID: location.uuid,
+                ...(isCloudLocation && {
+                  bucketName: currentLocation.bucketName
+                })
+              },
+              PlatformIO.getDirSeparator(),
+              PlatformIO.loadTextFilePromise
             );
           }
           return Search.searchLocationIndex(directoryIndex, searchQuery)
@@ -496,12 +566,12 @@ export const actions = {
               if (isCloudLocation) {
                 PlatformIO.disableObjectStoreSupport();
               }
-              console.log('Searching Index failed: ' + e);
+              console.error('Searching Index failed: ', e);
               dispatch(AppActions.setSearchResults([]));
-              dispatch(AppActions.hideNotifications());
+              // dispatch(AppActions.hideNotifications());
               dispatch(
                 AppActions.showNotification(
-                  i18n.t('core:searchingFailed'),
+                  i18n.t('core:searchingFailed') + ' ' + e.message,
                   'warning',
                   true
                 )

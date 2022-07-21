@@ -8,11 +8,11 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import merge from 'webpack-merge';
 import baseConfig from './webpack.config.base';
-import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
+// import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 
 const targetPlatform = 'cordova-io'; // electron-io | webdav-io | cordova-io | process.env.APP_TARGET ||
 
-CheckNodeEnv('development');
+// CheckNodeEnv('development');
 export default merge(baseConfig, {
   cache: false,
   devtool: 'inline-source-map',
@@ -193,14 +193,14 @@ export default merge(baseConfig, {
      * development checks
      */
     new webpack.EnvironmentPlugin({
-      NODE_ENV: 'production'
+      NODE_ENV: 'development'
     }),
 
     new MiniCssExtractPlugin({
       filename: 'style.css'
     }),
 
-    new webpack.NormalModuleReplacementPlugin(
+    /* new webpack.NormalModuleReplacementPlugin(
       /(.*)_PLATFORMIO_(\.*)/,
       resource => {
         resource.request = resource.request.replace(
@@ -208,9 +208,9 @@ export default merge(baseConfig, {
           `${targetPlatform}`
         );
       }
-    ),
+    ), */
 
-    new webpack.NormalModuleReplacementPlugin(
+    /* new webpack.NormalModuleReplacementPlugin(
       /(.*)_PDFDISTLIB_(\.*)/,
       resource => {
         resource.request = resource.request.replace(
@@ -218,7 +218,7 @@ export default merge(baseConfig, {
           `pdfjs-dist`
         );
       }
-    ),
+    ), */
 
     new BundleAnalyzerPlugin({
       analyzerMode:

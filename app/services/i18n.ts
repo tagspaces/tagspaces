@@ -365,6 +365,17 @@ function loadLocales(options, url, payload, callback) {
         });
       break;
     }
+    case 'fr_CA': {
+      import('../locales/fr_CA/core.json')
+        .then(locale => {
+          callback(undefined, { status: '200', data: locale });
+          return true;
+        })
+        .catch(() => {
+          console.log('Error loading ' + url + ' locale.');
+        });
+      break;
+    }
     default: {
       callback(undefined, { status: '200', data: en });
       break;

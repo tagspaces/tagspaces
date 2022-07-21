@@ -80,7 +80,7 @@ module.exports = async () => {
         {
           pageTitle: BRANCH_NAME + ' Test Report',
           outputPath:
-            './test-reports/' +
+            './tests/test-reports/' +
             BRANCH_NAME +
             os +
             isPlaywright +

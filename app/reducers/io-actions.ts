@@ -17,24 +17,23 @@
  */
 
 import { Progress } from 'aws-sdk/clients/s3';
-import { actions as AppActions } from './app';
+import {
+  enhanceEntry,
+  loadJSONString
+} from '@tagspaces/tagspaces-platforms/utils-common';
 import {
   extractFileName,
   getMetaFileLocationForFile,
   getThumbFileLocationForFile,
   normalizePath
-} from '-/utils/paths';
-import {
-  copyFilesPromise,
-  enhanceEntry,
-  loadJSONString,
-  renameFilesPromise
-} from '-/services/utils-io';
+} from '@tagspaces/tagspaces-platforms/paths';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import { actions as AppActions } from './app';
+import { copyFilesPromise, renameFilesPromise } from '-/services/utils-io';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import TaggingActions from './tagging-actions';
-import PlatformIO from '-/services/platform-io';
-import AppConfig from '-/config';
+import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
 
 const actions = {
@@ -101,8 +100,16 @@ const actions = {
             getMetaFileLocationForFile(job[1], PlatformIO.getDirSeparator())
           ]);
           moveMetaJobs.push([
-            getThumbFileLocationForFile(job[0], PlatformIO.getDirSeparator()),
-            getThumbFileLocationForFile(job[1], PlatformIO.getDirSeparator())
+            getThumbFileLocationForFile(
+              job[0],
+              PlatformIO.getDirSeparator(),
+              false
+            ),
+            getThumbFileLocationForFile(
+              job[1],
+              PlatformIO.getDirSeparator(),
+              false
+            )
           ]);
           renameFilesPromise(moveMetaJobs)
             .then(() => {
@@ -149,8 +156,16 @@ const actions = {
             getMetaFileLocationForFile(job[1], PlatformIO.getDirSeparator())
           ]);
           copyMetaJobs.push([
-            getThumbFileLocationForFile(job[0], PlatformIO.getDirSeparator()),
-            getThumbFileLocationForFile(job[1], PlatformIO.getDirSeparator())
+            getThumbFileLocationForFile(
+              job[0],
+              PlatformIO.getDirSeparator(),
+              false
+            ),
+            getThumbFileLocationForFile(
+              job[1],
+              PlatformIO.getDirSeparator(),
+              false
+            )
           ]);
           copyFilesPromise(copyMetaJobs)
             .then(() => {
@@ -214,13 +229,14 @@ const actions = {
         reader.onload = async (event: any) => {
           await readerLoaded(event, inx, filePath);
         };
-        if (AppConfig.isWeb) {
-          reader.readAsBinaryString(file);
-        } /* else if (AppConfig.isCordova) {
+        // if (AppConfig.isWeb && PlatformIO.isMinio()) {
+        //   reader.readAsBinaryString(file);
+        // } else {
+        reader.readAsArrayBuffer(file);
+        // }
+        /* else if (AppConfig.isCordova) {
           reader.readAsDataURL(file);
-        } */ else {
-          reader.readAsArrayBuffer(file);
-        }
+        } */
       }
 
       async function readerLoaded(event, index, fileTargetPath) {
@@ -239,24 +255,28 @@ const actions = {
           const result = event.currentTarget
             ? event.currentTarget.result
             : event.target.result;
-          const fsEntry: TS.FileSystemEntry = await PlatformIO.saveBinaryFilePromise(
-            fileTargetPath,
-            result,
-            true,
-            onUploadProgress
-          );
-          if (fsEntry) {
-            dispatch(
-              AppActions.showNotification(
-                'File ' + fileTargetPath + ' successfully imported.',
-                'default',
-                true
-              )
+          try {
+            const fsEntry: TS.FileSystemEntry = await PlatformIO.saveBinaryFilePromise(
+              fileTargetPath,
+              new Uint8Array(result),
+              true,
+              onUploadProgress
             );
-            fsEntries.push(fsEntry);
-            // dispatch(AppActions.reflectCreateEntry(fileTargetPath, true));
-          } else {
-            console.error('Save to file ' + fileTargetPath + ' failed ');
+            if (fsEntry) {
+              dispatch(
+                AppActions.showNotification(
+                  'File ' + fileTargetPath + ' successfully imported.',
+                  'default',
+                  true
+                )
+              );
+              fsEntries.push(fsEntry);
+              // dispatch(AppActions.reflectCreateEntry(fileTargetPath, true));
+            }
+          } catch (error) {
+            console.error(
+              'Uploading ' + fileTargetPath + ' failed with ' + error
+            );
             dispatch(
               AppActions.showNotification(
                 'Importing file ' + fileTargetPath + ' failed.',
@@ -453,7 +473,11 @@ const actions = {
                   }
                 }
                 if (file.meta) {
-                  return enhanceEntry(file);
+                  return enhanceEntry(
+                    file,
+                    AppConfig.tagDelimiter,
+                    PlatformIO.getDirSeparator()
+                  );
                 }
                 return file;
               })

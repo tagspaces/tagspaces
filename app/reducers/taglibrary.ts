@@ -15,17 +15,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-import uuidv1 from 'uuid';
+import { v1 as uuidv1 } from 'uuid';
 import {
   immutablySwapItems,
   formatDateTime4Tag,
   extend,
   prepareTagGroupForExport
-} from '-/utils/misc';
+} from '@tagspaces/tagspaces-platforms/misc';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import { parseNewTags, saveAsTextFile } from '-/services/utils-io';
 import versionMeta from '../version.json';
 import defaultTagLibrary from './taglibrary-default';
-import AppConfig from '../config';
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
 
@@ -708,7 +708,7 @@ export const actions = {
     fromIndex,
     toIndex
   }),
-  importTagGroups: (entries: Array<TS.TagGroup>, replace: boolean = false) => ({
+  importTagGroups: (entries: Array<TS.TagGroup>, replace = false) => ({
     type: types.IMPORT_TAGGROUP,
     entries,
     replace
@@ -751,9 +751,12 @@ export const actions = {
       }
     });
 
-    const blob = new Blob([jsonFormat + JSON.stringify(allTagGroups) + '}'], {
-      type: 'application/json'
-    });
+    const blob = new Blob(
+      [jsonFormat + JSON.stringify(allTagGroups, null, 2) + '}'],
+      {
+        type: 'application/json'
+      }
+    );
     const dateTimeTag = formatDateTime4Tag(new Date(), true);
     saveAsTextFile(blob, 'tag-library [tagspaces ' + dateTimeTag + '].json');
     console.log('Tag library exported...');

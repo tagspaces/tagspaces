@@ -26,7 +26,7 @@ interface Props {
   testId?: string; // id used for user interface test automation
 }
 
-const DialogCloseButton = (props: Props) => {
+function DialogCloseButton(props: Props) {
   const { onClose, testId } = props;
   return (
     <IconButton
@@ -43,6 +43,6 @@ const DialogCloseButton = (props: Props) => {
       <CloseIcon />
     </IconButton>
   );
-};
+}
 
 export default DialogCloseButton;

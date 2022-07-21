@@ -17,26 +17,30 @@
  */
 
 import semver from 'semver';
-import uuidv1 from 'uuid';
+import { v1 as uuidv1 } from 'uuid';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '-/services/i18n';
 import defaultSettings from './settings-default';
-import PlatformIO from '-/services/platform-io';
-import AppConfig from '-/config';
+import PlatformIO from '-/services/platform-facade';
 import Links from '-/links';
 import versionMeta from '-/version.json';
 import { actions as AppActions } from './app';
 import { TS } from '-/tagspaces.namespace';
+import { Pro } from '../pro';
 
 export const types = {
   UPGRADE_SETTINGS: 'SETTINGS/UPGRADE_SETTINGS',
   SET_LANGUAGE: 'SETTINGS/SET_LANGUAGE',
   TOGGLE_SHOWUNIXHIDDENENTRIES: 'SETTINGS/TOGGLE_SHOWUNIXHIDDENENTRIES',
   SET_DESKTOPMODE: 'SETTINGS/SET_DESKTOPMODE',
+  SET_ENABLE_WS: 'SETTINGS/SET_ENABLE_WS',
   WARNING_OPENING_FILES_EXTERNALLY: 'SETTINGS/WARNING_OPENING_FILES_EXTERNALLY',
   SET_SAVE_TAGS_IN_LOCATION: 'SETTINGS/SET_SAVE_TAGS_IN_LOCATION',
   SET_TAG_DELIMITER: 'SETTINGS/SET_TAG_DELIMITER',
   SET_MAX_SEARCH_RESULT: 'SETTINGS/SET_MAX_SEARCH_RESULT',
   SET_CHECKFORUPDATES: 'SETTINGS/SET_CHECKFORUPDATES',
+  SET_REORDER_TAGS: 'SETTINGS/SET_REORDER_TAGS',
+  SET_DEFAULTPERSPECTIVE: 'SETTINGS/SET_DEFAULTPERSPECTIVE',
   SET_USEDEFAULTLOCATION: 'SETTINGS/SET_USEDEFAULTLOCATION',
   SET_COLOREDFILEEXTENSION: 'SETTINGS/SET_COLOREDFILEEXTENSION',
   SET_SHOWTAGAREAONSTARTUP: 'SETTINGS/SET_SHOWTAGAREAONSTARTUP',
@@ -57,6 +61,7 @@ export const types = {
   SET_TAGCOLOR: 'SETTINGS/SET_TAGCOLOR',
   SET_TAGTEXTCOLOR: 'SETTINGS/SET_TAGTEXTCOLOR',
   SET_CURRENTTHEME: 'SETTINGS/SET_CURRENTTHEME',
+  SET_GEO_TAGGING_FORMAT: 'SETTINGS/SET_GEO_TAGGING_FORMAT',
   SWITCH_THEME: 'SETTINGS/SWITCH_THEME',
   SET_KEYBINDING: 'SETTINGS/SET_KEYBINDING',
   SET_GLOBAL_KEYBINDING: 'SETTINGS/SET_GLOBAL_KEYBINDING',
@@ -68,7 +73,6 @@ export const types = {
   SET_LAST_PUBLISHED_VERSION: 'SETTINGS/SET_LAST_PUBLISHED_VERSION',
   SET_ENTRY_PROPERTIES_SPLIT_SIZE: 'SETTINGS/SET_ENTRY_PROPERTIES_SPLIT_SIZE',
   SET_MAIN_VSPLIT_SIZE: 'SETTINGS/SET_MAIN_VSPLIT_SIZE',
-  SET_LEFT_VSPLIT_SIZE: 'SETTINGS/SET_LEFT_VSPLIT_SIZE',
   SET_FIRST_RUN: 'SETTINGS/SET_FIRST_RUN',
   TOGGLE_TAGGROUP: 'TOGGLE_TAGGROUP',
   ADD_MAPTILE_SERVER: 'SET_MAPTILE_SERVER',
@@ -139,8 +143,14 @@ export default (state: any = defaultSettings, action: any) => {
     case types.SET_MAX_SEARCH_RESULT: {
       return { ...state, maxSearchResult: action.maxSearchResult };
     }
+    case types.SET_DEFAULTPERSPECTIVE: {
+      return { ...state, defaultPerspective: action.defaultPerspective };
+    }
     case types.SET_DESKTOPMODE: {
       return { ...state, desktopMode: action.desktopMode };
+    }
+    case types.SET_ENABLE_WS: {
+      return { ...state, enableWS: action.enableWS };
     }
     case types.WARNING_OPENING_FILES_EXTERNALLY: {
       return {
@@ -153,6 +163,9 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_CHECKFORUPDATES: {
       return { ...state, checkForUpdates: action.checkForUpdates };
+    }
+    case types.SET_REORDER_TAGS: {
+      return { ...state, reorderTags: action.reorderTags };
     }
     case types.SET_USEDEFAULTLOCATION: {
       return { ...state, useDefaultLocation: action.useDefaultLocation };
@@ -228,6 +241,9 @@ export default (state: any = defaultSettings, action: any) => {
     case types.SET_CURRENTTHEME: {
       return { ...state, currentTheme: action.currentTheme };
     }
+    case types.SET_GEO_TAGGING_FORMAT: {
+      return { ...state, geoTaggingFormat: action.geoTaggingFormat };
+    }
     case types.SWITCH_THEME: {
       let currentTheme = 'dark';
       if (state.currentTheme === 'dark') {
@@ -298,19 +314,13 @@ export default (state: any = defaultSettings, action: any) => {
     case types.SET_ENTRY_PROPERTIES_SPLIT_SIZE: {
       return {
         ...state,
-        entryPropertiesSplitSize: action.entryPropertiesSplitSize
+        entrySplitSize: action.entrySplitSize
       };
     }
     case types.SET_MAIN_VSPLIT_SIZE: {
       return {
         ...state,
-        mainVerticalSplitSize: action.mainVerticalSplitSize
-      };
-    }
-    case types.SET_LEFT_VSPLIT_SIZE: {
-      return {
-        ...state,
-        leftVerticalSplitSize: action.leftVerticalSplitSize
+        mainVSplitSize: action.mainVSplitSize
       };
     }
     case types.SET_LAST_PUBLISHED_VERSION: {
@@ -394,18 +404,12 @@ export default (state: any = defaultSettings, action: any) => {
 };
 
 export const actions = {
-  addTileServers: (
-    tileServer: TS.MapTileServer,
-    isDefault: boolean = false
-  ) => ({
+  addTileServers: (tileServer: TS.MapTileServer, isDefault = false) => ({
     type: types.ADD_MAPTILE_SERVER,
     tileServer,
     isDefault
   }),
-  editTileServers: (
-    tileServer: TS.MapTileServer,
-    isDefault: boolean = false
-  ) => ({
+  editTileServers: (tileServer: TS.MapTileServer, isDefault = false) => ({
     type: types.EDIT_MAPTILE_SERVER,
     tileServer,
     isDefault
@@ -430,6 +434,10 @@ export const actions = {
     type: types.SET_DESKTOPMODE,
     desktopMode
   }),
+  setEnableWS: (enableWS: boolean) => ({
+    type: types.SET_ENABLE_WS,
+    enableWS
+  }),
   setWarningOpeningFilesExternally: (
     warningOpeningFilesExternally: boolean
   ) => ({
@@ -447,10 +455,18 @@ export const actions = {
     type: types.SET_CHECKFORUPDATES,
     checkForUpdates
   }),
+  reorderTags: (reorderTags: boolean) => ({
+    type: types.SET_REORDER_TAGS,
+    reorderTags
+  }),
   setLanguage: (language: string) => ({ type: types.SET_LANGUAGE, language }),
   setUseDefaultLocation: (useDefaultLocation: boolean) => ({
     type: types.SET_USEDEFAULTLOCATION,
     useDefaultLocation
+  }),
+  setDefaultPerspective: (defaultPerspective: string) => ({
+    type: types.SET_DEFAULTPERSPECTIVE,
+    defaultPerspective
   }),
   setColoredFileExtension: (coloredFileExtension: boolean) => ({
     type: types.SET_COLOREDFILEEXTENSION,
@@ -515,6 +531,10 @@ export const actions = {
     type: types.SET_CURRENTTHEME,
     currentTheme
   }),
+  setGeoTaggingFormat: (geoTaggingFormat: string) => ({
+    type: types.SET_GEO_TAGGING_FORMAT,
+    geoTaggingFormat
+  }),
   switchTheme: () => ({ type: types.SWITCH_THEME }),
   setKeyBinding: (keyBindingName: string, keyBindingCommand: string) => ({
     type: types.SET_KEYBINDING,
@@ -529,17 +549,13 @@ export const actions = {
     type: types.SET_SUPPORTED_FILE_TYPES,
     supportedFileTypes
   }),
-  setEntryPropertiesSplitSize: (entryPropertiesSplitSize: number) => ({
+  setEntryPropertiesSplitSize: (entrySplitSize: string) => ({
     type: types.SET_ENTRY_PROPERTIES_SPLIT_SIZE,
-    entryPropertiesSplitSize
+    entrySplitSize
   }),
-  setMainVerticalSplitSize: (mainVerticalSplitSize: any) => ({
+  setMainVerticalSplitSize: (mainVSplitSize: string) => ({
     type: types.SET_MAIN_VSPLIT_SIZE,
-    mainVerticalSplitSize
-  }),
-  setLeftVerticalSplitSize: (leftVerticalSplitSize: number) => ({
-    type: types.SET_LEFT_VSPLIT_SIZE,
-    leftVerticalSplitSize
+    mainVSplitSize
   }),
   setFirstRun: (firstRun: boolean) => ({
     type: types.SET_FIRST_RUN,
@@ -586,8 +602,24 @@ export function getLastVersionPromise(): Promise<string> {
   return new Promise((resolve, reject) => {
     console.log('Checking for new version...');
     const xhr = new XMLHttpRequest();
+    let versionFile = 'tagspaces.json';
+    const proText = Pro ? 'pro-' : '';
+    if (AppConfig.isWeb) {
+      versionFile = 'tagspaces-pro-web.json';
+    } else if (AppConfig.isWin) {
+      versionFile = 'tagspaces-' + proText + 'win-x64.json';
+    } else if (AppConfig.isMacLike) {
+      versionFile = 'tagspaces-' + proText + 'mac.json';
+    } else if (AppConfig.isLinux) {
+      versionFile = 'tagspaces-' + proText + 'linux-x64.json';
+    } else if (AppConfig.isAndroid) {
+      versionFile = 'tagspaces-' + proText + 'android.json';
+    }
     const updateUrl =
-      Links.links.checkNewVersionURL + '?cv=' + versionMeta.version;
+      Links.links.checkNewVersionURL +
+      versionFile +
+      '?cv=' +
+      versionMeta.version;
     xhr.open('GET', updateUrl, true);
     xhr.responseType = 'json';
     xhr.onerror = reject;
@@ -613,6 +645,7 @@ export const getMapTileServer = (state: any): TS.MapTileServer =>
 export const getMapTileServers = (state: any): Array<TS.MapTileServer> =>
   AppConfig.mapTileServers || state.settings.mapTileServers;
 export const getSettings = (state: any) => state.settings;
+export const getEnableWS = (state: any) => state.settings.enableWS;
 export const getDesktopMode = (state: any) => {
   if (typeof window.ExtDisplayMode === 'undefined') {
     return state.settings.desktopMode;
@@ -629,6 +662,8 @@ export const getShowUnixHiddenEntries = (state: any) =>
   state.settings.showUnixHiddenEntries;
 export const getUseDefaultLocation = (state: any) =>
   state.settings.useDefaultLocation;
+export const getDefaultPerspective = (state: any) =>
+  state.settings.defaultPerspective;
 export const getColoredFileExtension = (state: any) =>
   state.settings.coloredFileExtension;
 export const getShowTagAreaOnStartup = (state: any) =>
@@ -657,18 +692,16 @@ export const getKeyBindings = (state: any) => state.settings.keyBindings;
 export const getKeyBindingObject = (state: any) =>
   generateKeyBindingObject(state.settings.keyBindings);
 export const getSupportedFileTypes = (state: any) =>
-  state.settings.supportedFileTypes.sort((a, b) => {
-    return a.type > b.type ? 1 : a.type < b.type ? -1 : 0;
-  });
+  state.settings.supportedFileTypes.sort((a, b) =>
+    a.type > b.type ? 1 : a.type < b.type ? -1 : 0
+  );
 export const getTagColor = (state: any) => state.settings.tagBackgroundColor;
 export const getTagTextColor = (state: any) => state.settings.tagTextColor;
 export const getCurrentTheme = (state: any) => state.settings.currentTheme;
 export const isGlobalKeyBindingEnabled = (state: any) =>
   state.settings.enableGlobalKeyboardShortcuts;
-export const getLeftVerticalSplitSize = (state: any) =>
-  state.settings.leftVerticalSplitSize;
 export const getMainVerticalSplitSize = (state: any) =>
-  state.settings.mainVerticalSplitSize;
+  state.settings.mainVSplitSize;
 export const getTagDelimiter = (state: any) => state.settings.tagDelimiter;
 export const getMaxSearchResults = (state: any) =>
   state.settings.maxSearchResult;

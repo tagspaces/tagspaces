@@ -30,11 +30,16 @@ import EditIcon from '@material-ui/icons/Edit';
 import IconButton from '@material-ui/core/IconButton';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Switch from '@material-ui/core/Switch';
+import Select from '@material-ui/core/Select';
+import Input from '@material-ui/core/Input';
+import MenuItem from '@material-ui/core/MenuItem';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '-/services/i18n';
 import {
   actions as SettingsActions,
   getSettings,
-  getMapTileServers
+  getMapTileServers,
+  getEnableWS
 } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import MapTileServerDialog from '-/components/dialogs/settings/MapTileServerDialog';
@@ -63,15 +68,17 @@ interface Props {
   classes: any;
   settings: any;
   setDesktopMode: (desktopMode: boolean) => void;
+  setEnableWS: (enableWS: boolean) => void;
   setWarningOpeningFilesExternally: (
     warningOpeningFilesExternally: boolean
   ) => void;
   setSaveTagInLocation: (saveTagInLocation: boolean) => void;
   showResetSettings: (showDialog: boolean) => void;
   tileServers: Array<TS.MapTileServer>;
+  setGeoTaggingFormat: (geoTaggingFormat: string) => void;
 }
 
-const SettingsAdvanced = (props: Props) => {
+function SettingsAdvanced(props: Props) {
   const [tileServerDialog, setTileServerDialog] = useState<any>(undefined);
 
   const handleEditTileServerClick = (
@@ -85,6 +92,8 @@ const SettingsAdvanced = (props: Props) => {
   };
 
   const { classes } = props;
+
+  const geoTaggingFormatDisabled = AppConfig.geoTaggingFormat !== undefined;
 
   return (
     <div style={{ width: '100%' }}>
@@ -119,6 +128,14 @@ const SettingsAdvanced = (props: Props) => {
           />
         </ListItem>
         <ListItem className={classes.listItem}>
+          <ListItemText primary={i18n.t('enableWS')} />
+          <Switch
+            data-tid="settingsEnableWS"
+            onClick={() => props.setEnableWS(!props.settings.enableWS)}
+            checked={props.settings.enableWS}
+          />
+        </ListItem>
+        <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('warningOpeningFilesExternally')} />
           <Switch
             data-tid="warningOpeningFilesExternally"
@@ -148,6 +165,33 @@ const SettingsAdvanced = (props: Props) => {
             }
             checked={props.settings.saveTagInLocation}
           />
+        </ListItem>
+        <ListItem className={classes.listItem}>
+          <ListItemText primary={i18n.t('core:geoTaggingFormat')} />
+          <Select
+            disabled={geoTaggingFormatDisabled}
+            data-tid="geoTaggingFormatTID"
+            title={
+              geoTaggingFormatDisabled
+                ? i18n.t('core:settingExternallyConfigured')
+                : ''
+            }
+            value={
+              geoTaggingFormatDisabled
+                ? AppConfig.geoTaggingFormat
+                : props.settings.geoTaggingFormat
+            }
+            onChange={(event: any) =>
+              props.setGeoTaggingFormat(event.target.value)
+            }
+            input={<Input id="geoTaggingFormatSelector" />}
+          >
+            {props.settings.supportedGeoTagging.map(geoTagging => (
+              <MenuItem key={geoTagging} value={geoTagging}>
+                {geoTagging.toUpperCase()}
+              </MenuItem>
+            ))}
+          </Select>
         </ListItem>
         <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('core:tileServerTitle')} />
@@ -219,12 +263,13 @@ const SettingsAdvanced = (props: Props) => {
       )}
     </div>
   );
-};
+}
 
 function mapStateToProps(state) {
   return {
     settings: getSettings(state),
-    tileServers: getMapTileServers(state)
+    tileServers: getMapTileServers(state),
+    enableWS: getEnableWS(state)
   };
 }
 
@@ -234,7 +279,9 @@ function mapActionCreatorsToProps(dispatch) {
       setWarningOpeningFilesExternally:
         SettingsActions.setWarningOpeningFilesExternally,
       setDesktopMode: SettingsActions.setDesktopMode,
-      setSaveTagInLocation: SettingsActions.setSaveTagInLocation
+      setEnableWS: SettingsActions.setEnableWS,
+      setSaveTagInLocation: SettingsActions.setSaveTagInLocation,
+      setGeoTaggingFormat: SettingsActions.setGeoTaggingFormat
     },
     dispatch
   );
@@ -243,5 +290,4 @@ function mapActionCreatorsToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
-  // @ts-ignore
 )(withStyles(styles, { withTheme: true })(SettingsAdvanced));

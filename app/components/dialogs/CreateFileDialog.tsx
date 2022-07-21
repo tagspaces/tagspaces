@@ -36,12 +36,12 @@ import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import Dialog from '@material-ui/core/Dialog';
+import { formatDateTime4Tag } from '@tagspaces/tagspaces-platforms/misc';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '-/services/i18n';
-import { formatDateTime4Tag } from '-/utils/misc';
-import AppConfig from '-/config';
 import TaggingActions from '-/reducers/tagging-actions';
 import { actions as AppActions } from '-/reducers/app';
-import PlatformIO from '-/services/platform-io';
+import PlatformIO from '-/services/platform-facade';
 
 const styles = theme => ({
   root: {
@@ -88,7 +88,7 @@ interface Props {
 /**
  * @deprecated use CreateDialog instead
  */
-const CreateFileDialog = (props: Props) => {
+function CreateFileDialog(props: Props) {
   const [errorTextName, setErrorTextName] = useState<boolean>(false);
   const [errorTextPath, setErrorTextPath] = useState<boolean>(false);
   const [fileName, setFileName] = useState<string>(
@@ -274,7 +274,8 @@ const CreateFileDialog = (props: Props) => {
             value={selectedDirectoryPath.current}
             onChange={handleFileChange}
             endAdornment={
-              PlatformIO.haveObjectStoreSupport() ? (
+              PlatformIO.haveObjectStoreSupport() ||
+              PlatformIO.haveWebDavSupport() ? (
                 undefined
               ) : (
                 <InputAdornment position="end" style={{ height: 32 }}>
@@ -305,7 +306,7 @@ const CreateFileDialog = (props: Props) => {
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(

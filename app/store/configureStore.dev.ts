@@ -23,7 +23,7 @@ import thunk from 'redux-thunk';
 import { createLogger } from 'redux-logger';
 import rootReducer from '../reducers';
 import onlineListener from '../services/onlineListener';
-import PlatformIO from '-/services/platform-io';
+import PlatformIO from '-/services/platform-facade';
 
 const configureStore = initialState => {
   // Redux Configuration
@@ -67,6 +67,7 @@ const configureStore = initialState => {
   const persistor = persistStore(store, null, () => {
     // languageChanged event is not handled in main process on store loaded (App is not ready)
     setTimeout(() => {
+      // @ts-ignore
       PlatformIO.setLanguage(store.getState().settings.interfaceLanguage);
     }, 500);
     // document.dispatchEvent(new Event('storeLoaded'));

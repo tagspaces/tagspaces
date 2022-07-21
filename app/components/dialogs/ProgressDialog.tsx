@@ -28,21 +28,23 @@ interface Props {
   onClose: () => void;
 }
 
-const ProgressDialog = (props: Props) => (
-  <Dialog open={props.open} onClose={props.onClose}>
-    <DialogTitle data-tid="progressDialogTitle">
-      <DialogCloseButton onClose={props.onClose} />
-    </DialogTitle>
-    <DialogContent
-      style={{
-        marginLeft: 'auto',
-        marginRight: 'auto',
-        flexGrow: 1
-      }}
-    >
-      <CircularProgress size={24} />
-    </DialogContent>
-  </Dialog>
-);
+function ProgressDialog(props: Props) {
+  return (
+    <Dialog open={props.open} onClose={props.onClose}>
+      <DialogTitle data-tid="progressDialogTitle">
+        <DialogCloseButton onClose={props.onClose} />
+      </DialogTitle>
+      <DialogContent
+        style={{
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          flexGrow: 1
+        }}
+      >
+        <CircularProgress size={24} />
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 export default ProgressDialog;

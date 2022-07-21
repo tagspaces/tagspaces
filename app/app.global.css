@@ -1,6 +1,5 @@
 @import 'assets/loading.css';
 @import 'assets/scrollbars.css';
-@import 'assets/splitpane.css';
 @import 'assets/minireset.css';
 @import 'assets/fonts/roboto/index.css';
 @import '~rc-table/assets/index.css';
@@ -20,4 +19,29 @@ div[tabindex='-1']:focus {
 html,
 body {
   overscroll-behavior-x: none;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+}
+
+.react-split > .split-container.vertical > .splitter {
+  z-index: 1;
+}
+
+.rc-table-row-expand-icon {
+  width: 13px !important;
+  height: 13px !important;
+  line-height: 13px !important;
+  margin: 5px;
+  cursor: pointer;
+}
+
+#root {
+  height: 100%;
 }

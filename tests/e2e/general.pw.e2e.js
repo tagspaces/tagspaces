@@ -13,13 +13,14 @@ import {
   createNewDirectory,
   newHTMLFile,
   newMDFile,
-  newTEXTFile,
   closeOpenedFile,
   deleteDirectory,
   clickOn,
   expectElementExist,
   selectorFile,
-  setSettings
+  setSettings,
+  takeScreenshot,
+  createTxtFile
 } from './general.helpers';
 import { searchEngine } from './search.helpers';
 import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
@@ -53,11 +54,12 @@ describe('TST51 - Perspective Grid', () => {
   });
 
   it('TST0501 - Create HTML file [electron,web]', async () => {
+    await global.client.waitForLoadState('networkidle');
     await createNewDirectory();
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
       true,
-      5000
+      2000
     );
     await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
     // create new file
@@ -65,16 +67,16 @@ describe('TST51 - Perspective Grid', () => {
     await closeOpenedFile();
     // await reloadDirectory();
     await expectElementExist(selectorFile, true);
-    /**/
-    // delete directory
 
-    // await deleteFirstFile();
+    // delete directory
     await deleteDirectory(testFolder);
+
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
       false,
-      5000
+      2000
     );
+    await takeScreenshot('TST0501 after deleteDirectory');
   });
 
   it('TST0502 - Create MD file [electron,web]', async () => {
@@ -82,7 +84,7 @@ describe('TST51 - Perspective Grid', () => {
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
       true,
-      5000
+      2000
     );
     await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
 
@@ -97,21 +99,24 @@ describe('TST51 - Perspective Grid', () => {
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
       false,
-      5000
+      2000
     );
+    await takeScreenshot('TST0502 after deleteDirectory');
   });
 
   it('TST0503 - Create TEXT file [electron,web]', async () => {
+    await takeScreenshot('TST0503 start test');
     await createNewDirectory();
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
       true,
-      5000
+      2000
     );
+    await takeScreenshot('TST0503 create folder');
     await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
 
     // create new file
-    await newTEXTFile();
+    await createTxtFile();
     await closeOpenedFile();
     // await reloadDirectory();
     await expectElementExist(selectorFile, true);
@@ -121,8 +126,9 @@ describe('TST51 - Perspective Grid', () => {
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
       false,
-      5000
+      2000
     );
+    await takeScreenshot('TST0503 after deleteDirectory');
   });
 
   it('TST0510 - Generate thumbnail from Images', async () => {

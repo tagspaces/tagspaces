@@ -21,20 +21,20 @@ jobs:
           path: tests/testdata
       - uses: actions/setup-node@v2
         with:
-          node-version: '12.x'
-      - name: Running yarn install, prettier and type checks
+          node-version: '16.x'
+      - name: Running npm install, prettier and type checks
         run: |
-          yarn install --check-files --cache-folder .ycache
-          yarn prettier-check
-          yarn type-check
+          npm install
+          npm run prepare-node
+          npm run prettier-check
+          npm run type-check
       - name: Run Unit tests
-        run: yarn test-unit
+        run: npm run test-unit
       - name: Run Electron tests
         run: |
-          yarn install-ext
-          yarn build-main
-          yarn build-e2e
-          yarn test-playwright
+          npm run build-main
+          npm run build-e2e
+          npm run test-playwright
       - uses: IgnusG/jest-report-action@v2.3.3
         if: always() # Run regardless of whether other steps failed
         with:
