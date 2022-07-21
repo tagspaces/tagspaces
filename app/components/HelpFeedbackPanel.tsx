@@ -41,6 +41,8 @@ import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import styles from './SidePanels.css';
 import i18n from '../services/i18n';
 import Links from '-/links';
+import { connect } from 'react-redux';
+import { getCurrentLanguage } from '-/reducers/settings';
 
 interface Props {
   classes?: any;
@@ -236,4 +238,9 @@ function HelpFeedbackPanel(props: Props) {
   );
 }
 
-export default withStyles(styles, { withTheme: true })(HelpFeedbackPanel);
+function mapStateToProps(state) {
+  return { language: getCurrentLanguage(state) };
+}
+export default connect(mapStateToProps)(
+  withStyles(styles, { withTheme: true })(HelpFeedbackPanel)
+);

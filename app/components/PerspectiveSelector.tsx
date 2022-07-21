@@ -26,6 +26,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { AvailablePerspectives, PerspectiveIDs } from '-/perspectives';
 import i18n from '../services/i18n';
 import { Pro } from '-/pro';
+import { connect } from 'react-redux';
+import { getCurrentLanguage } from '-/reducers/settings';
 
 function PerspectiveSelector(props) {
   const { defaultValue, onChange, testId } = props;
@@ -80,4 +82,7 @@ function PerspectiveSelector(props) {
   );
 }
 
-export default PerspectiveSelector;
+function mapStateToProps(state) {
+  return { language: getCurrentLanguage(state) };
+}
+export default connect(mapStateToProps)(PerspectiveSelector);

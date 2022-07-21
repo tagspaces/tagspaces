@@ -45,10 +45,10 @@ import {
 import TaggingActions from '../reducers/tagging-actions';
 import i18n from '../services/i18n';
 import {
-  actions as SettingsActions,
+  actions as SettingsActions, getCurrentLanguage,
   getTagColor,
   getTagTextColor
-} from '../reducers/settings';
+} from "../reducers/settings";
 import {
   actions as AppActions,
   getSelectedEntries,
@@ -477,7 +477,8 @@ function mapStateToProps(state) {
     isReadOnly: isReadOnlyMode(state),
     tagGroupCollapsed: state.settings.tagGroupCollapsed,
     locations: getLocations(state),
-    saveTagInLocation: state.settings.saveTagInLocation
+    saveTagInLocation: state.settings.saveTagInLocation,
+    language: getCurrentLanguage(state)
   };
 }
 

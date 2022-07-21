@@ -62,7 +62,7 @@ import {
   getDirectoryPath
 } from '../reducers/app';
 import LoadingLazy from './LoadingLazy';
-import { actions as SettingsActions, isFirstRun } from '../reducers/settings';
+import { actions as SettingsActions, getCurrentLanguage, isFirstRun } from "../reducers/settings";
 import Links from '-/links';
 import StoredSearches from '-/components/StoredSearches';
 import UserDetailsPopover from '-/components/UserDetailsPopover';
@@ -428,7 +428,8 @@ function mapStateToProps(state) {
     isHelpFeedbackPanelOpened: isHelpFeedbackPanelOpened(state),
     isReadOnlyMode: isReadOnlyMode(state),
     directoryPath: getDirectoryPath(state),
-    user: state.app.user
+    user: state.app.user,
+    language: getCurrentLanguage(state)
   };
 }
 

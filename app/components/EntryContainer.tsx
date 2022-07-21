@@ -1205,6 +1205,7 @@ function mapActionCreatorsToProps(dispatch) {
 }
 const areEqual = (prevProp, nextProp) =>
   // JSON.stringify(nextProp.theme) === JSON.stringify(prevProp.theme) &&
+  nextProp.language === prevProp.language &&
   nextProp.settings.currentTheme === prevProp.settings.currentTheme &&
   nextProp.settings.entrySplitSize === prevProp.settings.entrySplitSize &&
   JSON.stringify(nextProp.openedFiles) === JSON.stringify(prevProp.openedFiles);

@@ -47,7 +47,10 @@ import IOActions from '../reducers/io-actions';
 import DirectoryTreeView, {
   DirectoryTreeViewRef
 } from '-/components/DirectoryTreeView';
-import { getShowUnixHiddenEntries } from '-/reducers/settings';
+import {
+  getCurrentLanguage,
+  getShowUnixHiddenEntries
+} from '-/reducers/settings';
 import LocationContextMenu from '-/components/menus/LocationContextMenu';
 import { TS } from '-/tagspaces.namespace';
 
@@ -353,7 +356,8 @@ function mapStateToProps(state) {
   return {
     currentLocationId: getCurrentLocationId(state),
     isReadOnlyMode: isReadOnlyMode(state),
-    showUnixHiddenEntries: getShowUnixHiddenEntries(state)
+    showUnixHiddenEntries: getShowUnixHiddenEntries(state),
+    language: getCurrentLanguage(state)
   };
 }
 
@@ -376,8 +380,14 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
+const areEqual = (prevProp, nextProp) =>
+  nextProp.language === prevProp.language &&
+  nextProp.currentLocationId === prevProp.currentLocationId &&
+  nextProp.isReadOnlyMode === prevProp.isReadOnlyMode &&
+  nextProp.showUnixHiddenEntries === prevProp.showUnixHiddenEntries;
+
 export default connect(
   mapStateToProps,
   mapDispatchToProps
   // @ts-ignore
-)(withStyles(styles)(React.memo(LocationView)));
+)(React.memo(withStyles(styles)(LocationView), areEqual));

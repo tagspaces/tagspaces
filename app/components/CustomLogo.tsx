@@ -31,6 +31,7 @@ import LogoIcon from '../assets/images/icon100x100.svg';
 import { actions as AppActions } from '../reducers/app';
 import i18n from '../services/i18n';
 import versionMeta from '../version.json';
+import { getCurrentLanguage } from '-/reducers/settings';
 
 const AppVersionBadge = withStyles(theme => ({
   badge: {
@@ -93,6 +94,10 @@ function CustomLogo(props: Props) {
   );
 }
 
+function mapStateToProps(state) {
+  return { language: getCurrentLanguage(state) };
+}
+
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
@@ -102,4 +107,4 @@ function mapActionCreatorsToProps(dispatch) {
   );
 }
 
-export default connect(undefined, mapActionCreatorsToProps)(CustomLogo);
+export default connect(mapStateToProps, mapActionCreatorsToProps)(CustomLogo);

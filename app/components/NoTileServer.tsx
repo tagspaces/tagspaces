@@ -1,5 +1,7 @@
 import React from 'react';
 import i18n from '-/services/i18n';
+import { connect } from 'react-redux';
+import { getCurrentLanguage } from '-/reducers/settings';
 
 function NoTileServer() {
   return (
@@ -10,4 +12,8 @@ function NoTileServer() {
   );
 }
 
-export default NoTileServer;
+function mapStateToProps(state) {
+  return { language: getCurrentLanguage(state) };
+}
+
+export default connect(mapStateToProps)(NoTileServer);

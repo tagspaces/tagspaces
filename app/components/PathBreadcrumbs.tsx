@@ -30,6 +30,8 @@ import {
 import i18n from '../services/i18n';
 import DirectoryMenu from './menus/DirectoryMenu';
 import { TS } from '-/tagspaces.namespace';
+import { connect } from 'react-redux';
+import { getCurrentLanguage } from '-/reducers/settings';
 
 // @ts-ignore
 const StyledBreadcrumb = withStyles((theme: Theme) => ({
@@ -80,7 +82,7 @@ function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
   console.info('You clicked a breadcrumb.');
 }
 
-export default function PathBreadcrumbs(props: Props) {
+function PathBreadcrumbs(props: Props) {
   let pathParts: Array<string> = [];
 
   const [
@@ -230,3 +232,7 @@ export default function PathBreadcrumbs(props: Props) {
     </>
   );
 }
+function mapStateToProps(state) {
+  return { language: getCurrentLanguage(state) };
+}
+export default connect(mapStateToProps)(PathBreadcrumbs);
