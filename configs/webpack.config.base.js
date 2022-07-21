@@ -67,7 +67,7 @@ export default {
         __dirname,
         '..',
         'node_modules',
-        '@tagspaces/tagspaces-platforms/node_modules/@tagspaces/tagspaces-common/default.env'
+        '@tagspaces/tagspaces-common/default.env'
       )
     })
     // new webpack.NamedModulesPlugin()
