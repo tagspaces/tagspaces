@@ -99,6 +99,8 @@ jobs:
       - name: Running npm install, prettier and type checks
         run: |
           npm install
+          npm run install-ext-web
+          npm run postinstall-aws-check
           npm run prettier-check
           npm run type-check
       - name: Run Unit tests
@@ -111,7 +113,6 @@ jobs:
           target: tests/bin/
       - name: Run Electron tests
         run: |
-          npm run install-ext-web
           npm run build-e2e-web
           npm run test-playwright-web-headless
       - uses: IgnusG/jest-report-action@v2.3.3
