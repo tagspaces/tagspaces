@@ -33,7 +33,10 @@ import {
   actions as LocationIndexActions,
   getSearchQuery
 } from '-/reducers/location-index';
-import { getCurrentLanguage, getShowUnixHiddenEntries } from "-/reducers/settings";
+import {
+  getCurrentLanguage,
+  getShowUnixHiddenEntries
+} from '-/reducers/settings';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import { actions as SearchActions, getSearches } from '-/reducers/searches';

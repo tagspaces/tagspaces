@@ -45,10 +45,11 @@ import {
 import TaggingActions from '../reducers/tagging-actions';
 import i18n from '../services/i18n';
 import {
-  actions as SettingsActions, getCurrentLanguage,
+  actions as SettingsActions,
+  getCurrentLanguage,
   getTagColor,
   getTagTextColor
-} from "../reducers/settings";
+} from '../reducers/settings';
 import {
   actions as AppActions,
   getSelectedEntries,

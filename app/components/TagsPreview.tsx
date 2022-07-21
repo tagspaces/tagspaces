@@ -21,7 +21,11 @@ import { connect } from 'react-redux';
 import Tooltip from '@material-ui/core/Tooltip';
 import { TS } from '-/tagspaces.namespace';
 import { getAllTags, getTagColors } from '-/reducers/taglibrary';
-import { getCurrentLanguage, getTagColor, getTagTextColor } from "-/reducers/settings";
+import {
+  getCurrentLanguage,
+  getTagColor,
+  getTagTextColor
+} from '-/reducers/settings';
 import i18n from '-/services/i18n';
 
 interface Props {

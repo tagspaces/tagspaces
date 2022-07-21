@@ -380,14 +380,8 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
-const areEqual = (prevProp, nextProp) =>
-  nextProp.language === prevProp.language &&
-  nextProp.currentLocationId === prevProp.currentLocationId &&
-  nextProp.isReadOnlyMode === prevProp.isReadOnlyMode &&
-  nextProp.showUnixHiddenEntries === prevProp.showUnixHiddenEntries;
-
 export default connect(
   mapStateToProps,
   mapDispatchToProps
   // @ts-ignore
-)(React.memo(withStyles(styles)(LocationView), areEqual));
+)(withStyles(styles)(React.memo(LocationView)));

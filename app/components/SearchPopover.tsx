@@ -64,7 +64,7 @@ import {
   getCurrentLanguage,
   getMaxSearchResults,
   getShowUnixHiddenEntries
-} from "-/reducers/settings";
+} from '-/reducers/settings';
 import { styles, StyleProps } from './SearchInline.css';
 import i18n from '../services/i18n';
 import { FileTypeGroups } from '-/services/search';

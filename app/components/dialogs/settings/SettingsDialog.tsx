@@ -37,7 +37,11 @@ import SettingsGeneral from '../settings/SettingsGeneral';
 import SettingsKeyBindings from '../settings/SettingsKeyBindings';
 import SettingsFileTypes from '../settings/SettingsFileTypes';
 import i18n from '-/services/i18n';
-import { actions, getCurrentLanguage, getSupportedFileTypes } from "-/reducers/settings";
+import {
+  actions,
+  getCurrentLanguage,
+  getSupportedFileTypes
+} from '-/reducers/settings';
 import { clearAllURLParams } from '-/utils/dom';
 import SettingsAdvanced from '-/components/dialogs/settings/SettingsAdvanced';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';

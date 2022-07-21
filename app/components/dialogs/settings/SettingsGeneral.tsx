@@ -125,15 +125,15 @@ function SettingsGeneral(props: Props) {
 
   return (
     <List className={classes.root}>
-        <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:interfaceLanguage')} />
-          <Select
-            data-tid="settingsSetLanguage"
-            value={props.settings.interfaceLanguage}
-            onChange={(event: any) => {
-              props.setLanguage(event.target.value);
-              PlatformIO.setLanguage(event.target.value);
-              // TODO remove (language state is changed in settings reducer and components will be reloaded without this)
+      <ListItem className={classes.listItem}>
+        <ListItemText primary={i18n.t('core:interfaceLanguage')} />
+        <Select
+          data-tid="settingsSetLanguage"
+          value={props.settings.interfaceLanguage}
+          onChange={(event: any) => {
+            props.setLanguage(event.target.value);
+            PlatformIO.setLanguage(event.target.value);
+            // TODO remove (language state is changed in settings reducer and components will be reloaded without this)
             /* const { currentTheme } = props.settings;
               const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
               props.setCurrentTheme(newTheme);

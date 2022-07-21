@@ -42,8 +42,9 @@ import {
 import {
   isDesktopMode,
   getMaxSearchResults,
-  getShowUnixHiddenEntries, getCurrentLanguage
-} from "-/reducers/settings";
+  getShowUnixHiddenEntries,
+  getCurrentLanguage
+} from '-/reducers/settings';
 import i18n from '-/services/i18n';
 import { FileTypeGroups } from '-/services/search';
 import { TS } from '-/tagspaces.namespace';
