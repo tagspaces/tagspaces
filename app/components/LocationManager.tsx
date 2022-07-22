@@ -32,6 +32,7 @@ import {
 } from '../reducers/locations';
 import { actions as AppActions, isLoading } from '../reducers/app';
 import {
+  getCurrentLanguage,
   getPersistTagsInSidecarFile,
   isDesktopMode
 } from '-/reducers/settings';
@@ -280,7 +281,8 @@ function mapStateToProps(state) {
     locations: getLocations(state),
     isDesktop: isDesktopMode(state),
     isLoading: isLoading(state),
-    isPersistTagsInSidecar: getPersistTagsInSidecarFile(state)
+    isPersistTagsInSidecar: getPersistTagsInSidecarFile(state),
+    language: getCurrentLanguage(state)
   };
 }
 

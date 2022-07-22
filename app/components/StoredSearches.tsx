@@ -33,7 +33,10 @@ import {
   actions as LocationIndexActions,
   getSearchQuery
 } from '-/reducers/location-index';
-import { getShowUnixHiddenEntries } from '-/reducers/settings';
+import {
+  getCurrentLanguage,
+  getShowUnixHiddenEntries
+} from '-/reducers/settings';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import { actions as SearchActions, getSearches } from '-/reducers/searches';
@@ -280,6 +283,7 @@ function StoredSearches(props: Props) {
 
 function mapStateToProps(state) {
   return {
+    language: getCurrentLanguage(state),
     searchQuery: getSearchQuery(state),
     searches: getSearches(state),
     showUnixHiddenEntries: getShowUnixHiddenEntries(state)
@@ -300,6 +304,7 @@ function mapDispatchToProps(dispatch) {
 }
 
 const areEqual = (prevProp, nextProp) =>
+  nextProp.language === prevProp.language &&
   nextProp.indexing === prevProp.indexing &&
   nextProp.searchQuery === prevProp.searchQuery &&
   nextProp.currentDirectory === prevProp.currentDirectory &&

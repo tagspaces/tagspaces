@@ -21,7 +21,11 @@ import { connect } from 'react-redux';
 import Tooltip from '@material-ui/core/Tooltip';
 import { TS } from '-/tagspaces.namespace';
 import { getAllTags, getTagColors } from '-/reducers/taglibrary';
-import { getTagColor, getTagTextColor } from '-/reducers/settings';
+import {
+  getCurrentLanguage,
+  getTagColor,
+  getTagTextColor
+} from '-/reducers/settings';
 import i18n from '-/services/i18n';
 
 interface Props {
@@ -81,7 +85,8 @@ function mapStateToProps(state) {
   return {
     allTags: getAllTags(state),
     defaultBackgroundColor: getTagColor(state),
-    defaultTextColor: getTagTextColor(state)
+    defaultTextColor: getTagTextColor(state),
+    language: getCurrentLanguage(state)
   };
 }
 export default connect(mapStateToProps)(TagsPreview);

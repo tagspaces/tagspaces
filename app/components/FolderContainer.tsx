@@ -39,9 +39,10 @@ import i18n from '../services/i18n';
 import {
   getMaxSearchResults,
   getDesktopMode,
-  // getKeyBindingObject,
+  getCurrentLanguage,
   getDefaultPerspective
 } from '-/reducers/settings';
+
 import {
   actions as AppActions,
   getDirectoryContent,
@@ -241,6 +242,7 @@ interface Props {
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   openCurrentDirectory: () => void;
   openURLExternally?: (url: string, skipConfirmation: boolean) => void;
+  language: string;
   // keyBindings: Array<any>;
 }
 
@@ -721,6 +723,7 @@ function mapStateToProps(state) {
     maxSearchResults: getMaxSearchResults(state),
     isDesktopMode: getDesktopMode(state),
     isReadOnlyMode: isReadOnlyMode(state),
+    language: getCurrentLanguage(state),
     progress: getProgress(state),
     searchQuery: getSearchQuery(state),
     // keyBindings: getKeyBindingObject(state),
@@ -772,6 +775,8 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
     JSON.stringify(prevProp.openedFiles) &&
   JSON.stringify(nextProp.theme) === JSON.stringify(prevProp.theme) &&
   nextProp.windowWidth === prevProp.windowWidth &&
+  nextProp.windowHeight === prevProp.windowHeight &&
+  nextProp.language === prevProp.language &&
   nextProp.windowHeight === prevProp.windowHeight &&
   nextProp.searchQuery === prevProp.searchQuery;
 

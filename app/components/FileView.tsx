@@ -18,11 +18,12 @@
 
 import React, { MutableRefObject } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import Fab from '@material-ui/core/Fab';
 import CloseIcon from '@material-ui/icons/Close';
 import i18n from '-/services/i18n';
 import { OpenedEntry } from '-/reducers/app';
 import useEventListener from '-/utils/useEventListener';
+import { connect } from 'react-redux';
+import { getCurrentLanguage } from '-/reducers/settings';
 
 interface Props {
   openedFile: OpenedEntry;
@@ -138,6 +139,7 @@ function FileView(props: Props) {
 }
 
 const areEqual = (prevProp, nextProp) =>
+  nextProp.language === prevProp.language &&
   nextProp.openedFile.path === prevProp.openedFile.path &&
   nextProp.openedFile.url === prevProp.openedFile.url &&
   nextProp.openedFile.editMode === prevProp.openedFile.editMode &&
@@ -148,7 +150,10 @@ const areEqual = (prevProp, nextProp) =>
     prevProp.openedFile.editMode === true) ||
     nextProp.openedFile.editMode === prevProp.openedFile.editMode); */
 
-export default React.memo(
-  withStyles(undefined, { withTheme: true })(FileView),
-  areEqual
+function mapStateToProps(state) {
+  return { language: getCurrentLanguage(state) };
+}
+
+export default connect(mapStateToProps)(
+  React.memo(withStyles(undefined, { withTheme: true })(FileView), areEqual)
 );

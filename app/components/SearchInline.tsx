@@ -42,7 +42,8 @@ import {
 import {
   isDesktopMode,
   getMaxSearchResults,
-  getShowUnixHiddenEntries
+  getShowUnixHiddenEntries,
+  getCurrentLanguage
 } from '-/reducers/settings';
 import i18n from '-/services/i18n';
 import { FileTypeGroups } from '-/services/search';
@@ -492,7 +493,8 @@ function mapStateToProps(state) {
     currentDirectory: getDirectoryPath(state),
     indexedEntriesCount: getIndexedEntriesCount(state),
     maxSearchResults: getMaxSearchResults(state),
-    showUnixHiddenEntries: getShowUnixHiddenEntries(state)
+    showUnixHiddenEntries: getShowUnixHiddenEntries(state),
+    language: getCurrentLanguage(state)
   };
 }
 
@@ -512,6 +514,7 @@ function mapDispatchToProps(dispatch) {
 }
 
 const areEqual = (prevProp, nextProp) =>
+  nextProp.language === prevProp.language &&
   nextProp.indexing === prevProp.indexing &&
   nextProp.searchQuery === prevProp.searchQuery &&
   nextProp.currentDirectory === prevProp.currentDirectory &&

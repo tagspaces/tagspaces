@@ -189,7 +189,6 @@ export default (state: any = defaultSettings, action: any) => {
       return { ...state, firstRun: action.firstRun };
     }
     case types.SET_LANGUAGE: {
-      i18n.changeLanguage(action.language);
       return { ...state, interfaceLanguage: action.language };
     }
     case types.SET_APPDATAPATH: {
@@ -459,7 +458,15 @@ export const actions = {
     type: types.SET_REORDER_TAGS,
     reorderTags
   }),
-  setLanguage: (language: string) => ({ type: types.SET_LANGUAGE, language }),
+  setLanguage: (language: string) => (dispatch: (action) => void) => {
+    return i18n.changeLanguage(language).then(() => {
+      dispatch(actions.setLanguageInt(language));
+    });
+  },
+  setLanguageInt: (language: string) => ({
+    type: types.SET_LANGUAGE,
+    language
+  }),
   setUseDefaultLocation: (useDefaultLocation: boolean) => ({
     type: types.SET_USEDEFAULTLOCATION,
     useDefaultLocation

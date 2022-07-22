@@ -68,7 +68,8 @@ import {
   actions as SettingsActions,
   isDesktopMode,
   getKeyBindingObject,
-  getMapTileServer
+  getMapTileServer,
+  getCurrentLanguage
 } from '-/reducers/settings';
 import TaggingActions from '-/reducers/tagging-actions';
 import {
@@ -1171,7 +1172,8 @@ function mapStateToProps(state) {
     isReadOnlyMode: isReadOnlyMode(state),
     keyBindings: getKeyBindingObject(state),
     isDesktopMode: isDesktopMode(state),
-    tileServer: getMapTileServer(state)
+    tileServer: getMapTileServer(state),
+    language: getCurrentLanguage(state)
   };
 }
 
@@ -1203,6 +1205,7 @@ function mapActionCreatorsToProps(dispatch) {
 }
 const areEqual = (prevProp, nextProp) =>
   // JSON.stringify(nextProp.theme) === JSON.stringify(prevProp.theme) &&
+  nextProp.language === prevProp.language &&
   nextProp.settings.currentTheme === prevProp.settings.currentTheme &&
   nextProp.settings.entrySplitSize === prevProp.settings.entrySplitSize &&
   JSON.stringify(nextProp.openedFiles) === JSON.stringify(prevProp.openedFiles);
