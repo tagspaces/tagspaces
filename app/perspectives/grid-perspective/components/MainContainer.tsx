@@ -565,8 +565,8 @@ function GridPerspective(props: Props) {
       } else {
         arrPath = [mItem.path];
       }
-      console.log('Dropped files: ' + mItem.path);
-      props.moveFiles(arrPath, mItem.path);
+      console.log('Dropped files: ' + item.path);
+      props.moveFiles(arrPath, item.path);
       clearSelection();
     }
   };
