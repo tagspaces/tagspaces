@@ -17,18 +17,18 @@
  */
 
 import React from 'react';
-import Button from '@material-ui/core/Button';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Dialog from '@material-ui/core/Dialog';
-import CloseIcon from '@material-ui/icons/Close';
+import Button from '@mui/material/Button';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from '@mui/material/Dialog';
+import CloseIcon from '@mui/icons-material/Close';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
-import { LinearProgress, Grid, Tooltip } from '@material-ui/core';
-import WarningIcon from '@material-ui/icons/Warning';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import { LinearProgress, Grid, Tooltip } from '@mui/material';
+import WarningIcon from '@mui/icons-material/Warning';
 import PlatformIO from '-/services/platform-facade';
 import { actions as AppActions, getProgress } from '-/reducers/app';
 import { extractFileName } from '@tagspaces/tagspaces-platforms/paths';
@@ -114,7 +114,12 @@ function FileUploadDialog(props: Props) {
               }
 
               return (
-                <Grid key={path} container justify="center" alignItems="center">
+                <Grid
+                  key={path}
+                  container
+                  justifyContent="center"
+                  alignItems="center"
+                >
                   <Grid
                     item
                     xs={10}

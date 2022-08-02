@@ -19,15 +19,15 @@
 import React, { useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import IconButton from '@material-ui/core/IconButton';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import EditIcon from '@material-ui/icons/Edit';
-import MenuIcon from '@material-ui/icons/MoreVert';
-import SearchIcon from '@material-ui/icons/Search';
-import ArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import ArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
-import Typography from '@material-ui/core/Typography';
+import IconButton from '@mui/material/IconButton';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import EditIcon from '@mui/icons-material/Edit';
+import MenuIcon from '@mui/icons-material/MoreVert';
+import SearchIcon from '@mui/icons-material/Search';
+import ArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import ArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import Typography from '@mui/material/Typography';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import {
   actions as LocationIndexActions,
@@ -153,6 +153,7 @@ function StoredSearches(props: Props) {
           <IconButton
             style={{ minWidth: 'auto', padding: 7 }}
             onClick={() => setStoredSearchesVisible(!storedSearchesVisible)}
+            size="large"
           >
             {storedSearchesVisible ? <ArrowDownIcon /> : <ArrowRightIcon />}
           </IconButton>
@@ -182,6 +183,7 @@ function StoredSearches(props: Props) {
           <IconButton
             style={{ minWidth: 'auto', padding: 7 }}
             onClick={handleSearchMenu}
+            size="large"
           >
             <MenuIcon />
           </IconButton>
@@ -219,6 +221,7 @@ function StoredSearches(props: Props) {
                   aria-label={i18n.t('core:searchEditBtn')}
                   onClick={() => editSearch(search.uuid)}
                   data-tid="editSearchTID"
+                  size="large"
                 >
                   <EditIcon />
                 </IconButton>

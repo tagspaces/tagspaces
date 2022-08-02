@@ -17,21 +17,21 @@
  */
 
 import React from 'react';
-import Toolbar from '@material-ui/core/Toolbar';
-import Tooltip from '@material-ui/core/Tooltip';
-import SettingsIcon from '@material-ui/icons/Settings';
-import IconButton from '@material-ui/core/IconButton';
-import ParentDirIcon from '@material-ui/icons/SubdirectoryArrowLeft';
-import ViewGridIcon from '@material-ui/icons/ViewModule';
-import SwapVertIcon from '@material-ui/icons/SwapVert';
-import ViewListIcon from '@material-ui/icons/ViewList';
-import TagIcon from '@material-ui/icons/LocalOffer';
-import SelectAllIcon from '@material-ui/icons/CheckBox';
-import DeSelectAllIcon from '@material-ui/icons/CheckBoxOutlineBlank';
-import CopyIcon from '@material-ui/icons/FileCopy';
-import DeleteIcon from '@material-ui/icons/Delete';
-import PropertiesIcon from '@material-ui/icons/Info';
-import ExportIcon from '@material-ui/icons/AssignmentReturn';
+import Toolbar from '@mui/material/Toolbar';
+import Tooltip from '@mui/material/Tooltip';
+import SettingsIcon from '@mui/icons-material/Settings';
+import IconButton from '@mui/material/IconButton';
+import ParentDirIcon from '@mui/icons-material/SubdirectoryArrowLeft';
+import ViewGridIcon from '@mui/icons-material/ViewModule';
+import SwapVertIcon from '@mui/icons-material/SwapVert';
+import ViewListIcon from '@mui/icons-material/ViewList';
+import TagIcon from '@mui/icons-material/LocalOffer';
+import SelectAllIcon from '@mui/icons-material/CheckBox';
+import DeSelectAllIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CopyIcon from '@mui/icons-material/FileCopy';
+import DeleteIcon from '@mui/icons-material/Delete';
+import PropertiesIcon from '@mui/icons-material/Info';
+import ExportIcon from '@mui/icons-material/AssignmentReturn';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
@@ -118,6 +118,7 @@ function MainToolbar(props: Props) {
         <IconButton
           data-tid="gridPerspectiveSelectAllFiles"
           onClick={toggleSelectAllFiles}
+          size="large"
         >
           {someFileSelected ? <SelectAllIcon /> : <DeSelectAllIcon />}
         </IconButton>
@@ -144,6 +145,7 @@ function MainToolbar(props: Props) {
               loadParentDirectoryContent();
             }
           }}
+          size="large"
         >
           <ParentDirIcon />
         </IconButton>
@@ -153,6 +155,7 @@ function MainToolbar(props: Props) {
           aria-label={i18n.t('core:directoryPropertiesTitle')}
           data-tid="openFolderProperties"
           onClick={showProperties}
+          size="large"
         >
           <PropertiesIcon />
         </IconButton>
@@ -196,6 +199,7 @@ function MainToolbar(props: Props) {
             data-tid="gridPerspectiveAddRemoveTags"
             disabled={selectedEntries.length < 1}
             onClick={openAddRemoveTagsDialog}
+            size="large"
           >
             <TagIcon />
           </IconButton>
@@ -208,6 +212,7 @@ function MainToolbar(props: Props) {
             data-tid="gridPerspectiveCopySelectedFiles"
             disabled={!fileOperationsEnabled}
             onClick={openMoveCopyFilesDialog}
+            size="large"
           >
             <CopyIcon />
           </IconButton>
@@ -227,6 +232,7 @@ function MainToolbar(props: Props) {
             data-tid="gridPerspectiveDeleteMultipleFiles"
             disabled={!fileOperationsEnabled}
             onClick={openDeleteFileDialog}
+            size="large"
           >
             <DeleteIcon />
           </IconButton>
@@ -240,6 +246,7 @@ function MainToolbar(props: Props) {
           onClick={e => {
             handleSortingMenu(e);
           }}
+          size="large"
         >
           <SwapVertIcon />
         </IconButton>
@@ -251,6 +258,7 @@ function MainToolbar(props: Props) {
               data-tid="gridPerspectiveExportCsvMenuTID"
               onClick={props.handleExportCsvMenu}
               style={{ transform: 'scale(-1, 1)' }}
+              size="large"
             >
               <ExportIcon />
             </IconButton>
@@ -260,6 +268,7 @@ function MainToolbar(props: Props) {
         <IconButton
           data-tid="gridPerspectiveOptionsMenu"
           onClick={openSettings}
+          size="large"
         >
           <SettingsIcon />
         </IconButton>

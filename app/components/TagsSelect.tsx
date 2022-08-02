@@ -19,9 +19,9 @@
 import React, { useState } from 'react';
 import { v1 as uuidv1 } from 'uuid';
 import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import withStyles from '@mui/styles/withStyles';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
 import { getAllTags } from '-/reducers/taglibrary';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import TagContainer from './TagContainer';
@@ -184,6 +184,7 @@ function TagsSelect(props: Props) {
         data-tid={props.dataTid}
         multiple
         options={!props.isReadOnlyMode ? allTags : []}
+        // @ts-ignore TODO mui v5
         getOptionLabel={option => option.title}
         freeSolo
         autoSelect

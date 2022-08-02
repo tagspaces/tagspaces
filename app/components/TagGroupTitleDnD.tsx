@@ -17,18 +17,18 @@
  */
 
 import React from 'react';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import ArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import ArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import ArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import ArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import {
   ConnectDragSource,
   ConnectDropTarget,
   DragSource,
   DropTarget
 } from 'react-dnd';
-import Grid from '@material-ui/core/Grid';
+import Grid from '@mui/material/Grid';
 import { TS } from '-/tagspaces.namespace';
 import DragItemTypes from '-/components/DragItemTypes';
 
@@ -90,6 +90,7 @@ function TagGroupTitleDnD(props: Props) {
           <IconButton
             style={{ minWidth: 'auto', padding: 7 }}
             onClick={(event: any) => handleTagGroupTitleClick(event, tagGroup)}
+            size="large"
           >
             {tagGroup.expanded ? <ArrowDownIcon /> : <ArrowRightIcon />}
           </IconButton>
@@ -135,6 +136,7 @@ function TagGroupTitleDnD(props: Props) {
                 'tagLibraryMoreButton_' + tagGroup.title.replace(/ /g, '_')
               }
               onClick={(event: any) => handleTagGroupMenu(event, tagGroup)}
+              size="large"
             >
               <MoreVertIcon />
             </IconButton>

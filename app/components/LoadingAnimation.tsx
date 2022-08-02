@@ -18,7 +18,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 import PlatformIO from '-/services/platform-facade';
 import { isLoading } from '-/reducers/app';
 

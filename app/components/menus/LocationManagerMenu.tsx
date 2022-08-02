@@ -17,20 +17,20 @@
  */
 
 import React, { useState } from 'react';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import CreateLocationIcon from '@material-ui/icons/CreateNewFolder';
-import ExportImportIcon from '@material-ui/icons/SwapHoriz';
-import OpenLinkIcon from '@material-ui/icons/Link';
-import HelpIcon from '@material-ui/icons/Help';
-import CloseIcon from '@material-ui/icons/Close';
-import UpdateIndexIcon from '@material-ui/icons/Update';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import CreateLocationIcon from '@mui/icons-material/CreateNewFolder';
+import ExportImportIcon from '@mui/icons-material/SwapHoriz';
+import OpenLinkIcon from '@mui/icons-material/Link';
+import HelpIcon from '@mui/icons-material/Help';
+import CloseIcon from '@mui/icons-material/Close';
+import UpdateIndexIcon from '@mui/icons-material/Update';
 import classNames from 'classnames';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
@@ -203,6 +203,7 @@ function LocationManagerMenu(props: Props) {
         <IconButton
           data-tid="locationManagerMenu"
           onClick={event => setLocationManagerMenuAnchorEl(event.currentTarget)}
+          size="large"
         >
           <MoreVertIcon />
         </IconButton>

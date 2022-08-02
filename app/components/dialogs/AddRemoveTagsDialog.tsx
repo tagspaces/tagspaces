@@ -18,19 +18,18 @@
 
 import React, { useState } from 'react';
 import Draggable from 'react-draggable';
-import withMobileDialog from '@material-ui/core/withMobileDialog';
-import Button from '@material-ui/core/Button';
-import Paper, { PaperProps } from '@material-ui/core/Paper';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import FolderIcon from '@material-ui/icons/FolderOpen';
-import FileIcon from '@material-ui/icons/InsertDriveFileOutlined';
-import Typography from '@material-ui/core/Typography';
-import Dialog from '@material-ui/core/Dialog';
+import Button from '@mui/material/Button';
+import Paper, { PaperProps } from '@mui/material/Paper';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import FolderIcon from '@mui/icons-material/FolderOpen';
+import FileIcon from '@mui/icons-material/InsertDriveFileOutlined';
+import Typography from '@mui/material/Typography';
+import Dialog from '@mui/material/Dialog';
 import TagsSelect from '../TagsSelect';
 import i18n from '-/services/i18n';
 import {
@@ -40,6 +39,11 @@ import {
 import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+
+// FIXME checkout https://mui.com/components/use-media-query/#using-material-uis-breakpoint-helpers
+const withMobileDialog = () => WrappedComponent => props => (
+  <WrappedComponent {...props} width="lg" fullScreen={false} />
+);
 
 interface Props {
   open: boolean;

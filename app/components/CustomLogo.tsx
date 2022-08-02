@@ -19,10 +19,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import IconButton from '@material-ui/core/IconButton';
-import { withStyles } from '@material-ui/core/styles';
-import Badge from '@material-ui/core/Badge';
-import Tooltip from '@material-ui/core/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import withStyles from '@mui/styles/withStyles';
+import Badge from '@mui/material/Badge';
+import Tooltip from '@mui/material/Tooltip';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import { Pro } from '../pro';
 import TextLogoIcon from '../assets/images/text-logo.svg';

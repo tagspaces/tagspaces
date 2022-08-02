@@ -21,27 +21,27 @@ import { v1 as uuidv1 } from 'uuid';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
-import Tooltip from '@material-ui/core/Tooltip';
-import ToggleButton from '@material-ui/lab/ToggleButton';
-import Button from '@material-ui/core/Button';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
-import ThemingIcon from '@material-ui/icons/InvertColors';
-import LocationsIcon from '@material-ui/icons/WorkOutline';
-import CreateIcon from '@material-ui/icons/Add';
-import TagLibraryIcon from '@material-ui/icons/LocalOfferOutlined';
-import RecentThingsIcon from '@material-ui/icons/History';
-import HelpIcon from '@material-ui/icons/HelpOutline';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import SettingsIcon from '@material-ui/icons/Settings';
-import { withStyles } from '@material-ui/core/styles';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
+import Tooltip from '@mui/material/Tooltip';
+import ToggleButton from '@mui/material/ToggleButton';
+import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import ThemingIcon from '@mui/icons-material/InvertColors';
+import LocationsIcon from '@mui/icons-material/WorkOutline';
+import CreateIcon from '@mui/icons-material/Add';
+import TagLibraryIcon from '@mui/icons-material/LocalOfferOutlined';
+import RecentThingsIcon from '@mui/icons-material/History';
+import HelpIcon from '@mui/icons-material/HelpOutline';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import SettingsIcon from '@mui/icons-material/Settings';
+import withStyles from '@mui/styles/withStyles';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
-import CloseIcon from '@material-ui/icons/Close';
-import Popover from '@material-ui/core/Popover';
+import CloseIcon from '@mui/icons-material/Close';
+import Popover from '@mui/material/Popover';
 import ProTeaser from '../assets/images/spacerocket_undraw.svg';
 import ProTeaserImage from '-/assets/images/pro-teaser.svg';
 import ProTextLogo from '../assets/images/text-logo-pro.svg';
@@ -311,6 +311,7 @@ function MobileNavigation(props: Props) {
               toggleSettingsDialog();
             }}
             style={{ marginTop: -15, marginRight: 2 }}
+            size="large"
           >
             <SettingsIcon />
           </IconButton>
@@ -325,6 +326,7 @@ function MobileNavigation(props: Props) {
                   : classes.button
               }
               data-tid="locationManager"
+              value="check"
             >
               <LocationsIcon />
             </ToggleButton>
@@ -338,6 +340,7 @@ function MobileNavigation(props: Props) {
                   ? classNames(classes.button, classes.selectedButton)
                   : classes.button
               }
+              value="check"
             >
               <TagLibraryIcon />
             </ToggleButton>
@@ -351,6 +354,7 @@ function MobileNavigation(props: Props) {
                   ? classNames(classes.button, classes.selectedButton)
                   : classes.button
               }
+              value="check"
             >
               <RecentThingsIcon />
             </ToggleButton>
@@ -364,6 +368,7 @@ function MobileNavigation(props: Props) {
                   ? classNames(classes.button, classes.selectedButton)
                   : classes.button
               }
+              value="check"
             >
               <HelpIcon />
             </ToggleButton>
@@ -378,6 +383,7 @@ function MobileNavigation(props: Props) {
                   setAnchorUser(event.currentTarget)
                 }
                 style={{ marginTop: -15, marginRight: 2 }}
+                size="large"
               >
                 <AccountCircleIcon className={classes.buttonIcon} />
               </IconButton>
@@ -404,6 +410,7 @@ function MobileNavigation(props: Props) {
               data-tid="switchTheme"
               onClick={switchTheme}
               style={{ marginTop: -15, marginRight: 2 }}
+              size="large"
             >
               <ThemingIcon className={classes.buttonIcon} />
             </IconButton>

@@ -17,12 +17,12 @@
  */
 
 import React from 'react';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import HelpIcon from '@material-ui/icons/Help';
-import ExportImportIcon from '@material-ui/icons/SwapHoriz';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import HelpIcon from '@mui/icons-material/Help';
+import ExportImportIcon from '@mui/icons-material/SwapHoriz';
 import i18n from '-/services/i18n';
 import { Pro } from '../../pro';
 import Links from '-/links';

@@ -17,17 +17,17 @@
  */
 
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import TextField from '@material-ui/core/TextField';
-import Grid from '@material-ui/core/Grid';
-import FormControl from '@material-ui/core/FormControl';
-import IconButton from '@material-ui/core/IconButton';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import withStyles from '@mui/styles/withStyles';
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
+import Grid from '@mui/material/Grid';
+import FormControl from '@mui/material/FormControl';
+import IconButton from '@mui/material/IconButton';
+import Input from '@mui/material/Input';
+import InputLabel from '@mui/material/InputLabel';
+import InputAdornment from '@mui/material/InputAdornment';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import i18n from '-/services/i18n';
 
 /**
@@ -226,6 +226,7 @@ function ObjectStoreForm(props: Props) {
                 <IconButton
                   aria-label="toggle password visibility"
                   onClick={() => setShowSecretAccessKey(!showSecretAccessKey)}
+                  size="large"
                 >
                   {showSecretAccessKey ? <Visibility /> : <VisibilityOff />}
                 </IconButton>

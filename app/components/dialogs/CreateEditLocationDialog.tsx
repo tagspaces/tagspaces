@@ -17,29 +17,28 @@
  */
 
 import React, { ChangeEvent, useEffect, useState } from 'react';
-import Button from '@material-ui/core/Button';
+import Button from '@mui/material/Button';
 import { v1 as uuidv1 } from 'uuid';
-import { withStyles } from '@material-ui/core/styles';
-import withMobileDialog from '@material-ui/core/withMobileDialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Switch from '@material-ui/core/Switch';
-import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormGroup from '@material-ui/core/FormGroup';
-import Typography from '@material-ui/core/Typography';
-import Tooltip from '@material-ui/core/Tooltip';
-import Dialog from '@material-ui/core/Dialog';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import Input from '@material-ui/core/Input';
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import ToggleButton from '@material-ui/lab/ToggleButton';
-import CheckIcon from '@material-ui/icons/Check';
-import RemoveIcon from '@material-ui/icons/RemoveCircleOutline';
+import withStyles from '@mui/styles/withStyles';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Switch from '@mui/material/Switch';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormGroup from '@mui/material/FormGroup';
+import Typography from '@mui/material/Typography';
+import Tooltip from '@mui/material/Tooltip';
+import Dialog from '@mui/material/Dialog';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Input from '@mui/material/Input';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import ToggleButton from '@mui/material/ToggleButton';
+import CheckIcon from '@mui/icons-material/Check';
+import RemoveIcon from '@mui/icons-material/RemoveCircleOutline';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { locationType } from '@tagspaces/tagspaces-platforms/misc';
@@ -51,8 +50,8 @@ import {
   InputLabel,
   MenuItem,
   Select
-} from '@material-ui/core';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 import ObjectStoreForm from './ObjectStoreForm';
@@ -68,6 +67,11 @@ import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import PlatformIO from '-/services/platform-facade';
 import WebdavForm from '-/components/dialogs/WebdavForm';
+
+// FIXME checkout https://mui.com/components/use-media-query/#using-material-uis-breakpoint-helpers
+const withMobileDialog = () => WrappedComponent => props => (
+  <WrappedComponent {...props} width="lg" fullScreen={false} />
+);
 
 const styles: any = theme => ({
   formControl: {

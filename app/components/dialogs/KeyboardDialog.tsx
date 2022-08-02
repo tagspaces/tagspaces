@@ -18,21 +18,25 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import withMobileDialog from '@material-ui/core/withMobileDialog';
-import Button from '@material-ui/core/Button';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import ListItemText from '@material-ui/core/ListItemText';
-import { withStyles } from '@material-ui/core/styles';
-import Dialog from '@material-ui/core/Dialog';
+import Button from '@mui/material/Button';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
+import ListItemText from '@mui/material/ListItemText';
+import withStyles from '@mui/styles/withStyles';
+import Dialog from '@mui/material/Dialog';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '-/services/i18n';
 import { getKeyBindingObject } from '-/reducers/settings';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+
+// FIXME checkout https://mui.com/components/use-media-query/#using-material-uis-breakpoint-helpers
+const withMobileDialog = () => WrappedComponent => props => (
+  <WrappedComponent {...props} width="lg" fullScreen={false} />
+);
 
 const styles = theme => ({
   root: {

@@ -1,6 +1,6 @@
 import React from 'react';
-import Avatar from '@material-ui/core/Avatar';
-import Chip from '@material-ui/core/Chip';
+import Avatar from '@mui/material/Avatar';
+import Chip from '@mui/material/Chip';
 
 export interface Props {
   entries: Array<any>;

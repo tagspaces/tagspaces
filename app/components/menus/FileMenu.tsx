@@ -17,22 +17,22 @@
  */
 
 import React from 'react';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import Divider from '@material-ui/core/Divider';
-import OpenFile from '@material-ui/icons/SubdirectoryArrowRight';
-import OpenFileNatively from '@material-ui/icons/Launch';
-import OpenParentFolder from '@material-ui/icons/FolderOpen';
-import OpenFolderInternally from '@material-ui/icons/Folder';
-import AddRemoveTags from '@material-ui/icons/Loyalty';
-import MoveCopy from '@material-ui/icons/FileCopy';
-import DuplicateFile from '@material-ui/icons/PostAdd';
-import ImageIcon from '@material-ui/icons/Image';
-import ShareIcon from '@material-ui/icons/Link';
-import RenameFile from '@material-ui/icons/FormatTextdirectionLToR';
-import DeleteForever from '@material-ui/icons/DeleteForever';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Divider from '@mui/material/Divider';
+import OpenFile from '@mui/icons-material/SubdirectoryArrowRight';
+import OpenFileNatively from '@mui/icons-material/Launch';
+import OpenParentFolder from '@mui/icons-material/FolderOpen';
+import OpenFolderInternally from '@mui/icons-material/Folder';
+import AddRemoveTags from '@mui/icons-material/Loyalty';
+import MoveCopy from '@mui/icons-material/FileCopy';
+import DuplicateFile from '@mui/icons-material/PostAdd';
+import ImageIcon from '@mui/icons-material/Image';
+import ShareIcon from '@mui/icons-material/Link';
+import RenameFile from '@mui/icons-material/FormatTextdirectionLToR';
+import DeleteForever from '@mui/icons-material/DeleteForever';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-platforms/misc';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import {
@@ -51,7 +51,7 @@ import {
 } from '-/services/utils-io';
 import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
-// import AddIcon from '@material-ui/icons/Add';
+// import AddIcon from '@mui/icons-material/Add';
 
 interface Props {
   anchorEl: Element;

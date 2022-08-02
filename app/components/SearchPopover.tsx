@@ -19,38 +19,39 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { Theme } from '@mui/material/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import format from 'date-fns/format';
-import Typography from '@material-ui/core/Typography';
-import MenuItem from '@material-ui/core/MenuItem';
-import Tooltip from '@material-ui/core/Tooltip';
-import PictureIcon from '@material-ui/icons/Panorama';
-import DocumentIcon from '@material-ui/icons/PictureAsPdf';
-import NoteIcon from '@material-ui/icons/Note';
-import AudioIcon from '@material-ui/icons/MusicVideo';
-import VideoIcon from '@material-ui/icons/OndemandVideo';
-import ArchiveIcon from '@material-ui/icons/Archive';
-import FolderIcon from '@material-ui/icons/FolderOpen';
-import UntaggedIcon from '@material-ui/icons/LabelOffOutlined';
-import FileIcon from '@material-ui/icons/InsertDriveFileOutlined';
-import BookmarkIcon from '@material-ui/icons/BookmarkBorder';
-import BookIcon from '@material-ui/icons/LocalLibraryOutlined';
-import DateIcon from '@material-ui/icons/DateRange';
-import Button from '@material-ui/core/Button';
-import Input from '@material-ui/core/Input';
-import TextField from '@material-ui/core/TextField';
-import InputLabel from '@material-ui/core/InputLabel';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
-import CancelSearchIcon from '@material-ui/icons/CancelOutlined';
-import Select from '@material-ui/core/Select';
-import FormControl from '@material-ui/core/FormControl';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-import ToggleButton from '@material-ui/lab/ToggleButton';
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import Typography from '@mui/material/Typography';
+import MenuItem from '@mui/material/MenuItem';
+import Tooltip from '@mui/material/Tooltip';
+import PictureIcon from '@mui/icons-material/Panorama';
+import DocumentIcon from '@mui/icons-material/PictureAsPdf';
+import NoteIcon from '@mui/icons-material/Note';
+import AudioIcon from '@mui/icons-material/MusicVideo';
+import VideoIcon from '@mui/icons-material/OndemandVideo';
+import ArchiveIcon from '@mui/icons-material/Archive';
+import FolderIcon from '@mui/icons-material/FolderOpen';
+import UntaggedIcon from '@mui/icons-material/LabelOffOutlined';
+import FileIcon from '@mui/icons-material/InsertDriveFileOutlined';
+import BookmarkIcon from '@mui/icons-material/BookmarkBorder';
+import BookIcon from '@mui/icons-material/LocalLibraryOutlined';
+import DateIcon from '@mui/icons-material/DateRange';
+import Button from '@mui/material/Button';
+import Input from '@mui/material/Input';
+import TextField from '@mui/material/TextField';
+import InputLabel from '@mui/material/InputLabel';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+import CancelSearchIcon from '@mui/icons-material/CancelOutlined';
+import Select from '@mui/material/Select';
+import FormControl from '@mui/material/FormControl';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { mergeWithExtractedTags } from '@tagspaces/tagspaces-platforms/misc';
-import HelpIcon from '@material-ui/icons/Help';
+import HelpIcon from '@mui/icons-material/Help';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import TagsSelect from './TagsSelect';
 import { actions as AppActions, getDirectoryPath } from '../reducers/app';
@@ -562,6 +563,7 @@ function SearchPopover(props: Props) {
           style={{ marginLeft: 'auto' }}
           data-tid="closeSearchTID"
           onClick={props.onClose}
+          size="large"
         >
           <CloseIcon />
         </IconButton>
@@ -725,19 +727,19 @@ function SearchPopover(props: Props) {
                     {i18n.t('core:anyType')}
                   </MenuItem>
                   <MenuItem value={JSON.stringify(FileTypeGroups.folders)}>
-                    <IconButton>
+                    <IconButton size="large">
                       <FolderIcon />
                     </IconButton>
                     {i18n.t('core:searchFolders')}
                   </MenuItem>
                   <MenuItem value={JSON.stringify(FileTypeGroups.files)}>
-                    <IconButton>
+                    <IconButton size="large">
                       <FileIcon />
                     </IconButton>
                     {i18n.t('core:searchFiles')}
                   </MenuItem>
                   <MenuItem value={JSON.stringify(FileTypeGroups.untagged)}>
-                    <IconButton>
+                    <IconButton size="large">
                       <UntaggedIcon />
                     </IconButton>
                     {i18n.t('core:searchUntaggedEntries')}
@@ -746,7 +748,7 @@ function SearchPopover(props: Props) {
                     value={JSON.stringify(FileTypeGroups.images)}
                     title={FileTypeGroups.images.toString()}
                   >
-                    <IconButton>
+                    <IconButton size="large">
                       <PictureIcon />
                     </IconButton>
                     {i18n.t('core:searchPictures')}
@@ -755,7 +757,7 @@ function SearchPopover(props: Props) {
                     value={JSON.stringify(FileTypeGroups.documents)}
                     title={FileTypeGroups.documents.toString()}
                   >
-                    <IconButton>
+                    <IconButton size="large">
                       <DocumentIcon />
                     </IconButton>
                     {i18n.t('core:searchDocuments')}
@@ -764,7 +766,7 @@ function SearchPopover(props: Props) {
                     value={JSON.stringify(FileTypeGroups.notes)}
                     title={FileTypeGroups.notes.toString()}
                   >
-                    <IconButton>
+                    <IconButton size="large">
                       <NoteIcon />
                     </IconButton>
                     {i18n.t('core:searchNotes')}
@@ -773,7 +775,7 @@ function SearchPopover(props: Props) {
                     value={JSON.stringify(FileTypeGroups.audio)}
                     title={FileTypeGroups.audio.toString()}
                   >
-                    <IconButton>
+                    <IconButton size="large">
                       <AudioIcon />
                     </IconButton>
                     {i18n.t('core:searchAudio')}
@@ -782,7 +784,7 @@ function SearchPopover(props: Props) {
                     value={JSON.stringify(FileTypeGroups.video)}
                     title={FileTypeGroups.video.toString()}
                   >
-                    <IconButton>
+                    <IconButton size="large">
                       <VideoIcon />
                     </IconButton>
                     {i18n.t('core:searchVideoFiles')}
@@ -791,7 +793,7 @@ function SearchPopover(props: Props) {
                     value={JSON.stringify(FileTypeGroups.archives)}
                     title={FileTypeGroups.archives.toString()}
                   >
-                    <IconButton>
+                    <IconButton size="large">
                       <ArchiveIcon />
                     </IconButton>
                     {i18n.t('core:searchArchives')}
@@ -800,7 +802,7 @@ function SearchPopover(props: Props) {
                     value={JSON.stringify(FileTypeGroups.bookmarks)}
                     title={FileTypeGroups.bookmarks.toString()}
                   >
-                    <IconButton>
+                    <IconButton size="large">
                       <BookmarkIcon />
                     </IconButton>
                     {i18n.t('core:searchBookmarks')}
@@ -809,7 +811,7 @@ function SearchPopover(props: Props) {
                     value={JSON.stringify(FileTypeGroups.ebooks)}
                     title={FileTypeGroups.ebooks.toString()}
                   >
-                    <IconButton>
+                    <IconButton size="large">
                       <BookIcon />
                     </IconButton>
                     {i18n.t('core:searchEbooks')}
@@ -920,7 +922,7 @@ function SearchPopover(props: Props) {
                         position="end"
                         title="201905 for May 2019 / 20190412 for 12th of April 2019 / 20190501~124523 for specific time"
                       >
-                        <IconButton>
+                        <IconButton size="large">
                           <DateIcon />
                         </IconButton>
                       </InputAdornment>

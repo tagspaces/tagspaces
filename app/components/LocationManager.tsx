@@ -19,9 +19,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { List } from '@material-ui/core';
+import { List } from '@mui/material';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import styles from './SidePanels.css';
 import LocationManagerMenu from './menus/LocationManagerMenu';

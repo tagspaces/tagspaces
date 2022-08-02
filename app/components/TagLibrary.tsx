@@ -20,11 +20,11 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import Collapse from '@material-ui/core/Collapse';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import withStyles from '@mui/styles/withStyles';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import Collapse from '@mui/material/Collapse';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import TagContainerDnd from './TagContainerDnd';
 import TagContainer from './TagContainer';
@@ -333,7 +333,11 @@ function TagLibrary(props: Props) {
           {i18n.t('core:tagLibrary')}
         </Typography>
         {!isTagLibraryReadOnly && (
-          <IconButton data-tid="tagLibraryMenu" onClick={handleTagLibraryMenu}>
+          <IconButton
+            data-tid="tagLibraryMenu"
+            onClick={handleTagLibraryMenu}
+            size="large"
+          >
             <MoreVertIcon />
           </IconButton>
         )}

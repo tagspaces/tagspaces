@@ -19,17 +19,17 @@
 import React, { useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
-import Tooltip from '@material-ui/core/Tooltip';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import LocationIcon from '@material-ui/icons/WorkOutline';
-import CloudLocationIcon from '@material-ui/icons/CloudQueue';
-import DefaultLocationIcon from '@material-ui/icons/Highlight';
+import withStyles from '@mui/styles/withStyles';
+import Tooltip from '@mui/material/Tooltip';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import LocationIcon from '@mui/icons-material/WorkOutline';
+import CloudLocationIcon from '@mui/icons-material/CloudQueue';
+import DefaultLocationIcon from '@mui/icons-material/Highlight';
 import { Progress } from 'aws-sdk/clients/s3';
 import { locationType } from '@tagspaces/tagspaces-platforms/misc';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
@@ -328,6 +328,7 @@ function LocationView(props: Props) {
             data-tid={'locationMoreButton_' + location.name}
             onClick={event => handleLocationContextMenuClick(event)}
             onContextMenu={event => handleLocationContextMenuClick(event)}
+            size="large"
           >
             {location.isDefault && (
               <Tooltip title={i18n.t('core:thisIsStartupLocation')}>

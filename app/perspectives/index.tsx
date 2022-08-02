@@ -16,12 +16,12 @@
  *
  */
 import React from 'react';
-import KanbanPerspectiveIcon from '@material-ui/icons/Dashboard';
-import MapiquePerspectiveIcon from '@material-ui/icons/Map';
-import WikiPerspectiveIcon from '@material-ui/icons/FormatAlignLeft';
-import GalleryPerspectiveIcon from '@material-ui/icons/Camera';
-import ListPerspectiveIcon from '@material-ui/icons/ViewList';
-import GridPerspectiveIcon from '@material-ui/icons/ViewModule';
+import KanbanPerspectiveIcon from '@mui/icons-material/Dashboard';
+import MapiquePerspectiveIcon from '@mui/icons-material/Map';
+import WikiPerspectiveIcon from '@mui/icons-material/FormatAlignLeft';
+import GalleryPerspectiveIcon from '@mui/icons-material/Camera';
+import ListPerspectiveIcon from '@mui/icons-material/ViewList';
+import GridPerspectiveIcon from '@mui/icons-material/ViewModule';
 
 export const PerspectiveIDs = {
   UNSPECIFIED: 'unspecified',

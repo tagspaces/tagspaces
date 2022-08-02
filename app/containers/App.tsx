@@ -19,48 +19,63 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { I18nextProvider } from 'react-i18next'; // as we build ourself via webpack
-import { createTheme, ThemeProvider } from '@material-ui/core/styles';
+import {
+  createTheme,
+  ThemeProvider,
+  Theme,
+  StyledEngineProvider,
+  adaptV4Theme
+} from '@mui/material/styles';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '../services/i18n';
 import { getCurrentTheme } from '-/reducers/settings';
 
-const lightTheme = createTheme({
-  palette: {
-    type: 'light', // Switching the dark mode on is a single property value change.
-    primary: {
-      light: AppConfig.lightThemeLightColor,
-      main: AppConfig.lightThemeMainColor,
-      dark: AppConfig.lightThemeMainColor,
-      contrastText: '#ffffff'
-    },
-    secondary: {
-      main: AppConfig.lightThemeMainColor
-    },
-    divider: '#ddd'
-    // secondary: { main: '#cccccc', 200: '#ddd' }
-  }
-});
+declare module '@mui/styles/defaultTheme' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface DefaultTheme extends Theme {}
+}
 
-const darkTheme = createTheme({
-  palette: {
-    type: 'dark',
-    primary: {
-      light: AppConfig.darkThemeLightColor,
-      main: AppConfig.darkThemeMainColor,
-      dark: AppConfig.darkThemeMainColor,
-      contrastText: '#ffffff'
-    },
-    secondary: {
-      main: AppConfig.darkThemeMainColor
-    },
-    divider: '#555'
-    // secondary: { main: '#555', 200: '#777' }
-  }
-});
+const lightTheme = createTheme(
+  adaptV4Theme({
+    palette: {
+      mode: 'light', // Switching the dark mode on is a single property value change.
+      primary: {
+        light: AppConfig.lightThemeLightColor,
+        main: AppConfig.lightThemeMainColor,
+        dark: AppConfig.lightThemeMainColor,
+        contrastText: '#ffffff'
+      },
+      secondary: {
+        main: AppConfig.lightThemeMainColor
+      },
+      divider: '#ddd'
+      // secondary: { main: '#cccccc', 200: '#ddd' }
+    }
+  })
+);
+
+const darkTheme = createTheme(
+  adaptV4Theme({
+    palette: {
+      mode: 'dark',
+      primary: {
+        light: AppConfig.darkThemeLightColor,
+        main: AppConfig.darkThemeMainColor,
+        dark: AppConfig.darkThemeMainColor,
+        contrastText: '#ffffff'
+      },
+      secondary: {
+        main: AppConfig.darkThemeMainColor
+      },
+      divider: '#555'
+      // secondary: { main: '#555', 200: '#777' }
+    }
+  })
+);
 
 // const lightBlueTheme = createMuiTheme({
 //   palette: {
-//     type: 'light', // Switching the dark mode on is a single property value change.
+//     mode: 'light', // Switching the dark mode on is a single property value change.
 //     primary: {
 //       light: '#cbe9fa',
 //       main: '#19aeff',
@@ -97,9 +112,11 @@ function App(props: Props) {
   }
 
   return (
-    <ThemeProvider theme={theme}>
-      <I18nextProvider i18n={i18n}>{props.children}</I18nextProvider>
-    </ThemeProvider>
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={theme}>
+        <I18nextProvider i18n={i18n}>{props.children}</I18nextProvider>
+      </ThemeProvider>
+    </StyledEngineProvider>
   );
 }
 

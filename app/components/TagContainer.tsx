@@ -18,11 +18,11 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import Button from '@material-ui/core/Button';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import PlaceIcon from '@material-ui/icons/Place';
-import DateIcon from '@material-ui/icons/DateRange';
-import RemoveTagIcon from '@material-ui/icons/Close';
+import Button from '@mui/material/Button';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import PlaceIcon from '@mui/icons-material/Place';
+import DateIcon from '@mui/icons-material/DateRange';
+import RemoveTagIcon from '@mui/icons-material/Close';
 import { formatDateTime } from '@tagspaces/tagspaces-platforms/misc';
 import { getAllTags, getTagColors } from '-/reducers/taglibrary';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';

@@ -18,14 +18,13 @@
 
 import React, { useState } from 'react';
 import SwipeableViews from 'react-swipeable-views';
-import Button from '@material-ui/core/Button';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Typography from '@material-ui/core/Typography';
-import withMobileDialog from '@material-ui/core/withMobileDialog';
-import MobileStepper from '@material-ui/core/MobileStepper';
-import Dialog from '@material-ui/core/Dialog';
+import Button from '@mui/material/Button';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Typography from '@mui/material/Typography';
+import MobileStepper from '@mui/material/MobileStepper';
+import Dialog from '@mui/material/Dialog';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import ProTeaserImage from '-/assets/images/pro-teaser.svg';
 import ThumbsImage from '-/assets/images/thumbnails-undraw.svg';
@@ -41,6 +40,11 @@ import EnterpriseImage from '-/assets/images/world-undraw.svg';
 import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Links from '-/links';
+
+// FIXME checkout https://mui.com/components/use-media-query/#using-material-uis-breakpoint-helpers
+const withMobileDialog = () => WrappedComponent => props => (
+  <WrappedComponent {...props} width="lg" fullScreen={false} />
+);
 
 interface Props {
   open: boolean;

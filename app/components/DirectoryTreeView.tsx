@@ -18,7 +18,7 @@
 
 import React, { useState, forwardRef, useImperativeHandle, Ref } from 'react';
 import Table from 'rc-table';
-import FolderIcon from '@material-ui/icons/FolderOpen';
+import FolderIcon from '@mui/icons-material/FolderOpen';
 import { locationType } from '@tagspaces/tagspaces-platforms/misc';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import DragItemTypes from '-/components/DragItemTypes';

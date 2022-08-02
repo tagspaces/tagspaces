@@ -18,7 +18,7 @@
 
 import React, { ReactNode, useRef } from 'react';
 import { DropTargetMonitor, useDrop } from 'react-dnd';
-import { withStyles } from '@material-ui/core/styles/index';
+import withStyles from '@mui/styles/withStyles';
 import i18n from '../services/i18n';
 
 const styles: any = (theme: any) => ({

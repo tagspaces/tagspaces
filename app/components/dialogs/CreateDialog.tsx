@@ -19,20 +19,19 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Button from '@material-ui/core/Button';
-import Container from '@material-ui/core/Container';
-import HTMLFileIcon from '@material-ui/icons/PhotoAlbumOutlined';
-import TextFileIcon from '@material-ui/icons/InsertDriveFileOutlined';
-import MarkdownFileIcon from '@material-ui/icons/DescriptionOutlined';
-import AddFileIcon from '@material-ui/icons/NoteAddOutlined';
-import Typography from '@material-ui/core/Typography';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Avatar from '@material-ui/core/Avatar';
-import Grid from '@material-ui/core/Grid';
-import { withStyles } from '@material-ui/core/styles';
-import withMobileDialog from '@material-ui/core/withMobileDialog';
-import Dialog from '@material-ui/core/Dialog';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import HTMLFileIcon from '@mui/icons-material/PhotoAlbumOutlined';
+import TextFileIcon from '@mui/icons-material/InsertDriveFileOutlined';
+import MarkdownFileIcon from '@mui/icons-material/DescriptionOutlined';
+import AddFileIcon from '@mui/icons-material/NoteAddOutlined';
+import Typography from '@mui/material/Typography';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Avatar from '@mui/material/Avatar';
+import Grid from '@mui/material/Grid';
+import withStyles from '@mui/styles/withStyles';
+import Dialog from '@mui/material/Dialog';
 import { Progress } from 'aws-sdk/clients/s3';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-platforms/misc';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
@@ -43,6 +42,11 @@ import IOActions from '-/reducers/io-actions';
 import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Spacer from '-/components/Spacer';
+
+// FIXME checkout https://mui.com/components/use-media-query/#using-material-uis-breakpoint-helpers
+const withMobileDialog = () => WrappedComponent => props => (
+  <WrappedComponent {...props} width="lg" fullScreen={false} />
+);
 
 const styles: any = () => ({
   root: {
