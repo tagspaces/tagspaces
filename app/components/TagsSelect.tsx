@@ -18,7 +18,7 @@
 
 import React, { useState } from 'react';
 import { v1 as uuidv1 } from 'uuid';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import withStyles from '@mui/styles/withStyles';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -91,11 +91,11 @@ function TagsSelect(props: Props) {
 
   const [selectedTag, setSelectedTag] = useState(undefined);
 
+  const allTags = useSelector(getAllTags);
+  const defaultBackgroundColor = useSelector(getTagColor);
+  const defaultTextColor = useSelector(getTagTextColor);
   const {
     classes,
-    allTags,
-    defaultBackgroundColor,
-    defaultTextColor,
     placeholderText = '',
     label,
     selectedEntryPath,
@@ -231,21 +231,4 @@ function TagsSelect(props: Props) {
   );
 }
 
-const mapStateToProps = state => ({
-  allTags: getAllTags(state),
-  defaultBackgroundColor: getTagColor(state),
-  defaultTextColor: getTagTextColor(state)
-});
-
-/* function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      removeTags: TaggingActions.removeTags
-    },
-    dispatch
-  );
-} */
-
-export default connect(mapStateToProps)(
-  withStyles(styles, { withTheme: true })(TagsSelect)
-);
+export default withStyles(styles, { withTheme: true })(TagsSelect);
