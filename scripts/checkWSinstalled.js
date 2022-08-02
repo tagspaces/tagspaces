@@ -1,5 +1,7 @@
 #! /usr/bin/env node
 
+const path = require('path');
+const fs = require('fs-extra');
 const shell = require('shelljs');
 
 function isInstalled(packageName) {
@@ -9,6 +11,18 @@ function isInstalled(packageName) {
   } catch (err) {
     return false;
   }
+}
+
+function dirExist(dir) {
+  try {
+    fs.statSync(dir);
+    return true;
+  } catch (err) {
+    if (err.code === 'ENOENT') {
+      return false;
+    }
+  }
+  return false;
 }
 
 /*function checkSharpPlatform(targetPlatform, arch) {
@@ -29,6 +43,7 @@ function isInstalled(packageName) {
 
 let platform = 'node';
 let installCmd;
+const dir = path.join(__dirname, '../app/node_modules');
 
 if (process.env.PD_PLATFORM) {
   platform = process.env.PD_PLATFORM;
@@ -37,12 +52,13 @@ if (process.env.PD_PLATFORM) {
 if (platform === 'node') {
   if (
     //!checkSharpPlatform(process.env.TARGET_PLATFORM, process.env.TARGET_ARCH) ||
+    !dirExist(dir) ||
     !isInstalled('@tagspaces/tagspaces-ws')
   ) {
     installCmd = 'npm run-script install-ext-node';
   }
 } else if (platform === 'web') {
-  if (isInstalled('@tagspaces/tagspaces-ws')) {
+  if (!dirExist(dir) || isInstalled('@tagspaces/tagspaces-ws')) {
     installCmd = 'npm run-script install-ext-web';
   }
 }
