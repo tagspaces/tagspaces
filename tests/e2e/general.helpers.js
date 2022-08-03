@@ -21,7 +21,7 @@ export async function takeScreenshot(name) {
   await global.client.screenshot({ path: sPath });
 }
 
-export async function clickOn(selector, options = { timeout: 20000 }) {
+export async function clickOn(selector, options = { timeout: 35000 }) {
   if (global.isPlaywright) {
     try {
       await global.client.click(selector, options);
