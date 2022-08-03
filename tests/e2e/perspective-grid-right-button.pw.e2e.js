@@ -134,6 +134,8 @@ describe('TST50** - Right button on a file', () => {
     // await searchEngine('desktop');
     // Select file
     await clickOn(selectorFile);
+    //Toggle Properties
+    await clickOn('[data-tid=fileContainerToggleProperties]');
     await AddRemoveTagsToSelectedFiles([testTagName], true);
     await expectElementExist(
       selectorFile + '[1]//div[@id="gridCellTags"]//button[1]',
@@ -183,6 +185,8 @@ describe('TST50** - Right button on a file', () => {
     // await searchEngine('desktop');
     // select file
     await clickOn(selectorFile);
+    //Toggle Properties
+    await clickOn('[data-tid=fileContainerToggleProperties]');
     await AddRemoveTagsToSelectedFiles([testTagName], true);
     await expectElementExist(
       selectorFile + '[1]//div[@id="gridCellTags"]//button[1]',

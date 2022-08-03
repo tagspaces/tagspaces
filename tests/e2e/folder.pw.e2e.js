@@ -79,7 +79,7 @@ describe('TST01 - Folder management', () => {
     await takeScreenshot('TST0103 - Rename folder - after deleteDirectory');
     await expectElementExist(
       '[data-tid=fsEntryName_' + newDirectoryName + ']',
-      false ,
+      false,
       5000
     );
   });
