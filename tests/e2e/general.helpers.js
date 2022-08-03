@@ -21,9 +21,14 @@ export async function takeScreenshot(name) {
   await global.client.screenshot({ path: sPath });
 }
 
-export async function clickOn(selector, options = {}) {
+export async function clickOn(selector, options = { timeout: 10000 }) {
   if (global.isPlaywright) {
-    await global.client.click(selector, options);
+    try {
+      await global.client.click(selector, options);
+    } catch (e) {
+      console.log('clickOn ' + selector + ' error: ', e);
+      await global.client.click(selector, { ...options, force: true });
+    }
   } else {
     const element = await global.client.$(selector);
     await element.waitUntil(

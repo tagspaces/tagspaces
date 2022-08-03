@@ -112,7 +112,7 @@ function TagsSelect(props: Props) {
   ) {
     if (reason === 'selectOption') {
       props.handleChange(props.tagSearchType, selectedTags, reason);
-    } else if (reason === 'create-option') {
+    } else if (reason === 'createOption') {
       if (selectedTags && selectedTags.length) {
         const tagsInput = '' + selectedTags[selectedTags.length - 1];
         let tags = tagsInput
@@ -132,7 +132,7 @@ function TagsSelect(props: Props) {
           };
           if (isValidNewOption(newTag.title, selectedTags)) {
             newTags.push(newTag);
-            props.allTags.push(newTag);
+            allTags.push(newTag);
           }
         });
         selectedTags.pop();
