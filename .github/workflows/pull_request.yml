@@ -84,7 +84,7 @@ jobs:
       - name: Checkout TagspacesPro
         uses: actions/checkout@v2
         with:
-          ref: TSN890-update-material-ui
+          ref: develop
           repository: tagspaces/tagspacespro
           token: ${{ secrets.CHECKOUT_TSPRO  }}
           path: extensions/tagspacespro
