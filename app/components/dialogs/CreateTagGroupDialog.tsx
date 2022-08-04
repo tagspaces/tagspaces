@@ -18,17 +18,16 @@
 
 import React, { ChangeEvent, useReducer, useRef, useState } from 'react';
 import { v1 as uuidv1 } from 'uuid';
-import withMobileDialog from '@material-ui/core/withMobileDialog';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import Dialog from '@material-ui/core/Dialog';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
+import Dialog from '@mui/material/Dialog';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
 import { connect } from 'react-redux';
 import ColorPickerDialog from './ColorPickerDialog';
 import i18n from '-/services/i18n';
@@ -37,6 +36,11 @@ import { TS } from '-/tagspaces.namespace';
 import { getLocations } from '-/reducers/locations';
 import { getCurrentLocationId } from '-/reducers/app';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+
+// FIXME checkout https://mui.com/components/use-media-query/#using-material-uis-breakpoint-helpers
+const withMobileDialog = () => WrappedComponent => props => (
+  <WrappedComponent {...props} width="lg" fullScreen={false} />
+);
 
 interface Props {
   open: boolean;

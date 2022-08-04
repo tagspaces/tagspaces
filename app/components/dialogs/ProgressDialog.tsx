@@ -17,10 +17,10 @@
  */
 
 import React from 'react';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Dialog from '@material-ui/core/Dialog';
-import { CircularProgress } from '@material-ui/core';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from '@mui/material/Dialog';
+import { CircularProgress } from '@mui/material';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {

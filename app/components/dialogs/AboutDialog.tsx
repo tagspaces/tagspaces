@@ -17,14 +17,13 @@
  */
 
 import React, { useState } from 'react';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Tooltip from '@material-ui/core/Tooltip';
-import withMobileDialog from '@material-ui/core/withMobileDialog';
-import Dialog from '@material-ui/core/Dialog';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Tooltip from '@mui/material/Tooltip';
+import Dialog from '@mui/material/Dialog';
 import semver from 'semver';
 import LogoIcon from '-/assets/images/icon100x100.svg';
 import i18n from '-/services/i18n';
@@ -33,6 +32,11 @@ import { Pro } from '-/pro';
 import { getLastVersionPromise } from '-/reducers/settings';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Links from '-/links';
+
+// FIXME checkout https://mui.com/components/use-media-query/#using-material-uis-breakpoint-helpers
+const withMobileDialog = () => WrappedComponent => props => (
+  <WrappedComponent {...props} width="lg" fullScreen={false} />
+);
 
 interface Props {
   open: boolean;

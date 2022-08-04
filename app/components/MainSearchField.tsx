@@ -17,8 +17,10 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
+import { Theme } from '@mui/material/styles';
+import withStyles from '@mui/styles/withStyles';
+import createStyles from '@mui/styles/createStyles';
+import TextField from '@mui/material/TextField';
 
 const MainSearchField = withStyles((theme: Theme) =>
   createStyles({
@@ -34,11 +36,11 @@ const MainSearchField = withStyles((theme: Theme) =>
       },
       '& .Mui-focused': {
         color:
-          theme.palette.type === 'light'
+          theme.palette.mode === 'light'
             ? theme.palette.grey[900]
             : theme.palette.grey[200],
         backgroundColor:
-          theme.palette.type === 'light'
+          theme.palette.mode === 'light'
             ? theme.palette.grey[200]
             : theme.palette.grey[900]
         // backgroundColor: 'gray',

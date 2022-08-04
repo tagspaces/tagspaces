@@ -19,11 +19,13 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
-import Snackbar from '@material-ui/core/Snackbar';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
+import { Theme } from '@mui/material/styles';
+import withStyles from '@mui/styles/withStyles';
+import createStyles from '@mui/styles/createStyles';
+import Snackbar from '@mui/material/Snackbar';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 import { getLastPublishedVersion } from '-/reducers/settings';
 import {
   actions as AppActions,
@@ -105,6 +107,7 @@ function PageNotification(props: Props) {
             aria-label={i18n.t('core:closeButton')}
             color="inherit"
             onClick={props.hideNotifications}
+            size="large"
           >
             <CloseIcon />
           </IconButton>
@@ -122,6 +125,7 @@ function PageNotification(props: Props) {
               aria-label={i18n.t('core:closeButton')}
               color="inherit"
               onClick={() => props.setGeneratingThumbnails(false)}
+              size="large"
             >
               <CloseIcon />
             </IconButton>

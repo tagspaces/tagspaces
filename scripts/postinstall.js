@@ -90,6 +90,9 @@ if (install) {
       packageJson.dependencies['@tagspaces/tagspaces-platforms'],
       '^'
     );*/
+  if (!fs.existsSync('./node_modules/@tagspaces/tagspaces-platforms')) {
+    shell.exec('npm install');
+  }
   if (shell.exec(cmd).code !== 0) {
     shell.echo(
       'Error: Install ' + process.env.PD_PLATFORM + ' platform failed'

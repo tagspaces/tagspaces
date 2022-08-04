@@ -17,11 +17,12 @@
  */
 
 import React, { useState } from 'react';
-import { emphasize, withStyles, Theme } from '@material-ui/core/styles';
-import Breadcrumbs from '@material-ui/core/Breadcrumbs';
-import Tooltip from '@material-ui/core/Tooltip';
-import Chip from '@material-ui/core/Chip';
-import ExpandMoreIcon from '@material-ui/icons/MoreVert';
+import { emphasize, Theme } from '@mui/material/styles';
+import withStyles from '@mui/styles/withStyles';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
+import Tooltip from '@mui/material/Tooltip';
+import Chip from '@mui/material/Chip';
+import ExpandMoreIcon from '@mui/icons-material/MoreVert';
 import PlatformIO from '../services/platform-facade';
 import {
   normalizePath,

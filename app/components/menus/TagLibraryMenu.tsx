@@ -17,14 +17,14 @@
  */
 
 import React, { useRef, useState } from 'react';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import ImportExportIcon from '@material-ui/icons/ImportExport';
-import HelpIcon from '@material-ui/icons/Help';
-import AddIcon from '@material-ui/icons/Add';
-import ReloadIcon from '@material-ui/icons/Sync';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ImportExportIcon from '@mui/icons-material/ImportExport';
+import HelpIcon from '@mui/icons-material/Help';
+import AddIcon from '@mui/icons-material/Add';
+import ReloadIcon from '@mui/icons-material/Sync';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import ImportExportTagGroupsDialog from '../dialogs/ImportExportTagGroupsDialog';
 import i18n from '-/services/i18n';

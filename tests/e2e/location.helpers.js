@@ -62,11 +62,10 @@ export async function createPwMinioLocation(
   const lastLocationTID = await getPwLocationTid(-1);
   // Check if location not exist (from extconfig.js)
   if (locationName !== lastLocationTID) {
-    await clickOn('[data-tid=createNewLocation]');
-    if (global.isMinio) {
-      // await clickOn('[data-tid=objectStorageLocation]');
-    }
-    await clickOn('[data-tid=switchAdvancedModeTID]');
+    await clickOn('[data-tid=createNewLocation]', { timeout: 35000 });
+    // if (global.isMinio) {
+    // await clickOn('[data-tid=objectStorageLocation]');
+    // }
 
     // SET LOCATION NAME
     await global.client.fill(
@@ -83,6 +82,7 @@ export async function createPwMinioLocation(
     await global.client.fill('[data-tid=endpointURL] input', minioEndpointURL);
 
     if (isDefault) {
+      await clickOn('[data-tid=switchAdvancedModeTID]');
       await clickOn('[data-tid=locationIsDefault]');
     }
     await clickOn('[data-tid=confirmLocationCreation]');
@@ -107,6 +107,7 @@ export async function createPwLocation(
     );
 
     if (isDefault) {
+      await clickOn('[data-tid=switchAdvancedModeTID]');
       await global.client.check('[data-tid=locationIsDefault] input');
     }
     await global.client.click('[data-tid=confirmLocationCreation]');
@@ -246,12 +247,12 @@ export async function getFirstFileName() {
 export async function getPropertiesTags() {
   const arrTags = [];
   const tags = await global.client.$$(
-    '[data-tid=PropertiesTagsSelectTID] div div'
+    '[data-tid=PropertiesTagsSelectTID] div div div'
   );
   for (let i = 0; i < tags.length; i++) {
     const dataTid = await tags[i].getAttribute('data-tid');
     if (dataTid && dataTid.startsWith('tagContainer_')) {
-      const label = await tags[i].$('button span span');
+      const label = await tags[i].$('button span');
       arrTags.push(await getElementText(label));
     }
   }
@@ -328,7 +329,7 @@ export async function getPwLocationTid(locationIndex) {
   try {
     await global.client.waitForSelector('[data-tid=locationTitleElement]', {
       // state: 'attached',
-      timeout: 1000
+      timeout: 4000
     });
   } catch (error) {
     console.log("The element didn't appear.");

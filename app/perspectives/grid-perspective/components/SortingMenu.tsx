@@ -17,12 +17,12 @@
  */
 
 import React from 'react';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import ArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-import ArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import ArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import i18n from '-/services/i18n';
 
 interface Props {

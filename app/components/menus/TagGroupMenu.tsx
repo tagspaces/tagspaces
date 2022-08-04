@@ -17,19 +17,19 @@
  */
 
 import React from 'react';
-import Edit from '@material-ui/icons/Edit';
-import ArrowDownward from '@material-ui/icons/ArrowDownward';
-import ArrowUpward from '@material-ui/icons/ArrowUpward';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import DeleteTagGroupIcon from '@material-ui/icons/DeleteForever';
-import SortTagGroupIcon from '@material-ui/icons/SortByAlpha';
-import ShowEntriesWithTagIcon from '@material-ui/icons/SearchOutlined';
-import TagIcon from '@material-ui/icons/LocalOffer';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import CollectTagsIcon from '@material-ui/icons/Voicemail';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
+import Edit from '@mui/icons-material/Edit';
+import ArrowDownward from '@mui/icons-material/ArrowDownward';
+import ArrowUpward from '@mui/icons-material/ArrowUpward';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import DeleteTagGroupIcon from '@mui/icons-material/DeleteForever';
+import SortTagGroupIcon from '@mui/icons-material/SortByAlpha';
+import ShowEntriesWithTagIcon from '@mui/icons-material/SearchOutlined';
+import TagIcon from '@mui/icons-material/LocalOffer';
+import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
+import CollectTagsIcon from '@mui/icons-material/Voicemail';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import i18n from '-/services/i18n';

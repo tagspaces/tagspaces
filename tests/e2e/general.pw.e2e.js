@@ -76,7 +76,7 @@ describe('TST51 - Perspective Grid', () => {
       false,
       2000
     );
-    await takeScreenshot('TST0501 after deleteDirectory');
+    // await takeScreenshot('TST0501 after deleteDirectory');
   });
 
   it('TST0502 - Create MD file [electron,web]', async () => {
@@ -101,7 +101,7 @@ describe('TST51 - Perspective Grid', () => {
       false,
       2000
     );
-    await takeScreenshot('TST0502 after deleteDirectory');
+    // await takeScreenshot('TST0502 after deleteDirectory');
   });
 
   it('TST0503 - Create TEXT file [electron,web]', async () => {
@@ -128,7 +128,7 @@ describe('TST51 - Perspective Grid', () => {
       false,
       2000
     );
-    await takeScreenshot('TST0503 after deleteDirectory');
+    // await takeScreenshot('TST0503 after deleteDirectory');
   });
 
   it('TST0510 - Generate thumbnail from Images', async () => {

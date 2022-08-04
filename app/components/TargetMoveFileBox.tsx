@@ -18,7 +18,7 @@
 
 import React from 'react';
 import { DropTarget } from 'react-dnd';
-import { withStyles } from '@material-ui/core/styles/index';
+import withStyles from '@mui/styles/withStyles';
 import { TS } from '-/tagspaces.namespace';
 
 const styles: any = () => ({

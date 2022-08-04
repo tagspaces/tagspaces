@@ -19,17 +19,17 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import LocationIcon from '@material-ui/icons/WorkOutline';
-import CloudLocationIcon from '@material-ui/icons/CloudQueue';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListSubHeader from '@material-ui/core/ListSubheader';
-import Tooltip from '@material-ui/core/Tooltip';
-import { withTheme } from '@material-ui/core/styles';
-import IconButton from '@material-ui/core/IconButton';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import LocationIcon from '@mui/icons-material/WorkOutline';
+import CloudLocationIcon from '@mui/icons-material/CloudQueue';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import ListSubHeader from '@mui/material/ListSubheader';
+import Tooltip from '@mui/material/Tooltip';
+import withTheme from '@mui/styles/withTheme';
+import IconButton from '@mui/material/IconButton';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { locationType } from '@tagspaces/tagspaces-platforms/misc';
 import i18n from '-/services/i18n';
 import { getLocations } from '-/reducers/locations';
@@ -94,6 +94,7 @@ function LocationMenu(props: Props) {
             fontSize: theme.typography.fontSize,
             borderRadius: 10
           }}
+          size="large"
         >
           {currentLocation
             ? locationIcon // this.state.currentLocation.name

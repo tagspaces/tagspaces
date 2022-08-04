@@ -17,9 +17,9 @@
  */
 
 import React from 'react';
-import IconButton from '@material-ui/core/IconButton';
-import HelpIcon from '@material-ui/icons/InfoOutlined';
-import Tooltip from '@material-ui/core/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import HelpIcon from '@mui/icons-material/InfoOutlined';
+import Tooltip from '@mui/material/Tooltip';
 
 interface Props {
   tooltip?: string;
@@ -29,7 +29,7 @@ function InfoIcon(props: Props) {
   const { tooltip } = props;
   return (
     <Tooltip arrow title={tooltip}>
-      <IconButton edge="end" aria-label="delete">
+      <IconButton edge="end" aria-label="delete" size="large">
         <HelpIcon />
       </IconButton>
     </Tooltip>

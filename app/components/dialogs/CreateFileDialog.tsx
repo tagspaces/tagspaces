@@ -19,29 +19,33 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import { withStyles } from '@material-ui/core/styles';
-import IconButton from '@material-ui/core/IconButton';
-import FolderIcon from '@material-ui/icons/FolderOpen';
-import ListItem from '@material-ui/core/ListItem';
-import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import Radio from '@material-ui/core/Radio';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import withMobileDialog from '@material-ui/core/withMobileDialog';
-import Dialog from '@material-ui/core/Dialog';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import withStyles from '@mui/styles/withStyles';
+import IconButton from '@mui/material/IconButton';
+import FolderIcon from '@mui/icons-material/FolderOpen';
+import ListItem from '@mui/material/ListItem';
+import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
+import Radio from '@mui/material/Radio';
+import Input from '@mui/material/Input';
+import InputLabel from '@mui/material/InputLabel';
+import InputAdornment from '@mui/material/InputAdornment';
+import Dialog from '@mui/material/Dialog';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-platforms/misc';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '-/services/i18n';
 import TaggingActions from '-/reducers/tagging-actions';
 import { actions as AppActions } from '-/reducers/app';
 import PlatformIO from '-/services/platform-facade';
+
+// FIXME checkout https://mui.com/components/use-media-query/#using-material-uis-breakpoint-helpers
+const withMobileDialog = () => WrappedComponent => props => (
+  <WrappedComponent {...props} width="lg" fullScreen={false} />
+);
 
 const styles = theme => ({
   root: {
@@ -234,7 +238,7 @@ function CreateFileDialog(props: Props) {
             margin="normal"
             fullWidth={true}
             rows={4}
-            rowsMax={10}
+            maxRows={10}
           />
         </FormControl>
         <ListItem>
@@ -279,7 +283,7 @@ function CreateFileDialog(props: Props) {
                 undefined
               ) : (
                 <InputAdornment position="end" style={{ height: 32 }}>
-                  <IconButton onClick={openFolderChooser}>
+                  <IconButton onClick={openFolderChooser} size="large">
                     <FolderIcon />
                   </IconButton>
                 </InputAdornment>

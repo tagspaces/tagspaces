@@ -28,24 +28,24 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { GlobalHotKeys } from 'react-hotkeys';
 import fscreen from 'fscreen';
-import Button from '@material-ui/core/Button';
-import Tooltip from '@material-ui/core/Tooltip';
-import IconButton from '@material-ui/core/IconButton';
-import SaveIcon from '@material-ui/icons/Save';
-import CloseIcon from '@material-ui/icons/Close';
-import BackIcon from '@material-ui/icons/RemoveRedEye';
-import FullScreenIcon from '@material-ui/icons/ZoomOutMap';
-import OpenNativelyIcon from '@material-ui/icons/Launch';
-import PrevDocumentIcon from '@material-ui/icons/KeyboardArrowUp';
-import NextDocumentIcon from '@material-ui/icons/KeyboardArrowDown';
-import FileDownloadIcon from '@material-ui/icons/AssignmentReturned';
-import DetailsIcon from '@material-ui/icons/Info';
-import ExpandIcon from '@material-ui/icons/SettingsEthernet';
-import DeleteIcon from '@material-ui/icons/Delete';
-import ShareIcon from '@material-ui/icons/Share';
-import { withStyles } from '@material-ui/core/styles';
-import RefreshIcon from '@material-ui/icons/Refresh';
-import Box from '@material-ui/core/Box';
+import Button from '@mui/material/Button';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import SaveIcon from '@mui/icons-material/Save';
+import CloseIcon from '@mui/icons-material/Close';
+import BackIcon from '@mui/icons-material/RemoveRedEye';
+import FullScreenIcon from '@mui/icons-material/ZoomOutMap';
+import OpenNativelyIcon from '@mui/icons-material/Launch';
+import PrevDocumentIcon from '@mui/icons-material/KeyboardArrowUp';
+import NextDocumentIcon from '@mui/icons-material/KeyboardArrowDown';
+import FileDownloadIcon from '@mui/icons-material/AssignmentReturned';
+import DetailsIcon from '@mui/icons-material/Info';
+import ExpandIcon from '@mui/icons-material/SettingsEthernet';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ShareIcon from '@mui/icons-material/Share';
+import withStyles from '@mui/styles/withStyles';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import Box from '@mui/material/Box';
 import { Split } from 'ts-react-splitter';
 import { buffer } from '@tagspaces/tagspaces-platforms/misc';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
@@ -611,6 +611,7 @@ function EntryContainer(props: Props) {
             aria-label={i18n.t('core:toggleProperties')}
             onClick={togglePanel}
             data-tid="fileContainerToggleProperties"
+            size="large"
           >
             <DetailsIcon color={isPropPanelVisible ? 'primary' : 'action'} />
           </IconButton>
@@ -620,6 +621,7 @@ function EntryContainer(props: Props) {
             aria-label={i18n.t('core:switchToFullscreen')}
             data-tid="fileContainerSwitchToFullScreen"
             onClick={toggleFullScreen}
+            size="large"
           >
             <FullScreenIcon />
           </IconButton>
@@ -630,6 +632,7 @@ function EntryContainer(props: Props) {
               aria-label={i18n.t('core:shareFile')}
               data-tid="shareFile"
               onClick={() => shareFile(`file:///${openedFile.path}`)}
+              size="large"
             >
               <ShareIcon />
             </IconButton>
@@ -644,6 +647,7 @@ function EntryContainer(props: Props) {
             <IconButton
               aria-label={i18n.t('core:openFileExternally')}
               onClick={openNatively}
+              size="large"
             >
               <OpenNativelyIcon />
             </IconButton>
@@ -704,6 +708,7 @@ function EntryContainer(props: Props) {
                 }
               }
             }}
+            size="large"
           >
             <FileDownloadIcon />
           </IconButton>
@@ -714,6 +719,7 @@ function EntryContainer(props: Props) {
               data-tid="deleteEntryTID"
               aria-label={i18n.t('core:deleteEntry')}
               onClick={() => setDeleteEntryModalOpened(true)}
+              size="large"
             >
               <DeleteIcon />
             </IconButton>
@@ -724,6 +730,7 @@ function EntryContainer(props: Props) {
             data-tid="reloadFileTID"
             aria-label={i18n.t('core:reloadFile')}
             onClick={reloadDocument}
+            size="large"
           >
             <RefreshIcon />
           </IconButton>
@@ -737,6 +744,7 @@ function EntryContainer(props: Props) {
                 props.toggleEntryFullWidth();
                 closePanel();
               }}
+              size="large"
             >
               <ExpandIcon />
             </IconButton>
@@ -757,6 +765,7 @@ function EntryContainer(props: Props) {
             aria-label={i18n.t('core:openPrevFileTooltip')}
             data-tid="fileContainerPrevFile"
             onClick={openPrevFile}
+            size="large"
           >
             <PrevDocumentIcon />
           </IconButton>
@@ -766,6 +775,7 @@ function EntryContainer(props: Props) {
             aria-label={i18n.t('core:openNextFileTooltip')}
             data-tid="fileContainerNextFile"
             onClick={openNextFile}
+            size="large"
           >
             <NextDocumentIcon />
           </IconButton>
@@ -786,6 +796,7 @@ function EntryContainer(props: Props) {
             <IconButton
               aria-label={i18n.t('core:openDirectoryExternally')}
               onClick={openNatively}
+              size="large"
             >
               <OpenNativelyIcon />
             </IconButton>
@@ -795,6 +806,7 @@ function EntryContainer(props: Props) {
           <IconButton
             aria-label={i18n.t('core:reloadDirectory')}
             onClick={reloadDocument}
+            size="large"
           >
             <RefreshIcon />
           </IconButton>
@@ -808,6 +820,7 @@ function EntryContainer(props: Props) {
                 props.toggleEntryFullWidth();
                 closePanel();
               }}
+              size="large"
             >
               <ExpandIcon />
             </IconButton>
@@ -818,6 +831,7 @@ function EntryContainer(props: Props) {
             <IconButton
               aria-label={i18n.t('core:deleteDirectory')}
               onClick={() => setDeleteEntryModalOpened(true)}
+              size="large"
             >
               <DeleteIcon />
             </IconButton>
@@ -848,6 +862,7 @@ function EntryContainer(props: Props) {
           onClick={startClosingFile}
           aria-label={i18n.t('core:closeEntry')}
           data-tid="fileContainerCloseOpenedFile"
+          size="large"
         >
           <CloseIcon />
         </IconButton>
@@ -946,6 +961,7 @@ function EntryContainer(props: Props) {
                         onClick={startSavingFile}
                         aria-label={i18n.t('core:saveFile')}
                         data-tid="fileContainerSaveFile"
+                        size="large"
                       >
                         <SaveIcon />
                       </IconButton>
@@ -954,6 +970,7 @@ function EntryContainer(props: Props) {
                       <IconButton
                         onClick={reloadDocument}
                         aria-label={i18n.t('core:cancelEditing')}
+                        size="large"
                       >
                         <BackIcon />
                       </IconButton>

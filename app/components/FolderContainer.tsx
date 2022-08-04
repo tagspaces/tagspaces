@@ -19,20 +19,20 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import IconButton from '@material-ui/core/IconButton';
-import Box from '@material-ui/core/Box';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Popover from '@material-ui/core/Popover';
-import Tooltip from '@material-ui/core/Tooltip';
-import Typography from '@material-ui/core/Typography';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import SearchIcon from '@material-ui/icons/Search';
-import AdvancedSearchIcon from '@material-ui/icons/Tune';
-import MenuIcon from '@material-ui/icons/MenuOpen';
-import Badge from '@material-ui/core/Badge';
-import { withStyles } from '@material-ui/core/styles';
-import ToggleButton from '@material-ui/lab/ToggleButton';
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import IconButton from '@mui/material/IconButton';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
+import Popover from '@mui/material/Popover';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
+import InputAdornment from '@mui/material/InputAdornment';
+import SearchIcon from '@mui/icons-material/Search';
+import AdvancedSearchIcon from '@mui/icons-material/Tune';
+import MenuIcon from '@mui/icons-material/MenuOpen';
+import Badge from '@mui/material/Badge';
+import withStyles from '@mui/styles/withStyles';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import LocationMenu from './menus/LocationMenu';
 import i18n from '../services/i18n';
@@ -177,11 +177,11 @@ const CounterBadge: any = withStyles(theme => ({
     top: '50%',
     right: -15,
     color:
-      theme.palette.type === 'light'
+      theme.palette.mode === 'light'
         ? theme.palette.grey[900]
         : theme.palette.grey[200],
     backgroundColor:
-      theme.palette.type === 'light'
+      theme.palette.mode === 'light'
         ? theme.palette.grey[200]
         : theme.palette.grey[900]
   }
@@ -434,7 +434,7 @@ function FolderContainer(props: Props) {
   function CircularProgressWithLabel(prop) {
     return (
       <Box position="relative" display="inline-flex">
-        <CircularProgress size={24} variant="static" {...prop} />
+        <CircularProgress size={24} variant="determinate" {...prop} />
         <Box
           top={0}
           left={0}

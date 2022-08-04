@@ -17,8 +17,8 @@
  */
 
 import React from 'react';
-import Tooltip from '@material-ui/core/Tooltip';
-import Typography from '@material-ui/core/Typography';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 import i18n from '../services/i18n';
 import { Pro } from '-/pro';
 

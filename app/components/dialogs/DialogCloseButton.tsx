@@ -17,8 +17,8 @@
  */
 
 import React from 'react';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 import i18n from '-/services/i18n';
 
 interface Props {
@@ -39,6 +39,7 @@ function DialogCloseButton(props: Props) {
       }}
       data-tid={testId && testId}
       onClick={onClose}
+      size="large"
     >
       <CloseIcon />
     </IconButton>

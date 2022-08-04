@@ -21,20 +21,20 @@ import { useStateWithCallbackLazy } from 'use-state-with-callback';
 import { v1 as uuidv1 } from 'uuid';
 import L from 'leaflet';
 import classNames from 'classnames';
-import { withStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import FormControl from '@material-ui/core/FormControl';
-import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import ShareIcon from '@material-ui/icons/Link';
-import Tooltip from '@material-ui/core/Tooltip';
-import LocationIcon from '@material-ui/icons/WorkOutline';
-import CloudLocationIcon from '@material-ui/icons/CloudQueue';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import ClearColorIcon from '@material-ui/icons/Backspace';
+import withStyles from '@mui/styles/withStyles';
+import Grid from '@mui/material/Grid';
+import FormControl from '@mui/material/FormControl';
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import InputAdornment from '@mui/material/InputAdornment';
+import ShareIcon from '@mui/icons-material/Link';
+import Tooltip from '@mui/material/Tooltip';
+import LocationIcon from '@mui/icons-material/WorkOutline';
+import CloudLocationIcon from '@mui/icons-material/CloudQueue';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import ClearColorIcon from '@mui/icons-material/Backspace';
 import {
   AttributionControl,
   Map,
@@ -44,7 +44,7 @@ import {
   TileLayer,
   withLeaflet
 } from 'react-leaflet';
-import { IconButton } from '@material-ui/core';
+import { IconButton } from '@mui/material';
 import { formatFileSize } from '@tagspaces/tagspaces-platforms/misc';
 import {
   extractContainingDirectoryPath,

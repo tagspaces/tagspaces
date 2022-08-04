@@ -17,16 +17,16 @@
  */
 
 import React, { useState } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import ListItem from '@material-ui/core/ListItem';
-import MenuItem from '@material-ui/core/MenuItem';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
-import IconButton from '@material-ui/core/IconButton';
-import RemoveIcon from '@material-ui/icons/RemoveCircle';
-import Button from '@material-ui/core/Button';
-import Select from '@material-ui/core/Select';
+import withStyles from '@mui/styles/withStyles';
+import ListItem from '@mui/material/ListItem';
+import MenuItem from '@mui/material/MenuItem';
+import Input from '@mui/material/Input';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
+import IconButton from '@mui/material/IconButton';
+import RemoveIcon from '@mui/icons-material/RemoveCircle';
+import Button from '@mui/material/Button';
+import Select from '@mui/material/Select';
 import ColorPickerDialog from '../ColorPickerDialog';
 import { findAvailableExtensions } from '-/reducers/settings-default';
 // import { sortBy } from '@tagspaces/tagspaces-platforms/misc';
@@ -235,6 +235,7 @@ function SettingsFileTypes(props: Props) {
             className={classes.fileExtRemove}
             title={i18n.t('removeFileType', { itemType: item.type })}
             onClick={() => onRemoveItem(item)}
+            size="large"
           >
             <RemoveIcon />
           </IconButton>

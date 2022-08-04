@@ -17,19 +17,19 @@
  */
 
 import React from 'react';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import CheckBoxEmptyIcon from '@material-ui/icons/CheckBoxOutlineBlank';
-import Divider from '@material-ui/core/Divider';
-import ThumbnailCoverIcon from '@material-ui/icons/PhotoSizeSelectActual';
-import ThumbnailContainIcon from '@material-ui/icons/PhotoSizeSelectLarge';
-import RadioCheckedIcon from '@material-ui/icons/RadioButtonChecked';
-import RadioUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
-import SettingsIcon from '@material-ui/icons/Settings';
-import HelpIcon from '@material-ui/icons/Help';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import CheckBoxEmptyIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import Divider from '@mui/material/Divider';
+import ThumbnailCoverIcon from '@mui/icons-material/PhotoSizeSelectActual';
+import ThumbnailContainIcon from '@mui/icons-material/PhotoSizeSelectLarge';
+import RadioCheckedIcon from '@mui/icons-material/RadioButtonChecked';
+import RadioUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import SettingsIcon from '@mui/icons-material/Settings';
+import HelpIcon from '@mui/icons-material/Help';
 import i18n from '-/services/i18n';
 
 interface Props {

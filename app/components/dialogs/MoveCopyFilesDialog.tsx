@@ -19,29 +19,33 @@
 import React, { useState, useEffect } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import withMobileDialog from '@material-ui/core/withMobileDialog';
-import Button from '@material-ui/core/Button';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import Input from '@material-ui/core/Input';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import FolderIcon from '@material-ui/icons/Folder';
-import FileIcon from '@material-ui/icons/InsertDriveFileOutlined';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import Typography from '@material-ui/core/Typography';
-import Dialog from '@material-ui/core/Dialog';
-import IconButton from '@material-ui/core/IconButton';
+import Button from '@mui/material/Button';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Input from '@mui/material/Input';
+import InputAdornment from '@mui/material/InputAdornment';
+import FolderIcon from '@mui/icons-material/Folder';
+import FileIcon from '@mui/icons-material/InsertDriveFileOutlined';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
+import Typography from '@mui/material/Typography';
+import Dialog from '@mui/material/Dialog';
+import IconButton from '@mui/material/IconButton';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import { extractFileName } from '@tagspaces/tagspaces-platforms/paths';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
 import IOActions from '-/reducers/io-actions';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+
+// FIXME checkout https://mui.com/components/use-media-query/#using-material-uis-breakpoint-helpers
+const withMobileDialog = () => WrappedComponent => props => (
+  <WrappedComponent {...props} width="lg" fullScreen={false} />
+);
 
 interface Props {
   open: boolean;
@@ -158,6 +162,7 @@ function MoveCopyFilesDialog(props: Props) {
                   <IconButton
                     data-tid="openDirectoryMoveCopyDialog"
                     onClick={selectDirectory}
+                    size="large"
                   >
                     <FolderIcon />
                   </IconButton>

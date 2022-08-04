@@ -19,11 +19,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { withStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import Switch from '@material-ui/core/Switch';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
+import withStyles from '@mui/styles/withStyles';
+import TextField from '@mui/material/TextField';
+import Switch from '@mui/material/Switch';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
 import { isStr } from '@tagspaces/tagspaces-platforms/misc';
 import PlatformIO from '-/services/platform-facade';
 import i18n from '-/services/i18n';

@@ -18,9 +18,9 @@
 
 import React, { useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
-import Typography from '@material-ui/core/Typography';
-import Tooltip from '@material-ui/core/Tooltip';
-import Pagination from '@material-ui/lab/Pagination';
+import Typography from '@mui/material/Typography';
+import Tooltip from '@mui/material/Tooltip';
+import Pagination from '@mui/material/Pagination';
 import { bindActionCreators } from 'redux';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import {

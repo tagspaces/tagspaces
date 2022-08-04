@@ -766,7 +766,7 @@ export const actions = {
 // Selectors
 export const getTagGroups = (state: any) => state.taglibrary;
 export const getAllTags = (state: any) => {
-  const uniqueTags: Array<TS.Tag> = [];
+  const uniqueTags: TS.Tag[] = [];
   state.taglibrary.forEach(tagGroup => {
     tagGroup.children.forEach(tag => {
       const found = uniqueTags.find(uTag => uTag.title === tag.title);

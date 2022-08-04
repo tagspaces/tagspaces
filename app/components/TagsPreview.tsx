@@ -18,7 +18,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import Tooltip from '@material-ui/core/Tooltip';
+import Tooltip from '@mui/material/Tooltip';
 import { TS } from '-/tagspaces.namespace';
 import { getAllTags, getTagColors } from '-/reducers/taglibrary';
 import {

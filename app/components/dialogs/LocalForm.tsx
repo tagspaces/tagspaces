@@ -18,14 +18,14 @@
 
 import React from 'react';
 
-import InputAdornment from '@material-ui/core/InputAdornment';
-import FormControl from '@material-ui/core/FormControl';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
-import IconButton from '@material-ui/core/IconButton';
-import FolderIcon from '@material-ui/icons/Folder';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import Grid from '@material-ui/core/Grid';
+import InputAdornment from '@mui/material/InputAdornment';
+import FormControl from '@mui/material/FormControl';
+import Input from '@mui/material/Input';
+import InputLabel from '@mui/material/InputLabel';
+import IconButton from '@mui/material/IconButton';
+import FolderIcon from '@mui/icons-material/Folder';
+import FormHelperText from '@mui/material/FormHelperText';
+import Grid from '@mui/material/Grid';
 import { extractDirectoryName } from '@tagspaces/tagspaces-platforms/paths';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '-/services/i18n';
@@ -99,7 +99,7 @@ function LocalForm(props: Props) {
             placeholder="Enter a folder path or select it with the button on the right"
             endAdornment={
               <InputAdornment position="end" style={{ height: 32 }}>
-                <IconButton onClick={openDirectory}>
+                <IconButton onClick={openDirectory} size="large">
                   <FolderIcon />
                 </IconButton>
               </InputAdornment>

@@ -17,8 +17,8 @@
  */
 
 import React, { MutableRefObject } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import CloseIcon from '@material-ui/icons/Close';
+import withStyles from '@mui/styles/withStyles';
+import CloseIcon from '@mui/icons-material/Close';
 import i18n from '-/services/i18n';
 import { OpenedEntry } from '-/reducers/app';
 import useEventListener from '-/utils/useEventListener';

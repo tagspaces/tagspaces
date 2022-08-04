@@ -17,12 +17,12 @@
  */
 
 import React from 'react';
-import Input from '@material-ui/core/Input';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import LayersClearIcon from '@material-ui/icons/LayersClear';
-import ListItemText from '@material-ui/core/ListItemText';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
+import Input from '@mui/material/Input';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import LayersClearIcon from '@mui/icons-material/LayersClear';
+import ListItemText from '@mui/material/ListItemText';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 import { AvailablePerspectives, PerspectiveIDs } from '-/perspectives';
 import i18n from '../services/i18n';
 import { Pro } from '-/pro';

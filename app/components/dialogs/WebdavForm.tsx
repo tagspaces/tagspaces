@@ -18,17 +18,17 @@
 
 import React, { ChangeEvent } from 'react';
 
-import FormControl from '@material-ui/core/FormControl';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@mui/material/FormControl';
+import Input from '@mui/material/Input';
+import InputLabel from '@mui/material/InputLabel';
 import {
   Grid,
   IconButton,
   InputAdornment,
   MenuItem,
   Select
-} from '@material-ui/core';
-import { Visibility, VisibilityOff } from '@material-ui/icons';
+} from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import i18n from '-/services/i18n';
 
 interface Props {
@@ -153,6 +153,7 @@ function WebdavForm(props: Props) {
                     <IconButton
                       aria-label="toggle password visibility"
                       onClick={() => setShowPassword(!showPassword)}
+                      size="large"
                     >
                       {showPassword ? <Visibility /> : <VisibilityOff />}
                     </IconButton>
@@ -183,6 +184,7 @@ function WebdavForm(props: Props) {
                   <IconButton
                     aria-label="toggle password visibility"
                     onClick={() => setShowPassword(!showPassword)}
+                    size="large"
                   >
                     {showPassword ? <Visibility /> : <VisibilityOff />}
                   </IconButton>

@@ -32,14 +32,14 @@ import {
   MenuItem,
   Button,
   FormHelperText
-} from '@material-ui/core';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import ThumbnailCoverIcon from '@material-ui/icons/PhotoSizeSelectActual';
-import ThumbnailContainIcon from '@material-ui/icons/PhotoSizeSelectLarge';
-import RadioCheckedIcon from '@material-ui/icons/RadioButtonChecked';
-import RadioUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
-import { withStyles } from '@material-ui/core/styles';
+} from '@mui/material';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import ThumbnailCoverIcon from '@mui/icons-material/PhotoSizeSelectActual';
+import ThumbnailContainIcon from '@mui/icons-material/PhotoSizeSelectLarge';
+import RadioCheckedIcon from '@mui/icons-material/RadioButtonChecked';
+import RadioUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import withStyles from '@mui/styles/withStyles';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import i18n from '-/services/i18n';
 

@@ -18,15 +18,15 @@
 
 import React, { useState } from 'react';
 import { v1 as uuidv1 } from 'uuid';
-import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import { useSelector } from 'react-redux';
+import withStyles from '@mui/styles/withStyles';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
 import { getAllTags } from '-/reducers/taglibrary';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
-import TagContainer from './TagContainer';
 import EntryTagMenu from '-/components/menus/EntryTagMenu';
 import { TS } from '-/tagspaces.namespace';
+import TagContainer from '-/components/TagContainer';
 
 const styles: any = (theme: any) => ({
   root: {
@@ -69,13 +69,13 @@ interface Props {
   dataTid?: string;
   classes?: any;
   theme?: any;
-  tags: Array<TS.Tag>;
+  tags: TS.Tag[];
   label?: string;
   tagSearchType?: string;
   defaultBackgroundColor?: string;
   defaultTextColor?: string;
   handleChange?: (param1: any, param2: any, param3?: any) => void;
-  allTags?: Array<TS.Tag>;
+  allTags?: TS.Tag[];
   tagMode?: 'default' | 'display' | 'remove';
   isReadOnlyMode?: boolean;
   placeholderText?: string;
@@ -91,14 +91,28 @@ function TagsSelect(props: Props) {
 
   const [selectedTag, setSelectedTag] = useState(undefined);
 
+  const allTags = useSelector(getAllTags);
+  const defaultBackgroundColor = useSelector(getTagColor);
+  const defaultTextColor = useSelector(getTagTextColor);
+  const {
+    classes,
+    placeholderText = '',
+    label,
+    selectedEntryPath,
+    autoFocus = false,
+    tags = [],
+    tagMode,
+    isReadOnlyMode
+  } = props;
+
   function handleTagChange(
     event: Object,
     selectedTags: Array<TS.Tag>,
     reason: string
   ) {
-    if (reason === 'select-option') {
+    if (reason === 'selectOption') {
       props.handleChange(props.tagSearchType, selectedTags, reason);
-    } else if (reason === 'create-option') {
+    } else if (reason === 'createOption') {
       if (selectedTags && selectedTags.length) {
         const tagsInput = '' + selectedTags[selectedTags.length - 1];
         let tags = tagsInput
@@ -118,7 +132,7 @@ function TagsSelect(props: Props) {
           };
           if (isValidNewOption(newTag.title, selectedTags)) {
             newTags.push(newTag);
-            props.allTags.push(newTag);
+            allTags.push(newTag);
           }
         });
         selectedTags.pop();
@@ -142,20 +156,6 @@ function TagsSelect(props: Props) {
       !selectOptions.find(option => option.title === inputValue)
     );
   }
-
-  const {
-    classes,
-    allTags,
-    defaultBackgroundColor,
-    defaultTextColor,
-    placeholderText = '',
-    label,
-    tagMode,
-    selectedEntryPath,
-    autoFocus = false
-  } = props;
-
-  const tags = props.tags ? props.tags : [];
 
   const handleTagMenu = (event: React.ChangeEvent<HTMLInputElement>, tag) => {
     setTagMenuAnchorEl(event.currentTarget);
@@ -184,19 +184,19 @@ function TagsSelect(props: Props) {
         data-tid={props.dataTid}
         multiple
         options={!props.isReadOnlyMode ? allTags : []}
-        getOptionLabel={option => option.title}
+        getOptionLabel={(option: TS.Tag) => option.title}
         freeSolo
         autoSelect
         autoComplete
         disableClearable
         value={tags}
         onChange={handleTagChange}
-        renderTags={(value: TS.Tag[]) =>
-          value.map((tag: TS.Tag) => (
+        renderTags={(value: readonly TS.Tag[], getTagProps) =>
+          value.map((option: TS.Tag, index: number) => (
             <TagContainer
-              key={selectedEntryPath + tag.title}
-              isReadOnlyMode={props.isReadOnlyMode}
-              tag={tag}
+              key={selectedEntryPath + option + index}
+              isReadOnlyMode={isReadOnlyMode}
+              tag={option}
               tagMode={tagMode}
               handleTagMenu={handleTagMenu}
               handleRemoveTag={handleRemoveTag}
@@ -231,21 +231,4 @@ function TagsSelect(props: Props) {
   );
 }
 
-const mapStateToProps = state => ({
-  allTags: getAllTags(state),
-  defaultBackgroundColor: getTagColor(state),
-  defaultTextColor: getTagTextColor(state)
-});
-
-/* function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      removeTags: TaggingActions.removeTags
-    },
-    dispatch
-  );
-} */
-
-export default connect(mapStateToProps)(
-  withStyles(styles, { withTheme: true })(TagsSelect)
-);
+export default withStyles(styles, { withTheme: true })(TagsSelect);
