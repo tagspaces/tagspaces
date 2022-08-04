@@ -82,7 +82,7 @@ export function findAvailableExtensions() {
       extensionType: 'editor'
     },
     {
-      extensionId: '@tagspaces/extensions/media-player',
+      extensionId: '@tagspaces/extensions/media-player/build',
       extensionName: 'Media Player',
       extensionType: 'viewer'
     },
@@ -332,12 +332,12 @@ export default {
     },
     {
       type: 'flac',
-      viewer: '@tagspaces/extensions/media-player',
+      viewer: '@tagspaces/extensions/media-player/build',
       color: ''
     },
     {
       type: 'acc',
-      viewer: '@tagspaces/extensions/media-player',
+      viewer: '@tagspaces/extensions/media-player/build',
       color: ''
     },
     {
@@ -420,7 +420,7 @@ export default {
     },
     {
       type: 'mkv',
-      viewer: '@tagspaces/extensions/media-player',
+      viewer: '@tagspaces/extensions/media-player/build',
       color: '#c5e4f9'
     },
     {
@@ -453,47 +453,47 @@ export default {
     },
     {
       type: 'mp3',
-      viewer: '@tagspaces/extensions/media-player',
+      viewer: '@tagspaces/extensions/media-player/build',
       color: '#c5e4f9'
     },
     {
       type: 'lrv',
-      viewer: '@tagspaces/extensions/media-player',
+      viewer: '@tagspaces/extensions/media-player/build',
       color: '#c5e4f9'
     },
     {
       type: 'mp4',
-      viewer: '@tagspaces/extensions/media-player',
+      viewer: '@tagspaces/extensions/media-player/build',
       color: '#c5e4f9'
     },
     {
       type: 'm4a',
-      viewer: '@tagspaces/extensions/media-player',
+      viewer: '@tagspaces/extensions/media-player/build',
       color: '#c5e4f9'
     },
     {
       type: 'oga',
-      viewer: '@tagspaces/extensions/media-player',
+      viewer: '@tagspaces/extensions/media-player/build',
       color: '#c5e4f9'
     },
     {
       type: 'ogg',
-      viewer: '@tagspaces/extensions/media-player',
+      viewer: '@tagspaces/extensions/media-player/build',
       color: '#c5e4f9'
     },
     {
       type: 'ogv',
-      viewer: '@tagspaces/extensions/media-player',
+      viewer: '@tagspaces/extensions/media-player/build',
       color: '#c5e4f9'
     },
     {
       type: 'ogx',
-      viewer: '@tagspaces/extensions/media-player',
+      viewer: '@tagspaces/extensions/media-player/build',
       color: '#c5e4f9'
     },
     {
       type: 'opus',
-      viewer: '@tagspaces/extensions/media-player',
+      viewer: '@tagspaces/extensions/media-player/build',
       color: '#c5e4f9'
     },
     {
@@ -547,7 +547,7 @@ export default {
     },
     {
       type: 'spx',
-      viewer: '@tagspaces/extensions/media-player',
+      viewer: '@tagspaces/extensions/media-player/build',
       color: '#c5e4f9'
     },
     {
@@ -582,17 +582,17 @@ export default {
     },
     {
       type: 'wav',
-      viewer: '@tagspaces/extensions/media-player',
+      viewer: '@tagspaces/extensions/media-player/build',
       color: '#c5e4f9'
     },
     {
       type: 'wave',
-      viewer: '@tagspaces/extensions/media-player',
+      viewer: '@tagspaces/extensions/media-player/build',
       color: '#c5e4f9'
     },
     {
       type: 'webm',
-      viewer: '@tagspaces/extensions/media-player',
+      viewer: '@tagspaces/extensions/media-player/build',
       color: '#c5e4f9'
     },
     {
