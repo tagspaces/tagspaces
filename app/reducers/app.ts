@@ -509,17 +509,17 @@ export default (state: any = initialState, action: any) => {
     }
     case types.UPDATE_THUMB_URLS: {
       const dirEntries = [...state.currentDirectoryEntries];
-      for (const entry of dirEntries) {
-        for (const tmbUrl of action.tmbURLs) {
-          if (entry.path === tmbUrl.filePath) {
-            entry.thumbPath = tmbUrl.tmbPath;
-            break;
-          }
-        }
+      for (let i = 0; i < dirEntries.length; i++) {
+        const entry = dirEntries[i];
+        const tmbURLs: any[] = action.tmbURLs;
+        const tmbUrl = tmbURLs.find(tmbUrl => tmbUrl.filePath == entry.path);
+        if (!tmbUrl) continue;
+        dirEntries[i] = { ...entry };
+        dirEntries[i].thumbPath = tmbUrl.tmbPath;
       }
       return {
         ...state,
-        currentDirectoryEntries: [...dirEntries]
+        currentDirectoryEntries: dirEntries
       };
     }
     case types.REFLECT_DELETE_ENTRY: {
