@@ -240,9 +240,25 @@ function EntryContainer(props: Props) {
     if (fscreen.fullscreenElement !== null) {
       change = 'Entered fullscreen mode';
       setFullscreen(true);
+      if (
+        fileViewer &&
+        fileViewer.current &&
+        fileViewer.current.contentWindow
+      ) {
+        // @ts-ignore
+        fileViewer.current.contentWindow.enterFullscreen();
+      }
     } else {
       change = 'Exited fullscreen mode';
       setFullscreen(false);
+      if (
+        fileViewer &&
+        fileViewer.current &&
+        fileViewer.current.contentWindow
+      ) {
+        // @ts-ignore
+        fileViewer.current.contentWindow.exitFullscreen();
+      }
     }
     console.log(change, e);
   }, []);
