@@ -154,7 +154,7 @@
     "@mui/styles": "^5.9.2",
     "@mui/icons-material": "^5.8.4",
     "@mui/lab": "^5.0.0-alpha.92",
-    "@tagspaces/tagspaces-platforms": "2.0.9",
+    "@tagspaces/tagspaces-platforms": "2.0.11",
     "aws-amplify": "^4.3.8",
     "aws-sdk": "^2.1036.0",
     "babel-polyfill": "^6.26.0",

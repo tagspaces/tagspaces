@@ -485,7 +485,11 @@ function EntryProperties(props: Props) {
   if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
     url = PlatformIO.getURLforPath(thumbPath);
   } else {
-    url = thumbPath + '?' + new Date().getTime();
+    url =
+      // normalize path for URL is always '/'
+      thumbPath.replaceAll(PlatformIO.getDirSeparator(), '/') +
+      '?' +
+      new Date().getTime();
   }
   const thumbPathUrl = thumbPath ? 'url("' + url + '")' : '';
 
