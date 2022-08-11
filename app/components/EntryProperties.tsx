@@ -481,15 +481,23 @@ function EntryProperties(props: Props) {
       PlatformIO.getDirSeparator()
     );
   }
+  /**
+   *  normalize path for URL is always '/'
+   *  TODO move this in common module
+   */
+  function normalizeUrl(url: string) {
+    if (PlatformIO.getDirSeparator() !== '/') {
+      if (url) {
+        return url.replaceAll(PlatformIO.getDirSeparator(), '/');
+      }
+    }
+    return url;
+  }
   let url;
   if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
     url = PlatformIO.getURLforPath(thumbPath);
   } else {
-    url =
-      // normalize path for URL is always '/'
-      thumbPath.replaceAll(PlatformIO.getDirSeparator(), '/') +
-      '?' +
-      new Date().getTime();
+    url = normalizeUrl(thumbPath) + '?' + new Date().getTime();
   }
   const thumbPathUrl = thumbPath ? 'url("' + url + '")' : '';
 
