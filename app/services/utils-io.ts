@@ -60,6 +60,7 @@ import {
   supportedVideos,
   supportedMisc
 } from '-/services/thumbsgenerator';
+import { defaultSettings } from '-/perspectives/grid-perspective';
 
 const supportedImgsWS = [
   'jpg',
@@ -858,6 +859,61 @@ export function cleanMetaData(
   }
   if (metaData.dirs && metaData.dirs.length > 0) {
     cleanedMeta.dirs = metaData.dirs;
+  }
+  if (metaData.perspectiveSettings) {
+    Object.keys(metaData.perspectiveSettings).forEach(perspective => {
+      if (!cleanedMeta.perspectiveSettings) {
+        cleanedMeta.perspectiveSettings = {};
+      }
+      cleanedMeta.perspectiveSettings[perspective] = {
+        ...(metaData.perspectiveSettings[perspective].showDirectories !=
+          defaultSettings.showDirectories && {
+          showDirectories:
+            metaData.perspectiveSettings[perspective].showDirectories
+        }),
+        ...(metaData.perspectiveSettings[perspective].showTags !=
+          defaultSettings.showTags && {
+          showTags: metaData.perspectiveSettings[perspective].showTags
+        }),
+        ...(metaData.perspectiveSettings[perspective].layoutType !=
+          defaultSettings.layoutType && {
+          layoutType: metaData.perspectiveSettings[perspective].layoutType
+        }),
+        ...(metaData.perspectiveSettings[perspective].orderBy !=
+          defaultSettings.orderBy && {
+          orderBy: metaData.perspectiveSettings[perspective].orderBy
+        }),
+        ...(metaData.perspectiveSettings[perspective].sortBy !=
+          defaultSettings.sortBy && {
+          sortBy: metaData.perspectiveSettings[perspective].sortBy
+        }),
+        ...(metaData.perspectiveSettings[perspective].singleClickAction !=
+          defaultSettings.singleClickAction && {
+          singleClickAction:
+            metaData.perspectiveSettings[perspective].singleClickAction
+        }),
+        ...(metaData.perspectiveSettings[perspective].entrySize !=
+          defaultSettings.entrySize && {
+          entrySize: metaData.perspectiveSettings[perspective].entrySize
+        }),
+        ...(metaData.perspectiveSettings[perspective].thumbnailMode !=
+          defaultSettings.thumbnailMode && {
+          thumbnailMode: metaData.perspectiveSettings[perspective].thumbnailMode
+        }),
+        ...(metaData.perspectiveSettings[perspective].gridPageLimit !=
+          defaultSettings.gridPageLimit && {
+          gridPageLimit: metaData.perspectiveSettings[perspective].gridPageLimit
+        })
+      };
+      if (
+        Object.keys(cleanedMeta.perspectiveSettings[perspective]).length === 0
+      ) {
+        delete cleanedMeta.perspectiveSettings[perspective];
+      }
+    });
+    if (Object.keys(cleanedMeta.perspectiveSettings).length === 0) {
+      delete cleanedMeta.perspectiveSettings;
+    }
   }
   if (metaData.tagGroups && metaData.tagGroups.length > 0) {
     cleanedMeta.tagGroups = metaData.tagGroups;

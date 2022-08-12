@@ -68,6 +68,7 @@ import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
 import Links from '-/links';
 import { defaultSettings } from '../index';
+import { PerspectiveIDs } from '-/perspectives';
 
 interface Props {
   classes: any;
@@ -193,27 +194,38 @@ function GridPerspective(props: Props) {
     boolean
   >(false);
   const [gridPageLimit, setGridPageLimit] = useState<number>(
-    settings && settings.gridPageLimit ? settings.gridPageLimit : 100
+    settings && settings.gridPageLimit
+      ? settings.gridPageLimit
+      : defaultSettings.gridPageLimit
   );
 
   useEffect(() => {
     makeFirstSelectedEntryVisible();
   }, [props.selectedEntries]);
 
-  settings = {
-    showDirectories,
-    showTags,
-    layoutType,
-    orderBy,
-    sortBy,
-    singleClickAction,
-    entrySize,
-    thumbnailMode,
-    gridPageLimit
-  };
-
   useEffect(() => {
-    localStorage.setItem(defaultSettings.settingsKey, JSON.stringify(settings));
+    if (Pro) {
+      Pro.MetaOperations.savePerspectiveSettings(
+        currentDirectoryPath,
+        PerspectiveIDs.GRID,
+        {
+          showDirectories,
+          showTags,
+          layoutType,
+          orderBy,
+          sortBy,
+          singleClickAction,
+          entrySize,
+          thumbnailMode,
+          gridPageLimit
+        }
+      );
+    } else {
+      localStorage.setItem(
+        defaultSettings.settingsKey,
+        JSON.stringify(settings)
+      );
+    }
   }, [
     showDirectories,
     showTags,
