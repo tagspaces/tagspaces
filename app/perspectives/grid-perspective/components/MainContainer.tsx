@@ -204,26 +204,27 @@ function GridPerspective(props: Props) {
   }, [props.selectedEntries]);
 
   useEffect(() => {
+    const perspectiveSettings = {
+      showDirectories,
+      showTags,
+      layoutType,
+      orderBy,
+      sortBy,
+      singleClickAction,
+      entrySize,
+      thumbnailMode,
+      gridPageLimit
+    };
     if (Pro) {
       Pro.MetaOperations.savePerspectiveSettings(
         currentDirectoryPath,
         PerspectiveIDs.GRID,
-        {
-          showDirectories,
-          showTags,
-          layoutType,
-          orderBy,
-          sortBy,
-          singleClickAction,
-          entrySize,
-          thumbnailMode,
-          gridPageLimit
-        }
+        perspectiveSettings
       );
     } else {
       localStorage.setItem(
         defaultSettings.settingsKey,
-        JSON.stringify(settings)
+        JSON.stringify(perspectiveSettings)
       );
     }
   }, [
