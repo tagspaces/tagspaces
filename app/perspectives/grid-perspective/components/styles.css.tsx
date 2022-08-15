@@ -147,7 +147,8 @@ export default (theme: any): any => ({
     background:
       'linear-gradient(0deg, ' +
       theme.palette.background.default +
-      'AA 0%, ' +
+      (theme.palette.background.default.length === 4 ? 'A' : 'AA') +
+      ' 0%, ' +
       theme.palette.background.default +
       ' 99%)',
     backdropFilter: 'blur(5px)',
