@@ -135,7 +135,7 @@ function AddRemoveTagsDialog(props: Props) {
         {i18n.t('core:tagOperationTitle')}
         <DialogCloseButton onClose={onClose} />
       </DialogTitle>
-      <DialogContent style={{ minHeight: 330 }}>
+      <DialogContent style={{ minHeight: 330, paddingTop: 1 }}>
         <TagsSelect
           dataTid="AddRemoveTagsSelectTID"
           placeholderText={i18n.t('core:selectTags')}

@@ -553,7 +553,8 @@ function FolderContainer(props: Props) {
           <CustomButton
             id="mobileMenuButton"
             style={{
-              transform: drawerOpened ? 'rotate(0deg)' : 'rotate(180deg)'
+              transform: drawerOpened ? 'rotate(0deg)' : 'rotate(180deg)',
+              width: 50
             }}
             onClick={toggleDrawer}
           >
