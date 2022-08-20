@@ -485,13 +485,13 @@ function CreateEditLocationDialog(props: Props) {
         }}
       >
         <Accordion defaultExpanded>
-          <AccordionSummary
+          {/* <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panelGeneral-content"
             id="panelGeneral-header"
           >
             <Typography>{i18n.t('core:switchGeneral')}</Typography>
-          </AccordionSummary>
+          </AccordionSummary> */}
           <AccordionDetails>
             <FormGroup>
               <FormControl disabled={disableLocationTypeSwitch} fullWidth>
@@ -877,15 +877,6 @@ function CreateEditLocationDialog(props: Props) {
         </Accordion>
       </DialogContent>
       <DialogActions>
-        {/* <Button
-          data-tid="switchAdvancedModeTID"
-          onClick={() => setShowAdvancedMode(!showAdvancedMode)}
-          style={{ marginLeft: 10 }}
-        >
-          {showAdvancedMode
-            ? i18n.t('core:switchSimpleMode')
-            : i18n.t('core:switchAdvancedMode')}
-        </Button> */}
         <Button onClick={() => onClose()}>{i18n.t('core:cancel')}</Button>
         <Button
           disabled={disableConfirmButton()}
