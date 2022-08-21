@@ -16,11 +16,17 @@
  *
  */
 
+/**
+ * Used for the import functionality with drag and drop from the
+ * file manager or desktop of the operating system
+ */
+
 import React from 'react';
 import Button from '@mui/material/Button';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
+import ListSubheader from '@mui/material/ListSubheader';
 import FileIcon from '@mui/icons-material/InsertDriveFileOutlined';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -55,7 +61,15 @@ function MoveOrCopyFilesDialog(props: Props) {
         <DialogCloseButton onClose={() => onClose()} />
       </DialogTitle>
       <DialogContent>
-        <List dense style={{ width: 550 }}>
+        <List
+          dense
+          style={{ width: 550, marginLeft: -15 }}
+          subheader={
+            <ListSubheader component="div">
+              {i18n.t('selectedFiles')}
+            </ListSubheader>
+          }
+        >
           {props.selectedFiles &&
             props.selectedFiles.length > 0 &&
             props.selectedFiles.map((file: File) => (

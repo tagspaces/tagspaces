@@ -653,6 +653,7 @@
   "exifDialogExplanation": "This functionality will traverse all JPG files from the current folder and import the data from the selected EXIF/IPTC fields as tags",
   "webDavToken": "WebDAV token",
   "WebdavAuth": "WebDAV authorization type",
-  "selectedFileAndFolders": "Selected files and folders",
+  "selectedFiles": "Selected files",
+  "selectedFilesAndFolders": "Selected files and folders",
   "-": "-"
 }

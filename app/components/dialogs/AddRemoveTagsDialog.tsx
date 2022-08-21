@@ -160,7 +160,7 @@ function AddRemoveTagsDialog(props: Props) {
           style={{ width: 550, marginLeft: -15 }}
           subheader={
             <ListSubheader component="div">
-              {i18n.t('selectedFileAndFolders')}
+              {i18n.t('selectedFilesAndFolders')}
             </ListSubheader>
           }
         >

@@ -23,7 +23,8 @@ import Button from '@mui/material/Button';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import Input from '@mui/material/Input';
+import ListSubheader from '@mui/material/ListSubheader';
+import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import FolderIcon from '@mui/icons-material/Folder';
 import FileIcon from '@mui/icons-material/InsertDriveFileOutlined';
@@ -124,7 +125,15 @@ function MoveCopyFilesDialog(props: Props) {
         <DialogCloseButton onClose={onCloseDialog} />
       </DialogTitle>
       <DialogContent>
-        <List dense style={{ width: 550 }}>
+        <List
+          dense
+          style={{ width: 550, marginLeft: -15 }}
+          subheader={
+            <ListSubheader component="div">
+              {i18n.t('selectedFiles')}
+            </ListSubheader>
+          }
+        >
           {props.selectedFiles &&
             props.selectedFiles.length > 0 &&
             props.selectedFiles.map(path => (
@@ -139,7 +148,7 @@ function MoveCopyFilesDialog(props: Props) {
             ))}
         </List>
         <FormControl fullWidth={true}>
-          <Input
+          <TextField
             autoFocus
             required
             margin="dense"
@@ -152,23 +161,24 @@ function MoveCopyFilesDialog(props: Props) {
               setTargetPath(target.value);
             }}
             value={targetPath}
-            endAdornment={
-              PlatformIO.haveObjectStoreSupport() ||
-              PlatformIO.haveWebDavSupport() ||
-              AppConfig.isWeb ? (
-                undefined
-              ) : (
-                <InputAdornment position="end" style={{ height: 33 }}>
-                  <IconButton
-                    data-tid="openDirectoryMoveCopyDialog"
-                    onClick={selectDirectory}
-                    size="large"
-                  >
-                    <FolderIcon />
-                  </IconButton>
-                </InputAdornment>
-              )
-            }
+            InputProps={{
+              endAdornment:
+                PlatformIO.haveObjectStoreSupport() ||
+                PlatformIO.haveWebDavSupport() ||
+                AppConfig.isWeb ? (
+                  undefined
+                ) : (
+                  <InputAdornment position="end" style={{ height: 33 }}>
+                    <IconButton
+                      data-tid="openDirectoryMoveCopyDialog"
+                      onClick={selectDirectory}
+                      size="large"
+                    >
+                      <FolderIcon />
+                    </IconButton>
+                  </InputAdornment>
+                )
+            }}
           />
           {inputError && <FormHelperText>Empty Input Field</FormHelperText>}
         </FormControl>
