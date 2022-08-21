@@ -19,12 +19,10 @@
 import React from 'react';
 import withStyles from '@mui/styles/withStyles';
 import Autocomplete from '@mui/material/Autocomplete';
-import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import FormControl from '@mui/material/FormControl';
 import IconButton from '@mui/material/IconButton';
-import Input from '@mui/material/Input';
-import InputLabel from '@mui/material/InputLabel';
+import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -147,13 +145,10 @@ function ObjectStoreForm(props: Props) {
   }
 
   return (
-    <Grid container spacing={2}>
+    <Grid container>
       <Grid item xs={12}>
         <FormControl fullWidth={true} error={cloudErrorTextName}>
-          <InputLabel htmlFor="storeName">
-            {i18n.t('core:createLocationName')}
-          </InputLabel>
-          <Input
+          <TextField
             required
             autoFocus
             margin="dense"
@@ -163,6 +158,7 @@ function ObjectStoreForm(props: Props) {
             data-tid="locationName"
             onChange={event => setStoreName(event.target.value)}
             value={storeName}
+            label={i18n.t('core:createLocationName')}
           />
           {/* {state.cloudErrorTextName && (
           <FormHelperText>{i18n.t('core:invalidName')}</FormHelperText>
@@ -171,10 +167,7 @@ function ObjectStoreForm(props: Props) {
       </Grid>
       <Grid item xs={12}>
         <FormControl fullWidth={true} error={cloudErrorTextPath}>
-          <InputLabel htmlFor="path">
-            {i18n.t('core:createLocationPath')}
-          </InputLabel>
-          <Input
+          <TextField
             margin="dense"
             name="storePath"
             fullWidth={true}
@@ -182,6 +175,7 @@ function ObjectStoreForm(props: Props) {
             data-tid="locationPath"
             onChange={event => setStorePath(event.target.value)}
             value={storePath}
+            label={i18n.t('core:createLocationPath')}
           />
           {/* {state.cloudErrorTextPath && (
           <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>
@@ -190,10 +184,7 @@ function ObjectStoreForm(props: Props) {
       </Grid>
       <Grid item xs={12}>
         <FormControl fullWidth={true} error={cloudErrorAccessKey}>
-          <InputLabel htmlFor="accessKeyId">
-            {i18n.t('core:accessKeyId')}
-          </InputLabel>
-          <Input
+          <TextField
             margin="dense"
             name="accessKeyId"
             fullWidth={true}
@@ -201,6 +192,7 @@ function ObjectStoreForm(props: Props) {
             inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
             onChange={event => setAccessKeyId(event.target.value)}
             value={accessKeyId}
+            label={i18n.t('core:accessKeyId')}
           />
           {/* {state.cloudErrorAccessKey && (
           <FormHelperText>{i18n.t('core:invalidAccessKey')}</FormHelperText>
@@ -209,10 +201,7 @@ function ObjectStoreForm(props: Props) {
       </Grid>
       <Grid item xs={12}>
         <FormControl fullWidth={true} error={cloudErrorSecretAccessKey}>
-          <InputLabel htmlFor="secretAccessKey">
-            {i18n.t('core:secretAccessKey')}
-          </InputLabel>
-          <Input
+          <TextField
             margin="dense"
             name="secretAccessKey"
             type={showSecretAccessKey ? 'text' : 'password'}
@@ -221,17 +210,20 @@ function ObjectStoreForm(props: Props) {
             inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
             onChange={event => setSecretAccessKey(event.target.value)}
             value={secretAccessKey}
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={() => setShowSecretAccessKey(!showSecretAccessKey)}
-                  size="large"
-                >
-                  {showSecretAccessKey ? <Visibility /> : <VisibilityOff />}
-                </IconButton>
-              </InputAdornment>
-            }
+            label={i18n.t('core:secretAccessKey')}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={() => setShowSecretAccessKey(!showSecretAccessKey)}
+                    size="large"
+                  >
+                    {showSecretAccessKey ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
           />
           {/* {state.cloudErrorSecretAccessKey && (
           <FormHelperText>
@@ -242,10 +234,7 @@ function ObjectStoreForm(props: Props) {
       </Grid>
       <Grid item xs={12}>
         <FormControl fullWidth={true}>
-          <InputLabel htmlFor="sessionToken">
-            {i18n.t('core:sessionToken')}
-          </InputLabel>
-          <Input
+          <TextField
             margin="dense"
             name="sessionToken"
             fullWidth={true}
@@ -253,15 +242,13 @@ function ObjectStoreForm(props: Props) {
             inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
             onChange={event => setSessionToken(event.target.value)}
             value={sessionToken}
+            label={i18n.t('core:sessionToken')}
           />
         </FormControl>
       </Grid>
       <Grid item xs={12}>
         <FormControl fullWidth={true} error={cloudErrorBucketName}>
-          <InputLabel htmlFor="bucketName">
-            {i18n.t('core:bucketName')}
-          </InputLabel>
-          <Input
+          <TextField
             margin="dense"
             name="bucketName"
             fullWidth={true}
@@ -269,6 +256,7 @@ function ObjectStoreForm(props: Props) {
             inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
             onChange={event => setBucketName(event.target.value)}
             value={bucketName}
+            label={i18n.t('core:bucketName')}
           />
           {/* {state.cloudErrorBucketName && (
           <FormHelperText>
@@ -279,10 +267,7 @@ function ObjectStoreForm(props: Props) {
       </Grid>
       <Grid item xs={12}>
         <FormControl fullWidth={true}>
-          <InputLabel htmlFor="endpointURL">
-            {i18n.t('core:endpointURL')}
-          </InputLabel>
-          <Input
+          <TextField
             margin="dense"
             name="endpointURL"
             fullWidth={true}
@@ -290,6 +275,7 @@ function ObjectStoreForm(props: Props) {
             placeholder={i18n.t('s3serviceURL')}
             onChange={event => setEndpointURL(event.target.value)}
             value={endpointURL}
+            label={i18n.t('core:endpointURL')}
           />
           {/* {state.cloudErrorId && (
           <FormHelperText>{i18n.t('core:missingId')}</FormHelperText>
