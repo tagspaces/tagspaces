@@ -26,10 +26,12 @@ import DialogTitle from '@mui/material/DialogTitle';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
+import ListSubheader from '@mui/material/ListSubheader';
 import FolderIcon from '@mui/icons-material/FolderOpen';
 import FileIcon from '@mui/icons-material/InsertDriveFileOutlined';
 import Typography from '@mui/material/Typography';
 import Dialog from '@mui/material/Dialog';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import TagsSelect from '../TagsSelect';
 import i18n from '-/services/i18n';
 import {
@@ -135,7 +137,15 @@ function AddRemoveTagsDialog(props: Props) {
         {i18n.t('core:tagOperationTitle')}
         <DialogCloseButton onClose={onClose} />
       </DialogTitle>
-      <DialogContent style={{ minHeight: 330 }}>
+      <DialogContent
+        style={{
+          minHeight: 330,
+          paddingTop: 1,
+          // @ts-ignore
+          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
+          overflowX: 'hidden'
+        }}
+      >
         <TagsSelect
           dataTid="AddRemoveTagsSelectTID"
           placeholderText={i18n.t('core:selectTags')}
@@ -144,7 +154,16 @@ function AddRemoveTagsDialog(props: Props) {
           tagMode="remove"
           autoFocus={true}
         />
-        <List dense style={{ width: 550 }}>
+
+        <List
+          dense
+          style={{ width: 550, marginLeft: -15 }}
+          subheader={
+            <ListSubheader component="div">
+              {i18n.t('selectedFilesAndFolders')}
+            </ListSubheader>
+          }
+        >
           {selectedEntries.length > 0 &&
             selectedEntries.map(entry => (
               <ListItem key={entry.path} title={entry.path}>

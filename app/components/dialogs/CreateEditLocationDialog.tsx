@@ -34,6 +34,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import TextField from '@mui/material/TextField';
 import Input from '@mui/material/Input';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import ToggleButton from '@mui/material/ToggleButton';
@@ -485,14 +486,14 @@ function CreateEditLocationDialog(props: Props) {
         }}
       >
         <Accordion defaultExpanded>
-          <AccordionSummary
+          {/* <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panelGeneral-content"
             id="panelGeneral-header"
           >
             <Typography>{i18n.t('core:switchGeneral')}</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
+          </AccordionSummary> */}
+          <AccordionDetails style={{ paddingTop: 16 }}>
             <FormGroup>
               <FormControl disabled={disableLocationTypeSwitch} fullWidth>
                 <InputLabel id="locationLabelID">
@@ -619,10 +620,7 @@ function CreateEditLocationDialog(props: Props) {
           <AccordionDetails>
             <FormGroup style={{ width: '100%' }}>
               <FormControl fullWidth={true}>
-                <InputLabel htmlFor="newuuid">
-                  {i18n.t('core:locationId')}
-                </InputLabel>
-                <Input
+                <TextField
                   required
                   margin="dense"
                   name="newuuid"
@@ -631,6 +629,7 @@ function CreateEditLocationDialog(props: Props) {
                   placeholder="Unique location identifier"
                   onChange={event => setNewUuid(event.target.value)}
                   value={newuuid}
+                  label={i18n.t('core:locationId')}
                 />
               </FormControl>
               <FormControlLabel
@@ -877,15 +876,6 @@ function CreateEditLocationDialog(props: Props) {
         </Accordion>
       </DialogContent>
       <DialogActions>
-        {/* <Button
-          data-tid="switchAdvancedModeTID"
-          onClick={() => setShowAdvancedMode(!showAdvancedMode)}
-          style={{ marginLeft: 10 }}
-        >
-          {showAdvancedMode
-            ? i18n.t('core:switchSimpleMode')
-            : i18n.t('core:switchAdvancedMode')}
-        </Button> */}
         <Button onClick={() => onClose()}>{i18n.t('core:cancel')}</Button>
         <Button
           disabled={disableConfirmButton()}

@@ -200,7 +200,7 @@ function CreateTagGroupDialog(props: Props) {
         {i18n.t('core:createTagGroupTitle')}
         <DialogCloseButton onClose={onClose} />
       </DialogTitle>
-      <DialogContent>
+      <DialogContent style={{ paddingTop: 10 }}>
         <FormControl fullWidth={true} error={inputError}>
           <TextField
             fullWidth={true}

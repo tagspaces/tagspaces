@@ -18,10 +18,9 @@
 
 import React from 'react';
 
-import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
-import Input from '@mui/material/Input';
-import InputLabel from '@mui/material/InputLabel';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import FolderIcon from '@mui/icons-material/Folder';
 import FormHelperText from '@mui/material/FormHelperText';
@@ -63,14 +62,12 @@ function LocalForm(props: Props) {
   };
 
   return (
-    <Grid container spacing={2}>
+    <Grid container>
       <Grid item xs={12}>
         <FormControl fullWidth={true} error={errorTextName}>
-          <InputLabel htmlFor="path">
-            {i18n.t('core:createLocationName')}
-          </InputLabel>
-          <Input
+          <TextField
             required
+            autoFocus
             margin="dense"
             name="name"
             inputProps={{ autoCorrect: 'off' }}
@@ -78,17 +75,15 @@ function LocalForm(props: Props) {
             value={name}
             data-tid="locationName"
             fullWidth={true}
+            // helperText="Please enter location name"
+            label={i18n.t('core:createLocationName')}
           />
         </FormControl>
       </Grid>
       <Grid item xs={12}>
         <FormControl fullWidth={true} error={errorTextPath}>
-          <InputLabel htmlFor="path">
-            {i18n.t('core:createLocationPath')}
-          </InputLabel>
-          <Input
+          <TextField
             required
-            autoFocus
             margin="dense"
             name="path"
             fullWidth={true}
@@ -96,14 +91,17 @@ function LocalForm(props: Props) {
             data-tid="locationPath"
             onChange={event => setPath(event.target.value)}
             value={path}
-            placeholder="Enter a folder path or select it with the button on the right"
-            endAdornment={
-              <InputAdornment position="end" style={{ height: 32 }}>
-                <IconButton onClick={openDirectory} size="large">
-                  <FolderIcon />
-                </IconButton>
-              </InputAdornment>
-            }
+            // placeholder="Enter a folder path or select it with the button on the right"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end" style={{ height: 32 }}>
+                  <IconButton onClick={openDirectory} size="large">
+                    <FolderIcon />
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
+            label={i18n.t('core:createLocationPath')}
           />
           {AppConfig.isCordovaAndroid && (
             <FormHelperText>

@@ -553,7 +553,8 @@ function FolderContainer(props: Props) {
           <CustomButton
             id="mobileMenuButton"
             style={{
-              transform: drawerOpened ? 'rotate(0deg)' : 'rotate(180deg)'
+              transform: drawerOpened ? 'rotate(0deg)' : 'rotate(180deg)',
+              width: 50
             }}
             onClick={toggleDrawer}
           >
@@ -767,8 +768,9 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   nextProp.currentDirectoryPath === prevProp.currentDirectoryPath &&
   nextProp.currentDirectoryPerspective ===
     prevProp.currentDirectoryPerspective &&
-  /* this props is set before currentDirectoryEntries is loaded and will reload FolderContainer
-  nextProp.currentLocationPath === prevProp.currentLocationPath &&  */
+  /* this props is set before currentDirectoryEntries is loaded and will reload FolderContainer */
+  /* nextProp.currentLocationPath === prevProp.currentLocationPath &&  */
+
   JSON.stringify(nextProp.directoryContent) ===
     JSON.stringify(prevProp.directoryContent) &&
   JSON.stringify(nextProp.openedFiles) ===

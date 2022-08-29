@@ -160,7 +160,7 @@ function StoredSearches(props: Props) {
           <Typography
             variant="inherit"
             // className={props.classes.header}
-            style={{ textTransform: 'uppercase' }}
+            style={{ textTransform: 'uppercase', display: 'inline' }}
             noWrap
             onClick={() => setStoredSearchesVisible(!storedSearchesVisible)}
           >

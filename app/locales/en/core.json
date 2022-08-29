@@ -516,7 +516,7 @@
   "goforward": "Go Forward",
   "switchSimpleMode": "Simple Mode",
   "switchAdvancedMode": "Advanced Mode",
-  "switchAdvanced": "Advanced",
+  "switchAdvanced": "More properties",
   "switchGeneral": "General",
   "userName": "User",
   "openLink": "Open Link",
@@ -653,5 +653,7 @@
   "exifDialogExplanation": "This functionality will traverse all JPG files from the current folder and import the data from the selected EXIF/IPTC fields as tags",
   "webDavToken": "WebDAV token",
   "WebdavAuth": "WebDAV authorization type",
+  "selectedFiles": "Selected files",
+  "selectedFilesAndFolders": "Selected files and folders",
   "-": "-"
 }
