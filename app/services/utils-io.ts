@@ -861,6 +861,9 @@ export function cleanMetaData(
     cleanedMeta.dirs = metaData.dirs;
   }
   if (metaData.perspectiveSettings) {
+    cleanedMeta.perspectiveSettings = metaData.perspectiveSettings;
+  }
+  /*if (metaData.perspectiveSettings) {  // clean perspectiveSettings !== defaultSettings
     Object.keys(metaData.perspectiveSettings).forEach(perspective => {
       if (!cleanedMeta.perspectiveSettings) {
         cleanedMeta.perspectiveSettings = {};
@@ -914,7 +917,7 @@ export function cleanMetaData(
     if (Object.keys(cleanedMeta.perspectiveSettings).length === 0) {
       delete cleanedMeta.perspectiveSettings;
     }
-  }
+  } */
   if (metaData.tagGroups && metaData.tagGroups.length > 0) {
     cleanedMeta.tagGroups = metaData.tagGroups;
   }

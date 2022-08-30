@@ -392,6 +392,7 @@ function GridPerspective(props: Props) {
     closeOptionsMenu();
     const thumbMode = thumbnailMode === 'cover' ? 'contain' : 'cover';
     setThumbnailMode(thumbMode);
+    return thumbMode;
   };
 
   const changeEntrySize = size => {

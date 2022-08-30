@@ -1004,7 +1004,7 @@ export const actions = {
       );
       // console.log('parentDirectory: ' + parentDirectory  + ' - currentLocationPath: ' + currentLocationPath);
       if (parentDirectory.includes(currentLocationPath)) {
-        dispatch(actions.loadDirectoryContent(parentDirectory, false));
+        dispatch(actions.loadDirectoryContent(parentDirectory, false, true));
       } else {
         dispatch(
           actions.showNotification(

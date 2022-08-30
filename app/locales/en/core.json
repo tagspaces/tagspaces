@@ -655,5 +655,7 @@
   "WebdavAuth": "WebDAV authorization type",
   "selectedFiles": "Selected files",
   "selectedFilesAndFolders": "Selected files and folders",
+  "defaultSettings": "set Default",
+  "directorySettings": "set for Current Folder",
   "-": "-"
 }
