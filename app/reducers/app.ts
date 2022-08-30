@@ -73,6 +73,7 @@ export const types = {
   LOGIN_FAILURE: 'APP/LOGIN_FAILURE',
   LOGOUT: 'APP/LOGOUT',
   LOAD_DIRECTORY_SUCCESS: 'APP/LOAD_DIRECTORY_SUCCESS',
+  SET_DIRECTORY_META: 'APP/SET_DIRECTORY_META',
   LOAD_DIRECTORY_FAILURE: 'APP/LOAD_DIRECTORY_FAILURE',
   CLEAR_DIRECTORY_CONTENT: 'APP/CLEAR_DIRECTORY_CONTENT',
   // LOAD_PAGE_CONTENT: 'APP/LOAD_PAGE_CONTENT',
@@ -269,6 +270,12 @@ export default (state: any = initialState, action: any) => {
         isUpdateAvailable: action.isUpdateAvailable
       };
     }
+    case types.SET_DIRECTORY_META: {
+      return {
+        ...state,
+        directoryMeta: action.directoryMeta
+      };
+    }
     case types.LOAD_DIRECTORY_SUCCESS: {
       let { directoryPath } = action;
       if (directoryPath && directoryPath.startsWith('./')) {
@@ -278,7 +285,7 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         currentDirectoryEntries: action.directoryContent,
-        // pageEntries: [],
+        directoryMeta: action.directoryMeta,
         currentDirectoryColor: action.directoryMeta
           ? action.directoryMeta.color || ''
           : '',
@@ -1185,6 +1192,10 @@ export const actions = {
     directoryMeta,
     showIsLoading
   }),
+  setDirectoryMeta: (directoryMeta: TS.FileSystemEntryMeta) => ({
+    type: types.SET_DIRECTORY_META,
+    directoryMeta
+  }),
   loadDirectoryFailure: (directoryPath: string, error?: any) => (
     dispatch: (action) => void
   ) => {
@@ -1610,7 +1621,11 @@ export const actions = {
       dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
       dispatch(actions.changeLocation(location));
       dispatch(
-        actions.loadDirectoryContent(PlatformIO.getLocationPath(location), true)
+        actions.loadDirectoryContent(
+          PlatformIO.getLocationPath(location),
+          true,
+          true
+        )
       );
       if (Pro && Pro.Watcher && location.watchForChanges) {
         const perspective = getCurrentDirectoryPerspective(getState());
@@ -2356,6 +2371,7 @@ export const getLastSelectedEntry = (state: any) => {
 export const getSelectedTag = (state: any) => state.app.tag;
 export const getSelectedEntries = (state: any) =>
   state.app.selectedEntries ? state.app.selectedEntries : [];
+export const getDirectoryMeta = (state: any) => state.app.directoryMeta;
 export const isGeneratingThumbs = (state: any) => state.app.isGeneratingThumbs;
 export const isReadOnlyMode = (state: any) => state.app.isReadOnlyMode;
 export const isOnboardingDialogOpened = (state: any) =>

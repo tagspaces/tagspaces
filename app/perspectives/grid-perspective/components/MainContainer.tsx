@@ -49,6 +49,7 @@ import TagDropContainer from '-/components/TagDropContainer';
 import IOActions from '-/reducers/io-actions';
 import {
   actions as AppActions,
+  getDirectoryMeta,
   getLastSelectedEntry,
   getSelectedEntries,
   isDeleteMultipleEntriesDialogOpened,
@@ -110,10 +111,22 @@ interface Props {
   locations: Array<TS.Location>;
   // isDesktopMode: boolean;
   toggleDeleteMultipleEntriesDialog: () => void;
+  directoryMeta: TS.FileSystemEntryMeta;
+  setDirectoryMeta: (fsEntryMeta: TS.FileSystemEntryMeta) => void;
 }
 
 function GridPerspective(props: Props) {
-  let settings = JSON.parse(localStorage.getItem(defaultSettings.settingsKey)); // loading settings
+  let settings;
+  if (
+    props.directoryMeta &&
+    props.directoryMeta.perspectiveSettings &&
+    props.directoryMeta.perspectiveSettings[PerspectiveIDs.GRID]
+  ) {
+    settings = props.directoryMeta.perspectiveSettings[PerspectiveIDs.GRID];
+  } else {
+    // loading settings for not Pro
+    settings = JSON.parse(localStorage.getItem(defaultSettings.settingsKey));
+  }
 
   const [mouseX, setMouseX] = useState<number>(undefined);
   const [mouseY, setMouseY] = useState<number>(undefined);
@@ -204,6 +217,10 @@ function GridPerspective(props: Props) {
   }, [props.selectedEntries]);
 
   useEffect(() => {
+
+  }, [props.directoryMeta]);
+
+  useEffect(() => {
     const perspectiveSettings = {
       showDirectories,
       showTags,
@@ -220,7 +237,9 @@ function GridPerspective(props: Props) {
         currentDirectoryPath,
         PerspectiveIDs.GRID,
         perspectiveSettings
-      );
+      ).then((fsEntryMeta: TS.FileSystemEntryMeta) => {
+        props.setDirectoryMeta(fsEntryMeta);
+      });
     } else {
       localStorage.setItem(
         defaultSettings.settingsKey,
@@ -943,6 +962,7 @@ function mapActionCreatorsToProps(dispatch) {
       openURLExternally: AppActions.openURLExternally,
       openNextFile: AppActions.openNextFile,
       openPrevFile: AppActions.openPrevFile,
+      setDirectoryMeta: AppActions.setDirectoryMeta,
       toggleDeleteMultipleEntriesDialog:
         AppActions.toggleDeleteMultipleEntriesDialog,
       addTags: TaggingActions.addTags,
@@ -954,6 +974,7 @@ function mapActionCreatorsToProps(dispatch) {
 
 function mapStateToProps(state) {
   return {
+    directoryMeta: getDirectoryMeta(state),
     supportedFileTypes: getSupportedFileTypes(state),
     isReadOnlyMode: isReadOnlyMode(state),
     lastSelectedEntry: getLastSelectedEntry(state),
