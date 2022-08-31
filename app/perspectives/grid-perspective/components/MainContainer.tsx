@@ -230,10 +230,7 @@ function GridPerspective(props: Props) {
       perspectiveSettings && perspectiveSettings.showTags !== undefined
         ? perspectiveSettings.showTags
         : defaultSettings.showTags;
-    layoutType.current =
-      perspectiveSettings && perspectiveSettings.layoutType !== undefined
-        ? perspectiveSettings.layoutType
-        : defaultSettings.layoutType;
+    layoutType.current = defaultSettings.layoutType;
     orderBy.current =
       perspectiveSettings && perspectiveSettings.orderBy !== undefined
         ? perspectiveSettings.orderBy
@@ -358,7 +355,7 @@ function GridPerspective(props: Props) {
     if (sortBy.current !== handleSort) {
       sortBy.current = handleSort;
     } else {
-      orderBy.current = !orderBy;
+      orderBy.current = !orderBy.current;
     }
     // forceUpdate();
     setSortingContextMenuAnchorEl(null);
