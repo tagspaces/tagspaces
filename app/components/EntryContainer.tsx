@@ -81,6 +81,11 @@ import {
 import useEventListener from '-/utils/useEventListener';
 import { TS } from '-/tagspaces.namespace';
 import FileView from '-/components/FileView';
+import { Pro } from '-/pro';
+import {
+  historyKeys,
+  saveHistory
+} from '../../extensions/tagspacespro/modules/history';
 
 const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
 // const openedSplitSize = AppConfig.isElectron ? 560 : 360;
@@ -519,6 +524,9 @@ function EntryContainer(props: Props) {
       editMode: true,
       shouldReload: undefined
     });
+    if (Pro) {
+      saveHistory(historyKeys.fileEditKey, openedFile.path);
+    }
     // setFileView(renderFileView());
   };
 

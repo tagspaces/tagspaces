@@ -63,6 +63,10 @@ import {
 } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { PerspectiveIDs } from '-/perspectives';
+import {
+  historyKeys,
+  saveHistory
+} from '../../extensions/tagspacespro/modules/history';
 
 export const types = {
   DEVICE_ONLINE: 'APP/DEVICE_ONLINE',
@@ -1781,6 +1785,17 @@ export const actions = {
     }
     let entryForOpening: OpenedEntry;
     const { openedFiles } = getState().app;
+
+    /**
+     * save in history
+     */
+    if (Pro) {
+      if (fsEntry.isFile) {
+        saveHistory(historyKeys.fileOpenKey, fsEntry.path);
+      } else {
+        saveHistory(historyKeys.folderOpenKey, fsEntry.path);
+      }
+    }
     /**
      * check for editMode in order to show save changes dialog (shouldReload: false)
      */
