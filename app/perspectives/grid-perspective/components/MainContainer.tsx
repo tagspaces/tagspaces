@@ -287,6 +287,7 @@ function GridPerspective(props: Props) {
           defaultSettings.settingsKey,
           JSON.stringify(perspectiveSettings)
         );
+        forceUpdate();
       }
       isDefaultSetting.current = undefined;
     }
