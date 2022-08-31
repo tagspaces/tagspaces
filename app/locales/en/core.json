@@ -657,5 +657,10 @@
   "selectedFilesAndFolders": "Selected files and folders",
   "defaultSettings": "set Default",
   "directorySettings": "set for Current Folder",
+  "byName": "By Name",
+  "byFileSize": "By File Size",
+  "byDateModified": "By Date Modified",
+  "byFirstTag": "By First Tag",
+  "byExtension": "By Extension",
   "-": "-"
 }

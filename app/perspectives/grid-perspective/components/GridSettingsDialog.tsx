@@ -77,6 +77,9 @@ interface Props {
   changeSingleClickAction: (actionType: string) => void;
   singleClickAction: string;
   openHelpWebPage: () => void;
+  sortBy: string;
+  orderBy: boolean;
+  handleSortingMenu: (event) => void;
   classes: any;
   // setShowDirectories: (check: boolean) => void;
 }
@@ -173,6 +176,25 @@ function GridSettingsDialog(props: Props) {
             )}
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:toggleThumbnailMode')} />
+        </MenuItem>
+        <Divider />
+        <MenuItem
+          data-tid="sortByMenuTID"
+          title={i18n.t('core:sortBy')}
+          aria-label={i18n.t('core:sortBy')}
+          onClick={e => {
+            props.handleSortingMenu(e);
+          }}
+        >
+          <ListItemText
+            primary={
+              i18n.t('core:sort') +
+              ': ' +
+              i18n.t(props.sortBy) +
+              ' ' +
+              (props.orderBy ? 'ASC' : 'DESC')
+            }
+          />
         </MenuItem>
         <Divider />
         <MenuItem

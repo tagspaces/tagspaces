@@ -213,6 +213,7 @@ function GridPerspective(props: Props) {
       ? settings.gridPageLimit
       : defaultSettings.gridPageLimit
   );
+  // true: save in default settings; false: save per folder settings; undefined - dont save changes
   const isDefaultSetting = useRef<boolean>(undefined);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
@@ -289,6 +290,7 @@ function GridPerspective(props: Props) {
       isDefaultSetting.current = undefined;
     }
   }, [
+    isDefaultSetting.current,
     showDirectories.current,
     showTags.current,
     layoutType.current,
@@ -361,7 +363,7 @@ function GridPerspective(props: Props) {
     setSortingContextMenuAnchorEl(null);
   };
 
-  const handleSortingMenu = event => {
+  const handleSortingMenu = (event) => {
     const anchor = event ? event.currentTarget : null;
     setSortingContextMenuAnchorEl(anchor);
   };
@@ -916,6 +918,9 @@ function GridPerspective(props: Props) {
           changeSingleClickAction={changeSingleClickAction}
           singleClickAction={singleClickAction.current}
           openHelpWebPage={openHelpWebPage}
+          sortBy={sortBy.current}
+          orderBy={orderBy.current}
+          handleSortingMenu={handleSortingMenu}
         />
       )}
       {isMoveCopyFilesDialogOpened && (
