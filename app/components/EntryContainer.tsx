@@ -110,6 +110,7 @@ const styles: any = (theme: any) => ({
     display: 'flex',
     alignItems: 'center',
     overflowX: AppConfig.isFirefox ? 'auto' : 'overlay',
+    overflowY: 'hidden',
     paddingRight: 100
   },
   fileBadge: {
