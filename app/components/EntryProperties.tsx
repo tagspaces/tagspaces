@@ -18,9 +18,11 @@
 
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
+import { Theme } from '@mui/material/styles';
 import { v1 as uuidv1 } from 'uuid';
 import L from 'leaflet';
 import classNames from 'classnames';
+import createStyles from '@mui/styles/createStyles';
 import withStyles from '@mui/styles/withStyles';
 import Grid from '@mui/material/Grid';
 import FormControl from '@mui/material/FormControl';
@@ -31,6 +33,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import ShareIcon from '@mui/icons-material/Link';
 import Tooltip from '@mui/material/Tooltip';
 import LocationIcon from '@mui/icons-material/WorkOutline';
+import EditIcon from '@mui/icons-material/Edit';
 import CloudLocationIcon from '@mui/icons-material/CloudQueue';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
@@ -102,14 +105,6 @@ const styles: any = (theme: any) => ({
     float: 'right',
     margin: '0 0 10px 0'
   },
-  colorChooserButton: {
-    minHeight: 35,
-    width: '100%',
-    border: '1px solid lightgray',
-    margin: '0 8px 0 0',
-    textTransform: 'none',
-    fontWeight: 'lighter'
-  },
   textField: {
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
@@ -127,33 +122,10 @@ const styles: any = (theme: any) => ({
   actionPlaceholder: {
     textAlign: 'end'
   },
-  header: {
-    color: theme.palette.text.primary
-  },
-  entryItem: {
-    width: '100%',
-    padding: 0
-  },
   button: {
     position: 'relative',
     padding: '8px 12px 6px 8px',
     margin: '0'
-  },
-  fluidGrid: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  gridItem: {
-    width: '100%',
-    paddingLeft: 5
-  },
-  formControl: {
-    width: 'calc(100% - 12px)',
-    marginBottom: 10,
-    marginLeft: 5
   },
   mdHelpers: {
     borderRadius: '0.25rem',
@@ -507,7 +479,7 @@ function EntryProperties(props: Props) {
         .substring(0, 19)
         .split('T')
         .join(' ')
-    : '';
+    : ' ';
 
   const changePerspective = (event: any) => {
     const perspective = event.target.value;
@@ -598,117 +570,91 @@ function EntryProperties(props: Props) {
     <div className={classes.entryProperties}>
       <Grid container>
         <Grid item xs={12}>
-          <div className={classes.fluidGrid}>
-            <div className={classes.gridItem}>
-              <Typography
-                variant="caption"
-                className={classes.header}
-                style={{ display: 'block' }}
-              >
-                {currentEntry.isFile
-                  ? i18n.t('core:fileName')
-                  : i18n.t('core:folderName')}
-              </Typography>
-            </div>
-          </div>
-          <FormControl fullWidth={true} className={classes.formControl}>
-            <TextField
-              InputProps={{
-                readOnly: editName === undefined,
-                endAdornment: (
-                  <InputAdornment position="end">
-                    {!isReadOnlyMode &&
-                      !currentEntry.editMode &&
-                      editDescription === undefined && (
-                        <div
-                          className={classes.gridItem}
-                          style={{ textAlign: 'right' }}
-                        >
-                          {editName !== undefined ? (
-                            <div>
-                              <Button
-                                data-tid="cancelRenameEntryTID"
-                                onClick={deactivateEditNameField}
-                              >
-                                {i18n.t('core:cancel')}
-                              </Button>
-                              <Button
-                                data-tid="confirmRenameEntryTID"
-                                color="primary"
-                                onClick={renameEntry}
-                              >
-                                {i18n.t('core:confirmSaveButton')}
-                              </Button>
-                            </div>
-                          ) : (
+          <TextField
+            label={
+              currentEntry.isFile
+                ? i18n.t('core:fileName')
+                : i18n.t('core:folderName')
+            }
+            InputProps={{
+              readOnly: editName === undefined,
+              endAdornment: (
+                <InputAdornment position="end">
+                  {!isReadOnlyMode &&
+                    !currentEntry.editMode &&
+                    editDescription === undefined && (
+                      <div style={{ textAlign: 'right' }}>
+                        {editName !== undefined ? (
+                          <div>
                             <Button
-                              data-tid="startRenameEntryTID"
-                              color="primary"
-                              onClick={activateEditNameField}
+                              data-tid="cancelRenameEntryTID"
+                              onClick={deactivateEditNameField}
                             >
-                              {i18n.t('core:renameFile')}
+                              {i18n.t('core:cancel')}
                             </Button>
-                          )}
-                        </div>
-                      )}
-                  </InputAdornment>
-                )
-              }}
-              margin="dense"
-              name="name"
-              fullWidth={true}
-              data-tid="fileNameProperties"
-              defaultValue={entryName} // currentEntry.name}
-              inputRef={fileNameRef}
-              onClick={() => {
-                if (
-                  !currentEntry.editMode &&
-                  editName === undefined &&
-                  editDescription === undefined
-                ) {
-                  activateEditNameField();
-                }
-              }}
-              onKeyDown={event => {
-                if (event.key === 'Enter') {
-                  renameEntry();
-                }
-              }}
-              onChange={handleFileNameChange}
-            />
-          </FormControl>
+                            <Button
+                              data-tid="confirmRenameEntryTID"
+                              color="primary"
+                              onClick={renameEntry}
+                            >
+                              {i18n.t('core:confirmSaveButton')}
+                            </Button>
+                          </div>
+                        ) : (
+                          <Button
+                            data-tid="startRenameEntryTID"
+                            color="primary"
+                            onClick={activateEditNameField}
+                          >
+                            {i18n.t('core:rename')}
+                          </Button>
+                        )}
+                      </div>
+                    )}
+                </InputAdornment>
+              )
+            }}
+            margin="dense"
+            name="name"
+            fullWidth={true}
+            data-tid="fileNameProperties"
+            defaultValue={entryName} // currentEntry.name}
+            inputRef={fileNameRef}
+            onClick={() => {
+              if (
+                !currentEntry.editMode &&
+                editName === undefined &&
+                editDescription === undefined
+              ) {
+                activateEditNameField();
+              }
+            }}
+            onKeyDown={event => {
+              if (event.key === 'Enter') {
+                renameEntry();
+              }
+            }}
+            onChange={handleFileNameChange}
+          />
         </Grid>
-        <Grid item xs={12}>
-          <div className={classes.fluidGrid}>
-            <div className={classes.gridItem}>
-              <Typography
-                variant="caption"
-                className={classes.header}
-                style={{ display: 'block' }}
-              >
-                {i18n.t('core:fileTags')}
-              </Typography>
-            </div>
-            <div className={classes.gridItem} />
-          </div>
-          <div className={classes.gridItem}>
-            <TagDropContainer entryPath={currentEntry.path}>
-              <TagsSelect
-                dataTid="PropertiesTagsSelectTID"
-                placeholderText={i18n.t('core:dropHere')}
-                isReadOnlyMode={
-                  isReadOnlyMode ||
-                  currentEntry.editMode ||
-                  editDescription !== undefined ||
-                  editName !== undefined
-                }
-                tags={currentEntry.tags}
-                tagMode="default"
-                handleChange={handleChange}
-                selectedEntryPath={currentEntry.path}
-              />
-            </TagDropContainer>
-          </div>
+        <Grid item xs={12} style={{ marginTop: 10 }}>
+          <TagDropContainer entryPath={currentEntry.path}>
+            <TagsSelect
+              label={i18n.t('core:fileTags')}
+              dataTid="PropertiesTagsSelectTID"
+              placeholderText={i18n.t('core:dropHere')}
+              isReadOnlyMode={
+                isReadOnlyMode ||
+                currentEntry.editMode ||
+                editDescription !== undefined ||
+                editName !== undefined
+              }
+              tags={currentEntry.tags}
+              tagMode="default"
+              handleChange={handleChange}
+              selectedEntryPath={currentEntry.path}
+            />
+          </TagDropContainer>
         </Grid>
 
         {geoLocation && (
@@ -754,213 +700,203 @@ function EntryProperties(props: Props) {
         )}
 
         <Grid item xs={12}>
-          <div className={classes.fluidGrid}>
-            <div className={classes.gridItem}>
-              <Typography
-                variant="caption"
-                className={classNames(classes.header, classes.header)}
-                style={{ display: 'block' }}
-              >
-                {i18n.t('core:filePropertiesDescription')}
-              </Typography>
-            </div>
-            {!isReadOnlyMode &&
-              !currentEntry.editMode &&
-              editName === undefined && (
-                <div
-                  className={classes.gridItem}
-                  style={{ textAlign: 'right' }}
+          <span style={{ verticalAlign: 'sub', paddingLeft: 5 }}>
+            <Typography variant="caption">
+              {i18n.t('core:filePropertiesDescription')}
+            </Typography>
+          </span>
+          {!isReadOnlyMode && !currentEntry.editMode && editName === undefined && (
+            <span style={{ float: 'right' }}>
+              {editDescription !== undefined && (
+                <Button
+                  className={classes.button}
+                  onClick={() => setEditDescription(undefined)}
                 >
-                  {editDescription !== undefined && (
-                    <Button
-                      className={classes.button}
-                      onClick={() => setEditDescription(undefined)}
-                    >
-                      {i18n.t('core:cancel')}
-                    </Button>
-                  )}
-                  {editDescription === undefined && (
-                    <Button
-                      className={classes.button}
-                      onClick={() => printHTML(sanitizedDescription)}
-                    >
-                      {i18n.t('core:print')}
-                    </Button>
-                  )}
-                  <ProTooltip tooltip={i18n.t('editDescription')}>
-                    <Button
-                      color="primary"
-                      className={classes.button}
-                      disabled={!Pro}
-                      onClick={toggleEditDescriptionField}
-                    >
-                      {editDescription !== undefined
-                        ? i18n.t('core:confirmSaveButton')
-                        : i18n.t('core:edit')}
-                    </Button>
-                  </ProTooltip>
-                </div>
+                  {i18n.t('core:cancel')}
+                </Button>
               )}
-          </div>
-          <FormControl fullWidth={true} className={classes.formControl}>
-            {editDescription !== undefined ? (
-              <>
-                <TextField
-                  multiline
-                  inputRef={fileDescriptionRef}
-                  style={{
-                    padding: 10,
-                    borderRadius: 5,
-                    maxHeight: 400,
-                    overflow: 'auto',
-                    backgroundColor: 'rgba(255, 216, 115, 0.20)'
-                  }}
-                  id="textarea"
-                  placeholder=""
-                  name="description"
-                  className={styles.textField}
-                  defaultValue={currentEntry.description}
-                  fullWidth={true}
-                  onChange={handleDescriptionChange}
-                />
-                <Typography
-                  variant="caption"
-                  style={{
-                    color: theme.palette.text.primary
-                  }}
+              {editDescription === undefined && (
+                <Button
+                  className={classes.button}
+                  onClick={() => printHTML(sanitizedDescription)}
                 >
-                  Formatting: <i className={classes.mdHelpers}>_italic_</i>{' '}
-                  <b className={classes.mdHelpers}>**bold**</b>{' '}
-                  <span className={classes.mdHelpers}>* list item</span>{' '}
-                  <span className={classes.mdHelpers}>
-                    [Link text](http://...)
-                  </span>
-                </Typography>
-              </>
-            ) : (
-              <Typography
+                  {i18n.t('core:print')}
+                </Button>
+              )}
+              <ProTooltip tooltip={i18n.t('editDescription')}>
+                <Button
+                  color="primary"
+                  className={classes.button}
+                  disabled={!Pro}
+                  onClick={toggleEditDescriptionField}
+                >
+                  {editDescription !== undefined
+                    ? i18n.t('core:confirmSaveButton')
+                    : i18n.t('core:edit')}
+                </Button>
+              </ProTooltip>
+            </span>
+          )}
+        </Grid>
+        <Grid item xs={12}>
+          {editDescription !== undefined ? (
+            <>
+              <TextField
+                multiline
+                inputRef={fileDescriptionRef}
                 style={{
-                  display: 'block',
-                  padding: 10,
-                  borderRadius: 5,
-                  backgroundColor: 'rgba(255, 216, 115, 0.20)',
-                  marginBottom: 5,
+                  paddingTop: 1,
+                  // borderRadius: 5,
                   maxHeight: 400,
                   overflow: 'auto',
-                  color: currentEntry.description
-                    ? theme.palette.text.primary
-                    : theme.palette.text.disabled
+                  backgroundColor: 'rgba(255, 216, 115, 0.20)'
                 }}
-                role="button"
-                id="descriptionArea"
-                dangerouslySetInnerHTML={{
-                  // eslint-disable-next-line no-nested-ternary
-                  __html: sanitizedDescription
-                }}
-                onDoubleClick={() => {
-                  if (!currentEntry.editMode && editName === undefined) {
-                    toggleEditDescriptionField();
-                  }
-                }}
+                id="textarea"
+                placeholder=""
+                name="description"
+                className={styles.textField}
+                defaultValue={currentEntry.description}
+                fullWidth={true}
+                onChange={handleDescriptionChange}
               />
-            )}
-          </FormControl>
-        </Grid>
-
-        <Grid container item xs={12}>
-          <Grid item xs={6}>
-            <div className={classes.gridItem}>
               <Typography
                 variant="caption"
-                className={classes.header}
-                style={{ display: 'block' }}
+                style={{
+                  color: theme.palette.text.primary
+                }}
               >
-                {i18n.t('core:fileLDTM')}
-                <br />
-                <strong>{ldtm}</strong>
+                Formatting: <i className={classes.mdHelpers}>_italic_</i>{' '}
+                <b className={classes.mdHelpers}>**bold**</b>{' '}
+                <span className={classes.mdHelpers}>* list item</span>{' '}
+                <span className={classes.mdHelpers}>
+                  [Link text](http://...)
+                </span>
               </Typography>
-            </div>
+            </>
+          ) : (
+            <Typography
+              style={{
+                display: 'block',
+                padding: 10,
+                borderRadius: 5,
+                border: '1px solid lightgray',
+                backgroundColor: 'rgba(255, 216, 115, 0.20)',
+                marginBottom: 5,
+                maxHeight: 400,
+                overflow: 'auto',
+                color: currentEntry.description
+                  ? theme.palette.text.primary
+                  : theme.palette.text.disabled
+              }}
+              role="button"
+              id="descriptionArea"
+              dangerouslySetInnerHTML={{
+                // eslint-disable-next-line no-nested-ternary
+                __html: sanitizedDescription
+              }}
+              onDoubleClick={() => {
+                if (!currentEntry.editMode && editName === undefined) {
+                  toggleEditDescriptionField();
+                }
+              }}
+            />
+          )}
+        </Grid>
+
+        <Grid container item xs={12} spacing={1}>
+          <Grid item xs={6}>
+            <TextField
+              margin="dense"
+              fullWidth={true}
+              value={ldtm}
+              label={i18n.t('core:fileLDTM')}
+              InputProps={{
+                readOnly: true
+              }}
+            />
           </Grid>
 
           {currentEntry.isFile ? (
             <Grid item xs={6}>
-              <Typography
-                variant="caption"
-                className={classes.header}
-                style={{ display: 'block' }}
-              >
-                {i18n.t('core:fileSize')}
-                <br />
-                <strong>{formatFileSize(currentEntry.size)}</strong>
-              </Typography>
+              <TextField
+                margin="dense"
+                fullWidth={true}
+                value={formatFileSize(currentEntry.size)}
+                label={i18n.t('core:fileSize')}
+                InputProps={{
+                  readOnly: true
+                }}
+              />
             </Grid>
           ) : (
             <Grid item xs={6}>
-              <Typography
-                variant="caption"
-                style={{ display: 'block', paddingLeft: 6 }}
-                className={classes.header}
-              >
-                {i18n.t('core:backgroundColor')}
-              </Typography>
-              <Grid container item xs={12}>
-                <Grid item xs={10}>
-                  <FormControl fullWidth={true} className={classes.formControl}>
-                    <TransparentBackground>
-                      <Button
-                        fullWidth={true}
-                        className={[
-                          classes.colorChooserButton,
-                          classes.button
-                        ].join(' ')}
-                        style={{
-                          backgroundColor: currentEntry.color
-                        }}
-                        onClick={toggleBackgroundColorPicker}
-                      >
-                        {i18n.t('core:changeBackgroundColor')}
-                      </Button>
-                    </TransparentBackground>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={2}>
-                  {currentEntry.color && (
-                    <>
-                      <ProTooltip tooltip={i18n.t('clearFolderColor')}>
-                        <IconButton
-                          disabled={!Pro}
-                          aria-label="clear"
-                          size="small"
-                          style={{ marginTop: 5 }}
-                          onClick={() => setConfirmResetColorDialogOpened(true)}
+              <TextField
+                margin="dense"
+                name="path"
+                label={i18n.t('core:backgroundColor')}
+                title=""
+                fullWidth
+                InputProps={{
+                  readOnly: true,
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <TransparentBackground>
+                        <Button
+                          fullWidth
+                          style={{
+                            width: '100%',
+                            backgroundColor: currentEntry.color
+                          }}
+                          onClick={toggleBackgroundColorPicker}
                         >
-                          <ClearColorIcon />
-                        </IconButton>
-                      </ProTooltip>
-                      {isConfirmResetColorDialogOpened && (
-                        <ConfirmDialog
-                          open={isConfirmResetColorDialogOpened}
-                          onClose={() => {
-                            setConfirmResetColorDialogOpened(false);
-                          }}
-                          title={i18n.t('core:confirm')}
-                          content={i18n.t('core:confirmResetColor')}
-                          confirmCallback={result => {
-                            if (result) {
-                              handleChangeColor('transparent');
-                            } else {
-                              setConfirmResetColorDialogOpened(false);
-                            }
-                          }}
-                          cancelDialogTID="cancelConfirmResetColorDialog"
-                          confirmDialogTID="confirmConfirmResetColorDialog"
-                          confirmDialogContentTID="confirmResetColorDialogContent"
-                        />
+                          {i18n.t('core:changeBackgroundColor')}
+                        </Button>
+                      </TransparentBackground>
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {currentEntry.color && (
+                        <>
+                          <ProTooltip tooltip={i18n.t('clearFolderColor')}>
+                            <IconButton
+                              disabled={!Pro}
+                              aria-label="clear"
+                              size="small"
+                              style={{ marginTop: 5 }}
+                              onClick={() =>
+                                setConfirmResetColorDialogOpened(true)
+                              }
+                            >
+                              <ClearColorIcon />
+                            </IconButton>
+                          </ProTooltip>
+                          {isConfirmResetColorDialogOpened && (
+                            <ConfirmDialog
+                              open={isConfirmResetColorDialogOpened}
+                              onClose={() => {
+                                setConfirmResetColorDialogOpened(false);
+                              }}
+                              title={i18n.t('core:confirm')}
+                              content={i18n.t('core:confirmResetColor')}
+                              confirmCallback={result => {
+                                if (result) {
+                                  handleChangeColor('transparent');
+                                } else {
+                                  setConfirmResetColorDialogOpened(false);
+                                }
+                              }}
+                              cancelDialogTID="cancelConfirmResetColorDialog"
+                              confirmDialogTID="confirmConfirmResetColorDialog"
+                              confirmDialogContentTID="confirmResetColorDialogContent"
+                            />
+                          )}
+                        </>
                       )}
-                    </>
-                  )}
-                </Grid>
-              </Grid>
+                    </InputAdornment>
+                  )
+                }}
+              />
               {displayColorPicker && (
                 <ColorPickerDialog
                   color={currentEntry.color}
@@ -998,23 +934,13 @@ function EntryProperties(props: Props) {
         </Grid>
 
         <Grid item xs={12}>
-          <div className={classes.fluidGrid}>
-            <div className={classes.gridItem}>
-              <Typography
-                variant="caption"
-                className={classNames(classes.header)}
-                style={{ display: 'block' }}
-              >
-                {i18n.t('core:filePath')}
-              </Typography>
-            </div>
-          </div>
           <FormControl fullWidth={true} className={classes.formControl}>
             <TextField
               margin="dense"
               name="path"
               title={currentEntry.url || currentEntry.path}
               fullWidth={true}
+              label={i18n.t('core:filePath')}
               data-tid="filePathProperties"
               value={currentEntry.path || ''}
               InputProps={{
@@ -1053,27 +979,21 @@ function EntryProperties(props: Props) {
           </FormControl>
         </Grid>
 
-        <Grid item xs={showLinkForDownloading ? 6 : 12}>
-          <Typography
-            variant="caption"
-            className={classNames(classes.header)}
-            style={{ display: 'block', paddingLeft: 5 }}
-          >
-            {i18n.t('core:sharingLink')}
-            <InfoIcon
-              tooltip={i18n.t(
-                'Link for sharing to other TagSpaces installation using the same location IDs'
-              )}
-            />
-          </Typography>
-          <FormControl
-            style={{ marginTop: -10 }}
-            fullWidth={true}
-            className={classes.formControl}
-          >
+        <Grid container item xs={12} spacing={1}>
+          <Grid item xs={showLinkForDownloading ? 6 : 12}>
             <TextField
               margin="dense"
               name="path"
+              label={
+                <>
+                  {i18n.t('core:sharingLink')}
+                  <InfoIcon
+                    tooltip={i18n.t(
+                      'Link for sharing to other TagSpaces installation using the same location IDs'
+                    )}
+                  />
+                </>
+              }
               title="Sharing Link"
               fullWidth={true}
               value={sharingLink}
@@ -1108,41 +1028,35 @@ function EntryProperties(props: Props) {
                 )
               }}
             />
-          </FormControl>
-        </Grid>
+          </Grid>
 
-        {showLinkForDownloading && (
-          <Grid item xs={6}>
-            <Typography
-              variant="caption"
-              className={classNames(classes.header)}
-              style={{ display: 'block', paddingLeft: 5 }}
-            >
-              {i18n.t('Link for downloading')}
-              <InfoIcon
-                tooltip={i18n.t(
-                  'Link for time limited sharing on the Internet'
-                )}
-              />
-            </Typography>
-            <FormControl
-              style={{ marginTop: -10 }}
-              fullWidth={true}
-              className={classes.formControl}
-            >
+          {showLinkForDownloading && (
+            <Grid item xs={6}>
               <TextField
                 margin="dense"
                 name="path"
+                label={
+                  <>
+                    {i18n.t('Link for downloading')}
+                    <InfoIcon
+                      tooltip={i18n.t(
+                        'Link for time limited sharing on the Internet'
+                      )}
+                    />
+                  </>
+                }
                 title="Object Storage Sharing Link"
                 fullWidth={true}
                 value={signedLink}
                 inputRef={objectStorageLinkRef}
                 InputProps={{
                   startAdornment: (
-                    <InputAdornment position="start" style={{ width: 70 }}>
+                    <InputAdornment position="start">
                       <Tooltip title="Link validity duration time">
-                        <Select
-                          style={{ height: 28 }}
+                        <TextField
+                          select
+                          // style={{ minWidth: 80 }}
+                          variant="standard"
                           value={linkValidityDuration}
                           onChange={(event: ChangeEvent<HTMLInputElement>) => {
                             setLinkValidityDuration(
@@ -1155,7 +1069,7 @@ function EntryProperties(props: Props) {
                           <MenuItem value={60 * 60 * 24}>1 day</MenuItem>
                           <MenuItem value={60 * 60 * 24 * 3}>3 days</MenuItem>
                           <MenuItem value={60 * 60 * 24 * 7}>1 week</MenuItem>
-                        </Select>
+                        </TextField>
                       </Tooltip>
                     </InputAdornment>
                   ),
@@ -1173,88 +1087,79 @@ function EntryProperties(props: Props) {
                   )
                 }}
               />
-            </FormControl>
-          </Grid>
-        )}
+            </Grid>
+          )}
+        </Grid>
 
         {!currentEntry.isFile && (
-          <Grid item xs={12}>
-            <div className={classes.fluidGrid}>
-              <div className={classes.gridItem}>
-                <Typography
-                  variant="caption"
-                  className={classNames(classes.header)}
-                  style={{ display: 'block' }}
-                >
-                  {i18n.t('core:choosePerspective')}
-                </Typography>
-              </div>
-            </div>
-            <ProTooltip tooltip={i18n.t('core:choosePerspective')}>
-              <FormControl fullWidth={true} className={classes.formControl}>
-                <PerspectiveSelector
-                  onChange={changePerspective}
-                  defaultValue={perspectiveDefault}
-                  testId="changePerspectiveTID"
-                />
-              </FormControl>
-            </ProTooltip>
+          <Grid item xs={12} style={{ marginTop: 10 }}>
+            <PerspectiveSelector
+              onChange={changePerspective}
+              defaultValue={perspectiveDefault}
+              label={i18n.t('core:choosePerspective')}
+              testId="changePerspectiveTID"
+            />
           </Grid>
         )}
 
         <Grid item xs={12}>
-          <div className={classes.fluidGrid}>
-            <div className={classes.gridItem}>
-              <Typography
-                variant="caption"
-                className={classNames(classes.header)}
-                style={{ display: 'block' }}
-              >
-                {i18n.t('core:thumbnail')}
-              </Typography>
-            </div>
-            {!isReadOnlyMode &&
-              !currentEntry.editMode &&
-              editName === undefined &&
-              editDescription === undefined && (
-                <ProTooltip tooltip={i18n.t('changeThumbnail')}>
-                  <Button
-                    disabled={!Pro}
-                    color="primary"
-                    className={classes.button}
-                    style={{ whiteSpace: 'nowrap' }}
+          <ThumbnailTextField
+            margin="dense"
+            label={i18n.t('core:thumbnail')}
+            fullWidth
+            value=""
+            style={{
+              marginTop: 13,
+              minHeight: AppConfig.maxThumbSize + 20,
+              maxHeight: AppConfig.maxThumbSize + 20
+            }}
+            InputProps={{
+              readOnly: true,
+              startAdornment: (
+                <InputAdornment position="start">
+                  {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/control-has-associated-label */}
+                  <div
                     onClick={toggleThumbFilesDialog}
-                  >
-                    {i18n.t('core:changeThumbnail')}
-                  </Button>
-                </ProTooltip>
-              )}
-          </div>
-          <div className={classes.fluidGrid}>
-            <div
-              className={classes.gridItem}
-              title={i18n.t('core:changeThumbnail')}
-            >
-              {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/control-has-associated-label */}
-              <div
-                className={classes.header}
-                onClick={toggleThumbFilesDialog}
-                role="button"
-                tabIndex={0}
-                style={{
-                  backgroundSize: 'contain',
-                  backgroundRepeat: 'no-repeat',
-                  backgroundImage: thumbPathUrl,
-                  backgroundPosition: 'center',
-                  minHeight: AppConfig.maxThumbSize,
-                  maxHeight: AppConfig.maxThumbSize,
-                  maxWidth: AppConfig.maxThumbSize,
-                  display: 'block',
-                  marginBottom: 5
-                }}
-              />
-            </div>
-          </div>
+                    role="button"
+                    title={i18n.t('core:changeThumbnail')}
+                    tabIndex={0}
+                    style={{
+                      backgroundSize: 'contain',
+                      backgroundRepeat: 'no-repeat',
+                      backgroundImage: thumbPathUrl,
+                      backgroundPosition: 'center',
+                      minHeight: AppConfig.maxThumbSize,
+                      maxHeight: AppConfig.maxThumbSize,
+                      minWidth: AppConfig.maxThumbSize,
+                      maxWidth: AppConfig.maxThumbSize,
+                      display: 'block',
+                      marginBottom: 5
+                    }}
+                  />
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  {!isReadOnlyMode &&
+                    !currentEntry.editMode &&
+                    editName === undefined &&
+                    editDescription === undefined && (
+                      <ProTooltip tooltip={i18n.t('changeThumbnail')}>
+                        <IconButton
+                          disabled={!Pro}
+                          color="primary"
+                          className={classes.button}
+                          style={{ whiteSpace: 'nowrap' }}
+                          onClick={toggleThumbFilesDialog}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                      </ProTooltip>
+                    )}
+                </InputAdornment>
+              )
+            }}
+          />
         </Grid>
       </Grid>
       {isMoveCopyFilesDialogOpened && (
@@ -1276,6 +1181,16 @@ function EntryProperties(props: Props) {
     </div>
   );
 }
+
+const ThumbnailTextField = withStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      '& .MuiInputBase-root': {
+        height: AppConfig.maxThumbSize + 20
+      }
+    }
+  })
+)(TextField);
 
 export default withLeaflet(
   withStyles(styles, { withTheme: true })(EntryProperties)

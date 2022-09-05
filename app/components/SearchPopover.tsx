@@ -39,6 +39,7 @@ import BookIcon from '@mui/icons-material/LocalLibraryOutlined';
 import DateIcon from '@mui/icons-material/DateRange';
 import Button from '@mui/material/Button';
 import Input from '@mui/material/Input';
+import OutlinedInput from '@mui/material/OutlinedInput';
 import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -721,7 +722,13 @@ function SearchPopover(props: Props) {
                   style={{ width: '100%' }}
                   value={JSON.stringify(fileTypes.current)}
                   onChange={handleFileTypeChange}
-                  input={<Input name="fileTypes" id="file-type" />}
+                  input={
+                    <OutlinedInput
+                      name="fileTypes"
+                      id="file-type"
+                      label={i18n.t('core:fileType')}
+                    />
+                  }
                 >
                   <MenuItem value={JSON.stringify(FileTypeGroups.any)}>
                     {i18n.t('core:anyType')}
@@ -829,10 +836,16 @@ function SearchPopover(props: Props) {
                   {i18n.t('core:sizeSearchTitle')}
                 </InputLabel>
                 <Select
-                  style={{ width: '100%' }}
+                  fullWidth
                   value={fileSize.current}
                   onChange={handleFileSizeChange}
-                  input={<Input name="fileSize" id="file-size" />}
+                  input={
+                    <OutlinedInput
+                      name="fileSize"
+                      id="file-size"
+                      label={i18n.t('core:sizeSearchTitle')}
+                    />
+                  }
                   displayEmpty
                 >
                   <MenuItem value="">{i18n.t('core:sizeAny')}</MenuItem>
@@ -875,10 +888,16 @@ function SearchPopover(props: Props) {
                   {i18n.t('core:lastModifiedSearchTitle')}
                 </InputLabel>
                 <Select
+                  fullWidth
                   value={lastModified.current}
-                  style={{ width: '100%' }}
                   onChange={handleLastModifiedChange}
-                  input={<Input name="lastModified" id="modification-date" />}
+                  input={
+                    <OutlinedInput
+                      name="lastModified"
+                      id="modification-date"
+                      label={i18n.t('core:lastModifiedSearchTitle')}
+                    />
+                  }
                   displayEmpty
                 >
                   <MenuItem value="">{i18n.t('core:anyTime')}</MenuItem>
@@ -962,10 +981,16 @@ function SearchPopover(props: Props) {
                   {i18n.t('core:savedSearchesTitle')}
                 </InputLabel>
                 <Select
-                  style={{ width: '100%' }}
                   onChange={handleSavedSearchChange}
-                  input={<Input name="savedSearch" id="saved-searches" />}
+                  input={
+                    <OutlinedInput
+                      name="savedSearch"
+                      id="saved-searches"
+                      label={i18n.t('core:savedSearchesTitle')}
+                    />
+                  }
                   displayEmpty
+                  fullWidth
                   value={props.searchQuery.uuid ? props.searchQuery.uuid : -1}
                 >
                   <MenuItem value={-1} style={{ display: 'none' }} />

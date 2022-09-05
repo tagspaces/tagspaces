@@ -140,7 +140,7 @@ function AddRemoveTagsDialog(props: Props) {
       <DialogContent
         style={{
           minHeight: 330,
-          paddingTop: 1,
+          paddingTop: 10,
           // @ts-ignore
           overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
           overflowX: 'hidden'
@@ -149,6 +149,7 @@ function AddRemoveTagsDialog(props: Props) {
         <TagsSelect
           dataTid="AddRemoveTagsSelectTID"
           placeholderText={i18n.t('core:selectTags')}
+          label={i18n.t('core:fileTags')}
           tags={newlyAddedTags}
           handleChange={handleChange}
           tagMode="remove"

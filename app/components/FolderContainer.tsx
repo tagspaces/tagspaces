@@ -27,7 +27,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
-import AdvancedSearchIcon from '@mui/icons-material/Tune';
+import AdvancedSearchIcon from '@mui/icons-material/FilterAlt';
 import MenuIcon from '@mui/icons-material/MenuOpen';
 import Badge from '@mui/material/Badge';
 import withStyles from '@mui/styles/withStyles';

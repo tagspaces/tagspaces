@@ -110,29 +110,18 @@ const styles: any = (theme: any) => ({
     display: 'flex',
     alignItems: 'center',
     overflowX: AppConfig.isFirefox ? 'auto' : 'overlay',
+    overflowY: 'hidden',
     paddingRight: 100
   },
   fileBadge: {
     color: 'white',
     backgroundColor: AppConfig.defaultFileColor,
-    padding: '2px 5px 0px 5px',
+    padding: '2px 5px 4px 5px',
     textShadow: '1px 1px #8f8f8f',
     minHeight: 18,
     fontSize: 13,
     marginLeft: 3,
-    marginTop: -2,
     borderRadius: 3
-  },
-  entryNameButton: {
-    paddingTop: 1,
-    paddingRight: 0,
-    paddingLeft: 6,
-    paddingBottom: 0,
-    minWidth: 20,
-    height: 44,
-    justifyContent: 'unset',
-    color: 'inherit !important',
-    whiteSpace: 'nowrap'
   },
   entryCloseSection: {
     zIndex: 1,
@@ -911,24 +900,32 @@ function EntryContainer(props: Props) {
               }}
             >
               <Box className={classes.flexLeft} style={{ paddingRight: 20 }}>
-                {openedFile.isFile ? (
-                  <Button
-                    disabled
-                    title={openedFile.url || openedFile.path}
-                    aria-label={i18n.t('core:toggleEntryProperties')}
-                    className={classes.entryNameButton}
+                <div
+                  title={openedFile.url || openedFile.path}
+                  style={{
+                    paddingTop: 15,
+                    paddingRight: 0,
+                    paddingLeft: 10,
+                    paddingBottom: 0,
+                    minWidth: 20,
+                    height: 44,
+                    color: 'inherit !important'
+                  }}
+                >
+                  <Box
+                    style={{
+                      color: props.theme.palette.text.primary,
+                      display: 'inline',
+                      fontSize: 17
+                    }}
                   >
-                    <Box
-                      style={{
-                        color: props.theme.palette.text.primary
-                      }}
-                    >
-                      {fileChanged.current // openedFile.editMode && openedFile.changed
-                        ? String.fromCharCode(0x25cf) + ' '
-                        : ''}
-                      {fileTitle}
-                    </Box>
-                    <Box
+                    {openedFile.isFile && fileChanged.current // openedFile.editMode && openedFile.changed
+                      ? String.fromCharCode(0x25cf) + ' '
+                      : ''}
+                    {fileTitle}
+                  </Box>
+                  {openedFile.isFile ? (
+                    <span
                       className={classes.fileBadge}
                       title={i18n.t('core:toggleEntryProperties')}
                       style={{
@@ -940,22 +937,9 @@ function EntryContainer(props: Props) {
                           openedFile.path,
                           PlatformIO.getDirSeparator()
                         )}
-                    </Box>
-                  </Button>
-                ) : (
-                  <Button
-                    disabled
-                    aria-label={i18n.t('core:toggleEntryProperties')}
-                    className={classes.entryNameButton}
-                  >
-                    <Box
-                      style={{
-                        color: props.theme.palette.text.primary
-                      }}
-                    >
-                      {fileTitle}
-                    </Box>
-                    <Box
+                    </span>
+                  ) : (
+                    <span
                       className={classes.fileBadge}
                       title={i18n.t('core:toggleEntryProperties')}
                       style={{
@@ -963,9 +947,9 @@ function EntryContainer(props: Props) {
                       }}
                     >
                       {i18n.t('core:folder')}
-                    </Box>
-                  </Button>
-                )}
+                    </span>
+                  )}
+                </div>
                 <TagsPreview tags={openedFile.tags} />
               </Box>
               <div className={classes.entryCloseSection}>

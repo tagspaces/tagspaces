@@ -47,9 +47,9 @@ The native Windows, Linux and Mac OS versions of TagSpaces are built with [Elect
     ./cordova............ contains the code needed for running the Android version
     ./dll................ contains the files needed for live reload in development mode
     ./internals.......... contains files needed for supporting Flow and Eslint
-    ./node_modules....... after yarn install, you will find here the external dependencies of the application
+    ./node_modules....... after npm install, you will find here the external dependencies of the application
     ./resources.......... contains images and other files needed for the application building
-    ./scripts............ contains js script needed for the yarn/npm tasks
+    ./scripts............ contains js script needed for the npm tasks
     ./test............... contains unit and e2e tests of the app
     ./web................ contains assets needed for the web version of the app
 
@@ -58,7 +58,7 @@ The native Windows, Linux and Mac OS versions of TagSpaces are built with [Elect
 In order to run TagSpaces on your Windows, Mac OS or Linux from the source code published here, you will need the following prerequisites:
 
 - [node.js](https://nodejs.org/)
-- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com), currently we prefer yarn
+- [npm](https://www.npmjs.com/)
 - [git](http://git-scm.org/)
 
 Get the TagSpaces source code by cloning its repository:
@@ -77,11 +77,11 @@ Change to the branch with the name **develop**:
 
 and install the project dependencies:
 
-    $ yarn install
+    $ npm install
 
 The last command will automatically build the application with webpack. Now it is time to install all the TagSpaces extensions:
 
-    $ yarn install-ext-node
+    $ npm run install-ext-node
 
 Starting from v4 of the application, a web service is running locally as a separate process. The web service is responsible for the search index creation and the generation of the thumbnails for most of the images formats. A key is required in order for the main application to communicate with the web server. It should be defined in the `.env` file located in `app` folder. This is an example for an .env file.
 
@@ -91,58 +91,58 @@ Having a custom key, ensures that another instance of TagSpaces will not communi
 
 Now you are ready and can build and start (bs) the application with:
 
-    $ yarn bs
+    $ npm run bs
 
 If you want to try the development mode, you can start it by:
 
-    $ yarn dev
+    $ npm run dev
 
 This will start a development server in background, which watches for changes in background and refreshes the application automatically once you have done some changes in the source code.
 
 ## Package for Windows, Linux and macOS
 
-Building of the packages can be accomplished with the integrated yarn scripts:
+Building of the packages can be accomplished with the integrated npm scripts:
 
 ```bash
-$ yarn package-win
+$ npm run package-win
 
-$ yarn package-linux
+$ npm run package-linux
 
-$ yarn package-mac
+$ npm run package-mac
 
-$ yarn package-mac-arm64
+$ npm run package-mac-arm64
 ```
 
-The commands will create packages for Windows, Linux, Mac OS and Mac OS with the M1 processor respectively. Do not forget to run the `yarn build` script before packaging.
+The commands will create packages for Windows, Linux, Mac OS and Mac OS with the M1 processor respectively. Do not forget to run the `npm run build` script before packaging.
 
-## Package the  Android
+## Package the Android
 
-Building of the packages for Android can be accomplished with the integrated yarn scripts:
+Building of the packages for Android can be accomplished with the integrated npm scripts:
 
 ```bash
-$ yarn version-meta
+$ npm run version-meta
 
-$ yarn prepare-cordova
+$ npm run prepare-cordova
 
-$ yarn package-android
+$ npm run package-android
 ```
 
 ## Start the web version locally
 
-For developing purposes and local tests, the web version of the app can be started with the following yarn command:
+For developing purposes and local tests, the web version of the app can be started with the following npm command:
 
-    $ yarn run-web
+    $ npm run run-web
 
 ## Running Tests
 
 To run tests, run the following command
 
 ```bash
-yarn test-unit
+npm run test-unit
 
-yarn test-e2e-electron
+npm run test-e2e-electron
 
-yarn test-e2e-web
+npm run test-e2e-web
 ```
 
 ## Developing viewer and editor for TagSpaces

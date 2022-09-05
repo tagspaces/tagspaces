@@ -23,7 +23,14 @@ import React from 'react';
 
 function LoadingLazy() {
   return (
-    <div style={{ width: 1, height: 1, backgroundColor: 'transparent' }}>
+    <div
+      style={{
+        width: 1,
+        height: 1,
+        backgroundColor: 'transparent',
+        padding: 10
+      }}
+    >
       ...
     </div>
   );

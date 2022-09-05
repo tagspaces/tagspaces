@@ -29,9 +29,9 @@ function InfoIcon(props: Props) {
   const { tooltip } = props;
   return (
     <Tooltip arrow title={tooltip}>
-      <IconButton edge="end" aria-label="delete" size="large">
-        <HelpIcon />
-      </IconButton>
+      {/* <IconButton edge="end" aria-label="delete" size="large"> */}
+      <HelpIcon />
+      {/* </IconButton> */}
     </Tooltip>
   );
 }
