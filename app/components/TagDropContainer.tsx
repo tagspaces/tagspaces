@@ -75,7 +75,7 @@ function TagDropContainer(props: Props) {
       style={{
         border,
         backgroundColor,
-        paddingRight: 10,
+        // paddingRight: 10,
         borderRadius: 5
       }}
     >
