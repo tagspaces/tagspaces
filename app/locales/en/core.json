@@ -655,5 +655,8 @@
   "WebdavAuth": "WebDAV authorization type",
   "selectedFiles": "Selected files",
   "selectedFilesAndFolders": "Selected files and folders",
+  "fileOpenHistory": "File Open History",
+  "folderOpenHistory": "Folder Open History" ,
+  "fileEditHistory": "File Edit History",
   "-": "-"
 }

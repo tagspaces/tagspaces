@@ -525,7 +525,7 @@ function EntryContainer(props: Props) {
       shouldReload: undefined
     });
     if (Pro) {
-      saveHistory(historyKeys.fileEditKey, openedFile.path);
+      saveHistory(historyKeys.fileEditKey, openedFile.path, props.settings[historyKeys.fileEditKey]);
     }
     // setFileView(renderFileView());
   };

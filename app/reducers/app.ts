@@ -1791,9 +1791,9 @@ export const actions = {
      */
     if (Pro) {
       if (fsEntry.isFile) {
-        saveHistory(historyKeys.fileOpenKey, fsEntry.path);
+        saveHistory(historyKeys.fileOpenKey, fsEntry.path, getState().settings[historyKeys.fileOpenKey]);
       } else {
-        saveHistory(historyKeys.folderOpenKey, fsEntry.path);
+        saveHistory(historyKeys.folderOpenKey, fsEntry.path, getState().settings[historyKeys.folderOpenKey]);
       }
     }
     /**

@@ -66,6 +66,15 @@ function StoredSearches(props: Props) {
   const [storedSearchesVisible, setStoredSearchesVisible] = useState<boolean>(
     true
   );
+  const [fileOpenHistory, setFileOpenHistory] = useState<boolean>(
+    true
+  );
+  const [folderOpenHistory, setFolderOpenHistory] = useState<boolean>(
+    true
+  );
+  const [fileEditHistory, setfileEditHistory] = useState<boolean>(
+    true
+  );
   const [
     searchMenuAnchorEl,
     setSearchMenuAnchorEl
@@ -229,7 +238,48 @@ function StoredSearches(props: Props) {
             </React.Fragment>
           ))}
       </Grid>
-      {SaveSearchDialog && saveSearchDialogOpened !== undefined && (
+      <Grid container direction="row">
+        <Grid item xs={10} style={{ alignSelf: 'center' }}>
+          <IconButton
+            style={{ minWidth: 'auto', padding: 7 }}
+            onClick={() => setFileOpenHistory(!fileOpenHistory)}
+            size="large"
+          >
+            {fileOpenHistory ? <ArrowDownIcon /> : <ArrowRightIcon />}
+          </IconButton>
+          <Typography
+            variant="inherit"
+            // className={props.classes.header}
+            style={{ textTransform: 'uppercase', display: 'inline' }}
+            noWrap
+            onClick={() => setFileOpenHistory(!fileOpenHistory)}
+          >
+            {i18n.t('core:fileOpenHistoryTitle')}
+          </Typography>
+        </Grid>
+        <Grid item xs={2} style={{ alignSelf: 'center' }}>
+          <SearchMenu
+            anchorEl={searchMenuAnchorEl}
+            open={Boolean(searchMenuAnchorEl)}
+            onClose={handleCloseSearchMenu}
+            openURLExternally={props.openURLExternally}
+            exportSearches={() => {
+              setExportSearchesDialogOpened(true);
+            }}
+            importSearches={() => {
+              fileInputRef.current.click();
+            }}
+          />
+          <IconButton
+            style={{ minWidth: 'auto', padding: 7 }}
+            onClick={handleSearchMenu}
+            size="large"
+          >
+            <MenuIcon />
+          </IconButton>
+        </Grid>
+      </Grid>
+      {SaveSearchDialog && (
         <SaveSearchDialog
           open={saveSearchDialogOpened !== undefined}
           onClose={(searchQuery: TS.SearchQuery) => {
