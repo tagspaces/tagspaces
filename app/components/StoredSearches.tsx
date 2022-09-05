@@ -16,13 +16,15 @@
  *
  */
 
-import React, { useRef, useState } from 'react';
+import React, { useReducer, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import MenuIcon from '@mui/icons-material/MoreVert';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -43,6 +45,17 @@ import { actions as SearchActions, getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
 import SearchMenu from '-/components/menus/SearchMenu';
 import { actions as AppActions } from '-/reducers/app';
+import {
+  delAllHistory,
+  delHistory,
+  getHistory,
+  historyKeys
+} from '../../extensions/tagspacespro/modules/history';
+import { getAllPropertiesPromise } from '-/services/utils-io';
+import { Tooltip } from '@mui/material';
+import { extractFileName } from '@tagspaces/tagspaces-platforms/paths';
+import PlatformIO from '-/services/platform-facade';
+import HistoryMenu from '-/components/menus/HistoryMenu';
 
 interface Props {
   style?: any;
@@ -55,6 +68,7 @@ interface Props {
   addSearches: (searches: Array<TS.SearchQuery>) => void;
   openURLExternally: (url: string) => void;
   reduceHeightBy: number;
+  openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
 }
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
@@ -66,18 +80,16 @@ function StoredSearches(props: Props) {
   const [storedSearchesVisible, setStoredSearchesVisible] = useState<boolean>(
     true
   );
-  const [fileOpenHistory, setFileOpenHistory] = useState<boolean>(
-    true
-  );
-  const [folderOpenHistory, setFolderOpenHistory] = useState<boolean>(
-    true
-  );
-  const [fileEditHistory, setfileEditHistory] = useState<boolean>(
-    true
-  );
+  const [fileOpenHistory, setFileOpenHistory] = useState<boolean>(true);
+  const [folderOpenHistory, setFolderOpenHistory] = useState<boolean>(true);
+  const [fileEditHistory, setFileEditHistory] = useState<boolean>(true);
   const [
     searchMenuAnchorEl,
     setSearchMenuAnchorEl
+  ] = useState<null | HTMLElement>(null);
+  const [
+    historyMenuAnchorEl,
+    setHistoryMenuAnchorEl
   ] = useState<null | HTMLElement>(null);
 
   const [
@@ -87,6 +99,8 @@ function StoredSearches(props: Props) {
 
   const [importFile, setImportFile] = useState<File>(undefined);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const menuHistoryKey = useRef<string>(undefined);
+  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
   const ExportSearchesDialog =
     Pro && Pro.UI ? Pro.UI.ExportSearchesDialog : false;
@@ -146,6 +160,64 @@ function StoredSearches(props: Props) {
   const noSearchesFound = props.searches.length < 1;
 
   const { reduceHeightBy } = props;
+
+  const fileOpenHistoryItems = getHistory(historyKeys.fileOpenKey);
+  const fileEditHistoryItems = getHistory(historyKeys.fileEditKey);
+  const folderOpenHistoryItems = getHistory(historyKeys.folderOpenKey);
+
+  const renderHistory = (historyKey, items) => (
+    <Grid container direction="row">
+      {items &&
+        items.map(history => (
+          <React.Fragment key={history.dt}>
+            <Grid item xs={10} style={{ display: 'flex' }}>
+              <Tooltip title={history.path}>
+                <Button
+                  style={{
+                    textTransform: 'none',
+                    fontWeight: 'normal',
+                    marginLeft: 5,
+                    width: '100%',
+                    justifyContent: 'start',
+                    wordBreak: 'break-word'
+                  }}
+                  onClick={() => {
+                    getAllPropertiesPromise(history.path)
+                      .then((fsEntry: TS.FileSystemEntry) => {
+                        props.openFsEntry(fsEntry);
+                        return true;
+                      })
+                      .catch(error =>
+                        console.warn(
+                          'Error getting properties for entry: ' +
+                            history.path +
+                            ' - ' +
+                            error
+                        )
+                      );
+                  }}
+                >
+                  {extractFileName(history.path, PlatformIO.getDirSeparator())}
+                </Button>
+              </Tooltip>
+            </Grid>
+            <Grid item xs={2} style={{ display: 'flex' }}>
+              <IconButton
+                aria-label={i18n.t('core:searchEditBtn')}
+                onClick={() => {
+                  delHistory(historyKey, history.dt);
+                  forceUpdate();
+                }}
+                data-tid="editSearchTID"
+                size="large"
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Grid>
+          </React.Fragment>
+        ))}
+    </Grid>
+  );
 
   return (
     <div
@@ -249,39 +321,108 @@ function StoredSearches(props: Props) {
           </IconButton>
           <Typography
             variant="inherit"
-            // className={props.classes.header}
             style={{ textTransform: 'uppercase', display: 'inline' }}
             noWrap
             onClick={() => setFileOpenHistory(!fileOpenHistory)}
           >
-            {i18n.t('core:fileOpenHistoryTitle')}
+            {i18n.t('core:fileOpenHistory')}
           </Typography>
         </Grid>
         <Grid item xs={2} style={{ alignSelf: 'center' }}>
-          <SearchMenu
-            anchorEl={searchMenuAnchorEl}
-            open={Boolean(searchMenuAnchorEl)}
-            onClose={handleCloseSearchMenu}
-            openURLExternally={props.openURLExternally}
-            exportSearches={() => {
-              setExportSearchesDialogOpened(true);
-            }}
-            importSearches={() => {
-              fileInputRef.current.click();
-            }}
-          />
           <IconButton
             style={{ minWidth: 'auto', padding: 7 }}
-            onClick={handleSearchMenu}
+            onClick={(event: any) => {
+              menuHistoryKey.current = historyKeys.fileOpenKey;
+              setHistoryMenuAnchorEl(event.currentTarget);
+            }}
             size="large"
           >
             <MenuIcon />
           </IconButton>
         </Grid>
       </Grid>
-      {SaveSearchDialog && (
+      {fileOpenHistory &&
+        renderHistory(historyKeys.fileOpenKey, fileOpenHistoryItems)}
+      <Grid container direction="row">
+        <Grid item xs={10} style={{ alignSelf: 'center' }}>
+          <IconButton
+            style={{ minWidth: 'auto', padding: 7 }}
+            onClick={() => setFileEditHistory(!fileEditHistory)}
+            size="large"
+          >
+            {fileEditHistory ? <ArrowDownIcon /> : <ArrowRightIcon />}
+          </IconButton>
+          <Typography
+            variant="inherit"
+            // className={props.classes.header}
+            style={{ textTransform: 'uppercase', display: 'inline' }}
+            noWrap
+            onClick={() => setFileEditHistory(!fileEditHistory)}
+          >
+            {i18n.t('core:fileEditHistory')}
+          </Typography>
+        </Grid>
+        <Grid item xs={2} style={{ alignSelf: 'center' }}>
+          <IconButton
+            style={{ minWidth: 'auto', padding: 7 }}
+            onClick={(event: any) => {
+              menuHistoryKey.current = historyKeys.fileEditKey;
+              setHistoryMenuAnchorEl(event.currentTarget);
+            }}
+            size="large"
+          >
+            <MenuIcon />
+          </IconButton>
+        </Grid>
+      </Grid>
+      {fileEditHistory &&
+        renderHistory(historyKeys.fileEditKey, fileEditHistoryItems)}
+      <Grid container direction="row">
+        <Grid item xs={10} style={{ alignSelf: 'center' }}>
+          <IconButton
+            style={{ minWidth: 'auto', padding: 7 }}
+            onClick={() => setFolderOpenHistory(!folderOpenHistory)}
+            size="large"
+          >
+            {folderOpenHistory ? <ArrowDownIcon /> : <ArrowRightIcon />}
+          </IconButton>
+          <Typography
+            variant="inherit"
+            style={{ textTransform: 'uppercase', display: 'inline' }}
+            noWrap
+            onClick={() => setFolderOpenHistory(!folderOpenHistory)}
+          >
+            {i18n.t('core:folderOpenHistory')}
+          </Typography>
+        </Grid>
+        <Grid item xs={2} style={{ alignSelf: 'center' }}>
+          <IconButton
+            style={{ minWidth: 'auto', padding: 7 }}
+            onClick={(event: any) => {
+              menuHistoryKey.current = historyKeys.folderOpenKey;
+              setHistoryMenuAnchorEl(event.currentTarget);
+            }}
+            size="large"
+          >
+            <MenuIcon />
+          </IconButton>
+        </Grid>
+      </Grid>
+      <HistoryMenu
+        anchorEl={historyMenuAnchorEl}
+        open={Boolean(historyMenuAnchorEl)}
+        onClose={() => setHistoryMenuAnchorEl(null)}
+        refreshHistory={() => forceUpdate()}
+        clearAll={() => {
+          delAllHistory(menuHistoryKey.current); //historyKeys.fileOpenKey);
+          forceUpdate();
+        }}
+      />
+      {folderOpenHistory &&
+        renderHistory(historyKeys.folderOpenKey, folderOpenHistoryItems)}
+      {SaveSearchDialog && saveSearchDialogOpened !== undefined && (
         <SaveSearchDialog
-          open={saveSearchDialogOpened !== undefined}
+          open={true}
           onClose={(searchQuery: TS.SearchQuery) => {
             setSaveSearchDialogOpened(undefined);
             if (searchQuery) {
@@ -350,7 +491,8 @@ function mapDispatchToProps(dispatch) {
       setSearchQuery: LocationIndexActions.setSearchQuery,
       // searchAllLocations: LocationIndexActions.searchAllLocations,
       // searchLocationIndex: LocationIndexActions.searchLocationIndex,
-      openURLExternally: AppActions.openURLExternally
+      openURLExternally: AppActions.openURLExternally,
+      openFsEntry: AppActions.openFsEntry
     },
     dispatch
   );

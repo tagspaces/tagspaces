@@ -659,5 +659,7 @@
   "fileOpenHistory": "File Open History",
   "folderOpenHistory": "Folder Open History" ,
   "fileEditHistory": "File Edit History",
+  "refreshHistory": "Refresh History",
+  "deleteHistory": "Delete History",
   "-": "-"
 }
