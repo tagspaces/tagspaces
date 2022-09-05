@@ -1,3 +1,5 @@
+import { PerspectiveIDs } from '-/perspectives';
+
 /**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
@@ -139,6 +141,28 @@ export namespace TS {
     lastUpdated: string;
     files?: Array<FileSystemEntry>;
     dirs?: Array<FileSystemEntry>;
+    perspectiveSettings?: PerspectiveSettings;
+  }
+
+  interface PerspectiveSettings {
+    grid?: FolderSettings;
+    list?: FolderSettings;
+    gallery?: FolderSettings;
+    mapique?: FolderSettings;
+    kanban?: FolderSettings;
+    wiki?: FolderSettings;
+  }
+
+  interface FolderSettings {
+    showDirectories?: boolean;
+    showTags?: boolean;
+    layoutType?: string;
+    orderBy?: boolean;
+    sortBy?: string;
+    singleClickAction?: string;
+    entrySize?: string;
+    thumbnailMode?: string;
+    gridPageLimit?: number;
   }
 
   interface MapTileServer {

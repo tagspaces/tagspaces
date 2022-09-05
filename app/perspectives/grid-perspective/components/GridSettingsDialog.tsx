@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useReducer, useRef } from 'react';
 import {
   Dialog,
   DialogActions,
@@ -42,6 +42,7 @@ import RadioUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import withStyles from '@mui/styles/withStyles';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import i18n from '-/services/i18n';
+import { Pro } from '-/pro';
 
 const styles: any = {
   root: {
@@ -63,24 +64,31 @@ const styles: any = {
 interface Props {
   open: boolean;
   gridPageLimit: number;
-  onClose: () => void;
+  onClose: (isDefault?: boolean) => void;
   setGridPageLimit: (number) => void;
   toggleShowDirectories: () => void;
   toggleShowTags: () => void;
   showDirectories: boolean;
   showTags: boolean;
-  toggleThumbnailsMode: () => void;
+  toggleThumbnailsMode: () => string;
   thumbnailMode: string;
   changeEntrySize: (entrySize: string) => void;
   entrySize: string;
   changeSingleClickAction: (actionType: string) => void;
   singleClickAction: string;
   openHelpWebPage: () => void;
+  sortBy: string;
+  orderBy: boolean;
+  handleSortingMenu: (event) => void;
   classes: any;
   // setShowDirectories: (check: boolean) => void;
 }
 
 function GridSettingsDialog(props: Props) {
+  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  const thumbnailMode = useRef<string>(props.thumbnailMode);
+  const entrySize = useRef<string>(props.entrySize);
+  const singleClickAction = useRef<string>(props.singleClickAction);
   const {
     open,
     onClose,
@@ -90,11 +98,8 @@ function GridSettingsDialog(props: Props) {
     toggleShowTags,
     showTags,
     toggleThumbnailsMode,
-    thumbnailMode,
     changeEntrySize,
-    entrySize,
     changeSingleClickAction,
-    singleClickAction,
     openHelpWebPage
   } = props;
 
@@ -121,10 +126,10 @@ function GridSettingsDialog(props: Props) {
   }
 
   return (
-    <Dialog open={open} onClose={onClose} keepMounted scroll="paper">
+    <Dialog open={open} onClose={() => onClose()} keepMounted scroll="paper">
       <DialogTitle>
         {i18n.t('core:perspectiveSettingsTitle')}
-        <DialogCloseButton onClose={onClose} />
+        <DialogCloseButton onClose={() => onClose()} />
       </DialogTitle>
       <DialogContent>
         <FormGroup>
@@ -132,7 +137,7 @@ function GridSettingsDialog(props: Props) {
             control={
               <Switch
                 data-tid="gridPerspectiveToggleShowDirectories"
-                checked={showDirectories}
+                defaultChecked={showDirectories}
                 onChange={toggleShowDirectories}
                 name="checkedB"
                 color="primary"
@@ -144,7 +149,7 @@ function GridSettingsDialog(props: Props) {
             control={
               <Switch
                 data-tid="gridPerspectiveToggleShowTags"
-                checked={showTags}
+                defaultChecked={showTags}
                 onChange={toggleShowTags}
                 name="checkedB"
                 color="primary"
@@ -158,10 +163,13 @@ function GridSettingsDialog(props: Props) {
           data-tid="gridPerspectiveToggleThumbnailsMode"
           title={i18n.t('core:toggleThumbnailModeTitle')}
           aria-label={i18n.t('core:toggleThumbnailMode')}
-          onClick={toggleThumbnailsMode}
+          onClick={() => {
+            thumbnailMode.current = toggleThumbnailsMode();
+            forceUpdate();
+          }}
         >
           <ListItemIcon>
-            {thumbnailMode === 'cover' ? (
+            {thumbnailMode.current === 'cover' ? (
               <ThumbnailCoverIcon />
             ) : (
               <ThumbnailContainIcon />
@@ -171,13 +179,36 @@ function GridSettingsDialog(props: Props) {
         </MenuItem>
         <Divider />
         <MenuItem
+          data-tid="sortByMenuTID"
+          title={i18n.t('core:sortBy')}
+          aria-label={i18n.t('core:sortBy')}
+          onClick={e => {
+            props.handleSortingMenu(e);
+          }}
+        >
+          <ListItemText
+            primary={
+              i18n.t('core:sort') +
+              ': ' +
+              i18n.t(props.sortBy) +
+              ' ' +
+              (props.orderBy ? 'ASC' : 'DESC')
+            }
+          />
+        </MenuItem>
+        <Divider />
+        <MenuItem
           data-tid="gridPerspectiveEntrySizeSmall"
           title={i18n.t('core:entrySizeSmall')}
           aria-label={i18n.t('core:entrySizeSmall')}
-          onClick={() => changeEntrySize('small')}
+          onClick={() => {
+            changeEntrySize('small');
+            entrySize.current = 'small';
+            forceUpdate();
+          }}
         >
           <ListItemIcon>
-            {entrySize === 'small' ? (
+            {entrySize.current === 'small' ? (
               <RadioCheckedIcon />
             ) : (
               <RadioUncheckedIcon />
@@ -189,10 +220,14 @@ function GridSettingsDialog(props: Props) {
           data-tid="gridPerspectiveEntrySizeNormal"
           title={i18n.t('core:entrySizeNormal')}
           aria-label={i18n.t('core:entrySizeNormal')}
-          onClick={() => changeEntrySize('normal')}
+          onClick={() => {
+            changeEntrySize('normal');
+            entrySize.current = 'normal';
+            forceUpdate();
+          }}
         >
           <ListItemIcon>
-            {entrySize === 'normal' ? (
+            {entrySize.current === 'normal' ? (
               <RadioCheckedIcon />
             ) : (
               <RadioUncheckedIcon />
@@ -204,10 +239,14 @@ function GridSettingsDialog(props: Props) {
           data-tid="gridPerspectiveEntrySizeBig"
           title={i18n.t('core:entrySizeBig')}
           aria-label={i18n.t('core:entrySizeBig')}
-          onClick={() => changeEntrySize('big')}
+          onClick={() => {
+            changeEntrySize('big');
+            entrySize.current = 'big';
+            forceUpdate();
+          }}
         >
           <ListItemIcon>
-            {entrySize === 'big' ? (
+            {entrySize.current === 'big' ? (
               <RadioCheckedIcon />
             ) : (
               <RadioUncheckedIcon />
@@ -220,10 +259,14 @@ function GridSettingsDialog(props: Props) {
           data-tid="gridPerspectiveSingleClickOpenInternally"
           title={i18n.t('core:singleClickOpenInternally')}
           aria-label={i18n.t('core:singleClickOpenInternally')}
-          onClick={() => changeSingleClickAction('openInternal')}
+          onClick={() => {
+            changeSingleClickAction('openInternal');
+            singleClickAction.current = 'openInternal';
+            forceUpdate();
+          }}
         >
           <ListItemIcon>
-            {singleClickAction === 'openInternal' ? (
+            {singleClickAction.current === 'openInternal' ? (
               <RadioCheckedIcon />
             ) : (
               <RadioUncheckedIcon />
@@ -235,10 +278,14 @@ function GridSettingsDialog(props: Props) {
           data-tid="gridPerspectiveSingleClickOpenExternally"
           title={i18n.t('core:singleClickOpenExternally')}
           aria-label={i18n.t('core:singleClickOpenExternally')}
-          onClick={() => changeSingleClickAction('openExternal')}
+          onClick={() => {
+            changeSingleClickAction('openExternal');
+            singleClickAction.current = 'openExternal';
+            forceUpdate();
+          }}
         >
           <ListItemIcon>
-            {singleClickAction === 'openExternal' ? (
+            {singleClickAction.current === 'openExternal' ? (
               <RadioCheckedIcon />
             ) : (
               <RadioUncheckedIcon />
@@ -250,10 +297,14 @@ function GridSettingsDialog(props: Props) {
           data-tid="gridPerspectiveSingleClickSelects"
           title={i18n.t('core:singleClickSelects')}
           aria-label={i18n.t('core:singleClickSelects')}
-          onClick={() => changeSingleClickAction('selects')}
+          onClick={() => {
+            changeSingleClickAction('selects');
+            singleClickAction.current = 'selects';
+            forceUpdate();
+          }}
         >
           <ListItemIcon>
-            {singleClickAction === 'selects' ? (
+            {singleClickAction.current === 'selects' ? (
               <RadioCheckedIcon />
             ) : (
               <RadioUncheckedIcon />
@@ -292,13 +343,27 @@ function GridSettingsDialog(props: Props) {
           {i18n.t('core:help')}
         </Button>
         <Button
-          data-tid="cancelDialog"
-          title={i18n.t('core:closeButton')}
-          onClick={onClose}
+          data-tid="defaultSettings"
+          title={i18n.t('core:defaultSettings')}
+          onClick={() => {
+            onClose(true);
+          }}
           color="primary"
         >
-          {i18n.t('core:closeButton')}
+          {i18n.t('core:defaultSettings')}
         </Button>
+        {Pro && (
+          <Button
+            data-tid="directorySettings"
+            title={i18n.t('core:directorySettings')}
+            onClick={() => {
+              onClose(false);
+            }}
+            color="primary"
+          >
+            {i18n.t('core:directorySettings')}
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );

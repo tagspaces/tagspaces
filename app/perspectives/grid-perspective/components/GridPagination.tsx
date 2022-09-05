@@ -152,7 +152,7 @@ function GridPagination(props: Props) {
       PlatformIO.getDirSeparator(),
       false
     );
-    if (meta.some(metaFile => thumbPath.endsWith(metaFile.path))) {
+    if (thumbPath && meta.some(metaFile => thumbPath.endsWith(metaFile.path))) {
       thumbEntry.thumbPath = thumbPath;
       if (
         PlatformIO.haveObjectStoreSupport() ||

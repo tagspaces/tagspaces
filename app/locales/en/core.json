@@ -655,6 +655,13 @@
   "WebdavAuth": "WebDAV authorization type",
   "selectedFiles": "Selected files",
   "selectedFilesAndFolders": "Selected files and folders",
+  "defaultSettings": "Set as default",
+  "directorySettings": "Set for this folder",
+  "byName": "By Name",
+  "byFileSize": "By File Size",
+  "byDateModified": "By Date Modified",
+  "byFirstTag": "By First Tag",
+  "byExtension": "By Extension",
   "rename": "Rename",
   "-": "-"
 }
