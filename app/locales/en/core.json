@@ -655,5 +655,6 @@
   "WebdavAuth": "WebDAV authorization type",
   "selectedFiles": "Selected files",
   "selectedFilesAndFolders": "Selected files and folders",
+  "rename": "Rename",
   "-": "-"
 }

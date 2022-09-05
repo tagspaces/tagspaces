@@ -21,7 +21,7 @@ import Input from '@mui/material/Input';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import LayersClearIcon from '@mui/icons-material/LayersClear';
 import ListItemText from '@mui/material/ListItemText';
-import Select from '@mui/material/Select';
+import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import { AvailablePerspectives, PerspectiveIDs } from '-/perspectives';
 import i18n from '../services/i18n';
@@ -30,7 +30,7 @@ import { connect } from 'react-redux';
 import { getCurrentLanguage } from '-/reducers/settings';
 
 function PerspectiveSelector(props) {
-  const { defaultValue, onChange, testId } = props;
+  const { defaultValue, onChange, testId, label } = props;
 
   const perspectiveSelectorMenuItems = [];
   perspectiveSelectorMenuItems.push(
@@ -71,14 +71,17 @@ function PerspectiveSelector(props) {
   });
 
   return (
-    <Select
+    <TextField
       data-tid={testId}
       defaultValue={defaultValue}
       onChange={onChange}
-      input={<Input id="changePerspectiveId" />}
+      select
+      label={label}
+      fullWidth
+      // input={<Input id="changePerspectiveId" />}
     >
       {perspectiveSelectorMenuItems}
-    </Select>
+    </TextField>
   );
 }
 

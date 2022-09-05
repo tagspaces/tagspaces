@@ -915,7 +915,8 @@ function EntryContainer(props: Props) {
                   <Box
                     style={{
                       color: props.theme.palette.text.primary,
-                      display: 'inline'
+                      display: 'inline',
+                      fontSize: 17
                     }}
                   >
                     {openedFile.isFile && fileChanged.current // openedFile.editMode && openedFile.changed
