@@ -656,9 +656,9 @@
   "selectedFiles": "Selected files",
   "selectedFilesAndFolders": "Selected files and folders",
   "rename": "Rename",
-  "fileOpenHistory": "File Open History",
-  "folderOpenHistory": "Folder Open History" ,
-  "fileEditHistory": "File Edit History",
+  "fileOpenHistory": "Last opened files history",
+  "folderOpenHistory": "Last opened folders history",
+  "fileEditHistory": "Last edited files history",
   "refreshHistory": "Refresh History",
   "deleteHistory": "Delete History",
   "-": "-"

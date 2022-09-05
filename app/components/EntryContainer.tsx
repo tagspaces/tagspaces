@@ -496,6 +496,13 @@ function EntryContainer(props: Props) {
           i18n.t('core:fileSavedSuccessfully'),
           NotificationTypes.default
         );
+        if (Pro) {
+          saveHistory(
+            historyKeys.fileEditKey,
+            openedFile.path,
+            props.settings[historyKeys.fileEditKey]
+          );
+        }
         return result;
       })
       .catch(error => {
@@ -513,9 +520,7 @@ function EntryContainer(props: Props) {
       editMode: true,
       shouldReload: undefined
     });
-    if (Pro) {
-      saveHistory(historyKeys.fileEditKey, openedFile.path, props.settings[historyKeys.fileEditKey]);
-    }
+
     // setFileView(renderFileView());
   };
 

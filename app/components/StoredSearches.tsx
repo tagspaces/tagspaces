@@ -171,15 +171,27 @@ function StoredSearches(props: Props) {
         items.map(history => (
           <React.Fragment key={history.dt}>
             <Grid item xs={10} style={{ display: 'flex' }}>
-              <Tooltip title={history.path}>
+              <Tooltip
+                title={
+                  history.path +
+                  ' - ' +
+                  new Date(history.dt)
+                    .toISOString()
+                    .substring(0, 19)
+                    .split('T')
+                    .join(' ')
+                }
+              >
                 <Button
                   style={{
                     textTransform: 'none',
                     fontWeight: 'normal',
                     marginLeft: 5,
-                    width: '100%',
+                    width: '240px',
                     justifyContent: 'start',
-                    wordBreak: 'break-word'
+                    whiteSpace: 'nowrap',
+                    textOverflow: 'ellipsis',
+                    overflow: 'hidden'
                   }}
                   onClick={() => {
                     getAllPropertiesPromise(history.path)
@@ -209,7 +221,7 @@ function StoredSearches(props: Props) {
                   forceUpdate();
                 }}
                 data-tid="editSearchTID"
-                size="large"
+                size="small"
               >
                 <DeleteIcon />
               </IconButton>
@@ -241,7 +253,7 @@ function StoredSearches(props: Props) {
           <Typography
             variant="inherit"
             // className={props.classes.header}
-            style={{ textTransform: 'uppercase', display: 'inline' }}
+            style={{ display: 'inline' }}
             noWrap
             onClick={() => setStoredSearchesVisible(!storedSearchesVisible)}
           >
@@ -302,7 +314,7 @@ function StoredSearches(props: Props) {
                   aria-label={i18n.t('core:searchEditBtn')}
                   onClick={() => editSearch(search.uuid)}
                   data-tid="editSearchTID"
-                  size="large"
+                  size="small"
                 >
                   <EditIcon />
                 </IconButton>
@@ -321,7 +333,7 @@ function StoredSearches(props: Props) {
           </IconButton>
           <Typography
             variant="inherit"
-            style={{ textTransform: 'uppercase', display: 'inline' }}
+            style={{ display: 'inline' }}
             noWrap
             onClick={() => setFileOpenHistory(!fileOpenHistory)}
           >
@@ -355,7 +367,7 @@ function StoredSearches(props: Props) {
           <Typography
             variant="inherit"
             // className={props.classes.header}
-            style={{ textTransform: 'uppercase', display: 'inline' }}
+            style={{ display: 'inline' }}
             noWrap
             onClick={() => setFileEditHistory(!fileEditHistory)}
           >
@@ -388,7 +400,7 @@ function StoredSearches(props: Props) {
           </IconButton>
           <Typography
             variant="inherit"
-            style={{ textTransform: 'uppercase', display: 'inline' }}
+            style={{ display: 'inline' }}
             noWrap
             onClick={() => setFolderOpenHistory(!folderOpenHistory)}
           >

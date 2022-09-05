@@ -407,229 +407,218 @@ export default (state: any = defaultSettings, action: any) => {
 };
 
 export const actions = {
-         addTileServers: (tileServer: TS.MapTileServer, isDefault = false) => ({
-           type: types.ADD_MAPTILE_SERVER,
-           tileServer,
-           isDefault
-         }),
-         editTileServers: (
-           tileServer: TS.MapTileServer,
-           isDefault = false
-         ) => ({
-           type: types.EDIT_MAPTILE_SERVER,
-           tileServer,
-           isDefault
-         }),
-         deleteTileServer: (uuid: string) => ({
-           type: types.DELETE_MAPTILE_SERVER,
-           uuid
-         }),
-         toggleTagGroup: (tagGroupUUID: string) => ({
-           type: types.TOGGLE_TAGGROUP,
-           uuid: tagGroupUUID
-         }),
-         setTagDelimiter: (delimiter: string) => ({
-           type: types.SET_TAG_DELIMITER,
-           delimiter
-         }),
-         setMaxSearchResult: (maxSearchResult: number) => ({
-           type: types.SET_MAX_SEARCH_RESULT,
-           maxSearchResult
-         }),
-         setDesktopMode: (desktopMode: boolean) => ({
-           type: types.SET_DESKTOPMODE,
-           desktopMode
-         }),
-         setEnableWS: (enableWS: boolean) => ({
-           type: types.SET_ENABLE_WS,
-           enableWS
-         }),
-         setWarningOpeningFilesExternally: (
-           warningOpeningFilesExternally: boolean
-         ) => ({
-           type: types.WARNING_OPENING_FILES_EXTERNALLY,
-           warningOpeningFilesExternally
-         }),
-         setSaveTagInLocation: (saveTagInLocation: boolean) => ({
-           type: types.SET_SAVE_TAGS_IN_LOCATION,
-           saveTagInLocation
-         }),
-         toggleShowUnixHiddenEntries: () => ({
-           type: types.TOGGLE_SHOWUNIXHIDDENENTRIES
-         }),
-         setCheckForUpdates: (checkForUpdates: boolean) => ({
-           type: types.SET_CHECKFORUPDATES,
-           checkForUpdates
-         }),
-         reorderTags: (reorderTags: boolean) => ({
-           type: types.SET_REORDER_TAGS,
-           reorderTags
-         }),
-         setLanguage: (language: string) => (dispatch: (action) => void) => {
-           return i18n.changeLanguage(language).then(() => {
-             dispatch(actions.setLanguageInt(language));
-           });
-         },
-         setLanguageInt: (language: string) => ({
-           type: types.SET_LANGUAGE,
-           language
-         }),
-         setUseDefaultLocation: (useDefaultLocation: boolean) => ({
-           type: types.SET_USEDEFAULTLOCATION,
-           useDefaultLocation
-         }),
-         setDefaultPerspective: (defaultPerspective: string) => ({
-           type: types.SET_DEFAULTPERSPECTIVE,
-           defaultPerspective
-         }),
-         setColoredFileExtension: (coloredFileExtension: boolean) => ({
-           type: types.SET_COLOREDFILEEXTENSION,
-           coloredFileExtension
-         }),
-         setShowTagAreaOnStartup: (showTagAreaOnStartup: boolean) => ({
-           type: types.SET_SHOWTAGAREAONSTARTUP,
-           showTagAreaOnStartup
-         }),
-         setLoadsLocationMetaData: (loadsLocationMetaData: boolean) => ({
-           type: types.SET_LOADSLOCATIONMETADATA,
-           loadsLocationMetaData
-         }),
-         setSearchInSubfolders: (searchInSubfolders: boolean) => ({
-           type: types.SET_SEARCHINSUBFOLDERS,
-           searchInSubfolders
-         }),
-         setWatchCurrentDirectory: (watchCurrentDirectory: boolean) => ({
-           type: types.SET_WATCHCURRENTDIRECTORY,
-           watchCurrentDirectory
-         }),
-         setCalculateTags: (calculateTags: boolean) => ({
-           type: types.SET_CALCULATETAGS,
-           calculateTags
-         }),
-         setUseTrashCan: (useTrashCan: boolean) => ({
-           type: types.SET_USETRASHCAN,
-           useTrashCan
-         }),
-         setPersistTagsInSidecarFile: (persistTagsInSidecarFile: boolean) => ({
-           type: types.SET_PERSISTTAGSINSIDECARFILE,
-           persistTagsInSidecarFile
-         }),
-         setAddTagsToLibrary: (addTagsToLibrary: boolean) => ({
-           type: types.SET_ADDTAGSTOLIBRARY,
-           addTagsToLibrary
-         }),
-         setUseGenerateThumbnails: (useGenerateThumbnails: boolean) => ({
-           type: types.SET_USEGENERATETHUMBNAILS,
-           useGenerateThumbnails
-         }),
-         setUseTextExtraction: (useTextExtraction: boolean) => ({
-           type: types.SET_USETEXTEXTRACTION,
-           useTextExtraction
-         }),
-         setAppDataPath: (path: string) => ({
-           type: types.SET_APPDATAPATH,
-           path
-         }),
-         setContentHash: (contentHash: string) => ({
-           type: types.SET_CONTENTHASH,
-           contentHash
-         }),
-         setEmail: (email: string) => ({ type: types.SET_EMAIL, email }),
-         setZoomRestoreApp: () => ({ type: types.SET_ZOOM_RESTORE }),
-         setZoomResetApp: () => ({ type: types.SET_ZOOM_RESET }),
-         setZoomInApp: () => ({ type: types.SET_ZOOM_IN }),
-         setZoomOutApp: () => ({ type: types.SET_ZOOM_OUT }),
-         setTagColor: (tagColor: string) => ({
-           type: types.SET_TAGCOLOR,
-           tagColor
-         }),
-         setTagTextColor: (tagTextColor: string) => ({
-           type: types.SET_TAGTEXTCOLOR,
-           tagTextColor
-         }),
-         setCurrentTheme: (currentTheme: string) => ({
-           type: types.SET_CURRENTTHEME,
-           currentTheme
-         }),
-         setGeoTaggingFormat: (geoTaggingFormat: string) => ({
-           type: types.SET_GEO_TAGGING_FORMAT,
-           geoTaggingFormat
-         }),
-         setHistory: (key: string, value: number) => ({
-           type: types.SET_HISTORY,
-           key,
-           value
-         }),
-         switchTheme: () => ({ type: types.SWITCH_THEME }),
-         setKeyBinding: (
-           keyBindingName: string,
-           keyBindingCommand: string
-         ) => ({
-           type: types.SET_KEYBINDING,
-           keyBindingName,
-           keyBindingCommand
-         }),
-         setGlobalKeyBinding: (enableGlobalKeyboardShortcuts: boolean) => ({
-           type: types.SET_GLOBAL_KEYBINDING,
-           enableGlobalKeyboardShortcuts
-         }),
-         setSupportedFileTypes: (supportedFileTypes: []) => ({
-           type: types.SET_SUPPORTED_FILE_TYPES,
-           supportedFileTypes
-         }),
-         setEntryPropertiesSplitSize: (entrySplitSize: string) => ({
-           type: types.SET_ENTRY_PROPERTIES_SPLIT_SIZE,
-           entrySplitSize
-         }),
-         setMainVerticalSplitSize: (mainVSplitSize: string) => ({
-           type: types.SET_MAIN_VSPLIT_SIZE,
-           mainVSplitSize
-         }),
-         setFirstRun: (firstRun: boolean) => ({
-           type: types.SET_FIRST_RUN,
-           firstRun
-         }),
-         upgradeSettings: () => ({
-           type: types.UPGRADE_SETTINGS
-         }),
-         setLastPublishedVersion: (lastPublishedVersion: string) => ({
-           type: types.SET_LAST_PUBLISHED_VERSION,
-           lastPublishedVersion
-         }),
-         checkForUpdate: () => (
-           dispatch: (actions: Object) => void
-           // getState: () => any
-         ) => {
-           // const { settings } = getState();
-           getLastVersionPromise()
-             .then(lastVersion => {
-               console.log('Last version on server: ' + lastVersion);
-               const newVersion = semver.coerce(lastVersion); // lastVersion '3.0.5' ;
-               const currentVersion = semver.coerce(versionMeta.version);
-               // const lastPublishedVersion = semver.coerce(settings.lastPublishedVersion);
-               if (
-                 semver.valid(newVersion) &&
-                 semver.gt(newVersion, currentVersion)
-               ) {
-                 console.log(
-                   'New version available: ' + newVersion.version + '!'
-                 );
-                 dispatch(actions.setLastPublishedVersion(newVersion.version));
-                 // if (semver.gt(newVersion, lastPublishedVersion)) {
-                 dispatch(AppActions.setUpdateAvailable(true));
-                 // }
-               } else {
-                 console.log(
-                   'Current version: ' + versionMeta.version + ' is up to date'
-                 );
-               }
-               return true;
-             })
-             .catch(error => {
-               console.warn('Error while checking for update: ' + error);
-             });
-         }
-       };
+  addTileServers: (tileServer: TS.MapTileServer, isDefault = false) => ({
+    type: types.ADD_MAPTILE_SERVER,
+    tileServer,
+    isDefault
+  }),
+  editTileServers: (tileServer: TS.MapTileServer, isDefault = false) => ({
+    type: types.EDIT_MAPTILE_SERVER,
+    tileServer,
+    isDefault
+  }),
+  deleteTileServer: (uuid: string) => ({
+    type: types.DELETE_MAPTILE_SERVER,
+    uuid
+  }),
+  toggleTagGroup: (tagGroupUUID: string) => ({
+    type: types.TOGGLE_TAGGROUP,
+    uuid: tagGroupUUID
+  }),
+  setTagDelimiter: (delimiter: string) => ({
+    type: types.SET_TAG_DELIMITER,
+    delimiter
+  }),
+  setMaxSearchResult: (maxSearchResult: number) => ({
+    type: types.SET_MAX_SEARCH_RESULT,
+    maxSearchResult
+  }),
+  setDesktopMode: (desktopMode: boolean) => ({
+    type: types.SET_DESKTOPMODE,
+    desktopMode
+  }),
+  setEnableWS: (enableWS: boolean) => ({
+    type: types.SET_ENABLE_WS,
+    enableWS
+  }),
+  setWarningOpeningFilesExternally: (
+    warningOpeningFilesExternally: boolean
+  ) => ({
+    type: types.WARNING_OPENING_FILES_EXTERNALLY,
+    warningOpeningFilesExternally
+  }),
+  setSaveTagInLocation: (saveTagInLocation: boolean) => ({
+    type: types.SET_SAVE_TAGS_IN_LOCATION,
+    saveTagInLocation
+  }),
+  toggleShowUnixHiddenEntries: () => ({
+    type: types.TOGGLE_SHOWUNIXHIDDENENTRIES
+  }),
+  setCheckForUpdates: (checkForUpdates: boolean) => ({
+    type: types.SET_CHECKFORUPDATES,
+    checkForUpdates
+  }),
+  reorderTags: (reorderTags: boolean) => ({
+    type: types.SET_REORDER_TAGS,
+    reorderTags
+  }),
+  setLanguage: (language: string) => (dispatch: (action) => void) => {
+    return i18n.changeLanguage(language).then(() => {
+      dispatch(actions.setLanguageInt(language));
+    });
+  },
+  setLanguageInt: (language: string) => ({
+    type: types.SET_LANGUAGE,
+    language
+  }),
+  setUseDefaultLocation: (useDefaultLocation: boolean) => ({
+    type: types.SET_USEDEFAULTLOCATION,
+    useDefaultLocation
+  }),
+  setDefaultPerspective: (defaultPerspective: string) => ({
+    type: types.SET_DEFAULTPERSPECTIVE,
+    defaultPerspective
+  }),
+  setColoredFileExtension: (coloredFileExtension: boolean) => ({
+    type: types.SET_COLOREDFILEEXTENSION,
+    coloredFileExtension
+  }),
+  setShowTagAreaOnStartup: (showTagAreaOnStartup: boolean) => ({
+    type: types.SET_SHOWTAGAREAONSTARTUP,
+    showTagAreaOnStartup
+  }),
+  setLoadsLocationMetaData: (loadsLocationMetaData: boolean) => ({
+    type: types.SET_LOADSLOCATIONMETADATA,
+    loadsLocationMetaData
+  }),
+  setSearchInSubfolders: (searchInSubfolders: boolean) => ({
+    type: types.SET_SEARCHINSUBFOLDERS,
+    searchInSubfolders
+  }),
+  setWatchCurrentDirectory: (watchCurrentDirectory: boolean) => ({
+    type: types.SET_WATCHCURRENTDIRECTORY,
+    watchCurrentDirectory
+  }),
+  setCalculateTags: (calculateTags: boolean) => ({
+    type: types.SET_CALCULATETAGS,
+    calculateTags
+  }),
+  setUseTrashCan: (useTrashCan: boolean) => ({
+    type: types.SET_USETRASHCAN,
+    useTrashCan
+  }),
+  setPersistTagsInSidecarFile: (persistTagsInSidecarFile: boolean) => ({
+    type: types.SET_PERSISTTAGSINSIDECARFILE,
+    persistTagsInSidecarFile
+  }),
+  setAddTagsToLibrary: (addTagsToLibrary: boolean) => ({
+    type: types.SET_ADDTAGSTOLIBRARY,
+    addTagsToLibrary
+  }),
+  setUseGenerateThumbnails: (useGenerateThumbnails: boolean) => ({
+    type: types.SET_USEGENERATETHUMBNAILS,
+    useGenerateThumbnails
+  }),
+  setUseTextExtraction: (useTextExtraction: boolean) => ({
+    type: types.SET_USETEXTEXTRACTION,
+    useTextExtraction
+  }),
+  setAppDataPath: (path: string) => ({
+    type: types.SET_APPDATAPATH,
+    path
+  }),
+  setContentHash: (contentHash: string) => ({
+    type: types.SET_CONTENTHASH,
+    contentHash
+  }),
+  setEmail: (email: string) => ({ type: types.SET_EMAIL, email }),
+  setZoomRestoreApp: () => ({ type: types.SET_ZOOM_RESTORE }),
+  setZoomResetApp: () => ({ type: types.SET_ZOOM_RESET }),
+  setZoomInApp: () => ({ type: types.SET_ZOOM_IN }),
+  setZoomOutApp: () => ({ type: types.SET_ZOOM_OUT }),
+  setTagColor: (tagColor: string) => ({
+    type: types.SET_TAGCOLOR,
+    tagColor
+  }),
+  setTagTextColor: (tagTextColor: string) => ({
+    type: types.SET_TAGTEXTCOLOR,
+    tagTextColor
+  }),
+  setCurrentTheme: (currentTheme: string) => ({
+    type: types.SET_CURRENTTHEME,
+    currentTheme
+  }),
+  setGeoTaggingFormat: (geoTaggingFormat: string) => ({
+    type: types.SET_GEO_TAGGING_FORMAT,
+    geoTaggingFormat
+  }),
+  setHistory: (key: string, value: number) => ({
+    type: types.SET_HISTORY,
+    key,
+    value
+  }),
+  switchTheme: () => ({ type: types.SWITCH_THEME }),
+  setKeyBinding: (keyBindingName: string, keyBindingCommand: string) => ({
+    type: types.SET_KEYBINDING,
+    keyBindingName,
+    keyBindingCommand
+  }),
+  setGlobalKeyBinding: (enableGlobalKeyboardShortcuts: boolean) => ({
+    type: types.SET_GLOBAL_KEYBINDING,
+    enableGlobalKeyboardShortcuts
+  }),
+  setSupportedFileTypes: (supportedFileTypes: []) => ({
+    type: types.SET_SUPPORTED_FILE_TYPES,
+    supportedFileTypes
+  }),
+  setEntryPropertiesSplitSize: (entrySplitSize: string) => ({
+    type: types.SET_ENTRY_PROPERTIES_SPLIT_SIZE,
+    entrySplitSize
+  }),
+  setMainVerticalSplitSize: (mainVSplitSize: string) => ({
+    type: types.SET_MAIN_VSPLIT_SIZE,
+    mainVSplitSize
+  }),
+  setFirstRun: (firstRun: boolean) => ({
+    type: types.SET_FIRST_RUN,
+    firstRun
+  }),
+  upgradeSettings: () => ({
+    type: types.UPGRADE_SETTINGS
+  }),
+  setLastPublishedVersion: (lastPublishedVersion: string) => ({
+    type: types.SET_LAST_PUBLISHED_VERSION,
+    lastPublishedVersion
+  }),
+  checkForUpdate: () => (
+    dispatch: (actions: Object) => void
+    // getState: () => any
+  ) => {
+    // const { settings } = getState();
+    getLastVersionPromise()
+      .then(lastVersion => {
+        console.log('Last version on server: ' + lastVersion);
+        const newVersion = semver.coerce(lastVersion); // lastVersion '3.0.5' ;
+        const currentVersion = semver.coerce(versionMeta.version);
+        // const lastPublishedVersion = semver.coerce(settings.lastPublishedVersion);
+        if (semver.valid(newVersion) && semver.gt(newVersion, currentVersion)) {
+          console.log('New version available: ' + newVersion.version + '!');
+          dispatch(actions.setLastPublishedVersion(newVersion.version));
+          // if (semver.gt(newVersion, lastPublishedVersion)) {
+          dispatch(AppActions.setUpdateAvailable(true));
+          // }
+        } else {
+          console.log(
+            'Current version: ' + versionMeta.version + ' is up to date'
+          );
+        }
+        return true;
+      })
+      .catch(error => {
+        console.warn('Error while checking for update: ' + error);
+      });
+  }
+};
 
 export function getLastVersionPromise(): Promise<string> {
   return new Promise((resolve, reject) => {
