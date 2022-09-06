@@ -23,7 +23,7 @@ import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from '@mui/icons-material/RemoveCircleOutline';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import MenuIcon from '@mui/icons-material/MoreVert';
 import SearchIcon from '@mui/icons-material/Search';
@@ -172,14 +172,18 @@ function StoredSearches(props: Props) {
           <React.Fragment key={history.dt}>
             <Grid item xs={10} style={{ display: 'flex' }}>
               <Tooltip
+                arrow
                 title={
-                  history.path +
-                  ' - ' +
-                  new Date(history.dt)
-                    .toISOString()
-                    .substring(0, 19)
-                    .split('T')
-                    .join(' ')
+                  <span style={{ fontSize: 14 }}>
+                    <b>Path:</b> {history.path}
+                    <br />
+                    <b>Opened on: </b>{' '}
+                    {new Date(history.dt)
+                      .toISOString()
+                      .substring(0, 19)
+                      .split('T')
+                      .join(' ')}
+                  </span>
                 }
               >
                 <Button
