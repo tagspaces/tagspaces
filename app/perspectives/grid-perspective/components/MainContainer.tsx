@@ -363,7 +363,7 @@ function GridPerspective(props: Props) {
     setSortingContextMenuAnchorEl(null);
   };
 
-  const handleSortingMenu = (event) => {
+  const handleSortingMenu = event => {
     const anchor = event ? event.currentTarget : null;
     setSortingContextMenuAnchorEl(anchor);
   };

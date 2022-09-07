@@ -31,7 +31,8 @@ import {
   Select,
   MenuItem,
   Button,
-  FormHelperText
+  FormHelperText,
+  TextField
 } from '@mui/material';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -317,10 +318,9 @@ function GridSettingsDialog(props: Props) {
           fullWidth={true}
           style={{ overflow: 'visible', marginTop: 20 }}
         >
-          <InputLabel shrink htmlFor="pageLimit">
-            {i18n.t('core:pageLimit')}
-          </InputLabel>
-          <Select
+          <TextField
+            select
+            label={i18n.t('core:pageLimit')}
             name="limit"
             defaultValue={gridPageLimit}
             onChange={handleGridPaginationLimit}
@@ -330,7 +330,7 @@ function GridSettingsDialog(props: Props) {
             <MenuItem value={100}>100</MenuItem>
             <MenuItem value={500}>500</MenuItem>
             <MenuItem value={1000}>1000</MenuItem>
-          </Select>
+          </TextField>
           <FormHelperText>{i18n.t('core:pageLimitHelp')}</FormHelperText>
         </FormControl>
       </DialogContent>
