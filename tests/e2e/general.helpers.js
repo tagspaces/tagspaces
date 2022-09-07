@@ -448,7 +448,7 @@ export async function setGridOptions(
   if (entrySize) {
     await clickOn('[data-tid=' + entrySize + ']');
   }
-  await clickOn('[data-tid=cancelDialog]');
+  await clickOn('[data-tid=defaultSettings]');
 }
 /**
  *

@@ -40,7 +40,7 @@ interface Props {
   toggleShowTags: () => void;
   showDirectories: boolean;
   showTags: boolean;
-  toggleThumbnailsMode: () => void;
+  toggleThumbnailsMode: () => string;
   thumbnailMode: string;
   singleClickAction: string;
   entrySize: string;
