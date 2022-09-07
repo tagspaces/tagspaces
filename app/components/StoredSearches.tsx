@@ -161,15 +161,21 @@ function StoredSearches(props: Props) {
 
   const { reduceHeightBy } = props;
 
-  const fileOpenHistoryItems = getHistory(historyKeys.fileOpenKey);
-  const fileEditHistoryItems = getHistory(historyKeys.fileEditKey);
-  const folderOpenHistoryItems = getHistory(historyKeys.folderOpenKey);
+  const fileOpenHistoryItems: Array<TS.HistoryItem> = getHistory(
+    historyKeys.fileOpenKey
+  );
+  const fileEditHistoryItems: Array<TS.HistoryItem> = getHistory(
+    historyKeys.fileEditKey
+  );
+  const folderOpenHistoryItems: Array<TS.HistoryItem> = getHistory(
+    historyKeys.folderOpenKey
+  );
 
-  const renderHistory = (historyKey, items) => (
+  const renderHistory = (historyKey, items: Array<TS.HistoryItem>) => (
     <Grid container direction="row">
       {items &&
         items.map(history => (
-          <React.Fragment key={history.dt}>
+          <React.Fragment key={history.creationTimeStamp}>
             <Grid item xs={10} style={{ display: 'flex' }}>
               <Tooltip
                 arrow
@@ -178,7 +184,7 @@ function StoredSearches(props: Props) {
                     <b>Path:</b> {history.path}
                     <br />
                     <b>Opened on: </b>{' '}
-                    {new Date(history.dt)
+                    {new Date(history.creationTimeStamp)
                       .toISOString()
                       .substring(0, 19)
                       .split('T')
@@ -221,7 +227,7 @@ function StoredSearches(props: Props) {
               <IconButton
                 aria-label={i18n.t('core:searchEditBtn')}
                 onClick={() => {
-                  delHistory(historyKey, history.dt);
+                  delHistory(historyKey, history.creationTimeStamp);
                   forceUpdate();
                 }}
                 data-tid="editSearchTID"

@@ -143,6 +143,10 @@ export namespace TS {
     dirs?: Array<FileSystemEntry>;
     perspectiveSettings?: PerspectiveSettings;
   }
+  interface HistoryItem {
+    path: string;
+    creationTimeStamp: number;
+  }
 
   interface PerspectiveSettings {
     grid?: FolderSettings;
