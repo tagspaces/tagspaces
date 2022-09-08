@@ -19,6 +19,9 @@
 import React, { useReducer, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import classNames from 'classnames';
+import withStyles from '@mui/styles/withStyles';
+import styles from './SidePanels.css';
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
@@ -62,6 +65,7 @@ import HistoryMenu from '-/components/menus/HistoryMenu';
 
 interface Props {
   style?: any;
+  classes?: any;
   searchQuery: TS.SearchQuery;
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   searches: Array<TS.SearchQuery>;
@@ -165,7 +169,7 @@ function StoredSearches(props: Props) {
 
   const noSearchesFound = props.searches.length < 1;
 
-  const { reduceHeightBy } = props;
+  const { reduceHeightBy, classes } = props;
 
   const fileOpenHistoryItems: Array<TS.HistoryItem> = getHistory(
     historyKeys.fileOpenKey
@@ -265,217 +269,233 @@ function StoredSearches(props: Props) {
 
   return (
     <div
+      className={classes.panel}
       style={{
-        paddingTop: 0,
-        marginTop: 0,
-        height: 'calc(100% - ' + reduceHeightBy + 'px)',
-        // @ts-ignore
-        overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+        display: 'flex',
+        flexDirection: 'column'
       }}
     >
-      <Grid container direction="row">
-        <Grid item xs={10} style={{ alignSelf: 'center' }}>
-          <IconButton
-            style={{ minWidth: 'auto', padding: 7 }}
-            onClick={() => setStoredSearchesVisible(!storedSearchesVisible)}
-            size="large"
-          >
-            {storedSearchesVisible ? <ArrowDownIcon /> : <ArrowRightIcon />}
-          </IconButton>
-          <Typography
-            variant="inherit"
-            // className={props.classes.header}
-            style={{ display: 'inline' }}
-            noWrap
-            onClick={() => setStoredSearchesVisible(!storedSearchesVisible)}
-          >
-            {i18n.t('core:savedSearchesTitle')}
-          </Typography>
-        </Grid>
-        <Grid item xs={2} style={{ alignSelf: 'center' }}>
-          <SearchMenu
-            anchorEl={searchMenuAnchorEl}
-            open={Boolean(searchMenuAnchorEl)}
-            onClose={handleCloseSearchMenu}
-            openURLExternally={props.openURLExternally}
-            exportSearches={() => {
-              setExportSearchesDialogOpened(true);
-            }}
-            importSearches={() => {
-              fileInputRef.current.click();
-            }}
-          />
-          <IconButton
-            style={{ minWidth: 'auto', padding: 7 }}
-            onClick={handleSearchMenu}
-            size="large"
-          >
-            <MenuIcon />
-          </IconButton>
-        </Grid>
-      </Grid>
-      <Grid container direction="row">
-        {storedSearchesVisible && noSearchesFound && (
-          <Grid item xs={12} style={{ display: 'flex', padding: 10 }}>
-            {i18n.t('noSavedSearches')}
-          </Grid>
-        )}
-      </Grid>
-      <Grid container direction="row">
-        {storedSearchesVisible &&
-          props.searches.map(search => (
-            <React.Fragment key={search.uuid}>
-              <Grid item xs={10} style={{ display: 'flex' }}>
-                <Button
-                  style={{
-                    textTransform: 'none',
-                    fontWeight: 'normal',
-                    marginLeft: 5,
-                    width: '100%',
-                    justifyContent: 'start'
-                  }}
-                  onClick={() => handleSavedSearchClick(search.uuid)}
-                >
-                  <SearchIcon />
-                  &nbsp;
-                  {search.title}
-                </Button>
-              </Grid>
-              <Grid item xs={2} style={{ display: 'flex' }}>
-                <IconButton
-                  aria-label={i18n.t('core:searchEditBtn')}
-                  onClick={() => editSearch(search.uuid)}
-                  data-tid="editSearchTID"
-                  size="small"
-                >
-                  <EditIcon />
-                </IconButton>
-              </Grid>
-            </React.Fragment>
-          ))}
-      </Grid>
-      <Grid container direction="row">
-        <Grid item xs={10} style={{ alignSelf: 'center' }}>
-          <IconButton
-            style={{ minWidth: 'auto', padding: 7 }}
-            onClick={() => setFileOpenHistory(!fileOpenHistory)}
-            size="large"
-          >
-            {fileOpenHistory ? <ArrowDownIcon /> : <ArrowRightIcon />}
-          </IconButton>
-          <Typography
-            variant="inherit"
-            style={{ display: 'inline' }}
-            noWrap
-            onClick={() => setFileOpenHistory(!fileOpenHistory)}
-          >
-            {i18n.t('core:fileOpenHistory')}
-          </Typography>
-        </Grid>
-        <Grid item xs={2} style={{ alignSelf: 'center' }}>
-          <IconButton
-            style={{ minWidth: 'auto', padding: 7 }}
-            onClick={(event: any) => {
-              menuHistoryKey.current = historyKeys.fileOpenKey;
-              setHistoryMenuAnchorEl(event.currentTarget);
-            }}
-            size="large"
-          >
-            <MenuIcon />
-          </IconButton>
-        </Grid>
-      </Grid>
-      {fileOpenHistory &&
-        renderHistory(historyKeys.fileOpenKey, fileOpenHistoryItems)}
-      <Grid container direction="row">
-        <Grid item xs={10} style={{ alignSelf: 'center' }}>
-          <IconButton
-            style={{ minWidth: 'auto', padding: 7 }}
-            onClick={() => setFileEditHistory(!fileEditHistory)}
-            size="large"
-          >
-            {fileEditHistory ? <ArrowDownIcon /> : <ArrowRightIcon />}
-          </IconButton>
-          <Typography
-            variant="inherit"
-            // className={props.classes.header}
-            style={{ display: 'inline' }}
-            noWrap
-            onClick={() => setFileEditHistory(!fileEditHistory)}
-          >
-            {i18n.t('core:fileEditHistory')}
-          </Typography>
-        </Grid>
-        <Grid item xs={2} style={{ alignSelf: 'center' }}>
-          <IconButton
-            style={{ minWidth: 'auto', padding: 7 }}
-            onClick={(event: any) => {
-              menuHistoryKey.current = historyKeys.fileEditKey;
-              setHistoryMenuAnchorEl(event.currentTarget);
-            }}
-            size="large"
-          >
-            <MenuIcon />
-          </IconButton>
-        </Grid>
-      </Grid>
-      {fileEditHistory &&
-        renderHistory(historyKeys.fileEditKey, fileEditHistoryItems)}
-      <Grid container direction="row">
-        <Grid item xs={10} style={{ alignSelf: 'center' }}>
-          <IconButton
-            style={{ minWidth: 'auto', padding: 7 }}
-            onClick={() => setFolderOpenHistory(!folderOpenHistory)}
-            size="large"
-          >
-            {folderOpenHistory ? <ArrowDownIcon /> : <ArrowRightIcon />}
-          </IconButton>
-          <Typography
-            variant="inherit"
-            style={{ display: 'inline' }}
-            noWrap
-            onClick={() => setFolderOpenHistory(!folderOpenHistory)}
-          >
-            {i18n.t('core:folderOpenHistory')}
-          </Typography>
-        </Grid>
-        <Grid item xs={2} style={{ alignSelf: 'center' }}>
-          <IconButton
-            style={{ minWidth: 'auto', padding: 7 }}
-            onClick={(event: any) => {
-              menuHistoryKey.current = historyKeys.folderOpenKey;
-              setHistoryMenuAnchorEl(event.currentTarget);
-            }}
-            size="large"
-          >
-            <MenuIcon />
-          </IconButton>
-        </Grid>
-      </Grid>
-      <HistoryMenu
-        anchorEl={historyMenuAnchorEl}
-        open={Boolean(historyMenuAnchorEl)}
-        onClose={() => setHistoryMenuAnchorEl(null)}
-        refreshHistory={() => forceUpdate()}
-        clearAll={() => {
-          delAllHistory(menuHistoryKey.current); //historyKeys.fileOpenKey);
-          forceUpdate();
+      <div className={classes.toolbar}>
+        <Typography
+          className={classNames(classes.panelTitle, classes.header)}
+          variant="subtitle1"
+          style={{ paddingLeft: 14 }}
+        >
+          {i18n.t('core:quickAccess')}
+        </Typography>
+      </div>
+      <div
+        style={{
+          paddingTop: 0,
+          marginTop: 0,
+          height: 'calc(100% - ' + reduceHeightBy + 'px)',
+          // @ts-ignore
+          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
         }}
-      />
-      {folderOpenHistory &&
-        renderHistory(historyKeys.folderOpenKey, folderOpenHistoryItems)}
-      {SaveSearchDialog && saveSearchDialogOpened !== undefined && (
-        <SaveSearchDialog
-          open={true}
-          onClose={(searchQuery: TS.SearchQuery) => {
-            setSaveSearchDialogOpened(undefined);
-            if (searchQuery) {
-              props.setSearchQuery({
-                ...searchQuery,
-                showUnixHiddenEntries: props.showUnixHiddenEntries
-              });
+      >
+        <Grid container direction="row">
+          <Grid item xs={10} style={{ alignSelf: 'center' }}>
+            <IconButton
+              style={{ minWidth: 'auto', padding: 7 }}
+              onClick={() => setStoredSearchesVisible(!storedSearchesVisible)}
+              size="large"
+            >
+              {storedSearchesVisible ? <ArrowDownIcon /> : <ArrowRightIcon />}
+            </IconButton>
+            <Typography
+              variant="inherit"
+              // className={props.classes.header}
+              style={{ display: 'inline' }}
+              noWrap
+              onClick={() => setStoredSearchesVisible(!storedSearchesVisible)}
+            >
+              {i18n.t('core:savedSearchesTitle')}
+            </Typography>
+          </Grid>
+          <Grid item xs={2} style={{ alignSelf: 'center' }}>
+            <SearchMenu
+              anchorEl={searchMenuAnchorEl}
+              open={Boolean(searchMenuAnchorEl)}
+              onClose={handleCloseSearchMenu}
+              openURLExternally={props.openURLExternally}
+              exportSearches={() => {
+                setExportSearchesDialogOpened(true);
+              }}
+              importSearches={() => {
+                fileInputRef.current.click();
+              }}
+            />
+            <IconButton
+              style={{ minWidth: 'auto', padding: 7 }}
+              onClick={handleSearchMenu}
+              size="large"
+            >
+              <MenuIcon />
+            </IconButton>
+          </Grid>
+        </Grid>
+        <Grid container direction="row">
+          {storedSearchesVisible && noSearchesFound && (
+            <Grid item xs={12} style={{ display: 'flex', padding: 10 }}>
+              {i18n.t('noSavedSearches')}
+            </Grid>
+          )}
+        </Grid>
+        <Grid container direction="row">
+          {storedSearchesVisible &&
+            props.searches.map(search => (
+              <React.Fragment key={search.uuid}>
+                <Grid item xs={10} style={{ display: 'flex' }}>
+                  <Button
+                    style={{
+                      textTransform: 'none',
+                      fontWeight: 'normal',
+                      marginLeft: 5,
+                      width: '100%',
+                      justifyContent: 'start'
+                    }}
+                    onClick={() => handleSavedSearchClick(search.uuid)}
+                  >
+                    <SearchIcon />
+                    &nbsp;
+                    {search.title}
+                  </Button>
+                </Grid>
+                <Grid item xs={2} style={{ display: 'flex' }}>
+                  <IconButton
+                    aria-label={i18n.t('core:searchEditBtn')}
+                    onClick={() => editSearch(search.uuid)}
+                    data-tid="editSearchTID"
+                    size="small"
+                  >
+                    <EditIcon />
+                  </IconButton>
+                </Grid>
+              </React.Fragment>
+            ))}
+        </Grid>
+        <Grid container direction="row">
+          <Grid item xs={10} style={{ alignSelf: 'center' }}>
+            <IconButton
+              style={{ minWidth: 'auto', padding: 7 }}
+              onClick={() => setFileOpenHistory(!fileOpenHistory)}
+              size="large"
+            >
+              {fileOpenHistory ? <ArrowDownIcon /> : <ArrowRightIcon />}
+            </IconButton>
+            <Typography
+              variant="inherit"
+              style={{ display: 'inline' }}
+              noWrap
+              onClick={() => setFileOpenHistory(!fileOpenHistory)}
+            >
+              {i18n.t('core:fileOpenHistory')}
+            </Typography>
+          </Grid>
+          <Grid item xs={2} style={{ alignSelf: 'center' }}>
+            <IconButton
+              style={{ minWidth: 'auto', padding: 7 }}
+              onClick={(event: any) => {
+                menuHistoryKey.current = historyKeys.fileOpenKey;
+                setHistoryMenuAnchorEl(event.currentTarget);
+              }}
+              size="large"
+            >
+              <MenuIcon />
+            </IconButton>
+          </Grid>
+        </Grid>
+        {fileOpenHistory &&
+          renderHistory(historyKeys.fileOpenKey, fileOpenHistoryItems)}
+        <Grid container direction="row">
+          <Grid item xs={10} style={{ alignSelf: 'center' }}>
+            <IconButton
+              style={{ minWidth: 'auto', padding: 7 }}
+              onClick={() => setFileEditHistory(!fileEditHistory)}
+              size="large"
+            >
+              {fileEditHistory ? <ArrowDownIcon /> : <ArrowRightIcon />}
+            </IconButton>
+            <Typography
+              variant="inherit"
+              // className={props.classes.header}
+              style={{ display: 'inline' }}
+              noWrap
+              onClick={() => setFileEditHistory(!fileEditHistory)}
+            >
+              {i18n.t('core:fileEditHistory')}
+            </Typography>
+          </Grid>
+          <Grid item xs={2} style={{ alignSelf: 'center' }}>
+            <IconButton
+              style={{ minWidth: 'auto', padding: 7 }}
+              onClick={(event: any) => {
+                menuHistoryKey.current = historyKeys.fileEditKey;
+                setHistoryMenuAnchorEl(event.currentTarget);
+              }}
+              size="large"
+            >
+              <MenuIcon />
+            </IconButton>
+          </Grid>
+        </Grid>
+        {fileEditHistory &&
+          renderHistory(historyKeys.fileEditKey, fileEditHistoryItems)}
+        <Grid container direction="row">
+          <Grid item xs={10} style={{ alignSelf: 'center' }}>
+            <IconButton
+              style={{ minWidth: 'auto', padding: 7 }}
+              onClick={() => setFolderOpenHistory(!folderOpenHistory)}
+              size="large"
+            >
+              {folderOpenHistory ? <ArrowDownIcon /> : <ArrowRightIcon />}
+            </IconButton>
+            <Typography
+              variant="inherit"
+              style={{ display: 'inline' }}
+              noWrap
+              onClick={() => setFolderOpenHistory(!folderOpenHistory)}
+            >
+              {i18n.t('core:folderOpenHistory')}
+            </Typography>
+          </Grid>
+          <Grid item xs={2} style={{ alignSelf: 'center' }}>
+            <IconButton
+              style={{ minWidth: 'auto', padding: 7 }}
+              onClick={(event: any) => {
+                menuHistoryKey.current = historyKeys.folderOpenKey;
+                setHistoryMenuAnchorEl(event.currentTarget);
+              }}
+              size="large"
+            >
+              <MenuIcon />
+            </IconButton>
+          </Grid>
+        </Grid>
+        <HistoryMenu
+          anchorEl={historyMenuAnchorEl}
+          open={Boolean(historyMenuAnchorEl)}
+          onClose={() => setHistoryMenuAnchorEl(null)}
+          refreshHistory={() => forceUpdate()}
+          clearAll={() => {
+            delAllHistory(menuHistoryKey.current); //historyKeys.fileOpenKey);
+            forceUpdate();
+          }}
+        />
+        {folderOpenHistory &&
+          renderHistory(historyKeys.folderOpenKey, folderOpenHistoryItems)}
+        {SaveSearchDialog && saveSearchDialogOpened !== undefined && (
+          <SaveSearchDialog
+            open={true}
+            onClose={(searchQuery: TS.SearchQuery) => {
+              setSaveSearchDialogOpened(undefined);
+              if (searchQuery) {
+                props.setSearchQuery({
+                  ...searchQuery,
+                  showUnixHiddenEntries: props.showUnixHiddenEntries
+                });
 
-              /* if (searchQuery.searchBoxing === 'global') {
+                /* if (searchQuery.searchBoxing === 'global') {
                 props.searchAllLocations({
                   ...searchQuery,
                   showUnixHiddenEntries: props.showUnixHiddenEntries
@@ -486,12 +506,14 @@ function StoredSearches(props: Props) {
                   showUnixHiddenEntries: props.showUnixHiddenEntries
                 });
               } */
-            }
-          }}
-          onClearSearch={() => console.log('search deleted')}
-          searchQuery={saveSearchDialogOpened}
-        />
-      )}
+              }
+            }}
+            onClearSearch={() => console.log('search deleted')}
+            searchQuery={saveSearchDialogOpened}
+          />
+        )}
+        <div style={{ height: 40 }} />
+      </div>
       <input
         style={{ display: 'none' }}
         ref={fileInputRef}
@@ -557,4 +579,4 @@ const areEqual = (prevProp, nextProp) =>
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(React.memo(StoredSearches, areEqual));
+)(React.memo(withStyles(styles)(StoredSearches), areEqual));

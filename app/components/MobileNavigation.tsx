@@ -176,7 +176,7 @@ function MobileNavigation(props: Props) {
             textAlign: 'center',
             display: 'block',
             whiteSpace: 'nowrap',
-            marginBottom: 20
+            marginBottom: 10
           }}
         >
           <Tooltip title={i18n.t('core:createFileTitle')}>
@@ -303,7 +303,7 @@ function MobileNavigation(props: Props) {
             </CardActions>
           </>
         )}
-        <Tooltip title={i18n.t('core:settings')}>
+        <Tooltip title={i18n.t('core:settings')} arrow>
           <IconButton
             id="verticalNavButton"
             data-tid="settings"
@@ -317,7 +317,7 @@ function MobileNavigation(props: Props) {
           </IconButton>
         </Tooltip>
         <ToggleButtonGroup exclusive>
-          <Tooltip title={i18n.t('core:locationManager')}>
+          <Tooltip title={i18n.t('core:locationManager')} arrow>
             <ToggleButton
               onClick={openLocationManagerPanel}
               className={
@@ -331,7 +331,7 @@ function MobileNavigation(props: Props) {
               <LocationsIcon />
             </ToggleButton>
           </Tooltip>
-          <Tooltip title={i18n.t('core:tagLibrary')}>
+          <Tooltip title={i18n.t('core:tagLibrary')} arrow>
             <ToggleButton
               data-tid="tagLibrary"
               onClick={openTagLibraryPanel}
@@ -345,7 +345,7 @@ function MobileNavigation(props: Props) {
               <TagLibraryIcon />
             </ToggleButton>
           </Tooltip>
-          <Tooltip title={i18n.t('core:searchTitle')}>
+          <Tooltip title={i18n.t('core:quickAccess')} arrow>
             <ToggleButton
               data-tid="search"
               onClick={openSearchPanel}
@@ -359,7 +359,7 @@ function MobileNavigation(props: Props) {
               <RecentThingsIcon />
             </ToggleButton>
           </Tooltip>
-          <Tooltip title={i18n.t('core:helpFeedback')}>
+          <Tooltip title={i18n.t('core:helpFeedback')} arrow>
             <ToggleButton
               data-tid="helpFeedback"
               onClick={openHelpFeedbackPanel}
@@ -376,7 +376,7 @@ function MobileNavigation(props: Props) {
         </ToggleButtonGroup>
         {user ? (
           <>
-            <Tooltip title={i18n.t('core:userAccount')}>
+            <Tooltip title={i18n.t('core:userAccount')} arrow>
               <IconButton
                 data-tid="accountCircleIconTID"
                 onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
@@ -405,7 +405,7 @@ function MobileNavigation(props: Props) {
             </Popover>
           </>
         ) : (
-          <Tooltip title={i18n.t('core:switchTheme')}>
+          <Tooltip title={i18n.t('core:switchTheme')} arrow>
             <IconButton
               data-tid="switchTheme"
               onClick={switchTheme}

@@ -80,6 +80,7 @@ function HelpFeedbackPanel(props: Props) {
         <Typography
           className={classNames(classes.panelTitle, classes.header)}
           variant="subtitle1"
+          style={{ paddingLeft: 14 }}
         >
           {i18n.t('core:helpFeedback')}
         </Typography>

@@ -114,7 +114,7 @@ const styles: any = (theme: any) => ({
     flexDirection: 'row',
     flex: '1 1',
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'baseline',
     overflowX: AppConfig.isFirefox ? 'auto' : 'overlay',
     overflowY: 'hidden',
     paddingRight: 100
@@ -946,7 +946,8 @@ function EntryContainer(props: Props) {
                       className={classes.fileBadge}
                       title={i18n.t('core:toggleEntryProperties')}
                       style={{
-                        backgroundColor: openedFile.color
+                        backgroundColor: openedFile.color,
+                        textTransform: 'uppercase'
                       }}
                     >
                       {'.' +

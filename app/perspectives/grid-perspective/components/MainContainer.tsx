@@ -851,13 +851,18 @@ function GridPerspective(props: Props) {
       >
         <GridPagination
           gridPageLimit={gridPageLimit.current}
-          className={
-            layoutType.current === 'grid'
-              ? classes.gridContainer
-              : classes.rowContainer
-          }
+          // className={
+          //   layoutType.current === 'grid'
+          //     ? classes.gridContainer
+          //     : classes.rowContainer
+          // }
           style={{
+            margin: 0,
             marginTop: 53,
+            display: 'grid',
+            gridGap: '5px 5px',
+            padding: 5,
+            paddingBottom: 10,
             gridTemplateColumns:
               layoutType.current === 'grid'
                 ? 'repeat(auto-fit,minmax(' + entryWidth + 'px,1fr))'
