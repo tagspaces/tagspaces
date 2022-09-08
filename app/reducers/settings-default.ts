@@ -178,9 +178,9 @@ export default {
   mainVSplitSize: '50%',
   supportedGeoTagging: ['pluscodes', 'mgrs'],
   supportedThemes: ['light', 'dark'],
-  tsHistoryFileOpen: 10,
-  tsHistoryFolderOpen: 10,
-  tsHistoryFileEdit: 10,
+  tsLastOpenedFilesHistory: 10,
+  tsLastOpenedFoldersHistory: 10,
+  tsLastEditedFilesHistory: 10,
   supportedLanguages: [
     {
       iso: 'en',

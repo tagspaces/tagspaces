@@ -145,6 +145,8 @@ export namespace TS {
   }
   interface HistoryItem {
     path: string;
+    url: string;
+    lid: string;
     creationTimeStamp: number;
   }
 

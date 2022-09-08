@@ -76,7 +76,8 @@ import {
   OpenedEntry,
   NotificationTypes,
   isReadOnlyMode,
-  actions as AppActions
+  actions as AppActions,
+  getCurrentLocationId
 } from '-/reducers/app';
 import useEventListener from '-/utils/useEventListener';
 import { TS } from '-/tagspaces.namespace';
@@ -176,6 +177,7 @@ interface Props {
   currentDirectoryPath: string | null;
   isDesktopMode: boolean;
   tileServer: TS.MapTileServer;
+  currentLocationId: string;
 }
 
 function EntryContainer(props: Props) {
@@ -500,6 +502,8 @@ function EntryContainer(props: Props) {
           saveHistory(
             historyKeys.fileEditKey,
             openedFile.path,
+            openedFile.url,
+            props.currentLocationId,
             props.settings[historyKeys.fileEditKey]
           );
         }
@@ -1203,7 +1207,8 @@ function mapStateToProps(state) {
     keyBindings: getKeyBindingObject(state),
     isDesktopMode: isDesktopMode(state),
     tileServer: getMapTileServer(state),
-    language: getCurrentLanguage(state)
+    language: getCurrentLanguage(state),
+    currentLocationId: getCurrentLocationId(state)
   };
 }
 

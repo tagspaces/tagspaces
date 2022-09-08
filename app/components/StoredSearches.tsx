@@ -44,7 +44,7 @@ import { Pro } from '../pro';
 import { actions as SearchActions, getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
 import SearchMenu from '-/components/menus/SearchMenu';
-import { actions as AppActions } from '-/reducers/app';
+import { actions as AppActions, getCurrentLocationId } from '-/reducers/app';
 import {
   delAllHistory,
   delHistory,
@@ -69,6 +69,9 @@ interface Props {
   openURLExternally: (url: string) => void;
   reduceHeightBy: number;
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
+  openLink: (url: string, options: any) => void;
+  openLocationById: (locationId: string) => void;
+  currentLocationId: string;
 }
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
@@ -204,19 +207,27 @@ function StoredSearches(props: Props) {
                     overflow: 'hidden'
                   }}
                   onClick={() => {
-                    getAllPropertiesPromise(history.path)
-                      .then((fsEntry: TS.FileSystemEntry) => {
-                        props.openFsEntry(fsEntry);
-                        return true;
-                      })
-                      .catch(error =>
-                        console.warn(
-                          'Error getting properties for entry: ' +
-                            history.path +
-                            ' - ' +
-                            error
-                        )
-                      );
+                    if (history.url) {
+                      props.openLink(history.url, { fullWidth: false });
+                    } else {
+                      PlatformIO.disableObjectStoreSupport();
+                      if (history.lid !== props.currentLocationId) {
+                        props.openLocationById(history.lid);
+                      }
+                      getAllPropertiesPromise(history.path)
+                        .then((fsEntry: TS.FileSystemEntry) => {
+                          props.openFsEntry(fsEntry);
+                          return true;
+                        })
+                        .catch(error =>
+                          console.warn(
+                            'Error getting properties for entry: ' +
+                              history.path +
+                              ' - ' +
+                              error
+                          )
+                        );
+                    }
                   }}
                 >
                   {extractFileName(history.path, PlatformIO.getDirSeparator())}
@@ -502,7 +513,8 @@ function mapStateToProps(state) {
     language: getCurrentLanguage(state),
     searchQuery: getSearchQuery(state),
     searches: getSearches(state),
-    showUnixHiddenEntries: getShowUnixHiddenEntries(state)
+    showUnixHiddenEntries: getShowUnixHiddenEntries(state),
+    currentLocationId: getCurrentLocationId(state)
   };
 }
 
@@ -514,7 +526,9 @@ function mapDispatchToProps(dispatch) {
       // searchAllLocations: LocationIndexActions.searchAllLocations,
       // searchLocationIndex: LocationIndexActions.searchLocationIndex,
       openURLExternally: AppActions.openURLExternally,
-      openFsEntry: AppActions.openFsEntry
+      openFsEntry: AppActions.openFsEntry,
+      openLink: AppActions.openLink,
+      openLocationById: AppActions.openLocationById
     },
     dispatch
   );

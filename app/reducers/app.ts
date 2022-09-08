@@ -32,7 +32,8 @@ import {
   extractTagsAsObjects,
   normalizePath,
   extractContainingDirectoryPath,
-  getMetaFileLocationForDir
+  getMetaFileLocationForDir,
+  generateSharingLink
 } from '@tagspaces/tagspaces-platforms/paths';
 import {
   getURLParameter,
@@ -1802,24 +1803,6 @@ export const actions = {
     const { openedFiles } = getState().app;
 
     /**
-     * save in history
-     */
-    if (Pro) {
-      if (fsEntry.isFile) {
-        saveHistory(
-          historyKeys.fileOpenKey,
-          fsEntry.path,
-          getState().settings[historyKeys.fileOpenKey]
-        );
-      } else {
-        saveHistory(
-          historyKeys.folderOpenKey,
-          fsEntry.path,
-          getState().settings[historyKeys.folderOpenKey]
-        );
-      }
-    }
-    /**
      * check for editMode in order to show save changes dialog (shouldReload: false)
      */
     if (openedFiles.length > 0) {
@@ -1888,6 +1871,32 @@ export const actions = {
     updateHistory(currentLocation, currentDirectoryPath, fsEntry.path);
 
     dispatch(actions.addToEntryContainer(entryForOpening));
+    /**
+     * save in history
+     */
+    if (Pro) {
+      if (fsEntry.isFile) {
+        saveHistory(
+          historyKeys.fileOpenKey,
+          fsEntry.path,
+          entryForOpening.url
+            ? generateSharingLink(currentLocation.uuid, fsEntry.path)
+            : undefined,
+          currentLocation.uuid,
+          getState().settings[historyKeys.fileOpenKey]
+        );
+      } else {
+        saveHistory(
+          historyKeys.folderOpenKey,
+          fsEntry.path,
+          entryForOpening.url
+            ? generateSharingLink(currentLocation.uuid, undefined, fsEntry.path)
+            : undefined,
+          currentLocation.uuid,
+          getState().settings[historyKeys.folderOpenKey]
+        );
+      }
+    }
   },
   toggleEntryFullWidth: () => ({
     type: types.TOGGLE_ENTRY_FULLWIDTH
@@ -2153,7 +2162,7 @@ export const actions = {
       PlatformIO.openFile(selectedFile, warningOpeningFilesExternally);
     }
   },
-  openLink: (url: string) => (
+  openLink: (url: string, options = { fullWidth: true }) => (
     dispatch: (action) => void,
     getState: () => any
   ) => {
@@ -2200,30 +2209,34 @@ export const actions = {
         }
         setTimeout(() => {
           if (isCloudLocation) {
-            if (directoryPath && directoryPath.length > 0) {
-              const dirFullPath = directoryPath;
-              dispatch(actions.loadDirectoryContent(dirFullPath, false));
-            }
+            PlatformIO.enableObjectStoreSupport(targetLocation).then(() => {
+              if (directoryPath && directoryPath.length > 0) {
+                const dirFullPath = directoryPath;
+                dispatch(actions.loadDirectoryContent(dirFullPath, false));
+              }
 
-            if (entryPath) {
-              getAllPropertiesPromise(entryPath)
-                .then((fsEntry: TS.FileSystemEntry) => {
-                  if (fsEntry) {
-                    dispatch(actions.openFsEntry(fsEntry));
-                    dispatch(actions.setEntryFullWidth(true));
-                  }
-                  return true;
-                })
-                .catch(() =>
-                  dispatch(
-                    actions.showNotification(
-                      i18n.t('core:invalidLink'),
-                      'warning',
-                      true
+              if (entryPath) {
+                getAllPropertiesPromise(entryPath)
+                  .then((fsEntry: TS.FileSystemEntry) => {
+                    if (fsEntry) {
+                      dispatch(actions.openFsEntry(fsEntry));
+                      if (options.fullWidth) {
+                        dispatch(actions.setEntryFullWidth(true));
+                      }
+                    }
+                    return true;
+                  })
+                  .catch(() =>
+                    dispatch(
+                      actions.showNotification(
+                        i18n.t('core:invalidLink'),
+                        'warning',
+                        true
+                      )
                     )
-                  )
-                );
-            }
+                  );
+              }
+            });
           } else {
             // local files case
             const locationPath = PlatformIO.getLocationPath(targetLocation);
@@ -2263,7 +2276,9 @@ export const actions = {
                 .then((fsEntry: TS.FileSystemEntry) => {
                   if (fsEntry) {
                     dispatch(actions.openFsEntry(fsEntry));
-                    dispatch(actions.setEntryFullWidth(true));
+                    if (options.fullWidth) {
+                      dispatch(actions.setEntryFullWidth(true));
+                    }
                   }
                   return true;
                 })
