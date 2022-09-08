@@ -1034,7 +1034,7 @@ function SearchPopover(props: Props) {
 
             {SaveSearchDialog && saveSearchDialogOpened !== undefined && (
               <SaveSearchDialog
-                open={saveSearchDialogOpened !== undefined}
+                open={true}
                 onClose={(searchQuery: TS.SearchQuery) => {
                   setSaveSearchDialogOpened(undefined);
                   if (searchQuery) {

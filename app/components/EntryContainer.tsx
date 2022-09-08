@@ -76,11 +76,17 @@ import {
   OpenedEntry,
   NotificationTypes,
   isReadOnlyMode,
-  actions as AppActions
+  actions as AppActions,
+  getCurrentLocationId
 } from '-/reducers/app';
 import useEventListener from '-/utils/useEventListener';
 import { TS } from '-/tagspaces.namespace';
 import FileView from '-/components/FileView';
+import { Pro } from '-/pro';
+import {
+  historyKeys,
+  saveHistory
+} from '../../extensions/tagspacespro/modules/history';
 
 const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
 // const openedSplitSize = AppConfig.isElectron ? 560 : 360;
@@ -171,6 +177,7 @@ interface Props {
   currentDirectoryPath: string | null;
   isDesktopMode: boolean;
   tileServer: TS.MapTileServer;
+  currentLocationId: string;
 }
 
 function EntryContainer(props: Props) {
@@ -491,6 +498,15 @@ function EntryContainer(props: Props) {
           i18n.t('core:fileSavedSuccessfully'),
           NotificationTypes.default
         );
+        if (Pro) {
+          saveHistory(
+            historyKeys.fileEditKey,
+            openedFile.path,
+            openedFile.url,
+            props.currentLocationId,
+            props.settings[historyKeys.fileEditKey]
+          );
+        }
         return result;
       })
       .catch(error => {
@@ -508,6 +524,7 @@ function EntryContainer(props: Props) {
       editMode: true,
       shouldReload: undefined
     });
+
     // setFileView(renderFileView());
   };
 
@@ -1190,7 +1207,8 @@ function mapStateToProps(state) {
     keyBindings: getKeyBindingObject(state),
     isDesktopMode: isDesktopMode(state),
     tileServer: getMapTileServer(state),
-    language: getCurrentLanguage(state)
+    language: getCurrentLanguage(state),
+    currentLocationId: getCurrentLocationId(state)
   };
 }
 
