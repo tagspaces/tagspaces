@@ -53,7 +53,10 @@ import {
 } from '../../extensions/tagspacespro/modules/history';
 import { getAllPropertiesPromise } from '-/services/utils-io';
 import { Tooltip } from '@mui/material';
-import { extractFileName } from '@tagspaces/tagspaces-platforms/paths';
+import {
+  extractFileName,
+  extractDirectoryName
+} from '@tagspaces/tagspaces-platforms/paths';
 import PlatformIO from '-/services/platform-facade';
 import HistoryMenu from '-/components/menus/HistoryMenu';
 
@@ -230,7 +233,15 @@ function StoredSearches(props: Props) {
                     }
                   }}
                 >
-                  {extractFileName(history.path, PlatformIO.getDirSeparator())}
+                  {history.path.endsWith(PlatformIO.getDirSeparator())
+                    ? extractDirectoryName(
+                        history.path,
+                        PlatformIO.getDirSeparator()
+                      )
+                    : extractFileName(
+                        history.path,
+                        PlatformIO.getDirSeparator()
+                      )}
                 </Button>
               </Tooltip>
             </Grid>
