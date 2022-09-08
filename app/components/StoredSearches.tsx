@@ -30,6 +30,7 @@ import DeleteIcon from '@mui/icons-material/RemoveCircleOutline';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import MenuIcon from '@mui/icons-material/MoreVert';
 import SearchIcon from '@mui/icons-material/Search';
+import HistoryIcon from '@mui/icons-material/ExitToApp';
 import ArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import ArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import Typography from '@mui/material/Typography';
@@ -187,67 +188,65 @@ function StoredSearches(props: Props) {
         items.map(history => (
           <React.Fragment key={history.creationTimeStamp}>
             <Grid item xs={10} style={{ display: 'flex' }}>
-              <Tooltip
-                arrow
-                title={
-                  <span style={{ fontSize: 14 }}>
-                    <b>Path:</b> {history.path}
-                    <br />
-                    <b>Opened on: </b>{' '}
-                    {new Date(history.creationTimeStamp)
-                      .toISOString()
-                      .substring(0, 19)
-                      .split('T')
-                      .join(' ')}
-                  </span>
-                }
-              >
-                <Button
-                  style={{
-                    textTransform: 'none',
-                    fontWeight: 'normal',
-                    marginLeft: 5,
-                    width: '240px',
-                    justifyContent: 'start',
-                    whiteSpace: 'nowrap',
-                    textOverflow: 'ellipsis',
-                    overflow: 'hidden'
-                  }}
-                  onClick={() => {
-                    if (history.url) {
-                      props.openLink(history.url, { fullWidth: false });
-                    } else {
-                      PlatformIO.disableObjectStoreSupport();
-                      if (history.lid !== props.currentLocationId) {
-                        props.openLocationById(history.lid);
-                      }
-                      getAllPropertiesPromise(history.path)
-                        .then((fsEntry: TS.FileSystemEntry) => {
-                          props.openFsEntry(fsEntry);
-                          return true;
-                        })
-                        .catch(error =>
-                          console.warn(
-                            'Error getting properties for entry: ' +
-                              history.path +
-                              ' - ' +
-                              error
-                          )
-                        );
+              <Button
+                style={{
+                  textTransform: 'none',
+                  fontWeight: 'normal',
+                  width: '240px',
+                  justifyContent: 'start',
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden'
+                }}
+                onClick={() => {
+                  if (history.url) {
+                    props.openLink(history.url, { fullWidth: false });
+                  } else {
+                    PlatformIO.disableObjectStoreSupport();
+                    if (history.lid !== props.currentLocationId) {
+                      props.openLocationById(history.lid);
                     }
-                  }}
+                    getAllPropertiesPromise(history.path)
+                      .then((fsEntry: TS.FileSystemEntry) => {
+                        props.openFsEntry(fsEntry);
+                        return true;
+                      })
+                      .catch(error =>
+                        console.warn(
+                          'Error getting properties for entry: ' +
+                            history.path +
+                            ' - ' +
+                            error
+                        )
+                      );
+                  }
+                }}
+              >
+                <Tooltip
+                  arrow
+                  title={
+                    <span style={{ fontSize: 14 }}>
+                      <b>Path:</b> {history.path}
+                      <br />
+                      <b>Opened on: </b>{' '}
+                      {new Date(history.creationTimeStamp)
+                        .toISOString()
+                        .substring(0, 19)
+                        .split('T')
+                        .join(' ')}
+                    </span>
+                  }
                 >
-                  {history.path.endsWith(PlatformIO.getDirSeparator())
-                    ? extractDirectoryName(
-                        history.path,
-                        PlatformIO.getDirSeparator()
-                      )
-                    : extractFileName(
-                        history.path,
-                        PlatformIO.getDirSeparator()
-                      )}
-                </Button>
-              </Tooltip>
+                  <HistoryIcon fontSize="small" />
+                </Tooltip>
+                &nbsp;
+                {history.path.endsWith(PlatformIO.getDirSeparator())
+                  ? extractDirectoryName(
+                      history.path,
+                      PlatformIO.getDirSeparator()
+                    )
+                  : extractFileName(history.path, PlatformIO.getDirSeparator())}
+              </Button>
             </Grid>
             <Grid item xs={2} style={{ display: 'flex' }}>
               <IconButton
@@ -350,7 +349,6 @@ function StoredSearches(props: Props) {
                     style={{
                       textTransform: 'none',
                       fontWeight: 'normal',
-                      marginLeft: 5,
                       width: '100%',
                       justifyContent: 'start'
                     }}
