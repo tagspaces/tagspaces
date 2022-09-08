@@ -663,5 +663,10 @@
   "byFirstTag": "By First Tag",
   "byExtension": "By Extension",
   "rename": "Rename",
+  "fileOpenHistory": "Last opened files history",
+  "folderOpenHistory": "Last opened folders history",
+  "fileEditHistory": "Last edited files history",
+  "refreshHistory": "Refresh History",
+  "deleteHistory": "Delete History",
   "-": "-"
 }

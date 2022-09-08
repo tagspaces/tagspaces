@@ -46,6 +46,7 @@ import MapTileServerDialog from '-/components/dialogs/settings/MapTileServerDial
 import { Pro } from '-/pro';
 import { ProLabel } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
+import { historyKeys } from '../../../../extensions/tagspacespro/modules/history';
 
 const styles: any = {
   root: {
@@ -76,6 +77,7 @@ interface Props {
   showResetSettings: (showDialog: boolean) => void;
   tileServers: Array<TS.MapTileServer>;
   setGeoTaggingFormat: (geoTaggingFormat: string) => void;
+  setHistory: (key: string, value: number) => void;
 }
 
 function SettingsAdvanced(props: Props) {
@@ -117,7 +119,6 @@ function SettingsAdvanced(props: Props) {
             {i18n.t('core:reloadApplication')}
           </Button>
         </ListItem>
-
         <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('enableMobileMode')} />
           <Switch
@@ -146,6 +147,57 @@ function SettingsAdvanced(props: Props) {
             }
             checked={props.settings.warningOpeningFilesExternally}
           />
+        </ListItem>
+        <ListItem className={classes.listItem}>
+          <ListItemText primary={i18n.t('core:fileOpenHistory')} />
+          <Select
+            data-tid="fileOpenTID"
+            title={i18n.t('core:fileOpenHistoryTitle')}
+            value={props.settings[historyKeys.fileOpenKey]}
+            onChange={(event: any) =>
+              props.setHistory(historyKeys.fileOpenKey, event.target.value)
+            }
+            input={<Input id="fileOpenSelector" />}
+          >
+            <MenuItem value={0}>{i18n.t('core:disabled')}</MenuItem>
+            <MenuItem value={10}>10</MenuItem>
+            <MenuItem value={50}>50</MenuItem>
+            <MenuItem value={100}>100</MenuItem>
+          </Select>
+        </ListItem>
+        <ListItem className={classes.listItem}>
+          <ListItemText primary={i18n.t('core:folderOpenHistory')} />
+          <Select
+            data-tid="folderOpenTID"
+            title={i18n.t('core:folderOpenHistoryTitle')}
+            value={props.settings[historyKeys.folderOpenKey]}
+            onChange={(event: any) =>
+              props.setHistory(historyKeys.folderOpenKey, event.target.value)
+            }
+            input={<Input id="folderOpenSelector" />}
+          >
+            <MenuItem value={0}>{i18n.t('core:disabled')}</MenuItem>
+            <MenuItem value={10}>10</MenuItem>
+            <MenuItem value={50}>50</MenuItem>
+            <MenuItem value={100}>100</MenuItem>
+          </Select>
+        </ListItem>
+        <ListItem className={classes.listItem}>
+          <ListItemText primary={i18n.t('core:fileEditHistory')} />
+          <Select
+            data-tid="fileEditTID"
+            title={i18n.t('core:fileEditHistoryTitle')}
+            value={props.settings[historyKeys.fileEditKey]}
+            onChange={(event: any) =>
+              props.setHistory(historyKeys.fileEditKey, event.target.value)
+            }
+            input={<Input id="fileEditSelector" />}
+          >
+            <MenuItem value={0}>{i18n.t('core:disabled')}</MenuItem>
+            <MenuItem value={10}>10</MenuItem>
+            <MenuItem value={50}>50</MenuItem>
+            <MenuItem value={100}>100</MenuItem>
+          </Select>
         </ListItem>
         <ListItem className={classes.listItem}>
           <ListItemText
@@ -282,7 +334,8 @@ function mapActionCreatorsToProps(dispatch) {
       setDesktopMode: SettingsActions.setDesktopMode,
       setEnableWS: SettingsActions.setEnableWS,
       setSaveTagInLocation: SettingsActions.setSaveTagInLocation,
-      setGeoTaggingFormat: SettingsActions.setGeoTaggingFormat
+      setGeoTaggingFormat: SettingsActions.setGeoTaggingFormat,
+      setHistory: SettingsActions.setHistory
     },
     dispatch
   );

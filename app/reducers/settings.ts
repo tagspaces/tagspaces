@@ -62,6 +62,7 @@ export const types = {
   SET_TAGTEXTCOLOR: 'SETTINGS/SET_TAGTEXTCOLOR',
   SET_CURRENTTHEME: 'SETTINGS/SET_CURRENTTHEME',
   SET_GEO_TAGGING_FORMAT: 'SETTINGS/SET_GEO_TAGGING_FORMAT',
+  SET_HISTORY: 'SETTINGS/SET_HISTORY',
   SWITCH_THEME: 'SETTINGS/SWITCH_THEME',
   SET_KEYBINDING: 'SETTINGS/SET_KEYBINDING',
   SET_GLOBAL_KEYBINDING: 'SETTINGS/SET_GLOBAL_KEYBINDING',
@@ -242,6 +243,9 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_GEO_TAGGING_FORMAT: {
       return { ...state, geoTaggingFormat: action.geoTaggingFormat };
+    }
+    case types.SET_HISTORY: {
+      return { ...state, [action.key]: action.value };
     }
     case types.SWITCH_THEME: {
       let currentTheme = 'dark';
@@ -519,7 +523,10 @@ export const actions = {
     type: types.SET_USETEXTEXTRACTION,
     useTextExtraction
   }),
-  setAppDataPath: (path: string) => ({ type: types.SET_APPDATAPATH, path }),
+  setAppDataPath: (path: string) => ({
+    type: types.SET_APPDATAPATH,
+    path
+  }),
   setContentHash: (contentHash: string) => ({
     type: types.SET_CONTENTHASH,
     contentHash
@@ -529,7 +536,10 @@ export const actions = {
   setZoomResetApp: () => ({ type: types.SET_ZOOM_RESET }),
   setZoomInApp: () => ({ type: types.SET_ZOOM_IN }),
   setZoomOutApp: () => ({ type: types.SET_ZOOM_OUT }),
-  setTagColor: (tagColor: string) => ({ type: types.SET_TAGCOLOR, tagColor }),
+  setTagColor: (tagColor: string) => ({
+    type: types.SET_TAGCOLOR,
+    tagColor
+  }),
   setTagTextColor: (tagTextColor: string) => ({
     type: types.SET_TAGTEXTCOLOR,
     tagTextColor
@@ -541,6 +551,11 @@ export const actions = {
   setGeoTaggingFormat: (geoTaggingFormat: string) => ({
     type: types.SET_GEO_TAGGING_FORMAT,
     geoTaggingFormat
+  }),
+  setHistory: (key: string, value: number) => ({
+    type: types.SET_HISTORY,
+    key,
+    value
   }),
   switchTheme: () => ({ type: types.SWITCH_THEME }),
   setKeyBinding: (keyBindingName: string, keyBindingCommand: string) => ({
