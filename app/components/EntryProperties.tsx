@@ -701,7 +701,10 @@ function EntryProperties(props: Props) {
 
         <Grid item xs={12}>
           <span style={{ verticalAlign: 'sub', paddingLeft: 5 }}>
-            <Typography variant="caption">
+            <Typography
+              style={{ color: theme.palette.text.primary }}
+              variant="caption"
+            >
               {i18n.t('core:filePropertiesDescription')}
             </Typography>
           </span>
@@ -779,7 +782,7 @@ function EntryProperties(props: Props) {
                 display: 'block',
                 padding: 10,
                 borderRadius: 5,
-                border: '1px solid lightgray',
+                border: '1px solid rgba(0, 0, 0, 0.38)',
                 backgroundColor: 'rgba(255, 216, 115, 0.20)',
                 marginBottom: 5,
                 maxHeight: 400,
