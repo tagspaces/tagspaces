@@ -45,7 +45,7 @@ import PlatformIO from '-/services/platform-facade';
 interface Props {
   isMetaLoaded: boolean;
   setIsMetaLoaded: (isLoaded: boolean) => void;
-  className: string;
+  className?: string;
   style;
   theme: any;
   // gridRef: Object;
