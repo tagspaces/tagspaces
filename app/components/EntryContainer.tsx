@@ -604,8 +604,22 @@ function EntryContainer(props: Props) {
       locale +
       theme +
       (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
-    if (fileExt.startsWith('mht')) {
+    if (
+      fileExt.startsWith('mht') ||
+      fileExt.startsWith('txt') ||
+      fileExt.startsWith('json')
+    ) {
       fileOpenerURL = filePath;
+    } else if (
+      fileExt.startsWith('md')
+      // fileExt.startsWith('txt') ||
+      // fileExt.startsWith('json')
+    ) {
+      props.showNotification(
+        'Opening this file type in a new window is not supported yet',
+        NotificationTypes.default
+      );
+      return;
     }
     const fileName = extractFileName(
       openedFile.url ? openedFile.url : openedFile.path
