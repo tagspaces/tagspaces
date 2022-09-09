@@ -44,6 +44,7 @@ import i18n from '../services/i18n';
 import Links from '-/links';
 import { connect } from 'react-redux';
 import { getCurrentLanguage } from '-/reducers/settings';
+import { Pro } from '-/pro';
 
 interface Props {
   classes?: any;
@@ -207,19 +208,21 @@ function HelpFeedbackPanel(props: Props) {
             {i18n.t('core:emailContact')}
           </Typography>
         </ListItem>
-        <ListItem
-          button
-          onClick={() =>
-            openURLExternally(Links.links.cancelSubscription, true)
-          }
-        >
-          <ListItemIcon>
-            <CancelSubscriptionIcon />
-          </ListItemIcon>
-          <Typography style={{ color: theme.palette.text.primary }}>
-            {i18n.t('core:cancelSubscription')}
-          </Typography>
-        </ListItem>
+        {Pro && (
+          <ListItem
+            button
+            onClick={() =>
+              openURLExternally(Links.links.cancelSubscription, true)
+            }
+          >
+            <ListItemIcon>
+              <CancelSubscriptionIcon />
+            </ListItemIcon>
+            <Typography style={{ color: theme.palette.text.primary }}>
+              {i18n.t('core:cancelSubscription')}
+            </Typography>
+          </ListItem>
+        )}
         <ListItem button onClick={() => openURLExternally(Links.links.twitter)}>
           <ListItemIcon>
             <TwitterIcon />
