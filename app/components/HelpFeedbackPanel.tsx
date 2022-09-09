@@ -30,6 +30,7 @@ import ChangeLogIcon from '@mui/icons-material/ImportContacts';
 import OnboardingIcon from '@mui/icons-material/Explore';
 import WebClipperIcon from '@mui/icons-material/Transform';
 import EmailIcon from '@mui/icons-material/Email';
+import CancelSubscriptionIcon from '@mui/icons-material/EventBusy';
 import IssueIcon from '@mui/icons-material/BugReport';
 import TranslationIcon from '@mui/icons-material/Translate';
 import NewFeatureIcon from '@mui/icons-material/Gesture';
@@ -204,6 +205,19 @@ function HelpFeedbackPanel(props: Props) {
           </ListItemIcon>
           <Typography style={{ color: theme.palette.text.primary }}>
             {i18n.t('core:emailContact')}
+          </Typography>
+        </ListItem>
+        <ListItem
+          button
+          onClick={() =>
+            openURLExternally(Links.links.cancelSubscription, true)
+          }
+        >
+          <ListItemIcon>
+            <CancelSubscriptionIcon />
+          </ListItemIcon>
+          <Typography style={{ color: theme.palette.text.primary }}>
+            {i18n.t('core:cancelSubscription')}
           </Typography>
         </ListItem>
         <ListItem button onClick={() => openURLExternally(Links.links.twitter)}>

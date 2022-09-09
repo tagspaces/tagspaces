@@ -278,6 +278,15 @@ export default function buildDesktopMenu(props: any, i18n) {
           click: props.toggleLicenseDialog
         },
         {
+          label: i18n.t('cancelSubscription'),
+          click: () => {
+            props.openURLExternally({
+              url: Links.links.cancelSubscription,
+              skipConfirm: true
+            });
+          }
+        },
+        {
           label: '&' + i18n.t('thirdPartyLibs'),
           click: props.toggleThirdPartyLibsDialog
         },

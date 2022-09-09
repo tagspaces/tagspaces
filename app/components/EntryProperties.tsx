@@ -1113,7 +1113,7 @@ function EntryProperties(props: Props) {
             value=""
             style={{
               marginTop: 13,
-              minHeight: AppConfig.maxThumbSize + 20,
+              minHeight: thumbPath ? AppConfig.maxThumbSize + 20 : 20,
               maxHeight: AppConfig.maxThumbSize + 20
             }}
             InputProps={{
@@ -1131,7 +1131,7 @@ function EntryProperties(props: Props) {
                       backgroundRepeat: 'no-repeat',
                       backgroundImage: thumbPathUrl,
                       backgroundPosition: 'center',
-                      minHeight: AppConfig.maxThumbSize,
+                      minHeight: thumbPath ? AppConfig.maxThumbSize : 20,
                       maxHeight: AppConfig.maxThumbSize,
                       minWidth: AppConfig.maxThumbSize,
                       maxWidth: AppConfig.maxThumbSize,

@@ -222,14 +222,14 @@ function MobileNavigation(props: Props) {
           </Tooltip>
         </ButtonGroup>
         <LocationManager
-          reduceHeightBy={180}
+          reduceHeightBy={170}
           show={props.isLocationManagerPanelOpened}
         />
-        {props.isTagLibraryPanelOpened && <TagLibrary reduceHeightBy={180} />}
-        {props.isSearchPanelOpened && <StoredSearches reduceHeightBy={120} />}
+        {props.isTagLibraryPanelOpened && <TagLibrary reduceHeightBy={170} />}
+        {props.isSearchPanelOpened && <StoredSearches reduceHeightBy={170} />}
         {props.isHelpFeedbackPanelOpened && (
           <HelpFeedbackPanel
-            reduceHeightBy={180}
+            reduceHeightBy={170}
             openURLExternally={openURLExternally}
             toggleAboutDialog={toggleAboutDialog}
             toggleKeysDialog={toggleKeysDialog}

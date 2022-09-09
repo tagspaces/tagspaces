@@ -512,7 +512,6 @@ function StoredSearches(props: Props) {
             searchQuery={saveSearchDialogOpened}
           />
         )}
-        <div style={{ height: 40 }} />
       </div>
       <input
         style={{ display: 'none' }}
