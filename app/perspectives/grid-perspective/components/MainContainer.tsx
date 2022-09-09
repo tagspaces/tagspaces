@@ -117,6 +117,7 @@ interface Props {
 
 function getSettings(directoryMeta: TS.FileSystemEntryMeta): TS.FolderSettings {
   if (
+    Pro &&
     directoryMeta &&
     directoryMeta.perspectiveSettings &&
     directoryMeta.perspectiveSettings[PerspectiveIDs.GRID]
