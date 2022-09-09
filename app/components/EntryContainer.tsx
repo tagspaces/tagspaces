@@ -36,6 +36,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import BackIcon from '@mui/icons-material/RemoveRedEye';
 import FullScreenIcon from '@mui/icons-material/ZoomOutMap';
 import OpenNativelyIcon from '@mui/icons-material/Launch';
+import OpenNewWindowIcon from '@mui/icons-material/OpenInBrowser';
 import PrevDocumentIcon from '@mui/icons-material/KeyboardArrowUp';
 import NextDocumentIcon from '@mui/icons-material/KeyboardArrowDown';
 import FileDownloadIcon from '@mui/icons-material/AssignmentReturned';
@@ -122,9 +123,8 @@ const styles: any = (theme: any) => ({
   fileBadge: {
     color: 'white',
     backgroundColor: AppConfig.defaultFileColor,
-    padding: '2px 5px 4px 5px',
+    padding: 5,
     textShadow: '1px 1px #8f8f8f',
-    minHeight: 18,
     fontSize: 13,
     marginLeft: 3,
     borderRadius: 3
@@ -592,6 +592,34 @@ function EntryContainer(props: Props) {
     }
   };
 
+  const openInNewWindow = () => {
+    const locale = '&locale=' + i18n.language;
+    const filePath = openedFile.url ? openedFile.url : openedFile.path;
+    const fileExt = extractFileExtension(
+      filePath,
+      PlatformIO.getDirSeparator()
+    );
+    let fileOpenerURL =
+      openedFile.viewingExtensionPath +
+      '/index.html?file=' +
+      encodeURIComponent(filePath) +
+      locale +
+      theme +
+      (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
+    if (fileExt.startsWith('mht')) {
+      fileOpenerURL = filePath;
+    }
+    const fileName = extractFileName(
+      openedFile.url ? openedFile.url : openedFile.path
+    );
+    const newWindow = window.open(
+      fileOpenerURL,
+      '_blank',
+      'menubar=0,location=0,toolbar=0,resizable=1,status=1,scrollbars=1'
+    );
+    newWindow.document.title = fileName;
+  };
+
   const downloadCordova = (uri, filename) => {
     const { Downloader } = window.plugins;
 
@@ -675,6 +703,15 @@ function EntryContainer(props: Props) {
             </IconButton>
           </Tooltip>
         )}
+        <Tooltip title={i18n.t('core:openFileInWindow')}>
+          <IconButton
+            aria-label={i18n.t('core:openFileInWindow')}
+            onClick={openInNewWindow}
+            size="large"
+          >
+            <OpenNewWindowIcon />
+          </IconButton>
+        </Tooltip>
         <Tooltip title={i18n.t('core:downloadFile')}>
           <IconButton
             aria-label={i18n.t('core:downloadFile')}
@@ -920,10 +957,9 @@ function EntryContainer(props: Props) {
                 <div
                   title={openedFile.url || openedFile.path}
                   style={{
-                    paddingTop: 15,
-                    paddingRight: 0,
                     paddingLeft: 10,
-                    paddingBottom: 0,
+                    display: 'flex',
+                    alignItems: 'center',
                     minWidth: 20,
                     height: 44,
                     color: 'inherit !important'
