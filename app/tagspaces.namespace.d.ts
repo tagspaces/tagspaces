@@ -169,6 +169,7 @@ export namespace TS {
     entrySize?: string;
     thumbnailMode?: string;
     gridPageLimit?: number;
+    isLocal?: boolean;
   }
 
   interface MapTileServer {

@@ -670,6 +670,8 @@
   "refreshHistory": "Refresh History",
   "deleteHistory": "Delete History",
   "quickAccess": "Quick access",
+  "resetLocalSettings": "Reset Custom Settings",
+  "folderWithCustomPerspectiveSetting": "Current folder has custom settings for this perspective",
   "cancelSubscription": "Cancel Subscription",
   "-": "-"
 }

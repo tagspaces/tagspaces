@@ -115,13 +115,17 @@ interface Props {
   setDirectoryMeta: (fsEntryMeta: TS.FileSystemEntryMeta) => void;
 }
 
-function getSettings(directoryMeta: TS.FileSystemEntryMeta) {
+function getSettings(directoryMeta: TS.FileSystemEntryMeta): TS.FolderSettings {
   if (
+    Pro &&
     directoryMeta &&
     directoryMeta.perspectiveSettings &&
     directoryMeta.perspectiveSettings[PerspectiveIDs.GRID]
   ) {
-    return directoryMeta.perspectiveSettings[PerspectiveIDs.GRID];
+    return {
+      ...directoryMeta.perspectiveSettings[PerspectiveIDs.GRID],
+      isLocal: true
+    };
   } else {
     // loading settings for not Pro
     return JSON.parse(localStorage.getItem(defaultSettings.settingsKey));
@@ -874,6 +878,9 @@ function GridPerspective(props: Props) {
           // gridRef={this.mainGrid}
           directories={sortedDirectories}
           showDirectories={showDirectories.current}
+          showTags={showTags.current}
+          thumbnailMode={thumbnailMode.current}
+          entrySize={entrySize.current}
           files={sortedFiles}
           renderCell={renderCell}
           currentPage={1}
@@ -897,7 +904,7 @@ function GridPerspective(props: Props) {
       )}
       {isAddTagDialogOpened !== undefined && (
         <AddTagToTagGroupDialog
-          open={isAddTagDialogOpened !== undefined}
+          open={true}
           onClose={() => setIsAddTagDialogOpened(undefined)}
           addTag={props.addTag}
           selectedTag={isAddTagDialogOpened}
@@ -926,6 +933,16 @@ function GridPerspective(props: Props) {
           sortBy={sortBy.current}
           orderBy={orderBy.current}
           handleSortingMenu={handleSortingMenu}
+          isLocal={settings && settings.isLocal}
+          resetLocalSettings={() => {
+            Pro.MetaOperations.savePerspectiveSettings(
+              currentDirectoryPath,
+              PerspectiveIDs.GRID
+            ).then((fsEntryMeta: TS.FileSystemEntryMeta) => {
+              props.setDirectoryMeta(fsEntryMeta);
+              setIsGridSettingsDialogOpened(false);
+            });
+          }}
         />
       )}
       {isMoveCopyFilesDialogOpened && (

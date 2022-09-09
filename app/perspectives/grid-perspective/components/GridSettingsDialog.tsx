@@ -32,6 +32,7 @@ import {
   MenuItem,
   Button,
   FormHelperText,
+  Typography,
   TextField
 } from '@mui/material';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -64,6 +65,7 @@ const styles: any = {
 
 interface Props {
   open: boolean;
+  theme?: any;
   gridPageLimit: number;
   onClose: (isDefault?: boolean) => void;
   setGridPageLimit: (number) => void;
@@ -82,6 +84,8 @@ interface Props {
   orderBy: boolean;
   handleSortingMenu: (event) => void;
   classes: any;
+  isLocal: boolean;
+  resetLocalSettings: () => void;
   // setShowDirectories: (check: boolean) => void;
 }
 
@@ -101,7 +105,8 @@ function GridSettingsDialog(props: Props) {
     toggleThumbnailsMode,
     changeEntrySize,
     changeSingleClickAction,
-    openHelpWebPage
+    openHelpWebPage,
+    theme
   } = props;
 
   let newGridPageLimit = gridPageLimit;
@@ -133,6 +138,27 @@ function GridSettingsDialog(props: Props) {
         <DialogCloseButton onClose={() => onClose()} />
       </DialogTitle>
       <DialogContent>
+        {props.isLocal && (
+          <>
+            <Typography
+              style={{ color: theme.palette.text.primary }}
+              variant="caption"
+            >
+              {i18n.t('core:folderWithCustomPerspectiveSetting')}
+            </Typography>
+            <br />
+            <Button
+              data-tid="resetLocalSettingsTID"
+              title={i18n.t('core:resetLocalSettings')}
+              onClick={() => {
+                props.resetLocalSettings();
+                // forceUpdate();
+              }}
+            >
+              {i18n.t('core:resetLocalSettings')}
+            </Button>
+          </>
+        )}
         <FormGroup>
           <FormControlLabel
             control={
@@ -140,7 +166,7 @@ function GridSettingsDialog(props: Props) {
                 data-tid="gridPerspectiveToggleShowDirectories"
                 defaultChecked={showDirectories}
                 onChange={toggleShowDirectories}
-                name="checkedB"
+                name="checkedD"
                 color="primary"
               />
             }
@@ -152,7 +178,7 @@ function GridSettingsDialog(props: Props) {
                 data-tid="gridPerspectiveToggleShowTags"
                 defaultChecked={showTags}
                 onChange={toggleShowTags}
-                name="checkedB"
+                name="checkedT"
                 color="primary"
               />
             }
