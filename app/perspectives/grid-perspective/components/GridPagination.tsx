@@ -51,6 +51,9 @@ interface Props {
   // gridRef: Object;
   directories: Array<TS.FileSystemEntry>;
   showDirectories: boolean;
+  showTags: boolean;
+  thumbnailMode: string;
+  entrySize: string;
   files: Array<TS.FileSystemEntry>;
   // pageEntries: Array<TS.FileSystemEntry>;
   renderCell: (entry: TS.FileSystemEntry, isLast?: boolean) => void;
@@ -399,7 +402,11 @@ function mapActionCreatorsToProps(dispatch) {
 
 const areEqual = (prevProp: Props, nextProp: Props) =>
   nextProp.isMetaLoaded === prevProp.isMetaLoaded &&
-  nextProp.theme === prevProp.theme &&
+  nextProp.showDirectories === prevProp.showDirectories &&
+  nextProp.showTags === prevProp.showTags &&
+  nextProp.thumbnailMode === prevProp.thumbnailMode &&
+  nextProp.entrySize === prevProp.entrySize &&
+  nextProp.gridPageLimit === prevProp.gridPageLimit &&
   JSON.stringify(nextProp.files) === JSON.stringify(prevProp.files) &&
   JSON.stringify(nextProp.directories) ===
     JSON.stringify(prevProp.directories) &&

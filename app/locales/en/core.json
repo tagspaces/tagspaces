@@ -669,5 +669,6 @@
   "refreshHistory": "Refresh History",
   "deleteHistory": "Delete History",
   "quickAccess": "Quick access",
+  "resetLocalSettings": "Reset Folder Settings",
   "-": "-"
 }

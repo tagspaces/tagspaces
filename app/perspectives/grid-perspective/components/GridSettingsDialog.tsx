@@ -82,6 +82,8 @@ interface Props {
   orderBy: boolean;
   handleSortingMenu: (event) => void;
   classes: any;
+  isLocal: boolean;
+  resetLocalSettings: () => void;
   // setShowDirectories: (check: boolean) => void;
 }
 
@@ -133,6 +135,18 @@ function GridSettingsDialog(props: Props) {
         <DialogCloseButton onClose={() => onClose()} />
       </DialogTitle>
       <DialogContent>
+        {props.isLocal && (
+          <Button
+            data-tid="resetLocalSettingsTID"
+            title={i18n.t('core:resetLocalSettings')}
+            onClick={() => {
+              props.resetLocalSettings();
+              // forceUpdate();
+            }}
+          >
+            {i18n.t('core:resetLocalSettings')}
+          </Button>
+        )}
         <FormGroup>
           <FormControlLabel
             control={
@@ -140,7 +154,7 @@ function GridSettingsDialog(props: Props) {
                 data-tid="gridPerspectiveToggleShowDirectories"
                 defaultChecked={showDirectories}
                 onChange={toggleShowDirectories}
-                name="checkedB"
+                name="checkedD"
                 color="primary"
               />
             }
@@ -152,7 +166,7 @@ function GridSettingsDialog(props: Props) {
                 data-tid="gridPerspectiveToggleShowTags"
                 defaultChecked={showTags}
                 onChange={toggleShowTags}
-                name="checkedB"
+                name="checkedT"
                 color="primary"
               />
             }
