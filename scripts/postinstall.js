@@ -71,7 +71,7 @@ if (process.env.PD_PLATFORM === 'electron') {
     install = true;
   }
 } else if (process.env.PD_PLATFORM === 'cordova') {
-  if (!isInstalled('@tagspaces-common-cordova')) {
+  if (!isInstalled('@tagspaces/tagspaces-common-cordova')) {
     install = true;
   }
 }
