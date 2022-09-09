@@ -32,7 +32,7 @@ import ThemingIcon from '@mui/icons-material/InvertColors';
 import LocationsIcon from '@mui/icons-material/WorkOutline';
 import CreateIcon from '@mui/icons-material/Add';
 import TagLibraryIcon from '@mui/icons-material/LocalOfferOutlined';
-import RecentThingsIcon from '@mui/icons-material/History';
+import RecentThingsIcon from '@mui/icons-material/BookmarksOutlined';
 import HelpIcon from '@mui/icons-material/HelpOutline';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SettingsIcon from '@mui/icons-material/Settings';
