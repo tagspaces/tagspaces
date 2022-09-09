@@ -49,12 +49,6 @@ import { actions as SearchActions, getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
 import SearchMenu from '-/components/menus/SearchMenu';
 import { actions as AppActions, getCurrentLocationId } from '-/reducers/app';
-import {
-  delAllHistory,
-  delHistory,
-  getHistory,
-  historyKeys
-} from '../../extensions/tagspacespro/modules/history';
 import { getAllPropertiesPromise } from '-/services/utils-io';
 import { Tooltip } from '@mui/material';
 import {
@@ -83,6 +77,7 @@ interface Props {
 }
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
+const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 
 function StoredSearches(props: Props) {
   const [saveSearchDialogOpened, setSaveSearchDialogOpened] = useState<
@@ -172,15 +167,15 @@ function StoredSearches(props: Props) {
 
   const { reduceHeightBy, classes } = props;
 
-  const fileOpenHistoryItems: Array<TS.HistoryItem> = getHistory(
-    historyKeys.fileOpenKey
-  );
-  const fileEditHistoryItems: Array<TS.HistoryItem> = getHistory(
-    historyKeys.fileEditKey
-  );
-  const folderOpenHistoryItems: Array<TS.HistoryItem> = getHistory(
-    historyKeys.folderOpenKey
-  );
+  const fileOpenHistoryItems: Array<TS.HistoryItem> = Pro
+    ? Pro.history.getHistory(historyKeys.fileOpenKey)
+    : undefined;
+  const fileEditHistoryItems: Array<TS.HistoryItem> = Pro
+    ? Pro.history.getHistory(historyKeys.fileEditKey)
+    : undefined;
+  const folderOpenHistoryItems: Array<TS.HistoryItem> = Pro
+    ? Pro.history.getHistory(historyKeys.folderOpenKey)
+    : undefined;
 
   const renderHistory = (historyKey, items: Array<TS.HistoryItem>) => (
     <Grid container direction="row">
@@ -250,9 +245,14 @@ function StoredSearches(props: Props) {
             </Grid>
             <Grid item xs={2} style={{ display: 'flex' }}>
               <IconButton
-                aria-label={i18n.t('core:searchEditBtn')}
+                aria-label={i18n.t('core:deleteHistory')}
                 onClick={() => {
-                  delHistory(historyKey, history.creationTimeStamp);
+                  if (Pro) {
+                    Pro.history.delHistory(
+                      historyKey,
+                      history.creationTimeStamp
+                    );
+                  }
                   forceUpdate();
                 }}
                 data-tid="editSearchTID"
@@ -476,7 +476,9 @@ function StoredSearches(props: Props) {
           onClose={() => setHistoryMenuAnchorEl(null)}
           refreshHistory={() => forceUpdate()}
           clearAll={() => {
-            delAllHistory(menuHistoryKey.current); //historyKeys.fileOpenKey);
+            if (Pro) {
+              Pro.history.delAllHistory(menuHistoryKey.current);
+            } //historyKeys.fileOpenKey);
             forceUpdate();
           }}
         />
@@ -510,7 +512,6 @@ function StoredSearches(props: Props) {
             searchQuery={saveSearchDialogOpened}
           />
         )}
-        <div style={{ height: 40 }} />
       </div>
       <input
         style={{ display: 'none' }}
