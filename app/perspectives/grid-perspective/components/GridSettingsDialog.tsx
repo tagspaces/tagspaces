@@ -32,6 +32,7 @@ import {
   MenuItem,
   Button,
   FormHelperText,
+  Typography,
   TextField
 } from '@mui/material';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -64,6 +65,7 @@ const styles: any = {
 
 interface Props {
   open: boolean;
+  theme?: any;
   gridPageLimit: number;
   onClose: (isDefault?: boolean) => void;
   setGridPageLimit: (number) => void;
@@ -103,7 +105,8 @@ function GridSettingsDialog(props: Props) {
     toggleThumbnailsMode,
     changeEntrySize,
     changeSingleClickAction,
-    openHelpWebPage
+    openHelpWebPage,
+    theme
   } = props;
 
   let newGridPageLimit = gridPageLimit;
@@ -136,16 +139,25 @@ function GridSettingsDialog(props: Props) {
       </DialogTitle>
       <DialogContent>
         {props.isLocal && (
-          <Button
-            data-tid="resetLocalSettingsTID"
-            title={i18n.t('core:resetLocalSettings')}
-            onClick={() => {
-              props.resetLocalSettings();
-              // forceUpdate();
-            }}
-          >
-            {i18n.t('core:resetLocalSettings')}
-          </Button>
+          <>
+            <Typography
+              style={{ color: theme.palette.text.primary }}
+              variant="caption"
+            >
+              {i18n.t('core:folderWithCustomPerspectiveSetting')}
+            </Typography>
+            <br />
+            <Button
+              data-tid="resetLocalSettingsTID"
+              title={i18n.t('core:resetLocalSettings')}
+              onClick={() => {
+                props.resetLocalSettings();
+                // forceUpdate();
+              }}
+            >
+              {i18n.t('core:resetLocalSettings')}
+            </Button>
+          </>
         )}
         <FormGroup>
           <FormControlLabel
