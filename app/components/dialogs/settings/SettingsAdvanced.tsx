@@ -46,7 +46,6 @@ import MapTileServerDialog from '-/components/dialogs/settings/MapTileServerDial
 import { Pro } from '-/pro';
 import { ProLabel } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
-import { historyKeys } from '../../../../extensions/tagspacespro/modules/history';
 
 const styles: any = {
   root: {
@@ -79,6 +78,8 @@ interface Props {
   setGeoTaggingFormat: (geoTaggingFormat: string) => void;
   setHistory: (key: string, value: number) => void;
 }
+
+const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 
 function SettingsAdvanced(props: Props) {
   const [tileServerDialog, setTileServerDialog] = useState<any>(undefined);
@@ -148,57 +149,65 @@ function SettingsAdvanced(props: Props) {
             checked={props.settings.warningOpeningFilesExternally}
           />
         </ListItem>
-        <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:fileOpenHistory')} />
-          <Select
-            data-tid="fileOpenTID"
-            title={i18n.t('core:fileOpenHistoryTitle')}
-            value={props.settings[historyKeys.fileOpenKey]}
-            onChange={(event: any) =>
-              props.setHistory(historyKeys.fileOpenKey, event.target.value)
-            }
-            input={<Input id="fileOpenSelector" />}
-          >
-            <MenuItem value={0}>{i18n.t('core:disabled')}</MenuItem>
-            <MenuItem value={10}>10</MenuItem>
-            <MenuItem value={50}>50</MenuItem>
-            <MenuItem value={100}>100</MenuItem>
-          </Select>
-        </ListItem>
-        <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:folderOpenHistory')} />
-          <Select
-            data-tid="folderOpenTID"
-            title={i18n.t('core:folderOpenHistoryTitle')}
-            value={props.settings[historyKeys.folderOpenKey]}
-            onChange={(event: any) =>
-              props.setHistory(historyKeys.folderOpenKey, event.target.value)
-            }
-            input={<Input id="folderOpenSelector" />}
-          >
-            <MenuItem value={0}>{i18n.t('core:disabled')}</MenuItem>
-            <MenuItem value={10}>10</MenuItem>
-            <MenuItem value={50}>50</MenuItem>
-            <MenuItem value={100}>100</MenuItem>
-          </Select>
-        </ListItem>
-        <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:fileEditHistory')} />
-          <Select
-            data-tid="fileEditTID"
-            title={i18n.t('core:fileEditHistoryTitle')}
-            value={props.settings[historyKeys.fileEditKey]}
-            onChange={(event: any) =>
-              props.setHistory(historyKeys.fileEditKey, event.target.value)
-            }
-            input={<Input id="fileEditSelector" />}
-          >
-            <MenuItem value={0}>{i18n.t('core:disabled')}</MenuItem>
-            <MenuItem value={10}>10</MenuItem>
-            <MenuItem value={50}>50</MenuItem>
-            <MenuItem value={100}>100</MenuItem>
-          </Select>
-        </ListItem>
+        {Pro && (
+          <>
+            <ListItem className={classes.listItem}>
+              <ListItemText primary={i18n.t('core:fileOpenHistory')} />
+              <Select
+                data-tid="fileOpenTID"
+                title={i18n.t('core:fileOpenHistoryTitle')}
+                value={props.settings[historyKeys.fileOpenKey]}
+                onChange={(event: any) =>
+                  props.setHistory(historyKeys.fileOpenKey, event.target.value)
+                }
+                input={<Input id="fileOpenSelector" />}
+              >
+                <MenuItem value={0}>{i18n.t('core:disabled')}</MenuItem>
+                <MenuItem value={10}>10</MenuItem>
+                <MenuItem value={50}>50</MenuItem>
+                <MenuItem value={100}>100</MenuItem>
+              </Select>
+            </ListItem>
+            <ListItem className={classes.listItem}>
+              <ListItemText primary={i18n.t('core:folderOpenHistory')} />
+              <Select
+                data-tid="folderOpenTID"
+                title={i18n.t('core:folderOpenHistoryTitle')}
+                value={props.settings[historyKeys.folderOpenKey]}
+                onChange={(event: any) =>
+                  props.setHistory(
+                    historyKeys.folderOpenKey,
+                    event.target.value
+                  )
+                }
+                input={<Input id="folderOpenSelector" />}
+              >
+                <MenuItem value={0}>{i18n.t('core:disabled')}</MenuItem>
+                <MenuItem value={10}>10</MenuItem>
+                <MenuItem value={50}>50</MenuItem>
+                <MenuItem value={100}>100</MenuItem>
+              </Select>
+            </ListItem>
+            <ListItem className={classes.listItem}>
+              <ListItemText primary={i18n.t('core:fileEditHistory')} />
+              <Select
+                data-tid="fileEditTID"
+                title={i18n.t('core:fileEditHistoryTitle')}
+                value={props.settings[historyKeys.fileEditKey]}
+                onChange={(event: any) =>
+                  props.setHistory(historyKeys.fileEditKey, event.target.value)
+                }
+                input={<Input id="fileEditSelector" />}
+              >
+                <MenuItem value={0}>{i18n.t('core:disabled')}</MenuItem>
+                <MenuItem value={10}>10</MenuItem>
+                <MenuItem value={50}>50</MenuItem>
+                <MenuItem value={100}>100</MenuItem>
+              </Select>
+            </ListItem>
+          </>
+        )}
+
         <ListItem className={classes.listItem}>
           <ListItemText
             primary={
