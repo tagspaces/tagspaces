@@ -83,10 +83,6 @@ import useEventListener from '-/utils/useEventListener';
 import { TS } from '-/tagspaces.namespace';
 import FileView from '-/components/FileView';
 import { Pro } from '-/pro';
-import {
-  historyKeys,
-  saveHistory
-} from '../../extensions/tagspacespro/modules/history';
 
 const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
 // const openedSplitSize = AppConfig.isElectron ? 560 : 360;
@@ -179,6 +175,8 @@ interface Props {
   tileServer: TS.MapTileServer;
   currentLocationId: string;
 }
+
+const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 
 function EntryContainer(props: Props) {
   // const [percent, setPercent] = React.useState<number | undefined>(undefined);
@@ -499,7 +497,7 @@ function EntryContainer(props: Props) {
           NotificationTypes.default
         );
         if (Pro) {
-          saveHistory(
+          Pro.histroy.saveHistory(
             historyKeys.fileEditKey,
             openedFile.path,
             openedFile.url,
