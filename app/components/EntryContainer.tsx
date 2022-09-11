@@ -497,7 +497,7 @@ function EntryContainer(props: Props) {
           NotificationTypes.default
         );
         if (Pro) {
-          Pro.histroy.saveHistory(
+          Pro.history.saveHistory(
             historyKeys.fileEditKey,
             openedFile.path,
             openedFile.url,
@@ -626,8 +626,8 @@ function EntryContainer(props: Props) {
     );
     const newWindow = window.open(
       fileOpenerURL,
-      '_blank',
-      'menubar=0,location=0,toolbar=0,resizable=1,status=1,scrollbars=1'
+      '_blank'
+      // 'menubar=0,location=0,toolbar=0,resizable=1,status=1,scrollbars=1'
     );
     newWindow.document.title = fileName;
   };
