@@ -497,7 +497,7 @@ function EntryContainer(props: Props) {
           NotificationTypes.default
         );
         if (Pro) {
-          Pro.histroy.saveHistory(
+          Pro.history.saveHistory(
             historyKeys.fileEditKey,
             openedFile.path,
             openedFile.url,
