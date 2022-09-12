@@ -242,7 +242,7 @@
     "@babel/register": "^7.17.7",
     "@milkdown/core": "5.5.0",
     "@milkdown/plugin-clipboard": "5.5.0",
-    "@milkdown/plugin-diagram": "5.5.0",
+    "@milkdown/plugin-diagram": "6.4.0",
     "@milkdown/plugin-emoji": "5.5.0",
     "@milkdown/plugin-history": "5.5.0",
     "@milkdown/plugin-listener": "5.5.0",
