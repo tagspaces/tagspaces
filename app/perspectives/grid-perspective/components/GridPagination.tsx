@@ -401,6 +401,7 @@ function mapActionCreatorsToProps(dispatch) {
 }
 
 const areEqual = (prevProp: Props, nextProp: Props) =>
+  nextProp.theme === prevProp.theme &&
   nextProp.isMetaLoaded === prevProp.isMetaLoaded &&
   nextProp.showDirectories === prevProp.showDirectories &&
   nextProp.showTags === prevProp.showTags &&
