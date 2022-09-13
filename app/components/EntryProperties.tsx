@@ -590,7 +590,8 @@ function EntryProperties(props: Props) {
               startAdornment: (
                 <InputAdornment position="start">
                   <IconButton
-                    disabled={!Pro}
+                    // TODO skip this if to Enable Bookmarks for folders
+                    disabled={!Pro || !currentEntry.isFile}
                     aria-label="bookmark"
                     size="small"
                     onClick={() => {

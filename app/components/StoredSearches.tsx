@@ -27,7 +27,7 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/RemoveCircleOutline';
-import RefreshIcon from '@mui/icons-material/Refresh';
+import BookmarkTwoToneIcon from '@mui/icons-material/BookmarkTwoTone';
 import MenuIcon from '@mui/icons-material/MoreVert';
 import SearchIcon from '@mui/icons-material/Search';
 import HistoryIcon from '@mui/icons-material/ExitToApp';
@@ -63,7 +63,7 @@ import {
 } from '@tagspaces/tagspaces-platforms/paths';
 import PlatformIO from '-/services/platform-facade';
 import HistoryMenu from '-/components/menus/HistoryMenu';
-import BookmarksMenu from "-/components/menus/BookmarksMenu";
+import BookmarksMenu from '-/components/menus/BookmarksMenu';
 
 interface Props {
   style?: any;
@@ -254,7 +254,11 @@ function StoredSearches(props: Props) {
                     </span>
                   }
                 >
-                  <HistoryIcon fontSize="small" />
+                  {key === Pro.bookmarks.bookmarksKey ? (
+                    <BookmarkTwoToneIcon fontSize="small" />
+                  ) : (
+                    <HistoryIcon fontSize="small" />
+                  )}
                 </Tooltip>
                 &nbsp;
                 {item.path.endsWith(PlatformIO.getDirSeparator())
