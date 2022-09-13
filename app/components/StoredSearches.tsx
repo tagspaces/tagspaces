@@ -29,8 +29,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/RemoveCircleOutline';
 import BookmarkTwoToneIcon from '@mui/icons-material/BookmarkTwoTone';
 import MenuIcon from '@mui/icons-material/MoreVert';
-import SearchIcon from '@mui/icons-material/Search';
-import HistoryIcon from '@mui/icons-material/ExitToApp';
+import SearchIcon from '@mui/icons-material/FilterAltTwoTone';
+import HistoryIcon from '@mui/icons-material/ChangeHistoryTwoTone';
 import ArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import ArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import Typography from '@mui/material/Typography';
@@ -244,6 +244,7 @@ function StoredSearches(props: Props) {
                   title={
                     <span style={{ fontSize: 14 }}>
                       <b>Path:</b> {item.path}
+                      <br />
                       <br />
                       <b>Opened on: </b>{' '}
                       {new Date(item.creationTimeStamp)

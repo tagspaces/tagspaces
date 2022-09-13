@@ -31,6 +31,8 @@ import fscreen from 'fscreen';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
+import BookmarkIcon from '@mui/icons-material/BookmarkTwoTone';
+import BookmarkAddIcon from '@mui/icons-material/BookmarkAddTwoTone';
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
 import BackIcon from '@mui/icons-material/RemoveRedEye';
@@ -56,8 +58,10 @@ import {
   extractFileExtension,
   baseName,
   extractFileName,
-  extractDirectoryName
+  extractDirectoryName,
+  generateSharingLink
 } from '@tagspaces/tagspaces-platforms/paths';
+import { ProTooltip } from '-/components/HelperComponents';
 import EntryProperties from '-/components/EntryProperties';
 import TagsPreview from '-/components/TagsPreview';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
@@ -211,7 +215,6 @@ function EntryContainer(props: Props) {
   const fileViewerContainer: MutableRefObject<HTMLDivElement> = useRef<
     HTMLDivElement
   >(null);
-
   const fileChanged = useRef<boolean>(false);
 
   useEventListener('message', e => {
@@ -321,6 +324,27 @@ function EntryContainer(props: Props) {
     !props.isReadOnlyMode &&
     openedFile.editingExtensionId !== undefined &&
     openedFile.editingExtensionId.length > 3;
+
+  const haveBookmark =
+    Pro && Pro.bookmarks && Pro.bookmarks.haveBookmark(openedFile.path);
+
+  let sharingLink = '';
+  if (window.location.href.indexOf('?') > 0) {
+    const sharingURL = new URL(window.location.href);
+    const params = new URLSearchParams(sharingURL.search);
+    if (params.has('tslid')) {
+      const locationId = params.get('tslid');
+      if (openedFile.isFile && params.has('tsepath')) {
+        const entryPath = params.get('tsepath');
+        sharingLink = generateSharingLink(locationId, entryPath);
+      } else if (!openedFile.isFile) {
+        const dirPath = params.has('tsepath')
+          ? params.get('tsepath')
+          : openedFile.path;
+        sharingLink = generateSharingLink(locationId, undefined, dirPath);
+      }
+    }
+  }
 
   const handleMessage = (data: any) => {
     let message;
@@ -967,7 +991,6 @@ function EntryContainer(props: Props) {
             >
               <Box className={classes.flexLeft} style={{ paddingRight: 20 }}>
                 <div
-                  title={openedFile.url || openedFile.path}
                   style={{
                     paddingLeft: 10,
                     display: 'flex',
@@ -977,33 +1000,40 @@ function EntryContainer(props: Props) {
                     color: 'inherit !important'
                   }}
                 >
-                  <Box
-                    style={{
-                      color: props.theme.palette.text.primary,
-                      display: 'inline',
-                      fontSize: 17
-                    }}
-                  >
-                    {openedFile.isFile && fileChanged.current // openedFile.editMode && openedFile.changed
-                      ? String.fromCharCode(0x25cf) + ' '
-                      : ''}
-                    {fileTitle}
-                  </Box>
-                  {openedFile.isFile ? (
-                    <span
-                      className={classes.fileBadge}
-                      title={i18n.t('core:toggleEntryProperties')}
+                  <Tooltip title={openedFile.url || openedFile.path}>
+                    <Box
                       style={{
-                        backgroundColor: openedFile.color,
-                        textTransform: 'uppercase'
+                        color: props.theme.palette.text.primary,
+                        display: 'inline',
+                        fontSize: 17
                       }}
                     >
-                      {'.' +
-                        extractFileExtension(
-                          openedFile.path,
-                          PlatformIO.getDirSeparator()
-                        )}
-                    </span>
+                      {fileTitle}
+                    </Box>
+                  </Tooltip>
+                  {openedFile.isFile ? (
+                    <>
+                      {fileChanged.current ? (
+                        <Tooltip title="File changed">
+                          <span>{' ' + String.fromCharCode(0x25cf)}</span>
+                        </Tooltip>
+                      ) : (
+                        ''
+                      )}
+                      <span
+                        className={classes.fileBadge}
+                        style={{
+                          backgroundColor: openedFile.color,
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        {'.' +
+                          extractFileExtension(
+                            openedFile.path,
+                            PlatformIO.getDirSeparator()
+                          )}
+                      </span>
+                    </>
                   ) : (
                     <span
                       className={classes.fileBadge}
@@ -1016,6 +1046,39 @@ function EntryContainer(props: Props) {
                     </span>
                   )}
                 </div>
+                <ProTooltip tooltip={i18n.t('core:toggleBookmark')}>
+                  <IconButton
+                    aria-label="bookmark"
+                    size="small"
+                    onClick={() => {
+                      if (Pro) {
+                        if (haveBookmark) {
+                          Pro.bookmarks.delBookmark(openedFile.path);
+                        } else {
+                          Pro.bookmarks.setBookmark(
+                            openedFile.path,
+                            openedFile.url ? sharingLink : undefined
+                          );
+                        }
+                        forceUpdate();
+                      }
+                    }}
+                  >
+                    {haveBookmark ? (
+                      <BookmarkIcon
+                        style={{
+                          color: theme.palette.primary.main
+                        }}
+                      />
+                    ) : (
+                      <BookmarkAddIcon
+                        style={{
+                          color: theme.palette.text.secondary
+                        }}
+                      />
+                    )}
+                  </IconButton>
+                </ProTooltip>
                 <TagsPreview tags={openedFile.tags} />
               </Box>
               <div className={classes.entryCloseSection}>
@@ -1098,6 +1161,7 @@ function EntryContainer(props: Props) {
           isReadOnlyMode={props.isReadOnlyMode}
           currentDirectoryPath={props.currentDirectoryPath}
           tileServer={props.tileServer}
+          sharingLink={sharingLink}
         />
       </div>
     );

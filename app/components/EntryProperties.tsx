@@ -37,7 +37,6 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import InputAdornment from '@mui/material/InputAdornment';
 import ShareIcon from '@mui/icons-material/Link';
-import BookmarkTwoToneIcon from '@mui/icons-material/BookmarkTwoTone';
 import Tooltip from '@mui/material/Tooltip';
 import LocationIcon from '@mui/icons-material/WorkOutline';
 import EditIcon from '@mui/icons-material/Edit';
@@ -61,8 +60,7 @@ import {
   getThumbFileLocationForFile,
   getThumbFileLocationForDirectory,
   extractFileName,
-  extractDirectoryName,
-  generateSharingLink
+  extractDirectoryName
 } from '@tagspaces/tagspaces-platforms/paths';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import TagDropContainer from './TagDropContainer';
@@ -157,6 +155,7 @@ interface Props {
   isReadOnlyMode: boolean;
   // currentDirectoryPath: string | null;
   tagDelimiter: string;
+  sharingLink: string;
   tileServer: TS.MapTileServer;
 }
 
@@ -166,7 +165,6 @@ function EntryProperties(props: Props) {
   const sharingLinkRef = useRef<HTMLInputElement>(null);
   const objectStorageLinkRef = useRef<HTMLInputElement>(null);
   const fileDescriptionRef = useRef<HTMLInputElement>(null);
-  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
   const directoryPath = props.openedEntry.isFile
     ? extractContainingDirectoryPath(
@@ -442,7 +440,7 @@ function EntryProperties(props: Props) {
     }
   };
 
-  const { classes, isReadOnlyMode, theme } = props;
+  const { classes, isReadOnlyMode, theme, sharingLink } = props;
 
   if (!currentEntry || !currentEntry.path || currentEntry.path === '') {
     return <div />;
@@ -536,24 +534,6 @@ function EntryProperties(props: Props) {
 
   const geoLocation: any = getGeoLocation(currentEntry.tags);
 
-  let sharingLink = '';
-  if (window.location.href.indexOf('?') > 0) {
-    const sharingURL = new URL(window.location.href);
-    const params = new URLSearchParams(sharingURL.search);
-    if (params.has('tslid')) {
-      const locationId = params.get('tslid');
-      if (currentEntry.isFile && params.has('tsepath')) {
-        const entryPath = params.get('tsepath');
-        sharingLink = generateSharingLink(locationId, entryPath);
-      } else if (!currentEntry.isFile) {
-        const dirPath = params.has('tsepath')
-          ? params.get('tsepath')
-          : currentEntry.path;
-        sharingLink = generateSharingLink(locationId, undefined, dirPath);
-      }
-    }
-  }
-
   const isCloudLocation = currentEntry.url && currentEntry.url.length > 5;
 
   function generateCopySharingURL() {
@@ -574,8 +554,6 @@ function EntryProperties(props: Props) {
 
   const showLinkForDownloading = isCloudLocation && currentEntry.isFile;
 
-  const haveBookmark =
-    Pro && Pro.bookmarks && Pro.bookmarks.haveBookmark(currentEntry.path);
   return (
     <div className={classes.entryProperties}>
       <Grid container>
@@ -588,33 +566,6 @@ function EntryProperties(props: Props) {
             }
             InputProps={{
               readOnly: editName === undefined,
-              startAdornment: currentEntry.isFile && ( // TODO skip to enable bookmarks also for folders
-                <InputAdornment position="start">
-                  <IconButton
-                    aria-label="bookmark"
-                    size="small"
-                    onClick={() => {
-                      if (haveBookmark) {
-                        Pro.bookmarks.delBookmark(currentEntry.path);
-                      } else {
-                        Pro.bookmarks.setBookmark(
-                          currentEntry.path,
-                          currentEntry.url ? sharingLink : undefined
-                        );
-                      }
-                      forceUpdate();
-                    }}
-                  >
-                    <BookmarkTwoToneIcon
-                      style={{
-                        color: haveBookmark
-                          ? theme.palette.primary.main
-                          : theme.palette.text.secondary
-                      }}
-                    />
-                  </IconButton>
-                </InputAdornment>
-              ),
               endAdornment: (
                 <InputAdornment position="end">
                   {!isReadOnlyMode &&
