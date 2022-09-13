@@ -30,8 +30,8 @@ export const PerspectiveIDs = {
   GALLERY: 'gallery',
   // TREEVIZ: 'treeviz',
   MAPIQUE: 'mapique',
-  KANBAN: 'kanban',
-  WIKI: 'wiki'
+  KANBAN: 'kanban'
+  // WIKI: 'wiki'
 };
 
 export const GridPerspectiveMeta = {
@@ -52,14 +52,14 @@ export const ListPerspectiveMeta = {
   title: 'List Perspective'
 };
 
-export const WikiPerspectiveMeta = {
-  id: PerspectiveIDs.WIKI,
-  key: 'openWikiPerspective',
-  pro: true,
-  beta: true,
-  icon: <WikiPerspectiveIcon />,
-  title: 'Wiki Perspective'
-};
+// export const WikiPerspectiveMeta = {
+//   id: PerspectiveIDs.WIKI,
+//   key: 'openWikiPerspective',
+//   pro: true,
+//   beta: true,
+//   icon: <WikiPerspectiveIcon />,
+//   title: 'Wiki Perspective'
+// };
 
 export const MapiquePerspectiveMeta = {
   id: PerspectiveIDs.MAPIQUE,
@@ -93,5 +93,5 @@ AvailablePerspectives.push(GridPerspectiveMeta);
 AvailablePerspectives.push(ListPerspectiveMeta);
 AvailablePerspectives.push(GalleryPerspectiveMeta);
 AvailablePerspectives.push(MapiquePerspectiveMeta);
-AvailablePerspectives.push(KanbanPerspectiveMeta);
-AvailablePerspectives.push(WikiPerspectiveMeta);
+// AvailablePerspectives.push(KanbanPerspectiveMeta);
+// AvailablePerspectives.push(WikiPerspectiveMeta);
