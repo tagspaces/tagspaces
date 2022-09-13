@@ -16,7 +16,7 @@
  *
  */
 
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, useEffect, useReducer, useRef, useState } from "react";
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
 import { Theme } from '@mui/material/styles';
 import { v1 as uuidv1 } from 'uuid';
@@ -31,6 +31,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import InputAdornment from '@mui/material/InputAdornment';
 import ShareIcon from '@mui/icons-material/Link';
+import BookmarkTwoToneIcon from '@mui/icons-material/BookmarkTwoTone';
 import Tooltip from '@mui/material/Tooltip';
 import LocationIcon from '@mui/icons-material/WorkOutline';
 import EditIcon from '@mui/icons-material/Edit';
@@ -159,6 +160,7 @@ function EntryProperties(props: Props) {
   const sharingLinkRef = useRef<HTMLInputElement>(null);
   const objectStorageLinkRef = useRef<HTMLInputElement>(null);
   const fileDescriptionRef = useRef<HTMLInputElement>(null);
+  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
   const directoryPath = props.openedEntry.isFile
     ? extractContainingDirectoryPath(
@@ -566,6 +568,7 @@ function EntryProperties(props: Props) {
 
   const showLinkForDownloading = isCloudLocation && currentEntry.isFile;
 
+  const haveBookmark = Pro.bookmarks.haveBookmark(currentEntry.path);
   return (
     <div className={classes.entryProperties}>
       <Grid container>
@@ -578,6 +581,31 @@ function EntryProperties(props: Props) {
             }
             InputProps={{
               readOnly: editName === undefined,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <IconButton
+                    disabled={!Pro}
+                    aria-label="bookmark"
+                    size="small"
+                    onClick={() => {
+                      if (haveBookmark) {
+                        Pro.bookmarks.delBookmark(currentEntry.path);
+                      } else {
+                        Pro.bookmarks.setBookmark(currentEntry.path);
+                      }
+                      forceUpdate();
+                    }}
+                  >
+                    <BookmarkTwoToneIcon
+                      style={{
+                        color: haveBookmark
+                          ? 'yellow'
+                          : theme.palette.text.secondary
+                      }}
+                    />
+                  </IconButton>
+                </InputAdornment>
+              ),
               endAdornment: (
                 <InputAdornment position="end">
                   {!isReadOnlyMode &&

@@ -181,6 +181,11 @@ export default {
   tsLastOpenedFilesHistory: 10,
   tsLastOpenedFoldersHistory: 10,
   tsLastEditedFilesHistory: 10,
+  storedSearchesVisible: true,
+  showBookmarks: true,
+  fileOpenHistory: false,
+  folderOpenHistory: false,
+  fileEditHistory: false,
   supportedLanguages: [
     {
       iso: 'en',

@@ -78,7 +78,12 @@ export const types = {
   TOGGLE_TAGGROUP: 'TOGGLE_TAGGROUP',
   ADD_MAPTILE_SERVER: 'SET_MAPTILE_SERVER',
   EDIT_MAPTILE_SERVER: 'EDIT_MAPTILE_SERVER',
-  DELETE_MAPTILE_SERVER: 'DELETE_MAPTILE_SERVER'
+  DELETE_MAPTILE_SERVER: 'DELETE_MAPTILE_SERVER',
+  SET_STORED_SEARCHES_VISIBLE: 'SET_STORED_SEARCHES_VISIBLE',
+  SET_SHOW_BOOKMARKS: 'SET_SHOW_BOOKMARKS',
+  SET_FILE_OPEN_HISTORY: 'SET_FILE_OPEN_HISTORY',
+  SET_FOLDER_OPEN_HISTORY: 'SET_FOLDER_OPEN_HISTORY',
+  SET_FILE_EDIT_HISTORY: 'SET_FILE_EDIT_HISTORY',
 };
 
 export default (state: any = defaultSettings, action: any) => {
@@ -330,6 +335,36 @@ export default (state: any = defaultSettings, action: any) => {
       return {
         ...state,
         lastPublishedVersion: action.lastPublishedVersion
+      };
+    }
+    case types.SET_STORED_SEARCHES_VISIBLE: {
+      return {
+        ...state,
+        storedSearchesVisible: action.storedSearchesVisible
+      };
+    }
+    case types.SET_SHOW_BOOKMARKS: {
+      return {
+        ...state,
+        showBookmarks: action.showBookmarks
+      };
+    }
+    case types.SET_FILE_OPEN_HISTORY: {
+      return {
+        ...state,
+        fileOpenHistory: action.fileOpenHistory
+      };
+    }
+    case types.SET_FOLDER_OPEN_HISTORY: {
+      return {
+        ...state,
+        folderOpenHistory: action.folderOpenHistory
+      };
+    }
+    case types.SET_FILE_EDIT_HISTORY: {
+      return {
+        ...state,
+        fileEditHistory: action.fileEditHistory
       };
     }
     case types.TOGGLE_TAGGROUP: {
@@ -590,6 +625,26 @@ export const actions = {
     type: types.SET_LAST_PUBLISHED_VERSION,
     lastPublishedVersion
   }),
+  setStoredSearchesVisible: (storedSearchesVisible: boolean) => ({
+    type: types.SET_STORED_SEARCHES_VISIBLE,
+    storedSearchesVisible
+  }),
+  setShowBookmarks: (showBookmarks: boolean) => ({
+    type: types.SET_SHOW_BOOKMARKS,
+    showBookmarks
+  }),
+  setFileOpenHistory: (fileOpenHistory: boolean) => ({
+    type: types.SET_FILE_OPEN_HISTORY,
+    fileOpenHistory
+  }),
+  setFolderOpenHistory: (folderOpenHistory: boolean) => ({
+    type: types.SET_FOLDER_OPEN_HISTORY,
+    folderOpenHistory
+  }),
+  setFileEditHistory: (fileEditHistory: boolean) => ({
+    type: types.SET_FILE_EDIT_HISTORY,
+    fileEditHistory
+  }),
   checkForUpdate: () => (
     dispatch: (actions: Object) => void
     // getState: () => any
@@ -728,6 +783,11 @@ export const getTagDelimiter = (state: any) => state.settings.tagDelimiter;
 export const getMaxSearchResults = (state: any) =>
   state.settings.maxSearchResult;
 export const isDesktopMode = (state: any) => state.settings.desktopMode;
+export const getStoredSearchesVisible = (state: any) => state.settings.storedSearchesVisible;
+export const getShowBookmarks = (state: any) => state.settings.showBookmarks;
+export const getFileOpenHistory = (state: any) => state.settings.fileOpenHistory;
+export const getFolderOpenHistory = (state: any) => state.settings.folderOpenHistory;
+export const getFileEditHistory = (state: any) => state.settings.fileEditHistory;
 export const isFirstRun = (state: any) => {
   if (typeof window.ExtIsFirstRun === 'undefined') {
     return state.settings.firstRun;
