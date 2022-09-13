@@ -271,7 +271,7 @@ function StoredSearches(props: Props) {
             </Grid>
             <Grid item xs={2} style={{ display: 'flex' }}>
               <IconButton
-                aria-label={i18n.t('core:deleteHistory')}
+                aria-label={i18n.t('core:clearHistory')}
                 onClick={() => {
                   if (Pro) {
                     if (key === Pro.bookmarks.bookmarksKey) {

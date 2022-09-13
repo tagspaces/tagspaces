@@ -50,7 +50,7 @@ function HistoryMenu(props: Props) {
       <ListItemIcon>
         <RefreshIcon />
       </ListItemIcon>
-      <ListItemText primary={<>{i18n.t('core:refreshHistory')}</>} />
+      <ListItemText primary={<>{i18n.t('core:refresh')}</>} />
     </MenuItem>
   );
   menuItems.push(
@@ -66,7 +66,7 @@ function HistoryMenu(props: Props) {
       <ListItemIcon>
         <DeleteIcon />
       </ListItemIcon>
-      <ListItemText primary={<>{i18n.t('core:deleteHistory')}</>} />
+      <ListItemText primary={<>{i18n.t('core:clearHistory')}</>} />
     </MenuItem>
   );
 

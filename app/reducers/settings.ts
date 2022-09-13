@@ -83,7 +83,7 @@ export const types = {
   SET_SHOW_BOOKMARKS: 'SET_SHOW_BOOKMARKS',
   SET_FILE_OPEN_HISTORY: 'SET_FILE_OPEN_HISTORY',
   SET_FOLDER_OPEN_HISTORY: 'SET_FOLDER_OPEN_HISTORY',
-  SET_FILE_EDIT_HISTORY: 'SET_FILE_EDIT_HISTORY',
+  SET_FILE_EDIT_HISTORY: 'SET_FILE_EDIT_HISTORY'
 };
 
 export default (state: any = defaultSettings, action: any) => {
@@ -783,11 +783,15 @@ export const getTagDelimiter = (state: any) => state.settings.tagDelimiter;
 export const getMaxSearchResults = (state: any) =>
   state.settings.maxSearchResult;
 export const isDesktopMode = (state: any) => state.settings.desktopMode;
-export const getStoredSearchesVisible = (state: any) => state.settings.storedSearchesVisible;
+export const getStoredSearchesVisible = (state: any) =>
+  state.settings.storedSearchesVisible;
 export const getShowBookmarks = (state: any) => state.settings.showBookmarks;
-export const getFileOpenHistory = (state: any) => state.settings.fileOpenHistory;
-export const getFolderOpenHistory = (state: any) => state.settings.folderOpenHistory;
-export const getFileEditHistory = (state: any) => state.settings.fileEditHistory;
+export const getFileOpenHistory = (state: any) =>
+  state.settings.fileOpenHistory;
+export const getFolderOpenHistory = (state: any) =>
+  state.settings.folderOpenHistory;
+export const getFileEditHistory = (state: any) =>
+  state.settings.fileEditHistory;
 export const isFirstRun = (state: any) => {
   if (typeof window.ExtIsFirstRun === 'undefined') {
     return state.settings.firstRun;

@@ -574,7 +574,8 @@ function EntryProperties(props: Props) {
 
   const showLinkForDownloading = isCloudLocation && currentEntry.isFile;
 
-  const haveBookmark = Pro.bookmarks.haveBookmark(currentEntry.path);
+  const haveBookmark =
+    Pro && Pro.bookmarks && Pro.bookmarks.haveBookmark(currentEntry.path);
   return (
     <div className={classes.entryProperties}>
       <Grid container>
@@ -587,11 +588,9 @@ function EntryProperties(props: Props) {
             }
             InputProps={{
               readOnly: editName === undefined,
-              startAdornment: (
+              startAdornment: currentEntry.isFile && ( // TODO skip to enable bookmarks also for folders
                 <InputAdornment position="start">
                   <IconButton
-                    // TODO skip this if to Enable Bookmarks for folders
-                    disabled={!Pro || !currentEntry.isFile}
                     aria-label="bookmark"
                     size="small"
                     onClick={() => {
@@ -609,7 +608,7 @@ function EntryProperties(props: Props) {
                     <BookmarkTwoToneIcon
                       style={{
                         color: haveBookmark
-                          ? 'yellow'
+                          ? theme.palette.primary.main
                           : theme.palette.text.secondary
                       }}
                     />
