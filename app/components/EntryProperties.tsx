@@ -16,7 +16,13 @@
  *
  */
 
-import React, { ChangeEvent, useEffect, useReducer, useRef, useState } from "react";
+import React, {
+  ChangeEvent,
+  useEffect,
+  useReducer,
+  useRef,
+  useState
+} from 'react';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
 import { Theme } from '@mui/material/styles';
 import { v1 as uuidv1 } from 'uuid';
@@ -591,7 +597,10 @@ function EntryProperties(props: Props) {
                       if (haveBookmark) {
                         Pro.bookmarks.delBookmark(currentEntry.path);
                       } else {
-                        Pro.bookmarks.setBookmark(currentEntry.path);
+                        Pro.bookmarks.setBookmark(
+                          currentEntry.path,
+                          currentEntry.url ? sharingLink : undefined
+                        );
                       }
                       forceUpdate();
                     }}

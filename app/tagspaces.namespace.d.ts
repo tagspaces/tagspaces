@@ -152,6 +152,7 @@ export namespace TS {
 
   interface BookmarkItem {
     path: string;
+    url: string;
     creationTimeStamp: number;
   }
 
