@@ -150,6 +150,12 @@ export namespace TS {
     creationTimeStamp: number;
   }
 
+  interface BookmarkItem {
+    path: string;
+    url: string;
+    creationTimeStamp: number;
+  }
+
   interface PerspectiveSettings {
     grid?: FolderSettings;
     list?: FolderSettings;

@@ -667,11 +667,14 @@
   "fileOpenHistory": "Recently Opened Files",
   "folderOpenHistory": "Recently Opened Folders",
   "fileEditHistory": "Recently Edited Files",
-  "refreshHistory": "Refresh History",
-  "deleteHistory": "Delete History",
+  "clearHistory": "Clear History",
+  "showBookmarks": "Bookmarks",
+  "refresh": "Refresh",
+  "deleteBookmarks": "Delete All Bookmarks",
   "quickAccess": "Quick access",
   "resetLocalSettings": "Reset Custom Settings",
   "folderWithCustomPerspectiveSetting": "Current folder has custom settings for this perspective",
   "cancelSubscription": "Cancel Subscription",
+  "toggleBookmark": "Toggle Bookmark",
   "-": "-"
 }

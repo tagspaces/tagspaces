@@ -31,20 +31,20 @@ interface Props {
   open: boolean;
   anchorEl: Element;
   onClose: () => void;
-  refreshHistory: () => void;
+  refresh: () => void;
   clearAll: () => void;
 }
 
-function HistoryMenu(props: Props) {
+function BookmarksMenu(props: Props) {
   const menuItems = [];
   menuItems.push(
     <MenuItem
       disabled={!Pro}
-      key="refreshHistoryTID"
-      data-tid="refreshHistoryTID"
+      key="refreshBookmarks"
+      data-tid="refreshBookmarksTID"
       onClick={() => {
         props.onClose();
-        props.refreshHistory();
+        props.refresh();
       }}
     >
       <ListItemIcon>
@@ -56,8 +56,8 @@ function HistoryMenu(props: Props) {
   menuItems.push(
     <MenuItem
       disabled={!Pro}
-      key="clearHistoryTID"
-      data-tid="clearHistoryTID"
+      key="clearBookmarksTID"
+      data-tid="clearBookmarksTID"
       onClick={() => {
         props.onClose();
         props.clearAll();
@@ -66,7 +66,7 @@ function HistoryMenu(props: Props) {
       <ListItemIcon>
         <DeleteIcon />
       </ListItemIcon>
-      <ListItemText primary={<>{i18n.t('core:clearHistory')}</>} />
+      <ListItemText primary={<>{i18n.t('core:deleteBookmarks')}</>} />
     </MenuItem>
   );
 
@@ -79,4 +79,4 @@ function HistoryMenu(props: Props) {
   );
 }
 
-export default HistoryMenu;
+export default BookmarksMenu;
