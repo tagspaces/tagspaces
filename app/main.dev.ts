@@ -99,7 +99,6 @@ process.argv.forEach((arg, count) => {
     count === 0
   ) {
     // ignoring the first argument
-    // Ignore these argument
   } else if (arg.length > 2) {
     // console.warn('Opening file: ' + arg);
     if (arg !== './app/main.dev.js' && arg !== './app/') {
@@ -309,6 +308,30 @@ function reloadApp() {
   }
 }
 
+function createNewWindowInstance(startupParameter?) {
+  const mainWindowState = windowStateKeeper({
+    defaultWidth: 1280,
+    defaultHeight: 800
+  });
+
+  const mainWindowInstance = new BrowserWindow({
+    show: true,
+    center: true,
+    width: mainWindowState.width,
+    height: mainWindowState.height,
+    webPreferences: {
+      spellcheck: true,
+      nodeIntegration: true,
+      webviewTag: true,
+      contextIsolation: false
+    }
+  });
+
+  mainWindowInstance.setMenuBarVisibility(false);
+  mainWindowInstance.setAutoHideMenuBar(true);
+  mainWindowInstance.loadURL(mainHTML); //  + startupParameter && startupParameter
+}
+
 function buildTrayMenu() {
   /* let iconPath;
   if (devMode) {
@@ -364,59 +387,12 @@ function buildAppMenu() {
       openURLExternally,
       toggleLicenseDialog,
       toggleThirdPartyLibsDialog,
-      toggleAboutDialog
+      toggleAboutDialog,
+      createNewWindowInstance
     },
     i18n
   );
 }
-
-/* function createSplashWorker() {
-  // console.log('Dev ' + process.env.NODE_ENV + ' worker ' + showWorkerWindow);
-  (global as any).splashWorkerWindow = new BrowserWindow({
-    show: workerDevMode,
-    x: 0,
-    y: 0,
-    width: workerDevMode ? 800 : 1,
-    height: workerDevMode ? 600 : 1,
-    frame: false,
-    webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false
-    }
-  });
-
-  if (!process.env.DISABLE_WORKER) {
-    (global as any).splashWorkerWindow.loadURL(
-      `file://${__dirname}/splash.html`
-    );
-  }
-
-  (global as any).splashWorkerWindow.webContents.on('crashed', () => {
-    try {
-      (global as any).splashWorkerWindow.close();
-      (global as any).splashWorkerWindow = null;
-    } catch (err) {
-      console.warn('Error closing the splash window. ' + err);
-    }
-    // createSplashWorker();
-  });
-
-  // electron-io actions
-  ipcMain.on('is-worker-available', event => {
-    let workerAvailable = false;
-    try {
-      if (
-        (global as any).splashWorkerWindow &&
-        (global as any).splashWorkerWindow.webContents
-      ) {
-        workerAvailable = true;
-      }
-    } catch (err) {
-      console.info('Error by finding if worker is available.');
-    }
-    event.returnValue = workerAvailable;
-  });
-} */
 
 async function startWS() {
   try {
@@ -542,29 +518,9 @@ async function createAppWindow() {
   });
 
   mainWindow.webContents.on('crashed', () => {
-    /* const options = {
-      type: 'info',
-      title: 'Renderer Process Crashed',
-      message: 'This process has crashed.',
-      buttons: ['Reload', 'Close']
-    }; */
-
-    // if (!mainWindow) {
     pm2.stopAll();
     globalShortcut.unregisterAll();
     app.quit();
-
-    // }
-
-    /* dialog.showMessageBox(mainWindow, options).then(dialogResponse => {
-      mainWindow.hide();
-      if (dialogResponse.response === 0) {
-        mainWindow.loadURL(mainHTML); // reloadApp();
-      } else {
-        mainWindow.close();
-        globalShortcut.unregisterAll();
-      }
-    }); */
   });
 }
 
@@ -579,7 +535,6 @@ app.on('window-all-closed', () => {
 startWS();
 
 app.on('ready', async () => {
-  // await startWS();
   if (
     process.env.NODE_ENV === 'development' ||
     process.env.DEBUG_PROD === 'true'
@@ -587,9 +542,6 @@ app.on('ready', async () => {
     await installExtensions();
   }
 
-  // if (!process.env.DISABLE_WORKER) {
-  // createSplashWorker();
-  // }
   try {
     buildAppMenu();
     await createAppWindow();
@@ -643,15 +595,7 @@ app.on('ready', async () => {
     event.returnValue = app.getPath('home');
   });
 
-  /* ipcMain.on('worker', (event, arg) => {
-    // console.log('worker event in main.' + arg.result.length);
-    if ((global as any).splashWorkerWindow) {
-      (global as any).splashWorkerWindow.webContents.send('worker', arg);
-    }
-  }); */
-
   ipcMain.on('worker-response', (event, arg) => {
-    // console.log('worker event in main.' + arg.result.length);
     if (mainWindow) {
       mainWindow.webContents.send(arg.id, arg);
     }
@@ -673,15 +617,6 @@ app.on('ready', async () => {
 
   // end electron-io
 
-  /* ipcMain.on('setSplashVisibility', (event, arg) => {
-    // worker window needed to be visible for the PDF tmb generation
-    // console.log('worker event in main: ' + arg.visibility);
-    if ((global as any).splashWorkerWindow && arg.visibility) {
-      (global as any).splashWorkerWindow.show();
-      // arg.visibility ? global.splashWorkerWindow.show() : global.splashWorkerWindow.hide();
-    }
-  }); */
-
   ipcMain.on('app-data-path-request', event => {
     event.returnValue = app.getPath('appData'); // eslint-disable-line
   });
@@ -689,12 +624,6 @@ app.on('ready', async () => {
   ipcMain.on('app-version-request', event => {
     event.returnValue = app.getVersion(); // eslint-disable-line
   });
-
-  /*
-  ipcMain.on('app-dir-path-request', event => {
-    event.returnValue = path.join(__dirname, ''); // eslint-disable-line
-  });
-  */
 
   ipcMain.handle('move-to-trash', async (event, files) => {
     const result = [];
@@ -760,11 +689,6 @@ app.on('ready', async () => {
     }
     reloadApp();
   });
-
-  // i18n.on('loaded', loaded => {
-  // setTimeout(() => {
-
-  // }, 5000);
 });
 
 // i18n.on('languageChanged', lng => {

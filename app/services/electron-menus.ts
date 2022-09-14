@@ -28,16 +28,14 @@ export default function buildDesktopMenu(props: any, i18n) {
     {
       label: i18n.t('file'),
       submenu: [
-        /* {
+        {
           label: i18n.t('openNewInstance'),
           accelerator: '',
-          click: () => {
-            // ipcRenderer.send('new-win', 'newWin');
-          }
-        }, */
-        /* {
+          click: props.createNewWindowInstance
+        },
+        {
           type: 'separator'
-        }, */
+        },
         {
           label: i18n.t('newFileNote'),
           accelerator: 'CommandOrControl+Shift+n',
