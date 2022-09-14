@@ -19,7 +19,7 @@
 import i18n from 'i18next';
 import HttpApi from 'i18next-http-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import en from '../locales/en/core.json';
+import en from '../locales/en_US/core.json';
 
 function loadLocales(options, url, payload, callback) {
   // (url, options, callback, data) {
