@@ -155,18 +155,6 @@ function StoredSearches(props: Props) {
       ...savedSearch,
       showUnixHiddenEntries: props.showUnixHiddenEntries
     });
-
-    /* if (savedSearch.searchBoxing === 'global') {
-      props.searchAllLocations({
-        ...savedSearch,
-        showUnixHiddenEntries: props.showUnixHiddenEntries
-      });
-    } else {
-      props.searchLocationIndex({
-        ...savedSearch,
-        showUnixHiddenEntries: props.showUnixHiddenEntries
-      });
-    } */
   };
 
   function handleFileInputChange(selection: any) {
@@ -185,16 +173,24 @@ function StoredSearches(props: Props) {
 
   const bookmarkItems: Array<TS.BookmarkItem> = Pro
     ? Pro.bookmarks.getBookmarks()
-    : undefined;
+    : [];
   const fileOpenHistoryItems: Array<TS.HistoryItem> = Pro
     ? Pro.history.getHistory(historyKeys.fileOpenKey)
-    : undefined;
+    : [];
   const fileEditHistoryItems: Array<TS.HistoryItem> = Pro
     ? Pro.history.getHistory(historyKeys.fileEditKey)
-    : undefined;
+    : [];
   const folderOpenHistoryItems: Array<TS.HistoryItem> = Pro
     ? Pro.history.getHistory(historyKeys.folderOpenKey)
-    : undefined;
+    : [];
+
+  const bookmarksAvailable = bookmarkItems && bookmarkItems.length > 0;
+  const openedFilesAvailable =
+    fileOpenHistoryItems && fileOpenHistoryItems.length > 0;
+  const editedFilesAvailable =
+    fileEditHistoryItems && fileEditHistoryItems.length > 0;
+  const openedFoldersAvailable =
+    folderOpenHistoryItems && folderOpenHistoryItems.length > 0;
 
   const renderItem = (
     key,
@@ -372,7 +368,9 @@ function StoredSearches(props: Props) {
         <Grid container direction="row">
           {props.storedSearchesVisible && noSearchesFound && (
             <Grid item xs={12} style={{ display: 'flex', padding: 10 }}>
-              {i18n.t('noSavedSearches')}
+              <Typography variant="caption">
+                {i18n.t('noSavedSearches')}
+              </Typography>
             </Grid>
           )}
         </Grid>
@@ -439,6 +437,13 @@ function StoredSearches(props: Props) {
             </IconButton>
           </Grid>
         </Grid>
+        <Grid container direction="row">
+          {props.showBookmarks && !bookmarksAvailable && (
+            <Grid item xs={12} style={{ textAlign: 'center' }}>
+              <Typography variant="caption">{i18n.t('noItems')}</Typography>
+            </Grid>
+          )}
+        </Grid>
         {Pro &&
           props.showBookmarks &&
           renderItem(Pro.bookmarks.bookmarksKey, bookmarkItems)}
@@ -473,6 +478,13 @@ function StoredSearches(props: Props) {
             </IconButton>
           </Grid>
         </Grid>
+        <Grid container direction="row">
+          {props.fileOpenHistory && !openedFilesAvailable && (
+            <Grid item xs={12} style={{ textAlign: 'center' }}>
+              <Typography variant="caption">{i18n.t('noItems')}</Typography>
+            </Grid>
+          )}
+        </Grid>
         {props.fileOpenHistory &&
           renderItem(historyKeys.fileOpenKey, fileOpenHistoryItems)}
         <Grid container direction="row">
@@ -506,6 +518,13 @@ function StoredSearches(props: Props) {
               <MenuIcon />
             </IconButton>
           </Grid>
+        </Grid>
+        <Grid container direction="row">
+          {props.fileEditHistory && !editedFilesAvailable && (
+            <Grid item xs={12} style={{ textAlign: 'center' }}>
+              <Typography variant="caption">{i18n.t('noItems')}</Typography>
+            </Grid>
+          )}
         </Grid>
         {props.fileEditHistory &&
           renderItem(historyKeys.fileEditKey, fileEditHistoryItems)}
@@ -568,6 +587,13 @@ function StoredSearches(props: Props) {
             forceUpdate();
           }}
         />
+        <Grid container direction="row">
+          {props.folderOpenHistory && !openedFoldersAvailable && (
+            <Grid item xs={12} style={{ textAlign: 'center' }}>
+              <Typography variant="caption">{i18n.t('noItems')}</Typography>
+            </Grid>
+          )}
+        </Grid>
         {props.folderOpenHistory &&
           renderItem(historyKeys.folderOpenKey, folderOpenHistoryItems)}
         {SaveSearchDialog && saveSearchDialogOpened !== undefined && (

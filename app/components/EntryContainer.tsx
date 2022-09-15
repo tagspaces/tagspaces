@@ -123,7 +123,7 @@ const styles: any = (theme: any) => ({
   fileBadge: {
     color: 'white',
     backgroundColor: AppConfig.defaultFileColor,
-    padding: 5,
+    padding: 3,
     textShadow: '1px 1px #8f8f8f',
     fontSize: 13,
     marginLeft: 3,
