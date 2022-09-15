@@ -419,7 +419,7 @@ function MainPage(props: Props) {
       }
     }
     Promise.all(promises)
-      .then(() => props.loadDirectoryContent(props.directoryPath, true, true))
+      .then(() => loadDirectoryContent(props.directoryPath, true, true))
       .catch(error => {
         console.log('promises', error);
       });
@@ -527,6 +527,7 @@ function MainPage(props: Props) {
     toggleOpenLinkDialog,
     setFirstRun,
     openURLExternally,
+    loadDirectoryContent,
     directoryPath,
     mainSplitSize,
     openedFiles,
@@ -590,6 +591,7 @@ function MainPage(props: Props) {
         {isFileOpened && (
           <EntryContainer
             key="EntryContainerID"
+            loadDirectoryContent={loadDirectoryContent}
             openedFiles={openedFiles}
             currentDirectoryPath={directoryPath}
           />

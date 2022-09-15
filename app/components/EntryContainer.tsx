@@ -174,6 +174,11 @@ interface Props {
   updateThumbnailUrl: (path: string, thumbUrl: string) => void;
   // setLastSelectedEntry: (path: string) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
+  loadDirectoryContent: (
+    path: string,
+    generateThumbnails: boolean,
+    loadDirMeta?: boolean
+  ) => void;
   currentDirectoryPath: string | null;
   isDesktopMode: boolean;
   tileServer: TS.MapTileServer;
@@ -329,11 +334,20 @@ function EntryContainer(props: Props) {
     Pro && Pro.bookmarks && Pro.bookmarks.haveBookmark(openedFile.path);
 
   let sharingLink = '';
+  let sharingParentFolderLink = '';
   if (window.location.href.indexOf('?') > 0) {
     const sharingURL = new URL(window.location.href);
     const params = new URLSearchParams(sharingURL.search);
     if (params.has('tslid')) {
       const locationId = params.get('tslid');
+      if (params.has('tsdpath')) {
+        const folderPath = params.get('tsdpath');
+        sharingParentFolderLink = generateSharingLink(
+          locationId,
+          undefined,
+          folderPath
+        );
+      }
       if (openedFile.isFile && params.has('tsepath')) {
         const entryPath = params.get('tsepath');
         sharingLink = generateSharingLink(locationId, entryPath);
@@ -355,7 +369,7 @@ function EntryContainer(props: Props) {
         if (data.message) {
           message = message + ': ' + data.message;
         }
-        props.showNotification(message, NotificationTypes.default);
+        showNotification(message, NotificationTypes.default);
         break;
       case 'saveDocument':
         startSavingFile();
@@ -369,7 +383,7 @@ function EntryContainer(props: Props) {
         props.openNextFile(openedFile.path);
         break;
       case 'openLinkExternally':
-        props.openLink(data.link);
+        openLink(data.link);
         break;
       case 'loadDefaultTextContent':
         if (!openedFile || !openedFile.path) {
@@ -516,7 +530,7 @@ function EntryContainer(props: Props) {
           shouldReload: undefined
         });
         fileChanged.current = false;
-        props.showNotification(
+        showNotification(
           i18n.t('core:fileSavedSuccessfully'),
           NotificationTypes.default
         );
@@ -532,7 +546,7 @@ function EntryContainer(props: Props) {
         return result;
       })
       .catch(error => {
-        props.showNotification(
+        showNotification(
           i18n.t('core:errorSavingFile'),
           NotificationTypes.error
         );
@@ -614,6 +628,18 @@ function EntryContainer(props: Props) {
     }
   };
 
+  const navigateToFolder = () => {
+    // let folderPath = '';
+    if (openedFile.isFile) {
+      // folderPath = extractContainingDirectoryPath(openedFile.path);
+      openLink(sharingParentFolderLink);
+    } else {
+      openLink(sharingLink);
+      // folderPath = openedFile.path;
+    }
+    // loadDirectoryContent(folderPath, false, true);
+  };
+
   const openInNewWindow = () => {
     const locale = '&locale=' + i18n.language;
     const filePath = openedFile.url ? openedFile.url : openedFile.path;
@@ -639,7 +665,7 @@ function EntryContainer(props: Props) {
       // fileExt.startsWith('txt') ||
       // fileExt.startsWith('json')
     ) {
-      props.showNotification(
+      showNotification(
         'Opening this file type in a new window is not supported yet',
         NotificationTypes.default
       );
@@ -712,6 +738,25 @@ function EntryContainer(props: Props) {
             <FullScreenIcon />
           </IconButton>
         </Tooltip>
+        <Tooltip title={i18n.t('core:navigateToParentDirectory')}>
+          <IconButton
+            aria-label={i18n.t('core:navigateToParentDirectory')}
+            onClick={navigateToFolder}
+            style={{ transform: 'rotate(-90deg)' }}
+            size="large"
+          >
+            <OpenNewWindowIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title={i18n.t('core:openFileInWindow')}>
+          <IconButton
+            aria-label={i18n.t('core:openFileInWindow')}
+            onClick={openInNewWindow}
+            size="large"
+          >
+            <OpenNewWindowIcon />
+          </IconButton>
+        </Tooltip>
         {AppConfig.isCordova && (
           <Tooltip title={i18n.t('core:shareFile')}>
             <IconButton
@@ -739,15 +784,6 @@ function EntryContainer(props: Props) {
             </IconButton>
           </Tooltip>
         )}
-        <Tooltip title={i18n.t('core:openFileInWindow')}>
-          <IconButton
-            aria-label={i18n.t('core:openFileInWindow')}
-            onClick={openInNewWindow}
-            size="large"
-          >
-            <OpenNewWindowIcon />
-          </IconButton>
-        </Tooltip>
         <Tooltip title={i18n.t('core:downloadFile')}>
           <IconButton
             aria-label={i18n.t('core:downloadFile')}
@@ -766,7 +802,7 @@ function EntryContainer(props: Props) {
                   downloadCordova(openedFile.url, entryName);
                 } else {
                   console.log('Can only download HTTP/HTTPS URIs');
-                  props.showNotification(
+                  showNotification(
                     i18n.t('core:cantDownloadLocalFile'),
                     NotificationTypes.default
                   );
@@ -882,6 +918,16 @@ function EntryContainer(props: Props) {
   const renderFolderToolbar = () => (
     <div className={props.classes.toolbar2}>
       <div className={props.classes.flexLeft}>
+        <Tooltip title={i18n.t('core:navigateTo')}>
+          <IconButton
+            aria-label={i18n.t('core:navigateTo')}
+            onClick={navigateToFolder}
+            style={{ transform: 'rotate(-90deg)' }}
+            size="large"
+          >
+            <OpenNewWindowIcon />
+          </IconButton>
+        </Tooltip>
         {!(
           PlatformIO.haveObjectStoreSupport() ||
           PlatformIO.haveWebDavSupport() ||
@@ -936,7 +982,14 @@ function EntryContainer(props: Props) {
     </div>
   );
 
-  const { classes, keyBindings, theme } = props;
+  const {
+    classes,
+    keyBindings,
+    theme,
+    loadDirectoryContent,
+    openLink,
+    showNotification
+  } = props;
 
   const fileTitle: string = openedFile.path
     ? extractTitle(
@@ -1157,7 +1210,7 @@ function EntryContainer(props: Props) {
           removeAllTags={props.removeAllTags}
           updateOpenedFile={props.updateOpenedFile}
           updateThumbnailUrl={props.updateThumbnailUrl}
-          showNotification={props.showNotification}
+          showNotification={showNotification}
           isReadOnlyMode={props.isReadOnlyMode}
           currentDirectoryPath={props.currentDirectoryPath}
           tileServer={props.tileServer}
