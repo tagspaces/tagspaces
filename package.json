@@ -138,7 +138,7 @@
     "type-check": "tsc --noEmit",
     "update-changelog": "git log v4.4.3..HEAD --no-merges --format=%B > CHANGELOG.TXT",
     "update-changelog-pro": "cd extensions/tagspacespro && git log v4.4.3..HEAD --no-merges --format=%B > ../../CHANGELOG-PRO.TXT",
-    "update-i18n": "tx pull -a",
+    "update-i18n": "tx pull -a -f",
     "version-meta": "node scripts/versionmeta.js",
     "linux-fix-sandbox": "sudo chown root:root node_modules/electron/dist/chrome-sandbox && sudo chmod 4755 node_modules/electron/dist/chrome-sandbox",
     "ts-extension-symlink": "rimraf app/node_modules/@tagspaces/extensions && cd app/node_modules/@tagspaces && ln -s ../../../extensions extensions && cd ../../.."
