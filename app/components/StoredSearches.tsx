@@ -367,7 +367,7 @@ function StoredSearches(props: Props) {
         </Grid>
         <Grid container direction="row">
           {props.storedSearchesVisible && noSearchesFound && (
-            <Grid item xs={12} style={{ display: 'flex', padding: 10 }}>
+            <Grid item xs={12} style={{ textAlign: 'center' }}>
               <Typography variant="caption">
                 {i18n.t('noSavedSearches')}
               </Typography>

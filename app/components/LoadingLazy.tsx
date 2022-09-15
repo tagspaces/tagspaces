@@ -25,10 +25,10 @@ function LoadingLazy() {
   return (
     <div
       style={{
-        width: 1,
-        height: 1,
+        width: 0,
+        height: 0,
         backgroundColor: 'transparent',
-        padding: 10
+        padding: 0
       }}
     >
       ...

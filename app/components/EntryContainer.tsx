@@ -641,6 +641,10 @@ function EntryContainer(props: Props) {
   };
 
   const openInNewWindow = () => {
+    PlatformIO.createNewInstance(window.location.href);
+  };
+
+  const openInNewWindow2 = () => {
     const locale = '&locale=' + i18n.language;
     const filePath = openedFile.url ? openedFile.url : openedFile.path;
     const fileExt = extractFileExtension(
@@ -674,11 +678,7 @@ function EntryContainer(props: Props) {
     const fileName = extractFileName(
       openedFile.url ? openedFile.url : openedFile.path
     );
-    const newWindow = window.open(
-      fileOpenerURL,
-      '_blank'
-      // 'menubar=0,location=0,toolbar=0,resizable=1,status=1,scrollbars=1'
-    );
+    const newWindow = window.open(fileOpenerURL, '_blank');
     newWindow.document.title = fileName;
   };
 
@@ -748,9 +748,9 @@ function EntryContainer(props: Props) {
             <OpenNewWindowIcon />
           </IconButton>
         </Tooltip>
-        <Tooltip title={i18n.t('core:openFileInWindow')}>
+        <Tooltip title={i18n.t('core:openInWindow')}>
           <IconButton
-            aria-label={i18n.t('core:openFileInWindow')}
+            aria-label={i18n.t('core:openInWindow')}
             onClick={openInNewWindow}
             size="large"
           >
@@ -923,6 +923,15 @@ function EntryContainer(props: Props) {
             aria-label={i18n.t('core:navigateTo')}
             onClick={navigateToFolder}
             style={{ transform: 'rotate(-90deg)' }}
+            size="large"
+          >
+            <OpenNewWindowIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title={i18n.t('core:openInWindow')}>
+          <IconButton
+            aria-label={i18n.t('core:openInWindow')}
+            onClick={openInNewWindow}
             size="large"
           >
             <OpenNewWindowIcon />

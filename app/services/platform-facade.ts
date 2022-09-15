@@ -109,6 +109,17 @@ export default class PlatformFacade {
 
   static showMainWindow = (): void => platformShowMainWindow();
 
+  static createNewInstance = (url?: string): void => {
+    if (AppConfig.isElectron) {
+    } else {
+      if (url) {
+        window.open(url, '_blank');
+      } else {
+        window.open('index.html', '_blank');
+      }
+    }
+  };
+
   static quitApp = (): void => platformQuitApp();
 
   static watchDirectory = (dirPath: string, listener): void =>

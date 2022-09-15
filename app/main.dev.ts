@@ -308,7 +308,7 @@ function reloadApp() {
   }
 }
 
-function createNewWindowInstance(startupParameter?) {
+function createNewWindowInstance(url?) {
   const mainWindowState = windowStateKeeper({
     defaultWidth: 1280,
     defaultHeight: 800
@@ -329,7 +329,11 @@ function createNewWindowInstance(startupParameter?) {
 
   mainWindowInstance.setMenuBarVisibility(false);
   mainWindowInstance.setAutoHideMenuBar(true);
-  mainWindowInstance.loadURL(mainHTML); //  + startupParameter && startupParameter
+  if (url) {
+    mainWindowInstance.loadURL(url);
+  } else {
+    mainWindowInstance.loadURL(mainHTML);
+  }
 }
 
 function buildTrayMenu() {
@@ -567,6 +571,10 @@ app.on('ready', async () => {
       }
       mainWindow.show();
     }
+  });
+
+  ipcMain.on('create-new-window', (e, url) => {
+    createNewWindowInstance(url);
   });
 
   ipcMain.on('focus-window', () => {
