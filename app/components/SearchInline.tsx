@@ -53,8 +53,6 @@ import { Pro } from '../pro';
 import useFirstRender from '-/utils/useFirstRender';
 import MainSearchField from '-/components/MainSearchField';
 import SavedSearchesMenu from '-/components/menus/SavedSearchesMenu';
-import { display } from 'html2canvas/dist/types/css/property-descriptors/display';
-import { MenuItem } from '@mui/material';
 
 // type PropsClasses = Record<keyof StyleProps, string>;
 
@@ -312,24 +310,6 @@ function SearchInline(props: Props) {
   };
 
   const classes = useStyles();
-  function SavedSearches() {
-    const open = Boolean(openSavedSearches);
-
-    return (
-      <IconButton
-        id="basic-button"
-        size="small"
-        edge="end"
-        onClick={handleOpenSavedSearches}
-        sx={{ ml: 2 }}
-        aria-controls={open ? 'search-menu' : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? 'true' : undefined}
-      >
-        <ExpandMoreIcon style={{ color: 'lightgray' }} />
-      </IconButton>
-    );
-  }
 
   function HelpTooltip(hClasses) {
     return (
@@ -483,7 +463,14 @@ function SearchInline(props: Props) {
               <InputAdornment position="end">
                 {isDesktop && (
                   <>
-                    <SavedSearches />
+                    <IconButton
+                      id="basic-button"
+                      size="small"
+                      edge="end"
+                      onClick={handleOpenSavedSearches}
+                    >
+                      <ExpandMoreIcon style={{ color: 'lightgray' }} />
+                    </IconButton>
                     <HelpTooltip classes={classes} />
                   </>
                 )}

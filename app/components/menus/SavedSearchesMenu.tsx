@@ -22,6 +22,9 @@ import MenuItem from '@mui/material/MenuItem';
 import { TS } from '-/tagspaces.namespace';
 import { getSearches } from '-/reducers/searches';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { actions as LocationIndexActions } from '-/reducers/location-index';
+import { getShowUnixHiddenEntries } from '-/reducers/settings';
 
 interface Props {
   classes?: any;
@@ -29,13 +32,30 @@ interface Props {
   anchorEl: Element;
   onClose: () => void;
   searches: Array<TS.SearchQuery>;
+  setSearchQuery: (searchQuery: TS.SearchQuery) => void;
+  showUnixHiddenEntries: boolean;
 }
 
 function SavedSearchesMenu(props: Props) {
+  const handleSavedSearchClick = (uuid: string) => {
+    const savedSearch = props.searches.find(search => search.uuid === uuid);
+    if (!savedSearch) {
+      return true;
+    }
+
+    props.setSearchQuery({
+      ...savedSearch,
+      showUnixHiddenEntries: props.showUnixHiddenEntries
+    });
+  };
+
   const menuItems = props.searches.map(search => (
     <MenuItem
       key={search.uuid}
-      onClick={() => {} /* todo handleSavedSearchClick(search.uuid)*/}
+      onClick={() => {
+        handleSavedSearchClick(search.uuid);
+        props.onClose();
+      }}
     >
       {search.title}
     </MenuItem>
@@ -87,6 +107,17 @@ function SavedSearchesMenu(props: Props) {
 }
 
 function mapStateToProps(state) {
-  return { searches: getSearches(state) };
+  return {
+    searches: getSearches(state),
+    showUnixHiddenEntries: getShowUnixHiddenEntries(state)
+  };
 }
-export default connect(mapStateToProps)(SavedSearchesMenu);
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(
+    {
+      setSearchQuery: LocationIndexActions.setSearchQuery
+    },
+    dispatch
+  );
+}
+export default connect(mapStateToProps, mapDispatchToProps)(SavedSearchesMenu);
