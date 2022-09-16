@@ -1051,7 +1051,10 @@ function EntryContainer(props: Props) {
                 justifyContent: 'flex-start'
               }}
             >
-              <Box className={classes.flexLeft} style={{ paddingRight: 20 }}>
+              <Box
+                className={classes.flexLeft}
+                style={{ paddingRight: 20, alignItems: 'center' }}
+              >
                 <div
                   style={{
                     paddingLeft: 10,
