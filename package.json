@@ -138,7 +138,7 @@
     "type-check": "tsc --noEmit",
     "update-changelog": "git log v4.4.3..HEAD --no-merges --format=%B > CHANGELOG.TXT",
     "update-changelog-pro": "cd extensions/tagspacespro && git log v4.4.3..HEAD --no-merges --format=%B > ../../CHANGELOG-PRO.TXT",
-    "update-i18n": "tx pull -a",
+    "update-i18n": "tx pull -a -f",
     "version-meta": "node scripts/versionmeta.js",
     "linux-fix-sandbox": "sudo chown root:root node_modules/electron/dist/chrome-sandbox && sudo chmod 4755 node_modules/electron/dist/chrome-sandbox",
     "ts-extension-symlink": "rimraf app/node_modules/@tagspaces/extensions && cd app/node_modules/@tagspaces && ln -s ../../../extensions extensions && cd ../../.."
@@ -154,7 +154,7 @@
     "@mui/lab": "^5.0.0-alpha.92",
     "@mui/material": "^5.9.2",
     "@mui/styles": "^5.9.2",
-    "@tagspaces/tagspaces-platforms": "2.0.15",
+    "@tagspaces/tagspaces-platforms": "2.0.17",
     "aws-amplify": "^4.3.8",
     "aws-sdk": "^2.1036.0",
     "babel-polyfill": "^6.26.0",

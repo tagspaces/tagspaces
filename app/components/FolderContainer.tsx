@@ -149,17 +149,17 @@ function KanBanPerspectiveAsync(props) {
   );
 }
 
-let WikiPerspective = React.Fragment;
-if (Pro && Pro.Perspectives && Pro.Perspectives.WikiPerspective) {
-  WikiPerspective = Pro.Perspectives.WikiPerspective;
-}
-function WikiPerspectiveAsync(props) {
-  return (
-    <React.Suspense fallback={<LoadingLazy />}>
-      <WikiPerspective {...props} />
-    </React.Suspense>
-  );
-}
+// let WikiPerspective = React.Fragment;
+// if (Pro && Pro.Perspectives && Pro.Perspectives.WikiPerspective) {
+//   WikiPerspective = Pro.Perspectives.WikiPerspective;
+// }
+// function WikiPerspectiveAsync(props) {
+//   return (
+//     <React.Suspense fallback={<LoadingLazy />}>
+//       <WikiPerspective {...props} />
+//     </React.Suspense>
+//   );
+// }
 
 const WelcomePanel = React.lazy(() =>
   import(/* webpackChunkName: "WelcomePanel" */ './WelcomePanel')
@@ -391,26 +391,26 @@ function FolderContainer(props: Props) {
         />
       );
     }
-    if (Pro && currentPerspective === PerspectiveIDs.WIKI) {
-      return (
-        <WikiPerspectiveAsync
-          directoryContent={props.directoryContent}
-          loadDirectoryContent={props.loadDirectoryContent}
-          openFsEntry={props.openFsEntry}
-          openRenameEntryDialog={() => setIsRenameEntryDialogOpened(true)}
-          loadParentDirectoryContent={props.loadParentDirectoryContent}
-          renameFile={props.renameFile}
-          openDirectory={props.openDirectory}
-          showInFileManager={props.showInFileManager}
-          currentDirectoryPath={props.currentDirectoryPath}
-          addTags={props.addTags}
-          editTagForEntry={props.editTagForEntry}
-          removeTags={props.removeTags}
-          removeAllTags={props.removeAllTags}
-          windowWidth={props.windowWidth}
-        />
-      );
-    }
+    // if (Pro && currentPerspective === PerspectiveIDs.WIKI) {
+    //   return (
+    //     <WikiPerspectiveAsync
+    //       directoryContent={props.directoryContent}
+    //       loadDirectoryContent={props.loadDirectoryContent}
+    //       openFsEntry={props.openFsEntry}
+    //       openRenameEntryDialog={() => setIsRenameEntryDialogOpened(true)}
+    //       loadParentDirectoryContent={props.loadParentDirectoryContent}
+    //       renameFile={props.renameFile}
+    //       openDirectory={props.openDirectory}
+    //       showInFileManager={props.showInFileManager}
+    //       currentDirectoryPath={props.currentDirectoryPath}
+    //       addTags={props.addTags}
+    //       editTagForEntry={props.editTagForEntry}
+    //       removeTags={props.removeTags}
+    //       removeAllTags={props.removeAllTags}
+    //       windowWidth={props.windowWidth}
+    //     />
+    //   );
+    // }
     return (
       <GridPerspectiveAsync
         directoryContent={props.directoryContent}
@@ -498,14 +498,14 @@ function FolderContainer(props: Props) {
           true
         );
       }
-    } else if (perspectiveId === PerspectiveIDs.WIKI) {
-      const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
-      if (openPersDocs) {
-        props.openURLExternally(
-          Links.documentationLinks.kanbanPerspective,
-          true
-        );
-      }
+      // } else if (perspectiveId === PerspectiveIDs.WIKI) {
+      //   const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
+      //   if (openPersDocs) {
+      //     props.openURLExternally(
+      //       Links.documentationLinks.kanbanPerspective,
+      //       true
+      //     );
+      //   }
     }
   };
 

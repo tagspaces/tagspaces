@@ -62,7 +62,8 @@ import {
   platformSelectFileDialog,
   platformSelectDirectoryDialog,
   platformShareFiles,
-  platformCreateIndex
+  platformCreateIndex,
+  platformCreateNewInstance
 } from '@tagspaces/tagspaces-platforms/platform-io';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import { Pro } from '../pro';
@@ -108,6 +109,18 @@ export default class PlatformFacade {
   };
 
   static showMainWindow = (): void => platformShowMainWindow();
+
+  static createNewInstance = (url?: string): void => {
+    if (AppConfig.isElectron) {
+      platformCreateNewInstance(url);
+    } else {
+      if (url) {
+        window.open(url, '_blank');
+      } else {
+        window.open('index.html', '_blank');
+      }
+    }
+  };
 
   static quitApp = (): void => platformQuitApp();
 

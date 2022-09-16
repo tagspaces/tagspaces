@@ -68,7 +68,9 @@ export default (state: any = initialState, action: any) => {
     }
     case types.INDEX_DIRECTORY_CLEAR: {
       // GlobalSearch.index.length = 0;
-      GlobalSearch.index.splice(0, GlobalSearch.index.length);
+      if (GlobalSearch.index) {
+        GlobalSearch.index.splice(0, GlobalSearch.index.length);
+      }
       GlobalSearch.indexLoadedOn = undefined;
       return {
         ...state,
@@ -94,7 +96,7 @@ export default (state: any = initialState, action: any) => {
       };
     }
     case types.REFLECT_DELETE_ENTRY: {
-      if (GlobalSearch.index.length < 1) {
+      if (!GlobalSearch.index || GlobalSearch.index.length < 1) {
         return state;
       }
       for (let i = 0; i < GlobalSearch.index.length; i += 1) {
@@ -106,7 +108,7 @@ export default (state: any = initialState, action: any) => {
       return state;
     }
     case types.REFLECT_CREATE_ENTRY: {
-      if (GlobalSearch.index.length < 1) {
+      if (!GlobalSearch.index || GlobalSearch.index.length < 1) {
         return state;
       }
       let entryFound = false;
@@ -122,7 +124,7 @@ export default (state: any = initialState, action: any) => {
       return state;
     }
     case types.REFLECT_RENAME_ENTRY: {
-      if (GlobalSearch.index.length < 1) {
+      if (!GlobalSearch.index || GlobalSearch.index.length < 1) {
         return state;
       }
       for (let i = 0; i < GlobalSearch.index.length; i += 1) {

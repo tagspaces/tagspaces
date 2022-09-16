@@ -24,6 +24,7 @@ import withStyles from '@mui/styles/withStyles';
 import Badge from '@mui/material/Badge';
 import Tooltip from '@mui/material/Tooltip';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import PlatformIO from '-/services/platform-facade';
 import { Pro } from '../pro';
 import TextLogoIcon from '../assets/images/text-logo.svg';
 import WebLogoIcon from '../assets/images/text-logo-web.svg';
@@ -62,22 +63,23 @@ if (AppConfig.customLogo) {
 
 function CustomLogo(props: Props) {
   return (
-    <Tooltip title={i18n.t('core:aboutTitle')}>
-      <AppVersionBadge badgeContent={'v' + versionMeta.version} color="primary">
+    <AppVersionBadge badgeContent={'v' + versionMeta.version} color="primary">
+      <Tooltip title={i18n.t('core:openNewInstance')}>
         <IconButton
-          onClick={props.toggleAboutDialog}
+          onClick={() => PlatformIO.createNewInstance()}
           style={{ padding: 0, paddingLeft: 5, height: 50 }}
-          data-tid="aboutTagSpaces"
+          data-tid="createNewInstance"
         >
           <img
             style={{
               width: 40
-              // color: props.theme.palette.text.primary
             }}
             src={LogoIcon}
             alt="TagSpaces Logo"
           />
         </IconButton>
+      </Tooltip>
+      <Tooltip title={i18n.t('core:aboutTitle')}>
         <IconButton
           style={{ height: 50, padding: 0, marginBottom: 15 }}
           data-tid="aboutTagSpaces"
@@ -89,8 +91,8 @@ function CustomLogo(props: Props) {
             alt="TagSpaces"
           />
         </IconButton>
-      </AppVersionBadge>
-    </Tooltip>
+      </Tooltip>
+    </AppVersionBadge>
   );
 }
 

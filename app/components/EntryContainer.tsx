@@ -31,6 +31,8 @@ import fscreen from 'fscreen';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
+import BookmarkIcon from '@mui/icons-material/BookmarkTwoTone';
+import BookmarkAddIcon from '@mui/icons-material/BookmarkAddTwoTone';
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
 import BackIcon from '@mui/icons-material/RemoveRedEye';
@@ -56,8 +58,10 @@ import {
   extractFileExtension,
   baseName,
   extractFileName,
-  extractDirectoryName
+  extractDirectoryName,
+  generateSharingLink
 } from '@tagspaces/tagspaces-platforms/paths';
+import { ProTooltip } from '-/components/HelperComponents';
 import EntryProperties from '-/components/EntryProperties';
 import TagsPreview from '-/components/TagsPreview';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
@@ -119,7 +123,7 @@ const styles: any = (theme: any) => ({
   fileBadge: {
     color: 'white',
     backgroundColor: AppConfig.defaultFileColor,
-    padding: 5,
+    padding: 3,
     textShadow: '1px 1px #8f8f8f',
     fontSize: 13,
     marginLeft: 3,
@@ -170,6 +174,11 @@ interface Props {
   updateThumbnailUrl: (path: string, thumbUrl: string) => void;
   // setLastSelectedEntry: (path: string) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
+  loadDirectoryContent: (
+    path: string,
+    generateThumbnails: boolean,
+    loadDirMeta?: boolean
+  ) => void;
   currentDirectoryPath: string | null;
   isDesktopMode: boolean;
   tileServer: TS.MapTileServer;
@@ -211,7 +220,6 @@ function EntryContainer(props: Props) {
   const fileViewerContainer: MutableRefObject<HTMLDivElement> = useRef<
     HTMLDivElement
   >(null);
-
   const fileChanged = useRef<boolean>(false);
 
   useEventListener('message', e => {
@@ -322,6 +330,36 @@ function EntryContainer(props: Props) {
     openedFile.editingExtensionId !== undefined &&
     openedFile.editingExtensionId.length > 3;
 
+  const haveBookmark =
+    Pro && Pro.bookmarks && Pro.bookmarks.haveBookmark(openedFile.path);
+
+  let sharingLink = '';
+  let sharingParentFolderLink = '';
+  if (window.location.href.indexOf('?') > 0) {
+    const sharingURL = new URL(window.location.href);
+    const params = new URLSearchParams(sharingURL.search);
+    if (params.has('tslid')) {
+      const locationId = params.get('tslid');
+      if (params.has('tsdpath')) {
+        const folderPath = params.get('tsdpath');
+        sharingParentFolderLink = generateSharingLink(
+          locationId,
+          undefined,
+          folderPath
+        );
+      }
+      if (openedFile.isFile && params.has('tsepath')) {
+        const entryPath = params.get('tsepath');
+        sharingLink = generateSharingLink(locationId, entryPath);
+      } else if (!openedFile.isFile) {
+        const dirPath = params.has('tsepath')
+          ? params.get('tsepath')
+          : openedFile.path;
+        sharingLink = generateSharingLink(locationId, undefined, dirPath);
+      }
+    }
+  }
+
   const handleMessage = (data: any) => {
     let message;
     let textFilePath;
@@ -331,7 +369,7 @@ function EntryContainer(props: Props) {
         if (data.message) {
           message = message + ': ' + data.message;
         }
-        props.showNotification(message, NotificationTypes.default);
+        showNotification(message, NotificationTypes.default);
         break;
       case 'saveDocument':
         startSavingFile();
@@ -345,7 +383,7 @@ function EntryContainer(props: Props) {
         props.openNextFile(openedFile.path);
         break;
       case 'openLinkExternally':
-        props.openLink(data.link);
+        openLink(data.link);
         break;
       case 'loadDefaultTextContent':
         if (!openedFile || !openedFile.path) {
@@ -492,7 +530,7 @@ function EntryContainer(props: Props) {
           shouldReload: undefined
         });
         fileChanged.current = false;
-        props.showNotification(
+        showNotification(
           i18n.t('core:fileSavedSuccessfully'),
           NotificationTypes.default
         );
@@ -508,7 +546,7 @@ function EntryContainer(props: Props) {
         return result;
       })
       .catch(error => {
-        props.showNotification(
+        showNotification(
           i18n.t('core:errorSavingFile'),
           NotificationTypes.error
         );
@@ -590,7 +628,23 @@ function EntryContainer(props: Props) {
     }
   };
 
+  const navigateToFolder = () => {
+    // let folderPath = '';
+    if (openedFile.isFile) {
+      // folderPath = extractContainingDirectoryPath(openedFile.path);
+      openLink(sharingParentFolderLink);
+    } else {
+      openLink(sharingLink);
+      // folderPath = openedFile.path;
+    }
+    // loadDirectoryContent(folderPath, false, true);
+  };
+
   const openInNewWindow = () => {
+    PlatformIO.createNewInstance(window.location.href);
+  };
+
+  const openInNewWindow2 = () => {
     const locale = '&locale=' + i18n.language;
     const filePath = openedFile.url ? openedFile.url : openedFile.path;
     const fileExt = extractFileExtension(
@@ -615,7 +669,7 @@ function EntryContainer(props: Props) {
       // fileExt.startsWith('txt') ||
       // fileExt.startsWith('json')
     ) {
-      props.showNotification(
+      showNotification(
         'Opening this file type in a new window is not supported yet',
         NotificationTypes.default
       );
@@ -624,11 +678,7 @@ function EntryContainer(props: Props) {
     const fileName = extractFileName(
       openedFile.url ? openedFile.url : openedFile.path
     );
-    const newWindow = window.open(
-      fileOpenerURL,
-      '_blank'
-      // 'menubar=0,location=0,toolbar=0,resizable=1,status=1,scrollbars=1'
-    );
+    const newWindow = window.open(fileOpenerURL, '_blank');
     newWindow.document.title = fileName;
   };
 
@@ -688,6 +738,25 @@ function EntryContainer(props: Props) {
             <FullScreenIcon />
           </IconButton>
         </Tooltip>
+        <Tooltip title={i18n.t('core:navigateToParentDirectory')}>
+          <IconButton
+            aria-label={i18n.t('core:navigateToParentDirectory')}
+            onClick={navigateToFolder}
+            style={{ transform: 'rotate(-90deg)' }}
+            size="large"
+          >
+            <OpenNewWindowIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title={i18n.t('core:openInWindow')}>
+          <IconButton
+            aria-label={i18n.t('core:openInWindow')}
+            onClick={openInNewWindow}
+            size="large"
+          >
+            <OpenNewWindowIcon />
+          </IconButton>
+        </Tooltip>
         {AppConfig.isCordova && (
           <Tooltip title={i18n.t('core:shareFile')}>
             <IconButton
@@ -715,15 +784,6 @@ function EntryContainer(props: Props) {
             </IconButton>
           </Tooltip>
         )}
-        <Tooltip title={i18n.t('core:openFileInWindow')}>
-          <IconButton
-            aria-label={i18n.t('core:openFileInWindow')}
-            onClick={openInNewWindow}
-            size="large"
-          >
-            <OpenNewWindowIcon />
-          </IconButton>
-        </Tooltip>
         <Tooltip title={i18n.t('core:downloadFile')}>
           <IconButton
             aria-label={i18n.t('core:downloadFile')}
@@ -742,7 +802,7 @@ function EntryContainer(props: Props) {
                   downloadCordova(openedFile.url, entryName);
                 } else {
                   console.log('Can only download HTTP/HTTPS URIs');
-                  props.showNotification(
+                  showNotification(
                     i18n.t('core:cantDownloadLocalFile'),
                     NotificationTypes.default
                   );
@@ -858,6 +918,25 @@ function EntryContainer(props: Props) {
   const renderFolderToolbar = () => (
     <div className={props.classes.toolbar2}>
       <div className={props.classes.flexLeft}>
+        <Tooltip title={i18n.t('core:navigateTo')}>
+          <IconButton
+            aria-label={i18n.t('core:navigateTo')}
+            onClick={navigateToFolder}
+            style={{ transform: 'rotate(-90deg)' }}
+            size="large"
+          >
+            <OpenNewWindowIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title={i18n.t('core:openInWindow')}>
+          <IconButton
+            aria-label={i18n.t('core:openInWindow')}
+            onClick={openInNewWindow}
+            size="large"
+          >
+            <OpenNewWindowIcon />
+          </IconButton>
+        </Tooltip>
         {!(
           PlatformIO.haveObjectStoreSupport() ||
           PlatformIO.haveWebDavSupport() ||
@@ -912,7 +991,14 @@ function EntryContainer(props: Props) {
     </div>
   );
 
-  const { classes, keyBindings, theme } = props;
+  const {
+    classes,
+    keyBindings,
+    theme,
+    loadDirectoryContent,
+    openLink,
+    showNotification
+  } = props;
 
   const fileTitle: string = openedFile.path
     ? extractTitle(
@@ -967,7 +1053,6 @@ function EntryContainer(props: Props) {
             >
               <Box className={classes.flexLeft} style={{ paddingRight: 20 }}>
                 <div
-                  title={openedFile.url || openedFile.path}
                   style={{
                     paddingLeft: 10,
                     display: 'flex',
@@ -977,33 +1062,40 @@ function EntryContainer(props: Props) {
                     color: 'inherit !important'
                   }}
                 >
-                  <Box
-                    style={{
-                      color: props.theme.palette.text.primary,
-                      display: 'inline',
-                      fontSize: 17
-                    }}
-                  >
-                    {openedFile.isFile && fileChanged.current // openedFile.editMode && openedFile.changed
-                      ? String.fromCharCode(0x25cf) + ' '
-                      : ''}
-                    {fileTitle}
-                  </Box>
-                  {openedFile.isFile ? (
-                    <span
-                      className={classes.fileBadge}
-                      title={i18n.t('core:toggleEntryProperties')}
+                  <Tooltip title={openedFile.url || openedFile.path}>
+                    <Box
                       style={{
-                        backgroundColor: openedFile.color,
-                        textTransform: 'uppercase'
+                        color: props.theme.palette.text.primary,
+                        display: 'inline',
+                        fontSize: 17
                       }}
                     >
-                      {'.' +
-                        extractFileExtension(
-                          openedFile.path,
-                          PlatformIO.getDirSeparator()
-                        )}
-                    </span>
+                      {fileTitle}
+                    </Box>
+                  </Tooltip>
+                  {openedFile.isFile ? (
+                    <>
+                      {fileChanged.current ? (
+                        <Tooltip title="File changed">
+                          <span>{' ' + String.fromCharCode(0x25cf)}</span>
+                        </Tooltip>
+                      ) : (
+                        ''
+                      )}
+                      <span
+                        className={classes.fileBadge}
+                        style={{
+                          backgroundColor: openedFile.color,
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        {'.' +
+                          extractFileExtension(
+                            openedFile.path,
+                            PlatformIO.getDirSeparator()
+                          )}
+                      </span>
+                    </>
                   ) : (
                     <span
                       className={classes.fileBadge}
@@ -1016,6 +1108,39 @@ function EntryContainer(props: Props) {
                     </span>
                   )}
                 </div>
+                <ProTooltip tooltip={i18n.t('core:toggleBookmark')}>
+                  <IconButton
+                    aria-label="bookmark"
+                    size="small"
+                    onClick={() => {
+                      if (Pro) {
+                        if (haveBookmark) {
+                          Pro.bookmarks.delBookmark(openedFile.path);
+                        } else {
+                          Pro.bookmarks.setBookmark(
+                            openedFile.path,
+                            openedFile.url ? sharingLink : undefined
+                          );
+                        }
+                        forceUpdate();
+                      }
+                    }}
+                  >
+                    {haveBookmark ? (
+                      <BookmarkIcon
+                        style={{
+                          color: theme.palette.primary.main
+                        }}
+                      />
+                    ) : (
+                      <BookmarkAddIcon
+                        style={{
+                          color: theme.palette.text.secondary
+                        }}
+                      />
+                    )}
+                  </IconButton>
+                </ProTooltip>
                 <TagsPreview tags={openedFile.tags} />
               </Box>
               <div className={classes.entryCloseSection}>
@@ -1094,10 +1219,11 @@ function EntryContainer(props: Props) {
           removeAllTags={props.removeAllTags}
           updateOpenedFile={props.updateOpenedFile}
           updateThumbnailUrl={props.updateThumbnailUrl}
-          showNotification={props.showNotification}
+          showNotification={showNotification}
           isReadOnlyMode={props.isReadOnlyMode}
           currentDirectoryPath={props.currentDirectoryPath}
           tileServer={props.tileServer}
+          sharingLink={sharingLink}
         />
       </div>
     );

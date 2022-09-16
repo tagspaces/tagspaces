@@ -16,7 +16,13 @@
  *
  */
 
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
+import React, {
+  ChangeEvent,
+  useEffect,
+  useReducer,
+  useRef,
+  useState
+} from 'react';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
 import { Theme } from '@mui/material/styles';
 import { v1 as uuidv1 } from 'uuid';
@@ -54,8 +60,7 @@ import {
   getThumbFileLocationForFile,
   getThumbFileLocationForDirectory,
   extractFileName,
-  extractDirectoryName,
-  generateSharingLink
+  extractDirectoryName
 } from '@tagspaces/tagspaces-platforms/paths';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import TagDropContainer from './TagDropContainer';
@@ -150,6 +155,7 @@ interface Props {
   isReadOnlyMode: boolean;
   // currentDirectoryPath: string | null;
   tagDelimiter: string;
+  sharingLink: string;
   tileServer: TS.MapTileServer;
 }
 
@@ -434,7 +440,7 @@ function EntryProperties(props: Props) {
     }
   };
 
-  const { classes, isReadOnlyMode, theme } = props;
+  const { classes, isReadOnlyMode, theme, sharingLink } = props;
 
   if (!currentEntry || !currentEntry.path || currentEntry.path === '') {
     return <div />;
@@ -527,24 +533,6 @@ function EntryProperties(props: Props) {
   }
 
   const geoLocation: any = getGeoLocation(currentEntry.tags);
-
-  let sharingLink = '';
-  if (window.location.href.indexOf('?') > 0) {
-    const sharingURL = new URL(window.location.href);
-    const params = new URLSearchParams(sharingURL.search);
-    if (params.has('tslid')) {
-      const locationId = params.get('tslid');
-      if (currentEntry.isFile && params.has('tsepath')) {
-        const entryPath = params.get('tsepath');
-        sharingLink = generateSharingLink(locationId, entryPath);
-      } else if (!currentEntry.isFile) {
-        const dirPath = params.has('tsepath')
-          ? params.get('tsepath')
-          : currentEntry.path;
-        sharingLink = generateSharingLink(locationId, undefined, dirPath);
-      }
-    }
-  }
 
   const isCloudLocation = currentEntry.url && currentEntry.url.length > 5;
 
