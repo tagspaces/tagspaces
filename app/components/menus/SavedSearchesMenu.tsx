@@ -24,6 +24,7 @@ import { getSearches } from '-/reducers/searches';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
+import i18n from '-/services/i18n';
 import { getShowUnixHiddenEntries } from '-/reducers/settings';
 
 interface Props {
@@ -49,17 +50,22 @@ function SavedSearchesMenu(props: Props) {
     });
   };
 
-  const menuItems = props.searches.map(search => (
-    <MenuItem
-      key={search.uuid}
-      onClick={() => {
-        handleSavedSearchClick(search.uuid);
-        props.onClose();
-      }}
-    >
-      {search.title}
-    </MenuItem>
-  ));
+  const menuItems = props.searches.length ? (
+    props.searches.map(search => (
+      <MenuItem
+        key={search.uuid}
+        onClick={() => {
+          handleSavedSearchClick(search.uuid);
+          props.onClose();
+        }}
+      >
+        {search.title}
+      </MenuItem>
+    ))
+  ) : (
+    <MenuItem key={'noSavedSearches'}>{i18n.t('noSavedSearches')}</MenuItem>
+  );
+
   return (
     <div style={{ overflowY: 'hidden' }}>
       <Menu
