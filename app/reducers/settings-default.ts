@@ -295,6 +295,11 @@ export default {
   keyBindings: keyBindings(AppConfig.isMacLike),
   supportedFileTypes: [
     {
+      type: 'avif',
+      viewer: '@tagspaces/extensions/image-viewer',
+      color: '#9fd5ba'
+    },
+    {
       type: 'bmp',
       viewer: '@tagspaces/extensions/image-viewer',
       color: '#9fd5ba'
