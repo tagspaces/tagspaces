@@ -97,7 +97,7 @@ export default (theme: any): any => ({
     fontSize: 13,
     marginRight: 5,
     marginTop: 7,
-    minWidth: 30,
+    minWidth: 35,
     height: 16,
     color: 'white',
     borderRadius: 3,
