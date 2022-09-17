@@ -27,7 +27,8 @@ import {
   getMetaFileLocationForDir,
   getMetaFileLocationForFile,
   getThumbFileLocationForDirectory,
-  getThumbFileLocationForFile
+  getThumbFileLocationForFile,
+  extractDirectoryName
 } from '@tagspaces/tagspaces-platforms/paths';
 import i18n from '-/services/i18n';
 import {
@@ -35,9 +36,11 @@ import {
   getCurrentDirectoryColor,
   getIsMetaLoaded,
   getSearchResultCount,
+  getCurrentDirectoryTags,
   isLoading
 } from '-/reducers/app';
 import EntryIcon from '-/components/EntryIcon';
+import TagsPreview from '-/components/TagsPreview';
 import { TS } from '-/tagspaces.namespace';
 import { getMetaForEntry } from '-/services/utils-io';
 import PlatformIO from '-/services/platform-facade';
@@ -46,7 +49,7 @@ interface Props {
   isMetaLoaded: boolean;
   setIsMetaLoaded: (isLoaded: boolean) => void;
   className?: string;
-  style;
+  style?: any;
   theme: any;
   // gridRef: Object;
   directories: Array<TS.FileSystemEntry>;
@@ -58,6 +61,7 @@ interface Props {
   // pageEntries: Array<TS.FileSystemEntry>;
   renderCell: (entry: TS.FileSystemEntry, isLast?: boolean) => void;
   currentDirectoryColor: string;
+  currentDirectoryTags: Array<TS.Tag>;
   isAppLoading: boolean;
   currentPage: number;
   gridPageLimit: number;
@@ -84,6 +88,8 @@ function GridPagination(props: Props) {
     renderCell,
     isAppLoading,
     currentDirectoryColor,
+    currentDirectoryTags,
+    currentDirectoryPath,
     gridPageLimit,
     currentPage,
     files
@@ -134,8 +140,8 @@ function GridPagination(props: Props) {
   useEffect(() => {
     page.current = currentPage;
     /* if (page !== currentPage) {
-      setPage(props.currentPage);
-    } */
+       setPage(props.currentPage);
+     } */
     if (containerEl && containerEl.current) {
       containerEl.current.scrollTop = 0;
     }
@@ -261,11 +267,11 @@ function GridPagination(props: Props) {
   };
 
   /* const checkEntryExist = path => {
-    const index = pageEntries.findIndex(
-      objUpdated => Object.keys(objUpdated).indexOf(path) > -1
-    );
-    return index > -1;
-  }; */
+     const index = pageEntries.findIndex(
+       objUpdated => Object.keys(objUpdated).indexOf(path) > -1
+     );
+     return index > -1;
+   }; */
 
   const handleChange = (event, value) => {
     // setPage(value);
@@ -276,6 +282,22 @@ function GridPagination(props: Props) {
       containerEl.current.scrollTop = 0;
     }
   };
+
+  let showDetails = false;
+  const folderName = extractDirectoryName(
+    decodeURIComponent(currentDirectoryPath),
+    PlatformIO.getDirSeparator()
+  );
+
+  const folderTmbPath = getThumbFileLocationForDirectory(
+    currentDirectoryPath,
+    PlatformIO.getDirSeparator()
+  );
+
+  const folderBgndPath = folderTmbPath.replace(
+    AppConfig.folderThumbFile,
+    'tsb.jpg'
+  );
 
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions,jsx-a11y/no-static-element-interactions
@@ -291,9 +313,71 @@ function GridPagination(props: Props) {
         height: '100%',
         // @ts-ignore
         overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
-        backgroundColor: currentDirectoryColor || 'transparent'
+        backgroundColor: currentDirectoryColor || 'transparent',
+        backgroundImage: 'url(' + folderBgndPath + ')',
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat'
       }}
     >
+      {showDetails && (
+        <>
+          <div
+            style={{
+              position: 'relative',
+              height: 150
+            }}
+          >
+            <img
+              alt="thumbnail"
+              src={folderTmbPath}
+              // @ts-ignore
+              onError={i => (i.target.style.display = 'none')}
+              loading="lazy"
+              style={{
+                objectFit: 'contain',
+                position: 'absolute',
+                width: '100%',
+                height: 150
+              }}
+            />
+            <EntryIcon isFile={false} />
+          </div>
+          <Typography
+            style={{
+              display: 'block',
+              padding: 10,
+              paddingTop: 55,
+              borderRadius: 5,
+              marginBottom: 5,
+              height: 50,
+              overflow: 'auto',
+              textShadow: '1px 1px #8f8f8f',
+              color: theme.palette.text.primary
+            }}
+            role="button"
+            id="descriptionArea"
+          >
+            {folderName}
+          </Typography>
+          {(directories.length > 0 || pageFiles.length > 0) && (
+            <div style={{ padding: 15, bottom: 10 }}>
+              <Typography
+                style={{
+                  fontSize: '0.9rem',
+                  color: theme.palette.text.secondary,
+                  textShadow: '1px 1px #8f8f8f'
+                }}
+              >
+                {directories.length +
+                  ' folder(s) and ' +
+                  allFilesCount +
+                  ' file(s) found'}
+              </Typography>
+            </div>
+          )}
+        </>
+      )}
+      <TagsPreview tags={currentDirectoryTags} />
       <div
         className={className}
         style={style}
@@ -360,21 +444,23 @@ function GridPagination(props: Props) {
           />
         </Tooltip>
       )}
-      {!showPagination && (directories.length > 0 || pageFiles.length > 0) && (
-        <div style={{ padding: 15, bottom: 10 }}>
-          <Typography
-            style={{
-              fontSize: '0.9rem',
-              color: theme.palette.text.secondary
-            }}
-          >
-            {directories.length +
-              ' folder(s) and ' +
-              allFilesCount +
-              ' file(s) found'}
-          </Typography>
-        </div>
-      )}
+      {!showDetails &&
+        !showPagination &&
+        (directories.length > 0 || pageFiles.length > 0) && (
+          <div style={{ padding: 15, bottom: 10 }}>
+            <Typography
+              style={{
+                fontSize: '0.9rem',
+                color: theme.palette.text.secondary
+              }}
+            >
+              {directories.length +
+                ' folder(s) and ' +
+                allFilesCount +
+                ' file(s) found'}
+            </Typography>
+          </div>
+        )}
     </div>
   );
 }
@@ -385,6 +471,7 @@ function mapStateToProps(state) {
     currentDirectoryColor: getCurrentDirectoryColor(state),
     searchResultCount: getSearchResultCount(state),
     // pageEntries: getPageEntries(state),
+    currentDirectoryTags: getCurrentDirectoryTags(state),
     isMetaLoaded: getIsMetaLoaded(state)
   };
 }
