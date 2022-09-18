@@ -90,7 +90,7 @@
   "showSearch": "Kies zoek",
   "deleteDocument": "Verwijder Document",
   "openFileExternally": "Open Bestand Extern",
-  "openFileInWindow": "Open File In New Window",
+  "openInWindow": "Open in nieuw venster",
   "showUnixHiddenFiles": "Bestanden/mappen tonen met een punt (.) voor de naam (b.v. Unix, Linux, OS X verborgen bestanden)",
   "checkForNewVersionOnStartup": "Op nieuwe versie controleren bij opstarten",
   "reorderTags": "Enable changing the tag order with drag and drop",

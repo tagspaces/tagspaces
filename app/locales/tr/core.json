@@ -90,7 +90,7 @@
   "showSearch": "Aramayı Göster",
   "deleteDocument": "Dosyayı Sil",
   "openFileExternally": "Dosyayı Harici Olarak Aç",
-  "openFileInWindow": "Open File In New Window",
+  "openInWindow": "Yeni Pencerede Aç",
   "showUnixHiddenFiles": "Nokta (.) ile başlayan dosya/dizinleri göster (ör. Unix, Linux, OS X gizli dosyaları)",
   "checkForNewVersionOnStartup": "Başlangıçta yeni sürüm kontrolü yap",
   "reorderTags": "Enable changing the tag order with drag and drop",

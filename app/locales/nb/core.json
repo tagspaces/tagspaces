@@ -90,7 +90,7 @@
   "showSearch": "Vis søk",
   "deleteDocument": "Slett dokument",
   "openFileExternally": "Åpne filen eksternt",
-  "openFileInWindow": "Open File In New Window",
+  "openInWindow": "Åpne i nytt vindu",
   "showUnixHiddenFiles": "Vis filer / mapper med en punktum (.) foran navnet (f.eks. skjulte filer i Unix, Linux og MacOS)",
   "checkForNewVersionOnStartup": "Se etter ny versjon på oppstart",
   "reorderTags": "Enable changing the tag order with drag and drop",

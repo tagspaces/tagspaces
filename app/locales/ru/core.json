@@ -90,7 +90,7 @@
   "showSearch": "Открыть окно поиска",
   "deleteDocument": "Удалить документ",
   "openFileExternally": "Открыть файл внешне",
-  "openFileInWindow": "Open File In New Window",
+  "openInWindow": "Открыть в новом окне",
   "showUnixHiddenFiles": "Отображать точку в начале имен файлов и папок (как в скрытых файлах Unix, Linux, OS X) ",
   "checkForNewVersionOnStartup": "Проверять наличие новой версии при запуске",
   "reorderTags": "Enable changing the tag order with drag and drop",

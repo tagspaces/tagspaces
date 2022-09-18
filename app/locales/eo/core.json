@@ -90,7 +90,7 @@
   "showSearch": "Show Search",
   "deleteDocument": "Delete Document",
   "openFileExternally": "Open File Externally",
-  "openFileInWindow": "Open File In New Window",
+  "openInWindow": "Malfermi en nova fenestro",
   "showUnixHiddenFiles": "Show files/directories with a dot(.) in front of the name (e.g. Unix, Linux, OS X hidden files)",
   "checkForNewVersionOnStartup": "Check for new version on startup",
   "reorderTags": "Enable changing the tag order with drag and drop",

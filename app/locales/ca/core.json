@@ -90,7 +90,7 @@
   "showSearch": "Show Search",
   "deleteDocument": "Delete Document",
   "openFileExternally": "Open File Externally",
-  "openFileInWindow": "Open File In New Window",
+  "openInWindow": "Open in new window",
   "showUnixHiddenFiles": "Mostra fitxers/directoris el noms dels quals comença amb un punt (.) (com els fitxers ocults de Unix, Linux, OS X, per exemple)",
   "checkForNewVersionOnStartup": "Cerca per noves versions a l'arrencada",
   "reorderTags": "Enable changing the tag order with drag and drop",

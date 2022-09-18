@@ -90,7 +90,7 @@
   "showSearch": "検索の表示",
   "deleteDocument": "ドキュメントの削除",
   "openFileExternally": "外部からファイルを開く",
-  "openFileInWindow": "Open File In New Window",
+  "openInWindow": "新規のウィンドウで開く",
   "showUnixHiddenFiles": "名前の先頭にドット(.)を使用してファイル/ディレクトリを表示する(例：Unix、Linux、OS Xの隠しファイル)",
   "checkForNewVersionOnStartup": "起動時に新しいバージョンを確認する",
   "reorderTags": "ドラッグアンドドロップでタグの順序を変更可能にする",

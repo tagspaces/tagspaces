@@ -90,7 +90,7 @@
   "showSearch": "Tampilkan Pencarian",
   "deleteDocument": "Hapus Dokumen",
   "openFileExternally": "Buka File Dengan Eksternal",
-  "openFileInWindow": "Open File In New Window",
+  "openInWindow": "Open in new window",
   "showUnixHiddenFiles": "Tampilkan file/direktori dengan titik(.) di depan nama (seperti file tersembunyi di Unix, Linux, OS X)",
   "checkForNewVersionOnStartup": "Cek versi baru saat mulai",
   "reorderTags": "Enable changing the tag order with drag and drop",

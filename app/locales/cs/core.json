@@ -90,7 +90,7 @@
   "showSearch": "Zobrazit vyhledávání",
   "deleteDocument": "Smazat dokument",
   "openFileExternally": "Otevřít soubor externě",
-  "openFileInWindow": "Open File In New Window",
+  "openInWindow": "Open in new window",
   "showUnixHiddenFiles": "Ukaž soubory/složky s tečkou(.) před názvem (např. Unix, Linux, OS X skryté soubory)",
   "checkForNewVersionOnStartup": "Zkontroluj dostupnost nové verze při spuštění",
   "reorderTags": "Enable changing the tag order with drag and drop",

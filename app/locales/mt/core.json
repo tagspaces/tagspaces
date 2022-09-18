@@ -90,7 +90,7 @@
   "showSearch": "Uri t-Tiftixa",
   "deleteDocument": "Delete Document",
   "openFileExternally": "Open File Externally",
-  "openFileInWindow": "Open File In New Window",
+  "openInWindow": "Open in new window",
   "showUnixHiddenFiles": "Uri l-fajls/dokumenti b'tikka(.) qabel l-isem (eż. Unix, Linux, OS X fajls moħbija)",
   "checkForNewVersionOnStartup": "Iċċekja għal verżjoni ġdida meta jinfetaħ il-programm",
   "reorderTags": "Enable changing the tag order with drag and drop",

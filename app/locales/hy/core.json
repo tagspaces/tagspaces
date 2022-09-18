@@ -90,7 +90,7 @@
   "showSearch": "Որոնում",
   "deleteDocument": "Ջնջել փաստաթուղթը",
   "openFileExternally": "Բացել դրսի ծրագրով",
-  "openFileInWindow": "Open File In New Window",
+  "openInWindow": "Բացել նոր պատուհանում",
   "showUnixHiddenFiles": "Նիշքերը/պանակները ցույց տալ անունից առաջ դրված կետով՝ (.) (օր.՝ Unix-ի, Linux-ի, OS X-ի թաքնված նիշքերը)։",
   "checkForNewVersionOnStartup": "Մեկնարկին ստուգել նոր տարբերակի առկայությունը",
   "reorderTags": "Պիտակների դասավորությունը փոխել քաշել-գցելու միջոցով",

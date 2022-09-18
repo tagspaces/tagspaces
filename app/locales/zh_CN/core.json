@@ -90,7 +90,7 @@
   "showSearch": "显示搜索",
   "deleteDocument": "删除文件",
   "openFileExternally": "用外部应用打开文件",
-  "openFileInWindow": "Open File In New Window",
+  "openInWindow": "在新窗口中打开",
   "showUnixHiddenFiles": "显示文件名以点(.)开始的文件/文件夹（例：Unix, Linux, OS X 的隐藏文件）",
   "checkForNewVersionOnStartup": "启动时检查更新",
   "reorderTags": "啟用拖曳方式變更標籤順序",

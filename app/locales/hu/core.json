@@ -90,7 +90,7 @@
   "showSearch": "Mutasd a keresőt",
   "deleteDocument": "Dokumentum törlése",
   "openFileExternally": "Fájl megnyitása külső alkalmazással",
-  "openFileInWindow": "Open File In New Window",
+  "openInWindow": "Megnyitás új ablakban",
   "showUnixHiddenFiles": "Mutassa a ponttal(.) kezdődő fájlokat / könyvtárakat (pl.: Unix, Linux, OS X rejtett fájlok)",
   "checkForNewVersionOnStartup": "Új verzió ellenőrzése induláskor",
   "reorderTags": "Enable changing the tag order with drag and drop",

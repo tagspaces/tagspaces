@@ -90,7 +90,7 @@
   "showSearch": "Mostrar pesquisa",
   "deleteDocument": "Apagar documento",
   "openFileExternally": "Abrir o ficheiro externamente",
-  "openFileInWindow": "Open File In New Window",
+  "openInWindow": "Open in new window",
   "showUnixHiddenFiles": "Mostrar ficheiros/pastas com um ponto (.) no início do nome (por exemplo ficheiros escondidos no Unix, Linux, OS X)",
   "checkForNewVersionOnStartup": "Verificar novas versões ao arranque",
   "reorderTags": "Habilitar mudança de ordem das etiquetas via arrastar e soltar",

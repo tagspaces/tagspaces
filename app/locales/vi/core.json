@@ -90,7 +90,7 @@
   "showSearch": "Hiển Thị Tìm Kiếm",
   "deleteDocument": "Xoá Tài Liệu",
   "openFileExternally": "Mở Tập Tin Với Phần Mềm Khác",
-  "openFileInWindow": "Open File In New Window",
+  "openInWindow": "Mở trong cửa sổ mới",
   "showUnixHiddenFiles": "Hiện tập tin/directory với dấm chấm(.) trước tên (VD: Các tập tin ẩn của Unix, Linux, OS X)",
   "checkForNewVersionOnStartup": "Kiểm tra phiên bản mới khi khởi chạy",
   "reorderTags": "Enable changing the tag order with drag and drop",

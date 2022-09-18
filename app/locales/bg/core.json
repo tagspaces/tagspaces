@@ -90,7 +90,7 @@
   "showSearch": "Покажи търсачката",
   "deleteDocument": "Delete Document",
   "openFileExternally": "Open File Externally",
-  "openFileInWindow": "Open File In New Window",
+  "openInWindow": "Open in new window",
   "showUnixHiddenFiles": "Показва файловете/директориите с точка(.) в началото на името (това са скритите файлове при Unix, Linux или OS X)",
   "checkForNewVersionOnStartup": "Провери за нова версия при стартиране на приложението.",
   "reorderTags": "Enable changing the tag order with drag and drop",
