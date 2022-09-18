@@ -825,7 +825,6 @@ function EntryProperties(props: Props) {
                 margin="dense"
                 name="path"
                 label={i18n.t('core:backgroundColor')}
-                title=""
                 fullWidth
                 InputProps={{
                   readOnly: true,
@@ -985,7 +984,6 @@ function EntryProperties(props: Props) {
                   />
                 </>
               }
-              title="Sharing Link"
               fullWidth={true}
               value={sharingLink}
               inputRef={sharingLinkRef}
@@ -1036,7 +1034,6 @@ function EntryProperties(props: Props) {
                     />
                   </>
                 }
-                title="Object Storage Sharing Link"
                 fullWidth={true}
                 value={signedLink}
                 inputRef={objectStorageLinkRef}
