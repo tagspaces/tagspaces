@@ -280,6 +280,7 @@ function SettingsAdvanced(props: Props) {
                 <ListItemText
                   primary={tileServer.name}
                   secondary={tileServer.serverURL}
+                  style={{ maxWidth: 470 }}
                 />
                 <ListItemSecondaryAction>
                   {index === 0 && (

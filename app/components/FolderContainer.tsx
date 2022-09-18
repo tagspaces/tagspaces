@@ -622,6 +622,7 @@ function FolderContainer(props: Props) {
                   size="small"
                   style={{
                     marginTop: 10,
+                    minWidth: 40,
                     width: 200
                   }}
                   onKeyDown={() => setSearchVisible(!isSearchVisible)}
