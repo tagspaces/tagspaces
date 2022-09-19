@@ -1338,7 +1338,7 @@ The following NPM packages may be included in this product:
  - @aws-sdk/signature-v4@3.47.2
  - @aws-sdk/signature-v4@3.6.1
  - @aws-sdk/types@1.0.0-rc.10
- - @aws-sdk/types@3.168.0
+ - @aws-sdk/types@3.171.0
  - @aws-sdk/types@3.29.0
  - @aws-sdk/types@3.47.1
  - @aws-sdk/types@3.6.1
@@ -1362,7 +1362,7 @@ The following NPM packages may be included in this product:
  - @aws-sdk/util-hex-encoding@3.29.0
  - @aws-sdk/util-hex-encoding@3.47.1
  - @aws-sdk/util-hex-encoding@3.6.1
- - @aws-sdk/util-locate-window@3.168.0
+ - @aws-sdk/util-locate-window@3.170.0
  - @aws-sdk/util-uri-escape@3.29.0
  - @aws-sdk/util-uri-escape@3.47.1
  - @aws-sdk/util-uri-escape@3.6.1
@@ -2940,12 +2940,12 @@ Apache License
 The following NPM packages may be included in this product:
 
  - @babel/code-frame@7.18.6
- - @babel/compat-data@7.19.0
- - @babel/core@7.19.0
+ - @babel/compat-data@7.19.1
+ - @babel/core@7.19.1
  - @babel/generator@7.19.0
  - @babel/helper-annotate-as-pure@7.18.6
  - @babel/helper-builder-binary-assignment-operator-visitor@7.18.9
- - @babel/helper-compilation-targets@7.19.0
+ - @babel/helper-compilation-targets@7.19.1
  - @babel/helper-create-class-features-plugin@7.19.0
  - @babel/helper-create-regexp-features-plugin@7.19.0
  - @babel/helper-environment-visitor@7.18.9
@@ -2958,19 +2958,19 @@ The following NPM packages may be included in this product:
  - @babel/helper-optimise-call-expression@7.18.6
  - @babel/helper-plugin-utils@7.19.0
  - @babel/helper-remap-async-to-generator@7.18.9
- - @babel/helper-replace-supers@7.18.9
+ - @babel/helper-replace-supers@7.19.1
  - @babel/helper-simple-access@7.18.6
  - @babel/helper-skip-transparent-expression-wrappers@7.18.9
  - @babel/helper-split-export-declaration@7.18.6
  - @babel/helper-string-parser@7.18.10
- - @babel/helper-validator-identifier@7.18.6
+ - @babel/helper-validator-identifier@7.19.1
  - @babel/helper-validator-option@7.18.6
  - @babel/helper-wrap-function@7.19.0
  - @babel/helpers@7.19.0
  - @babel/highlight@7.18.6
  - @babel/plugin-bugfix-safari-id-destructuring-collision-in-function-expression@7.18.6
  - @babel/plugin-bugfix-v8-spread-parameters-in-optional-chaining@7.18.9
- - @babel/plugin-proposal-async-generator-functions@7.19.0
+ - @babel/plugin-proposal-async-generator-functions@7.19.1
  - @babel/plugin-proposal-class-properties@7.18.6
  - @babel/plugin-proposal-class-static-block@7.18.6
  - @babel/plugin-proposal-dynamic-import@7.18.6
@@ -3024,7 +3024,7 @@ The following NPM packages may be included in this product:
  - @babel/plugin-transform-modules-commonjs@7.18.6
  - @babel/plugin-transform-modules-systemjs@7.19.0
  - @babel/plugin-transform-modules-umd@7.18.6
- - @babel/plugin-transform-named-capturing-groups-regex@7.19.0
+ - @babel/plugin-transform-named-capturing-groups-regex@7.19.1
  - @babel/plugin-transform-new-target@7.18.6
  - @babel/plugin-transform-object-super@7.18.6
  - @babel/plugin-transform-parameters@7.18.8
@@ -3035,22 +3035,22 @@ The following NPM packages may be included in this product:
  - @babel/plugin-transform-react-jsx@7.19.0
  - @babel/plugin-transform-regenerator@7.18.6
  - @babel/plugin-transform-reserved-words@7.18.6
- - @babel/plugin-transform-runtime@7.18.10
+ - @babel/plugin-transform-runtime@7.19.1
  - @babel/plugin-transform-shorthand-properties@7.18.6
  - @babel/plugin-transform-spread@7.19.0
  - @babel/plugin-transform-sticky-regex@7.18.6
  - @babel/plugin-transform-template-literals@7.18.9
  - @babel/plugin-transform-typeof-symbol@7.18.9
- - @babel/plugin-transform-typescript@7.19.0
+ - @babel/plugin-transform-typescript@7.19.1
  - @babel/plugin-transform-unicode-escapes@7.18.10
  - @babel/plugin-transform-unicode-regex@7.18.6
- - @babel/preset-env@7.19.0
+ - @babel/preset-env@7.19.1
  - @babel/preset-flow@7.18.6
  - @babel/preset-typescript@7.18.6
  - @babel/register@7.18.9
  - @babel/runtime@7.19.0
  - @babel/template@7.18.10
- - @babel/traverse@7.19.0
+ - @babel/traverse@7.19.1
  - @babel/types@7.19.0
 
 These packages each contain the following license and notice below:
@@ -3082,10 +3082,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following NPM packages may be included in this product:
 
- - @babel/helper-define-polyfill-provider@0.3.2
- - babel-plugin-polyfill-corejs2@0.3.2
- - babel-plugin-polyfill-corejs3@0.5.3
- - babel-plugin-polyfill-regenerator@0.4.0
+ - @babel/helper-define-polyfill-provider@0.3.3
+ - babel-plugin-polyfill-corejs2@0.3.3
+ - babel-plugin-polyfill-corejs3@0.6.0
+ - babel-plugin-polyfill-regenerator@0.4.1
 
 These packages each contain the following license and notice below:
 
@@ -3116,7 +3116,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - @babel/parser@7.19.0
+ - @babel/parser@7.19.1
 
 This package contains the following license and notice below:
 
@@ -5995,17 +5995,17 @@ SOFTWARE.
 
 The following NPM packages may be included in this product:
 
- - @mui/base@5.0.0-alpha.96
- - @mui/core-downloads-tracker@5.10.4
- - @mui/icons-material@5.10.3
- - @mui/lab@5.0.0-alpha.98
- - @mui/material@5.10.4
- - @mui/private-theming@5.10.3
- - @mui/styled-engine@5.10.4
- - @mui/styles@5.10.3
- - @mui/system@5.10.4
+ - @mui/base@5.0.0-alpha.98
+ - @mui/core-downloads-tracker@5.10.6
+ - @mui/icons-material@5.10.6
+ - @mui/lab@5.0.0-alpha.100
+ - @mui/material@5.10.6
+ - @mui/private-theming@5.10.6
+ - @mui/styled-engine@5.10.6
+ - @mui/styles@5.10.6
+ - @mui/system@5.10.6
  - @mui/types@7.2.0
- - @mui/utils@5.10.3
+ - @mui/utils@5.10.6
 
 These packages each contain the following license and notice below:
 
@@ -6202,18 +6202,18 @@ The following NPM packages may be included in this product:
  - @react-native/normalize-color@2.0.0
  - @react-native/polyfills@2.0.0
  - metro-babel-transformer@0.72.1
- - metro-babel-transformer@0.72.2
- - metro-cache-key@0.72.2
- - metro-cache@0.72.2
- - metro-inspector-proxy@0.72.2
- - metro-minify-uglify@0.72.2
+ - metro-babel-transformer@0.72.3
+ - metro-cache-key@0.72.3
+ - metro-cache@0.72.3
+ - metro-inspector-proxy@0.72.3
+ - metro-minify-uglify@0.72.3
  - metro-react-native-babel-transformer@0.72.1
  - metro-runtime@0.72.1
- - metro-runtime@0.72.2
+ - metro-runtime@0.72.3
  - metro-symbolicate@0.72.1
- - metro-symbolicate@0.72.2
- - metro-transform-plugins@0.72.2
- - metro-transform-worker@0.72.2
+ - metro-symbolicate@0.72.3
+ - metro-transform-plugins@0.72.3
+ - metro-transform-worker@0.72.3
  - tr46@0.0.3
 
 These packages each contain the following license and notice below:
@@ -6279,7 +6279,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 The following NPM package may be included in this product:
 
- - @tagspaces/tagspaces-platforms@2.0.15
+ - @tagspaces/tagspaces-platforms@2.0.19
 
 This package contains the following license and notice below:
 
@@ -6362,13 +6362,13 @@ The following NPM packages may be included in this product:
 
  - @types/istanbul-lib-coverage@2.0.4
  - @types/istanbul-reports@3.0.1
- - @types/node@18.7.16
+ - @types/node@18.7.18
  - @types/prop-types@15.7.5
  - @types/react-dom@17.0.17
  - @types/react-is@17.0.3
  - @types/react-redux@7.1.24
  - @types/react-transition-group@4.4.5
- - @types/react@17.0.49
+ - @types/react@17.0.50
  - @types/scheduler@0.16.2
  - @types/use-sync-external-store@0.0.3
  - @types/yargs-parser@21.0.0
@@ -7801,7 +7801,7 @@ Apache License
 
 The following NPM package may be included in this product:
 
- - aws-sdk@2.1213.0
+ - aws-sdk@2.1218.0
 
 This package contains the following license and notice below:
 
@@ -8342,13 +8342,13 @@ The following NPM packages may be included in this product:
  - emoji-regex@8.0.0
  - jsesc@2.5.2
  - punycode@1.3.2
- - regenerate-unicode-properties@10.0.1
+ - regenerate-unicode-properties@10.1.0
  - regenerate@1.4.2
- - regexpu-core@5.1.0
+ - regexpu-core@5.2.1
  - unicode-canonical-property-names-ecmascript@2.0.0
  - unicode-match-property-ecmascript@2.0.0
  - unicode-match-property-value-ecmascript@2.0.0
- - unicode-property-aliases-ecmascript@2.0.0
+ - unicode-property-aliases-ecmascript@2.1.0
 
 These packages each contain the following license and notice below:
 
@@ -8656,7 +8656,7 @@ THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - browserslist@4.21.3
+ - browserslist@4.21.4
 
 This package contains the following license and notice below:
 
@@ -8930,7 +8930,7 @@ THE SOFTWARE.
 The following NPM packages may be included in this product:
 
  - call-bind@1.0.2
- - get-intrinsic@1.1.2
+ - get-intrinsic@1.1.3
 
 These packages each contain the following license and notice below:
 
@@ -9043,7 +9043,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 The following NPM package may be included in this product:
 
- - caniuse-lite@1.0.30001397
+ - caniuse-lite@1.0.30001406
 
 This package contains the following license and notice below:
 
@@ -9567,7 +9567,7 @@ THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - classnames@2.3.1
+ - classnames@2.3.2
 
 This package contains the following license and notice below:
 
@@ -10139,7 +10139,7 @@ THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - core-js-compat@3.25.1
+ - core-js-compat@3.25.2
 
 This package contains the following license and notice below:
 
@@ -10453,7 +10453,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 The following NPM package may be included in this product:
 
- - csstype@3.1.0
+ - csstype@3.1.1
 
 This package contains the following license and notice below:
 
@@ -10511,7 +10511,7 @@ SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - date-fns@2.29.2
+ - date-fns@2.29.3
 
 This package contains the following license and notice below:
 
@@ -11532,7 +11532,7 @@ OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - electron-to-chromium@1.4.247
+ - electron-to-chromium@1.4.254
 
 This package contains the following license and notice below:
 
@@ -11835,7 +11835,7 @@ The following NPM packages may be included in this product:
 
  - es-to-primitive@1.2.1
  - is-boolean-object@1.1.2
- - is-callable@1.2.5
+ - is-callable@1.2.6
  - is-date-object@1.0.5
  - is-number-object@1.0.7
  - is-string@1.0.7
@@ -12513,7 +12513,7 @@ The second argument to `flow.parse` is the options object. Currently supported o
 
 The following NPM package may be included in this product:
 
- - follow-redirects@1.15.1
+ - follow-redirects@1.15.2
 
 This package contains the following license and notice below:
 
@@ -13460,7 +13460,7 @@ The following NPM packages may be included in this product:
 
  - hermes-estree@0.8.0
  - hermes-parser@0.8.0
- - react-native@0.70.0
+ - react-native@0.70.1
 
 These packages each contain the following license and notice below:
 
@@ -16344,7 +16344,7 @@ THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - metro-config@0.72.2
+ - metro-config@0.72.3
 
 This package contains the following license and notice below:
 
@@ -16356,7 +16356,7 @@ This package contains the following license and notice below:
 
 The following NPM package may be included in this product:
 
- - metro-core@0.72.2
+ - metro-core@0.72.3
 
 This package contains the following license and notice below:
 
@@ -16370,7 +16370,7 @@ This package contains the following license and notice below:
 
 The following NPM package may be included in this product:
 
- - metro-file-map@0.72.2
+ - metro-file-map@0.72.3
 
 This package contains the following license and notice below:
 
@@ -16391,7 +16391,7 @@ use case.
 
 The following NPM package may be included in this product:
 
- - metro-hermes-compiler@0.72.2
+ - metro-hermes-compiler@0.72.3
 
 This package contains the following license and notice below:
 
@@ -16419,7 +16419,7 @@ After the build process finishes the Hermes Bytecode Compiler JavaScript file wi
 The following NPM packages may be included in this product:
 
  - metro-react-native-babel-preset@0.72.1
- - metro-react-native-babel-preset@0.72.2
+ - metro-react-native-babel-preset@0.72.3
 
 These packages each contain the following license and notice below:
 
@@ -16469,7 +16469,7 @@ If you get stuck configuring Babel, please ask a question on Stack Overflow or f
 
 The following NPM package may be included in this product:
 
- - metro-resolver@0.72.2
+ - metro-resolver@0.72.3
 
 This package contains the following license and notice below:
 
@@ -16482,7 +16482,7 @@ This package contains the following license and notice below:
 The following NPM packages may be included in this product:
 
  - metro-source-map@0.72.1
- - metro-source-map@0.72.2
+ - metro-source-map@0.72.3
 
 These packages each contain the following license and notice below:
 
@@ -16496,7 +16496,7 @@ These packages each contain the following license and notice below:
 
 The following NPM package may be included in this product:
 
- - metro@0.72.2
+ - metro@0.72.3
 
 This package contains the following license and notice below:
 
@@ -17069,7 +17069,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 The following NPM packages may be included in this product:
 
  - ob1@0.72.1
- - ob1@0.72.2
+ - ob1@0.72.3
 
 These packages each contain the following license and notice below:
 
@@ -18341,7 +18341,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 The following NPM package may be included in this product:
 
- - rc-util@5.24.2
+ - rc-util@5.24.4
 
 This package contains the following license and notice below:
 
@@ -18788,7 +18788,7 @@ SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - react-native-codegen@0.70.4
+ - react-native-codegen@0.70.5
 
 This package contains the following license and notice below:
 
@@ -18841,7 +18841,7 @@ SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - react-native-gradle-plugin@0.70.2
+ - react-native-gradle-plugin@0.70.3
 
 This package contains the following license and notice below:
 
@@ -19353,7 +19353,7 @@ THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - regjsgen@0.6.0
+ - regjsgen@0.7.1
 
 This package contains the following license and notice below:
 
@@ -19384,7 +19384,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - regjsparser@0.8.4
+ - regjsparser@0.9.1
 
 This package contains the following license and notice below:
 
@@ -21033,7 +21033,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - update-browserslist-db@1.0.7
+ - update-browserslist-db@1.0.9
 
 This package contains the following license and notice below:
 
