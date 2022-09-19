@@ -314,16 +314,16 @@ function GridPagination(props: Props) {
         height: '100%',
         // @ts-ignore
         overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
-        background: currentDirectoryColor || 'transparent',
+        background: currentDirectoryColor || 'transparent'
         /*background:
           'linear-gradient(62deg, rgb(65, 88, 208) 0%, rgb(200, 80, 192) 46%, rgb(255, 204, 112) 100%)',*/
-        backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat'
       }}
     >
       <div
         style={{
-          backgroundImage: 'url(' + folderBgndPath + ')'
+          backgroundImage: 'url(' + folderBgndPath + ')',
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat'
         }}
       >
         {showDetails && (
