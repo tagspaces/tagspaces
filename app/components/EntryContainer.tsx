@@ -748,15 +748,17 @@ function EntryContainer(props: Props) {
             <OpenNewWindowIcon />
           </IconButton>
         </Tooltip>
-        <Tooltip title={i18n.t('core:openInWindow')}>
-          <IconButton
-            aria-label={i18n.t('core:openInWindow')}
-            onClick={openInNewWindow}
-            size="large"
-          >
-            <OpenNewWindowIcon />
-          </IconButton>
-        </Tooltip>
+        {!AppConfig.isCordova && (
+          <Tooltip title={i18n.t('core:openInWindow')}>
+            <IconButton
+              aria-label={i18n.t('core:openInWindow')}
+              onClick={openInNewWindow}
+              size="large"
+            >
+              <OpenNewWindowIcon />
+            </IconButton>
+          </Tooltip>
+        )}
         {AppConfig.isCordova && (
           <Tooltip title={i18n.t('core:shareFile')}>
             <IconButton
@@ -928,15 +930,17 @@ function EntryContainer(props: Props) {
             <OpenNewWindowIcon />
           </IconButton>
         </Tooltip>
-        <Tooltip title={i18n.t('core:openInWindow')}>
-          <IconButton
-            aria-label={i18n.t('core:openInWindow')}
-            onClick={openInNewWindow}
-            size="large"
-          >
-            <OpenNewWindowIcon />
-          </IconButton>
-        </Tooltip>
+        {!AppConfig.isCordova && (
+          <Tooltip title={i18n.t('core:openInWindow')}>
+            <IconButton
+              aria-label={i18n.t('core:openInWindow')}
+              onClick={openInNewWindow}
+              size="large"
+            >
+              <OpenNewWindowIcon />
+            </IconButton>
+          </Tooltip>
+        )}
         {!(
           PlatformIO.haveObjectStoreSupport() ||
           PlatformIO.haveWebDavSupport() ||

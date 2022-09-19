@@ -66,7 +66,11 @@ function CustomLogo(props: Props) {
     <AppVersionBadge badgeContent={'v' + versionMeta.version} color="primary">
       <Tooltip title={i18n.t('core:openNewInstance')}>
         <IconButton
-          onClick={() => PlatformIO.createNewInstance()}
+          onClick={() => {
+            AppConfig.isCordova
+              ? props.toggleAboutDialog()
+              : PlatformIO.createNewInstance();
+          }}
           style={{ padding: 0, paddingLeft: 5, height: 50 }}
           data-tid="createNewInstance"
         >
