@@ -25,6 +25,7 @@ import Tooltip from '@mui/material/Tooltip';
 import FolderIcon from '@mui/icons-material/Folder';
 import SelectedIcon from '@mui/icons-material/CheckBox';
 import UnSelectedIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import { useLongPress } from 'use-long-press';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import {
@@ -78,6 +79,8 @@ interface Props {
   handleGridCellClick: (event: Object, fsEntry: TS.FileSystemEntry) => void;
   editTagForEntry?: (path: string, tag: TS.Tag) => void;
   reorderTags: boolean;
+  isTouchMultiSelectActive: boolean;
+  toggleTouchMultiSelectMode: () => void;
 }
 
 function CellContent(props: Props) {
@@ -102,7 +105,9 @@ function CellContent(props: Props) {
     openFsEntry,
     selectEntry,
     deselectEntry,
-    isLast
+    isLast,
+    isTouchMultiSelectActive,
+    toggleTouchMultiSelectMode
   } = props;
   const entryTitle = extractTitle(
     fsEntry.name,
@@ -425,6 +430,21 @@ function CellContent(props: Props) {
     });
   }
 
+  const onLongPress = useLongPress(() => {
+    toggleTouchMultiSelectMode();
+  });
+
+  function handleClick(e: React.MouseEvent) {
+    e.stopPropagation();
+    if (isTouchMultiSelectActive)
+      selected ? deselectEntry(fsEntry) : selectEntry(fsEntry);
+    // TODO DoubleClick not fired in Cordova IOS
+    else
+      AppConfig.isCordovaiOS
+        ? handleGridCellDblClick(e, fsEntry)
+        : handleGridCellClick(e, fsEntry);
+  }
+
   let entryHeight = 130;
   if (entrySize === 'small') {
     entryHeight = 35;
@@ -458,12 +478,8 @@ function CellContent(props: Props) {
       }}
       onContextMenu={event => handleGridContextMenu(event, fsEntry)}
       onDoubleClick={event => handleGridCellDblClick(event, fsEntry)}
-      onClick={event => {
-        event.stopPropagation();
-        AppConfig.isCordovaiOS // TODO DoubleClick not fired in Cordova IOS
-          ? handleGridCellDblClick(event, fsEntry)
-          : handleGridCellClick(event, fsEntry);
-      }}
+      onClick={event => handleClick(event)}
+      {...onLongPress()}
     >
       {gridCell}
     </Paper>

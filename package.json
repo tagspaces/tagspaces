@@ -214,6 +214,7 @@
     "source-map-support": "^0.5.21",
     "tiff.js": "^1.0.0",
     "ts-react-splitter": "^3.0.0",
+    "use-long-press": "^2.0.2",
     "use-state-with-callback": "^2.0.3",
     "uuid": "^8.3.2",
     "winattr": "^3.0.0"

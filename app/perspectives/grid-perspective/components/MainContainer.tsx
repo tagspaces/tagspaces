@@ -222,7 +222,7 @@ function GridPerspective(props: Props) {
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
   useEffect(() => {
-    makeFirstSelectedEntryVisible();
+    updateTouchSelectMode();
   }, [props.selectedEntries]);
 
   useEffect(() => {
@@ -331,17 +331,20 @@ function GridPerspective(props: Props) {
     [props.directoryContent, sortBy.current, orderBy.current]
   );
 
-  const makeFirstSelectedEntryVisible = () => {
+  const updateTouchSelectMode = () => {
+    const { selectedEntries } = props;
+    if (selectedEntries && selectedEntries.length == 0)
+      setIsTouchMultiSelectActive(false);
+  };
+
+  const makeEntryVisible = (fsEntry: TS.FileSystemEntry) => {
     const { selectedEntries } = props;
     if (selectedEntries && selectedEntries.length > 0) {
-      const firstSelectedElement = document.querySelector(
-        '[data-entry-id="' + selectedEntries[0].uuid + '"]'
+      const selectedElement = document.querySelector(
+        '[data-entry-id="' + fsEntry.uuid + '"]'
       );
-      if (
-        isObj(firstSelectedElement) &&
-        !isVisibleOnScreen(firstSelectedElement)
-      ) {
-        firstSelectedElement.scrollIntoView(false);
+      if (isObj(selectedElement) && !isVisibleOnScreen(selectedElement)) {
+        selectedElement.scrollIntoView(false);
       }
     }
   };
@@ -439,6 +442,14 @@ function GridPerspective(props: Props) {
     }
   };
 
+  const [isTouchMultiSelectActive, setIsTouchMultiSelectActive] = useState<
+    boolean
+  >(false);
+
+  const toggleTouchMultiSelectMode = () => {
+    setIsTouchMultiSelectActive(!isTouchMultiSelectActive);
+  };
+
   const clearSelection = () => {
     props.setSelectedEntries([]);
     selectedEntryPath.current = undefined;
@@ -452,7 +463,8 @@ function GridPerspective(props: Props) {
     currentDirectoryPath
   } = props;
 
-  const someFileSelected = selectedEntries.length > 1;
+  const someFileSelected =
+    selectedEntries.length > 1 || isTouchMultiSelectActive;
 
   const toggleSelectAllFiles = () => {
     if (someFileSelected) {
@@ -590,6 +602,7 @@ function GridPerspective(props: Props) {
 
   const selectEntry = (fsEntry: TS.FileSystemEntry) => {
     const { setSelectedEntries } = props;
+    makeEntryVisible(fsEntry);
     setSelectedEntries([...selectedEntries, fsEntry]);
   };
 
@@ -712,6 +725,8 @@ function GridPerspective(props: Props) {
           handleGridContextMenu={handleGridContextMenu}
           handleGridCellDblClick={handleGridCellDblClick}
           handleGridCellClick={handleGridCellClick}
+          isTouchMultiSelectActive={isTouchMultiSelectActive}
+          toggleTouchMultiSelectMode={toggleTouchMultiSelectMode}
         />
       </TagDropContainer>
     );
