@@ -20,6 +20,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import Button from '@mui/material/Button';
 import withStyles from '@mui/styles/withStyles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import useTheme from '@mui/styles/useTheme';
 import AppBar from '@mui/material/AppBar';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -44,11 +46,6 @@ import {
 import { clearAllURLParams } from '-/utils/dom';
 import SettingsAdvanced from '-/components/dialogs/settings/SettingsAdvanced';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-
-// FIXME checkout https://mui.com/components/use-media-query/#using-material-uis-breakpoint-helpers
-const withMobileDialog = () => WrappedComponent => props => (
-  <WrappedComponent {...props} width="lg" fullScreen={false} />
-);
 
 const styles: any = () => ({
   mainContent: {
@@ -205,7 +202,8 @@ function SettingsDialog(props: Props) {
           value={currentTab}
           onChange={handleTabClick}
           indicatorColor="primary"
-          // variant="scrollable"
+          scrollButtons="auto"
+          variant="scrollable"
         >
           <Tab
             data-tid="generalSettingsDialog"
@@ -332,7 +330,9 @@ function SettingsDialog(props: Props) {
     </DialogActions>
   );
 
-  const { fullScreen, open, onClose } = props;
+  const { open, onClose } = props;
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       fullScreen={fullScreen}
@@ -361,4 +361,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withMobileDialog()(withStyles(styles)(SettingsDialog)));
+)(withStyles(styles)(SettingsDialog));
