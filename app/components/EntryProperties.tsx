@@ -19,7 +19,6 @@
 import React, {
   ChangeEvent,
   useEffect,
-  useReducer,
   useRef,
   useState
 } from 'react';
@@ -27,7 +26,6 @@ import { useStateWithCallbackLazy } from 'use-state-with-callback';
 import { Theme } from '@mui/material/styles';
 import { v1 as uuidv1 } from 'uuid';
 import L from 'leaflet';
-import classNames from 'classnames';
 import createStyles from '@mui/styles/createStyles';
 import withStyles from '@mui/styles/withStyles';
 import Grid from '@mui/material/Grid';
@@ -41,7 +39,6 @@ import Tooltip from '@mui/material/Tooltip';
 import LocationIcon from '@mui/icons-material/WorkOutline';
 import EditIcon from '@mui/icons-material/Edit';
 import CloudLocationIcon from '@mui/icons-material/CloudQueue';
-import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import ClearColorIcon from '@mui/icons-material/Backspace';
 import {
@@ -64,7 +61,6 @@ import {
 } from '@tagspaces/tagspaces-platforms/paths';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import TagDropContainer from './TagDropContainer';
-import ColorPickerDialog from './dialogs/ColorPickerDialog';
 import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
 import i18n from '../services/i18n';
 import { enhanceOpenedEntry, convertMarkDown } from '-/services/utils-io';
@@ -91,6 +87,8 @@ import PerspectiveSelector from '-/components/PerspectiveSelector';
 
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
+const CustomBackgroundDialog =
+  Pro && Pro.UI ? Pro.UI.CustomBackgroundDialog : false;
 
 const styles: any = (theme: any) => ({
   entryProperties: {
@@ -835,7 +833,7 @@ function EntryProperties(props: Props) {
                           fullWidth
                           style={{
                             width: '100%',
-                            backgroundColor: currentEntry.color
+                            background: currentEntry.color
                           }}
                           onClick={toggleBackgroundColorPicker}
                         >
@@ -887,38 +885,6 @@ function EntryProperties(props: Props) {
                   )
                 }}
               />
-              {displayColorPicker && (
-                <ColorPickerDialog
-                  color={currentEntry.color}
-                  open={displayColorPicker}
-                  setColor={handleChangeColor}
-                  onClose={toggleBackgroundColorPicker}
-                  presetColors={[
-                    'transparent',
-                    '#FFFFFF44',
-                    '#00000044',
-                    '#ac725e44',
-                    '#f83a2244',
-                    '#fa573c44',
-                    '#ff753744',
-                    '#ffad4644',
-                    '#42d69244',
-                    '#00800044',
-                    '#7bd14844',
-                    '#fad16544',
-                    '#92e1c044',
-                    '#9fe1e744',
-                    '#9fc6e744',
-                    '#4986e744',
-                    '#9a9cff44',
-                    '#c2c2c244',
-                    '#cca6ac44',
-                    '#f691b244',
-                    '#cd74e644',
-                    '#a47ae244'
-                  ]}
-                />
-              )}
             </Grid>
           )}
         </Grid>
@@ -1166,6 +1132,37 @@ function EntryProperties(props: Props) {
           setThumb={setThumb}
         />
       )}
+      <CustomBackgroundDialog
+        color={currentEntry.color}
+        open={displayColorPicker}
+        setColor={handleChangeColor}
+        onClose={toggleBackgroundColorPicker}
+        currentDirectoryPath={currentEntry.path}
+        presetColors={[
+          'transparent',
+          '#FFFFFF44',
+          '#00000044',
+          '#ac725e44',
+          '#f83a2244',
+          '#fa573c44',
+          '#ff753744',
+          '#ffad4644',
+          '#42d69244',
+          '#00800044',
+          '#7bd14844',
+          '#fad16544',
+          '#92e1c044',
+          '#9fe1e744',
+          '#9fc6e744',
+          '#4986e744',
+          '#9a9cff44',
+          '#c2c2c244',
+          '#cca6ac44',
+          '#f691b244',
+          '#cd74e644',
+          '#a47ae244'
+        ]}
+      />
     </div>
   );
 }
