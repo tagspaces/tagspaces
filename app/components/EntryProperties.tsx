@@ -1133,7 +1133,7 @@ function EntryProperties(props: Props) {
         setColor={handleChangeColor}
         onClose={toggleBackgroundColorPicker}
         currentDirectoryPath={currentEntry.path}
-        presetColors={[
+        /*presetColors={[
           'transparent',
           '#FFFFFF44',
           '#00000044',
@@ -1156,7 +1156,7 @@ function EntryProperties(props: Props) {
           '#f691b244',
           '#cd74e644',
           '#a47ae244'
-        ]}
+        ]}*/
       />
     </div>
   );
