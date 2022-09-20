@@ -36,17 +36,13 @@ import { TS } from '-/tagspaces.namespace';
 import { getLocations } from '-/reducers/locations';
 import { getCurrentLocationId } from '-/reducers/app';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-
-// FIXME checkout https://mui.com/components/use-media-query/#using-material-uis-breakpoint-helpers
-const withMobileDialog = () => WrappedComponent => props => (
-  <WrappedComponent {...props} width="lg" fullScreen={false} />
-);
+import useTheme from "@mui/styles/useTheme";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 interface Props {
   open: boolean;
   onClose: () => void;
   createTagGroup: (tagGroup: TS.TagGroup) => void;
-  fullScreen?: boolean;
   color: string;
   textcolor: string;
   currentLocationId: string | null;
@@ -72,7 +68,6 @@ function CreateTagGroupDialog(props: Props) {
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
   const {
-    fullScreen,
     open,
     saveTagsInLocation,
     onClose,
@@ -179,6 +174,8 @@ function CreateTagGroupDialog(props: Props) {
     }
   };
 
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}
@@ -317,6 +314,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(
-  withMobileDialog()(CreateTagGroupDialog)
-);
+export default connect(mapStateToProps)(CreateTagGroupDialog);

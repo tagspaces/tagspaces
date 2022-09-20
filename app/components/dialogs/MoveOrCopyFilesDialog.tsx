@@ -35,10 +35,11 @@ import Typography from '@mui/material/Typography';
 import Dialog from '@mui/material/Dialog';
 import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import useTheme from "@mui/styles/useTheme";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 interface Props {
   open: boolean;
-  fullScreen: boolean;
   onClose: (clearSelection?: boolean) => void;
   selectedFiles: Array<File>;
   handleMoveFiles: (files: Array<File>) => void;
@@ -46,8 +47,10 @@ interface Props {
 }
 
 function MoveOrCopyFilesDialog(props: Props) {
-  const { open, onClose, fullScreen } = props;
+  const { open, onClose } = props;
 
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}

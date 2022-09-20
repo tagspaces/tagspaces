@@ -611,7 +611,6 @@ function MainPage(props: Props) {
         onClose={() => {
           setMoveCopyDialogOpened(undefined);
         }}
-        fullScreen={false}
         selectedFiles={moveCopyDialogOpened}
         handleMoveFiles={files => {
           handleMoveCopyFiles(files, true);

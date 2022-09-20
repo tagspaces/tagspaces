@@ -29,12 +29,13 @@ import i18n from '-/services/i18n';
 import useFirstRender from '-/utils/useFirstRender';
 import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import useTheme from "@mui/styles/useTheme";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 interface Props {
   open: boolean;
   onClose: () => void;
   addTag: (tags: string, uuid: string) => void;
-  fullScreen?: boolean;
   selectedTagGroupEntry: TS.TagGroup;
 }
 
@@ -78,8 +79,10 @@ function CreateTagsDialog(props: Props) {
     }
   };
 
-  const { fullScreen, open, onClose } = props;
+  const { open, onClose } = props;
 
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}
