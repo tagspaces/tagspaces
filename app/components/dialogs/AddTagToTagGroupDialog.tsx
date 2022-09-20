@@ -34,12 +34,13 @@ import { getTagGroups } from '-/reducers/taglibrary';
 import i18n from '-/services/i18n';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
+import useTheme from "@mui/styles/useTheme";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 interface Props {
   open: boolean;
   onClose: () => void;
   addTag: (tag: TS.Tag, uuid: string) => void;
-  fullScreen?: boolean;
   selectedTag: TS.Tag;
   defaultBackgroundColor?: string;
   defaultTextColor?: string;
@@ -65,8 +66,10 @@ function AddTagToTagGroupDialog(props: Props) {
     props.onClose();
   };
 
-  const { fullScreen, open, onClose } = props;
+  const { open, onClose } = props;
 
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}

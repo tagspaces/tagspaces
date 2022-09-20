@@ -40,15 +40,11 @@ import EnterpriseImage from '-/assets/images/world-undraw.svg';
 import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Links from '-/links';
-
-// FIXME checkout https://mui.com/components/use-media-query/#using-material-uis-breakpoint-helpers
-const withMobileDialog = () => WrappedComponent => props => (
-  <WrappedComponent {...props} width="lg" fullScreen={false} />
-);
+import useTheme from "@mui/styles/useTheme";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 interface Props {
   open: boolean;
-  fullScreen: boolean;
   openURLExternally: (url: string, skipConfirmation: boolean) => void;
   onClose: () => void;
 }
@@ -405,8 +401,10 @@ function ProTeaserDialog(props: Props) {
     setActiveStep(step);
   };
 
-  const { fullScreen, open, onClose, openURLExternally } = props;
+  const { open, onClose, openURLExternally } = props;
 
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}
@@ -472,4 +470,4 @@ function ProTeaserDialog(props: Props) {
   );
 }
 
-export default withMobileDialog()(ProTeaserDialog);
+export default ProTeaserDialog;

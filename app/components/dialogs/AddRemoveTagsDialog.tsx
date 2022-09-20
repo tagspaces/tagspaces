@@ -41,15 +41,11 @@ import {
 import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-
-// FIXME checkout https://mui.com/components/use-media-query/#using-material-uis-breakpoint-helpers
-const withMobileDialog = () => WrappedComponent => props => (
-  <WrappedComponent {...props} width="lg" fullScreen={false} />
-);
+import useTheme from '@mui/styles/useTheme';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 interface Props {
   open: boolean;
-  fullScreen: boolean;
   selectedEntries: Array<any>;
   onClose: (clearSelection?: boolean) => void;
   addTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
@@ -120,10 +116,12 @@ function AddRemoveTagsDialog(props: Props) {
     onCloseDialog(true);
   };
 
-  const { open, selectedEntries = [], fullScreen } = props;
+  const { open, selectedEntries = [] } = props;
   const disabledButtons =
     !newlyAddedTags || newlyAddedTags.length < 1 || selectedEntries.length < 1;
 
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}
@@ -222,4 +220,4 @@ function AddRemoveTagsDialog(props: Props) {
   );
 }
 
-export default withMobileDialog()(AddRemoveTagsDialog);
+export default AddRemoveTagsDialog;

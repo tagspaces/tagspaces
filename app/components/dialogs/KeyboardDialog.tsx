@@ -32,11 +32,8 @@ import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '-/services/i18n';
 import { getKeyBindingObject } from '-/reducers/settings';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-
-// FIXME checkout https://mui.com/components/use-media-query/#using-material-uis-breakpoint-helpers
-const withMobileDialog = () => WrappedComponent => props => (
-  <WrappedComponent {...props} width="lg" fullScreen={false} />
-);
+import useTheme from "@mui/styles/useTheme";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 const styles = theme => ({
   root: {
@@ -54,13 +51,14 @@ const styles = theme => ({
 interface Props {
   open: boolean;
   classes: any;
-  fullScreen: boolean;
   keyBindings: Array<any>;
   onClose: () => void;
 }
 
 function KeyboardDialog(props: Props) {
-  const { open, onClose, fullScreen } = props;
+  const { open, onClose } = props;
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}
@@ -109,6 +107,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(
-  withMobileDialog()(withStyles(styles)(KeyboardDialog))
-);
+export default connect(mapStateToProps)(withStyles(styles)(KeyboardDialog));

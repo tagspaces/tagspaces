@@ -55,7 +55,6 @@ const styles: any = () => ({
 
 interface Props {
   open: boolean;
-  fullScreen?: boolean;
   classes?: any;
   onClose: () => void;
   setSupportedFileTypes?: (fileTypes: Array<any>) => void;

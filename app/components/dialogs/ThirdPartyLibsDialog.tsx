@@ -25,20 +25,18 @@ import Dialog from '@mui/material/Dialog';
 import i18n from '-/services/i18n';
 import ThirdPartyLibs from '-/third-party.txt';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-
-// FIXME checkout https://mui.com/components/use-media-query/#using-material-uis-breakpoint-helpers
-const withMobileDialog = () => WrappedComponent => props => (
-  <WrappedComponent {...props} width="lg" fullScreen={false} />
-);
+import useTheme from '@mui/styles/useTheme';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 interface Props {
   open: boolean;
   onClose: () => void;
-  fullScreen: boolean;
 }
 
 function ThirdPartyLibsDialog(props: Props) {
-  const { open, onClose, fullScreen } = props;
+  const { open, onClose } = props;
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}
@@ -68,4 +66,4 @@ function ThirdPartyLibsDialog(props: Props) {
   );
 }
 
-export default withMobileDialog()(ThirdPartyLibsDialog);
+export default ThirdPartyLibsDialog;
