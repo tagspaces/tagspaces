@@ -295,10 +295,13 @@ function GridPagination(props: Props) {
     PlatformIO.getDirSeparator()
   );
 
-  const folderBgndPath = getBgndFileLocationForDirectory(
-    currentDirectoryPath,
-    PlatformIO.getDirSeparator()
+  const folderBgndPath = encodeURI(
+    getBgndFileLocationForDirectory(
+      currentDirectoryPath,
+      PlatformIO.getDirSeparator()
+    )
   );
+  const dirColor = currentDirectoryColor || 'transparent';
 
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions,jsx-a11y/no-static-element-interactions
@@ -314,151 +317,61 @@ function GridPagination(props: Props) {
         height: '100%',
         // @ts-ignore
         overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
-        background: currentDirectoryColor || 'transparent'
+        backgroundImage: `url(${folderBgndPath})`,
+        backgroundColor: `${dirColor}`,
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat'
         /*background:
           'linear-gradient(62deg, rgb(65, 88, 208) 0%, rgb(200, 80, 192) 46%, rgb(255, 204, 112) 100%)',*/
       }}
     >
-      <div
-        style={{
-          backgroundImage: 'url(' + folderBgndPath + ')',
-          backgroundSize: 'cover',
-          backgroundRepeat: 'no-repeat'
-        }}
-      >
-        {showDetails && (
-          <>
-            <div
+      {showDetails && (
+        <>
+          <div
+            style={{
+              position: 'relative',
+              height: 150
+            }}
+          >
+            <img
+              alt="thumbnail"
+              src={folderTmbPath}
+              // @ts-ignore
+              onError={i => (i.target.style.display = 'none')}
+              loading="lazy"
               style={{
-                position: 'relative',
+                objectFit: 'contain',
+                position: 'absolute',
+                width: '100%',
                 height: 150
               }}
-            >
-              <img
-                alt="thumbnail"
-                src={folderTmbPath}
-                // @ts-ignore
-                onError={i => (i.target.style.display = 'none')}
-                loading="lazy"
-                style={{
-                  objectFit: 'contain',
-                  position: 'absolute',
-                  width: '100%',
-                  height: 150
-                }}
-              />
-              <EntryIcon isFile={false} />
-            </div>
-            <Typography
-              style={{
-                display: 'block',
-                padding: 10,
-                paddingTop: 55,
-                borderRadius: 5,
-                marginBottom: 5,
-                height: 50,
-                overflow: 'auto',
-                textShadow: '1px 1px #8f8f8f',
-                color: theme.palette.text.primary
-              }}
-              role="button"
-              id="descriptionArea"
-            >
-              {folderName}
-            </Typography>
-            {(directories.length > 0 || pageFiles.length > 0) && (
-              <div style={{ padding: 15, bottom: 10 }}>
-                <Typography
-                  style={{
-                    fontSize: '0.9rem',
-                    color: theme.palette.text.secondary,
-                    textShadow: '1px 1px #8f8f8f'
-                  }}
-                >
-                  {directories.length +
-                    ' folder(s) and ' +
-                    allFilesCount +
-                    ' file(s) found'}
-                </Typography>
-              </div>
-            )}
-          </>
-        )}
-        <TagsPreview tags={currentDirectoryTags} />
-        <div
-          className={className}
-          style={style}
-          data-tid="perspectiveGridFileTable"
-        >
-          {page.current === 1 && directories.map(entry => renderCell(entry))}
-          {pageFiles.map((entry, index, dArray) =>
-            renderCell(entry, index === dArray.length - 1)
-          )}
-          {!isAppLoading && pageFiles.length < 1 && directories.length < 1 && (
-            <div style={{ textAlign: 'center' }}>
-              <EntryIcon isFile={false} />
-              <Typography
-                style={{ padding: 15, color: theme.palette.text.secondary }}
-              >
-                {i18n.t('core:noFileFolderFound')}
-              </Typography>
-              <Typography style={{ color: theme.palette.text.secondary }}>
-                {i18n.t('core:dragAndDropToImport')}
-              </Typography>
-            </div>
-          )}
-          {!isAppLoading &&
-            pageFiles.length < 1 &&
-            directories.length >= 1 &&
-            !showDirectories && (
-              <div style={{ textAlign: 'center' }}>
-                <EntryIcon isFile={false} />
-                <Typography
-                  style={{ padding: 15, color: theme.palette.text.secondary }}
-                >
-                  {i18n.t('core:noFileButFoldersFound')}
-                </Typography>
-                <Typography style={{ color: theme.palette.text.secondary }}>
-                  {i18n.t('core:dragAndDropToImport')}
-                </Typography>
-              </div>
-            )}
-        </div>
-        {showPagination && (
-          <Tooltip
-            title={
-              directories.length +
-              ' folder(s) and ' +
-              allFilesCount +
-              ' file(s) found'
-            }
-          >
-            <Pagination
-              style={{
-                left: 15,
-                bottom: 65,
-                zIndex: 1100,
-                position: 'absolute',
-                backgroundColor: theme.palette.background.default,
-                opacity: 0.97,
-                border: '1px solid lightgray',
-                borderRadius: 5,
-                padding: 3
-              }}
-              count={paginationCount}
-              page={page.current}
-              onChange={handleChange}
             />
-          </Tooltip>
-        )}
-        {!showDetails &&
-          !showPagination &&
-          (directories.length > 0 || pageFiles.length > 0) && (
+            <EntryIcon isFile={false} />
+          </div>
+          <Typography
+            style={{
+              display: 'block',
+              padding: 10,
+              paddingTop: 55,
+              borderRadius: 5,
+              marginBottom: 5,
+              height: 50,
+              overflow: 'auto',
+              textShadow: '1px 1px #8f8f8f',
+              color: theme.palette.text.primary
+            }}
+            role="button"
+            id="descriptionArea"
+          >
+            {folderName}
+          </Typography>
+          {(directories.length > 0 || pageFiles.length > 0) && (
             <div style={{ padding: 15, bottom: 10 }}>
               <Typography
                 style={{
                   fontSize: '0.9rem',
-                  color: theme.palette.text.secondary
+                  color: theme.palette.text.secondary,
+                  textShadow: '1px 1px #8f8f8f'
                 }}
               >
                 {directories.length +
@@ -468,7 +381,92 @@ function GridPagination(props: Props) {
               </Typography>
             </div>
           )}
+        </>
+      )}
+      <TagsPreview tags={currentDirectoryTags} />
+      <div
+        className={className}
+        style={style}
+        data-tid="perspectiveGridFileTable"
+      >
+        {page.current === 1 && directories.map(entry => renderCell(entry))}
+        {pageFiles.map((entry, index, dArray) =>
+          renderCell(entry, index === dArray.length - 1)
+        )}
+        {!isAppLoading && pageFiles.length < 1 && directories.length < 1 && (
+          <div style={{ textAlign: 'center' }}>
+            <EntryIcon isFile={false} />
+            <Typography
+              style={{ padding: 15, color: theme.palette.text.secondary }}
+            >
+              {i18n.t('core:noFileFolderFound')}
+            </Typography>
+            <Typography style={{ color: theme.palette.text.secondary }}>
+              {i18n.t('core:dragAndDropToImport')}
+            </Typography>
+          </div>
+        )}
+        {!isAppLoading &&
+          pageFiles.length < 1 &&
+          directories.length >= 1 &&
+          !showDirectories && (
+            <div style={{ textAlign: 'center' }}>
+              <EntryIcon isFile={false} />
+              <Typography
+                style={{ padding: 15, color: theme.palette.text.secondary }}
+              >
+                {i18n.t('core:noFileButFoldersFound')}
+              </Typography>
+              <Typography style={{ color: theme.palette.text.secondary }}>
+                {i18n.t('core:dragAndDropToImport')}
+              </Typography>
+            </div>
+          )}
       </div>
+      {showPagination && (
+        <Tooltip
+          title={
+            directories.length +
+            ' folder(s) and ' +
+            allFilesCount +
+            ' file(s) found'
+          }
+        >
+          <Pagination
+            style={{
+              left: 15,
+              bottom: 65,
+              zIndex: 1100,
+              position: 'absolute',
+              backgroundColor: theme.palette.background.default,
+              opacity: 0.97,
+              border: '1px solid lightgray',
+              borderRadius: 5,
+              padding: 3
+            }}
+            count={paginationCount}
+            page={page.current}
+            onChange={handleChange}
+          />
+        </Tooltip>
+      )}
+      {!showDetails &&
+        !showPagination &&
+        (directories.length > 0 || pageFiles.length > 0) && (
+          <div style={{ padding: 15, bottom: 10 }}>
+            <Typography
+              style={{
+                fontSize: '0.9rem',
+                color: theme.palette.text.secondary
+              }}
+            >
+              {directories.length +
+                ' folder(s) and ' +
+                allFilesCount +
+                ' file(s) found'}
+            </Typography>
+          </div>
+        )}
     </div>
   );
 }
@@ -497,6 +495,7 @@ function mapActionCreatorsToProps(dispatch) {
 
 const areEqual = (prevProp: Props, nextProp: Props) =>
   nextProp.theme === prevProp.theme &&
+  nextProp.currentDirectoryPath === prevProp.currentDirectoryPath &&
   nextProp.isMetaLoaded === prevProp.isMetaLoaded &&
   nextProp.showDirectories === prevProp.showDirectories &&
   nextProp.showTags === prevProp.showTags &&
