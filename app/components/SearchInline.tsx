@@ -72,6 +72,7 @@ interface Props {
   indexing: boolean;
   showUnixHiddenEntries: boolean;
   isDesktop: boolean;
+  open: boolean;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -89,7 +90,7 @@ function SearchInline(props: Props) {
     openSavedSearches,
     setOpenSavedSearches
   ] = useState<null | HTMLElement>(null);
-  const textQuery = useRef<string>(props.searchQuery.textQuery);
+  const textQuery = useRef<string>(props.searchQuery.textQuery || '');
   const textQueryMask = useRef<string>('');
   const fileTypes = useRef<Array<string>>(
     props.searchQuery.fileTypes
@@ -135,9 +136,14 @@ function SearchInline(props: Props) {
   const firstRender = useFirstRender();
 
   useEffect(() => {
-    if (!firstRender) {
+    /*if (!firstRender) {
       if (Object.keys(props.searchQuery).length > 0) {
         props.setSearchQuery({});
+      }
+    }*/
+    if (!firstRender && !props.open) {
+      if (Object.keys(props.searchQuery).length > 0) {
+        clearSearch();
       }
     }
   }, [props.currentDirectory]);
@@ -172,7 +178,8 @@ function SearchInline(props: Props) {
         });
         emptySearch = false;
       }
-      const txtQuery = removeAllTagsFromSearchQuery(textQuery.current);
+      let txtQuery = textQuery.current.trim() || props.searchQuery.textQuery;
+      txtQuery = removeAllTagsFromSearchQuery(txtQuery);
       if (txtQuery) {
         emptySearch = false;
       }
@@ -259,6 +266,7 @@ function SearchInline(props: Props) {
       executeSearch();
     } else if (event.key === 'Escape' || event.keyCode === 27) {
       clearSearch();
+      props.openCurrentDirectory();
     }
   };
 
@@ -278,7 +286,7 @@ function SearchInline(props: Props) {
     forceIndexing.current = false;
     fileSize.current = '';
     props.setSearchQuery({});
-    props.openCurrentDirectory();
+    // props.openCurrentDirectory();
   };
 
   const removeTagsFromQuery = (
@@ -387,8 +395,11 @@ function SearchInline(props: Props) {
     props.setSearchQuery(searchQuery);
   };
 
-  const { indexing, isDesktop } = props;
+  const { indexing, isDesktop, open } = props;
 
+  if (!open) {
+    return null;
+  }
   return (
     <>
       <div
@@ -479,7 +490,10 @@ function SearchInline(props: Props) {
                 <Tooltip title={i18n.t('clearSearch') + ' (ESC)'}>
                   <IconButton
                     id="clearSearchID"
-                    onClick={clearSearch}
+                    onClick={()=>{
+                      clearSearch();
+                      props.openCurrentDirectory();
+                    }}
                     size="small"
                     edge="end"
                   >
@@ -546,6 +560,7 @@ function mapDispatchToProps(dispatch) {
 }
 
 const areEqual = (prevProp, nextProp) =>
+  nextProp.open === prevProp.open &&
   nextProp.language === prevProp.language &&
   nextProp.indexing === prevProp.indexing &&
   nextProp.searchQuery === prevProp.searchQuery &&
