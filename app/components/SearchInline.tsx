@@ -490,7 +490,7 @@ function SearchInline(props: Props) {
                 <Tooltip title={i18n.t('clearSearch') + ' (ESC)'}>
                   <IconButton
                     id="clearSearchID"
-                    onClick={()=>{
+                    onClick={() => {
                       clearSearch();
                       props.openCurrentDirectory();
                     }}

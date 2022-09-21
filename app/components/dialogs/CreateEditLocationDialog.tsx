@@ -68,8 +68,8 @@ import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import PlatformIO from '-/services/platform-facade';
 import WebdavForm from '-/components/dialogs/WebdavForm';
-import useTheme from "@mui/styles/useTheme";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import useTheme from '@mui/styles/useTheme';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const styles: any = theme => ({
   formControl: {

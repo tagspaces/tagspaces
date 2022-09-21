@@ -36,8 +36,8 @@ import { TS } from '-/tagspaces.namespace';
 import { getLocations } from '-/reducers/locations';
 import { Pro } from '-/pro';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import useTheme from "@mui/styles/useTheme";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import useTheme from '@mui/styles/useTheme';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const defaultTagGroupLocation = 'TAG_LIBRARY';
 

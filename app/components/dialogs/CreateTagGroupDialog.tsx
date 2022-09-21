@@ -36,8 +36,8 @@ import { TS } from '-/tagspaces.namespace';
 import { getLocations } from '-/reducers/locations';
 import { getCurrentLocationId } from '-/reducers/app';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import useTheme from "@mui/styles/useTheme";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import useTheme from '@mui/styles/useTheme';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 interface Props {
   open: boolean;
@@ -67,12 +67,7 @@ function CreateTagGroupDialog(props: Props) {
   // eslint-disable-next-line no-unused-vars
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
-  const {
-    open,
-    saveTagsInLocation,
-    onClose,
-    createTagGroup
-  } = props;
+  const { open, saveTagsInLocation, onClose, createTagGroup } = props;
 
   const handleTagGroupTitleChange = (
     event: React.ChangeEvent<HTMLInputElement>

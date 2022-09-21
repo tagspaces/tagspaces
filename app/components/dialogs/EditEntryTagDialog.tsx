@@ -46,8 +46,8 @@ import { TS } from '-/tagspaces.namespace';
 import useValidation from '-/utils/useValidation';
 import { getMapTileServer } from '-/reducers/settings';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import useTheme from "@mui/styles/useTheme";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import useTheme from '@mui/styles/useTheme';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const styles = () => ({
   root: {

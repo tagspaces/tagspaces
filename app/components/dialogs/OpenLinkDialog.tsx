@@ -29,8 +29,8 @@ import Dialog from '@mui/material/Dialog';
 import i18n from '-/services/i18n';
 import { actions as AppActions } from '-/reducers/app';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import useTheme from "@mui/styles/useTheme";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import useTheme from '@mui/styles/useTheme';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 interface Props {
   open: boolean;

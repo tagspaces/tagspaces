@@ -32,8 +32,8 @@ import { actions as AppActions } from '-/reducers/app';
 import { joinPaths } from '@tagspaces/tagspaces-platforms/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import PlatformIO from '-/services/platform-facade';
-import useTheme from "@mui/styles/useTheme";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import useTheme from '@mui/styles/useTheme';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 interface Props {
   open: boolean;

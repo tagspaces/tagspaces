@@ -32,8 +32,8 @@ import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '-/services/i18n';
 import { getKeyBindingObject } from '-/reducers/settings';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import useTheme from "@mui/styles/useTheme";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import useTheme from '@mui/styles/useTheme';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const styles = theme => ({
   root: {

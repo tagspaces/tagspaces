@@ -40,8 +40,8 @@ import EnterpriseImage from '-/assets/images/world-undraw.svg';
 import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Links from '-/links';
-import useTheme from "@mui/styles/useTheme";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import useTheme from '@mui/styles/useTheme';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 interface Props {
   open: boolean;

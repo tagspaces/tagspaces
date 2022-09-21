@@ -27,8 +27,8 @@ import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 import LicenseContent from '-/LICENSE.txt';
 import PlatformIO from '-/services/platform-facade';
-import useTheme from "@mui/styles/useTheme";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import useTheme from '@mui/styles/useTheme';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 // import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 

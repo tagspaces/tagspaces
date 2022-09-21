@@ -34,8 +34,8 @@ import { getTagGroups } from '-/reducers/taglibrary';
 import i18n from '-/services/i18n';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
-import useTheme from "@mui/styles/useTheme";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import useTheme from '@mui/styles/useTheme';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 interface Props {
   open: boolean;
