@@ -22,7 +22,7 @@ import { bindActionCreators } from 'redux';
 import IconButton from '@mui/material/IconButton';
 import withStyles from '@mui/styles/withStyles';
 import Badge from '@mui/material/Badge';
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from '-/components/Tooltip';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import PlatformIO from '-/services/platform-facade';
 import { Pro } from '../pro';

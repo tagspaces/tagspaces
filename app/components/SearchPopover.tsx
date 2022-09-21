@@ -24,7 +24,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import format from 'date-fns/format';
 import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from '-/components/Tooltip';
 import PictureIcon from '@mui/icons-material/Panorama';
 import DocumentIcon from '@mui/icons-material/PictureAsPdf';
 import NoteIcon from '@mui/icons-material/Note';
@@ -579,20 +579,17 @@ function SearchPopover(props: Props) {
             value={searchBoxing.current}
           >
             <ToggleButton value="location">
-              <Tooltip arrow title={i18n.t('searchPlaceholder')}>
+              <Tooltip title={i18n.t('searchPlaceholder')}>
                 <div>{i18n.t('location')}</div>
               </Tooltip>
             </ToggleButton>
             <ToggleButton value="folder">
-              <Tooltip
-                arrow
-                title={i18n.t('searchCurrentFolderWithSubFolders')}
-              >
+              <Tooltip title={i18n.t('searchCurrentFolderWithSubFolders')}>
                 <div>{i18n.t('folder')}</div>
               </Tooltip>
             </ToggleButton>
             <ToggleButton disabled={!Pro} value="global">
-              <Tooltip arrow title={i18n.t('searchInAllLocationTooltip')}>
+              <Tooltip title={i18n.t('searchInAllLocationTooltip')}>
                 <div>{i18n.t('globalSearch')}</div>
               </Tooltip>
               {Pro ? <BetaLabel /> : <ProLabel />}
@@ -608,17 +605,17 @@ function SearchPopover(props: Props) {
             value={searchType.current}
           >
             <ToggleButton value="fuzzy" data-tid="fuzzySearchTID">
-              <Tooltip arrow title={i18n.t('searchTypeFuzzyTooltip')}>
+              <Tooltip title={i18n.t('searchTypeFuzzyTooltip')}>
                 <div>{i18n.t('searchTypeFuzzy')}</div>
               </Tooltip>
             </ToggleButton>
             <ToggleButton value="semistrict" data-tid="semiStrictSearchTID">
-              <Tooltip arrow title={i18n.t('searchTypeSemiStrictTooltip')}>
+              <Tooltip title={i18n.t('searchTypeSemiStrictTooltip')}>
                 <div>{i18n.t('searchTypeSemiStrict')}</div>
               </Tooltip>
             </ToggleButton>
             <ToggleButton value="strict" data-tid="strictSearchTID">
-              <Tooltip arrow title={i18n.t('searchTypeStrictTooltip')}>
+              <Tooltip title={i18n.t('searchTypeStrictTooltip')}>
                 <div>{i18n.t('searchTypeStrict')}</div>
               </Tooltip>
             </ToggleButton>
@@ -636,12 +633,12 @@ function SearchPopover(props: Props) {
             value={forceIndexing.current}
           >
             <ToggleButton value={false}>
-              <Tooltip arrow title={i18n.t('useCurrentIndexTooltip')}>
+              <Tooltip title={i18n.t('useCurrentIndexTooltip')}>
                 <div>{i18n.t('useCurrentIndex')}</div>
               </Tooltip>
             </ToggleButton>
             <ToggleButton value={true} data-tid="forceIndexingTID">
-              <Tooltip arrow title={i18n.t('forceReindexTooltip')}>
+              <Tooltip title={i18n.t('forceReindexTooltip')}>
                 <div>{i18n.t('forceReindex')}</div>
               </Tooltip>
             </ToggleButton>

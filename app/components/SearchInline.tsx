@@ -24,7 +24,7 @@ import ClearSearchIcon from '@mui/icons-material/Close';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import Typography from '@mui/material/Typography';
@@ -322,7 +322,6 @@ function SearchInline(props: Props) {
   function HelpTooltip(hClasses) {
     return (
       <Tooltip
-        arrow
         classes={{ tooltip: hClasses.customWidth }}
         title={
           <span style={{ fontSize: 14 }}>
@@ -432,7 +431,6 @@ function SearchInline(props: Props) {
               <InputAdornment position="start" style={{ marginRight: 0 }}>
                 {isDesktop ? (
                   <Tooltip
-                    arrow
                     classes={{ tooltip: classes.customWidth }}
                     title={
                       <span style={{ fontSize: 14 }}>

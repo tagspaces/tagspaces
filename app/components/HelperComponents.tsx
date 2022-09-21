@@ -24,7 +24,7 @@ import { Pro } from '-/pro';
 
 export function BetaLabel() {
   return (
-    <Tooltip arrow placement="top" title={i18n.t('featureInBetaStatus')}>
+    <Tooltip title={i18n.t('featureInBetaStatus')}>
       <Typography style={{ display: 'initial' }}>
         <sup style={{ marginLeft: 5, textTransform: 'uppercase' }}>
           {i18n.t('betaStatus')}
@@ -38,7 +38,6 @@ export function ProLabel() {
   return (
     !Pro && (
       <Tooltip
-        arrow
         placement="top"
         title={i18n.t('thisFunctionalityIsAvailableInPro')}
       >

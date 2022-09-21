@@ -22,7 +22,7 @@ import Typography from '@mui/material/Typography';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from '-/components/Tooltip';
 import Dialog from '@mui/material/Dialog';
 import semver from 'semver';
 import LogoIcon from '-/assets/images/icon100x100.svg';
@@ -113,7 +113,6 @@ function AboutDialog(props: Props) {
           style={{ float: 'left', marginRight: 10, width: 120, height: 120 }}
         />
         <Tooltip
-          arrow
           placement="top"
           title={
             'Build on: ' +

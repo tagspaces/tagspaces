@@ -236,7 +236,6 @@ function StoredSearches(props: Props) {
                 }}
               >
                 <Tooltip
-                  arrow
                   title={
                     <span style={{ fontSize: 14 }}>
                       <b>Path:</b> {item.path}

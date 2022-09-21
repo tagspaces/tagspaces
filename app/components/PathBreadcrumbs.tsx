@@ -20,7 +20,7 @@ import React, { useState } from 'react';
 import { emphasize, Theme } from '@mui/material/styles';
 import withStyles from '@mui/styles/withStyles';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from '-/components/Tooltip';
 import Chip from '@mui/material/Chip';
 import ExpandMoreIcon from '@mui/icons-material/MoreVert';
 import PlatformIO from '../services/platform-facade';

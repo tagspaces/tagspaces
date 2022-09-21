@@ -28,7 +28,7 @@ import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import Typography from '@mui/material/Typography';
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from '-/components/Tooltip';
 import Dialog from '@mui/material/Dialog';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -734,7 +734,6 @@ function CreateEditLocationDialog(props: Props) {
                         onClick={() => setPersistTagsInSidecarFile(null)}
                       >
                         <Tooltip
-                          arrow
                           title={
                             <Typography color="inherit">
                               {i18n.t('core:useDefaultTaggingType')}:{' '}
@@ -758,7 +757,6 @@ function CreateEditLocationDialog(props: Props) {
                         onClick={() => setPersistTagsInSidecarFile(false)}
                       >
                         <Tooltip
-                          arrow
                           title={
                             <Typography color="inherit">
                               {i18n.t('core:tagsInFilenameExplanation')}
@@ -778,7 +776,6 @@ function CreateEditLocationDialog(props: Props) {
                         onClick={() => setPersistTagsInSidecarFile(true)}
                       >
                         <Tooltip
-                          arrow
                           title={
                             <Typography color="inherit">
                               {i18n.t('core:tagsInSidecarFileExplanation')}

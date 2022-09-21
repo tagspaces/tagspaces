@@ -21,7 +21,7 @@ import { v1 as uuidv1 } from 'uuid';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from '-/components/Tooltip';
 import ToggleButton from '@mui/material/ToggleButton';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -42,15 +42,14 @@ import CardContent from '@mui/material/CardContent';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
 import CloseIcon from '@mui/icons-material/Close';
 import Popover from '@mui/material/Popover';
-import ProTeaser from '../assets/images/spacerocket_undraw.svg';
 import ProTeaserImage from '-/assets/images/pro-teaser.svg';
-import ProTextLogo from '../assets/images/text-logo-pro.svg';
+import ProTextLogo from '-/assets/images/text-logo-pro.svg';
 import { Pro } from '-/pro';
-import CustomLogo from './CustomLogo';
-import TagLibrary from '../components/TagLibrary';
-import LocationManager from '../components/LocationManager';
-import HelpFeedbackPanel from '../components/HelpFeedbackPanel';
-import i18n from '../services/i18n';
+import CustomLogo from '-/components/CustomLogo';
+import TagLibrary from '-/components/TagLibrary';
+import LocationManager from '-/components/LocationManager';
+import HelpFeedbackPanel from '-/components/HelpFeedbackPanel';
+import i18n from '-/services/i18n';
 import {
   actions as AppActions,
   isSettingsDialogOpened,
@@ -61,12 +60,12 @@ import {
   isReadOnlyMode,
   getDirectoryPath
 } from '../reducers/app';
-import LoadingLazy from './LoadingLazy';
+import LoadingLazy from '-/components/LoadingLazy';
 import {
   actions as SettingsActions,
   getCurrentLanguage,
   isFirstRun
-} from '../reducers/settings';
+} from '-/reducers/settings';
 import Links from '-/links';
 import StoredSearches from '-/components/StoredSearches';
 import UserDetailsPopover from '-/components/UserDetailsPopover';
@@ -303,7 +302,7 @@ function MobileNavigation(props: Props) {
             </CardActions>
           </>
         )}
-        <Tooltip title={i18n.t('core:settings')} arrow>
+        <Tooltip title={i18n.t('core:settings')}>
           <IconButton
             id="verticalNavButton"
             data-tid="settings"
@@ -317,7 +316,7 @@ function MobileNavigation(props: Props) {
           </IconButton>
         </Tooltip>
         <ToggleButtonGroup exclusive>
-          <Tooltip title={i18n.t('core:locationManager')} arrow>
+          <Tooltip title={i18n.t('core:locationManager')}>
             <ToggleButton
               onClick={openLocationManagerPanel}
               className={
@@ -331,7 +330,7 @@ function MobileNavigation(props: Props) {
               <LocationsIcon />
             </ToggleButton>
           </Tooltip>
-          <Tooltip title={i18n.t('core:tagLibrary')} arrow>
+          <Tooltip title={i18n.t('core:tagLibrary')}>
             <ToggleButton
               data-tid="tagLibrary"
               onClick={openTagLibraryPanel}
@@ -345,7 +344,7 @@ function MobileNavigation(props: Props) {
               <TagLibraryIcon />
             </ToggleButton>
           </Tooltip>
-          <Tooltip title={i18n.t('core:quickAccess')} arrow>
+          <Tooltip title={i18n.t('core:quickAccess')}>
             <ToggleButton
               data-tid="search"
               onClick={openSearchPanel}
@@ -359,7 +358,7 @@ function MobileNavigation(props: Props) {
               <RecentThingsIcon />
             </ToggleButton>
           </Tooltip>
-          <Tooltip title={i18n.t('core:helpFeedback')} arrow>
+          <Tooltip title={i18n.t('core:helpFeedback')}>
             <ToggleButton
               data-tid="helpFeedback"
               onClick={openHelpFeedbackPanel}
@@ -376,7 +375,7 @@ function MobileNavigation(props: Props) {
         </ToggleButtonGroup>
         {user ? (
           <>
-            <Tooltip title={i18n.t('core:userAccount')} arrow>
+            <Tooltip title={i18n.t('core:userAccount')}>
               <IconButton
                 data-tid="accountCircleIconTID"
                 onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
@@ -405,7 +404,7 @@ function MobileNavigation(props: Props) {
             </Popover>
           </>
         ) : (
-          <Tooltip title={i18n.t('core:switchTheme')} arrow>
+          <Tooltip title={i18n.t('core:switchTheme')}>
             <IconButton
               data-tid="switchTheme"
               onClick={switchTheme}
