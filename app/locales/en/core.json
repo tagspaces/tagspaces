@@ -677,6 +677,8 @@
   "cancelSubscription": "Cancel Subscription",
   "toggleBookmark": "Toggle Bookmark",
   "chooseBackground": "Choose New Background",
+  "backgroundImage": "Background Image",
+  "changeBackgroundImage": "Change Background Image",
   "noItems": "No items found",
   "-": "-"
 }
