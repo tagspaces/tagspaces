@@ -30,7 +30,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import InputAdornment from '@mui/material/InputAdornment';
 import ShareIcon from '@mui/icons-material/Link';
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from '-/components/Tooltip';
 import LocationIcon from '@mui/icons-material/WorkOutline';
 import EditIcon from '@mui/icons-material/Edit';
 import CloudLocationIcon from '@mui/icons-material/CloudQueue';
@@ -94,6 +94,7 @@ const styles: any = (theme: any) => ({
     overflowX: 'hidden',
     flexGrow: 1,
     padding: 7,
+    paddingRight: 14,
     height: '100%'
   },
   tags: {
@@ -831,20 +832,21 @@ function EntryProperties(props: Props) {
               }}
             />
           </Grid>
-
-          {currentEntry.isFile && (
-            <Grid item xs={6}>
-              <TextField
-                margin="dense"
-                fullWidth={true}
-                value={formatFileSize(currentEntry.size)}
-                label={i18n.t('core:fileSize')}
-                InputProps={{
-                  readOnly: true
-                }}
-              />
-            </Grid>
-          )}
+          <Grid item xs={6}>
+            <TextField
+              margin="dense"
+              fullWidth={true}
+              value={
+                currentEntry.isFile
+                  ? formatFileSize(currentEntry.size)
+                  : i18n.t('core:notAvailable')
+              }
+              label={i18n.t('core:fileSize')}
+              InputProps={{
+                readOnly: true
+              }}
+            />
+          </Grid>
         </Grid>
 
         <Grid item xs={12}>

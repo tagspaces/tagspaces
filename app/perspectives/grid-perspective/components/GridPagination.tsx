@@ -19,7 +19,7 @@
 import React, { useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import Typography from '@mui/material/Typography';
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from '-/components/Tooltip';
 import Pagination from '@mui/material/Pagination';
 import { bindActionCreators } from 'redux';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
