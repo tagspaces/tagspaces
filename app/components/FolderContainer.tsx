@@ -23,7 +23,7 @@ import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Popover from '@mui/material/Popover';
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from '-/components/Tooltip';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
@@ -73,6 +73,7 @@ import Links from '-/links';
 import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
 import MainSearchField from '-/components/MainSearchField';
 import LoadingAnimation from '-/components/LoadingAnimation';
+import SearchBox from '-/components/SearchBox';
 
 const GridPerspective = React.lazy(() =>
   import(
@@ -520,7 +521,7 @@ function FolderContainer(props: Props) {
           data-tid={perspective.key}
           onClick={() => switchPerspective(perspective.id)}
         >
-          <Tooltip arrow title={perspective.title}>
+          <Tooltip title={perspective.title}>
             <div style={{ display: 'flex' }}>{perspective.icon}</div>
           </Tooltip>
         </ToggleButton>
@@ -561,43 +562,12 @@ function FolderContainer(props: Props) {
           >
             <MenuIcon />
           </CustomButton>
-          {isSearchVisible ? (
-            <>
-              <SearchInline />
-              <Tooltip title={i18n.t('core:advancedSearch')}>
-                <CustomButton
-                  id="advancedButton"
-                  data-tid="advancedSearch"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
-                    setAnchorSearch(event.currentTarget)
-                  }
-                >
-                  <AdvancedSearchIcon />
-                </CustomButton>
-              </Tooltip>
-              <Popover
-                open={Boolean(anchorSearch)}
-                anchorEl={anchorSearch}
-                onClose={() => setAnchorSearch(null)}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'right'
-                }}
-                PaperProps={{
-                  style: {
-                    overflow: 'hidden',
-                    height: 720
-                  }
-                }}
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right'
-                }}
-              >
-                <SearchPopover onClose={() => setAnchorSearch(null)} />
-              </Popover>
-            </>
-          ) : (
+          <SearchBox
+            open={isSearchVisible}
+            anchorSearch={anchorSearch}
+            setAnchorSearch={setAnchorSearch}
+          />
+          {!isSearchVisible && (
             <>
               <div
                 style={{

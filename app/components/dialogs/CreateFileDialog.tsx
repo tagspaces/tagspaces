@@ -41,11 +41,8 @@ import i18n from '-/services/i18n';
 import TaggingActions from '-/reducers/tagging-actions';
 import { actions as AppActions } from '-/reducers/app';
 import PlatformIO from '-/services/platform-facade';
-
-// FIXME checkout https://mui.com/components/use-media-query/#using-material-uis-breakpoint-helpers
-const withMobileDialog = () => WrappedComponent => props => (
-  <WrappedComponent {...props} width="lg" fullScreen={false} />
-);
+import useTheme from '@mui/styles/useTheme';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const styles = theme => ({
   root: {
@@ -68,7 +65,6 @@ const styles = theme => ({
 
 interface Props {
   open: boolean;
-  fullScreen: boolean;
   onClose: () => void;
   selectedDirectoryPath: string | null;
   createFileAdvanced: (
@@ -199,11 +195,13 @@ function CreateFileDialog(props: Props) {
     }
   };
 
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={props.open}
       onClose={props.onClose}
-      fullScreen={props.fullScreen}
+      fullScreen={fullScreen}
       keepMounted
       scroll="paper"
       // onKeyDown={confirmFunction}
@@ -325,4 +323,4 @@ function mapActionCreatorsToProps(dispatch) {
 export default connect(
   undefined,
   mapActionCreatorsToProps
-)(withMobileDialog()(withStyles(styles)(CreateFileDialog)));
+)(withStyles(styles)(CreateFileDialog));

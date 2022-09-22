@@ -34,11 +34,8 @@ import TagContainer from '../TagContainer';
 import i18n from '-/services/i18n';
 import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-
-// FIXME checkout https://mui.com/components/use-media-query/#using-material-uis-breakpoint-helpers
-const withMobileDialog = () => WrappedComponent => props => (
-  <WrappedComponent {...props} width="lg" fullScreen={false} />
-);
+import useTheme from '@mui/styles/useTheme';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const styles: any = {
   root: {
@@ -53,7 +50,6 @@ interface Props {
   classes: any;
   open: boolean;
   tagGroups: Array<any>;
-  fullScreen: boolean;
   onClose: () => void;
   dialogModeImport: boolean;
   showNotification?: (text: string) => void;
@@ -167,7 +163,9 @@ function ImportExportTagGroupsDialog(props: Props) {
     </DialogActions>
   );
 
-  const { onClose, open, fullScreen } = props;
+  const { onClose, open } = props;
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}
@@ -182,6 +180,4 @@ function ImportExportTagGroupsDialog(props: Props) {
   );
 }
 
-export default withMobileDialog()(
-  withStyles(styles)(ImportExportTagGroupsDialog)
-);
+export default withStyles(styles)(ImportExportTagGroupsDialog);

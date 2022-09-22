@@ -18,7 +18,7 @@
 
 import React from 'react';
 import Toolbar from '@mui/material/Toolbar';
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from '-/components/Tooltip';
 import SettingsIcon from '@mui/icons-material/Settings';
 import IconButton from '@mui/material/IconButton';
 import ParentDirIcon from '@mui/icons-material/SubdirectoryArrowLeft';

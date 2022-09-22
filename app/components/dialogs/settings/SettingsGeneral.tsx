@@ -26,7 +26,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import Switch from '@mui/material/Switch';
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from '-/components/Tooltip';
 import Input from '@mui/material/Input';
 import Select from '@mui/material/Select';
 import Button from '@mui/material/Button';
@@ -200,7 +200,6 @@ function SettingsGeneral(props: Props) {
               onClick={() => props.setPersistTagsInSidecarFile(false)}
             >
               <Tooltip
-                arrow
                 title={
                   <Typography color="inherit">
                     {i18n.t('core:tagsInFilenameExplanation')}
@@ -220,7 +219,6 @@ function SettingsGeneral(props: Props) {
               onClick={() => props.setPersistTagsInSidecarFile(true)}
             >
               <Tooltip
-                arrow
                 title={
                   <Typography color="inherit">
                     {i18n.t('core:tagsInSidecarFileExplanation')}

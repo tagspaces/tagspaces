@@ -29,11 +29,12 @@ import Dialog from '@mui/material/Dialog';
 import i18n from '-/services/i18n';
 import { actions as AppActions } from '-/reducers/app';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import useTheme from '@mui/styles/useTheme';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 interface Props {
   open: boolean;
   onClose: () => void;
-  fullScreen?: boolean;
   openLink: (linkURL: string) => void;
 }
 
@@ -41,7 +42,7 @@ function OpenLinkDialog(props: Props) {
   const [inputError, setInputError] = useState(false);
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [linkURL, setLinkURL] = useState('');
-  const { open, onClose, fullScreen } = props;
+  const { open, onClose } = props;
 
   useEffect(() => {
     handleValidation();
@@ -83,6 +84,8 @@ function OpenLinkDialog(props: Props) {
     setDisableConfirmButton(true);
   }
 
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}

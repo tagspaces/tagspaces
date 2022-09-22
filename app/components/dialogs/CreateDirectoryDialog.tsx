@@ -32,11 +32,12 @@ import { actions as AppActions } from '-/reducers/app';
 import { joinPaths } from '@tagspaces/tagspaces-platforms/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import PlatformIO from '-/services/platform-facade';
+import useTheme from '@mui/styles/useTheme';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 interface Props {
   open: boolean;
   onClose: () => void;
-  fullScreen?: boolean;
   selectedDirectoryPath: string;
   createDirectory: (directoryPath: string) => void;
 }
@@ -46,7 +47,7 @@ function CreateDirectoryDialog(props: Props) {
   const isFirstRun = useRef(true);
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [name, setName] = useState('');
-  const { open, onClose, fullScreen } = props;
+  const { open, onClose } = props;
 
   useEffect(() => {
     if (isFirstRun.current) {
@@ -92,6 +93,8 @@ function CreateDirectoryDialog(props: Props) {
     setDisableConfirmButton(true);
   }
 
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}

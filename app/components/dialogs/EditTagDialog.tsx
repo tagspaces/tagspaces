@@ -31,10 +31,11 @@ import TransparentBackground from '../TransparentBackground';
 import i18n from '-/services/i18n';
 import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import useTheme from '@mui/styles/useTheme';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 interface Props {
   open: boolean;
-  fullScreen?: boolean;
   onClose: () => void;
   editTag: (tag: TS.Tag, tagGroupId: string, origTitle: string) => void;
   selectedTag: TS.Tag;
@@ -96,7 +97,7 @@ function EditTagDialog(props: Props) {
     }
   };
 
-  const { fullScreen, open, onClose } = props;
+  const { open, onClose } = props;
   const styles = {
     color: {
       width: '100%',
@@ -124,6 +125,8 @@ function EditTagDialog(props: Props) {
     }
   };
 
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}

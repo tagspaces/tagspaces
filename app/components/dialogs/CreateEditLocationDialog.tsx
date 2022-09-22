@@ -28,7 +28,7 @@ import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import Typography from '@mui/material/Typography';
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from '-/components/Tooltip';
 import Dialog from '@mui/material/Dialog';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -68,11 +68,8 @@ import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import PlatformIO from '-/services/platform-facade';
 import WebdavForm from '-/components/dialogs/WebdavForm';
-
-// FIXME checkout https://mui.com/components/use-media-query/#using-material-uis-breakpoint-helpers
-const withMobileDialog = () => WrappedComponent => props => (
-  <WrappedComponent {...props} width="lg" fullScreen={false} />
-);
+import useTheme from '@mui/styles/useTheme';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const styles: any = theme => ({
   formControl: {
@@ -86,7 +83,6 @@ interface Props {
   open: boolean;
   onClose: () => void;
   classes: any;
-  fullScreen: boolean;
   addLocation: (location: TS.Location, openAfterCreate?: boolean) => void;
   editLocation?: (location: TS.Location) => void;
   isPersistTagsInSidecar: boolean;
@@ -304,7 +300,7 @@ function CreateEditLocationDialog(props: Props) {
     );
   };
 
-  const { fullScreen, open, onClose, classes } = props;
+  const { open, onClose, classes } = props;
 
   const onConfirm = () => {
     if (!disableConfirmButton()) {
@@ -453,6 +449,8 @@ function CreateEditLocationDialog(props: Props) {
 
   const disableLocationTypeSwitch: boolean = props.location !== undefined;
 
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}
@@ -736,7 +734,6 @@ function CreateEditLocationDialog(props: Props) {
                         onClick={() => setPersistTagsInSidecarFile(null)}
                       >
                         <Tooltip
-                          arrow
                           title={
                             <Typography color="inherit">
                               {i18n.t('core:useDefaultTaggingType')}:{' '}
@@ -760,7 +757,6 @@ function CreateEditLocationDialog(props: Props) {
                         onClick={() => setPersistTagsInSidecarFile(false)}
                       >
                         <Tooltip
-                          arrow
                           title={
                             <Typography color="inherit">
                               {i18n.t('core:tagsInFilenameExplanation')}
@@ -780,7 +776,6 @@ function CreateEditLocationDialog(props: Props) {
                         onClick={() => setPersistTagsInSidecarFile(true)}
                       >
                         <Tooltip
-                          arrow
                           title={
                             <Typography color="inherit">
                               {i18n.t('core:tagsInSidecarFileExplanation')}
@@ -908,4 +903,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withMobileDialog()(withStyles(styles)(CreateEditLocationDialog)));
+)(withStyles(styles)(CreateEditLocationDialog));

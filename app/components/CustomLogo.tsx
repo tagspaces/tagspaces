@@ -22,7 +22,7 @@ import { bindActionCreators } from 'redux';
 import IconButton from '@mui/material/IconButton';
 import withStyles from '@mui/styles/withStyles';
 import Badge from '@mui/material/Badge';
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from '-/components/Tooltip';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import PlatformIO from '-/services/platform-facade';
 import { Pro } from '../pro';
@@ -66,7 +66,11 @@ function CustomLogo(props: Props) {
     <AppVersionBadge badgeContent={'v' + versionMeta.version} color="primary">
       <Tooltip title={i18n.t('core:openNewInstance')}>
         <IconButton
-          onClick={() => PlatformIO.createNewInstance()}
+          onClick={() => {
+            AppConfig.isCordova
+              ? props.toggleAboutDialog()
+              : PlatformIO.createNewInstance();
+          }}
           style={{ padding: 0, paddingLeft: 5, height: 50 }}
           data-tid="createNewInstance"
         >

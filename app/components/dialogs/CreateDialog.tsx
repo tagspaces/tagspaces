@@ -42,11 +42,8 @@ import IOActions from '-/reducers/io-actions';
 import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Spacer from '-/components/Spacer';
-
-// FIXME checkout https://mui.com/components/use-media-query/#using-material-uis-breakpoint-helpers
-const withMobileDialog = () => WrappedComponent => props => (
-  <WrappedComponent {...props} width="lg" fullScreen={false} />
-);
+import useTheme from '@mui/styles/useTheme';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const styles: any = () => ({
   root: {
@@ -73,7 +70,6 @@ interface Props {
   open: boolean;
   classes: any;
   selectedDirectoryPath: string;
-  // fullScreen: boolean;
   chooseDirectoryPath: (path: string) => void;
   showNotification: (message: string, type: string, autohide: boolean) => void;
   reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => void;
@@ -256,11 +252,13 @@ function CreateDialog(props: Props) {
     } */
   }
 
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      // fullScreen={fullScreen}
+      fullScreen={fullScreen}
       keepMounted
       scroll="paper"
       onKeyDown={event => {
@@ -415,4 +413,4 @@ function mapActionCreatorsToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
-)(withMobileDialog()(withStyles(styles)(CreateDialog)));
+)(withStyles(styles)(CreateDialog));

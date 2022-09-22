@@ -42,15 +42,11 @@ import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
 import IOActions from '-/reducers/io-actions';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-
-// FIXME checkout https://mui.com/components/use-media-query/#using-material-uis-breakpoint-helpers
-const withMobileDialog = () => WrappedComponent => props => (
-  <WrappedComponent {...props} width="lg" fullScreen={false} />
-);
+import useTheme from '@mui/styles/useTheme';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 interface Props {
   open: boolean;
-  fullScreen: boolean;
   onClose: (clearSelection?: boolean) => void;
   copyFiles: (files: Array<string>, destination: string) => void;
   moveFiles: (files: Array<string>, destination: string) => void;
@@ -61,7 +57,7 @@ function MoveCopyFilesDialog(props: Props) {
   const [inputError, setInputError] = useState(false);
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [targetPath, setTargetPath] = useState('');
-  const { open, onClose, fullScreen } = props;
+  const { open, onClose } = props;
 
   useEffect(() => {
     handleValidation();
@@ -112,6 +108,8 @@ function MoveCopyFilesDialog(props: Props) {
     onClose();
   }
 
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}
@@ -218,7 +216,4 @@ function mapActionCreatorsToProps(dispatch) {
   );
 }
 
-export default connect(
-  null,
-  mapActionCreatorsToProps
-)(withMobileDialog()(MoveCopyFilesDialog));
+export default connect(null, mapActionCreatorsToProps)(MoveCopyFilesDialog);

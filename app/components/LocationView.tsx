@@ -20,7 +20,7 @@ import React, { useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import withStyles from '@mui/styles/withStyles';
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from '-/components/Tooltip';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
@@ -294,7 +294,7 @@ function LocationView(props: Props) {
           }}
           onClick={handleLocationIconClick}
         >
-          <Tooltip title={i18n.t('clickToExpand')} arrow placement="top">
+          <Tooltip title={i18n.t('clickToExpand')}>
             {isCloudLocation ? (
               <CloudLocationIcon
                 style={{

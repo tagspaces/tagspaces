@@ -27,17 +27,13 @@ import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 import LicenseContent from '-/LICENSE.txt';
 import PlatformIO from '-/services/platform-facade';
-
-// FIXME checkout https://mui.com/components/use-media-query/#using-material-uis-breakpoint-helpers
-const withMobileDialog = () => WrappedComponent => props => (
-  <WrappedComponent {...props} width="lg" fullScreen={false} />
-);
+import useTheme from '@mui/styles/useTheme';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 // import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {
   open: boolean;
-  fullScreen: boolean;
   onClose: () => void;
 }
 
@@ -55,13 +51,15 @@ interface Props {
 // }
 
 function LicenseDialog(props: Props) {
-  const { fullScreen, open, onClose } = props;
+  const { open, onClose } = props;
   // let licenseElement;
   // function printLicense() {
   //   // printElem(licenseElement);
   //   window.print();
   // }
 
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}
@@ -108,4 +106,4 @@ function LicenseDialog(props: Props) {
   );
 }
 
-export default withMobileDialog()(LicenseDialog);
+export default LicenseDialog;

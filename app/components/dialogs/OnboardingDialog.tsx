@@ -49,17 +49,13 @@ import {
 import { actions as AppActions } from '-/reducers/app';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Links from '-/links';
-
-// FIXME checkout https://mui.com/components/use-media-query/#using-material-uis-breakpoint-helpers
-const withMobileDialog = () => WrappedComponent => props => (
-  <WrappedComponent {...props} width="lg" fullScreen={false} />
-);
+import useTheme from '@mui/styles/useTheme';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 interface Props {
   classes: any;
   open: boolean;
   isPersistTagsInSidecar: boolean;
-  fullScreen: boolean;
   currentTheme: string;
   // setFirstRun: (isFirstRun: boolean) => void,
   setPersistTagsInSidecarFile: (isPersistTagsInSidecar: boolean) => void;
@@ -70,7 +66,7 @@ interface Props {
 
 function OnboardingDialog(props: Props) {
   const [activeStep, setActiveStep] = useState(0);
-  const { fullScreen, open, onClose } = props;
+  const { open, onClose } = props;
 
   const maxSteps = 4;
 
@@ -90,6 +86,8 @@ function OnboardingDialog(props: Props) {
     props.setPersistTagsInSidecarFile(!props.isPersistTagsInSidecar);
   }
 
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}
@@ -338,4 +336,4 @@ function mapActionCreatorsToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
-)(withMobileDialog()(OnboardingDialog));
+)(OnboardingDialog);

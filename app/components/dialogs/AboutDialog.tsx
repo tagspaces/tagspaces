@@ -22,7 +22,7 @@ import Typography from '@mui/material/Typography';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from '-/components/Tooltip';
 import Dialog from '@mui/material/Dialog';
 import semver from 'semver';
 import LogoIcon from '-/assets/images/icon100x100.svg';
@@ -32,15 +32,11 @@ import { Pro } from '-/pro';
 import { getLastVersionPromise } from '-/reducers/settings';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Links from '-/links';
-
-// FIXME checkout https://mui.com/components/use-media-query/#using-material-uis-breakpoint-helpers
-const withMobileDialog = () => WrappedComponent => props => (
-  <WrappedComponent {...props} width="lg" fullScreen={false} />
-);
+import useMediaQuery from '@mui/material/useMediaQuery';
+import useTheme from '@mui/styles/useTheme';
 
 interface Props {
   open: boolean;
-  fullScreen: boolean;
   openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   toggleLicenseDialog: () => void;
   toggleThirdPartyLibsDialog: () => void;
@@ -58,7 +54,7 @@ document.title = productName + ' ' + versionMeta.version;
 function AboutDialog(props: Props) {
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [newVersion, setNewVersion] = useState('');
-  const { open, onClose, fullScreen } = props;
+  const { open, onClose } = props;
 
   function checkForUpdates() {
     if (updateAvailable) {
@@ -96,6 +92,8 @@ function AboutDialog(props: Props) {
     }
   }
 
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}
@@ -115,7 +113,6 @@ function AboutDialog(props: Props) {
           style={{ float: 'left', marginRight: 10, width: 120, height: 120 }}
         />
         <Tooltip
-          arrow
           placement="top"
           title={
             'Build on: ' +
@@ -241,4 +238,4 @@ function AboutDialog(props: Props) {
   );
 }
 
-export default withMobileDialog()(AboutDialog);
+export default AboutDialog;

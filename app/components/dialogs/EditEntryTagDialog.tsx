@@ -46,11 +46,8 @@ import { TS } from '-/tagspaces.namespace';
 import useValidation from '-/utils/useValidation';
 import { getMapTileServer } from '-/reducers/settings';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-
-// FIXME checkout https://mui.com/components/use-media-query/#using-material-uis-breakpoint-helpers
-const withMobileDialog = () => WrappedComponent => props => (
-  <WrappedComponent {...props} width="lg" fullScreen={false} />
-);
+import useTheme from '@mui/styles/useTheme';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const styles = () => ({
   root: {
@@ -63,7 +60,6 @@ const styles = () => ({
 interface Props {
   classes: any;
   open: boolean;
-  fullScreen: boolean;
   onClose: () => void;
   editTagForEntry: (path: string, tag: TS.Tag, title: string) => void;
   selectedEntries: Array<TS.FileSystemEntry>;
@@ -102,7 +98,7 @@ function EditEntryTagDialog(props: Props) {
     isShowDatePeriodEditor
   );
   const { setError, haveError } = useValidation();
-  const { onClose, open, fullScreen } = props;
+  const { onClose, open } = props;
 
   useEffect(() => {
     if (titleRef && titleRef.current) {
@@ -237,6 +233,8 @@ function EditEntryTagDialog(props: Props) {
     );
   }
 
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}
@@ -286,9 +284,4 @@ const areEqual = (prevProp, nextProp) =>
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(
-  React.memo(
-    withMobileDialog()(withStyles(styles)(EditEntryTagDialog)),
-    areEqual
-  )
-);
+)(React.memo(withStyles(styles)(EditEntryTagDialog), areEqual));
