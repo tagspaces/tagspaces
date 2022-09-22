@@ -22,9 +22,7 @@ import Tooltip from '-/components/Tooltip';
 import SettingsIcon from '@mui/icons-material/Settings';
 import IconButton from '@mui/material/IconButton';
 import ParentDirIcon from '@mui/icons-material/SubdirectoryArrowLeft';
-import ViewGridIcon from '@mui/icons-material/ViewModule';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
-import ViewListIcon from '@mui/icons-material/ViewList';
 import TagIcon from '@mui/icons-material/LocalOffer';
 import SelectAllIcon from '@mui/icons-material/CheckBox';
 import DeSelectAllIcon from '@mui/icons-material/CheckBoxOutlineBlank';
@@ -194,28 +192,32 @@ function MainToolbar(props: Props) {
             ')'
           }
         >
-          <IconButton
-            aria-label={i18n.t('core:tagSelectedEntries')}
-            data-tid="gridPerspectiveAddRemoveTags"
-            disabled={selectedEntries.length < 1}
-            onClick={openAddRemoveTagsDialog}
-            size="large"
-          >
-            <TagIcon />
-          </IconButton>
+          <span>
+            <IconButton
+              aria-label={i18n.t('core:tagSelectedEntries')}
+              data-tid="gridPerspectiveAddRemoveTags"
+              disabled={selectedEntries.length < 1}
+              onClick={openAddRemoveTagsDialog}
+              size="large"
+            >
+              <TagIcon />
+            </IconButton>
+          </span>
         </Tooltip>
       )}
       {!isReadOnlyMode && (
         <Tooltip title={i18n.t('core:copyMoveSelectedEntries')}>
-          <IconButton
-            aria-label={i18n.t('core:copyMoveSelectedEntries')}
-            data-tid="gridPerspectiveCopySelectedFiles"
-            disabled={!fileOperationsEnabled}
-            onClick={openMoveCopyFilesDialog}
-            size="large"
-          >
-            <CopyIcon />
-          </IconButton>
+          <span>
+            <IconButton
+              aria-label={i18n.t('core:copyMoveSelectedEntries')}
+              data-tid="gridPerspectiveCopySelectedFiles"
+              disabled={!fileOperationsEnabled}
+              onClick={openMoveCopyFilesDialog}
+              size="large"
+            >
+              <CopyIcon />
+            </IconButton>
+          </span>
         </Tooltip>
       )}
       {!isReadOnlyMode && (
@@ -227,15 +229,17 @@ function MainToolbar(props: Props) {
             ')'
           }
         >
-          <IconButton
-            aria-label={i18n.t('core:deleteSelectedEntries')}
-            data-tid="gridPerspectiveDeleteMultipleFiles"
-            disabled={!fileOperationsEnabled}
-            onClick={openDeleteFileDialog}
-            size="large"
-          >
-            <DeleteIcon />
-          </IconButton>
+          <span>
+            <IconButton
+              aria-label={i18n.t('core:deleteSelectedEntries')}
+              data-tid="gridPerspectiveDeleteMultipleFiles"
+              disabled={!fileOperationsEnabled}
+              onClick={openDeleteFileDialog}
+              size="large"
+            >
+              <DeleteIcon />
+            </IconButton>
+          </span>
         </Tooltip>
       )}
       <Tooltip title={i18n.t('core:sort')}>

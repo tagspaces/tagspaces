@@ -188,7 +188,9 @@ function MobileNavigation(props: Props) {
                   );
                 } else {
                   toggleCreateFileDialog();
-                  hideDrawer();
+                  if (hideDrawer) {
+                    hideDrawer();
+                  }
                 }
               }}
               size="small"
