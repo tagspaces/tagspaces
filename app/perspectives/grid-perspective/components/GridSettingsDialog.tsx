@@ -69,6 +69,10 @@ interface Props {
   gridPageLimit: number;
   onClose: (isDefault?: boolean) => void;
   setGridPageLimit: (number) => void;
+  toggleShowDescription: () => void;
+  toggleShowDetails: () => void;
+  showDetails: boolean;
+  showDescription: boolean;
   toggleShowDirectories: () => void;
   toggleShowTags: () => void;
   showDirectories: boolean;
@@ -98,6 +102,10 @@ function GridSettingsDialog(props: Props) {
     open,
     onClose,
     gridPageLimit,
+    showDetails,
+    toggleShowDetails,
+    showDescription,
+    toggleShowDescription,
     toggleShowDirectories,
     showDirectories,
     toggleShowTags,
@@ -183,6 +191,30 @@ function GridSettingsDialog(props: Props) {
               />
             }
             label={i18n.t('core:showTags')}
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                data-tid="gridPerspectiveToggleShowDescription"
+                defaultChecked={showDescription}
+                onChange={toggleShowDescription}
+                name={i18n.t('core:showHideDescription')}
+                color="primary"
+              />
+            }
+            label={i18n.t('core:showHideDescription')}
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                data-tid="gridPerspectiveToggleShowDetails"
+                defaultChecked={showDetails}
+                onChange={toggleShowDetails}
+                name={i18n.t('core:showHideDetails')}
+                color="primary"
+              />
+            }
+            label={i18n.t('core:showHideDetails')}
           />
         </FormGroup>
         <Divider />

@@ -360,6 +360,8 @@
   "copyMoveSelectedEntries": "Copy or move selected entries",
   "deleteSelectedEntries": "Delete selected entries",
   "showHideDirectories": "Show folders",
+  "showHideDescription": "Show Description",
+  "showHideDetails": "Show Details",
   "showTags": "Show tags",
   "sort": "Sort",
   "thirdPartyLibs": "Third Party Libraries",

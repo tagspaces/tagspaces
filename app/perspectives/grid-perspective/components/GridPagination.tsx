@@ -54,6 +54,8 @@ interface Props {
   // gridRef: Object;
   directories: Array<TS.FileSystemEntry>;
   showDirectories: boolean;
+  showDetails: boolean;
+  showDescription: boolean;
   showTags: boolean;
   thumbnailMode: string;
   entrySize: string;
@@ -85,6 +87,8 @@ function GridPagination(props: Props) {
     theme,
     directories,
     showDirectories,
+    showDetails,
+    showDescription,
     renderCell,
     isAppLoading,
     currentDirectoryColor,
@@ -283,7 +287,6 @@ function GridPagination(props: Props) {
     }
   };
 
-  let showDetails = false;
   const folderName = extractDirectoryName(
     decodeURIComponent(currentDirectoryPath),
     PlatformIO.getDirSeparator()
@@ -493,6 +496,8 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   nextProp.theme === prevProp.theme &&
   nextProp.isMetaLoaded === prevProp.isMetaLoaded &&
   nextProp.showDirectories === prevProp.showDirectories &&
+  nextProp.showDetails === prevProp.showDetails &&
+  nextProp.showDescription === prevProp.showDescription &&
   nextProp.showTags === prevProp.showTags &&
   nextProp.thumbnailMode === prevProp.thumbnailMode &&
   nextProp.entrySize === prevProp.entrySize &&
