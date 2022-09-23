@@ -21,7 +21,7 @@ import classNames from 'classnames';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from '-/components/Tooltip';
 import FolderIcon from '@mui/icons-material/Folder';
 import SelectedIcon from '@mui/icons-material/CheckBox';
 import UnSelectedIcon from '@mui/icons-material/CheckBoxOutlineBlank';
@@ -154,7 +154,7 @@ function CellContent(props: Props) {
     return (
       <div
         style={{
-          backgroundColor: fsEntryBgColor,
+          background: fsEntryBgColor,
           opacity: fsEntry.isIgnored ? 0.3 : 1
         }}
       >

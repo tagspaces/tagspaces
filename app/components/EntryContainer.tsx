@@ -29,7 +29,7 @@ import { bindActionCreators } from 'redux';
 import { GlobalHotKeys } from 'react-hotkeys';
 import fscreen from 'fscreen';
 import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import BookmarkIcon from '@mui/icons-material/BookmarkTwoTone';
 import BookmarkAddIcon from '@mui/icons-material/BookmarkAddTwoTone';
@@ -1130,6 +1130,13 @@ function EntryContainer(props: Props) {
                           );
                         }
                         forceUpdate();
+                      } else {
+                        showNotification(
+                          i18n.t('core:toggleBookmark') +
+                            ' - ' +
+                            i18n.t('thisFunctionalityIsAvailableInPro'),
+                          NotificationTypes.default
+                        );
                       }
                     }}
                   >

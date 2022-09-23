@@ -114,7 +114,8 @@ function ColorPickerDialog(props: Props) {
         data-tid="colorPickerDialogContent"
         style={{
           marginLeft: 'auto',
-          marginRight: 'auto'
+          marginRight: 'auto',
+          overflowX: 'hidden'
         }}
       >
         <SketchPicker

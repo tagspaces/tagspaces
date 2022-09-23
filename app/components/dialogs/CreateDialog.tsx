@@ -55,8 +55,7 @@ const styles: any = () => ({
   },
   grid: {
     flexGrow: 1,
-    width: '100%',
-    height: '100%'
+    width: '100%'
   },
   createButton: {
     minHeight: 100,

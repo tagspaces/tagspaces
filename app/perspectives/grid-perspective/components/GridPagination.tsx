@@ -19,7 +19,7 @@
 import React, { useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import Typography from '@mui/material/Typography';
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from '-/components/Tooltip';
 import Pagination from '@mui/material/Pagination';
 import { bindActionCreators } from 'redux';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
@@ -27,9 +27,10 @@ import {
   getMetaFileLocationForDir,
   getMetaFileLocationForFile,
   getThumbFileLocationForDirectory,
+  getBgndFileLocationForDirectory,
   getThumbFileLocationForFile,
   extractDirectoryName
-} from '@tagspaces/tagspaces-platforms/paths';
+} from '@tagspaces/tagspaces-common/paths';
 import i18n from '-/services/i18n';
 import {
   actions as AppActions,
@@ -294,10 +295,13 @@ function GridPagination(props: Props) {
     PlatformIO.getDirSeparator()
   );
 
-  const folderBgndPath = folderTmbPath.replace(
-    AppConfig.folderThumbFile,
-    'tsb.jpg'
+  const folderBgndPath = encodeURI(
+    getBgndFileLocationForDirectory(
+      currentDirectoryPath,
+      PlatformIO.getDirSeparator()
+    )
   );
+  const dirColor = currentDirectoryColor || 'transparent';
 
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions,jsx-a11y/no-static-element-interactions
@@ -313,12 +317,12 @@ function GridPagination(props: Props) {
         height: '100%',
         // @ts-ignore
         overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
-        backgroundColor: currentDirectoryColor || 'transparent',
-        background:
-          'linear-gradient(62deg, rgb(65, 88, 208) 0%, rgb(200, 80, 192) 46%, rgb(255, 204, 112) 100%)',
-        backgroundImage: 'url(' + folderBgndPath + ')',
+        backgroundImage: `url(${folderBgndPath}?${new Date().getTime()})`,
+        backgroundColor: `${dirColor}`,
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat'
+        /*background:
+          'linear-gradient(62deg, rgb(65, 88, 208) 0%, rgb(200, 80, 192) 46%, rgb(255, 204, 112) 100%)',*/
       }}
     >
       {showDetails && (
@@ -491,6 +495,7 @@ function mapActionCreatorsToProps(dispatch) {
 
 const areEqual = (prevProp: Props, nextProp: Props) =>
   nextProp.theme === prevProp.theme &&
+  nextProp.currentDirectoryPath === prevProp.currentDirectoryPath &&
   nextProp.isMetaLoaded === prevProp.isMetaLoaded &&
   nextProp.showDirectories === prevProp.showDirectories &&
   nextProp.showTags === prevProp.showTags &&

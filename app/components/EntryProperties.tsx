@@ -16,19 +16,12 @@
  *
  */
 
-import React, {
-  ChangeEvent,
-  useEffect,
-  useReducer,
-  useRef,
-  useState
-} from 'react';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
-import { Theme } from '@mui/material/styles';
+import { getBgndFileLocationForDirectory } from '@tagspaces/tagspaces-common/paths';
+
 import { v1 as uuidv1 } from 'uuid';
 import L from 'leaflet';
-import classNames from 'classnames';
-import createStyles from '@mui/styles/createStyles';
 import withStyles from '@mui/styles/withStyles';
 import Grid from '@mui/material/Grid';
 import FormControl from '@mui/material/FormControl';
@@ -37,11 +30,10 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import InputAdornment from '@mui/material/InputAdornment';
 import ShareIcon from '@mui/icons-material/Link';
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from '-/components/Tooltip';
 import LocationIcon from '@mui/icons-material/WorkOutline';
 import EditIcon from '@mui/icons-material/Edit';
 import CloudLocationIcon from '@mui/icons-material/CloudQueue';
-import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import ClearColorIcon from '@mui/icons-material/Backspace';
 import {
@@ -64,7 +56,6 @@ import {
 } from '@tagspaces/tagspaces-platforms/paths';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import TagDropContainer from './TagDropContainer';
-import ColorPickerDialog from './dialogs/ColorPickerDialog';
 import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
 import i18n from '../services/i18n';
 import { enhanceOpenedEntry, convertMarkDown } from '-/services/utils-io';
@@ -88,9 +79,14 @@ import NoTileServer from '-/components/NoTileServer';
 import InfoIcon from '-/components/InfoIcon';
 import { ProTooltip } from '-/components/HelperComponents';
 import PerspectiveSelector from '-/components/PerspectiveSelector';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
+const CustomBackgroundDialog =
+  Pro && Pro.UI ? Pro.UI.CustomBackgroundDialog : false;
+const BgndImgChooserDialog =
+  Pro && Pro.UI ? Pro.UI.BgndImgChooserDialog : false;
 
 const styles: any = (theme: any) => ({
   entryProperties: {
@@ -98,6 +94,7 @@ const styles: any = (theme: any) => ({
     overflowX: 'hidden',
     flexGrow: 1,
     padding: 7,
+    paddingRight: 14,
     height: '100%'
   },
   tags: {
@@ -217,6 +214,9 @@ function EntryProperties(props: Props) {
     isFileThumbChooseDialogOpened,
     setFileThumbChooseDialogOpened
   ] = useState<boolean>(false);
+  const [isBgndImgChooseDialogOpened, setBgndImgChooseDialogOpened] = useState<
+    boolean
+  >(false);
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
 
   useEffect(() => {
@@ -324,6 +324,20 @@ function EntryProperties(props: Props) {
       editDescription === undefined
     ) {
       setFileThumbChooseDialogOpened(!isFileThumbChooseDialogOpened);
+    }
+  };
+
+  const toggleBgndImgDialog = () => {
+    if (!Pro) {
+      props.showNotification(i18n.t('core:thisFunctionalityIsAvailableInPro'));
+      return true;
+    }
+    if (
+      !currentEntry.editMode &&
+      editName === undefined &&
+      editDescription === undefined
+    ) {
+      setBgndImgChooseDialogOpened(!isBgndImgChooseDialogOpened);
     }
   };
 
@@ -459,6 +473,14 @@ function EntryProperties(props: Props) {
       PlatformIO.getDirSeparator()
     );
   }
+
+  let bgndPath;
+  if (!currentEntry.isFile) {
+    bgndPath = getBgndFileLocationForDirectory(
+      currentEntry.path,
+      PlatformIO.getDirSeparator()
+    );
+  }
   /**
    *  normalize path for URL is always '/'
    *  TODO move this in common module
@@ -472,12 +494,16 @@ function EntryProperties(props: Props) {
     return url;
   }
   let url;
+  let bgndUrl;
   if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
     url = PlatformIO.getURLforPath(thumbPath);
+    bgndUrl = PlatformIO.getURLforPath(bgndPath);
   } else {
     url = normalizeUrl(thumbPath) + '?' + new Date().getTime();
+    bgndUrl = normalizeUrl(bgndPath) + '?' + new Date().getTime();
   }
   const thumbPathUrl = thumbPath ? 'url("' + url + '")' : '';
+  const bgndPathUrl = bgndPath ? 'url("' + bgndUrl + '")' : '';
 
   const ldtm = currentEntry.lmdt
     ? new Date(currentEntry.lmdt)
@@ -806,121 +832,21 @@ function EntryProperties(props: Props) {
               }}
             />
           </Grid>
-
-          {currentEntry.isFile ? (
-            <Grid item xs={6}>
-              <TextField
-                margin="dense"
-                fullWidth={true}
-                value={formatFileSize(currentEntry.size)}
-                label={i18n.t('core:fileSize')}
-                InputProps={{
-                  readOnly: true
-                }}
-              />
-            </Grid>
-          ) : (
-            <Grid item xs={6}>
-              <TextField
-                margin="dense"
-                name="path"
-                label={i18n.t('core:backgroundColor')}
-                fullWidth
-                InputProps={{
-                  readOnly: true,
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <TransparentBackground>
-                        <Button
-                          fullWidth
-                          style={{
-                            width: '100%',
-                            backgroundColor: currentEntry.color
-                          }}
-                          onClick={toggleBackgroundColorPicker}
-                        >
-                          {i18n.t('core:changeBackgroundColor')}
-                        </Button>
-                      </TransparentBackground>
-                    </InputAdornment>
-                  ),
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      {currentEntry.color && (
-                        <>
-                          <ProTooltip tooltip={i18n.t('clearFolderColor')}>
-                            <IconButton
-                              disabled={!Pro}
-                              aria-label="clear"
-                              size="small"
-                              style={{ marginTop: 5 }}
-                              onClick={() =>
-                                setConfirmResetColorDialogOpened(true)
-                              }
-                            >
-                              <ClearColorIcon />
-                            </IconButton>
-                          </ProTooltip>
-                          {isConfirmResetColorDialogOpened && (
-                            <ConfirmDialog
-                              open={isConfirmResetColorDialogOpened}
-                              onClose={() => {
-                                setConfirmResetColorDialogOpened(false);
-                              }}
-                              title={i18n.t('core:confirm')}
-                              content={i18n.t('core:confirmResetColor')}
-                              confirmCallback={result => {
-                                if (result) {
-                                  handleChangeColor('transparent');
-                                } else {
-                                  setConfirmResetColorDialogOpened(false);
-                                }
-                              }}
-                              cancelDialogTID="cancelConfirmResetColorDialog"
-                              confirmDialogTID="confirmConfirmResetColorDialog"
-                              confirmDialogContentTID="confirmResetColorDialogContent"
-                            />
-                          )}
-                        </>
-                      )}
-                    </InputAdornment>
-                  )
-                }}
-              />
-              {displayColorPicker && (
-                <ColorPickerDialog
-                  color={currentEntry.color}
-                  open={displayColorPicker}
-                  setColor={handleChangeColor}
-                  onClose={toggleBackgroundColorPicker}
-                  presetColors={[
-                    'transparent',
-                    '#FFFFFF44',
-                    '#00000044',
-                    '#ac725e44',
-                    '#f83a2244',
-                    '#fa573c44',
-                    '#ff753744',
-                    '#ffad4644',
-                    '#42d69244',
-                    '#00800044',
-                    '#7bd14844',
-                    '#fad16544',
-                    '#92e1c044',
-                    '#9fe1e744',
-                    '#9fc6e744',
-                    '#4986e744',
-                    '#9a9cff44',
-                    '#c2c2c244',
-                    '#cca6ac44',
-                    '#f691b244',
-                    '#cd74e644',
-                    '#a47ae244'
-                  ]}
-                />
-              )}
-            </Grid>
-          )}
+          <Grid item xs={6}>
+            <TextField
+              margin="dense"
+              fullWidth={true}
+              value={
+                currentEntry.isFile
+                  ? formatFileSize(currentEntry.size)
+                  : i18n.t('core:notAvailable')
+              }
+              label={i18n.t('core:fileSize')}
+              InputProps={{
+                readOnly: true
+              }}
+            />
+          </Grid>
         </Grid>
 
         <Grid item xs={12}>
@@ -1091,43 +1017,78 @@ function EntryProperties(props: Props) {
         )}
 
         <Grid item xs={12}>
-          <ThumbnailTextField
+          <TextField
             margin="dense"
-            label={i18n.t('core:thumbnail')}
+            name="path"
+            label={i18n.t('core:backgroundColor')}
             fullWidth
-            value=""
-            style={{
-              marginTop: 13,
-              minHeight: thumbPath ? AppConfig.maxThumbSize + 20 : 20,
-              maxHeight: AppConfig.maxThumbSize + 20
-            }}
             InputProps={{
               readOnly: true,
               startAdornment: (
                 <InputAdornment position="start">
-                  {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/control-has-associated-label */}
-                  <div
-                    onClick={toggleThumbFilesDialog}
-                    role="button"
-                    title={i18n.t('core:changeThumbnail')}
-                    tabIndex={0}
-                    style={{
-                      backgroundSize: 'contain',
-                      backgroundRepeat: 'no-repeat',
-                      backgroundImage: thumbPathUrl,
-                      backgroundPosition: 'center',
-                      minHeight: thumbPath ? AppConfig.maxThumbSize : 20,
-                      maxHeight: AppConfig.maxThumbSize,
-                      minWidth: AppConfig.maxThumbSize,
-                      maxWidth: AppConfig.maxThumbSize,
-                      display: 'block',
-                      marginBottom: 5
-                    }}
-                  />
+                  <TransparentBackground>
+                    <Button
+                      fullWidth
+                      style={{
+                        width: '100%',
+                        background: currentEntry.color
+                      }}
+                      onClick={toggleBackgroundColorPicker}
+                    >
+                      {i18n.t('core:changeBackgroundColor')}
+                    </Button>
+                  </TransparentBackground>
                 </InputAdornment>
               ),
               endAdornment: (
                 <InputAdornment position="end">
+                  {currentEntry.color && (
+                    <>
+                      <ProTooltip tooltip={i18n.t('clearFolderColor')}>
+                        <IconButton
+                          disabled={!Pro}
+                          aria-label="clear"
+                          size="small"
+                          style={{ marginTop: 5 }}
+                          onClick={() => setConfirmResetColorDialogOpened(true)}
+                        >
+                          <ClearColorIcon />
+                        </IconButton>
+                      </ProTooltip>
+                      {isConfirmResetColorDialogOpened && (
+                        <ConfirmDialog
+                          open={isConfirmResetColorDialogOpened}
+                          onClose={() => {
+                            setConfirmResetColorDialogOpened(false);
+                          }}
+                          title={i18n.t('core:confirm')}
+                          content={i18n.t('core:confirmResetColor')}
+                          confirmCallback={result => {
+                            if (result) {
+                              handleChangeColor('transparent');
+                            } else {
+                              setConfirmResetColorDialogOpened(false);
+                            }
+                          }}
+                          cancelDialogTID="cancelConfirmResetColorDialog"
+                          confirmDialogTID="confirmConfirmResetColorDialog"
+                          confirmDialogContentTID="confirmResetColorDialogContent"
+                        />
+                      )}
+                    </>
+                  )}
+                </InputAdornment>
+              )
+            }}
+          />
+        </Grid>
+        <Grid item xs={6}>
+          <FormControl component="fieldset" fullWidth={true} variant="outlined">
+            <FormControlLabel
+              label={i18n.t('core:thumbnail')}
+              labelPlacement="top"
+              control={
+                <>
                   {!isReadOnlyMode &&
                     !currentEntry.editMode &&
                     editName === undefined &&
@@ -1144,10 +1105,71 @@ function EntryProperties(props: Props) {
                         </IconButton>
                       </ProTooltip>
                     )}
-                </InputAdornment>
-              )
-            }}
-          />
+                  {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/control-has-associated-label */}
+                  <div
+                    // onClick={toggleThumbFilesDialog}
+                    role="button"
+                    title={i18n.t('core:changeThumbnail')}
+                    tabIndex={0}
+                    style={{
+                      backgroundSize: 'contain',
+                      backgroundRepeat: 'no-repeat',
+                      backgroundImage: thumbPathUrl,
+                      backgroundPosition: 'center',
+                      minHeight: thumbPath ? AppConfig.maxThumbSize : 20,
+                      maxHeight: AppConfig.maxThumbSize,
+                      minWidth: AppConfig.maxThumbSize,
+                      maxWidth: AppConfig.maxThumbSize,
+                      // display: 'block',
+                      marginBottom: 5
+                    }}
+                  />
+                </>
+              }
+            />
+          </FormControl>
+        </Grid>
+        <Grid item xs={6}>
+          <FormControl component="fieldset" fullWidth={true} variant="outlined">
+            <FormControlLabel
+              label={i18n.t('core:backgroundImage')}
+              labelPlacement="top"
+              control={
+                <>
+                  {!isReadOnlyMode &&
+                    !currentEntry.editMode &&
+                    editName === undefined &&
+                    editDescription === undefined && (
+                      <ProTooltip tooltip={i18n.t('changeBackgroundImage')}>
+                        <IconButton
+                          disabled={!Pro}
+                          color="primary"
+                          className={classes.button}
+                          style={{ whiteSpace: 'nowrap' }}
+                          onClick={toggleBgndImgDialog}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                      </ProTooltip>
+                    )}
+                  <div
+                    style={{
+                      backgroundSize: 'contain',
+                      backgroundRepeat: 'no-repeat',
+                      backgroundImage: bgndPathUrl,
+                      backgroundPosition: 'center',
+                      minHeight: thumbPath ? AppConfig.maxThumbSize : 20,
+                      maxHeight: AppConfig.maxThumbSize,
+                      minWidth: AppConfig.maxThumbSize,
+                      maxWidth: AppConfig.maxThumbSize,
+                      marginBottom: 5
+                      // display: 'block',
+                    }}
+                  />
+                </>
+              }
+            />
+          </FormControl>
         </Grid>
       </Grid>
       {isMoveCopyFilesDialogOpened && (
@@ -1158,7 +1180,7 @@ function EntryProperties(props: Props) {
           selectedFiles={[currentEntry.path]}
         />
       )}
-      {ThumbnailChooserDialog && isFileThumbChooseDialogOpened && (
+      {ThumbnailChooserDialog && (
         <ThumbnailChooserDialog
           open={isFileThumbChooseDialogOpened}
           onClose={toggleThumbFilesDialog}
@@ -1166,11 +1188,51 @@ function EntryProperties(props: Props) {
           setThumb={setThumb}
         />
       )}
+      {BgndImgChooserDialog && (
+        <BgndImgChooserDialog
+          open={isBgndImgChooseDialogOpened}
+          onClose={toggleBgndImgDialog}
+          currentDirectoryPath={currentEntry.path}
+        />
+      )}
+      {CustomBackgroundDialog && (
+        <CustomBackgroundDialog
+          color={currentEntry.color}
+          open={displayColorPicker}
+          setColor={handleChangeColor}
+          onClose={toggleBackgroundColorPicker}
+          currentDirectoryPath={currentEntry.path}
+          /*presetColors={[
+          'transparent',
+          '#FFFFFF44',
+          '#00000044',
+          '#ac725e44',
+          '#f83a2244',
+          '#fa573c44',
+          '#ff753744',
+          '#ffad4644',
+          '#42d69244',
+          '#00800044',
+          '#7bd14844',
+          '#fad16544',
+          '#92e1c044',
+          '#9fe1e744',
+          '#9fc6e744',
+          '#4986e744',
+          '#9a9cff44',
+          '#c2c2c244',
+          '#cca6ac44',
+          '#f691b244',
+          '#cd74e644',
+          '#a47ae244'
+        ]}*/
+        />
+      )}
     </div>
   );
 }
 
-const ThumbnailTextField = withStyles((theme: Theme) =>
+/*const ThumbnailTextField = withStyles((theme: Theme) =>
   createStyles({
     root: {
       '& .MuiInputBase-root': {
@@ -1178,7 +1240,7 @@ const ThumbnailTextField = withStyles((theme: Theme) =>
       }
     }
   })
-)(TextField);
+)(TextField);*/
 
 export default withLeaflet(
   withStyles(styles, { withTheme: true })(EntryProperties)
