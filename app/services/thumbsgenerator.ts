@@ -30,7 +30,7 @@ import { base64ToArrayBuffer } from '-/utils/dom';
 import PlatformIO from '../services/platform-facade';
 import { Pro } from '../pro';
 
-const maxSize = AppConfig.maxThumbSize;
+let maxSize = AppConfig.maxThumbSize;
 const bgColor = AppConfig.thumbBgColor;
 
 export const supportedMisc = ['url', 'html'];
@@ -301,11 +301,18 @@ function generateDefaultThumbnail() {
   return Promise.resolve('');
 }
 
-export function generateImageThumbnail(fileURL): Promise<string> {
+export function generateImageThumbnail(
+  fileURL: string,
+  maxTmbSize?: number
+): Promise<string> {
   return new Promise(resolve => {
     let canvas: HTMLCanvasElement = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     let img: HTMLImageElement = new Image();
+
+    if (maxTmbSize && maxTmbSize > maxSize) {
+      maxSize = maxTmbSize;
+    }
 
     const errorHandler = err => {
       console.warn(
@@ -351,6 +358,7 @@ export function generateImageThumbnail(fileURL): Promise<string> {
       //     default:
       //     // ctx.rotate(0);
       //   }
+      // if (img.width > maxSize || img.height > maxSize) { // uncomment to do not extend smaller images
       if (img.width >= img.height) {
         canvas.width = maxSize;
         canvas.height = (maxSize * img.height) / img.width;
@@ -358,8 +366,11 @@ export function generateImageThumbnail(fileURL): Promise<string> {
         canvas.height = maxSize;
         canvas.width = (maxSize * img.width) / img.height;
       }
-      const { width } = canvas;
-      const { height } = canvas;
+      // } else {
+      //   canvas.width = img.width;
+      //   canvas.height = img.height;
+      // }
+      const { width, height } = canvas;
       const x = canvas.width / 2;
       const y = canvas.height / 2;
 

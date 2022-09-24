@@ -160,10 +160,10 @@ interface Props {
 }
 
 const defaultBackgrounds = [
-  'linear-gradient(43deg, rgb(65, 88, 208) 0%, rgb(200, 80, 192) 46%, rgb(255, 204, 112) 100%)',
-  'linear-gradient( 102.4deg,  rgba(253,189,85,1) 7.8%, rgba(249,131,255,1) 100.3% )',
-  'linear-gradient( 109.6deg,  rgba(48,207,208,1) 11.2%, rgba(51,8,103,1) 92.5% )',
-  'radial-gradient( circle 321px at 8.3% 75.7%,  rgba(209,247,241,1) 0%, rgba(249,213,213,1) 81% )'
+  'linear-gradient(43deg, rgb(65, 88, 208) 0%, rgb(200, 80, 190) 45%, rgb(255, 204, 112) 100%)',
+  'linear-gradient( 102deg,  rgba(253,189,85,1) 8%, rgba(249,131,255,1) 100% )',
+  'radial-gradient( circle 321px at 8% 75%,  rgba(209,247,241,1) 0%, rgba(249,213,213,1) 80% )',
+  'linear-gradient( 110deg,  rgba(48,207,208,1) 11.2%, rgba(51,8,103,1) 90% )'
 ];
 
 function EntryProperties(props: Props) {
@@ -1026,74 +1026,85 @@ function EntryProperties(props: Props) {
           </Grid>
         )}
 
-        <Grid item xs={12}>
-          <TextField
-            margin="dense"
-            name="path"
-            label={i18n.t('core:backgroundColor')}
-            fullWidth
-            InputProps={{
-              readOnly: true,
-              startAdornment: (
-                <InputAdornment position="start">
-                  {/* <Tooltip title={i18n.t('core:changeBackgroundColor')}> */}
-                  <TransparentBackground>
-                    <Button
-                      fullWidth
-                      style={{
-                        width: 100,
-                        background: currentEntry.color
-                      }}
-                      onClick={toggleBackgroundColorPicker}
-                    >
-                      &nbsp;
-                    </Button>
-                  </TransparentBackground>
-                  {/* </Tooltip> */}
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <Stack direction="row" spacing={1}>
-                    {defaultBackgrounds.map((background, cnt) => (
-                      <IconButton
-                        key={cnt}
-                        aria-label="fingerprint"
-                        onClick={() => handleChangeColor(background)}
-                        style={{
-                          backgroundImage: background
-                        }}
-                      >
-                        <SetBackgroundIcon />
-                      </IconButton>
-                    ))}
-                    {currentEntry.color && (
-                      <>
-                        <ProTooltip tooltip={i18n.t('clearFolderColor')}>
-                          <span>
-                            <IconButton
-                              disabled={!Pro}
-                              aria-label="clear"
-                              size="small"
-                              style={{ marginTop: 5 }}
-                              onClick={() =>
-                                setConfirmResetColorDialogOpened(true)
-                              }
-                            >
-                              <ClearBackgroundIcon />
-                            </IconButton>
-                          </span>
-                        </ProTooltip>
-                      </>
+        {!currentEntry.isFile && (
+          <Grid item xs={12} style={{ marginTop: 5 }}>
+            <TextField
+              margin="dense"
+              name="path"
+              label={
+                <>
+                  {i18n.t('core:backgroundColor')}
+                  <InfoIcon
+                    tooltip={i18n.t(
+                      'The background color will not be visible if you have set a background image'
                     )}
-                  </Stack>
-                </InputAdornment>
-              )
-            }}
-          />
-        </Grid>
+                  />
+                </>
+              }
+              fullWidth
+              InputProps={{
+                readOnly: true,
+                startAdornment: (
+                  <InputAdornment position="start" style={{ marginTop: 10 }}>
+                    {/* <Tooltip title={i18n.t('core:changeBackgroundColor')}> */}
+                    <TransparentBackground>
+                      <Button
+                        fullWidth
+                        style={{
+                          width: 100,
+                          background: currentEntry.color
+                        }}
+                        onClick={toggleBackgroundColorPicker}
+                      >
+                        &nbsp;
+                      </Button>
+                    </TransparentBackground>
+                    {/* </Tooltip> */}
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Stack direction="row" spacing={1}>
+                      {defaultBackgrounds.map((background, cnt) => (
+                        <IconButton
+                          key={cnt}
+                          aria-label="fingerprint"
+                          onClick={() => handleChangeColor(background)}
+                          style={{
+                            backgroundImage: background
+                          }}
+                        >
+                          <SetBackgroundIcon />
+                        </IconButton>
+                      ))}
+                      {currentEntry.color && (
+                        <>
+                          <ProTooltip tooltip={i18n.t('clearFolderColor')}>
+                            <span>
+                              <IconButton
+                                disabled={!Pro}
+                                aria-label="clear"
+                                size="small"
+                                style={{ marginTop: 5 }}
+                                onClick={() =>
+                                  setConfirmResetColorDialogOpened(true)
+                                }
+                              >
+                                <ClearBackgroundIcon />
+                              </IconButton>
+                            </span>
+                          </ProTooltip>
+                        </>
+                      )}
+                    </Stack>
+                  </InputAdornment>
+                )
+              }}
+            />
+          </Grid>
+        )}
         <Grid container item xs={12} spacing={1}>
-          <Grid item xs={6}>
+          <Grid item xs={currentEntry.isFile ? 12 : 6}>
             <ThumbnailTextField
               margin="dense"
               label={i18n.t('core:thumbnail')}
@@ -1112,10 +1123,11 @@ function EntryProperties(props: Props) {
                           role="button"
                           tabIndex={0}
                           style={{
-                            backgroundSize: 'contain',
+                            backgroundSize: 'cover',
                             backgroundRepeat: 'no-repeat',
                             backgroundImage: thumbPathUrl,
                             backgroundPosition: 'center',
+                            borderRadius: 8,
                             minHeight: 150,
                             minWidth: 150,
                             marginBottom: 5
@@ -1145,59 +1157,65 @@ function EntryProperties(props: Props) {
               }}
             />
           </Grid>
-          <Grid item xs={6}>
-            <ThumbnailTextField
-              margin="dense"
-              label={i18n.t('core:backgroundImage')}
-              fullWidth
-              InputProps={{
-                readOnly: true,
-                startAdornment: (
-                  <InputAdornment position="end">
-                    <Stack
-                      direction="row"
-                      spacing={1}
-                      style={{ alignItems: 'center' }}
-                    >
-                      <ProTooltip tooltip={i18n.t('changeBackgroundImage')}>
-                        <div
-                          role="button"
-                          tabIndex={0}
-                          style={{
-                            backgroundSize: 'contain',
-                            backgroundRepeat: 'no-repeat',
-                            backgroundImage: bgndPathUrl,
-                            backgroundPosition: 'center',
-                            minHeight: 150,
-                            minWidth: 150,
-                            marginBottom: 5
-                          }}
-                          onClick={toggleBgndImgDialog}
-                        />
-                      </ProTooltip>
-                      {!isReadOnlyMode &&
-                        !currentEntry.editMode &&
-                        editName === undefined &&
-                        editDescription === undefined && (
-                          <ProTooltip tooltip={i18n.t('changeBackgroundImage')}>
-                            <IconButton
-                              disabled={!Pro}
-                              color="primary"
-                              className={classes.button}
-                              style={{ whiteSpace: 'nowrap' }}
-                              onClick={toggleBgndImgDialog}
+          {!currentEntry.isFile && (
+            <Grid item xs={6}>
+              <ThumbnailTextField
+                margin="dense"
+                label={i18n.t('core:backgroundImage')}
+                fullWidth
+                InputProps={{
+                  readOnly: true,
+                  startAdornment: (
+                    <InputAdornment position="end">
+                      <Stack
+                        direction="row"
+                        spacing={1}
+                        style={{ alignItems: 'center' }}
+                      >
+                        <ProTooltip tooltip={i18n.t('changeBackgroundImage')}>
+                          <div
+                            role="button"
+                            tabIndex={0}
+                            style={{
+                              backgroundSize: 'cover',
+                              backgroundRepeat: 'no-repeat',
+                              backgroundImage: bgndPathUrl,
+                              backgroundPosition: 'center',
+                              borderRadius: 8,
+                              minHeight: 150,
+                              minWidth: 150,
+                              marginBottom: 5
+                            }}
+                            onClick={toggleBgndImgDialog}
+                          />
+                        </ProTooltip>
+                        {!isReadOnlyMode &&
+                          !currentEntry.editMode &&
+                          editName === undefined &&
+                          editDescription === undefined && (
+                            <ProTooltip
+                              tooltip={i18n.t('changeBackgroundImage')}
                             >
-                              <EditIcon />
-                            </IconButton>
-                          </ProTooltip>
-                        )}
-                    </Stack>
-                  </InputAdornment>
-                )
-              }}
-            />
-          </Grid>
+                              <IconButton
+                                disabled={!Pro}
+                                color="primary"
+                                className={classes.button}
+                                style={{ whiteSpace: 'nowrap' }}
+                                onClick={toggleBgndImgDialog}
+                              >
+                                <EditIcon />
+                              </IconButton>
+                            </ProTooltip>
+                          )}
+                      </Stack>
+                    </InputAdornment>
+                  )
+                }}
+              />
+            </Grid>
+          )}
         </Grid>
+        <Grid container item xs={12} style={{ height: 150 }}></Grid>
       </Grid>
       {isConfirmResetColorDialogOpened && (
         <ConfirmDialog
