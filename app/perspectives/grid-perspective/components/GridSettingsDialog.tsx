@@ -192,7 +192,8 @@ function GridSettingsDialog(props: Props) {
             }
             label={i18n.t('core:showTags')}
           />
-          <FormControlLabel
+          <Divider />
+          {/* <FormControlLabel
             control={
               <Switch
                 data-tid="gridPerspectiveToggleShowDescription"
@@ -203,7 +204,7 @@ function GridSettingsDialog(props: Props) {
               />
             }
             label={i18n.t('core:showHideDescription')}
-          />
+          /> */}
           <FormControlLabel
             control={
               <Switch
