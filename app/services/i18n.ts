@@ -19,7 +19,18 @@
 import i18n from 'i18next';
 import HttpApi from 'i18next-http-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import en from '../locales/en_US/core.json';
+import enUs from '../locales/en_US/core.json';
+import en from '../locales/en/core.json';
+
+let defaultLanguage = enUs;
+if (
+  typeof process !== 'undefined' &&
+  process.env &&
+  process.env.NODE_ENV &&
+  process.env.NODE_ENV === 'development'
+) {
+  defaultLanguage = en;
+}
 
 function loadLocales(options, url, payload, callback) {
   // (url, options, callback, data) {
@@ -377,7 +388,7 @@ function loadLocales(options, url, payload, callback) {
       break;
     }
     default: {
-      callback(undefined, { status: '200', data: en });
+      callback(undefined, { status: '200', data: defaultLanguage });
       break;
     }
   }
