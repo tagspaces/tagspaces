@@ -24,8 +24,8 @@ export const defaultSettings = {
   entrySize: 'small', // small, normal, big
   thumbnailMode: 'contain', // cover contain
   showDirectories: true,
-  showDetails: true,
-  showDescription: true,
+  showDetails: false,
+  showDescription: false,
   showTags: true,
   gridPageLimit: 100
 };
