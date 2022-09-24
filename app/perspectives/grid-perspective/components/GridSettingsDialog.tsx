@@ -393,16 +393,11 @@ function GridSettingsDialog(props: Props) {
         </FormControl>
       </DialogContent>
       <DialogActions style={{ justifyContent: 'space-between' }}>
-        <Button
-          data-tid="gridPerspectiveHelp"
-          title={i18n.t('core:help')}
-          onClick={openHelpWebPage}
-        >
+        <Button data-tid="gridPerspectiveHelp" onClick={openHelpWebPage}>
           {i18n.t('core:help')}
         </Button>
         <Button
           data-tid="defaultSettings"
-          title={i18n.t('core:defaultSettings')}
           onClick={() => {
             onClose(true);
           }}
@@ -413,7 +408,6 @@ function GridSettingsDialog(props: Props) {
         {Pro && (
           <Button
             data-tid="directorySettings"
-            title={i18n.t('core:directorySettings')}
             onClick={() => {
               onClose(false);
             }}

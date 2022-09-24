@@ -23,6 +23,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PlaceIcon from '@mui/icons-material/Place';
 import DateIcon from '@mui/icons-material/DateRange';
 import RemoveTagIcon from '@mui/icons-material/Close';
+import Tooltip from '-/components/Tooltip';
 import { formatDateTime } from '@tagspaces/tagspaces-platforms/misc';
 import { getAllTags, getTagColors } from '-/reducers/taglibrary';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
@@ -194,52 +195,53 @@ function TagContainer(props: Props) {
         display: 'inline-block'
       }}
     >
-      <Button
-        title={tagTitle}
-        size="small"
-        style={{
-          opacity: isDragging ? 0.5 : 1,
-          fontSize: 13,
-          textTransform: 'none',
-          color: textColor,
-          backgroundColor,
-          minHeight: 0,
-          minWidth: 0,
-          margin: 2,
-          paddingTop: 0,
-          paddingBottom: 0,
-          paddingRight: 0,
-          paddingLeft: 5,
-          borderRadius: 5
-        }}
-      >
-        <span style={{ flexGrow: 1 }}>
-          {(isTagGeo || isGeoSmartTag) && (
-            <PlaceIcon
-              style={{
-                color: tag.textcolor,
-                height: 20,
-                marginBottom: -5,
-                marginLeft: -5,
-                marginRight: 0
-              }}
-            />
-          )}
-          {(isTagDate || isDateSmartTag) && (
-            <DateIcon
-              style={{
-                color: tag.textcolor,
-                height: 20,
-                marginBottom: -5,
-                marginLeft: -5,
-                marginRight: 0
-              }}
-            />
-          )}
-          {!isTagGeo && title}
-        </span>
-        {getActionMenu()}
-      </Button>
+      <Tooltip title={tagTitle}>
+        <Button
+          size="small"
+          style={{
+            opacity: isDragging ? 0.5 : 1,
+            fontSize: 13,
+            textTransform: 'none',
+            color: textColor,
+            backgroundColor,
+            minHeight: 0,
+            minWidth: 0,
+            margin: 2,
+            paddingTop: 0,
+            paddingBottom: 0,
+            paddingRight: 0,
+            paddingLeft: 5,
+            borderRadius: 5
+          }}
+        >
+          <span style={{ flexGrow: 1 }}>
+            {(isTagGeo || isGeoSmartTag) && (
+              <PlaceIcon
+                style={{
+                  color: tag.textcolor,
+                  height: 20,
+                  marginBottom: -5,
+                  marginLeft: -5,
+                  marginRight: 0
+                }}
+              />
+            )}
+            {(isTagDate || isDateSmartTag) && (
+              <DateIcon
+                style={{
+                  color: tag.textcolor,
+                  height: 20,
+                  marginBottom: -5,
+                  marginLeft: -5,
+                  marginRight: 0
+                }}
+              />
+            )}
+            {!isTagGeo && title}
+          </span>
+          {getActionMenu()}
+        </Button>
+      </Tooltip>
     </div>
   );
 }
