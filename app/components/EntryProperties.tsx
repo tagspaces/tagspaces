@@ -19,10 +19,11 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
 import { getBgndFileLocationForDirectory } from '@tagspaces/tagspaces-common/paths';
-
 import { v1 as uuidv1 } from 'uuid';
 import L from 'leaflet';
+import { Theme } from '@mui/material/styles';
 import withStyles from '@mui/styles/withStyles';
+import createStyles from '@mui/styles/createStyles';
 import Grid from '@mui/material/Grid';
 import FormControl from '@mui/material/FormControl';
 import Typography from '@mui/material/Typography';
@@ -35,7 +36,9 @@ import LocationIcon from '@mui/icons-material/WorkOutline';
 import EditIcon from '@mui/icons-material/Edit';
 import CloudLocationIcon from '@mui/icons-material/CloudQueue';
 import MenuItem from '@mui/material/MenuItem';
-import ClearColorIcon from '@mui/icons-material/Backspace';
+import Stack from '@mui/material/Stack';
+import SetBackgroundIcon from '@mui/icons-material/OpacityOutlined';
+import ClearBackgroundIcon from '@mui/icons-material/FormatColorResetOutlined';
 import {
   AttributionControl,
   Map,
@@ -155,6 +158,13 @@ interface Props {
   sharingLink: string;
   tileServer: TS.MapTileServer;
 }
+
+const defaultBackgrounds = [
+  'linear-gradient(43deg, rgb(65, 88, 208) 0%, rgb(200, 80, 192) 46%, rgb(255, 204, 112) 100%)',
+  'linear-gradient( 102.4deg,  rgba(253,189,85,1) 7.8%, rgba(249,131,255,1) 100.3% )',
+  'linear-gradient( 109.6deg,  rgba(48,207,208,1) 11.2%, rgba(51,8,103,1) 92.5% )',
+  'radial-gradient( circle 321px at 8.3% 75.7%,  rgba(209,247,241,1) 0%, rgba(249,213,213,1) 81% )'
+];
 
 function EntryProperties(props: Props) {
   // const EntryProperties = React.memo((props: Props) => {
@@ -1026,152 +1036,189 @@ function EntryProperties(props: Props) {
               readOnly: true,
               startAdornment: (
                 <InputAdornment position="start">
+                  {/* <Tooltip title={i18n.t('core:changeBackgroundColor')}> */}
                   <TransparentBackground>
                     <Button
                       fullWidth
                       style={{
-                        width: '100%',
+                        width: 100,
                         background: currentEntry.color
                       }}
                       onClick={toggleBackgroundColorPicker}
                     >
-                      {i18n.t('core:changeBackgroundColor')}
+                      &nbsp;
                     </Button>
                   </TransparentBackground>
+                  {/* </Tooltip> */}
                 </InputAdornment>
               ),
               endAdornment: (
                 <InputAdornment position="end">
-                  {currentEntry.color && (
-                    <>
-                      <ProTooltip tooltip={i18n.t('clearFolderColor')}>
-                        <IconButton
-                          disabled={!Pro}
-                          aria-label="clear"
-                          size="small"
-                          style={{ marginTop: 5 }}
-                          onClick={() => setConfirmResetColorDialogOpened(true)}
-                        >
-                          <ClearColorIcon />
-                        </IconButton>
-                      </ProTooltip>
-                      {isConfirmResetColorDialogOpened && (
-                        <ConfirmDialog
-                          open={isConfirmResetColorDialogOpened}
-                          onClose={() => {
-                            setConfirmResetColorDialogOpened(false);
-                          }}
-                          title={i18n.t('core:confirm')}
-                          content={i18n.t('core:confirmResetColor')}
-                          confirmCallback={result => {
-                            if (result) {
-                              handleChangeColor('transparent');
-                            } else {
-                              setConfirmResetColorDialogOpened(false);
-                            }
-                          }}
-                          cancelDialogTID="cancelConfirmResetColorDialog"
-                          confirmDialogTID="confirmConfirmResetColorDialog"
-                          confirmDialogContentTID="confirmResetColorDialogContent"
-                        />
-                      )}
-                    </>
-                  )}
+                  <Stack direction="row" spacing={1}>
+                    {defaultBackgrounds.map((background, cnt) => (
+                      <IconButton
+                        key={cnt}
+                        aria-label="fingerprint"
+                        onClick={() => handleChangeColor(background)}
+                        style={{
+                          backgroundImage: background
+                        }}
+                      >
+                        <SetBackgroundIcon />
+                      </IconButton>
+                    ))}
+                    {currentEntry.color && (
+                      <>
+                        <ProTooltip tooltip={i18n.t('clearFolderColor')}>
+                          <span>
+                            <IconButton
+                              disabled={!Pro}
+                              aria-label="clear"
+                              size="small"
+                              style={{ marginTop: 5 }}
+                              onClick={() =>
+                                setConfirmResetColorDialogOpened(true)
+                              }
+                            >
+                              <ClearBackgroundIcon />
+                            </IconButton>
+                          </span>
+                        </ProTooltip>
+                      </>
+                    )}
+                  </Stack>
                 </InputAdornment>
               )
             }}
           />
         </Grid>
-        <Grid item xs={6}>
-          <FormControl component="fieldset" fullWidth={true} variant="outlined">
-            <FormControlLabel
+        <Grid container item xs={12} spacing={1}>
+          <Grid item xs={6}>
+            <ThumbnailTextField
+              margin="dense"
               label={i18n.t('core:thumbnail')}
-              labelPlacement="top"
-              control={
-                <>
-                  {!isReadOnlyMode &&
-                    !currentEntry.editMode &&
-                    editName === undefined &&
-                    editDescription === undefined && (
+              fullWidth
+              InputProps={{
+                readOnly: true,
+                startAdornment: (
+                  <InputAdornment position="end">
+                    <Stack
+                      direction="row"
+                      spacing={1}
+                      style={{ alignItems: 'center' }}
+                    >
                       <ProTooltip tooltip={i18n.t('changeThumbnail')}>
-                        <IconButton
-                          disabled={!Pro}
-                          color="primary"
-                          className={classes.button}
-                          style={{ whiteSpace: 'nowrap' }}
+                        <div
+                          role="button"
+                          tabIndex={0}
+                          style={{
+                            backgroundSize: 'contain',
+                            backgroundRepeat: 'no-repeat',
+                            backgroundImage: thumbPathUrl,
+                            backgroundPosition: 'center',
+                            minHeight: 150,
+                            minWidth: 150,
+                            marginBottom: 5
+                          }}
                           onClick={toggleThumbFilesDialog}
-                        >
-                          <EditIcon />
-                        </IconButton>
+                        />
                       </ProTooltip>
-                    )}
-                  {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/control-has-associated-label */}
-                  <div
-                    // onClick={toggleThumbFilesDialog}
-                    role="button"
-                    title={i18n.t('core:changeThumbnail')}
-                    tabIndex={0}
-                    style={{
-                      backgroundSize: 'contain',
-                      backgroundRepeat: 'no-repeat',
-                      backgroundImage: thumbPathUrl,
-                      backgroundPosition: 'center',
-                      minHeight: thumbPath ? AppConfig.maxThumbSize : 20,
-                      maxHeight: AppConfig.maxThumbSize,
-                      minWidth: AppConfig.maxThumbSize,
-                      maxWidth: AppConfig.maxThumbSize,
-                      // display: 'block',
-                      marginBottom: 5
-                    }}
-                  />
-                </>
-              }
+                      {!isReadOnlyMode &&
+                        !currentEntry.editMode &&
+                        editName === undefined &&
+                        editDescription === undefined && (
+                          <ProTooltip tooltip={i18n.t('changeThumbnail')}>
+                            <IconButton
+                              disabled={!Pro}
+                              color="primary"
+                              className={classes.button}
+                              style={{ whiteSpace: 'nowrap' }}
+                              onClick={toggleThumbFilesDialog}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                          </ProTooltip>
+                        )}
+                    </Stack>
+                  </InputAdornment>
+                )
+              }}
             />
-          </FormControl>
-        </Grid>
-        <Grid item xs={6}>
-          <FormControl component="fieldset" fullWidth={true} variant="outlined">
-            <FormControlLabel
+          </Grid>
+          <Grid item xs={6}>
+            <ThumbnailTextField
+              margin="dense"
               label={i18n.t('core:backgroundImage')}
-              labelPlacement="top"
-              control={
-                <>
-                  {!isReadOnlyMode &&
-                    !currentEntry.editMode &&
-                    editName === undefined &&
-                    editDescription === undefined && (
+              fullWidth
+              InputProps={{
+                readOnly: true,
+                startAdornment: (
+                  <InputAdornment position="end">
+                    <Stack
+                      direction="row"
+                      spacing={1}
+                      style={{ alignItems: 'center' }}
+                    >
                       <ProTooltip tooltip={i18n.t('changeBackgroundImage')}>
-                        <IconButton
-                          disabled={!Pro}
-                          color="primary"
-                          className={classes.button}
-                          style={{ whiteSpace: 'nowrap' }}
+                        <div
+                          role="button"
+                          tabIndex={0}
+                          style={{
+                            backgroundSize: 'contain',
+                            backgroundRepeat: 'no-repeat',
+                            backgroundImage: bgndPathUrl,
+                            backgroundPosition: 'center',
+                            minHeight: 150,
+                            minWidth: 150,
+                            marginBottom: 5
+                          }}
                           onClick={toggleBgndImgDialog}
-                        >
-                          <EditIcon />
-                        </IconButton>
+                        />
                       </ProTooltip>
-                    )}
-                  <div
-                    style={{
-                      backgroundSize: 'contain',
-                      backgroundRepeat: 'no-repeat',
-                      backgroundImage: bgndPathUrl,
-                      backgroundPosition: 'center',
-                      minHeight: thumbPath ? AppConfig.maxThumbSize : 20,
-                      maxHeight: AppConfig.maxThumbSize,
-                      minWidth: AppConfig.maxThumbSize,
-                      maxWidth: AppConfig.maxThumbSize,
-                      marginBottom: 5
-                      // display: 'block',
-                    }}
-                  />
-                </>
-              }
+                      {!isReadOnlyMode &&
+                        !currentEntry.editMode &&
+                        editName === undefined &&
+                        editDescription === undefined && (
+                          <ProTooltip tooltip={i18n.t('changeBackgroundImage')}>
+                            <IconButton
+                              disabled={!Pro}
+                              color="primary"
+                              className={classes.button}
+                              style={{ whiteSpace: 'nowrap' }}
+                              onClick={toggleBgndImgDialog}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                          </ProTooltip>
+                        )}
+                    </Stack>
+                  </InputAdornment>
+                )
+              }}
             />
-          </FormControl>
+          </Grid>
         </Grid>
       </Grid>
+      {isConfirmResetColorDialogOpened && (
+        <ConfirmDialog
+          open={isConfirmResetColorDialogOpened}
+          onClose={() => {
+            setConfirmResetColorDialogOpened(false);
+          }}
+          title={i18n.t('core:confirm')}
+          content={i18n.t('core:confirmResetColor')}
+          confirmCallback={result => {
+            if (result) {
+              handleChangeColor('transparent');
+            } else {
+              setConfirmResetColorDialogOpened(false);
+            }
+          }}
+          cancelDialogTID="cancelConfirmResetColorDialog"
+          confirmDialogTID="confirmConfirmResetColorDialog"
+          confirmDialogContentTID="confirmResetColorDialogContent"
+        />
+      )}
       {isMoveCopyFilesDialogOpened && (
         <MoveCopyFilesDialog
           key={uuidv1()}
@@ -1232,15 +1279,15 @@ function EntryProperties(props: Props) {
   );
 }
 
-/*const ThumbnailTextField = withStyles((theme: Theme) =>
+const ThumbnailTextField = withStyles((theme: Theme) =>
   createStyles({
     root: {
       '& .MuiInputBase-root': {
-        height: AppConfig.maxThumbSize + 20
+        height: 200
       }
     }
   })
-)(TextField);*/
+)(TextField);
 
 export default withLeaflet(
   withStyles(styles, { withTheme: true })(EntryProperties)
