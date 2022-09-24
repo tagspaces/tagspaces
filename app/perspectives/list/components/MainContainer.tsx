@@ -196,6 +196,16 @@ function GridPerspective(props: Props) {
       ? settings.showDirectories
       : defaultSettings.showDirectories
   );
+  const showDetails = useRef<boolean>(
+    settings && typeof settings.showDetails !== 'undefined'
+      ? settings.showDetails
+      : defaultSettings.showDetails
+  );
+  const showDescription = useRef<boolean>(
+    settings && typeof settings.showDescription !== 'undefined'
+      ? settings.showDescription
+      : defaultSettings.showDescription
+  );
   const showTags = useRef<boolean>(
     settings && typeof settings.showTags !== 'undefined'
       ? settings.showTags
@@ -231,6 +241,14 @@ function GridPerspective(props: Props) {
       perspectiveSettings && perspectiveSettings.showDirectories !== undefined
         ? perspectiveSettings.showDirectories
         : defaultSettings.showDirectories;
+    showDescription.current =
+      perspectiveSettings && perspectiveSettings.showDescription !== undefined
+        ? perspectiveSettings.showDescription
+        : defaultSettings.showDescription;
+    showDetails.current =
+      perspectiveSettings && perspectiveSettings.showDetails !== undefined
+        ? perspectiveSettings.showDetails
+        : defaultSettings.showDetails;
     showTags.current =
       perspectiveSettings && perspectiveSettings.showTags !== undefined
         ? perspectiveSettings.showTags
@@ -267,6 +285,8 @@ function GridPerspective(props: Props) {
     if (isDefaultSetting.current !== undefined) {
       const perspectiveSettings = {
         showDirectories: showDirectories.current,
+        showDescription: showDescription.current,
+        showDetails: showDetails.current,
         showTags: showTags.current,
         layoutType: layoutType.current,
         orderBy: orderBy.current,
@@ -296,6 +316,8 @@ function GridPerspective(props: Props) {
   }, [
     isDefaultSetting.current,
     showDirectories.current,
+    showDescription.current,
+    showDetails.current,
     showTags.current,
     layoutType.current,
     orderBy.current,
@@ -466,6 +488,16 @@ function GridPerspective(props: Props) {
     closeOptionsMenu();
     showDirectories.current = !showDirectories.current;
     // forceUpdate();
+  };
+
+  const toggleShowDetails = () => {
+    closeOptionsMenu();
+    showDetails.current = !showDetails.current;
+  };
+
+  const toggleShowDescription = () => {
+    closeOptionsMenu();
+    showDescription.current = !showDescription.current;
   };
 
   const toggleShowTags = () => {
@@ -872,6 +904,8 @@ function GridPerspective(props: Props) {
           theme={theme}
           // gridRef={this.mainGrid}
           directories={sortedDirectories}
+          showDetails={showDetails.current}
+          showDescription={showDescription.current}
           showDirectories={showDirectories.current}
           showTags={showTags.current}
           thumbnailMode={thumbnailMode.current}
@@ -916,6 +950,10 @@ function GridPerspective(props: Props) {
           gridPageLimit={gridPageLimit.current}
           toggleShowDirectories={toggleShowDirectories}
           toggleShowTags={toggleShowTags}
+          toggleShowDetails={toggleShowDetails}
+          toggleShowDescription={toggleShowDescription}
+          showDetails={showDetails.current}
+          showDescription={showDescription.current}
           showDirectories={showDirectories.current}
           showTags={showTags.current}
           toggleThumbnailsMode={toggleThumbnailsMode}

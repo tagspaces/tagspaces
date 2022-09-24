@@ -168,6 +168,8 @@ export namespace TS {
   interface FolderSettings {
     showDirectories?: boolean;
     showTags?: boolean;
+    showDetails?: boolean;
+    showDescription?: boolean;
     layoutType?: string;
     orderBy?: boolean;
     sortBy?: string;
