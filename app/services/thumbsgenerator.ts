@@ -149,7 +149,12 @@ export function getThumbnailURLPromise(
               // Thumbnail exists
               if (origStats.lmdt > stats.lmdt) {
                 // Checking if is up to date
-                createThumbnailPromise(filePath, origStats.size, thumbFilePath, origStats.isFile)
+                createThumbnailPromise(
+                  filePath,
+                  origStats.size,
+                  thumbFilePath,
+                  origStats.isFile
+                )
                   .then(tmbPath => resolve({ filePath, tmbPath }))
                   .catch(err => {
                     console.warn('Thumb generation failed ' + err);
@@ -161,7 +166,12 @@ export function getThumbnailURLPromise(
               }
             } else {
               // Thumbnail does not exists
-              createThumbnailPromise(filePath, origStats.size, thumbFilePath, origStats.isFile)
+              createThumbnailPromise(
+                filePath,
+                origStats.size,
+                thumbFilePath,
+                origStats.isFile
+              )
                 .then(tmbPath => resolve({ filePath, tmbPath }))
                 .catch(err => {
                   console.warn('Thumb generation failed ' + err);

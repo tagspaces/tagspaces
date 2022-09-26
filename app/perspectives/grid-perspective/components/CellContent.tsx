@@ -179,7 +179,8 @@ function CellContent(props: Props) {
               src={
                 fsEntry.thumbPath +
                 (props.lastThumbnailImageChange
-                  ? urlGetDelim(fsEntry.thumbPath) + props.lastThumbnailImageChange
+                  ? urlGetDelim(fsEntry.thumbPath) +
+                    props.lastThumbnailImageChange
                   : '')
               }
               // @ts-ignore
@@ -387,7 +388,8 @@ function CellContent(props: Props) {
               src={
                 fsEntry.thumbPath +
                 (props.lastThumbnailImageChange
-                  ? urlGetDelim(fsEntry.thumbPath) + props.lastThumbnailImageChange
+                  ? urlGetDelim(fsEntry.thumbPath) +
+                    props.lastThumbnailImageChange
                   : '')
               }
               // @ts-ignore
