@@ -49,6 +49,7 @@ import PlatformIO from '-/services/platform-facade';
 import EntryIcon from '-/components/EntryIcon';
 import { TS } from '-/tagspaces.namespace';
 import TaggingActions from '-/reducers/tagging-actions';
+import { getLastThumbnailImageChange } from '-/reducers/app';
 // import { getTagColor } from '-/reducers/settings';
 
 const maxDescriptionPreviewLength = 100;
@@ -78,6 +79,7 @@ interface Props {
   handleGridCellClick: (event: Object, fsEntry: TS.FileSystemEntry) => void;
   editTagForEntry?: (path: string, tag: TS.Tag) => void;
   reorderTags: boolean;
+  lastThumbnailImageChange: number;
 }
 
 function CellContent(props: Props) {
@@ -150,6 +152,10 @@ function CellContent(props: Props) {
   tagTitles = tagTitles.substring(0, tagTitles.length - 2);
   const tagPlaceholder = <TagsPreview tags={entryTags} />;
 
+  function urlGetDelim(url) {
+    return url.indexOf('?') > 0 ? '&' : '?';
+  }
+
   function renderGridCell() {
     return (
       <div
@@ -170,7 +176,12 @@ function CellContent(props: Props) {
             <img
               alt="thumbnail"
               className={classes.gridCellThumb}
-              src={fsEntry.thumbPath}
+              src={
+                fsEntry.thumbPath +
+                (props.lastThumbnailImageChange
+                  ? urlGetDelim(fsEntry.thumbPath) + props.lastThumbnailImageChange
+                  : '')
+              }
               // @ts-ignore
               onError={i => (i.target.style.display = 'none')}
               loading="lazy"
@@ -373,7 +384,12 @@ function CellContent(props: Props) {
             <img
               alt="thumbnail"
               className={classes.gridCellThumb}
-              src={fsEntry.thumbPath}
+              src={
+                fsEntry.thumbPath +
+                (props.lastThumbnailImageChange
+                  ? urlGetDelim(fsEntry.thumbPath) + props.lastThumbnailImageChange
+                  : '')
+              }
               // @ts-ignore
               onError={i => (i.target.style.display = 'none')}
               loading="lazy"
@@ -472,7 +488,8 @@ function CellContent(props: Props) {
 
 function mapStateToProps(state) {
   return {
-    reorderTags: state.settings.reorderTags
+    reorderTags: state.settings.reorderTags,
+    lastThumbnailImageChange: getLastThumbnailImageChange(state)
   };
 }
 

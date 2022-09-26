@@ -71,7 +71,11 @@ import {
   replaceThumbnailURLPromise,
   getThumbnailURLPromise
 } from '-/services/thumbsgenerator';
-import { OpenedEntry } from '-/reducers/app';
+import {
+  getLastBackgroundImageChange,
+  getLastThumbnailImageChange,
+  OpenedEntry
+} from '-/reducers/app';
 import { savePerspective } from '-/utils/metaoperations';
 import MarkerIcon from '-/assets/icons/marker-icon.png';
 import Marker2xIcon from '-/assets/icons/marker-icon-2x.png';
@@ -82,7 +86,7 @@ import NoTileServer from '-/components/NoTileServer';
 import InfoIcon from '-/components/InfoIcon';
 import { ProTooltip } from '-/components/HelperComponents';
 import PerspectiveSelector from '-/components/PerspectiveSelector';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import { connect } from 'react-redux';
 
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
@@ -157,6 +161,8 @@ interface Props {
   tagDelimiter: string;
   sharingLink: string;
   tileServer: TS.MapTileServer;
+  lastBackgroundImageChange: number;
+  lastThumbnailImageChange: number;
 }
 
 const defaultBackgrounds = [
@@ -365,7 +371,10 @@ function EntryProperties(props: Props) {
         .then(objUrl => {
           props.updateThumbnailUrl(
             currentEntry.path,
-            objUrl.tmbPath + '?' + new Date().getTime()
+            objUrl.tmbPath +
+              (props.lastThumbnailImageChange
+                ? '?' + props.lastThumbnailImageChange
+                : '')
           );
           return true;
         })
@@ -506,11 +515,27 @@ function EntryProperties(props: Props) {
   let url;
   let bgndUrl;
   if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
-    url = PlatformIO.getURLforPath(thumbPath);
-    bgndUrl = PlatformIO.getURLforPath(bgndPath);
+    if (thumbPath !== undefined) {
+      url = PlatformIO.getURLforPath(thumbPath);
+    }
+    if (bgndPath !== undefined) {
+      bgndUrl = PlatformIO.getURLforPath(bgndPath);
+    }
   } else {
-    url = normalizeUrl(thumbPath) + '?' + new Date().getTime();
-    bgndUrl = normalizeUrl(bgndPath) + '?' + new Date().getTime();
+    if (thumbPath !== undefined) {
+      url =
+        normalizeUrl(thumbPath) +
+        (props.lastThumbnailImageChange
+          ? '?' + props.lastThumbnailImageChange
+          : '');
+    }
+    if (bgndPath !== undefined) {
+      bgndUrl =
+        normalizeUrl(bgndPath) +
+        (props.lastBackgroundImageChange
+          ? '?' + props.lastBackgroundImageChange
+          : '');
+    }
   }
   const thumbPathUrl = thumbPath ? 'url("' + url + '")' : '';
   const bgndPathUrl = bgndPath ? 'url("' + bgndUrl + '")' : '';
@@ -1249,7 +1274,8 @@ function EntryProperties(props: Props) {
         <ThumbnailChooserDialog
           open={isFileThumbChooseDialogOpened}
           onClose={toggleThumbFilesDialog}
-          selectedFile={thumbPath}
+          selectedFile={currentEntry.path}
+          thumbPath={thumbPath}
           setThumb={setThumb}
         />
       )}
@@ -1307,6 +1333,14 @@ const ThumbnailTextField = withStyles((theme: Theme) =>
   })
 )(TextField);
 
+function mapStateToProps(state) {
+  return {
+    lastBackgroundImageChange: getLastBackgroundImageChange(state),
+    lastThumbnailImageChange: getLastThumbnailImageChange(state)
+  };
+}
 export default withLeaflet(
-  withStyles(styles, { withTheme: true })(EntryProperties)
+  connect(mapStateToProps)(
+    withStyles(styles, { withTheme: true })(EntryProperties)
+  )
 );

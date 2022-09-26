@@ -38,7 +38,8 @@ import {
   getIsMetaLoaded,
   getSearchResultCount,
   getCurrentDirectoryTags,
-  isLoading
+  isLoading,
+  getLastBackgroundImageChange
 } from '-/reducers/app';
 import EntryIcon from '-/components/EntryIcon';
 import TagsPreview from '-/components/TagsPreview';
@@ -79,6 +80,7 @@ interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
   selectedEntries; // cache only
   // setMetaForCurrentDir: (metaFiles: Array<any>) => void;
+  lastBackgroundImageChange: number;
 }
 
 function GridPagination(props: Props) {
@@ -108,7 +110,7 @@ function GridPagination(props: Props) {
   const containerEl = useRef(null);
   // const entriesUpdated = useRef([]);
   const page = useRef<number>(currentPage);
-  const metaLoadedLock = useRef<boolean>(false);
+  const metaLoadedLock = useRef<boolean>(false); // TODO move this for all perspectives - not lock if you open folder with diff perspective now
   // const [page, setPage] = useState(currentPage);
 
   let pageFiles;
@@ -298,12 +300,20 @@ function GridPagination(props: Props) {
     PlatformIO.getDirSeparator()
   );
 
-  const folderBgndPath = encodeURI(
-    getBgndFileLocationForDirectory(
-      currentDirectoryPath,
-      PlatformIO.getDirSeparator()
-    )
+  let folderBgndPath = getBgndFileLocationForDirectory(
+    currentDirectoryPath,
+    PlatformIO.getDirSeparator()
   );
+  if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
+    folderBgndPath = PlatformIO.getURLforPath(folderBgndPath);
+  } else {
+    folderBgndPath = encodeURI(
+      folderBgndPath +
+        (props.lastBackgroundImageChange
+          ? '?' + props.lastBackgroundImageChange
+          : '')
+    );
+  }
   const dirColor = currentDirectoryColor || 'transparent';
 
   return (
@@ -326,7 +336,7 @@ function GridPagination(props: Props) {
           height: '100%',
           // @ts-ignore
           overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
-          backgroundImage: `url(${folderBgndPath}?${new Date().getTime()})`,
+          backgroundImage: 'url(' + folderBgndPath + ')',
           backgroundSize: 'cover',
           backgroundRepeat: 'no-repeat'
         }}
@@ -485,7 +495,8 @@ function mapStateToProps(state) {
     searchResultCount: getSearchResultCount(state),
     // pageEntries: getPageEntries(state),
     currentDirectoryTags: getCurrentDirectoryTags(state),
-    isMetaLoaded: getIsMetaLoaded(state)
+    isMetaLoaded: getIsMetaLoaded(state),
+    lastBackgroundImageChange: getLastBackgroundImageChange(state)
   };
 }
 
@@ -502,6 +513,7 @@ function mapActionCreatorsToProps(dispatch) {
 
 const areEqual = (prevProp: Props, nextProp: Props) =>
   nextProp.theme === prevProp.theme &&
+  nextProp.lastBackgroundImageChange === prevProp.lastBackgroundImageChange &&
   nextProp.currentDirectoryPath === prevProp.currentDirectoryPath &&
   nextProp.isMetaLoaded === prevProp.isMetaLoaded &&
   nextProp.showDirectories === prevProp.showDirectories &&

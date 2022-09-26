@@ -70,6 +70,8 @@ export const types = {
   DEVICE_OFFLINE: 'APP/DEVICE_OFFLINE',
   PROGRESS: 'APP/PROGRESS',
   RESET_PROGRESS: 'APP/RESET_PROGRESS',
+  LAST_BACKGROUND_IMAGE_CHANGE: 'APP/LAST_BACKGROUND_IMAGE_CHANGE',
+  LAST_THUMBNAIL_IMAGE_CHANGE: 'APP/LAST_THUMBNAIL_IMAGE_CHANGE',
   LOGIN_SUCCESS: 'APP/LOGIN_SUCCESS',
   LOGIN_FAILURE: 'APP/LOGIN_FAILURE',
   LOGOUT: 'APP/LOGOUT',
@@ -238,6 +240,18 @@ export const initialState = {
 // eslint-disable-next-line default-param-last
 export default (state: any = initialState, action: any) => {
   switch (action.type) {
+    case types.LAST_BACKGROUND_IMAGE_CHANGE: {
+      return {
+        ...state,
+        lastBackgroundImageChange: action.lastBackgroundImageChange
+      };
+    }
+    case types.LAST_THUMBNAIL_IMAGE_CHANGE: {
+      return {
+        ...state,
+        lastThumbnailImageChange: action.lastThumbnailImageChange
+      };
+    }
     case types.LOGIN_SUCCESS: {
       return { ...state, user: action.user };
     }
@@ -792,6 +806,14 @@ function disableBackGestureMac() {
 }
 
 export const actions = {
+  setLastBackgroundImageChange: lastBackgroundImageChange => ({
+    type: types.LAST_BACKGROUND_IMAGE_CHANGE,
+    lastBackgroundImageChange
+  }),
+  setLastThumbnailImageChange: lastThumbnailImageChange => ({
+    type: types.LAST_THUMBNAIL_IMAGE_CHANGE,
+    lastThumbnailImageChange
+  }),
   loggedIn: user => ({ type: types.LOGIN_SUCCESS, user }),
   initApp: () => (dispatch: (action) => void, getState: () => any) => {
     disableBackGestureMac();
@@ -2346,6 +2368,10 @@ export const actions = {
 };
 
 // Selectors
+export const getLastBackgroundImageChange = (state: any) =>
+  state.app.lastBackgroundImageChange;
+export const getLastThumbnailImageChange = (state: any) =>
+  state.app.lastThumbnailImageChange;
 export const currentUser = (state: any) => state.app.user;
 export const getIsMetaLoaded = (state: any) => state.app.isMetaLoaded;
 export const getDirectoryContent = (state: any) =>
