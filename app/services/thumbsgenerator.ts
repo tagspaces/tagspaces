@@ -149,7 +149,7 @@ export function getThumbnailURLPromise(
               // Thumbnail exists
               if (origStats.lmdt > stats.lmdt) {
                 // Checking if is up to date
-                createThumbnailPromise(filePath, origStats.size, thumbFilePath)
+                createThumbnailPromise(filePath, origStats.size, thumbFilePath, origStats.isFile)
                   .then(tmbPath => resolve({ filePath, tmbPath }))
                   .catch(err => {
                     console.warn('Thumb generation failed ' + err);
@@ -161,7 +161,7 @@ export function getThumbnailURLPromise(
               }
             } else {
               // Thumbnail does not exists
-              createThumbnailPromise(filePath, origStats.size, thumbFilePath)
+              createThumbnailPromise(filePath, origStats.size, thumbFilePath, origStats.isFile)
                 .then(tmbPath => resolve({ filePath, tmbPath }))
                 .catch(err => {
                   console.warn('Thumb generation failed ' + err);
@@ -190,7 +190,12 @@ export function replaceThumbnailURLPromise(
   return new Promise(resolve => {
     PlatformIO.getPropertiesPromise(filePath)
       .then(origStats => {
-        createThumbnailPromise(filePath, origStats.size, thumbFilePath)
+        createThumbnailPromise(
+          filePath,
+          origStats.size,
+          thumbFilePath,
+          origStats.isFile
+        )
           .then(tmbPath => resolve({ filePath, tmbPath }))
           .catch(err => {
             console.warn('Thumb generation failed ' + err);
@@ -208,17 +213,17 @@ export function replaceThumbnailURLPromise(
 export function createThumbnailPromise(
   filePath: string,
   fileSize: number,
-  thumbFilePath: string
+  thumbFilePath: string,
+  isFile: boolean
 ): Promise<any> {
   return new Promise(async resolve => {
     const metaDirectory = extractContainingDirectoryPath(
       thumbFilePath,
       PlatformIO.getDirSeparator()
     );
-    const fileDirectory = extractContainingDirectoryPath(
-      filePath,
-      PlatformIO.getDirSeparator()
-    );
+    const fileDirectory = isFile
+      ? extractContainingDirectoryPath(filePath, PlatformIO.getDirSeparator())
+      : filePath;
     const normalizedFileDirectory = normalizePath(fileDirectory);
     if (normalizedFileDirectory.endsWith(AppConfig.metaFolder)) {
       resolve(undefined); // prevent creating thumbs in meta/.ts folder
@@ -240,7 +245,7 @@ export function createThumbnailPromise(
             });
           return true;
         }
-        resolve(undefined);
+        resolve(thumbFilePath);
         return true;
       })
       .catch(err => {
