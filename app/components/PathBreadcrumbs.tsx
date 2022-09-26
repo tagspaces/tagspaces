@@ -181,9 +181,11 @@ function PathBreadcrumbs(props: Props) {
         {/* <LocationMenu /> */}
         {pathParts.length > 0 &&
           pathParts.map(pathPart => (
-            <Tooltip title={i18n.t('core:navigateTo') + ' ' + pathPart}>
+            <Tooltip
+              key={pathPart}
+              title={i18n.t('core:navigateTo') + ' ' + pathPart}
+            >
               <StyledBreadcrumb
-                key={pathPart}
                 component="a"
                 href="#"
                 label={extractShortDirectoryName(

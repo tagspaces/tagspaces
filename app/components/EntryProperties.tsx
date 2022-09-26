@@ -1139,10 +1139,26 @@ function EntryProperties(props: Props) {
                 startAdornment: (
                   <InputAdornment position="end">
                     <Stack
-                      direction="row"
+                      direction="column"
                       spacing={1}
                       style={{ alignItems: 'center' }}
                     >
+                      {!isReadOnlyMode &&
+                        !currentEntry.editMode &&
+                        editName === undefined &&
+                        editDescription === undefined && (
+                          <ProTooltip tooltip={i18n.t('changeThumbnail')}>
+                            <IconButton
+                              disabled={!Pro}
+                              color="primary"
+                              className={classes.button}
+                              style={{ whiteSpace: 'nowrap' }}
+                              onClick={toggleThumbFilesDialog}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                          </ProTooltip>
+                        )}
                       <ProTooltip tooltip={i18n.t('changeThumbnail')}>
                         <div
                           role="button"
@@ -1160,22 +1176,6 @@ function EntryProperties(props: Props) {
                           onClick={toggleThumbFilesDialog}
                         />
                       </ProTooltip>
-                      {!isReadOnlyMode &&
-                        !currentEntry.editMode &&
-                        editName === undefined &&
-                        editDescription === undefined && (
-                          <ProTooltip tooltip={i18n.t('changeThumbnail')}>
-                            <IconButton
-                              disabled={!Pro}
-                              color="primary"
-                              className={classes.button}
-                              style={{ whiteSpace: 'nowrap' }}
-                              onClick={toggleThumbFilesDialog}
-                            >
-                              <EditIcon />
-                            </IconButton>
-                          </ProTooltip>
-                        )}
                     </Stack>
                   </InputAdornment>
                 )
@@ -1193,27 +1193,10 @@ function EntryProperties(props: Props) {
                   startAdornment: (
                     <InputAdornment position="end">
                       <Stack
-                        direction="row"
+                        direction="column"
                         spacing={1}
                         style={{ alignItems: 'center' }}
                       >
-                        <ProTooltip tooltip={i18n.t('changeBackgroundImage')}>
-                          <div
-                            role="button"
-                            tabIndex={0}
-                            style={{
-                              backgroundSize: 'cover',
-                              backgroundRepeat: 'no-repeat',
-                              backgroundImage: bgndPathUrl,
-                              backgroundPosition: 'center',
-                              borderRadius: 8,
-                              minHeight: 150,
-                              minWidth: 150,
-                              marginBottom: 5
-                            }}
-                            onClick={toggleBgndImgDialog}
-                          />
-                        </ProTooltip>
                         {!isReadOnlyMode &&
                           !currentEntry.editMode &&
                           editName === undefined &&
@@ -1232,6 +1215,23 @@ function EntryProperties(props: Props) {
                               </IconButton>
                             </ProTooltip>
                           )}
+                        <ProTooltip tooltip={i18n.t('changeBackgroundImage')}>
+                          <div
+                            role="button"
+                            tabIndex={0}
+                            style={{
+                              backgroundSize: 'cover',
+                              backgroundRepeat: 'no-repeat',
+                              backgroundImage: bgndPathUrl,
+                              backgroundPosition: 'center',
+                              borderRadius: 8,
+                              minHeight: 150,
+                              minWidth: 150,
+                              marginBottom: 5
+                            }}
+                            onClick={toggleBgndImgDialog}
+                          />
+                        </ProTooltip>
                       </Stack>
                     </InputAdornment>
                   )
@@ -1327,7 +1327,7 @@ const ThumbnailTextField = withStyles((theme: Theme) =>
   createStyles({
     root: {
       '& .MuiInputBase-root': {
-        height: 200
+        height: 220
       }
     }
   })
