@@ -360,6 +360,8 @@
   "copyMoveSelectedEntries": "复制或移动所选的项目",
   "deleteSelectedEntries": "删除所选项目",
   "showHideDirectories": "显示文件夹",
+  "showHideDescription": "Show folder description",
+  "showHideDetails": "Show folder details",
   "showTags": "显示标签",
   "sort": "排序",
   "thirdPartyLibs": "第三方库",
@@ -676,6 +678,10 @@
   "folderWithCustomPerspectiveSetting": "當前資料夾的視圖有自定義設置",
   "cancelSubscription": "取消訂閱",
   "toggleBookmark": "切換書籤",
+  "chooseBackground": "Choose Background",
+  "backgroundImage": "Background Image",
+  "changeBackgroundImage": "Change Background Image",
   "noItems": "沒有發現任何項目",
+  "notAvailable": "Not available",
   "-": "-"
 }

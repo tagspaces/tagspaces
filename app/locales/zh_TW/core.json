@@ -360,6 +360,8 @@
   "copyMoveSelectedEntries": "複製或移動選擇的項目",
   "deleteSelectedEntries": "刪除選擇的項目",
   "showHideDirectories": "顯示資料夾",
+  "showHideDescription": "Show folder description",
+  "showHideDetails": "Show folder details",
   "showTags": "顯示標籤",
   "sort": "排序",
   "thirdPartyLibs": "第三方函式庫",
@@ -641,7 +643,7 @@
   "print": "列印",
   "advancedSearch": "高级搜索",
   "new": "新建",
-  "perspectiveInPro": "此視圖是 TagSapces Pro 的一部分。您想要了解更多資訊嗎?",
+  "perspectiveInPro": "此視圖是 TagSpaces Pro 的一部分。您想要了解更多資訊嗎?",
   "currentLocation": "當前位置",
   "navigateTo": "導航至",
   "searchScope": "搜尋範圍",
@@ -676,6 +678,10 @@
   "folderWithCustomPerspectiveSetting": "當前資料夾的視圖有自定義設置",
   "cancelSubscription": "取消訂閱",
   "toggleBookmark": "切換書籤",
+  "chooseBackground": "Choose Background",
+  "backgroundImage": "Background Image",
+  "changeBackgroundImage": "Change Background Image",
   "noItems": "沒有發現任何項目",
+  "notAvailable": "Not available",
   "-": "-"
 }

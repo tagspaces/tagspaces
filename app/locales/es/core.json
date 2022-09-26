@@ -360,6 +360,8 @@
   "copyMoveSelectedEntries": "Copiar o mover las entradas seleccionadas",
   "deleteSelectedEntries": "Eliminar las entradas seleccionadas",
   "showHideDirectories": "Mostrar carpetas",
+  "showHideDescription": "Show folder description",
+  "showHideDetails": "Show folder details",
   "showTags": "Mostrar etiquetas",
   "sort": "Ordenar",
   "thirdPartyLibs": "Librerías de terceros",
@@ -676,6 +678,10 @@
   "folderWithCustomPerspectiveSetting": "Current folder has custom settings for this perspective",
   "cancelSubscription": "Cancel Subscription",
   "toggleBookmark": "Toggle Bookmark",
+  "chooseBackground": "Choose Background",
+  "backgroundImage": "Background Image",
+  "changeBackgroundImage": "Change Background Image",
   "noItems": "No items found",
+  "notAvailable": "Not available",
   "-": "-"
 }
