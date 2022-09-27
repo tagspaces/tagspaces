@@ -231,9 +231,9 @@ function GridPerspective(props: Props) {
   const isDefaultSetting = useRef<boolean>(undefined);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
-  useEffect(() => {
+  /* useEffect(() => {
     makeFirstSelectedEntryVisible();
-  }, [props.selectedEntries]);
+  }, [props.selectedEntries]); */
 
   useEffect(() => {
     const perspectiveSettings = getSettings(props.directoryMeta);
