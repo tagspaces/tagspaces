@@ -581,12 +581,16 @@ function CreateEditLocationDialog(props: Props) {
                 />
               )}
               <FormControlLabel
+                disabled={
+                  !Pro ||
+                  type === locationType.TYPE_CLOUD ||
+                  AppConfig.isCordova
+                }
                 className={classes.formControl}
                 labelPlacement="start"
                 style={{ justifyContent: 'space-between' }}
                 control={
                   <Switch
-                    disabled={!Pro || type === locationType.TYPE_CLOUD}
                     data-tid="changeWatchForChanges"
                     name="watchForChanges"
                     checked={watchForChanges}

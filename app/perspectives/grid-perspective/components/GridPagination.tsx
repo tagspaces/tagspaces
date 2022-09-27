@@ -417,9 +417,13 @@ function GridPagination(props: Props) {
               >
                 {i18n.t('core:noFileFolderFound')}
               </Typography>
-              <Typography style={{ color: theme.palette.text.secondary }}>
-                {i18n.t('core:dragAndDropToImport')}
-              </Typography>
+              {
+                !AppConfig.isCordova(
+                  <Typography style={{ color: theme.palette.text.secondary }}>
+                    {i18n.t('core:dragAndDropToImport')}
+                  </Typography>
+                )
+              }
             </div>
           )}
           {!isAppLoading &&
@@ -433,9 +437,13 @@ function GridPagination(props: Props) {
                 >
                   {i18n.t('core:noFileButFoldersFound')}
                 </Typography>
-                <Typography style={{ color: theme.palette.text.secondary }}>
-                  {i18n.t('core:dragAndDropToImport')}
-                </Typography>
+                {
+                  !AppConfig.isCordova(
+                    <Typography style={{ color: theme.palette.text.secondary }}>
+                      {i18n.t('core:dragAndDropToImport')}
+                    </Typography>
+                  )
+                }
               </div>
             )}
         </div>
