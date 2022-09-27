@@ -591,7 +591,7 @@ export async function extractTags(selectorElement) {
   if (tags) {
     const tagsList = await tags.$$('button');
     for (let i = 0; i < tagsList.length; i++) {
-      arrTags.push(await tagsList[i].getAttribute('title'));
+      arrTags.push(await tagsList[i].getAttribute('aria-label'));
     }
   }
   return arrTags;
