@@ -710,7 +710,14 @@ function EntryProperties(props: Props) {
           <Grid item xs={12}>
             <Map
               tap={true}
-              style={{ height: '200px', width: '100%', margin: 3 }}
+              style={{
+                height: '200px',
+                width: '99%',
+                margin: 2,
+                marginTop: 8,
+                borderRadius: 5,
+                border: '1px solid rgba(0, 0, 0, 0.38)'
+              }}
               animate={false}
               doubleClickZoom={true}
               keyboard={false}
