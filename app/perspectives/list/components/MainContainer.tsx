@@ -232,7 +232,9 @@ function GridPerspective(props: Props) {
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
   useEffect(() => {
-    makeFirstSelectedEntryVisible();
+    if (props.selectedEntries.length === 1) {
+      makeFirstSelectedEntryVisible();
+    }
   }, [props.selectedEntries]);
 
   useEffect(() => {
