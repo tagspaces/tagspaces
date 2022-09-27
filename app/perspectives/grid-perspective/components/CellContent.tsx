@@ -178,7 +178,9 @@ function CellContent(props: Props) {
               className={classes.gridCellThumb}
               src={
                 fsEntry.thumbPath +
-                (props.lastThumbnailImageChange
+                (props.lastThumbnailImageChange &&
+                !PlatformIO.haveObjectStoreSupport() &&
+                !PlatformIO.haveWebDavSupport()
                   ? urlGetDelim(fsEntry.thumbPath) +
                     props.lastThumbnailImageChange
                   : '')
@@ -387,7 +389,9 @@ function CellContent(props: Props) {
               className={classes.gridCellThumb}
               src={
                 fsEntry.thumbPath +
-                (props.lastThumbnailImageChange
+                (props.lastThumbnailImageChange &&
+                !PlatformIO.haveObjectStoreSupport() &&
+                !PlatformIO.haveWebDavSupport()
                   ? urlGetDelim(fsEntry.thumbPath) +
                     props.lastThumbnailImageChange
                   : '')
