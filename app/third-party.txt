@@ -210,22 +210,22 @@ Apache License
 
 The following NPM packages may be included in this product:
 
- - @aws-amplify/analytics@5.2.20
- - @aws-amplify/api-graphql@2.3.17
- - @aws-amplify/api-rest@2.0.53
- - @aws-amplify/api@4.0.53
- - @aws-amplify/auth@4.6.6
- - @aws-amplify/cache@4.0.55
- - @aws-amplify/core@4.7.4
- - @aws-amplify/datastore@3.12.10
- - @aws-amplify/geo@1.3.16
- - @aws-amplify/interactions@4.1.1
- - @aws-amplify/predictions@4.0.53
- - @aws-amplify/pubsub@4.5.3
- - @aws-amplify/storage@4.5.6
+ - @aws-amplify/analytics@5.2.21
+ - @aws-amplify/api-graphql@2.3.18
+ - @aws-amplify/api-rest@2.0.54
+ - @aws-amplify/api@4.0.54
+ - @aws-amplify/auth@4.6.7
+ - @aws-amplify/cache@4.0.56
+ - @aws-amplify/core@4.7.5
+ - @aws-amplify/datastore@3.12.11
+ - @aws-amplify/geo@1.3.17
+ - @aws-amplify/interactions@4.1.2
+ - @aws-amplify/predictions@4.0.54
+ - @aws-amplify/pubsub@4.5.4
+ - @aws-amplify/storage@4.5.7
  - @aws-amplify/ui-react@1.2.26
  - @aws-amplify/ui@2.0.5
- - @aws-amplify/xr@3.0.53
+ - @aws-amplify/xr@3.0.54
 
 These packages each contain the following license and notice below:
 
@@ -646,6 +646,7 @@ Apache License
 The following NPM packages may be included in this product:
 
  - @aws-crypto/crc32@1.2.2
+ - @aws-crypto/crc32@2.0.0
  - @aws-crypto/util@1.2.2
  - @aws-crypto/util@2.0.2
 
@@ -1284,93 +1285,93 @@ Apache License
 
 The following NPM packages may be included in this product:
 
- - @aws-sdk/abort-controller@3.29.0
+ - @aws-sdk/abort-controller@3.171.0
  - @aws-sdk/abort-controller@3.47.2
  - @aws-sdk/abort-controller@3.6.1
  - @aws-sdk/chunked-blob-reader-native@3.6.1
  - @aws-sdk/chunked-blob-reader@3.6.1
- - @aws-sdk/config-resolver@3.30.0
+ - @aws-sdk/config-resolver@3.171.0
  - @aws-sdk/config-resolver@3.47.2
  - @aws-sdk/config-resolver@3.6.1
- - @aws-sdk/credential-provider-env@3.29.0
+ - @aws-sdk/credential-provider-env@3.171.0
  - @aws-sdk/credential-provider-env@3.47.2
  - @aws-sdk/credential-provider-env@3.6.1
- - @aws-sdk/credential-provider-imds@3.29.0
+ - @aws-sdk/credential-provider-imds@3.171.0
  - @aws-sdk/credential-provider-imds@3.47.2
  - @aws-sdk/credential-provider-imds@3.6.1
- - @aws-sdk/credential-provider-ini@3.31.0
+ - @aws-sdk/credential-provider-ini@3.171.0
  - @aws-sdk/credential-provider-ini@3.48.0
  - @aws-sdk/credential-provider-ini@3.6.1
- - @aws-sdk/credential-provider-node@3.31.0
+ - @aws-sdk/credential-provider-node@3.171.0
  - @aws-sdk/credential-provider-node@3.48.0
  - @aws-sdk/credential-provider-node@3.6.1
- - @aws-sdk/fetch-http-handler@3.29.0
+ - @aws-sdk/fetch-http-handler@3.171.0
  - @aws-sdk/fetch-http-handler@3.47.2
  - @aws-sdk/fetch-http-handler@3.6.1
  - @aws-sdk/hash-blob-browser@3.6.1
- - @aws-sdk/hash-node@3.29.0
+ - @aws-sdk/hash-node@3.171.0
  - @aws-sdk/hash-node@3.47.2
  - @aws-sdk/hash-node@3.6.1
  - @aws-sdk/hash-stream-node@3.6.1
- - @aws-sdk/is-array-buffer@3.29.0
+ - @aws-sdk/is-array-buffer@3.170.0
  - @aws-sdk/is-array-buffer@3.47.1
  - @aws-sdk/is-array-buffer@3.6.1
  - @aws-sdk/md5-js@3.6.1
- - @aws-sdk/middleware-content-length@3.29.0
+ - @aws-sdk/middleware-content-length@3.171.0
  - @aws-sdk/middleware-content-length@3.47.2
  - @aws-sdk/middleware-content-length@3.6.1
- - @aws-sdk/middleware-signing@3.30.0
+ - @aws-sdk/middleware-signing@3.171.0
  - @aws-sdk/middleware-signing@3.47.2
  - @aws-sdk/middleware-signing@3.6.1
- - @aws-sdk/middleware-stack@3.29.0
+ - @aws-sdk/middleware-stack@3.171.0
  - @aws-sdk/middleware-stack@3.47.2
  - @aws-sdk/middleware-stack@3.6.1
- - @aws-sdk/node-http-handler@3.29.0
+ - @aws-sdk/node-http-handler@3.171.0
  - @aws-sdk/node-http-handler@3.47.2
  - @aws-sdk/node-http-handler@3.6.1
- - @aws-sdk/property-provider@3.29.0
+ - @aws-sdk/property-provider@3.171.0
  - @aws-sdk/property-provider@3.47.2
  - @aws-sdk/property-provider@3.6.1
- - @aws-sdk/shared-ini-file-loader@3.29.0
+ - @aws-sdk/shared-ini-file-loader@3.171.0
  - @aws-sdk/shared-ini-file-loader@3.47.1
  - @aws-sdk/shared-ini-file-loader@3.6.1
- - @aws-sdk/signature-v4@3.30.0
+ - @aws-sdk/signature-v4@3.171.0
  - @aws-sdk/signature-v4@3.47.2
  - @aws-sdk/signature-v4@3.6.1
  - @aws-sdk/types@1.0.0-rc.10
  - @aws-sdk/types@3.171.0
- - @aws-sdk/types@3.29.0
+ - @aws-sdk/types@3.178.0
  - @aws-sdk/types@3.47.1
  - @aws-sdk/types@3.6.1
  - @aws-sdk/util-arn-parser@3.6.1
- - @aws-sdk/util-base64-browser@3.29.0
+ - @aws-sdk/util-base64-browser@3.170.0
  - @aws-sdk/util-base64-browser@3.47.1
  - @aws-sdk/util-base64-browser@3.6.1
- - @aws-sdk/util-base64-node@3.29.0
+ - @aws-sdk/util-base64-node@3.170.0
  - @aws-sdk/util-base64-node@3.47.2
  - @aws-sdk/util-base64-node@3.6.1
- - @aws-sdk/util-body-length-browser@3.29.0
+ - @aws-sdk/util-body-length-browser@3.170.0
  - @aws-sdk/util-body-length-browser@3.47.1
  - @aws-sdk/util-body-length-browser@3.6.1
- - @aws-sdk/util-body-length-node@3.29.0
+ - @aws-sdk/util-body-length-node@3.170.0
  - @aws-sdk/util-body-length-node@3.47.1
  - @aws-sdk/util-body-length-node@3.6.1
- - @aws-sdk/util-buffer-from@3.29.0
+ - @aws-sdk/util-buffer-from@3.170.0
  - @aws-sdk/util-buffer-from@3.47.2
  - @aws-sdk/util-buffer-from@3.6.1
  - @aws-sdk/util-format-url@3.6.1
- - @aws-sdk/util-hex-encoding@3.29.0
+ - @aws-sdk/util-hex-encoding@3.170.0
  - @aws-sdk/util-hex-encoding@3.47.1
  - @aws-sdk/util-hex-encoding@3.6.1
  - @aws-sdk/util-locate-window@3.170.0
- - @aws-sdk/util-uri-escape@3.29.0
+ - @aws-sdk/util-uri-escape@3.170.0
  - @aws-sdk/util-uri-escape@3.47.1
  - @aws-sdk/util-uri-escape@3.6.1
  - @aws-sdk/util-utf8-browser@1.0.0-rc.8
- - @aws-sdk/util-utf8-browser@3.29.0
+ - @aws-sdk/util-utf8-browser@3.170.0
  - @aws-sdk/util-utf8-browser@3.47.1
  - @aws-sdk/util-utf8-browser@3.6.1
- - @aws-sdk/util-utf8-node@3.29.0
+ - @aws-sdk/util-utf8-node@3.170.0
  - @aws-sdk/util-utf8-node@3.47.2
  - @aws-sdk/util-utf8-node@3.6.1
  - @aws-sdk/util-waiter@3.6.1
@@ -1595,46 +1596,48 @@ The following NPM packages may be included in this product:
  - @aws-sdk/client-polly@3.6.1
  - @aws-sdk/client-rekognition@3.6.1
  - @aws-sdk/client-s3@3.6.1
- - @aws-sdk/client-sso@3.31.0
+ - @aws-sdk/client-sso@3.171.0
  - @aws-sdk/client-sso@3.48.0
- - @aws-sdk/client-sts@3.31.0
+ - @aws-sdk/client-sts@3.171.0
  - @aws-sdk/client-sts@3.48.0
  - @aws-sdk/client-textract@3.6.1
  - @aws-sdk/client-translate@3.6.1
  - @aws-sdk/credential-provider-cognito-identity@3.6.1
- - @aws-sdk/eventstream-marshaller@3.29.0
+ - @aws-sdk/eventstream-codec@3.171.0
  - @aws-sdk/eventstream-marshaller@3.6.1
  - @aws-sdk/middleware-apply-body-checksum@3.6.1
  - @aws-sdk/middleware-bucket-endpoint@3.6.1
- - @aws-sdk/middleware-eventstream@3.29.0
+ - @aws-sdk/middleware-eventstream@3.171.0
  - @aws-sdk/middleware-expect-continue@3.6.1
  - @aws-sdk/middleware-header-default@3.6.1
  - @aws-sdk/middleware-location-constraint@3.6.1
- - @aws-sdk/middleware-retry@3.29.0
+ - @aws-sdk/middleware-retry@3.171.0
  - @aws-sdk/middleware-retry@3.47.2
  - @aws-sdk/middleware-retry@3.6.1
- - @aws-sdk/middleware-sdk-sts@3.30.0
+ - @aws-sdk/middleware-sdk-sts@3.171.0
  - @aws-sdk/middleware-sdk-sts@3.47.2
  - @aws-sdk/middleware-ssec@3.6.1
- - @aws-sdk/querystring-builder@3.29.0
+ - @aws-sdk/querystring-builder@3.171.0
  - @aws-sdk/querystring-builder@3.47.2
  - @aws-sdk/querystring-builder@3.6.1
- - @aws-sdk/querystring-parser@3.29.0
+ - @aws-sdk/querystring-parser@3.171.0
  - @aws-sdk/querystring-parser@3.47.2
  - @aws-sdk/querystring-parser@3.6.1
- - @aws-sdk/service-error-classification@3.29.0
+ - @aws-sdk/service-error-classification@3.171.0
  - @aws-sdk/service-error-classification@3.47.2
  - @aws-sdk/service-error-classification@3.6.1
  - @aws-sdk/url-parser-native@3.6.1
- - @aws-sdk/url-parser@3.29.0
+ - @aws-sdk/url-parser@3.171.0
  - @aws-sdk/url-parser@3.47.2
  - @aws-sdk/url-parser@3.6.1
+ - @aws-sdk/util-defaults-mode-browser@3.171.0
  - @aws-sdk/util-defaults-mode-browser@3.47.2
+ - @aws-sdk/util-defaults-mode-node@3.171.0
  - @aws-sdk/util-defaults-mode-node@3.47.2
- - @aws-sdk/util-user-agent-browser@3.29.0
+ - @aws-sdk/util-user-agent-browser@3.171.0
  - @aws-sdk/util-user-agent-browser@3.47.2
  - @aws-sdk/util-user-agent-browser@3.6.1
- - @aws-sdk/util-user-agent-node@3.29.0
+ - @aws-sdk/util-user-agent-node@3.171.0
  - @aws-sdk/util-user-agent-node@3.47.2
  - @aws-sdk/util-user-agent-node@3.6.1
 
@@ -1846,7 +1849,7 @@ Apache License
 
 The following NPM packages may be included in this product:
 
- - @aws-sdk/client-lex-runtime-v2@3.31.0
+ - @aws-sdk/client-lex-runtime-v2@3.171.0
  - @aws-sdk/client-location@3.48.0
 
 These packages each contain the following license and notice below:
@@ -2057,12 +2060,12 @@ Apache License
 
 The following NPM packages may be included in this product:
 
- - @aws-sdk/credential-provider-process@3.29.0
+ - @aws-sdk/credential-provider-process@3.171.0
  - @aws-sdk/credential-provider-process@3.47.2
  - @aws-sdk/credential-provider-process@3.6.1
- - @aws-sdk/credential-provider-sso@3.31.0
+ - @aws-sdk/credential-provider-sso@3.171.0
  - @aws-sdk/credential-provider-sso@3.48.0
- - @aws-sdk/credential-provider-web-identity@3.29.0
+ - @aws-sdk/credential-provider-web-identity@3.171.0
  - @aws-sdk/credential-provider-web-identity@3.47.2
 
 These packages each contain the following license and notice below:
@@ -2273,33 +2276,34 @@ Apache License
 
 The following NPM packages may be included in this product:
 
- - @aws-sdk/eventstream-handler-node@3.29.0
- - @aws-sdk/eventstream-serde-browser@3.29.0
+ - @aws-sdk/eventstream-handler-node@3.171.0
+ - @aws-sdk/eventstream-serde-browser@3.171.0
  - @aws-sdk/eventstream-serde-browser@3.6.1
- - @aws-sdk/eventstream-serde-config-resolver@3.29.0
+ - @aws-sdk/eventstream-serde-config-resolver@3.171.0
  - @aws-sdk/eventstream-serde-config-resolver@3.6.1
- - @aws-sdk/eventstream-serde-node@3.29.0
+ - @aws-sdk/eventstream-serde-node@3.171.0
  - @aws-sdk/eventstream-serde-node@3.6.1
- - @aws-sdk/eventstream-serde-universal@3.29.0
+ - @aws-sdk/eventstream-serde-universal@3.171.0
  - @aws-sdk/eventstream-serde-universal@3.6.1
- - @aws-sdk/invalid-dependency@3.29.0
+ - @aws-sdk/invalid-dependency@3.171.0
  - @aws-sdk/invalid-dependency@3.47.2
  - @aws-sdk/invalid-dependency@3.6.1
- - @aws-sdk/middleware-host-header@3.29.0
+ - @aws-sdk/middleware-host-header@3.171.0
  - @aws-sdk/middleware-host-header@3.47.2
  - @aws-sdk/middleware-host-header@3.6.1
+ - @aws-sdk/middleware-recursion-detection@3.171.0
  - @aws-sdk/middleware-sdk-s3@3.6.1
- - @aws-sdk/middleware-serde@3.29.0
+ - @aws-sdk/middleware-serde@3.171.0
  - @aws-sdk/middleware-serde@3.47.2
  - @aws-sdk/middleware-serde@3.6.1
- - @aws-sdk/middleware-user-agent@3.29.0
+ - @aws-sdk/middleware-user-agent@3.171.0
  - @aws-sdk/middleware-user-agent@3.47.2
  - @aws-sdk/middleware-user-agent@3.6.1
- - @aws-sdk/protocol-http@3.29.0
+ - @aws-sdk/protocol-http@3.171.0
  - @aws-sdk/protocol-http@3.47.2
  - @aws-sdk/protocol-http@3.6.1
  - @aws-sdk/s3-request-presigner@3.6.1
- - @aws-sdk/smithy-client@3.31.0
+ - @aws-sdk/smithy-client@3.171.0
  - @aws-sdk/smithy-client@3.47.2
  - @aws-sdk/smithy-client@3.6.1
  - @aws-sdk/util-create-request@3.6.1
@@ -2512,12 +2516,13 @@ Apache License
 
 The following NPM packages may be included in this product:
 
- - @aws-sdk/middleware-logger@3.29.0
+ - @aws-sdk/middleware-logger@3.171.0
  - @aws-sdk/middleware-logger@3.47.2
  - @aws-sdk/middleware-logger@3.6.1
- - @aws-sdk/node-config-provider@3.29.0
+ - @aws-sdk/node-config-provider@3.171.0
  - @aws-sdk/node-config-provider@3.47.2
  - @aws-sdk/node-config-provider@3.6.1
+ - @aws-sdk/util-config-provider@3.170.0
  - @aws-sdk/util-config-provider@3.47.1
 
 These packages each contain the following license and notice below:
@@ -2728,8 +2733,8 @@ Apache License
 
 The following NPM packages may be included in this product:
 
- - @aws-sdk/util-credentials@3.29.0
  - @aws-sdk/util-credentials@3.47.2
+ - @aws-sdk/util-middleware@3.171.0
 
 These packages each contain the following license and notice below:
 
@@ -2940,12 +2945,12 @@ Apache License
 The following NPM packages may be included in this product:
 
  - @babel/code-frame@7.18.6
- - @babel/compat-data@7.19.1
- - @babel/core@7.19.1
- - @babel/generator@7.19.0
+ - @babel/compat-data@7.19.3
+ - @babel/core@7.19.3
+ - @babel/generator@7.19.3
  - @babel/helper-annotate-as-pure@7.18.6
  - @babel/helper-builder-binary-assignment-operator-visitor@7.18.9
- - @babel/helper-compilation-targets@7.19.1
+ - @babel/helper-compilation-targets@7.19.3
  - @babel/helper-create-class-features-plugin@7.19.0
  - @babel/helper-create-regexp-features-plugin@7.19.0
  - @babel/helper-environment-visitor@7.18.9
@@ -3041,17 +3046,17 @@ The following NPM packages may be included in this product:
  - @babel/plugin-transform-sticky-regex@7.18.6
  - @babel/plugin-transform-template-literals@7.18.9
  - @babel/plugin-transform-typeof-symbol@7.18.9
- - @babel/plugin-transform-typescript@7.19.1
+ - @babel/plugin-transform-typescript@7.19.3
  - @babel/plugin-transform-unicode-escapes@7.18.10
  - @babel/plugin-transform-unicode-regex@7.18.6
- - @babel/preset-env@7.19.1
+ - @babel/preset-env@7.19.3
  - @babel/preset-flow@7.18.6
  - @babel/preset-typescript@7.18.6
  - @babel/register@7.18.9
  - @babel/runtime@7.19.0
  - @babel/template@7.18.10
- - @babel/traverse@7.19.1
- - @babel/types@7.19.0
+ - @babel/traverse@7.19.3
+ - @babel/types@7.19.3
 
 These packages each contain the following license and notice below:
 
@@ -3116,7 +3121,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - @babel/parser@7.19.1
+ - @babel/parser@7.19.3
 
 This package contains the following license and notice below:
 
@@ -5995,15 +6000,15 @@ SOFTWARE.
 
 The following NPM packages may be included in this product:
 
- - @mui/base@5.0.0-alpha.98
- - @mui/core-downloads-tracker@5.10.6
+ - @mui/base@5.0.0-alpha.99
+ - @mui/core-downloads-tracker@5.10.7
  - @mui/icons-material@5.10.6
- - @mui/lab@5.0.0-alpha.100
- - @mui/material@5.10.6
+ - @mui/lab@5.0.0-alpha.101
+ - @mui/material@5.10.7
  - @mui/private-theming@5.10.6
- - @mui/styled-engine@5.10.6
- - @mui/styles@5.10.6
- - @mui/system@5.10.6
+ - @mui/styled-engine@5.10.7
+ - @mui/styles@5.10.7
+ - @mui/system@5.10.7
  - @mui/types@7.2.0
  - @mui/utils@5.10.6
 
@@ -6160,15 +6165,15 @@ The following NPM packages may be included in this product:
  - @react-native-community/cli-clean@9.1.0
  - @react-native-community/cli-config@9.1.0
  - @react-native-community/cli-debugger-ui@9.0.0
- - @react-native-community/cli-doctor@9.1.1
+ - @react-native-community/cli-doctor@9.1.2
  - @react-native-community/cli-hermes@9.1.0
  - @react-native-community/cli-platform-android@9.1.0
- - @react-native-community/cli-platform-ios@9.1.0
+ - @react-native-community/cli-platform-ios@9.1.2
  - @react-native-community/cli-plugin-metro@9.1.1
  - @react-native-community/cli-server-api@9.1.0
  - @react-native-community/cli-tools@9.1.0
  - @react-native-community/cli-types@9.1.0
- - @react-native-community/cli@9.1.1
+ - @react-native-community/cli@9.1.2
 
 These packages each contain the following license and notice below:
 
@@ -6279,7 +6284,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 The following NPM package may be included in this product:
 
- - @tagspaces/tagspaces-platforms@2.0.19
+ - @tagspaces/tagspaces-platforms@2.0.22
 
 This package contains the following license and notice below:
 
@@ -6362,7 +6367,7 @@ The following NPM packages may be included in this product:
 
  - @types/istanbul-lib-coverage@2.0.4
  - @types/istanbul-reports@3.0.1
- - @types/node@18.7.18
+ - @types/node@18.7.23
  - @types/prop-types@15.7.5
  - @types/react-dom@17.0.17
  - @types/react-is@17.0.3
@@ -7591,7 +7596,7 @@ SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - aws-amplify@4.3.35
+ - aws-amplify@4.3.36
 
 This package contains the following license and notice below:
 
@@ -7801,7 +7806,7 @@ Apache License
 
 The following NPM package may be included in this product:
 
- - aws-sdk@2.1218.0
+ - aws-sdk@2.1225.0
 
 This package contains the following license and notice below:
 
@@ -9043,7 +9048,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 The following NPM package may be included in this product:
 
- - caniuse-lite@1.0.30001406
+ - caniuse-lite@1.0.30001412
 
 This package contains the following license and notice below:
 
@@ -10139,7 +10144,7 @@ THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - core-js-compat@3.25.2
+ - core-js-compat@3.25.3
 
 This package contains the following license and notice below:
 
@@ -11532,7 +11537,7 @@ OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - electron-to-chromium@1.4.254
+ - electron-to-chromium@1.4.265
 
 This package contains the following license and notice below:
 
@@ -11803,7 +11808,7 @@ SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - es-abstract@1.20.2
+ - es-abstract@1.20.3
 
 This package contains the following license and notice below:
 
@@ -11835,7 +11840,7 @@ The following NPM packages may be included in this product:
 
  - es-to-primitive@1.2.1
  - is-boolean-object@1.1.2
- - is-callable@1.2.6
+ - is-callable@1.2.7
  - is-date-object@1.0.5
  - is-number-object@1.0.7
  - is-string@1.0.7
@@ -12270,7 +12275,7 @@ SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - fb-watchman@2.0.1
+ - fb-watchman@2.0.2
 
 This package contains the following license and notice below:
 
@@ -13687,7 +13692,7 @@ SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - i18next-http-backend@1.4.1
+ - i18next-http-backend@1.4.4
 
 This package contains the following license and notice below:
 
@@ -14506,12 +14511,13 @@ limitations under the License.
 
 The following NPM package may be included in this product:
 
- - joi@17.6.0
+ - joi@17.6.1
 
 This package contains the following license and notice below:
 
-Copyright (c) 2012-2020, Sideway. Inc, and project contributors.<br>
-Copyright (c) 2012-2014, Walmart.<br>
+Copyright (c) 2012-2022, Project contributors.
+Copyright (c) 2012-2022, Sideway. Inc.
+Copyright (c) 2012-2014, Walmart.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -15615,7 +15621,7 @@ THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - leaflet@1.8.0
+ - leaflet@1.9.1
 
 This package contains the following license and notice below:
 
@@ -16282,7 +16288,7 @@ Apache License
 The following NPM packages may be included in this product:
 
  - memoize-one@5.2.1
- - tiny-invariant@1.2.0
+ - tiny-invariant@1.3.0
  - tiny-warning@1.0.3
  - use-memo-one@1.1.3
 
@@ -18392,6 +18398,47 @@ limitations under the License.
 
 -----------
 
+The following NPM package may be included in this product:
+
+ - react-best-gradient-color-picker@2.0.17
+
+This package contains the following license and notice below:
+
+MIT License
+
+Copyright (c) 2022 Harry Fox
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+-----------
+
+The following NPM package may be included in this product:
+
+ - react-color-eye-dropper@1.0.1
+
+This package contains the following license and notice below:
+
+# react-color-eye-dropper
+Determines the color of a chosen pixel
+
+-----------
+
 The following NPM packages may be included in this product:
 
  - react-color@2.19.3
@@ -18866,8 +18913,8 @@ yarn add react-native-gradle-plugin
 
 The following NPM packages may be included in this product:
 
- - react-redux@7.2.8
- - react-redux@8.0.2
+ - react-redux@7.2.9
+ - react-redux@8.0.4
  - redux-thunk@2.4.1
 
 These packages each contain the following license and notice below:
@@ -19649,6 +19696,66 @@ HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
+
+-----------
+
+The following NPM package may be included in this product:
+
+ - robofox-react-portal@1.0.3
+
+This package contains the following license and notice below:
+
+MIT License
+
+Copyright (c) 2022 robo-fox
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+-----------
+
+The following NPM package may be included in this product:
+
+ - safe-regex-test@1.0.0
+
+This package contains the following license and notice below:
+
+MIT License
+
+Copyright (c) 2022 Jordan Harband
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 -----------
 
