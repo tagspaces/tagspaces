@@ -41,7 +41,7 @@ interface Props {
 function TooltipTS(props: Props) {
   const { title, placement } = props;
   return (
-    <Tooltip arrow title={title} placement="top" {...props}>
+    <Tooltip arrow title={title} disableInteractive placement="top" {...props}>
       {props.children}
     </Tooltip>
   );

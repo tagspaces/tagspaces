@@ -17,9 +17,8 @@
  */
 
 import React from 'react';
-import IconButton from '@mui/material/IconButton';
 import HelpIcon from '@mui/icons-material/InfoOutlined';
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from '-/components/Tooltip';
 
 interface Props {
   tooltip?: string;
@@ -28,10 +27,8 @@ interface Props {
 function InfoIcon(props: Props) {
   const { tooltip } = props;
   return (
-    <Tooltip arrow title={tooltip}>
-      {/* <IconButton edge="end" aria-label="delete" size="large"> */}
+    <Tooltip title={tooltip}>
       <HelpIcon />
-      {/* </IconButton> */}
     </Tooltip>
   );
 }

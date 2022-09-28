@@ -754,7 +754,7 @@ function MainPage(props: Props) {
         <style>
           {`
               .default-splitter {
-                --default-splitter-line-margin: 4px !important;
+                --default-splitter-line-margin: 2px !important;
                 --default-splitter-line-size: 1px !important;
                 --default-splitter-line-color: ${theme.palette.divider} !important;
               }
