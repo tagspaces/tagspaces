@@ -249,7 +249,7 @@ describe('TST08 - File folder properties', () => {
     // await searchEngine('note');
     // await waitForNotification();
     // await global.client.waitForTimeout(1500); // To do wait for search results
-    await expectElementExist(selectorFile, true);
+    await expectElementExist(selectorFile, true, 5000);
 
     // open fileProperties
     await clickOn(selectorFile);
