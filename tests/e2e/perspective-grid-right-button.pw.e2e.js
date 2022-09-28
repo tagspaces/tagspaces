@@ -478,7 +478,7 @@ describe('TST50** - Right button on a file', () => {
 
     await createTxtFile();
     // await searchEngine('note');
-    await expectElementExist(selectorFile, true);
+    await expectElementExist(selectorFile, true, 5000);
 
     // cleanup
     // await deleteFirstFile();
