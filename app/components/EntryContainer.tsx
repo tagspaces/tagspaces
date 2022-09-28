@@ -728,64 +728,6 @@ function EntryContainer(props: Props) {
             <DetailsIcon color={isPropPanelVisible ? 'primary' : 'action'} />
           </IconButton>
         </Tooltip>
-        <Tooltip title={i18n.t('core:switchToFullscreen')}>
-          <IconButton
-            aria-label={i18n.t('core:switchToFullscreen')}
-            data-tid="fileContainerSwitchToFullScreen"
-            onClick={toggleFullScreen}
-            size="large"
-          >
-            <FullScreenIcon />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title={i18n.t('core:navigateToParentDirectory')}>
-          <IconButton
-            aria-label={i18n.t('core:navigateToParentDirectory')}
-            onClick={navigateToFolder}
-            style={{ transform: 'rotate(-90deg)' }}
-            size="large"
-          >
-            <OpenNewWindowIcon />
-          </IconButton>
-        </Tooltip>
-        {!AppConfig.isCordova && (
-          <Tooltip title={i18n.t('core:openInWindow')}>
-            <IconButton
-              aria-label={i18n.t('core:openInWindow')}
-              onClick={openInNewWindow}
-              size="large"
-            >
-              <OpenNewWindowIcon />
-            </IconButton>
-          </Tooltip>
-        )}
-        {AppConfig.isCordova && (
-          <Tooltip title={i18n.t('core:shareFile')}>
-            <IconButton
-              aria-label={i18n.t('core:shareFile')}
-              data-tid="shareFile"
-              onClick={() => shareFile(`file:///${openedFile.path}`)}
-              size="large"
-            >
-              <ShareIcon />
-            </IconButton>
-          </Tooltip>
-        )}
-        {!(
-          PlatformIO.haveObjectStoreSupport() ||
-          PlatformIO.haveWebDavSupport() ||
-          AppConfig.isWeb
-        ) && (
-          <Tooltip title={i18n.t('core:openFileExternally')}>
-            <IconButton
-              aria-label={i18n.t('core:openFileExternally')}
-              onClick={openNatively}
-              size="large"
-            >
-              <OpenNativelyIcon />
-            </IconButton>
-          </Tooltip>
-        )}
         <Tooltip title={i18n.t('core:downloadFile')}>
           <IconButton
             aria-label={i18n.t('core:downloadFile')}
@@ -846,26 +788,14 @@ function EntryContainer(props: Props) {
             <FileDownloadIcon />
           </IconButton>
         </Tooltip>
-        {!props.isReadOnlyMode && (
-          <Tooltip title={i18n.t('core:deleteEntry')}>
-            <IconButton
-              data-tid="deleteEntryTID"
-              aria-label={i18n.t('core:deleteEntry')}
-              onClick={() => setDeleteEntryModalOpened(true)}
-              size="large"
-            >
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
-        )}
-        <Tooltip title={i18n.t('core:reloadFile')}>
+        <Tooltip title={i18n.t('core:switchToFullscreen')}>
           <IconButton
-            data-tid="reloadFileTID"
-            aria-label={i18n.t('core:reloadFile')}
-            onClick={reloadDocument}
+            aria-label={i18n.t('core:switchToFullscreen')}
+            data-tid="fileContainerSwitchToFullScreen"
+            onClick={toggleFullScreen}
             size="large"
           >
-            <RefreshIcon />
+            <FullScreenIcon />
           </IconButton>
         </Tooltip>
         {props.isDesktopMode && (
@@ -880,6 +810,76 @@ function EntryContainer(props: Props) {
               size="large"
             >
               <ExpandIcon />
+            </IconButton>
+          </Tooltip>
+        )}
+        <Tooltip title={i18n.t('core:navigateToParentDirectory')}>
+          <IconButton
+            aria-label={i18n.t('core:navigateToParentDirectory')}
+            onClick={navigateToFolder}
+            style={{ transform: 'rotate(-90deg)' }}
+            size="large"
+          >
+            <OpenNewWindowIcon />
+          </IconButton>
+        </Tooltip>
+        {!AppConfig.isCordova && (
+          <Tooltip title={i18n.t('core:openInWindow')}>
+            <IconButton
+              aria-label={i18n.t('core:openInWindow')}
+              onClick={openInNewWindow}
+              size="large"
+            >
+              <OpenNewWindowIcon />
+            </IconButton>
+          </Tooltip>
+        )}
+        {AppConfig.isCordova && (
+          <Tooltip title={i18n.t('core:shareFile')}>
+            <IconButton
+              aria-label={i18n.t('core:shareFile')}
+              data-tid="shareFile"
+              onClick={() => shareFile(`file:///${openedFile.path}`)}
+              size="large"
+            >
+              <ShareIcon />
+            </IconButton>
+          </Tooltip>
+        )}
+        {!(
+          PlatformIO.haveObjectStoreSupport() ||
+          PlatformIO.haveWebDavSupport() ||
+          AppConfig.isWeb
+        ) && (
+          <Tooltip title={i18n.t('core:openFileExternally')}>
+            <IconButton
+              aria-label={i18n.t('core:openFileExternally')}
+              onClick={openNatively}
+              size="large"
+            >
+              <OpenNativelyIcon />
+            </IconButton>
+          </Tooltip>
+        )}
+        <Tooltip title={i18n.t('core:reloadFile')}>
+          <IconButton
+            data-tid="reloadFileTID"
+            aria-label={i18n.t('core:reloadFile')}
+            onClick={reloadDocument}
+            size="large"
+          >
+            <RefreshIcon />
+          </IconButton>
+        </Tooltip>
+        {!props.isReadOnlyMode && (
+          <Tooltip title={i18n.t('core:deleteEntry')}>
+            <IconButton
+              data-tid="deleteEntryTID"
+              aria-label={i18n.t('core:deleteEntry')}
+              onClick={() => setDeleteEntryModalOpened(true)}
+              size="large"
+            >
+              <DeleteIcon />
             </IconButton>
           </Tooltip>
         )}
