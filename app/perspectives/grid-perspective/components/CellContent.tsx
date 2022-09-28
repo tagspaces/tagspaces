@@ -161,12 +161,11 @@ function CellContent(props: Props) {
       <div
         style={{
           background: fsEntryBgColor,
-          opacity: fsEntry.isIgnored ? 0.3 : 1
+          // opacity: fsEntry.isIgnored ? 0.3 : 1
         }}
       >
         <div
           className={classes.gridCellThumb}
-          title={fsEntry.isIgnored && i18n.t('core:ignoredFolder')}
           style={{
             position: 'relative',
             height: 150
@@ -282,9 +281,8 @@ function CellContent(props: Props) {
         container
         wrap="nowrap"
         className={classes.rowHover}
-        title={fsEntry.isIgnored && i18n.t('core:ignoredFolder')}
         style={{
-          opacity: fsEntry.isIgnored ? 0.3 : 1,
+          // opacity: fsEntry.isIgnored ? 0.3 : 1,
           backgroundColor,
           borderRadius: 5
         }}

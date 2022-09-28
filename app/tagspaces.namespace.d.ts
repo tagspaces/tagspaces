@@ -125,7 +125,7 @@ export namespace TS {
     path: string;
     url?: string;
     meta?: FileSystemEntryMeta;
-    isIgnored?: boolean;
+    // isIgnored?: boolean;
   }
 
   interface FileSystemEntryMeta {

@@ -829,7 +829,7 @@ function CreateEditLocationDialog(props: Props) {
                     </Typography>
                   }
                 />
-                {ignorePatternPaths && ignorePatternPaths.length && (
+                {ignorePatternPaths && ignorePatternPaths.length > 0 && (
                   <List
                     style={{
                       padding: 5,
@@ -859,7 +859,7 @@ function CreateEditLocationDialog(props: Props) {
                     ))}
                   </List>
                 )}
-                {IgnorePatternDialog && isIgnorePatternDialogOpen && (
+                {IgnorePatternDialog && (
                   <IgnorePatternDialog
                     open={isIgnorePatternDialogOpen}
                     onClose={() => setIgnorePatternDialogOpen(false)}
