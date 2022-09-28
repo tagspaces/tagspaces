@@ -160,7 +160,7 @@ function CellContent(props: Props) {
     return (
       <div
         style={{
-          background: fsEntryBgColor,
+          background: fsEntryBgColor
           // opacity: fsEntry.isIgnored ? 0.3 : 1
         }}
       >
