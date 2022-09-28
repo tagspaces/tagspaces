@@ -211,7 +211,7 @@ describe('TST08 - File folder properties', () => {
   it('TST0810 - Tag file drag&drop in file opener [web]', async () => {
     const tagName = 'article';
     await clickOn('[data-tid=tagLibrary]');
-    await dragDrop('button[title=' + tagName + ']', selectorFile);
+    await dragDrop('button[aria-label=' + tagName + ']', selectorFile);
 
     await clickOn(selectorFile);
     await clickOn('[data-tid=fileContainerToggleProperties]');
@@ -249,7 +249,7 @@ describe('TST08 - File folder properties', () => {
     // await searchEngine('note');
     // await waitForNotification();
     // await global.client.waitForTimeout(1500); // To do wait for search results
-    await expectElementExist(selectorFile, true);
+    await expectElementExist(selectorFile, true, 5000);
 
     // open fileProperties
     await clickOn(selectorFile);
