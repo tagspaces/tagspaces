@@ -122,7 +122,7 @@ function MoveCopyFilesDialog(props: Props) {
         {i18n.t('core:copyMoveFilesTitle')}
         <DialogCloseButton onClose={onCloseDialog} />
       </DialogTitle>
-      <DialogContent>
+      <DialogContent style={{ overflowX: 'hidden' }}>
         <List
           dense
           style={{ width: 550, marginLeft: -15 }}
