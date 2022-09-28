@@ -168,7 +168,7 @@ interface Props {
 const defaultBackgrounds = [
   'linear-gradient(43deg, rgb(65, 88, 208) 0%, rgb(200, 80, 190) 45%, rgb(255, 204, 112) 100%)',
   'linear-gradient( 102deg,  rgba(253,189,85,1) 8%, rgba(249,131,255,1) 100% )',
-  'radial-gradient( circle 321px at 8% 75%,  rgba(209,247,241,1) 0%, rgba(249,213,213,1) 80% )',
+  'radial-gradient( circle farthest-corner at 1.4% 2.8%,  rgba(240,249,249,1) 0%, rgba(182,199,226,1) 100% )',
   'linear-gradient( 110deg,  rgba(48,207,208,1) 11.2%, rgba(51,8,103,1) 90% )'
 ];
 

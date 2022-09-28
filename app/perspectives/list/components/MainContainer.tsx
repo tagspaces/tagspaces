@@ -889,22 +889,12 @@ function GridPerspective(props: Props) {
       >
         <GridPagination
           gridPageLimit={gridPageLimit.current}
-          className={
-            layoutType.current === 'grid'
-              ? classes.gridContainer
-              : classes.rowContainer
-          }
           style={{
-            marginTop: 53,
-            gridTemplateColumns:
-              layoutType.current === 'grid'
-                ? 'repeat(auto-fit,minmax(' + entryWidth + 'px,1fr))'
-                : 'none'
-            // gridTemplateRows:
-            //  layoutType === 'grid' ? 'repeat(auto-fit, 230px)' : 'auto'
+            marginTop: 5,
+            paddingRight: 4,
+            gridTemplateColumns: 'none'
           }}
           theme={theme}
-          // gridRef={this.mainGrid}
           directories={sortedDirectories}
           showDetails={showDetails.current}
           showDescription={showDescription.current}

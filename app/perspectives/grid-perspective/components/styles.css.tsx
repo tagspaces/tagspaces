@@ -16,23 +16,16 @@
  *
  */
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import { alpha } from '@mui/material/styles';
 
 export default (theme: any): any => ({
-  gridContainer: {
-    display: 'grid',
-    gridGap: '0px 0px',
-    padding: 0,
-    paddingRight: 4,
-    paddingBottom: 20
-  },
-  rowContainer: {
-    display: 'grid',
-    gridGap: '0px 0px',
-    padding: 0,
-    paddingRight: 4,
-    margin: 0,
-    paddingBottom: 10
-  },
+  // rowContainer: {
+  //   display: 'grid',
+  //   gridGap: '0px 0px',
+  //   padding: 0,
+  //   margin: 0,
+  //   paddingBottom: 10
+  // },
   gridCell: {
     border: '2px solid transparent',
     marginTop: 1,
@@ -145,8 +138,7 @@ export default (theme: any): any => ({
     zIndex: 1,
     background:
       'linear-gradient(0deg, ' +
-      theme.palette.background.default +
-      (theme.palette.background.default.length === 4 ? 'A' : 'AA') +
+      alpha(theme.palette.background.default, 0.67) +
       ' 0%, ' +
       theme.palette.background.default +
       ' 99%)',

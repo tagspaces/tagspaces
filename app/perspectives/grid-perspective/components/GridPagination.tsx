@@ -18,8 +18,11 @@
 
 import React, { useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
+import { alpha } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import Tooltip from '-/components/Tooltip';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
 import Pagination from '@mui/material/Pagination';
 import { bindActionCreators } from 'redux';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
@@ -39,18 +42,18 @@ import {
   getSearchResultCount,
   getCurrentDirectoryTags,
   isLoading,
+  getCurrentDirectoryDescription,
   getLastBackgroundImageChange
 } from '-/reducers/app';
 import EntryIcon from '-/components/EntryIcon';
 import TagsPreview from '-/components/TagsPreview';
 import { TS } from '-/tagspaces.namespace';
-import { getMetaForEntry } from '-/services/utils-io';
+import { getMetaForEntry, convertMarkDown } from '-/services/utils-io';
 import PlatformIO from '-/services/platform-facade';
 
 interface Props {
   isMetaLoaded: boolean;
   setIsMetaLoaded: (isLoaded: boolean) => void;
-  className?: string;
   style?: any;
   theme: any;
   // gridRef: Object;
@@ -59,6 +62,7 @@ interface Props {
   showDetails: boolean;
   showDescription: boolean;
   showTags: boolean;
+  currentDirectoryDescription: string;
   thumbnailMode: string;
   entrySize: string;
   files: Array<TS.FileSystemEntry>;
@@ -85,7 +89,6 @@ interface Props {
 
 function GridPagination(props: Props) {
   const {
-    className,
     style,
     theme,
     directories,
@@ -97,6 +100,7 @@ function GridPagination(props: Props) {
     currentDirectoryColor,
     currentDirectoryTags,
     currentDirectoryPath,
+    currentDirectoryDescription,
     gridPageLimit,
     currentPage,
     files
@@ -316,6 +320,17 @@ function GridPagination(props: Props) {
   }
   const dirColor = currentDirectoryColor || 'transparent';
 
+  const folderSummary =
+    directories.length + ' folder(s) and ' + allFilesCount + ' file(s) found';
+
+  let descriptionHTML = '';
+  if (showDescription && currentDirectoryDescription) {
+    descriptionHTML = convertMarkDown(
+      currentDirectoryDescription,
+      currentDirectoryPath
+    );
+  }
+
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions,jsx-a11y/no-static-element-interactions
     <div
@@ -341,70 +356,89 @@ function GridPagination(props: Props) {
           backgroundRepeat: 'no-repeat'
         }}
       >
-        {showDetails && (
-          <>
-            <div
-              style={{
-                position: 'relative',
-                height: 150
-              }}
-            >
-              <img
-                alt="thumbnail"
-                src={folderTmbPath}
-                // @ts-ignore
-                onError={i => (i.target.style.display = 'none')}
-                loading="lazy"
-                style={{
-                  objectFit: 'contain',
-                  position: 'absolute',
-                  width: '100%',
-                  height: 150
-                }}
-              />
-              <EntryIcon isFile={false} />
-            </div>
-            <Typography
-              style={{
-                display: 'block',
-                padding: 10,
-                paddingTop: 55,
-                borderRadius: 5,
-                marginBottom: 5,
-                height: 50,
-                overflow: 'auto',
-                textShadow: '1px 1px #8f8f8f',
-                color: theme.palette.text.primary
-              }}
-              role="button"
-              id="descriptionArea"
-            >
-              {folderName}
-            </Typography>
-            {(directories.length > 0 || pageFiles.length > 0) && (
-              <div style={{ padding: 15, bottom: 10 }}>
-                <Typography
+        <Grid container spacing={2}>
+          <Grid item xs={12} style={{ height: 70 }} />
+          {showDetails && (
+            <>
+              <Grid xs={8} item>
+                <div
                   style={{
-                    fontSize: '0.9rem',
-                    color: theme.palette.text.secondary,
-                    textShadow: '1px 1px #8f8f8f'
+                    padding: 10,
+                    marginLeft: 10,
+                    marginRight: 10,
+                    marginTop: 0,
+                    marginBottom: 0,
+                    background: alpha(theme.palette.background.default, 0.9),
+                    borderRadius: 8,
+                    height: 130
                   }}
                 >
-                  {directories.length +
-                    ' folder(s) and ' +
-                    allFilesCount +
-                    ' file(s) found'}
-                </Typography>
-              </div>
-            )}
-          </>
-        )}
-        <TagsPreview tags={currentDirectoryTags} />
-        <div
-          className={className}
-          style={style}
-          data-tid="perspectiveGridFileTable"
-        >
+                  <Typography
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      overflow: 'auto',
+                      fontSize: '1.5rem',
+                      color: theme.palette.text.primary
+                    }}
+                  >
+                    {folderName}
+                    <TagsPreview tags={currentDirectoryTags} />
+                  </Typography>
+                  {(directories.length > 0 || pageFiles.length > 0) && (
+                    <Typography
+                      style={{
+                        fontSize: '0.9rem',
+                        paddingBottom: 5,
+                        color: theme.palette.text.primary
+                      }}
+                    >
+                      {folderSummary}
+                    </Typography>
+                  )}
+                </div>
+              </Grid>
+              <Grid xs={4} item>
+                <div
+                  style={{
+                    borderRadius: 8,
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
+                    height: 150,
+                    width: 150,
+                    backgroundImage: 'url(' + folderTmbPath + ')',
+                    backgroundSize: 'contain',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center center'
+                  }}
+                ></div>
+              </Grid>
+            </>
+          )}
+          {showDescription && descriptionHTML && (
+            <Grid xs={12}>
+              <Typography
+                style={{
+                  display: 'block',
+                  padding: 10,
+                  paddingTop: 0,
+                  margin: '15px 10px 5px 25px',
+                  background: alpha(theme.palette.background.default, 0.9),
+                  borderRadius: 8,
+                  overflow: 'auto',
+                  color: theme.palette.text.primary
+                }}
+                role="button"
+                id="descriptionArea"
+                dangerouslySetInnerHTML={{
+                  // eslint-disable-next-line no-nested-ternary
+                  __html: descriptionHTML
+                }}
+              />
+            </Grid>
+          )}
+        </Grid>
+        <div style={style} data-tid="perspectiveGridFileTable">
           {page.current === 1 && directories.map(entry => renderCell(entry))}
           {pageFiles.map((entry, index, dArray) =>
             renderCell(entry, index === dArray.length - 1)
@@ -444,14 +478,7 @@ function GridPagination(props: Props) {
             )}
         </div>
         {showPagination && (
-          <Tooltip
-            title={
-              directories.length +
-              ' folder(s) and ' +
-              allFilesCount +
-              ' file(s) found'
-            }
-          >
+          <Tooltip title={folderSummary}>
             <Pagination
               style={{
                 left: 15,
@@ -477,13 +504,10 @@ function GridPagination(props: Props) {
               <Typography
                 style={{
                   fontSize: '0.9rem',
-                  color: theme.palette.text.secondary
+                  color: theme.palette.text.primary
                 }}
               >
-                {directories.length +
-                  ' folder(s) and ' +
-                  allFilesCount +
-                  ' file(s) found'}
+                {folderSummary}
               </Typography>
             </div>
           )}
@@ -500,6 +524,7 @@ function mapStateToProps(state) {
     // pageEntries: getPageEntries(state),
     currentDirectoryTags: getCurrentDirectoryTags(state),
     isMetaLoaded: getIsMetaLoaded(state),
+    currentDirectoryDescription: getCurrentDirectoryDescription(state),
     lastBackgroundImageChange: getLastBackgroundImageChange(state)
   };
 }

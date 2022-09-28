@@ -109,7 +109,6 @@ interface Props {
   ) => void;
   currentLocation: TS.Location;
   locations: Array<TS.Location>;
-  // isDesktopMode: boolean;
   toggleDeleteMultipleEntriesDialog: () => void;
   directoryMeta: TS.FileSystemEntryMeta;
   setDirectoryMeta: (fsEntryMeta: TS.FileSystemEntryMeta) => void;
@@ -377,7 +376,6 @@ function GridPerspective(props: Props) {
 
   const handleGridPageLimit = (limit: number) => {
     gridPageLimit.current = limit;
-    // setIsGridSettingsDialogOpened(false);
     // forceUpdate();
   };
 
@@ -696,15 +694,7 @@ function GridPerspective(props: Props) {
   };
 
   const renderCell = (fsEntry: TS.FileSystemEntry, isLast?: boolean) => {
-    const {
-      // classes,
-      // theme,
-      // selectedEntries,
-      addTags,
-      addTag,
-      supportedFileTypes,
-      openFsEntry
-    } = props;
+    const { addTags, addTag, supportedFileTypes, openFsEntry } = props;
     if (!fsEntry.isFile && !showDirectories.current) {
       return;
     }
@@ -889,14 +879,9 @@ function GridPerspective(props: Props) {
       >
         <GridPagination
           gridPageLimit={gridPageLimit.current}
-          // className={
-          //   layoutType.current === 'grid'
-          //     ? classes.gridContainer
-          //     : classes.rowContainer
-          // }
           style={{
             margin: 0,
-            marginTop: 53,
+            // marginTop: 53,
             display: 'grid',
             gridGap: '5px 5px',
             padding: 5,
@@ -905,11 +890,8 @@ function GridPerspective(props: Props) {
               layoutType.current === 'grid'
                 ? 'repeat(auto-fit,minmax(' + entryWidth + 'px,1fr))'
                 : 'none'
-            // gridTemplateRows:
-            //  layoutType === 'grid' ? 'repeat(auto-fit, 230px)' : 'auto'
           }}
           theme={theme}
-          // gridRef={this.mainGrid}
           directories={sortedDirectories}
           showDetails={showDetails.current}
           showDescription={showDescription.current}
@@ -1107,7 +1089,6 @@ function mapStateToProps(state) {
     keyBindings: getKeyBindingObject(state),
     currentLocation: getLocation(state, state.app.currentLocationId),
     locations: getLocations(state),
-    // isDesktopMode: isDesktopMode(state),
     isDeleteMultipleEntriesDialogOpened: isDeleteMultipleEntriesDialogOpened(
       state
     )

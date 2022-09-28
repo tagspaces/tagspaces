@@ -193,18 +193,6 @@ function GridSettingsDialog(props: Props) {
             label={i18n.t('core:showTags')}
           />
           <Divider />
-          {/* <FormControlLabel
-            control={
-              <Switch
-                data-tid="gridPerspectiveToggleShowDescription"
-                defaultChecked={showDescription}
-                onChange={toggleShowDescription}
-                name={i18n.t('core:showHideDescription')}
-                color="primary"
-              />
-            }
-            label={i18n.t('core:showHideDescription')}
-          /> */}
           <FormControlLabel
             control={
               <Switch
@@ -216,6 +204,18 @@ function GridSettingsDialog(props: Props) {
               />
             }
             label={i18n.t('core:showHideDetails')}
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                data-tid="gridPerspectiveToggleShowDescription"
+                defaultChecked={showDescription}
+                onChange={toggleShowDescription}
+                name={i18n.t('core:showHideDescription')}
+                color="primary"
+              />
+            }
+            label={i18n.t('core:showHideDescription')}
           />
         </FormGroup>
         <Divider />
