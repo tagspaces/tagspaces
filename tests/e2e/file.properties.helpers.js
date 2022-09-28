@@ -31,7 +31,7 @@ export async function AddRemovePropertiesTags(
       // await clickOn('[data-tid=PropertiesTagsSelectTID]');
       await global.client.keyboard.press('Enter');
       const tagDisplayed = await isDisplayed(
-        '[data-tid=PropertiesTagsSelectTID] button[title=' + tagName + ']',
+        '[data-tid=PropertiesTagsSelectTID] button[aria-label=' + tagName + ']',
         true,
         2000
       );
