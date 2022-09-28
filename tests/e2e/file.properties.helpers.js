@@ -47,7 +47,7 @@ export async function AddRemovePropertiesTags(
       await removeTagFromTagMenu(tagName);
       // await global.client.waitForLoadState('networkidle'); //'networkidle'); //'domcontentloaded'); // load
       await isDisplayed(
-        '[data-tid=PropertiesTagsSelectTID] button[title=' + tagName + ']',
+        '[data-tid=PropertiesTagsSelectTID] button[aria-label=' + tagName + ']',
         false,
         2000
       );
