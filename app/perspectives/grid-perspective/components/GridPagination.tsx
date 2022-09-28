@@ -359,61 +359,71 @@ function GridPagination(props: Props) {
         <Grid container spacing={2}>
           <Grid item xs={12} style={{ height: 70 }} />
           {showDetails && (
-            <>
-              <Grid xs={8} item>
-                <div
+            <Grid xs={12} item>
+              <div
+                style={{
+                  padding: 10,
+                  marginLeft: 10,
+                  marginRight: 10,
+                  marginTop: 0,
+                  marginBottom: 0,
+                  height: 150,
+                  position: 'relative'
+                }}
+              >
+                <Typography
                   style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    overflow: 'auto',
+                    fontSize: '1.5rem',
                     padding: 10,
-                    marginLeft: 10,
-                    marginRight: 10,
-                    marginTop: 0,
-                    marginBottom: 0,
-                    background: alpha(theme.palette.background.default, 0.9),
+                    width: 'fit-content',
+                    background: theme.palette.background.default,
+                    // background: alpha(theme.palette.background.default, 0.9),
                     borderRadius: 8,
-                    height: 130
+                    color: theme.palette.text.primary
                   }}
                 >
+                  {folderName}
+                  <TagsPreview tags={currentDirectoryTags} />
+                </Typography>
+                {(directories.length > 0 || pageFiles.length > 0) && (
                   <Typography
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      overflow: 'auto',
-                      fontSize: '1.5rem',
+                      fontSize: '0.9rem',
+                      paddingBottom: 5,
+                      background: theme.palette.background.default,
+                      marginTop: -12,
+                      padding: 10,
+                      borderRadius: 8,
+                      width: 'fit-content',
                       color: theme.palette.text.primary
                     }}
                   >
-                    {folderName}
-                    <TagsPreview tags={currentDirectoryTags} />
+                    {folderSummary}
                   </Typography>
-                  {(directories.length > 0 || pageFiles.length > 0) && (
-                    <Typography
-                      style={{
-                        fontSize: '0.9rem',
-                        paddingBottom: 5,
-                        color: theme.palette.text.primary
-                      }}
-                    >
-                      {folderSummary}
-                    </Typography>
-                  )}
-                </div>
-              </Grid>
-              <Grid xs={4} item>
-                <div
-                  style={{
-                    borderRadius: 8,
-                    marginLeft: 'auto',
-                    marginRight: 'auto',
-                    height: 150,
-                    width: 150,
-                    backgroundImage: 'url(' + folderTmbPath + ')',
-                    backgroundSize: 'contain',
-                    backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'center center'
-                  }}
-                ></div>
-              </Grid>
-            </>
+                )}
+                <Tooltip title={i18n.t('core:thumbnail')}>
+                  <div
+                    style={{
+                      borderRadius: 8,
+                      marginLeft: 'auto',
+                      marginRight: 'auto',
+                      height: 140,
+                      width: 140,
+                      backgroundImage: 'url(' + folderTmbPath + ')',
+                      backgroundSize: 'cover',
+                      backgroundRepeat: 'no-repeat',
+                      backgroundPosition: 'center center',
+                      position: 'absolute',
+                      top: 10,
+                      right: 10
+                    }}
+                  />
+                </Tooltip>
+              </div>
+            </Grid>
           )}
           {showDescription && descriptionHTML && (
             <Grid xs={12}>
