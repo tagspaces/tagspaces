@@ -87,6 +87,7 @@ import InfoIcon from '-/components/InfoIcon';
 import { ProTooltip } from '-/components/HelperComponents';
 import PerspectiveSelector from '-/components/PerspectiveSelector';
 import { connect } from 'react-redux';
+import { MilkdownEditor, MilkdownRef } from "@tagspaces/tagspaces-md";
 
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
@@ -177,7 +178,7 @@ function EntryProperties(props: Props) {
   const fileNameRef = useRef<HTMLInputElement>(null);
   const sharingLinkRef = useRef<HTMLInputElement>(null);
   const objectStorageLinkRef = useRef<HTMLInputElement>(null);
-  const fileDescriptionRef = useRef<HTMLInputElement>(null);
+  const fileDescriptionRef = useRef<MilkdownRef>(null);
 
   const directoryPath = props.openedEntry.isFile
     ? extractContainingDirectoryPath(
@@ -235,14 +236,14 @@ function EntryProperties(props: Props) {
   >(false);
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (
       // editDescription === currentEntry.description &&
       fileDescriptionRef.current
     ) {
       fileDescriptionRef.current.focus();
     }
-  }, [editDescription]);
+  }, [editDescription]);*/
 
   useEffect(() => {
     if (editName === entryName && fileNameRef.current) {
@@ -447,6 +448,17 @@ function EntryProperties(props: Props) {
       setEditDescription(value);
     }
   };
+
+  const milkdownListener = React.useCallback(
+    (markdown: string, prevMarkdown: string | null) => {
+      setEditDescription(markdown);
+      // update codeMirror
+      /*const { current } = codeMirrorRef;
+      if (!current) return;
+      current.update(markdown);*/
+    },
+    []
+  );
 
   const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
     if (action === 'remove-value') {
@@ -800,7 +812,14 @@ function EntryProperties(props: Props) {
         <Grid item xs={12}>
           {editDescription !== undefined ? (
             <>
-              <TextField
+              <MilkdownEditor
+                ref={fileDescriptionRef}
+                content={currentEntry.description}
+                onChange={milkdownListener}
+                readOnly={false}
+                dark={false}
+              />
+              {/*<TextField
                 multiline
                 inputRef={fileDescriptionRef}
                 style={{
@@ -817,7 +836,7 @@ function EntryProperties(props: Props) {
                 defaultValue={currentEntry.description}
                 fullWidth={true}
                 onChange={handleDescriptionChange}
-              />
+              />*/}
               <Typography
                 variant="caption"
                 style={{
