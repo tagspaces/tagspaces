@@ -814,7 +814,7 @@ function EntryProperties(props: Props) {
             <>
               <MilkdownEditor
                 ref={fileDescriptionRef}
-                content={currentEntry.description}
+                content={currentEntry.description || ''}
                 onChange={milkdownListener}
                 readOnly={false}
                 dark={false}
