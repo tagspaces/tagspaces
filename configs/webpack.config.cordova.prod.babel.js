@@ -5,10 +5,9 @@
 import path from 'path';
 import webpack from 'webpack';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin';
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import merge from 'webpack-merge';
-import TerserPlugin from 'terser-webpack-plugin';
 import baseConfig from './webpack.config.base';
 // import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 
@@ -129,7 +128,8 @@ export default merge(baseConfig, {
             limit: 10000,
             mimetype: 'application/font-woff'
           }
-        }
+        },
+        type: 'javascript/auto'
       },
       // WOFF2 Font
       {
@@ -140,7 +140,8 @@ export default merge(baseConfig, {
             limit: 10000,
             mimetype: 'application/font-woff'
           }
-        }
+        },
+        type: 'javascript/auto'
       },
       // TTF Font
       {
@@ -151,12 +152,14 @@ export default merge(baseConfig, {
             limit: 10000,
             mimetype: 'application/octet-stream'
           }
-        }
+        },
+        type: 'javascript/auto'
       },
       // EOT Font
       {
         test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-        use: 'file-loader'
+        use: 'file-loader',
+        type: 'javascript/auto'
       },
       // SVG Font
       {
@@ -167,17 +170,20 @@ export default merge(baseConfig, {
             limit: 10000,
             mimetype: 'image/svg+xml'
           }
-        }
+        },
+        type: 'javascript/auto'
       },
       // Text files
       {
         test: /\.(txt)$/,
-        use: 'raw-loader'
+        use: 'raw-loader',
+        type: 'javascript/auto'
       },
       // Common Image Formats
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
-        use: 'url-loader'
+        use: 'url-loader',
+        type: 'javascript/auto'
       }
     ]
   },
@@ -186,19 +192,17 @@ export default merge(baseConfig, {
     minimizer: process.env.E2E_BUILD
       ? []
       : [
-          new TerserPlugin({
-            parallel: true,
-            sourceMap: true,
-            cache: true
-          }),
-          new OptimizeCSSAssetsPlugin({
+          // For webpack@5 you can use the `...` syntax to extend existing minimizers (i.e. `terser-webpack-plugin`), uncomment the next line
+          `...`,
+          new CssMinimizerPlugin()
+          /*new OptimizeCSSAssetsPlugin({
             cssProcessorOptions: {
               map: {
                 inline: false,
                 annotation: true
               }
             }
-          })
+          })*/
         ]
   },
 

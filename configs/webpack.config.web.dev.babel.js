@@ -129,7 +129,8 @@ export default merge(baseConfig, {
             limit: 10000,
             mimetype: 'application/font-woff'
           }
-        }
+        },
+        type: 'javascript/auto'
       },
       // WOFF2 Font
       {
@@ -140,7 +141,8 @@ export default merge(baseConfig, {
             limit: 10000,
             mimetype: 'application/font-woff'
           }
-        }
+        },
+        type: 'javascript/auto'
       },
       // TTF Font
       {
@@ -151,12 +153,14 @@ export default merge(baseConfig, {
             limit: 10000,
             mimetype: 'application/octet-stream'
           }
-        }
+        },
+        type: 'javascript/auto'
       },
       // EOT Font
       {
         test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-        use: 'file-loader'
+        use: 'file-loader',
+        type: 'javascript/auto'
       },
       // SVG Font
       {
@@ -167,17 +171,20 @@ export default merge(baseConfig, {
             limit: 10000,
             mimetype: 'image/svg+xml'
           }
-        }
+        },
+        type: 'javascript/auto'
       },
       // Text files
       {
         test: /\.(txt)$/,
-        use: 'raw-loader'
+        use: 'raw-loader',
+        type: 'javascript/auto'
       },
       // Common Image Formats
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
-        use: 'url-loader'
+        use: 'url-loader',
+        type: 'javascript/auto'
       }
     ]
   },
