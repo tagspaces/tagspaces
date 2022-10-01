@@ -299,10 +299,20 @@ function GridPagination(props: Props) {
     PlatformIO.getDirSeparator()
   );
 
-  const folderTmbPath = getThumbFileLocationForDirectory(
+  let folderTmbPath = getThumbFileLocationForDirectory(
     currentDirectoryPath,
     PlatformIO.getDirSeparator()
   );
+  if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
+    folderTmbPath = PlatformIO.getURLforPath(folderTmbPath);
+  } else {
+    folderTmbPath = encodeURI(
+      folderTmbPath +
+        (props.lastBackgroundImageChange
+          ? '?' + props.lastBackgroundImageChange
+          : '')
+    );
+  }
 
   let folderBgndPath = getBgndFileLocationForDirectory(
     currentDirectoryPath,
