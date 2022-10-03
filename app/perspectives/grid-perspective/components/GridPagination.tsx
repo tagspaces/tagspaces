@@ -48,8 +48,13 @@ import {
 } from '-/reducers/app';
 import EntryIcon from '-/components/EntryIcon';
 import TagsPreview from '-/components/TagsPreview';
+import TagContainer from '-/components/TagContainer';
 import { TS } from '-/tagspaces.namespace';
-import { getMetaForEntry, convertMarkDown } from '-/services/utils-io';
+import {
+  getMetaForEntry,
+  convertMarkDown,
+  removeMarkDown
+} from '-/services/utils-io';
 import PlatformIO from '-/services/platform-facade';
 
 interface Props {
@@ -97,6 +102,7 @@ function GridPagination(props: Props) {
     showDirectories,
     showDetails,
     showDescription,
+    showTags,
     renderCell,
     isAppLoading,
     currentDirectoryColor,
@@ -344,6 +350,18 @@ function GridPagination(props: Props) {
     );
   }
 
+  let shortDescription = '';
+  if (currentDirectoryDescription) {
+    shortDescription = removeMarkDown(currentDirectoryDescription);
+    if (shortDescription && shortDescription.length > 200) {
+      shortDescription = shortDescription.substring(0, 200) + '...';
+    }
+  }
+
+  function renderTags(tags: Array<TS.Tag>) {
+    return;
+  }
+
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions,jsx-a11y/no-static-element-interactions
     <div
@@ -390,6 +408,7 @@ function GridPagination(props: Props) {
                     alignItems: 'center',
                     overflow: 'auto',
                     padding: 10,
+                    marginRight: 160,
                     width: 'fit-content',
                     background: theme.palette.background.default,
                     // background: alpha(theme.palette.background.default, 0.9),
@@ -397,30 +416,57 @@ function GridPagination(props: Props) {
                     color: theme.palette.text.primary
                   }}
                 >
-                  <ButtonBase
-                    style={{ fontSize: '1.5rem' }}
-                    onClick={openRenameEntryDialog}
-                  >
-                    {folderName}
-                  </ButtonBase>
-                  <TagsPreview tags={currentDirectoryTags} />
+                  <Tooltip title={i18n.t('core:renameDirectory')}>
+                    <ButtonBase
+                      style={{ fontSize: '1.5rem' }}
+                      onClick={openRenameEntryDialog}
+                    >
+                      {folderName}
+                    </ButtonBase>
+                  </Tooltip>
+                  {showTags ? (
+                    <span style={{ paddingLeft: 5 }}>
+                      {currentDirectoryTags.map((tag: TS.Tag) => {
+                        return <TagContainer tag={tag} tagMode="display" />;
+                      })}
+                    </span>
+                  ) : (
+                    <TagsPreview tags={currentDirectoryTags} />
+                  )}
                 </Box>
-                {(directories.length > 0 || pageFiles.length > 0) && (
-                  <Typography
-                    style={{
-                      fontSize: '0.9rem',
-                      paddingBottom: 5,
-                      background: theme.palette.background.default,
-                      marginTop: -12,
-                      padding: 10,
-                      borderRadius: 8,
-                      width: 'fit-content',
-                      color: theme.palette.text.primary
-                    }}
-                  >
-                    {folderSummary}
-                  </Typography>
-                )}
+                <Box
+                  style={{
+                    paddingBottom: 5,
+                    background: theme.palette.background.default,
+                    marginTop: -12,
+                    marginRight: 160,
+                    padding: 10,
+                    borderRadius: 8,
+                    width: 'fit-content',
+                    color: theme.palette.text.primary
+                  }}
+                >
+                  {(directories.length > 0 || pageFiles.length > 0) && (
+                    <Typography
+                      style={{
+                        fontSize: '0.9rem'
+                      }}
+                    >
+                      {folderSummary}
+                    </Typography>
+                  )}
+                  {!showDescription && shortDescription && (
+                    <Tooltip title={i18n.t('core:filePropertiesDescription')}>
+                      <Typography
+                        style={{
+                          fontSize: '0.8rem'
+                        }}
+                      >
+                        {shortDescription}
+                      </Typography>
+                    </Tooltip>
+                  )}
+                </Box>
                 <Tooltip title={i18n.t('core:thumbnail')}>
                   <div
                     style={{

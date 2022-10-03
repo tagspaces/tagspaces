@@ -116,7 +116,7 @@ function CellContent(props: Props) {
 
   description = removeMarkDown(description);
   if (description && description.length > maxDescriptionPreviewLength) {
-    description = description.substr(0, maxDescriptionPreviewLength) + '...';
+    description = description.substring(0, maxDescriptionPreviewLength) + '...';
   }
 
   if (description && layoutType === 'row' && fsEntry.isFile) {
