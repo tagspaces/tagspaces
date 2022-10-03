@@ -23,6 +23,7 @@ import Typography from '@mui/material/Typography';
 import Tooltip from '-/components/Tooltip';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
+import ButtonBase from '@mui/material/ButtonBase';
 import Pagination from '@mui/material/Pagination';
 import { bindActionCreators } from 'redux';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
@@ -77,6 +78,7 @@ interface Props {
   currentDirectoryPath: string;
   searchResultCount: number;
   onContextMenu: (event: React.MouseEvent<HTMLDivElement>) => void;
+  openRenameEntryDialog: () => void;
   onClick: (event: React.MouseEvent<HTMLDivElement>) => void;
   updateCurrentDirEntries: (dirEntries: TS.FileSystemEntry[]) => void;
   // eslint-disable-next-line react/no-unused-prop-types
@@ -101,6 +103,7 @@ function GridPagination(props: Props) {
     currentDirectoryTags,
     currentDirectoryPath,
     currentDirectoryDescription,
+    openRenameEntryDialog,
     gridPageLimit,
     currentPage,
     files
@@ -381,12 +384,11 @@ function GridPagination(props: Props) {
                   position: 'relative'
                 }}
               >
-                <Typography
+                <Box
                   style={{
                     display: 'flex',
                     alignItems: 'center',
                     overflow: 'auto',
-                    fontSize: '1.5rem',
                     padding: 10,
                     width: 'fit-content',
                     background: theme.palette.background.default,
@@ -395,9 +397,14 @@ function GridPagination(props: Props) {
                     color: theme.palette.text.primary
                   }}
                 >
-                  {folderName}
+                  <ButtonBase
+                    style={{ fontSize: '1.5rem' }}
+                    onClick={openRenameEntryDialog}
+                  >
+                    {folderName}
+                  </ButtonBase>
                   <TagsPreview tags={currentDirectoryTags} />
-                </Typography>
+                </Box>
                 {(directories.length > 0 || pageFiles.length > 0) && (
                   <Typography
                     style={{

@@ -899,6 +899,7 @@ function GridPerspective(props: Props) {
           showDetails={showDetails.current}
           showDescription={showDescription.current}
           showDirectories={showDirectories.current}
+          openRenameEntryDialog={props.openRenameEntryDialog}
           showTags={showTags.current}
           thumbnailMode={thumbnailMode.current}
           entrySize={entrySize.current}
