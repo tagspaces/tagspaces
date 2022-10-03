@@ -7,6 +7,7 @@ import webpack from 'webpack';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import merge from 'webpack-merge';
+import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
 import baseConfig from './webpack.config.base';
 // import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 
@@ -32,10 +33,10 @@ export default merge(baseConfig, {
     sourceMapFilename: '[file].map'
   },
 
-  node: {
+  /*node: {
     fs: 'empty',
     child_process: 'empty'
-  },
+  },*/
 
   module: {
     rules: [
@@ -187,6 +188,13 @@ export default merge(baseConfig, {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
         use: 'url-loader',
         type: 'javascript/auto'
+      },
+      {
+        // https://github.com/microsoft/PowerBI-visuals-tools/issues/365#issuecomment-1099716186
+        test: /\.m?js/,
+        resolve: {
+          fullySpecified: false
+        }
       }
     ]
   },
@@ -204,6 +212,7 @@ export default merge(baseConfig, {
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'development'
     }),
+    new NodePolyfillPlugin(),
 
     new MiniCssExtractPlugin({
       filename: 'style.css'

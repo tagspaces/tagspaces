@@ -29,6 +29,9 @@ import {
   platformGetLocationPath,
   platformSetLanguage,
   platformIsWorkerAvailable,
+  platformReadMacOSTags,
+  platformWatchFolder,
+  platformTiffJs,
   platformSetZoomFactorElectron,
   platformSetGlobalShortcuts,
   platformShowMainWindow,
@@ -160,6 +163,18 @@ export default class PlatformFacade {
     return false;
   };
 
+  static readMacOSTags = (filename: string): Promise<TS.Tag[]> => {
+    return platformReadMacOSTags(filename);
+  };
+
+  static watchFolder = (locationPath, options) => {
+    return platformWatchFolder(locationPath, options);
+  };
+
+  static tiffJs = () => {
+    return platformTiffJs();
+  };
+
   static createDirectoryIndexInWorker = (
     directoryPath: string,
     extractText: boolean,
@@ -232,23 +247,6 @@ export default class PlatformFacade {
 
     return platformCreateDirectoryPromise(dirPath).then(result => {
       PlatformFacade.deignoreByWatcher(dirPath);
-      if (
-        AppConfig.isElectron &&
-        AppConfig.isWin &&
-        dirPath.endsWith('\\' + AppConfig.metaFolder)
-      ) {
-        // hide .ts folder on Windows
-        import('winattr').then(winattr => {
-          winattr.set(dirPath, { hidden: true }, err => {
-            if (err) {
-              console.warn('Error setting hidden attr. to dir: ' + dirPath);
-            } else {
-              console.log('Success setting hidden attr. to dir: ' + dirPath);
-            }
-          });
-        });
-        return true;
-      }
       return result;
     });
   };

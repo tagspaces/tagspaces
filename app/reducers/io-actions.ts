@@ -348,71 +348,62 @@ const actions = {
 
         // TODO try to replace this with <input type="file"
         if (AppConfig.isElectron) {
-          return import('fs-extra')
-            .then(fs => {
-              const fileContent = fs.readFileSync(job[0]);
-              // TODO event.currentTarget.result is ArrayBuffer
-              // Sample call from PRO version using content = Utils.base64ToArrayBuffer(baseString);
-              return PlatformIO.getPropertiesPromise(filePath)
-                .then(entryProps => {
-                  if (entryProps) {
-                    dispatch(
-                      AppActions.showNotification(
-                        'File with the same name already exist, importing skipped!',
-                        'warning',
-                        true
-                      )
-                    );
-                    dispatch(AppActions.setProgress(filePath, -1, undefined));
-                  } else {
-                    // dispatch(AppActions.setProgress(filePath, progress));
-                    return PlatformIO.saveBinaryFilePromise(
-                      filePath,
-                      fileContent,
-                      true,
-                      onUploadProgress
+          return PlatformIO.getFileContentPromise(job[0]).then(fileContent =>
+            PlatformIO.getPropertiesPromise(filePath)
+              .then(entryProps => {
+                if (entryProps) {
+                  dispatch(
+                    AppActions.showNotification(
+                      'File with the same name already exist, importing skipped!',
+                      'warning',
+                      true
                     )
-                      .then((fsEntry: TS.FileSystemEntry) => {
-                        // handle meta files
-                        if (fileType === 'meta') {
-                          try {
-                            // eslint-disable-next-line no-param-reassign
-                            fsEntry.meta = loadJSONString(
-                              fileContent.toString()
-                            );
-                          } catch (e) {
-                            console.debug('cannot parse entry meta');
-                          }
-                        } else if (fileType === 'thumb') {
+                  );
+                  dispatch(AppActions.setProgress(filePath, -1, undefined));
+                } else {
+                  // dispatch(AppActions.setProgress(filePath, progress));
+                  return PlatformIO.saveBinaryFilePromise(
+                    filePath,
+                    fileContent,
+                    true,
+                    onUploadProgress
+                  )
+                    .then((fsEntry: TS.FileSystemEntry) => {
+                      // handle meta files
+                      if (fileType === 'meta') {
+                        try {
                           // eslint-disable-next-line no-param-reassign
-                          fsEntry.thumbPath = fsEntry.path;
+                          fsEntry.meta = loadJSONString(fileContent.toString());
+                        } catch (e) {
+                          console.debug('cannot parse entry meta');
                         }
+                      } else if (fileType === 'thumb') {
+                        // eslint-disable-next-line no-param-reassign
+                        fsEntry.thumbPath = fsEntry.path;
+                      }
 
-                        return fsEntry;
-                      })
-                      .catch(err => {
-                        console.error(
-                          'Importing file ' + filePath + ' failed ' + err
-                        );
-                        dispatch(
-                          AppActions.showNotification(
-                            'Importing file ' + filePath + ' failed.',
-                            'error',
-                            true
-                          )
-                        );
-                        return undefined;
-                      });
-                  }
-                  return undefined;
-                })
-                .catch(err => {
-                  console.log('Error getting properties ' + err);
-                });
-            })
-            .catch(err => {
-              console.log('Error import fs: ' + err);
-            });
+                      return fsEntry;
+                    })
+                    .catch(err => {
+                      console.error(
+                        'Importing file ' + filePath + ' failed ' + err
+                      );
+                      dispatch(
+                        AppActions.showNotification(
+                          'Importing file ' + filePath + ' failed.',
+                          'error',
+                          true
+                        )
+                      );
+                      return undefined;
+                    });
+                }
+                return undefined;
+              })
+              .catch(err => {
+                console.log('Error getting properties ' + err);
+              })
+          );
         }
         return undefined;
       });
