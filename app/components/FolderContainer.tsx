@@ -22,12 +22,10 @@ import { bindActionCreators } from 'redux';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
-import Popover from '@mui/material/Popover';
 import Tooltip from '-/components/Tooltip';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
-import AdvancedSearchIcon from '@mui/icons-material/FilterAlt';
 import MenuIcon from '@mui/icons-material/MenuOpen';
 import Badge from '@mui/material/Badge';
 import withStyles from '@mui/styles/withStyles';
@@ -63,8 +61,6 @@ import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
 import { TS } from '-/tagspaces.namespace';
 import PathBreadcrumbs from './PathBreadcrumbs';
 import { enhanceOpenedEntry } from '-/services/utils-io';
-import SearchInline from '-/components/SearchInline';
-import SearchPopover from '-/components/SearchPopover';
 import {
   actions as LocationIndexActions,
   getSearchQuery
