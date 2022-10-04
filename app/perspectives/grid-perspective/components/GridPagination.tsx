@@ -350,11 +350,11 @@ function GridPagination(props: Props) {
     );
   }
 
-  let shortDescription = '';
+  let descriptionPreview = '';
   if (currentDirectoryDescription) {
-    shortDescription = removeMarkDown(currentDirectoryDescription);
-    if (shortDescription && shortDescription.length > 200) {
-      shortDescription = shortDescription.substring(0, 200) + '...';
+    descriptionPreview = removeMarkDown(currentDirectoryDescription);
+    if (descriptionPreview && descriptionPreview.length > 200) {
+      descriptionPreview = descriptionPreview.substring(0, 200) + '...';
     }
   }
 
@@ -426,9 +426,10 @@ function GridPagination(props: Props) {
                   </Tooltip>
                   {showTags ? (
                     <span style={{ paddingLeft: 5 }}>
-                      {currentDirectoryTags.map((tag: TS.Tag) => {
-                        return <TagContainer tag={tag} tagMode="display" />;
-                      })}
+                      {currentDirectoryTags &&
+                        currentDirectoryTags.map((tag: TS.Tag) => {
+                          return <TagContainer tag={tag} tagMode="display" />;
+                        })}
                     </span>
                   ) : (
                     <TagsPreview tags={currentDirectoryTags} />
@@ -455,14 +456,14 @@ function GridPagination(props: Props) {
                       {folderSummary}
                     </Typography>
                   )}
-                  {!showDescription && shortDescription && (
+                  {!showDescription && descriptionPreview && (
                     <Tooltip title={i18n.t('core:filePropertiesDescription')}>
                       <Typography
                         style={{
                           fontSize: '0.8rem'
                         }}
                       >
-                        {shortDescription}
+                        {descriptionPreview}
                       </Typography>
                     </Tooltip>
                   )}
