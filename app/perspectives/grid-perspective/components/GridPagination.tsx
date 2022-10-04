@@ -308,6 +308,19 @@ function GridPagination(props: Props) {
     PlatformIO.getDirSeparator()
   );
 
+  /**
+   *  normalize path for URL is always '/'
+   *  TODO move this in common module
+   */
+  function normalizeUrl(url: string) {
+    if (PlatformIO.getDirSeparator() !== '/') {
+      if (url) {
+        return url.replaceAll(PlatformIO.getDirSeparator(), '/');
+      }
+    }
+    return url;
+  }
+
   let folderTmbPath = getThumbFileLocationForDirectory(
     currentDirectoryPath,
     PlatformIO.getDirSeparator()
@@ -315,12 +328,11 @@ function GridPagination(props: Props) {
   if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
     folderTmbPath = PlatformIO.getURLforPath(folderTmbPath);
   } else {
-    folderTmbPath = encodeURI(
-      folderTmbPath +
-        (props.lastBackgroundImageChange
-          ? '?' + props.lastBackgroundImageChange
-          : '')
-    );
+    folderTmbPath =
+      normalizeUrl(folderTmbPath) +
+      (props.lastBackgroundImageChange
+        ? '?' + props.lastBackgroundImageChange
+        : '');
   }
 
   let folderBgndPath = getBgndFileLocationForDirectory(
@@ -330,12 +342,11 @@ function GridPagination(props: Props) {
   if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
     folderBgndPath = PlatformIO.getURLforPath(folderBgndPath);
   } else {
-    folderBgndPath = encodeURI(
-      folderBgndPath +
-        (props.lastBackgroundImageChange
-          ? '?' + props.lastBackgroundImageChange
-          : '')
-    );
+    folderBgndPath =
+      normalizeUrl(folderBgndPath) +
+      (props.lastBackgroundImageChange
+        ? '?' + props.lastBackgroundImageChange
+        : '');
   }
   const dirColor = currentDirectoryColor || 'transparent';
 
@@ -382,7 +393,7 @@ function GridPagination(props: Props) {
           height: '100%',
           // @ts-ignore
           overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
-          backgroundImage: 'url(' + folderBgndPath + ')',
+          backgroundImage: 'url("' + folderBgndPath + '")',
           backgroundSize: 'cover',
           backgroundRepeat: 'no-repeat'
         }}
@@ -476,7 +487,7 @@ function GridPagination(props: Props) {
                       marginRight: 'auto',
                       height: 140,
                       width: 140,
-                      backgroundImage: 'url(' + folderTmbPath + ')',
+                      backgroundImage: 'url("' + folderTmbPath + '")',
                       backgroundSize: 'cover',
                       backgroundRepeat: 'no-repeat',
                       backgroundPosition: 'center center',
