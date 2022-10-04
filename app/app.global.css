@@ -6,7 +6,7 @@
 @import 'assets/rc-table.css';
 @import '~leaflet/dist/leaflet.css';
 @import '~react-image-gallery/styles/css/image-gallery.css';
-@import '~material-icons/iconfont/material-icons.css';
+@import '~@material-design-icons/font';
 
 
 /* Needed to disable border on focused HotKey element */

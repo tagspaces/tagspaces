@@ -133,8 +133,26 @@ export default merge(baseConfig, {
           }
         ]
       },
-      // WOFF Font
       {
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'fonts/[hash][ext][query]'
+        }
+      },
+      /*{
+        test: /\.(eot|woff|ttf|svg|woff2)$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: "[path][name].[ext]"
+            }
+          }
+        ]
+      },*/
+      // WOFF Font
+      /* {
         test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
         use: {
           loader: 'url-loader',
@@ -143,7 +161,7 @@ export default merge(baseConfig, {
             mimetype: 'application/font-woff'
           }
         },
-        type: 'javascript/auto'
+        // type: 'javascript/auto'
       },
       // WOFF2 Font
       {
@@ -155,10 +173,10 @@ export default merge(baseConfig, {
             mimetype: 'application/font-woff'
           }
         },
-        type: 'javascript/auto'
-      },
+       // type: 'javascript/auto'
+      }, */
       // TTF Font
-      {
+      /* {
         test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
         use: {
           loader: 'url-loader',
@@ -174,7 +192,7 @@ export default merge(baseConfig, {
         test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
         use: 'file-loader',
         type: 'javascript/auto'
-      },
+      }, */
       // SVG Font
       {
         test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
