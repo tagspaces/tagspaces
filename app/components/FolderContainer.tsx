@@ -237,7 +237,7 @@ interface Props {
   progress?: Array<any>;
   searchQuery: TS.SearchQuery;
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
-  openCurrentDirectory: () => void;
+  // openCurrentDirectory: () => void;
   openURLExternally?: (url: string, skipConfirmation: boolean) => void;
   language: string;
   // keyBindings: Array<any>;
@@ -722,7 +722,7 @@ function mapActionCreatorsToProps(dispatch) {
       updateCurrentDirEntry: AppActions.updateCurrentDirEntry,
       setCurrentDirectoryColor: AppActions.setCurrentDirectoryColor,
       setSearchQuery: LocationIndexActions.setSearchQuery,
-      openCurrentDirectory: AppActions.openCurrentDirectory,
+      // openCurrentDirectory: AppActions.openCurrentDirectory,
       openURLExternally: AppActions.openURLExternally
     },
     dispatch

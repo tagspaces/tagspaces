@@ -2360,7 +2360,7 @@ export const actions = {
   ) => {
     const { currentDirectoryPath } = getState().app;
     if (currentDirectoryPath) {
-      dispatch(actions.loadDirectoryContent(currentDirectoryPath, false));
+      dispatch(actions.loadDirectoryContent(currentDirectoryPath, false, true));
     } else {
       dispatch(actions.setSearchResults([]));
     }
