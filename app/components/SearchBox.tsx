@@ -54,7 +54,7 @@ import useFirstRender from '-/utils/useFirstRender';
 import MainSearchField from '-/components/MainSearchField';
 import SavedSearchesMenu from '-/components/menus/SavedSearchesMenu';
 import SearchInline from '-/components/SearchInline';
-import AdvancedSearchIcon from '@mui/icons-material/FilterAlt';
+import AdvancedSearchIcon from '@mui/icons-material/ManageSearch';
 import Popover from '@mui/material/Popover';
 import SearchPopover from '-/components/SearchPopover';
 import SearchIcon from '@mui/icons-material/Search';

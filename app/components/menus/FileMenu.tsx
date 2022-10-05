@@ -47,10 +47,15 @@ import PlatformIO from '-/services/platform-facade';
 import {
   generateFileName,
   getAllPropertiesPromise,
+  setFolderBackgroundPromise,
   setFolderThumbnailPromise
 } from '-/services/utils-io';
 import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
+import { bindActionCreators } from 'redux';
+import { actions as AppActions } from '-/reducers/app';
+import { connect } from 'react-redux';
+import { supportedImgs } from '-/services/thumbsgenerator';
 // import AddIcon from '@mui/icons-material/Add';
 
 interface Props {
@@ -81,6 +86,7 @@ interface Props {
   selectedEntries: Array<any>;
   currentLocation: TS.Location;
   locations: Array<TS.Location>;
+  setLastBackgroundImageChange: (number) => void;
 }
 
 function FileMenu(props: Props) {
@@ -151,6 +157,24 @@ function FileMenu(props: Props) {
         showNotification('Thumbnail creation failed.');
         console.warn(
           'Error setting Thumb for entry: ' + props.selectedFilePath,
+          error
+        );
+        return true;
+      });
+  }
+
+  function setFolderBackground() {
+    onClose();
+    setFolderBackgroundPromise(props.selectedFilePath)
+      .then((directoryPath: string) => {
+        props.setLastBackgroundImageChange(new Date().getTime());
+        showNotification('Background created for: ' + directoryPath);
+        return true;
+      })
+      .catch(error => {
+        showNotification('Background creation failed.');
+        console.warn(
+          'Error setting Background for entry: ' + props.selectedFilePath,
           error
         );
         return true;
@@ -366,6 +390,22 @@ function FileMenu(props: Props) {
           <ListItemText primary={i18n.t('core:setAsThumbnail')} />
         </MenuItem>
       );
+      if (
+        supportedImgs.some(ext => props.selectedFilePath.endsWith('.' + ext))
+      ) {
+        menuItems.push(
+          <MenuItem
+            key="setAsBgndTID"
+            data-tid="setAsBgndTID"
+            onClick={setFolderBackground}
+          >
+            <ListItemIcon>
+              <ImageIcon />
+            </ListItemIcon>
+            <ListItemText primary={i18n.t('core:setAsBackground')} />
+          </MenuItem>
+        );
+      }
     }
     menuItems.push(
       <MenuItem
@@ -417,4 +457,13 @@ function FileMenu(props: Props) {
   );
 }
 
-export default FileMenu;
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(
+    {
+      setLastBackgroundImageChange: AppActions.setLastBackgroundImageChange
+    },
+    dispatch
+  );
+}
+
+export default connect(undefined, mapDispatchToProps)(FileMenu);

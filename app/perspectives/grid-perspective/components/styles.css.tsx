@@ -96,21 +96,6 @@ export default (theme: any): any => ({
     borderRadius: 3,
     textAlign: 'center'
   },
-  rowFileExtension: {
-    flex: 1,
-    padding: 4,
-    // width: 35,
-    maxWidth: 60,
-    borderWidth: 1,
-    color: 'white',
-    textTransform: 'uppercase',
-    fontSize: 12,
-    fontWeight: 'bold',
-    borderRadius: 4,
-    textAlign: 'center',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis'
-  },
   gridSizeDate: {
     overflow: AppConfig.isFirefox ? 'auto' : 'overlay',
     whiteSpace: 'nowrap',

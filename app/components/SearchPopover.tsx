@@ -570,6 +570,66 @@ function SearchPopover(props: Props) {
         </IconButton>
       </div>
       <div className={classes.searchArea} data-tid="searchAdvancedTID">
+        <FormControl
+          className={classes.formControl}
+          style={{ marginTop: 5 }}
+          disabled={indexing || !Pro}
+        >
+          <ProTooltip tooltip={i18n.t('storedSearchQueriesTooltip')}>
+            <InputLabel shrink htmlFor="saved-searches">
+              {i18n.t('core:savedSearchesTitle')}
+            </InputLabel>
+            <Select
+              onChange={handleSavedSearchChange}
+              input={
+                <OutlinedInput
+                  name="savedSearch"
+                  id="saved-searches"
+                  label={i18n.t('core:savedSearchesTitle')}
+                />
+              }
+              displayEmpty
+              fullWidth
+              value={props.searchQuery.uuid ? props.searchQuery.uuid : -1}
+            >
+              <MenuItem value={-1} style={{ display: 'none' }} />
+              {props.searches.length < 1 && (
+                <MenuItem>{i18n.t('noSavedSearches')}</MenuItem>
+              )}
+              {props.searches.map(search => (
+                <MenuItem key={search.uuid} value={search.uuid}>
+                  <span style={{ width: '100%' }}>{search.title}</span>
+                </MenuItem>
+              ))}
+            </Select>
+          </ProTooltip>
+        </FormControl>
+        {Pro && (
+          <FormControl className={classes.formControl}>
+            <ButtonGroup fullWidth style={{ justifyContent: 'center' }}>
+              <Button
+                variant="outlined"
+                color="primary"
+                size="small"
+                style={{ flex: 1 }}
+                onClick={() => saveSearch()}
+              >
+                {i18n.t('searchSaveBtn')}
+              </Button>
+              {props.searchQuery.uuid && (
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  size="small"
+                  style={{ flex: 1 }}
+                  onClick={() => saveSearch(false)}
+                >
+                  {i18n.t('searchEditBtn')}
+                </Button>
+              )}
+            </ButtonGroup>
+          </FormControl>
+        )}
         <FormControl className={classes.formControl} disabled={indexing}>
           <ToggleButtonGroup
             onChange={switchSearchBoxing}
@@ -649,7 +709,7 @@ function SearchPopover(props: Props) {
             <Button
               disabled={indexing}
               id="searchButtonAdvTID"
-              // variant="outlined"
+              variant="contained"
               color="primary"
               onClick={executeSearch}
               style={{ flex: 1 }}
@@ -661,8 +721,8 @@ function SearchPopover(props: Props) {
             </Button>
             <Tooltip title={i18n.t('clearSearch')}>
               <Button
-                variant="outlined"
-                color="secondary"
+                variant="contained"
+                color="primary"
                 size="small"
                 onClick={clearSearch}
                 id="resetSearchButton"
@@ -969,66 +1029,6 @@ function SearchPopover(props: Props) {
                 }}
               /> */}
             </FormControl>
-            <FormControl
-              className={classes.formControl}
-              disabled={indexing || !Pro}
-            >
-              <ProTooltip tooltip={i18n.t('storedSearchQueriesTooltip')}>
-                <InputLabel shrink htmlFor="saved-searches">
-                  {i18n.t('core:savedSearchesTitle')}
-                </InputLabel>
-                <Select
-                  onChange={handleSavedSearchChange}
-                  input={
-                    <OutlinedInput
-                      name="savedSearch"
-                      id="saved-searches"
-                      label={i18n.t('core:savedSearchesTitle')}
-                    />
-                  }
-                  displayEmpty
-                  fullWidth
-                  value={props.searchQuery.uuid ? props.searchQuery.uuid : -1}
-                >
-                  <MenuItem value={-1} style={{ display: 'none' }} />
-                  {props.searches.length < 1 && (
-                    <MenuItem>{i18n.t('noSavedSearches')}</MenuItem>
-                  )}
-                  {props.searches.map(search => (
-                    <MenuItem key={search.uuid} value={search.uuid}>
-                      <span style={{ width: '100%' }}>{search.title}</span>
-                    </MenuItem>
-                  ))}
-                </Select>
-              </ProTooltip>
-            </FormControl>
-            {Pro && (
-              <FormControl className={classes.formControl}>
-                <ButtonGroup fullWidth style={{ justifyContent: 'center' }}>
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    size="small"
-                    style={{ flex: 1 }}
-                    onClick={() => saveSearch()}
-                  >
-                    {i18n.t('searchSaveBtn')}
-                  </Button>
-                  {props.searchQuery.uuid && (
-                    <Button
-                      variant="outlined"
-                      color="secondary"
-                      size="small"
-                      style={{ flex: 1 }}
-                      onClick={() => saveSearch(false)}
-                    >
-                      {i18n.t('searchEditBtn')}
-                    </Button>
-                  )}
-                </ButtonGroup>
-              </FormControl>
-            )}
-
             {SaveSearchDialog && saveSearchDialogOpened !== undefined && (
               <SaveSearchDialog
                 open={true}

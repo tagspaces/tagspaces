@@ -43,7 +43,8 @@ export const supportedImgs = [
   'gif',
   'svg',
   'webp',
-  'bmp'
+  'bmp',
+  'avif'
 ];
 export const supportedContainers = [
   'zip',
@@ -373,18 +374,22 @@ export function generateImageThumbnail(
       //     default:
       //     // ctx.rotate(0);
       //   }
-      // if (img.width > maxSize || img.height > maxSize) { // uncomment to do not extend smaller images
-      if (img.width >= img.height) {
-        canvas.width = maxSize;
-        canvas.height = (maxSize * img.height) / img.width;
-      } else {
-        canvas.height = maxSize;
-        canvas.width = (maxSize * img.width) / img.height;
+      let maxSizeWidth = maxSize;
+      if (img.width < maxSize) {
+        maxSizeWidth = img.width;
       }
-      // } else {
-      //   canvas.width = img.width;
-      //   canvas.height = img.height;
-      // }
+      let maxSizeHeight = maxSize;
+      if (img.height < maxSize) {
+        maxSizeHeight = img.height;
+      }
+      if (img.width >= img.height) {
+        canvas.width = maxSizeWidth;
+        canvas.height = (maxSizeWidth * img.height) / img.width;
+      } else {
+        canvas.height = maxSizeHeight;
+        canvas.width = (maxSizeHeight * img.width) / img.height;
+      }
+
       const { width, height } = canvas;
       const x = canvas.width / 2;
       const y = canvas.height / 2;

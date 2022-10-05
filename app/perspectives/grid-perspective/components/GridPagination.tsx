@@ -23,6 +23,7 @@ import Typography from '@mui/material/Typography';
 import Tooltip from '-/components/Tooltip';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
+import ButtonBase from '@mui/material/ButtonBase';
 import Pagination from '@mui/material/Pagination';
 import { bindActionCreators } from 'redux';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
@@ -47,8 +48,13 @@ import {
 } from '-/reducers/app';
 import EntryIcon from '-/components/EntryIcon';
 import TagsPreview from '-/components/TagsPreview';
+import TagContainer from '-/components/TagContainer';
 import { TS } from '-/tagspaces.namespace';
-import { getMetaForEntry, convertMarkDown } from '-/services/utils-io';
+import {
+  getMetaForEntry,
+  convertMarkDown,
+  removeMarkDown
+} from '-/services/utils-io';
 import PlatformIO from '-/services/platform-facade';
 
 interface Props {
@@ -77,6 +83,7 @@ interface Props {
   currentDirectoryPath: string;
   searchResultCount: number;
   onContextMenu: (event: React.MouseEvent<HTMLDivElement>) => void;
+  openRenameEntryDialog: () => void;
   onClick: (event: React.MouseEvent<HTMLDivElement>) => void;
   updateCurrentDirEntries: (dirEntries: TS.FileSystemEntry[]) => void;
   // eslint-disable-next-line react/no-unused-prop-types
@@ -95,12 +102,14 @@ function GridPagination(props: Props) {
     showDirectories,
     showDetails,
     showDescription,
+    showTags,
     renderCell,
     isAppLoading,
     currentDirectoryColor,
     currentDirectoryTags,
     currentDirectoryPath,
     currentDirectoryDescription,
+    openRenameEntryDialog,
     gridPageLimit,
     currentPage,
     files
@@ -299,10 +308,32 @@ function GridPagination(props: Props) {
     PlatformIO.getDirSeparator()
   );
 
-  const folderTmbPath = getThumbFileLocationForDirectory(
+  /**
+   *  normalize path for URL is always '/'
+   *  TODO move this in common module
+   */
+  function normalizeUrl(url: string) {
+    if (PlatformIO.getDirSeparator() !== '/') {
+      if (url) {
+        return url.replaceAll(PlatformIO.getDirSeparator(), '/');
+      }
+    }
+    return url;
+  }
+
+  let folderTmbPath = getThumbFileLocationForDirectory(
     currentDirectoryPath,
     PlatformIO.getDirSeparator()
   );
+  if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
+    folderTmbPath = PlatformIO.getURLforPath(folderTmbPath);
+  } else {
+    folderTmbPath =
+      normalizeUrl(folderTmbPath) +
+      (props.lastBackgroundImageChange
+        ? '?' + props.lastBackgroundImageChange
+        : '');
+  }
 
   let folderBgndPath = getBgndFileLocationForDirectory(
     currentDirectoryPath,
@@ -311,12 +342,11 @@ function GridPagination(props: Props) {
   if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
     folderBgndPath = PlatformIO.getURLforPath(folderBgndPath);
   } else {
-    folderBgndPath = encodeURI(
-      folderBgndPath +
-        (props.lastBackgroundImageChange
-          ? '?' + props.lastBackgroundImageChange
-          : '')
-    );
+    folderBgndPath =
+      normalizeUrl(folderBgndPath) +
+      (props.lastBackgroundImageChange
+        ? '?' + props.lastBackgroundImageChange
+        : '');
   }
   const dirColor = currentDirectoryColor || 'transparent';
 
@@ -329,6 +359,18 @@ function GridPagination(props: Props) {
       currentDirectoryDescription,
       currentDirectoryPath
     );
+  }
+
+  let descriptionPreview = '';
+  if (currentDirectoryDescription) {
+    descriptionPreview = removeMarkDown(currentDirectoryDescription);
+    if (descriptionPreview && descriptionPreview.length > 200) {
+      descriptionPreview = descriptionPreview.substring(0, 200) + '...';
+    }
+  }
+
+  function renderTags(tags: Array<TS.Tag>) {
+    return;
   }
 
   return (
@@ -351,7 +393,7 @@ function GridPagination(props: Props) {
           height: '100%',
           // @ts-ignore
           overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
-          backgroundImage: 'url(' + folderBgndPath + ')',
+          backgroundImage: 'url("' + folderBgndPath + '")',
           backgroundSize: 'cover',
           backgroundRepeat: 'no-repeat'
         }}
@@ -371,13 +413,13 @@ function GridPagination(props: Props) {
                   position: 'relative'
                 }}
               >
-                <Typography
+                <Box
                   style={{
                     display: 'flex',
                     alignItems: 'center',
                     overflow: 'auto',
-                    fontSize: '1.5rem',
                     padding: 10,
+                    marginRight: 160,
                     width: 'fit-content',
                     background: theme.palette.background.default,
                     // background: alpha(theme.palette.background.default, 0.9),
@@ -385,25 +427,58 @@ function GridPagination(props: Props) {
                     color: theme.palette.text.primary
                   }}
                 >
-                  {folderName}
-                  <TagsPreview tags={currentDirectoryTags} />
-                </Typography>
-                {(directories.length > 0 || pageFiles.length > 0) && (
-                  <Typography
-                    style={{
-                      fontSize: '0.9rem',
-                      paddingBottom: 5,
-                      background: theme.palette.background.default,
-                      marginTop: -12,
-                      padding: 10,
-                      borderRadius: 8,
-                      width: 'fit-content',
-                      color: theme.palette.text.primary
-                    }}
-                  >
-                    {folderSummary}
-                  </Typography>
-                )}
+                  <Tooltip title={i18n.t('core:renameDirectory')}>
+                    <ButtonBase
+                      style={{ fontSize: '1.5rem' }}
+                      onClick={openRenameEntryDialog}
+                    >
+                      {folderName}
+                    </ButtonBase>
+                  </Tooltip>
+                  {showTags ? (
+                    <span style={{ paddingLeft: 5 }}>
+                      {currentDirectoryTags &&
+                        currentDirectoryTags.map((tag: TS.Tag) => {
+                          return <TagContainer tag={tag} tagMode="display" />;
+                        })}
+                    </span>
+                  ) : (
+                    <TagsPreview tags={currentDirectoryTags} />
+                  )}
+                </Box>
+                <Box
+                  style={{
+                    paddingBottom: 5,
+                    background: theme.palette.background.default,
+                    marginTop: -12,
+                    marginRight: 160,
+                    padding: 10,
+                    borderRadius: 8,
+                    width: 'fit-content',
+                    color: theme.palette.text.primary
+                  }}
+                >
+                  {(directories.length > 0 || pageFiles.length > 0) && (
+                    <Typography
+                      style={{
+                        fontSize: '0.9rem'
+                      }}
+                    >
+                      {folderSummary}
+                    </Typography>
+                  )}
+                  {!showDescription && descriptionPreview && (
+                    <Tooltip title={i18n.t('core:filePropertiesDescription')}>
+                      <Typography
+                        style={{
+                          fontSize: '0.8rem'
+                        }}
+                      >
+                        {descriptionPreview}
+                      </Typography>
+                    </Tooltip>
+                  )}
+                </Box>
                 <Tooltip title={i18n.t('core:thumbnail')}>
                   <div
                     style={{
@@ -412,7 +487,7 @@ function GridPagination(props: Props) {
                       marginRight: 'auto',
                       height: 140,
                       width: 140,
-                      backgroundImage: 'url(' + folderTmbPath + ')',
+                      backgroundImage: 'url("' + folderTmbPath + '")',
                       backgroundSize: 'cover',
                       backgroundRepeat: 'no-repeat',
                       backgroundPosition: 'center center',

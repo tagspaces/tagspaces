@@ -1118,16 +1118,18 @@ function EntryProperties(props: Props) {
                   <InputAdornment position="end">
                     <Stack direction="row" spacing={1}>
                       {defaultBackgrounds.map((background, cnt) => (
-                        <IconButton
-                          key={cnt}
-                          aria-label="fingerprint"
-                          onClick={() => handleChangeColor(background)}
-                          style={{
-                            backgroundImage: background
-                          }}
-                        >
-                          <SetBackgroundIcon />
-                        </IconButton>
+                        <ProTooltip tooltip={i18n.t('changeBackgroundColor')}>
+                          <IconButton
+                            key={cnt}
+                            aria-label="fingerprint"
+                            onClick={() => handleChangeColor(background)}
+                            style={{
+                              backgroundImage: background
+                            }}
+                          >
+                            <SetBackgroundIcon />
+                          </IconButton>
+                        </ProTooltip>
                       ))}
                       {currentEntry.color && (
                         <>

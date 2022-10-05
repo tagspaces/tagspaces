@@ -438,6 +438,17 @@ function GridPerspective(props: Props) {
       }
 
       setSelectedEntries(entriesToSelect);
+    } else if (event.type === 'drag') {
+      if (
+        selectedEntries &&
+        selectedEntries.some(entry => entry.path === fsEntry.path)
+      ) {
+      } else {
+        const currentSelectedEntry = directoryContent.find(
+          entry => entry.path === fsEntry.path
+        );
+        setSelectedEntries([currentSelectedEntry]);
+      }
     } else if (selectHelperKey) {
       if (
         selectedEntries &&
@@ -678,7 +689,7 @@ function GridPerspective(props: Props) {
         const arrSelected = mItem.selectedEntries
           .map(entry => entry.path)
           // remove target folder selection
-          .filter(epath => epath !== mItem.path);
+          .filter(epath => epath !== item.path);
         if (arrSelected.length > 0) {
           arrPath = arrSelected;
         } else {
@@ -881,21 +892,19 @@ function GridPerspective(props: Props) {
           gridPageLimit={gridPageLimit.current}
           style={{
             margin: 0,
-            // marginTop: 53,
             display: 'grid',
             gridGap: '5px 5px',
             padding: 5,
             paddingBottom: 10,
             gridTemplateColumns:
-              layoutType.current === 'grid'
-                ? 'repeat(auto-fit,minmax(' + entryWidth + 'px,1fr))'
-                : 'none'
+              'repeat(auto-fit,minmax(' + entryWidth + 'px,1fr))'
           }}
           theme={theme}
           directories={sortedDirectories}
           showDetails={showDetails.current}
           showDescription={showDescription.current}
           showDirectories={showDirectories.current}
+          openRenameEntryDialog={props.openRenameEntryDialog}
           showTags={showTags.current}
           thumbnailMode={thumbnailMode.current}
           entrySize={entrySize.current}

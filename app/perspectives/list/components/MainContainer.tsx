@@ -440,6 +440,17 @@ function GridPerspective(props: Props) {
       }
 
       setSelectedEntries(entriesToSelect);
+    } else if (event.type === 'drag') {
+      if (
+        selectedEntries &&
+        selectedEntries.some(entry => entry.path === fsEntry.path)
+      ) {
+      } else {
+        const currentSelectedEntry = directoryContent.find(
+          entry => entry.path === fsEntry.path
+        );
+        setSelectedEntries([currentSelectedEntry]);
+      }
     } else if (selectHelperKey) {
       if (
         selectedEntries &&
@@ -892,6 +903,7 @@ function GridPerspective(props: Props) {
           style={{
             marginTop: 5,
             paddingRight: 4,
+            paddingLeft: 4,
             gridTemplateColumns: 'none'
           }}
           theme={theme}
@@ -899,6 +911,7 @@ function GridPerspective(props: Props) {
           showDetails={showDetails.current}
           showDescription={showDescription.current}
           showDirectories={showDirectories.current}
+          openRenameEntryDialog={props.openRenameEntryDialog}
           showTags={showTags.current}
           thumbnailMode={thumbnailMode.current}
           entrySize={entrySize.current}

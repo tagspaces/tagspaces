@@ -116,7 +116,7 @@ function CellContent(props: Props) {
 
   description = removeMarkDown(description);
   if (description && description.length > maxDescriptionPreviewLength) {
-    description = description.substr(0, maxDescriptionPreviewLength) + '...';
+    description = description.substring(0, maxDescriptionPreviewLength) + '...';
   }
 
   if (description && layoutType === 'row' && fsEntry.isFile) {
@@ -260,8 +260,9 @@ function CellContent(props: Props) {
   }
 
   function renderRowCell(selected: boolean) {
+    const isSmall = entrySize === 'small';
     let tmbSize = 85;
-    if (entrySize === 'small') {
+    if (isSmall) {
       tmbSize = 30;
     } else if (entrySize === 'normal') {
       tmbSize = 70;
@@ -292,8 +293,7 @@ function CellContent(props: Props) {
           item
           style={{
             minHeight: entryHeight,
-            width: 50,
-            maxWidth: 50,
+            width: isSmall ? 80 : 60,
             padding: 3,
             marginRight: 5,
             textAlign: 'left',
@@ -303,7 +303,24 @@ function CellContent(props: Props) {
           <Tooltip title={fsEntry.path}>
             <div
               data-tid="rowCellTID"
-              className={classes.rowFileExtension}
+              style={{
+                display: 'flex',
+                flexDirection: isSmall ? 'row' : 'column',
+                flex: 1,
+                padding: 4,
+                borderWidth: 1,
+                color: 'white',
+                textTransform: 'uppercase',
+                fontSize: 12,
+                fontWeight: 'bold',
+                borderRadius: 4,
+                textAlign: 'center',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                backgroundColor: fsEntryColor,
+                // alignSelf: isSmall ? 'center' : 'auto',
+                alignItems: 'center'
+              }}
               role="presentation"
               onClick={e => {
                 e.stopPropagation();
@@ -313,22 +330,19 @@ function CellContent(props: Props) {
                   selectEntry(fsEntry);
                 }
               }}
-              style={{
-                backgroundColor: fsEntryColor,
-                alignSelf: entrySize === 'small' ? 'center' : 'auto'
-              }}
             >
-              {fsEntry.isFile ? fsEntry.extension : <FolderIcon />}
-              {entrySize !== 'small' &&
-                (selected ? (
-                  <SelectedIcon style={{ paddingTop: 5 }} />
-                ) : (
-                  <UnSelectedIcon style={{ paddingTop: 5 }} />
-                ))}
+              {selected ? <SelectedIcon /> : <UnSelectedIcon />}
+              {fsEntry.isFile ? (
+                <span style={{ marginTop: isSmall ? 0 : 10 }}>
+                  {fsEntry.extension}
+                </span>
+              ) : (
+                <FolderIcon />
+              )}
             </div>
           </Tooltip>
         </Grid>
-        {entrySize === 'small' ? (
+        {isSmall ? (
           <Grid
             item
             xs
@@ -484,6 +498,10 @@ function CellContent(props: Props) {
         AppConfig.isCordovaiOS // TODO DoubleClick not fired in Cordova IOS
           ? handleGridCellDblClick(event, fsEntry)
           : handleGridCellClick(event, fsEntry);
+      }}
+      onDrag={event => {
+        // event.stopPropagation();
+        handleGridCellClick(event, fsEntry);
       }}
     >
       {gridCell}

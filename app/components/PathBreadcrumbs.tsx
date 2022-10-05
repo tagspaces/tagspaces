@@ -44,17 +44,10 @@ const StyledBreadcrumb = withStyles((theme: Theme) => ({
     '&:hover, &:focus': {
       backgroundColor: emphasize(theme.palette.background.default, 0.22)
     }
-    // '&:active': {
-    //   boxShadow: theme.shadows[1],
-    //   backgroundColor: emphasize(theme.palette.grey[300], 0.12)
-    // }
   }
 }))(Chip) as typeof Chip;
 
 const NoWrapBreadcrumb = withStyles({
-  root: {
-    marginTop: 10
-  },
   ol: {
     flexWrap: 'nowrap'
   }
@@ -76,11 +69,6 @@ interface Props {
   isReadOnlyMode: boolean;
   openRenameDirectoryDialog: () => void;
   isDesktopMode: boolean;
-}
-
-function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
-  event.preventDefault();
-  console.info('You clicked a breadcrumb.');
 }
 
 function PathBreadcrumbs(props: Props) {
@@ -150,14 +138,10 @@ function PathBreadcrumbs(props: Props) {
       );
     }
 
-    // console.log('Path parts : ' + JSON.stringify(pathParts));
     if (pathParts.length >= 1) {
       pathParts = pathParts.slice(1, pathParts.length); // remove current directory
     }
     pathParts = pathParts.reverse();
-    // if (pathParts.length > 2) {
-    //   pathParts = pathParts.slice(pathParts.length - 2, pathParts.length); // leave only the last 2 dirs in the path
-    // }
   }
 
   return (
@@ -178,7 +162,6 @@ function PathBreadcrumbs(props: Props) {
           </span>
         }
       >
-        {/* <LocationMenu /> */}
         {pathParts.length > 0 &&
           pathParts.map(pathPart => (
             <Tooltip
@@ -211,7 +194,6 @@ function PathBreadcrumbs(props: Props) {
                 '/'
               )}
               deleteIcon={<ExpandMoreIcon />}
-              // onClick={handleClick}
               onDelete={openDirectoryMenu}
               onClick={openDirectoryMenu}
               onContextMenu={openDirectoryMenu}
