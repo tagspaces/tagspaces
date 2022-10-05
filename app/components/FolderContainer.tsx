@@ -122,18 +122,6 @@ function MapiquePerspectiveAsync(props) {
   );
 }
 
-/* let TreeVizPerspective = React.Fragment;
-if (Pro && Pro.Perspectives && Pro.Perspectives.TreeVizPerspective) {
-  // TreeVizPerspective = React.lazy(() => import(/!* webpackChunkName: "TreeVizPerspective" *!/ '../node_modules/@tagspaces/pro/modules/perspectives/treeviz'));
-  // eslint-disable-next-line prefer-destructuring
-  TreeVizPerspective = Pro.Perspectives.TreeVizPerspective;
-}
-const TreeVizPerspectiveAsync = props => (
-  <React.Suspense fallback={<LoadingLazy />}>
-    <TreeVizPerspective {...props} />
-  </React.Suspense>
-); */
-
 let KanBanPerspective = React.Fragment;
 if (Pro && Pro.Perspectives && Pro.Perspectives.KanBanPerspective) {
   KanBanPerspective = Pro.Perspectives.KanBanPerspective;
@@ -145,18 +133,6 @@ function KanBanPerspectiveAsync(props) {
     </React.Suspense>
   );
 }
-
-// let WikiPerspective = React.Fragment;
-// if (Pro && Pro.Perspectives && Pro.Perspectives.WikiPerspective) {
-//   WikiPerspective = Pro.Perspectives.WikiPerspective;
-// }
-// function WikiPerspectiveAsync(props) {
-//   return (
-//     <React.Suspense fallback={<LoadingLazy />}>
-//       <WikiPerspective {...props} />
-//     </React.Suspense>
-//   );
-// }
 
 const WelcomePanel = React.lazy(() =>
   import(/* webpackChunkName: "WelcomePanel" */ './WelcomePanel')
@@ -237,10 +213,8 @@ interface Props {
   progress?: Array<any>;
   searchQuery: TS.SearchQuery;
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
-  // openCurrentDirectory: () => void;
   openURLExternally?: (url: string, skipConfirmation: boolean) => void;
   language: string;
-  // keyBindings: Array<any>;
 }
 
 function FolderContainer(props: Props) {
@@ -284,7 +258,6 @@ function FolderContainer(props: Props) {
     boolean
   >(false);
   const [isSearchVisible, setSearchVisible] = useState<boolean>(false);
-  // const [advancedSearch, setAdvancedSearch] = useState<boolean>(false);
   const [anchorSearch, setAnchorSearch] = useState<HTMLButtonElement | null>(
     null
   );
@@ -293,9 +266,7 @@ function FolderContainer(props: Props) {
     currentDirectoryPath = '',
     loadDirectoryContent,
     directoryContent,
-    // searchResultCount,
     classes,
-    // maxSearchResults,
     toggleDrawer,
     drawerOpened,
     isDesktopMode,
@@ -306,7 +277,6 @@ function FolderContainer(props: Props) {
     openDirectory,
     reflectCreateEntry,
     openFsEntry,
-    // keyBindings,
     defaultPerspective
   } = props;
 
@@ -388,26 +358,7 @@ function FolderContainer(props: Props) {
         />
       );
     }
-    // if (Pro && currentPerspective === PerspectiveIDs.WIKI) {
-    //   return (
-    //     <WikiPerspectiveAsync
-    //       directoryContent={props.directoryContent}
-    //       loadDirectoryContent={props.loadDirectoryContent}
-    //       openFsEntry={props.openFsEntry}
-    //       openRenameEntryDialog={() => setIsRenameEntryDialogOpened(true)}
-    //       loadParentDirectoryContent={props.loadParentDirectoryContent}
-    //       renameFile={props.renameFile}
-    //       openDirectory={props.openDirectory}
-    //       showInFileManager={props.showInFileManager}
-    //       currentDirectoryPath={props.currentDirectoryPath}
-    //       addTags={props.addTags}
-    //       editTagForEntry={props.editTagForEntry}
-    //       removeTags={props.removeTags}
-    //       removeAllTags={props.removeAllTags}
-    //       windowWidth={props.windowWidth}
-    //     />
-    //   );
-    // }
+
     return (
       <GridPerspectiveAsync
         directoryContent={props.directoryContent}
@@ -495,14 +446,6 @@ function FolderContainer(props: Props) {
           true
         );
       }
-      // } else if (perspectiveId === PerspectiveIDs.WIKI) {
-      //   const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
-      //   if (openPersDocs) {
-      //     props.openURLExternally(
-      //       Links.documentationLinks.kanbanPerspective,
-      //       true
-      //     );
-      //   }
     }
   };
 
@@ -588,7 +531,6 @@ function FolderContainer(props: Props) {
                   variant="outlined"
                   size="small"
                   style={{
-                    marginTop: 10,
                     minWidth: 40,
                     width: 200
                   }}

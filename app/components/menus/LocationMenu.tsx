@@ -88,17 +88,13 @@ function LocationMenu(props: Props) {
           id="locationMenuButton"
           onClick={event => setLocationChooserMenuAnchorEl(event.currentTarget)}
           style={{
-            // paddingRight: 0,
-            // paddingLeft: 0,
-            // marginRight: 5,
+            padding: 5,
             fontSize: theme.typography.fontSize,
             borderRadius: 10
           }}
           size="large"
         >
-          {currentLocation
-            ? locationIcon // this.state.currentLocation.name
-            : i18n.t('core:pleaseOpenLocation')}
+          {currentLocation ? locationIcon : i18n.t('core:pleaseOpenLocation')}
           <ArrowDropDownIcon />
         </IconButton>
       </Tooltip>
