@@ -43,7 +43,8 @@ import {
   extractContainingDirectoryPath,
   extractDirectoryName,
   getThumbFileLocationForFile,
-  getThumbFileLocationForDirectory
+  getThumbFileLocationForDirectory,
+  getBgndFileLocationForDirectory
 } from '@tagspaces/tagspaces-platforms/paths';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import PlatformIO from './platform-facade';
@@ -58,9 +59,11 @@ import {
   supportedImgs,
   supportedText,
   supportedVideos,
-  supportedMisc
+  supportedMisc,
+  generateImageThumbnail
 } from '-/services/thumbsgenerator';
 import { defaultSettings } from '-/perspectives/grid-perspective';
+import { base64ToArrayBuffer } from '-/utils/dom';
 
 const supportedImgsWS = [
   'jpg',
@@ -1047,6 +1050,41 @@ export function setFolderThumbnailPromise(filePath: string): Promise<string> {
     ),
     i18n.t('core:thumbAlreadyExists', { directoryName })
   ).then(() => directoryPath);
+}
+
+/**
+ * @param filePath
+ * return Promise<directoryPath> of directory in order to open Folder properties next
+ */
+export function setFolderBackgroundPromise(filePath: string): Promise<string> {
+  const directoryPath = extractContainingDirectoryPath(
+    filePath,
+    PlatformIO.getDirSeparator()
+  );
+
+  const folderBgndPath = getBgndFileLocationForDirectory(
+    directoryPath,
+    PlatformIO.getDirSeparator()
+  );
+
+  return generateImageThumbnail(filePath, AppConfig.maxBgndSize) // 4K -> 3840, 2K -> 2560
+    .then(base64Image => {
+      if (base64Image) {
+        const data = base64ToArrayBuffer(base64Image.split(',').pop());
+        return PlatformIO.saveBinaryFilePromise(folderBgndPath, data, true)
+          .then(() => {
+            // props.setLastBackgroundImageChange(new Date().getTime());
+            return directoryPath;
+          })
+          .catch(error => {
+            console.error('Save to file failed ', error);
+            return true;
+          });
+      }
+    })
+    .catch(error => {
+      console.error('Background generation failed ' + error);
+    });
 }
 
 export function findBackgroundColorForFolder(fsEntry: TS.FileSystemEntry) {
