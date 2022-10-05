@@ -438,6 +438,17 @@ function GridPerspective(props: Props) {
       }
 
       setSelectedEntries(entriesToSelect);
+    } else if (event.type === 'drag') {
+      if (
+        selectedEntries &&
+        selectedEntries.some(entry => entry.path === fsEntry.path)
+      ) {
+      } else {
+        const currentSelectedEntry = directoryContent.find(
+          entry => entry.path === fsEntry.path
+        );
+        setSelectedEntries([currentSelectedEntry]);
+      }
     } else if (selectHelperKey) {
       if (
         selectedEntries &&
@@ -678,7 +689,7 @@ function GridPerspective(props: Props) {
         const arrSelected = mItem.selectedEntries
           .map(entry => entry.path)
           // remove target folder selection
-          .filter(epath => epath !== mItem.path);
+          .filter(epath => epath !== item.path);
         if (arrSelected.length > 0) {
           arrPath = arrSelected;
         } else {

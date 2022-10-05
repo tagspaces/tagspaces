@@ -499,6 +499,10 @@ function CellContent(props: Props) {
           ? handleGridCellDblClick(event, fsEntry)
           : handleGridCellClick(event, fsEntry);
       }}
+      onDrag={event => {
+        // event.stopPropagation();
+        handleGridCellClick(event, fsEntry);
+      }}
     >
       {gridCell}
     </Paper>

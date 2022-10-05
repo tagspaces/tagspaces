@@ -440,6 +440,17 @@ function GridPerspective(props: Props) {
       }
 
       setSelectedEntries(entriesToSelect);
+    } else if (event.type === 'drag') {
+      if (
+        selectedEntries &&
+        selectedEntries.some(entry => entry.path === fsEntry.path)
+      ) {
+      } else {
+        const currentSelectedEntry = directoryContent.find(
+          entry => entry.path === fsEntry.path
+        );
+        setSelectedEntries([currentSelectedEntry]);
+      }
     } else if (selectHelperKey) {
       if (
         selectedEntries &&
