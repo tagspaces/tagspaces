@@ -609,7 +609,7 @@ function SearchPopover(props: Props) {
             <ButtonGroup fullWidth style={{ justifyContent: 'center' }}>
               <Button
                 variant="outlined"
-                color="secondary"
+                color="primary"
                 size="small"
                 style={{ flex: 1 }}
                 onClick={() => saveSearch()}
@@ -619,7 +619,7 @@ function SearchPopover(props: Props) {
               {props.searchQuery.uuid && (
                 <Button
                   variant="outlined"
-                  color="secondary"
+                  color="primary"
                   size="small"
                   style={{ flex: 1 }}
                   onClick={() => saveSearch(false)}
@@ -709,7 +709,7 @@ function SearchPopover(props: Props) {
             <Button
               disabled={indexing}
               id="searchButtonAdvTID"
-              // variant="outlined"
+              variant="contained"
               color="primary"
               onClick={executeSearch}
               style={{ flex: 1 }}
@@ -721,8 +721,8 @@ function SearchPopover(props: Props) {
             </Button>
             <Tooltip title={i18n.t('clearSearch')}>
               <Button
-                variant="outlined"
-                color="secondary"
+                variant="contained"
+                color="primary"
                 size="small"
                 onClick={clearSearch}
                 id="resetSearchButton"

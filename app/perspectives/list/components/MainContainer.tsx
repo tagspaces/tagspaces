@@ -892,6 +892,7 @@ function GridPerspective(props: Props) {
           style={{
             marginTop: 5,
             paddingRight: 4,
+            paddingLeft: 4,
             gridTemplateColumns: 'none'
           }}
           theme={theme}
