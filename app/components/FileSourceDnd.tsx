@@ -30,10 +30,19 @@ interface Props {
 const boxSource = {
   beginDrag(props) {
     // console.log('beginDrag', props);
-    return {
-      path: props.children.props.entryPath,
-      selectedEntries: props.children.props.selectedEntries
-    };
+    const entryPath = props.children.props.entryPath;
+    const selectedEntries = props.children.props.selectedEntries;
+    if (!selectedEntries.some(entry => entry.path === entryPath)) {
+      return {
+        path: entryPath,
+        selectedEntries: [{ path: entryPath }]
+      };
+    } else {
+      return {
+        path: entryPath,
+        selectedEntries: selectedEntries
+      };
+    }
   }
 
   /* endDrag(props, monitor) {
