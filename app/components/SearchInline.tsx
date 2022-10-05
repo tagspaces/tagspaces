@@ -475,18 +475,15 @@ function SearchInline(props: Props) {
             endAdornment: (
               <InputAdornment position="end">
                 {isDesktop && (
-                  <>
-                    <Tooltip title={i18n.t('core:savedSearchesTitle')}>
-                      <IconButton
-                        id="basic-button"
-                        size="small"
-                        edge="end"
-                        onClick={handleOpenSavedSearches}
-                      >
-                        <ExpandMoreIcon style={{ color: 'lightgray' }} />
-                      </IconButton>
-                    </Tooltip>
-                  </>
+                  <Tooltip title={i18n.t('core:savedSearchesTitle')}>
+                    <IconButton
+                      size="small"
+                      edge="end"
+                      onClick={handleOpenSavedSearches}
+                    >
+                      <ExpandMoreIcon />
+                    </IconButton>
+                  </Tooltip>
                 )}
                 <Tooltip title={i18n.t('clearSearch') + ' (ESC)'}>
                   <IconButton
