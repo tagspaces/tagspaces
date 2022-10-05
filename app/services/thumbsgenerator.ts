@@ -43,7 +43,8 @@ export const supportedImgs = [
   'gif',
   'svg',
   'webp',
-  'bmp'
+  'bmp',
+  'avif'
 ];
 export const supportedContainers = [
   'zip',
