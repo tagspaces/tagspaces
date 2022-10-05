@@ -881,15 +881,12 @@ function GridPerspective(props: Props) {
           gridPageLimit={gridPageLimit.current}
           style={{
             margin: 0,
-            // marginTop: 53,
             display: 'grid',
             gridGap: '5px 5px',
             padding: 5,
             paddingBottom: 10,
             gridTemplateColumns:
-              layoutType.current === 'grid'
-                ? 'repeat(auto-fit,minmax(' + entryWidth + 'px,1fr))'
-                : 'none'
+              'repeat(auto-fit,minmax(' + entryWidth + 'px,1fr))'
           }}
           theme={theme}
           directories={sortedDirectories}

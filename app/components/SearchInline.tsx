@@ -404,7 +404,9 @@ function SearchInline(props: Props) {
       <div
         style={{
           width: '100%',
-          whiteSpace: 'nowrap'
+          whiteSpace: 'nowrap',
+          display: 'flex',
+          alignItems: 'center'
         }}
       >
         <MainSearchField
@@ -418,7 +420,6 @@ function SearchInline(props: Props) {
           }}
           size="small"
           style={{
-            marginTop: 10,
             width: 'calc(100% - 80px)'
           }}
           inputRef={mainSearchField}
@@ -430,39 +431,42 @@ function SearchInline(props: Props) {
             startAdornment: (
               <InputAdornment position="start" style={{ marginRight: 0 }}>
                 {isDesktop ? (
-                  <Tooltip
-                    classes={{ tooltip: classes.customWidth }}
-                    title={
-                      <span style={{ fontSize: 14 }}>
-                        {i18n.t('searchScope')}:
-                        <br />
-                        &bull; {i18n.t('location')} -{' '}
-                        {i18n.t('searchPlaceholder')}
-                        <br />
-                        &bull; {i18n.t('folder')} -{' '}
-                        {i18n.t('searchCurrentFolderWithSubFolders')}
-                        <br />
-                        &bull; {i18n.t('globalSearch')} -{' '}
-                        {i18n.t('searchInAllLocationTooltip')} (
-                        {i18n.t('betaStatus')})<br />
-                      </span>
-                    }
-                  >
-                    <Typography
-                      variant="overline"
-                      display="block"
-                      onClick={toggleSearchBoxing}
-                      style={{
-                        border: '1px solid gray',
-                        borderRadius: 5,
-                        lineHeight: 'inherit',
-                        paddingLeft: 3,
-                        paddingRight: 3
-                      }}
+                  <>
+                    <Tooltip
+                      classes={{ tooltip: classes.customWidth }}
+                      title={
+                        <span style={{ fontSize: 14 }}>
+                          {i18n.t('searchScope')}:
+                          <br />
+                          &bull; {i18n.t('location')} -{' '}
+                          {i18n.t('searchPlaceholder')}
+                          <br />
+                          &bull; {i18n.t('folder')} -{' '}
+                          {i18n.t('searchCurrentFolderWithSubFolders')}
+                          <br />
+                          &bull; {i18n.t('globalSearch')} -{' '}
+                          {i18n.t('searchInAllLocationTooltip')} (
+                          {i18n.t('betaStatus')})<br />
+                        </span>
+                      }
                     >
-                      {searchBoxingName}
-                    </Typography>
-                  </Tooltip>
+                      <Typography
+                        variant="overline"
+                        display="block"
+                        onClick={toggleSearchBoxing}
+                        style={{
+                          border: '1px solid gray',
+                          borderRadius: 5,
+                          lineHeight: 'inherit',
+                          paddingLeft: 3,
+                          paddingRight: 3
+                        }}
+                      >
+                        {searchBoxingName}
+                      </Typography>
+                    </Tooltip>
+                    <HelpTooltip classes={classes} />
+                  </>
                 ) : (
                   <HelpTooltip classes={classes} />
                 )}
@@ -482,7 +486,6 @@ function SearchInline(props: Props) {
                         <ExpandMoreIcon style={{ color: 'lightgray' }} />
                       </IconButton>
                     </Tooltip>
-                    <HelpTooltip classes={classes} />
                   </>
                 )}
                 <Tooltip title={i18n.t('clearSearch') + ' (ESC)'}>
@@ -510,8 +513,7 @@ function SearchInline(props: Props) {
             disabled={indexing}
             style={{
               marginRight: 10,
-              marginLeft: 10,
-              marginTop: 10
+              marginLeft: 10
             }}
             color="primary"
             onClick={clickSearchButton}

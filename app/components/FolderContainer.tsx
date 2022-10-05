@@ -544,6 +544,7 @@ function FolderContainer(props: Props) {
             paddingLeft: 5,
             display: 'flex',
             overflowY: 'hidden',
+            alignItems: 'center',
             // @ts-ignore
             overflowX: AppConfig.isFirefox ? 'auto' : 'overlay'
           }}

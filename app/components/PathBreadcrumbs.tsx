@@ -52,9 +52,6 @@ const StyledBreadcrumb = withStyles((theme: Theme) => ({
 }))(Chip) as typeof Chip;
 
 const NoWrapBreadcrumb = withStyles({
-  root: {
-    marginTop: 10
-  },
   ol: {
     flexWrap: 'nowrap'
   }
