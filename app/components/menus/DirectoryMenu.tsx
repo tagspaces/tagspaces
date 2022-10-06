@@ -63,7 +63,7 @@ import { TS } from '-/tagspaces.namespace';
 import { ProLabel, BetaLabel } from '-/components/HelperComponents';
 import Links from '-/links';
 import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
-import PlatformFacade from "-/services/platform-facade";
+import PlatformFacade from '-/services/platform-facade';
 
 interface Props {
   open: boolean;

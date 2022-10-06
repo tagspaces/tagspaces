@@ -87,7 +87,7 @@ import InfoIcon from '-/components/InfoIcon';
 import { ProTooltip } from '-/components/HelperComponents';
 import PerspectiveSelector from '-/components/PerspectiveSelector';
 import { connect } from 'react-redux';
-import { MilkdownEditor, MilkdownRef } from "@tagspaces/tagspaces-md";
+import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
 // import '@material-design-icons/font/outlined.css';
 
 const ThumbnailChooserDialog =
