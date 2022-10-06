@@ -541,7 +541,7 @@ function SearchPopover(props: Props) {
     >
       <div className={classes.toolbar}>
         <Typography variant="button" style={{ margin: '12px 0 10px 10px' }}>
-          {i18n.t('core:searchTitle')}
+          {i18n.t('core:advancedSearch')}
         </Typography>
         <IconButton
           size="medium"

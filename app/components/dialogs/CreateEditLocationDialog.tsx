@@ -751,7 +751,7 @@ function CreateEditLocationDialog(props: Props) {
                         >
                           <div style={{ display: 'flex' }}>
                             {persistTagsInSidecarFile === null && <CheckIcon />}
-                            &nbsp;{i18n.t('core:default')}&nbsp;&nbsp;
+                            &nbsp;{i18n.t('core:defaultSetting')}&nbsp;&nbsp;
                           </div>
                         </Tooltip>
                       </ToggleButton>
