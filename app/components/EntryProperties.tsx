@@ -701,7 +701,7 @@ function EntryProperties(props: Props) {
               }
             }}
             onKeyDown={event => {
-              if (event.key === 'Enter') {
+              if (event.key === 'Enter' && !fileNameError.current) {
                 renameEntry();
               }
             }}
