@@ -426,11 +426,13 @@ const actions = {
             return true;
           });
           if (arrFiles.length > 0) {
+            const numberOfFile = arrFiles.length;
             dispatch(
               AppActions.showNotification(
-                'File ' +
-                  arrFiles.map(file => file.name).toString() +
-                  ' successfully imported.',
+                numberOfFile + ' ' + 'file(s) successfully imported.',
+                // 'Files: ' +
+                //   arrFiles.map(file => file.name).toString() +
+                //   ' successfully imported.',
                 'default',
                 true
               )
