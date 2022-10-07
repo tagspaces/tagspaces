@@ -513,9 +513,14 @@ function CreateEditLocationDialog(props: Props) {
                   <MenuItem key="TYPE_CLOUD" value={locationType.TYPE_CLOUD}>
                     {i18n.t('core:objectStorage') + ' (AWS, MinIO, Wasabi,...)'}
                   </MenuItem>
-                  <MenuItem key="TYPE_WEBDAV" value={locationType.TYPE_WEBDAV}>
-                    {i18n.t('core:webdavLocation') + ' (experimental)'}
-                  </MenuItem>
+                  {Pro && (
+                    <MenuItem
+                      key="TYPE_WEBDAV"
+                      value={locationType.TYPE_WEBDAV}
+                    >
+                      {i18n.t('core:webdavLocation') + ' (experimental)'}
+                    </MenuItem>
+                  )}
                 </Select>
               </FormControl>
               {content}
