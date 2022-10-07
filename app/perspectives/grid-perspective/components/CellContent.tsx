@@ -213,16 +213,14 @@ function CellContent(props: Props) {
             </Tooltip>
           )}
         </div>
-        <Tooltip title={fsEntry.path}>
-          <Typography
-            className={classes.gridCellTitle}
-            data-tid={'fsEntryName_' + fsEntry.name}
-            noWrap={true}
-            variant="body1"
-          >
-            {entryTitle}
-          </Typography>
-        </Tooltip>
+        <Typography
+          className={classes.gridCellTitle}
+          data-tid={'fsEntryName_' + fsEntry.name}
+          noWrap={true}
+          variant="body1"
+        >
+          {entryTitle}
+        </Typography>
         <div className={classes.gridDetails}>
           <Tooltip title={fsEntry.path}>
             <Typography
@@ -274,7 +272,7 @@ function CellContent(props: Props) {
       : fsEntryBgColor;
 
     const entrySizeFormatted =
-      fsEntry.isFile && formatFileSize(fsEntry.size) + ' - ';
+      fsEntry.isFile && formatFileSize(fsEntry.size) + ' | ';
     const entryLMDTFormatted =
       fsEntry.isFile && fsEntry.lmdt && formatDateTime(fsEntry.lmdt, true);
 
@@ -351,19 +349,17 @@ function CellContent(props: Props) {
               display: 'flex'
             }}
           >
-            <Tooltip
+            {/* <Tooltip
               title={
                 fsEntry.isFile ? entrySizeFormatted + entryLMDTFormatted : ''
               }
-            >
-              <Typography
-                style={{ wordBreak: 'break-all', alignSelf: 'center' }}
-              >
-                {entryTitle}
-                &nbsp;
-                {showTags && entryTags ? renderTags(entryTags) : tagPlaceholder}
-              </Typography>
-            </Tooltip>
+            > */}
+            <Typography style={{ wordBreak: 'break-all', alignSelf: 'center' }}>
+              {entryTitle}
+              &nbsp;
+              {showTags && entryTags ? renderTags(entryTags) : tagPlaceholder}
+            </Typography>
+            {/* </Tooltip> */}
           </Grid>
         ) : (
           <Grid item xs zeroMinWidth>
@@ -389,9 +385,9 @@ function CellContent(props: Props) {
               >
                 <span>{entryLMDTFormatted}</span>
               </Tooltip>
-              <Tooltip title={i18n.t('core:entryDescription')}>
-                <span>{description}</span>
-              </Tooltip>
+              {/* <Tooltip title={i18n.t('core:entryDescription')}> */}
+              <span>{description}</span>
+              {/* </Tooltip> */}
             </Typography>
           </Grid>
         )}
