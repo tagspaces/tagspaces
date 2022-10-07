@@ -50,12 +50,9 @@ import EntryIcon from '-/components/EntryIcon';
 import TagsPreview from '-/components/TagsPreview';
 import TagContainer from '-/components/TagContainer';
 import { TS } from '-/tagspaces.namespace';
-import {
-  getMetaForEntry,
-  convertMarkDown,
-  removeMarkDown
-} from '-/services/utils-io';
+import { getMetaForEntry, getDescriptionPreview } from '-/services/utils-io';
 import PlatformIO from '-/services/platform-facade';
+import { MilkdownEditor } from '@tagspaces/tagspaces-md';
 
 interface Props {
   isMetaLoaded: boolean;
@@ -353,24 +350,20 @@ function GridPagination(props: Props) {
   const folderSummary =
     directories.length + ' folder(s) and ' + allFilesCount + ' file(s) found';
 
-  let descriptionHTML = '';
+  /* let descriptionHTML = '';
   if (showDescription && currentDirectoryDescription) {
     descriptionHTML = convertMarkDown(
       currentDirectoryDescription,
       currentDirectoryPath
     );
   }
-
+  */
   let descriptionPreview = '';
   if (currentDirectoryDescription) {
-    descriptionPreview = removeMarkDown(currentDirectoryDescription);
-    if (descriptionPreview && descriptionPreview.length > 200) {
-      descriptionPreview = descriptionPreview.substring(0, 200) + '...';
-    }
-  }
-
-  function renderTags(tags: Array<TS.Tag>) {
-    return;
+    descriptionPreview = getDescriptionPreview(
+      currentDirectoryDescription,
+      200
+    );
   }
 
   return (
@@ -500,9 +493,14 @@ function GridPagination(props: Props) {
               </div>
             </Grid>
           )}
-          {showDescription && descriptionHTML && (
+          {showDescription && currentDirectoryDescription && (
             <Grid xs={12}>
-              <Typography
+              <MilkdownEditor
+                content={currentDirectoryDescription}
+                readOnly={true}
+                dark={false}
+              />
+              {/*<Typography
                 style={{
                   display: 'block',
                   padding: 10,
@@ -519,7 +517,7 @@ function GridPagination(props: Props) {
                   // eslint-disable-next-line no-nested-ternary
                   __html: descriptionHTML
                 }}
-              />
+              />*/}
             </Grid>
           )}
         </Grid>

@@ -39,7 +39,7 @@ import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import {
   findBackgroundColorForFolder,
   findColorForEntry,
-  removeMarkDown
+  getDescriptionPreview
 } from '-/services/utils-io';
 import TagContainerDnd from '-/components/TagContainerDnd';
 import TagContainer from '-/components/TagContainer';
@@ -114,9 +114,11 @@ function CellContent(props: Props) {
 
   let { description } = fsEntry;
 
-  description = removeMarkDown(description);
   if (description && description.length > maxDescriptionPreviewLength) {
-    description = description.substring(0, maxDescriptionPreviewLength) + '...';
+    description = getDescriptionPreview(
+      description,
+      maxDescriptionPreviewLength
+    );
   }
 
   if (description && layoutType === 'row' && fsEntry.isFile) {

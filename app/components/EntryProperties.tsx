@@ -811,48 +811,37 @@ function EntryProperties(props: Props) {
           )}
         </Grid>
         <Grid item xs={12}>
-          {editDescription !== undefined ? (
-            <>
-              <MilkdownEditor
-                ref={fileDescriptionRef}
-                content={currentEntry.description || ''}
-                onChange={milkdownListener}
-                readOnly={false}
-                dark={false}
-              />
-              {/*<TextField
-                multiline
-                inputRef={fileDescriptionRef}
-                style={{
-                  paddingTop: 1,
-                  // borderRadius: 5,
-                  maxHeight: 400,
-                  overflow: 'auto',
-                  backgroundColor: 'rgba(255, 216, 115, 0.20)'
-                }}
-                id="textarea"
-                placeholder=""
-                name="description"
-                className={styles.textField}
-                defaultValue={currentEntry.description}
-                fullWidth={true}
-                onChange={handleDescriptionChange}
-              />*/}
-              <Typography
-                variant="caption"
-                style={{
-                  color: theme.palette.text.primary
-                }}
-              >
-                Formatting: <i className={classes.mdHelpers}>_italic_</i>{' '}
-                <b className={classes.mdHelpers}>**bold**</b>{' '}
-                <span className={classes.mdHelpers}>* list item</span>{' '}
-                <span className={classes.mdHelpers}>
-                  [Link text](http://...)
-                </span>
-              </Typography>
-            </>
-          ) : (
+          <div
+            onDoubleClick={() => {
+              if (
+                editDescription === undefined &&
+                !currentEntry.editMode &&
+                editName === undefined
+              ) {
+                toggleEditDescriptionField();
+              }
+            }}
+          >
+            <MilkdownEditor
+              ref={fileDescriptionRef}
+              content={currentEntry.description || ''}
+              onChange={milkdownListener}
+              readOnly={editDescription === undefined}
+              dark={false}
+            />
+          </div>
+          <Typography
+            variant="caption"
+            style={{
+              color: theme.palette.text.primary
+            }}
+          >
+            Formatting: <i className={classes.mdHelpers}>_italic_</i>{' '}
+            <b className={classes.mdHelpers}>**bold**</b>{' '}
+            <span className={classes.mdHelpers}>* list item</span>{' '}
+            <span className={classes.mdHelpers}>[Link text](http://...)</span>
+          </Typography>
+          {/*
             <Typography
               style={{
                 display: 'block',
@@ -878,8 +867,7 @@ function EntryProperties(props: Props) {
                   toggleEditDescriptionField();
                 }
               }}
-            />
-          )}
+            />*/}
         </Grid>
 
         <Grid container item xs={12} spacing={1}>
