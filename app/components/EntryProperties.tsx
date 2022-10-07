@@ -48,7 +48,7 @@ import {
   TileLayer,
   withLeaflet
 } from 'react-leaflet';
-import { IconButton } from '@mui/material';
+import { ButtonGroup, IconButton } from '@mui/material';
 import { formatFileSize } from '@tagspaces/tagspaces-platforms/misc';
 import {
   extractContainingDirectoryPath,
@@ -741,12 +741,61 @@ function EntryProperties(props: Props) {
                   icon={iconFileMarker}
                   position={[geoLocation.lat, geoLocation.lng]}
                 >
-                  <Popup
-                    style={{
-                      backgroundColor: 'white'
-                    }}
-                  >
-                    <h2>{geoLocation.lat + ', ' + geoLocation.lng}</h2>
+                  <Popup>
+                    <Typography
+                      style={{ margin: 0, color: theme.palette.text.primary }}
+                    >
+                      {i18n.t('core:lat') + ' : ' + geoLocation.lat}
+                      <br />
+                      {i18n.t('core:lat') + ' : ' + geoLocation.lng}
+                    </Typography>
+                    <br />
+                    <ButtonGroup>
+                      <Button
+                        size="small"
+                        color="primary"
+                        variant="outlined"
+                        onClick={() => {
+                          PlatformIO.openUrl(
+                            'https://www.openstreetmap.org/?mlat=' +
+                              geoLocation.lat +
+                              '&mlon=' +
+                              geoLocation.lng +
+                              '#map=14/' +
+                              geoLocation.lat +
+                              '/' +
+                              geoLocation.lng
+                          );
+                        }}
+                        title="Open in OpenStreetMap"
+                      >
+                        Open in
+                        <br />
+                        OpenStreetMap
+                      </Button>
+                      <Button
+                        size="small"
+                        color="primary"
+                        variant="outlined"
+                        onClick={() => {
+                          PlatformIO.openUrl(
+                            'https://maps.google.com/?q=' +
+                              geoLocation.lat +
+                              ',' +
+                              geoLocation.lng +
+                              '&ll=' +
+                              geoLocation.lat +
+                              ',' +
+                              geoLocation.lng +
+                              '&z=15'
+                          );
+                        }}
+                      >
+                        Open in
+                        <br />
+                        Google Maps
+                      </Button>
+                    </ButtonGroup>
                   </Popup>
                 </Marker>
               </LayerGroup>
