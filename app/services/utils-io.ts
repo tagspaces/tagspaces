@@ -1187,3 +1187,26 @@ export function convertMarkDown(mdContent: string, directoryPath: string) {
 
   return marked.parse(DOMPurify.sanitize(mdContent));
 }
+
+/**
+ * forbidden characters # \ / * ? " < > |
+ * @param dirName
+ */
+export function dirNameValidation(dirName): boolean {
+  if (dirName.length > 0) {
+    const rg1 = /^[^#\\/*?"<>|]+$/; // forbidden characters # \ / * ? " < > |
+    return !rg1.test(dirName);
+  }
+  return true;
+}
+
+export function fileNameValidation(fileName): boolean {
+  if (fileName.length > 0) {
+    const rg1 = /^[^#\\/*?"<>|]+$/;
+    // https://stackoverflow.com/a/11101624/2285631
+    const rg2 = /^\./; // cannot start with dot (.)
+    const rg3 = /^(nul|prn|con|lpt[0-9]|com[0-9])(\.|$)/i; // forbidden file names
+    return !(rg1.test(fileName) && !rg2.test(fileName) && !rg3.test(fileName));
+  }
+  return true;
+}

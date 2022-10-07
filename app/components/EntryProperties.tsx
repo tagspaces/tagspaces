@@ -61,7 +61,12 @@ import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import TagDropContainer from './TagDropContainer';
 import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
 import i18n from '../services/i18n';
-import { enhanceOpenedEntry, convertMarkDown } from '-/services/utils-io';
+import {
+  enhanceOpenedEntry,
+  convertMarkDown,
+  fileNameValidation,
+  dirNameValidation
+} from '-/services/utils-io';
 import { parseGeoLocation } from '-/utils/geo';
 import { Pro } from '../pro';
 import PlatformIO from '../services/platform-facade';
@@ -87,6 +92,7 @@ import InfoIcon from '-/components/InfoIcon';
 import { ProTooltip } from '-/components/HelperComponents';
 import PerspectiveSelector from '-/components/PerspectiveSelector';
 import { connect } from 'react-redux';
+import FormHelperText from '@mui/material/FormHelperText';
 
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
@@ -178,6 +184,8 @@ function EntryProperties(props: Props) {
   const sharingLinkRef = useRef<HTMLInputElement>(null);
   const objectStorageLinkRef = useRef<HTMLInputElement>(null);
   const fileDescriptionRef = useRef<HTMLInputElement>(null);
+  const disableConfirmButton = useRef<boolean>(true);
+  const fileNameError = useRef<boolean>(false);
 
   const directoryPath = props.openedEntry.isFile
     ? extractContainingDirectoryPath(
@@ -288,6 +296,7 @@ function EntryProperties(props: Props) {
 
   const deactivateEditNameField = () => {
     setEditName(undefined);
+    fileNameError.current = false;
     if (fileNameRef) {
       fileNameRef.current.value = entryName;
     }
@@ -435,6 +444,17 @@ function EntryProperties(props: Props) {
     const { value, name } = target;
 
     if (name === 'name') {
+      const initValid = disableConfirmButton.current;
+      let noValid;
+      if (currentEntry.isFile) {
+        noValid = fileNameValidation(value);
+      } else {
+        noValid = dirNameValidation(value);
+      }
+      disableConfirmButton.current = noValid;
+      if (noValid || initValid !== noValid) {
+        fileNameError.current = noValid;
+      }
       setEditName(value);
     }
   };
@@ -620,6 +640,7 @@ function EntryProperties(props: Props) {
       <Grid container>
         <Grid item xs={12}>
           <TextField
+            error={fileNameError.current}
             label={
               currentEntry.isFile
                 ? i18n.t('core:fileName')
@@ -645,6 +666,7 @@ function EntryProperties(props: Props) {
                               data-tid="confirmRenameEntryTID"
                               color="primary"
                               onClick={renameEntry}
+                              disabled={disableConfirmButton.current}
                             >
                               {i18n.t('core:confirmSaveButton')}
                             </Button>
@@ -685,6 +707,14 @@ function EntryProperties(props: Props) {
             }}
             onChange={handleFileNameChange}
           />
+          {fileNameError.current && (
+            <FormHelperText>
+              {i18n.t(
+                'core:' +
+                  (currentEntry.isFile ? 'fileNameHelp' : 'directoryNameHelp')
+              )}
+            </FormHelperText>
+          )}
         </Grid>
         <Grid item xs={12} style={{ marginTop: 10 }}>
           <TagDropContainer entryPath={currentEntry.path}>
