@@ -37,6 +37,7 @@ import i18n from '-/services/i18n';
 import { actions as AppActions, getLastSelectedEntry } from '-/reducers/app';
 import PlatformIO from '-/services/platform-facade';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import { dirNameValidation, fileNameValidation } from '-/services/utils-io';
 
 interface Props {
   open: boolean;
@@ -119,25 +120,16 @@ function RenameEntryDialog(props: Props) {
 
   const handleValidation = () => {
     const initValid = disableConfirmButton.current;
-    if (name.current.length > 0) {
-      const rg1 = /^[^#\\/*?"<>|]+$/; // forbidden characters # \ / * ? " < > |
-      if (isFile) {
-        // https://stackoverflow.com/a/11101624/2285631
-        const rg2 = /^\./; // cannot start with dot (.)
-        const rg3 = /^(nul|prn|con|lpt[0-9]|com[0-9])(\.|$)/i; // forbidden file names
-        disableConfirmButton.current = !(
-          rg1.test(name.current) &&
-          !rg2.test(name.current) &&
-          !rg3.test(name.current)
-        );
-      } else disableConfirmButton.current = !rg1.test(name.current);
-      setInputError(disableConfirmButton.current);
+    let noValid;
+    if (isFile) {
+      noValid = fileNameValidation(name.current);
     } else {
-      disableConfirmButton.current = true;
+      noValid = dirNameValidation(name.current);
     }
-    if (initValid !== disableConfirmButton.current) {
-      setInputError(disableConfirmButton.current);
-      forceUpdate();
+    disableConfirmButton.current = noValid;
+
+    if (noValid || initValid !== noValid) {
+      setInputError(noValid);
     }
   };
 
