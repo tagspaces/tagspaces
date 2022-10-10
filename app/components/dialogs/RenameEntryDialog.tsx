@@ -129,7 +129,11 @@ function RenameEntryDialog(props: Props) {
     disableConfirmButton.current = noValid;
 
     if (noValid || initValid !== noValid) {
-      setInputError(noValid);
+      if(inputError !== noValid) {
+        setInputError(noValid);
+      } else {
+        forceUpdate();
+      }
     }
   };
 
