@@ -63,6 +63,7 @@ import { TS } from '-/tagspaces.namespace';
 import { ProLabel, BetaLabel } from '-/components/HelperComponents';
 import Links from '-/links';
 import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
+import PlatformFacade from '-/services/platform-facade';
 
 interface Props {
   open: boolean;
@@ -286,7 +287,7 @@ Do you want to continue?`)
       props.toggleProgressDialog();
 
       const entryCallback = entry => {
-        Pro.MacTagsImport.readMacOSTags(entry.path)
+        PlatformFacade.readMacOSTags(entry.path)
           .then(tags => {
             if (tags.length > 0) {
               props.addTags([entry.path], tags, true);

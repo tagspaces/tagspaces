@@ -84,10 +84,11 @@ export default merge(baseConfig, {
           {
             loader: 'css-loader',
             options: {
-              modules: true,
+              modules: {
+                localIdentName: '[name]__[local]__[hash:base64:5]'
+              },
               sourceMap: true,
-              importLoaders: 1,
-              localIdentName: '[name]__[local]__[hash:base64:5]'
+              importLoaders: 1
             }
           }
         ]
@@ -120,10 +121,11 @@ export default merge(baseConfig, {
           {
             loader: 'css-loader',
             options: {
-              modules: true,
+              modules: {
+                localIdentName: '[name]__[local]__[hash:base64:5]'
+              },
               sourceMap: true,
-              importLoaders: 1,
-              localIdentName: '[name]__[local]__[hash:base64:5]'
+              importLoaders: 1
             }
           },
           {
@@ -131,8 +133,26 @@ export default merge(baseConfig, {
           }
         ]
       },
-      // WOFF Font
       {
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'fonts/[hash][ext][query]'
+        }
+      },
+      /*{
+        test: /\.(eot|woff|ttf|svg|woff2)$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: "[path][name].[ext]"
+            }
+          }
+        ]
+      },*/
+      // WOFF Font
+      /* {
         test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
         use: {
           loader: 'url-loader',
@@ -140,7 +160,8 @@ export default merge(baseConfig, {
             limit: 10000,
             mimetype: 'application/font-woff'
           }
-        }
+        },
+        // type: 'javascript/auto'
       },
       // WOFF2 Font
       {
@@ -151,10 +172,11 @@ export default merge(baseConfig, {
             limit: 10000,
             mimetype: 'application/font-woff'
           }
-        }
-      },
+        },
+       // type: 'javascript/auto'
+      }, */
       // TTF Font
-      {
+      /* {
         test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
         use: {
           loader: 'url-loader',
@@ -162,13 +184,15 @@ export default merge(baseConfig, {
             limit: 10000,
             mimetype: 'application/octet-stream'
           }
-        }
+        },
+        type: 'javascript/auto'
       },
       // EOT Font
       {
         test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-        use: 'file-loader'
-      },
+        use: 'file-loader',
+        type: 'javascript/auto'
+      }, */
       // SVG Font
       {
         test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
@@ -178,17 +202,20 @@ export default merge(baseConfig, {
             limit: 10000,
             mimetype: 'image/svg+xml'
           }
-        }
+        },
+        type: 'javascript/auto'
       },
       // Text files
       {
         test: /\.(txt)$/,
-        use: 'raw-loader'
+        use: 'raw-loader',
+        type: 'javascript/auto'
       },
       // Common Image Formats
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
-        use: 'url-loader'
+        use: 'url-loader',
+        type: 'javascript/auto'
       }
     ]
   },
@@ -256,25 +283,49 @@ export default merge(baseConfig, {
 
   devServer: {
     port,
-    publicPath,
     compress: true,
-    noInfo: true,
-    stats: 'errors-only',
-    inline: true,
-    lazy: false,
+    client: {
+      overlay: {
+        warnings: false,
+        errors: false
+      }
+    },
+    // noInfo: true,
+    devMiddleware: {
+      // index: true,
+      stats: 'errors-only'
+      // mimeTypes: { "text/html": ["phtml"] },
+      // publicPath: "/publicPathForDevServe",
+      // serverSideRender: true,
+      // writeToDisk: true,
+    },
+    // inline: true,
+    // lazy: false,
     hot: true,
     headers: { 'Access-Control-Allow-Origin': '*' },
-    contentBase: path.join(__dirname, 'dist'),
-    watchOptions: {
-      aggregateTimeout: 300,
-      ignored: /node_modules/,
-      poll: 100
+    static: {
+      directory: path.join(__dirname, 'dist'),
+      staticOptions: {},
+      // Don't be confused with `devMiddleware.publicPath`, it is `publicPath` for static directory
+      // Can be:
+      // publicPath: ['/static-public-path-one/', '/static-public-path-two/'],
+      publicPath,
+      // Can be:
+      // serveIndex: {} (options for the `serveIndex` option you can find https://github.com/expressjs/serve-index)
+      // serveIndex: true,
+      // Can be:
+      // watch: {} (options for the `watch` option you can find https://github.com/paulmillr/chokidar)
+      watch: {
+        aggregateTimeout: 300,
+        ignored: /node_modules/,
+        poll: 100
+      }
     },
     historyApiFallback: {
       verbose: true,
       disableDotRule: false
     },
-    before() {
+    setupMiddlewares(middlewares, devServer) {
       if (process.env.START_HOT) {
         console.log('Starting Main Process...');
         spawn('npm', ['run', 'start-main-dev'], {
@@ -285,6 +336,7 @@ export default merge(baseConfig, {
           .on('close', code => process.exit(code))
           .on('error', spawnError => console.error(spawnError));
       }
+      return middlewares;
     }
   }
 });

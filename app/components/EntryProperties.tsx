@@ -92,6 +92,7 @@ import InfoIcon from '-/components/InfoIcon';
 import { ProTooltip } from '-/components/HelperComponents';
 import PerspectiveSelector from '-/components/PerspectiveSelector';
 import { connect } from 'react-redux';
+import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
 import FormHelperText from '@mui/material/FormHelperText';
 
 const ThumbnailChooserDialog =
@@ -183,7 +184,7 @@ function EntryProperties(props: Props) {
   const fileNameRef = useRef<HTMLInputElement>(null);
   const sharingLinkRef = useRef<HTMLInputElement>(null);
   const objectStorageLinkRef = useRef<HTMLInputElement>(null);
-  const fileDescriptionRef = useRef<HTMLInputElement>(null);
+  const fileDescriptionRef = useRef<MilkdownRef>(null);
   const disableConfirmButton = useRef<boolean>(true);
   const fileNameError = useRef<boolean>(false);
 
@@ -243,14 +244,14 @@ function EntryProperties(props: Props) {
   >(false);
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (
       // editDescription === currentEntry.description &&
       fileDescriptionRef.current
     ) {
       fileDescriptionRef.current.focus();
     }
-  }, [editDescription]);
+  }, [editDescription]);*/
 
   useEffect(() => {
     if (editName === entryName && fileNameRef.current) {
@@ -467,6 +468,17 @@ function EntryProperties(props: Props) {
       setEditDescription(value);
     }
   };
+
+  const milkdownListener = React.useCallback(
+    (markdown: string, prevMarkdown: string | null) => {
+      setEditDescription(markdown);
+      // update codeMirror
+      /*const { current } = codeMirrorRef;
+      if (!current) return;
+      current.update(markdown);*/
+    },
+    []
+  );
 
   const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
     if (action === 'remove-value') {
@@ -877,41 +889,37 @@ function EntryProperties(props: Props) {
           )}
         </Grid>
         <Grid item xs={12}>
-          {editDescription !== undefined ? (
-            <>
-              <TextField
-                multiline
-                inputRef={fileDescriptionRef}
-                style={{
-                  paddingTop: 1,
-                  // borderRadius: 5,
-                  maxHeight: 400,
-                  overflow: 'auto',
-                  backgroundColor: 'rgba(255, 216, 115, 0.20)'
-                }}
-                id="textarea"
-                placeholder=""
-                name="description"
-                className={styles.textField}
-                defaultValue={currentEntry.description}
-                fullWidth={true}
-                onChange={handleDescriptionChange}
-              />
-              <Typography
-                variant="caption"
-                style={{
-                  color: theme.palette.text.primary
-                }}
-              >
-                Formatting: <i className={classes.mdHelpers}>_italic_</i>{' '}
-                <b className={classes.mdHelpers}>**bold**</b>{' '}
-                <span className={classes.mdHelpers}>* list item</span>{' '}
-                <span className={classes.mdHelpers}>
-                  [Link text](http://...)
-                </span>
-              </Typography>
-            </>
-          ) : (
+          <div
+            onDoubleClick={() => {
+              if (
+                editDescription === undefined &&
+                !currentEntry.editMode &&
+                editName === undefined
+              ) {
+                toggleEditDescriptionField();
+              }
+            }}
+          >
+            <MilkdownEditor
+              ref={fileDescriptionRef}
+              content={currentEntry.description || ''}
+              onChange={milkdownListener}
+              readOnly={editDescription === undefined}
+              dark={false}
+            />
+          </div>
+          <Typography
+            variant="caption"
+            style={{
+              color: theme.palette.text.primary
+            }}
+          >
+            Formatting: <i className={classes.mdHelpers}>_italic_</i>{' '}
+            <b className={classes.mdHelpers}>**bold**</b>{' '}
+            <span className={classes.mdHelpers}>* list item</span>{' '}
+            <span className={classes.mdHelpers}>[Link text](http://...)</span>
+          </Typography>
+          {/*
             <Typography
               style={{
                 display: 'block',
@@ -937,8 +945,7 @@ function EntryProperties(props: Props) {
                   toggleEditDescriptionField();
                 }
               }}
-            />
-          )}
+            />*/}
         </Grid>
 
         <Grid container item xs={12} spacing={1}>

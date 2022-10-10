@@ -1136,6 +1136,19 @@ export function loadFileContentPromise(
   });
 }
 
+/**
+ * @param mdContent
+ * @param length - for preview of fist 200 chars
+ */
+export function getDescriptionPreview(mdContent, length = 200) {
+  if (!mdContent) return '';
+  let preview;
+  if (mdContent.length > 200) {
+    preview = mdContent.substring(0, 200) + '...';
+  } else preview = mdContent;
+  return preview.replace(/[#*_\[\]()`]/g, '');
+}
+
 export function removeMarkDown(mdContent) {
   if (!mdContent) return '';
   let result = marked.parse(DOMPurify.sanitize(mdContent));

@@ -7,6 +7,7 @@ import webpack from 'webpack';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import merge from 'webpack-merge';
+import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
 import baseConfig from './webpack.config.base';
 // import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 
@@ -32,10 +33,10 @@ export default merge(baseConfig, {
     sourceMapFilename: '[file].map'
   },
 
-  node: {
+  /*node: {
     fs: 'empty',
     child_process: 'empty'
-  },
+  },*/
 
   module: {
     rules: [
@@ -67,8 +68,9 @@ export default merge(baseConfig, {
           {
             loader: 'css-loader',
             options: {
-              modules: true,
-              localIdentName: '[name]__[local]__[hash:base64:5]',
+              modules: {
+                localIdentName: '[name]__[local]__[hash:base64:5]'
+              },
               sourceMap: true
             }
           }
@@ -106,9 +108,10 @@ export default merge(baseConfig, {
           {
             loader: 'css-loader',
             options: {
-              modules: true,
+              modules: {
+                localIdentName: '[name]__[local]__[hash:base64:5]'
+              },
               importLoaders: 1,
-              localIdentName: '[name]__[local]__[hash:base64:5]',
               sourceMap: true
             }
           },
@@ -129,7 +132,8 @@ export default merge(baseConfig, {
             limit: 10000,
             mimetype: 'application/font-woff'
           }
-        }
+        },
+        type: 'javascript/auto'
       },
       // WOFF2 Font
       {
@@ -140,7 +144,8 @@ export default merge(baseConfig, {
             limit: 10000,
             mimetype: 'application/font-woff'
           }
-        }
+        },
+        type: 'javascript/auto'
       },
       // TTF Font
       {
@@ -151,12 +156,14 @@ export default merge(baseConfig, {
             limit: 10000,
             mimetype: 'application/octet-stream'
           }
-        }
+        },
+        type: 'javascript/auto'
       },
       // EOT Font
       {
         test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-        use: 'file-loader'
+        use: 'file-loader',
+        type: 'javascript/auto'
       },
       // SVG Font
       {
@@ -167,17 +174,27 @@ export default merge(baseConfig, {
             limit: 10000,
             mimetype: 'image/svg+xml'
           }
-        }
+        },
+        type: 'javascript/auto'
       },
       // Text files
       {
         test: /\.(txt)$/,
-        use: 'raw-loader'
+        use: 'raw-loader',
+        type: 'javascript/auto'
       },
       // Common Image Formats
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
-        use: 'url-loader'
+        use: 'url-loader',
+        type: 'javascript/auto'
+      },
+      {
+        // https://github.com/microsoft/PowerBI-visuals-tools/issues/365#issuecomment-1099716186
+        test: /\.m?js/,
+        resolve: {
+          fullySpecified: false
+        }
       }
     ]
   },
@@ -195,6 +212,7 @@ export default merge(baseConfig, {
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'development'
     }),
+    new NodePolyfillPlugin(),
 
     new MiniCssExtractPlugin({
       filename: 'style.css'

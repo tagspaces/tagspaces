@@ -58,6 +58,13 @@ export default {
     modules: [path.join(__dirname, '..', 'app'), 'node_modules']
   },
 
+  cache: {
+    type: 'filesystem',
+    buildDependencies: {
+      config: [__filename]
+    }
+  },
+
   plugins: [
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'production'
