@@ -522,7 +522,7 @@
   "switchAdvancedMode": "Advanced Mode",
   "switchAdvanced": "More properties",
   "switchGeneral": "General",
-  "userName": "User",
+  "userName": "Username",
   "openLink": "Open Link",
   "invalidLink": "Invalid Link",
   "link": "Link",
@@ -684,5 +684,6 @@
   "noItems": "No items found",
   "notAvailable": "Not available",
   "clearBackground": "Clear background image",
+  "password": "Password",
   "-": "-"
 }

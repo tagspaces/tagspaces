@@ -19,7 +19,7 @@
 import React, { ChangeEvent } from 'react';
 
 import FormControl from '@mui/material/FormControl';
-import Input from '@mui/material/Input';
+import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
 import {
   Grid,
@@ -81,16 +81,14 @@ function WebdavForm(props: Props) {
     <Grid container direction="column" spacing={1}>
       <Grid item>
         <FormControl fullWidth={true} error={errorTextName}>
-          <InputLabel htmlFor="name">
-            {i18n.t('core:createLocationName')}
-          </InputLabel>
-          <Input
+          <TextField
             required
             margin="dense"
             name="name"
             inputProps={{ autoCorrect: 'off' }}
             onChange={event => setName(event.target.value)}
             value={name}
+            label={i18n.t('core:createLocationName')}
             data-tid="locationName"
             fullWidth={true}
           />
@@ -120,26 +118,21 @@ function WebdavForm(props: Props) {
         <>
           <Grid item>
             <FormControl fullWidth={true}>
-              <InputLabel htmlFor="userNameId">
-                {i18n.t('core:userName')}
-              </InputLabel>
-              <Input
+              <TextField
                 margin="dense"
                 name="userNameId"
                 fullWidth={true}
                 data-tid="userNameIdTID"
                 inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
                 onChange={event => setUserName(event.target.value)}
+                label={i18n.t('core:userName')}
                 value={userName}
               />
             </FormControl>
           </Grid>
           <Grid item>
             <FormControl fullWidth={true}>
-              <InputLabel htmlFor="password">
-                {i18n.t('core:password')}
-              </InputLabel>
-              <Input
+              <TextField
                 margin="dense"
                 name="password"
                 type={showPassword ? 'text' : 'password'}
@@ -148,7 +141,40 @@ function WebdavForm(props: Props) {
                 inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
                 onChange={event => setPassword(event.target.value)}
                 value={password}
-                endAdornment={
+                label={i18n.t('core:password')}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={() => setShowPassword(!showPassword)}
+                        size="large"
+                      >
+                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                      </IconButton>
+                    </InputAdornment>
+                  )
+                }}
+              />
+            </FormControl>
+          </Grid>
+        </>
+      )}
+      {authType === AuthTypes.Token && (
+        <Grid item>
+          <FormControl fullWidth={true}>
+            <TextField
+              margin="dense"
+              name="webDavToken"
+              type={showPassword ? 'text' : 'password'}
+              fullWidth={true}
+              data-tid="webDavToken"
+              inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
+              onChange={event => setSecretAccessKey(event.target.value)}
+              value={secretAccessKey}
+              label={i18n.t('core:webDavToken')}
+              InputProps={{
+                endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
                       aria-label="toggle password visibility"
@@ -158,48 +184,15 @@ function WebdavForm(props: Props) {
                       {showPassword ? <Visibility /> : <VisibilityOff />}
                     </IconButton>
                   </InputAdornment>
-                }
-              />
-            </FormControl>
-          </Grid>
-        </>
-      )}
-      {authType === AuthTypes.Token && (
-        <Grid item>
-          <FormControl fullWidth={true}>
-            <InputLabel htmlFor="webDavToken">
-              {i18n.t('core:webDavToken')}
-            </InputLabel>
-            <Input
-              margin="dense"
-              name="webDavToken"
-              type={showPassword ? 'text' : 'password'}
-              fullWidth={true}
-              data-tid="webDavToken"
-              inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
-              onChange={event => setSecretAccessKey(event.target.value)}
-              value={secretAccessKey}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={() => setShowPassword(!showPassword)}
-                    size="large"
-                  >
-                    {showPassword ? <Visibility /> : <VisibilityOff />}
-                  </IconButton>
-                </InputAdornment>
-              }
+                )
+              }}
             />
           </FormControl>
         </Grid>
       )}
       <Grid item>
         <FormControl fullWidth={true} error={webdavErrorUrl}>
-          <InputLabel htmlFor="endpointURL">
-            {i18n.t('core:endpointURL')}
-          </InputLabel>
-          <Input
+          <TextField
             margin="dense"
             name="endpointURL"
             fullWidth={true}
@@ -207,6 +200,7 @@ function WebdavForm(props: Props) {
             placeholder={i18n.t('webdavServiceURL')}
             onChange={event => setEndpointURL(event.target.value)}
             value={endpointURL}
+            label={i18n.t('core:endpointURL')}
           />
         </FormControl>
       </Grid>
