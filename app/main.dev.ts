@@ -116,7 +116,7 @@ const workerDevMode = false;
 
 if (devMode || testMode) {
   // eslint-disable-next-line
-  require('electron-debug')({ showDevTools: false, devToolsMode: 'right' });
+  // require('electron-debug')({ showDevTools: false, devToolsMode: 'right' });
   const p = path.join(__dirname, '..', 'app', 'node_modules');
   // eslint-disable-next-line
   require('module').globalPaths.push(p);
@@ -128,7 +128,7 @@ if (devMode || testMode) {
 
 app.commandLine.appendSwitch('--disable-http-cache');
 
-const installExtensions = async () => {
+const installExtensions = () => {
   const {
     default: installExtension,
     REACT_DEVELOPER_TOOLS,
@@ -143,7 +143,7 @@ const installExtensions = async () => {
   };
 
   return Promise.all(
-    extensions.map(name => installExtension(name.id, extOptions))
+    extensions.map(async name => await installExtension(name.id, extOptions))
   ).catch(console.log);
 };
 

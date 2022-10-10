@@ -394,7 +394,7 @@ function GridPagination(props: Props) {
         <Grid container spacing={2}>
           <Grid item xs={12} style={{ height: 70 }} />
           {showDetails && (
-            <Grid xs={12} item>
+            <Grid item xs={12}>
               <div
                 style={{
                   padding: 10,
@@ -494,7 +494,7 @@ function GridPagination(props: Props) {
             </Grid>
           )}
           {showDescription && currentDirectoryDescription && (
-            <Grid xs={12}>
+            <Grid item xs={12}>
               <MilkdownEditor
                 content={currentDirectoryDescription}
                 readOnly={true}
