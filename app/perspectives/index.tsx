@@ -93,5 +93,5 @@ AvailablePerspectives.push(GridPerspectiveMeta);
 AvailablePerspectives.push(ListPerspectiveMeta);
 AvailablePerspectives.push(GalleryPerspectiveMeta);
 AvailablePerspectives.push(MapiquePerspectiveMeta);
-// AvailablePerspectives.push(KanbanPerspectiveMeta);
+AvailablePerspectives.push(KanbanPerspectiveMeta);
 // AvailablePerspectives.push(WikiPerspectiveMeta);
