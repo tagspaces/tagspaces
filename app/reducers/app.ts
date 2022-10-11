@@ -113,6 +113,8 @@ export const types = {
   TOGGLE_CREATE_FILE_DIALOG: 'APP/TOGGLE_CREATE_FILE_DIALOG',
   TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG:
     'APP/TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG',
+  TOGGLE_IMPORT_KANBAN_DIALOG:
+    'APP/TOGGLE_IMPORT_KANBAN_DIALOG',
   TOGGLE_UPLOAD_DIALOG: 'APP/TOGGLE_UPLOAD_DIALOG',
   CLEAR_UPLOAD_DIALOG: 'APP/CLEAR_UPLOAD_DIALOG',
   TOGGLE_PROGRESS_DIALOG: 'APP/TOGGLE_PROGRESS_DIALOG',
@@ -217,6 +219,7 @@ export const initialState = {
   thirdPartyLibsDialogOpened: false,
   settingsDialogOpened: false,
   createDirectoryDialogOpened: false,
+  importKanBanDialogOpened: false,
   // lastSelectedEntry: null,
   selectedEntries: [],
   isEntryInFullWidth: false,
@@ -405,6 +408,12 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         deleteMultipleEntriesDialogOpened: !state.deleteMultipleEntriesDialogOpened
+      };
+    }
+    case types.TOGGLE_IMPORT_KANBAN_DIALOG: {
+      return {
+        ...state,
+        importKanBanDialogOpened: !state.importKanBanDialogOpened
       };
     }
     case types.TOGGLE_LICENSE_DIALOG: {
@@ -937,6 +946,9 @@ export const actions = {
   toggleCreateFileDialog: () => ({ type: types.TOGGLE_CREATE_FILE_DIALOG }),
   toggleDeleteMultipleEntriesDialog: () => ({
     type: types.TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG
+  }),
+  toggleImportKanBanDialog: () => ({
+    type: types.TOGGLE_IMPORT_KANBAN_DIALOG
   }),
   toggleUploadDialog: () => ({
     type: types.TOGGLE_UPLOAD_DIALOG
@@ -2455,6 +2467,8 @@ export const isCreateFileDialogOpened = (state: any) =>
   state.app.createFileDialogOpened;
 export const isDeleteMultipleEntriesDialogOpened = (state: any) =>
   state.app.deleteMultipleEntriesDialogOpened;
+export const isImportKanBanDialogOpened = (state: any) =>
+  state.app.importKanBanDialogOpened;
 export const isUploadDialogOpened = (state: any) =>
   state.app.uploadDialogOpened;
 export const isOpenLinkDialogOpened = (state: any) =>
