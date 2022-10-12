@@ -124,6 +124,13 @@ export default merge(baseConfig, {
       },
       // WOFF Font
       {
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'fonts/[hash][ext][query]'
+        }
+      },
+      /*{
         test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
         use: {
           loader: 'url-loader',
@@ -163,7 +170,7 @@ export default merge(baseConfig, {
         test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
         use: 'file-loader',
         type: 'javascript/auto'
-      },
+      },*/
       // SVG Font
       {
         test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
