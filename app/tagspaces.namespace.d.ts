@@ -113,7 +113,7 @@ export namespace TS {
     name: string;
     isFile: boolean;
     isNewFile?: boolean;
-    extension: string;
+    extension?: string;
     thumbPath?: string;
     color?: string;
     perspective?: string;

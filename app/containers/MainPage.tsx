@@ -68,6 +68,7 @@ import {
   getOpenedFiles,
   OpenedEntry,
   isDeleteMultipleEntriesDialogOpened,
+  isImportKanBanDialogOpened,
   getSelectedEntries,
   currentUser,
   isLocationDialogOpened
@@ -88,6 +89,7 @@ import listen from '-/containers/RendererListener';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import MoveOrCopyFilesDialog from '-/components/dialogs/MoveOrCopyFilesDialog';
 import PlatformIO from '-/services/platform-facade';
+import { Pro } from '-/pro';
 
 const drawerWidth = 320;
 const body = document.getElementsByTagName('body')[0];
@@ -95,6 +97,8 @@ const bufferedLeftSplitResize = buffer({
   timeout: 300,
   id: 'buffered-leftsplit-resize'
 });
+
+const KanBanImportDialog = Pro && Pro.UI ? Pro.UI.KanBanImportDialog : false;
 
 const styles: any = (theme: any) => ({
   content: {
@@ -159,6 +163,7 @@ interface Props {
   toggleSettingsDialog: () => void; // needed by electron-menus
   toggleKeysDialog: () => void; // needed by electron-menus
   toggleLicenseDialog: () => void; // needed by electron-menus
+  toggleImportKanBanDialog: () => void;
   toggleThirdPartyLibsDialog: () => void; // neede by electron-menus
   toggleAboutDialog: () => void; // needed by electron-menus
   toggleLocationDialog: () => void; // needed by electron-menus
@@ -202,6 +207,7 @@ interface Props {
   ) => any;
   onUploadProgress: (progress: Progress, response: any) => void;
   isDeleteMultipleEntriesDialogOpened: boolean;
+  isImportKanBanDialogOpened: boolean;
   toggleDeleteMultipleEntriesDialog: () => void;
   selectedEntries: Array<any>;
   deleteFile: (path: string) => void;
@@ -710,6 +716,12 @@ function MainPage(props: Props) {
           onClose={toggleSettingsDialog}
         />
       )}
+      {KanBanImportDialog && props.selectedEntries[0] && (
+        <KanBanImportDialog
+          open={props.isImportKanBanDialogOpened}
+          onClose={props.toggleImportKanBanDialog}
+        />
+      )}
       {props.isDeleteMultipleEntriesDialogOpened && (
         <ConfirmDialog
           open={props.isDeleteMultipleEntriesDialogOpened}
@@ -843,6 +855,7 @@ function mapStateToProps(state) {
     isDeleteMultipleEntriesDialogOpened: isDeleteMultipleEntriesDialogOpened(
       state
     ),
+    isImportKanBanDialogOpened: isImportKanBanDialogOpened(state),
     selectedEntries: getSelectedEntries(state),
     user: currentUser(state)
   };
@@ -867,6 +880,7 @@ function mapDispatchToProps(dispatch) {
       toggleSettingsDialog: AppActions.toggleSettingsDialog,
       toggleKeysDialog: AppActions.toggleKeysDialog,
       toggleLicenseDialog: AppActions.toggleLicenseDialog,
+      toggleImportKanBanDialog: AppActions.toggleImportKanBanDialog,
       toggleThirdPartyLibsDialog: AppActions.toggleThirdPartyLibsDialog,
       toggleAboutDialog: AppActions.toggleAboutDialog,
       toggleLocationDialog: AppActions.toggleLocationDialog,
@@ -930,6 +944,8 @@ const areEqual = (prevProp, nextProp) =>
     prevProp.isThirdPartyLibsDialogOpened &&
   nextProp.isUploadProgressDialogOpened ===
     prevProp.isUploadProgressDialogOpened &&
+  nextProp.isImportKanBanDialogOpened ===
+    prevProp.isImportKanBanDialogOpened &&
   JSON.stringify(nextProp.selectedEntries) ===
     JSON.stringify(prevProp.selectedEntries) &&
   JSON.stringify(nextProp.openedFiles) === JSON.stringify(prevProp.openedFiles);
