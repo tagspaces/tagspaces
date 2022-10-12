@@ -944,8 +944,7 @@ const areEqual = (prevProp, nextProp) =>
     prevProp.isThirdPartyLibsDialogOpened &&
   nextProp.isUploadProgressDialogOpened ===
     prevProp.isUploadProgressDialogOpened &&
-  nextProp.isImportKanBanDialogOpened ===
-    prevProp.isImportKanBanDialogOpened &&
+  nextProp.isImportKanBanDialogOpened === prevProp.isImportKanBanDialogOpened &&
   JSON.stringify(nextProp.selectedEntries) ===
     JSON.stringify(prevProp.selectedEntries) &&
   JSON.stringify(nextProp.openedFiles) === JSON.stringify(prevProp.openedFiles);
