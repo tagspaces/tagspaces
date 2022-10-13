@@ -121,19 +121,21 @@ function FileView(props: Props) {
           <span>ESC</span>
         </div>
       )}
-      <iframe
-        ref={fileViewer}
-        style={{
-          width: '100%',
-          zIndex: 3,
-          border: 0
-        }}
-        src={fileOpenerURL}
-        allowFullScreen
-        sandbox="allow-same-origin allow-scripts allow-modals"
-        title={i18n.t('core:fileViewer')}
-        id="FileViewer"
-      />
+      {openedFile.isFile && (
+        <iframe
+          ref={fileViewer}
+          style={{
+            width: '100%',
+            zIndex: 3,
+            border: 0
+          }}
+          src={fileOpenerURL}
+          allowFullScreen
+          sandbox="allow-same-origin allow-scripts allow-modals"
+          title={i18n.t('core:fileViewer')}
+          id="FileViewer"
+        />
+      )}
     </div>
   );
 }
