@@ -33,9 +33,9 @@ export default merge(baseConfig, {
       ? []
       : [
           new TerserPlugin({
-            parallel: true,
-            sourceMap: true,
-            cache: true
+            parallel: true
+            // sourceMap: true,
+            // cache: true
           })
         ]
   },
@@ -45,7 +45,7 @@ export default merge(baseConfig, {
       analyzerMode:
         process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
       openAnalyzer: process.env.OPEN_ANALYZER === 'true'
-    }),
+    })
 
     /* new webpack.NormalModuleReplacementPlugin(
       /(.*)_PLATFORMIO_(\.*)/,
@@ -76,11 +76,11 @@ export default merge(baseConfig, {
      * NODE_ENV should be production so that modules do not perform certain
      * development checks
      */
-    new webpack.EnvironmentPlugin({
+    /*new webpack.EnvironmentPlugin({
       NODE_ENV: 'production',
       DEBUG_PROD: false,
       START_MINIMIZED: false
-    })
+    })*/
   ],
 
   /**

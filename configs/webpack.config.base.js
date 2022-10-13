@@ -66,17 +66,23 @@ export default {
   },
 
   plugins: [
-    new webpack.EnvironmentPlugin({
-      NODE_ENV: 'production'
-    }),
+    /*new webpack.EnvironmentPlugin({
+      NODE_ENV: 'production' // use 'production' unless process.env.NODE_ENV is defined
+    }),*/
     new Dotenv({
-      path: path.join(
+      path: path.join(__dirname, '..', '.env.defaults'),
+      defaults: path.join(
         __dirname,
         '..',
         'node_modules',
         '@tagspaces/tagspaces-common/default.env'
-      )
+      ),
+      systemvars: true
+      // ignoreStub: true
     })
     // new webpack.NamedModulesPlugin()
-  ]
+  ],
+  stats: {
+    errorDetails: true
+  }
 };

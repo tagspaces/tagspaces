@@ -166,7 +166,7 @@ export async function startTestingApp(extconfig) {
       env: {
         ELECTRON_ENABLE_LOGGING: true,
         ELECTRON_ENABLE_STACK_DUMPING: true,
-        NODE_ENV: 'test'
+        NODE_ENV: 'test' // this is set from Dotenv too
       }
     });
 

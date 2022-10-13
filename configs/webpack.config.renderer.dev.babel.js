@@ -267,9 +267,9 @@ export default merge(baseConfig, {
      * By default, use 'development' as NODE_ENV. This can be overriden with
      * 'staging', for example, by changing the ENV variables in the npm scripts
      */
-    new webpack.EnvironmentPlugin({
+    /*new webpack.EnvironmentPlugin({
       NODE_ENV: 'development'
-    }),
+    }),*/
 
     new webpack.LoaderOptionsPlugin({
       debug: true
@@ -293,7 +293,7 @@ export default merge(baseConfig, {
     // noInfo: true,
     devMiddleware: {
       // index: true,
-      stats: 'errors-only'
+      // stats: 'errors-only'
       // mimeTypes: { "text/html": ["phtml"] },
       // publicPath: "/publicPathForDevServe",
       // serverSideRender: true,
