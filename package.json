@@ -95,7 +95,7 @@
     "prepare-cordova": "npm run install-ext-web-check && npm run postinstall-cordova-check && rimraf cordova/www/dist && rimraf cordova/www/node_modules && shx cp -rL app/node_modules cordova/www && shx cp LICENSE.txt cordova/www",
     "prepare-cordova-pro": "npm run install-ext-web-check && npm run postinstall-cordova-check && rimraf cordova/www/dist && rimraf cordova/www/node_modules && shx cp -rL app/node_modules cordova/www && shx cp extensions/tagspacespro/EULA.txt cordova/www",
     "prepare-node": "npm run install-ext-node-check && npm run postinstall-electron-check",
-    "prepare-web": "npm run version-meta && npm run install-ext-web-check && npm run postinstall-aws-check && rimraf web/node_modules && shx cp -rL app/node_modules/ web && npm run clean-maps && npm run build-web && node scripts/genswconf.js",
+    "prepare-web": "npm run version-meta && npm run install-ext-web-check && npm run postinstall-aws-check && rimraf web/node_modules && shx cp -rL app/node_modules/ web && shx cp LICENSE.txt web && npm run clean-maps && npm run build-web && node scripts/genswconf.js",
     "prepare-web-pro": "npm run version-meta && npm run install-ext-web-check && npm run postinstall-aws-check && rimraf web/node_modules && shx cp -rL app/node_modules/ web && shx cp extensions/tagspacespro/EULA.txt web && npm run clean-maps && npm run build-web && node scripts/genswconf.js",
     "prettier-check": "prettier --check **/*.{js,json,ts,tsx,yml}",
     "prettier-format": "prettier --write **/*.{js,jsx,json,ts,tsx,yml}",
