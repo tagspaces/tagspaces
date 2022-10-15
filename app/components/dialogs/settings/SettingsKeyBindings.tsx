@@ -35,16 +35,9 @@ import {
 import DefaultSettings from '-/reducers/settings-default';
 
 const styles: any = (theme: any) => ({
-  root: {
-    background: theme.palette.background.paper
-  },
   keyBinding: {
     marginTop: 10,
     marginBottom: 10
-  },
-  listItem: {
-    paddingLeft: 0,
-    paddingRight: 0
   }
 });
 
@@ -66,7 +59,7 @@ function SettingsKeyBindings(props: Props) {
   } = props;
   return (
     <form className={classes.root} noValidate autoComplete="off">
-      <ListItem className={classes.listItem}>
+      <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
         <ListItemText primary={i18n.t('core:enableGlobalKeyboardShortcuts')} />
         <Switch
           onClick={() => {
