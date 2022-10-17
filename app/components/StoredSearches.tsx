@@ -238,10 +238,10 @@ function StoredSearches(props: Props) {
                 <Tooltip
                   title={
                     <span style={{ fontSize: 14 }}>
-                      <b>Path:</b> {item.path}
+                      <b>{i18n.t('core:filePath')}:</b> {item.path}
                       <br />
                       <br />
-                      <b>Opened on: </b>{' '}
+                      {/* <b>Opened on: </b>{' '} */}
                       {new Date(item.creationTimeStamp)
                         .toISOString()
                         .substring(0, 19)
