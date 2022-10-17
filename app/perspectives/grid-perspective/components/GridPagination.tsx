@@ -49,7 +49,7 @@ import EntryIcon from '-/components/EntryIcon';
 import TagsPreview from '-/components/TagsPreview';
 import TagContainer from '-/components/TagContainer';
 import { TS } from '-/tagspaces.namespace';
-import { getMetaForEntry, getDescriptionPreview } from '-/services/utils-io';
+import { getMetaForEntry, getDescriptionPreview, normalizeUrl } from "-/services/utils-io";
 import PlatformIO from '-/services/platform-facade';
 import { MilkdownEditor } from '@tagspaces/tagspaces-md';
 import { renderCell } from '-/perspectives/common/main-container';
@@ -336,19 +336,6 @@ function GridPagination(props: Props) {
     decodeURIComponent(currentDirectoryPath),
     PlatformIO.getDirSeparator()
   );
-
-  /**
-   *  normalize path for URL is always '/'
-   *  TODO move this in common module
-   */
-  function normalizeUrl(url: string) {
-    if (PlatformIO.getDirSeparator() !== '/') {
-      if (url) {
-        return url.replaceAll(PlatformIO.getDirSeparator(), '/');
-      }
-    }
-    return url;
-  }
 
   let folderTmbPath = getThumbFileLocationForDirectory(
     currentDirectoryPath,
