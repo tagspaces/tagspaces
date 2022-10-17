@@ -11,7 +11,9 @@ import i18n from '-/services/i18n';
 export const fileOperationsEnabled = selectedEntries => {
   let selectionContainsDirectories = false;
   if (selectedEntries && selectedEntries.length > 0) {
-    selectionContainsDirectories = selectedEntries.some(entry => !entry.isFile);
+    selectionContainsDirectories = selectedEntries.some(
+      entry => entry !== undefined && !entry.isFile
+    );
     return !selectionContainsDirectories;
   }
   return false;
@@ -20,15 +22,19 @@ export const fileOperationsEnabled = selectedEntries => {
 export const folderOperationsEnabled = selectedEntries => {
   let selectionContainsFiles = false;
   if (selectedEntries && selectedEntries.length > 0) {
-    selectionContainsFiles = selectedEntries.some(entry => entry.isFile);
+    selectionContainsFiles = selectedEntries.some(
+      entry => entry !== undefined && entry.isFile
+    );
   }
   return !selectionContainsFiles;
 };
 
 export const renderCell = (
   fsEntry: TS.FileSystemEntry,
+  index: number,
   cellContent: (
     fsEntry: TS.FileSystemEntry,
+    index: number,
     handleGridContextMenu,
     handleGridCellClick,
     handleGridCellDblClick,
@@ -196,7 +202,10 @@ export const renderCell = (
         const currentSelectedEntry = directoryContent.find(
           entry => entry.path === fsEntry.path
         );
-        setSelectedEntries([currentSelectedEntry]);
+        if (currentSelectedEntry) {
+          // in KanBan directoryContent not content dragging entry from subfolder
+          setSelectedEntries([currentSelectedEntry]);
+        }
       }
     } else if (selectHelperKey) {
       if (
@@ -255,6 +264,7 @@ export const renderCell = (
       <FileSourceDnd key={key}>
         {cellContent(
           fsEntry,
+          index,
           handleGridContextMenu,
           handleGridCellClick,
           handleGridCellDblClick,
@@ -278,6 +288,7 @@ export const renderCell = (
       >
         {cellContent(
           fsEntry,
+          index,
           handleGridContextMenu,
           handleGridCellClick,
           handleGridCellDblClick,

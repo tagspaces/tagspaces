@@ -74,8 +74,9 @@ interface Props {
   entrySize: string;
   files: Array<TS.FileSystemEntry>;
   // pageEntries: Array<TS.FileSystemEntry>;
-  cellContent: (
+  getCellContent: (
     fsEntry: TS.FileSystemEntry,
+    index: number,
     handleGridContextMenu,
     handleGridCellClick,
     handleGridCellDblClick,
@@ -132,7 +133,7 @@ function GridPagination(props: Props) {
     showDetails,
     showDescription,
     showTags,
-    cellContent,
+    getCellContent,
     isAppLoading,
     currentDirectoryColor,
     currentDirectoryTags,
@@ -542,10 +543,11 @@ function GridPagination(props: Props) {
         </Grid>
         <div style={style} data-tid="perspectiveGridFileTable">
           {page.current === 1 &&
-            directories.map(entry =>
+            directories.map((entry, index) =>
               renderCell(
                 entry,
-                cellContent,
+                index,
+                getCellContent,
                 props.classes,
                 theme,
                 showDirectories,
@@ -570,7 +572,8 @@ function GridPagination(props: Props) {
           {pageFiles.map((entry, index, dArray) =>
             renderCell(
               entry,
-              cellContent,
+              index,
+              getCellContent,
               props.classes,
               theme,
               showDirectories,

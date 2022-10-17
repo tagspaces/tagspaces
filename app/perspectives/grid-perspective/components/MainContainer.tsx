@@ -570,6 +570,7 @@ function GridPerspective(props: Props) {
 
   const getCellContent = (
     fsEntry: TS.FileSystemEntry,
+    index: number,
     handleGridContextMenu,
     handleGridCellClick,
     handleGridCellDblClick,
@@ -682,7 +683,7 @@ function GridPerspective(props: Props) {
           thumbnailMode={thumbnailMode.current}
           entrySize={entrySize.current}
           files={sortedFiles}
-          cellContent={getCellContent}
+          getCellContent={getCellContent}
           currentPage={1}
           currentLocationPath={locationPath}
           currentDirectoryPath={props.currentDirectoryPath}
