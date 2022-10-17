@@ -170,6 +170,10 @@ export namespace TS {
     showTags?: boolean;
     showDetails?: boolean;
     showDescription?: boolean;
+    showFolderContent?: boolean; // KanBan
+    pageLimit?: number; // KanBan
+    pageOffset?: number; // KanBan
+    filesLimit?: number; // KanBan
     layoutType?: string;
     orderBy?: boolean;
     sortBy?: string;

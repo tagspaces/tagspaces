@@ -33,10 +33,11 @@ export default merge(baseConfig, {
       ? []
       : [
           new TerserPlugin({
-            parallel: true,
-            sourceMap: true,
-            cache: true
-          })
+            parallel: true
+            // sourceMap: true,
+            // cache: true
+          }),
+          '...' // '...' can be used in optimization.minimizer to access the defaults.
         ]
   },
 
