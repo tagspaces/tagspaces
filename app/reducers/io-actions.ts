@@ -94,7 +94,7 @@ const actions = {
         );
         const moveMetaJobs = [];
         moveJobs.map(job => {
-          dispatch(AppActions.reflectDeleteEntry(job[0])); // TODO moved files should be added to the index, if the target dir in index
+          dispatch(AppActions.reflectRenameEntry(job[0], job[1])); // TODO moved files should be added to the index, if the target dir in index
           moveMetaJobs.push([
             getMetaFileLocationForFile(job[0], PlatformIO.getDirSeparator()),
             getMetaFileLocationForFile(job[1], PlatformIO.getDirSeparator())
@@ -170,9 +170,11 @@ const actions = {
           copyFilesPromise(copyMetaJobs)
             .then(() => {
               console.log('Copy meta and thumbs successful');
+              dispatch(AppActions.reflectCreateEntry(job[1], true));
               return true;
             })
             .catch(err => {
+              dispatch(AppActions.reflectCreateEntry(job[1], true));
               console.warn('At least one meta or thumb was not copied ' + err);
             });
           return true;

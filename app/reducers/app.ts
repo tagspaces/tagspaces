@@ -565,12 +565,16 @@ export default (state: any = initialState, action: any) => {
       ) {
         return {
           ...state,
+          editedEntryPaths: [action.path],
           currentDirectoryEntries: newDirectoryEntries,
           openedFiles: newOpenedFiles,
           isEntryInFullWidth: false
         };
       }
-      return state;
+      return {
+        ...state,
+        editedEntryPaths: [action.path]
+      };
     }
     case types.REFLECT_CREATE_ENTRY: {
       // Prevent adding entry twice e.g. by the watcher
@@ -588,13 +592,17 @@ export default (state: any = initialState, action: any) => {
       ) {
         return {
           ...state,
+          editedEntryPaths: [action.newEntry.path],
           currentDirectoryEntries: [
             ...state.currentDirectoryEntries,
             action.newEntry
           ]
         };
       }
-      return state;
+      return {
+        ...state,
+        editedEntryPaths: [action.newEntry.path]
+      };
     }
     case types.REFLECT_RENAME_ENTRY: {
       const extractedTags = extractTagsAsObjects(
@@ -605,6 +613,7 @@ export default (state: any = initialState, action: any) => {
 
       return {
         ...state,
+        editedEntryPaths: [action.path, action.newPath],
         currentDirectoryEntries: state.currentDirectoryEntries.map(entry => {
           if (entry.path !== action.path) {
             return entry;
@@ -2388,6 +2397,7 @@ export const getIsMetaLoaded = (state: any) => state.app.isMetaLoaded;
 export const getDirectoryContent = (state: any) =>
   state.app.currentDirectoryEntries;
 // export const getPageEntries = (state: any) => state.app.pageEntries;
+export const getEditedEntryPaths = (state: any) => state.app.editedEntryPaths;
 export const getCurrentDirectoryFiles = (state: any) =>
   state.app.currentDirectoryFiles;
 export const getCurrentDirectoryDirs = (state: any) =>
