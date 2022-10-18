@@ -477,18 +477,24 @@ export function getPrevFile(
 }
 
 /**
- * persistIndex based on location - S3 or Native
+ * persistIndex based on location - used for S3 and cordova only
+ * for native used common-platform/indexer.js -> persistIndex instead
  * @param param
  * @param directoryIndex
  */
-function persistIndex(param: string | any, directoryIndex: any) {
+async function persistIndex(param: string | any, directoryIndex: any) {
   let directoryPath;
   if (typeof param === 'object' && param !== null) {
     directoryPath = param.path;
   } else {
     directoryPath = param;
   }
-  const folderIndexPath = getMetaIndexFilePath(directoryPath);
+  const metaDirectory = getMetaDirectoryPath(directoryPath);
+  const exist = await PlatformIO.checkDirExist(metaDirectory);
+  if (!exist) {
+    await PlatformIO.createDirectoryPromise(metaDirectory);
+  }
+  const folderIndexPath = metaDirectory + PlatformIO.getDirSeparator() + AppConfig.folderIndexFile; // getMetaIndexFilePath(directoryPath);
   return PlatformIO.saveTextFilePlatform(
     { ...param, path: folderIndexPath },
     JSON.stringify(directoryIndex), // relativeIndex),
