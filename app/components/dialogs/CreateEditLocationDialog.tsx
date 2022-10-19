@@ -70,6 +70,7 @@ import PlatformIO from '-/services/platform-facade';
 import WebdavForm from '-/components/dialogs/WebdavForm';
 import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { loadLocationDataPromise } from '-/services/utils-io';
 
 const styles: any = theme => ({
   formControl: {
@@ -221,6 +222,18 @@ function CreateEditLocationDialog(props: Props) {
     }
   }, [name, path]);
 
+  function setLocationId(path: string) {
+    loadLocationDataPromise(path, AppConfig.metaFolderFile)
+      .then((meta: TS.FileSystemEntryMeta) => {
+        if (meta && meta.id) {
+          setNewUuid(meta.id);
+        }
+        return true;
+      })
+      .catch(err => {
+        console.debug('no meta in location:' + path);
+      });
+  }
   /**
    * @param checkOnly - switch to set errors or only to check validation
    * return true - have errors; false - no errors
@@ -390,7 +403,10 @@ function CreateEditLocationDialog(props: Props) {
         cloudErrorRegion={false}
         showSecretAccessKey={showSecretAccessKey}
         storeName={storeName}
-        storePath={storePath}
+        setStorePath={path => {
+          setStorePath(path);
+          setLocationId(path);
+        }}
         accessKeyId={accessKeyId}
         secretAccessKey={secretAccessKey}
         sessionToken={sessionToken}
@@ -435,7 +451,10 @@ function CreateEditLocationDialog(props: Props) {
         errorTextPath={errorTextPath}
         errorTextName={errorTextName}
         setName={setName}
-        setPath={setPath}
+        setPath={path => {
+          setPath(path);
+          setLocationId(path);
+        }}
         path={path}
         name={name}
       />
