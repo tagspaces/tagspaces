@@ -175,7 +175,7 @@ function PathBreadcrumbs(props: Props) {
                   pathPart,
                   PlatformIO.getDirSeparator()
                 )}
-                onClick={() => loadDirectoryContent(pathPart, false)}
+                onClick={() => loadDirectoryContent(pathPart, false, true)}
               />
             </Tooltip>
           ))}
