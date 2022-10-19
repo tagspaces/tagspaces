@@ -777,14 +777,15 @@ export function parseNewTags(tagsInput: string, tagGroup: TS.TagGroup) {
 }
 
 export async function loadLocationDataPromise(
-  path: string
+  path: string,
+  metaFile = AppConfig.folderLocationsFile
 ): Promise<TS.FileSystemEntryMeta> {
   const entryProperties = await PlatformIO.getPropertiesPromise(path);
   if (!entryProperties.isFile) {
     const metaFilePath = getMetaFileLocationForDir(
       path,
       PlatformIO.getDirSeparator(),
-      AppConfig.folderLocationsFile
+      metaFile
     );
     let metaData;
     try {
