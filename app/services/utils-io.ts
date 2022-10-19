@@ -494,7 +494,8 @@ async function persistIndex(param: string | any, directoryIndex: any) {
   if (!exist) {
     await PlatformIO.createDirectoryPromise(metaDirectory);
   }
-  const folderIndexPath = metaDirectory + PlatformIO.getDirSeparator() + AppConfig.folderIndexFile; // getMetaIndexFilePath(directoryPath);
+  const folderIndexPath =
+    metaDirectory + PlatformIO.getDirSeparator() + AppConfig.folderIndexFile; // getMetaIndexFilePath(directoryPath);
   return PlatformIO.saveTextFilePlatform(
     { ...param, path: folderIndexPath },
     JSON.stringify(directoryIndex), // relativeIndex),
