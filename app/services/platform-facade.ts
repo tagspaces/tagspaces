@@ -66,7 +66,9 @@ import {
   platformSelectDirectoryDialog,
   platformShareFiles,
   platformCreateIndex,
-  platformCreateNewInstance
+  platformCreateNewInstance,
+  platformCheckFileExist,
+  platformCheckDirExist
 } from '@tagspaces/tagspaces-platforms/platform-io';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import { Pro } from '../pro';
@@ -225,6 +227,12 @@ export default class PlatformFacade {
 
   static getPropertiesPromise = (path: string): Promise<any> =>
     platformGetPropertiesPromise(path);
+
+  static checkDirExist = (dir: string): Promise<boolean> =>
+    platformCheckDirExist(dir);
+
+  static checkFileExist = (file: string): Promise<boolean> =>
+    platformCheckFileExist(file);
 
   static ignoreByWatcher = (...paths) => {
     if (Pro && Pro.Watcher && Pro.Watcher.isWatching()) {
