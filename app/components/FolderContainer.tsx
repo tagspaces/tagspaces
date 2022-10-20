@@ -218,12 +218,14 @@ interface Props {
 }
 
 function FolderContainer(props: Props) {
+  const havePrevOpenedFile = React.useRef<boolean>(false);
+
   useEffect(() => {
     setSearchVisible(false);
   }, [props.currentDirectoryPath]);
 
   useEffect(() => {
-    if (props.selectedEntries.length < 2) {
+    if (havePrevOpenedFile.current && props.selectedEntries.length < 2) {
       if (props.openedFiles.length > 0) {
         const openedFile = props.openedFiles[0];
         if (openedFile.path === props.currentDirectoryPath) {
@@ -244,6 +246,7 @@ function FolderContainer(props: Props) {
         }
       }
     }
+    havePrevOpenedFile.current = props.openedFiles.length > 0;
   }, [props.openedFiles]);
 
   useEffect(() => {
