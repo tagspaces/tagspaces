@@ -220,7 +220,7 @@ function FileMenu(props: Props) {
 
       PlatformIO.copyFilePromise(selectedFilePath, newFilePath)
         .then(() => {
-          props.loadDirectoryContent(dirPath, true);
+          props.loadDirectoryContent(dirPath, true, true);
           return true;
         })
         .catch(error => {
@@ -243,7 +243,7 @@ function FileMenu(props: Props) {
         selectedFilePath,
         PlatformIO.getDirSeparator()
       );
-      props.loadDirectoryContent(parentFolder, false);
+      props.loadDirectoryContent(parentFolder, false, true);
     }
   }
 
