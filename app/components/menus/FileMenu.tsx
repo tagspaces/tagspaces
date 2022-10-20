@@ -267,6 +267,11 @@ function FileMenu(props: Props) {
   }
   const menuItems = [];
 
+  const pathLowerCase = selectedFilePath.toLowerCase();
+  const isImageFile = supportedImgs.some(ext =>
+    pathLowerCase.endsWith('.' + ext)
+  );
+
   if (selectedEntries.length < 2) {
     menuItems.push(
       <MenuItem
@@ -390,9 +395,7 @@ function FileMenu(props: Props) {
           <ListItemText primary={i18n.t('core:setAsThumbnail')} />
         </MenuItem>
       );
-      if (
-        supportedImgs.some(ext => props.selectedFilePath.endsWith('.' + ext))
-      ) {
+      if (isImageFile) {
         menuItems.push(
           <MenuItem
             key="setAsBgndTID"
