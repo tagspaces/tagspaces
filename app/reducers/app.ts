@@ -1908,6 +1908,8 @@ export const actions = {
     const { currentDirectoryPath } = getState().app;
     updateHistory(currentLocation, currentDirectoryPath, fsEntry.path);
 
+    document.title = fsEntry.name + ' | ' + 'TagSpaces'; // TODO get it later from app config
+
     dispatch(actions.addToEntryContainer(entryForOpening));
     /**
      * save in history
@@ -1977,7 +1979,11 @@ export const actions = {
       dispatch(actions.setSelectedEntries([prevFile]));
     }
   },
-  closeAllFiles: () => ({ type: types.CLOSE_ALL_FILES }),
+  closeAllFiles: () => (dispatch: (action) => void) => {
+    document.title = 'TagSpaces'; // TODO move to AppConfig
+    dispatch(actions.closeAllFilesInt());
+  },
+  closeAllFilesInt: () => ({ type: types.CLOSE_ALL_FILES }),
   reflectDeleteEntryInt: (path: string) => ({
     type: types.REFLECT_DELETE_ENTRY,
     path

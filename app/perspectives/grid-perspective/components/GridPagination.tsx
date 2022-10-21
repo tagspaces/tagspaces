@@ -49,7 +49,11 @@ import EntryIcon from '-/components/EntryIcon';
 import TagsPreview from '-/components/TagsPreview';
 import TagContainer from '-/components/TagContainer';
 import { TS } from '-/tagspaces.namespace';
-import { getMetaForEntry, getDescriptionPreview, normalizeUrl } from "-/services/utils-io";
+import {
+  getMetaForEntry,
+  getDescriptionPreview,
+  normalizeUrl
+} from '-/services/utils-io';
 import PlatformIO from '-/services/platform-facade';
 import { MilkdownEditor } from '@tagspaces/tagspaces-md';
 import { renderCell } from '-/perspectives/common/main-container';

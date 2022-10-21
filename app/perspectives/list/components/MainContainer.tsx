@@ -665,7 +665,7 @@ function GridPerspective(props: Props) {
             marginTop: 5,
             paddingRight: 4,
             paddingLeft: 4,
-            gridTemplateColumns: "none"
+            gridTemplateColumns: 'none'
           }}
           classes={classes}
           theme={theme}
@@ -703,7 +703,7 @@ function GridPerspective(props: Props) {
           showNotification={props.showNotification}
           moveFiles={props.moveFiles}
           clearSelection={clearSelection}
-      />
+        />
       </GlobalHotKeys>
       {isAddRemoveTagsDialogOpened && (
         <AddRemoveTagsDialog

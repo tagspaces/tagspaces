@@ -394,7 +394,6 @@ function GridPerspective(props: Props) {
     selectedEntryPath.current = undefined;
   };
 
-
   const someFileSelected = selectedEntries.length > 1;
 
   const toggleSelectAllFiles = () => {
