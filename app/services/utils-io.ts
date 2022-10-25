@@ -1230,3 +1230,15 @@ export function fileNameValidation(fileName): boolean {
   }
   return true;
 }
+
+/**
+ *  normalize path for URL is always '/'
+ */
+export function normalizeUrl(url: string) {
+  if (PlatformIO.getDirSeparator() !== '/') {
+    if (url) {
+      return url.replaceAll(PlatformIO.getDirSeparator(), '/');
+    }
+  }
+  return url;
+}

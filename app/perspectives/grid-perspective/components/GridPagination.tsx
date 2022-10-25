@@ -18,7 +18,6 @@
 
 import React, { useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
-import { alpha } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import Tooltip from '-/components/Tooltip';
 import Grid from '@mui/material/Grid';
@@ -50,27 +49,43 @@ import EntryIcon from '-/components/EntryIcon';
 import TagsPreview from '-/components/TagsPreview';
 import TagContainer from '-/components/TagContainer';
 import { TS } from '-/tagspaces.namespace';
-import { getMetaForEntry, getDescriptionPreview } from '-/services/utils-io';
+import {
+  getMetaForEntry,
+  getDescriptionPreview,
+  normalizeUrl
+} from '-/services/utils-io';
 import PlatformIO from '-/services/platform-facade';
 import { MilkdownEditor } from '@tagspaces/tagspaces-md';
+import { renderCell } from '-/perspectives/common/main-container';
 
 interface Props {
   isMetaLoaded: boolean;
   setIsMetaLoaded: (isLoaded: boolean) => void;
   style?: any;
+  classes: any;
   theme: any;
   // gridRef: Object;
   directories: Array<TS.FileSystemEntry>;
   showDirectories: boolean;
   showDetails: boolean;
   showDescription: boolean;
+  isReadOnlyMode: boolean;
+  layoutType: string;
   showTags: boolean;
+  desktopMode: boolean;
   currentDirectoryDescription: string;
   thumbnailMode: string;
   entrySize: string;
   files: Array<TS.FileSystemEntry>;
   // pageEntries: Array<TS.FileSystemEntry>;
-  renderCell: (entry: TS.FileSystemEntry, isLast?: boolean) => void;
+  getCellContent: (
+    fsEntry: TS.FileSystemEntry,
+    index: number,
+    handleGridContextMenu,
+    handleGridCellClick,
+    handleGridCellDblClick,
+    isLast?: boolean
+  ) => void;
   currentDirectoryColor: string;
   currentDirectoryTags: Array<TS.Tag>;
   isAppLoading: boolean;
@@ -89,6 +104,28 @@ interface Props {
   selectedEntries; // cache only
   // setMetaForCurrentDir: (metaFiles: Array<any>) => void;
   lastBackgroundImageChange: number;
+  setSelectedEntries: (selectedEntries: Array<TS.FileSystemEntry>) => void;
+  singleClickAction: string;
+  currentLocation: TS.Location;
+  lastSelectedEntry: any;
+  directoryContent: Array<TS.FileSystemEntry>;
+  supportedFileTypes: Array<any>;
+  openFsEntry: (fsEntry?: TS.FileSystemEntry) => void;
+  openFileNatively: (path?: string) => void;
+  loadDirectoryContent: (
+    path: string,
+    generateThumbnails: boolean,
+    loadDirMeta?: boolean
+  ) => void;
+  setFileContextMenuAnchorEl: (HTMLElement) => void;
+  setDirContextMenuAnchorEl: (HTMLElement) => void;
+  showNotification: (
+    text: string,
+    notificationType: string,
+    autohide: boolean
+  ) => void;
+  moveFiles: (files: Array<string>, destination: string) => Promise<boolean>;
+  clearSelection: () => void;
 }
 
 function GridPagination(props: Props) {
@@ -100,7 +137,7 @@ function GridPagination(props: Props) {
     showDetails,
     showDescription,
     showTags,
-    renderCell,
+    getCellContent,
     isAppLoading,
     currentDirectoryColor,
     currentDirectoryTags,
@@ -304,19 +341,6 @@ function GridPagination(props: Props) {
     decodeURIComponent(currentDirectoryPath),
     PlatformIO.getDirSeparator()
   );
-
-  /**
-   *  normalize path for URL is always '/'
-   *  TODO move this in common module
-   */
-  function normalizeUrl(url: string) {
-    if (PlatformIO.getDirSeparator() !== '/') {
-      if (url) {
-        return url.replaceAll(PlatformIO.getDirSeparator(), '/');
-      }
-    }
-    return url;
-  }
 
   let folderTmbPath = getThumbFileLocationForDirectory(
     currentDirectoryPath,
@@ -522,9 +546,59 @@ function GridPagination(props: Props) {
           )}
         </Grid>
         <div style={style} data-tid="perspectiveGridFileTable">
-          {page.current === 1 && directories.map(entry => renderCell(entry))}
+          {page.current === 1 &&
+            directories.map((entry, index) =>
+              renderCell(
+                entry,
+                index,
+                getCellContent,
+                props.classes,
+                theme,
+                showDirectories,
+                props.isReadOnlyMode,
+                props.desktopMode,
+                props.singleClickAction,
+                props.currentLocation,
+                props.selectedEntries,
+                props.setSelectedEntries,
+                props.lastSelectedEntry,
+                props.directoryContent,
+                props.openFsEntry,
+                props.openFileNatively,
+                props.loadDirectoryContent,
+                props.setFileContextMenuAnchorEl,
+                props.setDirContextMenuAnchorEl,
+                props.showNotification,
+                props.moveFiles,
+                props.clearSelection
+              )
+            )}
           {pageFiles.map((entry, index, dArray) =>
-            renderCell(entry, index === dArray.length - 1)
+            renderCell(
+              entry,
+              index,
+              getCellContent,
+              props.classes,
+              theme,
+              showDirectories,
+              props.isReadOnlyMode,
+              props.desktopMode,
+              props.singleClickAction,
+              props.currentLocation,
+              props.selectedEntries,
+              props.setSelectedEntries,
+              props.lastSelectedEntry,
+              props.directoryContent,
+              props.openFsEntry,
+              props.openFileNatively,
+              props.loadDirectoryContent,
+              props.setFileContextMenuAnchorEl,
+              props.setDirContextMenuAnchorEl,
+              props.showNotification,
+              props.moveFiles,
+              props.clearSelection,
+              index === dArray.length - 1
+            )
           )}
           {!isAppLoading && pageFiles.length < 1 && directories.length < 1 && (
             <div style={{ textAlign: 'center' }}>

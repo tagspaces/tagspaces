@@ -65,7 +65,8 @@ import {
   enhanceOpenedEntry,
   convertMarkDown,
   fileNameValidation,
-  dirNameValidation
+  dirNameValidation,
+  normalizeUrl
 } from '-/services/utils-io';
 import { parseGeoLocation } from '-/utils/geo';
 import { Pro } from '../pro';
@@ -532,18 +533,7 @@ function EntryProperties(props: Props) {
       PlatformIO.getDirSeparator()
     );
   }
-  /**
-   *  normalize path for URL is always '/'
-   *  TODO move this in common module
-   */
-  function normalizeUrl(url: string) {
-    if (PlatformIO.getDirSeparator() !== '/') {
-      if (url) {
-        return url.replaceAll(PlatformIO.getDirSeparator(), '/');
-      }
-    }
-    return url;
-  }
+
   let url;
   let bgndUrl;
   if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
