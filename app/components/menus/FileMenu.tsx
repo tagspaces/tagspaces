@@ -165,7 +165,17 @@ function FileMenu(props: Props) {
 
   function setFolderBackground() {
     onClose();
-    setFolderBackgroundPromise(props.selectedFilePath)
+    let path =
+      PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()
+        ? PlatformIO.getURLforPath(props.selectedFilePath)
+        : props.selectedFilePath;
+
+    const directoryPath = extractContainingDirectoryPath(
+      props.selectedFilePath,
+      PlatformIO.getDirSeparator()
+    );
+
+    setFolderBackgroundPromise(path, directoryPath)
       .then((directoryPath: string) => {
         props.setLastBackgroundImageChange(new Date().getTime());
         showNotification('Background created for: ' + directoryPath);
