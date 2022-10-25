@@ -1217,3 +1217,17 @@ export function fileNameValidation(fileName): boolean {
   }
   return true;
 }
+
+/**
+ * https://stackoverflow.com/a/71981197/2285631
+ * TODO this not merge with "b" properties that missing in "a"
+ * @param a
+ * @param b
+ */
+export const merge = (a, b) =>
+  Object.fromEntries(
+    Object.entries(a).map(([k, v]) => [
+      k,
+      v && Array.isArray(v) ? [...v, ...b[k]] : v || b[k]
+    ])
+  );
