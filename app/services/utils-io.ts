@@ -1061,14 +1061,13 @@ export function setFolderThumbnailPromise(filePath: string): Promise<string> {
 
 /**
  * @param filePath
+ * @param directoryPath
  * return Promise<directoryPath> of directory in order to open Folder properties next
  */
-export function setFolderBackgroundPromise(filePath: string): Promise<string> {
-  const directoryPath = extractContainingDirectoryPath(
-    filePath,
-    PlatformIO.getDirSeparator()
-  );
-
+export function setFolderBackgroundPromise(
+  filePath: string,
+  directoryPath: string
+): Promise<string> {
   const folderBgndPath = getBgndFileLocationForDirectory(
     directoryPath,
     PlatformIO.getDirSeparator()
@@ -1085,12 +1084,13 @@ export function setFolderBackgroundPromise(filePath: string): Promise<string> {
           })
           .catch(error => {
             console.error('Save to file failed ', error);
-            return true;
+            return Promise.reject(error);
           });
       }
     })
     .catch(error => {
-      console.error('Background generation failed ' + error);
+      console.error('Background generation failed ', error);
+      return Promise.reject(error);
     });
 }
 
