@@ -51,7 +51,8 @@ import {
   findExtensionsForEntry,
   getNextFile,
   getPrevFile,
-  loadJSONFile
+  loadJSONFile,
+  merge
 } from '-/services/utils-io';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
@@ -679,19 +680,35 @@ export default (state: any = initialState, action: any) => {
       };
     } */
     case types.UPDATE_CURRENTDIR_ENTRIES: {
-      const newDirEntries = [...state.currentDirectoryEntries];
-      for (let i = 0; i < newDirEntries.length; i += 1) {
-        const dirEntry = action.dirEntries.find(
-          entry => entry.path === newDirEntries[i].path
+      if (
+        state.currentDirectoryEntries &&
+        state.currentDirectoryEntries.length > 0
+      ) {
+        const newDirEntries = state.currentDirectoryEntries.map(
+          currentEntry => {
+            const updatedEntries = action.dirEntries.filter(
+              newEntry => newEntry.path === currentEntry.path
+            );
+            if (updatedEntries && updatedEntries.length > 0) {
+              const updatedEntry = updatedEntries.reduce(
+                (prevValue, currentValue) => {
+                  return merge(currentValue, prevValue);
+                }
+              );
+              return merge(updatedEntry, currentEntry);
+            }
+            return currentEntry;
+          }
         );
-        if (dirEntry) {
-          newDirEntries[i] = dirEntry;
-        }
-      }
 
+        return {
+          ...state,
+          currentDirectoryEntries: newDirEntries
+        };
+      }
       return {
         ...state,
-        currentDirectoryEntries: newDirEntries
+        currentDirectoryEntries: action.dirEntries
       };
     }
     case types.UPDATE_CURRENTDIR_ENTRY: {
@@ -1638,7 +1655,8 @@ export const actions = {
           dispatch(
             actions.loadDirectoryContent(
               PlatformIO.getLocationPath(location),
-              false
+              false,
+              true
             )
           );
           return true;
