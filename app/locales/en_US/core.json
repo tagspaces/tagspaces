@@ -269,7 +269,7 @@
   "info": "Info",
   "signOut": "Sign Out",
   "setAsThumbnail": "Use as Thumbnail for Current Folder",
-  "setAsBackground": "Use as Background Image",
+  "setAsBackground": "Use as Wallpaper",
   "setAsParentFolderThumbnail": "Use as Thumbnail for Parent Folder",
   "fileExtension": "File Ext.",
   "fileTitle": "Title",
@@ -679,10 +679,10 @@
   "cancelSubscription": "Cancel Subscription",
   "toggleBookmark": "Toggle Bookmark",
   "chooseBackground": "Choose Background",
-  "backgroundImage": "Background Image",
-  "changeBackgroundImage": "Change Background Image",
+  "backgroundImage": "Wallpaper",
+  "changeBackgroundImage": "Change Wallpaper",
   "noItems": "No items found",
   "notAvailable": "Not available",
-  "clearBackground": "Clear background image",
+  "clearBackground": "Clear Wallpaper",
   "-": "-"
 }
