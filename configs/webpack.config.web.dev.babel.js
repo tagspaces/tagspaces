@@ -16,6 +16,7 @@ const targetPlatform = 'webdav-io'; // electron-io | webdav-io | cordova-io | pr
 
 // CheckNodeEnv('production');
 export default merge(baseConfig, {
+  cache: false,
   devtool: 'inline-source-map',
 
   mode: 'development',
