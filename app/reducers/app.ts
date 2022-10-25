@@ -1635,7 +1635,8 @@ export const actions = {
           dispatch(
             actions.loadDirectoryContent(
               PlatformIO.getLocationPath(location),
-              false
+              false,
+              true
             )
           );
           return true;
