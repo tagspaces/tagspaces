@@ -142,6 +142,7 @@ export namespace TS {
     files?: Array<FileSystemEntry>;
     dirs?: Array<FileSystemEntry>;
     perspectiveSettings?: PerspectiveSettings;
+    isHidden?: boolean;
   }
   interface HistoryItem {
     path: string;
