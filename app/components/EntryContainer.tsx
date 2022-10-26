@@ -1252,7 +1252,7 @@ function EntryContainer(props: Props) {
     return (
       <Split
         horizontal
-        minPrimarySize="100px"
+        minPrimarySize="98px"
         initialPrimarySize={initSize}
         percent={percent.current}
         setPercent={setPercent}
