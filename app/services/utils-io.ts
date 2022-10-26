@@ -1256,3 +1256,55 @@ export const merge = (a, b) =>
       v && Array.isArray(v) ? [...v, ...b[k]] : v || b[k]
     ])
   );
+
+export function getFolderThumbPath(
+  path: string,
+  lastThumbnailImageChange: number
+) {
+  return getThumbPath(
+    getThumbFileLocationForDirectory(path, PlatformIO.getDirSeparator()),
+    lastThumbnailImageChange
+  );
+}
+
+export function getThumbPath(
+  thumbPath: string,
+  lastThumbnailImageChange: number
+) {
+  if (!thumbPath) {
+    return undefined;
+  }
+  if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
+    return PlatformIO.getURLforPath(thumbPath);
+  }
+  return (
+    normalizeUrl(thumbPath) +
+    (lastThumbnailImageChange ? '?' + lastThumbnailImageChange : '')
+  );
+}
+
+export function getFolderBgndPath(
+  path: string,
+  lastBackgroundImageChange: number
+) {
+  return getBgndPath(
+    getBgndFileLocationForDirectory(path, PlatformIO.getDirSeparator()),
+    lastBackgroundImageChange
+  );
+}
+
+export function getBgndPath(
+  bgndPath: string,
+  lastBackgroundImageChange: number
+) {
+  if (!bgndPath) {
+    return undefined;
+  }
+  if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
+    return PlatformIO.getURLforPath(bgndPath);
+  }
+  return (
+    normalizeUrl(bgndPath) +
+    (lastBackgroundImageChange ? '?' + lastBackgroundImageChange : '')
+  );
+}
