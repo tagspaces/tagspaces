@@ -307,7 +307,7 @@ export function prepareDirectoryContent(
   );
 }
 
-export function orderDirectories(directories, metaArray) {
+export function orderDirectories(directories, metaArray: Array<TS.OrderVisibilitySettings>) {
   // if (sortBy === 'custom') {
   try {
     // const metaDirData = await loadMetaDataPromise(currentLocationPath);
@@ -316,11 +316,11 @@ export function orderDirectories(directories, metaArray) {
       const arrLength = directories.length;
       return directories.sort((a, b) => {
         let indexA = metaArray.findIndex(
-          meta => meta.path === a.path
+          meta => meta.name === a.name
           // meta => meta.path === Object.keys(a)[0]
         );
         let indexB = metaArray.findIndex(
-          meta => meta.path === b.path
+          meta => meta.name === b.name
           // meta => meta.path === Object.keys(b)[0]
         );
         // set new dirs last
@@ -340,7 +340,7 @@ export function orderDirectories(directories, metaArray) {
   return directories;
 }
 
-export function orderByMetaArray(arr, metaArray) {
+export function orderByMetaArray(arr, metaArray: Array<TS.OrderVisibilitySettings>) {
   const arrLength = arr.length;
   return arr.sort((a, b) => {
     let indexA = metaArray.findIndex(metaFiles => metaFiles.name === a.name);
@@ -863,12 +863,6 @@ export function cleanMetaData(
   }
   if (metaData.description) {
     cleanedMeta.description = metaData.description;
-  }
-  if (metaData.files && metaData.files.length > 0) {
-    cleanedMeta.files = metaData.files;
-  }
-  if (metaData.dirs && metaData.dirs.length > 0) {
-    cleanedMeta.dirs = metaData.dirs;
   }
   if (metaData.perspectiveSettings) {
     cleanedMeta.perspectiveSettings = metaData.perspectiveSettings;

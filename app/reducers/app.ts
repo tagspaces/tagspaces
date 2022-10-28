@@ -116,6 +116,7 @@ export const types = {
     'APP/TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG',
   TOGGLE_IMPORT_KANBAN_DIALOG: 'APP/TOGGLE_IMPORT_KANBAN_DIALOG',
   TOGGLE_UPLOAD_DIALOG: 'APP/TOGGLE_UPLOAD_DIALOG',
+  SET_CURRENT_DIRECTORY_DIRS: 'APP/SET_CURRENT_DIRECTORY_DIRS',
   CLEAR_UPLOAD_DIALOG: 'APP/CLEAR_UPLOAD_DIALOG',
   TOGGLE_PROGRESS_DIALOG: 'APP/TOGGLE_PROGRESS_DIALOG',
   OPEN_LOCATIONMANAGER_PANEL: 'APP/OPEN_LOCATIONMANAGER_PANEL',
@@ -300,6 +301,27 @@ export default (state: any = initialState, action: any) => {
         // relative paths
         directoryPath = PlatformIO.resolveFilePath(directoryPath);
       }
+      let currentDirectoryFiles: Array<TS.OrderVisibilitySettings> = [];
+      if (
+        action.directoryMeta &&
+        action.directoryMeta.perspectiveSettings &&
+        action.directoryMeta.perspectiveSettings[PerspectiveIDs.KANBAN] &&
+        action.directoryMeta.perspectiveSettings[PerspectiveIDs.KANBAN].files
+      ) {
+        currentDirectoryFiles =
+          action.directoryMeta.perspectiveSettings[PerspectiveIDs.KANBAN].files;
+      }
+      let currentDirectoryDirs: Array<TS.OrderVisibilitySettings> = [];
+      if (
+        action.directoryMeta &&
+        action.directoryMeta.perspectiveSettings &&
+        action.directoryMeta.perspectiveSettings[PerspectiveIDs.KANBAN] &&
+        action.directoryMeta.perspectiveSettings[PerspectiveIDs.KANBAN].columns
+      ) {
+        currentDirectoryDirs =
+          action.directoryMeta.perspectiveSettings[PerspectiveIDs.KANBAN]
+            .columns;
+      }
       return {
         ...state,
         currentDirectoryEntries: action.directoryContent,
@@ -321,15 +343,11 @@ export default (state: any = initialState, action: any) => {
         /**
          * used for reorder files in KanBan
          */
-        currentDirectoryFiles: action.directoryMeta
-          ? action.directoryMeta.files
-          : [],
+        currentDirectoryFiles: currentDirectoryFiles,
         /**
          * used for reorder dirs in KanBan
          */
-        currentDirectoryDirs: action.directoryMeta
-          ? action.directoryMeta.dirs
-          : [],
+        currentDirectoryDirs: currentDirectoryDirs,
         isLoading: action.showIsLoading || false
       };
     }
@@ -444,6 +462,12 @@ export default (state: any = initialState, action: any) => {
         };
       }
       return state;
+    }
+    case types.SET_CURRENT_DIRECTORY_DIRS: {
+      return {
+        ...state,
+        currentDirectoryDirs: action.dirs
+      };
     }
     case types.CLEAR_UPLOAD_DIALOG: {
       // if (PlatformIO.haveObjectStoreSupport()) {
@@ -977,6 +1001,10 @@ export const actions = {
   }),
   toggleUploadDialog: () => ({
     type: types.TOGGLE_UPLOAD_DIALOG
+  }),
+  setCurrentDirectoryDirs: dirs => ({
+    type: types.SET_CURRENT_DIRECTORY_DIRS,
+    dirs
   }),
   clearUploadDialog: () => (
     dispatch: (action) => void,
