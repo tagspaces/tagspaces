@@ -1247,9 +1247,19 @@ export const merge = (a, b) =>
   Object.fromEntries(
     Object.entries(a).map(([k, v]) => [
       k,
-      v && Array.isArray(v) ? [...v, ...b[k]] : v || b[k]
+      v && Array.isArray(v) ? mergeTags(v, b[k]) : v || b[k]
     ])
   );
+
+function mergeTags(oldTagsArray: Array<TS.Tag>, newTagsArray: Array<TS.Tag>) {
+  if (newTagsArray.length === 0) {
+    return oldTagsArray;
+  }
+  const uniqueTags = newTagsArray.filter(newTag =>
+    !oldTagsArray.some(oldTag => oldTag.title === newTag.title)
+  );
+  return [...oldTagsArray, ...uniqueTags];
+}
 
 export function getFolderThumbPath(
   path: string,

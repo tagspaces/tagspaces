@@ -774,6 +774,10 @@ function MainPage(props: Props) {
               .react-split .split-container.vertical .splitter {
                 background-color: ${theme.palette.background.default};
               }
+
+              .react-split .split-container {
+                --react-split-splitter:3px !important;
+              }              
           `}
         </style>
         {props.isDesktopMode || (AppConfig.isAmplify && !props.user) ? (
