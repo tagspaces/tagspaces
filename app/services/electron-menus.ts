@@ -31,7 +31,7 @@ export default function buildDesktopMenu(props: any, i18n) {
         {
           label: i18n.t('openNewInstance'),
           accelerator: '',
-          click: props.createNewWindowInstance
+          click: () => props.createNewWindowInstance()
         },
         {
           type: 'separator'
