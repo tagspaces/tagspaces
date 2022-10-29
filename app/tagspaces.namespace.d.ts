@@ -139,8 +139,6 @@ export namespace TS {
     appName: string;
     appVersion: string;
     lastUpdated: string;
-    files?: Array<FileSystemEntry>;
-    dirs?: Array<FileSystemEntry>;
     perspectiveSettings?: PerspectiveSettings;
   }
   interface HistoryItem {
@@ -182,6 +180,13 @@ export namespace TS {
     thumbnailMode?: string;
     gridPageLimit?: number;
     isLocal?: boolean;
+    columns?: Array<OrderVisibilitySettings>;
+    files?: Array<OrderVisibilitySettings>;
+  }
+
+  interface OrderVisibilitySettings {
+    uuid: string;
+    name: string;
   }
 
   interface MapTileServer {

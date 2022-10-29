@@ -18,6 +18,7 @@ const targetPlatform = 'electron-io'; // electron-io | webdav-io | cordova-io | 
 const dist = path.join(__dirname, '..', 'dll');
 
 export default merge(baseConfig, {
+  cache: false,
   context: path.join(__dirname, '..'),
 
   devtool: 'eval',

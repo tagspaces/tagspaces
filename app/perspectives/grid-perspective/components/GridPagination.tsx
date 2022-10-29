@@ -53,7 +53,8 @@ import { TS } from '-/tagspaces.namespace';
 import {
   getMetaForEntry,
   getDescriptionPreview,
-  normalizeUrl
+  getFolderThumbPath,
+  getFolderBgndPath
 } from '-/services/utils-io';
 import PlatformIO from '-/services/platform-facade';
 import { MilkdownEditor } from '@tagspaces/tagspaces-md';
@@ -371,35 +372,6 @@ function GridPagination(props: Props) {
     PlatformIO.getDirSeparator()
   );
 
-  function getFolderThumbPath(path: string, lastThumbnailImageChange: number) {
-    let tmbPath = getThumbFileLocationForDirectory(
-      path,
-      PlatformIO.getDirSeparator()
-    );
-    if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
-      tmbPath = PlatformIO.getURLforPath(tmbPath);
-    } else {
-      tmbPath =
-        normalizeUrl(tmbPath) +
-        (lastThumbnailImageChange ? '?' + lastThumbnailImageChange : '');
-    }
-    return tmbPath;
-  }
-
-  function getFolderBgndPath(path: string, lastBackgroundImageChange: number) {
-    let bgndPath = getBgndFileLocationForDirectory(
-      path,
-      PlatformIO.getDirSeparator()
-    );
-    if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
-      bgndPath = PlatformIO.getURLforPath(bgndPath);
-    } else {
-      bgndPath =
-        normalizeUrl(bgndPath) +
-        (lastBackgroundImageChange ? '?' + lastBackgroundImageChange : '');
-    }
-    return bgndPath;
-  }
   const dirColor = currentDirectoryColor || 'transparent';
 
   const folderSummary =
