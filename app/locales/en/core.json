@@ -146,6 +146,7 @@
   "showInFileManager": "Show in File Manager",
   "fullscreen": "Open in Fullscreen",
   "renameFile": "Rename File",
+  "newFileName": "New File Name",
   "moveCopyFile": "Move / Copy File",
   "duplicateFile": "Duplicate File",
   "deleteEntry": "Delete",
