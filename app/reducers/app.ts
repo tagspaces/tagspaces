@@ -65,6 +65,7 @@ import {
 } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { PerspectiveIDs } from '-/perspectives';
+import versionMeta from '-/version.json';
 
 export const types = {
   DEVICE_ONLINE: 'APP/DEVICE_ONLINE',
@@ -1578,7 +1579,14 @@ export const actions = {
     content: string,
     fileType: 'md' | 'txt' | 'html'
   ) => (dispatch: (action) => void, getState: () => any) => {
+    const creationDate = new Date().toISOString();
     const fileNameAndExt = fileName + '.' + fileType;
+    const creationMeta =
+      'Created by ' +
+      versionMeta.name +
+      ' on ' +
+      creationDate.substring(0, 10) +
+      '.';
     const filePath =
       normalizePath(targetPath) + PlatformIO.getDirSeparator() + fileNameAndExt;
     let fileContent = content;
@@ -1586,12 +1594,20 @@ export const actions = {
       const { newHTMLFileContent } = getState().settings;
       fileContent =
         newHTMLFileContent.split('<body></body>')[0] +
-        '<body>' +
+        '<body data-createdwith="' +
+        versionMeta.name +
+        '" data-createdon="' +
+        creationDate +
+        '" >' +
         content +
-        '</body>' +
-        newHTMLFileContent.split('<body></body>')[1];
+        '\n<br />\n' +
+        creationMeta +
+        '\n';
+      '</body>' + newHTMLFileContent.split('<body></body>')[1];
+    } else if (fileType === 'md') {
+      fileContent = content + ' \n\n*' + creationMeta + '*\n';
     }
-    PlatformIO.saveFilePromise(filePath, fileContent, true)
+    PlatformIO.saveFilePromise(filePath, fileContent, false)
       .then((fsEntry: TS.FileSystemEntry) => {
         dispatch(actions.reflectCreateEntry(filePath, true));
         dispatch(actions.openFsEntry(fsEntry)); // TODO return fsEntry from saveFilePromise and simplify

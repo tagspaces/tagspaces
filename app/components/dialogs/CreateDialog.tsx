@@ -50,17 +50,6 @@ import { FormControl } from '@mui/material';
 import { fileNameValidation } from '-/services/utils-io';
 
 const styles: any = () => ({
-  root: {
-    dispatch: 'flex',
-    minWidth: 200,
-    minHeight: 300,
-    overflow: 'overlay',
-    alignSelf: 'center'
-  },
-  grid: {
-    flexGrow: 1,
-    width: '100%'
-  },
   createButton: {
     minHeight: 100,
     width: '100%',
@@ -96,30 +85,32 @@ interface Props {
 function CreateDialog(props: Props) {
   const { classes, selectedDirectoryPath, open, onClose } = props;
 
-  const fileName = useRef<string>('note' +
-    AppConfig.beginTagContainer +
-    formatDateTime4Tag(new Date(), true) +
-    AppConfig.endTagContainer);
+  const fileName = useRef<string>(
+    'note' +
+      AppConfig.beginTagContainer +
+      formatDateTime4Tag(new Date(), true) +
+      AppConfig.endTagContainer
+  );
   const [inputError, setInputError] = useState<boolean>(false);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
   let fileInput: HTMLInputElement;
   const fileContent = '';
 
-  function handleKeyPress(event: any) {
-    if (event.key === 'n') {
-      event.stopPropagation();
-      createRichTextFile();
-    } else if (event.key === 't') {
-      event.stopPropagation();
-      createTextFile();
-    } else if (event.key === 'm') {
-      event.stopPropagation();
-      createMarkdownFile();
-    } else if (event.key === 'a') {
-      event.stopPropagation();
-      addFile();
-    }
-  }
+  // function handleKeyPress(event: any) {
+  //   if (event.key === 'n') {
+  //     event.stopPropagation();
+  //     createRichTextFile();
+  //   } else if (event.key === 't') {
+  //     event.stopPropagation();
+  //     createTextFile();
+  //   } else if (event.key === 'm') {
+  //     event.stopPropagation();
+  //     createMarkdownFile();
+  //   } else if (event.key === 'a') {
+  //     event.stopPropagation();
+  //     addFile();
+  //   }
+  // }
 
   function createRichTextFile() {
     if (selectedDirectoryPath && !fileNameValidation(fileName.current)) {
@@ -187,11 +178,13 @@ function CreateDialog(props: Props) {
       event.preventDefault();
       const { target } = event;
       target.focus();
-      const indexOfBracket = fileName.current.indexOf(AppConfig.beginTagContainer);
+      const indexOfBracket = fileName.current.indexOf(
+        AppConfig.beginTagContainer
+      );
       let endRange = fileName.current.length;
-      if (indexOfBracket > 0) {
-        endRange = indexOfBracket;
-      }
+      // if (indexOfBracket > 0) {
+      //   endRange = indexOfBracket;
+      // }
       target.setSelectionRange(0, endRange);
     }
   };
@@ -225,15 +218,16 @@ function CreateDialog(props: Props) {
       keepMounted
       scroll="paper"
       onKeyDown={event => {
-        if (event.key === 'N' || event.key === 'n') {
-          createRichTextFile();
-        } else if (event.key === 'T' || event.key === 't') {
-          createTextFile();
-        } else if (event.key === 'M' || event.key === 'm') {
-          createMarkdownFile();
-        } else if (event.key === 'A' || event.key === 'a') {
-          addFile();
-        } else if (event.key === 'Escape') {
+        // if (event.key === 'N' || event.key === 'n') {
+        //   createRichTextFile();
+        // } else if (event.key === 'T' || event.key === 't') {
+        //   createTextFile();
+        // } else if (event.key === 'M' || event.key === 'm') {
+        //   createMarkdownFile();
+        // } else if (event.key === 'A' || event.key === 'a') {
+        //   addFile();
+        // } else
+        if (event.key === 'Escape') {
           onClose();
         }
       }}
@@ -243,11 +237,17 @@ function CreateDialog(props: Props) {
         <DialogCloseButton onClose={onClose} />
       </DialogTitle>
       <DialogContent
-        onKeyPress={handleKeyPress}
-        className={classes.root}
+        // onKeyPress={handleKeyPress}
+        style={{
+          display: 'flex',
+          minWidth: 200,
+          minHeight: 300,
+          overflow: 'overlay',
+          alignSelf: 'center'
+        }}
         data-tid="keyboardShortCutsDialog"
       >
-        <Grid className={classes.grid} container spacing={1}>
+        <Grid style={{ flexGrow: 1, width: '100%' }} container spacing={1}>
           <Grid item xs={12}>
             <FormControl fullWidth={true} error={inputError}>
               <TextField
@@ -262,7 +262,9 @@ function CreateDialog(props: Props) {
                 fullWidth={true}
                 data-tid="newEntryDialogInputTID"
               />
-              <FormHelperText>{i18n.t('core:fileNameHelp')}</FormHelperText>
+              {inputError && (
+                <FormHelperText>{i18n.t('core:fileNameHelp')}</FormHelperText>
+              )}
             </FormControl>
           </Grid>
           <Grid item xs={12}>
@@ -331,7 +333,7 @@ function CreateDialog(props: Props) {
               </Container>
             </Button>
           </Grid>
-          <Grid item xs={12}>
+          <Grid style={{ marginTop: 40 }} item xs={12}>
             <Button
               variant="outlined"
               onClick={addFile}
