@@ -91,7 +91,7 @@
   "deleteDocument": "Delete Document",
   "openFileExternally": "Open File Externally",
   "openInWindow": "Open in new window",
-  "showUnixHiddenFiles": "Show files/directories with a dot(.) in front of the name (e.g. Unix, Linux, OS X hidden files)",
+  "showUnixHiddenFiles": "Show files/folders with a dot(.) in front of the name (hidden on Linux and macOS)",
   "checkForNewVersionOnStartup": "Check for new version on startup",
   "reorderTags": "Enable changing the tag order with drag and drop",
   "calculateTag": "Extracts the tags used in the current folder",
