@@ -307,7 +307,10 @@ export function prepareDirectoryContent(
   );
 }
 
-export function orderDirectories(directories, metaArray: Array<TS.OrderVisibilitySettings>) {
+export function orderDirectories(
+  directories,
+  metaArray: Array<TS.OrderVisibilitySettings>
+) {
   // if (sortBy === 'custom') {
   try {
     // const metaDirData = await loadMetaDataPromise(currentLocationPath);
@@ -340,7 +343,10 @@ export function orderDirectories(directories, metaArray: Array<TS.OrderVisibilit
   return directories;
 }
 
-export function orderByMetaArray(arr, metaArray: Array<TS.OrderVisibilitySettings>) {
+export function orderByMetaArray(
+  arr,
+  metaArray: Array<TS.OrderVisibilitySettings>
+) {
   const arrLength = arr.length;
   return arr.sort((a, b) => {
     let indexA = metaArray.findIndex(metaFiles => metaFiles.name === a.name);
@@ -1255,8 +1261,8 @@ function mergeTags(oldTagsArray: Array<TS.Tag>, newTagsArray: Array<TS.Tag>) {
   if (newTagsArray.length === 0) {
     return oldTagsArray;
   }
-  const uniqueTags = newTagsArray.filter(newTag =>
-    !oldTagsArray.some(oldTag => oldTag.title === newTag.title)
+  const uniqueTags = newTagsArray.filter(
+    newTag => !oldTagsArray.some(oldTag => oldTag.title === newTag.title)
   );
   return [...oldTagsArray, ...uniqueTags];
 }

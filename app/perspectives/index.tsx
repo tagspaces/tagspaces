@@ -74,7 +74,7 @@ export const KanbanPerspectiveMeta = {
   id: PerspectiveIDs.KANBAN,
   key: 'openKanbanPerspective',
   pro: true,
-  beta: true,
+  beta: false,
   icon: <KanbanPerspectiveIcon />,
   title: 'Kanban Perspective'
 };
