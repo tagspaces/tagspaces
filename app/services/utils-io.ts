@@ -1220,6 +1220,10 @@ export function dirNameValidation(dirName): boolean {
   return true;
 }
 
+/**
+ * return true if no valid
+ * @param fileName
+ */
 export function fileNameValidation(fileName): boolean {
   if (fileName.length > 0) {
     const rg1 = /^[^#\\/*?"<>|]+$/;

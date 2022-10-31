@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useReducer, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Button from '@mui/material/Button';
@@ -44,6 +44,10 @@ import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Spacer from '-/components/Spacer';
 import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import TextField from '@mui/material/TextField';
+import FormHelperText from '@mui/material/FormHelperText';
+import { FormControl } from '@mui/material';
+import { fileNameValidation } from '-/services/utils-io';
 
 const styles: any = () => ({
   root: {
@@ -90,14 +94,16 @@ interface Props {
 }
 
 function CreateDialog(props: Props) {
-  let fileInput: HTMLInputElement;
-  const fileName =
-    'note' +
+  const { classes, selectedDirectoryPath, open, onClose } = props;
+
+  const fileName = useRef<string>('note' +
     AppConfig.beginTagContainer +
     formatDateTime4Tag(new Date(), true) +
-    AppConfig.endTagContainer;
+    AppConfig.endTagContainer);
+  const [inputError, setInputError] = useState<boolean>(false);
+  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  let fileInput: HTMLInputElement;
   const fileContent = '';
-  const { classes, selectedDirectoryPath, open, onClose } = props;
 
   function handleKeyPress(event: any) {
     if (event.key === 'n') {
@@ -116,10 +122,10 @@ function CreateDialog(props: Props) {
   }
 
   function createRichTextFile() {
-    if (selectedDirectoryPath) {
+    if (selectedDirectoryPath && !fileNameValidation(fileName.current)) {
       props.createFileAdvanced(
         selectedDirectoryPath,
-        fileName,
+        fileName.current,
         fileContent,
         'html'
       );
@@ -128,10 +134,10 @@ function CreateDialog(props: Props) {
   }
 
   function createTextFile() {
-    if (selectedDirectoryPath) {
+    if (selectedDirectoryPath && !fileNameValidation(fileName.current)) {
       props.createFileAdvanced(
         selectedDirectoryPath,
-        fileName,
+        fileName.current,
         fileContent,
         'txt'
       );
@@ -140,10 +146,10 @@ function CreateDialog(props: Props) {
   }
 
   function createMarkdownFile() {
-    if (selectedDirectoryPath) {
+    if (selectedDirectoryPath && !fileNameValidation(fileName.current)) {
       props.createFileAdvanced(
         selectedDirectoryPath,
-        fileName,
+        fileName.current,
         fileContent,
         'md'
       );
@@ -154,24 +160,6 @@ function CreateDialog(props: Props) {
   function addFile() {
     fileInput.click();
   }
-
-  // function loadImageLocal() {
-  //   props.onClose();
-  //   navigator.camera.getPicture(onCameraSuccess, onFail, {
-  //     destinationType: Camera.DestinationType.FILE_URI,
-  //     sourceType: Camera.PictureSourceType.PHOTOLIBRARY
-  //   });
-  // }
-
-  // function cameraTakePicture() {
-  //   props.onClose();
-  //   navigator.camera.getPicture(onCameraSuccess, onFail, {
-  //     // quality: 50,
-  //     destinationType: Camera.DestinationType.FILE_URI, // DATA_URL, // Return base64 encoded string
-  //     // encodingType: Camera.EncodingType.JPEG,
-  //     mediaType: Camera.MediaType.PICTURE // ALLMEDIA
-  //   });
-  // }
 
   function handleFileInputChange(selection: any) {
     // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
@@ -192,64 +180,40 @@ function CreateDialog(props: Props) {
         console.log('uploadFiles', error);
       });
     props.onClose();
-
-    /* const filePath =
-      normalizePath(selectedDirectoryPath) +
-      PlatformIO.getDirSeparator() +
-      decodeURIComponent(file.name);
-
-    const reader = new FileReader();
-    reader.onload = (event: any) => {
-      PlatformIO.getPropertiesPromise(filePath)
-        .then(entryProps => {
-          if (entryProps) {
-            showNotification(
-              'File with the same name already exist, importing skipped!',
-              'warning',
-              true
-            );
-          } else {
-            PlatformIO.saveBinaryFilePromise(
-              filePath,
-              event.currentTarget.result,
-              true
-            )
-              .then(() => {
-                showNotification(
-                  'File ' + filePath + ' successfully imported.',
-                  'default',
-                  true
-                );
-                props.reflectCreateEntry(filePath, true);
-                props.onClose();
-                return true;
-              })
-              .catch(error => {
-                // TODO showAlertDialog("Saving " + filePath + " failed.");
-                console.error('Save to file ' + filePath + ' failed ' + error);
-                showNotification(
-                  'Importing file ' + filePath + ' failed.',
-                  'error',
-                  true
-                );
-                props.onClose();
-                return true;
-              });
-          }
-          return true;
-        })
-        .catch(err => {
-          console.log('Error getting properties ' + err);
-          props.onClose();
-        });
-    };
-
-    if (AppConfig.isCordova) {
-      reader.readAsDataURL(file);
-    } else {
-      reader.readAsArrayBuffer(file);
-    } */
   }
+
+  const onInputFocus = event => {
+    if (fileName.current) {
+      event.preventDefault();
+      const { target } = event;
+      target.focus();
+      const indexOfBracket = fileName.current.indexOf(AppConfig.beginTagContainer);
+      let endRange = fileName.current.length;
+      if (indexOfBracket > 0) {
+        endRange = indexOfBracket;
+      }
+      target.setSelectionRange(0, endRange);
+    }
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    fileName.current = event.target.value;
+    handleValidation();
+  };
+
+  const handleValidation = () => {
+    let noValid = fileNameValidation(fileName.current);
+
+    if (noValid) {
+      if (inputError !== noValid) {
+        setInputError(noValid);
+      } else {
+        forceUpdate();
+      }
+    } else {
+      setInputError(noValid);
+    }
+  };
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -284,6 +248,23 @@ function CreateDialog(props: Props) {
         data-tid="keyboardShortCutsDialog"
       >
         <Grid className={classes.grid} container spacing={1}>
+          <Grid item xs={12}>
+            <FormControl fullWidth={true} error={inputError}>
+              <TextField
+                autoFocus
+                error={inputError}
+                margin="dense"
+                name="entryName"
+                label={i18n.t('core:newFileName')}
+                onChange={handleInputChange}
+                onFocus={onInputFocus}
+                defaultValue={fileName.current}
+                fullWidth={true}
+                data-tid="newEntryDialogInputTID"
+              />
+              <FormHelperText>{i18n.t('core:fileNameHelp')}</FormHelperText>
+            </FormControl>
+          </Grid>
           <Grid item xs={12}>
             <Button
               variant="outlined"
