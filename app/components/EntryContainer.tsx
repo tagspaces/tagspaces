@@ -33,6 +33,7 @@ import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import BookmarkIcon from '@mui/icons-material/BookmarkTwoTone';
 import BookmarkAddIcon from '@mui/icons-material/BookmarkAddTwoTone';
+import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
 import BackIcon from '@mui/icons-material/RemoveRedEye';
@@ -1160,18 +1161,28 @@ function EntryContainer(props: Props) {
               <div className={classes.entryCloseSection}>
                 {editingSupported && openedFile.editMode && (
                   <>
-                    <Tooltip title={i18n.t('core:saveFile')}>
-                      <IconButton
+                    <Tooltip
+                      title={
+                        i18n.t('core:saveFile') +
+                        ' (' +
+                        (AppConfig.isMaclike ? '⌘' : 'CTRL') +
+                        ' + S)'
+                      }
+                    >
+                      <Button
                         disabled={false}
                         onClick={startSavingFile}
                         aria-label={i18n.t('core:saveFile')}
                         data-tid="fileContainerSaveFile"
-                        size="large"
+                        size="small"
+                        variant="outlined"
+                        color="primary"
+                        startIcon={<SaveIcon />}
                       >
-                        <SaveIcon />
-                      </IconButton>
+                        {i18n.t('core:save')}
+                      </Button>
                     </Tooltip>
-                    <Tooltip title="Preview">
+                    {/* <Tooltip title="Preview">
                       <IconButton
                         onClick={reloadDocument}
                         aria-label={i18n.t('core:cancelEditing')}
@@ -1179,7 +1190,7 @@ function EntryContainer(props: Props) {
                       >
                         <BackIcon />
                       </IconButton>
-                    </Tooltip>
+                    </Tooltip> */}
                     {closeButton}
                   </>
                 )}
@@ -1194,6 +1205,7 @@ function EntryContainer(props: Props) {
                         onClick={editFile}
                         aria-label={i18n.t('core:editFile')}
                         data-tid="fileContainerEditFile"
+                        startIcon={<EditIcon />}
                       >
                         {i18n.t('core:edit')}
                       </Button>

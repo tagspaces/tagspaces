@@ -515,7 +515,10 @@ function FolderContainer(props: Props) {
               />
               <Tooltip
                 title={
-                  i18n.t('showSearch') + ' (CTRL/⌘ + SHIFT + F)'
+                  i18n.t('showSearch') +
+                  ' (' +
+                  (AppConfig.isMaclike ? '⌘' : 'CTRL') +
+                  ' + SHIFT + F)'
                   // +
                   // ' - ' +
                   // keyBindings['openSearch'].toUpperCase()

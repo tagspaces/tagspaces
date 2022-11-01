@@ -197,8 +197,6 @@ function MobileNavigation(props: Props) {
               color="primary"
             >
               <CreateIcon />
-              &nbsp;
-              {i18n.t('core:new')}
             </Button>
           </Tooltip>
           <Tooltip title={i18n.t('core:createLocationTitle')}>
