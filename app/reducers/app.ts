@@ -1582,7 +1582,7 @@ export const actions = {
     const creationDate = new Date().toISOString();
     const fileNameAndExt = fileName + '.' + fileType;
     const creationMeta =
-      'Created by ' +
+      'Created in ' +
       versionMeta.name +
       ' on ' +
       creationDate.substring(0, 10) +
