@@ -1893,6 +1893,19 @@ export const actions = {
         });
     }
   },
+  openEntry: (path: string) => (
+    dispatch: (action) => void
+  ) => {
+    return getAllPropertiesPromise(path)
+      .then((fsEntry: TS.FileSystemEntry) =>
+        dispatch(actions.openFsEntry(fsEntry))
+      )
+      .catch(error =>
+        console.warn(
+          'Error getting properties for entry: ' + path + ' - ' + error
+        )
+      );
+  },
   openFsEntry: (fsEntry?: TS.FileSystemEntry) => (
     dispatch: (action) => void,
     getState: () => any
@@ -2536,9 +2549,18 @@ export const getLastSelectedEntry = (state: any) => {
   }
   return undefined;
 };
+export const getLastSelectedEntryPath = (state: any) => {
+  const { selectedEntries, currentDirectoryPath } = state.app;
+  if (selectedEntries && selectedEntries.length > 0) {
+    return selectedEntries[selectedEntries.length - 1].path;
+  }
+  return currentDirectoryPath;
+};
 export const getSelectedTag = (state: any) => state.app.tag;
 export const getSelectedEntries = (state: any) =>
   state.app.selectedEntries ? state.app.selectedEntries : [];
+export const getSelectedEntriesLength = (state: any) =>
+  state.app.selectedEntries ? state.app.selectedEntries.length : 0;
 export const getDirectoryMeta = (state: any) => state.app.directoryMeta;
 export const isGeneratingThumbs = (state: any) => state.app.isGeneratingThumbs;
 export const isReadOnlyMode = (state: any) => state.app.isReadOnlyMode;

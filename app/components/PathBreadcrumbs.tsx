@@ -212,7 +212,6 @@ function PathBreadcrumbs(props: Props) {
         reflectCreateEntry={reflectCreateEntry}
         openFsEntry={openFsEntry}
         switchPerspective={switchPerspective}
-        isReadOnlyMode={isReadOnlyMode}
       />
     </>
   );

@@ -120,7 +120,9 @@ export const renderCell = (
       } else {
         setSelectedEntries([fsEntry]);
       }
-      setDirContextMenuAnchorEl(event.currentTarget);
+      if (setDirContextMenuAnchorEl) {
+        setDirContextMenuAnchorEl(event.currentTarget);
+      }
     }
   };
 

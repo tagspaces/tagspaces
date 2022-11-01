@@ -804,7 +804,6 @@ function GridPerspective(props: Props) {
         openRenameDirectoryDialog={props.openRenameEntryDialog}
         openDirectory={props.openDirectory}
         openFsEntry={props.openFsEntry}
-        isReadOnlyMode={props.isReadOnlyMode}
         perspectiveMode={getSelEntryPath() !== props.currentDirectoryPath}
         currentLocation={props.currentLocation}
         locations={props.locations}
