@@ -74,7 +74,7 @@ export const supportedContainers = [
 ];
 export const supportedText = [
   'txt',
-  'md',
+  // 'md',
   'coffee',
   'c',
   'cpp',
@@ -86,16 +86,16 @@ export const supportedText = [
   'js',
   'json',
   'less',
-  'markdown',
-  'mdown',
+  // 'markdown',
+  // 'mdown',
   'php',
   'pl',
   'py',
   'rb',
   'ini',
   'sh',
-  'sql',
-  'mhtml'
+  'sql'
+  // 'mhtml'
 ];
 export const supportedVideos = ['ogv', 'mp4', 'webm', 'm4v', 'mkv', 'lrv'];
 const maxFileSize = 30 * 1024 * 1024;
