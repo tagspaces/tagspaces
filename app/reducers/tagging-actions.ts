@@ -546,49 +546,47 @@ const actions = {
     const tagTitlesForRemoving = tags.map(tag => tag.title);
     loadMetaDataPromise(path)
       .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
-        const newTags = [];
-        fsEntryMeta.tags.map(sidecarTag => {
-          if (!tagTitlesForRemoving.includes(sidecarTag.title)) {
-            newTags.push(sidecarTag); // adds only tags which are not in the tags for removing array
+        const newTags = fsEntryMeta.tags.filter(
+          sidecarTag => !tagTitlesForRemoving.includes(sidecarTag.title)
+        );
+
+        removeTagsFromFilename(fsEntryMeta.isFile).then(newFilePath => {
+          // no file rename - only sidecar tags removed
+          if (newFilePath === path) {
+            const updatedFsEntryMeta = {
+              ...fsEntryMeta,
+              tags: newTags
+            };
+            saveMetaDataPromise(path, updatedFsEntryMeta)
+              .then(() => {
+                dispatch(
+                  AppActions.reflectUpdateSidecarTags(newFilePath, newTags)
+                );
+                return true;
+              })
+              .catch(err => {
+                console.warn(
+                  'Removing sidecar tags failed ' + path + ' with ' + err
+                );
+                dispatch(
+                  AppActions.showNotification(
+                    i18n.t('core:removingSidecarTagsFailed'),
+                    'error',
+                    true
+                  )
+                );
+              });
           }
-          return true;
-        });
-        const updatedFsEntryMeta = {
-          ...fsEntryMeta,
-          tags: newTags
-        };
-        saveMetaDataPromise(path, updatedFsEntryMeta)
-          .then(() => {
-            // TODO rethink this updateCurrentDirEntry and not need for KanBan
-            dispatch(AppActions.reflectUpdateSidecarTags(path, newTags));
-            const { openedFiles } = getState().app;
-            if (openedFiles.find(obj => obj.path === path)) {
-              dispatch(
-                AppActions.updateOpenedFile(path, {
-                  tags: newTags
-                })
-              );
-            }
-            if (fsEntryMeta.isFile) {
-              removeTagsFromFilename();
-            }
-            return true;
-          })
-          .catch(err => {
-            console.warn(
-              'Removing sidecar tags failed ' + path + ' with ' + err
-            );
+          // dispatch(AppActions.reflectEditedEntryPaths([newFilePath]));
+          const { openedFiles } = getState().app;
+          if (openedFiles.find(obj => obj.path === path)) {
             dispatch(
-              AppActions.showNotification(
-                i18n.t('core:removingSidecarTagsFailed'),
-                'error',
-                true
-              )
+              AppActions.updateOpenedFile(path, {
+                tags: newTags
+              })
             );
-            if (fsEntryMeta.isFile) {
-              removeTagsFromFilename();
-            }
-          });
+          }
+        });
         return true;
       })
       .catch(error => {
@@ -597,37 +595,48 @@ const actions = {
         removeTagsFromFilename();
       });
 
-    function removeTagsFromFilename() {
-      const extractedTags = extractTags(
-        path,
-        settings.tagDelimiter,
-        PlatformIO.getDirSeparator()
-      );
-      if (extractedTags.length > 0) {
-        const fileName = extractFileName(path, PlatformIO.getDirSeparator());
-        const containingDirectoryPath = extractContainingDirectoryPath(
+    /**
+     * return new file path
+     * @param isFile
+     */
+    function removeTagsFromFilename(isFile: boolean = true): Promise<string> {
+      if (!isFile) {
+        return Promise.resolve(path);
+      }
+      return new Promise(async resolve => {
+        const extractedTags = extractTags(
           path,
+          settings.tagDelimiter,
           PlatformIO.getDirSeparator()
         );
-        for (let i = 0; i < tagTitlesForRemoving.length; i += 1) {
-          const tagLoc = extractedTags.indexOf(tagTitlesForRemoving[i]);
-          if (tagLoc < 0) {
-            console.log(
-              'The tag cannot be removed because it is not part of the file name.'
-            );
-          } else {
-            extractedTags.splice(tagLoc, 1);
+        if (extractedTags.length > 0) {
+          const fileName = extractFileName(path, PlatformIO.getDirSeparator());
+          const containingDirectoryPath = extractContainingDirectoryPath(
+            path,
+            PlatformIO.getDirSeparator()
+          );
+          for (let i = 0; i < tagTitlesForRemoving.length; i += 1) {
+            const tagLoc = extractedTags.indexOf(tagTitlesForRemoving[i]);
+            if (tagLoc < 0) {
+              console.log(
+                'The tag cannot be removed because it is not part of the file name.'
+              );
+            } else {
+              extractedTags.splice(tagLoc, 1);
+            }
           }
+          const newFilePath =
+            (containingDirectoryPath
+              ? containingDirectoryPath + PlatformIO.getDirSeparator()
+              : '') +
+            generateFileName(fileName, extractedTags, settings.tagDelimiter);
+          if (path !== newFilePath) {
+            await dispatch(AppActions.renameFile(path, newFilePath));
+          }
+          resolve(newFilePath);
         }
-        const newFilePath =
-          (containingDirectoryPath
-            ? containingDirectoryPath + PlatformIO.getDirSeparator()
-            : '') +
-          generateFileName(fileName, extractedTags, settings.tagDelimiter);
-        if (path !== newFilePath) {
-          dispatch(AppActions.renameFile(path, newFilePath));
-        }
-      }
+        resolve(path);
+      });
     }
   },
   removeAllTags: (paths: Array<string>) => async (

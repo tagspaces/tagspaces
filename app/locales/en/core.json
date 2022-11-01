@@ -517,6 +517,7 @@
   "sharingLink": "Link for internal sharing",
   "folderLimit": "Max. folders to be displayed",
   "filesLimit": "Max. files to be displayed in a folder",
+  "scrollFilesLimit": "Files to be loaded on scroll down",
   "goback": "Go Back",
   "goforward": "Go Forward",
   "switchSimpleMode": "Simple Mode",

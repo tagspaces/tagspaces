@@ -132,6 +132,7 @@ export const types = {
   // REFLECT_UPDATE_SIDECARMETA: 'APP/REFLECT_UPDATE_SIDECARMETA',
   UPDATE_CURRENTDIR_ENTRY: 'APP/UPDATE_CURRENTDIR_ENTRY',
   UPDATE_CURRENTDIR_ENTRIES: 'APP/UPDATE_CURRENTDIR_ENTRIES',
+  REFLECT_EDITED_ENTRY_PATHS: 'APP/REFLECT_EDITED_ENTRY_PATHS',
   SET_ISLOADING: 'APP/SET_ISLOADING'
 };
 
@@ -655,7 +656,7 @@ export default (state: any = initialState, action: any) => {
               PlatformIO.getDirSeparator()
             ),
             tags: [
-              ...entry.tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
+              ...entry.tags.filter(tag => tag.type !== 'plain'), //'sidecar'), // add only sidecar tags
               ...fileNameTags
             ]
           };
@@ -670,7 +671,7 @@ export default (state: any = initialState, action: any) => {
             ...entry,
             path: action.newPath, // TODO handle change extension case
             tags: [
-              ...entry.tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
+              ...entry.tags.filter(tag => tag.type !== 'plain'), //'sidecar'), // add only sidecar tags
               ...fileNameTags
             ]
             // shouldReload: true
@@ -736,9 +737,17 @@ export default (state: any = initialState, action: any) => {
         currentDirectoryEntries: action.dirEntries
       };
     }
+    case types.REFLECT_EDITED_ENTRY_PATHS: {
+      return {
+        ...state,
+        editedEntryPaths: action.paths
+      };
+    }
     case types.UPDATE_CURRENTDIR_ENTRY: {
       return {
         ...state,
+        // to reload cell in KanBan if add/remove sidecar tags
+        // editedEntryPaths: [{ [action.path]: action.entry.tags }],
         currentDirectoryEntries: state.currentDirectoryEntries.map(entry => {
           if (entry.path !== action.path) {
             return entry;
@@ -2105,6 +2114,10 @@ export const actions = {
     type: types.UPDATE_CURRENTDIR_ENTRIES,
     dirEntries
   }),
+  reflectEditedEntryPaths: (paths: Array<any>) => ({
+    type: types.REFLECT_EDITED_ENTRY_PATHS,
+    paths
+  }),
   /**
    * @param path
    * @param tags
@@ -2116,16 +2129,18 @@ export const actions = {
     updateIndex = true
   ) => (dispatch: (action) => void, getState: () => any) => {
     const { openedFiles, selectedEntries } = getState().app;
+    // to reload cell in KanBan if add/remove sidecar tags
+    dispatch(actions.reflectEditedEntryPaths([{ [path]: tags }]));
     /**
      * if its have openedFiles updateCurrentDirEntry is called from FolderContainer (useEffect -> ... if (openedFile.changed)
      */
-    if (
+    /*if (
       openedFiles.length === 0 ||
       !openedFiles.some(obj => obj.path === path) ||
       selectedEntries.length > 1
-    ) {
-      dispatch(actions.updateCurrentDirEntry(path, { tags }));
-    }
+    ) {*/
+    dispatch(actions.updateCurrentDirEntry(path, { tags }));
+    // }
     if (updateIndex) {
       dispatch(LocationIndexActions.reflectUpdateSidecarTags(path, tags));
     }
@@ -2191,9 +2206,8 @@ export const actions = {
             true
           )
         );
-        dispatch(actions.reflectRenameEntry(filePath, newFilePathFromPromise));
         // Update sidecar file and thumb
-        renameFilesPromise([
+        return renameFilesPromise([
           [
             getMetaFileLocationForFile(filePath, PlatformIO.getDirSeparator()),
             getMetaFileLocationForFile(
@@ -2215,6 +2229,9 @@ export const actions = {
           ]
         ])
           .then(() => {
+            dispatch(
+              actions.reflectRenameEntry(filePath, newFilePathFromPromise)
+            );
             console.info(
               'Renaming meta file and thumb successful from ' +
                 filePath +
@@ -2224,17 +2241,18 @@ export const actions = {
             return true;
           })
           .catch(err => {
+            dispatch(
+              actions.reflectRenameEntry(filePath, newFilePathFromPromise)
+            );
             console.warn(
               'Renaming meta file and thumb failed from ' +
                 filePath +
                 ' to:' +
-                newFilePath +
-                ' with ' +
-                err
+                newFilePath,
+              err
             );
             return false;
           });
-        return true;
       })
       .catch(error => {
         console.warn('Error while renaming file: ' + error);
