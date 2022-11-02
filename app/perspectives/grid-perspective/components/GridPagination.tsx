@@ -44,7 +44,8 @@ import {
   isLoading,
   getCurrentDirectoryDescription,
   getLastBackgroundImageChange,
-  getLastThumbnailImageChange
+  getLastThumbnailImageChange,
+  getLastSelectedEntryPath
 } from '-/reducers/app';
 import EntryIcon from '-/components/EntryIcon';
 import TagsPreview from '-/components/TagsPreview';
@@ -82,6 +83,7 @@ interface Props {
   // pageEntries: Array<TS.FileSystemEntry>;
   getCellContent: (
     fsEntry: TS.FileSystemEntry,
+    selectedEntries: Array<TS.FileSystemEntry>,
     index: number,
     handleGridContextMenu,
     handleGridCellClick,
@@ -110,7 +112,7 @@ interface Props {
   setSelectedEntries: (selectedEntries: Array<TS.FileSystemEntry>) => void;
   singleClickAction: string;
   currentLocation: TS.Location;
-  lastSelectedEntry: any;
+  lastSelectedEntryPath: string;
   directoryContent: Array<TS.FileSystemEntry>;
   supportedFileTypes: Array<any>;
   openFsEntry: (fsEntry?: TS.FileSystemEntry) => void;
@@ -563,7 +565,7 @@ function GridPagination(props: Props) {
                 props.currentLocation,
                 props.selectedEntries,
                 props.setSelectedEntries,
-                props.lastSelectedEntry,
+                props.lastSelectedEntryPath,
                 props.directoryContent,
                 props.openFsEntry,
                 props.openFileNatively,
@@ -589,7 +591,7 @@ function GridPagination(props: Props) {
               props.currentLocation,
               props.selectedEntries,
               props.setSelectedEntries,
-              props.lastSelectedEntry,
+              props.lastSelectedEntryPath,
               props.directoryContent,
               props.openFsEntry,
               props.openFileNatively,
@@ -685,7 +687,8 @@ function mapStateToProps(state) {
     isMetaLoaded: getIsMetaLoaded(state),
     currentDirectoryDescription: getCurrentDirectoryDescription(state),
     lastBackgroundImageChange: getLastBackgroundImageChange(state),
-    lastThumbnailImageChange: getLastThumbnailImageChange(state)
+    lastThumbnailImageChange: getLastThumbnailImageChange(state),
+    lastSelectedEntryPath: getLastSelectedEntryPath(state)
   };
 }
 

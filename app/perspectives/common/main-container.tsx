@@ -34,6 +34,7 @@ export const renderCell = (
   index: number,
   cellContent: (
     fsEntry: TS.FileSystemEntry,
+    selectedEntries: Array<TS.FileSystemEntry>,
     index: number,
     handleGridContextMenu,
     handleGridCellClick,
@@ -49,7 +50,7 @@ export const renderCell = (
   currentLocation,
   selectedEntries,
   setSelectedEntries,
-  lastSelectedEntry,
+  lastSelectedEntryPath,
   directoryContent,
   openFsEntry,
   openFileNatively,
@@ -167,9 +168,9 @@ export const renderCell = (
     const selectHelperKey = AppConfig.isMacLike ? event.metaKey : event.ctrlKey;
     if (event.shiftKey) {
       let lastSelectedIndex;
-      if (lastSelectedEntry) {
+      if (lastSelectedEntryPath) {
         lastSelectedIndex = directoryContent.findIndex(
-          entry => entry.path === lastSelectedEntry.path
+          entry => entry.path === lastSelectedEntryPath
         );
       }
       const currentSelectedIndex = directoryContent.findIndex(
@@ -266,6 +267,7 @@ export const renderCell = (
       <FileSourceDnd key={key}>
         {cellContent(
           fsEntry,
+          selectedEntries,
           index,
           handleGridContextMenu,
           handleGridCellClick,
@@ -290,6 +292,7 @@ export const renderCell = (
       >
         {cellContent(
           fsEntry,
+          selectedEntries,
           index,
           handleGridContextMenu,
           handleGridCellClick,
