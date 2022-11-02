@@ -210,7 +210,7 @@ function MobileNavigation(props: Props) {
               &nbsp;
               <span
                 style={{
-                  maxWidth: 150,
+                  maxWidth: 180,
                   textOverflow: 'ellipsis',
                   overflow: 'hidden'
                 }}
