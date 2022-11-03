@@ -50,11 +50,11 @@ import IOActions from '-/reducers/io-actions';
 import {
   actions as AppActions,
   getDirectoryMeta,
-  getLastSelectedEntry,
+  getLastSelectedEntry, getLastSelectedEntryPath,
   getSelectedEntries,
   isDeleteMultipleEntriesDialogOpened,
   isReadOnlyMode
-} from '-/reducers/app';
+} from "-/reducers/app";
 import TaggingActions from '-/reducers/tagging-actions';
 import CellContent from './CellContent';
 import MainToolbar from './MainToolbar';
@@ -78,7 +78,8 @@ interface Props {
   desktopMode: boolean;
   currentDirectoryPath: string;
   lastSelectedEntry: any;
-  selectedEntries: Array<any>;
+  selectedEntries: Array<TS.FileSystemEntry>;
+  lastSelectedEntryPath: string;
   supportedFileTypes: Array<any>;
   isReadOnlyMode: boolean;
   openFsEntry: (fsEntry?: TS.FileSystemEntry) => void;
@@ -513,13 +514,6 @@ function GridPerspective(props: Props) {
     }
   };
 
-  const getSelEntryPath = () => {
-    if (props.lastSelectedEntry) {
-      return props.lastSelectedEntry.path;
-    }
-    return currentDirectoryPath;
-  };
-
   const keyBindingHandlers = {
     nextDocument: () => props.openNextFile(),
     prevDocument: () => props.openPrevFile(),
@@ -530,7 +524,7 @@ function GridPerspective(props: Props) {
       }
     },
     addRemoveTags: () => {
-      if (getSelEntryPath()) {
+      if (props.lastSelectedEntryPath) {
         openAddRemoveTagsDialog();
       }
     },
@@ -569,6 +563,7 @@ function GridPerspective(props: Props) {
 
   const getCellContent = (
     fsEntry: TS.FileSystemEntry,
+    selectedEntries: Array<TS.FileSystemEntry>,
     index: number,
     handleGridContextMenu,
     handleGridCellClick,
@@ -693,7 +688,6 @@ function GridPerspective(props: Props) {
           setSelectedEntries={props.setSelectedEntries}
           singleClickAction={singleClickAction.current}
           currentLocation={props.currentLocation}
-          lastSelectedEntry={props.lastSelectedEntry}
           directoryContent={props.directoryContent}
           supportedFileTypes={props.supportedFileTypes}
           openFsEntry={props.openFsEntry}
@@ -787,7 +781,7 @@ function GridPerspective(props: Props) {
           showInFileManager={props.showInFileManager}
           showNotification={props.showNotification}
           isReadOnlyMode={props.isReadOnlyMode}
-          selectedFilePath={getSelEntryPath()}
+          selectedFilePath={props.lastSelectedEntryPath}
           selectedEntries={props.selectedEntries}
           currentLocation={props.currentLocation}
           locations={props.locations}
@@ -800,13 +794,12 @@ function GridPerspective(props: Props) {
         anchorEl={dirContextMenuAnchorEl}
         mouseX={mouseX}
         mouseY={mouseY}
-        directoryPath={getSelEntryPath()}
+        directoryPath={props.lastSelectedEntryPath}
         loadDirectoryContent={props.loadDirectoryContent}
         openRenameDirectoryDialog={props.openRenameEntryDialog}
         openDirectory={props.openDirectory}
         openFsEntry={props.openFsEntry}
-        isReadOnlyMode={props.isReadOnlyMode}
-        perspectiveMode={getSelEntryPath() !== props.currentDirectoryPath}
+        perspectiveMode={props.lastSelectedEntryPath !== props.currentDirectoryPath}
         currentLocation={props.currentLocation}
         locations={props.locations}
       />
@@ -882,6 +875,7 @@ function mapStateToProps(state) {
     lastSelectedEntry: getLastSelectedEntry(state),
     desktopMode: getDesktopMode(state),
     selectedEntries: getSelectedEntries(state),
+    lastSelectedEntryPath: getLastSelectedEntryPath(state),
     keyBindings: getKeyBindingObject(state),
     currentLocation: getLocation(state, state.app.currentLocationId),
     locations: getLocations(state),

@@ -37,7 +37,11 @@ import { formatDateTime4Tag } from '@tagspaces/tagspaces-platforms/misc';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '-/services/i18n';
 import { getKeyBindingObject } from '-/reducers/settings';
-import { actions as AppActions } from '-/reducers/app';
+import {
+  actions as AppActions,
+  getDirectoryPath,
+  getSelectedEntries
+} from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
 import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
@@ -61,8 +65,10 @@ const styles: any = () => ({
 interface Props {
   open: boolean;
   classes: any;
-  selectedDirectoryPath: string;
-  chooseDirectoryPath: (path: string) => void;
+  selectedEntries: Array<TS.FileSystemEntry>;
+  currentDirectoryPath: string | null;
+  // selectedDirectoryPath: string;
+  // chooseDirectoryPath: (path: string) => void;
   showNotification: (message: string, type: string, autohide: boolean) => void;
   reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => void;
   createFileAdvanced: (
@@ -83,8 +89,7 @@ interface Props {
 }
 
 function CreateDialog(props: Props) {
-  const { classes, selectedDirectoryPath, open, onClose } = props;
-
+  const { classes, open, onClose } = props;
   const fileName = useRef<string>(
     'note' +
       AppConfig.beginTagContainer +
@@ -95,6 +100,14 @@ function CreateDialog(props: Props) {
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
   let fileInput: HTMLInputElement;
   const fileContent = '';
+
+  const selectedDirectoryPath =
+    props.selectedEntries && props.selectedEntries.length === 1
+      ? props.selectedEntries[0].path
+      : props.currentDirectoryPath;
+  if (!selectedDirectoryPath) {
+    return null;
+  }
 
   // function handleKeyPress(event: any) {
   //   if (event.key === 'n') {
@@ -373,7 +386,9 @@ function CreateDialog(props: Props) {
 
 function mapStateToProps(state) {
   return {
-    keyBindings: getKeyBindingObject(state)
+    keyBindings: getKeyBindingObject(state),
+    selectedEntries: getSelectedEntries(state),
+    currentDirectoryPath: getDirectoryPath(state)
   };
 }
 

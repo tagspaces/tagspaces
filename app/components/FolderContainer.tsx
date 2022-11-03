@@ -233,13 +233,13 @@ function FolderContainer(props: Props) {
           if (openedFile.perspective) {
             props.setCurrentDirectoryPerspective(openedFile.perspective);
           }
-        } else {
+        } /*else {
           const currentEntry = enhanceOpenedEntry(
             openedFile,
             props.settings.tagDelimiter
           );
           props.updateCurrentDirEntry(openedFile.path, currentEntry);
-        }
+        }*/
       }
     }
     havePrevOpenedFile.current = props.openedFiles.length > 0;

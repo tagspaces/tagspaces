@@ -571,6 +571,7 @@ function GridPerspective(props: Props) {
 
   const getCellContent = (
     fsEntry: TS.FileSystemEntry,
+    selectedEntries: Array<TS.FileSystemEntry>,
     index: number,
     handleGridContextMenu,
     handleGridCellClick,
@@ -692,7 +693,7 @@ function GridPerspective(props: Props) {
           setSelectedEntries={props.setSelectedEntries}
           singleClickAction={singleClickAction.current}
           currentLocation={props.currentLocation}
-          lastSelectedEntry={props.lastSelectedEntry}
+          // lastSelectedEntry={props.lastSelectedEntry}
           directoryContent={props.directoryContent}
           supportedFileTypes={props.supportedFileTypes}
           openFsEntry={props.openFsEntry}
@@ -804,7 +805,6 @@ function GridPerspective(props: Props) {
         openRenameDirectoryDialog={props.openRenameEntryDialog}
         openDirectory={props.openDirectory}
         openFsEntry={props.openFsEntry}
-        isReadOnlyMode={props.isReadOnlyMode}
         perspectiveMode={getSelEntryPath() !== props.currentDirectoryPath}
         currentLocation={props.currentLocation}
         locations={props.locations}

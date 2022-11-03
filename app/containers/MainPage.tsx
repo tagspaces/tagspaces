@@ -323,10 +323,10 @@ function OpenLinkDialogAsync(props) {
 function MainPage(props: Props) {
   // const [percent, setPercent] = React.useState<number | undefined>(undefined);
   const percent = useRef<number | undefined>(undefined);
-  const selectedDirectoryPath = useRef<string>('');
-  const setSelectedDirectoryPath = (path: string) => {
+  // const selectedDirectoryPath = useRef<string>('');
+  /*const setSelectedDirectoryPath = (path: string) => {
     selectedDirectoryPath.current = path;
-  };
+  };*/
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
   const width =
@@ -703,11 +703,11 @@ function MainPage(props: Props) {
       {props.isCreateFileDialogOpened && (
         <CreateFileDialog
           open={props.isCreateFileDialogOpened}
-          selectedDirectoryPath={selectedDirectoryPath.current || directoryPath}
-          chooseDirectoryPath={currentPath =>
-            setSelectedDirectoryPath(currentPath)
-          }
           onClose={toggleCreateFileDialog}
+          // selectedDirectoryPath={selectedDirectoryPath.current || directoryPath}
+          /*chooseDirectoryPath={currentPath =>
+            setSelectedDirectoryPath(currentPath)
+          }*/
         />
       )}
       {props.isSettingsDialogOpened && (

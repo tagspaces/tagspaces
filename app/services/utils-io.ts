@@ -64,6 +64,8 @@ import {
 } from '-/services/thumbsgenerator';
 import { defaultSettings } from '-/perspectives/grid-perspective';
 import { base64ToArrayBuffer } from '-/utils/dom';
+import { Simulate } from 'react-dom/test-utils';
+import error = Simulate.error;
 
 const supportedImgsWS = [
   'jpg',
@@ -629,17 +631,15 @@ export function deleteFilesPromise(filePathList: Array<string>) {
 
 export function renameFilesPromise(renameJobs: Array<Array<string>>) {
   return Promise.all(
-    renameJobs.map(renameJob =>
-      PlatformIO.renameFilePromise(renameJob[0], renameJob[1])
-    )
+    renameJobs.map(async renameJob => {
+      try {
+        return await PlatformIO.renameFilePromise(renameJob[0], renameJob[1]);
+      } catch (err) {
+        console.warn('Error rename file:', err);
+        return false;
+      }
+    })
   );
-  /* const fileRenamePromises = [];
-  renameJobs.forEach(renameJob => {
-    fileRenamePromises.push(
-      PlatformIO.renameFilePromise(renameJob[0], renameJob[1])
-    );
-  });
-  return Promise.all(fileRenamePromises); */
 }
 
 export function copyFilesPromise(copyJobs: Array<Array<string>>) {
