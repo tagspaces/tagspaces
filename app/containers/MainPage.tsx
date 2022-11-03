@@ -490,7 +490,7 @@ function MainPage(props: Props) {
   const keyBindingHandlers = {
     openParentDirectory: props.loadParentDirectoryContent,
     toggleShowHiddenEntries: props.toggleShowUnixHiddenEntries,
-    showFolderNavigator: () => {
+    showLocationManager: () => {
       props.openLocationManagerPanel();
       setDrawerOpened(true);
     },
@@ -509,7 +509,7 @@ function MainPage(props: Props) {
   const keyMap = {
     openParentDirectory: props.keyBindings.openParentDirectory,
     toggleShowHiddenEntries: props.keyBindings.toggleShowHiddenEntries,
-    showFolderNavigator: props.keyBindings.showFolderNavigator,
+    showLocationManager: props.keyBindings.showLocationManager,
     showTagLibrary: props.keyBindings.showTagLibrary,
     openSearch: props.keyBindings.openSearch,
     closeSearch: props.keyBindings.Escape,
