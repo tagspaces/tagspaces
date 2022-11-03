@@ -688,5 +688,6 @@
   "password": "Password",
   "userAccount": "User Account",
   "save": "Save",
+  "importKanbanBoard": "Import Kanban Board",
   "-": "-"
 }

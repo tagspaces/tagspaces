@@ -16,7 +16,7 @@
  *
  */
 import React from 'react';
-import KanbanPerspectiveIcon from '@mui/icons-material/Dashboard';
+import KanbanPerspectiveIcon from '@mui/icons-material/ViewKanban';
 import MapiquePerspectiveIcon from '@mui/icons-material/Map';
 import WikiPerspectiveIcon from '@mui/icons-material/FormatAlignLeft';
 import GalleryPerspectiveIcon from '@mui/icons-material/Camera';

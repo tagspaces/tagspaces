@@ -21,7 +21,7 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import ImportExportIcon from '@mui/icons-material/ImportExport';
+import ImportExportIcon from '@mui/icons-material/SwapHoriz';
 import HelpIcon from '@mui/icons-material/Help';
 import AddIcon from '@mui/icons-material/Add';
 import ReloadIcon from '@mui/icons-material/Sync';
