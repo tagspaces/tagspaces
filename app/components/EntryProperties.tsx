@@ -889,6 +889,15 @@ function EntryProperties(props: Props) {
                 toggleEditDescriptionField();
               }
             }}
+            style={{
+              border: '1px solid lightgray',
+              borderRadius: 5,
+              padding: 2,
+              minHeight: 50,
+              maxHeight: 250,
+              // @ts-ignore
+              overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+            }}
           >
             <MilkdownEditor
               ref={fileDescriptionRef}

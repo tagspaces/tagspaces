@@ -50,11 +50,12 @@ import IOActions from '-/reducers/io-actions';
 import {
   actions as AppActions,
   getDirectoryMeta,
-  getLastSelectedEntry, getLastSelectedEntryPath,
+  getLastSelectedEntry,
+  getLastSelectedEntryPath,
   getSelectedEntries,
   isDeleteMultipleEntriesDialogOpened,
   isReadOnlyMode
-} from "-/reducers/app";
+} from '-/reducers/app';
 import TaggingActions from '-/reducers/tagging-actions';
 import CellContent from './CellContent';
 import MainToolbar from './MainToolbar';
@@ -799,7 +800,9 @@ function GridPerspective(props: Props) {
         openRenameDirectoryDialog={props.openRenameEntryDialog}
         openDirectory={props.openDirectory}
         openFsEntry={props.openFsEntry}
-        perspectiveMode={props.lastSelectedEntryPath !== props.currentDirectoryPath}
+        perspectiveMode={
+          props.lastSelectedEntryPath !== props.currentDirectoryPath
+        }
         currentLocation={props.currentLocation}
         locations={props.locations}
       />

@@ -522,30 +522,21 @@ function GridPagination(props: Props) {
             </Grid>
           )}
           {showDescription && currentDirectoryDescription && (
-            <Grid item xs={12}>
+            <Grid
+              item
+              xs={12}
+              style={{
+                backgroundColor: theme.palette.background.default,
+                marginLeft: 25,
+                marginRight: 10,
+                borderRadius: 5
+              }}
+            >
               <MilkdownEditor
                 content={currentDirectoryDescription}
                 readOnly={true}
                 dark={false}
               />
-              {/*<Typography
-                style={{
-                  display: 'block',
-                  padding: 10,
-                  paddingTop: 0,
-                  margin: '15px 10px 5px 25px',
-                  background: alpha(theme.palette.background.default, 0.9),
-                  borderRadius: 8,
-                  overflow: 'auto',
-                  color: theme.palette.text.primary
-                }}
-                role="button"
-                id="descriptionArea"
-                dangerouslySetInnerHTML={{
-                  // eslint-disable-next-line no-nested-ternary
-                  __html: descriptionHTML
-                }}
-              />*/}
             </Grid>
           )}
         </Grid>

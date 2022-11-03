@@ -112,7 +112,7 @@ function DirectoryMenu(props: Props) {
     selectedEntries,
     currentLocation,
     locations,
-    showNotification,
+    showNotification
   } = props;
 
   function copySharingLink() {

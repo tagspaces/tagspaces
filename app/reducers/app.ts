@@ -1893,9 +1893,7 @@ export const actions = {
         });
     }
   },
-  openEntry: (path: string) => (
-    dispatch: (action) => void
-  ) => {
+  openEntry: (path: string) => (dispatch: (action) => void) => {
     return getAllPropertiesPromise(path)
       .then((fsEntry: TS.FileSystemEntry) =>
         dispatch(actions.openFsEntry(fsEntry))
