@@ -460,7 +460,13 @@ function GridPagination(props: Props) {
                     <span style={{ paddingLeft: 5 }}>
                       {currentDirectoryTags &&
                         currentDirectoryTags.map((tag: TS.Tag) => {
-                          return <TagContainer tag={tag} tagMode="display" />;
+                          return (
+                            <TagContainer
+                              isReadOnlyMode
+                              tag={tag}
+                              tagMode="display"
+                            />
+                          );
                         })}
                     </span>
                   ) : (
