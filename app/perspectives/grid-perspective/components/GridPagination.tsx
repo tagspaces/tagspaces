@@ -492,7 +492,8 @@ function GridPagination(props: Props) {
                     <Tooltip title={i18n.t('core:filePropertiesDescription')}>
                       <Typography
                         style={{
-                          fontSize: '0.8rem'
+                          fontSize: '0.8rem',
+                          wordBreak: 'break-all'
                         }}
                       >
                         {descriptionPreview}

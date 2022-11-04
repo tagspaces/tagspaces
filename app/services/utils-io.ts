@@ -1145,15 +1145,18 @@ export function loadFileContentPromise(
 
 /**
  * @param mdContent
- * @param length - for preview of fist 200 chars
+ * @param maxLength - for preview of fist 200 chars
  */
-export function getDescriptionPreview(mdContent, length = 200) {
+export function getDescriptionPreview(mdContent, maxLength = 200) {
   if (!mdContent) return '';
-  let preview;
-  if (mdContent.length > 200) {
-    preview = mdContent.substring(0, 200) + '...';
-  } else preview = mdContent;
-  return preview.replace(/[#*_\[\]()`]/g, '');
+  let preview = mdContent.replace(
+    /\(data:([\w\/\+]+);(charset=[\w-]+|base64).*,([a-zA-Z0-9+/]+={0,2})\)/g,
+    ''
+  );
+  if (preview.length > maxLength) {
+    preview = preview.substring(0, maxLength) + '...';
+  }
+  return preview.replace(/[#*!_\[\]()`]/g, '');
 }
 
 export function removeMarkDown(mdContent) {

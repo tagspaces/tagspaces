@@ -899,6 +899,15 @@ function EntryProperties(props: Props) {
               overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
             }}
           >
+            {/* {editDescription === undefined &&
+              !currentEntry.editMode &&
+              editName === undefined && (
+                <span
+                  style={{ paddingLeft: 5, paddingTop: 5, color: 'lightgray' }}
+                >
+                  {i18n.t('core:addMarkdownDescription')}
+                </span>
+              )} */}
             <MilkdownEditor
               ref={fileDescriptionRef}
               content={currentEntry.description || ''}
@@ -913,7 +922,7 @@ function EntryProperties(props: Props) {
               color: theme.palette.text.primary
             }}
           >
-            Formatting: <i className={classes.mdHelpers}>_italic_</i>{' '}
+            Markdown help: <i className={classes.mdHelpers}>_italic_</i>{' '}
             <b className={classes.mdHelpers}>**bold**</b>{' '}
             <span className={classes.mdHelpers}>* list item</span>{' '}
             <span className={classes.mdHelpers}>[Link text](http://...)</span>
