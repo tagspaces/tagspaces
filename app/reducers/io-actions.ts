@@ -35,6 +35,7 @@ import { Pro } from '../pro';
 import TaggingActions from './tagging-actions';
 import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
+import { actions as LocationIndexActions } from '-/reducers/location-index';
 
 const actions = {
   extractContent: (
@@ -94,7 +95,8 @@ const actions = {
         );
         const moveMetaJobs = [];
         moveJobs.map(job => {
-          dispatch(AppActions.reflectRenameEntry(job[0], job[1])); // TODO moved files should be added to the index, if the target dir in index
+          // dispatch(AppActions.reflectRenameEntry(job[0], job[1]));
+          dispatch(LocationIndexActions.reflectRenameEntry(job[0], job[1])); // moved files should be added to the index, if the target dir in index
           moveMetaJobs.push([
             getMetaFileLocationForFile(job[0], PlatformIO.getDirSeparator()),
             getMetaFileLocationForFile(job[1], PlatformIO.getDirSeparator())
