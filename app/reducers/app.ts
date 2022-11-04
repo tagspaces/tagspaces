@@ -889,10 +889,6 @@ export const actions = {
     dispatch(SettingsActions.setZoomRestoreApp());
     dispatch(SettingsActions.upgradeSettings()); // TODO call this only on app version update
     const state = getState();
-    const defaultLocationId = getDefaultLocationId(state);
-    if (defaultLocationId && defaultLocationId.length > 0) {
-      dispatch(actions.openLocationById(defaultLocationId));
-    }
     if (getCheckForUpdateOnStartup(state)) {
       dispatch(SettingsActions.checkForUpdate());
     }
@@ -912,15 +908,18 @@ export const actions = {
       dispatch(SettingsActions.setLanguage(langURLParam));
     }
 
+    let openDefaultLocation = true;
     const lid = getURLParameter('tslid');
     const dPath = getURLParameter('tsdpath');
     const ePath = getURLParameter('tsepath');
     const cmdOpen = getURLParameter('cmdopen');
     if (lid || dPath || ePath) {
+      openDefaultLocation = false;
       setTimeout(() => {
         dispatch(actions.openLink(window.location.href));
       }, 1000);
     } else if (cmdOpen) {
+      openDefaultLocation = false;
       setTimeout(() => {
         dispatch(
           actions.openLink(
@@ -928,6 +927,14 @@ export const actions = {
           )
         );
       }, 1000);
+    }
+    const defaultLocationId = getDefaultLocationId(state);
+    if (
+      openDefaultLocation &&
+      defaultLocationId &&
+      defaultLocationId.length > 0
+    ) {
+      dispatch(actions.openLocationById(defaultLocationId));
     }
   },
   goOnline: () => ({ type: types.DEVICE_ONLINE }),
