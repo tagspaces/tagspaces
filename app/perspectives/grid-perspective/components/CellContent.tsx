@@ -230,6 +230,7 @@ function CellContent(props: Props) {
               style={{
                 backgroundColor: fsEntryColor,
                 textShadow: '1px 1px #8f8f8f',
+                textOverflow: 'unset',
                 maxWidth: fsEntry.isFile ? 50 : 100
               }}
               noWrap={true}
