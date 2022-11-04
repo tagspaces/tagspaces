@@ -95,8 +95,7 @@ const actions = {
         );
         const moveMetaJobs = [];
         moveJobs.map(job => {
-          // dispatch(AppActions.reflectRenameEntry(job[0], job[1]));
-          dispatch(LocationIndexActions.reflectRenameEntry(job[0], job[1])); // moved files should be added to the index, if the target dir in index
+          dispatch(AppActions.reflectDeleteEntry(job[0])); // moved files should be added to the index, if the target dir in index
           moveMetaJobs.push([
             getMetaFileLocationForFile(job[0], PlatformIO.getDirSeparator()),
             getMetaFileLocationForFile(job[1], PlatformIO.getDirSeparator())
