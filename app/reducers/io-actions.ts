@@ -351,8 +351,10 @@ const actions = {
 
         // TODO try to replace this with <input type="file"
         if (AppConfig.isElectron) {
-          return PlatformIO.getFileContentPromise(job[0]).then(fileContent =>
-            PlatformIO.getPropertiesPromise(filePath)
+          // for AWS location getFileContentPromise cannot load with io-objectore
+          return import('fs-extra').then(fs => {
+            const fileContent = fs.readFileSync(job[0]);
+            return PlatformIO.getPropertiesPromise(filePath)
               .then(entryProps => {
                 if (entryProps) {
                   dispatch(
@@ -405,9 +407,10 @@ const actions = {
               })
               .catch(err => {
                 console.log('Error getting properties ' + err);
-              })
-          );
+              });
+          });
         }
+
         return undefined;
       });
       Promise.all(jobsPromises)
