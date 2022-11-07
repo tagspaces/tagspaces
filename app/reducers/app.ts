@@ -306,23 +306,18 @@ export default (state: any = initialState, action: any) => {
       let currentDirectoryFiles: Array<TS.OrderVisibilitySettings> = [];
       if (
         action.directoryMeta &&
-        action.directoryMeta.perspectiveSettings &&
-        action.directoryMeta.perspectiveSettings[PerspectiveIDs.KANBAN] &&
-        action.directoryMeta.perspectiveSettings[PerspectiveIDs.KANBAN].files
+        action.directoryMeta.customOrder &&
+        action.directoryMeta.customOrder.files
       ) {
-        currentDirectoryFiles =
-          action.directoryMeta.perspectiveSettings[PerspectiveIDs.KANBAN].files;
+        currentDirectoryFiles = action.directoryMeta.customOrder.files;
       }
       let currentDirectoryDirs: Array<TS.OrderVisibilitySettings> = [];
       if (
         action.directoryMeta &&
-        action.directoryMeta.perspectiveSettings &&
-        action.directoryMeta.perspectiveSettings[PerspectiveIDs.KANBAN] &&
-        action.directoryMeta.perspectiveSettings[PerspectiveIDs.KANBAN].columns
+        action.directoryMeta.customOrder &&
+        action.directoryMeta.customOrder.folders
       ) {
-        currentDirectoryDirs =
-          action.directoryMeta.perspectiveSettings[PerspectiveIDs.KANBAN]
-            .columns;
+        currentDirectoryDirs = action.directoryMeta.customOrder.folders;
       }
       return {
         ...state,

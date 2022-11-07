@@ -351,8 +351,10 @@ const actions = {
 
         // TODO try to replace this with <input type="file"
         if (AppConfig.isElectron) {
-          return PlatformIO.getFileContentPromise(job[0]).then(fileContent =>
-            PlatformIO.getPropertiesPromise(filePath)
+          // for AWS location getFileContentPromise cannot load with io-objectore
+          return import('fs-extra').then(fs => {
+            const fileContent = fs.readFileSync(job[0]);
+            return PlatformIO.getPropertiesPromise(filePath)
               .then(entryProps => {
                 if (entryProps) {
                   dispatch(
@@ -405,9 +407,10 @@ const actions = {
               })
               .catch(err => {
                 console.log('Error getting properties ' + err);
-              })
-          );
+              });
+          });
         }
+
         return undefined;
       });
       Promise.all(jobsPromises)
@@ -447,25 +450,35 @@ const actions = {
                 const metaFilePath = getMetaFileLocationForFile(
                   file.path,
                   AppConfig.dirSeparator
-                ).replace(/[/\\]/g, '');
+                );
+                if (metaFilePath !== undefined) {
+                  for (let i = 0; i < arrMeta.length; i += 1) {
+                    const metaFile = arrMeta[i];
+                    if (
+                      metaFile.path.replace(/[/\\]/g, '') ===
+                      metaFilePath.replace(/[/\\]/g, '')
+                    ) {
+                      // eslint-disable-next-line no-param-reassign
+                      file.meta = metaFile.meta;
+                    }
+                  }
+                }
                 const thumbFilePath = getThumbFileLocationForFile(
                   file.path,
                   AppConfig.dirSeparator
-                ).replace(/[/\\]/g, '');
-                for (let i = 0; i < arrMeta.length; i += 1) {
-                  const metaFile = arrMeta[i];
-                  if (metaFile.path.replace(/[/\\]/g, '') === metaFilePath) {
-                    // eslint-disable-next-line no-param-reassign
-                    file.meta = metaFile.meta;
-                  }
-                }
-                for (let i = 0; i < arrThumb.length; i += 1) {
-                  const thumbFile = arrThumb[i];
-                  if (thumbFile.path.replace(/[/\\]/g, '') === thumbFilePath) {
-                    // eslint-disable-next-line no-param-reassign
-                    file.thumbPath = PlatformIO.getURLforPath(
-                      thumbFile.thumbPath
-                    );
+                );
+                if (thumbFilePath !== undefined) {
+                  for (let i = 0; i < arrThumb.length; i += 1) {
+                    const thumbFile = arrThumb[i];
+                    if (
+                      thumbFile.path.replace(/[/\\]/g, '') ===
+                      thumbFilePath.replace(/[/\\]/g, '')
+                    ) {
+                      // eslint-disable-next-line no-param-reassign
+                      file.thumbPath = PlatformIO.getURLforPath(
+                        thumbFile.thumbPath
+                      );
+                    }
                   }
                 }
                 if (file.meta) {
