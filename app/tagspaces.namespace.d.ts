@@ -139,7 +139,12 @@ export namespace TS {
     appName: string;
     appVersion: string;
     lastUpdated: string;
+    customOrder?: CustomOrder;
     perspectiveSettings?: PerspectiveSettings;
+  }
+  interface CustomOrder {
+    folders?: Array<OrderVisibilitySettings>;
+    files?: Array<OrderVisibilitySettings>;
   }
   interface HistoryItem {
     path: string;
@@ -179,9 +184,7 @@ export namespace TS {
     entrySize?: string;
     thumbnailMode?: string;
     gridPageLimit?: number;
-    isLocal?: boolean;
-    columns?: Array<OrderVisibilitySettings>;
-    files?: Array<OrderVisibilitySettings>;
+    // isLocal?: boolean;
   }
 
   interface OrderVisibilitySettings {

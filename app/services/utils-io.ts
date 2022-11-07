@@ -873,6 +873,9 @@ export function cleanMetaData(
   if (metaData.perspectiveSettings) {
     cleanedMeta.perspectiveSettings = metaData.perspectiveSettings;
   }
+  if (metaData.customOrder) {
+    cleanedMeta.customOrder = metaData.customOrder;
+  }
   /*if (metaData.perspectiveSettings) {  // clean perspectiveSettings !== defaultSettings
     Object.keys(metaData.perspectiveSettings).forEach(perspective => {
       if (!cleanedMeta.perspectiveSettings) {
