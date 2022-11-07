@@ -124,10 +124,7 @@ function getSettings(directoryMeta: TS.FileSystemEntryMeta): TS.FolderSettings {
     directoryMeta.perspectiveSettings &&
     directoryMeta.perspectiveSettings[PerspectiveIDs.GRID]
   ) {
-    return {
-      ...directoryMeta.perspectiveSettings[PerspectiveIDs.GRID],
-      isLocal: true
-    };
+    return directoryMeta.perspectiveSettings[PerspectiveIDs.GRID];
   } else {
     // loading settings for not Pro
     return JSON.parse(localStorage.getItem(defaultSettings.settingsKey));
@@ -135,6 +132,11 @@ function getSettings(directoryMeta: TS.FileSystemEntryMeta): TS.FolderSettings {
 }
 
 function GridPerspective(props: Props) {
+  const isLocal =
+    Pro &&
+    props.directoryMeta &&
+    props.directoryMeta.perspectiveSettings &&
+    props.directoryMeta.perspectiveSettings[PerspectiveIDs.GRID];
   const settings = getSettings(props.directoryMeta);
 
   const [mouseX, setMouseX] = useState<number>(undefined);
@@ -746,7 +748,7 @@ function GridPerspective(props: Props) {
           sortBy={sortBy.current}
           orderBy={orderBy.current}
           handleSortingMenu={handleSortingMenu}
-          isLocal={settings && settings.isLocal}
+          isLocal={isLocal}
           resetLocalSettings={() => {
             Pro.MetaOperations.savePerspectiveSettings(
               currentDirectoryPath,
