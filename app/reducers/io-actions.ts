@@ -447,25 +447,35 @@ const actions = {
                 const metaFilePath = getMetaFileLocationForFile(
                   file.path,
                   AppConfig.dirSeparator
-                ).replace(/[/\\]/g, '');
+                );
+                if (metaFilePath !== undefined) {
+                  for (let i = 0; i < arrMeta.length; i += 1) {
+                    const metaFile = arrMeta[i];
+                    if (
+                      metaFile.path.replace(/[/\\]/g, '') ===
+                      metaFilePath.replace(/[/\\]/g, '')
+                    ) {
+                      // eslint-disable-next-line no-param-reassign
+                      file.meta = metaFile.meta;
+                    }
+                  }
+                }
                 const thumbFilePath = getThumbFileLocationForFile(
                   file.path,
                   AppConfig.dirSeparator
-                ).replace(/[/\\]/g, '');
-                for (let i = 0; i < arrMeta.length; i += 1) {
-                  const metaFile = arrMeta[i];
-                  if (metaFile.path.replace(/[/\\]/g, '') === metaFilePath) {
-                    // eslint-disable-next-line no-param-reassign
-                    file.meta = metaFile.meta;
-                  }
-                }
-                for (let i = 0; i < arrThumb.length; i += 1) {
-                  const thumbFile = arrThumb[i];
-                  if (thumbFile.path.replace(/[/\\]/g, '') === thumbFilePath) {
-                    // eslint-disable-next-line no-param-reassign
-                    file.thumbPath = PlatformIO.getURLforPath(
-                      thumbFile.thumbPath
-                    );
+                );
+                if (thumbFilePath !== undefined) {
+                  for (let i = 0; i < arrThumb.length; i += 1) {
+                    const thumbFile = arrThumb[i];
+                    if (
+                      thumbFile.path.replace(/[/\\]/g, '') ===
+                      thumbFilePath.replace(/[/\\]/g, '')
+                    ) {
+                      // eslint-disable-next-line no-param-reassign
+                      file.thumbPath = PlatformIO.getURLforPath(
+                        thumbFile.thumbPath
+                      );
+                    }
                   }
                 }
                 if (file.meta) {
