@@ -187,6 +187,7 @@ export namespace TS {
   interface OrderVisibilitySettings {
     uuid: string;
     name: string;
+    isCurrent?: boolean;
   }
 
   interface MapTileServer {
