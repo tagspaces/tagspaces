@@ -568,7 +568,10 @@ function GridPerspective(props: Props) {
     fsEntry: TS.FileSystemEntry,
     selectedEntries: Array<TS.FileSystemEntry>,
     index: number,
-    handleGridContextMenu,
+    handleGridContextMenu: (
+      event: React.MouseEvent<HTMLDivElement>,
+      fsEntry: TS.FileSystemEntry
+    ) => void,
     handleGridCellClick,
     handleGridCellDblClick,
     isLast?: boolean
@@ -616,7 +619,14 @@ function GridPerspective(props: Props) {
           layoutType={layoutType.current}
           showTags={showTags.current}
           openFsEntry={props.openFsEntry}
-          handleGridContextMenu={handleGridContextMenu}
+          handleGridContextMenu={(
+            event: React.MouseEvent<HTMLDivElement>,
+            fsEntry: TS.FileSystemEntry
+          ) => {
+            setMouseX(event.clientX);
+            setMouseY(event.clientY);
+            handleGridContextMenu(event, fsEntry);
+          }}
           handleGridCellDblClick={handleGridCellDblClick}
           handleGridCellClick={handleGridCellClick}
         />
