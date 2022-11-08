@@ -31,7 +31,7 @@ export async function AddRemovePropertiesTags(
       // await clickOn('[data-tid=PropertiesTagsSelectTID]');
       await global.client.keyboard.press('Enter');
       const tagDisplayed = await isDisplayed(
-        '[data-tid=PropertiesTagsSelectTID] button[aria-label=' + tagName + ']',
+        '[data-tid=tagContainer_' + tagName + ']',
         true,
         2000
       );
@@ -47,7 +47,7 @@ export async function AddRemovePropertiesTags(
       await removeTagFromTagMenu(tagName);
       // await global.client.waitForLoadState('networkidle'); //'networkidle'); //'domcontentloaded'); // load
       await isDisplayed(
-        '[data-tid=PropertiesTagsSelectTID] button[aria-label=' + tagName + ']',
+        '[data-tid=tagContainer_' + tagName + ']',
         false,
         2000
       );
