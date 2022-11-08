@@ -36,7 +36,7 @@ export const renderCell = (
     fsEntry: TS.FileSystemEntry,
     selectedEntries: Array<TS.FileSystemEntry>,
     index: number,
-    handleGridContextMenu,
+    handleGridContextMenu: (event: React.MouseEvent<HTMLDivElement>, fsEntry: TS.FileSystemEntry) => void,
     handleGridCellClick,
     handleGridCellDblClick,
     isLast?: boolean
