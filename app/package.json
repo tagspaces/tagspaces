@@ -16,7 +16,7 @@
     "@tagspaces/extensions": "1.0.35"
   },
   "nodeDependencies": {
-    "@tagspaces/tagspaces-ws": "2.0.40",
+    "@tagspaces/tagspaces-ws": "2.0.41",
     "@tagspaces/extensions": "1.0.35",
     "sharp": "^0.30.7"
   }
