@@ -353,6 +353,7 @@ const actions = {
         if (AppConfig.isElectron) {
           // for AWS location getFileContentPromise cannot load with io-objectore
           return import('fs-extra').then(fs => {
+            try {
             const fileContent = fs.readFileSync(job[0]);
             return PlatformIO.getPropertiesPromise(filePath)
               .then(entryProps => {
@@ -408,6 +409,9 @@ const actions = {
               .catch(err => {
                 console.log('Error getting properties ' + err);
               });
+            } catch (ex) {
+              console.warn("Error readFileSync for " + job[0], ex);
+            }
           });
         }
 
