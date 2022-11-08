@@ -592,7 +592,7 @@ export async function extractTags(selectorElement) {
     const tagsList = await tags.$$('div[role=presentation]');
     for (let i = 0; i < tagsList.length; i++) {
       const tid = await tagsList[i].getAttribute('data-tid');
-      arrTags.push(tid.replace(/(^tagContainer_)/i, ""));
+      arrTags.push(tid.replace(/(^tagContainer_)/i, ''));
     }
   }
   return arrTags;

@@ -96,6 +96,8 @@ interface Props {
 }
 function App(props: Props) {
   let theme;
+  const systemDarkMode = window.matchMedia('(prefers-color-scheme: dark)')
+    .matches;
   switch (props.currentTheme) {
     case 'light': {
       theme = lightTheme;
@@ -103,6 +105,10 @@ function App(props: Props) {
     }
     case 'dark': {
       theme = darkTheme;
+      break;
+    }
+    case 'system': {
+      theme = systemDarkMode ? darkTheme : lightTheme;
       break;
     }
     default: {

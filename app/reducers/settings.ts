@@ -254,7 +254,10 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SWITCH_THEME: {
       let currentTheme = 'dark';
-      if (state.currentTheme === 'dark') {
+      const systemDarkMode = window.matchMedia('(prefers-color-scheme: dark)');
+      if (state.currentTheme === 'system') {
+        currentTheme = systemDarkMode ? 'light' : 'dark';
+      } else if (state.currentTheme === 'dark') {
         currentTheme = 'light';
       }
       return { ...state, currentTheme };

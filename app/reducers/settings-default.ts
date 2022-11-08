@@ -177,7 +177,7 @@ export default {
   entrySplitSize: '45%', // AppConfig.isElectron ? '560px' : '360px',
   mainVSplitSize: '50%',
   supportedGeoTagging: ['pluscodes', 'mgrs'],
-  supportedThemes: ['light', 'dark'],
+  supportedThemes: ['light', 'dark', 'system'],
   tsLastOpenedFilesHistory: 10,
   tsLastOpenedFoldersHistory: 10,
   tsLastEditedFilesHistory: 10,
