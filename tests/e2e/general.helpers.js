@@ -589,9 +589,10 @@ export async function extractTags(selectorElement) {
   const arrTags = [];
   const tags = await selectorElement.$('#gridCellTags');
   if (tags) {
-    const tagsList = await tags.$$('button');
+    const tagsList = await tags.$$('div[role=presentation]');
     for (let i = 0; i < tagsList.length; i++) {
-      arrTags.push(await tagsList[i].getAttribute('aria-label'));
+      const tid = await tagsList[i].getAttribute('data-tid');
+      arrTags.push(tid.replace(/(^tagContainer_)/i, ""));
     }
   }
   return arrTags;
