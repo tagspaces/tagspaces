@@ -1163,7 +1163,8 @@ export const actions = {
       directoryPath,
       fsEntryMeta &&
         fsEntryMeta.perspective &&
-        fsEntryMeta.perspective === PerspectiveIDs.GALLERY
+        (fsEntryMeta.perspective === PerspectiveIDs.KANBAN ||
+          fsEntryMeta.perspective === PerspectiveIDs.GALLERY)
         ? ['extractThumbPath']
         : [], // mode,
       currentLocation ? currentLocation.ignorePatternPaths : []
