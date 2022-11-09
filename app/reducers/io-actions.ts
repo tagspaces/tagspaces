@@ -219,10 +219,12 @@ const actions = {
       async function setupReader(inx) {
         const file = files[inx];
         const reader = new FileReader();
+        let fileName = file.name;
+        try {
+          fileName = decodeURIComponent(file.name);
+        } catch (ex) {}
         let filePath =
-          normalizePath(targetPath) +
-          PlatformIO.getDirSeparator() +
-          decodeURIComponent(file.name);
+          normalizePath(targetPath) + PlatformIO.getDirSeparator() + fileName;
         if (
           PlatformIO.haveObjectStoreSupport() &&
           (filePath.startsWith('\\') || filePath.startsWith('/'))
