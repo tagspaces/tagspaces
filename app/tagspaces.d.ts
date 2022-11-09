@@ -38,7 +38,7 @@ declare interface Window {
   ExtLocations?: Array<any>;
   ExtSearches?: Array<any>;
   ExtTheme?: string;
-  ExtLightTheme?: string;
+  ExtRegularTheme?: string;
   ExtDarkTheme?: string;
   ExtIsFirstRun?: boolean;
   ExtIsAmplify?: boolean;

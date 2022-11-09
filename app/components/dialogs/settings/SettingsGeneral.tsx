@@ -73,7 +73,7 @@ interface Props {
   persistTagsInSidecarFile: boolean;
   toggleShowUnixHiddenEntries: () => void;
   setCurrentTheme: (theme: string) => void;
-  setCurrentLightTheme: (theme: string) => void;
+  setCurrentRegularTheme: (theme: string) => void;
   setCurrentDarkTheme: (theme: string) => void;
   setLanguage: (language: string) => void;
   setCheckForUpdates: (check: boolean) => void;
@@ -162,22 +162,26 @@ function SettingsGeneral(props: Props) {
         >
           {props.settings.supportedThemes.map(theme => (
             <MenuItem key={theme} value={theme}>
-              {theme}
+              {theme === 'light' && i18n.t('core:regularScheme')}
+              {theme === 'dark' && i18n.t('core:darkScheme')}
+              {theme === 'system' && i18n.t('core:systemScheme')}
             </MenuItem>
           ))}
         </Select>
       </ListItem>
       <ListItem className={classes.listItem}>
-        <ListItemText primary={i18n.t('core:themeLightSelector')} />
+        <ListItemText primary={i18n.t('core:themeRegularSelector')} />
         <Select
-          data-tid="settingsCurrentLightThemeTID"
-          value={props.settings.currentLightTheme}
-          onChange={(event: any) => props.setCurrentLightTheme(event.target.value)}
-          input={<Input id="themeLightSelector" />}
+          data-tid="settingsCurrentRegularThemeTID"
+          value={props.settings.currentRegularTheme}
+          onChange={(event: any) =>
+            props.setCurrentRegularTheme(event.target.value)
+          }
+          input={<Input id="themeRegularSelector" />}
         >
-          {props.settings.supportedLightThemes.map(theme => (
+          {props.settings.supportedRegularThemes.map(theme => (
             <MenuItem key={theme} value={theme}>
-              {theme}
+              {theme.charAt(0).toUpperCase() + theme.slice(1)}
             </MenuItem>
           ))}
         </Select>
@@ -187,12 +191,14 @@ function SettingsGeneral(props: Props) {
         <Select
           data-tid="settingsCurrentDarkThemeTID"
           value={props.settings.currentDarkTheme}
-          onChange={(event: any) => props.setCurrentDarkTheme(event.target.value)}
+          onChange={(event: any) =>
+            props.setCurrentDarkTheme(event.target.value)
+          }
           input={<Input id="themeDarkSelector" />}
         >
           {props.settings.supportedDarkThemes.map(theme => (
             <MenuItem key={theme} value={theme}>
-              {theme}
+              {theme.charAt(0).toUpperCase() + theme.slice(1)}
             </MenuItem>
           ))}
         </Select>

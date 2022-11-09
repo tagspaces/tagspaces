@@ -61,7 +61,7 @@ export const types = {
   SET_TAGCOLOR: 'SETTINGS/SET_TAGCOLOR',
   SET_TAGTEXTCOLOR: 'SETTINGS/SET_TAGTEXTCOLOR',
   SET_CURRENTTHEME: 'SETTINGS/SET_CURRENTTHEME',
-  SET_CURRENT_LIGHT_THEME: 'SETTINGS/SET_CURRENT_LIGHT_THEME',
+  SET_CURRENT_REGULAR_THEME: 'SETTINGS/SET_CURRENT_REGULAR_THEME',
   SET_CURRENT_DARK_THEME: 'SETTINGS/SET_CURRENT_DARK_THEME',
   SET_GEO_TAGGING_FORMAT: 'SETTINGS/SET_GEO_TAGGING_FORMAT',
   SET_HISTORY: 'SETTINGS/SET_HISTORY',
@@ -130,11 +130,12 @@ export default (state: any = defaultSettings, action: any) => {
         ...defaultSettings,
         ...state,
         currentTheme: window.ExtTheme || state.currentTheme,
-        currentLightTheme: window.ExtLightTheme || state.currentLightTheme,
+        currentRegularTheme:
+          window.ExtRegularTheme || state.currentRegularTheme,
         currentDarkTheme: window.ExtDarkTheme || state.currentDarkTheme,
         // TODO dynamically add supportedThemes functionality
         supportedThemes: defaultSettings.supportedThemes, // taking always the themes from default settings
-        supportedLightThemes: defaultSettings.supportedLightThemes, // taking always the themes from default settings
+        supportedRegularThemes: defaultSettings.supportedRegularThemes, // taking always the themes from default settings
         supportedDarkThemes: defaultSettings.supportedDarkThemes, // taking always the themes from default settings
         supportedLanguages: defaultSettings.supportedLanguages, // taking always the languages from default settings
         keyBindings: [
@@ -253,8 +254,8 @@ export default (state: any = defaultSettings, action: any) => {
     case types.SET_CURRENTTHEME: {
       return { ...state, currentTheme: action.currentTheme };
     }
-    case types.SET_CURRENT_LIGHT_THEME: {
-      return { ...state, currentLightTheme: action.currentLightTheme };
+    case types.SET_CURRENT_REGULAR_THEME: {
+      return { ...state, currentRegularTheme: action.currentRegularTheme };
     }
     case types.SET_CURRENT_DARK_THEME: {
       return { ...state, currentDarkTheme: action.currentDarkTheme };
@@ -599,9 +600,9 @@ export const actions = {
     type: types.SET_CURRENTTHEME,
     currentTheme
   }),
-  setCurrentLightTheme: (currentLightTheme: string) => ({
-    type: types.SET_CURRENT_LIGHT_THEME,
-    currentLightTheme
+  setCurrentRegularTheme: (currentRegularTheme: string) => ({
+    type: types.SET_CURRENT_REGULAR_THEME,
+    currentRegularTheme
   }),
   setCurrentDarkTheme: (currentDarkTheme: string) => ({
     type: types.SET_CURRENT_DARK_THEME,
@@ -799,6 +800,10 @@ export const getSupportedFileTypes = (state: any) =>
 export const getTagColor = (state: any) => state.settings.tagBackgroundColor;
 export const getTagTextColor = (state: any) => state.settings.tagTextColor;
 export const getCurrentTheme = (state: any) => state.settings.currentTheme;
+export const getDefaultRegularTheme = (state: any) =>
+  state.settings.currentRegularTheme;
+export const getDefaultDarkTheme = (state: any) =>
+  state.settings.currentDarkTheme;
 export const isGlobalKeyBindingEnabled = (state: any) =>
   state.settings.enableGlobalKeyboardShortcuts;
 export const getMainVerticalSplitSize = (state: any) =>
