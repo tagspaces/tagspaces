@@ -30,16 +30,22 @@ import Box from '@mui/material/Box';
 import { LinearProgress, Grid, Tooltip } from '@mui/material';
 import WarningIcon from '@mui/icons-material/Warning';
 import PlatformIO from '-/services/platform-facade';
-import { actions as AppActions, getProgress } from '-/reducers/app';
+import {
+  actions as AppActions,
+  getCurrentDirectoryPerspective,
+  getProgress
+} from '-/reducers/app';
 import { extractFileName } from '@tagspaces/tagspaces-platforms/paths';
 import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import { PerspectiveIDs } from '-/perspectives';
 
 interface Props {
   open: boolean;
   progress?: Array<any>;
   onClose: () => void;
   clearUploadDialog: () => void;
+  currentDirectoryPerspective: string;
 }
 
 function FileUploadDialog(props: Props) {
@@ -152,7 +158,12 @@ function FileUploadDialog(props: Props) {
         {!haveProgress && (
           <Button
             data-tid="uploadCloseDialog"
-            onClick={props.clearUploadDialog}
+            onClick={() => {
+              onClose();
+              if (props.currentDirectoryPerspective === PerspectiveIDs.GRID) {
+                props.clearUploadDialog();
+              }
+            }}
             color="primary"
           >
             {i18n.t('core:closeAndClear')}
@@ -181,7 +192,8 @@ function FileUploadDialog(props: Props) {
 
 function mapStateToProps(state) {
   return {
-    progress: getProgress(state)
+    progress: getProgress(state),
+    currentDirectoryPerspective: getCurrentDirectoryPerspective(state)
   };
 }
 

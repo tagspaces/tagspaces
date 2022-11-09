@@ -1295,12 +1295,23 @@ export function getThumbPath(
     return undefined;
   }
   if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
+    if (isSignedURL(thumbPath)) {
+      return thumbPath;
+    }
     return PlatformIO.getURLforPath(thumbPath);
   }
   return (
     normalizeUrl(thumbPath) +
     (lastThumbnailImageChange ? '?' + lastThumbnailImageChange : '')
   );
+}
+
+function isSignedURL(signedUrl) {
+  try {
+    // const query = url.parse(signedUrl, true).query;
+    return signedUrl.indexOf('Signature=') !== -1;
+  } catch (ex) {}
+  return false;
 }
 
 export function getFolderBgndPath(
