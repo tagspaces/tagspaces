@@ -61,6 +61,8 @@ export const types = {
   SET_TAGCOLOR: 'SETTINGS/SET_TAGCOLOR',
   SET_TAGTEXTCOLOR: 'SETTINGS/SET_TAGTEXTCOLOR',
   SET_CURRENTTHEME: 'SETTINGS/SET_CURRENTTHEME',
+  SET_CURRENT_LIGHT_THEME: 'SETTINGS/SET_CURRENT_LIGHT_THEME',
+  SET_CURRENT_DARK_THEME: 'SETTINGS/SET_CURRENT_DARK_THEME',
   SET_GEO_TAGGING_FORMAT: 'SETTINGS/SET_GEO_TAGGING_FORMAT',
   SET_HISTORY: 'SETTINGS/SET_HISTORY',
   SWITCH_THEME: 'SETTINGS/SWITCH_THEME',
@@ -128,7 +130,12 @@ export default (state: any = defaultSettings, action: any) => {
         ...defaultSettings,
         ...state,
         currentTheme: window.ExtTheme || state.currentTheme,
+        currentLightTheme: window.ExtLightTheme || state.currentLightTheme,
+        currentDarkTheme: window.ExtDarkTheme || state.currentDarkTheme,
+        // TODO dynamically add supportedThemes functionality
         supportedThemes: defaultSettings.supportedThemes, // taking always the themes from default settings
+        supportedLightThemes: defaultSettings.supportedLightThemes, // taking always the themes from default settings
+        supportedDarkThemes: defaultSettings.supportedDarkThemes, // taking always the themes from default settings
         supportedLanguages: defaultSettings.supportedLanguages, // taking always the languages from default settings
         keyBindings: [
           // ...defaultSettings.keyBindings, // use to reset to the default key bindings
@@ -245,6 +252,12 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_CURRENTTHEME: {
       return { ...state, currentTheme: action.currentTheme };
+    }
+    case types.SET_CURRENT_LIGHT_THEME: {
+      return { ...state, currentLightTheme: action.currentLightTheme };
+    }
+    case types.SET_CURRENT_DARK_THEME: {
+      return { ...state, currentDarkTheme: action.currentDarkTheme };
     }
     case types.SET_GEO_TAGGING_FORMAT: {
       return { ...state, geoTaggingFormat: action.geoTaggingFormat };
@@ -585,6 +598,14 @@ export const actions = {
   setCurrentTheme: (currentTheme: string) => ({
     type: types.SET_CURRENTTHEME,
     currentTheme
+  }),
+  setCurrentLightTheme: (currentLightTheme: string) => ({
+    type: types.SET_CURRENT_LIGHT_THEME,
+    currentLightTheme
+  }),
+  setCurrentDarkTheme: (currentDarkTheme: string) => ({
+    type: types.SET_CURRENT_DARK_THEME,
+    currentDarkTheme
   }),
   setGeoTaggingFormat: (geoTaggingFormat: string) => ({
     type: types.SET_GEO_TAGGING_FORMAT,
