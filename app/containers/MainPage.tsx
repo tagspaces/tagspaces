@@ -321,12 +321,7 @@ function OpenLinkDialogAsync(props) {
 }
 
 function MainPage(props: Props) {
-  // const [percent, setPercent] = React.useState<number | undefined>(undefined);
   const percent = useRef<number | undefined>(undefined);
-  // const selectedDirectoryPath = useRef<string>('');
-  /*const setSelectedDirectoryPath = (path: string) => {
-    selectedDirectoryPath.current = path;
-  };*/
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
   const width =
@@ -346,7 +341,6 @@ function MainPage(props: Props) {
   const [moveCopyDialogOpened, setMoveCopyDialogOpened] = useState<any>(
     undefined
   );
-  // const [rightPanelWidth, setRightPanelWidth] = useState<number>(0);
 
   useEffect(() => {
     if (!AppConfig.isCordova) {
@@ -758,11 +752,10 @@ function MainPage(props: Props) {
       <PageNotification />
       <div
         style={{
-          backgroundColor: theme.palette.background.default,
+          // backgroundColor: theme.palette.background.default,
           height: '100%'
         }}
       >
-        {/* --default-splitter-line-hover-color: green !important; */}
         <style>
           {`
               .default-splitter {

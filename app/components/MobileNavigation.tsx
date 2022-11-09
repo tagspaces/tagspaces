@@ -21,6 +21,7 @@ import { v1 as uuidv1 } from 'uuid';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
+import Box from '@mui/material/Box';
 import Tooltip from '-/components/Tooltip';
 import ToggleButton from '@mui/material/ToggleButton';
 import Button from '@mui/material/Button';
@@ -150,17 +151,16 @@ function MobileNavigation(props: Props) {
     user
   } = props;
   return (
-    <div
-      className={classes.root}
+    <Box
       style={{
-        backgroundColor: theme.palette.background.paper,
+        // backgroundColor: theme.palette.background.default,
         height: '100%',
         overflow: 'hidden',
         width: width || 320,
         maxWidth: width || 320
       }}
     >
-      <div
+      <Box
         style={{
           overflow: 'hidden',
           height: showProTeaser ? 'calc(100% - 220px)' : 'calc(100% - 55px)'
@@ -168,9 +168,7 @@ function MobileNavigation(props: Props) {
       >
         <CustomLogo />
         <ButtonGroup
-          // variant="text"
           color="primary"
-          aria-label="text primary button group"
           style={{
             textAlign: 'center',
             display: 'block',
@@ -236,8 +234,8 @@ function MobileNavigation(props: Props) {
             toggleProTeaser={toggleProTeaser}
           />
         )}
-      </div>
-      <div
+      </Box>
+      <Box
         style={{
           textAlign: 'center'
         }}
@@ -423,8 +421,8 @@ function MobileNavigation(props: Props) {
             key={uuidv1()} // TODO rethink to remove this
           />
         )}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }
 
@@ -469,4 +467,4 @@ function mapActionCreatorsToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
-)(withStyles(styles, { withTheme: true })(MobileNavigation));
+)(withStyles(styles)(MobileNavigation));
