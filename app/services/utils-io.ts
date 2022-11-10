@@ -315,9 +315,7 @@ export function orderDirectories(
 ) {
   // if (sortBy === 'custom') {
   try {
-    // const metaDirData = await loadMetaDataPromise(currentLocationPath);
     if (metaArray && metaArray.length > 0) {
-      // return orderByMetaArray(directories, metaDirData.dirs);
       const arrLength = directories.length;
       return directories.sort((a, b) => {
         let indexA = metaArray.findIndex(
@@ -339,7 +337,7 @@ export function orderDirectories(
       });
     }
   } catch (e) {
-    console.log('error loadMetaDataPromise:', e);
+    console.log('error orderDirectories:', e);
   }
   // }
   return directories;
@@ -810,47 +808,74 @@ export async function loadLocationDataPromise(
   return undefined;
 }
 
+/**
+ * if you have entryProperties.isFile prefer to use loadFileMetaDataPromise/loadDirMetaDataPromise
+ * @param path
+ */
 export function loadMetaDataPromise(
   path: string
 ): Promise<TS.FileSystemEntryMeta> {
   return PlatformIO.getPropertiesPromise(path).then(entryProperties => {
     if (entryProperties) {
       if (entryProperties.isFile) {
-        const metaFilePath = getMetaFileLocationForFile(
-          path,
-          PlatformIO.getDirSeparator()
-        );
-        return loadJSONFile(metaFilePath).then(metaData => ({
-          ...metaData,
-          isFile: true,
-          description: metaData.description || '',
-          color: metaData.color || '',
-          tags: metaData.tags || [],
-          appName: metaData.appName || '',
-          appVersion: metaData.appVersion || '',
-          lastUpdated: metaData.lastUpdated || ''
-        }));
+        return loadFileMetaDataPromise(path);
       }
-      const metaFilePath = getMetaFileLocationForDir(
-        path,
-        PlatformIO.getDirSeparator()
-      );
-      return loadJSONFile(metaFilePath).then(metaData => ({
-        ...metaData,
-        id: metaData.id || uuidv1(),
-        isFile: false,
-        description: metaData.description || '',
-        color: metaData.color || '',
-        perspective: metaData.perspective || '',
-        tags: metaData.tags || [],
-        appName: metaData.appName || '',
-        appVersion: metaData.appVersion || '',
-        lastUpdated: metaData.lastUpdated || '',
-        files: metaData.files || [],
-        dirs: metaData.dirs || []
-      }));
+      return loadDirMetaDataPromise(path);
     }
     throw new Error('loadMetaDataPromise not exist' + path);
+  });
+}
+
+export function loadFileMetaDataPromise(
+  path: string
+): Promise<TS.FileSystemEntryMeta> {
+  const metaFilePath = getMetaFileLocationForFile(
+    path,
+    PlatformIO.getDirSeparator()
+  );
+  return loadJSONFile(metaFilePath).then(metaData => {
+    if (!metaData) {
+      throw new Error('loadFileMetaDataPromise ' + metaFilePath + ' not exist');
+    }
+    return {
+      ...metaData,
+      isFile: true,
+      description: metaData.description || '',
+      color: metaData.color || '',
+      tags: metaData.tags || [],
+      appName: metaData.appName || '',
+      appVersion: metaData.appVersion || '',
+      lastUpdated: metaData.lastUpdated || ''
+    };
+  });
+}
+
+export function loadDirMetaDataPromise(
+  path: string
+): Promise<TS.FileSystemEntryMeta> {
+
+  const metaDirPath = getMetaFileLocationForDir(
+    path,
+    PlatformIO.getDirSeparator()
+  );
+  return loadJSONFile(metaDirPath).then(metaData => {
+    if (!metaData) {
+      throw new Error('loadDirMetaDataPromise ' + metaDirPath + ' not exist');
+    }
+    return {
+    ...metaData,
+    id: metaData.id || uuidv1(),
+    isFile: false,
+    description: metaData.description || '',
+    color: metaData.color || '',
+    perspective: metaData.perspective || '',
+    tags: metaData.tags || [],
+    appName: metaData.appName || '',
+    appVersion: metaData.appVersion || '',
+    lastUpdated: metaData.lastUpdated || '',
+    files: metaData.files || [],
+    dirs: metaData.dirs || []
+    };
   });
 }
 

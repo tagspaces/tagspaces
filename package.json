@@ -191,7 +191,7 @@
     "qrcode.react": "^1.0.1",
     "rc-table": "^7.8.0",
     "react": "17.0.2",
-    "react-beautiful-dnd": "^13.1.0",
+    "react-beautiful-dnd": "^13.1.1",
     "react-best-gradient-color-picker": "^2.0.21",
     "react-color": "^2.19.3",
     "react-dnd": "^14.0.4",

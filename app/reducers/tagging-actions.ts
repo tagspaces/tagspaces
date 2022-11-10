@@ -34,7 +34,9 @@ import {
 import {
   loadMetaDataPromise,
   saveMetaDataPromise,
-  generateFileName
+  generateFileName,
+  loadFileMetaDataPromise,
+  loadDirMetaDataPromise
 } from '-/services/utils-io';
 import { isGeoTag } from '-/utils/geo';
 import PlatformIO from '../services/platform-facade';
@@ -169,7 +171,7 @@ const actions = {
     const entryProperties = await PlatformIO.getPropertiesPromise(path);
     let fsEntryMeta;
     try {
-      fsEntryMeta = await loadMetaDataPromise(path);
+      fsEntryMeta = entryProperties.isFile ? await loadFileMetaDataPromise(path) : await loadDirMetaDataPromise(path);
     } catch (error) {
       console.log('No sidecar found ' + error);
     }
