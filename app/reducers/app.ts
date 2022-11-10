@@ -1617,7 +1617,7 @@ export const actions = {
         '\n';
       '</body>' + newHTMLFileContent.split('<body></body>')[1];
     } else if (fileType === 'md') {
-      fileContent = content + ' \n\n*' + creationMeta + '*\n';
+      fileContent = content + ' \n\n' + creationMeta + '\n';
     }
     PlatformIO.saveFilePromise(filePath, fileContent, false)
       .then((fsEntry: TS.FileSystemEntry) => {

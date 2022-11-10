@@ -171,7 +171,9 @@ const actions = {
     const entryProperties = await PlatformIO.getPropertiesPromise(path);
     let fsEntryMeta;
     try {
-      fsEntryMeta = entryProperties.isFile ? await loadFileMetaDataPromise(path) : await loadDirMetaDataPromise(path);
+      fsEntryMeta = entryProperties.isFile
+        ? await loadFileMetaDataPromise(path)
+        : await loadDirMetaDataPromise(path);
     } catch (error) {
       console.log('No sidecar found ' + error);
     }

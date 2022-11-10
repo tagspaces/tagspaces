@@ -853,7 +853,6 @@ export function loadFileMetaDataPromise(
 export function loadDirMetaDataPromise(
   path: string
 ): Promise<TS.FileSystemEntryMeta> {
-
   const metaDirPath = getMetaFileLocationForDir(
     path,
     PlatformIO.getDirSeparator()
@@ -863,18 +862,18 @@ export function loadDirMetaDataPromise(
       throw new Error('loadDirMetaDataPromise ' + metaDirPath + ' not exist');
     }
     return {
-    ...metaData,
-    id: metaData.id || uuidv1(),
-    isFile: false,
-    description: metaData.description || '',
-    color: metaData.color || '',
-    perspective: metaData.perspective || '',
-    tags: metaData.tags || [],
-    appName: metaData.appName || '',
-    appVersion: metaData.appVersion || '',
-    lastUpdated: metaData.lastUpdated || '',
-    files: metaData.files || [],
-    dirs: metaData.dirs || []
+      ...metaData,
+      id: metaData.id || uuidv1(),
+      isFile: false,
+      description: metaData.description || '',
+      color: metaData.color || '',
+      perspective: metaData.perspective || '',
+      tags: metaData.tags || [],
+      appName: metaData.appName || '',
+      appVersion: metaData.appVersion || '',
+      lastUpdated: metaData.lastUpdated || '',
+      files: metaData.files || [],
+      dirs: metaData.dirs || []
     };
   });
 }
