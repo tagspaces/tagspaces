@@ -472,7 +472,9 @@ function EntryProperties(props: Props) {
 
   const milkdownListener = React.useCallback(
     (markdown: string, prevMarkdown: string | null) => {
-      setEditDescription(markdown);
+      if (markdown !== currentEntry.description) {
+        setEditDescription(markdown);
+      }
       // update codeMirror
       /*const { current } = codeMirrorRef;
       if (!current) return;
