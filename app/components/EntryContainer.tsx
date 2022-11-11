@@ -1056,9 +1056,9 @@ function EntryContainer(props: Props) {
     ? extractFileName(openedFile.path, PlatformIO.getDirSeparator())
     : '';
 
-  const filePropsHeight =
-    Math.floor((percent.current * window.innerHeight) / 100) - 125;
-  // console.log('filePropsHeight: ' + filePropsHeight);
+  // const filePropsHeight =
+  //   Math.floor((percent.current * window.innerHeight) / 100) - 125;
+  // // console.log('filePropsHeight: ' + filePropsHeight);
 
   const renderPanels = () => {
     const closeButton = (
@@ -1085,7 +1085,7 @@ function EntryContainer(props: Props) {
               flex: '1 1 100%',
               display: 'flex',
               backgroundColor: theme.palette.background.default,
-              height: filePropsHeight || '100%'
+              height: '100%' // filePropsHeight ||
             }}
           >
             <Box
