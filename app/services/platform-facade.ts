@@ -49,6 +49,7 @@ import {
   platformGetPropertiesPromise,
   platformLoadTextFilePromise,
   platformGetFileContentPromise,
+  platformGetLocalFileContentPromise,
   platformSaveTextFilePromise,
   platformSaveBinaryFilePromise,
   platformCreateDirectoryPromise,
@@ -346,6 +347,11 @@ export default class PlatformFacade {
     filePath: string,
     type?: string
   ): Promise<any> => platformGetFileContentPromise(filePath, type);
+
+  static getLocalFileContentPromise = (
+    filePath: string,
+    type?: string
+  ): Promise<any> => platformGetLocalFileContentPromise(filePath, type);
 
   static saveFilePromise = (
     filePath: string,
