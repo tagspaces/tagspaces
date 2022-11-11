@@ -542,7 +542,7 @@ function GridPagination(props: Props) {
               <MilkdownEditor
                 content={currentDirectoryDescription}
                 readOnly={true}
-                dark={false}
+                dark={theme.palette.mode === 'dark'}
               />
             </Grid>
           )}

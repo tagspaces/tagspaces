@@ -913,7 +913,7 @@ function EntryProperties(props: Props) {
               content={currentEntry.description || ''}
               onChange={milkdownListener}
               readOnly={editDescription === undefined}
-              dark={false}
+              dark={theme.palette.mode === 'dark'}
             />
           </div>
           <Typography
