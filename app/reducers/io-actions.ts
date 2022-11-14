@@ -354,61 +354,64 @@ const actions = {
         // TODO try to replace this with <input type="file"
         if (AppConfig.isElectron) {
           // for AWS location getFileContentPromise cannot load with io-objectore
-          return PlatformIO.getLocalFileContentPromise(job[0]).then(fileContent =>
-            PlatformIO.getPropertiesPromise(filePath)
-              .then(entryProps => {
-                if (entryProps) {
-                  dispatch(
-                    AppActions.showNotification(
-                      'File with the same name already exist, importing skipped!',
-                      'warning',
-                      true
+          return PlatformIO.getLocalFileContentPromise(job[0]).then(
+            fileContent =>
+              PlatformIO.getPropertiesPromise(filePath)
+                .then(entryProps => {
+                  if (entryProps) {
+                    dispatch(
+                      AppActions.showNotification(
+                        'File with the same name already exist, importing skipped!',
+                        'warning',
+                        true
+                      )
+                    );
+                    dispatch(AppActions.setProgress(filePath, -1, undefined));
+                  } else {
+                    // dispatch(AppActions.setProgress(filePath, progress));
+                    return PlatformIO.saveBinaryFilePromise(
+                      filePath,
+                      fileContent,
+                      true,
+                      onUploadProgress
                     )
-                  );
-                  dispatch(AppActions.setProgress(filePath, -1, undefined));
-                } else {
-                  // dispatch(AppActions.setProgress(filePath, progress));
-                  return PlatformIO.saveBinaryFilePromise(
-                    filePath,
-                    fileContent,
-                    true,
-                    onUploadProgress
-                  )
-                    .then((fsEntry: TS.FileSystemEntry) => {
-                      // handle meta files
-                      if (fileType === 'meta') {
-                        try {
+                      .then((fsEntry: TS.FileSystemEntry) => {
+                        // handle meta files
+                        if (fileType === 'meta') {
+                          try {
+                            // eslint-disable-next-line no-param-reassign
+                            fsEntry.meta = loadJSONString(
+                              fileContent.toString()
+                            );
+                          } catch (e) {
+                            console.debug('cannot parse entry meta');
+                          }
+                        } else if (fileType === 'thumb') {
                           // eslint-disable-next-line no-param-reassign
-                          fsEntry.meta = loadJSONString(fileContent.toString());
-                        } catch (e) {
-                          console.debug('cannot parse entry meta');
+                          fsEntry.thumbPath = fsEntry.path;
                         }
-                      } else if (fileType === 'thumb') {
-                        // eslint-disable-next-line no-param-reassign
-                        fsEntry.thumbPath = fsEntry.path;
-                      }
 
-                      return fsEntry;
-                    })
-                    .catch(err => {
-                      console.error(
-                        'Importing file ' + filePath + ' failed ' + err
-                      );
-                      dispatch(
-                        AppActions.showNotification(
-                          'Importing file ' + filePath + ' failed.',
-                          'error',
-                          true
-                        )
-                      );
-                      return undefined;
-                    });
-                }
-                return undefined;
-              })
-              .catch(err => {
-                console.log('Error getting properties ' + err);
-              })
+                        return fsEntry;
+                      })
+                      .catch(err => {
+                        console.error(
+                          'Importing file ' + filePath + ' failed ' + err
+                        );
+                        dispatch(
+                          AppActions.showNotification(
+                            'Importing file ' + filePath + ' failed.',
+                            'error',
+                            true
+                          )
+                        );
+                        return undefined;
+                      });
+                  }
+                  return undefined;
+                })
+                .catch(err => {
+                  console.log('Error getting properties ' + err);
+                })
           );
         }
 
