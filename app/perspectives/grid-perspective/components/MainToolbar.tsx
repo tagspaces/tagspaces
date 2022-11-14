@@ -268,7 +268,7 @@ function MainToolbar(props: Props) {
             </IconButton>
           </Tooltip>
         )}
-      <Tooltip title={i18n.t('core:options')}>
+      <Tooltip title={i18n.t('core:perspectiveSettingsTitle')}>
         <IconButton
           data-tid="gridPerspectiveOptionsMenu"
           onClick={openSettings}

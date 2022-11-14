@@ -190,52 +190,35 @@ slidesEN['search'] = {
   pictureURL: SearchImage,
   pictureHeight: 150
 };
-slidesEN['objectstorage'] = {
-  title: 'Connect AWS S3 or MinIO object storage',
-  // description: (
-  //   <>
-  //     TagSpaces Pro supports connecting of{' '}
-  //     <b>cloud object storage</b> as locations. Such storage is offered by cloud
-  //     provider such as Amazon AWS. You can also host an object storage{' '}
-  //     <b>privately</b> (e.g. on your NAS) with the help of open source projects
-  //     like MinIO.
-  //     <br />
-  //     This allows you to <b>work collaboratively</b> on
-  //     the same files with family member or co-workers.
-  //     <br />
-  //     By doing so, you are getting a Cloud based{' '}
-  //     <b>full-fledged file organizer and browser</b>, so you do not have to
-  //     download files in order to preview, edit or annotate them. On top of that
-  //     you can <b>stream audio and video</b> files from the Cloud location.
-  //   </>
-  // ),
-  items: [
-    <>
-      TagSpaces Pro supports connecting{' '}
-      <b>Amazon S3 compliant storage providers</b> as locations. Such storage is
-      offered by Amazon AWS, Wasabi and many others. You can also host an object
-      storage <b>privately</b> (e.g. on your NAS) with the help of open source
-      projects like MinIO.
-    </>,
-    <>
-      This allows you to <b>work collaboratively</b> on the same files with
-      family members or co-workers.
-    </>,
-    <>
-      By doing so, you are getting a Cloud based{' '}
-      <b>full-fledged file organizer and browser</b>, so you do not have to
-      download files in order to preview, edit or annotate them. On top of that
-      you can <b>stream audio and video</b> files from the Cloud location.
-    </>
-  ],
-  ctaURL: Links.links.productProObjectStore,
-  ctaTitle: i18n.t('showMeMore'),
-  pictureURL: CloudImage,
-  pictureShadow: true,
-  pictureHeight: 300
-};
+// slidesEN['objectstorage'] = {
+//   title: 'Connect AWS S3 or MinIO object storage',
+//   items: [
+//     <>
+//       TagSpaces Pro supports connecting{' '}
+//       <b>Amazon S3 compliant storage providers</b> as locations. Such storage is
+//       offered by Amazon AWS, Wasabi and many others. You can also host an object
+//       storage <b>privately</b> (e.g. on your NAS) with the help of open source
+//       projects like MinIO.
+//     </>,
+//     <>
+//       This allows you to <b>work collaboratively</b> on the same files with
+//       family members or co-workers.
+//     </>,
+//     <>
+//       By doing so, you are getting a Cloud based{' '}
+//       <b>full-fledged file organizer and browser</b>, so you do not have to
+//       download files in order to preview, edit or annotate them. On top of that
+//       you can <b>stream audio and video</b> files from the Cloud location.
+//     </>
+//   ],
+//   ctaURL: Links.links.productProObjectStore,
+//   ctaTitle: i18n.t('showMeMore'),
+//   pictureURL: CloudImage,
+//   pictureShadow: true,
+//   pictureHeight: 300
+// };
 slidesEN['folderColor'] = {
-  title: 'Folders with custom background color',
+  title: 'Folders with custom backgrounds',
   description: (
     <>
       In the Pro version you can set a background color to any folder. The color

@@ -696,5 +696,10 @@
   "save": "Save",
   "importKanbanBoard": "Import Kanban Board",
   "clearEditor": "Clear editor",
+  "folderVisibilityMenu": "Toggle visibility of sub folders",
+  "showCurrentFolderContent": "Show content of the current folder",
+  "hide": "Hide",
+  "show": "Show",
+  "chooseKanbanJSON": "Choose Trello JSON file",
   "-": "-"
 }
