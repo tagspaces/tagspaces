@@ -16,7 +16,13 @@
  *
  */
 
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
+import React, {
+  ChangeEvent,
+  useEffect,
+  useReducer,
+  useRef,
+  useState
+} from 'react';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
 import { getBgndFileLocationForDirectory } from '@tagspaces/tagspaces-common/paths';
 import { v1 as uuidv1 } from 'uuid';
@@ -93,8 +99,9 @@ import InfoIcon from '-/components/InfoIcon';
 import { ProTooltip } from '-/components/HelperComponents';
 import PerspectiveSelector from '-/components/PerspectiveSelector';
 import { connect } from 'react-redux';
-import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
 import FormHelperText from '@mui/material/FormHelperText';
+import { MilkdownRef } from '@tagspaces/tagspaces-md';
+import EditDescription from '-/components/EditDescription';
 
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
@@ -196,7 +203,7 @@ function EntryProperties(props: Props) {
       )
     : props.openedEntry.path;
 
-  const printHTML = html => {
+  const printHTML = () => {
     const printWin = window.open('', 'PRINT', 'height=400,width=600');
     printWin.document.write(
       '<html><head><title>' + entryName + ' description</title>'
@@ -228,7 +235,7 @@ function EntryProperties(props: Props) {
     60 * 15
   );
   const [editName, setEditName] = useState<string>(undefined);
-  const [editDescription, setEditDescription] = useState<string>(undefined);
+  const editDescription = useRef<string>(undefined);
   const [isMoveCopyFilesDialogOpened, setMoveCopyFilesDialogOpened] = useState<
     boolean
   >(false);
@@ -245,20 +252,19 @@ function EntryProperties(props: Props) {
   >(false);
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
 
-  /*useEffect(() => {
-    if (
-      // editDescription === currentEntry.description &&
-      fileDescriptionRef.current
-    ) {
-      fileDescriptionRef.current.focus();
-    }
-  }, [editDescription]);*/
-
   useEffect(() => {
     if (editName === entryName && fileNameRef.current) {
       fileNameRef.current.focus();
     }
   }, [editName]);
+
+  /*useEffect(() => {
+    if (props.openedEntry != undefined && currentEntry.description) {
+      const { current } = fileDescriptionRef;
+      if (!current) return;
+      current.update(currentEntry.description);
+    }
+  }, [props.openedEntry]);*/
 
   const renameEntry = () => {
     if (editName !== undefined) {
@@ -306,7 +312,7 @@ function EntryProperties(props: Props) {
 
   const toggleEditDescriptionField = () => {
     if (props.isReadOnlyMode) {
-      setEditDescription(undefined);
+      editDescription.current = undefined;
       return;
     }
     if (!Pro) {
@@ -317,22 +323,25 @@ function EntryProperties(props: Props) {
       props.showNotification(i18n.t('Saving description not supported'));
       return;
     }
-    if (editDescription !== undefined) {
-      Pro.MetaOperations.saveDescription(currentEntry.path, editDescription)
+    if (editDescription.current !== undefined) {
+      Pro.MetaOperations.saveDescription(
+        currentEntry.path,
+        editDescription.current
+      )
         .then(entryMeta => {
-          setEditDescription(undefined);
+          editDescription.current = undefined;
           props.updateOpenedFile(currentEntry.path, entryMeta);
           return true;
         })
         .catch(error => {
           console.warn('Error saving description ' + error);
-          setEditDescription(undefined);
+          editDescription.current = undefined;
           props.showNotification(i18n.t('Error saving description'));
         });
     } else if (currentEntry.description) {
-      setEditDescription(currentEntry.description);
+      editDescription.current = currentEntry.description;
     } else {
-      setEditDescription('');
+      editDescription.current = '';
     }
   };
 
@@ -348,7 +357,7 @@ function EntryProperties(props: Props) {
     if (
       !currentEntry.editMode &&
       editName === undefined &&
-      editDescription === undefined
+      editDescription.current === undefined
     ) {
       setFileThumbChooseDialogOpened(!isFileThumbChooseDialogOpened);
     }
@@ -362,7 +371,7 @@ function EntryProperties(props: Props) {
     if (
       !currentEntry.editMode &&
       editName === undefined &&
-      editDescription === undefined
+      editDescription.current === undefined
     ) {
       setBgndImgChooseDialogOpened(!isBgndImgChooseDialogOpened);
     }
@@ -461,27 +470,14 @@ function EntryProperties(props: Props) {
     }
   };
 
-  const handleDescriptionChange = (event: ChangeEvent<HTMLInputElement>) => {
+  /*const handleDescriptionChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
     const { value, name } = target;
 
     if (name === 'description') {
       setEditDescription(value);
     }
-  };
-
-  const milkdownListener = React.useCallback(
-    (markdown: string, prevMarkdown: string | null) => {
-      if (markdown !== currentEntry.description) {
-        setEditDescription(markdown);
-      }
-      // update codeMirror
-      /*const { current } = codeMirrorRef;
-      if (!current) return;
-      current.update(markdown);*/
-    },
-    []
-  );
+  };*/
 
   const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
     if (action === 'remove-value') {
@@ -656,7 +652,7 @@ function EntryProperties(props: Props) {
                 <InputAdornment position="end">
                   {!isReadOnlyMode &&
                     !currentEntry.editMode &&
-                    editDescription === undefined && (
+                    editDescription.current === undefined && (
                       <div style={{ textAlign: 'right' }}>
                         {editName !== undefined ? (
                           <div>
@@ -699,7 +695,7 @@ function EntryProperties(props: Props) {
               if (
                 !currentEntry.editMode &&
                 editName === undefined &&
-                editDescription === undefined
+                editDescription.current === undefined
               ) {
                 activateEditNameField();
               }
@@ -729,7 +725,7 @@ function EntryProperties(props: Props) {
               isReadOnlyMode={
                 isReadOnlyMode ||
                 currentEntry.editMode ||
-                editDescription !== undefined ||
+                editDescription.current !== undefined ||
                 editName !== undefined
               }
               tags={currentEntry.tags}
@@ -839,123 +835,21 @@ function EntryProperties(props: Props) {
         )}
 
         <Grid item xs={12}>
-          <span style={{ verticalAlign: 'sub', paddingLeft: 5 }}>
-            <Typography
-              style={{ color: theme.palette.text.primary }}
-              variant="caption"
-            >
-              {i18n.t('core:filePropertiesDescription')}
-            </Typography>
-          </span>
-          {!isReadOnlyMode && !currentEntry.editMode && editName === undefined && (
-            <span style={{ float: 'right' }}>
-              {editDescription !== undefined && (
-                <Button
-                  className={classes.button}
-                  onClick={() => setEditDescription(undefined)}
-                >
-                  {i18n.t('core:cancel')}
-                </Button>
-              )}
-              {editDescription === undefined && (
-                <Button
-                  className={classes.button}
-                  onClick={() => printHTML(sanitizedDescription)}
-                >
-                  {i18n.t('core:print')}
-                </Button>
-              )}
-              <ProTooltip tooltip={i18n.t('editDescription')}>
-                <Button
-                  color="primary"
-                  className={classes.button}
-                  disabled={!Pro}
-                  onClick={toggleEditDescriptionField}
-                >
-                  {editDescription !== undefined
-                    ? i18n.t('core:confirmSaveButton')
-                    : i18n.t('core:edit')}
-                </Button>
-              </ProTooltip>
-            </span>
-          )}
-        </Grid>
-        <Grid item xs={12}>
-          <div
-            onDoubleClick={() => {
-              if (
-                editDescription === undefined &&
-                !currentEntry.editMode &&
-                editName === undefined
-              ) {
-                toggleEditDescriptionField();
-              }
-            }}
-            style={{
-              border: '1px solid lightgray',
-              borderRadius: 5,
-              padding: 2,
-              minHeight: 50,
-              maxHeight: 250,
-              // @ts-ignore
-              overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
-            }}
-          >
-            {/* {editDescription === undefined &&
+          <EditDescription
+            classes={classes}
+            primaryColor={theme.palette.text.primary}
+            toggleEditDescriptionField={
+              !isReadOnlyMode &&
               !currentEntry.editMode &&
-              editName === undefined && (
-                <span
-                  style={{ paddingLeft: 5, paddingTop: 5, color: 'lightgray' }}
-                >
-                  {i18n.t('core:addMarkdownDescription')}
-                </span>
-              )} */}
-            <MilkdownEditor
-              ref={fileDescriptionRef}
-              content={currentEntry.description || ''}
-              onChange={milkdownListener}
-              readOnly={editDescription === undefined}
-              dark={theme.palette.mode === 'dark'}
-            />
-          </div>
-          <Typography
-            variant="caption"
-            style={{
-              color: theme.palette.text.primary
-            }}
-          >
-            Markdown help: <i className={classes.mdHelpers}>_italic_</i>{' '}
-            <b className={classes.mdHelpers}>**bold**</b>{' '}
-            <span className={classes.mdHelpers}>* list item</span>{' '}
-            <span className={classes.mdHelpers}>[Link text](http://...)</span>
-          </Typography>
-          {/*
-            <Typography
-              style={{
-                display: 'block',
-                padding: 10,
-                borderRadius: 5,
-                border: '1px solid rgba(0, 0, 0, 0.38)',
-                backgroundColor: 'rgba(255, 216, 115, 0.20)',
-                marginBottom: 5,
-                maxHeight: 400,
-                overflow: 'auto',
-                color: currentEntry.description
-                  ? theme.palette.text.primary
-                  : theme.palette.text.disabled
-              }}
-              role="button"
-              id="descriptionArea"
-              dangerouslySetInnerHTML={{
-                // eslint-disable-next-line no-nested-ternary
-                __html: sanitizedDescription
-              }}
-              onDoubleClick={() => {
-                if (!currentEntry.editMode && editName === undefined) {
-                  toggleEditDescriptionField();
-                }
-              }}
-            />*/}
+              editName === undefined &&
+              toggleEditDescriptionField
+            }
+            printHTML={printHTML}
+            fileDescriptionRef={fileDescriptionRef}
+            description={currentEntry.description}
+            setEditDescription={md => (editDescription.current = md)}
+            isDarkTheme={theme.palette.mode === 'dark'}
+          />
         </Grid>
 
         <Grid container item xs={12} spacing={1}>
@@ -1018,7 +912,7 @@ function EntryProperties(props: Props) {
                       !isReadOnlyMode &&
                       !currentEntry.editMode &&
                       editName === undefined &&
-                      editDescription === undefined && (
+                      editDescription.current === undefined && (
                         <Button
                           color="primary"
                           onClick={toggleMoveCopyFilesDialog}
@@ -1251,7 +1145,7 @@ function EntryProperties(props: Props) {
                       {!isReadOnlyMode &&
                         !currentEntry.editMode &&
                         editName === undefined &&
-                        editDescription === undefined && (
+                        editDescription.current === undefined && (
                           <ProTooltip tooltip={i18n.t('changeThumbnail')}>
                             <IconButton
                               disabled={!Pro}
@@ -1305,7 +1199,7 @@ function EntryProperties(props: Props) {
                         {!isReadOnlyMode &&
                           !currentEntry.editMode &&
                           editName === undefined &&
-                          editDescription === undefined && (
+                          editDescription.current === undefined && (
                             <ProTooltip
                               tooltip={i18n.t('changeBackgroundImage')}
                             >
@@ -1444,8 +1338,15 @@ function mapStateToProps(state) {
     lastThumbnailImageChange: getLastThumbnailImageChange(state)
   };
 }
+
+const areEqual = (prevProp: Props, nextProp: Props) =>
+  JSON.stringify(nextProp.openedEntry) === JSON.stringify(prevProp.openedEntry);
+
 export default withLeaflet(
   connect(mapStateToProps)(
-    withStyles(styles, { withTheme: true })(EntryProperties)
+    React.memo(
+      withStyles(styles, { withTheme: true })(EntryProperties),
+      areEqual
+    )
   )
 );
