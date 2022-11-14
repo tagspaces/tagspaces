@@ -21,8 +21,8 @@ import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '-/components/Tooltip';
 import SettingsIcon from '@mui/icons-material/Settings';
 import IconButton from '@mui/material/IconButton';
-import ParentDirIcon from '@mui/icons-material/SubdirectoryArrowLeft';
-import SwapVertIcon from '@mui/icons-material/SwapVert';
+import ParentDirIcon from '@mui/icons-material/DriveFolderUploadRounded';
+import SortingIcon from '@mui/icons-material/SwapVerticalCircle';
 import TagIcon from '@mui/icons-material/LocalOffer';
 import SelectAllIcon from '@mui/icons-material/CheckBox';
 import DeSelectAllIcon from '@mui/icons-material/CheckBoxOutlineBlank';
@@ -252,7 +252,7 @@ function MainToolbar(props: Props) {
           }}
           size="large"
         >
-          <SwapVertIcon />
+          <SortingIcon />
         </IconButton>
       </Tooltip>
       {Pro &&

@@ -23,6 +23,7 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import Tooltip from '-/components/Tooltip';
 import FolderIcon from '@mui/icons-material/Folder';
+import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import SelectedIcon from '@mui/icons-material/CheckBox';
 import UnSelectedIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import { bindActionCreators } from 'redux';
@@ -236,7 +237,7 @@ function CellContent(props: Props) {
               noWrap={true}
               variant="button"
             >
-              {fsEntry.isFile ? fsEntry.extension : i18n.t('core:folder')}
+              {fsEntry.isFile ? fsEntry.extension : <FolderOpenIcon />}
             </Typography>
           </Tooltip>
           {fsEntry.isFile && fsEntry.lmdt && (
