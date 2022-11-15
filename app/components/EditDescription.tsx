@@ -89,6 +89,7 @@ function EditDescription(props: Props) {
           padding: 2,
           minHeight: 50,
           maxHeight: 250,
+          width: 'calc(100% - 8px)',
           // @ts-ignore
           overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
         }}
