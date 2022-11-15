@@ -107,9 +107,9 @@ function CreateDirectoryDialog(props: Props) {
           event.preventDefault();
           event.stopPropagation();
           onConfirm();
-        } else if (event.key === 'Escape') {
+        } /*else if (event.key === 'Escape') {
           onClose();
-        }
+        }*/
       }}
     >
       <DialogTitle>

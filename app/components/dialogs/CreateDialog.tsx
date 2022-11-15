@@ -240,9 +240,9 @@ function CreateDialog(props: Props) {
         // } else if (event.key === 'A' || event.key === 'a') {
         //   addFile();
         // } else
-        if (event.key === 'Escape') {
+        /* if (event.key === 'Escape') {
           onClose();
-        }
+        } */
       }}
     >
       <DialogTitle>
