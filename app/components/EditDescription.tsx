@@ -1,11 +1,11 @@
-import React, { MutableRefObject, useRef, useState } from "react";
+import React, { MutableRefObject, useRef, useState } from 'react';
 import Button from '@mui/material/Button';
 import i18n from '-/services/i18n';
 import { ProTooltip } from '-/components/HelperComponents';
 import { Pro } from '-/pro';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import Typography from '@mui/material/Typography';
-import { MilkdownEditor, MilkdownRef } from "@tagspaces/tagspaces-md";
+import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
 
 interface Props {
   primaryColor: string;
@@ -71,10 +71,7 @@ function EditDescription(props: Props) {
   return (
     <>
       <span style={{ verticalAlign: 'sub', paddingLeft: 5 }}>
-        <Typography
-          style={{ color: props.primaryColor }}
-          variant="caption"
-        >
+        <Typography style={{ color: props.primaryColor }} variant="caption">
           {i18n.t('core:filePropertiesDescription')}
         </Typography>
       </span>
