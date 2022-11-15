@@ -28,7 +28,6 @@ import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
 import ThemingIcon from '@mui/icons-material/InvertColors';
 import LocationsIcon from '@mui/icons-material/WorkOutline';
 import CreateIcon from '@mui/icons-material/Add';
@@ -38,15 +37,11 @@ import HelpIcon from '@mui/icons-material/HelpOutline';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SettingsIcon from '@mui/icons-material/Settings';
 import withStyles from '@mui/styles/withStyles';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
-import CloseIcon from '@mui/icons-material/Close';
 import Popover from '@mui/material/Popover';
-import ProTeaserImage from '-/assets/images/pro-teaser.svg';
-import ProTextLogo from '-/assets/images/text-logo-pro.svg';
 import { Pro } from '-/pro';
 import CustomLogo from '-/components/CustomLogo';
+import ProTeaser from '-/components/ProTeaser';
 import TagLibrary from '-/components/TagLibrary';
 import LocationManager from '-/components/LocationManager';
 import HelpFeedbackPanel from '-/components/HelpFeedbackPanel';
@@ -241,64 +236,11 @@ function MobileNavigation(props: Props) {
         }}
       >
         {showProTeaser && (
-          <>
-            <CardContent
-              onClick={toggleProTeaser}
-              style={{
-                padding: 5,
-                paddingBottom: 0,
-                textAlign: 'center'
-              }}
-            >
-              <Typography color="textSecondary" variant="caption">
-                achieve more with
-                <IconButton
-                  style={{ right: 5, marginTop: -10, position: 'absolute' }}
-                  size="small"
-                  aria-label="close"
-                  onClick={event => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    setShowTeaserBanner(false);
-                  }}
-                >
-                  <CloseIcon fontSize="small" />
-                </IconButton>
-              </Typography>
-              <br />
-              <img style={{ height: 35 }} src={ProTextLogo} alt="" />
-              <br />
-              <img style={{ maxHeight: 60 }} src={ProTeaserImage} alt="" />
-            </CardContent>
-            <CardActions
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'center',
-                marginTop: -10
-              }}
-            >
-              <Button
-                size="small"
-                onClick={(event: any) => {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  toggleProTeaser();
-                }}
-              >
-                {i18n.t('showMeMore')}
-              </Button>
-              <Button
-                size="small"
-                onClick={(event: any) => {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  openURLExternally(Links.links.productsOverview, true);
-                }}
-              >
-                {i18n.t('getItNow')}
-              </Button>
-            </CardActions>
-          </>
+          <ProTeaser
+            toggleProTeaser={toggleProTeaser}
+            setShowTeaserBanner={setShowTeaserBanner}
+            openURLExternally={openURLExternally}
+          />
         )}
         <Tooltip title={i18n.t('core:settings')}>
           <IconButton
