@@ -151,7 +151,7 @@ interface Props {
   resetProgress: () => void;
   isEditTagDialogOpened: boolean;
   keyBindings: any;
-  toggleEditTagDialog: () => void;
+  toggleEditTagDialog: (tag: TS.Tag) => void;
   setEntryFullWidth: (isFullWidth: boolean) => void;
   loadParentDirectoryContent: () => void;
   saveFile: () => void; // needed by electron-menus
@@ -666,7 +666,7 @@ function MainPage(props: Props) {
       {props.isEditTagDialogOpened && (
         <EditEntryTagDialogAsync
           open={props.isEditTagDialogOpened}
-          onClose={toggleEditTagDialog}
+          onClose={() => toggleEditTagDialog(undefined)}
         />
       )}
       {props.isOpenLinkDialogOpened && (
@@ -770,7 +770,7 @@ function MainPage(props: Props) {
 
               .react-split .split-container {
                 --react-split-splitter:3px !important;
-              }              
+              }
           `}
         </style>
         {props.isDesktopMode || (AppConfig.isAmplify && !props.user) ? (
