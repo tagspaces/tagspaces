@@ -1236,8 +1236,8 @@ function mergeTags(oldTagsArray: Array<TS.Tag>, newTagsArray: Array<TS.Tag>) {
   if (newTagsArray.length === 0) {
     return oldTagsArray;
   }
-  const uniqueTags = newTagsArray.filter(newTag =>
-    !oldTagsArray.some(oldTag => oldTag.title === newTag.title)
+  const uniqueTags = newTagsArray.filter(
+    newTag => !oldTagsArray.some(oldTag => oldTag.title === newTag.title)
   );
   return [...oldTagsArray, ...uniqueTags];
 }
