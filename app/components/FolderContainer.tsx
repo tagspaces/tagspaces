@@ -448,21 +448,26 @@ function FolderContainer(props: Props) {
 
   const perspectiveToggleButtons = [];
   AvailablePerspectives.forEach(perspective => {
-    if (perspective.beta === false) {
-      perspectiveToggleButtons.push(
-        <ToggleButton
-          value={perspective.id}
-          aria-label={perspective.id}
-          key={perspective.id}
-          data-tid={perspective.key}
-          onClick={() => switchPerspective(perspective.id)}
+    // if (perspective.beta === false) {
+    perspectiveToggleButtons.push(
+      <ToggleButton
+        value={perspective.id}
+        aria-label={perspective.id}
+        key={perspective.id}
+        data-tid={perspective.key}
+        onClick={() => switchPerspective(perspective.id)}
+      >
+        <Tooltip
+          title={
+            perspective.title +
+            (perspective.beta && ' ' + i18n.t('core:betaStatus').toUpperCase())
+          }
         >
-          <Tooltip title={perspective.title}>
-            <div style={{ display: 'flex' }}>{perspective.icon}</div>
-          </Tooltip>
-        </ToggleButton>
-      );
-    }
+          <div style={{ display: 'flex' }}>{perspective.icon}</div>
+        </Tooltip>
+      </ToggleButton>
+    );
+    // }
   });
 
   return (

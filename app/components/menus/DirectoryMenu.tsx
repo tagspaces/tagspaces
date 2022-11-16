@@ -213,14 +213,6 @@ function DirectoryMenu(props: Props) {
           true
         );
       }
-      // } else if (perspectiveId === PerspectiveIDs.WIKI) {
-      //   const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
-      //   if (openPersDocs) {
-      //     props.openURLExternally(
-      //       Links.documentationLinks.kanbanPerspective,
-      //       true
-      //     );
-      //   }
     }
   }
 

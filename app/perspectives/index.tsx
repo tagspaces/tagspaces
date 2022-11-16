@@ -52,15 +52,6 @@ export const ListPerspectiveMeta = {
   title: 'List Perspective'
 };
 
-// export const WikiPerspectiveMeta = {
-//   id: PerspectiveIDs.WIKI,
-//   key: 'openWikiPerspective',
-//   pro: true,
-//   beta: true,
-//   icon: <WikiPerspectiveIcon />,
-//   title: 'Wiki Perspective'
-// };
-
 export const MapiquePerspectiveMeta = {
   id: PerspectiveIDs.MAPIQUE,
   key: 'openMapiquePerspective',
@@ -74,7 +65,7 @@ export const KanbanPerspectiveMeta = {
   id: PerspectiveIDs.KANBAN,
   key: 'openKanbanPerspective',
   pro: true,
-  beta: false,
+  beta: true,
   icon: <KanbanPerspectiveIcon />,
   title: 'Kanban Perspective'
 };
