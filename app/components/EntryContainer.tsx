@@ -1356,7 +1356,7 @@ function EntryContainer(props: Props) {
               : i18n.t('core:deleteDirectoryContentConfirm', {
                   dirPath: openedFile.path
                     ? extractDirectoryName(
-                        decodeURIComponent(openedFile.path),
+                        openedFile.path,
                         PlatformIO.getDirSeparator()
                       )
                     : ''

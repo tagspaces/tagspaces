@@ -333,7 +333,7 @@ function GridPagination(props: Props) {
   };
 
   const folderName = extractDirectoryName(
-    decodeURIComponent(props.currentDirectoryPath),
+    props.currentDirectoryPath,
     PlatformIO.getDirSeparator()
   );
 
