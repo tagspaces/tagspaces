@@ -370,7 +370,7 @@ function Slide(props: SlideProps) {
 function ProTeaserDialog(props: Props) {
   const [activeStep, setActiveStep] = useState<number>(0);
 
-  const maxSteps = 8;
+  const maxSteps = 7;
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -416,7 +416,7 @@ function ProTeaserDialog(props: Props) {
           <Slide {...slidesEN['mapique']} openURL={openURLExternally} />
           <Slide {...slidesEN['annotation']} openURL={openURLExternally} />
           <Slide {...slidesEN['search']} openURL={openURLExternally} />
-          <Slide {...slidesEN['objectstorage']} openURL={openURLExternally} />
+          {/* <Slide {...slidesEN['objectstorage']} openURL={openURLExternally} /> */}
           <Slide {...slidesEN['folderColor']} openURL={openURLExternally} />
           <Slide {...slidesEN['enterprise']} openURL={openURLExternally} />
         </SwipeableViews>

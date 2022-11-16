@@ -30,7 +30,8 @@ import Tooltip from '-/components/Tooltip';
 import Input from '@mui/material/Input';
 import Select from '@mui/material/Select';
 import Button from '@mui/material/Button';
-import InfoIcon from '@mui/icons-material/InfoOutlined';
+import InfoMuiIcon from '@mui/icons-material/InfoOutlined';
+import InfoIcon from '-/components/InfoIcon';
 import CheckIcon from '@mui/icons-material/Check';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
@@ -247,7 +248,7 @@ function SettingsGeneral(props: Props) {
                 <div style={{ display: 'flex' }}>
                   {!persistTagsInSidecarFile && <CheckIcon />}
                   &nbsp;{i18n.t('core:renameFile')}&nbsp;&nbsp;
-                  <InfoIcon />
+                  <InfoMuiIcon />
                 </div>
               </Tooltip>
             </ToggleButton>
@@ -266,7 +267,7 @@ function SettingsGeneral(props: Props) {
                 <div style={{ display: 'flex' }}>
                   {persistTagsInSidecarFile && <CheckIcon />}
                   &nbsp;{i18n.t('core:useSidecarFile')}&nbsp;&nbsp;
-                  <InfoIcon />
+                  <InfoMuiIcon />
                 </div>
               </Tooltip>
             </ToggleButton>
@@ -377,7 +378,14 @@ function SettingsGeneral(props: Props) {
       </ListItem>
       {AppConfig.isElectron && (
         <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:useTrashCan')} />
+          <ListItemText
+            primary={
+              <Typography>
+                {i18n.t('core:useTrashCan')}
+                <InfoIcon tooltip={i18n.t('core:useTrashCanInfo')} />
+              </Typography>
+            }
+          />
           <Switch
             data-tid="settingsSetUseTrashCan"
             onClick={() => props.setUseTrashCan(!props.settings.useTrashCan)}
