@@ -1220,17 +1220,18 @@ export function fileNameValidation(fileName): boolean {
 
 /**
  * https://stackoverflow.com/a/71981197/2285631
- * TODO this not merge with "b" properties that missing in "a"
  * @param a
  * @param b
  */
-export const merge = (a, b) =>
-  Object.fromEntries(
-    Object.entries(a).map(([k, v]) => [
+export const merge = (a, b) => {
+  const allKeys = { ...b, ...a };
+  return Object.fromEntries(
+    Object.entries(allKeys).map(([k, v]) => [
       k,
       v && Array.isArray(v) ? mergeTags(v, b[k]) : v || b[k]
     ])
   );
+};
 
 function mergeTags(oldTagsArray: Array<TS.Tag>, newTagsArray: Array<TS.Tag>) {
   if (newTagsArray.length === 0) {
