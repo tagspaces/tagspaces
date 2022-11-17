@@ -1451,7 +1451,7 @@ export const actions = {
       .then(newDirPath => {
         const { currentDirectoryPath, openedFiles } = getState().app;
         if (currentDirectoryPath === directoryPath) {
-          dispatch(actions.loadDirectoryContent(newDirPath, false));
+          dispatch(actions.loadDirectoryContent(newDirPath, false, true));
           if (openedFiles && openedFiles.length > 0) {
             if (openedFiles[0].path === directoryPath) {
               const openedFile = openedFiles[0];
@@ -2318,7 +2318,7 @@ export const actions = {
             dispatch(actions.openFsEntry(fsEntry));
             dispatch(actions.setEntryFullWidth(true));
           } else {
-            dispatch(actions.loadDirectoryContent(fsEntry.path, false));
+            dispatch(actions.loadDirectoryContent(fsEntry.path, false, true));
           }
           return true;
         })
@@ -2351,7 +2351,9 @@ export const actions = {
             PlatformIO.enableObjectStoreSupport(targetLocation).then(() => {
               if (directoryPath && directoryPath.length > 0) {
                 const dirFullPath = directoryPath;
-                dispatch(actions.loadDirectoryContent(dirFullPath, false));
+                dispatch(
+                  actions.loadDirectoryContent(dirFullPath, false, true)
+                );
               }
 
               if (entryPath) {
@@ -2395,7 +2397,7 @@ export const actions = {
               }
               const dirFullPath =
                 locationPath + PlatformIO.getDirSeparator() + directoryPath;
-              dispatch(actions.loadDirectoryContent(dirFullPath, false));
+              dispatch(actions.loadDirectoryContent(dirFullPath, false, true));
             }
 
             if (entryPath && entryPath.length > 0) {
