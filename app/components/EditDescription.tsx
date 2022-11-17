@@ -101,6 +101,7 @@ function EditDescription(props: Props) {
           onFocus={milkdownOnFocus}
           readOnly={!editMode}
           dark={props.isDarkTheme}
+          lightMode={true}
         />
       </div>
       <Typography
