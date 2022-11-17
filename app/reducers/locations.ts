@@ -244,6 +244,18 @@ export const actions = {
       dispatch(AppActions.setReadOnlyMode(location.isReadOnly || false));
     }
   },
+  switchLocationType: (locationId: string) => (
+    dispatch: (actions) => Promise<boolean>,
+    getState: () => any
+  ): Promise<boolean> => {
+    const { locations } = getState();
+    const location: TS.Location = locations.find(
+      location => location.uuid === locationId
+    );
+    if (location) {
+      return dispatch(AppActions.switchLocationType(location));
+    }
+  },
   changeLocation: (location: TS.Location) => ({
     type: types.EDIT_LOCATION,
     location

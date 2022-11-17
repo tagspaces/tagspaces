@@ -52,8 +52,8 @@ import {
   getNextFile,
   getPrevFile,
   loadJSONFile,
-  merge
-} from '-/services/utils-io';
+  merge, setLocationType
+} from "-/services/utils-io";
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import { actions as LocationIndexActions } from './location-index';
@@ -146,6 +146,7 @@ export type OpenedEntry = {
   url?: string;
   size: number;
   lmdt: number;
+  locationId: string;
   viewingExtensionPath: string;
   viewingExtensionId: string;
   editingExtensionPath?: string;
@@ -1667,6 +1668,32 @@ export const actions = {
       dispatch(actions.setCurrentLocationId(location.uuid));
     }
   },
+  switchLocationType: (location: TS.Location) => (
+    dispatch: (action) => void,
+    getState: () => any
+  ): Promise<boolean> => {
+    const { currentLocationId } = getState().app;
+    if (location.uuid !== currentLocationId) {
+      const currentLocation: TS.Location = getLocation(
+        getState(),
+        getState().app.currentLocationId
+      );
+      if (location.type !== currentLocation.type) {
+        return setLocationType(location);
+      }
+    }
+    return Promise.resolve(false);
+  },
+  switchCurrentLocationType: () => (
+    dispatch: (action) => void,
+    getState: () => any
+  ): Promise<boolean> => {
+    const location: TS.Location = getLocation(
+      getState(),
+      getState().app.currentLocationId
+    );
+    return setLocationType(location);
+  },
   openLocationById: (locationId: string) => (
     dispatch: (action) => void,
     getState: () => any
@@ -1843,10 +1870,10 @@ export const actions = {
     entryPath: string,
     fsEntryMeta: any // FileSystemEntryMeta,
     // isFile: boolean = true
-  ) => (dispatch: (action) => void, getState: () => any) => {
+  ) => (dispatch: (action) => void, getState: () => any): Promise<boolean> => {
     const { openedFiles } = getState().app;
     if (openedFiles && openedFiles.length > 0) {
-      PlatformIO.getPropertiesPromise(entryPath)
+      return PlatformIO.getPropertiesPromise(entryPath)
         .then(entryProps => {
           if (entryProps) {
             const { supportedFileTypes } = getState().settings;
@@ -1893,8 +1920,10 @@ export const actions = {
         })
         .catch(err => {
           console.error('updateOpenedFile ' + entryPath + ' not exist ' + err);
+          return Promise.resolve(false);
         });
     }
+    return Promise.resolve(false);
   },
   openEntry: (path: string) => (dispatch: (action) => void) => {
     return getAllPropertiesPromise(path)
@@ -1986,10 +2015,12 @@ export const actions = {
     if (fsEntry.isNewFile) {
       entryForOpening.editMode = true;
     }
+
     const currentLocation: TS.Location = getLocation(
       getState(),
       getState().app.currentLocationId
     );
+    entryForOpening.locationId = currentLocation.uuid;
     const { currentDirectoryPath } = getState().app;
     updateHistory(currentLocation, currentDirectoryPath, fsEntry.path);
 
