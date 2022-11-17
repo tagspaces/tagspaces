@@ -866,10 +866,9 @@ function EntryContainer(props: Props) {
           <IconButton
             aria-label={i18n.t('core:navigateToParentDirectory')}
             onClick={navigateToFolder}
-            style={{ transform: 'rotate(-90deg)' }}
             size="large"
           >
-            <OpenNewWindowIcon />
+            <OpenNewWindowIcon style={{ transform: 'rotate(-90deg)' }} />
           </IconButton>
         </Tooltip>
         {!AppConfig.isCordova && (
