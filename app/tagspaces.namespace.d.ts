@@ -77,6 +77,9 @@ export namespace TS {
 
   interface Tag {
     title?: string;
+    /**
+     * @deprecated type can be auto recognized -> look at editTagForEntry
+     */
     type?: 'plain' | 'sidecar' | 'smart'; // smart should be eventually removed from this list, functionality should be enough
     id?: Uuid;
     icon?: string;
