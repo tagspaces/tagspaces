@@ -87,6 +87,7 @@ interface Props {
   currentLocation: TS.Location;
   locations: Array<TS.Location>;
   setLastBackgroundImageChange: (number) => void;
+  reorderTop?: () => void;
 }
 
 function FileMenu(props: Props) {
@@ -445,6 +446,24 @@ function FileMenu(props: Props) {
           <ShareIcon />
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:copySharingLink')} />
+      </MenuItem>
+    );
+  }
+
+  if (props.reorderTop) {
+    menuItems.push(
+      <MenuItem
+        key="reorderTop"
+        data-tid="reorderTopTID"
+        onClick={() => {
+          onClose();
+          props.reorderTop();
+        }}
+      >
+        <ListItemIcon>
+          <ShareIcon />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:reorderTop')} />
       </MenuItem>
     );
   }
