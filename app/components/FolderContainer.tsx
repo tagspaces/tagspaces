@@ -50,7 +50,8 @@ import {
   getCurrentDirectoryPerspective,
   OpenedEntry,
   getSelectedEntries,
-  getProgress
+  getProgress,
+  getEditedEntryPaths
 } from '../reducers/app';
 import TaggingActions from '../reducers/tagging-actions';
 import LoadingLazy from '../components/LoadingLazy';
@@ -68,6 +69,7 @@ import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
 import MainSearchField from '-/components/MainSearchField';
 import LoadingAnimation from '-/components/LoadingAnimation';
 import SearchBox from '-/components/SearchBox';
+import useFirstRender from '-/utils/useFirstRender';
 
 const GridPerspective = React.lazy(() =>
   import(
@@ -183,6 +185,7 @@ interface Props {
   openDirectory: () => void;
   showInFileManager: () => void;
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
+  openEntry: (path: string) => void;
   reflectCreateEntry: (path: string, isFile: boolean) => void;
   loadDirectoryContent: (
     path: string,
@@ -211,17 +214,23 @@ interface Props {
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   openURLExternally?: (url: string, skipConfirmation: boolean) => void;
   language: string;
+  editedEntryPaths: Array<string>;
 }
 
 function FolderContainer(props: Props) {
   const havePrevOpenedFile = React.useRef<boolean>(false);
+  const firstRender = useFirstRender();
 
   useEffect(() => {
     setSearchVisible(false);
   }, [props.currentDirectoryPath]);
 
   useEffect(() => {
-    if (havePrevOpenedFile.current && props.selectedEntries.length < 2) {
+    if (
+      !firstRender &&
+      havePrevOpenedFile.current &&
+      props.selectedEntries.length < 2
+    ) {
       if (props.openedFiles.length > 0) {
         const openedFile = props.openedFiles[0];
         if (openedFile.path === props.currentDirectoryPath) {
@@ -234,7 +243,7 @@ function FolderContainer(props: Props) {
             props.setCurrentDirectoryPerspective(openedFile.perspective);
           }
         } else {
-          // update openedFile meta in grid perspective list
+          // update openedFile meta in grid perspective list (like description)
           const currentEntry = enhanceOpenedEntry(
             openedFile,
             props.settings.tagDelimiter
@@ -245,6 +254,41 @@ function FolderContainer(props: Props) {
     }
     havePrevOpenedFile.current = props.openedFiles.length > 0;
   }, [props.openedFiles]);
+
+  /**
+   * reflect update openedFile from perspective
+   */
+  useEffect(() => {
+    if (
+      !firstRender &&
+      props.editedEntryPaths &&
+      props.editedEntryPaths.length > 0
+    ) {
+      let action = 'createNew'; // todo set action in editedEntryPaths
+      for (const editedEntryPath of props.editedEntryPaths) {
+        let path;
+        if (typeof editedEntryPath === 'string') {
+          path = editedEntryPath;
+          action = 'createNew';
+        } else if (typeof editedEntryPath === 'object') {
+          path = Object.keys(editedEntryPath)[0];
+          action = 'addTag';
+        }
+        if (path && action === 'addTag') {
+          // update opened file after delete sidecar tags
+          if (props.openedFiles.length > 0) {
+            const openedFile = props.openedFiles[0];
+            if (openedFile.path === path) {
+              props.openEntry(path);
+            }
+          }
+        }
+      }
+      /*if (props.editedEntryPaths.length === 2) {
+        action = 'renameFile';
+      }*/
+    }
+  }, [props.editedEntryPaths]);
 
   useEffect(() => {
     if (!props.searchQuery || Object.keys(props.searchQuery).length === 0) {
@@ -643,7 +687,8 @@ function mapStateToProps(state) {
     progress: getProgress(state),
     searchQuery: getSearchQuery(state),
     // keyBindings: getKeyBindingObject(state),
-    defaultPerspective: getDefaultPerspective(state)
+    defaultPerspective: getDefaultPerspective(state),
+    editedEntryPaths: getEditedEntryPaths(state)
   };
 }
 
@@ -659,6 +704,7 @@ function mapActionCreatorsToProps(dispatch) {
       openDirectory: AppActions.openDirectory,
       showInFileManager: AppActions.showInFileManager,
       openFsEntry: AppActions.openFsEntry,
+      openEntry: AppActions.openEntry,
       reflectCreateEntry: AppActions.reflectCreateEntry,
       loadDirectoryContent: AppActions.loadDirectoryContent,
       loadParentDirectoryContent: AppActions.loadParentDirectoryContent,
@@ -691,6 +737,8 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   JSON.stringify(nextProp.openedFiles) ===
     JSON.stringify(prevProp.openedFiles) &&
   JSON.stringify(nextProp.theme) === JSON.stringify(prevProp.theme) &&
+  JSON.stringify(nextProp.editedEntryPaths) ===
+    JSON.stringify(prevProp.editedEntryPaths) &&
   nextProp.windowWidth === prevProp.windowWidth &&
   nextProp.windowHeight === prevProp.windowHeight &&
   nextProp.language === prevProp.language &&
