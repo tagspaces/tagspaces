@@ -413,7 +413,8 @@ const actions = {
           )
         );
       }
-    } else { //if (tag.type === 'sidecar') {
+    } else {
+      //if (tag.type === 'sidecar') {
       loadMetaDataPromise(path)
         .then(fsEntryMeta => {
           let tagFoundPosition = -1;

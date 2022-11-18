@@ -398,7 +398,7 @@ describe('TST50** - Right button on a file', () => {
 
   test('TST5036 - Open directory properties (directory menu) [web,minio,electron]', async () => {
     await openContextEntryMenu(selectorFolder, 'showProperties');
-    await expectElementExist('[data-tid=fileNameProperties]', true);
+    await expectElementExist('[data-tid=fileNameProperties]', true, 5000);
   });
 
   test('TST5037 - Show sub folders [TST5037,web,minio,electron]', async () => {
@@ -462,7 +462,8 @@ describe('TST50** - Right button on a file', () => {
     await expectElementExist(
       // '[data-tid=' + gridDefaultSettings.testID + ']',
       '[data-tid=gridPerspectiveContainer]',
-      true
+      true,
+      5000
     );
     await clickOn('[data-tid=openListPerspective]'); // openListPerspective
     await expectElementExist(
