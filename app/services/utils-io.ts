@@ -385,6 +385,7 @@ export function findExtensionsForEntry(
     viewingExtensionId: '',
     isFile,
     // changed: false,
+    locationId: undefined,
     lmdt: 0,
     size: 0
   };
@@ -1363,4 +1364,19 @@ export function getBgndPath(
     normalizeUrl(bgndPath) +
     (lastBackgroundImageChange ? '?' + lastBackgroundImageChange : '')
   );
+}
+
+export function setLocationType(location: TS.Location): Promise<boolean> {
+  if (location) {
+    if (location.type === locationType.TYPE_CLOUD) {
+      return PlatformIO.enableObjectStoreSupport(location);
+    } else if (location.type === locationType.TYPE_WEBDAV) {
+      PlatformIO.enableWebdavSupport(location);
+    } else if (location.type === locationType.TYPE_LOCAL) {
+      PlatformIO.disableObjectStoreSupport();
+      PlatformIO.disableWebdavSupport();
+    }
+    return Promise.resolve(true);
+  }
+  return Promise.resolve(false);
 }

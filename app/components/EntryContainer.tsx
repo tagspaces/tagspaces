@@ -89,6 +89,7 @@ import useEventListener from '-/utils/useEventListener';
 import { TS } from '-/tagspaces.namespace';
 import FileView from '-/components/FileView';
 import { Pro } from '-/pro';
+import { actions as LocationActions } from '-/reducers/locations';
 
 const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
 // const openedSplitSize = AppConfig.isElectron ? 560 : 360;
@@ -170,7 +171,7 @@ interface Props {
   updateOpenedFile: (
     entryPath: string,
     fsEntryMeta: any // FileSystemEntryMeta
-  ) => void;
+  ) => Promise<boolean>;
   // reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
   updateThumbnailUrl: (path: string, thumbUrl: string) => void;
   // setLastSelectedEntry: (path: string) => void;
@@ -184,6 +185,8 @@ interface Props {
   isDesktopMode: boolean;
   tileServer: TS.MapTileServer;
   currentLocationId: string;
+  switchLocationType: (locationId: string) => Promise<boolean>;
+  switchCurrentLocationType: () => Promise<boolean>;
 }
 
 const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
@@ -436,49 +439,52 @@ function EntryContainer(props: Props) {
         // if (!this.state.currentEntry.isFile) {
         //   textFilePath += '/index.html';
         // }
-        PlatformIO.loadTextFilePromise(
-          textFilePath,
-          data.preview ? data.preview : false
-        )
-          .then(content => {
-            const UTF8_BOM = '\ufeff';
-            if (content.indexOf(UTF8_BOM) === 0) {
-              // eslint-disable-next-line no-param-reassign
-              content = content.substr(1);
-            }
-            let fileDirectory = extractContainingDirectoryPath(
-              textFilePath,
-              PlatformIO.getDirSeparator()
-            );
-            if (AppConfig.isWeb) {
-              fileDirectory =
-                extractContainingDirectoryPath(
-                  // eslint-disable-next-line no-restricted-globals
-                  location.href,
-                  PlatformIO.getDirSeparator()
-                ) +
-                '/' +
-                fileDirectory;
-            }
-            if (
-              fileViewer &&
-              fileViewer.current &&
-              fileViewer.current.contentWindow &&
-              // @ts-ignore
-              fileViewer.current.contentWindow.setContent
-            ) {
-              // @ts-ignore call setContent from iframe
-              fileViewer.current.contentWindow.setContent(
-                content,
-                fileDirectory,
-                !openedFile.editMode
+        props.switchLocationType(openedFile.locationId).then(() => {
+          PlatformIO.loadTextFilePromise(
+            textFilePath,
+            data.preview ? data.preview : false
+          )
+            .then(content => {
+              const UTF8_BOM = '\ufeff';
+              if (content.indexOf(UTF8_BOM) === 0) {
+                // eslint-disable-next-line no-param-reassign
+                content = content.substr(1);
+              }
+              let fileDirectory = extractContainingDirectoryPath(
+                textFilePath,
+                PlatformIO.getDirSeparator()
               );
-            }
-            return true;
-          })
-          .catch(err => {
-            console.warn('Error loading text content ' + err);
-          });
+              if (AppConfig.isWeb) {
+                fileDirectory =
+                  extractContainingDirectoryPath(
+                    // eslint-disable-next-line no-restricted-globals
+                    location.href,
+                    PlatformIO.getDirSeparator()
+                  ) +
+                  '/' +
+                  fileDirectory;
+              }
+              if (
+                fileViewer &&
+                fileViewer.current &&
+                fileViewer.current.contentWindow &&
+                // @ts-ignore
+                fileViewer.current.contentWindow.setContent
+              ) {
+                // @ts-ignore call setContent from iframe
+                fileViewer.current.contentWindow.setContent(
+                  content,
+                  fileDirectory,
+                  !openedFile.editMode
+                );
+              }
+              return props.switchCurrentLocationType();
+            })
+            .catch(err => {
+              console.warn('Error loading text content ' + err);
+              return props.switchCurrentLocationType();
+            });
+        });
         break;
       case 'contentChangedInEditor': {
         if (!fileChanged.current) {
@@ -548,48 +554,55 @@ function EntryContainer(props: Props) {
   };
 
   const saveFile = (textContent: string) => {
-    PlatformIO.saveTextFilePromise(openedFile.path, textContent, true)
-      .then(result => {
-        // isChanged = false;
-        updateOpenedFile(openedFile.path, {
-          ...openedFile,
-          editMode: false,
-          // changed: false,
-          shouldReload: undefined
-        });
-        fileChanged.current = false;
-        showNotification(
-          i18n.t('core:fileSavedSuccessfully'),
-          NotificationTypes.default
-        );
-        if (Pro) {
-          Pro.history.saveHistory(
-            historyKeys.fileEditKey,
-            openedFile.path,
-            openedFile.url,
-            currentLocationId,
-            settings[historyKeys.fileEditKey]
+    props.switchLocationType(openedFile.locationId).then(() => {
+      PlatformIO.saveTextFilePromise(openedFile.path, textContent, true)
+        .then(result => {
+          // isChanged = false;
+          updateOpenedFile(openedFile.path, {
+            ...openedFile,
+            editMode: false,
+            // changed: false,
+            shouldReload: undefined
+          }).then(() => {
+            props.switchCurrentLocationType();
+          });
+          fileChanged.current = false;
+          showNotification(
+            i18n.t('core:fileSavedSuccessfully'),
+            NotificationTypes.default
           );
-        }
-        return result;
-      })
-      .catch(error => {
-        showNotification(
-          i18n.t('core:errorSavingFile'),
-          NotificationTypes.error
-        );
-        console.log('Error saving file ' + openedFile.path + ' - ' + error);
-      });
+          if (Pro) {
+            Pro.history.saveHistory(
+              historyKeys.fileEditKey,
+              openedFile.path,
+              openedFile.url,
+              currentLocationId,
+              settings[historyKeys.fileEditKey]
+            );
+          }
+          return result;
+        })
+        .catch(error => {
+          showNotification(
+            i18n.t('core:errorSavingFile'),
+            NotificationTypes.error
+          );
+          console.log('Error saving file ' + openedFile.path + ' - ' + error);
+          props.switchCurrentLocationType();
+        });
+    });
   };
 
   const editFile = () => {
-    updateOpenedFile(openedFile.path, {
-      ...openedFile,
-      editMode: true,
-      shouldReload: undefined
+    props.switchLocationType(openedFile.locationId).then(() => {
+      updateOpenedFile(openedFile.path, {
+        ...openedFile,
+        editMode: true,
+        shouldReload: undefined
+      }).then(() => {
+        props.switchCurrentLocationType();
+      });
     });
-
-    // setFileView(renderFileView());
   };
 
   const shareFile = (filePath: string) => {
@@ -1453,7 +1466,9 @@ function mapActionCreatorsToProps(dispatch) {
       removeAllTags: TaggingActions.removeAllTags,
       updateOpenedFile: AppActions.updateOpenedFile,
       updateThumbnailUrl: AppActions.updateThumbnailUrl,
-      setSelectedEntries: AppActions.setSelectedEntries
+      setSelectedEntries: AppActions.setSelectedEntries,
+      switchLocationType: LocationActions.switchLocationType,
+      switchCurrentLocationType: AppActions.switchCurrentLocationType
     },
     dispatch
   );

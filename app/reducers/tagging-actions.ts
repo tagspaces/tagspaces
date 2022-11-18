@@ -61,7 +61,7 @@ const actions = {
   addTags: (paths: Array<string>, tags: Array<TS.Tag>, updateIndex = true) => (
     dispatch: (action) => void,
     getState: () => any
-  ) => {
+  ): Promise<boolean> => {
     const { settings, taglibrary } = getState();
     let defaultTagLocation;
     if (settings.geoTaggingFormat.toLowerCase() === 'mgrs') {
@@ -120,10 +120,9 @@ const actions = {
     });
 
     if (processedTags.length > 0) {
-      paths.map(path => {
-        dispatch(actions.addTagsToEntry(path, processedTags, updateIndex));
-        return true;
-      });
+      const promises = paths.map(path =>
+        dispatch(actions.addTagsToEntry(path, processedTags, updateIndex))
+      );
 
       if (settings.addTagsToLibrary) {
         // collecting tags
@@ -160,13 +159,18 @@ const actions = {
           dispatch(TagLibraryActions.mergeTagGroup(tagGroup));
         }
       }
+      return Promise.all(promises).then(() => true);
     }
+    return Promise.resolve(false);
   },
   addTagsToEntry: (
     path: string,
     tags: Array<TS.Tag>,
     updateIndex = true
-  ) => async (dispatch: (actions: Object) => void, getState: () => any) => {
+  ) => async (
+    dispatch: (actions: Object) => Promise<boolean>,
+    getState: () => any
+  ): Promise<boolean> => {
     const { settings } = getState();
     const entryProperties = await PlatformIO.getPropertiesPromise(path);
     let fsEntryMeta;
@@ -196,7 +200,7 @@ const actions = {
             ...fsEntryMeta,
             tags: newTags
           };
-          saveMetaDataPromise(path, updatedFsEntryMeta)
+          return saveMetaDataPromise(path, updatedFsEntryMeta)
             .then(() => {
               dispatch(
                 // TODO rethink this updateCurrentDirEntry and not need for KanBan
@@ -204,7 +208,7 @@ const actions = {
               );
               const { openedFiles } = getState().app;
               if (openedFiles.find(obj => obj.path === path)) {
-                dispatch(
+                return dispatch(
                   AppActions.updateOpenedFile(path, {
                     tags: newTags
                   })
@@ -221,11 +225,12 @@ const actions = {
                   true
                 )
               );
+              return false;
             });
         }
       } else {
         const newFsEntryMeta = { tags };
-        saveMetaDataPromise(path, newFsEntryMeta)
+        return saveMetaDataPromise(path, newFsEntryMeta)
           .then(() => {
             dispatch(
               // TODO rethink this updateCurrentDirEntry and not need for KanBan
@@ -233,7 +238,7 @@ const actions = {
             );
             const { openedFiles } = getState().app;
             if (openedFiles.find(obj => obj.path === path)) {
-              dispatch(
+              return dispatch(
                 AppActions.updateOpenedFile(path, { tags, changed: true })
               );
             }
@@ -248,6 +253,7 @@ const actions = {
                 true
               )
             );
+            return true;
           });
       }
     } else if (fsEntryMeta) {
@@ -277,7 +283,7 @@ const actions = {
             ? containingDirectoryPath + PlatformIO.getDirSeparator()
             : '') +
           generateFileName(fileName, extractedTags, settings.tagDelimiter);
-        dispatch(AppActions.renameFile(path, newFilePath));
+        return dispatch(AppActions.renameFile(path, newFilePath));
       }
     } else {
       // Handling tags in filename by no sidecar
@@ -304,9 +310,10 @@ const actions = {
           : '') +
         generateFileName(fileName, extractedTags, settings.tagDelimiter);
       if (path !== newFilePath) {
-        dispatch(AppActions.renameFile(path, newFilePath));
+        return dispatch(AppActions.renameFile(path, newFilePath));
       }
     }
+    return Promise.resolve(false);
 
     function getNonExistingTags(
       newTagsArray: Array<TS.Tag>,
@@ -535,33 +542,33 @@ const actions = {
     }
   },
   removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => (
-    dispatch: (actions: Object) => void
-  ) => {
-    paths.map(path => {
-      dispatch(actions.removeTagsFromEntry(path, tags));
-      return true;
-    });
+    dispatch: (actions: Object) => Promise<boolean>
+  ): Promise<boolean> => {
+    const promises: Array<Promise<boolean>> = paths.map(path =>
+      dispatch(actions.removeTagsFromEntry(path, tags))
+    );
+    return Promise.all(promises).then(() => true);
   },
   removeTagsFromEntry: (path: string, tags: Array<TS.Tag>) => (
     dispatch: (actions: Object) => void,
     getState: () => any
-  ) => {
+  ): Promise<boolean> => {
     const { settings } = getState();
     const tagTitlesForRemoving = tags.map(tag => tag.title);
-    loadMetaDataPromise(path)
+    return loadMetaDataPromise(path)
       .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
         const newTags = fsEntryMeta.tags.filter(
           sidecarTag => !tagTitlesForRemoving.includes(sidecarTag.title)
         );
 
-        removeTagsFromFilename(fsEntryMeta.isFile).then(newFilePath => {
+        return removeTagsFromFilename(fsEntryMeta.isFile).then(newFilePath => {
           // no file rename - only sidecar tags removed
           if (newFilePath === path) {
             const updatedFsEntryMeta = {
               ...fsEntryMeta,
               tags: newTags
             };
-            saveMetaDataPromise(path, updatedFsEntryMeta)
+            return saveMetaDataPromise(path, updatedFsEntryMeta)
               .then(() => {
                 dispatch(
                   AppActions.reflectUpdateSidecarTags(newFilePath, newTags)
@@ -579,6 +586,7 @@ const actions = {
                     true
                   )
                 );
+                return false;
               });
           }
           // dispatch(AppActions.reflectEditedEntryPaths([newFilePath]));
@@ -591,12 +599,11 @@ const actions = {
             );
           }
         });
-        return true;
       })
       .catch(error => {
         console.warn('Error removing tags for ' + path + ' with ' + error);
         // dispatch(AppActions.showNotification(i18n.t('core:removingSidecarTagsFailed'), 'error', true));
-        removeTagsFromFilename();
+        return removeTagsFromFilename().then(() => true);
       });
 
     /**
@@ -645,17 +652,13 @@ const actions = {
   },
   removeAllTags: (paths: Array<string>) => async (
     dispatch: (action) => Promise<boolean>
-  ) => {
+  ): Promise<boolean> => {
+    const promises = [];
     for (const path of paths) {
-      // eslint-disable-next-line no-await-in-loop
-      const resultMeta = await dispatch(
-        actions.removeAllTagsFromMetaData(path)
-      );
-      // eslint-disable-next-line no-await-in-loop
-      const resultName = await dispatch(
-        actions.removeAllTagsFromFilename(path)
-      );
+      promises.push(dispatch(actions.removeAllTagsFromMetaData(path)));
+      promises.push(dispatch(actions.removeAllTagsFromFilename(path)));
     }
+    return Promise.all(promises).then(() => true);
   },
   removeAllTagsFromFilename: (path: string) => (
     dispatch: (action) => Promise<boolean>,

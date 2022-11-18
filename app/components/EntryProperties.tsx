@@ -16,13 +16,7 @@
  *
  */
 
-import React, {
-  ChangeEvent,
-  useEffect,
-  useReducer,
-  useRef,
-  useState
-} from 'react';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
 import { getBgndFileLocationForDirectory } from '@tagspaces/tagspaces-common/paths';
 import { v1 as uuidv1 } from 'uuid';
@@ -102,6 +96,9 @@ import { connect } from 'react-redux';
 import FormHelperText from '@mui/material/FormHelperText';
 import { MilkdownRef } from '@tagspaces/tagspaces-md';
 import EditDescription from '-/components/EditDescription';
+import { bindActionCreators } from 'redux';
+import { actions as LocationActions } from '-/reducers/locations';
+import { actions as AppActions } from '-/reducers/app';
 
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
@@ -166,11 +163,13 @@ interface Props {
   renameFile: (path: string, nextPath: string) => Promise<boolean>;
   renameDirectory: (path: string, nextPath: string) => Promise<boolean>;
   showNotification: (message: string) => void;
-  updateOpenedFile: (entryPath: string, fsEntryMeta: any) => void;
+  updateOpenedFile: (entryPath: string, fsEntryMeta: any) => Promise<boolean>;
   updateThumbnailUrl: (path: string, thumbUrl: string) => void;
-  addTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
-  removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
-  removeAllTags: (paths: Array<string>) => void;
+  addTags: (paths: Array<string>, tags: Array<TS.Tag>) => Promise<boolean>;
+  removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => Promise<boolean>;
+  removeAllTags: (paths: Array<string>) => Promise<boolean>;
+  switchLocationType: (locationId: string) => Promise<boolean>;
+  switchCurrentLocationType: () => Promise<boolean>;
   isReadOnlyMode: boolean;
   // currentDirectoryPath: string | null;
   tagDelimiter: string;
@@ -276,19 +275,29 @@ function EntryProperties(props: Props) {
       );
       const nextPath = path + PlatformIO.getDirSeparator() + editName;
 
-      if (currentEntry.isFile) {
-        renameFile(currentEntry.path, nextPath)
-          .then(() => true)
-          .catch(() => {
-            fileNameRef.current.value = entryName;
-          });
-      } else {
-        renameDirectory(currentEntry.path, editName)
-          .then(() => true)
-          .catch(() => {
-            fileNameRef.current.value = entryName;
-          });
-      }
+      props.switchLocationType(props.openedEntry.locationId).then(() => {
+        if (currentEntry.isFile) {
+          renameFile(currentEntry.path, nextPath)
+            .then(() => {
+              props.switchCurrentLocationType();
+              return true;
+            })
+            .catch(() => {
+              props.switchCurrentLocationType();
+              fileNameRef.current.value = entryName;
+            });
+        } else {
+          renameDirectory(currentEntry.path, editName)
+            .then(() => {
+              props.switchCurrentLocationType();
+              return true;
+            })
+            .catch(() => {
+              props.switchCurrentLocationType();
+              fileNameRef.current.value = entryName;
+            });
+        }
+      });
 
       setEditName(undefined);
     }
@@ -324,20 +333,24 @@ function EntryProperties(props: Props) {
       return;
     }
     if (editDescription.current !== undefined) {
-      Pro.MetaOperations.saveDescription(
-        currentEntry.path,
-        editDescription.current
-      )
-        .then(entryMeta => {
-          editDescription.current = undefined;
-          props.updateOpenedFile(currentEntry.path, entryMeta);
-          return true;
-        })
-        .catch(error => {
-          console.warn('Error saving description ' + error);
-          editDescription.current = undefined;
-          props.showNotification(i18n.t('Error saving description'));
-        });
+      props.switchLocationType(props.openedEntry.locationId).then(() => {
+        Pro.MetaOperations.saveDescription(
+          currentEntry.path,
+          editDescription.current
+        )
+          .then(entryMeta => {
+            editDescription.current = undefined;
+            props.updateOpenedFile(currentEntry.path, entryMeta);
+            props.switchCurrentLocationType();
+            return true;
+          })
+          .catch(error => {
+            console.warn('Error saving description ' + error);
+            editDescription.current = undefined;
+            props.switchCurrentLocationType();
+            props.showNotification(i18n.t('Error saving description'));
+          });
+      });
     } else if (currentEntry.description) {
       editDescription.current = currentEntry.description;
     } else {
@@ -379,29 +392,33 @@ function EntryProperties(props: Props) {
 
   const setThumb = (filePath, thumbFilePath) => {
     if (filePath !== undefined) {
-      if (
-        PlatformIO.haveObjectStoreSupport() ||
-        PlatformIO.haveWebDavSupport()
-      ) {
-        const thumbUrl = PlatformIO.getURLforPath(thumbFilePath);
-        props.updateThumbnailUrl(currentEntry.path, thumbUrl);
-        return Promise.resolve(true);
-      }
-      return replaceThumbnailURLPromise(filePath, thumbFilePath)
-        .then(objUrl => {
-          props.updateThumbnailUrl(
-            currentEntry.path,
-            objUrl.tmbPath +
-              (props.lastThumbnailImageChange
-                ? '?' + props.lastThumbnailImageChange
-                : '')
-          );
+      props.switchLocationType(props.openedEntry.locationId).then(() => {
+        if (
+          PlatformIO.haveObjectStoreSupport() ||
+          PlatformIO.haveWebDavSupport()
+        ) {
+          const thumbUrl = PlatformIO.getURLforPath(thumbFilePath);
+          props.updateThumbnailUrl(currentEntry.path, thumbUrl);
           return true;
-        })
-        .catch(err => {
-          console.warn('Error replaceThumbnailURLPromise ' + err);
-          props.showNotification('Error replacing thumbnail');
-        });
+        }
+        return replaceThumbnailURLPromise(filePath, thumbFilePath)
+          .then(objUrl => {
+            props.updateThumbnailUrl(
+              currentEntry.path,
+              objUrl.tmbPath +
+                (props.lastThumbnailImageChange
+                  ? '?' + props.lastThumbnailImageChange
+                  : '')
+            );
+            props.switchCurrentLocationType();
+            return true;
+          })
+          .catch(err => {
+            props.switchCurrentLocationType();
+            console.warn('Error replaceThumbnailURLPromise ' + err);
+            props.showNotification('Error replacing thumbnail');
+          });
+      });
     }
     // reset Thumbnail
     return getThumbnailURLPromise(currentEntry.path)
@@ -435,19 +452,23 @@ function EntryProperties(props: Props) {
       // eslint-disable-next-line no-param-reassign
       color = 'transparent';
     }
-    Pro.MetaOperations.saveColor(currentEntry.path, color)
-      .then(entryMeta => {
-        // if (props.entryPath === props.currentDirectoryPath) {
-        props.updateOpenedFile(currentEntry.path, entryMeta);
-        /* } else {
-          setCurrentEntry({ ...currentEntry, color });
-        } */
-        return true;
-      })
-      .catch(error => {
-        console.warn('Error saving color for folder ' + error);
-        props.showNotification(i18n.t('Error saving color for folder'));
-      });
+    props.switchLocationType(props.openedEntry.locationId).then(() => {
+      Pro.MetaOperations.saveColor(currentEntry.path, color)
+        .then(entryMeta => {
+          // if (props.entryPath === props.currentDirectoryPath) {
+          props.updateOpenedFile(currentEntry.path, entryMeta);
+          props.switchCurrentLocationType();
+          /* } else {
+            setCurrentEntry({ ...currentEntry, color });
+          } */
+          return true;
+        })
+        .catch(error => {
+          props.switchCurrentLocationType();
+          console.warn('Error saving color for folder ' + error);
+          props.showNotification(i18n.t('Error saving color for folder'));
+        });
+    });
   };
 
   const handleFileNameChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -480,28 +501,40 @@ function EntryProperties(props: Props) {
   };*/
 
   const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
-    if (action === 'remove-value') {
-      if (!value) {
-        // no tags left in the select element
-        props.removeAllTags([currentEntry.path]); // TODO return promise
-        props.updateOpenedFile(currentEntry.path, { tags: [] });
-      } else {
-        props.removeTags([currentEntry.path], value);
-      }
-    } else if (action === 'clear') {
-      props.removeAllTags([currentEntry.path]);
-    } else {
-      // create-option or select-option
-      value.map(tag => {
-        if (
-          currentEntry.tags === undefined ||
-          currentEntry.tags.findIndex(obj => obj.title === tag.title) === -1
-        ) {
-          props.addTags([currentEntry.path], [tag]);
+    props.switchLocationType(props.openedEntry.locationId).then(() => {
+      if (action === 'remove-value') {
+        if (!value) {
+          // no tags left in the select element
+          props.removeAllTags([currentEntry.path]).then(() => {
+            props.updateOpenedFile(currentEntry.path, { tags: [] }).then(() => {
+              props.switchCurrentLocationType();
+            });
+          });
+        } else {
+          props.removeTags([currentEntry.path], value).then(() => {
+            props.switchCurrentLocationType();
+          });
         }
-        return true;
-      });
-    }
+      } else if (action === 'clear') {
+        props.removeAllTags([currentEntry.path]).then(() => {
+          props.switchCurrentLocationType();
+        });
+      } else {
+        // create-option or select-option
+        const promises = value.map(tag => {
+          if (
+            currentEntry.tags === undefined ||
+            currentEntry.tags.findIndex(obj => obj.title === tag.title) === -1
+          ) {
+            return props.addTags([currentEntry.path], [tag]);
+          }
+          return Promise.resolve(false);
+        });
+        Promise.all(promises).then(() => {
+          props.switchCurrentLocationType();
+        });
+      }
+    });
   };
 
   const { classes, isReadOnlyMode, theme, sharingLink } = props;
@@ -1339,11 +1372,25 @@ function mapStateToProps(state) {
   };
 }
 
+function mapActionCreatorsToProps(dispatch) {
+  return bindActionCreators(
+    {
+      switchLocationType: LocationActions.switchLocationType,
+      switchCurrentLocationType: AppActions.switchCurrentLocationType
+    },
+    dispatch
+  );
+}
+
 const areEqual = (prevProp: Props, nextProp: Props) =>
   JSON.stringify(nextProp.openedEntry) === JSON.stringify(prevProp.openedEntry);
 
 export default withLeaflet(
-  connect(mapStateToProps)(
+  connect(
+    mapStateToProps,
+    mapActionCreatorsToProps
+  )(
+    // @ts-ignore
     React.memo(
       withStyles(styles, { withTheme: true })(EntryProperties),
       areEqual
