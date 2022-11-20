@@ -39,6 +39,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import BackIcon from '@mui/icons-material/RemoveRedEye';
 import FullScreenIcon from '@mui/icons-material/ZoomOutMap';
 import OpenNativelyIcon from '@mui/icons-material/Launch';
+import ParentDirIcon from '@mui/icons-material/ReplyOutlined';
 import OpenNewWindowIcon from '@mui/icons-material/OpenInBrowser';
 import PrevDocumentIcon from '@mui/icons-material/KeyboardArrowUp';
 import NextDocumentIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -881,7 +882,7 @@ function EntryContainer(props: Props) {
             onClick={navigateToFolder}
             size="large"
           >
-            <OpenNewWindowIcon style={{ transform: 'rotate(-90deg)' }} />
+            <ParentDirIcon />
           </IconButton>
         </Tooltip>
         {!AppConfig.isCordova && (

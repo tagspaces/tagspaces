@@ -21,7 +21,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '-/components/Tooltip';
 import SettingsIcon from '@mui/icons-material/Settings';
 import IconButton from '@mui/material/IconButton';
-import ParentDirIcon from '@mui/icons-material/OpenInBrowser';
+import ParentDirIcon from '@mui/icons-material/ReplyOutlined';
 import SortingIcon from '@mui/icons-material/SwapVerticalCircle';
 import TagIcon from '@mui/icons-material/LocalOffer';
 import SelectAllIcon from '@mui/icons-material/CheckBox';
@@ -145,7 +145,7 @@ function MainToolbar(props: Props) {
           }}
           size="large"
         >
-          <ParentDirIcon style={{ transform: 'rotate(-90deg)' }} />
+          <ParentDirIcon />
         </IconButton>
       </Tooltip>
       <Tooltip title={i18n.t('core:directoryPropertiesTitle')}>

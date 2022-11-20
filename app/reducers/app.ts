@@ -52,8 +52,9 @@ import {
   getNextFile,
   getPrevFile,
   loadJSONFile,
-  merge, setLocationType
-} from "-/services/utils-io";
+  merge,
+  setLocationType
+} from '-/services/utils-io';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import { actions as LocationIndexActions } from './location-index';
