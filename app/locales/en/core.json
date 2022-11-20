@@ -702,6 +702,6 @@
   "hide": "Hide",
   "show": "Show",
   "chooseKanbanJSON": "Choose Trello JSON file",
-  "reorderTop": "Order to Top",
+  "moveToTop": "Move to top",
   "-": "-"
 }
