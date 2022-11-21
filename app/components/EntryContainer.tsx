@@ -36,10 +36,8 @@ import BookmarkAddIcon from '@mui/icons-material/BookmarkAddTwoTone';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
-import BackIcon from '@mui/icons-material/RemoveRedEye';
 import FullScreenIcon from '@mui/icons-material/ZoomOutMap';
 import OpenNativelyIcon from '@mui/icons-material/Launch';
-import ParentDirIcon from '@mui/icons-material/ReplyOutlined';
 import OpenNewWindowIcon from '@mui/icons-material/OpenInBrowser';
 import PrevDocumentIcon from '@mui/icons-material/KeyboardArrowUp';
 import NextDocumentIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -51,6 +49,7 @@ import ShareIcon from '@mui/icons-material/Share';
 import withStyles from '@mui/styles/withStyles';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import Box from '@mui/material/Box';
+import { ParentFolderIcon } from '-/components/CommonIcons';
 import { Split } from 'ts-react-splitter';
 import { buffer } from '@tagspaces/tagspaces-platforms/misc';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
@@ -882,7 +881,7 @@ function EntryContainer(props: Props) {
             onClick={navigateToFolder}
             size="large"
           >
-            <ParentDirIcon />
+            <ParentFolderIcon />
           </IconButton>
         </Tooltip>
         {!AppConfig.isCordova && (
@@ -982,14 +981,13 @@ function EntryContainer(props: Props) {
   const renderFolderToolbar = () => (
     <div className={classes.toolbar2}>
       <div className={classes.flexLeft}>
-        <Tooltip title={i18n.t('core:navigateTo')}>
+        <Tooltip title={i18n.t('core:openInMainArea')}>
           <IconButton
-            aria-label={i18n.t('core:navigateTo')}
+            aria-label={i18n.t('core:openInMainArea')}
             onClick={navigateToFolder}
-            style={{ transform: 'rotate(-90deg)' }}
             size="large"
           >
-            <OpenNewWindowIcon />
+            <ParentFolderIcon />
           </IconButton>
         </Tooltip>
         {!AppConfig.isCordova && (

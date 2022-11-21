@@ -703,5 +703,6 @@
   "show": "Show",
   "chooseKanbanJSON": "Choose Trello JSON file",
   "moveToTop": "Move to top",
+  "openInMainArea": "Open in main area",
   "-": "-"
 }
