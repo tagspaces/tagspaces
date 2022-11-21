@@ -304,6 +304,8 @@
   "systemScheme": "match operating system",
   "moveUp": "Move Up",
   "moveDown": "Move Down",
+  "moveLeft": "Move Left",
+  "moveRight": "Move Right",
   "chooseSearchQuery": "Choose a search query",
   "closeButton": "Close",
   "closeButtonDialog": "Press ESC to close this dialog",
