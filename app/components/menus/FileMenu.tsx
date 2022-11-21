@@ -28,6 +28,7 @@ import OpenParentFolder from '@mui/icons-material/FolderOpen';
 import OpenFolderInternally from '@mui/icons-material/Folder';
 import AddRemoveTags from '@mui/icons-material/Loyalty';
 import MoveCopy from '@mui/icons-material/FileCopy';
+import MoveToTopIcon from '@mui/icons-material/VerticalAlignTop';
 import DuplicateFile from '@mui/icons-material/PostAdd';
 import ImageIcon from '@mui/icons-material/Image';
 import ShareIcon from '@mui/icons-material/Link';
@@ -87,6 +88,7 @@ interface Props {
   currentLocation: TS.Location;
   locations: Array<TS.Location>;
   setLastBackgroundImageChange: (number) => void;
+  reorderTop?: () => void;
 }
 
 function FileMenu(props: Props) {
@@ -356,6 +358,23 @@ function FileMenu(props: Props) {
         <ListItemText primary={i18n.t('core:addRemoveTags')} />
       </MenuItem>
     );
+    if (props.reorderTop) {
+      menuItems.push(
+        <MenuItem
+          key="reorderTop"
+          data-tid="reorderTopTID"
+          onClick={() => {
+            onClose();
+            props.reorderTop();
+          }}
+        >
+          <ListItemIcon>
+            <MoveToTopIcon />
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:moveToTop')} />
+        </MenuItem>
+      );
+    }
     menuItems.push(
       <MenuItem
         key="fileMenuRenameFile"

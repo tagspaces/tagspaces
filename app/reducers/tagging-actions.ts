@@ -368,18 +368,21 @@ const actions = {
     delete tag.functionality;
     delete tag.path;
     delete tag.id;
+
+    const extractedTags: string[] = extractTags(
+      path,
+      settings.tagDelimiter,
+      PlatformIO.getDirSeparator()
+    );
     // TODO: Handle adding already added tags
-    if (tag.type === 'plain') {
+    if (extractedTags.includes(tag.title)) {
+      // tag.type === 'plain') {
       const fileName = extractFileName(path, PlatformIO.getDirSeparator());
       const containingDirectoryPath = extractContainingDirectoryPath(
         path,
         PlatformIO.getDirSeparator()
       );
-      const extractedTags = extractTags(
-        path,
-        settings.tagDelimiter,
-        PlatformIO.getDirSeparator()
-      );
+
       let tagFoundPosition = -1;
       for (let i = 0; i < extractedTags.length; i += 1) {
         // check if tag is already in the tag array
@@ -410,7 +413,8 @@ const actions = {
           )
         );
       }
-    } else if (tag.type === 'sidecar') {
+    } else {
+      //if (tag.type === 'sidecar') {
       loadMetaDataPromise(path)
         .then(fsEntryMeta => {
           let tagFoundPosition = -1;
