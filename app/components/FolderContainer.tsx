@@ -174,7 +174,7 @@ interface Props {
   theme: any;
   windowHeight: number;
   windowWidth: number;
-  directoryContent: Array<Object>;
+  directoryContent: Array<TS.FileSystemEntry>;
   currentDirectoryPath: string | null;
   searchResultCount: number;
   addTags: () => void;
