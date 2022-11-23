@@ -109,22 +109,6 @@ function MainToolbar(props: Props) {
     <Toolbar className={classes.topToolbar} data-tid="perspectiveGridToolbar">
       <Tooltip
         title={
-          i18n.t('core:toggleSelectAllFiles') +
-          ' (' +
-          keyBindings['selectAll'].toUpperCase() +
-          ')'
-        }
-      >
-        <IconButton
-          data-tid="gridPerspectiveSelectAllFiles"
-          onClick={toggleSelectAllFiles}
-          size="large"
-        >
-          {someFileSelected ? <SelectAllIcon /> : <DeSelectAllIcon />}
-        </IconButton>
-      </Tooltip>
-      <Tooltip
-        title={
           i18n.t('core:navigateToParentDirectory') +
           ' (' +
           keyBindings['openParentDirectory'].toUpperCase() +
@@ -148,6 +132,22 @@ function MainToolbar(props: Props) {
           size="large"
         >
           <ParentFolderIcon />
+        </IconButton>
+      </Tooltip>
+      <Tooltip
+        title={
+          i18n.t('core:toggleSelectAllFiles') +
+          ' (' +
+          keyBindings['selectAll'].toUpperCase() +
+          ')'
+        }
+      >
+        <IconButton
+          data-tid="gridPerspectiveSelectAllFiles"
+          onClick={toggleSelectAllFiles}
+          size="large"
+        >
+          {someFileSelected ? <SelectAllIcon /> : <DeSelectAllIcon />}
         </IconButton>
       </Tooltip>
       <Tooltip title={i18n.t('core:directoryPropertiesTitle')}>
