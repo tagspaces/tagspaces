@@ -17,7 +17,6 @@
  */
 
 import React, { useState } from 'react';
-import { v1 as uuidv1 } from 'uuid';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
@@ -65,6 +64,7 @@ import {
 import Links from '-/links';
 import StoredSearches from '-/components/StoredSearches';
 import UserDetailsPopover from '-/components/UserDetailsPopover';
+import { getUuid } from '-/services/utils-io';
 
 const styles: any = (theme: any) => ({
   selectedButton: {
@@ -360,7 +360,7 @@ function MobileNavigation(props: Props) {
             open={isProTeaserVisible}
             onClose={toggleProTeaser}
             openURLExternally={openURLExternally}
-            key={uuidv1()} // TODO rethink to remove this
+            key={getUuid()} // TODO rethink to remove this
           />
         )}
       </Box>

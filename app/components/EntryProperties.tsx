@@ -19,7 +19,6 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
 import { getBgndFileLocationForDirectory } from '@tagspaces/tagspaces-common/paths';
-import { v1 as uuidv1 } from 'uuid';
 import L from 'leaflet';
 import { Theme } from '@mui/material/styles';
 import withStyles from '@mui/styles/withStyles';
@@ -66,7 +65,8 @@ import {
   convertMarkDown,
   fileNameValidation,
   dirNameValidation,
-  normalizeUrl
+  normalizeUrl,
+  getUuid
 } from '-/services/utils-io';
 import { parseGeoLocation } from '-/utils/geo';
 import { Pro } from '../pro';
@@ -1296,7 +1296,7 @@ function EntryProperties(props: Props) {
       )}
       {isMoveCopyFilesDialogOpened && (
         <MoveCopyFilesDialog
-          key={uuidv1()}
+          key={getUuid()}
           open={isMoveCopyFilesDialogOpened}
           onClose={toggleMoveCopyFilesDialog}
           selectedFiles={[currentEntry.path]}

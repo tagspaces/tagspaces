@@ -17,7 +17,6 @@
  */
 
 import React, { useState } from 'react';
-import { v1 as uuidv1 } from 'uuid';
 import { useSelector } from 'react-redux';
 import withStyles from '@mui/styles/withStyles';
 import TextField from '@mui/material/TextField';
@@ -27,6 +26,7 @@ import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import EntryTagMenu from '-/components/menus/EntryTagMenu';
 import { TS } from '-/tagspaces.namespace';
 import TagContainer from '-/components/TagContainer';
+import { getUuid } from '-/services/utils-io';
 
 const styles: any = (theme: any) => ({
   root: {
@@ -125,7 +125,7 @@ function TagsSelect(props: Props) {
         const newTags = [];
         tags.map(tag => {
           const newTag: TS.Tag = {
-            id: uuidv1(),
+            id: getUuid(),
             title: '' + tag,
             color: defaultBackgroundColor,
             textcolor: defaultTextColor

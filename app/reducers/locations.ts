@@ -16,7 +16,6 @@
  *
  */
 
-import { v1 as uuidv1 } from 'uuid';
 import {
   immutablySwapItems,
   locationType
@@ -25,6 +24,7 @@ import { actions as AppActions } from '-/reducers/app';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
+import { getUuid } from '-/services/utils-io';
 
 export const types = {
   ADD_LOCATION: 'APP/ADD_LOCATION',
@@ -50,7 +50,7 @@ export default (state: Array<TS.Location> = initialState, action: any) => {
         ...state,
         {
           ...action.location,
-          uuid: action.location.uuid || uuidv1(),
+          uuid: action.location.uuid || getUuid(),
           creationDate: new Date().toJSON()
         }
       ];
@@ -155,7 +155,7 @@ export const actions = {
             dispatch(
               actions.addLocation(
                 {
-                  uuid: uuidv1(),
+                  uuid: getUuid(),
                   type: locationType.TYPE_LOCAL,
                   name: i18n.t(key),
                   path: devicePaths[key],

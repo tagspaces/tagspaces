@@ -29,7 +29,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import { v1 as uuidv1 } from 'uuid';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
 import { extend } from '@tagspaces/tagspaces-platforms/misc';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
@@ -46,6 +45,7 @@ import {
 import { clearAllURLParams } from '-/utils/dom';
 import SettingsAdvanced from '-/components/dialogs/settings/SettingsAdvanced';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import { getUuid } from '-/services/utils-io';
 
 const styles: any = () => ({
   mainContent: {
@@ -81,7 +81,7 @@ function SettingsDialog(props: Props) {
     const initSupportedFileTypes = props.supportedFileTypes.reduce(
       (accumulator, fileType) => {
         const modifiedFileType = extend({}, fileType, {
-          id: fileType.id || uuidv1()
+          id: fileType.id || getUuid()
         });
         if (fileType.viewer !== '') {
           accumulator.push(modifiedFileType);
@@ -142,7 +142,7 @@ function SettingsDialog(props: Props) {
   };
 
   const defaultFileTypeObject = {
-    id: uuidv1(),
+    id: getUuid(),
     type: '',
     viewer: '',
     editor: '',

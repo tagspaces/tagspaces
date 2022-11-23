@@ -18,7 +18,6 @@
 
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
-import { v1 as uuidv1 } from 'uuid';
 import withStyles from '@mui/styles/withStyles';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -70,6 +69,7 @@ import PlatformIO from '-/services/platform-facade';
 import WebdavForm from '-/components/dialogs/WebdavForm';
 import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { getUuid } from '-/services/utils-io';
 
 const styles: any = theme => ({
   formControl: {
@@ -176,7 +176,7 @@ function CreateEditLocationDialog(props: Props) {
   }
   const [type, setType] = useState<string>(defaultType);
   const [newuuid, setNewUuid] = useState<string>(
-    location ? location.uuid : uuidv1()
+    location ? location.uuid : getUuid()
   );
   const [cloudErrorTextName, setCloudErrorTextName] = useState<boolean>(false);
   const [webdavErrorUrl, setWebdavErrorUrl] = useState<boolean>(false);

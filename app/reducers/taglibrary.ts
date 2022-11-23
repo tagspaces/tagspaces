@@ -15,7 +15,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-import { v1 as uuidv1 } from 'uuid';
 import {
   immutablySwapItems,
   formatDateTime4Tag,
@@ -23,7 +22,7 @@ import {
   prepareTagGroupForExport
 } from '@tagspaces/tagspaces-platforms/misc';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
-import { parseNewTags, saveAsTextFile } from '-/services/utils-io';
+import { getUuid, parseNewTags, saveAsTextFile } from '-/services/utils-io';
 import versionMeta from '../version.json';
 import defaultTagLibrary from './taglibrary-default';
 import { TS } from '-/tagspaces.namespace';
@@ -113,7 +112,7 @@ export default (state: Array<TS.TagGroup> = defaultTagLibrary, action: any) => {
       return [
         ...state,
         {
-          uuid: action.entry.uuid || uuidv1(),
+          uuid: action.entry.uuid || getUuid(),
           title: action.entry.title,
           color: action.entry.color,
           textcolor: action.entry.textcolor,

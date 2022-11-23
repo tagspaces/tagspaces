@@ -16,7 +16,6 @@
  *
  */
 
-import { v1 as uuidv1 } from 'uuid';
 import {
   formatDateTime4Tag,
   locationType
@@ -53,7 +52,8 @@ import {
   getPrevFile,
   loadJSONFile,
   merge,
-  setLocationType
+  setLocationType,
+  getUuid
 } from '-/services/utils-io';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
@@ -2123,7 +2123,7 @@ export const actions = {
     dispatch: (action) => void
   ) => {
     const newEntry = {
-      uuid: uuidv1(),
+      uuid: getUuid(),
       name: isFile
         ? extractFileName(path, PlatformIO.getDirSeparator())
         : extractDirectoryName(path, PlatformIO.getDirSeparator()),

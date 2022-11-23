@@ -17,7 +17,6 @@
  */
 
 import semver from 'semver';
-import { v1 as uuidv1 } from 'uuid';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '-/services/i18n';
 import defaultSettings from './settings-default';
@@ -27,6 +26,7 @@ import versionMeta from '-/version.json';
 import { actions as AppActions } from './app';
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '../pro';
+import { getUuid } from '-/services/utils-io';
 
 export const types = {
   UPGRADE_SETTINGS: 'SETTINGS/UPGRADE_SETTINGS',
@@ -406,13 +406,13 @@ export default (state: any = defaultSettings, action: any) => {
       let mapTileServers;
       if (action.isDefault) {
         mapTileServers = [
-          { ...action.tileServer, uuid: uuidv1() },
+          { ...action.tileServer, uuid: getUuid() },
           ...state.mapTileServers
         ];
       } else {
         mapTileServers = [
           ...state.mapTileServers,
-          { ...action.tileServer, uuid: uuidv1() }
+          { ...action.tileServer, uuid: getUuid() }
         ];
       }
       return {

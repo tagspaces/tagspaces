@@ -16,7 +16,7 @@
  *
  */
 
-import { v1 as uuidv1 } from 'uuid';
+import { v1 as uuidv1, v4 as uuidv4 } from 'uuid';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import {
@@ -864,7 +864,7 @@ export function loadDirMetaDataPromise(
     }
     return {
       ...metaData,
-      id: metaData.id || uuidv1(),
+      id: metaData.id || getUuid(),
       isFile: false,
       description: metaData.description || '',
       color: metaData.color || '',
@@ -1047,7 +1047,7 @@ export async function saveMetaDataPromise(
 
       if (!cleanedMetaData.id) {
         // add id for directories
-        cleanedMetaData.id = uuidv1();
+        cleanedMetaData.id = getUuid();
       }
 
       metaFilePath = getMetaFileLocationForDir(
@@ -1379,4 +1379,8 @@ export function setLocationType(location: TS.Location): Promise<boolean> {
     return Promise.resolve(true);
   }
   return Promise.resolve(false);
+}
+
+export function getUuid(version = 1): string {
+  return version === 1 ? uuidv1() : uuidv4();
 }
