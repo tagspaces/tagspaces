@@ -304,6 +304,8 @@
   "systemScheme": "match operating system",
   "moveUp": "Move Up",
   "moveDown": "Move Down",
+  "moveLeft": "Move Left",
+  "moveRight": "Move Right",
   "chooseSearchQuery": "Choose a search query",
   "closeButton": "Sluit",
   "closeButtonDialog": "Press ESC to close this dialog",
@@ -702,5 +704,14 @@
   "hide": "Hide",
   "show": "Show",
   "chooseKanbanJSON": "Choose Trello JSON file",
+  "moveToTop": "Move to top",
+  "moveToBottom": "Move to bottom",
+  "openInMainArea": "Open in main area",
+  "changeDate": "Change Date",
+  "changeTime": "Change Time",
+  "toDate": "To Date",
+  "toTime": "To Time",
+  "fromDate": "From Date",
+  "fromTime": "From Time",
   "-": "-"
 }
