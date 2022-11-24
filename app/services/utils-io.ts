@@ -872,9 +872,7 @@ export function loadDirMetaDataPromise(
       tags: metaData.tags || [],
       appName: metaData.appName || '',
       appVersion: metaData.appVersion || '',
-      lastUpdated: metaData.lastUpdated || '',
-      files: metaData.files || [],
-      dirs: metaData.dirs || []
+      lastUpdated: metaData.lastUpdated || ''
     };
   });
 }

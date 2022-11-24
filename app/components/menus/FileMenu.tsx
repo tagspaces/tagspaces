@@ -29,6 +29,7 @@ import OpenFolderInternally from '@mui/icons-material/Folder';
 import AddRemoveTags from '@mui/icons-material/Loyalty';
 import MoveCopy from '@mui/icons-material/FileCopy';
 import MoveToTopIcon from '@mui/icons-material/VerticalAlignTop';
+import MoveToBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import DuplicateFile from '@mui/icons-material/PostAdd';
 import ImageIcon from '@mui/icons-material/Image';
 import ShareIcon from '@mui/icons-material/Link';
@@ -89,6 +90,7 @@ interface Props {
   locations: Array<TS.Location>;
   setLastBackgroundImageChange: (number) => void;
   reorderTop?: () => void;
+  reorderBottom?: () => void;
 }
 
 function FileMenu(props: Props) {
@@ -372,6 +374,23 @@ function FileMenu(props: Props) {
             <MoveToTopIcon />
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:moveToTop')} />
+        </MenuItem>
+      );
+    }
+    if (props.reorderBottom) {
+      menuItems.push(
+        <MenuItem
+          key="reorderBottom"
+          data-tid="reorderBottomTID"
+          onClick={() => {
+            onClose();
+            props.reorderBottom();
+          }}
+        >
+          <ListItemIcon>
+            <MoveToBottomIcon />
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:moveToBottom')} />
         </MenuItem>
       );
     }
