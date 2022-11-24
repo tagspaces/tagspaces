@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useReducer } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import withStyles from '@mui/styles/withStyles';
@@ -37,7 +37,7 @@ import TwitterIcon from '@mui/icons-material/Twitter';
 import KeyShortcutsIcon from '@mui/icons-material/Keyboard';
 import WelcomeBackground from '../assets/images/background.png';
 import WelcomeLogo from '../assets/images/welcome-logo.png';
-import { actions as AppActions } from '../reducers/app';
+import { actions as AppActions, getCurrentLocationId } from '../reducers/app';
 import i18n from '../services/i18n';
 import {
   isFirstRun,
@@ -45,6 +45,12 @@ import {
   actions as SettingsActions
 } from '../reducers/settings';
 import Links from '../links';
+import { Pro } from '-/pro';
+import { TS } from '-/tagspaces.namespace';
+import { renderHistory } from '-/components/RenderHistory';
+import PlatformIO from '-/services/platform-facade';
+import { getAllPropertiesPromise } from '-/services/utils-io';
+import Typography from '@mui/material/Typography';
 
 const styles: any = (theme: any) => ({
   mainPanel: {
@@ -80,10 +86,59 @@ interface Props {
   openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   toggleAboutDialog: () => void;
   isDesktopMode: boolean;
+  openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
+  openLink: (url: string, options: any) => void;
+  openLocationById: (locationId: string) => void;
+  currentLocationId: string;
 }
 
 function WelcomePanel(props: Props) {
   const { classes, openURLExternally, toggleKeysDialog, isDesktopMode } = props;
+  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+
+  const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
+  const fileOpenHistoryItems: Array<TS.HistoryItem> = Pro
+    ? Pro.history.getHistory(historyKeys.fileOpenKey)
+    : [];
+  const fileEditHistoryItems: Array<TS.HistoryItem> = Pro
+    ? Pro.history.getHistory(historyKeys.fileEditKey)
+    : [];
+  const folderOpenHistoryItems: Array<TS.HistoryItem> = Pro
+    ? Pro.history.getHistory(historyKeys.folderOpenKey)
+    : [];
+
+  function openItem(item: TS.HistoryItem) {
+    if (item.url) {
+      props.openLink(item.url, { fullWidth: false });
+    } else {
+      PlatformIO.disableObjectStoreSupport();
+      if (item.lid !== props.currentLocationId) {
+        props.openLocationById(item.lid);
+      }
+      getAllPropertiesPromise(item.path)
+        .then((fsEntry: TS.FileSystemEntry) => {
+          props.openFsEntry(fsEntry);
+          return true;
+        })
+        .catch(error =>
+          console.warn(
+            'Error getting properties for entry: ' + item.path + ' - ' + error
+          )
+        );
+    }
+  }
+
+  function delItem(item: TS.HistoryItem, key: string) {
+    if (Pro) {
+      if (key === Pro.bookmarks.bookmarksKey) {
+        Pro.bookmarks.delBookmark(item.path);
+      } else {
+        Pro.history.delHistory(key, item.creationTimeStamp);
+      }
+    }
+    forceUpdate();
+  }
+
   return (
     <div className={classes.mainPanel}>
       <List
@@ -194,6 +249,51 @@ function WelcomePanel(props: Props) {
             {i18n.t('core:likeUsOnFacebook')}
           </Button>
         </ListItem> */}
+        {fileOpenHistoryItems && (
+          <>
+            <Typography variant="inherit" style={{ display: 'inline' }} noWrap>
+              {i18n.t('core:fileOpenHistory')}
+            </Typography>
+            <ListItem>
+              {renderHistory(
+                historyKeys.fileOpenKey,
+                fileOpenHistoryItems,
+                openItem,
+                delItem
+              )}
+            </ListItem>
+          </>
+        )}
+        {fileEditHistoryItems && (
+          <>
+            <Typography variant="inherit" style={{ display: 'inline' }} noWrap>
+              {i18n.t('core:fileEditHistory')}
+            </Typography>
+            <ListItem>
+              {renderHistory(
+                historyKeys.fileEditKey,
+                fileEditHistoryItems,
+                openItem,
+                delItem
+              )}
+            </ListItem>
+          </>
+        )}
+        {folderOpenHistoryItems && (
+          <>
+            <Typography variant="inherit" style={{ display: 'inline' }} noWrap>
+              {i18n.t('core:folderOpenHistory')}
+            </Typography>
+            <ListItem>
+              {renderHistory(
+                historyKeys.folderOpenKey,
+                folderOpenHistoryItems,
+                openItem,
+                delItem
+              )}
+            </ListItem>
+          </>
+        )}
       </List>
     </div>
   );
@@ -202,7 +302,8 @@ function WelcomePanel(props: Props) {
 function mapStateToProps(state) {
   return {
     isFirstRun: isFirstRun(state),
-    isDesktopMode: getDesktopMode(state)
+    isDesktopMode: getDesktopMode(state),
+    currentLocationId: getCurrentLocationId(state)
   };
 }
 
@@ -212,7 +313,10 @@ function mapActionCreatorsToProps(dispatch) {
       setFirstRun: SettingsActions.setFirstRun,
       openURLExternally: AppActions.openURLExternally,
       toggleKeysDialog: AppActions.toggleKeysDialog,
-      toggleAboutDialog: AppActions.toggleAboutDialog
+      toggleAboutDialog: AppActions.toggleAboutDialog,
+      openFsEntry: AppActions.openFsEntry,
+      openLink: AppActions.openLink,
+      openLocationById: AppActions.openLocationById
     },
     dispatch
   );
