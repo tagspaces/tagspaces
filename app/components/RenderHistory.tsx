@@ -36,8 +36,11 @@ import DeleteIcon from '@mui/icons-material/RemoveCircleOutline';
 export const renderHistory = (
   key: string,
   items: Array<TS.HistoryItem> | Array<TS.BookmarkItem>,
-  openItem: (item: TS.HistoryItem) => void,
-  delItem: (item: TS.HistoryItem, key: string) => void
+  update: () => void,
+  currentLocationId: string,
+  openLink: (url: string, options: any) => void,
+  openLocationById: (locationId: string) => void,
+  openFsEntry: (fsEntry: TS.FileSystemEntry) => void
 ) => (
   <Grid container direction="row">
     {items &&
@@ -54,7 +57,15 @@ export const renderHistory = (
                 textOverflow: 'ellipsis',
                 overflow: 'hidden'
               }}
-              onClick={() => openItem(item)}
+              onClick={() =>
+                Pro.history.openItem(
+                  item,
+                  currentLocationId,
+                  openLink,
+                  openLocationById,
+                  openFsEntry
+                )
+              }
             >
               <Tooltip
                 title={
@@ -86,7 +97,10 @@ export const renderHistory = (
           <Grid item xs={2} style={{ display: 'flex' }}>
             <IconButton
               aria-label={i18n.t('core:clearHistory')}
-              onClick={() => delItem(item, key)}
+              onClick={() => {
+                Pro.history.delItem(item, key);
+                update();
+              }}
               data-tid="editSearchTID"
               size="small"
             >

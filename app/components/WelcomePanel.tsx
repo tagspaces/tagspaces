@@ -107,38 +107,6 @@ function WelcomePanel(props: Props) {
     ? Pro.history.getHistory(historyKeys.folderOpenKey)
     : [];
 
-  function openItem(item: TS.HistoryItem) {
-    if (item.url) {
-      props.openLink(item.url, { fullWidth: false });
-    } else {
-      PlatformIO.disableObjectStoreSupport();
-      if (item.lid !== props.currentLocationId) {
-        props.openLocationById(item.lid);
-      }
-      getAllPropertiesPromise(item.path)
-        .then((fsEntry: TS.FileSystemEntry) => {
-          props.openFsEntry(fsEntry);
-          return true;
-        })
-        .catch(error =>
-          console.warn(
-            'Error getting properties for entry: ' + item.path + ' - ' + error
-          )
-        );
-    }
-  }
-
-  function delItem(item: TS.HistoryItem, key: string) {
-    if (Pro) {
-      if (key === Pro.bookmarks.bookmarksKey) {
-        Pro.bookmarks.delBookmark(item.path);
-      } else {
-        Pro.history.delHistory(key, item.creationTimeStamp);
-      }
-    }
-    forceUpdate();
-  }
-
   return (
     <div className={classes.mainPanel}>
       <List
@@ -258,8 +226,11 @@ function WelcomePanel(props: Props) {
               {renderHistory(
                 historyKeys.fileOpenKey,
                 fileOpenHistoryItems,
-                openItem,
-                delItem
+                forceUpdate,
+                props.currentLocationId,
+                props.openLink,
+                props.openLocationById,
+                props.openFsEntry
               )}
             </ListItem>
           </>
@@ -273,8 +244,11 @@ function WelcomePanel(props: Props) {
               {renderHistory(
                 historyKeys.fileEditKey,
                 fileEditHistoryItems,
-                openItem,
-                delItem
+                forceUpdate,
+                props.currentLocationId,
+                props.openLink,
+                props.openLocationById,
+                props.openFsEntry
               )}
             </ListItem>
           </>
@@ -288,8 +262,11 @@ function WelcomePanel(props: Props) {
               {renderHistory(
                 historyKeys.folderOpenKey,
                 folderOpenHistoryItems,
-                openItem,
-                delItem
+                forceUpdate,
+                props.currentLocationId,
+                props.openLink,
+                props.openLocationById,
+                props.openFsEntry
               )}
             </ListItem>
           </>
