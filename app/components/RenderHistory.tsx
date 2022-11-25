@@ -2,6 +2,7 @@ import { TS } from '-/tagspaces.namespace';
 import Grid from '@mui/material/Grid';
 import React from 'react';
 import Button from '@mui/material/Button';
+import ListItem from '@mui/material/ListItem';
 import PlatformIO from '-/services/platform-facade';
 import { Tooltip } from '@mui/material';
 import i18n from '-/services/i18n';
@@ -40,22 +41,20 @@ export const renderHistory = (
   currentLocationId: string,
   openLink: (url: string, options: any) => void,
   openLocationById: (locationId: string) => void,
-  openFsEntry: (fsEntry: TS.FileSystemEntry) => void
+  openFsEntry: (fsEntry: TS.FileSystemEntry) => void,
+  maxItems: number | undefined = undefined,
+  showDelete: boolean = true
 ) => (
-  <Grid container direction="row">
+  <>
     {items &&
-      items.map(item => (
-        <React.Fragment key={item.creationTimeStamp}>
-          <Grid item xs={10} style={{ display: 'flex' }}>
+      items.slice(0, maxItems || items.length).map(item => (
+        <ListItem dense style={{ paddingLeft: 0 }} key={item.creationTimeStamp}>
+          <Grid item xs={10} style={{ width: '100%' }}>
             <Button
               style={{
                 textTransform: 'none',
                 fontWeight: 'normal',
-                width: '240px',
-                justifyContent: 'start',
-                whiteSpace: 'nowrap',
-                textOverflow: 'ellipsis',
-                overflow: 'hidden'
+                justifyContent: 'start'
               }}
               onClick={() =>
                 Pro.history.openItem(
@@ -89,25 +88,39 @@ export const renderHistory = (
                 )}
               </Tooltip>
               &nbsp;
-              {item.path.endsWith(PlatformIO.getDirSeparator())
-                ? extractDirectoryName(item.path, PlatformIO.getDirSeparator())
-                : extractFileName(item.path, PlatformIO.getDirSeparator())}
+              <span
+                style={{
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden',
+                  maxWidth: 220
+                }}
+              >
+                {item.path.endsWith(PlatformIO.getDirSeparator())
+                  ? extractDirectoryName(
+                      item.path,
+                      PlatformIO.getDirSeparator()
+                    )
+                  : extractFileName(item.path, PlatformIO.getDirSeparator())}
+              </span>
             </Button>
           </Grid>
-          <Grid item xs={2} style={{ display: 'flex' }}>
-            <IconButton
-              aria-label={i18n.t('core:clearHistory')}
-              onClick={() => {
-                Pro.history.delItem(item, key);
-                update();
-              }}
-              data-tid="editSearchTID"
-              size="small"
-            >
-              <DeleteIcon />
-            </IconButton>
-          </Grid>
-        </React.Fragment>
+          {showDelete && (
+            <Grid item xs={2}>
+              <IconButton
+                aria-label={i18n.t('core:clearHistory')}
+                onClick={() => {
+                  Pro.history.delItem(item, key);
+                  update();
+                }}
+                data-tid="editSearchTID"
+                size="small"
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Grid>
+          )}
+        </ListItem>
       ))}
-  </Grid>
+  </>
 );

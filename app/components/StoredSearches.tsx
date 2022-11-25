@@ -34,6 +34,8 @@ import HistoryIcon from '@mui/icons-material/ChangeHistoryTwoTone';
 import ArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import ArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import Typography from '@mui/material/Typography';
+import ListItem from '@mui/material/ListItem';
+import List from '@mui/material/List';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import {
   actions as LocationIndexActions,
@@ -277,38 +279,44 @@ function StoredSearches(props: Props) {
             </Grid>
           )}
         </Grid>
-        <Grid container direction="row">
-          {props.storedSearchesVisible &&
-            props.searches.map(search => (
-              <React.Fragment key={search.uuid}>
-                <Grid item xs={10} style={{ display: 'flex' }}>
-                  <Button
+        {props.storedSearchesVisible &&
+          props.searches.map(search => (
+            <ListItem dense style={{ paddingLeft: 0 }} key={search.uuid}>
+              <Grid item xs={10} style={{ width: '100%' }}>
+                <Button
+                  style={{
+                    textTransform: 'none',
+                    fontWeight: 'normal',
+                    justifyContent: 'start'
+                  }}
+                  onClick={() => handleSavedSearchClick(search.uuid)}
+                >
+                  <SearchIcon />
+                  &nbsp;
+                  <span
                     style={{
-                      textTransform: 'none',
-                      fontWeight: 'normal',
-                      width: '100%',
-                      justifyContent: 'start'
+                      whiteSpace: 'nowrap',
+                      textOverflow: 'ellipsis',
+                      overflow: 'hidden',
+                      maxWidth: 220
                     }}
-                    onClick={() => handleSavedSearchClick(search.uuid)}
                   >
-                    <SearchIcon />
-                    &nbsp;
                     {search.title}
-                  </Button>
-                </Grid>
-                <Grid item xs={2} style={{ display: 'flex' }}>
-                  <IconButton
-                    aria-label={i18n.t('core:searchEditBtn')}
-                    onClick={() => editSearch(search.uuid)}
-                    data-tid="editSearchTID"
-                    size="small"
-                  >
-                    <EditIcon />
-                  </IconButton>
-                </Grid>
-              </React.Fragment>
-            ))}
-        </Grid>
+                  </span>
+                </Button>
+              </Grid>
+              <Grid item xs={2}>
+                <IconButton
+                  aria-label={i18n.t('core:searchEditBtn')}
+                  onClick={() => editSearch(search.uuid)}
+                  data-tid="editSearchTID"
+                  size="small"
+                >
+                  <EditIcon />
+                </IconButton>
+              </Grid>
+            </ListItem>
+          ))}
         <Grid container direction="row">
           <Grid item xs={10} style={{ alignSelf: 'center' }}>
             <IconButton
