@@ -24,7 +24,6 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Divider from '@mui/material/Divider';
-import DocumentationIcon from '@mui/icons-material/Help';
 import AboutIcon from '@mui/icons-material/BlurOn';
 import ChangeLogIcon from '@mui/icons-material/ImportContacts';
 import OnboardingIcon from '@mui/icons-material/Explore';
@@ -34,13 +33,12 @@ import CancelSubscriptionIcon from '@mui/icons-material/EventBusy';
 import IssueIcon from '@mui/icons-material/BugReport';
 import TranslationIcon from '@mui/icons-material/Translate';
 import NewFeatureIcon from '@mui/icons-material/Gesture';
-// import SocialIcon from '@mui/icons-material/ThumbUp';
 import TwitterIcon from '@mui/icons-material/Twitter';
-import KeyShortcutsIcon from '@mui/icons-material/Keyboard';
 import ProTeaserIcon from '@mui/icons-material/FlightTakeoff';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
-import styles from './SidePanels.css';
-import i18n from '../services/i18n';
+import styles from '-/components/SidePanels.css';
+import i18n from '-/services/i18n';
+import { KeyShortcutsIcon, HelpIcon } from '-/components/CommonIcons';
 import Links from '-/links';
 import { connect } from 'react-redux';
 import { getCurrentLanguage } from '-/reducers/settings';
@@ -117,7 +115,7 @@ function HelpFeedbackPanel(props: Props) {
           }
         >
           <ListItemIcon>
-            <DocumentationIcon />
+            <HelpIcon />
           </ListItemIcon>
           <Typography style={{ color: theme.palette.text.primary }}>
             {i18n.t('core:documentation')}

@@ -280,6 +280,7 @@ function CreateDialog(props: Props) {
           display: 'flex',
           minWidth: 200,
           minHeight: 300,
+          marginBottom: 20,
           overflow: 'overlay',
           alignSelf: 'center'
         }}

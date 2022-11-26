@@ -23,22 +23,26 @@ import withStyles from '@mui/styles/withStyles';
 import Button from '@mui/material/Button';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
 import Grid from '@mui/material/Grid';
 import Divider from '@mui/material/Divider';
-import DocumentationIcon from '@mui/icons-material/Help';
-import LocationIcon from '@mui/icons-material/WorkOutline';
 import ChangeLogIcon from '@mui/icons-material/ImportContacts';
 import WebClipperIcon from '@mui/icons-material/Transform';
 import EmailIcon from '@mui/icons-material/Email';
 import IssueIcon from '@mui/icons-material/BugReport';
 import TranslationIcon from '@mui/icons-material/Translate';
 import NewFeatureIcon from '@mui/icons-material/Gesture';
-import SocialIcon from '@mui/icons-material/ThumbUp';
 import TwitterIcon from '@mui/icons-material/Twitter';
-import KeyShortcutsIcon from '@mui/icons-material/Keyboard';
 import WelcomeBackground from '../assets/images/background.png';
 import WelcomeLogo from '../assets/images/welcome-logo.png';
-import { CreateFileIcon, LocalLocationIcon } from '-/components/CommonIcons';
+import {
+  CreateFileIcon,
+  LocalLocationIcon,
+  OpenLinkIcon,
+  KeyShortcutsIcon,
+  HelpIcon
+} from '-/components/CommonIcons';
 import { actions as AppActions, getCurrentLocationId } from '../reducers/app';
 import i18n from '../services/i18n';
 import {
@@ -50,14 +54,14 @@ import Links from '../links';
 import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
 import { renderHistory } from '-/components/RenderHistory';
-import PlatformIO from '-/services/platform-facade';
-import { getAllPropertiesPromise } from '-/services/utils-io';
 import Typography from '@mui/material/Typography';
 
 interface Props {
   theme: any;
+  classes: any;
   toggleCreateFileDialog: () => void;
   toggleLocationDialog: () => void;
+  toggleOpenLinkDialog: () => void;
   toggleKeysDialog: () => void;
   openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   toggleAboutDialog: () => void;
@@ -68,9 +72,22 @@ interface Props {
   currentLocationId: string;
 }
 
+const styles: any = (theme: any) => ({
+  listItem: {
+    color: theme.palette.text.primary,
+    textTransform: 'uppercase'
+  },
+  recentTitle: {
+    color: theme.palette.text.primary,
+    textTransform: 'uppercase',
+    textAlign: 'center'
+  }
+});
+
 function WelcomePanel(props: Props) {
   const {
     theme,
+    classes,
     currentLocationId,
     openLink,
     openLocationById,
@@ -79,6 +96,7 @@ function WelcomePanel(props: Props) {
     toggleKeysDialog,
     toggleCreateFileDialog,
     toggleLocationDialog,
+    toggleOpenLinkDialog,
     isDesktopMode
   } = props;
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
@@ -96,6 +114,13 @@ function WelcomePanel(props: Props) {
 
   const showDelete = false;
   const maxRecentItems = 5;
+
+  function triggerOpenLocation() {
+    const button = document.getElementById(
+      isDesktopMode ? 'locationMenuButton' : 'mobileMenuButton'
+    );
+    button.click();
+  }
 
   return (
     <div
@@ -120,19 +145,20 @@ function WelcomePanel(props: Props) {
       />
       <Grid
         style={{
-          position: 'relative'
+          position: 'relative',
+          height: '100%'
         }}
         container
         spacing={3}
       >
-        <Grid item xs={4}>
+        <Grid item xs={isDesktopMode ? 4 : 12} style={{ height: '100%' }}>
           <List
             dense={false}
             component="nav"
             aria-label="main help area"
             style={{
               width: 300,
-              // height: 'calc(100% - 100px)',
+              height: 'calc(100% - 70px)',
               margin: 'auto',
               marginTop: 15,
               marginBottom: 15,
@@ -149,28 +175,41 @@ function WelcomePanel(props: Props) {
             >
               <img src={WelcomeLogo} alt="Organize your files" />
             </div>
-            {/* <ListItem
-          button
-          onClick={() => {
-            const button = document.getElementById(
-              isDesktopMode ? 'locationMenuButton' : 'mobileMenuButton'
-            );
-            button.click();
-          }}
-        >
-          <Button startIcon={<LocationIcon />}>
-            {i18n.t('core:chooseLocation')}
-          </Button>
-        </ListItem> */}
+            <ListItem button onClick={triggerOpenLocation}>
+              <ListItemIcon>
+                <LocalLocationIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={i18n.t('chooseLocation')}
+                className={classes.listItem}
+              />
+            </ListItem>
             <ListItem button onClick={toggleCreateFileDialog}>
-              <Button startIcon={<CreateFileIcon />}>
-                {i18n.t('createFileTitle')}
-              </Button>
+              <ListItemIcon>
+                <CreateFileIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={i18n.t('createFileTitle')}
+                className={classes.listItem}
+              />
             </ListItem>
             <ListItem button onClick={toggleLocationDialog}>
-              <Button startIcon={<LocalLocationIcon />}>
-                {i18n.t('core:createLocationTitle')}
-              </Button>
+              <ListItemIcon>
+                <LocalLocationIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={i18n.t('createLocationTitle')}
+                className={classes.listItem}
+              />
+            </ListItem>
+            <ListItem button onClick={toggleOpenLinkDialog}>
+              <ListItemIcon>
+                <OpenLinkIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={i18n.t('openLink')}
+                className={classes.listItem}
+              />
             </ListItem>
             <Divider />
             <ListItem
@@ -179,33 +218,46 @@ function WelcomePanel(props: Props) {
                 openURLExternally(Links.documentationLinks.general, true)
               }
             >
-              <Button startIcon={<DocumentationIcon />}>
-                {i18n.t('documentation')}
-              </Button>
+              <ListItemIcon>
+                <HelpIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={i18n.t('documentation')}
+                className={classes.listItem}
+              />
             </ListItem>
-            <ListItem button onClick={() => toggleKeysDialog()}>
-              <Button startIcon={<KeyShortcutsIcon />}>
-                {i18n.t('core:shortcutKeys')}
-              </Button>
+            <ListItem button onClick={toggleKeysDialog}>
+              <ListItemIcon>
+                <KeyShortcutsIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={i18n.t('shortcutKeys')}
+                className={classes.listItem}
+              />
             </ListItem>
             <ListItem
               button
               onClick={() => openURLExternally(Links.links.changelogURL, true)}
             >
-              <Button
-                startIcon={<ChangeLogIcon />}
-                title="Opens the changelog of the app"
-              >
-                {i18n.t('core:whatsNew')}
-              </Button>
+              <ListItemIcon>
+                <ChangeLogIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={i18n.t('core:whatsNew')}
+                className={classes.listItem}
+              />
             </ListItem>
             <ListItem
               button
               onClick={() => openURLExternally(Links.links.webClipper, true)}
             >
-              <Button startIcon={<WebClipperIcon />}>
-                {i18n.t('core:webClipper')}
-              </Button>
+              <ListItemIcon>
+                <WebClipperIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={i18n.t('core:webClipper')}
+                className={classes.listItem}
+              />
             </ListItem>
             <Divider />
             <ListItem
@@ -214,157 +266,191 @@ function WelcomePanel(props: Props) {
                 openURLExternally(Links.links.suggestFeature, true)
               }
             >
-              <Button startIcon={<NewFeatureIcon />}>
-                {i18n.t('core:suggestNewFeatures')}
-              </Button>
+              <ListItemIcon>
+                <NewFeatureIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={i18n.t('core:suggestNewFeatures')}
+                className={classes.listItem}
+              />
             </ListItem>
             <ListItem
               button
               onClick={() => openURLExternally(Links.links.reportIssue, true)}
             >
-              <Button startIcon={<IssueIcon />}>
-                {i18n.t('core:reportIssues')}
-              </Button>
+              <ListItemIcon>
+                <IssueIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={i18n.t('core:reportIssues')}
+                className={classes.listItem}
+              />
             </ListItem>
             <ListItem
               button
-              onClick={() => openURLExternally(Links.links.helpTranslating)}
+              onClick={() =>
+                openURLExternally(Links.links.helpTranslating, true)
+              }
             >
-              <Button startIcon={<TranslationIcon />}>
-                {i18n.t('core:helpWithTranslation')}
-              </Button>
+              <ListItemIcon>
+                <TranslationIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={i18n.t('core:helpWithTranslation')}
+                className={classes.listItem}
+              />
             </ListItem>
             <Divider />
             <ListItem
               button
               onClick={() => openURLExternally(Links.links.emailContact, true)}
             >
-              <Button startIcon={<EmailIcon />}>
-                {i18n.t('core:emailContact')}
-              </Button>
+              <ListItemIcon>
+                <EmailIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={i18n.t('core:emailContact')}
+                className={classes.listItem}
+              />
             </ListItem>
             <ListItem
               button
-              onClick={() => openURLExternally(Links.links.twitter)}
+              onClick={() => openURLExternally(Links.links.twitter, true)}
             >
-              <Button startIcon={<TwitterIcon />}>
-                {i18n.t('core:followOnTwitter')}
-              </Button>
+              <ListItemIcon>
+                <TwitterIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={i18n.t('core:followOnTwitter')}
+                className={classes.listItem}
+              />
             </ListItem>
-            {/* <ListItem
-          button
-          onClick={() => openURLExternally(Links.links.facebook)}
-        >
-          <Button startIcon={<SocialIcon />}>
-            {i18n.t('core:likeUsOnFacebook')}
-          </Button>
-        </ListItem> */}
           </List>
         </Grid>
-        <Grid item xs={4}>
-          &nbsp;
-        </Grid>
-        <Grid item xs={4}>
-          <div
-            style={{
-              width: 300,
-              margin: 'auto',
-              marginTop: 15,
-              marginBottom: 15,
-              // @ts-ignore
-              overflowY: 'overlay',
-              backgroundColor: theme.palette.background.default
-            }}
-          >
-            {fileOpenHistoryItems && (
-              <>
-                <Typography
-                  variant="inherit"
-                  style={{
-                    padding: 10,
-                    color: theme.palette.text.primary,
-                    textTransform: 'uppercase',
-                    textAlign: 'center'
-                  }}
-                  noWrap
-                >
-                  {i18n.t('core:fileOpenHistory')}
-                </Typography>
-                <List>
-                  {renderHistory(
-                    historyKeys.fileOpenKey,
-                    fileOpenHistoryItems,
-                    forceUpdate,
-                    currentLocationId,
-                    openLink,
-                    openLocationById,
-                    openFsEntry,
-                    maxRecentItems,
-                    showDelete
+        {isDesktopMode && (
+          <>
+            <Grid item xs={4} style={{ height: '100%' }}>
+              <div
+                style={{
+                  width: 300,
+                  margin: 'auto',
+                  marginTop: 15,
+                  marginBottom: 15,
+                  // @ts-ignore
+                  overflowY: 'overlay',
+                  height: 'calc(100% - 50px)',
+                  backgroundColor: theme.palette.background.default
+                }}
+              >
+                <div>
+                  <Typography
+                    variant="inherit"
+                    style={{
+                      paddingTop: 20
+                    }}
+                    className={classes.recentTitle}
+                    noWrap
+                  >
+                    {i18n.t('How to start')}
+                  </Typography>
+                  <div style={{ height: 400 }}></div>
+                </div>
+              </div>
+            </Grid>
+            <Grid item xs={4} style={{ height: '100%' }}>
+              <div
+                style={{
+                  width: 300,
+                  margin: 'auto',
+                  marginTop: 15,
+                  marginBottom: 15,
+                  // @ts-ignore
+                  overflowY: 'overlay',
+                  height: 'calc(100% - 50px)',
+                  backgroundColor: theme.palette.background.default
+                }}
+              >
+                <div>
+                  {fileOpenHistoryItems && (
+                    <>
+                      <Typography
+                        variant="inherit"
+                        style={{
+                          paddingTop: 20
+                        }}
+                        className={classes.recentTitle}
+                        noWrap
+                      >
+                        {i18n.t('core:fileOpenHistory')}
+                      </Typography>
+                      <List>
+                        {renderHistory(
+                          historyKeys.fileOpenKey,
+                          fileOpenHistoryItems,
+                          forceUpdate,
+                          currentLocationId,
+                          openLink,
+                          openLocationById,
+                          openFsEntry,
+                          maxRecentItems,
+                          showDelete
+                        )}
+                      </List>
+                    </>
                   )}
-                </List>
-              </>
-            )}
-            {fileEditHistoryItems && (
-              <>
-                <Typography
-                  variant="inherit"
-                  style={{
-                    padding: 10,
-                    color: theme.palette.text.primary,
-                    textTransform: 'uppercase',
-                    textAlign: 'center'
-                  }}
-                  noWrap
-                >
-                  {i18n.t('core:fileEditHistory')}
-                </Typography>
-                <List>
-                  {renderHistory(
-                    historyKeys.fileEditKey,
-                    fileEditHistoryItems,
-                    forceUpdate,
-                    props.currentLocationId,
-                    props.openLink,
-                    props.openLocationById,
-                    props.openFsEntry,
-                    maxRecentItems,
-                    showDelete
+                  {fileEditHistoryItems && (
+                    <>
+                      <Typography
+                        variant="inherit"
+                        className={classes.recentTitle}
+                        noWrap
+                      >
+                        {i18n.t('core:fileEditHistory')}
+                      </Typography>
+                      <List>
+                        {renderHistory(
+                          historyKeys.fileEditKey,
+                          fileEditHistoryItems,
+                          forceUpdate,
+                          props.currentLocationId,
+                          props.openLink,
+                          props.openLocationById,
+                          props.openFsEntry,
+                          maxRecentItems,
+                          showDelete
+                        )}
+                      </List>
+                    </>
                   )}
-                </List>
-              </>
-            )}
-            {folderOpenHistoryItems && (
-              <>
-                <Typography
-                  variant="inherit"
-                  style={{
-                    padding: 10,
-                    color: theme.palette.text.primary,
-                    textTransform: 'uppercase',
-                    textAlign: 'center'
-                  }}
-                  noWrap
-                >
-                  {i18n.t('core:folderOpenHistory')}
-                </Typography>
-                <List>
-                  {renderHistory(
-                    historyKeys.folderOpenKey,
-                    folderOpenHistoryItems,
-                    forceUpdate,
-                    props.currentLocationId,
-                    props.openLink,
-                    props.openLocationById,
-                    props.openFsEntry,
-                    maxRecentItems,
-                    showDelete
+                  {folderOpenHistoryItems && (
+                    <>
+                      <Typography
+                        variant="inherit"
+                        className={classes.recentTitle}
+                        noWrap
+                      >
+                        {i18n.t('core:folderOpenHistory')}
+                      </Typography>
+                      <List>
+                        {renderHistory(
+                          historyKeys.folderOpenKey,
+                          folderOpenHistoryItems,
+                          forceUpdate,
+                          props.currentLocationId,
+                          props.openLink,
+                          props.openLocationById,
+                          props.openFsEntry,
+                          maxRecentItems,
+                          showDelete
+                        )}
+                      </List>
+                    </>
                   )}
-                </List>
-              </>
-            )}
-          </div>
-        </Grid>
+                </div>
+              </div>
+            </Grid>
+          </>
+        )}
       </Grid>
     </div>
   );
@@ -384,6 +470,7 @@ function mapActionCreatorsToProps(dispatch) {
       setFirstRun: SettingsActions.setFirstRun,
       toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
       toggleLocationDialog: AppActions.toggleLocationDialog,
+      toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
       openURLExternally: AppActions.openURLExternally,
       toggleKeysDialog: AppActions.toggleKeysDialog,
       toggleAboutDialog: AppActions.toggleAboutDialog,
@@ -398,4 +485,4 @@ function mapActionCreatorsToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
-)(withStyles(undefined, { withTheme: true })(WelcomePanel));
+)(withStyles(styles, { withTheme: true })(WelcomePanel));

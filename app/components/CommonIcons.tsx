@@ -24,7 +24,9 @@ import History from '@mui/icons-material/ChangeHistoryTwoTone';
 import Settings from '@mui/icons-material/Settings';
 import InfoIcon from '@mui/icons-material/Info';
 import AddIcon from '@mui/icons-material/Add';
-import SuitcaseIcon from '@mui/icons-material/WorkOutline';
+import Suitcase from '@mui/icons-material/WorkOutline';
+import Link from '@mui/icons-material/Link';
+import KeyShortcuts from '@mui/icons-material/Keyboard';
 
 export const ParentFolderIcon = props => (
   // <ParentDirIcon style={{ transform: 'rotate(-90deg)' }} /> SubdirectoryArrowLeft
@@ -43,4 +45,8 @@ export const FolderPropertiesIcon = props => <InfoIcon {...props} />;
 
 export const CreateFileIcon = props => <AddIcon {...props} />;
 
-export const LocalLocationIcon = props => <SuitcaseIcon {...props} />;
+export const LocalLocationIcon = props => <Suitcase {...props} />;
+
+export const OpenLinkIcon = props => <Link {...props} />;
+
+export const KeyShortcutsIcon = props => <KeyShortcuts {...props} />;
