@@ -23,8 +23,6 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import CreateLocationIcon from '@mui/icons-material/CreateNewFolder';
 import ExportImportIcon from '@mui/icons-material/SwapHoriz';
-import OpenLinkIcon from '@mui/icons-material/Link';
-import HelpIcon from '@mui/icons-material/Help';
 import CloseIcon from '@mui/icons-material/Close';
 import UpdateIndexIcon from '@mui/icons-material/Update';
 import classNames from 'classnames';
@@ -40,6 +38,7 @@ import { actions as AppActions } from '-/reducers/app';
 import Links from '-/links';
 import { ProLabel } from '-/components/HelperComponents';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
+import { OpenLinkIcon, HelpIcon } from '-/components/CommonIcons';
 
 interface Props {
   classes: any;

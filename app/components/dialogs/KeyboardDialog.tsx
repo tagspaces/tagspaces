@@ -36,11 +36,8 @@ import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 const styles = theme => ({
-  root: {
-    minWidth: 350
-  },
   shortcutKey: {
-    backgroundColor: '#D6D6D6',
+    backgroundColor: theme.palette.primary.main,
     font: 'Console',
     fontFamily: 'monospace',
     padding: '5px',
@@ -56,7 +53,7 @@ interface Props {
 }
 
 function KeyboardDialog(props: Props) {
-  const { open, onClose } = props;
+  const { open, onClose, keyBindings, classes } = props;
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
@@ -72,17 +69,19 @@ function KeyboardDialog(props: Props) {
         <DialogCloseButton onClose={onClose} />
       </DialogTitle>
       <DialogContent
-        className={props.classes.root}
         data-tid="keyboardShortCutsDialog"
-        style={{ overflow: AppConfig.isFirefox ? 'auto' : 'overlay' }}
+        style={{
+          minWidth: 350,
+          overflow: AppConfig.isFirefox ? 'auto' : 'overlay'
+        }}
       >
         <List dense={false}>
-          {props.keyBindings &&
-            Object.keys(props.keyBindings).map(shortcutKey => (
+          {keyBindings &&
+            Object.keys(keyBindings).map(shortcutKey => (
               <ListItem key={shortcutKey}>
                 <ListItemText primary={i18n.t('core:' + shortcutKey)} />
-                <ListItemSecondaryAction className={props.classes.shortcutKey}>
-                  {props.keyBindings[shortcutKey].toUpperCase()}
+                <ListItemSecondaryAction className={classes.shortcutKey}>
+                  {keyBindings[shortcutKey].toUpperCase()}
                 </ListItemSecondaryAction>
               </ListItem>
             ))}
@@ -91,7 +90,7 @@ function KeyboardDialog(props: Props) {
       <DialogActions>
         <Button
           data-tid="closeKeyboardDialog"
-          onClick={props.onClose}
+          onClick={onClose}
           color="primary"
         >
           {i18n.t('core:ok')}
