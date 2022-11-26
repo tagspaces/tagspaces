@@ -285,12 +285,17 @@ export const getLocationByPath = (
 ): TS.Location | null =>
   state.locations.find(location => location.path === path);
 export const getDefaultLocationId = (state: any): string | undefined => {
-  let defaultLocationID;
-  state.locations.map(location => {
-    if (location.isDefault) {
-      defaultLocationID = location.uuid;
-    }
-    return true;
-  });
-  return defaultLocationID;
+  let foundLocation = state.locations.find(
+    location => location.isDefault && !location.isReadOnly
+  );
+  return foundLocation ? foundLocation.uuid : undefined;
+};
+export const getFirstRWLocation = (state: any): string | undefined => {
+  let foundLocation = state.locations.find(
+    location => location.isDefault && !location.isReadOnly
+  );
+  if (!foundLocation) {
+    foundLocation = state.locations.find(location => !location.isReadOnly);
+  }
+  return foundLocation;
 };
