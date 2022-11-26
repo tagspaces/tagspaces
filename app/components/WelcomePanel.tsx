@@ -38,6 +38,7 @@ import TwitterIcon from '@mui/icons-material/Twitter';
 import KeyShortcutsIcon from '@mui/icons-material/Keyboard';
 import WelcomeBackground from '../assets/images/background.png';
 import WelcomeLogo from '../assets/images/welcome-logo.png';
+import { CreateFileIcon, LocalLocationIcon } from '-/components/CommonIcons';
 import { actions as AppActions, getCurrentLocationId } from '../reducers/app';
 import i18n from '../services/i18n';
 import {
@@ -55,6 +56,8 @@ import Typography from '@mui/material/Typography';
 
 interface Props {
   theme: any;
+  toggleCreateFileDialog: () => void;
+  toggleLocationDialog: () => void;
   toggleKeysDialog: () => void;
   openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   toggleAboutDialog: () => void;
@@ -74,6 +77,8 @@ function WelcomePanel(props: Props) {
     openFsEntry,
     openURLExternally,
     toggleKeysDialog,
+    toggleCreateFileDialog,
+    toggleLocationDialog,
     isDesktopMode
   } = props;
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
@@ -157,6 +162,17 @@ function WelcomePanel(props: Props) {
             {i18n.t('core:chooseLocation')}
           </Button>
         </ListItem> */}
+            <ListItem button onClick={toggleCreateFileDialog}>
+              <Button startIcon={<CreateFileIcon />}>
+                {i18n.t('createFileTitle')}
+              </Button>
+            </ListItem>
+            <ListItem button onClick={toggleLocationDialog}>
+              <Button startIcon={<LocalLocationIcon />}>
+                {i18n.t('core:createLocationTitle')}
+              </Button>
+            </ListItem>
+            <Divider />
             <ListItem
               button
               onClick={() =>
@@ -264,7 +280,12 @@ function WelcomePanel(props: Props) {
               <>
                 <Typography
                   variant="inherit"
-                  style={{ padding: 10, color: theme.palette.text.primary }}
+                  style={{
+                    padding: 10,
+                    color: theme.palette.text.primary,
+                    textTransform: 'uppercase',
+                    textAlign: 'center'
+                  }}
                   noWrap
                 >
                   {i18n.t('core:fileOpenHistory')}
@@ -288,7 +309,12 @@ function WelcomePanel(props: Props) {
               <>
                 <Typography
                   variant="inherit"
-                  style={{ padding: 10, color: theme.palette.text.primary }}
+                  style={{
+                    padding: 10,
+                    color: theme.palette.text.primary,
+                    textTransform: 'uppercase',
+                    textAlign: 'center'
+                  }}
                   noWrap
                 >
                   {i18n.t('core:fileEditHistory')}
@@ -312,7 +338,12 @@ function WelcomePanel(props: Props) {
               <>
                 <Typography
                   variant="inherit"
-                  style={{ padding: 10, color: theme.palette.text.primary }}
+                  style={{
+                    padding: 10,
+                    color: theme.palette.text.primary,
+                    textTransform: 'uppercase',
+                    textAlign: 'center'
+                  }}
                   noWrap
                 >
                   {i18n.t('core:folderOpenHistory')}
@@ -351,6 +382,8 @@ function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
       setFirstRun: SettingsActions.setFirstRun,
+      toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
+      toggleLocationDialog: AppActions.toggleLocationDialog,
       openURLExternally: AppActions.openURLExternally,
       toggleKeysDialog: AppActions.toggleKeysDialog,
       toggleAboutDialog: AppActions.toggleAboutDialog,

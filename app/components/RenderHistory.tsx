@@ -8,13 +8,12 @@ import { Tooltip } from '@mui/material';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 import BookmarkTwoToneIcon from '@mui/icons-material/BookmarkTwoTone';
-import HistoryIcon from '@mui/icons-material/ChangeHistoryTwoTone';
 import {
   extractDirectoryName,
   extractFileName
 } from '@tagspaces/tagspaces-platforms/paths';
 import IconButton from '@mui/material/IconButton';
-import DeleteIcon from '@mui/icons-material/RemoveCircleOutline';
+import { RemoveIcon, HistoryIcon } from '-/components/CommonIcons';
 
 /**
  * TagSpaces - universal file and folder organizer
@@ -116,7 +115,7 @@ export const renderHistory = (
                 data-tid="editSearchTID"
                 size="small"
               >
-                <DeleteIcon />
+                <RemoveIcon />
               </IconButton>
             </Grid>
           )}
