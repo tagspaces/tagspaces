@@ -708,5 +708,11 @@
   "moveToBottom": "Move to bottom",
   "openInMainArea": "Open in main area",
   "importing": "Importing",
+  "changeDate": "Change Date",
+  "changeTime": "Change Time",
+  "toDate": "To Date",
+  "toTime": "To Time",
+  "fromDate": "From Date",
+  "fromTime": "From Time",
   "-": "-"
 }

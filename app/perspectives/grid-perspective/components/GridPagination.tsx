@@ -394,6 +394,9 @@ function GridPagination(props: Props) {
       200
     );
   }
+
+  const displayDescription = showDescription && currentDirectoryDescription;
+
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions,jsx-a11y/no-static-element-interactions
     <div
@@ -523,12 +526,14 @@ function GridPagination(props: Props) {
                       top: 10,
                       right: 10
                     }}
-                  />
+                  >
+                    {/* <EntryIcon isFile={false} /> */}
+                  </div>
                 </Tooltip>
               </div>
             </Grid>
           )}
-          {showDescription && currentDirectoryDescription && (
+          {displayDescription && (
             <Grid
               item
               xs={12}
@@ -604,7 +609,11 @@ function GridPagination(props: Props) {
           )}
           {!isAppLoading && pageFiles.length < 1 && directories.length < 1 && (
             <div style={{ textAlign: 'center' }}>
-              <EntryIcon isFile={false} />
+              {!displayDescription && (
+                <div style={{ position: 'relative', marginBottom: 150 }}>
+                  <EntryIcon isFile={false} />
+                </div>
+              )}
               <Typography
                 style={{ padding: 15, color: theme.palette.text.secondary }}
               >
@@ -622,7 +631,11 @@ function GridPagination(props: Props) {
             directories.length >= 1 &&
             !showDirectories && (
               <div style={{ textAlign: 'center' }}>
-                <EntryIcon isFile={false} />
+                {!displayDescription && (
+                  <div style={{ position: 'relative', marginBottom: 150 }}>
+                    <EntryIcon isFile={false} />
+                  </div>
+                )}
                 <Typography
                   style={{ padding: 15, color: theme.palette.text.secondary }}
                 >
