@@ -28,8 +28,6 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import IconButton from '@mui/material/IconButton';
 import ThemingIcon from '@mui/icons-material/InvertColors';
-import LocationsIcon from '@mui/icons-material/WorkOutline';
-import CreateIcon from '@mui/icons-material/Add';
 import TagLibraryIcon from '@mui/icons-material/LocalOfferOutlined';
 import RecentThingsIcon from '@mui/icons-material/BookmarksOutlined';
 import HelpIcon from '@mui/icons-material/HelpOutline';
@@ -64,6 +62,7 @@ import {
 import Links from '-/links';
 import StoredSearches from '-/components/StoredSearches';
 import UserDetailsPopover from '-/components/UserDetailsPopover';
+import { CreateFileIcon, LocalLocationIcon } from '-/components/CommonIcons';
 import { getUuid } from '-/services/utils-io';
 
 const styles: any = (theme: any) => ({
@@ -128,6 +127,7 @@ function MobileNavigation(props: Props) {
   const {
     classes,
     toggleCreateFileDialog,
+    toggleLocationDialog,
     toggleOnboardingDialog,
     toggleSettingsDialog,
     toggleKeysDialog,
@@ -175,31 +175,25 @@ function MobileNavigation(props: Props) {
             <Button
               data-tid="createNewFileTID"
               onClick={() => {
-                if (props.isReadOnlyMode || !directoryPath) {
-                  showNotification(
-                    'You are in read-only mode or there is no opened location'
-                  );
-                } else {
-                  toggleCreateFileDialog();
-                  if (hideDrawer) {
-                    hideDrawer();
-                  }
+                toggleCreateFileDialog();
+                if (hideDrawer) {
+                  hideDrawer();
                 }
               }}
               size="small"
               color="primary"
             >
-              <CreateIcon />
+              <CreateFileIcon />
             </Button>
           </Tooltip>
           <Tooltip title={i18n.t('core:createLocationTitle')}>
             <Button
               data-tid="createNewLocation"
-              onClick={props.toggleLocationDialog}
+              onClick={toggleLocationDialog}
               size="small"
               color="primary"
             >
-              <LocationsIcon />
+              <LocalLocationIcon />
               &nbsp;
               <span
                 style={{
@@ -267,7 +261,7 @@ function MobileNavigation(props: Props) {
               data-tid="locationManager"
               value="check"
             >
-              <LocationsIcon />
+              <LocalLocationIcon />
             </ToggleButton>
           </Tooltip>
           <Tooltip title={i18n.t('core:tagLibrary')}>

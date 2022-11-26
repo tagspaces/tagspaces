@@ -43,6 +43,7 @@ import {
   getSelectedEntries
 } from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
+import { getLocations, getFirstRWLocation } from '-/reducers/locations';
 import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Spacer from '-/components/Spacer';
@@ -65,11 +66,14 @@ const styles: any = () => ({
 interface Props {
   open: boolean;
   classes: any;
+  locations: Array<TS.Location>;
+  firstRWLocation: TS.Location;
   selectedEntries: Array<TS.FileSystemEntry>;
   currentDirectoryPath: string | null;
+  openLocation: (location: TS.Location) => void;
   // selectedDirectoryPath: string;
   // chooseDirectoryPath: (path: string) => void;
-  showNotification: (message: string, type: string, autohide: boolean) => void;
+  showNotification: (message: string, type: string) => void;
   reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => void;
   createFileAdvanced: (
     targetPath: string,
@@ -89,7 +93,18 @@ interface Props {
 }
 
 function CreateDialog(props: Props) {
-  const { classes, open, onClose } = props;
+  const {
+    classes,
+    open,
+    onClose,
+    createFileAdvanced,
+    openLocation,
+    currentDirectoryPath,
+    selectedEntries,
+    // locations,
+    showNotification,
+    firstRWLocation
+  } = props;
   const fileName = useRef<string>(
     'note' +
       AppConfig.beginTagContainer +
@@ -101,13 +116,16 @@ function CreateDialog(props: Props) {
   let fileInput: HTMLInputElement;
   const fileContent = '';
 
-  const selectedDirectoryPath =
-    props.selectedEntries && props.selectedEntries.length === 1
-      ? props.selectedEntries[0].path
-      : props.currentDirectoryPath;
-  if (!selectedDirectoryPath) {
-    return null;
+  let selectedDirectoryPath =
+    selectedEntries && selectedEntries.length === 1
+      ? selectedEntries[0].path
+      : currentDirectoryPath;
+
+  if (!selectedDirectoryPath && firstRWLocation) {
+    selectedDirectoryPath = firstRWLocation.path;
   }
+
+  const noSuitableLocation = !selectedDirectoryPath;
 
   // function handleKeyPress(event: any) {
   //   if (event.key === 'n') {
@@ -125,43 +143,53 @@ function CreateDialog(props: Props) {
   //   }
   // }
 
+  function loadLocation() {
+    if (!currentDirectoryPath && firstRWLocation) {
+      openLocation(firstRWLocation);
+    }
+  }
+
   function createRichTextFile() {
     if (selectedDirectoryPath && !fileNameValidation(fileName.current)) {
-      props.createFileAdvanced(
+      loadLocation();
+      createFileAdvanced(
         selectedDirectoryPath,
         fileName.current,
         fileContent,
         'html'
       );
-      props.onClose();
+      onClose();
     }
   }
 
   function createTextFile() {
     if (selectedDirectoryPath && !fileNameValidation(fileName.current)) {
-      props.createFileAdvanced(
+      loadLocation();
+      createFileAdvanced(
         selectedDirectoryPath,
         fileName.current,
         fileContent,
         'txt'
       );
-      props.onClose();
+      onClose();
     }
   }
 
   function createMarkdownFile() {
     if (selectedDirectoryPath && !fileNameValidation(fileName.current)) {
-      props.createFileAdvanced(
+      loadLocation();
+      createFileAdvanced(
         selectedDirectoryPath,
         fileName.current,
         fileContent,
         'md'
       );
-      props.onClose();
+      onClose();
     }
   }
 
   function addFile() {
+    loadLocation();
     fileInput.click();
   }
 
@@ -183,7 +211,7 @@ function CreateDialog(props: Props) {
       .catch(error => {
         console.log('uploadFiles', error);
       });
-    props.onClose();
+    onClose();
   }
 
   const onInputFocus = event => {
@@ -230,20 +258,17 @@ function CreateDialog(props: Props) {
       fullScreen={fullScreen}
       keepMounted
       scroll="paper"
-      onKeyDown={event => {
-        // if (event.key === 'N' || event.key === 'n') {
-        //   createRichTextFile();
-        // } else if (event.key === 'T' || event.key === 't') {
-        //   createTextFile();
-        // } else if (event.key === 'M' || event.key === 'm') {
-        //   createMarkdownFile();
-        // } else if (event.key === 'A' || event.key === 'a') {
-        //   addFile();
-        // } else
-        /* if (event.key === 'Escape') {
-          onClose();
-        } */
-      }}
+      // onKeyDown={event => {
+      //   // if (event.key === 'N' || event.key === 'n') {
+      //   //   createRichTextFile();
+      //   // } else if (event.key === 'T' || event.key === 't') {
+      //   //   createTextFile();
+      //   // } else if (event.key === 'M' || event.key === 'm') {
+      //   //   createMarkdownFile();
+      //   // } else if (event.key === 'A' || event.key === 'a') {
+      //   //   addFile();
+      //   // } else
+      // }}
     >
       <DialogTitle>
         {i18n.t('createNewContent')}
@@ -255,12 +280,20 @@ function CreateDialog(props: Props) {
           display: 'flex',
           minWidth: 200,
           minHeight: 300,
+          marginBottom: 20,
           overflow: 'overlay',
           alignSelf: 'center'
         }}
         data-tid="keyboardShortCutsDialog"
       >
         <Grid style={{ flexGrow: 1, width: '100%' }} container spacing={1}>
+          {noSuitableLocation && (
+            <Grid item xs={12}>
+              <Typography>
+                File can not be created. No suitable location found!
+              </Typography>
+            </Grid>
+          )}
           <Grid item xs={12}>
             <FormControl fullWidth={true} error={inputError}>
               <TextField
@@ -272,8 +305,12 @@ function CreateDialog(props: Props) {
                 onChange={handleInputChange}
                 onFocus={onInputFocus}
                 defaultValue={fileName.current}
+                disabled={noSuitableLocation}
                 fullWidth={true}
                 data-tid="newEntryDialogInputTID"
+                helperText={
+                  'File will be created in : ' + selectedDirectoryPath
+                }
               />
               {inputError && (
                 <FormHelperText>{i18n.t('core:fileNameHelp')}</FormHelperText>
@@ -287,6 +324,7 @@ function CreateDialog(props: Props) {
               className={classes.createButton}
               // title={i18n.t('createMarkdownTitle')}
               data-tid="createMarkdownButton"
+              disabled={noSuitableLocation}
             >
               <Avatar>
                 <MarkdownFileIcon />
@@ -309,6 +347,7 @@ function CreateDialog(props: Props) {
               className={classes.createButton}
               // title={i18n.t('createNoteTitle')}
               data-tid="createRichTextFileButton"
+              disabled={noSuitableLocation}
             >
               <Avatar>
                 <HTMLFileIcon />
@@ -331,6 +370,7 @@ function CreateDialog(props: Props) {
               className={classes.createButton}
               // title={i18n.t('createTextFileTitle')}
               data-tid="createTextFileButton"
+              disabled={noSuitableLocation}
             >
               <Avatar>
                 <TextFileIcon />
@@ -353,6 +393,7 @@ function CreateDialog(props: Props) {
               className={classes.createButton}
               // title={i18n.t('addFilesTitle')}
               data-tid="addFilesButton"
+              disabled={noSuitableLocation}
             >
               <Avatar>
                 <AddFileIcon />
@@ -386,6 +427,8 @@ function CreateDialog(props: Props) {
 
 function mapStateToProps(state) {
   return {
+    locations: getLocations(state),
+    firstRWLocation: getFirstRWLocation(state),
     keyBindings: getKeyBindingObject(state),
     selectedEntries: getSelectedEntries(state),
     currentDirectoryPath: getDirectoryPath(state)
@@ -395,6 +438,7 @@ function mapStateToProps(state) {
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
+      openLocation: AppActions.openLocation,
       createFileAdvanced: AppActions.createFileAdvanced,
       showNotification: AppActions.showNotification,
       reflectCreateEntries: AppActions.reflectCreateEntries,

@@ -19,16 +19,34 @@
 import React from 'react';
 import ParentFolder from '@mui/icons-material/ReplyOutlined';
 import Help from '@mui/icons-material/Help';
+import Remove from '@mui/icons-material/RemoveCircleOutline';
+import History from '@mui/icons-material/ChangeHistoryTwoTone';
 import Settings from '@mui/icons-material/Settings';
 import InfoIcon from '@mui/icons-material/Info';
+import AddIcon from '@mui/icons-material/Add';
+import Suitcase from '@mui/icons-material/WorkOutline';
+import Link from '@mui/icons-material/Link';
+import KeyShortcuts from '@mui/icons-material/Keyboard';
 
-export const ParentFolderIcon = () => (
+export const ParentFolderIcon = props => (
   // <ParentDirIcon style={{ transform: 'rotate(-90deg)' }} /> SubdirectoryArrowLeft
-  <ParentFolder />
+  <ParentFolder {...props} />
 );
 
-export const HelpIcon = () => <Help />;
+export const HelpIcon = props => <Help {...props} />;
 
-export const PerspectiveSettingsIcon = () => <Settings />;
+export const RemoveIcon = props => <Remove {...props} />;
 
-export const FolderPropertiesIcon = () => <InfoIcon />;
+export const HistoryIcon = props => <History {...props} />;
+
+export const PerspectiveSettingsIcon = props => <Settings {...props} />;
+
+export const FolderPropertiesIcon = props => <InfoIcon {...props} />;
+
+export const CreateFileIcon = props => <AddIcon {...props} />;
+
+export const LocalLocationIcon = props => <Suitcase {...props} />;
+
+export const OpenLinkIcon = props => <Link {...props} />;
+
+export const KeyShortcutsIcon = props => <KeyShortcuts {...props} />;
