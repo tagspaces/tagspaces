@@ -25,12 +25,14 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
+import InputAdornment from '@mui/material/InputAdornment';
 import Dialog from '@mui/material/Dialog';
 import i18n from '-/services/i18n';
 import { actions as AppActions } from '-/reducers/app';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import InfoIcon from '-/components/InfoIcon';
 
 interface Props {
   open: boolean;
@@ -90,7 +92,8 @@ function OpenLinkDialog(props: Props) {
     <Dialog
       open={open}
       onClose={onClose}
-      fullScreen={fullScreen}
+      style={{ minWidth: 300 }}
+      // fullScreen={fullScreen}
       onKeyDown={event => {
         if (event.key === 'Enter' || event.keyCode === 13) {
           event.preventDefault();
@@ -105,7 +108,7 @@ function OpenLinkDialog(props: Props) {
         {i18n.t('core:openLink')}
         <DialogCloseButton onClose={onClose} />
       </DialogTitle>
-      <DialogContent style={{ minWidth: 400 }}>
+      <DialogContent>
         <FormControl fullWidth={true} error={inputError}>
           <TextField
             fullWidth
@@ -119,6 +122,13 @@ function OpenLinkDialog(props: Props) {
             }}
             value={linkURL}
             data-tid="directoryName"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="start">
+                  <InfoIcon tooltip="TagSpace links begin with ts:? and are used for internal sharing of files and folders" />
+                </InputAdornment>
+              )
+            }}
           />
         </FormControl>
       </DialogContent>
