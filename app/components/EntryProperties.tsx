@@ -18,7 +18,7 @@
 
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
-import { getBgndFileLocationForDirectory } from '@tagspaces/tagspaces-common/paths';
+import { getBgndFileLocationForDirectory } from '@tagspaces/tagspaces-platforms/paths';
 import L from 'leaflet';
 import { Theme } from '@mui/material/styles';
 import withStyles from '@mui/styles/withStyles';

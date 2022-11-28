@@ -30,10 +30,9 @@ import {
   getMetaFileLocationForDir,
   getMetaFileLocationForFile,
   getThumbFileLocationForDirectory,
-  getBgndFileLocationForDirectory,
   getThumbFileLocationForFile,
   extractDirectoryName
-} from '@tagspaces/tagspaces-common/paths';
+} from '@tagspaces/tagspaces-platforms/paths';
 import i18n from '-/services/i18n';
 import {
   actions as AppActions,
