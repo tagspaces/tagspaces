@@ -28,14 +28,13 @@ import Dialog from '@mui/material/Dialog';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import ProTeaserImage from '-/assets/images/pro-teaser.svg';
 import ThumbsImage from '-/assets/images/thumbnails-undraw.svg';
-// import PerspectivesImage from '-/assets/images/perspectives-undraw.svg';
 import CloudImage from '-/assets/images/aws-s3-in-tagspaces.png';
 import SearchImage from '-/assets/images/search-undraw.svg';
 import MapImage from '-/assets/images/mapique-perspective.jpg';
 import GalleryImage from '-/assets/images/gallery-perspective.jpg';
+import KanbanImage from '-/assets/images/kanban-perspective.jpg';
 import CustomFolderColor from '-/assets/images/custom-folder-color.jpg';
 import EntryDescription from '-/assets/images/entry-description.jpg';
-// import AnnotateImage from '-/assets/images/annotate-undraw.svg';
 import EnterpriseImage from '-/assets/images/world-undraw.svg';
 import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
@@ -76,14 +75,32 @@ slidesEN['general'] = {
       <br />
       On top of that you will get <b>a lot of useful features</b>, extended
       search functionalities, alternative perspectives for your files, geo
-      tagging functionality and ability to connect AWS S3 compatible object
-      storage. Some of these features are briefly presented on the next pages.
+      tagging functionality. Some of these features are briefly presented on the
+      next slides.
     </>
   ),
   ctaURL: Links.links.productsOverview,
   ctaTitle: 'Compare TagSpaces Lite vs. Pro',
   pictureURL: ProTeaserImage,
   pictureHeight: 150
+};
+slidesEN['kanban'] = {
+  title: 'Kanban Perspectives',
+  description: (
+    <>
+      This perspective can turn every folder into a Kanban board, where columns
+      represents the sub folders of the current folder. Every file from the sub
+      folders is shown as a tile and can be moved with drag and drop between the
+      columns. The columns itself can be moved with drag and drop too. There is
+      a built-in <b>Trello import</b>, where a Trello JSON export can be
+      imported in the current folder.
+    </>
+  ),
+  ctaURL: Links.documentationLinks.kanbanPerspective,
+  ctaTitle: i18n.t('showMeMore'),
+  pictureURL: KanbanImage,
+  pictureShadow: true,
+  pictureHeight: 300
 };
 slidesEN['gallery'] = {
   title: 'Gallery Perspectives',
@@ -101,8 +118,6 @@ slidesEN['gallery'] = {
   ctaTitle: i18n.t('showMeMore'),
   pictureURL: GalleryImage,
   pictureShadow: true,
-  // videoURL: 'https://www.tagspaces.org/content/v3-10/perpspective-switch.mp4_',
-  // videoPosterURL: PerspectivesImage,
   pictureHeight: 300
 };
 slidesEN['mapique'] = {
@@ -190,33 +205,6 @@ slidesEN['search'] = {
   pictureURL: SearchImage,
   pictureHeight: 150
 };
-// slidesEN['objectstorage'] = {
-//   title: 'Connect AWS S3 or MinIO object storage',
-//   items: [
-//     <>
-//       TagSpaces Pro supports connecting{' '}
-//       <b>Amazon S3 compliant storage providers</b> as locations. Such storage is
-//       offered by Amazon AWS, Wasabi and many others. You can also host an object
-//       storage <b>privately</b> (e.g. on your NAS) with the help of open source
-//       projects like MinIO.
-//     </>,
-//     <>
-//       This allows you to <b>work collaboratively</b> on the same files with
-//       family members or co-workers.
-//     </>,
-//     <>
-//       By doing so, you are getting a Cloud based{' '}
-//       <b>full-fledged file organizer and browser</b>, so you do not have to
-//       download files in order to preview, edit or annotate them. On top of that
-//       you can <b>stream audio and video</b> files from the Cloud location.
-//     </>
-//   ],
-//   ctaURL: Links.links.productProObjectStore,
-//   ctaTitle: i18n.t('showMeMore'),
-//   pictureURL: CloudImage,
-//   pictureShadow: true,
-//   pictureHeight: 300
-// };
 slidesEN['folderColor'] = {
   title: 'Folders with custom backgrounds',
   description: (
@@ -266,20 +254,33 @@ slidesEN['enterprise'] = {
   pictureURL: EnterpriseImage,
   pictureHeight: 200
 };
-slidesEN['persistentThumbs'] = {
-  title: 'Generating persistent thumbnails',
-  description: (
-    <>
-      TagSpaces Pro generates persistent thumbnails for many file type such as:
-      images, videos, notes, source code, office documents, bookmarks, ebooks,
-      archives and PDFs.
-    </>
-  ),
-  ctaURL: Links.links.productProThumbnailsGeneration,
-  ctaTitle: 'Learn more',
-  pictureURL: ThumbsImage,
-  pictureHeight: 200
-};
+// slidesEN['objectstorage'] = {
+//   title: 'Connect AWS S3 or MinIO object storage',
+//   items: [
+//     <>
+//       TagSpaces Pro supports connecting{' '}
+//       <b>Amazon S3 compliant storage providers</b> as locations. Such storage is
+//       offered by Amazon AWS, Wasabi and many others. You can also host an object
+//       storage <b>privately</b> (e.g. on your NAS) with the help of open source
+//       projects like MinIO.
+//     </>,
+//     <>
+//       This allows you to <b>work collaboratively</b> on the same files with
+//       family members or co-workers.
+//     </>,
+//     <>
+//       By doing so, you are getting a Cloud based{' '}
+//       <b>full-fledged file organizer and browser</b>, so you do not have to
+//       download files in order to preview, edit or annotate them. On top of that
+//       you can <b>stream audio and video</b> files from the Cloud location.
+//     </>
+//   ],
+//   ctaURL: Links.links.productProObjectStore,
+//   ctaTitle: i18n.t('showMeMore'),
+//   pictureURL: CloudImage,
+//   pictureShadow: true,
+//   pictureHeight: 300
+// };
 
 function Slide(props: SlideProps) {
   const {
@@ -370,7 +371,7 @@ function Slide(props: SlideProps) {
 function ProTeaserDialog(props: Props) {
   const [activeStep, setActiveStep] = useState<number>(0);
 
-  const maxSteps = 7;
+  const maxSteps = Object.keys(slidesEN).length;
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -388,6 +389,12 @@ function ProTeaserDialog(props: Props) {
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+
+  const slides = [];
+  for (let index in slidesEN) {
+    slides.push(<Slide {...slidesEN[index]} openURL={openURLExternally} />);
+  }
+
   return (
     <Dialog
       open={open}
@@ -411,14 +418,7 @@ function ProTeaserDialog(props: Props) {
           onChangeIndex={handleStepChange}
           enableMouseEvents
         >
-          <Slide {...slidesEN['general']} openURL={openURLExternally} />
-          <Slide {...slidesEN['gallery']} openURL={openURLExternally} />
-          <Slide {...slidesEN['mapique']} openURL={openURLExternally} />
-          <Slide {...slidesEN['annotation']} openURL={openURLExternally} />
-          <Slide {...slidesEN['search']} openURL={openURLExternally} />
-          {/* <Slide {...slidesEN['objectstorage']} openURL={openURLExternally} /> */}
-          <Slide {...slidesEN['folderColor']} openURL={openURLExternally} />
-          <Slide {...slidesEN['enterprise']} openURL={openURLExternally} />
+          {slides ? slides : <></>}
         </SwipeableViews>
       </DialogContent>
       <DialogActions style={{ justifyContent: 'center' }}>
