@@ -34,7 +34,6 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import MobileStepper from '@mui/material/MobileStepper';
 import Dialog from '@mui/material/Dialog';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
-import NavigationV3 from '-/assets/images/navigation-v3.png';
 import BrowserExtension from '-/assets/images/collectcontent.svg';
 import WizardFinished from '-/assets/images/computer-desk.svg';
 import ChooseTagging from '-/assets/images/abacus.svg';
@@ -139,18 +138,6 @@ function OnboardingDialog(props: Props) {
               <ToggleButton value="dark">Dark</ToggleButton>
             </ToggleButtonGroup>
           </div>
-          {/* <div
-            style={{
-              textAlign: 'center'
-            }}
-          >
-            <Typography variant="h5">Navigation in the app</Typography>
-            <img
-              style={{ marginTop: 15, maxHeight: 500 }}
-              src={NavigationV3}
-              alt=""
-            />
-          </div> */}
           <div
             style={{
               textAlign: 'center'

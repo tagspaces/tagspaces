@@ -455,6 +455,7 @@ function TagLibrary(props: Props) {
         style={{
           paddingTop: 0,
           marginTop: 0,
+          borderRadius: 5,
           height: 'calc(100% - ' + reduceHeightBy + 'px)',
           // @ts-ignore
           overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'

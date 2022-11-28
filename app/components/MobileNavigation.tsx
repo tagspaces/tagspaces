@@ -56,8 +56,7 @@ import {
 import LoadingLazy from '-/components/LoadingLazy';
 import {
   actions as SettingsActions,
-  getCurrentLanguage,
-  isFirstRun
+  getCurrentLanguage
 } from '-/reducers/settings';
 import Links from '-/links';
 import StoredSearches from '-/components/StoredSearches';
@@ -84,8 +83,6 @@ function ProTeaserDialogAsync(props) {
 
 interface Props {
   classes: any;
-  isFirstRun: boolean;
-  setFirstRun: (isFirstRun: boolean) => void;
   toggleOnboardingDialog: () => void;
   toggleCreateFileDialog: () => void;
   toggleAboutDialog: () => void;
@@ -280,7 +277,7 @@ function MobileNavigation(props: Props) {
           </Tooltip>
           <Tooltip title={i18n.t('core:quickAccess')}>
             <ToggleButton
-              data-tid="search"
+              data-tid="quickAccessButton"
               onClick={openSearchPanel}
               className={
                 props.isSearchPanelOpened
@@ -364,7 +361,6 @@ function MobileNavigation(props: Props) {
 
 function mapStateToProps(state) {
   return {
-    isFirstRun: isFirstRun(state),
     isSettingsDialogOpened: isSettingsDialogOpened(state),
     isLocationManagerPanelOpened: isLocationManagerPanelOpened(state),
     isTagLibraryPanelOpened: isTagLibraryPanelOpened(state),
@@ -393,8 +389,7 @@ function mapActionCreatorsToProps(dispatch) {
       openURLExternally: AppActions.openURLExternally,
       showNotification: AppActions.showNotification,
       // closeAllVerticalPanels: AppActions.closeAllVerticalPanels,
-      switchTheme: SettingsActions.switchTheme,
-      setFirstRun: SettingsActions.setFirstRun
+      switchTheme: SettingsActions.switchTheme
     },
     dispatch
   );

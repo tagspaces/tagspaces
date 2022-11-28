@@ -166,6 +166,7 @@ function LocationManager(props: Props) {
         data-tid="locationList"
         style={{
           height: 'calc(100% - ' + reduceHeightBy + 'px)',
+          borderRadius: 5,
           // @ts-ignore
           overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
         }}
