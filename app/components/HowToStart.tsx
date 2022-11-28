@@ -10,6 +10,7 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import i18n from '-/services/i18n';
 import Links from '-/links';
+import { ProSign } from '-/components/HelperComponents';
 
 export const styles: any = (theme: any) => ({
   recentTitle: {
@@ -32,6 +33,9 @@ function clearHighlights() {
   selectByTID('tagLibraryTagGroupList') &&
     selectByTID('tagLibraryTagGroupList').classList.remove('highlighterOn');
   selectByTID('quickAccessButton').classList.remove('highlighterOn');
+  selectByTID('quickAccessArea') &&
+    selectByTID('quickAccessArea').classList.remove('highlighterOn');
+  selectByTID('floatingPerspectiveSwitcher').classList.remove('highlighterOn');
 }
 
 interface Props {
@@ -70,7 +74,7 @@ function HowToStart(props: Props) {
             variant="text"
             color="primary"
           >
-            More about locations
+            Find out more
           </Button>
         </>
       ),
@@ -98,7 +102,7 @@ function HowToStart(props: Props) {
             variant="text"
             color="primary"
           >
-            Videos for creating location
+            Videos Tutorials
           </Button>
         </>
       ),
@@ -113,6 +117,17 @@ function HowToStart(props: Props) {
           The tag library is the place where you can manage and organize the
           tags with which you can tag your files and folders. In order to apply
           a tag you have to just and drop and drop it on a file or folder.
+          <br />
+          <Button
+            style={{ marginTop: 20 }}
+            onClick={() => {
+              openURLExternally(Links.documentationLinks.taglibrary, true);
+            }}
+            variant="text"
+            color="primary"
+          >
+            Find out more
+          </Button>
         </>
       ),
       action: () => {
@@ -125,12 +140,103 @@ function HowToStart(props: Props) {
     },
     {
       label: 'Quick access section',
-      description: <>Here you will</>,
+      description: (
+        <>
+          In this section you can get easy access to the following list:
+          <ul>
+            <li>
+              Search you have stored for later use&nbsp;
+              <ProSign />
+            </li>
+            <li>
+              Bookmarks to files and folders&nbsp;
+              <ProSign />
+            </li>
+            <li>
+              Recently opened files&nbsp;
+              <ProSign />
+            </li>
+            <li>
+              Recently edited files&nbsp;
+              <ProSign />
+            </li>
+            <li>
+              Recently opened folder&nbsp;
+              <ProSign />
+            </li>
+          </ul>
+        </>
+      ),
       action: () => {
         selectByTID('quickAccessButton').click();
         setTimeout(() => {
           selectByTID('quickAccessButton').classList.add('highlighterOn');
+          selectByTID('quickAccessArea').classList.add('highlighterOn');
         }, 2000);
+      }
+    },
+    {
+      label: 'Perspectives Switcher',
+      description: (
+        <>
+          Perspective offer a different view on the files in a given folder.
+          With the switcher you can change the perspective of the current
+          folder.
+          <ul>
+            <li>Grid</li>
+            <li>List</li>
+            <li>
+              Gallery&nbsp;
+              <ProSign />
+            </li>
+            <li>
+              Mapique&nbsp;
+              <ProSign />
+            </li>
+            <li>
+              Kanban&nbsp;
+              <ProSign />
+            </li>
+          </ul>
+          <Button
+            style={{ marginTop: 20 }}
+            onClick={() => {
+              openURLExternally(Links.documentationLinks.perspectives, true);
+            }}
+            variant="text"
+            color="primary"
+          >
+            Find out more
+          </Button>
+        </>
+      ),
+      action: () => {
+        selectByTID('floatingPerspectiveSwitcher').classList.add(
+          'highlighterOn'
+        );
+      }
+    },
+    {
+      label: 'Creating files',
+      description: (
+        <>
+          The settings of the application can be accessed with highlighted
+          button.
+          <br />
+          <Button
+            style={{ marginTop: 20 }}
+            onClick={() => {
+              openURLExternally(Links.documentationLinks.creatingFiles, true);
+            }}
+            variant="text"
+            color="primary"
+          >
+            Find out more
+          </Button>
+        </>
+      ),
+      action: () => {
+        selectByTID('createNewFileTID').classList.add('highlighterOn');
       }
     },
     {
@@ -142,23 +248,22 @@ function HowToStart(props: Props) {
           choosing the color theme, language, perspective, tagging method and so
           on. Further more here you can change the key binding and define how
           you would like to open and edit certain file types.
+          <br />
+          <Button
+            style={{ marginTop: 20 }}
+            onClick={() => {
+              openURLExternally(Links.documentationLinks.settings, true);
+            }}
+            variant="text"
+            color="primary"
+          >
+            Find out more
+          </Button>
         </>
       ),
       action: () => {
         selectByTID('locationManager').click();
         selectByTID('settings').classList.add('highlighterOn');
-      }
-    },
-    {
-      label: 'Creating files',
-      description: (
-        <>
-          The settings of the application can be accessed with highlighted
-          button.
-        </>
-      ),
-      action: () => {
-        selectByTID('createNewFileTID').classList.add('highlighterOn');
       }
     },
     {
@@ -242,14 +347,16 @@ function HowToStart(props: Props) {
                     onClick={handleNext}
                     sx={{ mt: 1, mr: 1 }}
                   >
-                    {index === steps.length - 1 ? 'Finish' : 'Continue'}
+                    {index === steps.length - 1
+                      ? i18n.t('core:finish')
+                      : i18n.t('core:goforward')}
                   </Button>
                   <Button
                     disabled={index === 0}
                     onClick={handleBack}
                     sx={{ mt: 1, mr: 1 }}
                   >
-                    Back
+                    {i18n.t('core:goback')}
                   </Button>
                 </div>
               </Box>
@@ -261,7 +368,7 @@ function HowToStart(props: Props) {
         <Paper square elevation={0} sx={{ p: 3 }}>
           <Typography>All steps completed - you&apos;re finished</Typography>
           <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
-            Reset
+            {i18n.t('core:resetBtn')}
           </Button>
         </Paper>
       )}
