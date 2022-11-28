@@ -654,6 +654,7 @@ function FolderContainer(props: Props) {
         <ToggleButtonGroup
           value={currentPerspective}
           size="small"
+          data-tid="floatingPerspectiveSwitcher"
           disabled={showWelcomePanel}
           aria-label="change perspective"
           exclusive

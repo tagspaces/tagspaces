@@ -198,9 +198,13 @@ function StoredSearches(props: Props) {
   return (
     <div
       className={classes.panel}
+      data-tid="quickAccessArea"
       style={{
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        borderRadius: 5,
+        marginLeft: 5,
+        marginRight: 5
       }}
     >
       <div className={classes.toolbar}>

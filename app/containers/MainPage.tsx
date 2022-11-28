@@ -707,6 +707,7 @@ function MainPage(props: Props) {
       {props.isSettingsDialogOpened && (
         <SettingsDialog
           open={props.isSettingsDialogOpened}
+          openURLExternally={openURLExternally}
           onClose={toggleSettingsDialog}
         />
       )}

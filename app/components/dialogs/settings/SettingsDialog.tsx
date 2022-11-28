@@ -46,6 +46,7 @@ import { clearAllURLParams } from '-/utils/dom';
 import SettingsAdvanced from '-/components/dialogs/settings/SettingsAdvanced';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { getUuid } from '-/services/utils-io';
+import Links from '-/links';
 
 const styles: any = () => ({
   mainContent: {
@@ -58,6 +59,7 @@ interface Props {
   classes?: any;
   onClose: () => void;
   setSupportedFileTypes?: (fileTypes: Array<any>) => void;
+  openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   supportedFileTypes?: Array<any>;
 }
 
@@ -308,6 +310,15 @@ function SettingsDialog(props: Props) {
         justifyContent: currentTab === 1 ? 'space-between' : 'flex-end'
       }}
     >
+      <Button
+        onClick={() =>
+          openURLExternally(Links.documentationLinks.settings, true)
+        }
+        color="secondary"
+        style={{ float: 'left' }}
+      >
+        {i18n.t('core:help')}
+      </Button>
       {currentTab === 1 && (
         <Button
           data-tid="addNewFileTypeTID"
@@ -329,7 +340,7 @@ function SettingsDialog(props: Props) {
     </DialogActions>
   );
 
-  const { open, onClose } = props;
+  const { open, onClose, openURLExternally } = props;
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (

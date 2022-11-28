@@ -74,7 +74,8 @@ const Links = {
     locations: 'https://docs.tagspaces.org/ui/locations' + urlParams,
     taglibrary: 'https://docs.tagspaces.org/ui/taglibrary' + urlParams,
     search: 'https://docs.tagspaces.org/search' + urlParams,
-    settings: 'https://docs.tagspaces.org/ui/settings' + urlParams
+    settings: 'https://docs.tagspaces.org/ui/settings' + urlParams,
+    creatingFiles: 'https://docs.tagspaces.org/creating-files' + urlParams
   }
 };
 
