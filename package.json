@@ -157,7 +157,7 @@
     "@mui/material": "^5.9.2",
     "@mui/styles": "^5.9.2",
     "@mui/x-date-pickers": "^5.0.8",
-    "@tagspaces/tagspaces-md": "2.0.51",
+    "@tagspaces/tagspaces-md": "2.0.52",
     "@tagspaces/tagspaces-platforms": "2.0.45",
     "aws-amplify": "^4.3.8",
     "aws-sdk": "^2.1036.0",
