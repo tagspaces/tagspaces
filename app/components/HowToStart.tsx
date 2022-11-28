@@ -51,8 +51,8 @@ function HowToStart(props: Props) {
       label: 'Introduction',
       description: (
         <>
-          Here you will learn some basics about how to start using the
-          application.
+          The following guide will show you some basic functionalities of the
+          application. It is recommended for first time users.
         </>
       )
     },
@@ -60,22 +60,16 @@ function HowToStart(props: Props) {
       label: 'Location Manager',
       description: (
         <>
-          Locations are connection to folder containing file, which you want to
-          use in TagSpaces. The location manager is the place where you can
-          create, edit, remove, order, import or export your locations. The
-          pre-existing location pointing for example to your Desktop or Download
-          folder are optional and can be remove.
+          In order to use a folder and files in TagSpaces you have to connect
+          this folder as location. The location manager is the place where you
+          can create, edit, remove, import or export your locations. The
+          pre-existing locations, pointing for example to your Desktop or
+          Download folders, are optional and can be removed.
           <br />
-          <Button
-            style={{ marginTop: 20 }}
-            onClick={() => {
-              openURLExternally(Links.documentationLinks.locations, true);
-            }}
-            variant="text"
-            color="primary"
-          >
-            Find out more
-          </Button>
+          <SlideButton
+            title="Find out more"
+            link={Links.documentationLinks.locations}
+          />
         </>
       ),
       action: () => {
@@ -87,23 +81,17 @@ function HowToStart(props: Props) {
       label: 'Creating a Location',
       description: (
         <>
-          Clicking the highlighted button will open a dialog where you can
-          choose which folder you want to use in TagSpaces and create a location
-          pointing to it. Depending on location type the folder can be on your
-          computer or located on a object storage in cloud. TagSpaces supports
+          The highlighted button will open a dialog where you can choose which
+          folder you want to use in TagSpaces and create a location pointing to
+          it. Depending on location's type, the folder can be on your computer
+          or located on an object storage in the Cloud. TagSpaces supports
           object storage from AWS S3 compatible providers such as Wasabi or
           Minio.
           <br />
-          <Button
-            style={{ marginTop: 20 }}
-            onClick={() => {
-              openURLExternally(Links.links.howToStart, true);
-            }}
-            variant="text"
-            color="primary"
-          >
-            Videos Tutorials
-          </Button>
+          <SlideButton
+            title="Open Videos Tutorials"
+            link={Links.links.howToStart}
+          />
         </>
       ),
       action: () => {
@@ -115,19 +103,14 @@ function HowToStart(props: Props) {
       description: (
         <>
           The tag library is the place where you can manage and organize the
-          tags with which you can tag your files and folders. In order to apply
-          a tag you have to just and drop and drop it on a file or folder.
+          tags with which you can tag your files and folders. The tags are
+          organized themselves in tag groups. In order to apply a tag, you have
+          to just drag and drop it on a file or folder.
           <br />
-          <Button
-            style={{ marginTop: 20 }}
-            onClick={() => {
-              openURLExternally(Links.documentationLinks.taglibrary, true);
-            }}
-            variant="text"
-            color="primary"
-          >
-            Find out more
-          </Button>
+          <SlideButton
+            title="Find out more"
+            link={Links.documentationLinks.taglibrary}
+          />
         </>
       ),
       action: () => {
@@ -142,10 +125,10 @@ function HowToStart(props: Props) {
       label: 'Quick access section',
       description: (
         <>
-          In this section you can get easy access to the following list:
+          In this section you can find the following functionalities:
           <ul>
             <li>
-              Search you have stored for later use&nbsp;
+              Searches you have stored for later use&nbsp;
               <ProSign />
             </li>
             <li>
@@ -179,35 +162,33 @@ function HowToStart(props: Props) {
       label: 'Perspectives Switcher',
       description: (
         <>
-          Perspective offer a different view on the files in a given folder.
-          With the switcher you can change the perspective of the current
-          folder.
+          The perspectives offer a specific view on the files in a given folder.
+          With the highlighted switcher you can change the perspective of the
+          current folder.
           <ul>
-            <li>Grid</li>
-            <li>List</li>
             <li>
-              Gallery&nbsp;
-              <ProSign />
+              <b>Grid</b> - displays files in a grid
             </li>
             <li>
-              Mapique&nbsp;
-              <ProSign />
+              <b>List</b> - displays files in a list
             </li>
             <li>
-              Kanban&nbsp;
-              <ProSign />
+              <b>Gallery</b>&nbsp;
+              <ProSign /> - suitable for folders containing images and photos
+            </li>
+            <li>
+              <b>Mapique</b>&nbsp;
+              <ProSign /> - suitable for geo-tagging
+            </li>
+            <li>
+              <b>Kanban</b>&nbsp;
+              <ProSign /> - turns every folder into a Kanban board
             </li>
           </ul>
-          <Button
-            style={{ marginTop: 20 }}
-            onClick={() => {
-              openURLExternally(Links.documentationLinks.perspectives, true);
-            }}
-            variant="text"
-            color="primary"
-          >
-            Find out more
-          </Button>
+          <SlideButton
+            title="Find out more"
+            link={Links.documentationLinks.perspectives}
+          />
         </>
       ),
       action: () => {
@@ -220,19 +201,27 @@ function HowToStart(props: Props) {
       label: 'Creating files',
       description: (
         <>
-          The settings of the application can be accessed with highlighted
-          button.
-          <br />
-          <Button
-            style={{ marginTop: 20 }}
-            onClick={() => {
-              openURLExternally(Links.documentationLinks.creatingFiles, true);
-            }}
-            variant="text"
-            color="primary"
-          >
-            Find out more
-          </Button>
+          The highlighted button will open a dialog, where you can create new
+          file or digital note. The new files can be in the following file
+          formats:
+          <ul>
+            <li>
+              <b>Markdown</b> (recommended) - suitable for notes with simple
+              formatting
+            </li>
+            <li>
+              <b>HTML</b> - suitable for documents requiring rich text
+              formatting
+            </li>
+            <li>
+              <b>Text</b> - suitable for creating plain text files, with no
+              formatting
+            </li>
+          </ul>
+          <SlideButton
+            title="Find out more"
+            link={Links.documentationLinks.creatingFiles}
+          />
         </>
       ),
       action: () => {
@@ -243,22 +232,16 @@ function HowToStart(props: Props) {
       label: 'App Settings',
       description: (
         <>
-          The settings of the application can be accessed with highlighted
-          button. In the settings dialog you can fine tune the application by
-          choosing the color theme, language, perspective, tagging method and so
-          on. Further more here you can change the key binding and define how
-          you would like to open and edit certain file types.
+          The settings of the application can be accessed with the highlighted
+          button. In the settings dialog you can configure the application's
+          color theme, language, default perspective, tagging method and so on.
+          Furthermore, here you can change the keyboard shortcuts and define how
+          you would like to open and edit the supported file types.
           <br />
-          <Button
-            style={{ marginTop: 20 }}
-            onClick={() => {
-              openURLExternally(Links.documentationLinks.settings, true);
-            }}
-            variant="text"
-            color="primary"
-          >
-            Find out more
-          </Button>
+          <SlideButton
+            title="Find out more"
+            link={Links.documentationLinks.settings}
+          />
         </>
       ),
       action: () => {
@@ -270,8 +253,8 @@ function HowToStart(props: Props) {
       label: 'Start using TagSpaces',
       description: (
         <>
-          You can start using the app by opening a location or creating a new
-          one.
+          You can start using the app by creating a new location or open an
+          existing one from the location manager.
         </>
       ),
       action: () => {
@@ -281,6 +264,21 @@ function HowToStart(props: Props) {
       }
     }
   ];
+
+  function SlideButton(props) {
+    const { title, link } = props;
+    return (
+      <Button
+        onClick={() => {
+          openURLExternally(link, true);
+        }}
+        variant="text"
+        color="primary"
+      >
+        {title}
+      </Button>
+    );
+  }
 
   const [activeStep, setActiveStep] = React.useState(0);
 
@@ -309,7 +307,7 @@ function HowToStart(props: Props) {
 
   // ${theme.palette.primary.main};
   return (
-    <Box style={{ maxWidth: 400, paddingLeft: 10, paddingRight: 10 }}>
+    <Box style={{ maxWidth: 480, paddingLeft: 10, paddingRight: 10 }}>
       <style>
         {`
         .highlighterOn {

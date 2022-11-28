@@ -51,23 +51,25 @@ export function ProLabel() {
 
 export function ProSign() {
   return (
-    <Tooltip
-      placement="top"
-      title={i18n.t('thisFunctionalityIsAvailableInPro')}
-    >
-      <Typography style={{ display: 'initial' }}>
-        <sup
-          style={{
-            fontSize: 10,
-            borderRadius: 4,
-            backgroundColor: '#1dd19f',
-            padding: 3
-          }}
-        >
-          PRO
-        </sup>
-      </Typography>
-    </Tooltip>
+    !Pro && (
+      <Tooltip
+        placement="top"
+        title={i18n.t('thisFunctionalityIsAvailableInPro')}
+      >
+        <Typography style={{ display: 'initial' }}>
+          <sup
+            style={{
+              fontSize: 10,
+              borderRadius: 4,
+              backgroundColor: '#1dd19f',
+              padding: 3
+            }}
+          >
+            PRO
+          </sup>
+        </Typography>
+      </Tooltip>
+    )
   );
 }
 

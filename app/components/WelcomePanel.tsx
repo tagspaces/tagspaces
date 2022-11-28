@@ -75,7 +75,9 @@ interface Props {
 
 export const styles: any = (theme: any) => ({
   listItem: {
-    color: theme.palette.text.primary
+    color: theme.palette.text.primary,
+    textTransform: 'uppercase',
+    marginTop: 10
   },
   recentTitle: {
     color: theme.palette.text.primary,
@@ -210,13 +212,10 @@ function WelcomePanel(props: Props) {
   function renderQuickLinks() {
     return (
       <List
-        dense={false}
-        component="nav"
-        aria-label="main help area"
+        dense={true}
+        aria-label="useful link on welcome page"
         style={{
-          width: 300,
           height: 'calc(100% - 70px)',
-          margin: 'auto',
           marginTop: 15,
           marginBottom: 15,
           // @ts-ignore
@@ -435,7 +434,7 @@ function WelcomePanel(props: Props) {
           </div>
         </Grid>
         {Pro && (
-          <Grid item xs={3} style={{ height: '100%', width: 300 }}>
+          <Grid item xs="auto" style={{ height: '100%', minWidth: 330 }}>
             <div
               style={{
                 margin: 'auto',
