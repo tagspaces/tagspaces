@@ -221,7 +221,10 @@ function HelpFeedbackPanel(props: Props) {
             </Typography>
           </ListItem>
         )}
-        <ListItem button onClick={() => openURLExternally(Links.links.twitter)}>
+        <ListItem
+          button
+          onClick={() => openURLExternally(Links.links.twitter, true)}
+        >
           <ListItemIcon>
             <TwitterIcon />
           </ListItemIcon>
@@ -229,17 +232,6 @@ function HelpFeedbackPanel(props: Props) {
             {i18n.t('core:followOnTwitter')}
           </Typography>
         </ListItem>
-        {/* <ListItem
-          button
-          onClick={() => openURLExternally(Links.links.facebook)}
-        >
-          <ListItemIcon>
-            <SocialIcon />
-          </ListItemIcon>
-          <Typography style={{ color: theme.palette.text.primary }}>
-            {i18n.t('core:likeUsOnFacebook')}
-          </Typography>
-        </ListItem> */}
         <Divider />
         <ListItem button onClick={toggleProTeaser}>
           <ListItemIcon>

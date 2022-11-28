@@ -245,14 +245,17 @@ function OnboardingDialog(props: Props) {
               textAlign: 'center'
             }}
           >
-            <Typography variant="h5">And... you&apos;re done</Typography>
+            <Typography variant="h5">
+              We hope you will love TagSpaces as much as we do!
+            </Typography>
             <img
               style={{ maxHeight: 300, marginTop: 100 }}
               src={WizardFinished}
               alt=""
             />
             <Typography variant="h6">
-              We hope you will love TagSpaces as much as we love it!
+              If you want to learn more about the application, you can start the
+              introduction from the welcome screen.
             </Typography>
           </div>
         </SwipeableViews>

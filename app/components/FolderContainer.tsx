@@ -650,10 +650,11 @@ function FolderContainer(props: Props) {
           )}
         </div>
       </div>
-      {props.isDesktopMode && !showWelcomePanel && (
+      {props.isDesktopMode && (
         <ToggleButtonGroup
           value={currentPerspective}
           size="small"
+          disabled={showWelcomePanel}
           aria-label="change perspective"
           exclusive
           style={{
