@@ -290,6 +290,12 @@ export const getDefaultLocationId = (state: any): string | undefined => {
   );
   return foundLocation ? foundLocation.uuid : undefined;
 };
+export const getCurrentLocation = (state: any): string | undefined => {
+  let foundLocation = state.locations.find(
+    location => location.uuid === state.app.currentLocationId
+  );
+  return foundLocation ? foundLocation.uuid : undefined;
+};
 export const getFirstRWLocation = (state: any): string | undefined => {
   let foundLocation = state.locations.find(
     location => location.isDefault && !location.isReadOnly

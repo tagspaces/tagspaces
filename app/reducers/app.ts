@@ -1797,6 +1797,7 @@ export const actions = {
           dispatch(actions.setCurrentLocationId(null));
           dispatch(actions.clearDirectoryContent());
           dispatch(LocationIndexActions.clearDirectoryIndex());
+          dispatch(actions.setSelectedEntries([]));
           if (Pro && Pro.Watcher) {
             Pro.Watcher.stopWatching();
           }
@@ -1811,6 +1812,7 @@ export const actions = {
     dispatch(actions.setCurrentLocationId(null));
     dispatch(actions.clearDirectoryContent());
     dispatch(LocationIndexActions.clearDirectoryIndex());
+    dispatch(actions.setSelectedEntries([]));
     if (Pro && Pro.Watcher) {
       Pro.Watcher.stopWatching();
     }

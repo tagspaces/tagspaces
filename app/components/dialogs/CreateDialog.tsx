@@ -35,6 +35,7 @@ import Dialog from '@mui/material/Dialog';
 import { Progress } from 'aws-sdk/clients/s3';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-platforms/misc';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-platforms/paths';
 import i18n from '-/services/i18n';
 import { getKeyBindingObject } from '-/reducers/settings';
 import {
@@ -43,8 +44,13 @@ import {
   getSelectedEntries
 } from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
-import { getLocations, getFirstRWLocation } from '-/reducers/locations';
+import {
+  getLocations,
+  getFirstRWLocation,
+  getCurrentLocation
+} from '-/reducers/locations';
 import { TS } from '-/tagspaces.namespace';
+import PlatformIO from '-/services/platform-facade';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Spacer from '-/components/Spacer';
 import useTheme from '@mui/styles/useTheme';
@@ -53,6 +59,7 @@ import TextField from '@mui/material/TextField';
 import FormHelperText from '@mui/material/FormHelperText';
 import { FormControl } from '@mui/material';
 import { fileNameValidation } from '-/services/utils-io';
+import { PerspectiveIDs } from '-/perspectives';
 
 const styles: any = () => ({
   createButton: {
@@ -66,8 +73,9 @@ const styles: any = () => ({
 interface Props {
   open: boolean;
   classes: any;
-  locations: Array<TS.Location>;
+  // locations: Array<TS.Location>;
   firstRWLocation: TS.Location;
+  currentLocation: TS.Location;
   selectedEntries: Array<TS.FileSystemEntry>;
   currentDirectoryPath: string | null;
   openLocation: (location: TS.Location) => void;
@@ -101,6 +109,7 @@ function CreateDialog(props: Props) {
     openLocation,
     currentDirectoryPath,
     selectedEntries,
+    currentLocation,
     // locations,
     showNotification,
     firstRWLocation
@@ -116,16 +125,24 @@ function CreateDialog(props: Props) {
   let fileInput: HTMLInputElement;
   const fileContent = '';
 
-  let selectedDirectoryPath =
-    selectedEntries && selectedEntries.length === 1
-      ? selectedEntries[0].path
-      : currentDirectoryPath;
-
-  if (!selectedDirectoryPath && firstRWLocation) {
-    selectedDirectoryPath = firstRWLocation.path;
+  let targetDirectoryPath = currentDirectoryPath;
+  if (
+    currentLocation &&
+    currentLocation.perspective === PerspectiveIDs.KANBAN &&
+    selectedEntries &&
+    selectedEntries.length === 1
+  ) {
+    targetDirectoryPath = extractContainingDirectoryPath(
+      selectedEntries[0].path,
+      PlatformIO.getDirSeparator()
+    );
   }
 
-  const noSuitableLocation = !selectedDirectoryPath;
+  if (!targetDirectoryPath && firstRWLocation) {
+    targetDirectoryPath = firstRWLocation.path;
+  }
+
+  const noSuitableLocation = !targetDirectoryPath;
 
   // function handleKeyPress(event: any) {
   //   if (event.key === 'n') {
@@ -150,10 +167,10 @@ function CreateDialog(props: Props) {
   }
 
   function createRichTextFile() {
-    if (selectedDirectoryPath && !fileNameValidation(fileName.current)) {
+    if (targetDirectoryPath && !fileNameValidation(fileName.current)) {
       loadLocation();
       createFileAdvanced(
-        selectedDirectoryPath,
+        targetDirectoryPath,
         fileName.current,
         fileContent,
         'html'
@@ -163,10 +180,10 @@ function CreateDialog(props: Props) {
   }
 
   function createTextFile() {
-    if (selectedDirectoryPath && !fileNameValidation(fileName.current)) {
+    if (targetDirectoryPath && !fileNameValidation(fileName.current)) {
       loadLocation();
       createFileAdvanced(
-        selectedDirectoryPath,
+        targetDirectoryPath,
         fileName.current,
         fileContent,
         'txt'
@@ -176,10 +193,10 @@ function CreateDialog(props: Props) {
   }
 
   function createMarkdownFile() {
-    if (selectedDirectoryPath && !fileNameValidation(fileName.current)) {
+    if (targetDirectoryPath && !fileNameValidation(fileName.current)) {
       loadLocation();
       createFileAdvanced(
-        selectedDirectoryPath,
+        targetDirectoryPath,
         fileName.current,
         fileContent,
         'md'
@@ -201,7 +218,7 @@ function CreateDialog(props: Props) {
     props
       .uploadFilesAPI(
         Array.from(selection.currentTarget.files),
-        selectedDirectoryPath,
+        targetDirectoryPath,
         props.onUploadProgress
       )
       .then(fsEntries => {
@@ -308,9 +325,7 @@ function CreateDialog(props: Props) {
                 disabled={noSuitableLocation}
                 fullWidth={true}
                 data-tid="newEntryDialogInputTID"
-                helperText={
-                  'File will be created in : ' + selectedDirectoryPath
-                }
+                helperText={'File will be created in : ' + targetDirectoryPath}
               />
               {inputError && (
                 <FormHelperText>{i18n.t('core:fileNameHelp')}</FormHelperText>
@@ -427,11 +442,12 @@ function CreateDialog(props: Props) {
 
 function mapStateToProps(state) {
   return {
-    locations: getLocations(state),
+    // locations: getLocations(state),
     firstRWLocation: getFirstRWLocation(state),
     keyBindings: getKeyBindingObject(state),
     selectedEntries: getSelectedEntries(state),
-    currentDirectoryPath: getDirectoryPath(state)
+    currentDirectoryPath: getDirectoryPath(state),
+    currentLocation: getCurrentLocation(state)
   };
 }
 
