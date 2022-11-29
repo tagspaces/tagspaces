@@ -41,7 +41,8 @@ import { getKeyBindingObject } from '-/reducers/settings';
 import {
   actions as AppActions,
   getDirectoryPath,
-  getSelectedEntries
+  getSelectedEntries,
+  getCurrentDirectoryPerspective
 } from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
 import {
@@ -75,9 +76,10 @@ interface Props {
   classes: any;
   // locations: Array<TS.Location>;
   firstRWLocation: TS.Location;
-  currentLocation: TS.Location;
+  // currentLocation: TS.Location;
   selectedEntries: Array<TS.FileSystemEntry>;
   currentDirectoryPath: string | null;
+  currentDirectoryPerspective: string;
   openLocation: (location: TS.Location) => void;
   // selectedDirectoryPath: string;
   // chooseDirectoryPath: (path: string) => void;
@@ -108,9 +110,9 @@ function CreateDialog(props: Props) {
     createFileAdvanced,
     openLocation,
     currentDirectoryPath,
+    currentDirectoryPerspective,
     selectedEntries,
-    currentLocation,
-    // locations,
+    // currentLocation,
     showNotification,
     firstRWLocation
   } = props;
@@ -127,15 +129,12 @@ function CreateDialog(props: Props) {
 
   let targetDirectoryPath = currentDirectoryPath;
   if (
-    currentLocation &&
-    currentLocation.perspective === PerspectiveIDs.KANBAN &&
+    currentDirectoryPerspective === PerspectiveIDs.KANBAN &&
     selectedEntries &&
-    selectedEntries.length === 1
+    selectedEntries.length === 1 &&
+    !selectedEntries[0].isFile
   ) {
-    targetDirectoryPath = extractContainingDirectoryPath(
-      selectedEntries[0].path,
-      PlatformIO.getDirSeparator()
-    );
+    targetDirectoryPath = selectedEntries[0].path;
   }
 
   if (!targetDirectoryPath && firstRWLocation) {
@@ -447,7 +446,8 @@ function mapStateToProps(state) {
     keyBindings: getKeyBindingObject(state),
     selectedEntries: getSelectedEntries(state),
     currentDirectoryPath: getDirectoryPath(state),
-    currentLocation: getCurrentLocation(state)
+    currentDirectoryPerspective: getCurrentDirectoryPerspective(state)
+    // currentLocation: getCurrentLocation(state)
   };
 }
 

@@ -79,7 +79,7 @@ function EditDescription(props: Props) {
       <div
         onDoubleClick={() => {
           if (props.toggleEditDescriptionField) {
-            setEditMode(!editMode);
+            setEditMode(true);
             props.toggleEditDescriptionField();
           }
         }}

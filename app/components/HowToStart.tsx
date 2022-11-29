@@ -51,8 +51,9 @@ function HowToStart(props: Props) {
       label: 'Introduction',
       description: (
         <>
-          The following guide will show you some basic functionalities of the
-          application. It is recommended for first time users.
+          The following walkthrough will show you some important areas and
+          functionalities of the application. It is recommended for first time
+          users.
         </>
       )
     },
@@ -60,10 +61,10 @@ function HowToStart(props: Props) {
       label: 'Location Manager',
       description: (
         <>
-          In order to use a folder and files in TagSpaces you have to connect
-          this folder as location. The location manager is the place where you
-          can create, edit, remove, import or export your locations. The
-          pre-existing locations, pointing for example to your Desktop or
+          In order to use a folder tree with files in TagSpaces you have to
+          connect the main folder as location. The location manager is the place
+          where you can create, edit, remove, import or export your locations.
+          All pre-existing locations, pointing for example to your Desktop or
           Download folders, are optional and can be removed.
           <br />
           <SlideButton
@@ -83,10 +84,10 @@ function HowToStart(props: Props) {
         <>
           The highlighted button will open a dialog where you can choose which
           folder you want to use in TagSpaces and create a location pointing to
-          it. Depending on location's type, the folder can be on your computer
-          or located on an object storage in the Cloud. TagSpaces supports
-          object storage from AWS S3 compatible providers such as Wasabi or
-          Minio.
+          it. Depending on the location's type, the folder can be on your
+          computer or located on an object storage in the Cloud. TagSpaces
+          supports object storage from AWS S3 compatible providers such as
+          Wasabi or Minio.
           <br />
           <SlideButton
             title="Open Videos Tutorials"
@@ -128,7 +129,7 @@ function HowToStart(props: Props) {
           In this section you can find the following functionalities:
           <ul>
             <li>
-              Searches you have stored for later use&nbsp;
+              Search queries you have stored for later use&nbsp;
               <ProSign />
             </li>
             <li>
@@ -136,15 +137,15 @@ function HowToStart(props: Props) {
               <ProSign />
             </li>
             <li>
-              Recently opened files&nbsp;
+              A list of recently opened files&nbsp;
               <ProSign />
             </li>
             <li>
-              Recently edited files&nbsp;
+              A list of recently edited files&nbsp;
               <ProSign />
             </li>
             <li>
-              Recently opened folder&nbsp;
+              A list of recently opened folders&nbsp;
               <ProSign />
             </li>
           </ul>
@@ -201,9 +202,9 @@ function HowToStart(props: Props) {
       label: 'Creating files',
       description: (
         <>
-          The highlighted button will open a dialog, where you can create new
-          file or digital note. The new files can be in the following file
-          formats:
+          The highlighted button will open a dialog, where you can create a new
+          file or <b>digital note</b>. The new files can be in the following
+          file formats:
           <ul>
             <li>
               <b>Markdown</b> (recommended) - suitable for notes with simple
@@ -364,7 +365,7 @@ function HowToStart(props: Props) {
       </Stepper>
       {activeStep === steps.length && (
         <Paper square elevation={0} sx={{ p: 3 }}>
-          <Typography>All steps completed - you&apos;re finished</Typography>
+          <Typography>All steps completed - you&apos;re finished.</Typography>
           <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
             {i18n.t('core:resetBtn')}
           </Button>
