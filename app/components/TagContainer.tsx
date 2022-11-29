@@ -25,16 +25,16 @@ import DateIcon from '@mui/icons-material/DateRange';
 import RemoveTagIcon from '@mui/icons-material/Close';
 import Tooltip from '-/components/Tooltip';
 import { formatDateTime } from '@tagspaces/tagspaces-common/misc';
-import { getAllTags, getTagColors } from '-/reducers/taglibrary';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import { isGeoTag } from '-/utils/geo';
 import { isDateTimeTag, convertToDateTime, convertToDate } from '-/utils/dates';
 import { TS } from '-/tagspaces.namespace';
+import { getAllTags, getTagColors } from '-/services/taglibrary-utils';
 
 interface Props {
   tag: TS.Tag;
   isReadOnlyMode?: boolean;
-  allTags?: Array<TS.Tag>;
+  // allTags?: Array<TS.Tag>;
   defaultTextColor?: string;
   defaultBackgroundColor?: string;
   tagGroup?: TS.TagGroup;
@@ -49,7 +49,11 @@ interface Props {
   entryPath?: string;
   deleteIcon?: Object;
   addTags?: (paths: Array<string>, tags: Array<TS.Tag>) => void;
-  moveTag?: () => void;
+  moveTag?: (
+    tagTitle: string,
+    fromTagGroupId: TS.Uuid,
+    toTagGroupId: TS.Uuid
+  ) => void;
   selectedEntries?: Array<TS.FileSystemEntry>;
   reorderTags?: boolean;
 }
@@ -63,7 +67,7 @@ function TagContainer(props: Props) {
     defaultBackgroundColor,
     tagGroup,
     entryPath,
-    allTags,
+    // allTags,
     handleRemoveTag,
     handleTagMenu,
     selectedEntries,
@@ -82,7 +86,7 @@ function TagContainer(props: Props) {
     isTagDate = !isTagGeo && isDateTimeTag(title);
   }
 
-  const tagColors = getTagColors(allTags, title);
+  const tagColors = getTagColors(getAllTags(), title);
   const textColor = tag.textcolor || tagColors.textcolor || defaultTextColor;
   const backgroundColor =
     tag.color || tagColors.color || defaultBackgroundColor;
@@ -248,7 +252,7 @@ function TagContainer(props: Props) {
 
 function mapStateToProps(state) {
   return {
-    allTags: getAllTags(state),
+    // allTags: getAllTags(state),
     defaultBackgroundColor: getTagColor(state),
     defaultTextColor: getTagTextColor(state)
     // selectedEntries: getSelectedEntries(state)

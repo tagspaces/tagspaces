@@ -69,6 +69,7 @@ import {
 import { TS } from '-/tagspaces.namespace';
 import { PerspectiveIDs } from '-/perspectives';
 import versionMeta from '-/version.json';
+import { addTag, getTagLibrary } from '-/services/taglibrary-utils';
 import { getProTeaserSlideIndex } from '-/content/ProTeaserSlides';
 
 export const types = {
@@ -103,6 +104,7 @@ export const types = {
   SET_IS_META_LOADED: 'APP/SET_IS_META_LOADED',
   SET_LAST_SELECTED_ENTRY: 'APP/SET_LAST_SELECTED_ENTRY',
   SET_SELECTED_ENTRIES: 'APP/SET_SELECTED_ENTRIES',
+  SET_TAG_LIBRARY_CHANGED: 'APP/SET_TAG_LIBRARY_CHANGED',
   SET_FILEDRAGGED: 'APP/SET_FILEDRAGGED',
   SET_READONLYMODE: 'APP/SET_READONLYMODE',
   RENAME_FILE: 'APP/RENAME_FILE',
@@ -232,6 +234,7 @@ export const initialState = {
   importKanBanDialogOpened: false,
   // lastSelectedEntry: null,
   selectedEntries: [],
+  tagLibraryChanged: false,
   isEntryInFullWidth: false,
   isGeneratingThumbs: false,
   locationManagerPanelOpened: showLocations,
@@ -373,6 +376,9 @@ export default (state: any = initialState, action: any) => {
     } */
     case types.SET_SELECTED_ENTRIES: {
       return { ...state, selectedEntries: action.selectedEntries };
+    }
+    case types.SET_TAG_LIBRARY_CHANGED: {
+      return { ...state, tagLibraryChanged: !state.tagLibraryChanged };
     }
     case types.SET_CURRENDIRECTORYCOLOR: {
       if (state.currentDirectoryColor !== action.color) {
@@ -1416,6 +1422,17 @@ export const actions = {
   setSelectedEntriesInt: (selectedEntries: Array<TS.FileSystemEntry>) => ({
     type: types.SET_SELECTED_ENTRIES,
     selectedEntries
+  }),
+  addTag: (tag: any, parentTagGroupUuid: TS.Uuid) => (
+    dispatch: (action) => void,
+    getState: () => any
+  ) => {
+    const { locations } = getState();
+    addTag(tag, parentTagGroupUuid, getTagLibrary(), locations);
+    dispatch(actions.tagLibraryChanged());
+  },
+  tagLibraryChanged: () => ({
+    type: types.SET_TAG_LIBRARY_CHANGED
   }),
   deleteDirectory: (directoryPath: string) => (
     dispatch: (action) => void,
@@ -2639,6 +2656,7 @@ export const getLastSelectedEntryPath = (state: any) => {
   return currentDirectoryPath;
 };
 export const getSelectedTag = (state: any) => state.app.tag;
+export const isTagLibraryChanged = (state: any) => state.app.tagLibraryChanged;
 export const getSelectedEntries = (state: any) =>
   state.app.selectedEntries ? state.app.selectedEntries : [];
 export const getSelectedEntriesLength = (state: any) =>
