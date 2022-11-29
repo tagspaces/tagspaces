@@ -39,7 +39,7 @@ import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import styles from '-/components/SidePanels.css';
 import i18n from '-/services/i18n';
 import { KeyShortcutsIcon, HelpIcon } from '-/components/CommonIcons';
-import Links from '-/links';
+import Links from '-/content/links';
 import { connect } from 'react-redux';
 import { getCurrentLanguage } from '-/reducers/settings';
 import { Pro } from '-/pro';
@@ -51,7 +51,7 @@ interface Props {
   toggleAboutDialog?: () => void;
   toggleKeysDialog: () => void;
   toggleOnboardingDialog: () => void;
-  toggleProTeaser: () => void;
+  toggleProTeaser: (slidePage?: string) => void;
   style?: any;
   reduceHeightBy?: number;
 }
@@ -233,7 +233,7 @@ function HelpFeedbackPanel(props: Props) {
           </Typography>
         </ListItem>
         <Divider />
-        <ListItem button onClick={toggleProTeaser}>
+        <ListItem button onClick={() => toggleProTeaser()}>
           <ListItemIcon>
             <ProTeaserIcon />
           </ListItemIcon>

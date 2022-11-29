@@ -53,16 +53,13 @@ import {
   isReadOnlyMode,
   getDirectoryPath
 } from '../reducers/app';
-import LoadingLazy from '-/components/LoadingLazy';
 import {
   actions as SettingsActions,
   getCurrentLanguage
 } from '-/reducers/settings';
-import Links from '-/links';
 import StoredSearches from '-/components/StoredSearches';
 import UserDetailsPopover from '-/components/UserDetailsPopover';
 import { CreateFileIcon, LocalLocationIcon } from '-/components/CommonIcons';
-import { getUuid } from '-/services/utils-io';
 
 const styles: any = (theme: any) => ({
   selectedButton: {
@@ -70,19 +67,9 @@ const styles: any = (theme: any) => ({
   }
 });
 
-const ProTeaserDialog = React.lazy(() =>
-  import(/* webpackChunkName: "ProTeaserDialog" */ './dialogs/ProTeaserDialog')
-);
-function ProTeaserDialogAsync(props) {
-  return (
-    <React.Suspense fallback={<LoadingLazy />}>
-      <ProTeaserDialog {...props} />
-    </React.Suspense>
-  );
-}
-
 interface Props {
   classes: any;
+  toggleProTeaser: (slidePage?: string) => void;
   toggleOnboardingDialog: () => void;
   toggleCreateFileDialog: () => void;
   toggleAboutDialog: () => void;
@@ -111,13 +98,8 @@ interface Props {
 }
 
 function MobileNavigation(props: Props) {
-  const [isProTeaserVisible, setIsProTeaserVisible] = useState<boolean>(false);
   const [showTeaserBanner, setShowTeaserBanner] = useState<boolean>(true);
   const [anchorUser, setAnchorUser] = useState<HTMLButtonElement | null>(null);
-
-  const toggleProTeaser = () => {
-    setIsProTeaserVisible(!isProTeaserVisible);
-  };
 
   const showProTeaser = !Pro && showTeaserBanner;
 
@@ -217,7 +199,7 @@ function MobileNavigation(props: Props) {
             toggleAboutDialog={toggleAboutDialog}
             toggleKeysDialog={toggleKeysDialog}
             toggleOnboardingDialog={toggleOnboardingDialog}
-            toggleProTeaser={toggleProTeaser}
+            toggleProTeaser={() => props.toggleProTeaser()}
           />
         )}
       </Box>
@@ -228,7 +210,7 @@ function MobileNavigation(props: Props) {
       >
         {showProTeaser && (
           <ProTeaser
-            toggleProTeaser={toggleProTeaser}
+            toggleProTeaser={props.toggleProTeaser}
             setShowTeaserBanner={setShowTeaserBanner}
             openURLExternally={openURLExternally}
           />
@@ -346,14 +328,6 @@ function MobileNavigation(props: Props) {
             </IconButton>
           </Tooltip>
         )}
-        {isProTeaserVisible && (
-          <ProTeaserDialogAsync
-            open={isProTeaserVisible}
-            onClose={toggleProTeaser}
-            openURLExternally={openURLExternally}
-            key={getUuid()} // TODO rethink to remove this
-          />
-        )}
       </Box>
     </Box>
   );
@@ -379,6 +353,7 @@ function mapActionCreatorsToProps(dispatch) {
       toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
       toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
       toggleSettingsDialog: AppActions.toggleSettingsDialog,
+      toggleProTeaser: AppActions.toggleProTeaser,
       toggleAboutDialog: AppActions.toggleAboutDialog,
       toggleKeysDialog: AppActions.toggleKeysDialog,
       openLocationManagerPanel: AppActions.openLocationManagerPanel,

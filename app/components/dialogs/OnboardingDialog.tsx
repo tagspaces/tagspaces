@@ -47,7 +47,7 @@ import {
 } from '-/reducers/settings';
 import { actions as AppActions } from '-/reducers/app';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import Links from '-/links';
+import Links from '-/content/links';
 import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
 

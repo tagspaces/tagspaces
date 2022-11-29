@@ -29,7 +29,7 @@ import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import ImportExportTagGroupsDialog from '../dialogs/ImportExportTagGroupsDialog';
 import i18n from '-/services/i18n';
 import { TS } from '-/tagspaces.namespace';
-import Links from '-/links';
+import Links from '-/content/links';
 import { ProLabel, ProTooltip } from '-/components/HelperComponents';
 import { Pro } from '-/pro';
 

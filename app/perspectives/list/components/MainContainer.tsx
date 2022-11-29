@@ -67,7 +67,7 @@ import GridSettingsDialog from '-/perspectives/grid-perspective/components/GridS
 import AddTagToTagGroupDialog from '-/components/dialogs/AddTagToTagGroupDialog';
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
-import Links from '-/links';
+import Links from '-/content/links';
 import { defaultSettings } from '../index';
 import { PerspectiveIDs } from '-/perspectives';
 import { fileOperationsEnabled } from '-/perspectives/common/main-container';

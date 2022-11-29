@@ -39,7 +39,7 @@ import {
 } from '../reducers/location-index';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
-import Links from '-/links';
+import Links from '-/content/links';
 
 interface Props {
   notificationStatus: any;

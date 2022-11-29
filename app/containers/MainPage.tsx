@@ -71,7 +71,8 @@ import {
   isImportKanBanDialogOpened,
   getSelectedEntries,
   currentUser,
-  isLocationDialogOpened
+  isLocationDialogOpened,
+  isProTeaserVisible
 } from '../reducers/app';
 import TargetFileBox from '../components/TargetFileBox';
 import i18n from '../services/i18n';
@@ -90,6 +91,7 @@ import { actions as LocationIndexActions } from '-/reducers/location-index';
 import MoveOrCopyFilesDialog from '-/components/dialogs/MoveOrCopyFilesDialog';
 import PlatformIO from '-/services/platform-facade';
 import { Pro } from '-/pro';
+import { getUuid } from '-/services/utils-io';
 
 const drawerWidth = 320;
 const body = document.getElementsByTagName('body')[0];
@@ -145,6 +147,7 @@ interface Props {
   isOnboardingDialogOpened: boolean;
   isUploadProgressDialogOpened: boolean;
   isProgressDialogOpened: boolean;
+  isProTeaserVisible: boolean;
   toggleUploadDialog: () => void;
   toggleOpenLinkDialog: () => void;
   toggleProgressDialog: () => void;
@@ -168,6 +171,7 @@ interface Props {
   toggleAboutDialog: () => void; // needed by electron-menus
   toggleLocationDialog: () => void; // needed by electron-menus
   toggleOnboardingDialog: () => void; // needed by electron-menus
+  toggleProTeaser: () => void; // needed by electron-menus
   // setLastSelectedEntry: (path: string) => void; // needed by electron-menus
   setSelectedEntries: (selectedEntries: Array<Object>) => void; // needed by electron-menus
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void; // needed by electron-menus
@@ -316,6 +320,19 @@ function OpenLinkDialogAsync(props) {
   return (
     <React.Suspense fallback={<LoadingLazy />}>
       <OpenLinkDialog {...props} />
+    </React.Suspense>
+  );
+}
+
+const ProTeaserDialog = React.lazy(() =>
+  import(
+    /* webpackChunkName: "ProTeaserDialog" */ '../components/dialogs/ProTeaserDialog'
+  )
+);
+function ProTeaserDialogAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <ProTeaserDialog {...props} />
     </React.Suspense>
   );
 }
@@ -525,6 +542,7 @@ function MainPage(props: Props) {
     toggleProgressDialog,
     toggleEditTagDialog,
     toggleOpenLinkDialog,
+    toggleProTeaser,
     setFirstRun,
     openURLExternally,
     loadDirectoryContent,
@@ -584,6 +602,7 @@ function MainPage(props: Props) {
           windowHeight={dimensions.height}
           windowWidth={dimensions.width}
           toggleDrawer={toggleDrawer}
+          toggleProTeaser={toggleProTeaser}
           drawerOpened={drawerOpened}
           openedFiles={openedFiles}
           currentDirectoryPath={directoryPath}
@@ -673,6 +692,14 @@ function MainPage(props: Props) {
         <OpenLinkDialogAsync
           open={props.isOpenLinkDialogOpened}
           onClose={toggleOpenLinkDialog}
+        />
+      )}
+      {props.isProTeaserVisible && (
+        <ProTeaserDialogAsync
+          open={props.isProTeaserVisible}
+          onClose={toggleProTeaser}
+          openURLExternally={openURLExternally}
+          // key={getUuid()} // TODO rethink to remove this
         />
       )}
       {props.isUploadProgressDialogOpened && (
@@ -837,6 +864,7 @@ function mapStateToProps(state) {
     isThirdPartyLibsDialogOpened: isThirdPartyLibsDialogOpened(state),
     isUploadProgressDialogOpened: isUploadDialogOpened(state),
     isOpenLinkDialogOpened: isOpenLinkDialogOpened(state),
+    isProTeaserVisible: isProTeaserVisible(state),
     isProgressDialogOpened: isProgressOpened(state),
     isReadOnlyMode: isReadOnlyMode(state),
     isGeneratingThumbs: isGeneratingThumbs(state),
@@ -884,6 +912,7 @@ function mapDispatchToProps(dispatch) {
       toggleLocationDialog: AppActions.toggleLocationDialog,
       toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
       toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
+      toggleProTeaser: AppActions.toggleProTeaser,
       setSelectedEntries: AppActions.setSelectedEntries,
       // setGeneratingThumbnails: AppActions.setGeneratingThumbnails,
       openFsEntry: AppActions.openFsEntry,
@@ -933,6 +962,7 @@ const areEqual = (prevProp, nextProp) =>
     prevProp.isLocationManagerPanelOpened &&
   nextProp.isOnboardingDialogOpened === prevProp.isOnboardingDialogOpened &&
   nextProp.isOpenLinkDialogOpened === prevProp.isOpenLinkDialogOpened &&
+  nextProp.isProTeaserVisible === prevProp.isProTeaserVisible &&
   nextProp.isProgressDialogOpened === prevProp.isProgressDialogOpened &&
   nextProp.isReadOnlyMode === prevProp.isReadOnlyMode &&
   nextProp.isSearchPanelOpened === prevProp.isSearchPanelOpened &&

@@ -31,7 +31,7 @@ import versionMeta from '-/version.json';
 import { Pro } from '-/pro';
 import { getLastVersionPromise } from '-/reducers/settings';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import Links from '-/links';
+import Links from '-/content/links';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import useTheme from '@mui/styles/useTheme';
 

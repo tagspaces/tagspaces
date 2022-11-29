@@ -25,7 +25,7 @@ import HelpIcon from '@mui/icons-material/Help';
 import ExportImportIcon from '@mui/icons-material/SwapHoriz';
 import i18n from '-/services/i18n';
 import { Pro } from '../../pro';
-import Links from '-/links';
+import Links from '-/content/links';
 import { ProLabel } from '-/components/HelperComponents';
 
 interface Props {

@@ -64,7 +64,7 @@ import {
   actions as LocationIndexActions,
   getSearchQuery
 } from '-/reducers/location-index';
-import Links from '-/links';
+import Links from '-/content/links';
 import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
 import MainSearchField from '-/components/MainSearchField';
 import LoadingAnimation from '-/components/LoadingAnimation';
@@ -198,6 +198,7 @@ interface Props {
   isDesktopMode: boolean;
   showNotification: (content: string) => void;
   toggleDrawer?: () => void;
+  toggleProTeaser: (slidePage?: string) => void;
   drawerOpened: boolean;
   setCurrentDirectoryPerspective: (perspective: string) => void;
   maxSearchResults: number;
@@ -312,6 +313,7 @@ function FolderContainer(props: Props) {
     directoryContent,
     classes,
     toggleDrawer,
+    toggleProTeaser,
     drawerOpened,
     isDesktopMode,
     theme,
@@ -465,29 +467,32 @@ function FolderContainer(props: Props) {
     ) {
       props.setCurrentDirectoryPerspective(perspectiveId);
     } else if (perspectiveId === PerspectiveIDs.GALLERY) {
-      const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
-      if (openPersDocs) {
-        props.openURLExternally(
-          Links.documentationLinks.galleryPerspective,
-          true
-        );
-      }
+      toggleProTeaser(PerspectiveIDs.GALLERY);
+      // const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
+      // if (openPersDocs) {
+      //   props.openURLExternally(
+      //     Links.documentationLinks.galleryPerspective,
+      //     true
+      //   );
+      // }
     } else if (perspectiveId === PerspectiveIDs.MAPIQUE) {
-      const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
-      if (openPersDocs) {
-        props.openURLExternally(
-          Links.documentationLinks.mapiquePerspective,
-          true
-        );
-      }
+      toggleProTeaser(PerspectiveIDs.MAPIQUE);
+      // const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
+      // if (openPersDocs) {
+      //   props.openURLExternally(
+      //     Links.documentationLinks.mapiquePerspective,
+      //     true
+      //   );
+      // }
     } else if (perspectiveId === PerspectiveIDs.KANBAN) {
-      const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
-      if (openPersDocs) {
-        props.openURLExternally(
-          Links.documentationLinks.kanbanPerspective,
-          true
-        );
-      }
+      toggleProTeaser(PerspectiveIDs.KANBAN);
+      // const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
+      // if (openPersDocs) {
+      //   props.openURLExternally(
+      //     Links.documentationLinks.kanbanPerspective,
+      //     true
+      //   );
+      // }
     }
   };
 
