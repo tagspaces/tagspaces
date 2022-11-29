@@ -41,7 +41,7 @@ interface Props {
   open: boolean;
   onClose: () => void;
   importTagGroups: (entries: Array<TS.TagGroup>, replace?: boolean) => void;
-  exportTagGroups: () => void;
+  exportTagGroups: (entries: Array<TS.TagGroup>) => void;
   showCreateTagGroupDialog: () => void;
   showNotification: (
     text: string,

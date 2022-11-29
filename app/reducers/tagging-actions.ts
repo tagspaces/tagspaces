@@ -23,7 +23,6 @@ import {
   actions as AppActions,
   getLocationPersistTagsInSidecarFile
 } from './app';
-import { actions as TagLibraryActions } from './taglibrary';
 import {
   extractFileExtension,
   extractFileName,
@@ -44,6 +43,7 @@ import { Pro } from '../pro';
 import GlobalSearch from '../services/search-index';
 import { getPersistTagsInSidecarFile } from './settings';
 import { TS } from '-/tagspaces.namespace';
+import { getTagLibrary, mergeTagGroup } from '-/services/taglibrary-utils';
 
 // export const defaultTagLocation = OpenLocationCode.encode(51.48, 0, undefined); // default tag coordinate Greenwich
 
@@ -62,7 +62,7 @@ const actions = {
     dispatch: (action) => void,
     getState: () => any
   ): Promise<boolean> => {
-    const { settings, taglibrary } = getState();
+    const { settings } = getState();
     let defaultTagLocation;
     if (settings.geoTaggingFormat.toLowerCase() === 'mgrs') {
       defaultTagLocation = mgrs.forward([0, 51.48]);
@@ -130,7 +130,7 @@ const actions = {
         const uniqueTags = [];
         processedTags.map(tag => {
           if (
-            taglibrary.findIndex(
+            getTagLibrary().findIndex(
               tagGroup =>
                 tagGroup.children.findIndex(obj => obj.title === tag.title) !==
                 -1
@@ -156,7 +156,7 @@ const actions = {
             created_date: new Date().getTime(),
             modified_date: new Date().getTime()
           };
-          dispatch(TagLibraryActions.mergeTagGroup(tagGroup));
+          // dispatch(TagLibraryActions.mergeTagGroup(tagGroup));
         }
       }
       return Promise.all(promises).then(() => true);
@@ -348,7 +348,7 @@ const actions = {
     dispatch: (actions: Object) => void,
     getState: () => any
   ) => {
-    const { settings, taglibrary } = getState();
+    const { settings } = getState();
     if (newTagTitle === undefined) {
       // eslint-disable-next-line no-param-reassign
       newTagTitle = tag.title;
@@ -517,7 +517,7 @@ const actions = {
       // filter existed in tagLibrary
       const uniqueTags = [];
       if (
-        taglibrary.findIndex(
+        getTagLibrary().findIndex(
           tagGroup =>
             tagGroup.children.findIndex(obj => obj.title === newTagTitle) !== -1
         ) === -1 &&
@@ -541,7 +541,7 @@ const actions = {
           created_date: new Date().getTime(),
           modified_date: new Date().getTime()
         };
-        dispatch(TagLibraryActions.mergeTagGroup(tagGroup));
+        // dispatch(TagLibraryActions.mergeTagGroup(tagGroup));
       }
     }
   },
@@ -783,7 +783,9 @@ const actions = {
         children: uniqueTags,
         modified_date: new Date().getTime()
       };
-      dispatch(TagLibraryActions.mergeTagGroup(changedTagGroup));
+      const { locations } = getState();
+      mergeTagGroup(changedTagGroup, getTagLibrary(), locations);
+      // dispatch(TagLibraryActions.mergeTagGroup(changedTagGroup));
     }
   }
 };

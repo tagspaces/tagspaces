@@ -1,4 +1,5 @@
-/**
+/*
+/!**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
  *
@@ -14,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- */
+ *!/
 import {
   immutablySwapItems,
   formatDateTime4Tag,
@@ -202,7 +203,7 @@ export default (state: Array<TS.TagGroup> = defaultTagLibrary, action: any) => {
       }
       return state;
     }
-    /* case types.UPDATE_TAG: {
+    /!* case types.UPDATE_TAG: {
       let tagIndexForUpdating = -1;
       let tagGroupIndexForUpdating = -1;
       state.forEach((tagGroup, index) => {
@@ -238,8 +239,8 @@ export default (state: Array<TS.TagGroup> = defaultTagLibrary, action: any) => {
         ];
       }
       return state;
-    } */
-    /* case types.REMOVE_TAG: {
+    } *!/
+    /!* case types.REMOVE_TAG: {
       let tagIndexForRemoving = -1;
       let tagGroupIndexForEditing = -1;
       state.forEach((tagGroup, index) => {
@@ -271,7 +272,7 @@ export default (state: Array<TS.TagGroup> = defaultTagLibrary, action: any) => {
         ];
       }
       return state;
-    } */
+    } *!/
     case types.MOVE_TAG_GROUP_DOWN: {
       let indexForUpdating = -1;
       state.forEach((tagGroup, index) => {
@@ -514,10 +515,10 @@ export const actions = {
     type: types.REMOVE_TAGGROUP,
     uuid: parentTagGroupUuid
   }),
-  /* addTagGroup: (entry: TS.TagGroup) => ({
+  /!* addTagGroup: (entry: TS.TagGroup) => ({
     type: types.ADD_TAGGROUP,
     entry
-  }), */
+  }), *!/
   mergeTagGroup: (entry: TS.TagGroup) => (
     dispatch: (actions: Object) => void,
     getState: () => any
@@ -621,7 +622,7 @@ export const actions = {
     }
     dispatch(actions.editTagGroupInt(newTagGroup));
   },
-  /* editTagInt: (
+  /!* editTagInt: (
     tag: TS.Tag,
     parentTagGroupUuid: TS.Uuid,
     origTitle: string
@@ -630,7 +631,7 @@ export const actions = {
     tag,
     uuid: parentTagGroupUuid,
     origTitle
-  }), */
+  }), *!/
   deleteTag: (tagTitle: string, parentTagGroupUuid: TS.Uuid) => (
     dispatch: (actions: Object) => void,
     getState: () => any
@@ -665,11 +666,11 @@ export const actions = {
       dispatch(actions.editTagGroupInt(editedTagGroup));
     }
   },
-  /* deleteTagInt: (tagTitle: string, parentTagGroupUuid: TS.Uuid) => ({
+  /!* deleteTagInt: (tagTitle: string, parentTagGroupUuid: TS.Uuid) => ({
     type: types.REMOVE_TAG,
     tagTitle,
     uuid: parentTagGroupUuid
-  }), */
+  }), *!/
   moveTagGroup: (tagGroupUuid: TS.Uuid, position: number) => ({
     type: types.MOVE_TAG_GROUP,
     uuid: tagGroupUuid,
@@ -712,12 +713,12 @@ export const actions = {
     entries,
     replace
   }),
-  /**
+  /!**
    * GraphQL API return TagGroup Tags array like String
    * This migrate tagGroups model to children []
    * @param entries
-   */
-  /* addTagGroups: (entries: Array<any>) => (
+   *!/
+  /!* addTagGroups: (entries: Array<any>) => (
     dispatch: (actions: Object) => void
   ) => {
     if (entries && entries.length > 0) {
@@ -727,7 +728,7 @@ export const actions = {
       });
       dispatch(actions.importTagGroups(tagGroups, true));
     }
-  }, */
+  }, *!/
   exportTagGroups: (entry: Array<TS.TagGroup>) => (
     dispatch: (actions: Object) => void,
     getState: () => any
@@ -792,3 +793,4 @@ export const getTagColors = (allTags: Array<TS.Tag>, tagTitle: string) => {
   });
   return tagColors;
 };
+*/

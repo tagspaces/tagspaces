@@ -21,14 +21,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { GlobalHotKeys } from 'react-hotkeys';
 import withStyles from '@mui/styles/withStyles';
-import {
-  isObj,
-  locationType,
-  sortByCriteria
-} from '@tagspaces/tagspaces-platforms/misc';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import { isObj, sortByCriteria } from '@tagspaces/tagspaces-platforms/misc';
 import { isVisibleOnScreen } from '-/utils/dom';
-import { actions as TagLibraryActions } from '-/reducers/taglibrary';
+// import { actions as TagLibraryActions } from '-/reducers/taglibrary';
 import {
   getSupportedFileTypes,
   getDesktopMode,
@@ -876,7 +871,7 @@ function mapActionCreatorsToProps(dispatch) {
       toggleDeleteMultipleEntriesDialog:
         AppActions.toggleDeleteMultipleEntriesDialog,
       addTags: TaggingActions.addTags,
-      addTag: TagLibraryActions.addTag
+      addTag: AppActions.addTag
     },
     dispatch
   );

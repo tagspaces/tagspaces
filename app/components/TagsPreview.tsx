@@ -20,13 +20,14 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Tooltip from '-/components/Tooltip';
 import { TS } from '-/tagspaces.namespace';
-import { getAllTags, getTagColors } from '-/reducers/taglibrary';
+// import { getAllTags, getTagColors } from '-/reducers/taglibrary';
 import {
   getCurrentLanguage,
   getTagColor,
   getTagTextColor
 } from '-/reducers/settings';
 import i18n from '-/services/i18n';
+import { getTagColors } from '-/services/taglibrary-utils';
 
 interface Props {
   tags: Array<TS.Tag>;
@@ -83,7 +84,7 @@ function TagsPreview(props: Props) {
 
 function mapStateToProps(state) {
   return {
-    allTags: getAllTags(state),
+    // allTags: getAllTags(state),
     defaultBackgroundColor: getTagColor(state),
     defaultTextColor: getTagTextColor(state),
     language: getCurrentLanguage(state)

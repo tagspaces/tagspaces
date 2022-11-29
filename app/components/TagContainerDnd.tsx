@@ -194,7 +194,11 @@ interface Props {
   entryPath?: string;
   addTags?: (paths: Array<string>, tags: Array<TS.Tag>) => void;
   addTag?: (tag: TS.Tag, parentTagGroupUuid: TS.Uuid) => void;
-  moveTag?: () => void;
+  moveTag?: (
+    tagTitle: string,
+    fromTagGroupId: TS.Uuid,
+    toTagGroupId: TS.Uuid
+  ) => void;
   changeTagOrder?: (
     tagGroupUuid: TS.Uuid,
     fromIndex: number,
