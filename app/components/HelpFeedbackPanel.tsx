@@ -51,7 +51,7 @@ interface Props {
   toggleAboutDialog?: () => void;
   toggleKeysDialog: () => void;
   toggleOnboardingDialog: () => void;
-  toggleProTeaser: () => void;
+  toggleProTeaser: (slidePage?: string) => void;
   style?: any;
   reduceHeightBy?: number;
 }
@@ -233,7 +233,7 @@ function HelpFeedbackPanel(props: Props) {
           </Typography>
         </ListItem>
         <Divider />
-        <ListItem button onClick={toggleProTeaser}>
+        <ListItem button onClick={() => toggleProTeaser()}>
           <ListItemIcon>
             <ProTeaserIcon />
           </ListItemIcon>

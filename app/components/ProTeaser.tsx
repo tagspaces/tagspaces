@@ -30,7 +30,7 @@ import i18n from '../services/i18n';
 import Links from '-/links';
 
 interface Props {
-  toggleProTeaser: () => void;
+  toggleProTeaser: (slidePage?: string) => void;
   setShowTeaserBanner: (teaserVisibility: boolean) => void;
   openURLExternally: (url: string, skipConfirmation?: boolean) => void;
 }
@@ -40,7 +40,7 @@ function ProTeaser(props: Props) {
   return (
     <>
       <CardContent
-        onClick={toggleProTeaser}
+        onClick={() => toggleProTeaser()}
         style={{
           padding: 5,
           paddingBottom: 0,

@@ -67,6 +67,7 @@ import {
 import { TS } from '-/tagspaces.namespace';
 import { PerspectiveIDs } from '-/perspectives';
 import versionMeta from '-/version.json';
+import { getProTeaserSlideIndex } from '-/utils/proTeaserSlides';
 
 export const types = {
   DEVICE_ONLINE: 'APP/DEVICE_ONLINE',
@@ -110,6 +111,7 @@ export const types = {
   TOGGLE_KEYBOARD_DIALOG: 'APP/TOGGLE_KEYBOARD_DIALOG',
   TOGGLE_LICENSE_DIALOG: 'APP/TOGGLE_LICENSE_DIALOG',
   TOGGLE_OPENLINK_DIALOG: 'APP/TOGGLE_OPENLINK_DIALOG',
+  TOGGLE_OPEN_PRO_TEASER_DIALOG: 'APP/TOGGLE_OPEN_PRO_TEASER_DIALOG',
   TOGGLE_THIRD_PARTY_LIBS_DIALOG: 'APP/TOGGLE_THIRD_PARTY_LIBS_DIALOG',
   TOGGLE_SETTINGS_DIALOG: 'APP/TOGGLE_SETTINGS_DIALOG',
   TOGGLE_CREATE_DIRECTORY_DIALOG: 'APP/TOGGLE_CREATE_DIRECTORY_DIALOG',
@@ -217,6 +219,7 @@ export const initialState = {
   aboutDialogOpened: false,
   locationDialogOpened: false,
   openLinkDialogOpened: false,
+  proTeaserIndex: -1,
   onboardingDialogOpened: false,
   keysDialogOpened: false,
   createFileDialogOpened: false,
@@ -410,6 +413,19 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         openLinkDialogOpened: !state.openLinkDialogOpened
+      };
+    }
+    case types.TOGGLE_OPEN_PRO_TEASER_DIALOG: {
+      let index = -1;
+      const proTeaserIndex = getProTeaserSlideIndex(action.proTeaserPage);
+      if (proTeaserIndex && proTeaserIndex > -1) {
+        index = proTeaserIndex;
+      } else if (state.proTeaserIndex === -1) {
+        index = 0;
+      }
+      return {
+        ...state,
+        proTeaserIndex: index
       };
     }
     case types.TOGGLE_KEYBOARD_DIALOG: {
@@ -998,6 +1014,10 @@ export const actions = {
   toggleOnboardingDialog: () => ({ type: types.TOGGLE_ONBOARDING_DIALOG }),
   toggleKeysDialog: () => ({ type: types.TOGGLE_KEYBOARD_DIALOG }),
   toggleOpenLinkDialog: () => ({ type: types.TOGGLE_OPENLINK_DIALOG }),
+  toggleProTeaser: (slidePage?: string) => ({
+    type: types.TOGGLE_OPEN_PRO_TEASER_DIALOG,
+    proTeaserPage: slidePage
+  }),
   toggleLicenseDialog: () => ({ type: types.TOGGLE_LICENSE_DIALOG }),
   toggleThirdPartyLibsDialog: () => ({
     type: types.TOGGLE_THIRD_PARTY_LIBS_DIALOG
@@ -2627,6 +2647,8 @@ export const isUploadDialogOpened = (state: any) =>
   state.app.uploadDialogOpened;
 export const isOpenLinkDialogOpened = (state: any) =>
   state.app.openLinkDialogOpened;
+export const isProTeaserVisible = (state: any) => state.app.proTeaserIndex > -1;
+export const getProTeaserIndex = (state: any) => state.app.proTeaserIndex;
 export const isProgressOpened = (state: any) => state.app.progressDialogOpened;
 export const getOpenedFiles = (state: any) => state.app.openedFiles;
 export const getNotificationStatus = (state: any) =>
