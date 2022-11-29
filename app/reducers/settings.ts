@@ -21,7 +21,7 @@ import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '-/services/i18n';
 import defaultSettings from './settings-default';
 import PlatformIO from '-/services/platform-facade';
-import Links from '-/links';
+import Links from '-/content/links';
 import versionMeta from '-/version.json';
 import { actions as AppActions } from './app';
 import { TS } from '-/tagspaces.namespace';

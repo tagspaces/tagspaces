@@ -1,4 +1,4 @@
-import Links from '-/links';
+import Links from '-/content/links';
 import ProTeaserImage from '-/assets/images/pro-teaser.svg';
 import i18n from '-/services/i18n';
 import KanbanImage from '-/assets/images/kanban-perspective.jpg';
@@ -8,6 +8,7 @@ import EntryDescription from '-/assets/images/entry-description.jpg';
 import SearchImage from '-/assets/images/search-undraw.svg';
 import CustomFolderColor from '-/assets/images/custom-folder-color.jpg';
 import EnterpriseImage from '-/assets/images/world-undraw.svg';
+import { PerspectiveIDs } from '-/perspectives';
 import React from 'react';
 
 export function getProTeaserSlideIndex(slideName: string): number {
@@ -36,12 +37,10 @@ export function getProTeaserSlides() {
         the next slides.
       </>
     ),
-    ctaURL: Links.links.productsOverview,
-    ctaTitle: 'Compare TagSpaces Lite vs. Pro',
     pictureURL: ProTeaserImage,
     pictureHeight: 150
   };
-  slidesEN['kanban'] = {
+  slidesEN[PerspectiveIDs.KANBAN] = {
     title: 'Kanban Perspectives',
     description: (
       <>
@@ -59,7 +58,7 @@ export function getProTeaserSlides() {
     pictureShadow: true,
     pictureHeight: 300
   };
-  slidesEN['gallery'] = {
+  slidesEN[PerspectiveIDs.GALLERY] = {
     title: 'Gallery Perspectives',
     description: (
       <>
@@ -77,8 +76,8 @@ export function getProTeaserSlides() {
     pictureShadow: true,
     pictureHeight: 300
   };
-  slidesEN['mapique'] = {
-    title: 'Digital Map & Geo tagging',
+  slidesEN[PerspectiveIDs.MAPIQUE] = {
+    title: 'Mapique Perspective & Geo tagging',
     description: (
       <>
         The Mapique perspective displays files and folders tagged with geo-tags

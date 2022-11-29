@@ -9,7 +9,7 @@ import StepContent from '@mui/material/StepContent';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import i18n from '-/services/i18n';
-import Links from '-/links';
+import Links from '-/content/links';
 import { ProSign } from '-/components/HelperComponents';
 
 export const styles: any = (theme: any) => ({

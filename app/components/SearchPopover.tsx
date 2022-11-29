@@ -76,7 +76,7 @@ import { parseGeoLocation, parseLatLon } from '-/utils/geo';
 import { getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
-import Links from '-/links';
+import Links from '-/content/links';
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
 

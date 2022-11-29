@@ -51,7 +51,7 @@ import {
   getDesktopMode,
   actions as SettingsActions
 } from '-/reducers/settings';
-import Links from '-/links';
+import Links from '-/content/links';
 import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
 import { renderHistory } from '-/components/RenderHistory';

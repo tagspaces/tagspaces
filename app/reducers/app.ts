@@ -67,7 +67,7 @@ import {
 import { TS } from '-/tagspaces.namespace';
 import { PerspectiveIDs } from '-/perspectives';
 import versionMeta from '-/version.json';
-import { getProTeaserSlideIndex } from '-/utils/proTeaserSlides';
+import { getProTeaserSlideIndex } from '-/content/ProTeaserSlides';
 
 export const types = {
   DEVICE_ONLINE: 'APP/DEVICE_ONLINE',

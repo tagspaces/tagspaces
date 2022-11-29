@@ -602,6 +602,7 @@ function MainPage(props: Props) {
           windowHeight={dimensions.height}
           windowWidth={dimensions.width}
           toggleDrawer={toggleDrawer}
+          toggleProTeaser={toggleProTeaser}
           drawerOpened={drawerOpened}
           openedFiles={openedFiles}
           currentDirectoryPath={directoryPath}

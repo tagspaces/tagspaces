@@ -26,24 +26,14 @@ import Typography from '@mui/material/Typography';
 import MobileStepper from '@mui/material/MobileStepper';
 import Dialog from '@mui/material/Dialog';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
-import ProTeaserImage from '-/assets/images/pro-teaser.svg';
-import ThumbsImage from '-/assets/images/thumbnails-undraw.svg';
-import CloudImage from '-/assets/images/aws-s3-in-tagspaces.png';
-import SearchImage from '-/assets/images/search-undraw.svg';
-import MapImage from '-/assets/images/mapique-perspective.jpg';
-import GalleryImage from '-/assets/images/gallery-perspective.jpg';
-import KanbanImage from '-/assets/images/kanban-perspective.jpg';
-import CustomFolderColor from '-/assets/images/custom-folder-color.jpg';
-import EntryDescription from '-/assets/images/entry-description.jpg';
-import EnterpriseImage from '-/assets/images/world-undraw.svg';
 import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import Links from '-/links';
 import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { getProTeaserIndex } from '-/reducers/app';
 import { connect } from 'react-redux';
-import { getProTeaserSlides } from "-/utils/proTeaserSlides";
+import { getProTeaserSlides } from '-/content/ProTeaserSlides';
+import Links from '-/content/links';
 
 interface Props {
   open: boolean;
@@ -66,9 +56,9 @@ interface SlideProps {
   pictureHeight?: number;
 }
 
+const slidesEN = getProTeaserSlides();
 
 function Slide(props: SlideProps) {
-
   const {
     title,
     description,
@@ -138,11 +128,21 @@ function Slide(props: SlideProps) {
           />
         )}
         <br />
+        <Button
+          onClick={() => {
+            openURL(Links.links.productsOverview, true);
+          }}
+          variant="contained"
+          color="primary"
+        >
+          Compare TagSpaces Products
+        </Button>
         {ctaTitle && openURL && (
           <Button
             onClick={() => {
               openURL(ctaURL, true);
             }}
+            style={{ marginLeft: 10 }}
             variant="contained"
             color="primary"
           >
@@ -155,8 +155,6 @@ function Slide(props: SlideProps) {
 }
 
 function ProTeaserDialog(props: Props) {
-
-  const slidesEN = getProTeaserSlides();
   const [activeStep, setActiveStep] = useState<number>(
     props.slideIndex && props.slideIndex > -1 ? props.slideIndex : 0
   );

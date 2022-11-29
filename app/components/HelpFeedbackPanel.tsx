@@ -39,7 +39,7 @@ import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import styles from '-/components/SidePanels.css';
 import i18n from '-/services/i18n';
 import { KeyShortcutsIcon, HelpIcon } from '-/components/CommonIcons';
-import Links from '-/links';
+import Links from '-/content/links';
 import { connect } from 'react-redux';
 import { getCurrentLanguage } from '-/reducers/settings';
 import { Pro } from '-/pro';

@@ -35,7 +35,7 @@ import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '-/services/i18n';
 import { Pro } from '../../pro';
 import { actions as AppActions } from '-/reducers/app';
-import Links from '-/links';
+import Links from '-/content/links';
 import { ProLabel } from '-/components/HelperComponents';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { OpenLinkIcon, HelpIcon } from '-/components/CommonIcons';

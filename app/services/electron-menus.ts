@@ -17,7 +17,7 @@
  */
 
 import { app, Menu } from 'electron';
-import Links from '-/links';
+import Links from '-/content/links';
 
 export default function buildDesktopMenu(props: any, i18n) {
   function quitApp() {
