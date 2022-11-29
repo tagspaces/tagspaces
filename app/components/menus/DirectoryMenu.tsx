@@ -76,6 +76,7 @@ interface Props {
   reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => void;
   onUploadProgress: (progress: Progress, response: any) => void;
   switchPerspective?: (perspectiveId: string) => void;
+  toggleProTeaser?: (slidePage?: string) => void;
   setCurrentDirectoryPerspective: (perspective: string) => void;
   perspectiveMode?: boolean;
   showNotification?: (
@@ -112,6 +113,7 @@ function DirectoryMenu(props: Props) {
     selectedEntries,
     currentLocation,
     locations,
+    toggleProTeaser,
     showNotification
   } = props;
 
@@ -190,29 +192,32 @@ function DirectoryMenu(props: Props) {
         props.setCurrentDirectoryPerspective(perspectiveId);
       }
     } else if (perspectiveId === PerspectiveIDs.GALLERY) {
-      const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
-      if (openPersDocs) {
-        props.openURLExternally(
-          Links.documentationLinks.galleryPerspective,
-          true
-        );
-      }
+      toggleProTeaser(PerspectiveIDs.GALLERY);
+      // const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
+      // if (openPersDocs) {
+      //   props.openURLExternally(
+      //     Links.documentationLinks.galleryPerspective,
+      //     true
+      //   );
+      // }
     } else if (perspectiveId === PerspectiveIDs.MAPIQUE) {
-      const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
-      if (openPersDocs) {
-        props.openURLExternally(
-          Links.documentationLinks.mapiquePerspective,
-          true
-        );
-      }
+      toggleProTeaser(PerspectiveIDs.MAPIQUE);
+      // const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
+      // if (openPersDocs) {
+      //   props.openURLExternally(
+      //     Links.documentationLinks.mapiquePerspective,
+      //     true
+      //   );
+      // }
     } else if (perspectiveId === PerspectiveIDs.KANBAN) {
-      const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
-      if (openPersDocs) {
-        props.openURLExternally(
-          Links.documentationLinks.kanbanPerspective,
-          true
-        );
-      }
+      toggleProTeaser(PerspectiveIDs.KANBAN);
+      // const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
+      // if (openPersDocs) {
+      //   props.openURLExternally(
+      //     Links.documentationLinks.kanbanPerspective,
+      //     true
+      //   );
+      // }
     }
   }
 
@@ -485,6 +490,7 @@ function mapDispatchToProps(dispatch) {
       toggleUploadDialog: AppActions.toggleUploadDialog,
       toggleProgressDialog: AppActions.toggleProgressDialog,
       toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
+      toggleProTeaser: AppActions.toggleProTeaser,
       resetProgress: AppActions.resetProgress,
       reflectCreateEntries: AppActions.reflectCreateEntries,
       setCurrentDirectoryPerspective: AppActions.setCurrentDirectoryPerspective,
