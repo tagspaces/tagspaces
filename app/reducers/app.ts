@@ -60,6 +60,7 @@ import {
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import { actions as LocationIndexActions } from './location-index';
+import { actions as tagLibraryActions } from './taglibrary';
 import {
   actions as SettingsActions,
   getCheckForUpdateOnStartup,
@@ -69,7 +70,11 @@ import {
 import { TS } from '-/tagspaces.namespace';
 import { PerspectiveIDs } from '-/perspectives';
 import versionMeta from '-/version.json';
-import { addTag, getTagLibrary } from '-/services/taglibrary-utils';
+import {
+  addTag,
+  getTagLibrary,
+  setTagLibrary
+} from '-/services/taglibrary-utils';
 import { getProTeaserSlideIndex } from '-/content/ProTeaserSlides';
 
 export const types = {
@@ -922,6 +927,16 @@ export const actions = {
   loggedIn: user => ({ type: types.LOGIN_SUCCESS, user }),
   initApp: () => (dispatch: (action) => void, getState: () => any) => {
     disableBackGestureMac();
+    // migrate TagLibrary from redux state
+    const { taglibrary } = getState();
+    if (taglibrary && taglibrary.length > 0) {
+      try {
+        setTagLibrary(taglibrary);
+        dispatch(tagLibraryActions.deleteAll());
+      } catch (e) {
+        console.error('migrate TagLibrary failed', e);
+      }
+    }
 
     dispatch(SettingsActions.setZoomRestoreApp());
     dispatch(SettingsActions.upgradeSettings()); // TODO call this only on app version update
