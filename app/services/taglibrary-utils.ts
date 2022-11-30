@@ -11,12 +11,14 @@ import { getUuid, parseNewTags, saveAsTextFile } from '-/services/utils-io';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import defaultTagLibrary from '../reducers/taglibrary-default';
 
-export const tagLibraryKey = 'TagLibraryKey';
+export const tagLibraryKey = 'tsTagLibrary';
 
 export function getTagLibrary(): Array<TS.TagGroup> {
   if (window.ExtTagLibrary) {
     return window.ExtTagLibrary;
   }
+  // import and delete from redux
+
   const item = localStorage.getItem(tagLibraryKey);
   if (item) {
     return JSON.parse(item);
@@ -438,7 +440,7 @@ export function addTag(
       textcolor: tagGroup.textcolor // ? tagGroup.textcolor : tagTextColor
     };
     newTags = parseNewTags(tag, newTagGroup);
-    addTags(newTags, newTagGroup, tagGroups);
+    tagGroupsReturn = addTags(newTags, newTagGroup, tagGroups);
   }
 
   if (Pro && tagGroup && tagGroup.locationId) {
@@ -562,6 +564,7 @@ function updateTagGroup(
   return tagGroups;
 }
 
+/* Why this function exist?
 export const getTagColors = (allTags: Array<TS.Tag>, tagTitle: string) => {
   const tagColors = {
     textcolor: '',
@@ -574,4 +577,4 @@ export const getTagColors = (allTags: Array<TS.Tag>, tagTitle: string) => {
     }
   });
   return tagColors;
-};
+};*/

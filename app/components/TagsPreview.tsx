@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { connect } from 'react-redux';
 import Tooltip from '-/components/Tooltip';
 import { TS } from '-/tagspaces.namespace';
@@ -27,17 +27,18 @@ import {
   getTagTextColor
 } from '-/reducers/settings';
 import i18n from '-/services/i18n';
-import { getTagColors } from '-/services/taglibrary-utils';
+import { getAllTags, getTagLibrary } from '-/services/taglibrary-utils';
 
 interface Props {
   tags: Array<TS.Tag>;
-  allTags?: Array<TS.Tag>;
+  // allTags?: Array<TS.Tag>;
   defaultTextColor?: string;
   defaultBackgroundColor?: string;
 }
 
 function TagsPreview(props: Props) {
-  const { tags, allTags, defaultBackgroundColor, defaultTextColor } = props;
+  const { tags, defaultBackgroundColor, defaultTextColor } = props;
+  const allTags = useRef<Array<TS.Tag>>(getAllTags(getTagLibrary()));
   if (!tags || tags.length < 1) {
     return <></>;
   }
@@ -46,16 +47,15 @@ function TagsPreview(props: Props) {
     tagNames = tagNames + tag.title + ' ';
   });
 
-  const tag1Colors = getTagColors(allTags, tags[0].title);
-  const firstTagColor =
-    tags[0].color || tag1Colors.color || defaultBackgroundColor;
+  // const tag1Colors = getTagColors(allTags.current, tags[0].title);
+  const firstTagColor = tags[0].color || defaultBackgroundColor; // || tag1Colors.color
   let secondTagColor = defaultBackgroundColor;
   let moreThanOne = false;
   if (tags[1]) {
     moreThanOne = true;
-    const tag2Colors = getTagColors(allTags, tags[1].title);
+    // const tag2Colors = getTagColors(allTags.current, tags[1].title);
     if (tags[1].color) {
-      secondTagColor = tags[1].color || tag2Colors.color;
+      secondTagColor = tags[1].color; // || tag2Colors.color;
     }
   }
   return (
@@ -72,7 +72,7 @@ function TagsPreview(props: Props) {
           backgroundColor: firstTagColor,
           fontSize: 11,
           lineHeight: '16px',
-          color: tag1Colors.textcolor || defaultTextColor,
+          color: firstTagColor || defaultTextColor, //tag1Colors.textcolor ,
           textAlign: 'center'
         }}
       >
