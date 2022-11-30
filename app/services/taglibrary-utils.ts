@@ -17,8 +17,6 @@ export function getTagLibrary(): Array<TS.TagGroup> {
   if (window.ExtTagLibrary) {
     return window.ExtTagLibrary;
   }
-  // import and delete from redux
-
   const item = localStorage.getItem(tagLibraryKey);
   if (item) {
     return JSON.parse(item);
