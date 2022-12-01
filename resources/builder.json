@@ -4,6 +4,10 @@
   "asarUnpack": "**/node_modules/sharp/**/*",
   "afterSign": "scripts/afterSign.js",
   "includeSubNodeModules": true,
+  "protocols": {
+    "name": "tagspaces-deep-linking",
+    "schemes": ["ts"]
+  },
   "files": [
     "dist/",
     "node_modules/",
