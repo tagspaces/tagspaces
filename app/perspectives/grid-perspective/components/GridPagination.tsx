@@ -146,7 +146,10 @@ function GridPagination(props: Props) {
     currentDirectoryColor,
     currentDirectoryTags,
     currentDirectoryDescription,
+    currentDirectoryPath,
+    lastThumbnailImageChange,
     openRenameEntryDialog,
+    lastBackgroundImageChange,
     gridPageLimit,
     currentPage,
     files
@@ -162,16 +165,10 @@ function GridPagination(props: Props) {
   const page = useRef<number>(currentPage);
   const metaLoadedLock = useRef<boolean>(false); // TODO move this for all perspectives - not lock if you open folder with diff perspective now
   const folderTmbPath = useRef<string>(
-    getFolderThumbPath(
-      props.currentDirectoryPath,
-      props.lastThumbnailImageChange
-    )
+    getFolderThumbPath(currentDirectoryPath, lastThumbnailImageChange)
   );
   const folderBgndPath = useRef<string>(
-    getFolderBgndPath(
-      props.currentDirectoryPath,
-      props.lastBackgroundImageChange
-    )
+    getFolderBgndPath(currentDirectoryPath, lastBackgroundImageChange)
   );
   // const [page, setPage] = useState(currentPage);
 
@@ -547,6 +544,7 @@ function GridPagination(props: Props) {
                 content={currentDirectoryDescription}
                 readOnly={true}
                 dark={theme.palette.mode === 'dark'}
+                currentFolder={currentDirectoryPath}
               />
             </Grid>
           )}

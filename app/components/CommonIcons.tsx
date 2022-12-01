@@ -38,7 +38,7 @@ export const HelpIcon = props => <Help {...props} />;
 
 export const InfoIcon = props => <AnnouncementIcon {...props} />;
 
-export const FolderPropertiesIcon = props => <InfoIcon {...props} />;
+export const FolderPropertiesIcon = props => <Info {...props} />;
 
 export const RemoveIcon = props => <Remove {...props} />;
 

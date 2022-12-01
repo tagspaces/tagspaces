@@ -53,6 +53,7 @@ import { Pro } from '../pro';
 import useFirstRender from '-/utils/useFirstRender';
 import MainSearchField from '-/components/MainSearchField';
 import SavedSearchesMenu from '-/components/menus/SavedSearchesMenu';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 
 // type PropsClasses = Record<keyof StyleProps, string>;
 
@@ -365,7 +366,10 @@ function SearchInline(props: Props) {
 
   const executeSearch = () => {
     let query = textQuery.current;
-    if (query.startsWith('ts:?ts')) {
+    if (
+      query.startsWith('ts:?ts') ||
+      query.startsWith(AppConfig.tsProtocol + '?ts')
+    ) {
       props.openLink(query);
       clearSearch();
       return;
