@@ -19,10 +19,11 @@
 import React from 'react';
 import ParentFolder from '@mui/icons-material/ReplyOutlined';
 import Help from '@mui/icons-material/Help';
+import Info from '@mui/icons-material/Info';
+import AnnouncementIcon from '@mui/icons-material/Announcement';
 import Remove from '@mui/icons-material/RemoveCircleOutline';
 import History from '@mui/icons-material/ChangeHistoryTwoTone';
 import Settings from '@mui/icons-material/Settings';
-import InfoIcon from '@mui/icons-material/Info';
 import AddIcon from '@mui/icons-material/Add';
 import Suitcase from '@mui/icons-material/WorkOutline';
 import Link from '@mui/icons-material/Link';
@@ -35,13 +36,15 @@ export const ParentFolderIcon = props => (
 
 export const HelpIcon = props => <Help {...props} />;
 
+export const InfoIcon = props => <AnnouncementIcon {...props} />;
+
+export const FolderPropertiesIcon = props => <InfoIcon {...props} />;
+
 export const RemoveIcon = props => <Remove {...props} />;
 
 export const HistoryIcon = props => <History {...props} />;
 
 export const PerspectiveSettingsIcon = props => <Settings {...props} />;
-
-export const FolderPropertiesIcon = props => <InfoIcon {...props} />;
 
 export const CreateFileIcon = props => <AddIcon {...props} />;
 
