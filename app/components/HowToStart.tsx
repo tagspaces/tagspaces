@@ -86,8 +86,7 @@ function HowToStart(props: Props) {
           folder you want to use in TagSpaces and create a location pointing to
           it. Depending on the location's type, the folder can be on your
           computer or located on an object storage in the Cloud. TagSpaces
-          supports object storage from AWS S3 compatible providers such as
-          Wasabi or Minio.
+          supports S3-compliant cloud storage like from AWS, Wasabi or Minio.
           <br />
           <SlideButton
             title="Open Videos Tutorials"
