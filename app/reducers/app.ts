@@ -564,17 +564,15 @@ export default (state: any = initialState, action: any) => {
       return { ...state, isEntryInFullWidth: action.isFullWidth };
     }
     case types.UPDATE_THUMB_URL: {
-      const dirEntries = [...state.currentDirectoryEntries];
-      dirEntries.map(entry => {
+      const dirEntries = state.currentDirectoryEntries.map(entry => {
         if (entry.path === action.filePath) {
-          // eslint-disable-next-line no-param-reassign
-          entry.thumbPath = action.thumbUrl;
+          return { ...entry, thumbPath: action.thumbUrl };
         }
-        return true;
+        return entry;
       });
       return {
         ...state,
-        currentDirectoryEntries: [...dirEntries]
+        currentDirectoryEntries: dirEntries
       };
     }
     case types.UPDATE_THUMB_URLS: {
