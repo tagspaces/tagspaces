@@ -33,6 +33,8 @@ import i18n from '-/services/i18n'; // '-/i18nBackend';
 import buildTrayIconMenu from '-/electron-tray-menu';
 import buildDesktopMenu from '-/services/electron-menus';
 import Settings from '-/settings';
+import { Deeplink } from 'electron-deeplink';
+import * as isDev from 'electron-is-dev';
 
 // delete process.env.ELECTRON_ENABLE_SECURITY_WARNINGS;
 // process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
@@ -41,15 +43,28 @@ const isMac = process.platform === 'darwin';
 let mainWindow = null;
 // (global as any).splashWorkerWindow = null;
 
+const deeplink = new Deeplink({
+  app,
+  mainWindow,
+  protocol: 'ts',
+  isDev,
+  debugLogging: true
+});
+
+deeplink.on('received', link => {
+  mainWindow.webContents.send('received-link', link);
+  startupFilePath = link;
+});
+
 const testMode = process.env.NODE_ENV === 'test';
 
 if (process.env.NODE_ENV === 'production') {
   // eslint-disable-next-line
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
-  console.log = () => {};
+  /*console.log = () => {};
   console.time = () => {};
-  console.timeEnd = () => {};
+  console.timeEnd = () => {};*/
 } else if (testMode) {
   const dir = path.join(__dirname, '..', 'tests', 'test-reports');
   if (!fs.existsSync(dir)) {
@@ -117,7 +132,7 @@ const workerDevMode = false;
 if (devMode || testMode) {
   // eslint-disable-next-line
   // require('electron-debug')({ showDevTools: false, devToolsMode: 'right' });
-  const p = path.join(__dirname, '..', 'app', 'node_modules');
+  const p = path.join(__dirname, 'node_modules'); // '..', 'app', 'node_modules');
   // eslint-disable-next-line
   require('module').globalPaths.push(p);
   // workerDevMode = true; // hide worker window in dev mode
@@ -499,6 +514,8 @@ async function createAppWindow() {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
+    mainWindow.webContents.send('set-protocol', deeplink.getProtocol());
+    mainWindow.webContents.send('set-logfile', deeplink.getLogfile());
     // mainWindow.show();
     // (global as any).splashWorkerWindow.hide(); // Comment for easy debugging of the worker (global as any).splashWorkerWindow.show();
     if (portableMode) {
@@ -529,6 +546,14 @@ async function createAppWindow() {
 }
 
 app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required'); // Fix broken autoplay functionality in the av player
+
+app.on('activate', async () => {
+  // On OS X it's common to re-create a window in the app when the
+  // dock icon is clicked and there are no other windows open.
+  if (BrowserWindow.getAllWindows().length === 0) {
+    await createAppWindow();
+  }
+});
 
 app.on('window-all-closed', () => {
   pm2.stopAll();
