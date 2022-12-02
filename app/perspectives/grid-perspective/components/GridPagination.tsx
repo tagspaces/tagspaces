@@ -724,7 +724,8 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   nextProp.thumbnailMode === prevProp.thumbnailMode &&
   nextProp.entrySize === prevProp.entrySize &&
   nextProp.gridPageLimit === prevProp.gridPageLimit &&
-  nextProp.currentDirectoryDescription === prevProp.currentDirectoryDescription &&
+  nextProp.currentDirectoryDescription ===
+    prevProp.currentDirectoryDescription &&
   JSON.stringify(nextProp.files) === JSON.stringify(prevProp.files) &&
   JSON.stringify(nextProp.directories) ===
     JSON.stringify(prevProp.directories) &&

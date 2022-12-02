@@ -28,11 +28,20 @@ import AddIcon from '@mui/icons-material/Add';
 import Suitcase from '@mui/icons-material/WorkOutline';
 import Link from '@mui/icons-material/Link';
 import KeyShortcuts from '@mui/icons-material/Keyboard';
+import Reorder from '@mui/icons-material/Reorder';
+import ArrowBack from '@mui/icons-material/ArrowBack';
+import ArrowForward from '@mui/icons-material/ArrowForward';
 
 export const ParentFolderIcon = props => (
   // <ParentDirIcon style={{ transform: 'rotate(-90deg)' }} /> SubdirectoryArrowLeft
   <ParentFolder {...props} />
 );
+
+export const MainMenuIcon = props => <Reorder {...props} />;
+
+export const GoBackIcon = props => <ArrowBack {...props} />;
+
+export const GoForwardIcon = props => <ArrowForward {...props} />;
 
 export const HelpIcon = props => <Help {...props} />;
 
