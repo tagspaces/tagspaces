@@ -114,7 +114,8 @@ function EditDescription(props: Props) {
             variant="caption"
             style={{
               color: primaryColor,
-              padding: 10
+              padding: 10,
+              lineHeight: 4
             }}
           >
             {i18n.t('core:addMarkdownDescription')}
