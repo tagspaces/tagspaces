@@ -34,6 +34,7 @@ import IssueIcon from '@mui/icons-material/BugReport';
 import TranslationIcon from '@mui/icons-material/Translate';
 import NewFeatureIcon from '@mui/icons-material/Gesture';
 import TwitterIcon from '@mui/icons-material/Twitter';
+import ForumIcon from '@mui/icons-material/Forum';
 import ProTeaserIcon from '@mui/icons-material/FlightTakeoff';
 import AppConfig from '-/AppConfig';
 import styles from '-/components/SidePanels.css';
@@ -170,6 +171,17 @@ function HelpFeedbackPanel(props: Props) {
           </ListItemIcon>
           <Typography style={{ color: theme.palette.text.primary }}>
             {i18n.t('core:suggestNewFeatures')}
+          </Typography>
+        </ListItem>
+        <ListItem
+          button
+          onClick={() => openURLExternally(Links.links.forumsUrl, true)}
+        >
+          <ListItemIcon>
+            <ForumIcon />
+          </ListItemIcon>
+          <Typography style={{ color: theme.palette.text.primary }}>
+            {i18n.t('core:forums')}
           </Typography>
         </ListItem>
         <ListItem
