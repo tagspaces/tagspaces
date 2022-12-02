@@ -1194,6 +1194,7 @@ export const actions = {
       currentLocation ? currentLocation.ignorePatternPaths : []
     )
       .then(results => {
+        updateHistory(currentLocation, directoryPath);
         if (results !== undefined) {
           // console.debug('app listDirectoryPromise resolved:' + results.length);
           prepareDirectoryContent(
@@ -2402,74 +2403,16 @@ export const actions = {
         } else {
           openLocationTimer = 0;
         }
-        setTimeout(() => {
-          if (isCloudLocation) {
-            PlatformIO.enableObjectStoreSupport(targetLocation).then(() => {
-              if (directoryPath && directoryPath.length > 0) {
-                const dirFullPath = directoryPath;
-                dispatch(
-                  actions.loadDirectoryContent(dirFullPath, false, true)
-                );
-              }
-
-              if (entryPath) {
-                getAllPropertiesPromise(entryPath)
-                  .then((fsEntry: TS.FileSystemEntry) => {
-                    if (fsEntry) {
-                      dispatch(actions.openFsEntry(fsEntry));
-                      if (options.fullWidth) {
-                        dispatch(actions.setEntryFullWidth(true));
-                      }
-                    }
-                    return true;
-                  })
-                  .catch(() =>
-                    dispatch(
-                      actions.showNotification(
-                        i18n.t('core:invalidLink'),
-                        'warning',
-                        true
-                      )
-                    )
-                  );
-              }
-            });
-          } else {
-            // local files case
-            const locationPath = PlatformIO.getLocationPath(targetLocation);
+        // setTimeout(() => {
+        if (isCloudLocation) {
+          PlatformIO.enableObjectStoreSupport(targetLocation).then(() => {
             if (directoryPath && directoryPath.length > 0) {
-              if (
-                directoryPath.includes('../') ||
-                directoryPath.includes('..\\')
-              ) {
-                dispatch(
-                  actions.showNotification(
-                    i18n.t('core:invalidLink'),
-                    'warning',
-                    true
-                  )
-                );
-                return true;
-              }
-              const dirFullPath =
-                locationPath + PlatformIO.getDirSeparator() + directoryPath;
+              const dirFullPath = directoryPath;
               dispatch(actions.loadDirectoryContent(dirFullPath, false, true));
             }
 
-            if (entryPath && entryPath.length > 0) {
-              if (entryPath.includes('../') || entryPath.includes('..\\')) {
-                dispatch(
-                  actions.showNotification(
-                    i18n.t('core:invalidLink'),
-                    'warning',
-                    true
-                  )
-                );
-                return true;
-              }
-              const entryFullPath =
-                locationPath + PlatformIO.getDirSeparator() + entryPath;
-              getAllPropertiesPromise(entryFullPath)
+            if (entryPath) {
+              getAllPropertiesPromise(entryPath)
                 .then((fsEntry: TS.FileSystemEntry) => {
                   if (fsEntry) {
                     dispatch(actions.openFsEntry(fsEntry));
@@ -2489,8 +2432,64 @@ export const actions = {
                   )
                 );
             }
+          });
+        } else {
+          // local files case
+          const locationPath = PlatformIO.getLocationPath(targetLocation);
+          if (directoryPath && directoryPath.length > 0) {
+            if (
+              directoryPath.includes('../') ||
+              directoryPath.includes('..\\')
+            ) {
+              dispatch(
+                actions.showNotification(
+                  i18n.t('core:invalidLink'),
+                  'warning',
+                  true
+                )
+              );
+              return true;
+            }
+            const dirFullPath =
+              locationPath + PlatformIO.getDirSeparator() + directoryPath;
+            dispatch(actions.loadDirectoryContent(dirFullPath, false, true));
           }
-        }, openLocationTimer);
+
+          if (entryPath && entryPath.length > 0) {
+            if (entryPath.includes('../') || entryPath.includes('..\\')) {
+              dispatch(
+                actions.showNotification(
+                  i18n.t('core:invalidLink'),
+                  'warning',
+                  true
+                )
+              );
+              return true;
+            }
+            const entryFullPath =
+              locationPath + PlatformIO.getDirSeparator() + entryPath;
+            getAllPropertiesPromise(entryFullPath)
+              .then((fsEntry: TS.FileSystemEntry) => {
+                if (fsEntry) {
+                  dispatch(actions.openFsEntry(fsEntry));
+                  if (options.fullWidth) {
+                    dispatch(actions.setEntryFullWidth(true));
+                  }
+                }
+                return true;
+              })
+              .catch(() =>
+                dispatch(
+                  actions.showNotification(
+                    i18n.t('core:invalidLink'),
+                    'warning',
+                    true
+                  )
+                )
+              );
+          }
+        }
+        //  }, openLocationTimer);
       } else {
         dispatch(
           actions.showNotification(i18n.t('core:invalidLink'), 'warning', true)

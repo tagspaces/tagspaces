@@ -1,4 +1,5 @@
 import { locationType } from '@tagspaces/tagspaces-platforms/misc';
+import { normalizePath } from '@tagspaces/tagspaces-platforms/paths';
 import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
 
@@ -21,7 +22,7 @@ export function getURLParameter(paramName: string, url?: string): string {
 }
 
 export function clearAllURLParams() {
-  window.history.pushState('', document.title, window.location.pathname);
+  window.history.pushState(null, null, window.location.pathname);
   // console.log(window.location.href);
 }
 
@@ -31,11 +32,7 @@ export function clearURLParam(paramName) {
 
   // Delete the foo parameter.
   params.delete(paramName);
-  window.history.pushState(
-    '',
-    document.title,
-    window.location.pathname + '?' + params
-  );
+  window.history.pushState(null, null, window.location.pathname + '?' + params);
   // console.log(window.location.href);
 }
 
@@ -44,6 +41,8 @@ export function updateHistory(
   currentDirectory: string,
   entryPath?: string
 ) {
+  const currentDirectoryPath = normalizePath(currentDirectory);
+  const entryPathNormed = normalizePath(entryPath);
   if (currentLocation) {
     // const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
     let urlParams = '?';
@@ -52,20 +51,24 @@ export function updateHistory(
 
     if (currentLocation && currentLocation.uuid) {
       urlParams += 'tslid=' + encodeURIComponent(currentLocation.uuid);
-      currentLocationPath = PlatformIO.getLocationPath(currentLocation);
+      currentLocationPath =
+        currentLocation.path ||
+        (currentLocation.paths && currentLocation.paths[0]); // PlatformIO.getLocationPath(currentLocation);
+      currentLocationPath = normalizePath(currentLocationPath);
     }
 
-    if (currentDirectory && currentDirectory.length > 0) {
+    if (currentDirectoryPath && currentDirectoryPath.length > 0) {
       const currentDir = isCloudLocation
-        ? currentDirectory
-        : currentDirectory.replace(currentLocationPath, '');
+        ? currentDirectoryPath
+        : currentDirectoryPath.replace(currentLocationPath, '');
+      console.log('href curdir ' + currentDir);
       urlParams += '&tsdpath=' + encodeURIComponent(currentDir);
     }
 
-    if (entryPath && entryPath.length > 0) {
+    if (entryPathNormed && entryPathNormed.length > 0) {
       const ePath = isCloudLocation
-        ? entryPath
-        : entryPath.replace(currentLocationPath, '');
+        ? entryPathNormed
+        : entryPathNormed.replace(currentLocationPath, '');
       urlParams += '&tsepath=' + encodeURIComponent(ePath);
     }
 
@@ -74,8 +77,8 @@ export function updateHistory(
       urlParams += '&locale=' + localePar;
     }
 
-    window.history.pushState('', document.title, urlParams);
-    // console.log(window.location.href);
+    window.history.pushState(null, null, urlParams);
+    console.log('href updated: ' + window.location.href);
   }
 }
 
