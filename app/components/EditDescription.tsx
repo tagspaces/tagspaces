@@ -82,6 +82,7 @@ function EditDescription(props: Props) {
     </span>
   );
 
+  const noDescription = !description || description.length < 1;
   return (
     <>
       <span style={{ verticalAlign: 'sub', paddingLeft: 5 }}>
@@ -102,22 +103,34 @@ function EditDescription(props: Props) {
           borderRadius: 5,
           padding: 2,
           minHeight: 50,
-          maxHeight: 250,
+          maxHeight: noDescription && !editMode ? 100 : 250,
           width: 'calc(100% - 8px)',
           // @ts-ignore
           overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
         }}
       >
-        <MilkdownEditor
-          ref={fileDescriptionRef}
-          content={description || ''}
-          onChange={milkdownListener}
-          onFocus={milkdownOnFocus}
-          readOnly={!editMode}
-          dark={isDarkTheme}
-          lightMode={true}
-          currentFolder={currentFolder}
-        />
+        {noDescription && !editMode ? (
+          <Typography
+            variant="caption"
+            style={{
+              color: primaryColor,
+              padding: 10
+            }}
+          >
+            {i18n.t('core:addMarkdownDescription')}
+          </Typography>
+        ) : (
+          <MilkdownEditor
+            ref={fileDescriptionRef}
+            content={description || ''}
+            onChange={milkdownListener}
+            onFocus={milkdownOnFocus}
+            readOnly={!editMode}
+            dark={isDarkTheme}
+            lightMode={true}
+            currentFolder={currentFolder}
+          />
+        )}
       </div>
       <Typography
         variant="caption"

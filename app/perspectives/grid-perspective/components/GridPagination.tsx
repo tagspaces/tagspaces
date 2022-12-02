@@ -424,7 +424,6 @@ function GridPagination(props: Props) {
             <Grid item xs={12}>
               <div
                 style={{
-                  padding: 10,
                   marginLeft: 10,
                   marginRight: 10,
                   marginTop: 0,
@@ -510,8 +509,6 @@ function GridPagination(props: Props) {
                   <div
                     style={{
                       borderRadius: 8,
-                      marginLeft: 'auto',
-                      marginRight: 'auto',
                       height: 140,
                       width: 140,
                       backgroundImage: 'url("' + folderTmbPath.current + '")',
@@ -519,8 +516,8 @@ function GridPagination(props: Props) {
                       backgroundRepeat: 'no-repeat',
                       backgroundPosition: 'center center',
                       position: 'absolute',
-                      top: 10,
-                      right: 10
+                      top: 0,
+                      right: 0
                     }}
                   >
                     {/* <EntryIcon isFile={false} /> */}
@@ -535,8 +532,11 @@ function GridPagination(props: Props) {
               xs={12}
               style={{
                 backgroundColor: theme.palette.background.default,
+                marginTop: showDetails ? 0 : 10,
                 marginLeft: 25,
                 marginRight: 10,
+                paddingBottom: 16,
+                paddingRight: 16,
                 borderRadius: 5
               }}
             >
