@@ -157,6 +157,7 @@ interface Props {
   toggleEditTagDialog: (tag: TS.Tag) => void;
   setEntryFullWidth: (isFullWidth: boolean) => void;
   loadParentDirectoryContent: () => void;
+  openLink: (linkURL: string, options: any) => void;
   saveFile: () => void; // needed by electron-menus
   setZoomResetApp: () => void; // needed by electron-menus
   setZoomInApp: () => void; // needed by electron-menus
@@ -549,6 +550,7 @@ function MainPage(props: Props) {
     directoryPath,
     mainSplitSize,
     openedFiles,
+    openLink,
     classes
   } = props;
   const { FILE } = NativeTypes;
@@ -692,6 +694,7 @@ function MainPage(props: Props) {
         <OpenLinkDialogAsync
           open={props.isOpenLinkDialogOpened}
           onClose={toggleOpenLinkDialog}
+          openLink={openLink}
         />
       )}
       {props.isProTeaserVisible && (
@@ -898,6 +901,7 @@ function mapDispatchToProps(dispatch) {
       toggleEditTagDialog: AppActions.toggleEditTagDialog,
       onUploadProgress: AppActions.onUploadProgress,
       saveFile: AppActions.saveFile,
+      openLink: AppActions.openLink,
       setZoomResetApp: SettingsActions.setZoomResetApp,
       setZoomInApp: SettingsActions.setZoomInApp,
       setZoomOutApp: SettingsActions.setZoomOutApp,

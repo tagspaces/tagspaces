@@ -17,8 +17,6 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
@@ -28,10 +26,9 @@ import FormControl from '@mui/material/FormControl';
 import InputAdornment from '@mui/material/InputAdornment';
 import Dialog from '@mui/material/Dialog';
 import i18n from '-/services/i18n';
-import { actions as AppActions } from '-/reducers/app';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import useTheme from '@mui/styles/useTheme';
-import useMediaQuery from '@mui/material/useMediaQuery';
+// import useMediaQuery from '@mui/material/useMediaQuery';
 import InfoIcon from '-/components/InfoIcon';
 
 interface Props {
@@ -87,7 +84,7 @@ function OpenLinkDialog(props: Props) {
   }
 
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  // const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}
@@ -99,9 +96,7 @@ function OpenLinkDialog(props: Props) {
           event.preventDefault();
           event.stopPropagation();
           onConfirm();
-        } /*else if (event.key === 'Escape') {
-          onClose();
-        }*/
+        }
       }}
     >
       <DialogTitle>
@@ -125,7 +120,7 @@ function OpenLinkDialog(props: Props) {
             InputProps={{
               endAdornment: (
                 <InputAdornment position="start">
-                  <InfoIcon tooltip="TagSpace links begin with ts:? and are used for internal sharing of files and folders" />
+                  <InfoIcon tooltip="TagSpace links begin with ts://? and are used for internal sharing of files and folders" />
                 </InputAdornment>
               )
             }}
@@ -149,13 +144,4 @@ function OpenLinkDialog(props: Props) {
   );
 }
 
-function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators(
-    {
-      openLink: AppActions.openLink
-    },
-    dispatch
-  );
-}
-
-export default connect(undefined, mapActionCreatorsToProps)(OpenLinkDialog);
+export default OpenLinkDialog;
