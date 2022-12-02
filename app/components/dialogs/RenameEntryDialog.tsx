@@ -31,8 +31,8 @@ import {
   extractContainingDirectoryPath,
   extractDirectoryName,
   extractFileName
-} from '@tagspaces/tagspaces-platforms/paths';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+} from '@tagspaces/tagspaces-common/paths';
+import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
 import { actions as AppActions, getLastSelectedEntry } from '-/reducers/app';
 import PlatformIO from '-/services/platform-facade';

@@ -17,14 +17,14 @@
  */
 
 import { loadIndex, hasIndex } from '@tagspaces/tagspaces-platforms/indexer';
-import { locationType } from '@tagspaces/tagspaces-platforms/misc';
+import { locationType } from '@tagspaces/tagspaces-common/misc';
 import {
   extractFileExtension,
   extractFileName,
   extractTagsAsObjects,
   getThumbFileLocationForFile
-} from '@tagspaces/tagspaces-platforms/paths';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+} from '@tagspaces/tagspaces-common/paths';
+import AppConfig from '-/AppConfig';
 import { getLocation, getLocationByPath, getLocations } from './locations';
 import { createDirectoryIndex } from '-/services/utils-io';
 import Search from '../services/search';

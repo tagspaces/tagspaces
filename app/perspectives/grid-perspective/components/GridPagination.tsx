@@ -25,14 +25,14 @@ import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 import Pagination from '@mui/material/Pagination';
 import { bindActionCreators } from 'redux';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '-/AppConfig';
 import {
   getMetaFileLocationForDir,
   getMetaFileLocationForFile,
   getThumbFileLocationForDirectory,
   getThumbFileLocationForFile,
   extractDirectoryName
-} from '@tagspaces/tagspaces-platforms/paths';
+} from '@tagspaces/tagspaces-common/paths';
 import i18n from '-/services/i18n';
 import {
   actions as AppActions,

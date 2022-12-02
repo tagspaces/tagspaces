@@ -30,7 +30,7 @@ import Tooltip from '-/components/Tooltip';
 import withTheme from '@mui/styles/withTheme';
 import IconButton from '@mui/material/IconButton';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { locationType } from '@tagspaces/tagspaces-platforms/misc';
+import { locationType } from '@tagspaces/tagspaces-common/misc';
 import i18n from '-/services/i18n';
 import { getLocations } from '-/reducers/locations';
 import { actions as AppActions, getCurrentLocationId } from '-/reducers/app';

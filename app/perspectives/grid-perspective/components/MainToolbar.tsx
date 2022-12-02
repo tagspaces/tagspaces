@@ -34,7 +34,7 @@ import {
 } from '-/components/CommonIcons';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 import {

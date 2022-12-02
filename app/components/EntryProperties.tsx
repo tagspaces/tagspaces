@@ -18,7 +18,7 @@
 
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
-import { getBgndFileLocationForDirectory } from '@tagspaces/tagspaces-platforms/paths';
+import { getBgndFileLocationForDirectory } from '@tagspaces/tagspaces-common/paths';
 import L from 'leaflet';
 import { Theme } from '@mui/material/styles';
 import withStyles from '@mui/styles/withStyles';
@@ -48,15 +48,15 @@ import {
   withLeaflet
 } from 'react-leaflet';
 import { ButtonGroup, IconButton } from '@mui/material';
-import { formatFileSize } from '@tagspaces/tagspaces-platforms/misc';
+import { formatFileSize } from '@tagspaces/tagspaces-common/misc';
 import {
   extractContainingDirectoryPath,
   getThumbFileLocationForFile,
   getThumbFileLocationForDirectory,
   extractFileName,
   extractDirectoryName
-} from '@tagspaces/tagspaces-platforms/paths';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+} from '@tagspaces/tagspaces-common/paths';
+import AppConfig from '-/AppConfig';
 import TagDropContainer from './TagDropContainer';
 import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
 import i18n from '../services/i18n';

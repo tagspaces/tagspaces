@@ -71,7 +71,7 @@ import {
   platformCheckFileExist,
   platformCheckDirExist
 } from '@tagspaces/tagspaces-platforms/platform-io';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '-/AppConfig';
 import { Pro } from '../pro';
 import { TS } from '-/tagspaces.namespace';
 

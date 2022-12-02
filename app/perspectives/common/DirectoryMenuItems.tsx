@@ -7,7 +7,7 @@ import AutoRenew from '@mui/icons-material/Autorenew';
 import RenameFolderIcon from '@mui/icons-material/FormatTextdirectionLToR';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import PlatformIO from '-/services/platform-facade';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '-/AppConfig';
 import OpenFolderNativelyIcon from '@mui/icons-material/Launch';
 import Divider from '@mui/material/Divider';
 import NewFileIcon from '@mui/icons-material/InsertDriveFile';

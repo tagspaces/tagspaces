@@ -35,15 +35,15 @@ import ImageIcon from '@mui/icons-material/Image';
 import ShareIcon from '@mui/icons-material/Link';
 import RenameFile from '@mui/icons-material/FormatTextdirectionLToR';
 import DeleteForever from '@mui/icons-material/DeleteForever';
-import { formatDateTime4Tag } from '@tagspaces/tagspaces-platforms/misc';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
+import AppConfig from '-/AppConfig';
 import {
   extractContainingDirectoryPath,
   extractFileName,
   extractParentDirectoryPath,
   extractTags,
   generateSharingLink
-} from '@tagspaces/tagspaces-platforms/paths';
+} from '@tagspaces/tagspaces-common/paths';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
 import {

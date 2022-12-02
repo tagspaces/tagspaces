@@ -22,7 +22,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 import LicenseContent from '-/LICENSE.txt';

@@ -35,8 +35,7 @@ import ArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import ArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import Typography from '@mui/material/Typography';
 import ListItem from '@mui/material/ListItem';
-import List from '@mui/material/List';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '-/AppConfig';
 import {
   actions as LocationIndexActions,
   getSearchQuery
@@ -62,7 +61,7 @@ import { Tooltip } from '@mui/material';
 import {
   extractFileName,
   extractDirectoryName
-} from '@tagspaces/tagspaces-platforms/paths';
+} from '@tagspaces/tagspaces-common/paths';
 import PlatformIO from '-/services/platform-facade';
 import HistoryMenu from '-/components/menus/HistoryMenu';
 import BookmarksMenu from '-/components/menus/BookmarksMenu';

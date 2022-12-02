@@ -25,8 +25,8 @@ import {
   isObj,
   locationType,
   sortByCriteria
-} from '@tagspaces/tagspaces-platforms/misc';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+} from '@tagspaces/tagspaces-common/misc';
+import AppConfig from '-/AppConfig';
 import { isVisibleOnScreen } from '-/utils/dom';
 import { actions as TagLibraryActions } from '-/reducers/taglibrary';
 import {

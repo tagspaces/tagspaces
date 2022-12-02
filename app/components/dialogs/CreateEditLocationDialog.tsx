@@ -41,8 +41,8 @@ import CheckIcon from '@mui/icons-material/Check';
 import RemoveIcon from '@mui/icons-material/RemoveCircleOutline';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { locationType } from '@tagspaces/tagspaces-platforms/misc';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import { locationType } from '@tagspaces/tagspaces-common/misc';
+import AppConfig from '-/AppConfig';
 import {
   Accordion,
   AccordionDetails,

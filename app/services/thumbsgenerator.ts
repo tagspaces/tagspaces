@@ -24,8 +24,8 @@ import {
   normalizePath,
   getMetaDirectoryPath,
   encodeFileName
-} from '@tagspaces/tagspaces-platforms/paths';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+} from '@tagspaces/tagspaces-common/paths';
+import AppConfig from '-/AppConfig';
 import { base64ToArrayBuffer } from '-/utils/dom';
 import PlatformIO from '../services/platform-facade';
 import { Pro } from '../pro';

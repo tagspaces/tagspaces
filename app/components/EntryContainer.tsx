@@ -51,8 +51,8 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import Box from '@mui/material/Box';
 import { ParentFolderIcon } from '-/components/CommonIcons';
 import { Split } from 'ts-react-splitter';
-import { buffer } from '@tagspaces/tagspaces-platforms/misc';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import { buffer } from '@tagspaces/tagspaces-common/misc';
+import AppConfig from '-/AppConfig';
 import {
   extractContainingDirectoryPath,
   extractTitle,
@@ -61,7 +61,7 @@ import {
   extractFileName,
   extractDirectoryName,
   generateSharingLink
-} from '@tagspaces/tagspaces-platforms/paths';
+} from '@tagspaces/tagspaces-common/paths';
 import { ProTooltip } from '-/components/HelperComponents';
 import EntryProperties from '-/components/EntryProperties';
 import TagsPreview from '-/components/TagsPreview';
@@ -69,7 +69,7 @@ import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import PlatformIO from '-/services/platform-facade';
 import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
 import i18n from '-/services/i18n';
-// import { buffer } from '@tagspaces/tagspaces-platforms/misc';
+// import { buffer } from '@tagspaces/tagspaces-common/misc';
 import {
   actions as SettingsActions,
   isDesktopMode,
