@@ -25,7 +25,7 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Collapse from '@mui/material/Collapse';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '-/AppConfig';
 import TagContainerDnd from './TagContainerDnd';
 import TagContainer from './TagContainer';
 import ConfirmDialog from './dialogs/ConfirmDialog';

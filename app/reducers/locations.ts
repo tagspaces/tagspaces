@@ -19,7 +19,7 @@
 import {
   immutablySwapItems,
   locationType
-} from '@tagspaces/tagspaces-platforms/misc';
+} from '@tagspaces/tagspaces-common/misc';
 import { actions as AppActions } from '-/reducers/app';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';

@@ -35,7 +35,7 @@ import TranslationIcon from '@mui/icons-material/Translate';
 import NewFeatureIcon from '@mui/icons-material/Gesture';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import ProTeaserIcon from '@mui/icons-material/FlightTakeoff';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '-/AppConfig';
 import styles from '-/components/SidePanels.css';
 import i18n from '-/services/i18n';
 import { KeyShortcutsIcon, HelpIcon } from '-/components/CommonIcons';

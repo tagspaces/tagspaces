@@ -20,14 +20,14 @@ import { Progress } from 'aws-sdk/clients/s3';
 import {
   enhanceEntry,
   loadJSONString
-} from '@tagspaces/tagspaces-platforms/utils-common';
+} from '@tagspaces/tagspaces-common/utils-io';
 import {
   extractFileName,
   getMetaFileLocationForFile,
   getThumbFileLocationForFile,
   normalizePath
-} from '@tagspaces/tagspaces-platforms/paths';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+} from '@tagspaces/tagspaces-common/paths';
+import AppConfig from '-/AppConfig';
 import { actions as AppActions } from './app';
 import { copyFilesPromise, renameFilesPromise } from '-/services/utils-io';
 import i18n from '../services/i18n';

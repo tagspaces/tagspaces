@@ -25,7 +25,7 @@ import ImportExportIcon from '@mui/icons-material/SwapHoriz';
 import HelpIcon from '@mui/icons-material/Help';
 import AddIcon from '@mui/icons-material/Add';
 import ReloadIcon from '@mui/icons-material/Sync';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '-/AppConfig';
 import ImportExportTagGroupsDialog from '../dialogs/ImportExportTagGroupsDialog';
 import i18n from '-/services/i18n';
 import { TS } from '-/tagspaces.namespace';

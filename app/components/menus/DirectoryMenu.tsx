@@ -21,15 +21,15 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Menu from '@mui/material/Menu';
 import { Progress } from 'aws-sdk/clients/s3';
-import { formatDateTime4Tag } from '@tagspaces/tagspaces-platforms/misc';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
+import AppConfig from '-/AppConfig';
 import {
   extractContainingDirectoryPath,
   extractDirectoryName,
   getThumbFileLocationForDirectory,
   normalizePath,
   generateSharingLink
-} from '@tagspaces/tagspaces-platforms/paths';
+} from '@tagspaces/tagspaces-common/paths';
 import { Pro } from '../../pro';
 import CreateDirectoryDialog from '../dialogs/CreateDirectoryDialog';
 import i18n from '-/services/i18n';

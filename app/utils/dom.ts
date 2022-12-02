@@ -1,4 +1,4 @@
-import { locationType } from '@tagspaces/tagspaces-platforms/misc';
+import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
 

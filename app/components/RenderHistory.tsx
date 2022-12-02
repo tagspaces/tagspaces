@@ -11,7 +11,7 @@ import BookmarkTwoToneIcon from '@mui/icons-material/BookmarkTwoTone';
 import {
   extractDirectoryName,
   extractFileName
-} from '@tagspaces/tagspaces-platforms/paths';
+} from '@tagspaces/tagspaces-common/paths';
 import IconButton from '@mui/material/IconButton';
 import { RemoveIcon, HistoryIcon } from '-/components/CommonIcons';
 

@@ -33,7 +33,7 @@ import Switch from '@mui/material/Switch';
 import Select from '@mui/material/Select';
 import Input from '@mui/material/Input';
 import MenuItem from '@mui/material/MenuItem';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
 import {
   actions as SettingsActions,

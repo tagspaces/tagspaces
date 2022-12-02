@@ -35,7 +35,7 @@ import InfoIcon from '-/components/InfoIcon';
 import CheckIcon from '@mui/icons-material/Check';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
 import {
   actions as SettingsActions,
