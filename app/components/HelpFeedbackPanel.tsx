@@ -24,7 +24,6 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Divider from '@mui/material/Divider';
-import DocumentationIcon from '@mui/icons-material/Help';
 import AboutIcon from '@mui/icons-material/BlurOn';
 import ChangeLogIcon from '@mui/icons-material/ImportContacts';
 import OnboardingIcon from '@mui/icons-material/Explore';
@@ -34,14 +33,13 @@ import CancelSubscriptionIcon from '@mui/icons-material/EventBusy';
 import IssueIcon from '@mui/icons-material/BugReport';
 import TranslationIcon from '@mui/icons-material/Translate';
 import NewFeatureIcon from '@mui/icons-material/Gesture';
-// import SocialIcon from '@mui/icons-material/ThumbUp';
 import TwitterIcon from '@mui/icons-material/Twitter';
-import KeyShortcutsIcon from '@mui/icons-material/Keyboard';
 import ProTeaserIcon from '@mui/icons-material/FlightTakeoff';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
-import styles from './SidePanels.css';
-import i18n from '../services/i18n';
-import Links from '-/links';
+import styles from '-/components/SidePanels.css';
+import i18n from '-/services/i18n';
+import { KeyShortcutsIcon, HelpIcon } from '-/components/CommonIcons';
+import Links from '-/content/links';
 import { connect } from 'react-redux';
 import { getCurrentLanguage } from '-/reducers/settings';
 import { Pro } from '-/pro';
@@ -53,7 +51,7 @@ interface Props {
   toggleAboutDialog?: () => void;
   toggleKeysDialog: () => void;
   toggleOnboardingDialog: () => void;
-  toggleProTeaser: () => void;
+  toggleProTeaser: (slidePage?: string) => void;
   style?: any;
   reduceHeightBy?: number;
 }
@@ -117,7 +115,7 @@ function HelpFeedbackPanel(props: Props) {
           }
         >
           <ListItemIcon>
-            <DocumentationIcon />
+            <HelpIcon />
           </ListItemIcon>
           <Typography style={{ color: theme.palette.text.primary }}>
             {i18n.t('core:documentation')}
@@ -223,7 +221,10 @@ function HelpFeedbackPanel(props: Props) {
             </Typography>
           </ListItem>
         )}
-        <ListItem button onClick={() => openURLExternally(Links.links.twitter)}>
+        <ListItem
+          button
+          onClick={() => openURLExternally(Links.links.twitter, true)}
+        >
           <ListItemIcon>
             <TwitterIcon />
           </ListItemIcon>
@@ -231,19 +232,8 @@ function HelpFeedbackPanel(props: Props) {
             {i18n.t('core:followOnTwitter')}
           </Typography>
         </ListItem>
-        {/* <ListItem
-          button
-          onClick={() => openURLExternally(Links.links.facebook)}
-        >
-          <ListItemIcon>
-            <SocialIcon />
-          </ListItemIcon>
-          <Typography style={{ color: theme.palette.text.primary }}>
-            {i18n.t('core:likeUsOnFacebook')}
-          </Typography>
-        </ListItem> */}
         <Divider />
-        <ListItem button onClick={toggleProTeaser}>
+        <ListItem button onClick={() => toggleProTeaser()}>
           <ListItemIcon>
             <ProTeaserIcon />
           </ListItemIcon>

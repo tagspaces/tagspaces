@@ -16,7 +16,6 @@
  *
  */
 
-import { v1 as uuidv1 } from 'uuid';
 import {
   immutablySwapItems,
   locationType
@@ -25,6 +24,7 @@ import { actions as AppActions } from '-/reducers/app';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
+import { getUuid } from '-/services/utils-io';
 
 export const types = {
   ADD_LOCATION: 'APP/ADD_LOCATION',
@@ -50,7 +50,7 @@ export default (state: Array<TS.Location> = initialState, action: any) => {
         ...state,
         {
           ...action.location,
-          uuid: action.location.uuid || uuidv1(),
+          uuid: action.location.uuid || getUuid(),
           creationDate: new Date().toJSON()
         }
       ];
@@ -155,7 +155,7 @@ export const actions = {
             dispatch(
               actions.addLocation(
                 {
-                  uuid: uuidv1(),
+                  uuid: getUuid(),
                   type: locationType.TYPE_LOCAL,
                   name: i18n.t(key),
                   path: devicePaths[key],
@@ -244,6 +244,18 @@ export const actions = {
       dispatch(AppActions.setReadOnlyMode(location.isReadOnly || false));
     }
   },
+  switchLocationType: (locationId: string) => (
+    dispatch: (actions) => Promise<boolean>,
+    getState: () => any
+  ): Promise<boolean> => {
+    const { locations } = getState();
+    const location: TS.Location = locations.find(
+      location => location.uuid === locationId
+    );
+    if (location) {
+      return dispatch(AppActions.switchLocationType(location));
+    }
+  },
   changeLocation: (location: TS.Location) => ({
     type: types.EDIT_LOCATION,
     location
@@ -273,12 +285,23 @@ export const getLocationByPath = (
 ): TS.Location | null =>
   state.locations.find(location => location.path === path);
 export const getDefaultLocationId = (state: any): string | undefined => {
-  let defaultLocationID;
-  state.locations.map(location => {
-    if (location.isDefault) {
-      defaultLocationID = location.uuid;
-    }
-    return true;
-  });
-  return defaultLocationID;
+  let foundLocation = state.locations.find(
+    location => location.isDefault && !location.isReadOnly
+  );
+  return foundLocation ? foundLocation.uuid : undefined;
+};
+export const getCurrentLocation = (state: any): string | undefined => {
+  let foundLocation = state.locations.find(
+    location => location.uuid === state.app.currentLocationId
+  );
+  return foundLocation ? foundLocation : undefined;
+};
+export const getFirstRWLocation = (state: any): string | undefined => {
+  let foundLocation = state.locations.find(
+    location => location.isDefault && !location.isReadOnly
+  );
+  if (!foundLocation) {
+    foundLocation = state.locations.find(location => !location.isReadOnly);
+  }
+  return foundLocation;
 };

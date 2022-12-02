@@ -16,7 +16,6 @@
  *
  */
 
-import { v1 as uuidv1 } from 'uuid';
 import {
   formatDateTime4Tag,
   locationType
@@ -51,7 +50,10 @@ import {
   findExtensionsForEntry,
   getNextFile,
   getPrevFile,
-  loadJSONFile
+  loadJSONFile,
+  merge,
+  setLocationType,
+  getUuid
 } from '-/services/utils-io';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
@@ -64,6 +66,8 @@ import {
 } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { PerspectiveIDs } from '-/perspectives';
+import versionMeta from '-/version.json';
+import { getProTeaserSlideIndex } from '-/content/ProTeaserSlides';
 
 export const types = {
   DEVICE_ONLINE: 'APP/DEVICE_ONLINE',
@@ -107,6 +111,7 @@ export const types = {
   TOGGLE_KEYBOARD_DIALOG: 'APP/TOGGLE_KEYBOARD_DIALOG',
   TOGGLE_LICENSE_DIALOG: 'APP/TOGGLE_LICENSE_DIALOG',
   TOGGLE_OPENLINK_DIALOG: 'APP/TOGGLE_OPENLINK_DIALOG',
+  TOGGLE_OPEN_PRO_TEASER_DIALOG: 'APP/TOGGLE_OPEN_PRO_TEASER_DIALOG',
   TOGGLE_THIRD_PARTY_LIBS_DIALOG: 'APP/TOGGLE_THIRD_PARTY_LIBS_DIALOG',
   TOGGLE_SETTINGS_DIALOG: 'APP/TOGGLE_SETTINGS_DIALOG',
   TOGGLE_CREATE_DIRECTORY_DIALOG: 'APP/TOGGLE_CREATE_DIRECTORY_DIALOG',
@@ -115,6 +120,7 @@ export const types = {
     'APP/TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG',
   TOGGLE_IMPORT_KANBAN_DIALOG: 'APP/TOGGLE_IMPORT_KANBAN_DIALOG',
   TOGGLE_UPLOAD_DIALOG: 'APP/TOGGLE_UPLOAD_DIALOG',
+  SET_CURRENT_DIRECTORY_DIRS: 'APP/SET_CURRENT_DIRECTORY_DIRS',
   CLEAR_UPLOAD_DIALOG: 'APP/CLEAR_UPLOAD_DIALOG',
   TOGGLE_PROGRESS_DIALOG: 'APP/TOGGLE_PROGRESS_DIALOG',
   OPEN_LOCATIONMANAGER_PANEL: 'APP/OPEN_LOCATIONMANAGER_PANEL',
@@ -129,6 +135,7 @@ export const types = {
   // REFLECT_UPDATE_SIDECARMETA: 'APP/REFLECT_UPDATE_SIDECARMETA',
   UPDATE_CURRENTDIR_ENTRY: 'APP/UPDATE_CURRENTDIR_ENTRY',
   UPDATE_CURRENTDIR_ENTRIES: 'APP/UPDATE_CURRENTDIR_ENTRIES',
+  REFLECT_EDITED_ENTRY_PATHS: 'APP/REFLECT_EDITED_ENTRY_PATHS',
   SET_ISLOADING: 'APP/SET_ISLOADING'
 };
 
@@ -142,6 +149,7 @@ export type OpenedEntry = {
   url?: string;
   size: number;
   lmdt: number;
+  locationId: string;
   viewingExtensionPath: string;
   viewingExtensionId: string;
   editingExtensionPath?: string;
@@ -211,6 +219,7 @@ export const initialState = {
   aboutDialogOpened: false,
   locationDialogOpened: false,
   openLinkDialogOpened: false,
+  proTeaserIndex: -1,
   onboardingDialogOpened: false,
   keysDialogOpened: false,
   createFileDialogOpened: false,
@@ -299,6 +308,22 @@ export default (state: any = initialState, action: any) => {
         // relative paths
         directoryPath = PlatformIO.resolveFilePath(directoryPath);
       }
+      let currentDirectoryFiles: Array<TS.OrderVisibilitySettings> = [];
+      if (
+        action.directoryMeta &&
+        action.directoryMeta.customOrder &&
+        action.directoryMeta.customOrder.files
+      ) {
+        currentDirectoryFiles = action.directoryMeta.customOrder.files;
+      }
+      let currentDirectoryDirs: Array<TS.OrderVisibilitySettings> = [];
+      if (
+        action.directoryMeta &&
+        action.directoryMeta.customOrder &&
+        action.directoryMeta.customOrder.folders
+      ) {
+        currentDirectoryDirs = action.directoryMeta.customOrder.folders;
+      }
       return {
         ...state,
         currentDirectoryEntries: action.directoryContent,
@@ -320,15 +345,11 @@ export default (state: any = initialState, action: any) => {
         /**
          * used for reorder files in KanBan
          */
-        currentDirectoryFiles: action.directoryMeta
-          ? action.directoryMeta.files
-          : [],
+        currentDirectoryFiles: currentDirectoryFiles,
         /**
          * used for reorder dirs in KanBan
          */
-        currentDirectoryDirs: action.directoryMeta
-          ? action.directoryMeta.dirs
-          : [],
+        currentDirectoryDirs: currentDirectoryDirs,
         isLoading: action.showIsLoading || false
       };
     }
@@ -394,6 +415,19 @@ export default (state: any = initialState, action: any) => {
         openLinkDialogOpened: !state.openLinkDialogOpened
       };
     }
+    case types.TOGGLE_OPEN_PRO_TEASER_DIALOG: {
+      let index = -1;
+      const proTeaserIndex = getProTeaserSlideIndex(action.proTeaserPage);
+      if (proTeaserIndex && proTeaserIndex > -1) {
+        index = proTeaserIndex;
+      } else if (state.proTeaserIndex === -1) {
+        index = 0;
+      }
+      return {
+        ...state,
+        proTeaserIndex: index
+      };
+    }
     case types.TOGGLE_KEYBOARD_DIALOG: {
       return { ...state, keysDialogOpened: !state.keysDialogOpened };
     }
@@ -443,6 +477,12 @@ export default (state: any = initialState, action: any) => {
         };
       }
       return state;
+    }
+    case types.SET_CURRENT_DIRECTORY_DIRS: {
+      return {
+        ...state,
+        currentDirectoryDirs: action.dirs
+      };
     }
     case types.CLEAR_UPLOAD_DIALOG: {
       // if (PlatformIO.haveObjectStoreSupport()) {
@@ -514,7 +554,11 @@ export default (state: any = initialState, action: any) => {
         openedFiles: [
           action.file
           // ...state.openedFiles // TODO uncomment for multiple file support
-        ]
+        ],
+        ...(action.file.path === state.currentDirectoryPath &&
+          action.file.description && {
+            currentDirectoryDescription: action.file.description
+          })
       };
     }
     case types.TOGGLE_ENTRY_FULLWIDTH: {
@@ -524,17 +568,15 @@ export default (state: any = initialState, action: any) => {
       return { ...state, isEntryInFullWidth: action.isFullWidth };
     }
     case types.UPDATE_THUMB_URL: {
-      const dirEntries = [...state.currentDirectoryEntries];
-      dirEntries.map(entry => {
+      const dirEntries = state.currentDirectoryEntries.map(entry => {
         if (entry.path === action.filePath) {
-          // eslint-disable-next-line no-param-reassign
-          entry.thumbPath = action.thumbUrl;
+          return { ...entry, thumbPath: action.thumbUrl };
         }
-        return true;
+        return entry;
       });
       return {
         ...state,
-        currentDirectoryEntries: [...dirEntries]
+        currentDirectoryEntries: dirEntries
       };
     }
     case types.UPDATE_THUMB_URLS: {
@@ -565,12 +607,16 @@ export default (state: any = initialState, action: any) => {
       ) {
         return {
           ...state,
+          editedEntryPaths: [action.path],
           currentDirectoryEntries: newDirectoryEntries,
           openedFiles: newOpenedFiles,
           isEntryInFullWidth: false
         };
       }
-      return state;
+      return {
+        ...state,
+        editedEntryPaths: [action.path]
+      };
     }
     case types.REFLECT_CREATE_ENTRY: {
       // Prevent adding entry twice e.g. by the watcher
@@ -588,13 +634,17 @@ export default (state: any = initialState, action: any) => {
       ) {
         return {
           ...state,
+          editedEntryPaths: [action.newEntry.path],
           currentDirectoryEntries: [
             ...state.currentDirectoryEntries,
             action.newEntry
           ]
         };
       }
-      return state;
+      return {
+        ...state,
+        editedEntryPaths: [action.newEntry.path]
+      };
     }
     case types.REFLECT_RENAME_ENTRY: {
       const extractedTags = extractTagsAsObjects(
@@ -605,6 +655,7 @@ export default (state: any = initialState, action: any) => {
 
       return {
         ...state,
+        editedEntryPaths: [action.path, action.newPath],
         currentDirectoryEntries: state.currentDirectoryEntries.map(entry => {
           if (entry.path !== action.path) {
             return entry;
@@ -620,7 +671,7 @@ export default (state: any = initialState, action: any) => {
               PlatformIO.getDirSeparator()
             ),
             tags: [
-              ...entry.tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
+              ...entry.tags.filter(tag => tag.type !== 'plain'), //'sidecar'), // add only sidecar tags
               ...fileNameTags
             ]
           };
@@ -635,7 +686,7 @@ export default (state: any = initialState, action: any) => {
             ...entry,
             path: action.newPath, // TODO handle change extension case
             tags: [
-              ...entry.tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
+              ...entry.tags.filter(tag => tag.type !== 'plain'), //'sidecar'), // add only sidecar tags
               ...fileNameTags
             ]
             // shouldReload: true
@@ -670,24 +721,48 @@ export default (state: any = initialState, action: any) => {
       };
     } */
     case types.UPDATE_CURRENTDIR_ENTRIES: {
-      const newDirEntries = [...state.currentDirectoryEntries];
-      for (let i = 0; i < newDirEntries.length; i += 1) {
-        const dirEntry = action.dirEntries.find(
-          entry => entry.path === newDirEntries[i].path
+      if (
+        state.currentDirectoryEntries &&
+        state.currentDirectoryEntries.length > 0
+      ) {
+        const newDirEntries = state.currentDirectoryEntries.map(
+          currentEntry => {
+            const updatedEntries = action.dirEntries.filter(
+              newEntry => newEntry.path === currentEntry.path
+            );
+            if (updatedEntries && updatedEntries.length > 0) {
+              const updatedEntry = updatedEntries.reduce(
+                (prevValue, currentValue) => {
+                  return merge(currentValue, prevValue);
+                }
+              );
+              return merge(updatedEntry, currentEntry);
+            }
+            return currentEntry;
+          }
         );
-        if (dirEntry) {
-          newDirEntries[i] = dirEntry;
-        }
-      }
 
+        return {
+          ...state,
+          currentDirectoryEntries: newDirEntries
+        };
+      }
       return {
         ...state,
-        currentDirectoryEntries: newDirEntries
+        currentDirectoryEntries: action.dirEntries
+      };
+    }
+    case types.REFLECT_EDITED_ENTRY_PATHS: {
+      return {
+        ...state,
+        editedEntryPaths: action.paths
       };
     }
     case types.UPDATE_CURRENTDIR_ENTRY: {
       return {
         ...state,
+        // to reload cell in KanBan if add/remove sidecar tags
+        // editedEntryPaths: [{ [action.path]: action.entry.tags }],
         currentDirectoryEntries: state.currentDirectoryEntries.map(entry => {
           if (entry.path !== action.path) {
             return entry;
@@ -829,10 +904,6 @@ export const actions = {
     dispatch(SettingsActions.setZoomRestoreApp());
     dispatch(SettingsActions.upgradeSettings()); // TODO call this only on app version update
     const state = getState();
-    const defaultLocationId = getDefaultLocationId(state);
-    if (defaultLocationId && defaultLocationId.length > 0) {
-      dispatch(actions.openLocationById(defaultLocationId));
-    }
     if (getCheckForUpdateOnStartup(state)) {
       dispatch(SettingsActions.checkForUpdate());
     }
@@ -852,15 +923,18 @@ export const actions = {
       dispatch(SettingsActions.setLanguage(langURLParam));
     }
 
+    let openDefaultLocation = true;
     const lid = getURLParameter('tslid');
     const dPath = getURLParameter('tsdpath');
     const ePath = getURLParameter('tsepath');
     const cmdOpen = getURLParameter('cmdopen');
     if (lid || dPath || ePath) {
+      openDefaultLocation = false;
       setTimeout(() => {
         dispatch(actions.openLink(window.location.href));
       }, 1000);
     } else if (cmdOpen) {
+      openDefaultLocation = false;
       setTimeout(() => {
         dispatch(
           actions.openLink(
@@ -868,6 +942,14 @@ export const actions = {
           )
         );
       }, 1000);
+    }
+    const defaultLocationId = getDefaultLocationId(state);
+    if (
+      openDefaultLocation &&
+      defaultLocationId &&
+      defaultLocationId.length > 0
+    ) {
+      dispatch(actions.openLocationById(defaultLocationId));
     }
   },
   goOnline: () => ({ type: types.DEVICE_ONLINE }),
@@ -934,6 +1016,10 @@ export const actions = {
   toggleOnboardingDialog: () => ({ type: types.TOGGLE_ONBOARDING_DIALOG }),
   toggleKeysDialog: () => ({ type: types.TOGGLE_KEYBOARD_DIALOG }),
   toggleOpenLinkDialog: () => ({ type: types.TOGGLE_OPENLINK_DIALOG }),
+  toggleProTeaser: (slidePage?: string) => ({
+    type: types.TOGGLE_OPEN_PRO_TEASER_DIALOG,
+    proTeaserPage: slidePage
+  }),
   toggleLicenseDialog: () => ({ type: types.TOGGLE_LICENSE_DIALOG }),
   toggleThirdPartyLibsDialog: () => ({
     type: types.TOGGLE_THIRD_PARTY_LIBS_DIALOG
@@ -951,6 +1037,10 @@ export const actions = {
   }),
   toggleUploadDialog: () => ({
     type: types.TOGGLE_UPLOAD_DIALOG
+  }),
+  setCurrentDirectoryDirs: dirs => ({
+    type: types.SET_CURRENT_DIRECTORY_DIRS,
+    dirs
   }),
   clearUploadDialog: () => (
     dispatch: (action) => void,
@@ -1097,7 +1187,8 @@ export const actions = {
       directoryPath,
       fsEntryMeta &&
         fsEntryMeta.perspective &&
-        fsEntryMeta.perspective === PerspectiveIDs.GALLERY
+        (fsEntryMeta.perspective === PerspectiveIDs.KANBAN ||
+          fsEntryMeta.perspective === PerspectiveIDs.GALLERY)
         ? ['extractThumbPath']
         : [], // mode,
       currentLocation ? currentLocation.ignorePatternPaths : []
@@ -1384,7 +1475,7 @@ export const actions = {
       .then(newDirPath => {
         const { currentDirectoryPath, openedFiles } = getState().app;
         if (currentDirectoryPath === directoryPath) {
-          dispatch(actions.loadDirectoryContent(newDirPath, false));
+          dispatch(actions.loadDirectoryContent(newDirPath, false, true));
           if (openedFiles && openedFiles.length > 0) {
             if (openedFiles[0].path === directoryPath) {
               const openedFile = openedFiles[0];
@@ -1524,7 +1615,14 @@ export const actions = {
     content: string,
     fileType: 'md' | 'txt' | 'html'
   ) => (dispatch: (action) => void, getState: () => any) => {
+    const creationDate = new Date().toISOString();
     const fileNameAndExt = fileName + '.' + fileType;
+    const creationMeta =
+      'Created in ' +
+      versionMeta.name +
+      ' on ' +
+      creationDate.substring(0, 10) +
+      '.';
     const filePath =
       normalizePath(targetPath) + PlatformIO.getDirSeparator() + fileNameAndExt;
     let fileContent = content;
@@ -1532,12 +1630,20 @@ export const actions = {
       const { newHTMLFileContent } = getState().settings;
       fileContent =
         newHTMLFileContent.split('<body></body>')[0] +
-        '<body>' +
+        '<body data-createdwith="' +
+        versionMeta.name +
+        '" data-createdon="' +
+        creationDate +
+        '" >' +
         content +
-        '</body>' +
-        newHTMLFileContent.split('<body></body>')[1];
+        '\n<br />\n' +
+        creationMeta +
+        '\n';
+      '</body>' + newHTMLFileContent.split('<body></body>')[1];
+    } else if (fileType === 'md') {
+      fileContent = content + ' \n\n' + creationMeta + '\n';
     }
-    PlatformIO.saveFilePromise(filePath, fileContent, true)
+    PlatformIO.saveFilePromise(filePath, fileContent, false)
       .then((fsEntry: TS.FileSystemEntry) => {
         dispatch(actions.reflectCreateEntry(filePath, true));
         dispatch(actions.openFsEntry(fsEntry)); // TODO return fsEntry from saveFilePromise and simplify
@@ -1585,6 +1691,32 @@ export const actions = {
       dispatch(actions.setCurrentLocationId(location.uuid));
     }
   },
+  switchLocationType: (location: TS.Location) => (
+    dispatch: (action) => void,
+    getState: () => any
+  ): Promise<boolean> => {
+    const { currentLocationId } = getState().app;
+    if (location.uuid !== currentLocationId) {
+      const currentLocation: TS.Location = getLocation(
+        getState(),
+        getState().app.currentLocationId
+      );
+      if (location.type !== currentLocation.type) {
+        return setLocationType(location);
+      }
+    }
+    return Promise.resolve(false);
+  },
+  switchCurrentLocationType: () => (
+    dispatch: (action) => void,
+    getState: () => any
+  ): Promise<boolean> => {
+    const location: TS.Location = getLocation(
+      getState(),
+      getState().app.currentLocationId
+    );
+    return setLocationType(location);
+  },
   openLocationById: (locationId: string) => (
     dispatch: (action) => void,
     getState: () => any
@@ -1629,7 +1761,8 @@ export const actions = {
           dispatch(
             actions.loadDirectoryContent(
               PlatformIO.getLocationPath(location),
-              false
+              false,
+              true
             )
           );
           return true;
@@ -1686,6 +1819,7 @@ export const actions = {
           dispatch(actions.setCurrentLocationId(null));
           dispatch(actions.clearDirectoryContent());
           dispatch(LocationIndexActions.clearDirectoryIndex());
+          dispatch(actions.setSelectedEntries([]));
           if (Pro && Pro.Watcher) {
             Pro.Watcher.stopWatching();
           }
@@ -1700,6 +1834,7 @@ export const actions = {
     dispatch(actions.setCurrentLocationId(null));
     dispatch(actions.clearDirectoryContent());
     dispatch(LocationIndexActions.clearDirectoryIndex());
+    dispatch(actions.setSelectedEntries([]));
     if (Pro && Pro.Watcher) {
       Pro.Watcher.stopWatching();
     }
@@ -1760,10 +1895,10 @@ export const actions = {
     entryPath: string,
     fsEntryMeta: any // FileSystemEntryMeta,
     // isFile: boolean = true
-  ) => (dispatch: (action) => void, getState: () => any) => {
+  ) => (dispatch: (action) => void, getState: () => any): Promise<boolean> => {
     const { openedFiles } = getState().app;
     if (openedFiles && openedFiles.length > 0) {
-      PlatformIO.getPropertiesPromise(entryPath)
+      return PlatformIO.getPropertiesPromise(entryPath)
         .then(entryProps => {
           if (entryProps) {
             const { supportedFileTypes } = getState().settings;
@@ -1810,8 +1945,21 @@ export const actions = {
         })
         .catch(err => {
           console.error('updateOpenedFile ' + entryPath + ' not exist ' + err);
+          return Promise.resolve(false);
         });
     }
+    return Promise.resolve(false);
+  },
+  openEntry: (path: string) => (dispatch: (action) => void) => {
+    return getAllPropertiesPromise(path)
+      .then((fsEntry: TS.FileSystemEntry) =>
+        dispatch(actions.openFsEntry(fsEntry))
+      )
+      .catch(error =>
+        console.warn(
+          'Error getting properties for entry: ' + path + ' - ' + error
+        )
+      );
   },
   openFsEntry: (fsEntry?: TS.FileSystemEntry) => (
     dispatch: (action) => void,
@@ -1892,12 +2040,16 @@ export const actions = {
     if (fsEntry.isNewFile) {
       entryForOpening.editMode = true;
     }
+
     const currentLocation: TS.Location = getLocation(
       getState(),
       getState().app.currentLocationId
     );
+    entryForOpening.locationId = currentLocation.uuid;
     const { currentDirectoryPath } = getState().app;
     updateHistory(currentLocation, currentDirectoryPath, fsEntry.path);
+
+    document.title = fsEntry.name + ' | ' + 'TagSpaces'; // TODO get it later from app config
 
     dispatch(actions.addToEntryContainer(entryForOpening));
     /**
@@ -1968,7 +2120,11 @@ export const actions = {
       dispatch(actions.setSelectedEntries([prevFile]));
     }
   },
-  closeAllFiles: () => ({ type: types.CLOSE_ALL_FILES }),
+  closeAllFiles: () => (dispatch: (action) => void) => {
+    document.title = 'TagSpaces'; // TODO move to AppConfig
+    dispatch(actions.closeAllFilesInt());
+  },
+  closeAllFilesInt: () => ({ type: types.CLOSE_ALL_FILES }),
   reflectDeleteEntryInt: (path: string) => ({
     type: types.REFLECT_DELETE_ENTRY,
     path
@@ -1991,7 +2147,7 @@ export const actions = {
     dispatch: (action) => void
   ) => {
     const newEntry = {
-      uuid: uuidv1(),
+      uuid: getUuid(),
       name: isFile
         ? extractFileName(path, PlatformIO.getDirSeparator())
         : extractDirectoryName(path, PlatformIO.getDirSeparator()),
@@ -2028,6 +2184,10 @@ export const actions = {
     type: types.UPDATE_CURRENTDIR_ENTRIES,
     dirEntries
   }),
+  reflectEditedEntryPaths: (paths: Array<any>) => ({
+    type: types.REFLECT_EDITED_ENTRY_PATHS,
+    paths
+  }),
   /**
    * @param path
    * @param tags
@@ -2039,16 +2199,18 @@ export const actions = {
     updateIndex = true
   ) => (dispatch: (action) => void, getState: () => any) => {
     const { openedFiles, selectedEntries } = getState().app;
+    // to reload cell in KanBan if add/remove sidecar tags
+    dispatch(actions.reflectEditedEntryPaths([{ [path]: tags }]));
     /**
      * if its have openedFiles updateCurrentDirEntry is called from FolderContainer (useEffect -> ... if (openedFile.changed)
      */
-    if (
+    /*if (
       openedFiles.length === 0 ||
       !openedFiles.some(obj => obj.path === path) ||
       selectedEntries.length > 1
-    ) {
-      dispatch(actions.updateCurrentDirEntry(path, { tags }));
-    }
+    ) {*/
+    dispatch(actions.updateCurrentDirEntry(path, { tags }));
+    // }
     if (updateIndex) {
       dispatch(LocationIndexActions.reflectUpdateSidecarTags(path, tags));
     }
@@ -2114,9 +2276,8 @@ export const actions = {
             true
           )
         );
-        dispatch(actions.reflectRenameEntry(filePath, newFilePathFromPromise));
         // Update sidecar file and thumb
-        renameFilesPromise([
+        return renameFilesPromise([
           [
             getMetaFileLocationForFile(filePath, PlatformIO.getDirSeparator()),
             getMetaFileLocationForFile(
@@ -2138,6 +2299,9 @@ export const actions = {
           ]
         ])
           .then(() => {
+            dispatch(
+              actions.reflectRenameEntry(filePath, newFilePathFromPromise)
+            );
             console.info(
               'Renaming meta file and thumb successful from ' +
                 filePath +
@@ -2147,17 +2311,18 @@ export const actions = {
             return true;
           })
           .catch(err => {
+            dispatch(
+              actions.reflectRenameEntry(filePath, newFilePathFromPromise)
+            );
             console.warn(
               'Renaming meta file and thumb failed from ' +
                 filePath +
                 ' to:' +
-                newFilePath +
-                ' with ' +
-                err
+                newFilePath,
+              err
             );
             return false;
           });
-        return true;
       })
       .catch(error => {
         console.warn('Error while renaming file: ' + error);
@@ -2209,7 +2374,7 @@ export const actions = {
             dispatch(actions.openFsEntry(fsEntry));
             dispatch(actions.setEntryFullWidth(true));
           } else {
-            dispatch(actions.loadDirectoryContent(fsEntry.path, false));
+            dispatch(actions.loadDirectoryContent(fsEntry.path, false, true));
           }
           return true;
         })
@@ -2242,7 +2407,9 @@ export const actions = {
             PlatformIO.enableObjectStoreSupport(targetLocation).then(() => {
               if (directoryPath && directoryPath.length > 0) {
                 const dirFullPath = directoryPath;
-                dispatch(actions.loadDirectoryContent(dirFullPath, false));
+                dispatch(
+                  actions.loadDirectoryContent(dirFullPath, false, true)
+                );
               }
 
               if (entryPath) {
@@ -2286,7 +2453,7 @@ export const actions = {
               }
               const dirFullPath =
                 locationPath + PlatformIO.getDirSeparator() + directoryPath;
-              dispatch(actions.loadDirectoryContent(dirFullPath, false));
+              dispatch(actions.loadDirectoryContent(dirFullPath, false, true));
             }
 
             if (entryPath && entryPath.length > 0) {
@@ -2388,6 +2555,7 @@ export const getIsMetaLoaded = (state: any) => state.app.isMetaLoaded;
 export const getDirectoryContent = (state: any) =>
   state.app.currentDirectoryEntries;
 // export const getPageEntries = (state: any) => state.app.pageEntries;
+export const getEditedEntryPaths = (state: any) => state.app.editedEntryPaths;
 export const getCurrentDirectoryFiles = (state: any) =>
   state.app.currentDirectoryFiles;
 export const getCurrentDirectoryDirs = (state: any) =>
@@ -2440,9 +2608,18 @@ export const getLastSelectedEntry = (state: any) => {
   }
   return undefined;
 };
+export const getLastSelectedEntryPath = (state: any) => {
+  const { selectedEntries, currentDirectoryPath } = state.app;
+  if (selectedEntries && selectedEntries.length > 0) {
+    return selectedEntries[selectedEntries.length - 1].path;
+  }
+  return currentDirectoryPath;
+};
 export const getSelectedTag = (state: any) => state.app.tag;
 export const getSelectedEntries = (state: any) =>
   state.app.selectedEntries ? state.app.selectedEntries : [];
+export const getSelectedEntriesLength = (state: any) =>
+  state.app.selectedEntries ? state.app.selectedEntries.length : 0;
 export const getDirectoryMeta = (state: any) => state.app.directoryMeta;
 export const isGeneratingThumbs = (state: any) => state.app.isGeneratingThumbs;
 export const isReadOnlyMode = (state: any) => state.app.isReadOnlyMode;
@@ -2472,6 +2649,8 @@ export const isUploadDialogOpened = (state: any) =>
   state.app.uploadDialogOpened;
 export const isOpenLinkDialogOpened = (state: any) =>
   state.app.openLinkDialogOpened;
+export const isProTeaserVisible = (state: any) => state.app.proTeaserIndex > -1;
+export const getProTeaserIndex = (state: any) => state.app.proTeaserIndex;
 export const isProgressOpened = (state: any) => state.app.progressDialogOpened;
 export const getOpenedFiles = (state: any) => state.app.openedFiles;
 export const getNotificationStatus = (state: any) =>

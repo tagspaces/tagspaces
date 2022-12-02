@@ -35,6 +35,7 @@ import { Pro } from '../pro';
 import TaggingActions from './tagging-actions';
 import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
+import { actions as LocationIndexActions } from '-/reducers/location-index';
 
 const actions = {
   extractContent: (
@@ -94,7 +95,7 @@ const actions = {
         );
         const moveMetaJobs = [];
         moveJobs.map(job => {
-          dispatch(AppActions.reflectDeleteEntry(job[0])); // TODO moved files should be added to the index, if the target dir in index
+          dispatch(AppActions.reflectDeleteEntry(job[0])); // moved files should be added to the index, if the target dir in index
           moveMetaJobs.push([
             getMetaFileLocationForFile(job[0], PlatformIO.getDirSeparator()),
             getMetaFileLocationForFile(job[1], PlatformIO.getDirSeparator())
@@ -170,9 +171,11 @@ const actions = {
           copyFilesPromise(copyMetaJobs)
             .then(() => {
               console.log('Copy meta and thumbs successful');
+              dispatch(AppActions.reflectCreateEntry(job[1], true));
               return true;
             })
             .catch(err => {
+              dispatch(AppActions.reflectCreateEntry(job[1], true));
               console.warn('At least one meta or thumb was not copied ' + err);
             });
           return true;
@@ -216,10 +219,12 @@ const actions = {
       async function setupReader(inx) {
         const file = files[inx];
         const reader = new FileReader();
+        let fileName = file.name;
+        try {
+          fileName = decodeURIComponent(file.name);
+        } catch (ex) {}
         let filePath =
-          normalizePath(targetPath) +
-          PlatformIO.getDirSeparator() +
-          decodeURIComponent(file.name);
+          normalizePath(targetPath) + PlatformIO.getDirSeparator() + fileName;
         if (
           PlatformIO.haveObjectStoreSupport() &&
           (filePath.startsWith('\\') || filePath.startsWith('/'))
@@ -348,63 +353,68 @@ const actions = {
 
         // TODO try to replace this with <input type="file"
         if (AppConfig.isElectron) {
-          return PlatformIO.getFileContentPromise(job[0]).then(fileContent =>
-            PlatformIO.getPropertiesPromise(filePath)
-              .then(entryProps => {
-                if (entryProps) {
-                  dispatch(
-                    AppActions.showNotification(
-                      'File with the same name already exist, importing skipped!',
-                      'warning',
-                      true
+          // for AWS location getFileContentPromise cannot load with io-objectore
+          return PlatformIO.getLocalFileContentPromise(job[0]).then(
+            fileContent =>
+              PlatformIO.getPropertiesPromise(filePath)
+                .then(entryProps => {
+                  if (entryProps) {
+                    dispatch(
+                      AppActions.showNotification(
+                        'File with the same name already exist, importing skipped!',
+                        'warning',
+                        true
+                      )
+                    );
+                    dispatch(AppActions.setProgress(filePath, -1, undefined));
+                  } else {
+                    // dispatch(AppActions.setProgress(filePath, progress));
+                    return PlatformIO.saveBinaryFilePromise(
+                      filePath,
+                      fileContent,
+                      true,
+                      onUploadProgress
                     )
-                  );
-                  dispatch(AppActions.setProgress(filePath, -1, undefined));
-                } else {
-                  // dispatch(AppActions.setProgress(filePath, progress));
-                  return PlatformIO.saveBinaryFilePromise(
-                    filePath,
-                    fileContent,
-                    true,
-                    onUploadProgress
-                  )
-                    .then((fsEntry: TS.FileSystemEntry) => {
-                      // handle meta files
-                      if (fileType === 'meta') {
-                        try {
+                      .then((fsEntry: TS.FileSystemEntry) => {
+                        // handle meta files
+                        if (fileType === 'meta') {
+                          try {
+                            // eslint-disable-next-line no-param-reassign
+                            fsEntry.meta = loadJSONString(
+                              fileContent.toString()
+                            );
+                          } catch (e) {
+                            console.debug('cannot parse entry meta');
+                          }
+                        } else if (fileType === 'thumb') {
                           // eslint-disable-next-line no-param-reassign
-                          fsEntry.meta = loadJSONString(fileContent.toString());
-                        } catch (e) {
-                          console.debug('cannot parse entry meta');
+                          fsEntry.thumbPath = fsEntry.path;
                         }
-                      } else if (fileType === 'thumb') {
-                        // eslint-disable-next-line no-param-reassign
-                        fsEntry.thumbPath = fsEntry.path;
-                      }
 
-                      return fsEntry;
-                    })
-                    .catch(err => {
-                      console.error(
-                        'Importing file ' + filePath + ' failed ' + err
-                      );
-                      dispatch(
-                        AppActions.showNotification(
-                          'Importing file ' + filePath + ' failed.',
-                          'error',
-                          true
-                        )
-                      );
-                      return undefined;
-                    });
-                }
-                return undefined;
-              })
-              .catch(err => {
-                console.log('Error getting properties ' + err);
-              })
+                        return fsEntry;
+                      })
+                      .catch(err => {
+                        console.error(
+                          'Importing file ' + filePath + ' failed ' + err
+                        );
+                        dispatch(
+                          AppActions.showNotification(
+                            'Importing file ' + filePath + ' failed.',
+                            'error',
+                            true
+                          )
+                        );
+                        return undefined;
+                      });
+                  }
+                  return undefined;
+                })
+                .catch(err => {
+                  console.log('Error getting properties ' + err);
+                })
           );
         }
+
         return undefined;
       });
       Promise.all(jobsPromises)
@@ -444,25 +454,35 @@ const actions = {
                 const metaFilePath = getMetaFileLocationForFile(
                   file.path,
                   AppConfig.dirSeparator
-                ).replace(/[/\\]/g, '');
+                );
+                if (metaFilePath !== undefined) {
+                  for (let i = 0; i < arrMeta.length; i += 1) {
+                    const metaFile = arrMeta[i];
+                    if (
+                      metaFile.path.replace(/[/\\]/g, '') ===
+                      metaFilePath.replace(/[/\\]/g, '')
+                    ) {
+                      // eslint-disable-next-line no-param-reassign
+                      file.meta = metaFile.meta;
+                    }
+                  }
+                }
                 const thumbFilePath = getThumbFileLocationForFile(
                   file.path,
                   AppConfig.dirSeparator
-                ).replace(/[/\\]/g, '');
-                for (let i = 0; i < arrMeta.length; i += 1) {
-                  const metaFile = arrMeta[i];
-                  if (metaFile.path.replace(/[/\\]/g, '') === metaFilePath) {
-                    // eslint-disable-next-line no-param-reassign
-                    file.meta = metaFile.meta;
-                  }
-                }
-                for (let i = 0; i < arrThumb.length; i += 1) {
-                  const thumbFile = arrThumb[i];
-                  if (thumbFile.path.replace(/[/\\]/g, '') === thumbFilePath) {
-                    // eslint-disable-next-line no-param-reassign
-                    file.thumbPath = PlatformIO.getURLforPath(
-                      thumbFile.thumbPath
-                    );
+                );
+                if (thumbFilePath !== undefined) {
+                  for (let i = 0; i < arrThumb.length; i += 1) {
+                    const thumbFile = arrThumb[i];
+                    if (
+                      thumbFile.path.replace(/[/\\]/g, '') ===
+                      thumbFilePath.replace(/[/\\]/g, '')
+                    ) {
+                      // eslint-disable-next-line no-param-reassign
+                      file.thumbPath = PlatformIO.getURLforPath(
+                        thumbFile.thumbPath
+                      );
+                    }
                   }
                 }
                 if (file.meta) {

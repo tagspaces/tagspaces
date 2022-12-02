@@ -17,35 +17,28 @@
  */
 
 import React, { useState } from 'react';
-import { v1 as uuidv1 } from 'uuid';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
+import Box from '@mui/material/Box';
 import Tooltip from '-/components/Tooltip';
 import ToggleButton from '@mui/material/ToggleButton';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
 import ThemingIcon from '@mui/icons-material/InvertColors';
-import LocationsIcon from '@mui/icons-material/WorkOutline';
-import CreateIcon from '@mui/icons-material/Add';
 import TagLibraryIcon from '@mui/icons-material/LocalOfferOutlined';
 import RecentThingsIcon from '@mui/icons-material/BookmarksOutlined';
 import HelpIcon from '@mui/icons-material/HelpOutline';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SettingsIcon from '@mui/icons-material/Settings';
 import withStyles from '@mui/styles/withStyles';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
-import CloseIcon from '@mui/icons-material/Close';
 import Popover from '@mui/material/Popover';
-import ProTeaserImage from '-/assets/images/pro-teaser.svg';
-import ProTextLogo from '-/assets/images/text-logo-pro.svg';
 import { Pro } from '-/pro';
 import CustomLogo from '-/components/CustomLogo';
+import ProTeaser from '-/components/ProTeaser';
 import TagLibrary from '-/components/TagLibrary';
 import LocationManager from '-/components/LocationManager';
 import HelpFeedbackPanel from '-/components/HelpFeedbackPanel';
@@ -60,15 +53,13 @@ import {
   isReadOnlyMode,
   getDirectoryPath
 } from '../reducers/app';
-import LoadingLazy from '-/components/LoadingLazy';
 import {
   actions as SettingsActions,
-  getCurrentLanguage,
-  isFirstRun
+  getCurrentLanguage
 } from '-/reducers/settings';
-import Links from '-/links';
 import StoredSearches from '-/components/StoredSearches';
 import UserDetailsPopover from '-/components/UserDetailsPopover';
+import { CreateFileIcon, LocalLocationIcon } from '-/components/CommonIcons';
 
 const styles: any = (theme: any) => ({
   selectedButton: {
@@ -76,21 +67,9 @@ const styles: any = (theme: any) => ({
   }
 });
 
-const ProTeaserDialog = React.lazy(() =>
-  import(/* webpackChunkName: "ProTeaserDialog" */ './dialogs/ProTeaserDialog')
-);
-function ProTeaserDialogAsync(props) {
-  return (
-    <React.Suspense fallback={<LoadingLazy />}>
-      <ProTeaserDialog {...props} />
-    </React.Suspense>
-  );
-}
-
 interface Props {
   classes: any;
-  isFirstRun: boolean;
-  setFirstRun: (isFirstRun: boolean) => void;
+  toggleProTeaser: (slidePage?: string) => void;
   toggleOnboardingDialog: () => void;
   toggleCreateFileDialog: () => void;
   toggleAboutDialog: () => void;
@@ -119,19 +98,15 @@ interface Props {
 }
 
 function MobileNavigation(props: Props) {
-  const [isProTeaserVisible, setIsProTeaserVisible] = useState<boolean>(false);
   const [showTeaserBanner, setShowTeaserBanner] = useState<boolean>(true);
   const [anchorUser, setAnchorUser] = useState<HTMLButtonElement | null>(null);
-
-  const toggleProTeaser = () => {
-    setIsProTeaserVisible(!isProTeaserVisible);
-  };
 
   const showProTeaser = !Pro && showTeaserBanner;
 
   const {
     classes,
     toggleCreateFileDialog,
+    toggleLocationDialog,
     toggleOnboardingDialog,
     toggleSettingsDialog,
     toggleKeysDialog,
@@ -150,17 +125,16 @@ function MobileNavigation(props: Props) {
     user
   } = props;
   return (
-    <div
-      className={classes.root}
+    <Box
       style={{
-        backgroundColor: theme.palette.background.paper,
+        // backgroundColor: theme.palette.background.default,
         height: '100%',
         overflow: 'hidden',
         width: width || 320,
         maxWidth: width || 320
       }}
     >
-      <div
+      <Box
         style={{
           overflow: 'hidden',
           height: showProTeaser ? 'calc(100% - 220px)' : 'calc(100% - 55px)'
@@ -168,9 +142,7 @@ function MobileNavigation(props: Props) {
       >
         <CustomLogo />
         <ButtonGroup
-          // variant="text"
           color="primary"
-          aria-label="text primary button group"
           style={{
             textAlign: 'center',
             display: 'block',
@@ -182,37 +154,29 @@ function MobileNavigation(props: Props) {
             <Button
               data-tid="createNewFileTID"
               onClick={() => {
-                if (props.isReadOnlyMode || !directoryPath) {
-                  showNotification(
-                    'You are in read-only mode or there is no opened location'
-                  );
-                } else {
-                  toggleCreateFileDialog();
-                  if (hideDrawer) {
-                    hideDrawer();
-                  }
+                toggleCreateFileDialog();
+                if (hideDrawer) {
+                  hideDrawer();
                 }
               }}
               size="small"
               color="primary"
             >
-              <CreateIcon />
-              &nbsp;
-              {i18n.t('core:new')}
+              <CreateFileIcon />
             </Button>
           </Tooltip>
           <Tooltip title={i18n.t('core:createLocationTitle')}>
             <Button
               data-tid="createNewLocation"
-              onClick={props.toggleLocationDialog}
+              onClick={toggleLocationDialog}
               size="small"
               color="primary"
             >
-              <LocationsIcon />
+              <LocalLocationIcon />
               &nbsp;
               <span
                 style={{
-                  maxWidth: 150,
+                  maxWidth: 180,
                   textOverflow: 'ellipsis',
                   overflow: 'hidden'
                 }}
@@ -235,74 +199,21 @@ function MobileNavigation(props: Props) {
             toggleAboutDialog={toggleAboutDialog}
             toggleKeysDialog={toggleKeysDialog}
             toggleOnboardingDialog={toggleOnboardingDialog}
-            toggleProTeaser={toggleProTeaser}
+            toggleProTeaser={() => props.toggleProTeaser()}
           />
         )}
-      </div>
-      <div
+      </Box>
+      <Box
         style={{
           textAlign: 'center'
         }}
       >
         {showProTeaser && (
-          <>
-            <CardContent
-              onClick={toggleProTeaser}
-              style={{
-                padding: 5,
-                paddingBottom: 0,
-                textAlign: 'center'
-              }}
-            >
-              <Typography color="textSecondary" variant="caption">
-                achieve more with
-                <IconButton
-                  style={{ right: 5, marginTop: -10, position: 'absolute' }}
-                  size="small"
-                  aria-label="close"
-                  onClick={event => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    setShowTeaserBanner(false);
-                  }}
-                >
-                  <CloseIcon fontSize="small" />
-                </IconButton>
-              </Typography>
-              <br />
-              <img style={{ height: 35 }} src={ProTextLogo} alt="" />
-              <br />
-              <img style={{ maxHeight: 60 }} src={ProTeaserImage} alt="" />
-            </CardContent>
-            <CardActions
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'center',
-                marginTop: -10
-              }}
-            >
-              <Button
-                size="small"
-                onClick={(event: any) => {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  toggleProTeaser();
-                }}
-              >
-                {i18n.t('showMeMore')}
-              </Button>
-              <Button
-                size="small"
-                onClick={(event: any) => {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  openURLExternally(Links.links.productsOverview, true);
-                }}
-              >
-                {i18n.t('getItNow')}
-              </Button>
-            </CardActions>
-          </>
+          <ProTeaser
+            toggleProTeaser={props.toggleProTeaser}
+            setShowTeaserBanner={setShowTeaserBanner}
+            openURLExternally={openURLExternally}
+          />
         )}
         <Tooltip title={i18n.t('core:settings')}>
           <IconButton
@@ -329,7 +240,7 @@ function MobileNavigation(props: Props) {
               data-tid="locationManager"
               value="check"
             >
-              <LocationsIcon />
+              <LocalLocationIcon />
             </ToggleButton>
           </Tooltip>
           <Tooltip title={i18n.t('core:tagLibrary')}>
@@ -348,7 +259,7 @@ function MobileNavigation(props: Props) {
           </Tooltip>
           <Tooltip title={i18n.t('core:quickAccess')}>
             <ToggleButton
-              data-tid="search"
+              data-tid="quickAccessButton"
               onClick={openSearchPanel}
               className={
                 props.isSearchPanelOpened
@@ -417,22 +328,13 @@ function MobileNavigation(props: Props) {
             </IconButton>
           </Tooltip>
         )}
-        {isProTeaserVisible && (
-          <ProTeaserDialogAsync
-            open={isProTeaserVisible}
-            onClose={toggleProTeaser}
-            openURLExternally={openURLExternally}
-            key={uuidv1()} // TODO rethink to remove this
-          />
-        )}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }
 
 function mapStateToProps(state) {
   return {
-    isFirstRun: isFirstRun(state),
     isSettingsDialogOpened: isSettingsDialogOpened(state),
     isLocationManagerPanelOpened: isLocationManagerPanelOpened(state),
     isTagLibraryPanelOpened: isTagLibraryPanelOpened(state),
@@ -451,6 +353,7 @@ function mapActionCreatorsToProps(dispatch) {
       toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
       toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
       toggleSettingsDialog: AppActions.toggleSettingsDialog,
+      toggleProTeaser: AppActions.toggleProTeaser,
       toggleAboutDialog: AppActions.toggleAboutDialog,
       toggleKeysDialog: AppActions.toggleKeysDialog,
       openLocationManagerPanel: AppActions.openLocationManagerPanel,
@@ -461,8 +364,7 @@ function mapActionCreatorsToProps(dispatch) {
       openURLExternally: AppActions.openURLExternally,
       showNotification: AppActions.showNotification,
       // closeAllVerticalPanels: AppActions.closeAllVerticalPanels,
-      switchTheme: SettingsActions.switchTheme,
-      setFirstRun: SettingsActions.setFirstRun
+      switchTheme: SettingsActions.switchTheme
     },
     dispatch
   );
@@ -471,4 +373,4 @@ function mapActionCreatorsToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
-)(withStyles(styles, { withTheme: true })(MobileNavigation));
+)(withStyles(styles)(MobileNavigation));

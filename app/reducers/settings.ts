@@ -17,16 +17,16 @@
  */
 
 import semver from 'semver';
-import { v1 as uuidv1 } from 'uuid';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '-/services/i18n';
 import defaultSettings from './settings-default';
 import PlatformIO from '-/services/platform-facade';
-import Links from '-/links';
+import Links from '-/content/links';
 import versionMeta from '-/version.json';
 import { actions as AppActions } from './app';
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '../pro';
+import { getUuid } from '-/services/utils-io';
 
 export const types = {
   UPGRADE_SETTINGS: 'SETTINGS/UPGRADE_SETTINGS',
@@ -61,6 +61,8 @@ export const types = {
   SET_TAGCOLOR: 'SETTINGS/SET_TAGCOLOR',
   SET_TAGTEXTCOLOR: 'SETTINGS/SET_TAGTEXTCOLOR',
   SET_CURRENTTHEME: 'SETTINGS/SET_CURRENTTHEME',
+  SET_CURRENT_REGULAR_THEME: 'SETTINGS/SET_CURRENT_REGULAR_THEME',
+  SET_CURRENT_DARK_THEME: 'SETTINGS/SET_CURRENT_DARK_THEME',
   SET_GEO_TAGGING_FORMAT: 'SETTINGS/SET_GEO_TAGGING_FORMAT',
   SET_HISTORY: 'SETTINGS/SET_HISTORY',
   SWITCH_THEME: 'SETTINGS/SWITCH_THEME',
@@ -128,7 +130,13 @@ export default (state: any = defaultSettings, action: any) => {
         ...defaultSettings,
         ...state,
         currentTheme: window.ExtTheme || state.currentTheme,
+        currentRegularTheme:
+          window.ExtRegularTheme || state.currentRegularTheme,
+        currentDarkTheme: window.ExtDarkTheme || state.currentDarkTheme,
+        // TODO dynamically add supportedThemes functionality
         supportedThemes: defaultSettings.supportedThemes, // taking always the themes from default settings
+        supportedRegularThemes: defaultSettings.supportedRegularThemes, // taking always the themes from default settings
+        supportedDarkThemes: defaultSettings.supportedDarkThemes, // taking always the themes from default settings
         supportedLanguages: defaultSettings.supportedLanguages, // taking always the languages from default settings
         keyBindings: [
           // ...defaultSettings.keyBindings, // use to reset to the default key bindings
@@ -246,6 +254,12 @@ export default (state: any = defaultSettings, action: any) => {
     case types.SET_CURRENTTHEME: {
       return { ...state, currentTheme: action.currentTheme };
     }
+    case types.SET_CURRENT_REGULAR_THEME: {
+      return { ...state, currentRegularTheme: action.currentRegularTheme };
+    }
+    case types.SET_CURRENT_DARK_THEME: {
+      return { ...state, currentDarkTheme: action.currentDarkTheme };
+    }
     case types.SET_GEO_TAGGING_FORMAT: {
       return { ...state, geoTaggingFormat: action.geoTaggingFormat };
     }
@@ -254,7 +268,10 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SWITCH_THEME: {
       let currentTheme = 'dark';
-      if (state.currentTheme === 'dark') {
+      const systemDarkMode = window.matchMedia('(prefers-color-scheme: dark)');
+      if (state.currentTheme === 'system') {
+        currentTheme = systemDarkMode ? 'light' : 'dark';
+      } else if (state.currentTheme === 'dark') {
         currentTheme = 'light';
       }
       return { ...state, currentTheme };
@@ -389,13 +406,13 @@ export default (state: any = defaultSettings, action: any) => {
       let mapTileServers;
       if (action.isDefault) {
         mapTileServers = [
-          { ...action.tileServer, uuid: uuidv1() },
+          { ...action.tileServer, uuid: getUuid() },
           ...state.mapTileServers
         ];
       } else {
         mapTileServers = [
           ...state.mapTileServers,
-          { ...action.tileServer, uuid: uuidv1() }
+          { ...action.tileServer, uuid: getUuid() }
         ];
       }
       return {
@@ -582,6 +599,14 @@ export const actions = {
   setCurrentTheme: (currentTheme: string) => ({
     type: types.SET_CURRENTTHEME,
     currentTheme
+  }),
+  setCurrentRegularTheme: (currentRegularTheme: string) => ({
+    type: types.SET_CURRENT_REGULAR_THEME,
+    currentRegularTheme
+  }),
+  setCurrentDarkTheme: (currentDarkTheme: string) => ({
+    type: types.SET_CURRENT_DARK_THEME,
+    currentDarkTheme
   }),
   setGeoTaggingFormat: (geoTaggingFormat: string) => ({
     type: types.SET_GEO_TAGGING_FORMAT,
@@ -775,6 +800,10 @@ export const getSupportedFileTypes = (state: any) =>
 export const getTagColor = (state: any) => state.settings.tagBackgroundColor;
 export const getTagTextColor = (state: any) => state.settings.tagTextColor;
 export const getCurrentTheme = (state: any) => state.settings.currentTheme;
+export const getDefaultRegularTheme = (state: any) =>
+  state.settings.currentRegularTheme;
+export const getDefaultDarkTheme = (state: any) =>
+  state.settings.currentDarkTheme;
 export const isGlobalKeyBindingEnabled = (state: any) =>
   state.settings.enableGlobalKeyboardShortcuts;
 export const getMainVerticalSplitSize = (state: any) =>

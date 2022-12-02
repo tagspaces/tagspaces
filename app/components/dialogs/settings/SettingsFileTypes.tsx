@@ -29,7 +29,6 @@ import Button from '@mui/material/Button';
 import Select from '@mui/material/Select';
 import ColorPickerDialog from '../ColorPickerDialog';
 import { findAvailableExtensions } from '-/reducers/settings-default';
-// import { sortBy } from '@tagspaces/tagspaces-platforms/misc';
 import i18n from '-/services/i18n';
 import TransparentBackground from '../../TransparentBackground';
 
@@ -105,20 +104,20 @@ function SettingsFileTypes(props: Props) {
   } = props;
 
   return (
-    <div className={classes.root}>
+    <div>
       <ColorPickerDialog
         open={isColorPickerVisible}
         setColor={handleChangeColor}
         onClose={closeColorPicker}
         color={selectedItem.color}
       />
-
       {items.map(item => (
         <ListItem
           data-id={item.id}
           key={item.id}
           style={{
-            padding: 0,
+            paddingLeft: 0,
+            paddingRight: 0,
             paddingBottom: 15,
             alignItems: 'flex-end'
           }}
@@ -131,7 +130,7 @@ function SettingsFileTypes(props: Props) {
                 1
             }
           >
-            <InputLabel htmlFor="name-disabled" data-shrink={false}>
+            <InputLabel style={{ marginLeft: -15 }} htmlFor="">
               {i18n.t('core:fileExtension')}
             </InputLabel>
             <Input
@@ -141,18 +140,6 @@ function SettingsFileTypes(props: Props) {
                 items.filter(targetItem => targetItem.type === item.type)
                   .length > 1
               }
-              /* onChange={event => {
-                event.persist();
-                const nextValue = event.target.value;
-                const withoutSpecialChars = sanitizeFileTypeInput(nextValue);
-                updateItems(
-                  'type',
-                  item.type,
-                  'type',
-                  withoutSpecialChars,
-                  true
-                );
-              }} */
               onBlur={event => {
                 const nextValue = event.target.value;
                 const withoutSpecialChars = sanitizeFileTypeInput(nextValue);
@@ -164,7 +151,9 @@ function SettingsFileTypes(props: Props) {
             className={classes.fileOpener}
             error={isValidationInProgress && item.viewer === ''}
           >
-            <InputLabel htmlFor="">{i18n.t('core:fileOpener')}</InputLabel>
+            <InputLabel style={{ marginLeft: -15 }} htmlFor="">
+              {i18n.t('core:fileOpener')}
+            </InputLabel>
             <Select
               error={isValidationInProgress && item.viewer === ''}
               value={item.viewer}
@@ -189,7 +178,9 @@ function SettingsFileTypes(props: Props) {
             </Select>
           </FormControl>
           <FormControl className={classes.fileOpener}>
-            <InputLabel htmlFor="">{i18n.t('core:fileEditor')}</InputLabel>
+            <InputLabel style={{ marginLeft: -15 }} htmlFor="">
+              {i18n.t('core:fileEditor')}
+            </InputLabel>
             <Select
               value={item.editor}
               input={<Input id="" />}
@@ -197,7 +188,7 @@ function SettingsFileTypes(props: Props) {
                 updateItems('id', item.id, 'editor', event.target.value)
               }
             >
-              <MenuItem value="" />
+              <MenuItem value="">{i18n.t('clearEditor')}</MenuItem>
               {availableExtensions
                 .filter(extension => extension.extensionType === 'editor')
                 .map(extension => (

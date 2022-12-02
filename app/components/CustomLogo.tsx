@@ -39,11 +39,11 @@ const AppVersionBadge = withStyles(theme => ({
     top: '25%',
     right: -25,
     color:
-      theme.palette.type === 'light'
+      theme.palette.mode === 'light'
         ? theme.palette.grey[900]
         : theme.palette.grey[200],
     backgroundColor:
-      theme.palette.type === 'light'
+      theme.palette.mode === 'light'
         ? theme.palette.grey[200]
         : theme.palette.grey[900]
   }

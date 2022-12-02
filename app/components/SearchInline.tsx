@@ -53,6 +53,7 @@ import { Pro } from '../pro';
 import useFirstRender from '-/utils/useFirstRender';
 import MainSearchField from '-/components/MainSearchField';
 import SavedSearchesMenu from '-/components/menus/SavedSearchesMenu';
+import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 
 // type PropsClasses = Record<keyof StyleProps, string>;
 
@@ -66,6 +67,7 @@ interface Props {
   searchQuery: TS.SearchQuery; // () => any;
   openCurrentDirectory: () => void;
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
+  openLink: (linkURL: string) => void;
   currentDirectory: string;
   indexedEntriesCount: number;
   maxSearchResults: number;
@@ -364,6 +366,14 @@ function SearchInline(props: Props) {
 
   const executeSearch = () => {
     let query = textQuery.current;
+    if (
+      query.startsWith('ts:?ts') ||
+      query.startsWith(AppConfig.tsProtocol + '?ts')
+    ) {
+      props.openLink(query);
+      clearSearch();
+      return;
+    }
     const tagsAND = parseTextQuery(textQuery.current, '+');
     query = removeTagsFromQuery(tagsAND, query, '+');
     const tagsOR = parseTextQuery(textQuery.current, '|');
@@ -549,6 +559,7 @@ function mapDispatchToProps(dispatch) {
       searchLocationIndex: LocationIndexActions.searchLocationIndex,
       createLocationsIndexes: LocationIndexActions.createLocationsIndexes,
       // loadDirectoryContent: AppActions.loadDirectoryContent,
+      openLink: AppActions.openLink,
       openURLExternally: AppActions.openURLExternally,
       openCurrentDirectory: AppActions.openCurrentDirectory
     },

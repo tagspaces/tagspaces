@@ -16,7 +16,7 @@
  *
  */
 
-import { v1 as uuidv1 } from 'uuid';
+import { v1 as uuidv1, v4 as uuidv4 } from 'uuid';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import {
@@ -64,6 +64,8 @@ import {
 } from '-/services/thumbsgenerator';
 import { defaultSettings } from '-/perspectives/grid-perspective';
 import { base64ToArrayBuffer } from '-/utils/dom';
+import { Simulate } from 'react-dom/test-utils';
+import error = Simulate.error;
 
 const supportedImgsWS = [
   'jpg',
@@ -307,20 +309,21 @@ export function prepareDirectoryContent(
   );
 }
 
-export function orderDirectories(directories, metaArray) {
+export function orderDirectories(
+  directories,
+  metaArray: Array<TS.OrderVisibilitySettings>
+) {
   // if (sortBy === 'custom') {
   try {
-    // const metaDirData = await loadMetaDataPromise(currentLocationPath);
     if (metaArray && metaArray.length > 0) {
-      // return orderByMetaArray(directories, metaDirData.dirs);
       const arrLength = directories.length;
       return directories.sort((a, b) => {
         let indexA = metaArray.findIndex(
-          meta => meta.path === a.path
+          meta => meta.name === a.name
           // meta => meta.path === Object.keys(a)[0]
         );
         let indexB = metaArray.findIndex(
-          meta => meta.path === b.path
+          meta => meta.name === b.name
           // meta => meta.path === Object.keys(b)[0]
         );
         // set new dirs last
@@ -334,13 +337,16 @@ export function orderDirectories(directories, metaArray) {
       });
     }
   } catch (e) {
-    console.log('error loadMetaDataPromise:', e);
+    console.log('error orderDirectories:', e);
   }
   // }
   return directories;
 }
 
-export function orderByMetaArray(arr, metaArray) {
+export function orderByMetaArray(
+  arr,
+  metaArray: Array<TS.OrderVisibilitySettings>
+) {
   const arrLength = arr.length;
   return arr.sort((a, b) => {
     let indexA = metaArray.findIndex(metaFiles => metaFiles.name === a.name);
@@ -379,6 +385,7 @@ export function findExtensionsForEntry(
     viewingExtensionId: '',
     isFile,
     // changed: false,
+    locationId: undefined,
     lmdt: 0,
     size: 0
   };
@@ -477,18 +484,25 @@ export function getPrevFile(
 }
 
 /**
- * persistIndex based on location - S3 or Native
+ * persistIndex based on location - used for S3 and cordova only
+ * for native used common-platform/indexer.js -> persistIndex instead
  * @param param
  * @param directoryIndex
  */
-function persistIndex(param: string | any, directoryIndex: any) {
+async function persistIndex(param: string | any, directoryIndex: any) {
   let directoryPath;
   if (typeof param === 'object' && param !== null) {
     directoryPath = param.path;
   } else {
     directoryPath = param;
   }
-  const folderIndexPath = getMetaIndexFilePath(directoryPath);
+  const metaDirectory = getMetaDirectoryPath(directoryPath);
+  const exist = await PlatformIO.checkDirExist(metaDirectory);
+  if (!exist) {
+    await PlatformIO.createDirectoryPromise(metaDirectory);
+  }
+  const folderIndexPath =
+    metaDirectory + PlatformIO.getDirSeparator() + AppConfig.folderIndexFile; // getMetaIndexFilePath(directoryPath);
   return PlatformIO.saveTextFilePlatform(
     { ...param, path: folderIndexPath },
     JSON.stringify(directoryIndex), // relativeIndex),
@@ -616,17 +630,15 @@ export function deleteFilesPromise(filePathList: Array<string>) {
 
 export function renameFilesPromise(renameJobs: Array<Array<string>>) {
   return Promise.all(
-    renameJobs.map(renameJob =>
-      PlatformIO.renameFilePromise(renameJob[0], renameJob[1])
-    )
+    renameJobs.map(async renameJob => {
+      try {
+        return await PlatformIO.renameFilePromise(renameJob[0], renameJob[1]);
+      } catch (err) {
+        console.warn('Error rename file:', err);
+        return false;
+      }
+    })
   );
-  /* const fileRenamePromises = [];
-  renameJobs.forEach(renameJob => {
-    fileRenamePromises.push(
-      PlatformIO.renameFilePromise(renameJob[0], renameJob[1])
-    );
-  });
-  return Promise.all(fileRenamePromises); */
 }
 
 export function copyFilesPromise(copyJobs: Array<Array<string>>) {
@@ -798,47 +810,71 @@ export async function loadLocationDataPromise(
   return undefined;
 }
 
+/**
+ * if you have entryProperties.isFile prefer to use loadFileMetaDataPromise/loadDirMetaDataPromise
+ * @param path
+ */
 export function loadMetaDataPromise(
   path: string
 ): Promise<TS.FileSystemEntryMeta> {
   return PlatformIO.getPropertiesPromise(path).then(entryProperties => {
     if (entryProperties) {
       if (entryProperties.isFile) {
-        const metaFilePath = getMetaFileLocationForFile(
-          path,
-          PlatformIO.getDirSeparator()
-        );
-        return loadJSONFile(metaFilePath).then(metaData => ({
-          ...metaData,
-          isFile: true,
-          description: metaData.description || '',
-          color: metaData.color || '',
-          tags: metaData.tags || [],
-          appName: metaData.appName || '',
-          appVersion: metaData.appVersion || '',
-          lastUpdated: metaData.lastUpdated || ''
-        }));
+        return loadFileMetaDataPromise(path);
       }
-      const metaFilePath = getMetaFileLocationForDir(
-        path,
-        PlatformIO.getDirSeparator()
-      );
-      return loadJSONFile(metaFilePath).then(metaData => ({
-        ...metaData,
-        id: metaData.id || uuidv1(),
-        isFile: false,
-        description: metaData.description || '',
-        color: metaData.color || '',
-        perspective: metaData.perspective || '',
-        tags: metaData.tags || [],
-        appName: metaData.appName || '',
-        appVersion: metaData.appVersion || '',
-        lastUpdated: metaData.lastUpdated || '',
-        files: metaData.files || [],
-        dirs: metaData.dirs || []
-      }));
+      return loadDirMetaDataPromise(path);
     }
     throw new Error('loadMetaDataPromise not exist' + path);
+  });
+}
+
+export function loadFileMetaDataPromise(
+  path: string
+): Promise<TS.FileSystemEntryMeta> {
+  const metaFilePath = getMetaFileLocationForFile(
+    path,
+    PlatformIO.getDirSeparator()
+  );
+  return loadJSONFile(metaFilePath).then(metaData => {
+    if (!metaData) {
+      throw new Error('loadFileMetaDataPromise ' + metaFilePath + ' not exist');
+    }
+    return {
+      ...metaData,
+      isFile: true,
+      description: metaData.description || '',
+      color: metaData.color || '',
+      tags: metaData.tags || [],
+      appName: metaData.appName || '',
+      appVersion: metaData.appVersion || '',
+      lastUpdated: metaData.lastUpdated || ''
+    };
+  });
+}
+
+export function loadDirMetaDataPromise(
+  path: string
+): Promise<TS.FileSystemEntryMeta> {
+  const metaDirPath = getMetaFileLocationForDir(
+    path,
+    PlatformIO.getDirSeparator()
+  );
+  return loadJSONFile(metaDirPath).then(metaData => {
+    if (!metaData) {
+      throw new Error('loadDirMetaDataPromise ' + metaDirPath + ' not exist');
+    }
+    return {
+      ...metaData,
+      id: metaData.id || getUuid(),
+      isFile: false,
+      description: metaData.description || '',
+      color: metaData.color || '',
+      perspective: metaData.perspective || '',
+      tags: metaData.tags || [],
+      appName: metaData.appName || '',
+      appVersion: metaData.appVersion || '',
+      lastUpdated: metaData.lastUpdated || ''
+    };
   });
 }
 
@@ -858,14 +894,11 @@ export function cleanMetaData(
   if (metaData.description) {
     cleanedMeta.description = metaData.description;
   }
-  if (metaData.files && metaData.files.length > 0) {
-    cleanedMeta.files = metaData.files;
-  }
-  if (metaData.dirs && metaData.dirs.length > 0) {
-    cleanedMeta.dirs = metaData.dirs;
-  }
   if (metaData.perspectiveSettings) {
     cleanedMeta.perspectiveSettings = metaData.perspectiveSettings;
+  }
+  if (metaData.customOrder) {
+    cleanedMeta.customOrder = metaData.customOrder;
   }
   /*if (metaData.perspectiveSettings) {  // clean perspectiveSettings !== defaultSettings
     Object.keys(metaData.perspectiveSettings).forEach(perspective => {
@@ -1013,7 +1046,7 @@ export async function saveMetaDataPromise(
 
       if (!cleanedMetaData.id) {
         // add id for directories
-        cleanedMetaData.id = uuidv1();
+        cleanedMetaData.id = getUuid();
       }
 
       metaFilePath = getMetaFileLocationForDir(
@@ -1055,14 +1088,13 @@ export function setFolderThumbnailPromise(filePath: string): Promise<string> {
 
 /**
  * @param filePath
+ * @param directoryPath
  * return Promise<directoryPath> of directory in order to open Folder properties next
  */
-export function setFolderBackgroundPromise(filePath: string): Promise<string> {
-  const directoryPath = extractContainingDirectoryPath(
-    filePath,
-    PlatformIO.getDirSeparator()
-  );
-
+export function setFolderBackgroundPromise(
+  filePath: string,
+  directoryPath: string
+): Promise<string> {
   const folderBgndPath = getBgndFileLocationForDirectory(
     directoryPath,
     PlatformIO.getDirSeparator()
@@ -1079,12 +1111,13 @@ export function setFolderBackgroundPromise(filePath: string): Promise<string> {
           })
           .catch(error => {
             console.error('Save to file failed ', error);
-            return true;
+            return Promise.reject(error);
           });
       }
     })
     .catch(error => {
-      console.error('Background generation failed ' + error);
+      console.error('Background generation failed ', error);
+      return Promise.reject(error);
     });
 }
 
@@ -1102,7 +1135,7 @@ export function findColorForEntry(
   supportedFileTypes: Array<any>
 ): string {
   if (!fsEntry.isFile) {
-    return AppConfig.defaultFolderColor;
+    return 'gray'; // AppConfig.defaultFolderColor;
   }
   if (fsEntry.extension !== undefined) {
     const fileType = supportedFileTypes.find(
@@ -1139,15 +1172,18 @@ export function loadFileContentPromise(
 
 /**
  * @param mdContent
- * @param length - for preview of fist 200 chars
+ * @param maxLength - for preview of fist 200 chars
  */
-export function getDescriptionPreview(mdContent, length = 200) {
+export function getDescriptionPreview(mdContent, maxLength = 200) {
   if (!mdContent) return '';
-  let preview;
-  if (mdContent.length > 200) {
-    preview = mdContent.substring(0, 200) + '...';
-  } else preview = mdContent;
-  return preview.replace(/[#*_\[\]()`]/g, '');
+  let preview = mdContent.replace(
+    /\(data:([\w\/\+]+);(charset=[\w-]+|base64).*,([a-zA-Z0-9+/]+={0,2})\)/g,
+    ''
+  );
+  if (preview.length > maxLength) {
+    preview = preview.substring(0, maxLength) + '...';
+  }
+  return preview.replace(/[#*!_\[\]()`]/g, '');
 }
 
 export function removeMarkDown(mdContent) {
@@ -1214,6 +1250,10 @@ export function dirNameValidation(dirName): boolean {
   return true;
 }
 
+/**
+ * return true if no valid
+ * @param fileName
+ */
 export function fileNameValidation(fileName): boolean {
   if (fileName.length > 0) {
     const rg1 = /^[^#\\/*?"<>|]+$/;
@@ -1223,4 +1263,123 @@ export function fileNameValidation(fileName): boolean {
     return !(rg1.test(fileName) && !rg2.test(fileName) && !rg3.test(fileName));
   }
   return true;
+}
+
+/**
+ *  normalize path for URL is always '/'
+ */
+export function normalizeUrl(url: string) {
+  if (PlatformIO.getDirSeparator() !== '/') {
+    if (url) {
+      return url.replaceAll(PlatformIO.getDirSeparator(), '/');
+    }
+  }
+  return url;
+}
+
+/**
+ * https://stackoverflow.com/a/71981197/2285631
+ * @param a
+ * @param b
+ */
+export const merge = (a, b) => {
+  const allKeys = { ...b, ...a };
+  return Object.fromEntries(
+    Object.entries(allKeys).map(([k, v]) => [
+      k,
+      v && Array.isArray(v) ? mergeTags(v, b[k]) : v || b[k]
+    ])
+  );
+};
+
+function mergeTags(oldTagsArray: Array<TS.Tag>, newTagsArray: Array<TS.Tag>) {
+  if (newTagsArray.length === 0) {
+    return oldTagsArray;
+  }
+  const uniqueTags = newTagsArray.filter(
+    newTag => !oldTagsArray.some(oldTag => oldTag.title === newTag.title)
+  );
+  return [...oldTagsArray, ...uniqueTags];
+}
+
+export function getFolderThumbPath(
+  path: string,
+  lastThumbnailImageChange: number
+) {
+  return getThumbPath(
+    getThumbFileLocationForDirectory(path, PlatformIO.getDirSeparator()),
+    lastThumbnailImageChange
+  );
+}
+
+export function getThumbPath(
+  thumbPath: string,
+  lastThumbnailImageChange: number
+) {
+  if (!thumbPath) {
+    return undefined;
+  }
+  if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
+    if (isSignedURL(thumbPath)) {
+      return thumbPath;
+    }
+    return PlatformIO.getURLforPath(thumbPath);
+  }
+  return (
+    normalizeUrl(thumbPath) +
+    (lastThumbnailImageChange ? '?' + lastThumbnailImageChange : '')
+  );
+}
+
+function isSignedURL(signedUrl) {
+  try {
+    // const query = url.parse(signedUrl, true).query;
+    return signedUrl.indexOf('Signature=') !== -1;
+  } catch (ex) {}
+  return false;
+}
+
+export function getFolderBgndPath(
+  path: string,
+  lastBackgroundImageChange: number
+) {
+  return getBgndPath(
+    getBgndFileLocationForDirectory(path, PlatformIO.getDirSeparator()),
+    lastBackgroundImageChange
+  );
+}
+
+export function getBgndPath(
+  bgndPath: string,
+  lastBackgroundImageChange: number
+) {
+  if (!bgndPath) {
+    return undefined;
+  }
+  if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
+    return PlatformIO.getURLforPath(bgndPath);
+  }
+  return (
+    normalizeUrl(bgndPath) +
+    (lastBackgroundImageChange ? '?' + lastBackgroundImageChange : '')
+  );
+}
+
+export function setLocationType(location: TS.Location): Promise<boolean> {
+  if (location) {
+    if (location.type === locationType.TYPE_CLOUD) {
+      return PlatformIO.enableObjectStoreSupport(location);
+    } else if (location.type === locationType.TYPE_WEBDAV) {
+      PlatformIO.enableWebdavSupport(location);
+    } else if (location.type === locationType.TYPE_LOCAL) {
+      PlatformIO.disableObjectStoreSupport();
+      PlatformIO.disableWebdavSupport();
+    }
+    return Promise.resolve(true);
+  }
+  return Promise.resolve(false);
+}
+
+export function getUuid(version = 1): string {
+  return version === 1 ? uuidv1() : uuidv4();
 }

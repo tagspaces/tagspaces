@@ -141,7 +141,7 @@ function TagContainer(props: Props) {
     }
   }
 
-  let tagTitle = tag.title;
+  let tagTitle = ''; // tag.title;
   if (isTagDate) {
     let date;
     if (tag.title.length > 8) {
@@ -153,11 +153,11 @@ function TagContainer(props: Props) {
   }
 
   if (tag.description) {
-    tagTitle = tagTitle + ' - ' + tag.description;
+    tagTitle = tagTitle + ' ' + tag.description;
   }
 
   if (isTagDate && title.length > 8) {
-    title = title.substr(0, 8) + '...';
+    title = title.substring(0, 8) + '...';
   }
 
   return (

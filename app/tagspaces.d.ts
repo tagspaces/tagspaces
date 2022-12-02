@@ -38,6 +38,8 @@ declare interface Window {
   ExtLocations?: Array<any>;
   ExtSearches?: Array<any>;
   ExtTheme?: string;
+  ExtRegularTheme?: string;
+  ExtDarkTheme?: string;
   ExtIsFirstRun?: boolean;
   ExtIsAmplify?: boolean;
   ExtUseSidecarsForFileTagging?: boolean;
@@ -52,6 +54,7 @@ declare interface Window {
   ExtUseGenerateThumbnails?: boolean;
   ExtGeoTaggingFormat?: string;
   ExtDemoUser?: any;
+  ExtCheckForUpdatesOnStartup?: boolean;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: any;
   plugins?: any; // needed for Cordova
   resolveLocalFileSystemURL?: any; // needed for Cordova

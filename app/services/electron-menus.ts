@@ -17,7 +17,7 @@
  */
 
 import { app, Menu } from 'electron';
-import Links from '-/links';
+import Links from '-/content/links';
 
 export default function buildDesktopMenu(props: any, i18n) {
   function quitApp() {
@@ -31,7 +31,7 @@ export default function buildDesktopMenu(props: any, i18n) {
         {
           label: i18n.t('openNewInstance'),
           accelerator: '',
-          click: props.createNewWindowInstance
+          click: () => props.createNewWindowInstance()
         },
         {
           type: 'separator'

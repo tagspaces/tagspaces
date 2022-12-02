@@ -26,25 +26,18 @@ import Typography from '@mui/material/Typography';
 import MobileStepper from '@mui/material/MobileStepper';
 import Dialog from '@mui/material/Dialog';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
-import ProTeaserImage from '-/assets/images/pro-teaser.svg';
-import ThumbsImage from '-/assets/images/thumbnails-undraw.svg';
-// import PerspectivesImage from '-/assets/images/perspectives-undraw.svg';
-import CloudImage from '-/assets/images/aws-s3-in-tagspaces.png';
-import SearchImage from '-/assets/images/search-undraw.svg';
-import MapImage from '-/assets/images/mapique-perspective.jpg';
-import GalleryImage from '-/assets/images/gallery-perspective.jpg';
-import CustomFolderColor from '-/assets/images/custom-folder-color.jpg';
-import EntryDescription from '-/assets/images/entry-description.jpg';
-// import AnnotateImage from '-/assets/images/annotate-undraw.svg';
-import EnterpriseImage from '-/assets/images/world-undraw.svg';
 import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import Links from '-/links';
 import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { getProTeaserIndex } from '-/reducers/app';
+import { connect } from 'react-redux';
+import { getProTeaserSlides } from '-/content/ProTeaserSlides';
+import Links from '-/content/links';
 
 interface Props {
   open: boolean;
+  slideIndex: number;
   openURLExternally: (url: string, skipConfirmation: boolean) => void;
   onClose: () => void;
 }
@@ -63,240 +56,7 @@ interface SlideProps {
   pictureHeight?: number;
 }
 
-const slidesEN = [];
-slidesEN['general'] = {
-  title: 'Why TagSpaces Pro ?',
-  description: (
-    <>
-      The TagSpaces project is entirely <b>subscriber-supported</b>. We do not
-      make money through advertising or any form of data sharing, so buying a
-      Pro subscription will support the further development of our core product
-      TagSpaces Lite and our browser extensions, which are all freely available.
-      <br />
-      <br />
-      On top of that you will get <b>a lot of useful features</b>, extended
-      search functionalities, alternative perspectives for your files, geo
-      tagging functionality and ability to connect AWS S3 compatible object
-      storage. Some of these features are briefly presented on the next pages.
-    </>
-  ),
-  ctaURL: Links.links.productsOverview,
-  ctaTitle: 'Compare TagSpaces Lite vs. Pro',
-  pictureURL: ProTeaserImage,
-  pictureHeight: 150
-};
-slidesEN['gallery'] = {
-  title: 'Gallery Perspectives',
-  description: (
-    <>
-      This perspective is optimized for displaying folders with photos and other
-      images. It has an integrated <b>presentation mode</b>, so by just clicking
-      the play button, the images start to change automatically one after
-      another. With the expand button you can start the presentation in{' '}
-      <b>full screen</b>, so you can enjoy your photos in a distraction-free
-      way.
-    </>
-  ),
-  ctaURL: Links.documentationLinks.galleryPerspective,
-  ctaTitle: i18n.t('showMeMore'),
-  pictureURL: GalleryImage,
-  pictureShadow: true,
-  // videoURL: 'https://www.tagspaces.org/content/v3-10/perpspective-switch.mp4_',
-  // videoPosterURL: PerspectivesImage,
-  pictureHeight: 300
-};
-slidesEN['mapique'] = {
-  title: 'Digital Map & Geo tagging',
-  description: (
-    <>
-      The Mapique perspective displays files and folders tagged with geo-tags on
-      a digital map. The perspective integrates an ability to{' '}
-      <b>extract geo coordinates</b> from EXIF/IPTC data embedded in JPEG files.
-      By default TagSpaces uses OpenStreetMap for the map, but other compatible
-      map tile servers can be used instead.
-      <br />
-      In the PRO version, you can add tags containing geolocation data to any
-      file or folder. This can be useful for example for planing and documenting
-      trips or just to <b>privately annotate maps</b>.
-    </>
-  ),
-  ctaURL: Links.documentationLinks.mapiquePerspective,
-  ctaTitle: i18n.t('showMeMore'),
-  pictureURL: MapImage,
-  pictureShadow: true,
-  pictureHeight: 300
-};
-slidesEN['annotation'] = {
-  title: 'Annotate and link your files and folders',
-  description: (
-    <>
-      In TagSpaces Pro you can add text description to every kind of file or
-      folder.
-    </>
-  ),
-  items: [
-    <>
-      The description text can be in <b>Markdown</b> format.
-    </>,
-    <>
-      This will allow so you have basic text formatting such as <b>bold</b> or{' '}
-      <i>italic</i>.
-    </>,
-    <>
-      You can easily create plain or numbered (<b>to-do</b>) lists.
-    </>,
-    <>
-      <b>Create links</b> to other documents, folder, locations or web pages
-    </>,
-    <>
-      You can also set a <b>custom thumbnail</b> for every file or folder,
-      allowing you to emphasize visually its content.
-    </>
-  ],
-  ctaURL: Links.links.productProFileFolderMeta,
-  ctaTitle: i18n.t('showMeMore'),
-  pictureURL: EntryDescription,
-  pictureShadow: true,
-  pictureHeight: 300
-};
-slidesEN['search'] = {
-  title: 'Extended Search',
-  description: (
-    <>
-      The search is essential part of TagSpaces, which is significantly extended
-      in the PRO version.
-    </>
-  ),
-  items: [
-    <>
-      <b>Stored search queries</b> – save common or complex queries for later
-      use
-    </>,
-    <>
-      <b>Full text search</b> on TXT, Markdown and HTML files
-    </>,
-    <>
-      <b>Global search</b> – searching all local locations at once
-    </>,
-    <>
-      <b>Filter by file type</b> – documents, notes, audio or video files,
-      archives, bookmarks, ebooks, ...
-    </>,
-    <>Filter for files, folders or untagged files</>,
-    <>Filter by size and date</>
-  ],
-  ctaURL: Links.links.productProAdvancedSearch,
-  ctaTitle: i18n.t('showMeMore'),
-  pictureURL: SearchImage,
-  pictureHeight: 150
-};
-slidesEN['objectstorage'] = {
-  title: 'Connect AWS S3 or MinIO object storage',
-  // description: (
-  //   <>
-  //     TagSpaces Pro supports connecting of{' '}
-  //     <b>cloud object storage</b> as locations. Such storage is offered by cloud
-  //     provider such as Amazon AWS. You can also host an object storage{' '}
-  //     <b>privately</b> (e.g. on your NAS) with the help of open source projects
-  //     like MinIO.
-  //     <br />
-  //     This allows you to <b>work collaboratively</b> on
-  //     the same files with family member or co-workers.
-  //     <br />
-  //     By doing so, you are getting a Cloud based{' '}
-  //     <b>full-fledged file organizer and browser</b>, so you do not have to
-  //     download files in order to preview, edit or annotate them. On top of that
-  //     you can <b>stream audio and video</b> files from the Cloud location.
-  //   </>
-  // ),
-  items: [
-    <>
-      TagSpaces Pro supports connecting{' '}
-      <b>Amazon S3 compliant storage providers</b> as locations. Such storage is
-      offered by Amazon AWS, Wasabi and many others. You can also host an object
-      storage <b>privately</b> (e.g. on your NAS) with the help of open source
-      projects like MinIO.
-    </>,
-    <>
-      This allows you to <b>work collaboratively</b> on the same files with
-      family members or co-workers.
-    </>,
-    <>
-      By doing so, you are getting a Cloud based{' '}
-      <b>full-fledged file organizer and browser</b>, so you do not have to
-      download files in order to preview, edit or annotate them. On top of that
-      you can <b>stream audio and video</b> files from the Cloud location.
-    </>
-  ],
-  ctaURL: Links.links.productProObjectStore,
-  ctaTitle: i18n.t('showMeMore'),
-  pictureURL: CloudImage,
-  pictureShadow: true,
-  pictureHeight: 300
-};
-slidesEN['folderColor'] = {
-  title: 'Folders with custom background color',
-  description: (
-    <>
-      In the Pro version you can set a background color to any folder. The color
-      is visible also in the parent folder. Once it is opened the whole
-      background area is having the specified folder color. This can be useful
-      if you have common sub-folders structure, where for example the sub-folder{' '}
-      <i>Archive</i> can marked <i>yellow</i> for easy recognition.
-    </>
-  ),
-  ctaURL: Links.links.productProFolderColor,
-  ctaTitle: i18n.t('showMeMore'),
-  pictureURL: CustomFolderColor,
-  pictureShadow: true,
-  pictureHeight: 300
-};
-slidesEN['enterprise'] = {
-  title: 'TagSpaces Web Pro & Enterprise',
-  description: (
-    <>
-      TagSpaces is offered also as a web application running in your web
-      browser.
-    </>
-  ),
-  items: [
-    <>
-      <b>On-prem web</b> version of TagSpaces Pro for <b>self-hosting</b>
-    </>,
-    <>
-      <b>PWA</b> mode optimized for use on <b>mobile devices</b>
-    </>,
-    <>
-      <b>White label</b> packages, with custom colors and logo
-    </>,
-    <>
-      Easy deployable on the AWS cloud stack, providing user management and
-      MFA/2FA by utilizing Cognito.
-    </>,
-    <>
-      Development of custom <b>file viewers</b> or <b>perspectives</b>
-    </>,
-    <>Premium technical support</>
-  ],
-  ctaURL: Links.links.emailContact,
-  ctaTitle: i18n.t('contactUs'),
-  pictureURL: EnterpriseImage,
-  pictureHeight: 200
-};
-slidesEN['persistentThumbs'] = {
-  title: 'Generating persistent thumbnails',
-  description: (
-    <>
-      TagSpaces Pro generates persistent thumbnails for many file type such as:
-      images, videos, notes, source code, office documents, bookmarks, ebooks,
-      archives and PDFs.
-    </>
-  ),
-  ctaURL: Links.links.productProThumbnailsGeneration,
-  ctaTitle: 'Learn more',
-  pictureURL: ThumbsImage,
-  pictureHeight: 200
-};
+const slidesEN = getProTeaserSlides();
 
 function Slide(props: SlideProps) {
   const {
@@ -368,11 +128,21 @@ function Slide(props: SlideProps) {
           />
         )}
         <br />
+        <Button
+          onClick={() => {
+            openURL(Links.links.productsOverview, true);
+          }}
+          variant="contained"
+          color="primary"
+        >
+          Compare TagSpaces Products
+        </Button>
         {ctaTitle && openURL && (
           <Button
             onClick={() => {
               openURL(ctaURL, true);
             }}
+            style={{ marginLeft: 10 }}
             variant="contained"
             color="primary"
           >
@@ -385,9 +155,11 @@ function Slide(props: SlideProps) {
 }
 
 function ProTeaserDialog(props: Props) {
-  const [activeStep, setActiveStep] = useState<number>(0);
+  const [activeStep, setActiveStep] = useState<number>(
+    props.slideIndex && props.slideIndex > -1 ? props.slideIndex : 0
+  );
 
-  const maxSteps = 8;
+  const maxSteps = Object.keys(slidesEN).length;
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -405,6 +177,12 @@ function ProTeaserDialog(props: Props) {
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+
+  const slides = [];
+  for (let index in slidesEN) {
+    slides.push(<Slide {...slidesEN[index]} openURL={openURLExternally} />);
+  }
+
   return (
     <Dialog
       open={open}
@@ -428,14 +206,7 @@ function ProTeaserDialog(props: Props) {
           onChangeIndex={handleStepChange}
           enableMouseEvents
         >
-          <Slide {...slidesEN['general']} openURL={openURLExternally} />
-          <Slide {...slidesEN['gallery']} openURL={openURLExternally} />
-          <Slide {...slidesEN['mapique']} openURL={openURLExternally} />
-          <Slide {...slidesEN['annotation']} openURL={openURLExternally} />
-          <Slide {...slidesEN['search']} openURL={openURLExternally} />
-          <Slide {...slidesEN['objectstorage']} openURL={openURLExternally} />
-          <Slide {...slidesEN['folderColor']} openURL={openURLExternally} />
-          <Slide {...slidesEN['enterprise']} openURL={openURLExternally} />
+          {slides ? slides : <></>}
         </SwipeableViews>
       </DialogContent>
       <DialogActions style={{ justifyContent: 'center' }}>
@@ -470,4 +241,9 @@ function ProTeaserDialog(props: Props) {
   );
 }
 
-export default ProTeaserDialog;
+function mapStateToProps(state) {
+  return {
+    slideIndex: getProTeaserIndex(state)
+  };
+}
+export default connect(mapStateToProps)(ProTeaserDialog);

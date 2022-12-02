@@ -17,7 +17,6 @@
  */
 
 import React, { ChangeEvent, useReducer, useRef, useState } from 'react';
-import { v1 as uuidv1 } from 'uuid';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
@@ -38,6 +37,7 @@ import { getCurrentLocationId } from '-/reducers/app';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { getUuid } from '-/services/utils-io';
 
 interface Props {
   open: boolean;
@@ -109,7 +109,7 @@ function CreateTagGroupDialog(props: Props) {
 
     if (!disableConfirmButton.current) {
       createTagGroup({
-        uuid: uuidv1(),
+        uuid: getUuid(),
         title: title.current,
         color: color.current,
         textcolor: textcolor.current,
@@ -183,9 +183,9 @@ function CreateTagGroupDialog(props: Props) {
           event.preventDefault();
           event.stopPropagation();
           onConfirm();
-        } else if (event.key === 'Escape') {
+        } /*else if (event.key === 'Escape') {
           onClose();
-        }
+        }*/
       }}
     >
       <DialogTitle>

@@ -77,6 +77,9 @@ export namespace TS {
 
   interface Tag {
     title?: string;
+    /**
+     * @deprecated type can be auto recognized -> look at editTagForEntry
+     */
     type?: 'plain' | 'sidecar' | 'smart'; // smart should be eventually removed from this list, functionality should be enough
     id?: Uuid;
     icon?: string;
@@ -139,9 +142,12 @@ export namespace TS {
     appName: string;
     appVersion: string;
     lastUpdated: string;
-    files?: Array<FileSystemEntry>;
-    dirs?: Array<FileSystemEntry>;
+    customOrder?: CustomOrder;
     perspectiveSettings?: PerspectiveSettings;
+  }
+  interface CustomOrder {
+    folders?: Array<OrderVisibilitySettings>;
+    files?: Array<OrderVisibilitySettings>;
   }
   interface HistoryItem {
     path: string;
@@ -170,6 +176,10 @@ export namespace TS {
     showTags?: boolean;
     showDetails?: boolean;
     showDescription?: boolean;
+    showFolderContent?: boolean; // KanBan
+    // pageLimit?: number; // KanBan
+    // pageOffset?: number; // KanBan
+    filesLimit?: number; // KanBan
     layoutType?: string;
     orderBy?: boolean;
     sortBy?: string;
@@ -177,7 +187,13 @@ export namespace TS {
     entrySize?: string;
     thumbnailMode?: string;
     gridPageLimit?: number;
-    isLocal?: boolean;
+    // isLocal?: boolean;
+  }
+
+  interface OrderVisibilitySettings {
+    uuid: string;
+    name: string;
+    isCurrent?: boolean;
   }
 
   interface MapTileServer {

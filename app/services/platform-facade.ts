@@ -49,6 +49,7 @@ import {
   platformGetPropertiesPromise,
   platformLoadTextFilePromise,
   platformGetFileContentPromise,
+  platformGetLocalFileContentPromise,
   platformSaveTextFilePromise,
   platformSaveBinaryFilePromise,
   platformCreateDirectoryPromise,
@@ -66,7 +67,9 @@ import {
   platformSelectDirectoryDialog,
   platformShareFiles,
   platformCreateIndex,
-  platformCreateNewInstance
+  platformCreateNewInstance,
+  platformCheckFileExist,
+  platformCheckDirExist
 } from '@tagspaces/tagspaces-platforms/platform-io';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import { Pro } from '../pro';
@@ -226,6 +229,12 @@ export default class PlatformFacade {
   static getPropertiesPromise = (path: string): Promise<any> =>
     platformGetPropertiesPromise(path);
 
+  static checkDirExist = (dir: string): Promise<boolean> =>
+    platformCheckDirExist(dir);
+
+  static checkFileExist = (file: string): Promise<boolean> =>
+    platformCheckFileExist(file);
+
   static ignoreByWatcher = (...paths) => {
     if (Pro && Pro.Watcher && Pro.Watcher.isWatching()) {
       for (let i = 0; i < paths.length; i += 1) {
@@ -326,13 +335,23 @@ export default class PlatformFacade {
   static loadTextFilePromise = (
     filePath: string,
     isPreview?: boolean
-  ): Promise<any> =>
-    platformLoadTextFilePromise(decodeURIComponent(filePath), isPreview);
+  ): Promise<any> => {
+    let path = filePath;
+    try {
+      path = decodeURIComponent(filePath);
+    } catch (ex) {}
+    return platformLoadTextFilePromise(path, isPreview);
+  };
 
   static getFileContentPromise = (
     filePath: string,
     type?: string
   ): Promise<any> => platformGetFileContentPromise(filePath, type);
+
+  static getLocalFileContentPromise = (
+    filePath: string,
+    type?: string
+  ): Promise<any> => platformGetLocalFileContentPromise(filePath, type);
 
   static saveFilePromise = (
     filePath: string,

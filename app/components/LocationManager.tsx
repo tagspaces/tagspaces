@@ -23,20 +23,17 @@ import withStyles from '@mui/styles/withStyles';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { List } from '@mui/material';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
-import styles from './SidePanels.css';
-import LocationManagerMenu from './menus/LocationManagerMenu';
-import ConfirmDialog from './dialogs/ConfirmDialog';
-import {
-  actions as LocationActions,
-  getLocations
-} from '../reducers/locations';
-import { actions as AppActions, isLoading } from '../reducers/app';
+import styles from '-/components/SidePanels.css';
+import LocationManagerMenu from '-/components/menus/LocationManagerMenu';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import { actions as LocationActions, getLocations } from '-/reducers/locations';
+import { actions as AppActions, isLoading } from '-/reducers/app';
 import {
   getCurrentLanguage,
   getPersistTagsInSidecarFile,
   isDesktopMode
 } from '-/reducers/settings';
-import i18n from '../services/i18n';
+import i18n from '-/services/i18n';
 import LoadingLazy from '-/components/LoadingLazy';
 import LocationView from '-/components/LocationView';
 import { Pro } from '-/pro';
@@ -169,6 +166,7 @@ function LocationManager(props: Props) {
         data-tid="locationList"
         style={{
           height: 'calc(100% - ' + reduceHeightBy + 'px)',
+          borderRadius: 5,
           // @ts-ignore
           overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
         }}

@@ -34,6 +34,8 @@ import HistoryIcon from '@mui/icons-material/ChangeHistoryTwoTone';
 import ArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import ArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import Typography from '@mui/material/Typography';
+import ListItem from '@mui/material/ListItem';
+import List from '@mui/material/List';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import {
   actions as LocationIndexActions,
@@ -64,6 +66,7 @@ import {
 import PlatformIO from '-/services/platform-facade';
 import HistoryMenu from '-/components/menus/HistoryMenu';
 import BookmarksMenu from '-/components/menus/BookmarksMenu';
+import { renderHistory } from '-/components/RenderHistory';
 
 interface Props {
   style?: any;
@@ -192,109 +195,16 @@ function StoredSearches(props: Props) {
   const openedFoldersAvailable =
     folderOpenHistoryItems && folderOpenHistoryItems.length > 0;
 
-  const renderItem = (
-    key,
-    items: Array<TS.HistoryItem> | Array<TS.BookmarkItem>
-  ) => (
-    <Grid container direction="row">
-      {items &&
-        items.map(item => (
-          <React.Fragment key={item.creationTimeStamp}>
-            <Grid item xs={10} style={{ display: 'flex' }}>
-              <Button
-                style={{
-                  textTransform: 'none',
-                  fontWeight: 'normal',
-                  width: '240px',
-                  justifyContent: 'start',
-                  whiteSpace: 'nowrap',
-                  textOverflow: 'ellipsis',
-                  overflow: 'hidden'
-                }}
-                onClick={() => {
-                  if (item.url) {
-                    props.openLink(item.url, { fullWidth: false });
-                  } else {
-                    PlatformIO.disableObjectStoreSupport();
-                    if (item.lid !== props.currentLocationId) {
-                      props.openLocationById(item.lid);
-                    }
-                    getAllPropertiesPromise(item.path)
-                      .then((fsEntry: TS.FileSystemEntry) => {
-                        props.openFsEntry(fsEntry);
-                        return true;
-                      })
-                      .catch(error =>
-                        console.warn(
-                          'Error getting properties for entry: ' +
-                            item.path +
-                            ' - ' +
-                            error
-                        )
-                      );
-                  }
-                }}
-              >
-                <Tooltip
-                  title={
-                    <span style={{ fontSize: 14 }}>
-                      <b>{i18n.t('core:filePath')}:</b> {item.path}
-                      <br />
-                      <br />
-                      {/* <b>Opened on: </b>{' '} */}
-                      {new Date(item.creationTimeStamp)
-                        .toISOString()
-                        .substring(0, 19)
-                        .split('T')
-                        .join(' ')}
-                    </span>
-                  }
-                >
-                  {key === Pro.bookmarks.bookmarksKey ? (
-                    <BookmarkTwoToneIcon fontSize="small" />
-                  ) : (
-                    <HistoryIcon fontSize="small" />
-                  )}
-                </Tooltip>
-                &nbsp;
-                {item.path.endsWith(PlatformIO.getDirSeparator())
-                  ? extractDirectoryName(
-                      item.path,
-                      PlatformIO.getDirSeparator()
-                    )
-                  : extractFileName(item.path, PlatformIO.getDirSeparator())}
-              </Button>
-            </Grid>
-            <Grid item xs={2} style={{ display: 'flex' }}>
-              <IconButton
-                aria-label={i18n.t('core:clearHistory')}
-                onClick={() => {
-                  if (Pro) {
-                    if (key === Pro.bookmarks.bookmarksKey) {
-                      Pro.bookmarks.delBookmark(item.path);
-                    } else {
-                      Pro.history.delHistory(key, item.creationTimeStamp);
-                    }
-                  }
-                  forceUpdate();
-                }}
-                data-tid="editSearchTID"
-                size="small"
-              >
-                <DeleteIcon />
-              </IconButton>
-            </Grid>
-          </React.Fragment>
-        ))}
-    </Grid>
-  );
-
   return (
     <div
       className={classes.panel}
+      data-tid="quickAccessArea"
       style={{
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        borderRadius: 5,
+        marginLeft: 5,
+        marginRight: 5
       }}
     >
       <div className={classes.toolbar}>
@@ -373,38 +283,44 @@ function StoredSearches(props: Props) {
             </Grid>
           )}
         </Grid>
-        <Grid container direction="row">
-          {props.storedSearchesVisible &&
-            props.searches.map(search => (
-              <React.Fragment key={search.uuid}>
-                <Grid item xs={10} style={{ display: 'flex' }}>
-                  <Button
+        {props.storedSearchesVisible &&
+          props.searches.map(search => (
+            <ListItem dense style={{ paddingLeft: 0 }} key={search.uuid}>
+              <Grid item xs={10} style={{ width: '100%' }}>
+                <Button
+                  style={{
+                    textTransform: 'none',
+                    fontWeight: 'normal',
+                    justifyContent: 'start'
+                  }}
+                  onClick={() => handleSavedSearchClick(search.uuid)}
+                >
+                  <SearchIcon />
+                  &nbsp;
+                  <span
                     style={{
-                      textTransform: 'none',
-                      fontWeight: 'normal',
-                      width: '100%',
-                      justifyContent: 'start'
+                      whiteSpace: 'nowrap',
+                      textOverflow: 'ellipsis',
+                      overflow: 'hidden',
+                      maxWidth: 220
                     }}
-                    onClick={() => handleSavedSearchClick(search.uuid)}
                   >
-                    <SearchIcon />
-                    &nbsp;
                     {search.title}
-                  </Button>
-                </Grid>
-                <Grid item xs={2} style={{ display: 'flex' }}>
-                  <IconButton
-                    aria-label={i18n.t('core:searchEditBtn')}
-                    onClick={() => editSearch(search.uuid)}
-                    data-tid="editSearchTID"
-                    size="small"
-                  >
-                    <EditIcon />
-                  </IconButton>
-                </Grid>
-              </React.Fragment>
-            ))}
-        </Grid>
+                  </span>
+                </Button>
+              </Grid>
+              <Grid item xs={2}>
+                <IconButton
+                  aria-label={i18n.t('core:searchEditBtn')}
+                  onClick={() => editSearch(search.uuid)}
+                  data-tid="editSearchTID"
+                  size="small"
+                >
+                  <EditIcon />
+                </IconButton>
+              </Grid>
+            </ListItem>
+          ))}
         <Grid container direction="row">
           <Grid item xs={10} style={{ alignSelf: 'center' }}>
             <IconButton
@@ -445,7 +361,15 @@ function StoredSearches(props: Props) {
         </Grid>
         {Pro &&
           props.showBookmarks &&
-          renderItem(Pro.bookmarks.bookmarksKey, bookmarkItems)}
+          renderHistory(
+            Pro.bookmarks.bookmarksKey,
+            bookmarkItems,
+            forceUpdate,
+            props.currentLocationId,
+            props.openLink,
+            props.openLocationById,
+            props.openFsEntry
+          )}
         <Grid container direction="row">
           <Grid item xs={10} style={{ alignSelf: 'center' }}>
             <IconButton
@@ -485,7 +409,15 @@ function StoredSearches(props: Props) {
           )}
         </Grid>
         {props.fileOpenHistory &&
-          renderItem(historyKeys.fileOpenKey, fileOpenHistoryItems)}
+          renderHistory(
+            historyKeys.fileOpenKey,
+            fileOpenHistoryItems,
+            forceUpdate,
+            props.currentLocationId,
+            props.openLink,
+            props.openLocationById,
+            props.openFsEntry
+          )}
         <Grid container direction="row">
           <Grid item xs={10} style={{ alignSelf: 'center' }}>
             <IconButton
@@ -526,7 +458,15 @@ function StoredSearches(props: Props) {
           )}
         </Grid>
         {props.fileEditHistory &&
-          renderItem(historyKeys.fileEditKey, fileEditHistoryItems)}
+          renderHistory(
+            historyKeys.fileEditKey,
+            fileEditHistoryItems,
+            forceUpdate,
+            props.currentLocationId,
+            props.openLink,
+            props.openLocationById,
+            props.openFsEntry
+          )}
         <Grid container direction="row">
           <Grid item xs={10} style={{ alignSelf: 'center' }}>
             <IconButton
@@ -594,7 +534,15 @@ function StoredSearches(props: Props) {
           )}
         </Grid>
         {props.folderOpenHistory &&
-          renderItem(historyKeys.folderOpenKey, folderOpenHistoryItems)}
+          renderHistory(
+            historyKeys.folderOpenKey,
+            folderOpenHistoryItems,
+            forceUpdate,
+            props.currentLocationId,
+            props.openLink,
+            props.openLocationById,
+            props.openFsEntry
+          )}
         {SaveSearchDialog && saveSearchDialogOpened !== undefined && (
           <SaveSearchDialog
             open={true}

@@ -34,7 +34,6 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import MobileStepper from '@mui/material/MobileStepper';
 import Dialog from '@mui/material/Dialog';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
-import NavigationV3 from '-/assets/images/navigation-v3.png';
 import BrowserExtension from '-/assets/images/collectcontent.svg';
 import WizardFinished from '-/assets/images/computer-desk.svg';
 import ChooseTagging from '-/assets/images/abacus.svg';
@@ -48,7 +47,7 @@ import {
 } from '-/reducers/settings';
 import { actions as AppActions } from '-/reducers/app';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import Links from '-/links';
+import Links from '-/content/links';
 import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
@@ -139,18 +138,6 @@ function OnboardingDialog(props: Props) {
               <ToggleButton value="dark">Dark</ToggleButton>
             </ToggleButtonGroup>
           </div>
-          {/* <div
-            style={{
-              textAlign: 'center'
-            }}
-          >
-            <Typography variant="h5">Navigation in the app</Typography>
-            <img
-              style={{ marginTop: 15, maxHeight: 500 }}
-              src={NavigationV3}
-              alt=""
-            />
-          </div> */}
           <div
             style={{
               textAlign: 'center'
@@ -258,14 +245,17 @@ function OnboardingDialog(props: Props) {
               textAlign: 'center'
             }}
           >
-            <Typography variant="h5">And... you&apos;re done</Typography>
+            <Typography variant="h5">
+              We hope you will love TagSpaces as much as we do!
+            </Typography>
             <img
               style={{ maxHeight: 300, marginTop: 100 }}
               src={WizardFinished}
               alt=""
             />
             <Typography variant="h6">
-              We hope you will love TagSpaces as much as we love it!
+              If you want to learn more about the application, you can start the
+              introduction from the welcome screen.
             </Typography>
           </div>
         </SwipeableViews>

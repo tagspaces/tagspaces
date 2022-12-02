@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useReducer, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Button from '@mui/material/Button';
@@ -35,28 +35,34 @@ import Dialog from '@mui/material/Dialog';
 import { Progress } from 'aws-sdk/clients/s3';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-platforms/misc';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-platforms/paths';
 import i18n from '-/services/i18n';
 import { getKeyBindingObject } from '-/reducers/settings';
-import { actions as AppActions } from '-/reducers/app';
+import {
+  actions as AppActions,
+  getDirectoryPath,
+  getSelectedEntries,
+  getCurrentDirectoryPerspective
+} from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
+import {
+  getLocations,
+  getFirstRWLocation,
+  getCurrentLocation
+} from '-/reducers/locations';
 import { TS } from '-/tagspaces.namespace';
+import PlatformIO from '-/services/platform-facade';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Spacer from '-/components/Spacer';
 import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import TextField from '@mui/material/TextField';
+import FormHelperText from '@mui/material/FormHelperText';
+import { FormControl } from '@mui/material';
+import { fileNameValidation } from '-/services/utils-io';
+import { PerspectiveIDs } from '-/perspectives';
 
 const styles: any = () => ({
-  root: {
-    dispatch: 'flex',
-    minWidth: 200,
-    minHeight: 300,
-    overflow: 'overlay',
-    alignSelf: 'center'
-  },
-  grid: {
-    flexGrow: 1,
-    width: '100%'
-  },
   createButton: {
     minHeight: 100,
     width: '100%',
@@ -68,9 +74,16 @@ const styles: any = () => ({
 interface Props {
   open: boolean;
   classes: any;
-  selectedDirectoryPath: string;
-  chooseDirectoryPath: (path: string) => void;
-  showNotification: (message: string, type: string, autohide: boolean) => void;
+  // locations: Array<TS.Location>;
+  firstRWLocation: TS.Location;
+  // currentLocation: TS.Location;
+  selectedEntries: Array<TS.FileSystemEntry>;
+  currentDirectoryPath: string | null;
+  currentDirectoryPerspective: string;
+  openLocation: (location: TS.Location) => void;
+  // selectedDirectoryPath: string;
+  // chooseDirectoryPath: (path: string) => void;
+  showNotification: (message: string, type: string) => void;
   reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => void;
   createFileAdvanced: (
     targetPath: string,
@@ -90,88 +103,111 @@ interface Props {
 }
 
 function CreateDialog(props: Props) {
-  let fileInput: HTMLInputElement;
-  const fileName =
+  const {
+    classes,
+    open,
+    onClose,
+    createFileAdvanced,
+    openLocation,
+    currentDirectoryPath,
+    currentDirectoryPerspective,
+    selectedEntries,
+    // currentLocation,
+    showNotification,
+    firstRWLocation
+  } = props;
+  const fileName = useRef<string>(
     'note' +
-    AppConfig.beginTagContainer +
-    formatDateTime4Tag(new Date(), true) +
-    AppConfig.endTagContainer;
+      AppConfig.beginTagContainer +
+      formatDateTime4Tag(new Date(), true) +
+      AppConfig.endTagContainer
+  );
+  const [inputError, setInputError] = useState<boolean>(false);
+  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  let fileInput: HTMLInputElement;
   const fileContent = '';
-  const { classes, selectedDirectoryPath, open, onClose } = props;
 
-  function handleKeyPress(event: any) {
-    if (event.key === 'n') {
-      event.stopPropagation();
-      createRichTextFile();
-    } else if (event.key === 't') {
-      event.stopPropagation();
-      createTextFile();
-    } else if (event.key === 'm') {
-      event.stopPropagation();
-      createMarkdownFile();
-    } else if (event.key === 'a') {
-      event.stopPropagation();
-      addFile();
+  let targetDirectoryPath = currentDirectoryPath;
+  if (
+    currentDirectoryPerspective === PerspectiveIDs.KANBAN &&
+    selectedEntries &&
+    selectedEntries.length === 1 &&
+    !selectedEntries[0].isFile
+  ) {
+    targetDirectoryPath = selectedEntries[0].path;
+  }
+
+  if (!targetDirectoryPath && firstRWLocation) {
+    targetDirectoryPath = firstRWLocation.path;
+  }
+
+  const noSuitableLocation = !targetDirectoryPath;
+
+  // function handleKeyPress(event: any) {
+  //   if (event.key === 'n') {
+  //     event.stopPropagation();
+  //     createRichTextFile();
+  //   } else if (event.key === 't') {
+  //     event.stopPropagation();
+  //     createTextFile();
+  //   } else if (event.key === 'm') {
+  //     event.stopPropagation();
+  //     createMarkdownFile();
+  //   } else if (event.key === 'a') {
+  //     event.stopPropagation();
+  //     addFile();
+  //   }
+  // }
+
+  function loadLocation() {
+    if (!currentDirectoryPath && firstRWLocation) {
+      openLocation(firstRWLocation);
     }
   }
 
   function createRichTextFile() {
-    if (selectedDirectoryPath) {
-      props.createFileAdvanced(
-        selectedDirectoryPath,
-        fileName,
+    if (targetDirectoryPath && !fileNameValidation(fileName.current)) {
+      loadLocation();
+      createFileAdvanced(
+        targetDirectoryPath,
+        fileName.current,
         fileContent,
         'html'
       );
-      props.onClose();
+      onClose();
     }
   }
 
   function createTextFile() {
-    if (selectedDirectoryPath) {
-      props.createFileAdvanced(
-        selectedDirectoryPath,
-        fileName,
+    if (targetDirectoryPath && !fileNameValidation(fileName.current)) {
+      loadLocation();
+      createFileAdvanced(
+        targetDirectoryPath,
+        fileName.current,
         fileContent,
         'txt'
       );
-      props.onClose();
+      onClose();
     }
   }
 
   function createMarkdownFile() {
-    if (selectedDirectoryPath) {
-      props.createFileAdvanced(
-        selectedDirectoryPath,
-        fileName,
+    if (targetDirectoryPath && !fileNameValidation(fileName.current)) {
+      loadLocation();
+      createFileAdvanced(
+        targetDirectoryPath,
+        fileName.current,
         fileContent,
         'md'
       );
-      props.onClose();
+      onClose();
     }
   }
 
   function addFile() {
+    loadLocation();
     fileInput.click();
   }
-
-  // function loadImageLocal() {
-  //   props.onClose();
-  //   navigator.camera.getPicture(onCameraSuccess, onFail, {
-  //     destinationType: Camera.DestinationType.FILE_URI,
-  //     sourceType: Camera.PictureSourceType.PHOTOLIBRARY
-  //   });
-  // }
-
-  // function cameraTakePicture() {
-  //   props.onClose();
-  //   navigator.camera.getPicture(onCameraSuccess, onFail, {
-  //     // quality: 50,
-  //     destinationType: Camera.DestinationType.FILE_URI, // DATA_URL, // Return base64 encoded string
-  //     // encodingType: Camera.EncodingType.JPEG,
-  //     mediaType: Camera.MediaType.PICTURE // ALLMEDIA
-  //   });
-  // }
 
   function handleFileInputChange(selection: any) {
     // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
@@ -181,7 +217,7 @@ function CreateDialog(props: Props) {
     props
       .uploadFilesAPI(
         Array.from(selection.currentTarget.files),
-        selectedDirectoryPath,
+        targetDirectoryPath,
         props.onUploadProgress
       )
       .then(fsEntries => {
@@ -191,65 +227,43 @@ function CreateDialog(props: Props) {
       .catch(error => {
         console.log('uploadFiles', error);
       });
-    props.onClose();
-
-    /* const filePath =
-      normalizePath(selectedDirectoryPath) +
-      PlatformIO.getDirSeparator() +
-      decodeURIComponent(file.name);
-
-    const reader = new FileReader();
-    reader.onload = (event: any) => {
-      PlatformIO.getPropertiesPromise(filePath)
-        .then(entryProps => {
-          if (entryProps) {
-            showNotification(
-              'File with the same name already exist, importing skipped!',
-              'warning',
-              true
-            );
-          } else {
-            PlatformIO.saveBinaryFilePromise(
-              filePath,
-              event.currentTarget.result,
-              true
-            )
-              .then(() => {
-                showNotification(
-                  'File ' + filePath + ' successfully imported.',
-                  'default',
-                  true
-                );
-                props.reflectCreateEntry(filePath, true);
-                props.onClose();
-                return true;
-              })
-              .catch(error => {
-                // TODO showAlertDialog("Saving " + filePath + " failed.");
-                console.error('Save to file ' + filePath + ' failed ' + error);
-                showNotification(
-                  'Importing file ' + filePath + ' failed.',
-                  'error',
-                  true
-                );
-                props.onClose();
-                return true;
-              });
-          }
-          return true;
-        })
-        .catch(err => {
-          console.log('Error getting properties ' + err);
-          props.onClose();
-        });
-    };
-
-    if (AppConfig.isCordova) {
-      reader.readAsDataURL(file);
-    } else {
-      reader.readAsArrayBuffer(file);
-    } */
+    onClose();
   }
+
+  const onInputFocus = event => {
+    if (fileName.current) {
+      event.preventDefault();
+      const { target } = event;
+      target.focus();
+      const indexOfBracket = fileName.current.indexOf(
+        AppConfig.beginTagContainer
+      );
+      let endRange = fileName.current.length;
+      // if (indexOfBracket > 0) {
+      //   endRange = indexOfBracket;
+      // }
+      target.setSelectionRange(0, endRange);
+    }
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    fileName.current = event.target.value;
+    handleValidation();
+  };
+
+  const handleValidation = () => {
+    let noValid = fileNameValidation(fileName.current);
+
+    if (noValid) {
+      if (inputError !== noValid) {
+        setInputError(noValid);
+      } else {
+        forceUpdate();
+      }
+    } else {
+      setInputError(noValid);
+    }
+  };
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -260,30 +274,63 @@ function CreateDialog(props: Props) {
       fullScreen={fullScreen}
       keepMounted
       scroll="paper"
-      onKeyDown={event => {
-        if (event.key === 'N' || event.key === 'n') {
-          createRichTextFile();
-        } else if (event.key === 'T' || event.key === 't') {
-          createTextFile();
-        } else if (event.key === 'M' || event.key === 'm') {
-          createMarkdownFile();
-        } else if (event.key === 'A' || event.key === 'a') {
-          addFile();
-        } else if (event.key === 'Escape') {
-          onClose();
-        }
-      }}
+      // onKeyDown={event => {
+      //   // if (event.key === 'N' || event.key === 'n') {
+      //   //   createRichTextFile();
+      //   // } else if (event.key === 'T' || event.key === 't') {
+      //   //   createTextFile();
+      //   // } else if (event.key === 'M' || event.key === 'm') {
+      //   //   createMarkdownFile();
+      //   // } else if (event.key === 'A' || event.key === 'a') {
+      //   //   addFile();
+      //   // } else
+      // }}
     >
       <DialogTitle>
         {i18n.t('createNewContent')}
         <DialogCloseButton onClose={onClose} />
       </DialogTitle>
       <DialogContent
-        onKeyPress={handleKeyPress}
-        className={classes.root}
+        // onKeyPress={handleKeyPress}
+        style={{
+          display: 'flex',
+          minWidth: 200,
+          minHeight: 300,
+          marginBottom: 20,
+          overflow: 'overlay',
+          alignSelf: 'center'
+        }}
         data-tid="keyboardShortCutsDialog"
       >
-        <Grid className={classes.grid} container spacing={1}>
+        <Grid style={{ flexGrow: 1, width: '100%' }} container spacing={1}>
+          {noSuitableLocation && (
+            <Grid item xs={12}>
+              <Typography>
+                File can not be created. No suitable location found!
+              </Typography>
+            </Grid>
+          )}
+          <Grid item xs={12}>
+            <FormControl fullWidth={true} error={inputError}>
+              <TextField
+                autoFocus
+                error={inputError}
+                margin="dense"
+                name="entryName"
+                label={i18n.t('core:newFileName')}
+                onChange={handleInputChange}
+                onFocus={onInputFocus}
+                defaultValue={fileName.current}
+                disabled={noSuitableLocation}
+                fullWidth={true}
+                data-tid="newEntryDialogInputTID"
+                helperText={'File will be created in : ' + targetDirectoryPath}
+              />
+              {inputError && (
+                <FormHelperText>{i18n.t('core:fileNameHelp')}</FormHelperText>
+              )}
+            </FormControl>
+          </Grid>
           <Grid item xs={12}>
             <Button
               variant="outlined"
@@ -291,6 +338,7 @@ function CreateDialog(props: Props) {
               className={classes.createButton}
               // title={i18n.t('createMarkdownTitle')}
               data-tid="createMarkdownButton"
+              disabled={noSuitableLocation}
             >
               <Avatar>
                 <MarkdownFileIcon />
@@ -313,6 +361,7 @@ function CreateDialog(props: Props) {
               className={classes.createButton}
               // title={i18n.t('createNoteTitle')}
               data-tid="createRichTextFileButton"
+              disabled={noSuitableLocation}
             >
               <Avatar>
                 <HTMLFileIcon />
@@ -335,6 +384,7 @@ function CreateDialog(props: Props) {
               className={classes.createButton}
               // title={i18n.t('createTextFileTitle')}
               data-tid="createTextFileButton"
+              disabled={noSuitableLocation}
             >
               <Avatar>
                 <TextFileIcon />
@@ -350,13 +400,14 @@ function CreateDialog(props: Props) {
               </Container>
             </Button>
           </Grid>
-          <Grid item xs={12}>
+          <Grid style={{ marginTop: 40 }} item xs={12}>
             <Button
               variant="outlined"
               onClick={addFile}
               className={classes.createButton}
               // title={i18n.t('addFilesTitle')}
               data-tid="addFilesButton"
+              disabled={noSuitableLocation}
             >
               <Avatar>
                 <AddFileIcon />
@@ -390,13 +441,20 @@ function CreateDialog(props: Props) {
 
 function mapStateToProps(state) {
   return {
-    keyBindings: getKeyBindingObject(state)
+    // locations: getLocations(state),
+    firstRWLocation: getFirstRWLocation(state),
+    keyBindings: getKeyBindingObject(state),
+    selectedEntries: getSelectedEntries(state),
+    currentDirectoryPath: getDirectoryPath(state),
+    currentDirectoryPerspective: getCurrentDirectoryPerspective(state)
+    // currentLocation: getCurrentLocation(state)
   };
 }
 
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
+      openLocation: AppActions.openLocation,
       createFileAdvanced: AppActions.createFileAdvanced,
       showNotification: AppActions.showNotification,
       reflectCreateEntries: AppActions.reflectCreateEntries,

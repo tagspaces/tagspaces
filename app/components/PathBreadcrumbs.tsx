@@ -175,7 +175,7 @@ function PathBreadcrumbs(props: Props) {
                   pathPart,
                   PlatformIO.getDirSeparator()
                 )}
-                onClick={() => loadDirectoryContent(pathPart, false)}
+                onClick={() => loadDirectoryContent(pathPart, false, true)}
               />
             </Tooltip>
           ))}
@@ -212,7 +212,6 @@ function PathBreadcrumbs(props: Props) {
         reflectCreateEntry={reflectCreateEntry}
         openFsEntry={openFsEntry}
         switchPerspective={switchPerspective}
-        isReadOnlyMode={isReadOnlyMode}
       />
     </>
   );

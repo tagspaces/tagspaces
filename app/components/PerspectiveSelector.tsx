@@ -28,6 +28,7 @@ import i18n from '../services/i18n';
 import { Pro } from '-/pro';
 import { connect } from 'react-redux';
 import { getCurrentLanguage } from '-/reducers/settings';
+import { BetaLabel, ProLabel } from '-/components/HelperComponents';
 
 function PerspectiveSelector(props) {
   const { defaultValue, onChange, testId, label } = props;
@@ -49,12 +50,9 @@ function PerspectiveSelector(props) {
   );
 
   AvailablePerspectives.forEach(perspective => {
-    let includePerspective = perspective.beta === false;
+    let includePerspective = true;
     if (!Pro && perspective.pro === true) {
       includePerspective = false;
-    }
-    if (Pro && perspective.beta === false) {
-      includePerspective = true;
     }
     if (includePerspective) {
       perspectiveSelectorMenuItems.push(
@@ -63,7 +61,10 @@ function PerspectiveSelector(props) {
             <ListItemIcon style={{ paddingLeft: 3, paddingTop: 3 }}>
               {perspective.icon}
             </ListItemIcon>
-            <ListItemText>{perspective.title}</ListItemText>
+            <ListItemText>
+              {perspective.title}&nbsp;
+              {perspective.beta && <BetaLabel />}
+            </ListItemText>
           </div>
         </MenuItem>
       );

@@ -23,55 +23,103 @@ import {
   createTheme,
   ThemeProvider,
   Theme,
-  StyledEngineProvider,
-  adaptV4Theme
+  StyledEngineProvider
 } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
 import i18n from '../services/i18n';
-import { getCurrentTheme } from '-/reducers/settings';
+import {
+  getCurrentTheme,
+  getDefaultRegularTheme,
+  getDefaultDarkTheme
+} from '-/reducers/settings';
 
 declare module '@mui/styles/defaultTheme' {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface DefaultTheme extends Theme {}
 }
 
-const lightTheme = createTheme(
-  adaptV4Theme({
-    palette: {
-      mode: 'light', // Switching the dark mode on is a single property value change.
-      primary: {
-        light: AppConfig.lightThemeLightColor,
-        main: AppConfig.lightThemeMainColor,
-        dark: AppConfig.lightThemeMainColor,
-        contrastText: '#ffffff'
-      },
-      secondary: {
-        main: AppConfig.lightThemeMainColor
-      },
-      divider: '#ddd'
-      // secondary: { main: '#cccccc', 200: '#ddd' }
-    }
-  })
-);
+const legacyTheme = createTheme({
+  palette: {
+    mode: 'light', // Switching the dark mode on is a single property value change.
+    primary: {
+      light: AppConfig.lightThemeLightColor,
+      main: AppConfig.lightThemeMainColor,
+      dark: AppConfig.lightThemeMainColor
+    },
+    secondary: {
+      main: AppConfig.lightThemeMainColor
+    },
+    divider: '#ddd'
+  }
+});
 
-const darkTheme = createTheme(
-  adaptV4Theme({
-    palette: {
-      mode: 'dark',
-      primary: {
-        light: AppConfig.darkThemeLightColor,
-        main: AppConfig.darkThemeMainColor,
-        dark: AppConfig.darkThemeMainColor,
-        contrastText: '#ffffff'
-      },
-      secondary: {
-        main: AppConfig.darkThemeMainColor
-      },
-      divider: '#555'
-      // secondary: { main: '#555', 200: '#777' }
+const newlightTheme = createTheme({
+  palette: {
+    mode: 'light',
+    primary: {
+      light: '#a6def4',
+      main: '#3bc8ff',
+      dark: '#3bc8ff'
+    },
+    secondary: {
+      main: '#3bc8ff'
+    },
+    divider: '#ddd'
+  }
+});
+
+// https://mui.com/material-ui/customization/dark-mode/
+const darklegacyTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      light: AppConfig.darkThemeLightColor,
+      main: AppConfig.darkThemeMainColor,
+      dark: AppConfig.darkThemeMainColor
+    },
+    secondary: {
+      main: AppConfig.darkThemeMainColor
+    },
+    divider: '#555'
+  }
+});
+
+const darkblueTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      light: '#a6def4',
+      main: '#3bc8ff',
+      dark: '#3bc8ff'
+    },
+    secondary: {
+      main: '#3bc8ff'
+    },
+    divider: '#555'
+  }
+});
+
+const draculaTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      light: '#503d50',
+      main: '#BD93F9',
+      dark: '#BD93F9'
+    },
+    secondary: {
+      main: '#BD93F9'
+    },
+    divider: '#555',
+    background: {
+      default: '#282A36'
+    },
+    text: {
+      primary: '#f8f8f2'
     }
-  })
-);
+  }
+});
 
 // const lightBlueTheme = createMuiTheme({
 //   palette: {
@@ -93,20 +141,50 @@ const darkTheme = createTheme(
 interface Props {
   children: Object;
   currentTheme: string;
+  defaultRegularTheme: string;
+  defaultDarkTheme: string;
 }
 function App(props: Props) {
-  let theme;
-  switch (props.currentTheme) {
+  let theme = legacyTheme;
+  let regularTheme = legacyTheme;
+  let darkTheme = darklegacyTheme;
+  const { currentTheme, defaultRegularTheme, defaultDarkTheme } = props;
+  const systemDarkMode = useMediaQuery('(prefers-color-scheme: dark)'); // window.matchMedia().matches;
+  switch (defaultRegularTheme) {
+    case 'legacy': {
+      regularTheme = legacyTheme;
+      break;
+    }
+    case 'newlight': {
+      regularTheme = newlightTheme;
+      break;
+    }
+  }
+  switch (defaultDarkTheme) {
+    case 'darklegacy': {
+      darkTheme = darklegacyTheme;
+      break;
+    }
+    case 'darkblue': {
+      darkTheme = darkblueTheme;
+      break;
+    }
+    case 'dracula': {
+      darkTheme = draculaTheme;
+      break;
+    }
+  }
+  switch (currentTheme) {
     case 'light': {
-      theme = lightTheme;
+      theme = regularTheme;
       break;
     }
     case 'dark': {
       theme = darkTheme;
       break;
     }
-    default: {
-      theme = lightTheme;
+    case 'system': {
+      theme = systemDarkMode ? darkTheme : regularTheme;
       break;
     }
   }
@@ -122,7 +200,9 @@ function App(props: Props) {
 
 function mapStateToProps(state) {
   return {
-    currentTheme: getCurrentTheme(state)
+    currentTheme: getCurrentTheme(state),
+    defaultDarkTheme: getDefaultDarkTheme(state),
+    defaultRegularTheme: getDefaultRegularTheme(state)
   };
 }
 export default connect(mapStateToProps)(App);

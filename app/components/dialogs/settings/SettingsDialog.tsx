@@ -29,7 +29,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import { v1 as uuidv1 } from 'uuid';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
 import { extend } from '@tagspaces/tagspaces-platforms/misc';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
@@ -46,6 +45,8 @@ import {
 import { clearAllURLParams } from '-/utils/dom';
 import SettingsAdvanced from '-/components/dialogs/settings/SettingsAdvanced';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import { getUuid } from '-/services/utils-io';
+import Links from '-/content/links';
 
 const styles: any = () => ({
   mainContent: {
@@ -58,6 +59,7 @@ interface Props {
   classes?: any;
   onClose: () => void;
   setSupportedFileTypes?: (fileTypes: Array<any>) => void;
+  openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   supportedFileTypes?: Array<any>;
 }
 
@@ -81,7 +83,7 @@ function SettingsDialog(props: Props) {
     const initSupportedFileTypes = props.supportedFileTypes.reduce(
       (accumulator, fileType) => {
         const modifiedFileType = extend({}, fileType, {
-          id: fileType.id || uuidv1()
+          id: fileType.id || getUuid()
         });
         if (fileType.viewer !== '') {
           accumulator.push(modifiedFileType);
@@ -142,7 +144,7 @@ function SettingsDialog(props: Props) {
   };
 
   const defaultFileTypeObject = {
-    id: uuidv1(),
+    id: getUuid(),
     type: '',
     viewer: '',
     editor: '',
@@ -308,6 +310,15 @@ function SettingsDialog(props: Props) {
         justifyContent: currentTab === 1 ? 'space-between' : 'flex-end'
       }}
     >
+      <Button
+        onClick={() =>
+          openURLExternally(Links.documentationLinks.settings, true)
+        }
+        color="secondary"
+        style={{ float: 'left' }}
+      >
+        {i18n.t('core:help')}
+      </Button>
       {currentTab === 1 && (
         <Button
           data-tid="addNewFileTypeTID"
@@ -329,7 +340,7 @@ function SettingsDialog(props: Props) {
     </DialogActions>
   );
 
-  const { open, onClose } = props;
+  const { open, onClose, openURLExternally } = props;
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (

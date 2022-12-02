@@ -28,6 +28,8 @@ import OpenParentFolder from '@mui/icons-material/FolderOpen';
 import OpenFolderInternally from '@mui/icons-material/Folder';
 import AddRemoveTags from '@mui/icons-material/Loyalty';
 import MoveCopy from '@mui/icons-material/FileCopy';
+import MoveToTopIcon from '@mui/icons-material/VerticalAlignTop';
+import MoveToBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import DuplicateFile from '@mui/icons-material/PostAdd';
 import ImageIcon from '@mui/icons-material/Image';
 import ShareIcon from '@mui/icons-material/Link';
@@ -87,6 +89,8 @@ interface Props {
   currentLocation: TS.Location;
   locations: Array<TS.Location>;
   setLastBackgroundImageChange: (number) => void;
+  reorderTop?: () => void;
+  reorderBottom?: () => void;
 }
 
 function FileMenu(props: Props) {
@@ -165,7 +169,17 @@ function FileMenu(props: Props) {
 
   function setFolderBackground() {
     onClose();
-    setFolderBackgroundPromise(props.selectedFilePath)
+    let path =
+      PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()
+        ? PlatformIO.getURLforPath(props.selectedFilePath)
+        : props.selectedFilePath;
+
+    const directoryPath = extractContainingDirectoryPath(
+      props.selectedFilePath,
+      PlatformIO.getDirSeparator()
+    );
+
+    setFolderBackgroundPromise(path, directoryPath)
       .then((directoryPath: string) => {
         props.setLastBackgroundImageChange(new Date().getTime());
         showNotification('Background created for: ' + directoryPath);
@@ -220,7 +234,7 @@ function FileMenu(props: Props) {
 
       PlatformIO.copyFilePromise(selectedFilePath, newFilePath)
         .then(() => {
-          props.loadDirectoryContent(dirPath, true);
+          props.loadDirectoryContent(dirPath, true, true);
           return true;
         })
         .catch(error => {
@@ -243,7 +257,7 @@ function FileMenu(props: Props) {
         selectedFilePath,
         PlatformIO.getDirSeparator()
       );
-      props.loadDirectoryContent(parentFolder, false);
+      props.loadDirectoryContent(parentFolder, false, true);
     }
   }
 
@@ -266,6 +280,11 @@ function FileMenu(props: Props) {
     }
   }
   const menuItems = [];
+
+  const pathLowerCase = selectedFilePath.toLowerCase();
+  const isImageFile = supportedImgs.some(ext =>
+    pathLowerCase.endsWith('.' + ext)
+  );
 
   if (selectedEntries.length < 2) {
     menuItems.push(
@@ -341,6 +360,40 @@ function FileMenu(props: Props) {
         <ListItemText primary={i18n.t('core:addRemoveTags')} />
       </MenuItem>
     );
+    if (props.reorderTop) {
+      menuItems.push(
+        <MenuItem
+          key="reorderTop"
+          data-tid="reorderTopTID"
+          onClick={() => {
+            onClose();
+            props.reorderTop();
+          }}
+        >
+          <ListItemIcon>
+            <MoveToTopIcon />
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:moveToTop')} />
+        </MenuItem>
+      );
+    }
+    if (props.reorderBottom) {
+      menuItems.push(
+        <MenuItem
+          key="reorderBottom"
+          data-tid="reorderBottomTID"
+          onClick={() => {
+            onClose();
+            props.reorderBottom();
+          }}
+        >
+          <ListItemIcon>
+            <MoveToBottomIcon />
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:moveToBottom')} />
+        </MenuItem>
+      );
+    }
     menuItems.push(
       <MenuItem
         key="fileMenuRenameFile"
@@ -390,9 +443,7 @@ function FileMenu(props: Props) {
           <ListItemText primary={i18n.t('core:setAsThumbnail')} />
         </MenuItem>
       );
-      if (
-        supportedImgs.some(ext => props.selectedFilePath.endsWith('.' + ext))
-      ) {
+      if (isImageFile) {
         menuItems.push(
           <MenuItem
             key="setAsBgndTID"

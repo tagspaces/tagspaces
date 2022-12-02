@@ -71,7 +71,8 @@ import {
   isImportKanBanDialogOpened,
   getSelectedEntries,
   currentUser,
-  isLocationDialogOpened
+  isLocationDialogOpened,
+  isProTeaserVisible
 } from '../reducers/app';
 import TargetFileBox from '../components/TargetFileBox';
 import i18n from '../services/i18n';
@@ -90,6 +91,7 @@ import { actions as LocationIndexActions } from '-/reducers/location-index';
 import MoveOrCopyFilesDialog from '-/components/dialogs/MoveOrCopyFilesDialog';
 import PlatformIO from '-/services/platform-facade';
 import { Pro } from '-/pro';
+import { getUuid } from '-/services/utils-io';
 
 const drawerWidth = 320;
 const body = document.getElementsByTagName('body')[0];
@@ -145,15 +147,17 @@ interface Props {
   isOnboardingDialogOpened: boolean;
   isUploadProgressDialogOpened: boolean;
   isProgressDialogOpened: boolean;
+  isProTeaserVisible: boolean;
   toggleUploadDialog: () => void;
   toggleOpenLinkDialog: () => void;
   toggleProgressDialog: () => void;
   resetProgress: () => void;
   isEditTagDialogOpened: boolean;
   keyBindings: any;
-  toggleEditTagDialog: () => void;
+  toggleEditTagDialog: (tag: TS.Tag) => void;
   setEntryFullWidth: (isFullWidth: boolean) => void;
   loadParentDirectoryContent: () => void;
+  openLink: (linkURL: string, options: any) => void;
   saveFile: () => void; // needed by electron-menus
   setZoomResetApp: () => void; // needed by electron-menus
   setZoomInApp: () => void; // needed by electron-menus
@@ -168,6 +172,7 @@ interface Props {
   toggleAboutDialog: () => void; // needed by electron-menus
   toggleLocationDialog: () => void; // needed by electron-menus
   toggleOnboardingDialog: () => void; // needed by electron-menus
+  toggleProTeaser: () => void; // needed by electron-menus
   // setLastSelectedEntry: (path: string) => void; // needed by electron-menus
   setSelectedEntries: (selectedEntries: Array<Object>) => void; // needed by electron-menus
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void; // needed by electron-menus
@@ -320,13 +325,21 @@ function OpenLinkDialogAsync(props) {
   );
 }
 
+const ProTeaserDialog = React.lazy(() =>
+  import(
+    /* webpackChunkName: "ProTeaserDialog" */ '../components/dialogs/ProTeaserDialog'
+  )
+);
+function ProTeaserDialogAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <ProTeaserDialog {...props} />
+    </React.Suspense>
+  );
+}
+
 function MainPage(props: Props) {
-  // const [percent, setPercent] = React.useState<number | undefined>(undefined);
   const percent = useRef<number | undefined>(undefined);
-  const selectedDirectoryPath = useRef<string>('');
-  const setSelectedDirectoryPath = (path: string) => {
-    selectedDirectoryPath.current = path;
-  };
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
   const width =
@@ -346,7 +359,6 @@ function MainPage(props: Props) {
   const [moveCopyDialogOpened, setMoveCopyDialogOpened] = useState<any>(
     undefined
   );
-  // const [rightPanelWidth, setRightPanelWidth] = useState<number>(0);
 
   useEffect(() => {
     if (!AppConfig.isCordova) {
@@ -490,7 +502,7 @@ function MainPage(props: Props) {
   const keyBindingHandlers = {
     openParentDirectory: props.loadParentDirectoryContent,
     toggleShowHiddenEntries: props.toggleShowUnixHiddenEntries,
-    showFolderNavigator: () => {
+    showLocationManager: () => {
       props.openLocationManagerPanel();
       setDrawerOpened(true);
     },
@@ -509,7 +521,7 @@ function MainPage(props: Props) {
   const keyMap = {
     openParentDirectory: props.keyBindings.openParentDirectory,
     toggleShowHiddenEntries: props.keyBindings.toggleShowHiddenEntries,
-    showFolderNavigator: props.keyBindings.showFolderNavigator,
+    showLocationManager: props.keyBindings.showLocationManager,
     showTagLibrary: props.keyBindings.showTagLibrary,
     openSearch: props.keyBindings.openSearch,
     closeSearch: props.keyBindings.Escape,
@@ -531,12 +543,14 @@ function MainPage(props: Props) {
     toggleProgressDialog,
     toggleEditTagDialog,
     toggleOpenLinkDialog,
+    toggleProTeaser,
     setFirstRun,
     openURLExternally,
     loadDirectoryContent,
     directoryPath,
     mainSplitSize,
     openedFiles,
+    openLink,
     classes
   } = props;
   const { FILE } = NativeTypes;
@@ -590,6 +604,7 @@ function MainPage(props: Props) {
           windowHeight={dimensions.height}
           windowWidth={dimensions.width}
           toggleDrawer={toggleDrawer}
+          toggleProTeaser={toggleProTeaser}
           drawerOpened={drawerOpened}
           openedFiles={openedFiles}
           currentDirectoryPath={directoryPath}
@@ -672,13 +687,22 @@ function MainPage(props: Props) {
       {props.isEditTagDialogOpened && (
         <EditEntryTagDialogAsync
           open={props.isEditTagDialogOpened}
-          onClose={toggleEditTagDialog}
+          onClose={() => toggleEditTagDialog(undefined)}
         />
       )}
       {props.isOpenLinkDialogOpened && (
         <OpenLinkDialogAsync
           open={props.isOpenLinkDialogOpened}
           onClose={toggleOpenLinkDialog}
+          openLink={openLink}
+        />
+      )}
+      {props.isProTeaserVisible && (
+        <ProTeaserDialogAsync
+          open={props.isProTeaserVisible}
+          onClose={toggleProTeaser}
+          openURLExternally={openURLExternally}
+          // key={getUuid()} // TODO rethink to remove this
         />
       )}
       {props.isUploadProgressDialogOpened && (
@@ -703,16 +727,17 @@ function MainPage(props: Props) {
       {props.isCreateFileDialogOpened && (
         <CreateFileDialog
           open={props.isCreateFileDialogOpened}
-          selectedDirectoryPath={selectedDirectoryPath.current || directoryPath}
-          chooseDirectoryPath={currentPath =>
-            setSelectedDirectoryPath(currentPath)
-          }
           onClose={toggleCreateFileDialog}
+          // selectedDirectoryPath={selectedDirectoryPath.current || directoryPath}
+          /*chooseDirectoryPath={currentPath =>
+            setSelectedDirectoryPath(currentPath)
+          }*/
         />
       )}
       {props.isSettingsDialogOpened && (
         <SettingsDialog
           open={props.isSettingsDialogOpened}
+          openURLExternally={openURLExternally}
           onClose={toggleSettingsDialog}
         />
       )}
@@ -758,11 +783,10 @@ function MainPage(props: Props) {
       <PageNotification />
       <div
         style={{
-          backgroundColor: theme.palette.background.default,
+          // backgroundColor: theme.palette.background.default,
           height: '100%'
         }}
       >
-        {/* --default-splitter-line-hover-color: green !important; */}
         <style>
           {`
               .default-splitter {
@@ -773,6 +797,10 @@ function MainPage(props: Props) {
 
               .react-split .split-container.vertical .splitter {
                 background-color: ${theme.palette.background.default};
+              }
+
+              .react-split .split-container {
+                --react-split-splitter:3px !important;
               }
           `}
         </style>
@@ -839,6 +867,7 @@ function mapStateToProps(state) {
     isThirdPartyLibsDialogOpened: isThirdPartyLibsDialogOpened(state),
     isUploadProgressDialogOpened: isUploadDialogOpened(state),
     isOpenLinkDialogOpened: isOpenLinkDialogOpened(state),
+    isProTeaserVisible: isProTeaserVisible(state),
     isProgressDialogOpened: isProgressOpened(state),
     isReadOnlyMode: isReadOnlyMode(state),
     isGeneratingThumbs: isGeneratingThumbs(state),
@@ -872,6 +901,7 @@ function mapDispatchToProps(dispatch) {
       toggleEditTagDialog: AppActions.toggleEditTagDialog,
       onUploadProgress: AppActions.onUploadProgress,
       saveFile: AppActions.saveFile,
+      openLink: AppActions.openLink,
       setZoomResetApp: SettingsActions.setZoomResetApp,
       setZoomInApp: SettingsActions.setZoomInApp,
       setZoomOutApp: SettingsActions.setZoomOutApp,
@@ -886,6 +916,7 @@ function mapDispatchToProps(dispatch) {
       toggleLocationDialog: AppActions.toggleLocationDialog,
       toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
       toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
+      toggleProTeaser: AppActions.toggleProTeaser,
       setSelectedEntries: AppActions.setSelectedEntries,
       // setGeneratingThumbnails: AppActions.setGeneratingThumbnails,
       openFsEntry: AppActions.openFsEntry,
@@ -935,6 +966,7 @@ const areEqual = (prevProp, nextProp) =>
     prevProp.isLocationManagerPanelOpened &&
   nextProp.isOnboardingDialogOpened === prevProp.isOnboardingDialogOpened &&
   nextProp.isOpenLinkDialogOpened === prevProp.isOpenLinkDialogOpened &&
+  nextProp.isProTeaserVisible === prevProp.isProTeaserVisible &&
   nextProp.isProgressDialogOpened === prevProp.isProgressDialogOpened &&
   nextProp.isReadOnlyMode === prevProp.isReadOnlyMode &&
   nextProp.isSearchPanelOpened === prevProp.isSearchPanelOpened &&

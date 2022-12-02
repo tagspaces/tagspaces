@@ -51,8 +51,7 @@ import {
   OpenedEntry,
   getSelectedEntries,
   getProgress,
-  getCurrentDirectoryFiles,
-  getCurrentDirectoryDirs
+  getEditedEntryPaths
 } from '../reducers/app';
 import TaggingActions from '../reducers/tagging-actions';
 import LoadingLazy from '../components/LoadingLazy';
@@ -65,11 +64,12 @@ import {
   actions as LocationIndexActions,
   getSearchQuery
 } from '-/reducers/location-index';
-import Links from '-/links';
+import Links from '-/content/links';
 import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
 import MainSearchField from '-/components/MainSearchField';
 import LoadingAnimation from '-/components/LoadingAnimation';
 import SearchBox from '-/components/SearchBox';
+import useFirstRender from '-/utils/useFirstRender';
 
 const GridPerspective = React.lazy(() =>
   import(
@@ -174,9 +174,7 @@ interface Props {
   theme: any;
   windowHeight: number;
   windowWidth: number;
-  directoryContent: Array<Object>;
-  currentDirectoryFiles: Array<any>;
-  currentDirectoryDirs: Array<any>;
+  directoryContent: Array<TS.FileSystemEntry>;
   currentDirectoryPath: string | null;
   searchResultCount: number;
   addTags: () => void;
@@ -187,6 +185,7 @@ interface Props {
   openDirectory: () => void;
   showInFileManager: () => void;
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
+  openEntry: (path: string) => void;
   reflectCreateEntry: (path: string, isFile: boolean) => void;
   loadDirectoryContent: (
     path: string,
@@ -199,6 +198,7 @@ interface Props {
   isDesktopMode: boolean;
   showNotification: (content: string) => void;
   toggleDrawer?: () => void;
+  toggleProTeaser: (slidePage?: string) => void;
   drawerOpened: boolean;
   setCurrentDirectoryPerspective: (perspective: string) => void;
   maxSearchResults: number;
@@ -215,15 +215,23 @@ interface Props {
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   openURLExternally?: (url: string, skipConfirmation: boolean) => void;
   language: string;
+  editedEntryPaths: Array<string>;
 }
 
 function FolderContainer(props: Props) {
+  const havePrevOpenedFile = React.useRef<boolean>(false);
+  const firstRender = useFirstRender();
+
   useEffect(() => {
     setSearchVisible(false);
   }, [props.currentDirectoryPath]);
 
   useEffect(() => {
-    if (props.selectedEntries.length < 2) {
+    if (
+      !firstRender &&
+      havePrevOpenedFile.current &&
+      props.selectedEntries.length < 2
+    ) {
       if (props.openedFiles.length > 0) {
         const openedFile = props.openedFiles[0];
         if (openedFile.path === props.currentDirectoryPath) {
@@ -236,6 +244,7 @@ function FolderContainer(props: Props) {
             props.setCurrentDirectoryPerspective(openedFile.perspective);
           }
         } else {
+          // update openedFile meta in grid perspective list (like description)
           const currentEntry = enhanceOpenedEntry(
             openedFile,
             props.settings.tagDelimiter
@@ -244,7 +253,43 @@ function FolderContainer(props: Props) {
         }
       }
     }
+    havePrevOpenedFile.current = props.openedFiles.length > 0;
   }, [props.openedFiles]);
+
+  /**
+   * reflect update openedFile from perspective
+   */
+  useEffect(() => {
+    if (
+      !firstRender &&
+      props.editedEntryPaths &&
+      props.editedEntryPaths.length > 0
+    ) {
+      let action = 'createNew'; // todo set action in editedEntryPaths
+      for (const editedEntryPath of props.editedEntryPaths) {
+        let path;
+        if (typeof editedEntryPath === 'string') {
+          path = editedEntryPath;
+          action = 'createNew';
+        } else if (typeof editedEntryPath === 'object') {
+          path = Object.keys(editedEntryPath)[0];
+          action = 'addTag';
+        }
+        if (path && action === 'addTag') {
+          // update opened file after delete sidecar tags
+          if (props.openedFiles.length > 0) {
+            const openedFile = props.openedFiles[0];
+            if (openedFile.path === path) {
+              props.openEntry(path);
+            }
+          }
+        }
+      }
+      /*if (props.editedEntryPaths.length === 2) {
+        action = 'renameFile';
+      }*/
+    }
+  }, [props.editedEntryPaths]);
 
   useEffect(() => {
     if (!props.searchQuery || Object.keys(props.searchQuery).length === 0) {
@@ -268,6 +313,7 @@ function FolderContainer(props: Props) {
     directoryContent,
     classes,
     toggleDrawer,
+    toggleProTeaser,
     drawerOpened,
     isDesktopMode,
     theme,
@@ -339,8 +385,6 @@ function FolderContainer(props: Props) {
       return (
         <KanBanPerspectiveAsync
           directoryContent={props.directoryContent}
-          currentDirectoryFiles={props.currentDirectoryFiles}
-          currentDirectoryDirs={props.currentDirectoryDirs}
           loadDirectoryContent={props.loadDirectoryContent}
           openFsEntry={props.openFsEntry}
           openRenameEntryDialog={() => setIsRenameEntryDialogOpened(true)}
@@ -423,49 +467,57 @@ function FolderContainer(props: Props) {
     ) {
       props.setCurrentDirectoryPerspective(perspectiveId);
     } else if (perspectiveId === PerspectiveIDs.GALLERY) {
-      const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
-      if (openPersDocs) {
-        props.openURLExternally(
-          Links.documentationLinks.galleryPerspective,
-          true
-        );
-      }
+      toggleProTeaser(PerspectiveIDs.GALLERY);
+      // const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
+      // if (openPersDocs) {
+      //   props.openURLExternally(
+      //     Links.documentationLinks.galleryPerspective,
+      //     true
+      //   );
+      // }
     } else if (perspectiveId === PerspectiveIDs.MAPIQUE) {
-      const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
-      if (openPersDocs) {
-        props.openURLExternally(
-          Links.documentationLinks.mapiquePerspective,
-          true
-        );
-      }
+      toggleProTeaser(PerspectiveIDs.MAPIQUE);
+      // const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
+      // if (openPersDocs) {
+      //   props.openURLExternally(
+      //     Links.documentationLinks.mapiquePerspective,
+      //     true
+      //   );
+      // }
     } else if (perspectiveId === PerspectiveIDs.KANBAN) {
-      const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
-      if (openPersDocs) {
-        props.openURLExternally(
-          Links.documentationLinks.kanbanPerspective,
-          true
-        );
-      }
+      toggleProTeaser(PerspectiveIDs.KANBAN);
+      // const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
+      // if (openPersDocs) {
+      //   props.openURLExternally(
+      //     Links.documentationLinks.kanbanPerspective,
+      //     true
+      //   );
+      // }
     }
   };
 
   const perspectiveToggleButtons = [];
   AvailablePerspectives.forEach(perspective => {
-    if (perspective.beta === false) {
-      perspectiveToggleButtons.push(
-        <ToggleButton
-          value={perspective.id}
-          aria-label={perspective.id}
-          key={perspective.id}
-          data-tid={perspective.key}
-          onClick={() => switchPerspective(perspective.id)}
+    // if (perspective.beta === false) {
+    perspectiveToggleButtons.push(
+      <ToggleButton
+        value={perspective.id}
+        aria-label={perspective.id}
+        key={perspective.id}
+        data-tid={perspective.key}
+        onClick={() => switchPerspective(perspective.id)}
+      >
+        <Tooltip
+          title={
+            perspective.title +
+            (perspective.beta && ' ' + i18n.t('core:betaStatus').toUpperCase())
+          }
         >
-          <Tooltip title={perspective.title}>
-            <div style={{ display: 'flex' }}>{perspective.icon}</div>
-          </Tooltip>
-        </ToggleButton>
-      );
-    }
+          <div style={{ display: 'flex' }}>{perspective.icon}</div>
+        </Tooltip>
+      </ToggleButton>
+    );
+    // }
   });
 
   return (
@@ -518,7 +570,10 @@ function FolderContainer(props: Props) {
               />
               <Tooltip
                 title={
-                  i18n.t('showSearch') + ' (CTRL/⌘ + SHIFT + F)'
+                  i18n.t('showSearch') +
+                  ' (' +
+                  (AppConfig.isMaclike ? '⌘' : 'CTRL') +
+                  ' + SHIFT + F)'
                   // +
                   // ' - ' +
                   // keyBindings['openSearch'].toUpperCase()
@@ -600,10 +655,12 @@ function FolderContainer(props: Props) {
           )}
         </div>
       </div>
-      {props.isDesktopMode && !showWelcomePanel && (
+      {props.isDesktopMode && (
         <ToggleButtonGroup
           value={currentPerspective}
           size="small"
+          data-tid="floatingPerspectiveSwitcher"
+          disabled={showWelcomePanel}
           aria-label="change perspective"
           exclusive
           style={{
@@ -627,8 +684,6 @@ function mapStateToProps(state) {
     settings: state.settings,
     selectedEntries: getSelectedEntries(state),
     directoryContent: getDirectoryContent(state),
-    currentDirectoryFiles: getCurrentDirectoryFiles(state),
-    currentDirectoryDirs: getCurrentDirectoryDirs(state),
     currentDirectoryPerspective: getCurrentDirectoryPerspective(state),
     searchResultCount: getSearchResultCount(state),
     currentLocationPath: getCurrentLocationPath(state),
@@ -639,7 +694,8 @@ function mapStateToProps(state) {
     progress: getProgress(state),
     searchQuery: getSearchQuery(state),
     // keyBindings: getKeyBindingObject(state),
-    defaultPerspective: getDefaultPerspective(state)
+    defaultPerspective: getDefaultPerspective(state),
+    editedEntryPaths: getEditedEntryPaths(state)
   };
 }
 
@@ -655,6 +711,7 @@ function mapActionCreatorsToProps(dispatch) {
       openDirectory: AppActions.openDirectory,
       showInFileManager: AppActions.showInFileManager,
       openFsEntry: AppActions.openFsEntry,
+      openEntry: AppActions.openEntry,
       reflectCreateEntry: AppActions.reflectCreateEntry,
       loadDirectoryContent: AppActions.loadDirectoryContent,
       loadParentDirectoryContent: AppActions.loadParentDirectoryContent,
@@ -687,6 +744,8 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   JSON.stringify(nextProp.openedFiles) ===
     JSON.stringify(prevProp.openedFiles) &&
   JSON.stringify(nextProp.theme) === JSON.stringify(prevProp.theme) &&
+  JSON.stringify(nextProp.editedEntryPaths) ===
+    JSON.stringify(prevProp.editedEntryPaths) &&
   nextProp.windowWidth === prevProp.windowWidth &&
   nextProp.windowHeight === prevProp.windowHeight &&
   nextProp.language === prevProp.language &&

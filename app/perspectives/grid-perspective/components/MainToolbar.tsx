@@ -19,17 +19,19 @@
 import React from 'react';
 import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '-/components/Tooltip';
-import SettingsIcon from '@mui/icons-material/Settings';
 import IconButton from '@mui/material/IconButton';
-import ParentDirIcon from '@mui/icons-material/SubdirectoryArrowLeft';
-import SwapVertIcon from '@mui/icons-material/SwapVert';
+import SortingIcon from '@mui/icons-material/SwapVerticalCircle';
 import TagIcon from '@mui/icons-material/LocalOffer';
 import SelectAllIcon from '@mui/icons-material/CheckBox';
 import DeSelectAllIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CopyIcon from '@mui/icons-material/FileCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
-import PropertiesIcon from '@mui/icons-material/Info';
 import ExportIcon from '@mui/icons-material/AssignmentReturn';
+import {
+  ParentFolderIcon,
+  FolderPropertiesIcon,
+  PerspectiveSettingsIcon
+} from '-/components/CommonIcons';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
@@ -107,22 +109,6 @@ function MainToolbar(props: Props) {
     <Toolbar className={classes.topToolbar} data-tid="perspectiveGridToolbar">
       <Tooltip
         title={
-          i18n.t('core:toggleSelectAllFiles') +
-          ' (' +
-          keyBindings['selectAll'].toUpperCase() +
-          ')'
-        }
-      >
-        <IconButton
-          data-tid="gridPerspectiveSelectAllFiles"
-          onClick={toggleSelectAllFiles}
-          size="large"
-        >
-          {someFileSelected ? <SelectAllIcon /> : <DeSelectAllIcon />}
-        </IconButton>
-      </Tooltip>
-      <Tooltip
-        title={
           i18n.t('core:navigateToParentDirectory') +
           ' (' +
           keyBindings['openParentDirectory'].toUpperCase() +
@@ -145,7 +131,23 @@ function MainToolbar(props: Props) {
           }}
           size="large"
         >
-          <ParentDirIcon />
+          <ParentFolderIcon />
+        </IconButton>
+      </Tooltip>
+      <Tooltip
+        title={
+          i18n.t('core:toggleSelectAllFiles') +
+          ' (' +
+          keyBindings['selectAll'].toUpperCase() +
+          ')'
+        }
+      >
+        <IconButton
+          data-tid="gridPerspectiveSelectAllFiles"
+          onClick={toggleSelectAllFiles}
+          size="large"
+        >
+          {someFileSelected ? <SelectAllIcon /> : <DeSelectAllIcon />}
         </IconButton>
       </Tooltip>
       <Tooltip title={i18n.t('core:directoryPropertiesTitle')}>
@@ -155,7 +157,7 @@ function MainToolbar(props: Props) {
           onClick={showProperties}
           size="large"
         >
-          <PropertiesIcon />
+          <FolderPropertiesIcon />
         </IconButton>
       </Tooltip>
       {/* {layoutType === 'row' ? (
@@ -252,7 +254,7 @@ function MainToolbar(props: Props) {
           }}
           size="large"
         >
-          <SwapVertIcon />
+          <SortingIcon />
         </IconButton>
       </Tooltip>
       {Pro &&
@@ -268,13 +270,13 @@ function MainToolbar(props: Props) {
             </IconButton>
           </Tooltip>
         )}
-      <Tooltip title={i18n.t('core:options')}>
+      <Tooltip title={i18n.t('core:perspectiveSettingsTitle')}>
         <IconButton
           data-tid="gridPerspectiveOptionsMenu"
           onClick={openSettings}
           size="large"
         >
-          <SettingsIcon />
+          <PerspectiveSettingsIcon />
         </IconButton>
       </Tooltip>
     </Toolbar>

@@ -16,7 +16,7 @@
  *
  */
 
-import { v1 as uuidv1 } from 'uuid';
+import { getUuid } from '-/services/utils-io';
 
 export default [
   {
@@ -26,7 +26,7 @@ export default [
     textcolor: '#ffffff',
     children: [
       {
-        id: uuidv1(),
+        id: getUuid(),
         title: 'done',
         type: 'plain',
         color: '#008000',
@@ -34,28 +34,28 @@ export default [
         keyBinding: ''
       },
       {
-        id: uuidv1(),
+        id: getUuid(),
         title: 'next',
         type: 'plain',
         color: '#008000',
         textcolor: '#ffffff'
       },
       {
-        id: uuidv1(),
+        id: getUuid(),
         title: 'maybe',
         type: 'plain',
         color: '#008000',
         textcolor: '#ffffff'
       },
       {
-        id: uuidv1(),
+        id: getUuid(),
         title: 'waiting',
         type: 'plain',
         color: '#008000',
         textcolor: '#ffffff'
       },
       {
-        id: uuidv1(),
+        id: getUuid(),
         type: 'plain',
         title: 'todo',
         color: '#008000',
@@ -70,21 +70,21 @@ export default [
     textcolor: '#ffffff',
     children: [
       {
-        id: uuidv1(),
+        id: getUuid(),
         type: 'plain',
         title: 'book',
         color: '#008000',
         textcolor: '#ffffff'
       },
       {
-        id: uuidv1(),
+        id: getUuid(),
         type: 'plain',
         title: 'paper',
         color: '#008000',
         textcolor: '#ffffff'
       },
       {
-        id: uuidv1(),
+        id: getUuid(),
         type: 'plain',
         title: 'article',
         color: '#008000',
@@ -99,21 +99,21 @@ export default [
     textcolor: '#ffffff',
     children: [
       {
-        id: uuidv1(),
+        id: getUuid(),
         type: 'plain',
         title: 'high',
         color: '#ff7537',
         textcolor: '#ffffff'
       },
       {
-        id: uuidv1(),
+        id: getUuid(),
         type: 'plain',
         title: 'medium',
         color: '#ffad46',
         textcolor: '#ffffff'
       },
       {
-        id: uuidv1(),
+        id: getUuid(),
         type: 'plain',
         title: 'low',
         color: '#7bd148',
@@ -128,35 +128,35 @@ export default [
     textcolor: '#ffffff',
     children: [
       {
-        id: uuidv1(),
+        id: getUuid(),
         type: 'plain',
         title: '1star',
         color: '#ffcc24',
         textcolor: '#ffffff'
       },
       {
-        id: uuidv1(),
+        id: getUuid(),
         type: 'plain',
         title: '2star',
         color: '#ffcc24',
         textcolor: '#ffffff'
       },
       {
-        id: uuidv1(),
+        id: getUuid(),
         type: 'plain',
         title: '3star',
         color: '#ffcc24',
         textcolor: '#ffffff'
       },
       {
-        id: uuidv1(),
+        id: getUuid(),
         type: 'plain',
         title: '4star',
         color: '#ffcc24',
         textcolor: '#ffffff'
       },
       {
-        id: uuidv1(),
+        id: getUuid(),
         type: 'plain',
         title: '5star',
         color: '#ffcc24',
