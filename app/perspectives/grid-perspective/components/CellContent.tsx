@@ -31,12 +31,12 @@ import { connect } from 'react-redux';
 import {
   formatFileSize,
   formatDateTime
-} from '@tagspaces/tagspaces-platforms/misc';
+} from '@tagspaces/tagspaces-common/misc';
 import {
   extractTagsAsObjects,
   extractTitle
-} from '@tagspaces/tagspaces-platforms/paths';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+} from '@tagspaces/tagspaces-common/paths';
+import AppConfig from '-/AppConfig';
 import {
   findBackgroundColorForFolder,
   findColorForEntry,

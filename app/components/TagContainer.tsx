@@ -24,7 +24,7 @@ import PlaceIcon from '@mui/icons-material/Place';
 import DateIcon from '@mui/icons-material/DateRange';
 import RemoveTagIcon from '@mui/icons-material/Close';
 import Tooltip from '-/components/Tooltip';
-import { formatDateTime } from '@tagspaces/tagspaces-platforms/misc';
+import { formatDateTime } from '@tagspaces/tagspaces-common/misc';
 import { getAllTags, getTagColors } from '-/reducers/taglibrary';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import { isGeoTag } from '-/utils/geo';

@@ -1,7 +1,7 @@
 {
   "name": "tagspaces",
   "productName": "TagSpaces",
-  "version": "5.1.1",
+  "version": "5.1.2",
   "description": "Offline file organizer and browser with tagging support.",
   "homepage": "https://www.tagspaces.org",
   "main": "./main.prod.js",
@@ -16,7 +16,7 @@
     "@tagspaces/extensions": "1.0.43"
   },
   "nodeDependencies": {
-    "@tagspaces/tagspaces-ws": "2.0.53",
+    "@tagspaces/tagspaces-ws": "2.1.2",
     "@tagspaces/extensions": "1.0.43",
     "sharp": "^0.30.7"
   }

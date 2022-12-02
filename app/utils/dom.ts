@@ -1,5 +1,5 @@
-import { locationType } from '@tagspaces/tagspaces-platforms/misc';
-import { normalizePath } from '@tagspaces/tagspaces-platforms/paths';
+import { locationType } from '@tagspaces/tagspaces-common/misc';
+import { normalizePath } from '@tagspaces/tagspaces-common/paths';
 import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
 

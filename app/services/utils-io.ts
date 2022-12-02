@@ -27,12 +27,12 @@ import {
 import {
   enhanceEntry,
   loadJSONString
-} from '@tagspaces/tagspaces-platforms/utils-common';
+} from '@tagspaces/tagspaces-common/utils-io';
 import { saveAs } from 'file-saver';
 import {
   locationType,
   prepareTagForExport
-} from '@tagspaces/tagspaces-platforms/misc';
+} from '@tagspaces/tagspaces-common/misc';
 import {
   extractTagsAsObjects,
   extractFileExtension,
@@ -45,8 +45,8 @@ import {
   getThumbFileLocationForFile,
   getThumbFileLocationForDirectory,
   getBgndFileLocationForDirectory
-} from '@tagspaces/tagspaces-platforms/paths';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+} from '@tagspaces/tagspaces-common/paths';
+import AppConfig from '-/AppConfig';
 import PlatformIO from './platform-facade';
 import i18n from '../services/i18n';
 import versionMeta from '../version.json';
@@ -789,14 +789,15 @@ export function parseNewTags(tagsInput: string, tagGroup: TS.TagGroup) {
 }
 
 export async function loadLocationDataPromise(
-  path: string
+  path: string,
+  metaFile = AppConfig.folderLocationsFile
 ): Promise<TS.FileSystemEntryMeta> {
   const entryProperties = await PlatformIO.getPropertiesPromise(path);
   if (!entryProperties.isFile) {
     const metaFilePath = getMetaFileLocationForDir(
       path,
       PlatformIO.getDirSeparator(),
-      AppConfig.folderLocationsFile
+      metaFile
     );
     let metaData;
     try {

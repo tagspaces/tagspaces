@@ -1,4 +1,4 @@
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '-/AppConfig';
 import { BaseCSSProperties } from '@mui/styles';
 
 export interface StyleProps {

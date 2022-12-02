@@ -32,7 +32,7 @@ import {
   escapeRegExp,
   parseTextQuery,
   removeAllTagsFromSearchQuery
-} from '@tagspaces/tagspaces-platforms/misc';
+} from '@tagspaces/tagspaces-common/misc';
 import { actions as AppActions, getDirectoryPath } from '../reducers/app';
 import {
   actions as LocationIndexActions,
@@ -53,7 +53,7 @@ import { Pro } from '../pro';
 import useFirstRender from '-/utils/useFirstRender';
 import MainSearchField from '-/components/MainSearchField';
 import SavedSearchesMenu from '-/components/menus/SavedSearchesMenu';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '-/AppConfig';
 
 // type PropsClasses = Record<keyof StyleProps, string>;
 

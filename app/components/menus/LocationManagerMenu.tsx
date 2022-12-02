@@ -31,7 +31,7 @@ import IconButton from '@mui/material/IconButton';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
 import { Pro } from '../../pro';
 import { actions as AppActions } from '-/reducers/app';

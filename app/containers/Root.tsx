@@ -20,7 +20,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Store } from 'redux';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '-/AppConfig';
 import LoadingScreen from '../components/LoadingScreen';
 import { actions as AppActions } from '../reducers/app';
 import App from '-/containers/App';

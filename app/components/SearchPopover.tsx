@@ -51,9 +51,9 @@ import FormControl from '@mui/material/FormControl';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import { mergeWithExtractedTags } from '@tagspaces/tagspaces-platforms/misc';
+import { mergeWithExtractedTags } from '@tagspaces/tagspaces-common/misc';
 import HelpIcon from '@mui/icons-material/Help';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '-/AppConfig';
 import TagsSelect from './TagsSelect';
 import { actions as AppActions, getDirectoryPath } from '../reducers/app';
 import {

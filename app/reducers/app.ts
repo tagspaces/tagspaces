@@ -19,8 +19,8 @@
 import {
   formatDateTime4Tag,
   locationType
-} from '@tagspaces/tagspaces-platforms/misc';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+} from '@tagspaces/tagspaces-common/misc';
+import AppConfig from '-/AppConfig';
 import {
   extractFileExtension,
   extractDirectoryName,
@@ -33,7 +33,7 @@ import {
   extractContainingDirectoryPath,
   getMetaFileLocationForDir,
   generateSharingLink
-} from '@tagspaces/tagspaces-platforms/paths';
+} from '@tagspaces/tagspaces-common/paths';
 import {
   getURLParameter,
   clearURLParam,

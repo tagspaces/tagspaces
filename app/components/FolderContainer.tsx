@@ -30,7 +30,7 @@ import Badge from '@mui/material/Badge';
 import withStyles from '@mui/styles/withStyles';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '-/AppConfig';
 import LocationMenu from './menus/LocationMenu';
 import i18n from '../services/i18n';
 import {

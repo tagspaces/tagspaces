@@ -3,9 +3,9 @@ import FileSourceDnd from '-/components/FileSourceDnd';
 import TargetMoveFileBox from '-/components/TargetMoveFileBox';
 import DragItemTypes from '-/components/DragItemTypes';
 import React from 'react';
-import { locationType } from '@tagspaces/tagspaces-platforms/misc';
+import { locationType } from '@tagspaces/tagspaces-common/misc';
 import PlatformIO from '-/services/platform-facade';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
 
 export const fileOperationsEnabled = selectedEntries => {

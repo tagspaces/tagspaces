@@ -33,7 +33,7 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import MobileStepper from '@mui/material/MobileStepper';
 import Dialog from '@mui/material/Dialog';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '-/AppConfig';
 import BrowserExtension from '-/assets/images/collectcontent.svg';
 import WizardFinished from '-/assets/images/computer-desk.svg';
 import ChooseTagging from '-/assets/images/abacus.svg';

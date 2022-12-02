@@ -16,7 +16,7 @@
  *
  */
 
-import { immutablySwapItems } from '@tagspaces/tagspaces-platforms/misc';
+import { immutablySwapItems } from '@tagspaces/tagspaces-common/misc';
 import { TS } from '-/tagspaces.namespace';
 
 export const initialState = [];

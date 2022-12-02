@@ -26,7 +26,7 @@ import {
   StyledEngineProvider
 } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '-/AppConfig';
 import i18n from '../services/i18n';
 import {
   getCurrentTheme,

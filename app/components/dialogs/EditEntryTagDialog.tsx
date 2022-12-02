@@ -35,7 +35,7 @@ import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import Dialog from '@mui/material/Dialog';
 import EditIcon from '@mui/icons-material/Edit';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
 import { isGeoTag } from '-/utils/geo';
 import { Pro } from '-/pro';

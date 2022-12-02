@@ -1,9 +1,7 @@
 import React, { MutableRefObject, useRef, useState } from 'react';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
-import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-platforms/paths';
-import PlatformIO from '-/services/platform-facade';
+import AppConfig from '-/AppConfig';
 import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
 import i18n from '-/services/i18n';
 import { ProTooltip } from '-/components/HelperComponents';

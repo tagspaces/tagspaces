@@ -16,7 +16,7 @@
  *
  */
 
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '-/AppConfig';
 
 export default function listen(props) {
   let ipcRenderer;
