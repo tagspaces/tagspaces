@@ -20,7 +20,7 @@ import React from 'react';
 import ParentFolder from '@mui/icons-material/ReplyOutlined';
 import Help from '@mui/icons-material/Help';
 import Info from '@mui/icons-material/Info';
-import AnnouncementIcon from '@mui/icons-material/Announcement';
+import AnnouncementIcon from '@mui/icons-material/AnnouncementOutlined';
 import Remove from '@mui/icons-material/RemoveCircleOutline';
 import History from '@mui/icons-material/ChangeHistoryTwoTone';
 import Settings from '@mui/icons-material/Settings';
