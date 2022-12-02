@@ -360,11 +360,23 @@ function MainPage(props: Props) {
     undefined
   );
 
+  function goForward() {
+    window.history.forward();
+    props.openLink(window.location.href, { fullWidth: false });
+  }
+
+  function goBack() {
+    console.log('current href: ' + decodeURIComponent(window.location.href));
+    window.history.back();
+    props.openLink(window.location.href, { fullWidth: false });
+    console.log('next href: ' + decodeURIComponent(window.location.href));
+  }
+
   useEffect(() => {
     if (!AppConfig.isCordova) {
       updateDimensions();
     }
-    listen(props);
+    listen({ ...props, goBack, goForward });
   }, []);
 
   useEffect(() => {
@@ -608,6 +620,8 @@ function MainPage(props: Props) {
           drawerOpened={drawerOpened}
           openedFiles={openedFiles}
           currentDirectoryPath={directoryPath}
+          goBack={goBack}
+          goForward={goForward}
         />
         {isFileOpened && (
           <EntryContainer

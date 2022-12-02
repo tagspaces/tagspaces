@@ -26,7 +26,6 @@ import Tooltip from '-/components/Tooltip';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
-import MenuIcon from '@mui/icons-material/MenuOpen';
 import Badge from '@mui/material/Badge';
 import withStyles from '@mui/styles/withStyles';
 import ToggleButton from '@mui/material/ToggleButton';
@@ -55,6 +54,7 @@ import {
 } from '../reducers/app';
 import TaggingActions from '../reducers/tagging-actions';
 import LoadingLazy from '../components/LoadingLazy';
+import { GoBackIcon, GoForwardIcon, MainMenuIcon } from './CommonIcons';
 import { Pro } from '../pro';
 import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
 import { TS } from '-/tagspaces.namespace';
@@ -64,7 +64,6 @@ import {
   actions as LocationIndexActions,
   getSearchQuery
 } from '-/reducers/location-index';
-import Links from '-/content/links';
 import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
 import MainSearchField from '-/components/MainSearchField';
 import LoadingAnimation from '-/components/LoadingAnimation';
@@ -160,13 +159,13 @@ const CounterBadge: any = withStyles(theme => ({
   }
 }))(Badge);
 
-const CustomButton: any = withStyles(theme => ({
-  root: {
-    // borderRadius: 15,
-    // minWidth: 45,
-    // height: 40
-  }
-}))(IconButton);
+// const CustomButton: any = withStyles(theme => ({
+//   root: {
+//     // borderRadius: 15,
+//     // minWidth: 45,
+//     // height: 40
+//   }
+// }))(IconButton);
 
 interface Props {
   classes: any;
@@ -216,6 +215,8 @@ interface Props {
   openURLExternally?: (url: string, skipConfirmation: boolean) => void;
   language: string;
   editedEntryPaths: Array<string>;
+  goBack: () => void;
+  goForward: () => void;
 }
 
 function FolderContainer(props: Props) {
@@ -323,7 +324,9 @@ function FolderContainer(props: Props) {
     openDirectory,
     reflectCreateEntry,
     openFsEntry,
-    defaultPerspective
+    defaultPerspective,
+    goBack,
+    goForward
   } = props;
 
   let currentPerspective =
@@ -343,8 +346,8 @@ function FolderContainer(props: Props) {
       return (
         <ListPerspectiveAsync
           directoryContent={props.directoryContent}
-          loadDirectoryContent={props.loadDirectoryContent}
-          openFsEntry={props.openFsEntry}
+          loadDirectoryContent={loadDirectoryContent}
+          openFsEntry={openFsEntry}
           openRenameEntryDialog={() => setIsRenameEntryDialogOpened(true)}
           loadParentDirectoryContent={props.loadParentDirectoryContent}
           renameFile={props.renameFile}
@@ -363,7 +366,7 @@ function FolderContainer(props: Props) {
       return (
         <GalleryPerspectiveAsync
           directoryContent={props.directoryContent}
-          openFsEntry={props.openFsEntry}
+          openFsEntry={openFsEntry}
           currentDirectoryPath={props.currentDirectoryPath}
           windowWidth={props.windowWidth}
           switchPerspective={switchPerspective}
@@ -544,16 +547,24 @@ function FolderContainer(props: Props) {
             overflowX: AppConfig.isFirefox ? 'auto' : 'overlay'
           }}
         >
-          <CustomButton
+          <IconButton
             id="mobileMenuButton"
-            style={{
-              transform: drawerOpened ? 'rotate(0deg)' : 'rotate(180deg)',
-              width: 50
-            }}
+            // style={{
+            //   transform: drawerOpened ? 'rotate(0deg)' : 'rotate(180deg)',
+            //   width: 50
+            // }}
             onClick={toggleDrawer}
           >
-            <MenuIcon />
-          </CustomButton>
+            <MainMenuIcon />
+          </IconButton>
+          <IconButton id="goBackButton" onClick={goBack}>
+            <GoBackIcon />
+          </IconButton>
+          {isDesktopMode && (
+            <IconButton id="goForwardButton" onClick={goForward}>
+              <GoForwardIcon />
+            </IconButton>
+          )}
           <SearchBox
             open={isSearchVisible}
             anchorSearch={anchorSearch}
@@ -608,7 +619,7 @@ function FolderContainer(props: Props) {
                 />
               </Tooltip>
               {props.progress && props.progress.length > 0 && (
-                <CustomButton
+                <IconButton
                   id="progressButton"
                   title={i18n.t('core:progress')}
                   data-tid="uploadProgress"
@@ -616,7 +627,7 @@ function FolderContainer(props: Props) {
                   className={[classes.button, classes.upgradeButton].join(' ')}
                 >
                   <CircularProgressWithLabel value={getProgressValue()} />
-                </CustomButton>
+                </IconButton>
               )}
               <LocationMenu />
               <PathBreadcrumbs
