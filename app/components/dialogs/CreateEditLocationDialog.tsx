@@ -61,7 +61,7 @@ import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import InfoIcon from '-/components/InfoIcon';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
-import { actions as LocationActions } from '-/reducers/locations';
+import { actions as LocationActions, getLocations } from '-/reducers/locations';
 import { getPersistTagsInSidecarFile } from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
@@ -81,6 +81,7 @@ const styles: any = theme => ({
 
 interface Props {
   location?: TS.Location;
+  locations: Array<TS.Location>;
   open: boolean;
   onClose: () => void;
   classes: any;
@@ -226,7 +227,9 @@ function CreateEditLocationDialog(props: Props) {
     loadLocationDataPromise(path, AppConfig.metaFolderFile)
       .then((meta: TS.FileSystemEntryMeta) => {
         if (meta && meta.id) {
-          setNewUuid(meta.id);
+          if (!props.locations.some(ln => ln.uuid === meta.id)) {
+            setNewUuid(meta.id);
+          }
         }
         return true;
       })
@@ -914,7 +917,8 @@ function CreateEditLocationDialog(props: Props) {
 
 function mapStateToProps(state) {
   return {
-    isPersistTagsInSidecar: getPersistTagsInSidecarFile(state)
+    isPersistTagsInSidecar: getPersistTagsInSidecarFile(state),
+    locations: getLocations(state)
   };
 }
 
