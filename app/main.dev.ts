@@ -479,10 +479,6 @@ async function createAppWindow() {
     }
   });
 
-  /* setTimeout(() => {
-    mainWindow.toggleDevTools(); // debugging
-  }, 2000); */
-
   const winUserAgent =
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36';
   const testWinOnUnix = false; // set to true to simulate windows os, useful for testing s3 handling
@@ -499,8 +495,6 @@ async function createAppWindow() {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
-    // mainWindow.show();
-    // (global as any).splashWorkerWindow.hide(); // Comment for easy debugging of the worker (global as any).splashWorkerWindow.show();
     if (portableMode) {
       mainWindow.setTitle(mainWindow.title + ' Portable 🔌');
     }
@@ -513,12 +507,6 @@ async function createAppWindow() {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null;
-    /* try {
-      (global as any).splashWorkerWindow.close();
-      (global as any).splashWorkerWindow = null;
-    } catch (err) {
-      // console.warn('Error closing the splash window. ' + err);
-    } */
   });
 
   mainWindow.webContents.on('crashed', () => {

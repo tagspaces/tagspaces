@@ -89,14 +89,10 @@ function RenameEntryDialog(props: Props) {
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
   const onInputFocus = event => {
-    // https://github.com/mui-org/material-ui/issues/1594
-    // const timer = setTimeout(() => {
     if (name.current) {
       event.preventDefault();
       const { target } = event;
       target.focus();
-      // inputElement.focus();
-      // if (defaultName) {
       const indexOfBracket = name.current.indexOf(AppConfig.beginTagContainer);
       const indexOfDot = name.current.lastIndexOf('.');
       let endRange = name.current.length;
@@ -106,11 +102,7 @@ function RenameEntryDialog(props: Props) {
         endRange = indexOfDot;
       }
       target.setSelectionRange(0, endRange);
-      // }
     }
-    // }, 100);
-
-    // return () => clearTimeout(timer);
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
