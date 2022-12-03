@@ -31,11 +31,14 @@ import KeyShortcuts from '@mui/icons-material/Keyboard';
 import Menu from '@mui/icons-material/Menu';
 import ArrowBack from '@mui/icons-material/ArrowBack';
 import ArrowForward from '@mui/icons-material/ArrowForward';
+import Folder from '@mui/icons-material/Folder';
 
 export const ParentFolderIcon = props => (
   // <ParentDirIcon style={{ transform: 'rotate(-90deg)' }} /> SubdirectoryArrowLeft
   <ParentFolder {...props} />
 );
+
+export const FolderIcon = props => <Folder {...props} />;
 
 export const MainMenuIcon = props => <Menu {...props} />;
 
