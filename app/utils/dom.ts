@@ -1,5 +1,8 @@
 import { locationType } from '@tagspaces/tagspaces-common/misc';
-import { normalizePath } from '@tagspaces/tagspaces-common/paths';
+import {
+  normalizePath,
+  cleanTrailingDirSeparator
+} from '@tagspaces/tagspaces-common/paths';
 import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
 
@@ -36,13 +39,34 @@ export function clearURLParam(paramName) {
   // console.log(window.location.href);
 }
 
+function cleanFrontDirSeparator(dirPath) {
+  if (dirPath) {
+    if (dirPath.startsWith('\\')) {
+      return dirPath.substring(2);
+    }
+    if (dirPath.startsWith('/')) {
+      return dirPath.substring(1);
+    }
+    return dirPath;
+  }
+  return '';
+}
+
 export function updateHistory(
   currentLocation: TS.Location,
   currentDirectory: string,
   entryPath?: string
 ) {
-  const currentDirectoryPath = normalizePath(currentDirectory);
-  const entryPathNormed = normalizePath(entryPath);
+  const currentDirectoryPath = cleanTrailingDirSeparator(currentDirectory);
+  const entryPathNormed = cleanTrailingDirSeparator(entryPath);
+  // console.log(
+  //   '>>> Updating history: ' +
+  //     currentLocation.name +
+  //     ' dir: ' +
+  //     currentDirectoryPath +
+  //     ' entry: ' +
+  //     entryPathNormed
+  // );
   if (currentLocation) {
     // const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
     let urlParams = '?';
@@ -54,22 +78,30 @@ export function updateHistory(
       currentLocationPath =
         currentLocation.path ||
         (currentLocation.paths && currentLocation.paths[0]); // PlatformIO.getLocationPath(currentLocation);
-      currentLocationPath = normalizePath(currentLocationPath);
+      currentLocationPath = cleanTrailingDirSeparator(currentLocationPath);
+      // console.log('>>> history current location path: ' + currentLocationPath);
     }
 
     if (currentDirectoryPath && currentDirectoryPath.length > 0) {
-      const currentDir = isCloudLocation
+      let currentRelDir = isCloudLocation
         ? currentDirectoryPath
         : currentDirectoryPath.replace(currentLocationPath, '');
-      console.log('href curdir ' + currentDir);
-      urlParams += '&tsdpath=' + encodeURIComponent(currentDir);
+      currentRelDir = cleanFrontDirSeparator(currentRelDir);
+      // console.log('>>> history current rel dir path: ' + currentRelDir);
+      if (currentRelDir) {
+        urlParams += '&tsdpath=' + encodeURIComponent(currentRelDir);
+      }
     }
 
     if (entryPathNormed && entryPathNormed.length > 0) {
-      const ePath = isCloudLocation
+      let eRelPath = isCloudLocation
         ? entryPathNormed
         : entryPathNormed.replace(currentLocationPath, '');
-      urlParams += '&tsepath=' + encodeURIComponent(ePath);
+      eRelPath = cleanFrontDirSeparator(eRelPath);
+      // console.log('>>> history current rel entry path: ' + eRelPath);
+      if (eRelPath) {
+        urlParams += '&tsepath=' + encodeURIComponent(eRelPath);
+      }
     }
 
     const localePar = getURLParameter('locale');
