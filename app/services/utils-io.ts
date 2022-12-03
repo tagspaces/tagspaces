@@ -1380,6 +1380,6 @@ export function setLocationType(location: TS.Location): Promise<boolean> {
   return Promise.resolve(false);
 }
 
-export function getUuid(version = 1): string {
-  return version === 1 ? uuidv1() : uuidv4();
+export function getUuid(version = 4): string {
+  return version === 4 ? uuidv4() : uuidv1();
 }
