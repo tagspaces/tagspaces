@@ -557,13 +557,21 @@ function FolderContainer(props: Props) {
           >
             <MainMenuIcon />
           </IconButton>
-          <IconButton id="goBackButton" onClick={goBack}>
-            <GoBackIcon />
-          </IconButton>
-          {isDesktopMode && (
-            <IconButton id="goForwardButton" onClick={goForward}>
-              <GoForwardIcon />
+          <Tooltip
+            title={
+              i18n.t('core:goback') + ' - ' + i18n.t('core:gobackClarification')
+            }
+          >
+            <IconButton id="goBackButton" onClick={goBack}>
+              <GoBackIcon />
             </IconButton>
+          </Tooltip>
+          {isDesktopMode && (
+            <Tooltip title={i18n.t('core:goforward')}>
+              <IconButton id="goForwardButton" onClick={goForward}>
+                <GoForwardIcon />
+              </IconButton>
+            </Tooltip>
           )}
           <SearchBox
             open={isSearchVisible}

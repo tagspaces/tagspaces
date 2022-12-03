@@ -528,6 +528,7 @@
   "filesLimit": "Max. files to be displayed in a folder",
   "scrollFilesLimit": "Files to be loaded on scroll down",
   "goback": "Go Back",
+  "gobackClarification": "Navigate to last opened file, folder or location",
   "goforward": "Go Forward",
   "switchSimpleMode": "Simple Mode",
   "switchAdvancedMode": "Advanced Mode",

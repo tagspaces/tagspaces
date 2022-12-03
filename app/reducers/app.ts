@@ -1194,6 +1194,7 @@ export const actions = {
       currentLocation ? currentLocation.ignorePatternPaths : []
     )
       .then(results => {
+        updateHistory(currentLocation, directoryPath);
         if (results !== undefined) {
           // console.debug('app listDirectoryPromise resolved:' + results.length);
           prepareDirectoryContent(
@@ -2402,6 +2403,7 @@ export const actions = {
         } else {
           openLocationTimer = 0;
         }
+        // setTimeout is needed for case of a location switch, if not location swith the timer is 0
         setTimeout(() => {
           if (isCloudLocation) {
             PlatformIO.enableObjectStoreSupport(targetLocation).then(() => {
@@ -2436,7 +2438,10 @@ export const actions = {
             });
           } else {
             // local files case
-            const locationPath = PlatformIO.getLocationPath(targetLocation);
+            // const locationPath = PlatformIO.getLocationPath(targetLocation);
+            const locationPath =
+              targetLocation.path ||
+              (targetLocation.paths && targetLocation.paths[0]);
             if (directoryPath && directoryPath.length > 0) {
               if (
                 directoryPath.includes('../') ||
@@ -2453,6 +2458,12 @@ export const actions = {
               }
               const dirFullPath =
                 locationPath + PlatformIO.getDirSeparator() + directoryPath;
+              // console.log(
+              //   '>>> Openlink Local Directory path: ' +
+              //     directoryPath +
+              //     ' full: ' +
+              //     dirFullPath
+              // );
               dispatch(actions.loadDirectoryContent(dirFullPath, false, true));
             }
 

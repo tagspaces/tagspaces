@@ -285,9 +285,7 @@ export const getLocationByPath = (
 ): TS.Location | null =>
   state.locations.find(location => location.path === path);
 export const getDefaultLocationId = (state: any): string | undefined => {
-  let foundLocation = state.locations.find(
-    location => location.isDefault && !location.isReadOnly
-  );
+  let foundLocation = state.locations.find(location => location.isDefault);
   return foundLocation ? foundLocation.uuid : undefined;
 };
 export const getCurrentLocation = (state: any): string | undefined => {

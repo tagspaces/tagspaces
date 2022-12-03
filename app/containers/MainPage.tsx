@@ -362,14 +362,30 @@ function MainPage(props: Props) {
 
   function goForward() {
     window.history.forward();
-    props.openLink(window.location.href, { fullWidth: false });
+    window.addEventListener(
+      'popstate',
+      () => {
+        props.openLink(window.location.href, { fullWidth: false });
+      },
+      { once: true }
+    );
   }
 
   function goBack() {
-    console.log('current href: ' + decodeURIComponent(window.location.href));
-    window.history.back();
-    props.openLink(window.location.href, { fullWidth: false });
-    console.log('next href: ' + decodeURIComponent(window.location.href));
+    // console.log(
+    //   '>>> current href: ' + decodeURIComponent(window.location.href)
+    // );
+    window.history.back(); // window.history.go(-1);
+    window.addEventListener(
+      'popstate',
+      () => {
+        props.openLink(window.location.href, { fullWidth: false });
+        // console.log(
+        //   '>>> last href: ' + decodeURIComponent(window.location.href)
+        // );
+      },
+      { once: true }
+    );
   }
 
   useEffect(() => {

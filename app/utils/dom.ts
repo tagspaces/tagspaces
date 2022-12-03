@@ -1,4 +1,8 @@
 import { locationType } from '@tagspaces/tagspaces-common/misc';
+import {
+  normalizePath,
+  cleanTrailingDirSeparator
+} from '@tagspaces/tagspaces-common/paths';
 import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
 
@@ -21,7 +25,7 @@ export function getURLParameter(paramName: string, url?: string): string {
 }
 
 export function clearAllURLParams() {
-  window.history.pushState('', document.title, window.location.pathname);
+  window.history.pushState(null, null, window.location.pathname);
   // console.log(window.location.href);
 }
 
@@ -31,12 +35,21 @@ export function clearURLParam(paramName) {
 
   // Delete the foo parameter.
   params.delete(paramName);
-  window.history.pushState(
-    '',
-    document.title,
-    window.location.pathname + '?' + params
-  );
+  window.history.pushState(null, null, window.location.pathname + '?' + params);
   // console.log(window.location.href);
+}
+
+function cleanFrontDirSeparator(dirPath) {
+  if (dirPath) {
+    if (dirPath.startsWith('\\')) {
+      return dirPath.substring(2);
+    }
+    if (dirPath.startsWith('/')) {
+      return dirPath.substring(1);
+    }
+    return dirPath;
+  }
+  return '';
 }
 
 export function updateHistory(
@@ -44,6 +57,16 @@ export function updateHistory(
   currentDirectory: string,
   entryPath?: string
 ) {
+  const currentDirectoryPath = cleanTrailingDirSeparator(currentDirectory);
+  const entryPathNormed = cleanTrailingDirSeparator(entryPath);
+  // console.log(
+  //   '>>> Updating history: ' +
+  //     currentLocation.name +
+  //     ' dir: ' +
+  //     currentDirectoryPath +
+  //     ' entry: ' +
+  //     entryPathNormed
+  // );
   if (currentLocation) {
     // const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
     let urlParams = '?';
@@ -52,21 +75,33 @@ export function updateHistory(
 
     if (currentLocation && currentLocation.uuid) {
       urlParams += 'tslid=' + encodeURIComponent(currentLocation.uuid);
-      currentLocationPath = PlatformIO.getLocationPath(currentLocation);
+      currentLocationPath =
+        currentLocation.path ||
+        (currentLocation.paths && currentLocation.paths[0]); // PlatformIO.getLocationPath(currentLocation);
+      currentLocationPath = cleanTrailingDirSeparator(currentLocationPath);
+      // console.log('>>> history current location path: ' + currentLocationPath);
     }
 
-    if (currentDirectory && currentDirectory.length > 0) {
-      const currentDir = isCloudLocation
-        ? currentDirectory
-        : currentDirectory.replace(currentLocationPath, '');
-      urlParams += '&tsdpath=' + encodeURIComponent(currentDir);
+    if (currentDirectoryPath && currentDirectoryPath.length > 0) {
+      let currentRelDir = isCloudLocation
+        ? currentDirectoryPath
+        : currentDirectoryPath.replace(currentLocationPath, '');
+      currentRelDir = cleanFrontDirSeparator(currentRelDir);
+      // console.log('>>> history current rel dir path: ' + currentRelDir);
+      if (currentRelDir) {
+        urlParams += '&tsdpath=' + encodeURIComponent(currentRelDir);
+      }
     }
 
-    if (entryPath && entryPath.length > 0) {
-      const ePath = isCloudLocation
-        ? entryPath
-        : entryPath.replace(currentLocationPath, '');
-      urlParams += '&tsepath=' + encodeURIComponent(ePath);
+    if (entryPathNormed && entryPathNormed.length > 0) {
+      let eRelPath = isCloudLocation
+        ? entryPathNormed
+        : entryPathNormed.replace(currentLocationPath, '');
+      eRelPath = cleanFrontDirSeparator(eRelPath);
+      // console.log('>>> history current rel entry path: ' + eRelPath);
+      if (eRelPath) {
+        urlParams += '&tsepath=' + encodeURIComponent(eRelPath);
+      }
     }
 
     const localePar = getURLParameter('locale');
@@ -74,8 +109,8 @@ export function updateHistory(
       urlParams += '&locale=' + localePar;
     }
 
-    window.history.pushState('', document.title, urlParams);
-    // console.log(window.location.href);
+    window.history.pushState(null, null, urlParams);
+    console.log('href updated: ' + window.location.href);
   }
 }
 
