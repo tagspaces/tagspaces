@@ -127,7 +127,10 @@ function MoveCopyFilesDialog(props: Props) {
           dense
           style={{ width: 550, marginLeft: -15 }}
           subheader={
-            <ListSubheader component="div">
+            <ListSubheader
+              style={{ backgroundColor: 'transparent' }}
+              component="div"
+            >
               {i18n.t('selectedFiles')}
             </ListSubheader>
           }
