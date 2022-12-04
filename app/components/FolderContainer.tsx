@@ -637,7 +637,7 @@ function FolderContainer(props: Props) {
                   <CircularProgressWithLabel value={getProgressValue()} />
                 </IconButton>
               )}
-              <LocationMenu />
+              {isDesktopMode && <LocationMenu />}
               <PathBreadcrumbs
                 currentDirectoryPath={currentDirectoryPath}
                 currentLocationPath={currentLocationPath}
