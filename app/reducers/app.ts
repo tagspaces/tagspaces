@@ -2524,6 +2524,8 @@ export const actions = {
           actions.showNotification(i18n.t('core:invalidLink'), 'warning', true)
         );
       }
+    } else if (decodedURI.endsWith(location.pathname)) {
+      return true;
     } else if (
       // External URL case
       decodedURI.startsWith('http://') ||
