@@ -1177,7 +1177,8 @@ export function loadFileContentPromise(
 export function getDescriptionPreview(mdContent, maxLength = 200) {
   if (!mdContent) return '';
   let preview = mdContent.replace(
-    /\(data:([\w\/\+]+);(charset=[\w-]+|base64).*,([a-zA-Z0-9+/]+={0,2})\)/g,
+    /\[(.*?)\]\(.*?\)/g, // remove link href, also dataurls
+    // /\(data:([\w\/\+]+);(charset=[\w-]+|base64).*,([a-zA-Z0-9+/]+={0,2})\)/g,
     ''
   );
   if (preview.length > maxLength) {
