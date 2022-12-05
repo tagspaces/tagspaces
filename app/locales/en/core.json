@@ -249,6 +249,7 @@
   "file": "File",
   "newFileNote": "New File / Note",
   "createNewContent": "Add or create new files",
+  "createNewColumn": "Create new column",
   "createFileTitle": "Create File / Note",
   "createNote": "Create Note",
   "createNoteTitle": "Use to create a document with rich text formatting.",

@@ -156,7 +156,7 @@ interface Props {
   openPrevFile: (path: string) => void;
   openNextFile: (path: string) => void;
   openFileNatively: (path: string) => void;
-  openLink: (url: string) => void;
+  openLink: (url: string, options?: any) => void;
   openDirectory: (path: string) => void;
   showNotification: (
     text: string,
@@ -416,7 +416,7 @@ function EntryContainer(props: Props) {
         openNextFile();
         break;
       case 'openLinkExternally':
-        openLink(data.link);
+        // openLink(data.link);
         break;
       case 'loadDefaultTextContent':
         if (!openedFile || !openedFile.path) {

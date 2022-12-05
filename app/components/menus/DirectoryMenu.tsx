@@ -104,6 +104,7 @@ interface Props {
   openURLExternally?: (url: string, skipConfirmation: boolean) => void;
   currentLocation?: TS.Location;
   locations?: Array<TS.Location>;
+  toggleCreateDirectoryDialog: () => void;
 }
 
 function DirectoryMenu(props: Props) {
@@ -151,10 +152,10 @@ function DirectoryMenu(props: Props) {
     }
   }
 
-  const [
+  /*  const [
     isCreateDirectoryDialogOpened,
     setIsCreateDirectoryDialogOpened
-  ] = useState(false);
+  ] = useState(false);*/
 
   function reloadDirectory() {
     props.loadDirectoryContent(props.directoryPath, true, true);
@@ -239,9 +240,9 @@ function DirectoryMenu(props: Props) {
     props.openRenameDirectoryDialog();
   }
 
-  function showCreateDirectoryDialog() {
+  /*function showCreateDirectoryDialog() {
     setIsCreateDirectoryDialogOpened(true);
-  }
+  }*/
 
   function createNewFile() {
     props.toggleCreateFileDialog();
@@ -424,7 +425,7 @@ Do you want to continue?`)
     showDeleteDirectoryDialog,
     showInFileManager,
     createNewFile,
-    showCreateDirectoryDialog,
+    props.toggleCreateDirectoryDialog,
     addExistingFile,
     setFolderThumbnail,
     copySharingLink,
@@ -436,14 +437,6 @@ Do you want to continue?`)
 
   return (
     <div style={{ overflowY: 'hidden' }}>
-      {isCreateDirectoryDialogOpened && ( // TODO move dialogs in MainContainer and don't include the Menu HTML always
-        <CreateDirectoryDialog
-          key={'createDir' + props.directoryPath}
-          open={isCreateDirectoryDialogOpened}
-          onClose={() => setIsCreateDirectoryDialogOpened(false)}
-          selectedDirectoryPath={props.directoryPath}
-        />
-      )}
       <Menu
         anchorEl={props.anchorEl}
         open={props.open}
@@ -490,6 +483,7 @@ function mapDispatchToProps(dispatch) {
       toggleUploadDialog: AppActions.toggleUploadDialog,
       toggleProgressDialog: AppActions.toggleProgressDialog,
       toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
+      toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog,
       toggleProTeaser: AppActions.toggleProTeaser,
       resetProgress: AppActions.resetProgress,
       reflectCreateEntries: AppActions.reflectCreateEntries,

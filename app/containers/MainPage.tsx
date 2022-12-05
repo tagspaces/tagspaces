@@ -157,7 +157,7 @@ interface Props {
   toggleEditTagDialog: (tag: TS.Tag) => void;
   setEntryFullWidth: (isFullWidth: boolean) => void;
   loadParentDirectoryContent: () => void;
-  openLink: (linkURL: string, options: any) => void;
+  openLink: (linkURL: string, options?: any) => void;
   saveFile: () => void; // needed by electron-menus
   setZoomResetApp: () => void; // needed by electron-menus
   setZoomInApp: () => void; // needed by electron-menus
@@ -359,6 +359,23 @@ function MainPage(props: Props) {
   const [moveCopyDialogOpened, setMoveCopyDialogOpened] = useState<any>(
     undefined
   );
+
+  useEventListener('message', e => {
+    if (typeof e.data === 'string') {
+      // console.log(e.data);
+      try {
+        const data = JSON.parse(e.data);
+        if(data.command === 'openLinkExternally'){
+          openLink(data.link);
+        }
+      } catch (ex) {
+        console.debug(
+          'useEventListener message:' + e.data + ' parse error:',
+          ex
+        );
+      }
+    }
+  });
 
   function goForward() {
     window.history.forward();
