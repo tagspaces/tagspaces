@@ -544,6 +544,7 @@ function GridPagination(props: Props) {
                 readOnly={true}
                 dark={theme.palette.mode === 'dark'}
                 currentFolder={currentDirectoryPath}
+                lightMode={true}
               />
             </Grid>
           )}
