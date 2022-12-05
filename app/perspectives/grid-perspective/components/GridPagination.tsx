@@ -535,8 +535,7 @@ function GridPagination(props: Props) {
                 marginTop: showDetails ? 0 : 10,
                 marginLeft: 25,
                 marginRight: 10,
-                paddingBottom: 16,
-                paddingRight: 16,
+                padding: 2,
                 borderRadius: 5
               }}
             >
