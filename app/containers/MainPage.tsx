@@ -365,7 +365,7 @@ function MainPage(props: Props) {
       // console.log(e.data);
       try {
         const data = JSON.parse(e.data);
-        if(data.command === 'openLinkExternally'){
+        if (data.command === 'openLinkExternally') {
           openLink(data.link);
         }
       } catch (ex) {
