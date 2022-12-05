@@ -5,6 +5,7 @@ web
 web/files
 app/node_modules
 app/version.json
+app/tagspaces.namespace.d.ts
 flow-typed
 app/dist
 app/main.prod.js

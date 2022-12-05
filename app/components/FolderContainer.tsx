@@ -214,7 +214,7 @@ interface Props {
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   openURLExternally?: (url: string, skipConfirmation: boolean) => void;
   language: string;
-  editedEntryPaths: Array<string>;
+  editedEntryPaths: Array<TS.EditedEntryPath>;
   goBack: () => void;
   goForward: () => void;
 }
@@ -266,29 +266,18 @@ function FolderContainer(props: Props) {
       props.editedEntryPaths &&
       props.editedEntryPaths.length > 0
     ) {
-      let action = 'createNew'; // todo set action in editedEntryPaths
       for (const editedEntryPath of props.editedEntryPaths) {
-        let path;
-        if (typeof editedEntryPath === 'string') {
-          path = editedEntryPath;
-          action = 'createNew';
-        } else if (typeof editedEntryPath === 'object') {
-          path = Object.keys(editedEntryPath)[0];
-          action = 'addTag';
-        }
-        if (path && action === 'addTag') {
+        const action = editedEntryPath.action;
+        if (editedEntryPath.path && action.startsWith('edit')) {
           // update opened file after delete sidecar tags
           if (props.openedFiles.length > 0) {
             const openedFile = props.openedFiles[0];
-            if (openedFile.path === path) {
-              props.openEntry(path);
+            if (openedFile.path === editedEntryPath.path) {
+              props.openEntry(editedEntryPath.path);
             }
           }
         }
       }
-      /*if (props.editedEntryPaths.length === 2) {
-        action = 'renameFile';
-      }*/
     }
   }, [props.editedEntryPaths]);
 

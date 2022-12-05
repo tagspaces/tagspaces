@@ -601,13 +601,14 @@ export default (state: any = initialState, action: any) => {
       const newOpenedFiles = state.openedFiles.filter(
         entry => entry.path !== action.path
       );
+      const editedEntryPaths = [{ action: 'delete', path: action.path }];
       if (
         state.currentDirectoryEntries.length > newDirectoryEntries.length ||
         state.openedFiles.length > newOpenedFiles.length
       ) {
         return {
           ...state,
-          editedEntryPaths: [action.path],
+          editedEntryPaths,
           currentDirectoryEntries: newDirectoryEntries,
           openedFiles: newOpenedFiles,
           isEntryInFullWidth: false
@@ -615,14 +616,22 @@ export default (state: any = initialState, action: any) => {
       }
       return {
         ...state,
-        editedEntryPaths: [action.path]
+        editedEntryPaths
       };
     }
     case types.REFLECT_CREATE_ENTRY: {
+      const newEntry: TS.FileSystemEntry = action.newEntry;
       // Prevent adding entry twice e.g. by the watcher
       const entryIndex = state.currentDirectoryEntries.findIndex(
-        entry => entry.path === action.newEntry.path
+        entry => entry.path === newEntry.path
       );
+      const editedEntryPaths: Array<TS.EditedEntryPath> = [
+        {
+          action: newEntry.isFile ? 'createFile' : 'createDir',
+          path: newEntry.path,
+          uuid: newEntry.uuid
+        }
+      ];
       // clean all dir separators to have platform independent path match
       if (
         entryIndex < 0 &&
@@ -634,7 +643,7 @@ export default (state: any = initialState, action: any) => {
       ) {
         return {
           ...state,
-          editedEntryPaths: [action.newEntry.path],
+          editedEntryPaths,
           currentDirectoryEntries: [
             ...state.currentDirectoryEntries,
             action.newEntry
@@ -643,7 +652,7 @@ export default (state: any = initialState, action: any) => {
       }
       return {
         ...state,
-        editedEntryPaths: [action.newEntry.path]
+        editedEntryPaths
       };
     }
     case types.REFLECT_RENAME_ENTRY: {
@@ -653,9 +662,14 @@ export default (state: any = initialState, action: any) => {
         PlatformIO.getDirSeparator()
       );
 
+      const editedEntryPaths = [
+        { action: 'rename', path: action.path },
+        { action: 'rename', path: action.newPath }
+      ];
+
       return {
         ...state,
-        editedEntryPaths: [action.path, action.newPath],
+        editedEntryPaths,
         currentDirectoryEntries: state.currentDirectoryEntries.map(entry => {
           if (entry.path !== action.path) {
             return entry;
@@ -755,7 +769,7 @@ export default (state: any = initialState, action: any) => {
     case types.REFLECT_EDITED_ENTRY_PATHS: {
       return {
         ...state,
-        editedEntryPaths: action.paths
+        editedEntryPaths: action.editedEntryPaths // .map(path => ({ action: 'edit', path }))
       };
     }
     case types.UPDATE_CURRENTDIR_ENTRY: {
@@ -2134,7 +2148,7 @@ export const actions = {
     dispatch(actions.reflectDeleteEntryInt(path));
     dispatch(LocationIndexActions.reflectDeleteEntry(path));
   },
-  reflectCreateEntryInt: newEntry => ({
+  reflectCreateEntryInt: (newEntry: TS.FileSystemEntry) => ({
     type: types.REFLECT_CREATE_ENTRY,
     newEntry
   }),
@@ -2185,9 +2199,9 @@ export const actions = {
     type: types.UPDATE_CURRENTDIR_ENTRIES,
     dirEntries
   }),
-  reflectEditedEntryPaths: (paths: Array<any>) => ({
+  reflectEditedEntryPaths: (editedEntryPaths: Array<TS.EditedEntryPath>) => ({
     type: types.REFLECT_EDITED_ENTRY_PATHS,
-    paths
+    editedEntryPaths
   }),
   /**
    * @param path
@@ -2201,7 +2215,10 @@ export const actions = {
   ) => (dispatch: (action) => void, getState: () => any) => {
     const { openedFiles, selectedEntries } = getState().app;
     // to reload cell in KanBan if add/remove sidecar tags
-    dispatch(actions.reflectEditedEntryPaths([{ [path]: tags }]));
+    const action: TS.EditedEntryAction = `edit${tags
+      .map(tag => tag.title)
+      .join()}`;
+    dispatch(actions.reflectEditedEntryPaths([{ action, path }])); //[{ [path]: tags }]));
     /**
      * if its have openedFiles updateCurrentDirEntry is called from FolderContainer (useEffect -> ... if (openedFile.changed)
      */

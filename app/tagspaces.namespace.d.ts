@@ -149,6 +149,15 @@ export namespace TS {
     folders?: Array<OrderVisibilitySettings>;
     files?: Array<OrderVisibilitySettings>;
   }
+  // editTag1Tag2 - prevent edit action react component cache and not reload component if add/remove tags
+  // todo fix prettier SyntaxError: Type expected and remove file from .prettierignore
+  type EditedEntryAction = `edit${string}` | 'delete' | 'rename' | 'createFile' | 'createDir';
+
+  interface EditedEntryPath {
+    action: EditedEntryAction;
+    path: string;
+    uuid?: Uuid;
+  }
   interface HistoryItem {
     path: string;
     url: string;
