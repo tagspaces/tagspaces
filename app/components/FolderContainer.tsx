@@ -559,16 +559,26 @@ function FolderContainer(props: Props) {
           </IconButton>
           <Tooltip
             title={
-              i18n.t('core:goback') + ' - ' + i18n.t('core:gobackClarification')
+              i18n.t('core:goback') +
+              ' - BETA - ' +
+              i18n.t('core:gobackClarification')
             }
           >
-            <IconButton id="goBackButton" onClick={goBack}>
+            <IconButton
+              id="goBackButton"
+              disabled={window.history.length < 2}
+              onClick={goBack}
+            >
               <GoBackIcon />
             </IconButton>
           </Tooltip>
           {isDesktopMode && (
-            <Tooltip title={i18n.t('core:goforward')}>
-              <IconButton id="goForwardButton" onClick={goForward}>
+            <Tooltip title={i18n.t('core:goforward') + ' - BETA'}>
+              <IconButton
+                id="goForwardButton"
+                disabled={window.history.length < 2}
+                onClick={goForward}
+              >
                 <GoForwardIcon />
               </IconButton>
             </Tooltip>
