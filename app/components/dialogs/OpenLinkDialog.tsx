@@ -34,7 +34,7 @@ import InfoIcon from '-/components/InfoIcon';
 interface Props {
   open: boolean;
   onClose: () => void;
-  openLink: (linkURL: string) => void;
+  openLink: (url: string, options?: any) => void;
 }
 
 function OpenLinkDialog(props: Props) {
@@ -66,7 +66,7 @@ function OpenLinkDialog(props: Props) {
 
   function onConfirm() {
     if (!disableConfirmButton && linkURL) {
-      props.openLink(linkURL);
+      props.openLink(linkURL, { fullWidth: false });
       resetState();
       props.onClose();
     }

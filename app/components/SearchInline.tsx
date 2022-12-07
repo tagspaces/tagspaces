@@ -67,7 +67,7 @@ interface Props {
   searchQuery: TS.SearchQuery; // () => any;
   openCurrentDirectory: () => void;
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
-  openLink: (linkURL: string) => void;
+  openLink: (url: string, options?: any) => void;
   currentDirectory: string;
   indexedEntriesCount: number;
   maxSearchResults: number;
@@ -370,7 +370,7 @@ function SearchInline(props: Props) {
       query.startsWith('ts:?ts') ||
       query.startsWith(AppConfig.tsProtocol + '?ts')
     ) {
-      props.openLink(query);
+      props.openLink(query, { fullWidth: false });
       clearSearch();
       return;
     }
