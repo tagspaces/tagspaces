@@ -36,7 +36,7 @@ import FolderContainer from '../components/FolderContainer';
 import EntryContainer from '../components/EntryContainer';
 import SettingsDialog from '../components/dialogs/settings/SettingsDialog';
 import CreateDirectoryDialog from '../components/dialogs/CreateDirectoryDialog';
-import CreateFileDialog from '../components/dialogs/CreateDialog';
+import CreateDialog from '../components/dialogs/CreateDialog';
 import {
   getDesktopMode,
   getKeyBindingObject,
@@ -772,7 +772,7 @@ function MainPage(props: Props) {
         />
       )}
       {props.isCreateFileDialogOpened && (
-        <CreateFileDialog
+        <CreateDialog
           open={props.isCreateFileDialogOpened}
           onClose={toggleCreateFileDialog}
           // selectedDirectoryPath={selectedDirectoryPath.current || directoryPath}
