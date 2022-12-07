@@ -417,20 +417,23 @@ const actions = {
 
         return undefined;
       });
-      Promise.all(jobsPromises)
+      Promise.allSettled(jobsPromises)
         .then(filesProm => {
           const arrFiles: Array<TS.FileSystemEntry> = [];
           const arrMeta: Array<TS.FileSystemEntry> = [];
           const arrThumb: Array<TS.FileSystemEntry> = [];
 
-          filesProm.map(file => {
-            if (file) {
-              if (file.meta) {
-                arrMeta.push(file);
-              } else if (file.thumbPath) {
-                arrThumb.push(file);
-              } else {
-                arrFiles.push(file);
+          filesProm.map(result => {
+            if (result.status !== 'rejected') {
+              const file = result.value;
+              if (file) {
+                if (file.meta) {
+                  arrMeta.push(file);
+                } else if (file.thumbPath) {
+                  arrThumb.push(file);
+                } else {
+                  arrFiles.push(file);
+                }
               }
             }
             return true;
