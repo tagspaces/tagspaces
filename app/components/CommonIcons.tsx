@@ -32,10 +32,12 @@ import Menu from '@mui/icons-material/Menu';
 import ArrowBack from '@mui/icons-material/ArrowBack';
 import ArrowForward from '@mui/icons-material/ArrowForward';
 import Folder from '@mui/icons-material/Folder';
+import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
+import SubdirectoryArrowLeftIcon from '@mui/icons-material/SubdirectoryArrowLeft';
 
 export const ParentFolderIcon = props => (
-  // <ParentDirIcon style={{ transform: 'rotate(-90deg)' }} /> SubdirectoryArrowLeft
-  <ParentFolder {...props} />
+  <KeyboardReturnIcon style={{ transform: 'rotate(90deg)' }} />
+  // <ParentFolder {...props} />
 );
 
 export const FolderIcon = props => <Folder {...props} />;
