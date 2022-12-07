@@ -1396,11 +1396,12 @@ export function getRelativeEntryPath(
   entryPath: string
 ): string {
   const entryPathCleaned = cleanTrailingDirSeparator(entryPath);
-  const isCloudLocation = location.type === locationType.TYPE_CLOUD;
+  // const isCloudLocation = location.type === locationType.TYPE_CLOUD;
   const currentLocationPath = getCleanLocationPath(location);
-  let relEntryPath = isCloudLocation
-    ? entryPathCleaned
-    : entryPathCleaned.replace(currentLocationPath, '');
+  // let relEntryPath = isCloudLocation
+  //   ? entryPathCleaned
+  //   : entryPathCleaned.replace(currentLocationPath, '');
+  let relEntryPath = entryPathCleaned.replace(currentLocationPath, '');
   relEntryPath = cleanFrontDirSeparator(relEntryPath);
   return relEntryPath;
 }

@@ -2416,14 +2416,18 @@ export const actions = {
         }
         const locationPath = getCleanLocationPath(targetLocation);
 
-        // setTimeout is needed for case of a location switch, if not location swith the timer is 0
+        // setTimeout is needed for case of a location switch, if no location swith the timer is 0
         setTimeout(() => {
           if (isCloudLocation) {
             PlatformIO.enableObjectStoreSupport(targetLocation).then(() => {
               if (directoryPath && directoryPath.length > 0) {
+                const newRelDir = getRelativeEntryPath(
+                  targetLocation,
+                  directoryPath
+                );
                 const dirFullPath =
                   locationPath.length > 0
-                    ? locationPath + '/' + directoryPath
+                    ? locationPath + '/' + newRelDir
                     : directoryPath;
                 dispatch(
                   actions.loadDirectoryContent(dirFullPath, false, true)
