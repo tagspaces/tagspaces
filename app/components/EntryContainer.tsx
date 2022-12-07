@@ -384,14 +384,15 @@ function EntryContainer(props: Props) {
           folderPath
         );
       }
-      if (openedFile.isFile && params.has('tsepath')) {
+      if (params.has('tsepath')) {
         const entryPath = params.get('tsepath');
-        sharingLink = generateSharingLink(locationId, entryPath);
-      } else if (!openedFile.isFile) {
-        const dirPath = params.has('tsepath')
-          ? params.get('tsepath')
-          : openedFile.path;
-        sharingLink = generateSharingLink(locationId, undefined, dirPath);
+        if (openedFile.isFile) {
+          sharingLink = generateSharingLink(locationId, entryPath);
+        } else {
+          sharingLink = generateSharingLink(locationId, undefined, entryPath);
+        }
+      } else {
+        sharingLink = generateSharingLink(locationId);
       }
     }
   }

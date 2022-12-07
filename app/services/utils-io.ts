@@ -1408,7 +1408,7 @@ export function getRelativeEntryPath(
 export function cleanFrontDirSeparator(dirPath) {
   if (dirPath) {
     if (dirPath.startsWith('\\')) {
-      return dirPath.substring(2);
+      return dirPath.substring(1);
     }
     if (dirPath.startsWith('/')) {
       return dirPath.substring(1);
