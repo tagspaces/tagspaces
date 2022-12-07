@@ -35,41 +35,43 @@ export function clearURLParam(paramName) {
 }
 
 export function updateHistory(
-  currentLocation: TS.Location,
-  currentDirectory: string,
-  entryPath?: string
+  newLocation: TS.Location,
+  newDirectoryPath: string,
+  newEntryPath?: string
 ) {
-  // console.log(
-  //   '>>> Updating history: ' +
-  //     currentLocation.name +
-  //     ' dir: ' +
-  //     currentDirectoryPath +
-  //     ' entry: ' +
-  //     entryPathNormed
-  // );
-  if (currentLocation) {
-    // const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
+  const currentHref = new URL(window.location.href);
+  const params = new URLSearchParams(currentHref.search);
+  // console.log('>>> current href: ' + window.location.href);
+  const currentLocationID = params.get('tslid');
+  const currentFolderPath = params.get('tsdpath');
+  const currentEntryPath = params.get('tsepath');
+  let diffLocation = false;
+  let diffFolderPath = false;
+  let diffEntryPath = false;
+
+  if (newLocation) {
     let urlParams = '?';
-    if (currentLocation && currentLocation.uuid) {
-      urlParams += 'tslid=' + encodeURIComponent(currentLocation.uuid);
+    if (newLocation && newLocation.uuid) {
+      const newEncLocationID = encodeURIComponent(newLocation.uuid);
+      urlParams += 'tslid=' + newEncLocationID;
+      diffLocation = newLocation.uuid !== currentLocationID;
     }
 
-    if (currentDirectory && currentDirectory.length > 0) {
-      const currentRelDir = getRelativeEntryPath(
-        currentLocation,
-        currentDirectory
-      );
-      // console.log('>>> history current rel dir path: ' + currentRelDir);
-      if (currentRelDir) {
-        urlParams += '&tsdpath=' + encodeURIComponent(currentRelDir);
+    if (newDirectoryPath && newDirectoryPath.length > 0) {
+      const newRelDir = getRelativeEntryPath(newLocation, newDirectoryPath);
+      if (newRelDir) {
+        const newEncRelDir = encodeURIComponent(newRelDir);
+        urlParams += '&tsdpath=' + newEncRelDir;
+        diffFolderPath = newRelDir !== currentFolderPath;
       }
     }
 
-    if (entryPath && entryPath.length > 0) {
-      const eRelPath = getRelativeEntryPath(currentLocation, entryPath);
-      // console.log('>>> history current rel entry path: ' + eRelPath);
-      if (eRelPath) {
-        urlParams += '&tsepath=' + encodeURIComponent(eRelPath);
+    if (newEntryPath && newEntryPath.length > 0) {
+      const entryRelPath = getRelativeEntryPath(newLocation, newEntryPath);
+      if (entryRelPath) {
+        const newEncEntryPath = encodeURIComponent(entryRelPath);
+        urlParams += '&tsepath=' + newEncEntryPath;
+        diffEntryPath = entryRelPath !== currentEntryPath;
       }
     }
 
@@ -78,8 +80,10 @@ export function updateHistory(
       urlParams += '&locale=' + localePar;
     }
 
-    window.history.pushState(null, null, urlParams);
-    console.log('href updated: ' + window.location.href);
+    if (diffLocation || diffEntryPath || diffFolderPath) {
+      window.history.pushState(null, null, urlParams);
+      // console.log('>>> href updated with: ' + urlParams);
+    }
   }
 }
 
