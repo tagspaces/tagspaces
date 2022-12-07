@@ -40,6 +40,8 @@ export const ParentFolderIcon = props => (
   // <ParentFolder {...props} />
 );
 
+export const NavigateToFolderIcon = props => <KeyboardReturnIcon />;
+
 export const FolderIcon = props => <Folder {...props} />;
 
 export const MainMenuIcon = props => <Menu {...props} />;

@@ -53,7 +53,9 @@ import {
   loadJSONFile,
   merge,
   setLocationType,
-  getUuid
+  getUuid,
+  getRelativeEntryPath,
+  getCleanLocationPath
 } from '-/services/utils-io';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
@@ -1744,7 +1746,7 @@ export const actions = {
       return true;
     });
   },
-  openLocation: (location: TS.Location) => (
+  openLocation: (location: TS.Location, skipInitialDirList?: boolean) => (
     dispatch: (action) => void,
     getState: () => any
   ) => {
@@ -1752,16 +1754,6 @@ export const actions = {
       Pro.Watcher.stopWatching();
     }
     if (location.type === locationType.TYPE_CLOUD) {
-      // if (!Pro) {
-      //   dispatch(
-      //     actions.showNotification(
-      //       i18n.t('core:thisFunctionalityIsAvailableInPro'),
-      //       'warning',
-      //       true
-      //     )
-      //   );
-      //   return;
-      // }
       PlatformIO.enableObjectStoreSupport(location)
         .then(() => {
           dispatch(
@@ -1773,13 +1765,15 @@ export const actions = {
           );
           dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
           dispatch(actions.changeLocation(location));
-          dispatch(
-            actions.loadDirectoryContent(
-              PlatformIO.getLocationPath(location),
-              false,
-              true
-            )
-          );
+          if (!skipInitialDirList) {
+            dispatch(
+              actions.loadDirectoryContent(
+                PlatformIO.getLocationPath(location),
+                false,
+                true
+              )
+            );
+          }
           return true;
         })
         .catch(e => {
@@ -1802,13 +1796,15 @@ export const actions = {
       }
       dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
       dispatch(actions.changeLocation(location));
-      dispatch(
-        actions.loadDirectoryContent(
-          PlatformIO.getLocationPath(location),
-          true,
-          true
-        )
-      );
+      if (!skipInitialDirList) {
+        dispatch(
+          actions.loadDirectoryContent(
+            PlatformIO.getLocationPath(location),
+            true,
+            true
+          )
+        );
+      }
       if (Pro && Pro.Watcher && location.watchForChanges) {
         const perspective = getCurrentDirectoryPerspective(getState());
         const depth = perspective === PerspectiveIDs.KANBAN ? 3 : 1;
@@ -2072,13 +2068,12 @@ export const actions = {
      */
     if (Pro) {
       const historyKeys = Pro.history.historyKeys;
+      const relEntryPath = getRelativeEntryPath(currentLocation, fsEntry.path);
       if (fsEntry.isFile) {
         Pro.history.saveHistory(
           historyKeys.fileOpenKey,
           fsEntry.path,
-          entryForOpening.url
-            ? generateSharingLink(currentLocation.uuid, fsEntry.path)
-            : undefined,
+          generateSharingLink(currentLocation.uuid, relEntryPath),
           currentLocation.uuid,
           getState().settings[historyKeys.fileOpenKey]
         );
@@ -2086,9 +2081,7 @@ export const actions = {
         Pro.history.saveHistory(
           historyKeys.folderOpenKey,
           fsEntry.path,
-          entryForOpening.url
-            ? generateSharingLink(currentLocation.uuid, undefined, fsEntry.path)
-            : undefined,
+          generateSharingLink(currentLocation.uuid, relEntryPath, relEntryPath),
           currentLocation.uuid,
           getState().settings[historyKeys.folderOpenKey]
         );
@@ -2415,17 +2408,23 @@ export const actions = {
         let openLocationTimer = 1000;
         const isCloudLocation = targetLocation.type === locationType.TYPE_CLOUD;
         const { currentLocationId } = getState().app;
+        let skipListingLocation = directoryPath && directoryPath.length > 0;
         if (targetLocation.uuid !== currentLocationId) {
-          dispatch(actions.openLocation(targetLocation));
+          dispatch(actions.openLocation(targetLocation, skipListingLocation));
         } else {
           openLocationTimer = 0;
         }
+        const locationPath = getCleanLocationPath(targetLocation);
+
         // setTimeout is needed for case of a location switch, if not location swith the timer is 0
         setTimeout(() => {
           if (isCloudLocation) {
             PlatformIO.enableObjectStoreSupport(targetLocation).then(() => {
               if (directoryPath && directoryPath.length > 0) {
-                const dirFullPath = directoryPath;
+                const dirFullPath =
+                  locationPath.length > 0
+                    ? locationPath + '/' + directoryPath
+                    : directoryPath;
                 dispatch(
                   actions.loadDirectoryContent(dirFullPath, false, true)
                 );
@@ -2455,10 +2454,6 @@ export const actions = {
             });
           } else {
             // local files case
-            // const locationPath = PlatformIO.getLocationPath(targetLocation);
-            const locationPath =
-              targetLocation.path ||
-              (targetLocation.paths && targetLocation.paths[0]);
             if (directoryPath && directoryPath.length > 0) {
               if (
                 directoryPath.includes('../') ||
@@ -2475,12 +2470,6 @@ export const actions = {
               }
               const dirFullPath =
                 locationPath + PlatformIO.getDirSeparator() + directoryPath;
-              // console.log(
-              //   '>>> Openlink Local Directory path: ' +
-              //     directoryPath +
-              //     ' full: ' +
-              //     dirFullPath
-              // );
               dispatch(actions.loadDirectoryContent(dirFullPath, false, true));
             }
 

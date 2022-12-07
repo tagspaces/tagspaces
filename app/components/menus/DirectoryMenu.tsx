@@ -31,7 +31,6 @@ import {
   generateSharingLink
 } from '@tagspaces/tagspaces-common/paths';
 import { Pro } from '../../pro';
-import CreateDirectoryDialog from '../dialogs/CreateDirectoryDialog';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
 import {
@@ -48,7 +47,7 @@ import FileUploadContainer, {
   FileUploadContainerRef
 } from '-/components/FileUploadContainer';
 import { TS } from '-/tagspaces.namespace';
-import Links from '-/content/links';
+import { getRelativeEntryPath } from '-/services/utils-io';
 import { PerspectiveIDs } from '-/perspectives';
 import PlatformFacade from '-/services/platform-facade';
 import { getDirectoryMenuItems } from '-/perspectives/common/DirectoryMenuItems';
@@ -124,17 +123,9 @@ function DirectoryMenu(props: Props) {
       const locationID = entryFromIndex
         ? selectedEntries[0]['locationID']
         : currentLocation.uuid;
-      let relativePath = selectedEntries[0].path;
+      const entryPath = selectedEntries[0].path;
       const tmpLoc = locations.find(location => location.uuid === locationID);
-      const locationPath = tmpLoc.path;
-      if (
-        locationPath &&
-        relativePath &&
-        relativePath.startsWith(locationPath)
-      ) {
-        // remove location path from entry path if possible
-        relativePath = relativePath.substr(locationPath.length);
-      }
+      const relativePath = getRelativeEntryPath(tmpLoc, entryPath);
       const sharingLink = generateSharingLink(
         locationID,
         undefined,

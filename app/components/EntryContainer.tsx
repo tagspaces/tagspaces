@@ -49,7 +49,10 @@ import ShareIcon from '@mui/icons-material/Share';
 import withStyles from '@mui/styles/withStyles';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import Box from '@mui/material/Box';
-import { ParentFolderIcon } from '-/components/CommonIcons';
+import {
+  ParentFolderIcon,
+  NavigateToFolderIcon
+} from '-/components/CommonIcons';
 import { Split } from 'ts-react-splitter';
 import { buffer } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
@@ -987,7 +990,7 @@ function EntryContainer(props: Props) {
             onClick={navigateToFolder}
             size="large"
           >
-            <ParentFolderIcon />
+            <NavigateToFolderIcon />
           </IconButton>
         </Tooltip>
         {!AppConfig.isCordova && (
