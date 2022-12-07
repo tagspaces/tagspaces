@@ -668,10 +668,7 @@ function EntryContainer(props: Props) {
       if (haveBookmark) {
         Pro.bookmarks.delBookmark(openedFile.path);
       } else {
-        Pro.bookmarks.setBookmark(
-          openedFile.path,
-          openedFile.url ? sharingLink : undefined
-        );
+        Pro.bookmarks.setBookmark(openedFile.path, sharingLink);
       }
       forceUpdate();
     } else {
