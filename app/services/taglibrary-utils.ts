@@ -5,10 +5,10 @@ import {
   formatDateTime4Tag,
   immutablySwapItems,
   prepareTagGroupForExport
-} from '@tagspaces/tagspaces-platforms/misc';
+} from '@tagspaces/tagspaces-common/misc';
 import versionMeta from '-/version.json';
 import { getUuid, parseNewTags, saveAsTextFile } from '-/services/utils-io';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '-/AppConfig';
 import defaultTagLibrary from '../reducers/taglibrary-default';
 
 export const tagLibraryKey = 'tsTagLibrary';
