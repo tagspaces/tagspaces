@@ -157,8 +157,26 @@ export function enhanceDirectoryContent(
 
 export async function getMetaForEntry(
   entry: TS.FileSystemEntry,
-  metaFilePath: string
+  metaFilePath?: string
 ): Promise<any> {
+  if (entry.meta) {
+    // && Object.keys(entry.meta).length > 0) {
+    // entry is Enhanced
+    return { [entry.path]: { ...entry } };
+  }
+  if (!metaFilePath) {
+    if (entry.isFile) {
+      metaFilePath = getMetaFileLocationForFile(
+        entry.path,
+        PlatformIO.getDirSeparator()
+      );
+    } else {
+      metaFilePath = getMetaFileLocationForDir(
+        entry.path,
+        PlatformIO.getDirSeparator()
+      );
+    }
+  }
   const meta: TS.FileSystemEntryMeta = await loadJSONFile(metaFilePath);
   if (meta) {
     const entryEnhanced = enhanceEntry(
