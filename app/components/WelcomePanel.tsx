@@ -418,21 +418,23 @@ function WelcomePanel(props: Props) {
         >
           {renderQuickLinks()}
         </Grid>
-        <Grid item xs="auto" style={{ height: '100%' }}>
-          <div
-            style={{
-              margin: 'auto',
-              marginTop: 15,
-              marginBottom: 15,
-              // @ts-ignore
-              overflowY: 'overlay',
-              height: 'calc(100% - 50px)',
-              backgroundColor: theme.palette.background.default
-            }}
-          >
-            <HowToStart openURLExternally={openURLExternally} />
-          </div>
-        </Grid>
+        {isDesktopMode && (
+          <Grid item xs="auto" style={{ height: '100%' }}>
+            <div
+              style={{
+                margin: 'auto',
+                marginTop: 15,
+                marginBottom: 15,
+                // @ts-ignore
+                overflowY: 'overlay',
+                height: 'calc(100% - 50px)',
+                backgroundColor: theme.palette.background.default
+              }}
+            >
+              <HowToStart openURLExternally={openURLExternally} />
+            </div>
+          </Grid>
+        )}
         {Pro && (
           <Grid item xs="auto" style={{ height: '100%', minWidth: 330 }}>
             <div

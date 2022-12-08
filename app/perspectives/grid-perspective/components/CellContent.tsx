@@ -22,7 +22,6 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import Tooltip from '-/components/Tooltip';
-import FolderIcon from '@mui/icons-material/Folder';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import SelectedIcon from '@mui/icons-material/CheckBox';
 import UnSelectedIcon from '@mui/icons-material/CheckBoxOutlineBlank';
@@ -31,12 +30,12 @@ import { connect } from 'react-redux';
 import {
   formatFileSize,
   formatDateTime
-} from '@tagspaces/tagspaces-platforms/misc';
+} from '@tagspaces/tagspaces-common/misc';
 import {
   extractTagsAsObjects,
   extractTitle
-} from '@tagspaces/tagspaces-platforms/paths';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+} from '@tagspaces/tagspaces-common/paths';
+import AppConfig from '-/AppConfig';
 import {
   findBackgroundColorForFolder,
   findColorForEntry,
@@ -51,6 +50,7 @@ import EntryIcon from '-/components/EntryIcon';
 import { TS } from '-/tagspaces.namespace';
 import TaggingActions from '-/reducers/tagging-actions';
 import { getLastThumbnailImageChange } from '-/reducers/app';
+import { FolderIcon } from '-/components/CommonIcons';
 // import { getTagColor } from '-/reducers/settings';
 
 const maxDescriptionPreviewLength = 100;
@@ -335,7 +335,14 @@ function CellContent(props: Props) {
             >
               {selected ? <SelectedIcon /> : <UnSelectedIcon />}
               {fsEntry.isFile ? (
-                <span style={{ marginTop: isSmall ? 0 : 10 }}>
+                <span
+                  style={{
+                    width: '100%',
+                    marginTop: isSmall ? 0 : 10,
+                    textShadow: '1px 1px #8f8f8f',
+                    overflowWrap: 'anywhere'
+                  }}
+                >
                   {fsEntry.extension}
                 </span>
               ) : (

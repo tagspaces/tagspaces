@@ -19,8 +19,8 @@
 import {
   formatDateTime4Tag,
   locationType
-} from '@tagspaces/tagspaces-platforms/misc';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+} from '@tagspaces/tagspaces-common/misc';
+import AppConfig from '-/AppConfig';
 import {
   extractFileExtension,
   extractDirectoryName,
@@ -33,7 +33,7 @@ import {
   extractContainingDirectoryPath,
   getMetaFileLocationForDir,
   generateSharingLink
-} from '@tagspaces/tagspaces-platforms/paths';
+} from '@tagspaces/tagspaces-common/paths';
 import {
   getURLParameter,
   clearURLParam,
@@ -53,7 +53,9 @@ import {
   loadJSONFile,
   merge,
   setLocationType,
-  getUuid
+  getUuid,
+  getRelativeEntryPath,
+  getCleanLocationPath
 } from '-/services/utils-io';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
@@ -565,7 +567,11 @@ export default (state: any = initialState, action: any) => {
         openedFiles: [
           action.file
           // ...state.openedFiles // TODO uncomment for multiple file support
-        ]
+        ],
+        ...(action.file.path === state.currentDirectoryPath &&
+          action.file.description && {
+            currentDirectoryDescription: action.file.description
+          })
       };
     }
     case types.TOGGLE_ENTRY_FULLWIDTH: {
@@ -575,17 +581,15 @@ export default (state: any = initialState, action: any) => {
       return { ...state, isEntryInFullWidth: action.isFullWidth };
     }
     case types.UPDATE_THUMB_URL: {
-      const dirEntries = [...state.currentDirectoryEntries];
-      dirEntries.map(entry => {
+      const dirEntries = state.currentDirectoryEntries.map(entry => {
         if (entry.path === action.filePath) {
-          // eslint-disable-next-line no-param-reassign
-          entry.thumbPath = action.thumbUrl;
+          return { ...entry, thumbPath: action.thumbUrl };
         }
-        return true;
+        return entry;
       });
       return {
         ...state,
-        currentDirectoryEntries: [...dirEntries]
+        currentDirectoryEntries: dirEntries
       };
     }
     case types.UPDATE_THUMB_URLS: {
@@ -610,13 +614,14 @@ export default (state: any = initialState, action: any) => {
       const newOpenedFiles = state.openedFiles.filter(
         entry => entry.path !== action.path
       );
+      const editedEntryPaths = [{ action: 'delete', path: action.path }];
       if (
         state.currentDirectoryEntries.length > newDirectoryEntries.length ||
         state.openedFiles.length > newOpenedFiles.length
       ) {
         return {
           ...state,
-          editedEntryPaths: [action.path],
+          editedEntryPaths,
           currentDirectoryEntries: newDirectoryEntries,
           openedFiles: newOpenedFiles,
           isEntryInFullWidth: false
@@ -624,14 +629,22 @@ export default (state: any = initialState, action: any) => {
       }
       return {
         ...state,
-        editedEntryPaths: [action.path]
+        editedEntryPaths
       };
     }
     case types.REFLECT_CREATE_ENTRY: {
+      const newEntry: TS.FileSystemEntry = action.newEntry;
       // Prevent adding entry twice e.g. by the watcher
       const entryIndex = state.currentDirectoryEntries.findIndex(
-        entry => entry.path === action.newEntry.path
+        entry => entry.path === newEntry.path
       );
+      const editedEntryPaths: Array<TS.EditedEntryPath> = [
+        {
+          action: newEntry.isFile ? 'createFile' : 'createDir',
+          path: newEntry.path,
+          uuid: newEntry.uuid
+        }
+      ];
       // clean all dir separators to have platform independent path match
       if (
         entryIndex < 0 &&
@@ -643,7 +656,7 @@ export default (state: any = initialState, action: any) => {
       ) {
         return {
           ...state,
-          editedEntryPaths: [action.newEntry.path],
+          editedEntryPaths,
           currentDirectoryEntries: [
             ...state.currentDirectoryEntries,
             action.newEntry
@@ -652,7 +665,7 @@ export default (state: any = initialState, action: any) => {
       }
       return {
         ...state,
-        editedEntryPaths: [action.newEntry.path]
+        editedEntryPaths
       };
     }
     case types.REFLECT_RENAME_ENTRY: {
@@ -662,9 +675,14 @@ export default (state: any = initialState, action: any) => {
         PlatformIO.getDirSeparator()
       );
 
+      const editedEntryPaths = [
+        { action: 'rename', path: action.path },
+        { action: 'rename', path: action.newPath }
+      ];
+
       return {
         ...state,
-        editedEntryPaths: [action.path, action.newPath],
+        editedEntryPaths,
         currentDirectoryEntries: state.currentDirectoryEntries.map(entry => {
           if (entry.path !== action.path) {
             return entry;
@@ -764,7 +782,7 @@ export default (state: any = initialState, action: any) => {
     case types.REFLECT_EDITED_ENTRY_PATHS: {
       return {
         ...state,
-        editedEntryPaths: action.paths
+        editedEntryPaths: action.editedEntryPaths // .map(path => ({ action: 'edit', path }))
       };
     }
     case types.UPDATE_CURRENTDIR_ENTRY: {
@@ -1213,6 +1231,7 @@ export const actions = {
       currentLocation ? currentLocation.ignorePatternPaths : []
     )
       .then(results => {
+        updateHistory(currentLocation, directoryPath);
         if (results !== undefined) {
           // console.debug('app listDirectoryPromise resolved:' + results.length);
           prepareDirectoryContent(
@@ -1759,7 +1778,7 @@ export const actions = {
       return true;
     });
   },
-  openLocation: (location: TS.Location) => (
+  openLocation: (location: TS.Location, skipInitialDirList?: boolean) => (
     dispatch: (action) => void,
     getState: () => any
   ) => {
@@ -1767,16 +1786,6 @@ export const actions = {
       Pro.Watcher.stopWatching();
     }
     if (location.type === locationType.TYPE_CLOUD) {
-      // if (!Pro) {
-      //   dispatch(
-      //     actions.showNotification(
-      //       i18n.t('core:thisFunctionalityIsAvailableInPro'),
-      //       'warning',
-      //       true
-      //     )
-      //   );
-      //   return;
-      // }
       PlatformIO.enableObjectStoreSupport(location)
         .then(() => {
           dispatch(
@@ -1788,13 +1797,15 @@ export const actions = {
           );
           dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
           dispatch(actions.changeLocation(location));
-          dispatch(
-            actions.loadDirectoryContent(
-              PlatformIO.getLocationPath(location),
-              false,
-              true
-            )
-          );
+          if (!skipInitialDirList) {
+            dispatch(
+              actions.loadDirectoryContent(
+                PlatformIO.getLocationPath(location),
+                false,
+                true
+              )
+            );
+          }
           return true;
         })
         .catch(e => {
@@ -1817,13 +1828,15 @@ export const actions = {
       }
       dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
       dispatch(actions.changeLocation(location));
-      dispatch(
-        actions.loadDirectoryContent(
-          PlatformIO.getLocationPath(location),
-          true,
-          true
-        )
-      );
+      if (!skipInitialDirList) {
+        dispatch(
+          actions.loadDirectoryContent(
+            PlatformIO.getLocationPath(location),
+            true,
+            true
+          )
+        );
+      }
       if (Pro && Pro.Watcher && location.watchForChanges) {
         const perspective = getCurrentDirectoryPerspective(getState());
         const depth = perspective === PerspectiveIDs.KANBAN ? 3 : 1;
@@ -2087,13 +2100,12 @@ export const actions = {
      */
     if (Pro) {
       const historyKeys = Pro.history.historyKeys;
+      const relEntryPath = getRelativeEntryPath(currentLocation, fsEntry.path);
       if (fsEntry.isFile) {
         Pro.history.saveHistory(
           historyKeys.fileOpenKey,
           fsEntry.path,
-          entryForOpening.url
-            ? generateSharingLink(currentLocation.uuid, fsEntry.path)
-            : undefined,
+          generateSharingLink(currentLocation.uuid, relEntryPath),
           currentLocation.uuid,
           getState().settings[historyKeys.fileOpenKey]
         );
@@ -2101,9 +2113,7 @@ export const actions = {
         Pro.history.saveHistory(
           historyKeys.folderOpenKey,
           fsEntry.path,
-          entryForOpening.url
-            ? generateSharingLink(currentLocation.uuid, undefined, fsEntry.path)
-            : undefined,
+          generateSharingLink(currentLocation.uuid, relEntryPath, relEntryPath),
           currentLocation.uuid,
           getState().settings[historyKeys.folderOpenKey]
         );
@@ -2163,7 +2173,7 @@ export const actions = {
     dispatch(actions.reflectDeleteEntryInt(path));
     dispatch(LocationIndexActions.reflectDeleteEntry(path));
   },
-  reflectCreateEntryInt: newEntry => ({
+  reflectCreateEntryInt: (newEntry: TS.FileSystemEntry) => ({
     type: types.REFLECT_CREATE_ENTRY,
     newEntry
   }),
@@ -2214,9 +2224,9 @@ export const actions = {
     type: types.UPDATE_CURRENTDIR_ENTRIES,
     dirEntries
   }),
-  reflectEditedEntryPaths: (paths: Array<any>) => ({
+  reflectEditedEntryPaths: (editedEntryPaths: Array<TS.EditedEntryPath>) => ({
     type: types.REFLECT_EDITED_ENTRY_PATHS,
-    paths
+    editedEntryPaths
   }),
   /**
    * @param path
@@ -2230,7 +2240,10 @@ export const actions = {
   ) => (dispatch: (action) => void, getState: () => any) => {
     const { openedFiles, selectedEntries } = getState().app;
     // to reload cell in KanBan if add/remove sidecar tags
-    dispatch(actions.reflectEditedEntryPaths([{ [path]: tags }]));
+    const action: TS.EditedEntryAction = `edit${tags
+      .map(tag => tag.title)
+      .join()}`;
+    dispatch(actions.reflectEditedEntryPaths([{ action, path }])); //[{ [path]: tags }]));
     /**
      * if its have openedFiles updateCurrentDirEntry is called from FolderContainer (useEffect -> ... if (openedFile.changed)
      */
@@ -2427,16 +2440,27 @@ export const actions = {
         let openLocationTimer = 1000;
         const isCloudLocation = targetLocation.type === locationType.TYPE_CLOUD;
         const { currentLocationId } = getState().app;
+        let skipListingLocation = directoryPath && directoryPath.length > 0;
         if (targetLocation.uuid !== currentLocationId) {
-          dispatch(actions.openLocation(targetLocation));
+          dispatch(actions.openLocation(targetLocation, skipListingLocation));
         } else {
           openLocationTimer = 0;
         }
+        const locationPath = getCleanLocationPath(targetLocation);
+
+        // setTimeout is needed for case of a location switch, if no location swith the timer is 0
         setTimeout(() => {
           if (isCloudLocation) {
             PlatformIO.enableObjectStoreSupport(targetLocation).then(() => {
               if (directoryPath && directoryPath.length > 0) {
-                const dirFullPath = directoryPath;
+                const newRelDir = getRelativeEntryPath(
+                  targetLocation,
+                  directoryPath
+                );
+                const dirFullPath =
+                  locationPath.length > 0
+                    ? locationPath + '/' + newRelDir
+                    : directoryPath;
                 dispatch(
                   actions.loadDirectoryContent(dirFullPath, false, true)
                 );
@@ -2466,7 +2490,6 @@ export const actions = {
             });
           } else {
             // local files case
-            const locationPath = PlatformIO.getLocationPath(targetLocation);
             if (directoryPath && directoryPath.length > 0) {
               if (
                 directoryPath.includes('../') ||
@@ -2526,6 +2549,8 @@ export const actions = {
           actions.showNotification(i18n.t('core:invalidLink'), 'warning', true)
         );
       }
+    } else if (decodedURI.endsWith(location.pathname)) {
+      return true;
     } else if (
       // External URL case
       decodedURI.startsWith('http://') ||

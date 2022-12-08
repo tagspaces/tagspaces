@@ -26,8 +26,8 @@ import {
 } from 'react-dnd';
 
 import { getEmptyImage } from 'react-dnd-html5-backend';
-import { extractTags } from '@tagspaces/tagspaces-platforms/paths';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import { extractTags } from '@tagspaces/tagspaces-common/paths';
+import AppConfig from '-/AppConfig';
 import DragItemTypes from './DragItemTypes';
 import TagContainer from './TagContainer';
 import { TS } from '-/tagspaces.namespace';

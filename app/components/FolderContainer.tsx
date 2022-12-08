@@ -26,12 +26,11 @@ import Tooltip from '-/components/Tooltip';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
-import MenuIcon from '@mui/icons-material/MenuOpen';
 import Badge from '@mui/material/Badge';
 import withStyles from '@mui/styles/withStyles';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '-/AppConfig';
 import LocationMenu from './menus/LocationMenu';
 import i18n from '../services/i18n';
 import {
@@ -55,6 +54,7 @@ import {
 } from '../reducers/app';
 import TaggingActions from '../reducers/tagging-actions';
 import LoadingLazy from '../components/LoadingLazy';
+import { GoBackIcon, GoForwardIcon, MainMenuIcon } from './CommonIcons';
 import { Pro } from '../pro';
 import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
 import { TS } from '-/tagspaces.namespace';
@@ -64,7 +64,6 @@ import {
   actions as LocationIndexActions,
   getSearchQuery
 } from '-/reducers/location-index';
-import Links from '-/content/links';
 import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
 import MainSearchField from '-/components/MainSearchField';
 import LoadingAnimation from '-/components/LoadingAnimation';
@@ -160,13 +159,13 @@ const CounterBadge: any = withStyles(theme => ({
   }
 }))(Badge);
 
-const CustomButton: any = withStyles(theme => ({
-  root: {
-    // borderRadius: 15,
-    // minWidth: 45,
-    // height: 40
-  }
-}))(IconButton);
+// const CustomButton: any = withStyles(theme => ({
+//   root: {
+//     // borderRadius: 15,
+//     // minWidth: 45,
+//     // height: 40
+//   }
+// }))(IconButton);
 
 interface Props {
   classes: any;
@@ -215,7 +214,9 @@ interface Props {
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   openURLExternally?: (url: string, skipConfirmation: boolean) => void;
   language: string;
-  editedEntryPaths: Array<string>;
+  editedEntryPaths: Array<TS.EditedEntryPath>;
+  goBack: () => void;
+  goForward: () => void;
 }
 
 function FolderContainer(props: Props) {
@@ -265,29 +266,18 @@ function FolderContainer(props: Props) {
       props.editedEntryPaths &&
       props.editedEntryPaths.length > 0
     ) {
-      let action = 'createNew'; // todo set action in editedEntryPaths
       for (const editedEntryPath of props.editedEntryPaths) {
-        let path;
-        if (typeof editedEntryPath === 'string') {
-          path = editedEntryPath;
-          action = 'createNew';
-        } else if (typeof editedEntryPath === 'object') {
-          path = Object.keys(editedEntryPath)[0];
-          action = 'addTag';
-        }
-        if (path && action === 'addTag') {
+        const action = editedEntryPath.action;
+        if (editedEntryPath.path && action.startsWith('edit')) {
           // update opened file after delete sidecar tags
           if (props.openedFiles.length > 0) {
             const openedFile = props.openedFiles[0];
-            if (openedFile.path === path) {
-              props.openEntry(path);
+            if (openedFile.path === editedEntryPath.path) {
+              props.openEntry(editedEntryPath.path);
             }
           }
         }
       }
-      /*if (props.editedEntryPaths.length === 2) {
-        action = 'renameFile';
-      }*/
     }
   }, [props.editedEntryPaths]);
 
@@ -323,7 +313,9 @@ function FolderContainer(props: Props) {
     openDirectory,
     reflectCreateEntry,
     openFsEntry,
-    defaultPerspective
+    defaultPerspective,
+    goBack,
+    goForward
   } = props;
 
   let currentPerspective =
@@ -343,8 +335,8 @@ function FolderContainer(props: Props) {
       return (
         <ListPerspectiveAsync
           directoryContent={props.directoryContent}
-          loadDirectoryContent={props.loadDirectoryContent}
-          openFsEntry={props.openFsEntry}
+          loadDirectoryContent={loadDirectoryContent}
+          openFsEntry={openFsEntry}
           openRenameEntryDialog={() => setIsRenameEntryDialogOpened(true)}
           loadParentDirectoryContent={props.loadParentDirectoryContent}
           renameFile={props.renameFile}
@@ -363,7 +355,7 @@ function FolderContainer(props: Props) {
       return (
         <GalleryPerspectiveAsync
           directoryContent={props.directoryContent}
-          openFsEntry={props.openFsEntry}
+          openFsEntry={openFsEntry}
           currentDirectoryPath={props.currentDirectoryPath}
           windowWidth={props.windowWidth}
           switchPerspective={switchPerspective}
@@ -544,16 +536,42 @@ function FolderContainer(props: Props) {
             overflowX: AppConfig.isFirefox ? 'auto' : 'overlay'
           }}
         >
-          <CustomButton
+          <IconButton
             id="mobileMenuButton"
-            style={{
-              transform: drawerOpened ? 'rotate(0deg)' : 'rotate(180deg)',
-              width: 50
-            }}
+            // style={{
+            //   transform: drawerOpened ? 'rotate(0deg)' : 'rotate(180deg)',
+            //   width: 50
+            // }}
             onClick={toggleDrawer}
           >
-            <MenuIcon />
-          </CustomButton>
+            <MainMenuIcon />
+          </IconButton>
+          <Tooltip
+            title={
+              i18n.t('core:goback') +
+              ' - BETA - ' +
+              i18n.t('core:gobackClarification')
+            }
+          >
+            <IconButton
+              id="goBackButton"
+              disabled={window.history.length < 2}
+              onClick={goBack}
+            >
+              <GoBackIcon />
+            </IconButton>
+          </Tooltip>
+          {isDesktopMode && (
+            <Tooltip title={i18n.t('core:goforward') + ' - BETA'}>
+              <IconButton
+                id="goForwardButton"
+                disabled={window.history.length < 2}
+                onClick={goForward}
+              >
+                <GoForwardIcon />
+              </IconButton>
+            </Tooltip>
+          )}
           <SearchBox
             open={isSearchVisible}
             anchorSearch={anchorSearch}
@@ -608,7 +626,7 @@ function FolderContainer(props: Props) {
                 />
               </Tooltip>
               {props.progress && props.progress.length > 0 && (
-                <CustomButton
+                <IconButton
                   id="progressButton"
                   title={i18n.t('core:progress')}
                   data-tid="uploadProgress"
@@ -616,9 +634,9 @@ function FolderContainer(props: Props) {
                   className={[classes.button, classes.upgradeButton].join(' ')}
                 >
                   <CircularProgressWithLabel value={getProgressValue()} />
-                </CustomButton>
+                </IconButton>
               )}
-              <LocationMenu />
+              {isDesktopMode && <LocationMenu />}
               <PathBreadcrumbs
                 currentDirectoryPath={currentDirectoryPath}
                 currentLocationPath={currentLocationPath}

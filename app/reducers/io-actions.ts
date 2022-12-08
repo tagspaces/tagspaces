@@ -20,14 +20,14 @@ import { Progress } from 'aws-sdk/clients/s3';
 import {
   enhanceEntry,
   loadJSONString
-} from '@tagspaces/tagspaces-platforms/utils-common';
+} from '@tagspaces/tagspaces-common/utils-io';
 import {
   extractFileName,
   getMetaFileLocationForFile,
   getThumbFileLocationForFile,
   normalizePath
-} from '@tagspaces/tagspaces-platforms/paths';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+} from '@tagspaces/tagspaces-common/paths';
+import AppConfig from '-/AppConfig';
 import { actions as AppActions } from './app';
 import { copyFilesPromise, renameFilesPromise } from '-/services/utils-io';
 import i18n from '../services/i18n';
@@ -417,20 +417,23 @@ const actions = {
 
         return undefined;
       });
-      Promise.all(jobsPromises)
+      Promise.allSettled(jobsPromises)
         .then(filesProm => {
           const arrFiles: Array<TS.FileSystemEntry> = [];
           const arrMeta: Array<TS.FileSystemEntry> = [];
           const arrThumb: Array<TS.FileSystemEntry> = [];
 
-          filesProm.map(file => {
-            if (file) {
-              if (file.meta) {
-                arrMeta.push(file);
-              } else if (file.thumbPath) {
-                arrThumb.push(file);
-              } else {
-                arrFiles.push(file);
+          filesProm.map(result => {
+            if (result.status !== 'rejected') {
+              const file = result.value;
+              if (file) {
+                if (file.meta) {
+                  arrMeta.push(file);
+                } else if (file.thumbPath) {
+                  arrThumb.push(file);
+                } else {
+                  arrFiles.push(file);
+                }
               }
             }
             return true;

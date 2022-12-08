@@ -19,29 +19,48 @@
 import React from 'react';
 import ParentFolder from '@mui/icons-material/ReplyOutlined';
 import Help from '@mui/icons-material/Help';
+import Info from '@mui/icons-material/Info';
+import AnnouncementIcon from '@mui/icons-material/AnnouncementOutlined';
 import Remove from '@mui/icons-material/RemoveCircleOutline';
 import History from '@mui/icons-material/ChangeHistoryTwoTone';
 import Settings from '@mui/icons-material/Settings';
-import InfoIcon from '@mui/icons-material/Info';
 import AddIcon from '@mui/icons-material/Add';
 import Suitcase from '@mui/icons-material/WorkOutline';
 import Link from '@mui/icons-material/Link';
 import KeyShortcuts from '@mui/icons-material/Keyboard';
+import Menu from '@mui/icons-material/Menu';
+import ArrowBack from '@mui/icons-material/ArrowBack';
+import ArrowForward from '@mui/icons-material/ArrowForward';
+import Folder from '@mui/icons-material/Folder';
+import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
+import SubdirectoryArrowLeftIcon from '@mui/icons-material/SubdirectoryArrowLeft';
 
 export const ParentFolderIcon = props => (
-  // <ParentDirIcon style={{ transform: 'rotate(-90deg)' }} /> SubdirectoryArrowLeft
-  <ParentFolder {...props} />
+  <KeyboardReturnIcon style={{ transform: 'rotate(90deg)' }} />
+  // <ParentFolder {...props} />
 );
 
+export const NavigateToFolderIcon = props => <KeyboardReturnIcon />;
+
+export const FolderIcon = props => <Folder {...props} />;
+
+export const MainMenuIcon = props => <Menu {...props} />;
+
+export const GoBackIcon = props => <ArrowBack {...props} />;
+
+export const GoForwardIcon = props => <ArrowForward {...props} />;
+
 export const HelpIcon = props => <Help {...props} />;
+
+export const InfoIcon = props => <AnnouncementIcon {...props} />;
+
+export const FolderPropertiesIcon = props => <Info {...props} />;
 
 export const RemoveIcon = props => <Remove {...props} />;
 
 export const HistoryIcon = props => <History {...props} />;
 
 export const PerspectiveSettingsIcon = props => <Settings {...props} />;
-
-export const FolderPropertiesIcon = props => <InfoIcon {...props} />;
 
 export const CreateFileIcon = props => <AddIcon {...props} />;
 

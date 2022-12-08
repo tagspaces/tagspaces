@@ -41,8 +41,8 @@ import CheckIcon from '@mui/icons-material/Check';
 import RemoveIcon from '@mui/icons-material/RemoveCircleOutline';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { locationType } from '@tagspaces/tagspaces-platforms/misc';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import { locationType } from '@tagspaces/tagspaces-common/misc';
+import AppConfig from '-/AppConfig';
 import {
   Accordion,
   AccordionDetails,
@@ -61,7 +61,7 @@ import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import InfoIcon from '-/components/InfoIcon';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
-import { actions as LocationActions } from '-/reducers/locations';
+import { actions as LocationActions, getLocations } from '-/reducers/locations';
 import { getPersistTagsInSidecarFile } from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
@@ -69,6 +69,7 @@ import PlatformIO from '-/services/platform-facade';
 import WebdavForm from '-/components/dialogs/WebdavForm';
 import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { loadLocationDataPromise } from '-/services/utils-io';
 import { getUuid } from '-/services/utils-io';
 
 const styles: any = theme => ({
@@ -80,6 +81,7 @@ const styles: any = theme => ({
 
 interface Props {
   location?: TS.Location;
+  locations: Array<TS.Location>;
   open: boolean;
   onClose: () => void;
   classes: any;
@@ -221,6 +223,20 @@ function CreateEditLocationDialog(props: Props) {
     }
   }, [name, path]);
 
+  function setLocationId(path: string) {
+    loadLocationDataPromise(path, AppConfig.metaFolderFile)
+      .then((meta: TS.FileSystemEntryMeta) => {
+        if (meta && meta.id) {
+          if (!props.locations.some(ln => ln.uuid === meta.id)) {
+            setNewUuid(meta.id);
+          }
+        }
+        return true;
+      })
+      .catch(err => {
+        console.debug('no meta in location:' + path);
+      });
+  }
   /**
    * @param checkOnly - switch to set errors or only to check validation
    * return true - have errors; false - no errors
@@ -399,7 +415,10 @@ function CreateEditLocationDialog(props: Props) {
         region={region}
         endpointURL={endpointURL}
         setStoreName={setStoreName}
-        setStorePath={setStorePath}
+        setStorePath={path => {
+          setStorePath(path);
+          setLocationId(path);
+        }}
         setAccessKeyId={setAccessKeyId}
         setSecretAccessKey={setSecretAccessKey}
         setSessionToken={setSessionToken}
@@ -435,7 +454,10 @@ function CreateEditLocationDialog(props: Props) {
         errorTextPath={errorTextPath}
         errorTextName={errorTextName}
         setName={setName}
-        setPath={setPath}
+        setPath={path => {
+          setPath(path);
+          setLocationId(path);
+        }}
         path={path}
         name={name}
       />
@@ -895,7 +917,8 @@ function CreateEditLocationDialog(props: Props) {
 
 function mapStateToProps(state) {
   return {
-    isPersistTagsInSidecar: getPersistTagsInSidecarFile(state)
+    isPersistTagsInSidecar: getPersistTagsInSidecarFile(state),
+    locations: getLocations(state)
   };
 }
 

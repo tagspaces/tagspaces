@@ -35,7 +35,7 @@ import InfoIcon from '-/components/InfoIcon';
 import CheckIcon from '@mui/icons-material/Check';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
 import {
   actions as SettingsActions,
@@ -136,13 +136,6 @@ function SettingsGeneral(props: Props) {
           onChange={(event: any) => {
             props.setLanguage(event.target.value);
             PlatformIO.setLanguage(event.target.value);
-            // TODO remove (language state is changed in settings reducer and components will be reloaded without this)
-            /* const { currentTheme } = props.settings;
-              const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-              props.setCurrentTheme(newTheme);
-              setTimeout(() => {
-                props.setCurrentTheme(currentTheme);
-              }, 500); */
           }}
           input={<Input id="languageSelector" />}
         >

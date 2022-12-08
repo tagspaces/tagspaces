@@ -31,8 +31,8 @@ import LocationIcon from '@mui/icons-material/WorkOutline';
 import CloudLocationIcon from '@mui/icons-material/CloudQueue';
 import DefaultLocationIcon from '@mui/icons-material/Highlight';
 import { Progress } from 'aws-sdk/clients/s3';
-import { locationType } from '@tagspaces/tagspaces-platforms/misc';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import { locationType } from '@tagspaces/tagspaces-common/misc';
+import AppConfig from '-/AppConfig';
 import styles from './SidePanels.css';
 import {
   actions as AppActions,

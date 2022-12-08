@@ -29,14 +29,14 @@ import { NativeTypes } from 'react-dnd-html5-backend';
 import { Progress } from 'aws-sdk/clients/s3';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
 import { Split } from 'ts-react-splitter';
-import { buffer } from '@tagspaces/tagspaces-platforms/misc';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import { buffer } from '@tagspaces/tagspaces-common/misc';
+import AppConfig from '-/AppConfig';
 import MobileNavigation from '../components/MobileNavigation';
 import FolderContainer from '../components/FolderContainer';
 import EntryContainer from '../components/EntryContainer';
 import SettingsDialog from '../components/dialogs/settings/SettingsDialog';
 import CreateDirectoryDialog from '../components/dialogs/CreateDirectoryDialog';
-import CreateFileDialog from '../components/dialogs/CreateDialog';
+import CreateDialog from '../components/dialogs/CreateDialog';
 import {
   getDesktopMode,
   getKeyBindingObject,
@@ -157,6 +157,7 @@ interface Props {
   toggleEditTagDialog: (tag: TS.Tag) => void;
   setEntryFullWidth: (isFullWidth: boolean) => void;
   loadParentDirectoryContent: () => void;
+  openLink: (linkURL: string, options?: any) => void;
   saveFile: () => void; // needed by electron-menus
   setZoomResetApp: () => void; // needed by electron-menus
   setZoomInApp: () => void; // needed by electron-menus
@@ -359,11 +360,56 @@ function MainPage(props: Props) {
     undefined
   );
 
+  useEventListener('message', e => {
+    if (typeof e.data === 'string') {
+      // console.log(e.data);
+      try {
+        const data = JSON.parse(e.data);
+        if (data.command === 'openLinkExternally') {
+          openLink(data.link);
+        }
+      } catch (ex) {
+        console.debug(
+          'useEventListener message:' + e.data + ' parse error:',
+          ex
+        );
+      }
+    }
+  });
+
+  function goForward() {
+    window.history.forward();
+    window.addEventListener(
+      'popstate',
+      () => {
+        props.openLink(window.location.href, { fullWidth: false });
+      },
+      { once: true }
+    );
+  }
+
+  function goBack() {
+    // console.log(
+    //   '>>> current href: ' + decodeURIComponent(window.location.href)
+    // );
+    window.history.back(); // window.history.go(-1);
+    window.addEventListener(
+      'popstate',
+      () => {
+        props.openLink(window.location.href, { fullWidth: false });
+        // console.log(
+        //   '>>> last href: ' + decodeURIComponent(window.location.href)
+        // );
+      },
+      { once: true }
+    );
+  }
+
   useEffect(() => {
     if (!AppConfig.isCordova) {
       updateDimensions();
     }
-    listen(props);
+    listen({ ...props, goBack, goForward });
   }, []);
 
   useEffect(() => {
@@ -549,6 +595,7 @@ function MainPage(props: Props) {
     directoryPath,
     mainSplitSize,
     openedFiles,
+    openLink,
     classes
   } = props;
   const { FILE } = NativeTypes;
@@ -606,6 +653,8 @@ function MainPage(props: Props) {
           drawerOpened={drawerOpened}
           openedFiles={openedFiles}
           currentDirectoryPath={directoryPath}
+          goBack={goBack}
+          goForward={goForward}
         />
         {isFileOpened && (
           <EntryContainer
@@ -692,6 +741,7 @@ function MainPage(props: Props) {
         <OpenLinkDialogAsync
           open={props.isOpenLinkDialogOpened}
           onClose={toggleOpenLinkDialog}
+          openLink={openLink}
         />
       )}
       {props.isProTeaserVisible && (
@@ -722,7 +772,7 @@ function MainPage(props: Props) {
         />
       )}
       {props.isCreateFileDialogOpened && (
-        <CreateFileDialog
+        <CreateDialog
           open={props.isCreateFileDialogOpened}
           onClose={toggleCreateFileDialog}
           // selectedDirectoryPath={selectedDirectoryPath.current || directoryPath}
@@ -898,6 +948,7 @@ function mapDispatchToProps(dispatch) {
       toggleEditTagDialog: AppActions.toggleEditTagDialog,
       onUploadProgress: AppActions.onUploadProgress,
       saveFile: AppActions.saveFile,
+      openLink: AppActions.openLink,
       setZoomResetApp: SettingsActions.setZoomResetApp,
       setZoomInApp: SettingsActions.setZoomInApp,
       setZoomOutApp: SettingsActions.setZoomOutApp,

@@ -1,11 +1,11 @@
 import React, { MutableRefObject, useRef, useState } from 'react';
 import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import AppConfig from '-/AppConfig';
+import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
 import i18n from '-/services/i18n';
 import { ProTooltip } from '-/components/HelperComponents';
 import { Pro } from '-/pro';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
-import Typography from '@mui/material/Typography';
-import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
 
 interface Props {
   primaryColor: string;
@@ -16,8 +16,20 @@ interface Props {
   isDarkTheme: boolean;
   description: string;
   setEditDescription: (md: string) => void;
+  currentFolder: string;
 }
 function EditDescription(props: Props) {
+  const {
+    currentFolder,
+    description,
+    setEditDescription,
+    classes,
+    printHTML,
+    toggleEditDescriptionField,
+    fileDescriptionRef,
+    primaryColor,
+    isDarkTheme
+  } = props;
   const [editMode, setEditMode] = useState<boolean>(false);
   const descriptionFocus = useRef<boolean>(false);
 
@@ -26,8 +38,8 @@ function EditDescription(props: Props) {
     []
   );
   const milkdownListener = React.useCallback((markdown: string) => {
-    if (descriptionFocus.current && markdown !== props.description) {
-      props.setEditDescription(markdown);
+    if (descriptionFocus.current && markdown !== description) {
+      setEditDescription(markdown);
     }
     // update codeMirror
     /*const { current } = codeMirrorRef;
@@ -39,7 +51,7 @@ function EditDescription(props: Props) {
     <span style={{ float: 'right' }}>
       {editMode && (
         <Button
-          className={props.classes.button}
+          className={classes.button}
           onClick={() => {
             setEditMode(false);
           }}
@@ -48,18 +60,18 @@ function EditDescription(props: Props) {
         </Button>
       )}
       {!editMode && (
-        <Button className={props.classes.button} onClick={props.printHTML}>
+        <Button className={classes.button} onClick={printHTML}>
           {i18n.t('core:print')}
         </Button>
       )}
       <ProTooltip tooltip={i18n.t('editDescription')}>
         <Button
           color="primary"
-          className={props.classes.button}
+          className={classes.button}
           disabled={!Pro}
           onClick={() => {
             setEditMode(!editMode);
-            props.toggleEditDescriptionField();
+            toggleEditDescriptionField();
           }}
         >
           {editMode ? i18n.t('core:confirmSaveButton') : i18n.t('core:edit')}
@@ -68,19 +80,20 @@ function EditDescription(props: Props) {
     </span>
   );
 
+  const noDescription = !description || description.length < 1;
   return (
     <>
       <span style={{ verticalAlign: 'sub', paddingLeft: 5 }}>
-        <Typography style={{ color: props.primaryColor }} variant="caption">
+        <Typography style={{ color: primaryColor }} variant="caption">
           {i18n.t('core:filePropertiesDescription')}
         </Typography>
       </span>
-      {props.toggleEditDescriptionField && editSaveActions}
+      {toggleEditDescriptionField && editSaveActions}
       <div
         onDoubleClick={() => {
-          if (props.toggleEditDescriptionField) {
+          if (toggleEditDescriptionField) {
             setEditMode(true);
-            props.toggleEditDescriptionField();
+            toggleEditDescriptionField();
           }
         }}
         style={{
@@ -88,32 +101,46 @@ function EditDescription(props: Props) {
           borderRadius: 5,
           padding: 2,
           minHeight: 50,
-          maxHeight: 250,
+          maxHeight: noDescription && !editMode ? 100 : 250,
           width: 'calc(100% - 8px)',
           // @ts-ignore
           overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
         }}
       >
-        <MilkdownEditor
-          ref={props.fileDescriptionRef}
-          content={props.description || ''}
-          onChange={milkdownListener}
-          onFocus={milkdownOnFocus}
-          readOnly={!editMode}
-          dark={props.isDarkTheme}
-          lightMode={true}
-        />
+        {noDescription && !editMode ? (
+          <Typography
+            variant="caption"
+            style={{
+              color: primaryColor,
+              padding: 10,
+              lineHeight: 4
+            }}
+          >
+            {i18n.t('core:addMarkdownDescription')}
+          </Typography>
+        ) : (
+          <MilkdownEditor
+            ref={fileDescriptionRef}
+            content={description || ''}
+            onChange={milkdownListener}
+            onFocus={milkdownOnFocus}
+            readOnly={!editMode}
+            dark={isDarkTheme}
+            lightMode={true}
+            currentFolder={currentFolder}
+          />
+        )}
       </div>
       <Typography
         variant="caption"
         style={{
-          color: props.primaryColor
+          color: primaryColor
         }}
       >
-        Markdown help: <i className={props.classes.mdHelpers}>_italic_</i>{' '}
-        <b className={props.classes.mdHelpers}>**bold**</b>{' '}
-        <span className={props.classes.mdHelpers}>* list item</span>{' '}
-        <span className={props.classes.mdHelpers}>[Link text](http://...)</span>
+        Markdown help: <i className={classes.mdHelpers}>_italic_</i>{' '}
+        <b className={classes.mdHelpers}>**bold**</b>{' '}
+        <span className={classes.mdHelpers}>* list item</span>{' '}
+        <span className={classes.mdHelpers}>[Link text](http://...)</span>
       </Typography>
     </>
   );

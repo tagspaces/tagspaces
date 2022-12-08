@@ -1,6 +1,5 @@
-import { locationType } from '@tagspaces/tagspaces-platforms/misc';
 import { TS } from '-/tagspaces.namespace';
-import PlatformIO from '-/services/platform-facade';
+import { getRelativeEntryPath } from '-/services/utils-io';
 
 export function isVisibleOnScreen(element: any) {
   const rectangle = element.getBoundingClientRect();
@@ -21,7 +20,7 @@ export function getURLParameter(paramName: string, url?: string): string {
 }
 
 export function clearAllURLParams() {
-  window.history.pushState('', document.title, window.location.pathname);
+  window.history.pushState(null, null, window.location.pathname);
   // console.log(window.location.href);
 }
 
@@ -31,42 +30,49 @@ export function clearURLParam(paramName) {
 
   // Delete the foo parameter.
   params.delete(paramName);
-  window.history.pushState(
-    '',
-    document.title,
-    window.location.pathname + '?' + params
-  );
+  window.history.pushState(null, null, window.location.pathname + '?' + params);
   // console.log(window.location.href);
 }
 
 export function updateHistory(
-  currentLocation: TS.Location,
-  currentDirectory: string,
-  entryPath?: string
+  newLocation: TS.Location,
+  newDirectoryPath: string,
+  newEntryPath?: string
 ) {
-  if (currentLocation) {
-    // const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
+  const currentHref = new URL(window.location.href);
+  const params = new URLSearchParams(currentHref.search);
+  // console.log('>>> current href: ' + window.location.href);
+  const currentLocationID = params.get('tslid');
+  const currentFolderPath = params.get('tsdpath');
+  const currentEntryPath = params.get('tsepath');
+  let diffLocation = false;
+  let diffFolderPath = false;
+  let diffEntryPath = false;
+
+  if (newLocation) {
     let urlParams = '?';
-    let currentLocationPath = '';
-    const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
-
-    if (currentLocation && currentLocation.uuid) {
-      urlParams += 'tslid=' + encodeURIComponent(currentLocation.uuid);
-      currentLocationPath = PlatformIO.getLocationPath(currentLocation);
+    if (newLocation && newLocation.uuid) {
+      const newEncLocationID = encodeURIComponent(newLocation.uuid);
+      urlParams += 'tslid=' + newEncLocationID;
+      diffLocation = newLocation.uuid !== currentLocationID;
     }
 
-    if (currentDirectory && currentDirectory.length > 0) {
-      const currentDir = isCloudLocation
-        ? currentDirectory
-        : currentDirectory.replace(currentLocationPath, '');
-      urlParams += '&tsdpath=' + encodeURIComponent(currentDir);
+    if (newDirectoryPath && newDirectoryPath.length > 0) {
+      const newRelDir = getRelativeEntryPath(newLocation, newDirectoryPath);
+      if (newRelDir) {
+        const newEncRelDir = encodeURIComponent(newRelDir);
+        urlParams += '&tsdpath=' + newEncRelDir;
+        diffFolderPath = newRelDir !== currentFolderPath;
+      }
     }
 
-    if (entryPath && entryPath.length > 0) {
-      const ePath = isCloudLocation
-        ? entryPath
-        : entryPath.replace(currentLocationPath, '');
-      urlParams += '&tsepath=' + encodeURIComponent(ePath);
+    if (newEntryPath && newEntryPath.length > 0) {
+      const entryRelPath = getRelativeEntryPath(newLocation, newEntryPath);
+      if (entryRelPath) {
+        const newEncEntryPath = encodeURIComponent(entryRelPath);
+        urlParams += '&tsepath=' + newEncEntryPath;
+        diffEntryPath = entryRelPath !== currentEntryPath;
+      }
     }
 
     const localePar = getURLParameter('locale');
@@ -74,8 +80,10 @@ export function updateHistory(
       urlParams += '&locale=' + localePar;
     }
 
-    window.history.pushState('', document.title, urlParams);
-    // console.log(window.location.href);
+    if (diffLocation || diffEntryPath || diffFolderPath) {
+      window.history.pushState(null, null, urlParams);
+      // console.log('>>> href updated with: ' + urlParams);
+    }
   }
 }
 

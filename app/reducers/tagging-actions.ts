@@ -17,7 +17,7 @@
  */
 import OpenLocationCode from 'open-location-code-typescript';
 import mgrs from 'mgrs';
-import { formatDateTime4Tag } from '@tagspaces/tagspaces-platforms/misc';
+import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import i18n from '../services/i18n';
 import {
   actions as AppActions,
@@ -29,7 +29,7 @@ import {
   extractTags,
   extractTitle,
   extractContainingDirectoryPath
-} from '@tagspaces/tagspaces-platforms/paths';
+} from '@tagspaces/tagspaces-common/paths';
 import {
   loadMetaDataPromise,
   saveMetaDataPromise,

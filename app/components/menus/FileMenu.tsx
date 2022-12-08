@@ -24,7 +24,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Divider from '@mui/material/Divider';
 import OpenFile from '@mui/icons-material/SubdirectoryArrowRight';
 import OpenFileNatively from '@mui/icons-material/Launch';
-import OpenParentFolder from '@mui/icons-material/FolderOpen';
+import { ParentFolderIcon } from '-/components/CommonIcons';
 import OpenFolderInternally from '@mui/icons-material/Folder';
 import AddRemoveTags from '@mui/icons-material/Loyalty';
 import MoveCopy from '@mui/icons-material/FileCopy';
@@ -35,22 +35,23 @@ import ImageIcon from '@mui/icons-material/Image';
 import ShareIcon from '@mui/icons-material/Link';
 import RenameFile from '@mui/icons-material/FormatTextdirectionLToR';
 import DeleteForever from '@mui/icons-material/DeleteForever';
-import { formatDateTime4Tag } from '@tagspaces/tagspaces-platforms/misc';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
+import AppConfig from '-/AppConfig';
 import {
   extractContainingDirectoryPath,
   extractFileName,
   extractParentDirectoryPath,
   extractTags,
   generateSharingLink
-} from '@tagspaces/tagspaces-platforms/paths';
+} from '@tagspaces/tagspaces-common/paths';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
 import {
   generateFileName,
   getAllPropertiesPromise,
   setFolderBackgroundPromise,
-  setFolderThumbnailPromise
+  setFolderThumbnailPromise,
+  getRelativeEntryPath
 } from '-/services/utils-io';
 import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
@@ -111,17 +112,9 @@ function FileMenu(props: Props) {
       const locationID = entryFromIndex
         ? selectedEntries[0].locationID
         : currentLocation.uuid;
-      let relativePath = selectedEntries[0].path;
+      const entryPath = selectedEntries[0].path;
       const tmpLoc = locations.find(location => location.uuid === locationID);
-      const locationPath = tmpLoc.path;
-      if (
-        locationPath &&
-        relativePath &&
-        relativePath.startsWith(locationPath)
-      ) {
-        // remove location path from entry path if possible
-        relativePath = relativePath.substr(locationPath.length);
-      }
+      const relativePath = getRelativeEntryPath(tmpLoc, entryPath);
       const sharingLink = generateSharingLink(locationID, relativePath);
       navigator.clipboard
         .writeText(sharingLink)
@@ -306,7 +299,7 @@ function FileMenu(props: Props) {
         onClick={openParentFolderInternally}
       >
         <ListItemIcon>
-          <OpenParentFolder />
+          <ParentFolderIcon />
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:openParentFolder')} />
       </MenuItem>

@@ -29,7 +29,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Dialog from '@mui/material/Dialog';
 import i18n from '-/services/i18n';
 import { actions as AppActions } from '-/reducers/app';
-import { joinPaths } from '@tagspaces/tagspaces-platforms/paths';
+import { joinPaths } from '@tagspaces/tagspaces-common/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import PlatformIO from '-/services/platform-facade';
 import useTheme from '@mui/styles/useTheme';

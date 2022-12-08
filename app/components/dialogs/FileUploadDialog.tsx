@@ -35,7 +35,7 @@ import {
   getCurrentDirectoryPerspective,
   getProgress
 } from '-/reducers/app';
-import { extractFileName } from '@tagspaces/tagspaces-platforms/paths';
+import { extractFileName } from '@tagspaces/tagspaces-common/paths';
 import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { PerspectiveIDs } from '-/perspectives';

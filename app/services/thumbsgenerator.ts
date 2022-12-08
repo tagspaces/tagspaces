@@ -24,8 +24,8 @@ import {
   normalizePath,
   getMetaDirectoryPath,
   encodeFileName
-} from '@tagspaces/tagspaces-platforms/paths';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+} from '@tagspaces/tagspaces-common/paths';
+import AppConfig from '-/AppConfig';
 import { base64ToArrayBuffer } from '-/utils/dom';
 import PlatformIO from '../services/platform-facade';
 import { Pro } from '../pro';
@@ -140,133 +140,134 @@ function getThumbFileLocation(filePath: string) {
 export function getThumbnailURLPromise(
   filePath: string
 ): Promise<{ filePath: string; tmbPath?: string }> {
-  return new Promise(resolve => {
-    PlatformIO.getPropertiesPromise(filePath)
-      .then(origStats => {
-        const thumbFilePath = getThumbFileLocation(filePath);
-        PlatformIO.getPropertiesPromise(thumbFilePath)
-          .then(stats => {
-            if (stats) {
-              // Thumbnail exists
-              if (origStats.lmdt > stats.lmdt) {
-                // Checking if is up to date
-                createThumbnailPromise(
-                  filePath,
-                  origStats.size,
-                  thumbFilePath,
-                  origStats.isFile
-                )
-                  .then(tmbPath => resolve({ filePath, tmbPath }))
-                  .catch(err => {
-                    console.warn('Thumb generation failed ' + err);
-                    resolve({ filePath, tmbPath: thumbFilePath });
-                  });
-              } else {
-                // Tmb up to date
-                resolve({ filePath });
-              }
-            } else {
-              // Thumbnail does not exists
-              createThumbnailPromise(
+  return PlatformIO.getPropertiesPromise(filePath)
+    .then(origStats => {
+      const thumbFilePath = getThumbFileLocation(filePath);
+      return PlatformIO.getPropertiesPromise(thumbFilePath)
+        .then(stats => {
+          if (stats) {
+            // Thumbnail exists
+            if (origStats.lmdt > stats.lmdt) {
+              // Checking if is up to date
+              return createThumbnailPromise(
                 filePath,
                 origStats.size,
                 thumbFilePath,
                 origStats.isFile
               )
-                .then(tmbPath => resolve({ filePath, tmbPath }))
+                .then(tmbPath => ({ filePath, tmbPath }))
                 .catch(err => {
                   console.warn('Thumb generation failed ' + err);
-                  resolve({ filePath });
+                  return Promise.resolve({ filePath, tmbPath: thumbFilePath });
                 });
+            } else {
+              // Tmb up to date
+              return Promise.resolve({ filePath, tmbPath: thumbFilePath });
             }
-            return true;
-          })
-          .catch(err => {
-            console.warn('Error getting tmb properties ' + err);
-            resolve({ filePath });
-          });
-        return true;
-      })
-      .catch(err => {
-        console.warn('Error getting file properties ' + err);
-        resolve({ filePath });
-      });
-  });
+          } else {
+            // Thumbnail does not exists
+            return createThumbnailPromise(
+              filePath,
+              origStats.size,
+              thumbFilePath,
+              origStats.isFile
+            )
+              .then(tmbPath => ({ filePath, tmbPath }))
+              .catch(err => {
+                console.warn('Thumb generation failed ' + err);
+                return Promise.resolve({ filePath });
+              });
+          }
+        })
+        .catch(err => {
+          console.warn('Error getting tmb properties ' + err);
+          return Promise.resolve({ filePath });
+        });
+    })
+    .catch(err => {
+      console.warn('Error getting file properties ' + err);
+      return Promise.resolve({ filePath });
+    });
 }
 
-export function replaceThumbnailURLPromise(
+/*export function replaceThumbnailURLPromise(
   filePath: string,
   thumbFilePath: string
 ): Promise<any> {
-  return new Promise(resolve => {
-    PlatformIO.getPropertiesPromise(filePath)
-      .then(origStats => {
-        createThumbnailPromise(
-          filePath,
-          origStats.size,
-          thumbFilePath,
-          origStats.isFile
-        )
-          .then(tmbPath => resolve({ filePath, tmbPath }))
-          .catch(err => {
-            console.warn('Thumb generation failed ' + err);
-            resolve({ filePath, tmbPath: thumbFilePath });
-          });
-        return true;
-      })
-      .catch(err => {
-        console.warn('Error getting file properties ' + err);
-        resolve({ filePath });
-      });
-  });
-}
+  return PlatformIO.getPropertiesPromise(filePath)
+    .then(origStats =>
+      createThumbnailPromise(
+        filePath,
+        origStats.size,
+        thumbFilePath,
+        origStats.isFile
+      )
+        .then(tmbPath => ({ filePath, tmbPath }))
+        .catch(err => {
+          console.warn('Thumb generation failed ' + err);
+          return { filePath, tmbPath: thumbFilePath };
+        })
+    )
+    .catch(err => {
+      console.warn('Error getting file properties ' + err);
+      return { filePath };
+    });
+}*/
 
 export function createThumbnailPromise(
   filePath: string,
   fileSize: number,
   thumbFilePath: string,
   isFile: boolean
-): Promise<any> {
-  return new Promise(async resolve => {
-    const metaDirectory = extractContainingDirectoryPath(
-      thumbFilePath,
-      PlatformIO.getDirSeparator()
-    );
-    const fileDirectory = isFile
-      ? extractContainingDirectoryPath(filePath, PlatformIO.getDirSeparator())
-      : filePath;
-    const normalizedFileDirectory = normalizePath(fileDirectory);
-    if (normalizedFileDirectory.endsWith(AppConfig.metaFolder)) {
-      resolve(undefined); // prevent creating thumbs in meta/.ts folder
-      return true;
-    }
-    const exist = await PlatformIO.checkDirExist(metaDirectory);
+): Promise<string | undefined> {
+  const metaDirectory = extractContainingDirectoryPath(
+    thumbFilePath,
+    PlatformIO.getDirSeparator()
+  );
+  const fileDirectory = isFile
+    ? extractContainingDirectoryPath(filePath, PlatformIO.getDirSeparator())
+    : filePath;
+  const normalizedFileDirectory = normalizePath(fileDirectory);
+  if (normalizedFileDirectory.endsWith(AppConfig.metaFolder)) {
+    return Promise.resolve(undefined); // prevent creating thumbs in meta/.ts folder
+  }
+  return PlatformIO.checkDirExist(metaDirectory).then(exist => {
     if (!exist) {
-      await PlatformIO.createDirectoryPromise(metaDirectory);
-    }
-
-    generateThumbnailPromise(filePath, fileSize)
-      .then(dataURL => {
-        if (dataURL && dataURL.length) {
-          saveThumbnailPromise(thumbFilePath, dataURL)
-            .then(() => resolve(thumbFilePath))
-            .catch(err => {
-              console.warn('Thumb saving failed ' + err + ' for ' + filePath);
-              resolve(undefined);
-            });
-          return true;
-        }
-        resolve(thumbFilePath);
-        return true;
-      })
-      .catch(err => {
-        console.warn('Thumb generation failed ' + err + ' for ' + filePath);
-        resolve(undefined);
+      return PlatformIO.createDirectoryPromise(metaDirectory).then(() => {
+        return createThumbnailSavePromise(filePath, fileSize, thumbFilePath);
       });
-    return true;
+    } else {
+      return createThumbnailSavePromise(filePath, fileSize, thumbFilePath);
+    }
   });
 }
 
+function createThumbnailSavePromise(
+  filePath: string,
+  fileSize: number,
+  thumbFilePath: string
+): Promise<string | undefined> {
+  return generateThumbnailPromise(filePath, fileSize)
+    .then(dataURL => {
+      if (dataURL && dataURL.length) {
+        return saveThumbnailPromise(thumbFilePath, dataURL)
+          .then(() => thumbFilePath)
+          .catch(err => {
+            console.warn('Thumb saving failed ' + err + ' for ' + filePath);
+            return Promise.resolve(undefined);
+          });
+      }
+      return undefined; // thumbFilePath;
+    })
+    .catch(err => {
+      console.warn('Thumb generation failed ' + err + ' for ' + filePath);
+      return Promise.resolve(undefined);
+    });
+}
+
+/**
+ * return thumbFilePath: Promise<string> or empty sting on error or not supported
+ */
 export function generateThumbnailPromise(fileURL: string, fileSize: number) {
   const ext = extractFileExtension(
     fileURL,

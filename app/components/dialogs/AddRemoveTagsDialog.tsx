@@ -31,13 +31,13 @@ import FolderIcon from '@mui/icons-material/FolderOpen';
 import FileIcon from '@mui/icons-material/InsertDriveFileOutlined';
 import Typography from '@mui/material/Typography';
 import Dialog from '@mui/material/Dialog';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '-/AppConfig';
 import TagsSelect from '../TagsSelect';
 import i18n from '-/services/i18n';
 import {
   extractFileName,
   extractDirectoryName
-} from '@tagspaces/tagspaces-platforms/paths';
+} from '@tagspaces/tagspaces-common/paths';
 import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
@@ -158,7 +158,10 @@ function AddRemoveTagsDialog(props: Props) {
           dense
           style={{ width: 550, marginLeft: -15 }}
           subheader={
-            <ListSubheader component="div">
+            <ListSubheader
+              style={{ backgroundColor: 'transparent' }}
+              component="div"
+            >
               {i18n.t('selectedFilesAndFolders')}
             </ListSubheader>
           }

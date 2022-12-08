@@ -25,8 +25,8 @@ import IconButton from '@mui/material/IconButton';
 import FolderIcon from '@mui/icons-material/Folder';
 import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid';
-import { extractDirectoryName } from '@tagspaces/tagspaces-platforms/paths';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
+import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
 

@@ -28,7 +28,7 @@ import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 import ListItemText from '@mui/material/ListItemText';
 import withStyles from '@mui/styles/withStyles';
 import Dialog from '@mui/material/Dialog';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
 import { getKeyBindingObject } from '-/reducers/settings';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';

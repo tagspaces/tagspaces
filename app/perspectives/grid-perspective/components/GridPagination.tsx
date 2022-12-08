@@ -25,14 +25,14 @@ import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 import Pagination from '@mui/material/Pagination';
 import { bindActionCreators } from 'redux';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '-/AppConfig';
 import {
   getMetaFileLocationForDir,
   getMetaFileLocationForFile,
   getThumbFileLocationForDirectory,
   getThumbFileLocationForFile,
   extractDirectoryName
-} from '@tagspaces/tagspaces-platforms/paths';
+} from '@tagspaces/tagspaces-common/paths';
 import i18n from '-/services/i18n';
 import {
   actions as AppActions,
@@ -146,7 +146,10 @@ function GridPagination(props: Props) {
     currentDirectoryColor,
     currentDirectoryTags,
     currentDirectoryDescription,
+    currentDirectoryPath,
+    lastThumbnailImageChange,
     openRenameEntryDialog,
+    lastBackgroundImageChange,
     gridPageLimit,
     currentPage,
     files
@@ -162,16 +165,10 @@ function GridPagination(props: Props) {
   const page = useRef<number>(currentPage);
   const metaLoadedLock = useRef<boolean>(false); // TODO move this for all perspectives - not lock if you open folder with diff perspective now
   const folderTmbPath = useRef<string>(
-    getFolderThumbPath(
-      props.currentDirectoryPath,
-      props.lastThumbnailImageChange
-    )
+    getFolderThumbPath(currentDirectoryPath, lastThumbnailImageChange)
   );
   const folderBgndPath = useRef<string>(
-    getFolderBgndPath(
-      props.currentDirectoryPath,
-      props.lastBackgroundImageChange
-    )
+    getFolderBgndPath(currentDirectoryPath, lastBackgroundImageChange)
   );
   // const [page, setPage] = useState(currentPage);
 
@@ -427,7 +424,6 @@ function GridPagination(props: Props) {
             <Grid item xs={12}>
               <div
                 style={{
-                  padding: 10,
                   marginLeft: 10,
                   marginRight: 10,
                   marginTop: 0,
@@ -513,8 +509,6 @@ function GridPagination(props: Props) {
                   <div
                     style={{
                       borderRadius: 8,
-                      marginLeft: 'auto',
-                      marginRight: 'auto',
                       height: 140,
                       width: 140,
                       backgroundImage: 'url("' + folderTmbPath.current + '")',
@@ -522,8 +516,8 @@ function GridPagination(props: Props) {
                       backgroundRepeat: 'no-repeat',
                       backgroundPosition: 'center center',
                       position: 'absolute',
-                      top: 10,
-                      right: 10
+                      top: 0,
+                      right: 0
                     }}
                   >
                     {/* <EntryIcon isFile={false} /> */}
@@ -538,8 +532,10 @@ function GridPagination(props: Props) {
               xs={12}
               style={{
                 backgroundColor: theme.palette.background.default,
+                marginTop: showDetails ? 0 : 10,
                 marginLeft: 25,
                 marginRight: 10,
+                padding: 2,
                 borderRadius: 5
               }}
             >
@@ -547,6 +543,8 @@ function GridPagination(props: Props) {
                 content={currentDirectoryDescription}
                 readOnly={true}
                 dark={theme.palette.mode === 'dark'}
+                currentFolder={currentDirectoryPath}
+                lightMode={true}
               />
             </Grid>
           )}
@@ -726,6 +724,8 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   nextProp.thumbnailMode === prevProp.thumbnailMode &&
   nextProp.entrySize === prevProp.entrySize &&
   nextProp.gridPageLimit === prevProp.gridPageLimit &&
+  nextProp.currentDirectoryDescription ===
+    prevProp.currentDirectoryDescription &&
   JSON.stringify(nextProp.files) === JSON.stringify(prevProp.files) &&
   JSON.stringify(nextProp.directories) ===
     JSON.stringify(prevProp.directories) &&

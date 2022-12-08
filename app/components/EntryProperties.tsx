@@ -18,7 +18,7 @@
 
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
-import { getBgndFileLocationForDirectory } from '@tagspaces/tagspaces-platforms/paths';
+import { getBgndFileLocationForDirectory } from '@tagspaces/tagspaces-common/paths';
 import L from 'leaflet';
 import { Theme } from '@mui/material/styles';
 import withStyles from '@mui/styles/withStyles';
@@ -48,15 +48,15 @@ import {
   withLeaflet
 } from 'react-leaflet';
 import { ButtonGroup, IconButton } from '@mui/material';
-import { formatFileSize } from '@tagspaces/tagspaces-platforms/misc';
+import { formatFileSize } from '@tagspaces/tagspaces-common/misc';
 import {
   extractContainingDirectoryPath,
   getThumbFileLocationForFile,
   getThumbFileLocationForDirectory,
   extractFileName,
   extractDirectoryName
-} from '@tagspaces/tagspaces-platforms/paths';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+} from '@tagspaces/tagspaces-common/paths';
+import AppConfig from '-/AppConfig';
 import TagDropContainer from './TagDropContainer';
 import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
 import i18n from '../services/i18n';
@@ -73,10 +73,7 @@ import { Pro } from '../pro';
 import PlatformIO from '../services/platform-facade';
 import TagsSelect from './TagsSelect';
 import TransparentBackground from './TransparentBackground';
-import {
-  replaceThumbnailURLPromise,
-  getThumbnailURLPromise
-} from '-/services/thumbsgenerator';
+import { getThumbnailURLPromise } from '-/services/thumbsgenerator';
 import {
   getLastBackgroundImageChange,
   getLastThumbnailImageChange,
@@ -392,7 +389,7 @@ function EntryProperties(props: Props) {
 
   const setThumb = (filePath, thumbFilePath) => {
     if (filePath !== undefined) {
-      props.switchLocationType(props.openedEntry.locationId).then(() => {
+      return props.switchLocationType(props.openedEntry.locationId).then(() => {
         if (
           PlatformIO.haveObjectStoreSupport() ||
           PlatformIO.haveWebDavSupport()
@@ -401,35 +398,36 @@ function EntryProperties(props: Props) {
           props.updateThumbnailUrl(currentEntry.path, thumbUrl);
           return true;
         }
-        return replaceThumbnailURLPromise(filePath, thumbFilePath)
-          .then(objUrl => {
-            props.updateThumbnailUrl(
-              currentEntry.path,
-              objUrl.tmbPath +
-                (props.lastThumbnailImageChange
+        /*return replaceThumbnailURLPromise(filePath, thumbFilePath)
+          .then(objUrl => {*/
+        props.updateThumbnailUrl(
+          currentEntry.path,
+          thumbFilePath
+          // objUrl.tmbPath
+          /*(props.lastThumbnailImageChange
                   ? '?' + props.lastThumbnailImageChange
-                  : '')
-            );
-            props.switchCurrentLocationType();
-            return true;
-          })
+                  : '')*/
+        );
+        return props.switchCurrentLocationType();
+        /*})
           .catch(err => {
             props.switchCurrentLocationType();
             console.warn('Error replaceThumbnailURLPromise ' + err);
             props.showNotification('Error replacing thumbnail');
-          });
+          });*/
       });
+    } else {
+      // reset Thumbnail
+      return getThumbnailURLPromise(currentEntry.path)
+        .then(objUrl => {
+          props.updateThumbnailUrl(currentEntry.path, objUrl.tmbPath);
+          return true;
+        })
+        .catch(err => {
+          console.warn('Error getThumbnailURLPromise ' + err);
+          props.showNotification('Error reset Thumbnail');
+        });
     }
-    // reset Thumbnail
-    return getThumbnailURLPromise(currentEntry.path)
-      .then(objUrl => {
-        props.updateThumbnailUrl(currentEntry.path, objUrl.tmbPath);
-        return true;
-      })
-      .catch(err => {
-        console.warn('Error getThumbnailURLPromise ' + err);
-        props.showNotification('Error reset Thumbnail');
-      });
   };
 
   const toggleBackgroundColorPicker = () => {
@@ -882,6 +880,7 @@ function EntryProperties(props: Props) {
             description={currentEntry.description}
             setEditDescription={md => (editDescription.current = md)}
             isDarkTheme={theme.palette.mode === 'dark'}
+            currentFolder={directoryPath}
           />
         </Grid>
 
@@ -1383,7 +1382,9 @@ function mapActionCreatorsToProps(dispatch) {
 }
 
 const areEqual = (prevProp: Props, nextProp: Props) =>
-  JSON.stringify(nextProp.openedEntry) === JSON.stringify(prevProp.openedEntry);
+  JSON.stringify(nextProp.openedEntry) ===
+    JSON.stringify(prevProp.openedEntry) &&
+  nextProp.lastThumbnailImageChange === prevProp.lastThumbnailImageChange;
 
 export default withLeaflet(
   connect(

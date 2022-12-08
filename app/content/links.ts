@@ -45,6 +45,7 @@ const Links = {
     imprintURL: 'https://www.tagspaces.org/about/imprint/' + urlParams,
     privacyURL: 'https://www.tagspaces.org/legal/privacy-app/' + urlParams,
     suggestFeature: 'https://tagspaces.discourse.group/c/feature-requests/6',
+    forumsUrl: 'https://tagspaces.discourse.group',
     reportIssue: 'https://github.com/tagspaces/tagspaces/issues/',
     helpTranslating: 'https://www.transifex.com/tagspaces/tagspaces/',
     webClipperChrome:

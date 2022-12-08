@@ -21,17 +21,16 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Menu from '@mui/material/Menu';
 import { Progress } from 'aws-sdk/clients/s3';
-import { formatDateTime4Tag } from '@tagspaces/tagspaces-platforms/misc';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
+import AppConfig from '-/AppConfig';
 import {
   extractContainingDirectoryPath,
   extractDirectoryName,
   getThumbFileLocationForDirectory,
   normalizePath,
   generateSharingLink
-} from '@tagspaces/tagspaces-platforms/paths';
+} from '@tagspaces/tagspaces-common/paths';
 import { Pro } from '../../pro';
-import CreateDirectoryDialog from '../dialogs/CreateDirectoryDialog';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
 import {
@@ -48,7 +47,7 @@ import FileUploadContainer, {
   FileUploadContainerRef
 } from '-/components/FileUploadContainer';
 import { TS } from '-/tagspaces.namespace';
-import Links from '-/content/links';
+import { getRelativeEntryPath } from '-/services/utils-io';
 import { PerspectiveIDs } from '-/perspectives';
 import PlatformFacade from '-/services/platform-facade';
 import { getDirectoryMenuItems } from '-/perspectives/common/DirectoryMenuItems';
@@ -104,6 +103,7 @@ interface Props {
   openURLExternally?: (url: string, skipConfirmation: boolean) => void;
   currentLocation?: TS.Location;
   locations?: Array<TS.Location>;
+  toggleCreateDirectoryDialog: () => void;
 }
 
 function DirectoryMenu(props: Props) {
@@ -123,17 +123,9 @@ function DirectoryMenu(props: Props) {
       const locationID = entryFromIndex
         ? selectedEntries[0]['locationID']
         : currentLocation.uuid;
-      let relativePath = selectedEntries[0].path;
+      const entryPath = selectedEntries[0].path;
       const tmpLoc = locations.find(location => location.uuid === locationID);
-      const locationPath = tmpLoc.path;
-      if (
-        locationPath &&
-        relativePath &&
-        relativePath.startsWith(locationPath)
-      ) {
-        // remove location path from entry path if possible
-        relativePath = relativePath.substr(locationPath.length);
-      }
+      const relativePath = getRelativeEntryPath(tmpLoc, entryPath);
       const sharingLink = generateSharingLink(
         locationID,
         undefined,
@@ -151,10 +143,10 @@ function DirectoryMenu(props: Props) {
     }
   }
 
-  const [
+  /*  const [
     isCreateDirectoryDialogOpened,
     setIsCreateDirectoryDialogOpened
-  ] = useState(false);
+  ] = useState(false);*/
 
   function reloadDirectory() {
     props.loadDirectoryContent(props.directoryPath, true, true);
@@ -239,9 +231,9 @@ function DirectoryMenu(props: Props) {
     props.openRenameDirectoryDialog();
   }
 
-  function showCreateDirectoryDialog() {
+  /*function showCreateDirectoryDialog() {
     setIsCreateDirectoryDialogOpened(true);
-  }
+  }*/
 
   function createNewFile() {
     props.toggleCreateFileDialog();
@@ -424,7 +416,7 @@ Do you want to continue?`)
     showDeleteDirectoryDialog,
     showInFileManager,
     createNewFile,
-    showCreateDirectoryDialog,
+    props.toggleCreateDirectoryDialog,
     addExistingFile,
     setFolderThumbnail,
     copySharingLink,
@@ -436,14 +428,6 @@ Do you want to continue?`)
 
   return (
     <div style={{ overflowY: 'hidden' }}>
-      {isCreateDirectoryDialogOpened && ( // TODO move dialogs in MainContainer and don't include the Menu HTML always
-        <CreateDirectoryDialog
-          key={'createDir' + props.directoryPath}
-          open={isCreateDirectoryDialogOpened}
-          onClose={() => setIsCreateDirectoryDialogOpened(false)}
-          selectedDirectoryPath={props.directoryPath}
-        />
-      )}
       <Menu
         anchorEl={props.anchorEl}
         open={props.open}
@@ -490,6 +474,7 @@ function mapDispatchToProps(dispatch) {
       toggleUploadDialog: AppActions.toggleUploadDialog,
       toggleProgressDialog: AppActions.toggleProgressDialog,
       toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
+      toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog,
       toggleProTeaser: AppActions.toggleProTeaser,
       resetProgress: AppActions.resetProgress,
       reflectCreateEntries: AppActions.reflectCreateEntries,

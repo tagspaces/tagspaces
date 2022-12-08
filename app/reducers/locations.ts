@@ -19,7 +19,7 @@
 import {
   immutablySwapItems,
   locationType
-} from '@tagspaces/tagspaces-platforms/misc';
+} from '@tagspaces/tagspaces-common/misc';
 import { actions as AppActions } from '-/reducers/app';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
@@ -285,9 +285,7 @@ export const getLocationByPath = (
 ): TS.Location | null =>
   state.locations.find(location => location.path === path);
 export const getDefaultLocationId = (state: any): string | undefined => {
-  let foundLocation = state.locations.find(
-    location => location.isDefault && !location.isReadOnly
-  );
+  let foundLocation = state.locations.find(location => location.isDefault);
   return foundLocation ? foundLocation.uuid : undefined;
 };
 export const getCurrentLocation = (state: any): string | undefined => {

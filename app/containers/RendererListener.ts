@@ -16,7 +16,7 @@
  *
  */
 
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '-/AppConfig';
 
 export default function listen(props) {
   let ipcRenderer;
@@ -59,12 +59,11 @@ export default function listen(props) {
           break;
         }
         case 'go-back': {
-          window.history.back();
-          // console.log('navigate to: ' + window.location.href);
+          props.goBack();
           break;
         }
         case 'go-forward': {
-          window.history.forward();
+          props.goForward();
           break;
         }
         case 'set-zoom-reset-app': {

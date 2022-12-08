@@ -24,7 +24,7 @@ import TextField from '@mui/material/TextField';
 import Switch from '@mui/material/Switch';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import { isStr } from '@tagspaces/tagspaces-platforms/misc';
+import { isStr } from '@tagspaces/tagspaces-common/misc';
 import PlatformIO from '-/services/platform-facade';
 import i18n from '-/services/i18n';
 import {

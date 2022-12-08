@@ -27,12 +27,12 @@ import {
 import {
   enhanceEntry,
   loadJSONString
-} from '@tagspaces/tagspaces-platforms/utils-common';
+} from '@tagspaces/tagspaces-common/utils-io';
 import { saveAs } from 'file-saver';
 import {
   locationType,
   prepareTagForExport
-} from '@tagspaces/tagspaces-platforms/misc';
+} from '@tagspaces/tagspaces-common/misc';
 import {
   extractTagsAsObjects,
   extractFileExtension,
@@ -45,8 +45,8 @@ import {
   getThumbFileLocationForFile,
   getThumbFileLocationForDirectory,
   getBgndFileLocationForDirectory
-} from '@tagspaces/tagspaces-platforms/paths';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+} from '@tagspaces/tagspaces-common/paths';
+import AppConfig from '-/AppConfig';
 import PlatformIO from './platform-facade';
 import i18n from '../services/i18n';
 import versionMeta from '../version.json';
@@ -789,14 +789,15 @@ export function parseNewTags(tagsInput: string, tagGroup: TS.TagGroup) {
 }
 
 export async function loadLocationDataPromise(
-  path: string
+  path: string,
+  metaFile = AppConfig.folderLocationsFile
 ): Promise<TS.FileSystemEntryMeta> {
   const entryProperties = await PlatformIO.getPropertiesPromise(path);
   if (!entryProperties.isFile) {
     const metaFilePath = getMetaFileLocationForDir(
       path,
       PlatformIO.getDirSeparator(),
-      AppConfig.folderLocationsFile
+      metaFile
     );
     let metaData;
     try {
@@ -1176,7 +1177,8 @@ export function loadFileContentPromise(
 export function getDescriptionPreview(mdContent, maxLength = 200) {
   if (!mdContent) return '';
   let preview = mdContent.replace(
-    /\(data:([\w\/\+]+);(charset=[\w-]+|base64).*,([a-zA-Z0-9+/]+={0,2})\)/g,
+    /\[(.*?)\]\(.*?\)/g, // remove link href, also dataurls
+    // /\(data:([\w\/\+]+);(charset=[\w-]+|base64).*,([a-zA-Z0-9+/]+={0,2})\)/g,
     ''
   );
   if (preview.length > maxLength) {
@@ -1379,6 +1381,40 @@ export function setLocationType(location: TS.Location): Promise<boolean> {
   return Promise.resolve(false);
 }
 
-export function getUuid(version = 1): string {
-  return version === 1 ? uuidv1() : uuidv4();
+export function getUuid(version = 4): string {
+  return version === 4 ? uuidv4() : uuidv1();
+}
+
+export function getCleanLocationPath(location: TS.Location): string {
+  let locationPath = PlatformIO.getLocationPath(location);
+  locationPath = cleanTrailingDirSeparator(locationPath);
+  return locationPath;
+}
+
+export function getRelativeEntryPath(
+  location: TS.Location,
+  entryPath: string
+): string {
+  const entryPathCleaned = cleanTrailingDirSeparator(entryPath);
+  // const isCloudLocation = location.type === locationType.TYPE_CLOUD;
+  const currentLocationPath = getCleanLocationPath(location);
+  // let relEntryPath = isCloudLocation
+  //   ? entryPathCleaned
+  //   : entryPathCleaned.replace(currentLocationPath, '');
+  let relEntryPath = entryPathCleaned.replace(currentLocationPath, '');
+  relEntryPath = cleanFrontDirSeparator(relEntryPath);
+  return relEntryPath;
+}
+
+export function cleanFrontDirSeparator(dirPath) {
+  if (dirPath) {
+    if (dirPath.startsWith('\\')) {
+      return dirPath.substring(1);
+    }
+    if (dirPath.startsWith('/')) {
+      return dirPath.substring(1);
+    }
+    return dirPath;
+  }
+  return '';
 }

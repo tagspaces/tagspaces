@@ -20,8 +20,8 @@ import {
   formatDateTime4Tag,
   extend,
   prepareTagGroupForExport
-} from '@tagspaces/tagspaces-platforms/misc';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+} from '@tagspaces/tagspaces-common/misc';
+import AppConfig from '-/AppConfig';
 import { getUuid, parseNewTags, saveAsTextFile } from '-/services/utils-io';
 import versionMeta from '../version.json';
 import defaultTagLibrary from './taglibrary-default';

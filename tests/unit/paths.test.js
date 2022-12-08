@@ -1,11 +1,11 @@
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import AppConfig from '@tagspaces/tagspaces-common/AppConfig';
 
 const {
   baseName,
   extractFileExtension,
   getMetaDirectoryPath,
   getMetaFileLocationForFile
-} = require('@tagspaces/tagspaces-platforms/paths');
+} = require('@tagspaces/tagspaces-common/paths');
 
 const dirSeparatorUnix = '/';
 const dirSeparatorWin = '\\';

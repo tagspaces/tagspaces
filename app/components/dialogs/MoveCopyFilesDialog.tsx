@@ -36,8 +36,8 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Typography from '@mui/material/Typography';
 import Dialog from '@mui/material/Dialog';
 import IconButton from '@mui/material/IconButton';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
-import { extractFileName } from '@tagspaces/tagspaces-platforms/paths';
+import AppConfig from '-/AppConfig';
+import { extractFileName } from '@tagspaces/tagspaces-common/paths';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
 import IOActions from '-/reducers/io-actions';
@@ -127,7 +127,10 @@ function MoveCopyFilesDialog(props: Props) {
           dense
           style={{ width: 550, marginLeft: -15 }}
           subheader={
-            <ListSubheader component="div">
+            <ListSubheader
+              style={{ backgroundColor: 'transparent' }}
+              component="div"
+            >
               {i18n.t('selectedFiles')}
             </ListSubheader>
           }

@@ -32,7 +32,7 @@ import {
   escapeRegExp,
   parseTextQuery,
   removeAllTagsFromSearchQuery
-} from '@tagspaces/tagspaces-platforms/misc';
+} from '@tagspaces/tagspaces-common/misc';
 import { actions as AppActions, getDirectoryPath } from '../reducers/app';
 import {
   actions as LocationIndexActions,
@@ -53,6 +53,7 @@ import { Pro } from '../pro';
 import useFirstRender from '-/utils/useFirstRender';
 import MainSearchField from '-/components/MainSearchField';
 import SavedSearchesMenu from '-/components/menus/SavedSearchesMenu';
+import AppConfig from '-/AppConfig';
 
 // type PropsClasses = Record<keyof StyleProps, string>;
 
@@ -66,7 +67,7 @@ interface Props {
   searchQuery: TS.SearchQuery; // () => any;
   openCurrentDirectory: () => void;
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
-  openLink: (linkURL: string) => void;
+  openLink: (url: string, options?: any) => void;
   currentDirectory: string;
   indexedEntriesCount: number;
   maxSearchResults: number;
@@ -365,8 +366,11 @@ function SearchInline(props: Props) {
 
   const executeSearch = () => {
     let query = textQuery.current;
-    if (query.startsWith('ts:?ts')) {
-      props.openLink(query);
+    if (
+      query.startsWith('ts:?ts') ||
+      query.startsWith(AppConfig.tsProtocol + '?ts')
+    ) {
+      props.openLink(query, { fullWidth: false });
       clearSearch();
       return;
     }

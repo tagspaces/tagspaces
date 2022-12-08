@@ -33,9 +33,8 @@ import Grid from '@mui/material/Grid';
 import withStyles from '@mui/styles/withStyles';
 import Dialog from '@mui/material/Dialog';
 import { Progress } from 'aws-sdk/clients/s3';
-import { formatDateTime4Tag } from '@tagspaces/tagspaces-platforms/misc';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
-import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-platforms/paths';
+import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
+import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
 import { getKeyBindingObject } from '-/reducers/settings';
 import {

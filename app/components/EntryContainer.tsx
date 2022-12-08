@@ -49,10 +49,13 @@ import ShareIcon from '@mui/icons-material/Share';
 import withStyles from '@mui/styles/withStyles';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import Box from '@mui/material/Box';
-import { ParentFolderIcon } from '-/components/CommonIcons';
+import {
+  ParentFolderIcon,
+  NavigateToFolderIcon
+} from '-/components/CommonIcons';
 import { Split } from 'ts-react-splitter';
-import { buffer } from '@tagspaces/tagspaces-platforms/misc';
-import AppConfig from '@tagspaces/tagspaces-platforms/AppConfig';
+import { buffer } from '@tagspaces/tagspaces-common/misc';
+import AppConfig from '-/AppConfig';
 import {
   extractContainingDirectoryPath,
   extractTitle,
@@ -61,7 +64,7 @@ import {
   extractFileName,
   extractDirectoryName,
   generateSharingLink
-} from '@tagspaces/tagspaces-platforms/paths';
+} from '@tagspaces/tagspaces-common/paths';
 import { ProTooltip } from '-/components/HelperComponents';
 import EntryProperties from '-/components/EntryProperties';
 import TagsPreview from '-/components/TagsPreview';
@@ -69,7 +72,7 @@ import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import PlatformIO from '-/services/platform-facade';
 import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
 import i18n from '-/services/i18n';
-// import { buffer } from '@tagspaces/tagspaces-platforms/misc';
+// import { buffer } from '@tagspaces/tagspaces-common/misc';
 import {
   actions as SettingsActions,
   isDesktopMode,
@@ -156,7 +159,7 @@ interface Props {
   openPrevFile: (path: string) => void;
   openNextFile: (path: string) => void;
   openFileNatively: (path: string) => void;
-  openLink: (url: string) => void;
+  openLink: (url: string, options?: any) => void;
   openDirectory: (path: string) => void;
   showNotification: (
     text: string,
@@ -381,14 +384,15 @@ function EntryContainer(props: Props) {
           folderPath
         );
       }
-      if (openedFile.isFile && params.has('tsepath')) {
+      if (params.has('tsepath')) {
         const entryPath = params.get('tsepath');
-        sharingLink = generateSharingLink(locationId, entryPath);
-      } else if (!openedFile.isFile) {
-        const dirPath = params.has('tsepath')
-          ? params.get('tsepath')
-          : openedFile.path;
-        sharingLink = generateSharingLink(locationId, undefined, dirPath);
+        if (openedFile.isFile) {
+          sharingLink = generateSharingLink(locationId, entryPath);
+        } else {
+          sharingLink = generateSharingLink(locationId, undefined, entryPath);
+        }
+      } else {
+        sharingLink = generateSharingLink(locationId);
       }
     }
   }
@@ -416,7 +420,7 @@ function EntryContainer(props: Props) {
         openNextFile();
         break;
       case 'openLinkExternally':
-        openLink(data.link);
+        // openLink(data.link);
         break;
       case 'loadDefaultTextContent':
         if (!openedFile || !openedFile.path) {
@@ -664,10 +668,7 @@ function EntryContainer(props: Props) {
       if (haveBookmark) {
         Pro.bookmarks.delBookmark(openedFile.path);
       } else {
-        Pro.bookmarks.setBookmark(
-          openedFile.path,
-          openedFile.url ? sharingLink : undefined
-        );
+        Pro.bookmarks.setBookmark(openedFile.path, sharingLink);
       }
       forceUpdate();
     } else {
@@ -987,7 +988,7 @@ function EntryContainer(props: Props) {
             onClick={navigateToFolder}
             size="large"
           >
-            <ParentFolderIcon />
+            <NavigateToFolderIcon />
           </IconButton>
         </Tooltip>
         {!AppConfig.isCordova && (
