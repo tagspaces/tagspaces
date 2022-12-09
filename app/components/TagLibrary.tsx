@@ -200,11 +200,11 @@ function TagLibrary(props: Props) {
     tag,
     tagGroup: TS.TagGroup
   ) => {
-    if (!tagGroup.readOnly) {
-      setTagMenuAnchorEl(event.currentTarget);
-      setSelectedTagGroupEntry(tagGroup);
-      setSelectedTag(tag);
-    }
+    // if (!tagGroup.readOnly) { Smart Tags are readonly but needs to have TagMenu
+    setTagMenuAnchorEl(event.currentTarget);
+    setSelectedTagGroupEntry(tagGroup);
+    setSelectedTag(tag);
+    // }
   };
 
   const handleTagLibraryMenu = (event: any) => {

@@ -94,8 +94,7 @@ function TagContainer(props: Props) {
 
   function getActionMenu() {
     if (
-      props.isReadOnlyMode ||
-      (tag.functionality && tag.functionality.length > 0)
+      props.isReadOnlyMode // || (tag.functionality && tag.functionality.length > 0)
     ) {
       return <div style={{ width: 10 }} />;
     }
