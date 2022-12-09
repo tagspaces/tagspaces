@@ -188,9 +188,10 @@ function TagLibrary(props: Props) {
     (
       event: React.ChangeEvent<HTMLInputElement>,
       tag,
-      tagGroup: TS.TagGroup
+      tagGroup: TS.TagGroup,
+      selectedEntries: Array<TS.FileSystemEntry>
     ) => {
-      handleTagMenu(event, tag, tagGroup);
+      handleTagMenu(event, tag, tagGroup, selectedEntries);
     },
     []
   );
@@ -198,13 +199,16 @@ function TagLibrary(props: Props) {
   const handleTagMenu = (
     event: React.ChangeEvent<HTMLInputElement>,
     tag,
-    tagGroup: TS.TagGroup
+    tagGroup: TS.TagGroup,
+    selectedEntries: Array<TS.FileSystemEntry>
   ) => {
     // if (!tagGroup.readOnly) { Smart Tags are readonly but needs to have TagMenu
-    setTagMenuAnchorEl(event.currentTarget);
-    setSelectedTagGroupEntry(tagGroup);
-    setSelectedTag(tag);
-    // }
+    const isSmartTag = tag.functionality && tag.functionality.length > 0;
+    if (!isSmartTag || (selectedEntries && selectedEntries.length > 0)) {
+      setTagMenuAnchorEl(event.currentTarget);
+      setSelectedTagGroupEntry(tagGroup);
+      setSelectedTag(tag);
+    }
   };
 
   const handleTagLibraryMenu = (event: any) => {

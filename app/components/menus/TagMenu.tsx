@@ -96,18 +96,24 @@ function TagMenu(props: Props) {
     onClose();
   }
 
+  const isSmartTag =
+    selectedTag.functionality && selectedTag.functionality.length > 0;
+
   return (
     <div style={{ overflowY: 'hidden' }}>
       <Menu anchorEl={anchorEl} open={open} onClose={onClose}>
-        <MenuItem
-          data-tid="showFilesWithThisTag"
-          onClick={showFilesWithThisTag}
-        >
-          <ListItemIcon>
-            <ShowEntriesWithTagIcon />
-          </ListItemIcon>
-          <ListItemText primary={i18n.t('core:showFilesWithThisTag')} />
-        </MenuItem>
+        {!isSmartTag && (
+          <MenuItem
+            data-tid="showFilesWithThisTag"
+            onClick={showFilesWithThisTag}
+          >
+            <ListItemIcon>
+              <ShowEntriesWithTagIcon />
+            </ListItemIcon>
+            <ListItemText primary={i18n.t('core:showFilesWithThisTag')} />
+          </MenuItem>
+        )}
+
         {selectedEntries && selectedEntries.length > 0 && !isReadOnlyMode && (
           <MenuItem data-tid="applyTagTID" onClick={applyTag}>
             <ListItemIcon>
@@ -116,7 +122,7 @@ function TagMenu(props: Props) {
             <ListItemText primary={i18n.t('core:applyTag')} />
           </MenuItem>
         )}
-        {!isTagLibraryReadOnly && (
+        {!isSmartTag && !isTagLibraryReadOnly && (
           <MenuItem data-tid="editTagDialog" onClick={showEditTagMenuDialog}>
             <ListItemIcon>
               <Edit />
@@ -124,7 +130,7 @@ function TagMenu(props: Props) {
             <ListItemText primary={i18n.t('core:editTag')} />
           </MenuItem>
         )}
-        {!isTagLibraryReadOnly && (
+        {!isSmartTag && !isTagLibraryReadOnly && (
           <MenuItem data-tid="deleteTagDialog" onClick={openDeleteTagDialog}>
             <ListItemIcon>
               <DeleteIcon />
