@@ -21,8 +21,7 @@ import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import {
   loadIndex,
-  enhanceDirectoryIndex,
-  getMetaIndexFilePath
+  enhanceDirectoryIndex
 } from '@tagspaces/tagspaces-platforms/indexer';
 import {
   enhanceEntry,
@@ -62,10 +61,8 @@ import {
   supportedMisc,
   generateImageThumbnail
 } from '-/services/thumbsgenerator';
-import { defaultSettings } from '-/perspectives/grid-perspective';
 import { base64ToArrayBuffer } from '-/utils/dom';
-import { Simulate } from 'react-dom/test-utils';
-import error = Simulate.error;
+import { Pro } from '-/pro';
 
 const supportedImgsWS = [
   'jpg',
@@ -526,6 +523,9 @@ export function createDirectoryIndex(
   enableWS = true
   // disableIndexing = true,
 ): Promise<Array<TS.FileSystemEntry>> {
+  if (Pro && Pro.Watcher) {
+    Pro.Watcher.stopWatching();
+  }
   let directoryPath;
   let locationID;
   if (typeof param === 'object' && param !== null) {

@@ -1805,16 +1805,25 @@ export const actions = {
           )
         );
       }
-      if (Pro && Pro.Watcher && location.watchForChanges) {
-        const perspective = getCurrentDirectoryPerspective(getState());
-        const depth = perspective === PerspectiveIDs.KANBAN ? 3 : 1;
-        Pro.Watcher.watchFolder(
-          PlatformIO.getLocationPath(location),
-          dispatch,
-          actions,
-          depth
-        );
-      }
+      dispatch(actions.watchForChanges(location));
+    }
+  },
+  watchForChanges: (location?: TS.Location) => (
+    dispatch: (action) => void,
+    getState: () => any
+  ) => {
+    if (location === undefined) {
+      location = getLocation(getState(), getState().app.currentLocationId);
+    }
+    if (Pro && Pro.Watcher && location.watchForChanges) {
+      const perspective = getCurrentDirectoryPerspective(getState());
+      const depth = perspective === PerspectiveIDs.KANBAN ? 3 : 1;
+      Pro.Watcher.watchFolder(
+        PlatformIO.getLocationPath(location),
+        dispatch,
+        actions,
+        depth
+      );
     }
   },
   closeLocation: (locationId: string) => (

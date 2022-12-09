@@ -59,6 +59,7 @@ import AppConfig from '-/AppConfig';
 
 interface Props {
   style?: any;
+  watchForChanges: () => void;
   searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
   createLocationsIndexes: () => void;
   searchAllLocations: (searchQuery: TS.SearchQuery) => void;
@@ -288,6 +289,7 @@ function SearchInline(props: Props) {
     forceIndexing.current = false;
     fileSize.current = '';
     props.setSearchQuery({});
+    props.watchForChanges();
     // props.openCurrentDirectory();
   };
 
@@ -561,7 +563,8 @@ function mapDispatchToProps(dispatch) {
       // loadDirectoryContent: AppActions.loadDirectoryContent,
       openLink: AppActions.openLink,
       openURLExternally: AppActions.openURLExternally,
-      openCurrentDirectory: AppActions.openCurrentDirectory
+      openCurrentDirectory: AppActions.openCurrentDirectory,
+      watchForChanges: AppActions.watchForChanges
     },
     dispatch
   );
