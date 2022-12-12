@@ -41,7 +41,8 @@ interface Props {
   handleTagMenu?: (
     event: Object,
     tag: TS.Tag,
-    tagGroup: TS.TagGroup | string
+    tagGroup: TS.TagGroup | string,
+    haveSelectedEntries: boolean
   ) => void; // TODO refactor
   handleRemoveTag?: (event: Object, tags: Array<TS.Tag>) => void;
   isDragging?: boolean;
@@ -94,8 +95,7 @@ function TagContainer(props: Props) {
 
   function getActionMenu() {
     if (
-      props.isReadOnlyMode ||
-      (tag.functionality && tag.functionality.length > 0)
+      props.isReadOnlyMode // || (tag.functionality && tag.functionality.length > 0)
     ) {
       return <div style={{ width: 10 }} />;
     }
@@ -177,17 +177,32 @@ function TagContainer(props: Props) {
           //   selectedEntries.map(entry => selectedEntryPaths.push(entry.path));
           //   removeTags(selectedEntryPaths, [tag]);
         } else if (handleTagMenu) {
-          handleTagMenu(event, tag, entryPath || tagGroup);
+          handleTagMenu(
+            event,
+            tag,
+            entryPath || tagGroup,
+            selectedEntries && selectedEntries.length > 0
+          );
         }
       }}
       onContextMenu={event => {
         if (handleTagMenu) {
-          handleTagMenu(event, tag, entryPath || tagGroup);
+          handleTagMenu(
+            event,
+            tag,
+            entryPath || tagGroup,
+            selectedEntries && selectedEntries.length > 0
+          );
         }
       }}
       onDoubleClick={event => {
         if (handleTagMenu) {
-          handleTagMenu(event, tag, entryPath || tagGroup);
+          handleTagMenu(
+            event,
+            tag,
+            entryPath || tagGroup,
+            selectedEntries && selectedEntries.length > 0
+          );
         }
       }}
       style={{

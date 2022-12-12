@@ -187,7 +187,12 @@ interface Props {
   tag: TS.Tag;
   index: number;
   tagGroup?: TS.TagGroup;
-  handleTagMenu: (event: Object, tag: TS.Tag, param: any) => void;
+  handleTagMenu: (
+    event: Object,
+    tag: TS.Tag,
+    param: any,
+    haveSelectedEntries: boolean
+  ) => void;
   handleRemoveTag?: (event: Object, tag: TS.Tag) => void;
   isDragging?: boolean;
   tagMode?: 'default' | 'display' | 'remove';
