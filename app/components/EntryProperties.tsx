@@ -173,7 +173,7 @@ interface Props {
   sharingLink: string;
   tileServer: TS.MapTileServer;
   lastBackgroundImageChange: number;
-  lastThumbnailImageChange: number;
+  lastThumbnailImageChange: any;
 }
 
 const defaultBackgrounds = [
@@ -576,8 +576,9 @@ function EntryProperties(props: Props) {
     if (thumbPath !== undefined) {
       url =
         normalizeUrl(thumbPath) +
-        (props.lastThumbnailImageChange
-          ? '?' + props.lastThumbnailImageChange
+        (props.lastThumbnailImageChange &&
+        props.lastThumbnailImageChange.thumbPath === thumbPath
+          ? '?' + props.lastThumbnailImageChange.dt
           : '');
     }
     if (bgndPath !== undefined) {
@@ -1384,7 +1385,8 @@ function mapActionCreatorsToProps(dispatch) {
 const areEqual = (prevProp: Props, nextProp: Props) =>
   JSON.stringify(nextProp.openedEntry) ===
     JSON.stringify(prevProp.openedEntry) &&
-  nextProp.lastThumbnailImageChange === prevProp.lastThumbnailImageChange;
+  JSON.stringify(nextProp.lastThumbnailImageChange) ===
+    JSON.stringify(prevProp.lastThumbnailImageChange);
 
 export default withLeaflet(
   connect(

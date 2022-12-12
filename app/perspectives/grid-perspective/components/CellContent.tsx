@@ -80,7 +80,7 @@ interface Props {
   handleGridCellClick: (event: Object, fsEntry: TS.FileSystemEntry) => void;
   editTagForEntry?: (path: string, tag: TS.Tag) => void;
   reorderTags: boolean;
-  lastThumbnailImageChange: number;
+  lastThumbnailImageChange: any;
 }
 
 function CellContent(props: Props) {
@@ -182,10 +182,12 @@ function CellContent(props: Props) {
               src={
                 fsEntry.thumbPath +
                 (props.lastThumbnailImageChange &&
+                props.lastThumbnailImageChange.thumbPath ===
+                  fsEntry.thumbPath &&
                 !PlatformIO.haveObjectStoreSupport() &&
                 !PlatformIO.haveWebDavSupport()
                   ? urlGetDelim(fsEntry.thumbPath) +
-                    props.lastThumbnailImageChange
+                    props.lastThumbnailImageChange.dt
                   : '')
               }
               // @ts-ignore
@@ -410,10 +412,12 @@ function CellContent(props: Props) {
               src={
                 fsEntry.thumbPath +
                 (props.lastThumbnailImageChange &&
+                props.lastThumbnailImageChange.thumbPath ===
+                  fsEntry.thumbPath &&
                 !PlatformIO.haveObjectStoreSupport() &&
                 !PlatformIO.haveWebDavSupport()
                   ? urlGetDelim(fsEntry.thumbPath) +
-                    props.lastThumbnailImageChange
+                    props.lastThumbnailImageChange.dt
                   : '')
               }
               // @ts-ignore

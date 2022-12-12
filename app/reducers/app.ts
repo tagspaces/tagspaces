@@ -262,7 +262,10 @@ export default (state: any = initialState, action: any) => {
     case types.LAST_THUMBNAIL_IMAGE_CHANGE: {
       return {
         ...state,
-        lastThumbnailImageChange: action.lastThumbnailImageChange
+        lastThumbnailImageChange: {
+          thumbPath: action.thumbPath,
+          dt: action.lastThumbnailImageChange
+        }
       };
     }
     case types.LOGIN_SUCCESS: {
@@ -909,9 +912,14 @@ export const actions = {
     type: types.LAST_BACKGROUND_IMAGE_CHANGE,
     lastBackgroundImageChange
   }),
-  setLastThumbnailImageChange: lastThumbnailImageChange => ({
+  /**
+   * @param thumbPath
+   * @param lastThumbnailImageChange - timestamp set -1 if thumbnail image deleted
+   */
+  setLastThumbnailImageChange: (thumbPath, lastThumbnailImageChange?) => ({
     type: types.LAST_THUMBNAIL_IMAGE_CHANGE,
-    lastThumbnailImageChange
+    thumbPath,
+    lastThumbnailImageChange: lastThumbnailImageChange || new Date().getTime()
   }),
   loggedIn: user => ({ type: types.LOGIN_SUCCESS, user }),
   initApp: () => (dispatch: (action) => void, getState: () => any) => {
