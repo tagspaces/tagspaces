@@ -107,7 +107,7 @@ interface Props {
   selectedEntries; // cache only
   // setMetaForCurrentDir: (metaFiles: Array<any>) => void;
   lastBackgroundImageChange: number;
-  lastThumbnailImageChange: number;
+  lastThumbnailImageChange: any;
   setSelectedEntries: (selectedEntries: Array<TS.FileSystemEntry>) => void;
   singleClickAction: string;
   currentLocation: TS.Location;
@@ -714,7 +714,8 @@ function mapActionCreatorsToProps(dispatch) {
 const areEqual = (prevProp: Props, nextProp: Props) =>
   nextProp.theme === prevProp.theme &&
   nextProp.lastBackgroundImageChange === prevProp.lastBackgroundImageChange &&
-  nextProp.lastThumbnailImageChange === prevProp.lastThumbnailImageChange &&
+  JSON.stringify(nextProp.lastThumbnailImageChange) ===
+    JSON.stringify(prevProp.lastThumbnailImageChange) &&
   nextProp.currentDirectoryPath === prevProp.currentDirectoryPath &&
   nextProp.isMetaLoaded === prevProp.isMetaLoaded &&
   nextProp.showDirectories === prevProp.showDirectories &&

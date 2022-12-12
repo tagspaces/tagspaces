@@ -1323,7 +1323,7 @@ function mergeTags(oldTagsArray: Array<TS.Tag>, newTagsArray: Array<TS.Tag>) {
 
 export function getFolderThumbPath(
   path: string,
-  lastThumbnailImageChange: number
+  lastThumbnailImageChange: any
 ) {
   return getThumbPath(
     getThumbFileLocationForDirectory(path, PlatformIO.getDirSeparator()),
@@ -1331,10 +1331,7 @@ export function getFolderThumbPath(
   );
 }
 
-export function getThumbPath(
-  thumbPath: string,
-  lastThumbnailImageChange: number
-) {
+export function getThumbPath(thumbPath: string, lastThumbnailImageChange: any) {
   if (!thumbPath) {
     return undefined;
   }
@@ -1346,7 +1343,10 @@ export function getThumbPath(
   }
   return (
     normalizeUrl(thumbPath) +
-    (lastThumbnailImageChange ? '?' + lastThumbnailImageChange : '')
+    (lastThumbnailImageChange &&
+    lastThumbnailImageChange.thumbPath === thumbPath
+      ? '?' + lastThumbnailImageChange.dt
+      : '')
   );
 }
 
