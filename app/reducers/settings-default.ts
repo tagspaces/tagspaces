@@ -19,6 +19,7 @@
 import AppConfig from '-/AppConfig';
 import keyBindings from '-/reducers/keybindings-default';
 import { PerspectiveIDs } from '-/perspectives';
+import { getUuid } from '-/services/utils-io';
 
 let desktopMode = !AppConfig.isMobile;
 if (window.ExtDisplayMode && window.ExtDisplayMode === 'mobile') {
@@ -671,14 +672,14 @@ export default {
   ],
   mapTileServers: [
     {
-      uuid: '1b25af5e-dd15-4415-83cb-7eb53d15e336',
+      uuid: getUuid(),
       name: 'Standard',
       serverURL: 'https://{s}.tile.osm.org/{z}/{x}/{y}.png',
       serverInfo:
         '<b>Leaflet</b> | Map data: &copy; <b>https://openstreetmap.org/copyright</b> contributors, <b>CC-BY-SA</b>, Imagery © <b>Mapbox</b>'
     },
     {
-      uuid: '5b4be90f-3c7b-4157-8ee3-2c7a3e7cf827',
+      uuid: getUuid(),
       name: 'Topographic',
       serverURL: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
       serverInfo:

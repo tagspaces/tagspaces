@@ -718,5 +718,7 @@
   "fromDate": "From Date",
   "fromTime": "From Time",
   "finish": "Finish",
+  "showSubFolderDetails": "Show Column Details",
+  "showHideSubFolderDescription": "Show Entry Description",
   "-": "-"
 }

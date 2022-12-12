@@ -21,42 +21,31 @@ import { getUuid } from '-/services/utils-io';
 export default [
   {
     title: 'ToDo Workflow',
-    uuid: '50567824-16ba-4fda-a128-3865df97472f',
+    uuid: getUuid(),
     color: '#008000',
     textcolor: '#ffffff',
     children: [
       {
-        id: getUuid(),
         title: 'done',
-        type: 'plain',
         color: '#008000',
-        textcolor: '#ffffff',
-        keyBinding: ''
+        textcolor: '#ffffff'
       },
       {
-        id: getUuid(),
         title: 'next',
-        type: 'plain',
         color: '#008000',
         textcolor: '#ffffff'
       },
       {
-        id: getUuid(),
         title: 'maybe',
-        type: 'plain',
         color: '#008000',
         textcolor: '#ffffff'
       },
       {
-        id: getUuid(),
         title: 'waiting',
-        type: 'plain',
         color: '#008000',
         textcolor: '#ffffff'
       },
       {
-        id: getUuid(),
-        type: 'plain',
         title: 'todo',
         color: '#008000',
         textcolor: '#ffffff'
@@ -65,27 +54,21 @@ export default [
   },
   {
     title: 'Common Tags',
-    uuid: '17882854-44a7-4b2d-a2b1-b022846ac41d',
+    uuid: getUuid(),
     color: '#008000',
     textcolor: '#ffffff',
     children: [
       {
-        id: getUuid(),
-        type: 'plain',
         title: 'book',
         color: '#008000',
         textcolor: '#ffffff'
       },
       {
-        id: getUuid(),
-        type: 'plain',
         title: 'paper',
         color: '#008000',
         textcolor: '#ffffff'
       },
       {
-        id: getUuid(),
-        type: 'plain',
         title: 'article',
         color: '#008000',
         textcolor: '#ffffff'
@@ -94,27 +77,21 @@ export default [
   },
   {
     title: 'Priorities',
-    uuid: 'e21711da-ee78-4c83-bae3-e0007fe426a3',
+    uuid: getUuid(),
     color: '#008000',
     textcolor: '#ffffff',
     children: [
       {
-        id: getUuid(),
-        type: 'plain',
         title: 'high',
         color: '#ff7537',
         textcolor: '#ffffff'
       },
       {
-        id: getUuid(),
-        type: 'plain',
         title: 'medium',
         color: '#ffad46',
         textcolor: '#ffffff'
       },
       {
-        id: getUuid(),
-        type: 'plain',
         title: 'low',
         color: '#7bd148',
         textcolor: '#ffffff'
@@ -123,41 +100,31 @@ export default [
   },
   {
     title: 'Ratings',
-    uuid: '5cf5173d-738c-4413-9386-3f4411aa7b64',
+    uuid: getUuid(),
     color: '#ffcc24',
     textcolor: '#ffffff',
     children: [
       {
-        id: getUuid(),
-        type: 'plain',
         title: '1star',
         color: '#ffcc24',
         textcolor: '#ffffff'
       },
       {
-        id: getUuid(),
-        type: 'plain',
         title: '2star',
         color: '#ffcc24',
         textcolor: '#ffffff'
       },
       {
-        id: getUuid(),
-        type: 'plain',
         title: '3star',
         color: '#ffcc24',
         textcolor: '#ffffff'
       },
       {
-        id: getUuid(),
-        type: 'plain',
         title: '4star',
         color: '#ffcc24',
         textcolor: '#ffffff'
       },
       {
-        id: getUuid(),
-        type: 'plain',
         title: '5star',
         color: '#ffcc24',
         textcolor: '#ffffff'
