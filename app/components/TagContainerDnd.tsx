@@ -191,7 +191,7 @@ interface Props {
     event: Object,
     tag: TS.Tag,
     param: any,
-    selectedEntries: Array<TS.FileSystemEntry>
+    haveSelectedEntries: boolean
   ) => void;
   handleRemoveTag?: (event: Object, tag: TS.Tag) => void;
   isDragging?: boolean;

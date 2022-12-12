@@ -42,7 +42,7 @@ interface Props {
     event: Object,
     tag: TS.Tag,
     tagGroup: TS.TagGroup | string,
-    selectedEntries: Array<TS.FileSystemEntry>
+    haveSelectedEntries: boolean
   ) => void; // TODO refactor
   handleRemoveTag?: (event: Object, tags: Array<TS.Tag>) => void;
   isDragging?: boolean;
@@ -177,17 +177,32 @@ function TagContainer(props: Props) {
           //   selectedEntries.map(entry => selectedEntryPaths.push(entry.path));
           //   removeTags(selectedEntryPaths, [tag]);
         } else if (handleTagMenu) {
-          handleTagMenu(event, tag, entryPath || tagGroup, selectedEntries);
+          handleTagMenu(
+            event,
+            tag,
+            entryPath || tagGroup,
+            selectedEntries && selectedEntries.length > 0
+          );
         }
       }}
       onContextMenu={event => {
         if (handleTagMenu) {
-          handleTagMenu(event, tag, entryPath || tagGroup, selectedEntries);
+          handleTagMenu(
+            event,
+            tag,
+            entryPath || tagGroup,
+            selectedEntries && selectedEntries.length > 0
+          );
         }
       }}
       onDoubleClick={event => {
         if (handleTagMenu) {
-          handleTagMenu(event, tag, entryPath || tagGroup, selectedEntries);
+          handleTagMenu(
+            event,
+            tag,
+            entryPath || tagGroup,
+            selectedEntries && selectedEntries.length > 0
+          );
         }
       }}
       style={{
