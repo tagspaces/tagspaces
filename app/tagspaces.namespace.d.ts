@@ -185,7 +185,7 @@ export namespace TS {
     showTags?: boolean;
     showDetails?: boolean;
     showSubFolderDetails?:  boolean; // KanBan
-    showSubFolderDescription?: boolean; // KanBan
+    showEntriesDescription?: boolean;
     showDescription?: boolean;
     showFolderContent?: boolean; // KanBan
     // pageLimit?: number; // KanBan
