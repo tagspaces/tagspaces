@@ -403,6 +403,7 @@
   "tagDelimiterUnderscore": "underscore (_)",
   "tagDelimiterComma": "comma (,)",
   "maxSearchResultChoose": "Max Search Results",
+  "searchResults": "Search Results",
   "releaseToDrop": "Drop files to import them...",
   "releaseToMoveDrop": "Move files here...",
   "loading": "Loading...",

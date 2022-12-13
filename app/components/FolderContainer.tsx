@@ -50,7 +50,8 @@ import {
   OpenedEntry,
   getSelectedEntries,
   getProgress,
-  getEditedEntryPaths
+  getEditedEntryPaths,
+  getSearchResultsCount
 } from '../reducers/app';
 import TaggingActions from '../reducers/tagging-actions';
 import LoadingLazy from '../components/LoadingLazy';
@@ -217,6 +218,7 @@ interface Props {
   editedEntryPaths: Array<TS.EditedEntryPath>;
   goBack: () => void;
   goForward: () => void;
+  searchResultsCount: number;
 }
 
 function FolderContainer(props: Props) {
@@ -335,6 +337,7 @@ function FolderContainer(props: Props) {
       return (
         <ListPerspectiveAsync
           directoryContent={props.directoryContent}
+          searchResultsCount={props.searchResultsCount}
           loadDirectoryContent={loadDirectoryContent}
           openFsEntry={openFsEntry}
           openRenameEntryDialog={() => setIsRenameEntryDialogOpened(true)}
@@ -377,6 +380,7 @@ function FolderContainer(props: Props) {
       return (
         <KanBanPerspectiveAsync
           directoryContent={props.directoryContent}
+          searchResultsCount={props.searchResultsCount}
           loadDirectoryContent={props.loadDirectoryContent}
           openFsEntry={props.openFsEntry}
           openRenameEntryDialog={() => setIsRenameEntryDialogOpened(true)}
@@ -398,6 +402,7 @@ function FolderContainer(props: Props) {
     return (
       <GridPerspectiveAsync
         directoryContent={props.directoryContent}
+        searchResultsCount={props.searchResultsCount}
         loadDirectoryContent={props.loadDirectoryContent}
         openFsEntry={props.openFsEntry}
         openRenameEntryDialog={() => setIsRenameEntryDialogOpened(true)}
@@ -713,7 +718,8 @@ function mapStateToProps(state) {
     searchQuery: getSearchQuery(state),
     // keyBindings: getKeyBindingObject(state),
     defaultPerspective: getDefaultPerspective(state),
-    editedEntryPaths: getEditedEntryPaths(state)
+    editedEntryPaths: getEditedEntryPaths(state),
+    searchResultsCount: getSearchResultsCount(state)
   };
 }
 
@@ -768,7 +774,8 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   nextProp.windowHeight === prevProp.windowHeight &&
   nextProp.language === prevProp.language &&
   nextProp.windowHeight === prevProp.windowHeight &&
-  nextProp.searchQuery === prevProp.searchQuery;
+  nextProp.searchQuery === prevProp.searchQuery &&
+  nextProp.searchResultsCount === prevProp.searchResultsCount;
 
 export default connect(
   mapStateToProps,

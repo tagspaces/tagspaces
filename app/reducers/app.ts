@@ -70,6 +70,7 @@ import { TS } from '-/tagspaces.namespace';
 import { PerspectiveIDs } from '-/perspectives';
 import versionMeta from '-/version.json';
 import { getProTeaserSlideIndex } from '-/content/ProTeaserSlides';
+import GlobalSearch from '-/services/search-index';
 
 export const types = {
   DEVICE_ONLINE: 'APP/DEVICE_ONLINE',
@@ -237,7 +238,7 @@ export const initialState = {
   locationManagerPanelOpened: showLocations,
   tagLibraryPanelOpened: showTagLibrary,
   searchPanelOpened: showSearch,
-  helpFeedbackPanelOpened: false,
+  searchResultsCount: 0,
   user: window.ExtDemoUser
     ? {
         attributes: window.ExtDemoUser,
@@ -507,25 +508,28 @@ export default (state: any = initialState, action: any) => {
       };
     }
     case types.SET_SEARCH_RESULTS: {
+      GlobalSearch.results = action.searchResults;
       return {
         ...state,
-        currentDirectoryEntries: action.searchResults,
+        // currentDirectoryEntries: action.searchResults,
+        searchResultsCount: action.searchResults.length,
         isLoading: false
       };
     }
     case types.APPEND_SEARCH_RESULTS: {
-      const newDirEntries = [...state.currentDirectoryEntries];
+      // const newDirEntries = [...state.currentDirectoryEntries];
       for (let i = 0; i < action.searchResults.length; i += 1) {
-        const index = newDirEntries.findIndex(
+        const index = GlobalSearch.results.findIndex(
           entry => entry.path === action.searchResults[i].path
         );
         if (index === -1) {
-          newDirEntries.push(action.searchResults[i]);
+          GlobalSearch.results.push(action.searchResults[i]);
         }
       }
       return {
         ...state,
-        currentDirectoryEntries: newDirEntries,
+        searchResultsCount: GlobalSearch.results.length,
+        // currentDirectoryEntries: newDirEntries,
         isLoading: false
       };
     }
@@ -2719,3 +2723,4 @@ export const isTagLibraryPanelOpened = (state: any) =>
 export const isSearchPanelOpened = (state: any) => state.app.searchPanelOpened;
 export const isHelpFeedbackPanelOpened = (state: any) =>
   state.app.helpFeedbackPanelOpened;
+export const getSearchResultsCount = (state: any) => state.app.searchResultsCount;

@@ -72,6 +72,7 @@ import Links from '-/content/links';
 import { defaultSettings } from '../index';
 import { PerspectiveIDs } from '-/perspectives';
 import { fileOperationsEnabled } from '-/perspectives/common/main-container';
+import GlobalSearch from '-/services/search-index';
 
 interface Props {
   classes: any;
@@ -115,6 +116,7 @@ interface Props {
   toggleDeleteMultipleEntriesDialog: () => void;
   directoryMeta: TS.FileSystemEntryMeta;
   setDirectoryMeta: (fsEntryMeta: TS.FileSystemEntryMeta) => void;
+  searchResultsCount: number;
 }
 
 function getSettings(directoryMeta: TS.FileSystemEntryMeta): TS.FolderSettings {
@@ -548,10 +550,14 @@ function GridPerspective(props: Props) {
         .filter(fsEntry => fsEntry.isFile)
         .map(fsentry => fsentry.path)
     : [];
-  const sortedDirectories = sortedDirContentMemoized.filter(
-    entry => !entry.isFile
-  );
-  const sortedFiles = sortedDirContentMemoized.filter(entry => entry.isFile);
+  const sortedDirectories =
+    props.searchResultsCount > 0
+      ? []
+      : sortedDirContentMemoized.filter(entry => !entry.isFile);
+  const sortedFiles =
+    props.searchResultsCount > 0
+      ? GlobalSearch.results
+      : sortedDirContentMemoized.filter(entry => entry.isFile);
   const locationPath = props.currentLocation
     ? PlatformIO.getLocationPath(props.currentLocation)
     : '';
@@ -702,6 +708,7 @@ function GridPerspective(props: Props) {
           singleClickAction={singleClickAction.current}
           currentLocation={props.currentLocation}
           directoryContent={props.directoryContent}
+          searchResultsCount={props.searchResultsCount}
           supportedFileTypes={props.supportedFileTypes}
           openFsEntry={props.openFsEntry}
           openFileNatively={props.openFileNatively}
