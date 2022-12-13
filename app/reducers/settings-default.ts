@@ -299,6 +299,10 @@ export default {
     {
       iso: 'fr_CA',
       title: 'français canadien (Canadian French)'
+    },
+    {
+      iso: 'zh_HK',
+      title: '漢語 (Chinese Hong Kong)'
     }
   ],
   keyBindings: keyBindings(AppConfig.isMacLike),

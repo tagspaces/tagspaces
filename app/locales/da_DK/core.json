@@ -718,5 +718,7 @@
   "fromDate": "From Date",
   "fromTime": "From Time",
   "finish": "Finish",
+  "showSubFolderDetails": "Show column details",
+  "showEntriesDescription": "Show description for files and folders",
   "-": "- "
 }
