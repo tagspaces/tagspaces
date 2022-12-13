@@ -187,9 +187,9 @@ interface Props {
   currentDirectoryPath: string | null;
   isDesktopMode: boolean;
   tileServer: TS.MapTileServer;
-  currentLocationId: string;
-  switchLocationType: (locationId: string) => Promise<boolean>;
-  switchCurrentLocationType: () => Promise<boolean>;
+  // currentLocationId: string;
+  switchLocationType: (locationId: string) => Promise<string | null>;
+  switchCurrentLocationType: (currentLocationId) => Promise<boolean>;
 }
 
 const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
@@ -201,8 +201,6 @@ function EntryContainer(props: Props) {
     theme,
     settings,
     openedFiles,
-    loadDirectoryContent,
-    currentLocationId,
     currentDirectoryPath,
     isDesktopMode,
     toggleEntryFullWidth,
@@ -443,7 +441,7 @@ function EntryContainer(props: Props) {
         // if (!this.state.currentEntry.isFile) {
         //   textFilePath += '/index.html';
         // }
-        props.switchLocationType(openedFile.locationId).then(() => {
+        props.switchLocationType(openedFile.locationId).then((currentLocationId) => {
           PlatformIO.loadTextFilePromise(
             textFilePath,
             data.preview ? data.preview : false
@@ -482,11 +480,11 @@ function EntryContainer(props: Props) {
                   !openedFile.editMode
                 );
               }
-              return props.switchCurrentLocationType();
+              return props.switchCurrentLocationType(currentLocationId);
             })
             .catch(err => {
               console.warn('Error loading text content ' + err);
-              return props.switchCurrentLocationType();
+              return props.switchCurrentLocationType(currentLocationId);
             });
         });
         break;
@@ -558,7 +556,7 @@ function EntryContainer(props: Props) {
   };
 
   const saveFile = (textContent: string) => {
-    props.switchLocationType(openedFile.locationId).then(() => {
+    props.switchLocationType(openedFile.locationId).then((currentLocationId) => {
       PlatformIO.saveTextFilePromise(openedFile.path, textContent, true)
         .then(result => {
           // isChanged = false;
@@ -568,7 +566,7 @@ function EntryContainer(props: Props) {
             // changed: false,
             shouldReload: undefined
           }).then(() => {
-            props.switchCurrentLocationType();
+            props.switchCurrentLocationType(currentLocationId);
           });
           fileChanged.current = false;
           showNotification(
@@ -580,7 +578,7 @@ function EntryContainer(props: Props) {
               historyKeys.fileEditKey,
               openedFile.path,
               openedFile.url,
-              currentLocationId,
+              openedFile.locationId,
               settings[historyKeys.fileEditKey]
             );
           }
@@ -592,19 +590,19 @@ function EntryContainer(props: Props) {
             NotificationTypes.error
           );
           console.log('Error saving file ' + openedFile.path + ' - ' + error);
-          props.switchCurrentLocationType();
+          props.switchCurrentLocationType(currentLocationId);
         });
     });
   };
 
   const editFile = () => {
-    props.switchLocationType(openedFile.locationId).then(() => {
+    props.switchLocationType(openedFile.locationId).then((currentLocationId) => {
       updateOpenedFile(openedFile.path, {
         ...openedFile,
         editMode: true,
         shouldReload: undefined
       }).then(() => {
-        props.switchCurrentLocationType();
+        props.switchCurrentLocationType(currentLocationId);
       });
     });
   };
@@ -1441,7 +1439,7 @@ function mapStateToProps(state) {
     isDesktopMode: isDesktopMode(state),
     tileServer: getMapTileServer(state),
     language: getCurrentLanguage(state),
-    currentLocationId: getCurrentLocationId(state)
+    // currentLocationId: getCurrentLocationId(state)
   };
 }
 
