@@ -1716,30 +1716,40 @@ export const actions = {
       dispatch(actions.setCurrentLocationId(location.uuid));
     }
   },
+  /**
+   * @param location
+   * return Promise<currentLocationId> if location is changed or null if location and type is changed
+   */
   switchLocationType: (location: TS.Location) => (
     dispatch: (action) => void,
     getState: () => any
-  ): Promise<boolean> => {
+  ): Promise<string | null> => {
     const { currentLocationId } = getState().app;
     if (location.uuid !== currentLocationId) {
       const currentLocation: TS.Location = getLocation(
         getState(),
-        getState().app.currentLocationId
+        currentLocationId
       );
       if (location.type !== currentLocation.type) {
-        return setLocationType(location);
+        return setLocationType(location).then(() => null);
+      } else {
+        // handle the same location type but different location
+        // dispatch(actions.setCurrentLocationId(location.uuid));
+        return setLocationType(location).then(() => currentLocationId);
       }
     }
-    return Promise.resolve(false);
+    return Promise.resolve(null);
   },
-  switchCurrentLocationType: () => (
+  switchCurrentLocationType: (currentLocationId?: string) => (
     dispatch: (action) => void,
     getState: () => any
   ): Promise<boolean> => {
+    // dispatch(actions.setCurrentLocationId(location.uuid));
     const location: TS.Location = getLocation(
       getState(),
-      getState().app.currentLocationId
+      currentLocationId || getState().app.currentLocationId
     );
+
     return setLocationType(location);
   },
   openLocationById: (locationId: string) => (
