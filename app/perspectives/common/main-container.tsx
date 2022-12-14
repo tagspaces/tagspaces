@@ -7,6 +7,7 @@ import { locationType } from '@tagspaces/tagspaces-common/misc';
 import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
+import TagDropContainer from '-/components/TagDropContainer';
 
 export const fileOperationsEnabled = selectedEntries => {
   let selectionContainsDirectories = false;
@@ -303,6 +304,20 @@ export const renderCell = (
           isLast
         )}
       </TargetMoveFileBox>
+    </div>
+  );
+};
+
+export const renderCellPlaceholder = () => {
+  return (
+    <div
+      style={{
+        position: 'relative'
+      }}
+    >
+      <TagDropContainer entryPath="">
+        <div></div>
+      </TagDropContainer>
     </div>
   );
 };
