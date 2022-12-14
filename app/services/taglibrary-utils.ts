@@ -234,22 +234,20 @@ export function createTagGroup(
   tagGroups: Array<TS.TagGroup>,
   locations: Array<TS.Location>
 ): Array<TS.TagGroup> {
+  const newEntry = {
+    ...entry,
+    created_date: new Date().getTime(),
+    modified_date: new Date().getTime()
+  };
   if (Pro && entry.locationId) {
     const location: TS.Location = locations.find(
       l => l.uuid === entry.locationId
     );
     if (location) {
-      Pro.MetaOperations.createTagGroup(location.path, entry);
+      Pro.MetaOperations.createTagGroup(location.path, newEntry);
     }
   }
-  return setTagLibrary([
-    ...tagGroups,
-    {
-      ...entry,
-      created_date: new Date().getTime(),
-      modified_date: new Date().getTime()
-    }
-  ]);
+  return setTagLibrary([...tagGroups, newEntry]);
 }
 
 export function editTag(
@@ -265,8 +263,9 @@ export function editTag(
 
   if (indexForEditing > -1) {
     const tagGroup: TS.TagGroup = tagGroups[indexForEditing];
-    const newTagGroup = {
+    const newTagGroup: TS.TagGroup = {
       ...tagGroup,
+      modified_date: new Date().getTime(),
       children: tagGroup.children.map(t => {
         if (t.title === origTitle) {
           return tag;
@@ -360,15 +359,20 @@ export function editTagGroup(
   tagGroups: Array<TS.TagGroup>,
   locations: Array<TS.Location>
 ) {
+  const editedTagGroup = {
+    ...entry,
+    modified_date: new Date().getTime()
+  };
+
   if (Pro && entry.locationId) {
     const location: TS.Location = locations.find(
       l => l.uuid === entry.locationId
     );
     if (location) {
-      Pro.MetaOperations.editTagGroup(location.path, entry);
+      Pro.MetaOperations.editTagGroup(location.path, editedTagGroup);
     }
   }
-  return updateTagGroup(entry, tagGroups);
+  return updateTagGroup(editedTagGroup, tagGroups);
 }
 
 export function deleteTag(
@@ -385,8 +389,9 @@ export function deleteTag(
     tag => tag.title === tagTitle
   );
   if (tagIndexForRemoving >= 0) {
-    const editedTagGroup = {
+    const editedTagGroup: TS.TagGroup = {
       ...tagGroup,
+      modified_date: new Date().getTime(),
       children: [
         ...tagGroup.children.slice(0, tagIndexForRemoving),
         ...tagGroup.children.slice(tagIndexForRemoving + 1)
@@ -550,9 +555,11 @@ function updateTagGroup(
   );
 
   if (indexForEditing >= 0) {
-    const modifiedEntry = extend({ created_date: new Date() }, entry, {
-      modified_date: new Date()
-    });
+    const modifiedEntry = {
+      ...entry,
+      ...(!entry.created_date && { created_date: new Date().getTime() }),
+      ...(!entry.modified_date && { modified_date: new Date().getTime() })
+    };
     return setTagLibrary([
       ...tagGroups.slice(0, indexForEditing),
       modifiedEntry,
