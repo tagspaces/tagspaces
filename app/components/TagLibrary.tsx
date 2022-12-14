@@ -182,7 +182,7 @@ function TagLibrary(props: Props) {
               ...group,
               locationId: location.uuid
             }));
-            setTagGroups(importTagGroups(newGroups, tg, false));
+            setTagGroups(importTagGroups(newGroups, getTagLibrary(), false));
           } else {
             setTagGroups(getTagLibrary());
           }
