@@ -358,6 +358,7 @@ function FolderContainer(props: Props) {
       return (
         <GalleryPerspectiveAsync
           directoryContent={props.directoryContent}
+          searchResultsCount={props.searchResultsCount}
           openFsEntry={openFsEntry}
           currentDirectoryPath={props.currentDirectoryPath}
           windowWidth={props.windowWidth}
@@ -369,6 +370,7 @@ function FolderContainer(props: Props) {
       return (
         <MapiquePerspectiveAsync
           directoryContent={props.directoryContent}
+          searchResultsCount={props.searchResultsCount}
           currentDirectoryPath={props.currentDirectoryPath}
           windowWidth={props.windowWidth}
           switchPerspective={switchPerspective}
