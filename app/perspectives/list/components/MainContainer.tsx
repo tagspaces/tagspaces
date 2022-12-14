@@ -28,7 +28,7 @@ import {
 } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
 import { isVisibleOnScreen } from '-/utils/dom';
-import { actions as TagLibraryActions } from '-/reducers/taglibrary';
+// import { actions as TagLibraryActions } from '-/reducers/taglibrary';
 import {
   getSupportedFileTypes,
   getDesktopMode,
@@ -876,7 +876,7 @@ function mapActionCreatorsToProps(dispatch) {
       toggleDeleteMultipleEntriesDialog:
         AppActions.toggleDeleteMultipleEntriesDialog,
       addTags: TaggingActions.addTags,
-      addTag: TagLibraryActions.addTag
+      addTag: AppActions.addTag
     },
     dispatch
   );

@@ -29,6 +29,7 @@ import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
 
 export const types = {
+  DELETE_ALL: 'DELETE_ALL',
   CREATE_TAGGROUP: 'CREATE_TAGGROUP',
   IMPORT_TAGGROUP: 'IMPORT_TAGGROUP',
   IMPORT_OLD_TAGGROUP: 'IMPORT_OLD_TAGGROUP',
@@ -52,6 +53,9 @@ export const types = {
 
 export default (state: Array<TS.TagGroup> = defaultTagLibrary, action: any) => {
   switch (action.type) {
+    case types.DELETE_ALL: {
+      return [];
+    }
     case types.CREATE_TAGGROUP: {
       return [
         ...state,
@@ -453,6 +457,9 @@ export default (state: Array<TS.TagGroup> = defaultTagLibrary, action: any) => {
 };
 
 export const actions = {
+  deleteAll: () => ({
+    type: types.DELETE_ALL
+  }),
   createTagGroup: (entry: TS.TagGroup) => (
     dispatch: (actions: Object) => void,
     getState: () => any
