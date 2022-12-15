@@ -89,8 +89,7 @@ function TagContainer(props: Props) {
 
   // const tagColors = getTagColors(getAllTags(), title);
   const textColor = tag.textcolor || defaultTextColor; // || tagColors.textcolor
-  const backgroundColor =
-    tag.color || defaultBackgroundColor; // || tagColors.color
+  const backgroundColor = tag.color || defaultBackgroundColor; // || tagColors.color
 
   let tid = 'tagContainer_';
   if (title && title.length > 0) {

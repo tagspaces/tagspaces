@@ -36,7 +36,7 @@ import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { getTagLibrary } from "-/services/taglibrary-utils";
+import { getTagLibrary } from '-/services/taglibrary-utils';
 
 interface Props {
   open: boolean;

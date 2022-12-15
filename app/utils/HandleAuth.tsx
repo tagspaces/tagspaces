@@ -11,7 +11,7 @@ import { actions as LocationActions } from '-/reducers/locations';
 // import { actions as TagGroupActions } from '-/reducers/taglibrary';
 import { actions as AppActions } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
-import { importTagGroups } from "-/services/taglibrary-utils";
+import { importTagGroups } from '-/services/taglibrary-utils';
 
 interface Props {
   loggedIn: (user: CognitoUserInterface) => void;
@@ -124,7 +124,7 @@ function mapDispatchToProps(dispatch) {
     {
       loggedIn: AppActions.loggedIn,
       initApp: AppActions.initApp,
-      addLocations: LocationActions.addLocations,
+      addLocations: LocationActions.addLocations
       // importTagGroups: TagGroupActions.importTagGroups
     },
     dispatch

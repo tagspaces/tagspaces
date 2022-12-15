@@ -1136,7 +1136,7 @@ function EntryContainer(props: Props) {
                 {openedFile.isFile ? (
                   <>
                     {fileChanged.current ? (
-                      <Tooltip title="File changed">
+                      <Tooltip title={i18n.t('core:fileChanged')}>
                         <span
                           style={{
                             color: theme.palette.text.primary,
