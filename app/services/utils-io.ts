@@ -43,7 +43,8 @@ import {
   extractDirectoryName,
   getThumbFileLocationForFile,
   getThumbFileLocationForDirectory,
-  getBgndFileLocationForDirectory
+  getBgndFileLocationForDirectory,
+  cleanFrontDirSeparator
 } from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
 import PlatformIO from './platform-facade';
@@ -1422,17 +1423,4 @@ export function getRelativeEntryPath(
   let relEntryPath = entryPathCleaned.replace(currentLocationPath, '');
   relEntryPath = cleanFrontDirSeparator(relEntryPath);
   return relEntryPath;
-}
-
-export function cleanFrontDirSeparator(dirPath) {
-  if (dirPath) {
-    if (dirPath.startsWith('\\')) {
-      return dirPath.substring(1);
-    }
-    if (dirPath.startsWith('/')) {
-      return dirPath.substring(1);
-    }
-    return dirPath;
-  }
-  return '';
 }
