@@ -75,6 +75,7 @@ import {
   removeTagGroup,
   sortTagGroup
 } from '-/services/taglibrary-utils';
+import useFirstRender from '-/utils/useFirstRender';
 
 interface Props {
   classes?: any;
@@ -162,6 +163,7 @@ function TagLibrary(props: Props) {
   const [isDeleteTagDialogOpened, setIsDeleteTagDialogOpened] = useState<
     boolean
   >(false);
+  const firstRender = useFirstRender();
 
   useEffect(() => {
     if (Pro && props.saveTagInLocation) {
@@ -170,7 +172,9 @@ function TagLibrary(props: Props) {
   }, []);
 
   useEffect(() => {
-    setTagGroups(getTagLibrary());
+    if (!firstRender) {
+      setTagGroups(getTagLibrary());
+    }
   }, [props.isTagLibraryChanged]);
 
   const refreshTagsFromLocation = () => {
@@ -182,10 +186,13 @@ function TagLibrary(props: Props) {
               ...group,
               locationId: location.uuid
             }));
-            setTagGroups(importTagGroups(newGroups, getTagLibrary(), false));
-          } else {
+            const oldGroups = getTagLibrary();
+            if (checkTagGroupModified(location.uuid, newGroups, oldGroups)) {
+              setTagGroups(importTagGroups(newGroups, oldGroups, false));
+            }
+          } /*else {
             setTagGroups(getTagLibrary());
-          }
+          }*/
           return true;
         })
         .catch(err => {
@@ -193,6 +200,23 @@ function TagLibrary(props: Props) {
         })
     );
   };
+
+  function checkTagGroupModified(
+    locationId: string,
+    newGroups: Array<TS.TagGroup>,
+    oldGroups: Array<TS.TagGroup>
+  ) {
+    if (!oldGroups.some(group => group.locationId === locationId)) {
+      return true;
+    }
+    return !oldGroups.some(group =>
+      newGroups.some(
+        newGroup =>
+          newGroup.modified_date === group.modified_date &&
+          newGroup.locationId === group.locationId
+      )
+    );
+  }
 
   const isTagLibraryReadOnly =
     window.ExtTagLibrary && window.ExtTagLibrary.length > 0;
