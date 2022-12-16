@@ -721,5 +721,6 @@
   "finish": "Finish",
   "showSubFolderDetails": "Show column details",
   "showEntriesDescription": "Show description for files and folders",
+  "fileChanged": "File changed",
   "-": "-"
 }

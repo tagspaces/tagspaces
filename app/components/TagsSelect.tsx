@@ -21,12 +21,13 @@ import { useSelector } from 'react-redux';
 import withStyles from '@mui/styles/withStyles';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import { getAllTags } from '-/reducers/taglibrary';
+// import { getAllTags } from '-/reducers/taglibrary';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import EntryTagMenu from '-/components/menus/EntryTagMenu';
 import { TS } from '-/tagspaces.namespace';
 import TagContainer from '-/components/TagContainer';
 import { getUuid } from '-/services/utils-io';
+import { getAllTags } from '-/services/taglibrary-utils';
 
 const styles: any = (theme: any) => ({
   root: {
@@ -72,8 +73,8 @@ interface Props {
   tags: TS.Tag[];
   label?: string;
   tagSearchType?: string;
-  defaultBackgroundColor?: string;
-  defaultTextColor?: string;
+  // defaultBackgroundColor?: string;
+  // defaultTextColor?: string;
   handleChange?: (param1: any, param2: any, param3?: any) => void;
   allTags?: TS.Tag[];
   tagMode?: 'default' | 'display' | 'remove';
@@ -90,8 +91,9 @@ function TagsSelect(props: Props) {
   );
 
   const [selectedTag, setSelectedTag] = useState(undefined);
+  const [allTags, setAllTags] = useState(getAllTags());
 
-  const allTags = useSelector(getAllTags);
+  /*const allTags = useSelector(getAllTags); */
   const defaultBackgroundColor = useSelector(getTagColor);
   const defaultTextColor = useSelector(getTagTextColor);
   const {

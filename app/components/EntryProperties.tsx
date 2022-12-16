@@ -272,29 +272,31 @@ function EntryProperties(props: Props) {
       );
       const nextPath = path + PlatformIO.getDirSeparator() + editName;
 
-      props.switchLocationType(props.openedEntry.locationId).then((currentLocationId) => {
-        if (currentEntry.isFile) {
-          renameFile(currentEntry.path, nextPath)
-            .then(() => {
-              props.switchCurrentLocationType(currentLocationId);
-              return true;
-            })
-            .catch(() => {
-              props.switchCurrentLocationType(currentLocationId);
-              fileNameRef.current.value = entryName;
-            });
-        } else {
-          renameDirectory(currentEntry.path, editName)
-            .then(() => {
-              props.switchCurrentLocationType(currentLocationId);
-              return true;
-            })
-            .catch(() => {
-              props.switchCurrentLocationType(currentLocationId);
-              fileNameRef.current.value = entryName;
-            });
-        }
-      });
+      props
+        .switchLocationType(props.openedEntry.locationId)
+        .then(currentLocationId => {
+          if (currentEntry.isFile) {
+            renameFile(currentEntry.path, nextPath)
+              .then(() => {
+                props.switchCurrentLocationType(currentLocationId);
+                return true;
+              })
+              .catch(() => {
+                props.switchCurrentLocationType(currentLocationId);
+                fileNameRef.current.value = entryName;
+              });
+          } else {
+            renameDirectory(currentEntry.path, editName)
+              .then(() => {
+                props.switchCurrentLocationType(currentLocationId);
+                return true;
+              })
+              .catch(() => {
+                props.switchCurrentLocationType(currentLocationId);
+                fileNameRef.current.value = entryName;
+              });
+          }
+        });
 
       setEditName(undefined);
     }
@@ -330,24 +332,26 @@ function EntryProperties(props: Props) {
       return;
     }
     if (editDescription.current !== undefined) {
-      props.switchLocationType(props.openedEntry.locationId).then((currentLocationId) => {
-        Pro.MetaOperations.saveDescription(
-          currentEntry.path,
-          editDescription.current
-        )
-          .then(entryMeta => {
-            editDescription.current = undefined;
-            props.updateOpenedFile(currentEntry.path, entryMeta);
-            props.switchCurrentLocationType(currentLocationId);
-            return true;
-          })
-          .catch(error => {
-            console.warn('Error saving description ' + error);
-            editDescription.current = undefined;
-            props.switchCurrentLocationType(currentLocationId);
-            props.showNotification(i18n.t('Error saving description'));
-          });
-      });
+      props
+        .switchLocationType(props.openedEntry.locationId)
+        .then(currentLocationId => {
+          Pro.MetaOperations.saveDescription(
+            currentEntry.path,
+            editDescription.current
+          )
+            .then(entryMeta => {
+              editDescription.current = undefined;
+              props.updateOpenedFile(currentEntry.path, entryMeta);
+              props.switchCurrentLocationType(currentLocationId);
+              return true;
+            })
+            .catch(error => {
+              console.warn('Error saving description ' + error);
+              editDescription.current = undefined;
+              props.switchCurrentLocationType(currentLocationId);
+              props.showNotification(i18n.t('Error saving description'));
+            });
+        });
     } else if (currentEntry.description) {
       editDescription.current = currentEntry.description;
     } else {
@@ -389,33 +393,35 @@ function EntryProperties(props: Props) {
 
   const setThumb = (filePath, thumbFilePath) => {
     if (filePath !== undefined) {
-      return props.switchLocationType(props.openedEntry.locationId).then((currentLocationId) => {
-        if (
-          PlatformIO.haveObjectStoreSupport() ||
-          PlatformIO.haveWebDavSupport()
-        ) {
-          const thumbUrl = PlatformIO.getURLforPath(thumbFilePath);
-          props.updateThumbnailUrl(currentEntry.path, thumbUrl);
-          return true;
-        }
-        /*return replaceThumbnailURLPromise(filePath, thumbFilePath)
+      return props
+        .switchLocationType(props.openedEntry.locationId)
+        .then(currentLocationId => {
+          if (
+            PlatformIO.haveObjectStoreSupport() ||
+            PlatformIO.haveWebDavSupport()
+          ) {
+            const thumbUrl = PlatformIO.getURLforPath(thumbFilePath);
+            props.updateThumbnailUrl(currentEntry.path, thumbUrl);
+            return true;
+          }
+          /*return replaceThumbnailURLPromise(filePath, thumbFilePath)
           .then(objUrl => {*/
-        props.updateThumbnailUrl(
-          currentEntry.path,
-          thumbFilePath
-          // objUrl.tmbPath
-          /*(props.lastThumbnailImageChange
+          props.updateThumbnailUrl(
+            currentEntry.path,
+            thumbFilePath
+            // objUrl.tmbPath
+            /*(props.lastThumbnailImageChange
                   ? '?' + props.lastThumbnailImageChange
                   : '')*/
-        );
-        return props.switchCurrentLocationType(currentLocationId);
-        /*})
+          );
+          return props.switchCurrentLocationType(currentLocationId);
+          /*})
           .catch(err => {
             props.switchCurrentLocationType();
             console.warn('Error replaceThumbnailURLPromise ' + err);
             props.showNotification('Error replacing thumbnail');
           });*/
-      });
+        });
     } else {
       // reset Thumbnail
       return getThumbnailURLPromise(currentEntry.path)
@@ -450,23 +456,25 @@ function EntryProperties(props: Props) {
       // eslint-disable-next-line no-param-reassign
       color = 'transparent';
     }
-    props.switchLocationType(props.openedEntry.locationId).then((currentLocationId) => {
-      Pro.MetaOperations.saveColor(currentEntry.path, color)
-        .then(entryMeta => {
-          // if (props.entryPath === props.currentDirectoryPath) {
-          props.updateOpenedFile(currentEntry.path, entryMeta);
-          props.switchCurrentLocationType(currentLocationId);
-          /* } else {
+    props
+      .switchLocationType(props.openedEntry.locationId)
+      .then(currentLocationId => {
+        Pro.MetaOperations.saveColor(currentEntry.path, color)
+          .then(entryMeta => {
+            // if (props.entryPath === props.currentDirectoryPath) {
+            props.updateOpenedFile(currentEntry.path, entryMeta);
+            props.switchCurrentLocationType(currentLocationId);
+            /* } else {
             setCurrentEntry({ ...currentEntry, color });
           } */
-          return true;
-        })
-        .catch(error => {
-          props.switchCurrentLocationType(currentLocationId);
-          console.warn('Error saving color for folder ' + error);
-          props.showNotification(i18n.t('Error saving color for folder'));
-        });
-    });
+            return true;
+          })
+          .catch(error => {
+            props.switchCurrentLocationType(currentLocationId);
+            console.warn('Error saving color for folder ' + error);
+            props.showNotification(i18n.t('Error saving color for folder'));
+          });
+      });
   };
 
   const handleFileNameChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -499,40 +507,44 @@ function EntryProperties(props: Props) {
   };*/
 
   const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
-    props.switchLocationType(props.openedEntry.locationId).then((currentLocationId) => {
-      if (action === 'remove-value') {
-        if (!value) {
-          // no tags left in the select element
-          props.removeAllTags([currentEntry.path]).then(() => {
-            props.updateOpenedFile(currentEntry.path, { tags: [] }).then(() => {
+    props
+      .switchLocationType(props.openedEntry.locationId)
+      .then(currentLocationId => {
+        if (action === 'remove-value') {
+          if (!value) {
+            // no tags left in the select element
+            props.removeAllTags([currentEntry.path]).then(() => {
+              props
+                .updateOpenedFile(currentEntry.path, { tags: [] })
+                .then(() => {
+                  props.switchCurrentLocationType(currentLocationId);
+                });
+            });
+          } else {
+            props.removeTags([currentEntry.path], value).then(() => {
               props.switchCurrentLocationType(currentLocationId);
             });
+          }
+        } else if (action === 'clear') {
+          props.removeAllTags([currentEntry.path]).then(() => {
+            props.switchCurrentLocationType(currentLocationId);
           });
         } else {
-          props.removeTags([currentEntry.path], value).then(() => {
+          // create-option or select-option
+          const promises = value.map(tag => {
+            if (
+              currentEntry.tags === undefined ||
+              currentEntry.tags.findIndex(obj => obj.title === tag.title) === -1
+            ) {
+              return props.addTags([currentEntry.path], [tag]);
+            }
+            return Promise.resolve(false);
+          });
+          Promise.all(promises).then(() => {
             props.switchCurrentLocationType(currentLocationId);
           });
         }
-      } else if (action === 'clear') {
-        props.removeAllTags([currentEntry.path]).then(() => {
-          props.switchCurrentLocationType(currentLocationId);
-        });
-      } else {
-        // create-option or select-option
-        const promises = value.map(tag => {
-          if (
-            currentEntry.tags === undefined ||
-            currentEntry.tags.findIndex(obj => obj.title === tag.title) === -1
-          ) {
-            return props.addTags([currentEntry.path], [tag]);
-          }
-          return Promise.resolve(false);
-        });
-        Promise.all(promises).then(() => {
-          props.switchCurrentLocationType(currentLocationId);
-        });
-      }
-    });
+      });
   };
 
   const { classes, isReadOnlyMode, theme, sharingLink } = props;

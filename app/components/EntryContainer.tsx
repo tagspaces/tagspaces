@@ -441,52 +441,54 @@ function EntryContainer(props: Props) {
         // if (!this.state.currentEntry.isFile) {
         //   textFilePath += '/index.html';
         // }
-        props.switchLocationType(openedFile.locationId).then((currentLocationId) => {
-          PlatformIO.loadTextFilePromise(
-            textFilePath,
-            data.preview ? data.preview : false
-          )
-            .then(content => {
-              const UTF8_BOM = '\ufeff';
-              if (content.indexOf(UTF8_BOM) === 0) {
-                // eslint-disable-next-line no-param-reassign
-                content = content.substr(1);
-              }
-              let fileDirectory = extractContainingDirectoryPath(
-                textFilePath,
-                PlatformIO.getDirSeparator()
-              );
-              if (AppConfig.isWeb) {
-                fileDirectory =
-                  extractContainingDirectoryPath(
-                    // eslint-disable-next-line no-restricted-globals
-                    location.href,
-                    PlatformIO.getDirSeparator()
-                  ) +
-                  '/' +
-                  fileDirectory;
-              }
-              if (
-                fileViewer &&
-                fileViewer.current &&
-                fileViewer.current.contentWindow &&
-                // @ts-ignore
-                fileViewer.current.contentWindow.setContent
-              ) {
-                // @ts-ignore call setContent from iframe
-                fileViewer.current.contentWindow.setContent(
-                  content,
-                  fileDirectory,
-                  !openedFile.editMode
+        props
+          .switchLocationType(openedFile.locationId)
+          .then(currentLocationId => {
+            PlatformIO.loadTextFilePromise(
+              textFilePath,
+              data.preview ? data.preview : false
+            )
+              .then(content => {
+                const UTF8_BOM = '\ufeff';
+                if (content.indexOf(UTF8_BOM) === 0) {
+                  // eslint-disable-next-line no-param-reassign
+                  content = content.substr(1);
+                }
+                let fileDirectory = extractContainingDirectoryPath(
+                  textFilePath,
+                  PlatformIO.getDirSeparator()
                 );
-              }
-              return props.switchCurrentLocationType(currentLocationId);
-            })
-            .catch(err => {
-              console.warn('Error loading text content ' + err);
-              return props.switchCurrentLocationType(currentLocationId);
-            });
-        });
+                if (AppConfig.isWeb) {
+                  fileDirectory =
+                    extractContainingDirectoryPath(
+                      // eslint-disable-next-line no-restricted-globals
+                      location.href,
+                      PlatformIO.getDirSeparator()
+                    ) +
+                    '/' +
+                    fileDirectory;
+                }
+                if (
+                  fileViewer &&
+                  fileViewer.current &&
+                  fileViewer.current.contentWindow &&
+                  // @ts-ignore
+                  fileViewer.current.contentWindow.setContent
+                ) {
+                  // @ts-ignore call setContent from iframe
+                  fileViewer.current.contentWindow.setContent(
+                    content,
+                    fileDirectory,
+                    !openedFile.editMode
+                  );
+                }
+                return props.switchCurrentLocationType(currentLocationId);
+              })
+              .catch(err => {
+                console.warn('Error loading text content ' + err);
+                return props.switchCurrentLocationType(currentLocationId);
+              });
+          });
         break;
       case 'contentChangedInEditor': {
         if (!fileChanged.current) {
@@ -556,7 +558,7 @@ function EntryContainer(props: Props) {
   };
 
   const saveFile = (textContent: string) => {
-    props.switchLocationType(openedFile.locationId).then((currentLocationId) => {
+    props.switchLocationType(openedFile.locationId).then(currentLocationId => {
       PlatformIO.saveTextFilePromise(openedFile.path, textContent, true)
         .then(result => {
           // isChanged = false;
@@ -596,7 +598,7 @@ function EntryContainer(props: Props) {
   };
 
   const editFile = () => {
-    props.switchLocationType(openedFile.locationId).then((currentLocationId) => {
+    props.switchLocationType(openedFile.locationId).then(currentLocationId => {
       updateOpenedFile(openedFile.path, {
         ...openedFile,
         editMode: true,
@@ -1134,8 +1136,15 @@ function EntryContainer(props: Props) {
                 {openedFile.isFile ? (
                   <>
                     {fileChanged.current ? (
-                      <Tooltip title="File changed">
-                        <span>{' ' + String.fromCharCode(0x25cf)}</span>
+                      <Tooltip title={i18n.t('core:fileChanged')}>
+                        <span
+                          style={{
+                            color: theme.palette.text.primary,
+                            margin: 3
+                          }}
+                        >
+                          {String.fromCharCode(0x25cf)}
+                        </span>
                       </Tooltip>
                     ) : (
                       ''
@@ -1438,7 +1447,7 @@ function mapStateToProps(state) {
     keyBindings: getKeyBindingObject(state),
     isDesktopMode: isDesktopMode(state),
     tileServer: getMapTileServer(state),
-    language: getCurrentLanguage(state),
+    language: getCurrentLanguage(state)
     // currentLocationId: getCurrentLocationId(state)
   };
 }

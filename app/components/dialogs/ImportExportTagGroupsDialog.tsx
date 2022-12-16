@@ -53,8 +53,8 @@ interface Props {
   onClose: () => void;
   dialogModeImport: boolean;
   showNotification?: (text: string) => void;
-  importTagGroups: (taggroup: any) => void;
-  exportTagGroups: (taggroup: any) => void;
+  importTagGroups: (taggroups: Array<TS.TagGroup>) => void;
+  exportTagGroups: (taggroups: Array<TS.TagGroup>) => void;
 }
 
 function ImportExportTagGroupsDialog(props: Props) {

@@ -8,15 +8,16 @@ import { API, Auth } from 'aws-amplify';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { actions as LocationActions } from '-/reducers/locations';
-import { actions as TagGroupActions } from '-/reducers/taglibrary';
+// import { actions as TagGroupActions } from '-/reducers/taglibrary';
 import { actions as AppActions } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
+import { importTagGroups } from '-/services/taglibrary-utils';
 
 interface Props {
   loggedIn: (user: CognitoUserInterface) => void;
   initApp: () => void;
   addLocations: (locations: Array<TS.Location>, override: boolean) => void;
-  importTagGroups: (tagGroups: Array<TS.TagGroup>, replace: boolean) => void;
+  // importTagGroups: (tagGroups: Array<TS.TagGroup>, replace: boolean) => void;
 }
 function HandleAuth(props: Props) {
   const username = useRef(undefined);
@@ -93,7 +94,7 @@ function HandleAuth(props: Props) {
     });
     if (data && data.TagGroupsByTenant.items.length > 0) {
       const tagGroupsByTenant = data.TagGroupsByTenant.items[0];
-      props.importTagGroups(
+      importTagGroups(
         JSON.parse(tagGroupsByTenant.tagGroups),
         tagGroupsByTenant.replace
       );
@@ -123,8 +124,8 @@ function mapDispatchToProps(dispatch) {
     {
       loggedIn: AppActions.loggedIn,
       initApp: AppActions.initApp,
-      addLocations: LocationActions.addLocations,
-      importTagGroups: TagGroupActions.importTagGroups
+      addLocations: LocationActions.addLocations
+      // importTagGroups: TagGroupActions.importTagGroups
     },
     dispatch
   );

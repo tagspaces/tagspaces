@@ -30,12 +30,13 @@ import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { connect } from 'react-redux';
-import { getTagGroups } from '-/reducers/taglibrary';
+// import { getTagGroups } from '-/reducers/taglibrary';
 import i18n from '-/services/i18n';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { getTagLibrary } from '-/services/taglibrary-utils';
 
 interface Props {
   open: boolean;
@@ -44,7 +45,7 @@ interface Props {
   selectedTag: TS.Tag;
   defaultBackgroundColor?: string;
   defaultTextColor?: string;
-  tagGroups: Array<TS.TagGroup>;
+  // tagGroups: Array<TS.TagGroup>;
 }
 
 function AddTagToTagGroupDialog(props: Props) {
@@ -112,7 +113,7 @@ function AddTagToTagGroupDialog(props: Props) {
             onChange={handleTagGroupChange}
             input={<Input id="addTagToTagGroupInput" />}
           >
-            {props.tagGroups.map(tg => (
+            {getTagLibrary().map(tg => (
               <MenuItem value={tg.uuid}>{tg.title}</MenuItem>
             ))}
           </Select>
@@ -134,7 +135,7 @@ function AddTagToTagGroupDialog(props: Props) {
 }
 
 const mapStateToProps = state => ({
-  tagGroups: getTagGroups(state),
+  // tagGroups: getTagGroups(state),
   defaultBackgroundColor: getTagColor(state),
   defaultTextColor: getTagTextColor(state)
 });
