@@ -29,6 +29,7 @@ import { bindActionCreators } from 'redux';
 import { GlobalHotKeys } from 'react-hotkeys';
 import fscreen from 'fscreen';
 import Button from '@mui/material/Button';
+import LoadingButton from '@mui/lab/LoadingButton';
 import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import BookmarkIcon from '@mui/icons-material/BookmarkTwoTone';
@@ -248,6 +249,7 @@ function EntryContainer(props: Props) {
   const [isDeleteEntryModalOpened, setDeleteEntryModalOpened] = useState<
     boolean
   >(false);
+  const [isSavingInProgress, setSavingInProgress] = useState<boolean>(false);
   const fileViewer: MutableRefObject<HTMLIFrameElement> = useRef<
     HTMLIFrameElement
   >(null);
@@ -558,9 +560,11 @@ function EntryContainer(props: Props) {
   };
 
   const saveFile = (textContent: string) => {
+    setSavingInProgress(true);
     props.switchLocationType(openedFile.locationId).then(currentLocationId => {
       PlatformIO.saveTextFilePromise(openedFile.path, textContent, true)
         .then(result => {
+          setSavingInProgress(false);
           // isChanged = false;
           updateOpenedFile(openedFile.path, {
             ...openedFile,
@@ -587,6 +591,7 @@ function EntryContainer(props: Props) {
           return result;
         })
         .catch(error => {
+          setSavingInProgress(false);
           showNotification(
             i18n.t('core:errorSavingFile'),
             NotificationTypes.error
@@ -1208,7 +1213,7 @@ function EntryContainer(props: Props) {
                         ' + S)'
                       }
                     >
-                      <Button
+                      <LoadingButton
                         disabled={false}
                         onClick={startSavingFile}
                         aria-label={i18n.t('core:saveFile')}
@@ -1217,9 +1222,10 @@ function EntryContainer(props: Props) {
                         variant="outlined"
                         color="primary"
                         startIcon={<SaveIcon />}
+                        loading={isSavingInProgress}
                       >
                         {i18n.t('core:save')}
-                      </Button>
+                      </LoadingButton>
                     </Tooltip>
                     {/* <Tooltip title="Preview">
                       <IconButton
