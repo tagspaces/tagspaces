@@ -657,12 +657,15 @@ const actions = {
   removeAllTags: (paths: Array<string>) => async (
     dispatch: (action) => Promise<boolean>
   ): Promise<boolean> => {
-    const promises = [];
     for (const path of paths) {
-      promises.push(dispatch(actions.removeAllTagsFromMetaData(path)));
-      promises.push(dispatch(actions.removeAllTagsFromFilename(path)));
+      const success = await dispatch(actions.removeAllTagsFromFilename(path));
+      if (success) {
+        await dispatch(actions.removeAllTagsFromMetaData(path));
+      } else {
+        return Promise.resolve(false);
+      }
     }
-    return Promise.all(promises).then(() => true);
+    return Promise.resolve(true);
   },
   removeAllTagsFromFilename: (path: string) => (
     dispatch: (action) => Promise<boolean>,
