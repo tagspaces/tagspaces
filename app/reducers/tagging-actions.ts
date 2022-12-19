@@ -545,16 +545,19 @@ const actions = {
       }
     }
   },
-  removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => (
+  removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => async (
     dispatch: (actions: Object) => Promise<boolean>
   ): Promise<boolean> => {
-    const promises: Array<Promise<boolean>> = paths.map(path =>
-      dispatch(actions.removeTagsFromEntry(path, tags))
-    );
-    return Promise.all(promises).then(() => true);
+    for (const path of paths) {
+      const success = await dispatch(actions.removeTagsFromEntry(path, tags));
+      if (!success) {
+        return Promise.resolve(false);
+      }
+    }
+    return Promise.resolve(true);
   },
   removeTagsFromEntry: (path: string, tags: Array<TS.Tag>) => (
-    dispatch: (actions: Object) => void,
+    dispatch: (actions: Object) => Promise<boolean>,
     getState: () => any
   ): Promise<boolean> => {
     const { settings } = getState();
@@ -618,7 +621,7 @@ const actions = {
       if (!isFile) {
         return Promise.resolve(path);
       }
-      return new Promise(async resolve => {
+      return new Promise(async (resolve, reject) => {
         const extractedTags = extractTags(
           path,
           settings.tagDelimiter,
@@ -646,23 +649,33 @@ const actions = {
               : '') +
             generateFileName(fileName, extractedTags, settings.tagDelimiter);
           if (path !== newFilePath) {
-            await dispatch(AppActions.renameFile(path, newFilePath));
+            const success = await dispatch(
+              AppActions.renameFile(path, newFilePath)
+            );
+            if (!success) {
+              reject(new Error('Error renaming file'));
+              return;
+            }
           }
           resolve(newFilePath);
+        } else {
+          resolve(path);
         }
-        resolve(path);
       });
     }
   },
   removeAllTags: (paths: Array<string>) => async (
     dispatch: (action) => Promise<boolean>
   ): Promise<boolean> => {
-    const promises = [];
     for (const path of paths) {
-      promises.push(dispatch(actions.removeAllTagsFromMetaData(path)));
-      promises.push(dispatch(actions.removeAllTagsFromFilename(path)));
+      const success = await dispatch(actions.removeAllTagsFromFilename(path));
+      if (success) {
+        await dispatch(actions.removeAllTagsFromMetaData(path));
+      } else {
+        return Promise.resolve(false);
+      }
     }
-    return Promise.all(promises).then(() => true);
+    return Promise.resolve(true);
   },
   removeAllTagsFromFilename: (path: string) => (
     dispatch: (action) => Promise<boolean>,
