@@ -39,6 +39,9 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import ToggleButton from '@mui/material/ToggleButton';
 import CheckIcon from '@mui/icons-material/Check';
 import RemoveIcon from '@mui/icons-material/RemoveCircleOutline';
+import IdIcon from '@mui/icons-material/Abc';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
@@ -62,6 +65,7 @@ import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import InfoIcon from '-/components/InfoIcon';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
 import { actions as LocationActions, getLocations } from '-/reducers/locations';
+import { NotificationTypes, actions as AppActions } from '-/reducers/app';
 import { getPersistTagsInSidecarFile } from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
@@ -89,12 +93,17 @@ interface Props {
   editLocation?: (location: TS.Location) => void;
   isPersistTagsInSidecar: boolean;
   createLocationIndex: (location: TS.Location) => void;
+  showNotification: (
+    text: string,
+    notificationType?: string, // NotificationTypes
+    autohide?: boolean
+  ) => void;
 }
 
 function CreateEditLocationDialog(props: Props) {
   const IgnorePatternDialog =
     Pro && Pro.UI ? Pro.UI.IgnorePatternDialog : false;
-  const { location } = props;
+  const { location, showNotification, locations } = props;
   const [showSecretAccessKey, setShowSecretAccessKey] = useState<boolean>(
     false
   );
@@ -227,7 +236,7 @@ function CreateEditLocationDialog(props: Props) {
     loadLocationDataPromise(path, AppConfig.metaFolderFile)
       .then((meta: TS.FileSystemEntryMeta) => {
         if (meta && meta.id) {
-          if (!props.locations.some(ln => ln.uuid === meta.id)) {
+          if (!locations.some(ln => ln.uuid === meta.id)) {
             setNewUuid(meta.id);
           }
         }
@@ -236,6 +245,16 @@ function CreateEditLocationDialog(props: Props) {
       .catch(err => {
         console.debug('no meta in location:' + path);
       });
+  }
+  function setNewLocationID(newId: string) {
+    if (!locations.some(ln => ln.uuid === newId)) {
+      setNewUuid(newId);
+    } else {
+      showNotification(
+        'Location with this ID already exists',
+        NotificationTypes.error
+      );
+    }
   }
   /**
    * @param checkOnly - switch to set errors or only to check validation
@@ -655,9 +674,30 @@ function CreateEditLocationDialog(props: Props) {
                   fullWidth={true}
                   data-tid="newuuid"
                   placeholder="Unique location identifier"
-                  onChange={event => setNewUuid(event.target.value)}
+                  onChange={event => setNewLocationID(event.target.value)}
                   value={newuuid}
                   label={i18n.t('core:locationId')}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end" style={{ height: 32 }}>
+                        <Tooltip title="Generates new unique identifier for this location">
+                          <IconButton
+                            onClick={() => {
+                              const result = confirm(
+                                'Changing the identifier of a location, will invalidate all the internal sharing links (tslinks) leading to files and folders in this location. Do you want to continue?'
+                              );
+                              if (result) {
+                                setNewLocationID(getUuid());
+                              }
+                            }}
+                            size="large"
+                          >
+                            <IdIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </InputAdornment>
+                    )
+                  }}
                 />
               </FormControl>
               <FormControlLabel
@@ -926,7 +966,8 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
       addLocation: LocationActions.addLocation,
-      createLocationIndex: LocationIndexActions.createLocationIndex
+      createLocationIndex: LocationIndexActions.createLocationIndex,
+      showNotification: AppActions.showNotification
     },
     dispatch
   );
