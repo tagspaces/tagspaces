@@ -179,7 +179,15 @@ export default (state: any = initialState, action: any) => {
 };
 
 export const actions = {
-  setSearchQuery: (searchQuery: TS.SearchQuery) => ({
+  setSearchQuery: (searchQuery: TS.SearchQuery) => (
+    dispatch: (action) => void
+  ) => {
+    dispatch(actions.setSearchQueryInt(searchQuery));
+    if (Object.keys(searchQuery).length === 0) {
+      dispatch(AppActions.setSearchResults([]));
+    }
+  },
+  setSearchQueryInt: (searchQuery: TS.SearchQuery) => ({
     type: types.SET_SEARCH_QUERY,
     searchQuery
   }),

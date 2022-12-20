@@ -130,6 +130,7 @@ interface Props {
   ) => void;
   moveFiles: (files: Array<string>, destination: string) => Promise<boolean>;
   clearSelection: () => void;
+  searchResultsCount: number;
 }
 
 function GridPagination(props: Props) {
@@ -725,6 +726,7 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   nextProp.thumbnailMode === prevProp.thumbnailMode &&
   nextProp.entrySize === prevProp.entrySize &&
   nextProp.gridPageLimit === prevProp.gridPageLimit &&
+  nextProp.searchResultsCount === prevProp.searchResultsCount &&
   nextProp.currentDirectoryDescription ===
     prevProp.currentDirectoryDescription &&
   JSON.stringify(nextProp.files) === JSON.stringify(prevProp.files) &&

@@ -66,7 +66,7 @@ interface Props {
   // loadDirectoryContent: (path: string, generateThumbnails: boolean, loadDirMeta?: boolean) => void;
   openURLExternally: (url: string) => void;
   searchQuery: TS.SearchQuery; // () => any;
-  openCurrentDirectory: () => void;
+  // openCurrentDirectory: () => void;
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   openLink: (url: string, options?: any) => void;
   currentDirectory: string;
@@ -269,7 +269,7 @@ function SearchInline(props: Props) {
       executeSearch();
     } else if (event.key === 'Escape' || event.keyCode === 27) {
       clearSearch();
-      props.openCurrentDirectory();
+      // props.openCurrentDirectory();
     }
   };
 
@@ -289,6 +289,7 @@ function SearchInline(props: Props) {
     forceIndexing.current = false;
     fileSize.current = '';
     props.setSearchQuery({});
+    // props.setSearchResults([]);
     props.watchForChanges();
     // props.openCurrentDirectory();
   };
@@ -502,7 +503,7 @@ function SearchInline(props: Props) {
                     id="clearSearchID"
                     onClick={() => {
                       clearSearch();
-                      props.openCurrentDirectory();
+                      // props.openCurrentDirectory();
                     }}
                     size="small"
                     edge="end"
@@ -563,7 +564,7 @@ function mapDispatchToProps(dispatch) {
       // loadDirectoryContent: AppActions.loadDirectoryContent,
       openLink: AppActions.openLink,
       openURLExternally: AppActions.openURLExternally,
-      openCurrentDirectory: AppActions.openCurrentDirectory,
+      // openCurrentDirectory: AppActions.openCurrentDirectory,
       watchForChanges: AppActions.watchForChanges
     },
     dispatch
