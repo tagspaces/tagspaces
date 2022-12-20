@@ -365,6 +365,17 @@ function loadLocales(options, url, payload, callback) {
         });
       break;
     }
+    case 'zh_HK': {
+      import('../locales/zh_HK/core.json')
+        .then(locale => {
+          callback(undefined, { status: '200', data: locale });
+          return true;
+        })
+        .catch(() => {
+          console.log('Error loading ' + url + ' locale.');
+        });
+      break;
+    }
     case 'nb': {
       import('../locales/nb/core.json')
         .then(locale => {
