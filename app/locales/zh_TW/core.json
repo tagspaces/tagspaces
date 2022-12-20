@@ -373,7 +373,7 @@
   "deleteSelectedEntries": "刪除選擇的項目",
   "showHideDirectories": "顯示資料夾",
   "showHideDescription": "顯示資料夾描述",
-  "showHideDetails": "顯示資料夾細節",
+  "showHideDetails": "顯示資料夾詳細資訊",
   "showTags": "顯示標籤",
   "sort": "排序",
   "thirdPartyLibs": "第三方函式庫",
@@ -718,7 +718,7 @@
   "fromDate": "開始日期",
   "fromTime": "開始時間",
   "finish": "完成",
-  "showSubFolderDetails": "Show column details",
-  "showEntriesDescription": "Show description for files and folders",
+  "showSubFolderDetails": "顯示列詳細資訊",
+  "showEntriesDescription": "顯示檔案和資料夾詳細資訊",
   "-": "-"
 }

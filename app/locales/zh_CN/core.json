@@ -718,7 +718,7 @@
   "fromDate": "開始日期",
   "fromTime": "開始時間",
   "finish": "完成",
-  "showSubFolderDetails": "Show column details",
-  "showEntriesDescription": "Show description for files and folders",
+  "showSubFolderDetails": "顯示列細節",
+  "showEntriesDescription": "顯示檔案和資料夾詳細資訊",
   "-": "-"
 }
