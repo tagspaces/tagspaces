@@ -2756,4 +2756,5 @@ export const isTagLibraryPanelOpened = (state: any) =>
 export const isSearchPanelOpened = (state: any) => state.app.searchPanelOpened;
 export const isHelpFeedbackPanelOpened = (state: any) =>
   state.app.helpFeedbackPanelOpened;
-export const getSearchResultsCount = (state: any) => state.app.searchResultsCount;
+export const getSearchResultsCount = (state: any) =>
+  state.app.searchResultsCount;
