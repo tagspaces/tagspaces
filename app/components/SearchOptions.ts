@@ -43,14 +43,27 @@ export const ExecActions = {
   OPEN_HISTORY: 'open_history',
   TAG_SEARCH_AND: 'tag_search_and',
   TAG_SEARCH_NOT: 'tag_search_not',
-  TAG_SEARCH_OR: 'tag_search_or'
+  TAG_SEARCH_OR: 'tag_search_or',
+  TYPE_SEARCH: 'type_search',
+  SIZE_SEARCH: 'size_search'
 };
 
-export function findAction(option: string) {
-  const actions = [...Object.values(SearchQueryComposition),...Object.values(SearchActions)];
-  let action = actions.find(a =>
-    option.startsWith(a)
-  );
+export const FileSize = {
+  sizeEmpty: 0,
+  sizeTiny: 10000, // 10KB
+  sizeVerySmall: 100000, // 100KB
+  sizeSmall: 1000000, // 1MB
+  sizeMedium: 50000000, // 50 mB
+  sizeLarge: 1000000000, // 1GB
+  sizeHuge: 1000000001 // over 1GB
+};
+
+export function findAction(option: string): string {
+  const actions = [
+    ...Object.values(SearchQueryComposition),
+    ...Object.values(SearchActions)
+  ];
+  let action = actions.find(a => option.startsWith(a));
   if (!action) {
     action = Object.values(SearchCommandAlternatives).find(a =>
       option.startsWith(a)

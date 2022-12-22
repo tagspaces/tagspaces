@@ -56,6 +56,7 @@ import AppConfig from '-/AppConfig';
 import { Autocomplete, Box, TextField } from '@mui/material';
 import {
   ExecActions,
+  FileSize,
   findAction,
   SearchActions,
   SearchOptions,
@@ -497,6 +498,47 @@ function SearchAutocomplete(props: Props) {
         }
         searchOptions.current = options;
       }
+    } else if (option === SearchQueryComposition.TYPE) {
+      if (currentOptions.current !== SearchQueryComposition.TYPE) {
+        currentOptions.current = option;
+        const options = [];
+        Object.entries(FileTypeGroups).forEach(([key, value]) => {
+          options.push({
+            id: key,
+            action: ExecActions.TYPE_SEARCH,
+            label: i18n.t('core:' + key),
+            descr: value.join(', ')
+          });
+        });
+        searchOptions.current = options;
+      }
+    } else if (option === SearchQueryComposition.SIZE) {
+      if (currentOptions.current !== SearchQueryComposition.SIZE) {
+        currentOptions.current = option;
+        const options = [];
+
+        Object.entries(FileSize).forEach(([key, value]) => {
+          let descr = '';
+          if (value > 0) {
+            if (value < 1000000) {
+              descr = value / 1000 + 'KB';
+            } else if (value < 1000000000) {
+              descr = value / 1000000 + 'MB';
+            } else if (value === 1000000000) {
+              descr = value / 1000000000 + 'G';
+            } else {
+              descr = 'over 1GB';
+            }
+          }
+          options.push({
+            id: key,
+            action: ExecActions.SIZE_SEARCH,
+            label: i18n.t('core:' + key),
+            descr: descr
+          });
+        });
+        searchOptions.current = options;
+      }
     }
   }
 
@@ -551,6 +593,39 @@ function SearchAutocomplete(props: Props) {
             const prevAction = actions[actions.length - 1];
             prevAction.label = searchAction + option.label;
           }
+        } else if (option.action === SearchQueryComposition.TYPE) {
+          changeOptions(option.action);
+          actions.push(option);
+        } else if (option.action === ExecActions.TYPE_SEARCH) {
+          if (actions.length > 0) {
+            const prevAction = actions[actions.length - 1];
+            if (prevAction.action === SearchQueryComposition.TYPE) {
+              prevAction.label = prevAction.action + option.label;
+              fileTypes.current = option.descr.split(', ');
+            }
+          }
+          // executeSearch();
+        } else if (option.action === SearchQueryComposition.SIZE) {
+          changeOptions(option.action);
+          actions.push(option);
+        } else if (option.action === ExecActions.SIZE_SEARCH) {
+          if (actions.length > 0) {
+            const prevAction = actions[actions.length - 1];
+            if (prevAction.action === SearchQueryComposition.SIZE) {
+              prevAction.label = prevAction.action + option.label;
+              fileSize.current = option.id;
+            }
+          }
+          // executeSearch();
+        } else if (option.action === SearchQueryComposition.LAST_MODIFIED) {
+          changeOptions(option.action);
+          actions.push(option);
+        } else if (option.action === SearchQueryComposition.SCOPE) {
+          changeOptions(option.action);
+          actions.push(option);
+        } else if (option.action === SearchQueryComposition.ACCURACY) {
+          changeOptions(option.action);
+          actions.push(option);
         }
       } else {
         actions.push(option);
@@ -592,14 +667,27 @@ function SearchAutocomplete(props: Props) {
       actionValues.current = actionValues.current.filter(
         v => !selected.includes(v.label)
       );
+      // reset default search filters
+      for (let i = 0; i < selected.length; i++) {
+        const action = findAction(selected[i]);
+        if (action === SearchQueryComposition.TYPE) {
+          fileTypes.current = [];
+        } else if (action === SearchQueryComposition.SIZE) {
+          fileSize.current = '';
+        }
+      }
+
       if (actionValues.current.length === 0) {
         searchOptions.current = SearchOptions;
-        textQuery.current = '';
+        // textQuery.current = '';
       } else {
-        textQuery.current = actionValues.current.map(v => v.label).join(' ');
+        const prevAction =
+          actionValues.current[actionValues.current.length - 1];
+        changeOptions(prevAction.action);
+        // textQuery.current = actionValues.current.map(v => v.label).join(' ');
       }
       // executeSearch();
-      //forceUpdate();
+      forceUpdate();
     } else if (reason === 'clear') {
       props.setSearchQuery({});
     }
