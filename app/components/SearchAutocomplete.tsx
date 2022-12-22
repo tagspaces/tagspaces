@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import makeStyles from '@mui/styles/makeStyles';
@@ -51,11 +51,20 @@ import { FileTypeGroups } from '-/services/search';
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '../pro';
 import useFirstRender from '-/utils/useFirstRender';
-import MainSearchField from '-/components/MainSearchField';
 import SavedSearchesMenu from '-/components/menus/SavedSearchesMenu';
 import AppConfig from '-/AppConfig';
-
-// type PropsClasses = Record<keyof StyleProps, string>;
+import { Autocomplete, Box, TextField } from '@mui/material';
+import {
+  ExecActions,
+  findAction,
+  SearchActions,
+  SearchOptions,
+  SearchOptionType,
+  SearchQueryComposition
+} from '-/components/SearchOptions';
+import { getCurrentLocation, getLocations } from '-/reducers/locations';
+import CloseIcon from '@mui/icons-material/Close';
+import { getTagLibrary } from '-/services/taglibrary-utils';
 
 interface Props {
   style?: any;
@@ -76,6 +85,9 @@ interface Props {
   showUnixHiddenEntries: boolean;
   isDesktop: boolean;
   open: boolean;
+  locations: TS.Location[];
+  currentLocation: TS.Location;
+  openLocationById: (locationId: string) => void;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -87,12 +99,14 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function SearchInline(props: Props) {
+function SearchAutocomplete(props: Props) {
   // const [, forceUpdate] = useReducer(x => x + 1, 0);
   const [
     openSavedSearches,
     setOpenSavedSearches
   ] = useState<null | HTMLElement>(null);
+  const searchOptions = useRef<Array<SearchOptionType>>(SearchOptions);
+  const currentOptions = useRef<string>(undefined);
   const textQuery = useRef<string>(props.searchQuery.textQuery || '');
   const textQueryMask = useRef<string>('');
   const fileTypes = useRef<Array<string>>(
@@ -100,6 +114,9 @@ function SearchInline(props: Props) {
       ? props.searchQuery.fileTypes
       : FileTypeGroups.any
   );
+  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  const actionValues = useRef<Array<SearchOptionType>>([]);
+  const inputValue = useRef<string>('');
 
   // const searchBoxing = useRef<'location' | 'folder' | 'global'>(
   //   props.searchQuery.searchBoxing ? props.searchQuery.searchBoxing : 'location'
@@ -267,7 +284,7 @@ function SearchInline(props: Props) {
 
   const startSearch = event => {
     if (event.key === 'Enter' || event.keyCode === 13) {
-      executeSearch();
+      // executeSearch();
     } else if (event.key === 'Escape' || event.keyCode === 27) {
       clearSearch();
       // props.openCurrentDirectory();
@@ -410,6 +427,184 @@ function SearchInline(props: Props) {
 
   const { indexing, isDesktop, open } = props;
 
+  /*function parseOptions(options: Array<any>) {
+
+    const parsed = [];
+    let prevAction;
+    for (let i = 0; i < options.length; i++) {
+      const option = options[i];
+      let label, action;
+      if (typeof option === 'object') {
+        label = option.label;
+        action = option.label;
+      } else {
+        label = option;
+        action = Object.values(SearchActions).find(a => option.startsWith(a));
+      }
+      if (!action) {
+        parsed.push(option);
+      }
+      prevAction = action;
+    }
+    return parsed;
+  }*/
+  function changeOptions(option: string) {
+    if (SearchActions.LOCATION === option) {
+      if (currentOptions.current !== option) {
+        currentOptions.current = option;
+        searchOptions.current = props.locations.map(location => {
+          return {
+            id: location.uuid,
+            descr: location.path,
+            action: ExecActions.OPEN_LOCATION,
+            label: location.name
+          };
+        });
+      }
+    } else if (SearchActions.HISTORY === option) {
+      if (currentOptions.current !== option) {
+        currentOptions.current = option;
+        // searchOptions.current = ... todo
+      }
+    } else if (
+      option === SearchQueryComposition.TAG_AND ||
+      option === SearchQueryComposition.TAG_OR ||
+      option === SearchQueryComposition.TAG_NOT
+    ) {
+      if (
+        currentOptions.current !== SearchQueryComposition.TAG_AND ||
+        currentOptions.current === SearchQueryComposition.TAG_OR ||
+        currentOptions.current === SearchQueryComposition.TAG_NOT
+      ) {
+        currentOptions.current = option;
+        const searchAction =
+          option === SearchQueryComposition.TAG_AND
+            ? ExecActions.TAG_SEARCH_AND
+            : option === SearchQueryComposition.TAG_NOT
+            ? ExecActions.TAG_SEARCH_NOT
+            : ExecActions.TAG_SEARCH_OR;
+        const tagGroups = getTagLibrary();
+        const options = [];
+        for (let j = 0; j < tagGroups.length; j++) {
+          tagGroups[j].children.forEach((tag: TS.Tag) => {
+            options.push({
+              id: tag.id,
+              action: searchAction,
+              label: tag.title,
+              group: tagGroups[j].title
+            });
+          });
+        }
+        searchOptions.current = options;
+      }
+    }
+  }
+
+  function execActions(options: Array<any>) {
+    const actions: Array<SearchOptionType> = [];
+    for (let i = 0; i < options.length; i++) {
+      let option: SearchOptionType;
+      if (typeof options[i] === 'object') {
+        option = options[i];
+      } else {
+        option = {
+          label: options[i],
+          action: findAction(options[i])
+        };
+      }
+      if (!actionValues.current.some(obj => obj.action === option.action)) {
+        if (option.action === SearchActions.LOCATION) {
+          changeOptions(option.action);
+          actions.push(option);
+        } else if (option.action === ExecActions.OPEN_LOCATION) {
+          props.openLocationById(option.id);
+        } else if (option.action === SearchActions.HISTORY) {
+          changeOptions(option.action);
+          actions.push(option);
+        } else if (option.action === ExecActions.OPEN_HISTORY) {
+        } else if (
+          option.action === SearchQueryComposition.TAG_AND ||
+          option.action === SearchQueryComposition.TAG_OR ||
+          option.action === SearchQueryComposition.TAG_NOT
+        ) {
+          // if (props.currentLocation) {
+          changeOptions(option.action);
+          // }
+          actions.push(option);
+        } else if (
+          option.action === ExecActions.TAG_SEARCH_AND ||
+          option.action === ExecActions.TAG_SEARCH_OR ||
+          option.action === ExecActions.TAG_SEARCH_NOT
+        ) {
+          const searchAction =
+            option.action === ExecActions.TAG_SEARCH_AND
+              ? SearchQueryComposition.TAG_AND
+              : option.action === ExecActions.TAG_SEARCH_NOT
+              ? SearchQueryComposition.TAG_NOT
+              : SearchQueryComposition.TAG_OR;
+          if (textQuery.current.indexOf(searchAction + option.label) === -1) {
+            textQuery.current += ' ' + searchAction + option.label;
+          }
+          // executeSearch();
+
+          if (actions.length > 0) {
+            const prevAction = actions[actions.length - 1];
+            prevAction.label = searchAction + option.label;
+          }
+        }
+      } else {
+        actions.push(option);
+      }
+    }
+    return actions;
+  }
+
+  function handleInputChange(event: Object, value: string, reason: string) {
+    // handleChange(event, value.split(' '), 'createOption');
+    if (reason === 'input') {
+      const valueArr = value.split(' ');
+      actionValues.current = execActions([
+        ...actionValues.current,
+        ...valueArr
+      ]);
+      const inputArr = valueArr.filter(
+        action => !actionValues.current.some(v => v.label === action)
+      );
+      inputValue.current = inputArr.join(' ');
+      textQuery.current = inputValue.current;
+      forceUpdate();
+    } else if (reason === 'clear') {
+      clearSearch();
+    } else if (reason === 'reset') {
+      inputValue.current = '';
+      // executeSearch();
+    }
+  }
+  function handleChange(event: Object, selected: Array<any>, reason: string) {
+    if (reason === 'selectOption') {
+      actionValues.current = execActions(selected);
+      //textQuery.current = txtQuery.trim();
+      forceUpdate();
+    } else if (reason === 'createOption') {
+      actionValues.current = execActions(selected);
+      forceUpdate();
+    } else if (reason === 'remove-value') {
+      actionValues.current = actionValues.current.filter(
+        v => !selected.includes(v.label)
+      );
+      if (actionValues.current.length === 0) {
+        searchOptions.current = SearchOptions;
+        textQuery.current = '';
+      } else {
+        textQuery.current = actionValues.current.map(v => v.label).join(' ');
+      }
+      // executeSearch();
+      //forceUpdate();
+    } else if (reason === 'clear') {
+      props.setSearchQuery({});
+    }
+  }
+
   if (!open) {
     return null;
   }
@@ -423,98 +618,160 @@ function SearchInline(props: Props) {
           alignItems: 'center'
         }}
       >
-        <MainSearchField
-          fullWidth
+        <Autocomplete
           id="textQuery"
-          name="textQuery"
-          defaultValue={textQuery.current}
-          variant="outlined"
-          onChange={event => {
-            textQuery.current = event.target.value;
-          }}
-          size="small"
-          style={{
-            width: 'calc(100% - 80px)'
-          }}
-          inputRef={mainSearchField}
-          margin="dense"
-          autoFocus
+          multiple
+          /*autoFocus*/
+          openOnFocus
+          freeSolo
+          autoSelect
+          autoComplete
+          handleHomeEndKeys
+          /*defaultValue={['one']}*/
+          value={actionValues.current.map(v => v.label)}
+          onChange={handleChange}
+          inputValue={inputValue.current}
+          onInputChange={handleInputChange}
+          renderTags={value =>
+            value.map((option, index: number) => (
+              <Button
+                size="small"
+                style={{
+                  fontSize: 13,
+                  textTransform: 'none',
+                  color: 'black',
+                  backgroundColor: 'green',
+                  minHeight: 0,
+                  minWidth: 0,
+                  margin: 2,
+                  paddingTop: 0,
+                  paddingBottom: 0,
+                  paddingRight: 0,
+                  paddingLeft: 5,
+                  borderRadius: 5
+                }}
+                onClick={() => {
+                  handleChange(null, [option], 'remove-value');
+                }}
+              >
+                {option}
+                <CloseIcon />
+              </Button>
+            ))
+          }
+          /*inputValue={inputValue}
+          onInputChange={(event, newInputValue) => {
+            setInputValue(newInputValue);
+          }}*/
+          options={searchOptions.current}
+          groupBy={option => option.group}
+          renderOption={(props, option) => (
+            <Box component="li" {...props}>
+              <b>{option.label}</b>&nbsp;{option.descr}
+            </Box>
+          )}
+          /*getOptionLabel={(option: SearchOptionType) =>
+            option.label + ': ' + option.descr
+          }*/
+          sx={{ width: 'calc(100% - 80px)' }}
           onKeyDown={startSearch}
-          placeholder={i18n.t('core:searchTitle')}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start" style={{ marginRight: 0 }}>
-                {isDesktop ? (
-                  <>
-                    <Tooltip
-                      classes={{ tooltip: classes.customWidth }}
-                      title={
-                        <span style={{ fontSize: 14 }}>
-                          {i18n.t('searchScope')}:
-                          <br />
-                          &bull; {i18n.t('location')} -{' '}
-                          {i18n.t('searchPlaceholder')}
-                          <br />
-                          &bull; {i18n.t('folder')} -{' '}
-                          {i18n.t('searchCurrentFolderWithSubFolders')}
-                          <br />
-                          &bull; {i18n.t('globalSearch')} -{' '}
-                          {i18n.t('searchInAllLocationTooltip')} (
-                          {i18n.t('betaStatus')})<br />
-                        </span>
-                      }
-                    >
-                      <Typography
-                        variant="overline"
-                        display="block"
-                        onClick={toggleSearchBoxing}
-                        style={{
-                          border: '1px solid gray',
-                          borderRadius: 5,
-                          lineHeight: 'inherit',
-                          paddingLeft: 3,
-                          paddingRight: 3
+          renderInput={params => (
+            <TextField
+              {...params}
+              fullWidth
+              /*id="textQuery"
+              name="textQuery"*/
+              label={i18n.t('core:searchTitle')}
+              /*defaultValue={textQuery.current}*/
+              /*onChange={event => {
+                textQuery.current = event.target.value;
+              }}*/
+              /*style={{
+        width: 'calc(100% - 80px)'
+      }}*/
+              /*inputRef={mainSearchField}*/
+              autoFocus
+              /*onKeyDown={startSearch}*/
+              placeholder={i18n.t('core:searchTitle')}
+              size="small"
+              margin="dense"
+              variant="outlined"
+              /*InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start" style={{ marginRight: 0 }}>
+                    {isDesktop ? (
+                      <>
+                        <Tooltip
+                          classes={{ tooltip: classes.customWidth }}
+                          title={
+                            <span style={{ fontSize: 14 }}>
+                              {i18n.t('searchScope')}:
+                              <br />
+                              &bull; {i18n.t('location')} -{' '}
+                              {i18n.t('searchPlaceholder')}
+                              <br />
+                              &bull; {i18n.t('folder')} -{' '}
+                              {i18n.t('searchCurrentFolderWithSubFolders')}
+                              <br />
+                              &bull; {i18n.t('globalSearch')} -{' '}
+                              {i18n.t('searchInAllLocationTooltip')} (
+                              {i18n.t('betaStatus')})<br />
+                            </span>
+                          }
+                        >
+                          <Typography
+                            variant="overline"
+                            display="block"
+                            onClick={toggleSearchBoxing}
+                            style={{
+                              border: '1px solid gray',
+                              borderRadius: 5,
+                              lineHeight: 'inherit',
+                              paddingLeft: 3,
+                              paddingRight: 3
+                            }}
+                          >
+                            {searchBoxingName}
+                          </Typography>
+                        </Tooltip>
+                        <HelpTooltip classes={classes} />
+                      </>
+                    ) : (
+                      <HelpTooltip classes={classes} />
+                    )}
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {isDesktop && (
+                      <Tooltip title={i18n.t('core:savedSearchesTitle')}>
+                        <IconButton
+                          size="small"
+                          edge="end"
+                          onClick={handleOpenSavedSearches}
+                        >
+                          <ExpandMoreIcon />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                    <Tooltip title={i18n.t('clearSearch') + ' (ESC)'}>
+                      <IconButton
+                        id="clearSearchID"
+                        onClick={() => {
+                          clearSearch();
+                          // props.openCurrentDirectory();
                         }}
+                        size="small"
+                        edge="end"
                       >
-                        {searchBoxingName}
-                      </Typography>
+                        <ClearSearchIcon />
+                      </IconButton>
                     </Tooltip>
-                    <HelpTooltip classes={classes} />
-                  </>
-                ) : (
-                  <HelpTooltip classes={classes} />
-                )}
-              </InputAdornment>
-            ),
-            endAdornment: (
-              <InputAdornment position="end">
-                {isDesktop && (
-                  <Tooltip title={i18n.t('core:savedSearchesTitle')}>
-                    <IconButton
-                      size="small"
-                      edge="end"
-                      onClick={handleOpenSavedSearches}
-                    >
-                      <ExpandMoreIcon />
-                    </IconButton>
-                  </Tooltip>
-                )}
-                <Tooltip title={i18n.t('clearSearch') + ' (ESC)'}>
-                  <IconButton
-                    id="clearSearchID"
-                    onClick={() => {
-                      clearSearch();
-                      // props.openCurrentDirectory();
-                    }}
-                    size="small"
-                    edge="end"
-                  >
-                    <ClearSearchIcon />
-                  </IconButton>
-                </Tooltip>
-              </InputAdornment>
-            )
-          }}
+                  </InputAdornment>
+                )
+              }}*/
+            />
+          )}
         />
         <Tooltip title={indexing ? i18n.t('searchDisabledWhileIndexing') : ''}>
           <Button
@@ -551,7 +808,9 @@ function mapStateToProps(state) {
     indexedEntriesCount: getIndexedEntriesCount(state),
     maxSearchResults: getMaxSearchResults(state),
     showUnixHiddenEntries: getShowUnixHiddenEntries(state),
-    language: getCurrentLanguage(state)
+    language: getCurrentLanguage(state),
+    locations: getLocations(state),
+    currentLocation: getCurrentLocation(state)
   };
 }
 
@@ -566,7 +825,8 @@ function mapDispatchToProps(dispatch) {
       openLink: AppActions.openLink,
       openURLExternally: AppActions.openURLExternally,
       // openCurrentDirectory: AppActions.openCurrentDirectory,
-      watchForChanges: AppActions.watchForChanges
+      watchForChanges: AppActions.watchForChanges,
+      openLocationById: AppActions.openLocationById
     },
     dispatch
   );
@@ -580,7 +840,4 @@ const areEqual = (prevProp, nextProp) =>
   nextProp.currentDirectory === prevProp.currentDirectory &&
   nextProp.indexedEntriesCount === prevProp.indexedEntriesCount;
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(React.memo(SearchInline, areEqual));
+export default connect(mapStateToProps, mapDispatchToProps)(SearchAutocomplete); // (React.memo(SearchAutocomplete, areEqual));

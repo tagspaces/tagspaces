@@ -286,18 +286,15 @@ function FolderContainer(props: Props) {
   useEffect(() => {
     if (!props.searchQuery || Object.keys(props.searchQuery).length === 0) {
       setSearchVisible(false);
-    } else {
+    } /* else {
       setSearchVisible(true);
-    }
+    }*/
   }, [props.searchQuery]);
 
   const [isRenameEntryDialogOpened, setIsRenameEntryDialogOpened] = useState<
     boolean
   >(false);
   const [isSearchVisible, setSearchVisible] = useState<boolean>(false);
-  const [anchorSearch, setAnchorSearch] = useState<HTMLButtonElement | null>(
-    null
-  );
 
   const {
     currentDirectoryPath = '',
@@ -579,12 +576,9 @@ function FolderContainer(props: Props) {
               </IconButton>
             </Tooltip>
           )}
-          <SearchBox
-            open={isSearchVisible}
-            anchorSearch={anchorSearch}
-            setAnchorSearch={setAnchorSearch}
-          />
-          {!isSearchVisible && (
+          {isSearchVisible ? (
+            <SearchBox open={isSearchVisible} />
+          ) : (
             <>
               <div
                 style={{

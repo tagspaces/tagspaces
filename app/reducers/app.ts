@@ -1869,7 +1869,7 @@ export const actions = {
     if (location === undefined) {
       location = getLocation(getState(), getState().app.currentLocationId);
     }
-    if (Pro && Pro.Watcher && location.watchForChanges) {
+    if (Pro && Pro.Watcher && location && location.watchForChanges) {
       const perspective = getCurrentDirectoryPerspective(getState());
       const depth = perspective === PerspectiveIDs.KANBAN ? 3 : 1;
       Pro.Watcher.watchFolder(

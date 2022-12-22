@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import i18n from '-/services/i18n';
@@ -25,35 +25,49 @@ import AdvancedSearchIcon from '@mui/icons-material/TuneOutlined';
 import DropDownIcon from '@mui/icons-material/ArrowDropDownOutlined';
 import Popover from '@mui/material/Popover';
 import SearchPopover from '-/components/SearchPopover';
+import SearchAutocomplete from '-/components/SearchAutocomplete';
+import Autocomplete from '@mui/material/Autocomplete';
+import { TextField } from '@mui/material';
+import { SearchOptions } from '-/components/SearchOptions';
 
 interface Props {
   open: boolean;
-  setAnchorSearch: (HTMLButtonElement) => void;
-  anchorSearch: HTMLButtonElement | null;
 }
 
 function SearchBox(props: Props) {
+  const [anchorSearch, setAnchorSearch] = useState<HTMLButtonElement | null>(
+    null
+  );
+  // const searchInlineRef = React.useRef<HTMLDivElement | null>(null);
+
+  /*  useEffect(() => {
+    if (props.open && searchInlineRef.current) {
+      setAnchorSearchItems(searchInlineRef.current);
+    }
+  }, [searchInlineRef.current, props.open]);*/
+
   return (
     <>
-      <SearchInline open={props.open} />
+      <SearchAutocomplete open={props.open} />
+      {/*<SearchInline open={props.open} />*/}
       {props.open && (
         <>
           <Tooltip title={i18n.t('core:advancedSearch')}>
             <IconButton
               id="advancedButton"
               data-tid="advancedSearch"
-              onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
-                props.setAnchorSearch(event.currentTarget)
-              }
+              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                setAnchorSearch(event.currentTarget);
+              }}
             >
               <AdvancedSearchIcon />
               <DropDownIcon />
             </IconButton>
           </Tooltip>
           <Popover
-            open={Boolean(props.anchorSearch)}
-            anchorEl={props.anchorSearch}
-            onClose={() => props.setAnchorSearch(null)}
+            open={Boolean(anchorSearch)}
+            anchorEl={anchorSearch}
+            onClose={() => setAnchorSearch(null)}
             anchorOrigin={{
               vertical: 'bottom',
               horizontal: 'right'
@@ -69,7 +83,7 @@ function SearchBox(props: Props) {
               horizontal: 'right'
             }}
           >
-            <SearchPopover onClose={() => props.setAnchorSearch(null)} />
+            <SearchPopover onClose={() => setAnchorSearch(null)} />
           </Popover>
         </>
       )}
