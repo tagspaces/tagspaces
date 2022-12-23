@@ -672,6 +672,16 @@ export default {
       type: 'ods',
       viewer: '@tagspaces/extensions/spreadsheet-viewer',
       color: '#b2f30e'
+    },
+    {
+      type: 'glb',
+      viewer: '@tagspaces/extensions/3d-viewer',
+      color: '#ac21f3'
+    },
+    {
+      type: 'gltf',
+      viewer: '@tagspaces/extensions/3d-viewer',
+      color: '#ac21f3'
     }
   ],
   mapTileServers: [
