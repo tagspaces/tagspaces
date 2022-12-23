@@ -45,7 +45,9 @@ export const ExecActions = {
   TAG_SEARCH_NOT: 'tag_search_not',
   TAG_SEARCH_OR: 'tag_search_or',
   TYPE_SEARCH: 'type_search',
-  SIZE_SEARCH: 'size_search'
+  SIZE_SEARCH: 'size_search',
+  LAST_MODIFIED_SEARCH: 'last_modified_search',
+  SCOPE_SEARCH: 'scope_search'
 };
 
 export const FileSize = {
@@ -57,6 +59,23 @@ export const FileSize = {
   sizeLarge: 1000000000, // 1GB
   sizeHuge: 1000000001 // over 1GB
 };
+
+export const LastModified = {
+  today: 86400000, // 1 day
+  yesterday: 172800000, // 48 hours
+  past7Days: 604800000, // 7 days
+  past30Days: 2592000000, // 30 days
+  past6Months: 15778476000, // 6 months
+  pastYear: 31556952000, // 1 year
+  moreThanYear: 31556952001 // over 1 year
+};
+export const scope = {
+  location: 'location',
+  folder: 'folder',
+  global: 'global'
+};
+
+export type ScopeType = 'location' | 'folder' | 'global';
 
 export function findAction(option: string): string {
   const actions = [
