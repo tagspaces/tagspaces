@@ -16,7 +16,9 @@ More information about can be found from the following sources:
 
 ## Downloads
 
-You can find the latest release of TagSpaces in the Github [release section](https://github.com/tagspaces/tagspaces/releases/)
+You can find the latest release of TagSpaces in the Github [release section](https://github.com/tagspaces/tagspaces/releases/latest)
+
+You can download the app from the [IzzyOnDroid repo](https://apt.izzysoft.de/fdroid/index/apk/org.tagspaces.mobileapp), compatible with F-Droid.
 
 A full list of the changes is available in the [changelog](CHANGELOG.md)
 
