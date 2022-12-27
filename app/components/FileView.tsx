@@ -131,7 +131,7 @@ function FileView(props: Props) {
           }}
           src={fileOpenerURL}
           allowFullScreen
-          sandbox="allow-same-origin allow-scripts allow-modals"
+          sandbox="allow-same-origin allow-scripts allow-modals allow-downloads"
           title={i18n.t('core:fileViewer')}
           id="FileViewer"
         />
