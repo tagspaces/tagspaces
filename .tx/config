@@ -37,9 +37,10 @@ source_file = extensions/extensions/md-editor/src/locales/en/ns.editorMD.json
 source_lang = en
 type        = KEYVALUEJSON
 
-[o:tagspaces:p:tagspaces:r:nsviewermhtmljson]
-file_filter = extensions/extensions/mhtml-viewer/locales/<lang>/ns.viewerMHTML.json
-source_file = extensions/extensions/mhtml-viewer/locales/en/ns.viewerMHTML.json
+[o:tagspaces:p:tagspaces:r:nsviewerhtmljson]
+file_filter = extensions/extensions/common/locales/<lang>/ns.extension.json
+source_file = extensions/extensions/common/locales/en/ns.extension.json
 source_lang = en
 type        = KEYVALUEJSON
+
 
