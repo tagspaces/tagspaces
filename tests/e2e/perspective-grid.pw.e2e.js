@@ -93,13 +93,13 @@ describe('TST50 - Perspective Grid', () => {
     test('TST10xx - Sort by size [web,minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortBySize]');
       let firstFileName = await getGridFileName(0);
-      expect(firstFileName).toBe('sample.desktop');
+      expect(firstFileName).toBe('sample.csv');
 
       // ASC
       await clickOn('[data-tid=gridPerspectiveSortMenu]');
       await clickOn('[data-tid=gridPerspectiveSortBySize]');
       firstFileName = await getGridFileName(0);
-      expect(firstFileName).toBe('sample.ogv');
+      expect(firstFileName).toBe('sample.glb');
     });
 
     test('TST10xx - Sort by date [web,minio,electron]', async () => {
