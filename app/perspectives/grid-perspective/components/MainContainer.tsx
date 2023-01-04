@@ -551,13 +551,13 @@ function GridPerspective(props: Props) {
         .map(fsentry => fsentry.path)
     : [];
   const sortedDirectories =
-    props.searchResultsCount > 0
-      ? []
-      : sortedDirContentMemoized.filter(entry => !entry.isFile);
+    props.searchResultsCount === -1 // not in search mode
+      ? sortedDirContentMemoized.filter(entry => !entry.isFile)
+      : [];
   const sortedFiles =
-    props.searchResultsCount > 0
-      ? GlobalSearch.results
-      : sortedDirContentMemoized.filter(entry => entry.isFile);
+    props.searchResultsCount === -1 // not in search mode
+      ? sortedDirContentMemoized.filter(entry => entry.isFile)
+      : GlobalSearch.results;
   const locationPath = props.currentLocation
     ? PlatformIO.getLocationPath(props.currentLocation)
     : '';

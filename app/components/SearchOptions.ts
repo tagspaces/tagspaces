@@ -77,15 +77,15 @@ export const scope = {
 
 export type ScopeType = 'location' | 'folder' | 'global';
 
-export function findAction(option: string): string {
+export function findAction(option: string, equal = false): string {
   const actions = [
     ...Object.values(SearchQueryComposition),
     ...Object.values(SearchActions)
   ];
-  let action = actions.find(a => option.startsWith(a));
+  let action = actions.find(a => (equal ? option === a : option.startsWith(a)));
   if (!action) {
     action = Object.values(SearchCommandAlternatives).find(a =>
-      option.startsWith(a)
+      equal ? option === a : option.startsWith(a)
     );
   }
   return action;

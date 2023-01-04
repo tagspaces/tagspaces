@@ -225,9 +225,9 @@ function FolderContainer(props: Props) {
   const havePrevOpenedFile = React.useRef<boolean>(false);
   const firstRender = useFirstRender();
 
-  useEffect(() => {
+  /*useEffect(() => {
     setSearchVisible(false);
-  }, [props.currentDirectoryPath]);
+  }, [props.currentDirectoryPath]);*/
 
   useEffect(() => {
     if (

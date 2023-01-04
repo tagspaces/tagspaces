@@ -94,6 +94,7 @@ export const types = {
   CLEAR_DIRECTORY_CONTENT: 'APP/CLEAR_DIRECTORY_CONTENT',
   // LOAD_PAGE_CONTENT: 'APP/LOAD_PAGE_CONTENT',
   SET_SEARCH_RESULTS: 'APP/SET_SEARCH_RESULTS',
+  EXIT_SEARCH_MODE: 'APP/EXIT_SEARCH_MODE',
   APPEND_SEARCH_RESULTS: 'APP/APPEND_SEARCH_RESULTS',
   OPEN_FILE: 'APP/OPEN_FILE',
   TOGGLE_ENTRY_FULLWIDTH: 'APP/TOGGLE_ENTRY_FULLWIDTH',
@@ -246,7 +247,7 @@ export const initialState = {
   locationManagerPanelOpened: showLocations,
   tagLibraryPanelOpened: showTagLibrary,
   searchPanelOpened: showSearch,
-  searchResultsCount: 0,
+  searchResultsCount: -1,
   user: window.ExtDemoUser
     ? {
         attributes: window.ExtDemoUser,
@@ -524,6 +525,14 @@ export default (state: any = initialState, action: any) => {
         ...state,
         // currentDirectoryEntries: action.searchResults,
         searchResultsCount: action.searchResults.length,
+        isLoading: false
+      };
+    }
+    case types.EXIT_SEARCH_MODE: {
+      GlobalSearch.results = [];
+      return {
+        ...state,
+        searchResultsCount: -1,
         isLoading: false
       };
     }
@@ -1734,6 +1743,9 @@ export const actions = {
     type: types.SET_SEARCH_RESULTS,
     searchResults
   }),
+  exitSearchMode: () => ({
+    type: types.EXIT_SEARCH_MODE
+  }),
   appendSearchResults: (searchResults: Array<any> | []) => ({
     type: types.APPEND_SEARCH_RESULTS,
     searchResults
@@ -1748,6 +1760,7 @@ export const actions = {
   ) => {
     const { currentLocationId } = getState().app;
     if (location.uuid !== currentLocationId) {
+      // dispatch(actions.exitSearchMode());
       dispatch(LocationIndexActions.clearDirectoryIndex());
       dispatch(actions.setCurrentLocationId(location.uuid));
     }

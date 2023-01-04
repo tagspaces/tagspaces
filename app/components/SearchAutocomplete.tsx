@@ -119,7 +119,17 @@ function SearchAutocomplete(props: Props) {
       : FileTypeGroups.any
   );
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
-  const actionValues = useRef<Array<SearchOptionType>>([]);
+
+  /*function parseSearchQuery(textQuery: string) {
+    if (textQuery) {
+      return execActions(textQuery.split(' '), []);
+    }
+    return [];
+  }*/
+
+  const actionValues = useRef<Array<SearchOptionType>>(
+    [] //parseSearchQuery(textQueryMask.current)
+  );
   const inputValue = useRef<string>('');
 
   // const searchBoxing = useRef<'location' | 'folder' | 'global'>(
@@ -165,8 +175,10 @@ function SearchAutocomplete(props: Props) {
         props.setSearchQuery({});
       }
     }*/
-    if (!firstRender && !props.open) {
-      if (Object.keys(props.searchQuery).length > 0) {
+    if (!firstRender) {
+      if (props.open) {
+        executeSearch();
+      } else if (Object.keys(props.searchQuery).length > 0) {
         clearSearch();
       }
     }
@@ -477,8 +489,8 @@ function SearchAutocomplete(props: Props) {
     ) {
       if (
         currentOptions.current !== SearchQueryComposition.TAG_AND ||
-        currentOptions.current === SearchQueryComposition.TAG_OR ||
-        currentOptions.current === SearchQueryComposition.TAG_NOT
+        currentOptions.current !== SearchQueryComposition.TAG_OR ||
+        currentOptions.current !== SearchQueryComposition.TAG_NOT
       ) {
         currentOptions.current = option;
         const searchAction =
@@ -573,7 +585,7 @@ function SearchAutocomplete(props: Props) {
     }
   }
 
-  function execActions(options: Array<any>) {
+  function execActions(options: Array<any>, previousActions) {
     const actions: Array<SearchOptionType> = [];
 
     function setPreviousAction(key: string, option: SearchOptionType): string {
@@ -592,108 +604,139 @@ function SearchAutocomplete(props: Props) {
       if (typeof options[i] === 'object') {
         option = options[i];
       } else {
+        /*let action = findAction(options[i]);
+        if (action === undefined && previousActions.length > 0) {
+          action = findAction(
+            previousActions[previousActions.length - 1].action,
+            true
+          );
+        }*/
         option = {
           label: options[i],
           action: findAction(options[i])
         };
       }
-      if (!actionValues.current.some(obj => obj.action === option.action)) {
-        if (option.action === SearchActions.LOCATION) {
-          changeOptions(option.action);
-          actions.push(option);
-        } else if (option.action === ExecActions.OPEN_LOCATION) {
-          props.openLocationById(option.id);
-        } else if (option.action === SearchActions.HISTORY) {
-          changeOptions(option.action);
-          actions.push(option);
-        } else if (option.action === ExecActions.OPEN_HISTORY) {
-        } else if (
-          option.action === SearchQueryComposition.TAG_AND ||
-          option.action === SearchQueryComposition.TAG_OR ||
-          option.action === SearchQueryComposition.TAG_NOT
-        ) {
-          // if (props.currentLocation) {
-          changeOptions(option.action);
-          // }
-          actions.push(option);
-        } else if (
-          option.action === ExecActions.TAG_SEARCH_AND ||
-          option.action === ExecActions.TAG_SEARCH_OR ||
-          option.action === ExecActions.TAG_SEARCH_NOT
-        ) {
-          const searchAction =
-            option.action === ExecActions.TAG_SEARCH_AND
-              ? SearchQueryComposition.TAG_AND
-              : option.action === ExecActions.TAG_SEARCH_NOT
-              ? SearchQueryComposition.TAG_NOT
-              : SearchQueryComposition.TAG_OR;
-          if (textQuery.current.indexOf(searchAction + option.label) === -1) {
-            textQuery.current += ' ' + searchAction + option.label;
-          }
-          // executeSearch();
+      try {
+        if (!previousActions.some(obj => obj.action === option.action)) {
+          if (option.action === SearchActions.LOCATION) {
+            changeOptions(option.action);
+            actions.push(option);
+          } else if (option.action === ExecActions.OPEN_LOCATION) {
+            props.openLocationById(option.id);
+          } else if (option.action === SearchActions.HISTORY) {
+            changeOptions(option.action);
+            actions.push(option);
+          } else if (option.action === ExecActions.OPEN_HISTORY) {
+          } else if (
+            option.action === SearchQueryComposition.TAG_AND ||
+            option.action === SearchQueryComposition.TAG_OR ||
+            option.action === SearchQueryComposition.TAG_NOT
+          ) {
+            // if (props.currentLocation) {
+            changeOptions(option.action);
+            // }
+            actions.push(option);
+          } else if (
+            option.action === ExecActions.TAG_SEARCH_AND ||
+            option.action === ExecActions.TAG_SEARCH_OR ||
+            option.action === ExecActions.TAG_SEARCH_NOT
+          ) {
+            const searchAction =
+              option.action === ExecActions.TAG_SEARCH_AND
+                ? SearchQueryComposition.TAG_AND
+                : option.action === ExecActions.TAG_SEARCH_NOT
+                ? SearchQueryComposition.TAG_NOT
+                : SearchQueryComposition.TAG_OR;
+            /* if (txtActions.indexOf(searchAction + option.label) === -1) {
+              txtActions += ' ' + searchAction + option.label;
+            }*/
+            // executeSearch();
 
-          if (actions.length > 0) {
-            const prevAction = actions[actions.length - 1];
-            prevAction.label = searchAction + option.label;
-          }
-        } else if (option.action === SearchQueryComposition.TYPE) {
-          changeOptions(option.action);
-          actions.push(option);
-        } else if (option.action === ExecActions.TYPE_SEARCH) {
-          if (actions.length > 0) {
-            const prevAction = actions[actions.length - 1];
-            if (prevAction.action === SearchQueryComposition.TYPE) {
-              prevAction.label = prevAction.action + option.label;
-              fileTypes.current = option.descr.split(', ');
+            if (actions.length > 0) {
+              const prevAction = actions[actions.length - 1];
+              prevAction.label = searchAction + option.label;
             }
+          } else if (option.action === SearchQueryComposition.TYPE) {
+            changeOptions(option.action);
+            actions.push(option);
+          } else if (option.action === ExecActions.TYPE_SEARCH) {
+            if (actions.length > 0) {
+              const prevAction = actions[actions.length - 1];
+              if (prevAction.action === SearchQueryComposition.TYPE) {
+                prevAction.label = prevAction.action + option.label;
+                fileTypes.current = option.descr.split(', ');
+              }
+            }
+            // executeSearch();
+          } else if (option.action === SearchQueryComposition.SIZE) {
+            changeOptions(option.action);
+            actions.push(option);
+          } else if (option.action === ExecActions.SIZE_SEARCH) {
+            const id = setPreviousAction(SearchQueryComposition.SIZE, option);
+            if (id) {
+              fileSize.current = id;
+            }
+            // executeSearch();
+          } else if (option.action === SearchQueryComposition.LAST_MODIFIED) {
+            changeOptions(option.action);
+            actions.push(option);
+          } else if (option.action === ExecActions.LAST_MODIFIED_SEARCH) {
+            const id = setPreviousAction(
+              SearchQueryComposition.LAST_MODIFIED,
+              option
+            );
+            if (id) {
+              lastModified.current = id;
+            }
+            // executeSearch();
+          } else if (option.action === SearchQueryComposition.SCOPE) {
+            changeOptions(option.action);
+            actions.push(option);
+          } else if (option.action === ExecActions.SCOPE_SEARCH) {
+            const id = setPreviousAction(SearchQueryComposition.SCOPE, option);
+            if (id) {
+              setSearchBoxing(scope[id]);
+            }
+            // executeSearch();
+          } else if (option.action === SearchQueryComposition.ACCURACY) {
+            changeOptions(option.action);
+            actions.push(option);
           }
-          // executeSearch();
-        } else if (option.action === SearchQueryComposition.SIZE) {
-          changeOptions(option.action);
-          actions.push(option);
-        } else if (option.action === ExecActions.SIZE_SEARCH) {
-          const id = setPreviousAction(SearchQueryComposition.SIZE, option);
-          if (id) {
-            fileSize.current = id;
-          }
-          // executeSearch();
-        } else if (option.action === SearchQueryComposition.LAST_MODIFIED) {
-          changeOptions(option.action);
-          actions.push(option);
-        } else if (option.action === ExecActions.LAST_MODIFIED_SEARCH) {
-          const id = setPreviousAction(SearchQueryComposition.LAST_MODIFIED, option);
-          if (id) {
-            lastModified.current = id;
-          }
-          // executeSearch();
-        } else if (option.action === SearchQueryComposition.SCOPE) {
-          changeOptions(option.action);
-          actions.push(option);
-        } else if (option.action === ExecActions.SCOPE_SEARCH) {
-          const id = setPreviousAction(SearchQueryComposition.SCOPE, option);
-          if (id) {
-            setSearchBoxing(scope[id]);
-          }
-          // executeSearch();
-        } else if (option.action === SearchQueryComposition.ACCURACY) {
-          changeOptions(option.action);
+        } else {
           actions.push(option);
         }
-      } else {
-        actions.push(option);
+      } catch (e) {
+        console.warn(e);
       }
     }
+    setTextQuery(actions);
     return actions;
+  }
+
+  function setTextQuery(actions) {
+    let txtQuery = '';
+    if (actions.length > 0) {
+      actions.forEach(action => {
+        if (
+          action.action === ExecActions.TAG_SEARCH_AND ||
+          ExecActions.TAG_SEARCH_OR ||
+          ExecActions.TAG_SEARCH_NOT
+        ) {
+          txtQuery += ' ' + action.label;
+        }
+      });
+    }
+    textQuery.current = txtQuery.trim();
   }
 
   function handleInputChange(event: Object, value: string, reason: string) {
     // handleChange(event, value.split(' '), 'createOption');
     if (reason === 'input') {
       const valueArr = value.split(' ');
-      actionValues.current = execActions([
-        ...actionValues.current,
-        ...valueArr
-      ]);
+      actionValues.current = execActions(
+        [...actionValues.current, ...valueArr],
+        actionValues.current
+      );
       const inputArr = valueArr.filter(
         action => !actionValues.current.some(v => v.label === action)
       );
@@ -709,11 +752,11 @@ function SearchAutocomplete(props: Props) {
   }
   function handleChange(event: Object, selected: Array<any>, reason: string) {
     if (reason === 'selectOption') {
-      actionValues.current = execActions(selected);
+      actionValues.current = execActions(selected, actionValues.current);
       //textQuery.current = txtQuery.trim();
       forceUpdate();
     } else if (reason === 'createOption') {
-      actionValues.current = execActions(selected);
+      actionValues.current = execActions(selected, actionValues.current);
       forceUpdate();
     } else if (reason === 'remove-value') {
       actionValues.current = actionValues.current.filter(
@@ -731,12 +774,13 @@ function SearchAutocomplete(props: Props) {
 
       if (actionValues.current.length === 0) {
         searchOptions.current = SearchOptions;
-        // textQuery.current = '';
+        currentOptions.current = undefined;
+        textQuery.current = '';
       } else {
         const prevAction =
           actionValues.current[actionValues.current.length - 1];
         changeOptions(prevAction.action);
-        // textQuery.current = actionValues.current.map(v => v.label).join(' ');
+        textQuery.current = actionValues.current.map(v => v.label).join(' ');
       }
       // executeSearch();
       forceUpdate();
