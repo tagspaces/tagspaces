@@ -33,7 +33,11 @@ import {
   parseTextQuery,
   removeAllTagsFromSearchQuery
 } from '@tagspaces/tagspaces-common/misc';
-import { actions as AppActions, getDirectoryPath } from '../reducers/app';
+import {
+  actions as AppActions,
+  getDirectoryPath,
+  getSearchResultsCount
+} from '../reducers/app';
 import {
   actions as LocationIndexActions,
   getIndexedEntriesCount,
@@ -92,6 +96,7 @@ interface Props {
   locations: TS.Location[];
   currentLocation: TS.Location;
   openLocationById: (locationId: string) => void;
+  searchResultsCount: number;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -170,26 +175,27 @@ function SearchAutocomplete(props: Props) {
   const firstRender = useFirstRender();
 
   useEffect(() => {
-    /*if (!firstRender) {
-      if (Object.keys(props.searchQuery).length > 0) {
-        props.setSearchQuery({});
-      }
-    }*/
     if (!firstRender) {
       if (props.open) {
         executeSearch();
-      } else if (Object.keys(props.searchQuery).length > 0) {
+      }
+    }
+  }, [props.currentLocation]);
+
+  useEffect(() => {
+    if (!firstRender) {
+      if (props.searchResultsCount === -1) {
         clearSearch();
       }
     }
-  }, [props.currentDirectory]);
+  }, [props.searchResultsCount]);
 
-  let searchBoxingName = i18n.t('location');
+  /* let searchBoxingName = i18n.t('location');
   if (searchBoxing === 'global') {
     searchBoxingName = i18n.t('globalSearch');
   } else if (searchBoxing === 'folder') {
     searchBoxingName = i18n.t('folder');
-  }
+  }*/
 
   useEffect(() => {
     if (Object.keys(props.searchQuery).length > 0) {
@@ -284,7 +290,7 @@ function SearchAutocomplete(props: Props) {
     }
   }, [props.searchQuery]);
 
-  const toggleSearchBoxing = () => {
+  /*const toggleSearchBoxing = () => {
     if (searchBoxing === 'location') {
       setSearchBoxing('folder');
     } else if (searchBoxing === 'folder' && Pro) {
@@ -292,7 +298,7 @@ function SearchAutocomplete(props: Props) {
     } else {
       setSearchBoxing('location');
     }
-  };
+  };*/
 
   const clickSearchButton = () => {
     executeSearch();
@@ -994,7 +1000,8 @@ function mapStateToProps(state) {
     showUnixHiddenEntries: getShowUnixHiddenEntries(state),
     language: getCurrentLanguage(state),
     locations: getLocations(state),
-    currentLocation: getCurrentLocation(state)
+    currentLocation: getCurrentLocation(state),
+    searchResultsCount: getSearchResultsCount(state)
   };
 }
 
