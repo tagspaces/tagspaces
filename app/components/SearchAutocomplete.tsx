@@ -314,7 +314,7 @@ function SearchAutocomplete(props: Props) {
     executeSearch();
   };
 
-  const startSearch = event => {
+  const onKeyDownHandler = event => {
     if (event.key === 'Enter' || event.keyCode === 13) {
       if (!isOpen.current) {
         executeSearch();
@@ -330,6 +330,8 @@ function SearchAutocomplete(props: Props) {
         isOpen.current = true;
         forceUpdate();
       }
+    } else {
+      isOpen.current = true;
     }
   };
 
@@ -630,13 +632,6 @@ function SearchAutocomplete(props: Props) {
       if (typeof options[i] === 'object') {
         option = options[i];
       } else {
-        /*let action = findAction(options[i]);
-        if (action === undefined && previousActions.length > 0) {
-          action = findAction(
-            previousActions[previousActions.length - 1].action,
-            true
-          );
-        }*/
         option = {
           label: options[i],
           action: findAction(options[i])
@@ -727,7 +722,8 @@ function SearchAutocomplete(props: Props) {
           } else if (option.action === SearchQueryComposition.ACCURACY) {
             changeOptions(option.action);
             actions.push(option);
-          } else if (option.action === undefined) { // text query
+          } else if (option.action === undefined) {
+            // text query
             inputValue.current = option.label;
           }
         } else {
@@ -783,12 +779,45 @@ function SearchAutocomplete(props: Props) {
       // executeSearch();
     }
   }
+
+  function toExecAction(action: string) {
+    if (action === SearchQueryComposition.TAG_AND) {
+      return ExecActions.TAG_SEARCH_AND;
+    }
+    if (action === SearchQueryComposition.TAG_NOT) {
+      return ExecActions.TAG_SEARCH_NOT;
+    }
+    if (action === SearchQueryComposition.TAG_OR) {
+      return ExecActions.TAG_SEARCH_OR;
+    }
+    return action;
+  }
+
   function handleChange(event: Object, selected: Array<any>, reason: string) {
     if (reason === 'selectOption') {
       actionValues.current = execActions(selected, actionValues.current);
       forceUpdate();
     } else if (reason === 'createOption') {
-      actionValues.current = execActions(selected, actionValues.current);
+      const actions = [];
+      let prevOption;
+      for (let i = 0; i < selected.length; i++) {
+        const option = selected[i];
+        if (option.action === undefined && prevOption) {
+          let action = findAction(prevOption, true);
+          if(action) {
+            actions.push({
+              label: option,
+              action: toExecAction(action)
+            });
+          } else {
+            actions.push(option);
+          }
+        } else {
+          actions.push(option);
+        }
+        prevOption = option;
+      }
+      actionValues.current = execActions(actions, actionValues.current);
       forceUpdate();
     } else if (reason === 'remove-value') {
       actionValues.current = actionValues.current.filter(
@@ -807,7 +836,7 @@ function SearchAutocomplete(props: Props) {
       if (actionValues.current.length === 0) {
         searchOptions.current = SearchOptions;
         currentOptions.current = undefined;
-        textQuery.current = '';
+        // textQuery.current = ''; todo remove tagsAnd from search query
       } else {
         const prevAction =
           actionValues.current[actionValues.current.length - 1];
@@ -815,6 +844,7 @@ function SearchAutocomplete(props: Props) {
         textQuery.current = actionValues.current.map(v => v.label).join(' ');
       }
       // executeSearch();
+      isOpen.current = true;
       forceUpdate();
     } else if (reason === 'clear') {
       props.setSearchQuery({});
@@ -901,7 +931,7 @@ function SearchAutocomplete(props: Props) {
             option.label + ': ' + option.descr
           }*/
           sx={{ width: 'calc(100% - 80px)' }}
-          onKeyDown={startSearch}
+          onKeyDown={onKeyDownHandler}
           renderInput={params => (
             <TextField
               {...params}
