@@ -116,7 +116,7 @@ function SearchAutocomplete(props: Props) {
   ] = useState<null | HTMLElement>(null);
   const searchOptions = useRef<Array<SearchOptionType>>(SearchOptions);
   const currentOptions = useRef<string>(undefined);
-  const textQuery = useRef<string>(props.searchQuery.textQuery || '');
+  const textQuery = useRef<string>(props.searchQuery.textQuery || ''); // rethink to use inputValue instead
   const textQueryMask = useRef<string>('');
   const fileTypes = useRef<Array<string>>(
     props.searchQuery.fileTypes
@@ -135,7 +135,7 @@ function SearchAutocomplete(props: Props) {
   const actionValues = useRef<Array<SearchOptionType>>(
     [] //parseSearchQuery(textQueryMask.current)
   );
-  const inputValue = useRef<string>('');
+  const inputValue = useRef<string>(getInputValue());
 
   // const searchBoxing = useRef<'location' | 'folder' | 'global'>(
   //   props.searchQuery.searchBoxing ? props.searchQuery.searchBoxing : 'location'
@@ -171,6 +171,7 @@ function SearchAutocomplete(props: Props) {
   );
 
   const mainSearchField = useRef<HTMLInputElement>(null);
+  const isOpen = useRef<boolean>(true);
 
   const firstRender = useFirstRender();
 
@@ -220,9 +221,9 @@ function SearchAutocomplete(props: Props) {
         });
         emptySearch = false;
       }
-      let txtQuery = textQuery.current.trim() || props.searchQuery.textQuery;
-      txtQuery = removeAllTagsFromSearchQuery(txtQuery);
-      if (txtQuery) {
+
+      inputValue.current = getInputValue();
+      if (inputValue.current) {
         emptySearch = false;
       }
       /* if (textQueryMask.current) {
@@ -234,7 +235,7 @@ function SearchAutocomplete(props: Props) {
       } */
       const searchQuery = {
         ...props.searchQuery,
-        textQuery: txtQuery
+        textQuery: inputValue.current
       };
       /* if (textQuery.current) {
         txtQuery = textQuery.current.replace(tagsMask, '');
@@ -242,10 +243,10 @@ function SearchAutocomplete(props: Props) {
         txtQuery = props.searchQuery.textQuery || '';
       }
       */
-      textQuery.current = txtQuery + ' ' + textQueryMask.current.trim();
+      textQuery.current = inputValue.current + ' ' + textQueryMask.current.trim();
       if (mainSearchField.current) {
         mainSearchField.current.value =
-          txtQuery +
+          inputValue.current +
           (textQueryMask.current ? ' ' + textQueryMask.current.trim() : '');
       }
       if (props.searchQuery.searchBoxing) {
@@ -290,6 +291,14 @@ function SearchAutocomplete(props: Props) {
     }
   }, [props.searchQuery]);
 
+  function getInputValue() {
+    let txtQuery = textQuery.current.trim() || props.searchQuery.textQuery;
+    txtQuery = removeAllTagsFromSearchQuery(txtQuery);
+    if (txtQuery) {
+      return txtQuery;
+    }
+    return '';
+  }
   /*const toggleSearchBoxing = () => {
     if (searchBoxing === 'location') {
       setSearchBoxing('folder');
@@ -306,10 +315,20 @@ function SearchAutocomplete(props: Props) {
 
   const startSearch = event => {
     if (event.key === 'Enter' || event.keyCode === 13) {
-      // executeSearch();
+      if (!isOpen.current) {
+        executeSearch();
+      } else {
+        isOpen.current = false;
+        forceUpdate();
+      }
     } else if (event.key === 'Escape' || event.keyCode === 27) {
       clearSearch();
       // props.openCurrentDirectory();
+    } else if (event.key === 'ArrowDown' || event.keyCode === 40) {
+      if (!isOpen.current) {
+        isOpen.current = true;
+        forceUpdate();
+      }
     }
   };
 
@@ -747,7 +766,7 @@ function SearchAutocomplete(props: Props) {
         action => !actionValues.current.some(v => v.label === action)
       );
       inputValue.current = inputArr.join(' ');
-      textQuery.current = inputValue.current;
+      textQuery.current += ' ' + inputValue.current;
       forceUpdate();
     } else if (reason === 'clear') {
       clearSearch();
@@ -795,6 +814,14 @@ function SearchAutocomplete(props: Props) {
     }
   }
 
+  /*const handleOpen = React.useCallback(() => {
+    isOpen.current = true;
+  }, []);
+
+  const handleClose = React.useCallback(() => {
+    isOpen.current = false;
+  }, []);*/
+
   if (!open) {
     return null;
   }
@@ -812,7 +839,7 @@ function SearchAutocomplete(props: Props) {
           id="textQuery"
           multiple
           /*autoFocus*/
-          openOnFocus
+          /*openOnFocus*/
           freeSolo
           autoSelect
           autoComplete
@@ -822,6 +849,9 @@ function SearchAutocomplete(props: Props) {
           onChange={handleChange}
           inputValue={inputValue.current}
           onInputChange={handleInputChange}
+          open={isOpen.current}
+          /*onOpen={handleOpen}
+          onClose={handleClose}*/
           renderTags={value =>
             value.map((option, index: number) => (
               <Button
@@ -868,6 +898,14 @@ function SearchAutocomplete(props: Props) {
           renderInput={params => (
             <TextField
               {...params}
+              onBlur={() => {
+                isOpen.current = false;
+                forceUpdate();
+              }}
+              onFocus={() => {
+                console.log('focus changed');
+                isOpen.current = true;
+              }}
               fullWidth
               /*id="textQuery"
               name="textQuery"*/
