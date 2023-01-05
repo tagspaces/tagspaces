@@ -243,7 +243,8 @@ function SearchAutocomplete(props: Props) {
         txtQuery = props.searchQuery.textQuery || '';
       }
       */
-      textQuery.current = inputValue.current + ' ' + textQueryMask.current.trim();
+      textQuery.current =
+        inputValue.current + ' ' + textQueryMask.current.trim();
       if (mainSearchField.current) {
         mainSearchField.current.value =
           inputValue.current +
@@ -754,7 +755,7 @@ function SearchAutocomplete(props: Props) {
     textQuery.current = txtQuery.trim();
   }
 
-  function handleInputChange(event: Object, value: string, reason: string) {
+  function handleInputChange(event: any, value: string, reason: string) {
     // handleChange(event, value.split(' '), 'createOption');
     if (reason === 'input') {
       const valueArr = value.split(' ');
@@ -771,7 +772,14 @@ function SearchAutocomplete(props: Props) {
     } else if (reason === 'clear') {
       clearSearch();
     } else if (reason === 'reset') {
-      inputValue.current = '';
+      if (event.type === 'keydown') {
+        inputValue.current = '';
+        /*if (!isOpen.current) {
+          executeSearch();
+        }*/
+      } /*else if (event.type === 'blur') {
+
+      }*/
       // executeSearch();
     }
   }
