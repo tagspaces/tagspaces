@@ -293,7 +293,7 @@ function SearchAutocomplete(props: Props) {
   }, [props.searchQuery]);
 
   function getInputValue() {
-    let txtQuery = textQuery.current.trim() || props.searchQuery.textQuery;
+    let txtQuery = textQuery.current.trim(); // || props.searchQuery.textQuery;
     txtQuery = removeAllTagsFromSearchQuery(txtQuery);
     if (txtQuery) {
       return txtQuery;
@@ -727,6 +727,8 @@ function SearchAutocomplete(props: Props) {
           } else if (option.action === SearchQueryComposition.ACCURACY) {
             changeOptions(option.action);
             actions.push(option);
+          } else if (option.action === undefined) { // text query
+            inputValue.current = option.label;
           }
         } else {
           actions.push(option);
@@ -752,7 +754,8 @@ function SearchAutocomplete(props: Props) {
         }
       });
     }
-    textQuery.current = txtQuery.trim();
+    textQuery.current =
+      txtQuery.trim() + (inputValue.current ? ' ' + inputValue.current : '');
   }
 
   function handleInputChange(event: any, value: string, reason: string) {
@@ -767,26 +770,22 @@ function SearchAutocomplete(props: Props) {
         action => !actionValues.current.some(v => v.label === action)
       );
       inputValue.current = inputArr.join(' ');
-      textQuery.current += ' ' + inputValue.current;
+      //textQuery.current += ' ' + inputValue.current;
       forceUpdate();
     } else if (reason === 'clear') {
       clearSearch();
     } else if (reason === 'reset') {
       if (event.type === 'keydown') {
+        // textQuery.current += ' ' + inputValue.current;
         inputValue.current = '';
-        /*if (!isOpen.current) {
-          executeSearch();
-        }*/
-      } /*else if (event.type === 'blur') {
-
-      }*/
+      } else if (event.type === 'blur') {
+      }
       // executeSearch();
     }
   }
   function handleChange(event: Object, selected: Array<any>, reason: string) {
     if (reason === 'selectOption') {
       actionValues.current = execActions(selected, actionValues.current);
-      //textQuery.current = txtQuery.trim();
       forceUpdate();
     } else if (reason === 'createOption') {
       actionValues.current = execActions(selected, actionValues.current);
