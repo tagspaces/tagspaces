@@ -59,6 +59,7 @@ import SavedSearchesMenu from '-/components/menus/SavedSearchesMenu';
 import AppConfig from '-/AppConfig';
 import { Autocomplete, Box, TextField } from '@mui/material';
 import {
+  accuracy,
   ExecActions,
   FileSize,
   findAction,
@@ -580,15 +581,6 @@ function SearchAutocomplete(props: Props) {
       }
       searchOptions.current = options;
       optionsChanged = true;
-    } else if (
-      action === ExecActions.TAG_SEARCH_AND ||
-      action === ExecActions.TAG_SEARCH_OR ||
-      action === ExecActions.TAG_SEARCH_NOT
-    ) {
-      searchOptions.current = SearchOptions.filter(
-        option => option.group === 'query'
-      );
-      optionsChanged = true;
     } else if (action === SearchQueryComposition.TYPE) {
       if (currentOptions.current !== SearchQueryComposition.TYPE) {
         currentOptions.current = action;
@@ -662,9 +654,34 @@ function SearchAutocomplete(props: Props) {
         searchOptions.current = options;
         optionsChanged = true;
       }
+    } else if (action === SearchQueryComposition.ACCURACY) {
+      if (currentOptions.current !== SearchQueryComposition.ACCURACY) {
+        currentOptions.current = action;
+        const options = [];
+
+        Object.entries(accuracy).forEach(([key, value]) => {
+          options.push({
+            id: key,
+            action: ExecActions.ACCURACY_SEARCH,
+            label: i18n.t('core:' + key)
+          });
+        });
+        searchOptions.current = options;
+        optionsChanged = true;
+      }
     } else {
-      searchOptions.current = SearchOptions;
+      currentOptions.current = action;
+      const execActionsArr = Object.values(ExecActions);
+      if (execActionsArr.includes(action)) {
+        searchOptions.current = SearchOptions.filter(
+          option => option.group === 'query'
+        );
+        optionsChanged = true;
+      } else {
+        searchOptions.current = SearchOptions;
+      }
     }
+
     if (optionsChanged) {
       isOpen.current = true;
       forceUpdate();
@@ -748,6 +765,7 @@ function SearchAutocomplete(props: Props) {
                 fileTypes.current = option.descr.split(', ');
               }
             }
+            changeOptions(option.action);
             // executeSearch();
           } else if (option.action === SearchQueryComposition.SIZE) {
             changeOptions(option.action);
@@ -757,6 +775,7 @@ function SearchAutocomplete(props: Props) {
             if (id) {
               fileSize.current = id;
             }
+            changeOptions(option.action);
             // executeSearch();
           } else if (option.action === SearchQueryComposition.LAST_MODIFIED) {
             changeOptions(option.action);
@@ -769,6 +788,7 @@ function SearchAutocomplete(props: Props) {
             if (id) {
               lastModified.current = id;
             }
+            changeOptions(option.action);
             // executeSearch();
           } else if (option.action === SearchQueryComposition.SCOPE) {
             changeOptions(option.action);
@@ -778,10 +798,21 @@ function SearchAutocomplete(props: Props) {
             if (id) {
               setSearchBoxing(scope[id]);
             }
+            changeOptions(option.action);
             // executeSearch();
           } else if (option.action === SearchQueryComposition.ACCURACY) {
             changeOptions(option.action);
             actions.push(option);
+          } else if (option.action === ExecActions.ACCURACY_SEARCH) {
+            const id = setPreviousAction(
+              SearchQueryComposition.ACCURACY,
+              option
+            );
+            if (id) {
+              searchType.current = accuracy[id];
+            }
+            changeOptions(option.action);
+            // executeSearch();
           } else if (option.action === undefined) {
             // text query
             inputValue.current = option.label;
@@ -952,6 +983,7 @@ function SearchAutocomplete(props: Props) {
           renderTags={value =>
             value.map((option, index: number) => (
               <Button
+                key={'button_' + index}
                 size="small"
                 style={{
                   fontSize: 13,

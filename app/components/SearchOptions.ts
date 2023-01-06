@@ -47,7 +47,8 @@ export const ExecActions = {
   TYPE_SEARCH: 'type_search',
   SIZE_SEARCH: 'size_search',
   LAST_MODIFIED_SEARCH: 'last_modified_search',
-  SCOPE_SEARCH: 'scope_search'
+  SCOPE_SEARCH: 'scope_search',
+  ACCURACY_SEARCH: 'accuracy_search'
 };
 
 export const FileSize = {
@@ -73,6 +74,12 @@ export const scope = {
   location: 'location',
   folder: 'folder',
   global: 'global'
+};
+
+export const accuracy = {
+  fuzzy: 'fuzzy',
+  semistrict: 'semistrict',
+  strict: 'strict'
 };
 
 export type ScopeType = 'location' | 'folder' | 'global';
