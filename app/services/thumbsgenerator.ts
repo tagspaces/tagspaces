@@ -44,6 +44,13 @@ export const supportedImgs = [
   'svg',
   'webp',
   'bmp',
+  'tga',
+  'tif',
+  'tiff',
+  'nef',
+  'cr2',
+  'dng',
+  'psd',
   'avif'
 ];
 export const supportedContainers = [
@@ -98,7 +105,7 @@ export const supportedText = [
   // 'mhtml'
 ];
 export const supportedVideos = ['ogv', 'mp4', 'webm', 'm4v', 'mkv', 'lrv'];
-const maxFileSize = 30 * 1024 * 1024;
+const maxFileSize = 30 * 1024 * 1024; // 30 MB
 
 function saveThumbnailPromise(filePath, dataURL) {
   if (!dataURL || dataURL.length < 7) {
@@ -277,7 +284,17 @@ export function generateThumbnailPromise(fileURL: string, fileSize: number) {
   const fileURLEscaped = encodeFileName(fileURL, PlatformIO.getDirSeparator());
 
   if (supportedImgs.indexOf(ext) >= 0) {
-    if (fileSize && fileSize < maxFileSize) {
+    if (Pro && ext === 'tga') {
+      return Pro.ThumbsGenerator.generateTGAThumbnail(fileURLEscaped, maxSize);
+    } else if (Pro && ext.startsWith('tif')) {
+      return Pro.ThumbsGenerator.generateUTIFThumbnail(fileURLEscaped, maxSize);
+    } else if (Pro && ext === 'dng') {
+      return Pro.ThumbsGenerator.generateUTIFThumbnail(fileURLEscaped, maxSize);
+    } else if (Pro && ext === 'nef') {
+      return Pro.ThumbsGenerator.generateUTIFThumbnail(fileURLEscaped, maxSize);
+    } else if (Pro && ext === 'cr2') {
+      return Pro.ThumbsGenerator.generateUTIFThumbnail(fileURLEscaped, maxSize);
+    } else if (fileSize && fileSize < maxFileSize) {
       return generateImageThumbnail(fileURLEscaped);
     }
   } else if (Pro && ext === 'pdf') {
@@ -286,8 +303,6 @@ export function generateThumbnailPromise(fileURL: string, fileSize: number) {
     return Pro.ThumbsGenerator.generateHtmlThumbnail(fileURLEscaped, maxSize);
   } else if (Pro && ext === 'url') {
     return Pro.ThumbsGenerator.generateUrlThumbnail(fileURLEscaped, maxSize);
-  } else if (Pro && ext === 'tiff') {
-    return Pro.ThumbsGenerator.generateTiffThumbnail(fileURLEscaped, maxSize);
   } else if (Pro && ext === 'mp3') {
     if (fileSize && fileSize < maxFileSize) {
       // return Pro.ThumbsGenerator.generateMp3Thumbnail(fileURL, maxSize);
