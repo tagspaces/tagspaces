@@ -210,22 +210,22 @@ Apache License
 
 The following NPM packages may be included in this product:
 
- - @aws-amplify/analytics@5.2.29
- - @aws-amplify/api-graphql@2.3.26
- - @aws-amplify/api-rest@2.0.62
- - @aws-amplify/api@4.0.62
- - @aws-amplify/auth@4.6.15
- - @aws-amplify/cache@4.0.64
- - @aws-amplify/core@4.7.13
- - @aws-amplify/datastore@3.14.5
- - @aws-amplify/geo@1.3.25
- - @aws-amplify/interactions@4.1.10
- - @aws-amplify/predictions@4.0.62
- - @aws-amplify/pubsub@4.5.12
- - @aws-amplify/storage@4.5.15
+ - @aws-amplify/analytics@5.2.30
+ - @aws-amplify/api-graphql@2.3.27
+ - @aws-amplify/api-rest@2.0.63
+ - @aws-amplify/api@4.0.63
+ - @aws-amplify/auth@4.6.16
+ - @aws-amplify/cache@4.0.65
+ - @aws-amplify/core@4.7.14
+ - @aws-amplify/datastore@3.14.6
+ - @aws-amplify/geo@1.3.26
+ - @aws-amplify/interactions@4.1.11
+ - @aws-amplify/predictions@4.0.63
+ - @aws-amplify/pubsub@4.5.13
+ - @aws-amplify/storage@4.5.16
  - @aws-amplify/ui-react@1.2.26
  - @aws-amplify/ui@2.0.7
- - @aws-amplify/xr@3.0.62
+ - @aws-amplify/xr@3.0.63
 
 These packages each contain the following license and notice below:
 
@@ -2895,25 +2895,25 @@ Apache License
 The following NPM packages may be included in this product:
 
  - @babel/code-frame@7.18.6
- - @babel/compat-data@7.20.5
- - @babel/core@7.20.5
- - @babel/generator@7.20.5
+ - @babel/compat-data@7.20.10
+ - @babel/core@7.20.12
+ - @babel/generator@7.20.7
  - @babel/helper-annotate-as-pure@7.18.6
  - @babel/helper-builder-binary-assignment-operator-visitor@7.18.9
- - @babel/helper-compilation-targets@7.20.0
- - @babel/helper-create-class-features-plugin@7.20.5
+ - @babel/helper-compilation-targets@7.20.7
+ - @babel/helper-create-class-features-plugin@7.20.12
  - @babel/helper-create-regexp-features-plugin@7.20.5
  - @babel/helper-environment-visitor@7.18.9
  - @babel/helper-explode-assignable-expression@7.18.6
  - @babel/helper-function-name@7.19.0
  - @babel/helper-hoist-variables@7.18.6
- - @babel/helper-member-expression-to-functions@7.18.9
+ - @babel/helper-member-expression-to-functions@7.20.7
  - @babel/helper-module-imports@7.18.6
- - @babel/helper-module-transforms@7.20.2
+ - @babel/helper-module-transforms@7.20.11
  - @babel/helper-optimise-call-expression@7.18.6
  - @babel/helper-plugin-utils@7.20.2
  - @babel/helper-remap-async-to-generator@7.18.9
- - @babel/helper-replace-supers@7.19.1
+ - @babel/helper-replace-supers@7.20.7
  - @babel/helper-simple-access@7.20.2
  - @babel/helper-skip-transparent-expression-wrappers@7.20.0
  - @babel/helper-split-export-declaration@7.18.6
@@ -2921,23 +2921,23 @@ The following NPM packages may be included in this product:
  - @babel/helper-validator-identifier@7.19.1
  - @babel/helper-validator-option@7.18.6
  - @babel/helper-wrap-function@7.20.5
- - @babel/helpers@7.20.6
+ - @babel/helpers@7.20.7
  - @babel/highlight@7.18.6
  - @babel/plugin-bugfix-safari-id-destructuring-collision-in-function-expression@7.18.6
- - @babel/plugin-bugfix-v8-spread-parameters-in-optional-chaining@7.18.9
- - @babel/plugin-proposal-async-generator-functions@7.20.1
+ - @babel/plugin-bugfix-v8-spread-parameters-in-optional-chaining@7.20.7
+ - @babel/plugin-proposal-async-generator-functions@7.20.7
  - @babel/plugin-proposal-class-properties@7.18.6
- - @babel/plugin-proposal-class-static-block@7.18.6
+ - @babel/plugin-proposal-class-static-block@7.20.7
  - @babel/plugin-proposal-dynamic-import@7.18.6
  - @babel/plugin-proposal-export-default-from@7.18.10
  - @babel/plugin-proposal-export-namespace-from@7.18.9
  - @babel/plugin-proposal-json-strings@7.18.6
- - @babel/plugin-proposal-logical-assignment-operators@7.18.9
+ - @babel/plugin-proposal-logical-assignment-operators@7.20.7
  - @babel/plugin-proposal-nullish-coalescing-operator@7.18.6
  - @babel/plugin-proposal-numeric-separator@7.18.6
- - @babel/plugin-proposal-object-rest-spread@7.20.2
+ - @babel/plugin-proposal-object-rest-spread@7.20.7
  - @babel/plugin-proposal-optional-catch-binding@7.18.6
- - @babel/plugin-proposal-optional-chaining@7.18.9
+ - @babel/plugin-proposal-optional-chaining@7.20.7
  - @babel/plugin-proposal-private-methods@7.18.6
  - @babel/plugin-proposal-private-property-in-object@7.20.5
  - @babel/plugin-proposal-unicode-property-regex@7.18.6
@@ -2960,13 +2960,13 @@ The following NPM packages may be included in this product:
  - @babel/plugin-syntax-private-property-in-object@7.14.5
  - @babel/plugin-syntax-top-level-await@7.14.5
  - @babel/plugin-syntax-typescript@7.20.0
- - @babel/plugin-transform-arrow-functions@7.18.6
- - @babel/plugin-transform-async-to-generator@7.18.6
+ - @babel/plugin-transform-arrow-functions@7.20.7
+ - @babel/plugin-transform-async-to-generator@7.20.7
  - @babel/plugin-transform-block-scoped-functions@7.18.6
- - @babel/plugin-transform-block-scoping@7.20.5
- - @babel/plugin-transform-classes@7.20.2
- - @babel/plugin-transform-computed-properties@7.18.9
- - @babel/plugin-transform-destructuring@7.20.2
+ - @babel/plugin-transform-block-scoping@7.20.11
+ - @babel/plugin-transform-classes@7.20.7
+ - @babel/plugin-transform-computed-properties@7.20.7
+ - @babel/plugin-transform-destructuring@7.20.7
  - @babel/plugin-transform-dotall-regex@7.18.6
  - @babel/plugin-transform-duplicate-keys@7.18.9
  - @babel/plugin-transform-exponentiation-operator@7.18.6
@@ -2975,38 +2975,38 @@ The following NPM packages may be included in this product:
  - @babel/plugin-transform-function-name@7.18.9
  - @babel/plugin-transform-literals@7.18.9
  - @babel/plugin-transform-member-expression-literals@7.18.6
- - @babel/plugin-transform-modules-amd@7.19.6
- - @babel/plugin-transform-modules-commonjs@7.19.6
- - @babel/plugin-transform-modules-systemjs@7.19.6
+ - @babel/plugin-transform-modules-amd@7.20.11
+ - @babel/plugin-transform-modules-commonjs@7.20.11
+ - @babel/plugin-transform-modules-systemjs@7.20.11
  - @babel/plugin-transform-modules-umd@7.18.6
  - @babel/plugin-transform-named-capturing-groups-regex@7.20.5
  - @babel/plugin-transform-new-target@7.18.6
  - @babel/plugin-transform-object-super@7.18.6
- - @babel/plugin-transform-parameters@7.20.5
+ - @babel/plugin-transform-parameters@7.20.7
  - @babel/plugin-transform-property-literals@7.18.6
  - @babel/plugin-transform-react-display-name@7.18.6
  - @babel/plugin-transform-react-jsx-self@7.18.6
  - @babel/plugin-transform-react-jsx-source@7.19.6
- - @babel/plugin-transform-react-jsx@7.19.0
+ - @babel/plugin-transform-react-jsx@7.20.7
  - @babel/plugin-transform-regenerator@7.20.5
  - @babel/plugin-transform-reserved-words@7.18.6
  - @babel/plugin-transform-runtime@7.19.6
  - @babel/plugin-transform-shorthand-properties@7.18.6
- - @babel/plugin-transform-spread@7.19.0
+ - @babel/plugin-transform-spread@7.20.7
  - @babel/plugin-transform-sticky-regex@7.18.6
  - @babel/plugin-transform-template-literals@7.18.9
  - @babel/plugin-transform-typeof-symbol@7.18.9
- - @babel/plugin-transform-typescript@7.20.2
+ - @babel/plugin-transform-typescript@7.20.7
  - @babel/plugin-transform-unicode-escapes@7.18.10
  - @babel/plugin-transform-unicode-regex@7.18.6
  - @babel/preset-env@7.20.2
  - @babel/preset-flow@7.18.6
  - @babel/preset-typescript@7.18.6
  - @babel/register@7.18.9
- - @babel/runtime@7.20.6
- - @babel/template@7.18.10
- - @babel/traverse@7.20.5
- - @babel/types@7.20.5
+ - @babel/runtime@7.20.7
+ - @babel/template@7.20.7
+ - @babel/traverse@7.20.12
+ - @babel/types@7.20.7
 
 These packages each contain the following license and notice below:
 
@@ -3071,7 +3071,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - @babel/parser@7.20.5
+ - @babel/parser@7.20.7
 
 This package contains the following license and notice below:
 
@@ -3191,7 +3191,7 @@ SOFTWARE.
 The following NPM packages may be included in this product:
 
  - @codemirror/autocomplete@6.4.0
- - @codemirror/commands@6.1.2
+ - @codemirror/commands@6.1.3
  - @codemirror/lang-css@6.0.1
  - @codemirror/lang-html@6.4.0
  - @codemirror/lang-javascript@6.1.2
@@ -3199,8 +3199,8 @@ The following NPM packages may be included in this product:
  - @codemirror/language@6.3.2
  - @codemirror/lint@6.1.0
  - @codemirror/search@6.2.3
- - @codemirror/state@6.1.4
- - @codemirror/view@6.7.1
+ - @codemirror/state@6.2.0
+ - @codemirror/view@6.7.2
 
 These packages each contain the following license and notice below:
 
@@ -6145,17 +6145,17 @@ SOFTWARE.
 The following NPM packages may be included in this product:
 
  - @mui/base@5.0.0-alpha.107
- - @mui/base@5.0.0-alpha.111
- - @mui/core-downloads-tracker@5.11.1
+ - @mui/base@5.0.0-alpha.112
+ - @mui/core-downloads-tracker@5.11.3
  - @mui/icons-material@5.11.0
- - @mui/lab@5.0.0-alpha.113
+ - @mui/lab@5.0.0-alpha.114
  - @mui/material@5.10.15
- - @mui/private-theming@5.11.1
+ - @mui/private-theming@5.11.2
  - @mui/styled-engine@5.11.0
  - @mui/styles@5.10.15
- - @mui/system@5.11.1
+ - @mui/system@5.11.2
  - @mui/types@7.2.3
- - @mui/utils@5.11.1
+ - @mui/utils@5.11.2
 
 These packages each contain the following license and notice below:
 
@@ -6185,7 +6185,7 @@ SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - @mui/x-date-pickers@5.0.11
+ - @mui/x-date-pickers@5.0.13
 
 This package contains the following license and notice below:
 
@@ -6239,6 +6239,24 @@ FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+-----------
+
+The following NPM package may be included in this product:
+
+ - @rc-component/context@1.3.0
+
+This package contains the following license and notice below:
+
+The MIT License (MIT)
+
+Copyright (c) 2014-present yiminghe
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 -----------
 
@@ -6548,20 +6566,20 @@ The following NPM packages may be included in this product:
  - @types/mdast@3.0.10
  - @types/mermaid@9.2.0
  - @types/node-emoji@1.8.2
- - @types/node@18.11.17
+ - @types/node@18.11.18
  - @types/prismjs@1.26.0
  - @types/prop-types@15.7.5
  - @types/react-dom@17.0.18
  - @types/react-is@17.0.3
- - @types/react-redux@7.1.24
+ - @types/react-redux@7.1.25
  - @types/react-transition-group@4.4.5
  - @types/react@17.0.52
  - @types/scheduler@0.16.2
  - @types/unist@2.0.6
  - @types/use-sync-external-store@0.0.3
  - @types/yargs-parser@21.0.0
- - @types/yargs@15.0.14
- - @types/yargs@16.0.4
+ - @types/yargs@15.0.15
+ - @types/yargs@16.0.5
 
 These packages each contain the following license and notice below:
 
@@ -6684,7 +6702,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - amazon-cognito-identity-js@5.2.13
+ - amazon-cognito-identity-js@5.2.14
 
 This package contains the following license and notice below:
 
@@ -7775,7 +7793,7 @@ SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - aws-amplify@4.3.44
+ - aws-amplify@4.3.45
 
 This package contains the following license and notice below:
 
@@ -7985,7 +8003,7 @@ Apache License
 
 The following NPM package may be included in this product:
 
- - aws-sdk@2.1278.0
+ - aws-sdk@2.1290.0
 
 This package contains the following license and notice below:
 
@@ -9219,7 +9237,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 The following NPM package may be included in this product:
 
- - caniuse-lite@1.0.30001439
+ - caniuse-lite@1.0.30001442
 
 This package contains the following license and notice below:
 
@@ -9653,13 +9671,13 @@ SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - ci-info@3.7.0
+ - ci-info@3.7.1
 
 This package contains the following license and notice below:
 
 The MIT License (MIT)
 
-Copyright (c) 2016-2022 Thomas Watson Steen
+Copyright (c) 2016-2023 Thomas Watson Steen
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -9911,8 +9929,8 @@ THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 The following NPM packages may be included in this product:
 
  - comma-separated-tokens@2.0.3
- - hast-util-parse-selector@3.1.0
- - hastscript@7.1.0
+ - hast-util-parse-selector@3.1.1
+ - hastscript@7.2.0
  - is-alphabetical@2.0.1
  - is-alphanumerical@2.0.1
  - is-decimal@2.0.1
@@ -9984,7 +10002,7 @@ The following NPM packages may be included in this product:
  - commander@2.13.0
  - commander@7.2.0
  - commander@8.3.0
- - commander@9.4.1
+ - commander@9.5.0
 
 These packages each contain the following license and notice below:
 
@@ -10359,7 +10377,7 @@ THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - core-js-compat@3.26.1
+ - core-js-compat@3.27.1
 
 This package contains the following license and notice below:
 
@@ -10761,8 +10779,9 @@ The following NPM packages may be included in this product:
 
  - d3-array@3.2.1
  - d3-color@3.1.0
+ - d3-shape@3.2.0
  - d3-time@3.1.0
- - d3@7.7.0
+ - d3@7.8.0
 
 These packages each contain the following license and notice below:
 
@@ -10798,7 +10817,6 @@ The following NPM packages may be included in this product:
  - d3-random@3.0.1
  - d3-scale@4.0.2
  - d3-selection@3.0.0
- - d3-shape@3.1.0
  - d3-time-format@4.1.0
  - d3-timer@3.0.1
  - d3-transition@3.0.1
@@ -10950,11 +10968,11 @@ THIS SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - d3-geo@3.0.1
+ - d3-geo@3.1.0
 
 This package contains the following license and notice below:
 
-Copyright 2010-2021 Mike Bostock
+Copyright 2010-2022 Mike Bostock
 
 Permission to use, copy, modify, and/or distribute this software for any purpose
 with or without fee is hereby granted, provided that the above copyright notice
@@ -11727,11 +11745,12 @@ THE SOFTWARE.
 
 -----------
 
-The following NPM package may be included in this product:
+The following NPM packages may be included in this product:
 
  - dompurify@2.4.1
+ - dompurify@2.4.3
 
-This package contains the following license and notice below:
+These packages each contain the following license and notice below:
 
 DOMPurify
 Copyright 2015 Mario Heiderich
@@ -14915,6 +14934,7 @@ SOFTWARE.
 The following NPM packages may be included in this product:
 
  - isexe@2.0.0
+ - lru-cache@5.1.1
  - lru-cache@6.0.0
  - minimatch@3.1.2
  - once@1.4.0
@@ -14925,6 +14945,7 @@ The following NPM packages may be included in this product:
  - semver@7.3.8
  - which@1.3.1
  - wrappy@1.0.2
+ - yallist@3.1.1
  - yallist@4.0.0
 
 These packages each contain the following license and notice below:
@@ -15256,7 +15277,7 @@ distributed under the terms of the MIT license above.
 
 The following NPM package may be included in this product:
 
- - json5@2.2.2
+ - json5@2.2.3
 
 This package contains the following license and notice below:
 
@@ -16534,7 +16555,7 @@ THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - marked@4.2.4
+ - marked@4.2.5
 
 This package contains the following license and notice below:
 
@@ -16643,7 +16664,7 @@ The following NPM packages may be included in this product:
  - mdast-util-gfm-task-list-item@1.0.1
  - mdast-util-gfm@2.0.1
  - mdast-util-math@2.0.1
- - mdast-util-to-markdown@1.4.0
+ - mdast-util-to-markdown@1.5.0
  - micromark-extension-directive@2.1.2
  - micromark-extension-gfm-autolink-literal@1.0.3
  - micromark-extension-gfm-strikethrough@1.0.4
@@ -16660,6 +16681,38 @@ These packages each contain the following license and notice below:
 (The MIT License)
 
 Copyright (c) 2020 Titus Wormer <tituswormer@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+-----------
+
+The following NPM package may be included in this product:
+
+ - mdast-util-phrasing@3.0.0
+
+This package contains the following license and notice below:
+
+(The MIT License)
+
+Copyright (c) 2017 Titus Wormer <tituswormer@gmail.com>
+Copyright (c) 2017 Victor Felder <victor@draft.li>
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -24236,7 +24289,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - rc-resize-observer@1.2.0
+ - rc-resize-observer@1.2.1
 
 This package contains the following license and notice below:
 
@@ -24254,7 +24307,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 The following NPM package may be included in this product:
 
- - rc-table@7.28.2
+ - rc-table@7.30.3
 
 This package contains the following license and notice below:
 
@@ -24272,7 +24325,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 The following NPM package may be included in this product:
 
- - rc-util@5.27.0
+ - rc-util@5.27.1
 
 This package contains the following license and notice below:
 
@@ -26996,6 +27049,34 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
+ - tga-js@1.1.1
+
+This package contains the following license and notice below:
+
+Copyright (c) 2013-2020 Vincent Thibault, Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+-----------
+
+The following NPM package may be included in this product:
+
  - throat@5.0.0
 
 This package contains the following license and notice below:
@@ -27042,7 +27123,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 The following NPM package may be included in this product:
 
- - tinycolor2@1.4.2
+ - tinycolor2@1.5.2
 
 This package contains the following license and notice below:
 
@@ -27740,6 +27821,36 @@ This package contains the following license and notice below:
 MIT License
 
 Copyright (c) 2019 Robin Wieruch
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+-----------
+
+The following NPM package may be included in this product:
+
+ - utif@3.1.0
+
+This package contains the following license and notice below:
+
+MIT License
+
+Copyright (c) 2017 Photopea
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
