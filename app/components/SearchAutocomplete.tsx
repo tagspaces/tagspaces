@@ -60,9 +60,11 @@ import AppConfig from '-/AppConfig';
 import { Autocomplete, Box, TextField } from '@mui/material';
 import {
   accuracy,
+  ActionType,
   ExecActions,
   FileSize,
   findAction,
+  isAction,
   LastModified,
   scope,
   ScopeType,
@@ -98,6 +100,8 @@ interface Props {
   currentLocation: TS.Location;
   openLocationById: (locationId: string) => void;
   searchResultsCount: number;
+  exitSearchMode: () => void;
+  setSearchFilter: (filter) => void;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -178,7 +182,10 @@ function SearchAutocomplete(props: Props) {
 
   useEffect(() => {
     if (!firstRender) {
-      if (props.open) {
+      if (
+        props.open &&
+        (inputValue.current.length > 0 || actionValues.current.length > 0)
+      ) {
         executeSearch();
       }
     }
@@ -446,14 +453,19 @@ function SearchAutocomplete(props: Props) {
     );
   }
 
-  function getTags(actions: Array<SearchOptionType>, action: string): TS.Tag[] {
+  function getTags(
+    actions: Array<SearchOptionType>,
+    action: ActionType
+  ): TS.Tag[] {
     if (actions.length > 0) {
-      const actionsArr = actions.filter(a => a.action === action);
+      const actionsArr = actions.filter(a => isAction(a.action, action));
       if (actionsArr.length > 0) {
         return actionsArr.map(a => ({
           title:
-            a.label.indexOf(action) === 0
-              ? a.label.substring(action.length)
+            a.label.indexOf(action.shortName) === 0
+              ? a.label.substring(action.shortName.length)
+              : action.fullName && a.label.indexOf(action.fullName) === 0
+              ? a.label.substring(action.fullName.length)
               : a.label
         }));
       }
@@ -537,7 +549,7 @@ function SearchAutocomplete(props: Props) {
   }*/
   function changeOptions(action: string) {
     let optionsChanged = false;
-    if (SearchActions.LOCATION === action) {
+    if (isAction(action, SearchActions.LOCATION)) {
       if (currentOptions.current !== action) {
         currentOptions.current = action;
         searchOptions.current = props.locations.map(location => {
@@ -550,15 +562,15 @@ function SearchAutocomplete(props: Props) {
         });
         optionsChanged = true;
       }
-    } else if (SearchActions.HISTORY === action) {
+    } else if (isAction(action, SearchActions.HISTORY)) {
       if (currentOptions.current !== action) {
         currentOptions.current = action;
         // searchOptions.current = ... todo
       }
     } else if (
-      action === SearchQueryComposition.TAG_AND ||
-      action === SearchQueryComposition.TAG_OR ||
-      action === SearchQueryComposition.TAG_NOT
+      isAction(action, SearchQueryComposition.TAG_AND) ||
+      isAction(action, SearchQueryComposition.TAG_OR) ||
+      isAction(action, SearchQueryComposition.TAG_NOT)
     ) {
       /*if (
         currentOptions.current !== SearchQueryComposition.TAG_AND ||
@@ -575,14 +587,16 @@ function SearchAutocomplete(props: Props) {
             id: tag.id,
             action: searchAction,
             label: tag.title,
+            color: tag.color,
+            textcolor: tag.textcolor,
             group: tagGroups[j].title
           });
         });
       }
       searchOptions.current = options;
       optionsChanged = true;
-    } else if (action === SearchQueryComposition.TYPE) {
-      if (currentOptions.current !== SearchQueryComposition.TYPE) {
+    } else if (isAction(action, SearchQueryComposition.TYPE)) {
+      if (currentOptions.current !== SearchQueryComposition.TYPE.shortName) {
         currentOptions.current = action;
         const options = [];
         Object.entries(FileTypeGroups).forEach(([key, value]) => {
@@ -596,8 +610,8 @@ function SearchAutocomplete(props: Props) {
         searchOptions.current = options;
         optionsChanged = true;
       }
-    } else if (action === SearchQueryComposition.SIZE) {
-      if (currentOptions.current !== SearchQueryComposition.SIZE) {
+    } else if (isAction(action, SearchQueryComposition.SIZE)) {
+      if (currentOptions.current !== SearchQueryComposition.SIZE.shortName) {
         currentOptions.current = action;
         const options = [];
 
@@ -624,8 +638,11 @@ function SearchAutocomplete(props: Props) {
         searchOptions.current = options;
         optionsChanged = true;
       }
-    } else if (action === SearchQueryComposition.LAST_MODIFIED) {
-      if (currentOptions.current !== SearchQueryComposition.LAST_MODIFIED) {
+    } else if (isAction(action, SearchQueryComposition.LAST_MODIFIED)) {
+      if (
+        currentOptions.current !==
+        SearchQueryComposition.LAST_MODIFIED.shortName
+      ) {
         currentOptions.current = action;
         const options = [];
 
@@ -639,8 +656,8 @@ function SearchAutocomplete(props: Props) {
         searchOptions.current = options;
         optionsChanged = true;
       }
-    } else if (action === SearchQueryComposition.SCOPE) {
-      if (currentOptions.current !== SearchQueryComposition.SCOPE) {
+    } else if (isAction(action, SearchQueryComposition.SCOPE)) {
+      if (currentOptions.current !== SearchQueryComposition.SCOPE.shortName) {
         currentOptions.current = action;
         const options = [];
 
@@ -654,8 +671,10 @@ function SearchAutocomplete(props: Props) {
         searchOptions.current = options;
         optionsChanged = true;
       }
-    } else if (action === SearchQueryComposition.ACCURACY) {
-      if (currentOptions.current !== SearchQueryComposition.ACCURACY) {
+    } else if (isAction(action, SearchQueryComposition.ACCURACY)) {
+      if (
+        currentOptions.current !== SearchQueryComposition.ACCURACY.shortName
+      ) {
         currentOptions.current = action;
         const options = [];
 
@@ -691,10 +710,13 @@ function SearchAutocomplete(props: Props) {
   function execActions(options: Array<any>, previousActions) {
     const actions: Array<SearchOptionType> = [];
 
-    function setPreviousAction(key: string, option: SearchOptionType): string {
+    function setPreviousAction(
+      key: ActionType,
+      option: SearchOptionType
+    ): string {
       if (actions.length > 0) {
         const prevAction = actions[actions.length - 1];
-        if (prevAction.action === key) {
+        if (isAction(prevAction.action, key)) {
           prevAction.label = prevAction.action + option.label;
           return option.id;
         }
@@ -707,121 +729,137 @@ function SearchAutocomplete(props: Props) {
       if (typeof options[i] === 'object') {
         option = options[i];
       } else {
+        const action = findAction(options[i]);
         option = {
           label: options[i],
-          action: findAction(options[i])
+          fullName: action,
+          action: action
         };
       }
-      try {
-        if (
-          !previousActions.some(
-            obj => obj.action === option.action && obj.label === option.label
-          )
-        ) {
-          if (option.action === SearchActions.LOCATION) {
-            changeOptions(option.action);
-            actions.push(option);
-          } else if (option.action === ExecActions.OPEN_LOCATION) {
-            props.openLocationById(option.id);
-          } else if (option.action === SearchActions.HISTORY) {
-            changeOptions(option.action);
-            actions.push(option);
-          } else if (option.action === ExecActions.OPEN_HISTORY) {
-          } else if (
-            option.action === SearchQueryComposition.TAG_AND ||
-            option.action === SearchQueryComposition.TAG_OR ||
-            option.action === SearchQueryComposition.TAG_NOT
-          ) {
-            // if (props.currentLocation) {
-            changeOptions(option.action);
-            // }
-            actions.push(option);
-          } else if (
-            option.action === ExecActions.TAG_SEARCH_AND ||
-            option.action === ExecActions.TAG_SEARCH_OR ||
-            option.action === ExecActions.TAG_SEARCH_NOT
-          ) {
-            const searchAction =
-              option.action === ExecActions.TAG_SEARCH_AND
-                ? SearchQueryComposition.TAG_AND
-                : option.action === ExecActions.TAG_SEARCH_NOT
-                ? SearchQueryComposition.TAG_NOT
-                : SearchQueryComposition.TAG_OR;
-            // executeSearch();
-
-            if (actions.length > 0) {
-              const prevAction = actions[actions.length - 1];
-              prevAction.label = searchAction + option.label;
-            }
-            changeOptions(option.action);
-          } else if (option.action === SearchQueryComposition.TYPE) {
-            changeOptions(option.action);
-            actions.push(option);
-          } else if (option.action === ExecActions.TYPE_SEARCH) {
-            if (actions.length > 0) {
-              const prevAction = actions[actions.length - 1];
-              if (prevAction.action === SearchQueryComposition.TYPE) {
-                prevAction.label = prevAction.action + option.label;
-                fileTypes.current = option.descr.split(', ');
-              }
-            }
-            changeOptions(option.action);
-            // executeSearch();
-          } else if (option.action === SearchQueryComposition.SIZE) {
-            changeOptions(option.action);
-            actions.push(option);
-          } else if (option.action === ExecActions.SIZE_SEARCH) {
-            const id = setPreviousAction(SearchQueryComposition.SIZE, option);
-            if (id) {
-              fileSize.current = id;
-            }
-            changeOptions(option.action);
-            // executeSearch();
-          } else if (option.action === SearchQueryComposition.LAST_MODIFIED) {
-            changeOptions(option.action);
-            actions.push(option);
-          } else if (option.action === ExecActions.LAST_MODIFIED_SEARCH) {
-            const id = setPreviousAction(
-              SearchQueryComposition.LAST_MODIFIED,
-              option
-            );
-            if (id) {
-              lastModified.current = id;
-            }
-            changeOptions(option.action);
-            // executeSearch();
-          } else if (option.action === SearchQueryComposition.SCOPE) {
-            changeOptions(option.action);
-            actions.push(option);
-          } else if (option.action === ExecActions.SCOPE_SEARCH) {
-            const id = setPreviousAction(SearchQueryComposition.SCOPE, option);
-            if (id) {
-              setSearchBoxing(scope[id]);
-            }
-            changeOptions(option.action);
-            // executeSearch();
-          } else if (option.action === SearchQueryComposition.ACCURACY) {
-            changeOptions(option.action);
-            actions.push(option);
-          } else if (option.action === ExecActions.ACCURACY_SEARCH) {
-            const id = setPreviousAction(
-              SearchQueryComposition.ACCURACY,
-              option
-            );
-            if (id) {
-              searchType.current = accuracy[id];
-            }
-            changeOptions(option.action);
-            // executeSearch();
-          } else if (option.action === undefined) {
-            // text query
-            inputValue.current = option.label;
-          }
-        } else {
+      const prevAction = previousActions.find(
+        obj =>
+          obj.action === option.action &&
+          (obj.label === option.label || obj.fullName === option.fullName)
+      );
+      if (!prevAction) {
+        if (isAction(option.action, SearchActions.LOCATION)) {
+          changeOptions(option.action);
           actions.push(option);
+        } else if (option.action === ExecActions.OPEN_LOCATION) {
+          // props.exitSearchMode();
+          searchOptions.current = SearchOptions;
+          currentOptions.current = undefined;
+          props.openLocationById(option.id);
+          return [];
+        } else if (isAction(option.action, SearchActions.FILTER)) {
+          actions.push(option);
+          isOpen.current = false;
+        } else if (isAction(option.action, SearchActions.HISTORY)) {
+          changeOptions(option.action);
+          actions.push(option);
+        } else if (option.action === ExecActions.OPEN_HISTORY) {
+        } else if (
+          isAction(option.action, SearchQueryComposition.TAG_AND) ||
+          isAction(option.action, SearchQueryComposition.TAG_OR) ||
+          isAction(option.action, SearchQueryComposition.TAG_NOT)
+        ) {
+          // if (props.currentLocation) {
+          changeOptions(option.action);
+          // }
+          actions.push(option);
+        } else if (
+          option.action === ExecActions.TAG_SEARCH_AND ||
+          option.action === ExecActions.TAG_SEARCH_OR ||
+          option.action === ExecActions.TAG_SEARCH_NOT
+        ) {
+          const searchAction: string =
+            option.action === ExecActions.TAG_SEARCH_AND
+              ? SearchQueryComposition.TAG_AND.shortName
+              : option.action === ExecActions.TAG_SEARCH_NOT
+              ? SearchQueryComposition.TAG_NOT.shortName
+              : SearchQueryComposition.TAG_OR.shortName;
+          // executeSearch();
+
+          if (actions.length > 0) {
+            const prevAction = actions[actions.length - 1];
+            prevAction.label = searchAction + option.label;
+            prevAction.fullName = searchAction + option.label;
+            prevAction.color = option.color;
+            prevAction.textcolor = option.textcolor;
+          }
+          changeOptions(option.action);
+        } else if (isAction(option.action, SearchQueryComposition.TYPE)) {
+          changeOptions(option.action);
+          actions.push(option);
+        } else if (option.action === ExecActions.TYPE_SEARCH) {
+          if (actions.length > 0) {
+            const prevAction = actions[actions.length - 1];
+            if (isAction(prevAction.action, SearchQueryComposition.TYPE)) {
+              prevAction.label = prevAction.action + option.label;
+              fileTypes.current = option.descr.split(', ');
+            }
+          }
+          changeOptions(option.action);
+          // executeSearch();
+        } else if (isAction(option.action, SearchQueryComposition.SIZE)) {
+          changeOptions(option.action);
+          actions.push(option);
+        } else if (option.action === ExecActions.SIZE_SEARCH) {
+          const id = setPreviousAction(SearchQueryComposition.SIZE, option);
+          if (id) {
+            fileSize.current = id;
+          }
+          changeOptions(option.action);
+          // executeSearch();
+        } else if (
+          isAction(option.action, SearchQueryComposition.LAST_MODIFIED)
+        ) {
+          changeOptions(option.action);
+          actions.push(option);
+        } else if (option.action === ExecActions.LAST_MODIFIED_SEARCH) {
+          const id = setPreviousAction(
+            SearchQueryComposition.LAST_MODIFIED,
+            option
+          );
+          if (id) {
+            lastModified.current = id;
+          }
+          changeOptions(option.action);
+          // executeSearch();
+        } else if (isAction(option.action, SearchQueryComposition.SCOPE)) {
+          changeOptions(option.action);
+          actions.push(option);
+        } else if (option.action === ExecActions.SCOPE_SEARCH) {
+          const id = setPreviousAction(SearchQueryComposition.SCOPE, option);
+          if (id) {
+            setSearchBoxing(scope[id]);
+          }
+          changeOptions(option.action);
+          // executeSearch();
+        } else if (isAction(option.action, SearchQueryComposition.ACCURACY)) {
+          changeOptions(option.action);
+          actions.push(option);
+        } else if (option.action === ExecActions.ACCURACY_SEARCH) {
+          const id = setPreviousAction(SearchQueryComposition.ACCURACY, option);
+          if (id) {
+            searchType.current = accuracy[id];
+          }
+          changeOptions(option.action);
+          // executeSearch();
+        } else if (option.action === undefined) {
+          // text query
+          inputValue.current = option.label;
+
+          const pAction = actions[actions.length - 1];
+          if (pAction && isAction(pAction.action, SearchActions.FILTER)) {
+            if (option.label) {
+              props.setSearchFilter(option.label);
+              isOpen.current = false;
+            }
+          }
         }
-      } catch (e) {
-        console.warn(e);
+      } else {
+        actions.push(prevAction);
       }
     }
     // setTextQuery(actions);
@@ -872,13 +910,13 @@ function SearchAutocomplete(props: Props) {
   }
 
   function toExecAction(action: string) {
-    if (action === SearchQueryComposition.TAG_AND) {
+    if (isAction(action, SearchQueryComposition.TAG_AND)) {
       return ExecActions.TAG_SEARCH_AND;
     }
-    if (action === SearchQueryComposition.TAG_NOT) {
+    if (isAction(action, SearchQueryComposition.TAG_NOT)) {
       return ExecActions.TAG_SEARCH_NOT;
     }
-    if (action === SearchQueryComposition.TAG_OR) {
+    if (isAction(action, SearchQueryComposition.TAG_OR)) {
       return ExecActions.TAG_SEARCH_OR;
     }
     return action;
@@ -912,14 +950,14 @@ function SearchAutocomplete(props: Props) {
       forceUpdate();
     } else if (reason === 'remove-value') {
       actionValues.current = actionValues.current.filter(
-        v => !selected.includes(v.label)
+        v => !(selected.includes(v.label) || selected.includes(v.fullName))
       );
       // reset default search filters
       for (let i = 0; i < selected.length; i++) {
         const action = findAction(selected[i]);
-        if (action === SearchQueryComposition.TYPE) {
+        if (isAction(action, SearchQueryComposition.TYPE)) {
           fileTypes.current = [];
-        } else if (action === SearchQueryComposition.SIZE) {
+        } else if (isAction(action, SearchQueryComposition.SIZE)) {
           fileSize.current = '';
         }
       }
@@ -973,7 +1011,9 @@ function SearchAutocomplete(props: Props) {
           autoComplete
           handleHomeEndKeys
           /*defaultValue={['one']}*/
-          value={actionValues.current.map(v => v.label)}
+          value={actionValues.current.map(v =>
+            v.fullName ? v.fullName : v.label
+          )}
           onChange={handleChange}
           inputValue={inputValue.current}
           onInputChange={handleInputChange}
@@ -981,32 +1021,42 @@ function SearchAutocomplete(props: Props) {
           /*onOpen={handleOpen}
           onClose={handleClose}*/
           renderTags={value =>
-            value.map((option, index: number) => (
-              <Button
-                key={'button_' + index}
-                size="small"
-                style={{
-                  fontSize: 13,
-                  textTransform: 'none',
-                  color: 'black',
-                  backgroundColor: 'green',
-                  minHeight: 0,
-                  minWidth: 0,
-                  margin: 2,
-                  paddingTop: 0,
-                  paddingBottom: 0,
-                  paddingRight: 0,
-                  paddingLeft: 5,
-                  borderRadius: 5
-                }}
-                onClick={() => {
-                  handleChange(null, [option], 'remove-value');
-                }}
-              >
-                {option}
-                <CloseIcon />
-              </Button>
-            ))
+            value.map((option, index: number) => {
+              const action = actionValues.current.find(
+                a => a.fullName === option || a.label === option
+              );
+              return (
+                <Button
+                  key={'button_' + index}
+                  size="small"
+                  style={{
+                    fontSize: 13,
+                    textTransform: 'none',
+                    color: 'black',
+                    backgroundColor: 'green',
+                    minHeight: 0,
+                    minWidth: 0,
+                    margin: 2,
+                    paddingTop: 0,
+                    paddingBottom: 0,
+                    paddingRight: 0,
+                    paddingLeft: 5,
+                    borderRadius: 5,
+                    ...(action &&
+                      action.color && {
+                        color: action.textcolor,
+                        backgroundColor: action.color
+                      })
+                  }}
+                  onClick={() => {
+                    handleChange(null, [option], 'remove-value');
+                  }}
+                >
+                  {option}
+                  <CloseIcon />
+                </Button>
+              );
+            })
           }
           /*inputValue={inputValue}
           onInputChange={(event, newInputValue) => {
@@ -1015,8 +1065,17 @@ function SearchAutocomplete(props: Props) {
           options={searchOptions.current}
           groupBy={option => option.group}
           renderOption={(props, option) => (
-            <Box component="li" {...props}>
-              <b>{option.label}</b>&nbsp;{option.descr}
+            <Box
+              component="li"
+              style={{ ...(option.color && { backgroundColor: option.color }) }}
+              {...props}
+            >
+              <b
+                style={{ ...(option.textcolor && { color: option.textcolor }) }}
+              >
+                {option.label}
+              </b>
+              &nbsp;{option.descr}
             </Box>
           )}
           /*getOptionLabel={(option: SearchOptionType) =>
@@ -1184,18 +1243,20 @@ function mapDispatchToProps(dispatch) {
       openURLExternally: AppActions.openURLExternally,
       // openCurrentDirectory: AppActions.openCurrentDirectory,
       watchForChanges: AppActions.watchForChanges,
-      openLocationById: AppActions.openLocationById
+      openLocationById: AppActions.openLocationById,
+      exitSearchMode: AppActions.exitSearchMode,
+      setSearchFilter: AppActions.setSearchFilter
     },
     dispatch
   );
 }
 
-const areEqual = (prevProp, nextProp) =>
+/*const areEqual = (prevProp, nextProp) =>
   nextProp.open === prevProp.open &&
   nextProp.language === prevProp.language &&
   nextProp.indexing === prevProp.indexing &&
   nextProp.searchQuery === prevProp.searchQuery &&
   nextProp.currentDirectory === prevProp.currentDirectory &&
-  nextProp.indexedEntriesCount === prevProp.indexedEntriesCount;
+  nextProp.indexedEntriesCount === prevProp.indexedEntriesCount;*/
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchAutocomplete); // (React.memo(SearchAutocomplete, areEqual));

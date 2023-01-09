@@ -96,6 +96,7 @@ export const types = {
   SET_SEARCH_RESULTS: 'APP/SET_SEARCH_RESULTS',
   EXIT_SEARCH_MODE: 'APP/EXIT_SEARCH_MODE',
   APPEND_SEARCH_RESULTS: 'APP/APPEND_SEARCH_RESULTS',
+  SET_SEARCH_FILTER: 'APP/SET_SEARCH_FILTER',
   OPEN_FILE: 'APP/OPEN_FILE',
   TOGGLE_ENTRY_FULLWIDTH: 'APP/TOGGLE_ENTRY_FULLWIDTH',
   SET_ENTRY_FULLWIDTH: 'APP/SET_ENTRY_FULLWIDTH',
@@ -533,6 +534,7 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         searchResultsCount: -1,
+        searchFilter: undefined,
         isLoading: false
       };
     }
@@ -551,6 +553,12 @@ export default (state: any = initialState, action: any) => {
         searchResultsCount: GlobalSearch.results.length,
         // currentDirectoryEntries: newDirEntries,
         isLoading: false
+      };
+    }
+    case types.SET_SEARCH_FILTER: {
+      return {
+        ...state,
+        searchFilter: action.searchFilter
       };
     }
     case types.SET_NOTIFICATION: {
@@ -1750,6 +1758,10 @@ export const actions = {
     type: types.APPEND_SEARCH_RESULTS,
     searchResults
   }),
+  setSearchFilter: (searchFilter: string) => ({
+    type: types.SET_SEARCH_FILTER,
+    searchFilter
+  }),
   setCurrentLocationId: (locationId: string | null) => ({
     type: types.SET_CURRENLOCATIONID,
     locationId
@@ -2771,3 +2783,5 @@ export const isHelpFeedbackPanelOpened = (state: any) =>
   state.app.helpFeedbackPanelOpened;
 export const getSearchResultsCount = (state: any) =>
   state.app.searchResultsCount;
+export const getSearchFilter = (state: any) =>
+  state.app.searchFilter;

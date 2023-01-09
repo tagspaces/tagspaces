@@ -1,23 +1,72 @@
 export interface SearchOptionType {
   id?: string;
   label: string;
+  fullName?: string;
   descr?: string;
+  color?: string;
+  textcolor?: string;
   action: string;
   group?: string;
 }
 
+export type ActionType = { shortName: string; fullName?: string };
+
 export const SearchQueryComposition = {
-  TAG_AND: '+',
-  TAG_NOT: '-',
-  TAG_OR: '|',
-  TYPE: 't:',
-  SIZE: 's:',
-  LAST_MODIFIED: 'lm:',
-  SCOPE: 'sc:',
-  ACCURACY: 'a:'
+  TAG_AND: {
+    shortName: '+'
+  },
+  TAG_NOT: {
+    shortName: '-'
+  },
+  TAG_OR: {
+    shortName: '|'
+  },
+  TYPE: {
+    shortName: 't:',
+    fullName: 'type:'
+  },
+  SIZE: {
+    shortName: 's:',
+    fullName: 'size:'
+  },
+  LAST_MODIFIED: {
+    shortName: 'lm:',
+    fullName: 'lastmod:'
+  },
+  SCOPE: {
+    shortName: 'sc:',
+    fullName: 'scope:'
+  },
+  ACCURACY: {
+    shortName: 'a:',
+    fullName: 'accuracy:'
+  }
 };
 
-export const SearchCommandAlternatives = {
+export const SearchActions = {
+  LOCATION: {
+    shortName: 'l:',
+    fullName: 'location:'
+  },
+  FILTER: {
+    shortName: 'f:',
+    fullName: 'filter:'
+  },
+  HISTORY: {
+    shortName: 'h:',
+    fullName: 'history:'
+  },
+  BOOK: {
+    shortName: 'b:',
+    fullName: 'bookmark:'
+  },
+  SEARCH: {
+    shortName: 'sav:',
+    fullName: 'search:'
+  }
+};
+
+/*export const SearchCommandFullNames = {
   TYPE: 'type:',
   SIZE: 'size:',
   LAST_MODIFIED: 'lastmod:',
@@ -28,15 +77,7 @@ export const SearchCommandAlternatives = {
   HISTORY: 'history:',
   BOOK: 'bookmark:',
   SEARCH: 'search:'
-};
-
-export const SearchActions = {
-  LOCATION: 'l:',
-  FILTER: 'f:',
-  HISTORY: 'h:',
-  BOOK: 'b:',
-  SEARCH: 'sav:'
-};
+};*/
 
 export const ExecActions = {
   OPEN_LOCATION: 'open_location',
@@ -84,109 +125,143 @@ export const accuracy = {
 
 export type ScopeType = 'location' | 'folder' | 'global';
 
+/*export function toActionFullName(action): string {
+  const actions = {
+    ...SearchQueryComposition,
+    ...SearchActions
+  };
+  const actionFind = Object.entries(actions).find(a => a[1] === action);
+  if (actionFind && SearchCommandFullNames[actionFind[0]]) {
+    return SearchCommandFullNames[actionFind[0]];
+  }
+  return action;
+}*/
+
+export function isAction(action: string, actionType: ActionType): boolean {
+  return (
+    action !== undefined &&
+    (action === actionType.shortName || action === actionType.fullName)
+  );
+}
+
 export function findAction(option: string, equal = false): string {
-  const actions = [
+  const actions: Array<ActionType> = [
     ...Object.values(SearchQueryComposition),
     ...Object.values(SearchActions)
   ];
-  let action = actions.find(a => (equal ? option === a : option.startsWith(a)));
-  if (!action) {
-    action = Object.values(SearchCommandAlternatives).find(a =>
+  let action = actions.find(a =>
+    equal
+      ? option === a.shortName || option === a.fullName
+      : option.startsWith(a.shortName) || option.startsWith(a.fullName)
+  );
+  if (action) {
+    return action.fullName ? action.fullName : action.shortName;
+    /*action = Object.values(SearchCommandFullNames).find(a =>
       equal ? option === a : option.startsWith(a)
-    );
+    );*/
   }
-  return action;
+  return undefined;
 }
 
-export const SearchOptions = [
+export const SearchOptions: Array<SearchOptionType> = [
   {
-    id: SearchActions.LOCATION,
-    label: SearchActions.LOCATION,
-    action: SearchActions.LOCATION,
+    id: SearchActions.LOCATION.shortName,
+    label: SearchActions.LOCATION.shortName,
+    fullName: SearchActions.LOCATION.fullName,
+    action: SearchActions.LOCATION.shortName,
     descr: 'for searching in location',
     group: 'actions'
   },
   {
-    id: SearchActions.FILTER,
-    label: SearchActions.FILTER,
-    action: SearchActions.FILTER,
+    id: SearchActions.FILTER.shortName,
+    label: SearchActions.FILTER.shortName,
+    fullName: SearchActions.FILTER.fullName,
+    action: SearchActions.FILTER.shortName,
     descr: 'should filter the current directory list',
     group: 'actions'
   },
   {
-    id: SearchActions.HISTORY,
-    label: SearchActions.HISTORY,
-    action: SearchActions.HISTORY,
+    id: SearchActions.HISTORY.shortName,
+    label: SearchActions.HISTORY.shortName,
+    fullName: SearchActions.HISTORY.fullName,
+    action: SearchActions.HISTORY.shortName,
     descr: 'should search in the all recent file and folder lists',
     group: 'actions'
   },
   {
-    id: SearchActions.BOOK,
-    label: SearchActions.BOOK,
-    action: SearchActions.BOOK,
+    id: SearchActions.BOOK.shortName,
+    label: SearchActions.BOOK.shortName,
+    fullName: SearchActions.BOOK.fullName,
+    action: SearchActions.BOOK.shortName,
     descr: 'should search in the bookmarks',
     group: 'actions'
   },
   {
-    id: SearchActions.SEARCH,
-    label: SearchActions.SEARCH,
-    action: SearchActions.SEARCH,
+    id: SearchActions.SEARCH.shortName,
+    label: SearchActions.SEARCH.shortName,
+    fullName: SearchActions.SEARCH.fullName,
+    action: SearchActions.SEARCH.shortName,
     descr: 'saved searched',
     group: 'actions'
   },
   {
-    id: SearchQueryComposition.TAG_AND,
-    label: SearchQueryComposition.TAG_AND,
-    action: SearchQueryComposition.TAG_AND,
+    id: SearchQueryComposition.TAG_AND.shortName,
+    label: SearchQueryComposition.TAG_AND.shortName,
+    action: SearchQueryComposition.TAG_AND.shortName,
     descr: 'Tag AND',
     group: 'query'
   },
   {
-    id: SearchQueryComposition.TAG_NOT,
-    label: SearchQueryComposition.TAG_NOT,
-    action: SearchQueryComposition.TAG_NOT,
+    id: SearchQueryComposition.TAG_NOT.shortName,
+    label: SearchQueryComposition.TAG_NOT.shortName,
+    action: SearchQueryComposition.TAG_NOT.shortName,
     descr: 'Tag NOT',
     group: 'query'
   },
   {
-    id: SearchQueryComposition.TAG_OR,
-    label: SearchQueryComposition.TAG_OR,
-    action: SearchQueryComposition.TAG_OR,
+    id: SearchQueryComposition.TAG_OR.shortName,
+    label: SearchQueryComposition.TAG_OR.shortName,
+    action: SearchQueryComposition.TAG_OR.shortName,
     descr: 'Tag OR',
     group: 'query'
   },
   {
-    id: SearchQueryComposition.TYPE,
-    label: SearchQueryComposition.TYPE,
-    action: SearchQueryComposition.TYPE,
+    id: SearchQueryComposition.TYPE.shortName,
+    label: SearchQueryComposition.TYPE.shortName,
+    fullName: SearchQueryComposition.TYPE.fullName,
+    action: SearchQueryComposition.TYPE.shortName,
     descr: 'filter by file type: document, video, files, folders',
     group: 'query'
   },
   {
-    id: SearchQueryComposition.SIZE,
-    label: SearchQueryComposition.SIZE,
-    action: SearchQueryComposition.SIZE,
+    id: SearchQueryComposition.SIZE.shortName,
+    label: SearchQueryComposition.SIZE.shortName,
+    fullName: SearchQueryComposition.SIZE.fullName,
+    action: SearchQueryComposition.SIZE.shortName,
     descr: 'list sizes from advanced search',
     group: 'query'
   },
   {
-    id: SearchQueryComposition.LAST_MODIFIED,
-    label: SearchQueryComposition.LAST_MODIFIED,
-    action: SearchQueryComposition.LAST_MODIFIED,
+    id: SearchQueryComposition.LAST_MODIFIED.shortName,
+    label: SearchQueryComposition.LAST_MODIFIED.shortName,
+    fullName: SearchQueryComposition.LAST_MODIFIED.fullName,
+    action: SearchQueryComposition.LAST_MODIFIED.shortName,
     descr: 'list last modified options from advanced search',
     group: 'query'
   },
   {
-    id: SearchQueryComposition.SCOPE,
-    label: SearchQueryComposition.SCOPE,
-    action: SearchQueryComposition.SCOPE,
+    id: SearchQueryComposition.SCOPE.shortName,
+    label: SearchQueryComposition.SCOPE.shortName,
+    fullName: SearchQueryComposition.SCOPE.fullName,
+    action: SearchQueryComposition.SCOPE.shortName,
     descr: 'scope of the search: location, folder, global',
     group: 'query'
   },
   {
-    id: SearchQueryComposition.ACCURACY,
-    label: SearchQueryComposition.ACCURACY,
-    action: SearchQueryComposition.ACCURACY,
+    id: SearchQueryComposition.ACCURACY.shortName,
+    label: SearchQueryComposition.ACCURACY.shortName,
+    fullName: SearchQueryComposition.ACCURACY.fullName,
+    action: SearchQueryComposition.ACCURACY.shortName,
     descr: 'accuracy: fuzzy, semi strict, strict',
     group: 'query'
   }
