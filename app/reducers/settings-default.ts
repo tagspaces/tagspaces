@@ -97,6 +97,11 @@ export function findAvailableExtensions() {
       extensionType: 'viewer'
     },
     {
+      extensionId: '@tagspaces/extensions/msg-viewer',
+      extensionName: 'MSG Viewer',
+      extensionType: 'viewer'
+    },
+    {
       extensionId: '@tagspaces/extensions/pdf-viewer',
       extensionName: 'PDF Viewer',
       extensionType: 'viewer'
@@ -349,7 +354,7 @@ export default {
     {
       type: 'eml',
       viewer: '@tagspaces/extensions/mhtml-viewer',
-      color: ''
+      color: '#a8cf31'
     },
     {
       type: 'epub',
@@ -545,6 +550,11 @@ export default {
       color: '#9fd5ba'
     },
     {
+      type: 'tga',
+      viewer: '@tagspaces/extensions/image-viewer',
+      color: '#9fd5ba'
+    },
+    {
       type: 'psd',
       viewer: '@tagspaces/extensions/image-viewer'
     },
@@ -672,6 +682,21 @@ export default {
       type: 'ods',
       viewer: '@tagspaces/extensions/spreadsheet-viewer',
       color: '#b2f30e'
+    },
+    {
+      type: 'glb',
+      viewer: '@tagspaces/extensions/3d-viewer',
+      color: '#ac21f3'
+    },
+    {
+      type: 'gltf',
+      viewer: '@tagspaces/extensions/3d-viewer',
+      color: '#ac21f3'
+    },
+    {
+      type: 'msg',
+      viewer: '@tagspaces/extensions/msg-viewer',
+      color: '#a8cf31'
     }
   ],
   mapTileServers: [

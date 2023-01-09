@@ -66,8 +66,16 @@ function FileView(props: Props) {
     //   fileTitle = fileTitle.substr(0, maxCharactersTitleLength) + '...';
     // }
 
+    const primaryColor =
+      '&primecolor=' + encodeURIComponent(theme.palette.primary.main);
+    const textColor =
+      '&textcolor=' + encodeURIComponent(theme.palette.text.primary);
+    const backgroundColor =
+      '&bgndcolor=' + encodeURIComponent(theme.palette.background.default);
+
     const locale = '&locale=' + i18n.language;
-    const theme = '&theme=' + currentTheme;
+    const theming =
+      '&theme=' + currentTheme + primaryColor + textColor + backgroundColor;
 
     if (openedFile.editMode && openedFile.editingExtensionPath) {
       fileOpenerURL =
@@ -75,7 +83,7 @@ function FileView(props: Props) {
         '/index.html?file=' +
         encodeURIComponent(openedFile.url ? openedFile.url : openedFile.path) +
         locale +
-        theme +
+        theming +
         '&edit=true' +
         (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
       // } else if (!currentEntry.isFile) { // TODO needed for loading folder's default html
@@ -86,7 +94,7 @@ function FileView(props: Props) {
         '/index.html?file=' +
         encodeURIComponent(openedFile.url ? openedFile.url : openedFile.path) +
         locale +
-        theme +
+        theming +
         (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
     }
   } else {
@@ -131,7 +139,7 @@ function FileView(props: Props) {
           }}
           src={fileOpenerURL}
           allowFullScreen
-          sandbox="allow-same-origin allow-scripts allow-modals"
+          sandbox="allow-same-origin allow-scripts allow-modals allow-downloads"
           title={i18n.t('core:fileViewer')}
           id="FileViewer"
         />

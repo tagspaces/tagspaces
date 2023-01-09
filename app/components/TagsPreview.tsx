@@ -48,7 +48,8 @@ function TagsPreview(props: Props) {
   });
 
   // const tag1Colors = getTagColors(allTags.current, tags[0].title);
-  const firstTagColor = tags[0].color || defaultBackgroundColor; // || tag1Colors.color
+  const firstTagColor = tags[0].color || defaultBackgroundColor;
+  const firstTagTextColor = tags[0].textcolor || defaultTextColor;
   let secondTagColor = defaultBackgroundColor;
   let moreThanOne = false;
   if (tags[1]) {
@@ -72,7 +73,7 @@ function TagsPreview(props: Props) {
           backgroundColor: firstTagColor,
           fontSize: 11,
           lineHeight: '16px',
-          color: firstTagColor || defaultTextColor, //tag1Colors.textcolor ,
+          color: firstTagTextColor || defaultTextColor, //tag1Colors.textcolor ,
           textAlign: 'center'
         }}
       >
