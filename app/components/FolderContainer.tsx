@@ -283,13 +283,21 @@ function FolderContainer(props: Props) {
     }
   }, [props.editedEntryPaths]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (!props.searchQuery || Object.keys(props.searchQuery).length === 0) {
       setSearchVisible(false);
-    } /* else {
+    } else {
       setSearchVisible(true);
-    }*/
-  }, [props.searchQuery]);
+    }
+  }, [props.searchQuery]);*/
+
+  useEffect(() => {
+    if (props.searchResultsCount === -1) {
+      setSearchVisible(false);
+    } else {
+      setSearchVisible(true);
+    }
+  }, [props.searchResultsCount]);
 
   const [isRenameEntryDialogOpened, setIsRenameEntryDialogOpened] = useState<
     boolean

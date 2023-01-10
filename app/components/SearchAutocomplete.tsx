@@ -727,7 +727,7 @@ function SearchAutocomplete(props: Props) {
     for (let i = 0; i < options.length; i++) {
       let option: SearchOptionType;
       if (typeof options[i] === 'object') {
-        option = options[i];
+        option = {...options[i]};
       } else {
         const action = findAction(options[i]);
         option = {
@@ -975,9 +975,9 @@ function SearchAutocomplete(props: Props) {
       // executeSearch();
       isOpen.current = true;
       forceUpdate();
-    } else if (reason === 'clear') {
+    } /*else if (reason === 'clear') {
       props.setSearchQuery({});
-    }
+    }*/
   }
 
   /*const handleOpen = React.useCallback(() => {
