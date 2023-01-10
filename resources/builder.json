@@ -17,7 +17,7 @@
     "version.json",
     "package.json"
   ],
-  "copyright": "Copyright © 2022 TagSpaces UG (haftungsbeschraenkt)",
+  "copyright": "Copyright © 2023 TagSpaces UG (haftungsbeschraenkt)",
   "artifactName": "${name}-${os}-${arch}-${version}.${ext}",
   "dmg": {
     "sign": false
