@@ -225,10 +225,6 @@ function FolderContainer(props: Props) {
   const havePrevOpenedFile = React.useRef<boolean>(false);
   const firstRender = useFirstRender();
 
-  /*useEffect(() => {
-    setSearchVisible(false);
-  }, [props.currentDirectoryPath]);*/
-
   useEffect(() => {
     if (
       !firstRender &&
@@ -282,14 +278,6 @@ function FolderContainer(props: Props) {
       }
     }
   }, [props.editedEntryPaths]);
-
-  /*useEffect(() => {
-    if (!props.searchQuery || Object.keys(props.searchQuery).length === 0) {
-      setSearchVisible(false);
-    } else {
-      setSearchVisible(true);
-    }
-  }, [props.searchQuery]);*/
 
   useEffect(() => {
     if (props.searchResultsCount === -1) {
@@ -616,8 +604,17 @@ function FolderContainer(props: Props) {
                     minWidth: 40,
                     width: 200
                   }}
-                  onKeyDown={() => setSearchVisible(!isSearchVisible)}
-                  onClick={() => setSearchVisible(!isSearchVisible)}
+                  onKeyDown={
+                    () =>
+                      props.setSearchQuery(
+                        isSearchVisible ? {} : { textQuery: '' }
+                      ) /*setSearchVisible(!isSearchVisible)*/
+                  }
+                  onClick={() =>
+                    props.setSearchQuery(
+                      isSearchVisible ? {} : { textQuery: '' }
+                    )
+                  }
                   margin="dense"
                   placeholder={i18n.t('core:searchTitle')}
                   InputProps={{

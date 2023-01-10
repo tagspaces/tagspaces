@@ -727,7 +727,7 @@ function SearchAutocomplete(props: Props) {
     for (let i = 0; i < options.length; i++) {
       let option: SearchOptionType;
       if (typeof options[i] === 'object') {
-        option = {...options[i]};
+        option = { ...options[i] };
       } else {
         const action = findAction(options[i]);
         option = {
@@ -852,9 +852,13 @@ function SearchAutocomplete(props: Props) {
 
           const pAction = actions[actions.length - 1];
           if (pAction && isAction(pAction.action, SearchActions.FILTER)) {
-            if (option.label) {
-              props.setSearchFilter(option.label);
+            const filterArr = options.filter(
+              o => !(typeof o === 'object') && o.action === undefined
+            );
+            if (filterArr.length > 0) {
+              props.setSearchFilter(filterArr.join(' '));
               isOpen.current = false;
+              return actions;
             }
           }
         }
