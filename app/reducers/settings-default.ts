@@ -556,7 +556,23 @@ export default {
     },
     {
       type: 'psd',
-      viewer: '@tagspaces/extensions/image-viewer'
+      viewer: '@tagspaces/extensions/image-viewer',
+      color: '#9fd5ba'
+    },
+    {
+      type: 'nef',
+      viewer: '@tagspaces/extensions/image-viewer',
+      color: '#9fd5ba'
+    },
+    {
+      type: 'cr2',
+      viewer: '@tagspaces/extensions/image-viewer',
+      color: '#9fd5ba'
+    },
+    {
+      type: 'dng',
+      viewer: '@tagspaces/extensions/image-viewer',
+      color: '#9fd5ba'
     },
     {
       type: 'py',

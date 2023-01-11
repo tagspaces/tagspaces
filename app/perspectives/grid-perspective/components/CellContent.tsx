@@ -347,7 +347,7 @@ function CellContent(props: Props) {
                   {fsEntry.extension}
                 </span>
               ) : (
-                <FolderIcon />
+                <FolderIcon style={{ margin: '0 auto' }} />
               )}
             </div>
           </Tooltip>
