@@ -694,6 +694,16 @@ export default {
       color: '#ac21f3'
     },
     {
+      type: 'stl',
+      viewer: '@tagspaces/extensions/3d-viewer',
+      color: '#ac21f3'
+    },
+    {
+      type: 'obj',
+      viewer: '@tagspaces/extensions/3d-viewer',
+      color: '#ac21f3'
+    },
+    {
       type: 'msg',
       viewer: '@tagspaces/extensions/msg-viewer',
       color: '#a8cf31'
