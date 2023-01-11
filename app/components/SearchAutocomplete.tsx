@@ -19,22 +19,15 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import format from 'date-fns/format';
 import makeStyles from '@mui/styles/makeStyles';
-import ClearSearchIcon from '@mui/icons-material/Close';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Button from '@mui/material/Button';
 import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
-import InputAdornment from '@mui/material/InputAdornment';
-import Typography from '@mui/material/Typography';
-import {
-  escapeRegExp,
-  parseTextQuery,
-  removeAllTagsFromSearchQuery
-} from '@tagspaces/tagspaces-common/misc';
 import {
   actions as AppActions,
+  getCurrentLocationId,
   getDirectoryPath,
   getSearchResultsCount
 } from '../reducers/app';
@@ -53,7 +46,7 @@ import {
 import i18n from '-/services/i18n';
 import { FileTypeGroups } from '-/services/search';
 import { TS } from '-/tagspaces.namespace';
-import { Pro } from '../pro';
+import { Pro } from '-/pro';
 import useFirstRender from '-/utils/useFirstRender';
 import SavedSearchesMenu from '-/components/menus/SavedSearchesMenu';
 import AppConfig from '-/AppConfig';
@@ -102,6 +95,8 @@ interface Props {
   searchResultsCount: number;
   exitSearchMode: () => void;
   setSearchFilter: (filter) => void;
+  currentLocationId: string;
+  openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -574,7 +569,43 @@ function SearchAutocomplete(props: Props) {
     } else if (isAction(action, SearchActions.HISTORY)) {
       if (currentOptions.current !== action) {
         currentOptions.current = action;
-        // searchOptions.current = ... todo
+
+        const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
+        const fileOpenHistoryItems: Array<TS.HistoryItem> = Pro
+          ? Pro.history.getHistory(historyKeys.fileOpenKey)
+          : [];
+        const folderOpenHistoryItems: Array<TS.HistoryItem> = Pro
+          ? Pro.history.getHistory(historyKeys.folderOpenKey)
+          : [];
+        const fileEditHistoryItems: Array<TS.HistoryItem> = Pro
+          ? Pro.history.getHistory(historyKeys.fileEditKey)
+          : [];
+        function getOptions(
+          items: TS.HistoryItem[],
+          group: string
+        ): SearchOptionType[] {
+          if (!items) {
+            return [];
+          }
+          return items.map((item: TS.HistoryItem) => ({
+            id: item.lid,
+            descr:
+              '(' + format(item.creationTimeStamp, 'yyyy-MM-dd HH:mm') + ')',
+            action: ExecActions.OPEN_HISTORY,
+            fullName: item.url,
+            label: item.path,
+            group: group
+          }));
+        }
+
+        searchOptions.current = [
+          ...getOptions(fileOpenHistoryItems, i18n.t('core:fileOpenHistory')),
+          ...getOptions(
+            folderOpenHistoryItems,
+            i18n.t('core:folderOpenHistory')
+          ),
+          ...getOptions(fileEditHistoryItems, i18n.t('core:fileEditHistory'))
+        ];
       }
     } else if (
       isAction(action, SearchQueryComposition.TAG_AND) ||
@@ -775,6 +806,20 @@ function SearchAutocomplete(props: Props) {
           }
           actions.push(option);
         } else if (option.action === ExecActions.OPEN_HISTORY) {
+          const item: TS.HistoryItem = {
+            path: option.label,
+            url: option.fullName,
+            lid: option.id,
+            creationTimeStamp: 0
+          };
+          Pro.history.openItem(
+            item,
+            props.currentLocationId,
+            props.openLink,
+            props.openLocationById,
+            props.openFsEntry
+          );
+          return [];
         } else if (
           isAction(option.action, SearchQueryComposition.TAG_AND) ||
           isAction(option.action, SearchQueryComposition.TAG_OR) ||
@@ -1302,7 +1347,8 @@ function mapStateToProps(state) {
     language: getCurrentLanguage(state),
     locations: getLocations(state),
     currentLocation: getCurrentLocation(state),
-    searchResultsCount: getSearchResultsCount(state)
+    searchResultsCount: getSearchResultsCount(state),
+    currentLocationId: getCurrentLocationId(state)
   };
 }
 
@@ -1320,7 +1366,8 @@ function mapDispatchToProps(dispatch) {
       watchForChanges: AppActions.watchForChanges,
       openLocationById: AppActions.openLocationById,
       exitSearchMode: AppActions.exitSearchMode,
-      setSearchFilter: AppActions.setSearchFilter
+      setSearchFilter: AppActions.setSearchFilter,
+      openFsEntry: AppActions.openFsEntry
     },
     dispatch
   );

@@ -169,7 +169,7 @@ export const SearchOptions: Array<SearchOptionType> = [
     label: SearchActions.LOCATION.shortName,
     fullName: SearchActions.LOCATION.fullName,
     action: SearchActions.LOCATION.shortName,
-    descr: 'for searching in location',
+    descr: 'filter and open location',
     group: 'actions'
   },
   {
@@ -177,7 +177,7 @@ export const SearchOptions: Array<SearchOptionType> = [
     label: SearchActions.FILTER.shortName,
     fullName: SearchActions.FILTER.fullName,
     action: SearchActions.FILTER.shortName,
-    descr: 'should filter the current directory list',
+    descr: 'filter the current directory items',
     group: 'actions'
   },
   {
@@ -185,7 +185,7 @@ export const SearchOptions: Array<SearchOptionType> = [
     label: SearchActions.HISTORY.shortName,
     fullName: SearchActions.HISTORY.fullName,
     action: SearchActions.HISTORY.shortName,
-    descr: 'should search in the all recent file and folder lists',
+    descr: 'filter and open all recent file and folders',
     group: 'actions'
   },
   {
@@ -193,7 +193,7 @@ export const SearchOptions: Array<SearchOptionType> = [
     label: SearchActions.BOOK.shortName,
     fullName: SearchActions.BOOK.fullName,
     action: SearchActions.BOOK.shortName,
-    descr: 'should search in the bookmarks',
+    descr: 'filter and open the bookmarks',
     group: 'actions'
   },
   {
@@ -201,7 +201,7 @@ export const SearchOptions: Array<SearchOptionType> = [
     label: SearchActions.SEARCH.shortName,
     fullName: SearchActions.SEARCH.fullName,
     action: SearchActions.SEARCH.shortName,
-    descr: 'saved searched',
+    descr: 'filter and run saved searched',
     group: 'actions'
   },
   {
