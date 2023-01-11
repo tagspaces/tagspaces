@@ -87,7 +87,7 @@ describe('TST50 - Perspective Grid', () => {
       await clickOn('[data-tid=gridPerspectiveSortMenu]');
       await clickOn('[data-tid=gridPerspectiveSortByName]');
       firstFileName = await getGridFileName(0);
-      expect(firstFileName).toBe('sample.bmp');
+      expect(firstFileName).toBe('sample.avif');
     });
 
     test('TST10xx - Sort by size [web,minio,electron]', async () => {
@@ -99,7 +99,7 @@ describe('TST50 - Perspective Grid', () => {
       await clickOn('[data-tid=gridPerspectiveSortMenu]');
       await clickOn('[data-tid=gridPerspectiveSortBySize]');
       firstFileName = await getGridFileName(0);
-      expect(firstFileName).toBe('sample.glb');
+      expect(firstFileName).toBe('sample.nef');
     });
 
     test('TST10xx - Sort by date [web,minio,electron]', async () => {
@@ -126,7 +126,7 @@ describe('TST50 - Perspective Grid', () => {
     test('TST10xx - Sort by extension [web,minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortByExt]');
       let firstFileName = await getGridFileName(0);
-      expect(firstFileName).toBe('sample.bmp');
+      expect(firstFileName).toBe('sample.avif');
 
       await clickOn('[data-tid=gridPerspectiveSortMenu]');
       await clickOn('[data-tid=gridPerspectiveSortByExt]');
@@ -137,7 +137,7 @@ describe('TST50 - Perspective Grid', () => {
     test('TST10xx - Sort by tags [web,minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortByFirstTag]');
       let firstFileName = await getGridFileName(0);
-      expect(firstFileName).toBe('sample.bmp');
+      expect(firstFileName).toBe('sample.avif');
       // ASC
       await clickOn('[data-tid=gridPerspectiveSortMenu]');
       await clickOn('[data-tid=gridPerspectiveSortByFirstTag]');
