@@ -88,6 +88,13 @@ export const types = {
   SET_FILE_EDIT_HISTORY: 'SET_FILE_EDIT_HISTORY'
 };
 
+function merge(a, b, prop) {
+  var reduced = a.filter(
+    aitem => !b.find(bitem => aitem[prop] === bitem[prop])
+  );
+  return reduced.concat(b);
+}
+
 export default (state: any = defaultSettings, action: any) => {
   switch (action.type) {
     case types.UPGRADE_SETTINGS: {
@@ -100,32 +107,6 @@ export default (state: any = defaultSettings, action: any) => {
           state.keyBindings.find(y => y.name === x.name)
         )
       );
-      // Bidirectional filetype merge
-      // const mergedFileTypes = defaultSettings.supportedFileTypes.map(x =>
-      //   Object.assign(
-      //     x,
-      //     state.supportedFileTypes.find(y => y.type === x.type)
-      //   )
-      // );
-      // const combinedFileTypes = state.supportedFileTypes.map(x =>
-      //   Object.assign(
-      //     x,
-      //     mergedFileTypes.find(y => y.type === x.type)
-      //   )
-      // );
-      const extensionMigrated = state.supportedFileTypes.find(y =>
-        y.viewer.startsWith('@tagspaces/extensions/')
-      );
-      let migratedFileTypes = [];
-      if (!extensionMigrated) {
-        migratedFileTypes = state.supportedFileTypes.map(x =>
-          Object.assign(
-            x,
-            defaultSettings.supportedFileTypes.find(y => y.type === x.type)
-          )
-        );
-        console.log('Performing filetype migration');
-      }
       return {
         ...defaultSettings,
         ...state,
@@ -142,10 +123,11 @@ export default (state: any = defaultSettings, action: any) => {
           // ...defaultSettings.keyBindings, // use to reset to the default key bindings
           ...mergedKeyBindings
         ],
-        supportedFileTypes:
-          migratedFileTypes.length > 0
-            ? [...migratedFileTypes]
-            : state.supportedFileTypes
+        supportedFileTypes: merge(
+          defaultSettings.supportedFileTypes,
+          state.supportedFileTypes,
+          'type'
+        )
       };
     }
     case types.TOGGLE_SHOWUNIXHIDDENENTRIES: {
