@@ -62,8 +62,13 @@ export default (theme: any): any => ({
     marginBottom: 5
   },
   gridCellTitle: {
-    padding: 5,
-    minHeight: 20
+    padding: '0px 5px 0 5px',
+    minHeight: 45,
+    display: '-webkit-box',
+    WebkitLineClamp: 2,
+    WebkitBoxOrient: 'vertical',
+    textOverflow: 'ellipsis',
+    overflow: 'hidden'
   },
   gridCellTags: {
     padding: 0,

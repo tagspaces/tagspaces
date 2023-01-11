@@ -225,7 +225,6 @@ function CellContent(props: Props) {
         <Typography
           className={classes.gridCellTitle}
           data-tid={'fsEntryName_' + fsEntry.name}
-          noWrap={true}
           variant="body1"
         >
           {entryTitle}
