@@ -20,7 +20,7 @@ const urlParams = '?utm_source=app';
 
 const Links = {
   links: {
-    checkNewVersionURL: 'https://updates.tagspaces.org/releases/' + urlParams,
+    checkNewVersionURL: 'https://updates.tagspaces.org/releases/',
     productsOverview: 'https://www.tagspaces.org/products/' + urlParams,
     productProObjectStore:
       'https://www.tagspaces.org/products/pro/#connectingObjectStorage' +
