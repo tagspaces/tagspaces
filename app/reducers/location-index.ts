@@ -186,7 +186,7 @@ export const actions = {
     if (Object.keys(searchQuery).length === 0) {
       dispatch(AppActions.exitSearchMode());
     } else {
-      dispatch(AppActions.setSearchResults([]));
+      dispatch(AppActions.enterSearchMode());
     }
   },
   setSearchQueryInt: (searchQuery: TS.SearchQuery) => ({

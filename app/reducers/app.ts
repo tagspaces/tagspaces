@@ -95,6 +95,7 @@ export const types = {
   // LOAD_PAGE_CONTENT: 'APP/LOAD_PAGE_CONTENT',
   SET_SEARCH_RESULTS: 'APP/SET_SEARCH_RESULTS',
   EXIT_SEARCH_MODE: 'APP/EXIT_SEARCH_MODE',
+  ENTER_SEARCH_MODE: 'APP/ENTER_SEARCH_MODE',
   APPEND_SEARCH_RESULTS: 'APP/APPEND_SEARCH_RESULTS',
   SET_SEARCH_FILTER: 'APP/SET_SEARCH_FILTER',
   OPEN_FILE: 'APP/OPEN_FILE',
@@ -248,7 +249,7 @@ export const initialState = {
   locationManagerPanelOpened: showLocations,
   tagLibraryPanelOpened: showTagLibrary,
   searchPanelOpened: showSearch,
-  searchResultsCount: -1,
+  searchResultsCount: -2,
   user: window.ExtDemoUser
     ? {
         attributes: window.ExtDemoUser,
@@ -533,6 +534,18 @@ export default (state: any = initialState, action: any) => {
       GlobalSearch.results = [];
       return {
         ...state,
+        searchResultsCount: -2,
+        searchFilter: undefined,
+        isLoading: false
+      };
+    }
+    case types.ENTER_SEARCH_MODE: {
+      GlobalSearch.results = [];
+      return {
+        ...state,
+        /**
+         * -2 not in search mode -1: search mode but search is not started
+         */
         searchResultsCount: -1,
         searchFilter: undefined,
         isLoading: false
@@ -1753,6 +1766,9 @@ export const actions = {
   }),
   exitSearchMode: () => ({
     type: types.EXIT_SEARCH_MODE
+  }),
+  enterSearchMode: () => ({
+    type: types.ENTER_SEARCH_MODE
   }),
   appendSearchResults: (searchResults: Array<any> | []) => ({
     type: types.APPEND_SEARCH_RESULTS,

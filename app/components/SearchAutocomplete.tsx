@@ -193,7 +193,7 @@ function SearchAutocomplete(props: Props) {
 
   useEffect(() => {
     if (!firstRender) {
-      if (props.searchResultsCount === -1) {
+      if (props.searchResultsCount === -2) {
         clearSearch();
       }
     }
@@ -341,12 +341,19 @@ function SearchAutocomplete(props: Props) {
         isOpen.current = true;
         forceUpdate();
       }
+    } else if (event.key === 'Backspace' || event.keyCode === 8) {
+      if (inputValue.current.length === 0 && actionValues.current.length > 0) {
+        actionValues.current = actionValues.current.slice(0, -1);
+        resetActions(actionValues.current);
+        isOpen.current = true;
+        forceUpdate();
+      }
     } else {
       isOpen.current = true;
     }
   };
 
-  const clearSearch = () => {
+  function resetValues() {
     inputValue.current = '';
     setSearchBoxing('location');
     searchType.current = 'fuzzy';
@@ -358,9 +365,11 @@ function SearchAutocomplete(props: Props) {
     tagTimePeriodTo.current = null;
     setTagPlaceLat(null);
     setTagPlaceLong(null);
-    // setTagPlaceRadius(0);
     forceIndexing.current = false;
     fileSize.current = '';
+  }
+  const clearSearch = () => {
+    resetValues();
     props.setSearchQuery({});
     // props.setSearchResults([]);
     props.watchForChanges();
@@ -707,7 +716,11 @@ function SearchAutocomplete(props: Props) {
     }
   }
 
-  function execActions(options: Array<any>, previousActions) {
+  function execActions(
+    options: Array<any>,
+    previousActions = [],
+    hasOptionsChanged = true
+  ) {
     const actions: Array<SearchOptionType> = [];
 
     function setPreviousAction(
@@ -743,7 +756,9 @@ function SearchAutocomplete(props: Props) {
       );
       if (!prevAction) {
         if (isAction(option.action, SearchActions.LOCATION)) {
-          changeOptions(option.action);
+          if (hasOptionsChanged) {
+            changeOptions(option.action);
+          }
           actions.push(option);
         } else if (option.action === ExecActions.OPEN_LOCATION) {
           // props.exitSearchMode();
@@ -755,7 +770,9 @@ function SearchAutocomplete(props: Props) {
           actions.push(option);
           isOpen.current = false;
         } else if (isAction(option.action, SearchActions.HISTORY)) {
-          changeOptions(option.action);
+          if (hasOptionsChanged) {
+            changeOptions(option.action);
+          }
           actions.push(option);
         } else if (option.action === ExecActions.OPEN_HISTORY) {
         } else if (
@@ -763,9 +780,9 @@ function SearchAutocomplete(props: Props) {
           isAction(option.action, SearchQueryComposition.TAG_OR) ||
           isAction(option.action, SearchQueryComposition.TAG_NOT)
         ) {
-          // if (props.currentLocation) {
-          changeOptions(option.action);
-          // }
+          if (hasOptionsChanged) {
+            changeOptions(option.action);
+          }
           actions.push(option);
         } else if (
           option.action === ExecActions.TAG_SEARCH_AND ||
@@ -787,9 +804,13 @@ function SearchAutocomplete(props: Props) {
             prevAction.color = option.color;
             prevAction.textcolor = option.textcolor;
           }
-          changeOptions(option.action);
+          if (hasOptionsChanged) {
+            changeOptions(option.action);
+          }
         } else if (isAction(option.action, SearchQueryComposition.TYPE)) {
-          changeOptions(option.action);
+          if (hasOptionsChanged) {
+            changeOptions(option.action);
+          }
           actions.push(option);
         } else if (option.action === ExecActions.TYPE_SEARCH) {
           if (actions.length > 0) {
@@ -799,22 +820,30 @@ function SearchAutocomplete(props: Props) {
               fileTypes.current = option.descr.split(', ');
             }
           }
-          changeOptions(option.action);
+          if (hasOptionsChanged) {
+            changeOptions(option.action);
+          }
           // executeSearch();
         } else if (isAction(option.action, SearchQueryComposition.SIZE)) {
-          changeOptions(option.action);
+          if (hasOptionsChanged) {
+            changeOptions(option.action);
+          }
           actions.push(option);
         } else if (option.action === ExecActions.SIZE_SEARCH) {
           const id = setPreviousAction(SearchQueryComposition.SIZE, option);
           if (id) {
             fileSize.current = id;
           }
-          changeOptions(option.action);
+          if (hasOptionsChanged) {
+            changeOptions(option.action);
+          }
           // executeSearch();
         } else if (
           isAction(option.action, SearchQueryComposition.LAST_MODIFIED)
         ) {
-          changeOptions(option.action);
+          if (hasOptionsChanged) {
+            changeOptions(option.action);
+          }
           actions.push(option);
         } else if (option.action === ExecActions.LAST_MODIFIED_SEARCH) {
           const id = setPreviousAction(
@@ -824,27 +853,37 @@ function SearchAutocomplete(props: Props) {
           if (id) {
             lastModified.current = id;
           }
-          changeOptions(option.action);
+          if (hasOptionsChanged) {
+            changeOptions(option.action);
+          }
           // executeSearch();
         } else if (isAction(option.action, SearchQueryComposition.SCOPE)) {
-          changeOptions(option.action);
+          if (hasOptionsChanged) {
+            changeOptions(option.action);
+          }
           actions.push(option);
         } else if (option.action === ExecActions.SCOPE_SEARCH) {
           const id = setPreviousAction(SearchQueryComposition.SCOPE, option);
           if (id) {
             setSearchBoxing(scope[id]);
           }
-          changeOptions(option.action);
+          if (hasOptionsChanged) {
+            changeOptions(option.action);
+          }
           // executeSearch();
         } else if (isAction(option.action, SearchQueryComposition.ACCURACY)) {
-          changeOptions(option.action);
+          if (hasOptionsChanged) {
+            changeOptions(option.action);
+          }
           actions.push(option);
         } else if (option.action === ExecActions.ACCURACY_SEARCH) {
           const id = setPreviousAction(SearchQueryComposition.ACCURACY, option);
           if (id) {
             searchType.current = accuracy[id];
           }
-          changeOptions(option.action);
+          if (hasOptionsChanged) {
+            changeOptions(option.action);
+          }
           // executeSearch();
         } else if (option.action === undefined) {
           // text query
@@ -956,8 +995,10 @@ function SearchAutocomplete(props: Props) {
       actionValues.current = actionValues.current.filter(
         v => !(selected.includes(v.label) || selected.includes(v.fullName))
       );
+      resetActions(actionValues.current);
+      forceUpdate();
       // reset default search filters
-      for (let i = 0; i < selected.length; i++) {
+      /*for (let i = 0; i < selected.length; i++) {
         const action = findAction(selected[i]);
         if (isAction(action, SearchQueryComposition.TYPE)) {
           fileTypes.current = [];
@@ -977,11 +1018,25 @@ function SearchAutocomplete(props: Props) {
         // textQuery.current = actionValues.current.map(v => v.label).join(' ');
       }
       // executeSearch();
-      isOpen.current = true;
-      forceUpdate();
+      isOpen.current = true;*/
     } /*else if (reason === 'clear') {
       props.setSearchQuery({});
     }*/
+  }
+
+  function resetActions(actions) {
+    resetValues();
+    if (actions.length === 0) {
+      searchOptions.current = SearchOptions;
+      currentOptions.current = undefined;
+      // textQuery.current = ''; todo remove tagsAnd from search query
+    } else {
+      actionValues.current = execActions(actions, [], false);
+      searchOptions.current = SearchOptions.filter(
+        option => option.group === 'query'
+      );
+      currentOptions.current = undefined;
+    }
   }
 
   /*const handleOpen = React.useCallback(() => {
@@ -1069,17 +1124,33 @@ function SearchAutocomplete(props: Props) {
           options={searchOptions.current}
           groupBy={option => option.group}
           renderOption={(props, option) => (
-            <Box
-              component="li"
-              style={{ ...(option.color && { backgroundColor: option.color }) }}
-              {...props}
-            >
-              <b
-                style={{ ...(option.textcolor && { color: option.textcolor }) }}
-              >
-                {option.label}
-              </b>
-              &nbsp;{option.descr}
+            <Box component="li" {...props}>
+              {option.color ? (
+                <Button
+                  size="small"
+                  style={{
+                    fontSize: 13,
+                    textTransform: 'none',
+                    color: option.textcolor,
+                    backgroundColor: option.color,
+                    minHeight: 0,
+                    minWidth: 0,
+                    margin: 2,
+                    paddingTop: 0,
+                    paddingBottom: 0,
+                    paddingRight: 5,
+                    paddingLeft: 5,
+                    borderRadius: 5
+                  }}
+                >
+                  {option.label}
+                </Button>
+              ) : (
+                <>
+                  <b>{option.label}</b>
+                  &nbsp;{option.descr}
+                </>
+              )}
             </Box>
           )}
           /*getOptionLabel={(option: SearchOptionType) =>

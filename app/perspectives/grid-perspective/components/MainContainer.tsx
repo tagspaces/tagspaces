@@ -583,11 +583,11 @@ function GridPerspective(props: Props) {
         .map(fsentry => fsentry.path)
     : [];
   const sortedDirectories =
-    props.searchResultsCount === -1 // not in search mode
+    props.searchResultsCount < 0 // not in search mode
       ? sortedDirContent.current.filter(entry => !entry.isFile)
       : [];
   const sortedFiles =
-    props.searchResultsCount === -1 // not in search mode
+    props.searchResultsCount < 0 // not in search mode
       ? sortedDirContent.current.filter(entry => entry.isFile)
       : GlobalSearch.results;
   const locationPath = props.currentLocation

@@ -280,7 +280,7 @@ function FolderContainer(props: Props) {
   }, [props.editedEntryPaths]);
 
   useEffect(() => {
-    if (props.searchResultsCount === -1) {
+    if (props.searchResultsCount === -2) {
       setSearchVisible(false);
     } else {
       setSearchVisible(true);
