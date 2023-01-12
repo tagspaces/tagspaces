@@ -819,6 +819,7 @@ function SearchAutocomplete(props: Props) {
         const prevAction = actions[actions.length - 1];
         if (isAction(prevAction.action, key)) {
           prevAction.label = prevAction.action + option.label;
+          prevAction.fullName = prevAction.action + option.label;
           return option.id;
         }
       }
@@ -955,12 +956,9 @@ function SearchAutocomplete(props: Props) {
           }
           actions.push(option);
         } else if (option.action === ExecActions.TYPE_SEARCH) {
-          if (actions.length > 0) {
-            const prevAction = actions[actions.length - 1];
-            if (isAction(prevAction.action, SearchQueryComposition.TYPE)) {
-              prevAction.label = prevAction.action + option.label;
-              fileTypes.current = option.descr.split(', ');
-            }
+          const id = setPreviousAction(SearchQueryComposition.TYPE, option);
+          if (id) {
+            fileTypes.current = option.descr.split(', ');
           }
           if (hasOptionsChanged) {
             changeOptions(option.action);
