@@ -2798,7 +2798,5 @@ export const isHelpFeedbackPanelOpened = (state: any) =>
   state.app.helpFeedbackPanelOpened;
 export const getSearchResultsCount = (state: any) =>
   state.app.searchResultsCount;
-export const isSearchMode = (state: any) =>
-  state.app.searchMode;
-export const getSearchFilter = (state: any) =>
-  state.app.searchFilter;
+export const isSearchMode = (state: any) => state.app.searchMode;
+export const getSearchFilter = (state: any) => state.app.searchFilter;

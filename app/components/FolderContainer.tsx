@@ -607,11 +607,10 @@ function FolderContainer(props: Props) {
                     minWidth: 40,
                     width: 200
                   }}
-                  onKeyDown={
-                    () =>
-                      props.setSearchQuery(
-                        props.isSearchMode ? {} : { textQuery: '' }
-                      )
+                  onKeyDown={() =>
+                    props.setSearchQuery(
+                      props.isSearchMode ? {} : { textQuery: '' }
+                    )
                   }
                   onClick={() =>
                     props.setSearchQuery(
