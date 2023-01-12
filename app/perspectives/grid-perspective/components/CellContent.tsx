@@ -49,7 +49,10 @@ import PlatformIO from '-/services/platform-facade';
 import EntryIcon from '-/components/EntryIcon';
 import { TS } from '-/tagspaces.namespace';
 import TaggingActions from '-/reducers/tagging-actions';
-import { getLastThumbnailImageChange } from '-/reducers/app';
+import {
+  actions as AppActions,
+  getLastThumbnailImageChange
+} from '-/reducers/app';
 import { FolderIcon } from '-/components/CommonIcons';
 // import { getTagColor } from '-/reducers/settings';
 
@@ -81,6 +84,7 @@ interface Props {
   editTagForEntry?: (path: string, tag: TS.Tag) => void;
   reorderTags: boolean;
   lastThumbnailImageChange: any;
+  exitSearchMode: () => void;
 }
 
 function CellContent(props: Props) {
@@ -502,7 +506,10 @@ function CellContent(props: Props) {
         backgroundColor: theme.palette.background.default
       }}
       onContextMenu={event => handleGridContextMenu(event, fsEntry)}
-      onDoubleClick={event => handleGridCellDblClick(event, fsEntry)}
+      onDoubleClick={event => {
+        props.exitSearchMode();
+        handleGridCellDblClick(event, fsEntry);
+      }}
       onClick={event => {
         event.stopPropagation();
         AppConfig.isCordovaiOS // TODO DoubleClick not fired in Cordova IOS
@@ -529,7 +536,8 @@ function mapStateToProps(state) {
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
-      editTagForEntry: TaggingActions.editTagForEntry
+      editTagForEntry: TaggingActions.editTagForEntry,
+      exitSearchMode: AppActions.exitSearchMode
     },
     dispatch
   );

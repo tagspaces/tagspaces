@@ -94,7 +94,10 @@ export const types = {
   CLEAR_DIRECTORY_CONTENT: 'APP/CLEAR_DIRECTORY_CONTENT',
   // LOAD_PAGE_CONTENT: 'APP/LOAD_PAGE_CONTENT',
   SET_SEARCH_RESULTS: 'APP/SET_SEARCH_RESULTS',
+  EXIT_SEARCH_MODE: 'APP/EXIT_SEARCH_MODE',
+  ENTER_SEARCH_MODE: 'APP/ENTER_SEARCH_MODE',
   APPEND_SEARCH_RESULTS: 'APP/APPEND_SEARCH_RESULTS',
+  SET_SEARCH_FILTER: 'APP/SET_SEARCH_FILTER',
   OPEN_FILE: 'APP/OPEN_FILE',
   TOGGLE_ENTRY_FULLWIDTH: 'APP/TOGGLE_ENTRY_FULLWIDTH',
   SET_ENTRY_FULLWIDTH: 'APP/SET_ENTRY_FULLWIDTH',
@@ -246,7 +249,7 @@ export const initialState = {
   locationManagerPanelOpened: showLocations,
   tagLibraryPanelOpened: showTagLibrary,
   searchPanelOpened: showSearch,
-  searchResultsCount: 0,
+  searchResultsCount: -1,
   user: window.ExtDemoUser
     ? {
         attributes: window.ExtDemoUser,
@@ -527,6 +530,26 @@ export default (state: any = initialState, action: any) => {
         isLoading: false
       };
     }
+    case types.EXIT_SEARCH_MODE: {
+      GlobalSearch.results = [];
+      return {
+        ...state,
+        searchMode: false,
+        searchResultsCount: -1,
+        searchFilter: undefined,
+        isLoading: false
+      };
+    }
+    case types.ENTER_SEARCH_MODE: {
+      GlobalSearch.results = [];
+      return {
+        ...state,
+        searchResultsCount: -1,
+        searchMode: true,
+        searchFilter: undefined,
+        isLoading: false
+      };
+    }
     case types.APPEND_SEARCH_RESULTS: {
       // const newDirEntries = [...state.currentDirectoryEntries];
       for (let i = 0; i < action.searchResults.length; i += 1) {
@@ -542,6 +565,12 @@ export default (state: any = initialState, action: any) => {
         searchResultsCount: GlobalSearch.results.length,
         // currentDirectoryEntries: newDirEntries,
         isLoading: false
+      };
+    }
+    case types.SET_SEARCH_FILTER: {
+      return {
+        ...state,
+        searchFilter: action.searchFilter
       };
     }
     case types.SET_NOTIFICATION: {
@@ -1734,9 +1763,19 @@ export const actions = {
     type: types.SET_SEARCH_RESULTS,
     searchResults
   }),
+  exitSearchMode: () => ({
+    type: types.EXIT_SEARCH_MODE
+  }),
+  enterSearchMode: () => ({
+    type: types.ENTER_SEARCH_MODE
+  }),
   appendSearchResults: (searchResults: Array<any> | []) => ({
     type: types.APPEND_SEARCH_RESULTS,
     searchResults
+  }),
+  setSearchFilter: (searchFilter: string) => ({
+    type: types.SET_SEARCH_FILTER,
+    searchFilter
   }),
   setCurrentLocationId: (locationId: string | null) => ({
     type: types.SET_CURRENLOCATIONID,
@@ -1748,6 +1787,7 @@ export const actions = {
   ) => {
     const { currentLocationId } = getState().app;
     if (location.uuid !== currentLocationId) {
+      // dispatch(actions.exitSearchMode());
       dispatch(LocationIndexActions.clearDirectoryIndex());
       dispatch(actions.setCurrentLocationId(location.uuid));
     }
@@ -1869,7 +1909,7 @@ export const actions = {
     if (location === undefined) {
       location = getLocation(getState(), getState().app.currentLocationId);
     }
-    if (Pro && Pro.Watcher && location.watchForChanges) {
+    if (Pro && Pro.Watcher && location && location.watchForChanges) {
       const perspective = getCurrentDirectoryPerspective(getState());
       const depth = perspective === PerspectiveIDs.KANBAN ? 3 : 1;
       Pro.Watcher.watchFolder(
@@ -2758,3 +2798,7 @@ export const isHelpFeedbackPanelOpened = (state: any) =>
   state.app.helpFeedbackPanelOpened;
 export const getSearchResultsCount = (state: any) =>
   state.app.searchResultsCount;
+export const isSearchMode = (state: any) =>
+  state.app.searchMode;
+export const getSearchFilter = (state: any) =>
+  state.app.searchFilter;

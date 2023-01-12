@@ -52,6 +52,7 @@ import {
   getDirectoryMeta,
   getLastSelectedEntry,
   getLastSelectedEntryPath,
+  getSearchFilter,
   getSelectedEntries,
   isDeleteMultipleEntriesDialogOpened,
   isReadOnlyMode
@@ -73,6 +74,7 @@ import { defaultSettings } from '../index';
 import { PerspectiveIDs } from '-/perspectives';
 import { fileOperationsEnabled } from '-/perspectives/common/main-container';
 import GlobalSearch from '-/services/search-index';
+import useFirstRender from '-/utils/useFirstRender';
 
 interface Props {
   classes: any;
@@ -117,6 +119,7 @@ interface Props {
   directoryMeta: TS.FileSystemEntryMeta;
   setDirectoryMeta: (fsEntryMeta: TS.FileSystemEntryMeta) => void;
   searchResultsCount: number;
+  searchFilter: string;
 }
 
 function getSettings(directoryMeta: TS.FileSystemEntryMeta): TS.FolderSettings {
@@ -177,6 +180,9 @@ function GridPerspective(props: Props) {
       ? settings.orderBy
       : defaultSettings.orderBy
   );
+  const sortedDirContent = useRef<Array<TS.FileSystemEntry>>(
+    sortByCriteria(props.directoryContent, sortBy.current, orderBy.current)
+  );
   const layoutType = useRef<string>(
     settings && settings.layoutType
       ? settings.layoutType
@@ -236,6 +242,7 @@ function GridPerspective(props: Props) {
   // true: save in default settings; false: save per folder settings; undefined - dont save changes
   const isDefaultSetting = useRef<boolean>(undefined);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  const firstRender = useFirstRender();
 
   const {
     classes,
@@ -252,53 +259,84 @@ function GridPerspective(props: Props) {
   }, [props.selectedEntries]);
 
   useEffect(() => {
-    const perspectiveSettings = getSettings(props.directoryMeta);
-    showDirectories.current =
-      perspectiveSettings && perspectiveSettings.showDirectories !== undefined
-        ? perspectiveSettings.showDirectories
-        : defaultSettings.showDirectories;
-    showDescription.current =
-      perspectiveSettings && perspectiveSettings.showDescription !== undefined
-        ? perspectiveSettings.showDescription
-        : defaultSettings.showDescription;
-    showDetails.current =
-      perspectiveSettings && perspectiveSettings.showDetails !== undefined
-        ? perspectiveSettings.showDetails
-        : defaultSettings.showDetails;
-    showTags.current =
-      perspectiveSettings && perspectiveSettings.showTags !== undefined
-        ? perspectiveSettings.showTags
-        : defaultSettings.showTags;
-    layoutType.current = defaultSettings.layoutType;
-    orderBy.current =
-      perspectiveSettings && perspectiveSettings.orderBy !== undefined
-        ? perspectiveSettings.orderBy
-        : defaultSettings.orderBy;
-    sortBy.current =
-      perspectiveSettings && perspectiveSettings.sortBy !== undefined
-        ? perspectiveSettings.sortBy
-        : defaultSettings.sortBy;
-    singleClickAction.current =
-      perspectiveSettings && perspectiveSettings.singleClickAction !== undefined
-        ? perspectiveSettings.singleClickAction
-        : defaultSettings.singleClickAction;
-    entrySize.current =
-      perspectiveSettings && perspectiveSettings.entrySize !== undefined
-        ? perspectiveSettings.entrySize
-        : defaultSettings.entrySize;
-    thumbnailMode.current =
-      perspectiveSettings && perspectiveSettings.thumbnailMode !== undefined
-        ? perspectiveSettings.thumbnailMode
-        : defaultSettings.thumbnailMode;
-    gridPageLimit.current =
-      perspectiveSettings && perspectiveSettings.gridPageLimit !== undefined
-        ? perspectiveSettings.gridPageLimit
-        : defaultSettings.gridPageLimit;
-    forceUpdate();
+    if (!firstRender) {
+      sortedDirContent.current = sortByCriteria(
+        props.searchFilter
+          ? props.directoryContent.filter(entry =>
+              entry.name
+                .toLowerCase()
+                .includes(props.searchFilter.toLowerCase())
+            )
+          : props.directoryContent,
+        sortBy.current,
+        orderBy.current
+      );
+      forceUpdate();
+    }
+  }, [props.searchFilter]);
+
+  useEffect(() => {
+    if (!firstRender) {
+      sortedDirContent.current = sortByCriteria(
+        props.directoryContent,
+        sortBy.current,
+        orderBy.current
+      );
+      forceUpdate();
+    }
+  }, [props.directoryContent, sortBy.current, orderBy.current]);
+
+  useEffect(() => {
+    if (!firstRender) {
+      const perspectiveSettings = getSettings(props.directoryMeta);
+      showDirectories.current =
+        perspectiveSettings && perspectiveSettings.showDirectories !== undefined
+          ? perspectiveSettings.showDirectories
+          : defaultSettings.showDirectories;
+      showDescription.current =
+        perspectiveSettings && perspectiveSettings.showDescription !== undefined
+          ? perspectiveSettings.showDescription
+          : defaultSettings.showDescription;
+      showDetails.current =
+        perspectiveSettings && perspectiveSettings.showDetails !== undefined
+          ? perspectiveSettings.showDetails
+          : defaultSettings.showDetails;
+      showTags.current =
+        perspectiveSettings && perspectiveSettings.showTags !== undefined
+          ? perspectiveSettings.showTags
+          : defaultSettings.showTags;
+      layoutType.current = defaultSettings.layoutType;
+      orderBy.current =
+        perspectiveSettings && perspectiveSettings.orderBy !== undefined
+          ? perspectiveSettings.orderBy
+          : defaultSettings.orderBy;
+      sortBy.current =
+        perspectiveSettings && perspectiveSettings.sortBy !== undefined
+          ? perspectiveSettings.sortBy
+          : defaultSettings.sortBy;
+      singleClickAction.current =
+        perspectiveSettings &&
+        perspectiveSettings.singleClickAction !== undefined
+          ? perspectiveSettings.singleClickAction
+          : defaultSettings.singleClickAction;
+      entrySize.current =
+        perspectiveSettings && perspectiveSettings.entrySize !== undefined
+          ? perspectiveSettings.entrySize
+          : defaultSettings.entrySize;
+      thumbnailMode.current =
+        perspectiveSettings && perspectiveSettings.thumbnailMode !== undefined
+          ? perspectiveSettings.thumbnailMode
+          : defaultSettings.thumbnailMode;
+      gridPageLimit.current =
+        perspectiveSettings && perspectiveSettings.gridPageLimit !== undefined
+          ? perspectiveSettings.gridPageLimit
+          : defaultSettings.gridPageLimit;
+      forceUpdate();
+    }
   }, [props.directoryMeta]);
 
   useEffect(() => {
-    if (isDefaultSetting.current !== undefined) {
+    if (!firstRender && isDefaultSetting.current !== undefined) {
       const perspectiveSettings = {
         showDirectories: showDirectories.current,
         showDescription: showDescription.current,
@@ -343,12 +381,6 @@ function GridPerspective(props: Props) {
     thumbnailMode.current,
     gridPageLimit.current
   ]);
-
-  const sortedDirContentMemoized = useMemo(
-    () =>
-      sortByCriteria(props.directoryContent, sortBy.current, orderBy.current),
-    [props.directoryContent, sortBy.current, orderBy.current]
-  );
 
   const makeFirstSelectedEntryVisible = () => {
     if (selectedEntries && selectedEntries.length > 0) {
@@ -551,13 +583,13 @@ function GridPerspective(props: Props) {
         .map(fsentry => fsentry.path)
     : [];
   const sortedDirectories =
-    props.searchResultsCount > 0
-      ? []
-      : sortedDirContentMemoized.filter(entry => !entry.isFile);
+    props.searchResultsCount < 0 // not in search mode
+      ? sortedDirContent.current.filter(entry => !entry.isFile)
+      : [];
   const sortedFiles =
-    props.searchResultsCount > 0
-      ? GlobalSearch.results
-      : sortedDirContentMemoized.filter(entry => entry.isFile);
+    props.searchResultsCount < 0 // not in search mode
+      ? sortedDirContent.current.filter(entry => entry.isFile)
+      : GlobalSearch.results;
   const locationPath = props.currentLocation
     ? PlatformIO.getLocationPath(props.currentLocation)
     : '';
@@ -903,7 +935,8 @@ function mapStateToProps(state) {
     locations: getLocations(state),
     isDeleteMultipleEntriesDialogOpened: isDeleteMultipleEntriesDialogOpened(
       state
-    )
+    ),
+    searchFilter: getSearchFilter(state)
   };
 }
 

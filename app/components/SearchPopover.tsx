@@ -94,6 +94,7 @@ interface Props {
   hideDrawer?: () => void;
   searchQuery: TS.SearchQuery; // () => any;
   setSearchResults: (entries: Array<any>) => void;
+  exitSearchMode: () => void;
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   currentDirectory: string;
   indexedEntriesCount: number;
@@ -401,7 +402,7 @@ function SearchPopover(props: Props) {
     if (props.currentDirectory) {
       props.loadDirectoryContent(props.currentDirectory, false, true);
     } else {
-      props.setSearchResults([]);
+      props.exitSearchMode();
     }
   }
 
@@ -1072,7 +1073,8 @@ function mapDispatchToProps(dispatch) {
       createLocationsIndexes: LocationIndexActions.createLocationsIndexes,
       loadDirectoryContent: AppActions.loadDirectoryContent,
       openURLExternally: AppActions.openURLExternally,
-      setSearchResults: AppActions.setSearchResults
+      setSearchResults: AppActions.setSearchResults,
+      exitSearchMode: AppActions.exitSearchMode
     },
     dispatch
   );

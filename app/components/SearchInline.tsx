@@ -204,10 +204,11 @@ function SearchInline(props: Props) {
       }
       */
       textQuery.current = txtQuery + ' ' + textQueryMask.current.trim();
-      mainSearchField.current.value =
-        txtQuery +
-        (textQueryMask.current ? ' ' + textQueryMask.current.trim() : '');
-      // }
+      if (mainSearchField.current) {
+        mainSearchField.current.value =
+          txtQuery +
+          (textQueryMask.current ? ' ' + textQueryMask.current.trim() : '');
+      }
       if (props.searchQuery.searchBoxing) {
         setSearchBoxing(props.searchQuery.searchBoxing);
         // searchBoxing.current = props.searchQuery.searchBoxing;
