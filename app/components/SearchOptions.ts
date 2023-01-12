@@ -43,6 +43,12 @@ export const SearchQueryComposition = {
   }
 };
 
+/*export const searchMode = {
+  NOT_IN_SEARCH_MODE: 'NOT_IN_SEARCH_MODE',
+  // search mode but search is not started
+  INITIAL_SEARCH_MODE: 'NOT_IN_SEARCH_MODE'
+};*/
+
 export const SearchActions = {
   LOCATION: {
     shortName: 'l:',
@@ -82,6 +88,8 @@ export const SearchActions = {
 export const ExecActions = {
   OPEN_LOCATION: 'open_location',
   OPEN_HISTORY: 'open_history',
+  OPEN_BOOKMARK: 'open_bookmark',
+  OPEN_SAVED_SEARCHES: 'open_saved_searches',
   TAG_SEARCH_AND: 'tag_search_and',
   TAG_SEARCH_NOT: 'tag_search_not',
   TAG_SEARCH_OR: 'tag_search_or',

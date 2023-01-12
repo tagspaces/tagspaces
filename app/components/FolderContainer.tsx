@@ -51,7 +51,8 @@ import {
   getSelectedEntries,
   getProgress,
   getEditedEntryPaths,
-  getSearchResultsCount
+  getSearchResultsCount,
+  isSearchMode
 } from '../reducers/app';
 import TaggingActions from '../reducers/tagging-actions';
 import LoadingLazy from '../components/LoadingLazy';
@@ -219,6 +220,7 @@ interface Props {
   goBack: () => void;
   goForward: () => void;
   searchResultsCount: number;
+  isSearchMode: boolean;
 }
 
 function FolderContainer(props: Props) {
@@ -279,18 +281,18 @@ function FolderContainer(props: Props) {
     }
   }, [props.editedEntryPaths]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (props.searchResultsCount === -2) {
       setSearchVisible(false);
     } else {
       setSearchVisible(true);
     }
-  }, [props.searchResultsCount]);
+  }, [props.isSearchMode]);*/
 
   const [isRenameEntryDialogOpened, setIsRenameEntryDialogOpened] = useState<
     boolean
   >(false);
-  const [isSearchVisible, setSearchVisible] = useState<boolean>(false);
+  // const [isSearchVisible, setSearchVisible] = useState<boolean>(false);
 
   const {
     currentDirectoryPath = '',
@@ -572,8 +574,9 @@ function FolderContainer(props: Props) {
               </IconButton>
             </Tooltip>
           )}
-          {isSearchVisible ? (
-            <SearchBox open={isSearchVisible} />
+          {props.isSearchMode ? (
+            /* todo rethink if open props is needed */
+            <SearchBox open={props.isSearchMode} />
           ) : (
             <>
               <div
@@ -607,12 +610,12 @@ function FolderContainer(props: Props) {
                   onKeyDown={
                     () =>
                       props.setSearchQuery(
-                        isSearchVisible ? {} : { textQuery: '' }
-                      ) /*setSearchVisible(!isSearchVisible)*/
+                        props.isSearchMode ? {} : { textQuery: '' }
+                      )
                   }
                   onClick={() =>
                     props.setSearchQuery(
-                      isSearchVisible ? {} : { textQuery: '' }
+                      props.isSearchMode ? {} : { textQuery: '' }
                     )
                   }
                   margin="dense"
@@ -720,7 +723,8 @@ function mapStateToProps(state) {
     // keyBindings: getKeyBindingObject(state),
     defaultPerspective: getDefaultPerspective(state),
     editedEntryPaths: getEditedEntryPaths(state),
-    searchResultsCount: getSearchResultsCount(state)
+    searchResultsCount: getSearchResultsCount(state),
+    isSearchMode: isSearchMode(state)
   };
 }
 
@@ -776,7 +780,8 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   nextProp.language === prevProp.language &&
   nextProp.windowHeight === prevProp.windowHeight &&
   nextProp.searchQuery === prevProp.searchQuery &&
-  nextProp.searchResultsCount === prevProp.searchResultsCount;
+  nextProp.searchResultsCount === prevProp.searchResultsCount &&
+  nextProp.isSearchMode === prevProp.isSearchMode;
 
 export default connect(
   mapStateToProps,

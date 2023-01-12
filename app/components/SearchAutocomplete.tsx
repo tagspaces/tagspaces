@@ -29,7 +29,7 @@ import {
   actions as AppActions,
   getCurrentLocationId,
   getDirectoryPath,
-  getSearchResultsCount
+  isSearchMode
 } from '../reducers/app';
 import {
   actions as LocationIndexActions,
@@ -69,6 +69,8 @@ import {
 import { getCurrentLocation, getLocations } from '-/reducers/locations';
 import CloseIcon from '@mui/icons-material/Close';
 import { getTagLibrary } from '-/services/taglibrary-utils';
+import { getBookmarks } from '../../extensions/tagspacespro/modules/bookmarks';
+import { getSearches } from '-/reducers/searches';
 
 interface Props {
   style?: any;
@@ -92,11 +94,12 @@ interface Props {
   locations: TS.Location[];
   currentLocation: TS.Location;
   openLocationById: (locationId: string) => void;
-  searchResultsCount: number;
+  isSearchMode: boolean;
   exitSearchMode: () => void;
   setSearchFilter: (filter) => void;
   currentLocationId: string;
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
+  searches: Array<TS.SearchQuery>;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -188,11 +191,11 @@ function SearchAutocomplete(props: Props) {
 
   useEffect(() => {
     if (!firstRender) {
-      if (props.searchResultsCount === -2) {
+      if (!props.isSearchMode) {
         clearSearch();
       }
     }
-  }, [props.searchResultsCount]);
+  }, [props.isSearchMode]);
 
   /* let searchBoxingName = i18n.t('location');
   if (searchBoxing === 'global') {
@@ -607,6 +610,60 @@ function SearchAutocomplete(props: Props) {
           ...getOptions(fileEditHistoryItems, i18n.t('core:fileEditHistory'))
         ];
       }
+    } else if (isAction(action, SearchActions.BOOK)) {
+      if (currentOptions.current !== action) {
+        currentOptions.current = action;
+        const bookmarks: Array<TS.BookmarkItem> =
+          Pro && Pro.bookmarks && Pro.bookmarks.getBookmarks();
+
+        function getOptions(
+          items: TS.BookmarkItem[],
+          group: string
+        ): SearchOptionType[] {
+          if (!items) {
+            return [];
+          }
+          return items.map((item: TS.BookmarkItem) => ({
+            id: item.creationTimeStamp.toString(),
+            descr:
+              '(' + format(item.creationTimeStamp, 'yyyy-MM-dd HH:mm') + ')',
+            action: ExecActions.OPEN_BOOKMARK,
+            fullName: item.url,
+            label: item.path,
+            group: group
+          }));
+        }
+
+        searchOptions.current = getOptions(
+          bookmarks,
+          i18n.t('core:searchBookmarks')
+        );
+      }
+    } else if (isAction(action, SearchActions.SEARCH)) {
+      if (currentOptions.current !== action) {
+        currentOptions.current = action;
+
+        function getOptions(
+          items: TS.SearchQuery[],
+          group: string
+        ): SearchOptionType[] {
+          if (!items) {
+            return [];
+          }
+          return items.map((item: TS.SearchQuery) => ({
+            id: item.uuid,
+            action: ExecActions.OPEN_SAVED_SEARCHES,
+            label: item.title,
+            fullName: JSON.stringify(item),
+            group: group
+          }));
+        }
+
+        searchOptions.current = getOptions(
+          props.searches,
+          i18n.t('core:savedSearchesTitle')
+        );
+      }
     } else if (
       isAction(action, SearchQueryComposition.TAG_AND) ||
       isAction(action, SearchQueryComposition.TAG_OR) ||
@@ -803,6 +860,19 @@ function SearchAutocomplete(props: Props) {
         } else if (isAction(option.action, SearchActions.HISTORY)) {
           if (hasOptionsChanged) {
             changeOptions(option.action);
+            isOpen.current = true;
+          }
+          actions.push(option);
+        } else if (isAction(option.action, SearchActions.BOOK)) {
+          if (hasOptionsChanged) {
+            changeOptions(option.action);
+            isOpen.current = true;
+          }
+          actions.push(option);
+        } else if (isAction(option.action, SearchActions.SEARCH)) {
+          if (hasOptionsChanged) {
+            changeOptions(option.action);
+            isOpen.current = true;
           }
           actions.push(option);
         } else if (option.action === ExecActions.OPEN_HISTORY) {
@@ -819,6 +889,33 @@ function SearchAutocomplete(props: Props) {
             props.openLocationById,
             props.openFsEntry
           );
+          searchOptions.current = SearchOptions;
+          currentOptions.current = undefined;
+          isOpen.current = false;
+          return [];
+        } else if (option.action === ExecActions.OPEN_BOOKMARK) {
+          const item: TS.HistoryItem = {
+            path: option.label,
+            url: option.fullName,
+            lid: undefined,
+            creationTimeStamp: 0
+          };
+          Pro.history.openItem(
+            item,
+            props.currentLocationId,
+            props.openLink,
+            props.openLocationById,
+            props.openFsEntry
+          );
+          searchOptions.current = SearchOptions;
+          currentOptions.current = undefined;
+          isOpen.current = false;
+          return [];
+        } else if (option.action === ExecActions.OPEN_SAVED_SEARCHES) {
+          props.setSearchQuery(JSON.parse(option.fullName));
+          searchOptions.current = SearchOptions;
+          currentOptions.current = undefined;
+          isOpen.current = false;
           return [];
         } else if (
           isAction(option.action, SearchQueryComposition.TAG_AND) ||
@@ -1347,8 +1444,9 @@ function mapStateToProps(state) {
     language: getCurrentLanguage(state),
     locations: getLocations(state),
     currentLocation: getCurrentLocation(state),
-    searchResultsCount: getSearchResultsCount(state),
-    currentLocationId: getCurrentLocationId(state)
+    isSearchMode: isSearchMode(state),
+    currentLocationId: getCurrentLocationId(state),
+    searches: getSearches(state)
   };
 }
 
