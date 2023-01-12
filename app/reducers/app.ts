@@ -547,6 +547,7 @@ export default (state: any = initialState, action: any) => {
          * -2 not in search mode -1: search mode but search is not started
          */
         searchResultsCount: -1,
+        // searchMode: '', //todo
         searchFilter: undefined,
         isLoading: false
       };
