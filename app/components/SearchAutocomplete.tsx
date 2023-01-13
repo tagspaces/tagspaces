@@ -69,7 +69,6 @@ import {
 import { getCurrentLocation, getLocations } from '-/reducers/locations';
 import CloseIcon from '@mui/icons-material/Close';
 import { getTagLibrary } from '-/services/taglibrary-utils';
-import { getBookmarks } from '../../extensions/tagspacespro/modules/bookmarks';
 import { getSearches } from '-/reducers/searches';
 
 interface Props {
