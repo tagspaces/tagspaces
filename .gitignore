@@ -118,3 +118,5 @@ junit.xml
 test-reports/*
 
 /app/**main.prod.js**
+
+deploy.sh
