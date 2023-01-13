@@ -45,7 +45,7 @@ function LocalForm(props: Props) {
   const openDirectory = () => {
     PlatformIO.selectDirectoryDialog()
       .then(selectedPaths => {
-        const selectedPath = selectedPaths[0];
+        const selectedPath = decodeURI(selectedPaths[0]);
         setPath(selectedPath);
         if (name.length < 1 && selectedPath.length > 0) {
           const dirName = extractDirectoryName(
