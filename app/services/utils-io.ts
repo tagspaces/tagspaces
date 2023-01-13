@@ -379,7 +379,8 @@ export function orderByMetaArray(
 }
 
 export function findExtensionPathForId(extensionId: string): string {
-  const extensionPath = 'node_modules/' + extensionId;
+  const extensionPath =
+    (AppConfig.isWeb ? 'modules/' : 'node_modules/') + extensionId;
   return extensionPath;
 }
 
