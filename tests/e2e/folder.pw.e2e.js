@@ -70,7 +70,11 @@ describe('TST01 - Folder management', () => {
     await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
     const newDirectoryName = await renameFolder();
     await clickOn('[data-tid=gridPerspectiveOnBackButton]');
-    await expectElementExist('[data-tid=fsEntryName_' + newDirectoryName + ']');
+    await takeScreenshot('TST0103 - Rename folder - after OnBackButton');
+    await expectElementExist(
+      '[data-tid=fsEntryName_' + newDirectoryName + ']',
+      2000
+    );
     // cleanup
     await global.client.dblclick(
       '[data-tid=fsEntryName_' + newDirectoryName + ']'
