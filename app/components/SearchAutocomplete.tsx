@@ -28,6 +28,7 @@ import IconButton from '@mui/material/IconButton';
 import {
   actions as AppActions,
   getCurrentLocationId,
+  getDirectoryContent,
   getDirectoryPath,
   isSearchMode
 } from '../reducers/app';
@@ -99,6 +100,7 @@ interface Props {
   currentLocationId: string;
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   searches: Array<TS.SearchQuery>;
+  currentDirectoryEntries: Array<TS.FileSystemEntry>;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -187,6 +189,15 @@ function SearchAutocomplete(props: Props) {
       }
     }
   }, [props.currentLocation]);
+
+  useEffect(() => {
+    // HANDLE CHANGE currentDirectoryEntries (ADD/REMOVE TAGS) IN SEARCH RESULTS
+    if (!firstRender) {
+      if (props.isSearchMode && Object.keys(props.searchQuery).length > 0) {
+        executeSearch();
+      }
+    }
+  }, [props.currentDirectoryEntries]);
 
   useEffect(() => {
     if (!firstRender) {
@@ -1443,7 +1454,8 @@ function mapStateToProps(state) {
     currentLocation: getCurrentLocation(state),
     isSearchMode: isSearchMode(state),
     currentLocationId: getCurrentLocationId(state),
-    searches: getSearches(state)
+    searches: getSearches(state),
+    currentDirectoryEntries: getDirectoryContent(state)
   };
 }
 
