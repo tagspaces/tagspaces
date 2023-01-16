@@ -30,6 +30,7 @@ import {
   getCurrentLocationId,
   getDirectoryContent,
   getDirectoryPath,
+  getEditedEntryPaths,
   isSearchMode
 } from '../reducers/app';
 import {
@@ -100,7 +101,7 @@ interface Props {
   currentLocationId: string;
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   searches: Array<TS.SearchQuery>;
-  currentDirectoryEntries: Array<TS.FileSystemEntry>;
+  editedEntryPaths: Array<TS.EditedEntryPath>;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -180,11 +181,10 @@ function SearchAutocomplete(props: Props) {
   const firstRender = useFirstRender();
 
   useEffect(() => {
+    // Handle CHANGE LOCATION IN SEARCH MODE
     if (!firstRender) {
-      if (
-        props.open &&
-        (inputValue.current.length > 0 || actionValues.current.length > 0)
-      ) {
+      if (props.isSearchMode && Object.keys(props.searchQuery).length > 0) {
+        // if (props.open && (inputValue.current.length > 0 || actionValues.current.length > 0)
         executeSearch();
       }
     }
@@ -197,7 +197,7 @@ function SearchAutocomplete(props: Props) {
         executeSearch();
       }
     }
-  }, [props.currentDirectoryEntries]);
+  }, [props.editedEntryPaths]);
 
   useEffect(() => {
     if (!firstRender) {
@@ -1455,7 +1455,7 @@ function mapStateToProps(state) {
     isSearchMode: isSearchMode(state),
     currentLocationId: getCurrentLocationId(state),
     searches: getSearches(state),
-    currentDirectoryEntries: getDirectoryContent(state)
+    editedEntryPaths: getEditedEntryPaths(state)
   };
 }
 
