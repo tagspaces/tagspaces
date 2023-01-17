@@ -42,7 +42,7 @@ if (!requiredByDLLConfig && !(fs.existsSync(dll) && fs.existsSync(manifest))) {
 
 export default merge(baseConfig, {
   cache: false,
-  devtool: 'inline-source-map', // eval-source-map
+  devtool: 'eval-source-map', // inline-source-map
 
   mode: 'development',
 
