@@ -2,12 +2,30 @@
 
 const path = require('path');
 const fs = require('fs-extra');
-const shell = require('shelljs');
+// const shell = require('shelljs');
+const childProcess = require('child_process');
+const packageJson = require('../app/package.json');
 
-function isInstalled(packageName) {
+function isInstalled(packageName, checkVersion = undefined) {
   try {
-    require.resolve('../app/node_modules/' + packageName);
-    return true;
+    const packageVersions =
+      packageName + (checkVersion ? '@' + checkVersion : '');
+    const versions = childProcess
+      .execSync('npm list --depth=0 --prefix ' + path.join(__dirname, '../app'))
+      //.execSync('npm view ' + packageName + ' version')
+      .toString();
+    if (versions.indexOf(packageVersions) > 0) {
+      return true;
+    }
+    /*if (checkVersion) {
+      if (checkVersion === version) {
+        return true;
+      }
+    } else if (version.length > 0) {
+      return true;
+    }*/
+    // require.resolve('../app/node_modules/' + packageName);
+    return false;
   } catch (err) {
     return false;
   }
@@ -53,20 +71,35 @@ if (platform === 'node') {
   if (
     //!checkSharpPlatform(process.env.TARGET_PLATFORM, process.env.TARGET_ARCH) ||
     !dirExist(dir) ||
-    !isInstalled('@tagspaces/tagspaces-ws')
+    !isInstalled(
+      '@tagspaces/extensions',
+      packageJson.nodeDependencies['@tagspaces/extensions']
+    ) ||
+    !isInstalled(
+      '@tagspaces/tagspaces-ws',
+      packageJson.nodeDependencies['@tagspaces/tagspaces-ws']
+    )
   ) {
     installCmd = 'npm run-script install-ext-node';
   }
 } else if (platform === 'web') {
-  if (!dirExist(dir) || isInstalled('@tagspaces/tagspaces-ws')) {
+  if (
+    !dirExist(dir) ||
+    !isInstalled(
+      '@tagspaces/extensions',
+      packageJson.webDependencies['@tagspaces/extensions']
+    ) ||
+    isInstalled('@tagspaces/tagspaces-ws')
+  ) {
     installCmd = 'npm run-script install-ext-web';
   }
 }
 if (installCmd) {
-  if (shell.exec(installCmd).code !== 0) {
+  console.log(childProcess.execSync(installCmd).toString());
+  /*if (shell.exec(installCmd).code !== 0) {
     shell.echo(
       'Error: Install ' + process.env.PD_PLATFORM + ' platform failed'
     );
     shell.exit(1);
-  }
+  }*/
 }
