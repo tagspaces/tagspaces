@@ -172,8 +172,12 @@ interface Props {
   tagDelimiter: string;
   sharingLink: string;
   tileServer: TS.MapTileServer;
-  lastBackgroundImageChange: number;
+  lastBackgroundImageChange: any;
   lastThumbnailImageChange: any;
+  setLastBackgroundColorChange: (
+    folderPath: string,
+    lastBackgroundColorChange: number
+  ) => void;
 }
 
 const defaultBackgrounds = [
@@ -462,8 +466,14 @@ function EntryProperties(props: Props) {
         Pro.MetaOperations.saveColor(currentEntry.path, color)
           .then(entryMeta => {
             // if (props.entryPath === props.currentDirectoryPath) {
+            props.setLastBackgroundColorChange(
+              currentEntry.path,
+              new Date().getTime()
+            );
+            // todo handle LastBackgroundColorChange and skip updateOpenedFile
             props.updateOpenedFile(currentEntry.path, entryMeta);
             props.switchCurrentLocationType(currentLocationId);
+
             /* } else {
             setCurrentEntry({ ...currentEntry, color });
           } */
@@ -596,8 +606,9 @@ function EntryProperties(props: Props) {
     if (bgndPath !== undefined) {
       bgndUrl =
         normalizeUrl(bgndPath) +
-        (props.lastBackgroundImageChange
-          ? '?' + props.lastBackgroundImageChange
+        (props.lastBackgroundImageChange &&
+        props.lastBackgroundImageChange.folderPath === bgndPath
+          ? '?' + props.lastBackgroundImageChange.dt
           : '');
     }
   }
@@ -1388,7 +1399,8 @@ function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
       switchLocationType: LocationActions.switchLocationType,
-      switchCurrentLocationType: AppActions.switchCurrentLocationType
+      switchCurrentLocationType: AppActions.switchCurrentLocationType,
+      setLastBackgroundColorChange: AppActions.setLastBackgroundColorChange
     },
     dispatch
   );
@@ -1398,7 +1410,9 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   JSON.stringify(nextProp.openedEntry) ===
     JSON.stringify(prevProp.openedEntry) &&
   JSON.stringify(nextProp.lastThumbnailImageChange) ===
-    JSON.stringify(prevProp.lastThumbnailImageChange);
+    JSON.stringify(prevProp.lastThumbnailImageChange) &&
+  JSON.stringify(nextProp.lastBackgroundImageChange) ===
+    JSON.stringify(prevProp.lastBackgroundImageChange);
 
 export default withLeaflet(
   connect(

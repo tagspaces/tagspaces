@@ -1362,7 +1362,7 @@ function isSignedURL(signedUrl) {
 
 export function getFolderBgndPath(
   path: string,
-  lastBackgroundImageChange: number
+  lastBackgroundImageChange: any
 ) {
   return getBgndPath(
     getBgndFileLocationForDirectory(path, PlatformIO.getDirSeparator()),
@@ -1370,10 +1370,7 @@ export function getFolderBgndPath(
   );
 }
 
-export function getBgndPath(
-  bgndPath: string,
-  lastBackgroundImageChange: number
-) {
+export function getBgndPath(bgndPath: string, lastBackgroundImageChange: any) {
   if (!bgndPath) {
     return undefined;
   }
@@ -1382,7 +1379,10 @@ export function getBgndPath(
   }
   return (
     normalizeUrl(bgndPath) +
-    (lastBackgroundImageChange ? '?' + lastBackgroundImageChange : '')
+    (lastBackgroundImageChange &&
+    lastBackgroundImageChange.folderPath === bgndPath
+      ? '?' + lastBackgroundImageChange.dt
+      : '')
   );
 }
 
