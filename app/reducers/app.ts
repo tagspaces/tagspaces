@@ -84,6 +84,7 @@ export const types = {
   PROGRESS: 'APP/PROGRESS',
   RESET_PROGRESS: 'APP/RESET_PROGRESS',
   LAST_BACKGROUND_IMAGE_CHANGE: 'APP/LAST_BACKGROUND_IMAGE_CHANGE',
+  LAST_BACKGROUND_COLOR_CHANGE: 'APP/LAST_BACKGROUND_COLOR_CHANGE',
   LAST_THUMBNAIL_IMAGE_CHANGE: 'APP/LAST_THUMBNAIL_IMAGE_CHANGE',
   LOGIN_SUCCESS: 'APP/LOGIN_SUCCESS',
   LOGIN_FAILURE: 'APP/LOGIN_FAILURE',
@@ -268,7 +269,19 @@ export default (state: any = initialState, action: any) => {
     case types.LAST_BACKGROUND_IMAGE_CHANGE: {
       return {
         ...state,
-        lastBackgroundImageChange: action.lastBackgroundImageChange
+        lastBackgroundImageChange: {
+          folderPath: action.folderPath,
+          dt: action.lastBackgroundImageChange
+        }
+      };
+    }
+    case types.LAST_BACKGROUND_COLOR_CHANGE: {
+      return {
+        ...state,
+        lastBackgroundColorChange: {
+          folderPath: action.folderPath,
+          dt: action.lastBackgroundColorChange
+        }
       };
     }
     case types.LAST_THUMBNAIL_IMAGE_CHANGE: {
@@ -824,8 +837,8 @@ export default (state: any = initialState, action: any) => {
     case types.UPDATE_CURRENTDIR_ENTRY: {
       return {
         ...state,
-        // to reload cell in KanBan if add/remove sidecar tags
-        // editedEntryPaths: [{ [action.path]: action.entry.tags }],
+        // warning: edit action is handled in FolderContainer; to reload column in KanBan if properties is changed (dir color)
+        // editedEntryPaths: [{ action: 'edit', path: action.path }],
         currentDirectoryEntries: state.currentDirectoryEntries.map(entry => {
           if (entry.path !== action.path) {
             return entry;
@@ -952,9 +965,15 @@ function disableBackGestureMac() {
 }
 
 export const actions = {
-  setLastBackgroundImageChange: lastBackgroundImageChange => ({
+  setLastBackgroundImageChange: (folderPath, lastBackgroundImageChange) => ({
     type: types.LAST_BACKGROUND_IMAGE_CHANGE,
+    folderPath,
     lastBackgroundImageChange
+  }),
+  setLastBackgroundColorChange: (folderPath, lastBackgroundColorChange) => ({
+    type: types.LAST_BACKGROUND_COLOR_CHANGE,
+    folderPath,
+    lastBackgroundColorChange
   }),
   /**
    * @param thumbPath
@@ -2674,6 +2693,8 @@ export const actions = {
 // Selectors
 export const getLastBackgroundImageChange = (state: any) =>
   state.app.lastBackgroundImageChange;
+export const getLastBackgroundColorChange = (state: any) =>
+  state.app.lastBackgroundColorChange;
 export const getLastThumbnailImageChange = (state: any) =>
   state.app.lastThumbnailImageChange;
 export const currentUser = (state: any) => state.app.user;

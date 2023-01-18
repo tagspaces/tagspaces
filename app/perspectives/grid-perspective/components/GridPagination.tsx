@@ -106,7 +106,7 @@ interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
   selectedEntries; // cache only
   // setMetaForCurrentDir: (metaFiles: Array<any>) => void;
-  lastBackgroundImageChange: number;
+  lastBackgroundImageChange: any;
   lastThumbnailImageChange: any;
   setSelectedEntries: (selectedEntries: Array<TS.FileSystemEntry>) => void;
   singleClickAction: string;
@@ -714,7 +714,8 @@ function mapActionCreatorsToProps(dispatch) {
 
 const areEqual = (prevProp: Props, nextProp: Props) =>
   nextProp.theme === prevProp.theme &&
-  nextProp.lastBackgroundImageChange === prevProp.lastBackgroundImageChange &&
+  JSON.stringify(nextProp.lastBackgroundImageChange) ===
+    JSON.stringify(prevProp.lastBackgroundImageChange) &&
   JSON.stringify(nextProp.lastThumbnailImageChange) ===
     JSON.stringify(prevProp.lastThumbnailImageChange) &&
   nextProp.currentDirectoryPath === prevProp.currentDirectoryPath &&

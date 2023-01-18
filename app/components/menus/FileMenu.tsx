@@ -89,7 +89,7 @@ interface Props {
   selectedEntries: Array<any>;
   currentLocation: TS.Location;
   locations: Array<TS.Location>;
-  setLastBackgroundImageChange: (number) => void;
+  setLastBackgroundImageChange: (path: string, dt: number) => void;
   reorderTop?: () => void;
   reorderBottom?: () => void;
 }
@@ -174,7 +174,7 @@ function FileMenu(props: Props) {
 
     setFolderBackgroundPromise(path, directoryPath)
       .then((directoryPath: string) => {
-        props.setLastBackgroundImageChange(new Date().getTime());
+        props.setLastBackgroundImageChange(path, new Date().getTime());
         showNotification('Background created for: ' + directoryPath);
         return true;
       })
