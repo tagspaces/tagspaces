@@ -26,6 +26,7 @@ export const defaultSettings = {
   showDirectories: true,
   showDetails: true,
   showDescription: false,
+  showEntriesDescription: true,
   showTags: true,
   gridPageLimit: 100
 };

@@ -72,6 +72,7 @@ import { defaultSettings } from '../index';
 import { PerspectiveIDs } from '-/perspectives';
 import { fileOperationsEnabled } from '-/perspectives/common/main-container';
 import GlobalSearch from '-/services/search-index';
+import useFirstRender from '-/utils/useFirstRender';
 
 interface Props {
   classes: any;
@@ -79,7 +80,7 @@ interface Props {
   desktopMode: boolean;
   currentDirectoryPath: string;
   lastSelectedEntry: any;
-  selectedEntries: Array<any>;
+  selectedEntries: Array<TS.FileSystemEntry>;
   supportedFileTypes: Array<any>;
   isReadOnlyMode: boolean;
   openFsEntry: (fsEntry?: TS.FileSystemEntry) => void;
@@ -211,6 +212,11 @@ function GridPerspective(props: Props) {
       ? settings.showDescription
       : defaultSettings.showDescription
   );
+  const showEntriesDescription = useRef<boolean>(
+    settings && typeof settings.showEntriesDescription !== 'undefined'
+      ? settings.showEntriesDescription
+      : defaultSettings.showEntriesDescription
+  );
   const showTags = useRef<boolean>(
     settings && typeof settings.showTags !== 'undefined'
       ? settings.showTags
@@ -235,6 +241,7 @@ function GridPerspective(props: Props) {
   // true: save in default settings; false: save per folder settings; undefined - dont save changes
   const isDefaultSetting = useRef<boolean>(undefined);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  const firstRender = useFirstRender();
 
   useEffect(() => {
     if (props.selectedEntries.length === 1) {
@@ -243,56 +250,65 @@ function GridPerspective(props: Props) {
   }, [props.selectedEntries]);
 
   useEffect(() => {
-    const perspectiveSettings = getSettings(props.directoryMeta);
-    showDirectories.current =
-      perspectiveSettings && perspectiveSettings.showDirectories !== undefined
-        ? perspectiveSettings.showDirectories
-        : defaultSettings.showDirectories;
-    showDescription.current =
-      perspectiveSettings && perspectiveSettings.showDescription !== undefined
-        ? perspectiveSettings.showDescription
-        : defaultSettings.showDescription;
-    showDetails.current =
-      perspectiveSettings && perspectiveSettings.showDetails !== undefined
-        ? perspectiveSettings.showDetails
-        : defaultSettings.showDetails;
-    showTags.current =
-      perspectiveSettings && perspectiveSettings.showTags !== undefined
-        ? perspectiveSettings.showTags
-        : defaultSettings.showTags;
-    layoutType.current = defaultSettings.layoutType;
-    orderBy.current =
-      perspectiveSettings && perspectiveSettings.orderBy !== undefined
-        ? perspectiveSettings.orderBy
-        : defaultSettings.orderBy;
-    sortBy.current =
-      perspectiveSettings && perspectiveSettings.sortBy !== undefined
-        ? perspectiveSettings.sortBy
-        : defaultSettings.sortBy;
-    singleClickAction.current =
-      perspectiveSettings && perspectiveSettings.singleClickAction !== undefined
-        ? perspectiveSettings.singleClickAction
-        : defaultSettings.singleClickAction;
-    entrySize.current =
-      perspectiveSettings && perspectiveSettings.entrySize !== undefined
-        ? perspectiveSettings.entrySize
-        : defaultSettings.entrySize;
-    thumbnailMode.current =
-      perspectiveSettings && perspectiveSettings.thumbnailMode !== undefined
-        ? perspectiveSettings.thumbnailMode
-        : defaultSettings.thumbnailMode;
-    gridPageLimit.current =
-      perspectiveSettings && perspectiveSettings.gridPageLimit !== undefined
-        ? perspectiveSettings.gridPageLimit
-        : defaultSettings.gridPageLimit;
-    forceUpdate();
+    if (!firstRender) {
+      const perspectiveSettings = getSettings(props.directoryMeta);
+      showDirectories.current =
+        perspectiveSettings && perspectiveSettings.showDirectories !== undefined
+          ? perspectiveSettings.showDirectories
+          : defaultSettings.showDirectories;
+      showDescription.current =
+        perspectiveSettings && perspectiveSettings.showDescription !== undefined
+          ? perspectiveSettings.showDescription
+          : defaultSettings.showDescription;
+      showEntriesDescription.current =
+        perspectiveSettings &&
+        perspectiveSettings.showEntriesDescription !== undefined
+          ? perspectiveSettings.showEntriesDescription
+          : defaultSettings.showEntriesDescription;
+      showDetails.current =
+        perspectiveSettings && perspectiveSettings.showDetails !== undefined
+          ? perspectiveSettings.showDetails
+          : defaultSettings.showDetails;
+      showTags.current =
+        perspectiveSettings && perspectiveSettings.showTags !== undefined
+          ? perspectiveSettings.showTags
+          : defaultSettings.showTags;
+      layoutType.current = defaultSettings.layoutType;
+      orderBy.current =
+        perspectiveSettings && perspectiveSettings.orderBy !== undefined
+          ? perspectiveSettings.orderBy
+          : defaultSettings.orderBy;
+      sortBy.current =
+        perspectiveSettings && perspectiveSettings.sortBy !== undefined
+          ? perspectiveSettings.sortBy
+          : defaultSettings.sortBy;
+      singleClickAction.current =
+        perspectiveSettings &&
+        perspectiveSettings.singleClickAction !== undefined
+          ? perspectiveSettings.singleClickAction
+          : defaultSettings.singleClickAction;
+      entrySize.current =
+        perspectiveSettings && perspectiveSettings.entrySize !== undefined
+          ? perspectiveSettings.entrySize
+          : defaultSettings.entrySize;
+      thumbnailMode.current =
+        perspectiveSettings && perspectiveSettings.thumbnailMode !== undefined
+          ? perspectiveSettings.thumbnailMode
+          : defaultSettings.thumbnailMode;
+      gridPageLimit.current =
+        perspectiveSettings && perspectiveSettings.gridPageLimit !== undefined
+          ? perspectiveSettings.gridPageLimit
+          : defaultSettings.gridPageLimit;
+      forceUpdate();
+    }
   }, [props.directoryMeta]);
 
   useEffect(() => {
-    if (isDefaultSetting.current !== undefined) {
+    if (!firstRender && isDefaultSetting.current !== undefined) {
       const perspectiveSettings = {
         showDirectories: showDirectories.current,
         showDescription: showDescription.current,
+        showEntriesDescription: showEntriesDescription.current,
         showDetails: showDetails.current,
         showTags: showTags.current,
         layoutType: layoutType.current,
@@ -324,6 +340,7 @@ function GridPerspective(props: Props) {
     isDefaultSetting.current,
     showDirectories.current,
     showDescription.current,
+    showEntriesDescription.current,
     showDetails.current,
     showTags.current,
     layoutType.current,
@@ -424,6 +441,11 @@ function GridPerspective(props: Props) {
   const toggleShowDescription = () => {
     closeOptionsMenu();
     showDescription.current = !showDescription.current;
+  };
+
+  const toggleShowEntriesDescription = () => {
+    closeOptionsMenu();
+    showEntriesDescription.current = !showEntriesDescription.current;
   };
 
   const toggleShowTags = () => {
@@ -614,6 +636,7 @@ function GridPerspective(props: Props) {
         <CellContent
           selected={selected}
           fsEntry={fsEntry}
+          showEntriesDescription={showEntriesDescription.current}
           entrySize={entrySize.current}
           classes={classes}
           isLast={isLast}
@@ -754,8 +777,10 @@ function GridPerspective(props: Props) {
           toggleShowTags={toggleShowTags}
           toggleShowDetails={toggleShowDetails}
           toggleShowDescription={toggleShowDescription}
+          toggleShowEntriesDescription={toggleShowEntriesDescription}
           showDetails={showDetails.current}
           showDescription={showDescription.current}
+          showEntriesDescription={showEntriesDescription.current}
           showDirectories={showDirectories.current}
           showTags={showTags.current}
           toggleThumbnailsMode={toggleThumbnailsMode}
