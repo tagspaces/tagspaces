@@ -69,10 +69,12 @@ interface Props {
   gridPageLimit: number;
   onClose: (isDefault?: boolean) => void;
   setGridPageLimit: (number) => void;
-  toggleShowDescription: () => void;
+  toggleShowDescription?: () => void;
+  toggleShowEntriesDescription?: () => void;
   toggleShowDetails: () => void;
   showDetails: boolean;
   showDescription: boolean;
+  showEntriesDescription?: boolean;
   toggleShowDirectories: () => void;
   toggleShowTags: () => void;
   showDirectories: boolean;
@@ -105,6 +107,8 @@ function GridSettingsDialog(props: Props) {
     showDetails,
     toggleShowDetails,
     showDescription,
+    showEntriesDescription,
+    toggleShowEntriesDescription,
     toggleShowDescription,
     toggleShowDirectories,
     showDirectories,
@@ -192,6 +196,18 @@ function GridSettingsDialog(props: Props) {
             }
             label={i18n.t('core:showTags')}
           />
+          <FormControlLabel
+            control={
+              <Switch
+                data-tid="gridPerspectiveToggleShowEntriesDescription"
+                defaultChecked={showEntriesDescription}
+                onChange={toggleShowEntriesDescription}
+                name={i18n.t('core:showHideEntriesDescription')}
+                color="primary"
+              />
+            }
+            label={i18n.t('core:showHideEntriesDescription')}
+          />
           <Divider />
           <FormControlLabel
             control={
@@ -205,18 +221,20 @@ function GridSettingsDialog(props: Props) {
             }
             label={i18n.t('core:showHideDetails')}
           />
-          <FormControlLabel
-            control={
-              <Switch
-                data-tid="gridPerspectiveToggleShowDescription"
-                defaultChecked={showDescription}
-                onChange={toggleShowDescription}
-                name={i18n.t('core:showHideDescription')}
-                color="primary"
-              />
-            }
-            label={i18n.t('core:showHideDescription')}
-          />
+          {toggleShowDescription && (
+            <FormControlLabel
+              control={
+                <Switch
+                  data-tid="gridPerspectiveToggleShowDescription"
+                  defaultChecked={showDescription}
+                  onChange={toggleShowDescription}
+                  name={i18n.t('core:showHideDescription')}
+                  color="primary"
+                />
+              }
+              label={i18n.t('core:showHideDescription')}
+            />
+          )}
         </FormGroup>
         <Divider />
         <MenuItem

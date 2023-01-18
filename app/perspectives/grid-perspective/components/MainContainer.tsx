@@ -218,6 +218,11 @@ function GridPerspective(props: Props) {
       ? settings.showDescription
       : defaultSettings.showDescription
   );
+  const showEntriesDescription = useRef<boolean>(
+    settings && typeof settings.showEntriesDescription !== 'undefined'
+      ? settings.showEntriesDescription
+      : defaultSettings.showEntriesDescription
+  );
   const showTags = useRef<boolean>(
     settings && typeof settings.showTags !== 'undefined'
       ? settings.showTags
@@ -297,6 +302,10 @@ function GridPerspective(props: Props) {
         perspectiveSettings && perspectiveSettings.showDescription !== undefined
           ? perspectiveSettings.showDescription
           : defaultSettings.showDescription;
+      showEntriesDescription.current =
+        perspectiveSettings && perspectiveSettings.showEntriesDescription !== undefined
+          ? perspectiveSettings.showEntriesDescription
+          : defaultSettings.showEntriesDescription;
       showDetails.current =
         perspectiveSettings && perspectiveSettings.showDetails !== undefined
           ? perspectiveSettings.showDetails
@@ -340,6 +349,7 @@ function GridPerspective(props: Props) {
       const perspectiveSettings = {
         showDirectories: showDirectories.current,
         showDescription: showDescription.current,
+        showEntriesDescription: showEntriesDescription.current,
         showDetails: showDetails.current,
         showTags: showTags.current,
         layoutType: layoutType.current,
@@ -371,6 +381,7 @@ function GridPerspective(props: Props) {
     isDefaultSetting.current,
     showDirectories.current,
     showDescription.current,
+    showEntriesDescription.current,
     showDetails.current,
     showTags.current,
     layoutType.current,
@@ -456,6 +467,11 @@ function GridPerspective(props: Props) {
   const toggleShowDescription = () => {
     closeOptionsMenu();
     showDescription.current = !showDescription.current;
+  };
+
+  const toggleShowEntriesDescription = () => {
+    closeOptionsMenu();
+    showEntriesDescription.current = !showEntriesDescription.current;
   };
 
   const toggleShowTags = () => {
@@ -641,6 +657,7 @@ function GridPerspective(props: Props) {
         <CellContent
           selected={selected}
           fsEntry={fsEntry}
+          showEntriesDescription={showEntriesDescription.current}
           entrySize={entrySize.current}
           classes={classes}
           isLast={isLast}
@@ -783,8 +800,10 @@ function GridPerspective(props: Props) {
           toggleShowTags={toggleShowTags}
           toggleShowDetails={toggleShowDetails}
           toggleShowDescription={toggleShowDescription}
+          toggleShowEntriesDescription={toggleShowEntriesDescription}
           showDetails={showDetails.current}
           showDescription={showDescription.current}
+          showEntriesDescription={showEntriesDescription.current}
           showDirectories={showDirectories.current}
           showTags={showTags.current}
           toggleThumbnailsMode={toggleThumbnailsMode}

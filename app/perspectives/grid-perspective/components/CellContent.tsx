@@ -85,6 +85,7 @@ interface Props {
   reorderTags: boolean;
   lastThumbnailImageChange: any;
   exitSearchMode: () => void;
+  showEntriesDescription?: boolean;
 }
 
 function CellContent(props: Props) {
@@ -117,17 +118,19 @@ function CellContent(props: Props) {
     PlatformIO.getDirSeparator()
   );
 
-  let { description } = fsEntry;
+  let description;
+  if (props.showEntriesDescription) {
+    description = fsEntry.description;
+    if (description && description.length > maxDescriptionPreviewLength) {
+      description = getDescriptionPreview(
+        description,
+        maxDescriptionPreviewLength
+      );
+    }
 
-  if (description && description.length > maxDescriptionPreviewLength) {
-    description = getDescriptionPreview(
-      description,
-      maxDescriptionPreviewLength
-    );
-  }
-
-  if (description && layoutType === 'row' && fsEntry.isFile) {
-    description = ' | ' + description;
+    if (description && layoutType === 'row' && fsEntry.isFile) {
+      description = ' | ' + description;
+    }
   }
 
   const fsEntryColor = findColorForEntry(fsEntry, supportedFileTypes);
