@@ -16,18 +16,18 @@
  *
  */
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import withStyles from '@mui/styles/withStyles';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-// import { getAllTags } from '-/reducers/taglibrary';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import EntryTagMenu from '-/components/menus/EntryTagMenu';
 import { TS } from '-/tagspaces.namespace';
 import TagContainer from '-/components/TagContainer';
 import { getUuid } from '-/services/utils-io';
 import { getAllTags } from '-/services/taglibrary-utils';
+import { Box } from '@mui/material';
 
 const styles: any = (theme: any) => ({
   root: {
@@ -76,7 +76,7 @@ interface Props {
   // defaultBackgroundColor?: string;
   // defaultTextColor?: string;
   handleChange?: (param1: any, param2: any, param3?: any) => void;
-  allTags?: TS.Tag[];
+  // allTags?: TS.Tag[];
   tagMode?: 'default' | 'display' | 'remove';
   isReadOnlyMode?: boolean;
   placeholderText?: string;
@@ -91,9 +91,8 @@ function TagsSelect(props: Props) {
   );
 
   const [selectedTag, setSelectedTag] = useState(undefined);
-  const [allTags, setAllTags] = useState(getAllTags());
+  const allTags = useRef<Array<TS.Tag>>(getAllTags());
 
-  /*const allTags = useSelector(getAllTags); */
   const defaultBackgroundColor = useSelector(getTagColor);
   const defaultTextColor = useSelector(getTagTextColor);
   const {
@@ -134,7 +133,7 @@ function TagsSelect(props: Props) {
           };
           if (isValidNewOption(newTag.title, selectedTags)) {
             newTags.push(newTag);
-            allTags.push(newTag);
+            allTags.current.push(newTag);
           }
         });
         selectedTags.pop();
@@ -185,7 +184,7 @@ function TagsSelect(props: Props) {
       <Autocomplete
         data-tid={props.dataTid}
         multiple
-        options={!props.isReadOnlyMode ? allTags : []}
+        options={!props.isReadOnlyMode ? allTags.current : []}
         getOptionLabel={(option: TS.Tag) => option.title}
         freeSolo
         autoSelect
@@ -205,6 +204,15 @@ function TagsSelect(props: Props) {
             />
           ))
         }
+        renderOption={(props, option) => (
+          <Box component="li" {...props}>
+            <TagContainer
+              isReadOnlyMode={true}
+              tag={option}
+              tagMode={tagMode}
+            />
+          </Box>
+        )}
         renderInput={params => (
           <TextField
             {...params}
