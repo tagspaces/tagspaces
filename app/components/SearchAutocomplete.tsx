@@ -52,7 +52,9 @@ import { Pro } from '-/pro';
 import useFirstRender from '-/utils/useFirstRender';
 import SavedSearchesMenu from '-/components/menus/SavedSearchesMenu';
 import AppConfig from '-/AppConfig';
-import { Autocomplete, Box, TextField } from '@mui/material';
+import { Box, TextField } from '@mui/material';
+// import { Autocomplete, Box, TextField } from '@mui/material';
+import Autocomplete from '-/components/autocomplete/Autocomplete';
 import {
   accuracy,
   ActionType,
@@ -1200,6 +1202,7 @@ function SearchAutocomplete(props: Props) {
   if (!open) {
     return null;
   }
+
   return (
     <>
       <div
@@ -1211,6 +1214,7 @@ function SearchAutocomplete(props: Props) {
         }}
       >
         <Autocomplete
+          // @ts-ignore
           id="textQuery"
           multiple
           /*autoFocus*/
@@ -1229,6 +1233,15 @@ function SearchAutocomplete(props: Props) {
           open={isOpen.current}
           /*onOpen={handleOpen}
           onClose={handleClose}*/
+          filterOptions={(options: Array<SearchOptionType>, state: any) => {
+            const filteredOptions = options.filter(option => {
+              return option.label.indexOf(state.inputValue) > -1;
+            });
+            if (filteredOptions.length === 0) {
+              isOpen.current = false;
+            }
+            return filteredOptions;
+          }}
           renderTags={value =>
             value.map((option, index: number) => {
               const action = actionValues.current.find(
@@ -1273,6 +1286,11 @@ function SearchAutocomplete(props: Props) {
           }}*/
           options={searchOptions.current}
           groupBy={option => option.group}
+          afterOptions={() => (
+            <div>
+              after options
+            </div>
+          )}
           renderOption={(props, option) => (
             <Box component="li" {...props}>
               {option.color ? (
