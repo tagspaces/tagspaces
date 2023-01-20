@@ -1,0 +1,17 @@
+{
+  "accounts": [
+    {
+      "name": "Stanimir",
+      "email": "sampleaccount1@sampling.com",
+      "arn": "arn:aws:iam::123456789012:root",
+      "canonicalID": "79a59df900b949e55d96a1e698fbacedfd6e09d98eacf8f8d5218e7cd47ef2be",
+      "shortid": "123456789012",
+      "keys": [
+        {
+          "access": "accessKey1",
+          "secret": "verySecretKey1"
+        }
+      ]
+    }
+  ]
+}

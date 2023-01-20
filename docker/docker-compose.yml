@@ -1,21 +1,55 @@
 version: '3.9'
-networks:
-  app-ts:
-    driver: bridge
 services:
   tagspaces-web:
+    container_name: tagspaces-web
     build: .
     ports:
       - '8080:80'
+    volumes:
+      - ./config/extconfig.js:/usr/share/nginx/html/extconfig.js
+    depends_on:
+      - s3server
     networks:
-      - app-ts
-  minio:
-    image: 'minio/minio'
+      - appts
+
+  s3server:
+    hostname: s3server
+    container_name: s3server
+    image: zenko/cloudserver:latest-0.0.0
+    restart: unless-stopped
     ports:
-      - '9000:9000'
-      - '9001:9001'
+      - '8000:8000'
+    volumes:
+      - s3data:/usr/src/app/localData
+      - s3metadata:/usr/src/app/localMetadata
+      - ./cloudserver/authdata.json:/usr/src/app/conf/authdata.json
     environment:
-      - MINIO_ROOT_USER=minio-root-user
-      - MINIO_ROOT_PASSWORD=minio-root-password
+      S3BACKEND: file
+      REMOTE_MANAGEMENT_DISABLE: 1
+      LOG_LEVEL: debug
+      SSL: 'false'
+      LISTEN_ADDR: 0.0.0.0
     networks:
-      - app-ts
+      - appts
+  s3manager:
+    container_name: s3manger
+    hostname: s3manager
+    image: mastertinner/s3manager
+    ports:
+      - 8081:8081
+    environment:
+      - PORT=8081
+      - ENDPOINT=s3server:8000
+      - ACCESS_KEY_ID=accessKey1
+      - SECRET_ACCESS_KEY=verySecretKey1
+      - USE_SSL=false
+    depends_on:
+      - s3server
+    networks:
+      - appts
+volumes:
+  s3data:
+  s3metadata:
+networks:
+  appts:
+    driver: bridge
