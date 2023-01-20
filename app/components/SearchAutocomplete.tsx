@@ -1229,6 +1229,15 @@ function SearchAutocomplete(props: Props) {
           open={isOpen.current}
           /*onOpen={handleOpen}
           onClose={handleClose}*/
+          filterOptions={(options: Array<SearchOptionType>, state: any) => {
+            const filteredOptions = options.filter(option => {
+              return option.label.indexOf(state.inputValue) > -1;
+            });
+            if (filteredOptions.length === 0) {
+              isOpen.current = false;
+            }
+            return filteredOptions;
+          }}
           renderTags={value =>
             value.map((option, index: number) => {
               const action = actionValues.current.find(
