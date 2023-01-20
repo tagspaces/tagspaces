@@ -102,6 +102,7 @@
     "run-android-dev": "npm run prepare-cordova && npm run build-cordova-dev && cd cordova && cordova run android && cd ..",
     "run-ios-dev": "npm run prepare-cordova && npm run build-cordova-dev && cd cordova && cordova run ios && cd ..",
     "run-web": "npm run prepare-web-pro && node scripts/webserver.js",
+    "run-web-server": "node scripts/webserver.js",
     "run-web-aws": "npm run prepare-web-pro && node scripts/webserver.js",
     "run-web-dev": "npm run prepare-web-pro && npm run build-web-dev && node scripts/webserver.js",
     "setup-ext": "node scripts/setupextensions.js",

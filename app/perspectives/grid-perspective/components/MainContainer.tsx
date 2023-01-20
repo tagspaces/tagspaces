@@ -303,7 +303,8 @@ function GridPerspective(props: Props) {
           ? perspectiveSettings.showDescription
           : defaultSettings.showDescription;
       showEntriesDescription.current =
-        perspectiveSettings && perspectiveSettings.showEntriesDescription !== undefined
+        perspectiveSettings &&
+        perspectiveSettings.showEntriesDescription !== undefined
           ? perspectiveSettings.showEntriesDescription
           : defaultSettings.showEntriesDescription;
       showDetails.current =
