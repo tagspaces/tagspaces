@@ -455,6 +455,16 @@ export default {
       color: '#c5e4f9'
     },
     {
+      type: '3g2',
+      viewer: '@tagspaces/extensions/media-player',
+      color: '#c5e4f9'
+    },
+    {
+      type: '3gp',
+      viewer: '@tagspaces/extensions/media-player',
+      color: '#c5e4f9'
+    },
+    {
       type: 'md',
       viewer: '@tagspaces/extensions/md-editor/build',
       editor: '@tagspaces/extensions/md-editor/build',
