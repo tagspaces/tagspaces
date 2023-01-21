@@ -85,6 +85,7 @@ web/EULA.txt
 app/config
 app/extconfig*
 web/extconfig*
+!web/extconfig.tmpl.js
 cordova/www/extconfig.js
 
 reports/*
