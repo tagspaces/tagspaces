@@ -25,6 +25,8 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import Button from '@mui/material/Button';
 import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
+import ClearSearchIcon from '@mui/icons-material/Close';
+import InputAdornment from '@mui/material/InputAdornment';
 import {
   actions as AppActions,
   getCurrentLocationId,
@@ -1202,6 +1204,13 @@ function SearchAutocomplete(props: Props) {
   }
   return (
     <>
+      <style>
+        {`
+          .MuiAutocomplete-root .MuiInputBase-root {
+            padding: 3px !important;
+          }
+        `}
+      </style>
       <div
         style={{
           width: '100%',
@@ -1251,7 +1260,8 @@ function SearchAutocomplete(props: Props) {
                     fontSize: 13,
                     textTransform: 'none',
                     color: 'black',
-                    backgroundColor: 'green',
+                    backgroundColor: 'white',
+                    border: '1px solid gray',
                     minHeight: 0,
                     minWidth: 0,
                     margin: 2,
@@ -1263,7 +1273,8 @@ function SearchAutocomplete(props: Props) {
                     ...(action &&
                       action.color && {
                         color: action.textcolor,
-                        backgroundColor: action.color
+                        backgroundColor: action.color,
+                        border: 'none'
                       })
                   }}
                   onClick={() => {
@@ -1331,7 +1342,7 @@ function SearchAutocomplete(props: Props) {
               fullWidth
               /*id="textQuery"
               name="textQuery"*/
-              label={i18n.t('core:searchTitle')}
+              // label={i18n.t('core:searchTitle')}
               /*defaultValue={textQuery.current}*/
               /*onChange={event => {
                 textQuery.current = event.target.value;
@@ -1346,80 +1357,81 @@ function SearchAutocomplete(props: Props) {
               size="small"
               margin="dense"
               variant="outlined"
-              /*InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start" style={{ marginRight: 0 }}>
-                    {isDesktop ? (
-                      <>
-                        <Tooltip
-                          classes={{ tooltip: classes.customWidth }}
-                          title={
-                            <span style={{ fontSize: 14 }}>
-                              {i18n.t('searchScope')}:
-                              <br />
-                              &bull; {i18n.t('location')} -{' '}
-                              {i18n.t('searchPlaceholder')}
-                              <br />
-                              &bull; {i18n.t('folder')} -{' '}
-                              {i18n.t('searchCurrentFolderWithSubFolders')}
-                              <br />
-                              &bull; {i18n.t('globalSearch')} -{' '}
-                              {i18n.t('searchInAllLocationTooltip')} (
-                              {i18n.t('betaStatus')})<br />
-                            </span>
-                          }
-                        >
-                          <Typography
-                            variant="overline"
-                            display="block"
-                            onClick={toggleSearchBoxing}
-                            style={{
-                              border: '1px solid gray',
-                              borderRadius: 5,
-                              lineHeight: 'inherit',
-                              paddingLeft: 3,
-                              paddingRight: 3
-                            }}
-                          >
-                            {searchBoxingName}
-                          </Typography>
-                        </Tooltip>
-                        <HelpTooltip classes={classes} />
-                      </>
-                    ) : (
-                      <HelpTooltip classes={classes} />
-                    )}
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    {isDesktop && (
-                      <Tooltip title={i18n.t('core:savedSearchesTitle')}>
-                        <IconButton
-                          size="small"
-                          edge="end"
-                          onClick={handleOpenSavedSearches}
-                        >
-                          <ExpandMoreIcon />
-                        </IconButton>
-                      </Tooltip>
-                    )}
-                    <Tooltip title={i18n.t('clearSearch') + ' (ESC)'}>
-                      <IconButton
-                        id="clearSearchID"
-                        onClick={() => {
-                          clearSearch();
-                          // props.openCurrentDirectory();
-                        }}
-                        size="small"
-                        edge="end"
-                      >
-                        <ClearSearchIcon />
-                      </IconButton>
-                    </Tooltip>
-                  </InputAdornment>
-                )
-              }}*/
+              // InputProps={{
+              // startAdornment: (
+              //   <InputAdornment position="start" style={{ marginRight: 0 }}>
+              //     {isDesktop ? (
+              //       <>
+              //         <Tooltip
+              //           classes={{ tooltip: classes.customWidth }}
+              //           title={
+              //             <span style={{ fontSize: 14 }}>
+              //               {i18n.t('searchScope')}:
+              //               <br />
+              //               &bull; {i18n.t('location')} -{' '}
+              //               {i18n.t('searchPlaceholder')}
+              //               <br />
+              //               &bull; {i18n.t('folder')} -{' '}
+              //               {i18n.t('searchCurrentFolderWithSubFolders')}
+              //               <br />
+              //               &bull; {i18n.t('globalSearch')} -{' '}
+              //               {i18n.t('searchInAllLocationTooltip')} (
+              //               {i18n.t('betaStatus')})<br />
+              //             </span>
+              //           }
+              //         >
+              //           <Typography
+              //             variant="overline"
+              //             display="block"
+              //             onClick={toggleSearchBoxing}
+              //             style={{
+              //               border: '1px solid gray',
+              //               borderRadius: 5,
+              //               lineHeight: 'inherit',
+              //               paddingLeft: 3,
+              //               paddingRight: 3
+              //             }}
+              //           >
+              //             {searchBoxingName}
+              //           </Typography>
+              //         </Tooltip>
+              //         <HelpTooltip classes={classes} />
+              //       </>
+              //     ) : (
+              //       <HelpTooltip classes={classes} />
+              //     )}
+              //   </InputAdornment>
+              // ),
+              // style: { padding: 3, borderRadius: 7 }
+              // endAdornment: (
+              //   <InputAdornment position="end">
+              //     {/* {isDesktop && (
+              //       <Tooltip title={i18n.t('core:savedSearchesTitle')}>
+              //         <IconButton
+              //           size="small"
+              //           edge="end"
+              //           onClick={handleOpenSavedSearches}
+              //         >
+              //           <ExpandMoreIcon />
+              //         </IconButton>
+              //       </Tooltip>
+              //     )} */}
+              //     <Tooltip title={i18n.t('clearSearch') + ' (ESC)'}>
+              //       <IconButton
+              //         id="clearSearchID"
+              //         onClick={() => {
+              //           clearSearch();
+              //           // props.openCurrentDirectory();
+              //         }}
+              //         size="small"
+              //         edge="end"
+              //       >
+              //         <ClearSearchIcon />
+              //       </IconButton>
+              //     </Tooltip>
+              //   </InputAdornment>
+              // )
+              // }}
             />
           )}
         />
@@ -1431,7 +1443,8 @@ function SearchAutocomplete(props: Props) {
             disabled={indexing}
             style={{
               marginRight: 10,
-              marginLeft: 10
+              marginLeft: 10,
+              marginTop: 3
             }}
             color="primary"
             onClick={clickSearchButton}
