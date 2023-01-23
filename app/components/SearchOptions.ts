@@ -67,7 +67,7 @@ export const SearchActions = {
     fullName: 'bookmarks:'
   },
   SEARCH: {
-    shortName: 'sq:',
+    shortName: 'q:',
     fullName: 'search-queries:'
   }
 };
@@ -193,7 +193,7 @@ export const SearchOptions: Array<SearchOptionType> = [
     label: SearchActions.HISTORY.shortName,
     fullName: SearchActions.HISTORY.fullName,
     action: SearchActions.HISTORY.shortName,
-    descr: 'filter the recently used files and folders',
+    descr: 'find recently used files and folders',
     group: 'actions'
   },
   {
@@ -201,7 +201,7 @@ export const SearchOptions: Array<SearchOptionType> = [
     label: SearchActions.BOOK.shortName,
     fullName: SearchActions.BOOK.fullName,
     action: SearchActions.BOOK.shortName,
-    descr: 'find and open a bookmarks',
+    descr: 'find bookmarks',
     group: 'actions'
   },
   {

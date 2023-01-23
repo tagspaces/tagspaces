@@ -1393,14 +1393,8 @@ function SearchAutocomplete(props: Props) {
 
   return (
     <>
-      <style>
-        {`
-          .MuiAutocomplete-root .MuiInputBase-root {
-            padding: 3px !important;
-          }
-        `}
-      </style>
       <div
+        id="searchAutocompleteComp"
         style={{
           width: '100%',
           whiteSpace: 'nowrap',
@@ -1408,6 +1402,13 @@ function SearchAutocomplete(props: Props) {
           alignItems: 'center'
         }}
       >
+        <style>
+          {`
+          #searchAutocompleteComp .MuiAutocomplete-root .MuiInputBase-root {
+            padding: 0 5px 0 5px !important;
+          }
+        `}
+        </style>
         <Autocomplete
           id="textQuery"
           multiple

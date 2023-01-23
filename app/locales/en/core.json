@@ -723,7 +723,7 @@
   "showSubFolderDetails": "Show column details",
   "showEntriesDescription": "Show description for files and folders",
   "fileChanged": "File changed",
-  "actions": "Search Actions",
-  "query": "Search Query",
+  "actions": "Actions",
+  "query": "Search Query Composition",
   "-": "-"
 }
