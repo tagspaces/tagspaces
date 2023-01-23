@@ -255,6 +255,7 @@ export const actions = {
     if (location) {
       return dispatch(AppActions.switchLocationType(location));
     }
+    return Promise.resolve(null);
   },
   changeLocation: (location: TS.Location) => ({
     type: types.EDIT_LOCATION,

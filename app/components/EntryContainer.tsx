@@ -473,11 +473,15 @@ function EntryContainer(props: Props) {
                     !openedFile.editMode
                   );
                 }
-                return props.switchCurrentLocationType(currentLocationId);
+                if (currentLocationId) {
+                  return props.switchCurrentLocationType(currentLocationId);
+                }
               })
               .catch(err => {
                 console.warn('Error loading text content ' + err);
-                return props.switchCurrentLocationType(currentLocationId);
+                if (currentLocationId) {
+                  return props.switchCurrentLocationType(currentLocationId);
+                }
               });
           });
         break;
