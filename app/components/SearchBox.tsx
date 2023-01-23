@@ -20,7 +20,6 @@ import React, { useEffect, useState } from 'react';
 import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import i18n from '-/services/i18n';
-import SearchInline from '-/components/SearchInline';
 import AdvancedSearchIcon from '@mui/icons-material/TuneOutlined';
 import DropDownIcon from '@mui/icons-material/ArrowDropDownOutlined';
 import Popover from '@mui/material/Popover';

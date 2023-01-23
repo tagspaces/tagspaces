@@ -1,4 +1,5 @@
-/**
+/*
+/!**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
  *
@@ -14,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- */
+ *!/
 
 import React, { useEffect, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
@@ -139,11 +140,11 @@ function SearchInline(props: Props) {
   const firstRender = useFirstRender();
 
   useEffect(() => {
-    /*if (!firstRender) {
+    /!*if (!firstRender) {
       if (Object.keys(props.searchQuery).length > 0) {
         props.setSearchQuery({});
       }
-    }*/
+    }*!/
     if (!firstRender && !props.open) {
       if (Object.keys(props.searchQuery).length > 0) {
         clearSearch();
@@ -186,23 +187,23 @@ function SearchInline(props: Props) {
       if (txtQuery) {
         emptySearch = false;
       }
-      /* if (textQueryMask.current) {
+      /!* if (textQueryMask.current) {
         txtQuery = textQuery.current.replace(textQueryMask.current, '').trim();
       } else if (textQuery.current) {
         txtQuery = textQuery.current; // props.searchQuery.textQuery;
       } else {
         txtQuery = '';
-      } */
+      } *!/
       const searchQuery = {
         ...props.searchQuery,
         textQuery: txtQuery
       };
-      /* if (textQuery.current) {
+      /!* if (textQuery.current) {
         txtQuery = textQuery.current.replace(tagsMask, '');
       } else {
         txtQuery = props.searchQuery.textQuery || '';
       }
-      */
+      *!/
       textQuery.current = txtQuery + ' ' + textQueryMask.current.trim();
       if (mainSearchField.current) {
         mainSearchField.current.value =
@@ -584,3 +585,4 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(React.memo(SearchInline, areEqual));
+*/

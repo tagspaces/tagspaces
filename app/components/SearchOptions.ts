@@ -23,15 +23,15 @@ export const SearchQueryComposition = {
   },
   TYPE: {
     shortName: 't:',
-    fullName: 'type: '
+    fullName: 'type:'
   },
   SIZE: {
     shortName: 's:',
-    fullName: 'size: '
+    fullName: 'size:'
   },
   LAST_MODIFIED: {
     shortName: 'lm:',
-    fullName: 'last modified: '
+    fullName: 'last modified:'
   },
   SCOPE: {
     shortName: 'sc:',
@@ -39,7 +39,7 @@ export const SearchQueryComposition = {
   },
   ACCURACY: {
     shortName: 'a:',
-    fullName: 'accuracy: '
+    fullName: 'accuracy:'
   }
 };
 
@@ -52,23 +52,23 @@ export const SearchQueryComposition = {
 export const SearchActions = {
   LOCATION: {
     shortName: 'l:',
-    fullName: 'locations'
+    fullName: 'locations:'
   },
   FILTER: {
     shortName: 'f:',
-    fullName: 'filter'
+    fullName: 'filter:'
   },
   HISTORY: {
     shortName: 'h:',
-    fullName: 'history'
+    fullName: 'history:'
   },
   BOOK: {
     shortName: 'b:',
-    fullName: 'bookmarks'
+    fullName: 'bookmarks:'
   },
   SEARCH: {
-    shortName: 'sq:',
-    fullName: 'search queries'
+    shortName: 'q:',
+    fullName: 'search-queries:'
   }
 };
 
@@ -193,7 +193,7 @@ export const SearchOptions: Array<SearchOptionType> = [
     label: SearchActions.HISTORY.shortName,
     fullName: SearchActions.HISTORY.fullName,
     action: SearchActions.HISTORY.shortName,
-    descr: 'filter the recently used files and folders',
+    descr: 'find recently used files and folders',
     group: 'actions'
   },
   {
@@ -201,7 +201,7 @@ export const SearchOptions: Array<SearchOptionType> = [
     label: SearchActions.BOOK.shortName,
     fullName: SearchActions.BOOK.fullName,
     action: SearchActions.BOOK.shortName,
-    descr: 'find and open a bookmarks',
+    descr: 'find bookmarks',
     group: 'actions'
   },
   {
