@@ -373,8 +373,9 @@
   "deleteSelectedEntries": "刪除選擇的項目",
   "showHideDirectories": "顯示資料夾",
   "showHideDescription": "顯示資料夾描述",
+  "showHideEntriesDescription": "顯示檔案和資料夾詳細資訊",
   "showHideDetails": "顯示資料夾詳細資訊",
-  "showTags": "顯示標籤",
+  "showTags": "Show tags for files and folders",
   "sort": "排序",
   "thirdPartyLibs": "第三方函式庫",
   "indexLocation": "重新整理位置索引",
@@ -403,6 +404,7 @@
   "tagDelimiterUnderscore": "底線 (_)",
   "tagDelimiterComma": "逗號 (,)",
   "maxSearchResultChoose": "最大搜尋結果數",
+  "searchResults": "Search Results",
   "releaseToDrop": "拖曳檔案以導入...",
   "releaseToMoveDrop": "將檔案移動至此...",
   "loading": "載入中...",
@@ -720,5 +722,6 @@
   "finish": "完成",
   "showSubFolderDetails": "顯示列詳細資訊",
   "showEntriesDescription": "顯示檔案和資料夾詳細資訊",
+  "fileChanged": "File changed",
   "-": "-"
 }

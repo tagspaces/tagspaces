@@ -373,8 +373,9 @@
   "deleteSelectedEntries": "Kijelölt bejegyzés törlése",
   "showHideDirectories": "Show folders",
   "showHideDescription": "Show folder description",
+  "showHideEntriesDescription": "Show description for files and folders",
   "showHideDetails": "Show folder details",
-  "showTags": "Show tags",
+  "showTags": "Show tags for files and folders",
   "sort": "Rendezés",
   "thirdPartyLibs": "Harmadik fél könyvtárai",
   "indexLocation": "Hely újraindexelése",
@@ -403,6 +404,7 @@
   "tagDelimiterUnderscore": "alávonás (_)",
   "tagDelimiterComma": "vessző (,)",
   "maxSearchResultChoose": "Összes keresési eredmény",
+  "searchResults": "Search Results",
   "releaseToDrop": "Húzd ide az importálandó fájlokat...",
   "releaseToMoveDrop": "Fájlok mozgatása ide...",
   "loading": "Töltés...",
@@ -720,5 +722,6 @@
   "finish": "Finish",
   "showSubFolderDetails": "Show column details",
   "showEntriesDescription": "Show description for files and folders",
+  "fileChanged": "File changed",
   "-": "-"
 }

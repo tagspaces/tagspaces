@@ -373,8 +373,9 @@
   "deleteSelectedEntries": "Slett markerte oppføringer",
   "showHideDirectories": "Vis mapper",
   "showHideDescription": "Show folder description",
+  "showHideEntriesDescription": "Show description for files and folders",
   "showHideDetails": "Show folder details",
-  "showTags": "Vis stikkord",
+  "showTags": "Show tags for files and folders",
   "sort": "Sorter",
   "thirdPartyLibs": "Tredjepartsbiblioteker",
   "indexLocation": "Oppdater lokasjonsindeks",
@@ -403,6 +404,7 @@
   "tagDelimiterUnderscore": "understrek (_)",
   "tagDelimiterComma": "komma (,)",
   "maxSearchResultChoose": "Maksimalt søkeresultat",
+  "searchResults": "Search Results",
   "releaseToDrop": "Slipp filer for å importere de...",
   "releaseToMoveDrop": "Flytt filer hit...",
   "loading": "Laster...",
@@ -720,5 +722,6 @@
   "finish": "Finish",
   "showSubFolderDetails": "Show column details",
   "showEntriesDescription": "Show description for files and folders",
+  "fileChanged": "File changed",
   "-": "-"
 }

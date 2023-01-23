@@ -373,8 +373,9 @@
   "deleteSelectedEntries": "Seçili girdileri sil",
   "showHideDirectories": "Show folders",
   "showHideDescription": "Show folder description",
+  "showHideEntriesDescription": "Show description for files and folders",
   "showHideDetails": "Show folder details",
-  "showTags": "Show tags",
+  "showTags": "Show tags for files and folders",
   "sort": "Sırala",
   "thirdPartyLibs": "Üçüncü Parti Kütüphaneler",
   "indexLocation": "Konum İndeksini Tazele",
@@ -403,6 +404,7 @@
   "tagDelimiterUnderscore": "altçizgi (_)",
   "tagDelimiterComma": "virgül (,)",
   "maxSearchResultChoose": "Maksimum Arama Sonucu",
+  "searchResults": "Search Results",
   "releaseToDrop": "İçe aktarmak için dosyaları buraya bırakın...",
   "releaseToMoveDrop": "Dosyaları buraya taşı...",
   "loading": "Yükleniyor...",
@@ -720,5 +722,6 @@
   "finish": "Finish",
   "showSubFolderDetails": "Show column details",
   "showEntriesDescription": "Show description for files and folders",
+  "fileChanged": "File changed",
   "-": "-"
 }

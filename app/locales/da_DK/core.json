@@ -373,8 +373,9 @@
   "deleteSelectedEntries": "Delete selected entries",
   "showHideDirectories": "Show folders",
   "showHideDescription": "Show folder description",
+  "showHideEntriesDescription": "Show description for files and folders",
   "showHideDetails": "Show folder details",
-  "showTags": "Show tags",
+  "showTags": "Show tags for files and folders",
   "sort": "Sort",
   "thirdPartyLibs": "Third Party Libraries",
   "indexLocation": "Refresh Location Index",
@@ -403,6 +404,7 @@
   "tagDelimiterUnderscore": "underscore (_)",
   "tagDelimiterComma": "comma (,)",
   "maxSearchResultChoose": "Max Search Results",
+  "searchResults": "Search Results",
   "releaseToDrop": "Drop files to import them...",
   "releaseToMoveDrop": "Move files here...",
   "loading": "Loading...",
@@ -720,5 +722,6 @@
   "finish": "Finish",
   "showSubFolderDetails": "Show column details",
   "showEntriesDescription": "Show description for files and folders",
+  "fileChanged": "File changed",
   "-": "- "
 }

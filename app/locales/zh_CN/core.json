@@ -373,8 +373,9 @@
   "deleteSelectedEntries": "删除所选项目",
   "showHideDirectories": "显示文件夹",
   "showHideDescription": "顯示資料夾描述",
+  "showHideEntriesDescription": "顯示檔案和資料夾詳細資訊",
   "showHideDetails": "顯示資料夾細節",
-  "showTags": "显示标签",
+  "showTags": "Show tags for files and folders",
   "sort": "排序",
   "thirdPartyLibs": "第三方库",
   "indexLocation": "更新位置索引",
@@ -403,6 +404,7 @@
   "tagDelimiterUnderscore": "下划线(_)",
   "tagDelimiterComma": "半角逗号(,)",
   "maxSearchResultChoose": "最多搜索结果",
+  "searchResults": "Search Results",
   "releaseToDrop": "拖拽入文件导入...",
   "releaseToMoveDrop": "将文件移至此处",
   "loading": "载入中……",
@@ -720,5 +722,6 @@
   "finish": "完成",
   "showSubFolderDetails": "顯示列細節",
   "showEntriesDescription": "顯示檔案和資料夾詳細資訊",
+  "fileChanged": "File changed",
   "-": "-"
 }
