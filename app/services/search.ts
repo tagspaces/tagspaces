@@ -75,6 +75,23 @@ export const FileTypeGroups = {
   untagged: ['untagged']
 };
 
+export function haveSearchFilters(searchQuery: TS.SearchQuery) {
+  return (
+    searchQuery.textQuery ||
+    (searchQuery.tagsAND !== undefined && searchQuery.tagsAND.length > 0) ||
+    (searchQuery.tagsNOT !== undefined && searchQuery.tagsNOT.length > 0) ||
+    (searchQuery.tagsOR !== undefined && searchQuery.tagsOR.length > 0) ||
+    (searchQuery.fileTypes !== undefined &&
+      searchQuery.fileTypes !== FileTypeGroups.any) ||
+    searchQuery.lastModified ||
+    searchQuery.tagTimePeriodFrom ||
+    searchQuery.tagTimePeriodTo ||
+    searchQuery.tagPlaceLat ||
+    searchQuery.tagPlaceLong ||
+    searchQuery.fileSize
+  );
+}
+
 // id, name, isFile, tags, extension, size, lmdt, path
 
 // index[?size > '9000'  && contains(path, 'Apple')]
