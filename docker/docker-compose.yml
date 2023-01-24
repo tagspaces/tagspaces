@@ -2,7 +2,11 @@ version: '3.9'
 services:
   tagspaces-web:
     container_name: tagspaces-web
-    build: .
+    build:
+      context: ../
+      dockerfile: ./Dockerfile
+    # target: production
+    image: tagspaces-web:latest
     ports:
       - '8080:80'
     volumes:
@@ -10,7 +14,8 @@ services:
     depends_on:
       - s3server
     networks:
-      - appts
+      deployment:
+        ipv4_address: 172.173.100.1
 
   s3server:
     hostname: s3server
@@ -25,12 +30,13 @@ services:
       - ./cloudserver/authdata.json:/usr/src/app/conf/authdata.json
     environment:
       S3BACKEND: file
-      REMOTE_MANAGEMENT_DISABLE: 1
+      # REMOTE_MANAGEMENT_DISABLE: 1
       LOG_LEVEL: debug
       SSL: 'false'
-      LISTEN_ADDR: 0.0.0.0
+      # LISTEN_ADDR: 0.0.0.0
     networks:
-      - appts
+      deployment:
+        ipv4_address: 172.173.100.2
   s3manager:
     container_name: s3manger
     hostname: s3manager
@@ -39,17 +45,23 @@ services:
       - 8081:8081
     environment:
       - PORT=8081
-      - ENDPOINT=s3server:8000
+      - ENDPOINT=172.173.100.2:8000
       - ACCESS_KEY_ID=accessKey1
       - SECRET_ACCESS_KEY=verySecretKey1
       - USE_SSL=false
     depends_on:
       - s3server
     networks:
-      - appts
+      deployment:
+        ipv4_address: 172.173.100.3
 volumes:
   s3data:
   s3metadata:
 networks:
-  appts:
+  deployment:
     driver: bridge
+    internal: false
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.173.0.0/16

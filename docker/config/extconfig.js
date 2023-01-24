@@ -12,7 +12,7 @@ window.ExtLocations = [
     path: '', // the path to sub folder in the location
     accessKeyId: 'accessKey1', // the access key of the user
     secretAccessKey: 'verySecretKey1', // the secret case of the user
-    endpointURL: 'http://s3server:8000',
+    endpointURL: 'http://localhost:8000',
     // endpointURL: 'http://172.173.100.2:8000/api/buckets',
     bucketName: 'tsbucket', // the name of the S3 bucket
     // region: 'eu-central-1', // the AWS region
