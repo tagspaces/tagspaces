@@ -107,20 +107,24 @@ function CellContent(props: Props) {
     handleGridCellDblClick,
     handleGridCellClick,
     showTags,
-    openFsEntry,
+    // openFsEntry,
     selectEntry,
     deselectEntry,
     isLast
   } = props;
+
+  // remove isNewFile on Cell click it will open file in editMode
+  const fSystemEntry: TS.FileSystemEntry = (({ isNewFile, ...o }) => o)(fsEntry)
+
   const entryTitle = extractTitle(
-    fsEntry.name,
-    !fsEntry.isFile,
+    fSystemEntry.name,
+    !fSystemEntry.isFile,
     PlatformIO.getDirSeparator()
   );
 
   let description;
   if (props.showEntriesDescription) {
-    description = fsEntry.description;
+    description = fSystemEntry.description;
     if (description && description.length > maxDescriptionPreviewLength) {
       description = getDescriptionPreview(
         description,
@@ -128,27 +132,27 @@ function CellContent(props: Props) {
       );
     }
 
-    if (description && layoutType === 'row' && fsEntry.isFile) {
+    if (description && layoutType === 'row' && fSystemEntry.isFile) {
       description = ' | ' + description;
     }
   }
 
-  const fsEntryColor = findColorForEntry(fsEntry, supportedFileTypes);
-  const fsEntryBgColor = findBackgroundColorForFolder(fsEntry);
+  const fileSystemEntryColor = findColorForEntry(fSystemEntry, supportedFileTypes);
+  const fileSystemEntryBgColor = findBackgroundColorForFolder(fSystemEntry);
 
   let fileNameTags = [];
-  if (fsEntry.isFile) {
+  if (fSystemEntry.isFile) {
     fileNameTags = extractTagsAsObjects(
-      fsEntry.name,
+      fSystemEntry.name,
       AppConfig.tagDelimiter,
       PlatformIO.getDirSeparator()
     );
   }
 
-  const fsEntryTags = fsEntry.tags ? fsEntry.tags : [];
-  const sideCarTagsTitles = fsEntryTags.map(tag => tag.title);
+  const fileSystemEntryTags = fSystemEntry.tags ? fSystemEntry.tags : [];
+  const sideCarTagsTitles = fileSystemEntryTags.map(tag => tag.title);
   const entryTags = [
-    ...fsEntryTags,
+    ...fileSystemEntryTags,
     ...fileNameTags.filter(tag => !sideCarTagsTitles.includes(tag.title))
   ];
 
@@ -170,9 +174,9 @@ function CellContent(props: Props) {
     return (
       <div
         style={{
-          background: fsEntryBgColor,
+          background: fileSystemEntryBgColor,
           borderRadius: 5
-          // opacity: fsEntry.isIgnored ? 0.3 : 1
+          // opacity: fileSystemEntry.isIgnored ? 0.3 : 1
         }}
       >
         <div
@@ -182,18 +186,18 @@ function CellContent(props: Props) {
             height: 150
           }}
         >
-          {fsEntry.thumbPath ? (
+          {fSystemEntry.thumbPath ? (
             <img
               alt="thumbnail"
               className={classes.gridCellThumb}
               src={
-                fsEntry.thumbPath +
+                fSystemEntry.thumbPath +
                 (props.lastThumbnailImageChange &&
                 props.lastThumbnailImageChange.thumbPath ===
-                  fsEntry.thumbPath &&
+                  fSystemEntry.thumbPath &&
                 !PlatformIO.haveObjectStoreSupport() &&
                 !PlatformIO.haveWebDavSupport()
-                  ? urlGetDelim(fsEntry.thumbPath) +
+                  ? urlGetDelim(fSystemEntry.thumbPath) +
                     props.lastThumbnailImageChange.dt
                   : '')
               }
@@ -208,7 +212,7 @@ function CellContent(props: Props) {
               }}
             />
           ) : (
-            <EntryIcon isFile={fsEntry.isFile} />
+            <EntryIcon isFile={fSystemEntry.isFile} />
           )}
           <div id="gridCellTags" className={classes.gridCellTags}>
             {showTags && entryTags ? renderTags(entryTags) : tagPlaceholder}
@@ -227,40 +231,40 @@ function CellContent(props: Props) {
         </div>
         <Typography
           className={classes.gridCellTitle}
-          data-tid={'fsEntryName_' + fsEntry.name}
+          data-tid={'fileSystemEntryName_' + fSystemEntry.name}
           variant="body1"
         >
           {entryTitle}
         </Typography>
         <div className={classes.gridDetails}>
-          <Tooltip title={fsEntry.path}>
+          <Tooltip title={fSystemEntry.path}>
             <Typography
               className={classes.gridFileExtension}
               style={{
-                backgroundColor: fsEntryColor,
+                backgroundColor: fileSystemEntryColor,
                 textShadow: '1px 1px #8f8f8f',
                 textOverflow: 'unset',
-                maxWidth: fsEntry.isFile ? 50 : 100
+                maxWidth: fSystemEntry.isFile ? 50 : 100
               }}
               noWrap={true}
               variant="button"
             >
-              {fsEntry.isFile ? fsEntry.extension : <FolderOpenIcon />}
+              {fSystemEntry.isFile ? fSystemEntry.extension : <FolderOpenIcon />}
             </Typography>
           </Tooltip>
-          {fsEntry.isFile && fsEntry.lmdt && (
+          {fSystemEntry.isFile && fSystemEntry.lmdt && (
             <Typography className={classes.gridSizeDate} variant="caption">
               <Tooltip
                 title={
                   i18n.t('core:modifiedDate') +
                   ': ' +
-                  formatDateTime(fsEntry.lmdt, true)
+                  formatDateTime(fSystemEntry.lmdt, true)
                 }
               >
-                <span>{formatDateTime(fsEntry.lmdt, false)}</span>
+                <span>{formatDateTime(fSystemEntry.lmdt, false)}</span>
               </Tooltip>
-              <Tooltip title={fsEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
-                <span>{' | ' + formatFileSize(fsEntry.size)}</span>
+              <Tooltip title={fSystemEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
+                <span>{' | ' + formatFileSize(fSystemEntry.size)}</span>
               </Tooltip>
             </Typography>
           )}
@@ -281,12 +285,12 @@ function CellContent(props: Props) {
     }
     const backgroundColor = selected
       ? theme.palette.primary.light
-      : fsEntryBgColor;
+      : fileSystemEntryBgColor;
 
     const entrySizeFormatted =
-      fsEntry.isFile && formatFileSize(fsEntry.size) + ' | ';
+      fSystemEntry.isFile && formatFileSize(fSystemEntry.size) + ' | ';
     const entryLMDTFormatted =
-      fsEntry.isFile && fsEntry.lmdt && formatDateTime(fsEntry.lmdt, true);
+      fSystemEntry.isFile && fSystemEntry.lmdt && formatDateTime(fSystemEntry.lmdt, true);
 
     return (
       <Grid
@@ -294,7 +298,7 @@ function CellContent(props: Props) {
         wrap="nowrap"
         className={classes.rowHover}
         style={{
-          // opacity: fsEntry.isIgnored ? 0.3 : 1,
+          // opacity: fileSystemEntry.isIgnored ? 0.3 : 1,
           backgroundColor,
           borderRadius: 5
         }}
@@ -310,7 +314,7 @@ function CellContent(props: Props) {
             display: 'flex'
           }}
         >
-          <Tooltip title={fsEntry.path}>
+          <Tooltip title={fSystemEntry.path}>
             <div
               data-tid="rowCellTID"
               style={{
@@ -327,7 +331,7 @@ function CellContent(props: Props) {
                 textAlign: 'center',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
-                backgroundColor: fsEntryColor,
+                backgroundColor: fileSystemEntryColor,
                 // alignSelf: isSmall ? 'center' : 'auto',
                 alignItems: 'center'
               }}
@@ -335,14 +339,14 @@ function CellContent(props: Props) {
               onClick={e => {
                 e.stopPropagation();
                 if (selected) {
-                  deselectEntry(fsEntry);
+                  deselectEntry(fSystemEntry);
                 } else {
-                  selectEntry(fsEntry);
+                  selectEntry(fSystemEntry);
                 }
               }}
             >
               {selected ? <SelectedIcon /> : <UnSelectedIcon />}
-              {fsEntry.isFile ? (
+              {fSystemEntry.isFile ? (
                 <span
                   style={{
                     width: '100%',
@@ -351,7 +355,7 @@ function CellContent(props: Props) {
                     overflowWrap: 'anywhere'
                   }}
                 >
-                  {fsEntry.extension}
+                  {fSystemEntry.extension}
                 </span>
               ) : (
                 <FolderIcon style={{ margin: '0 auto' }} />
@@ -370,7 +374,7 @@ function CellContent(props: Props) {
           >
             {/* <Tooltip
               title={
-                fsEntry.isFile ? entrySizeFormatted + entryLMDTFormatted : ''
+                fileSystemEntry.isFile ? entrySizeFormatted + entryLMDTFormatted : ''
               }
             > */}
             <Typography style={{ wordBreak: 'break-all', alignSelf: 'center' }}>
@@ -392,14 +396,14 @@ function CellContent(props: Props) {
               }}
               variant="body2"
             >
-              <Tooltip title={fsEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
+              <Tooltip title={fSystemEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
                 <span>{entrySizeFormatted}</span>
               </Tooltip>
               <Tooltip
                 title={
                   i18n.t('core:modifiedDate') +
                   ': ' +
-                  formatDateTime(fsEntry.lmdt, true)
+                  formatDateTime(fSystemEntry.lmdt, true)
                 }
               >
                 <span>{entryLMDTFormatted}</span>
@@ -410,19 +414,19 @@ function CellContent(props: Props) {
             </Typography>
           </Grid>
         )}
-        {fsEntry.thumbPath && (
+        {fSystemEntry.thumbPath && (
           <Grid item style={{ display: 'flex', alignItems: 'center' }}>
             <img
               alt="thumbnail"
               className={classes.gridCellThumb}
               src={
-                fsEntry.thumbPath +
+                fSystemEntry.thumbPath +
                 (props.lastThumbnailImageChange &&
                 props.lastThumbnailImageChange.thumbPath ===
-                  fsEntry.thumbPath &&
+                  fSystemEntry.thumbPath &&
                 !PlatformIO.haveObjectStoreSupport() &&
                 !PlatformIO.haveWebDavSupport()
-                  ? urlGetDelim(fsEntry.thumbPath) +
+                  ? urlGetDelim(fSystemEntry.thumbPath) +
                     props.lastThumbnailImageChange.dt
                   : '')
               }
@@ -449,8 +453,8 @@ function CellContent(props: Props) {
       const tagContainer = isReadOnlyMode ? (
         <TagContainer
           tag={tag}
-          key={fsEntry.path + tag.title}
-          entryPath={fsEntry.path}
+          key={fSystemEntry.path + tag.title}
+          entryPath={fSystemEntry.path}
           addTags={addTags}
           handleTagMenu={handleTagMenu}
           selectedEntries={selectedEntries}
@@ -459,8 +463,8 @@ function CellContent(props: Props) {
         <TagContainerDnd
           tag={tag}
           index={tag.type === 'sidecar' ? index : index - sideCarLength}
-          key={fsEntry.path + tag.title}
-          entryPath={fsEntry.path}
+          key={fSystemEntry.path + tag.title}
+          entryPath={fSystemEntry.path}
           addTags={addTags}
           addTag={addTag}
           handleTagMenu={handleTagMenu}
@@ -496,7 +500,7 @@ function CellContent(props: Props) {
   return (
     <Paper
       elevation={2}
-      data-entry-id={fsEntry.uuid}
+      data-entry-id={fSystemEntry.uuid}
       className={classNames(
         layoutType === 'grid' && classes.gridCell,
         layoutType === 'row' && classes.rowCell,
@@ -508,20 +512,20 @@ function CellContent(props: Props) {
         marginBottom: isLast ? 40 : 'auto',
         backgroundColor: theme.palette.background.default
       }}
-      onContextMenu={event => handleGridContextMenu(event, fsEntry)}
+      onContextMenu={event => handleGridContextMenu(event, fSystemEntry)}
       onDoubleClick={event => {
         props.exitSearchMode();
-        handleGridCellDblClick(event, fsEntry);
+        handleGridCellDblClick(event, fSystemEntry);
       }}
       onClick={event => {
         event.stopPropagation();
         AppConfig.isCordovaiOS // TODO DoubleClick not fired in Cordova IOS
-          ? handleGridCellDblClick(event, fsEntry)
-          : handleGridCellClick(event, fsEntry);
+          ? handleGridCellDblClick(event, fSystemEntry)
+          : handleGridCellClick(event, fSystemEntry);
       }}
       onDrag={event => {
         // event.stopPropagation();
-        handleGridCellClick(event, fsEntry);
+        handleGridCellClick(event, fSystemEntry);
       }}
     >
       {gridCell}
