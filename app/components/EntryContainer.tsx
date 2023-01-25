@@ -545,54 +545,61 @@ function EntryContainer(props: Props) {
       try {
         // @ts-ignore
         const textContent = fileViewer.current.contentWindow.getContent();
-        saveFile(textContent);
+        setSavingInProgress(true);
+        saveFile(textContent).then(() => {
+          fileChanged.current = false;
+          showNotification(
+            i18n.t('core:fileSavedSuccessfully'),
+            NotificationTypes.default
+          );
+          // change state will not render DOT before file name too
+          setSavingInProgress(false);
+        });
       } catch (e) {
+        setSavingInProgress(false);
         console.debug('function getContent not exist for video file:', e);
       }
     }
   };
 
   const saveFile = (textContent: string) => {
-    setSavingInProgress(true);
-    props.switchLocationType(openedFile.locationId).then(currentLocationId => {
-      // TODO check for timestamp on filesystem and ask to overwrite the changes there
-      PlatformIO.saveTextFilePromise(openedFile.path, textContent, true)
-        .then(result => {
-          setSavingInProgress(false);
-          updateOpenedFile(openedFile.path, {
-            ...openedFile,
-            editMode: true,
-            changed: false,
-            shouldReload: undefined
-          }).then(() => {
-            props.switchCurrentLocationType(currentLocationId);
-          });
-          fileChanged.current = false;
-          showNotification(
-            i18n.t('core:fileSavedSuccessfully'),
-            NotificationTypes.default
-          );
-          if (Pro) {
-            Pro.history.saveHistory(
-              historyKeys.fileEditKey,
-              openedFile.path,
-              openedFile.url,
-              openedFile.locationId,
-              settings[historyKeys.fileEditKey]
+    return props
+      .switchLocationType(openedFile.locationId)
+      .then(currentLocationId => {
+        // TODO check for timestamp on filesystem and ask to overwrite the changes there
+        return PlatformIO.saveTextFilePromise(
+          openedFile.path,
+          textContent,
+          true
+        )
+          .then(result => {
+            if (Pro) {
+              Pro.history.saveHistory(
+                historyKeys.fileEditKey,
+                openedFile.path,
+                openedFile.url,
+                openedFile.locationId,
+                settings[historyKeys.fileEditKey]
+              );
+            }
+
+            return updateOpenedFile(openedFile.path, {
+              ...openedFile,
+              editMode: true,
+              changed: false,
+              shouldReload: undefined
+            }).then(() => props.switchCurrentLocationType(currentLocationId));
+          })
+          .catch(error => {
+            // setSavingInProgress(false);
+            showNotification(
+              i18n.t('core:errorSavingFile'),
+              NotificationTypes.error
             );
-          }
-          return result;
-        })
-        .catch(error => {
-          setSavingInProgress(false);
-          showNotification(
-            i18n.t('core:errorSavingFile'),
-            NotificationTypes.error
-          );
-          console.log('Error saving file ' + openedFile.path + ' - ' + error);
-          props.switchCurrentLocationType(currentLocationId);
-        });
-    });
+            console.log('Error saving file ' + openedFile.path + ' - ' + error);
+            return props.switchCurrentLocationType(currentLocationId);
+          });
+      });
   };
 
   const editFile = () => {
