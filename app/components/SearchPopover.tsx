@@ -69,7 +69,7 @@ import {
 } from '-/reducers/settings';
 import { styles, StyleProps } from './SearchInline.css';
 import i18n from '../services/i18n';
-import { FileTypeGroups } from '-/services/search';
+import { FileTypeGroups, haveSearchFilters } from '-/services/search';
 import { Pro } from '../pro';
 import { formatDateTime, extractTimePeriod } from '-/utils/dates';
 import { parseGeoLocation, parseLatLon } from '-/utils/geo';
@@ -300,9 +300,6 @@ function SearchPopover(props: Props) {
           tagsOR: removeTags(props.searchQuery.tagsOR, value)
         };
       }
-      if (!haveSearchFilters(searchQuery)) {
-        clearSearch();
-      }
     } else {
       // eslint-disable-next-line no-lonely-if
       if (name === 'tagsAND') {
@@ -313,29 +310,16 @@ function SearchPopover(props: Props) {
         searchQuery = { ...props.searchQuery, tagsOR: value };
       }
     }
-    props.setSearchQuery({
-      ...searchQuery,
-      searchBoxing: searchBoxing.current,
-      showUnixHiddenEntries: props.showUnixHiddenEntries
-    });
+    if (!haveSearchFilters(searchQuery)) {
+      clearSearch();
+    } else {
+      props.setSearchQuery({
+        ...searchQuery,
+        searchBoxing: searchBoxing.current,
+        showUnixHiddenEntries: props.showUnixHiddenEntries
+      });
+    }
   };
-
-  function haveSearchFilters(searchQuery) {
-    return (
-      searchQuery.textQuery ||
-      (searchQuery.tagsAND !== undefined && searchQuery.tagsAND.length > 0) ||
-      (searchQuery.tagsNOT !== undefined && searchQuery.tagsNOT.length > 0) ||
-      (searchQuery.tagsOR !== undefined && searchQuery.tagsOR.length > 0) ||
-      (searchQuery.fileTypes !== undefined &&
-        searchQuery.fileTypes !== FileTypeGroups.any) ||
-      searchQuery.lastModified ||
-      searchQuery.tagTimePeriodFrom ||
-      searchQuery.tagTimePeriodTo ||
-      searchQuery.tagPlaceLat ||
-      searchQuery.tagPlaceLong ||
-      searchQuery.fileSize
-    );
-  }
 
   const handleTimePeriodChange = event => {
     const { target } = event;

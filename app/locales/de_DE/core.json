@@ -373,8 +373,9 @@
   "deleteSelectedEntries": "Ausgewählte Einträge löschen ",
   "showHideDirectories": "Verzeichnisse zeigen",
   "showHideDescription": "Beschreibung anzeigen",
+  "showHideEntriesDescription": "Beschreibung für Dateien und Ordner anzeigen",
   "showHideDetails": "Einzelheiten anzeigen",
-  "showTags": "Schlagwörter zeigen",
+  "showTags": "Show tags for files and folders",
   "sort": "Sortieren",
   "thirdPartyLibs": "Drittanbieter Bibliotheken",
   "indexLocation": "Ort-Indexierung aktualisieren",
@@ -403,6 +404,7 @@
   "tagDelimiterUnderscore": "Unterstrich (_)",
   "tagDelimiterComma": "Komma (,)",
   "maxSearchResultChoose": "Maximale Anzahl von Suchergebnissen",
+  "searchResults": "Search Results",
   "releaseToDrop": "Ziehe die Dateien um sie zu importieren",
   "releaseToMoveDrop": "Dateien hier verschieben",
   "loading": "Laden...",
@@ -720,5 +722,6 @@
   "finish": "Beenden",
   "showSubFolderDetails": "Spaltendetails anzeigen",
   "showEntriesDescription": "Beschreibung für Dateien und Ordner anzeigen",
+  "fileChanged": "File changed",
   "-": "-"
 }

@@ -373,8 +373,9 @@
   "deleteSelectedEntries": "Hapus entri yang dipilih",
   "showHideDirectories": "Tampilkan folder",
   "showHideDescription": "Show folder description",
+  "showHideEntriesDescription": "Show description for files and folders",
   "showHideDetails": "Show folder details",
-  "showTags": "Tampilkan tag",
+  "showTags": "Show tags for files and folders",
   "sort": "Urutkan",
   "thirdPartyLibs": "Pustaka Pihak Ketiga",
   "indexLocation": "Refresh Indeks Lokasi",
@@ -403,6 +404,7 @@
   "tagDelimiterUnderscore": "garis bawah (_)",
   "tagDelimiterComma": "koma (,)",
   "maxSearchResultChoose": "Hasil Pencarian Maks",
+  "searchResults": "Search Results",
   "releaseToDrop": "Jatuhkan file untuk impor...",
   "releaseToMoveDrop": "Pindahkan file di sini...",
   "loading": "Memuat...",
@@ -720,5 +722,6 @@
   "finish": "Finish",
   "showSubFolderDetails": "Show column details",
   "showEntriesDescription": "Show description for files and folders",
+  "fileChanged": "File changed",
   "-": "-"
 }

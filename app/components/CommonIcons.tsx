@@ -34,6 +34,7 @@ import ArrowForward from '@mui/icons-material/ArrowForward';
 import Folder from '@mui/icons-material/Folder';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import SubdirectoryArrowLeftIcon from '@mui/icons-material/SubdirectoryArrowLeft';
+import Cancel from '@mui/icons-material/DoDisturbOn';
 
 export const ParentFolderIcon = props => (
   <KeyboardReturnIcon style={{ transform: 'rotate(90deg)' }} />
@@ -69,3 +70,5 @@ export const LocalLocationIcon = props => <Suitcase {...props} />;
 export const OpenLinkIcon = props => <Link {...props} />;
 
 export const KeyShortcutsIcon = props => <KeyShortcuts {...props} />;
+
+export const CancelIcon = props => <Cancel {...props} />;

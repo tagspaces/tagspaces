@@ -1035,7 +1035,9 @@ export const actions = {
       setTimeout(() => {
         dispatch(
           actions.openLink(
-            window.location.href.split('?')[0] + '?cmdopen=' + cmdOpen
+            // window.location.href.split('?')[0] +
+            'ts://?cmdopen=' + cmdOpen,
+            { fullWidth: true }
           )
         );
       }, 1000);
@@ -2174,39 +2176,50 @@ export const actions = {
       entryForOpening.editMode = true;
     }
 
+    document.title = fsEntry.name + ' | ' + 'TagSpaces'; // TODO get it later from app config
+
     const currentLocation: TS.Location = getLocation(
       getState(),
       getState().app.currentLocationId
     );
-    entryForOpening.locationId = currentLocation.uuid;
-    const { currentDirectoryPath } = getState().app;
-    updateHistory(currentLocation, currentDirectoryPath, fsEntry.path);
 
-    document.title = fsEntry.name + ' | ' + 'TagSpaces'; // TODO get it later from app config
+    if (currentLocation) {
+      entryForOpening.locationId = currentLocation.uuid;
+      const { currentDirectoryPath } = getState().app;
+      updateHistory(currentLocation, currentDirectoryPath, fsEntry.path);
+    }
 
     dispatch(actions.addToEntryContainer(entryForOpening));
-    /**
-     * save in history
-     */
-    if (Pro) {
-      const historyKeys = Pro.history.historyKeys;
-      const relEntryPath = getRelativeEntryPath(currentLocation, fsEntry.path);
-      if (fsEntry.isFile) {
-        Pro.history.saveHistory(
-          historyKeys.fileOpenKey,
-          fsEntry.path,
-          generateSharingLink(currentLocation.uuid, relEntryPath),
-          currentLocation.uuid,
-          getState().settings[historyKeys.fileOpenKey]
+
+    // save in history
+    if (currentLocation) {
+      if (Pro) {
+        const historyKeys = Pro.history.historyKeys;
+        const relEntryPath = getRelativeEntryPath(
+          currentLocation,
+          fsEntry.path
         );
-      } else {
-        Pro.history.saveHistory(
-          historyKeys.folderOpenKey,
-          fsEntry.path,
-          generateSharingLink(currentLocation.uuid, relEntryPath, relEntryPath),
-          currentLocation.uuid,
-          getState().settings[historyKeys.folderOpenKey]
-        );
+        if (fsEntry.isFile) {
+          Pro.history.saveHistory(
+            historyKeys.fileOpenKey,
+            fsEntry.path,
+            generateSharingLink(currentLocation.uuid, relEntryPath),
+            currentLocation.uuid,
+            getState().settings[historyKeys.fileOpenKey]
+          );
+        } else {
+          Pro.history.saveHistory(
+            historyKeys.folderOpenKey,
+            fsEntry.path,
+            generateSharingLink(
+              currentLocation.uuid,
+              relEntryPath,
+              relEntryPath
+            ),
+            currentLocation.uuid,
+            getState().settings[historyKeys.folderOpenKey]
+          );
+        }
       }
     }
   },
@@ -2505,21 +2518,22 @@ export const actions = {
         .then((fsEntry: TS.FileSystemEntry) => {
           if (fsEntry.isFile) {
             dispatch(actions.openFsEntry(fsEntry));
-            dispatch(actions.setEntryFullWidth(true));
+            dispatch(actions.setEntryFullWidth(options.fullWidth));
           } else {
             dispatch(actions.loadDirectoryContent(fsEntry.path, false, true));
           }
           return true;
         })
-        .catch(() =>
+        .catch(err => {
+          // console.log('Error opening from cmd ' + JSON.stringify(err));
           dispatch(
             actions.showNotification(
-              i18n.t('missing file or folder'),
+              i18n.t('Missing file or folder'),
               'warning',
               true
             )
-          )
-        );
+          );
+        });
     } else if (lid && lid.length > 0) {
       const locationId = decodeURIComponent(lid);
       const directoryPath = dPath && decodeURIComponent(dPath);

@@ -373,8 +373,9 @@
   "deleteSelectedEntries": "Удалить выбранные записи",
   "showHideDirectories": "Show folders",
   "showHideDescription": "Show folder description",
+  "showHideEntriesDescription": "Show description for files and folders",
   "showHideDetails": "Show folder details",
-  "showTags": "Show tags",
+  "showTags": "Show tags for files and folders",
   "sort": "Сортировать",
   "thirdPartyLibs": "Сторонние библиотеки",
   "indexLocation": "Обновить индекс расположения",
@@ -403,6 +404,7 @@
   "tagDelimiterUnderscore": "нижнее подчеркивание (_)",
   "tagDelimiterComma": "запятая (,)",
   "maxSearchResultChoose": "Макс. Результаты поиска",
+  "searchResults": "Search Results",
   "releaseToDrop": "Перетащите файлы, чтобы импортировать их ...",
   "releaseToMoveDrop": "Переместить файлы сюда ...",
   "loading": "Загрузка...",
@@ -720,5 +722,6 @@
   "finish": "Finish",
   "showSubFolderDetails": "Show column details",
   "showEntriesDescription": "Show description for files and folders",
+  "fileChanged": "File changed",
   "-": "-"
 }

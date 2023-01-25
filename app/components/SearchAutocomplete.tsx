@@ -25,6 +25,8 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import Button from '@mui/material/Button';
 import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
+import ClearSearchIcon from '@mui/icons-material/Close';
+import InputAdornment from '@mui/material/InputAdornment';
 import {
   actions as AppActions,
   getCurrentLocationId,
@@ -46,7 +48,7 @@ import {
   getCurrentLanguage
 } from '-/reducers/settings';
 import i18n from '-/services/i18n';
-import { FileTypeGroups } from '-/services/search';
+import { FileTypeGroups, haveSearchFilters } from '-/services/search';
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
 import useFirstRender from '-/utils/useFirstRender';
@@ -122,7 +124,7 @@ function SearchAutocomplete(props: Props) {
   const searchOptions = useRef<Array<SearchOptionType>>(SearchOptions);
   const currentOptions = useRef<string>(undefined);
   // const textQuery = useRef<string>(props.searchQuery.textQuery || ''); // rethink to use inputValue instead
-  const textQueryMask = useRef<string>('');
+  // const textQueryMask = useRef<string>('');
   const fileTypes = useRef<Array<string>>(
     props.searchQuery.fileTypes
       ? props.searchQuery.fileTypes
@@ -175,7 +177,7 @@ function SearchAutocomplete(props: Props) {
     props.searchQuery.fileSize ? props.searchQuery.fileSize : ''
   );
 
-  const mainSearchField = useRef<HTMLInputElement>(null);
+  // const mainSearchField = useRef<HTMLInputElement>(null);
   const isOpen = useRef<boolean>(true);
 
   const firstRender = useFirstRender();
@@ -185,7 +187,8 @@ function SearchAutocomplete(props: Props) {
     if (!firstRender) {
       if (props.isSearchMode && Object.keys(props.searchQuery).length > 0) {
         // if (props.open && (inputValue.current.length > 0 || actionValues.current.length > 0)
-        executeSearch();
+        // executeSearch();  // will execute the same searchQuery in new location
+        props.exitSearchMode();
       }
     }
   }, [props.currentLocation]);
@@ -217,71 +220,124 @@ function SearchAutocomplete(props: Props) {
   useEffect(() => {
     if (Object.keys(props.searchQuery).length > 0) {
       let emptySearch = true;
-      textQueryMask.current = '';
+      const actions: SearchOptionType[] = [];
+      // textQueryMask.current = '';
 
       if (props.searchQuery.tagsAND && props.searchQuery.tagsAND.length > 0) {
         props.searchQuery.tagsAND.forEach(tag => {
-          textQueryMask.current += ' +' + tag.title;
+          // textQueryMask.current += ' +' + tag.title;
+
+          actions.push({
+            action: SearchQueryComposition.TAG_AND.shortName,
+            label: SearchQueryComposition.TAG_AND.shortName + tag.title
+          });
         });
         emptySearch = false;
       }
       if (props.searchQuery.tagsOR && props.searchQuery.tagsOR.length > 0) {
         props.searchQuery.tagsOR.forEach(tag => {
-          textQueryMask.current += ' |' + tag.title;
+          // textQueryMask.current += ' |' + tag.title;
+          actions.push({
+            action: SearchQueryComposition.TAG_OR.shortName,
+            label: SearchQueryComposition.TAG_OR.shortName + tag.title
+          });
         });
         emptySearch = false;
       }
       if (props.searchQuery.tagsNOT && props.searchQuery.tagsNOT.length > 0) {
         props.searchQuery.tagsNOT.forEach(tag => {
-          textQueryMask.current += ' -' + tag.title;
+          // textQueryMask.current += ' -' + tag.title;
+          actions.push({
+            action: SearchQueryComposition.TAG_NOT.shortName,
+            label: SearchQueryComposition.TAG_NOT.shortName + tag.title
+          });
         });
         emptySearch = false;
       }
 
       // inputValue.current = getInputValue();
-      if (inputValue.current) {
+      if (props.searchQuery.textQuery) {
+        inputValue.current = props.searchQuery.textQuery;
+        emptySearch = false;
+      } else if (inputValue.current) {
         emptySearch = false;
       }
-      /* if (textQueryMask.current) {
-        txtQuery = textQuery.current.replace(textQueryMask.current, '').trim();
-      } else if (textQuery.current) {
-        txtQuery = textQuery.current; // props.searchQuery.textQuery;
-      } else {
-        txtQuery = '';
-      } */
+
       const searchQuery = {
         ...props.searchQuery,
         textQuery: inputValue.current
       };
-      /* if (textQuery.current) {
-        txtQuery = textQuery.current.replace(tagsMask, '');
-      } else {
-        txtQuery = props.searchQuery.textQuery || '';
-      }
-      */
-      /*textQuery.current =
-        inputValue.current + ' ' + textQueryMask.current.trim();*/
-      if (mainSearchField.current) {
+
+      /*if (mainSearchField.current) {
         mainSearchField.current.value =
           inputValue.current +
           (textQueryMask.current ? ' ' + textQueryMask.current.trim() : '');
-      }
-      if (props.searchQuery.searchBoxing) {
+      }*/
+      if (
+        props.searchQuery.searchBoxing &&
+        props.searchQuery.searchBoxing !== 'location'
+      ) {
         setSearchBoxing(props.searchQuery.searchBoxing);
         // searchBoxing.current = props.searchQuery.searchBoxing;
         emptySearch = false;
+        actions.push({
+          action: SearchQueryComposition.SCOPE.fullName,
+          label:
+            SearchQueryComposition.SCOPE.fullName +
+            ' ' +
+            props.searchQuery.searchBoxing
+        });
       }
-      if (props.searchQuery.fileTypes) {
+      if (
+        props.searchQuery.fileTypes &&
+        JSON.stringify(searchQuery.fileTypes) !==
+          JSON.stringify(FileTypeGroups.any)
+      ) {
         fileTypes.current = props.searchQuery.fileTypes;
         emptySearch = false;
+        let keyFileType;
+        Object.entries(FileTypeGroups).forEach(([key, value]) => {
+          if (
+            JSON.stringify(value) ===
+            JSON.stringify(props.searchQuery.fileTypes)
+          ) {
+            keyFileType = key;
+          }
+        });
+        actions.push({
+          action: SearchQueryComposition.TYPE.fullName,
+          label:
+            SearchQueryComposition.TYPE.fullName +
+            ' ' +
+            (keyFileType
+              ? i18n.t('core:' + keyFileType)
+              : props.searchQuery.fileTypes)
+        });
       }
-      if (props.searchQuery.searchType) {
+      if (
+        props.searchQuery.searchType &&
+        props.searchQuery.searchType !== accuracy.fuzzy
+      ) {
         searchType.current = props.searchQuery.searchType;
         emptySearch = false;
+        actions.push({
+          action: SearchQueryComposition.ACCURACY.fullName,
+          label:
+            SearchQueryComposition.ACCURACY.fullName +
+            ' ' +
+            i18n.t('core:' + props.searchQuery.searchType)
+        });
       }
       if (props.searchQuery.lastModified) {
         lastModified.current = props.searchQuery.lastModified;
         emptySearch = false;
+        actions.push({
+          action: SearchQueryComposition.LAST_MODIFIED.fullName,
+          label:
+            SearchQueryComposition.LAST_MODIFIED.fullName +
+            ' ' +
+            i18n.t('core:' + props.searchQuery.lastModified)
+        });
       }
       if (props.searchQuery.tagTimePeriodFrom) {
         tagTimePeriodFrom.current = props.searchQuery.tagTimePeriodFrom;
@@ -297,14 +353,32 @@ function SearchAutocomplete(props: Props) {
       if (props.searchQuery.fileSize) {
         fileSize.current = props.searchQuery.fileSize;
         emptySearch = false;
+        actions.push({
+          action: SearchQueryComposition.SIZE.fullName,
+          label:
+            SearchQueryComposition.SIZE.fullName +
+            ' ' +
+            i18n.t('core:' + props.searchQuery.fileSize)
+        });
       }
       if (!emptySearch) {
+        if (actions.length > 0) {
+          actionValues.current = execActions(
+            actions,
+            actionValues.current,
+            false
+          );
+          isOpen.current = false;
+          forceUpdate();
+        }
         if (searchBoxing === 'global') {
           props.searchAllLocations(searchQuery);
         } else {
           props.searchLocationIndex(searchQuery);
         }
-      }
+      } /*else {
+        clearSearch();
+      }*/
     }
   }, [props.searchQuery]);
 
@@ -361,12 +435,36 @@ function SearchAutocomplete(props: Props) {
     }
   };
 
-  function resetValues() {
+  function resetValues(exceptions: Array<SearchOptionType>) {
     inputValue.current = '';
-    setSearchBoxing('location');
-    searchType.current = 'fuzzy';
-    fileTypes.current = FileTypeGroups.any;
-    lastModified.current = '';
+    if (
+      !exceptions.some(action =>
+        isAction(action.action, SearchQueryComposition.SCOPE)
+      )
+    ) {
+      setSearchBoxing('location');
+    }
+    if (
+      !exceptions.some(action =>
+        isAction(action.action, SearchQueryComposition.ACCURACY)
+      )
+    ) {
+      searchType.current = 'fuzzy';
+    }
+    if (
+      !exceptions.some(action =>
+        isAction(action.action, SearchQueryComposition.TYPE)
+      )
+    ) {
+      fileTypes.current = FileTypeGroups.any;
+    }
+    if (
+      !exceptions.some(action =>
+        isAction(action.action, SearchQueryComposition.LAST_MODIFIED)
+      )
+    ) {
+      lastModified.current = '';
+    }
     tagTimePeriod.current = '';
     tagTimePeriodHelper.current = ' ';
     tagTimePeriodFrom.current = null;
@@ -374,10 +472,16 @@ function SearchAutocomplete(props: Props) {
     setTagPlaceLat(null);
     setTagPlaceLong(null);
     forceIndexing.current = false;
-    fileSize.current = '';
+    if (
+      !exceptions.some(action =>
+        isAction(action.action, SearchQueryComposition.SIZE)
+      )
+    ) {
+      fileSize.current = '';
+    }
   }
   const clearSearch = () => {
-    resetValues();
+    resetValues([]);
     props.setSearchQuery({});
     // props.setSearchResults([]);
     props.watchForChanges();
@@ -537,8 +641,13 @@ function SearchAutocomplete(props: Props) {
       forceIndexing: forceIndexing.current,
       showUnixHiddenEntries: props.showUnixHiddenEntries
     };
-    console.log('Search object: ' + JSON.stringify(searchQuery));
-    props.setSearchQuery(searchQuery);
+    if (!haveSearchFilters(searchQuery)) {
+      clearSearch();
+      // props.openLocationById(props.currentLocationId);
+    } else {
+      console.log('Search object: ' + JSON.stringify(searchQuery));
+      props.setSearchQuery(searchQuery);
+    }
   };
 
   const { indexing, isDesktop, open } = props;
@@ -817,7 +926,8 @@ function SearchAutocomplete(props: Props) {
   function execActions(
     options: Array<any>,
     previousActions = [],
-    hasOptionsChanged = true
+    hasOptionsChanged = false,
+    unique = false
   ) {
     const actions: Array<SearchOptionType> = [];
 
@@ -851,7 +961,9 @@ function SearchAutocomplete(props: Props) {
       const prevAction = previousActions.find(
         obj =>
           obj.action === option.action &&
-          (obj.label === option.label || obj.fullName === option.fullName)
+          (unique ||
+            obj.label === option.label ||
+            (obj.fullName && obj.fullName === option.fullName))
       );
       if (!prevAction) {
         if (isAction(option.action, SearchActions.LOCATION)) {
@@ -860,7 +972,8 @@ function SearchAutocomplete(props: Props) {
           }
           actions.push(option);
         } else if (option.action === ExecActions.OPEN_LOCATION) {
-          // props.exitSearchMode();
+          props.exitSearchMode();
+          // isOpen.current = false;
           searchOptions.current = SearchOptions;
           currentOptions.current = undefined;
           props.openLocationById(option.id);
@@ -1082,7 +1195,8 @@ function SearchAutocomplete(props: Props) {
       const valueArr = value.split(' ');
       actionValues.current = execActions(
         [...actionValues.current, ...valueArr],
-        actionValues.current
+        actionValues.current,
+        true
       );
       const inputArr = valueArr.filter(
         action => !actionValues.current.some(v => v.label === action)
@@ -1093,7 +1207,7 @@ function SearchAutocomplete(props: Props) {
     } else if (reason === 'clear') {
       clearSearch();
     } else if (reason === 'reset') {
-      if (event.type === 'keydown') {
+      if (event.type === 'keydown' || event.type === 'click') {
         // textQuery.current += ' ' + inputValue.current;
         inputValue.current = '';
       } else if (event.type === 'blur') {
@@ -1117,7 +1231,7 @@ function SearchAutocomplete(props: Props) {
 
   function handleChange(event: Object, selected: Array<any>, reason: string) {
     if (reason === 'selectOption') {
-      actionValues.current = execActions(selected, actionValues.current);
+      actionValues.current = execActions(selected, actionValues.current, true);
       forceUpdate();
     } else if (reason === 'createOption') {
       const actions = [];
@@ -1139,7 +1253,7 @@ function SearchAutocomplete(props: Props) {
         }
         prevOption = option;
       }
-      actionValues.current = execActions(actions, actionValues.current);
+      actionValues.current = execActions(actions, actionValues.current, true);
       forceUpdate();
     } else if (reason === 'remove-value') {
       actionValues.current = actionValues.current.filter(
@@ -1174,8 +1288,8 @@ function SearchAutocomplete(props: Props) {
     }*/
   }
 
-  function resetActions(actions) {
-    resetValues();
+  function resetActions(actions: Array<SearchOptionType>) {
+    resetValues(actions);
     if (actions.length === 0) {
       searchOptions.current = SearchOptions;
       currentOptions.current = undefined;
@@ -1200,9 +1314,87 @@ function SearchAutocomplete(props: Props) {
   if (!open) {
     return null;
   }
+
+  /*const startAdornment = isDesktop ? (
+    <>
+      <Tooltip
+        classes={{ tooltip: classes.customWidth }}
+        title={
+          <span style={{ fontSize: 14 }}>
+            {i18n.t('searchScope')}:
+            <br />
+            &bull; {i18n.t('location')} - {i18n.t('searchPlaceholder')}
+            <br />
+            &bull; {i18n.t('folder')} -{' '}
+            {i18n.t('searchCurrentFolderWithSubFolders')}
+            <br />
+            &bull; {i18n.t('globalSearch')} -{' '}
+            {i18n.t('searchInAllLocationTooltip')} ({i18n.t('betaStatus')})
+            <br />
+          </span>
+        }
+      >
+        <Typography
+          variant="overline"
+          display="block"
+          onClick={toggleSearchBoxing}
+          style={{
+            border: '1px solid gray',
+            borderRadius: 5,
+            lineHeight: 'inherit',
+            paddingLeft: 3,
+            paddingRight: 3
+          }}
+        >
+          {searchBoxingName}
+        </Typography>
+      </Tooltip>
+      <HelpTooltip classes={classes} />
+    </>
+  ) : (
+    <HelpTooltip classes={classes} />
+  );*/
+
+  const endAdornment = (
+    /* {isDesktop && (
+                      <Tooltip title={i18n.t('core:savedSearchesTitle')}>
+                        <IconButton
+                          size="small"
+                          edge="end"
+                          onClick={handleOpenSavedSearches}
+                        >
+                          <ExpandMoreIcon />
+                        </IconButton>
+                      </Tooltip>
+                    )}*/
+    <Tooltip title={i18n.t('clearSearch') + ' (ESC)'}>
+      <IconButton
+        id="clearSearchID"
+        onClick={() => {
+          clearSearch();
+          // props.openCurrentDirectory();
+        }}
+        size="small"
+        edge="end"
+      >
+        <ClearSearchIcon />
+      </IconButton>
+    </Tooltip>
+  );
+
+  function haveEmptyAction(): boolean {
+    if (actionValues.current.length > 0) {
+      const action =
+        actionValues.current[actionValues.current.length - 1].label;
+      return !!findAction(action, true);
+    }
+    return false;
+  }
+
   return (
     <>
       <div
+        id="searchAutocompleteComp"
         style={{
           width: '100%',
           whiteSpace: 'nowrap',
@@ -1210,6 +1402,13 @@ function SearchAutocomplete(props: Props) {
           alignItems: 'center'
         }}
       >
+        <style>
+          {`
+          #searchAutocompleteComp .MuiAutocomplete-root .MuiInputBase-root {
+            padding: 0 5px 0 5px !important;
+          }
+        `}
+        </style>
         <Autocomplete
           id="textQuery"
           multiple
@@ -1233,7 +1432,7 @@ function SearchAutocomplete(props: Props) {
             const filteredOptions = options.filter(option => {
               return option.label.indexOf(state.inputValue) > -1;
             });
-            if (filteredOptions.length === 0) {
+            if (filteredOptions.length === 0 && !haveEmptyAction()) {
               isOpen.current = false;
             }
             return filteredOptions;
@@ -1251,7 +1450,8 @@ function SearchAutocomplete(props: Props) {
                     fontSize: 13,
                     textTransform: 'none',
                     color: 'black',
-                    backgroundColor: 'green',
+                    backgroundColor: 'white',
+                    border: '1px solid gray',
                     minHeight: 0,
                     minWidth: 0,
                     margin: 2,
@@ -1263,7 +1463,8 @@ function SearchAutocomplete(props: Props) {
                     ...(action &&
                       action.color && {
                         color: action.textcolor,
-                        backgroundColor: action.color
+                        backgroundColor: action.color,
+                        border: 'none'
                       })
                   }}
                   onClick={() => {
@@ -1282,6 +1483,20 @@ function SearchAutocomplete(props: Props) {
           }}*/
           options={searchOptions.current}
           groupBy={option => option.group}
+          renderGroup={params => (
+            <li key={params.key}>
+              <div
+                style={{
+                  position: 'sticky',
+                  top: '-8px',
+                  padding: '4px 10px'
+                }}
+              >
+                {i18n.t(params.group)}
+              </div>
+              <ul style={{ padding: 0 }}>{params.children}</ul>
+            </li>
+          )}
           renderOption={(props, option) => (
             <Box component="li" {...props}>
               {option.color ? (
@@ -1317,111 +1532,58 @@ function SearchAutocomplete(props: Props) {
           }*/
           sx={{ width: 'calc(100% - 80px)' }}
           onKeyDown={onKeyDownHandler}
-          renderInput={params => (
-            <TextField
-              {...params}
-              onBlur={() => {
-                isOpen.current = false;
-                forceUpdate();
-              }}
-              onFocus={() => {
-                isOpen.current = true;
-                forceUpdate();
-              }}
-              fullWidth
-              /*id="textQuery"
+          disableClearable={true}
+          renderInput={params => {
+            /*if (params.InputProps.startAdornment) {
+              params.InputProps.startAdornment = [
+                startAdornment,
+                ...(Array.isArray(params.InputProps.startAdornment) &&
+                  params.InputProps.startAdornment)
+              ];
+            } else {
+              params.InputProps.startAdornment = [startAdornment];
+            }*/
+            if (params.InputProps.endAdornment) {
+              params.InputProps.endAdornment = [
+                params.InputProps.endAdornment,
+                endAdornment
+              ];
+            } else {
+              params.InputProps.endAdornment = [endAdornment];
+            }
+            return (
+              <TextField
+                {...params}
+                /*style={{ padding: 3, borderRadius: 7 }}*/
+                onBlur={() => {
+                  isOpen.current = false;
+                  forceUpdate();
+                }}
+                onFocus={() => {
+                  isOpen.current = true;
+                  forceUpdate();
+                }}
+                fullWidth
+                /*id="textQuery"
               name="textQuery"*/
-              label={i18n.t('core:searchTitle')}
-              /*defaultValue={textQuery.current}*/
-              /*onChange={event => {
+                // label={i18n.t('core:searchTitle')}
+                /*defaultValue={textQuery.current}*/
+                /*onChange={event => {
                 textQuery.current = event.target.value;
               }}*/
-              /*style={{
+                /*style={{
         width: 'calc(100% - 80px)'
       }}*/
-              /*inputRef={mainSearchField}*/
-              autoFocus
-              /*onKeyDown={startSearch}*/
-              placeholder={i18n.t('core:searchTitle')}
-              size="small"
-              margin="dense"
-              variant="outlined"
-              /*InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start" style={{ marginRight: 0 }}>
-                    {isDesktop ? (
-                      <>
-                        <Tooltip
-                          classes={{ tooltip: classes.customWidth }}
-                          title={
-                            <span style={{ fontSize: 14 }}>
-                              {i18n.t('searchScope')}:
-                              <br />
-                              &bull; {i18n.t('location')} -{' '}
-                              {i18n.t('searchPlaceholder')}
-                              <br />
-                              &bull; {i18n.t('folder')} -{' '}
-                              {i18n.t('searchCurrentFolderWithSubFolders')}
-                              <br />
-                              &bull; {i18n.t('globalSearch')} -{' '}
-                              {i18n.t('searchInAllLocationTooltip')} (
-                              {i18n.t('betaStatus')})<br />
-                            </span>
-                          }
-                        >
-                          <Typography
-                            variant="overline"
-                            display="block"
-                            onClick={toggleSearchBoxing}
-                            style={{
-                              border: '1px solid gray',
-                              borderRadius: 5,
-                              lineHeight: 'inherit',
-                              paddingLeft: 3,
-                              paddingRight: 3
-                            }}
-                          >
-                            {searchBoxingName}
-                          </Typography>
-                        </Tooltip>
-                        <HelpTooltip classes={classes} />
-                      </>
-                    ) : (
-                      <HelpTooltip classes={classes} />
-                    )}
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    {isDesktop && (
-                      <Tooltip title={i18n.t('core:savedSearchesTitle')}>
-                        <IconButton
-                          size="small"
-                          edge="end"
-                          onClick={handleOpenSavedSearches}
-                        >
-                          <ExpandMoreIcon />
-                        </IconButton>
-                      </Tooltip>
-                    )}
-                    <Tooltip title={i18n.t('clearSearch') + ' (ESC)'}>
-                      <IconButton
-                        id="clearSearchID"
-                        onClick={() => {
-                          clearSearch();
-                          // props.openCurrentDirectory();
-                        }}
-                        size="small"
-                        edge="end"
-                      >
-                        <ClearSearchIcon />
-                      </IconButton>
-                    </Tooltip>
-                  </InputAdornment>
-                )
-              }}*/
-            />
-          )}
+                /*inputRef={mainSearchField}*/
+                autoFocus
+                /*onKeyDown={startSearch}*/
+                placeholder={i18n.t('core:searchTitle')}
+                size="small"
+                margin="dense"
+                variant="outlined"
+              />
+            );
+          }}
         />
         <Tooltip title={indexing ? i18n.t('searchDisabledWhileIndexing') : ''}>
           <Button
@@ -1431,7 +1593,8 @@ function SearchAutocomplete(props: Props) {
             disabled={indexing}
             style={{
               marginRight: 10,
-              marginLeft: 10
+              marginLeft: 10,
+              marginTop: 3
             }}
             color="primary"
             onClick={clickSearchButton}

@@ -36,24 +36,61 @@ export const FileTypeGroups = {
     'jiff',
     'png',
     'gif',
+    'svg',
+    'webp',
     'bmp',
     'tif',
     'tiff',
     'ico',
-    'webp',
-    'psd'
+    'psd',
+    'cr2',
+    'nef',
+    'dng',
+    'avif',
+    'tga'
   ],
   notes: ['md', 'mdown', 'txt', 'html'],
-  documents: ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'odt', 'ods'],
+  documents: [
+    'pdf',
+    'doc',
+    'docx',
+    'xls',
+    'xlsx',
+    'odt',
+    'ods',
+    'odp',
+    'pptx',
+    'numbers',
+    'potx',
+    'sldx',
+    'dotx'
+  ],
   audio: ['ogg', 'mp3', 'wav', 'wave', 'flac', 'acc'],
-  video: ['ogv', 'mp4', 'webm', 'm4v', 'mkv', 'avi'],
+  video: ['ogv', 'mp4', 'webm', 'm4v', 'mkv', 'avi', '3gp', '3g2'],
   archives: ['zip', 'rar', 'gz', 'tgz', 'arc', '7z'],
-  bookmarks: ['url', 'lnk', 'sym'],
+  bookmarks: ['url', 'lnk', 'sym', 'desktop', 'website'],
   ebooks: ['epub', 'mobi', 'azw', 'prc', 'azw1', 'azw3', 'azw4', 'azw8', 'azk'],
   folders: ['folders'],
   files: ['files'],
   untagged: ['untagged']
 };
+
+export function haveSearchFilters(searchQuery: TS.SearchQuery) {
+  return (
+    searchQuery.textQuery ||
+    (searchQuery.tagsAND !== undefined && searchQuery.tagsAND.length > 0) ||
+    (searchQuery.tagsNOT !== undefined && searchQuery.tagsNOT.length > 0) ||
+    (searchQuery.tagsOR !== undefined && searchQuery.tagsOR.length > 0) ||
+    (searchQuery.fileTypes !== undefined &&
+      searchQuery.fileTypes !== FileTypeGroups.any) ||
+    searchQuery.lastModified ||
+    searchQuery.tagTimePeriodFrom ||
+    searchQuery.tagTimePeriodTo ||
+    searchQuery.tagPlaceLat ||
+    searchQuery.tagPlaceLong ||
+    searchQuery.fileSize
+  );
+}
 
 // id, name, isFile, tags, extension, size, lmdt, path
 

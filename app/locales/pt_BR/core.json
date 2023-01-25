@@ -373,8 +373,9 @@
   "deleteSelectedEntries": "Delete selected entries",
   "showHideDirectories": "Mostrar pastas",
   "showHideDescription": "Show folder description",
+  "showHideEntriesDescription": "Show description for files and folders",
   "showHideDetails": "Show folder details",
-  "showTags": "Mostrar etiquetas",
+  "showTags": "Show tags for files and folders",
   "sort": "Sort",
   "thirdPartyLibs": "Bibliotecas de Terceiros",
   "indexLocation": "Atualizar Índice do Local",
@@ -403,6 +404,7 @@
   "tagDelimiterUnderscore": "underline (_)",
   "tagDelimiterComma": "vírgula (,)",
   "maxSearchResultChoose": "Quantidade máxima de resultados da pesquisa",
+  "searchResults": "Search Results",
   "releaseToDrop": "Drop files to import them...",
   "releaseToMoveDrop": "Mover arquivos para cá...",
   "loading": "Carregando...",
@@ -720,5 +722,6 @@
   "finish": "Finish",
   "showSubFolderDetails": "Show column details",
   "showEntriesDescription": "Show description for files and folders",
+  "fileChanged": "File changed",
   "-": "-"
 }

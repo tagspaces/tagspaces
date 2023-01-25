@@ -16,7 +16,13 @@
  *
  */
 
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
+import React, {
+  ChangeEvent,
+  useEffect,
+  useReducer,
+  useRef,
+  useState
+} from 'react';
 import { useStateWithCallbackLazy } from 'use-state-with-callback';
 import { getBgndFileLocationForDirectory } from '@tagspaces/tagspaces-common/paths';
 import L from 'leaflet';
@@ -96,6 +102,7 @@ import EditDescription from '-/components/EditDescription';
 import { bindActionCreators } from 'redux';
 import { actions as LocationActions } from '-/reducers/locations';
 import { actions as AppActions } from '-/reducers/app';
+import useFirstRender from '-/utils/useFirstRender';
 
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
@@ -251,12 +258,30 @@ function EntryProperties(props: Props) {
     boolean
   >(false);
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
+  const bgndUrl = useRef<string>(getBgndUrl());
+  const thumbUrl = useRef<string>(getThumbUrl());
+  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  const firstRender = useFirstRender();
 
   useEffect(() => {
     if (editName === entryName && fileNameRef.current) {
       fileNameRef.current.focus();
     }
   }, [editName]);
+
+  useEffect(() => {
+    if (!firstRender) {
+      bgndUrl.current = getBgndUrl();
+      forceUpdate();
+    }
+  }, [props.lastBackgroundImageChange]);
+
+  useEffect(() => {
+    if (!firstRender) {
+      thumbUrl.current = getThumbUrl();
+      forceUpdate();
+    }
+  }, [props.lastThumbnailImageChange]);
 
   /*useEffect(() => {
     if (props.openedEntry != undefined && currentEntry.description) {
@@ -404,8 +429,10 @@ function EntryProperties(props: Props) {
             PlatformIO.haveObjectStoreSupport() ||
             PlatformIO.haveWebDavSupport()
           ) {
-            const thumbUrl = PlatformIO.getURLforPath(thumbFilePath);
-            props.updateThumbnailUrl(currentEntry.path, thumbUrl);
+            props.updateThumbnailUrl(
+              currentEntry.path,
+              PlatformIO.getURLforPath(thumbFilePath)
+            );
             return true;
           }
           /*return replaceThumbnailURLPromise(filePath, thumbFilePath)
@@ -563,57 +590,67 @@ function EntryProperties(props: Props) {
     return <div />;
   }
 
-  let thumbPath;
-  if (currentEntry.isFile) {
-    thumbPath = getThumbFileLocationForFile(
-      currentEntry.path,
-      PlatformIO.getDirSeparator(),
-      false
-    );
-  } else {
-    thumbPath = getThumbFileLocationForDirectory(
+  function getBgndUrl() {
+    if (!currentEntry.isFile) {
+      const bgndPath = getBgndFileLocationForDirectory(
+        currentEntry.path,
+        PlatformIO.getDirSeparator()
+      );
+      if (bgndPath !== undefined) {
+        if (
+          PlatformIO.haveObjectStoreSupport() ||
+          PlatformIO.haveWebDavSupport()
+        ) {
+          return PlatformIO.getURLforPath(bgndPath);
+        } else {
+          return (
+            normalizeUrl(bgndPath) +
+            (props.lastBackgroundImageChange &&
+            props.lastBackgroundImageChange.folderPath === bgndPath
+              ? '?' + props.lastBackgroundImageChange.dt
+              : '')
+          );
+        }
+      }
+    }
+    return undefined;
+  }
+
+  function getThumbPath() {
+    if (currentEntry.isFile) {
+      return getThumbFileLocationForFile(
+        currentEntry.path,
+        PlatformIO.getDirSeparator(),
+        false
+      );
+    }
+    return getThumbFileLocationForDirectory(
       currentEntry.path,
       PlatformIO.getDirSeparator()
     );
   }
 
-  let bgndPath;
-  if (!currentEntry.isFile) {
-    bgndPath = getBgndFileLocationForDirectory(
-      currentEntry.path,
-      PlatformIO.getDirSeparator()
-    );
-  }
+  function getThumbUrl() {
+    const thumbPath = getThumbPath();
 
-  let url;
-  let bgndUrl;
-  if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
     if (thumbPath !== undefined) {
-      url = PlatformIO.getURLforPath(thumbPath);
+      if (
+        PlatformIO.haveObjectStoreSupport() ||
+        PlatformIO.haveWebDavSupport()
+      ) {
+        return PlatformIO.getURLforPath(thumbPath);
+      } else {
+        return (
+          normalizeUrl(thumbPath) +
+          (props.lastThumbnailImageChange &&
+          props.lastThumbnailImageChange.thumbPath === thumbPath
+            ? '?' + props.lastThumbnailImageChange.dt
+            : '')
+        );
+      }
     }
-    if (bgndPath !== undefined) {
-      bgndUrl = PlatformIO.getURLforPath(bgndPath);
-    }
-  } else {
-    if (thumbPath !== undefined) {
-      url =
-        normalizeUrl(thumbPath) +
-        (props.lastThumbnailImageChange &&
-        props.lastThumbnailImageChange.thumbPath === thumbPath
-          ? '?' + props.lastThumbnailImageChange.dt
-          : '');
-    }
-    if (bgndPath !== undefined) {
-      bgndUrl =
-        normalizeUrl(bgndPath) +
-        (props.lastBackgroundImageChange &&
-        props.lastBackgroundImageChange.folderPath === bgndPath
-          ? '?' + props.lastBackgroundImageChange.dt
-          : '');
-    }
+    return undefined;
   }
-  const thumbPathUrl = thumbPath ? 'url("' + url + '")' : '';
-  const bgndPathUrl = bgndPath ? 'url("' + bgndUrl + '")' : '';
 
   const ldtm = currentEntry.lmdt
     ? new Date(currentEntry.lmdt)
@@ -1221,7 +1258,9 @@ function EntryProperties(props: Props) {
                           style={{
                             backgroundSize: 'cover',
                             backgroundRepeat: 'no-repeat',
-                            backgroundImage: thumbPathUrl,
+                            backgroundImage: thumbUrl.current
+                              ? 'url("' + thumbUrl.current + '")'
+                              : '',
                             backgroundPosition: 'center',
                             borderRadius: 8,
                             minHeight: 150,
@@ -1277,7 +1316,9 @@ function EntryProperties(props: Props) {
                             style={{
                               backgroundSize: 'cover',
                               backgroundRepeat: 'no-repeat',
-                              backgroundImage: bgndPathUrl,
+                              backgroundImage: bgndUrl.current
+                                ? 'url("' + bgndUrl.current + '")'
+                                : '',
                               backgroundPosition: 'center',
                               borderRadius: 8,
                               minHeight: 150,
@@ -1330,7 +1371,7 @@ function EntryProperties(props: Props) {
           open={isFileThumbChooseDialogOpened}
           onClose={toggleThumbFilesDialog}
           selectedFile={currentEntry.path}
-          thumbPath={thumbPath}
+          thumbPath={getThumbPath()}
           setThumb={setThumb}
         />
       )}

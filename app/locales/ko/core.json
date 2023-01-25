@@ -373,8 +373,9 @@
   "deleteSelectedEntries": "선택 항목 삭제",
   "showHideDirectories": "폴더 표시",
   "showHideDescription": "Show folder description",
+  "showHideEntriesDescription": "Show description for files and folders",
   "showHideDetails": "Show folder details",
-  "showTags": "태그 표시",
+  "showTags": "Show tags for files and folders",
   "sort": "정렬",
   "thirdPartyLibs": "타사 라이브러리",
   "indexLocation": "위치 색인 갱신",
@@ -403,6 +404,7 @@
   "tagDelimiterUnderscore": "밑줄 (_)",
   "tagDelimiterComma": "콤마 (,)",
   "maxSearchResultChoose": "최대 검색 결과",
+  "searchResults": "Search Results",
   "releaseToDrop": "가져 오려면 파일을 드롭...",
   "releaseToMoveDrop": "이곳으로 파일 이동",
   "loading": "여는중...",
@@ -720,5 +722,6 @@
   "finish": "Finish",
   "showSubFolderDetails": "Show column details",
   "showEntriesDescription": "Show description for files and folders",
+  "fileChanged": "File changed",
   "-": "-"
 }

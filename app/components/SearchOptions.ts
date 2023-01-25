@@ -31,11 +31,11 @@ export const SearchQueryComposition = {
   },
   LAST_MODIFIED: {
     shortName: 'lm:',
-    fullName: 'lastmod:'
+    fullName: 'last modified:'
   },
   SCOPE: {
     shortName: 'sc:',
-    fullName: 'scope:'
+    fullName: 'scope: '
   },
   ACCURACY: {
     shortName: 'a:',
@@ -52,7 +52,7 @@ export const SearchQueryComposition = {
 export const SearchActions = {
   LOCATION: {
     shortName: 'l:',
-    fullName: 'location:'
+    fullName: 'locations:'
   },
   FILTER: {
     shortName: 'f:',
@@ -64,11 +64,11 @@ export const SearchActions = {
   },
   BOOK: {
     shortName: 'b:',
-    fullName: 'bookmark:'
+    fullName: 'bookmarks:'
   },
   SEARCH: {
-    shortName: 'sav:',
-    fullName: 'search:'
+    shortName: 'q:',
+    fullName: 'search-queries:'
   }
 };
 
@@ -177,7 +177,7 @@ export const SearchOptions: Array<SearchOptionType> = [
     label: SearchActions.LOCATION.shortName,
     fullName: SearchActions.LOCATION.fullName,
     action: SearchActions.LOCATION.shortName,
-    descr: 'filter and open location',
+    descr: 'find and open a location',
     group: 'actions'
   },
   {
@@ -185,7 +185,7 @@ export const SearchOptions: Array<SearchOptionType> = [
     label: SearchActions.FILTER.shortName,
     fullName: SearchActions.FILTER.fullName,
     action: SearchActions.FILTER.shortName,
-    descr: 'filter the current directory items',
+    descr: 'filter the entries from the current folder',
     group: 'actions'
   },
   {
@@ -193,7 +193,7 @@ export const SearchOptions: Array<SearchOptionType> = [
     label: SearchActions.HISTORY.shortName,
     fullName: SearchActions.HISTORY.fullName,
     action: SearchActions.HISTORY.shortName,
-    descr: 'filter and open all recent file and folders',
+    descr: 'find recently used files and folders',
     group: 'actions'
   },
   {
@@ -201,7 +201,7 @@ export const SearchOptions: Array<SearchOptionType> = [
     label: SearchActions.BOOK.shortName,
     fullName: SearchActions.BOOK.fullName,
     action: SearchActions.BOOK.shortName,
-    descr: 'filter and open the bookmarks',
+    descr: 'find bookmarks',
     group: 'actions'
   },
   {
@@ -209,28 +209,31 @@ export const SearchOptions: Array<SearchOptionType> = [
     label: SearchActions.SEARCH.shortName,
     fullName: SearchActions.SEARCH.fullName,
     action: SearchActions.SEARCH.shortName,
-    descr: 'filter and run saved searched',
+    descr: 'find and execute saved search queries',
     group: 'actions'
   },
   {
     id: SearchQueryComposition.TAG_AND.shortName,
     label: SearchQueryComposition.TAG_AND.shortName,
     action: SearchQueryComposition.TAG_AND.shortName,
-    descr: 'Tag AND',
+    descr:
+      'entries should have this tag to be included in the results (logical AND)',
     group: 'query'
   },
   {
     id: SearchQueryComposition.TAG_NOT.shortName,
     label: SearchQueryComposition.TAG_NOT.shortName,
     action: SearchQueryComposition.TAG_NOT.shortName,
-    descr: 'Tag NOT',
+    descr:
+      'entries should not have this tag to be included in the results (logical NOT)',
     group: 'query'
   },
   {
     id: SearchQueryComposition.TAG_OR.shortName,
     label: SearchQueryComposition.TAG_OR.shortName,
     action: SearchQueryComposition.TAG_OR.shortName,
-    descr: 'Tag OR',
+    descr:
+      'allows searching for entries having one tag or another (logical OR)',
     group: 'query'
   },
   {

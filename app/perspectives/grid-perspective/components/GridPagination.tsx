@@ -337,10 +337,12 @@ function GridPagination(props: Props) {
   const updateCurrentDirEntries = entries => {
     const entriesEnhanced = [];
     entries.forEach(entry => {
-      for (const [key, value] of Object.entries(entry)) {
-        if (value) {
-          // !checkEntryExist(key)) {
-          entriesEnhanced.push(value);
+      if (entry) {
+        for (const [key, value] of Object.entries(entry)) {
+          if (value) {
+            // !checkEntryExist(key)) {
+            entriesEnhanced.push(value);
+          }
         }
       }
     });
