@@ -1,6 +1,6 @@
 ARG NODE_VERSION=16.17.1-bullseye-slim
 
-FROM node:${NODE_VERSION} as production
+FROM node:${NODE_VERSION} as builder
 
 WORKDIR /usr/src/tagspaces
 
@@ -28,7 +28,7 @@ MAINTAINER tagspaces.org
 
 # ADD https://github.com/tagspaces/tagspaces/releases/download/v5.0.6/tagspaces-web-5.0.6.zip .
 RUN rm -rf /usr/share/nginx/html
-COPY --from=production /usr/src/tagspaces/web /usr/share/nginx/html/
+COPY --from=builder /usr/src/tagspaces/web /usr/share/nginx/html/
 # RUN unzip tagspaces-web-5.0.6.zip
 # RUN mv web /usr/share/nginx/html
 # cleanup

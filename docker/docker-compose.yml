@@ -16,7 +16,22 @@ services:
     networks:
       deployment:
         ipv4_address: 172.173.100.1
-
+  createbucket:
+    container_name: createbucket
+    build:
+      context: ./createbucket
+      dockerfile: ./Dockerfile
+    image: createbucket:latest
+    environment:
+      - ACCESS_KEY_ID=accessKey1
+      - SECRET_ACCESS_KEY=verySecretKey1
+      - ENDPOINT=http://172.173.100.2:8000
+      - BUCKET_NAME=testbucket
+    depends_on:
+      - s3server
+    networks:
+      deployment:
+        ipv4_address: 172.173.100.5
   s3server:
     hostname: s3server
     container_name: s3server
@@ -37,6 +52,7 @@ services:
     networks:
       deployment:
         ipv4_address: 172.173.100.2
+
   s3manager:
     container_name: s3manger
     hostname: s3manager

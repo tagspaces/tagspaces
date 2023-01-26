@@ -14,7 +14,7 @@ window.ExtLocations = [
     secretAccessKey: 'verySecretKey1', // the secret case of the user
     endpointURL: 'http://localhost:8000',
     // endpointURL: 'http://172.173.100.2:8000/api/buckets',
-    bucketName: 'tsbucket', // the name of the S3 bucket
+    bucketName: 'testbucket', // the name of the S3 bucket
     // region: 'eu-central-1', // the AWS region
     isDefault: false, // if true this location will be loaded by the application start
     isReadOnly: false, // if true the user interface of the application turns to read-only mode
