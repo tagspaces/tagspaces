@@ -5,7 +5,6 @@ services:
     build:
       context: ../
       dockerfile: ./Dockerfile
-    # target: production
     image: tagspaces-web:latest
     ports:
       - '8080:80'
@@ -33,7 +32,7 @@ services:
       deployment:
         ipv4_address: 172.173.100.5
   s3server:
-    hostname: s3server
+    hostname: s3server-ts
     container_name: s3server
     image: zenko/cloudserver:latest-0.0.0
     restart: unless-stopped
@@ -55,7 +54,6 @@ services:
 
   s3manager:
     container_name: s3manger
-    hostname: s3manager
     image: mastertinner/s3manager
     ports:
       - 8081:8081

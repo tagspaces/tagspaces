@@ -10,6 +10,7 @@
   "author": "sytolk, Stanimir Marinov",
   "license": "Apache-2.0",
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.32.0"
+    "@aws-sdk/client-s3": "^3.32.0",
+    "wait-port": "^1.0.4"
   }
 }
