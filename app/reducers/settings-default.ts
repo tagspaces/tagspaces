@@ -130,6 +130,11 @@ export function findAvailableExtensions() {
       extensionId: '@tagspaces/extensions/url-viewer',
       extensionName: 'URL Viewer',
       extensionType: 'viewer'
+      // },
+      // {
+      //   extensionId: '@tagspaces/extensions/mindmap-viewer',
+      //   extensionName: 'Mindmap Viewer',
+      //   extensionType: 'viewer'
     }
   ];
   return extensionsFound;
@@ -364,7 +369,12 @@ export default {
     {
       type: 'flac',
       viewer: '@tagspaces/extensions/media-player',
-      color: ''
+      color: '#c5e4f9'
+    },
+    {
+      type: 'mov',
+      viewer: '@tagspaces/extensions/media-player',
+      color: '#c5e4f9'
     },
     {
       type: 'acc',
