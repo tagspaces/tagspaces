@@ -17,7 +17,9 @@
  */
 
 import React, { useState } from 'react';
+import Draggable from 'react-draggable';
 import Button from '@mui/material/Button';
+import Paper, { PaperProps } from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -41,6 +43,17 @@ interface Props {
   toggleLicenseDialog: () => void;
   toggleThirdPartyLibsDialog: () => void;
   onClose: () => void;
+}
+
+function PaperComponent(props: PaperProps) {
+  return (
+    <Draggable
+      handle="#draggable-dialog-title"
+      cancel={'[class*="MuiDialogContent-root"]'}
+    >
+      <Paper {...props} />
+    </Draggable>
+  );
 }
 
 let buildID = versionMeta.commitId;
@@ -101,8 +114,10 @@ function AboutDialog(props: Props) {
       fullScreen={fullScreen}
       keepMounted
       scroll="paper"
+      PaperComponent={fullScreen ? Paper : PaperComponent}
+      aria-labelledby="draggable-dialog-title"
     >
-      <DialogTitle>
+      <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
         {productName}
         <DialogCloseButton onClose={onClose} />
       </DialogTitle>
