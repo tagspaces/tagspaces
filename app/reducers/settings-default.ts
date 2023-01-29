@@ -130,11 +130,16 @@ export function findAvailableExtensions() {
       extensionId: '@tagspaces/extensions/url-viewer',
       extensionName: 'URL Viewer',
       extensionType: 'viewer'
-      // },
-      // {
-      //   extensionId: '@tagspaces/extensions/mindmap-viewer',
-      //   extensionName: 'Mindmap Viewer',
-      //   extensionType: 'viewer'
+    },
+    {
+      extensionId: '@tagspaces/extensions/mindmap-viewer',
+      extensionName: 'Mindmap Viewer (beta)',
+      extensionType: 'viewer'
+    },
+    {
+      extensionId: '@tagspaces/extensions/slides-viewer',
+      extensionName: 'Slides Viewer (beta)',
+      extensionType: 'viewer'
     }
   ];
   return extensionsFound;
