@@ -1325,7 +1325,7 @@ The following NPM packages may be included in this product:
  - @aws-sdk/signature-v4@3.6.1
  - @aws-sdk/types@1.0.0-rc.10
  - @aws-sdk/types@3.186.0
- - @aws-sdk/types@3.226.0
+ - @aws-sdk/types@3.257.0
  - @aws-sdk/types@3.6.1
  - @aws-sdk/util-arn-parser@3.6.1
  - @aws-sdk/util-base64-browser@3.186.0
@@ -2895,9 +2895,9 @@ Apache License
 The following NPM packages may be included in this product:
 
  - @babel/code-frame@7.18.6
- - @babel/compat-data@7.20.10
+ - @babel/compat-data@7.20.14
  - @babel/core@7.20.12
- - @babel/generator@7.20.7
+ - @babel/generator@7.20.14
  - @babel/helper-annotate-as-pure@7.18.6
  - @babel/helper-builder-binary-assignment-operator-visitor@7.18.9
  - @babel/helper-compilation-targets@7.20.7
@@ -2921,7 +2921,7 @@ The following NPM packages may be included in this product:
  - @babel/helper-validator-identifier@7.19.1
  - @babel/helper-validator-option@7.18.6
  - @babel/helper-wrap-function@7.20.5
- - @babel/helpers@7.20.7
+ - @babel/helpers@7.20.13
  - @babel/highlight@7.18.6
  - @babel/plugin-bugfix-safari-id-destructuring-collision-in-function-expression@7.18.6
  - @babel/plugin-bugfix-v8-spread-parameters-in-optional-chaining@7.20.7
@@ -2963,7 +2963,7 @@ The following NPM packages may be included in this product:
  - @babel/plugin-transform-arrow-functions@7.20.7
  - @babel/plugin-transform-async-to-generator@7.20.7
  - @babel/plugin-transform-block-scoped-functions@7.18.6
- - @babel/plugin-transform-block-scoping@7.20.11
+ - @babel/plugin-transform-block-scoping@7.20.14
  - @babel/plugin-transform-classes@7.20.7
  - @babel/plugin-transform-computed-properties@7.20.7
  - @babel/plugin-transform-destructuring@7.20.7
@@ -2987,7 +2987,7 @@ The following NPM packages may be included in this product:
  - @babel/plugin-transform-react-display-name@7.18.6
  - @babel/plugin-transform-react-jsx-self@7.18.6
  - @babel/plugin-transform-react-jsx-source@7.19.6
- - @babel/plugin-transform-react-jsx@7.20.7
+ - @babel/plugin-transform-react-jsx@7.20.13
  - @babel/plugin-transform-regenerator@7.20.5
  - @babel/plugin-transform-reserved-words@7.18.6
  - @babel/plugin-transform-runtime@7.19.6
@@ -2996,16 +2996,16 @@ The following NPM packages may be included in this product:
  - @babel/plugin-transform-sticky-regex@7.18.6
  - @babel/plugin-transform-template-literals@7.18.9
  - @babel/plugin-transform-typeof-symbol@7.18.9
- - @babel/plugin-transform-typescript@7.20.7
+ - @babel/plugin-transform-typescript@7.20.13
  - @babel/plugin-transform-unicode-escapes@7.18.10
  - @babel/plugin-transform-unicode-regex@7.18.6
  - @babel/preset-env@7.20.2
  - @babel/preset-flow@7.18.6
  - @babel/preset-typescript@7.18.6
  - @babel/register@7.18.9
- - @babel/runtime@7.20.7
+ - @babel/runtime@7.20.13
  - @babel/template@7.20.7
- - @babel/traverse@7.20.12
+ - @babel/traverse@7.20.13
  - @babel/types@7.20.7
 
 These packages each contain the following license and notice below:
@@ -3071,7 +3071,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - @babel/parser@7.20.7
+ - @babel/parser@7.20.13
 
 This package contains the following license and notice below:
 
@@ -3191,16 +3191,16 @@ SOFTWARE.
 The following NPM packages may be included in this product:
 
  - @codemirror/autocomplete@6.4.0
- - @codemirror/commands@6.1.3
+ - @codemirror/commands@6.2.0
  - @codemirror/lang-css@6.0.1
- - @codemirror/lang-html@6.4.0
+ - @codemirror/lang-html@6.4.1
  - @codemirror/lang-javascript@6.1.2
  - @codemirror/lang-markdown@6.0.5
- - @codemirror/language@6.3.2
+ - @codemirror/language@6.4.0
  - @codemirror/lint@6.1.0
  - @codemirror/search@6.2.3
  - @codemirror/state@6.2.0
- - @codemirror/view@6.7.2
+ - @codemirror/view@6.7.3
 
 These packages each contain the following license and notice below:
 
@@ -5859,17 +5859,26 @@ This package contains the following license and notice below:
 
 The following NPM packages may be included in this product:
 
- - @jest/create-cache-key-function@27.5.1
+ - @jest/create-cache-key-function@29.4.1
+ - @jest/environment@29.4.1
+ - @jest/fake-timers@29.4.1
+ - @jest/schemas@29.4.0
  - @jest/types@26.6.2
  - @jest/types@27.5.1
+ - @jest/types@29.4.1
+ - jest-environment-node@29.4.1
  - jest-get-type@26.3.0
+ - jest-message-util@29.4.1
+ - jest-mock@29.4.1
  - jest-regex-util@27.5.1
  - jest-serializer@27.5.1
  - jest-util@27.5.1
+ - jest-util@29.4.1
  - jest-validate@26.6.2
  - jest-worker@27.5.1
  - jscodeshift@0.13.1
  - pretty-format@26.6.2
+ - pretty-format@29.4.1
  - react-dom@17.0.2
  - react-is@16.13.1
  - react-is@17.0.2
@@ -5878,9 +5887,9 @@ The following NPM packages may be included in this product:
  - react-shallow-renderer@16.15.0
  - react@16.14.0
  - react@17.0.2
- - react@18.1.0
+ - react@18.2.0
  - scheduler@0.20.2
- - scheduler@0.22.0
+ - scheduler@0.23.0
  - use-sync-external-store@1.2.0
 
 These packages each contain the following license and notice below:
@@ -5939,11 +5948,12 @@ SOFTWARE.
 
 -----------
 
-The following NPM package may be included in this product:
+The following NPM packages may be included in this product:
 
  - @jridgewell/resolve-uri@3.1.0
+ - @jridgewell/source-map@0.3.2
 
-This package contains the following license and notice below:
+These packages each contain the following license and notice below:
 
 Copyright 2019 Justin Ridgewell <jridgewell@google.com>
 
@@ -6032,7 +6042,7 @@ The following NPM packages may be included in this product:
  - @lezer/highlight@1.1.3
  - @lezer/html@1.3.0
  - @lezer/javascript@1.4.1
- - @lezer/lr@1.3.0
+ - @lezer/lr@1.3.1
 
 These packages each contain the following license and notice below:
 
@@ -6145,15 +6155,15 @@ SOFTWARE.
 The following NPM packages may be included in this product:
 
  - @mui/base@5.0.0-alpha.107
- - @mui/base@5.0.0-alpha.113
- - @mui/core-downloads-tracker@5.11.4
+ - @mui/base@5.0.0-alpha.115
+ - @mui/core-downloads-tracker@5.11.6
  - @mui/icons-material@5.11.0
- - @mui/lab@5.0.0-alpha.115
+ - @mui/lab@5.0.0-alpha.117
  - @mui/material@5.10.15
  - @mui/private-theming@5.11.2
  - @mui/styled-engine@5.11.0
  - @mui/styles@5.10.15
- - @mui/system@5.11.4
+ - @mui/system@5.11.5
  - @mui/types@7.2.3
  - @mui/utils@5.11.2
 
@@ -6185,7 +6195,7 @@ SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - @mui/x-date-pickers@5.0.13
+ - @mui/x-date-pickers@5.0.16
 
 This package contains the following license and notice below:
 
@@ -6355,18 +6365,18 @@ SOFTWARE.
 
 The following NPM packages may be included in this product:
 
- - @react-native-community/cli-clean@9.2.1
- - @react-native-community/cli-config@9.2.1
- - @react-native-community/cli-debugger-ui@9.0.0
- - @react-native-community/cli-doctor@9.3.0
- - @react-native-community/cli-hermes@9.3.1
- - @react-native-community/cli-platform-android@9.3.1
- - @react-native-community/cli-platform-ios@9.3.0
- - @react-native-community/cli-plugin-metro@9.2.1
- - @react-native-community/cli-server-api@9.2.1
- - @react-native-community/cli-tools@9.2.1
- - @react-native-community/cli-types@9.1.0
- - @react-native-community/cli@9.3.2
+ - @react-native-community/cli-clean@10.1.1
+ - @react-native-community/cli-config@10.1.1
+ - @react-native-community/cli-debugger-ui@10.0.0
+ - @react-native-community/cli-doctor@10.1.1
+ - @react-native-community/cli-hermes@10.1.3
+ - @react-native-community/cli-platform-android@10.1.3
+ - @react-native-community/cli-platform-ios@10.1.1
+ - @react-native-community/cli-plugin-metro@10.1.1
+ - @react-native-community/cli-server-api@10.1.1
+ - @react-native-community/cli-tools@10.1.1
+ - @react-native-community/cli-types@10.0.0
+ - @react-native-community/cli@10.1.3
 
 These packages each contain the following license and notice below:
 
@@ -6397,18 +6407,19 @@ SOFTWARE.
 The following NPM packages may be included in this product:
 
  - @react-native/assets@1.0.0
- - @react-native/normalize-color@2.0.0
+ - @react-native/normalize-color@2.1.0
  - @react-native/polyfills@2.0.0
- - metro-babel-transformer@0.72.3
- - metro-cache-key@0.72.3
- - metro-cache@0.72.3
- - metro-inspector-proxy@0.72.3
- - metro-minify-uglify@0.72.3
- - metro-react-native-babel-transformer@0.72.3
- - metro-runtime@0.72.3
- - metro-symbolicate@0.72.3
- - metro-transform-plugins@0.72.3
- - metro-transform-worker@0.72.3
+ - metro-babel-transformer@0.73.7
+ - metro-cache-key@0.73.7
+ - metro-cache@0.73.7
+ - metro-inspector-proxy@0.73.7
+ - metro-minify-terser@0.73.7
+ - metro-minify-uglify@0.73.7
+ - metro-react-native-babel-transformer@0.73.7
+ - metro-runtime@0.73.7
+ - metro-symbolicate@0.73.7
+ - metro-transform-plugins@0.73.7
+ - metro-transform-worker@0.73.7
  - tr46@0.0.3
 
 These packages each contain the following license and notice below:
@@ -6472,10 +6483,100 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 -----------
 
+The following NPM package may be included in this product:
+
+ - @sinclair/typebox@0.25.21
+
+This package contains the following license and notice below:
+
+TypeBox: JSON Schema Type Builder with Static Type Resolution for TypeScript 
+
+The MIT License (MIT)
+
+Copyright (c) 2017-2023 Haydn Paterson (sinclair) <haydn.developer@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+-----------
+
+The following NPM package may be included in this product:
+
+ - @sinonjs/commons@2.0.0
+
+This package contains the following license and notice below:
+
+BSD 3-Clause License
+
+Copyright (c) 2018, Sinon.JS
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of the copyright holder nor the names of its
+  contributors may be used to endorse or promote products derived from
+  this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-----------
+
+The following NPM package may be included in this product:
+
+ - @sinonjs/fake-timers@10.0.2
+
+This package contains the following license and notice below:
+
+Copyright (c) 2010-2014, Christian Johansen, christian@cjohansen.no. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-----------
+
 The following NPM packages may be included in this product:
 
  - @tagspaces/tagspaces-md@2.1.6
- - @tagspaces/tagspaces-platforms@2.1.11
+ - @tagspaces/tagspaces-platforms@2.1.12
 
 These packages each contain the following license and notice below:
 
@@ -6573,13 +6674,15 @@ The following NPM packages may be included in this product:
  - @types/react-is@17.0.3
  - @types/react-redux@7.1.25
  - @types/react-transition-group@4.4.5
- - @types/react@17.0.52
+ - @types/react@17.0.53
  - @types/scheduler@0.16.2
+ - @types/stack-utils@2.0.1
  - @types/unist@2.0.6
  - @types/use-sync-external-store@0.0.3
  - @types/yargs-parser@21.0.0
  - @types/yargs@15.0.15
  - @types/yargs@16.0.5
+ - @types/yargs@17.0.20
 
 These packages each contain the following license and notice below:
 
@@ -6697,6 +6800,36 @@ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
 CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+-----------
+
+The following NPM package may be included in this product:
+
+ - acorn@8.8.2
+
+This package contains the following license and notice below:
+
+MIT License
+
+Copyright (C) 2012-2022 by various contributors (see AUTHORS)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
 
 -----------
 
@@ -7037,12 +7170,14 @@ The following NPM packages may be included in this product:
  - ansi-regex@5.0.1
  - ansi-styles@3.2.1
  - ansi-styles@4.3.0
+ - ansi-styles@5.2.0
  - callsites@3.1.0
  - camelcase-keys@6.2.2
  - camelcase@5.3.1
  - chalk@2.4.2
  - chalk@4.1.2
  - cli-cursor@3.1.0
+ - escape-string-regexp@2.0.0
  - execa@1.0.0
  - find-up@3.0.0
  - find-up@4.1.0
@@ -8003,7 +8138,7 @@ Apache License
 
 The following NPM package may be included in this product:
 
- - aws-sdk@2.1291.0
+ - aws-sdk@2.1304.0
 
 This package contains the following license and notice below:
 
@@ -8486,9 +8621,9 @@ The following NPM packages may be included in this product:
  - character-entities-legacy@3.0.0
  - character-entities@2.0.2
  - character-reference-invalid@2.0.1
- - mdast-util-to-string@3.1.0
+ - mdast-util-to-string@3.1.1
  - remark-inline-links@6.0.1
- - unist-util-visit@4.1.1
+ - unist-util-visit@4.1.2
 
 These packages each contain the following license and notice below:
 
@@ -9123,7 +9258,7 @@ THE SOFTWARE.
 The following NPM packages may be included in this product:
 
  - call-bind@1.0.2
- - get-intrinsic@1.1.3
+ - get-intrinsic@1.2.0
 
 These packages each contain the following license and notice below:
 
@@ -9219,6 +9354,7 @@ The following NPM packages may be included in this product:
  - p-locate@5.0.0
  - parse-json@5.2.0
  - supports-color@8.1.1
+ - wrap-ansi@7.0.0
  - yocto-queue@0.1.0
 
 These packages each contain the following license and notice below:
@@ -9237,7 +9373,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 The following NPM package may be included in this product:
 
- - caniuse-lite@1.0.30001442
+ - caniuse-lite@1.0.30001449
 
 This package contains the following license and notice below:
 
@@ -9759,11 +9895,12 @@ SOFTWARE.
 
 -----------
 
-The following NPM package may be included in this product:
+The following NPM packages may be included in this product:
 
  - cliui@6.0.0
+ - cliui@8.0.1
 
-This package contains the following license and notice below:
+These packages each contain the following license and notice below:
 
 Copyright (c) 2015, Contributors
 
@@ -9936,8 +10073,8 @@ The following NPM packages may be included in this product:
  - is-decimal@2.0.1
  - is-hexadecimal@2.0.1
  - space-separated-tokens@2.0.2
- - unist-util-stringify-position@3.0.2
- - unist-util-visit-parents@5.1.1
+ - unist-util-stringify-position@3.0.3
+ - unist-util-visit-parents@5.1.3
  - zwitch@2.0.4
 
 These packages each contain the following license and notice below:
@@ -10000,6 +10137,7 @@ SOFTWARE.
 The following NPM packages may be included in this product:
 
  - commander@2.13.0
+ - commander@2.20.3
  - commander@7.2.0
  - commander@8.3.0
  - commander@9.5.0
@@ -10377,11 +10515,11 @@ THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - core-js-compat@3.27.1
+ - core-js-compat@3.27.2
 
 This package contains the following license and notice below:
 
-Copyright (c) 2014-2022 Denis Pushkarev
+Copyright (c) 2014-2023 Denis Pushkarev
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -10777,15 +10915,12 @@ SOFTWARE.
 
 The following NPM packages may be included in this product:
 
- - d3-array@3.2.1
- - d3-color@3.1.0
- - d3-shape@3.2.0
- - d3-time@3.1.0
- - d3@7.8.0
+ - d3-array@3.2.2
+ - d3@7.8.2
 
 These packages each contain the following license and notice below:
 
-Copyright 2010-2022 Mike Bostock
+Copyright 2010-2023 Mike Bostock
 
 Permission to use, copy, modify, and/or distribute this software for any purpose
 with or without fee is hereby granted, provided that the above copyright notice
@@ -10840,9 +10975,33 @@ THIS SOFTWARE.
 
 -----------
 
+The following NPM packages may be included in this product:
+
+ - d3-color@3.1.0
+ - d3-shape@3.2.0
+ - d3-time@3.1.0
+
+These packages each contain the following license and notice below:
+
+Copyright 2010-2022 Mike Bostock
+
+Permission to use, copy, modify, and/or distribute this software for any purpose
+with or without fee is hereby granted, provided that the above copyright notice
+and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
+THIS SOFTWARE.
+
+-----------
+
 The following NPM package may be included in this product:
 
- - d3-contour@4.0.1
+ - d3-contour@4.0.2
 
 This package contains the following license and notice below:
 
@@ -11228,7 +11387,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 The following NPM packages may be included in this product:
 
  - decode-named-character-reference@1.0.2
- - mdast-util-gfm-footnote@1.0.1
+ - mdast-util-gfm-footnote@1.0.2
  - micromark-extension-gfm-footnote@1.0.4
 
 These packages each contain the following license and notice below:
@@ -11520,6 +11679,144 @@ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
 CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+-----------
+
+The following NPM package may be included in this product:
+
+ - deprecated-react-native-prop-types@3.0.1
+
+This package contains the following license and notice below:
+
+# deprecated-react-native-prop-types
+
+This package contains deprecated `prop-types` from [React Native](https://github.com/facebook/react-native).
+
+## Image.propTypes
+
+### Before
+
+```js
+import {Image} from 'react-native';
+
+doSomething(Image.propTypes);
+```
+
+### After
+
+```js
+import {ImagePropTypes} from 'deprecated-react-native-prop-types';
+
+doSomething(ImagePropTypes);
+```
+
+## Text.propTypes
+
+### Before
+
+```js
+import {Text} from 'react-native';
+
+doSomething(Text.propTypes);
+```
+
+### After
+
+```js
+import {TextPropTypes} from 'deprecated-react-native-prop-types';
+
+doSomething(TextPropTypes);
+```
+
+## TextInput.propTypes
+
+### Before
+
+```js
+import {TextInput} from 'react-native';
+
+doSomething(TextInput.propTypes);
+```
+
+### After
+
+```js
+import {TextInputPropTypes} from 'deprecated-react-native-prop-types';
+
+doSomething(TextInputPropTypes);
+```
+
+## ColorPropType
+
+### Before
+
+```js
+import {ColorPropType} from 'react-native';
+
+doSomething(ColorPropType);
+```
+
+### After
+
+```js
+import {ColorPropType} from 'deprecated-react-native-prop-types';
+
+doSomething(ColorPropType);
+```
+
+## EdgeInsetsPropType
+
+### Before
+
+```js
+import {EdgeInsetsPropType} from 'react-native';
+
+doSomething(EdgeInsetsPropType);
+```
+
+### After
+
+```js
+import {EdgeInsetsPropType} from 'deprecated-react-native-prop-types';
+
+doSomething(EdgeInsetsPropType);
+```
+
+## PointPropType
+
+### Before
+
+```js
+import {PointPropType} from 'react-native';
+
+doSomething(PointPropType);
+```
+
+### After
+
+```js
+import {PointPropType} from 'deprecated-react-native-prop-types';
+
+doSomething(PointPropType);
+```
+
+## ViewPropTypes
+
+### Before
+
+```js
+import {ViewPropTypes} from 'react-native';
+
+doSomething(ViewPropTypes);
+```
+
+### After
+
+```js
+import {ViewPropTypes} from 'deprecated-react-native-prop-types';
+
+doSomething(ViewPropTypes);
+```
 
 -----------
 
@@ -13087,7 +13384,7 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 
 The following NPM package may be included in this product:
 
- - flow-parser@0.121.0
+ - flow-parser@0.185.2
 
 This package contains the following license and notice below:
 
@@ -13127,14 +13424,14 @@ flow.parse('1+1', {});
 
 The second argument to `flow.parse` is the options object. Currently supported options:
 
+* `all_comments` (boolean, default `true`) - include a list of all comments from the whole program
+* `comments` (boolean, default `true`) - attach comments to AST nodes (`leadingComments` and `trailingComments`)
 * `enums` (boolean, default `false`) - enable parsing of Flow enums
 * `esproposal_decorators` (boolean, default `false`) - enable parsing of decorators
-* `esproposal_class_instance_fields` (boolean, default `false`) - enable parsing of class instance fields
-* `esproposal_class_static_fields` (boolean, default `false`) - enable parsing of class static fields
 * `esproposal_export_star_as` (boolean, default `false`) - enable parsing of `export * as` syntax
-* `esproposal_optional_chaining` (boolean, default `false`) - enable parsing of optional chaining (`?.`)
-* `esproposal_nullish_coalescing` (boolean, default `false`) - enable parsing of nullish coalescing (`??`)
+* `tokens` (boolean, default `false`) - include a list of all parsed tokens in a top-level `tokens` property
 * `types` (boolean, default `true`) - enable parsing of Flow types
+* `use_strict` (boolean, default `false`) - treat the file as strict, without needing a "use strict" directive
 
 -----------
 
@@ -13255,30 +13552,6 @@ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
 CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
------------
-
-The following NPM package may be included in this product:
-
- - fs-extra@1.0.0
-
-This package contains the following license and notice below:
-
-(The MIT License)
-
-Copyright (c) 2011-2016 JP Richardson
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the 'Software'), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
- merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
-WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 -----------
 
@@ -13955,7 +14228,7 @@ The following NPM packages may be included in this product:
 
  - hermes-estree@0.8.0
  - hermes-parser@0.8.0
- - react-native@0.70.6
+ - react-native@0.71.1
 
 These packages each contain the following license and notice below:
 
@@ -14939,7 +15212,7 @@ The following NPM packages may be included in this product:
  - minimatch@3.1.2
  - once@1.4.0
  - rimraf@2.6.3
- - rimraf@2.7.1
+ - rimraf@3.0.2
  - semver@5.7.1
  - semver@6.3.0
  - semver@7.3.8
@@ -15309,7 +15582,6 @@ SOFTWARE.
 
 The following NPM packages may be included in this product:
 
- - jsonfile@2.4.0
  - jsonfile@4.0.0
  - jsonfile@5.0.0
  - jsonfile@6.1.0
@@ -16111,30 +16383,6 @@ DEALINGS IN THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - klaw@1.3.1
-
-This package contains the following license and notice below:
-
-(The MIT License)
-
-Copyright (c) 2015-2016 JP Richardson
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the 'Software'), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
- merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
-WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
------------
-
-The following NPM package may be included in this product:
-
  - leaflet@1.9.3
 
 This package contains the following license and notice below:
@@ -16555,7 +16803,7 @@ THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - marked@4.2.5
+ - marked@4.2.12
 
 This package contains the following license and notice below:
 
@@ -16624,7 +16872,7 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH RE
 
 The following NPM package may be included in this product:
 
- - mdast-util-definitions@5.1.1
+ - mdast-util-definitions@5.1.2
 
 This package contains the following license and notice below:
 
@@ -16656,14 +16904,14 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 The following NPM packages may be included in this product:
 
  - mdast-util-directive@2.2.2
- - mdast-util-find-and-replace@2.2.1
- - mdast-util-from-markdown@1.2.0
+ - mdast-util-find-and-replace@2.2.2
+ - mdast-util-from-markdown@1.3.0
  - mdast-util-gfm-autolink-literal@1.0.2
  - mdast-util-gfm-strikethrough@1.0.2
  - mdast-util-gfm-table@1.0.6
  - mdast-util-gfm-task-list-item@1.0.1
  - mdast-util-gfm@2.0.1
- - mdast-util-math@2.0.1
+ - mdast-util-math@2.0.2
  - mdast-util-to-markdown@1.5.0
  - micromark-extension-directive@2.1.2
  - micromark-extension-gfm-autolink-literal@1.0.3
@@ -16705,7 +16953,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - mdast-util-phrasing@3.0.0
+ - mdast-util-phrasing@3.0.1
 
 This package contains the following license and notice below:
 
@@ -17155,7 +17403,7 @@ _Mermaid was created by Knut Sveidqvist for easier documentation._
 
 The following NPM package may be included in this product:
 
- - metro-config@0.72.3
+ - metro-config@0.73.7
 
 This package contains the following license and notice below:
 
@@ -17167,7 +17415,7 @@ This package contains the following license and notice below:
 
 The following NPM package may be included in this product:
 
- - metro-core@0.72.3
+ - metro-core@0.73.7
 
 This package contains the following license and notice below:
 
@@ -17181,7 +17429,7 @@ This package contains the following license and notice below:
 
 The following NPM package may be included in this product:
 
- - metro-file-map@0.72.3
+ - metro-file-map@0.73.7
 
 This package contains the following license and notice below:
 
@@ -17202,7 +17450,7 @@ use case.
 
 The following NPM package may be included in this product:
 
- - metro-hermes-compiler@0.72.3
+ - metro-hermes-compiler@0.73.7
 
 This package contains the following license and notice below:
 
@@ -17229,7 +17477,7 @@ After the build process finishes the Hermes Bytecode Compiler JavaScript file wi
 
 The following NPM package may be included in this product:
 
- - metro-react-native-babel-preset@0.72.3
+ - metro-react-native-babel-preset@0.73.7
 
 This package contains the following license and notice below:
 
@@ -17279,7 +17527,7 @@ If you get stuck configuring Babel, please ask a question on Stack Overflow or f
 
 The following NPM package may be included in this product:
 
- - metro-resolver@0.72.3
+ - metro-resolver@0.73.7
 
 This package contains the following license and notice below:
 
@@ -17291,7 +17539,7 @@ This package contains the following license and notice below:
 
 The following NPM package may be included in this product:
 
- - metro-source-map@0.72.3
+ - metro-source-map@0.73.7
 
 This package contains the following license and notice below:
 
@@ -17305,7 +17553,7 @@ This package contains the following license and notice below:
 
 The following NPM package may be included in this product:
 
- - metro@0.72.3
+ - metro@0.73.7
 
 This package contains the following license and notice below:
 
@@ -22893,7 +23141,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 The following NPM package may be included in this product:
 
- - ob1@0.72.3
+ - ob1@0.73.7
 
 This package contains the following license and notice below:
 
@@ -24110,11 +24358,11 @@ The following NPM packages may be included in this product:
  - prosemirror-history@1.3.0
  - prosemirror-inputrules@1.2.0
  - prosemirror-keymap@1.2.0
- - prosemirror-model@1.18.3
+ - prosemirror-model@1.19.0
  - prosemirror-schema-list@1.2.2
  - prosemirror-state@1.4.2
- - prosemirror-transform@1.7.0
- - prosemirror-view@1.29.1
+ - prosemirror-transform@1.7.1
+ - prosemirror-view@1.30.0
 
 These packages each contain the following license and notice below:
 
@@ -24378,7 +24626,7 @@ limitations under the License.
 
 The following NPM package may be included in this product:
 
- - react-best-gradient-color-picker@2.1.11
+ - react-best-gradient-color-picker@2.1.12
 
 This package contains the following license and notice below:
 
@@ -24439,73 +24687,129 @@ SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - react-devtools-core@4.24.0
+ - react-devtools-core@4.27.1
 
 This package contains the following license and notice below:
 
 # `react-devtools-core`
 
-A standalone React DevTools implementation.
+This package provides low-level APIs to support renderers like [React Native](https://github.com/facebook/react-native). If you're looking for the standalone React DevTools UI, **we suggest using [`react-devtools`](https://github.com/facebook/react/tree/main/packages/react-devtools) instead of using this package directly**.
 
-This is a low-level package. If you're looking for the Electron app you can run, **use `react-devtools` package instead.**
+This package provides two entrypoints: labeled "backend" and "standalone" (frontend). Both APIs are described below.
 
-## API
+# Backend API
 
-### `react-devtools-core`
+Backend APIs are embedded in _development_ builds of renderers like [React Native](https://github.com/facebook/react-native) in order to connect to the React DevTools UI.
 
-This is similar requiring the `react-devtools` package, but provides several configurable options. Unlike `react-devtools`, requiring `react-devtools-core` doesn't connect immediately but instead exports a function:
+### Example
 
-```js
-const { connectToDevTools } = require("react-devtools-core");
-connectToDevTools(config);
-```
-
-Run `connectToDevTools()` in the same context as React to set up a connection to DevTools.  
-Be sure to run this function *before* importing e.g. `react`, `react-dom`, `react-native`.
-
-The `config` object may contain:
-* `host: string` (defaults to "localhost") - Websocket will connect to this host.
-* `port: number` (defaults to `8097`) - Websocket will connect to this port.
-* `useHttps: boolean` (defaults to `false`) - Websocket should use a secure protocol (wss).
-* `websocket: Websocket` - Custom websocket to use. Overrides `host` and `port` settings if provided.
-* `resolveRNStyle: (style: number) => ?Object` - Used by the React Native style plug-in.
-* `retryConnectionDelay: number` (defaults to `2000`) - Milliseconds delay to wait between retrying a failed Websocket connection.
-* `isAppActive: () => boolean` - If provided, DevTools will poll this method and wait until it returns true before connecting to React.
-
-## `react-devtools-core/standalone`
-
-Renders the DevTools interface into a DOM node.
+If you are building a non-browser-based React renderer, you can use the backend API like so:
 
 ```js
-require("react-devtools-core/standalone")
-  .setContentDOMNode(document.getElementById("container"))
-  .setStatusListener(status => {
-    // This callback is optional...
-  })
-  .startServer(port);
+if (process.env.NODE_ENV !== 'production') {
+  const { connectToDevTools } = require("react-devtools-core");
+
+  // Must be called before packages like react or react-native are imported
+  connectToDevTools({
+    ...config
+  });
+}
 ```
 
-Renders DevTools interface into a DOM node over SSL using a custom host name (Default is localhost).
+> **NOTE** that this API (`connectToDevTools`) must be (1) run in the same context as React and (2) must be called before React packages are imported (e.g. `react`, `react-dom`, `react-native`).
 
+### `connectToDevTools` options
+| Prop | Default | Description |
+|---|---|---|
+| `host` | `"localhost"` | Socket connection to frontend should use this host. |
+| `isAppActive` |  | (Optional) function that returns true/false, telling DevTools when it's ready to connect to React. |
+| `port` | `8097` | Socket connection to frontend should use this port. |
+| `resolveRNStyle` |  | (Optional) function that accepts a key (number) and returns a style (object); used by React Native. |
+| `retryConnectionDelay` | `200` | Delay (ms) to wait between retrying a failed Websocket connection |
+| `useHttps` | `false` | Socket connection to frontend should use secure protocol (wss). |
+| `websocket` |  | Custom `WebSocket` connection to frontend; overrides `host` and `port` settings. |
+
+# Frontend API
+
+Frontend APIs can be used to render the DevTools UI into a DOM node. One example of this is [`react-devtools`](https://github.com/facebook/react/tree/main/packages/react-devtools) which wraps DevTools in an Electron app.
+
+### Example
 ```js
-const host = 'dev.server.com';
-const options = {
-  key: fs.readFileSync('test/fixtures/keys/agent2-key.pem'),
-  cert: fs.readFileSync('test/fixtures/keys/agent2-cert.pem')
-};
+import DevtoolsUI from "react-devtools-core/standalone";
 
+// See the full list of API methods in documentation below.
+const { setContentDOMNode, startServer } = DevtoolsUI;
 
-require("react-devtools-core/standalone")
-  .setContentDOMNode(document.getElementById("container"))
-  .setStatusListener(status => {
-    // This callback is optional...
-  })
-  .startServer(port, host, options);
+// Render DevTools UI into a DOM element.
+setContentDOMNode(document.getElementById("container"));
+
+// Start socket server used to communicate between backend and frontend.
+startServer(
+  // Port defaults to 8097
+  1234,
+
+  // Host defaults to "localhost"
+  "example.devserver.com",
+
+  // Optional config for secure socket (WSS).
+  {
+    key: fs.readFileSync('test/fixtures/keys/agent2-key.pem'),
+    cert: fs.readFileSync('test/fixtures/keys/agent2-cert.pem')
+  }
+);
 ```
 
-Reference the `react-devtools` package for a complete integration example.
+### Exported methods
+The `default` export is an object defining the methods described below.
 
-## Development
+These methods support chaining for convenience. For example:
+```js
+const DevtoolsUI = require("react-devtools-core/standalone");
+DevtoolsUI.setContentDOMNode(element).startServer();
+```
+
+#### `connectToSocket(socket: WebSocket)`
+> This is an advanced config function that is typically not used.
+
+Custom `WebSocket` connection to use for communication between DevTools frontend and backend. Calling this method automatically initializes the DevTools UI (similar to calling `startServer()`).
+
+#### `openProfiler()`
+Automatically select the "Profiler" tab in the DevTools UI.
+
+#### `setContentDOMNode(element: HTMLElement)`
+Set the DOM element DevTools UI should be rendered into on initialization.
+
+#### `setDisconnectedCallback(callback: Function)`
+_Optional_ callback to be notified when DevTools `WebSocket` closes (or errors).
+
+#### `setProjectRoots(roots: Array<string>)`
+_Optional_ set of root directories for source files. These roots can be used to open an inspected component's source code using an IDE.
+
+#### `setStatusListener(callback: Function)`
+_Optional_ callback to be notified of socket server events (e.g. initialized, errored, connected).
+
+This callback receives two parameters:
+```js
+function onStatus(
+  message: string,
+  status: 'server-connected' | 'devtools-connected' | 'error'
+): void {
+  // ...
+}
+```
+
+#### `startServer(port?: number, host?: string, httpsOptions?: Object, loggerOptions?: Object)`
+Start a socket server (used to communicate between backend and frontend) and renders the DevTools UI.
+
+This method accepts the following parameters:
+| Name | Default | Description |
+|---|---|---|
+| `port` | `8097` | Socket connection to backend should use this port. |
+| `host` | `"localhost"` | Socket connection to backend should use this host. |
+| `httpsOptions` | | _Optional_ object defining `key` and `cert` strings. |
+| `loggerOptions` | | _Optional_ object defining a `surface` string (to be included with DevTools logging events). |
+
+# Development
 
 Watch for changes made to the backend entry point and rebuild:
 ```sh
@@ -24516,6 +24820,8 @@ Watch for changes made to the standalone UI entry point and rebuild:
 ```sh
 yarn start:standalone
 ```
+
+Run the standalone UI using `yarn start` in the [`react-devtools`](https://github.com/facebook/react/tree/main/packages/react-devtools).
 
 -----------
 
@@ -24848,7 +25154,7 @@ SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - react-native-codegen@0.70.6
+ - react-native-codegen@0.71.3
 
 This package contains the following license and notice below:
 
@@ -24866,6 +25172,13 @@ yarn add --dev react-native-codegen
 
 [version-badge]: https://img.shields.io/npm/v/react-native-codegen?style=flat-square
 [package]: https://www.npmjs.com/package/react-native-codegen
+
+## Testing
+
+To run the tests in this package, run the following commands from the react Native root folder:
+
+1. `yarn` to install the dependencies. You just need to run this once
+2. `yarn jest react-native-codegen`.
 
 -----------
 
@@ -24901,7 +25214,7 @@ SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - react-native-gradle-plugin@0.70.3
+ - react-native-gradle-plugin@0.71.13
 
 This package contains the following license and notice below:
 
@@ -25446,7 +25759,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The following NPM package may be included in this product:
 
- - remark-emoji@3.0.2
+ - remark-emoji@3.1.0
 
 This package contains the following license and notice below:
 
@@ -25868,6 +26181,7 @@ The following NPM packages may be included in this product:
  - require-main-filename@2.0.0
  - set-blocking@2.0.0
  - yargs-parser@18.1.3
+ - yargs-parser@21.1.1
 
 These packages each contain the following license and notice below:
 
@@ -26720,6 +27034,36 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The following NPM package may be included in this product:
 
+ - stack-utils@2.0.6
+
+This package contains the following license and notice below:
+
+The MIT License (MIT)
+
+Copyright (c) 2016-2022 Isaac Z. Schlueter <i@izs.me>, James Talmage <james@talmage.io> (github.com/jamestalmage), and Contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+-----------
+
+The following NPM package may be included in this product:
+
  - stacktrace-parser@0.1.10
 
 This package contains the following license and notice below:
@@ -27012,6 +27356,44 @@ FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+-----------
+
+The following NPM package may be included in this product:
+
+ - terser@5.16.1
+
+This package contains the following license and notice below:
+
+Terser is released under the BSD license:
+
+Copyright 2012-2018 (c) Mihai Bazon <mihai.bazon@gmail.com>
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+    * Redistributions of source code must retain the above
+      copyright notice, this list of conditions and the following
+      disclaimer.
+
+    * Redistributions in binary form must reproduce the above
+      copyright notice, this list of conditions and the following
+      disclaimer in the documentation and/or other materials
+      provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER “AS IS” AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
+THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+SUCH DAMAGE.
 
 -----------
 
@@ -27424,7 +27806,7 @@ div {
 The following NPM packages may be included in this product:
 
  - tslib@1.14.1
- - tslib@2.4.1
+ - tslib@2.5.0
 
 These packages each contain the following license and notice below:
 
@@ -27498,6 +27880,34 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+-----------
+
+The following NPM package may be included in this product:
+
+ - type-detect@4.0.8
+
+This package contains the following license and notice below:
+
+Copyright (c) 2013 Jake Luer <jake@alogicalparadox.com> (http://alogicalparadox.com)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
 
 -----------
 
@@ -27632,7 +28042,7 @@ THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - unist-util-is@5.1.1
+ - unist-util-is@5.2.0
 
 This package contains the following license and notice below:
 
@@ -28382,11 +28792,12 @@ THE SOFTWARE.
 
 -----------
 
-The following NPM package may be included in this product:
+The following NPM packages may be included in this product:
 
  - y18n@4.0.3
+ - y18n@5.0.8
 
-This package contains the following license and notice below:
+These packages each contain the following license and notice below:
 
 Copyright (c) 2015, Contributors
 
@@ -28426,11 +28837,12 @@ THIS SOFTWARE.
 
 -----------
 
-The following NPM package may be included in this product:
+The following NPM packages may be included in this product:
 
  - yargs@15.4.1
+ - yargs@17.6.2
 
-This package contains the following license and notice below:
+These packages each contain the following license and notice below:
 
 MIT License
 
