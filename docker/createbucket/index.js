@@ -9,6 +9,26 @@ const params = {
   // protocol: url.protocol
 };
 
+/*function sync() {
+  const passwdFilePath = '/etc/passwd-s3fs';
+  fs.writeFileSync(
+    passwdFilePath,
+    process.env.ACCESS_KEY_ID + ':' + process.env.SECRET_ACCESS_KEY,
+    'utf-8'
+  );
+  fs.chmodSync(passwdFilePath, 600);
+  execa('s3fs', [
+    process.env.BUCKET_NAME,
+    '/mnt/datas3fs',
+    '-o',
+    'passwd_file=' + passwdFilePath,
+    '-o',
+    'url="' + process.env.ENDPOINT + '"',
+    '-o',
+    'use_path_request_style'
+  ]).stdout.pipe(process.stdout);
+}*/
+
 waitPort(params)
   .then(({ open, ipVersion }) => {
     if (open) {
@@ -19,6 +39,7 @@ waitPort(params)
             'Success Bucket ' + process.env.BUCKET_NAME + ' created',
             data
           );
+
           return setCors().then(data => {
             if (data) {
               console.log('CORS configured', data);

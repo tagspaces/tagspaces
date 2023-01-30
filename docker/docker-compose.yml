@@ -10,29 +10,20 @@ services:
       - '8080:80'
     volumes:
       - ./config/extconfig.js:/usr/share/nginx/html/extconfig.js
-    depends_on:
-      - s3server
-    networks:
-      deployment:
-        ipv4_address: 172.173.100.1
   createbucket:
     container_name: createbucket
     build:
       context: ./createbucket
       dockerfile: ./Dockerfile
+    env_file:
+      - ./createbucket/.env
     image: createbucket:latest
-    environment:
-      - ACCESS_KEY_ID=accessKey1
-      - SECRET_ACCESS_KEY=verySecretKey1
-      - ENDPOINT=http://172.173.100.2:8000
-      - BUCKET_NAME=testbucket
     depends_on:
       - s3server
     networks:
-      deployment:
-        ipv4_address: 172.173.100.5
+      - tsnet
+
   s3server:
-    hostname: s3server-ts
     container_name: s3server
     image: zenko/cloudserver:latest-0.0.0
     restart: unless-stopped
@@ -42,40 +33,58 @@ services:
       - s3data:/usr/src/app/localData
       - s3metadata:/usr/src/app/localMetadata
       - ./cloudserver/authdata.json:/usr/src/app/conf/authdata.json
+      - ./cloudserver/config.json:/usr/src/app/config.json
+      - ./cloudserver/locationConfig.json:/usr/src/app/locationConfig.json
     environment:
+      S3DATA: multiple
       S3BACKEND: file
       # REMOTE_MANAGEMENT_DISABLE: 1
-      LOG_LEVEL: debug
+      # LOG_LEVEL: debug
       SSL: 'false'
       # LISTEN_ADDR: 0.0.0.0
     networks:
-      deployment:
-        ipv4_address: 172.173.100.2
+      - tsnet
 
   s3manager:
     container_name: s3manger
     image: mastertinner/s3manager
     ports:
       - 8081:8081
+    links:
+      - s3server
     environment:
       - PORT=8081
-      - ENDPOINT=172.173.100.2:8000
+      - ENDPOINT=s3server:8000
       - ACCESS_KEY_ID=accessKey1
       - SECRET_ACCESS_KEY=verySecretKey1
       - USE_SSL=false
     depends_on:
       - s3server
     networks:
-      deployment:
-        ipv4_address: 172.173.100.3
+      - tsnet
+  #  s3fs-public:
+  #    container_name: "s3fs-public"
+  #    image: efrecon/s3fs:1.91
+  #    environment:
+  #      AWS_S3_URL: http://s3server:8000
+  #      AWS_S3_BUCKET: testbucket
+  #      AWS_S3_ACCESS_KEY_ID: accessKey1
+  #      AWS_S3_SECRET_ACCESS_KEY: verySecretKey1
+  #      AWS_S3_MOUNT: '/opt/s3fs/bucket'
+  #      S3FS_ARGS: use_path_request_style
+  #      S3FS_DEBUG: 1
+  #    devices:
+  #      - /dev/fuse
+  #      - SYS_ADMIN
+  #    security_opt:
+  #      - "apparmor:unconfined"
+  #    volumes:
+  #      - './createbucket/data:/opt/s3fs/bucket:rshared' #
+  #    networks:
+  #      - tsnet
 volumes:
   s3data:
   s3metadata:
 networks:
-  deployment:
+  tsnet:
     driver: bridge
-    internal: false
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.173.0.0/16

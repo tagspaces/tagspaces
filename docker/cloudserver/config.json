@@ -1,0 +1,101 @@
+{
+  "port": 8000,
+  "listenOn": [],
+  "replicationGroupId": "RG001",
+  "restEndpoints": {
+    "s3server": "eu-central-1",
+    "localhost": "us-east-1",
+    "127.0.0.1": "us-east-1",
+    "cloudserver-front": "us-east-1",
+    "s3.docker.test": "us-east-1",
+    "127.0.0.2": "us-east-1",
+    "s3.amazonaws.com": "us-east-1"
+  },
+  "websiteEndpoints": [
+    "s3-website-us-east-1.amazonaws.com",
+    "s3-website.us-east-2.amazonaws.com",
+    "s3-website-us-west-1.amazonaws.com",
+    "s3-website-us-west-2.amazonaws.com",
+    "s3-website.ap-south-1.amazonaws.com",
+    "s3-website.ap-northeast-2.amazonaws.com",
+    "s3-website-ap-southeast-1.amazonaws.com",
+    "s3-website-ap-southeast-2.amazonaws.com",
+    "s3-website-ap-northeast-1.amazonaws.com",
+    "s3-website.eu-central-1.amazonaws.com",
+    "s3-website-eu-west-1.amazonaws.com",
+    "s3-website-sa-east-1.amazonaws.com",
+    "s3-website.localhost",
+    "s3-website.scality.test"
+  ],
+  "replicationEndpoints": [
+    {
+      "site": "zenko",
+      "servers": [
+        "127.0.0.1:8000"
+      ],
+      "default": true
+    },
+    {
+      "site": "us-east-2",
+      "type": "aws_s3"
+    }
+  ],
+  "cdmi": {
+    "host": "localhost",
+    "port": 81,
+    "path": "/dewpoint",
+    "readonly": true
+  },
+  "bucketd": {
+    "bootstrap": [
+      "localhost:9000"
+    ]
+  },
+  "vaultd": {
+    "host": "localhost",
+    "port": 8500
+  },
+  "clusters": 10,
+  "log": {
+    "logLevel": "debug",
+    "dumpLevel": "error"
+  },
+  "healthChecks": {
+    "allowFrom": [
+      "127.0.0.1/8",
+      "::1"
+    ]
+  },
+  "metadataClient": {
+    "host": "localhost",
+    "port": 9990
+  },
+  "dataClient": {
+    "host": "localhost",
+    "port": 9991
+  },
+  "metadataDaemon": {
+    "bindAddress": "localhost",
+    "port": 9990
+  },
+  "dataDaemon": {
+    "bindAddress": "localhost",
+    "port": 9991
+  },
+  "recordLog": {
+    "enabled": false,
+    "recordLogName": "s3-recordlog"
+  },
+  "requests": {
+    "viaProxy": false,
+    "trustedProxyCIDRs": [],
+    "extractClientIPFromHeader": ""
+  },
+  "bucketNotificationDestinations": [
+    {
+      "resource": "target1",
+      "type": "dummy",
+      "host": "localhost:6000"
+    }
+  ]
+}

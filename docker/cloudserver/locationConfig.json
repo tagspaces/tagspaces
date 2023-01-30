@@ -1,0 +1,82 @@
+{
+  "us-east-1": {
+    "type": "file",
+    "legacyAwsBehavior": true,
+    "details": {}
+  },
+  "us-east-2": {
+    "type": "file",
+    "legacyAwsBehavior": false,
+    "details": {}
+  },
+  "us-west-1": {
+    "type": "file",
+    "legacyAwsBehavior": false,
+    "details": {}
+  },
+  "us-west-2": {
+    "type": "file",
+    "legacyAwsBehavior": false,
+    "details": {}
+  },
+  "ca-central-1": {
+    "type": "file",
+    "legacyAwsBehavior": false,
+    "details": {}
+  },
+  "cn-north-1": {
+    "type": "file",
+    "legacyAwsBehavior": false,
+    "details": {}
+  },
+  "ap-south-1": {
+    "type": "file",
+    "legacyAwsBehavior": false,
+    "details": {}
+  },
+  "ap-northeast-1": {
+    "type": "file",
+    "legacyAwsBehavior": false,
+    "details": {}
+  },
+  "ap-northeast-2": {
+    "type": "file",
+    "legacyAwsBehavior": false,
+    "details": {}
+  },
+  "ap-southeast-1": {
+    "type": "file",
+    "legacyAwsBehavior": false,
+    "details": {}
+  },
+  "ap-southeast-2": {
+    "type": "file",
+    "legacyAwsBehavior": false,
+    "details": {}
+  },
+  "eu-central-1": {
+    "type": "file",
+    "legacyAwsBehavior": false,
+    "details": {}
+  },
+  "eu-west-1": {
+    "type": "file",
+    "legacyAwsBehavior": false,
+    "details": {}
+  },
+  "eu-west-2": {
+    "type": "file",
+    "legacyAwsBehavior": false,
+    "details": {}
+  },
+  "EU": {
+    "type": "file",
+    "legacyAwsBehavior": false,
+    "details": {}
+  },
+  "sa-east-1": {
+    "type": "file",
+    "legacyAwsBehavior": false,
+    "details": {}
+  }
+}
