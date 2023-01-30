@@ -1142,15 +1142,15 @@ export const actions = {
     dirs
   }),
   clearUploadDialog: () => (
-    dispatch: (action) => void,
-    getState: () => any
+    dispatch: (action) => void
+    // getState: () => any
   ) => {
     // const currentLocation: Location = getState().locations.find(location => location.uuid === getCurrentLocationId(getState()))
     if (PlatformIO.haveObjectStoreSupport()) {
       // && currentLocation.type === locationType.TYPE_AMPLIFY) {
-      const { currentDirectoryPath } = getState().app;
       dispatch(actions.clearUploadDialogInt());
-      dispatch(actions.loadDirectoryContent(currentDirectoryPath, false));
+      // const { currentDirectoryPath } = getState().app;
+      // dispatch(actions.loadDirectoryContent(currentDirectoryPath, false));
     }
   },
   clearUploadDialogInt: () => ({

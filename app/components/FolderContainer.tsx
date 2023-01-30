@@ -766,7 +766,7 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
     prevProp.currentDirectoryPerspective &&
   /* this props is set before currentDirectoryEntries is loaded and will reload FolderContainer */
   /* nextProp.currentLocationPath === prevProp.currentLocationPath &&  */
-
+  JSON.stringify(nextProp.progress) === JSON.stringify(prevProp.progress) &&
   JSON.stringify(nextProp.directoryContent) ===
     JSON.stringify(prevProp.directoryContent) &&
   JSON.stringify(nextProp.openedFiles) ===
