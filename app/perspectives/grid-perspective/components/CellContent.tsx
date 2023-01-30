@@ -236,7 +236,7 @@ function CellContent(props: Props) {
         </div>
         <Typography
           className={classes.gridCellTitle}
-          data-tid={'fileSystemEntryName_' + fSystemEntry.name}
+          data-tid={'fsEntryName_' + fSystemEntry.name}
           variant="body1"
         >
           {entryTitle}
