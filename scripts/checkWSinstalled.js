@@ -78,7 +78,8 @@ if (platform === 'node') {
     !isInstalled(
       '@tagspaces/tagspaces-ws',
       packageJson.nodeDependencies['@tagspaces/tagspaces-ws']
-    )
+    ) ||
+    !isInstalled('sharp', packageJson.nodeDependencies['sharp'])
   ) {
     installCmd = 'npm run-script install-ext-node';
   }
