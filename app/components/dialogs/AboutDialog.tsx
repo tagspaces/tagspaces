@@ -36,6 +36,7 @@ import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Links from '-/content/links';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import useTheme from '@mui/styles/useTheme';
+import AppConfig from '-/AppConfig';
 
 interface Props {
   open: boolean;
@@ -103,6 +104,14 @@ function AboutDialog(props: Props) {
     } else {
       versionInfo = i18n.t('latestVersion', { productName });
     }
+  }
+
+  let privacyURL = Links.links.privacyURL;
+  if (AppConfig.isWeb) {
+    privacyURL = '';
+  }
+  if (window.ExtPrivacyURL) {
+    privacyURL = window.ExtPrivacyURL;
   }
 
   const theme = useTheme();
@@ -184,15 +193,17 @@ function AboutDialog(props: Props) {
           >
             Imprint
           </Button>
-          <Button
-            size="small"
-            color="primary"
-            onClick={() => {
-              props.openURLExternally(Links.links.privacyURL, true);
-            }}
-          >
-            Privacy Policy
-          </Button>
+          {privacyURL && (
+            <Button
+              size="small"
+              color="primary"
+              onClick={() => {
+                props.openURLExternally(privacyURL, true);
+              }}
+            >
+              Privacy Policy
+            </Button>
+          )}
           <Button
             size="small"
             color="primary"
