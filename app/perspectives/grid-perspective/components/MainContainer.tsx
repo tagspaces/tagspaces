@@ -181,7 +181,7 @@ function GridPerspective(props: Props) {
       : defaultSettings.orderBy
   );
   const sortedDirContent = useRef<Array<TS.FileSystemEntry>>(
-    sortByCriteria(props.directoryContent, sortBy.current, orderBy.current)
+    props.directoryContent
   );
   const layoutType = useRef<string>(
     settings && settings.layoutType
