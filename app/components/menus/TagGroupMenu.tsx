@@ -35,6 +35,7 @@ import { connect } from 'react-redux';
 import i18n from '-/services/i18n';
 import { getMaxSearchResults } from '-/reducers/settings';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
+import { actions as AppActions } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import InfoIcon from '-/components/InfoIcon';
 import { ProLabel } from '-/components/HelperComponents';
@@ -54,6 +55,7 @@ interface Props {
   collectTagsFromLocation: (tagGroup: TS.TagGroup) => void;
   handleCloseTagGroupMenu: () => void;
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
+  tagLibraryChanged: () => void;
   maxSearchResults: number;
 }
 
@@ -65,6 +67,7 @@ function TagGroupMenu(props: Props) {
       props.collectTagsFromLocation(props.selectedTagGroupEntry);
     }
     props.handleCloseTagGroupMenu();
+    props.tagLibraryChanged();
   }
 
   function moveTagGroupUp() {
@@ -183,7 +186,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      setSearchQuery: LocationIndexActions.setSearchQuery
+      setSearchQuery: LocationIndexActions.setSearchQuery,
+      tagLibraryChanged: AppActions.tagLibraryChanged
     },
     dispatch
   );
