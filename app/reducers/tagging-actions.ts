@@ -156,7 +156,8 @@ const actions = {
             created_date: new Date().getTime(),
             modified_date: new Date().getTime()
           };
-          // dispatch(TagLibraryActions.mergeTagGroup(tagGroup));
+          mergeTagGroup(tagGroup, getTagLibrary());
+          dispatch(AppActions.tagLibraryChanged());
         }
       }
       return Promise.all(promises).then(() => true);
@@ -541,7 +542,8 @@ const actions = {
           created_date: new Date().getTime(),
           modified_date: new Date().getTime()
         };
-        // dispatch(TagLibraryActions.mergeTagGroup(tagGroup));
+        mergeTagGroup(tagGroup, getTagLibrary());
+        dispatch(AppActions.tagLibraryChanged());
       }
     }
   },
