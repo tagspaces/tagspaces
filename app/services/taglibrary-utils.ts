@@ -462,9 +462,9 @@ export function addTag(
 export function mergeTagGroup(
   entry: TS.TagGroup,
   tagGroups: Array<TS.TagGroup>,
-  locations: Array<TS.Location>
+  locations?: Array<TS.Location>
 ) {
-  if (Pro && entry.locationId) {
+  if (Pro && entry.locationId && locations) {
     const location: TS.Location = locations.find(
       l => l.uuid === entry.locationId
     );

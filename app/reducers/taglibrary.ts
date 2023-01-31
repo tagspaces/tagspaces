@@ -525,6 +525,9 @@ export const actions = {
     type: types.ADD_TAGGROUP,
     entry
   }), */
+  /**
+   * @deprecated use /services/taglibrary-utils/mergeTagGroup instead
+   */
   mergeTagGroup: (entry: TS.TagGroup) => (
     dispatch: (actions: Object) => void,
     getState: () => any
