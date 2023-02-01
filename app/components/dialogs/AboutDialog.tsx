@@ -114,6 +114,14 @@ function AboutDialog(props: Props) {
     privacyURL = window.ExtPrivacyURL;
   }
 
+  let imprintURL = Links.links.imprintURL;
+  if (AppConfig.isWeb) {
+    imprintURL = '';
+  }
+  if (window.ExtImprintURL) {
+    imprintURL = window.ExtImprintURL;
+  }
+
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
@@ -184,15 +192,17 @@ function AboutDialog(props: Props) {
           for more details.
           <br />
           <br />
-          <Button
-            size="small"
-            color="primary"
-            onClick={() => {
-              props.openURLExternally(Links.links.imprintURL, true);
-            }}
-          >
-            Imprint
-          </Button>
+          {imprintURL && (
+            <Button
+              size="small"
+              color="primary"
+              onClick={() => {
+                props.openURLExternally(imprintURL, true);
+              }}
+            >
+              Imprint
+            </Button>
+          )}
           {privacyURL && (
             <Button
               size="small"
