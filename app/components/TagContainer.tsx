@@ -29,7 +29,7 @@ import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import { isGeoTag } from '-/utils/geo';
 import { isDateTimeTag, convertToDateTime, convertToDate } from '-/utils/dates';
 import { TS } from '-/tagspaces.namespace';
-// import { getAllTags, getTagColors } from '-/services/taglibrary-utils';
+import { getTagColors } from '-/services/taglibrary-utils';
 
 interface Props {
   tag: TS.Tag;
@@ -87,9 +87,20 @@ function TagContainer(props: Props) {
     isTagDate = !isTagGeo && isDateTimeTag(title);
   }
 
-  // const tagColors = getTagColors(getAllTags(), title);
-  const textColor = tag.textcolor || defaultTextColor; // || tagColors.textcolor
-  const backgroundColor = tag.color || defaultBackgroundColor; // || tagColors.color
+  let textColor: string;
+  let backgroundColor: string;
+  if (tag.color && tag.textcolor) {
+    textColor = tag.textcolor;
+    backgroundColor = tag.color;
+  } else {
+    const tagColors = getTagColors(
+      title,
+      defaultTextColor,
+      defaultBackgroundColor
+    );
+    textColor = tagColors.textcolor;
+    backgroundColor = tagColors.color;
+  }
 
   let tid = 'tagContainer_';
   if (title && title.length > 0) {
@@ -266,7 +277,6 @@ function TagContainer(props: Props) {
 
 function mapStateToProps(state) {
   return {
-    // allTags: getAllTags(state),
     defaultBackgroundColor: getTagColor(state),
     defaultTextColor: getTagTextColor(state)
     // selectedEntries: getSelectedEntries(state)
