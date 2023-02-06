@@ -725,5 +725,8 @@
   "fileChanged": "File changed",
   "actions": "Actions",
   "query": "Search Query Composition",
+  "qrCode": "QR Code",
+  "qrCodeValidity": "Validity QR Code",
+  "linkValidity": "Link validity duration time",
   "-": "-"
 }
