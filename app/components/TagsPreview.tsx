@@ -20,14 +20,18 @@ import React, { useRef } from 'react';
 import { connect } from 'react-redux';
 import Tooltip from '-/components/Tooltip';
 import { TS } from '-/tagspaces.namespace';
-// import { getAllTags, getTagColors } from '-/reducers/taglibrary';
+
 import {
   getCurrentLanguage,
   getTagColor,
   getTagTextColor
 } from '-/reducers/settings';
 import i18n from '-/services/i18n';
-import { getAllTags, getTagLibrary } from '-/services/taglibrary-utils';
+import {
+  getAllTags,
+  getTagColors,
+  getTagLibrary
+} from '-/services/taglibrary-utils';
 
 interface Props {
   tags: Array<TS.Tag>;
@@ -47,16 +51,34 @@ function TagsPreview(props: Props) {
     tagNames = tagNames + tag.title + ' ';
   });
 
-  // const tag1Colors = getTagColors(allTags.current, tags[0].title);
-  const firstTagColor = tags[0].color || defaultBackgroundColor;
-  const firstTagTextColor = tags[0].textcolor || defaultTextColor;
+  let firstTagColor: string;
+  let firstTagTextColor: string;
+  if (tags[0].color && tags[0].textcolor) {
+    firstTagColor = tags[0].textcolor;
+    firstTagTextColor = tags[0].color;
+  } else {
+    const tagColors = getTagColors(
+      tags[0].title,
+      defaultTextColor,
+      defaultBackgroundColor
+    );
+    firstTagColor = tagColors.textcolor;
+    firstTagTextColor = tagColors.color;
+  }
+
   let secondTagColor = defaultBackgroundColor;
   let moreThanOne = false;
   if (tags[1]) {
     moreThanOne = true;
-    // const tag2Colors = getTagColors(allTags.current, tags[1].title);
     if (tags[1].color) {
-      secondTagColor = tags[1].color; // || tag2Colors.color;
+      secondTagColor = tags[1].color;
+    } else {
+      const tag2Colors = getTagColors(
+        tags[1].title,
+        defaultTextColor,
+        defaultBackgroundColor
+      );
+      secondTagColor = tag2Colors.color;
     }
   }
   return (

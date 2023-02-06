@@ -788,17 +788,3 @@ export const getAllTags = (state: any) => {
     a.title > b.title ? 1 : a.title < b.title ? -1 : 0
   );
 };
-
-export const getTagColors = (allTags: Array<TS.Tag>, tagTitle: string) => {
-  const tagColors = {
-    textcolor: '',
-    color: ''
-  };
-  allTags.forEach((tag: TS.Tag) => {
-    if (tag.title === tagTitle) {
-      tagColors.textcolor = tag.textcolor;
-      tagColors.color = tag.color;
-    }
-  });
-  return tagColors;
-};
