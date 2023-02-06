@@ -1430,7 +1430,7 @@ function SearchAutocomplete(props: Props) {
           onClose={handleClose}*/
           filterOptions={(options: Array<SearchOptionType>, state: any) => {
             const filteredOptions = options.filter(option => {
-              return option.label.indexOf(state.inputValue) > -1;
+              return option.label.toLowerCase().indexOf(state.inputValue.toLowerCase()) > -1;
             });
             if (filteredOptions.length === 0 && !haveEmptyAction()) {
               isOpen.current = false;

@@ -557,7 +557,7 @@ export default (state: any = initialState, action: any) => {
       GlobalSearch.results = [];
       return {
         ...state,
-        searchResultsCount: -1,
+        // searchResultsCount: -1,
         searchMode: true,
         searchFilter: undefined,
         isLoading: false
