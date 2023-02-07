@@ -66,7 +66,8 @@ import {
   baseName,
   extractFileName,
   extractDirectoryName,
-  generateSharingLink
+  generateSharingLink,
+  getBackupFileLocation
 } from '@tagspaces/tagspaces-common/paths';
 import { ProTooltip } from '-/components/HelperComponents';
 import EntryProperties from '-/components/EntryProperties';
@@ -80,7 +81,8 @@ import {
   isDesktopMode,
   getKeyBindingObject,
   getMapTileServer,
-  getCurrentLanguage
+  getCurrentLanguage,
+  isAutoSaveEnabled
 } from '-/reducers/settings';
 import TaggingActions from '-/reducers/tagging-actions';
 import {
@@ -94,6 +96,7 @@ import { TS } from '-/tagspaces.namespace';
 import FileView from '-/components/FileView';
 import { Pro } from '-/pro';
 import { actions as LocationActions } from '-/reducers/locations';
+import { getMetadataID } from '-/utils/metaoperations';
 
 const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
 // const openedSplitSize = AppConfig.isElectron ? 560 : 360;
@@ -565,7 +568,19 @@ function EntryContainer(props: Props) {
   const saveFile = (textContent: string) => {
     return props
       .switchLocationType(openedFile.locationId)
-      .then(currentLocationId => {
+      .then(async currentLocationId => {
+        if (isAutoSaveEnabled) {
+          const id = await getMetadataID(openedFile.path); // todo synchronize and get id from openedFile.uuid
+          const targetPath = getBackupFileLocation(
+            openedFile.path,
+            id,
+            PlatformIO.getDirSeparator()
+          );
+          await PlatformIO.copyFilePromiseOverwrite(
+            openedFile.path,
+            targetPath
+          );
+        }
         // TODO check for timestamp on filesystem and ask to overwrite the changes there
         return PlatformIO.saveTextFilePromise(
           openedFile.path,

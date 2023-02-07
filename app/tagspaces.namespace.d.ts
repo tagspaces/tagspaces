@@ -130,7 +130,7 @@ export namespace TS {
   }
 
   interface FileSystemEntryMeta {
-    id?: string;
+    id: string;
     description?: string;
     isFile?: boolean;
     tags?: Array<TS.Tag>;

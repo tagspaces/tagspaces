@@ -385,6 +385,7 @@ export function findExtensionPathForId(extensionId: string): string {
 }
 
 export function findExtensionsForEntry(
+  uuid: string,
   supportedFileTypes: Array<any>,
   entryPath: string,
   isFile = true
@@ -397,6 +398,7 @@ export function findExtensionsForEntry(
     ? findExtensionPathForId('@tagspaces/extensions/text-viewer')
     : 'about:blank';
   const fileForOpening: OpenedEntry = {
+    uuid: uuid,
     path: entryPath,
     viewingExtensionPath,
     viewingExtensionId: '',

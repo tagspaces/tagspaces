@@ -159,6 +159,7 @@ export const NotificationTypes = {
 };
 
 export type OpenedEntry = {
+  uuid: string;
   path: string;
   url?: string;
   size: number;
@@ -2028,7 +2029,7 @@ export const actions = {
   },
   updateOpenedFile: (
     entryPath: string,
-    fsEntryMeta: any // FileSystemEntryMeta,
+    fsEntryMeta: any // TS.FileSystemEntryMeta,
     // isFile: boolean = true
   ) => (dispatch: (action) => void, getState: () => any): Promise<boolean> => {
     const { openedFiles } = getState().app;
@@ -2043,6 +2044,7 @@ export const actions = {
 
             if (!entryExist) {
               entryForOpening = findExtensionsForEntry(
+                fsEntryMeta.id,
                 supportedFileTypes,
                 entryPath,
                 entryProps.isFile
@@ -2142,6 +2144,7 @@ export const actions = {
     const { supportedFileTypes } = getState().settings;
     // TODO decide to copy all props from {...fsEntry} into openedEntry
     entryForOpening = findExtensionsForEntry(
+      fsEntry.uuid,
       supportedFileTypes,
       fsEntry.path,
       fsEntry.isFile

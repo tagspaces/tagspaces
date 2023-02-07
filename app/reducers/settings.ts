@@ -736,6 +736,8 @@ export const getDesktopMode = (state: any) => {
   }
   return window.ExtDisplayMode !== 'mobile';
 };
+export const isAutoSaveEnabled = (state: any) =>
+         state.settings.isAutoSaveEnabled;
 export const getWarningOpeningFilesExternally = (state: any) =>
   state.settings.warningOpeningFilesExternally;
 export const getCheckForUpdateOnStartup = (state: any) =>

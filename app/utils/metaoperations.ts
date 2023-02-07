@@ -1,4 +1,8 @@
-import { loadMetaDataPromise, saveMetaDataPromise } from '-/services/utils-io';
+import {
+  getUuid,
+  loadMetaDataPromise,
+  saveMetaDataPromise
+} from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 
 // eslint-disable-next-line import/prefer-default-export
@@ -34,11 +38,12 @@ export function savePerspective(
       })
       .catch(() => {
         const newFsEntryMeta: TS.FileSystemEntryMeta = {
+          id: getUuid(),
           appName: '',
           appVersion: '',
           description: '',
           lastUpdated: '',
-          tags: undefined,
+          tags: [],
           perspective
         };
         saveMetaDataPromise(path, newFsEntryMeta)
@@ -54,4 +59,31 @@ export function savePerspective(
           });
       });
   });
+}
+
+export function getMetadataID(path: string): Promise<string> {
+  return loadMetaDataPromise(path)
+    .then((fsEntryMeta: TS.FileSystemEntryMeta) => fsEntryMeta.id)
+    .catch(() => {
+      const newFsEntryMeta: TS.FileSystemEntryMeta = {
+        id: getUuid(),
+        appName: '',
+        appVersion: '',
+        description: '',
+        lastUpdated: '',
+        tags: []
+      };
+      return saveMetaDataPromise(path, newFsEntryMeta)
+        .then(() => newFsEntryMeta.id)
+        .catch(error => {
+          console.error(
+            'Error saveMetaDataPromise for ' +
+              path +
+              ' orphan id: ' +
+              newFsEntryMeta.id,
+            error
+          );
+          return newFsEntryMeta.id;
+        });
+    });
 }
