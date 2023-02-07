@@ -310,7 +310,7 @@ function GridPerspective(props: Props) {
       forceUpdate();
     }
   }, [
-    // props.directoryContent,
+    props.directoryContent, // open subdirs
     props.searchResultsCount,
     sortBy.current,
     orderBy.current
