@@ -18,18 +18,22 @@
 
 import React, { MutableRefObject } from 'react';
 import withStyles from '@mui/styles/withStyles';
+import { rgbToHex } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
 import i18n from '-/services/i18n';
 import { OpenedEntry } from '-/reducers/app';
 import useEventListener from '-/utils/useEventListener';
 import { connect } from 'react-redux';
 import { getCurrentLanguage } from '-/reducers/settings';
+import { getSearchQuery } from '-/reducers/location-index';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   openedFile: OpenedEntry;
   isFullscreen: boolean;
   fileViewer: MutableRefObject<HTMLIFrameElement>;
   fileViewerContainer: MutableRefObject<HTMLDivElement>;
+  searchQuery: TS.SearchQuery;
   toggleFullScreen: () => void;
   theme: any;
   currentTheme: string;
@@ -43,6 +47,7 @@ function FileView(props: Props) {
     isFullscreen,
     fileViewerContainer,
     toggleFullScreen,
+    searchQuery,
     currentTheme
   } = props; // .openedFiles[0];
 
@@ -66,16 +71,32 @@ function FileView(props: Props) {
     //   fileTitle = fileTitle.substr(0, maxCharactersTitleLength) + '...';
     // }
 
-    const primaryColor =
-      '&primecolor=' + encodeURIComponent(theme.palette.primary.main);
-    const textColor =
-      '&textcolor=' + encodeURIComponent(theme.palette.text.primary);
-    const backgroundColor =
-      '&bgndcolor=' + encodeURIComponent(theme.palette.background.default);
+    const textColor = theme.palette.text.primary;
+    const primaryColor = theme.palette.primary.main;
+    const bgndColor = theme.palette.background.default;
 
+    const extPrimaryColor =
+      '&primecolor=' +
+      encodeURIComponent(
+        primaryColor.startsWith('#') ? primaryColor : rgbToHex(primaryColor)
+      );
+    const extTextColor =
+      '&textcolor=' +
+      encodeURIComponent(
+        textColor.startsWith('#') ? textColor : rgbToHex(textColor)
+      );
+    const extBgndColor =
+      '&bgndcolor=' +
+      encodeURIComponent(
+        bgndColor.startsWith('#') ? bgndColor : rgbToHex(bgndColor)
+      );
+
+    const extQuery = searchQuery.textQuery
+      ? '&query=' + encodeURIComponent(searchQuery.textQuery)
+      : '';
     const locale = '&locale=' + i18n.language;
     const theming =
-      '&theme=' + currentTheme + primaryColor + textColor + backgroundColor;
+      '&theme=' + currentTheme + extPrimaryColor + extTextColor + extBgndColor;
 
     if (openedFile.editMode && openedFile.editingExtensionPath) {
       fileOpenerURL =
@@ -84,6 +105,7 @@ function FileView(props: Props) {
         encodeURIComponent(openedFile.url ? openedFile.url : openedFile.path) +
         locale +
         theming +
+        extQuery +
         '&edit=true' +
         (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
       // } else if (!currentEntry.isFile) { // TODO needed for loading folder's default html
@@ -95,6 +117,7 @@ function FileView(props: Props) {
         encodeURIComponent(openedFile.url ? openedFile.url : openedFile.path) +
         locale +
         theming +
+        extQuery +
         (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
     }
   } else {
@@ -160,7 +183,10 @@ const areEqual = (prevProp, nextProp) =>
     nextProp.openedFile.editMode === prevProp.openedFile.editMode); */
 
 function mapStateToProps(state) {
-  return { language: getCurrentLanguage(state) };
+  return {
+    language: getCurrentLanguage(state),
+    searchQuery: getSearchQuery(state)
+  };
 }
 
 export default connect(mapStateToProps)(

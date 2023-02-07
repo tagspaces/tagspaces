@@ -54,6 +54,8 @@ declare interface Window {
   ExtUseGenerateThumbnails?: boolean;
   ExtGeoTaggingFormat?: string;
   ExtDemoUser?: any;
+  ExtPrivacyURL?: string;
+  ExtImprintURL?: string;
   ExtCheckForUpdatesOnStartup?: boolean;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: any;
   plugins?: any; // needed for Cordova

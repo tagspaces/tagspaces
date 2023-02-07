@@ -114,7 +114,9 @@ function CellContent(props: Props) {
   } = props;
 
   // remove isNewFile on Cell click it will open file in editMode
-  const fSystemEntry: TS.FileSystemEntry = (({ isNewFile, ...o }) => o)(fsEntry)
+  const fSystemEntry: TS.FileSystemEntry = (({ isNewFile, ...o }) => o)(
+    fsEntry
+  );
 
   const entryTitle = extractTitle(
     fSystemEntry.name,
@@ -137,7 +139,10 @@ function CellContent(props: Props) {
     }
   }
 
-  const fileSystemEntryColor = findColorForEntry(fSystemEntry, supportedFileTypes);
+  const fileSystemEntryColor = findColorForEntry(
+    fSystemEntry,
+    supportedFileTypes
+  );
   const fileSystemEntryBgColor = findBackgroundColorForFolder(fSystemEntry);
 
   let fileNameTags = [];
@@ -231,7 +236,7 @@ function CellContent(props: Props) {
         </div>
         <Typography
           className={classes.gridCellTitle}
-          data-tid={'fileSystemEntryName_' + fSystemEntry.name}
+          data-tid={'fsEntryName_' + fSystemEntry.name}
           variant="body1"
         >
           {entryTitle}
@@ -249,7 +254,11 @@ function CellContent(props: Props) {
               noWrap={true}
               variant="button"
             >
-              {fSystemEntry.isFile ? fSystemEntry.extension : <FolderOpenIcon />}
+              {fSystemEntry.isFile ? (
+                fSystemEntry.extension
+              ) : (
+                <FolderOpenIcon />
+              )}
             </Typography>
           </Tooltip>
           {fSystemEntry.isFile && fSystemEntry.lmdt && (
@@ -263,7 +272,9 @@ function CellContent(props: Props) {
               >
                 <span>{formatDateTime(fSystemEntry.lmdt, false)}</span>
               </Tooltip>
-              <Tooltip title={fSystemEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
+              <Tooltip
+                title={fSystemEntry.size + ' ' + i18n.t('core:sizeInBytes')}
+              >
                 <span>{' | ' + formatFileSize(fSystemEntry.size)}</span>
               </Tooltip>
             </Typography>
@@ -290,7 +301,9 @@ function CellContent(props: Props) {
     const entrySizeFormatted =
       fSystemEntry.isFile && formatFileSize(fSystemEntry.size) + ' | ';
     const entryLMDTFormatted =
-      fSystemEntry.isFile && fSystemEntry.lmdt && formatDateTime(fSystemEntry.lmdt, true);
+      fSystemEntry.isFile &&
+      fSystemEntry.lmdt &&
+      formatDateTime(fSystemEntry.lmdt, true);
 
     return (
       <Grid
@@ -396,7 +409,9 @@ function CellContent(props: Props) {
               }}
               variant="body2"
             >
-              <Tooltip title={fSystemEntry.size + ' ' + i18n.t('core:sizeInBytes')}>
+              <Tooltip
+                title={fSystemEntry.size + ' ' + i18n.t('core:sizeInBytes')}
+              >
                 <span>{entrySizeFormatted}</span>
               </Tooltip>
               <Tooltip

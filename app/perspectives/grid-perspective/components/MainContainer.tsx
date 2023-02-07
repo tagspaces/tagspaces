@@ -181,7 +181,7 @@ function GridPerspective(props: Props) {
       : defaultSettings.orderBy
   );
   const sortedDirContent = useRef<Array<TS.FileSystemEntry>>(
-    sortByCriteria(props.directoryContent, sortBy.current, orderBy.current)
+    props.searchResultsCount < 0 ? props.directoryContent : GlobalSearch.results
   );
   const layoutType = useRef<string>(
     settings && settings.layoutType
@@ -282,14 +282,39 @@ function GridPerspective(props: Props) {
 
   useEffect(() => {
     if (!firstRender) {
-      sortedDirContent.current = sortByCriteria(
-        props.directoryContent,
-        sortBy.current,
-        orderBy.current
-      );
+      if (props.searchResultsCount < 0) {
+        // not in search mode
+        sortedDirContent.current = sortByCriteria(
+          props.directoryContent,
+          sortBy.current,
+          orderBy.current
+        );
+      } else {
+        if (sortBy.current === 'byName') {
+          // don't sort search results by Name it is sorted by relevance
+          sortedDirContent.current = GlobalSearch.results;
+        } else {
+          sortedDirContent.current = sortByCriteria(
+            props.searchFilter
+              ? GlobalSearch.results.filter(entry =>
+                  entry.name
+                    .toLowerCase()
+                    .includes(props.searchFilter.toLowerCase())
+                )
+              : GlobalSearch.results,
+            sortBy.current,
+            orderBy.current
+          );
+        }
+      }
       forceUpdate();
     }
-  }, [props.directoryContent, sortBy.current, orderBy.current]);
+  }, [
+    props.directoryContent, // open subdirs
+    props.searchResultsCount,
+    sortBy.current,
+    orderBy.current
+  ]);
 
   useEffect(() => {
     if (!firstRender) {
@@ -599,14 +624,10 @@ function GridPerspective(props: Props) {
         .filter(fsEntry => fsEntry.isFile)
         .map(fsentry => fsentry.path)
     : [];
-  const sortedDirectories =
-    props.searchResultsCount < 0 // not in search mode
-      ? sortedDirContent.current.filter(entry => !entry.isFile)
-      : [];
-  const sortedFiles =
-    props.searchResultsCount < 0 // not in search mode
-      ? sortedDirContent.current.filter(entry => entry.isFile)
-      : GlobalSearch.results;
+  const sortedDirectories = sortedDirContent.current.filter(
+    entry => !entry.isFile
+  );
+  const sortedFiles = sortedDirContent.current.filter(entry => entry.isFile);
   const locationPath = props.currentLocation
     ? PlatformIO.getLocationPath(props.currentLocation)
     : '';

@@ -130,8 +130,9 @@ function AddRemoveTagsDialog(props: Props) {
       keepMounted
       scroll="paper"
       PaperComponent={fullScreen ? Paper : PaperComponent}
+      aria-labelledby="draggable-dialog-title"
     >
-      <DialogTitle id="draggable-dialog-title">
+      <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
         {i18n.t('core:tagOperationTitle')}
         <DialogCloseButton onClose={onClose} />
       </DialogTitle>

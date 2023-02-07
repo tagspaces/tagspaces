@@ -33,7 +33,6 @@ import i18n from '-/services/i18n';
 import TransparentBackground from '../TransparentBackground';
 import { TS } from '-/tagspaces.namespace';
 import { getLocations } from '-/reducers/locations';
-import { getCurrentLocationId } from '-/reducers/app';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -45,7 +44,6 @@ interface Props {
   createTagGroup: (tagGroup: TS.TagGroup) => void;
   color: string;
   textcolor: string;
-  currentLocationId: string | null;
   locations: Array<TS.Location>;
   saveTagsInLocation: boolean;
 }
@@ -63,7 +61,7 @@ function CreateTagGroupDialog(props: Props) {
   const disableConfirmButton = useRef<boolean>(true);
   const color = useRef<string>(props.color);
   const textcolor = useRef<string>(props.textcolor);
-  const locationId = useRef<string>(props.currentLocationId);
+  const locationId = useRef<string>(defaultTagGroupLocation);
   // eslint-disable-next-line no-unused-vars
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
@@ -304,7 +302,6 @@ function CreateTagGroupDialog(props: Props) {
 function mapStateToProps(state) {
   return {
     locations: getLocations(state),
-    currentLocationId: getCurrentLocationId(state),
     saveTagsInLocation: state.settings.saveTagInLocation
   };
 }

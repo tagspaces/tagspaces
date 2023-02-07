@@ -92,6 +92,7 @@ interface Props {
   setLastBackgroundImageChange: (path: string, dt: number) => void;
   reorderTop?: () => void;
   reorderBottom?: () => void;
+  exitSearchMode: () => void;
 }
 
 function FileMenu(props: Props) {
@@ -250,6 +251,7 @@ function FileMenu(props: Props) {
         selectedFilePath,
         PlatformIO.getDirSeparator()
       );
+      props.exitSearchMode();
       props.loadDirectoryContent(parentFolder, false, true);
     }
   }
@@ -504,7 +506,8 @@ function FileMenu(props: Props) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      setLastBackgroundImageChange: AppActions.setLastBackgroundImageChange
+      setLastBackgroundImageChange: AppActions.setLastBackgroundImageChange,
+      exitSearchMode: AppActions.exitSearchMode
     },
     dispatch
   );

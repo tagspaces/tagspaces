@@ -17,7 +17,9 @@
  */
 
 import React, { useState } from 'react';
+import Draggable from 'react-draggable';
 import Button from '@mui/material/Button';
+import Paper, { PaperProps } from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -34,6 +36,7 @@ import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Links from '-/content/links';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import useTheme from '@mui/styles/useTheme';
+import AppConfig from '-/AppConfig';
 
 interface Props {
   open: boolean;
@@ -41,6 +44,17 @@ interface Props {
   toggleLicenseDialog: () => void;
   toggleThirdPartyLibsDialog: () => void;
   onClose: () => void;
+}
+
+function PaperComponent(props: PaperProps) {
+  return (
+    <Draggable
+      handle="#draggable-dialog-title"
+      cancel={'[class*="MuiDialogContent-root"]'}
+    >
+      <Paper {...props} />
+    </Draggable>
+  );
 }
 
 let buildID = versionMeta.commitId;
@@ -92,6 +106,22 @@ function AboutDialog(props: Props) {
     }
   }
 
+  let privacyURL = Links.links.privacyURL;
+  if (AppConfig.isWeb) {
+    privacyURL = '';
+  }
+  if (window.ExtPrivacyURL) {
+    privacyURL = window.ExtPrivacyURL;
+  }
+
+  let imprintURL = Links.links.imprintURL;
+  if (AppConfig.isWeb) {
+    imprintURL = '';
+  }
+  if (window.ExtImprintURL) {
+    imprintURL = window.ExtImprintURL;
+  }
+
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
@@ -101,8 +131,10 @@ function AboutDialog(props: Props) {
       fullScreen={fullScreen}
       keepMounted
       scroll="paper"
+      PaperComponent={fullScreen ? Paper : PaperComponent}
+      aria-labelledby="draggable-dialog-title"
     >
-      <DialogTitle>
+      <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
         {productName}
         <DialogCloseButton onClose={onClose} />
       </DialogTitle>
@@ -160,24 +192,28 @@ function AboutDialog(props: Props) {
           for more details.
           <br />
           <br />
-          <Button
-            size="small"
-            color="primary"
-            onClick={() => {
-              props.openURLExternally(Links.links.imprintURL, true);
-            }}
-          >
-            Imprint
-          </Button>
-          <Button
-            size="small"
-            color="primary"
-            onClick={() => {
-              props.openURLExternally(Links.links.privacyURL, true);
-            }}
-          >
-            Privacy Policy
-          </Button>
+          {imprintURL && (
+            <Button
+              size="small"
+              color="primary"
+              onClick={() => {
+                props.openURLExternally(imprintURL, true);
+              }}
+            >
+              Imprint
+            </Button>
+          )}
+          {privacyURL && (
+            <Button
+              size="small"
+              color="primary"
+              onClick={() => {
+                props.openURLExternally(privacyURL, true);
+              }}
+            >
+              Privacy Policy
+            </Button>
+          )}
           <Button
             size="small"
             color="primary"

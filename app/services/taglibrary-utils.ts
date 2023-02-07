@@ -462,9 +462,9 @@ export function addTag(
 export function mergeTagGroup(
   entry: TS.TagGroup,
   tagGroups: Array<TS.TagGroup>,
-  locations: Array<TS.Location>
+  locations?: Array<TS.Location>
 ) {
-  if (Pro && entry.locationId) {
+  if (Pro && entry.locationId && locations) {
     const location: TS.Location = locations.find(
       l => l.uuid === entry.locationId
     );
@@ -569,17 +569,23 @@ function updateTagGroup(
   return tagGroups;
 }
 
-/* Why this function exist?
-export const getTagColors = (allTags: Array<TS.Tag>, tagTitle: string) => {
+/**
+ * get tagColor used to show color of the filename tags
+ */
+export const getTagColors = (
+  tagTitle: string,
+  defaultTextColor: string,
+  defaultBackgroundColor: string
+) => {
   const tagColors = {
-    textcolor: '',
-    color: ''
+    textcolor: defaultTextColor,
+    color: defaultBackgroundColor
   };
-  allTags.forEach((tag: TS.Tag) => {
+  getAllTags().forEach((tag: TS.Tag) => {
     if (tag.title === tagTitle) {
       tagColors.textcolor = tag.textcolor;
       tagColors.color = tag.color;
     }
   });
   return tagColors;
-};*/
+};
