@@ -526,7 +526,7 @@
   "pageLimitHelp": "Set number of files per page",
   "unspecified": "Unspecified",
   "choosePerspective": "Set default perspective for this folder",
-  "sharingLink": "Link for internal sharing",
+  "sharingLink": "Generate sharing link",
   "folderLimit": "Max. folders to be displayed",
   "filesLimit": "Max. files to be displayed in a folder",
   "scrollFilesLimit": "Files to be loaded on scroll down",
@@ -726,7 +726,7 @@
   "actions": "Actions",
   "query": "Search Query Composition",
   "qrCode": "QR Code",
-  "qrCodeValidity": "Validity QR Code",
-  "linkValidity": "Link validity duration time",
+  "linkValidity": "Link validity time",
+  "linkValidityTooltip": "Time for which the link is valid",
   "-": "-"
 }

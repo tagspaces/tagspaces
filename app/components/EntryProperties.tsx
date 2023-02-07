@@ -1065,16 +1065,35 @@ function EntryProperties(props: Props) {
 
           {showLinkForDownloading && (
             <Grid item xs={4}>
-              <Button
+              <TextField
+                margin="dense"
+                name="downloadLink"
+                label={
+                  <>
+                    {i18n.t('Link for downloading')}
+                    <InfoIcon
+                      tooltip={i18n.t(
+                        'Link for time limited sharing on the Internet'
+                      )}
+                    />
+                  </>
+                }
                 fullWidth
-                style={{
-                  float: 'right',
-                  background: currentEntry.color
+                value={' '}
+                InputProps={{
+                  readOnly: true,
+                  endAdornment: (
+                    <InputAdornment position="start">
+                      <Button
+                        fullWidth
+                        onClick={() => setShowSharingLinkDialog(true)}
+                      >
+                        {i18n.t('core:sharingLink')}
+                      </Button>
+                    </InputAdornment>
+                  )
                 }}
-                onClick={() => setShowSharingLinkDialog(true)}
-              >
-                {i18n.t('core:sharingLink')}
-              </Button>
+              />
             </Grid>
           )}
         </Grid>
