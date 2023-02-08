@@ -54,7 +54,8 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import {
   ParentFolderIcon,
   NavigateToFolderIcon,
-  CancelIcon
+  CancelIcon,
+  HistoryIcon
 } from '-/components/CommonIcons';
 import { Split } from 'ts-react-splitter';
 import { buffer } from '@tagspaces/tagspaces-common/misc';
@@ -97,6 +98,7 @@ import FileView from '-/components/FileView';
 import { Pro } from '-/pro';
 import { actions as LocationActions } from '-/reducers/locations';
 import { getMetadataID } from '-/utils/metaoperations';
+import EntryHistory from '-/components/EntryHistory';
 
 const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
 // const openedSplitSize = AppConfig.isElectron ? 560 : 360;
@@ -225,6 +227,10 @@ function EntryContainer(props: Props) {
   const [isPropertiesPanelVisible, setPropertiesPanelVisible] = useState<
     boolean
   >(false);
+
+  const [isHistoryPanelVisible, setHistoryPanelVisible] = useState<boolean>(
+    false
+  );
   const [isFullscreen, setFullscreen] = useState<boolean>(false);
   // eslint-disable-next-line no-unused-vars
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
@@ -570,7 +576,7 @@ function EntryContainer(props: Props) {
       .switchLocationType(openedFile.locationId)
       .then(async currentLocationId => {
         if (isAutoSaveEnabled) {
-          const id = await getMetadataID(openedFile.path); // todo synchronize and get id from openedFile.uuid
+          const id = await getMetadataID(openedFile.path, openedFile.uuid);
           const targetPath = getBackupFileLocation(
             openedFile.path,
             id,
@@ -675,6 +681,11 @@ function EntryContainer(props: Props) {
     }
   };
 
+  const toggleHistory = () => {
+    setHistoryPanelVisible(true);
+    openPanel();
+  };
+
   const openNextFile = () => {
     props.openNextFile(openedFile.path);
   };
@@ -766,11 +777,26 @@ function EntryContainer(props: Props) {
         <Tooltip title={i18n.t('core:toggleProperties')}>
           <IconButton
             aria-label={i18n.t('core:toggleProperties')}
-            onClick={togglePanel}
+            onClick={() => {
+              togglePanel();
+              if (isHistoryPanelVisible) {
+                setHistoryPanelVisible(false);
+              }
+            }}
             data-tid="fileContainerToggleProperties"
             size="large"
           >
             <DetailsIcon color={isPropPanelVisible ? 'primary' : 'action'} />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title={i18n.t('core:editHistory')}>
+          <IconButton
+            aria-label={i18n.t('core:editHistory')}
+            onClick={toggleHistory}
+            data-tid="editHistoryTID"
+            size="large"
+          >
+            <HistoryIcon color={'action'} />
           </IconButton>
         </Tooltip>
         <Tooltip title={i18n.t('core:downloadFile')}>
@@ -1260,23 +1286,27 @@ function EntryContainer(props: Props) {
         }}
       >
         {openedFile.isFile ? renderFileToolbar(classes) : renderFolderToolbar()}
-        <EntryProperties
-          key={openedFile.path}
-          openedEntry={openedFile}
-          tagDelimiter={settings.tagDelimiter}
-          renameFile={renameFile}
-          renameDirectory={renameDirectory}
-          addTags={addTags}
-          removeTags={removeTags}
-          removeAllTags={removeAllTags}
-          updateOpenedFile={updateOpenedFile}
-          updateThumbnailUrl={updateThumbnailUrl}
-          showNotification={showNotification}
-          isReadOnlyMode={isReadOnlyMode}
-          currentDirectoryPath={currentDirectoryPath}
-          tileServer={tileServer}
-          sharingLink={sharingLink}
-        />
+        {isHistoryPanelVisible ? (
+          <EntryHistory openedFile={openedFile} />
+        ) : (
+          <EntryProperties
+            key={openedFile.path}
+            openedEntry={openedFile}
+            tagDelimiter={settings.tagDelimiter}
+            renameFile={renameFile}
+            renameDirectory={renameDirectory}
+            addTags={addTags}
+            removeTags={removeTags}
+            removeAllTags={removeAllTags}
+            updateOpenedFile={updateOpenedFile}
+            updateThumbnailUrl={updateThumbnailUrl}
+            showNotification={showNotification}
+            isReadOnlyMode={isReadOnlyMode}
+            currentDirectoryPath={currentDirectoryPath}
+            tileServer={tileServer}
+            sharingLink={sharingLink}
+          />
+        )}
       </div>
     );
 

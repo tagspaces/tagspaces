@@ -108,7 +108,7 @@ export function enhanceDirectoryContent(
       return true;
     }
 
-    const enhancedEntry = enhanceEntry(
+    const enhancedEntry: TS.FileSystemEntry = enhanceEntry(
       entry,
       AppConfig.tagDelimiter,
       PlatformIO.getDirSeparator()
@@ -1403,8 +1403,13 @@ export function setLocationType(location: TS.Location): Promise<boolean> {
   return Promise.resolve(false);
 }
 
+/**
+ * @deprecated use getUuid from @tagspaces/tagspaces-common/utils-io
+ * @param version
+ */
 export function getUuid(version = 4): string {
-  return version === 4 ? uuidv4() : uuidv1();
+  const uuid = version === 4 ? uuidv4() : uuidv1();
+  return uuid.replaceAll('-', '');
 }
 
 export function getCleanLocationPath(location: TS.Location): string {

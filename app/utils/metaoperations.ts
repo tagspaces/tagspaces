@@ -61,12 +61,16 @@ export function savePerspective(
   });
 }
 
-export function getMetadataID(path: string): Promise<string> {
+/**
+ * @param path
+ * @param id FileSystemEntry.uuid
+ */
+export function getMetadataID(path: string, id: string): Promise<string> {
   return loadMetaDataPromise(path)
     .then((fsEntryMeta: TS.FileSystemEntryMeta) => fsEntryMeta.id)
     .catch(() => {
       const newFsEntryMeta: TS.FileSystemEntryMeta = {
-        id: getUuid(),
+        id: id,
         appName: '',
         appVersion: '',
         description: '',
