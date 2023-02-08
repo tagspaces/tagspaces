@@ -103,6 +103,7 @@ import { bindActionCreators } from 'redux';
 import { actions as LocationActions } from '-/reducers/locations';
 import { actions as AppActions } from '-/reducers/app';
 import useFirstRender from '-/utils/useFirstRender';
+import SharingLinkDialog from '-/components/dialogs/SharingLinkDialog';
 
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
@@ -198,7 +199,6 @@ function EntryProperties(props: Props) {
   // const EntryProperties = React.memo((props: Props) => {
   const fileNameRef = useRef<HTMLInputElement>(null);
   const sharingLinkRef = useRef<HTMLInputElement>(null);
-  const objectStorageLinkRef = useRef<HTMLInputElement>(null);
   const fileDescriptionRef = useRef<MilkdownRef>(null);
   const disableConfirmButton = useRef<boolean>(true);
   const fileNameError = useRef<boolean>(false);
@@ -236,11 +236,6 @@ function EntryProperties(props: Props) {
     props.openedEntry,
     props.tagDelimiter
   );
-
-  const [signedLink, setSignedLink] = useStateWithCallbackLazy<string>('');
-  const [linkValidityDuration, setLinkValidityDuration] = useState<number>(
-    60 * 15
-  );
   const [editName, setEditName] = useState<string>(undefined);
   const editDescription = useRef<string>(undefined);
   const [isMoveCopyFilesDialogOpened, setMoveCopyFilesDialogOpened] = useState<
@@ -254,6 +249,9 @@ function EntryProperties(props: Props) {
     isFileThumbChooseDialogOpened,
     setFileThumbChooseDialogOpened
   ] = useState<boolean>(false);
+  const [showSharingLinkDialog, setShowSharingLinkDialog] = useState<boolean>(
+    false
+  );
   const [isBgndImgChooseDialogOpened, setBgndImgChooseDialogOpened] = useState<
     boolean
   >(false);
@@ -709,18 +707,6 @@ function EntryProperties(props: Props) {
 
   const isCloudLocation = currentEntry.url && currentEntry.url.length > 5;
 
-  function generateCopySharingURL() {
-    setSignedLink(
-      PlatformIO.getURLforPath(currentEntry.path, linkValidityDuration),
-      currentSignedLink => {
-        if (currentSignedLink && currentSignedLink.length > 1) {
-          const promise = navigator.clipboard.writeText(currentSignedLink);
-          props.showNotification(i18n.t('Link copied to clipboard'));
-        }
-      }
-    );
-  }
-
   const sanitizedDescription = currentEntry.description
     ? convertMarkDown(currentEntry.description, directoryPath)
     : i18n.t('core:addMarkdownDescription');
@@ -1020,8 +1006,15 @@ function EntryProperties(props: Props) {
           </FormControl>
         </Grid>
 
-        <Grid container item xs={12} spacing={1}>
-          <Grid item xs={showLinkForDownloading ? 6 : 12}>
+        <Grid
+          container
+          item
+          xs={12}
+          spacing={1}
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Grid item xs={showLinkForDownloading ? 8 : 12}>
             <TextField
               margin="dense"
               name="path"
@@ -1071,10 +1064,10 @@ function EntryProperties(props: Props) {
           </Grid>
 
           {showLinkForDownloading && (
-            <Grid item xs={6}>
+            <Grid item xs={4}>
               <TextField
                 margin="dense"
-                name="path"
+                name="downloadLink"
                 label={
                   <>
                     {i18n.t('Link for downloading')}
@@ -1085,43 +1078,18 @@ function EntryProperties(props: Props) {
                     />
                   </>
                 }
-                fullWidth={true}
-                value={signedLink}
-                inputRef={objectStorageLinkRef}
+                fullWidth
+                value={' '}
                 InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Tooltip title="Link validity duration time">
-                        <TextField
-                          select
-                          // style={{ minWidth: 80 }}
-                          variant="standard"
-                          value={linkValidityDuration}
-                          onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                            setLinkValidityDuration(
-                              parseInt(event.target.value, 10)
-                            );
-                          }}
-                        >
-                          <MenuItem value={60 * 15}>15 min</MenuItem>
-                          <MenuItem value={60 * 60}>1 hour</MenuItem>
-                          <MenuItem value={60 * 60 * 24}>1 day</MenuItem>
-                          <MenuItem value={60 * 60 * 24 * 3}>3 days</MenuItem>
-                          <MenuItem value={60 * 60 * 24 * 7}>1 week</MenuItem>
-                        </TextField>
-                      </Tooltip>
-                    </InputAdornment>
-                  ),
+                  readOnly: true,
                   endAdornment: (
-                    <InputAdornment position="end">
-                      <Tooltip title="Generate and copy the link to the clipboard">
-                        <Button
-                          color="primary"
-                          onClick={generateCopySharingURL}
-                        >
-                          {i18n.t('Generate & Copy')}
-                        </Button>
-                      </Tooltip>
+                    <InputAdornment position="start">
+                      <Button
+                        fullWidth
+                        onClick={() => setShowSharingLinkDialog(true)}
+                      >
+                        {i18n.t('core:sharingLink')}
+                      </Button>
                     </InputAdornment>
                   )
                 }}
@@ -1373,6 +1341,14 @@ function EntryProperties(props: Props) {
           selectedFile={currentEntry.path}
           thumbPath={getThumbPath()}
           setThumb={setThumb}
+        />
+      )}
+      {showSharingLinkDialog && (
+        <SharingLinkDialog
+          open={showSharingLinkDialog}
+          onClose={() => setShowSharingLinkDialog(false)}
+          path={currentEntry.path}
+          showNotification={props.showNotification}
         />
       )}
       {BgndImgChooserDialog && (
