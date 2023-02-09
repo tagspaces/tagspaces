@@ -214,6 +214,10 @@ export default {
     typeof window.ExtRevisionsEnabled === 'undefined'
       ? true
       : window.ExtRevisionsEnabled,
+  isAutoSaveEnabled:
+    typeof window.ExtAutoSaveEnabled === 'undefined'
+      ? false
+      : window.ExtAutoSaveEnabled,
   supportedLanguages: [
     {
       iso: 'en',

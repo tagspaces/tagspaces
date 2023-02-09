@@ -83,7 +83,8 @@ import {
   getKeyBindingObject,
   getMapTileServer,
   getCurrentLanguage,
-  isRevisionsEnabled
+  isRevisionsEnabled,
+  isAutoSaveEnabled
 } from '-/reducers/settings';
 import TaggingActions from '-/reducers/tagging-actions';
 import {
@@ -189,6 +190,9 @@ interface Props {
   tileServer: TS.MapTileServer;
   switchLocationType: (locationId: string) => Promise<string | null>;
   switchCurrentLocationType: (currentLocationId) => Promise<boolean>;
+  revisionsEnabled: boolean;
+  autoSaveEnabled: boolean;
+  setAutoSaveEnabled: (enabled: boolean) => void;
 }
 
 const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
@@ -223,7 +227,6 @@ function EntryContainer(props: Props) {
 
   // const [percent, setPercent] = React.useState<number | undefined>(undefined);
   const percent = useRef<number | undefined>(undefined);
-  const autoSave = useRef<boolean>(false);
   const timer = useRef(null);
   const openedFile = openedFiles[0];
   // const [currentEntry, setCurrentEntry] = useState<OpenedEntry>(openedFile);
@@ -333,10 +336,10 @@ function EntryContainer(props: Props) {
   });
 
   useEffect(() => {
-    if (autoSave.current) {
+    if (props.autoSaveEnabled) {
       if (fileChanged.current) {
         timer.current = setInterval(() => {
-          if (autoSave.current && fileChanged.current) {
+          if (props.autoSaveEnabled && fileChanged.current) {
             startSavingFile();
             console.debug('autosave');
           }
@@ -352,7 +355,7 @@ function EntryContainer(props: Props) {
         clearInterval(timer.current);
       }
     };
-  }, [autoSave.current, fileChanged.current]);
+  }, [props.autoSaveEnabled, fileChanged.current]);
 
   useEffect(() => {
     if (
@@ -604,7 +607,7 @@ function EntryContainer(props: Props) {
     return props
       .switchLocationType(openedFile.locationId)
       .then(async currentLocationId => {
-        if (Pro && isRevisionsEnabled) {
+        if (Pro && props.revisionsEnabled) {
           const id = await Pro.MetaOperations.getMetadataID(
             openedFile.path,
             openedFile.uuid
@@ -803,6 +806,10 @@ function EntryContainer(props: Props) {
     );
   };
 
+  const isEditable = AppConfig.editableFiles.some(ext =>
+    openedFile.path.endsWith(ext)
+  );
+
   const renderFileToolbar = classes => (
     <div className={classes.toolbar2}>
       <div className={classes.flexLeft}>
@@ -827,7 +834,7 @@ function EntryContainer(props: Props) {
             />
           </IconButton>
         </Tooltip>
-        {Pro && (
+        {Pro && isEditable && props.revisionsEnabled && (
           <Tooltip title={i18n.t('core:editHistory')}>
             <IconButton
               aria-label={i18n.t('core:editHistory')}
@@ -1253,14 +1260,19 @@ function EntryContainer(props: Props) {
                   alignItems: 'center'
                 }}
               >
-                <FormControlLabel
-                  control={<Checkbox defaultChecked={autoSave.current} />}
-                  label={i18n.t('autosave')}
-                  disabled={!Pro}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    autoSave.current = event.target.checked;
-                  }}
-                />
+                {isEditable && props.revisionsEnabled && (
+                  <FormControlLabel
+                    control={
+                      <Checkbox defaultChecked={props.autoSaveEnabled} />
+                    }
+                    label={i18n.t('autosave')}
+                    disabled={!Pro}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      props.setAutoSaveEnabled(event.target.checked);
+                    }}
+                  />
+                )}
+
                 {editingSupported && openedFile.editMode && (
                   <ButtonGroup>
                     <Tooltip title={i18n.t('core:cancelEditing')}>
@@ -1514,6 +1526,8 @@ function mapStateToProps(state) {
     keyBindings: getKeyBindingObject(state),
     isDesktopMode: isDesktopMode(state),
     tileServer: getMapTileServer(state),
+    revisionsEnabled: isRevisionsEnabled(state),
+    autoSaveEnabled: isAutoSaveEnabled(state),
     language: getCurrentLanguage(state)
   };
 }
@@ -1522,6 +1536,7 @@ function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
       setEntryPropertiesSplitSize: SettingsActions.setEntryPropertiesSplitSize,
+      setAutoSaveEnabled: SettingsActions.setAutoSaveEnabled,
       closeAllFiles: AppActions.closeAllFiles,
       renameFile: AppActions.renameFile,
       renameDirectory: AppActions.renameDirectory,

@@ -56,6 +56,8 @@ export const types = {
   SET_USETRASHCAN: 'SETTINGS/SET_USETRASHCAN',
   SET_PERSISTTAGSINSIDECARFILE: 'SETTINGS/SET_PERSISTTAGSINSIDECARFILE',
   SET_ADDTAGSTOLIBRARY: 'SETTINGS/SET_ADDTAGSTOLIBRARY',
+  SET_AUTOSAVE_ENABLED: 'SETTINGS/SET_AUTOSAVE_ENABLED',
+  SET_REVISIONS_ENABLED: 'SETTINGS/SET_REVISIONS_ENABLED',
   SET_USEGENERATETHUMBNAILS: 'SETTINGS/SET_USEGENERATETHUMBNAILS',
   SET_USETEXTEXTRACTION: 'SETTINGS/SET_USETEXTEXTRACTION',
   SET_TAGCOLOR: 'SETTINGS/SET_TAGCOLOR',
@@ -213,6 +215,12 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_ADDTAGSTOLIBRARY: {
       return { ...state, addTagsToLibrary: action.addTagsToLibrary };
+    }
+    case types.SET_AUTOSAVE_ENABLED: {
+      return { ...state, isAutoSaveEnabled: action.enabled };
+    }
+    case types.SET_REVISIONS_ENABLED: {
+      return { ...state, isRevisionsEnabled: action.enabled };
     }
     case types.SET_USEGENERATETHUMBNAILS: {
       return { ...state, useGenerateThumbnails: action.useGenerateThumbnails };
@@ -549,6 +557,14 @@ export const actions = {
     type: types.SET_ADDTAGSTOLIBRARY,
     addTagsToLibrary
   }),
+  setAutoSaveEnabled: (enabled: boolean) => ({
+    type: types.SET_AUTOSAVE_ENABLED,
+    enabled
+  }),
+  setRevisionsEnabled: (enabled: boolean) => ({
+    type: types.SET_REVISIONS_ENABLED,
+    enabled
+  }),
   setUseGenerateThumbnails: (useGenerateThumbnails: boolean) => ({
     type: types.SET_USEGENERATETHUMBNAILS,
     useGenerateThumbnails
@@ -737,7 +753,9 @@ export const getDesktopMode = (state: any) => {
   return window.ExtDisplayMode !== 'mobile';
 };
 export const isRevisionsEnabled = (state: any) =>
-         state.settings.isRevisionsEnabled;
+  state.settings.isRevisionsEnabled;
+export const isAutoSaveEnabled = (state: any) =>
+  state.settings.isAutoSaveEnabled;
 export const getWarningOpeningFilesExternally = (state: any) =>
   state.settings.warningOpeningFilesExternally;
 export const getCheckForUpdateOnStartup = (state: any) =>

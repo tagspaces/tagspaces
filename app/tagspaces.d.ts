@@ -58,6 +58,7 @@ declare interface Window {
   ExtImprintURL?: string;
   ExtCheckForUpdatesOnStartup?: boolean;
   ExtRevisionsEnabled?: boolean;
+  ExtAutoSaveEnabled?: boolean;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: any;
   plugins?: any; // needed for Cordova
   resolveLocalFileSystemURL?: any; // needed for Cordova
