@@ -139,7 +139,7 @@ export namespace TS {
     perspective?: string;
     appName: string;
     appVersion: string;
-    lastUpdated: string;
+    lastUpdated: number;
     customOrder?: CustomOrder;
     perspectiveSettings?: PerspectiveSettings;
   }

@@ -210,10 +210,10 @@ export default {
   fileOpenHistory: false,
   folderOpenHistory: false,
   fileEditHistory: false,
-  isAutoSaveEnabled:
-    typeof window.ExtAutoSaveEnabled === 'undefined'
+  isRevisionsEnabled:
+    typeof window.ExtRevisionsEnabled === 'undefined'
       ? true
-      : window.ExtAutoSaveEnabled,
+      : window.ExtRevisionsEnabled,
   supportedLanguages: [
     {
       iso: 'en',

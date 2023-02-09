@@ -1,5 +1,8 @@
-import { loadMetaDataPromise, saveMetaDataPromise } from '-/services/utils-io';
-import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import {
+  loadMetaDataPromise,
+  mergeFsEntryMeta,
+  saveMetaDataPromise
+} from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 
 // eslint-disable-next-line import/prefer-default-export
@@ -34,15 +37,9 @@ export function savePerspective(
         return true;
       })
       .catch(() => {
-        const newFsEntryMeta: TS.FileSystemEntryMeta = {
-          id: getUuid(),
-          appName: '',
-          appVersion: '',
-          description: '',
-          lastUpdated: '',
-          tags: [],
+        const newFsEntryMeta: TS.FileSystemEntryMeta = mergeFsEntryMeta({
           perspective
-        };
+        });
         saveMetaDataPromise(path, newFsEntryMeta)
           .then(() => {
             resolve(newFsEntryMeta);
@@ -56,35 +53,4 @@ export function savePerspective(
           });
       });
   });
-}
-
-/**
- * @param path
- * @param id FileSystemEntry.uuid
- */
-export function getMetadataID(path: string, id: string): Promise<string> {
-  return loadMetaDataPromise(path)
-    .then((fsEntryMeta: TS.FileSystemEntryMeta) => fsEntryMeta.id)
-    .catch(() => {
-      const newFsEntryMeta: TS.FileSystemEntryMeta = {
-        id: id,
-        appName: '',
-        appVersion: '',
-        description: '',
-        lastUpdated: '',
-        tags: []
-      };
-      return saveMetaDataPromise(path, newFsEntryMeta)
-        .then(() => newFsEntryMeta.id)
-        .catch(error => {
-          console.error(
-            'Error saveMetaDataPromise for ' +
-              path +
-              ' orphan id: ' +
-              newFsEntryMeta.id,
-            error
-          );
-          return newFsEntryMeta.id;
-        });
-    });
 }

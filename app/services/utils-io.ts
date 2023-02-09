@@ -1076,10 +1076,7 @@ export async function saveMetaDataPromise(
         PlatformIO.getDirSeparator()
       );
     }
-    cleanedMetaData.appName = versionMeta.name;
-    cleanedMetaData.appVersion = versionMeta.version;
-    cleanedMetaData.lastUpdated = new Date().toJSON();
-    const content = JSON.stringify(cleanedMetaData);
+    const content = JSON.stringify(mergeFsEntryMeta(cleanedMetaData));
     return PlatformIO.saveTextFilePromise(metaFilePath, content, true);
   }
   return Promise.reject(new Error('file not found' + path));
@@ -1422,4 +1419,16 @@ export function getRelativeEntryPath(
   let relEntryPath = entryPathCleaned.replace(currentLocationPath, '');
   relEntryPath = cleanFrontDirSeparator(relEntryPath);
   return relEntryPath;
+}
+
+export function mergeFsEntryMeta(props: any = {}): TS.FileSystemEntryMeta {
+  return {
+    id: props.id || getUuid(),
+    appName: versionMeta.name,
+    appVersion: versionMeta.version,
+    description: '',
+    lastUpdated: new Date().getTime(),
+    tags: [],
+    ...props
+  };
 }

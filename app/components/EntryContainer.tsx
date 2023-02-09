@@ -83,7 +83,7 @@ import {
   getKeyBindingObject,
   getMapTileServer,
   getCurrentLanguage,
-  isAutoSaveEnabled
+  isRevisionsEnabled
 } from '-/reducers/settings';
 import TaggingActions from '-/reducers/tagging-actions';
 import {
@@ -97,8 +97,10 @@ import { TS } from '-/tagspaces.namespace';
 import FileView from '-/components/FileView';
 import { Pro } from '-/pro';
 import { actions as LocationActions } from '-/reducers/locations';
-import { getMetadataID } from '-/utils/metaoperations';
-import EntryHistory from '-/components/EntryHistory';
+import Revisions from '-/components/Revisions';
+import SelectedIcon from '@mui/icons-material/CheckBox';
+import UnSelectedIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import { Checkbox, FormControlLabel } from '@mui/material';
 
 const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
 // const openedSplitSize = AppConfig.isElectron ? 560 : 360;
@@ -221,6 +223,8 @@ function EntryContainer(props: Props) {
 
   // const [percent, setPercent] = React.useState<number | undefined>(undefined);
   const percent = useRef<number | undefined>(undefined);
+  const autoSave = useRef<boolean>(false);
+  const timer = useRef(null);
   const openedFile = openedFiles[0];
   // const [currentEntry, setCurrentEntry] = useState<OpenedEntry>(openedFile);
 
@@ -228,7 +232,7 @@ function EntryContainer(props: Props) {
     boolean
   >(false);
 
-  const [isHistoryPanelVisible, setHistoryPanelVisible] = useState<boolean>(
+  const [isRevisionPanelVisible, setRevisionPanelVisible] = useState<boolean>(
     false
   );
   const [isFullscreen, setFullscreen] = useState<boolean>(false);
@@ -327,6 +331,28 @@ function EntryContainer(props: Props) {
       };
     }
   });
+
+  useEffect(() => {
+    if (autoSave.current) {
+      if (fileChanged.current) {
+        timer.current = setInterval(() => {
+          if (autoSave.current && fileChanged.current) {
+            startSavingFile();
+            console.debug('autosave');
+          }
+        }, 40000);
+      } else if (timer.current) {
+        clearInterval(timer.current);
+      }
+    } else if (timer.current) {
+      clearInterval(timer.current);
+    }
+    return () => {
+      if (timer.current) {
+        clearInterval(timer.current);
+      }
+    };
+  }, [autoSave.current, fileChanged.current]);
 
   useEffect(() => {
     if (
@@ -554,16 +580,19 @@ function EntryContainer(props: Props) {
       try {
         // @ts-ignore
         const textContent = fileViewer.current.contentWindow.getContent();
-        setSavingInProgress(true);
-        saveFile(textContent).then(() => {
-          fileChanged.current = false;
-          showNotification(
-            i18n.t('core:fileSavedSuccessfully'),
-            NotificationTypes.default
-          );
-          // change state will not render DOT before file name too
-          setSavingInProgress(false);
-        });
+        //check if file is changed
+        if (fileChanged.current) {
+          setSavingInProgress(true);
+          saveFile(textContent).then(() => {
+            fileChanged.current = false;
+            showNotification(
+              i18n.t('core:fileSavedSuccessfully'),
+              NotificationTypes.default
+            );
+            // change state will not render DOT before file name too
+            setSavingInProgress(false);
+          });
+        }
       } catch (e) {
         setSavingInProgress(false);
         console.debug('function getContent not exist for video file:', e);
@@ -575,8 +604,11 @@ function EntryContainer(props: Props) {
     return props
       .switchLocationType(openedFile.locationId)
       .then(async currentLocationId => {
-        if (isAutoSaveEnabled) {
-          const id = await getMetadataID(openedFile.path, openedFile.uuid);
+        if (Pro && isRevisionsEnabled) {
+          const id = await Pro.MetaOperations.getMetadataID(
+            openedFile.path,
+            openedFile.uuid
+          );
           const targetPath = getBackupFileLocation(
             openedFile.path,
             id,
@@ -674,15 +706,15 @@ function EntryContainer(props: Props) {
   };
 
   const togglePanel = () => {
-    if (isPropPanelVisible) {
+    if (isPropPanelVisible && !isRevisionPanelVisible) {
       closePanel();
     } else {
       openPanel();
     }
   };
 
-  const toggleHistory = () => {
-    setHistoryPanelVisible(true);
+  const toggleRevisions = () => {
+    setRevisionPanelVisible(!isRevisionPanelVisible);
     openPanel();
   };
 
@@ -779,26 +811,36 @@ function EntryContainer(props: Props) {
             aria-label={i18n.t('core:toggleProperties')}
             onClick={() => {
               togglePanel();
-              if (isHistoryPanelVisible) {
-                setHistoryPanelVisible(false);
+              if (isRevisionPanelVisible) {
+                setRevisionPanelVisible(false);
               }
             }}
             data-tid="fileContainerToggleProperties"
             size="large"
           >
-            <DetailsIcon color={isPropPanelVisible ? 'primary' : 'action'} />
+            <DetailsIcon
+              color={
+                isPropPanelVisible && !isRevisionPanelVisible
+                  ? 'primary'
+                  : 'action'
+              }
+            />
           </IconButton>
         </Tooltip>
-        <Tooltip title={i18n.t('core:editHistory')}>
-          <IconButton
-            aria-label={i18n.t('core:editHistory')}
-            onClick={toggleHistory}
-            data-tid="editHistoryTID"
-            size="large"
-          >
-            <HistoryIcon color={'action'} />
-          </IconButton>
-        </Tooltip>
+        {Pro && (
+          <Tooltip title={i18n.t('core:editHistory')}>
+            <IconButton
+              aria-label={i18n.t('core:editHistory')}
+              onClick={toggleRevisions}
+              data-tid="editHistoryTID"
+              size="large"
+            >
+              <HistoryIcon
+                color={isRevisionPanelVisible ? 'primary' : 'action'}
+              />
+            </IconButton>
+          </Tooltip>
+        )}
         <Tooltip title={i18n.t('core:downloadFile')}>
           <IconButton
             aria-label={i18n.t('core:downloadFile')}
@@ -1211,6 +1253,14 @@ function EntryContainer(props: Props) {
                   alignItems: 'center'
                 }}
               >
+                <FormControlLabel
+                  control={<Checkbox defaultChecked={autoSave.current} />}
+                  label={i18n.t('autosave')}
+                  disabled={!Pro}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    autoSave.current = event.target.checked;
+                  }}
+                />
                 {editingSupported && openedFile.editMode && (
                   <ButtonGroup>
                     <Tooltip title={i18n.t('core:cancelEditing')}>
@@ -1286,8 +1336,8 @@ function EntryContainer(props: Props) {
         }}
       >
         {openedFile.isFile ? renderFileToolbar(classes) : renderFolderToolbar()}
-        {isHistoryPanelVisible ? (
-          <EntryHistory openedFile={openedFile} />
+        {isRevisionPanelVisible ? (
+          <Revisions />
         ) : (
           <EntryProperties
             key={openedFile.path}

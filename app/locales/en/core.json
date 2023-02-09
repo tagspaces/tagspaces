@@ -725,5 +725,7 @@
   "fileChanged": "File changed",
   "actions": "Actions",
   "query": "Search Query Composition",
+  "revisions": "Revisions",
+  "autosave": "Auto save",
   "-": "-"
 }
