@@ -19,7 +19,7 @@
 import AppConfig from '-/AppConfig';
 import keyBindings from '-/reducers/keybindings-default';
 import { PerspectiveIDs } from '-/perspectives';
-import { getUuid } from '-/services/utils-io';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 
 let desktopMode = !AppConfig.isMobile;
 if (window.ExtDisplayMode && window.ExtDisplayMode === 'mobile') {

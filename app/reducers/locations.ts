@@ -24,7 +24,7 @@ import { actions as AppActions } from '-/reducers/app';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
-import { getUuid } from '-/services/utils-io';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 
 export const types = {
   ADD_LOCATION: 'APP/ADD_LOCATION',

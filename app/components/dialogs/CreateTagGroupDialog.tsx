@@ -36,7 +36,7 @@ import { getLocations } from '-/reducers/locations';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { getUuid } from '-/services/utils-io';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 
 interface Props {
   open: boolean;

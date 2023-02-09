@@ -53,10 +53,10 @@ import {
   loadJSONFile,
   merge,
   setLocationType,
-  getUuid,
   getRelativeEntryPath,
   getCleanLocationPath
 } from '-/services/utils-io';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import { actions as LocationIndexActions } from './location-index';

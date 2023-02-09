@@ -74,7 +74,7 @@ import WebdavForm from '-/components/dialogs/WebdavForm';
 import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { loadLocationDataPromise } from '-/services/utils-io';
-import { getUuid } from '-/services/utils-io';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 
 const styles: any = theme => ({
   formControl: {

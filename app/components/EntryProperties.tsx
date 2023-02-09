@@ -71,9 +71,9 @@ import {
   convertMarkDown,
   fileNameValidation,
   dirNameValidation,
-  normalizeUrl,
-  getUuid
+  normalizeUrl
 } from '-/services/utils-io';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { parseGeoLocation } from '-/utils/geo';
 import { Pro } from '../pro';
 import PlatformIO from '../services/platform-facade';

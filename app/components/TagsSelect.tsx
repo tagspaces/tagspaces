@@ -25,7 +25,7 @@ import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import EntryTagMenu from '-/components/menus/EntryTagMenu';
 import { TS } from '-/tagspaces.namespace';
 import TagContainer from '-/components/TagContainer';
-import { getUuid } from '-/services/utils-io';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { getAllTags } from '-/services/taglibrary-utils';
 import { Box } from '@mui/material';
 
