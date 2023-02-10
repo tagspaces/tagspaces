@@ -354,21 +354,27 @@ export default class PlatformFacade {
   ): Promise<any> => platformGetLocalFileContentPromise(filePath, type);
 
   static saveFilePromise = (
-    filePath: string,
+    param: any,
     content: any,
     overwrite: boolean
   ): Promise<any> => {
-    PlatformFacade.ignoreByWatcher(filePath);
+    PlatformFacade.ignoreByWatcher(param.path);
 
-    return platformSaveFilePromise(filePath, content, overwrite).then(
+    return platformSaveFilePromise(param, content, overwrite).then(
       result => {
-        PlatformFacade.deignoreByWatcher(filePath);
+        PlatformFacade.deignoreByWatcher(param.path);
         return result;
       }
     );
   };
 
-  static saveTextFilePlatform = (
+  /**
+   * @deprecated use saveTextFilePromise instead
+   * @param param
+   * @param content
+   * @param overwrite
+   */
+  /*static saveTextFilePlatform = (
     param: any,
     content: string,
     overwrite: boolean
@@ -376,32 +382,32 @@ export default class PlatformFacade {
     PlatformFacade.ignoreByWatcher(param.path);
 
     return PlatformFacade.saveTextFilePromise(
-      param.path,
+      param,
       content,
       overwrite
     ).then(result => {
       PlatformFacade.deignoreByWatcher(param.path);
       return result;
     });
-  };
+  };*/
 
   static saveTextFilePromise = (
-    filePath: string,
+    param: any,
     content: string,
     overwrite: boolean
   ): Promise<any> => {
-    PlatformFacade.ignoreByWatcher(filePath);
+    PlatformFacade.ignoreByWatcher(param.path);
 
-    return platformSaveTextFilePromise(filePath, content, overwrite).then(
+    return platformSaveTextFilePromise(param, content, overwrite).then(
       result => {
-        PlatformFacade.deignoreByWatcher(filePath);
+        PlatformFacade.deignoreByWatcher(param.path);
         return result;
       }
     );
   };
 
   static saveBinaryFilePromise = (
-    filePath: string,
+    param: any,
     content: any,
     overwrite: boolean,
     onUploadProgress?: (
@@ -409,15 +415,15 @@ export default class PlatformFacade {
       response: any // AWS.Response<AWS.S3.PutObjectOutput, AWS.AWSError>
     ) => void
   ): Promise<TS.FileSystemEntry> => {
-    PlatformFacade.ignoreByWatcher(filePath);
+    PlatformFacade.ignoreByWatcher(param.path);
 
     return platformSaveBinaryFilePromise(
-      filePath,
+      param,
       content,
       overwrite,
       onUploadProgress
     ).then(succeeded => {
-      PlatformFacade.deignoreByWatcher(filePath);
+      PlatformFacade.deignoreByWatcher(param.path);
       return succeeded;
     });
   };

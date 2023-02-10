@@ -159,7 +159,7 @@
     "@mui/styles": "5.10.15",
     "@mui/x-date-pickers": "^5.0.8",
     "@tagspaces/tagspaces-md": "2.1.6",
-    "@tagspaces/tagspaces-platforms": "2.1.15",
+    "@tagspaces/tagspaces-platforms": "2.1.16",
     "aws-amplify": "^4.3.8",
     "aws-sdk": "^2.1036.0",
     "babel-polyfill": "^6.26.0",

@@ -522,7 +522,7 @@ async function persistIndex(param: string | any, directoryIndex: any) {
   }
   const folderIndexPath =
     metaDirectory + PlatformIO.getDirSeparator() + AppConfig.folderIndexFile; // getMetaIndexFilePath(directoryPath);
-  return PlatformIO.saveTextFilePlatform(
+  return PlatformIO.saveTextFilePromise(
     { ...param, path: folderIndexPath },
     JSON.stringify(directoryIndex), // relativeIndex),
     true
@@ -1025,7 +1025,11 @@ export async function saveLocationDataPromise(
       appVersion: versionMeta.version,
       lastUpdated: new Date().toJSON()
     });
-    return PlatformIO.saveTextFilePromise(metaFilePath, content, true);
+    return PlatformIO.saveTextFilePromise(
+      { path: metaFilePath },
+      content,
+      true
+    );
   }
   return Promise.reject(new Error('file not found' + path));
 }
@@ -1077,7 +1081,11 @@ export async function saveMetaDataPromise(
       );
     }
     const content = JSON.stringify(mergeFsEntryMeta(cleanedMetaData));
-    return PlatformIO.saveTextFilePromise(metaFilePath, content, true);
+    return PlatformIO.saveTextFilePromise(
+      { path: metaFilePath },
+      content,
+      true
+    );
   }
   return Promise.reject(new Error('file not found' + path));
 }
@@ -1123,7 +1131,11 @@ export function setFolderBackgroundPromise(
     .then(base64Image => {
       if (base64Image) {
         const data = base64ToArrayBuffer(base64Image.split(',').pop());
-        return PlatformIO.saveBinaryFilePromise(folderBgndPath, data, true)
+        return PlatformIO.saveBinaryFilePromise(
+          { path: folderBgndPath },
+          data,
+          true
+        )
           .then(() => {
             // props.setLastBackgroundImageChange(new Date().getTime());
             return directoryPath;

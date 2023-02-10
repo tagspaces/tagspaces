@@ -30,11 +30,11 @@ import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   openedFile: OpenedEntry;
-  isFullscreen: boolean;
+  isFullscreen?: boolean;
   fileViewer: MutableRefObject<HTMLIFrameElement>;
   fileViewerContainer: MutableRefObject<HTMLDivElement>;
   searchQuery: TS.SearchQuery;
-  toggleFullScreen: () => void;
+  toggleFullScreen?: () => void;
   theme: any;
   currentTheme: string;
 }

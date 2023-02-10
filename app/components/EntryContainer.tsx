@@ -54,9 +54,9 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import {
   ParentFolderIcon,
   NavigateToFolderIcon,
-  CancelIcon,
-  HistoryIcon
+  CancelIcon
 } from '-/components/CommonIcons';
+import HistoryIcon from '@mui/icons-material/History';
 import { Split } from 'ts-react-splitter';
 import { buffer } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
@@ -102,6 +102,7 @@ import Revisions from '-/components/Revisions';
 import SelectedIcon from '@mui/icons-material/CheckBox';
 import UnSelectedIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import { Checkbox, FormControlLabel } from '@mui/material';
+import useFirstRender from '-/utils/useFirstRender';
 
 const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
 // const openedSplitSize = AppConfig.isElectron ? 560 : 360;
@@ -229,6 +230,7 @@ function EntryContainer(props: Props) {
   const percent = useRef<number | undefined>(undefined);
   const timer = useRef(null);
   const openedFile = openedFiles[0];
+  const openedFilePath = useRef(openedFile.path);
   // const [currentEntry, setCurrentEntry] = useState<OpenedEntry>(openedFile);
 
   const [isPropertiesPanelVisible, setPropertiesPanelVisible] = useState<
@@ -264,6 +266,7 @@ function EntryContainer(props: Props) {
     HTMLDivElement
   >(null);
   const fileChanged = useRef<boolean>(false);
+  const firstRender = useFirstRender();
 
   useEventListener('message', e => {
     if (typeof e.data === 'string') {
@@ -371,17 +374,17 @@ function EntryContainer(props: Props) {
   }, [settings.currentTheme]);
 
   useEffect(() => {
-    if (openedFiles.length > 0) {
-      if (
-        // openedFile.editMode &&
-        // openedFile.changed &&
-        fileChanged.current
-        // openedFile.shouldReload === false
-      ) {
-        setSaveBeforeReloadConfirmDialogOpened(true);
-      }
+    // if (openedFiles.length > 0) {
+    if (
+      !firstRender &&
+      // openedFile.editMode &&
+      // openedFile.changed &&
+      fileChanged.current
+      // openedFile.shouldReload === false
+    ) {
+      setSaveBeforeReloadConfirmDialogOpened(true);
     }
-  }, [openedFiles, isReadOnlyMode]); // , settings]);
+  }, [openedFilePath.current, isReadOnlyMode]); // , settings]);
 
   // always open for dirs
   const isPropPanelVisible = openedFile.isFile
@@ -586,12 +589,14 @@ function EntryContainer(props: Props) {
         //check if file is changed
         if (fileChanged.current) {
           setSavingInProgress(true);
-          saveFile(textContent).then(() => {
-            fileChanged.current = false;
-            showNotification(
-              i18n.t('core:fileSavedSuccessfully'),
-              NotificationTypes.default
-            );
+          saveFile(textContent).then(success => {
+            if (success) {
+              fileChanged.current = false;
+              showNotification(
+                i18n.t('core:fileSavedSuccessfully'),
+                NotificationTypes.default
+              );
+            }
             // change state will not render DOT before file name too
             setSavingInProgress(false);
           });
@@ -603,7 +608,7 @@ function EntryContainer(props: Props) {
     }
   };
 
-  const saveFile = (textContent: string) => {
+  const saveFile = (textContent: string): Promise<boolean> => {
     return props
       .switchLocationType(openedFile.locationId)
       .then(async currentLocationId => {
@@ -624,7 +629,7 @@ function EntryContainer(props: Props) {
         }
         // TODO check for timestamp on filesystem and ask to overwrite the changes there
         return PlatformIO.saveTextFilePromise(
-          openedFile.path,
+          { path: openedFile.path, lmdt: openedFile.lmdt },
           textContent,
           true
         )
@@ -649,11 +654,14 @@ function EntryContainer(props: Props) {
           .catch(error => {
             // setSavingInProgress(false);
             showNotification(
-              i18n.t('core:errorSavingFile'),
-              NotificationTypes.error
+              i18n.t('core:errorSavingFile') + ': ' + error.message,
+              NotificationTypes.error,
+              false
             );
             console.log('Error saving file ' + openedFile.path + ' - ' + error);
-            return props.switchCurrentLocationType(currentLocationId);
+            return props
+              .switchCurrentLocationType(currentLocationId)
+              .then(() => false);
           });
       });
   };

@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useEffect, useReducer, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   getBackupFileLocation,
   extractContainingDirectoryPath
@@ -35,7 +35,8 @@ import { format, formatDistanceToNow } from 'date-fns';
 import i18n from '-/services/i18n';
 import { bindActionCreators } from 'redux';
 import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
+import PreviewIcon from '@mui/icons-material/Preview';
+import RestoreIcon from '@mui/icons-material/Restore';
 import IconButton from '@mui/material/IconButton';
 import AppConfig from '-/AppConfig';
 import {
@@ -48,6 +49,8 @@ import {
   TablePagination,
   TableRow
 } from '@mui/material';
+import { Pro } from '-/pro';
+import FilePreviewDialog from '-/components/dialogs/FilePreviewDialog';
 
 interface Props {
   // openedFile: OpenedEntry;
@@ -60,7 +63,10 @@ function Revisions(props: Props) {
   const [rows, setRows] = useState<Array<TS.FileSystemEntry>>();
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(5);
-  const { openedFiles, theme, openEntry } = props;
+  const [previewDialogEntry, setPreviewDialogEntry] = useState<
+    TS.FileSystemEntry
+  >(undefined);
+  const { openedFiles, theme } = props;
   // const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
   useEffect(() => {
@@ -97,6 +103,23 @@ function Revisions(props: Props) {
     setPage(0);
   };
 
+  function restoreRevision(revisionPath) {
+    const openedFile = openedFiles[0];
+    const targetPath = getBackupFileLocation(
+      openedFile.path,
+      openedFile.uuid,
+      PlatformIO.getDirSeparator()
+    );
+    PlatformIO.copyFilePromiseOverwrite(openedFile.path, targetPath).then(
+      () => {
+        PlatformIO.copyFilePromiseOverwrite(
+          revisionPath,
+          openedFile.path
+        ).then(() => props.openEntry(openedFile.path)); // loadHistoryItems(openedFile));
+      }
+    );
+  }
+
   // Avoid a layout jump when reaching the last page with empty rows.
   /*const emptyRows =
     rows && page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;*/
@@ -108,7 +131,7 @@ function Revisions(props: Props) {
         <Table sx={{ minWidth: 650 }} aria-label="revisions table">
           <TableHead>
             <TableRow>
-              <TableCell>Path</TableCell>
+              <TableCell>File</TableCell>
               <TableCell align="right">Revision Date</TableCell>
               <TableCell align="right">Review/Delete</TableCell>
             </TableRow>
@@ -123,7 +146,7 @@ function Revisions(props: Props) {
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                   >
                     <TableCell component="th" scope="row">
-                      {row.path}
+                      {row.name}
                     </TableCell>
                     <TableCell
                       align="right"
@@ -137,12 +160,20 @@ function Revisions(props: Props) {
                     </TableCell>
                     <TableCell align="right">
                       <IconButton
-                        aria-label={i18n.t('core:delete')}
-                        onClick={() => openEntry(row.path)}
+                        aria-label={i18n.t('core:view')}
+                        onClick={() => setPreviewDialogEntry(row)}
                         data-tid="viewRevisionTID"
                         size="large"
                       >
-                        <EditIcon color="primary" />
+                        <PreviewIcon color="primary" />
+                      </IconButton>
+                      <IconButton
+                        aria-label={i18n.t('core:restore')}
+                        onClick={() => restoreRevision(row.path)}
+                        data-tid="restoreRevisionTID"
+                        size="large"
+                      >
+                        <RestoreIcon color="primary" />
                       </IconButton>
                       <IconButton
                         aria-label={i18n.t('core:delete')}
@@ -168,7 +199,7 @@ function Revisions(props: Props) {
           </TableBody>
         </Table>
       </TableContainer>
-      {rows && (
+      {rows && rowsPerPage < rows.length && (
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
@@ -179,39 +210,12 @@ function Revisions(props: Props) {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       )}
+      <FilePreviewDialog
+        fsEntry={previewDialogEntry}
+        open={previewDialogEntry !== undefined}
+        onClose={() => setPreviewDialogEntry(undefined)}
+      />
     </div>
-    /*<div
-      style={{
-        backgroundColor: theme.palette.background.default
-      }}
-    >
-      {history &&
-        history.map(item => (
-          <div>
-            <Button
-              onClick={() => openEntry(item.path)}
-              size="small"
-              variant="outlined"
-              color="primary"
-              startIcon={<HistoryIcon />}
-            >
-              {format(item.lmdt, 'dd.MM.yyyy HH:mm:ss')}
-            </Button>
-            <IconButton
-              aria-label={i18n.t('core:delete')}
-              onClick={() => {
-                PlatformIO.deleteFilePromise(item.path, true).then(() =>
-                  loadHistoryItems(openedFiles[0])
-                );
-              }}
-              data-tid="fileContainerToggleProperties"
-              size="large"
-            >
-              <DeleteIcon color="primary" />
-            </IconButton>
-          </div>
-        ))}
-    </div>*/
   );
 }
 

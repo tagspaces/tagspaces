@@ -1675,7 +1675,7 @@ export const actions = {
         formatDateTime4Tag(new Date(), true) +
         AppConfig.endTagContainer +
         '.txt';
-      PlatformIO.saveFilePromise(filePath, '', true)
+      PlatformIO.saveFilePromise({ path: filePath }, '', true)
         .then(() => {
           dispatch(actions.reflectCreateEntry(filePath, true));
           dispatch(
@@ -1755,7 +1755,7 @@ export const actions = {
     } else if (fileType === 'md') {
       fileContent = content + ' \n\n' + creationMeta + '\n';
     }
-    PlatformIO.saveFilePromise(filePath, fileContent, false)
+    PlatformIO.saveFilePromise({ path: filePath }, fileContent, false)
       .then((fsEntry: TS.FileSystemEntry) => {
         dispatch(actions.reflectCreateEntry(filePath, true));
         dispatch(actions.openFsEntry(fsEntry)); // TODO return fsEntry from saveFilePromise and simplify
@@ -2076,6 +2076,8 @@ export const actions = {
             if (fsEntryMeta.tags) {
               entryForOpening.tags = fsEntryMeta.tags;
             }
+            entryForOpening.lmdt = entryProps.lmdt;
+            entryForOpening.size = entryProps.size;
             dispatch(actions.addToEntryContainer(entryForOpening));
           }
           return true;
