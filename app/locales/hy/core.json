@@ -526,7 +526,7 @@
   "pageLimitHelp": "Էջում նիշքերի քանակը",
   "unspecified": "Չսահմանված",
   "choosePerspective": "Ընտրել այս պանակի սկզբնադիր ցուցադրաձևը",
-  "sharingLink": "Հղում ներքին համօգտագործման համար",
+  "sharingLink": "Generate sharing link",
   "folderLimit": "Ցուցադրվող պանակների առավելագույն քանակը",
   "filesLimit": "Պանակում ցուցադրվող նիշքերի առավելագույն քանակը",
   "scrollFilesLimit": "Files to be loaded on scroll down",
@@ -723,5 +723,10 @@
   "showSubFolderDetails": "Show column details",
   "showEntriesDescription": "Show description for files and folders",
   "fileChanged": "File changed",
+  "actions": "Actions",
+  "query": "Search Query Composition",
+  "qrCode": "QR Code",
+  "linkValidity": "Link validity time",
+  "linkValidityTooltip": "Time for which the link is valid",
   "-": "-"
 }
