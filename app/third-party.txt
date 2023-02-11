@@ -210,22 +210,22 @@ Apache License
 
 The following NPM packages may be included in this product:
 
- - @aws-amplify/analytics@5.2.30
- - @aws-amplify/api-graphql@2.3.27
- - @aws-amplify/api-rest@2.0.63
- - @aws-amplify/api@4.0.63
- - @aws-amplify/auth@4.6.16
- - @aws-amplify/cache@4.0.65
- - @aws-amplify/core@4.7.14
- - @aws-amplify/datastore@3.14.6
- - @aws-amplify/geo@1.3.26
- - @aws-amplify/interactions@4.1.11
- - @aws-amplify/predictions@4.0.63
- - @aws-amplify/pubsub@4.5.13
- - @aws-amplify/storage@4.5.16
+ - @aws-amplify/analytics@5.2.31
+ - @aws-amplify/api-graphql@2.3.28
+ - @aws-amplify/api-rest@2.0.64
+ - @aws-amplify/api@4.0.64
+ - @aws-amplify/auth@4.6.17
+ - @aws-amplify/cache@4.0.66
+ - @aws-amplify/core@4.7.15
+ - @aws-amplify/datastore@3.14.7
+ - @aws-amplify/geo@1.3.27
+ - @aws-amplify/interactions@4.1.12
+ - @aws-amplify/predictions@4.0.64
+ - @aws-amplify/pubsub@4.5.14
+ - @aws-amplify/storage@4.5.17
  - @aws-amplify/ui-react@1.2.26
  - @aws-amplify/ui@2.0.7
- - @aws-amplify/xr@3.0.63
+ - @aws-amplify/xr@3.0.64
 
 These packages each contain the following license and notice below:
 
@@ -1325,7 +1325,7 @@ The following NPM packages may be included in this product:
  - @aws-sdk/signature-v4@3.6.1
  - @aws-sdk/types@1.0.0-rc.10
  - @aws-sdk/types@3.186.0
- - @aws-sdk/types@3.257.0
+ - @aws-sdk/types@3.267.0
  - @aws-sdk/types@3.6.1
  - @aws-sdk/util-arn-parser@3.6.1
  - @aws-sdk/util-base64-browser@3.186.0
@@ -2963,7 +2963,7 @@ The following NPM packages may be included in this product:
  - @babel/plugin-transform-arrow-functions@7.20.7
  - @babel/plugin-transform-async-to-generator@7.20.7
  - @babel/plugin-transform-block-scoped-functions@7.18.6
- - @babel/plugin-transform-block-scoping@7.20.14
+ - @babel/plugin-transform-block-scoping@7.20.15
  - @babel/plugin-transform-classes@7.20.7
  - @babel/plugin-transform-computed-properties@7.20.7
  - @babel/plugin-transform-destructuring@7.20.7
@@ -3071,7 +3071,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - @babel/parser@7.20.13
+ - @babel/parser@7.20.15
 
 This package contains the following license and notice below:
 
@@ -3124,6 +3124,37 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+-----------
+
+The following NPM package may be included in this product:
+
+ - @babel/regjsgen@0.8.0
+
+This package contains the following license and notice below:
+
+The MIT License (MIT)
+
+Copyright 2014-2020 Benjamin Tan <https://ofcr.se/>
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 -----------
 
@@ -3192,14 +3223,10 @@ The following NPM packages may be included in this product:
 
  - @codemirror/autocomplete@6.4.0
  - @codemirror/commands@6.2.0
- - @codemirror/lang-html@6.4.1
- - @codemirror/lang-javascript@6.1.2
  - @codemirror/lang-markdown@6.0.5
- - @codemirror/language@6.4.0
  - @codemirror/lint@6.1.0
  - @codemirror/search@6.2.3
  - @codemirror/state@6.2.0
- - @codemirror/view@6.7.3
 
 These packages each contain the following license and notice below:
 
@@ -3227,11 +3254,15 @@ THE SOFTWARE.
 
 -----------
 
-The following NPM package may be included in this product:
+The following NPM packages may be included in this product:
 
  - @codemirror/lang-css@6.0.2
+ - @codemirror/lang-html@6.4.2
+ - @codemirror/lang-javascript@6.1.3
+ - @codemirror/language@6.5.0
+ - @codemirror/view@6.8.1
 
-This package contains the following license and notice below:
+These packages each contain the following license and notice below:
 
 MIT License
 
@@ -5888,26 +5919,26 @@ This package contains the following license and notice below:
 
 The following NPM packages may be included in this product:
 
- - @jest/create-cache-key-function@29.4.1
- - @jest/environment@29.4.1
- - @jest/fake-timers@29.4.1
- - @jest/schemas@29.4.0
+ - @jest/create-cache-key-function@29.4.2
+ - @jest/environment@29.4.2
+ - @jest/fake-timers@29.4.2
+ - @jest/schemas@29.4.2
  - @jest/types@26.6.2
  - @jest/types@27.5.1
- - @jest/types@29.4.1
- - jest-environment-node@29.4.1
+ - @jest/types@29.4.2
+ - jest-environment-node@29.4.2
  - jest-get-type@26.3.0
- - jest-message-util@29.4.1
- - jest-mock@29.4.1
+ - jest-message-util@29.4.2
+ - jest-mock@29.4.2
  - jest-regex-util@27.5.1
  - jest-serializer@27.5.1
  - jest-util@27.5.1
- - jest-util@29.4.1
+ - jest-util@29.4.2
  - jest-validate@26.6.2
  - jest-worker@27.5.1
  - jscodeshift@0.13.1
  - pretty-format@26.6.2
- - pretty-format@29.4.1
+ - pretty-format@29.4.2
  - react-dom@17.0.2
  - react-is@16.13.1
  - react-is@17.0.2
@@ -6071,13 +6102,42 @@ The following NPM packages may be included in this product:
  - @lezer/highlight@1.1.3
  - @lezer/html@1.3.0
  - @lezer/javascript@1.4.1
- - @lezer/lr@1.3.1
 
 These packages each contain the following license and notice below:
 
 MIT License
 
 Copyright (C) 2018 by Marijn Haverbeke <marijnh@gmail.com> and others
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+-----------
+
+The following NPM package may be included in this product:
+
+ - @lezer/lr@1.3.3
+
+This package contains the following license and notice below:
+
+MIT License
+
+Copyright (C) 2018 by Marijn Haverbeke <marijn@haverbeke.berlin> and others
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -6184,17 +6244,17 @@ SOFTWARE.
 The following NPM packages may be included in this product:
 
  - @mui/base@5.0.0-alpha.107
- - @mui/base@5.0.0-alpha.115
- - @mui/core-downloads-tracker@5.11.6
+ - @mui/base@5.0.0-alpha.117
+ - @mui/core-downloads-tracker@5.11.8
  - @mui/icons-material@5.11.0
- - @mui/lab@5.0.0-alpha.117
+ - @mui/lab@5.0.0-alpha.119
  - @mui/material@5.10.15
- - @mui/private-theming@5.11.2
- - @mui/styled-engine@5.11.0
+ - @mui/private-theming@5.11.7
+ - @mui/styled-engine@5.11.8
  - @mui/styles@5.10.15
- - @mui/system@5.11.5
+ - @mui/system@5.11.8
  - @mui/types@7.2.3
- - @mui/utils@5.11.2
+ - @mui/utils@5.11.7
 
 These packages each contain the following license and notice below:
 
@@ -6224,7 +6284,7 @@ SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - @mui/x-date-pickers@5.0.16
+ - @mui/x-date-pickers@5.0.18
 
 This package contains the following license and notice below:
 
@@ -6605,7 +6665,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 The following NPM packages may be included in this product:
 
  - @tagspaces/tagspaces-md@2.1.6
- - @tagspaces/tagspaces-platforms@2.1.12
+ - @tagspaces/tagspaces-platforms@2.1.16
 
 These packages each contain the following license and notice below:
 
@@ -6696,7 +6756,7 @@ The following NPM packages may be included in this product:
  - @types/mdast@3.0.10
  - @types/mermaid@9.2.0
  - @types/node-emoji@1.8.2
- - @types/node@18.11.18
+ - @types/node@18.13.0
  - @types/prismjs@1.26.0
  - @types/prop-types@15.7.5
  - @types/react-dom@17.0.18
@@ -6711,7 +6771,7 @@ The following NPM packages may be included in this product:
  - @types/yargs-parser@21.0.0
  - @types/yargs@15.0.15
  - @types/yargs@16.0.5
- - @types/yargs@17.0.20
+ - @types/yargs@17.0.22
 
 These packages each contain the following license and notice below:
 
@@ -7957,7 +8017,7 @@ SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - aws-amplify@4.3.45
+ - aws-amplify@4.3.46
 
 This package contains the following license and notice below:
 
@@ -8167,7 +8227,7 @@ Apache License
 
 The following NPM package may be included in this product:
 
- - aws-sdk@2.1304.0
+ - aws-sdk@2.1312.0
 
 This package contains the following license and notice below:
 
@@ -8720,7 +8780,7 @@ The following NPM packages may be included in this product:
  - punycode@1.3.2
  - regenerate-unicode-properties@10.1.0
  - regenerate@1.4.2
- - regexpu-core@5.2.2
+ - regexpu-core@5.3.0
  - unicode-canonical-property-names-ecmascript@2.0.0
  - unicode-match-property-ecmascript@2.0.0
  - unicode-match-property-value-ecmascript@2.1.0
@@ -9402,7 +9462,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 The following NPM package may be included in this product:
 
- - caniuse-lite@1.0.30001449
+ - caniuse-lite@1.0.30001451
 
 This package contains the following license and notice below:
 
@@ -10201,7 +10261,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 The following NPM packages may be included in this product:
 
  - commondir@1.0.1
- - shell-quote@1.7.4
+ - shell-quote@1.8.0
 
 These packages each contain the following license and notice below:
 
@@ -10365,7 +10425,7 @@ SOFTWARE.
 The following NPM packages may be included in this product:
 
  - concat-map@0.0.1
- - minimist@1.2.7
+ - minimist@1.2.8
  - safe-regex@1.1.0
 
 These packages each contain the following license and notice below:
@@ -10914,7 +10974,7 @@ SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - csv-stringify@6.2.3
+ - csv-stringify@6.2.4
 
 This package contains the following license and notice below:
 
@@ -12490,7 +12550,7 @@ THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - electron-to-chromium@1.4.284
+ - electron-to-chromium@1.4.295
 
 This package contains the following license and notice below:
 
@@ -14257,7 +14317,7 @@ The following NPM packages may be included in this product:
 
  - hermes-estree@0.8.0
  - hermes-parser@0.8.0
- - react-native@0.71.1
+ - react-native@0.71.2
 
 These packages each contain the following license and notice below:
 
@@ -15356,7 +15416,7 @@ limitations under the License.
 
 The following NPM package may be included in this product:
 
- - joi@17.7.0
+ - joi@17.7.1
 
 This package contains the following license and notice below:
 
@@ -15637,14 +15697,14 @@ OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHE
 
 The following NPM packages may be included in this product:
 
- - jss-plugin-camel-case@10.9.2
- - jss-plugin-default-unit@10.9.2
- - jss-plugin-global@10.9.2
- - jss-plugin-nested@10.9.2
- - jss-plugin-props-sort@10.9.2
- - jss-plugin-rule-value-function@10.9.2
- - jss-plugin-vendor-prefixer@10.9.2
- - jss@10.9.2
+ - jss-plugin-camel-case@10.10.0
+ - jss-plugin-default-unit@10.10.0
+ - jss-plugin-global@10.10.0
+ - jss-plugin-nested@10.10.0
+ - jss-plugin-props-sort@10.10.0
+ - jss-plugin-rule-value-function@10.10.0
+ - jss-plugin-vendor-prefixer@10.10.0
+ - jss@10.10.0
 
 These packages each contain the following license and notice below:
 
@@ -16636,6 +16696,62 @@ terms above.
 
 The following NPM package may be included in this product:
 
+ - lodash.isequal@4.5.0
+
+This package contains the following license and notice below:
+
+Copyright JS Foundation and other contributors <https://js.foundation/>
+
+Based on Underscore.js, copyright Jeremy Ashkenas,
+DocumentCloud and Investigative Reporters & Editors <http://underscorejs.org/>
+
+This software consists of voluntary contributions made by many
+individuals. For exact contribution history, see the revision history
+available at https://github.com/lodash/lodash
+
+The following license applies to all parts of this software except as
+documented below:
+
+====
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+====
+
+Copyright and related rights for sample code are waived via CC0. Sample
+code is defined as all source code displayed within the prose of the
+documentation.
+
+CC0: http://creativecommons.org/publicdomain/zero/1.0/
+
+====
+
+Files located in the node_modules and vendor directories are externally
+maintained libraries used by this software which have their own
+licenses; we recommend you read them, as their terms may differ from the
+terms above.
+
+-----------
+
+The following NPM package may be included in this product:
+
  - logkitty@0.7.1
 
 This package contains the following license and notice below:
@@ -16667,7 +16783,7 @@ SOFTWARE.
 The following NPM packages may be included in this product:
 
  - longest-streak@3.1.0
- - parse-entities@4.0.0
+ - parse-entities@4.0.1
  - property-information@6.2.0
  - stringify-entities@4.0.3
 
@@ -16932,14 +17048,14 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following NPM packages may be included in this product:
 
- - mdast-util-directive@2.2.3
+ - mdast-util-directive@2.2.4
  - mdast-util-find-and-replace@2.2.2
  - mdast-util-from-markdown@1.3.0
  - mdast-util-gfm-autolink-literal@1.0.3
- - mdast-util-gfm-strikethrough@1.0.2
+ - mdast-util-gfm-strikethrough@1.0.3
  - mdast-util-gfm-table@1.0.7
  - mdast-util-gfm-task-list-item@1.0.2
- - mdast-util-gfm@2.0.1
+ - mdast-util-gfm@2.0.2
  - mdast-util-math@2.0.2
  - mdast-util-to-markdown@1.5.0
  - micromark-extension-directive@2.1.2
@@ -22737,7 +22853,7 @@ SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - nanoid@4.0.0
+ - nanoid@4.0.1
 
 This package contains the following license and notice below:
 
@@ -23040,7 +23156,7 @@ THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - node-releases@2.0.8
+ - node-releases@2.0.10
 
 This package contains the following license and notice below:
 
@@ -24382,7 +24498,6 @@ SOFTWARE.
 The following NPM packages may be included in this product:
 
  - prosemirror-commands@1.5.0
- - prosemirror-dropcursor@1.6.1
  - prosemirror-gapcursor@1.3.1
  - prosemirror-history@1.3.0
  - prosemirror-inputrules@1.2.0
@@ -24391,11 +24506,39 @@ The following NPM packages may be included in this product:
  - prosemirror-schema-list@1.2.2
  - prosemirror-state@1.4.2
  - prosemirror-transform@1.7.1
- - prosemirror-view@1.30.0
 
 These packages each contain the following license and notice below:
 
 Copyright (C) 2015-2017 by Marijn Haverbeke <marijnh@gmail.com> and others
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+-----------
+
+The following NPM packages may be included in this product:
+
+ - prosemirror-dropcursor@1.7.0
+ - prosemirror-view@1.30.1
+
+These packages each contain the following license and notice below:
+
+Copyright (C) 2015-2017 by Marijn Haverbeke <marijn@haverbeke.berlin> and others
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24430,6 +24573,116 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+-----------
+
+The following NPM package may be included in this product:
+
+ - qrcode-generator@1.4.4
+
+This package contains the following license and notice below:
+
+QR Code Generator
+===
+
+## Getting Started
+
+1. Include qrcode.js in your html.
+2. Prepare a place holder.
+3. Generate QR and render it.
+
+```html
+<script type="text/javascript" src="qrcode.js"></script>
+```
+```html
+<div id="placeHolder"></div>
+```
+```javascript
+var typeNumber = 4;
+var errorCorrectionLevel = 'L';
+var qr = qrcode(typeNumber, errorCorrectionLevel);
+qr.addData('Hi!');
+qr.make();
+document.getElementById('placeHolder').innerHTML = qr.createImgTag();
+```
+## API Documentation
+
+### QRCodeFactory
+
+#### qrcode(typeNumber, errorCorrectionLevel) => <code>QRCode</code>
+Create a QRCode Object.
+
+| Param                | Type                | Description                                    |
+| ---------------------| ------------------- | ---------------------------------------------- |
+| typeNumber           | <code>number</code> | Type number (1 ~ 40), or 0 for auto detection. |
+| errorCorrectionLevel | <code>string</code> | Error correction level ('L', 'M', 'Q', 'H')    |
+
+#### qrcode.stringToBytes(s) : <code>number[]</code>
+Encodes a string into an array of number(byte) using any charset.
+This function is used by internal.
+Overwrite this function to encode using a multibyte charset.
+
+| Param  | Type                | Description      |
+| ------ | ------------------- | ---------------- |
+| s      | <code>string</code> | string to encode |
+
+### QRCode
+
+#### addData(data, mode) => <code>void</code>
+Add a data to encode.
+
+| Param  | Type                | Description                                                |
+| ------ | ------------------- | ---------------------------------------------------------- |
+| data   | <code>string</code> | string to encode                                           |
+| mode   | <code>string</code> | Mode ('Numeric', 'Alphanumeric', 'Byte'(default), 'Kanji') |
+
+#### make() => <code>void</code>
+Make a QR Code.
+
+#### getModuleCount() => <code>number</code>
+The number of modules(cells) for each orientation.
+_[Note] call make() before this function._
+
+#### isDark(row, col) => <code>boolean</code>
+The module at row and col is dark or not.
+_[Note] call make() before this function._
+
+| Param | Type                | Description         |
+| ----- | ------------------- | ------------------- |
+| row   | <code>number</code> | 0 ~ moduleCount - 1 |
+| col   | <code>number</code> | 0 ~ moduleCount - 1 |
+
+#### createDataURL(cellSize, margin) => <code>string</code>
+#### createImgTag(cellSize, margin, alt) => <code>string</code>
+#### createSvgTag(cellSize, margin) => <code>string</code>
+#### createTableTag(cellSize, margin) => <code>string</code>
+#### createASCII(cellSize, margin) => <code>string</code>
+Helper functions for HTML.
+ _[Note] call make() before these functions._
+
+| Param    | Type                | Description           |
+| -------- | ------------------- | --------------------- |
+| cellSize | <code>number</code> | default: 2            |
+| margin   | <code>number</code> | default: cellSize * 4 |
+| alt      | <code>string</code> | (optional)            |
+
+#### createSvgTag(opts) => <code>string</code>
+
+| Param         | Type                 | Description           |
+| ------------- | -------------------- | --------------------- |
+| opts          | <code>object</code>  | default: {}           |
+| opts.cellSize | <code>number</code>  | default: 2            |
+| opts.margin   | <code>number</code>  | default: cellSize * 4 |
+| opts.scalable | <code>boolean</code> | default: false        |
+
+#### renderTo2dContext(context, cellSize) => <code>void</code>
+
+--
+
+This implementation is based on JIS X 0510:1999.
+
+The word 'QR Code' is registered trademark of DENSO WAVE INCORPORATED
+<br/>http://www.denso-wave.com/qrcode/faqpatent-e.html
 
 -----------
 
@@ -24566,7 +24819,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - rc-resize-observer@1.2.1
+ - rc-resize-observer@1.3.0
 
 This package contains the following license and notice below:
 
@@ -24602,7 +24855,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 The following NPM package may be included in this product:
 
- - rc-util@5.27.1
+ - rc-util@5.27.2
 
 This package contains the following license and notice below:
 
@@ -24716,7 +24969,7 @@ SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - react-devtools-core@4.27.1
+ - react-devtools-core@4.27.2
 
 This package contains the following license and notice below:
 
@@ -25243,7 +25496,7 @@ SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - react-native-gradle-plugin@0.71.13
+ - react-native-gradle-plugin@0.71.14
 
 This package contains the following license and notice below:
 
@@ -25263,6 +25516,36 @@ yarn add react-native-gradle-plugin
 
 [version-badge]: https://img.shields.io/npm/v/react-native-gradle-plugin?style=flat-square
 [package]: https://www.npmjs.com/package/react-native-gradle-plugin
+
+-----------
+
+The following NPM package may be included in this product:
+
+ - react-qrcode-logo@2.8.0
+
+This package contains the following license and notice below:
+
+MIT License
+
+Copyright (c) 2018 Giulia Corò, Franco Berton
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 -----------
 
@@ -25593,7 +25876,7 @@ SOFTWARE.
 The following NPM packages may be included in this product:
 
  - refractor@4.8.0
- - vfile-message@3.1.3
+ - vfile-message@3.1.4
 
 These packages each contain the following license and notice below:
 
@@ -25722,37 +26005,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
------------
-
-The following NPM package may be included in this product:
-
- - regjsgen@0.7.1
-
-This package contains the following license and notice below:
-
-The MIT License (MIT)
-
-Copyright 2014-2020 Benjamin Tan <https://ofcr.se/>
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 -----------
 
@@ -27390,7 +27642,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - terser@5.16.1
+ - terser@5.16.3
 
 This package contains the following license and notice below:
 
@@ -27534,7 +27786,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 The following NPM package may be included in this product:
 
- - tinycolor2@1.5.2
+ - tinycolor2@1.6.0
 
 This package contains the following license and notice below:
 
@@ -28041,7 +28293,7 @@ SOFTWARE.
 The following NPM packages may be included in this product:
 
  - unified@10.1.2
- - vfile@5.3.6
+ - vfile@5.3.7
 
 These packages each contain the following license and notice below:
 
