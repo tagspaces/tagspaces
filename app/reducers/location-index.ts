@@ -183,6 +183,7 @@ export const actions = {
     dispatch: (action) => void
   ) => {
     dispatch(actions.setSearchQueryInt(searchQuery));
+    // TODO rethink right place for this -to switch search mode based on searchQuery
     if (Object.keys(searchQuery).length === 0) {
       dispatch(AppActions.exitSearchMode());
     } else {

@@ -46,6 +46,13 @@ export default function buildTrayIconMenu(mainPageProps: any, i18n, isMacLike) {
 
   const trayMenuTemplate = [
     {
+      label: i18n.t('openNewInstance'),
+      click: () => mainPageProps.createNewWindowInstance()
+    },
+    {
+      type: 'separator'
+    },
+    {
       label: i18n.t('showTagSpaces') + cKey + '+Shift+W',
       click: mainPageProps.showTagSpaces
     },

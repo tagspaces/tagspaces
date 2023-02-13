@@ -354,6 +354,7 @@ function buildTrayMenu() {
     {
       showTagSpaces,
       resumePlayback,
+      createNewWindowInstance,
       openSearch: showSearch,
       toggleCreateFileDialog: newTextFile,
       openNextFile: getNextFile,
