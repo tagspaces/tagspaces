@@ -177,6 +177,21 @@ export async function setInputKeys(tid, value, delay = 50) {
   return await setSelectorKeys('[data-tid=' + tid + ']', value);
 }
 
+/**
+ * Playwright only
+ * @param inputSelector
+ * @param value
+ * @param delay
+ * @returns {Promise<*>} oldValue
+ */
+export async function typeInputValue(inputSelector, value, delay = 50) {
+  const oldValue = await global.client.inputValue(inputSelector);
+  await global.client.type(inputSelector, value, {
+    delay
+  });
+  return oldValue;
+}
+
 export async function setSelectorKeys(selector, value) {
   const element = await global.client.$(selector);
   await element.waitUntil(
@@ -307,6 +322,7 @@ export async function isDisplayed(selector, displayed = true, timeout = 500) {
     try {
       const el = await global.client.waitForSelector(selector, {
         timeout,
+        strict: true,
         state: displayed ? 'visible' : 'detached'
       });
       if (!displayed) {
