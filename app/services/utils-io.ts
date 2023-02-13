@@ -1425,3 +1425,25 @@ export function getRelativeEntryPath(
   relEntryPath = cleanFrontDirSeparator(relEntryPath);
   return relEntryPath;
 }
+
+/**
+ * @param entries
+ * @param entriesChanges Array<TS.FileSystemEntry> but partly changes from FileSystemEntry model like { tags:[] } are acceptable
+ * return entries: Array<TS.FileSystemEntry> updated from
+ */
+export function updateFsEntries(
+  entries: Array<TS.FileSystemEntry>,
+  entriesChanges: Array<any>
+): Array<TS.FileSystemEntry> {
+  return entries.map(entry => {
+    const entryUpdated = entriesChanges.find(e => e.path === entry.path);
+    if (!entryUpdated) {
+      return entry;
+    }
+
+    return {
+      ...entry,
+      ...entryUpdated
+    };
+  });
+}
