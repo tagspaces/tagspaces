@@ -62,8 +62,8 @@ function TagsPreview(props: Props) {
       defaultTextColor,
       defaultBackgroundColor
     );
-    firstTagColor = tagColors.textcolor;
-    firstTagTextColor = tagColors.color;
+    firstTagColor = tagColors.color;
+    firstTagTextColor = tagColors.textcolor;
   }
 
   let secondTagColor = defaultBackgroundColor;
