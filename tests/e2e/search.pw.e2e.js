@@ -4,7 +4,8 @@ import {
   expectTagsExistBySelector,
   getGridFileSelector,
   selectorFile,
-  selectRowFiles
+  selectRowFiles,
+  setSettings
 } from './general.helpers';
 import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
 import {
@@ -93,7 +94,9 @@ describe('TST06 - Test Search in file structure:', () => {
     // expected to reset all search engine
   });*/
 
-  it('TST0624 - Add/Remove sidecar tags in search results [electron]', async () => {
+  async function addRemoveTagsInSearchResults(
+    tags = ['test-tag3', 'test-tag4']
+  ) {
     await global.client.dblclick(
       '[data-tid=fsEntryName_' + emptyFolderName + ']'
     );
@@ -103,14 +106,14 @@ describe('TST06 - Test Search in file structure:', () => {
 
     let selectedIds = await selectRowFiles([0]);
 
-    const tags = ['test-tag3', 'test-tag4'];
     await AddRemoveTagsToSelectedFiles(tags);
 
     for (let i = 0; i < selectedIds.length; i++) {
       await expectElementExist(
         // selectorFile + '[' + (i + 1) + ']//div[@id="gridCellTags"]//button[1]',
         '[data-tid=tagContainer_' + tags[0] + ']',
-        true
+        true,
+        5000
       );
     }
 
@@ -129,5 +132,14 @@ describe('TST06 - Test Search in file structure:', () => {
         false
       );
     }
+  }
+
+  it('TST0624 - Add/Remove sidecar tags in search results [electron]', async () => {
+    await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
+    await addRemoveTagsInSearchResults(['sidecar-tag5', 'sidecar-tag6']);
+  });
+
+  it('TST0625 - Add/Remove filename tags in search results [electron]', async () => {
+    await addRemoveTagsInSearchResults(['filename-tag5', 'filename-tag6']);
   });
 });
