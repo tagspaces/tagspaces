@@ -50,6 +50,7 @@ import IOActions from '-/reducers/io-actions';
 import {
   actions as AppActions,
   getDirectoryMeta,
+  getEditedEntryPaths,
   getLastSelectedEntry,
   getSelectedEntries,
   isDeleteMultipleEntriesDialogOpened,
@@ -117,6 +118,7 @@ interface Props {
   directoryMeta: TS.FileSystemEntryMeta;
   setDirectoryMeta: (fsEntryMeta: TS.FileSystemEntryMeta) => void;
   searchResultsCount: number;
+  editedEntryPaths: Array<TS.EditedEntryPath>;
 }
 
 function getSettings(directoryMeta: TS.FileSystemEntryMeta): TS.FolderSettings {
@@ -248,6 +250,14 @@ function GridPerspective(props: Props) {
       makeFirstSelectedEntryVisible();
     }
   }, [props.selectedEntries]);
+
+  useEffect(() => {
+    // HANDLE (ADD/REMOVE sidecar TAGS) IN SEARCH RESULTS
+    if (!firstRender && props.searchResultsCount > -1) {
+      // sortedDirContent.current = GlobalSearch.results;
+      forceUpdate();
+    }
+  }, [props.editedEntryPaths]);
 
   useEffect(() => {
     if (!firstRender) {
@@ -929,7 +939,8 @@ function mapStateToProps(state) {
     // isDesktopMode: isDesktopMode(state),
     isDeleteMultipleEntriesDialogOpened: isDeleteMultipleEntriesDialogOpened(
       state
-    )
+    ),
+    editedEntryPaths: getEditedEntryPaths(state)
   };
 }
 
