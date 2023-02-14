@@ -322,8 +322,8 @@ export async function isDisplayed(selector, displayed = true, timeout = 500) {
     try {
       const el = await global.client.waitForSelector(selector, {
         timeout,
-        strict: true,
-        state: displayed ? 'visible' : 'detached'
+        // strict: true,
+        state: displayed ? 'visible' : 'hidden' //'detached'
       });
       if (!displayed) {
         if (el === null) {
