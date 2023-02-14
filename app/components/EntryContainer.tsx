@@ -99,9 +99,7 @@ import FileView from '-/components/FileView';
 import { Pro } from '-/pro';
 import { actions as LocationActions } from '-/reducers/locations';
 import Revisions from '-/components/Revisions';
-import SelectedIcon from '@mui/icons-material/CheckBox';
-import UnSelectedIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import { Checkbox, FormControlLabel } from '@mui/material';
+import { Switch } from '@mui/material';
 import useFirstRender from '-/utils/useFirstRender';
 
 const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
@@ -1269,16 +1267,19 @@ function EntryContainer(props: Props) {
                 }}
               >
                 {isEditable && props.revisionsEnabled && (
-                  <FormControlLabel
-                    control={
-                      <Checkbox defaultChecked={props.autoSaveEnabled} />
-                    }
-                    label={i18n.t('autosave')}
-                    disabled={!Pro}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      props.setAutoSaveEnabled(event.target.checked);
-                    }}
-                  />
+                  <Tooltip title={i18n.t('core:autosave')}>
+                    <Switch
+                      data-tid="autoSaveTID"
+                      defaultChecked={props.autoSaveEnabled}
+                      onChange={(
+                        event: React.ChangeEvent<HTMLInputElement>
+                      ) => {
+                        props.setAutoSaveEnabled(event.target.checked);
+                      }}
+                      name="autoSave"
+                      color="primary"
+                    />
+                  </Tooltip>
                 )}
 
                 {editingSupported && openedFile.editMode && (

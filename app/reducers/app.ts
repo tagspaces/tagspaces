@@ -2033,7 +2033,7 @@ export const actions = {
 
             if (!entryExist) {
               entryForOpening = findExtensionsForEntry(
-                fsEntryMeta.id,
+                fsEntryMeta.id || fsEntryMeta.uuid,
                 supportedFileTypes,
                 entryPath,
                 entryProps.isFile

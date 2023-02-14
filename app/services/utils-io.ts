@@ -1466,3 +1466,22 @@ export function mergeFsEntryMeta(props: any = {}): TS.FileSystemEntryMeta {
     ...props
   };
 }
+
+export function createFsEntryMeta(
+  path: string,
+  props: any = {}
+): Promise<string> {
+  const newFsEntryMeta: TS.FileSystemEntryMeta = mergeFsEntryMeta(props);
+  return saveMetaDataPromise(path, newFsEntryMeta)
+    .then(() => newFsEntryMeta.id)
+    .catch(error => {
+      console.error(
+        'Error saveMetaDataPromise for ' +
+          path +
+          ' orphan id: ' +
+          newFsEntryMeta.id,
+        error
+      );
+      return newFsEntryMeta.id;
+    });
+}

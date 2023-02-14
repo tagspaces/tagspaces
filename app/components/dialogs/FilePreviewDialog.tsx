@@ -59,6 +59,15 @@ function FilePreviewDialog(props: Props) {
     HTMLDivElement
   >(null);
 
+  const openedFile: OpenedEntry = fsEntry
+    ? findExtensionsForEntry(
+        fsEntry.uuid,
+        props.supportedFileTypes,
+        fsEntry.path,
+        fsEntry.isFile
+      )
+    : undefined;
+
   useEventListener('message', e => {
     if (typeof e.data === 'string') {
       // console.log(e.data);
@@ -77,7 +86,7 @@ function FilePreviewDialog(props: Props) {
   const handleMessage = (data: any) => {
     let message;
     let textFilePath;
-    switch (data.command) {
+    switch (data.command) { // todo use diff command
       case 'loadDefaultTextContent':
         if (!openedFile || !openedFile.path) {
           // || openedFile.changed) {
@@ -159,21 +168,15 @@ function FilePreviewDialog(props: Props) {
     return null;
   }
 
-  const openedFile: OpenedEntry = findExtensionsForEntry(
-    fsEntry.uuid,
-    props.supportedFileTypes,
-    fsEntry.path,
-    fsEntry.isFile
-  );
-
   return (
     <Dialog
       open={open}
       onClose={onClose}
       keepMounted
       scroll="paper"
-      fullWidth={true}
-      maxWidth="sm"
+      /*fullWidth={true}
+      maxWidth="md"*/
+      PaperProps={{ sx: { width: "100%", height: "100%" } }}
       BackdropProps={{ style: { backgroundColor: 'transparent' } }}
     >
       <DialogTitle data-tid="importDialogTitle">
