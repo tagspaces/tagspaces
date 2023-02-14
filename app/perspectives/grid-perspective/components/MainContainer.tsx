@@ -312,8 +312,8 @@ function GridPerspective(props: Props) {
       forceUpdate();
     }
   }, [
-    props.currentDirectoryPath, // open subdirs
-    // props.directoryContent, // open subdirs todo rethink this (replace with useEffect for currDirPath changes only)
+    // props.currentDirectoryPath, // open subdirs
+    props.directoryContent, // open subdirs todo rethink this (replace with useEffect for currDirPath changes only)
     props.searchResultsCount,
     sortBy.current,
     orderBy.current
