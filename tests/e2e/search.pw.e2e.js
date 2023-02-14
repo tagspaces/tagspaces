@@ -3,6 +3,7 @@ import {
   expectElementExist,
   expectTagsExistBySelector,
   getGridFileSelector,
+  isDisabled,
   selectorFile,
   selectRowFiles,
   setSettings
@@ -116,8 +117,10 @@ describe('TST06 - Test Search in file structure:', () => {
         5000
       );
     }
-
-    selectedIds = await selectRowFiles([0]);
+    if (await isDisabled('[data-tid=gridPerspectiveAddRemoveTags]')) {
+      //select rows to enable button
+      selectedIds = await selectRowFiles([0]);
+    }
     await AddRemoveTagsToSelectedFiles(tags, false);
 
     for (let i = 0; i < selectedIds.length; i++) {

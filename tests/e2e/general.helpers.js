@@ -317,6 +317,11 @@ export async function isElementDisplayed(
   return false;
 }
 
+export async function isDisabled(selector) {
+  const element = await global.client.$(selector);
+  return element.isDisabled();
+}
+
 export async function isDisplayed(selector, displayed = true, timeout = 500) {
   if (global.isPlaywright) {
     try {
@@ -549,6 +554,7 @@ export async function selectRowFiles(arrIndex = []) {
       }
     }
   }
+  expect(arrElements.length).toBe(arrIndex.length);
   // await clickOn('[data-tid=gridPerspectiveContainer]');
   return arrElements;
 }
