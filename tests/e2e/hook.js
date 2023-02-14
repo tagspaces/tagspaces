@@ -2,6 +2,7 @@
 import electronPath from 'electron';
 import pathLib from 'path';
 import fse from 'fs-extra';
+// import { execSync } from 'child_process';
 
 // Spectron API https://github.com/electron/spectron
 // Webdriver.io http://webdriver.io/api.html
@@ -20,6 +21,26 @@ export const getRandomInt = (min, max) =>
 
 // the default timeout before starting every test
 // global.msPause = 3000;
+
+/**
+ * https://github.com/microsoft/playwright/issues/18041
+ * lsof -i :49352
+ * pid: number
+ * Returns: boolean true if the process was started by playwright.
+ */
+/*export const wasProcessStartedByPlaywright = (pid) => {
+  // get parent tree
+  const tree = execSync(`pstree -s -h -p -t -c -p ${pid}`)
+    .toString()
+    .trim();
+
+  // check if any of the parents has a command that contains the string "playwright"
+  const hasPlaywright = tree.includes('playwright');
+
+  console.log(`Process ${pid} was started by Playwright: ${hasPlaywright}`);
+
+  return hasPlaywright;
+};*/
 
 export async function clearLocalStorage() {
   /*if (!(await clearStorage())) {

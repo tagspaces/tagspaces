@@ -526,7 +526,7 @@
   "pageLimitHelp": "１ページあたりのファイル数を設定",
   "unspecified": "未定義",
   "choosePerspective": "このフォルダのデフォルトのパースペクティブを設定します",
-  "sharingLink": "内部共有リンク",
+  "sharingLink": "Generate sharing link",
   "folderLimit": "表示する最大フォルダ",
   "filesLimit": "フォルダ内に表示する最大ファイル",
   "scrollFilesLimit": "Files to be loaded on scroll down",
@@ -723,5 +723,10 @@
   "showSubFolderDetails": "Show column details",
   "showEntriesDescription": "Show description for files and folders",
   "fileChanged": "File changed",
+  "actions": "Actions",
+  "query": "Search Query Composition",
+  "qrCode": "QR Code",
+  "linkValidity": "Link validity time",
+  "linkValidityTooltip": "Time for which the link is valid",
   "-": "-"
 }

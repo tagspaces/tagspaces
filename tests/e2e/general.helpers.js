@@ -177,6 +177,21 @@ export async function setInputKeys(tid, value, delay = 50) {
   return await setSelectorKeys('[data-tid=' + tid + ']', value);
 }
 
+/**
+ * Playwright only
+ * @param inputSelector
+ * @param value
+ * @param delay
+ * @returns {Promise<*>} oldValue
+ */
+export async function typeInputValue(inputSelector, value, delay = 50) {
+  const oldValue = await global.client.inputValue(inputSelector);
+  await global.client.type(inputSelector, value, {
+    delay
+  });
+  return oldValue;
+}
+
 export async function setSelectorKeys(selector, value) {
   const element = await global.client.$(selector);
   await element.waitUntil(
@@ -302,12 +317,18 @@ export async function isElementDisplayed(
   return false;
 }
 
+export async function isDisabled(selector) {
+  const element = await global.client.$(selector);
+  return element.isDisabled();
+}
+
 export async function isDisplayed(selector, displayed = true, timeout = 500) {
   if (global.isPlaywright) {
     try {
       const el = await global.client.waitForSelector(selector, {
         timeout,
-        state: displayed ? 'visible' : 'detached'
+        // strict: true,
+        state: displayed ? 'visible' : 'hidden' //'detached'
       });
       if (!displayed) {
         if (el === null) {
@@ -533,6 +554,7 @@ export async function selectRowFiles(arrIndex = []) {
       }
     }
   }
+  expect(arrElements.length).toBe(arrIndex.length);
   // await clickOn('[data-tid=gridPerspectiveContainer]');
   return arrElements;
 }

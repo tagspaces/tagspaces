@@ -526,7 +526,7 @@
   "pageLimitHelp": "페이지당 파일 개수 설정",
   "unspecified": "지정 안됨",
   "choosePerspective": "Set default perspective for this folder",
-  "sharingLink": "Link for internal sharing",
+  "sharingLink": "Generate sharing link",
   "folderLimit": "표시될 최대 폴더 갯수",
   "filesLimit": "폴더에 표시될 최대 파일 갯수",
   "scrollFilesLimit": "Files to be loaded on scroll down",
@@ -723,5 +723,10 @@
   "showSubFolderDetails": "Show column details",
   "showEntriesDescription": "Show description for files and folders",
   "fileChanged": "File changed",
+  "actions": "Actions",
+  "query": "Search Query Composition",
+  "qrCode": "QR Code",
+  "linkValidity": "Link validity time",
+  "linkValidityTooltip": "Time for which the link is valid",
   "-": "-"
 }

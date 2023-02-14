@@ -50,6 +50,7 @@ import IOActions from '-/reducers/io-actions';
 import {
   actions as AppActions,
   getDirectoryMeta,
+  getEditedEntryPaths,
   getLastSelectedEntry,
   getLastSelectedEntryPath,
   getSearchFilter,
@@ -120,6 +121,7 @@ interface Props {
   setDirectoryMeta: (fsEntryMeta: TS.FileSystemEntryMeta) => void;
   searchResultsCount: number;
   searchFilter: string;
+  editedEntryPaths: Array<TS.EditedEntryPath>;
 }
 
 function getSettings(directoryMeta: TS.FileSystemEntryMeta): TS.FolderSettings {
@@ -310,11 +312,20 @@ function GridPerspective(props: Props) {
       forceUpdate();
     }
   }, [
-    props.directoryContent, // open subdirs
+    // props.currentDirectoryPath, // open subdirs
+    props.directoryContent, // open subdirs todo rethink this (replace with useEffect for currDirPath changes only)
     props.searchResultsCount,
     sortBy.current,
     orderBy.current
   ]);
+
+  useEffect(() => {
+    // HANDLE (ADD/REMOVE sidecar TAGS) IN SEARCH RESULTS
+    if (!firstRender && props.searchResultsCount > -1) {
+      sortedDirContent.current = GlobalSearch.results;
+      forceUpdate();
+    }
+  }, [props.editedEntryPaths]);
 
   useEffect(() => {
     if (!firstRender) {
@@ -475,7 +486,11 @@ function GridPerspective(props: Props) {
     if (someFileSelected) {
       clearSelection();
     } else {
-      props.setSelectedEntries(props.directoryContent);
+      if (props.searchResultsCount < 0) {
+        props.setSelectedEntries(props.directoryContent);
+      } else {
+        props.setSelectedEntries(GlobalSearch.results);
+      }
     }
   };
 
@@ -977,7 +992,8 @@ function mapStateToProps(state) {
     isDeleteMultipleEntriesDialogOpened: isDeleteMultipleEntriesDialogOpened(
       state
     ),
-    searchFilter: getSearchFilter(state)
+    searchFilter: getSearchFilter(state),
+    editedEntryPaths: getEditedEntryPaths(state)
   };
 }
 

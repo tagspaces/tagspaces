@@ -526,7 +526,7 @@
   "pageLimitHelp": "设置每页文件数量",
   "unspecified": "未指定",
   "choosePerspective": "设置该文件夹的默认视图",
-  "sharingLink": "内部分享链接",
+  "sharingLink": "Generate sharing link",
   "folderLimit": "最多可显示的文件夹",
   "filesLimit": "文件夹中最多可显示的文件",
   "scrollFilesLimit": "在下拉中載入檔案",
@@ -723,5 +723,10 @@
   "showSubFolderDetails": "顯示列細節",
   "showEntriesDescription": "顯示檔案和資料夾詳細資訊",
   "fileChanged": "檔案已變更",
+  "actions": "Actions",
+  "query": "Search Query Composition",
+  "qrCode": "QR Code",
+  "linkValidity": "Link validity time",
+  "linkValidityTooltip": "Time for which the link is valid",
   "-": "-"
 }

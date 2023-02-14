@@ -96,6 +96,9 @@ const darkblueTheme = createTheme({
     secondary: {
       main: '#3bc8ff'
     },
+    background: {
+      default: '#001E3C'
+    },
     divider: '#555'
   }
 });

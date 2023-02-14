@@ -354,6 +354,7 @@ function buildTrayMenu() {
     {
       showTagSpaces,
       resumePlayback,
+      createNewWindowInstance,
       openSearch: showSearch,
       toggleCreateFileDialog: newTextFile,
       openNextFile: getNextFile,
@@ -524,6 +525,11 @@ app.on('window-all-closed', () => {
   app.quit();
 });
 
+app.on('quit', () => {
+  pm2.stopAll();
+  globalShortcut.unregisterAll();
+});
+
 startWS();
 
 app.on('ready', async () => {
@@ -685,6 +691,14 @@ app.on('ready', async () => {
     }
     reloadApp();
   });
+
+  /*process.on('SIGINT SIGTERM', () => {
+    console.log('Detected SIGINT/SIGTERM');
+  });
+
+  process.on('SIGTERM', () => {
+    console.log('Detected SIGTERM');
+  });*/
 });
 
 // i18n.on('languageChanged', lng => {

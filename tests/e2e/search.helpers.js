@@ -1,8 +1,8 @@
 import {
   clickOn,
-  expectElementExist,
   isDisplayed,
   setInputValue,
+  typeInputValue,
   waitForNotification
 } from './general.helpers';
 
@@ -12,6 +12,7 @@ export const searchTagDate = '201612';
 export const searchSubFolder = '/search';
 export const testFileInSubDirectory = 'sample_exif';
 export const testFilename = 'sample.desktop';
+export const emptyFolderName = 'empty_folder';
 export const firstTagButton = '/tbody/tr[1]/td[3]/button[1]';
 
 /**
@@ -28,7 +29,7 @@ export async function searchEngine(filename, options = {}) {
   if (!(await isDisplayed('#textQuery'))) {
     await clickOn('[data-tid=toggleSearch]');
   }
-  await setInputValue('#textQuery', filename);
+  await typeInputValue('#textQuery', filename);
   if (!(await isDisplayed('[data-tid=searchAdvancedTID]'))) {
     await clickOn('[data-tid=advancedSearch]');
   }

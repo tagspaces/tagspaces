@@ -526,7 +526,7 @@
   "pageLimitHelp": "Anzahl der Einträge pro Seite",
   "unspecified": "Nicht spezifiziert",
   "choosePerspective": "Legen Sie die Standardperspektive für diesen Ordner fest",
-  "sharingLink": "Link zum Freigeben im Internet",
+  "sharingLink": "Link zum Teilen generieren",
   "folderLimit": "max. Anzahl der Ordner, die angezeigt werden",
   "filesLimit": "Max. Anzahl der Dateien, die in einem Ordner angezeigt werden",
   "scrollFilesLimit": "Dateien werden beim Herunterscrollen geladen",
@@ -723,5 +723,10 @@
   "showSubFolderDetails": "Spaltendetails anzeigen",
   "showEntriesDescription": "Beschreibung für Dateien und Ordner anzeigen",
   "fileChanged": "Datei geändert",
+  "actions": "Aktionen",
+  "query": "Erstellung von Suchanfragen",
+  "qrCode": "QR-Code",
+  "linkValidity": "Gültigkeitszeit des Links",
+  "linkValidityTooltip": "Zeit, für die der Link gültig ist",
   "-": "-"
 }

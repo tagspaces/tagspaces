@@ -54,7 +54,8 @@ import {
   merge,
   setLocationType,
   getRelativeEntryPath,
-  getCleanLocationPath
+  getCleanLocationPath,
+  updateFsEntries
 } from '-/services/utils-io';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import i18n from '../services/i18n';
@@ -840,34 +841,10 @@ export default (state: any = initialState, action: any) => {
         ...state,
         // warning: edit action is handled in FolderContainer; to reload column in KanBan if properties is changed (dir color)
         // editedEntryPaths: [{ action: 'edit', path: action.path }],
-        currentDirectoryEntries: state.currentDirectoryEntries.map(entry => {
-          if (entry.path !== action.path) {
-            return entry;
-          }
-          if (action.entry.tags && action.entry.tags.length > 0) {
-            /* const tags = [...entry.tags]; // .filter(tag => tag.type === 'plain')];
-            action.entry.tags.map(tag => {
-              if (!entry.tags.some(oldTag => oldTag.title === tag.title)) {
-                tags.push(tag);
-              }
-              return true;
-            }); */
-
-            return {
-              ...entry,
-              ...action.entry
-              // tags
-              /* tags: [
-                ...entry.tags.filter(tag => tag.type === 'plain'),
-                ...action.entry.tags
-              ] */
-            };
-          }
-          return {
-            ...entry,
-            ...action.entry
-          };
-        })
+        currentDirectoryEntries: updateFsEntries(
+          state.currentDirectoryEntries,
+          [action.entry]
+        )
       };
     }
     /* case types.REFLECT_UPDATE_SIDECARMETA: {
@@ -1785,10 +1762,22 @@ export const actions = {
     type: types.SET_SEARCH_RESULTS,
     searchResults
   }),
-  exitSearchMode: () => ({
+  exitSearchMode: () => (dispatch: (action) => void, getState: () => any) => {
+    const { searchMode } = getState().app;
+    if (searchMode) {
+      dispatch(actions.exitSearchModeInt());
+    }
+  },
+  exitSearchModeInt: () => ({
     type: types.EXIT_SEARCH_MODE
   }),
-  enterSearchMode: () => ({
+  enterSearchMode: () => (dispatch: (action) => void, getState: () => any) => {
+    const { searchMode } = getState().app;
+    if (!searchMode) {
+      dispatch(actions.enterSearchModeInt());
+    }
+  },
+  enterSearchModeInt: () => ({
     type: types.ENTER_SEARCH_MODE
   }),
   appendSearchResults: (searchResults: Array<any> | []) => ({
@@ -2317,16 +2306,49 @@ export const actions = {
     newPath
   }),
   reflectRenameEntry: (path: string, newPath: string) => (
-    dispatch: (action) => void
+    dispatch: (action) => void,
+    getState: () => any
   ) => {
+    const { searchMode } = getState().app;
+    if (searchMode) {
+      GlobalSearch.results = GlobalSearch.results.map(
+        (fsEntry: TS.FileSystemEntry) => {
+          if (fsEntry.path === path) {
+            return {
+              ...fsEntry,
+              path: newPath,
+              name: extractFileName(newPath, PlatformIO.getDirSeparator())
+            };
+          }
+          return fsEntry;
+        }
+      );
+    }
     dispatch(actions.reflectRenameEntryInt(path, newPath));
     dispatch(LocationIndexActions.reflectRenameEntry(path, newPath));
     dispatch(actions.setSelectedEntries([]));
   },
-  updateCurrentDirEntry: (path: string, entry: any) => ({
+  /**
+   * TODO include path in entry => only one entry parameter
+   * @param path
+   * @param entry
+   */
+  updateCurrentDirEntry: (path: string, entry: any) => (
+    dispatch: (action) => void,
+    getState: () => any
+  ) => {
+    const { searchMode } = getState().app;
+    if (searchMode) {
+      GlobalSearch.results = updateFsEntries(GlobalSearch.results, [
+        { ...entry, path }
+      ]);
+    } else {
+      dispatch(actions.updateCurrentDirEntryInt(path, entry));
+    }
+  },
+  updateCurrentDirEntryInt: (path: string, entry: any) => ({
     type: types.UPDATE_CURRENTDIR_ENTRY,
-    path,
-    entry
+    entry: { ...entry, path }
   }),
   updateCurrentDirEntries: (dirEntries: TS.FileSystemEntry[]) => ({
     type: types.UPDATE_CURRENTDIR_ENTRIES,

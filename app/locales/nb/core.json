@@ -526,7 +526,7 @@
   "pageLimitHelp": "Sett antall filer per side",
   "unspecified": "Uspesifisert",
   "choosePerspective": "Angi standardperspektiv for denne mappen",
-  "sharingLink": "Link for intern deling",
+  "sharingLink": "Generate sharing link",
   "folderLimit": "Maksimalt antall mapper som vises",
   "filesLimit": "Maksimalt antall filer som vises i mappe",
   "scrollFilesLimit": "Files to be loaded on scroll down",
@@ -723,5 +723,10 @@
   "showSubFolderDetails": "Show column details",
   "showEntriesDescription": "Show description for files and folders",
   "fileChanged": "File changed",
+  "actions": "Actions",
+  "query": "Search Query Composition",
+  "qrCode": "QR Code",
+  "linkValidity": "Link validity time",
+  "linkValidityTooltip": "Time for which the link is valid",
   "-": "-"
 }
