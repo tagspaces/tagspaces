@@ -525,6 +525,11 @@ app.on('window-all-closed', () => {
   app.quit();
 });
 
+app.on('quit', () => {
+  pm2.stopAll();
+  globalShortcut.unregisterAll();
+});
+
 startWS();
 
 app.on('ready', async () => {
