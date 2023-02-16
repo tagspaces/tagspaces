@@ -547,7 +547,7 @@ const actions = {
       }
     }
   },
-  removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => async (
+  removeTags: (paths: Array<string>, tags?: Array<TS.Tag>) => async (
     dispatch: (actions: Object) => Promise<boolean>
   ): Promise<boolean> => {
     for (const path of paths) {
@@ -558,17 +558,23 @@ const actions = {
     }
     return Promise.resolve(true);
   },
-  removeTagsFromEntry: (path: string, tags: Array<TS.Tag>) => (
+  /**
+   * @param path
+   * @param tags? if undefined will remove all tags
+   */
+  removeTagsFromEntry: (path: string, tags?: Array<TS.Tag>) => (
     dispatch: (actions: Object) => Promise<boolean>,
     getState: () => any
   ): Promise<boolean> => {
     const { settings } = getState();
-    const tagTitlesForRemoving = tags.map(tag => tag.title);
+    const tagTitlesForRemoving = tags ? tags.map(tag => tag.title) : undefined;
     return loadMetaDataPromise(path)
       .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
-        const newTags = fsEntryMeta.tags.filter(
-          sidecarTag => !tagTitlesForRemoving.includes(sidecarTag.title)
-        );
+        const newTags = tagTitlesForRemoving
+          ? fsEntryMeta.tags.filter(
+              sidecarTag => !tagTitlesForRemoving.includes(sidecarTag.title)
+            )
+          : [];
 
         return removeTagsFromFilename(fsEntryMeta.isFile).then(newFilePath => {
           // no file rename - only sidecar tags removed
@@ -624,7 +630,7 @@ const actions = {
         return Promise.resolve(path);
       }
       return new Promise(async (resolve, reject) => {
-        const extractedTags = extractTags(
+        let extractedTags = extractTags(
           path,
           settings.tagDelimiter,
           PlatformIO.getDirSeparator()
@@ -635,15 +641,19 @@ const actions = {
             path,
             PlatformIO.getDirSeparator()
           );
-          for (let i = 0; i < tagTitlesForRemoving.length; i += 1) {
-            const tagLoc = extractedTags.indexOf(tagTitlesForRemoving[i]);
-            if (tagLoc < 0) {
-              console.log(
-                'The tag cannot be removed because it is not part of the file name.'
-              );
-            } else {
-              extractedTags.splice(tagLoc, 1);
+          if (tagTitlesForRemoving) {
+            for (let i = 0; i < tagTitlesForRemoving.length; i += 1) {
+              const tagLoc = extractedTags.indexOf(tagTitlesForRemoving[i]);
+              if (tagLoc < 0) {
+                console.log(
+                  'The tag cannot be removed because it is not part of the file name.'
+                );
+              } else {
+                extractedTags.splice(tagLoc, 1);
+              }
             }
+          } else {
+            extractedTags = [];
           }
           const newFilePath =
             (containingDirectoryPath
@@ -669,7 +679,8 @@ const actions = {
   removeAllTags: (paths: Array<string>) => async (
     dispatch: (action) => Promise<boolean>
   ): Promise<boolean> => {
-    for (const path of paths) {
+    return dispatch(actions.removeTags(paths));
+    /*for (const path of paths) {
       const success = await dispatch(actions.removeAllTagsFromFilename(path));
       if (success) {
         await dispatch(actions.removeAllTagsFromMetaData(path));
@@ -677,9 +688,9 @@ const actions = {
         return Promise.resolve(false);
       }
     }
-    return Promise.resolve(true);
+    return Promise.resolve(true);*/
   },
-  removeAllTagsFromFilename: (path: string) => (
+  /*removeAllTagsFromFilename: (path: string) => (
     dispatch: (action) => Promise<boolean>,
     getState: () => any
   ): Promise<boolean> => {
@@ -748,7 +759,7 @@ const actions = {
         console.warn('Could not find meta file for ' + path + ' with ' + error);
         // dispatch(AppActions.showNotification('Adding tags failed', 'error', true));
         return false;
-      }),
+      }),*/
   // smart tagging -> PRO
   addDateTag: (paths: Array<string>) => () =>
     // dispatch: (actions: Object) => void
