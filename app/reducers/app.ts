@@ -171,6 +171,7 @@ export type OpenedEntry = {
   editingExtensionPath?: string;
   editingExtensionId?: string;
   isFile?: boolean;
+  isAutoSaveEnabled?: boolean;
   color?: string;
   description?: string;
   perspective?: string;
@@ -2065,6 +2066,9 @@ export const actions = {
             if (fsEntryMeta.tags) {
               entryForOpening.tags = fsEntryMeta.tags;
             }
+            if (fsEntryMeta.autoSave !== undefined) {
+              entryForOpening.isAutoSaveEnabled = fsEntryMeta.autoSave;
+            }
             entryForOpening.lmdt = entryProps.lmdt;
             entryForOpening.size = entryProps.size;
             dispatch(actions.addToEntryContainer(entryForOpening));
@@ -2168,6 +2172,11 @@ export const actions = {
     }
     if (fsEntry.isNewFile) {
       entryForOpening.editMode = true;
+    }
+    if (fsEntry.isAutoSaveEnabled !== undefined) {
+      entryForOpening.isAutoSaveEnabled = fsEntry.isAutoSaveEnabled;
+    } else if (fsEntry.meta && fsEntry.meta.autoSave) {
+      entryForOpening.isAutoSaveEnabled = fsEntry.meta.autoSave;
     }
 
     document.title = fsEntry.name + ' | ' + 'TagSpaces'; // TODO get it later from app config

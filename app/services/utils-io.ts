@@ -910,7 +910,7 @@ export function cleanMetaData(
   if (metaData.perspective) {
     cleanedMeta.perspective = metaData.perspective;
   }
-  if (metaData.color) {
+  if (metaData.color && metaData.color !== 'transparent') {
     cleanedMeta.color = metaData.color;
   }
   if (metaData.description) {
@@ -921,6 +921,9 @@ export function cleanMetaData(
   }
   if (metaData.customOrder) {
     cleanedMeta.customOrder = metaData.customOrder;
+  }
+  if (metaData.autoSave) {
+    cleanedMeta.autoSave = metaData.autoSave;
   }
   /*if (metaData.perspectiveSettings) {  // clean perspectiveSettings !== defaultSettings
     Object.keys(metaData.perspectiveSettings).forEach(perspective => {

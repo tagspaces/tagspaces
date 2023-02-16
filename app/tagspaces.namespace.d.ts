@@ -114,6 +114,7 @@ export namespace TS {
     name: string;
     isFile: boolean;
     isNewFile?: boolean;
+    isAutoSaveEnabled?: boolean; // common with OpenedEntry
     extension?: string;
     thumbPath?: string;
     color?: string;
@@ -133,6 +134,7 @@ export namespace TS {
     id: string;
     description?: string;
     isFile?: boolean;
+    autoSave?: boolean;
     tags?: Array<TS.Tag>;
     tagGroups?: Array<TS.TagGroup>;
     color?: string;

@@ -83,8 +83,7 @@ import {
   getKeyBindingObject,
   getMapTileServer,
   getCurrentLanguage,
-  isRevisionsEnabled,
-  isAutoSaveEnabled
+  isRevisionsEnabled
 } from '-/reducers/settings';
 import TaggingActions from '-/reducers/tagging-actions';
 import {
@@ -190,8 +189,6 @@ interface Props {
   switchLocationType: (locationId: string) => Promise<string | null>;
   switchCurrentLocationType: (currentLocationId) => Promise<boolean>;
   revisionsEnabled: boolean;
-  autoSaveEnabled: boolean;
-  setAutoSaveEnabled: (enabled: boolean) => void;
 }
 
 const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
@@ -337,10 +334,10 @@ function EntryContainer(props: Props) {
   });
 
   useEffect(() => {
-    if (props.autoSaveEnabled) {
+    if (openedFile.isAutoSaveEnabled) {
       if (fileChanged.current) {
         timer.current = setInterval(() => {
-          if (props.autoSaveEnabled && fileChanged.current) {
+          if (openedFile.isAutoSaveEnabled && fileChanged.current) {
             startSavingFile();
             console.debug('autosave');
           }
@@ -356,7 +353,7 @@ function EntryContainer(props: Props) {
         clearInterval(timer.current);
       }
     };
-  }, [props.autoSaveEnabled, fileChanged.current]);
+  }, [openedFile.isAutoSaveEnabled, fileChanged.current]);
 
   useEffect(() => {
     if (
@@ -1270,11 +1267,30 @@ function EntryContainer(props: Props) {
                   <Tooltip title={i18n.t('core:autosave')}>
                     <Switch
                       data-tid="autoSaveTID"
-                      defaultChecked={props.autoSaveEnabled}
+                      checked={
+                        openedFile.isAutoSaveEnabled !== undefined &&
+                        openedFile.isAutoSaveEnabled
+                      }
                       onChange={(
                         event: React.ChangeEvent<HTMLInputElement>
                       ) => {
-                        props.setAutoSaveEnabled(event.target.checked);
+                        const autoSave = event.target.checked;
+                        props
+                          .switchLocationType(openedFile.locationId)
+                          .then(currentLocationId => {
+                            Pro.MetaOperations.saveFsEntryMeta(
+                              openedFile.path,
+                              { autoSave }
+                            ).then(entryMeta => {
+                              updateOpenedFile(openedFile.path, entryMeta).then(
+                                () => {
+                                  props.switchCurrentLocationType(
+                                    currentLocationId
+                                  );
+                                }
+                              );
+                            });
+                          });
                       }}
                       name="autoSave"
                       color="primary"
@@ -1536,7 +1552,6 @@ function mapStateToProps(state) {
     isDesktopMode: isDesktopMode(state),
     tileServer: getMapTileServer(state),
     revisionsEnabled: isRevisionsEnabled(state),
-    autoSaveEnabled: isAutoSaveEnabled(state),
     language: getCurrentLanguage(state)
   };
 }
@@ -1545,7 +1560,6 @@ function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
       setEntryPropertiesSplitSize: SettingsActions.setEntryPropertiesSplitSize,
-      setAutoSaveEnabled: SettingsActions.setAutoSaveEnabled,
       closeAllFiles: AppActions.closeAllFiles,
       renameFile: AppActions.renameFile,
       renameDirectory: AppActions.renameDirectory,
