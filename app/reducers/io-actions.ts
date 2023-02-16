@@ -35,7 +35,8 @@ import { Pro } from '../pro';
 import TaggingActions from './tagging-actions';
 import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
-import { actions as LocationIndexActions } from '-/reducers/location-index';
+import { generateThumbnailPromise } from '-/services/thumbsgenerator';
+import { base64ToArrayBuffer } from '-/utils/dom';
 
 const actions = {
   extractContent: (
@@ -315,6 +316,65 @@ const actions = {
     onUploadProgress?: (progress: Progress, response: any) => void
   ) => (dispatch: (actions: Object) => void) =>
     new Promise((resolve, reject) => {
+      function uploadFile(
+        filePath: string,
+        fileType: string,
+        fileContent: any
+      ) {
+        return PlatformIO.getPropertiesPromise(filePath)
+          .then(entryProps => {
+            if (entryProps) {
+              dispatch(
+                AppActions.showNotification(
+                  'File with the same name already exist, importing skipped!',
+                  'warning',
+                  true
+                )
+              );
+              dispatch(AppActions.setProgress(filePath, -1, undefined));
+            } else {
+              // dispatch(AppActions.setProgress(filePath, progress));
+              return PlatformIO.saveBinaryFilePromise(
+                { path: filePath },
+                fileContent,
+                true,
+                onUploadProgress
+              )
+                .then((fsEntry: TS.FileSystemEntry) => {
+                  // handle meta files
+                  if (fileType === 'meta') {
+                    try {
+                      // eslint-disable-next-line no-param-reassign
+                      fsEntry.meta = loadJSONString(fileContent.toString());
+                    } catch (e) {
+                      console.debug('cannot parse entry meta');
+                    }
+                  } else if (fileType === 'thumb') {
+                    // eslint-disable-next-line no-param-reassign
+                    fsEntry.thumbPath = fsEntry.path;
+                  }
+
+                  return fsEntry;
+                })
+                .catch(err => {
+                  console.error('Importing file ' + filePath + ' failed ', err);
+                  dispatch(
+                    AppActions.showNotification(
+                      'Importing file ' + filePath + ' failed.',
+                      'error',
+                      true
+                    )
+                  );
+                  return undefined;
+                });
+            }
+            return undefined;
+          })
+          .catch(err => {
+            console.error('Error getting properties', err);
+          });
+      }
+
       const uploadJobs = [];
       paths.map(path => {
         let target =
@@ -338,7 +398,8 @@ const actions = {
         uploadJobs.push([
           getThumbFileLocationForFile(path, AppConfig.dirSeparator),
           getThumbFileLocationForFile(target, AppConfig.dirSeparator),
-          'thumb'
+          'thumb',
+          path
         ]);
         return true;
       });
@@ -347,72 +408,25 @@ const actions = {
         // const file = selection.currentTarget.files[0];
         const filePath = job[1];
         const fileType = job[2];
-        /* normalizePath(props.directoryPath) +
-                PlatformIO.getDirSeparator() +
-                decodeURIComponent(file.name); */
 
         // TODO try to replace this with <input type="file"
         if (AppConfig.isElectron) {
           // for AWS location getFileContentPromise cannot load with io-objectore
-          return PlatformIO.getLocalFileContentPromise(job[0]).then(
-            fileContent =>
-              PlatformIO.getPropertiesPromise(filePath)
-                .then(entryProps => {
-                  if (entryProps) {
-                    dispatch(
-                      AppActions.showNotification(
-                        'File with the same name already exist, importing skipped!',
-                        'warning',
-                        true
-                      )
-                    );
-                    dispatch(AppActions.setProgress(filePath, -1, undefined));
-                  } else {
-                    // dispatch(AppActions.setProgress(filePath, progress));
-                    return PlatformIO.saveBinaryFilePromise(
-                      { path: filePath },
-                      fileContent,
-                      true,
-                      onUploadProgress
-                    )
-                      .then((fsEntry: TS.FileSystemEntry) => {
-                        // handle meta files
-                        if (fileType === 'meta') {
-                          try {
-                            // eslint-disable-next-line no-param-reassign
-                            fsEntry.meta = loadJSONString(
-                              fileContent.toString()
-                            );
-                          } catch (e) {
-                            console.debug('cannot parse entry meta');
-                          }
-                        } else if (fileType === 'thumb') {
-                          // eslint-disable-next-line no-param-reassign
-                          fsEntry.thumbPath = fsEntry.path;
-                        }
-
-                        return fsEntry;
-                      })
-                      .catch(err => {
-                        console.error(
-                          'Importing file ' + filePath + ' failed ' + err
-                        );
-                        dispatch(
-                          AppActions.showNotification(
-                            'Importing file ' + filePath + ' failed.',
-                            'error',
-                            true
-                          )
-                        );
-                        return undefined;
-                      });
+          return PlatformIO.getLocalFileContentPromise(job[0])
+            .then(fileContent => uploadFile(filePath, fileType, fileContent))
+            .catch(err => {
+              // console.log('Error getting file:' + job[0] + ' ' + err);
+              if (fileType === 'thumb' && job[3]) {
+                return generateThumbnailPromise(job[3], 400).then(dataURL => {
+                  if (dataURL && dataURL.length > 6) {
+                    const baseString = dataURL.split(',').pop();
+                    const fileContent = base64ToArrayBuffer(baseString);
+                    return uploadFile(filePath, fileType, fileContent);
                   }
                   return undefined;
-                })
-                .catch(err => {
-                  console.log('Error getting properties ' + err);
-                })
-          );
+                });
+              }
+            });
         }
 
         return undefined;
