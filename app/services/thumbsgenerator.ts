@@ -123,7 +123,7 @@ function saveThumbnailPromise(filePath, dataURL) {
   }
   const baseString = dataURL.split(',').pop();
   const content = base64ToArrayBuffer(baseString);
-  return PlatformIO.saveBinaryFilePromise(filePath, content, true)
+  return PlatformIO.saveBinaryFilePromise({ path: filePath }, content, true)
     .then(() => filePath)
     .catch(error => {
       console.warn(

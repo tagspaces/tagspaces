@@ -263,7 +263,7 @@ const actions = {
             : event.target.result;
           try {
             const fsEntry: TS.FileSystemEntry = await PlatformIO.saveBinaryFilePromise(
-              fileTargetPath,
+              { path: fileTargetPath },
               new Uint8Array(result),
               true,
               onUploadProgress
@@ -335,7 +335,7 @@ const actions = {
             } else {
               // dispatch(AppActions.setProgress(filePath, progress));
               return PlatformIO.saveBinaryFilePromise(
-                filePath,
+                { path: filePath },
                 fileContent,
                 true,
                 onUploadProgress

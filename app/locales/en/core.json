@@ -728,5 +728,9 @@
   "qrCode": "QR Code",
   "linkValidity": "Link validity time",
   "linkValidityTooltip": "Time for which the link is valid",
+  "revisions": "Revisions",
+  "setRevisionsEnabled": "Enable Revisions",
+  "setRevisionsEnabledHelp": "Save file edit change history",
+  "autosave": "Auto save",
   "-": "-"
 }

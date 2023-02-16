@@ -16,7 +16,7 @@
  *
  */
 
-import { getUuid } from '-/services/utils-io';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 
 export default [
   {

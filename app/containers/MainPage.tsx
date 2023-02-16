@@ -91,7 +91,6 @@ import { actions as LocationIndexActions } from '-/reducers/location-index';
 import MoveOrCopyFilesDialog from '-/components/dialogs/MoveOrCopyFilesDialog';
 import PlatformIO from '-/services/platform-facade';
 import { Pro } from '-/pro';
-import { getUuid } from '-/services/utils-io';
 
 const drawerWidth = 320;
 const body = document.getElementsByTagName('body')[0];
@@ -749,7 +748,6 @@ function MainPage(props: Props) {
           open={props.isProTeaserVisible}
           onClose={toggleProTeaser}
           openURLExternally={openURLExternally}
-          // key={getUuid()} // TODO rethink to remove this
         />
       )}
       {props.isUploadProgressDialogOpened && (

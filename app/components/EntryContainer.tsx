@@ -56,6 +56,7 @@ import {
   NavigateToFolderIcon,
   CancelIcon
 } from '-/components/CommonIcons';
+import HistoryIcon from '@mui/icons-material/History';
 import { Split } from 'ts-react-splitter';
 import { buffer } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
@@ -66,7 +67,8 @@ import {
   baseName,
   extractFileName,
   extractDirectoryName,
-  generateSharingLink
+  generateSharingLink,
+  getBackupFileLocation
 } from '@tagspaces/tagspaces-common/paths';
 import { ProTooltip } from '-/components/HelperComponents';
 import EntryProperties from '-/components/EntryProperties';
@@ -80,7 +82,8 @@ import {
   isDesktopMode,
   getKeyBindingObject,
   getMapTileServer,
-  getCurrentLanguage
+  getCurrentLanguage,
+  isRevisionsEnabled
 } from '-/reducers/settings';
 import TaggingActions from '-/reducers/tagging-actions';
 import {
@@ -94,6 +97,9 @@ import { TS } from '-/tagspaces.namespace';
 import FileView from '-/components/FileView';
 import { Pro } from '-/pro';
 import { actions as LocationActions } from '-/reducers/locations';
+import Revisions from '-/components/Revisions';
+import { Switch } from '@mui/material';
+import useFirstRender from '-/utils/useFirstRender';
 
 const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
 // const openedSplitSize = AppConfig.isElectron ? 560 : 360;
@@ -182,6 +188,7 @@ interface Props {
   tileServer: TS.MapTileServer;
   switchLocationType: (locationId: string) => Promise<string | null>;
   switchCurrentLocationType: (currentLocationId) => Promise<boolean>;
+  revisionsEnabled: boolean;
 }
 
 const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
@@ -216,12 +223,18 @@ function EntryContainer(props: Props) {
 
   // const [percent, setPercent] = React.useState<number | undefined>(undefined);
   const percent = useRef<number | undefined>(undefined);
+  const timer = useRef(null);
   const openedFile = openedFiles[0];
+  const openedFilePath = useRef(openedFile.path);
   // const [currentEntry, setCurrentEntry] = useState<OpenedEntry>(openedFile);
 
   const [isPropertiesPanelVisible, setPropertiesPanelVisible] = useState<
     boolean
   >(false);
+
+  const [isRevisionPanelVisible, setRevisionPanelVisible] = useState<boolean>(
+    false
+  );
   const [isFullscreen, setFullscreen] = useState<boolean>(false);
   // eslint-disable-next-line no-unused-vars
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
@@ -248,6 +261,7 @@ function EntryContainer(props: Props) {
     HTMLDivElement
   >(null);
   const fileChanged = useRef<boolean>(false);
+  const firstRender = useFirstRender();
 
   useEventListener('message', e => {
     if (typeof e.data === 'string') {
@@ -320,6 +334,28 @@ function EntryContainer(props: Props) {
   });
 
   useEffect(() => {
+    if (openedFile.isAutoSaveEnabled) {
+      if (fileChanged.current) {
+        timer.current = setInterval(() => {
+          if (openedFile.isAutoSaveEnabled && fileChanged.current) {
+            startSavingFile();
+            console.debug('autosave');
+          }
+        }, 40000);
+      } else if (timer.current) {
+        clearInterval(timer.current);
+      }
+    } else if (timer.current) {
+      clearInterval(timer.current);
+    }
+    return () => {
+      if (timer.current) {
+        clearInterval(timer.current);
+      }
+    };
+  }, [openedFile.isAutoSaveEnabled, fileChanged.current]);
+
+  useEffect(() => {
     if (
       fileViewer &&
       fileViewer.current &&
@@ -333,17 +369,17 @@ function EntryContainer(props: Props) {
   }, [settings.currentTheme]);
 
   useEffect(() => {
-    if (openedFiles.length > 0) {
-      if (
-        // openedFile.editMode &&
-        // openedFile.changed &&
-        fileChanged.current
-        // openedFile.shouldReload === false
-      ) {
-        setSaveBeforeReloadConfirmDialogOpened(true);
-      }
+    // if (openedFiles.length > 0) {
+    if (
+      !firstRender &&
+      // openedFile.editMode &&
+      // openedFile.changed &&
+      fileChanged.current
+      // openedFile.shouldReload === false
+    ) {
+      setSaveBeforeReloadConfirmDialogOpened(true);
     }
-  }, [openedFiles, isReadOnlyMode]); // , settings]);
+  }, [openedFilePath.current, isReadOnlyMode]); // , settings]);
 
   // always open for dirs
   const isPropPanelVisible = openedFile.isFile
@@ -545,16 +581,21 @@ function EntryContainer(props: Props) {
       try {
         // @ts-ignore
         const textContent = fileViewer.current.contentWindow.getContent();
-        setSavingInProgress(true);
-        saveFile(textContent).then(() => {
-          fileChanged.current = false;
-          showNotification(
-            i18n.t('core:fileSavedSuccessfully'),
-            NotificationTypes.default
-          );
-          // change state will not render DOT before file name too
-          setSavingInProgress(false);
-        });
+        //check if file is changed
+        if (fileChanged.current) {
+          setSavingInProgress(true);
+          saveFile(textContent).then(success => {
+            if (success) {
+              fileChanged.current = false;
+              showNotification(
+                i18n.t('core:fileSavedSuccessfully'),
+                NotificationTypes.default
+              );
+            }
+            // change state will not render DOT before file name too
+            setSavingInProgress(false);
+          });
+        }
       } catch (e) {
         setSavingInProgress(false);
         console.debug('function getContent not exist for video file:', e);
@@ -562,13 +603,28 @@ function EntryContainer(props: Props) {
     }
   };
 
-  const saveFile = (textContent: string) => {
+  const saveFile = (textContent: string): Promise<boolean> => {
     return props
       .switchLocationType(openedFile.locationId)
-      .then(currentLocationId => {
+      .then(async currentLocationId => {
+        if (Pro && props.revisionsEnabled) {
+          const id = await Pro.MetaOperations.getMetadataID(
+            openedFile.path,
+            openedFile.uuid
+          );
+          const targetPath = getBackupFileLocation(
+            openedFile.path,
+            id,
+            PlatformIO.getDirSeparator()
+          );
+          await PlatformIO.copyFilePromiseOverwrite(
+            openedFile.path,
+            targetPath
+          );
+        }
         // TODO check for timestamp on filesystem and ask to overwrite the changes there
         return PlatformIO.saveTextFilePromise(
-          openedFile.path,
+          { path: openedFile.path, lmdt: openedFile.lmdt },
           textContent,
           true
         )
@@ -593,11 +649,14 @@ function EntryContainer(props: Props) {
           .catch(error => {
             // setSavingInProgress(false);
             showNotification(
-              i18n.t('core:errorSavingFile'),
-              NotificationTypes.error
+              i18n.t('core:errorSavingFile') + ': ' + error.message,
+              NotificationTypes.error,
+              false
             );
             console.log('Error saving file ' + openedFile.path + ' - ' + error);
-            return props.switchCurrentLocationType(currentLocationId);
+            return props
+              .switchCurrentLocationType(currentLocationId)
+              .then(() => false);
           });
       });
   };
@@ -653,11 +712,16 @@ function EntryContainer(props: Props) {
   };
 
   const togglePanel = () => {
-    if (isPropPanelVisible) {
+    if (isPropPanelVisible && !isRevisionPanelVisible) {
       closePanel();
     } else {
       openPanel();
     }
+  };
+
+  const toggleRevisions = () => {
+    setRevisionPanelVisible(!isRevisionPanelVisible);
+    openPanel();
   };
 
   const openNextFile = () => {
@@ -745,19 +809,48 @@ function EntryContainer(props: Props) {
     );
   };
 
+  const isEditable = AppConfig.editableFiles.some(ext =>
+    openedFile.path.endsWith(ext)
+  );
+
   const renderFileToolbar = classes => (
     <div className={classes.toolbar2}>
       <div className={classes.flexLeft}>
         <Tooltip title={i18n.t('core:toggleProperties')}>
           <IconButton
             aria-label={i18n.t('core:toggleProperties')}
-            onClick={togglePanel}
+            onClick={() => {
+              togglePanel();
+              if (isRevisionPanelVisible) {
+                setRevisionPanelVisible(false);
+              }
+            }}
             data-tid="fileContainerToggleProperties"
             size="large"
           >
-            <DetailsIcon color={isPropPanelVisible ? 'primary' : 'action'} />
+            <DetailsIcon
+              color={
+                isPropPanelVisible && !isRevisionPanelVisible
+                  ? 'primary'
+                  : 'action'
+              }
+            />
           </IconButton>
         </Tooltip>
+        {Pro && isEditable && props.revisionsEnabled && (
+          <Tooltip title={i18n.t('core:editHistory')}>
+            <IconButton
+              aria-label={i18n.t('core:editHistory')}
+              onClick={toggleRevisions}
+              data-tid="editHistoryTID"
+              size="large"
+            >
+              <HistoryIcon
+                color={isRevisionPanelVisible ? 'primary' : 'action'}
+              />
+            </IconButton>
+          </Tooltip>
+        )}
         <Tooltip title={i18n.t('core:downloadFile')}>
           <IconButton
             aria-label={i18n.t('core:downloadFile')}
@@ -1170,6 +1263,41 @@ function EntryContainer(props: Props) {
                   alignItems: 'center'
                 }}
               >
+                {isEditable && props.revisionsEnabled && (
+                  <Tooltip title={i18n.t('core:autosave')}>
+                    <Switch
+                      data-tid="autoSaveTID"
+                      checked={
+                        openedFile.isAutoSaveEnabled !== undefined &&
+                        openedFile.isAutoSaveEnabled
+                      }
+                      onChange={(
+                        event: React.ChangeEvent<HTMLInputElement>
+                      ) => {
+                        const autoSave = event.target.checked;
+                        props
+                          .switchLocationType(openedFile.locationId)
+                          .then(currentLocationId => {
+                            Pro.MetaOperations.saveFsEntryMeta(
+                              openedFile.path,
+                              { autoSave }
+                            ).then(entryMeta => {
+                              updateOpenedFile(openedFile.path, entryMeta).then(
+                                () => {
+                                  props.switchCurrentLocationType(
+                                    currentLocationId
+                                  );
+                                }
+                              );
+                            });
+                          });
+                      }}
+                      name="autoSave"
+                      color="primary"
+                    />
+                  </Tooltip>
+                )}
+
                 {editingSupported && openedFile.editMode && (
                   <ButtonGroup>
                     <Tooltip title={i18n.t('core:cancelEditing')}>
@@ -1245,23 +1373,27 @@ function EntryContainer(props: Props) {
         }}
       >
         {openedFile.isFile ? renderFileToolbar(classes) : renderFolderToolbar()}
-        <EntryProperties
-          key={openedFile.path}
-          openedEntry={openedFile}
-          tagDelimiter={settings.tagDelimiter}
-          renameFile={renameFile}
-          renameDirectory={renameDirectory}
-          addTags={addTags}
-          removeTags={removeTags}
-          removeAllTags={removeAllTags}
-          updateOpenedFile={updateOpenedFile}
-          updateThumbnailUrl={updateThumbnailUrl}
-          showNotification={showNotification}
-          isReadOnlyMode={isReadOnlyMode}
-          currentDirectoryPath={currentDirectoryPath}
-          tileServer={tileServer}
-          sharingLink={sharingLink}
-        />
+        {isRevisionPanelVisible ? (
+          <Revisions />
+        ) : (
+          <EntryProperties
+            key={openedFile.path}
+            openedEntry={openedFile}
+            tagDelimiter={settings.tagDelimiter}
+            renameFile={renameFile}
+            renameDirectory={renameDirectory}
+            addTags={addTags}
+            removeTags={removeTags}
+            removeAllTags={removeAllTags}
+            updateOpenedFile={updateOpenedFile}
+            updateThumbnailUrl={updateThumbnailUrl}
+            showNotification={showNotification}
+            isReadOnlyMode={isReadOnlyMode}
+            currentDirectoryPath={currentDirectoryPath}
+            tileServer={tileServer}
+            sharingLink={sharingLink}
+          />
+        )}
       </div>
     );
 
@@ -1419,6 +1551,7 @@ function mapStateToProps(state) {
     keyBindings: getKeyBindingObject(state),
     isDesktopMode: isDesktopMode(state),
     tileServer: getMapTileServer(state),
+    revisionsEnabled: isRevisionsEnabled(state),
     language: getCurrentLanguage(state)
   };
 }

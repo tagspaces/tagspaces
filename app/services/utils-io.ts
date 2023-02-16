@@ -16,7 +16,7 @@
  *
  */
 
-import { v1 as uuidv1, v4 as uuidv4 } from 'uuid';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import {
@@ -108,7 +108,7 @@ export function enhanceDirectoryContent(
       return true;
     }
 
-    const enhancedEntry = enhanceEntry(
+    const enhancedEntry: TS.FileSystemEntry = enhanceEntry(
       entry,
       AppConfig.tagDelimiter,
       PlatformIO.getDirSeparator()
@@ -385,6 +385,7 @@ export function findExtensionPathForId(extensionId: string): string {
 }
 
 export function findExtensionsForEntry(
+  uuid: string,
   supportedFileTypes: Array<any>,
   entryPath: string,
   isFile = true
@@ -397,6 +398,7 @@ export function findExtensionsForEntry(
     ? findExtensionPathForId('@tagspaces/extensions/text-viewer')
     : 'about:blank';
   const fileForOpening: OpenedEntry = {
+    uuid: uuid,
     path: entryPath,
     viewingExtensionPath,
     viewingExtensionId: '',
@@ -520,7 +522,7 @@ async function persistIndex(param: string | any, directoryIndex: any) {
   }
   const folderIndexPath =
     metaDirectory + PlatformIO.getDirSeparator() + AppConfig.folderIndexFile; // getMetaIndexFilePath(directoryPath);
-  return PlatformIO.saveTextFilePlatform(
+  return PlatformIO.saveTextFilePromise(
     { ...param, path: folderIndexPath },
     JSON.stringify(directoryIndex), // relativeIndex),
     true
@@ -908,7 +910,7 @@ export function cleanMetaData(
   if (metaData.perspective) {
     cleanedMeta.perspective = metaData.perspective;
   }
-  if (metaData.color) {
+  if (metaData.color && metaData.color !== 'transparent') {
     cleanedMeta.color = metaData.color;
   }
   if (metaData.description) {
@@ -919,6 +921,9 @@ export function cleanMetaData(
   }
   if (metaData.customOrder) {
     cleanedMeta.customOrder = metaData.customOrder;
+  }
+  if (metaData.autoSave) {
+    cleanedMeta.autoSave = metaData.autoSave;
   }
   /*if (metaData.perspectiveSettings) {  // clean perspectiveSettings !== defaultSettings
     Object.keys(metaData.perspectiveSettings).forEach(perspective => {
@@ -1023,7 +1028,11 @@ export async function saveLocationDataPromise(
       appVersion: versionMeta.version,
       lastUpdated: new Date().toJSON()
     });
-    return PlatformIO.saveTextFilePromise(metaFilePath, content, true);
+    return PlatformIO.saveTextFilePromise(
+      { path: metaFilePath },
+      content,
+      true
+    );
   }
   return Promise.reject(new Error('file not found' + path));
 }
@@ -1074,11 +1083,12 @@ export async function saveMetaDataPromise(
         PlatformIO.getDirSeparator()
       );
     }
-    cleanedMetaData.appName = versionMeta.name;
-    cleanedMetaData.appVersion = versionMeta.version;
-    cleanedMetaData.lastUpdated = new Date().toJSON();
-    const content = JSON.stringify(cleanedMetaData);
-    return PlatformIO.saveTextFilePromise(metaFilePath, content, true);
+    const content = JSON.stringify(mergeFsEntryMeta(cleanedMetaData));
+    return PlatformIO.saveTextFilePromise(
+      { path: metaFilePath },
+      content,
+      true
+    );
   }
   return Promise.reject(new Error('file not found' + path));
 }
@@ -1124,7 +1134,11 @@ export function setFolderBackgroundPromise(
     .then(base64Image => {
       if (base64Image) {
         const data = base64ToArrayBuffer(base64Image.split(',').pop());
-        return PlatformIO.saveBinaryFilePromise(folderBgndPath, data, true)
+        return PlatformIO.saveBinaryFilePromise(
+          { path: folderBgndPath },
+          data,
+          true
+        )
           .then(() => {
             // props.setLastBackgroundImageChange(new Date().getTime());
             return directoryPath;
@@ -1401,10 +1415,6 @@ export function setLocationType(location: TS.Location): Promise<boolean> {
   return Promise.resolve(false);
 }
 
-export function getUuid(version = 4): string {
-  return version === 4 ? uuidv4() : uuidv1();
-}
-
 export function getCleanLocationPath(location: TS.Location): string {
   let locationPath = PlatformIO.getLocationPath(location);
   locationPath = cleanTrailingDirSeparator(locationPath);
@@ -1446,4 +1456,35 @@ export function updateFsEntries(
       ...entryUpdated
     };
   });
+}
+
+export function mergeFsEntryMeta(props: any = {}): TS.FileSystemEntryMeta {
+  return {
+    id: props.id || getUuid(),
+    appName: versionMeta.name,
+    appVersion: versionMeta.version,
+    description: '',
+    lastUpdated: new Date().getTime(),
+    tags: [],
+    ...props
+  };
+}
+
+export function createFsEntryMeta(
+  path: string,
+  props: any = {}
+): Promise<string> {
+  const newFsEntryMeta: TS.FileSystemEntryMeta = mergeFsEntryMeta(props);
+  return saveMetaDataPromise(path, newFsEntryMeta)
+    .then(() => newFsEntryMeta.id)
+    .catch(error => {
+      console.error(
+        'Error saveMetaDataPromise for ' +
+          path +
+          ' orphan id: ' +
+          newFsEntryMeta.id,
+        error
+      );
+      return newFsEntryMeta.id;
+    });
 }

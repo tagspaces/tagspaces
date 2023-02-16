@@ -7,7 +7,8 @@ import {
   prepareTagGroupForExport
 } from '@tagspaces/tagspaces-common/misc';
 import versionMeta from '-/version.json';
-import { getUuid, parseNewTags, saveAsTextFile } from '-/services/utils-io';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import { parseNewTags, saveAsTextFile } from '-/services/utils-io';
 import AppConfig from '-/AppConfig';
 import defaultTagLibrary from '../reducers/taglibrary-default';
 

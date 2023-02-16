@@ -53,11 +53,11 @@ import {
   loadJSONFile,
   merge,
   setLocationType,
-  getUuid,
   getRelativeEntryPath,
   getCleanLocationPath,
   updateFsEntries
 } from '-/services/utils-io';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import { actions as LocationIndexActions } from './location-index';
@@ -160,6 +160,7 @@ export const NotificationTypes = {
 };
 
 export type OpenedEntry = {
+  uuid: string;
   path: string;
   url?: string;
   size: number;
@@ -170,6 +171,7 @@ export type OpenedEntry = {
   editingExtensionPath?: string;
   editingExtensionId?: string;
   isFile?: boolean;
+  isAutoSaveEnabled?: boolean;
   color?: string;
   description?: string;
   perspective?: string;
@@ -1651,7 +1653,7 @@ export const actions = {
         formatDateTime4Tag(new Date(), true) +
         AppConfig.endTagContainer +
         '.txt';
-      PlatformIO.saveFilePromise(filePath, '', true)
+      PlatformIO.saveFilePromise({ path: filePath }, '', true)
         .then(() => {
           dispatch(actions.reflectCreateEntry(filePath, true));
           dispatch(
@@ -1731,7 +1733,7 @@ export const actions = {
     } else if (fileType === 'md') {
       fileContent = content + ' \n\n' + creationMeta + '\n';
     }
-    PlatformIO.saveFilePromise(filePath, fileContent, false)
+    PlatformIO.saveFilePromise({ path: filePath }, fileContent, false)
       .then((fsEntry: TS.FileSystemEntry) => {
         dispatch(actions.reflectCreateEntry(filePath, true));
         dispatch(actions.openFsEntry(fsEntry)); // TODO return fsEntry from saveFilePromise and simplify
@@ -2017,7 +2019,7 @@ export const actions = {
   },
   updateOpenedFile: (
     entryPath: string,
-    fsEntryMeta: any // FileSystemEntryMeta,
+    fsEntryMeta: any // TS.FileSystemEntryMeta,
     // isFile: boolean = true
   ) => (dispatch: (action) => void, getState: () => any): Promise<boolean> => {
     const { openedFiles } = getState().app;
@@ -2032,6 +2034,7 @@ export const actions = {
 
             if (!entryExist) {
               entryForOpening = findExtensionsForEntry(
+                fsEntryMeta.id || fsEntryMeta.uuid,
                 supportedFileTypes,
                 entryPath,
                 entryProps.isFile
@@ -2063,6 +2066,11 @@ export const actions = {
             if (fsEntryMeta.tags) {
               entryForOpening.tags = fsEntryMeta.tags;
             }
+            if (fsEntryMeta.autoSave !== undefined) {
+              entryForOpening.isAutoSaveEnabled = fsEntryMeta.autoSave;
+            }
+            entryForOpening.lmdt = entryProps.lmdt;
+            entryForOpening.size = entryProps.size;
             dispatch(actions.addToEntryContainer(entryForOpening));
           }
           return true;
@@ -2131,6 +2139,7 @@ export const actions = {
     const { supportedFileTypes } = getState().settings;
     // TODO decide to copy all props from {...fsEntry} into openedEntry
     entryForOpening = findExtensionsForEntry(
+      fsEntry.uuid,
       supportedFileTypes,
       fsEntry.path,
       fsEntry.isFile
@@ -2163,6 +2172,11 @@ export const actions = {
     }
     if (fsEntry.isNewFile) {
       entryForOpening.editMode = true;
+    }
+    if (fsEntry.isAutoSaveEnabled !== undefined) {
+      entryForOpening.isAutoSaveEnabled = fsEntry.isAutoSaveEnabled;
+    } else if (fsEntry.meta && fsEntry.meta.autoSave) {
+      entryForOpening.isAutoSaveEnabled = fsEntry.meta.autoSave;
     }
 
     document.title = fsEntry.name + ' | ' + 'TagSpaces'; // TODO get it later from app config

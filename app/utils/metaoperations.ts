@@ -1,4 +1,8 @@
-import { loadMetaDataPromise, saveMetaDataPromise } from '-/services/utils-io';
+import {
+  loadMetaDataPromise,
+  mergeFsEntryMeta,
+  saveMetaDataPromise
+} from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 
 // eslint-disable-next-line import/prefer-default-export
@@ -33,14 +37,9 @@ export function savePerspective(
         return true;
       })
       .catch(() => {
-        const newFsEntryMeta: TS.FileSystemEntryMeta = {
-          appName: '',
-          appVersion: '',
-          description: '',
-          lastUpdated: '',
-          tags: undefined,
+        const newFsEntryMeta: TS.FileSystemEntryMeta = mergeFsEntryMeta({
           perspective
-        };
+        });
         saveMetaDataPromise(path, newFsEntryMeta)
           .then(() => {
             resolve(newFsEntryMeta);

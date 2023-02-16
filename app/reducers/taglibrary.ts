@@ -22,7 +22,8 @@ import {
   prepareTagGroupForExport
 } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
-import { getUuid, parseNewTags, saveAsTextFile } from '-/services/utils-io';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import { parseNewTags, saveAsTextFile } from '-/services/utils-io';
 import versionMeta from '../version.json';
 import defaultTagLibrary from './taglibrary-default';
 import { TS } from '-/tagspaces.namespace';

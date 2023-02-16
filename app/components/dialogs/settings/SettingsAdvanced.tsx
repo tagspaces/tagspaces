@@ -73,6 +73,7 @@ interface Props {
     warningOpeningFilesExternally: boolean
   ) => void;
   setSaveTagInLocation: (saveTagInLocation: boolean) => void;
+  setRevisionsEnabled: (enabled: boolean) => void;
   showResetSettings: (showDialog: boolean) => void;
   tileServers: Array<TS.MapTileServer>;
   setGeoTaggingFormat: (geoTaggingFormat: string) => void;
@@ -207,7 +208,25 @@ function SettingsAdvanced(props: Props) {
             </ListItem>
           </>
         )}
-
+        <ListItem className={classes.listItem}>
+          <ListItemText
+            primary={
+              <>
+                {i18n.t('setRevisionsEnabled')}
+                <InfoIcon tooltip={i18n.t('core:setRevisionsEnabledHelp')} />
+                <ProLabel />
+              </>
+            }
+          />
+          <Switch
+            data-tid="setRevisionsEnabledTID"
+            disabled={!Pro}
+            onClick={() =>
+              props.setRevisionsEnabled(!props.settings.isRevisionsEnabled)
+            }
+            checked={props.settings.isRevisionsEnabled}
+          />
+        </ListItem>
         <ListItem className={classes.listItem}>
           <ListItemText
             primary={
@@ -345,7 +364,8 @@ function mapActionCreatorsToProps(dispatch) {
       setEnableWS: SettingsActions.setEnableWS,
       setSaveTagInLocation: SettingsActions.setSaveTagInLocation,
       setGeoTaggingFormat: SettingsActions.setGeoTaggingFormat,
-      setHistory: SettingsActions.setHistory
+      setHistory: SettingsActions.setHistory,
+      setRevisionsEnabled: SettingsActions.setRevisionsEnabled
     },
     dispatch
   );

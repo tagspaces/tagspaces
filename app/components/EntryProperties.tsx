@@ -71,9 +71,9 @@ import {
   convertMarkDown,
   fileNameValidation,
   dirNameValidation,
-  normalizeUrl,
-  getUuid
+  normalizeUrl
 } from '-/services/utils-io';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { parseGeoLocation } from '-/utils/geo';
 import { Pro } from '../pro';
 import PlatformIO from '../services/platform-facade';
@@ -104,6 +104,7 @@ import { actions as LocationActions } from '-/reducers/locations';
 import { actions as AppActions } from '-/reducers/app';
 import useFirstRender from '-/utils/useFirstRender';
 import SharingLinkDialog from '-/components/dialogs/SharingLinkDialog';
+import { saveFsEntryMeta } from '../../extensions/tagspacespro/modules/metaoperations';
 
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
@@ -362,10 +363,9 @@ function EntryProperties(props: Props) {
       props
         .switchLocationType(props.openedEntry.locationId)
         .then(currentLocationId => {
-          Pro.MetaOperations.saveDescription(
-            currentEntry.path,
-            editDescription.current
-          )
+          Pro.MetaOperations.saveFsEntryMeta(currentEntry.path, {
+            description: editDescription.current
+          })
             .then(entryMeta => {
               editDescription.current = undefined;
               props.updateOpenedFile(currentEntry.path, entryMeta);
@@ -488,7 +488,7 @@ function EntryProperties(props: Props) {
     props
       .switchLocationType(props.openedEntry.locationId)
       .then(currentLocationId => {
-        Pro.MetaOperations.saveColor(currentEntry.path, color)
+        Pro.MetaOperations.saveFsEntryMeta(currentEntry.path, { color })
           .then(entryMeta => {
             // if (props.entryPath === props.currentDirectoryPath) {
             props.setLastBackgroundColorChange(
