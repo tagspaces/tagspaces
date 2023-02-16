@@ -125,7 +125,7 @@ describe('TST50** - Right button on a file', () => {
     // await expectElementExist(selectorFile, true);
 
     await deleteFileFromMenu(getGridFileSelector(fileName));
-    await expectElementExist(getGridFileSelector(fileName), false);
+    await expectElementExist(getGridFileSelector(fileName), false, 2000);
     /* firstFileName = await getGridFileName(0);
     expect(firstFileName).toBe(undefined); */
   });
