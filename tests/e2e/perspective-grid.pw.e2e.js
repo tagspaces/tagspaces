@@ -28,6 +28,16 @@ import {
   setGridOptions,
   waitForNotification
 } from './general.helpers';
+import {
+  cleanFileName,
+  extractFileExtension,
+  extractTagsAsObjects
+} from '@tagspaces/tagspaces-common/paths';
+import { sortByCriteria } from '@tagspaces/tagspaces-common/misc';
+import {
+  dirSeparator,
+  tagDelimiter
+} from '@tagspaces/tagspaces-common/AppConfig';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 import { getPropertiesFileName } from './file.properties.helpers';
 import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
@@ -74,6 +84,33 @@ describe('TST50 - Perspective Grid', () => {
 
   // Scenarios for sorting files in grid perspective
   describe('TST5003 - Testing sort files in the grid perspective [web,minio,electron]', () => {
+    let dirEntries;
+    beforeAll(async () => {
+      const path = require('path');
+      const fs = require('fs-extra');
+      const testDir = path.join(
+        __dirname,
+        '..',
+        'testdata-tmp',
+        'file-structure',
+        'supported-filestypes'
+      );
+      dirEntries = (await fs.readdir(testDir, { withFileTypes: true }))
+        .filter(item => !item.isDirectory() && !item.name.startsWith('.'))
+        .map(item => {
+          const entryPath = testDir + dirSeparator + item.name;
+          const stats = fs.statSync(entryPath);
+          return {
+            name: cleanFileName(item.name),
+            isFile: item.isFile(),
+            size: stats.size,
+            lmdt: stats.mtime.getTime ? stats.mtime.getTime() : stats.mtime,
+            extension: extractFileExtension(item.name, dirSeparator),
+            tags: extractTagsAsObjects(item.name, tagDelimiter, dirSeparator)
+          };
+        });
+    });
+
     beforeEach(async () => {
       await clickOn('[data-tid=gridPerspectiveSortMenu]');
     });
@@ -81,68 +118,94 @@ describe('TST50 - Perspective Grid', () => {
     test('TST10xx - Sort by name [web,minio,electron]', async () => {
       // DESC
       await clickOn('[data-tid=gridPerspectiveSortByName]');
-      let firstFileName = await getGridFileName(0);
-      expect(firstFileName).toBe('sample_exif.jpg');
+      let sorted = sortByCriteria(dirEntries, 'byName', false);
+      for (let i = 0; i < sorted.length; i += 1) {
+        const fileName = await getGridFileName(i);
+        expect(fileName).toBe(sorted[i].name); //'sample_exif.jpg');
+      }
+
       // ASC
       await clickOn('[data-tid=gridPerspectiveSortMenu]');
       await clickOn('[data-tid=gridPerspectiveSortByName]');
-      firstFileName = await getGridFileName(0);
-      expect(firstFileName).toBe('sample.avif');
+
+      sorted = sortByCriteria(dirEntries, 'byName', true);
+      for (let i = 0; i < sorted.length; i += 1) {
+        const fileName = await getGridFileName(i);
+        expect(fileName).toBe(sorted[i].name); //'sample.avif');
+      }
     });
 
     test('TST10xx - Sort by size [web,minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortBySize]');
-      let firstFileName = await getGridFileName(0);
-      expect(firstFileName).toBe('sample.csv');
+      // DESC
+      let sorted = sortByCriteria(dirEntries, 'byFileSize', true);
+      for (let i = 0; i < sorted.length; i += 1) {
+        const fileName = await getGridFileName(i);
+        expect(fileName).toBe(sorted[i].name); //'sample.csv');
+      }
 
       // ASC
       await clickOn('[data-tid=gridPerspectiveSortMenu]');
       await clickOn('[data-tid=gridPerspectiveSortBySize]');
-      firstFileName = await getGridFileName(0);
-      expect(firstFileName).toBe('sample.nef');
+      sorted = sortByCriteria(dirEntries, 'byFileSize', false);
+      for (let i = 0; i < sorted.length; i += 1) {
+        const fileName = await getGridFileName(i);
+        expect(fileName).toBe(sorted[i].name); //'sample.nef');
+      }
     });
 
     test('TST10xx - Sort by date [web,minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortByDate]');
 
-      await createTxtFile();
-      // await global.client.pause(500);
+      let sorted = sortByCriteria(dirEntries, 'byDateModified', true);
+      for (let i = 0; i < sorted.length; i += 1) {
+        const fileName = await getGridFileName(i);
+        expect(fileName).toBe(sorted[i].name);
+      }
 
       // ASC
       await clickOn('[data-tid=gridPerspectiveSortMenu]');
       await clickOn('[data-tid=gridPerspectiveSortByDate]');
 
-      const firstFileName = await getGridFileName(0);
-      expect(firstFileName).toBe('note.txt');
-
-      // cleanup
-      // await setSettings('[data-tid=settingsSetUseTrashCan]');
-      // await global.client.pause(500);
-      await deleteFileFromMenu();
-      // firstFileName = await getGridFileName(0);
-      // expect(firstFileName).not.toBe('note.txt'); TODO its have note.txt from another tests
+      sorted = sortByCriteria(dirEntries, 'byDateModified', false);
+      for (let i = 0; i < sorted.length; i += 1) {
+        const fileName = await getGridFileName(i);
+        expect(fileName).toBe(sorted[i].name);
+      }
     });
 
     test('TST10xx - Sort by extension [web,minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortByExt]');
-      let firstFileName = await getGridFileName(0);
-      expect(firstFileName).toBe('sample.avif');
+      let sorted = sortByCriteria(dirEntries, 'byExtension', true);
+      for (let i = 0; i < sorted.length; i += 1) {
+        const fileName = await getGridFileName(i);
+        expect(fileName).toBe(sorted[i].name);
+      }
 
       await clickOn('[data-tid=gridPerspectiveSortMenu]');
       await clickOn('[data-tid=gridPerspectiveSortByExt]');
-      firstFileName = await getGridFileName(0);
-      expect(firstFileName).toBe('sample.zip');
+      sorted = sortByCriteria(dirEntries, 'byExtension', false);
+      for (let i = 0; i < sorted.length; i += 1) {
+        const fileName = await getGridFileName(i);
+        expect(fileName).toBe(sorted[i].name);
+      }
     });
 
     test('TST10xx - Sort by tags [web,minio,electron]', async () => {
       await clickOn('[data-tid=gridPerspectiveSortByFirstTag]');
-      let firstFileName = await getGridFileName(0);
-      expect(firstFileName).toBe('sample.avif');
+      let sorted = sortByCriteria(dirEntries, 'byFirstTag', true);
+      for (let i = 0; i < sorted.length; i += 1) {
+        const fileName = await getGridFileName(i);
+        expect(fileName).toBe(sorted[i].name);
+      }
       // ASC
       await clickOn('[data-tid=gridPerspectiveSortMenu]');
       await clickOn('[data-tid=gridPerspectiveSortByFirstTag]');
-      firstFileName = await getGridFileName(0);
-      expect(firstFileName).toBe('sample_exif.jpg');
+      sorted = sortByCriteria(dirEntries, 'byFirstTag', false);
+      for (let i = 0; i < sorted.length; i += 1) {
+        const fileName = await getGridFileName(i);
+        expect(fileName).toBe(sorted[i].name);
+      }
     });
   });
 
