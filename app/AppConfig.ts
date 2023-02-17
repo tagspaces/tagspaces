@@ -4,6 +4,10 @@ AppConfig.mainToolbarHeight = 101;
 AppConfig.editableFiles = [
   'txt',
   'md',
+  'markdown',
+  'mdown',
+  'html',
+  'htm',
   'coffee',
   'c',
   'cpp',
@@ -15,16 +19,13 @@ AppConfig.editableFiles = [
   'js',
   'json',
   'less',
-  'markdown',
-  'mdown',
   'php',
   'pl',
   'py',
   'rb',
   'ini',
   'sh',
-  'sql',
-  'mhtml'
+  'sql'
 ];
 
 export default AppConfig;

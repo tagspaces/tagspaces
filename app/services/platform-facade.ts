@@ -360,12 +360,10 @@ export default class PlatformFacade {
   ): Promise<any> => {
     PlatformFacade.ignoreByWatcher(param.path);
 
-    return platformSaveFilePromise(param, content, overwrite).then(
-      result => {
-        PlatformFacade.deignoreByWatcher(param.path);
-        return result;
-      }
-    );
+    return platformSaveFilePromise(param, content, overwrite).then(result => {
+      PlatformFacade.deignoreByWatcher(param.path);
+      return result;
+    });
   };
 
   /**
