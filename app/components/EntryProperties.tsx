@@ -104,7 +104,6 @@ import { actions as LocationActions } from '-/reducers/locations';
 import { actions as AppActions } from '-/reducers/app';
 import useFirstRender from '-/utils/useFirstRender';
 import SharingLinkDialog from '-/components/dialogs/SharingLinkDialog';
-import { saveFsEntryMeta } from '../../extensions/tagspacespro/modules/metaoperations';
 
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
