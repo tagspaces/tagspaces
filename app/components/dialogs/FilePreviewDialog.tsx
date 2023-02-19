@@ -176,8 +176,8 @@ function FilePreviewDialog(props: Props) {
       onClose={onClose}
       keepMounted
       scroll="paper"
-      /*fullWidth={true}
-      maxWidth="md"*/
+      fullWidth
+      maxWidth="md"
       PaperProps={{ sx: { width: '100%', height: '100%' } }}
       BackdropProps={{ style: { backgroundColor: 'transparent' } }}
     >
@@ -189,6 +189,7 @@ function FilePreviewDialog(props: Props) {
         style={{
           marginLeft: 'auto',
           marginRight: 'auto',
+          overflowY: 'hidden',
           width: '90%',
           flexGrow: 1
         }}
@@ -199,6 +200,7 @@ function FilePreviewDialog(props: Props) {
           openedFile={openedFile}
           fileViewer={fileViewer}
           fileViewerContainer={fileViewerContainer}
+          height={'90%'}
           currentTheme={props.currentTheme}
         />
       </DialogContent>

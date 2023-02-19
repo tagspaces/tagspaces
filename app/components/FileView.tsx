@@ -35,6 +35,7 @@ interface Props {
   fileViewerContainer: MutableRefObject<HTMLDivElement>;
   searchQuery: TS.SearchQuery;
   toggleFullScreen?: () => void;
+  height?: string;
   theme: any;
   currentTheme: string;
 }
@@ -48,6 +49,7 @@ function FileView(props: Props) {
     fileViewerContainer,
     toggleFullScreen,
     searchQuery,
+    height,
     currentTheme
   } = props; // .openedFiles[0];
 
@@ -128,7 +130,7 @@ function FileView(props: Props) {
       ref={fileViewerContainer}
       style={{
         width: '100%',
-        height: '100%',
+        height: height || '100%',
         flex: '1 1 100%',
         display: 'flex',
         backgroundColor: theme.palette.background.default

@@ -730,7 +730,9 @@
   "linkValidityTooltip": "Time for which the link is valid",
   "revisions": "Revisions",
   "setRevisionsEnabled": "Enable Revisions",
-  "setRevisionsEnabledHelp": "Save file edit change history",
+  "setRevisionsEnabledHelp": "Create a file revision, every time a text document is saved",
   "autosave": "Auto save",
+  "restore": "Restore",
+  "createdOn": "Created on",
   "-": "-"
 }

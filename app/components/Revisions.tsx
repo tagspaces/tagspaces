@@ -21,6 +21,8 @@ import {
   getBackupFileLocation,
   extractContainingDirectoryPath
 } from '@tagspaces/tagspaces-common/paths';
+import Typography from '@mui/material/Typography';
+import Tooltip from '-/components/Tooltip';
 import withStyles from '@mui/styles/withStyles';
 import {
   actions as AppActions,
@@ -131,14 +133,16 @@ function Revisions(props: Props) {
 
   return (
     <div>
-      <h2>{i18n.t('revisions')}</h2>
+      <Typography variant="h4" style={{ color: theme.palette.text.primary }}>
+        {i18n.t('core:revisions')}
+      </Typography>
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="revisions table">
+        <Table sx={{ minWidth: 650 }} size="small" aria-label="revisions table">
           <TableHead>
             <TableRow>
-              <TableCell>File</TableCell>
-              <TableCell align="right">Revision Date</TableCell>
-              <TableCell align="right">Review/Delete</TableCell>
+              <TableCell>{i18n.t('file')}</TableCell>
+              <TableCell align="right">{i18n.t('createdOn')}</TableCell>
+              <TableCell align="right">{i18n.t('revisions')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -164,35 +168,41 @@ function Revisions(props: Props) {
                       })}
                     </TableCell>
                     <TableCell align="right">
-                      <IconButton
-                        aria-label={i18n.t('core:view')}
-                        onClick={() => setPreviewDialogEntry(row)}
-                        data-tid="viewRevisionTID"
-                        size="large"
-                      >
-                        <PreviewIcon color="primary" />
-                      </IconButton>
-                      <IconButton
-                        aria-label={i18n.t('core:restore')}
-                        onClick={() => restoreRevision(row.path)}
-                        data-tid="restoreRevisionTID"
-                        size="large"
-                      >
-                        <RestoreIcon color="primary" />
-                      </IconButton>
-                      <IconButton
-                        aria-label={i18n.t('core:delete')}
-                        onClick={() => {
-                          PlatformIO.deleteFilePromise(
-                            row.path,
-                            true
-                          ).then(() => loadHistoryItems(openedFiles[0]));
-                        }}
-                        data-tid="deleteRevisionTID"
-                        size="large"
-                      >
-                        <DeleteIcon color="primary" />
-                      </IconButton>
+                      <Tooltip title="core:view">
+                        <IconButton
+                          aria-label={i18n.t('core:view')}
+                          onClick={() => setPreviewDialogEntry(row)}
+                          data-tid="viewRevisionTID"
+                          size="large"
+                        >
+                          <PreviewIcon color="primary" />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="core:restore">
+                        <IconButton
+                          aria-label={i18n.t('core:restore')}
+                          onClick={() => restoreRevision(row.path)}
+                          data-tid="restoreRevisionTID"
+                          size="large"
+                        >
+                          <RestoreIcon color="primary" />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="core:delete">
+                        <IconButton
+                          aria-label={i18n.t('core:delete')}
+                          onClick={() => {
+                            PlatformIO.deleteFilePromise(
+                              row.path,
+                              true
+                            ).then(() => loadHistoryItems(openedFiles[0]));
+                          }}
+                          data-tid="deleteRevisionTID"
+                          size="large"
+                        >
+                          <DeleteIcon color="primary" />
+                        </IconButton>
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 ))}
