@@ -880,6 +880,7 @@ function GridPerspective(props: Props) {
           sortBy={sortBy.current}
           orderBy={orderBy.current}
           handleSortBy={handleSortBy}
+          searchModeEnabled={props.searchResultsCount > -1}
         />
       )}
       {Boolean(optionsContextMenuAnchorEl) && (

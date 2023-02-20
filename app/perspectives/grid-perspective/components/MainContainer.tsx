@@ -284,40 +284,67 @@ function GridPerspective(props: Props) {
 
   useEffect(() => {
     if (!firstRender) {
-      if (props.searchResultsCount < 0) {
-        // not in search mode
-        sortedDirContent.current = sortByCriteria(
-          props.directoryContent,
-          sortBy.current,
-          orderBy.current
-        );
-      } else {
-        if (sortBy.current === 'byName') {
-          // don't sort search results by Name it is sorted by relevance
-          sortedDirContent.current = GlobalSearch.results;
-        } else {
-          sortedDirContent.current = sortByCriteria(
-            props.searchFilter
-              ? GlobalSearch.results.filter(entry =>
-                  entry.name
-                    .toLowerCase()
-                    .includes(props.searchFilter.toLowerCase())
-                )
-              : GlobalSearch.results,
-            sortBy.current,
-            orderBy.current
-          );
-        }
-      }
-      forceUpdate();
+      setSortedDirContent();
     }
   }, [
     // props.currentDirectoryPath, // open subdirs
     props.directoryContent, // open subdirs todo rethink this (replace with useEffect for currDirPath changes only)
-    props.searchResultsCount,
+    // props.searchResultsCount,
     sortBy.current,
     orderBy.current
   ]);
+
+  useEffect(() => {
+    if (!firstRender) {
+      if (props.searchResultsCount > -1) {
+        sortBy.current = 'byRelevance';
+        // orderBy.current = false;
+      } else {
+        sortBy.current =
+          settings && settings.sortBy
+            ? settings.sortBy
+            : defaultSettings.sortBy;
+        orderBy.current =
+          settings && typeof settings.orderBy !== 'undefined'
+            ? settings.orderBy
+            : defaultSettings.orderBy;
+      }
+      setSortedDirContent();
+    }
+  }, [props.searchResultsCount]);
+
+  function setSortedDirContent() {
+    if (props.searchResultsCount < 0) {
+      // not in search mode
+      sortedDirContent.current = sortByCriteria(
+        props.directoryContent,
+        sortBy.current,
+        orderBy.current
+      );
+    } else {
+      if (sortBy.current === 'byRelevance') {
+        // initial search results is sorted by relevance
+        if (orderBy.current) {
+          sortedDirContent.current = GlobalSearch.results;
+        } else {
+          sortedDirContent.current = [...GlobalSearch.results].reverse();
+        }
+      } else {
+        sortedDirContent.current = sortByCriteria(
+          props.searchFilter
+            ? GlobalSearch.results.filter(entry =>
+                entry.name
+                  .toLowerCase()
+                  .includes(props.searchFilter.toLowerCase())
+              )
+            : GlobalSearch.results,
+          sortBy.current,
+          orderBy.current
+        );
+      }
+    }
+    forceUpdate();
+  }
 
   useEffect(() => {
     // HANDLE (ADD/REMOVE sidecar TAGS) IN SEARCH RESULTS
@@ -932,6 +959,7 @@ function GridPerspective(props: Props) {
           sortBy={sortBy.current}
           orderBy={orderBy.current}
           handleSortBy={handleSortBy}
+          searchModeEnabled={props.searchResultsCount > -1}
         />
       )}
       {Boolean(optionsContextMenuAnchorEl) && (
