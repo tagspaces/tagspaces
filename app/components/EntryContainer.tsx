@@ -26,6 +26,7 @@ import React, {
 } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { GlobalHotKeys } from 'react-hotkeys';
 import fscreen from 'fscreen';
 import Button from '@mui/material/Button';
@@ -261,6 +262,7 @@ function EntryContainer(props: Props) {
     HTMLDivElement
   >(null);
   const fileChanged = useRef<boolean>(false);
+  const eventID = useRef<string>(getUuid());
   const firstRender = useFirstRender();
 
   useEventListener('message', e => {
@@ -268,7 +270,9 @@ function EntryContainer(props: Props) {
       // console.log(e.data);
       try {
         const dataObj = JSON.parse(e.data);
-        handleMessage(dataObj);
+        if (dataObj.eventID === eventID.current) {
+          handleMessage(dataObj);
+        }
       } catch (ex) {
         console.debug(
           'useEventListener message:' + e.data + ' parse error:',
@@ -1421,6 +1425,7 @@ function EntryContainer(props: Props) {
           fileViewerContainer={fileViewerContainer}
           toggleFullScreen={toggleFullScreen}
           currentTheme={settings.currentTheme}
+          eventID={eventID.current}
         />
       </Split>
     );

@@ -38,6 +38,7 @@ interface Props {
   height?: string;
   theme: any;
   currentTheme: string;
+  eventID: string;
 }
 
 function FileView(props: Props) {
@@ -50,7 +51,8 @@ function FileView(props: Props) {
     toggleFullScreen,
     searchQuery,
     height,
-    currentTheme
+    currentTheme,
+    eventID
   } = props; // .openedFiles[0];
 
   useEventListener('toggle-resume', () => {
@@ -93,6 +95,7 @@ function FileView(props: Props) {
         bgndColor.startsWith('#') ? bgndColor : rgbToHex(bgndColor)
       );
 
+    const event = eventID ? '&eventID=' + eventID : '';
     const extQuery = searchQuery.textQuery
       ? '&query=' + encodeURIComponent(searchQuery.textQuery)
       : '';
@@ -108,6 +111,7 @@ function FileView(props: Props) {
         locale +
         theming +
         extQuery +
+        event +
         '&edit=true' +
         (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
       // } else if (!currentEntry.isFile) { // TODO needed for loading folder's default html
@@ -120,6 +124,7 @@ function FileView(props: Props) {
         locale +
         theming +
         extQuery +
+        event +
         (openedFile.shouldReload === true ? '&t=' + new Date().getTime() : '');
     }
   } else {
@@ -165,7 +170,7 @@ function FileView(props: Props) {
           src={fileOpenerURL}
           allowFullScreen
           sandbox="allow-same-origin allow-scripts allow-modals allow-downloads"
-          id="FileViewer"
+          id={'FileViewer' + eventID}
         />
       )}
     </div>

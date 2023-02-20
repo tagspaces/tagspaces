@@ -16,7 +16,8 @@
  *
  */
 
-import React, { MutableRefObject, useEffect, useRef, useState } from 'react';
+import React, { MutableRefObject, useRef } from 'react';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
@@ -58,6 +59,7 @@ function FilePreviewDialog(props: Props) {
   const fileViewerContainer: MutableRefObject<HTMLDivElement> = useRef<
     HTMLDivElement
   >(null);
+  const eventID = useRef<string>(getUuid());
 
   const openedFile: OpenedEntry = fsEntry
     ? findExtensionsForEntry(
@@ -73,7 +75,9 @@ function FilePreviewDialog(props: Props) {
       // console.log(e.data);
       try {
         const dataObj = JSON.parse(e.data);
-        handleMessage(dataObj);
+        if (dataObj.eventID === eventID.current) {
+          handleMessage(dataObj);
+        }
       } catch (ex) {
         console.debug(
           'useEventListener message:' + e.data + ' parse error:',
@@ -202,6 +206,7 @@ function FilePreviewDialog(props: Props) {
           fileViewerContainer={fileViewerContainer}
           height={'90%'}
           currentTheme={props.currentTheme}
+          eventID={eventID.current}
         />
       </DialogContent>
     </Dialog>
