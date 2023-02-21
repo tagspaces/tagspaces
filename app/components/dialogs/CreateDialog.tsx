@@ -19,9 +19,11 @@
 import React, { useReducer, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { saveAs } from 'file-saver';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import HTMLFileIcon from '@mui/icons-material/PhotoAlbumOutlined';
+import InputAdornment from '@mui/material/InputAdornment';
 import TextFileIcon from '@mui/icons-material/InsertDriveFileOutlined';
 import MarkdownFileIcon from '@mui/icons-material/DescriptionOutlined';
 import AddFileIcon from '@mui/icons-material/NoteAddOutlined';
@@ -115,6 +117,7 @@ function CreateDialog(props: Props) {
     showNotification,
     firstRWLocation
   } = props;
+  const fileUrl = useRef<string>();
   const fileName = useRef<string>(
     'note' +
       AppConfig.beginTagContainer +
@@ -263,6 +266,23 @@ function CreateDialog(props: Props) {
       setInputError(noValid);
     }
   };
+
+  const handleUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    fileUrl.current = event.target.value;
+  };
+
+  function downloadURL() {
+    if (fileUrl.current) {
+      /*if (AppConfig.isElectron) {
+        PlatformIO.saveFilePromise()
+      } else {*/
+      saveAs(
+        fileUrl.current,
+        fileUrl.current.substring(fileUrl.current.lastIndexOf('/') + 1)
+      );
+      onClose();
+    }
+  }
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -421,6 +441,33 @@ function CreateDialog(props: Props) {
                 </Typography>
               </Container>
             </Button>
+          </Grid>
+          <Grid style={{ marginTop: 40 }} item xs={12}>
+            <TextField
+              label={i18n.t('core:url')}
+              margin="dense"
+              name="name"
+              fullWidth={true}
+              data-tid="newUrlTID"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Button
+                      data-tid="cancelRenameEntryTID"
+                      onClick={() => downloadURL()}
+                    >
+                      {i18n.t('core:downloadFile')}
+                    </Button>
+                  </InputAdornment>
+                )
+              }}
+              onKeyDown={event => {
+                if (event.key === 'Enter') {
+                  downloadURL();
+                }
+              }}
+              onChange={handleUrlChange}
+            />
           </Grid>
         </Grid>
         <input
