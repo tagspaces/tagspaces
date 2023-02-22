@@ -40,20 +40,22 @@ export const initialState = [];
 export default (state: Array<TS.Location> = initialState, action: any) => {
   switch (action.type) {
     case types.ADD_LOCATION: {
-      if (action.location.isDefault) {
-        state.forEach(location => {
-          // eslint-disable-next-line no-param-reassign
-          location.isDefault = false;
-        });
+      const locations = action.location.isDefault
+        ? state.map(location => ({ ...location, isDefault: false }))
+        : [...state];
+
+      const newLocation = {
+        ...action.location,
+        uuid: action.location.uuid || getUuid(),
+        creationDate: new Date().toJSON()
+      };
+      if (action.locationPosition) {
+        locations.splice(action.locationPosition, 0, newLocation);
+        return locations;
+      } else {
+        locations.push(newLocation);
+        return locations;
       }
-      return [
-        ...state,
-        {
-          ...action.location,
-          uuid: action.location.uuid || getUuid(),
-          creationDate: new Date().toJSON()
-        }
-      ];
     }
     case types.EDIT_LOCATION: {
       let indexForEditing = -1;
@@ -172,10 +174,12 @@ export const actions = {
       })
       .catch(ex => console.error(ex));
   },
-  addLocation: (location: TS.Location, openAfterCreate = true) => (
-    dispatch: (actions: Object) => void
-  ) => {
-    dispatch(actions.createLocation(location));
+  addLocation: (
+    location: TS.Location,
+    openAfterCreate = true,
+    locationPosition: number = undefined
+  ) => (dispatch: (actions: Object) => void) => {
+    dispatch(actions.createLocation(location, locationPosition));
     if (openAfterCreate) {
       dispatch(AppActions.openLocation(location));
     }
@@ -201,9 +205,13 @@ export const actions = {
       }
     });
   },
-  createLocation: (location: TS.Location) => ({
+  createLocation: (
+    location: TS.Location,
+    locationPosition: number = undefined
+  ) => ({
     type: types.ADD_LOCATION,
-    location
+    location,
+    locationPosition
   }),
   moveLocation: (uuid: string, position: number) => ({
     type: types.MOVE_LOCATION,
@@ -280,6 +288,8 @@ export const getLocation = (
   locationId: string
 ): TS.Location | null =>
   state.locations.find(location => location.uuid === locationId);
+export const getLocationPosition = (state: any, locationId: string): number =>
+  state.locations.findIndex(location => location.uuid === locationId);
 export const getLocationByPath = (
   state: any,
   path: string
