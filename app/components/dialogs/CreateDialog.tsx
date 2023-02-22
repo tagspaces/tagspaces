@@ -283,10 +283,10 @@ function CreateDialog(props: Props) {
         fileUrl.current.lastIndexOf('/') + 1
       );
       if (
-        PlatformIO.haveObjectStoreSupport() &&
-        FileTypeGroups.notes.some(type => fileName.endsWith(type))
+        PlatformIO.haveObjectStoreSupport()
+        // AppConfig.isElectron
+        // FileTypeGroups.notes.some(type => fileName.endsWith(type))
       ) {
-        // AppConfig.isElectron) {
         props.downloadFile(
           fileUrl.current,
           targetDirectoryPath + PlatformIO.getDirSeparator() + fileName,

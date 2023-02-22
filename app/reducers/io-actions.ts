@@ -204,16 +204,16 @@ const actions = {
     return (
       fetch(url)
         //.then(response => response.body)
-        //.then(response => response.arrayBuffer())
-        .then(response => response.text())
+        .then(response => response.arrayBuffer())
+        //.then(response => response.text())
         //.then((is:  ReadableStream<Uint8Array>)=>
-        //.then(arrayBuffer =>
-        .then(txt =>
+        .then(arrayBuffer =>
+          //.then(txt =>
           PlatformIO.saveFilePromise(
             //PlatformIO.saveBinaryFilePromise(
             { path: targetPath },
             // streamToBuffer(Readable.fromWeb(response.body as any)),
-            txt,
+            arrayBuffer,
             //Buffer.from(arrayBuffer),
             true
             //onDownloadProgress
