@@ -27,6 +27,7 @@ import {
   getThumbFileLocationForFile,
   normalizePath
 } from '@tagspaces/tagspaces-common/paths';
+// import { Readable } from 'node:stream';
 import AppConfig from '-/AppConfig';
 import { actions as AppActions } from './app';
 import { copyFilesPromise, renameFilesPromise } from '-/services/utils-io';
@@ -189,6 +190,50 @@ const actions = {
           AppActions.showNotification(i18n.t('core:copyingFilesFailed'))
         );
       });
+  },
+  /**
+   * Electron or S3
+   * @param url
+   * @param targetPath
+   * @param onDownloadProgress
+   */
+  downloadFile: (
+    url: string,
+    targetPath: string,
+    onDownloadProgress?: (progress: Progress, response: any) => void
+  ) => (dispatch: (actions: Object) => void) => {
+    function streamToBuffer(stream) {
+      const buffs = [];
+      return new Promise(function(resolve) {
+        stream.on('data', function(d) {
+          buffs.push(d);
+        });
+        stream.on('end', function() {
+          resolve(Buffer.concat(buffs));
+        });
+      });
+    }
+    return (
+      fetch(url)
+        //.then(response => response.body)
+        .then(response => response.arrayBuffer())
+        //.then((is:  ReadableStream<Uint8Array>)=>
+        .then(arrayBuffer =>
+          PlatformIO.saveFilePromise(
+            //PlatformIO.saveBinaryFilePromise(
+            { path: targetPath },
+            // streamToBuffer(Readable.fromWeb(response.body as any)),
+            Buffer.from(arrayBuffer),
+            true
+            //onDownloadProgress
+          )
+        )
+        .then((fsEntry: TS.FileSystemEntry) => {
+          dispatch(AppActions.reflectCreateEntry(targetPath, true));
+          return fsEntry;
+        })
+        .catch(e => console.log(e))
+    );
   },
   /**
    * with HTML5 Files API

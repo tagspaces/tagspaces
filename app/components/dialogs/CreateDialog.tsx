@@ -98,6 +98,11 @@ interface Props {
     destination: string,
     onUploadProgress?: (progress: Progress, response: any) => void
   ) => any;
+  downloadFile: (
+    url: string,
+    destination: string,
+    onDownloadProgress?: (progress: Progress, response: any) => void
+  ) => any;
   onUploadProgress: (progress: Progress, response: any) => void;
   toggleUploadDialog: () => void;
   resetProgress: () => void;
@@ -273,13 +278,19 @@ function CreateDialog(props: Props) {
 
   function downloadURL() {
     if (fileUrl.current) {
-      /*if (AppConfig.isElectron) {
-        PlatformIO.saveFilePromise()
-      } else {*/
-      saveAs(
-        fileUrl.current,
-        fileUrl.current.substring(fileUrl.current.lastIndexOf('/') + 1)
+      const fileName = fileUrl.current.substring(
+        fileUrl.current.lastIndexOf('/') + 1
       );
+      if (AppConfig.isElectron) {
+        //|| PlatformIO.haveObjectStoreSupport()) {
+        props.downloadFile(
+          fileUrl.current,
+          targetDirectoryPath + PlatformIO.getDirSeparator() + fileName,
+          props.onUploadProgress
+        );
+      } else {
+        saveAs(fileUrl.current, fileName);
+      }
       onClose();
     }
   }
@@ -505,6 +516,7 @@ function mapActionCreatorsToProps(dispatch) {
       showNotification: AppActions.showNotification,
       reflectCreateEntries: AppActions.reflectCreateEntries,
       uploadFilesAPI: IOActions.uploadFilesAPI,
+      downloadFile: IOActions.downloadFile,
       onUploadProgress: AppActions.onUploadProgress,
       toggleUploadDialog: AppActions.toggleUploadDialog,
       resetProgress: AppActions.resetProgress
