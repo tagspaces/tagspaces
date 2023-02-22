@@ -192,38 +192,29 @@ const actions = {
       });
   },
   /**
-   * Electron or S3
+   * S3 TODO work for test files only
    * @param url
    * @param targetPath
-   * @param onDownloadProgress
    */
   downloadFile: (
     url: string,
-    targetPath: string,
-    onDownloadProgress?: (progress: Progress, response: any) => void
+    targetPath: string
+    // onDownloadProgress?: (progress: Progress, response: any) => void
   ) => (dispatch: (actions: Object) => void) => {
-    function streamToBuffer(stream) {
-      const buffs = [];
-      return new Promise(function(resolve) {
-        stream.on('data', function(d) {
-          buffs.push(d);
-        });
-        stream.on('end', function() {
-          resolve(Buffer.concat(buffs));
-        });
-      });
-    }
     return (
       fetch(url)
         //.then(response => response.body)
-        .then(response => response.arrayBuffer())
+        //.then(response => response.arrayBuffer())
+        .then(response => response.text())
         //.then((is:  ReadableStream<Uint8Array>)=>
-        .then(arrayBuffer =>
+        //.then(arrayBuffer =>
+        .then(txt =>
           PlatformIO.saveFilePromise(
             //PlatformIO.saveBinaryFilePromise(
             { path: targetPath },
             // streamToBuffer(Readable.fromWeb(response.body as any)),
-            Buffer.from(arrayBuffer),
+            txt,
+            //Buffer.from(arrayBuffer),
             true
             //onDownloadProgress
           )

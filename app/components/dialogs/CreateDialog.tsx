@@ -62,6 +62,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 import { FormControl } from '@mui/material';
 import { fileNameValidation } from '-/services/utils-io';
 import { PerspectiveIDs } from '-/perspectives';
+import { FileTypeGroups } from '-/services/search';
 
 const styles: any = () => ({
   createButton: {
@@ -281,8 +282,11 @@ function CreateDialog(props: Props) {
       const fileName = fileUrl.current.substring(
         fileUrl.current.lastIndexOf('/') + 1
       );
-      if (AppConfig.isElectron) {
-        //|| PlatformIO.haveObjectStoreSupport()) {
+      if (
+        PlatformIO.haveObjectStoreSupport() &&
+        FileTypeGroups.notes.some(type => fileName.endsWith(type))
+      ) {
+        // AppConfig.isElectron) {
         props.downloadFile(
           fileUrl.current,
           targetDirectoryPath + PlatformIO.getDirSeparator() + fileName,
