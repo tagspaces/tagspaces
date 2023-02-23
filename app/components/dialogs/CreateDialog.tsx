@@ -107,6 +107,7 @@ interface Props {
   onUploadProgress: (progress: Progress, response: any) => void;
   toggleUploadDialog: () => void;
   resetProgress: () => void;
+  setProgress: (path: string, progress: number) => void;
 }
 
 function CreateDialog(props: Props) {
@@ -282,16 +283,21 @@ function CreateDialog(props: Props) {
       const fileName = fileUrl.current.substring(
         fileUrl.current.lastIndexOf('/') + 1
       );
-      if (
-        PlatformIO.haveObjectStoreSupport()
-        // AppConfig.isElectron
-        // FileTypeGroups.notes.some(type => fileName.endsWith(type))
-      ) {
-        props.downloadFile(
-          fileUrl.current,
-          targetDirectoryPath + PlatformIO.getDirSeparator() + fileName,
-          props.onUploadProgress
-        );
+      if (PlatformIO.haveObjectStoreSupport() || AppConfig.isElectron) {
+        props.resetProgress();
+        props.toggleUploadDialog();
+        props
+          .downloadFile(
+            fileUrl.current,
+            targetDirectoryPath + PlatformIO.getDirSeparator() + fileName,
+            props.onUploadProgress
+          )
+          .then(() => {
+            if (PlatformIO.haveObjectStoreSupport()) {
+              // currently objectStore location in downloadFile use saveFilePromise and this function not have progress handling
+              props.setProgress(fileUrl.current, 100);
+            }
+          });
       } else {
         saveAs(fileUrl.current, fileName);
       }
@@ -523,7 +529,8 @@ function mapActionCreatorsToProps(dispatch) {
       downloadFile: IOActions.downloadFile,
       onUploadProgress: AppActions.onUploadProgress,
       toggleUploadDialog: AppActions.toggleUploadDialog,
-      resetProgress: AppActions.resetProgress
+      resetProgress: AppActions.resetProgress,
+      setProgress: AppActions.setProgress
     },
     dispatch
   );

@@ -27,7 +27,6 @@ import {
   getThumbFileLocationForFile,
   normalizePath
 } from '@tagspaces/tagspaces-common/paths';
-// import { Readable } from 'node:stream';
 import AppConfig from '-/AppConfig';
 import { actions as AppActions } from './app';
 import { copyFilesPromise, renameFilesPromise } from '-/services/utils-io';
@@ -195,36 +194,37 @@ const actions = {
    * S3 TODO work for test files only
    * @param url
    * @param targetPath
+   * @param onDownloadProgress
    */
   downloadFile: (
     url: string,
-    targetPath: string
-    // onDownloadProgress?: (progress: Progress, response: any) => void
+    targetPath: string,
+    onDownloadProgress?: (progress: Progress, response: any) => void
   ) => (dispatch: (actions: Object) => void) => {
-    return (
-      fetch(url)
-        //.then(response => response.body)
-        .then(response => response.arrayBuffer())
-        //.then(response => response.text())
-        //.then((is:  ReadableStream<Uint8Array>)=>
-        .then(arrayBuffer =>
-          //.then(txt =>
-          PlatformIO.saveFilePromise(
-            //PlatformIO.saveBinaryFilePromise(
-            { path: targetPath },
-            // streamToBuffer(Readable.fromWeb(response.body as any)),
-            arrayBuffer,
-            //Buffer.from(arrayBuffer),
-            true
-            //onDownloadProgress
-          )
-        )
-        .then((fsEntry: TS.FileSystemEntry) => {
-          dispatch(AppActions.reflectCreateEntry(targetPath, true));
-          return fsEntry;
-        })
-        .catch(e => console.log(e))
-    );
+    function saveFile(response: Response): Promise<TS.FileSystemEntry> {
+      if (AppConfig.isElectron && !PlatformIO.haveObjectStoreSupport()) {
+        return PlatformIO.saveBinaryFilePromise(
+          { path: targetPath },
+          response.body,
+          true,
+          onDownloadProgress
+        );
+      }
+      return response.arrayBuffer().then(arrayBuffer => {
+        return PlatformIO.saveFilePromise(
+          { path: targetPath },
+          arrayBuffer,
+          true
+        );
+      });
+    }
+    return fetch(url)
+      .then(response => saveFile(response))
+      .then((fsEntry: TS.FileSystemEntry) => {
+        dispatch(AppActions.reflectCreateEntry(targetPath, true));
+        return fsEntry;
+      })
+      .catch(e => console.log(e));
   },
   /**
    * with HTML5 Files API
