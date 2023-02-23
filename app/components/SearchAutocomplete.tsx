@@ -693,6 +693,9 @@ function SearchAutocomplete(props: Props) {
         const fileEditHistoryItems: Array<TS.HistoryItem> = Pro
           ? Pro.history.getHistory(historyKeys.fileEditKey)
           : [];
+        const searchHistoryItems: Array<TS.HistoryItem> = Pro
+          ? Pro.history.getHistory(historyKeys.searchHistoryKey)
+          : [];
         function getOptions(
           items: TS.HistoryItem[],
           group: string
@@ -707,7 +710,8 @@ function SearchAutocomplete(props: Props) {
             action: ExecActions.OPEN_HISTORY,
             fullName: item.url,
             label: item.path,
-            group: group
+            group: group,
+            ...(item.searchQuery && { searchQuery: item.searchQuery })
           }));
         }
 
@@ -717,7 +721,8 @@ function SearchAutocomplete(props: Props) {
             folderOpenHistoryItems,
             i18n.t('core:folderOpenHistory')
           ),
-          ...getOptions(fileEditHistoryItems, i18n.t('core:fileEditHistory'))
+          ...getOptions(fileEditHistoryItems, i18n.t('core:fileEditHistory')),
+          ...getOptions(searchHistoryItems, i18n.t('core:searchHistory'))
         ];
       }
     } else if (isAction(action, SearchActions.BOOK)) {
@@ -991,19 +996,23 @@ function SearchAutocomplete(props: Props) {
           }
           actions.push(option);
         } else if (option.action === ExecActions.OPEN_HISTORY) {
-          const item: TS.HistoryItem = {
-            path: option.label,
-            url: option.fullName,
-            lid: option.id,
-            creationTimeStamp: 0
-          };
-          Pro.history.openItem(
-            item,
-            props.currentLocationId,
-            props.openLink,
-            props.openLocationById,
-            props.openFsEntry
-          );
+          if (option.searchQuery) {
+            props.setSearchQuery(option.searchQuery);
+          } else {
+            const item: TS.HistoryItem = {
+              path: option.label,
+              url: option.fullName,
+              lid: option.id,
+              creationTimeStamp: 0
+            };
+            Pro.history.openItem(
+              item,
+              props.currentLocationId,
+              props.openLink,
+              props.openLocationById,
+              props.openFsEntry
+            );
+          }
           searchOptions.current = SearchOptions;
           currentOptions.current = undefined;
           isOpen.current = false;

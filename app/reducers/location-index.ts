@@ -22,17 +22,31 @@ import {
   extractFileExtension,
   extractFileName,
   extractTagsAsObjects,
-  getThumbFileLocationForFile
+  getThumbFileLocationForFile,
+  generateSharingLink
 } from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
-import { getLocation, getLocationByPath, getLocations } from './locations';
-import { createDirectoryIndex } from '-/services/utils-io';
-import Search from '../services/search';
-import { actions as AppActions } from './app';
+import {
+  getCurrentLocation,
+  getLocation,
+  getLocationByPath,
+  getLocations
+} from './locations';
+import {
+  createDirectoryIndex,
+  getRelativeEntryPath
+} from '-/services/utils-io';
+import Search, { defaultTitle } from '../services/search';
+import {
+  actions as AppActions,
+  getCurrentLocationId,
+  getCurrentLocationPath
+} from './app';
 import i18n from '../services/i18n';
 import PlatformIO from '../services/platform-facade';
 import GlobalSearch from '../services/search-index';
 import { TS } from '-/tagspaces.namespace';
+import { Pro } from '-/pro';
 
 export const types = {
   SET_SEARCH_QUERY: 'SET_SEARCH_QUERY',
@@ -180,13 +194,26 @@ export default (state: any = initialState, action: any) => {
 
 export const actions = {
   setSearchQuery: (searchQuery: TS.SearchQuery) => (
-    dispatch: (action) => void
+    dispatch: (action) => void,
+    getState: () => any
   ) => {
     dispatch(actions.setSearchQueryInt(searchQuery));
     // TODO rethink right place for this -to switch search mode based on searchQuery
     if (Object.keys(searchQuery).length === 0) {
       dispatch(AppActions.exitSearchMode());
     } else {
+      const historyKeys = Pro.history.historyKeys;
+      const currentLocation = getCurrentLocation(getState());
+      Pro.history.saveHistory(
+        historyKeys.searchHistoryKey,
+        {
+          path: defaultTitle(searchQuery) + ' ' + currentLocation.path,
+          url: '/',
+          lid: currentLocation.uuid,
+          searchQuery: searchQuery
+        },
+        getState().settings[historyKeys.searchHistoryKey]
+      );
       dispatch(AppActions.enterSearchMode());
     }
   },

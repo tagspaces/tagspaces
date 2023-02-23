@@ -2205,21 +2205,25 @@ export const actions = {
         if (fsEntry.isFile) {
           Pro.history.saveHistory(
             historyKeys.fileOpenKey,
-            fsEntry.path,
-            generateSharingLink(currentLocation.uuid, relEntryPath),
-            currentLocation.uuid,
+            {
+              path: fsEntry.path,
+              url: generateSharingLink(currentLocation.uuid, relEntryPath),
+              lid: currentLocation.uuid
+            },
             getState().settings[historyKeys.fileOpenKey]
           );
         } else {
           Pro.history.saveHistory(
             historyKeys.folderOpenKey,
-            fsEntry.path,
-            generateSharingLink(
-              currentLocation.uuid,
-              relEntryPath,
-              relEntryPath
-            ),
-            currentLocation.uuid,
+            {
+              path: fsEntry.path,
+              url: generateSharingLink(
+                currentLocation.uuid,
+                relEntryPath,
+                relEntryPath
+              ),
+              lid: currentLocation.uuid
+            },
             getState().settings[historyKeys.folderOpenKey]
           );
         }

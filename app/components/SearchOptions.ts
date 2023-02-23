@@ -1,3 +1,5 @@
+import { TS } from '-/tagspaces.namespace';
+
 export interface SearchOptionType {
   id?: string;
   label: string;
@@ -7,6 +9,7 @@ export interface SearchOptionType {
   textcolor?: string;
   action: string;
   group?: string;
+  searchQuery?: TS.SearchQuery;
 }
 
 export type ActionType = { shortName: string; fullName?: string };

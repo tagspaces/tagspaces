@@ -205,6 +205,7 @@ export default {
   tsLastOpenedFilesHistory: 10,
   tsLastOpenedFoldersHistory: 10,
   tsLastEditedFilesHistory: 10,
+  tsSearchHistory: 10,
   storedSearchesVisible: true,
   showBookmarks: true,
   fileOpenHistory: false,

@@ -92,6 +92,23 @@ export function haveSearchFilters(searchQuery: TS.SearchQuery) {
   );
 }
 
+export function defaultTitle(searchQuery: TS.SearchQuery) {
+  let title = '';
+  if (searchQuery.textQuery) {
+    title += searchQuery.textQuery;
+  }
+  if (searchQuery.tagsAND && searchQuery.tagsAND.length > 0) {
+    title += searchQuery.tagsAND.map(tag => ' +' + tag.title);
+  }
+  if (searchQuery.tagsNOT && searchQuery.tagsNOT.length > 0) {
+    title += searchQuery.tagsNOT.map(tag => ' -' + tag.title);
+  }
+  if (searchQuery.tagsOR && searchQuery.tagsOR.length > 0) {
+    title += searchQuery.tagsOR.map(tag => ' |' + tag.title);
+  }
+  return title.trim();
+}
+
 // id, name, isFile, tags, extension, size, lmdt, path
 
 // index[?size > '9000'  && contains(path, 'Apple')]
