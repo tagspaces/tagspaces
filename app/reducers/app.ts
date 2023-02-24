@@ -2305,6 +2305,11 @@ export const actions = {
       lmdt: new Date().getTime(),
       path
     };
+    dispatch(actions.reflectCreateEntryObj(newEntry));
+  },
+  reflectCreateEntryObj: (newEntry: TS.FileSystemEntry) => (
+    dispatch: (action) => void
+  ) => {
     dispatch(actions.setSelectedEntries([newEntry]));
     dispatch(actions.reflectCreateEntryInt(newEntry));
     dispatch(LocationIndexActions.reflectCreateEntry(newEntry));
