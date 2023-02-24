@@ -280,9 +280,28 @@ function CreateDialog(props: Props) {
 
   function downloadURL() {
     if (fileUrl.current) {
-      const fileName = fileUrl.current.substring(
-        fileUrl.current.lastIndexOf('/') + 1
-      );
+      const url = new URL(fileUrl.current);
+      let fileName;
+      let pathParts;
+      if (url.pathname) {
+        const delimiterIndex = url.pathname.lastIndexOf('/');
+        if (delimiterIndex > -1) {
+          fileName = url.pathname.substring(delimiterIndex + 1);
+          if (!fileName) {
+            pathParts = url.pathname.split('/').filter(Boolean);
+          }
+        } else {
+          fileName = url.pathname;
+        }
+      }
+      if (!fileName) {
+        fileName =
+          url.hostname +
+          (pathParts && pathParts.length > 0 ? pathParts.join('-') : '') +
+          '.html';
+      } else if (fileName.indexOf('.') === -1) {
+        fileName = url.hostname + '-' + fileName + '.html';
+      }
       if (PlatformIO.haveObjectStoreSupport() || AppConfig.isElectron) {
         props.resetProgress();
         props.toggleUploadDialog();
