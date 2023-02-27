@@ -52,6 +52,8 @@ import {
   getDirectoryMeta,
   getEditedEntryPaths,
   getLastSelectedEntry,
+  getLastSelectedEntryPath,
+  getSearchFilter,
   getSelectedEntries,
   isDeleteMultipleEntriesDialogOpened,
   isReadOnlyMode
@@ -82,6 +84,7 @@ interface Props {
   currentDirectoryPath: string;
   lastSelectedEntry: any;
   selectedEntries: Array<TS.FileSystemEntry>;
+  lastSelectedEntryPath: string;
   supportedFileTypes: Array<any>;
   isReadOnlyMode: boolean;
   openFsEntry: (fsEntry?: TS.FileSystemEntry) => void;
@@ -113,11 +116,11 @@ interface Props {
   ) => void;
   currentLocation: TS.Location;
   locations: Array<TS.Location>;
-  // isDesktopMode: boolean;
   toggleDeleteMultipleEntriesDialog: () => void;
   directoryMeta: TS.FileSystemEntryMeta;
   setDirectoryMeta: (fsEntryMeta: TS.FileSystemEntryMeta) => void;
   searchResultsCount: number;
+  searchFilter: string;
   editedEntryPaths: Array<TS.EditedEntryPath>;
 }
 
@@ -178,6 +181,9 @@ function GridPerspective(props: Props) {
     settings && typeof settings.orderBy !== 'undefined'
       ? settings.orderBy
       : defaultSettings.orderBy
+  );
+  const sortedDirContent = useRef<Array<TS.FileSystemEntry>>(
+    props.searchResultsCount < 0 ? props.directoryContent : GlobalSearch.results
   );
   const layoutType = useRef<string>(
     settings && settings.layoutType
@@ -245,6 +251,14 @@ function GridPerspective(props: Props) {
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
   const firstRender = useFirstRender();
 
+  const {
+    classes,
+    selectedEntries,
+    loadParentDirectoryContent,
+    theme,
+    currentDirectoryPath
+  } = props;
+
   useEffect(() => {
     if (props.selectedEntries.length === 1) {
       makeFirstSelectedEntryVisible();
@@ -252,9 +266,90 @@ function GridPerspective(props: Props) {
   }, [props.selectedEntries]);
 
   useEffect(() => {
+    if (!firstRender) {
+      sortedDirContent.current = sortByCriteria(
+        props.searchFilter
+          ? props.directoryContent.filter(entry =>
+              entry.name
+                .toLowerCase()
+                .includes(props.searchFilter.toLowerCase())
+            )
+          : props.directoryContent,
+        sortBy.current,
+        orderBy.current
+      );
+      forceUpdate();
+    }
+  }, [props.searchFilter]);
+
+  useEffect(() => {
+    if (!firstRender) {
+      setSortedDirContent();
+    }
+  }, [
+    // props.currentDirectoryPath, // open subdirs
+    props.directoryContent, // open subdirs todo rethink this (replace with useEffect for currDirPath changes only)
+    // props.searchResultsCount,
+    sortBy.current,
+    orderBy.current
+  ]);
+
+  useEffect(() => {
+    if (!firstRender) {
+      if (props.searchResultsCount > -1) {
+        sortBy.current = 'byRelevance';
+        // orderBy.current = false;
+      } else {
+        sortBy.current =
+          settings && settings.sortBy
+            ? settings.sortBy
+            : defaultSettings.sortBy;
+        orderBy.current =
+          settings && typeof settings.orderBy !== 'undefined'
+            ? settings.orderBy
+            : defaultSettings.orderBy;
+      }
+      setSortedDirContent();
+    }
+  }, [props.searchResultsCount]);
+
+  function setSortedDirContent() {
+    if (props.searchResultsCount < 0) {
+      // not in search mode
+      sortedDirContent.current = sortByCriteria(
+        props.directoryContent,
+        sortBy.current,
+        orderBy.current
+      );
+    } else {
+      if (sortBy.current === 'byRelevance') {
+        // initial search results is sorted by relevance
+        if (orderBy.current) {
+          sortedDirContent.current = GlobalSearch.results;
+        } else {
+          sortedDirContent.current = [...GlobalSearch.results].reverse();
+        }
+      } else {
+        sortedDirContent.current = sortByCriteria(
+          props.searchFilter
+            ? GlobalSearch.results.filter(entry =>
+                entry.name
+                  .toLowerCase()
+                  .includes(props.searchFilter.toLowerCase())
+              )
+            : GlobalSearch.results,
+          sortBy.current,
+          orderBy.current
+        );
+      }
+    }
+    forceUpdate();
+  }
+
+  useEffect(() => {
     // HANDLE (ADD/REMOVE sidecar TAGS) IN SEARCH RESULTS
     if (!firstRender && props.searchResultsCount > -1) {
-      // sortedDirContent.current = GlobalSearch.results;
+      sortedDirContent.current = GlobalSearch.results;
       forceUpdate();
     }
   }, [props.editedEntryPaths]);
@@ -362,23 +457,20 @@ function GridPerspective(props: Props) {
     gridPageLimit.current
   ]);
 
-  const sortedDirContentMemoized = useMemo(
-    () =>
-      sortByCriteria(props.directoryContent, sortBy.current, orderBy.current),
-    [props.directoryContent, sortBy.current, orderBy.current]
-  );
-
   const makeFirstSelectedEntryVisible = () => {
-    const { selectedEntries } = props;
     if (selectedEntries && selectedEntries.length > 0) {
-      const firstSelectedElement = document.querySelector(
-        '[data-entry-id="' + selectedEntries[0].uuid + '"]'
-      );
-      if (
-        isObj(firstSelectedElement) &&
-        !isVisibleOnScreen(firstSelectedElement)
-      ) {
-        firstSelectedElement.scrollIntoView(false);
+      try {
+        const firstSelectedElement = document.querySelector(
+          '[data-entry-id="' + selectedEntries[0].uuid + '"]'
+        );
+        if (
+          isObj(firstSelectedElement) &&
+          !isVisibleOnScreen(firstSelectedElement)
+        ) {
+          firstSelectedElement.scrollIntoView(false);
+        }
+      } catch (ex) {
+        console.debug('makeFirstSelectedEntryVisible:', ex);
       }
     }
   };
@@ -419,21 +511,17 @@ function GridPerspective(props: Props) {
     selectedEntryPath.current = undefined;
   };
 
-  const {
-    classes,
-    selectedEntries,
-    loadParentDirectoryContent,
-    theme,
-    currentDirectoryPath
-  } = props;
-
   const someFileSelected = selectedEntries.length > 1;
 
   const toggleSelectAllFiles = () => {
     if (someFileSelected) {
       clearSelection();
     } else {
-      props.setSelectedEntries(props.directoryContent);
+      if (props.searchResultsCount < 0) {
+        props.setSelectedEntries(props.directoryContent);
+      } else {
+        props.setSelectedEntries(GlobalSearch.results);
+      }
     }
   };
 
@@ -551,13 +639,6 @@ function GridPerspective(props: Props) {
     }
   };
 
-  const getSelEntryPath = () => {
-    if (props.lastSelectedEntry) {
-      return props.lastSelectedEntry.path;
-    }
-    return currentDirectoryPath;
-  };
-
   const keyBindingHandlers = {
     nextDocument: () => props.openNextFile(),
     prevDocument: () => props.openPrevFile(),
@@ -568,7 +649,7 @@ function GridPerspective(props: Props) {
       }
     },
     addRemoveTags: () => {
-      if (getSelEntryPath()) {
+      if (props.lastSelectedEntryPath) {
         openAddRemoveTagsDialog();
       }
     },
@@ -589,15 +670,10 @@ function GridPerspective(props: Props) {
         .filter(fsEntry => fsEntry.isFile)
         .map(fsentry => fsentry.path)
     : [];
-  const sortedDirectories =
-    props.searchResultsCount < 0 // not in search mode
-      ? sortedDirContentMemoized.filter(entry => !entry.isFile)
-      : [];
-  const sortedFiles =
-    props.searchResultsCount < 0 // not in search mode
-      ? sortedDirContentMemoized.filter(entry => entry.isFile)
-      : GlobalSearch.results;
-
+  const sortedDirectories = sortedDirContent.current.filter(
+    entry => !entry.isFile
+  );
+  const sortedFiles = sortedDirContent.current.filter(entry => entry.isFile);
   const locationPath = props.currentLocation
     ? PlatformIO.getLocationPath(props.currentLocation)
     : '';
@@ -614,7 +690,10 @@ function GridPerspective(props: Props) {
     fsEntry: TS.FileSystemEntry,
     selectedEntries: Array<TS.FileSystemEntry>,
     index: number,
-    handleGridContextMenu,
+    handleGridContextMenu: (
+      event: React.MouseEvent<HTMLDivElement>,
+      fsEntry: TS.FileSystemEntry
+    ) => void,
     handleGridCellClick,
     handleGridCellDblClick,
     isLast?: boolean
@@ -742,7 +821,6 @@ function GridPerspective(props: Props) {
           setSelectedEntries={props.setSelectedEntries}
           singleClickAction={singleClickAction.current}
           currentLocation={props.currentLocation}
-          // lastSelectedEntry={props.lastSelectedEntry}
           directoryContent={props.directoryContent}
           searchResultsCount={props.searchResultsCount}
           supportedFileTypes={props.supportedFileTypes}
@@ -839,7 +917,7 @@ function GridPerspective(props: Props) {
           showInFileManager={props.showInFileManager}
           showNotification={props.showNotification}
           isReadOnlyMode={props.isReadOnlyMode}
-          selectedFilePath={getSelEntryPath()}
+          selectedFilePath={props.lastSelectedEntryPath}
           selectedEntries={props.selectedEntries}
           currentLocation={props.currentLocation}
           locations={props.locations}
@@ -852,12 +930,14 @@ function GridPerspective(props: Props) {
         anchorEl={dirContextMenuAnchorEl}
         mouseX={mouseX}
         mouseY={mouseY}
-        directoryPath={getSelEntryPath()}
+        directoryPath={props.lastSelectedEntryPath}
         loadDirectoryContent={props.loadDirectoryContent}
         openRenameDirectoryDialog={props.openRenameEntryDialog}
         openDirectory={props.openDirectory}
         openFsEntry={props.openFsEntry}
-        perspectiveMode={getSelEntryPath() !== props.currentDirectoryPath}
+        perspectiveMode={
+          props.lastSelectedEntryPath !== props.currentDirectoryPath
+        }
         currentLocation={props.currentLocation}
         locations={props.locations}
       />
@@ -880,6 +960,7 @@ function GridPerspective(props: Props) {
           sortBy={sortBy.current}
           orderBy={orderBy.current}
           handleSortBy={handleSortBy}
+          searchModeEnabled={props.searchResultsCount > -1}
         />
       )}
       {Boolean(optionsContextMenuAnchorEl) && (
@@ -933,13 +1014,14 @@ function mapStateToProps(state) {
     lastSelectedEntry: getLastSelectedEntry(state),
     desktopMode: getDesktopMode(state),
     selectedEntries: getSelectedEntries(state),
+    lastSelectedEntryPath: getLastSelectedEntryPath(state),
     keyBindings: getKeyBindingObject(state),
     currentLocation: getLocation(state, state.app.currentLocationId),
     locations: getLocations(state),
-    // isDesktopMode: isDesktopMode(state),
     isDeleteMultipleEntriesDialogOpened: isDeleteMultipleEntriesDialogOpened(
       state
     ),
+    searchFilter: getSearchFilter(state),
     editedEntryPaths: getEditedEntryPaths(state)
   };
 }

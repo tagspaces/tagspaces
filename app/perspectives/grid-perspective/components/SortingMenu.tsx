@@ -32,14 +32,37 @@ interface Props {
   handleSortBy: (sortType: string) => void;
   sortBy: string;
   orderBy: null | boolean;
+  searchModeEnabled: boolean;
 }
 
 function SortingMenu(props: Props) {
-  const { open, onClose, sortBy, orderBy, handleSortBy, anchorEl } = props;
+  const {
+    open,
+    onClose,
+    sortBy,
+    orderBy,
+    handleSortBy,
+    anchorEl,
+    searchModeEnabled
+  } = props;
 
   return (
     <Menu anchorEl={anchorEl} open={open} onClose={onClose}>
       {/* <ListSubHeader>Sort by</ListSubHeader> */}
+      {searchModeEnabled && (
+        <MenuItem
+          data-tid="gridPerspectiveSortByRelevance"
+          onClick={() => {
+            handleSortBy('byRelevance');
+          }}
+        >
+          <ListItemIcon style={{ minWidth: 25 }}>
+            {sortBy === 'byRelevance' &&
+              (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:relevance')} />
+        </MenuItem>
+      )}
       <MenuItem
         data-tid="gridPerspectiveSortByName"
         onClick={() => {
