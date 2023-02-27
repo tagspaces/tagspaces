@@ -17,8 +17,10 @@
  */
 
 import React from 'react';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import EditIcon from '@mui/icons-material/Edit';
@@ -32,7 +34,10 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
-import { actions as LocationActions } from '-/reducers/locations';
+import {
+  actions as LocationActions,
+  getLocationPosition
+} from '-/reducers/locations';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import i18n from '-/services/i18n';
 import { actions as AppActions } from '-/reducers/app';
@@ -51,6 +56,12 @@ interface Props {
   closeLocationTree: () => void;
   locationDirectoryContextMenuAnchorEl: HTMLElement;
   setLocationDirectoryContextMenuAnchorEl: (el: HTMLElement) => void;
+  addLocation: (
+    location: TS.Location,
+    openAfterCreate?: boolean,
+    locationPosition?: number
+  ) => void;
+  locationPosition: number;
 }
 
 function LocationContextMenu(props: Props) {
@@ -64,6 +75,20 @@ function LocationContextMenu(props: Props) {
   const showEditLocationDialog = () => {
     props.setLocationDirectoryContextMenuAnchorEl(null);
     props.setEditLocationDialogOpened(true);
+  };
+
+  const duplicateLocation = () => {
+    props.addLocation(
+      {
+        ...props.selectedLocation,
+        uuid: getUuid(),
+        name: props.selectedLocation.name + ' (copy)',
+        isDefault: false
+      },
+      false,
+      props.locationPosition + 1
+    );
+    props.setLocationDirectoryContextMenuAnchorEl(null);
   };
 
   const moveLocationUp = () => {
@@ -114,6 +139,18 @@ function LocationContextMenu(props: Props) {
       </MenuItem>
     );
   }
+  menuItems.push(
+    <MenuItem
+      key="duplicateLocation"
+      data-tid="duplicateLocationTID"
+      onClick={duplicateLocation}
+    >
+      <ListItemIcon>
+        <ContentCopyIcon />
+      </ListItemIcon>
+      <ListItemText primary={i18n.t('core:duplicateLocationTitle')} />
+    </MenuItem>
+  );
   menuItems.push(
     <MenuItem
       key="indexLocation"
@@ -209,10 +246,20 @@ function mapDispatchToProps(dispatch) {
       moveLocationUp: LocationActions.moveLocationUp,
       moveLocationDown: LocationActions.moveLocationDown,
       showInFileManager: AppActions.showInFileManager,
-      closeLocation: AppActions.closeLocation
+      closeLocation: AppActions.closeLocation,
+      addLocation: LocationActions.addLocation
     },
     dispatch
   );
 }
 
-export default connect(undefined, mapDispatchToProps)(LocationContextMenu);
+function mapStateToProps(state, ownProps) {
+  return {
+    locationPosition: getLocationPosition(state, ownProps.selectedLocation.uuid)
+  };
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(LocationContextMenu);
