@@ -735,6 +735,7 @@
   "restore": "Restore",
   "createdOn": "Created on",
   "relevance": "Relevance",
+  "url": "Download Url",
   "duplicateLocationTitle": "Duplicate Location",
   "-": "-"
 }

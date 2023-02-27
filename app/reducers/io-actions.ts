@@ -29,7 +29,11 @@ import {
 } from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
 import { actions as AppActions } from './app';
-import { copyFilesPromise, renameFilesPromise } from '-/services/utils-io';
+import {
+  copyFilesPromise,
+  getThumbPath,
+  renameFilesPromise
+} from '-/services/utils-io';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import TaggingActions from './tagging-actions';
@@ -189,6 +193,68 @@ const actions = {
           AppActions.showNotification(i18n.t('core:copyingFilesFailed'))
         );
       });
+  },
+  /**
+   * S3 TODO work for test files only
+   * @param url
+   * @param targetPath
+   * @param onDownloadProgress
+   */
+  downloadFile: (
+    url: string,
+    targetPath: string,
+    onDownloadProgress?: (progress: Progress, response: any) => void
+  ) => (dispatch: (actions: Object) => void) => {
+    function saveFile(response: Response): Promise<TS.FileSystemEntry> {
+      if (AppConfig.isElectron && !PlatformIO.haveObjectStoreSupport()) {
+        return PlatformIO.saveBinaryFilePromise(
+          { path: targetPath },
+          response.body,
+          true,
+          onDownloadProgress
+        );
+      }
+      return response.arrayBuffer().then(arrayBuffer => {
+        return PlatformIO.saveFilePromise(
+          { path: targetPath },
+          arrayBuffer,
+          true
+        );
+      });
+    }
+    return fetch(url)
+      .then(response => saveFile(response))
+      .then((fsEntry: TS.FileSystemEntry) => {
+        return generateThumbnailPromise(
+          PlatformIO.haveObjectStoreSupport() ? url : fsEntry.path,
+          400
+        ).then(dataURL => {
+          if (dataURL && dataURL.length > 6) {
+            const baseString = dataURL.split(',').pop();
+            const fileContent = base64ToArrayBuffer(baseString);
+            return PlatformIO.saveBinaryFilePromise(
+              {
+                path: getThumbFileLocationForFile(
+                  targetPath,
+                  PlatformIO.getDirSeparator(),
+                  false
+                )
+              },
+              fileContent,
+              true
+            ).then((thumb: TS.FileSystemEntry) => ({
+              ...fsEntry,
+              thumbPath: getThumbPath(thumb.path)
+            }));
+          }
+          return fsEntry;
+        });
+      })
+      .then((fsEntry: TS.FileSystemEntry) => {
+        dispatch(AppActions.reflectCreateEntryObj(fsEntry));
+        return fsEntry;
+      })
+      .catch(e => console.log(e));
   },
   /**
    * with HTML5 Files API

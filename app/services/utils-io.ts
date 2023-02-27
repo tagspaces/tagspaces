@@ -1347,7 +1347,7 @@ export function getFolderThumbPath(
   );
 }
 
-export function getThumbPath(thumbPath: string, lastThumbnailImageChange: any) {
+export function getThumbPath(thumbPath: string, lastThumbnailImageChange?: any) {
   if (!thumbPath) {
     return undefined;
   }
