@@ -19,9 +19,11 @@
 import React, { useReducer, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { saveAs } from 'file-saver';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import HTMLFileIcon from '@mui/icons-material/PhotoAlbumOutlined';
+import InputAdornment from '@mui/material/InputAdornment';
 import TextFileIcon from '@mui/icons-material/InsertDriveFileOutlined';
 import MarkdownFileIcon from '@mui/icons-material/DescriptionOutlined';
 import AddFileIcon from '@mui/icons-material/NoteAddOutlined';
@@ -60,6 +62,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 import { FormControl } from '@mui/material';
 import { fileNameValidation } from '-/services/utils-io';
 import { PerspectiveIDs } from '-/perspectives';
+import { FileTypeGroups } from '-/services/search';
 
 const styles: any = () => ({
   createButton: {
@@ -96,9 +99,15 @@ interface Props {
     destination: string,
     onUploadProgress?: (progress: Progress, response: any) => void
   ) => any;
+  downloadFile: (
+    url: string,
+    destination: string,
+    onDownloadProgress?: (progress: Progress, response: any) => void
+  ) => any;
   onUploadProgress: (progress: Progress, response: any) => void;
   toggleUploadDialog: () => void;
   resetProgress: () => void;
+  setProgress: (path: string, progress: number) => void;
 }
 
 function CreateDialog(props: Props) {
@@ -115,6 +124,7 @@ function CreateDialog(props: Props) {
     showNotification,
     firstRWLocation
   } = props;
+  const fileUrl = useRef<string>();
   const fileName = useRef<string>(
     'note' +
       AppConfig.beginTagContainer +
@@ -263,6 +273,56 @@ function CreateDialog(props: Props) {
       setInputError(noValid);
     }
   };
+
+  const handleUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    fileUrl.current = event.target.value;
+  };
+
+  function downloadURL() {
+    if (fileUrl.current) {
+      const url = new URL(fileUrl.current);
+      let fileName;
+      let pathParts;
+      if (url.pathname) {
+        const delimiterIndex = url.pathname.lastIndexOf('/');
+        if (delimiterIndex > -1) {
+          fileName = url.pathname.substring(delimiterIndex + 1);
+          if (!fileName) {
+            pathParts = url.pathname.split('/').filter(Boolean);
+          }
+        } else {
+          fileName = url.pathname;
+        }
+      }
+      if (!fileName) {
+        fileName =
+          url.hostname +
+          (pathParts && pathParts.length > 0 ? pathParts.join('-') : '') +
+          '.html';
+      } else if (fileName.indexOf('.') === -1) {
+        fileName = url.hostname + '-' + fileName + '.html';
+      }
+      if (PlatformIO.haveObjectStoreSupport() || AppConfig.isElectron) {
+        props.resetProgress();
+        props.toggleUploadDialog();
+        props
+          .downloadFile(
+            fileUrl.current,
+            targetDirectoryPath + PlatformIO.getDirSeparator() + fileName,
+            props.onUploadProgress
+          )
+          .then(() => {
+            if (PlatformIO.haveObjectStoreSupport()) {
+              // currently objectStore location in downloadFile use saveFilePromise and this function not have progress handling
+              props.setProgress(fileUrl.current, 100);
+            }
+          });
+      } else {
+        saveAs(fileUrl.current, fileName);
+      }
+      onClose();
+    }
+  }
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -422,6 +482,33 @@ function CreateDialog(props: Props) {
               </Container>
             </Button>
           </Grid>
+          <Grid style={{ marginTop: 40 }} item xs={12}>
+            <TextField
+              label={i18n.t('core:url')}
+              margin="dense"
+              name="name"
+              fullWidth={true}
+              data-tid="newUrlTID"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Button
+                      data-tid="cancelRenameEntryTID"
+                      onClick={() => downloadURL()}
+                    >
+                      {i18n.t('core:downloadFile')}
+                    </Button>
+                  </InputAdornment>
+                )
+              }}
+              onKeyDown={event => {
+                if (event.key === 'Enter') {
+                  downloadURL();
+                }
+              }}
+              onChange={handleUrlChange}
+            />
+          </Grid>
         </Grid>
         <input
           style={{ display: 'none' }}
@@ -458,9 +545,11 @@ function mapActionCreatorsToProps(dispatch) {
       showNotification: AppActions.showNotification,
       reflectCreateEntries: AppActions.reflectCreateEntries,
       uploadFilesAPI: IOActions.uploadFilesAPI,
+      downloadFile: IOActions.downloadFile,
       onUploadProgress: AppActions.onUploadProgress,
       toggleUploadDialog: AppActions.toggleUploadDialog,
-      resetProgress: AppActions.resetProgress
+      resetProgress: AppActions.resetProgress,
+      setProgress: AppActions.setProgress
     },
     dispatch
   );

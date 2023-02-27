@@ -504,15 +504,15 @@ export default (state: any = initialState, action: any) => {
       };
     }
     case types.TOGGLE_UPLOAD_DIALOG: {
-      if (PlatformIO.haveObjectStoreSupport()) {
-        // upload dialog have objectStore support only
-        return {
-          ...state,
-          // progress: (state.uploadDialogOpened ? state.progress : []),
-          uploadDialogOpened: !state.uploadDialogOpened
-        };
-      }
-      return state;
+      // if (PlatformIO.haveObjectStoreSupport()) {
+      // upload dialog have objectStore support only
+      return {
+        ...state,
+        // progress: (state.uploadDialogOpened ? state.progress : []),
+        uploadDialogOpened: !state.uploadDialogOpened
+      };
+      //}
+      // return state;
     }
     case types.SET_CURRENT_DIRECTORY_DIRS: {
       return {
@@ -1120,7 +1120,7 @@ export const actions = {
     type: types.SET_CURRENT_DIRECTORY_DIRS,
     dirs
   }),
-  clearUploadDialog: () => (
+  /*clearUploadDialog: () => (
     dispatch: (action) => void
     // getState: () => any
   ) => {
@@ -1131,8 +1131,8 @@ export const actions = {
       // const { currentDirectoryPath } = getState().app;
       // dispatch(actions.loadDirectoryContent(currentDirectoryPath, false));
     }
-  },
-  clearUploadDialogInt: () => ({
+  },*/
+  clearUploadDialog: () => ({
     type: types.CLEAR_UPLOAD_DIALOG
   }),
   toggleProgressDialog: () => ({
@@ -2305,6 +2305,11 @@ export const actions = {
       lmdt: new Date().getTime(),
       path
     };
+    dispatch(actions.reflectCreateEntryObj(newEntry));
+  },
+  reflectCreateEntryObj: (newEntry: TS.FileSystemEntry) => (
+    dispatch: (action) => void
+  ) => {
     dispatch(actions.setSelectedEntries([newEntry]));
     dispatch(actions.reflectCreateEntryInt(newEntry));
     dispatch(LocationIndexActions.reflectCreateEntry(newEntry));

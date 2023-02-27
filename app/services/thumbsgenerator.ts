@@ -425,11 +425,11 @@ export function generateImageThumbnail(
       };
       img.src = fileURL;
       img.onerror = err => {
-        console.warn(`Error loading: ${fileURL} for tmb gen with: ${err} `);
+        console.warn(`Error loading: ${fileURL} for tmb gen`, err);
         resolve('');
       };
     } catch (e) {
-      console.warn(`Error creating image thumb for : ${fileURL} with: ${e}`);
+      console.warn(`Error creating image thumb for : ${fileURL}`, e);
       resolve('');
     }
   });

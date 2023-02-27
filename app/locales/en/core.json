@@ -734,6 +734,7 @@
   "autosave": "Auto save",
   "restore": "Restore",
   "createdOn": "Created on",
+  "url": "Download Url",
   "duplicateLocationTitle": "Duplicate Location",
   "-": "-"
 }

@@ -432,14 +432,18 @@ function GridPerspective(props: Props) {
 
   const makeFirstSelectedEntryVisible = () => {
     if (selectedEntries && selectedEntries.length > 0) {
-      const firstSelectedElement = document.querySelector(
-        '[data-entry-id="' + selectedEntries[0].uuid + '"]'
-      );
-      if (
-        isObj(firstSelectedElement) &&
-        !isVisibleOnScreen(firstSelectedElement)
-      ) {
-        firstSelectedElement.scrollIntoView(false);
+      try {
+        const firstSelectedElement = document.querySelector(
+          '[data-entry-id="' + selectedEntries[0].uuid + '"]'
+        );
+        if (
+          isObj(firstSelectedElement) &&
+          !isVisibleOnScreen(firstSelectedElement)
+        ) {
+          firstSelectedElement.scrollIntoView(false);
+        }
+      } catch (ex) {
+        console.debug('makeFirstSelectedEntryVisible:', ex);
       }
     }
   };
