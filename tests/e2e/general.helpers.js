@@ -322,6 +322,10 @@ export async function isDisabled(selector) {
   return element.isDisabled();
 }
 
+export async function frameLocator(selector = 'iframe') {
+  return await global.client.frameLocator(selector);
+}
+
 export async function isDisplayed(selector, displayed = true, timeout = 500) {
   if (global.isPlaywright) {
     try {

@@ -31,7 +31,8 @@ import {
   setInputKeys,
   setGridOptions,
   showFilesWithTag,
-  waitForNotification
+  waitForNotification,
+  frameLocator
 } from './general.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
@@ -72,9 +73,16 @@ describe('TST50** - Right button on a file', () => {
       '[data-tid="fsEntryName_sample.txt"]', // perspectiveGridTable + firstFile,
       'fileMenuOpenFile'
     );
+    const fLocator = await frameLocator();
+    const bodyTxt = await fLocator.locator('body').innerText();
+    const containTID = toContainTID(bodyTxt);
+    if (!containTID) {
+      console.debug('no containTID in:' + bodyTxt);
+    }
+    expect(containTID).toBe(true);
     // Check if the file is opened
     // await delay(1500);
-    await expectElementExist('#FileViewer', true, 2000);
+    /*await expectElementExist('#FileViewer', true, 2000);
     const webViewer = await global.client.waitForSelector('#FileViewer');
     // await webViewer.waitForDisplayed();
     // await delay(5000);
@@ -88,7 +96,7 @@ describe('TST50** - Right button on a file', () => {
     if (!containTID) {
       console.debug('no containTID in:' + bodyTxt);
     }
-    expect(containTID).toBe(true);
+    expect(containTID).toBe(true);*/
   });
 
   test('TST5017 - Rename file [web,minio,electron]', async () => {
