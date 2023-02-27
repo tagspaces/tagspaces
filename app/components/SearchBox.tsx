@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import i18n from '-/services/i18n';
@@ -25,9 +25,6 @@ import DropDownIcon from '@mui/icons-material/ArrowDropDownOutlined';
 import Popover from '@mui/material/Popover';
 import SearchPopover from '-/components/SearchPopover';
 import SearchAutocomplete from '-/components/SearchAutocomplete';
-import Autocomplete from '@mui/material/Autocomplete';
-import { TextField } from '@mui/material';
-import { SearchOptions } from '-/components/SearchOptions';
 
 interface Props {
   open: boolean;

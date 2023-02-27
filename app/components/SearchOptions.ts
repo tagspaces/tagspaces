@@ -29,7 +29,7 @@ export const SearchQueryComposition = {
     fullName: 'type:'
   },
   SIZE: {
-    shortName: 's:',
+    shortName: 'si:',
     fullName: 'size:'
   },
   LAST_MODIFIED: {
@@ -72,6 +72,10 @@ export const SearchActions = {
   SEARCH: {
     shortName: 'q:',
     fullName: 'search-queries:'
+  },
+  SEARCH_HISTORY: {
+    shortName: 's:',
+    fullName: 'search-history:'
   }
 };
 
@@ -213,6 +217,14 @@ export const SearchOptions: Array<SearchOptionType> = [
     fullName: SearchActions.SEARCH.fullName,
     action: SearchActions.SEARCH.shortName,
     descr: 'find and execute saved search queries',
+    group: 'actions'
+  },
+  {
+    id: SearchActions.SEARCH_HISTORY.shortName,
+    label: SearchActions.SEARCH_HISTORY.shortName,
+    fullName: SearchActions.SEARCH_HISTORY.fullName,
+    action: SearchActions.SEARCH_HISTORY.shortName,
+    descr: 'Execute search queries from history',
     group: 'actions'
   },
   {

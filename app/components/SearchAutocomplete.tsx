@@ -19,20 +19,16 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import format from 'date-fns/format';
+import { format, formatDistanceToNow } from 'date-fns';
 import makeStyles from '@mui/styles/makeStyles';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import Button from '@mui/material/Button';
 import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import ClearSearchIcon from '@mui/icons-material/Close';
-import InputAdornment from '@mui/material/InputAdornment';
 import {
   actions as AppActions,
-  getCurrentLocationId,
-  getDirectoryContent,
   getDirectoryPath,
-  getEditedEntryPaths,
   isSearchMode
 } from '../reducers/app';
 import {
@@ -97,12 +93,14 @@ interface Props {
   locations: TS.Location[];
   currentLocation: TS.Location;
   openLocationById: (locationId: string) => void;
+  changeLocationByID: (locationId: string) => void;
   isSearchMode: boolean;
   exitSearchMode: () => void;
   setSearchFilter: (filter) => void;
-  currentLocationId: string;
+  // currentLocationId: string;
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   searches: Array<TS.SearchQuery>;
+  switchLocationTypeByID: (locationId: string) => Promise<string | null>;
   // editedEntryPaths: Array<TS.EditedEntryPath>;
 }
 
@@ -181,8 +179,9 @@ function SearchAutocomplete(props: Props) {
   const isOpen = useRef<boolean>(true);
 
   const firstRender = useFirstRender();
+  const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 
-  useEffect(() => {
+  /*useEffect(() => {
     // Handle CHANGE LOCATION IN SEARCH MODE
     if (!firstRender) {
       if (props.isSearchMode && Object.keys(props.searchQuery).length > 0) {
@@ -191,7 +190,7 @@ function SearchAutocomplete(props: Props) {
         props.exitSearchMode();
       }
     }
-  }, [props.currentLocation]);
+  }, [props.currentLocation]);*/
 
   useEffect(() => {
     if (!firstRender) {
@@ -474,6 +473,7 @@ function SearchAutocomplete(props: Props) {
   const clearSearch = () => {
     resetValues([]);
     props.setSearchQuery({});
+    props.exitSearchMode();
     // props.setSearchResults([]);
     props.watchForChanges();
     // props.openCurrentDirectory();
@@ -664,6 +664,29 @@ function SearchAutocomplete(props: Props) {
     }
     return parsed;
   }*/
+
+  function getHistoryOptions(
+    items: TS.HistoryItem[],
+    group: string
+  ): SearchOptionType[] {
+    if (!items) {
+      return [];
+    }
+    return items.map((item: TS.HistoryItem) => ({
+      id: item.lid,
+      descr: formatDistanceToNow(item.creationTimeStamp, {
+        includeSeconds: true,
+        addSuffix: true
+        // locale: https://date-fns.org/v2.29.3/docs/formatDistanceToNow#usage
+      }),
+      action: ExecActions.OPEN_HISTORY,
+      fullName: item.url,
+      label: item.path,
+      group: group,
+      ...(item.searchQuery && { searchQuery: item.searchQuery })
+    }));
+  }
+
   function changeOptions(action: string) {
     let optionsChanged = false;
     if (isAction(action, SearchActions.LOCATION)) {
@@ -683,7 +706,6 @@ function SearchAutocomplete(props: Props) {
       if (currentOptions.current !== action) {
         currentOptions.current = action;
 
-        const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
         const fileOpenHistoryItems: Array<TS.HistoryItem> = Pro
           ? Pro.history.getHistory(historyKeys.fileOpenKey)
           : [];
@@ -693,36 +715,20 @@ function SearchAutocomplete(props: Props) {
         const fileEditHistoryItems: Array<TS.HistoryItem> = Pro
           ? Pro.history.getHistory(historyKeys.fileEditKey)
           : [];
-        const searchHistoryItems: Array<TS.HistoryItem> = Pro
-          ? Pro.history.getHistory(historyKeys.searchHistoryKey)
-          : [];
-        function getOptions(
-          items: TS.HistoryItem[],
-          group: string
-        ): SearchOptionType[] {
-          if (!items) {
-            return [];
-          }
-          return items.map((item: TS.HistoryItem) => ({
-            id: item.lid,
-            descr:
-              '(' + format(item.creationTimeStamp, 'yyyy-MM-dd HH:mm') + ')',
-            action: ExecActions.OPEN_HISTORY,
-            fullName: item.url,
-            label: item.path,
-            group: group,
-            ...(item.searchQuery && { searchQuery: item.searchQuery })
-          }));
-        }
 
         searchOptions.current = [
-          ...getOptions(fileOpenHistoryItems, i18n.t('core:fileOpenHistory')),
-          ...getOptions(
+          ...getHistoryOptions(
+            fileOpenHistoryItems,
+            i18n.t('core:fileOpenHistory')
+          ),
+          ...getHistoryOptions(
             folderOpenHistoryItems,
             i18n.t('core:folderOpenHistory')
           ),
-          ...getOptions(fileEditHistoryItems, i18n.t('core:fileEditHistory')),
-          ...getOptions(searchHistoryItems, i18n.t('core:searchHistory'))
+          ...getHistoryOptions(
+            fileEditHistoryItems,
+            i18n.t('core:fileEditHistory')
+          )
         ];
       }
     } else if (isAction(action, SearchActions.BOOK)) {
@@ -754,6 +760,14 @@ function SearchAutocomplete(props: Props) {
           i18n.t('core:searchBookmarks')
         );
       }
+    } else if (isAction(action, SearchActions.SEARCH_HISTORY)) {
+      const searchHistoryItems: Array<TS.HistoryItem> = Pro
+        ? Pro.history.getHistory(historyKeys.searchHistoryKey)
+        : [];
+      searchOptions.current = getHistoryOptions(
+        searchHistoryItems,
+        i18n.t('core:searchHistory')
+      );
     } else if (isAction(action, SearchActions.SEARCH)) {
       if (currentOptions.current !== action) {
         currentOptions.current = action;
@@ -995,9 +1009,21 @@ function SearchAutocomplete(props: Props) {
             isOpen.current = true;
           }
           actions.push(option);
+        } else if (isAction(option.action, SearchActions.SEARCH_HISTORY)) {
+          if (hasOptionsChanged) {
+            changeOptions(option.action);
+            isOpen.current = true;
+          }
+          actions.push(option);
         } else if (option.action === ExecActions.OPEN_HISTORY) {
           if (option.searchQuery) {
-            props.setSearchQuery(option.searchQuery);
+            if (option.id) {
+              props.switchLocationTypeByID(option.id).then(() => {
+                props.changeLocationByID(option.id);
+                props.setSearchQuery(option.searchQuery);
+              });
+            } else {
+            }
           } else {
             const item: TS.HistoryItem = {
               path: option.label,
@@ -1007,7 +1033,7 @@ function SearchAutocomplete(props: Props) {
             };
             Pro.history.openItem(
               item,
-              props.currentLocationId,
+              props.currentLocation.uuid,
               props.openLink,
               props.openLocationById,
               props.openFsEntry
@@ -1026,7 +1052,7 @@ function SearchAutocomplete(props: Props) {
           };
           Pro.history.openItem(
             item,
-            props.currentLocationId,
+            props.currentLocation.uuid,
             props.openLink,
             props.openLocationById,
             props.openFsEntry
@@ -1629,7 +1655,7 @@ function mapStateToProps(state) {
     locations: getLocations(state),
     currentLocation: getCurrentLocation(state),
     isSearchMode: isSearchMode(state),
-    currentLocationId: getCurrentLocationId(state),
+    //currentLocationId: getCurrentLocationId(state),
     searches: getSearches(state)
     // editedEntryPaths: getEditedEntryPaths(state)
   };
@@ -1648,9 +1674,11 @@ function mapDispatchToProps(dispatch) {
       // openCurrentDirectory: AppActions.openCurrentDirectory,
       watchForChanges: AppActions.watchForChanges,
       openLocationById: AppActions.openLocationById,
+      changeLocationByID: AppActions.changeLocationByID,
       exitSearchMode: AppActions.exitSearchMode,
       setSearchFilter: AppActions.setSearchFilter,
-      openFsEntry: AppActions.openFsEntry
+      openFsEntry: AppActions.openFsEntry,
+      switchLocationTypeByID: AppActions.switchLocationTypeByID
     },
     dispatch
   );
@@ -1664,4 +1692,5 @@ function mapDispatchToProps(dispatch) {
   nextProp.currentDirectory === prevProp.currentDirectory &&
   nextProp.indexedEntriesCount === prevProp.indexedEntriesCount;*/
 
+// @ts-ignore
 export default connect(mapStateToProps, mapDispatchToProps)(SearchAutocomplete); // (React.memo(SearchAutocomplete, areEqual));
