@@ -408,6 +408,7 @@ function SearchPopover(props: Props) {
     forceIndexing.current = false;
     fileSize.current = '';
     props.setSearchQuery({});
+    props.exitSearchMode();
     openCurrentDirectory();
     props.onClose();
   };

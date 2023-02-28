@@ -636,9 +636,11 @@ function EntryContainer(props: Props) {
             if (Pro) {
               Pro.history.saveHistory(
                 historyKeys.fileEditKey,
-                openedFile.path,
-                openedFile.url,
-                openedFile.locationId,
+                {
+                  path: openedFile.path,
+                  url: openedFile.url,
+                  lid: openedFile.locationId
+                },
                 settings[historyKeys.fileEditKey]
               );
             }

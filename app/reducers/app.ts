@@ -1793,16 +1793,26 @@ export const actions = {
     type: types.SET_CURRENLOCATIONID,
     locationId
   }),
-  changeLocation: (location: TS.Location) => (
+  changeLocation: (location: TS.Location) => (dispatch: (action) => void) => {
+    dispatch(actions.changeLocationByID(location.uuid));
+  },
+  changeLocationByID: (locationId: string) => (
     dispatch: (action) => void,
     getState: () => any
   ) => {
     const { currentLocationId } = getState().app;
-    if (location.uuid !== currentLocationId) {
+    if (locationId !== currentLocationId) {
       // dispatch(actions.exitSearchMode());
       dispatch(LocationIndexActions.clearDirectoryIndex());
-      dispatch(actions.setCurrentLocationId(location.uuid));
+      dispatch(actions.setCurrentLocationId(locationId));
     }
+  },
+  switchLocationTypeByID: (locationID: string) => (
+    dispatch: (action) => Promise<string | null>,
+    getState: () => any
+  ): Promise<string | null> => {
+    const location: TS.Location = getLocation(getState(), locationID);
+    return dispatch(actions.switchLocationType(location));
   },
   /**
    * @param location
@@ -2205,21 +2215,25 @@ export const actions = {
         if (fsEntry.isFile) {
           Pro.history.saveHistory(
             historyKeys.fileOpenKey,
-            fsEntry.path,
-            generateSharingLink(currentLocation.uuid, relEntryPath),
-            currentLocation.uuid,
+            {
+              path: fsEntry.path,
+              url: generateSharingLink(currentLocation.uuid, relEntryPath),
+              lid: currentLocation.uuid
+            },
             getState().settings[historyKeys.fileOpenKey]
           );
         } else {
           Pro.history.saveHistory(
             historyKeys.folderOpenKey,
-            fsEntry.path,
-            generateSharingLink(
-              currentLocation.uuid,
-              relEntryPath,
-              relEntryPath
-            ),
-            currentLocation.uuid,
+            {
+              path: fsEntry.path,
+              url: generateSharingLink(
+                currentLocation.uuid,
+                relEntryPath,
+                relEntryPath
+              ),
+              lid: currentLocation.uuid
+            },
             getState().settings[historyKeys.folderOpenKey]
           );
         }

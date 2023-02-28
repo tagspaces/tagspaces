@@ -214,6 +214,8 @@ interface Props {
   progress?: Array<any>;
   searchQuery: TS.SearchQuery;
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
+  enterSearchMode: () => void;
+  exitSearchMode: () => void;
   openURLExternally?: (url: string, skipConfirmation: boolean) => void;
   language: string;
   editedEntryPaths: Array<TS.EditedEntryPath>;
@@ -514,6 +516,16 @@ function FolderContainer(props: Props) {
     // }
   });
 
+  const toggleSearchMode = () => {
+    if (props.isSearchMode) {
+      props.setSearchQuery({});
+      props.exitSearchMode();
+    } else {
+      props.setSearchQuery({ textQuery: '' });
+      props.enterSearchMode();
+    }
+  };
+
   return (
     <div data-tid="folderContainerTID" style={{ position: 'relative' }}>
       <div
@@ -607,16 +619,8 @@ function FolderContainer(props: Props) {
                     minWidth: 40,
                     width: 200
                   }}
-                  onKeyDown={() =>
-                    props.setSearchQuery(
-                      props.isSearchMode ? {} : { textQuery: '' }
-                    )
-                  }
-                  onClick={() =>
-                    props.setSearchQuery(
-                      props.isSearchMode ? {} : { textQuery: '' }
-                    )
-                  }
+                  onKeyDown={toggleSearchMode}
+                  onClick={toggleSearchMode}
                   margin="dense"
                   placeholder={i18n.t('core:searchTitle')}
                   InputProps={{
@@ -748,6 +752,8 @@ function mapActionCreatorsToProps(dispatch) {
       setCurrentDirectoryPerspective: AppActions.setCurrentDirectoryPerspective,
       updateCurrentDirEntry: AppActions.updateCurrentDirEntry,
       setCurrentDirectoryColor: AppActions.setCurrentDirectoryColor,
+      enterSearchMode: AppActions.enterSearchMode,
+      exitSearchMode: AppActions.exitSearchMode,
       setSearchQuery: LocationIndexActions.setSearchQuery,
       // openCurrentDirectory: AppActions.openCurrentDirectory,
       openURLExternally: AppActions.openURLExternally

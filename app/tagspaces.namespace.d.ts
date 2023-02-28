@@ -158,11 +158,16 @@ export namespace TS {
     path: string;
     uuid?: Uuid;
   }
+
+  /**
+   * path: path or title to be shown
+   */
   interface HistoryItem {
     path: string;
     url: string;
     lid: string;
     creationTimeStamp: number;
+    searchQuery?: TS.SearchQuery
   }
 
   interface BookmarkItem {

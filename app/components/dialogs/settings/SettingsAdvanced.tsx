@@ -206,6 +206,23 @@ function SettingsAdvanced(props: Props) {
                 <MenuItem value={100}>100</MenuItem>
               </Select>
             </ListItem>
+            <ListItem className={classes.listItem}>
+              <ListItemText primary={i18n.t('core:searchHistory')} />
+              <Select
+                data-tid="searchHistoryTID"
+                title={i18n.t('core:searchHistoryTitle')}
+                value={props.settings[historyKeys.searchHistoryKey]}
+                onChange={(event: any) =>
+                  props.setHistory(historyKeys.searchHistoryKey, event.target.value)
+                }
+                input={<Input id="searchHistorySelector" />}
+              >
+                <MenuItem value={0}>{i18n.t('core:disabled')}</MenuItem>
+                <MenuItem value={10}>10</MenuItem>
+                <MenuItem value={50}>50</MenuItem>
+                <MenuItem value={100}>100</MenuItem>
+              </Select>
+            </ListItem>
           </>
         )}
         <ListItem className={classes.listItem}>

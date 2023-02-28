@@ -88,6 +88,7 @@ interface Props {
   selectedLocation: TS.Location;
   setSelectedLocation: (loc: TS.Location) => void;
   changeLocation: (loc: TS.Location) => void;
+  exitSearchMode: () => void;
 }
 
 function LocationView(props: Props) {
@@ -119,6 +120,7 @@ function LocationView(props: Props) {
     } else {
       // this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
       props.setSelectedEntries([]);
+      props.exitSearchMode();
       props.openLocation(location);
       if (props.hideDrawer) {
         props.hideDrawer();
@@ -379,7 +381,8 @@ function mapDispatchToProps(dispatch) {
       setSelectedEntries: AppActions.setSelectedEntries,
       openLocation: AppActions.openLocation,
       loadDirectoryContent: AppActions.loadDirectoryContent,
-      changeLocation: AppActions.changeLocation
+      changeLocation: AppActions.changeLocation,
+      exitSearchMode: AppActions.exitSearchMode
     },
     dispatch
   );
