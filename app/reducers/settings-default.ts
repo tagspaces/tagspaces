@@ -20,6 +20,7 @@ import AppConfig from '-/AppConfig';
 import keyBindings from '-/reducers/keybindings-default';
 import { PerspectiveIDs } from '-/perspectives';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import { extensionsFound, supportedFileTypes } from "-/extension-config";
 
 let desktopMode = !AppConfig.isMobile;
 if (window.ExtDisplayMode && window.ExtDisplayMode === 'mobile') {
@@ -33,9 +34,10 @@ if (window.ExtCheckForUpdatesOnStartup !== undefined) {
 }
 
 export function findAvailableExtensions() {
+  return extensionsFound;
   // TODO Search in users tagspaces folder
   // Search in the installation folder
-  const extensionsFound = [
+  /*const extensionsFound = [
     {
       extensionId: '@tagspaces/extensions/archive-viewer',
       extensionName: 'Archive Viewer',
@@ -142,7 +144,7 @@ export function findAvailableExtensions() {
       extensionType: 'viewer'
     }
   ];
-  return extensionsFound;
+  return extensionsFound;*/
 }
 
 export default {
@@ -330,7 +332,8 @@ export default {
     }
   ],
   keyBindings: keyBindings(AppConfig.isMacLike),
-  supportedFileTypes: [
+  supportedFileTypes: supportedFileTypes,
+    /*[
     {
       type: 'avif',
       viewer: '@tagspaces/extensions/image-viewer',
@@ -763,7 +766,7 @@ export default {
       viewer: '@tagspaces/extensions/msg-viewer',
       color: '#a8cf31'
     }
-  ],
+  ],*/
   mapTileServers: [
     {
       uuid: getUuid(),

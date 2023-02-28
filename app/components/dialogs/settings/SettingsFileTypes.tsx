@@ -165,8 +165,8 @@ function SettingsFileTypes(props: Props) {
               <MenuItem value="" />
               {availableExtensions.map(
                 extension =>
-                  (extension.extensionType === 'viewer' ||
-                    extension.extensionType === 'editor') && (
+                  (extension.extensionTypes.includes('viewer') ||
+                    extension.extensionTypes.includes('editor')) && (
                     <MenuItem
                       key={extension.extensionName}
                       value={extension.extensionId}
@@ -190,7 +190,11 @@ function SettingsFileTypes(props: Props) {
             >
               <MenuItem value="">{i18n.t('clearEditor')}</MenuItem>
               {availableExtensions
-                .filter(extension => extension.extensionType === 'editor')
+                .filter(
+                  extension =>
+                    extension.extensionTypes &&
+                    extension.extensionTypes.includes('editor')
+                )
                 .map(extension => (
                   <MenuItem
                     key={extension.extensionName}
