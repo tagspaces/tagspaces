@@ -989,6 +989,7 @@ export const actions = {
     }
     setTimeout(() => {
       PlatformIO.setGlobalShortcuts(isGlobalKeyBindingEnabled(state));
+      PlatformIO.loadExtensions();
     }, 1000);
     const langURLParam = getURLParameter('locale');
     if (

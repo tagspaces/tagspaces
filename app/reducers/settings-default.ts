@@ -33,120 +33,6 @@ if (window.ExtCheckForUpdatesOnStartup !== undefined) {
   checkForUpdates = window.ExtCheckForUpdatesOnStartup;
 }
 
-export function findAvailableExtensions() {
-  return extensionsFound;
-  // TODO Search in users tagspaces folder
-  // Search in the installation folder
-  /*const extensionsFound = [
-    {
-      extensionId: '@tagspaces/extensions/archive-viewer',
-      extensionName: 'Archive Viewer',
-      extensionType: 'viewer'
-    },
-    {
-      extensionId: '@tagspaces/extensions/3d-viewer',
-      extensionName: '3D Viewer',
-      extensionType: 'viewer'
-    },
-    {
-      extensionId: '@tagspaces/extensions/document-viewer',
-      extensionName: 'Documents Viewer',
-      extensionType: 'viewer'
-    },
-    {
-      extensionId: '@tagspaces/extensions/ebook-viewer',
-      extensionName: 'eBook Viewer',
-      extensionType: 'viewer'
-    },
-    {
-      extensionId: '@tagspaces/extensions/html-editor',
-      extensionName: 'HTML Editor',
-      extensionType: 'editor'
-    },
-    {
-      extensionId: '@tagspaces/extensions/html-viewer',
-      extensionName: 'HTML Viewer',
-      extensionType: 'viewer'
-    },
-    {
-      extensionId: '@tagspaces/extensions/image-viewer',
-      extensionName: 'Image Viewer',
-      extensionType: 'viewer'
-    },
-    {
-      extensionId: '@tagspaces/extensions/json-editor',
-      extensionName: 'JSON Viewer',
-      extensionType: 'editor'
-    },
-    {
-      extensionId: '@tagspaces/extensions/md-viewer',
-      extensionName: 'MarkDown Viewer',
-      extensionType: 'viewer'
-    },
-    {
-      extensionId: '@tagspaces/extensions/md-editor/build',
-      extensionName: 'MarkDown Editor',
-      extensionType: 'editor'
-    },
-    {
-      extensionId: '@tagspaces/extensions/media-player',
-      extensionName: 'Media Player',
-      extensionType: 'viewer'
-    },
-    {
-      extensionId: '@tagspaces/extensions/mhtml-viewer',
-      extensionName: 'MHTML Viewer',
-      extensionType: 'viewer'
-    },
-    {
-      extensionId: '@tagspaces/extensions/msg-viewer',
-      extensionName: 'MSG Viewer',
-      extensionType: 'viewer'
-    },
-    {
-      extensionId: '@tagspaces/extensions/pdf-viewer',
-      extensionName: 'PDF Viewer',
-      extensionType: 'viewer'
-    },
-    {
-      extensionId: '@tagspaces/extensions/rtf-viewer',
-      extensionName: 'RTF Viewer',
-      extensionType: 'viewer'
-    },
-    {
-      extensionId: '@tagspaces/extensions/spreadsheet-viewer',
-      extensionName: 'Spreadsheet Viewer',
-      extensionType: 'viewer'
-    },
-    {
-      extensionId: '@tagspaces/extensions/text-editor',
-      extensionName: 'Text Editor',
-      extensionType: 'editor'
-    },
-    {
-      extensionId: '@tagspaces/extensions/text-viewer',
-      extensionName: 'Text Viewer',
-      extensionType: 'viewer'
-    },
-    {
-      extensionId: '@tagspaces/extensions/url-viewer',
-      extensionName: 'URL Viewer',
-      extensionType: 'viewer'
-    },
-    {
-      extensionId: '@tagspaces/extensions/mindmap-viewer',
-      extensionName: 'Mindmap Viewer (beta)',
-      extensionType: 'viewer'
-    },
-    {
-      extensionId: '@tagspaces/extensions/slides-viewer',
-      extensionName: 'Slides Viewer (beta)',
-      extensionType: 'viewer'
-    }
-  ];
-  return extensionsFound;*/
-}
-
 export default {
   settingsVersion: 3,
   isLoading: false,
@@ -332,6 +218,7 @@ export default {
     }
   ],
   keyBindings: keyBindings(AppConfig.isMacLike),
+  extensions: extensionsFound,
   supportedFileTypes: supportedFileTypes,
     /*[
     {

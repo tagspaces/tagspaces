@@ -28,9 +28,9 @@ import RemoveIcon from '@mui/icons-material/RemoveCircle';
 import Button from '@mui/material/Button';
 import Select from '@mui/material/Select';
 import ColorPickerDialog from '../ColorPickerDialog';
-import { findAvailableExtensions } from '-/reducers/settings-default';
 import i18n from '-/services/i18n';
 import TransparentBackground from '../../TransparentBackground';
+import { TS } from '-/tagspaces.namespace';
 
 const styles: any = (theme: any) => ({
   fileExtension: {
@@ -66,13 +66,13 @@ interface Props {
   setSelectedItem: Function;
   isValidationInProgress: boolean;
   onRemoveItem: Function;
+  extensions: Array<TS.Extension>;
 }
 
 function SettingsFileTypes(props: Props) {
   const [isColorPickerVisible, setColorPickerVisible] = useState<boolean>(
     false
   );
-  const availableExtensions = findAvailableExtensions();
 
   const openColorPicker = selectedItem => {
     const { setSelectedItem } = props;
@@ -163,7 +163,7 @@ function SettingsFileTypes(props: Props) {
               }
             >
               <MenuItem value="" />
-              {availableExtensions.map(
+              {props.extensions.map(
                 extension =>
                   (extension.extensionTypes.includes('viewer') ||
                     extension.extensionTypes.includes('editor')) && (
@@ -189,7 +189,7 @@ function SettingsFileTypes(props: Props) {
               }
             >
               <MenuItem value="">{i18n.t('clearEditor')}</MenuItem>
-              {availableExtensions
+              {props.extensions
                 .filter(
                   extension =>
                     extension.extensionTypes &&

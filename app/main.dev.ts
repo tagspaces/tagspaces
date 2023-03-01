@@ -33,6 +33,7 @@ import i18n from '-/services/i18n'; // '-/i18nBackend';
 import buildTrayIconMenu from '-/electron-tray-menu';
 import buildDesktopMenu from '-/services/electron-menus';
 import Settings from '-/settings';
+import { getExtensions } from '-/extension-utils';
 
 // delete process.env.ELECTRON_ENABLE_SECURITY_WARNINGS;
 // process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
@@ -569,6 +570,20 @@ app.on('ready', async () => {
 
   ipcMain.on('create-new-window', (e, url) => {
     createNewWindowInstance(url);
+  });
+
+  ipcMain.on('load-extensions', () => {
+    getExtensions(path.join(app.getPath('userData'), 'tsplugins'), true)
+      .then(({ extensions, supportedFileTypes }) => {
+        if (mainWindow) {
+          mainWindow.webContents.send('set_extensions', {
+            extensions,
+            supportedFileTypes
+          });
+          // mainWindow.webContents.send('set_supported_file_types', supportedFileTypes);
+        }
+      })
+      .catch(err => console.error('load-extensions', err));
   });
 
   ipcMain.on('focus-window', () => {

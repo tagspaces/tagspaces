@@ -378,10 +378,17 @@ export function orderByMetaArray(
   });
 }
 
-export function findExtensionPathForId(extensionId: string): string {
-  const extensionPath =
-    (AppConfig.isWeb ? 'modules/' : 'node_modules/') + extensionId;
-  return extensionPath;
+export function findExtensionPathForId(
+  extensionId: string,
+  extensionExternalPath = undefined
+): string {
+  if (extensionExternalPath) {
+    return extensionExternalPath + '/' + extensionId;
+  }
+  if (AppConfig.isWeb) {
+    return 'modules/' + extensionId;
+  }
+  return 'node_modules/' + extensionId;
 }
 
 export function findExtensionsForEntry(
@@ -415,12 +422,14 @@ export function findExtensionsForEntry(
         fileForOpening.color = fileType.color;
       }
       fileForOpening.viewingExtensionPath = findExtensionPathForId(
-        fileType.viewer
+        fileType.viewer,
+        fileType.extensionExternalPath
       );
       if (fileType.editor && fileType.editor.length > 0) {
         fileForOpening.editingExtensionId = fileType.editor;
         fileForOpening.editingExtensionPath = findExtensionPathForId(
-          fileType.editor
+          fileType.editor,
+          fileType.extensionExternalPath
         );
       }
     }
