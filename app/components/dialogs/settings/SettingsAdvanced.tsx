@@ -213,7 +213,10 @@ function SettingsAdvanced(props: Props) {
                 title={i18n.t('core:searchHistoryTitle')}
                 value={props.settings[historyKeys.searchHistoryKey]}
                 onChange={(event: any) =>
-                  props.setHistory(historyKeys.searchHistoryKey, event.target.value)
+                  props.setHistory(
+                    historyKeys.searchHistoryKey,
+                    event.target.value
+                  )
                 }
                 input={<Input id="searchHistorySelector" />}
               >

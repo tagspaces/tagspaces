@@ -32,6 +32,7 @@ import fscreen from 'fscreen';
 import Button from '@mui/material/Button';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Tooltip from '-/components/Tooltip';
+import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import BookmarkIcon from '@mui/icons-material/BookmarkTwoTone';
 import BookmarkAddIcon from '@mui/icons-material/BookmarkAddTwoTone';
@@ -844,11 +845,11 @@ function EntryContainer(props: Props) {
           </IconButton>
         </Tooltip>
         {Pro && isEditable && props.revisionsEnabled && (
-          <Tooltip title={i18n.t('core:editHistory')}>
+          <Tooltip title={i18n.t('core:revisions')}>
             <IconButton
-              aria-label={i18n.t('core:editHistory')}
+              aria-label={i18n.t('core:revisions')}
               onClick={toggleRevisions}
-              data-tid="editHistoryTID"
+              data-tid="revisionsTID"
               size="large"
             >
               <HistoryIcon
@@ -857,6 +858,7 @@ function EntryContainer(props: Props) {
             </IconButton>
           </Tooltip>
         )}
+        <Divider orientation="vertical" flexItem />
         <Tooltip title={i18n.t('core:downloadFile')}>
           <IconButton
             aria-label={i18n.t('core:downloadFile')}

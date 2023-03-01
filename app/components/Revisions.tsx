@@ -110,6 +110,12 @@ function Revisions(props: Props) {
     setPage(0);
   };
 
+  function deleteRevision(path) {
+    PlatformIO.deleteFilePromise(path, true).then(() =>
+      loadHistoryItems(openedFiles[0])
+    );
+  }
+
   function restoreRevision(revisionPath) {
     const openedFile = openedFiles[0];
     const targetPath = getBackupFileLocation(
@@ -133,16 +139,19 @@ function Revisions(props: Props) {
 
   return (
     <div>
-      <Typography variant="h4" style={{ color: theme.palette.text.primary }}>
+      {/* <Typography
+        variant="h4"
+        style={{ color: theme.palette.text.primary }}
+      >
         {i18n.t('core:revisions')}
-      </Typography>
+      </Typography> */}
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} size="small" aria-label="revisions table">
           <TableHead>
             <TableRow>
-              <TableCell>{i18n.t('file')}</TableCell>
-              <TableCell align="right">{i18n.t('createdOn')}</TableCell>
-              <TableCell align="right">{i18n.t('revisions')}</TableCell>
+              <TableCell>{i18n.t('revisions')}</TableCell>
+              <TableCell align="right">{i18n.t('created')}</TableCell>
+              <TableCell align="right">{i18n.t('actions')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -168,9 +177,9 @@ function Revisions(props: Props) {
                       })}
                     </TableCell>
                     <TableCell align="right">
-                      <Tooltip title="core:view">
+                      <Tooltip title={i18n.t('core:view')}>
                         <IconButton
-                          aria-label={i18n.t('core:view')}
+                          aria-label="view revision"
                           onClick={() => setPreviewDialogEntry(row)}
                           data-tid="viewRevisionTID"
                           size="large"
@@ -178,25 +187,28 @@ function Revisions(props: Props) {
                           <PreviewIcon color="primary" />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="core:restore">
+                      <Tooltip title={i18n.t('core:restore')}>
                         <IconButton
-                          aria-label={i18n.t('core:restore')}
-                          onClick={() => restoreRevision(row.path)}
+                          aria-label="restore revision"
+                          onClick={() =>
+                            confirm(
+                              'The content of the current file will be replaced with the chosen revision. Do you want to continue?'
+                            ) && restoreRevision(row.path)
+                          }
                           data-tid="restoreRevisionTID"
                           size="large"
                         >
                           <RestoreIcon color="primary" />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="core:delete">
+                      <Tooltip title={i18n.t('core:delete')}>
                         <IconButton
-                          aria-label={i18n.t('core:delete')}
-                          onClick={() => {
-                            PlatformIO.deleteFilePromise(
-                              row.path,
-                              true
-                            ).then(() => loadHistoryItems(openedFiles[0]));
-                          }}
+                          aria-label="delete revision"
+                          onClick={() =>
+                            confirm(
+                              'The current revision will be deleted. Do you want to continue?'
+                            ) && deleteRevision(row.path)
+                          }
                           data-tid="deleteRevisionTID"
                           size="large"
                         >

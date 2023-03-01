@@ -103,7 +103,7 @@ import { bindActionCreators } from 'redux';
 import { actions as LocationActions } from '-/reducers/locations';
 import { actions as AppActions } from '-/reducers/app';
 import useFirstRender from '-/utils/useFirstRender';
-import SharingLinkDialog from '-/components/dialogs/SharingLinkDialog';
+import LinkGeneratorDialog from '-/components/dialogs/LinkGeneratorDialog';
 
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
@@ -1020,11 +1020,7 @@ function EntryProperties(props: Props) {
               label={
                 <>
                   {i18n.t('core:sharingLink')}
-                  <InfoIcon
-                    tooltip={i18n.t(
-                      'Link for sharing to other TagSpaces installation using the same location IDs'
-                    )}
-                  />
+                  <InfoIcon tooltip={i18n.t('core:sharingLinkTooltip')} />
                 </>
               }
               fullWidth={true}
@@ -1041,16 +1037,14 @@ function EntryProperties(props: Props) {
                 ),
                 endAdornment: (
                   <InputAdornment position="end">
-                    <Tooltip title="Copy the link to the clipboard">
+                    <Tooltip title="core:copyLinkToClipboard">
                       <Button
                         color="primary"
                         onClick={() => {
                           const promise = navigator.clipboard.writeText(
                             sharingLink
                           );
-                          props.showNotification(
-                            i18n.t('Link copied to clipboard')
-                          );
+                          props.showNotification(i18n.t('core:linkCopied'));
                         }}
                       >
                         {i18n.t('core:copy')}
@@ -1069,12 +1063,8 @@ function EntryProperties(props: Props) {
                 name="downloadLink"
                 label={
                   <>
-                    {i18n.t('Link for downloading')}
-                    <InfoIcon
-                      tooltip={i18n.t(
-                        'Link for time limited sharing on the Internet'
-                      )}
-                    />
+                    {i18n.t('core:downloadLink')}
+                    <InfoIcon tooltip={i18n.t('core:downloadLinkTooltip')} />
                   </>
                 }
                 fullWidth
@@ -1087,7 +1077,7 @@ function EntryProperties(props: Props) {
                         fullWidth
                         onClick={() => setShowSharingLinkDialog(true)}
                       >
-                        {i18n.t('core:sharingLink')}
+                        {i18n.t('core:generateDownloadLink')}
                       </Button>
                     </InputAdornment>
                   )
@@ -1343,7 +1333,7 @@ function EntryProperties(props: Props) {
         />
       )}
       {showSharingLinkDialog && (
-        <SharingLinkDialog
+        <LinkGeneratorDialog
           open={showSharingLinkDialog}
           onClose={() => setShowSharingLinkDialog(false)}
           path={currentEntry.path}
