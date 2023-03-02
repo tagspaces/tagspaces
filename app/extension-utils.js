@@ -37,48 +37,53 @@ function processDirs(directoryPath, dirs, isExternal = false) {
     try {
       const packageJsonContent = fs.readFileSync(pluginJsonPath);
       const packageJsonObj = JSON.parse(packageJsonContent);
-      let extensionId = '@tagspaces/extensions/' + dir.name;
       const version = packageJsonObj['version'];
       if (packageJsonObj['tsextension']) {
         const {
+          id,
           name,
           types,
+          color,
           fileTypes,
-          fileTypesEdit,
-          fileTypesView,
           buildFolder,
           ...props
         } = packageJsonObj['tsextension'];
 
-        if (buildFolder) {
-          extensionId += '/' + buildFolder;
-        }
+        const extensionId = id
+          ? id
+          : '@tagspaces/extensions/' +
+            dir.name +
+            (buildFolder ? '/' + buildFolder : '');
 
         if (fileTypes) {
           fileTypes.forEach(fileType => {
-            const supportedTypes = types.map(type => ({
-              [type]: extensionId,
-              ...(isExternal && { extensionExternalPath: directoryPath })
-            }));
+            if (fileType.ext) {
+              const supportTypes = fileType.types ? fileType.types : types;
+              const supportedTypes = supportTypes.map(type => ({
+                [type]: extensionId,
+                ...(isExternal && { extensionExternalPath: directoryPath })
+              }));
 
-            const existingItemIndex = supportedFileTypes.findIndex(
-              item => item.type === fileType
-            );
-            if (existingItemIndex !== -1) {
-              // If an item with the same id already exists, update its properties
-              supportedFileTypes[existingItemIndex] = {
-                ...supportedFileTypes[existingItemIndex],
-                ...supportedTypes.reduce((a, b) => ({ ...a, ...b }))
-              };
-            } else {
-              supportedFileTypes.push({
-                type: fileType,
-                ...supportedTypes.reduce((a, b) => ({ ...a, ...b }))
-              });
+              const existingItemIndex = supportedFileTypes.findIndex(
+                item => item.type === fileType.ext
+              );
+              if (existingItemIndex !== -1) {
+                // If an item with the same id already exists, update its properties
+                supportedFileTypes[existingItemIndex] = {
+                  ...supportedFileTypes[existingItemIndex],
+                  ...supportedTypes.reduce((a, b) => ({ ...a, ...b }))
+                };
+              } else {
+                supportedFileTypes.push({
+                  type: fileType.ext,
+                  color: fileType.color ? fileType.color : color,
+                  ...supportedTypes.reduce((a, b) => ({ ...a, ...b }))
+                });
+              }
             }
           });
         }
-        if (fileTypesEdit) {
+        /*if (fileTypesEdit) {
           fileTypesEdit.forEach(fileType => {
             const existingItemIndex = supportedFileTypes.findIndex(
               item => item.type === fileType
@@ -111,7 +116,7 @@ function processDirs(directoryPath, dirs, isExternal = false) {
               });
             }
           });
-        }
+        }*/
         return {
           extensionId: extensionId,
           extensionName: name,

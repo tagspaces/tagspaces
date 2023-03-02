@@ -21,7 +21,8 @@ function writeExtensions(extensions, supportedFileTypes) {
     JSON.stringify(extensions) +
     ';\n' +
     'export const supportedFileTypes = ' +
-    JSON.stringify(supportedFileTypes);
+    JSON.stringify(supportedFileTypes) +
+    ';';
   let outputFile = path.join(__dirname, '..', 'app', 'extension-config.ts');
 
   fs.writeFile(outputFile, generated, 'utf8', () => {

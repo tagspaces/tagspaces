@@ -52,6 +52,7 @@ export namespace TS {
     extensionName: string,
     extensionTypes: Array<string>,
     extensionExternal?: boolean,
+    color?: string,
     version: string,
   }
 

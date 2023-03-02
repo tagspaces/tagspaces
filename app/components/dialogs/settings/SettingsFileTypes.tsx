@@ -97,6 +97,7 @@ function SettingsFileTypes(props: Props) {
   const {
     classes,
     items,
+    extensions,
     selectedItem,
     updateItems = () => {},
     onRemoveItem = () => {},
@@ -163,7 +164,7 @@ function SettingsFileTypes(props: Props) {
               }
             >
               <MenuItem value="" />
-              {props.extensions.map(
+              {extensions.map(
                 extension =>
                   (extension.extensionTypes.includes('viewer') ||
                     extension.extensionTypes.includes('editor')) && (
@@ -171,7 +172,7 @@ function SettingsFileTypes(props: Props) {
                       key={extension.extensionName}
                       value={extension.extensionId}
                     >
-                      {extension.extensionName}
+                      {extension.extensionName} - {extension.version}
                     </MenuItem>
                   )
               )}
@@ -189,7 +190,7 @@ function SettingsFileTypes(props: Props) {
               }
             >
               <MenuItem value="">{i18n.t('clearEditor')}</MenuItem>
-              {props.extensions
+              {extensions
                 .filter(
                   extension =>
                     extension.extensionTypes &&
@@ -200,7 +201,7 @@ function SettingsFileTypes(props: Props) {
                     key={extension.extensionName}
                     value={extension.extensionId}
                   >
-                    {extension.extensionName}
+                    {extension.extensionName} - {extension.version}
                   </MenuItem>
                 ))}
             </Select>
