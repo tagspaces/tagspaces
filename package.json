@@ -211,6 +211,7 @@
     "react-qrcode-logo": "^2.8.0",
     "react-redux": "^8.0.2",
     "react-swipeable-views": "0.14.0",
+    "react-virtuoso": "^4.1.0",
     "redux": "^4.2.0",
     "redux-persist": "^5.10.0",
     "redux-thunk": "^2.4.1",

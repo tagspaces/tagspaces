@@ -56,6 +56,14 @@ export namespace TS {
     version: string,
   }
 
+  interface FileTypes {
+    id?: string,
+    type: string,
+    viewer: string;
+    editor: string;
+    color?: string
+  }
+
   interface SearchQuery {
     uuid?: string; // for saved searches
     title?: string; // for saved searches
