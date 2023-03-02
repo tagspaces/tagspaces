@@ -592,10 +592,10 @@ function EntryContainer(props: Props) {
           saveFile(textContent).then(success => {
             if (success) {
               fileChanged.current = false;
-              showNotification(
-                i18n.t('core:fileSavedSuccessfully'),
-                NotificationTypes.default
-              );
+              // showNotification(
+              //   i18n.t('core:fileSavedSuccessfully'),
+              //   NotificationTypes.default
+              // );
             }
             // change state will not render DOT before file name too
             setSavingInProgress(false);
@@ -1317,7 +1317,9 @@ function EntryContainer(props: Props) {
                         color="primary"
                         startIcon={isDesktopMode && <CancelIcon />}
                       >
-                        {i18n.t('core:cancel')}
+                        {fileChanged.current
+                          ? i18n.t('core:cancel')
+                          : i18n.t('core:closeButton')}
                       </Button>
                     </Tooltip>
                     <Tooltip
