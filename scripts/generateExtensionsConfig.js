@@ -5,7 +5,16 @@ const { getExtensions } = require('../app/extension-utils');
 
 let directoryPath = path.join(__dirname, '..', 'app', 'node_modules');
 
-getExtensions(directoryPath).then(({ extensions, supportedFileTypes }) => {
+getExtensions(directoryPath)
+  .then(({ extensions, supportedFileTypes }) => {
+    writeExtensions(extensions, supportedFileTypes);
+  })
+  .catch(err => {
+    console.error('getExtensions error:', err);
+    writeExtensions([], []);
+  });
+
+function writeExtensions(extensions, supportedFileTypes) {
   const generated =
     '/** GENERATED CODE - DO NOT MODIFY: This source file was generated automatically and any changes made to it may be overwritten */\n' +
     'export const extensionsFound = ' +
@@ -18,7 +27,7 @@ getExtensions(directoryPath).then(({ extensions, supportedFileTypes }) => {
   fs.writeFile(outputFile, generated, 'utf8', () => {
     console.log('Successfully generated:' + outputFile);
   });
-});
+}
 
 /*function getUserDataPath() {
   switch (process.platform) {
