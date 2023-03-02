@@ -1197,7 +1197,10 @@ function EntryProperties(props: Props) {
                         editName === undefined &&
                         editDescription.current === undefined && (
                           <ProTooltip tooltip={i18n.t('changeThumbnail')}>
-                            <IconButton
+                            <Button fullWidth onClick={toggleThumbFilesDialog}>
+                              {i18n.t('core:change')}
+                            </Button>
+                            {/* <IconButton
                               disabled={!Pro}
                               color="primary"
                               className={classes.button}
@@ -1205,28 +1208,28 @@ function EntryProperties(props: Props) {
                               onClick={toggleThumbFilesDialog}
                             >
                               <EditIcon />
-                            </IconButton>
+                            </IconButton> */}
                           </ProTooltip>
                         )}
-                      <ProTooltip tooltip={i18n.t('changeThumbnail')}>
-                        <div
-                          role="button"
-                          tabIndex={0}
-                          style={{
-                            backgroundSize: 'cover',
-                            backgroundRepeat: 'no-repeat',
-                            backgroundImage: thumbUrl.current
-                              ? 'url("' + thumbUrl.current + '")'
-                              : '',
-                            backgroundPosition: 'center',
-                            borderRadius: 8,
-                            minHeight: 150,
-                            minWidth: 150,
-                            marginBottom: 5
-                          }}
-                          onClick={toggleThumbFilesDialog}
-                        />
-                      </ProTooltip>
+                      {/* <ProTooltip tooltip={i18n.t('changeThumbnail')}> */}
+                      <div
+                        role="button"
+                        tabIndex={0}
+                        style={{
+                          backgroundSize: 'cover',
+                          backgroundRepeat: 'no-repeat',
+                          backgroundImage: thumbUrl.current
+                            ? 'url("' + thumbUrl.current + '")'
+                            : '',
+                          backgroundPosition: 'center',
+                          borderRadius: 8,
+                          minHeight: 150,
+                          minWidth: 150,
+                          marginBottom: 5
+                        }}
+                        onClick={toggleThumbFilesDialog}
+                      />
+                      {/* </ProTooltip> */}
                     </Stack>
                   </InputAdornment>
                 )
@@ -1255,7 +1258,10 @@ function EntryProperties(props: Props) {
                             <ProTooltip
                               tooltip={i18n.t('changeBackgroundImage')}
                             >
-                              <IconButton
+                              <Button fullWidth onClick={toggleBgndImgDialog}>
+                                {i18n.t('core:change')}
+                              </Button>
+                              {/* <IconButton
                                 disabled={!Pro}
                                 color="primary"
                                 className={classes.button}
@@ -1263,28 +1269,28 @@ function EntryProperties(props: Props) {
                                 onClick={toggleBgndImgDialog}
                               >
                                 <EditIcon />
-                              </IconButton>
+                              </IconButton> */}
                             </ProTooltip>
                           )}
-                        <ProTooltip tooltip={i18n.t('changeBackgroundImage')}>
-                          <div
-                            role="button"
-                            tabIndex={0}
-                            style={{
-                              backgroundSize: 'cover',
-                              backgroundRepeat: 'no-repeat',
-                              backgroundImage: bgndUrl.current
-                                ? 'url("' + bgndUrl.current + '")'
-                                : '',
-                              backgroundPosition: 'center',
-                              borderRadius: 8,
-                              minHeight: 150,
-                              minWidth: 150,
-                              marginBottom: 5
-                            }}
-                            onClick={toggleBgndImgDialog}
-                          />
-                        </ProTooltip>
+                        {/* <ProTooltip tooltip={i18n.t('changeBackgroundImage')}> */}
+                        <div
+                          role="button"
+                          tabIndex={0}
+                          style={{
+                            backgroundSize: 'cover',
+                            backgroundRepeat: 'no-repeat',
+                            backgroundImage: bgndUrl.current
+                              ? 'url("' + bgndUrl.current + '")'
+                              : '',
+                            backgroundPosition: 'center',
+                            borderRadius: 8,
+                            minHeight: 150,
+                            minWidth: 150,
+                            marginBottom: 5
+                          }}
+                          onClick={toggleBgndImgDialog}
+                        />
+                        {/* </ProTooltip> */}
                       </Stack>
                     </InputAdornment>
                   )
