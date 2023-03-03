@@ -504,7 +504,7 @@ export default class PlatformFacade {
     );
   }
 
-  static loadExtensions(){
+  static loadExtensions() {
     return platformLoadExtensions();
   }
 }

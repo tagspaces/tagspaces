@@ -37,6 +37,7 @@ import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import PlatformIO from '-/services/platform-facade';
 import InputLabel from '@mui/material/InputLabel';
+import AppConfig from '-/AppConfig';
 
 interface Props {
   open: boolean;
@@ -77,7 +78,9 @@ function SharingLinkDialog(props: Props) {
       <DialogTitle>
         {i18n.t('core:sharingLink')} <DialogCloseButton onClose={onClose} />
       </DialogTitle>
-      <DialogContent>
+      <DialogContent
+        style={{ overflow: AppConfig.isFirefox ? 'auto' : 'overlay' }}
+      >
         <TextField
           style={{ marginTop: 8 }}
           select

@@ -20,7 +20,7 @@ import AppConfig from '-/AppConfig';
 import keyBindings from '-/reducers/keybindings-default';
 import { PerspectiveIDs } from '-/perspectives';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import { extensionsFound, supportedFileTypes } from "-/extension-config";
+import { extensionsFound, supportedFileTypes } from '-/extension-config';
 
 let desktopMode = !AppConfig.isMobile;
 if (window.ExtDisplayMode && window.ExtDisplayMode === 'mobile') {
@@ -220,7 +220,7 @@ export default {
   keyBindings: keyBindings(AppConfig.isMacLike),
   extensions: extensionsFound,
   supportedFileTypes: supportedFileTypes,
-    /*[
+  /*[
     {
       type: 'avif',
       viewer: '@tagspaces/extensions/image-viewer',

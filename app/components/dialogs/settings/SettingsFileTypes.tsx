@@ -35,10 +35,12 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { TableVirtuoso, TableComponents } from 'react-virtuoso';
-import ColorPickerDialog from '../ColorPickerDialog';
+import Tooltip from '-/components/Tooltip';
+import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
 import i18n from '-/services/i18n';
-import TransparentBackground from '../../TransparentBackground';
+import TransparentBackground from '-/components/TransparentBackground';
 import { TS } from '-/tagspaces.namespace';
+import AppConfig from '-/AppConfig';
 
 const styles: any = (theme: any) => ({
   fileTypeColorDialog: {
@@ -53,6 +55,7 @@ const styles: any = (theme: any) => ({
   fileExtRemove: {
     height: '38px',
     cursor: 'pointer',
+    marginLeft: 10,
     padding: '0'
   }
 });
@@ -116,18 +119,18 @@ function SettingsFileTypes(props: Props) {
       dataKey: 'type'
     },
     {
-      width: 200,
+      width: 170,
       label: i18n.t('core:fileOpener'),
       dataKey: 'viewer'
     },
     {
-      width: 200,
+      width: 170,
       label: i18n.t('core:fileEditor'),
       dataKey: 'editor'
     },
     {
-      width: 100,
-      label: '',
+      width: 80,
+      label: i18n.t('core:actions'),
       dataKey: 'color'
     }
   ];
@@ -156,9 +159,11 @@ function SettingsFileTypes(props: Props) {
           <TableCell
             key={column.dataKey}
             variant="head"
-            align={'left'}
-            style={{ width: column.width }}
+            align={'center'}
             sx={{
+              width: column.width,
+              padding: 0,
+              paddingLeft: 2,
               backgroundColor: 'background.paper'
             }}
           >
@@ -172,7 +177,7 @@ function SettingsFileTypes(props: Props) {
   function rowContent(_index: number, item: TS.FileTypes) {
     return (
       <React.Fragment>
-        <TableCell>
+        <TableCell sx={{ padding: '0 5px 20px 5px' }}>
           <FormControl
             error={
               (isValidationInProgress && item.type === '') ||
@@ -195,11 +200,12 @@ function SettingsFileTypes(props: Props) {
             />
           </FormControl>
         </TableCell>
-        <TableCell align={'left'}>
+        <TableCell align={'left'} sx={{ padding: '0 5px 20px 0' }}>
           <FormControl error={isValidationInProgress && item.viewer === ''}>
             <Select
               error={isValidationInProgress && item.viewer === ''}
               value={item.viewer}
+              sx={{ width: 180 }}
               input={<Input id="" />}
               onChange={event =>
                 updateItems('id', item.id, 'viewer', event.target.value)
@@ -214,17 +220,18 @@ function SettingsFileTypes(props: Props) {
                       key={extension.extensionName}
                       value={extension.extensionId}
                     >
-                      {extension.extensionName} - {extension.version}
+                      {extension.extensionName} ({extension.version})
                     </MenuItem>
                   )
               )}
             </Select>
           </FormControl>
         </TableCell>
-        <TableCell align={'right'}>
+        <TableCell align={'right'} sx={{ padding: '0 5px 20px 0' }}>
           <Select
             value={item.editor}
             input={<Input id="" />}
+            sx={{ width: 180 }}
             onChange={event =>
               updateItems('id', item.id, 'editor', event.target.value)
             }
@@ -241,162 +248,14 @@ function SettingsFileTypes(props: Props) {
                   key={extension.extensionName}
                   value={extension.extensionId}
                 >
-                  {extension.extensionName} - {extension.version}
+                  {extension.extensionName} ({extension.version})
                 </MenuItem>
               ))}
           </Select>
         </TableCell>
-        <TableCell>
+        <TableCell sx={{ padding: '0 5px 20px 5px' }}>
           <TransparentBackground>
-            <Button
-              data-tid="settingsFileTypes_openColorPicker_"
-              className={classes.colorChooserButton}
-              style={{
-                backgroundColor: `${item.color}`,
-                minWidth: 50,
-                maxWidth: 50,
-                cursor: 'pointer'
-              }}
-              onClick={() => {
-                openColorPicker(item);
-              }}
-            >
-              &nbsp;
-              <div style={styles.color} />
-            </Button>
-          </TransparentBackground>
-          <IconButton
-            data-tid="settingsFileTypes_remove_"
-            className={classes.fileExtRemove}
-            title={i18n.t('removeFileType', { itemType: item.type })}
-            onClick={() => onRemoveItem(item)}
-            size="large"
-          >
-            <RemoveIcon />
-          </IconButton>
-        </TableCell>
-        {/*{columns.map(column => (
-          <TableCell key={column.dataKey} align={'left'}>
-            {row[column.dataKey]}
-          </TableCell>
-        ))}*/}
-      </React.Fragment>
-    );
-  }
-
-  return (
-    <>
-      <Paper style={{ height: 600, width: '100%' }}>
-        <TableVirtuoso
-          data={items}
-          components={VirtuosoTableComponents}
-          fixedHeaderContent={fixedHeaderContent}
-          itemContent={rowContent}
-        />
-      </Paper>
-
-      <ColorPickerDialog
-        open={isColorPickerVisible}
-        setColor={handleChangeColor}
-        onClose={closeColorPicker}
-        color={selectedItem.color}
-      />
-      {/*{items.map(item => (
-        <ListItem
-          data-id={item.id}
-          key={item.id}
-          style={{
-            paddingLeft: 0,
-            paddingRight: 0,
-            paddingBottom: 15,
-            alignItems: 'flex-end'
-          }}
-        >
-          <FormControl
-            className={classes.fileExtension}
-            error={
-              (isValidationInProgress && item.type === '') ||
-              items.filter(targetItem => targetItem.type === item.type).length >
-                1
-            }
-          >
-            <InputLabel style={{ marginLeft: -15 }} htmlFor="">
-              {i18n.t('core:fileExtension')}
-            </InputLabel>
-            <Input
-              defaultValue={item.type}
-              error={
-                (isValidationInProgress && item.type === '') ||
-                items.filter(targetItem => targetItem.type === item.type)
-                  .length > 1
-              }
-              onBlur={event => {
-                const nextValue = event.target.value;
-                const withoutSpecialChars = sanitizeFileTypeInput(nextValue);
-                updateItems('type', item.type, 'type', withoutSpecialChars);
-              }}
-            />
-          </FormControl>
-          <FormControl
-            className={classes.fileOpener}
-            error={isValidationInProgress && item.viewer === ''}
-          >
-            <InputLabel style={{ marginLeft: -15 }} htmlFor="">
-              {i18n.t('core:fileOpener')}
-            </InputLabel>
-            <Select
-              error={isValidationInProgress && item.viewer === ''}
-              value={item.viewer}
-              input={<Input id="" />}
-              onChange={event =>
-                updateItems('id', item.id, 'viewer', event.target.value)
-              }
-            >
-              <MenuItem value="" />
-              {extensions.map(
-                extension =>
-                  (extension.extensionTypes.includes('viewer') ||
-                    extension.extensionTypes.includes('editor')) && (
-                    <MenuItem
-                      key={extension.extensionName}
-                      value={extension.extensionId}
-                    >
-                      {extension.extensionName} - {extension.version}
-                    </MenuItem>
-                  )
-              )}
-            </Select>
-          </FormControl>
-          <FormControl className={classes.fileOpener}>
-            <InputLabel style={{ marginLeft: -15 }} htmlFor="">
-              {i18n.t('core:fileEditor')}
-            </InputLabel>
-            <Select
-              value={item.editor}
-              input={<Input id="" />}
-              onChange={event =>
-                updateItems('id', item.id, 'editor', event.target.value)
-              }
-            >
-              <MenuItem value="">{i18n.t('clearEditor')}</MenuItem>
-              {extensions
-                .filter(
-                  extension =>
-                    extension.extensionTypes &&
-                    extension.extensionTypes.includes('editor')
-                )
-                .map(extension => (
-                  <MenuItem
-                    key={extension.extensionName}
-                    value={extension.extensionId}
-                  >
-                    {extension.extensionName} - {extension.version}
-                  </MenuItem>
-                ))}
-            </Select>
-          </FormControl>
-          <FormControl style={{ width: 50, padding: 0 }}>
-            <TransparentBackground>
+            <Tooltip title={i18n.t('core:colorPickerDialogTitle')}>
               <Button
                 data-tid="settingsFileTypes_openColorPicker_"
                 className={classes.colorChooserButton}
@@ -413,19 +272,53 @@ function SettingsFileTypes(props: Props) {
                 &nbsp;
                 <div style={styles.color} />
               </Button>
-            </TransparentBackground>
-          </FormControl>
-          <IconButton
-            data-tid="settingsFileTypes_remove_"
-            className={classes.fileExtRemove}
-            title={i18n.t('removeFileType', { itemType: item.type })}
-            onClick={() => onRemoveItem(item)}
-            size="large"
-          >
-            <RemoveIcon />
-          </IconButton>
-        </ListItem>
-      ))}*/}
+            </Tooltip>
+          </TransparentBackground>
+          <Tooltip title={i18n.t('core:delete')}>
+            <IconButton
+              data-tid="settingsFileTypes_remove_"
+              className={classes.fileExtRemove}
+              title={i18n.t('removeFileType', { itemType: item.type })}
+              onClick={() => onRemoveItem(item)}
+              size="large"
+            >
+              <RemoveIcon />
+            </IconButton>
+          </Tooltip>
+        </TableCell>
+      </React.Fragment>
+    );
+  }
+
+  return (
+    <>
+      <Paper
+        style={{
+          height: 600,
+          width: '100%',
+          minWidth: 550,
+          overflow: 'hidden'
+        }}
+      >
+        <TableVirtuoso
+          style={{
+            overflowX: 'hidden',
+            // @ts-ignore
+            overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+          }}
+          data={items}
+          components={VirtuosoTableComponents}
+          fixedHeaderContent={fixedHeaderContent}
+          itemContent={rowContent}
+        />
+      </Paper>
+
+      <ColorPickerDialog
+        open={isColorPickerVisible}
+        setColor={handleChangeColor}
+        onClose={closeColorPicker}
+        color={selectedItem.color}
+      />
     </>
   );
 }

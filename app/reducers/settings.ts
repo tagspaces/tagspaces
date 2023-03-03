@@ -357,10 +357,10 @@ export default (state: any = defaultSettings, action: any) => {
       };
     }
     case types.ADD_EXTENSIONS: {
-        return {
-          ...state,
+      return {
+        ...state,
         extensions: merge(state.extensions, action.extensions, 'extensionId')
-        };
+      };
     }
     case types.ADD_EXTENSION: {
       return {
