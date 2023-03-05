@@ -33,7 +33,7 @@ import i18n from '-/services/i18n'; // '-/i18nBackend';
 import buildTrayIconMenu from '-/electron-tray-menu';
 import buildDesktopMenu from '-/services/electron-menus';
 import Settings from '-/settings';
-import { getExtensions } from '-/extension-utils';
+import { getExtensions } from '-/utils/extension-utils';
 
 // delete process.env.ELECTRON_ENABLE_SECURITY_WARNINGS;
 // process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';

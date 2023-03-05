@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { getExtensions } = require('../app/extension-utils');
+const { getExtensions } = require('../app/utils/extension-utils');
 // const os = require('os');
 
 let directoryPath = path.join(__dirname, '..', 'app', 'node_modules');
@@ -18,10 +18,10 @@ function writeExtensions(extensions, supportedFileTypes) {
   const generated =
     '/** GENERATED CODE - DO NOT MODIFY: This source file was generated automatically and any changes made to it may be overwritten */\n' +
     'export const extensionsFound = ' +
-    JSON.stringify(extensions) +
+    JSON.stringify(extensions, null, 2) +
     ';\n' +
     'export const supportedFileTypes = ' +
-    JSON.stringify(supportedFileTypes) +
+    JSON.stringify(supportedFileTypes, null, 2) +
     ';';
   let outputFile = path.join(__dirname, '..', 'app', 'extension-config.ts');
 
