@@ -61,10 +61,14 @@ interface Props {
   theme: any;
 }
 
+const initialRowsPerPage = 10;
+
 function Revisions(props: Props) {
   const [rows, setRows] = useState<Array<TS.FileSystemEntry>>();
   const [page, setPage] = React.useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState<number>(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState<number>(
+    initialRowsPerPage
+  );
   const [previewDialogEntry, setPreviewDialogEntry] = useState<
     TS.FileSystemEntry
   >(undefined);
@@ -110,6 +114,12 @@ function Revisions(props: Props) {
     setPage(0);
   };
 
+  function deleteRevision(path) {
+    PlatformIO.deleteFilePromise(path, true).then(() =>
+      loadHistoryItems(openedFiles[0])
+    );
+  }
+
   function restoreRevision(revisionPath) {
     const openedFile = openedFiles[0];
     const targetPath = getBackupFileLocation(
@@ -127,22 +137,33 @@ function Revisions(props: Props) {
     );
   }
 
-  // Avoid a layout jump when reaching the last page with empty rows.
-  /*const emptyRows =
-    rows && page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;*/
-
   return (
-    <div>
-      <Typography variant="h4" style={{ color: theme.palette.text.primary }}>
-        {i18n.t('core:revisions')}
-      </Typography>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} size="small" aria-label="revisions table">
+    <Paper
+      sx={{ width: '100%', overflow: 'hidden', height: 'calc(100% - 30px)' }}
+    >
+      {rows && rows.length > initialRowsPerPage && (
+        <TablePagination
+          rowsPerPageOptions={[10, 25]}
+          component="div"
+          count={rows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      )}
+      <TableContainer component={Paper} sx={{ maxHeight: '100%' }}>
+        <Table
+          sx={{ width: '100%', height: '100%' }}
+          stickyHeader
+          size="small"
+          aria-label="revisions table"
+        >
           <TableHead>
             <TableRow>
-              <TableCell>{i18n.t('file')}</TableCell>
-              <TableCell align="right">{i18n.t('createdOn')}</TableCell>
-              <TableCell align="right">{i18n.t('revisions')}</TableCell>
+              <TableCell>{i18n.t('revisions')}</TableCell>
+              <TableCell align="right">{i18n.t('created')}</TableCell>
+              <TableCell align="right">{i18n.t('actions')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -168,9 +189,9 @@ function Revisions(props: Props) {
                       })}
                     </TableCell>
                     <TableCell align="right">
-                      <Tooltip title="core:view">
+                      <Tooltip title={i18n.t('core:view')}>
                         <IconButton
-                          aria-label={i18n.t('core:view')}
+                          aria-label="view revision"
                           onClick={() => setPreviewDialogEntry(row)}
                           data-tid="viewRevisionTID"
                           size="large"
@@ -178,25 +199,28 @@ function Revisions(props: Props) {
                           <PreviewIcon color="primary" />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="core:restore">
+                      <Tooltip title={i18n.t('core:restore')}>
                         <IconButton
-                          aria-label={i18n.t('core:restore')}
-                          onClick={() => restoreRevision(row.path)}
+                          aria-label="restore revision"
+                          onClick={() =>
+                            confirm(
+                              'The content of the current file will be replaced with the content of the selected revision. Do you want to continue?'
+                            ) && restoreRevision(row.path)
+                          }
                           data-tid="restoreRevisionTID"
                           size="large"
                         >
                           <RestoreIcon color="primary" />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="core:delete">
+                      <Tooltip title={i18n.t('core:delete')}>
                         <IconButton
-                          aria-label={i18n.t('core:delete')}
-                          onClick={() => {
-                            PlatformIO.deleteFilePromise(
-                              row.path,
-                              true
-                            ).then(() => loadHistoryItems(openedFiles[0]));
-                          }}
+                          aria-label="delete revision"
+                          onClick={() =>
+                            confirm(
+                              'The selected revision will be deleted. Do you want to continue?'
+                            ) && deleteRevision(row.path)
+                          }
                           data-tid="deleteRevisionTID"
                           size="large"
                         >
@@ -206,31 +230,15 @@ function Revisions(props: Props) {
                     </TableCell>
                   </TableRow>
                 ))}
-            {/*{emptyRows > 0 && (
-              <TableRow style={{ height: 53 * emptyRows }}>
-                <TableCell colSpan={6} />
-              </TableRow>
-            )}*/}
           </TableBody>
         </Table>
       </TableContainer>
-      {rows && rowsPerPage < rows.length && (
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      )}
       <FilePreviewDialog
         fsEntry={previewDialogEntry}
         open={previewDialogEntry !== undefined}
         onClose={() => setPreviewDialogEntry(undefined)}
       />
-    </div>
+    </Paper>
   );
 }
 

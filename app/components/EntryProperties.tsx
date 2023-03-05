@@ -103,7 +103,7 @@ import { bindActionCreators } from 'redux';
 import { actions as LocationActions } from '-/reducers/locations';
 import { actions as AppActions } from '-/reducers/app';
 import useFirstRender from '-/utils/useFirstRender';
-import SharingLinkDialog from '-/components/dialogs/SharingLinkDialog';
+import LinkGeneratorDialog from '-/components/dialogs/LinkGeneratorDialog';
 
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
@@ -1020,11 +1020,7 @@ function EntryProperties(props: Props) {
               label={
                 <>
                   {i18n.t('core:sharingLink')}
-                  <InfoIcon
-                    tooltip={i18n.t(
-                      'Link for sharing to other TagSpaces installation using the same location IDs'
-                    )}
-                  />
+                  <InfoIcon tooltip={i18n.t('core:sharingLinkTooltip')} />
                 </>
               }
               fullWidth={true}
@@ -1041,16 +1037,14 @@ function EntryProperties(props: Props) {
                 ),
                 endAdornment: (
                   <InputAdornment position="end">
-                    <Tooltip title="Copy the link to the clipboard">
+                    <Tooltip title="core:copyLinkToClipboard">
                       <Button
                         color="primary"
                         onClick={() => {
                           const promise = navigator.clipboard.writeText(
                             sharingLink
                           );
-                          props.showNotification(
-                            i18n.t('Link copied to clipboard')
-                          );
+                          props.showNotification(i18n.t('core:linkCopied'));
                         }}
                       >
                         {i18n.t('core:copy')}
@@ -1069,12 +1063,8 @@ function EntryProperties(props: Props) {
                 name="downloadLink"
                 label={
                   <>
-                    {i18n.t('Link for downloading')}
-                    <InfoIcon
-                      tooltip={i18n.t(
-                        'Link for time limited sharing on the Internet'
-                      )}
-                    />
+                    {i18n.t('core:downloadLink')}
+                    <InfoIcon tooltip={i18n.t('core:downloadLinkTooltip')} />
                   </>
                 }
                 fullWidth
@@ -1087,7 +1077,7 @@ function EntryProperties(props: Props) {
                         fullWidth
                         onClick={() => setShowSharingLinkDialog(true)}
                       >
-                        {i18n.t('core:sharingLink')}
+                        {i18n.t('core:generateDownloadLink')}
                       </Button>
                     </InputAdornment>
                   )
@@ -1207,7 +1197,10 @@ function EntryProperties(props: Props) {
                         editName === undefined &&
                         editDescription.current === undefined && (
                           <ProTooltip tooltip={i18n.t('changeThumbnail')}>
-                            <IconButton
+                            <Button fullWidth onClick={toggleThumbFilesDialog}>
+                              {i18n.t('core:change')}
+                            </Button>
+                            {/* <IconButton
                               disabled={!Pro}
                               color="primary"
                               className={classes.button}
@@ -1215,28 +1208,28 @@ function EntryProperties(props: Props) {
                               onClick={toggleThumbFilesDialog}
                             >
                               <EditIcon />
-                            </IconButton>
+                            </IconButton> */}
                           </ProTooltip>
                         )}
-                      <ProTooltip tooltip={i18n.t('changeThumbnail')}>
-                        <div
-                          role="button"
-                          tabIndex={0}
-                          style={{
-                            backgroundSize: 'cover',
-                            backgroundRepeat: 'no-repeat',
-                            backgroundImage: thumbUrl.current
-                              ? 'url("' + thumbUrl.current + '")'
-                              : '',
-                            backgroundPosition: 'center',
-                            borderRadius: 8,
-                            minHeight: 150,
-                            minWidth: 150,
-                            marginBottom: 5
-                          }}
-                          onClick={toggleThumbFilesDialog}
-                        />
-                      </ProTooltip>
+                      {/* <ProTooltip tooltip={i18n.t('changeThumbnail')}> */}
+                      <div
+                        role="button"
+                        tabIndex={0}
+                        style={{
+                          backgroundSize: 'cover',
+                          backgroundRepeat: 'no-repeat',
+                          backgroundImage: thumbUrl.current
+                            ? 'url("' + thumbUrl.current + '")'
+                            : '',
+                          backgroundPosition: 'center',
+                          borderRadius: 8,
+                          minHeight: 150,
+                          minWidth: 150,
+                          marginBottom: 5
+                        }}
+                        onClick={toggleThumbFilesDialog}
+                      />
+                      {/* </ProTooltip> */}
                     </Stack>
                   </InputAdornment>
                 )
@@ -1265,7 +1258,10 @@ function EntryProperties(props: Props) {
                             <ProTooltip
                               tooltip={i18n.t('changeBackgroundImage')}
                             >
-                              <IconButton
+                              <Button fullWidth onClick={toggleBgndImgDialog}>
+                                {i18n.t('core:change')}
+                              </Button>
+                              {/* <IconButton
                                 disabled={!Pro}
                                 color="primary"
                                 className={classes.button}
@@ -1273,28 +1269,28 @@ function EntryProperties(props: Props) {
                                 onClick={toggleBgndImgDialog}
                               >
                                 <EditIcon />
-                              </IconButton>
+                              </IconButton> */}
                             </ProTooltip>
                           )}
-                        <ProTooltip tooltip={i18n.t('changeBackgroundImage')}>
-                          <div
-                            role="button"
-                            tabIndex={0}
-                            style={{
-                              backgroundSize: 'cover',
-                              backgroundRepeat: 'no-repeat',
-                              backgroundImage: bgndUrl.current
-                                ? 'url("' + bgndUrl.current + '")'
-                                : '',
-                              backgroundPosition: 'center',
-                              borderRadius: 8,
-                              minHeight: 150,
-                              minWidth: 150,
-                              marginBottom: 5
-                            }}
-                            onClick={toggleBgndImgDialog}
-                          />
-                        </ProTooltip>
+                        {/* <ProTooltip tooltip={i18n.t('changeBackgroundImage')}> */}
+                        <div
+                          role="button"
+                          tabIndex={0}
+                          style={{
+                            backgroundSize: 'cover',
+                            backgroundRepeat: 'no-repeat',
+                            backgroundImage: bgndUrl.current
+                              ? 'url("' + bgndUrl.current + '")'
+                              : '',
+                            backgroundPosition: 'center',
+                            borderRadius: 8,
+                            minHeight: 150,
+                            minWidth: 150,
+                            marginBottom: 5
+                          }}
+                          onClick={toggleBgndImgDialog}
+                        />
+                        {/* </ProTooltip> */}
                       </Stack>
                     </InputAdornment>
                   )
@@ -1343,7 +1339,7 @@ function EntryProperties(props: Props) {
         />
       )}
       {showSharingLinkDialog && (
-        <SharingLinkDialog
+        <LinkGeneratorDialog
           open={showSharingLinkDialog}
           onClose={() => setShowSharingLinkDialog(false)}
           path={currentEntry.path}
