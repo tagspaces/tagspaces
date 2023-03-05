@@ -985,7 +985,9 @@ function mapDispatchToProps(dispatch) {
       uploadFilesAPI: IOActions.uploadFilesAPI,
       deleteDirectory: AppActions.deleteDirectory,
       deleteFile: AppActions.deleteFile,
-      setSearchQuery: LocationIndexActions.setSearchQuery
+      setSearchQuery: LocationIndexActions.setSearchQuery,
+      addExtensions: SettingsActions.addExtensions,
+      addSupportedFileTypes: SettingsActions.addSupportedFileTypes
     },
     dispatch
   );

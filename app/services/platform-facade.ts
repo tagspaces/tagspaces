@@ -69,7 +69,8 @@ import {
   platformCreateIndex,
   platformCreateNewInstance,
   platformCheckFileExist,
-  platformCheckDirExist
+  platformCheckDirExist,
+  platformLoadExtensions
 } from '@tagspaces/tagspaces-platforms/platform-io';
 import AppConfig from '-/AppConfig';
 import { Pro } from '../pro';
@@ -501,5 +502,9 @@ export default class PlatformFacade {
       listDirectoryPromise,
       loadTextFilePromise
     );
+  }
+
+  static loadExtensions() {
+    return platformLoadExtensions();
   }
 }

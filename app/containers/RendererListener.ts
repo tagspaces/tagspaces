@@ -129,6 +129,14 @@ export default function listen(props) {
       const audioEvent = new CustomEvent('toggle-resume', { detail: '' });
       window.dispatchEvent(audioEvent);
     });
+
+    ipcRenderer.on('set_extensions', (event, arg) => {
+      const { extensions, supportedFileTypes } = arg;
+      props.addExtensions(extensions);
+      props.addSupportedFileTypes(supportedFileTypes);
+      //console.debug('extensions', extensions);
+      //console.debug('supportedFileTypes', supportedFileTypes);
+    });
   }
   return ipcRenderer;
 }

@@ -74,6 +74,9 @@ export const types = {
   SET_ZOOM_IN: 'SETTINGS/SET_ZOOM_IN',
   SET_ZOOM_OUT: 'SETTINGS/SET_ZOOM_OUT',
   SET_SUPPORTED_FILE_TYPES: 'SETTINGS/SET_SUPPORTED_FILE_TYPES',
+  ADD_SUPPORTED_FILE_TYPES: 'SETTINGS/ADD_SUPPORTED_FILE_TYPES',
+  ADD_EXTENSION: 'SETTINGS/ADD_EXTENSION',
+  ADD_EXTENSIONS: 'SETTINGS/ADD_EXTENSIONS',
   SET_LAST_PUBLISHED_VERSION: 'SETTINGS/SET_LAST_PUBLISHED_VERSION',
   SET_ENTRY_PROPERTIES_SPLIT_SIZE: 'SETTINGS/SET_ENTRY_PROPERTIES_SPLIT_SIZE',
   SET_MAIN_VSPLIT_SIZE: 'SETTINGS/SET_MAIN_VSPLIT_SIZE',
@@ -89,11 +92,32 @@ export const types = {
   SET_FILE_EDIT_HISTORY: 'SET_FILE_EDIT_HISTORY'
 };
 
+/**
+ * @param a - source array
+ * @param b - updates array
+ * @param prop
+ */
 function merge(a, b, prop) {
-  var reduced = a.filter(
+  const reduced = a.filter(
     aitem => !b.find(bitem => aitem[prop] === bitem[prop])
   );
   return reduced.concat(b);
+}
+
+function updateExtensions(extArray, ext) {
+  const exist = extArray.some(ex => ex.extensionId === ext.extensionId);
+  let extensions;
+  if (exist) {
+    extensions = extArray.map((ex: TS.Extension) => {
+      if (ex.extensionId === ext.extensionId) {
+        return ext;
+      }
+      return ex;
+    });
+  } else {
+    extensions = [...extArray, ext];
+  }
+  return extensions;
 }
 
 export default (state: any = defaultSettings, action: any) => {
@@ -125,8 +149,8 @@ export default (state: any = defaultSettings, action: any) => {
           ...mergedKeyBindings
         ],
         supportedFileTypes: merge(
-          defaultSettings.supportedFileTypes,
           state.supportedFileTypes,
+          defaultSettings.supportedFileTypes,
           'type'
         )
       };
@@ -320,6 +344,28 @@ export default (state: any = defaultSettings, action: any) => {
       return {
         ...state,
         supportedFileTypes: action.supportedFileTypes
+      };
+    }
+    case types.ADD_SUPPORTED_FILE_TYPES: {
+      return {
+        ...state,
+        supportedFileTypes: merge(
+          state.supportedFileTypes,
+          action.supportedFileTypes,
+          'type'
+        )
+      };
+    }
+    case types.ADD_EXTENSIONS: {
+      return {
+        ...state,
+        extensions: merge(state.extensions, action.extensions, 'extensionId')
+      };
+    }
+    case types.ADD_EXTENSION: {
+      return {
+        ...state,
+        extensions: updateExtensions(state.extensions, action.extension)
       };
     }
     case types.SET_ENTRY_PROPERTIES_SPLIT_SIZE: {
@@ -617,6 +663,18 @@ export const actions = {
     type: types.SET_GLOBAL_KEYBINDING,
     enableGlobalKeyboardShortcuts
   }),
+  addExtension: (extension: TS.Extension) => ({
+    type: types.ADD_EXTENSION,
+    extension
+  }),
+  addExtensions: (extensions: Array<TS.Extension>) => ({
+    type: types.ADD_EXTENSIONS,
+    extensions
+  }),
+  addSupportedFileTypes: (supportedFileTypes: []) => ({
+    type: types.ADD_SUPPORTED_FILE_TYPES,
+    supportedFileTypes
+  }),
   setSupportedFileTypes: (supportedFileTypes: []) => ({
     type: types.SET_SUPPORTED_FILE_TYPES,
     supportedFileTypes
@@ -789,6 +847,7 @@ export const getSupportedFileTypes = (state: any) =>
   state.settings.supportedFileTypes.sort((a, b) =>
     a.type > b.type ? 1 : a.type < b.type ? -1 : 0
   );
+export const getExtensions = (state: any) => state.settings.extensions;
 export const getTagColor = (state: any) => state.settings.tagBackgroundColor;
 export const getTagTextColor = (state: any) => state.settings.tagTextColor;
 export const getCurrentTheme = (state: any) => state.settings.currentTheme;

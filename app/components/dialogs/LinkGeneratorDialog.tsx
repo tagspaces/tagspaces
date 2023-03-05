@@ -35,6 +35,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import PlatformIO from '-/services/platform-facade';
+import AppConfig from '-/AppConfig';
 
 interface Props {
   open: boolean;
@@ -77,7 +78,9 @@ function LinkGeneratorDialog(props: Props) {
         {i18n.t('core:generateDownloadLink')}{' '}
         <DialogCloseButton onClose={onClose} />
       </DialogTitle>
-      <DialogContent>
+      <DialogContent
+        style={{ overflow: AppConfig.isFirefox ? 'auto' : 'overlay' }}
+      >
         <TextField
           style={{ marginTop: 8 }}
           select

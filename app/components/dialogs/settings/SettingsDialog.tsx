@@ -40,6 +40,7 @@ import i18n from '-/services/i18n';
 import {
   actions,
   getCurrentLanguage,
+  getExtensions,
   getSupportedFileTypes
 } from '-/reducers/settings';
 import { clearAllURLParams } from '-/utils/dom';
@@ -47,6 +48,7 @@ import SettingsAdvanced from '-/components/dialogs/settings/SettingsAdvanced';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import Links from '-/content/links';
+import { TS } from '-/tagspaces.namespace';
 
 const styles: any = () => ({
   mainContent: {
@@ -61,6 +63,7 @@ interface Props {
   setSupportedFileTypes?: (fileTypes: Array<any>) => void;
   openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   supportedFileTypes?: Array<any>;
+  extensions: Array<TS.Extension>;
 }
 
 function SettingsDialog(props: Props) {
@@ -292,6 +295,7 @@ function SettingsDialog(props: Props) {
               setSelectedItem(item);
               setIsConfirmDialogOpened(true);
             }}
+            extensions={props.extensions}
           />
         )}
         {currentTab === 2 && <SettingsKeyBindings />}
@@ -360,7 +364,8 @@ function SettingsDialog(props: Props) {
 
 const mapStateToProps = state => ({
   supportedFileTypes: getSupportedFileTypes(state),
-  language: getCurrentLanguage(state)
+  language: getCurrentLanguage(state),
+  extensions: getExtensions(state)
 });
 
 const mapDispatchToProps = dispatch => ({

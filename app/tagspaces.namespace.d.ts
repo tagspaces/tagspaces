@@ -47,6 +47,23 @@ export namespace TS {
     ignorePatternPaths?: Array<string>;
   }
 
+  interface Extension {
+    extensionId: string,
+    extensionName: string,
+    extensionTypes: Array<string>,
+    extensionExternal?: boolean,
+    color?: string,
+    version: string,
+  }
+
+  interface FileTypes {
+    id?: string,
+    type: string,
+    viewer: string;
+    editor: string;
+    color?: string
+  }
+
   interface SearchQuery {
     uuid?: string; // for saved searches
     title?: string; // for saved searches
