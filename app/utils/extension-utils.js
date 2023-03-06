@@ -49,11 +49,9 @@ function processDirs(directoryPath, dirs, isExternal = false) {
           ...props
         } = packageJsonObj['tsextension'];
 
-        const extensionId = id
-          ? id
-          : '@tagspaces/extensions/' +
-            dir.name +
-            (buildFolder ? '/' + buildFolder : '');
+        const extensionId =
+          (id ? id : '@tagspaces/extensions/' + dir.name) +
+          (buildFolder ? '/' + buildFolder : '');
 
         if (fileTypes) {
           fileTypes.forEach(fileType => {

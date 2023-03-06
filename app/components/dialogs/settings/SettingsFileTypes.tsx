@@ -16,12 +16,13 @@
  *
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useReducer } from 'react';
+import { connect } from 'react-redux';
+import { extend } from '@tagspaces/tagspaces-common/misc';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import withStyles from '@mui/styles/withStyles';
-import ListItem from '@mui/material/ListItem';
 import MenuItem from '@mui/material/MenuItem';
 import Input from '@mui/material/Input';
-import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import IconButton from '@mui/material/IconButton';
 import RemoveIcon from '@mui/icons-material/RemoveCircle';
@@ -34,13 +35,23 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { TableVirtuoso, TableComponents } from 'react-virtuoso';
+import {
+  TableVirtuoso,
+  TableComponents,
+  TableVirtuosoHandle
+} from 'react-virtuoso';
 import Tooltip from '-/components/Tooltip';
 import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
 import i18n from '-/services/i18n';
 import TransparentBackground from '-/components/TransparentBackground';
 import { TS } from '-/tagspaces.namespace';
 import AppConfig from '-/AppConfig';
+import {
+  actions,
+  getExtensions,
+  getSupportedFileTypes
+} from '-/reducers/settings';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 
 const styles: any = (theme: any) => ({
   fileTypeColorDialog: {
@@ -61,50 +72,139 @@ const styles: any = (theme: any) => ({
 });
 
 interface Props {
-  items: Array<TS.FileTypes>;
+  supportedFileTypes: Array<TS.FileTypes>;
+  setSupportedFileTypes?: (fileTypes: Array<any>) => void;
   classes: any;
-  updateItems: Function;
-  selectedItem: any;
-  setSelectedItem: Function;
-  isValidationInProgress: boolean;
-  onRemoveItem: Function;
   extensions: Array<TS.Extension>;
 }
 
 function SettingsFileTypes(props: Props) {
+  // const [items, setItems] = useStateWithCallbackLazy<Array<TS.FileTypes>>([]);
+  const items = useRef<Array<TS.FileTypes>>(props.supportedFileTypes);
+  const selectedItem = useRef<TS.FileTypes>(undefined);
+  const isValidationInProgress = useRef<boolean>(false);
+  const [isConfirmDialogOpened, setIsConfirmDialogOpened] = useState<boolean>(
+    false
+  );
   const [isColorPickerVisible, setColorPickerVisible] = useState<boolean>(
     false
   );
+  const settingsFileTypeRef = useRef<TableVirtuosoHandle>(null);
 
-  const openColorPicker = selectedItem => {
-    const { setSelectedItem } = props;
+  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+
+  /*function getItems(supportedFileTypes) {
+    return supportedFileTypes.reduce((accumulator, fileType) => {
+      const modifiedFileType = extend({}, fileType, {
+        id: fileType.id || getUuid()
+      });
+      if (fileType.viewer !== '') {
+        accumulator.push(modifiedFileType);
+      }
+      return accumulator;
+    }, []);
+  }*/
+
+  useEffect(() => {
+    items.current = props.supportedFileTypes;
+    // setItems(getItems(props.supportedFileTypes), undefined);
+    isValidationInProgress.current = false;
+  }, [props.supportedFileTypes]);
+
+  const updateItems = (
+    identifierKey,
+    identifierValue,
+    targetKey,
+    targetValue,
+    disableSave = false
+  ) => {
+    let isSaveable = false;
+    let hasViewer = false;
+    const modifiedItems = items.current.reduce((accumulator, item) => {
+      let modifiedItem = extend({}, item);
+      if (item[identifierKey] === identifierValue) {
+        isSaveable =
+          item.type !== '' || (targetKey === 'type' && targetValue !== '');
+        hasViewer = item.viewer !== '';
+        modifiedItem = extend(modifiedItem, {
+          [targetKey]: targetValue
+        });
+      }
+      accumulator.push(modifiedItem);
+      return accumulator;
+    }, []);
+    items.current = modifiedItems;
+    // setItems(modifiedItems, () => {
+    if (
+      (targetKey !== 'type' && isSaveable && !disableSave) ||
+      (targetKey === 'type' && hasViewer && isSaveable && !disableSave)
+    ) {
+      saveFileTypes(modifiedItems);
+    } else {
+      isValidationInProgress.current = true;
+      forceUpdate();
+    }
+    //});
+  };
+
+  const saveFileTypes = newItems => {
+    const { setSupportedFileTypes } = props;
+
+    isValidationInProgress.current = true;
+
+    const isValid = validateSelectedFileTypes(newItems);
+
+    if (!isValid) {
+      forceUpdate();
+      return false;
+    }
+
+    setSupportedFileTypes(newItems);
+  };
+
+  const validateSelectedFileTypes = newItems => {
+    let isValid = true;
+
+    newItems.map(item => {
+      const hasDuplicates =
+        items.current.filter(targetItem => targetItem.type === item.type)
+          .length > 1;
+
+      if (
+        isValid &&
+        (item.type === '' || item.viewer === '' || hasDuplicates)
+      ) {
+        isValid = false;
+      }
+      return item;
+    });
+
+    return isValid;
+  };
+
+  const openColorPicker = selected => {
     setColorPickerVisible(true);
-    setSelectedItem(selectedItem);
+    selectedItem.current = selected;
   };
 
   const closeColorPicker = () => {
-    const { setSelectedItem } = props;
     setColorPickerVisible(false);
-    setSelectedItem({});
+    selectedItem.current = undefined;
   };
 
   const handleChangeColor = color => {
-    const { updateItems, selectedItem } = props;
-    updateItems('id', selectedItem.id, 'color', color);
+    updateItems(
+      'id',
+      selectedItem.current && selectedItem.current.id,
+      'color',
+      color
+    );
   };
 
   const sanitizeFileTypeInput = fileTypeInput =>
     fileTypeInput.replace(/[^a-zA-Z0-9 ]/g, '');
 
-  const {
-    classes,
-    items,
-    extensions,
-    selectedItem,
-    updateItems = () => {},
-    onRemoveItem = () => {},
-    isValidationInProgress = false
-  } = props;
+  const { classes, extensions } = props;
 
   interface ColumnData {
     dataKey: keyof TS.FileTypes;
@@ -152,6 +252,31 @@ function SettingsFileTypes(props: Props) {
     ))
   };
 
+  const onAddFileType = () => {
+    const defaultFileTypeObject = {
+      id: getUuid(),
+      type: '',
+      viewer: '',
+      editor: '',
+      color: '#2196f3'
+    };
+    items.current = [defaultFileTypeObject, ...items.current];
+    forceUpdate();
+  };
+
+  const onRemoveItem = item => {
+    selectedItem.current = item;
+    setIsConfirmDialogOpened(true);
+  };
+
+  const removeItem = (itemForRemoval: any) => {
+    const filteredItems = items.current.filter(
+      item => item.type !== itemForRemoval.type
+    );
+    items.current = filteredItems;
+    saveFileTypes(filteredItems);
+  };
+
   function fixedHeaderContent() {
     return (
       <TableRow>
@@ -180,17 +305,18 @@ function SettingsFileTypes(props: Props) {
         <TableCell sx={{ padding: '0 5px 20px 5px' }}>
           <FormControl
             error={
-              (isValidationInProgress && item.type === '') ||
-              items.filter(targetItem => targetItem.type === item.type).length >
-                1
+              (isValidationInProgress.current && item.type === '') ||
+              items.current.filter(targetItem => targetItem.type === item.type)
+                .length > 1
             }
           >
             <Input
               defaultValue={item.type}
               error={
-                (isValidationInProgress && item.type === '') ||
-                items.filter(targetItem => targetItem.type === item.type)
-                  .length > 1
+                (isValidationInProgress.current && item.type === '') ||
+                items.current.filter(
+                  targetItem => targetItem.type === item.type
+                ).length > 1
               }
               onBlur={event => {
                 const nextValue = event.target.value;
@@ -201,9 +327,11 @@ function SettingsFileTypes(props: Props) {
           </FormControl>
         </TableCell>
         <TableCell align={'left'} sx={{ padding: '0 5px 20px 0' }}>
-          <FormControl error={isValidationInProgress && item.viewer === ''}>
+          <FormControl
+            error={isValidationInProgress.current && item.viewer === ''}
+          >
             <Select
-              error={isValidationInProgress && item.viewer === ''}
+              error={isValidationInProgress.current && item.viewer === ''}
               value={item.viewer}
               sx={{ width: 180 }}
               input={<Input id="" />}
@@ -274,11 +402,10 @@ function SettingsFileTypes(props: Props) {
               </Button>
             </Tooltip>
           </TransparentBackground>
-          <Tooltip title={i18n.t('core:delete')}>
+          <Tooltip title={i18n.t('removeFileType', { itemType: item.type })}>
             <IconButton
               data-tid="settingsFileTypes_remove_"
               className={classes.fileExtRemove}
-              title={i18n.t('removeFileType', { itemType: item.type })}
               onClick={() => onRemoveItem(item)}
               size="large"
             >
@@ -300,16 +427,43 @@ function SettingsFileTypes(props: Props) {
           overflow: 'hidden'
         }}
       >
+        <Button
+          data-tid="addNewFileTypeTID"
+          onClick={onAddFileType}
+          color="secondary"
+          style={{ width: '100%' }}
+        >
+          {i18n.t('core:addNewFileType')}
+        </Button>
+        {isConfirmDialogOpened && (
+          <ConfirmDialog
+            open={isConfirmDialogOpened}
+            onClose={() => {
+              setIsConfirmDialogOpened(false);
+            }}
+            title="Confirm"
+            content={i18n.t('core:confirmFileTypeDeletion')}
+            confirmCallback={result => {
+              if (result) {
+                removeItem(selectedItem.current);
+              }
+            }}
+            cancelDialogTID="cancelDeleteFileTypeDialog"
+            confirmDialogTID="confirmDeleteFileTypeDialog"
+            confirmDialogContentTID="confirmDeleteFileTypeDialogContent"
+          />
+        )}
         <TableVirtuoso
           style={{
             overflowX: 'hidden',
             // @ts-ignore
             overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
           }}
-          data={items}
+          data={items.current}
           components={VirtuosoTableComponents}
           fixedHeaderContent={fixedHeaderContent}
           itemContent={rowContent}
+          ref={settingsFileTypeRef}
         />
       </Paper>
 
@@ -317,10 +471,23 @@ function SettingsFileTypes(props: Props) {
         open={isColorPickerVisible}
         setColor={handleChangeColor}
         onClose={closeColorPicker}
-        color={selectedItem.color}
+        color={selectedItem.current && selectedItem.current.color}
       />
     </>
   );
 }
 
-export default withStyles(styles)(SettingsFileTypes);
+const mapStateToProps = state => ({
+  supportedFileTypes: getSupportedFileTypes(state),
+  extensions: getExtensions(state)
+});
+
+const mapDispatchToProps = dispatch => ({
+  setSupportedFileTypes: supportedFileTypes =>
+    dispatch(actions.setSupportedFileTypes(supportedFileTypes))
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(SettingsFileTypes));
