@@ -456,6 +456,7 @@ function SettingsFileTypes(props: Props) {
         <TableVirtuoso
           style={{
             overflowX: 'hidden',
+            height: 'calc(100% - 30px)',
             // @ts-ignore
             overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
           }}
