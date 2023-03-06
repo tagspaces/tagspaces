@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import Button from '@mui/material/Button';
 import withStyles from '@mui/styles/withStyles';
@@ -29,26 +29,17 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import { useStateWithCallbackLazy } from 'use-state-with-callback';
-import { extend } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
 import ConfirmDialog from '../ConfirmDialog';
 import SettingsGeneral from '../settings/SettingsGeneral';
 import SettingsKeyBindings from '../settings/SettingsKeyBindings';
 import SettingsFileTypes from '../settings/SettingsFileTypes';
 import i18n from '-/services/i18n';
-import {
-  actions,
-  getCurrentLanguage,
-  getExtensions,
-  getSupportedFileTypes
-} from '-/reducers/settings';
+import { getCurrentLanguage } from '-/reducers/settings';
 import { clearAllURLParams } from '-/utils/dom';
 import SettingsAdvanced from '-/components/dialogs/settings/SettingsAdvanced';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import Links from '-/content/links';
-import { TS } from '-/tagspaces.namespace';
 
 const styles: any = () => ({
   mainContent: {
@@ -60,139 +51,18 @@ interface Props {
   open: boolean;
   classes?: any;
   onClose: () => void;
-  setSupportedFileTypes?: (fileTypes: Array<any>) => void;
   openURLExternally: (url: string, skipConfirmation?: boolean) => void;
-  supportedFileTypes?: Array<any>;
-  extensions: Array<TS.Extension>;
 }
 
 function SettingsDialog(props: Props) {
-  const [items, setItems] = useStateWithCallbackLazy<Array<any>>([]);
   const [currentTab, setCurrentTab] = useState<number>(0);
-  const [selectedItem, setSelectedItem] = useState<any>({});
-  const [isValidationInProgress, setIsValidationInProgress] = useState<boolean>(
-    false
-  );
-  const [isConfirmDialogOpened, setIsConfirmDialogOpened] = useState<boolean>(
-    false
-  );
   const [
     isResetSettingsDialogOpened,
     setIsResetSettingsDialogOpened
   ] = useState<boolean>(false);
-  const settingsFileTypeRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const initSupportedFileTypes = props.supportedFileTypes.reduce(
-      (accumulator, fileType) => {
-        const modifiedFileType = extend({}, fileType, {
-          id: fileType.id || getUuid()
-        });
-        if (fileType.viewer !== '') {
-          accumulator.push(modifiedFileType);
-        }
-        return accumulator;
-      },
-      []
-    );
-    setItems(initSupportedFileTypes, undefined);
-    setIsValidationInProgress(false);
-  }, [props.supportedFileTypes]);
 
   const handleTabClick = (event, tab) => {
     setCurrentTab(tab);
-  };
-
-  const onAddFileType = (item = defaultFileTypeObject) => {
-    setItems([...items, item], () => {
-      if (settingsFileTypeRef && settingsFileTypeRef.current) {
-        const lastFileType = settingsFileTypeRef.current.querySelector(
-          'li:last-child'
-        );
-        lastFileType.scrollIntoView({ behavior: 'smooth' });
-      }
-    });
-  };
-
-  const updateItems = (
-    identifierKey,
-    identifierValue,
-    targetKey,
-    targetValue,
-    disableSave = false
-  ) => {
-    let isSaveable = false;
-    let hasViewer = false;
-    const modifiedItems = items.reduce((accumulator, item) => {
-      let modifiedItem = extend({}, item);
-      if (item[identifierKey] === identifierValue) {
-        isSaveable = item.type !== '';
-        hasViewer = item.viewer !== '';
-        modifiedItem = extend(modifiedItem, {
-          [targetKey]: targetValue
-        });
-      }
-      accumulator.push(modifiedItem);
-      return accumulator;
-    }, []);
-
-    setItems(modifiedItems, () => {
-      if (
-        (targetKey !== 'type' && isSaveable && !disableSave) ||
-        (targetKey === 'type' && hasViewer && isSaveable && !disableSave)
-      ) {
-        saveFileTypes(modifiedItems);
-      }
-    });
-  };
-
-  const defaultFileTypeObject = {
-    id: getUuid(),
-    type: '',
-    viewer: '',
-    editor: '',
-    color: '#2196f3'
-  };
-
-  const saveFileTypes = newItems => {
-    const { setSupportedFileTypes } = props;
-
-    setIsValidationInProgress(true);
-
-    const isValid = validateSelectedFileTypes(newItems);
-
-    if (!isValid) {
-      return false;
-    }
-
-    setSupportedFileTypes(newItems);
-  };
-
-  const validateSelectedFileTypes = newItems => {
-    let isValid = true;
-
-    newItems.map(item => {
-      const hasDuplicates =
-        items.filter(targetItem => targetItem.type === item.type).length > 1;
-
-      if (
-        isValid &&
-        (item.type === '' || item.viewer === '' || hasDuplicates)
-      ) {
-        isValid = false;
-      }
-      return item;
-    });
-
-    return isValid;
-  };
-
-  const removeItem = (itemForRemoval: any) => {
-    const filteredItems = items.filter(
-      item => item.type !== itemForRemoval.type
-    );
-    // setItems(filteredItems, undefined);
-    saveFileTypes(filteredItems);
   };
 
   const renderTitle = () => (
@@ -232,25 +102,6 @@ function SettingsDialog(props: Props) {
 
   const renderContent = () => (
     <DialogContent className={props.classes.mainContent}>
-      {isConfirmDialogOpened && (
-        <ConfirmDialog
-          open={isConfirmDialogOpened}
-          onClose={() => {
-            setIsConfirmDialogOpened(false);
-          }}
-          title="Confirm"
-          content={i18n.t('core:confirmFileTypeDeletion')}
-          confirmCallback={result => {
-            if (result) {
-              removeItem(selectedItem);
-            }
-          }}
-          cancelDialogTID="cancelDeleteFileTypeDialog"
-          confirmDialogTID="confirmDeleteFileTypeDialog"
-          confirmDialogContentTID="confirmDeleteFileTypeDialogContent"
-        />
-      )}
-
       {isResetSettingsDialogOpened && (
         <ConfirmDialog
           open={isResetSettingsDialogOpened}
@@ -278,26 +129,9 @@ function SettingsDialog(props: Props) {
         />
       )}
 
-      <div
-        data-tid="settingsDialog"
-        className={props.classes.mainContent}
-        ref={settingsFileTypeRef}
-      >
+      <div data-tid="settingsDialog" className={props.classes.mainContent}>
         {currentTab === 0 && <SettingsGeneral />}
-        {currentTab === 1 && (
-          <SettingsFileTypes
-            items={items}
-            selectedItem={selectedItem}
-            setSelectedItem={item => setSelectedItem(item)}
-            updateItems={updateItems}
-            isValidationInProgress={isValidationInProgress}
-            onRemoveItem={item => {
-              setSelectedItem(item);
-              setIsConfirmDialogOpened(true);
-            }}
-            extensions={props.extensions}
-          />
-        )}
+        {currentTab === 1 && <SettingsFileTypes />}
         {currentTab === 2 && <SettingsKeyBindings />}
         {currentTab === 3 && (
           <SettingsAdvanced
@@ -323,16 +157,6 @@ function SettingsDialog(props: Props) {
       >
         {i18n.t('core:help')}
       </Button>
-      {currentTab === 1 && (
-        <Button
-          data-tid="addNewFileTypeTID"
-          onClick={() => onAddFileType()}
-          color="secondary"
-          style={{ float: 'left' }}
-        >
-          {i18n.t('core:addNewFileType')}
-        </Button>
-      )}
 
       <Button
         data-tid="closeSettingsDialog"
@@ -363,17 +187,7 @@ function SettingsDialog(props: Props) {
 }
 
 const mapStateToProps = state => ({
-  supportedFileTypes: getSupportedFileTypes(state),
-  language: getCurrentLanguage(state),
-  extensions: getExtensions(state)
+  language: getCurrentLanguage(state)
 });
 
-const mapDispatchToProps = dispatch => ({
-  setSupportedFileTypes: supportedFileTypes =>
-    dispatch(actions.setSupportedFileTypes(supportedFileTypes))
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles)(SettingsDialog));
+export default connect(mapStateToProps)(withStyles(styles)(SettingsDialog));
