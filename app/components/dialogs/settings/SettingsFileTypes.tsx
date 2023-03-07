@@ -46,12 +46,9 @@ import i18n from '-/services/i18n';
 import TransparentBackground from '-/components/TransparentBackground';
 import { TS } from '-/tagspaces.namespace';
 import AppConfig from '-/AppConfig';
-import {
-  actions,
-  getExtensions,
-  getSupportedFileTypes
-} from '-/reducers/settings';
+import { actions, getSupportedFileTypes } from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import { extensionsFound } from '-/extension-config';
 
 const styles: any = (theme: any) => ({
   fileTypeColorDialog: {
@@ -75,7 +72,6 @@ interface Props {
   supportedFileTypes: Array<TS.FileTypes>;
   setSupportedFileTypes?: (fileTypes: Array<any>) => void;
   classes: any;
-  extensions: Array<TS.Extension>;
 }
 
 function SettingsFileTypes(props: Props) {
@@ -112,12 +108,20 @@ function SettingsFileTypes(props: Props) {
   }, [props.supportedFileTypes]);
 
   const updateItems = (
-    identifierKey,
-    identifierValue,
+    fileType: TS.FileTypes,
     targetKey,
     targetValue,
     disableSave = false
   ) => {
+    let identifierKey;
+    let identifierValue;
+    if (fileType.id) {
+      identifierKey = 'id';
+      identifierValue = fileType.id;
+    } else {
+      identifierKey = 'type';
+      identifierValue = fileType.type;
+    }
     let isSaveable = false;
     let hasViewer = false;
     const modifiedItems = items.current.reduce((accumulator, item) => {
@@ -193,18 +197,13 @@ function SettingsFileTypes(props: Props) {
   };
 
   const handleChangeColor = color => {
-    updateItems(
-      'id',
-      selectedItem.current && selectedItem.current.id,
-      'color',
-      color
-    );
+    updateItems(selectedItem.current, 'color', color);
   };
 
   const sanitizeFileTypeInput = fileTypeInput =>
     fileTypeInput.replace(/[^a-zA-Z0-9 ]/g, '');
 
-  const { classes, extensions } = props;
+  const { classes } = props;
 
   interface ColumnData {
     dataKey: keyof TS.FileTypes;
@@ -321,7 +320,7 @@ function SettingsFileTypes(props: Props) {
               onBlur={event => {
                 const nextValue = event.target.value;
                 const withoutSpecialChars = sanitizeFileTypeInput(nextValue);
-                updateItems('type', item.type, 'type', withoutSpecialChars);
+                updateItems(item, 'type', withoutSpecialChars);
               }}
             />
           </FormControl>
@@ -336,11 +335,11 @@ function SettingsFileTypes(props: Props) {
               sx={{ width: 180 }}
               input={<Input id="" />}
               onChange={event =>
-                updateItems('id', item.id, 'viewer', event.target.value)
+                updateItems(item, 'viewer', event.target.value)
               }
             >
               <MenuItem value="" />
-              {extensions.map(
+              {extensionsFound.map(
                 extension =>
                   (extension.extensionTypes.includes('viewer') ||
                     extension.extensionTypes.includes('editor')) && (
@@ -360,12 +359,10 @@ function SettingsFileTypes(props: Props) {
             value={item.editor}
             input={<Input id="" />}
             sx={{ width: 180 }}
-            onChange={event =>
-              updateItems('id', item.id, 'editor', event.target.value)
-            }
+            onChange={event => updateItems(item, 'editor', event.target.value)}
           >
             <MenuItem value="">{i18n.t('clearEditor')}</MenuItem>
-            {extensions
+            {extensionsFound
               .filter(
                 extension =>
                   extension.extensionTypes &&
@@ -479,8 +476,7 @@ function SettingsFileTypes(props: Props) {
 }
 
 const mapStateToProps = state => ({
-  supportedFileTypes: getSupportedFileTypes(state),
-  extensions: getExtensions(state)
+  supportedFileTypes: getSupportedFileTypes(state)
 });
 
 const mapDispatchToProps = dispatch => ({
