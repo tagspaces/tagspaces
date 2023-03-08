@@ -68,6 +68,8 @@
   "fileTypeTab": "File Types",
   "keyBindingsTab": "Key Bindings",
   "advancedSettingsTab": "Advanced",
+  "extensionsTab": "Extensions",
+  "enableDevMode": "Enable Developer Mode",
   "fileViewer": "File Viewer",
   "reloadDocument": "Reload Document",
   "selectAllFiles": "Select all files",

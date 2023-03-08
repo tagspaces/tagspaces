@@ -46,9 +46,13 @@ import i18n from '-/services/i18n';
 import TransparentBackground from '-/components/TransparentBackground';
 import { TS } from '-/tagspaces.namespace';
 import AppConfig from '-/AppConfig';
-import { actions, getSupportedFileTypes } from '-/reducers/settings';
+import {
+  actions,
+  getExtensions,
+  getSupportedFileTypes
+} from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import { extensionsFound } from '-/extension-config';
+// import { extensionsFound } from '-/extension-config';
 
 const styles: any = (theme: any) => ({
   fileTypeColorDialog: {
@@ -72,6 +76,7 @@ interface Props {
   supportedFileTypes: Array<TS.FileTypes>;
   setSupportedFileTypes?: (fileTypes: Array<any>) => void;
   classes: any;
+  extensions: Array<TS.Extension>;
 }
 
 function SettingsFileTypes(props: Props) {
@@ -339,7 +344,7 @@ function SettingsFileTypes(props: Props) {
               }
             >
               <MenuItem value="" />
-              {extensionsFound.map(
+              {props.extensions.map(
                 extension =>
                   (extension.extensionTypes.includes('viewer') ||
                     extension.extensionTypes.includes('editor')) && (
@@ -362,7 +367,7 @@ function SettingsFileTypes(props: Props) {
             onChange={event => updateItems(item, 'editor', event.target.value)}
           >
             <MenuItem value="">{i18n.t('clearEditor')}</MenuItem>
-            {extensionsFound
+            {props.extensions
               .filter(
                 extension =>
                   extension.extensionTypes &&
@@ -476,7 +481,8 @@ function SettingsFileTypes(props: Props) {
 }
 
 const mapStateToProps = state => ({
-  supportedFileTypes: getSupportedFileTypes(state)
+  supportedFileTypes: getSupportedFileTypes(state),
+  extensions: getExtensions(state)
 });
 
 const mapDispatchToProps = dispatch => ({

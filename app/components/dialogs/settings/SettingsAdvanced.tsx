@@ -39,7 +39,8 @@ import {
   actions as SettingsActions,
   getSettings,
   getMapTileServers,
-  getEnableWS
+  getEnableWS,
+  isDevMode
 } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import MapTileServerDialog from '-/components/dialogs/settings/MapTileServerDialog';
@@ -68,6 +69,8 @@ interface Props {
   classes: any;
   settings: any;
   setDesktopMode: (desktopMode: boolean) => void;
+  setDevMode: (devMode: boolean) => void;
+  isDevMode: boolean;
   setEnableWS: (enableWS: boolean) => void;
   setWarningOpeningFilesExternally: (
     warningOpeningFilesExternally: boolean
@@ -128,6 +131,15 @@ function SettingsAdvanced(props: Props) {
             disabled={!(typeof window.ExtDisplayMode === 'undefined')}
             onClick={() => props.setDesktopMode(!props.settings.desktopMode)}
             checked={!props.settings.desktopMode}
+          />
+        </ListItem>
+        <ListItem className={classes.listItem}>
+          <ListItemText primary={i18n.t('enableDevMode')} />
+          <Switch
+            data-tid="settingsEnableDevMode"
+            disabled={window.ExtDevMode && window.ExtDevMode === true}
+            onClick={() => props.setDevMode(!props.settings.devMode)}
+            checked={props.isDevMode}
           />
         </ListItem>
         <ListItem className={classes.listItem}>
@@ -371,7 +383,8 @@ function mapStateToProps(state) {
   return {
     settings: getSettings(state),
     tileServers: getMapTileServers(state),
-    enableWS: getEnableWS(state)
+    enableWS: getEnableWS(state),
+    isDevMode: isDevMode(state)
   };
 }
 
@@ -381,6 +394,7 @@ function mapActionCreatorsToProps(dispatch) {
       setWarningOpeningFilesExternally:
         SettingsActions.setWarningOpeningFilesExternally,
       setDesktopMode: SettingsActions.setDesktopMode,
+      setDevMode: SettingsActions.setDevMode,
       setEnableWS: SettingsActions.setEnableWS,
       setSaveTagInLocation: SettingsActions.setSaveTagInLocation,
       setGeoTaggingFormat: SettingsActions.setGeoTaggingFormat,

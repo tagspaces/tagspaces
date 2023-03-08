@@ -70,7 +70,10 @@ import {
   platformCreateNewInstance,
   platformCheckFileExist,
   platformCheckDirExist,
-  platformLoadExtensions
+  platformLoadExtensions,
+  platformRemoveExtension,
+  platformGetUserDataDir,
+  platformUnZip
 } from '@tagspaces/tagspaces-platforms/platform-io';
 import AppConfig from '-/AppConfig';
 import { Pro } from '../pro';
@@ -506,5 +509,17 @@ export default class PlatformFacade {
 
   static loadExtensions() {
     return platformLoadExtensions();
+  }
+
+  static removeExtension(extensionId: string) {
+    return platformRemoveExtension(extensionId);
+  }
+
+  static getUserDataDir(): Promise<string> {
+    return platformGetUserDataDir();
+  }
+
+  static unZip(filePath, targetPath): Promise<boolean> {
+    return platformUnZip(filePath, targetPath);
   }
 }

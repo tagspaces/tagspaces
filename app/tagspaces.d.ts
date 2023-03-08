@@ -33,6 +33,7 @@ declare interface Window {
   ExtLogoURL?: string;
   ExtDefaultVerticalPanel?: string;
   ExtDisplayMode?: string;
+  ExtDevMode?: boolean;
   ExtDefaultPerspective?: string;
   ExtTagLibrary?: Array<any>;
   ExtLocations?: Array<any>;

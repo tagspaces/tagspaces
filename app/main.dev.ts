@@ -586,6 +586,30 @@ app.on('ready', async () => {
       .catch(err => console.error('load-extensions', err));
   });
 
+  ipcMain.on('remove-extension', (e, extensionId) => {
+    try {
+      const extBuildIndex = extensionId.indexOf('/build');
+      fs.rmSync(
+        path.join(
+          app.getPath('userData'),
+          'tsplugins',
+          extBuildIndex > -1
+            ? extensionId.substring(0, extBuildIndex)
+            : extensionId
+        ),
+        {
+          recursive: true
+        }
+      );
+    } catch (e) {
+      console.debug(e);
+    }
+  });
+
+  ipcMain.handle('get-user-data', () => {
+    return app.getPath('userData');
+  });
+
   ipcMain.on('focus-window', () => {
     if (mainWindow) {
       mainWindow.focus();
