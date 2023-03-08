@@ -21,7 +21,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import Typography from '@mui/material/Typography';
+import Tooltip from '-/components/Tooltip';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import IconButton from '@mui/material/IconButton';
@@ -89,14 +91,14 @@ function SettingsExtensions(props: Props) {
   }
 
   return (
-    <div style={{ backgroundColor: '#E7EBF0', padding: 24 }}>
+    <div style={{ minHeight: 400 }}>
       <Accordion defaultExpanded>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="internal-content"
           id="internal-header"
         >
-          <Typography>Internal Extensions</Typography>
+          <Typography variant="h6">Core Extensions</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <List>
@@ -104,7 +106,7 @@ function SettingsExtensions(props: Props) {
               .filter(ext => !ext.extensionExternal)
               .map(ext => (
                 <ListItem key={ext.extensionId} disablePadding>
-                  {ext.extensionName} {ext.version}
+                  {ext.extensionName} ({ext.version})
                 </ListItem>
               ))}
           </List>
@@ -116,7 +118,7 @@ function SettingsExtensions(props: Props) {
           aria-controls="installed-content"
           id="installed-header"
         >
-          <Typography>Installed Extensions</Typography>
+          <Typography variant="h6">Installed Extensions</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <List>
@@ -124,30 +126,31 @@ function SettingsExtensions(props: Props) {
               .filter(ext => ext.extensionExternal)
               .map(ext => (
                 <ListItem key={ext.extensionId} disablePadding>
-                  {ext.extensionName} {ext.version}
-                  <IconButton
-                    aria-label={i18n.t('core:delete')}
-                    onClick={() => {
-                      props.removeExtension(ext.extensionId);
-                      PlatformFacade.removeExtension(ext.extensionId);
-                    }}
-                    data-tid="revisionsTID"
-                    size="large"
-                  >
-                    <DeleteIcon color={'action'} />
-                  </IconButton>
+                  {ext.extensionName} ({ext.version})
+                  <Tooltip title={i18n.t('core:removeExtension')}>
+                    <IconButton
+                      aria-label={i18n.t('core:delete')}
+                      onClick={() => {
+                        props.removeExtension(ext.extensionId);
+                        PlatformFacade.removeExtension(ext.extensionId);
+                      }}
+                      data-tid="revisionsTID"
+                      size="large"
+                    >
+                      <DeleteIcon color={'action'} />
+                    </IconButton>
+                  </Tooltip>
                 </ListItem>
               ))}
           </List>
           {props.isDevMode && (
-            <>
+            <Box style={{ textAlign: 'center' }}>
               <Button
-                data-tid="addNewExtensionTID"
+                data-tid="installExtensionTID"
                 onClick={() => fileInputRef.current.click()}
                 color="secondary"
-                style={{ width: '100%' }}
               >
-                {i18n.t('core:addNewExtension')}
+                {i18n.t('core:installExtension')}
               </Button>
               <input
                 style={{ display: 'none' }}
@@ -156,7 +159,7 @@ function SettingsExtensions(props: Props) {
                 type="file"
                 onChange={handleFileInputChange}
               />
-            </>
+            </Box>
           )}
         </AccordionDetails>
       </Accordion>

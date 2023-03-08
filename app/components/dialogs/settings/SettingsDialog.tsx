@@ -151,7 +151,7 @@ function SettingsDialog(props: Props) {
   const renderActions = () => (
     <DialogActions
       style={{
-        justifyContent: 'flex-end'
+        justifyContent: 'space-between'
       }}
     >
       <Button

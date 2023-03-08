@@ -1037,7 +1037,7 @@ function EntryProperties(props: Props) {
                 ),
                 endAdornment: (
                   <InputAdornment position="end">
-                    <Tooltip title="core:copyLinkToClipboard">
+                    <Tooltip title={i18n.t('core:copyLinkToClipboard')}>
                       <Button
                         color="primary"
                         onClick={() => {
