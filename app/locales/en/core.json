@@ -694,6 +694,7 @@
   "showBookmarks": "Bookmarks",
   "refresh": "Refresh",
   "deleteBookmarks": "Delete All Bookmarks",
+  "deleteAllRevisions": "Delete All Revisions",
   "quickAccess": "Quick access",
   "resetLocalSettings": "Reset Custom Settings",
   "folderWithCustomPerspectiveSetting": "Current folder has custom settings for this perspective",

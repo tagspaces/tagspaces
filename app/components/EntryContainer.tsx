@@ -168,7 +168,7 @@ interface Props {
     autohide?: boolean
   ) => void;
   removeAllTags: () => void;
-  deleteFile: (path: string) => void;
+  deleteFile: (path: string, uuid: string) => void;
   toggleEntryFullWidth: () => void;
   isReadOnlyMode: boolean;
   setEntryPropertiesSplitSize: (size: string) => void;
@@ -718,17 +718,26 @@ function EntryContainer(props: Props) {
     }
   };
 
-  const togglePanel = () => {
+  const toggleProperties = () => {
     if (isPropPanelVisible && !isRevisionPanelVisible) {
       closePanel();
     } else {
       openPanel();
     }
+
+    if (isRevisionPanelVisible) {
+      setRevisionPanelVisible(false);
+    }
   };
 
   const toggleRevisions = () => {
-    setRevisionPanelVisible(!isRevisionPanelVisible);
-    openPanel();
+    if (isRevisionPanelVisible) {
+      setRevisionPanelVisible(false);
+      closePanel();
+    } else {
+      setRevisionPanelVisible(true);
+      openPanel();
+    }
   };
 
   const openNextFile = () => {
@@ -826,12 +835,7 @@ function EntryContainer(props: Props) {
         <Tooltip title={i18n.t('core:toggleProperties')}>
           <IconButton
             aria-label={i18n.t('core:toggleProperties')}
-            onClick={() => {
-              togglePanel();
-              if (isRevisionPanelVisible) {
-                setRevisionPanelVisible(false);
-              }
-            }}
+            onClick={toggleProperties}
             data-tid="fileContainerToggleProperties"
             size="large"
           >
@@ -1530,7 +1534,7 @@ function EntryContainer(props: Props) {
           }
           confirmCallback={result => {
             if (result) {
-              deleteFile(openedFile.path);
+              deleteFile(openedFile.path, openedFile.uuid);
             }
           }}
           cancelDialogTID="cancelSaveBeforeCloseDialog"
