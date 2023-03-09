@@ -52,6 +52,7 @@ import {
   getSupportedFileTypes
 } from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import PlatformFacade from '-/services/platform-facade';
 // import { extensionsFound } from '-/extension-config';
 
 const styles: any = (theme: any) => ({
@@ -339,9 +340,23 @@ function SettingsFileTypes(props: Props) {
               value={item.viewer}
               sx={{ width: 180 }}
               input={<Input id="" />}
-              onChange={event =>
-                updateItems(item, 'viewer', event.target.value)
-              }
+              onChange={event => {
+                const extension: TS.Extension = props.extensions.find(
+                  ext => ext.extensionId === event.target.value
+                );
+                if (extension.extensionExternal) {
+                  PlatformFacade.getUserDataDir().then(dataDir => {
+                    const externalExtensionPath =
+                      dataDir + PlatformFacade.getDirSeparator() + 'tsplugins';
+                    updateItems(
+                      item,
+                      'extensionExternalPath',
+                      externalExtensionPath
+                    );
+                  });
+                }
+                updateItems(item, 'viewer', extension.extensionId);
+              }}
             >
               <MenuItem value="" />
               {props.extensions.map(
