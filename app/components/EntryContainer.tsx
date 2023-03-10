@@ -1387,7 +1387,11 @@ function EntryContainer(props: Props) {
         }}
       >
         {openedFile.isFile ? renderFileToolbar(classes) : renderFolderToolbar()}
-        {isRevisionPanelVisible ? (
+        {isRevisionPanelVisible &&
+        openedFile.isFile &&
+        Pro &&
+        isEditable &&
+        props.revisionsEnabled ? (
           <Revisions />
         ) : (
           <EntryProperties

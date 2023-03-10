@@ -25,6 +25,7 @@ import {
   extractFileName,
   getMetaFileLocationForFile,
   getThumbFileLocationForFile,
+  getBackupFileDir,
   normalizePath
 } from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
@@ -32,6 +33,7 @@ import { actions as AppActions } from './app';
 import {
   copyFilesPromise,
   getThumbPath,
+  loadFileMetaDataPromise,
   renameFilesPromise
 } from '-/services/utils-io';
 import i18n from '../services/i18n';
@@ -83,24 +85,57 @@ const actions = {
       console.warn('Moving files failed with ' + err)
       dispatch(AppActions.showNotification(i18n.t('core:movingFilesFailed')));
     }); */
-    const moveJobs = [];
-    paths.map(path => {
-      moveJobs.push([
-        path,
-        normalizePath(targetPath) +
-          PlatformIO.getDirSeparator() +
-          extractFileName(path, PlatformIO.getDirSeparator())
-      ]);
-      return true;
-    });
+    const moveJobs = paths.map(path => [
+      path,
+      normalizePath(targetPath) +
+        PlatformIO.getDirSeparator() +
+        extractFileName(path, PlatformIO.getDirSeparator())
+    ]);
     return renameFilesPromise(moveJobs)
       .then(() => {
         dispatch(
           AppActions.showNotification(i18n.t('core:filesMovedSuccessful'))
         );
+
         const moveMetaJobs = [];
         moveJobs.map(job => {
           dispatch(AppActions.reflectDeleteEntry(job[0])); // moved files should be added to the index, if the target dir in index
+
+          // Move revisions
+          loadFileMetaDataPromise(job[0]).then(
+            (fsEntryMeta: TS.FileSystemEntryMeta) => {
+              if (fsEntryMeta.id) {
+                const backupDir = getBackupFileDir(
+                  job[0],
+                  fsEntryMeta.id,
+                  PlatformIO.getDirSeparator()
+                );
+                const newBackupDir = getBackupFileDir(
+                  job[1],
+                  fsEntryMeta.id,
+                  PlatformIO.getDirSeparator()
+                );
+                return PlatformIO.moveDirectoryPromise(
+                  backupDir,
+                  newBackupDir
+                )
+                  .then(() => {
+                    console.log(
+                      'Moving revisions successful from ' +
+                        backupDir +
+                        ' to ' +
+                        newBackupDir
+                    );
+                    return true;
+                  })
+                  .catch(err => {
+                    console.warn('Moving revisions failed ', err);
+                  });
+              }
+            }
+          );
+
+          // move meta
           moveMetaJobs.push([
             getMetaFileLocationForFile(job[0], PlatformIO.getDirSeparator()),
             getMetaFileLocationForFile(job[1], PlatformIO.getDirSeparator())

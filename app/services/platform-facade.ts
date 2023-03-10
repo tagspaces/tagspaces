@@ -56,6 +56,7 @@ import {
   platformCopyFilePromise,
   platformRenameFilePromise,
   platformRenameDirectoryPromise,
+  platformMoveDirectoryPromise,
   platformDeleteFilePromise,
   platformDeleteDirectoryPromise,
   platformOpenDirectory,
@@ -329,6 +330,18 @@ export default class PlatformFacade {
 
     return platformRenameDirectoryPromise(dirPath, newDirName).then(result => {
       PlatformFacade.deignoreByWatcher(dirPath, newDirName);
+      return result;
+    });
+  };
+
+  static moveDirectoryPromise = (
+    dirPath: string,
+    newDirPath: string
+  ): Promise<any> => {
+    PlatformFacade.ignoreByWatcher(dirPath, newDirPath);
+
+    return platformMoveDirectoryPromise(dirPath, newDirPath).then(result => {
+      PlatformFacade.deignoreByWatcher(dirPath, newDirPath);
       return result;
     });
   };
