@@ -33,6 +33,7 @@ export const types = {
   SET_LANGUAGE: 'SETTINGS/SET_LANGUAGE',
   TOGGLE_SHOWUNIXHIDDENENTRIES: 'SETTINGS/TOGGLE_SHOWUNIXHIDDENENTRIES',
   SET_DESKTOPMODE: 'SETTINGS/SET_DESKTOPMODE',
+  SET_DEVMODE: 'SETTINGS/SET_DEVMODE',
   SET_ENABLE_WS: 'SETTINGS/SET_ENABLE_WS',
   WARNING_OPENING_FILES_EXTERNALLY: 'SETTINGS/WARNING_OPENING_FILES_EXTERNALLY',
   SET_SAVE_TAGS_IN_LOCATION: 'SETTINGS/SET_SAVE_TAGS_IN_LOCATION',
@@ -77,6 +78,7 @@ export const types = {
   ADD_SUPPORTED_FILE_TYPES: 'SETTINGS/ADD_SUPPORTED_FILE_TYPES',
   ADD_EXTENSION: 'SETTINGS/ADD_EXTENSION',
   ADD_EXTENSIONS: 'SETTINGS/ADD_EXTENSIONS',
+  REMOVE_EXTENSIONS: 'SETTINGS/REMOVE_EXTENSIONS',
   SET_LAST_PUBLISHED_VERSION: 'SETTINGS/SET_LAST_PUBLISHED_VERSION',
   SET_ENTRY_PROPERTIES_SPLIT_SIZE: 'SETTINGS/SET_ENTRY_PROPERTIES_SPLIT_SIZE',
   SET_MAIN_VSPLIT_SIZE: 'SETTINGS/SET_MAIN_VSPLIT_SIZE',
@@ -169,6 +171,9 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_DESKTOPMODE: {
       return { ...state, desktopMode: action.desktopMode };
+    }
+    case types.SET_DEVMODE: {
+      return { ...state, devMode: action.devMode };
     }
     case types.SET_ENABLE_WS: {
       return { ...state, enableWS: action.enableWS };
@@ -368,6 +373,14 @@ export default (state: any = defaultSettings, action: any) => {
         extensions: updateExtensions(state.extensions, action.extension)
       };
     }
+    case types.REMOVE_EXTENSIONS: {
+      return {
+        ...state,
+        extensions: state.extensions.filter(
+          ext => ext.extensionId !== action.extensionId
+        )
+      };
+    }
     case types.SET_ENTRY_PROPERTIES_SPLIT_SIZE: {
       return {
         ...state,
@@ -521,6 +534,10 @@ export const actions = {
     type: types.SET_DESKTOPMODE,
     desktopMode
   }),
+  setDevMode: (devMode: boolean) => ({
+    type: types.SET_DEVMODE,
+    devMode
+  }),
   setEnableWS: (enableWS: boolean) => ({
     type: types.SET_ENABLE_WS,
     enableWS
@@ -671,6 +688,10 @@ export const actions = {
     type: types.ADD_EXTENSIONS,
     extensions
   }),
+  removeExtension: (extensionId: string) => ({
+    type: types.REMOVE_EXTENSIONS,
+    extensionId
+  }),
   addSupportedFileTypes: (supportedFileTypes: []) => ({
     type: types.ADD_SUPPORTED_FILE_TYPES,
     supportedFileTypes
@@ -802,6 +823,8 @@ export const getDesktopMode = (state: any) => {
   }
   return window.ExtDisplayMode !== 'mobile';
 };
+export const isDevMode = (state: any) =>
+  window.ExtDevMode ? window.ExtDevMode : state.settings.devMode;
 export const isRevisionsEnabled = (state: any) =>
   state.settings.isRevisionsEnabled;
 export const getWarningOpeningFilesExternally = (state: any) =>

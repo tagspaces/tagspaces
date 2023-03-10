@@ -46,9 +46,14 @@ import i18n from '-/services/i18n';
 import TransparentBackground from '-/components/TransparentBackground';
 import { TS } from '-/tagspaces.namespace';
 import AppConfig from '-/AppConfig';
-import { actions, getSupportedFileTypes } from '-/reducers/settings';
+import {
+  actions,
+  getExtensions,
+  getSupportedFileTypes
+} from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import { extensionsFound } from '-/extension-config';
+import PlatformFacade from '-/services/platform-facade';
+// import { extensionsFound } from '-/extension-config';
 
 const styles: any = (theme: any) => ({
   fileTypeColorDialog: {
@@ -72,6 +77,7 @@ interface Props {
   supportedFileTypes: Array<TS.FileTypes>;
   setSupportedFileTypes?: (fileTypes: Array<any>) => void;
   classes: any;
+  extensions: Array<TS.Extension>;
 }
 
 function SettingsFileTypes(props: Props) {
@@ -334,12 +340,26 @@ function SettingsFileTypes(props: Props) {
               value={item.viewer}
               sx={{ width: 180 }}
               input={<Input id="" />}
-              onChange={event =>
-                updateItems(item, 'viewer', event.target.value)
-              }
+              onChange={event => {
+                const extension: TS.Extension = props.extensions.find(
+                  ext => ext.extensionId === event.target.value
+                );
+                if (extension.extensionExternal) {
+                  PlatformFacade.getUserDataDir().then(dataDir => {
+                    const externalExtensionPath =
+                      dataDir + PlatformFacade.getDirSeparator() + 'tsplugins';
+                    updateItems(
+                      item,
+                      'extensionExternalPath',
+                      externalExtensionPath
+                    );
+                  });
+                }
+                updateItems(item, 'viewer', extension.extensionId);
+              }}
             >
               <MenuItem value="" />
-              {extensionsFound.map(
+              {props.extensions.map(
                 extension =>
                   (extension.extensionTypes.includes('viewer') ||
                     extension.extensionTypes.includes('editor')) && (
@@ -362,7 +382,7 @@ function SettingsFileTypes(props: Props) {
             onChange={event => updateItems(item, 'editor', event.target.value)}
           >
             <MenuItem value="">{i18n.t('clearEditor')}</MenuItem>
-            {extensionsFound
+            {props.extensions
               .filter(
                 extension =>
                   extension.extensionTypes &&
@@ -476,7 +496,8 @@ function SettingsFileTypes(props: Props) {
 }
 
 const mapStateToProps = state => ({
-  supportedFileTypes: getSupportedFileTypes(state)
+  supportedFileTypes: getSupportedFileTypes(state),
+  extensions: getExtensions(state)
 });
 
 const mapDispatchToProps = dispatch => ({

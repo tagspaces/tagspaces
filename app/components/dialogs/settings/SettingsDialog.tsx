@@ -40,6 +40,7 @@ import { clearAllURLParams } from '-/utils/dom';
 import SettingsAdvanced from '-/components/dialogs/settings/SettingsAdvanced';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Links from '-/content/links';
+import SettingsExtensions from '-/components/dialogs/settings/SettingsExtensions';
 
 const styles: any = () => ({
   mainContent: {
@@ -92,6 +93,10 @@ function SettingsDialog(props: Props) {
             label={i18n.t('core:keyBindingsTab')}
           />
           <Tab
+            data-tid="extensionsSettingsDialog"
+            label={i18n.t('core:extensionsTab')}
+          />
+          <Tab
             data-tid="advancedSettingsDialogTID"
             label={i18n.t('core:advancedSettingsTab')}
           />
@@ -133,7 +138,8 @@ function SettingsDialog(props: Props) {
         {currentTab === 0 && <SettingsGeneral />}
         {currentTab === 1 && <SettingsFileTypes />}
         {currentTab === 2 && <SettingsKeyBindings />}
-        {currentTab === 3 && (
+        {currentTab === 3 && <SettingsExtensions />}
+        {currentTab === 4 && (
           <SettingsAdvanced
             showResetSettings={setIsResetSettingsDialogOpened}
           />
@@ -145,7 +151,7 @@ function SettingsDialog(props: Props) {
   const renderActions = () => (
     <DialogActions
       style={{
-        justifyContent: currentTab === 1 ? 'space-between' : 'flex-end'
+        justifyContent: 'space-between'
       }}
     >
       <Button
