@@ -57,7 +57,10 @@ import FilePreviewDialog from '-/components/dialogs/FilePreviewDialog';
 interface Props {
   // openedFile: OpenedEntry;
   openedFiles: Array<OpenedEntry>;
-  openEntry: (path: string) => void;
+  updateOpenedFile: (
+    entryPath: string,
+    fsEntryMeta: any // FileSystemEntryMeta
+  ) => Promise<boolean>;
   theme: any;
 }
 
@@ -120,6 +123,15 @@ function Revisions(props: Props) {
     );
   }
 
+  function deleteRevisions() {
+    if (rows.length > 0) {
+      const promises = rows.map(row =>
+        PlatformIO.deleteFilePromise(row.path, true)
+      );
+      Promise.all(promises).then(() => loadHistoryItems(openedFiles[0]));
+    }
+  }
+
   function restoreRevision(revisionPath) {
     const openedFile = openedFiles[0];
     const targetPath = getBackupFileLocation(
@@ -127,13 +139,18 @@ function Revisions(props: Props) {
       openedFile.uuid,
       PlatformIO.getDirSeparator()
     );
-    PlatformIO.copyFilePromiseOverwrite(openedFile.path, targetPath).then(
-      () => {
-        PlatformIO.copyFilePromiseOverwrite(
-          revisionPath,
-          openedFile.path
-        ).then(() => props.openEntry(openedFile.path)); // loadHistoryItems(openedFile));
-      }
+    return PlatformIO.copyFilePromiseOverwrite(
+      openedFile.path,
+      targetPath
+    ).then(() =>
+      PlatformIO.copyFilePromiseOverwrite(revisionPath, openedFile.path).then(
+        () =>
+          props.updateOpenedFile(openedFile.path, {
+            ...openedFile,
+            editMode: false,
+            shouldReload: !openedFile.shouldReload
+          })
+      )
     );
   }
 
@@ -161,7 +178,23 @@ function Revisions(props: Props) {
         >
           <TableHead>
             <TableRow>
-              <TableCell>{i18n.t('revisions')}</TableCell>
+              <TableCell>
+                {i18n.t('revisions')}
+                <Tooltip title={i18n.t('core:deleteAll')}>
+                  <IconButton
+                    aria-label="delete all revisions"
+                    onClick={() =>
+                      confirm(
+                        'The all revisions will be deleted. Do you want to continue?'
+                      ) && deleteRevisions()
+                    }
+                    data-tid="deleteRevisionsTID"
+                    size="large"
+                  >
+                    <DeleteIcon color="primary" />
+                  </IconButton>
+                </Tooltip>
+              </TableCell>
               <TableCell align="right">{i18n.t('created')}</TableCell>
               <TableCell align="right">{i18n.t('actions')}</TableCell>
             </TableRow>
@@ -175,7 +208,11 @@ function Revisions(props: Props) {
                     key={row.path}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                   >
-                    <TableCell component="th" scope="row">
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      onClick={() => setPreviewDialogEntry(row)}
+                    >
                       {row.name}
                     </TableCell>
                     <TableCell
@@ -252,7 +289,7 @@ function mapStateToProps(state) {
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
-      openEntry: AppActions.openEntry
+      updateOpenedFile: AppActions.updateOpenedFile
     },
     dispatch
   );

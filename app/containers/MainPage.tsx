@@ -214,7 +214,7 @@ interface Props {
   isImportKanBanDialogOpened: boolean;
   toggleDeleteMultipleEntriesDialog: () => void;
   selectedEntries: Array<any>;
-  deleteFile: (path: string) => void;
+  deleteFile: (path: string, uuid: string) => void;
   deleteDirectory: (path: string) => void;
   user: CognitoUserInterface;
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
@@ -803,7 +803,7 @@ function MainPage(props: Props) {
             if (result && props.selectedEntries) {
               const deletePromises = props.selectedEntries.map(fsEntry => {
                 if (fsEntry.isFile) {
-                  return props.deleteFile(fsEntry.path);
+                  return props.deleteFile(fsEntry.path, fsEntry.uuid);
                 }
                 return props.deleteDirectory(fsEntry.path);
               });

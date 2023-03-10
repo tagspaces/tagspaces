@@ -32,7 +32,8 @@ import {
   normalizePath,
   extractContainingDirectoryPath,
   getMetaFileLocationForDir,
-  generateSharingLink
+  generateSharingLink,
+  getBackupFileLocation
 } from '@tagspaces/tagspaces-common/paths';
 import {
   getURLParameter,
@@ -55,7 +56,8 @@ import {
   setLocationType,
   getRelativeEntryPath,
   getCleanLocationPath,
-  updateFsEntries
+  updateFsEntries,
+  loadMetaDataPromise
 } from '-/services/utils-io';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import i18n from '../services/i18n';
@@ -2417,7 +2419,7 @@ export const actions = {
       dispatch(LocationIndexActions.reflectUpdateSidecarTags(path, tags));
     }
   },
-  deleteFile: (filePath: string) => (
+  deleteFile: (filePath: string, uuid: string) => (
     dispatch: (action) => void,
     getState: () => any
   ) => {
@@ -2433,6 +2435,24 @@ export const actions = {
             true
           )
         );
+        // Delete revisions
+        const backupFilePath = getBackupFileLocation(
+          filePath,
+          uuid,
+          PlatformIO.getDirSeparator()
+        );
+        const backupPath = extractContainingDirectoryPath(
+          backupFilePath,
+          PlatformIO.getDirSeparator()
+        );
+        PlatformIO.deleteDirectoryPromise(backupPath)
+          .then(() => {
+            console.log('Cleaning revisions successful for ' + filePath);
+            return true;
+          })
+          .catch(err => {
+            console.warn('Cleaning revisions failed ', err);
+          });
         // Delete sidecar file and thumb
         deleteFilesPromise([
           getMetaFileLocationForFile(filePath, PlatformIO.getDirSeparator()),
