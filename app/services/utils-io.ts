@@ -1472,13 +1472,13 @@ export function updateFsEntries(
 
 export function mergeFsEntryMeta(props: any = {}): TS.FileSystemEntryMeta {
   return {
-    id: props.id || getUuid(),
     appName: versionMeta.name,
     appVersion: versionMeta.version,
     description: '',
     lastUpdated: new Date().getTime(),
     tags: [],
-    ...props
+    ...props,
+    id: props.id || getUuid()
   };
 }
 
