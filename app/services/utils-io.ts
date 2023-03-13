@@ -64,6 +64,7 @@ import {
 } from '-/services/thumbsgenerator';
 import { base64ToArrayBuffer } from '-/utils/dom';
 import { Pro } from '-/pro';
+import { supportedFileTypes } from '-/extension-config';
 
 const supportedImgsWS = [
   'jpg',
@@ -1322,6 +1323,45 @@ export function normalizeUrl(url: string) {
 }
 
 /**
+ * @param a - source array
+ * @param b - updates array
+ * @param prop
+ */
+export function mergeByProp(a, b, prop) {
+  const reduced = a.filter(
+    aitem => !b.find(bitem => aitem[prop] === bitem[prop])
+  );
+  return reduced.concat(b);
+}
+
+/**
+ * Update a props from b only if empty
+ * @param a - source array
+ * @param b - updates array
+ * @param prop
+ */
+export function updateByProp(a, b, prop) {
+  const commonResults = [];
+  const uniqueResults = [];
+  for (const el of a) {
+    const commonB = b.find(bitem => bitem[prop] === el[prop]);
+    if (commonB) {
+      const common = {};
+      Object.keys(el).forEach(function(key) {
+        common[key] = el[key] || commonB[key];
+      });
+      commonResults.push(common);
+    } else {
+      uniqueResults.push(el);
+    }
+  }
+  const uniqueB = b.filter(
+    bitem => !a.find(aitem => bitem[prop] === aitem[prop])
+  );
+  return [...commonResults, ...uniqueResults, ...uniqueB];
+}
+
+/**
  * https://stackoverflow.com/a/71981197/2285631
  * @param a
  * @param b
@@ -1499,4 +1539,18 @@ export function createFsEntryMeta(
       );
       return newFsEntryMeta.id;
     });
+}
+export function getDefaultViewer(fileType) {
+  const type = supportedFileTypes.find(fType => fType.type === fileType);
+  if (type) {
+    return type.viewer;
+  }
+  return undefined;
+}
+export function getDefaultEditor(fileType) {
+  const type = supportedFileTypes.find(fType => fType.type === fileType);
+  if (type) {
+    return type.editor;
+  }
+  return undefined;
 }

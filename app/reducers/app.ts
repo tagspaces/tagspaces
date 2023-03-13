@@ -57,7 +57,8 @@ import {
   getRelativeEntryPath,
   getCleanLocationPath,
   updateFsEntries,
-  loadMetaDataPromise
+  loadMetaDataPromise,
+  mergeByProp
 } from '-/services/utils-io';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import i18n from '../services/i18n';
@@ -80,6 +81,7 @@ import {
 } from '-/services/taglibrary-utils';
 import { getProTeaserSlideIndex } from '-/content/ProTeaserSlides';
 import GlobalSearch from '-/services/search-index';
+import { extensionsFound } from '-/extension-config';
 
 export const types = {
   DEVICE_ONLINE: 'APP/DEVICE_ONLINE',
@@ -153,7 +155,10 @@ export const types = {
   UPDATE_CURRENTDIR_ENTRY: 'APP/UPDATE_CURRENTDIR_ENTRY',
   UPDATE_CURRENTDIR_ENTRIES: 'APP/UPDATE_CURRENTDIR_ENTRIES',
   REFLECT_EDITED_ENTRY_PATHS: 'APP/REFLECT_EDITED_ENTRY_PATHS',
-  SET_ISLOADING: 'APP/SET_ISLOADING'
+  SET_ISLOADING: 'APP/SET_ISLOADING',
+  ADD_EXTENSION: 'APP/ADD_EXTENSION',
+  ADD_EXTENSIONS: 'APP/ADD_EXTENSIONS',
+  REMOVE_EXTENSIONS: 'APP/REMOVE_EXTENSIONS'
 };
 
 export const NotificationTypes = {
@@ -211,6 +216,7 @@ if (window.ExtDefaultVerticalPanel === 'none') {
 }
 
 export const initialState = {
+  extensions: extensionsFound,
   isLoading: false,
   error: null,
   loggedIn: false,
@@ -926,6 +932,34 @@ export default (state: any = initialState, action: any) => {
         helpFeedbackPanelOpened: false
       };
     }
+    case types.ADD_EXTENSIONS: {
+      return {
+        ...state,
+        extensions: mergeByProp(
+          state.extensions,
+          action.extensions,
+          'extensionId'
+        )
+      };
+    }
+    case types.ADD_EXTENSION: {
+      return {
+        ...state,
+        extensions: mergeByProp(
+          state.extensions,
+          [action.extension],
+          'extensionId'
+        ) // updateExtensions(state.extensions, action.extension)
+      };
+    }
+    case types.REMOVE_EXTENSIONS: {
+      return {
+        ...state,
+        extensions: state.extensions.filter(
+          ext => ext.extensionId !== action.extensionId
+        )
+      };
+    }
     default: {
       return state;
     }
@@ -946,6 +980,18 @@ function disableBackGestureMac() {
 }
 
 export const actions = {
+  addExtension: (extension: TS.Extension) => ({
+    type: types.ADD_EXTENSION,
+    extension
+  }),
+  addExtensions: (extensions: Array<TS.Extension>) => ({
+    type: types.ADD_EXTENSIONS,
+    extensions
+  }),
+  removeExtension: (extensionId: string) => ({
+    type: types.REMOVE_EXTENSIONS,
+    extensionId
+  }),
   setLastBackgroundImageChange: (folderPath, lastBackgroundImageChange) => ({
     type: types.LAST_BACKGROUND_IMAGE_CHANGE,
     folderPath,
@@ -2858,6 +2904,7 @@ export const getSelectedEntries = (state: any) =>
   state.app.selectedEntries ? state.app.selectedEntries : [];
 export const getSelectedEntriesLength = (state: any) =>
   state.app.selectedEntries ? state.app.selectedEntries.length : 0;
+export const getExtensions = (state: any) => state.app.extensions;
 export const getDirectoryMeta = (state: any) => state.app.directoryMeta;
 export const isGeneratingThumbs = (state: any) => state.app.isGeneratingThumbs;
 export const isReadOnlyMode = (state: any) => state.app.isReadOnlyMode;

@@ -27,6 +27,12 @@ import { actions as AppActions } from './app';
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '../pro';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import {
+  getDefaultEditor,
+  getDefaultViewer,
+  mergeByProp,
+  updateByProp
+} from '-/services/utils-io';
 
 export const types = {
   UPGRADE_SETTINGS: 'SETTINGS/UPGRADE_SETTINGS',
@@ -76,9 +82,7 @@ export const types = {
   SET_ZOOM_OUT: 'SETTINGS/SET_ZOOM_OUT',
   SET_SUPPORTED_FILE_TYPES: 'SETTINGS/SET_SUPPORTED_FILE_TYPES',
   ADD_SUPPORTED_FILE_TYPES: 'SETTINGS/ADD_SUPPORTED_FILE_TYPES',
-  ADD_EXTENSION: 'SETTINGS/ADD_EXTENSION',
-  ADD_EXTENSIONS: 'SETTINGS/ADD_EXTENSIONS',
-  REMOVE_EXTENSIONS: 'SETTINGS/REMOVE_EXTENSIONS',
+  REMOVE_SUPPORTED_FILE_TYPES: 'SETTINGS/REMOVE_SUPPORTED_FILE_TYPES',
   SET_LAST_PUBLISHED_VERSION: 'SETTINGS/SET_LAST_PUBLISHED_VERSION',
   SET_ENTRY_PROPERTIES_SPLIT_SIZE: 'SETTINGS/SET_ENTRY_PROPERTIES_SPLIT_SIZE',
   SET_MAIN_VSPLIT_SIZE: 'SETTINGS/SET_MAIN_VSPLIT_SIZE',
@@ -93,34 +97,6 @@ export const types = {
   SET_FOLDER_OPEN_HISTORY: 'SET_FOLDER_OPEN_HISTORY',
   SET_FILE_EDIT_HISTORY: 'SET_FILE_EDIT_HISTORY'
 };
-
-/**
- * @param a - source array
- * @param b - updates array
- * @param prop
- */
-function merge(a, b, prop) {
-  const reduced = a.filter(
-    aitem => !b.find(bitem => aitem[prop] === bitem[prop])
-  );
-  return reduced.concat(b);
-}
-
-function updateExtensions(extArray, ext) {
-  const exist = extArray.some(ex => ex.extensionId === ext.extensionId);
-  let extensions;
-  if (exist) {
-    extensions = extArray.map((ex: TS.Extension) => {
-      if (ex.extensionId === ext.extensionId) {
-        return ext;
-      }
-      return ex;
-    });
-  } else {
-    extensions = [...extArray, ext];
-  }
-  return extensions;
-}
 
 export default (state: any = defaultSettings, action: any) => {
   switch (action.type) {
@@ -150,7 +126,7 @@ export default (state: any = defaultSettings, action: any) => {
           // ...defaultSettings.keyBindings, // use to reset to the default key bindings
           ...mergedKeyBindings
         ],
-        supportedFileTypes: merge(
+        supportedFileTypes: mergeByProp(
           state.supportedFileTypes,
           defaultSettings.supportedFileTypes,
           'type'
@@ -354,31 +330,28 @@ export default (state: any = defaultSettings, action: any) => {
     case types.ADD_SUPPORTED_FILE_TYPES: {
       return {
         ...state,
-        supportedFileTypes: merge(
+        supportedFileTypes: updateByProp(
           state.supportedFileTypes,
           action.supportedFileTypes,
           'type'
         )
       };
     }
-    case types.ADD_EXTENSIONS: {
+    case types.REMOVE_SUPPORTED_FILE_TYPES: {
+      const supportedFileTypes = state.supportedFileTypes.map(
+        (fType: TS.FileTypes) => ({
+          ...fType,
+          ...(fType.viewer === action.extensionId && {
+            viewer: getDefaultViewer(fType.type)
+          }),
+          ...(fType.editor === action.extensionId && {
+            editor: getDefaultEditor(fType.type)
+          })
+        })
+      );
       return {
         ...state,
-        extensions: merge(state.extensions, action.extensions, 'extensionId')
-      };
-    }
-    case types.ADD_EXTENSION: {
-      return {
-        ...state,
-        extensions: updateExtensions(state.extensions, action.extension)
-      };
-    }
-    case types.REMOVE_EXTENSIONS: {
-      return {
-        ...state,
-        extensions: state.extensions.filter(
-          ext => ext.extensionId !== action.extensionId
-        )
+        supportedFileTypes: supportedFileTypes
       };
     }
     case types.SET_ENTRY_PROPERTIES_SPLIT_SIZE: {
@@ -680,21 +653,13 @@ export const actions = {
     type: types.SET_GLOBAL_KEYBINDING,
     enableGlobalKeyboardShortcuts
   }),
-  addExtension: (extension: TS.Extension) => ({
-    type: types.ADD_EXTENSION,
-    extension
-  }),
-  addExtensions: (extensions: Array<TS.Extension>) => ({
-    type: types.ADD_EXTENSIONS,
-    extensions
-  }),
-  removeExtension: (extensionId: string) => ({
-    type: types.REMOVE_EXTENSIONS,
-    extensionId
-  }),
   addSupportedFileTypes: (supportedFileTypes: []) => ({
     type: types.ADD_SUPPORTED_FILE_TYPES,
     supportedFileTypes
+  }),
+  removeSupportedFileTypes: (extensionId: string) => ({
+    type: types.REMOVE_SUPPORTED_FILE_TYPES,
+    extensionId
   }),
   setSupportedFileTypes: (supportedFileTypes: []) => ({
     type: types.SET_SUPPORTED_FILE_TYPES,
@@ -870,7 +835,6 @@ export const getSupportedFileTypes = (state: any) =>
   state.settings.supportedFileTypes.sort((a, b) =>
     a.type > b.type ? 1 : a.type < b.type ? -1 : 0
   );
-export const getExtensions = (state: any) => state.settings.extensions;
 export const getTagColor = (state: any) => state.settings.tagBackgroundColor;
 export const getTagTextColor = (state: any) => state.settings.tagTextColor;
 export const getCurrentTheme = (state: any) => state.settings.currentTheme;
