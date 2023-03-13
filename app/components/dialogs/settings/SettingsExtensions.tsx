@@ -105,17 +105,18 @@ function SettingsExtensions(props: Props) {
         </AccordionSummary>
         <AccordionDetails>
           <List>
-            {props.extension
-              .filter(ext => !ext.extensionExternal)
-              .map(ext => (
-                <ListItem key={ext.extensionId} disablePadding>
-                  {ext.extensionName} ({ext.version})
-                </ListItem>
-              ))}
+            {props.extension &&
+              props.extension
+                .filter(ext => !ext.extensionExternal)
+                .map(ext => (
+                  <ListItem key={ext.extensionId} disablePadding>
+                    {ext.extensionName} ({ext.version})
+                  </ListItem>
+                ))}
           </List>
         </AccordionDetails>
       </Accordion>
-      <Accordion>
+      <Accordion defaultExpanded>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="installed-content"
@@ -125,28 +126,33 @@ function SettingsExtensions(props: Props) {
         </AccordionSummary>
         <AccordionDetails>
           <List>
-            {props.extension
-              .filter(ext => ext.extensionExternal)
-              .map(ext => (
-                <ListItem key={ext.extensionId} disablePadding>
-                  {ext.extensionName} ({ext.version})
-                  <Tooltip title={i18n.t('core:removeExtension')}>
-                    <IconButton
-                      aria-label={i18n.t('core:delete')}
-                      onClick={() => {
-                        props.removeExtension(ext.extensionId);
-                        props.removeSupportedFileTypes(ext.extensionId);
-                        PlatformFacade.removeExtension(ext.extensionId);
-                      }}
-                      data-tid="revisionsTID"
-                      size="large"
-                    >
-                      <DeleteIcon color={'action'} />
-                    </IconButton>
-                  </Tooltip>
-                </ListItem>
-              ))}
+            {props.extension &&
+              props.extension
+                .filter(ext => ext.extensionExternal)
+                .map(ext => (
+                  <ListItem key={ext.extensionId} disablePadding>
+                    {ext.extensionName} ({ext.version})
+                    <Tooltip title={i18n.t('core:removeExtension')}>
+                      <IconButton
+                        aria-label={i18n.t('core:delete')}
+                        onClick={() => {
+                          props.removeExtension(ext.extensionId);
+                          props.removeSupportedFileTypes(ext.extensionId);
+                          PlatformFacade.removeExtension(ext.extensionId);
+                        }}
+                        data-tid="revisionsTID"
+                        size="large"
+                      >
+                        <DeleteIcon color={'action'} />
+                      </IconButton>
+                    </Tooltip>
+                  </ListItem>
+                ))}
           </List>
+          {props.extension &&
+            props.extension.filter(ext => ext.extensionExternal).length < 1 && (
+              <Typography variant="subtitle1">No extensions found</Typography>
+            )}
           {props.isDevMode && (
             <Box style={{ textAlign: 'center' }}>
               <Button

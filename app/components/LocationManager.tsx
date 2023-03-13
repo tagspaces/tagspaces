@@ -137,18 +137,31 @@ function LocationManager(props: Props) {
       {isLoading &&
         (PlatformIO.haveObjectStoreSupport() ||
           PlatformIO.haveWebDavSupport()) && (
-          <div
-            style={{
-              position: 'absolute',
-              zIndex: 1000,
-              height: 'calc(100% - 180px)',
-              width: 310,
-              backdropFilter: 'grayscale(1)'
-              // backgroundColor: 'red'
-              // backdropFilter: 'blur(2px)',
-              // backgroundColor: '#fafafaAA' // red: '#eb585882' '#d9d9d980'
-            }}
-          />
+          <>
+            <style>
+              {`
+                @keyframes hide {
+                  to {
+                      width: 0;
+                  }
+                }
+              }
+            `}
+            </style>
+            <div
+              style={{
+                position: 'absolute',
+                zIndex: 1000,
+                height: 'calc(100% - 180px)',
+                width: 310,
+                backdropFilter: 'grayscale(1)',
+                animation: 'hide 1ms linear 5s 1 forwards'
+                // backgroundColor: 'red'
+                // backdropFilter: 'blur(2px)',
+                // backgroundColor: '#fafafaAA' // red: '#eb585882' '#d9d9d980'
+              }}
+            />
+          </>
         )}
       <LocationManagerMenu
         importLocations={() => {
