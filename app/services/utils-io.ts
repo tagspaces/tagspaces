@@ -64,6 +64,7 @@ import {
 } from '-/services/thumbsgenerator';
 import { base64ToArrayBuffer } from '-/utils/dom';
 import { Pro } from '-/pro';
+import { supportedFileTypes } from '-/extension-config';
 
 const supportedImgsWS = [
   'jpg',
@@ -1499,4 +1500,18 @@ export function createFsEntryMeta(
       );
       return newFsEntryMeta.id;
     });
+}
+export function getDefaultViewer(fileType) {
+  const type = supportedFileTypes.find(fType => fType.type === fileType);
+  if (type) {
+    return type.viewer;
+  }
+  return undefined;
+}
+export function getDefaultEditor(fileType) {
+  const type = supportedFileTypes.find(fType => fType.type === fileType);
+  if (type) {
+    return type.editor;
+  }
+  return undefined;
 }

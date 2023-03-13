@@ -40,19 +40,23 @@ import IOActions from '-/reducers/io-actions';
 import { TS } from '-/tagspaces.namespace';
 import i18n from '-/services/i18n';
 import PlatformFacade from '-/services/platform-facade';
+import PlatformIO from '-/services/platform-facade';
 
 interface Props {
   extension: Array<TS.Extension>;
   isDevMode: boolean;
   removeExtension: (extensionId: string) => void;
+  removeSupportedFileTypes: (extensionId: string) => void;
   resetProgress: () => void;
   onUploadProgress: (progress: Progress, response: any) => void;
   toggleUploadDialog: () => void;
   uploadFilesAPI: (
     files: Array<File>,
     destination: string,
-    onUploadProgress?: (progress: Progress, response: any) => void
+    onUploadProgress?: (progress: Progress, response: any) => void,
+    uploadMeta?: boolean
   ) => any;
+  switchCurrentLocationType: (currentLocationId?) => void;
 }
 
 function SettingsExtensions(props: Props) {
@@ -63,10 +67,12 @@ function SettingsExtensions(props: Props) {
     PlatformFacade.getUserDataDir().then(dataDir => {
       props.resetProgress();
       props.toggleUploadDialog();
+      PlatformIO.disableObjectStoreSupport();
+      PlatformIO.disableWebdavSupport();
       const destinationPath =
         dataDir + PlatformFacade.getDirSeparator() + 'tsplugins';
       props
-        .uploadFilesAPI(files, destinationPath, props.onUploadProgress)
+        .uploadFilesAPI(files, destinationPath, props.onUploadProgress, false)
         .then(fsEntries => {
           const targetPath =
             destinationPath +
@@ -81,11 +87,12 @@ function SettingsExtensions(props: Props) {
           return Promise.all(promises).then(paths => {
             PlatformFacade.loadExtensions();
             paths.forEach(path => PlatformFacade.deleteFilePromise(path));
-            return true;
+            return props.switchCurrentLocationType();
           });
         })
         .catch(error => {
           console.log('uploadFiles', error);
+          return props.switchCurrentLocationType();
         });
     });
   }
@@ -132,6 +139,7 @@ function SettingsExtensions(props: Props) {
                       aria-label={i18n.t('core:delete')}
                       onClick={() => {
                         props.removeExtension(ext.extensionId);
+                        props.removeSupportedFileTypes(ext.extensionId);
                         PlatformFacade.removeExtension(ext.extensionId);
                       }}
                       data-tid="revisionsTID"
@@ -178,10 +186,12 @@ function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
       removeExtension: SettingsActions.removeExtension,
+      removeSupportedFileTypes: SettingsActions.removeSupportedFileTypes,
       onUploadProgress: AppActions.onUploadProgress,
       uploadFilesAPI: IOActions.uploadFilesAPI,
       toggleUploadDialog: AppActions.toggleUploadDialog,
-      resetProgress: AppActions.resetProgress
+      resetProgress: AppActions.resetProgress,
+      switchCurrentLocationType: AppActions.switchCurrentLocationType
     },
     dispatch
   );

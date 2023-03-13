@@ -27,6 +27,7 @@ import { actions as AppActions } from './app';
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '../pro';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import { getDefaultEditor, getDefaultViewer } from '-/services/utils-io';
 
 export const types = {
   UPGRADE_SETTINGS: 'SETTINGS/UPGRADE_SETTINGS',
@@ -76,6 +77,7 @@ export const types = {
   SET_ZOOM_OUT: 'SETTINGS/SET_ZOOM_OUT',
   SET_SUPPORTED_FILE_TYPES: 'SETTINGS/SET_SUPPORTED_FILE_TYPES',
   ADD_SUPPORTED_FILE_TYPES: 'SETTINGS/ADD_SUPPORTED_FILE_TYPES',
+  REMOVE_SUPPORTED_FILE_TYPES: 'SETTINGS/REMOVE_SUPPORTED_FILE_TYPES',
   ADD_EXTENSION: 'SETTINGS/ADD_EXTENSION',
   ADD_EXTENSIONS: 'SETTINGS/ADD_EXTENSIONS',
   REMOVE_EXTENSIONS: 'SETTINGS/REMOVE_EXTENSIONS',
@@ -106,7 +108,34 @@ function merge(a, b, prop) {
   return reduced.concat(b);
 }
 
-function updateExtensions(extArray, ext) {
+/**
+ * Update a props from b only if empty
+ * @param a - source array
+ * @param b - updates array
+ * @param prop
+ */
+function update(a, b, prop) {
+  const commonResults = [];
+  const uniqueResults = [];
+  for (const el of a) {
+    const commonB = b.find(bitem => bitem[prop] === el[prop]);
+    if (commonB) {
+      const common = {};
+      Object.keys(el).forEach(function(key) {
+        common[key] = el[key] || commonB[key];
+      });
+      commonResults.push(common);
+    } else {
+      uniqueResults.push(el);
+    }
+  }
+  const uniqueB = b.filter(
+    bitem => !a.find(aitem => bitem[prop] === aitem[prop])
+  );
+  return [...commonResults, ...uniqueResults, ...uniqueB];
+}
+
+/*function updateExtensions(extArray, ext) {
   const exist = extArray.some(ex => ex.extensionId === ext.extensionId);
   let extensions;
   if (exist) {
@@ -120,7 +149,7 @@ function updateExtensions(extArray, ext) {
     extensions = [...extArray, ext];
   }
   return extensions;
-}
+}*/
 
 export default (state: any = defaultSettings, action: any) => {
   switch (action.type) {
@@ -354,11 +383,28 @@ export default (state: any = defaultSettings, action: any) => {
     case types.ADD_SUPPORTED_FILE_TYPES: {
       return {
         ...state,
-        supportedFileTypes: merge(
+        supportedFileTypes: update(
           state.supportedFileTypes,
           action.supportedFileTypes,
           'type'
         )
+      };
+    }
+    case types.REMOVE_SUPPORTED_FILE_TYPES: {
+      const supportedFileTypes = state.supportedFileTypes.map(
+        (fType: TS.FileTypes) => ({
+          ...fType,
+          ...(fType.viewer === action.extensionId && {
+            viewer: getDefaultViewer(fType.type)
+          }),
+          ...(fType.editor === action.extensionId && {
+            editor: getDefaultEditor(fType.type)
+          })
+        })
+      );
+      return {
+        ...state,
+        supportedFileTypes: supportedFileTypes
       };
     }
     case types.ADD_EXTENSIONS: {
@@ -370,7 +416,7 @@ export default (state: any = defaultSettings, action: any) => {
     case types.ADD_EXTENSION: {
       return {
         ...state,
-        extensions: updateExtensions(state.extensions, action.extension)
+        extensions: merge(state.extensions, [action.extension], 'extensionId') // updateExtensions(state.extensions, action.extension)
       };
     }
     case types.REMOVE_EXTENSIONS: {
@@ -695,6 +741,10 @@ export const actions = {
   addSupportedFileTypes: (supportedFileTypes: []) => ({
     type: types.ADD_SUPPORTED_FILE_TYPES,
     supportedFileTypes
+  }),
+  removeSupportedFileTypes: (extensionId: string) => ({
+    type: types.REMOVE_SUPPORTED_FILE_TYPES,
+    extensionId
   }),
   setSupportedFileTypes: (supportedFileTypes: []) => ({
     type: types.SET_SUPPORTED_FILE_TYPES,

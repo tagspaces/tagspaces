@@ -115,10 +115,7 @@ const actions = {
                   fsEntryMeta.id,
                   PlatformIO.getDirSeparator()
                 );
-                return PlatformIO.moveDirectoryPromise(
-                  backupDir,
-                  newBackupDir
-                )
+                return PlatformIO.moveDirectoryPromise(backupDir, newBackupDir)
                   .then(() => {
                     console.log(
                       'Moving revisions successful from ' +
@@ -296,12 +293,14 @@ const actions = {
    * @param files
    * @param targetPath
    * @param onUploadProgress
+   * @param uploadMeta - try to upload meta and thumbs if available
    * reader.onload not work for multiple files https://stackoverflow.com/questions/56178918/react-upload-multiple-files-using-window-filereader
    */
   uploadFilesAPI: (
     files: Array<File>,
     targetPath: string,
-    onUploadProgress?: (progress: Progress, response: any) => void
+    onUploadProgress?: (progress: Progress, response: any) => void,
+    uploadMeta = true
   ) => (dispatch: (actions: Object) => void) => {
     if (AppConfig.isElectron || AppConfig.isCordovaiOS) {
       const arrFiles = [];
@@ -309,7 +308,7 @@ const actions = {
         arrFiles.push(files[i].path);
       }
       return dispatch(
-        actions.uploadFiles(arrFiles, targetPath, onUploadProgress)
+        actions.uploadFiles(arrFiles, targetPath, onUploadProgress, uploadMeta)
       );
     }
 
@@ -410,11 +409,13 @@ const actions = {
    * @param paths
    * @param targetPath
    * @param onUploadProgress
+   * @param uploadMeta
    */
   uploadFiles: (
     paths: Array<string>,
     targetPath: string,
-    onUploadProgress?: (progress: Progress, response: any) => void
+    onUploadProgress?: (progress: Progress, response: any) => void,
+    uploadMeta = true
   ) => (dispatch: (actions: Object) => void) =>
     new Promise((resolve, reject) => {
       function uploadFile(
@@ -490,18 +491,20 @@ const actions = {
           target = target.substr(1);
         }
         uploadJobs.push([path, target, 'file']);
-        // copy meta
-        uploadJobs.push([
-          getMetaFileLocationForFile(path, AppConfig.dirSeparator),
-          getMetaFileLocationForFile(target, AppConfig.dirSeparator),
-          'meta'
-        ]);
-        uploadJobs.push([
-          getThumbFileLocationForFile(path, AppConfig.dirSeparator),
-          getThumbFileLocationForFile(target, AppConfig.dirSeparator),
-          'thumb',
-          path
-        ]);
+        if (uploadMeta) {
+          // copy meta
+          uploadJobs.push([
+            getMetaFileLocationForFile(path, AppConfig.dirSeparator),
+            getMetaFileLocationForFile(target, AppConfig.dirSeparator),
+            'meta'
+          ]);
+          uploadJobs.push([
+            getThumbFileLocationForFile(path, AppConfig.dirSeparator),
+            getThumbFileLocationForFile(target, AppConfig.dirSeparator),
+            'thumb',
+            path
+          ]);
+        }
         return true;
       });
       const jobsPromises = uploadJobs.map(job => {
