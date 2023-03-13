@@ -986,7 +986,7 @@ function mapDispatchToProps(dispatch) {
       deleteDirectory: AppActions.deleteDirectory,
       deleteFile: AppActions.deleteFile,
       setSearchQuery: LocationIndexActions.setSearchQuery,
-      addExtensions: SettingsActions.addExtensions,
+      addExtensions: AppActions.addExtensions,
       addSupportedFileTypes: SettingsActions.addSupportedFileTypes
     },
     dispatch

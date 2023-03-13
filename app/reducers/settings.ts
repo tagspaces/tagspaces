@@ -27,7 +27,12 @@ import { actions as AppActions } from './app';
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '../pro';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import { getDefaultEditor, getDefaultViewer } from '-/services/utils-io';
+import {
+  getDefaultEditor,
+  getDefaultViewer,
+  mergeByProp,
+  updateByProp
+} from '-/services/utils-io';
 
 export const types = {
   UPGRADE_SETTINGS: 'SETTINGS/UPGRADE_SETTINGS',
@@ -78,9 +83,6 @@ export const types = {
   SET_SUPPORTED_FILE_TYPES: 'SETTINGS/SET_SUPPORTED_FILE_TYPES',
   ADD_SUPPORTED_FILE_TYPES: 'SETTINGS/ADD_SUPPORTED_FILE_TYPES',
   REMOVE_SUPPORTED_FILE_TYPES: 'SETTINGS/REMOVE_SUPPORTED_FILE_TYPES',
-  ADD_EXTENSION: 'SETTINGS/ADD_EXTENSION',
-  ADD_EXTENSIONS: 'SETTINGS/ADD_EXTENSIONS',
-  REMOVE_EXTENSIONS: 'SETTINGS/REMOVE_EXTENSIONS',
   SET_LAST_PUBLISHED_VERSION: 'SETTINGS/SET_LAST_PUBLISHED_VERSION',
   SET_ENTRY_PROPERTIES_SPLIT_SIZE: 'SETTINGS/SET_ENTRY_PROPERTIES_SPLIT_SIZE',
   SET_MAIN_VSPLIT_SIZE: 'SETTINGS/SET_MAIN_VSPLIT_SIZE',
@@ -95,61 +97,6 @@ export const types = {
   SET_FOLDER_OPEN_HISTORY: 'SET_FOLDER_OPEN_HISTORY',
   SET_FILE_EDIT_HISTORY: 'SET_FILE_EDIT_HISTORY'
 };
-
-/**
- * @param a - source array
- * @param b - updates array
- * @param prop
- */
-function merge(a, b, prop) {
-  const reduced = a.filter(
-    aitem => !b.find(bitem => aitem[prop] === bitem[prop])
-  );
-  return reduced.concat(b);
-}
-
-/**
- * Update a props from b only if empty
- * @param a - source array
- * @param b - updates array
- * @param prop
- */
-function update(a, b, prop) {
-  const commonResults = [];
-  const uniqueResults = [];
-  for (const el of a) {
-    const commonB = b.find(bitem => bitem[prop] === el[prop]);
-    if (commonB) {
-      const common = {};
-      Object.keys(el).forEach(function(key) {
-        common[key] = el[key] || commonB[key];
-      });
-      commonResults.push(common);
-    } else {
-      uniqueResults.push(el);
-    }
-  }
-  const uniqueB = b.filter(
-    bitem => !a.find(aitem => bitem[prop] === aitem[prop])
-  );
-  return [...commonResults, ...uniqueResults, ...uniqueB];
-}
-
-/*function updateExtensions(extArray, ext) {
-  const exist = extArray.some(ex => ex.extensionId === ext.extensionId);
-  let extensions;
-  if (exist) {
-    extensions = extArray.map((ex: TS.Extension) => {
-      if (ex.extensionId === ext.extensionId) {
-        return ext;
-      }
-      return ex;
-    });
-  } else {
-    extensions = [...extArray, ext];
-  }
-  return extensions;
-}*/
 
 export default (state: any = defaultSettings, action: any) => {
   switch (action.type) {
@@ -179,7 +126,7 @@ export default (state: any = defaultSettings, action: any) => {
           // ...defaultSettings.keyBindings, // use to reset to the default key bindings
           ...mergedKeyBindings
         ],
-        supportedFileTypes: merge(
+        supportedFileTypes: mergeByProp(
           state.supportedFileTypes,
           defaultSettings.supportedFileTypes,
           'type'
@@ -383,7 +330,7 @@ export default (state: any = defaultSettings, action: any) => {
     case types.ADD_SUPPORTED_FILE_TYPES: {
       return {
         ...state,
-        supportedFileTypes: update(
+        supportedFileTypes: updateByProp(
           state.supportedFileTypes,
           action.supportedFileTypes,
           'type'
@@ -405,26 +352,6 @@ export default (state: any = defaultSettings, action: any) => {
       return {
         ...state,
         supportedFileTypes: supportedFileTypes
-      };
-    }
-    case types.ADD_EXTENSIONS: {
-      return {
-        ...state,
-        extensions: merge(state.extensions, action.extensions, 'extensionId')
-      };
-    }
-    case types.ADD_EXTENSION: {
-      return {
-        ...state,
-        extensions: merge(state.extensions, [action.extension], 'extensionId') // updateExtensions(state.extensions, action.extension)
-      };
-    }
-    case types.REMOVE_EXTENSIONS: {
-      return {
-        ...state,
-        extensions: state.extensions.filter(
-          ext => ext.extensionId !== action.extensionId
-        )
       };
     }
     case types.SET_ENTRY_PROPERTIES_SPLIT_SIZE: {
@@ -726,18 +653,6 @@ export const actions = {
     type: types.SET_GLOBAL_KEYBINDING,
     enableGlobalKeyboardShortcuts
   }),
-  addExtension: (extension: TS.Extension) => ({
-    type: types.ADD_EXTENSION,
-    extension
-  }),
-  addExtensions: (extensions: Array<TS.Extension>) => ({
-    type: types.ADD_EXTENSIONS,
-    extensions
-  }),
-  removeExtension: (extensionId: string) => ({
-    type: types.REMOVE_EXTENSIONS,
-    extensionId
-  }),
   addSupportedFileTypes: (supportedFileTypes: []) => ({
     type: types.ADD_SUPPORTED_FILE_TYPES,
     supportedFileTypes
@@ -920,7 +835,6 @@ export const getSupportedFileTypes = (state: any) =>
   state.settings.supportedFileTypes.sort((a, b) =>
     a.type > b.type ? 1 : a.type < b.type ? -1 : 0
   );
-export const getExtensions = (state: any) => state.settings.extensions;
 export const getTagColor = (state: any) => state.settings.tagBackgroundColor;
 export const getTagTextColor = (state: any) => state.settings.tagTextColor;
 export const getCurrentTheme = (state: any) => state.settings.currentTheme;

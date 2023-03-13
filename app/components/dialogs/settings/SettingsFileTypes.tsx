@@ -46,13 +46,10 @@ import i18n from '-/services/i18n';
 import TransparentBackground from '-/components/TransparentBackground';
 import { TS } from '-/tagspaces.namespace';
 import AppConfig from '-/AppConfig';
-import {
-  actions,
-  getExtensions,
-  getSupportedFileTypes
-} from '-/reducers/settings';
+import { actions, getSupportedFileTypes } from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import PlatformFacade from '-/services/platform-facade';
+import { getExtensions } from '-/reducers/app';
 // import { extensionsFound } from '-/extension-config';
 
 const styles: any = (theme: any) => ({

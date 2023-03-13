@@ -30,12 +30,8 @@ import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Progress } from 'aws-sdk/clients/s3';
-import {
-  actions as SettingsActions,
-  getExtensions,
-  isDevMode
-} from '-/reducers/settings';
-import { actions as AppActions } from '-/reducers/app';
+import { actions as SettingsActions, isDevMode } from '-/reducers/settings';
+import { actions as AppActions, getExtensions } from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
 import { TS } from '-/tagspaces.namespace';
 import i18n from '-/services/i18n';
@@ -185,7 +181,7 @@ function mapStateToProps(state) {
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
-      removeExtension: SettingsActions.removeExtension,
+      removeExtension: AppActions.removeExtension,
       removeSupportedFileTypes: SettingsActions.removeSupportedFileTypes,
       onUploadProgress: AppActions.onUploadProgress,
       uploadFilesAPI: IOActions.uploadFilesAPI,
