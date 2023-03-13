@@ -68,6 +68,8 @@
   "fileTypeTab": "Tipos de Arquivos",
   "keyBindingsTab": "Atalhos de Teclado",
   "advancedSettingsTab": "Avançado",
+  "extensionsTab": "Extensions",
+  "enableDevMode": "Enable Developer Mode",
   "fileViewer": "Visualizador de Arquivos",
   "reloadDocument": "Recarregar documento",
   "selectAllFiles": "Selecionar todos os arquivos",
@@ -694,6 +696,7 @@
   "showBookmarks": "Favoritos",
   "refresh": "Refresh",
   "deleteBookmarks": "Delete All Bookmarks",
+  "deleteAllRevisions": "Delete All Revisions",
   "quickAccess": "Quick access",
   "resetLocalSettings": "Reset Custom Settings",
   "folderWithCustomPerspectiveSetting": "Current folder has custom settings for this perspective",
@@ -746,5 +749,8 @@
   "minutes": "minutes",
   "day": "day",
   "days": "days",
+  "change": "Change",
+  "fileSaved": "Saved",
+  "installExtension": "Install Extension",
   "-": "-"
 }
