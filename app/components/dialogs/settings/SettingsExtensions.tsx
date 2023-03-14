@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
@@ -37,6 +37,7 @@ import { TS } from '-/tagspaces.namespace';
 import i18n from '-/services/i18n';
 import PlatformFacade from '-/services/platform-facade';
 import PlatformIO from '-/services/platform-facade';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 
 interface Props {
   extension: Array<TS.Extension>;
@@ -57,6 +58,9 @@ interface Props {
 
 function SettingsExtensions(props: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [removeExtDialogOpened, setRemoveExtDialogOpened] = useState<
+    TS.Extension
+  >(undefined);
 
   function handleFileInputChange(selection: any) {
     const files: File[] = Array.from(selection.currentTarget.files);
@@ -136,9 +140,7 @@ function SettingsExtensions(props: Props) {
                       <IconButton
                         aria-label={i18n.t('core:delete')}
                         onClick={() => {
-                          props.removeExtension(ext.extensionId);
-                          props.removeSupportedFileTypes(ext.extensionId);
-                          PlatformFacade.removeExtension(ext.extensionId);
+                          setRemoveExtDialogOpened(ext);
                         }}
                         data-tid="revisionsTID"
                         size="large"
@@ -149,6 +151,30 @@ function SettingsExtensions(props: Props) {
                   </ListItem>
                 ))}
           </List>
+          <ConfirmDialog
+            open={removeExtDialogOpened !== undefined}
+            onClose={() => setRemoveExtDialogOpened(undefined)}
+            title={i18n.t('core:removeExtension')}
+            content={i18n.t('core:removeExtensionTooltip', {
+              extensionName: removeExtDialogOpened
+                ? removeExtDialogOpened.extensionName
+                : ''
+            })}
+            confirmCallback={result => {
+              if (result) {
+                props.removeExtension(removeExtDialogOpened.extensionId);
+                props.removeSupportedFileTypes(
+                  removeExtDialogOpened.extensionId
+                );
+                PlatformFacade.removeExtension(
+                  removeExtDialogOpened.extensionId
+                );
+              }
+            }}
+            cancelDialogTID="cancelRemoveExtDialogTID"
+            confirmDialogTID="confirmRemoveExtDialogTID"
+            confirmDialogContentTID="confirmRemoveExtDialogContentTID"
+          />
           {props.extension &&
             props.extension.filter(ext => ext.extensionExternal).length < 1 && (
               <Typography variant="subtitle1">No extensions found</Typography>

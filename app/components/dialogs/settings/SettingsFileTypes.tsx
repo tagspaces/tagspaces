@@ -18,7 +18,7 @@
 
 import React, { useState, useEffect, useRef, useReducer } from 'react';
 import { connect } from 'react-redux';
-import { extend } from '@tagspaces/tagspaces-common/misc';
+import { bindActionCreators } from 'redux';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import withStyles from '@mui/styles/withStyles';
 import MenuItem from '@mui/material/MenuItem';
@@ -46,11 +46,15 @@ import i18n from '-/services/i18n';
 import TransparentBackground from '-/components/TransparentBackground';
 import { TS } from '-/tagspaces.namespace';
 import AppConfig from '-/AppConfig';
-import { actions, getSupportedFileTypes } from '-/reducers/settings';
+import {
+  actions as SettingsActions,
+  getSupportedFileTypes,
+  isDevMode
+} from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import PlatformFacade from '-/services/platform-facade';
 import { getExtensions } from '-/reducers/app';
-// import { extensionsFound } from '-/extension-config';
+import { supportedFileTypes } from '-/extension-config';
 
 const styles: any = (theme: any) => ({
   fileTypeColorDialog: {
@@ -75,10 +79,10 @@ interface Props {
   setSupportedFileTypes?: (fileTypes: Array<any>) => void;
   classes: any;
   extensions: Array<TS.Extension>;
+  isDevMode: boolean;
 }
 
 function SettingsFileTypes(props: Props) {
-  // const [items, setItems] = useStateWithCallbackLazy<Array<TS.FileTypes>>([]);
   const items = useRef<Array<TS.FileTypes>>(props.supportedFileTypes);
   const selectedItem = useRef<TS.FileTypes>(undefined);
   const isValidationInProgress = useRef<boolean>(false);
@@ -92,23 +96,44 @@ function SettingsFileTypes(props: Props) {
 
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
-  /*function getItems(supportedFileTypes) {
-    return supportedFileTypes.reduce((accumulator, fileType) => {
-      const modifiedFileType = extend({}, fileType, {
-        id: fileType.id || getUuid()
-      });
-      if (fileType.viewer !== '') {
-        accumulator.push(modifiedFileType);
-      }
-      return accumulator;
-    }, []);
-  }*/
-
   useEffect(() => {
     items.current = props.supportedFileTypes;
-    // setItems(getItems(props.supportedFileTypes), undefined);
     isValidationInProgress.current = false;
+    const timer = scrollToItem(selectedItem.current);
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
   }, [props.supportedFileTypes]);
+
+  type ScrollToIndexArgs = {
+    index: number;
+    align?: 'start' | 'center' | 'end';
+  };
+
+  function scrollToItem(item: TS.FileTypes) {
+    if (item) {
+      const index = items.current.findIndex(
+        element => element.type === item.type
+      );
+      if (index > -1) {
+        return setTimeout(function() {
+          scrollToIndex({ index: index });
+        }, 50);
+      }
+    }
+    return undefined;
+  }
+
+  function scrollToIndex({ index, align = 'start' }: ScrollToIndexArgs) {
+    if (settingsFileTypeRef.current) {
+      settingsFileTypeRef.current.scrollToIndex({
+        index,
+        align
+      });
+    }
+  }
 
   const updateItems = (
     fileType: TS.FileTypes,
@@ -127,21 +152,21 @@ function SettingsFileTypes(props: Props) {
     }
     let isSaveable = false;
     let hasViewer = false;
-    const modifiedItems = items.current.reduce((accumulator, item) => {
-      let modifiedItem = extend({}, item);
+    const modifiedItems = items.current.map(item => {
       if (item[identifierKey] === identifierValue) {
         isSaveable =
           item.type !== '' || (targetKey === 'type' && targetValue !== '');
         hasViewer = item.viewer !== '';
-        modifiedItem = extend(modifiedItem, {
+        const itemUpdated = {
+          ...item,
           [targetKey]: targetValue
-        });
+        };
+        selectedItem.current = itemUpdated;
+        return itemUpdated;
       }
-      accumulator.push(modifiedItem);
-      return accumulator;
-    }, []);
+      return item;
+    });
     items.current = modifiedItems;
-    // setItems(modifiedItems, () => {
     if (
       (targetKey !== 'type' && isSaveable && !disableSave) ||
       (targetKey === 'type' && hasViewer && isSaveable && !disableSave)
@@ -151,12 +176,9 @@ function SettingsFileTypes(props: Props) {
       isValidationInProgress.current = true;
       forceUpdate();
     }
-    //});
   };
 
   const saveFileTypes = newItems => {
-    const { setSupportedFileTypes } = props;
-
     isValidationInProgress.current = true;
 
     const isValid = validateSelectedFileTypes(newItems);
@@ -165,8 +187,7 @@ function SettingsFileTypes(props: Props) {
       forceUpdate();
       return false;
     }
-
-    setSupportedFileTypes(newItems);
+    props.setSupportedFileTypes(newItems);
   };
 
   const validateSelectedFileTypes = newItems => {
@@ -192,11 +213,12 @@ function SettingsFileTypes(props: Props) {
   const openColorPicker = selected => {
     setColorPickerVisible(true);
     selectedItem.current = selected;
+    scrollToItem(selected);
   };
 
   const closeColorPicker = () => {
     setColorPickerVisible(false);
-    selectedItem.current = undefined;
+    // selectedItem.current = undefined;
   };
 
   const handleChangeColor = color => {
@@ -445,10 +467,24 @@ function SettingsFileTypes(props: Props) {
           data-tid="addNewFileTypeTID"
           onClick={onAddFileType}
           color="secondary"
-          style={{ width: '100%' }}
+          style={{ width: '50%' }}
         >
           {i18n.t('core:addNewFileType')}
         </Button>
+        {props.isDevMode && (
+          <Button
+            data-tid="resetFileTypesTID"
+            onClick={() => {
+              selectedItem.current = undefined;
+              items.current = supportedFileTypes;
+              props.setSupportedFileTypes(supportedFileTypes);
+            }}
+            color="secondary"
+            style={{ width: '50%' }}
+          >
+            {i18n.t('core:resetFileType')}
+          </Button>
+        )}
         {isConfirmDialogOpened && (
           <ConfirmDialog
             open={isConfirmDialogOpened}
@@ -494,13 +530,18 @@ function SettingsFileTypes(props: Props) {
 
 const mapStateToProps = state => ({
   supportedFileTypes: getSupportedFileTypes(state),
-  extensions: getExtensions(state)
+  extensions: getExtensions(state),
+  isDevMode: isDevMode(state)
 });
 
-const mapDispatchToProps = dispatch => ({
-  setSupportedFileTypes: supportedFileTypes =>
-    dispatch(actions.setSupportedFileTypes(supportedFileTypes))
-});
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(
+    {
+      setSupportedFileTypes: SettingsActions.setSupportedFileTypes
+    },
+    dispatch
+  );
+}
 
 export default connect(
   mapStateToProps,

@@ -127,8 +127,8 @@ export default (state: any = defaultSettings, action: any) => {
           ...mergedKeyBindings
         ],
         supportedFileTypes: mergeByProp(
-          state.supportedFileTypes,
           defaultSettings.supportedFileTypes,
+          state.supportedFileTypes,
           'type'
         )
       };
