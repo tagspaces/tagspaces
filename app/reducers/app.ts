@@ -2738,9 +2738,7 @@ export const actions = {
                 locationPath + PlatformIO.getDirSeparator() + directoryPath;
               dispatch(actions.loadDirectoryContent(dirFullPath, false, true));
             } else {
-              dispatch(
-                actions.loadDirectoryContent(locationPath, false, true)
-              );
+              dispatch(actions.loadDirectoryContent(locationPath, false, true));
             }
 
             if (entryPath && entryPath.length > 0) {
