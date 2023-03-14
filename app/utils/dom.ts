@@ -62,8 +62,8 @@ export function updateHistory(
       if (newRelDir) {
         const newEncRelDir = encodeURIComponent(newRelDir);
         urlParams += '&tsdpath=' + newEncRelDir;
-        diffFolderPath = newRelDir !== currentFolderPath;
       }
+      diffFolderPath = newRelDir !== currentFolderPath;
     }
 
     if (newEntryPath && newEntryPath.length > 0) {
@@ -71,8 +71,8 @@ export function updateHistory(
       if (entryRelPath) {
         const newEncEntryPath = encodeURIComponent(entryRelPath);
         urlParams += '&tsepath=' + newEncEntryPath;
-        diffEntryPath = entryRelPath !== currentEntryPath;
       }
+      diffEntryPath = entryRelPath !== currentEntryPath;
     }
 
     const localePar = getURLParameter('locale');

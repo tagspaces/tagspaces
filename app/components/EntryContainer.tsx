@@ -70,7 +70,8 @@ import {
   extractFileName,
   extractDirectoryName,
   generateSharingLink,
-  getBackupFileLocation
+  getBackupFileLocation,
+  cleanRootPath
 } from '@tagspaces/tagspaces-common/paths';
 import { ProTooltip } from '-/components/HelperComponents';
 import EntryProperties from '-/components/EntryProperties';
@@ -98,7 +99,7 @@ import useEventListener from '-/utils/useEventListener';
 import { TS } from '-/tagspaces.namespace';
 import FileView from '-/components/FileView';
 import { Pro } from '-/pro';
-import { actions as LocationActions } from '-/reducers/locations';
+import { actions as LocationActions, getLocations } from '-/reducers/locations';
 import Revisions from '-/components/Revisions';
 import { Switch } from '@mui/material';
 import useFirstRender from '-/utils/useFirstRender';
@@ -191,6 +192,7 @@ interface Props {
   switchLocationType: (locationId: string) => Promise<string | null>;
   switchCurrentLocationType: (currentLocationId) => Promise<boolean>;
   revisionsEnabled: boolean;
+  locations: Array<TS.Location>;
 }
 
 const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
@@ -406,14 +408,25 @@ function EntryContainer(props: Props) {
     const params = new URLSearchParams(sharingURL.search);
     if (params.has('tslid')) {
       const locationId = params.get('tslid');
-      if (params.has('tsdpath')) {
-        const folderPath = params.get('tsdpath');
+      //if (params.has('tsdpath')) {
+      // const folderPath2 = params.get('tsdpath');
+      const folderLocation = props.locations.find(
+        location => location.uuid === locationId
+      );
+      const folderPath = extractContainingDirectoryPath(openedFile.path);
+      if (folderPath.indexOf(folderLocation.path) === 0) {
         sharingParentFolderLink = generateSharingLink(
           locationId,
           undefined,
-          folderPath
+          cleanRootPath(
+            folderPath,
+            folderLocation.path,
+            PlatformIO.getDirSeparator()
+          )
         );
       }
+
+      //}
       if (params.has('tsepath')) {
         const entryPath = params.get('tsepath');
         if (openedFile.isFile) {
@@ -1571,7 +1584,8 @@ function mapStateToProps(state) {
     isDesktopMode: isDesktopMode(state),
     tileServer: getMapTileServer(state),
     revisionsEnabled: isRevisionsEnabled(state),
-    language: getCurrentLanguage(state)
+    language: getCurrentLanguage(state),
+    locations: getLocations(state)
   };
 }
 
