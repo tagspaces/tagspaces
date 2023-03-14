@@ -154,7 +154,7 @@ function FileUploadDialog(props: Props) {
               const percentage = fileProgress.progress;
               const { path } = fileProgress;
               const fileName = extractFileName(
-                path,
+                path.split('?')[0],
                 PlatformIO.getDirSeparator()
               );
               let { abort } = fileProgress;

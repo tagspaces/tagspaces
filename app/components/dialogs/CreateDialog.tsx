@@ -46,11 +46,7 @@ import {
   getCurrentDirectoryPerspective
 } from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
-import {
-  getLocations,
-  getFirstRWLocation,
-  getCurrentLocation
-} from '-/reducers/locations';
+import { getFirstRWLocation } from '-/reducers/locations';
 import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
@@ -62,7 +58,6 @@ import FormHelperText from '@mui/material/FormHelperText';
 import { FormControl } from '@mui/material';
 import { fileNameValidation } from '-/services/utils-io';
 import { PerspectiveIDs } from '-/perspectives';
-import { FileTypeGroups } from '-/services/search';
 
 const styles: any = () => ({
   createButton: {
@@ -132,6 +127,7 @@ function CreateDialog(props: Props) {
       AppConfig.endTagContainer
   );
   const [inputError, setInputError] = useState<boolean>(false);
+  const [invalidURL, setInvalidURL] = useState<boolean>(false);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
   let fileInput: HTMLInputElement;
   const fileContent = '';
@@ -280,47 +276,57 @@ function CreateDialog(props: Props) {
 
   function downloadURL() {
     if (fileUrl.current) {
-      const url = new URL(fileUrl.current);
-      let fileName;
-      let pathParts;
-      if (url.pathname) {
-        const delimiterIndex = url.pathname.lastIndexOf('/');
-        if (delimiterIndex > -1) {
-          fileName = url.pathname.substring(delimiterIndex + 1);
-          if (!fileName) {
-            pathParts = url.pathname.split('/').filter(Boolean);
-          }
-        } else {
-          fileName = url.pathname;
+      try {
+        const url = new URL(fileUrl.current);
+        if (invalidURL) {
+          setInvalidURL(false);
         }
-      }
-      if (!fileName) {
-        fileName =
-          url.hostname +
-          (pathParts && pathParts.length > 0 ? pathParts.join('-') : '') +
-          '.html';
-      } else if (fileName.indexOf('.') === -1) {
-        fileName = url.hostname + '-' + fileName + '.html';
-      }
-      if (PlatformIO.haveObjectStoreSupport() || AppConfig.isElectron) {
-        props.resetProgress();
-        props.toggleUploadDialog();
-        props
-          .downloadFile(
-            fileUrl.current,
-            targetDirectoryPath + PlatformIO.getDirSeparator() + fileName,
-            props.onUploadProgress
-          )
-          .then(() => {
-            if (PlatformIO.haveObjectStoreSupport()) {
-              // currently objectStore location in downloadFile use saveFilePromise and this function not have progress handling
-              props.setProgress(fileUrl.current, 100);
+        let fileName;
+        let pathParts;
+        if (url.pathname) {
+          const delimiterIndex = url.pathname.lastIndexOf('/');
+          if (delimiterIndex > -1) {
+            fileName = url.pathname.substring(delimiterIndex + 1);
+            if (!fileName) {
+              pathParts = url.pathname.split('/').filter(Boolean);
             }
-          });
-      } else {
-        saveAs(fileUrl.current, fileName);
+          } else {
+            fileName = url.pathname;
+          }
+        }
+        if (!fileName) {
+          fileName =
+            url.hostname +
+            (pathParts && pathParts.length > 0 ? pathParts.join('-') : '') +
+            '.html';
+        } else if (fileName.indexOf('.') === -1) {
+          fileName = url.hostname + '-' + fileName + '.html';
+        }
+        if (PlatformIO.haveObjectStoreSupport() || AppConfig.isElectron) {
+          props.resetProgress();
+          props.toggleUploadDialog();
+          props
+            .downloadFile(
+              fileUrl.current,
+              targetDirectoryPath +
+                PlatformIO.getDirSeparator() +
+                decodeURIComponent(fileName),
+              props.onUploadProgress
+            )
+            .then(() => {
+              if (PlatformIO.haveObjectStoreSupport()) {
+                // currently objectStore location in downloadFile use saveFilePromise and this function not have progress handling
+                props.setProgress(fileUrl.current, 100);
+              }
+            });
+        } else {
+          saveAs(fileUrl.current, decodeURIComponent(fileName));
+        }
+        onClose();
+      } catch (ex) {
+        setInvalidURL(true);
+        console.error('downloadURL', ex);
       }
-      onClose();
     }
   }
 
@@ -484,6 +490,7 @@ function CreateDialog(props: Props) {
           </Grid>
           <Grid style={{ marginTop: 40 }} item xs={12}>
             <TextField
+              error={invalidURL}
               label={i18n.t('core:url')}
               margin="dense"
               name="name"

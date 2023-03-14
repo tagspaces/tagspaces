@@ -1344,6 +1344,9 @@ function EntryProperties(props: Props) {
           onClose={() => setShowSharingLinkDialog(false)}
           path={currentEntry.path}
           showNotification={props.showNotification}
+          locationId={currentEntry.locationId}
+          switchCurrentLocationType={props.switchCurrentLocationType}
+          switchLocationType={props.switchLocationType}
         />
       )}
       {BgndImgChooserDialog && (
