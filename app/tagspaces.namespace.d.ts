@@ -60,7 +60,7 @@ export namespace TS {
     id?: string,
     type: string,
     viewer: string;
-    editor: string;
+    editor?: string;
     color?: string
   }
 

@@ -752,5 +752,8 @@
   "change": "Change",
   "fileSaved": "Saved",
   "installExtension": "Install Extension",
+  "removeExtension": "Remove Extension",
+  "removeExtensionTooltip": "Are you sure you want to remove '{{extensionName}}' extension?",
+  "resetFileType": "Reset File Types",
   "-": "-"
 }
