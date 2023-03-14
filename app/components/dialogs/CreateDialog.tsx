@@ -308,7 +308,9 @@ function CreateDialog(props: Props) {
           props
             .downloadFile(
               fileUrl.current,
-              targetDirectoryPath + PlatformIO.getDirSeparator() + fileName,
+              targetDirectoryPath +
+                PlatformIO.getDirSeparator() +
+                decodeURIComponent(fileName),
               props.onUploadProgress
             )
             .then(() => {
@@ -318,7 +320,7 @@ function CreateDialog(props: Props) {
               }
             });
         } else {
-          saveAs(fileUrl.current, fileName);
+          saveAs(fileUrl.current, decodeURIComponent(fileName));
         }
         onClose();
       } catch (ex) {
