@@ -2690,6 +2690,10 @@ export const actions = {
                 dispatch(
                   actions.loadDirectoryContent(dirFullPath, false, true)
                 );
+              } else {
+                dispatch(
+                  actions.loadDirectoryContent(locationPath, false, true)
+                );
               }
 
               if (entryPath) {
