@@ -752,5 +752,12 @@
   "change": "變更",
   "fileSaved": "保存",
   "installExtension": "安裝擴展",
+  "removeExtension": "Remove Extension",
+  "removeExtensionTooltip": "Are you sure you want to remove '{{extensionName}}' extension?",
+  "resetFileType": "Reset File Types",
+  "override": "Override",
+  "saveAs": "Save As",
+  "resolveConflictTitle": "File was modified externally",
+  "resolveConflictDesc": "For saving your changes as new file click on 'Save As' button, for override the external changes click the 'Override' button.",
   "-": "-"
 }
