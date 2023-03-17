@@ -103,6 +103,7 @@ import { actions as LocationActions, getLocations } from '-/reducers/locations';
 import Revisions from '-/components/Revisions';
 import { Switch } from '@mui/material';
 import useFirstRender from '-/utils/useFirstRender';
+import ResolveConflictDialog from '-/components/dialogs/ResolveConflictDialog';
 
 const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
 // const openedSplitSize = AppConfig.isElectron ? 560 : 360;
@@ -252,6 +253,9 @@ function EntryContainer(props: Props) {
     setSaveBeforeReloadConfirmDialogOpened
   ] = useState<boolean>(false);
   const [isEditTagsModalOpened, setEditTagsModalOpened] = useState<boolean>(
+    false
+  );
+  const [isConflictDialogOpen, setConflictDialogOpen] = useState<boolean>(
     false
   );
   const [isDeleteEntryModalOpened, setDeleteEntryModalOpened] = useState<
@@ -597,12 +601,10 @@ function EntryContainer(props: Props) {
       fileViewer.current.contentWindow.getContent
     ) {
       try {
-        // @ts-ignore
-        const textContent = fileViewer.current.contentWindow.getContent();
         //check if file is changed
         if (fileChanged.current) {
           setSavingInProgress(true);
-          saveFile(textContent).then(success => {
+          saveFile().then(success => {
             if (success) {
               fileChanged.current = false;
               // showNotification(
@@ -621,65 +623,110 @@ function EntryContainer(props: Props) {
     }
   };
 
-  const saveFile = (textContent: string): Promise<boolean> => {
+  const override = (): Promise<boolean> => {
     return props
       .switchLocationType(openedFile.locationId)
-      .then(async currentLocationId => {
-        if (Pro && props.revisionsEnabled) {
-          const id = await Pro.MetaOperations.getMetadataID(
-            openedFile.path,
-            openedFile.uuid
-          );
-          const targetPath = getBackupFileLocation(
-            openedFile.path,
-            id,
-            PlatformIO.getDirSeparator()
-          );
-          await PlatformIO.copyFilePromiseOverwrite(
-            openedFile.path,
-            targetPath
+      .then(currentLocationId =>
+        PlatformIO.getPropertiesPromise(
+          openedFile.path
+        ).then((entryProp: TS.FileSystemEntry) =>
+          save({ ...openedFile, lmdt: entryProp.lmdt }).then(() =>
+            props.switchCurrentLocationType(currentLocationId)
+          )
+        )
+      );
+  };
+
+  const saveAs = (newFilePath: string): Promise<boolean> => {
+    return props
+      .switchLocationType(openedFile.locationId)
+      .then(currentLocationId =>
+        PlatformIO.copyFilePromise(openedFile.path, newFilePath).then(() =>
+          PlatformIO.getPropertiesPromise(newFilePath).then(
+            (entryProp: TS.FileSystemEntry) =>
+              save({
+                ...openedFile,
+                path: entryProp.path,
+                lmdt: entryProp.lmdt
+              }).then(() => {
+                const openedFileDir = extractContainingDirectoryPath(
+                  entryProp.path
+                );
+                if (currentDirectoryPath === openedFileDir) {
+                  props.loadDirectoryContent(
+                    openedFileDir,
+                    true,
+                    true
+                  ); /*
+                  updateOpenedFile(openedFile.path, {
+                    ...openedFile,
+                    editMode: false,
+                    shouldReload: !openedFile.shouldReload
+                  });*/
+                }
+                return props.switchCurrentLocationType(currentLocationId);
+              })
+          )
+        )
+      );
+  };
+
+  const saveFile = (): Promise<boolean> => {
+    return props
+      .switchLocationType(openedFile.locationId)
+      .then(currentLocationId =>
+        save(openedFile).then(() =>
+          props.switchCurrentLocationType(currentLocationId)
+        )
+      );
+  };
+
+  async function save(fileOpen: OpenedEntry): Promise<boolean> {
+    // @ts-ignore
+    const textContent = fileViewer.current.contentWindow.getContent();
+    if (Pro && props.revisionsEnabled) {
+      const id = await Pro.MetaOperations.getMetadataID(
+        fileOpen.path,
+        fileOpen.uuid
+      );
+      const targetPath = getBackupFileLocation(
+        fileOpen.path,
+        id,
+        PlatformIO.getDirSeparator()
+      );
+      await PlatformIO.copyFilePromiseOverwrite(fileOpen.path, targetPath);
+    }
+    return PlatformIO.saveTextFilePromise(
+      { path: fileOpen.path, lmdt: fileOpen.lmdt },
+      textContent,
+      true
+    )
+      .then(() => {
+        if (Pro) {
+          Pro.history.saveHistory(
+            historyKeys.fileEditKey,
+            {
+              path: fileOpen.path,
+              url: fileOpen.url,
+              lid: fileOpen.locationId
+            },
+            settings[historyKeys.fileEditKey]
           );
         }
-        // TODO check for timestamp on filesystem and ask to overwrite the changes there
-        return PlatformIO.saveTextFilePromise(
-          { path: openedFile.path, lmdt: openedFile.lmdt },
-          textContent,
-          true
-        )
-          .then(result => {
-            if (Pro) {
-              Pro.history.saveHistory(
-                historyKeys.fileEditKey,
-                {
-                  path: openedFile.path,
-                  url: openedFile.url,
-                  lid: openedFile.locationId
-                },
-                settings[historyKeys.fileEditKey]
-              );
-            }
 
-            return updateOpenedFile(openedFile.path, {
-              ...openedFile,
-              editMode: true,
-              changed: false,
-              shouldReload: undefined
-            }).then(() => props.switchCurrentLocationType(currentLocationId));
-          })
-          .catch(error => {
-            // setSavingInProgress(false);
-            showNotification(
-              i18n.t('core:errorSavingFile') + ': ' + error.message,
-              NotificationTypes.error,
-              false
-            );
-            console.log('Error saving file ' + openedFile.path + ' - ' + error);
-            return props
-              .switchCurrentLocationType(currentLocationId)
-              .then(() => false);
-          });
+        return updateOpenedFile(fileOpen.path, {
+          ...fileOpen,
+          editMode: true,
+          changed: false,
+          shouldReload: undefined
+        }).then(() => true);
+      })
+      .catch(error => {
+        setConflictDialogOpen(true);
+        console.log('Error saving file ' + fileOpen.path + ' - ' + error);
+        return false;
       });
-  };
+  }
 
   const editFile = () => {
     props.switchLocationType(openedFile.locationId).then(currentLocationId => {
@@ -1569,6 +1616,13 @@ function EntryContainer(props: Props) {
           selectedEntries={openedFile ? [openedFile] : []}
         />
       )}
+      <ResolveConflictDialog
+        open={isConflictDialogOpen}
+        onClose={() => setConflictDialogOpen(false)}
+        file={openedFile}
+        saveAs={saveAs}
+        override={override}
+      />
       {/* eslint-disable-next-line jsx-a11y/anchor-has-content,jsx-a11y/anchor-is-valid */}
       <a href="#" id="downloadFile" />
       {renderPanels()}
