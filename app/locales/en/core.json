@@ -755,5 +755,9 @@
   "removeExtension": "Remove Extension",
   "removeExtensionTooltip": "Are you sure you want to remove '{{extensionName}}' extension?",
   "resetFileType": "Reset File Types",
+  "override": "Override",
+  "saveas": "Save As",
+  "resolveConflictTitle": "File was modified externally",
+  "resolveConflictDesc": "If you want to save you changes as new file click on 'Save As' button or if you want to override external changes click on 'Override' button",
   "-": "-"
 }
