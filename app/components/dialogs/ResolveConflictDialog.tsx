@@ -74,7 +74,7 @@ function ResolveConflictDialog(props: Props) {
       <DialogContent
         style={{
           overflow: AppConfig.isFirefox ? 'auto' : 'overlay',
-          minWidth: 400,
+          minWidth: 400
         }}
       >
         {isSaveAs ? (
@@ -130,13 +130,13 @@ function ResolveConflictDialog(props: Props) {
           <>
             <Button
               data-tid="saveas"
-              title={i18n.t('core:saveas')}
+              title={i18n.t('core:saveAs')}
               onClick={() => {
                 setSaveAs(true);
               }}
               color="primary"
             >
-              {i18n.t('core:saveas')}
+              {i18n.t('core:saveAs')}
             </Button>
             <Button
               data-tid="overrideTID"
