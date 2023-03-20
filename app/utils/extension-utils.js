@@ -46,6 +46,7 @@ function processDirs(directoryPath, dirs, isExternal = false) {
           color,
           fileTypes,
           buildFolder,
+          enabled,
           ...props
         } = packageJsonObj['tsextension'];
 
@@ -81,45 +82,12 @@ function processDirs(directoryPath, dirs, isExternal = false) {
             }
           });
         }
-        /*if (fileTypesEdit) {
-          fileTypesEdit.forEach(fileType => {
-            const existingItemIndex = supportedFileTypes.findIndex(
-              item => item.type === fileType
-            );
-            if (existingItemIndex !== -1) {
-              // If an item with the same id already exists, update its properties
-              supportedFileTypes[existingItemIndex].editor = extensionId;
-            } else {
-              // If the item doesn't exist, add it to the array
-              supportedFileTypes.push({
-                type: fileType,
-                editor: extensionId
-              });
-            }
-          });
-        }
-        if (fileTypesView) {
-          fileTypesView.forEach(fileType => {
-            const existingItemIndex = supportedFileTypes.findIndex(
-              item => item.type === fileType
-            );
-            if (existingItemIndex !== -1) {
-              // If an item with the same id already exists, update its properties
-              supportedFileTypes[existingItemIndex].viewer = extensionId;
-            } else {
-              // If the item doesn't exist, add it to the array
-              supportedFileTypes.push({
-                type: fileType,
-                viewer: extensionId
-              });
-            }
-          });
-        }*/
         return {
           extensionId: extensionId,
           extensionName: name,
           extensionTypes: types,
           ...(isExternal && { extensionExternal: true }),
+          extensionEnabled: enabled !== undefined ? enabled : !isExternal,
           version: version,
           ...props
         };

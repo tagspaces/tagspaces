@@ -83,6 +83,7 @@ export const types = {
   SET_SUPPORTED_FILE_TYPES: 'SETTINGS/SET_SUPPORTED_FILE_TYPES',
   ADD_SUPPORTED_FILE_TYPES: 'SETTINGS/ADD_SUPPORTED_FILE_TYPES',
   REMOVE_SUPPORTED_FILE_TYPES: 'SETTINGS/REMOVE_SUPPORTED_FILE_TYPES',
+  ENABLE_EXTENSION: 'SETTINGS/ENABLE_EXTENSION',
   SET_LAST_PUBLISHED_VERSION: 'SETTINGS/SET_LAST_PUBLISHED_VERSION',
   SET_ENTRY_PROPERTIES_SPLIT_SIZE: 'SETTINGS/SET_ENTRY_PROPERTIES_SPLIT_SIZE',
   SET_MAIN_VSPLIT_SIZE: 'SETTINGS/SET_MAIN_VSPLIT_SIZE',
@@ -335,6 +336,34 @@ export default (state: any = defaultSettings, action: any) => {
           action.supportedFileTypes,
           'type'
         )
+      };
+    }
+    case types.ENABLE_EXTENSION: {
+      let enabledExtensions;
+      let supportedFileTypes;
+      if (action.enabled) {
+        if (!state.enabledExtensions.includes(action.extensionId)) {
+          enabledExtensions = [...state.enabledExtensions, action.extensionId];
+        } else {
+          enabledExtensions = [...state.enabledExtensions];
+        }
+      } else {
+        enabledExtensions = state.enabledExtensions.filter(
+          extensionId => extensionId === action.extensionId
+        );
+        supportedFileTypes = state.supportedFileTypes.filter(
+          fType =>
+            !(
+              fType.viewer === action.extensionId &&
+              fType.editor === action.extensionId
+            )
+        );
+      }
+
+      return {
+        ...state,
+        enabledExtensions: enabledExtensions,
+        ...(supportedFileTypes && { supportedFileTypes: supportedFileTypes })
       };
     }
     case types.REMOVE_SUPPORTED_FILE_TYPES: {
@@ -653,13 +682,22 @@ export const actions = {
     type: types.SET_GLOBAL_KEYBINDING,
     enableGlobalKeyboardShortcuts
   }),
-  addSupportedFileTypes: (supportedFileTypes: []) => ({
+  addSupportedFileTypes: (
+    supportedFileTypes: Array<TS.FileTypes>,
+    override = false
+  ) => ({
     type: types.ADD_SUPPORTED_FILE_TYPES,
-    supportedFileTypes
+    supportedFileTypes,
+    override
   }),
   removeSupportedFileTypes: (extensionId: string) => ({
     type: types.REMOVE_SUPPORTED_FILE_TYPES,
     extensionId
+  }),
+  enableExtension: (extensionId: string, enabled: boolean) => ({
+    type: types.ENABLE_EXTENSION,
+    extensionId,
+    enabled
   }),
   setSupportedFileTypes: (supportedFileTypes: []) => ({
     type: types.SET_SUPPORTED_FILE_TYPES,

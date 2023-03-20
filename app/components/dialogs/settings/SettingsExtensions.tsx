@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useRef, useState } from 'react';
+import React, { ChangeEvent, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
@@ -27,6 +27,7 @@ import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import IconButton from '@mui/material/IconButton';
+import Switch from '@mui/material/Switch';
 import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Progress } from 'aws-sdk/clients/s3';
@@ -35,7 +36,6 @@ import { actions as AppActions, getExtensions } from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
 import { TS } from '-/tagspaces.namespace';
 import i18n from '-/services/i18n';
-import PlatformFacade from '-/services/platform-facade';
 import PlatformIO from '-/services/platform-facade';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 
@@ -43,7 +43,9 @@ interface Props {
   extension: Array<TS.Extension>;
   isDevMode: boolean;
   removeExtension: (extensionId: string) => void;
+  updateExtension: (extension: TS.Extension) => void;
   removeSupportedFileTypes: (extensionId: string) => void;
+  enableExtension: (extensionId: string, enabled: boolean) => void;
   resetProgress: () => void;
   onUploadProgress: (progress: Progress, response: any) => void;
   toggleUploadDialog: () => void;
@@ -64,29 +66,29 @@ function SettingsExtensions(props: Props) {
 
   function handleFileInputChange(selection: any) {
     const files: File[] = Array.from(selection.currentTarget.files);
-    PlatformFacade.getUserDataDir().then(dataDir => {
+    PlatformIO.getUserDataDir().then(dataDir => {
       props.resetProgress();
       props.toggleUploadDialog();
       PlatformIO.disableObjectStoreSupport();
       PlatformIO.disableWebdavSupport();
       const destinationPath =
-        dataDir + PlatformFacade.getDirSeparator() + 'tsplugins';
+        dataDir + PlatformIO.getDirSeparator() + 'tsplugins';
       props
         .uploadFilesAPI(files, destinationPath, props.onUploadProgress, false)
         .then(fsEntries => {
           const targetPath =
             destinationPath +
-            PlatformFacade.getDirSeparator() +
+            PlatformIO.getDirSeparator() +
             '@tagspaces' +
-            PlatformFacade.getDirSeparator() +
+            PlatformIO.getDirSeparator() +
             'extensions';
           const promises = fsEntries.map(fsEntry =>
-            PlatformFacade.unZip(fsEntry.path, targetPath)
+            PlatformIO.unZip(fsEntry.path, targetPath)
           );
           // fsEntries.name.substring(0, fsEntries.extension.length + 1);
           return Promise.all(promises).then(paths => {
-            PlatformFacade.loadExtensions();
-            paths.forEach(path => PlatformFacade.deleteFilePromise(path));
+            PlatformIO.loadExtensions();
+            paths.forEach(path => PlatformIO.deleteFilePromise(path));
             return props.switchCurrentLocationType();
           });
         })
@@ -136,6 +138,29 @@ function SettingsExtensions(props: Props) {
                 .map(ext => (
                   <ListItem key={ext.extensionId} disablePadding>
                     {ext.extensionName} ({ext.version})
+                    <Switch
+                      data-tid="enableExtensionTID"
+                      name="enableExtension"
+                      checked={ext.extensionEnabled}
+                      onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                        if (event.target.checked) {
+                          props.updateExtension({
+                            ...ext,
+                            extensionEnabled: true
+                          });
+                          props.enableExtension(ext.extensionId, true);
+                          //reload default file types
+                          PlatformIO.loadExtensions();
+                        } else {
+                          props.updateExtension({
+                            ...ext,
+                            extensionEnabled: false
+                          });
+                          props.enableExtension(ext.extensionId, false);
+                          props.removeSupportedFileTypes(ext.extensionId);
+                        }
+                      }}
+                    />
                     <Tooltip title={i18n.t('core:removeExtension')}>
                       <IconButton
                         aria-label={i18n.t('core:delete')}
@@ -166,9 +191,7 @@ function SettingsExtensions(props: Props) {
                 props.removeSupportedFileTypes(
                   removeExtDialogOpened.extensionId
                 );
-                PlatformFacade.removeExtension(
-                  removeExtDialogOpened.extensionId
-                );
+                PlatformIO.removeExtension(removeExtDialogOpened.extensionId);
               }
             }}
             cancelDialogTID="cancelRemoveExtDialogTID"
@@ -214,7 +237,9 @@ function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
       removeExtension: AppActions.removeExtension,
+      updateExtension: AppActions.updateExtension,
       removeSupportedFileTypes: SettingsActions.removeSupportedFileTypes,
+      enableExtension: SettingsActions.enableExtension,
       onUploadProgress: AppActions.onUploadProgress,
       uploadFilesAPI: IOActions.uploadFilesAPI,
       toggleUploadDialog: AppActions.toggleUploadDialog,

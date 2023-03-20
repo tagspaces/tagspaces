@@ -156,9 +156,9 @@ export const types = {
   UPDATE_CURRENTDIR_ENTRIES: 'APP/UPDATE_CURRENTDIR_ENTRIES',
   REFLECT_EDITED_ENTRY_PATHS: 'APP/REFLECT_EDITED_ENTRY_PATHS',
   SET_ISLOADING: 'APP/SET_ISLOADING',
-  ADD_EXTENSION: 'APP/ADD_EXTENSION',
   ADD_EXTENSIONS: 'APP/ADD_EXTENSIONS',
-  REMOVE_EXTENSIONS: 'APP/REMOVE_EXTENSIONS'
+  REMOVE_EXTENSIONS: 'APP/REMOVE_EXTENSIONS',
+  UPDATE_EXTENSION: 'APP/UPDATE_EXTENSION'
 };
 
 export const NotificationTypes = {
@@ -933,16 +933,22 @@ export default (state: any = initialState, action: any) => {
       };
     }
     case types.ADD_EXTENSIONS: {
+      const extensions = mergeByProp(
+        state.extensions,
+        action.extensions,
+        'extensionId'
+      );
       return {
         ...state,
-        extensions: mergeByProp(
-          state.extensions,
-          action.extensions,
-          'extensionId'
-        )
+        extensions: extensions.map(ext => {
+          if (action.enabledExtensions.includes(ext.extensionId)) {
+            return { ...ext, extensionEnabled: true };
+          }
+          return ext;
+        })
       };
     }
-    case types.ADD_EXTENSION: {
+    case types.UPDATE_EXTENSION: {
       return {
         ...state,
         extensions: mergeByProp(
@@ -980,17 +986,28 @@ function disableBackGestureMac() {
 }
 
 export const actions = {
-  addExtension: (extension: TS.Extension) => ({
-    type: types.ADD_EXTENSION,
-    extension
-  }),
-  addExtensions: (extensions: Array<TS.Extension>) => ({
+  addExtensions: (extensions: Array<TS.Extension>) => (
+    dispatch: (action) => void,
+    getState: () => any
+  ) => {
+    const { settings } = getState();
+    dispatch(actions.addExtensionsInt(extensions, settings.enabledExtensions));
+  },
+  addExtensionsInt: (
+    extensions: Array<TS.Extension>,
+    enabledExtensions: Array<string>
+  ) => ({
     type: types.ADD_EXTENSIONS,
-    extensions
+    extensions,
+    enabledExtensions
   }),
   removeExtension: (extensionId: string) => ({
     type: types.REMOVE_EXTENSIONS,
     extensionId
+  }),
+  updateExtension: (extension: TS.Extension) => ({
+    type: types.UPDATE_EXTENSION,
+    extension
   }),
   setLastBackgroundImageChange: (folderPath, lastBackgroundImageChange) => ({
     type: types.LAST_BACKGROUND_IMAGE_CHANGE,
