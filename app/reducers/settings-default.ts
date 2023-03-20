@@ -220,6 +220,7 @@ export default {
   ],
   keyBindings: keyBindings(AppConfig.isMacLike),
   supportedFileTypes: supportedFileTypes,
+  enabledExtensions: [],
   mapTileServers: [
     {
       uuid: getUuid(),

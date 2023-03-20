@@ -55,6 +55,7 @@ import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import PlatformFacade from '-/services/platform-facade';
 import { getExtensions } from '-/reducers/app';
 import { supportedFileTypes } from '-/extension-config';
+import useFirstRender from '-/utils/useFirstRender';
 
 const styles: any = (theme: any) => ({
   fileTypeColorDialog: {
@@ -95,16 +96,21 @@ function SettingsFileTypes(props: Props) {
   const settingsFileTypeRef = useRef<TableVirtuosoHandle>(null);
 
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  const firstRender = useFirstRender();
 
   useEffect(() => {
-    items.current = props.supportedFileTypes;
-    isValidationInProgress.current = false;
-    const timer = scrollToItem(selectedItem.current);
-    return () => {
-      if (timer) {
-        clearTimeout(timer);
+    if (!firstRender) {
+      items.current = props.supportedFileTypes;
+      isValidationInProgress.current = false;
+      if (selectedItem.current !== undefined) {
+        const timer = scrollToItem(selectedItem.current);
+        return () => {
+          if (timer) {
+            clearTimeout(timer);
+          }
+        };
       }
-    };
+    }
   }, [props.supportedFileTypes]);
 
   type ScrollToIndexArgs = {
