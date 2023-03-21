@@ -369,6 +369,36 @@ const actions = {
               onUploadProgress
             );
             if (fsEntry) {
+              // Generate Thumbnail
+              const thumbPath = await generateThumbnailPromise(
+                PlatformIO.getURLforPath(fileTargetPath),
+                400
+              )
+                .then(dataURL => {
+                  if (dataURL && dataURL.length > 6) {
+                    const baseString = dataURL.split(',').pop();
+                    const fileContent = base64ToArrayBuffer(baseString);
+                    const thumbPath = getThumbFileLocationForFile(
+                      fileTargetPath,
+                      PlatformIO.getDirSeparator(),
+                      false
+                    );
+                    return PlatformIO.saveBinaryFilePromise(
+                      { path: thumbPath },
+                      fileContent,
+                      true
+                    ).then(() => thumbPath);
+                  }
+                  return undefined;
+                })
+                .catch(err => {
+                  console.error('error generateThumbnail:', err);
+                });
+              if (thumbPath) {
+                fsEntry.thumbPath = PlatformIO.getURLforPath(thumbPath);
+              }
+              fsEntries.push(fsEntry);
+
               dispatch(
                 AppActions.showNotification(
                   'File ' + fileTargetPath + ' successfully imported.',
@@ -376,7 +406,6 @@ const actions = {
                   true
                 )
               );
-              fsEntries.push(fsEntry);
               // dispatch(AppActions.reflectCreateEntry(fileTargetPath, true));
             }
           } catch (error) {
