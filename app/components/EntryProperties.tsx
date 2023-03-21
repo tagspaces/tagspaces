@@ -36,6 +36,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import InputAdornment from '@mui/material/InputAdornment';
 import ShareIcon from '@mui/icons-material/Link';
+import QRCodeIcon from '@mui/icons-material/QrCode';
 import Tooltip from '-/components/Tooltip';
 import LocationIcon from '@mui/icons-material/WorkOutline';
 import EditIcon from '@mui/icons-material/Edit';
@@ -1071,6 +1072,13 @@ function EntryProperties(props: Props) {
                 value={' '}
                 InputProps={{
                   readOnly: true,
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <QRCodeIcon
+                        style={{ color: theme.palette.text.secondary }}
+                      />
+                    </InputAdornment>
+                  ),
                   endAdornment: (
                     <InputAdornment position="start">
                       <Button
