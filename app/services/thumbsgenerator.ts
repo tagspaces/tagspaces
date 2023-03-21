@@ -290,7 +290,9 @@ export function generateThumbnailPromise(fileURL: string, fileSize: number) {
     PlatformIO.getDirSeparator()
   ).toLowerCase();
 
-  const fileURLEscaped = encodeFileName(fileURL, PlatformIO.getDirSeparator());
+  const fileURLEscaped = /^https?:\/\//.test(fileURL)
+    ? fileURL
+    : encodeFileName(fileURL, PlatformIO.getDirSeparator());
 
   if (supportedImgs.indexOf(ext) >= 0) {
     if (Pro && ext === 'tga') {
