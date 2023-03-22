@@ -74,7 +74,8 @@ import {
   platformLoadExtensions,
   platformRemoveExtension,
   platformGetUserDataDir,
-  platformUnZip
+  platformUnZip,
+  platformDirSize
 } from '@tagspaces/tagspaces-platforms/platform-io';
 import AppConfig from '-/AppConfig';
 import { Pro } from '../pro';
@@ -339,11 +340,18 @@ export default class PlatformFacade {
 
   static moveDirectoryPromise = (
     dirPath: string,
-    newDirPath: string
+    newDirPath: string,
+    onProgress = undefined,
+    onAbort = undefined
   ): Promise<any> => {
     PlatformFacade.ignoreByWatcher(dirPath, newDirPath);
 
-    return platformMoveDirectoryPromise(dirPath, newDirPath).then(result => {
+    return platformMoveDirectoryPromise(
+      dirPath,
+      newDirPath,
+      onProgress,
+      onAbort
+    ).then(result => {
       PlatformFacade.deignoreByWatcher(dirPath, newDirPath);
       return result;
     });
@@ -534,5 +542,9 @@ export default class PlatformFacade {
 
   static unZip(filePath, targetPath): Promise<boolean> {
     return platformUnZip(filePath, targetPath);
+  }
+
+  static dirSize(filePath): Promise<number> {
+    return platformDirSize(filePath);
   }
 }

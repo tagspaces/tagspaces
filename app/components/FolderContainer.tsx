@@ -223,6 +223,7 @@ interface Props {
   goForward: () => void;
   searchResultsCount: number;
   isSearchMode: boolean;
+  openMoveCopyFilesDialog: () => void;
 }
 
 function FolderContainer(props: Props) {
@@ -663,6 +664,7 @@ function FolderContainer(props: Props) {
                 openRenameDirectoryDialog={() =>
                   setIsRenameEntryDialogOpened(true)
                 }
+                openMoveCopyFilesDialog={props.openMoveCopyFilesDialog}
               />
             </>
           )}

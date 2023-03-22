@@ -213,6 +213,12 @@ export function enhanceOpenedEntry(
         tags: fineNameTags
       };
     }
+  } else {
+    // ignore wrong size from fs.stats for directories
+    return {
+      ...entry,
+      size: undefined
+    };
   }
   return entry;
 }

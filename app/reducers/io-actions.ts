@@ -26,7 +26,9 @@ import {
   getMetaFileLocationForFile,
   getThumbFileLocationForFile,
   getBackupFileDir,
-  normalizePath
+  normalizePath,
+  extractDirectoryName,
+  joinPaths
 } from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
 import { actions as AppActions } from './app';
@@ -69,6 +71,37 @@ const actions = {
       TaggingActions,
       options
     );
+  },
+  moveDirs: (
+    paths: Array<string>,
+    targetPath: string,
+    onProgress = undefined,
+    onAbort = undefined
+  ) => (dispatch: (actions: Object) => void) => {
+    const promises = paths.map(dirPath => {
+      const dirName = extractDirectoryName(
+        dirPath,
+        PlatformIO.getDirSeparator()
+      );
+      return PlatformIO.moveDirectoryPromise(
+        dirPath,
+        joinPaths(PlatformIO.getDirSeparator(), targetPath, dirName),
+        onProgress,
+        onAbort
+      )
+        .then(() => {
+          console.log('Moving dir from ' + dirPath + ' to ' + targetPath);
+          dispatch(AppActions.reflectDeleteEntry(dirPath));
+          return true;
+        })
+        .catch(err => {
+          console.warn('Moving dirs failed ', err);
+          dispatch(
+            AppActions.showNotification(i18n.t('core:copyingDirsFailed'))
+          );
+        });
+    });
+    return Promise.all(promises).then(() => true);
   },
   moveFiles: (paths: Array<string>, targetPath: string) => (
     dispatch: (actions: Object) => Promise<boolean>
@@ -167,6 +200,24 @@ const actions = {
           AppActions.showNotification(i18n.t('core:copyingFilesFailed'))
         );
       });
+  },
+  copyDirs: (paths: Array<string>, targetPath: string) => (
+    dispatch: (actions: Object) => void
+  ) => {
+    const promises = []; /*paths.map(dirPath =>
+      PlatformIO.copyDirsPromise(dirPath, targetPath)
+        .then(() => {
+          console.log('Moving dir from ' + dirPath + ' to ' + targetPath);
+          return true;
+        })
+        .catch(err => {
+          console.warn('Moving dirs failed ', err);
+          dispatch(
+            AppActions.showNotification(i18n.t('core:copyingDirsFailed'))
+          );
+        })
+    );*/
+    return Promise.all(promises).then(() => true);
   },
   copyFiles: (paths: Array<string>, targetPath: string) => (
     dispatch: (actions: Object) => void

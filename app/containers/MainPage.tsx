@@ -654,6 +654,7 @@ function MainPage(props: Props) {
           currentDirectoryPath={directoryPath}
           goBack={goBack}
           goForward={goForward}
+          openMoveCopyFilesDialog={() => setMoveCopyDialogOpened(props.selectedEntries)}
         />
         {isFileOpened && (
           <EntryContainer

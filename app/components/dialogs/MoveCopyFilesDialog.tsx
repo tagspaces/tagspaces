@@ -16,9 +16,11 @@
  *
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useReducer, useEffect } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { Progress } from 'aws-sdk/clients/s3';
+import { formatBytes } from '@tagspaces/tagspaces-common/misc';
 import Button from '@mui/material/Button';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -37,31 +39,73 @@ import Typography from '@mui/material/Typography';
 import Dialog from '@mui/material/Dialog';
 import IconButton from '@mui/material/IconButton';
 import AppConfig from '-/AppConfig';
-import { extractFileName } from '@tagspaces/tagspaces-common/paths';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
 import IOActions from '-/reducers/io-actions';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { actions as AppActions, getSelectedEntries } from '-/reducers/app';
+import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   open: boolean;
   onClose: (clearSelection?: boolean) => void;
   copyFiles: (files: Array<string>, destination: string) => void;
+  copyDirs: (dirs: Array<string>, destination: string) => void;
   moveFiles: (files: Array<string>, destination: string) => void;
-  selectedFiles: Array<string>;
+  moveDirs: (
+    dirs: Array<string>,
+    destination: string,
+    onUploadProgress?: (progress: Progress, response: any) => void,
+    onAbort?: () => void
+  ) => void;
+  selectedEntries: Array<TS.FileSystemEntry>;
+  selectedFiles?: Array<string>;
+  onUploadProgress: (progress: Progress, response: any) => void;
+  toggleUploadDialog: () => void;
+  resetProgress: () => void;
 }
 
 function MoveCopyFilesDialog(props: Props) {
   const [inputError, setInputError] = useState(false);
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [targetPath, setTargetPath] = useState('');
+  const dirSizes = useRef({});
+
+  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
   const { open, onClose } = props;
+
+  let selectedFiles = props.selectedFiles ? props.selectedFiles : [];
+  if (props.selectedEntries) {
+    selectedFiles = selectedFiles.concat(
+      props.selectedEntries
+        .filter(fsEntry => fsEntry.isFile)
+        .map(fsentry => fsentry.path)
+    );
+  }
+
+  const selectedDirs = props.selectedEntries
+    ? props.selectedEntries
+        .filter(fsEntry => !fsEntry.isFile)
+        .map(fsentry => fsentry.path)
+    : [];
+
+  useEffect(() => {
+    if (selectedDirs.length > 0) {
+      const promises = selectedDirs.map(dirPath => {
+        return PlatformIO.dirSize(dirPath).then(dirSize => {
+          dirSizes.current[dirPath] = dirSize;
+          return true;
+        });
+      });
+      Promise.all(promises).then(() => forceUpdate());
+    }
+  }, []);
 
   useEffect(() => {
     handleValidation();
-  });
+  }, [targetPath]);
 
   function handleValidation() {
     if (targetPath && targetPath.length > 0) {
@@ -75,20 +119,32 @@ function MoveCopyFilesDialog(props: Props) {
 
   function handleCopyFiles() {
     if (!disableConfirmButton) {
-      props.copyFiles(props.selectedFiles, targetPath);
-      setInputError(false);
-      setDisableConfirmButton(true);
-      setTargetPath('');
+      if (selectedFiles.length > 0) {
+        props.copyFiles(selectedFiles, targetPath);
+        setInputError(false);
+        setDisableConfirmButton(true);
+        setTargetPath('');
+      }
+      if (selectedDirs.length > 0) {
+        props.copyDirs(selectedDirs, targetPath);
+      }
     }
     props.onClose(true);
   }
 
   function handleMoveFiles() {
     if (!disableConfirmButton) {
-      props.moveFiles(props.selectedFiles, targetPath);
-      setInputError(false);
-      setDisableConfirmButton(true);
-      setTargetPath('');
+      if (selectedFiles.length > 0) {
+        props.moveFiles(selectedFiles, targetPath);
+        setInputError(false);
+        setDisableConfirmButton(true);
+        setTargetPath('');
+      }
+      if (selectedDirs.length > 0) {
+        props.resetProgress();
+        props.toggleUploadDialog();
+        props.moveDirs(selectedDirs, targetPath, props.onUploadProgress);
+      }
     }
     props.onClose(true);
   }
@@ -135,15 +191,21 @@ function MoveCopyFilesDialog(props: Props) {
             </ListSubheader>
           }
         >
-          {props.selectedFiles &&
-            props.selectedFiles.length > 0 &&
-            props.selectedFiles.map(path => (
-              <ListItem title={path} key={path}>
+          {props.selectedEntries &&
+            props.selectedEntries.length > 0 &&
+            props.selectedEntries.map(entry => (
+              <ListItem title={entry.path} key={entry.path}>
                 <ListItemIcon>
                   <FileIcon />
                 </ListItemIcon>
                 <Typography variant="inherit" noWrap>
-                  {extractFileName(path, PlatformIO.getDirSeparator())}
+                  {entry.name}
+                  {dirSizes.current[entry.path] &&
+                    ' (' +
+                      i18n.t('fileSize') +
+                      ': ' +
+                      formatBytes(dirSizes.current[entry.path]) +
+                      ')'}
                 </Typography>
               </ListItem>
             ))}
@@ -209,14 +271,28 @@ function MoveCopyFilesDialog(props: Props) {
   );
 }
 
+function mapStateToProps(state) {
+  return {
+    selectedEntries: getSelectedEntries(state)
+  };
+}
+
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
       copyFiles: IOActions.copyFiles,
-      moveFiles: IOActions.moveFiles
+      moveFiles: IOActions.moveFiles,
+      moveDirs: IOActions.moveDirs,
+      copyDirs: IOActions.copyDirs,
+      toggleUploadDialog: AppActions.toggleUploadDialog,
+      onUploadProgress: AppActions.onUploadProgress,
+      resetProgress: AppActions.resetProgress
     },
     dispatch
   );
 }
 
-export default connect(null, mapActionCreatorsToProps)(MoveCopyFilesDialog);
+export default connect(
+  mapStateToProps,
+  mapActionCreatorsToProps
+)(MoveCopyFilesDialog);

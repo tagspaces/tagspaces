@@ -151,6 +151,7 @@
   "renameFile": "Rename File",
   "newFileName": "New File Name",
   "moveCopyFile": "Move / Copy File",
+  "moveCopyDirectory": "Move / Copy Directory",
   "duplicateFile": "Duplicate File",
   "deleteEntry": "Delete",
   "reloadFile": "Reload File",

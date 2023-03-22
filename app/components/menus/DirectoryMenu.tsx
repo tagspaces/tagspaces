@@ -93,6 +93,7 @@ interface Props {
   ) => void;
   toggleDeleteMultipleEntriesDialog: () => void;
   openRenameDirectoryDialog: () => void;
+  openMoveCopyFilesDialog: () => void;
   selectedEntries: Array<TS.FileSystemEntry>;
   currentDirectoryPath: string;
   lastSelectedEntryPath: string;
@@ -229,6 +230,10 @@ function DirectoryMenu(props: Props) {
 
   function showRenameDirectoryDialog() {
     props.openRenameDirectoryDialog();
+  }
+
+  function openMoveCopyDialog() {
+    props.openMoveCopyFilesDialog();
   }
 
   /*function showCreateDirectoryDialog() {
@@ -413,6 +418,7 @@ Do you want to continue?`)
     openDirectory,
     reloadDirectory,
     showRenameDirectoryDialog,
+    openMoveCopyDialog,
     showDeleteDirectoryDialog,
     showInFileManager,
     createNewFile,
