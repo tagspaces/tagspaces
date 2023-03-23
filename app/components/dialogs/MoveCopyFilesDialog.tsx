@@ -52,13 +52,18 @@ interface Props {
   open: boolean;
   onClose: (clearSelection?: boolean) => void;
   copyFiles: (files: Array<string>, destination: string) => void;
-  copyDirs: (dirs: Array<string>, destination: string) => void;
+  copyDirs: (
+    dirs: Array<string>,
+    totalCount: number,
+    destination: string,
+    onUploadProgress?: (progress: Progress, response: any) => void
+  ) => void;
   moveFiles: (files: Array<string>, destination: string) => void;
   moveDirs: (
     dirs: Array<string>,
+    totalCount: number,
     destination: string,
-    onUploadProgress?: (progress: Progress, response: any) => void,
-    onAbort?: () => void
+    onUploadProgress?: (progress: Progress, response: any) => void
   ) => void;
   selectedEntries: Array<TS.FileSystemEntry>;
   selectedFiles?: Array<string>;
@@ -71,7 +76,7 @@ function MoveCopyFilesDialog(props: Props) {
   const [inputError, setInputError] = useState(false);
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [targetPath, setTargetPath] = useState('');
-  const dirSizes = useRef({});
+  const dirProp = useRef({});
 
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
   const { open, onClose } = props;
@@ -94,8 +99,8 @@ function MoveCopyFilesDialog(props: Props) {
   useEffect(() => {
     if (selectedDirs.length > 0) {
       const promises = selectedDirs.map(dirPath => {
-        return PlatformIO.dirSize(dirPath).then(dirSize => {
-          dirSizes.current[dirPath] = dirSize;
+        return PlatformIO.getDirProperties(dirPath).then(prop => {
+          dirProp.current[dirPath] = prop;
           return true;
         });
       });
@@ -117,6 +122,13 @@ function MoveCopyFilesDialog(props: Props) {
     }
   }
 
+  function getEntriesCount(): number {
+    let total = 0;
+    const arr = Object.values(dirProp.current);
+    arr.forEach((n: TS.DirProp) => (total += n.filesCount + n.dirsCount));
+    return total;
+  }
+
   function handleCopyFiles() {
     if (!disableConfirmButton) {
       if (selectedFiles.length > 0) {
@@ -126,7 +138,14 @@ function MoveCopyFilesDialog(props: Props) {
         setTargetPath('');
       }
       if (selectedDirs.length > 0) {
-        props.copyDirs(selectedDirs, targetPath);
+        props.resetProgress();
+        props.toggleUploadDialog();
+        props.copyDirs(
+          selectedDirs,
+          getEntriesCount(),
+          targetPath,
+          props.onUploadProgress
+        );
       }
     }
     props.onClose(true);
@@ -143,7 +162,12 @@ function MoveCopyFilesDialog(props: Props) {
       if (selectedDirs.length > 0) {
         props.resetProgress();
         props.toggleUploadDialog();
-        props.moveDirs(selectedDirs, targetPath, props.onUploadProgress);
+        props.moveDirs(
+          selectedDirs,
+          getEntriesCount(),
+          targetPath,
+          props.onUploadProgress
+        );
       }
     }
     props.onClose(true);
@@ -200,11 +224,11 @@ function MoveCopyFilesDialog(props: Props) {
                 </ListItemIcon>
                 <Typography variant="inherit" noWrap>
                   {entry.name}
-                  {dirSizes.current[entry.path] &&
+                  {dirProp.current[entry.path] &&
                     ' (' +
                       i18n.t('fileSize') +
                       ': ' +
-                      formatBytes(dirSizes.current[entry.path]) +
+                      formatBytes(dirProp.current[entry.path]['totalSize']) +
                       ')'}
                 </Typography>
               </ListItem>

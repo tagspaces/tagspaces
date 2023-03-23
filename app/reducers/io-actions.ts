@@ -74,9 +74,9 @@ const actions = {
   },
   moveDirs: (
     paths: Array<string>,
+    totalCount: number,
     targetPath: string,
-    onProgress = undefined,
-    onAbort = undefined
+    onProgress = undefined
   ) => (dispatch: (actions: Object) => void) => {
     const promises = paths.map(dirPath => {
       const dirName = extractDirectoryName(
@@ -84,10 +84,9 @@ const actions = {
         PlatformIO.getDirSeparator()
       );
       return PlatformIO.moveDirectoryPromise(
-        dirPath,
+        { path: dirPath, total: totalCount },
         joinPaths(PlatformIO.getDirSeparator(), targetPath, dirName),
-        onProgress,
-        onAbort
+        onProgress
       )
         .then(() => {
           console.log('Moving dir from ' + dirPath + ' to ' + targetPath);
@@ -106,18 +105,6 @@ const actions = {
   moveFiles: (paths: Array<string>, targetPath: string) => (
     dispatch: (actions: Object) => Promise<boolean>
   ) => {
-    /* const renameJobs = [];
-    paths.map((path) => {
-      renameJobs.push(renameFile(path, targetPath + extractFileName(path)));
-      return true;
-    });
-    Promise.all(renameJobs).then(() => {
-      dispatch(AppActions.showNotification(i18n.t('core:filesMovedSuccessful')));
-      return true;
-    }).catch((err) => {
-      console.warn('Moving files failed with ' + err)
-      dispatch(AppActions.showNotification(i18n.t('core:movingFilesFailed')));
-    }); */
     const moveJobs = paths.map(path => [
       path,
       normalizePath(targetPath) +
@@ -148,7 +135,10 @@ const actions = {
                   fsEntryMeta.id,
                   PlatformIO.getDirSeparator()
                 );
-                return PlatformIO.moveDirectoryPromise(backupDir, newBackupDir)
+                return PlatformIO.moveDirectoryPromise(
+                  { path: backupDir },
+                  newBackupDir
+                )
                   .then(() => {
                     console.log(
                       'Moving revisions successful from ' +
@@ -201,22 +191,33 @@ const actions = {
         );
       });
   },
-  copyDirs: (paths: Array<string>, targetPath: string) => (
-    dispatch: (actions: Object) => void
-  ) => {
-    const promises = []; /*paths.map(dirPath =>
-      PlatformIO.copyDirsPromise(dirPath, targetPath)
+  copyDirs: (
+    paths: Array<string>,
+    totalCount: number,
+    targetPath: string,
+    onProgress = undefined
+  ) => (dispatch: (actions: Object) => void) => {
+    const promises = paths.map(dirPath => {
+      const dirName = extractDirectoryName(
+        dirPath,
+        PlatformIO.getDirSeparator()
+      );
+      return PlatformIO.copyDirectoryPromise(
+        { path: dirPath, total: totalCount },
+        joinPaths(PlatformIO.getDirSeparator(), targetPath, dirName),
+        onProgress
+      )
         .then(() => {
-          console.log('Moving dir from ' + dirPath + ' to ' + targetPath);
+          console.log('Copy dir from ' + dirPath + ' to ' + targetPath);
           return true;
         })
         .catch(err => {
-          console.warn('Moving dirs failed ', err);
+          console.warn('Copy dirs failed ', err);
           dispatch(
             AppActions.showNotification(i18n.t('core:copyingDirsFailed'))
           );
-        })
-    );*/
+        });
+    });
     return Promise.all(promises).then(() => true);
   },
   copyFiles: (paths: Array<string>, targetPath: string) => (

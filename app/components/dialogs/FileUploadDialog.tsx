@@ -61,6 +61,7 @@ interface Props {
 
 function FileUploadDialog(props: Props) {
   const { open = false, onClose } = props;
+  const targetPath = React.useRef<string>(undefined);
 
   function LinearProgressWithLabel(prop) {
     return (
@@ -121,7 +122,12 @@ function FileUploadDialog(props: Props) {
         );
       }
     }
-    return props.currentDirectoryPath ? props.currentDirectoryPath : '/';
+    if (targetPath.current) {
+      return targetPath.current;
+    } else if (props.currentDirectoryPath) {
+      return props.currentDirectoryPath;
+    }
+    return '/';
   }
 
   return (
@@ -153,8 +159,9 @@ function FileUploadDialog(props: Props) {
             .map(fileProgress => {
               const percentage = fileProgress.progress;
               const { path } = fileProgress;
+              targetPath.current = path.split('?')[0];
               const fileName = extractFileName(
-                path.split('?')[0],
+                targetPath.current,
                 PlatformIO.getDirSeparator()
               );
               let { abort } = fileProgress;

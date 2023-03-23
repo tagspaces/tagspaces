@@ -57,6 +57,7 @@ import {
   platformRenameFilePromise,
   platformRenameDirectoryPromise,
   platformMoveDirectoryPromise,
+  platformCopyDirectoryPromise,
   platformDeleteFilePromise,
   platformDeleteDirectoryPromise,
   platformOpenDirectory,
@@ -75,7 +76,7 @@ import {
   platformRemoveExtension,
   platformGetUserDataDir,
   platformUnZip,
-  platformDirSize
+  platformDirProperties
 } from '@tagspaces/tagspaces-platforms/platform-io';
 import AppConfig from '-/AppConfig';
 import { Pro } from '../pro';
@@ -338,21 +339,36 @@ export default class PlatformFacade {
     });
   };
 
-  static moveDirectoryPromise = (
-    dirPath: string,
+  static copyDirectoryPromise = (
+    param: any,
     newDirPath: string,
-    onProgress = undefined,
-    onAbort = undefined
+    onProgress = undefined
   ): Promise<any> => {
-    PlatformFacade.ignoreByWatcher(dirPath, newDirPath);
+    PlatformFacade.ignoreByWatcher(param.path, newDirPath);
+
+    return platformCopyDirectoryPromise(
+      param,
+      newDirPath,
+      onProgress
+    ).then(result => {
+      PlatformFacade.deignoreByWatcher(param.path, newDirPath);
+      return result;
+    });
+  };
+
+  static moveDirectoryPromise = (
+    param: any,
+    newDirPath: string,
+    onProgress = undefined
+  ): Promise<any> => {
+    PlatformFacade.ignoreByWatcher(param.path, newDirPath);
 
     return platformMoveDirectoryPromise(
-      dirPath,
+      param,
       newDirPath,
-      onProgress,
-      onAbort
+      onProgress
     ).then(result => {
-      PlatformFacade.deignoreByWatcher(dirPath, newDirPath);
+      PlatformFacade.deignoreByWatcher(param.path, newDirPath);
       return result;
     });
   };
@@ -544,7 +560,7 @@ export default class PlatformFacade {
     return platformUnZip(filePath, targetPath);
   }
 
-  static dirSize(filePath): Promise<number> {
-    return platformDirSize(filePath);
+  static getDirProperties(filePath): Promise<TS.DirProp> {
+    return platformDirProperties(filePath);
   }
 }

@@ -65,6 +65,12 @@ export namespace TS {
     color?: string
   }
 
+  interface DirProp {
+    totalSize: number;
+    filesCount: number;
+    dirsCount: number;
+  }
+
   interface SearchQuery {
     uuid?: string; // for saved searches
     title?: string; // for saved searches

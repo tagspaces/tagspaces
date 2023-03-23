@@ -263,10 +263,12 @@ function EntryProperties(props: Props) {
 
   useEffect(() => {
     if (!currentEntry.current.isFile) {
-      PlatformIO.dirSize(currentEntry.current.path).then(dirSize => {
-        currentEntry.current.size = dirSize;
-        forceUpdate();
-      });
+      PlatformIO.getDirProperties(currentEntry.current.path).then(
+        (dirProps: TS.DirProp) => {
+          currentEntry.current.size = dirProps.totalSize;
+          forceUpdate();
+        }
+      );
     }
   }, []);
 
@@ -577,7 +579,9 @@ function EntryProperties(props: Props) {
           const promises = value.map(tag => {
             if (
               currentEntry.current.tags === undefined ||
-              currentEntry.current.tags.findIndex(obj => obj.title === tag.title) === -1
+              currentEntry.current.tags.findIndex(
+                obj => obj.title === tag.title
+              ) === -1
             ) {
               return props.addTags([currentEntry.current.path], [tag]);
             }
@@ -592,7 +596,11 @@ function EntryProperties(props: Props) {
 
   const { classes, isReadOnlyMode, theme, sharingLink } = props;
 
-  if (!currentEntry || !currentEntry.current.path || currentEntry.current.path === '') {
+  if (
+    !currentEntry ||
+    !currentEntry.current.path ||
+    currentEntry.current.path === ''
+  ) {
     return <div />;
   }
 
@@ -713,7 +721,8 @@ function EntryProperties(props: Props) {
 
   const geoLocation: any = getGeoLocation(currentEntry.current.tags);
 
-  const isCloudLocation = currentEntry.current.url && currentEntry.current.url.length > 5;
+  const isCloudLocation =
+    currentEntry.current.url && currentEntry.current.url.length > 5;
 
   const sanitizedDescription = currentEntry.current.description
     ? convertMarkDown(currentEntry.current.description, directoryPath)
@@ -797,7 +806,9 @@ function EntryProperties(props: Props) {
             <FormHelperText>
               {i18n.t(
                 'core:' +
-                  (currentEntry.current.isFile ? 'fileNameHelp' : 'directoryNameHelp')
+                  (currentEntry.current.isFile
+                    ? 'fileNameHelp'
+                    : 'directoryNameHelp')
               )}
             </FormHelperText>
           )}
