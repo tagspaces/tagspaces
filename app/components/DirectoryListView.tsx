@@ -92,7 +92,6 @@ function DirectoryListView(props: Props) {
         <ListItem
           title={'Navigate to: ' + entry.path}
           style={{ maxWidth: 250 }}
-          button
           onClick={() => {
             props.setTargetDir(entry.path);
           }}
@@ -118,7 +117,6 @@ function DirectoryListView(props: Props) {
       <List
         dense
         style={{
-          backgroundColor: '#dcf3ecd1',
           borderRadius: 5,
           maxHeight: 400,
           // @ts-ignore

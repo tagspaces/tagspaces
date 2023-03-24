@@ -28,8 +28,6 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListSubheader from '@mui/material/ListSubheader';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
-import FolderIcon from '@mui/icons-material/Folder';
-import FileIcon from '@mui/icons-material/InsertDriveFileOutlined';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -38,6 +36,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Typography from '@mui/material/Typography';
 import Dialog from '@mui/material/Dialog';
 import IconButton from '@mui/material/IconButton';
+import { FolderIcon, FileIcon } from '-/components/CommonIcons';
 import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
@@ -206,13 +205,13 @@ function MoveCopyFilesDialog(props: Props) {
       <DialogContent style={{ overflowX: 'hidden' }}>
         <List
           dense
-          style={{ width: 550, marginLeft: -15 }}
+          style={{ width: 550, marginLeft: -15, marginBottom: 20 }}
           subheader={
             <ListSubheader
               style={{ backgroundColor: 'transparent' }}
               component="div"
             >
-              {i18n.t('selectedFiles')}
+              {i18n.t('selectedFilesAndFolders')}
             </ListSubheader>
           }
         >
@@ -221,7 +220,7 @@ function MoveCopyFilesDialog(props: Props) {
             props.selectedEntries.map(entry => (
               <ListItem title={entry.path} key={entry.path}>
                 <ListItemIcon>
-                  <FileIcon />
+                  {entry.isFile ? <FileIcon /> : <FolderIcon />}
                 </ListItemIcon>
                 <Typography variant="inherit" noWrap>
                   {entry.name}
@@ -236,46 +235,15 @@ function MoveCopyFilesDialog(props: Props) {
             ))}
         </List>
         {targetPath ? (
-          <div>{i18n.t('moveCopyToPath') + ':' + targetPath}</div>
+          <Typography variant="inherit">
+            {i18n.t('moveCopyToPath') + ': ' + targetPath}
+          </Typography>
         ) : (
-          <div>{i18n.t('ChoseTargetPath')}</div>
+          <Typography variant="inherit">
+            {i18n.t('chooseTargetLocationAndPath')}
+          </Typography>
         )}
         <DirectoryListView setTargetDir={setTargetPath} />
-        {/*<FormControl fullWidth={true}>
-          <TextField
-            autoFocus
-            required
-            margin="dense"
-            name="targetPath"
-            placeholder={i18n.t('core:moveCopyToPath')}
-            fullWidth={true}
-            data-tid="targetPathInput"
-            onChange={event => {
-              const { target } = event;
-              setTargetPath(target.value);
-            }}
-            value={targetPath}
-            InputProps={{
-              endAdornment:
-                PlatformIO.haveObjectStoreSupport() ||
-                PlatformIO.haveWebDavSupport() ||
-                AppConfig.isWeb ? (
-                  undefined
-                ) : (
-                  <InputAdornment position="end" style={{ height: 33 }}>
-                    <IconButton
-                      data-tid="openDirectoryMoveCopyDialog"
-                      onClick={selectDirectory}
-                      size="large"
-                    >
-                      <FolderIcon />
-                    </IconButton>
-                  </InputAdornment>
-                )
-            }}
-          />
-          {inputError && <FormHelperText>Empty Input Field</FormHelperText>}
-        </FormControl>*/}
       </DialogContent>
       <DialogActions>
         <Button data-tid="closeMoveCopyDialog" onClick={() => props.onClose()}>

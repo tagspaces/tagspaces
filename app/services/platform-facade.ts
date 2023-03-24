@@ -346,14 +346,12 @@ export default class PlatformFacade {
   ): Promise<any> => {
     PlatformFacade.ignoreByWatcher(param.path, newDirPath);
 
-    return platformCopyDirectoryPromise(
-      param,
-      newDirPath,
-      onProgress
-    ).then(result => {
-      PlatformFacade.deignoreByWatcher(param.path, newDirPath);
-      return result;
-    });
+    return platformCopyDirectoryPromise(param, newDirPath, onProgress).then(
+      result => {
+        PlatformFacade.deignoreByWatcher(param.path, newDirPath);
+        return result;
+      }
+    );
   };
 
   static moveDirectoryPromise = (
@@ -363,14 +361,12 @@ export default class PlatformFacade {
   ): Promise<any> => {
     PlatformFacade.ignoreByWatcher(param.path, newDirPath);
 
-    return platformMoveDirectoryPromise(
-      param,
-      newDirPath,
-      onProgress
-    ).then(result => {
-      PlatformFacade.deignoreByWatcher(param.path, newDirPath);
-      return result;
-    });
+    return platformMoveDirectoryPromise(param, newDirPath, onProgress).then(
+      result => {
+        PlatformFacade.deignoreByWatcher(param.path, newDirPath);
+        return result;
+      }
+    );
   };
 
   static loadTextFilePromise = (

@@ -17,7 +17,7 @@
  */
 
 import React from 'react';
-import HelpIcon from '@mui/icons-material/InfoOutlined';
+import { InfoTooltipIcon } from '-/components/CommonIcons';
 import Tooltip from '-/components/Tooltip';
 
 interface Props {
@@ -28,7 +28,7 @@ function InfoIcon(props: Props) {
   const { tooltip } = props;
   return (
     <Tooltip title={tooltip}>
-      <HelpIcon />
+      <InfoTooltipIcon />
     </Tooltip>
   );
 }

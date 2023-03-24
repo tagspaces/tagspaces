@@ -19,6 +19,7 @@
 import React from 'react';
 import ParentFolder from '@mui/icons-material/ReplyOutlined';
 import Help from '@mui/icons-material/Help';
+import InfoOutlined from '@mui/icons-material/InfoOutlined';
 import Info from '@mui/icons-material/Info';
 import AnnouncementIcon from '@mui/icons-material/AnnouncementOutlined';
 import Remove from '@mui/icons-material/RemoveCircleOutline';
@@ -32,6 +33,7 @@ import Menu from '@mui/icons-material/Menu';
 import ArrowBack from '@mui/icons-material/ArrowBack';
 import ArrowForward from '@mui/icons-material/ArrowForward';
 import Folder from '@mui/icons-material/Folder';
+import File from '@mui/icons-material/InsertDriveFile';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import SubdirectoryArrowLeftIcon from '@mui/icons-material/SubdirectoryArrowLeft';
 import Cancel from '@mui/icons-material/DoDisturbOn';
@@ -45,6 +47,8 @@ export const NavigateToFolderIcon = props => <KeyboardReturnIcon />;
 
 export const FolderIcon = props => <Folder {...props} />;
 
+export const FileIcon = props => <File {...props} />;
+
 export const MainMenuIcon = props => <Menu {...props} />;
 
 export const GoBackIcon = props => <ArrowBack {...props} />;
@@ -54,6 +58,8 @@ export const GoForwardIcon = props => <ArrowForward {...props} />;
 export const HelpIcon = props => <Help {...props} />;
 
 export const InfoIcon = props => <AnnouncementIcon {...props} />;
+
+export const InfoTooltipIcon = props => <InfoOutlined {...props} />;
 
 export const FolderPropertiesIcon = props => <Info {...props} />;
 
