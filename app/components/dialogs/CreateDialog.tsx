@@ -21,16 +21,10 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { saveAs } from 'file-saver';
 import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
-import HTMLFileIcon from '@mui/icons-material/PhotoAlbumOutlined';
-import InputAdornment from '@mui/material/InputAdornment';
-import TextFileIcon from '@mui/icons-material/InsertDriveFileOutlined';
-import MarkdownFileIcon from '@mui/icons-material/DescriptionOutlined';
-import AddFileIcon from '@mui/icons-material/NoteAddOutlined';
+import ButtonGroup from '@mui/material/ButtonGroup';
 import Typography from '@mui/material/Typography';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import Avatar from '@mui/material/Avatar';
 import Grid from '@mui/material/Grid';
 import withStyles from '@mui/styles/withStyles';
 import Dialog from '@mui/material/Dialog';
@@ -46,11 +40,11 @@ import {
   getCurrentDirectoryPerspective
 } from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
-import { getFirstRWLocation } from '-/reducers/locations';
+import { getFirstRWLocation, getCurrentLocation } from '-/reducers/locations';
 import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import Spacer from '-/components/Spacer';
+import Tooltip from '-/components/Tooltip';
 import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import TextField from '@mui/material/TextField';
@@ -61,26 +55,23 @@ import { PerspectiveIDs } from '-/perspectives';
 
 const styles: any = () => ({
   createButton: {
-    minHeight: 100,
     width: '100%',
-    textAlign: 'center',
-    textTransform: 'none'
+    textAlign: 'center'
   }
 });
 
 interface Props {
   open: boolean;
   classes: any;
-  // locations: Array<TS.Location>;
   firstRWLocation: TS.Location;
-  // currentLocation: TS.Location;
+  currentLocation: TS.Location;
   selectedEntries: Array<TS.FileSystemEntry>;
   currentDirectoryPath: string | null;
   currentDirectoryPerspective: string;
   openLocation: (location: TS.Location) => void;
-  // selectedDirectoryPath: string;
-  // chooseDirectoryPath: (path: string) => void;
   showNotification: (message: string, type: string) => void;
+  toggleLocationDialog: () => void;
+  toggleCreateDirectoryDialog: () => void;
   reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => void;
   createFileAdvanced: (
     targetPath: string,
@@ -115,9 +106,11 @@ function CreateDialog(props: Props) {
     currentDirectoryPath,
     currentDirectoryPerspective,
     selectedEntries,
-    // currentLocation,
     showNotification,
-    firstRWLocation
+    currentLocation,
+    firstRWLocation,
+    toggleLocationDialog,
+    toggleCreateDirectoryDialog
   } = props;
   const fileUrl = useRef<string>();
   const fileName = useRef<string>(
@@ -147,22 +140,6 @@ function CreateDialog(props: Props) {
   }
 
   const noSuitableLocation = !targetDirectoryPath;
-
-  // function handleKeyPress(event: any) {
-  //   if (event.key === 'n') {
-  //     event.stopPropagation();
-  //     createRichTextFile();
-  //   } else if (event.key === 't') {
-  //     event.stopPropagation();
-  //     createTextFile();
-  //   } else if (event.key === 'm') {
-  //     event.stopPropagation();
-  //     createMarkdownFile();
-  //   } else if (event.key === 'a') {
-  //     event.stopPropagation();
-  //     addFile();
-  //   }
-  // }
 
   function loadLocation() {
     if (!currentDirectoryPath && firstRWLocation) {
@@ -339,24 +316,12 @@ function CreateDialog(props: Props) {
       fullScreen={fullScreen}
       keepMounted
       scroll="paper"
-      // onKeyDown={event => {
-      //   // if (event.key === 'N' || event.key === 'n') {
-      //   //   createRichTextFile();
-      //   // } else if (event.key === 'T' || event.key === 't') {
-      //   //   createTextFile();
-      //   // } else if (event.key === 'M' || event.key === 'm') {
-      //   //   createMarkdownFile();
-      //   // } else if (event.key === 'A' || event.key === 'a') {
-      //   //   addFile();
-      //   // } else
-      // }}
     >
       <DialogTitle>
-        {i18n.t('createNewContent')}
+        {i18n.t('core:create') + '...'}
         <DialogCloseButton onClose={onClose} />
       </DialogTitle>
       <DialogContent
-        // onKeyPress={handleKeyPress}
         style={{
           display: 'flex',
           minWidth: 200,
@@ -368,13 +333,21 @@ function CreateDialog(props: Props) {
         data-tid="keyboardShortCutsDialog"
       >
         <Grid style={{ flexGrow: 1, width: '100%' }} container spacing={1}>
-          {noSuitableLocation && (
-            <Grid item xs={12}>
-              <Typography>
-                File can not be created. No suitable location found!
+          <Grid item xs={12}>
+            {noSuitableLocation ? (
+              <Typography variant="caption">
+                {i18n.t('noSuitableLocation')}
               </Typography>
-            </Grid>
-          )}
+            ) : (
+              <Typography variant="caption">
+                {i18n.t('core:entriesWillBeCreatedIn') +
+                  ' ' +
+                  (currentLocation ? currentLocation.name : '') +
+                  ' ' +
+                  targetDirectoryPath}
+              </Typography>
+            )}
+          </Grid>
           <Grid item xs={12}>
             <FormControl fullWidth={true} error={inputError}>
               <TextField
@@ -389,7 +362,6 @@ function CreateDialog(props: Props) {
                 disabled={noSuitableLocation}
                 fullWidth={true}
                 data-tid="newEntryDialogInputTID"
-                helperText={'File will be created in : ' + targetDirectoryPath}
               />
               {inputError && (
                 <FormHelperText>{i18n.t('core:fileNameHelp')}</FormHelperText>
@@ -397,98 +369,98 @@ function CreateDialog(props: Props) {
             </FormControl>
           </Grid>
           <Grid item xs={12}>
+            <ButtonGroup
+              style={{
+                textAlign: 'center',
+                width: '100%'
+              }}
+            >
+              <Button
+                variant="contained"
+                onClick={createMarkdownFile}
+                className={classes.createButton}
+                data-tid="createMarkdownButton"
+                disabled={noSuitableLocation}
+              >
+                <Tooltip title={i18n.t('createMarkdownTitle')}>
+                  <Typography variant="button" display="block" gutterBottom>
+                    {i18n.t('createMarkdown')}
+                  </Typography>
+                </Tooltip>
+              </Button>
+              <Button
+                variant="contained"
+                onClick={createRichTextFile}
+                className={classes.createButton}
+                data-tid="createRichTextFileButton"
+                disabled={noSuitableLocation}
+              >
+                <Tooltip title={i18n.t('createNoteTitle')}>
+                  <Typography variant="button" display="block" gutterBottom>
+                    {i18n.t('createRichTextFile')}
+                  </Typography>
+                </Tooltip>
+              </Button>
+              <Button
+                variant="contained"
+                onClick={createTextFile}
+                className={classes.createButton}
+                data-tid="createTextFileButton"
+                disabled={noSuitableLocation}
+              >
+                <Tooltip title={i18n.t('createTextFileTitle')}>
+                  <Typography variant="button" display="block" gutterBottom>
+                    {i18n.t('createTextFile')}
+                  </Typography>
+                </Tooltip>
+              </Button>
+            </ButtonGroup>
+          </Grid>
+          <Grid style={{ marginTop: 20 }} item xs={12}>
             <Button
               variant="outlined"
-              onClick={createMarkdownFile}
+              onClick={() => {
+                onClose();
+                toggleLocationDialog();
+              }}
               className={classes.createButton}
-              // title={i18n.t('createMarkdownTitle')}
-              data-tid="createMarkdownButton"
+              data-tid="createLocationButton"
+            >
+              <Tooltip title={i18n.t('createLocationTitle')}>
+                <Typography variant="button" display="block" gutterBottom>
+                  {i18n.t('core:createLocation')}
+                </Typography>
+              </Tooltip>
+            </Button>
+          </Grid>
+          <Grid style={{ marginTop: 20 }} item xs={12}>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                onClose();
+                toggleCreateDirectoryDialog();
+              }}
+              className={classes.createButton}
+              data-tid="newSubDirectory"
               disabled={noSuitableLocation}
             >
-              <Avatar>
-                <MarkdownFileIcon />
-              </Avatar>
-              <Container>
-                <Typography variant="button" display="block" gutterBottom>
-                  {i18n.t('createMarkdown')}
-                </Typography>
-                <Spacer height={10} />
-                <Typography variant="caption" display="block" gutterBottom>
-                  {i18n.t('createMarkdownTitle')}
-                </Typography>
-              </Container>
+              {i18n.t('core:newSubdirectory')}
             </Button>
           </Grid>
           <Grid item xs={12}>
-            <Button
-              variant="outlined"
-              onClick={createRichTextFile}
-              className={classes.createButton}
-              // title={i18n.t('createNoteTitle')}
-              data-tid="createRichTextFileButton"
-              disabled={noSuitableLocation}
-            >
-              <Avatar>
-                <HTMLFileIcon />
-              </Avatar>
-              <Container>
-                <Typography variant="button" display="block" gutterBottom>
-                  {i18n.t('createRichTextFile')}
-                </Typography>
-                <Spacer height={10} />
-                <Typography variant="caption" display="block" gutterBottom>
-                  {i18n.t('createNoteTitle')}
-                </Typography>
-              </Container>
-            </Button>
+            <Tooltip title={i18n.t('core:addFilesTitle')}>
+              <Button
+                variant="outlined"
+                onClick={addFile}
+                className={classes.createButton}
+                data-tid="addFilesButton"
+                disabled={noSuitableLocation}
+              >
+                {i18n.t('addFiles')}
+              </Button>
+            </Tooltip>
           </Grid>
           <Grid item xs={12}>
-            <Button
-              variant="outlined"
-              onClick={createTextFile}
-              className={classes.createButton}
-              // title={i18n.t('createTextFileTitle')}
-              data-tid="createTextFileButton"
-              disabled={noSuitableLocation}
-            >
-              <Avatar>
-                <TextFileIcon />
-              </Avatar>
-              <Container>
-                <Typography variant="button" display="block" gutterBottom>
-                  {i18n.t('createTextFile')}
-                </Typography>
-                <Spacer height={10} />
-                <Typography variant="caption" display="block" gutterBottom>
-                  {i18n.t('createTextFileTitle')}
-                </Typography>
-              </Container>
-            </Button>
-          </Grid>
-          <Grid style={{ marginTop: 40 }} item xs={12}>
-            <Button
-              variant="outlined"
-              onClick={addFile}
-              className={classes.createButton}
-              // title={i18n.t('addFilesTitle')}
-              data-tid="addFilesButton"
-              disabled={noSuitableLocation}
-            >
-              <Avatar>
-                <AddFileIcon />
-              </Avatar>
-              <Container>
-                <Typography variant="button" display="block" gutterBottom>
-                  {i18n.t('addFiles')}
-                </Typography>
-                <Spacer height={10} />
-                <Typography variant="caption" display="block" gutterBottom>
-                  {i18n.t('addFilesTitle')}
-                </Typography>
-              </Container>
-            </Button>
-          </Grid>
-          <Grid style={{ marginTop: 40 }} item xs={12}>
             <TextField
               error={invalidURL}
               label={i18n.t('core:url')}
@@ -496,18 +468,6 @@ function CreateDialog(props: Props) {
               name="name"
               fullWidth={true}
               data-tid="newUrlTID"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <Button
-                      data-tid="cancelRenameEntryTID"
-                      onClick={() => downloadURL()}
-                    >
-                      {i18n.t('core:downloadFile')}
-                    </Button>
-                  </InputAdornment>
-                )
-              }}
               onKeyDown={event => {
                 if (event.key === 'Enter') {
                   downloadURL();
@@ -515,6 +475,22 @@ function CreateDialog(props: Props) {
               }}
               onChange={handleUrlChange}
             />
+          </Grid>
+          <Grid item xs={12}>
+            <ButtonGroup
+              style={{
+                textAlign: 'center',
+                width: '100%'
+              }}
+            >
+              <Button
+                data-tid="cancelRenameEntryTID"
+                className={classes.createButton}
+                onClick={() => downloadURL()}
+              >
+                {i18n.t('core:downloadFile')}
+              </Button>
+            </ButtonGroup>
           </Grid>
         </Grid>
         <input
@@ -534,13 +510,12 @@ function CreateDialog(props: Props) {
 
 function mapStateToProps(state) {
   return {
-    // locations: getLocations(state),
     firstRWLocation: getFirstRWLocation(state),
     keyBindings: getKeyBindingObject(state),
     selectedEntries: getSelectedEntries(state),
     currentDirectoryPath: getDirectoryPath(state),
-    currentDirectoryPerspective: getCurrentDirectoryPerspective(state)
-    // currentLocation: getCurrentLocation(state)
+    currentDirectoryPerspective: getCurrentDirectoryPerspective(state),
+    currentLocation: getCurrentLocation(state)
   };
 }
 
@@ -551,6 +526,8 @@ function mapActionCreatorsToProps(dispatch) {
       createFileAdvanced: AppActions.createFileAdvanced,
       showNotification: AppActions.showNotification,
       reflectCreateEntries: AppActions.reflectCreateEntries,
+      toggleLocationDialog: AppActions.toggleLocationDialog,
+      toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog,
       uploadFilesAPI: IOActions.uploadFilesAPI,
       downloadFile: IOActions.downloadFile,
       onUploadProgress: AppActions.onUploadProgress,

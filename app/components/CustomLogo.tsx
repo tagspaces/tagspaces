@@ -24,7 +24,6 @@ import withStyles from '@mui/styles/withStyles';
 import Badge from '@mui/material/Badge';
 import Tooltip from '-/components/Tooltip';
 import AppConfig from '-/AppConfig';
-import PlatformIO from '-/services/platform-facade';
 import { Pro } from '../pro';
 import TextLogoIcon from '../assets/images/text-logo.svg';
 import WebLogoIcon from '../assets/images/text-logo-web.svg';
@@ -64,15 +63,10 @@ if (AppConfig.customLogo) {
 function CustomLogo(props: Props) {
   return (
     <AppVersionBadge badgeContent={'v' + versionMeta.version} color="primary">
-      <Tooltip title={i18n.t('core:openNewInstance')}>
+      <Tooltip title={i18n.t('core:aboutTitle')}>
         <IconButton
-          onClick={() => {
-            AppConfig.isCordova
-              ? props.toggleAboutDialog()
-              : PlatformIO.createNewInstance();
-          }}
+          onClick={props.toggleAboutDialog}
           style={{ padding: 0, paddingLeft: 5, height: 50 }}
-          data-tid="createNewInstance"
         >
           <img
             style={{
