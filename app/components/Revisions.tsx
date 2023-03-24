@@ -180,7 +180,7 @@ function Revisions(props: Props) {
             <TableRow>
               <TableCell>
                 {i18n.t('revisions')}
-                <Tooltip title={i18n.t('core:deleteAll')}>
+                <Tooltip title={i18n.t('core:deleteAllRevisions')}>
                   <IconButton
                     aria-label="delete all revisions"
                     onClick={() =>

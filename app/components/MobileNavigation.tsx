@@ -31,6 +31,7 @@ import ThemingIcon from '@mui/icons-material/InvertColors';
 import TagLibraryIcon from '@mui/icons-material/LocalOfferOutlined';
 import RecentThingsIcon from '@mui/icons-material/BookmarksOutlined';
 import HelpIcon from '@mui/icons-material/HelpOutline';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SettingsIcon from '@mui/icons-material/Settings';
 import withStyles from '@mui/styles/withStyles';
@@ -60,6 +61,8 @@ import {
 import StoredSearches from '-/components/StoredSearches';
 import UserDetailsPopover from '-/components/UserDetailsPopover';
 import { CreateFileIcon, LocalLocationIcon } from '-/components/CommonIcons';
+import PlatformIO from '-/services/platform-facade';
+import AppConfig from '-/AppConfig';
 
 const styles: any = (theme: any) => ({
   selectedButton: {
@@ -147,7 +150,8 @@ function MobileNavigation(props: Props) {
             textAlign: 'center',
             display: 'block',
             whiteSpace: 'nowrap',
-            marginBottom: 10
+            marginBottom: 10,
+            marginLeft: 15
           }}
         >
           <Tooltip title={i18n.t('core:createFileTitle')}>
@@ -163,17 +167,6 @@ function MobileNavigation(props: Props) {
               color="primary"
             >
               <CreateFileIcon />
-            </Button>
-          </Tooltip>
-          <Tooltip title={i18n.t('core:createLocationTitle')}>
-            <Button
-              data-tid="createNewLocation"
-              onClick={toggleLocationDialog}
-              size="small"
-              color="primary"
-            >
-              <LocalLocationIcon />
-              &nbsp;
               <span
                 style={{
                   maxWidth: 180,
@@ -181,10 +174,32 @@ function MobileNavigation(props: Props) {
                   overflow: 'hidden'
                 }}
               >
-                {i18n.t('core:createLocationTitle')}
+                {i18n.t('core:create')}
               </span>
             </Button>
           </Tooltip>
+          {!AppConfig.isCordova && (
+            <Tooltip title={i18n.t('core:openNewInstance')}>
+              <Button
+                data-tid="newAppWindow"
+                onClick={() => PlatformIO.createNewInstance()}
+                size="small"
+                color="primary"
+              >
+                <OpenInNewIcon />
+                &nbsp;
+                <span
+                  style={{
+                    maxWidth: 180,
+                    textOverflow: 'ellipsis',
+                    overflow: 'hidden'
+                  }}
+                >
+                  {i18n.t('core:newWindow')}
+                </span>
+              </Button>
+            </Tooltip>
+          )}
         </ButtonGroup>
         <LocationManager
           reduceHeightBy={170}
