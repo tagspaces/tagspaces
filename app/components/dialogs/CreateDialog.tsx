@@ -447,7 +447,7 @@ function CreateDialog(props: Props) {
               {i18n.t('core:newSubdirectory')}
             </Button>
           </Grid>
-          <Grid item xs={12}>
+          <Grid style={{ marginTop: 20 }} item xs={12}>
             <Tooltip title={i18n.t('core:addFilesTitle')}>
               <Button
                 variant="outlined"

@@ -266,7 +266,7 @@
   "addFilesTitle": "Add or upload files from your computer.",
   "exitApp": "Exit",
   "closeWin": "Close Window",
-  "openNewInstance": "New Application Window",
+  "openNewInstance": "Opens new application window or tab",
   "documentation": "Documentation",
   "selectFile": "Please select a file first.",
   "geoTaggingNotPossible": "Geo Tagging not possible!",
