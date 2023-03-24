@@ -57,6 +57,7 @@ import {
   platformRenameFilePromise,
   platformRenameDirectoryPromise,
   platformMoveDirectoryPromise,
+  platformCopyDirectoryPromise,
   platformDeleteFilePromise,
   platformDeleteDirectoryPromise,
   platformOpenDirectory,
@@ -74,7 +75,8 @@ import {
   platformLoadExtensions,
   platformRemoveExtension,
   platformGetUserDataDir,
-  platformUnZip
+  platformUnZip,
+  platformDirProperties
 } from '@tagspaces/tagspaces-platforms/platform-io';
 import AppConfig from '-/AppConfig';
 import { Pro } from '../pro';
@@ -337,16 +339,34 @@ export default class PlatformFacade {
     });
   };
 
-  static moveDirectoryPromise = (
-    dirPath: string,
-    newDirPath: string
+  static copyDirectoryPromise = (
+    param: any,
+    newDirPath: string,
+    onProgress = undefined
   ): Promise<any> => {
-    PlatformFacade.ignoreByWatcher(dirPath, newDirPath);
+    PlatformFacade.ignoreByWatcher(param.path, newDirPath);
 
-    return platformMoveDirectoryPromise(dirPath, newDirPath).then(result => {
-      PlatformFacade.deignoreByWatcher(dirPath, newDirPath);
-      return result;
-    });
+    return platformCopyDirectoryPromise(param, newDirPath, onProgress).then(
+      result => {
+        PlatformFacade.deignoreByWatcher(param.path, newDirPath);
+        return result;
+      }
+    );
+  };
+
+  static moveDirectoryPromise = (
+    param: any,
+    newDirPath: string,
+    onProgress = undefined
+  ): Promise<any> => {
+    PlatformFacade.ignoreByWatcher(param.path, newDirPath);
+
+    return platformMoveDirectoryPromise(param, newDirPath, onProgress).then(
+      result => {
+        PlatformFacade.deignoreByWatcher(param.path, newDirPath);
+        return result;
+      }
+    );
   };
 
   static loadTextFilePromise = (
@@ -534,5 +554,9 @@ export default class PlatformFacade {
 
   static unZip(filePath, targetPath): Promise<boolean> {
     return platformUnZip(filePath, targetPath);
+  }
+
+  static getDirProperties(filePath): Promise<TS.DirProp> {
+    return platformDirProperties(filePath);
   }
 }

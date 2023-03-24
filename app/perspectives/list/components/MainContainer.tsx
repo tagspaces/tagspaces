@@ -933,6 +933,7 @@ function GridPerspective(props: Props) {
         directoryPath={props.lastSelectedEntryPath}
         loadDirectoryContent={props.loadDirectoryContent}
         openRenameDirectoryDialog={props.openRenameEntryDialog}
+        openMoveCopyFilesDialog={openMoveCopyFilesDialog}
         openDirectory={props.openDirectory}
         openFsEntry={props.openFsEntry}
         perspectiveMode={

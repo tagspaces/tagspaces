@@ -47,6 +47,7 @@ import { TS } from '-/tagspaces.namespace';
 interface Props {
   open: boolean;
   progress?: Array<any>;
+  title: string;
   onClose: () => void;
   clearUploadDialog: () => void;
   currentDirectoryPerspective: string;
@@ -61,6 +62,7 @@ interface Props {
 
 function FileUploadDialog(props: Props) {
   const { open = false, onClose } = props;
+  const targetPath = React.useRef<string>(undefined);
 
   function LinearProgressWithLabel(prop) {
     return (
@@ -121,7 +123,12 @@ function FileUploadDialog(props: Props) {
         );
       }
     }
-    return props.currentDirectoryPath ? props.currentDirectoryPath : '/';
+    if (targetPath.current) {
+      return targetPath.current;
+    } else if (props.currentDirectoryPath) {
+      return props.currentDirectoryPath;
+    }
+    return '/';
   }
 
   return (
@@ -135,7 +142,12 @@ function FileUploadDialog(props: Props) {
       BackdropProps={{ style: { backgroundColor: 'transparent' } }}
     >
       <DialogTitle data-tid="importDialogTitle">
-        {i18n.t('core:importDialogTitle')}
+        {i18n.t(
+          'core:' +
+            (props.title && props.title.length > 0
+              ? props.title
+              : 'importDialogTitle')
+        )}
         <DialogCloseButton onClose={onClose} />
       </DialogTitle>
       <DialogContent
@@ -153,8 +165,9 @@ function FileUploadDialog(props: Props) {
             .map(fileProgress => {
               const percentage = fileProgress.progress;
               const { path } = fileProgress;
+              targetPath.current = path.split('?')[0];
               const fileName = extractFileName(
-                path.split('?')[0],
+                targetPath.current,
                 PlatformIO.getDirSeparator()
               );
               let { abort } = fileProgress;

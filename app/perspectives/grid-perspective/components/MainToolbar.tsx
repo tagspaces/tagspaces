@@ -160,31 +160,6 @@ function MainToolbar(props: Props) {
           <FolderPropertiesIcon />
         </IconButton>
       </Tooltip>
-      {/* {layoutType === 'row' ? (
-        <Tooltip title={i18n.t('core:switchToGridView')}>
-          <IconButton
-            aria-label={i18n.t('core:switchToGridView')}
-            data-tid="gridPerspectiveSwitchLayoutToGrid"
-            onClick={() => {
-              handleLayoutSwitch('grid');
-            }}
-          >
-            <ViewGridIcon />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title={i18n.t('core:switchToListView')}>
-          <IconButton
-            aria-label={i18n.t('core:switchToListView')}
-            data-tid="gridPerspectiveSwitchLayoutToRow"
-            onClick={() => {
-              handleLayoutSwitch('row');
-            }}
-          >
-            <ViewListIcon />
-          </IconButton>
-        </Tooltip>
-      )} */}
       {!isReadOnlyMode && (
         <Tooltip
           title={
@@ -213,7 +188,7 @@ function MainToolbar(props: Props) {
             <IconButton
               aria-label={i18n.t('core:copyMoveSelectedEntries')}
               data-tid="gridPerspectiveCopySelectedFiles"
-              disabled={!fileOperationsEnabled}
+              disabled={selectedEntries.length < 1}
               onClick={openMoveCopyFilesDialog}
               size="large"
             >

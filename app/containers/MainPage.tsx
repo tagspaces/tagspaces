@@ -144,7 +144,7 @@ interface Props {
   isLicenseDialogOpened: boolean;
   isThirdPartyLibsDialogOpened: boolean;
   isOnboardingDialogOpened: boolean;
-  isUploadProgressDialogOpened: boolean;
+  isUploadProgressDialogOpened: string | undefined;
   isProgressDialogOpened: boolean;
   isProTeaserVisible: boolean;
   toggleUploadDialog: () => void;
@@ -654,6 +654,9 @@ function MainPage(props: Props) {
           currentDirectoryPath={directoryPath}
           goBack={goBack}
           goForward={goForward}
+          openMoveCopyFilesDialog={() =>
+            setMoveCopyDialogOpened(props.selectedEntries)
+          }
         />
         {isFileOpened && (
           <EntryContainer
@@ -750,12 +753,11 @@ function MainPage(props: Props) {
           openURLExternally={openURLExternally}
         />
       )}
-      {props.isUploadProgressDialogOpened && (
-        <FileUploadDialog
-          open={props.isUploadProgressDialogOpened}
-          onClose={toggleUploadDialog}
-        />
-      )}
+      <FileUploadDialog
+        open={props.isUploadProgressDialogOpened !== undefined}
+        onClose={toggleUploadDialog}
+        title={props.isUploadProgressDialogOpened}
+      />
       {props.isProgressDialogOpened && (
         <ProgressDialog
           open={props.isProgressDialogOpened}

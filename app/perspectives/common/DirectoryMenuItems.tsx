@@ -1,6 +1,7 @@
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import OpenFolderIcon from '@mui/icons-material/SubdirectoryArrowLeft';
+import MoveCopy from '@mui/icons-material/FileCopy';
 import ListItemText from '@mui/material/ListItemText';
 import i18n from '-/services/i18n';
 import AutoRenew from '@mui/icons-material/Autorenew';
@@ -30,6 +31,7 @@ export function getDirectoryMenuItems(
   openDirectory?: () => void,
   reloadDirectory?: () => void,
   showRenameDirectoryDialog?: () => void,
+  openMoveCopyDialog?: () => void,
   showDeleteDirectoryDialog?: () => void,
   showInFileManager?: () => void,
   createNewFile?: () => void,
@@ -96,6 +98,24 @@ export function getDirectoryMenuItems(
         </MenuItem>
       );
     }
+  }
+
+  if (!isReadOnlyMode && openMoveCopyDialog) {
+    menuItems.push(
+      <MenuItem
+        key="fileMenuMoveCopyDirectory"
+        data-tid="fileMenuMoveCopyDirectoryTID"
+        onClick={() => {
+          onClose();
+          openMoveCopyDialog();
+        }}
+      >
+        <ListItemIcon>
+          <MoveCopy />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:moveCopyDirectory')} />
+      </MenuItem>
+    );
   }
 
   if (!isReadOnlyMode && showDeleteDirectoryDialog) {
