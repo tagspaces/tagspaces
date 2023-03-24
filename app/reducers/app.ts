@@ -517,7 +517,8 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         // progress: (state.uploadDialogOpened ? state.progress : []),
-        uploadDialogOpened: !state.uploadDialogOpened
+        uploadDialogOpened:
+          state.uploadDialogOpened === undefined ? action.title : undefined
       };
       //}
       // return state;
@@ -534,7 +535,7 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         progress: [],
-        uploadDialogOpened: false
+        uploadDialogOpened: undefined
       };
       // }
       // return state;
@@ -1179,8 +1180,9 @@ export const actions = {
   toggleImportKanBanDialog: () => ({
     type: types.TOGGLE_IMPORT_KANBAN_DIALOG
   }),
-  toggleUploadDialog: () => ({
-    type: types.TOGGLE_UPLOAD_DIALOG
+  toggleUploadDialog: (title = '') => ({
+    type: types.TOGGLE_UPLOAD_DIALOG,
+    title
   }),
   setCurrentDirectoryDirs: dirs => ({
     type: types.SET_CURRENT_DIRECTORY_DIRS,

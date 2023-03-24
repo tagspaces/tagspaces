@@ -47,6 +47,7 @@ import { TS } from '-/tagspaces.namespace';
 interface Props {
   open: boolean;
   progress?: Array<any>;
+  title: string;
   onClose: () => void;
   clearUploadDialog: () => void;
   currentDirectoryPerspective: string;
@@ -141,7 +142,12 @@ function FileUploadDialog(props: Props) {
       BackdropProps={{ style: { backgroundColor: 'transparent' } }}
     >
       <DialogTitle data-tid="importDialogTitle">
-        {i18n.t('core:importDialogTitle')}
+        {i18n.t(
+          'core:' +
+            (props.title && props.title.length > 0
+              ? props.title
+              : 'importDialogTitle')
+        )}
         <DialogCloseButton onClose={onClose} />
       </DialogTitle>
       <DialogContent

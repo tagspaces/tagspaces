@@ -47,6 +47,7 @@ import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { actions as AppActions, getSelectedEntries } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
+import DirectoryListView from '-/components/DirectoryListView';
 
 interface Props {
   open: boolean;
@@ -56,24 +57,24 @@ interface Props {
     dirs: Array<string>,
     totalCount: number,
     destination: string,
-    onUploadProgress?: (progress: Progress, response: any) => void
+    onUploadProgress?: (progress: Progress, abort: () => void) => void
   ) => void;
   moveFiles: (files: Array<string>, destination: string) => void;
   moveDirs: (
     dirs: Array<string>,
     totalCount: number,
     destination: string,
-    onUploadProgress?: (progress: Progress, response: any) => void
+    onUploadProgress?: (progress: Progress, abort: () => void) => void
   ) => void;
   selectedEntries: Array<TS.FileSystemEntry>;
   selectedFiles?: Array<string>;
-  onUploadProgress: (progress: Progress, response: any) => void;
-  toggleUploadDialog: () => void;
+  onUploadProgress: (progress: Progress, abort: () => void) => void;
+  toggleUploadDialog: (title?) => void;
   resetProgress: () => void;
 }
 
 function MoveCopyFilesDialog(props: Props) {
-  const [inputError, setInputError] = useState(false);
+  //const [inputError, setInputError] = useState(false);
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [targetPath, setTargetPath] = useState('');
   const dirProp = useRef({});
@@ -114,10 +115,10 @@ function MoveCopyFilesDialog(props: Props) {
 
   function handleValidation() {
     if (targetPath && targetPath.length > 0) {
-      setInputError(false);
+      //setInputError(false);
       setDisableConfirmButton(false);
     } else {
-      setInputError(true);
+      //setInputError(true);
       setDisableConfirmButton(true);
     }
   }
@@ -133,13 +134,13 @@ function MoveCopyFilesDialog(props: Props) {
     if (!disableConfirmButton) {
       if (selectedFiles.length > 0) {
         props.copyFiles(selectedFiles, targetPath);
-        setInputError(false);
+        //setInputError(false);
         setDisableConfirmButton(true);
         setTargetPath('');
       }
       if (selectedDirs.length > 0) {
         props.resetProgress();
-        props.toggleUploadDialog();
+        props.toggleUploadDialog('copyEntriesTitle');
         props.copyDirs(
           selectedDirs,
           getEntriesCount(),
@@ -155,13 +156,13 @@ function MoveCopyFilesDialog(props: Props) {
     if (!disableConfirmButton) {
       if (selectedFiles.length > 0) {
         props.moveFiles(selectedFiles, targetPath);
-        setInputError(false);
+        //setInputError(false);
         setDisableConfirmButton(true);
         setTargetPath('');
       }
       if (selectedDirs.length > 0) {
         props.resetProgress();
-        props.toggleUploadDialog();
+        props.toggleUploadDialog('moveEntriesTitle');
         props.moveDirs(
           selectedDirs,
           getEntriesCount(),
@@ -173,7 +174,7 @@ function MoveCopyFilesDialog(props: Props) {
     props.onClose(true);
   }
 
-  function selectDirectory() {
+  /*function selectDirectory() {
     PlatformIO.selectDirectoryDialog()
       .then(selectedPaths => {
         setTargetPath(selectedPaths[0]);
@@ -182,7 +183,7 @@ function MoveCopyFilesDialog(props: Props) {
       .catch(err => {
         console.log('selectDirectoryDialog failed with: ' + err);
       });
-  }
+  }*/
 
   function onCloseDialog() {
     onClose();
@@ -199,7 +200,7 @@ function MoveCopyFilesDialog(props: Props) {
       fullScreen={fullScreen}
     >
       <DialogTitle>
-        {i18n.t('core:copyMoveFilesTitle')}
+        {i18n.t('core:copyMoveTitle')}
         <DialogCloseButton onClose={onCloseDialog} />
       </DialogTitle>
       <DialogContent style={{ overflowX: 'hidden' }}>
@@ -234,7 +235,13 @@ function MoveCopyFilesDialog(props: Props) {
               </ListItem>
             ))}
         </List>
-        <FormControl fullWidth={true}>
+        {targetPath ? (
+          <div>{i18n.t('moveCopyToPath') + ':' + targetPath}</div>
+        ) : (
+          <div>{i18n.t('ChoseTargetPath')}</div>
+        )}
+        <DirectoryListView setTargetDir={setTargetPath} />
+        {/*<FormControl fullWidth={true}>
           <TextField
             autoFocus
             required
@@ -268,7 +275,7 @@ function MoveCopyFilesDialog(props: Props) {
             }}
           />
           {inputError && <FormHelperText>Empty Input Field</FormHelperText>}
-        </FormControl>
+        </FormControl>*/}
       </DialogContent>
       <DialogActions>
         <Button data-tid="closeMoveCopyDialog" onClick={() => props.onClose()}>
