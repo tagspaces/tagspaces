@@ -26,18 +26,12 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListSubheader from '@mui/material/ListSubheader';
-import TextField from '@mui/material/TextField';
-import InputAdornment from '@mui/material/InputAdornment';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import FormControl from '@mui/material/FormControl';
-import FormHelperText from '@mui/material/FormHelperText';
 import Typography from '@mui/material/Typography';
 import Dialog from '@mui/material/Dialog';
-import IconButton from '@mui/material/IconButton';
 import { FolderIcon, FileIcon } from '-/components/CommonIcons';
-import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
 import IOActions from '-/reducers/io-actions';
@@ -73,7 +67,6 @@ interface Props {
 }
 
 function MoveCopyFilesDialog(props: Props) {
-  //const [inputError, setInputError] = useState(false);
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [targetPath, setTargetPath] = useState('');
   const dirProp = useRef({});
@@ -114,10 +107,8 @@ function MoveCopyFilesDialog(props: Props) {
 
   function handleValidation() {
     if (targetPath && targetPath.length > 0) {
-      //setInputError(false);
       setDisableConfirmButton(false);
     } else {
-      //setInputError(true);
       setDisableConfirmButton(true);
     }
   }
@@ -133,7 +124,6 @@ function MoveCopyFilesDialog(props: Props) {
     if (!disableConfirmButton) {
       if (selectedFiles.length > 0) {
         props.copyFiles(selectedFiles, targetPath);
-        //setInputError(false);
         setDisableConfirmButton(true);
         setTargetPath('');
       }
@@ -155,7 +145,6 @@ function MoveCopyFilesDialog(props: Props) {
     if (!disableConfirmButton) {
       if (selectedFiles.length > 0) {
         props.moveFiles(selectedFiles, targetPath);
-        //setInputError(false);
         setDisableConfirmButton(true);
         setTargetPath('');
       }
@@ -222,7 +211,7 @@ function MoveCopyFilesDialog(props: Props) {
                 <ListItemIcon>
                   {entry.isFile ? <FileIcon /> : <FolderIcon />}
                 </ListItemIcon>
-                <Typography variant="inherit" noWrap>
+                <Typography variant="subtitle2" noWrap>
                   {entry.name}
                   {dirProp.current[entry.path] &&
                     ' (' +
@@ -235,11 +224,11 @@ function MoveCopyFilesDialog(props: Props) {
             ))}
         </List>
         {targetPath ? (
-          <Typography variant="inherit">
+          <Typography variant="subtitle2">
             {i18n.t('moveCopyToPath') + ': ' + targetPath}
           </Typography>
         ) : (
-          <Typography variant="inherit">
+          <Typography variant="subtitle2">
             {i18n.t('chooseTargetLocationAndPath')}
           </Typography>
         )}
