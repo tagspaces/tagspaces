@@ -32,6 +32,7 @@ function DialogCloseButton(props: Props) {
     <IconButton
       title={i18n.t('closeButtonDialog')}
       aria-label="close"
+      tabIndex={-1}
       style={{
         position: 'absolute',
         right: 5,

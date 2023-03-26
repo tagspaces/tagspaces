@@ -769,5 +769,7 @@
   "newWindow": "New window",
   "entriesWillBeCreatedIn": "Files and folders will be created in:",
   "noSuitableLocation": "Files or folders can't be created. No suitable location found!",
+  "openEntry": "Open entry",
+  "openSearch": "Open search",
   "-": "-"
 }

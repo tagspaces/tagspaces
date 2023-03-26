@@ -86,7 +86,7 @@ export default function keyBindings(isMacLike) {
     },
     {
       name: 'openEntry',
-      command: 'enter'
+      command: 'alt+enter'
     },
     {
       name: 'openParentDirectory',
