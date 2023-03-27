@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
+import IconButton from '@mui/material/IconButton';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import List from '@mui/material/List';
@@ -13,7 +14,7 @@ import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
 import { TS } from '-/tagspaces.namespace';
 import { getCurrentLocationId } from '-/reducers/app';
-import { ParentFolderIcon } from '-/components/CommonIcons';
+import { CreateFileIcon, ParentFolderIcon } from '-/components/CommonIcons';
 import { getLocations } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-facade';
 
@@ -45,12 +46,17 @@ function DirectoryListView(props: Props) {
       location => location.uuid === chosenLocationId.current
     );
     if (chosenLocation) {
-      props.setTargetDir(chosenLocation.path);
       listDirectory(chosenLocation.path);
     }
   };
 
   function getLocations() {
+    const currentLocation = locations.find(
+      location => location.uuid === chosenLocationId.current
+    );
+    if (currentLocation.type !== locationType.TYPE_LOCAL) {
+      return null;
+    }
     return (
       <Select
         onChange={handleLocationChange}
@@ -78,6 +84,7 @@ function DirectoryListView(props: Props) {
       .then(results => {
         if (results !== undefined) {
           setDirectoryContent(results.filter(entry => !entry.isFile));
+          props.setTargetDir(directoryPath);
         }
         return true;
       })
@@ -114,6 +121,20 @@ function DirectoryListView(props: Props) {
   return (
     <div style={{ marginTop: 10 }}>
       {getLocations()}
+      <IconButton
+        size="small"
+        style={{ backgroundColor: '#fefefe80', margin: 5 }}
+        onClick={() => {
+          if (chosenDirectory.current) {
+            listDirectory(
+              extractContainingDirectoryPath(chosenDirectory.current)
+            );
+          }
+        }}
+      >
+        <ParentFolderIcon />
+        {i18n.t('core:navigateToParentDirectory')}
+      </IconButton>
       <List
         dense
         style={{
@@ -123,21 +144,6 @@ function DirectoryListView(props: Props) {
           overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
         }}
       >
-        <ListItem
-          title={i18n.t('core:navigateToParentDirectory')}
-          style={{ maxWidth: 250 }}
-          button
-          onClick={() => {
-            listDirectory(
-              extractContainingDirectoryPath(chosenDirectory.current)
-            );
-          }}
-        >
-          <ListItemIcon style={{ minWidth: 35 }}>
-            <ParentFolderIcon />
-          </ListItemIcon>
-          <ListItemText primary={i18n.t('core:navigateToParentDirectory')} />
-        </ListItem>
         {getFolderContent()}
       </List>
     </div>

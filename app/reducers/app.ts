@@ -315,7 +315,12 @@ export default (state: any = initialState, action: any) => {
     }
     case types.PROGRESS: {
       const arrProgress = [
-        { path: action.path, progress: action.progress, abort: action.abort }
+        {
+          path: action.path,
+          filePath: action.filePath,
+          progress: action.progress,
+          abort: action.abort
+        }
       ];
       state.progress.map(fileProgress => {
         if (fileProgress.path !== action.path) {
@@ -1103,20 +1108,25 @@ export const actions = {
     type: types.SET_NEW_VERSION_AVAILABLE,
     isUpdateAvailable
   }),
-  setProgress: (path, progress, abort) => ({
+  setProgress: (path, progress, abort, filePath = undefined) => ({
     type: types.PROGRESS,
     path,
+    filePath,
     progress,
     abort
   }),
   resetProgress: () => ({ type: types.RESET_PROGRESS }),
-  onUploadProgress: (progress, abort) => (dispatch: (action) => void) => {
+  onUploadProgress: (progress, abort, fileName = undefined) => (
+    dispatch: (action) => void
+  ) => {
     const progressPercentage = Math.round(
       (progress.loaded / progress.total) * 100
     );
     console.log(progressPercentage);
 
-    dispatch(actions.setProgress(progress.key, progressPercentage, abort));
+    dispatch(
+      actions.setProgress(progress.key, progressPercentage, abort, fileName)
+    );
   },
   showCreateDirectoryDialog: () => (
     dispatch: (action) => void,

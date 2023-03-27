@@ -411,6 +411,7 @@ Do you want to continue?`)
   }
 
   const menuItems = getDirectoryMenuItems(
+    currentLocation,
     props.selectedEntries.length,
     props.lastSelectedEntryPath !== props.currentDirectoryPath,
     props.isReadOnlyMode,

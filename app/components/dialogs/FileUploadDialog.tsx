@@ -62,7 +62,7 @@ interface Props {
 
 function FileUploadDialog(props: Props) {
   const { open = false, onClose } = props;
-  const targetPath = React.useRef<string>(undefined);
+  const targetPath = React.useRef<string>(getTargetPath());
 
   function LinearProgressWithLabel(prop) {
     return (
@@ -92,6 +92,14 @@ function FileUploadDialog(props: Props) {
   };
 
   let haveProgress = false;
+
+  function getTargetPath() {
+    const pathProgress = props.progress.find(fileProgress => fileProgress.path);
+    if (pathProgress) {
+      return pathProgress.path;
+    }
+    return undefined;
+  }
 
   function getTargetURL() {
     if (props.currentLocation) {
@@ -164,12 +172,8 @@ function FileUploadDialog(props: Props) {
             .sort((a, b) => ('' + a.path).localeCompare(b.path))
             .map(fileProgress => {
               const percentage = fileProgress.progress;
-              const { path } = fileProgress;
+              const { path, filePath } = fileProgress;
               targetPath.current = path.split('?')[0];
-              const fileName = extractFileName(
-                targetPath.current,
-                PlatformIO.getDirSeparator()
-              );
               let { abort } = fileProgress;
               if (percentage > -1 && percentage < 100) {
                 haveProgress = true;
@@ -189,7 +193,12 @@ function FileUploadDialog(props: Props) {
                     xs={10}
                     style={{ display: 'flex', alignItems: 'center' }}
                   >
-                    {fileName}
+                    {filePath
+                      ? filePath
+                      : extractFileName(
+                          targetPath.current,
+                          PlatformIO.getDirSeparator()
+                        )}
                     {percentage === -1 && (
                       <Tooltip title={i18n.t('core:fileExist')}>
                         <WarningIcon color="secondary" />
