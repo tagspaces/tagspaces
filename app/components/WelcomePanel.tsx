@@ -231,25 +231,25 @@ function WelcomePanel(props: Props) {
         >
           <img src={WelcomeLogo} alt="Organize your files" />
         </div>
-        <ListItem button onClick={triggerOpenLocation}>
+        <ListItem onClick={triggerOpenLocation}>
           <ListItemIcon>
             <LocalLocationIcon />
           </ListItemIcon>
           <ListItemText
-            primary={i18n.t('chooseLocation')}
+            primary={i18n.t('core:chooseLocation')}
             className={classes.listItem}
           />
         </ListItem>
-        <ListItem button onClick={toggleCreateFileDialog}>
+        {/* <ListItem onClick={toggleCreateFileDialog}>
           <ListItemIcon>
             <CreateFileIcon />
           </ListItemIcon>
           <ListItemText
-            primary={i18n.t('createFileTitle')}
+            primary={i18n.t('core:create')}
             className={classes.listItem}
           />
-        </ListItem>
-        <ListItem button onClick={toggleLocationDialog}>
+        </ListItem> */}
+        <ListItem onClick={toggleLocationDialog}>
           <ListItemIcon>
             <LocalLocationIcon />
           </ListItemIcon>
@@ -258,7 +258,7 @@ function WelcomePanel(props: Props) {
             className={classes.listItem}
           />
         </ListItem>
-        <ListItem button onClick={toggleOpenLinkDialog}>
+        <ListItem onClick={toggleOpenLinkDialog}>
           <ListItemIcon>
             <OpenLinkIcon />
           </ListItemIcon>
@@ -269,7 +269,6 @@ function WelcomePanel(props: Props) {
         </ListItem>
         <Divider />
         <ListItem
-          button
           onClick={() =>
             openURLExternally(Links.documentationLinks.general, true)
           }
@@ -282,7 +281,7 @@ function WelcomePanel(props: Props) {
             className={classes.listItem}
           />
         </ListItem>
-        <ListItem button onClick={toggleKeysDialog}>
+        <ListItem onClick={toggleKeysDialog}>
           <ListItemIcon>
             <KeyShortcutsIcon />
           </ListItemIcon>
@@ -292,7 +291,6 @@ function WelcomePanel(props: Props) {
           />
         </ListItem>
         <ListItem
-          button
           onClick={() => openURLExternally(Links.links.changelogURL, true)}
         >
           <ListItemIcon>
@@ -304,7 +302,6 @@ function WelcomePanel(props: Props) {
           />
         </ListItem>
         <ListItem
-          button
           onClick={() => openURLExternally(Links.links.webClipper, true)}
         >
           <ListItemIcon>
@@ -317,7 +314,6 @@ function WelcomePanel(props: Props) {
         </ListItem>
         <Divider />
         <ListItem
-          button
           onClick={() => openURLExternally(Links.links.suggestFeature, true)}
         >
           <ListItemIcon>
@@ -329,7 +325,6 @@ function WelcomePanel(props: Props) {
           />
         </ListItem>
         <ListItem
-          button
           onClick={() => openURLExternally(Links.links.reportIssue, true)}
         >
           <ListItemIcon>
@@ -341,7 +336,6 @@ function WelcomePanel(props: Props) {
           />
         </ListItem>
         <ListItem
-          button
           onClick={() => openURLExternally(Links.links.helpTranslating, true)}
         >
           <ListItemIcon>
@@ -354,7 +348,6 @@ function WelcomePanel(props: Props) {
         </ListItem>
         <Divider />
         <ListItem
-          button
           onClick={() => openURLExternally(Links.links.emailContact, true)}
         >
           <ListItemIcon>
@@ -365,10 +358,7 @@ function WelcomePanel(props: Props) {
             className={classes.listItem}
           />
         </ListItem>
-        <ListItem
-          button
-          onClick={() => openURLExternally(Links.links.twitter, true)}
-        >
+        <ListItem onClick={() => openURLExternally(Links.links.twitter, true)}>
           <ListItemIcon>
             <TwitterIcon />
           </ListItemIcon>
