@@ -97,7 +97,8 @@ export async function createPwLocation(
   const lastLocationTID = await getPwLocationTid(-1);
   // Check if location not exist (from extconfig.js)
   if (locationName !== lastLocationTID) {
-    await global.client.click('[data-tid=createNewLocation]');
+    await clickOn('[data-tid=locationManagerMenu]');
+    await clickOn('[data-tid=locationManagerMenuCreateLocation]');
     //   await global.client.click('[data-tid=locationPath]');
     await setInputKeys('locationPath', locationPath || defaultLocationPath, 20);
     await setInputKeys(
