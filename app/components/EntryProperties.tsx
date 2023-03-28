@@ -971,15 +971,16 @@ function EntryProperties(props: Props) {
           <Grid item xs={6}>
             <Tooltip
               title={
-                dirProps.current && !currentEntry.current.isFile
-                  ? i18n.t('core:directories') +
-                    ': ' +
-                    dirProps.current.dirsCount +
-                    ' ' +
-                    i18n.t('core:files') +
-                    ': ' +
-                    dirProps.current.filesCount
-                  : formatBytes(currentEntry.current.size)
+                !PlatformIO.haveObjectStoreSupport() &&
+                dirProps.current &&
+                !currentEntry.current.isFile &&
+                i18n.t('core:directories') +
+                  ': ' +
+                  dirProps.current.dirsCount +
+                  ' ' +
+                  i18n.t('core:files') +
+                  ': ' +
+                  dirProps.current.filesCount
               }
             >
               <TextField

@@ -191,7 +191,11 @@ function FileUploadDialog(props: Props) {
                   <Grid
                     item
                     xs={10}
-                    style={{ display: 'flex', alignItems: 'center', wordBreak: 'break-word' }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      wordBreak: 'break-word'
+                    }}
                   >
                     {filePath
                       ? filePath

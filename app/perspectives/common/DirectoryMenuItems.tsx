@@ -23,7 +23,7 @@ import { BetaLabel, ProLabel } from '-/components/HelperComponents';
 import { AvailablePerspectives } from '-/perspectives';
 import PropertiesIcon from '@mui/icons-material/Info';
 import React from 'react';
-import { TS } from "-/tagspaces.namespace";
+import { TS } from '-/tagspaces.namespace';
 
 export function getDirectoryMenuItems(
   currentLocation: TS.Location,
@@ -103,7 +103,12 @@ export function getDirectoryMenuItems(
     }
   }
 
-  if (!isReadOnlyMode && openMoveCopyDialog && currentLocation && currentLocation.type === locationType.TYPE_LOCAL) {
+  if (
+    !isReadOnlyMode &&
+    openMoveCopyDialog &&
+    currentLocation &&
+    currentLocation.type === locationType.TYPE_LOCAL
+  ) {
     menuItems.push(
       <MenuItem
         key="fileMenuMoveCopyDirectory"

@@ -17,26 +17,7 @@
  */
 
 import React from 'react';
-import ParentFolder from '@mui/icons-material/ReplyOutlined';
-import Help from '@mui/icons-material/Help';
-import InfoOutlined from '@mui/icons-material/InfoOutlined';
-import Info from '@mui/icons-material/Info';
-import AnnouncementIcon from '@mui/icons-material/AnnouncementOutlined';
-import Remove from '@mui/icons-material/RemoveCircleOutline';
-import History from '@mui/icons-material/ChangeHistoryTwoTone';
-import Settings from '@mui/icons-material/Settings';
-import AddIcon from '@mui/icons-material/Add';
-import Suitcase from '@mui/icons-material/WorkOutline';
-import Link from '@mui/icons-material/Link';
-import KeyShortcuts from '@mui/icons-material/Keyboard';
-import Menu from '@mui/icons-material/Menu';
-import ArrowBack from '@mui/icons-material/ArrowBack';
-import ArrowForward from '@mui/icons-material/ArrowForward';
-import Folder from '@mui/icons-material/Folder';
-import File from '@mui/icons-material/InsertDriveFile';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
-import SubdirectoryArrowLeftIcon from '@mui/icons-material/SubdirectoryArrowLeft';
-import Cancel from '@mui/icons-material/DoDisturbOn';
 
 export const ParentFolderIcon = props => (
   <KeyboardReturnIcon style={{ transform: 'rotate(90deg)' }} />
@@ -45,36 +26,36 @@ export const ParentFolderIcon = props => (
 
 export const NavigateToFolderIcon = props => <KeyboardReturnIcon />;
 
-export const FolderIcon = props => <Folder {...props} />;
+export { default as InfoTooltipIcon } from '@mui/icons-material/InfoOutlined';
 
-export const FileIcon = props => <File {...props} />;
+export { default as FolderIcon } from '@mui/icons-material/Folder';
 
-export const MainMenuIcon = props => <Menu {...props} />;
+export { default as FileIcon } from '@mui/icons-material/InsertDriveFile';
 
-export const GoBackIcon = props => <ArrowBack {...props} />;
+export { default as MainMenuIcon } from '@mui/icons-material/Menu';
 
-export const GoForwardIcon = props => <ArrowForward {...props} />;
+export { default as GoBackIcon } from '@mui/icons-material/ArrowBack';
 
-export const HelpIcon = props => <Help {...props} />;
+export { default as GoForwardIcon } from '@mui/icons-material/ArrowForward';
 
-export const InfoIcon = props => <AnnouncementIcon {...props} />;
+export { default as HelpIcon } from '@mui/icons-material/Help';
 
-export const InfoTooltipIcon = props => <InfoOutlined {...props} />;
+export { default as InfoIcon } from '@mui/icons-material/AnnouncementOutlined';
 
-export const FolderPropertiesIcon = props => <Info {...props} />;
+export { default as FolderPropertiesIcon } from '@mui/icons-material/Info';
 
-export const RemoveIcon = props => <Remove {...props} />;
+export { default as RemoveIcon } from '@mui/icons-material/Remove';
 
-export const HistoryIcon = props => <History {...props} />;
+export { default as HistoryIcon } from '@mui/icons-material/History';
 
-export const PerspectiveSettingsIcon = props => <Settings {...props} />;
+export { default as PerspectiveSettingsIcon } from '@mui/icons-material/Settings';
 
-export const CreateFileIcon = props => <AddIcon {...props} />;
+export { default as CreateFileIcon } from '@mui/icons-material/Add';
 
-export const LocalLocationIcon = props => <Suitcase {...props} />;
+export { default as LocalLocationIcon } from '@mui/icons-material/WorkOutline';
 
-export const OpenLinkIcon = props => <Link {...props} />;
+export { default as OpenLinkIcon } from '@mui/icons-material/Link';
 
-export const KeyShortcutsIcon = props => <KeyShortcuts {...props} />;
+export { default as KeyShortcutsIcon } from '@mui/icons-material/Keyboard';
 
-export const CancelIcon = props => <Cancel {...props} />;
+export { default as CancelIcon } from '@mui/icons-material/Cancel';
