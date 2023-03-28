@@ -66,7 +66,7 @@ import InfoIcon from '-/components/InfoIcon';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
 import { actions as LocationActions, getLocations } from '-/reducers/locations';
 import { NotificationTypes, actions as AppActions } from '-/reducers/app';
-import { getPersistTagsInSidecarFile } from '-/reducers/settings';
+import { getPersistTagsInSidecarFile, isDevMode } from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import PlatformIO from '-/services/platform-facade';
@@ -98,6 +98,7 @@ interface Props {
     notificationType?: string, // NotificationTypes
     autohide?: boolean
   ) => void;
+  isDevMode: boolean;
 }
 
 function CreateEditLocationDialog(props: Props) {
@@ -554,7 +555,7 @@ function CreateEditLocationDialog(props: Props) {
                   <MenuItem key="TYPE_CLOUD" value={locationType.TYPE_CLOUD}>
                     {i18n.t('core:objectStorage') + ' (AWS, MinIO, Wasabi,...)'}
                   </MenuItem>
-                  {Pro && (
+                  {Pro && props.isDevMode && (
                     <MenuItem
                       key="TYPE_WEBDAV"
                       value={locationType.TYPE_WEBDAV}
@@ -958,7 +959,8 @@ function CreateEditLocationDialog(props: Props) {
 function mapStateToProps(state) {
   return {
     isPersistTagsInSidecar: getPersistTagsInSidecarFile(state),
-    locations: getLocations(state)
+    locations: getLocations(state),
+    isDevMode: isDevMode(state)
   };
 }
 
