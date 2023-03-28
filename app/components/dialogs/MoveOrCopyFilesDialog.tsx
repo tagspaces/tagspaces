@@ -23,6 +23,7 @@
 
 import React from 'react';
 import Button from '@mui/material/Button';
+import Paper from '@mui/material/Paper';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -33,6 +34,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
 import Dialog from '@mui/material/Dialog';
+import DraggablePaper from '-/components/DraggablePaper';
 import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import useTheme from '@mui/styles/useTheme';
@@ -57,10 +59,12 @@ function MoveOrCopyFilesDialog(props: Props) {
       onClose={onClose}
       keepMounted
       scroll="paper"
+      aria-labelledby="draggable-dialog-title"
+      PaperComponent={fullScreen ? Paper : DraggablePaper}
       fullScreen={fullScreen}
     >
-      <DialogTitle>
-        {i18n.t('core:copyMoveFilesTitle')}
+      <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
+        {i18n.t('core:copyMoveEntriesTitle')}
         <DialogCloseButton onClose={() => onClose()} />
       </DialogTitle>
       <DialogContent>
@@ -102,14 +106,14 @@ function MoveOrCopyFilesDialog(props: Props) {
           data-tid="confirmMoveFilesTID"
           color="primary"
         >
-          {i18n.t('core:moveFilesButton')}
+          {i18n.t('core:moveEntriesButton')}
         </Button>
         <Button
           onClick={() => props.handleCopyFiles(props.selectedFiles)}
           data-tid="confirmCopyFilesTID"
           color="primary"
         >
-          {i18n.t('core:copyFilesButton')}
+          {i18n.t('core:copyEntriesButton')}
         </Button>
       </DialogActions>
     </Dialog>

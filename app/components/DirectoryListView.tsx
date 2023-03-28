@@ -129,7 +129,7 @@ function DirectoryListView(props: Props) {
     <div style={{ marginTop: 10 }}>
       {getLocations()}
       <Button
-        variant="outlined"
+        variant="text"
         startIcon={<ParentFolderIcon />}
         style={{ backgroundColor: '#fefefe80', margin: 5 }}
         onClick={() => {
@@ -145,7 +145,7 @@ function DirectoryListView(props: Props) {
         {i18n.t('core:navigateToParentDirectory')}
       </Button>
       <Button
-        variant="outlined"
+        variant="text"
         startIcon={<NewFolderIcon />}
         style={{ backgroundColor: '#fefefe80', margin: 5 }}
         onClick={() => {
@@ -162,7 +162,7 @@ function DirectoryListView(props: Props) {
         dense
         style={{
           borderRadius: 5,
-          maxHeight: 400,
+          maxHeight: 300,
           // @ts-ignore
           overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
         }}

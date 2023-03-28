@@ -21,6 +21,8 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Progress } from 'aws-sdk/clients/s3';
 import { formatBytes } from '@tagspaces/tagspaces-common/misc';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -32,6 +34,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
 import Dialog from '@mui/material/Dialog';
 import { FolderIcon, FileIcon } from '-/components/CommonIcons';
+import DraggablePaper from '-/components/DraggablePaper';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
 import IOActions from '-/reducers/io-actions';
@@ -183,23 +186,26 @@ function MoveCopyFilesDialog(props: Props) {
       onClose={onClose}
       keepMounted
       scroll="paper"
+      aria-labelledby="draggable-dialog-title"
+      PaperComponent={fullScreen ? Paper : DraggablePaper}
       fullScreen={fullScreen}
     >
-      <DialogTitle>
-        {i18n.t('core:copyMoveTitle')}
+      <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
+        {i18n.t('core:copyMoveEntriesTitle')}
         <DialogCloseButton onClose={onCloseDialog} />
       </DialogTitle>
-      <DialogContent style={{ overflowX: 'hidden' }}>
+      <DialogContent style={{ overflow: 'hidden' }}>
         <List
           dense
-          style={{ width: 550, marginLeft: -15, marginBottom: 20 }}
+          style={{
+            overflowY: 'auto',
+            width: 550,
+            maxHeight: 200,
+            marginLeft: -15,
+            marginBottom: 20
+          }}
           subheader={
-            <ListSubheader
-              style={{ backgroundColor: 'transparent' }}
-              component="div"
-            >
-              {i18n.t('selectedFilesAndFolders')}
-            </ListSubheader>
+            <ListSubheader>{i18n.t('selectedFilesAndFolders')}</ListSubheader>
           }
         >
           {props.selectedEntries &&
@@ -232,17 +238,22 @@ function MoveCopyFilesDialog(props: Props) {
         )}
         <DirectoryListView setTargetDir={setTargetPath} />
       </DialogContent>
-      <DialogActions>
+      <DialogActions
+      // style={{
+      //   justifyContent: 'space-between'
+      // }}
+      >
         <Button data-tid="closeMoveCopyDialog" onClick={() => props.onClose()}>
           {i18n.t('core:cancel')}
         </Button>
+        {/* <Box> */}
         <Button
           data-tid="confirmMoveFiles"
           disabled={!targetPath}
           onClick={handleMoveFiles}
           color="primary"
         >
-          {i18n.t('core:moveFilesButton')}
+          {i18n.t('core:moveEntriesButton')}
         </Button>
         <Button
           onClick={handleCopyFiles}
@@ -250,8 +261,9 @@ function MoveCopyFilesDialog(props: Props) {
           disabled={!targetPath}
           color="primary"
         >
-          {i18n.t('core:copyFilesButton')}
+          {i18n.t('core:copyEntriesButton')}
         </Button>
+        {/* </Box> */}
       </DialogActions>
     </Dialog>
   );
