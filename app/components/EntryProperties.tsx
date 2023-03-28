@@ -258,6 +258,7 @@ function EntryProperties(props: Props) {
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
   const bgndUrl = useRef<string>(getBgndUrl());
   const thumbUrl = useRef<string>(getThumbUrl());
+  const dirProps = useRef<TS.DirProp>();
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
   const firstRender = useFirstRender();
 
@@ -265,8 +266,9 @@ function EntryProperties(props: Props) {
     if (!currentEntry.current.isFile) {
       try {
         PlatformIO.getDirProperties(currentEntry.current.path).then(
-          (dirProps: TS.DirProp) => {
-            currentEntry.current.size = dirProps.totalSize;
+          (dProps: TS.DirProp) => {
+            dirProps.current = dProps;
+            currentEntry.current.size = dProps.totalSize;
             forceUpdate();
           }
         );
@@ -967,19 +969,37 @@ function EntryProperties(props: Props) {
             />
           </Grid>
           <Grid item xs={6}>
-            <TextField
-              margin="dense"
-              fullWidth={true}
-              value={
-                currentEntry.current.size
-                  ? formatBytes(currentEntry.current.size)
-                  : i18n.t('core:notAvailable')
+            <Tooltip
+              title={
+                dirProps.current && !currentEntry.current.isFile
+                  ? i18n.t('core:directories') +
+                    ': ' +
+                    dirProps.current.dirsCount +
+                    ' ' +
+                    i18n.t('core:files') +
+                    ': ' +
+                    dirProps.current.filesCount
+                  : formatBytes(currentEntry.current.size)
               }
-              label={i18n.t('core:fileSize')}
-              InputProps={{
-                readOnly: true
-              }}
-            />
+            >
+              <TextField
+                margin="dense"
+                fullWidth={true}
+                value={
+                  currentEntry.current.size
+                    ? formatBytes(currentEntry.current.size)
+                    : i18n.t(
+                        PlatformIO.haveObjectStoreSupport()
+                          ? 'core:notAvailable'
+                          : 'core:counting'
+                      )
+                }
+                label={i18n.t('core:fileSize')}
+                InputProps={{
+                  readOnly: true
+                }}
+              />
+            </Tooltip>
           </Grid>
         </Grid>
 

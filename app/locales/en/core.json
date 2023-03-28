@@ -713,6 +713,7 @@
   "changeBackgroundImage": "Change Background Image",
   "noItems": "No items found",
   "notAvailable": "Not available",
+  "counting": "counting...",
   "clearBackground": "Clear background image",
   "password": "Password",
   "userAccount": "User Account",
@@ -772,5 +773,7 @@
   "openEntry": "Open entry",
   "openSearch": "Open search",
   "copyingDirsFailed": "Copying Dirs Failed",
+  "directories": "Directories",
+  "files": "Files",
   "-": "-"
 }
