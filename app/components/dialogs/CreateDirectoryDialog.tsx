@@ -39,7 +39,12 @@ interface Props {
   open: boolean;
   onClose: () => void;
   selectedDirectoryPath: string;
-  createDirectory: (directoryPath: string) => void;
+  createDirectory: (
+    directoryPath: string,
+    reflect: boolean
+  ) => Promise<boolean>;
+  callback?: () => void;
+  reflect?: boolean;
 }
 
 function CreateDirectoryDialog(props: Props) {
@@ -47,7 +52,7 @@ function CreateDirectoryDialog(props: Props) {
   const isFirstRun = useRef(true);
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [name, setName] = useState('');
-  const { open, onClose } = props;
+  const { open, onClose, reflect } = props;
 
   useEffect(() => {
     if (isFirstRun.current) {
@@ -76,7 +81,9 @@ function CreateDirectoryDialog(props: Props) {
         props.selectedDirectoryPath,
         name
       );
-      props.createDirectory(dirPath);
+      props
+        .createDirectory(dirPath, reflect !== undefined ? reflect : true)
+        .then(() => props.callback());
       resetState();
       props.onClose();
     }
@@ -155,6 +162,7 @@ function CreateDirectoryDialog(props: Props) {
 }
 
 function mapActionCreatorsToProps(dispatch) {
+  //: Dispatch<CreateDirectoryAction>) {
   return bindActionCreators(
     {
       createDirectory: AppActions.createDirectory
@@ -166,4 +174,5 @@ function mapActionCreatorsToProps(dispatch) {
 export default connect(
   undefined,
   mapActionCreatorsToProps
+  // @ts-ignore
 )(CreateDirectoryDialog);

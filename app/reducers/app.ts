@@ -251,7 +251,7 @@ export const initialState = {
   licenseDialogOpened: false,
   thirdPartyLibsDialogOpened: false,
   settingsDialogOpened: false,
-  createDirectoryDialogOpened: false,
+  createDirectoryDialogOpened: null,
   importKanBanDialogOpened: false,
   // lastSelectedEntry: null,
   selectedEntries: [],
@@ -511,9 +511,11 @@ export default (state: any = initialState, action: any) => {
       return { ...state, settingsDialogOpened: !state.settingsDialogOpened };
     }
     case types.TOGGLE_CREATE_DIRECTORY_DIALOG: {
+      // dialog closed = null
       return {
         ...state,
-        createDirectoryDialogOpened: !state.createDirectoryDialogOpened
+        createDirectoryDialogOpened:
+          state.createDirectoryDialogOpened !== null ? null : action.props
       };
     }
     case types.TOGGLE_UPLOAD_DIALOG: {
@@ -1180,8 +1182,9 @@ export const actions = {
     type: types.TOGGLE_THIRD_PARTY_LIBS_DIALOG
   }),
   toggleSettingsDialog: () => ({ type: types.TOGGLE_SETTINGS_DIALOG }),
-  toggleCreateDirectoryDialog: () => ({
-    type: types.TOGGLE_CREATE_DIRECTORY_DIALOG
+  toggleCreateDirectoryDialog: (props = undefined) => ({
+    type: types.TOGGLE_CREATE_DIRECTORY_DIALOG,
+    props
   }),
   toggleCreateFileDialog: () => ({ type: types.TOGGLE_CREATE_FILE_DIALOG }),
   toggleDeleteMultipleEntriesDialog: () => ({
@@ -1684,7 +1687,9 @@ export const actions = {
         );
         throw error;
       }),
-  createDirectory: (directoryPath: string) => (dispatch: (action) => void) => {
+  createDirectory: (directoryPath: string, reflect = true) => (
+    dispatch: (action) => void
+  ) =>
     PlatformIO.createDirectoryPromise(directoryPath)
       .then(result => {
         if (result !== undefined && result.dirPath !== undefined) {
@@ -1692,7 +1697,9 @@ export const actions = {
           directoryPath = result.dirPath;
         }
         console.log(`Creating directory ${directoryPath} successful.`);
-        dispatch(actions.reflectCreateEntry(directoryPath, false));
+        if (reflect) {
+          dispatch(actions.reflectCreateEntry(directoryPath, false));
+        }
         dispatch(
           actions.showNotification(
             `Creating directory ${extractDirectoryName(
@@ -1717,9 +1724,9 @@ export const actions = {
             true
           )
         );
+        return false;
         // dispatch stopLoadingAnimation
-      });
-  },
+      }),
   createFile: () => (dispatch: (action) => void, getState: () => any) => {
     const { app } = getState();
     if (app.currentDirectoryPath) {
@@ -2993,3 +3000,5 @@ export const getSearchResultsCount = (state: any) =>
   state.app.searchResultsCount;
 export const isSearchMode = (state: any) => state.app.searchMode;
 export const getSearchFilter = (state: any) => state.app.searchFilter;
+
+// export type CreateDirectoryAction = ReturnType<typeof actions.createDirectory>;

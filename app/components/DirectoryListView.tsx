@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import IconButton from '@mui/material/IconButton';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
@@ -13,8 +14,8 @@ import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/path
 import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
 import { TS } from '-/tagspaces.namespace';
-import { getCurrentLocationId } from '-/reducers/app';
-import { CreateFileIcon, ParentFolderIcon } from '-/components/CommonIcons';
+import { actions as AppActions, getCurrentLocationId } from '-/reducers/app';
+import { ParentFolderIcon } from '-/components/CommonIcons';
 import { getLocations } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-facade';
 
@@ -22,6 +23,7 @@ interface Props {
   setTargetDir: (dirPath: string) => void;
   locations: Array<TS.Location>;
   currentLocationId: string;
+  toggleCreateDirectoryDialog: (props: any) => void;
 }
 function DirectoryListView(props: Props) {
   const { locations, currentLocationId } = props;
@@ -83,7 +85,11 @@ function DirectoryListView(props: Props) {
     )
       .then(results => {
         if (results !== undefined) {
-          setDirectoryContent(results.filter(entry => !entry.isFile));
+          setDirectoryContent(
+            results
+              .filter(entry => !entry.isFile)
+              .sort((a, b) => b.lmdt - a.lmdt)
+          );
           props.setTargetDir(directoryPath);
         }
         return true;
@@ -135,6 +141,20 @@ function DirectoryListView(props: Props) {
         <ParentFolderIcon />
         {i18n.t('core:navigateToParentDirectory')}
       </IconButton>
+      <IconButton
+        size="small"
+        style={{ backgroundColor: '#fefefe80', margin: 5 }}
+        onClick={() => {
+          props.toggleCreateDirectoryDialog({
+            rootDirPath: chosenDirectory.current,
+            callback: () => listDirectory(chosenDirectory.current),
+            reflect: false
+          });
+        }}
+      >
+        <ParentFolderIcon />
+        {i18n.t('core:newSubdirectory')}
+      </IconButton>
       <List
         dense
         style={{
@@ -157,4 +177,16 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(DirectoryListView);
+function mapActionCreatorsToProps(dispatch) {
+  return bindActionCreators(
+    {
+      toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog
+    },
+    dispatch
+  );
+}
+
+export default connect(
+  mapStateToProps,
+  mapActionCreatorsToProps
+)(DirectoryListView);
