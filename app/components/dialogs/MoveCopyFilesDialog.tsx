@@ -67,7 +67,7 @@ interface Props {
 }
 
 function MoveCopyFilesDialog(props: Props) {
-  const [disableConfirmButton, setDisableConfirmButton] = useState(true);
+  // const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [targetPath, setTargetPath] = useState('');
   const dirProp = useRef({});
 
@@ -101,17 +101,17 @@ function MoveCopyFilesDialog(props: Props) {
     }
   }, []);
 
-  useEffect(() => {
+  /*useEffect(() => {
     handleValidation();
-  }, [targetPath]);
+  }, [targetPath]);*/
 
-  function handleValidation() {
+  /*function handleValidation() {
     if (targetPath && targetPath.length > 0) {
       setDisableConfirmButton(false);
     } else {
       setDisableConfirmButton(true);
     }
-  }
+  }*/
 
   function getEntriesCount(): number {
     let total = 0;
@@ -121,43 +121,41 @@ function MoveCopyFilesDialog(props: Props) {
   }
 
   function handleCopyFiles() {
-    if (!disableConfirmButton) {
-      if (selectedFiles.length > 0) {
-        props.copyFiles(selectedFiles, targetPath);
-        setDisableConfirmButton(true);
-        setTargetPath('');
-      }
-      if (selectedDirs.length > 0) {
-        props.resetProgress();
-        props.toggleUploadDialog('copyEntriesTitle');
-        props.copyDirs(
-          selectedDirs,
-          getEntriesCount(),
-          targetPath,
-          props.onUploadProgress
-        );
-      }
+    //if (!disableConfirmButton) {
+    if (selectedFiles.length > 0) {
+      props.copyFiles(selectedFiles, targetPath);
+      //setDisableConfirmButton(true);
+      setTargetPath('');
+    }
+    if (selectedDirs.length > 0) {
+      props.resetProgress();
+      props.toggleUploadDialog('copyEntriesTitle');
+      props.copyDirs(
+        selectedDirs,
+        getEntriesCount(),
+        targetPath,
+        props.onUploadProgress
+      );
     }
     props.onClose(true);
   }
 
   function handleMoveFiles() {
-    if (!disableConfirmButton) {
-      if (selectedFiles.length > 0) {
-        props.moveFiles(selectedFiles, targetPath);
-        setDisableConfirmButton(true);
-        setTargetPath('');
-      }
-      if (selectedDirs.length > 0) {
-        props.resetProgress();
-        props.toggleUploadDialog('moveEntriesTitle');
-        props.moveDirs(
-          selectedDirs,
-          getEntriesCount(),
-          targetPath,
-          props.onUploadProgress
-        );
-      }
+    // if (!disableConfirmButton) {
+    if (selectedFiles.length > 0) {
+      props.moveFiles(selectedFiles, targetPath);
+      // setDisableConfirmButton(true);
+      setTargetPath('');
+    }
+    if (selectedDirs.length > 0) {
+      props.resetProgress();
+      props.toggleUploadDialog('moveEntriesTitle');
+      props.moveDirs(
+        selectedDirs,
+        getEntriesCount(),
+        targetPath,
+        props.onUploadProgress
+      );
     }
     props.onClose(true);
   }
@@ -240,7 +238,7 @@ function MoveCopyFilesDialog(props: Props) {
         </Button>
         <Button
           data-tid="confirmMoveFiles"
-          disabled={disableConfirmButton}
+          disabled={!targetPath}
           onClick={handleMoveFiles}
           color="primary"
         >
@@ -249,7 +247,7 @@ function MoveCopyFilesDialog(props: Props) {
         <Button
           onClick={handleCopyFiles}
           data-tid="confirmCopyFiles"
-          disabled={disableConfirmButton}
+          disabled={!targetPath}
           color="primary"
         >
           {i18n.t('core:copyFilesButton')}

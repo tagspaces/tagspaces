@@ -4,6 +4,7 @@ import OpenFolderIcon from '@mui/icons-material/SubdirectoryArrowLeft';
 import MoveCopy from '@mui/icons-material/FileCopy';
 import ListItemText from '@mui/material/ListItemText';
 import i18n from '-/services/i18n';
+import { locationType } from '@tagspaces/tagspaces-common/misc';
 import AutoRenew from '@mui/icons-material/Autorenew';
 import RenameFolderIcon from '@mui/icons-material/FormatTextdirectionLToR';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -22,8 +23,10 @@ import { BetaLabel, ProLabel } from '-/components/HelperComponents';
 import { AvailablePerspectives } from '-/perspectives';
 import PropertiesIcon from '@mui/icons-material/Info';
 import React from 'react';
+import { TS } from '-/tagspaces.namespace';
 
 export function getDirectoryMenuItems(
+  currentLocation: TS.Location,
   selectedEntriesLength: number,
   perspectiveMode: boolean,
   isReadOnlyMode: boolean,
@@ -100,7 +103,12 @@ export function getDirectoryMenuItems(
     }
   }
 
-  if (!isReadOnlyMode && openMoveCopyDialog) {
+  if (
+    !isReadOnlyMode &&
+    openMoveCopyDialog &&
+    currentLocation &&
+    currentLocation.type === locationType.TYPE_LOCAL
+  ) {
     menuItems.push(
       <MenuItem
         key="fileMenuMoveCopyDirectory"

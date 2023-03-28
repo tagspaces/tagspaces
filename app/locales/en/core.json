@@ -713,6 +713,7 @@
   "changeBackgroundImage": "Change Background Image",
   "noItems": "No items found",
   "notAvailable": "Not available",
+  "counting": "counting...",
   "clearBackground": "Clear background image",
   "password": "Password",
   "userAccount": "User Account",
@@ -771,5 +772,8 @@
   "noSuitableLocation": "Files or folders can't be created. No suitable location found!",
   "openEntry": "Open entry",
   "openSearch": "Open search",
+  "copyingDirsFailed": "Copying Dirs Failed",
+  "directories": "Directories",
+  "files": "Files",
   "-": "-"
 }

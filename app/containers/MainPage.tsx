@@ -136,7 +136,7 @@ interface Props {
   isReadOnlyMode: boolean;
   isSettingsDialogOpened: boolean;
   isCreateFileDialogOpened: boolean;
-  isCreateDirectoryOpened: boolean;
+  isCreateDirectoryOpened: any;
   toggleCreateDirectoryDialog: () => void;
   isAboutDialogOpened: boolean;
   isLocationDialogOpened: boolean;
@@ -764,11 +764,18 @@ function MainPage(props: Props) {
           onClose={toggleProgressDialog}
         />
       )}
-      {props.isCreateDirectoryOpened && (
+      {props.isCreateDirectoryOpened !== null && (
         <CreateDirectoryDialog
-          open={props.isCreateDirectoryOpened}
+          open={true}
           onClose={toggleCreateDirectoryDialog}
-          selectedDirectoryPath={directoryPath}
+          selectedDirectoryPath={
+            props.isCreateDirectoryOpened &&
+            props.isCreateDirectoryOpened.rootDirPath
+              ? props.isCreateDirectoryOpened.rootDirPath
+              : directoryPath
+          }
+          callback={props.isCreateDirectoryOpened?.callback}
+          reflect={props.isCreateDirectoryOpened?.reflect}
         />
       )}
       {props.isCreateFileDialogOpened && (
@@ -1000,7 +1007,8 @@ const areEqual = (prevProp, nextProp) =>
     JSON.stringify(prevProp.theme.palette) && */
   nextProp.directoryPath === prevProp.directoryPath &&
   nextProp.isAboutDialogOpened === prevProp.isAboutDialogOpened &&
-  nextProp.isCreateDirectoryOpened === prevProp.isCreateDirectoryOpened &&
+  JSON.stringify(nextProp.isCreateDirectoryOpened) ===
+    JSON.stringify(prevProp.isCreateDirectoryOpened) &&
   nextProp.isCreateFileDialogOpened === prevProp.isCreateFileDialogOpened &&
   nextProp.isDeleteMultipleEntriesDialogOpened ===
     prevProp.isDeleteMultipleEntriesDialogOpened &&

@@ -1,5 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import Button from '@mui/material/Button';
+import NewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import List from '@mui/material/List';
@@ -12,7 +15,7 @@ import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/path
 import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
 import { TS } from '-/tagspaces.namespace';
-import { getCurrentLocationId } from '-/reducers/app';
+import { actions as AppActions, getCurrentLocationId } from '-/reducers/app';
 import { ParentFolderIcon } from '-/components/CommonIcons';
 import { getLocations } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-facade';
@@ -21,6 +24,7 @@ interface Props {
   setTargetDir: (dirPath: string) => void;
   locations: Array<TS.Location>;
   currentLocationId: string;
+  toggleCreateDirectoryDialog: (props: any) => void;
 }
 function DirectoryListView(props: Props) {
   const { locations, currentLocationId } = props;
@@ -45,12 +49,17 @@ function DirectoryListView(props: Props) {
       location => location.uuid === chosenLocationId.current
     );
     if (chosenLocation) {
-      props.setTargetDir(chosenLocation.path);
       listDirectory(chosenLocation.path);
     }
   };
 
   function getLocations() {
+    const currentLocation = locations.find(
+      location => location.uuid === chosenLocationId.current
+    );
+    if (currentLocation.type !== locationType.TYPE_LOCAL) {
+      return null;
+    }
     return (
       <Select
         onChange={handleLocationChange}
@@ -77,7 +86,12 @@ function DirectoryListView(props: Props) {
     )
       .then(results => {
         if (results !== undefined) {
-          setDirectoryContent(results.filter(entry => !entry.isFile));
+          setDirectoryContent(
+            results
+              .filter(entry => !entry.isFile)
+              .sort((a, b) => b.lmdt - a.lmdt)
+          );
+          props.setTargetDir(directoryPath);
         }
         return true;
       })
@@ -114,6 +128,36 @@ function DirectoryListView(props: Props) {
   return (
     <div style={{ marginTop: 10 }}>
       {getLocations()}
+      <Button
+        variant="outlined"
+        startIcon={<ParentFolderIcon />}
+        style={{ backgroundColor: '#fefefe80', margin: 5 }}
+        onClick={() => {
+          if (chosenDirectory.current) {
+            let currentPath = chosenDirectory.current;
+            if (currentPath.endsWith(PlatformIO.getDirSeparator())) {
+              currentPath = currentPath.slice(0, -1);
+            }
+            listDirectory(extractContainingDirectoryPath(currentPath));
+          }
+        }}
+      >
+        {i18n.t('core:navigateToParentDirectory')}
+      </Button>
+      <Button
+        variant="outlined"
+        startIcon={<NewFolderIcon />}
+        style={{ backgroundColor: '#fefefe80', margin: 5 }}
+        onClick={() => {
+          props.toggleCreateDirectoryDialog({
+            rootDirPath: chosenDirectory.current,
+            callback: () => listDirectory(chosenDirectory.current),
+            reflect: false
+          });
+        }}
+      >
+        {i18n.t('core:newSubdirectory')}
+      </Button>
       <List
         dense
         style={{
@@ -123,21 +167,6 @@ function DirectoryListView(props: Props) {
           overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
         }}
       >
-        <ListItem
-          title={i18n.t('core:navigateToParentDirectory')}
-          style={{ maxWidth: 250 }}
-          button
-          onClick={() => {
-            listDirectory(
-              extractContainingDirectoryPath(chosenDirectory.current)
-            );
-          }}
-        >
-          <ListItemIcon style={{ minWidth: 35 }}>
-            <ParentFolderIcon />
-          </ListItemIcon>
-          <ListItemText primary={i18n.t('core:navigateToParentDirectory')} />
-        </ListItem>
         {getFolderContent()}
       </List>
     </div>
@@ -151,4 +180,16 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(DirectoryListView);
+function mapActionCreatorsToProps(dispatch) {
+  return bindActionCreators(
+    {
+      toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog
+    },
+    dispatch
+  );
+}
+
+export default connect(
+  mapStateToProps,
+  mapActionCreatorsToProps
+)(DirectoryListView);
