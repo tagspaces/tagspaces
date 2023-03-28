@@ -32,6 +32,7 @@ import {
   extractDirectoryName,
   extractFileName
 } from '@tagspaces/tagspaces-common/paths';
+import DraggablePaper from '-/components/DraggablePaper';
 import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
 import { actions as AppActions, getLastSelectedEntry } from '-/reducers/app';
@@ -154,6 +155,8 @@ function RenameEntryDialog(props: Props) {
       onClose={onClose}
       keepMounted
       scroll="paper"
+      aria-labelledby="draggable-dialog-title"
+      PaperComponent={DraggablePaper}
       onKeyDown={event => {
         if (event.key === 'Enter' || event.keyCode === 13) {
           event.preventDefault();
@@ -164,7 +167,7 @@ function RenameEntryDialog(props: Props) {
         }*/
       }}
     >
-      <DialogTitle>
+      <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
         {i18n.t('core:' + (isFile ? 'renameFile' : 'renameDirectory'))}
         <DialogCloseButton onClose={onClose} />
       </DialogTitle>
@@ -178,7 +181,7 @@ function RenameEntryDialog(props: Props) {
             name="entryName"
             label={i18n.t(
               'core:' +
-                (isFile ? 'renameNewFileName' : 'renameDirectoryTitleName')
+                (isFile ? 'renameNewFileName' : 'createNewDirectoryTitleName')
             )}
             onChange={handleInputChange}
             onFocus={onInputFocus}

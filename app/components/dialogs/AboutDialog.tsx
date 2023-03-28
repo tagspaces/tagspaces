@@ -17,9 +17,8 @@
  */
 
 import React, { useState } from 'react';
-import Draggable from 'react-draggable';
 import Button from '@mui/material/Button';
-import Paper, { PaperProps } from '@mui/material/Paper';
+import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -27,6 +26,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Tooltip from '-/components/Tooltip';
 import Dialog from '@mui/material/Dialog';
 import semver from 'semver';
+import DraggablePaper from '-/components/DraggablePaper';
 import LogoIcon from '-/assets/images/icon100x100.svg';
 import i18n from '-/services/i18n';
 import versionMeta from '-/version.json';
@@ -44,17 +44,6 @@ interface Props {
   toggleLicenseDialog: () => void;
   toggleThirdPartyLibsDialog: () => void;
   onClose: () => void;
-}
-
-function PaperComponent(props: PaperProps) {
-  return (
-    <Draggable
-      handle="#draggable-dialog-title"
-      cancel={'[class*="MuiDialogContent-root"]'}
-    >
-      <Paper {...props} />
-    </Draggable>
-  );
 }
 
 let buildID = versionMeta.commitId;
@@ -131,7 +120,7 @@ function AboutDialog(props: Props) {
       fullScreen={fullScreen}
       keepMounted
       scroll="paper"
-      PaperComponent={fullScreen ? Paper : PaperComponent}
+      PaperComponent={fullScreen ? Paper : DraggablePaper}
       aria-labelledby="draggable-dialog-title"
     >
       <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">

@@ -22,7 +22,7 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import enUs from '../locales/en_US/core.json';
 import en from '../locales/en/core.json';
 
-let defaultLanguage = enUs;
+let defaultLanguage: any = enUs;
 if (
   typeof process !== 'undefined' &&
   process.env &&

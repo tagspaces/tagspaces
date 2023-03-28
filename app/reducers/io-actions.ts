@@ -96,7 +96,7 @@ const actions = {
         .catch(err => {
           console.warn('Moving dirs failed ', err);
           dispatch(
-            AppActions.showNotification(i18n.t('core:copyingDirsFailed'))
+            AppActions.showNotification(i18n.t('core:copyingFoldersFailed'))
           );
         });
     });
@@ -214,7 +214,7 @@ const actions = {
         .catch(err => {
           console.warn('Copy dirs failed ', err);
           dispatch(
-            AppActions.showNotification(i18n.t('core:copyingDirsFailed'))
+            AppActions.showNotification(i18n.t('core:copyingFoldersFailed'))
           );
         });
     });
