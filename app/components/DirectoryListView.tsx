@@ -1,7 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import IconButton from '@mui/material/IconButton';
+import Button from '@mui/material/Button';
+import NewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import List from '@mui/material/List';
@@ -127,22 +128,25 @@ function DirectoryListView(props: Props) {
   return (
     <div style={{ marginTop: 10 }}>
       {getLocations()}
-      <IconButton
-        size="small"
+      <Button
+        variant="outlined"
+        startIcon={<ParentFolderIcon />}
         style={{ backgroundColor: '#fefefe80', margin: 5 }}
         onClick={() => {
           if (chosenDirectory.current) {
-            listDirectory(
-              extractContainingDirectoryPath(chosenDirectory.current)
-            );
+            let currentPath = chosenDirectory.current;
+            if (currentPath.endsWith(PlatformIO.getDirSeparator())) {
+              currentPath = currentPath.slice(0, -1);
+            }
+            listDirectory(extractContainingDirectoryPath(currentPath));
           }
         }}
       >
-        <ParentFolderIcon />
         {i18n.t('core:navigateToParentDirectory')}
-      </IconButton>
-      <IconButton
-        size="small"
+      </Button>
+      <Button
+        variant="outlined"
+        startIcon={<NewFolderIcon />}
         style={{ backgroundColor: '#fefefe80', margin: 5 }}
         onClick={() => {
           props.toggleCreateDirectoryDialog({
@@ -152,9 +156,8 @@ function DirectoryListView(props: Props) {
           });
         }}
       >
-        <ParentFolderIcon />
         {i18n.t('core:newSubdirectory')}
-      </IconButton>
+      </Button>
       <List
         dense
         style={{

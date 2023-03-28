@@ -45,11 +45,12 @@ import { getKeyBindingObject } from '-/reducers/settings';
 import { getAllPropertiesPromise } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { actions as AppActions } from '-/reducers/app';
+import PlatformIO from '-/services/platform-facade';
 
 interface Props {
   classes: any;
   isReadOnlyMode: boolean;
-  selectedEntries: Array<Object>;
+  selectedEntries: Array<TS.FileSystemEntry>;
   loadParentDirectoryContent: () => void;
   toggleSelectAllFiles: (event: any) => void;
   someFileSelected: boolean;
@@ -188,7 +189,13 @@ function MainToolbar(props: Props) {
             <IconButton
               aria-label={i18n.t('core:copyMoveSelectedEntries')}
               data-tid="gridPerspectiveCopySelectedFiles"
-              disabled={selectedEntries.length < 1}
+              disabled={
+                selectedEntries.length < 1 ||
+                (PlatformIO.haveObjectStoreSupport() &&
+                  selectedEntries.some(
+                    (entry: TS.FileSystemEntry) => !entry.isFile
+                  ))
+              }
               onClick={openMoveCopyFilesDialog}
               size="large"
             >
