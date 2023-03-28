@@ -23,6 +23,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
+import DraggablePaper from '-/components/DraggablePaper';
 import { actions as AppActions, OpenedEntry } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { findExtensionsForEntry } from '-/services/utils-io';
@@ -182,10 +183,16 @@ function FilePreviewDialog(props: Props) {
       scroll="paper"
       fullWidth
       maxWidth="md"
+      aria-labelledby="draggable-dialog-title"
+      PaperComponent={DraggablePaper}
       PaperProps={{ sx: { width: '100%', height: '100%' } }}
       BackdropProps={{ style: { backgroundColor: 'transparent' } }}
     >
-      <DialogTitle data-tid="importDialogTitle">
+      <DialogTitle
+        data-tid="importDialogTitle"
+        style={{ cursor: 'move' }}
+        id="draggable-dialog-title"
+      >
         {/*{i18n.t('core:importDialogTitle')}*/}
         <DialogCloseButton onClose={onClose} />
       </DialogTitle>

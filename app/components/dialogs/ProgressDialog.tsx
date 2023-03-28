@@ -21,6 +21,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import { CircularProgress } from '@mui/material';
+import DraggablePaper from '-/components/DraggablePaper';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
 interface Props {
@@ -30,8 +31,17 @@ interface Props {
 
 function ProgressDialog(props: Props) {
   return (
-    <Dialog open={props.open} onClose={props.onClose}>
-      <DialogTitle data-tid="progressDialogTitle">
+    <Dialog
+      aria-labelledby="draggable-dialog-title"
+      PaperComponent={DraggablePaper}
+      open={props.open}
+      onClose={props.onClose}
+    >
+      <DialogTitle
+        style={{ cursor: 'move' }}
+        data-tid="progressDialogTitle"
+        id="draggable-dialog-title"
+      >
         <DialogCloseButton onClose={props.onClose} />
       </DialogTitle>
       <DialogContent

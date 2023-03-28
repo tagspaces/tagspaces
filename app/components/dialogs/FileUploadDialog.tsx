@@ -31,6 +31,7 @@ import Box from '@mui/material/Box';
 import { LinearProgress, Grid, Tooltip } from '@mui/material';
 import WarningIcon from '@mui/icons-material/Warning';
 import PlatformIO from '-/services/platform-facade';
+import DraggablePaper from '-/components/DraggablePaper';
 import {
   actions as AppActions,
   getCurrentDirectoryPerspective,
@@ -147,9 +148,15 @@ function FileUploadDialog(props: Props) {
       scroll="paper"
       fullWidth={true}
       maxWidth="sm"
+      aria-labelledby="draggable-dialog-title"
+      PaperComponent={DraggablePaper}
       BackdropProps={{ style: { backgroundColor: 'transparent' } }}
     >
-      <DialogTitle data-tid="importDialogTitle">
+      <DialogTitle
+        data-tid="importDialogTitle"
+        style={{ cursor: 'move' }}
+        id="draggable-dialog-title"
+      >
         {i18n.t(
           'core:' +
             (props.title && props.title.length > 0

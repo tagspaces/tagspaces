@@ -22,6 +22,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContentText from '@mui/material/DialogContentText';
+import DraggablePaper from '-/components/DraggablePaper';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import BulletIcon from '@mui/icons-material/Remove';
@@ -52,8 +53,15 @@ function ConfirmDialog(props: Props) {
   }
 
   return (
-    <Dialog open={open} onClose={onClose} keepMounted scroll="paper">
-      <DialogTitle>
+    <Dialog
+      aria-labelledby="draggable-dialog-title"
+      PaperComponent={DraggablePaper}
+      open={open}
+      onClose={onClose}
+      keepMounted
+      scroll="paper"
+    >
+      <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
         {props.title}
         <DialogCloseButton onClose={onClose} />
       </DialogTitle>

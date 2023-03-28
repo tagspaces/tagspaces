@@ -28,6 +28,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Grid from '@mui/material/Grid';
 import withStyles from '@mui/styles/withStyles';
 import Dialog from '@mui/material/Dialog';
+import Paper from '@mui/material/Paper';
+import DraggablePaper from '-/components/DraggablePaper';
 import { Progress } from 'aws-sdk/clients/s3';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
@@ -315,9 +317,11 @@ function CreateDialog(props: Props) {
       onClose={onClose}
       fullScreen={fullScreen}
       keepMounted
+      aria-labelledby="draggable-dialog-title"
+      PaperComponent={fullScreen ? Paper : DraggablePaper}
       scroll="paper"
     >
-      <DialogTitle>
+      <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
         {i18n.t('core:create') + '...'}
         <DialogCloseButton onClose={onClose} />
       </DialogTitle>
