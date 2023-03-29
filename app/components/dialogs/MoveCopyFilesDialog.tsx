@@ -44,6 +44,8 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { actions as AppActions, getSelectedEntries } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import DirectoryListView from '-/components/DirectoryListView';
+import AppConfig from '-/AppConfig';
+import Tooltip from '-/components/Tooltip';
 
 interface Props {
   open: boolean;
@@ -93,7 +95,8 @@ function MoveCopyFilesDialog(props: Props) {
     : [];
 
   useEffect(() => {
-    if (selectedDirs.length > 0) {
+    if (selectedDirs.length > 0 && AppConfig.isElectron) {
+      // getDirProperties have Electron impl only
       const promises = selectedDirs.map(dirPath => {
         return PlatformIO.getDirProperties(dirPath).then(prop => {
           dirProp.current[dirPath] = prop;
@@ -246,15 +249,24 @@ function MoveCopyFilesDialog(props: Props) {
         <Button data-tid="closeMoveCopyDialog" onClick={() => props.onClose()}>
           {i18n.t('core:cancel')}
         </Button>
-        {/* <Box> */}
-        <Button
-          data-tid="confirmMoveFiles"
-          disabled={!targetPath}
-          onClick={handleMoveFiles}
-          color="primary"
+        <Tooltip
+          title={i18n.t(
+            AppConfig.isAndroid
+              ? 'core:platformImplMissing'
+              : 'core:moveEntriesButton'
+          )}
         >
-          {i18n.t('core:moveEntriesButton')}
-        </Button>
+          <span>
+            <Button
+              data-tid="confirmMoveFiles"
+              disabled={!targetPath || AppConfig.isAndroid}
+              onClick={handleMoveFiles}
+              color="primary"
+            >
+              {i18n.t('core:moveEntriesButton')}
+            </Button>
+          </span>
+        </Tooltip>
         <Button
           onClick={handleCopyFiles}
           data-tid="confirmCopyFiles"
@@ -263,7 +275,6 @@ function MoveCopyFilesDialog(props: Props) {
         >
           {i18n.t('core:copyEntriesButton')}
         </Button>
-        {/* </Box> */}
       </DialogActions>
     </Dialog>
   );
