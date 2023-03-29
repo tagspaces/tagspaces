@@ -169,7 +169,14 @@ function Revisions(props: Props) {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       )}
-      <TableContainer component={Paper} sx={{ maxHeight: '100%' }}>
+      <TableContainer
+        component={Paper}
+        sx={{
+          maxHeight: '100%',
+          // @ts-ignore
+          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+        }}
+      >
         <Table
           sx={{ width: '100%', height: '100%' }}
           stickyHeader
