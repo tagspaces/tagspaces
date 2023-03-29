@@ -207,6 +207,7 @@ const actions = {
                 // TODO rethink this updateCurrentDirEntry and not need for KanBan
                 AppActions.reflectUpdateSidecarTags(path, newTags, updateIndex)
               );
+              /* opened file is updated from perspective look at FolderContainer -> useEffect of props.editedEntryPaths
               const { openedFiles } = getState().app;
               if (openedFiles.find(obj => obj.path === path)) {
                 return dispatch(
@@ -214,7 +215,7 @@ const actions = {
                     tags: newTags
                   })
                 );
-              }
+              }*/
               return true;
             })
             .catch(err => {

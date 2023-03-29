@@ -104,6 +104,7 @@ function DirectoryListView(props: Props) {
     if (directoryContent && directoryContent.length > 0) {
       return directoryContent.map(entry => (
         <ListItem
+          data-tid={'MoveTarget' + entry.name}
           title={'Navigate to: ' + entry.path}
           style={{ maxWidth: 250 }}
           onClick={() => {

@@ -298,6 +298,15 @@ function EntryProperties(props: Props) {
     }
   }, [props.lastThumbnailImageChange]);
 
+  useEffect(() => {
+    if (props.openedEntry != undefined) {
+      currentEntry.current = enhanceOpenedEntry(
+        props.openedEntry,
+        props.tagDelimiter
+      );
+      forceUpdate();
+    }
+  }, [props.openedEntry]);
   /*useEffect(() => {
     if (props.openedEntry != undefined && currentEntry.current.description) {
       const { current } = fileDescriptionRef;
