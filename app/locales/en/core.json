@@ -773,6 +773,6 @@
   "copyingFoldersFailed": "Copying folders failed",
   "directories": "Folders",
   "files": "Files",
-  "platformImplMissing": "Not implemented on this Platform",
+  "platformImplMissing": "Feature not supported on this platform",
   "-": "-"
 }
