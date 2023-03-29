@@ -40,7 +40,7 @@
   "deleteDirectoryContentConfirm": "Do you want to delete the folder '{{dirPath}}' ?",
   "errorDeletingDirectoryAlert": "Deleting '{{dirPath}}' failed. Folder probably not empty.",
   "deletingDirectorySuccessfull": "Folder '{{dirPath}}' successfully deleted.",
-  "filePropertiesDescription": "Pasta",
+  "filePropertiesDescription": "Descrição",
   "directoryPropertiesTitle": "Folder Properties",
   "createLocationTitle": "Conectar a um Local",
   "createLocation": "New location",
