@@ -27,5 +27,6 @@ AppConfig.editableFiles = [
   'sh',
   'sql'
 ];
+AppConfig.autoSaveInterval = 40000;
 
 export default AppConfig;

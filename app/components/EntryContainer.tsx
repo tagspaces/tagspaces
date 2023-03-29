@@ -352,7 +352,7 @@ function EntryContainer(props: Props) {
             startSavingFile();
             console.debug('autosave');
           }
-        }, 40000);
+        }, AppConfig.autoSaveInterval);
       } else if (timer.current) {
         clearInterval(timer.current);
       }
