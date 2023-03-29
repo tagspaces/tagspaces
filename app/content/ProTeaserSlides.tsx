@@ -41,7 +41,7 @@ export function getProTeaserSlides() {
     pictureHeight: 150
   };
   slidesEN[PerspectiveIDs.KANBAN] = {
-    title: 'Kanban Perspectives',
+    title: 'TagSpaces Pro - Kanban Perspectives',
     description: (
       <>
         This perspective can turn every folder into a Kanban board, where
@@ -59,7 +59,7 @@ export function getProTeaserSlides() {
     pictureHeight: 300
   };
   slidesEN[PerspectiveIDs.GALLERY] = {
-    title: 'Gallery Perspectives',
+    title: 'TagSpaces Pro - Gallery Perspectives',
     description: (
       <>
         This perspective is optimized for displaying folders with photos and
@@ -77,7 +77,7 @@ export function getProTeaserSlides() {
     pictureHeight: 300
   };
   slidesEN[PerspectiveIDs.MAPIQUE] = {
-    title: 'Mapique Perspective & Geo tagging',
+    title: 'TagSpaces Pro - Mapique Perspective & Geo tagging',
     description: (
       <>
         The Mapique perspective displays files and folders tagged with geo-tags
@@ -130,6 +130,21 @@ export function getProTeaserSlides() {
     pictureShadow: true,
     pictureHeight: 300
   };
+  // slidesEN['revisions'] = {
+  //   title: 'Revisions and autosave for editable files',
+  //   description: (
+  //     <>
+  //       TBD
+  //       <br />
+  //       TBD
+  //     </>
+  //   ),
+  //   ctaURL: Links.documentationLinks.revisions,
+  //   ctaTitle: i18n.t('showMeMore'),
+  //   pictureURL: MapImage,
+  //   pictureShadow: true,
+  //   pictureHeight: 300
+  // };
   slidesEN['search'] = {
     title: 'Extended Search',
     description: (
