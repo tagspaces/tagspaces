@@ -34,11 +34,12 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
 import Dialog from '@mui/material/Dialog';
+import useTheme from '@mui/styles/useTheme';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import DraggablePaper from '-/components/DraggablePaper';
 import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import useTheme from '@mui/styles/useTheme';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import AppConfig from '-/AppConfig';
 
 interface Props {
   open: boolean;
@@ -67,15 +68,18 @@ function MoveOrCopyFilesDialog(props: Props) {
         {i18n.t('core:copyMoveEntriesTitle')}
         <DialogCloseButton onClose={() => onClose()} />
       </DialogTitle>
-      <DialogContent>
+      <DialogContent
+        style={{
+          overflowX: 'hidden',
+          // @ts-ignore
+          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+        }}
+      >
         <List
           dense
           style={{ width: 550, marginLeft: -15 }}
           subheader={
-            <ListSubheader
-              style={{ backgroundColor: 'transparent' }}
-              component="div"
-            >
+            <ListSubheader component="div">
               {i18n.t('selectedFiles')}
             </ListSubheader>
           }

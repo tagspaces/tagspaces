@@ -1117,20 +1117,26 @@ function EntryProperties(props: Props) {
                 InputProps={{
                   readOnly: true,
                   startAdornment: (
-                    <InputAdornment position="start">
-                      <QRCodeIcon
-                        style={{ color: theme.palette.text.secondary }}
-                      />
-                    </InputAdornment>
-                  ),
-                  endAdornment: (
-                    <InputAdornment position="start">
-                      <Button
-                        fullWidth
-                        onClick={() => setShowSharingLinkDialog(true)}
-                      >
-                        {i18n.t('core:generateDownloadLink')}
-                      </Button>
+                    <InputAdornment position="start" style={{ width: '100%' }}>
+                      <Tooltip title={i18n.t('core:generateDownloadLink')}>
+                        <Button
+                          onClick={() => setShowSharingLinkDialog(true)}
+                          startIcon={
+                            <QRCodeIcon
+                              style={{ color: theme.palette.text.secondary }}
+                            />
+                          }
+                        >
+                          <span
+                            style={{
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis'
+                            }}
+                          >
+                            {i18n.t('core:generateDownloadLink')}
+                          </span>
+                        </Button>
+                      </Tooltip>
                     </InputAdornment>
                   )
                 }}

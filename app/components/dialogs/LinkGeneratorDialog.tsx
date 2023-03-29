@@ -163,12 +163,12 @@ function LinkGeneratorDialog(props: Props) {
           value={' '}
           InputProps={{
             readOnly: true,
-            endAdornment: (
-              <InputAdornment position="start" style={{ paddingRight: 50 }}>
+            startAdornment: (
+              <InputAdornment position="start">
                 <QRCode
                   id="qr-code-link"
                   value={signedLink.current}
-                  size={400}
+                  size={350}
                   enableCORS={true}
                   // logoWidth={64}
                   // logoHeight={64}

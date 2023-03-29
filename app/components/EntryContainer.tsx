@@ -889,6 +889,28 @@ function EntryContainer(props: Props) {
     openedFile.path.endsWith(ext)
   );
 
+  const toggleAutoSave = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const autoSave = event.target.checked;
+    if (Pro && Pro.MetaOperations) {
+      props
+        .switchLocationType(openedFile.locationId)
+        .then(currentLocationId => {
+          Pro.MetaOperations.saveFsEntryMeta(openedFile.path, {
+            autoSave
+          }).then(entryMeta => {
+            updateOpenedFile(openedFile.path, entryMeta).then(() => {
+              props.switchCurrentLocationType(currentLocationId);
+            });
+          });
+        });
+    } else {
+      showNotification(
+        i18n.t('core:thisFunctionalityIsAvailableInPro'),
+        NotificationTypes.default
+      );
+    }
+  };
+
   const renderFileToolbar = classes => (
     <div className={classes.toolbar2}>
       <div className={classes.flexLeft}>
@@ -1336,34 +1358,22 @@ function EntryContainer(props: Props) {
                 }}
               >
                 {isEditable && props.revisionsEnabled && (
-                  <Tooltip title={i18n.t('core:autosave')}>
+                  <Tooltip
+                    title={
+                      i18n.t('core:autosave') +
+                      (!Pro
+                        ? ' - ' +
+                          i18n.t('core:thisFunctionalityIsAvailableInPro')
+                        : '')
+                    }
+                  >
                     <Switch
                       data-tid="autoSaveTID"
                       checked={
                         openedFile.isAutoSaveEnabled !== undefined &&
                         openedFile.isAutoSaveEnabled
                       }
-                      onChange={(
-                        event: React.ChangeEvent<HTMLInputElement>
-                      ) => {
-                        const autoSave = event.target.checked;
-                        props
-                          .switchLocationType(openedFile.locationId)
-                          .then(currentLocationId => {
-                            Pro.MetaOperations.saveFsEntryMeta(
-                              openedFile.path,
-                              { autoSave }
-                            ).then(entryMeta => {
-                              updateOpenedFile(openedFile.path, entryMeta).then(
-                                () => {
-                                  props.switchCurrentLocationType(
-                                    currentLocationId
-                                  );
-                                }
-                              );
-                            });
-                          });
-                      }}
+                      onChange={toggleAutoSave}
                       name="autoSave"
                       color="primary"
                     />
