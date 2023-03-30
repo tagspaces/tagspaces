@@ -208,7 +208,11 @@ function MoveCopyFilesDialog(props: Props) {
             marginBottom: 20
           }}
           subheader={
-            <ListSubheader>{i18n.t('selectedFilesAndFolders')}</ListSubheader>
+            <ListSubheader>
+              <Typography variant="subtitle2">
+                {i18n.t('selectedFilesAndFolders')}
+              </Typography>
+            </ListSubheader>
           }
         >
           {props.selectedEntries &&

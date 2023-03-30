@@ -12,6 +12,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import FolderIcon from '@mui/icons-material/FolderOpen';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
+import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
 import { TS } from '-/tagspaces.namespace';
@@ -25,9 +26,10 @@ interface Props {
   locations: Array<TS.Location>;
   currentLocationId: string;
   toggleCreateDirectoryDialog: (props: any) => void;
+  showUnixHiddenEntries: boolean;
 }
 function DirectoryListView(props: Props) {
-  const { locations, currentLocationId } = props;
+  const { locations, currentLocationId, showUnixHiddenEntries } = props;
   const chosenLocationId = useRef<string>(currentLocationId);
   const chosenDirectory = useRef<string>();
   const [directoryContent, setDirectoryContent] = useState<
@@ -87,9 +89,15 @@ function DirectoryListView(props: Props) {
       .then(results => {
         if (results !== undefined) {
           setDirectoryContent(
-            results
-              .filter(entry => !entry.isFile)
-              .sort((a, b) => b.lmdt - a.lmdt)
+            results.filter(entry => {
+              return (
+                !entry.isFile &&
+                entry.name !== AppConfig.metaFolder &&
+                !entry.name.endsWith('/' + AppConfig.metaFolder) &&
+                !(!showUnixHiddenEntries && entry.name.startsWith('.'))
+              );
+            })
+            // .sort((a, b) => b.name - a.name)
           );
           props.setTargetDir(directoryPath);
         }
@@ -131,7 +139,7 @@ function DirectoryListView(props: Props) {
       <Button
         variant="text"
         startIcon={<ParentFolderIcon />}
-        style={{ backgroundColor: '#fefefe80', margin: 5 }}
+        style={{ margin: 5 }}
         onClick={() => {
           if (chosenDirectory.current) {
             let currentPath = chosenDirectory.current;
@@ -147,7 +155,7 @@ function DirectoryListView(props: Props) {
       <Button
         variant="text"
         startIcon={<NewFolderIcon />}
-        style={{ backgroundColor: '#fefefe80', margin: 5 }}
+        style={{ margin: 5 }}
         onClick={() => {
           props.toggleCreateDirectoryDialog({
             rootDirPath: chosenDirectory.current,
@@ -176,7 +184,8 @@ function DirectoryListView(props: Props) {
 function mapStateToProps(state) {
   return {
     locations: getLocations(state),
-    currentLocationId: getCurrentLocationId(state)
+    currentLocationId: getCurrentLocationId(state),
+    showUnixHiddenEntries: getShowUnixHiddenEntries(state)
   };
 }
 
