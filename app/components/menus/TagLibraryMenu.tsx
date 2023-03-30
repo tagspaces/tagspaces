@@ -136,7 +136,10 @@ function TagLibraryMenu(props: Props) {
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:createTagGroupTitle')} />
         </MenuItem>
-        <ProTooltip tooltip={i18n.t('core:enableTagsFromLocationHelp')}>
+        <ProTooltip
+          placement="right"
+          tooltip={i18n.t('core:enableTagsFromLocationHelp')}
+        >
           <MenuItem
             disabled={!Pro || !props.saveTagInLocation}
             data-tid="refreshTagGroups"

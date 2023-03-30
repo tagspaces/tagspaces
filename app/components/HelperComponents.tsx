@@ -74,13 +74,18 @@ export function ProSign() {
 }
 
 export function ProTooltip(props) {
-  const { tooltip } = props;
+  const { tooltip, placement } = props;
   const proTooltip = tooltip && tooltip;
+  const tooltipPlacement = placement || 'top';
   const noProTooltip = tooltip
     ? tooltip + ' - ' + i18n.t('thisFunctionalityIsAvailableInPro')
     : i18n.t('thisFunctionalityIsAvailableInPro');
   return (
-    <Tooltip arrow placement="top" title={Pro ? proTooltip : noProTooltip}>
+    <Tooltip
+      arrow
+      placement={tooltipPlacement}
+      title={Pro ? proTooltip : noProTooltip}
+    >
       <span {...props} />
     </Tooltip>
   );
