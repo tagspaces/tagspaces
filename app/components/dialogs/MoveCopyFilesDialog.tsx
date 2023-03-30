@@ -198,6 +198,9 @@ function MoveCopyFilesDialog(props: Props) {
         <DialogCloseButton onClose={onCloseDialog} />
       </DialogTitle>
       <DialogContent style={{ overflow: 'hidden' }}>
+        <Typography variant="subtitle2">
+          {i18n.t('selectedFilesAndFolders')}
+        </Typography>
         <List
           dense
           style={{
@@ -207,13 +210,6 @@ function MoveCopyFilesDialog(props: Props) {
             marginLeft: -15,
             marginBottom: 20
           }}
-          subheader={
-            <ListSubheader>
-              <Typography variant="subtitle2">
-                {i18n.t('selectedFilesAndFolders')}
-              </Typography>
-            </ListSubheader>
-          }
         >
           {props.selectedEntries &&
             props.selectedEntries.length > 0 &&

@@ -527,6 +527,9 @@ function FolderContainer(props: Props) {
     }
   };
 
+  const openSearchKeyBinding =
+    ' (' + (AppConfig.isMaclike ? '⌘' : 'Ctrl') + '+Shift+F)';
+  // keyBindings['openSearch'].toUpperCase()
   return (
     <div data-tid="folderContainerTID" style={{ position: 'relative' }}>
       <div
@@ -594,50 +597,39 @@ function FolderContainer(props: Props) {
             <>
               <div
                 style={{
-                  flex: '1 1 10%',
+                  flex: '1 1 1%',
                   display: 'flex',
                   flexDirection: 'column'
                 }}
               />
-              <Tooltip
-                title={
-                  i18n.t('showSearch') +
-                  ' (' +
-                  (AppConfig.isMaclike ? '⌘' : 'CTRL') +
-                  ' + SHIFT + F)'
-                  // +
-                  // ' - ' +
-                  // keyBindings['openSearch'].toUpperCase()
+              <MainSearchField
+                fullWidth
+                data-tid="toggleSearch"
+                defaultValue=""
+                variant="outlined"
+                size="small"
+                style={{
+                  minWidth: 40,
+                  width: 220,
+                  marginRight: 10
+                }}
+                onKeyDown={toggleSearchMode}
+                onClick={toggleSearchMode}
+                margin="dense"
+                placeholder={
+                  i18n.t('core:searchTitle') +
+                  (isDesktopMode ? openSearchKeyBinding : '')
                 }
-              >
-                <MainSearchField
-                  fullWidth
-                  data-tid="toggleSearch"
-                  defaultValue=""
-                  variant="outlined"
-                  size="small"
-                  style={{
-                    minWidth: 40,
-                    width: 200
-                  }}
-                  onKeyDown={toggleSearchMode}
-                  onClick={toggleSearchMode}
-                  margin="dense"
-                  placeholder={i18n.t('core:searchTitle')}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment
-                        position="start"
-                        style={{ marginRight: 0 }}
-                      >
-                        <IconButton size="small" edge="end">
-                          <SearchIcon />
-                        </IconButton>
-                      </InputAdornment>
-                    )
-                  }}
-                />
-              </Tooltip>
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start" style={{ marginRight: 0 }}>
+                      <IconButton size="small" edge="end">
+                        <SearchIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  )
+                }}
+              />
               {props.progress && props.progress.length > 0 && (
                 <IconButton
                   id="progressButton"

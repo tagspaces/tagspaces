@@ -75,15 +75,8 @@ function MoveOrCopyFilesDialog(props: Props) {
           overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
         }}
       >
-        <List
-          dense
-          style={{ width: 550, marginLeft: -15 }}
-          subheader={
-            <ListSubheader component="div">
-              {i18n.t('selectedFiles')}
-            </ListSubheader>
-          }
-        >
+        <Typography variant="subtitle2">{i18n.t('selectedFiles')}</Typography>
+        <List dense style={{ width: 550, marginLeft: -15 }}>
           {props.selectedFiles &&
             props.selectedFiles.length > 0 &&
             props.selectedFiles.map((file: File) => (

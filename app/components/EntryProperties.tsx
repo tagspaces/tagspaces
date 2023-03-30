@@ -974,13 +974,13 @@ function EntryProperties(props: Props) {
                 !PlatformIO.haveObjectStoreSupport() &&
                 dirProps.current &&
                 !currentEntry.current.isFile &&
-                i18n.t('core:directories') +
-                  ': ' +
-                  dirProps.current.dirsCount +
+                dirProps.current.dirsCount +
                   ' ' +
-                  i18n.t('core:files') +
-                  ': ' +
-                  dirProps.current.filesCount
+                  i18n.t('core:directories') +
+                  ', ' +
+                  dirProps.current.filesCount +
+                  ' ' +
+                  i18n.t('core:files')
               }
             >
               <TextField

@@ -17,7 +17,6 @@
  */
 
 import React, { useState } from 'react';
-import Draggable from 'react-draggable';
 import Button from '@mui/material/Button';
 import Paper, { PaperProps } from '@mui/material/Paper';
 import DialogActions from '@mui/material/DialogActions';
@@ -31,6 +30,7 @@ import FolderIcon from '@mui/icons-material/FolderOpen';
 import FileIcon from '@mui/icons-material/InsertDriveFileOutlined';
 import Typography from '@mui/material/Typography';
 import Dialog from '@mui/material/Dialog';
+import DraggablePaper from '-/components/DraggablePaper';
 import AppConfig from '-/AppConfig';
 import TagsSelect from '../TagsSelect';
 import i18n from '-/services/i18n';
@@ -51,17 +51,6 @@ interface Props {
   addTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
   removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
   removeAllTags: (paths: Array<string>) => void;
-}
-
-function PaperComponent(props: PaperProps) {
-  return (
-    <Draggable
-      handle="#draggable-dialog-title"
-      cancel={'[class*="MuiDialogContent-root"]'}
-    >
-      <Paper {...props} />
-    </Draggable>
-  );
 }
 
 function AddRemoveTagsDialog(props: Props) {
@@ -129,7 +118,7 @@ function AddRemoveTagsDialog(props: Props) {
       onClose={onClose}
       keepMounted
       scroll="paper"
-      PaperComponent={fullScreen ? Paper : PaperComponent}
+      PaperComponent={fullScreen ? Paper : DraggablePaper}
       aria-labelledby="draggable-dialog-title"
     >
       <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
@@ -154,19 +143,10 @@ function AddRemoveTagsDialog(props: Props) {
           tagMode="remove"
           autoFocus={true}
         />
-
-        <List
-          dense
-          style={{ width: 550, marginLeft: -15 }}
-          subheader={
-            <ListSubheader
-              style={{ backgroundColor: 'transparent' }}
-              component="div"
-            >
-              {i18n.t('selectedFilesAndFolders')}
-            </ListSubheader>
-          }
-        >
+        <Typography style={{ marginTop: 10 }} variant="subtitle2">
+          {i18n.t('selectedFilesAndFolders')}
+        </Typography>
+        <List dense style={{ width: 550, marginLeft: -15 }}>
           {selectedEntries.length > 0 &&
             selectedEntries.map(entry => (
               <ListItem key={entry.path} title={entry.path}>
