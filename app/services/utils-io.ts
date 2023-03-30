@@ -770,6 +770,7 @@ export function generateFileName(
       // File has an extension
       newFileName =
         fileName.substring(0, lastDotPosition).trim() +
+        ' ' +
         prefixTagContainer +
         tagsString +
         '.' +
@@ -779,6 +780,7 @@ export function generateFileName(
     // File does not have an extension
     newFileName =
       fileName.substring(0, beginTagContainer).trim() +
+      ' ' +
       prefixTagContainer +
       tagsString +
       fileName.substring(endTagContainer + 1, fileName.length).trim();
