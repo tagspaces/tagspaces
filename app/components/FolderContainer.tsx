@@ -160,15 +160,6 @@ const CounterBadge: any = withStyles(theme => ({
         : theme.palette.grey[900]
   }
 }))(Badge);
-
-// const CustomButton: any = withStyles(theme => ({
-//   root: {
-//     // borderRadius: 15,
-//     // minWidth: 45,
-//     // height: 40
-//   }
-// }))(IconButton);
-
 interface Props {
   classes: any;
   settings: any;
@@ -264,38 +255,25 @@ function FolderContainer(props: Props) {
    * reflect update openedFile from perspective
    */
   useEffect(() => {
-    if (
-      !firstRender &&
-      props.editedEntryPaths &&
-      props.editedEntryPaths.length > 0
-    ) {
-      for (const editedEntryPath of props.editedEntryPaths) {
-        const action = editedEntryPath.action;
-        if (editedEntryPath.path && action.startsWith('edit')) {
-          // update opened file after delete sidecar tags
-          if (props.openedFiles.length > 0) {
-            const openedFile = props.openedFiles[0];
-            if (openedFile.path === editedEntryPath.path) {
-              props.openEntry(editedEntryPath.path);
-            }
+    const { editedEntryPaths, openedFiles, openEntry } = props;
+
+    if (!firstRender && editedEntryPaths && editedEntryPaths.length > 0) {
+      editedEntryPaths.forEach(editedEntryPath => {
+        const { action, path } = editedEntryPath;
+        // update opened file after delete sidecar tags
+        if (path && action.startsWith('edit')) {
+          const openedFile = openedFiles[0];
+          if (openedFile.path === path) {
+            openEntry(path);
           }
         }
-      }
+      });
     }
   }, [props.editedEntryPaths]);
-
-  /*useEffect(() => {
-    if (props.searchResultsCount === -2) {
-      setSearchVisible(false);
-    } else {
-      setSearchVisible(true);
-    }
-  }, [props.isSearchMode]);*/
 
   const [isRenameEntryDialogOpened, setIsRenameEntryDialogOpened] = useState<
     boolean
   >(false);
-  // const [isSearchVisible, setSearchVisible] = useState<boolean>(false);
 
   const {
     currentDirectoryPath = '',
@@ -304,7 +282,6 @@ function FolderContainer(props: Props) {
     classes,
     toggleDrawer,
     toggleProTeaser,
-    drawerOpened,
     isDesktopMode,
     theme,
     currentDirectoryPerspective,
@@ -465,37 +442,15 @@ function FolderContainer(props: Props) {
       props.setCurrentDirectoryPerspective(perspectiveId);
     } else if (perspectiveId === PerspectiveIDs.GALLERY) {
       toggleProTeaser(PerspectiveIDs.GALLERY);
-      // const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
-      // if (openPersDocs) {
-      //   props.openURLExternally(
-      //     Links.documentationLinks.galleryPerspective,
-      //     true
-      //   );
-      // }
     } else if (perspectiveId === PerspectiveIDs.MAPIQUE) {
       toggleProTeaser(PerspectiveIDs.MAPIQUE);
-      // const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
-      // if (openPersDocs) {
-      //   props.openURLExternally(
-      //     Links.documentationLinks.mapiquePerspective,
-      //     true
-      //   );
-      // }
     } else if (perspectiveId === PerspectiveIDs.KANBAN) {
       toggleProTeaser(PerspectiveIDs.KANBAN);
-      // const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
-      // if (openPersDocs) {
-      //   props.openURLExternally(
-      //     Links.documentationLinks.kanbanPerspective,
-      //     true
-      //   );
-      // }
     }
   };
 
   const perspectiveToggleButtons = [];
   AvailablePerspectives.forEach(perspective => {
-    // if (perspective.beta === false) {
     perspectiveToggleButtons.push(
       <ToggleButton
         value={perspective.id}
@@ -514,7 +469,6 @@ function FolderContainer(props: Props) {
         </Tooltip>
       </ToggleButton>
     );
-    // }
   });
 
   const toggleSearchMode = () => {
@@ -527,8 +481,9 @@ function FolderContainer(props: Props) {
     }
   };
 
-  const openSearchKeyBinding =
-    ' (' + (AppConfig.isMaclike ? '⌘' : 'Ctrl') + '+Shift+F)';
+  const openSearchKeyBinding = AppConfig.isElectron
+    ? ' (' + (AppConfig.isMaclike ? '⌘' : 'Ctrl') + '+Shift+F)'
+    : '';
   // keyBindings['openSearch'].toUpperCase()
   return (
     <div data-tid="folderContainerTID" style={{ position: 'relative' }}>
@@ -616,10 +571,7 @@ function FolderContainer(props: Props) {
                 onKeyDown={toggleSearchMode}
                 onClick={toggleSearchMode}
                 margin="dense"
-                placeholder={
-                  i18n.t('core:searchTitle') +
-                  (isDesktopMode ? openSearchKeyBinding : '')
-                }
+                placeholder={i18n.t('core:searchTitle') + openSearchKeyBinding}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start" style={{ marginRight: 0 }}>
@@ -717,7 +669,6 @@ function mapStateToProps(state) {
     language: getCurrentLanguage(state),
     progress: getProgress(state),
     searchQuery: getSearchQuery(state),
-    // keyBindings: getKeyBindingObject(state),
     defaultPerspective: getDefaultPerspective(state),
     editedEntryPaths: getEditedEntryPaths(state),
     searchResultsCount: getSearchResultsCount(state),
@@ -749,7 +700,6 @@ function mapActionCreatorsToProps(dispatch) {
       enterSearchMode: AppActions.enterSearchMode,
       exitSearchMode: AppActions.exitSearchMode,
       setSearchQuery: LocationIndexActions.setSearchQuery,
-      // openCurrentDirectory: AppActions.openCurrentDirectory,
       openURLExternally: AppActions.openURLExternally
     },
     dispatch
@@ -757,7 +707,6 @@ function mapActionCreatorsToProps(dispatch) {
 }
 
 const areEqual = (prevProp: Props, nextProp: Props) =>
-  // nextProp.rightPanelWidth === prevProp.rightPanelWidth &&
   nextProp.settings.currentTheme === prevProp.settings.currentTheme &&
   nextProp.drawerOpened === prevProp.drawerOpened &&
   nextProp.isDesktopMode === prevProp.isDesktopMode &&
