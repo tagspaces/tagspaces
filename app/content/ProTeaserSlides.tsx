@@ -7,6 +7,7 @@ import MapImage from '-/assets/images/mapique-perspective.jpg';
 import EntryDescription from '-/assets/images/entry-description.jpg';
 import SearchImage from '-/assets/images/search-undraw.svg';
 import CustomFolderColor from '-/assets/images/custom-folder-color.jpg';
+import RevisionsAutosave from '-/assets/images/revisions-autosave.png';
 import EnterpriseImage from '-/assets/images/world-undraw.svg';
 import { PerspectiveIDs } from '-/perspectives';
 import React from 'react';
@@ -24,17 +25,19 @@ export function getProTeaserSlides() {
     title: 'Why TagSpaces Pro ?',
     description: (
       <>
-        The TagSpaces project is entirely <b>subscriber-supported</b>. We do not
-        make money through advertising or any form of data sharing, so buying a
-        Pro subscription will support the further development of our core
-        product TagSpaces Lite and our browser extensions, which are all freely
-        available.
-        <br />
-        <br />
-        On top of that you will get <b>a lot of useful features</b>, extended
-        search functionalities, alternative perspectives for your files, geo
-        tagging functionality. Some of these features are briefly presented on
-        the next slides.
+        <p>
+          The TagSpaces project is completely supported by subscribers. We
+          aren't paid through advertising or sharing data, so purchasing a Pro
+          subscription will contribute to the further development of our core
+          offering, TagSpaces Lite, and our browser extensions, which can all be
+          accessed without a cost.
+        </p>
+        <p>
+          Apart from that, you will be able to enjoy a lot of useful features,
+          advanced search capabilities, perspectives for your files and folders,
+          and geo-tagging. Several of these features will be highlighted in the
+          following slides.
+        </p>
       </>
     ),
     pictureURL: ProTeaserImage,
@@ -44,12 +47,13 @@ export function getProTeaserSlides() {
     title: 'TagSpaces Pro - Kanban Perspectives',
     description: (
       <>
-        This perspective can turn every folder into a Kanban board, where
-        columns represents the sub folders of the current folder. Every file
-        from the sub folders is shown as a tile and can be moved with drag and
-        drop between the columns. The columns itself can be moved with drag and
-        drop too. There is a built-in <b>Trello import</b>, where a Trello JSON
-        export can be imported in the current folder.
+        This perspective allows each folder to be transformed into a Kanban
+        board, with columns representing the subfolders of the current folder.
+        Each file residing in the subfolders is then displayed as a tile and can
+        be shifted, via drag and drop, between the columns. The columns
+        themselves can be rearranged also with drag and drop. A built-in Trello
+        import is included, where an exported Trello board can be imported into
+        the current folder.
       </>
     ),
     ctaURL: Links.documentationLinks.kanbanPerspective,
@@ -62,12 +66,11 @@ export function getProTeaserSlides() {
     title: 'TagSpaces Pro - Gallery Perspectives',
     description: (
       <>
-        This perspective is optimized for displaying folders with photos and
-        other images. It has an integrated <b>presentation mode</b>, so by just
-        clicking the play button, the images start to change automatically one
-        after another. With the expand button you can start the presentation in{' '}
-        <b>full screen</b>, so you can enjoy your photos in a distraction-free
-        way.
+        This perspective is designed to best display folders containing photos
+        and other images. It includes a presentation mode, so you can simply
+        click the play button and the images will change sequentially. The
+        presentation can be started in full screen mode, for an undisturbed
+        viewing experience.
       </>
     ),
     ctaURL: Links.documentationLinks.galleryPerspective,
@@ -80,15 +83,18 @@ export function getProTeaserSlides() {
     title: 'TagSpaces Pro - Mapique Perspective & Geo tagging',
     description: (
       <>
-        The Mapique perspective displays files and folders tagged with geo-tags
-        on a digital map. The perspective integrates an ability to{' '}
-        <b>extract geo coordinates</b> from EXIF/IPTC data embedded in JPEG
-        files. By default TagSpaces uses OpenStreetMap for the map, but other
-        compatible map tile servers can be used instead.
-        <br />
-        In the PRO version, you can add tags containing geolocation data to any
-        file or folder. This can be useful for example for planing and
-        documenting trips or just to <b>privately annotate maps</b>.
+        <p>
+          The Mapique Perspective displays files and folders that have been
+          tagged with geotags on a digital map. This perspective is also able to
+          automatically extract geocoordinates from EXIF/IPTC data stored in
+          JPEG files. OpenStreetMap is the default choice for the map, though
+          other compatible map tile servers may be used.{' '}
+        </p>
+        <p>
+          The PRO version of TagSpaces allows users to tag their files and
+          folders with geolocation data. This feature can be useful for planning
+          trips or simply for privately annotating maps.
+        </p>
       </>
     ),
     ctaURL: Links.documentationLinks.mapiquePerspective,
@@ -101,8 +107,8 @@ export function getProTeaserSlides() {
     title: 'Annotate and link your files and folders',
     description: (
       <>
-        In TagSpaces Pro you can add text description to every kind of file or
-        folder.
+        In TagSpaces Pro, you can add a text description to every type of file
+        or folder.
       </>
     ),
     items: [
@@ -130,21 +136,31 @@ export function getProTeaserSlides() {
     pictureShadow: true,
     pictureHeight: 300
   };
-  // slidesEN['revisions'] = {
-  //   title: 'Revisions and autosave for editable files',
-  //   description: (
-  //     <>
-  //       TBD
-  //       <br />
-  //       TBD
-  //     </>
-  //   ),
-  //   ctaURL: Links.documentationLinks.revisions,
-  //   ctaTitle: i18n.t('showMeMore'),
-  //   pictureURL: MapImage,
-  //   pictureShadow: true,
-  //   pictureHeight: 300
-  // };
+  slidesEN['revisions'] = {
+    title: 'Revisions and auto-save for editable files',
+    description: (
+      <>
+        <p>
+          A key feature of document management systems is the ability to create
+          revisions of the edited files. This feature can be enabled in the
+          Advanced tab of the application's Settings dialog box. Once activated,
+          a full copy of the current file (e.g. TXT, MD, HTML or JSON) is
+          created with each save.
+        </p>
+        <p>
+          The auto-save feature can be enabled individually for each editable
+          file. When it is enabled, the application will save any changes you
+          make automatically. You can also save the file manually by clicking
+          the save button or by pressing the CTRL+S key combination.
+        </p>
+      </>
+    ),
+    ctaURL: Links.documentationLinks.revisions,
+    ctaTitle: i18n.t('showMeMore'),
+    pictureURL: RevisionsAutosave,
+    pictureShadow: true,
+    pictureHeight: 400
+  };
   slidesEN['search'] = {
     title: 'Extended Search',
     description: (
@@ -180,11 +196,12 @@ export function getProTeaserSlides() {
     title: 'Folders with custom backgrounds',
     description: (
       <>
-        In the Pro version you can set a background color to any folder. The
-        color is visible also in the parent folder. Once it is opened the whole
-        background area is having the specified folder color. This can be useful
-        if you have common sub-folders structure, where for example the
-        sub-folder <i>Archive</i> can marked <i>yellow</i> for easy recognition.
+        In the Pro version, you can set a background color to any folder, which
+        is visible even in its parent folder. Once the folder is opened, the
+        entire background area assumes the designated folder color. This is
+        useful if you have common sub-folder structures, such as an 'Archive'
+        folder which can be marked with a color like 'yellow' to make it stand
+        out.
       </>
     ),
     ctaURL: Links.links.productProFolderColor,
@@ -197,7 +214,7 @@ export function getProTeaserSlides() {
     title: 'TagSpaces Web Pro & Enterprise',
     description: (
       <>
-        TagSpaces is offered also as a web application running in your web
+        TagSpaces is also available as a web application that runs on your web
         browser.
       </>
     ),
@@ -226,31 +243,4 @@ export function getProTeaserSlides() {
     pictureHeight: 200
   };
   return slidesEN;
-  // slidesEN['objectstorage'] = {
-  //   title: 'Connect AWS S3 or MinIO object storage',
-  //   items: [
-  //     <>
-  //       TagSpaces Pro supports connecting{' '}
-  //       <b>Amazon S3 compliant storage providers</b> as locations. Such storage is
-  //       offered by Amazon AWS, Wasabi and many others. You can also host an object
-  //       storage <b>privately</b> (e.g. on your NAS) with the help of open source
-  //       projects like MinIO.
-  //     </>,
-  //     <>
-  //       This allows you to <b>work collaboratively</b> on the same files with
-  //       family members or co-workers.
-  //     </>,
-  //     <>
-  //       By doing so, you are getting a Cloud based{' '}
-  //       <b>full-fledged file organizer and browser</b>, so you do not have to
-  //       download files in order to preview, edit or annotate them. On top of that
-  //       you can <b>stream audio and video</b> files from the Cloud location.
-  //     </>
-  //   ],
-  //   ctaURL: Links.links.productProObjectStore,
-  //   ctaTitle: i18n.t('showMeMore'),
-  //   pictureURL: CloudImage,
-  //   pictureShadow: true,
-  //   pictureHeight: 300
-  // };
 }

@@ -73,7 +73,8 @@ const Links = {
     kanbanPerspective:
       'https://docs.tagspaces.org/perspectives/kanban' + urlParams,
     locations: 'https://docs.tagspaces.org/ui/locations' + urlParams,
-    revisions: 'https://docs.tagspaces.org/editing-files#revisions' + urlParams,
+    revisions:
+      'https://docs.tagspaces.org/editing-files#file-revisions' + urlParams,
     taglibrary: 'https://docs.tagspaces.org/ui/taglibrary' + urlParams,
     search: 'https://docs.tagspaces.org/search' + urlParams,
     settings: 'https://docs.tagspaces.org/ui/settings' + urlParams,
