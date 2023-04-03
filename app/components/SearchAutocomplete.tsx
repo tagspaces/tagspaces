@@ -70,6 +70,7 @@ import { getCurrentLocation, getLocations } from '-/reducers/locations';
 import CloseIcon from '@mui/icons-material/Close';
 import { getTagLibrary } from '-/services/taglibrary-utils';
 import { getSearches } from '-/reducers/searches';
+import { validateCurrentDirectoryEntries } from '-/services/utils-io';
 
 interface Props {
   style?: any;
@@ -92,7 +93,7 @@ interface Props {
   open: boolean;
   locations: TS.Location[];
   currentLocation: TS.Location;
-  openLocationById: (locationId: string) => void;
+  openLocationById: (locationId?: string, validate?: boolean) => void;
   changeLocationByID: (locationId: string) => void;
   isSearchMode: boolean;
   exitSearchMode: () => void;
@@ -474,6 +475,7 @@ function SearchAutocomplete(props: Props) {
     resetValues([]);
     props.setSearchQuery({});
     props.exitSearchMode();
+    props.openLocationById(undefined, true);
     // props.setSearchResults([]);
     props.watchForChanges();
     // props.openCurrentDirectory();

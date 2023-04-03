@@ -58,7 +58,8 @@ import {
   getCleanLocationPath,
   updateFsEntries,
   loadMetaDataPromise,
-  mergeByProp
+  mergeByProp,
+  validateCurrentDirectoryEntries
 } from '-/services/utils-io';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import i18n from '../services/i18n';
@@ -557,7 +558,7 @@ export default (state: any = initialState, action: any) => {
       GlobalSearch.results = action.searchResults;
       return {
         ...state,
-        // currentDirectoryEntries: action.searchResults,
+        currentDirectoryPath: action.currentDirectoryPath,
         searchResultsCount: action.searchResults.length,
         isLoading: false
       };
@@ -1844,9 +1845,24 @@ export const actions = {
         );
       });
   },
-  setSearchResults: (searchResults: Array<any> | []) => ({
+  setSearchResults: (searchResults: Array<any> | []) => (
+    dispatch: (action) => void,
+    getState: () => any
+  ) => {
+    dispatch(
+      actions.setSearchResultsInt(
+        searchResults,
+        getCurrentLocationPath(getState())
+      )
+    );
+  },
+  setSearchResultsInt: (
+    searchResults: Array<any> | [],
+    currentDirectoryPath: string
+  ) => ({
     type: types.SET_SEARCH_RESULTS,
-    searchResults
+    searchResults,
+    currentDirectoryPath
   }),
   exitSearchMode: () => (dispatch: (action) => void, getState: () => any) => {
     const { searchMode } = getState().app;
@@ -1935,17 +1951,27 @@ export const actions = {
 
     return setLocationType(location);
   },
-  openLocationById: (locationId: string) => (
+  openLocationById: (locationId?: string, validate = false) => (
     dispatch: (action) => void,
     getState: () => any
   ) => {
+    if (!locationId) {
+      locationId = getState().app.currentLocationId;
+    }
+
     const { locations } = getState();
-    locations.map(location => {
-      if (location.uuid === locationId) {
-        dispatch(actions.openLocation(location));
+    const loc = locations.find(location => location.uuid === locationId);
+    if (loc) {
+      const isHaveValidDirContent = validate
+        ? validateCurrentDirectoryEntries(
+            getState().app.currentDirectoryEntries,
+            loc.path
+          )
+        : false;
+      if (!isHaveValidDirContent) {
+        dispatch(actions.openLocation(loc));
       }
-      return true;
-    });
+    }
   },
   openLocation: (location: TS.Location, skipInitialDirList?: boolean) => (
     dispatch: (action) => void,

@@ -1562,3 +1562,19 @@ export function getDefaultEditor(fileType) {
   }
   return undefined;
 }
+
+export function validateCurrentDirectoryEntries(
+  dirEntries: Array<TS.FileSystemEntry>,
+  dirPath
+) {
+  if (dirEntries && dirEntries.length > 0) {
+    return !dirEntries.some(
+      entry =>
+        extractContainingDirectoryPath(
+          entry.path,
+          PlatformIO.getDirSeparator()
+        ) !== dirPath
+    );
+  }
+  return false;
+}

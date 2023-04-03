@@ -61,7 +61,10 @@ import { Pro } from '../pro';
 import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
 import { TS } from '-/tagspaces.namespace';
 import PathBreadcrumbs from './PathBreadcrumbs';
-import { enhanceOpenedEntry } from '-/services/utils-io';
+import {
+  enhanceOpenedEntry,
+  validateCurrentDirectoryEntries
+} from '-/services/utils-io';
 import {
   actions as LocationIndexActions,
   getSearchQuery
@@ -475,6 +478,11 @@ function FolderContainer(props: Props) {
     if (props.isSearchMode) {
       props.setSearchQuery({});
       props.exitSearchMode();
+      if (
+        !validateCurrentDirectoryEntries(directoryContent, currentLocationPath)
+      ) {
+        loadDirectoryContent(currentLocationPath, true, true);
+      }
     } else {
       props.setSearchQuery({ textQuery: '' });
       props.enterSearchMode();
