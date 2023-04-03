@@ -43,7 +43,7 @@ interface Props {
     directoryPath: string,
     reflect: boolean
   ) => Promise<boolean>;
-  callback?: () => void;
+  callback?: (newDirPath: string) => void;
   reflect?: boolean;
 }
 
@@ -83,7 +83,11 @@ function CreateDirectoryDialog(props: Props) {
       );
       props
         .createDirectory(dirPath, reflect !== undefined ? reflect : true)
-        .then(() => props.callback());
+        .then(() => {
+          if (props.callback) {
+            props.callback(dirPath);
+          }
+        });
       resetState();
       props.onClose();
     }
