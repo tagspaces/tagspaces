@@ -28,7 +28,7 @@ function clearHighlights() {
   selectByTID('tagLibrary').classList.remove('highlighterOn');
   selectByTID('settings').classList.remove('highlighterOn');
   selectByTID('createNewFileTID').classList.remove('highlighterOn');
-  selectByTID('createNewLocation').classList.remove('highlighterOn');
+  // selectByTID('createNewLocation').classList.remove('highlighterOn');
   selectByTID('locationList').classList.remove('highlighterOn');
   selectByTID('tagLibraryTagGroupList') &&
     selectByTID('tagLibraryTagGroupList').classList.remove('highlighterOn');
@@ -51,9 +51,9 @@ function HowToStart(props: Props) {
       label: 'Introduction',
       description: (
         <>
-          The following walkthrough will show you some important areas and
-          functionalities of the application. It is recommended for first time
-          users.
+          The following guide will demonstrate some of the key areas and
+          features of this application. We suggest that first-time users utilize
+          this walk-through.
         </>
       )
     },
@@ -61,11 +61,11 @@ function HowToStart(props: Props) {
       label: 'Location Manager',
       description: (
         <>
-          In order to use a folder tree with files in TagSpaces you have to
-          connect the main folder as location. The location manager is the place
-          where you can create, edit, remove, import or export your locations.
-          All pre-existing locations, pointing for example to your Desktop or
-          Download folders, are optional and can be removed.
+          In order to use a folder with files in TagSpaces you have to connect
+          it as location within the Location Manager. The Location Manager
+          allows you to create, edit, remove, import, and export your locations.
+          Any pre-existing locations already pointing to folders such as the
+          Desktop or Downloads can be removed if they are not needed.
           <br />
           <SlideButton
             title="Find out more"
@@ -82,11 +82,11 @@ function HowToStart(props: Props) {
       label: 'Creating a Location',
       description: (
         <>
-          The highlighted button will open a dialog where you can choose which
-          folder you want to use in TagSpaces and create a location pointing to
-          it. Depending on the location's type, the folder can be on your
-          computer or located on an object storage in the Cloud. TagSpaces
-          supports S3-compliant cloud storage like from AWS, Wasabi or Minio.
+          By selecting the highlighted button, you can open a dialog to choose
+          which folder you'd like to use in TagSpaces and create a location
+          linked to it. Depending on the type of location, the folder can be
+          located on your computer or in an S3-compatible cloud storage such as
+          AWS, Wasabi, or Minio.
           <br />
           <SlideButton
             title="Open Videos Tutorials"
@@ -95,17 +95,17 @@ function HowToStart(props: Props) {
         </>
       ),
       action: () => {
-        selectByTID('createNewLocation').classList.add('highlighterOn');
+        selectByTID('createNewFileTID').classList.add('highlighterOn');
       }
     },
     {
       label: 'Tag Library',
       description: (
         <>
-          The tag library is the place where you can manage and organize the
-          tags with which you can tag your files and folders. The tags are
-          organized themselves in tag groups. In order to apply a tag, you have
-          to just drag and drop it on a file or folder.
+          The Tag Library is the place where you can manage and organize the
+          tags with which you can tag your files and folders. Tag Groups help
+          you categorize different tags and applying a tag is as simple as
+          dragging and dropping it onto a file or folder.
           <br />
           <SlideButton
             title="Find out more"
@@ -232,11 +232,11 @@ function HowToStart(props: Props) {
       label: 'App Settings',
       description: (
         <>
-          The settings of the application can be accessed with the highlighted
-          button. In the settings dialog you can configure the application's
-          color theme, language, default perspective, tagging method and so on.
-          Furthermore, here you can change the keyboard shortcuts and define how
-          you would like to open and edit the supported file types.
+          The highlighted button can be used to access the settings of the
+          application. This dialog allows the configuration of the application's
+          color theme, language, default perspective, tagging method, and more.
+          Additionally, keyboard shortcuts and preferences for editing supported
+          file types can be changed here.
           <br />
           <SlideButton
             title="Find out more"
@@ -258,7 +258,7 @@ function HowToStart(props: Props) {
         </>
       ),
       action: () => {
-        selectByTID('createNewLocation').classList.add('highlighterOn');
+        selectByTID('createNewFileTID').classList.add('highlighterOn');
         selectByTID('locationList').classList.add('highlighterOn');
         selectByTID('locationManager').click();
       }
@@ -363,7 +363,12 @@ function HowToStart(props: Props) {
         ))}
       </Stepper>
       {activeStep === steps.length && (
-        <Paper square elevation={0} sx={{ p: 3 }}>
+        <Paper
+          square
+          elevation={0}
+          sx={{ p: 3 }}
+          style={{ backgroundColor: 'transparent' }}
+        >
           <Typography>All steps completed - you&apos;re finished.</Typography>
           <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
             {i18n.t('core:resetBtn')}
