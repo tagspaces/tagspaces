@@ -298,13 +298,24 @@ function EntryProperties(props: Props) {
     }
   }, [props.lastThumbnailImageChange]);
 
-  /*useEffect(() => {
-    if (props.openedEntry != undefined && currentEntry.current.description) {
-      const { current } = fileDescriptionRef;
+  useEffect(() => {
+    if (
+      !firstRender &&
+      props.openedEntry != undefined &&
+      currentEntry.current.description !== props.openedEntry.description
+    ) {
+      // update description
+      currentEntry.current = enhanceOpenedEntry(
+        props.openedEntry,
+        props.tagDelimiter
+      );
+      forceUpdate();
+      // currentEntry.current.description = editDescription.current;
+      /*const { current } = fileDescriptionRef;
       if (!current) return;
-      current.update(currentEntry.current.description);
+      current.update(currentEntry.current.description);*/
     }
-  }, [props.openedEntry]);*/
+  }, [props.openedEntry]);
 
   const renameEntry = () => {
     if (editName !== undefined) {
