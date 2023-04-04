@@ -1913,7 +1913,10 @@ export const actions = {
         getState(),
         currentLocationId
       );
-      if (location.type !== currentLocation.type) {
+      if (
+        currentLocation === undefined ||
+        location.type !== currentLocation.type
+      ) {
         return setLocationType(location).then(() => null);
       } else {
         // handle the same location type but different location
@@ -1935,14 +1938,14 @@ export const actions = {
 
     return setLocationType(location);
   },
-  openLocationById: (locationId: string) => (
+  openLocationById: (locationId: string, skipInitialDirList?: boolean) => (
     dispatch: (action) => void,
     getState: () => any
   ) => {
     const { locations } = getState();
     locations.map(location => {
       if (location.uuid === locationId) {
-        dispatch(actions.openLocation(location));
+        dispatch(actions.openLocation(location, skipInitialDirList));
       }
       return true;
     });
@@ -2041,6 +2044,7 @@ export const actions = {
           dispatch(actions.clearDirectoryContent());
           dispatch(LocationIndexActions.clearDirectoryIndex());
           dispatch(actions.setSelectedEntries([]));
+          dispatch(actions.exitSearchMode());
           if (Pro && Pro.Watcher) {
             Pro.Watcher.stopWatching();
           }

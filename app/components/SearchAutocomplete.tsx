@@ -1018,6 +1018,10 @@ function SearchAutocomplete(props: Props) {
         } else if (option.action === ExecActions.OPEN_HISTORY) {
           if (option.searchQuery) {
             if (option.id) {
+              //if (props.currentLocation === undefined) {
+              //  props.openLocationById(option.id, true);
+              //  props.setSearchQuery(option.searchQuery);
+              //} else {
               props.switchLocationTypeByID(option.id).then(() => {
                 props.changeLocationByID(option.id);
                 props.setSearchQuery(option.searchQuery);
