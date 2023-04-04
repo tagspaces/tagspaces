@@ -512,6 +512,7 @@ function EntryProperties(props: Props) {
       // eslint-disable-next-line no-param-reassign
       color = 'transparent';
     }
+    currentEntry.current.color = color;
     props
       .switchLocationType(props.openedEntry.locationId)
       .then(currentLocationId => {
@@ -525,7 +526,6 @@ function EntryProperties(props: Props) {
             // todo handle LastBackgroundColorChange and skip updateOpenedFile
             props.updateOpenedFile(currentEntry.current.path, entryMeta);
             props.switchCurrentLocationType(currentLocationId);
-
             /* } else {
             setCurrentEntry({ ...currentEntry, color });
           } */
