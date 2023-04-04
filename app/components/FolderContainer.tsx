@@ -302,7 +302,10 @@ function FolderContainer(props: Props) {
     currentPerspective = defaultPerspective;
   }
 
-  const showWelcomePanel = !currentDirectoryPath && directoryContent.length < 1;
+  const showWelcomePanel =
+    !currentDirectoryPath &&
+    directoryContent.length < 1 &&
+    !(props.isSearchMode && props.searchResultsCount >= 0);
 
   const renderPerspective = () => {
     if (showWelcomePanel) {

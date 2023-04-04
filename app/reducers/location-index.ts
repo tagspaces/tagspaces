@@ -206,21 +206,23 @@ export const actions = {
       if (searchTitle.length > 0) {
         const historyKeys = Pro.history.historyKeys;
         const currentLocation = getCurrentLocation(getState());
-        Pro.history.saveHistory(
-          historyKeys.searchHistoryKey,
-          {
-            path:
-              searchTitle +
-              ' ' +
-              (currentLocation.path
-                ? currentLocation.path
-                : currentLocation.name),
-            url: '/',
-            lid: currentLocation.uuid,
-            searchQuery: searchQuery
-          },
-          getState().settings[historyKeys.searchHistoryKey]
-        );
+        if (currentLocation) {
+          Pro.history.saveHistory(
+            historyKeys.searchHistoryKey,
+            {
+              path:
+                searchTitle +
+                ' ' +
+                (currentLocation.path
+                  ? currentLocation.path
+                  : currentLocation.name),
+              url: '/',
+              lid: currentLocation.uuid,
+              searchQuery: searchQuery
+            },
+            getState().settings[historyKeys.searchHistoryKey]
+          );
+        }
       }
       dispatch(AppActions.enterSearchMode());
     }
