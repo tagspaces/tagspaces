@@ -2044,6 +2044,7 @@ export const actions = {
           dispatch(actions.clearDirectoryContent());
           dispatch(LocationIndexActions.clearDirectoryIndex());
           dispatch(actions.setSelectedEntries([]));
+          dispatch(actions.exitSearchMode());
           if (Pro && Pro.Watcher) {
             Pro.Watcher.stopWatching();
           }
