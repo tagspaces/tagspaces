@@ -294,16 +294,17 @@ describe('TST50 - Perspective Grid', () => {
   test('TST5008 - Copy file [web,minio,electron]', async () => {
     const sampleFileName = 'sample.txt';
     // Electron path: ./testdata-tmp/file-structure/supported-filestypes/empty_folder
-    const copyLocationPath = global.isElectron
+    /*const copyLocationPath = global.isElectron
       ? defaultLocationPath + '/empty_folder'
-      : 'empty_folder';
+      : 'empty_folder';*/
     // const fileName = await getFirstFileName();
 
     // select file
     await clickOn(getGridFileSelector(sampleFileName));
     // open Copy File Dialog
     await clickOn('[data-tid=gridPerspectiveCopySelectedFiles]');
-    await setInputKeys('targetPathInput', copyLocationPath);
+    //await setInputKeys('targetPathInput', copyLocationPath);
+    await clickOn('[data-tid=MoveTargetempty_folder]');
     await clickOn('[data-tid=confirmCopyFiles]');
     //await waitForNotification();
 
