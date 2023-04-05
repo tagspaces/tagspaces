@@ -753,11 +753,13 @@ function MainPage(props: Props) {
           openURLExternally={openURLExternally}
         />
       )}
-      <FileUploadDialog
-        open={props.isUploadProgressDialogOpened !== undefined}
-        onClose={toggleUploadDialog}
-        title={props.isUploadProgressDialogOpened}
-      />
+      {props.isUploadProgressDialogOpened !== undefined && (
+        <FileUploadDialog
+          open={true}
+          onClose={toggleUploadDialog}
+          title={props.isUploadProgressDialogOpened}
+        />
+      )}
       {props.isProgressDialogOpened && (
         <ProgressDialog
           open={props.isProgressDialogOpened}
@@ -788,13 +790,11 @@ function MainPage(props: Props) {
           }*/
         />
       )}
-      {props.isSettingsDialogOpened && (
-        <SettingsDialog
-          open={props.isSettingsDialogOpened}
-          openURLExternally={openURLExternally}
-          onClose={toggleSettingsDialog}
-        />
-      )}
+      <SettingsDialog
+        open={props.isSettingsDialogOpened}
+        openURLExternally={openURLExternally}
+        onClose={toggleSettingsDialog}
+      />
       {KanBanImportDialog && props.selectedEntries[0] && (
         <KanBanImportDialog
           open={props.isImportKanBanDialogOpened}

@@ -320,10 +320,11 @@ describe('TST50** - Right button on a file', () => {
     const fileName = 'sample.pdf';
     const fileSelector = getGridFileSelector(fileName);
     await openContextEntryMenu(fileSelector, 'fileMenuMoveCopyFile');
-    await setInputKeys(
+    await clickOn('[data-tid=MoveTargetempty_folder]');
+    /*await setInputKeys(
       'targetPathInput',
       defaultLocationPath + '/empty_folder'
-    );
+    );*/
 
     await clickOn('[data-tid=confirmMoveFiles]');
     await waitForNotification();
@@ -338,7 +339,7 @@ describe('TST50** - Right button on a file', () => {
 
     // Copy file in parent directory
     await openContextEntryMenu(fileSelector, 'fileMenuMoveCopyFile');
-    await setInputKeys('targetPathInput', defaultLocationPath);
+    // await setInputKeys('targetPathInput', defaultLocationPath);
     await clickOn('[data-tid=confirmCopyFiles]');
     await waitForNotification();
     // await clickOn('#clearSearchID');

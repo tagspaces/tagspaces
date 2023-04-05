@@ -254,7 +254,7 @@ function FolderContainer(props: Props) {
   /**
    * reflect update openedFile from perspective
    */
-  useEffect(() => {
+  /*useEffect(() => {
     const { editedEntryPaths, openedFiles, openEntry } = props;
 
     if (!firstRender && editedEntryPaths && editedEntryPaths.length > 0) {
@@ -269,7 +269,7 @@ function FolderContainer(props: Props) {
         }
       });
     }
-  }, [props.editedEntryPaths]);
+  }, [props.editedEntryPaths]);*/
 
   const [isRenameEntryDialogOpened, setIsRenameEntryDialogOpened] = useState<
     boolean

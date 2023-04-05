@@ -577,42 +577,20 @@ const actions = {
           : [];
 
         return removeTagsFromFilename(fsEntryMeta.isFile).then(newFilePath => {
-          // no file rename - only sidecar tags removed
-          if (newFilePath === path) {
-            const updatedFsEntryMeta = {
-              ...fsEntryMeta,
-              tags: newTags
-            };
-            return saveMetaDataPromise(path, updatedFsEntryMeta)
-              .then(() => {
-                dispatch(
-                  AppActions.reflectUpdateSidecarTags(newFilePath, newTags)
+          return removeTagsFromSideCar(fsEntryMeta, newTags, newFilePath).then(
+            () => {
+              // dispatch(AppActions.reflectEditedEntryPaths([newFilePath]));
+              const { openedFiles } = getState().app;
+              if (openedFiles.find(obj => obj.path === path)) {
+                return dispatch(
+                  AppActions.updateOpenedFile(path, {
+                    tags: newTags
+                  })
                 );
-                return true;
-              })
-              .catch(err => {
-                console.warn(
-                  'Removing sidecar tags failed ' + path + ' with ' + err
-                );
-                dispatch(
-                  AppActions.showNotification(
-                    i18n.t('core:removingSidecarTagsFailed'),
-                    'error',
-                    true
-                  )
-                );
-                return false;
-              });
-          }
-          // dispatch(AppActions.reflectEditedEntryPaths([newFilePath]));
-          const { openedFiles } = getState().app;
-          if (openedFiles.find(obj => obj.path === path)) {
-            dispatch(
-              AppActions.updateOpenedFile(path, {
-                tags: newTags
-              })
-            );
-          }
+              }
+              return true;
+            }
+          );
         });
       })
       .catch(error => {
@@ -621,6 +599,38 @@ const actions = {
         return removeTagsFromFilename().then(() => true);
       });
 
+    function removeTagsFromSideCar(
+      fsEntryMeta: TS.FileSystemEntryMeta,
+      newTags,
+      newFilePath
+    ): Promise<boolean> {
+      if (newFilePath === path) {
+        // no file rename - only sidecar tags removed
+        const updatedFsEntryMeta = {
+          ...fsEntryMeta,
+          tags: newTags
+        };
+        return saveMetaDataPromise(path, updatedFsEntryMeta)
+          .then(() => {
+            dispatch(AppActions.reflectUpdateSidecarTags(newFilePath, newTags));
+            return true;
+          })
+          .catch(err => {
+            console.warn(
+              'Removing sidecar tags failed ' + path + ' with ' + err
+            );
+            dispatch(
+              AppActions.showNotification(
+                i18n.t('core:removingSidecarTagsFailed'),
+                'error',
+                true
+              )
+            );
+            return false;
+          });
+      }
+      return Promise.resolve(true);
+    }
     /**
      * return new file path
      * @param isFile

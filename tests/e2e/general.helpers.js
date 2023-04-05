@@ -668,7 +668,8 @@ export function generateFileName(fileName, fileExt, tags, tagDelimiter = ' ') {
     beginTagContainer >= endTagContainer
   ) {
     // File does not have an extension
-    newFileName = fileName.trim() + tagsString + '.' + fileExt;
+    newFileName =
+      fileName.trim() + (tagsString ? ' ' + tagsString : '') + '.' + fileExt;
   } else {
     // File does not have an extension
     newFileName =
