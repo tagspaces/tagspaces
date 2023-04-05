@@ -301,8 +301,8 @@ function EntryProperties(props: Props) {
   useEffect(() => {
     if (
       !firstRender &&
-      props.openedEntry != undefined &&
-      currentEntry.current.description !== props.openedEntry.description
+      props.openedEntry != undefined
+      // && currentEntry.current.description !== props.openedEntry.description
     ) {
       // update description
       currentEntry.current = enhanceOpenedEntry(
