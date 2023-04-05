@@ -59,6 +59,13 @@ import { bindActionCreators } from 'redux';
 import { actions as AppActions } from '-/reducers/app';
 import { connect } from 'react-redux';
 import { supportedImgs } from '-/services/thumbsgenerator';
+import {
+  getEnableWS,
+  getMapTileServers,
+  getPrefixTagContainer,
+  getSettings,
+  isDevMode
+} from '-/reducers/settings';
 // import AddIcon from '@mui/icons-material/Add';
 
 interface Props {
@@ -93,6 +100,7 @@ interface Props {
   reorderTop?: () => void;
   reorderBottom?: () => void;
   exitSearchMode: () => void;
+  prefixTagContainer: string;
 }
 
 function FileMenu(props: Props) {
@@ -224,7 +232,12 @@ function FileMenu(props: Props) {
 
       const newFilePath =
         (dirPath ? dirPath + PlatformIO.getDirSeparator() : '') +
-        generateFileName(fileName, extractedTags, AppConfig.tagDelimiter);
+        generateFileName(
+          fileName,
+          extractedTags,
+          AppConfig.tagDelimiter,
+          props.prefixTagContainer
+        );
 
       PlatformIO.copyFilePromise(selectedFilePath, newFilePath)
         .then(() => {
@@ -503,6 +516,12 @@ function FileMenu(props: Props) {
   );
 }
 
+function mapStateToProps(state) {
+  return {
+    prefixTagContainer: getPrefixTagContainer(state)
+  };
+}
+
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
@@ -513,4 +532,4 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
-export default connect(undefined, mapDispatchToProps)(FileMenu);
+export default connect(mapStateToProps, mapDispatchToProps)(FileMenu);

@@ -64,6 +64,7 @@ export const types = {
   SET_PERSISTTAGSINSIDECARFILE: 'SETTINGS/SET_PERSISTTAGSINSIDECARFILE',
   SET_ADDTAGSTOLIBRARY: 'SETTINGS/SET_ADDTAGSTOLIBRARY',
   SET_REVISIONS_ENABLED: 'SETTINGS/SET_REVISIONS_ENABLED',
+  SET_PREFIX_TAG_CONTAINER: 'SETTINGS/SET_PREFIX_TAG_CONTAINER',
   SET_USEGENERATETHUMBNAILS: 'SETTINGS/SET_USEGENERATETHUMBNAILS',
   SET_USETEXTEXTRACTION: 'SETTINGS/SET_USETEXTEXTRACTION',
   SET_TAGCOLOR: 'SETTINGS/SET_TAGCOLOR',
@@ -223,6 +224,9 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_REVISIONS_ENABLED: {
       return { ...state, isRevisionsEnabled: action.enabled };
+    }
+    case types.SET_PREFIX_TAG_CONTAINER: {
+      return { ...state, prefixTagContainer: action.prefixTagContainer };
     }
     case types.SET_USEGENERATETHUMBNAILS: {
       return { ...state, useGenerateThumbnails: action.useGenerateThumbnails };
@@ -622,6 +626,10 @@ export const actions = {
     type: types.SET_REVISIONS_ENABLED,
     enabled
   }),
+  setPrefixTagContainer: (prefixTagContainer: boolean) => ({
+    type: types.SET_PREFIX_TAG_CONTAINER,
+    prefixTagContainer
+  }),
   setUseGenerateThumbnails: (useGenerateThumbnails: boolean) => ({
     type: types.SET_USEGENERATETHUMBNAILS,
     useGenerateThumbnails
@@ -830,6 +838,8 @@ export const isDevMode = (state: any) =>
   window.ExtDevMode ? window.ExtDevMode : state.settings.devMode;
 export const isRevisionsEnabled = (state: any) =>
   state.settings.isRevisionsEnabled;
+export const getPrefixTagContainer = (state: any) =>
+  state.settings.prefixTagContainer;
 export const getWarningOpeningFilesExternally = (state: any) =>
   state.settings.warningOpeningFilesExternally;
 export const getCheckForUpdateOnStartup = (state: any) =>

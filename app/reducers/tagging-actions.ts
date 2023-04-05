@@ -283,7 +283,12 @@ const actions = {
           (containingDirectoryPath
             ? containingDirectoryPath + PlatformIO.getDirSeparator()
             : '') +
-          generateFileName(fileName, extractedTags, settings.tagDelimiter);
+          generateFileName(
+            fileName,
+            extractedTags,
+            settings.tagDelimiter,
+            settings.prefixTagContainer
+          );
         return dispatch(AppActions.renameFile(path, newFilePath));
       }
     } else {
@@ -309,7 +314,12 @@ const actions = {
         (containingDirectoryPath
           ? containingDirectoryPath + PlatformIO.getDirSeparator()
           : '') +
-        generateFileName(fileName, extractedTags, settings.tagDelimiter);
+        generateFileName(
+          fileName,
+          extractedTags,
+          settings.tagDelimiter,
+          settings.prefixTagContainer
+        );
       if (path !== newFilePath) {
         return dispatch(AppActions.renameFile(path, newFilePath));
       }
@@ -404,7 +414,8 @@ const actions = {
       const newFileName = generateFileName(
         fileName,
         extractedTags,
-        settings.tagDelimiter
+        settings.tagDelimiter,
+        settings.prefixTagContainer
       );
       if (newFileName !== fileName) {
         dispatch(
@@ -669,7 +680,12 @@ const actions = {
             (containingDirectoryPath
               ? containingDirectoryPath + PlatformIO.getDirSeparator()
               : '') +
-            generateFileName(fileName, extractedTags, settings.tagDelimiter);
+            generateFileName(
+              fileName,
+              extractedTags,
+              settings.tagDelimiter,
+              settings.prefixTagContainer
+            );
           if (path !== newFilePath) {
             const success = await dispatch(
               AppActions.renameFile(path, newFilePath)

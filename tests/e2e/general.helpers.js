@@ -2,6 +2,7 @@
 import path from 'path';
 import { delay, clearLocalStorage } from './hook';
 import { firstFile } from './test-utils';
+import AppConfig from '../../app/AppConfig';
 
 export const defaultLocationPath =
   './testdata-tmp/file-structure/supported-filestypes';
@@ -643,9 +644,9 @@ export function getGridFileSelector(fileName) {
 
 export function generateFileName(fileName, fileExt, tags, tagDelimiter = ' ') {
   let tagsString = '';
-  let beginTagContainer = '[';
-  let endTagContainer = ']';
-  const prefixTagContainer = '';
+  let beginTagContainer = AppConfig.beginTagContainer;
+  let endTagContainer = AppConfig.endTagContainer;
+  const prefixTagContainer = AppConfig.prefixTagContainer;
   // Creating the string will all the tags by more that 0 tags
   if (tags && tags.length > 0) {
     tagsString = beginTagContainer;
@@ -669,13 +670,15 @@ export function generateFileName(fileName, fileExt, tags, tagDelimiter = ' ') {
   ) {
     // File does not have an extension
     newFileName =
-      fileName.trim() + (tagsString ? ' ' + tagsString : '') + '.' + fileExt;
+      fileName.trim() +
+      (tagsString ? prefixTagContainer + tagsString : '') +
+      '.' +
+      fileExt;
   } else {
     // File does not have an extension
     newFileName =
       fileName.substring(0, beginTagContainer).trim() +
-      prefixTagContainer +
-      tagsString +
+      (tagsString ? prefixTagContainer + tagsString : '') +
       fileName.substring(endTagContainer + 1, fileName.length).trim();
   }
   if (newFileName.length < 1) {

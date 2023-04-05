@@ -733,10 +733,10 @@ export async function loadSubFolders(path: string, loadHidden = false) {
 export function generateFileName(
   fileName: string,
   tags: Array<string>,
-  tagDelimiter: string
+  tagDelimiter: string,
+  prefixTagContainer = AppConfig.prefixTagContainer
 ) {
   let tagsString = '';
-  const { prefixTagContainer } = AppConfig;
   // Creating the string will all the tags by more that 0 tags
   if (tags && tags.length > 0) {
     tagsString = AppConfig.beginTagContainer;
@@ -769,26 +769,39 @@ export function generateFileName(
     } else {
       // File has an extension
       newFileName =
-        fileName.substring(0, lastDotPosition).trim() +
-        (tagsString ? ' ' + prefixTagContainer + tagsString : '') +
+        cleanFileName(
+          fileName.substring(0, lastDotPosition),
+          prefixTagContainer
+        ) +
+        (tagsString ? prefixTagContainer + tagsString : '') +
         '.' +
         fileExt;
     }
   } else {
     // File does not have an extension
     newFileName =
-      fileName.substring(0, beginTagContainer).trim() +
-      (tagsString ? ' ' + prefixTagContainer + tagsString : '') +
+      cleanFileName(
+        fileName.substring(0, beginTagContainer),
+        prefixTagContainer
+      ) +
+      (tagsString ? prefixTagContainer + tagsString : '') +
       fileName.substring(endTagContainer + 1, fileName.length).trim();
   }
   if (newFileName.length < 1) {
     throw new Error('Generated filename is invalid');
   }
-  // Removing double prefix
+  // Removing double prefix todo rethink this ?? there is no double prefix
   newFileName = newFileName
     .split(prefixTagContainer + '' + prefixTagContainer)
     .join(prefixTagContainer);
   return newFileName;
+}
+
+function cleanFileName(fileName, prefixTagContainer) {
+  if (prefixTagContainer && fileName.endsWith(prefixTagContainer)) {
+    return fileName.slice(0, -prefixTagContainer.length);
+  }
+  return fileName.trim();
 }
 
 export function parseNewTags(tagsInput: string, tagGroup: TS.TagGroup) {
