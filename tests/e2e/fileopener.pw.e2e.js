@@ -226,7 +226,12 @@ describe('TST08 - File folder properties', () => {
 
   it.skip('TST3004 - Folder Tagging [Pro]', async () => {});
 
-  it.skip('TST3001 - Description for files [Pro]', async () => {});
+  it.skip('TST3001 - Description for files -Pro [electron]', async () => {
+    // open fileProperties
+    await clickOn(selectorFile);
+    await global.client.dblclick('[data-tid=descriptionTID]');
+    await clickOn('[data-tid=descriptionTID]');
+  });
 
   it.skip('TST3005 - Description for folders [Pro]', async () => {});
 

@@ -90,6 +90,7 @@ function EditDescription(props: Props) {
       </span>
       {toggleEditDescriptionField && editSaveActions}
       <div
+        data-tid="descriptionTID"
         onDoubleClick={() => {
           if (toggleEditDescriptionField) {
             setEditMode(true);
