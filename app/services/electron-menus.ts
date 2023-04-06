@@ -29,7 +29,7 @@ export default function buildDesktopMenu(props: any, i18n) {
       label: i18n.t('file'),
       submenu: [
         {
-          label: i18n.t('openNewInstance'),
+          label: i18n.t('newWindow'),
           accelerator: '',
           click: () => props.createNewWindowInstance()
         },

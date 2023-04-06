@@ -46,7 +46,7 @@ export default function buildTrayIconMenu(mainPageProps: any, i18n, isMacLike) {
 
   const trayMenuTemplate = [
     {
-      label: i18n.t('openNewInstance'),
+      label: i18n.t('newWindow'),
       click: () => mainPageProps.createNewWindowInstance()
     },
     {
