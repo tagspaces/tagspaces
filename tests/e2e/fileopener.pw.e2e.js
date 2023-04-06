@@ -18,9 +18,9 @@ import {
   setInputKeys,
   setInputValue,
   setSettings,
-  takeScreenshot,
+  takeScreenshot, typeInputValue,
   waitForNotification
-} from './general.helpers';
+} from "./general.helpers";
 import { expect } from '@playwright/test';
 import {
   AddRemovePropertiesTags,
@@ -226,11 +226,17 @@ describe('TST08 - File folder properties', () => {
 
   it.skip('TST3004 - Folder Tagging [Pro]', async () => {});
 
-  it.skip('TST3001 - Description for files -Pro [electron]', async () => {
+  test('TST3001 - Description for files -Pro [electron]', async () => {
+    const desc = 'test decr';
     // open fileProperties
     await clickOn(selectorFile);
     await global.client.dblclick('[data-tid=descriptionTID]');
     await clickOn('[data-tid=descriptionTID]');
+    await typeInputValue('[data-tid=descriptionTID]', desc);
+    await clickOn('[data-tid=editDescriptionTID]');
+    await expectElementExist(
+      '[data-tid=gridCellDescription' + description + ']'
+    );
   });
 
   it.skip('TST3005 - Description for folders [Pro]', async () => {});
