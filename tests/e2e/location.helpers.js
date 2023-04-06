@@ -62,7 +62,9 @@ export async function createPwMinioLocation(
   const lastLocationTID = await getPwLocationTid(-1);
   // Check if location not exist (from extconfig.js)
   if (locationName !== lastLocationTID) {
-    await clickOn('[data-tid=createNewLocation]', { timeout: 35000 });
+    await clickOn('[data-tid=locationManagerMenu]');
+    await clickOn('[data-tid=locationManagerMenuCreateLocation]');
+    //await clickOn('[data-tid=createNewLocation]', { timeout: 35000 });
     // if (global.isMinio) {
     // await clickOn('[data-tid=objectStorageLocation]');
     // }
