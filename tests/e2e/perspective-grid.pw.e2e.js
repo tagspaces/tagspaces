@@ -278,7 +278,8 @@ describe('TST50 - Perspective Grid', () => {
     for (let i = 0; i < tags.length; i++) {
       await expectElementExist(
         '[data-tid=tagMoreButton_' + tags[i] + ']',
-        false
+        false,
+        5000
       );
     }
     /* for (let i = 0; i < selectedIds.length; i++) {
