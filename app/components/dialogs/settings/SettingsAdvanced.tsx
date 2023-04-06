@@ -81,6 +81,7 @@ interface Props {
   tileServers: Array<TS.MapTileServer>;
   setGeoTaggingFormat: (geoTaggingFormat: string) => void;
   setHistory: (key: string, value: number) => void;
+  setPrefixTagContainer: (prefix: string) => void;
 }
 
 const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
@@ -160,6 +161,15 @@ function SettingsAdvanced(props: Props) {
               )
             }
             checked={props.settings.warningOpeningFilesExternally}
+          />
+        </ListItem>
+        <ListItem className={classes.listItem}>
+          <ListItemText primary={i18n.t('core:prefixTagContainer')} />
+          <Input
+            style={{ maxWidth: '100px' }}
+            data-tid="prefixTagContainerTID"
+            value={props.settings.prefixTagContainer}
+            onChange={event => props.setPrefixTagContainer(event.target.value)}
           />
         </ListItem>
         {Pro && (
@@ -399,7 +409,8 @@ function mapActionCreatorsToProps(dispatch) {
       setSaveTagInLocation: SettingsActions.setSaveTagInLocation,
       setGeoTaggingFormat: SettingsActions.setGeoTaggingFormat,
       setHistory: SettingsActions.setHistory,
-      setRevisionsEnabled: SettingsActions.setRevisionsEnabled
+      setRevisionsEnabled: SettingsActions.setRevisionsEnabled,
+      setPrefixTagContainer: SettingsActions.setPrefixTagContainer
     },
     dispatch
   );

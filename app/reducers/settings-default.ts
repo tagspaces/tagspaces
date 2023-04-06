@@ -104,6 +104,7 @@ export default {
     typeof window.ExtRevisionsEnabled === 'undefined'
       ? true
       : window.ExtRevisionsEnabled,
+  prefixTagContainer: AppConfig.prefixTagContainer,
   isAutoSaveEnabled:
     typeof window.ExtAutoSaveEnabled === 'undefined'
       ? false
