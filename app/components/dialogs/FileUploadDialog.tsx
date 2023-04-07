@@ -106,12 +106,14 @@ function FileUploadDialog(props: Props) {
     if (props.currentLocation) {
       if (props.currentLocation.endpointURL) {
         return (
-          props.currentLocation.endpointURL +
+          (props.currentLocation.endpointURL.endsWith('/')
+            ? props.currentLocation.endpointURL
+            : props.currentLocation.endpointURL + '/') +
           (props.currentLocation.path
-            ? '/' + cleanFrontDirSeparator(props.currentLocation.path)
+            ? cleanFrontDirSeparator(props.currentLocation.path)
             : '') +
           (props.currentDirectoryPath
-            ? '/' + cleanFrontDirSeparator(props.currentDirectoryPath)
+            ? cleanFrontDirSeparator(props.currentDirectoryPath)
             : '')
         );
       } else if (
@@ -121,8 +123,10 @@ function FileUploadDialog(props: Props) {
         return (
           'https://s3.' +
           props.currentLocation.region +
-          '.amazonaws.com/' +
-          props.currentLocation.bucketName +
+          '.amazonaws.com' +
+          (props.currentLocation.bucketName
+            ? '/' + props.currentLocation.bucketName
+            : '') +
           (props.currentLocation.path
             ? '/' + cleanFrontDirSeparator(props.currentLocation.path)
             : '') +
