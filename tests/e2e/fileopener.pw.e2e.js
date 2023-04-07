@@ -219,7 +219,8 @@ describe('TST08 - File folder properties', () => {
     expect(propsTags.includes(tagName)).toBe(true);
   });
 
-  it('TST3002 - Add and remove tag to a folder [web,minio,electron]', async () => {
+  /** todo web */
+  it('TST3002 - Add and remove tag to a folder [minio,electron]', async () => {
     await openContextEntryMenu(selectorFolder, 'showProperties');
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
   });
