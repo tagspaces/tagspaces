@@ -225,7 +225,10 @@ function CellContent(props: Props) {
           {description && (
             <Tooltip title={i18n.t('core:entryDescription')}>
               <Typography
-                data-tid={'gridCellDescription' + description}
+                data-tid={
+                  'gridCellDescription' +
+                  description.trim().replaceAll(/\s+/g, '-')
+                }
                 className={classes.gridCellDescription}
                 variant="caption"
               >
