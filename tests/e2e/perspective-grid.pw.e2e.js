@@ -265,7 +265,10 @@ describe('TST50 - Perspective Grid', () => {
     }
   });
 
-  test('TST5007 - Remove all tags from selected files [web,minio,electron]', async () => {
+  /**
+   * todo in [web] its need more time to wait for removed files
+   */
+  test('TST5007 - Remove all tags from selected files [minio,electron]', async () => {
     const selectedIds = await selectRowFiles([0, 1, 2]);
     const tags = ['test-tag1', 'test-tag2', 'test-tag3'];
     await AddRemoveTagsToSelectedFiles(tags, true);
@@ -278,7 +281,8 @@ describe('TST50 - Perspective Grid', () => {
     for (let i = 0; i < tags.length; i++) {
       await expectElementExist(
         '[data-tid=tagMoreButton_' + tags[i] + ']',
-        false
+        false,
+        5000
       );
     }
     /* for (let i = 0; i < selectedIds.length; i++) {

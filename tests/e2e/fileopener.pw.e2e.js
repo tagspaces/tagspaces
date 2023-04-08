@@ -211,7 +211,7 @@ describe('TST08 - File folder properties', () => {
   it('TST0810 - Tag file drag&drop in file opener [web]', async () => {
     const tagName = 'article';
     await clickOn('[data-tid=tagLibrary]');
-    await dragDrop('button[aria-label=' + tagName + ']', selectorFile);
+    await dragDrop('[data-tid=tagContainer_' + tagName + ']', selectorFile);
 
     await clickOn(selectorFile);
     await clickOn('[data-tid=fileContainerToggleProperties]');
