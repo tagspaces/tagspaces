@@ -337,8 +337,8 @@ const actions = {
       .then((fsEntry: TS.FileSystemEntry) => {
         dispatch(AppActions.reflectCreateEntryObj(fsEntry));
         return fsEntry;
-      })
-      .catch(e => console.log(e));
+      });
+    //.catch(e => console.log(e));
   },
   /**
    * with HTML5 Files API

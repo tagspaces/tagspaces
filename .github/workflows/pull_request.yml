@@ -105,12 +105,13 @@ jobs:
           npm run type-check
       - name: Run Unit tests
         run: npm run test-unit
-      - uses: suisei-cn/actions-download-file@v1
+      - uses: carlosperate/download-file-action@v2
         id: minio
-        name: Download the Minio.exe
+        name: Download the Minio
         with:
-          url: 'https://dl.min.io/server/minio/release/windows-amd64/minio.exe'
-          target: tests/bin/
+          file-url: 'https://dl.min.io/server/minio/release/windows-amd64/archive/minio.RELEASE.2020-11-19T23-48-16Z'
+          file-name: 'minio.exe'
+          location: './tests/bin/'
       - name: Run Electron tests
         run: |
           npm run build-e2e-web
