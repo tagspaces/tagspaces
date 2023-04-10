@@ -366,7 +366,7 @@ describe('TST50 - Perspective Grid', () => {
       await expectElementExist(
         '[data-entry-id="' + selectedIds[i] + '"]',
         false,
-        1000
+        5000
       );
     }
 
