@@ -228,7 +228,10 @@ describe('TST08 - File folder properties', () => {
 
   it.skip('TST3004 - Folder Tagging [Pro]', async () => {});
 
-  it('TST3001 - Description for files Pro [web,minio,electron,pro]', async () => {
+  /**
+   * Description is Pro feature (if no Pro editDescription button is disabled)
+   */
+  it('TST3001 - Description for files [web,minio,electron,_pro]', async () => {
     const desc = 'testDecr';
     // open fileProperties
     await clickOn(selectorFile);
