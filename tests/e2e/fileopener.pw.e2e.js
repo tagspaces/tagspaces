@@ -246,6 +246,7 @@ describe('TST08 - File folder properties', () => {
       '[data-tid=gridCellDescription' +
         desc.trim().replaceAll(/\s+/g, '-') +
         ']',
+      true,
       10000
     );
   });
