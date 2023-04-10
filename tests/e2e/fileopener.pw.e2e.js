@@ -228,7 +228,7 @@ describe('TST08 - File folder properties', () => {
 
   it.skip('TST3004 - Folder Tagging [Pro]', async () => {});
 
-  it('TST3001 - Description for files Pro [web,minio,electron]', async () => {
+  it('TST3001 - Description for files Pro [web,minio,electron,pro]', async () => {
     const desc = 'testDecr';
     // open fileProperties
     await clickOn(selectorFile);
@@ -241,7 +241,7 @@ describe('TST08 - File folder properties', () => {
     );
     await editor.type(desc);
 
-    await clickOn('[data-tid=editDescriptionTID]', { timeout: 20000 });
+    await clickOn('[data-tid=editDescriptionTID]');
     await expectElementExist(
       '[data-tid=gridCellDescription' +
         desc.trim().replaceAll(/\s+/g, '-') +
