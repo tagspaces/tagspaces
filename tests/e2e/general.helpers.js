@@ -327,10 +327,16 @@ export async function frameLocator(selector = 'iframe') {
   return await global.client.frameLocator(selector);
 }
 
-export async function isDisplayed(selector, displayed = true, timeout = 500) {
+export async function isDisplayed(
+  selector,
+  displayed = true,
+  timeout = 500,
+  parentSelector = undefined
+) {
   if (global.isPlaywright) {
     try {
-      const el = await global.client.waitForSelector(selector, {
+      const parentEl = parentSelector ? parentSelector : global.client;
+      const el = await parentEl.waitForSelector(selector, {
         timeout,
         // strict: true,
         state: displayed ? 'visible' : 'hidden' //'detached'
@@ -387,11 +393,20 @@ export async function getGridCellClass(fileIndex = 0) {
 export async function expectElementExist(
   selector,
   exist = true,
-  timeout = 2000
+  timeout = 2000,
+  parentSelector = undefined
 ) {
-  const displayed = await isDisplayed(selector, exist, timeout);
+  let displayed;
+  if (parentSelector) {
+    const parentElement = await global.client.waitForSelector(parentSelector, {
+      timeout,
+      state: 'visible'
+    });
+    displayed = await isDisplayed(selector, exist, timeout, parentElement);
+  } else {
+    displayed = await isDisplayed(selector, exist, timeout);
+  }
   expect(displayed).toBe(true);
-  // return element;
 }
 
 /* export async function expectExist(element, exist = true, timeout = 5000) {
