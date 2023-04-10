@@ -774,5 +774,6 @@
   "directories": "Folders",
   "files": "Files",
   "platformImplMissing": "Feature not supported on this platform",
+  "errorCORS": "CORS error",
   "-": "-"
 }

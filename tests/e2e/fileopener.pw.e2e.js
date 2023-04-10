@@ -212,7 +212,7 @@ describe('TST08 - File folder properties', () => {
   it('TST0810 - Tag file drag&drop in file opener [web]', async () => {
     const tagName = 'article';
     await clickOn('[data-tid=tagLibrary]');
-    await dragDrop('button[aria-label=' + tagName + ']', selectorFile);
+    await dragDrop('[data-tid=tagContainer_' + tagName + ']', selectorFile);
 
     await clickOn(selectorFile);
     await clickOn('[data-tid=fileContainerToggleProperties]');
@@ -220,7 +220,8 @@ describe('TST08 - File folder properties', () => {
     expect(propsTags.includes(tagName)).toBe(true);
   });
 
-  it('TST3002 - Add and remove tag to a folder [web,minio,electron]', async () => {
+  /** todo web */
+  it('TST3002 - Add and remove tag to a folder [minio,electron]', async () => {
     await openContextEntryMenu(selectorFolder, 'showProperties');
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
   });

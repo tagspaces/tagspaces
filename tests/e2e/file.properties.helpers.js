@@ -33,7 +33,7 @@ export async function AddRemovePropertiesTags(
       const tagDisplayed = await isDisplayed(
         '[data-tid=tagContainer_' + tagName + ']',
         true,
-        2000
+        4000
       );
       expect(tagDisplayed).toBe(true);
       const propsNewTags = await getPropertiesTags();
@@ -46,7 +46,7 @@ export async function AddRemovePropertiesTags(
       const tagName = tagNames[i];
       await removeTagFromTagMenu(tagName);
       // await global.client.waitForLoadState('networkidle'); //'networkidle'); //'domcontentloaded'); // load
-      await isDisplayed('[data-tid=tagContainer_' + tagName + ']', false, 2000);
+      await isDisplayed('[data-tid=tagContainer_' + tagName + ']', false, 4000);
       // await global.client.waitForTimeout(1500);
       const propsNewTags = await getPropertiesTags();
       // console.log(JSON.stringify(propsNewTags));

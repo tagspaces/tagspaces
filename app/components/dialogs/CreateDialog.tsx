@@ -39,7 +39,8 @@ import {
   actions as AppActions,
   getDirectoryPath,
   getSelectedEntries,
-  getCurrentDirectoryPerspective
+  getCurrentDirectoryPerspective,
+  NotificationTypes
 } from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
 import { getFirstRWLocation, getCurrentLocation } from '-/reducers/locations';
@@ -71,7 +72,11 @@ interface Props {
   currentDirectoryPath: string | null;
   currentDirectoryPerspective: string;
   openLocation: (location: TS.Location) => void;
-  showNotification: (message: string, type: string) => void;
+  showNotification: (
+    message: string,
+    notificationType?: string,
+    autohide?: boolean
+  ) => void;
   toggleLocationDialog: () => void;
   toggleCreateDirectoryDialog: () => void;
   reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => void;
@@ -95,7 +100,7 @@ interface Props {
   onUploadProgress: (progress: Progress, response: any) => void;
   toggleUploadDialog: () => void;
   resetProgress: () => void;
-  setProgress: (path: string, progress: number) => void;
+  setProgress: (path: string, progress: number, abort?: string) => void;
 }
 
 function CreateDialog(props: Props) {
@@ -297,6 +302,15 @@ function CreateDialog(props: Props) {
                 // currently objectStore location in downloadFile use saveFilePromise and this function not have progress handling
                 props.setProgress(fileUrl.current, 100);
               }
+            })
+            .catch(e => {
+              console.log('downloadFile error:', e);
+              props.setProgress(fileUrl.current, -1, i18n.t('core:errorCORS'));
+              showNotification(
+                'downloadFile error' + e.message,
+                NotificationTypes.error,
+                true
+              );
             });
         } else {
           saveAs(fileUrl.current, decodeURIComponent(fileName));

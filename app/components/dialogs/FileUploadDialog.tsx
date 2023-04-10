@@ -84,7 +84,7 @@ function FileUploadDialog(props: Props) {
     if (props.progress) {
       props.progress.map(fileProgress => {
         const { abort } = fileProgress;
-        if (abort !== undefined) {
+        if (abort !== undefined && typeof abort === 'function') {
           abort();
         }
         return true;
@@ -106,12 +106,14 @@ function FileUploadDialog(props: Props) {
     if (props.currentLocation) {
       if (props.currentLocation.endpointURL) {
         return (
-          props.currentLocation.endpointURL +
+          (props.currentLocation.endpointURL.endsWith('/')
+            ? props.currentLocation.endpointURL
+            : props.currentLocation.endpointURL + '/') +
           (props.currentLocation.path
-            ? '/' + cleanFrontDirSeparator(props.currentLocation.path)
+            ? cleanFrontDirSeparator(props.currentLocation.path)
             : '') +
           (props.currentDirectoryPath
-            ? '/' + cleanFrontDirSeparator(props.currentDirectoryPath)
+            ? cleanFrontDirSeparator(props.currentDirectoryPath)
             : '')
         );
       } else if (
@@ -121,8 +123,10 @@ function FileUploadDialog(props: Props) {
         return (
           'https://s3.' +
           props.currentLocation.region +
-          '.amazonaws.com/' +
-          props.currentLocation.bucketName +
+          '.amazonaws.com' +
+          (props.currentLocation.bucketName
+            ? '/' + props.currentLocation.bucketName
+            : '') +
           (props.currentLocation.path
             ? '/' + cleanFrontDirSeparator(props.currentLocation.path)
             : '') +
@@ -184,9 +188,9 @@ function FileUploadDialog(props: Props) {
               let { abort } = fileProgress;
               if (percentage > -1 && percentage < 100) {
                 haveProgress = true;
-              } else {
+              } /*else {
                 abort = undefined;
-              }
+              }*/
 
               return (
                 <Grid
@@ -211,13 +215,19 @@ function FileUploadDialog(props: Props) {
                           PlatformIO.getDirSeparator()
                         )}
                     {percentage === -1 && (
-                      <Tooltip title={i18n.t('core:fileExist')}>
+                      <Tooltip
+                        title={
+                          abort && typeof abort === 'string'
+                            ? abort
+                            : i18n.t('core:fileExist')
+                        }
+                      >
                         <WarningIcon color="secondary" />
                       </Tooltip>
                     )}
                   </Grid>
                   <Grid item xs={2}>
-                    {abort && (
+                    {abort && typeof abort === 'function' && (
                       <Button onClick={() => abort()}>
                         <CloseIcon />
                       </Button>
