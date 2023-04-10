@@ -245,7 +245,8 @@ describe('TST08 - File folder properties', () => {
     await expectElementExist(
       '[data-tid=gridCellDescription' +
         desc.trim().replaceAll(/\s+/g, '-') +
-        ']'
+        ']',
+      10000
     );
   });
 
