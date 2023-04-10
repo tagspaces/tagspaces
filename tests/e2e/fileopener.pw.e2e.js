@@ -221,9 +221,14 @@ describe('TST08 - File folder properties', () => {
   });
 
   /** todo web */
-  it('TST3002 - Add and remove tag to a folder [minio,electron]', async () => {
+  it('TST0810a - Add and remove tag to a folder [web,minio,electron]', async () => {
     await openContextEntryMenu(selectorFolder, 'showProperties');
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
+  });
+
+  it('TST0811 - Duplicate file [web,minio,electron]', async () => {
+    await openContextEntryMenu(selectorFile, 'fileMenuDuplicateFileTID');
+    await expectElementExist('[data-tid=tagContainer_copy]', true, 5000);
   });
 
   it.skip('TST3004 - Folder Tagging [Pro]', async () => {});
