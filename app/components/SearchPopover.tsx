@@ -594,6 +594,7 @@ function SearchPopover(props: Props) {
           <FormControl className={classes.formControl}>
             <ButtonGroup fullWidth style={{ justifyContent: 'center' }}>
               <Button
+                data-tid="saveSearchBtnTID"
                 variant="outlined"
                 color="primary"
                 size="small"
@@ -604,6 +605,7 @@ function SearchPopover(props: Props) {
               </Button>
               {props.searchQuery.uuid && (
                 <Button
+                  data-tid="editSearchBtnTID"
                   variant="outlined"
                   color="primary"
                   size="small"
@@ -1015,25 +1017,25 @@ function SearchPopover(props: Props) {
                 }}
               /> */}
             </FormControl>
-            {SaveSearchDialog && saveSearchDialogOpened !== undefined && (
-              <SaveSearchDialog
-                open={true}
-                onClose={(searchQuery: TS.SearchQuery) => {
-                  setSaveSearchDialogOpened(undefined);
-                  if (searchQuery) {
-                    props.setSearchQuery({
-                      ...searchQuery,
-                      showUnixHiddenEntries: props.showUnixHiddenEntries
-                    });
-                  }
-                }}
-                onClearSearch={() => clearSearch()}
-                searchQuery={saveSearchDialogOpened}
-              />
-            )}
           </>
         )}
       </div>
+      {SaveSearchDialog && saveSearchDialogOpened !== undefined && (
+        <SaveSearchDialog
+          open={true}
+          onClose={(searchQuery: TS.SearchQuery) => {
+            setSaveSearchDialogOpened(undefined);
+            if (searchQuery) {
+              props.setSearchQuery({
+                ...searchQuery,
+                showUnixHiddenEntries: props.showUnixHiddenEntries
+              });
+            }
+          }}
+          onClearSearch={() => clearSearch()}
+          searchQuery={saveSearchDialogOpened}
+        />
+      )}
     </div>
   );
 }

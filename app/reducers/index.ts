@@ -31,23 +31,16 @@ const externalLocations = window.ExtLocations || false;
 // const externalTagLibrary = window.ExtTagLibrary || false;
 const externalSearches = window.ExtSearches || false;
 
-let locationsInBlackList = false; // electron case
-
-if (externalLocations || AppConfig.isWeb) {
-  locationsInBlackList = true;
+const blacklist = ['app', 'locationIndex'];
+if (
+  !AppConfig.saveLocationsInBrowser &&
+  (externalLocations || AppConfig.isWeb)
+) {
+  blacklist.push('locations');
 }
-
-if (AppConfig.saveLocationsInBrowser) {
-  locationsInBlackList = false;
+if (externalSearches) {
+  blacklist.push('searches');
 }
-
-const blacklist = [
-  'app',
-  'locationIndex',
-  locationsInBlackList ? 'locations' : '',
-  // externalTagLibrary ? 'taglibrary' : '',
-  externalSearches ? 'searches' : ''
-];
 
 // const migrations = {
 //   2: (state) => { // migration to add geo and date tags in state

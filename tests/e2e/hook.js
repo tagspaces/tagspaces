@@ -82,12 +82,14 @@ export async function copyExtConfig(extconfig = 'extconfig-with-welcome.js') {
 }
 
 export async function removeExtConfig() {
-  await fse.remove(pathLib.join(__dirname, '..', 'app', 'extconfig.js'));
+  await fse.remove(pathLib.join(__dirname, '..', '..', 'app', 'extconfig.js'));
 }
 
 export async function startTestingApp(extconfig) {
   if (extconfig) {
     await copyExtConfig(extconfig);
+  } else {
+    await removeExtConfig();
   }
   const chromeDriverArgs = [
     // '--disable-gpu',

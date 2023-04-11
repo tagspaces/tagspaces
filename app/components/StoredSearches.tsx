@@ -227,6 +227,11 @@ function StoredSearches(props: Props) {
         <Grid container direction="row">
           <Grid item xs={10} style={{ alignSelf: 'center' }}>
             <IconButton
+              data-tid={
+                props.storedSearchesVisible
+                  ? 'storedSearchesVisibleTID'
+                  : 'storedSearchesHiddenTID'
+              }
               style={{ minWidth: 'auto', padding: 7 }}
               onClick={() =>
                 props.setStoredSearchesVisible(!props.storedSearchesVisible)
@@ -287,6 +292,7 @@ function StoredSearches(props: Props) {
             <ListItem dense style={{ paddingLeft: 0 }} key={search.uuid}>
               <Grid item xs={10} style={{ width: '100%' }}>
                 <Button
+                  data-tid={'StoredSearchTID' + search.title}
                   style={{
                     textTransform: 'none',
                     fontWeight: 'normal',
