@@ -19,9 +19,10 @@ import {
   setInputValue,
   setSettings,
   takeScreenshot,
+  typeInputValue,
   waitForNotification
 } from './general.helpers';
-import { expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import {
   AddRemovePropertiesTags,
   getPropertiesFileName
@@ -219,18 +220,43 @@ describe('TST08 - File folder properties', () => {
     expect(propsTags.includes(tagName)).toBe(true);
   });
 
-  it('TST3002 - Add and remove tag to a folder [web,minio,electron]', async () => {
+  /** todo web */
+  it('TST0810a - Add and remove tag to a folder [web,minio,electron]', async () => {
     await openContextEntryMenu(selectorFolder, 'showProperties');
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
   });
 
+  it('TST0811 - Duplicate file [web,minio,electron]', async () => {
+    await openContextEntryMenu(selectorFile, 'fileMenuDuplicateFileTID');
+    await expectElementExist('[data-tid=tagContainer_copy]', true, 5000);
+  });
+
   it.skip('TST3004 - Folder Tagging [Pro]', async () => {});
 
-  it.skip('TST3001 - Description for files -Pro [electron]', async () => {
+  /**
+   * Description is Pro feature (if no Pro editDescription button is disabled)
+   */
+  it('TST3001 - Description for files [web,minio,electron,_pro]', async () => {
+    const desc = 'testDecr';
     // open fileProperties
     await clickOn(selectorFile);
+    await clickOn('[data-tid=fileContainerToggleProperties]');
     await global.client.dblclick('[data-tid=descriptionTID]');
     await clickOn('[data-tid=descriptionTID]');
+
+    const editor = await global.client.waitForSelector(
+      '[data-tid=descriptionTID] .milkdown'
+    );
+    await editor.type(desc);
+
+    await clickOn('[data-tid=editDescriptionTID]');
+    await expectElementExist(
+      '[data-tid=gridCellDescription' +
+        desc.trim().replaceAll(/\s+/g, '-') +
+        ']',
+      true,
+      10000
+    );
   });
 
   it.skip('TST3005 - Description for folders [Pro]', async () => {});

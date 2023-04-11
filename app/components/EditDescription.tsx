@@ -66,6 +66,7 @@ function EditDescription(props: Props) {
       )}
       <ProTooltip tooltip={i18n.t('editDescription')}>
         <Button
+          data-tid="editDescriptionTID"
           color="primary"
           className={classes.button}
           disabled={!Pro}

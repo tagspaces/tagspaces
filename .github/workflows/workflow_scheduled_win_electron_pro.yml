@@ -40,7 +40,7 @@ jobs:
         run: |
           npm run build-main
           npm run build-e2e
-          npm run test-playwright
+          npm run test-playwright-pro
       - uses: IgnusG/jest-report-action@v2.3.3
         if: always() # Run regardless of whether other steps failed
         with:
