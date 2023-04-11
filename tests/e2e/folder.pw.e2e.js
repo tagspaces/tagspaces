@@ -73,6 +73,7 @@ describe('TST01 - Folder management', () => {
     await takeScreenshot('TST0103 - Rename folder - after OnBackButton');
     await expectElementExist(
       '[data-tid=fsEntryName_' + newDirectoryName + ']',
+      true,
       2000
     );
     // cleanup

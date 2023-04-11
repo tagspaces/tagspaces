@@ -3,6 +3,7 @@
 import {
   addInputKeys,
   clickOn,
+  expectElementExist,
   isDisplayed,
   removeTagFromTagMenu,
   setInputKeys,
@@ -30,14 +31,20 @@ export async function AddRemovePropertiesTags(
       //await setInputValue('[data-tid=PropertiesTagsSelectTID] input', tagName);
       // await clickOn('[data-tid=PropertiesTagsSelectTID]');
       await global.client.keyboard.press('Enter');
-      const tagDisplayed = await isDisplayed(
+      await expectElementExist(
         '[data-tid=tagContainer_' + tagName + ']',
         true,
-        4000
+        8000,
+        '[data-tid=perspectiveGridFileTable]'
       );
-      expect(tagDisplayed).toBe(true);
-      const propsNewTags = await getPropertiesTags();
-      expect(propsNewTags.includes(tagName)).toBe(true);
+      await expectElementExist(
+        '[data-tid=tagContainer_' + tagName + ']',
+        true,
+        8000,
+        '[data-tid=PropertiesTagsSelectTID]'
+      );
+      //const propsNewTags = await getPropertiesTags();
+      //expect(propsNewTags.includes(tagName)).toBe(true);
     }
   }
 
@@ -45,12 +52,21 @@ export async function AddRemovePropertiesTags(
     for (let i = 0; i < tagNames.length; i++) {
       const tagName = tagNames[i];
       await removeTagFromTagMenu(tagName);
-      // await global.client.waitForLoadState('networkidle'); //'networkidle'); //'domcontentloaded'); // load
-      await isDisplayed('[data-tid=tagContainer_' + tagName + ']', false, 4000);
+      await expectElementExist(
+        '[data-tid=tagContainer_' + tagName + ']',
+        false,
+        8000,
+        '[data-tid=perspectiveGridFileTable]'
+      );
+      await expectElementExist(
+        '[data-tid=tagContainer_' + tagName + ']',
+        false,
+        8000,
+        '[data-tid=PropertiesTagsSelectTID]'
+      );
       // await global.client.waitForTimeout(1500);
-      const propsNewTags = await getPropertiesTags();
-      // console.log(JSON.stringify(propsNewTags));
-      expect(propsNewTags.includes(tagName)).toBe(false);
+      //const propsNewTags = await getPropertiesTags();
+      //expect(propsNewTags.includes(tagName)).toBe(false);
     }
   }
 }

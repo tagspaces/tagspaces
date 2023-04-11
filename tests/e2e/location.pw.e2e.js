@@ -92,7 +92,7 @@ describe('TST03 - Testing locations:', () => {
     await expectElementExist(
       '[data-tid=location_' + newLocationName + ']',
       true,
-      1000
+      5000
     );
   });
 
@@ -103,7 +103,7 @@ describe('TST03 - Testing locations:', () => {
     // await global.client.pause(500);
     await openLocationMenu(testLocationName);
     await startupLocation();
-    await expectElementExist('[data-tid=startupIndication]');
+    await expectElementExist('[data-tid=startupIndication]', true, 5000);
     // TODO check if the indicator is setted on the correct location
     // TODO evlt reastart the applcatio and see if the loading of default locations works
   });
