@@ -194,6 +194,9 @@ describe('TST09 - Quick access', () => {
     //Delete
     await clickOn('[data-tid=fileOpenMenuTID]');
     await clickOn('[data-tid=clearHistoryTID]');
-    await expectElementExist('[data-tid=tsBookmarksTID' + fileTid + ']', false);
+    await expectElementExist(
+      '[data-tid=tsLastOpenedFilesHistoryTID' + fileTid + ']',
+      false
+    );
   });
 });
