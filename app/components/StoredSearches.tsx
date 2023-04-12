@@ -292,7 +292,10 @@ function StoredSearches(props: Props) {
             <ListItem dense style={{ paddingLeft: 0 }} key={search.uuid}>
               <Grid item xs={10} style={{ width: '100%' }}>
                 <Button
-                  data-tid={'StoredSearchTID' + search.title}
+                  data-tid={
+                    'StoredSearchTID' +
+                    search.title.trim().replaceAll(/\s+/g, '-')
+                  }
                   style={{
                     textTransform: 'none',
                     fontWeight: 'normal',
@@ -346,6 +349,7 @@ function StoredSearches(props: Props) {
           </Grid>
           <Grid item xs={2} style={{ alignSelf: 'center' }}>
             <IconButton
+              data-tid="BookmarksMenuTID"
               style={{ minWidth: 'auto', padding: 7 }}
               onClick={(event: any) => {
                 menuHistoryKey.current = historyKeys.fileOpenKey;

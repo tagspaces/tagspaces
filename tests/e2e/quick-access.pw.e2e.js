@@ -10,6 +10,8 @@ import {
 import { clickOn, expectElementExist, setInputKeys } from './general.helpers';
 import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
 import { createSavedSearch } from './search.helpers';
+import { openContextEntryMenu } from './test-utils';
+import { dataTidFormat } from '../../app/services/test';
 
 describe('TST09 - Quick access', () => {
   beforeAll(async () => {
@@ -75,6 +77,37 @@ describe('TST09 - Quick access', () => {
     await clickOn('[data-tid=deleteSavedSearchTID]');
     await expectElementExist(
       '[data-tid=StoredSearchTID' + storedSearchTitle + ']',
+      false
+    );
+  });
+
+  test('TST0905 - Create, open and remove bookmark to file in properties [electron,_pro]', async () => {
+    const bookmarkFileTitle = 'sample.txt';
+    const bookmarkFileTid = dataTidFormat(bookmarkFileTitle);
+    await openContextEntryMenu(
+      '[data-tid="fsEntryName_' + bookmarkFileTitle + '"]', // todo rethink selector here contain dot
+      'fileMenuOpenFile'
+    );
+
+    // Create
+    await clickOn('[data-tid=toggleBookmarkTID]');
+    await clickOn('[data-tid=fileContainerCloseOpenedFile]');
+
+    // Open
+    await clickOn('[data-tid=quickAccessButton]');
+    await expectElementExist(
+      '[data-tid=tsBookmarksTID' + bookmarkFileTid + ']'
+    );
+    await clickOn('[data-tid=tsBookmarksTID' + bookmarkFileTid + ']');
+    await expectElementExist('[data-tid=OpenedTID' + bookmarkFileTid + ']');
+
+    //Delete
+    await clickOn('[data-tid=toggleBookmarkTID]');
+    await clickOn('[data-tid=BookmarksMenuTID]');
+    await clickOn('[data-tid=refreshBookmarksTID]');
+
+    await expectElementExist(
+      '[data-tid=tsBookmarksTID' + bookmarkFileTid + ']',
       false
     );
   });

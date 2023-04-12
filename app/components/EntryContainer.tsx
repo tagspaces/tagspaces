@@ -104,6 +104,7 @@ import Revisions from '-/components/Revisions';
 import { Switch } from '@mui/material';
 import useFirstRender from '-/utils/useFirstRender';
 import ResolveConflictDialog from '-/components/dialogs/ResolveConflictDialog';
+import { dataTidFormat } from '-/services/test';
 
 const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
 // const openedSplitSize = AppConfig.isElectron ? 560 : 360;
@@ -1272,6 +1273,7 @@ function EntryContainer(props: Props) {
               >
                 <Tooltip title={fileName}>
                   <Box
+                    data-tid={'OpenedTID' + dataTidFormat(fileName)}
                     style={{
                       color: theme.palette.text.primary,
                       display: 'inline',
@@ -1326,6 +1328,7 @@ function EntryContainer(props: Props) {
                 )}
                 <ProTooltip tooltip={i18n.t('core:toggleBookmark')}>
                   <IconButton
+                    data-tid="toggleBookmarkTID"
                     aria-label="bookmark"
                     size="small"
                     onClick={bookmarkClick}
