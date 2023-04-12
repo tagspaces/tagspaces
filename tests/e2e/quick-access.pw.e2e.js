@@ -111,4 +111,33 @@ describe('TST09 - Quick access', () => {
       false
     );
   });
+
+  test('TST0906 - Create, open and remove bookmark to folder in quickaccess [electron,_pro]', async () => {
+    const testFolder = 'empty_folder';
+    await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
+    await clickOn('[data-tid=folderContainerOpenDirMenu]');
+    await clickOn('[data-tid=showProperties]');
+
+    // Create
+    await clickOn('[data-tid=toggleBookmarkTID]');
+    await clickOn('[data-tid=fileContainerCloseOpenedFile]');
+
+    // Open
+    await clickOn('[data-tid=quickAccessButton]');
+    await expectElementExist('[data-tid=tsBookmarksTID' + testFolder + ']');
+    await clickOn('[data-tid=tsBookmarksTID' + testFolder + ']');
+    await clickOn('[data-tid=folderContainerOpenDirMenu]');
+    await clickOn('[data-tid=showProperties]');
+    await expectElementExist('[data-tid=OpenedTID' + testFolder + ']');
+
+    //Delete
+    await clickOn('[data-tid=toggleBookmarkTID]');
+    await clickOn('[data-tid=BookmarksMenuTID]');
+    await clickOn('[data-tid=refreshBookmarksTID]');
+
+    await expectElementExist(
+      '[data-tid=tsBookmarksTID' + testFolder + ']',
+      false
+    );
+  });
 });
