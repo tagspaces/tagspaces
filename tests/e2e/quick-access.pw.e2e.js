@@ -81,7 +81,7 @@ describe('TST09 - Quick access', () => {
     );
   });
 
-  test('TST0905 - Create, open and remove bookmark to file in properties [electron,_pro]', async () => {
+  test('TST0905 - Create, open and remove bookmark to file in properties [electron,web,_pro]', async () => {
     const bookmarkFileTitle = 'sample.txt';
     const bookmarkFileTid = dataTidFormat(bookmarkFileTitle);
     await openContextEntryMenu(
@@ -112,7 +112,7 @@ describe('TST09 - Quick access', () => {
     );
   });
 
-  test('TST0906 - Create, open and remove bookmark to folder in quickaccess [electron,_pro]', async () => {
+  test('TST0906 - Create, open and remove bookmark to folder in quickaccess [electron,web,_pro]', async () => {
     const testFolder = 'empty_folder';
     await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
     await clickOn('[data-tid=folderContainerOpenDirMenu]');
@@ -139,5 +139,37 @@ describe('TST09 - Quick access', () => {
       '[data-tid=tsBookmarksTID' + testFolder + ']',
       false
     );
+  });
+
+  test('TST0907 - Create 2 local bookmarks and delete all bookmarks [electron,_pro]', async () => {
+    await clickOn('[data-tid=quickAccessButton]');
+    const bookmarks = ['sample.txt', 'sample.jpg'];
+    for (let i = 0; i < bookmarks.length; i++) {
+      await openContextEntryMenu(
+        '[data-tid="fsEntryName_' + bookmarks[i] + '"]',
+        'fileMenuOpenFile'
+      );
+
+      // Create
+      await clickOn('[data-tid=toggleBookmarkTID]');
+      await clickOn('[data-tid=fileContainerCloseOpenedFile]');
+      // Refresh bookmarks
+      await clickOn('[data-tid=BookmarksMenuTID]');
+      await clickOn('[data-tid=refreshBookmarksTID]');
+
+      await expectElementExist(
+        '[data-tid=tsBookmarksTID' + dataTidFormat(bookmarks[i]) + ']'
+      );
+    }
+
+    // Delete All bookmarks
+    await clickOn('[data-tid=BookmarksMenuTID]');
+    await clickOn('[data-tid=clearBookmarksTID]');
+    for (let i = 0; i < bookmarks.length; i++) {
+      await expectElementExist(
+        '[data-tid=tsBookmarksTID' + dataTidFormat(bookmarks[i]) + ']',
+        false
+      );
+    }
   });
 });
