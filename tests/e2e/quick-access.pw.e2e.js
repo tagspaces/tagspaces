@@ -172,4 +172,28 @@ describe('TST09 - Quick access', () => {
       );
     }
   });
+  test('TST0908 - Add, open and remove recently opened file [web,electron,_pro]', async () => {
+    // Add
+    const fileTitle = 'sample.jpg';
+    const fileTid = dataTidFormat(fileTitle);
+    await openContextEntryMenu(
+      '[data-tid="fsEntryName_' + fileTitle + '"]', // todo rethink selector here contain dot
+      'fileMenuOpenFile'
+    );
+    await clickOn('[data-tid=fileContainerCloseOpenedFile]');
+
+    // Open
+    await clickOn('[data-tid=quickAccessButton]');
+    await clickOn('[data-tid=fileOpenHistoryTID]');
+    await expectElementExist(
+      '[data-tid=tsLastOpenedFilesHistoryTID' + fileTid + ']'
+    );
+    await clickOn('[data-tid=tsLastOpenedFilesHistoryTID' + fileTid + ']');
+    await expectElementExist('[data-tid=OpenedTID' + fileTid + ']');
+
+    //Delete
+    await clickOn('[data-tid=fileOpenMenuTID]');
+    await clickOn('[data-tid=clearHistoryTID]');
+    await expectElementExist('[data-tid=tsBookmarksTID' + fileTid + ']', false);
+  });
 });

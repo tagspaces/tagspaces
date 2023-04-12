@@ -270,6 +270,7 @@ function StoredSearches(props: Props) {
               }}
             />
             <IconButton
+              data-tid="StoredSearchesMenuTID"
               style={{ minWidth: 'auto', padding: 7 }}
               onClick={handleSearchMenu}
               size="large"
@@ -332,6 +333,7 @@ function StoredSearches(props: Props) {
         <Grid container direction="row">
           <Grid item xs={10} style={{ alignSelf: 'center' }}>
             <IconButton
+              data-tid="BookmarksTID"
               style={{ minWidth: 'auto', padding: 7 }}
               onClick={() => props.setShowBookmarks(!props.showBookmarks)}
               size="large"
@@ -382,6 +384,7 @@ function StoredSearches(props: Props) {
         <Grid container direction="row">
           <Grid item xs={10} style={{ alignSelf: 'center' }}>
             <IconButton
+              data-tid="fileOpenHistoryTID"
               style={{ minWidth: 'auto', padding: 7 }}
               onClick={() => props.setFileOpenHistory(!props.fileOpenHistory)}
               size="large"
@@ -399,6 +402,7 @@ function StoredSearches(props: Props) {
           </Grid>
           <Grid item xs={2} style={{ alignSelf: 'center' }}>
             <IconButton
+              data-tid="fileOpenMenuTID"
               style={{ minWidth: 'auto', padding: 7 }}
               onClick={(event: any) => {
                 menuHistoryKey.current = historyKeys.fileOpenKey;
@@ -430,6 +434,7 @@ function StoredSearches(props: Props) {
         <Grid container direction="row">
           <Grid item xs={10} style={{ alignSelf: 'center' }}>
             <IconButton
+              data-tid="fileEditHistoryTID"
               style={{ minWidth: 'auto', padding: 7 }}
               onClick={() => props.setFileEditHistory(!props.fileEditHistory)}
               size="large"
@@ -448,6 +453,7 @@ function StoredSearches(props: Props) {
           </Grid>
           <Grid item xs={2} style={{ alignSelf: 'center' }}>
             <IconButton
+              data-tid="FileEditedMenuTID"
               style={{ minWidth: 'auto', padding: 7 }}
               onClick={(event: any) => {
                 menuHistoryKey.current = historyKeys.fileEditKey;
@@ -479,6 +485,7 @@ function StoredSearches(props: Props) {
         <Grid container direction="row">
           <Grid item xs={10} style={{ alignSelf: 'center' }}>
             <IconButton
+              data-tid="folderOpenHistoryTID"
               style={{ minWidth: 'auto', padding: 7 }}
               onClick={() =>
                 props.setFolderOpenHistory(!props.folderOpenHistory)
@@ -500,6 +507,7 @@ function StoredSearches(props: Props) {
           </Grid>
           <Grid item xs={2} style={{ alignSelf: 'center' }}>
             <IconButton
+              data-tid="FolderOpenMenuTID"
               style={{ minWidth: 'auto', padding: 7 }}
               onClick={(event: any) => {
                 menuHistoryKey.current = historyKeys.folderOpenKey;
