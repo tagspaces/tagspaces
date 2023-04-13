@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
+
+import { expect as pExpect } from '@playwright/test';
 import {
   defaultLocationPath,
   defaultLocationName,
@@ -70,19 +72,32 @@ describe('TST50** - Right button on a file', () => {
   /**
    * todo web file content is slow loaded in web and innerText is empty string
    */
-  test('TST5016 - Open file [minio,electron]', async () => {
+  test('TST5016 - Open file [web,minio,electron]', async () => {
     // await searchEngine('txt');
     await openContextEntryMenu(
       '[data-tid="fsEntryName_sample.txt"]', // perspectiveGridTable + firstFile,
       'fileMenuOpenFile'
     );
-    const fLocator = await frameLocator();
-    const bodyTxt = await fLocator.locator('body').innerText();
-    const containTID = toContainTID(bodyTxt);
+    await pExpect
+      .poll(
+        async () => {
+          const fLocator = await frameLocator();
+          const bodyTxt = await fLocator.locator('body').innerText();
+          return toContainTID(bodyTxt);
+        },
+        {
+          message: 'make sure bodyTxt contain etete&5435', // custom error message
+          // Poll for 10 seconds; defaults to 5 seconds. Pass 0 to disable timeout.
+          timeout: global.isWeb ? 40000 : 10000
+        }
+      )
+      .toBe(true);
+
+    /*const containTID = toContainTID(bodyTxt);
     if (!containTID) {
       console.debug('no containTID in:' + bodyTxt);
     }
-    expect(containTID).toBe(true);
+    expect(containTID).toBe(true);*/
     // Check if the file is opened
     // await delay(1500);
     /*await expectElementExist('#FileViewer', true, 2000);
