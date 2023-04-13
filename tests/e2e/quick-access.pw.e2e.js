@@ -199,4 +199,36 @@ describe('TST09 - Quick access', () => {
       false
     );
   });
+
+  test('TST0909 - Add 2 recently opened files and clear history [electron,_pro]', async () => {
+    await clickOn('[data-tid=quickAccessButton]');
+    await clickOn('[data-tid=fileOpenHistoryTID]');
+
+    const files = ['sample.txt', 'sample.jpg'];
+    for (let i = 0; i < files.length; i++) {
+      // Add
+      const fileTid = dataTidFormat(files[i]);
+      await openContextEntryMenu(
+        '[data-tid="fsEntryName_' + files[i] + '"]',
+        'fileMenuOpenFile'
+      );
+      await clickOn('[data-tid=fileContainerCloseOpenedFile]');
+      // Refresh opened files
+      await clickOn('[data-tid=fileOpenMenuTID]');
+      await clickOn('[data-tid=refreshHistoryTID]');
+      await expectElementExist(
+        '[data-tid=tsLastOpenedFilesHistoryTID' + fileTid + ']'
+      );
+    }
+
+    // Delete All bookmarks
+    await clickOn('[data-tid=fileOpenMenuTID]');
+    await clickOn('[data-tid=clearHistoryTID]');
+    for (let i = 0; i < files.length; i++) {
+      await expectElementExist(
+        '[data-tid=tsLastOpenedFilesHistoryTID' + dataTidFormat(files[i]) + ']',
+        false
+      );
+    }
+  });
 });

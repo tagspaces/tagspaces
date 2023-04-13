@@ -133,7 +133,7 @@
     "test-one-suite": "cross-env  jest --config=jest.config.web.js --verbose ./tests/e2e/perspective-grid-right-button.e2e.js",
     "test-one-suite-headless": "cross-env HEADLESS_MODE=true jest --config=jest.config.web.js --verbose ./tests/e2e/fileopener.e2e.js",
     "test-playwright": "npm run test-refresh-data && cross-env JEST_JUNIT_OUTPUT_DIR=./tests NODE_ENV=test jest --config=jest.config.playwright.js -t '^(?!.*\\b_pro\\b).*\\belectron\\b.*' --verbose ./tests/e2e/",
-    "test-playwright-pro": "npm run test-refresh-data && cross-env JEST_JUNIT_OUTPUT_DIR=./tests NODE_ENV=test jest --config=jest.config.playwright.js -t 'electron' --verbose ./tests/e2e/",
+    "test-playwright-pro": "npm run test-refresh-data && cross-env JEST_JUNIT_OUTPUT_DIR=./tests NODE_ENV=test jest --config=jest.config.playwright.js -t 'TST0909' --verbose ./tests/e2e/",
     "test-playwright-web": "npm run test-refresh-data && cross-env NODE_ENV=test SHOW_CONSOLE=true DEBUG=pw:api PLAYWRIGHT=test_playwright jest --config=jest.config.web.js -t 'web' --verbose ./tests/e2e/",
     "test-playwright-web-headless": "npm run test-refresh-data && npm run prepare-web-pro && cross-env NODE_ENV=test SHOW_CONSOLE=true JEST_JUNIT_OUTPUT_DIR=./tests PLAYWRIGHT=test_playwright HEADLESS_MODE=true jest --config=jest.config.web.js -t 'web' --verbose ./tests/e2e/",
     "test-clone-data": "rimraf tests/testdata && git clone https://github.com/tagspaces/testdata tests/testdata",
