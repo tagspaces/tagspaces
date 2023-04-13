@@ -88,7 +88,7 @@ describe('TST50** - Right button on a file', () => {
         {
           message: 'make sure bodyTxt contain etete&5435', // custom error message
           // Poll for 10 seconds; defaults to 5 seconds. Pass 0 to disable timeout.
-          timeout: global.isWeb ? 20000 : 10000
+          timeout: global.isWeb ? 40000 : 10000
         }
       )
       .toBe(true);

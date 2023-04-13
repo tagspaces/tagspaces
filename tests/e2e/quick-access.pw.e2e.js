@@ -231,4 +231,60 @@ describe('TST09 - Quick access', () => {
       );
     }
   });
+
+  test.skip('TST0910 - Add, open and remove recently edited file [web,electron,_pro]', async () => {
+    // Add
+    const fileTitle = 'sample.txt';
+    const fileTid = dataTidFormat(fileTitle);
+    await openContextEntryMenu(
+      '[data-tid="fsEntryName_' + fileTitle + '"]', // todo rethink selector here contain dot
+      'fileMenuOpenFile'
+    );
+    await clickOn('[data-tid=fileContainerEditFile]');
+
+    await clickOn('[data-tid=fileContainerCloseOpenedFile]');
+
+    // Open
+    await clickOn('[data-tid=quickAccessButton]');
+    await clickOn('[data-tid=fileEditHistoryTID]');
+    await expectElementExist(
+      '[data-tid=tsLastOpenedFilesHistoryTID' + fileTid + ']'
+    );
+    await clickOn('[data-tid=tsLastOpenedFilesHistoryTID' + fileTid + ']');
+    await expectElementExist('[data-tid=OpenedTID' + fileTid + ']');
+
+    //Delete
+    await clickOn('[data-tid=fileOpenMenuTID]');
+    await clickOn('[data-tid=clearHistoryTID]');
+    await expectElementExist(
+      '[data-tid=tsLastOpenedFilesHistoryTID' + fileTid + ']',
+      false
+    );
+  });
+
+  test('TST0912 - Add, open and remove recently opened folder properties [web,electron,_pro]', async () => {
+    // Add
+    const testFolder = 'empty_folder';
+    await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
+    await clickOn('[data-tid=folderContainerOpenDirMenu]');
+    await clickOn('[data-tid=showProperties]');
+    await clickOn('[data-tid=fileContainerCloseOpenedFile]');
+
+    // Open
+    await clickOn('[data-tid=quickAccessButton]');
+    await clickOn('[data-tid=folderOpenHistoryTID]');
+    await expectElementExist(
+      '[data-tid=tsLastOpenedFoldersHistoryTID' + testFolder + ']'
+    );
+    await clickOn('[data-tid=tsLastOpenedFoldersHistoryTID' + testFolder + ']');
+    await expectElementExist('[data-tid=OpenedTID' + testFolder + ']');
+
+    //Delete
+    await clickOn('[data-tid=FolderOpenMenuTID]');
+    await clickOn('[data-tid=clearHistoryTID]');
+    await expectElementExist(
+      '[data-tid=tsLastOpenedFoldersHistoryTID' + testFolder + ']',
+      false
+    );
+  });
 });
