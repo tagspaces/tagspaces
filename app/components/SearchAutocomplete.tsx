@@ -1028,7 +1028,7 @@ function SearchAutocomplete(props: Props) {
               });
             } else {
             }
-          } else {
+          } else if (Pro && Pro.history) {
             const item: TS.HistoryItem = {
               path: option.label,
               url: option.fullName,
@@ -1048,19 +1048,21 @@ function SearchAutocomplete(props: Props) {
           isOpen.current = false;
           return [];
         } else if (option.action === ExecActions.OPEN_BOOKMARK) {
-          const item: TS.HistoryItem = {
-            path: option.label,
-            url: option.fullName,
-            lid: undefined,
-            creationTimeStamp: 0
-          };
-          Pro.history.openItem(
-            item,
-            props.currentLocation.uuid,
-            props.openLink,
-            props.openLocationById,
-            props.openFsEntry
-          );
+          if (Pro && Pro.history) {
+            const item: TS.HistoryItem = {
+              path: option.label,
+              url: option.fullName,
+              lid: undefined,
+              creationTimeStamp: 0
+            };
+            Pro.history.openItem(
+              item,
+              props.currentLocation.uuid,
+              props.openLink,
+              props.openLocationById,
+              props.openFsEntry
+            );
+          }
           searchOptions.current = SearchOptions;
           currentOptions.current = undefined;
           isOpen.current = false;
