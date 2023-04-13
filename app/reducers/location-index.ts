@@ -203,7 +203,7 @@ export const actions = {
       dispatch(AppActions.exitSearchMode());
     } else {
       const searchTitle = defaultTitle(searchQuery);
-      if (searchTitle.length > 0) {
+      if (searchTitle.length > 0 && Pro && Pro.history) {
         const historyKeys = Pro.history.historyKeys;
         const currentLocation = getCurrentLocation(getState());
         if (currentLocation) {
