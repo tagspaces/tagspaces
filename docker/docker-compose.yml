@@ -17,5 +17,6 @@ services:
     environment:
       - MINIO_ROOT_USER=minio-root-user
       - MINIO_ROOT_PASSWORD=minio-root-password
+    command: server --console-address ":9001"  /data
     networks:
       - app-ts
