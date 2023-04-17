@@ -186,6 +186,7 @@ function ObjectStoreForm(props: Props) {
         <FormControl fullWidth={true} error={cloudErrorAccessKey}>
           <TextField
             margin="dense"
+            required
             name="accessKeyId"
             fullWidth={true}
             data-tid="accessKeyId"
@@ -203,6 +204,7 @@ function ObjectStoreForm(props: Props) {
         <FormControl fullWidth={true} error={cloudErrorSecretAccessKey}>
           <TextField
             margin="dense"
+            required
             name="secretAccessKey"
             type={showSecretAccessKey ? 'text' : 'password'}
             fullWidth={true}
