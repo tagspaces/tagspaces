@@ -14,6 +14,7 @@ import {
 } from '@tagspaces/tagspaces-common/paths';
 import IconButton from '@mui/material/IconButton';
 import { RemoveIcon, HistoryIcon } from '-/components/CommonIcons';
+import { dataTidFormat } from '-/services/test';
 
 /**
  * TagSpaces - universal file and folder organizer
@@ -46,80 +47,85 @@ export const renderHistory = (
 ) => (
   <>
     {items &&
-      items.slice(0, maxItems || items.length).map(item => (
-        <ListItem dense style={{ paddingLeft: 0 }} key={item.creationTimeStamp}>
-          <Grid item xs={10} style={{ width: '100%' }}>
-            <Button
-              style={{
-                textTransform: 'none',
-                fontWeight: 'normal',
-                justifyContent: 'start'
-              }}
-              onClick={() =>
-                Pro.history.openItem(
-                  item,
-                  currentLocationId,
-                  openLink,
-                  openLocationById,
-                  openFsEntry
-                )
-              }
-            >
-              <Tooltip
-                title={
-                  <span style={{ fontSize: 14 }}>
-                    <b>{i18n.t('core:filePath')}:</b> {item.path}
-                    <br />
-                    <br />
-                    {/* <b>Opened on: </b>{' '} */}
-                    {new Date(item.creationTimeStamp)
-                      .toISOString()
-                      .substring(0, 19)
-                      .split('T')
-                      .join(' ')}
-                  </span>
+      items.slice(0, maxItems || items.length).map(item => {
+        const itemName = item.path.endsWith(PlatformIO.getDirSeparator())
+          ? extractDirectoryName(item.path, PlatformIO.getDirSeparator())
+          : extractFileName(item.path, PlatformIO.getDirSeparator());
+        return (
+          <ListItem
+            dense
+            style={{ paddingLeft: 0 }}
+            key={item.creationTimeStamp}
+          >
+            <Grid item xs={10} style={{ width: '100%' }}>
+              <Button
+                data-tid={key + 'TID' + dataTidFormat(itemName)}
+                style={{
+                  textTransform: 'none',
+                  fontWeight: 'normal',
+                  justifyContent: 'start'
+                }}
+                onClick={() =>
+                  Pro.history.openItem(
+                    item,
+                    currentLocationId,
+                    openLink,
+                    openLocationById,
+                    openFsEntry
+                  )
                 }
               >
-                {key === Pro.bookmarks.bookmarksKey ? (
-                  <BookmarkTwoToneIcon fontSize="small" />
-                ) : (
-                  <HistoryIcon fontSize="small" />
-                )}
-              </Tooltip>
-              &nbsp;
-              <span
-                style={{
-                  whiteSpace: 'nowrap',
-                  textOverflow: 'ellipsis',
-                  overflow: 'hidden',
-                  maxWidth: 220
-                }}
-              >
-                {item.path.endsWith(PlatformIO.getDirSeparator())
-                  ? extractDirectoryName(
-                      item.path,
-                      PlatformIO.getDirSeparator()
-                    )
-                  : extractFileName(item.path, PlatformIO.getDirSeparator())}
-              </span>
-            </Button>
-          </Grid>
-          {showDelete && (
-            <Grid item xs={2}>
-              <IconButton
-                aria-label={i18n.t('core:clearHistory')}
-                onClick={() => {
-                  Pro.history.delItem(item, key);
-                  update();
-                }}
-                data-tid="editSearchTID"
-                size="small"
-              >
-                <RemoveIcon />
-              </IconButton>
+                <Tooltip
+                  title={
+                    <span style={{ fontSize: 14 }}>
+                      <b>{i18n.t('core:filePath')}:</b> {item.path}
+                      <br />
+                      <br />
+                      {/* <b>Opened on: </b>{' '} */}
+                      {new Date(item.creationTimeStamp)
+                        .toISOString()
+                        .substring(0, 19)
+                        .split('T')
+                        .join(' ')}
+                    </span>
+                  }
+                >
+                  {key === Pro.bookmarks.bookmarksKey ? (
+                    <BookmarkTwoToneIcon fontSize="small" />
+                  ) : (
+                    <HistoryIcon fontSize="small" />
+                  )}
+                </Tooltip>
+                &nbsp;
+                <span
+                  style={{
+                    whiteSpace: 'nowrap',
+                    textOverflow: 'ellipsis',
+                    overflow: 'hidden',
+                    maxWidth: 220
+                  }}
+                >
+                  {itemName}
+                </span>
+              </Button>
             </Grid>
-          )}
-        </ListItem>
-      ))}
+            {showDelete && (
+              <Grid item xs={2}>
+                <IconButton
+                  aria-label={i18n.t('core:clearHistory')}
+                  onClick={() => {
+                    Pro.history.delItem(item, key);
+                    update();
+                  }}
+                  data-tid="editSearchTID"
+                  size="small"
+                >
+                  <RemoveIcon />
+                </IconButton>
+              </Grid>
+            )}
+          </ListItem>
+        );
+      })}
   </>
 );

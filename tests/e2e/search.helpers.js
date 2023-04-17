@@ -1,6 +1,7 @@
 import {
   clickOn,
   isDisplayed,
+  setInputKeys,
   setInputValue,
   typeInputValue,
   waitForNotification
@@ -52,6 +53,24 @@ export async function searchEngine(filename, options = {}) {
     await clickOn('#searchButtonAdvTID');
   }
   await waitForNotification('TIDSearching');
+}
+
+/**
+ * @param searchQuery TS.SearchQuery
+ * @returns {Promise<void>}
+ */
+export async function createSavedSearch(searchQuery) {
+  if (!(await isDisplayed('#textQuery'))) {
+    await clickOn('[data-tid=toggleSearch]');
+  }
+  await typeInputValue('#textQuery', searchQuery.textQuery);
+  await clickOn('#searchButton');
+  await clickOn('[data-tid=advancedSearch]');
+  await clickOn('[data-tid=saveSearchBtnTID]');
+  await global.client.dblclick('[data-tid=savedSearchTID]');
+  await setInputKeys('savedSearchTID', searchQuery.title);
+  await clickOn('[data-tid=confirmSavedSearchTID]');
+  await clickOn('[data-tid=closeSearchTID]');
 }
 
 /*describe('TST06 - Test Search in file structure:', () => {
