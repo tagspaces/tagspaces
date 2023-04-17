@@ -457,7 +457,7 @@ function EntryContainer(props: Props) {
         showNotification(message, NotificationTypes.default);
         break;
       case 'saveDocument':
-        startSavingFile();
+        savingFile(data.force !== undefined ? data.force : false);
         break;
       case 'editDocument':
         if (editingSupported) {
@@ -593,7 +593,9 @@ function EntryContainer(props: Props) {
     // setEditingSupported(false);
   };
 
-  const startSavingFile = () => {
+  const startSavingFile = () => savingFile();
+
+  function savingFile(force = false) {
     if (
       fileViewer &&
       fileViewer.current &&
@@ -603,7 +605,7 @@ function EntryContainer(props: Props) {
     ) {
       try {
         //check if file is changed
-        if (fileChanged.current) {
+        if (fileChanged.current || force) {
           setSavingInProgress(true);
           saveFile().then(success => {
             if (success) {
@@ -622,7 +624,7 @@ function EntryContainer(props: Props) {
         console.debug('function getContent not exist for video file:', e);
       }
     }
-  };
+  }
 
   const override = (): Promise<boolean> => {
     return props
