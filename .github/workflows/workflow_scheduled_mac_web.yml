@@ -1,4 +1,4 @@
-name: Nightly E2E Tests Web Minio MacOS
+name: Nightly E2E Tests Web Minio macOS
 on:
   schedule:
     - cron: '0 5 * * *'

@@ -1,4 +1,4 @@
-name: Nightly E2E Tests Electon Windows
+name: Nightly E2E Tests Electron Windows
 on:
   schedule:
     - cron: '0 0 * * *'
