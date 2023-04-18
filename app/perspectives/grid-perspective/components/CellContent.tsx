@@ -532,7 +532,7 @@ function CellContent(props: Props) {
       }}
       onContextMenu={event => handleGridContextMenu(event, fSystemEntry)}
       onDoubleClick={event => {
-        props.exitSearchMode();
+        // props.exitSearchMode();
         handleGridCellDblClick(event, fSystemEntry);
       }}
       onClick={event => {
