@@ -300,15 +300,17 @@ describe('TST08 - File folder properties', () => {
    * TODO dont work on web tests https://trello.com/c/93iEURf4/731-migrate-fullscreen-to-https-githubcom-snakesilk-react-fullscreen
    * dont work on electron Mac https://github.com/microsoft/playwright/issues/1086
    */
-  it.skip('TST0814 - Open file fullscreen and exit with close button [minio,electron]', async () => {
-    // open fileProperties
-    await clickOn(selectorFile);
-    await clickOn('[data-tid=fileContainerSwitchToFullScreen]');
-    await expectElementExist('[data-tid=fullscreenTID]', true, 10000);
-    // await takeScreenshot('TST0814 fullscreenTID exist true');
-    await clickOn('[data-tid=fullscreenTID]');
-    // await takeScreenshot('TST0814 fullscreenTID exist false');
-    await expectElementExist('[data-tid=fullscreenTID]', false, 10000);
+  it('TST0814 - Open file fullscreen and exit with close button [minio,electron]', async () => {
+    if (global.isWin) {
+      // open fileProperties
+      await clickOn(selectorFile);
+      await clickOn('[data-tid=fileContainerSwitchToFullScreen]');
+      await expectElementExist('[data-tid=fullscreenTID]', true, 10000);
+      // await takeScreenshot('TST0814 fullscreenTID exist true');
+      await clickOn('[data-tid=fullscreenTID]');
+      // await takeScreenshot('TST0814 fullscreenTID exist false');
+      await expectElementExist('[data-tid=fullscreenTID]', false, 10000);
+    }
   });
 
   it.skip('TST0815 - Test opening file, while TS is in fullscreen(F11) [manual]', async () => {});
