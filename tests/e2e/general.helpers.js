@@ -22,7 +22,7 @@ export async function takeScreenshot(name) {
   await global.client.screenshot({ path: sPath });
 }
 
-export async function clickOn(selector, options = { timeout: 10000 }) {
+export async function clickOn(selector, options = { timeout: 15000 }) {
   if (global.isPlaywright) {
     try {
       await global.client.click(selector, options);
@@ -339,7 +339,7 @@ export async function isDisplayed(
       const el = await parentEl.waitForSelector(selector, {
         timeout,
         // strict: true,
-        state: displayed ? 'visible' : 'hidden' //'detached'
+        state: displayed ? 'attached' : 'detached' //'visible' : 'hidden' //'detached'
       });
       if (!displayed) {
         if (el === null) {

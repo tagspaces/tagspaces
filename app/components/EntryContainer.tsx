@@ -300,8 +300,12 @@ function EntryContainer(props: Props) {
         fileViewer.current &&
         fileViewer.current.contentWindow
       ) {
-        // @ts-ignore
-        fileViewer.current.contentWindow.enterFullscreen();
+        try {
+          // @ts-ignore
+          fileViewer.current.contentWindow.enterFullscreen();
+        } catch (ex) {
+          console.error('err:', ex);
+        }
       }
     } else {
       change = 'Exited fullscreen mode';
@@ -311,8 +315,12 @@ function EntryContainer(props: Props) {
         fileViewer.current &&
         fileViewer.current.contentWindow
       ) {
-        // @ts-ignore
-        fileViewer.current.contentWindow.exitFullscreen();
+        try {
+          // @ts-ignore
+          fileViewer.current.contentWindow.exitFullscreen();
+        } catch (ex) {
+          console.error('err:', ex);
+        }
       }
     }
     console.log(change, e);
