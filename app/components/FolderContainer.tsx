@@ -43,7 +43,6 @@ import {
 import {
   actions as AppActions,
   getDirectoryContent,
-  getSearchResultCount,
   isReadOnlyMode,
   getCurrentLocationPath,
   getCurrentDirectoryPerspective,
@@ -52,7 +51,8 @@ import {
   getProgress,
   getEditedEntryPaths,
   getSearchResultsCount,
-  isSearchMode
+  isSearchMode,
+  getLastSearchTimestamp
 } from '../reducers/app';
 import TaggingActions from '../reducers/tagging-actions';
 import LoadingLazy from '../components/LoadingLazy';
@@ -168,7 +168,7 @@ interface Props {
   windowWidth: number;
   directoryContent: Array<TS.FileSystemEntry>;
   currentDirectoryPath: string | null;
-  searchResultCount: number;
+  //searchResultCount: number;
   addTags: () => void;
   removeTags: () => void;
   removeAllTags: () => void;
@@ -213,6 +213,7 @@ interface Props {
   goBack: () => void;
   goForward: () => void;
   searchResultsCount: number;
+  lastSearchTimestamp: number;
   isSearchMode: boolean;
   openMoveCopyFilesDialog: () => void;
 }
@@ -316,6 +317,7 @@ function FolderContainer(props: Props) {
         <ListPerspectiveAsync
           directoryContent={props.directoryContent}
           searchResultsCount={props.searchResultsCount}
+          lastSearchTimestamp={props.lastSearchTimestamp}
           loadDirectoryContent={loadDirectoryContent}
           openFsEntry={openFsEntry}
           openRenameEntryDialog={() => setIsRenameEntryDialogOpened(true)}
@@ -337,6 +339,7 @@ function FolderContainer(props: Props) {
         <GalleryPerspectiveAsync
           directoryContent={props.directoryContent}
           searchResultsCount={props.searchResultsCount}
+          lastSearchTimestamp={props.lastSearchTimestamp}
           openFsEntry={openFsEntry}
           currentDirectoryPath={props.currentDirectoryPath}
           windowWidth={props.windowWidth}
@@ -349,6 +352,7 @@ function FolderContainer(props: Props) {
         <MapiquePerspectiveAsync
           directoryContent={props.directoryContent}
           searchResultsCount={props.searchResultsCount}
+          lastSearchTimestamp={props.lastSearchTimestamp}
           currentDirectoryPath={props.currentDirectoryPath}
           windowWidth={props.windowWidth}
           switchPerspective={switchPerspective}
@@ -361,6 +365,7 @@ function FolderContainer(props: Props) {
         <KanBanPerspectiveAsync
           directoryContent={props.directoryContent}
           searchResultsCount={props.searchResultsCount}
+          lastSearchTimestamp={props.lastSearchTimestamp}
           loadDirectoryContent={props.loadDirectoryContent}
           openFsEntry={props.openFsEntry}
           openRenameEntryDialog={() => setIsRenameEntryDialogOpened(true)}
@@ -383,6 +388,7 @@ function FolderContainer(props: Props) {
       <GridPerspectiveAsync
         directoryContent={props.directoryContent}
         searchResultsCount={props.searchResultsCount}
+        lastSearchTimestamp={props.lastSearchTimestamp}
         loadDirectoryContent={props.loadDirectoryContent}
         openFsEntry={props.openFsEntry}
         openRenameEntryDialog={() => setIsRenameEntryDialogOpened(true)}
@@ -664,7 +670,7 @@ function mapStateToProps(state) {
     selectedEntries: getSelectedEntries(state),
     directoryContent: getDirectoryContent(state),
     currentDirectoryPerspective: getCurrentDirectoryPerspective(state),
-    searchResultCount: getSearchResultCount(state),
+    //searchResultCount: getSearchResultCount(state),
     currentLocationPath: getCurrentLocationPath(state),
     maxSearchResults: getMaxSearchResults(state),
     isDesktopMode: getDesktopMode(state),
@@ -675,6 +681,7 @@ function mapStateToProps(state) {
     defaultPerspective: getDefaultPerspective(state),
     editedEntryPaths: getEditedEntryPaths(state),
     searchResultsCount: getSearchResultsCount(state),
+    lastSearchTimestamp: getLastSearchTimestamp(state),
     isSearchMode: isSearchMode(state)
   };
 }
@@ -732,6 +739,7 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   nextProp.windowHeight === prevProp.windowHeight &&
   nextProp.searchQuery === prevProp.searchQuery &&
   nextProp.searchResultsCount === prevProp.searchResultsCount &&
+  nextProp.lastSearchTimestamp === prevProp.lastSearchTimestamp &&
   nextProp.isSearchMode === prevProp.isSearchMode;
 
 export default connect(

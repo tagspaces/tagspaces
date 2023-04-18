@@ -120,6 +120,7 @@ interface Props {
   directoryMeta: TS.FileSystemEntryMeta;
   setDirectoryMeta: (fsEntryMeta: TS.FileSystemEntryMeta) => void;
   searchResultsCount: number;
+  lastSearchTimestamp: number;
   searchFilter: string;
   editedEntryPaths: Array<TS.EditedEntryPath>;
 }
@@ -311,7 +312,7 @@ function GridPerspective(props: Props) {
       }
       setSortedDirContent();
     }
-  }, [props.searchResultsCount]);
+  }, [props.searchResultsCount, props.lastSearchTimestamp]);
 
   function setSortedDirContent() {
     if (props.searchResultsCount < 0) {
