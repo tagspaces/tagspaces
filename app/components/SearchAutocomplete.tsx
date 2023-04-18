@@ -586,6 +586,14 @@ function SearchAutocomplete(props: Props) {
   }
 
   const executeSearch = () => {
+    if (
+      actionValues.current.some(action =>
+        isAction(action.action, SearchActions.FILTER)
+      )
+    ) {
+      // don't execute search on search filter
+      return;
+    }
     let query = inputValue.current;
     if (
       query.startsWith('ts:?ts') ||
