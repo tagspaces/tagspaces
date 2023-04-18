@@ -261,7 +261,6 @@ export const initialState = {
   locationManagerPanelOpened: showLocations,
   tagLibraryPanelOpened: showTagLibrary,
   searchPanelOpened: showSearch,
-  searchResultsCount: -1,
   user: window.ExtDemoUser
     ? {
         attributes: window.ExtDemoUser,
@@ -557,8 +556,6 @@ export default (state: any = initialState, action: any) => {
       GlobalSearch.results = action.searchResults;
       return {
         ...state,
-        // currentDirectoryEntries: action.searchResults,
-        searchResultsCount: action.searchResults.length,
         lastSearchTimestamp: new Date().getTime(),
         isLoading: false
       };
@@ -568,7 +565,7 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         searchMode: false,
-        searchResultsCount: -1,
+        lastSearchTimestamp: undefined,
         searchFilter: undefined,
         isLoading: false
       };
@@ -577,7 +574,6 @@ export default (state: any = initialState, action: any) => {
       GlobalSearch.results = [];
       return {
         ...state,
-        // searchResultsCount: -1,
         searchMode: true,
         searchFilter: undefined,
         isLoading: false
@@ -595,7 +591,6 @@ export default (state: any = initialState, action: any) => {
       }
       return {
         ...state,
-        searchResultsCount: GlobalSearch.results.length,
         lastSearchTimestamp: new Date().getTime(),
         // currentDirectoryEntries: newDirEntries,
         isLoading: false
@@ -3004,8 +2999,6 @@ export const isTagLibraryPanelOpened = (state: any) =>
 export const isSearchPanelOpened = (state: any) => state.app.searchPanelOpened;
 export const isHelpFeedbackPanelOpened = (state: any) =>
   state.app.helpFeedbackPanelOpened;
-export const getSearchResultsCount = (state: any) =>
-  state.app.searchResultsCount;
 export const getLastSearchTimestamp = (state: any) =>
   state.app.lastSearchTimestamp;
 export const isSearchMode = (state: any) => state.app.searchMode;

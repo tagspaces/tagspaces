@@ -128,7 +128,6 @@ interface Props {
   ) => void;
   moveFiles: (files: Array<string>, destination: string) => Promise<boolean>;
   clearSelection: () => void;
-  searchResultsCount: number;
   lastSearchTimestamp: number;
 }
 
@@ -729,7 +728,6 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   nextProp.thumbnailMode === prevProp.thumbnailMode &&
   nextProp.entrySize === prevProp.entrySize &&
   nextProp.gridPageLimit === prevProp.gridPageLimit &&
-  nextProp.searchResultsCount === prevProp.searchResultsCount &&
   nextProp.lastSearchTimestamp === prevProp.lastSearchTimestamp &&
   nextProp.currentDirectoryDescription ===
     prevProp.currentDirectoryDescription &&

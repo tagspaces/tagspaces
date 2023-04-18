@@ -119,7 +119,6 @@ interface Props {
   toggleDeleteMultipleEntriesDialog: () => void;
   directoryMeta: TS.FileSystemEntryMeta;
   setDirectoryMeta: (fsEntryMeta: TS.FileSystemEntryMeta) => void;
-  searchResultsCount: number;
   lastSearchTimestamp: number;
   searchFilter: string;
   editedEntryPaths: Array<TS.EditedEntryPath>;
@@ -184,7 +183,7 @@ function GridPerspective(props: Props) {
       : defaultSettings.orderBy
   );
   const sortedDirContent = useRef<Array<TS.FileSystemEntry>>(
-    props.searchResultsCount < 0 ? props.directoryContent : GlobalSearch.results
+    !props.lastSearchTimestamp ? props.directoryContent : GlobalSearch.results
   );
   const layoutType = useRef<string>(
     settings && settings.layoutType
@@ -290,14 +289,13 @@ function GridPerspective(props: Props) {
   }, [
     // props.currentDirectoryPath, // open subdirs
     props.directoryContent, // open subdirs todo rethink this (replace with useEffect for currDirPath changes only)
-    // props.searchResultsCount,
     sortBy.current,
     orderBy.current
   ]);
 
   useEffect(() => {
     if (!firstRender) {
-      if (props.searchResultsCount > -1) {
+      if (props.lastSearchTimestamp) {
         sortBy.current = 'byRelevance';
         // orderBy.current = false;
       } else {
@@ -312,10 +310,10 @@ function GridPerspective(props: Props) {
       }
       setSortedDirContent();
     }
-  }, [props.searchResultsCount, props.lastSearchTimestamp]);
+  }, [props.lastSearchTimestamp]);
 
   function setSortedDirContent() {
-    if (props.searchResultsCount < 0) {
+    if (!props.lastSearchTimestamp) {
       // not in search mode
       sortedDirContent.current = sortByCriteria(
         props.directoryContent,
@@ -349,7 +347,7 @@ function GridPerspective(props: Props) {
 
   useEffect(() => {
     // HANDLE (ADD/REMOVE sidecar TAGS) IN SEARCH RESULTS
-    if (!firstRender && props.searchResultsCount > -1) {
+    if (!firstRender && props.lastSearchTimestamp) {
       sortedDirContent.current = GlobalSearch.results;
       forceUpdate();
     }
@@ -518,7 +516,7 @@ function GridPerspective(props: Props) {
     if (someFileSelected) {
       clearSelection();
     } else {
-      if (props.searchResultsCount < 0) {
+      if (!props.lastSearchTimestamp) {
         props.setSelectedEntries(props.directoryContent);
       } else {
         props.setSelectedEntries(GlobalSearch.results);
@@ -826,7 +824,6 @@ function GridPerspective(props: Props) {
           singleClickAction={singleClickAction.current}
           currentLocation={props.currentLocation}
           directoryContent={props.directoryContent}
-          searchResultsCount={props.searchResultsCount}
           supportedFileTypes={props.supportedFileTypes}
           openFsEntry={props.openFsEntry}
           openFileNatively={props.openFileNatively}
@@ -964,7 +961,7 @@ function GridPerspective(props: Props) {
           sortBy={sortBy.current}
           orderBy={orderBy.current}
           handleSortBy={handleSortBy}
-          searchModeEnabled={props.searchResultsCount > -1}
+          searchModeEnabled={props.lastSearchTimestamp !== undefined}
         />
       )}
       {Boolean(optionsContextMenuAnchorEl) && (

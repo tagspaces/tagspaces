@@ -50,7 +50,6 @@ import {
   getSelectedEntries,
   getProgress,
   getEditedEntryPaths,
-  getSearchResultsCount,
   isSearchMode,
   getLastSearchTimestamp
 } from '../reducers/app';
@@ -212,7 +211,6 @@ interface Props {
   editedEntryPaths: Array<TS.EditedEntryPath>;
   goBack: () => void;
   goForward: () => void;
-  searchResultsCount: number;
   lastSearchTimestamp: number;
   isSearchMode: boolean;
   openMoveCopyFilesDialog: () => void;
@@ -306,7 +304,7 @@ function FolderContainer(props: Props) {
   const showWelcomePanel =
     !currentDirectoryPath &&
     directoryContent.length < 1 &&
-    !(props.isSearchMode && props.searchResultsCount >= 0);
+    !(props.isSearchMode && props.lastSearchTimestamp);
 
   const renderPerspective = () => {
     if (showWelcomePanel) {
@@ -316,7 +314,6 @@ function FolderContainer(props: Props) {
       return (
         <ListPerspectiveAsync
           directoryContent={props.directoryContent}
-          searchResultsCount={props.searchResultsCount}
           lastSearchTimestamp={props.lastSearchTimestamp}
           loadDirectoryContent={loadDirectoryContent}
           openFsEntry={openFsEntry}
@@ -338,7 +335,6 @@ function FolderContainer(props: Props) {
       return (
         <GalleryPerspectiveAsync
           directoryContent={props.directoryContent}
-          searchResultsCount={props.searchResultsCount}
           lastSearchTimestamp={props.lastSearchTimestamp}
           openFsEntry={openFsEntry}
           currentDirectoryPath={props.currentDirectoryPath}
@@ -351,7 +347,6 @@ function FolderContainer(props: Props) {
       return (
         <MapiquePerspectiveAsync
           directoryContent={props.directoryContent}
-          searchResultsCount={props.searchResultsCount}
           lastSearchTimestamp={props.lastSearchTimestamp}
           currentDirectoryPath={props.currentDirectoryPath}
           windowWidth={props.windowWidth}
@@ -364,7 +359,6 @@ function FolderContainer(props: Props) {
       return (
         <KanBanPerspectiveAsync
           directoryContent={props.directoryContent}
-          searchResultsCount={props.searchResultsCount}
           lastSearchTimestamp={props.lastSearchTimestamp}
           loadDirectoryContent={props.loadDirectoryContent}
           openFsEntry={props.openFsEntry}
@@ -387,7 +381,6 @@ function FolderContainer(props: Props) {
     return (
       <GridPerspectiveAsync
         directoryContent={props.directoryContent}
-        searchResultsCount={props.searchResultsCount}
         lastSearchTimestamp={props.lastSearchTimestamp}
         loadDirectoryContent={props.loadDirectoryContent}
         openFsEntry={props.openFsEntry}
@@ -680,7 +673,6 @@ function mapStateToProps(state) {
     searchQuery: getSearchQuery(state),
     defaultPerspective: getDefaultPerspective(state),
     editedEntryPaths: getEditedEntryPaths(state),
-    searchResultsCount: getSearchResultsCount(state),
     lastSearchTimestamp: getLastSearchTimestamp(state),
     isSearchMode: isSearchMode(state)
   };
@@ -738,7 +730,6 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   nextProp.language === prevProp.language &&
   nextProp.windowHeight === prevProp.windowHeight &&
   nextProp.searchQuery === prevProp.searchQuery &&
-  nextProp.searchResultsCount === prevProp.searchResultsCount &&
   nextProp.lastSearchTimestamp === prevProp.lastSearchTimestamp &&
   nextProp.isSearchMode === prevProp.isSearchMode;
 
