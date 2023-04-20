@@ -3,7 +3,7 @@ import { closeWelcome, closeWelcomePlaywright } from './e2e/welcome.helpers';
 import { clearStorage } from './e2e/clearstorage.helpers';
 
 // the default timeout before starting every test
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 300000;
+//jasmine.DEFAULT_TIMEOUT_INTERVAL = 300000;
 
 // global.isWin = /^win/.test(process.platform);
 // global.isMac = /^darwin/.test(process.platform);
@@ -23,10 +23,10 @@ global.isUnitTest =
   }
 });*/
 
-jasmine.getEnv().addReporter({
+/*jasmine.getEnv().addReporter({
   specStarted: result => (jasmine.currentTest = result),
   specDone: result => (jasmine.previousTest = result)
-});
+});*/
 
 /*jasmine.getEnv().addReporter({
   specDone: async result => {

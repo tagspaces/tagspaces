@@ -7,7 +7,12 @@ import {
   createPwMinioLocation,
   createPwLocation
 } from './location.helpers';
-import { clickOn, expectElementExist, setInputKeys } from './general.helpers';
+import {
+  clickOn,
+  createNewDirectory,
+  expectElementExist,
+  setInputKeys
+} from './general.helpers';
 import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
 import { createSavedSearch } from './search.helpers';
 import { openContextEntryMenu } from './test-utils';
@@ -293,5 +298,49 @@ describe('TST09 - Quick access', () => {
       false,
       10000
     );
+  });
+
+  test('TST0913 - Add 2 recently opened folders and clear history [web,electron,_pro]', async () => {
+    const folders = ['new_folder', 'new_folder1'];
+    for (let i = 0; i < folders.length; i++) {
+      const testFolder = await createNewDirectory(folders[i]);
+      // Add
+      await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
+      await clickOn('[data-tid=folderContainerOpenDirMenu]');
+      await clickOn('[data-tid=showProperties]');
+      await clickOn('[data-tid=fileContainerCloseOpenedFile]');
+      await clickOn('[data-tid=gridPerspectiveOnBackButton]');
+    }
+
+    await clickOn('[data-tid=quickAccessButton]');
+    await clickOn('[data-tid=folderOpenHistoryTID]');
+    for (let i = 0; i < folders.length; i++) {
+      // Open
+      const testFolder = folders[i];
+      await expectElementExist(
+        '[data-tid=tsLastOpenedFoldersHistoryTID' + testFolder + ']',
+        true,
+        10000
+      );
+      await clickOn(
+        '[data-tid=tsLastOpenedFoldersHistoryTID' + testFolder + ']'
+      );
+      await expectElementExist(
+        '[data-tid=OpenedTID' + testFolder + ']',
+        true,
+        10000
+      );
+    }
+
+    //Delete
+    await clickOn('[data-tid=FolderOpenMenuTID]');
+    await clickOn('[data-tid=clearHistoryTID]');
+    for (let i = 0; i < folders.length; i++) {
+      await expectElementExist(
+        '[data-tid=tsLastOpenedFoldersHistoryTID' + folders[i] + ']',
+        false,
+        10000
+      );
+    }
   });
 });
