@@ -8,7 +8,7 @@ import {
   createPwMinioLocation,
   createPwLocation
 } from './location.helpers';
-import { clickOn, frameLocator } from './general.helpers';
+import { clickOn, frameLocator, isDisplayed } from './general.helpers';
 import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
 import { openContextEntryMenu, toContainTID } from './test-utils';
 
@@ -51,5 +51,37 @@ describe('TST69 - Markdown editor', () => {
         }
       )
       .toBe(true);
+  });
+
+  test('TST6902 - Open settings [web,minio,electron]', async () => {
+    await openContextEntryMenu(
+      '[data-tid="fsEntryName_sample.md"]',
+      'fileMenuOpenFile'
+    );
+
+    // Access the iframe
+    const iframeElement = await global.client.waitForSelector('iframe');
+    const frame = await iframeElement.contentFrame();
+
+    await frame.click('[data-tid=mdEditorMenuTID]');
+    await frame.click('[data-tid=settingsTID]');
+
+    let settingsExists = await isDisplayed(
+      '#settings-dialog-title',
+      true,
+      2000,
+      frame
+    );
+    expect(settingsExists).toBeTruthy();
+
+    await frame.click('[data-tid=settingsOkTID]');
+
+    settingsExists = await isDisplayed(
+      '#settings-dialog-title',
+      false,
+      2000,
+      frame
+    );
+    expect(settingsExists).toBeTruthy();
   });
 });
