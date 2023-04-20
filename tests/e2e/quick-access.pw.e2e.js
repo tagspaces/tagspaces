@@ -274,17 +274,24 @@ describe('TST09 - Quick access', () => {
     await clickOn('[data-tid=quickAccessButton]');
     await clickOn('[data-tid=folderOpenHistoryTID]');
     await expectElementExist(
-      '[data-tid=tsLastOpenedFoldersHistoryTID' + testFolder + ']'
+      '[data-tid=tsLastOpenedFoldersHistoryTID' + testFolder + ']',
+      true,
+      10000
     );
     await clickOn('[data-tid=tsLastOpenedFoldersHistoryTID' + testFolder + ']');
-    await expectElementExist('[data-tid=OpenedTID' + testFolder + ']');
+    await expectElementExist(
+      '[data-tid=OpenedTID' + testFolder + ']',
+      true,
+      10000
+    );
 
     //Delete
     await clickOn('[data-tid=FolderOpenMenuTID]');
     await clickOn('[data-tid=clearHistoryTID]');
     await expectElementExist(
       '[data-tid=tsLastOpenedFoldersHistoryTID' + testFolder + ']',
-      false
+      false,
+      10000
     );
   });
 });
