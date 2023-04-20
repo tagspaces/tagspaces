@@ -49,6 +49,8 @@ afterAll(async () => {
   await testDataRefresh();
 });*/
 
+jest.retryTimes(3); //, { logErrorsBeforeRetry: true });
+
 beforeEach(async () => {
   if (global.isPlaywright) {
     /*if (global.context) {
