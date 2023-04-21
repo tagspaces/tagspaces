@@ -53,8 +53,6 @@ jest.retryTimes(3); //, { logErrorsBeforeRetry: true });
 
 beforeEach(async () => {
   if (global.isPlaywright) {
-    // await closeWelcomePlaywright();
-
     if (global.isWeb) {
       await global.client.evaluate(() => {
         window.history.pushState('', document.title, window.location.pathname);
@@ -62,6 +60,7 @@ beforeEach(async () => {
       });
       await global.client.reload();
     } else {
+      await closeWelcomePlaywright();
       await clearStorage();
     }
 

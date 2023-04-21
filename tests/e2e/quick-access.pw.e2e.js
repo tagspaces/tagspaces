@@ -14,7 +14,7 @@ import {
   setInputKeys
 } from './general.helpers';
 import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
-import { createSavedSearch } from './search.helpers';
+import { createSavedSearch, searchEngine } from "./search.helpers";
 import { openContextEntryMenu } from './test-utils';
 import { dataTidFormat } from '../../app/services/test';
 
@@ -342,5 +342,16 @@ describe('TST09 - Quick access', () => {
         10000
       );
     }
+  });
+
+  test.skip('TST0914 - Add search to search history and search [web,electron]', async () => {
+    await searchEngine('txt');
+    await clickOn('#clearSearchID');
+
+    await expectElementExist(
+      '[data-tid=tsLastOpenedFoldersHistoryTID]',
+      false,
+      10000
+    );
   });
 });
