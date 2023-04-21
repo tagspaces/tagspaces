@@ -330,7 +330,7 @@ export async function frameLocator(selector = 'iframe') {
 export async function isDisplayed(
   selector,
   displayed = true,
-  timeout = 500,
+  timeout = 1500,
   parentSelector = undefined
 ) {
   if (global.isPlaywright) {
