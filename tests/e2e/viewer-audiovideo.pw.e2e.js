@@ -1,13 +1,14 @@
 /*
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
+import { expect as pExpect } from '@playwright/test';
 import {
   defaultLocationPath,
   defaultLocationName,
   createPwMinioLocation,
   createPwLocation
 } from './location.helpers';
-import { clickOn, isDisplayed } from './general.helpers';
+import { clickOn, frameLocator, isDisplayed } from './general.helpers';
 import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
 import { openContextEntryMenu, toContainTID } from './test-utils';
 
@@ -61,6 +62,29 @@ describe('TST59 - Media player', () => {
     );
     // Expect that the element of AboutDialog not exist within the iframe
     expect(aboutNotExists).toBeTruthy();
+  });
+
+  test('TST5904 - Play mp3 [web,minio,electron]', async () => {
+    await openContextEntryMenu(
+      '[data-tid="fsEntryName_sample.mp3"]',
+      'fileMenuOpenFile'
+    );
+
+    await pExpect
+      .poll(
+        async () => {
+          const fLocator = await frameLocator();
+          const progressSeek = await fLocator.locator('[data-plyr=seek]');
+          const ariaValueNow = await progressSeek.getAttribute('aria-valuenow');
+          return parseFloat(ariaValueNow) > 0;
+        },
+        {
+          message: 'progress of file is not greater that 0', // custom error message
+          // Poll for 10 seconds; defaults to 5 seconds. Pass 0 to disable timeout.
+          timeout: 10000
+        }
+      )
+      .toBe(true);
   });
 
   test('TST5905 - Play mp4 [web,minio,electron]', async () => {
