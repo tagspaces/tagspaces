@@ -391,7 +391,7 @@ export async function getGridCellClass(fileIndex = 0) {
   return undefined;
 }
 
-export async function expectAudioPlay(){
+export async function expectAudioPlay() {
   await pExpect
     .poll(
       async () => {

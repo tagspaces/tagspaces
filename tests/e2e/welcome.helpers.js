@@ -19,7 +19,7 @@ export async function closeWelcomePlaywright() {
     const el = await global.client.waitForSelector(
       '[data-tid=closeOnboardingDialog]',
       {
-        timeout: 5000,
+        timeout: 3000,
         state: 'visible'
       }
     );

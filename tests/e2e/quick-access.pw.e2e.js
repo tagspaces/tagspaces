@@ -14,7 +14,7 @@ import {
   setInputKeys
 } from './general.helpers';
 import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
-import { createSavedSearch, searchEngine } from "./search.helpers";
+import { createSavedSearch, searchEngine } from './search.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { dataTidFormat } from '../../app/services/test';
 
