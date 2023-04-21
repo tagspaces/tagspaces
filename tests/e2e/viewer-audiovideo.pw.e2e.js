@@ -62,4 +62,20 @@ describe('TST59 - Media player', () => {
     // Expect that the element of AboutDialog not exist within the iframe
     expect(aboutNotExists).toBeTruthy();
   });
+
+  test('TST5905 - Play mp4 [web,minio,electron]', async () => {
+    await openContextEntryMenu(
+      '[data-tid="fsEntryName_sample.mp4"]',
+      'fileMenuOpenFile'
+    );
+
+    // Access the iframe
+    const iframeElement = await global.client.waitForSelector('iframe');
+    const frame = await iframeElement.contentFrame();
+
+    // Click on the desired element within the iframe
+    await frame.click('#container');
+    const playExists = await isDisplayed('[data-plyr=play]', true, 2000, frame);
+    expect(playExists).toBeTruthy();
+  });
 });
