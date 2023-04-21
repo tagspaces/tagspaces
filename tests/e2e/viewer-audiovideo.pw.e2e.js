@@ -1,14 +1,18 @@
 /*
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
-import { expect as pExpect } from '@playwright/test';
 import {
   defaultLocationPath,
   defaultLocationName,
   createPwMinioLocation,
   createPwLocation
 } from './location.helpers';
-import { clickOn, frameLocator, isDisplayed } from './general.helpers';
+import {
+  clickOn,
+  expectAudioPlay,
+  frameLocator,
+  isDisplayed
+} from './general.helpers';
 import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
 import { openContextEntryMenu, toContainTID } from './test-utils';
 
@@ -30,6 +34,22 @@ describe('TST59 - Media player', () => {
     await clickOn('[data-tid=location_' + defaultLocationName + ']');
     // If its have opened file
     // await closeFileProperties();
+  });
+
+  test('TST5901 - Play ogg file [web,minio,electron]', async () => {
+    await openContextEntryMenu(
+      '[data-tid="fsEntryName_sample.ogg"]',
+      'fileMenuOpenFile'
+    );
+    await expectAudioPlay();
+  });
+
+  test('TST5902 - Play ogv file [web,minio,electron]', async () => {
+    await openContextEntryMenu(
+      '[data-tid="fsEntryName_sample.ogv"]',
+      'fileMenuOpenFile'
+    );
+    await expectAudioPlay();
   });
 
   test('TST5903 - Open and close about dialog [web,minio,electron]', async () => {
@@ -69,22 +89,7 @@ describe('TST59 - Media player', () => {
       '[data-tid="fsEntryName_sample.mp3"]',
       'fileMenuOpenFile'
     );
-
-    await pExpect
-      .poll(
-        async () => {
-          const fLocator = await frameLocator();
-          const progressSeek = await fLocator.locator('[data-plyr=seek]');
-          const ariaValueNow = await progressSeek.getAttribute('aria-valuenow');
-          return parseFloat(ariaValueNow) > 0;
-        },
-        {
-          message: 'progress of file is not greater that 0', // custom error message
-          // Poll for 10 seconds; defaults to 5 seconds. Pass 0 to disable timeout.
-          timeout: 10000
-        }
-      )
-      .toBe(true);
+    await expectAudioPlay();
   });
 
   test('TST5905 - Play mp4 [web,minio,electron]', async () => {
@@ -92,6 +97,8 @@ describe('TST59 - Media player', () => {
       '[data-tid="fsEntryName_sample.mp4"]',
       'fileMenuOpenFile'
     );
+
+    await expectAudioPlay();
 
     // Access the iframe
     const iframeElement = await global.client.waitForSelector('iframe');
@@ -101,5 +108,13 @@ describe('TST59 - Media player', () => {
     await frame.click('#container');
     const playExists = await isDisplayed('[data-plyr=play]', true, 2000, frame);
     expect(playExists).toBeTruthy();
+  });
+
+  test('TST5906 - Play flac [web,minio,electron]', async () => {
+    await openContextEntryMenu(
+      '[data-tid="fsEntryName_sample.flac"]',
+      'fileMenuOpenFile'
+    );
+    await expectAudioPlay();
   });
 });
