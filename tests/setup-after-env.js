@@ -53,17 +53,7 @@ jest.retryTimes(3); //, { logErrorsBeforeRetry: true });
 
 beforeEach(async () => {
   if (global.isPlaywright) {
-    /*if (global.context) {
-      if (jasmine.currentTest && jasmine.currentTest.status !== 'disabled') {
-        // Start tracing before creating / navigating a page.
-        await global.context.tracing.start({
-          screenshots: true,
-          snapshots: true
-        });
-      }
-    }*/
-
-    await closeWelcomePlaywright();
+    // await closeWelcomePlaywright();
 
     if (global.isWeb) {
       await global.client.evaluate(() => {
