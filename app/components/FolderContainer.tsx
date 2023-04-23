@@ -43,7 +43,6 @@ import {
 import {
   actions as AppActions,
   getDirectoryContent,
-  getSearchResultCount,
   isReadOnlyMode,
   getCurrentLocationPath,
   getCurrentDirectoryPerspective,
@@ -51,8 +50,8 @@ import {
   getSelectedEntries,
   getProgress,
   getEditedEntryPaths,
-  getSearchResultsCount,
-  isSearchMode
+  isSearchMode,
+  getLastSearchTimestamp
 } from '../reducers/app';
 import TaggingActions from '../reducers/tagging-actions';
 import LoadingLazy from '../components/LoadingLazy';
@@ -168,7 +167,7 @@ interface Props {
   windowWidth: number;
   directoryContent: Array<TS.FileSystemEntry>;
   currentDirectoryPath: string | null;
-  searchResultCount: number;
+  //searchResultCount: number;
   addTags: () => void;
   removeTags: () => void;
   removeAllTags: () => void;
@@ -212,7 +211,7 @@ interface Props {
   editedEntryPaths: Array<TS.EditedEntryPath>;
   goBack: () => void;
   goForward: () => void;
-  searchResultsCount: number;
+  lastSearchTimestamp: number;
   isSearchMode: boolean;
   openMoveCopyFilesDialog: () => void;
 }
@@ -305,7 +304,7 @@ function FolderContainer(props: Props) {
   const showWelcomePanel =
     !currentDirectoryPath &&
     directoryContent.length < 1 &&
-    !(props.isSearchMode && props.searchResultsCount >= 0);
+    !(props.isSearchMode && props.lastSearchTimestamp);
 
   const renderPerspective = () => {
     if (showWelcomePanel) {
@@ -315,7 +314,7 @@ function FolderContainer(props: Props) {
       return (
         <ListPerspectiveAsync
           directoryContent={props.directoryContent}
-          searchResultsCount={props.searchResultsCount}
+          lastSearchTimestamp={props.lastSearchTimestamp}
           loadDirectoryContent={loadDirectoryContent}
           openFsEntry={openFsEntry}
           openRenameEntryDialog={() => setIsRenameEntryDialogOpened(true)}
@@ -336,7 +335,7 @@ function FolderContainer(props: Props) {
       return (
         <GalleryPerspectiveAsync
           directoryContent={props.directoryContent}
-          searchResultsCount={props.searchResultsCount}
+          lastSearchTimestamp={props.lastSearchTimestamp}
           openFsEntry={openFsEntry}
           currentDirectoryPath={props.currentDirectoryPath}
           windowWidth={props.windowWidth}
@@ -348,7 +347,7 @@ function FolderContainer(props: Props) {
       return (
         <MapiquePerspectiveAsync
           directoryContent={props.directoryContent}
-          searchResultsCount={props.searchResultsCount}
+          lastSearchTimestamp={props.lastSearchTimestamp}
           currentDirectoryPath={props.currentDirectoryPath}
           windowWidth={props.windowWidth}
           switchPerspective={switchPerspective}
@@ -360,7 +359,7 @@ function FolderContainer(props: Props) {
       return (
         <KanBanPerspectiveAsync
           directoryContent={props.directoryContent}
-          searchResultsCount={props.searchResultsCount}
+          lastSearchTimestamp={props.lastSearchTimestamp}
           loadDirectoryContent={props.loadDirectoryContent}
           openFsEntry={props.openFsEntry}
           openRenameEntryDialog={() => setIsRenameEntryDialogOpened(true)}
@@ -382,7 +381,7 @@ function FolderContainer(props: Props) {
     return (
       <GridPerspectiveAsync
         directoryContent={props.directoryContent}
-        searchResultsCount={props.searchResultsCount}
+        lastSearchTimestamp={props.lastSearchTimestamp}
         loadDirectoryContent={props.loadDirectoryContent}
         openFsEntry={props.openFsEntry}
         openRenameEntryDialog={() => setIsRenameEntryDialogOpened(true)}
@@ -664,7 +663,7 @@ function mapStateToProps(state) {
     selectedEntries: getSelectedEntries(state),
     directoryContent: getDirectoryContent(state),
     currentDirectoryPerspective: getCurrentDirectoryPerspective(state),
-    searchResultCount: getSearchResultCount(state),
+    //searchResultCount: getSearchResultCount(state),
     currentLocationPath: getCurrentLocationPath(state),
     maxSearchResults: getMaxSearchResults(state),
     isDesktopMode: getDesktopMode(state),
@@ -674,7 +673,7 @@ function mapStateToProps(state) {
     searchQuery: getSearchQuery(state),
     defaultPerspective: getDefaultPerspective(state),
     editedEntryPaths: getEditedEntryPaths(state),
-    searchResultsCount: getSearchResultsCount(state),
+    lastSearchTimestamp: getLastSearchTimestamp(state),
     isSearchMode: isSearchMode(state)
   };
 }
@@ -731,7 +730,7 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   nextProp.language === prevProp.language &&
   nextProp.windowHeight === prevProp.windowHeight &&
   nextProp.searchQuery === prevProp.searchQuery &&
-  nextProp.searchResultsCount === prevProp.searchResultsCount &&
+  nextProp.lastSearchTimestamp === prevProp.lastSearchTimestamp &&
   nextProp.isSearchMode === prevProp.isSearchMode;
 
 export default connect(

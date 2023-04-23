@@ -38,14 +38,13 @@ import {
   actions as AppActions,
   getCurrentDirectoryColor,
   getIsMetaLoaded,
-  getSearchResultCount,
   getCurrentDirectoryTags,
   isLoading,
   getCurrentDirectoryDescription,
   getLastBackgroundImageChange,
   getLastThumbnailImageChange,
-  getLastSelectedEntryPath
-} from '-/reducers/app';
+  getLastSelectedEntryPath, getLastSearchTimestamp
+} from "-/reducers/app";
 import EntryIcon from '-/components/EntryIcon';
 import TagsPreview from '-/components/TagsPreview';
 import TagContainer from '-/components/TagContainer';
@@ -96,7 +95,6 @@ interface Props {
   gridPageLimit: number;
   currentLocationPath: string;
   currentDirectoryPath: string;
-  searchResultCount: number;
   onContextMenu: (event: React.MouseEvent<HTMLDivElement>) => void;
   openRenameEntryDialog: () => void;
   onClick: (event: React.MouseEvent<HTMLDivElement>) => void;
@@ -130,7 +128,7 @@ interface Props {
   ) => void;
   moveFiles: (files: Array<string>, destination: string) => Promise<boolean>;
   clearSelection: () => void;
-  searchResultsCount: number;
+  lastSearchTimestamp: number;
 }
 
 function GridPagination(props: Props) {
@@ -231,7 +229,7 @@ function GridPagination(props: Props) {
   }, [
     props.currentLocationPath,
     props.currentDirectoryPath,
-    props.searchResultCount
+    props.lastSearchTimestamp
   ]);
 
   const setThumbs = (
@@ -692,7 +690,8 @@ function mapStateToProps(state) {
   return {
     isAppLoading: isLoading(state),
     currentDirectoryColor: getCurrentDirectoryColor(state),
-    searchResultCount: getSearchResultCount(state),
+    lastSearchTimestamp: getLastSearchTimestamp(state),
+    // searchResultCount: getSearchResultCount(state),
     // pageEntries: getPageEntries(state),
     currentDirectoryTags: getCurrentDirectoryTags(state),
     isMetaLoaded: getIsMetaLoaded(state),
@@ -729,7 +728,7 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   nextProp.thumbnailMode === prevProp.thumbnailMode &&
   nextProp.entrySize === prevProp.entrySize &&
   nextProp.gridPageLimit === prevProp.gridPageLimit &&
-  nextProp.searchResultsCount === prevProp.searchResultsCount &&
+  nextProp.lastSearchTimestamp === prevProp.lastSearchTimestamp &&
   nextProp.currentDirectoryDescription ===
     prevProp.currentDirectoryDescription &&
   JSON.stringify(nextProp.files) === JSON.stringify(prevProp.files) &&
