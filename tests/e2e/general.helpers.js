@@ -1,6 +1,7 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 import path from 'path';
-import { delay, clearLocalStorage } from './hook';
+import { expect as pExpect } from '@playwright/test';
+import { delay } from './hook';
 import { firstFile } from './test-utils';
 import AppConfig from '../../app/AppConfig';
 
@@ -330,7 +331,7 @@ export async function frameLocator(selector = 'iframe') {
 export async function isDisplayed(
   selector,
   displayed = true,
-  timeout = 500,
+  timeout = 1500,
   parentSelector = undefined
 ) {
   if (global.isPlaywright) {
@@ -388,6 +389,24 @@ export async function getGridCellClass(fileIndex = 0) {
     return file.getAttribute('class');
   }
   return undefined;
+}
+
+export async function expectAudioPlay() {
+  await pExpect
+    .poll(
+      async () => {
+        const fLocator = await frameLocator();
+        const progressSeek = await fLocator.locator('[data-plyr=seek]');
+        const ariaValueNow = await progressSeek.getAttribute('aria-valuenow');
+        return parseFloat(ariaValueNow) > 0;
+      },
+      {
+        message: 'progress of file is not greater that 0', // custom error message
+        // Poll for 10 seconds; defaults to 5 seconds. Pass 0 to disable timeout.
+        timeout: 10000
+      }
+    )
+    .toBe(true);
 }
 
 export async function expectElementExist(

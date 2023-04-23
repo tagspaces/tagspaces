@@ -17,42 +17,48 @@ export const emptyFolderName = 'empty_folder';
 export const firstTagButton = '/tbody/tr[1]/td[3]/button[1]';
 
 /**
- *
  * @param filename
  * @param options = {
  *     tagName: true
  *     resetSearchButton: true
  *     reindexing: true
  * }
+ * @param executeSearch
  * @returns {Promise<void>}
  */
-export async function searchEngine(filename, options = {}) {
+export async function searchEngine(
+  filename,
+  options = {},
+  executeSearch = true
+) {
   if (!(await isDisplayed('#textQuery'))) {
     await clickOn('[data-tid=toggleSearch]');
   }
   await typeInputValue('#textQuery', filename);
-  if (!(await isDisplayed('[data-tid=searchAdvancedTID]'))) {
-    await clickOn('[data-tid=advancedSearch]');
-  }
-  if (options.tagName) {
-    await setInputValue('[data-tid=searchTagsAndTID] input', filename);
-  }
+  if (executeSearch) {
+    if (!(await isDisplayed('[data-tid=searchAdvancedTID]'))) {
+      await clickOn('[data-tid=advancedSearch]');
+    }
+    if (options.tagName) {
+      await setInputValue('[data-tid=searchTagsAndTID] input', filename);
+    }
 
-  if (options.reindexing) {
-    await clickOn('[data-tid=forceIndexingTID]');
-  }
-  if (options.searchType) {
-    await clickOn('[data-tid=' + options.searchType + ']');
-  } else {
-    await clickOn('[data-tid=strictSearchTID]');
-  }
+    if (options.reindexing) {
+      await clickOn('[data-tid=forceIndexingTID]');
+    }
+    if (options.searchType) {
+      await clickOn('[data-tid=' + options.searchType + ']');
+    } else {
+      await clickOn('[data-tid=strictSearchTID]');
+    }
 
-  if (options.resetSearchButton) {
-    await clickOn('#resetSearchButton');
-  } else {
-    await clickOn('#searchButtonAdvTID');
+    if (options.resetSearchButton) {
+      await clickOn('#resetSearchButton');
+    } else {
+      await clickOn('#searchButtonAdvTID');
+    }
+    await waitForNotification('TIDSearching');
   }
-  await waitForNotification('TIDSearching');
 }
 
 /**
