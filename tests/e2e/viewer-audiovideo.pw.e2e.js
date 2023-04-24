@@ -92,9 +92,12 @@ describe('TST59 - Media player', () => {
     await expectAudioPlay();
   });
 
-  test('TST5905 - Play mp4 [web,minio,electron]', async () => {
+  /**
+   * for mp4 codecs missing web on Chromium browser
+   */
+  test('TST5905 - Play webm [web,minio,electron]', async () => {
     await openContextEntryMenu(
-      '[data-tid="fsEntryName_sample.mp4"]',
+      '[data-tid="fsEntryName_sample.webm"]',
       'fileMenuOpenFile'
     );
 
