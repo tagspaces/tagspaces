@@ -322,10 +322,12 @@ export default class PlatformFacade {
   ): Promise<any> => {
     PlatformFacade.ignoreByWatcher(filePath, newFilePath);
 
-    return platformRenameFilePromise(filePath, newFilePath, onProgress).then(result => {
-      PlatformFacade.deignoreByWatcher(filePath, newFilePath);
-      return result;
-    });
+    return platformRenameFilePromise(filePath, newFilePath, onProgress).then(
+      result => {
+        PlatformFacade.deignoreByWatcher(filePath, newFilePath);
+        return result;
+      }
+    );
   };
 
   static renameDirectoryPromise = (

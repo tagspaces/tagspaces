@@ -666,11 +666,18 @@ export function deleteFilesPromise(filePathList: Array<string>) {
   return Promise.all(fileDeletionPromises);
 }
 
-export function renameFilesPromise(renameJobs: Array<Array<string>>, onProgress = undefined) {
+export function renameFilesPromise(
+  renameJobs: Array<Array<string>>,
+  onProgress = undefined
+) {
   return Promise.all(
     renameJobs.map(async renameJob => {
       try {
-        return await PlatformIO.renameFilePromise(renameJob[0], renameJob[1], onProgress);
+        return await PlatformIO.renameFilePromise(
+          renameJob[0],
+          renameJob[1],
+          onProgress
+        );
       } catch (err) {
         console.warn('Error rename file:', err);
         return false;

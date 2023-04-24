@@ -102,9 +102,11 @@ const actions = {
     });
     return Promise.all(promises).then(() => true);
   },
-  moveFiles: (paths: Array<string>, targetPath: string, onProgress = undefined) => (
-    dispatch: (actions: Object) => Promise<boolean>
-  ) => {
+  moveFiles: (
+    paths: Array<string>,
+    targetPath: string,
+    onProgress = undefined
+  ) => (dispatch: (actions: Object) => Promise<boolean>) => {
     const moveJobs = paths.map(path => [
       path,
       normalizePath(targetPath) +

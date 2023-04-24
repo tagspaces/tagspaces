@@ -43,8 +43,9 @@ import {
   getCurrentDirectoryDescription,
   getLastBackgroundImageChange,
   getLastThumbnailImageChange,
-  getLastSelectedEntryPath, getLastSearchTimestamp
-} from "-/reducers/app";
+  getLastSelectedEntryPath,
+  getLastSearchTimestamp
+} from '-/reducers/app';
 import EntryIcon from '-/components/EntryIcon';
 import TagsPreview from '-/components/TagsPreview';
 import TagContainer from '-/components/TagContainer';
