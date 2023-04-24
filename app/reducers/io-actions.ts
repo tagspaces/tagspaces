@@ -102,7 +102,7 @@ const actions = {
     });
     return Promise.all(promises).then(() => true);
   },
-  moveFiles: (paths: Array<string>, targetPath: string) => (
+  moveFiles: (paths: Array<string>, targetPath: string, onProgress = undefined) => (
     dispatch: (actions: Object) => Promise<boolean>
   ) => {
     const moveJobs = paths.map(path => [
@@ -111,7 +111,7 @@ const actions = {
         PlatformIO.getDirSeparator() +
         extractFileName(path, PlatformIO.getDirSeparator())
     ]);
-    return renameFilesPromise(moveJobs)
+    return renameFilesPromise(moveJobs, onProgress)
       .then(() => {
         dispatch(
           AppActions.showNotification(i18n.t('core:filesMovedSuccessful'))
