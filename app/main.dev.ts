@@ -28,6 +28,7 @@ import windowStateKeeper from 'electron-window-state';
 import path from 'path';
 import fs from 'fs-extra';
 import pm2 from '@elife/pm2';
+import fp from 'find-free-port';
 import propertiesReader from 'properties-reader';
 import i18n from '-/services/i18n'; // '-/i18nBackend';
 import buildTrayIconMenu from '-/electron-tray-menu';
@@ -420,29 +421,35 @@ async function startWS() {
     const properties = propertiesReader(envPath);
 
     const results = await new Promise((resolve, reject) => {
-      pm2.start(
-        {
-          name: 'Tagspaces WS',
-          script, // Script to be run
-          cwd: filepath, // './node_modules/tagspaces-ws', // './process1', cwd: '/path/to/npm/module/',
-          args: ['-p', Settings.wsPort, '-k', properties.get('KEY')],
-          restartAt: []
-          // log: path.join(process.cwd(), 'thumbGen.log')
-        },
-        (err, pid) => {
-          if (err && pid) {
-            if (pid && pid.name) console.error(pid.name, err, pid);
-            else console.error(err, pid);
-            reject(err);
-          } else if (err) {
-            reject(err);
-          } else {
-            resolve(
-              `Starting ${pid.name} on ${pid.cwd} - pid (${pid.child.pid})`
-            );
-          }
+      fp(Settings.wsPort, '127.0.0.1', function(err, freePort) {
+        if (err) {
+          reject(err);
+        } else {
+          pm2.start(
+            {
+              name: 'Tagspaces WS',
+              script, // Script to be run
+              cwd: filepath, // './node_modules/tagspaces-ws', // './process1', cwd: '/path/to/npm/module/',
+              args: ['-p', freePort, '-k', properties.get('KEY')],
+              restartAt: []
+              // log: path.join(process.cwd(), 'thumbGen.log')
+            },
+            (err, pid) => {
+              if (err && pid) {
+                if (pid && pid.name) console.error(pid.name, err, pid);
+                else console.error(err, pid);
+                reject(err);
+              } else if (err) {
+                reject(err);
+              } else {
+                resolve(
+                  `Starting ${pid.name} on ${pid.cwd} - pid (${pid.child.pid})`
+                );
+              }
+            }
+          );
         }
-      );
+      });
     });
     console.debug(results);
   } catch (ex) {
