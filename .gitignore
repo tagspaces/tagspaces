@@ -94,6 +94,7 @@ coverage/
 tests/*
 !tests/unit/
 !tests/e2e/
+!tests/e2e-old/
 !tests/minioEnv.js
 !tests/webEnv.js
 !tests/global-setup.js
