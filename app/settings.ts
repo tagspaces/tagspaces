@@ -15,8 +15,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-const Settings = {
-  wsPort: 49352 // 14385
-};
+class SettingsSingleton {
+  private usedWsPort?: number;
 
-export default Settings;
+  getInitWsPort(): number {
+    return 49352;
+  }
+
+  getUsedWsPort(): number | undefined {
+    return this.usedWsPort;
+  }
+
+  setUsedWsPort(port: number): void {
+    this.usedWsPort = port;
+  }
+}
+
+const settings = new SettingsSingleton();
+export default settings;
