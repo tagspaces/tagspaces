@@ -33,7 +33,7 @@ import propertiesReader from 'properties-reader';
 import i18n from '-/services/i18n'; // '-/i18nBackend';
 import buildTrayIconMenu from '-/electron-tray-menu';
 import buildDesktopMenu from '-/services/electron-menus';
-import Settings from '-/settings';
+import settings from '-/settings';
 import { getExtensions } from '-/utils/extension-utils';
 
 // delete process.env.ELECTRON_ENABLE_SECURITY_WARNINGS;
@@ -41,6 +41,7 @@ import { getExtensions } from '-/utils/extension-utils';
 
 const isMac = process.platform === 'darwin';
 let mainWindow = null;
+let usedWsPort = undefined;
 // (global as any).splashWorkerWindow = null;
 
 const testMode = process.env.NODE_ENV === 'test';
@@ -421,7 +422,7 @@ async function startWS() {
     const properties = propertiesReader(envPath);
 
     const results = await new Promise((resolve, reject) => {
-      fp(Settings.wsPort, '127.0.0.1', function(err, freePort) {
+      fp(settings.getInitWsPort(), '127.0.0.1', function(err, freePort) {
         if (err) {
           reject(err);
         } else {
@@ -442,6 +443,12 @@ async function startWS() {
               } else if (err) {
                 reject(err);
               } else {
+                usedWsPort = freePort;
+                if (mainWindow) {
+                  mainWindow.webContents.send('start_ws', {
+                    port: freePort
+                  });
+                }
                 resolve(
                   `Starting ${pid.name} on ${pid.cwd} - pid (${pid.child.pid})`
                 );
@@ -499,6 +506,10 @@ async function createAppWindow() {
   mainWindow.setMenuBarVisibility(false);
   mainWindow.setAutoHideMenuBar(true);
   mainWindowState.manage(mainWindow);
+
+  mainWindow.webContents.send('start_ws', {
+    port: usedWsPort
+  });
 
   mainWindow.webContents.on('did-finish-load', () => {
     if (!mainWindow) {
