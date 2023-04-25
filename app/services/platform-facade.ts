@@ -81,6 +81,7 @@ import {
 import AppConfig from '-/AppConfig';
 import { Pro } from '../pro';
 import { TS } from '-/tagspaces.namespace';
+import settings from '-/settings';
 
 let token: string;
 
@@ -161,7 +162,7 @@ export default class PlatformFacade {
     try {
       // eslint-disable-next-line global-require
       const config = require('-/config/config.json');
-      if (platformIsWorkerAvailable()) {
+      if (platformIsWorkerAvailable(settings.getUsedWsPort())) {
         token = config.jwt;
       }
     } catch (e) {
@@ -197,7 +198,8 @@ export default class PlatformFacade {
       token,
       directoryPath,
       extractText,
-      ignorePatterns
+      ignorePatterns,
+      settings.getUsedWsPort()
     );
   };
 
@@ -207,7 +209,11 @@ export default class PlatformFacade {
     if (!PlatformFacade.isWorkerAvailable()) {
       return Promise.reject(new Error('no Worker Available!'));
     }
-    return platformCreateThumbnailsInWorker(token, tmbGenerationList);
+    return platformCreateThumbnailsInWorker(
+      token,
+      tmbGenerationList,
+      settings.getUsedWsPort()
+    );
   };
 
   /**

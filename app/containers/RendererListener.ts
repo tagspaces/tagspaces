@@ -17,6 +17,7 @@
  */
 
 import AppConfig from '-/AppConfig';
+import settings from '-/settings';
 
 export default function listen(props) {
   let ipcRenderer;
@@ -136,6 +137,12 @@ export default function listen(props) {
       props.addSupportedFileTypes(supportedFileTypes);
       //console.debug('extensions', extensions);
       //console.debug('supportedFileTypes', supportedFileTypes);
+    });
+
+    ipcRenderer.on('start_ws', (event, arg) => {
+      const { port } = arg;
+      console.debug('RendererListener start_ws port:' + port);
+      settings.setUsedWsPort(port);
     });
   }
   return ipcRenderer;
