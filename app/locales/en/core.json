@@ -775,5 +775,6 @@
   "files": "Files",
   "platformImplMissing": "Feature not supported on this platform",
   "errorCORS": "The URL can not be access, CORS error",
+  "currentFolder": "Current folder",
   "-": "-"
 }
