@@ -715,7 +715,10 @@ function MainPage(props: Props) {
       {props.isLicenseDialogOpened && (
         <LicenseDialogAsync
           open={props.isLicenseDialogOpened}
-          onClose={() => {
+          onClose={(event, reason) => {
+            if (reason === 'backdropClick' || reason === 'escapeKeyDown') {
+              return true;
+            }
             setFirstRun(false);
             toggleLicenseDialog();
           }}

@@ -18,7 +18,6 @@
 import React from 'react';
 import KanbanPerspectiveIcon from '@mui/icons-material/ViewKanban';
 import MapiquePerspectiveIcon from '@mui/icons-material/Map';
-import WikiPerspectiveIcon from '@mui/icons-material/FormatAlignLeft';
 import GalleryPerspectiveIcon from '@mui/icons-material/Camera';
 import ListPerspectiveIcon from '@mui/icons-material/ViewList';
 import GridPerspectiveIcon from '@mui/icons-material/ViewModule';
@@ -69,6 +68,8 @@ export const KanbanPerspectiveMeta = {
   icon: <KanbanPerspectiveIcon />,
   title: 'Kanban Perspective'
 };
+
+export { KanbanPerspectiveIcon };
 
 export const GalleryPerspectiveMeta = {
   id: PerspectiveIDs.GALLERY,
