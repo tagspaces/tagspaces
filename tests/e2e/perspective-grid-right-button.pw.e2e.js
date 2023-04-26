@@ -2,7 +2,7 @@
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
 
-import { expect as pExpect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import {
   defaultLocationPath,
   defaultLocationName,
@@ -21,10 +21,7 @@ import {
   expectTagsExist,
   expectTagsExistBySelector,
   generateFileName,
-  getGridFileName,
   getGridFileSelector,
-  isDisplayed,
-  isElementDisplayed,
   reloadDirectory,
   removeTagFromTagMenu,
   selectorFile,
@@ -34,41 +31,42 @@ import {
   setGridOptions,
   showFilesWithTag,
   waitForNotification,
-  frameLocator,
-  takeScreenshot
+  frameLocator
 } from './general.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
-import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
-// import { defaultSettings as listDefaultSettings } from '../../app/perspectives/list/index';
-// import { defaultSettings as gridDefaultSettings } from '../../app/perspectives/grid-perspective/index';
-// import {
-//   GridPerspectiveMeta,
-//   ListPerspectiveMeta
-// } from '../../app/perspectives/index';
+import { startTestingApp, stopApp, testDataRefresh } from './hook';
+import { init } from "./welcome.helpers";
 
 const testTagName = 'testTag'; // TODO fix camelCase tag name
 
+test.beforeAll(async () => {
+  await startTestingApp('extconfig-with-welcome.js');
+  await init();
+});
+
+test.afterAll(async () => {
+  await stopApp();
+  await testDataRefresh();
+});
+
+test.afterEach(async () => {
+  await init();
+});
+
+
+test.beforeEach(async () => {
+  if (global.isMinio) {
+    await createPwMinioLocation('', defaultLocationName, true);
+  } else {
+    await createPwLocation(defaultLocationPath, defaultLocationName, true);
+  }
+  await clickOn('[data-tid=location_' + defaultLocationName + ']');
+  // If its have opened file
+  // await closeFileProperties();
+});
 // Test the functionality of the right button on a file on a grid perspective table
 // Scenarios for right button on a file
-describe('TST50** - Right button on a file', () => {
-  beforeAll(async () => {
-    await startTestingApp('extconfig-with-welcome.js');
-  });
-
-  afterAll(async () => {
-    await stopSpectronApp();
-    await testDataRefresh();
-  });
-  beforeEach(async () => {
-    if (global.isMinio) {
-      await createPwMinioLocation('', defaultLocationName, true);
-    } else {
-      await createPwLocation(defaultLocationPath, defaultLocationName, true);
-    }
-    await clickOn('[data-tid=location_' + defaultLocationName + ']');
-    // If its have opened file
-    // await closeFileProperties();
-  });
+test.describe('TST50** - Right button on a file', () => {
 
   test('TST5016 - Open file [web,minio,electron]', async () => {
     // await searchEngine('txt');
@@ -77,7 +75,7 @@ describe('TST50** - Right button on a file', () => {
       'fileMenuOpenFile'
     );
     // await takeScreenshot('fileMenuOpenFile');
-    await pExpect
+    await expect
       .poll(
         async () => {
           const fLocator = await frameLocator();
@@ -376,7 +374,7 @@ describe('TST50** - Right button on a file', () => {
     await expectElementExist(selectorFile, false);
   });
 
-  it.skip('TST5029 - Add file from file manager with dnd [manual]', async () => {});
+  test.skip('TST5029 - Add file from file manager with dnd [manual]', async () => {});
 
   test('TST5033 - Open directory (directory menu) [web,minio,electron]', async () => {
     // open empty_folder

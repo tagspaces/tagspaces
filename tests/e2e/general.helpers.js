@@ -1,6 +1,6 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 import path from 'path';
-import { expect as pExpect } from '@playwright/test';
+import { expect } from '@playwright/test';
 import { delay } from './hook';
 import { firstFile } from './test-utils';
 import AppConfig from '../../app/AppConfig';
@@ -28,7 +28,7 @@ export async function clickOn(selector, options = { timeout: 15000 }) {
     await global.client.click(selector, options);
   } catch (e) {
     console.log('clickOn ' + selector + ' error: ', e);
-    await global.client.click(selector, { ...options, force: true });
+    // await global.client.click(selector, { ...options, force: true });
   }
 }
 
@@ -347,12 +347,19 @@ export async function getGridCellClass(fileIndex = 0) {
 }
 
 export async function expectAudioPlay() {
-  await pExpect
+  await expect
     .poll(
       async () => {
         const fLocator = await frameLocator();
         const progressSeek = await fLocator.locator('[data-plyr=seek]');
         const ariaValueNow = await progressSeek.getAttribute('aria-valuenow');
+        if (ariaValueNow === 0) {
+          const playButton = await fLocator.locator('[data-plyr=play]');
+          const ariaLabel = await playButton.getAttribute('aria-label');
+          if (ariaLabel === 'Play') {
+            await playButton.click();
+          }
+        }
         return parseFloat(ariaValueNow) > 0;
       },
       {

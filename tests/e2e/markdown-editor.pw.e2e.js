@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
-import { expect as pExpect } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import {
   defaultLocationPath,
   defaultLocationName,
@@ -9,35 +9,43 @@ import {
   createPwLocation
 } from './location.helpers';
 import { clickOn, frameLocator, isDisplayed } from './general.helpers';
-import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
+import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { openContextEntryMenu, toContainTID } from './test-utils';
+import { init } from "./welcome.helpers";
 
-describe('TST69 - Markdown editor', () => {
-  beforeAll(async () => {
-    await startTestingApp();
-  });
+test.beforeAll(async () => {
+  await startTestingApp();
+  await init();
+});
 
-  afterAll(async () => {
-    await stopSpectronApp();
-    await testDataRefresh();
-  });
-  beforeEach(async () => {
-    if (global.isMinio) {
-      await createPwMinioLocation('', defaultLocationName, true);
-    } else {
-      await createPwLocation(defaultLocationPath, defaultLocationName, true);
-    }
-    await clickOn('[data-tid=location_' + defaultLocationName + ']');
-    // If its have opened file
-    // await closeFileProperties();
-  });
+test.afterAll(async () => {
+  await stopApp();
+  await testDataRefresh();
+});
+
+test.afterEach(async () => {
+  await init();
+});
+
+test.beforeEach(async () => {
+  if (global.isMinio) {
+    await createPwMinioLocation('', defaultLocationName, true);
+  } else {
+    await createPwLocation(defaultLocationPath, defaultLocationName, true);
+  }
+  await clickOn('[data-tid=location_' + defaultLocationName + ']');
+  // If its have opened file
+  // await closeFileProperties();
+});
+
+test.describe('TST69 - Markdown editor', () => {
 
   test('TST6901 - Open and render md file [web,minio,electron]', async () => {
     await openContextEntryMenu(
       '[data-tid="fsEntryName_sample.md"]',
       'fileMenuOpenFile'
     );
-    await pExpect
+    await expect
       .poll(
         async () => {
           const fLocator = await frameLocator();

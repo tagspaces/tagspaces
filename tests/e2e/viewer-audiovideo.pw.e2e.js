@@ -9,14 +9,9 @@ import {
   createPwMinioLocation,
   createPwLocation
 } from './location.helpers';
-import {
-  clickOn,
-  expectAudioPlay,
-  frameLocator,
-  isDisplayed
-} from './general.helpers';
+import { clickOn, expectAudioPlay, isDisplayed } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
-import { openContextEntryMenu, toContainTID } from './test-utils';
+import { openContextEntryMenu } from './test-utils';
 import { init } from './welcome.helpers';
 
 test.beforeAll(async () => {

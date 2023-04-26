@@ -162,7 +162,8 @@ export async function startTestingApp(extconfig) {
 
 export async function stopApp() {
   if (global.isWeb) {
-    await global.client.closeWindow();
+    await global.context.close();
+    // await global.client.closeWindow();
   } else if (global.app) {
     // global.isPlaywright &&
     await global.app.close();
@@ -191,7 +192,7 @@ export async function testDataRefresh() {
   }*/
 }
 
-export async function takeScreenshot(name = expect.getState().currentTestName) {
+/*export async function takeScreenshot(name = expect.getState().currentTestName) {
   // if (jasmine.currentTest.failedExpectations.length > 0) {
   if (global.isWeb) {
     await global.client.saveFullPageScreen(`${name}`, {
@@ -202,13 +203,13 @@ export async function takeScreenshot(name = expect.getState().currentTestName) {
     const filename = `${name}.png`; // -${new Date().toISOString()}
     //.replace(/\s/g, '_')
     //.replace(/:/g, '')
-    //.replace(/\*/g, '')
+    //.replace(/\*!/g, '')
     //.replace(/-/g, '');
     const imageBuffer = await global.app.browserWindow.capturePage();
     const fs = require('fs-extra');
     const path = pathLib.resolve(__dirname, 'test-pages', filename);
     fs.outputFile(path, imageBuffer, 'base64');
-    /*global.app.webContents
+    /!*global.app.webContents
         .savePage(
           pathLib.resolve(__dirname, 'test-pages', filename),
           'HTMLComplete'
@@ -218,9 +219,9 @@ export async function takeScreenshot(name = expect.getState().currentTestName) {
         })
         .catch(function(error) {
           console.error('saving page failed', error.message);
-        });*/
+        });*!/
   }
-}
+}*/
 
 // the path the electron app, that will be tested
 /* let testPath = '../tsn/app'; // '../repo/app';

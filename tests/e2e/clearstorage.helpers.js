@@ -1,4 +1,4 @@
-import { clickOn, takeScreenshot } from './general.helpers';
+import { clickOn } from './general.helpers';
 
 export async function clearStorage() {
   /*if (global.session) {

@@ -3,7 +3,7 @@ const { defineConfig } = require('@playwright/test');
 global.isWeb = false;
 global.isWin = /win32|mswin(?!ce)|mingw|bccwin|cygwin/i.test(process.platform);
 global.isHeadlessMode = process.env.HEADLESS_MODE === 'true';
-global.isMinio = false;
+global.isMinio = true;
 global.isElectron = true;
 global.isUnitTest = false;
 
@@ -19,7 +19,7 @@ module.exports = defineConfig({
   ignoreSnapshots: !process.env.CI,
   // The maximum number of test failures for the whole test suite run. After reaching this number, testing will stop and exit with an error
   maxFailures: process.env.CI ? 3 : 0,
-  globalSetup: './tests/global-setup.js',
-  globalTeardown: './tests/global-teardown.js',
+  globalSetup: './tests/global-setup-minio.js',
+  globalTeardown: './tests/global-teardown-minio.js',
   reporter: 'list'
 });

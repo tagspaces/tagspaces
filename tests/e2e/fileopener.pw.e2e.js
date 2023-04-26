@@ -1,5 +1,5 @@
+import { expect, test } from '@playwright/test';
 import {
-  closeFileProperties,
   createPwMinioLocation,
   createPwLocation,
   defaultLocationName,
@@ -12,47 +12,47 @@ import {
   dragDrop,
   expectElementExist,
   getGridFileName,
-  isDisplayed,
   selectorFile,
   selectorFolder,
-  setInputKeys,
   setInputValue,
   setSettings,
-  takeScreenshot,
-  typeInputValue,
   waitForNotification
 } from './general.helpers';
-import { expect, test } from '@playwright/test';
 import {
   AddRemovePropertiesTags,
   getPropertiesFileName
 } from './file.properties.helpers';
-import { searchEngine } from './search.helpers';
 import { openContextEntryMenu } from './test-utils';
-import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
+import { startTestingApp, stopApp, testDataRefresh } from './hook';
+import { init } from './welcome.helpers';
 
-describe('TST08 - File folder properties', () => {
-  beforeAll(async () => {
-    await startTestingApp('extconfig-with-welcome.js');
-  });
+test.beforeAll(async () => {
+  await startTestingApp('extconfig-with-welcome.js');
+  await init();
+});
 
-  afterAll(async () => {
-    await stopSpectronApp();
-    await testDataRefresh();
-  });
+test.afterAll(async () => {
+  await stopApp();
+  await testDataRefresh();
+});
 
-  beforeEach(async () => {
-    if (global.isMinio) {
-      await createPwMinioLocation('', defaultLocationName, true);
-    } else {
-      await createPwLocation(defaultLocationPath, defaultLocationName, true);
-    }
-    await clickOn('[data-tid=location_' + defaultLocationName + ']');
-    // If its have opened file
-    // await closeFileProperties();
-  });
+test.afterEach(async () => {
+  await init();
+});
 
-  it('TST0801 - Arrow keys select next prev file (keybindings) [web,minio,electron]', async () => {
+test.beforeEach(async () => {
+  if (global.isMinio) {
+    await createPwMinioLocation('', defaultLocationName, true);
+  } else {
+    await createPwLocation(defaultLocationPath, defaultLocationName, true);
+  }
+  await clickOn('[data-tid=location_' + defaultLocationName + ']');
+  // If its have opened file
+  // await closeFileProperties();
+});
+
+test.describe('TST08 - File folder properties', () => {
+  test('TST0801 - Arrow keys select next prev file (keybindings) [web,minio,electron]', async () => {
     // open fileProperties
     await clickOn(selectorFile);
     //Toggle Properties
@@ -72,7 +72,7 @@ describe('TST08 - File folder properties', () => {
     expect(propsPrevFileName).toBe(firstFileName);
   });
 
-  it('TST0802 - Open next file buttons [web,minio,electron]', async () => {
+  test('TST0802 - Open next file buttons [web,minio,electron]', async () => {
     // open fileProperties
     await clickOn(selectorFile);
     //Toggle Properties
@@ -89,7 +89,7 @@ describe('TST08 - File folder properties', () => {
     expect(secondFileName).toBe(propsNextFileName);
   });
 
-  it('TST0803 - Open previous files buttons [web,minio,electron]', async () => {
+  test('TST0803 - Open previous files buttons [web,minio,electron]', async () => {
     // open fileProperties
     await clickOn(selectorFile);
     //Toggle Properties
@@ -109,7 +109,7 @@ describe('TST08 - File folder properties', () => {
   /**
    * full width button not visible on electron (github app size specific)
    */
-  it('TST0804 - Open file in full width [web,minio]', async () => {
+  test('TST0804 - Open file in full width [web,minio]', async () => {
     //expect.extend(matchers);
     //await clickOn('[data-tid=location_supported-filestypes]');
     // open fileProperties
@@ -123,7 +123,7 @@ describe('TST08 - File folder properties', () => {
     // expect(global.client).toHaveSelector('[data-tid=folderContainerTID]');
   });
 
-  it('TST0805 - Rename opened file [web,minio,electron]', async () => {
+  test('TST0805 - Rename opened file [web,minio,electron]', async () => {
     const newTile = 'renamed.txt';
     // await searchEngine('txt');
     // open fileProperties
@@ -158,9 +158,9 @@ describe('TST08 - File folder properties', () => {
     expect(propsOldFileName).toBe(propsFileName);
   });
 
-  it.skip('TST0806 - Download file [manual]', async () => {});
+  test.skip('TST0806 - Download file [manual]', async () => {});
 
-  it('TST0807 - Rename opened folder [web,minio,electron]', async () => {
+  test('TST0807 - Rename opened folder [web,minio,electron]', async () => {
     const newTile = 'folderRenamed';
     // open folderProperties
     await openContextEntryMenu(selectorFolder, 'showProperties');
@@ -188,7 +188,7 @@ describe('TST08 - File folder properties', () => {
     expect(propsOldFileName).toBe(propsFolderName);
   });
 
-  it('TST0808 - Add and remove tags to a file (file names) [web,minio,electron]', async () => {
+  test('TST0808 - Add and remove tags to a file (file names) [web,minio,electron]', async () => {
     // await searchEngine('bmp');
     // open fileProperties
     await clickOn(selectorFile);
@@ -198,7 +198,7 @@ describe('TST08 - File folder properties', () => {
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
   });
 
-  it('TST0809 - Add and remove tag to a file (sidecar files) [web,minio,electron]', async () => {
+  test('TST0809 - Add and remove tag to a file (sidecar files) [web,minio,electron]', async () => {
     // global.client.setDefaultTimeout(300000);
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
     // await searchEngine('bmp');
@@ -209,7 +209,7 @@ describe('TST08 - File folder properties', () => {
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
   });
 
-  it('TST0810 - Tag file drag&drop in file opener [web]', async () => {
+  test('TST0810 - Tag file drag&drop in file opener [web]', async () => {
     const tagName = 'article';
     await clickOn('[data-tid=tagLibrary]');
     await dragDrop('[data-tid=tagContainer_' + tagName + ']', selectorFile);
@@ -220,23 +220,22 @@ describe('TST08 - File folder properties', () => {
     expect(propsTags.includes(tagName)).toBe(true);
   });
 
-  /** todo web */
-  it('TST0810a - Add and remove tag to a folder [web,minio,electron]', async () => {
+  test('TST0810a - Add and remove tag to a folder [web,minio,electron]', async () => {
     await openContextEntryMenu(selectorFolder, 'showProperties');
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
   });
 
-  it('TST0811 - Duplicate file [web,minio,electron]', async () => {
+  test('TST0811 - Duplicate file [web,minio,electron]', async () => {
     await openContextEntryMenu(selectorFile, 'fileMenuDuplicateFileTID');
     await expectElementExist('[data-tid=tagContainer_copy]', true, 5000);
   });
 
-  it.skip('TST3004 - Folder Tagging [Pro]', async () => {});
+  test.skip('TST3004 - Folder Tagging [Pro]', async () => {});
 
   /**
    * Description is Pro feature (if no Pro editDescription button is disabled)
    */
-  it('TST3001 - Description for files [web,minio,electron,_pro]', async () => {
+  test('TST3001 - Description for files [web,minio,electron,_pro]', async () => {
     const desc = 'testDecr';
     // open fileProperties
     await clickOn(selectorFile);
@@ -259,12 +258,12 @@ describe('TST08 - File folder properties', () => {
     );
   });
 
-  it.skip('TST3005 - Description for folders [Pro]', async () => {});
+  test.skip('TST3005 - Description for folders [Pro]', async () => {});
 
   /**
    * reload file button not visible on electron (github app size specific)
    */
-  it('TST0812 - Reload file [web,minio]', async () => {
+  test('TST0812 - Reload file [web,minio]', async () => {
     // open fileProperties
     await clickOn(selectorFile);
     //Toggle Properties
@@ -273,7 +272,7 @@ describe('TST08 - File folder properties', () => {
     // TODO externally change the file to check if its reloaded
   });
 
-  it('TST0813 - Delete file [web,minio,electron]', async () => {
+  test('TST0813 - Delete file [web,minio,electron]', async () => {
     await global.client.dblclick(selectorFolder);
 
     await createTxtFile();
@@ -300,7 +299,7 @@ describe('TST08 - File folder properties', () => {
    * TODO dont work on web tests https://trello.com/c/93iEURf4/731-migrate-fullscreen-to-https-githubcom-snakesilk-react-fullscreen
    * dont work on electron Mac https://github.com/microsoft/playwright/issues/1086
    */
-  it('TST0814 - Open file fullscreen and exit with close button [minio,electron]', async () => {
+  test('TST0814 - Open file fullscreen and exit with close button [minio,electron]', async () => {
     if (global.isWin) {
       // open fileProperties
       await clickOn(selectorFile);
@@ -313,23 +312,23 @@ describe('TST08 - File folder properties', () => {
     }
   });
 
-  it.skip('TST0815 - Test opening file, while TS is in fullscreen(F11) [manual]', async () => {});
+  test.skip('TST0815 - Test opening file, while TS is in fullscreen(F11) [manual]', async () => {});
 
-  it.skip('TST0817 - Open file fullscreen and exit with ESC button [electron]', async () => {});
+  test.skip('TST0817 - Open file fullscreen and exit with ESC button [electron]', async () => {});
 
-  it.skip('TST0818 - Open in new tab in the web version [Web]', async () => {});
+  test.skip('TST0818 - Open in new tab in the web version [Web]', async () => {});
 
-  it.skip('TST0819 - Open file natively [manual]', async () => {});
+  test.skip('TST0819 - Open file natively [manual]', async () => {});
 
-  it.skip('TST0820 - Open containing folder [manual]', async () => {});
+  test.skip('TST0820 - Open containing folder [manual]', async () => {});
 
-  it.skip('TST0821 - Toggle File Properties [electron]', async () => {});
+  test.skip('TST0821 - Toggle File Properties [electron]', async () => {});
 
-  it.skip('TST0822 - Open Folder Properties [electron]', async () => {});
+  test.skip('TST0822 - Open Folder Properties [electron]', async () => {});
 
-  it.skip('TST0823 - Show thumbnail in the properties if available [Pro]', async () => {});
+  test.skip('TST0823 - Show thumbnail in the properties if available [Pro]', async () => {});
 
-  it.skip('TST0824 - Change file thumbnail / Reset thumbnail [Pro]', async () => {});
+  test.skip('TST0824 - Change file thumbnail / Reset thumbnail [Pro]', async () => {});
 
-  it.skip('TST0825 - Change folder thumbnail / Reset thumbnail [Pro]', async () => {});
+  test.skip('TST0825 - Change folder thumbnail / Reset thumbnail [Pro]', async () => {});
 });

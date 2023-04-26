@@ -1,13 +1,9 @@
 /* Copyright (c) 2020-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
-
+import { expect } from '@playwright/test';
 import {
-  addInputKeys,
-  clickOn,
   expectElementExist,
-  isDisplayed,
   removeTagFromTagMenu,
-  setInputKeys,
-  setInputValue
+  setInputKeys
 } from './general.helpers';
 import { getPropertiesTags } from './location.helpers';
 
@@ -74,20 +70,12 @@ export async function AddRemovePropertiesTags(
 export async function getPropertiesFileName() {
   let fileName;
 
-  if (global.isPlaywright) {
-    fileName = await global.client.inputValue(
-      '[data-tid=fileNameProperties] input'
-    ); // https://github.com/microsoft/playwright/issues/3265
-    /*.getAttribute(
+  fileName = await global.client.inputValue(
+    '[data-tid=fileNameProperties] input'
+  ); // https://github.com/microsoft/playwright/issues/3265
+  /*.getAttribute(
       '[data-tid=fileNameProperties] input',
       'value'
     ); */
-  } else {
-    const propsFileNameInput = await global.client.$(
-      '[data-tid=fileNameProperties] input'
-    );
-    await propsFileNameInput.waitForDisplayed({ timeout: 5000 });
-    fileName = await propsFileNameInput.getValue();
-  }
   return fileName ? fileName.replace(/ *\[[^\]]*]/, '') : undefined;
 }

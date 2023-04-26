@@ -1,6 +1,5 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
-
-import pathLib from 'path';
+import { expect } from '@playwright/test';
 import { clickOn, setInputKeys } from './general.helpers';
 
 const newDirectoryName = 'newDirectory';
@@ -9,40 +8,6 @@ export const firstFile = '/span';
 export const firstFolder = '/div';
 export const firstFileName = '/span/div/div/div/p';
 
-// add perspective, remove perspective, change perspective
-// const perspectiveList = 'perspectiveList';
-// const perspectiveGrid = 'perspectiveGrid';
-// const select = '//*[@id="perspectiveList"]/div[5]/div/select';
-
-/**
- * @deprecated use: clickOn();
- * @param perspectiveSelector
- * @param inDepth
- * @returns {Promise<void>}
- */
-export async function openFile(perspectiveSelector, inDepth) {
-  // perspectiveSelector is selector for current perspective
-  // inDepth is selector for the depth of the elements
-  //await delay(500);
-
-  /*const resetSearch = await global.client.$('#resetSearchButton');
-  await resetSearch.waitForDisplayed();
-  await resetSearch.click();*/
-
-  const fileSelector = await global.client.$(perspectiveSelector + inDepth);
-  await fileSelector.waitForDisplayed();
-  await fileSelector.click();
-}
-
-// export async function openDirectoryMenu(menuOperation) {
-//   // menuOption is selector for current menu operation
-//   const folderContainerOpenDirMenu = await global.client.$(
-//     '[data-tid=folderContainerOpenDirMenu]'
-//   );
-//   await folderContainerOpenDirMenu.click();
-//   const menuElem = await global.client.$('[data-tid=' + menuOperation + ']');
-//   menuElem.click();
-// }
 
 export async function openContextEntryMenu(selector, menuOperation) {
   // selector is current selector location for element in perspectiveGridTable or perspectiveListTable (full xpath path to element)

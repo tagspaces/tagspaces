@@ -1,5 +1,5 @@
 import { clickOn } from './general.helpers';
-import { clearStorage } from "./clearstorage.helpers";
+import { clearStorage } from './clearstorage.helpers';
 
 export async function init() {
   if (global.isWeb) {

@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
+import { expect, test } from '@playwright/test';
 import {
   defaultLocationPath,
   defaultLocationName,
@@ -13,31 +14,38 @@ import {
   expectElementExist,
   setInputKeys
 } from './general.helpers';
-import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
+import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { createSavedSearch, searchEngine } from './search.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { dataTidFormat } from '../../app/services/test';
+import { init } from './welcome.helpers';
 
-describe('TST09 - Quick access', () => {
-  beforeAll(async () => {
-    await startTestingApp();
-  });
+test.beforeAll(async () => {
+  await startTestingApp();
+  await init();
+});
 
-  afterAll(async () => {
-    await stopSpectronApp();
-    await testDataRefresh();
-  });
-  beforeEach(async () => {
-    if (global.isMinio) {
-      await createPwMinioLocation('', defaultLocationName, true);
-    } else {
-      await createPwLocation(defaultLocationPath, defaultLocationName, true);
-    }
-    await clickOn('[data-tid=location_' + defaultLocationName + ']');
-    // If its have opened file
-    // await closeFileProperties();
-  });
+test.afterAll(async () => {
+  await stopApp();
+  await testDataRefresh();
+});
 
+test.afterEach(async () => {
+  await init();
+});
+
+test.beforeEach(async () => {
+  if (global.isMinio) {
+    await createPwMinioLocation('', defaultLocationName, true);
+  } else {
+    await createPwLocation(defaultLocationPath, defaultLocationName, true);
+  }
+  await clickOn('[data-tid=location_' + defaultLocationName + ']');
+  // If its have opened file
+  // await closeFileProperties();
+});
+
+test.describe('TST09 - Quick access', () => {
   test('TST0901 - Create, rename and delete stored search [electron,_pro]', async () => {
     const storedSearchTitle = 'jpgSearch';
     await createSavedSearch({ title: storedSearchTitle, textQuery: 'jpg' });
