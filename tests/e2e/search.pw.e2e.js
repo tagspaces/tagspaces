@@ -1,3 +1,4 @@
+import { expect, test } from '@playwright/test';
 import {
   clickOn,
   expectElementExist,
@@ -8,7 +9,7 @@ import {
   selectRowFiles,
   setSettings
 } from './general.helpers';
-import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
+import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import {
   createPwLocation,
   createPwMinioLocation,
@@ -17,28 +18,35 @@ import {
 } from './location.helpers';
 import { emptyFolderName, searchEngine, testFilename } from './search.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
+import { init } from './welcome.helpers';
 
-describe('TST06 - Test Search in file structure:', () => {
-  beforeAll(async () => {
-    await startTestingApp('extconfig-with-welcome.js');
-  });
+test.beforeAll(async () => {
+  await startTestingApp('extconfig-with-welcome.js');
+  await init();
+});
 
-  afterAll(async () => {
-    await stopSpectronApp();
-    await testDataRefresh();
-  });
-  beforeEach(async () => {
-    if (global.isMinio) {
-      await createPwMinioLocation('', defaultLocationName, true);
-    } else {
-      await createPwLocation(defaultLocationPath, defaultLocationName, true);
-    }
-    await clickOn('[data-tid=location_' + defaultLocationName + ']');
-    // If its have opened file
-    // await closeFileProperties();
-  });
+test.afterAll(async () => {
+  await stopApp();
+  await testDataRefresh();
+});
 
-  it('TST0601 - Simple Search / filter the current folder [electron]', async () => {
+test.afterEach(async () => {
+  await init();
+});
+
+test.beforeEach(async () => {
+  if (global.isMinio) {
+    await createPwMinioLocation('', defaultLocationName, true);
+  } else {
+    await createPwLocation(defaultLocationPath, defaultLocationName, true);
+  }
+  await clickOn('[data-tid=location_' + defaultLocationName + ']');
+  // If its have opened file
+  // await closeFileProperties();
+});
+
+test.describe('TST06 - Test Search in file structure:', () => {
+  test('TST0601 - Simple Search / filter the current folder [electron]', async () => {
     await global.client.dblclick(
       '[data-tid=fsEntryName_' + emptyFolderName + ']'
     );
@@ -50,47 +58,47 @@ describe('TST06 - Test Search in file structure:', () => {
   });
 
   /*
-  it('TST0602 - Search in sub folder: word with "?" in front of the query', async () => {
+  test('TST0602 - Search in sub folder: word with "?" in front of the query', async () => {
     await searchEngine('? ' + testFileInSubDirectory);
     // expected current filename
     await checkFilenameForExist(testFileInSubDirectory);
   });
 
-  it('TST0602 - Advanced Search: word with "?" in front of the query', async () => {
+  test('TST0602 - Advanced Search: word with "?" in front of the query', async () => {
     await searchEngine('? ' + testFileInSubDirectory);
     // expected current filename
     await checkFilenameForExist(testFileInSubDirectory);
   });
 
-  it('TST0603 - Advanced Search: word with "!" symbol in front of the query', async () => {
+  test('TST0603 - Advanced Search: word with "!" symbol in front of the query', async () => {
     await searchEngine('! ' + testFileInSubDirectory);
     // expected current filename
     await checkFilenameForExist(testFileInSubDirectory);
   });
 
-  it('TST0604 - Search for tag', async () => {
+  test('TST0604 - Search for tag', async () => {
     await searchEngine('! ' + testFileInSubDirectory, searchTag);
     // expected current filename and tag
     await checkFilenameForExist(testFileInSubDirectory);
   });
 
-  it('TST0604 - Advanced Search: word with "+" symbol in front of the query', async () => {
+  test('TST0604 - Advanced Search: word with "+" symbol in front of the query', async () => {
     await searchEngine('+ ' + testFileInSubDirectory);
   });
 
-  it('TST0604 - Advanced Search: word and tag', async () => {
+  test('TST0604 - Advanced Search: word and tag', async () => {
     await searchEngine('+ ' + testFileInSubDirectory);
     // expected current filename and tag
     await checkFilenameForExist(testFilename, searchTag);
   });
 
-  it('Advanced Search: test with regex query', async () => {
+  test('Advanced Search: test with regex query', async () => {
     await searchEngine(regexQuery);
     // expected current filename
     await checkFilenameForExist(testFileInSubDirectory);
   });
 
-  it('Advanced Search: reset button', async () => {
+  test('Advanced Search: reset button', async () => {
     await searchEngine(testFileInSubDirectory, searchTag, true);
     // expected to reset all search engine
   });*/
@@ -137,12 +145,12 @@ describe('TST06 - Test Search in file structure:', () => {
     }
   }
 
-  it('TST0624 - Add/Remove sidecar tags in search results [electron]', async () => {
+  test('TST0624 - Add/Remove sidecar tags in search results [electron]', async () => {
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
     await addRemoveTagsInSearchResults(['sidecar-tag5', 'sidecar-tag6']);
   });
 
-  it('TST0625 - Add/Remove filename tags in search results [electron]', async () => {
+  test('TST0625 - Add/Remove filename tags in search results [electron]', async () => {
     await addRemoveTagsInSearchResults(['filename-tag5', 'filename-tag6']);
   });
 });

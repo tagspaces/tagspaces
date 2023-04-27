@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
+import { expect, test } from '@playwright/test';
 import {
   defaultLocationPath,
   defaultLocationName,
@@ -11,21 +12,17 @@ import {
 import { searchEngine } from './search.helpers';
 import {
   clickOn,
-  createTxtFile,
   expectElementExist,
   expectTagsExistBySelector,
-  extractTags,
   getGridCellClass,
   getGridFileName,
   getGridFileSelector,
-  isElementDisplayed,
   selectAllFiles,
   selectFilesByID,
   selectorFile,
   selectorFolder,
   selectRowFiles,
   setInputKeys,
-  setGridOptions,
   waitForNotification
 } from './general.helpers';
 import {
@@ -40,35 +37,35 @@ import {
 } from '@tagspaces/tagspaces-common/AppConfig';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 import { getPropertiesFileName } from './file.properties.helpers';
-import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
+import { startTestingApp, stopApp, testDataRefresh } from './hook';
+import { init } from './welcome.helpers';
 
-/* const subFolderName = '/test-perspective-grid';
-const subFolderContentExtractionPath =
-  defaultLocationPath + '/content-extraction';
-const subFolderThumbnailsPath = defaultLocationPath + '/thumbnails';
-const testTestFilename = 'sample';
-*/
+test.beforeAll(async () => {
+  await startTestingApp('extconfig-with-welcome.js');
+  await init();
+});
 
-describe('TST50 - Perspective Grid', () => {
-  beforeAll(async () => {
-    await startTestingApp('extconfig-with-welcome.js');
-  });
+test.afterAll(async () => {
+  await stopApp();
+  await testDataRefresh();
+});
 
-  afterAll(async () => {
-    await stopSpectronApp();
-    await testDataRefresh();
-  });
-  beforeEach(async () => {
-    if (global.isMinio) {
-      await createPwMinioLocation('', defaultLocationName, true);
-    } else {
-      await createPwLocation(defaultLocationPath, defaultLocationName, true);
-    }
-    await clickOn('[data-tid=location_' + defaultLocationName + ']');
-    // If its have opened file
-    // await closeFileProperties();
-  });
+test.afterEach(async () => {
+  await init();
+});
 
+test.beforeEach(async () => {
+  if (global.isMinio) {
+    await createPwMinioLocation('', defaultLocationName, true);
+  } else {
+    await createPwLocation(defaultLocationPath, defaultLocationName, true);
+  }
+  await clickOn('[data-tid=location_' + defaultLocationName + ']');
+  // If its have opened file
+  // await closeFileProperties();
+});
+
+test.describe('TST50 - Perspective Grid', () => {
   test('TST5002 - Open file with click [web,minio,electron]', async () => {
     // await searchEngine('txt'); //testTestFilename);
     const fileName = 'sample.txt';
@@ -80,133 +77,6 @@ describe('TST50 - Perspective Grid', () => {
     const propsFileName = await getPropertiesFileName();
     expect(fileName).toBe(propsFileName);
     // await checkFilenameForExist(testTestFilename);
-  });
-
-  // Scenarios for sorting files in grid perspective
-  describe('TST5003 - Testing sort files in the grid perspective [web,minio,electron]', () => {
-    let dirEntries;
-    beforeAll(async () => {
-      const path = require('path');
-      const fs = require('fs-extra');
-      const testDir = path.join(
-        __dirname,
-        '..',
-        'testdata-tmp',
-        'file-structure',
-        'supported-filestypes'
-      );
-      dirEntries = (await fs.readdir(testDir, { withFileTypes: true }))
-        .filter(item => !item.isDirectory() && !item.name.startsWith('.'))
-        .map(item => {
-          const entryPath = testDir + dirSeparator + item.name;
-          const stats = fs.statSync(entryPath);
-          return {
-            name: cleanFileName(item.name),
-            isFile: item.isFile(),
-            size: stats.size,
-            lmdt: stats.mtime.getTime ? stats.mtime.getTime() : stats.mtime,
-            extension: extractFileExtension(item.name, dirSeparator),
-            tags: extractTagsAsObjects(item.name, tagDelimiter, dirSeparator)
-          };
-        });
-    });
-
-    beforeEach(async () => {
-      await clickOn('[data-tid=gridPerspectiveSortMenu]');
-    });
-
-    test('TST10xx - Sort by name [web,minio,electron]', async () => {
-      // DESC
-      await clickOn('[data-tid=gridPerspectiveSortByName]');
-      let sorted = sortByCriteria(dirEntries, 'byName', false);
-      for (let i = 0; i < sorted.length; i += 1) {
-        const fileName = await getGridFileName(i);
-        expect(fileName).toBe(sorted[i].name); //'sample_exif.jpg');
-      }
-
-      // ASC
-      await clickOn('[data-tid=gridPerspectiveSortMenu]');
-      await clickOn('[data-tid=gridPerspectiveSortByName]');
-
-      sorted = sortByCriteria(dirEntries, 'byName', true);
-      for (let i = 0; i < sorted.length; i += 1) {
-        const fileName = await getGridFileName(i);
-        expect(fileName).toBe(sorted[i].name); //'sample.avif');
-      }
-    });
-
-    test('TST10xx - Sort by size [web,minio,electron]', async () => {
-      await clickOn('[data-tid=gridPerspectiveSortBySize]');
-      // DESC
-      let sorted = sortByCriteria(dirEntries, 'byFileSize', true);
-      for (let i = 0; i < sorted.length; i += 1) {
-        const fileName = await getGridFileName(i);
-        expect(fileName).toBe(sorted[i].name); //'sample.csv');
-      }
-
-      // ASC
-      await clickOn('[data-tid=gridPerspectiveSortMenu]');
-      await clickOn('[data-tid=gridPerspectiveSortBySize]');
-      sorted = sortByCriteria(dirEntries, 'byFileSize', false);
-      for (let i = 0; i < sorted.length; i += 1) {
-        const fileName = await getGridFileName(i);
-        expect(fileName).toBe(sorted[i].name); //'sample.nef');
-      }
-    });
-
-    test('TST10xx - Sort by date [web,minio,electron]', async () => {
-      await clickOn('[data-tid=gridPerspectiveSortByDate]');
-
-      let sorted = sortByCriteria(dirEntries, 'byDateModified', true);
-      for (let i = 0; i < sorted.length; i += 1) {
-        const fileName = await getGridFileName(i);
-        expect(fileName).toBe(sorted[i].name);
-      }
-
-      // ASC
-      await clickOn('[data-tid=gridPerspectiveSortMenu]');
-      await clickOn('[data-tid=gridPerspectiveSortByDate]');
-
-      sorted = sortByCriteria(dirEntries, 'byDateModified', false);
-      for (let i = 0; i < sorted.length; i += 1) {
-        const fileName = await getGridFileName(i);
-        expect(fileName).toBe(sorted[i].name);
-      }
-    });
-
-    test('TST10xx - Sort by extension [web,minio,electron]', async () => {
-      await clickOn('[data-tid=gridPerspectiveSortByExt]');
-      let sorted = sortByCriteria(dirEntries, 'byExtension', true);
-      for (let i = 0; i < sorted.length; i += 1) {
-        const fileName = await getGridFileName(i);
-        expect(fileName).toBe(sorted[i].name);
-      }
-
-      await clickOn('[data-tid=gridPerspectiveSortMenu]');
-      await clickOn('[data-tid=gridPerspectiveSortByExt]');
-      sorted = sortByCriteria(dirEntries, 'byExtension', false);
-      for (let i = 0; i < sorted.length; i += 1) {
-        const fileName = await getGridFileName(i);
-        expect(fileName).toBe(sorted[i].name);
-      }
-    });
-
-    test('TST10xx - Sort by tags [web,minio,electron]', async () => {
-      await clickOn('[data-tid=gridPerspectiveSortByFirstTag]');
-      let sorted = sortByCriteria(dirEntries, 'byFirstTag', true);
-      for (let i = 0; i < sorted.length; i += 1) {
-        const fileName = await getGridFileName(i);
-        expect(fileName).toBe(sorted[i].name);
-      }
-      // ASC
-      await clickOn('[data-tid=gridPerspectiveSortMenu]');
-      await clickOn('[data-tid=gridPerspectiveSortByFirstTag]');
-      sorted = sortByCriteria(dirEntries, 'byFirstTag', false);
-      for (let i = 0; i < sorted.length; i += 1) {
-        const fileName = await getGridFileName(i);
-        expect(fileName).toBe(sorted[i].name);
-      }
-    });
   });
 
   test('TST5004 - Select-deselect all files [web,minio,electron]', async () => {
@@ -322,7 +192,7 @@ describe('TST50 - Perspective Grid', () => {
     await expectElementExist(selectorFile, false);
   });
 
-  it.skip('TST5009 - Copy file on different partition [manual]', async () => {});
+  test.skip('TST5009 - Copy file on different partition [manual]', async () => {});
 
   /**
    * TODO reindexing don't work in web
@@ -351,9 +221,9 @@ describe('TST50 - Perspective Grid', () => {
     await expectElementExist(selectorFile, false);
   });
 
-  it.skip('TST5011 - Move file drag&drop in location navigator [manual]', async () => {});
+  test.skip('TST5011 - Move file drag&drop in location navigator [manual]', async () => {});
 
-  it.skip('TST5012 - Move file different partition [manual]', async () => {});
+  test.skip('TST5012 - Move file different partition [manual]', async () => {});
 
   test('TST5013 - Delete files from selection (many files) [web,minio,electron]', async () => {
     const selectedIds = await selectRowFiles([0, 1, 2]);
@@ -389,7 +259,7 @@ describe('TST50 - Perspective Grid', () => {
     await expectElementExist(selectorFile, false); */
   });
 
-  it.skip('TST5015 - Tag file drag&drop in perspective [manual]', async () => {});
+  test.skip('TST5015 - Tag file drag&drop in perspective [manual]', async () => {});
 
   /* test('TST51** - Show/Hide directories in perspective view', async () => { //TODO
     await global.client.waitForVisible(

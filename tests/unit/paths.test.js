@@ -1,3 +1,4 @@
+import { test, expect } from '@playwright/test';
 import AppConfig from '@tagspaces/tagspaces-common/AppConfig';
 
 const {
@@ -41,17 +42,17 @@ function executeTests(dirPath, fileName, fileExtension, dirSeparator) {
     ).toBeTruthy();
   });
 
-  test(platform + ' extractFileExtension', () => {
+  test(platform + ' extractFileExtension ' + filepath, () => {
     expect(extractFileExtension(filepath, dirSeparator)).toBe(fileExtension);
   });
 
-  test(platform + ' getMetaDirectoryPath', () => {
+  test(platform + ' getMetaDirectoryPath ' + filepath, () => {
     expect(getMetaDirectoryPath(dirPath, dirSeparator)).toBe(
       dirPath + dirSeparator + AppConfig.metaFolder
     );
   });
 
-  test(platform + ' getMetaFileLocationForFile', () => {
+  test(platform + ' getMetaFileLocationForFile ' + filepath, () => {
     expect(getMetaFileLocationForFile(filepath, dirSeparator)).toBe(
       dirPath +
         dirSeparator +

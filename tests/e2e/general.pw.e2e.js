@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
+import { expect, test } from '@playwright/test';
 import {
   defaultLocationPath,
   defaultLocationName,
@@ -23,7 +24,8 @@ import {
   createTxtFile
 } from './general.helpers';
 import { searchEngine } from './search.helpers';
-import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
+import { startTestingApp, stopApp, testDataRefresh } from './hook';
+import { init } from './welcome.helpers';
 
 export const firstFile = '/span';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
@@ -33,27 +35,33 @@ const subFolderContentExtractionPath =
 const subFolderThumbnailsPath = defaultLocationPath + '/thumbnails';
 const testFolder = 'testFolder';
 
-describe('TST51 - Perspective Grid', () => {
-  beforeAll(async () => {
-    await startTestingApp('extconfig-with-welcome.js');
-  });
+test.beforeAll(async () => {
+  await startTestingApp('extconfig-with-welcome.js');
+  await init();
+});
 
-  afterAll(async () => {
-    await stopSpectronApp();
-    await testDataRefresh();
-  });
-  beforeEach(async () => {
-    if (global.isMinio) {
-      await createPwMinioLocation('', defaultLocationName, true);
-    } else {
-      await createPwLocation(defaultLocationPath, defaultLocationName, true);
-    }
-    await clickOn('[data-tid=location_' + defaultLocationName + ']');
-    // If its have opened file
-    // await closeFileProperties();
-  });
+test.afterAll(async () => {
+  await stopApp();
+  await testDataRefresh();
+});
 
-  it('TST0501 - Create HTML file [electron,web]', async () => {
+test.afterEach(async () => {
+  await init();
+});
+
+test.beforeEach(async () => {
+  if (global.isMinio) {
+    await createPwMinioLocation('', defaultLocationName, true);
+  } else {
+    await createPwLocation(defaultLocationPath, defaultLocationName, true);
+  }
+  await clickOn('[data-tid=location_' + defaultLocationName + ']');
+  // If its have opened file
+  // await closeFileProperties();
+});
+
+test.describe('TST51 - Perspective Grid', () => {
+  test('TST0501 - Create HTML file [electron,web]', async () => {
     await global.client.waitForLoadState('networkidle');
     await createNewDirectory();
     await expectElementExist(
@@ -79,7 +87,7 @@ describe('TST51 - Perspective Grid', () => {
     // await takeScreenshot('TST0501 after deleteDirectory');
   });
 
-  it('TST0502 - Create MD file [electron,web]', async () => {
+  test('TST0502 - Create MD file [electron,web]', async () => {
     await createNewDirectory();
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
@@ -104,7 +112,7 @@ describe('TST51 - Perspective Grid', () => {
     // await takeScreenshot('TST0502 after deleteDirectory');
   });
 
-  it('TST0503 - Create TEXT file [electron,web]', async () => {
+  test('TST0503 - Create TEXT file [electron,web]', async () => {
     await takeScreenshot('TST0503 start test');
     await createNewDirectory();
     await expectElementExist(
@@ -131,7 +139,7 @@ describe('TST51 - Perspective Grid', () => {
     // await takeScreenshot('TST0503 after deleteDirectory');
   });
 
-  it('TST0510 - Generate thumbnail from Images', async () => {
+  test('TST0510 - Generate thumbnail from Images', async () => {
     // let filename = 'sample.jpg';
     // activate 'Show Hidden File' functionality in the general settings
     await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
@@ -150,7 +158,7 @@ describe('TST51 - Perspective Grid', () => {
     // expect(file).toBe(filename);
   });
 
-  it('TST0511 - Generate thumbnail from Videos', async () => {
+  test('TST0511 - Generate thumbnail from Videos', async () => {
     // activate 'Show Hidden File' functionality in the general settings
     await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
     await reloadDirectory();
@@ -162,7 +170,7 @@ describe('TST51 - Perspective Grid', () => {
     //TODO expect
   });
 
-  it('TST0516 - Generate thumbnail from PDF', async () => {
+  test('TST0516 - Generate thumbnail from PDF', async () => {
     // activate 'Show Hidden File' functionality in the general settings
     await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
     await reloadDirectory();
@@ -174,7 +182,7 @@ describe('TST51 - Perspective Grid', () => {
     //TODO expect
   });
 
-  it('TST0517 - Generate thumbnail from ODT', async () => {
+  test('TST0517 - Generate thumbnail from ODT', async () => {
     // activate 'Show Hidden File' functionality in the general settings
     await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
 
@@ -188,7 +196,7 @@ describe('TST51 - Perspective Grid', () => {
     //TODO expect
   });
 
-  it('TST0519 - Generate thumbnail from TIFF', async () => {
+  test('TST0519 - Generate thumbnail from TIFF', async () => {
     // activate 'Show Hidden File' functionality in the general settings
     await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
 
@@ -204,7 +212,7 @@ describe('TST51 - Perspective Grid', () => {
     //TODO expect
   });
 
-  it('TST0520 - Generate thumbnail from PSD', async () => {
+  test('TST0520 - Generate thumbnail from PSD', async () => {
     // activate 'Show Hidden File' functionality in the general settings
     await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
 
@@ -220,7 +228,7 @@ describe('TST51 - Perspective Grid', () => {
     //TODO expect
   });
 
-  it('TST0524 - Generate thumbnail from TXT', async () => {
+  test('TST0524 - Generate thumbnail from TXT', async () => {
     // activate 'Show Hidden File' functionality in the general settings
     await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
 
@@ -236,7 +244,7 @@ describe('TST51 - Perspective Grid', () => {
     //TODO expect
   });
 
-  it('TST0523 - Generate thumbnail from HTML', async () => {
+  test('TST0523 - Generate thumbnail from HTML', async () => {
     // activate 'Show Hidden File' functionality in the general settings
     await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
 
@@ -252,7 +260,7 @@ describe('TST51 - Perspective Grid', () => {
     //TODO expect
   });
 
-  it('TST0522 - Generate thumbnail from URL', async () => {
+  test('TST0522 - Generate thumbnail from URL', async () => {
     // activate 'Show Hidden File' functionality in the general settings
     await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
 

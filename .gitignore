@@ -94,15 +94,12 @@ coverage/
 tests/*
 !tests/unit/
 !tests/e2e/
-!tests/minioEnv.js
-!tests/webEnv.js
 !tests/global-setup.js
 !tests/global-setup-minio.js
 !tests/global-setup-web.js
 !tests/global-teardown.js
 !tests/global-teardown-minio.js
 !tests/global-teardown-web.js
-!tests/setup-after-env.js
 !tests/setup-functions.js
 !tests/test-data-refresh.js
 

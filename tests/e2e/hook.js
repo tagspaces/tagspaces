@@ -1,5 +1,4 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
-import electronPath from 'electron';
 import pathLib from 'path';
 import fse from 'fs-extra';
 // import { execSync } from 'child_process';
@@ -49,21 +48,9 @@ export async function clearLocalStorage() {
     global.app.webContents.reload();
   }*/
   if (global.isWeb) {
-    if (isPlaywright) {
-      const windowHandle = await global.client.evaluateHandle(() => window);
-      const title = await global.client.evaluateHandle(() => document.title);
-      windowHandle.history.pushState('', title, windowHandle.location.pathname);
-    } else {
-      //clearAllURLParams && clears everything in localStorage
-      await global.client.execute(
-        "window.history.pushState('', document.title, window.location.pathname);localStorage.clear();"
-      );
-      // global.client.executeScript('window.localStorage.clear()');
-      // global.client.clearLocalStorage();
-      // window.localStorage.clear();
-      //await global.client.reloadSession();
-      await global.client.refresh();
-    }
+    const windowHandle = await global.client.evaluateHandle(() => window);
+    const title = await global.client.evaluateHandle(() => document.title);
+    windowHandle.history.pushState('', title, windowHandle.location.pathname);
   } else {
     await global.app.webContents.executeJavaScript(
       "window.history.pushState('', document.title, window.location.pathname);localStorage.clear()"
@@ -104,75 +91,22 @@ export async function startTestingApp(extconfig) {
   }
 
   if (global.isWeb) {
-    if (global.isPlaywright) {
-      const { webkit, chromium } = require('playwright');
-      global.app = await chromium.launch({
-        headless: global.isHeadlessMode,
-        slowMo: 50
-      }); //browser
+    const { webkit, chromium } = require('playwright');
+    global.app = await chromium.launch({
+      headless: global.isHeadlessMode,
+      slowMo: 50
+    }); //browser
 
-      global.context = await global.app.newContext({
-        viewport: { width: 1920, height: 1080 }
-      });
+    global.context = await global.app.newContext({
+      viewport: { width: 1920, height: 1080 }
+    });
 
-      global.client = await global.context.newPage(); //page
-      await global.client.goto('http://localhost:8000');
-      // await global.client.screenshot({ path: `example.png` });
-      // await global.client.close();
-    } else {
-      //require('scripts/wdio.conf');
-      const webdriverio = require('webdriverio');
-      // https://webdriver.io/docs/configurationfile.html
-
-      const options = {
-        host: 'localhost', // Use localhost as chrome driver server
-        port: 9515, // "9515" is the port opened by chrome driver.
-        capabilities: {
-          browserName: 'chrome',
-          'goog:chromeOptions': {
-            w3c: true,
-            args: chromeDriverArgs
-          }
-          // pageLoadStrategy: 'normal'
-        },
-        // Warns when a deprecated command is used
-        deprecationWarnings: true,
-        // If you only want to run your tests until a specific amount of tests have failed use
-        // bail (default is 0 - don't bail, run all tests).
-        bail: 0,
-        reporters: ['spec'],
-        /* afterTest: [async function(
-          test,
-          context,
-          { error, result, duration, passed, retries }
-        ) => {
-          await takeScreenshot();
-          await clearLocalStorage();
-        }], */
-        waitforTimeout: 5000,
-        maxInstances: 1,
-        // logLevel: 'debug'
-        logLevel: 'silent',
-        coloredLogs: true
-      };
-      // global.client = browser
-      global.client = await webdriverio.remote(options);
-      // global.client.setTimeout({ 'script': 60000 });
-      /*client = await client
-        .init()
-        .setViewportSize({ width: 1024, height: 768 }, false)
-        .timeouts('script', 6000)
-        /!*
-                   Cannot set 'implicit' timeout because of a bug in webdriverio [1].
-                   [1] https://github.com/webdriverio/webdriverio/issues/974
-                   *!/
-        // .timeouts('implicit', 5000)
-        .timeouts('pageLoad', 30000);*/
-      setWdioImageComparisonService(global.client);
-
-      await global.client.url('http://localhost:8000');
-    }
-  } else if (global.isPlaywright) {
+    global.client = await global.context.newPage(); //page
+    await global.client.goto('http://localhost:8000');
+    // await global.client.screenshot({ path: `example.png` });
+    // await global.client.close();
+  } else {
+    //if (global.isPlaywright) {
     const { _electron: electron } = require('playwright');
     // Launch Electron app.
     global.app = await electron.launch({
@@ -198,41 +132,15 @@ export async function startTestingApp(extconfig) {
     global.session = await global.client.context().newCDPSession(global.client);
     // await global.client.setViewportSize({ width: 1920, height: 1080 });
     await global.client.waitForLoadState('load'); //'domcontentloaded'); //'networkidle');
-    // await global.client.bringToFront();
-
-    // Print the title.
-    // console.log(await global.client.title());
 
     if (process.env.SHOW_CONSOLE) {
       // Direct Electron console to Node terminal.
       global.client.on('console', console.debug);
     }
-    // Click button.
-    /*await global.client.click('[data-tid=location_supported-filestypes]');
-    // Capture a screenshot.
-    await global.client.screenshot({
-      path: pathLib.join(__dirname, 'intro.png')
-    });*/
-    // Exit app.
-    // await global.app.close();
-  } else {
-    const { Application } = require('spectron');
-    global.app = new Application({
-      path: electronPath,
-      args: [pathLib.join(__dirname, '..', '..', 'app')],
-      // startTimeout: 500,
-      waitTimeout: 1000,
-      waitforInterval: 50,
-      maxInstances: 1,
-      chromeDriverArgs: chromeDriverArgs
-    });
-    await global.app.start();
-    global.client = global.app.client;
-    await global.client.waitUntilWindowLoaded();
   }
 }
 
-function setWdioImageComparisonService(browser) {
+/*function setWdioImageComparisonService(browser) {
   global.browser = browser;
   const WdioImageComparisonService = require('wdio-image-comparison-service')
     .default;
@@ -250,17 +158,15 @@ function setWdioImageComparisonService(browser) {
   browser.folders = wdioImageComparisonService.folders;
 
   wdioImageComparisonService.before(browser.capabilities);
-}
+}*/
 
-export async function stopSpectronApp() {
-  if (global.isPlaywright && global.app) {
+export async function stopApp() {
+  if (global.isWeb) {
+    await global.context.close();
+    // await global.client.closeWindow();
+  } else if (global.app) {
+    // global.isPlaywright &&
     await global.app.close();
-  } else if (global.isWeb) {
-    await global.client.closeWindow();
-    // await global.client.end();
-  } else if (global.app && global.app.isRunning()) {
-    // await clearLocalStorage();
-    return global.app.stop();
   }
 }
 
@@ -286,7 +192,7 @@ export async function testDataRefresh() {
   }*/
 }
 
-export async function takeScreenshot(name = expect.getState().currentTestName) {
+/*export async function takeScreenshot(name = expect.getState().currentTestName) {
   // if (jasmine.currentTest.failedExpectations.length > 0) {
   if (global.isWeb) {
     await global.client.saveFullPageScreen(`${name}`, {
@@ -297,13 +203,13 @@ export async function takeScreenshot(name = expect.getState().currentTestName) {
     const filename = `${name}.png`; // -${new Date().toISOString()}
     //.replace(/\s/g, '_')
     //.replace(/:/g, '')
-    //.replace(/\*/g, '')
+    //.replace(/\*!/g, '')
     //.replace(/-/g, '');
     const imageBuffer = await global.app.browserWindow.capturePage();
     const fs = require('fs-extra');
     const path = pathLib.resolve(__dirname, 'test-pages', filename);
     fs.outputFile(path, imageBuffer, 'base64');
-    /*global.app.webContents
+    /!*global.app.webContents
         .savePage(
           pathLib.resolve(__dirname, 'test-pages', filename),
           'HTMLComplete'
@@ -313,9 +219,9 @@ export async function takeScreenshot(name = expect.getState().currentTestName) {
         })
         .catch(function(error) {
           console.error('saving page failed', error.message);
-        });*/
+        });*!/
   }
-}
+}*/
 
 // the path the electron app, that will be tested
 /* let testPath = '../tsn/app'; // '../repo/app';

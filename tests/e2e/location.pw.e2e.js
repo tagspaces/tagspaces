@@ -1,4 +1,5 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
+import { expect, test } from '@playwright/test';
 import {
   defaultLocationPath,
   openLocationMenu,
@@ -13,37 +14,43 @@ import {
   setInputKeys,
   takeScreenshot
 } from './general.helpers';
-import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
+import { startTestingApp, stopApp, testDataRefresh } from './hook';
+import { init } from './welcome.helpers';
 
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const newLocationName = 'Location_Name_Changed';
 
 let testLocationName;
 
-describe('TST03 - Testing locations:', () => {
-  beforeAll(async () => {
-    await startTestingApp('extconfig-without-locations.js');
-  });
+test.beforeAll(async () => {
+  await startTestingApp('extconfig-without-locations.js');
+  await init();
+});
 
-  afterAll(async () => {
-    await stopSpectronApp();
-    await testDataRefresh();
-  });
+test.afterAll(async () => {
+  await stopApp();
+  await testDataRefresh();
+});
 
-  beforeEach(async () => {
-    testLocationName = '' + new Date().getTime();
+test.afterEach(async () => {
+  await init();
+});
 
-    if (global.isMinio) {
-      await createPwMinioLocation('', testLocationName, true);
-    } else {
-      await createPwLocation(defaultLocationPath, testLocationName, true);
-    }
-    await clickOn('[data-tid=location_' + testLocationName + ']');
-    // await delay(500);
-    // await closeFileProperties();
-  });
+test.beforeEach(async () => {
+  testLocationName = '' + new Date().getTime();
 
-  it('TST0301 - Should create a location [web,electron]', async () => {
+  if (global.isMinio) {
+    await createPwMinioLocation('', testLocationName, true);
+  } else {
+    await createPwLocation(defaultLocationPath, testLocationName, true);
+  }
+  await clickOn('[data-tid=location_' + testLocationName + ']');
+  // await delay(500);
+  // await closeFileProperties();
+});
+
+test.describe('TST03 - Testing locations:', () => {
+  test('TST0301 - Should create a location [web,electron]', async () => {
     // const allLocations = await global.client.$$('[data-tid=locationTitleElement]');
     // expect(allLocations.length).toBeGreaterThan(0);
     // const lastLocation = allLocations[allLocations.length - 1];
@@ -57,7 +64,7 @@ describe('TST03 - Testing locations:', () => {
     );
   });
 
-  it('TST0302 - Should remove a location [web,electron]', async () => {
+  test('TST0302 - Should remove a location [web,electron]', async () => {
     // await global.client.waitForVisible('[data-tid=locationList]');
     // const allLocations = await global.client.$$('[data-tid=locationList]');
     // await delay(500);
@@ -75,7 +82,7 @@ describe('TST03 - Testing locations:', () => {
     );
   });
 
-  it('TST0303 - Rename location [web,electron]', async () => {
+  test('TST0303 - Rename location [web,electron]', async () => {
     await openLocationMenu(testLocationName);
     await clickOn('[data-tid=editLocation]');
     await global.client.dblclick('[data-tid=locationName] input');
@@ -96,7 +103,7 @@ describe('TST03 - Testing locations:', () => {
     );
   });
 
-  it('TST0305 - Set as startup location [web,electron]', async () => {
+  test('TST0305 - Set as startup location [web,electron]', async () => {
     await openLocationMenu(testLocationName);
     await startupLocation();
     await expectElementExist('[data-tid=startupIndication]', false);
@@ -111,11 +118,11 @@ describe('TST03 - Testing locations:', () => {
   /**
    * You can create two locations with the same name now
    */
-  it('TST0306 - should test duplication warning on creating locations with the same name', async () => {
+  test('TST0306 - should test duplication warning on creating locations with the same name', async () => {
     // TODO test duplication warning on creating locations
   });
 
-  it('TST0307 - Move location Up and Down [web,electron]', async () => {
+  test('TST0307 - Move location Up and Down [web,electron]', async () => {
     if (global.isWeb) {
       await takeScreenshot(
         'TST0307 Move location Up and Down before create dummyLocation'

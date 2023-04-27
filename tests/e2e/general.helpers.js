@@ -1,6 +1,6 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 import path from 'path';
-import { expect as pExpect } from '@playwright/test';
+import { expect } from '@playwright/test';
 import { delay } from './hook';
 import { firstFile } from './test-utils';
 import AppConfig from '../../app/AppConfig';
@@ -24,30 +24,11 @@ export async function takeScreenshot(name) {
 }
 
 export async function clickOn(selector, options = { timeout: 15000 }) {
-  if (global.isPlaywright) {
-    try {
-      await global.client.click(selector, options);
-    } catch (e) {
-      console.log('clickOn ' + selector + ' error: ', e);
-      await global.client.click(selector, { ...options, force: true });
-    }
-  } else {
-    const element = await global.client.$(selector);
-    await element.waitUntil(
-      async function() {
-        const displayed = await this.isDisplayed();
-        // const clickable = await this.isClickable();
-        // const displayed = await this.isDisplayedInViewport();
-        return displayed; // && clickable;
-      },
-      {
-        timeout: 5000,
-        timeoutMsg: 'clickOn selector ' + selector + ' to exist after 5s'
-      }
-    );
-    // await element.scrollIntoView();
-    // await element.moveTo(selector);
-    await element.click(options);
+  try {
+    await global.client.click(selector, options);
+  } catch (e) {
+    console.log('clickOn ' + selector + ' error: ', e);
+    // await global.client.click(selector, { ...options, force: true });
   }
 }
 
@@ -105,23 +86,7 @@ export async function doubleClickOn(selector) {
 }
 
 export async function setInputValue(selector, value) {
-  if (isPlaywright) {
-    global.client.fill(selector, value);
-  } else {
-    const element = await global.client.$(selector);
-    await element.waitUntil(
-      async function() {
-        // const displayed = await this.isDisplayed();
-        const displayed = await this.isDisplayedInViewport();
-        return displayed === true;
-      },
-      {
-        timeout: 5000,
-        timeoutMsg: 'setInputValue selector ' + selector + ' to exist after 5s'
-      }
-    );
-    await element.setValue(value);
-  }
+  global.client.fill(selector, value);
 }
 
 /*
@@ -166,17 +131,14 @@ export async function addInputKeys(tid, value) {
  * @returns {Promise<*>}
  */
 export async function setInputKeys(tid, value, delay = 50) {
-  if (isPlaywright) {
-    // global.client.keyboard.type('[data-tid=' + tid + '] input', value, { delay: 100 });
-    const oldValue = await global.client.inputValue(
-      '[data-tid=' + tid + '] input'
-    );
-    await global.client.type('[data-tid=' + tid + '] input', value, {
-      delay
-    });
-    return oldValue;
-  }
-  return await setSelectorKeys('[data-tid=' + tid + ']', value);
+  // global.client.keyboard.type('[data-tid=' + tid + '] input', value, { delay: 100 });
+  const oldValue = await global.client.inputValue(
+    '[data-tid=' + tid + '] input'
+  );
+  await global.client.type('[data-tid=' + tid + '] input', value, {
+    delay
+  });
+  return oldValue;
 }
 
 /**
@@ -282,10 +244,7 @@ export async function getGridFileName(fileIndex) {
 }
 
 export async function getElementText(el) {
-  if (global.isPlaywright) {
-    return await el.innerText();
-  }
-  return await el.getText();
+  return await el.innerText();
 }
 
 /**
@@ -334,35 +293,31 @@ export async function isDisplayed(
   timeout = 1500,
   parentSelector = undefined
 ) {
-  if (global.isPlaywright) {
-    try {
-      const parentEl = parentSelector ? parentSelector : global.client;
-      const el = await parentEl.waitForSelector(selector, {
-        timeout,
-        // strict: true,
-        state: displayed ? 'attached' : 'detached' //'visible' : 'hidden' //'detached'
-      });
-      if (!displayed) {
-        if (el === null) {
-          return true;
-        }
+  try {
+    const parentEl = parentSelector ? parentSelector : global.client;
+    const el = await parentEl.waitForSelector(selector, {
+      timeout,
+      // strict: true,
+      state: displayed ? 'attached' : 'detached' //'visible' : 'hidden' //'detached'
+    });
+    if (!displayed) {
+      if (el === null) {
+        return true;
       }
-      return el !== null;
-    } catch (error) {
-      console.debug(
-        'Timeout ' +
-          timeout +
-          'ms exceeded. isDisplayed:' +
-          selector +
-          ' displayed:' +
-          displayed
-        // error
-      );
     }
-    return false;
+    return el !== null;
+  } catch (error) {
+    console.debug(
+      'Timeout ' +
+        timeout +
+        'ms exceeded. isDisplayed:' +
+        selector +
+        ' displayed:' +
+        displayed
+      // error
+    );
   }
-  const el = await global.client.$(selector);
-  return await el.isDisabled();
+  return false;
 }
 
 export async function getGridElement(fileIndex = 0) {
@@ -392,12 +347,19 @@ export async function getGridCellClass(fileIndex = 0) {
 }
 
 export async function expectAudioPlay() {
-  await pExpect
+  await expect
     .poll(
       async () => {
         const fLocator = await frameLocator();
         const progressSeek = await fLocator.locator('[data-plyr=seek]');
         const ariaValueNow = await progressSeek.getAttribute('aria-valuenow');
+        if (ariaValueNow === 0) {
+          const playButton = await fLocator.locator('[data-plyr=play]');
+          const ariaLabel = await playButton.getAttribute('aria-label');
+          if (ariaLabel === 'Play') {
+            await playButton.click();
+          }
+        }
         return parseFloat(ariaValueNow) > 0;
       },
       {
@@ -427,26 +389,6 @@ export async function expectElementExist(
   }
   expect(displayed).toBe(true);
 }
-
-/* export async function expectExist(element, exist = true, timeout = 5000) {
-  if(!isPlaywright) {
-
-    await element.waitForDisplayed({
-      timeout: timeout,
-      reverse: !exist,
-      timeoutMsg:
-        'expectElementExist selector:' +
-        element.selector +
-        ' to exist=' +
-        exist +
-        ' after ' +
-        timeout / 1000 +
-        's'
-    });
-  }
-  expect(await element.isDisplayed()).toBe(exist);
-  return element;
-} */
 
 export async function createLocation(
   locationPath,

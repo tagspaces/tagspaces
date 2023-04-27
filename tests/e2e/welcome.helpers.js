@@ -1,4 +1,20 @@
 import { clickOn } from './general.helpers';
+import { clearStorage } from './clearstorage.helpers';
+
+export async function init() {
+  if (global.isWeb) {
+    await global.client.evaluate(() => {
+      window.history.pushState('', document.title, window.location.pathname);
+      localStorage.clear();
+    });
+    await global.client.reload();
+  } else {
+    await closeWelcomePlaywright();
+    await clearStorage();
+  }
+
+  await closeWelcomePlaywright();
+}
 
 export async function closeWelcome() {
   const nextButton = await global.client.$('[data-tid=nextStepOnboarding]');

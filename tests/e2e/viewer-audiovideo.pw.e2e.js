@@ -1,41 +1,40 @@
 /*
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
+
+import { expect, test } from '@playwright/test';
 import {
   defaultLocationPath,
   defaultLocationName,
   createPwMinioLocation,
   createPwLocation
 } from './location.helpers';
-import {
-  clickOn,
-  expectAudioPlay,
-  frameLocator,
-  isDisplayed
-} from './general.helpers';
-import { startTestingApp, stopSpectronApp, testDataRefresh } from './hook';
-import { openContextEntryMenu, toContainTID } from './test-utils';
+import { clickOn, expectAudioPlay, isDisplayed } from './general.helpers';
+import { startTestingApp, stopApp, testDataRefresh } from './hook';
+import { openContextEntryMenu } from './test-utils';
+import { init } from './welcome.helpers';
 
-describe('TST59 - Media player', () => {
-  beforeAll(async () => {
-    await startTestingApp();
-  });
+test.beforeAll(async () => {
+  await startTestingApp();
+  await init();
+});
 
-  afterAll(async () => {
-    await stopSpectronApp();
-    await testDataRefresh();
-  });
-  beforeEach(async () => {
-    if (global.isMinio) {
-      await createPwMinioLocation('', defaultLocationName, true);
-    } else {
-      await createPwLocation(defaultLocationPath, defaultLocationName, true);
-    }
-    await clickOn('[data-tid=location_' + defaultLocationName + ']');
-    // If its have opened file
-    // await closeFileProperties();
-  });
+test.afterAll(async () => {
+  await stopApp();
+  await testDataRefresh();
+});
+test.beforeEach(async () => {
+  if (global.isMinio) {
+    await createPwMinioLocation('', defaultLocationName, true);
+  } else {
+    await createPwLocation(defaultLocationPath, defaultLocationName, true);
+  }
+  await clickOn('[data-tid=location_' + defaultLocationName + ']');
+  // If its have opened file
+  // await closeFileProperties();
+});
 
+test.describe('TST59 - Media player', () => {
   test('TST5901 - Play ogg file [web,minio,electron]', async () => {
     await openContextEntryMenu(
       '[data-tid="fsEntryName_sample.ogg"]',
