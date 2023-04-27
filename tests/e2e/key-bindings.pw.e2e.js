@@ -10,7 +10,7 @@ import {
   setInputValue
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
-import { init } from "./welcome.helpers";
+import { init } from './welcome.helpers';
 
 test.beforeAll(async () => {
   await startTestingApp('extconfig-with-welcome.js');
@@ -38,7 +38,6 @@ test.beforeEach(async () => {
 });
 
 test.describe('TST13 - Settings Key Bindings [electron]', () => {
-
   test('TST1311 - Test show search [electron]', async () => {
     const isMac = /^darwin/.test(process.platform);
     await clickOn(selectorFile);

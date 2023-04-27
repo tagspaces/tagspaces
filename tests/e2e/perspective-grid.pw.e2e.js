@@ -38,7 +38,7 @@ import {
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 import { getPropertiesFileName } from './file.properties.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
-import { init } from "./welcome.helpers";
+import { init } from './welcome.helpers';
 
 test.beforeAll(async () => {
   await startTestingApp('extconfig-with-welcome.js');
@@ -66,7 +66,6 @@ test.beforeEach(async () => {
 });
 
 test.describe('TST50 - Perspective Grid', () => {
-
   test('TST5002 - Open file with click [web,minio,electron]', async () => {
     // await searchEngine('txt'); //testTestFilename);
     const fileName = 'sample.txt';

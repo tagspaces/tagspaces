@@ -35,7 +35,7 @@ import {
 } from './general.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
-import { init } from "./welcome.helpers";
+import { init } from './welcome.helpers';
 
 const testTagName = 'testTag'; // TODO fix camelCase tag name
 
@@ -53,7 +53,6 @@ test.afterEach(async () => {
   await init();
 });
 
-
 test.beforeEach(async () => {
   if (global.isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
@@ -67,7 +66,6 @@ test.beforeEach(async () => {
 // Test the functionality of the right button on a file on a grid perspective table
 // Scenarios for right button on a file
 test.describe('TST50** - Right button on a file', () => {
-
   test('TST5016 - Open file [web,minio,electron]', async () => {
     // await searchEngine('txt');
     await openContextEntryMenu(

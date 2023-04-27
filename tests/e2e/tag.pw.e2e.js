@@ -7,7 +7,7 @@ import {
   setInputValue
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
-import { init } from "./welcome.helpers";
+import { init } from './welcome.helpers';
 
 const testTagName = 'testTag';
 const newTagName = 'newTagName';
@@ -58,7 +58,6 @@ test.beforeEach(async () => {
 });
 
 test.describe('TST04 - Testing the tag library:', () => {
-
   test('TST0401 - Should create a tag group [web,minio,electron]', async () => {
     await createTagGroup(testGroup);
     await expectElementExist(

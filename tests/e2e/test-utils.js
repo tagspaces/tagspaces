@@ -8,7 +8,6 @@ export const firstFile = '/span';
 export const firstFolder = '/div';
 export const firstFileName = '/span/div/div/div/p';
 
-
 export async function openContextEntryMenu(selector, menuOperation) {
   // selector is current selector location for element in perspectiveGridTable or perspectiveListTable (full xpath path to element)
   // menuOption is selector for current menu operation

@@ -67,5 +67,5 @@ export async function getDirEntries(sortCriteria, sortAsc) {
         tags: extractTagsAsObjects(item.name, tagDelimiter, dirSeparator)
       };
     });
-  return sortByCriteria(dirEntries, sortCriteria, sortAsc)
+  return sortByCriteria(dirEntries, sortCriteria, sortAsc);
 }

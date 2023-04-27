@@ -11,7 +11,7 @@ import {
 import { clickOn, frameLocator, isDisplayed } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { openContextEntryMenu, toContainTID } from './test-utils';
-import { init } from "./welcome.helpers";
+import { init } from './welcome.helpers';
 
 test.beforeAll(async () => {
   await startTestingApp();
@@ -39,7 +39,6 @@ test.beforeEach(async () => {
 });
 
 test.describe('TST69 - Markdown editor', () => {
-
   test('TST6901 - Open and render md file [web,minio,electron]', async () => {
     await openContextEntryMenu(
       '[data-tid="fsEntryName_sample.md"]',

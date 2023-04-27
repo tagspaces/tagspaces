@@ -18,7 +18,7 @@ import {
 } from './general.helpers';
 import { renameFolder } from './test-utils';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
-import { init } from "./welcome.helpers";
+import { init } from './welcome.helpers';
 
 test.beforeAll(async () => {
   await startTestingApp('extconfig-with-welcome.js');
@@ -46,7 +46,6 @@ test.beforeEach(async () => {
 });
 
 test.describe('TST01 - Folder management', () => {
-
   test('TST0101 - Create subfolder [web,minio,electron]', async () => {
     const testFolder = await createNewDirectory();
     await expectElementExist('[data-tid=fsEntryName_' + testFolder + ']');
