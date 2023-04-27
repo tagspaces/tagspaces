@@ -24,7 +24,9 @@ const config = defineConfig({
   // maxFailures: 8, //process.env.CI ? 3 : 0,
   globalSetup: './tests/global-setup.js',
   globalTeardown: './tests/global-teardown.js',
-  reporter: 'list'
+  // 'github' for GitHub Actions CI to generate annotations, plus a concise 'dot'
+  // default 'list' when running locally
+  reporter: process.env.CI ? 'github' : 'list',
 });
 
 console.log('in playwright.config.ts, testDir is', testDir);
