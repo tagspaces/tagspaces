@@ -52,11 +52,6 @@ jobs:
         with:
           name: test-pages
           path: tests/test-pages/
-      - uses: IgnusG/jest-report-action@v2.3.3
-        if: always() # Run regardless of whether other steps failed
-        with:
-          access-token: ${{ secrets.GITHUB_TOKEN }}
-          working-directory: tests
       - uses: actions/upload-artifact@v2
         if: failure()
         with:
