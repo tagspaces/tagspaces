@@ -39,15 +39,15 @@ export const FileTypeGroups = {
     'svg',
     'webp',
     'bmp',
+    'tga',
     'tif',
     'tiff',
-    'ico',
-    'psd',
-    'cr2',
     'nef',
+    'cr2',
     'dng',
+    'psd',
     'avif',
-    'tga'
+    'nef'
   ],
   notes: ['md', 'mdown', 'txt', 'html'],
   documents: [

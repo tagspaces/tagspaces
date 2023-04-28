@@ -29,30 +29,13 @@ import AppConfig from '-/AppConfig';
 import { base64ToArrayBuffer } from '-/utils/dom';
 import PlatformIO from '../services/platform-facade';
 import { Pro } from '../pro';
+import { FileTypeGroups } from '-/services/search';
 
 let maxSize = AppConfig.maxThumbSize;
 const thumbnailBackgroundColor = AppConfig.thumbBgColor;
 
 export const supportedMisc = ['url', 'html'];
-export const supportedImgs = [
-  'jpg',
-  'jpeg',
-  'jif',
-  'jfif',
-  'png',
-  'gif',
-  'svg',
-  'webp',
-  'bmp',
-  'tga',
-  'tif',
-  'tiff',
-  'nef',
-  'cr2',
-  'dng',
-  'psd',
-  'avif'
-];
+export const supportedImgs = FileTypeGroups.images;
 export const supportedContainers = [
   'zip',
   'pages',
