@@ -189,13 +189,7 @@ function MainToolbar(props: Props) {
             <IconButton
               aria-label={i18n.t('core:copyMoveSelectedEntries')}
               data-tid="gridPerspectiveCopySelectedFiles"
-              disabled={
-                selectedEntries.length < 1 ||
-                (PlatformIO.haveObjectStoreSupport() &&
-                  selectedEntries.some(
-                    (entry: TS.FileSystemEntry) => !entry.isFile
-                  ))
-              }
+              disabled={selectedEntries.length < 1}
               onClick={openMoveCopyFilesDialog}
               size="large"
             >
@@ -217,7 +211,6 @@ function MainToolbar(props: Props) {
             <IconButton
               aria-label={i18n.t('core:deleteSelectedEntries')}
               data-tid="gridPerspectiveDeleteMultipleFiles"
-              disabled={!fileOperationsEnabled}
               onClick={openDeleteFileDialog}
               size="large"
             >
