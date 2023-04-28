@@ -1,7 +1,7 @@
 name: Nightly E2E Tests Web Minio Windows
 on:
   schedule:
-    - cron: '0 2 * * *'
+    - cron: '0 1 * * *'
 
 jobs:
   e2eTestsWebWin:
@@ -47,10 +47,10 @@ jobs:
         run: |
           npm run build-e2e-web
           npm run test-playwright-web-headless
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: test-artifacts
           path: |
-            tests/test-pages/
             tests/test-reports/
+            playwright-report/

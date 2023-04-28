@@ -1,7 +1,7 @@
 name: Nightly E2E Tests Electron MacOS
 on:
   schedule:
-    - cron: '0 3 * * *'
+    - cron: '0 2 * * *'
 
 jobs:
   e2eTestsElectronMac:
@@ -34,10 +34,10 @@ jobs:
           npm run build-main
           npm run build-e2e
           npm run test-playwright
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: test-artifacts
           path: |
-            tests/test-pages/
             tests/test-reports/
+            playwright-report/

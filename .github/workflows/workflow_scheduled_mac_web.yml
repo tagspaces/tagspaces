@@ -1,7 +1,7 @@
 name: Nightly E2E Tests Web Minio macOS
 on:
   schedule:
-    - cron: '0 5 * * *'
+    - cron: '0 3 * * *'
 
 jobs:
   e2eTestsWebMac:
@@ -35,22 +35,21 @@ jobs:
           npm run type-check
       - name: Run Unit tests
         run: npm run test-unit
-      - uses: suisei-cn/actions-download-file@v1
+      - uses: carlosperate/download-file-action@v2
         id: minio
         name: Download the Minio
         with:
-          url: 'https://dl.min.io/server/minio/release/darwin-amd64/minio'
-          target: tests/bin/
-      - name: Make the Minio executable
-        run: chmod +x ./tests/bin/minio
+          file-url: 'https://dl.min.io/server/minio/release/windows-amd64/archive/minio.RELEASE.2020-11-19T23-48-16Z'
+          file-name: 'minio.exe'
+          location: './tests/bin/'
       - name: Run Electron tests
         run: |
           npm run build-e2e-web
           npm run test-playwright-web-headless
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: test-artifacts
           path: |
-            tests/test-pages/
             tests/test-reports/
+            playwright-report/

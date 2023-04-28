@@ -21,46 +21,12 @@ const minioAccessKey = 'minioadmin';
 const minioSecretAccessKey = 'minioadmin';
 const minioEndpointURL = 'http://127.0.0.1:9000';
 
-export async function createLocation(
-  locationPath,
-  locationName,
-  isDefault = false
-) {
-  const lastLocationTID = await getLocationTid(-1);
-  // Check if location not exist (from extconfig.js)
-  if (locationName !== lastLocationTID) {
-    await clickOn('[data-tid=createNewLocation]');
-    await clickOn('[data-tid=locationPath]');
-    await setInputKeys('locationPath', locationPath || defaultLocationPath);
-    /*const locationPathInput = await global.client.$(
-      '[data-tid=locationPath] input'
-    );
-    await locationPathInput.keys(locationPath || defaultLocationPath);*/
-    // keys is workarround for not working setValue await global.client.$('[data-tid=locationPath] input').setValue(locationPath || defaultLocationPath);
-    await setInputKeys(
-      'locationName',
-      locationName || 'Test Location' + new Date().getTime()
-    );
-    /* await clickOn('[data-tid=locationName]');
-    const locationNameInput = await global.client.$(
-      '[data-tid=locationName] input'
-    );
-    locationNameInput.keys(
-      locationName || 'Test Location' + new Date().getTime()
-    );*/
-    if (isDefault) {
-      await clickOn('[data-tid=locationIsDefault]');
-    }
-    await clickOn('[data-tid=confirmLocationCreation]');
-  }
-}
-
 export async function createPwMinioLocation(
   locationPath,
   locationName,
   isDefault = false
 ) {
-  const lastLocationTID = await getPwLocationTid(-1);
+  const lastLocationTID = global.isWeb ? undefined : await getPwLocationTid(-1);
   // Check if location not exist (from extconfig.js)
   if (locationName !== lastLocationTID) {
     await clickOn('[data-tid=locationManagerMenu]');
@@ -116,38 +82,6 @@ export async function createPwLocation(
     }
     await global.client.click('[data-tid=confirmLocationCreation]');
     await takeScreenshot('after createPwLocation');
-  }
-}
-
-export async function createMinioLocation(
-  locationPath,
-  locationName,
-  isDefault = false
-) {
-  const lastLocationTID = await getLocationTid(-1);
-  // Check if location not exist (from extconfig.js)
-  if (locationName !== lastLocationTID) {
-    await clickOn('[data-tid=createNewLocation]');
-    if (global.isMinio) {
-      await clickOn('[data-tid=objectStorageLocation]');
-    }
-    await clickOn('[data-tid=switchAdvancedModeTID]');
-
-    // SET LOCATION NAME
-    await setInputKeys(
-      'locationName',
-      locationName || 'Test Location' + new Date().getTime()
-    );
-    await setInputKeys('locationPath', locationPath);
-    await setInputKeys('accessKeyId', minioAccessKey);
-    await setInputKeys('secretAccessKey', minioSecretAccessKey);
-    await setInputKeys('bucketName', locationName);
-    await setInputKeys('endpointURL', minioEndpointURL);
-
-    if (isDefault) {
-      await clickOn('[data-tid=locationIsDefault]');
-    }
-    await clickOn('[data-tid=confirmLocationCreation]');
   }
 }
 
