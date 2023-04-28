@@ -112,10 +112,10 @@ jobs:
       - uses: actions/upload-artifact@v3
         if: failure()
         with:
-          name: test-artifacts-web
+          name: test-artifacts-pr
           path: |
-            tests/test-pages/
             tests/test-reports/
+            playwright-report/
   # gitHubActionForNpmMac:
   #  name: Validating MacOS
   #  runs-on: macos-latest

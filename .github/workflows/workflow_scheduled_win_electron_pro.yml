@@ -41,13 +41,13 @@ jobs:
           npm run build-main
           npm run build-e2e
           npm run test-playwright-pro
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: test-artifacts
           path: |
-            tests/test-pages/
             tests/test-reports/
+            playwright-report/
 
 #  e2eTestsElectronUbuntu:
 #    name: E2E Ubuntu Electron
