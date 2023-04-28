@@ -26,7 +26,7 @@ const config = defineConfig({
   globalTeardown: './tests/global-teardown.js',
   // 'github' for GitHub Actions CI to generate annotations, plus a concise 'dot'
   // default 'list' when running locally
-  reporter: process.env.CI ? 'github' : 'list',
+  reporter: process.env.CI ? 'github' : 'list'
 });
 
 console.log('in playwright.config.ts, testDir is', testDir);

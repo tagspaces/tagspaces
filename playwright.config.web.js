@@ -25,5 +25,5 @@ module.exports = defineConfig({
   // maxFailures: process.env.CI ? 3 : 0,
   globalSetup: './tests/global-setup-web.js',
   globalTeardown: './tests/global-teardown-web.js',
-  reporter: process.env.CI ? 'github' : 'list',
+  reporter: process.env.CI ? 'github' : 'list'
 });
