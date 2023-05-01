@@ -773,5 +773,11 @@
   "copyingFoldersFailed": "Kopieren der Ordner fehlgeschlagen",
   "directories": "Ordner",
   "files": "Dateien",
+  "platformImplMissing": "Funktion wird auf dieser Plattform nicht unterstützt",
+  "errorCORS": "Auf die URL kann nicht zugegriffen werden, CORS-Fehler",
+  "currentFolder": "Aktueller Ordner",
+  "switchToMasonry": "Switch to masonry view",
+  "switchToDefaultPerspective": "Zur Standardperspektive wechseln",
+  "noImagesInFolder": "Dieser Ordner enthält keine Bilder",
   "-": "-"
 }
