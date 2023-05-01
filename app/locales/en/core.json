@@ -776,5 +776,8 @@
   "platformImplMissing": "Feature not supported on this platform",
   "errorCORS": "The URL can not be access, CORS error",
   "currentFolder": "Current folder",
+  "switchToMasonry": "Switch to masonry view",
+  "switchToDefaultPerspective": "Switch to default perspective",
+  "noImagesInFolder": "This folder does not contain any images",
   "-": "-"
 }
