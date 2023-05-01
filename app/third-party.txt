@@ -3012,16 +3012,16 @@ SOFTWARE.
 
 The following NPM packages may be included in this product:
 
- - @codemirror/autocomplete@6.5.1
+ - @codemirror/autocomplete@6.6.0
  - @codemirror/commands@6.2.3
- - @codemirror/lang-css@6.1.1
+ - @codemirror/lang-css@6.2.0
  - @codemirror/lang-html@6.4.3
  - @codemirror/lang-javascript@6.1.7
  - @codemirror/lang-markdown@6.1.1
  - @codemirror/language@6.6.0
  - @codemirror/lint@6.2.1
- - @codemirror/search@6.3.0
- - @codemirror/view@6.9.6
+ - @codemirror/search@6.4.0
+ - @codemirror/view@6.10.0
 
 These packages each contain the following license and notice below:
 
@@ -3343,9 +3343,9 @@ This is usually because you want a clean log file.
 
 The following NPM packages may be included in this product:
 
- - @emotion/babel-plugin@11.10.6
- - @emotion/cache@11.10.7
- - @emotion/css@11.10.6
+ - @emotion/babel-plugin@11.10.8
+ - @emotion/cache@11.10.8
+ - @emotion/css@11.10.8
  - @emotion/hash@0.9.0
  - @emotion/is-prop-valid@1.2.0
  - @emotion/memoize@0.8.0
@@ -5953,8 +5953,8 @@ The following NPM packages may be included in this product:
 
  - @lezer/highlight@1.1.4
  - @lezer/html@1.3.4
- - @lezer/javascript@1.4.2
- - @lezer/lr@1.3.3
+ - @lezer/javascript@1.4.3
+ - @lezer/lr@1.3.4
 
 These packages each contain the following license and notice below:
 
@@ -6067,10 +6067,10 @@ SOFTWARE.
 The following NPM packages may be included in this product:
 
  - @mui/base@5.0.0-alpha.107
- - @mui/base@5.0.0-alpha.126
- - @mui/core-downloads-tracker@5.12.1
+ - @mui/base@5.0.0-alpha.127
+ - @mui/core-downloads-tracker@5.12.2
  - @mui/icons-material@5.11.16
- - @mui/lab@5.0.0-alpha.127
+ - @mui/lab@5.0.0-alpha.128
  - @mui/material@5.10.15
  - @mui/private-theming@5.12.0
  - @mui/styled-engine@5.12.0
@@ -6488,7 +6488,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 The following NPM packages may be included in this product:
 
  - @tagspaces/tagspaces-md@2.1.6
- - @tagspaces/tagspaces-platforms@2.1.29
+ - @tagspaces/tagspaces-platforms@2.1.31
 
 These packages each contain the following license and notice below:
 
@@ -6579,11 +6579,11 @@ The following NPM packages may be included in this product:
  - @types/mdast@3.0.11
  - @types/mermaid@9.2.0
  - @types/node-emoji@1.8.2
- - @types/node@18.16.0
+ - @types/node@18.16.2
  - @types/prismjs@1.26.0
  - @types/prop-types@15.7.5
- - @types/react-dom@17.0.19
- - @types/react-is@17.0.3
+ - @types/react-dom@17.0.20
+ - @types/react-is@17.0.4
  - @types/react-redux@7.1.25
  - @types/react-transition-group@4.4.5
  - @types/react@17.0.58
@@ -8050,7 +8050,7 @@ Apache License
 
 The following NPM package may be included in this product:
 
- - aws-sdk@2.1363.0
+ - aws-sdk@2.1367.0
 
 This package contains the following license and notice below:
 
@@ -12488,7 +12488,7 @@ THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - electron-to-chromium@1.4.369
+ - electron-to-chromium@1.4.376
 
 This package contains the following license and notice below:
 
@@ -13664,6 +13664,66 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+-----------
+
+The following NPM package may be included in this product:
+
+ - find-free-port@2.0.0
+
+This package contains the following license and notice below:
+
+find-free-port
+--------
+
+Find free tcp port or pors to listen on.  The definition of 'free' port is that connecting to this port and host ('localhost' by default) will not succeed, and thus 'free'.
+
+## Installation
+```bash
+npm install find-free-port --save
+```
+
+## Examples
+
+Find a free port to listen on that is >= 3000
+```js
+var fp = require("find-free-port")
+fp(3000, function(err, freePort){
+});
+```
+    
+Find a free port to listen on that is >= 3000 and < 3100
+```js
+var fp = require("find-free-port")
+fp(3000, 3100, function(err, freePort){
+});
+```
+            
+Find 3 free ports to listen on that is >= 3000 locally
+```js
+var fp = require("find-free-port")
+fp(3000, 3100, '127.0.0.1', 3, function(err, p1, p2, p3){
+});
+```
+
+Find a free port that is >= 3000 and at host 192.168.100.1
+```js
+var fp = require("find-free-port")
+fp(3000, "192.168.100.1", function(err, freePort){
+});
+```
+
+## Promise
+
+If the callback is omitted, then the call returns a Promise that resolve to a list of avaiable ports:
+```js
+var fp = require("find-free-port")
+fp(3000).then(([freep]) => {
+    console.log('found ' + freep);
+}).catch((err)=>{
+    console.error(err);
+});
+```
 
 -----------
 
@@ -15595,7 +15655,7 @@ limitations under the License.
 
 The following NPM package may be included in this product:
 
- - joi@17.9.1
+ - joi@17.9.2
 
 This package contains the following license and notice below:
 
@@ -15900,7 +15960,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 The following NPM package may be included in this product:
 
- - katex@0.16.6
+ - katex@0.16.7
 
 This package contains the following license and notice below:
 
@@ -24047,8 +24107,9 @@ The following NPM packages may be included in this product:
 
  - prosemirror-commands@1.5.1
  - prosemirror-dropcursor@1.8.0
+ - prosemirror-history@1.3.1
  - prosemirror-keymap@1.2.1
- - prosemirror-view@1.30.2
+ - prosemirror-view@1.31.0
 
 These packages each contain the following license and notice below:
 
@@ -24077,7 +24138,6 @@ THE SOFTWARE.
 The following NPM packages may be included in this product:
 
  - prosemirror-gapcursor@1.3.1
- - prosemirror-history@1.3.0
  - prosemirror-inputrules@1.2.0
  - prosemirror-model@1.19.0
  - prosemirror-schema-list@1.2.2
@@ -25202,7 +25262,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The following NPM package may be included in this product:
 
- - react-virtuoso@4.3.1
+ - react-virtuoso@4.3.2
 
 This package contains the following license and notice below:
 
@@ -27071,7 +27131,7 @@ THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - stylis@4.1.3
+ - stylis@4.1.4
 
 This package contains the following license and notice below:
 
@@ -28910,7 +28970,7 @@ THIS SOFTWARE.
 The following NPM packages may be included in this product:
 
  - yargs@15.4.1
- - yargs@17.7.1
+ - yargs@17.7.2
 
 These packages each contain the following license and notice below:
 
