@@ -228,7 +228,8 @@ function CreateEditLocationDialog(props: Props) {
     }
   }
 
-  function changeMaxLoops(loops) {
+  function changeMaxLoops(event: React.ChangeEvent<HTMLInputElement>) {
+    const loops = event.target.value;
     if (loops) {
       setMaxLoops(parseInt(loops, 10));
     }
@@ -790,19 +791,40 @@ function CreateEditLocationDialog(props: Props) {
                 labelPlacement="start"
                 style={{ justifyContent: 'space-between' }}
                 control={
-                  <Input
-                    name="maxLoops"
-                    style={{
-                      maxWidth: 70,
-                      marginLeft: 15,
-                      marginBottom: 15
-                    }}
-                    type="number"
+                  <Select
                     data-tid="maxLoopsTID"
-                    inputProps={{ min: 1 }}
+                    name="maxLoops"
+                    onChange={changeMaxLoops}
                     value={maxLoops}
-                    onChange={event => changeMaxLoops(event.target.value)}
-                  />
+                  >
+                    <MenuItem value="1">
+                      <span>1000</span>
+                    </MenuItem>
+                    <MenuItem value="2">
+                      <span>2000</span>
+                    </MenuItem>
+                    <MenuItem value="5">
+                      <span>5000</span>
+                    </MenuItem>
+                    <MenuItem value="10">
+                      <span>10000</span>
+                    </MenuItem>
+                    <MenuItem value="20">
+                      <span>20000</span>
+                    </MenuItem>
+                    <MenuItem value="50">
+                      <span>50000</span>
+                    </MenuItem>
+                    <MenuItem value="100">
+                      <span>100000</span>
+                    </MenuItem>
+                    <MenuItem value="150">
+                      <span>150000</span>
+                    </MenuItem>
+                    <MenuItem value="200">
+                      <span>200000</span>
+                    </MenuItem>
+                  </Select>
                 }
                 label={
                   <Typography>

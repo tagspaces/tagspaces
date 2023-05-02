@@ -780,7 +780,7 @@
   "switchToDefaultPerspective": "Switch to default perspective",
   "noImagesInFolder": "This folder does not contain any images",
   "warningDirectoryIsTruncated": "Directory is truncated!",
-  "maxLoops": "Max Loops",
-  "maxLoopsHelp": "ListDirectory ObjectStore location have limit 1000 files. This extends limit = maxLoops x 1000",
+  "maxLoops": "Limit list objects in a bucket",
+  "maxLoopsHelp": "list-objects-v2 returns some or all (up to this limit) of the objects in a bucket.",
   "-": "-"
 }
