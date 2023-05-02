@@ -779,5 +779,8 @@
   "switchToMasonry": "Switch to masonry view",
   "switchToDefaultPerspective": "Switch to default perspective",
   "noImagesInFolder": "This folder does not contain any images",
+  "warningDirectoryIsTruncated": "Directory is truncated!",
+  "maxLoops": "Max Loops",
+  "maxLoopsHelp": "ListDirectory ObjectStore location have limit 1000 files. This extends limit = maxLoops x 1000",
   "-": "-"
 }

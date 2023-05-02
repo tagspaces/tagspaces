@@ -126,6 +126,13 @@ function CreateEditLocationDialog(props: Props) {
     defaultIndexAge = parseInt(maxIndexAsString, 10);
   }
   const [maxIndexAge, setMaxIndexAge] = useState<number>(defaultIndexAge);
+
+  let defaultMaxLoops = AppConfig.maxLoops;
+  if (location && location.maxLoops && location.maxLoops > 0) {
+    const maxLoopsAsString = location.maxLoops + '';
+    defaultMaxLoops = parseInt(maxLoopsAsString, 10);
+  }
+  const [maxLoops, setMaxLoops] = useState<number>(defaultMaxLoops);
   const [storeName, setStoreName] = useState<string>(
     location && location.name ? location.name : ''
   );
@@ -218,6 +225,12 @@ function CreateEditLocationDialog(props: Props) {
     if (ageInMinutes) {
       const age = parseInt(ageInMinutes, 10);
       setMaxIndexAge(age * 1000 * 60);
+    }
+  }
+
+  function changeMaxLoops(loops) {
+    if (loops) {
+      setMaxLoops(parseInt(loops, 10));
     }
   }
 
@@ -393,6 +406,7 @@ function CreateEditLocationDialog(props: Props) {
           fullTextIndex,
           watchForChanges: false,
           maxIndexAge,
+          maxLoops,
           ignorePatternPaths
         };
       }
@@ -768,6 +782,32 @@ function CreateEditLocationDialog(props: Props) {
                   <Typography>
                     {i18n.t('core:maxIndexAge')}
                     <InfoIcon tooltip={i18n.t('core:maxIndexAgeHelp')} />
+                  </Typography>
+                }
+              />
+              <FormControlLabel
+                className={classes.formControl}
+                labelPlacement="start"
+                style={{ justifyContent: 'space-between' }}
+                control={
+                  <Input
+                    name="maxLoops"
+                    style={{
+                      maxWidth: 70,
+                      marginLeft: 15,
+                      marginBottom: 15
+                    }}
+                    type="number"
+                    data-tid="maxLoopsTID"
+                    inputProps={{ min: 1 }}
+                    value={maxLoops}
+                    onChange={event => changeMaxLoops(event.target.value)}
+                  />
+                }
+                label={
+                  <Typography>
+                    {i18n.t('core:maxLoops')}
+                    <InfoIcon tooltip={i18n.t('core:maxLoopsHelp')} />
                   </Typography>
                 }
               />
