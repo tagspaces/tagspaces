@@ -106,8 +106,8 @@ export function getDirectoryMenuItems(
   if (
     !isReadOnlyMode &&
     openMoveCopyDialog &&
-    currentLocation &&
-    currentLocation.type === locationType.TYPE_LOCAL
+    currentLocation
+    // && currentLocation.type === locationType.TYPE_LOCAL
   ) {
     menuItems.push(
       <MenuItem
