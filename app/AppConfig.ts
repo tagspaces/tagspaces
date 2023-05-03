@@ -28,5 +28,6 @@ AppConfig.editableFiles = [
   'sql'
 ];
 AppConfig.autoSaveInterval = 40000;
+AppConfig.maxLoops = 5;
 
 export default AppConfig;

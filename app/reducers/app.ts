@@ -1338,7 +1338,12 @@ export const actions = {
       getState(),
       getState().app.currentLocationId
     );
-
+    const resultsLimit = {
+      maxLoops: currentLocation.maxLoops
+        ? currentLocation.maxLoops
+        : AppConfig.maxLoops,
+      IsTruncated: false
+    };
     PlatformIO.listDirectoryPromise(
       directoryPath,
       fsEntryMeta &&
@@ -1347,9 +1352,19 @@ export const actions = {
           fsEntryMeta.perspective === PerspectiveIDs.GALLERY)
         ? ['extractThumbPath']
         : [], // mode,
-      currentLocation ? currentLocation.ignorePatternPaths : []
+      currentLocation ? currentLocation.ignorePatternPaths : [],
+      resultsLimit
     )
       .then(results => {
+        if (resultsLimit.IsTruncated) {
+          dispatch(
+            actions.showNotification(
+              i18n.t('warningDirectoryIsTruncated') + ': ' + directoryPath,
+              'error',
+              false
+            )
+          );
+        }
         updateHistory(currentLocation, directoryPath);
         if (results !== undefined) {
           // console.debug('app listDirectoryPromise resolved:' + results.length);
@@ -1451,7 +1466,7 @@ export const actions = {
         dispatch(actions.setSelectedEntries(newSelectedEntries));
       }
     } */
-    dispatch(actions.hideNotifications());
+    dispatch(actions.hideNotifications(['error']));
     dispatch(
       actions.loadDirectorySuccessInt(
         directoryPath,
@@ -2079,7 +2094,18 @@ export const actions = {
     autohide,
     tid
   }),
-  hideNotifications: () => ({
+  hideNotifications: (excludeTypes = []) => (
+    dispatch: (action) => void,
+    getState: () => any
+  ) => {
+    const { notificationStatus } = getState().app;
+    if (
+      !excludeTypes.some(type => type === notificationStatus.notificationType)
+    ) {
+      dispatch(actions.hideNotificationsInt());
+    }
+  },
+  hideNotificationsInt: () => ({
     type: types.SET_NOTIFICATION,
     visible: false,
     text: null,

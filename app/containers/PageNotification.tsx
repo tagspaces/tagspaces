@@ -97,7 +97,7 @@ function PageNotification(props: Props) {
         data-tid={props.notificationStatus.tid}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         open={props.notificationStatus.visible}
-        onClose={props.hideNotifications}
+        onClose={() => props.hideNotifications()}
         autoHideDuration={props.notificationStatus.autohide ? 3000 : undefined}
         message={props.notificationStatus.text}
         action={[
@@ -106,7 +106,7 @@ function PageNotification(props: Props) {
             key="close"
             aria-label={i18n.t('core:closeButton')}
             color="inherit"
-            onClick={props.hideNotifications}
+            onClick={() => props.hideNotifications()}
             size="large"
           >
             <CloseIcon />

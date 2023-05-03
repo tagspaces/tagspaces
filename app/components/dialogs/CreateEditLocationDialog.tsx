@@ -126,6 +126,13 @@ function CreateEditLocationDialog(props: Props) {
     defaultIndexAge = parseInt(maxIndexAsString, 10);
   }
   const [maxIndexAge, setMaxIndexAge] = useState<number>(defaultIndexAge);
+
+  let defaultMaxLoops = AppConfig.maxLoops;
+  if (location && location.maxLoops && location.maxLoops > 0) {
+    const maxLoopsAsString = location.maxLoops + '';
+    defaultMaxLoops = parseInt(maxLoopsAsString, 10);
+  }
+  const [maxLoops, setMaxLoops] = useState<number>(defaultMaxLoops);
   const [storeName, setStoreName] = useState<string>(
     location && location.name ? location.name : ''
   );
@@ -218,6 +225,13 @@ function CreateEditLocationDialog(props: Props) {
     if (ageInMinutes) {
       const age = parseInt(ageInMinutes, 10);
       setMaxIndexAge(age * 1000 * 60);
+    }
+  }
+
+  function changeMaxLoops(event: React.ChangeEvent<HTMLInputElement>) {
+    const loops = event.target.value;
+    if (loops) {
+      setMaxLoops(parseInt(loops, 10));
     }
   }
 
@@ -393,6 +407,7 @@ function CreateEditLocationDialog(props: Props) {
           fullTextIndex,
           watchForChanges: false,
           maxIndexAge,
+          maxLoops,
           ignorePatternPaths
         };
       }
@@ -771,6 +786,55 @@ function CreateEditLocationDialog(props: Props) {
                   </Typography>
                 }
               />
+              {type === locationType.TYPE_CLOUD && (
+                <FormControlLabel
+                  className={classes.formControl}
+                  labelPlacement="start"
+                  style={{ justifyContent: 'space-between' }}
+                  control={
+                    <Select
+                      data-tid="maxLoopsTID"
+                      name="maxLoops"
+                      onChange={changeMaxLoops}
+                      value={maxLoops}
+                    >
+                      <MenuItem value="1">
+                        <span>1000</span>
+                      </MenuItem>
+                      <MenuItem value="2">
+                        <span>2000</span>
+                      </MenuItem>
+                      <MenuItem value="5">
+                        <span>5000</span>
+                      </MenuItem>
+                      <MenuItem value="10">
+                        <span>10000</span>
+                      </MenuItem>
+                      <MenuItem value="20">
+                        <span>20000</span>
+                      </MenuItem>
+                      <MenuItem value="50">
+                        <span>50000</span>
+                      </MenuItem>
+                      <MenuItem value="100">
+                        <span>100000</span>
+                      </MenuItem>
+                      <MenuItem value="150">
+                        <span>150000</span>
+                      </MenuItem>
+                      <MenuItem value="200">
+                        <span>200000</span>
+                      </MenuItem>
+                    </Select>
+                  }
+                  label={
+                    <Typography>
+                      {i18n.t('core:maxLoops')}
+                      <InfoIcon tooltip={i18n.t('core:maxLoopsHelp')} />
+                    </Typography>
+                  }
+                />
+              )}
               {AppConfig.useSidecarsForFileTaggingDisableSetting ? (
                 <FormControlLabel
                   className={classes.formControl}

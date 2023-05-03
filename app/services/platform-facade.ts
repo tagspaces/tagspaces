@@ -221,13 +221,15 @@ export default class PlatformFacade {
    * @param path
    * @param mode = ['extractTextContent', 'extractThumbPath']
    * @param ignorePatterns
+   * @param resultsLimit
    */
   static listDirectoryPromise = (
     path: string,
     mode = ['extractThumbPath'],
-    ignorePatterns: Array<string> = []
+    ignorePatterns: Array<string> = [],
+    resultsLimit: any = {}
   ): Promise<Array<any>> =>
-    platformListDirectoryPromise(path, mode, ignorePatterns);
+    platformListDirectoryPromise(path, mode, ignorePatterns, resultsLimit);
 
   static listMetaDirectoryPromise = (path: string): Promise<Array<any>> =>
     platformListMetaDirectoryPromise(path);
