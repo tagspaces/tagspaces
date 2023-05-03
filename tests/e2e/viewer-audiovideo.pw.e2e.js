@@ -29,8 +29,8 @@ test.afterAll(async () => {
   await testDataRefresh();
 });
 test.afterEach(async ({ page }, testInfo) => {
-  if (testInfo.status === 'failed') {
-    await takeScreenshot(page, testInfo.title);
+  if (testInfo.status !== testInfo.expectedStatus) {
+    await takeScreenshot(testInfo);
   }
 });
 test.beforeEach(async () => {

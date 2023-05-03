@@ -16,7 +16,7 @@ const pwConfig = {
   maxFailures: process.env.CI ? 8 : 0,
   globalSetup: './tests/global-setup.js',
   globalTeardown: './tests/global-teardown.js',
-  use: {
+  /*use: {
     screenshot: {
       mode: 'only-on-failure',
       fullPage: true,
@@ -26,7 +26,7 @@ const pwConfig = {
     // trace: 'on-first-retry',
     // Record video only when retrying a test for the first time.
     // video: 'on-first-retry'
-  },
+  },*/
   // 'github' for GitHub Actions CI to generate annotations, plus a concise 'dot'
   // default 'list' when running locally
   reporter: process.env.CI

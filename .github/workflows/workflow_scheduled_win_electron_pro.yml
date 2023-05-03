@@ -47,6 +47,7 @@ jobs:
           name: test-artifacts
           path: |
             tests/test-reports/
+            test-results/
             playwright-report/
 
 #  e2eTestsElectronUbuntu:

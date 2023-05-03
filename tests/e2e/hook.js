@@ -113,6 +113,7 @@ export async function startTestingApp(extconfig) {
       args: [
         pathLib.join(__dirname, '..', '..', 'app', 'main.prod.js'),
         // `--user-data-dir=${tempDir.path}`,
+        '--integration-testing',
         '--no-sandbox',
         '--whitelisted-ips',
         // '--enable-logging', // after enabling cmd windows appears in Windows
@@ -120,6 +121,7 @@ export async function startTestingApp(extconfig) {
         '--ignore-ssl-errors',
         '--disable-dev-shm-usage'
       ],
+      bypassCSP: true,
       env: {
         ELECTRON_ENABLE_LOGGING: true,
         ELECTRON_ENABLE_STACK_DUMPING: true,
@@ -129,7 +131,7 @@ export async function startTestingApp(extconfig) {
 
     // Get the first window that the app opens, wait if necessary.
     global.client = await global.app.firstWindow();
-    global.session = await global.client.context().newCDPSession(global.client);
+    // global.session = await global.client.context().newCDPSession(global.client);
     // await global.client.setViewportSize({ width: 1920, height: 1080 });
     await global.client.waitForLoadState('load'); //'domcontentloaded'); //'networkidle');
 

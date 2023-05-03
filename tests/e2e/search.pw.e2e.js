@@ -32,8 +32,8 @@ test.afterAll(async () => {
 });
 
 test.afterEach(async ({ page }, testInfo) => {
-  if (testInfo.status === 'failed') {
-    await takeScreenshot(page, testInfo.title);
+  if (testInfo.status !== testInfo.expectedStatus) {
+    await takeScreenshot(testInfo);
   }
   await init();
 });
