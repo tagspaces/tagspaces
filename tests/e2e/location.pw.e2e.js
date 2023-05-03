@@ -32,7 +32,10 @@ test.afterAll(async () => {
   await testDataRefresh();
 });
 
-test.afterEach(async () => {
+test.afterEach(async ({ page }, testInfo) => {
+  if (testInfo.status === 'failed') {
+    await takeScreenshot(page, testInfo.title);
+  }
   await init();
 });
 
@@ -56,7 +59,6 @@ test.describe('TST03 - Testing locations:', () => {
     // const lastLocation = allLocations[allLocations.length - 1];
     // const lastLocationNameInDom = (await global.client.elementIdText(lastLocation.ELEMENT)).value;
     // const addedLocation = await global.client.getText('//button[contains(., "' + testTagName + '")]');
-    await takeScreenshot('TST0301 Should create a location');
     await expectElementExist(
       '[data-tid=location_' + testLocationName + ']',
       true,

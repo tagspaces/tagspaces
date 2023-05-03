@@ -7,7 +7,8 @@ import {
   isDisabled,
   selectorFile,
   selectRowFiles,
-  setSettings
+  setSettings,
+  takeScreenshot
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import {
@@ -30,7 +31,10 @@ test.afterAll(async () => {
   await testDataRefresh();
 });
 
-test.afterEach(async () => {
+test.afterEach(async ({ page }, testInfo) => {
+  if (testInfo.status === 'failed') {
+    await takeScreenshot(page, testInfo.title);
+  }
   await init();
 });
 

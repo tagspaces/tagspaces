@@ -12,7 +12,8 @@ import {
   clickOn,
   createNewDirectory,
   expectElementExist,
-  setInputKeys
+  setInputKeys,
+  takeScreenshot
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { createSavedSearch, searchEngine } from './search.helpers';
@@ -30,7 +31,10 @@ test.afterAll(async () => {
   await testDataRefresh();
 });
 
-test.afterEach(async () => {
+test.afterEach(async ({ page }, testInfo) => {
+  if (testInfo.status === 'failed') {
+    await takeScreenshot(page, testInfo.title);
+  }
   await init();
 });
 

@@ -30,7 +30,10 @@ test.afterAll(async () => {
   await testDataRefresh();
 });
 
-test.afterEach(async () => {
+test.afterEach(async ({ page }, testInfo) => {
+  if (testInfo.status === 'failed') {
+    await takeScreenshot(page, testInfo.title);
+  }
   await init();
 });
 
@@ -78,7 +81,6 @@ test.describe('TST01 - Folder management', () => {
     await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
     const newDirectoryName = await renameFolder();
     await clickOn('[data-tid=gridPerspectiveOnBackButton]');
-    await takeScreenshot('TST0103 - Rename folder - after OnBackButton');
     await expectElementExist(
       '[data-tid=fsEntryName_' + newDirectoryName + ']',
       true,
@@ -89,7 +91,6 @@ test.describe('TST01 - Folder management', () => {
       '[data-tid=fsEntryName_' + newDirectoryName + ']'
     );
     await deleteDirectory();
-    await takeScreenshot('TST0103 - Rename folder - after deleteDirectory');
     await expectElementExist(
       '[data-tid=fsEntryName_' + newDirectoryName + ']',
       false,

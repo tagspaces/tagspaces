@@ -9,7 +9,12 @@ import {
   createPwMinioLocation,
   createPwLocation
 } from './location.helpers';
-import { clickOn, expectAudioPlay, isDisplayed } from './general.helpers';
+import {
+  clickOn,
+  expectAudioPlay,
+  isDisplayed,
+  takeScreenshot
+} from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { openContextEntryMenu } from './test-utils';
 import { init } from './welcome.helpers';
@@ -22,6 +27,11 @@ test.beforeAll(async () => {
 test.afterAll(async () => {
   await stopApp();
   await testDataRefresh();
+});
+test.afterEach(async ({ page }, testInfo) => {
+  if (testInfo.status === 'failed') {
+    await takeScreenshot(page, testInfo.title);
+  }
 });
 test.beforeEach(async () => {
   if (global.isMinio) {

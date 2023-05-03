@@ -16,6 +16,7 @@ import {
   selectorFolder,
   setInputValue,
   setSettings,
+  takeScreenshot,
   waitForNotification
 } from './general.helpers';
 import {
@@ -36,7 +37,10 @@ test.afterAll(async () => {
   await testDataRefresh();
 });
 
-test.afterEach(async () => {
+test.afterEach(async ({ page }, testInfo) => {
+  if (testInfo.status === 'failed') {
+    await takeScreenshot(page, testInfo.title);
+  }
   await init();
 });
 

@@ -8,7 +8,7 @@ import {
   createPwMinioLocation,
   createPwLocation
 } from './location.helpers';
-import { clickOn, getGridFileName } from './general.helpers';
+import { clickOn, getGridFileName, takeScreenshot } from './general.helpers';
 
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { init } from './welcome.helpers';
@@ -24,9 +24,11 @@ test.afterAll(async () => {
   await testDataRefresh();
 });
 
-/*test.afterEach(async () => {
-  await init();
-});*/
+test.afterEach(async ({ page }, testInfo) => {
+  if (testInfo.status === 'failed') {
+    await takeScreenshot(page, testInfo.title);
+  }
+});
 
 test.beforeEach(async () => {
   if (global.isMinio) {

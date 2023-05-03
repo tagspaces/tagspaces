@@ -45,7 +45,10 @@ test.afterAll(async () => {
   await testDataRefresh();
 });
 
-test.afterEach(async () => {
+test.afterEach(async ({ page }, testInfo) => {
+  if (testInfo.status === 'failed') {
+    await takeScreenshot(page, testInfo.title);
+  }
   await init();
 });
 
@@ -113,14 +116,12 @@ test.describe('TST51 - Perspective Grid', () => {
   });
 
   test('TST0503 - Create TEXT file [electron,web]', async () => {
-    await takeScreenshot('TST0503 start test');
     await createNewDirectory();
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
       true,
       2000
     );
-    await takeScreenshot('TST0503 create folder');
     await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
 
     // create new file

@@ -8,7 +8,12 @@ import {
   createPwMinioLocation,
   createPwLocation
 } from './location.helpers';
-import { clickOn, frameLocator, isDisplayed } from './general.helpers';
+import {
+  clickOn,
+  frameLocator,
+  isDisplayed,
+  takeScreenshot
+} from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { openContextEntryMenu, toContainTID } from './test-utils';
 import { init } from './welcome.helpers';
@@ -23,7 +28,10 @@ test.afterAll(async () => {
   await testDataRefresh();
 });
 
-test.afterEach(async () => {
+test.afterEach(async ({ page }, testInfo) => {
+  if (testInfo.status === 'failed') {
+    await takeScreenshot(page, testInfo.title);
+  }
   await init();
 });
 
