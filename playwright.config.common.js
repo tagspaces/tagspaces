@@ -16,14 +16,26 @@ const pwConfig = {
   maxFailures: process.env.CI ? 8 : 0,
   globalSetup: './tests/global-setup.js',
   globalTeardown: './tests/global-teardown.js',
+  use: {
+    screenshot: {
+      mode: 'only-on-failure',
+      fullPage: true,
+    },
+    trace: 'retain-on-failure',
+    // Record trace only when retrying a test for the first time.
+    // trace: 'on-first-retry',
+    // Record video only when retrying a test for the first time.
+    // video: 'on-first-retry'
+  },
   // 'github' for GitHub Actions CI to generate annotations, plus a concise 'dot'
   // default 'list' when running locally
   reporter: process.env.CI
-    ? [['html', { open: 'never' }], ['github']]
+    ? [['html', { open: 'never' }], ['github'], ['list', { printSteps: true }]]
     : [
         ['html', { open: 'never' }],
         ['list', { printSteps: true }]
-      ]
+      ],
+  workers: 1
 };
 
 export default pwConfig;

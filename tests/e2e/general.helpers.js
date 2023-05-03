@@ -18,9 +18,16 @@ export const selectorFolder = '//*[@data-tid="perspectiveGridFileTable"]/div';
 const testFolder = 'testFolder';
 const testLocationName = '' + new Date().getTime();
 
-export async function takeScreenshot(page, name) {
-  const sPath = path.join(__dirname, '..', 'test-reports', name + '.png');
-  await page.screenshot({ path: sPath });
+export async function takeScreenshot(page, testInfo) {
+  // const sPath = path.join(__dirname, '..', 'test-reports', name + '.png');
+  /*const sPath = testInfo.outputPath(testInfo.name + 'failure.png');
+  // Add it to the report.
+  testInfo.attachments.push({
+    name: 'screenshot',
+    path: sPath,
+    contentType: 'image/png'
+  });
+  await page.screenshot({ path: sPath });*/
 }
 
 export async function clickOn(selector, options = { timeout: 15000 }) {

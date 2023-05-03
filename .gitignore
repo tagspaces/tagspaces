@@ -114,6 +114,7 @@ cordova/platforms/ios/www/yarn.lock
 cordova/platforms/ios/www/package.json
 junit.xml
 test-reports/*
+test-results/*
 playwright-report/*
 
 /app/**main.prod.js**

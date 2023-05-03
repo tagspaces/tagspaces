@@ -31,9 +31,9 @@ test.afterAll(async () => {
 });
 
 test.afterEach(async ({ page }, testInfo) => {
-  if (testInfo.status === 'failed') {
+  /*if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(page, testInfo.title);
-  }
+  }*/
   await init();
 });
 
@@ -66,7 +66,7 @@ test.describe('TST01 - Folder management', () => {
 
   test('TST0102 - Reload folder [web,minio,electron]', async () => {
     const testFolder = await createNewDirectory();
-    await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
+    await global.client.dblclick('[data-tid=fs1EntryName_' + testFolder + ']');
     await reloadDirectory();
     await deleteDirectory();
     await expectElementExist(

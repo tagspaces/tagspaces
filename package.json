@@ -83,7 +83,7 @@
     "package-win-pro": "npm run install-ext-node-win && electron-builder --win --x64 --config extensions/tagspacespro/resources/builder-pro.json",
     "paste-android-linux": "adb shell input text '$(xclip -selection c -o)'",
     "paste-android-macos": "adb shell input text \"'$(pbpaste)'\"",
-    "playwright-show-trace": "npx playwright show-trace \"tests/test-reports/TST0813 - Delete file [web,minio,electron].zip\"",
+    "playwright-show-trace": "npx playwright show-trace \"test-results/folder.pw.e2e.js-TST01---Folder-management-TST0102---Reload-folder-web-minio-electron-/trace.zip\"",
     "postinstall-cordova-check": "cross-env PD_PLATFORM=cordova node scripts/postinstall.js",
     "postinstall-node-check": "cross-env PD_PLATFORM=node node scripts/postinstall.js",
     "postinstall-electron-check": "cross-env PD_PLATFORM=electron node scripts/postinstall.js",
