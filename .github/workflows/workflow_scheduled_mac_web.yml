@@ -42,6 +42,10 @@ jobs:
           file-url: 'https://dl.min.io/server/minio/release/darwin-amd64/archive/minio.RELEASE.2020-11-19T23-48-16Z'
           file-name: 'minio'
           location: './tests/bin/'
+      - name: Check if Minio exists
+        run: |
+          ls ./tests/bin/
+          test -f ./tests/bin/minio
       - name: Run Electron tests
         run: |
           npm run build-e2e-web
