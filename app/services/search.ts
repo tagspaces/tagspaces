@@ -20,6 +20,7 @@
 import Fuse from 'fuse.js';
 import jmespath from '@gorillastack/jmespath';
 import i18n from 'i18next';
+import { isPathStartsWith } from '@tagspaces/tagspaces-common/paths';
 import { parseGeoLocation } from '-/utils/geo';
 import { extractTimePeriod } from '-/utils/dates';
 import { Pro } from '../pro';
@@ -366,7 +367,7 @@ export default class Search {
       // Limiting the search to current folder only (with sub-folders)
       if (searchQuery.searchBoxing === 'folder') {
         results = results.filter(entry =>
-          entry.path.startsWith(searchQuery.currentDirectory)
+          isPathStartsWith(entry.path, searchQuery.currentDirectory)
         );
       }
 
