@@ -39,8 +39,8 @@ jobs:
         id: minio
         name: Download the Minio
         with:
-          file-url: 'https://dl.min.io/server/minio/release/windows-amd64/archive/minio.RELEASE.2020-11-19T23-48-16Z'
-          file-name: 'minio.exe'
+          file-url: 'https://dl.min.io/server/minio/release/darwin-amd64/archive/minio.RELEASE.2020-11-19T23-48-16Z'
+          file-name: 'minio'
           location: './tests/bin/'
       - name: Run Electron tests
         run: |
