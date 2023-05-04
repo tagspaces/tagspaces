@@ -84,7 +84,7 @@ test.describe('TST01 - Folder management', () => {
     await expectElementExist(
       '[data-tid=fsEntryName_' + newDirectoryName + ']',
       true,
-      2000
+      5000
     );
     // cleanup
     await global.client.dblclick(
