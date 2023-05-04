@@ -124,7 +124,7 @@ export async function startTestingApp(extconfig) {
       bypassCSP: true,
       env: {
         ELECTRON_ENABLE_LOGGING: true,
-        ELECTRON_ENABLE_STACK_DUMPING: true,
+        ELECTRON_ENABLE_STACK_DUMPING: true
         // NODE_ENV: 'test'
       }
     });

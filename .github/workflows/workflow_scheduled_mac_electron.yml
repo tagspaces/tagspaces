@@ -3,6 +3,10 @@ on:
   schedule:
     - cron: '0 2 * * *'
 
+name: Nightly E2E Tests Electron MacOS Manual
+on:
+  workflow_dispatch:
+
 jobs:
   e2eTestsElectronMac:
     name: Test Desktop App Mac
