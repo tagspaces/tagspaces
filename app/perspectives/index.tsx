@@ -21,17 +21,7 @@ import MapiquePerspectiveIcon from '@mui/icons-material/Map';
 import GalleryPerspectiveIcon from '@mui/icons-material/Camera';
 import ListPerspectiveIcon from '@mui/icons-material/ViewList';
 import GridPerspectiveIcon from '@mui/icons-material/ViewModule';
-
-export const PerspectiveIDs = {
-  UNSPECIFIED: 'unspecified',
-  GRID: 'grid',
-  LIST: 'list',
-  GALLERY: 'gallery',
-  // TREEVIZ: 'treeviz',
-  MAPIQUE: 'mapique',
-  KANBAN: 'kanban'
-  // WIKI: 'wiki'
-};
+import { PerspectiveIDs } from '-/perspectives/types';
 
 export const GridPerspectiveMeta = {
   id: PerspectiveIDs.GRID,

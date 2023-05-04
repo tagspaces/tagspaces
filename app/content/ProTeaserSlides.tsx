@@ -9,7 +9,7 @@ import SearchImage from '-/assets/images/search-undraw.svg';
 import CustomFolderColor from '-/assets/images/custom-folder-color.jpg';
 import RevisionsAutosave from '-/assets/images/revisions-autosave.png';
 import EnterpriseImage from '-/assets/images/world-undraw.svg';
-import { PerspectiveIDs } from '-/perspectives';
+import { PerspectiveIDs } from '-/perspectives/types';
 import React from 'react';
 
 export function getProTeaserSlideIndex(slideName: string): number {

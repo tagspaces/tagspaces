@@ -72,7 +72,7 @@ import {
   isGlobalKeyBindingEnabled
 } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
-import { PerspectiveIDs } from '-/perspectives';
+import { PerspectiveIDs } from '-/perspectives/types';
 import versionMeta from '-/version.json';
 import {
   addTag,

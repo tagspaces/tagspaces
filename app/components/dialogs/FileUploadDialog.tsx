@@ -41,7 +41,7 @@ import {
 import { extractFileName } from '@tagspaces/tagspaces-common/paths';
 import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import { PerspectiveIDs } from '-/perspectives';
+import { PerspectiveIDs } from '-/perspectives/types';
 import { getCurrentLocation } from '-/reducers/locations';
 import { TS } from '-/tagspaces.namespace';
 
