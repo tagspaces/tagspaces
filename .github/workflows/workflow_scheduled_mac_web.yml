@@ -46,6 +46,8 @@ jobs:
         run: |
           ls ./tests/bin/
           test -f ./tests/bin/minio
+      - name: Make the Minio executable
+        run: chmod +x ./tests/bin/minio
       - name: Run Electron tests
         run: |
           npm run build-e2e-web
