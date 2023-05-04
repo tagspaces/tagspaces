@@ -373,6 +373,7 @@ function WelcomePanel(props: Props) {
 
   return (
     <div
+      data-tid="WelcomePanelTID"
       style={{
         overflow: 'hidden',
         position: 'relative',

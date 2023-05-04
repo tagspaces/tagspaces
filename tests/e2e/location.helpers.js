@@ -99,11 +99,12 @@ export async function openLocationMenu(locationName) {
 
 export async function closeLocation(locationName) {
   const locationSelector = '[data-tid=locationMoreButton_' + locationName + ']';
-  const element = await global.client.$(locationSelector);
-  if (!(await element.isDisplayed())) {
-    await clickOn('[data-tid=locationManagerPanel]');
+  //const element = await global.client.$(locationSelector);
+  // if (!(await element.isDisplayed())) {
+  if (!(await isDisplayed(locationSelector))) {
+    await clickOn('[data-tid=mobileMenuButton]');
   }
-  await global.client.pause(500);
+  // await global.client.pause(500);
   await clickOn(locationSelector);
   await clickOn('[data-tid=closeLocationTID]');
 }

@@ -2,24 +2,30 @@ import { expect, test } from '@playwright/test';
 import {
   clickOn,
   expectElementExist,
-  expectTagsExistBySelector,
+  getGridFileName,
   getGridFileSelector,
-  isDisabled,
-  selectorFile,
-  selectRowFiles,
   setSettings,
   takeScreenshot
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import {
+  closeFileProperties,
+  closeLocation,
   createPwLocation,
   createPwMinioLocation,
   defaultLocationName,
-  defaultLocationPath
+  defaultLocationPath,
+  getPwLocationTid
 } from './location.helpers';
-import { emptyFolderName, searchEngine, testFilename } from './search.helpers';
-import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
+import {
+  emptyFolderName,
+  searchEngine,
+  testFilename,
+  addRemoveTagsInSearchResults
+} from './search.helpers';
 import { init } from './welcome.helpers';
+import { openContextEntryMenu } from './test-utils';
+import { dataTidFormat } from '../../app/services/test';
 
 test.beforeAll(async () => {
   await startTestingApp('extconfig-with-welcome.js');
@@ -50,7 +56,7 @@ test.beforeEach(async () => {
 });
 
 test.describe('TST06 - Test Search in file structure:', () => {
-  test('TST0601 - Simple Search / filter the current folder [electron]', async () => {
+  test('TST0601 - Search in current location [web,electron]', async () => {
     await global.client.dblclick(
       '[data-tid=fsEntryName_' + emptyFolderName + ']'
     );
@@ -107,54 +113,49 @@ test.describe('TST06 - Test Search in file structure:', () => {
     // expected to reset all search engine
   });*/
 
-  async function addRemoveTagsInSearchResults(
-    tags = ['test-tag3', 'test-tag4']
-  ) {
-    await global.client.dblclick(
-      '[data-tid=fsEntryName_' + emptyFolderName + ']'
+  test('TST0621 - Search actions - open location [web,electron]', async () => {
+    const lastLocationTID = await getPwLocationTid(-1);
+    await closeLocation(lastLocationTID);
+    await expectElementExist('[data-tid=WelcomePanelTID]', true);
+    await searchEngine('l:', {}, false);
+    await clickOn('#textQuery-option-0');
+    await clickOn('[data-tid=folderContainerOpenDirMenu]');
+    await clickOn('[data-tid=showProperties]');
+    await expectElementExist(
+      '[data-tid=OpenedTID' + lastLocationTID + ']',
+      true
     );
-    await searchEngine(testFilename); //, { reindexing: true });
-    // expected current filename
-    await expectElementExist(getGridFileSelector(testFilename), true, 5000);
+  });
 
-    let selectedIds = await selectRowFiles([0]);
+  test('TST0622 - Search actions - filter [web,electron]', async () => {
+    await searchEngine('f:txt', {}, false);
+    const file = await getGridFileName(0);
+    expect(file).toContain('txt');
+  });
 
-    await AddRemoveTagsToSelectedFiles(tags);
+  test('TST0623 - Search actions - history [web,electron]', async () => {
+    const file = 'sample.txt';
+    // add file to history
+    await openContextEntryMenu(
+      '[data-tid="fsEntryName_' + file + '"]',
+      'fileMenuOpenFile'
+    );
+    await closeFileProperties();
 
-    for (let i = 0; i < selectedIds.length; i++) {
-      await expectElementExist(
-        // selectorFile + '[' + (i + 1) + ']//div[@id="gridCellTags"]//button[1]',
-        '[data-tid=tagContainer_' + tags[0] + ']',
-        true,
-        5000
-      );
-    }
-    if (await isDisabled('[data-tid=gridPerspectiveAddRemoveTags]')) {
-      //select rows to enable button
-      selectedIds = await selectRowFiles([0]);
-    }
-    await AddRemoveTagsToSelectedFiles(tags, false);
+    await searchEngine('h:', {}, false);
+    await clickOn('#textQuery-option-0');
+    await expectElementExist(
+      '[data-tid=OpenedTID' + dataTidFormat(file) + ']',
+      true
+    );
+  });
 
-    for (let i = 0; i < selectedIds.length; i++) {
-      await expectElementExist(
-        selectorFile + '[' + (i + 1) + ']//div[@id="gridCellTags"]//button[1]',
-        false,
-        1500
-      );
-      await expectTagsExistBySelector(
-        '[data-entry-id="' + selectedIds[i] + '"]',
-        tags,
-        false
-      );
-    }
-  }
-
-  test('TST0624 - Add/Remove sidecar tags in search results [electron]', async () => {
+  test('TST0639 - Add/Remove sidecar tags in search results [web,electron]', async () => {
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
     await addRemoveTagsInSearchResults(['sidecar-tag5', 'sidecar-tag6']);
   });
 
-  test('TST0625 - Add/Remove filename tags in search results [electron]', async () => {
+  test('TST0640 - Add/Remove filename tags in search results [web,electron]', async () => {
     await addRemoveTagsInSearchResults(['filename-tag5', 'filename-tag6']);
   });
 });
