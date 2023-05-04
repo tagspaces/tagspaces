@@ -2,6 +2,7 @@ name: Nightly E2E Tests Web Minio Windows
 on:
   schedule:
     - cron: '0 1 * * *'
+  workflow_dispatch:
 
 jobs:
   e2eTestsWebWin:

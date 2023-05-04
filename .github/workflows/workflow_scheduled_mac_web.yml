@@ -2,6 +2,7 @@ name: Nightly E2E Tests Web Minio macOS
 on:
   schedule:
     - cron: '0 3 * * *'
+  workflow_dispatch:
 
 jobs:
   e2eTestsWebMac:

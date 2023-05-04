@@ -2,6 +2,7 @@ name: Nightly E2E Tests Electron Windows Pro
 on:
   schedule:
     - cron: '0 0 * * *'
+  workflow_dispatch:
 
 jobs:
   e2eTestsElectronWin:
