@@ -66,7 +66,7 @@ test.describe('TST01 - Folder management', () => {
 
   test('TST0102 - Reload folder [web,minio,electron]', async () => {
     const testFolder = await createNewDirectory();
-    await global.client.dblclick('[data-tid=fs1EntryName_' + testFolder + ']');
+    await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
     await reloadDirectory();
     await deleteDirectory();
     await expectElementExist(
