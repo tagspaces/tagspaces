@@ -22,11 +22,13 @@ import {
   searchEngine,
   testFilename,
   addRemoveTagsInSearchResults,
-  createSavedSearch
+  createSavedSearch,
+  addSearchCommand
 } from './search.helpers';
 import { init } from './welcome.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { dataTidFormat } from '../../app/services/test';
+import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 
 test.beforeAll(async () => {
   await startTestingApp('extconfig-with-welcome.js');
@@ -188,6 +190,51 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await clickOn('#textQuery-option-0');
     // expect to not exist other than txt files extensions like jpg
     await expectElementExist(getGridFileSelector('sample.jpg'), false, 5000);
+  });
+
+  test('TST0627 - Search q. comp - +tag -tag |tag [web,electron]', async () => {
+    // Add 3 files tags
+    const file1 = 'txt';
+    const tags1 = ['test-tag1'];
+    const tags2 = ['test-tag1', 'test-tag2'];
+    const tags3 = ['test-tag2', 'test-tag3'];
+    await clickOn('[data-tid="fsEntryName_sample.' + file1 + '"]');
+    await AddRemoveTagsToSelectedFiles(tags1, true);
+
+    const file2 = 'jpg';
+    await clickOn('[data-tid="fsEntryName_sample.' + file2 + '"]');
+    await AddRemoveTagsToSelectedFiles(tags2, true);
+
+    const file3 = 'gif';
+    await clickOn('[data-tid="fsEntryName_sample.' + file3 + '"]');
+    await AddRemoveTagsToSelectedFiles(tags3, true);
+
+    function getFileName(fileExt, tags) {
+      return (
+        '[data-tid="fsEntryName_sample[' +
+        tags.join(' ') +
+        '].' +
+        fileExt +
+        '"]'
+      );
+    }
+    // Search for + one tag only: test-tag2
+    await addSearchCommand('+' + tags1[0], true);
+    await expectElementExist(getFileName(file1, tags1), true, 5000);
+    await expectElementExist(getFileName(file2, tags2), true, 5000);
+    await expectElementExist(getFileName(file3, tags3), false, 5000);
+
+    // Search for | tag - tag
+    await addSearchCommand('|' + tags2[1], true);
+    await expectElementExist(getFileName(file1, tags1), false, 5000);
+    await expectElementExist(getFileName(file2, tags2), true, 5000);
+    await expectElementExist(getFileName(file3, tags3), false, 5000);
+
+    // Search for - tag
+    await addSearchCommand('-' + tags3[1], true);
+    await expectElementExist(getFileName(file1, tags1), false, 5000);
+    await expectElementExist(getFileName(file2, tags2), true, 5000);
+    await expectElementExist(getFileName(file3, tags3), false, 5000);
   });
 
   test('TST0639 - Add/Remove sidecar tags in search results [web,electron]', async () => {
