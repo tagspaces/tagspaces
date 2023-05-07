@@ -549,7 +549,10 @@ function FolderContainer(props: Props) {
           )}
           {props.isSearchMode ? (
             /* todo rethink if open props is needed */
-            <SearchBox open={props.isSearchMode} />
+            <SearchBox
+              open={props.isSearchMode}
+              textQuery={props.searchQuery.textQuery}
+            />
           ) : (
             <>
               <div

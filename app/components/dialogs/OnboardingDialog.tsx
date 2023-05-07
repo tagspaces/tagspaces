@@ -124,7 +124,7 @@ function OnboardingDialog(props: Props) {
               src={NewLook}
               alt=""
             />
-            <Typography variant="h6">Try our our dark theme!</Typography>
+            <Typography variant="h6">Try our dark theme!</Typography>
             <Typography variant="h6">&nbsp;</Typography>
             <ToggleButtonGroup
               value={props.currentTheme}

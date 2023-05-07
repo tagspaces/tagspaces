@@ -102,6 +102,8 @@ interface Props {
   searches: Array<TS.SearchQuery>;
   switchLocationTypeByID: (locationId: string) => Promise<string | null>;
   // editedEntryPaths: Array<TS.EditedEntryPath>;
+  getTextQuery: () => string;
+  setTextQuery: (value: string) => void;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -140,7 +142,7 @@ function SearchAutocomplete(props: Props) {
   const actionValues = useRef<Array<SearchOptionType>>(
     [] //parseSearchQuery(textQueryMask.current)
   );
-  const inputValue = useRef<string>(props.searchQuery.textQuery || ''); //getInputValue());
+  // const inputValue = useRef<string>(props.searchQuery.textQuery || ''); //getInputValue());
 
   // const searchBoxing = useRef<'location' | 'folder' | 'global'>(
   //   props.searchQuery.searchBoxing ? props.searchQuery.searchBoxing : 'location'
@@ -247,15 +249,15 @@ function SearchAutocomplete(props: Props) {
 
       // inputValue.current = getInputValue();
       if (props.searchQuery.textQuery) {
-        inputValue.current = props.searchQuery.textQuery;
+        props.setTextQuery(props.searchQuery.textQuery);
         emptySearch = false;
-      } else if (inputValue.current) {
+      } else if (props.getTextQuery()) {
         emptySearch = false;
       }
 
       const searchQuery = {
         ...props.searchQuery,
-        textQuery: inputValue.current
+        textQuery: props.getTextQuery()
       };
 
       /*if (mainSearchField.current) {
@@ -414,7 +416,10 @@ function SearchAutocomplete(props: Props) {
         forceUpdate();
       }
     } else if (event.key === 'Backspace' || event.keyCode === 8) {
-      if (inputValue.current.length === 0 && actionValues.current.length > 0) {
+      if (
+        props.getTextQuery().length === 0 &&
+        actionValues.current.length > 0
+      ) {
         actionValues.current = actionValues.current.slice(0, -1);
         resetActions(actionValues.current);
         isOpen.current = true;
@@ -426,7 +431,7 @@ function SearchAutocomplete(props: Props) {
   };
 
   function resetValues(exceptions: Array<SearchOptionType>) {
-    inputValue.current = '';
+    props.setTextQuery('');
     if (
       !exceptions.some(action =>
         isAction(action.action, SearchQueryComposition.SCOPE)
@@ -594,7 +599,7 @@ function SearchAutocomplete(props: Props) {
       // don't execute search on search filter
       return;
     }
-    let query = inputValue.current;
+    let query = props.getTextQuery();
     if (
       query.startsWith('ts:?ts') ||
       query.startsWith(AppConfig.tsProtocol + '?ts')
@@ -1190,7 +1195,7 @@ function SearchAutocomplete(props: Props) {
           // executeSearch();
         } else if (option.action === undefined) {
           // text query
-          inputValue.current = option.label;
+          props.setTextQuery(option.label);
 
           const pAction = actions[actions.length - 1];
           if (pAction && isAction(pAction.action, SearchActions.FILTER)) {
@@ -1241,7 +1246,7 @@ function SearchAutocomplete(props: Props) {
       const inputArr = valueArr.filter(
         action => !actionValues.current.some(v => v.label === action)
       );
-      inputValue.current = inputArr.join(' ');
+      props.setTextQuery(inputArr.join(' '));
       //textQuery.current += ' ' + inputValue.current;
       forceUpdate();
     } else if (reason === 'clear') {
@@ -1249,7 +1254,7 @@ function SearchAutocomplete(props: Props) {
     } else if (reason === 'reset') {
       if (event.type === 'keydown' || event.type === 'click') {
         // textQuery.current += ' ' + inputValue.current;
-        inputValue.current = '';
+        props.setTextQuery('');
       } else if (event.type === 'blur') {
       }
       // executeSearch();
@@ -1466,7 +1471,7 @@ function SearchAutocomplete(props: Props) {
             v.fullName ? v.fullName : v.label
           )}
           onChange={handleChange}
-          inputValue={inputValue.current}
+          inputValue={props.getTextQuery()}
           onInputChange={handleInputChange}
           open={isOpen.current}
           /*onOpen={handleOpen}

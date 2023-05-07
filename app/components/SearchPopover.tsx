@@ -104,6 +104,8 @@ interface Props {
   showUnixHiddenEntries: boolean;
   // openSearchPanel: () => void;
   onClose: () => void;
+  getTextQuery: () => string;
+  setTextQuery: (value: string) => void;
 }
 
 const useStyles = makeStyles<Theme, StyleProps>(styles);
@@ -112,7 +114,7 @@ function SearchPopover(props: Props) {
   // @ts-ignore
   const classes: PropsClasses = useStyles({} as StyleProps);
   const [, forceUpdate] = useReducer(x => x + 1, 0);
-  const textQuery = useRef<string>(props.searchQuery.textQuery);
+  // const textQuery = useRef<string>(props.searchQuery.textQuery);
   // const tagsAND = useRef<Array<TS.Tag>>(props.searchQuery.tagsAND);
   const fileTypes = useRef<Array<string>>(
     props.searchQuery.fileTypes
@@ -154,33 +156,9 @@ function SearchPopover(props: Props) {
     props.searchQuery.fileSize ? props.searchQuery.fileSize : ''
   );
 
-  useEffect(() => {
-    textQuery.current = props.searchQuery.textQuery;
-    /* if (props.searchQuery.fileTypes) {
-      fileTypes.current = props.searchQuery.fileTypes;
-    }
-    if (props.searchQuery.searchBoxing) {
-      searchBoxing.current = props.searchQuery.searchBoxing;
-    }
-    if (props.searchQuery.searchType) {
-      searchType.current = props.searchQuery.searchType;
-    }
-    if (props.searchQuery.lastModified) {
-      lastModified.current = props.searchQuery.lastModified;
-    }
-    if (props.searchQuery.tagTimePeriodFrom) {
-      tagTimePeriodFrom.current = props.searchQuery.tagTimePeriodFrom;
-    }
-    if (props.searchQuery.tagTimePeriodTo) {
-      tagTimePeriodTo.current = props.searchQuery.tagTimePeriodTo;
-    }
-    if (props.searchQuery.forceIndexing) {
-      forceIndexing.current = props.searchQuery.forceIndexing;
-    }
-    if (props.searchQuery.fileSize) {
-      fileSize.current = props.searchQuery.fileSize;
-    } */
-  }, [props.searchQuery]);
+  /* useEffect(() => {
+    props.setTextQuery(props.searchQuery.textQuery);
+  }, [props.searchQuery]);*/
 
   const handleFileTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
@@ -244,7 +222,7 @@ function SearchPopover(props: Props) {
     if (!savedSearch) {
       return true;
     }
-    textQuery.current = savedSearch.textQuery;
+    props.setTextQuery(savedSearch.textQuery);
     fileTypes.current = savedSearch.fileTypes;
     lastModified.current = savedSearch.lastModified;
     fileSize.current = savedSearch.fileSize;
@@ -391,7 +369,7 @@ function SearchPopover(props: Props) {
   }
 
   const clearSearch = () => {
-    textQuery.current = '';
+    props.setTextQuery('');
     searchBoxing.current = 'location';
     searchType.current = 'fuzzy';
     fileTypes.current = FileTypeGroups.any;
@@ -415,24 +393,24 @@ function SearchPopover(props: Props) {
 
   const saveSearch = (isNew = true) => {
     const tagsAND = mergeWithExtractedTags(
-      textQuery.current,
+      props.getTextQuery(),
       props.searchQuery.tagsAND,
       '+'
     );
     const tagsOR = mergeWithExtractedTags(
-      textQuery.current,
+      props.getTextQuery(),
       props.searchQuery.tagsOR,
       '|'
     );
     const tagsNOT = mergeWithExtractedTags(
-      textQuery.current,
+      props.getTextQuery(),
       props.searchQuery.tagsNOT,
       '-'
     );
     setSaveSearchDialogOpened({
       uuid: isNew ? undefined : props.searchQuery.uuid,
       title: props.searchQuery.title,
-      textQuery: textQuery.current,
+      textQuery: props.getTextQuery(),
       tagsAND,
       tagsOR,
       tagsNOT,
@@ -474,22 +452,22 @@ function SearchPopover(props: Props) {
 
   const executeSearch = () => {
     const tagsAND = mergeWithExtractedTags(
-      textQuery.current,
+      props.getTextQuery(),
       props.searchQuery.tagsAND,
       '+'
     );
     const tagsOR = mergeWithExtractedTags(
-      textQuery.current,
+      props.getTextQuery(),
       props.searchQuery.tagsOR,
       '|'
     );
     const tagsNOT = mergeWithExtractedTags(
-      textQuery.current,
+      props.getTextQuery(),
       props.searchQuery.tagsNOT,
       '-'
     );
     const searchQuery: TS.SearchQuery = {
-      textQuery: textQuery.current,
+      textQuery: props.getTextQuery(),
       tagsAND,
       tagsOR,
       tagsNOT,

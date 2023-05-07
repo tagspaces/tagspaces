@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import i18n from '-/services/i18n';
@@ -28,12 +28,22 @@ import SearchAutocomplete from '-/components/SearchAutocomplete';
 
 interface Props {
   open: boolean;
+  textQuery: string;
 }
 
 function SearchBox(props: Props) {
   const [anchorSearch, setAnchorSearch] = useState<HTMLButtonElement | null>(
     null
   );
+  const textQuery = useRef<string>(props.textQuery || '');
+
+  function getTextQuery() {
+    return textQuery.current;
+  }
+
+  function setTextQuery(value) {
+    textQuery.current = value;
+  }
   // const searchInlineRef = React.useRef<HTMLDivElement | null>(null);
 
   /*  useEffect(() => {
@@ -44,7 +54,11 @@ function SearchBox(props: Props) {
 
   return (
     <>
-      <SearchAutocomplete open={props.open} />
+      <SearchAutocomplete
+        open={props.open}
+        getTextQuery={getTextQuery}
+        setTextQuery={setTextQuery}
+      />
       {/*<SearchInline open={props.open} />*/}
       {props.open && (
         <>
@@ -79,7 +93,11 @@ function SearchBox(props: Props) {
               horizontal: 'right'
             }}
           >
-            <SearchPopover onClose={() => setAnchorSearch(null)} />
+            <SearchPopover
+              onClose={() => setAnchorSearch(null)}
+              getTextQuery={getTextQuery}
+              setTextQuery={setTextQuery}
+            />
           </Popover>
         </>
       )}

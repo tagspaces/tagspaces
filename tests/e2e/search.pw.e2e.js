@@ -21,7 +21,8 @@ import {
   emptyFolderName,
   searchEngine,
   testFilename,
-  addRemoveTagsInSearchResults
+  addRemoveTagsInSearchResults,
+  createSavedSearch
 } from './search.helpers';
 import { init } from './welcome.helpers';
 import { openContextEntryMenu } from './test-utils';
@@ -148,6 +149,45 @@ test.describe('TST06 - Test Search in file structure:', () => {
       '[data-tid=OpenedTID' + dataTidFormat(file) + ']',
       true
     );
+  });
+
+  test('TST0624 - Search actions - bookmarks [web,electron]', async () => {
+    const bookmarkFileTitle = 'sample.txt';
+    await openContextEntryMenu(
+      '[data-tid="fsEntryName_' + bookmarkFileTitle + '"]',
+      'fileMenuOpenFile'
+    );
+
+    // Create
+    await clickOn('[data-tid=toggleBookmarkTID]');
+    await clickOn('[data-tid=fileContainerCloseOpenedFile]');
+
+    await searchEngine('b:', {}, false);
+    await clickOn('#textQuery-option-0');
+    await expectElementExist(
+      '[data-tid=OpenedTID' + dataTidFormat(bookmarkFileTitle) + ']',
+      true
+    );
+  });
+
+  test('TST0625 - Search actions - execute query from stored searches [web,electron]', async () => {
+    const storedSearchTitle = 'jpgSearch';
+    await createSavedSearch({ title: storedSearchTitle, textQuery: 'jpg' });
+
+    await searchEngine('q:', {}, false);
+    await clickOn('#textQuery-option-0');
+    // expect to not exist other than jpg files extensions like txt
+    await expectElementExist(getGridFileSelector('sample.txt'), false, 5000);
+  });
+
+  test('TST0626 - Search actions - execute query from search history [web,electron]', async () => {
+    await searchEngine('txt');
+    await clickOn('#clearSearchID');
+
+    await searchEngine('s:', {}, false);
+    await clickOn('#textQuery-option-0');
+    // expect to not exist other than txt files extensions like jpg
+    await expectElementExist(getGridFileSelector('sample.jpg'), false, 5000);
   });
 
   test('TST0639 - Add/Remove sidecar tags in search results [web,electron]', async () => {
