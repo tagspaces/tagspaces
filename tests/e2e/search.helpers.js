@@ -1,12 +1,18 @@
 import {
-  clickOn, expectElementExist, expectTagsExistBySelector, getGridFileSelector, isDisabled,
-  isDisplayed, selectorFile, selectRowFiles,
+  clickOn,
+  expectElementExist,
+  expectTagsExistBySelector,
+  getGridFileSelector,
+  isDisabled,
+  isDisplayed,
+  selectorFile,
+  selectRowFiles,
   setInputKeys,
   setInputValue,
   typeInputValue,
   waitForNotification
-} from "./general.helpers";
-import { AddRemoveTagsToSelectedFiles } from "./perspective-grid.helpers";
+} from './general.helpers';
+import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 
 export const regexQuery = '!"#$%&\'()*+,-./@:;<=>[\\]^_`{|}~';
 export const searchTag = 'tag1';

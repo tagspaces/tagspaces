@@ -1229,9 +1229,17 @@ function EntryContainer(props: Props) {
       )
     : '';
 
-  const fileName: string = openedFile.path
+  let fileName: string = openedFile.path
     ? extractFileName(openedFile.path, PlatformIO.getDirSeparator())
     : '';
+  if (!fileName) {
+    const currentLocation = props.locations.find(
+      location => location.uuid === openedFile.locationId
+    );
+    if (currentLocation) {
+      fileName = currentLocation.name;
+    }
+  }
 
   const renderPanels = () => {
     const closeButton = (
