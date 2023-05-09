@@ -162,26 +162,6 @@ export async function startTestingApp(extconfig) {
   }
 }
 
-/*function setWdioImageComparisonService(browser) {
-  global.browser = browser;
-  const WdioImageComparisonService = require('wdio-image-comparison-service')
-    .default;
-  let wdioImageComparisonService = new WdioImageComparisonService({
-    baselineFolder: pathLib.join(__dirname, '../test-pages/Baseline/'),
-    formatImageName: '{tag}-{logName}-{width}x{height}',
-    screenshotPath: pathLib.join(__dirname, '../test-pages/'),
-    savePerInstance: true,
-    autoSaveBaseline: true,
-    blockOutStatusBar: true,
-    blockOutToolBar: true
-  });
-  // wdioImageComparisonService.defaultOptions.autoSaveBaseline = true;
-  browser.defaultOptions = wdioImageComparisonService.defaultOptions;
-  browser.folders = wdioImageComparisonService.folders;
-
-  wdioImageComparisonService.before(browser.capabilities);
-}*/
-
 export async function stopApp() {
   if (global.isWeb) {
     await global.context.close();
@@ -193,10 +173,6 @@ export async function stopApp() {
 }
 
 export async function testDataRefresh() {
-  const fse = require('fs-extra');
-  //const gracefulFs = require('graceful-fs')
-  //gracefulFs.gracefulify(fse);
-
   const src = pathLib.join(
     __dirname,
     '..',
@@ -212,6 +188,25 @@ export async function testDataRefresh() {
   /*if (global.isElectron && global.client) {
     await global.client.waitForTimeout(1000);
   }*/
+}
+
+export async function createEmptyFile() {
+  const file = pathLib.join(
+    __dirname,
+    '..',
+    'testdata-tmp',
+    'file-structure',
+    'supported-filestypes',
+    'empty_folder',
+    'empty_file.html'
+  );
+
+  try {
+    await fse.createFile(file);
+    console.log('Empty file created!');
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 /*export async function takeScreenshot(name = expect.getState().currentTestName) {

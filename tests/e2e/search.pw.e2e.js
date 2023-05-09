@@ -7,7 +7,12 @@ import {
   setSettings,
   takeScreenshot
 } from './general.helpers';
-import { startTestingApp, stopApp, testDataRefresh } from './hook';
+import {
+  createEmptyFile,
+  startTestingApp,
+  stopApp,
+  testDataRefresh
+} from './hook';
 import {
   closeFileProperties,
   closeLocation,
@@ -243,6 +248,44 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await expectElementExist(getFileName(file1, tags1), true, 5000);
     await expectElementExist(getFileName(file2, tags2), true, 5000);
     await expectElementExist(getFileName(file3, tags3), false, 5000);
+  });
+
+  test('TST0629 - Search q. comp - file size [web,electron]', async () => {
+    await createEmptyFile();
+    await addSearchCommand('si:', false, true);
+    await clickOn('#textQuery-option-0');
+    await global.client.keyboard.press('Enter');
+    await global.client.keyboard.press('Enter');
+    await expectElementExist(getGridFileSelector('empty_file.html'), true, 5000);
+  });
+
+  test('TST0630 - Search q. comp - type [web,electron]', async () => {
+    await addSearchCommand('t:', false, true);
+    // choose image file type
+    await clickOn('#textQuery-option-1');
+    await global.client.keyboard.press('Enter');
+    await global.client.keyboard.press('Enter');
+    await expectElementExist(getGridFileSelector('sample.jpg'), true, 5000);
+    await expectElementExist(getGridFileSelector('sample.txt'), false, 5000);
+  });
+
+  test('TST0631 - Search q. comp - last modified [web,electron]', async () => {
+    await addSearchCommand('lm:', false, true);
+    // choose option Today
+    await clickOn('#textQuery-option-0');
+    await global.client.keyboard.press('Enter');
+    await global.client.keyboard.press('Enter');
+    // TODO all files are modified today
+    await expectElementExist(getGridFileSelector('sample.txt'), true, 5000);
+  });
+
+  // TODO handle 3 cases with better key words
+  test('TST0632 - Search q. comp - accuracy (fuzzy, semi strict, strict) [web,electron]', async () => {
+    await addSearchCommand('a:', false, true);
+    // choose option Today
+    await clickOn('#textQuery-option-0');
+    await addSearchCommand('txt', true);
+    await expectElementExist(getGridFileSelector('sample.txt'), true, 5000);
   });
 
   test('TST0642 - Add/Remove sidecar tags in search results [web,electron]', async () => {
