@@ -32,6 +32,8 @@ export async function addSearchCommand(command, executeSearch = true) {
   if (executeSearch) {
     await global.client.keyboard.press('Enter');
     await global.client.keyboard.press('Enter');
+  } else {
+    await global.client.keyboard.press('ArrowDown');
   }
 }
 /**

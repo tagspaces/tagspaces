@@ -146,7 +146,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     );
     await closeFileProperties();
 
-    await searchEngine('h:', {}, false);
+    await addSearchCommand('h:', false);
     await clickOn('#textQuery-option-0');
     await expectElementExist(
       '[data-tid=OpenedTID' + dataTidFormat(file) + ']',
@@ -165,7 +165,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await clickOn('[data-tid=toggleBookmarkTID]');
     await clickOn('[data-tid=fileContainerCloseOpenedFile]');
 
-    await searchEngine('b:', {}, false);
+    await addSearchCommand('b:', false);
     await clickOn('#textQuery-option-0');
     await expectElementExist(
       '[data-tid=OpenedTID' + dataTidFormat(bookmarkFileTitle) + ']',
@@ -224,16 +224,23 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await expectElementExist(getFileName(file1, tags1), true, 5000);
     await expectElementExist(getFileName(file2, tags2), true, 5000);
     await expectElementExist(getFileName(file3, tags3), false, 5000);
-
-    // Search for | tag - tag
-    await addSearchCommand('|' + tags2[1], true);
-    await expectElementExist(getFileName(file1, tags1), false, 5000);
-    await expectElementExist(getFileName(file2, tags2), true, 5000);
+    // Search for - tag
+    await addSearchCommand('-' + tags2[1], true);
+    await expectElementExist(getFileName(file1, tags1), true, 5000);
+    await expectElementExist(getFileName(file2, tags2), false, 5000);
     await expectElementExist(getFileName(file3, tags3), false, 5000);
 
-    // Search for - tag
+    await clickOn('#clearSearchID');
+
+    // Search for | tag - tag
+    await addSearchCommand('|' + tags1[0], false);
+    await addSearchCommand('|' + tags2[1], true);
+    await expectElementExist(getFileName(file1, tags1), true, 5000);
+    await expectElementExist(getFileName(file2, tags2), true, 5000);
+    await expectElementExist(getFileName(file3, tags3), true, 5000);
+
     await addSearchCommand('-' + tags3[1], true);
-    await expectElementExist(getFileName(file1, tags1), false, 5000);
+    await expectElementExist(getFileName(file1, tags1), true, 5000);
     await expectElementExist(getFileName(file2, tags2), true, 5000);
     await expectElementExist(getFileName(file3, tags3), false, 5000);
   });
