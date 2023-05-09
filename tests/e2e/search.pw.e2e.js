@@ -233,7 +233,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await clickOn('#clearSearchID');
 
     // Search for | tag - tag
-    await addSearchCommand('|' + tags1[0], false);
+    await addSearchCommand('|' + tags1[0], false, false);
     await addSearchCommand('|' + tags2[1], true);
     await expectElementExist(getFileName(file1, tags1), true, 5000);
     await expectElementExist(getFileName(file2, tags2), true, 5000);

@@ -23,7 +23,11 @@ export const testFilename = 'sample.desktop';
 export const emptyFolderName = 'empty_folder';
 export const firstTagButton = '/tbody/tr[1]/td[3]/button[1]';
 
-export async function addSearchCommand(command, executeSearch = true) {
+export async function addSearchCommand(
+  command,
+  executeSearch = true,
+  forceOpenMenu = true
+) {
   if (!(await isDisplayed('#textQuery'))) {
     await clickOn('[data-tid=toggleSearch]');
   }
@@ -32,7 +36,7 @@ export async function addSearchCommand(command, executeSearch = true) {
   if (executeSearch) {
     await global.client.keyboard.press('Enter');
     await global.client.keyboard.press('Enter');
-  } else {
+  } else if (forceOpenMenu) {
     await global.client.keyboard.press('ArrowDown');
   }
 }
