@@ -4,12 +4,13 @@ window.ExtUseGenerateThumbnails = true;
 window.ExtLocations = [
   {
     uuid: '30565f09-c7fd-2333-fc67-a75db27rt5ba', // an unique id of the location
-    type: '0', // 1 defines the locations a cloud based
+    type: '1', // 1 defines the locations a cloud based
     name: 'supported-filestypes', // the name of the location
-    path: './tests/testdata-tmp/file-structure/supported-filestypes', // the path to sub folder in the location
-    // accessKeyId: 'your_access_key', // the access key of the user
-    // secretAccessKey: 'your_secret_key', // the secret case of the user
-    // bucketName: 'demo-bucket', // the name of the S3 bucket
+    path: '', // the path to sub folder in the location
+    accessKeyId: 'minioadmin', // the access key of the user
+    secretAccessKey: 'minioadmin', // the secret case of the user
+    bucketName: 'supported-filestypes', // the name of the S3 bucket
+    endpointURL: 'http://127.0.0.1:9000', // the name of the S3 bucket
     // region: 'eu-central-1', // the AWS region
     isDefault: false, // if true this location will be loaded by the application start
     isReadOnly: false, // if true the user interface of the application turns to read-only mode

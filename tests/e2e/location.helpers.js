@@ -17,16 +17,16 @@ export const defaultLocationPath =
 export const defaultLocationName = 'supported-filestypes';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const newLocationName = 'Location Name Changed';
-const minioAccessKey = 'minioadmin';
-const minioSecretAccessKey = 'minioadmin';
-const minioEndpointURL = 'http://127.0.0.1:9000';
+export const minioAccessKey = 'minioadmin';
+export const minioSecretAccessKey = 'minioadmin';
+export const minioEndpointURL = 'http://127.0.0.1:9000';
 
 export async function createPwMinioLocation(
   locationPath,
   locationName,
   isDefault = false
 ) {
-  const lastLocationTID = global.isWeb ? undefined : await getPwLocationTid(-1);
+  const lastLocationTID = await getPwLocationTid(-1);
   // Check if location not exist (from extconfig.js)
   if (locationName !== lastLocationTID) {
     await clickOn('[data-tid=locationManagerMenu]');

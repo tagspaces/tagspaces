@@ -13,7 +13,7 @@ const pwConfig = {
   ignoreSnapshots: !process.env.CI,
   retries: process.env.CI ? 3 : 0,
   // The maximum number of test failures for the whole test suite run. After reaching this number, testing will stop and exit with an error
-  maxFailures: process.env.CI ? 8 : 0,
+  maxFailures: process.env.CI ? 20 : 0,
   globalSetup: './tests/global-setup.js',
   globalTeardown: './tests/global-teardown.js',
   /*use: {

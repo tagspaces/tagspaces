@@ -63,13 +63,33 @@ export async function clearLocalStorage() {
 }
 
 export async function copyExtConfig(extconfig = 'extconfig-with-welcome.js') {
-  const srcDir = pathLib.join(__dirname, '..', '..', 'scripts', extconfig);
-  const destDir = pathLib.join(__dirname, '..', '..', 'app', 'extconfig.js');
+  const srcDir = pathLib.join(
+    __dirname,
+    '..',
+    '..',
+    'scripts',
+    global.isWeb ? 'web' + extconfig : extconfig
+  );
+  const destDir = pathLib.join(
+    __dirname,
+    '..',
+    '..',
+    global.isWeb ? 'web' : 'app',
+    'extconfig.js'
+  );
   await fse.copy(srcDir, destDir);
 }
 
 export async function removeExtConfig() {
-  await fse.remove(pathLib.join(__dirname, '..', '..', 'app', 'extconfig.js'));
+  await fse.remove(
+    pathLib.join(
+      __dirname,
+      '..',
+      '..',
+      global.isWeb ? 'web' : 'app',
+      'extconfig.js'
+    )
+  );
 }
 
 export async function startTestingApp(extconfig) {

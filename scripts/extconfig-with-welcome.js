@@ -1,10 +1,5 @@
-window.ExtLogoURL = 'assets/images/text-logo-dev.svg';
-window.ExtShowAdvancedSearch = false;
-window.ExtLightThemeLightColor = '#a6def4';
-window.ExtLightThemeMainColor = '#3bc8ff';
-window.ExtDarkThemeLightColor = '#a6def4';
-window.ExtDarkThemeMainColor = '#3bc8ff';
 window.ExtIsFirstRun = true;
+window.ExtCheckForUpdatesOnStartup = false;
 window.ExtUseGenerateThumbnails = true;
 window.ExtLocations = [
   {
@@ -23,7 +18,7 @@ window.ExtLocations = [
     watchForChanges: false // activates the watching for changed files in the current location
   }
 ];
-window.ExtSearches = [
+/*window.ExtSearches = [
   {
     uuid: '16474266-0445-4f47-b092-25b884448d04', // an unique id of the search
     title: 'search by tag 1star', // the name of the search
@@ -42,4 +37,4 @@ window.ExtSearches = [
     maxSearchResults: 1000,
     forceIndexing: false
   }
-];
+];*/
