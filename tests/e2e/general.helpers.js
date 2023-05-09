@@ -73,62 +73,8 @@ export async function waitUntilClassChanged(selector, className) {
   return await element.getAttribute('class');
 }
 
-/**
- * @deprecated Spectron specific use await global.client.dblclick(selector);
- */
-export async function doubleClickOn(selector) {
-  const element = await global.client.$(selector);
-  await element.waitUntil(
-    async function() {
-      const displayed = await this.isDisplayed();
-      // const displayed = await this.isDisplayedInViewport();
-      return displayed; //=== true;
-    },
-    {
-      timeout: 5000,
-      timeoutMsg: 'doubleClick selector ' + selector + ' to exist after 5s'
-    }
-  );
-  await element.doubleClick();
-}
-
 export async function setInputValue(selector, value) {
   global.client.fill(selector, value);
-}
-
-/*
- * @deprecated spectron specific use setInputKeys instead
- */
-export async function addInputKeys(tid, value) {
-  const element = await global.client.$('[data-tid=' + tid + ']');
-  await element.waitUntil(
-    async function() {
-      const displayed = await this.isDisplayedInViewport();
-      return displayed === true;
-    },
-    {
-      timeout: 5000,
-      timeoutMsg:
-        'setInputKeys selector ' + element.selector + ' to exist after 5s'
-    }
-  );
-  await element.click();
-
-  const elemInput = await global.client.$('[data-tid=' + tid + '] input');
-  await elemInput.waitUntil(
-    async function() {
-      // const displayed = await this.isDisplayed();
-      const displayed = await this.isDisplayedInViewport();
-      return displayed === true;
-    },
-    {
-      timeout: 5000,
-      timeoutMsg:
-        'setInputKeys selector ' + element.selector + ' to exist after 5s'
-    }
-  );
-  await elemInput.click();
-  await elemInput.keys(value);
 }
 
 /**
@@ -163,7 +109,7 @@ export async function typeInputValue(inputSelector, value, delay = 50) {
   return oldValue;
 }
 
-export async function setSelectorKeys(selector, value) {
+/*export async function setSelectorKeys(selector, value) {
   const element = await global.client.$(selector);
   await element.waitUntil(
     async function() {
@@ -199,9 +145,9 @@ export async function setSelectorKeys(selector, value) {
   await element.click();
   await elemInput.keys(value);
   return oldValue;
-}
+}*/
 
-export async function clearInputValue(inputElement) {
+/*export async function clearInputValue(inputElement) {
   const oldValue = await inputElement.getValue();
   const count = oldValue.length;
   for (let i = 0; i < count; i++) {
@@ -215,7 +161,7 @@ export async function clearInputValue(inputElement) {
     await inputElement.clearValue();
   }
   return oldValue;
-}
+}*/
 
 /**
  * @param fileIndex

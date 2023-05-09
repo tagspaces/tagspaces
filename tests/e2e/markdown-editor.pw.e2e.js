@@ -16,11 +16,11 @@ import {
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { openContextEntryMenu, toContainTID } from './test-utils';
-import { init } from './welcome.helpers';
+import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 
 test.beforeAll(async () => {
   await startTestingApp();
-  await init();
+  // await clearDataStorage();
 });
 
 test.afterAll(async () => {
@@ -32,10 +32,11 @@ test.afterEach(async ({ page }, testInfo) => {
   if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
   }
-  await init();
+  await clearDataStorage();
 });
 
 test.beforeEach(async () => {
+  await closeWelcomePlaywright();
   if (global.isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
   } else {

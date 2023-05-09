@@ -17,14 +17,15 @@ import {
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { openContextEntryMenu } from './test-utils';
-import { init } from './welcome.helpers';
+import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 
 test.beforeAll(async () => {
   await startTestingApp();
-  await init();
+  await closeWelcomePlaywright();
 });
 
 test.afterAll(async () => {
+  await clearDataStorage();
   await stopApp();
   await testDataRefresh();
 });

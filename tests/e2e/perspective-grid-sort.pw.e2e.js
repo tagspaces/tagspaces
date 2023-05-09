@@ -11,12 +11,12 @@ import {
 import { clickOn, getGridFileName, takeScreenshot } from './general.helpers';
 
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
-import { init } from './welcome.helpers';
+import { clearDataStorage } from './welcome.helpers';
 import { getDirEntries } from './perspective-grid.helpers';
 
 test.beforeAll(async () => {
-  await startTestingApp('extconfig-with-welcome.js');
-  await init();
+  await startTestingApp('extconfig.js');
+  // await clearDataStorage();
 });
 
 test.afterAll(async () => {

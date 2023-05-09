@@ -1,7 +1,6 @@
-import { clickOn } from './general.helpers';
 import { clearStorage } from './clearstorage.helpers';
 
-export async function init() {
+export async function clearDataStorage() {
   if (global.isWeb) {
     await global.client.evaluate(() => {
       window.history.pushState('', document.title, window.location.pathname);
@@ -9,25 +8,11 @@ export async function init() {
     });
     await global.client.reload();
   } else {
-    await closeWelcomePlaywright();
+    // await closeWelcomePlaywright();
     await clearStorage();
   }
 
-  await closeWelcomePlaywright();
-}
-
-export async function closeWelcome() {
-  const nextButton = await global.client.$('[data-tid=nextStepOnboarding]');
-  if (await nextButton.isDisplayed()) {
-    await nextButton.click();
-    await nextButton.click();
-    await nextButton.click();
-    await nextButton.click();
-    await global.client.pause(500);
-    await clickOn('[data-tid=startTagSpacesAfterOnboarding]');
-    await global.client.pause(600);
-    await clickOn('[data-tid=agreeLicenseDialog]');
-  }
+  // await closeWelcomePlaywright();
 }
 
 export async function closeWelcomePlaywright() {

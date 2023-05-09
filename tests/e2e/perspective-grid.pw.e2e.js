@@ -39,11 +39,11 @@ import {
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 import { getPropertiesFileName } from './file.properties.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
-import { init } from './welcome.helpers';
+import { clearDataStorage } from './welcome.helpers';
 
 test.beforeAll(async () => {
-  await startTestingApp('extconfig-with-welcome.js');
-  await init();
+  await startTestingApp('extconfig.js');
+  //await clearDataStorage();
 });
 
 test.afterAll(async () => {
@@ -55,7 +55,7 @@ test.afterEach(async ({ page }, testInfo) => {
   if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
   }
-  await init();
+  await clearDataStorage();
 });
 
 test.beforeEach(async () => {
@@ -243,24 +243,6 @@ test.describe('TST50 - Perspective Grid', () => {
         5000
       );
     }
-
-    /* await doubleClickOn(selectorFolder);
-    await createTxtFile();
-    await searchEngine('note');
-    await expectElementExist(selectorFile, true);
-
-    const classNotSelected = await getGridCellClass(0);
-    await clickOn(selectorFile);
-    const classSelected = await waitUntilClassChanged(
-      selectorFile + '/div/div',
-      classNotSelected
-    );
-    expect(classNotSelected).not.toBe(classSelected);
-
-    await clickOn('[data-tid=gridPerspectiveDeleteMultipleFiles]');
-    await clickOn('[data-tid=confirmDeleteFileDialog]');
-    await waitForNotification();
-    await expectElementExist(selectorFile, false); */
   });
 
   test.skip('TST5015 - Tag file drag&drop in perspective [manual]', async () => {});

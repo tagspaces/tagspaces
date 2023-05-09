@@ -25,7 +25,7 @@ import {
 } from './general.helpers';
 import { searchEngine } from './search.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
-import { init } from './welcome.helpers';
+import { clearDataStorage } from './welcome.helpers';
 
 export const firstFile = '/span';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
@@ -36,8 +36,8 @@ const subFolderThumbnailsPath = defaultLocationPath + '/thumbnails';
 const testFolder = 'testFolder';
 
 test.beforeAll(async () => {
-  await startTestingApp('extconfig-with-welcome.js');
-  await init();
+  await startTestingApp('extconfig.js');
+  // await clearDataStorage();
 });
 
 test.afterAll(async () => {
@@ -49,7 +49,7 @@ test.afterEach(async ({ page }, testInfo) => {
   if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
   }
-  await init();
+  await clearDataStorage();
 });
 
 test.beforeEach(async () => {

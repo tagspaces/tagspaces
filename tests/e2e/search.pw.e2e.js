@@ -25,14 +25,14 @@ import {
   createSavedSearch,
   addSearchCommand
 } from './search.helpers';
-import { init } from './welcome.helpers';
+import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { dataTidFormat } from '../../app/services/test';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 
 test.beforeAll(async () => {
-  await startTestingApp('extconfig-with-welcome.js');
-  await init();
+  await startTestingApp('extconfig.js'); //'extconfig-with-welcome.js');
+  // await clearDataStorage();
 });
 
 test.afterAll(async () => {
@@ -44,10 +44,11 @@ test.afterEach(async ({ page }, testInfo) => {
   if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
   }
-  await init();
+  await clearDataStorage();
 });
 
 test.beforeEach(async () => {
+  // await closeWelcomePlaywright();
   if (global.isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
   } else {
@@ -237,12 +238,12 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await expectElementExist(getFileName(file3, tags3), false, 5000);
   });
 
-  test('TST0639 - Add/Remove sidecar tags in search results [web,electron]', async () => {
+  test('TST0642 - Add/Remove sidecar tags in search results [web,electron]', async () => {
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
     await addRemoveTagsInSearchResults(['sidecar-tag5', 'sidecar-tag6']);
   });
 
-  test('TST0640 - Add/Remove filename tags in search results [web,electron]', async () => {
+  test('TST0643 - Add/Remove filename tags in search results [web,electron]', async () => {
     await addRemoveTagsInSearchResults(['filename-tag5', 'filename-tag6']);
   });
 });

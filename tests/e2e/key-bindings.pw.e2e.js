@@ -11,11 +11,11 @@ import {
   takeScreenshot
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
-import { init } from './welcome.helpers';
+import { clearDataStorage } from './welcome.helpers';
 
 test.beforeAll(async () => {
-  await startTestingApp('extconfig-with-welcome.js');
-  await init();
+  await startTestingApp('extconfig.js');
+  // await clearDataStorage();
 });
 
 test.afterAll(async () => {
@@ -27,7 +27,7 @@ test.afterEach(async ({ page }, testInfo) => {
   if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
   }
-  await init();
+  await clearDataStorage();
 });
 
 test.beforeEach(async () => {

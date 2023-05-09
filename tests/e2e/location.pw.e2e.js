@@ -15,7 +15,7 @@ import {
   takeScreenshot
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
-import { init } from './welcome.helpers';
+import { clearDataStorage } from './welcome.helpers';
 
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const newLocationName = 'Location_Name_Changed';
@@ -24,7 +24,7 @@ let testLocationName;
 
 test.beforeAll(async () => {
   await startTestingApp('extconfig-without-locations.js');
-  await init();
+  //await clearDataStorage();
 });
 
 test.afterAll(async () => {
@@ -36,7 +36,7 @@ test.afterEach(async ({ page }, testInfo) => {
   if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
   }
-  await init();
+  await clearDataStorage();
 });
 
 test.beforeEach(async () => {

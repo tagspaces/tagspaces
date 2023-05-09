@@ -8,7 +8,7 @@ import {
   takeScreenshot
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
-import { init } from './welcome.helpers';
+import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 
 const testTagName = 'testTag';
 const newTagName = 'newTagName';
@@ -42,7 +42,7 @@ export async function tagMenu(tagName, menuOperation) {
 
 test.beforeAll(async () => {
   await startTestingApp();
-  await init();
+  //await clearDataStorage();
 });
 
 test.afterAll(async () => {
@@ -54,10 +54,11 @@ test.afterEach(async ({ page }, testInfo) => {
   if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
   }
-  await init();
+  await clearDataStorage();
 });
 
 test.beforeEach(async () => {
+  await closeWelcomePlaywright();
   await clickOn('[data-tid=tagLibrary]');
 });
 
