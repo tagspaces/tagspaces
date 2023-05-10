@@ -193,7 +193,7 @@ export async function testDataRefresh() {
   }*/
 }
 
-export async function createEmptyFile() {
+export async function createEmptyFile(fileName = 'empty_file.html') {
   const file = pathLib.join(
     __dirname,
     '..',
@@ -201,7 +201,7 @@ export async function createEmptyFile() {
     'file-structure',
     'supported-filestypes',
     'empty_folder',
-    'empty_file.html'
+    fileName
   );
 
   try {

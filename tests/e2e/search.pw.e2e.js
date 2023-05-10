@@ -301,13 +301,29 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await expectElementExist(getGridFileSelector('sample.pdf'), true, 5000);
   });
 
-  // TODO handle 3 cases with better key words
   test('TST0632 - Search q. comp - accuracy (fuzzy, semi strict, strict) [web,electron]', async () => {
+    await createEmptyFile('n1ote.txt');
+    await createEmptyFile('note.txt');
+    // fuzzy
     await addSearchCommand('a:', false);
-    // choose option Today
     await clickOn('#textQuery-option-0');
-    await addSearchCommand('txt', true);
-    await expectElementExist(getGridFileSelector('sample.pdf'), true, 5000);
+    await addSearchCommand('n1te', true);
+    await expectElementExist(getGridFileSelector('n1ote.txt'), true, 5000);
+    await expectElementExist(getGridFileSelector('note.txt'), true, 5000);
+    await clickOn('#clearSearchID');
+    // semi strict
+    await addSearchCommand('a:', false);
+    await clickOn('#textQuery-option-1');
+    await addSearchCommand('note', true);
+    await expectElementExist(getGridFileSelector('n1ote.txt'), false, 5000);
+    await expectElementExist(getGridFileSelector('note.txt'), true, 5000);
+    await clickOn('#clearSearchID');
+    // strict
+    await addSearchCommand('a:', false);
+    await clickOn('#textQuery-option-1');
+    await addSearchCommand('note', true);
+    await expectElementExist(getGridFileSelector('n1ote.txt'), false, 5000);
+    await expectElementExist(getGridFileSelector('note.txt'), true, 5000);
   });
 
   test('TST0642 - Add/Remove sidecar tags in search results [web,electron]', async () => {
