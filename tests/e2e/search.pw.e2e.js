@@ -21,7 +21,8 @@ import {
   createPwMinioLocation,
   defaultLocationName,
   defaultLocationPath,
-  getPwLocationTid
+  getPwLocationTid,
+  openLocationMenu
 } from './location.helpers';
 import {
   emptyFolderName,
@@ -260,6 +261,9 @@ test.describe('TST06 - Test Search in file structure:', () => {
 
   test('TST0629 - Search q. comp - file size [web,electron]', async () => {
     await createEmptyFile();
+    await openLocationMenu(defaultLocationName);
+    await clickOn('[data-tid=indexLocation]');
+
     await addSearchCommand('si:', false);
     await clickOn('#textQuery-option-0');
     await global.client.keyboard.press('Enter');
