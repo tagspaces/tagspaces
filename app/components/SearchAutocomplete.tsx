@@ -62,7 +62,6 @@ import {
   scope,
   ScopeType,
   SearchActions,
-  SearchOptions,
   SearchOptionType,
   SearchQueryComposition
 } from '-/components/SearchOptions';
@@ -70,6 +69,7 @@ import { getCurrentLocation, getLocations } from '-/reducers/locations';
 import CloseIcon from '@mui/icons-material/Close';
 import { getTagLibrary } from '-/services/taglibrary-utils';
 import { getSearches } from '-/reducers/searches';
+import { getSearchOptions } from '-/components/SearchOptionsMenu';
 
 interface Props {
   style?: any;
@@ -121,7 +121,7 @@ function SearchAutocomplete(props: Props) {
     openSavedSearches,
     setOpenSavedSearches
   ] = useState<null | HTMLElement>(null);
-  const searchOptions = useRef<Array<SearchOptionType>>(SearchOptions);
+  const searchOptions = useRef<Array<SearchOptionType>>(getSearchOptions());
   const currentOptions = useRef<string>(undefined);
   // const textQuery = useRef<string>(props.searchQuery.textQuery || ''); // rethink to use inputValue instead
   // const textQueryMask = useRef<string>('');
@@ -931,12 +931,12 @@ function SearchAutocomplete(props: Props) {
       currentOptions.current = action;
       const execActionsArr = Object.values(ExecActions);
       if (execActionsArr.includes(action)) {
-        searchOptions.current = SearchOptions.filter(
+        searchOptions.current = getSearchOptions().filter(
           option => option.group === 'query'
         );
         optionsChanged = true;
       } else {
-        searchOptions.current = SearchOptions;
+        searchOptions.current = getSearchOptions();
       }
     }
 
@@ -997,7 +997,7 @@ function SearchAutocomplete(props: Props) {
         } else if (option.action === ExecActions.OPEN_LOCATION) {
           props.exitSearchMode();
           // isOpen.current = false;
-          searchOptions.current = SearchOptions;
+          searchOptions.current = getSearchOptions();
           currentOptions.current = undefined;
           props.openLocationById(option.id);
           return [];
@@ -1056,7 +1056,7 @@ function SearchAutocomplete(props: Props) {
               props.openFsEntry
             );
           }
-          searchOptions.current = SearchOptions;
+          searchOptions.current = getSearchOptions();
           currentOptions.current = undefined;
           isOpen.current = false;
           return [];
@@ -1076,13 +1076,13 @@ function SearchAutocomplete(props: Props) {
               props.openFsEntry
             );
           }
-          searchOptions.current = SearchOptions;
+          searchOptions.current = getSearchOptions();
           currentOptions.current = undefined;
           isOpen.current = false;
           return [];
         } else if (option.action === ExecActions.OPEN_SAVED_SEARCHES) {
           props.setSearchQuery(JSON.parse(option.fullName));
-          searchOptions.current = SearchOptions;
+          searchOptions.current = getSearchOptions();
           currentOptions.current = undefined;
           isOpen.current = false;
           return [];
@@ -1336,12 +1336,12 @@ function SearchAutocomplete(props: Props) {
   function resetActions(actions: Array<SearchOptionType>) {
     resetValues(actions);
     if (actions.length === 0) {
-      searchOptions.current = SearchOptions;
+      searchOptions.current = getSearchOptions();
       currentOptions.current = undefined;
       // textQuery.current = ''; todo remove tagsAnd from search query
     } else {
       actionValues.current = execActions(actions, [], false);
-      searchOptions.current = SearchOptions.filter(
+      searchOptions.current = getSearchOptions().filter(
         option => option.group === 'query'
       );
       currentOptions.current = undefined;

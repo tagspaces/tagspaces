@@ -40,6 +40,7 @@ import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 test.beforeAll(async () => {
   await startTestingApp('extconfig.js'); //'extconfig-with-welcome.js');
   // await clearDataStorage();
+  await createEmptyFile();
 });
 
 test.afterAll(async () => {
@@ -151,7 +152,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     expect(file).toContain('txt');
   });
 
-  test('TST0623 - Search actions - history [web,electron]', async () => {
+  test('TST0623 - Search actions - history [web,electron,_pro]', async () => {
     const file = 'sample.txt';
     // add file to history
     await openContextEntryMenu(
@@ -168,7 +169,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     );
   });
 
-  test('TST0624 - Search actions - bookmarks [web,electron]', async () => {
+  test('TST0624 - Search actions - bookmarks [web,electron,_pro]', async () => {
     const bookmarkFileTitle = 'sample.txt';
     await openContextEntryMenu(
       '[data-tid="fsEntryName_' + bookmarkFileTitle + '"]',
@@ -187,7 +188,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     );
   });
 
-  test('TST0625 - Search actions - execute query from stored searches [web,electron]', async () => {
+  test('TST0625 - Search actions - execute query from stored searches [web,electron,_pro]', async () => {
     const storedSearchTitle = 'jpgSearch';
     await createSavedSearch({ title: storedSearchTitle, textQuery: 'jpg' });
 
@@ -197,7 +198,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await expectElementExist(getGridFileSelector('sample.pdf'), false, 5000);
   });
 
-  test('TST0626 - Search actions - execute query from search history [web,electron]', async () => {
+  test('TST0626 - Search actions - execute query from search history [web,electron,_pro]', async () => {
     await searchEngine('txt');
     await clickOn('#clearSearchID');
 
@@ -259,10 +260,15 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await expectElementExist(getFileName(file3, tags3), false, 5000);
   });
 
-  test('TST0629 - Search q. comp - file size [web,electron]', async () => {
-    await createEmptyFile();
-    await openLocationMenu(defaultLocationName);
-    await clickOn('[data-tid=indexLocation]');
+  test('TST0629 - Search q. comp - file size [web,electron,_pro]', async () => {
+    await global.client.dblclick('[data-tid=fsEntryName_empty_folder]');
+    await expectElementExist(
+      getGridFileSelector('empty_file.html'),
+      true,
+      5000
+    );
+    //await openLocationMenu(defaultLocationName);
+    //await clickOn('[data-tid=indexLocation]');
 
     await addSearchCommand('si:', false);
     await clickOn('#textQuery-option-0');
@@ -275,7 +281,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     );
   });
 
-  test('TST0630 - Search q. comp - type [web,electron]', async () => {
+  test('TST0630 - Search q. comp - type [web,electron,_pro]', async () => {
     await addSearchCommand('t:', false);
     // choose image file type
     await clickOn('#textQuery-option-1');
@@ -285,7 +291,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await expectElementExist(getGridFileSelector('sample.csv'), false, 5000);
   });
 
-  test('TST0631 - Search q. comp - last modified [web,electron]', async () => {
+  test('TST0631 - Search q. comp - last modified [web,electron,_pro]', async () => {
     await addSearchCommand('lm:', false);
     // choose option Today
     await clickOn('#textQuery-option-0');
