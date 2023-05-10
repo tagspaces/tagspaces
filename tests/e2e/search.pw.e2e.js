@@ -185,7 +185,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await searchEngine('q:', {}, false);
     await clickOn('#textQuery-option-0');
     // expect to not exist other than jpg files extensions like txt
-    await expectElementExist(getGridFileSelector('sample.txt'), false, 5000);
+    await expectElementExist(getGridFileSelector('sample.pdf'), false, 5000);
   });
 
   test('TST0626 - Search actions - execute query from search history [web,electron]', async () => {
@@ -238,7 +238,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await clickOn('#clearSearchID');
 
     // Search for | tag - tag
-    await addSearchCommand('|' + tags1[0], false, false);
+    await addSearchCommand('|' + tags1[0], false);
     await addSearchCommand('|' + tags2[1], true);
     await expectElementExist(getFileName(file1, tags1), true, 5000);
     await expectElementExist(getFileName(file2, tags2), true, 5000);
@@ -252,7 +252,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
 
   test('TST0629 - Search q. comp - file size [web,electron]', async () => {
     await createEmptyFile();
-    await addSearchCommand('si:', false, true);
+    await addSearchCommand('si:', false);
     await clickOn('#textQuery-option-0');
     await global.client.keyboard.press('Enter');
     await global.client.keyboard.press('Enter');
@@ -260,32 +260,32 @@ test.describe('TST06 - Test Search in file structure:', () => {
   });
 
   test('TST0630 - Search q. comp - type [web,electron]', async () => {
-    await addSearchCommand('t:', false, true);
+    await addSearchCommand('t:', false);
     // choose image file type
     await clickOn('#textQuery-option-1');
     await global.client.keyboard.press('Enter');
     await global.client.keyboard.press('Enter');
-    await expectElementExist(getGridFileSelector('sample.jpg'), true, 5000);
-    await expectElementExist(getGridFileSelector('sample.txt'), false, 5000);
+    await expectElementExist(getGridFileSelector('sample.tif'), true, 5000);
+    await expectElementExist(getGridFileSelector('sample.csv'), false, 5000);
   });
 
   test('TST0631 - Search q. comp - last modified [web,electron]', async () => {
-    await addSearchCommand('lm:', false, true);
+    await addSearchCommand('lm:', false);
     // choose option Today
     await clickOn('#textQuery-option-0');
     await global.client.keyboard.press('Enter');
     await global.client.keyboard.press('Enter');
     // TODO all files are modified today
-    await expectElementExist(getGridFileSelector('sample.txt'), true, 5000);
+    await expectElementExist(getGridFileSelector('sample.pdf'), true, 5000);
   });
 
   // TODO handle 3 cases with better key words
   test('TST0632 - Search q. comp - accuracy (fuzzy, semi strict, strict) [web,electron]', async () => {
-    await addSearchCommand('a:', false, true);
+    await addSearchCommand('a:', false);
     // choose option Today
     await clickOn('#textQuery-option-0');
     await addSearchCommand('txt', true);
-    await expectElementExist(getGridFileSelector('sample.txt'), true, 5000);
+    await expectElementExist(getGridFileSelector('sample.pdf'), true, 5000);
   });
 
   test('TST0642 - Add/Remove sidecar tags in search results [web,electron]', async () => {

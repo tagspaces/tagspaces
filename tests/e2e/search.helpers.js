@@ -13,6 +13,7 @@ import {
   waitForNotification
 } from './general.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
+import { findAction } from '../../app/components/SearchOptions';
 
 export const regexQuery = '!"#$%&\'()*+,-./@:;<=>[\\]^_`{|}~';
 export const searchTag = 'tag1';
@@ -26,13 +27,15 @@ export const firstTagButton = '/tbody/tr[1]/td[3]/button[1]';
 export async function addSearchCommand(
   command,
   executeSearch = true,
-  forceOpenMenu = true
+  forceOpenMenu = false
 ) {
   if (!(await isDisplayed('#textQuery'))) {
     await clickOn('[data-tid=toggleSearch]');
   }
   await typeInputValue('#textQuery', command);
-  await global.client.keyboard.press('Enter');
+  if (!findAction(command, true)) {
+    await global.client.keyboard.press('Enter');
+  }
   if (executeSearch) {
     await global.client.keyboard.press('Enter');
     await global.client.keyboard.press('Enter');
