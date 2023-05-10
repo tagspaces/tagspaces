@@ -15,6 +15,9 @@ export const delay = time => new Promise(resolve => setTimeout(resolve, time));
 export const getRandomInt = (min, max) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
 
+export function writeFile(filePath, fileContent) {
+  fse.writeFileSync(filePath, fileContent);
+}
 // use this pause only for visual debuging on places where you want to see the result after a given operation
 // global.msDebugPause = 0;
 

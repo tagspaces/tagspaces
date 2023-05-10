@@ -11,7 +11,8 @@ import {
   createEmptyFile,
   startTestingApp,
   stopApp,
-  testDataRefresh
+  testDataRefresh,
+  writeFile
 } from './hook';
 import {
   closeFileProperties,
@@ -48,6 +49,13 @@ test.afterAll(async () => {
 test.afterEach(async ({ page }, testInfo) => {
   if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
+    const localStorage = await global.client.evaluate(() =>
+      JSON.stringify(window.localStorage)
+    );
+    writeFile(
+      testInfo.outputPath(testInfo.title + '_localstorage.json'),
+      localStorage
+    );
   }
   await clearDataStorage();
 });
@@ -256,7 +264,11 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await clickOn('#textQuery-option-0');
     await global.client.keyboard.press('Enter');
     await global.client.keyboard.press('Enter');
-    await expectElementExist(getGridFileSelector('empty_file.html'), true, 5000);
+    await expectElementExist(
+      getGridFileSelector('empty_file.html'),
+      true,
+      5000
+    );
   });
 
   test('TST0630 - Search q. comp - type [web,electron]', async () => {
