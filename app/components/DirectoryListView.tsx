@@ -141,6 +141,7 @@ function DirectoryListView(props: Props) {
         variant="text"
         startIcon={<ParentFolderIcon />}
         style={{ margin: 5 }}
+        data-tid="navigateToParentTID"
         onClick={() => {
           if (chosenDirectory.current) {
             let currentPath = chosenDirectory.current;
@@ -157,6 +158,7 @@ function DirectoryListView(props: Props) {
         variant="text"
         startIcon={<NewFolderIcon />}
         style={{ margin: 5 }}
+        data-tid="newSubdirectoryTID"
         onClick={() => {
           props.toggleCreateDirectoryDialog({
             rootDirPath: chosenDirectory.current,

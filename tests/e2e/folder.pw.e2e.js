@@ -14,11 +14,15 @@ import {
   deleteDirectory,
   clickOn,
   expectElementExist,
-  takeScreenshot
+  takeScreenshot,
+  selectorFile,
+  setInputKeys
 } from './general.helpers';
-import { renameFolder } from './test-utils';
-import { startTestingApp, stopApp, testDataRefresh } from './hook';
+import { openContextEntryMenu, renameFolder } from './test-utils';
+import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage } from './welcome.helpers';
+import { emptyFolderName } from './search.helpers';
+import { AddRemovePropertiesTags } from './file.properties.helpers';
 
 test.beforeAll(async () => {
   await startTestingApp('extconfig.js');
@@ -98,9 +102,8 @@ test.describe('TST01 - Folder management', () => {
     );
   });
 
-  test('TST0104 - Delete empty folder [web,minio,electron]', async () => {
+  test('TST0104 - Delete empty folder by disabled trashcan [web,minio,electron]', async () => {
     // await setSettings('[data-tid=settingsSetUseTrashCan]');
-    // await global.client.pause(500);
     const testFolder = await createNewDirectory();
     await expectElementExist('[data-tid=fsEntryName_' + testFolder + ']');
     await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
@@ -112,19 +115,88 @@ test.describe('TST01 - Folder management', () => {
     );
   });
 
-  test.skip('TST0105 - Show folder tags [electron, TODO]', async () => {});
+  test('TST0105 - Open subfolder [web,minio,electron]', async () => {
+    await global.client.dblclick(
+      '[data-tid=fsEntryName_' + emptyFolderName + ']'
+    );
+    await expectElementExist(selectorFile, false, 5000);
+  });
 
-  test.skip('TST0106 - Show folder tags [TODO]', async () => {
-    // await createNewDirectory();
+  test('TST0106 - Show folder tags [web,minio,electron]', async () => {
+    await openContextEntryMenu(
+      '[data-tid=fsEntryName_empty_folder]',
+      'showProperties'
+    );
+    await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
+      add: true,
+      remove: false
+    });
+    await expectElementExist('[data-tid=tagContainer_test-tag1]', true, 5000);
+    await expectElementExist('[data-tid=tagContainer_test-tag2]', true, 5000);
+    await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
+      add: false,
+      remove: true
+    });
+    await expectElementExist('[data-tid=tagContainer_test-tag1]', false, 5000);
+    await expectElementExist('[data-tid=tagContainer_test-tag2]', false, 5000);
   });
 
   test.skip('TST0107 - Show in file manager [manual]', async () => {});
 
-  test.skip('TST0108 - Show directory properties [electron, TODO]', async () => {});
+  test('TST0108 - Move folder [web,minio,electron]', async () => {
+    await createFile('file_to_move.txt', 'testing file content');
+    await openContextEntryMenu(
+      '[data-tid=fsEntryName_empty_folder]',
+      'fileMenuMoveCopyDirectoryTID'
+    );
+    await clickOn('[data-tid=newSubdirectoryTID]');
+    const folderToMove = 'folder_to_move';
+    await setInputKeys('directoryName', folderToMove);
+    await clickOn('[data-tid=confirmCreateNewDirectory]');
+    await clickOn('[data-tid=MoveTarget' + folderToMove + ']');
+    await clickOn('[data-tid=confirmMoveFiles]');
+    await clickOn('[data-tid=uploadCloseAndClearTID]');
+    await clickOn('[data-tid=location_' + defaultLocationName + ']');
+    await expectElementExist('[data-tid=fsEntryName_empty_folder]', false, 5000);
+    await global.client.dblclick(
+      '[data-tid=fsEntryName_' + folderToMove + ']'
+    );
+    await expectElementExist('[data-tid=fsEntryName_empty_folder]', true, 5000);
+    await testDataRefresh();
+  });
 
-  test.skip('TST0109 - Delete non empty folder by disabled trashcan should not be possible [electron, TODO]', async () => {});
+  test('TST0109 - Copy folder [web,minio,electron]', async () => {
+    await createFile('file_to_copy.txt', 'testing file content');
+    await openContextEntryMenu(
+      '[data-tid=fsEntryName_empty_folder]',
+      'fileMenuMoveCopyDirectoryTID'
+    );
+    await clickOn('[data-tid=newSubdirectoryTID]');
+    const folderToCopy = 'folder_to_copy';
+    await setInputKeys('directoryName', folderToCopy);
+    await clickOn('[data-tid=confirmCreateNewDirectory]');
+    await clickOn('[data-tid=MoveTarget' + folderToCopy + ']');
+    await clickOn('[data-tid=confirmCopyFiles]');
+    await clickOn('[data-tid=uploadCloseAndClearTID]');
+    await clickOn('[data-tid=location_' + defaultLocationName + ']');
+    await expectElementExist('[data-tid=fsEntryName_empty_folder]', true, 5000);
+    await global.client.dblclick(
+      '[data-tid=fsEntryName_' + folderToCopy + ']'
+    );
+    await expectElementExist('[data-tid=fsEntryName_empty_folder]', true, 5000);
+    await testDataRefresh();
+  });
 
-  test.skip('TST0110 - Delete not empty folder to trashcan [electron, TODO]', async () => {});
+  test.skip('TST0110 - Tag folder [web,minio,electron]', async () => {
+    /*await openContextEntryMenu(
+      '[data-tid=fsEntryName_empty_folder]',
+      'fileMenuMoveCopyDirectoryTID'
+    );*/
+  });
 
-  test.skip('TST0111 - Open parent directory [electron, TODO]', async () => {});
+  test.skip('TST0111 - Open folder properties [TODO]', async () => {});
+
+  test.skip('TST0112 - Delete non empty folder by disabled trashcan should not be possible [electron, TODO]', async () => {});
+
+  test.skip('TST0113 - Delete not empty folder to trashcan [electron, TODO]', async () => {});
 });

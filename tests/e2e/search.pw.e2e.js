@@ -209,7 +209,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await expectElementExist(getGridFileSelector('sample.jpg'), false, 5000);
   });
 
-  test('TST0627 - Search q. comp - +tag -tag |tag [web,electron]', async () => {
+  test('TST0627 - Search q. comp - AND tag NOT tag OR tag [web,electron]', async () => {
     // Add 3 files tags
     const file1 = 'txt';
     const tags1 = ['test-tag1'];

@@ -939,6 +939,7 @@ function GridPerspective(props: Props) {
         }
         currentLocation={props.currentLocation}
         locations={props.locations}
+        openAddRemoveTagsDialog={openAddRemoveTagsDialog}
       />
       {/* {Boolean(tagContextMenuAnchorEl) && ( // TODO EntryTagMenu is used in TagSelect we cannot move confirm dialog from menu */}
       <EntryTagMenu

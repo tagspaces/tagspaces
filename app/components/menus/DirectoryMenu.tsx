@@ -65,6 +65,7 @@ interface Props {
   ) => void;
   openDirectory: (path: string) => void;
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
+  openAddRemoveTagsDialog?: () => void;
   reflectCreateEntry?: (path: string, isFile: boolean) => void;
   toggleCreateFileDialog?: () => void;
   uploadFilesAPI: (
@@ -430,7 +431,8 @@ Do you want to continue?`)
     importMacTags,
     switchPerspective,
     showProperties,
-    cameraTakePicture
+    cameraTakePicture,
+    props.openAddRemoveTagsDialog
   );
 
   return (

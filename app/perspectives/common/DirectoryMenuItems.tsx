@@ -4,13 +4,13 @@ import OpenFolderIcon from '@mui/icons-material/SubdirectoryArrowLeft';
 import MoveCopy from '@mui/icons-material/FileCopy';
 import ListItemText from '@mui/material/ListItemText';
 import i18n from '-/services/i18n';
-import { locationType } from '@tagspaces/tagspaces-common/misc';
 import AutoRenew from '@mui/icons-material/Autorenew';
 import RenameFolderIcon from '@mui/icons-material/FormatTextdirectionLToR';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
 import OpenFolderNativelyIcon from '@mui/icons-material/Launch';
+import AddRemoveTags from '@mui/icons-material/Loyalty';
 import Divider from '@mui/material/Divider';
 import NewFileIcon from '@mui/icons-material/InsertDriveFile';
 import NewFolderIcon from '@mui/icons-material/CreateNewFolder';
@@ -45,7 +45,8 @@ export function getDirectoryMenuItems(
   importMacTags?: () => void,
   switchPerspective?: (perspectiveId: string) => void,
   showProperties?: () => void,
-  cameraTakePicture?: () => void
+  cameraTakePicture?: () => void,
+  showAddRemoveTagsDialog?: () => void,
 ) {
   const menuItems = [];
   if (selectedEntriesLength < 2) {
@@ -261,6 +262,24 @@ export function getDirectoryMenuItems(
           <ShareIcon />
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:copySharingLink')} />
+      </MenuItem>
+    );
+  }
+
+  if (!isReadOnlyMode && showAddRemoveTagsDialog) {
+    menuItems.push(
+      <MenuItem
+        key="dirMenuAddRemoveTags"
+        data-tid="dirMenuAddRemoveTags"
+        onClick={() => {
+          onClose();
+          showAddRemoveTagsDialog();
+        }}
+      >
+        <ListItemIcon>
+          <AddRemoveTags />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:addRemoveTags')} />
       </MenuItem>
     );
   }

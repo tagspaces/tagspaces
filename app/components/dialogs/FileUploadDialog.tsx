@@ -245,7 +245,7 @@ function FileUploadDialog(props: Props) {
       <DialogActions>
         {!haveProgress && (
           <Button
-            data-tid="uploadCloseDialog"
+            data-tid="uploadCloseAndClearTID"
             onClick={() => {
               onClose();
               props.clearUploadDialog();
@@ -259,7 +259,7 @@ function FileUploadDialog(props: Props) {
           </Button>
         )}
         <Button
-          data-tid="uploadCloseDialog"
+          data-tid="uploadMinimizeDialogTID"
           onClick={props.onClose}
           color="primary"
         >
@@ -267,7 +267,7 @@ function FileUploadDialog(props: Props) {
         </Button>
         {haveProgress && (
           <Button
-            data-tid="uploadCloseDialog"
+            data-tid="uploadStopAllTID"
             onClick={stopAll}
             color="primary"
           >

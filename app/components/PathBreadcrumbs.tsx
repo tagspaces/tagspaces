@@ -214,6 +214,7 @@ function PathBreadcrumbs(props: Props) {
         openDirectory={openDirectory}
         reflectCreateEntry={reflectCreateEntry}
         openFsEntry={openFsEntry}
+        /*openAddRemoveTagsDialog={openAddRemoveTagsDialog}*/
       />
     </>
   );
