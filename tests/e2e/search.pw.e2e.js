@@ -4,11 +4,12 @@ import {
   expectElementExist,
   getGridFileName,
   getGridFileSelector,
+  selectorFile,
   setSettings,
   takeScreenshot
 } from './general.helpers';
 import {
-  createEmptyFile,
+  createFile,
   startTestingApp,
   stopApp,
   testDataRefresh,
@@ -21,8 +22,7 @@ import {
   createPwMinioLocation,
   defaultLocationName,
   defaultLocationPath,
-  getPwLocationTid,
-  openLocationMenu
+  getPwLocationTid
 } from './location.helpers';
 import {
   emptyFolderName,
@@ -32,15 +32,16 @@ import {
   createSavedSearch,
   addSearchCommand
 } from './search.helpers';
-import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
+import { clearDataStorage } from './welcome.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { dataTidFormat } from '../../app/services/test';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 
 test.beforeAll(async () => {
-  await startTestingApp('extconfig.js'); //'extconfig-with-welcome.js');
+  await startTestingApp('extconfig-two-locations.js'); //'extconfig-with-welcome.js');
+  // await startTestingApp('extconfig-without-locations.js');
   // await clearDataStorage();
-  await createEmptyFile();
+  await createFile();
 });
 
 test.afterAll(async () => {
@@ -302,8 +303,8 @@ test.describe('TST06 - Test Search in file structure:', () => {
   });
 
   test('TST0632 - Search q. comp - accuracy (fuzzy, semi strict, strict) [web,electron]', async () => {
-    await createEmptyFile('n1ote.txt');
-    await createEmptyFile('note.txt');
+    await createFile('n1ote.txt');
+    await createFile('note.txt');
     // fuzzy
     await addSearchCommand('a:', false);
     await clickOn('#textQuery-option-0');
@@ -324,6 +325,48 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await addSearchCommand('note', true);
     await expectElementExist(getGridFileSelector('n1ote.txt'), false, 5000);
     await expectElementExist(getGridFileSelector('note.txt'), true, 5000);
+  });
+
+  test('TST0633 - Search q. comp - scope (location) [web,electron]', async () => {
+    await addSearchCommand('sc:', false);
+    await clickOn('#textQuery-option-0');
+    await addSearchCommand('empty_file.html', true);
+    await expectElementExist(
+      getGridFileSelector('empty_file.html'),
+      true,
+      5000
+    );
+    await clickOn('#clearSearchID');
+
+    await global.client.dblclick('[data-tid=fsEntryName_empty_folder]');
+    await addSearchCommand('sc:', false);
+    await clickOn('#textQuery-option-0');
+    await addSearchCommand('sample.html', true);
+    await expectElementExist(getGridFileSelector('sample.html'), true, 5000);
+  });
+
+  test('TST0634 - Search q. comp - scope (folder) [web,electron]', async () => {
+    await global.client.dblclick('[data-tid=fsEntryName_empty_folder]');
+    await addSearchCommand('sc:', false);
+    await clickOn('#textQuery-option-1');
+    await addSearchCommand('sample.html', true);
+    await expectElementExist(selectorFile, false, 5000);
+  });
+
+  test('TST0635 - Search q. comp - scope (global) [web,electron]', async () => {
+    await createFile('fulltext.txt', 'testing fulltext');
+
+    await clickOn('[data-tid=location_' + defaultLocationName + ']');
+    await addSearchCommand('sc:', false);
+    await clickOn('#textQuery-option-2');
+    await addSearchCommand('sample.html', true);
+    await expectElementExist(getGridFileSelector('sample.html'), true, 5000);
+    await clickOn('#clearSearchID');
+
+    await addSearchCommand('sc:', false);
+    await clickOn('#textQuery-option-2');
+    await addSearchCommand('testing fulltext', true);
+    await expectElementExist(getGridFileSelector('fulltext.txt'), true, 5000);
   });
 
   test('TST0642 - Add/Remove sidecar tags in search results [web,electron]', async () => {

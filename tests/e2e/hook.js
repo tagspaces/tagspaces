@@ -193,8 +193,11 @@ export async function testDataRefresh() {
   }*/
 }
 
-export async function createEmptyFile(fileName = 'empty_file.html') {
-  const file = pathLib.join(
+export async function createFile(
+  fileName = 'empty_file.html',
+  fileContent = undefined
+) {
+  const filePath = pathLib.join(
     __dirname,
     '..',
     'testdata-tmp',
@@ -205,8 +208,12 @@ export async function createEmptyFile(fileName = 'empty_file.html') {
   );
 
   try {
-    await fse.createFile(file);
-    console.log('Empty file created!');
+    if (fileContent) {
+      await fse.outputFile(filePath, fileContent);
+    } else {
+      await fse.createFile(filePath);
+      console.log('Empty file created!');
+    }
   } catch (err) {
     console.error(err);
   }
