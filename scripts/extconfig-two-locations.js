@@ -27,7 +27,7 @@ window.ExtLocations = [
     // secretAccessKey: 'your_secret_key', // the secret case of the user
     // bucketName: 'demo-bucket', // the name of the S3 bucket
     // region: 'eu-central-1', // the AWS region
-    isDefault: false, // if true this location will be loaded by the application start
+    isDefault: true, // if true this location will be loaded by the application start
     isReadOnly: false, // if true the user interface of the application turns to read-only mode
     disableIndexing: false, // if true the search index will be persisted and loaded by default on location opening
     fullTextIndex: true, // activated the full-text search for TXT, MD and HTML files
