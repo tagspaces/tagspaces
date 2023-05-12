@@ -353,7 +353,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await expectElementExist(selectorFile, false, 5000);
   });
 
-  test('TST0635 - Search q. comp - scope (global) [web,electron]', async () => {
+  test('TST0635 - Search q. comp - scope (global) [electron]', async () => {
     await createFile('fulltext.txt', 'testing fulltext');
 
     await clickOn('[data-tid=location_' + defaultLocationName + ']');
