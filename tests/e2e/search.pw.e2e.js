@@ -353,15 +353,19 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await expectElementExist(selectorFile, false, 5000);
   });
 
-  test('TST0635 - Search q. comp - scope (global) [electron]', async () => {
-    await createFile('fulltext.txt', 'testing fulltext');
-
-    await clickOn('[data-tid=location_' + defaultLocationName + ']');
+  test('TST0635 - Search q. comp - scope (global) [web,electron]', async () => {
+    // await clickOn('[data-tid=location_' + defaultLocationName + ']');
     await addSearchCommand('sc:', false);
     await clickOn('#textQuery-option-2');
     await addSearchCommand('sample.html', true);
     await expectElementExist(getGridFileSelector('sample.html'), true, 5000);
-    await clickOn('#clearSearchID');
+  });
+
+  /**
+   * for web fulltext index is not created in tsi.json
+   */
+  test('TST0636 - Search q. fulltext in content [electron]', async () => {
+    await createFile('fulltext.txt', 'testing fulltext');
 
     await addSearchCommand('sc:', false);
     await clickOn('#textQuery-option-2');
@@ -369,12 +373,12 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await expectElementExist(getGridFileSelector('fulltext.txt'), true, 5000);
   });
 
-  test('TST0642 - Add/Remove sidecar tags in search results [web,electron]', async () => {
+  test('TST0637 - Add/Remove sidecar tags in search results [web,electron]', async () => {
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
     await addRemoveTagsInSearchResults(['sidecar-tag5', 'sidecar-tag6']);
   });
 
-  test('TST0643 - Add/Remove filename tags in search results [web,electron]', async () => {
+  test('TST0638 - Add/Remove filename tags in search results [web,electron]', async () => {
     await addRemoveTagsInSearchResults(['filename-tag5', 'filename-tag6']);
   });
 });

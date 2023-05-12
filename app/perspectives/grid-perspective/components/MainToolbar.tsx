@@ -45,10 +45,10 @@ import { getKeyBindingObject } from '-/reducers/settings';
 import { getAllPropertiesPromise } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { actions as AppActions } from '-/reducers/app';
-import PlatformIO from '-/services/platform-facade';
 
 interface Props {
   classes: any;
+  prefixDataTID?: string;
   isReadOnlyMode: boolean;
   selectedEntries: Array<TS.FileSystemEntry>;
   loadParentDirectoryContent: () => void;
@@ -74,6 +74,7 @@ interface Props {
 function MainToolbar(props: Props) {
   const {
     classes,
+    prefixDataTID,
     selectedEntries,
     toggleSelectAllFiles,
     someFileSelected,
@@ -107,7 +108,10 @@ function MainToolbar(props: Props) {
   }
 
   return (
-    <Toolbar className={classes.topToolbar} data-tid="perspectiveGridToolbar">
+    <Toolbar
+      className={classes.topToolbar}
+      data-tid={prefixDataTID + 'perspectiveToolbar'}
+    >
       <Tooltip
         title={
           i18n.t('core:navigateToParentDirectory') +
@@ -118,7 +122,7 @@ function MainToolbar(props: Props) {
       >
         <IconButton
           aria-label={i18n.t('core:navigateToParentDirectory')}
-          data-tid="gridPerspectiveOnBackButton"
+          data-tid={prefixDataTID + 'PerspectiveOnBackButton'}
           onClick={() => {
             if (
               props.searchQuery &&
@@ -144,7 +148,7 @@ function MainToolbar(props: Props) {
         }
       >
         <IconButton
-          data-tid="gridPerspectiveSelectAllFiles"
+          data-tid={prefixDataTID + 'PerspectiveSelectAllFiles'}
           onClick={toggleSelectAllFiles}
           size="large"
         >
@@ -173,7 +177,7 @@ function MainToolbar(props: Props) {
           <span>
             <IconButton
               aria-label={i18n.t('core:tagSelectedEntries')}
-              data-tid="gridPerspectiveAddRemoveTags"
+              data-tid={prefixDataTID + 'PerspectiveAddRemoveTags'}
               disabled={selectedEntries.length < 1}
               onClick={openAddRemoveTagsDialog}
               size="large"
@@ -188,7 +192,7 @@ function MainToolbar(props: Props) {
           <span>
             <IconButton
               aria-label={i18n.t('core:copyMoveSelectedEntries')}
-              data-tid="gridPerspectiveCopySelectedFiles"
+              data-tid={prefixDataTID + 'PerspectiveCopySelectedFiles'}
               disabled={selectedEntries.length < 1}
               onClick={openMoveCopyFilesDialog}
               size="large"
@@ -210,7 +214,7 @@ function MainToolbar(props: Props) {
           <span>
             <IconButton
               aria-label={i18n.t('core:deleteSelectedEntries')}
-              data-tid="gridPerspectiveDeleteMultipleFiles"
+              data-tid={prefixDataTID + 'PerspectiveDeleteMultipleFiles'}
               onClick={openDeleteFileDialog}
               size="large"
             >
@@ -223,7 +227,7 @@ function MainToolbar(props: Props) {
         <IconButton
           // title={i18n.t('core:sort')}
           aria-label={i18n.t('core:sort')}
-          data-tid="gridPerspectiveSortMenu"
+          data-tid={prefixDataTID + 'PerspectiveSortMenu'}
           onClick={e => {
             handleSortingMenu(e);
           }}
@@ -236,7 +240,7 @@ function MainToolbar(props: Props) {
       !AppConfig.isCordovaAndroid && ( // https://trello.com/c/z6ESlqxz/697-exports-to-json-or-csv-do-not-work-on-android
           <Tooltip title={i18n.t('core:exportCsv')}>
             <IconButton
-              data-tid="gridPerspectiveExportCsvMenuTID"
+              data-tid={prefixDataTID + 'PerspectiveExportCsvMenuTID'}
               onClick={props.handleExportCsvMenu}
               style={{ transform: 'scale(-1, 1)' }}
               size="large"
@@ -247,7 +251,7 @@ function MainToolbar(props: Props) {
         )}
       <Tooltip title={i18n.t('core:perspectiveSettingsTitle')}>
         <IconButton
-          data-tid="gridPerspectiveOptionsMenu"
+          data-tid={prefixDataTID + 'PerspectiveOptionsMenu'}
           onClick={openSettings}
           size="large"
         >

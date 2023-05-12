@@ -27,7 +27,7 @@ export async function takeScreenshot(testInfo, title = 'failure') {
     path: sPath,
     contentType: 'image/png'
   });
-  await global.client.screenshot({ path: sPath });
+  return await global.client.screenshot({ path: sPath });
 }
 
 export async function clickOn(selector, options = { timeout: 15000 }) {

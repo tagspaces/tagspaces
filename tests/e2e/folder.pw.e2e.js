@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import {
   defaultLocationPath,
   defaultLocationName,
@@ -23,6 +23,7 @@ import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage } from './welcome.helpers';
 import { emptyFolderName } from './search.helpers';
 import { AddRemovePropertiesTags } from './file.properties.helpers';
+import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 
 test.beforeAll(async () => {
   await startTestingApp('extconfig.js');
@@ -187,16 +188,94 @@ test.describe('TST01 - Folder management', () => {
     await testDataRefresh();
   });
 
-  test.skip('TST0110 - Tag folder [web,minio,electron]', async () => {
+  test('TST0110 - Tag folder [web,minio,electron]', async () => {
+    await clickOn('[data-tid=fsEntryName_empty_folder]');
+    await AddRemoveTagsToSelectedFiles(['test-tag1']);
+    await expectElementExist('[data-tid=tagContainer_test-tag1]', true, 5000);
     /*await openContextEntryMenu(
       '[data-tid=fsEntryName_empty_folder]',
       'fileMenuMoveCopyDirectoryTID'
     );*/
   });
 
-  test.skip('TST0111 - Open folder properties [TODO]', async () => {});
+  test('TST0111 - Open folder properties [web,minio,electron]', async () => {
+    await openContextEntryMenu(
+      '[data-tid=fsEntryName_empty_folder]',
+      'showProperties'
+    );
+    const divElement = await global.client.$(
+      '[data-tid=OpenedTIDsupported-filestypes]'
+    ); // Replace 'div' with your selector
+    const divText = await divElement.innerText();
+    expect(divText).toEqual('empty_folder');
+  });
 
-  test.skip('TST0112 - Delete non empty folder by disabled trashcan should not be possible [electron, TODO]', async () => {});
+  test('TST0112 - Delete non empty folder by disabled trashcan [web,minio,electron]', async () => {
+    await openContextEntryMenu(
+      '[data-tid=fsEntryName_empty_folder]',
+      'deleteDirectory'
+    );
+    await clickOn('[data-tid=confirmDeleteFileDialog]');
+    await expectElementExist(
+      '[data-tid=fsEntryName_empty_folder]',
+      false,
+      5000
+    );
+  });
 
-  test.skip('TST0113 - Delete not empty folder to trashcan [electron, TODO]', async () => {});
+  test.skip('TST0113 - Delete not empty folder to trashcan [electron]', async () => {});
+
+  test('TST0116 - Switch to Grid Perspective [web,minio,electron]', async () => {
+    await clickOn('[data-tid=openListPerspective]');
+    await expectElementExist('[data-tid=listPerspectiveContainer]', true, 5000);
+    await clickOn('[data-tid=openDefaultPerspective]');
+    await expectElementExist('[data-tid=listPerspectiveContainer]', false);
+    await expectElementExist('[data-tid=gridPerspectiveContainer]', true, 5000);
+    await clickOn('[data-tid=gridPerspectiveOptionsMenu]');
+    await expectElementExist(
+      '[data-tid=gridPerspectiveToggleShowDirectories]',
+      true,
+      5000
+    );
+  });
+
+  test('TST0117 - Switch to List Perspective [web,minio,electron]', async () => {
+    await clickOn('[data-tid=openListPerspective]');
+    await expectElementExist('[data-tid=gridPerspectiveContainer]', false);
+    await expectElementExist('[data-tid=listPerspectiveContainer]', true, 5000);
+    await expectElementExist(
+      '[data-tid=listPerspectiveOptionsMenu]',
+      true,
+      5000
+    );
+  });
+
+  test('TST0118 - Switch to Gallery Perspective [web,minio,electron,_pro]', async () => {
+    await clickOn('[data-tid=openGalleryPerspective]');
+    await expectElementExist(
+      '[data-tid=perspectiveGalleryToolbar]',
+      true,
+      5000
+    );
+    await expectElementExist('[data-tid=perspectiveGalleryHelp]', true, 5000);
+  });
+
+  test('TST0119 - Switch to Mapique Perspective [web,minio,electron,_pro]', async () => {
+    await clickOn('[data-tid=openMapiquePerspective]');
+    await expectElementExist(
+      '[data-tid=perspectiveMapiqueToolbar]',
+      true,
+      5000
+    );
+    await expectElementExist('[data-tid=perspectiveMapiqueHelp]', true, 5000);
+  });
+
+  test('TST0120 - Switch to Kanban Perspective [web,minio,electron,_pro]', async () => {
+    await clickOn('[data-tid=openKanbanPerspective]');
+    await expectElementExist(
+      '[data-tid=kanbanSettingsDialogOpenTID]',
+      true,
+      5000
+    );
+  });
 });

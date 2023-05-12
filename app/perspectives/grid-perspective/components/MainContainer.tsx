@@ -765,6 +765,7 @@ function GridPerspective(props: Props) {
     >
       <MainToolbar
         classes={classes}
+        prefixDataTID={'grid'}
         layoutType={layoutType.current}
         isReadOnlyMode={props.isReadOnlyMode}
         selectedEntries={selectedEntries}

@@ -328,8 +328,6 @@ test.describe('TST08 - File folder properties', () => {
 
   test.skip('TST0821 - Toggle File Properties [electron]', async () => {});
 
-  test.skip('TST0822 - Open Folder Properties [electron]', async () => {});
-
   test.skip('TST0823 - Show thumbnail in the properties if available [Pro]', async () => {});
 
   test.skip('TST0824 - Change file thumbnail / Reset thumbnail [Pro]', async () => {});
