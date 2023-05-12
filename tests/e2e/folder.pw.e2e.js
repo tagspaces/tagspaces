@@ -157,10 +157,12 @@ test.describe('TST01 - Folder management', () => {
     await clickOn('[data-tid=confirmMoveFiles]');
     await clickOn('[data-tid=uploadCloseAndClearTID]');
     await clickOn('[data-tid=location_' + defaultLocationName + ']');
-    await expectElementExist('[data-tid=fsEntryName_empty_folder]', false, 5000);
-    await global.client.dblclick(
-      '[data-tid=fsEntryName_' + folderToMove + ']'
+    await expectElementExist(
+      '[data-tid=fsEntryName_empty_folder]',
+      false,
+      5000
     );
+    await global.client.dblclick('[data-tid=fsEntryName_' + folderToMove + ']');
     await expectElementExist('[data-tid=fsEntryName_empty_folder]', true, 5000);
     await testDataRefresh();
   });
@@ -180,9 +182,7 @@ test.describe('TST01 - Folder management', () => {
     await clickOn('[data-tid=uploadCloseAndClearTID]');
     await clickOn('[data-tid=location_' + defaultLocationName + ']');
     await expectElementExist('[data-tid=fsEntryName_empty_folder]', true, 5000);
-    await global.client.dblclick(
-      '[data-tid=fsEntryName_' + folderToCopy + ']'
-    );
+    await global.client.dblclick('[data-tid=fsEntryName_' + folderToCopy + ']');
     await expectElementExist('[data-tid=fsEntryName_empty_folder]', true, 5000);
     await testDataRefresh();
   });

@@ -97,16 +97,26 @@ export async function openLocationMenu(locationName) {
   await clickOn('[data-tid=locationMoreButton_' + locationName + ']');
 }
 
-export async function closeLocation(locationName) {
-  const locationSelector = '[data-tid=locationMoreButton_' + locationName + ']';
-  //const element = await global.client.$(locationSelector);
-  // if (!(await element.isDisplayed())) {
-  if (!(await isDisplayed(locationSelector))) {
-    await clickOn('[data-tid=mobileMenuButton]');
+/**
+ * @param locationName = undefined -> closeAll
+ * @returns {Promise<void>}
+ */
+export async function closeLocation(locationName = undefined) {
+  if (locationName) {
+    const locationSelector =
+      '[data-tid=locationMoreButton_' + locationName + ']';
+    //const element = await global.client.$(locationSelector);
+    // if (!(await element.isDisplayed())) {
+    if (!(await isDisplayed(locationSelector))) {
+      await clickOn('[data-tid=mobileMenuButton]');
+    }
+    // await global.client.pause(500);
+    await clickOn(locationSelector);
+    await clickOn('[data-tid=closeLocationTID]');
+  } else {
+    await clickOn('[data-tid=locationManagerMenu]');
+    await clickOn('[data-tid=locationManagerMenuCloseAll]');
   }
-  // await global.client.pause(500);
-  await clickOn(locationSelector);
-  await clickOn('[data-tid=closeLocationTID]');
 }
 
 /**

@@ -134,15 +134,15 @@ test.describe('TST06 - Test Search in file structure:', () => {
   });*/
 
   test('TST0621 - Search actions - open location [web,electron]', async () => {
-    const lastLocationTID = await getPwLocationTid(-1);
-    await closeLocation(lastLocationTID);
+    const firstLocationTID = await getPwLocationTid(0);
+    await closeLocation(); //lastLocationTID);
     await expectElementExist('[data-tid=WelcomePanelTID]', true);
     await searchEngine('l:', {}, false);
     await clickOn('#textQuery-option-0');
     await clickOn('[data-tid=folderContainerOpenDirMenu]');
     await clickOn('[data-tid=showProperties]');
     await expectElementExist(
-      '[data-tid=OpenedTID' + lastLocationTID + ']',
+      '[data-tid=OpenedTID' + firstLocationTID + ']',
       true
     );
   });

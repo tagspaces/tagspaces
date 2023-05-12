@@ -19,7 +19,7 @@ window.ExtLocations = [
     watchForChanges: false // activates the watching for changed files in the current location
   },
   {
-    uuid: '30565f09-c7fd-2333-fc67-a75db27rt5ba', // an unique id of the location
+    uuid: '30565f09-c7fd-2333-fc67-a75db27rt5b1', // an unique id of the location
     type: '0', // 1 defines the locations a cloud based
     name: 'supported-filestypes', // the name of the location
     path: './tests/testdata-tmp/file-structure/supported-filestypes', // the path to sub folder in the location
