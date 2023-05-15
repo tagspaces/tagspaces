@@ -21,7 +21,7 @@ export async function AddRemoveTagsToSelectedFiles(
   tagNames = ['test-tag'], // TODO fix camelCase tag name
   addTag = true
 ) {
-  await clickOn('[data-tid=gridPerspectiveAddRemoveTags]');
+  await clickOn('[data-tid=listPerspectiveAddRemoveTags]');
 
   for (let i = 0; i < tagNames.length; i++) {
     const tagName = tagNames[i];

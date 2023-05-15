@@ -128,7 +128,7 @@ export async function addRemoveTagsInSearchResults(
       5000
     );
   }
-  if (await isDisabled('[data-tid=gridPerspectiveAddRemoveTags]')) {
+  if (await isDisabled('[data-tid=listPerspectiveAddRemoveTags]')) {
     //select rows to enable button
     selectedIds = await selectRowFiles([0]);
   }

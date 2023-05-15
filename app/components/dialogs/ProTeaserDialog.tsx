@@ -192,7 +192,7 @@ function ProTeaserDialog(props: Props) {
       scroll="paper"
     >
       <DialogTitle style={{ justifyContent: 'center', textAlign: 'center' }}>
-        <DialogCloseButton onClose={onClose} />
+        <DialogCloseButton testId="closeProTeaserTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent
         style={{

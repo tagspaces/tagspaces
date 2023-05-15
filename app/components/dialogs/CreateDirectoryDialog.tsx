@@ -125,7 +125,7 @@ function CreateDirectoryDialog(props: Props) {
     >
       <DialogTitle>
         {i18n.t('core:createNewDirectoryTitle')}
-        <DialogCloseButton onClose={onClose} />
+        <DialogCloseButton testId="closeCreateDirectoryTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent>
         <FormControl fullWidth={true} error={inputError}>

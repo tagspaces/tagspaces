@@ -147,7 +147,10 @@ function GridSettingsDialog(props: Props) {
     <Dialog open={open} onClose={() => onClose()} keepMounted scroll="paper">
       <DialogTitle>
         {i18n.t('core:perspectiveSettingsTitle')}
-        <DialogCloseButton onClose={() => onClose()} />
+        <DialogCloseButton
+          testId="closePerspectiveSettingsTID"
+          onClose={() => onClose()}
+        />
       </DialogTitle>
       <DialogContent>
         {props.isLocal && (

@@ -102,7 +102,7 @@ function CreateTagsDialog(props: Props) {
     >
       <DialogTitle>
         {i18n.t('core:addTagsToGroupTitle')}
-        <DialogCloseButton onClose={onClose} />
+        <DialogCloseButton testId="closeCreateTagTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent style={{ minWidth: 400, paddingTop: 10 }}>
         <FormControl fullWidth={true} error={inputError}>

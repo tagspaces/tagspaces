@@ -129,7 +129,7 @@ function EditTagGroupDialog(props: Props) {
   const renderTitle = () => (
     <DialogTitle style={{ overflow: 'visible' }}>
       {i18n.t('core:editTagGroupTitle')}
-      <DialogCloseButton onClose={onClose} />
+      <DialogCloseButton testId="closeEditTagGroupTID" onClose={onClose} />
     </DialogTitle>
   );
 

@@ -66,7 +66,7 @@ function KeyboardDialog(props: Props) {
     >
       <DialogTitle>
         {i18n.t('core:shortcutKeys')}
-        <DialogCloseButton onClose={onClose} />
+        <DialogCloseButton testId="closeKeyboardTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent
         data-tid="keyboardShortCutsDialog"

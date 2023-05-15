@@ -58,7 +58,7 @@ function MapTileServerDialog(props: Props) {
           ? 'core:tileServerDialogEdit'
           : 'core:tileServerDialogAdd'
       )}
-      <DialogCloseButton onClose={onClose} />
+      <DialogCloseButton testId="closeMapTileServerTID" onClose={onClose} />
     </DialogTitle>
   );
 

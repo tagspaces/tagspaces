@@ -337,7 +337,7 @@ function CreateDialog(props: Props) {
     >
       <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
         {i18n.t('core:create') + '...'}
-        <DialogCloseButton onClose={onClose} />
+        <DialogCloseButton testId="closeCreateDialogTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent
         style={{

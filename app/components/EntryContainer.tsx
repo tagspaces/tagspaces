@@ -1229,9 +1229,17 @@ function EntryContainer(props: Props) {
       )
     : '';
 
-  let fileName: string = openedFile.path
-    ? extractFileName(openedFile.path, PlatformIO.getDirSeparator())
-    : '';
+  let fileName: string;
+  if (openedFile.path) {
+    if (openedFile.isFile) {
+      fileName = extractFileName(openedFile.path, PlatformIO.getDirSeparator());
+    } else {
+      fileName = extractDirectoryName(
+        openedFile.path,
+        PlatformIO.getDirSeparator()
+      );
+    }
+  }
   if (!fileName) {
     const currentLocation = props.locations.find(
       location => location.uuid === openedFile.locationId
@@ -1256,7 +1264,7 @@ function EntryContainer(props: Props) {
     );
 
     const toolbarButtons = () => {
-      if (openedFile.path) {
+      if (openedFile.path !== undefined) {
         return (
           <Box
             key="toolbarButtonsID"

@@ -385,11 +385,12 @@ export async function createLocation(
 }
 
 export async function setGridOptions(
+  perspective = 'list',
   showDirectories = true,
   entrySize = undefined
 ) {
   // open Option menu
-  await clickOn('[data-tid=gridPerspectiveOptionsMenu]');
+  await clickOn('[data-tid=' + perspective + 'PerspectiveOptionsMenu]');
   if (showDirectories) {
     await global.client.check(
       '[data-tid=gridPerspectiveToggleShowDirectories] input'
@@ -449,7 +450,7 @@ export async function selectFilesByID(arrEntryIds = []) {
  */
 export async function selectRowFiles(arrIndex = []) {
   await clickOn('[data-tid=openListPerspective]');
-  await setGridOptions(false, 'gridPerspectiveEntrySizeNormal');
+  await setGridOptions('list', false, 'gridPerspectiveEntrySizeNormal');
   // const filesList = await global.client.$('[data-tid=perspectiveGridFileTable]');
   const filesList = await global.client.$$('[data-tid=rowCellTID]');
   const arrElements = [];

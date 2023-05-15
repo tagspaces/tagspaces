@@ -195,7 +195,7 @@ function MoveCopyFilesDialog(props: Props) {
     >
       <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
         {i18n.t('core:copyMoveEntriesTitle')}
-        <DialogCloseButton onClose={onCloseDialog} />
+        <DialogCloseButton testId="closeMCFilesTID" onClose={onCloseDialog} />
       </DialogTitle>
       <DialogContent style={{ overflow: 'hidden' }}>
         <Typography variant="subtitle2">

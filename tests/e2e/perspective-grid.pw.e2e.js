@@ -100,7 +100,7 @@ test.describe('TST50 - Perspective Grid', () => {
   });
 
   // This scenario includes "Add tags" && "Remove tags" to be fulfilled
-  test('TST5005/TST5006 - Add/Remove tags to the selected files [web,minio,electron]', async () => {
+  test('TST5005 - Add/Remove tags from selected files [web,minio,electron]', async () => {
     let selectedIds = await selectRowFiles([0, 1, 2]);
 
     const tags = ['test-tag1', 'test-tag2'];
@@ -149,7 +149,7 @@ test.describe('TST50 - Perspective Grid', () => {
 
     await selectFilesByID(selectedIds);
 
-    await clickOn('[data-tid=gridPerspectiveAddRemoveTags]');
+    await clickOn('[data-tid=listPerspectiveAddRemoveTags]');
     await clickOn('[data-tid=cleanTagsMultipleEntries]');
 
     for (let i = 0; i < tags.length; i++) {

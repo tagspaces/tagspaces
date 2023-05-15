@@ -125,7 +125,7 @@ function AboutDialog(props: Props) {
     >
       <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
         {productName}
-        <DialogCloseButton onClose={onClose} />
+        <DialogCloseButton testId="closeAboutDialogTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent>
         <img

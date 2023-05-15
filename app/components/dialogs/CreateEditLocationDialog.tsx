@@ -530,7 +530,10 @@ function CreateEditLocationDialog(props: Props) {
         {props.location
           ? i18n.t('core:editLocationTitle')
           : i18n.t('core:createLocationTitle')}
-        <DialogCloseButton onClose={onClose} />
+        <DialogCloseButton
+          testId="closeCreateEditLocationTID"
+          onClose={onClose}
+        />
       </DialogTitle>
       <DialogContent
         style={{

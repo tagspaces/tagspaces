@@ -101,7 +101,7 @@ function OpenLinkDialog(props: Props) {
     >
       <DialogTitle>
         {i18n.t('core:openLink')}
-        <DialogCloseButton onClose={onClose} />
+        <DialogCloseButton testId="closeOpenLinkTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent>
         <FormControl fullWidth={true} error={inputError}>

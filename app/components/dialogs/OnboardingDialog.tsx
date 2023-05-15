@@ -96,7 +96,7 @@ function OnboardingDialog(props: Props) {
       scroll="paper"
     >
       <DialogTitle style={{ justifyContent: 'center', textAlign: 'center' }}>
-        <DialogCloseButton onClose={onClose} testId="closeOnboardingDialog" />
+        <DialogCloseButton testId="closeOnboardingDialog" onClose={onClose} />
       </DialogTitle>
       <DialogContent
         style={{

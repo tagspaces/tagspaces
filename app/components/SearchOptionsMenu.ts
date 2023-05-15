@@ -1,5 +1,9 @@
 import { Pro } from '-/pro';
-import { SearchActions, SearchOptionType, SearchQueryComposition } from "-/components/SearchOptions";
+import {
+  SearchActions,
+  SearchOptionType,
+  SearchQueryComposition
+} from '-/components/SearchOptions';
 
 export function getSearchOptions(): Array<SearchOptionType> {
   const options = [];

@@ -147,7 +147,7 @@ function EditTagDialog(props: Props) {
       <DialogTitle style={{ overflow: 'visible' }}>
         {i18n.t('core:editTagTitle')}
         {` '${title}'`}
-        <DialogCloseButton onClose={onClose} />
+        <DialogCloseButton testId="closeEditTagTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent style={{ overflow: 'visible' }}>
         <FormControl

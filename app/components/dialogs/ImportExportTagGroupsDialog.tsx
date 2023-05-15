@@ -134,7 +134,7 @@ function ImportExportTagGroupsDialog(props: Props) {
       {props.dialogModeImport
         ? i18n.t('core:importGroupTagsTitle')
         : i18n.t('core:exportGroupTagsTitle')}
-      <DialogCloseButton onClose={onClose} />
+      <DialogCloseButton testId="closeIETagGroupsTID" onClose={onClose} />
     </DialogTitle>
   );
 

@@ -46,7 +46,8 @@ function ThirdPartyLibsDialog(props: Props) {
       scroll="paper"
     >
       <DialogTitle>
-        {i18n.t('core:thirdPartyLibs')} <DialogCloseButton onClose={onClose} />
+        {i18n.t('core:thirdPartyLibs')}{' '}
+        <DialogCloseButton testId="closeThirdPartyTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent style={{ overflowX: 'auto' }}>
         <pre style={{ whiteSpace: 'pre-wrap', userSelect: 'text' }}>

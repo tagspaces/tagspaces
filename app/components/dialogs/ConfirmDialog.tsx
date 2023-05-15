@@ -63,7 +63,7 @@ function ConfirmDialog(props: Props) {
     >
       <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
         {props.title}
-        <DialogCloseButton onClose={onClose} />
+        <DialogCloseButton testId="closeConfirmTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent>
         <DialogContentText

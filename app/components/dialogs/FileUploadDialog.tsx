@@ -167,7 +167,7 @@ function FileUploadDialog(props: Props) {
               ? props.title
               : 'importDialogTitle')
         )}
-        <DialogCloseButton onClose={onClose} />
+        <DialogCloseButton testId="closeFileUploadTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent
         style={{
@@ -266,11 +266,7 @@ function FileUploadDialog(props: Props) {
           {i18n.t('core:minimize')}
         </Button>
         {haveProgress && (
-          <Button
-            data-tid="uploadStopAllTID"
-            onClick={stopAll}
-            color="primary"
-          >
+          <Button data-tid="uploadStopAllTID" onClick={stopAll} color="primary">
             {i18n.t('core:stopAll')}
           </Button>
         )}

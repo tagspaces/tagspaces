@@ -70,7 +70,7 @@ function SettingsDialog(props: Props) {
     <>
       <DialogTitle>
         {i18n.t('core:settings')}
-        <DialogCloseButton onClose={onClose} />
+        <DialogCloseButton testId="closeSettingsTID" onClose={onClose} />
       </DialogTitle>
       <AppBar position="static" color="default">
         <Tabs

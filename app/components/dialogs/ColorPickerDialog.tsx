@@ -108,7 +108,7 @@ function ColorPickerDialog(props: Props) {
     >
       <DialogTitle data-tid="colorPickerDialogTitle">
         {i18n.t('core:colorPickerDialogTitle')}
-        <DialogCloseButton onClose={onClose} />
+        <DialogCloseButton testId="closeColorPickerTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent
         data-tid="colorPickerDialogContent"

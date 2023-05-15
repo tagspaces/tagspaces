@@ -123,7 +123,7 @@ function AddRemoveTagsDialog(props: Props) {
     >
       <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
         {i18n.t('core:tagOperationTitle')}
-        <DialogCloseButton onClose={onClose} />
+        <DialogCloseButton testId="closeAddRemoveTagsTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent
         style={{

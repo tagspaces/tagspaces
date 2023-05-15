@@ -133,7 +133,8 @@ function EditEntryTagDialog(props: Props) {
   function renderTitle() {
     return (
       <DialogTitle>
-        {i18n.t('core:tagProperties')} <DialogCloseButton onClose={onClose} />
+        {i18n.t('core:tagProperties')}{' '}
+        <DialogCloseButton testId="closeEditEntryTagTID" onClose={onClose} />
       </DialogTitle>
     );
   }

@@ -66,7 +66,10 @@ function MoveOrCopyFilesDialog(props: Props) {
     >
       <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
         {i18n.t('core:copyMoveEntriesTitle')}
-        <DialogCloseButton onClose={() => onClose()} />
+        <DialogCloseButton
+          testId="closeMoveOrCopyTID"
+          onClose={() => onClose()}
+        />
       </DialogTitle>
       <DialogContent
         style={{

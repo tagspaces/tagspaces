@@ -69,7 +69,7 @@ function ResolveConflictDialog(props: Props) {
     >
       <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
         {i18n.t('core:resolveConflictTitle')}
-        <DialogCloseButton onClose={onClose} />
+        <DialogCloseButton testId="closeResolveConflictTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent
         style={{

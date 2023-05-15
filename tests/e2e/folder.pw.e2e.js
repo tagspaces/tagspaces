@@ -203,11 +203,12 @@ test.describe('TST01 - Folder management', () => {
       '[data-tid=fsEntryName_empty_folder]',
       'showProperties'
     );
-    const divElement = await global.client.$(
+    await expectElementExist('[data-tid=OpenedTIDempty_folder]', true, 5000);
+    /*const divElement = await global.client.$(
       '[data-tid=OpenedTIDsupported-filestypes]'
-    ); // Replace 'div' with your selector
+    );
     const divText = await divElement.innerText();
-    expect(divText).toEqual('empty_folder');
+    expect(divText).toEqual('empty_folder');*/
   });
 
   test('TST0112 - Delete non empty folder by disabled trashcan [web,minio,electron]', async () => {
@@ -237,6 +238,7 @@ test.describe('TST01 - Folder management', () => {
       true,
       5000
     );
+    await clickOn('[data-tid=closePerspectiveSettingsTID]');
   });
 
   test('TST0117 - Switch to List Perspective [web,minio,electron]', async () => {

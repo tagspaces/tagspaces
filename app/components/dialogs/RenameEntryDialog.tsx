@@ -169,7 +169,7 @@ function RenameEntryDialog(props: Props) {
     >
       <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
         {i18n.t('core:' + (isFile ? 'renameFile' : 'renameDirectory'))}
-        <DialogCloseButton onClose={onClose} />
+        <DialogCloseButton testId="closeRenameEntryTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent>
         <FormControl fullWidth={true} error={inputError}>

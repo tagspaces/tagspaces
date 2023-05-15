@@ -430,7 +430,7 @@ test.describe('TST50** - Right button on a file', () => {
 
   test('TST5037 - Show sub folders [TST5037,web,minio,electron]', async () => {
     // click on hide directories
-    await setGridOptions(false);
+    await setGridOptions('grid', false);
 
     // file
     await expectElementExist(selectorFile, true);
@@ -438,7 +438,7 @@ test.describe('TST50** - Right button on a file', () => {
     await expectElementExist(selectorFolder, false);
 
     // show sub folder in the grid perspective
-    await setGridOptions(true);
+    await setGridOptions('grid', true);
 
     // file
     await expectElementExist(selectorFile, true);

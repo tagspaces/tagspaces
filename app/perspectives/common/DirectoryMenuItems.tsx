@@ -46,7 +46,7 @@ export function getDirectoryMenuItems(
   switchPerspective?: (perspectiveId: string) => void,
   showProperties?: () => void,
   cameraTakePicture?: () => void,
-  showAddRemoveTagsDialog?: () => void,
+  showAddRemoveTagsDialog?: () => void
 ) {
   const menuItems = [];
   if (selectedEntriesLength < 2) {

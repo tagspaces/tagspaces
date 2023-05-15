@@ -194,7 +194,7 @@ function FilePreviewDialog(props: Props) {
         id="draggable-dialog-title"
       >
         {/*{i18n.t('core:importDialogTitle')}*/}
-        <DialogCloseButton onClose={onClose} />
+        <DialogCloseButton testId="closeFilePreviewTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent
         style={{

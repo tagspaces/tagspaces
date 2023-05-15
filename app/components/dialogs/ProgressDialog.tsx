@@ -42,7 +42,7 @@ function ProgressDialog(props: Props) {
         data-tid="progressDialogTitle"
         id="draggable-dialog-title"
       >
-        <DialogCloseButton onClose={props.onClose} />
+        <DialogCloseButton testId="closeProgressTID" onClose={props.onClose} />
       </DialogTitle>
       <DialogContent
         style={{
