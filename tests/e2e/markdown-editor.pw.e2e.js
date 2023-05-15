@@ -11,6 +11,7 @@ import {
 import {
   clickOn,
   frameLocator,
+  getGridFileSelector,
   isDisplayed,
   takeScreenshot
 } from './general.helpers';
@@ -50,7 +51,7 @@ test.beforeEach(async () => {
 test.describe('TST69 - Markdown editor', () => {
   test('TST6901 - Open and render md file [web,minio,electron]', async () => {
     await openContextEntryMenu(
-      '[data-tid="fsEntryName_sample.md"]',
+      getGridFileSelector('sample.md'),
       'fileMenuOpenFile'
     );
     await expect
@@ -71,7 +72,7 @@ test.describe('TST69 - Markdown editor', () => {
 
   test('TST6902 - Open settings [web,minio,electron]', async () => {
     await openContextEntryMenu(
-      '[data-tid="fsEntryName_sample.md"]',
+      getGridFileSelector('sample.md'),
       'fileMenuOpenFile'
     );
 

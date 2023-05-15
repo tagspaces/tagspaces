@@ -4,6 +4,7 @@ import { expect } from '@playwright/test';
 import { delay } from './hook';
 import { firstFile } from './test-utils';
 import AppConfig from '../../app/AppConfig';
+import { dataTidFormat } from '../../app/services/test';
 
 export const defaultLocationPath =
   './testdata-tmp/file-structure/supported-filestypes';
@@ -569,7 +570,7 @@ export async function showFilesWithTag(tagName) {
 }
 
 export function getGridFileSelector(fileName) {
-  return '[data-tid="fsEntryName_' + fileName + '"]';
+  return '[data-tid="fsEntryName_' + dataTidFormat(fileName) + '"]';
 }
 
 export function generateFileName(fileName, fileExt, tags, tagDelimiter = ' ') {

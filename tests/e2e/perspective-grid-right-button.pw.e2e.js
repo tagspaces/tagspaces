@@ -73,7 +73,7 @@ test.describe('TST50** - Right button on a file', () => {
   test('TST5016 - Open file [web,minio,electron]', async () => {
     // await searchEngine('txt');
     await openContextEntryMenu(
-      '[data-tid="fsEntryName_sample.txt"]', // perspectiveGridTable + firstFile,
+      getGridFileSelector('sample.txt'), // perspectiveGridTable + firstFile,
       'fileMenuOpenFile'
     );
     // await takeScreenshot('fileMenuOpenFile');
