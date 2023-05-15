@@ -156,10 +156,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
   test('TST0623 - Search actions - history [web,electron,_pro]', async () => {
     const file = 'sample.txt';
     // add file to history
-    await openContextEntryMenu(
-      '[data-tid="fsEntryName_' + file + '"]',
-      'fileMenuOpenFile'
-    );
+    await openContextEntryMenu(getGridFileSelector(file), 'fileMenuOpenFile');
     await closeFileProperties();
 
     await addSearchCommand('h:', false);
@@ -173,7 +170,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
   test('TST0624 - Search actions - bookmarks [web,electron,_pro]', async () => {
     const bookmarkFileTitle = 'sample.txt';
     await openContextEntryMenu(
-      '[data-tid="fsEntryName_' + bookmarkFileTitle + '"]',
+      getGridFileSelector(bookmarkFileTitle),
       'fileMenuOpenFile'
     );
 
@@ -215,25 +212,19 @@ test.describe('TST06 - Test Search in file structure:', () => {
     const tags1 = ['test-tag1'];
     const tags2 = ['test-tag1', 'test-tag2'];
     const tags3 = ['test-tag2', 'test-tag3'];
-    await clickOn('[data-tid="fsEntryName_sample.' + file1 + '"]');
+    await clickOn(getGridFileSelector('sample.' + file1));
     await AddRemoveTagsToSelectedFiles('grid', tags1, true);
 
     const file2 = 'jpg';
-    await clickOn('[data-tid="fsEntryName_sample.' + file2 + '"]');
+    await clickOn(getGridFileSelector('sample.' + file2));
     await AddRemoveTagsToSelectedFiles('grid', tags2, true);
 
     const file3 = 'gif';
-    await clickOn('[data-tid="fsEntryName_sample.' + file3 + '"]');
+    await clickOn(getGridFileSelector('sample.' + file3));
     await AddRemoveTagsToSelectedFiles('grid', tags3, true);
 
     function getFileName(fileExt, tags) {
-      return (
-        '[data-tid="fsEntryName_sample[' +
-        tags.join(' ') +
-        '].' +
-        fileExt +
-        '"]'
-      );
+      return getGridFileSelector('sample[' + tags.join(' ') + '].' + fileExt);
     }
     // Search for + one tag only: test-tag2
     await addSearchCommand('+' + tags1[0], true);

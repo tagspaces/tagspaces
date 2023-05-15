@@ -16,7 +16,8 @@ import {
   expectElementExist,
   takeScreenshot,
   selectorFile,
-  setInputKeys
+  setInputKeys,
+  getGridFileSelector
 } from './general.helpers';
 import { openContextEntryMenu, renameFolder } from './test-utils';
 import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
@@ -63,10 +64,6 @@ test.describe('TST02 - Folder properties', () => {
     );
     await clickOn('[data-tid=openInMainAreaTID]');
 
-    await expectElementExist(
-      '[data-tid=fsEntryName_' + dataTidFormat(testFile) + ']',
-      true,
-      5000
-    );
+    await expectElementExist(getGridFileSelector(testFile), true, 5000);
   });
 });

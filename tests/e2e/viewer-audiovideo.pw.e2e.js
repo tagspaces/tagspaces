@@ -12,6 +12,7 @@ import {
 import {
   clickOn,
   expectAudioPlay,
+  getGridFileSelector,
   isDisplayed,
   takeScreenshot
 } from './general.helpers';
@@ -48,7 +49,7 @@ test.beforeEach(async () => {
 test.describe('TST59 - Media player', () => {
   test('TST5901 - Play ogg file [web,minio,electron]', async () => {
     await openContextEntryMenu(
-      '[data-tid="fsEntryName_sample.ogg"]',
+      getGridFileSelector('sample.ogg'),
       'fileMenuOpenFile'
     );
     await expectAudioPlay();
@@ -56,7 +57,7 @@ test.describe('TST59 - Media player', () => {
 
   test('TST5902 - Play ogv file [web,minio,electron]', async () => {
     await openContextEntryMenu(
-      '[data-tid="fsEntryName_sample.ogv"]',
+      getGridFileSelector('sample.ogv'),
       'fileMenuOpenFile'
     );
     await expectAudioPlay();
@@ -64,7 +65,7 @@ test.describe('TST59 - Media player', () => {
 
   test('TST5903 - Open and close about dialog [web,minio,electron]', async () => {
     await openContextEntryMenu(
-      '[data-tid="fsEntryName_sample.mp4"]',
+      getGridFileSelector('sample.mp4'),
       'fileMenuOpenFile'
     );
 
@@ -96,7 +97,7 @@ test.describe('TST59 - Media player', () => {
 
   test('TST5904 - Play mp3 [web,minio,electron]', async () => {
     await openContextEntryMenu(
-      '[data-tid="fsEntryName_sample.mp3"]',
+      getGridFileSelector('sample.mp3'),
       'fileMenuOpenFile'
     );
     await expectAudioPlay();
@@ -107,7 +108,7 @@ test.describe('TST59 - Media player', () => {
    */
   test('TST5905 - Play webm [web,minio,electron]', async () => {
     await openContextEntryMenu(
-      '[data-tid="fsEntryName_sample.webm"]',
+      getGridFileSelector('sample.webm'),
       'fileMenuOpenFile'
     );
 
@@ -125,7 +126,7 @@ test.describe('TST59 - Media player', () => {
 
   test('TST5906 - Play flac [web,minio,electron]', async () => {
     await openContextEntryMenu(
-      '[data-tid="fsEntryName_sample.flac"]',
+      getGridFileSelector('sample.flac'),
       'fileMenuOpenFile'
     );
     await expectAudioPlay();

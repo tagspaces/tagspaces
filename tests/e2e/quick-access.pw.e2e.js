@@ -12,6 +12,7 @@ import {
   clickOn,
   createNewDirectory,
   expectElementExist,
+  getGridFileSelector,
   setInputKeys,
   takeScreenshot
 } from './general.helpers';
@@ -103,7 +104,7 @@ test.describe('TST09 - Quick access', () => {
     const bookmarkFileTitle = 'sample.txt';
     const bookmarkFileTid = dataTidFormat(bookmarkFileTitle);
     await openContextEntryMenu(
-      '[data-tid="fsEntryName_' + bookmarkFileTitle + '"]', // todo rethink selector here contain dot
+      getGridFileSelector(bookmarkFileTitle), // todo rethink selector here contain dot
       'fileMenuOpenFile'
     );
 
@@ -164,7 +165,7 @@ test.describe('TST09 - Quick access', () => {
     const bookmarks = ['sample.txt', 'sample.jpg'];
     for (let i = 0; i < bookmarks.length; i++) {
       await openContextEntryMenu(
-        '[data-tid="fsEntryName_' + bookmarks[i] + '"]',
+        getGridFileSelector(bookmarks[i]),
         'fileMenuOpenFile'
       );
 
@@ -195,7 +196,7 @@ test.describe('TST09 - Quick access', () => {
     const fileTitle = 'sample.jpg';
     const fileTid = dataTidFormat(fileTitle);
     await openContextEntryMenu(
-      '[data-tid="fsEntryName_' + fileTitle + '"]', // todo rethink selector here contain dot
+      getGridFileSelector(fileTitle),
       'fileMenuOpenFile'
     );
     await clickOn('[data-tid=fileContainerCloseOpenedFile]');
@@ -227,7 +228,7 @@ test.describe('TST09 - Quick access', () => {
       // Add
       const fileTid = dataTidFormat(files[i]);
       await openContextEntryMenu(
-        '[data-tid="fsEntryName_' + files[i] + '"]',
+        getGridFileSelector(files[i]),
         'fileMenuOpenFile'
       );
       await clickOn('[data-tid=fileContainerCloseOpenedFile]');
@@ -255,7 +256,7 @@ test.describe('TST09 - Quick access', () => {
     const fileTitle = 'sample.txt';
     const fileTid = dataTidFormat(fileTitle);
     await openContextEntryMenu(
-      '[data-tid="fsEntryName_' + fileTitle + '"]', // todo rethink selector here contain dot
+      getGridFileSelector(fileTitle),
       'fileMenuOpenFile'
     );
     await clickOn('[data-tid=fileContainerEditFile]');

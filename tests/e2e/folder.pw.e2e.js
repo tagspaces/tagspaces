@@ -192,10 +192,6 @@ test.describe('TST01 - Folder management', () => {
     await clickOn('[data-tid=fsEntryName_empty_folder]');
     await AddRemoveTagsToSelectedFiles('grid', ['test-tag1']);
     await expectElementExist('[data-tid=tagContainer_test-tag1]', true, 5000);
-    /*await openContextEntryMenu(
-      '[data-tid=fsEntryName_empty_folder]',
-      'fileMenuMoveCopyDirectoryTID'
-    );*/
   });
 
   test('TST0111 - Open folder properties [web,minio,electron]', async () => {
