@@ -54,6 +54,7 @@ import {
   getLastThumbnailImageChange
 } from '-/reducers/app';
 import { FolderIcon } from '-/components/CommonIcons';
+import { dataTidFormat } from '-/services/test';
 // import { getTagColor } from '-/reducers/settings';
 
 const maxDescriptionPreviewLength = 100;
@@ -239,7 +240,7 @@ function CellContent(props: Props) {
         </div>
         <Typography
           className={classes.gridCellTitle}
-          data-tid={'fsEntryName_' + fSystemEntry.name}
+          data-tid={'fsEntryName_' + dataTidFormat(fSystemEntry.name)}
           variant="body1"
         >
           {entryTitle}

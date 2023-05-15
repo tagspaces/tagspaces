@@ -14,14 +14,16 @@ import { sortByCriteria } from '@tagspaces/tagspaces-common/misc';
  *
  * @param tagNames
  * @param addTag = true - add tags; false - remove tags
+ * @param perspective - current Perspective
  * @returns {Promise<void>}
  * @constructor
  */
 export async function AddRemoveTagsToSelectedFiles(
+  perspective = 'grid',
   tagNames = ['test-tag'], // TODO fix camelCase tag name
   addTag = true
 ) {
-  await clickOn('[data-tid=listPerspectiveAddRemoveTags]');
+  await clickOn('[data-tid=' + perspective + 'PerspectiveAddRemoveTags]');
 
   for (let i = 0; i < tagNames.length; i++) {
     const tagName = tagNames[i];

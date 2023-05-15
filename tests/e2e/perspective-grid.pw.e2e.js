@@ -104,7 +104,7 @@ test.describe('TST50 - Perspective Grid', () => {
     let selectedIds = await selectRowFiles([0, 1, 2]);
 
     const tags = ['test-tag1', 'test-tag2'];
-    await AddRemoveTagsToSelectedFiles(tags);
+    await AddRemoveTagsToSelectedFiles('list', tags);
 
     for (let i = 0; i < selectedIds.length; i++) {
       await expectElementExist(
@@ -123,7 +123,7 @@ test.describe('TST50 - Perspective Grid', () => {
     selectedIds = await selectRowFiles([0, 1, 2]);
 
     // tags = ['test-tag1', 'test-tag2'];
-    await AddRemoveTagsToSelectedFiles(tags, false);
+    await AddRemoveTagsToSelectedFiles('list', tags, false);
 
     for (let i = 0; i < selectedIds.length; i++) {
       await expectElementExist(
@@ -145,7 +145,7 @@ test.describe('TST50 - Perspective Grid', () => {
   test('TST5007 - Remove all tags from selected files [minio,electron]', async () => {
     const selectedIds = await selectRowFiles([0, 1, 2]);
     const tags = ['test-tag1', 'test-tag2', 'test-tag3'];
-    await AddRemoveTagsToSelectedFiles(tags, true);
+    await AddRemoveTagsToSelectedFiles('list', tags, true);
 
     await selectFilesByID(selectedIds);
 

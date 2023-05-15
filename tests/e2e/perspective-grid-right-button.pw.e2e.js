@@ -162,7 +162,7 @@ test.describe('TST50** - Right button on a file', () => {
     await clickOn(selectorFile);
     //Toggle Properties
     await clickOn('[data-tid=fileContainerToggleProperties]');
-    await AddRemoveTagsToSelectedFiles([testTagName], true);
+    await AddRemoveTagsToSelectedFiles('grid', [testTagName], true);
     await expectElementExist(
       selectorFile + '[1]//div[@id="gridCellTags"]//button[1]',
       true
@@ -192,7 +192,7 @@ test.describe('TST50** - Right button on a file', () => {
 
     // cleanup
     await clickOn(selectorFile);
-    await AddRemoveTagsToSelectedFiles([testTagName + 'Edited'], false);
+    await AddRemoveTagsToSelectedFiles('grid', [testTagName + 'Edited'], false);
 
     await expectElementExist(
       selectorFile + '[1]//div[@id="gridCellTags"]//button',
@@ -213,7 +213,7 @@ test.describe('TST50** - Right button on a file', () => {
     await clickOn(selectorFile);
     //Toggle Properties
     await clickOn('[data-tid=fileContainerToggleProperties]');
-    await AddRemoveTagsToSelectedFiles([testTagName], true);
+    await AddRemoveTagsToSelectedFiles('grid', [testTagName], true);
     await expectElementExist(
       selectorFile + '[1]//div[@id="gridCellTags"]//button[1]',
       true
@@ -234,7 +234,7 @@ test.describe('TST50** - Right button on a file', () => {
    */
   test('TST5024 - Show files with a given tag (tag menu)', async () => {
     await selectRowFiles([0, 1, 2]);
-    await AddRemoveTagsToSelectedFiles([testTagName], true);
+    await AddRemoveTagsToSelectedFiles('grid', [testTagName], true);
     await showFilesWithTag(testTagName);
 
     const filesList = await global.client.$$(selectorFile);
@@ -244,7 +244,7 @@ test.describe('TST50** - Right button on a file', () => {
 
     // cleanup
     await selectRowFiles([0, 1, 2]);
-    await AddRemoveTagsToSelectedFiles([testTagName], false);
+    await AddRemoveTagsToSelectedFiles('grid', [testTagName], false);
 
     /* const classNotSelected = await getGridCellClass(0);
     const classSelected = await selectAllFiles(classNotSelected);
@@ -275,7 +275,7 @@ test.describe('TST50** - Right button on a file', () => {
     const tags = [testTagName, testTagName + '2'];
     // select file
     await clickOn(getGridFileSelector(fileName + '.' + fileExt));
-    await AddRemoveTagsToSelectedFiles(tags, true);
+    await AddRemoveTagsToSelectedFiles('grid', tags, true);
 
     let gridElement = await global.client.waitForSelector(
       getGridFileSelector(generateFileName(fileName, fileExt, tags, ' '))
@@ -286,7 +286,7 @@ test.describe('TST50** - Right button on a file', () => {
 
     // remove tags
     await gridElement.click();
-    await AddRemoveTagsToSelectedFiles(tags, false);
+    await AddRemoveTagsToSelectedFiles('grid', tags, false);
 
     gridElement = await global.client.waitForSelector(
       getGridFileSelector(fileName + '.' + fileExt)

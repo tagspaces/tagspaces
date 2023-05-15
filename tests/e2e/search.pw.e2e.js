@@ -216,15 +216,15 @@ test.describe('TST06 - Test Search in file structure:', () => {
     const tags2 = ['test-tag1', 'test-tag2'];
     const tags3 = ['test-tag2', 'test-tag3'];
     await clickOn('[data-tid="fsEntryName_sample.' + file1 + '"]');
-    await AddRemoveTagsToSelectedFiles(tags1, true);
+    await AddRemoveTagsToSelectedFiles('grid', tags1, true);
 
     const file2 = 'jpg';
     await clickOn('[data-tid="fsEntryName_sample.' + file2 + '"]');
-    await AddRemoveTagsToSelectedFiles(tags2, true);
+    await AddRemoveTagsToSelectedFiles('grid', tags2, true);
 
     const file3 = 'gif';
     await clickOn('[data-tid="fsEntryName_sample.' + file3 + '"]');
-    await AddRemoveTagsToSelectedFiles(tags3, true);
+    await AddRemoveTagsToSelectedFiles('grid', tags3, true);
 
     function getFileName(fileExt, tags) {
       return (

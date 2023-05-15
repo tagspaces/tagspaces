@@ -190,7 +190,7 @@ test.describe('TST01 - Folder management', () => {
 
   test('TST0110 - Tag folder [web,minio,electron]', async () => {
     await clickOn('[data-tid=fsEntryName_empty_folder]');
-    await AddRemoveTagsToSelectedFiles(['test-tag1']);
+    await AddRemoveTagsToSelectedFiles('grid', ['test-tag1']);
     await expectElementExist('[data-tid=tagContainer_test-tag1]', true, 5000);
     /*await openContextEntryMenu(
       '[data-tid=fsEntryName_empty_folder]',

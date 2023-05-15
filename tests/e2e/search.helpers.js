@@ -118,7 +118,7 @@ export async function addRemoveTagsInSearchResults(
 
   let selectedIds = await selectRowFiles([0]);
 
-  await AddRemoveTagsToSelectedFiles(tags);
+  await AddRemoveTagsToSelectedFiles('list', tags);
 
   for (let i = 0; i < selectedIds.length; i++) {
     await expectElementExist(
@@ -132,7 +132,7 @@ export async function addRemoveTagsInSearchResults(
     //select rows to enable button
     selectedIds = await selectRowFiles([0]);
   }
-  await AddRemoveTagsToSelectedFiles(tags, false);
+  await AddRemoveTagsToSelectedFiles('list', tags, false);
 
   for (let i = 0; i < selectedIds.length; i++) {
     await expectElementExist(

@@ -1149,6 +1149,7 @@ function EntryContainer(props: Props) {
       <div className={classes.flexLeft}>
         <Tooltip title={i18n.t('core:openInMainArea')}>
           <IconButton
+            data-tid="openInMainAreaTID"
             aria-label={i18n.t('core:openInMainArea')}
             onClick={navigateToFolder}
             size="large"
