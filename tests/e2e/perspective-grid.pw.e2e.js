@@ -232,10 +232,10 @@ test.describe('TST50 - Perspective Grid', () => {
   test('TST5013 - Delete files from selection (many files) [web,minio,electron]', async () => {
     const selectedIds = await selectRowFiles([0, 1, 2]);
 
-    await clickOn('[data-tid=gridPerspectiveDeleteMultipleFiles]');
+    await clickOn('[data-tid=listPerspectiveDeleteMultipleFiles]');
     await clickOn('[data-tid=confirmDeleteFileDialog]');
-    // await waitForNotification();
 
+    await clickOn('[data-tid=openDefaultPerspective]');
     for (let i = 0; i < selectedIds.length; i++) {
       await expectElementExist(
         '[data-entry-id="' + selectedIds[i] + '"]',

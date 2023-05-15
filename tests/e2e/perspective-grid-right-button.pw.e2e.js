@@ -233,18 +233,28 @@ test.describe('TST50** - Right button on a file', () => {
    * todo search not work
    */
   test('TST5024 - Show files with a given tag (tag menu)', async () => {
-    await selectRowFiles([0, 1, 2]);
-    await AddRemoveTagsToSelectedFiles('grid', [testTagName], true);
+    const selectedIds = await selectRowFiles([0, 1, 2]);
+    await AddRemoveTagsToSelectedFiles('list', [testTagName], true);
     await showFilesWithTag(testTagName);
+    await clickOn('[data-tid=openDefaultPerspective]');
 
     const filesList = await global.client.$$(selectorFile);
+    expect(filesList.length).toBe(selectedIds.length);
+
+    /*const filesList = await global.client.$$(selectorFile);
     for (let i = 0; i < filesList.length; i++) {
       await expectTagsExist(filesList[i], [testTagName], true);
-    }
+    }*/
 
     // cleanup
+    await clickOn('#clearSearchID');
     await selectRowFiles([0, 1, 2]);
-    await AddRemoveTagsToSelectedFiles('grid', [testTagName], false);
+    await AddRemoveTagsToSelectedFiles('list', [testTagName], false);
+    await expectElementExist(
+      '[data-tid=tagMoreButton_' + testTagName + ']',
+      false,
+      5000
+    );
 
     /* const classNotSelected = await getGridCellClass(0);
     const classSelected = await selectAllFiles(classNotSelected);
