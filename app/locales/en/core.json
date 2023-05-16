@@ -156,6 +156,8 @@
   "duplicateFile": "Duplicate File",
   "deleteEntry": "Delete",
   "reloadFile": "Reload File",
+  "reloadFileProperties": "Reload File Properties",
+  "reloadFolderProperties": "Reload Folder Properties",
   "closeFile": "Close File",
   "fileProperties": "Properties",
   "editFile": "Edit File",

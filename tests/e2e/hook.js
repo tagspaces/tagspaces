@@ -195,7 +195,8 @@ export async function testDataRefresh() {
 
 export async function createFile(
   fileName = 'empty_file.html',
-  fileContent = undefined
+  fileContent = undefined,
+  rootFolder = 'empty_folder'
 ) {
   const filePath = pathLib.join(
     __dirname,
@@ -203,7 +204,7 @@ export async function createFile(
     'testdata-tmp',
     'file-structure',
     'supported-filestypes',
-    'empty_folder',
+    rootFolder,
     fileName
   );
 

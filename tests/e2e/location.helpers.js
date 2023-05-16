@@ -192,20 +192,6 @@ export async function getFirstFileName() {
   return fileName;
 }
 
-export async function getPropertiesTags() {
-  const arrTags = [];
-  const tags = await global.client.$$(
-    '[data-tid=PropertiesTagsSelectTID] div div div'
-  );
-  for (let i = 0; i < tags.length; i++) {
-    const dataTid = await tags[i].getAttribute('data-tid');
-    if (dataTid && dataTid.startsWith('tagContainer_')) {
-      const label = await tags[i].$('button span');
-      arrTags.push(await getElementText(label));
-    }
-  }
-  return arrTags;
-}
 
 /*export async function checkForValidExt(selector, ext) {
   const getExt = await global.client

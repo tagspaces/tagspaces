@@ -26,7 +26,6 @@ import React, {
 } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { GlobalHotKeys } from 'react-hotkeys';
 import fscreen from 'fscreen';
 import Button from '@mui/material/Button';
@@ -60,9 +59,12 @@ import {
 } from '-/components/CommonIcons';
 import HistoryIcon from '@mui/icons-material/History';
 import { Split } from 'ts-react-splitter';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { buffer } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
 import {
+  getMetaFileLocationForDir,
+  getMetaFileLocationForFile,
   extractContainingDirectoryPath,
   extractTitle,
   extractFileExtension,
@@ -105,6 +107,7 @@ import { Switch } from '@mui/material';
 import useFirstRender from '-/utils/useFirstRender';
 import ResolveConflictDialog from '-/components/dialogs/ResolveConflictDialog';
 import { dataTidFormat } from '-/services/test';
+import { getMetaForEntry, loadJSONFile } from '-/services/utils-io';
 
 const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
 // const openedSplitSize = AppConfig.isElectron ? 560 : 360;
@@ -574,11 +577,30 @@ function EntryContainer(props: Props) {
         // openedFile.changed) {
         setSaveBeforeReloadConfirmDialogOpened(true);
       } else {
-        updateOpenedFile(openedFile.path, {
-          ...openedFile,
-          editMode: false,
-          shouldReload: !openedFile.shouldReload
-        });
+        const metaFilePath = openedFile.isFile
+          ? getMetaFileLocationForFile(
+              openedFile.path,
+              PlatformIO.getDirSeparator()
+            )
+          : getMetaFileLocationForDir(
+              openedFile.path,
+              PlatformIO.getDirSeparator()
+            );
+        try {
+          loadJSONFile(metaFilePath).then(fsEntryMeta => {
+            updateOpenedFile(openedFile.path, {
+              ...fsEntryMeta,
+              editMode: false,
+              shouldReload: !openedFile.shouldReload
+            });
+          });
+        } catch (e) {
+          updateOpenedFile(openedFile.path, {
+            ...openedFile,
+            editMode: false,
+            shouldReload: !openedFile.shouldReload
+          });
+        }
       }
     }
   };
@@ -1090,8 +1112,12 @@ function EntryContainer(props: Props) {
         )}
         <Tooltip title={i18n.t('core:reloadFile')}>
           <IconButton
-            data-tid="reloadFileTID"
-            aria-label={i18n.t('core:reloadFile')}
+            data-tid="reloadPropertiesTID"
+            aria-label={i18n.t(
+              openedFile.isFile
+                ? 'core:reloadFileProperties'
+                : 'core:reloadFolderProperties'
+            )}
             onClick={reloadDocument}
             size="large"
           >
@@ -1185,6 +1211,7 @@ function EntryContainer(props: Props) {
         )}
         <Tooltip title={i18n.t('core:reloadDirectory')}>
           <IconButton
+            data-tid="reloadFolderTID"
             aria-label={i18n.t('core:reloadDirectory')}
             onClick={reloadDocument}
             size="large"
@@ -1210,6 +1237,7 @@ function EntryContainer(props: Props) {
         {!isReadOnlyMode && (
           <Tooltip title={i18n.t('core:deleteDirectory')}>
             <IconButton
+              data-tid="deleteFolderTID"
               aria-label={i18n.t('core:deleteDirectory')}
               onClick={() => setDeleteEntryModalOpened(true)}
               size="large"

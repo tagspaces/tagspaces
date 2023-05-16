@@ -3,8 +3,7 @@ import {
   createPwMinioLocation,
   createPwLocation,
   defaultLocationName,
-  defaultLocationPath,
-  getPropertiesTags
+  defaultLocationPath
 } from './location.helpers';
 import {
   clickOn,
@@ -21,7 +20,8 @@ import {
 } from './general.helpers';
 import {
   AddRemovePropertiesTags,
-  getPropertiesFileName
+  getPropertiesFileName,
+  getPropertiesTags
 } from './file.properties.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
