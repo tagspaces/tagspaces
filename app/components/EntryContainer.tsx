@@ -185,7 +185,6 @@ interface Props {
   // reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
   updateThumbnailUrl: (path: string, thumbUrl: string) => void;
   // setLastSelectedEntry: (path: string) => void;
-  setSelectedEntries: (selectedEntries: Array<Object>) => void;
   loadDirectoryContent: (
     path: string,
     generateThumbnails: boolean,
@@ -1732,7 +1731,6 @@ function mapActionCreatorsToProps(dispatch) {
       removeAllTags: TaggingActions.removeAllTags,
       updateOpenedFile: AppActions.updateOpenedFile,
       updateThumbnailUrl: AppActions.updateThumbnailUrl,
-      setSelectedEntries: AppActions.setSelectedEntries,
       switchLocationType: LocationActions.switchLocationType,
       switchCurrentLocationType: AppActions.switchCurrentLocationType
     },

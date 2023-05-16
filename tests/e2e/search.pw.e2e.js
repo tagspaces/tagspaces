@@ -134,17 +134,15 @@ test.describe('TST06 - Test Search in file structure:', () => {
   });*/
 
   test('TST0621 - Search actions - open location [web,electron]', async () => {
-    const firstLocationTID = await getPwLocationTid(0);
+    //const firstLocationTID = await getPwLocationTid(0);
     await closeLocation(); //lastLocationTID);
     await expectElementExist('[data-tid=WelcomePanelTID]', true);
     await searchEngine('l:', {}, false);
     await clickOn('#textQuery-option-0');
     await clickOn('[data-tid=folderContainerOpenDirMenu]');
     await clickOn('[data-tid=showProperties]');
-    await expectElementExist(
-      '[data-tid=OpenedTID' + firstLocationTID + ']',
-      true
-    );
+    await expectElementExist(getGridFileSelector('empty_folder'), true, 5000);
+    // await expectElementExist('[data-tid=OpenedTID' + firstLocationTID + ']',true);
   });
 
   test('TST0622 - Search actions - filter [web,electron]', async () => {

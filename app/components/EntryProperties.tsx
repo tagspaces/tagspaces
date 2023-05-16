@@ -187,6 +187,7 @@ interface Props {
     folderPath: string,
     lastBackgroundColorChange: number
   ) => void;
+  setSelectedEntries: (selectedEntries: Array<TS.FileSystemEntry>) => void;
 }
 
 const defaultBackgrounds = [
@@ -414,6 +415,9 @@ function EntryProperties(props: Props) {
   };
 
   const toggleMoveCopyFilesDialog = () => {
+    props.setSelectedEntries([
+      { name: '', isFile: true, tags: [], ...currentEntry.current }
+    ]);
     setMoveCopyFilesDialogOpened(!isMoveCopyFilesDialogOpened);
   };
 
@@ -1042,12 +1046,12 @@ function EntryProperties(props: Props) {
                 ),
                 endAdornment: (
                   <InputAdornment position="end">
-                    {currentEntry.current.isFile &&
-                      !isReadOnlyMode &&
+                    {!isReadOnlyMode &&
                       !currentEntry.current.editMode &&
                       editName === undefined &&
                       editDescription.current === undefined && (
                         <Button
+                          data-tid="moveCopyEntryTID"
                           color="primary"
                           onClick={toggleMoveCopyFilesDialog}
                         >
@@ -1484,7 +1488,8 @@ function mapActionCreatorsToProps(dispatch) {
     {
       switchLocationType: LocationActions.switchLocationType,
       switchCurrentLocationType: AppActions.switchCurrentLocationType,
-      setLastBackgroundColorChange: AppActions.setLastBackgroundColorChange
+      setLastBackgroundColorChange: AppActions.setLastBackgroundColorChange,
+      setSelectedEntries: AppActions.setSelectedEntries
     },
     dispatch
   );

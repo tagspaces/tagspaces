@@ -164,34 +164,6 @@ test.describe('TST08 - File folder properties', () => {
 
   test.skip('TST0806 - Download file [manual]', async () => {});
 
-  test('TST0807 - Rename opened folder [web,minio,electron]', async () => {
-    const newTile = 'folderRenamed';
-    // open folderProperties
-    await openContextEntryMenu(selectorFolder, 'showProperties');
-
-    const propsFolderName = await getPropertiesFileName();
-    await clickOn('[data-tid=startRenameEntryTID]');
-    await setInputValue('[data-tid=fileNameProperties] input', newTile);
-    await clickOn('[data-tid=confirmRenameEntryTID]');
-    // await waitForNotification();
-    await global.client.waitForSelector(
-      '[data-tid=fileNameProperties] input[value="' + newTile + '"]'
-    );
-    const propsNewFolderName = await getPropertiesFileName();
-    expect(propsFolderName).not.toBe(propsNewFolderName);
-
-    //turn folderName back
-    await clickOn('[data-tid=startRenameEntryTID]');
-    await setInputValue('[data-tid=fileNameProperties] input', propsFolderName);
-    await clickOn('[data-tid=confirmRenameEntryTID]');
-    // await waitForNotification();
-    await global.client.waitForSelector(
-      '[data-tid=fileNameProperties] input[value="' + propsFolderName + '"]'
-    );
-    const propsOldFileName = await getPropertiesFileName();
-    expect(propsOldFileName).toBe(propsFolderName);
-  });
-
   test('TST0808 - Add and remove tags to a file (file names) [web,minio,electron]', async () => {
     // await searchEngine('bmp');
     // open fileProperties

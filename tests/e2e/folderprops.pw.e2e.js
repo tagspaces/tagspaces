@@ -12,12 +12,18 @@ import {
   clickOn,
   expectElementExist,
   takeScreenshot,
-  getGridFileSelector
+  getGridFileSelector,
+  selectorFolder,
+  setInputValue,
+  createNewDirectory
 } from './general.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage } from './welcome.helpers';
-import { getPropertiesTags } from './file.properties.helpers';
+import {
+  getPropertiesFileName,
+  getPropertiesTags
+} from './file.properties.helpers';
 
 test.beforeAll(async () => {
   await startTestingApp('extconfig.js');
@@ -90,6 +96,53 @@ test.describe('TST02 - Folder properties', () => {
       '[data-tid=descriptionTID] .milkdown'
     );
     const description = await editor.innerText();
-    expect(description.replace(/[\s*#]/g, '')).toMatch(tsmJson.description.replace(/[\s*#]/g, ''));
+    expect(description.replace(/[\s*#]/g, '')).toMatch(
+      tsmJson.description.replace(/[\s*#]/g, '')
+    );
+  });
+
+  test('TST0205 - Delete folder from toolbar [web,minio,electron]', async () => {
+    await clickOn('[data-tid=deleteFolderTID]');
+    await clickOn('[data-tid=confirmSaveBeforeCloseDialog]');
+    await expectElementExist('OpenedTIDempty_folder', false, 5000);
+    await expectElementExist(getGridFileSelector('empty_folder'), false, 5000);
+    await testDataRefresh();
+  });
+
+  test('TST0206 - Rename folder [web,minio,electron]', async () => {
+    const newTile = 'folderRenamed';
+
+    const propsFolderName = await getPropertiesFileName();
+    await clickOn('[data-tid=startRenameEntryTID]');
+    await setInputValue('[data-tid=fileNameProperties] input', newTile);
+    await clickOn('[data-tid=confirmRenameEntryTID]');
+    // await waitForNotification();
+    await global.client.waitForSelector(
+      '[data-tid=fileNameProperties] input[value="' + newTile + '"]'
+    );
+    const propsNewFolderName = await getPropertiesFileName();
+    expect(propsFolderName).not.toBe(propsNewFolderName);
+
+    //turn folderName back
+    await clickOn('[data-tid=startRenameEntryTID]');
+    await setInputValue('[data-tid=fileNameProperties] input', propsFolderName);
+    await clickOn('[data-tid=confirmRenameEntryTID]');
+    // await waitForNotification();
+    await global.client.waitForSelector(
+      '[data-tid=fileNameProperties] input[value="' + propsFolderName + '"]'
+    );
+    const propsOldFileName = await getPropertiesFileName();
+    expect(propsOldFileName).toEqual(propsFolderName);
+  });
+
+  test('TST0207 - Move folder [web,minio,electron]', async () => {
+    const newFolder = await createNewDirectory('targetFolder');
+    await clickOn('[data-tid=moveCopyEntryTID]');
+    await clickOn('[data-tid=MoveTarget' + newFolder + ']');
+    await clickOn('[data-tid=confirmMoveFiles]');
+    await clickOn('[data-tid=uploadCloseAndClearTID]');
+    await expectElementExist(getGridFileSelector('empty_folder'), false, 5000);
+    await global.client.dblclick('[data-tid=fsEntryName_' + newFolder + ']');
+    await expectElementExist(getGridFileSelector('empty_folder'), true, 5000);
   });
 });
