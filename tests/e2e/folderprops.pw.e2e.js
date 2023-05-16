@@ -13,14 +13,15 @@ import {
   expectElementExist,
   takeScreenshot,
   getGridFileSelector,
-  selectorFolder,
   setInputValue,
-  createNewDirectory
+  createNewDirectory,
+  dnd
 } from './general.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage } from './welcome.helpers';
 import {
+  AddRemovePropertiesTags,
   getPropertiesFileName,
   getPropertiesTags
 } from './file.properties.helpers';
@@ -144,5 +145,27 @@ test.describe('TST02 - Folder properties', () => {
     await expectElementExist(getGridFileSelector('empty_folder'), false, 5000);
     await global.client.dblclick('[data-tid=fsEntryName_' + newFolder + ']');
     await expectElementExist(getGridFileSelector('empty_folder'), true, 5000);
+    await testDataRefresh();
+  });
+
+  test('TST0210 - Add and remove tag to folder with dropdown menu [web,minio,electron]', async () => {
+    await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
+  });
+  test('TST0211 - Add tag folder with DnD from tag library [web,minio,electron]', async () => {
+    const tagName = 'article';
+    await clickOn('[data-tid=tagLibrary]');
+    await dnd(
+      '[data-tid=tagContainer_' + tagName + ']',
+      '[data-tid=PropertiesTagsSelectTID]'
+    );
+    await expectElementExist(
+      '[data-tid=tagContainer_' + tagName + ']',
+      true,
+      8000,
+      '[data-tid=perspectiveGridFileTable]'
+    );
+
+    const propsTags = await getPropertiesTags();
+    expect(propsTags).toContain(tagName);
   });
 });

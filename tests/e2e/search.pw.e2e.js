@@ -141,8 +141,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await clickOn('#textQuery-option-0');
     await clickOn('[data-tid=folderContainerOpenDirMenu]');
     await clickOn('[data-tid=showProperties]');
-    await expectElementExist(getGridFileSelector('empty_folder'), true, 5000);
-    // await expectElementExist('[data-tid=OpenedTID' + firstLocationTID + ']',true);
+    await expectElementExist('[data-tid=OpenedTIDempty_folder]', true);
   });
 
   test('TST0622 - Search actions - filter [web,electron]', async () => {

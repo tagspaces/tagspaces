@@ -8,9 +8,10 @@ import {
 import {
   clickOn,
   createTxtFile,
-  dragDrop,
+  dnd,
   expectElementExist,
   getGridFileName,
+  getGridFileSelector,
   selectorFile,
   selectorFolder,
   setInputValue,
@@ -185,20 +186,24 @@ test.describe('TST08 - File folder properties', () => {
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
   });
 
-  test('TST0810 - Tag file drag&drop in file opener [web]', async () => {
+  test('TST0810 - Tag file drag&drop in file opener [web,minio,electron]', async () => {
     const tagName = 'article';
     await clickOn('[data-tid=tagLibrary]');
-    await dragDrop('[data-tid=tagContainer_' + tagName + ']', selectorFile);
-
-    await clickOn(selectorFile);
+    await dnd(
+      '[data-tid=tagContainer_' + tagName + ']',
+      getGridFileSelector('sample.txt')
+    );
+    await expectElementExist(
+      '[data-tid=tagContainer_' + tagName + ']',
+      true,
+      8000,
+      '[data-tid=perspectiveGridFileTable]'
+    );
+    await clickOn(getGridFileSelector('sample[' + tagName + '].txt'));
     await clickOn('[data-tid=fileContainerToggleProperties]');
-    const propsTags = await getPropertiesTags();
-    expect(propsTags.includes(tagName)).toBe(true);
-  });
 
-  test('TST0810a - Add and remove tag to a folder [web,minio,electron]', async () => {
-    await openContextEntryMenu(selectorFolder, 'showProperties');
-    await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
+    const propsTags = await getPropertiesTags();
+    expect(propsTags).toContain(tagName);
   });
 
   test('TST0811 - Duplicate file [web,minio,electron]', async () => {

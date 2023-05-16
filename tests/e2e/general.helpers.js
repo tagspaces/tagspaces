@@ -680,7 +680,13 @@ export async function setSettings(selector, click = false) {
   await clickOn('[data-tid=closeSettingsDialog]');
 }
 
-export async function dragDrop(originSelector, destinationSelector) {
+export async function dnd(originSelector, destinationSelector) {
+  const source = global.client.locator(originSelector);
+  const target = global.client.locator(destinationSelector);
+  await source.dragTo(target);
+}
+
+/*export async function dragDrop(originSelector, destinationSelector) {
   const originElement = await global.client.waitForSelector(originSelector);
   const destinationElement = await global.client.waitForSelector(
     destinationSelector
@@ -693,6 +699,29 @@ export async function dragDrop(originSelector, destinationSelector) {
   await destinationElement.hover();
   await global.client.mouse.up();
 }
+
+export async function dragAndDrop(srcSelector, targetSelector) {
+  const srcElement = await global.client.waitForSelector(srcSelector);
+  const target = await global.client.waitForSelector(targetSelector);
+
+  const bBox = await srcElement.boundingBox();
+
+  await global.client.mouse.move(
+    bBox.x + bBox.width / 2,
+    bBox.y + bBox.height / 2
+  );
+  await global.client.mouse.down();
+  await global.client.mouse.move(
+    bBox.x + bBox.width / 2 - 10,
+    bBox.y + bBox.height / 2
+  );
+  const targetBBox = await target.boundingBox();
+  await global.client.mouse.move(
+    targetBBox.x + 10,
+    targetBBox.y + targetBBox.height / 2
+  );
+  await global.client.mouse.up();
+}*/
 
 export async function reloadDirectory() {
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
