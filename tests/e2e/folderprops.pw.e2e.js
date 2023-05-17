@@ -214,4 +214,17 @@ test.describe('TST02 - Folder properties', () => {
     await clickOn('[data-tid=descriptionTID] .milkdown a');
     */
   });
+
+  test('TST0216 - Set gallery perspective as default for folder [web,minio,electron,_pro]', async () => {
+    const fileName = 'sample.jpg';
+    await openContextEntryMenu(getGridFileSelector(fileName), 'fileMenuMoveCopyFile');
+    await clickOn('[data-tid=MoveTargetempty_folder]');
+    await clickOn('[data-tid=confirmCopyFiles]');
+
+    await clickOn('[data-tid=changePerspectiveTID]');
+    await clickOn('[data-value=gallery]');
+    await global.client.dblclick('[data-tid=fsEntryName_empty_folder]');
+
+    await expectElementExist('[data-tid=perspectiveGalleryToolbar]', true, 5000);
+  });
 });
