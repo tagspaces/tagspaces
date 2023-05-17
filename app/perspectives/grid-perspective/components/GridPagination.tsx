@@ -448,7 +448,10 @@ function GridPagination(props: Props) {
                     color: theme.palette.text.primary
                   }}
                 >
-                  <Tooltip title={i18n.t('core:renameDirectory')}>
+                  <Tooltip
+                    data-tid={'currentDir_' + folderName}
+                    title={i18n.t('core:renameDirectory')}
+                  >
                     <ButtonBase
                       style={{ fontSize: '1.5rem' }}
                       onClick={openRenameEntryDialog}

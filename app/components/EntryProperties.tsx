@@ -1099,6 +1099,7 @@ function EntryProperties(props: Props) {
                   <InputAdornment position="end">
                     <Tooltip title={i18n.t('core:copyLinkToClipboard')}>
                       <Button
+                        data-tid="copyLinkToClipboardTID"
                         color="primary"
                         onClick={() => {
                           const promise = navigator.clipboard.writeText(

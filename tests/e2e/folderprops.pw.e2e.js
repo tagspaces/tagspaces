@@ -187,4 +187,29 @@ test.describe('TST02 - Folder properties', () => {
       getGridFileSelector('empty_folder')
     );
   });
+
+  test.skip('TST0215 - Link for internal sharing + copy [web,minio,electron,_pro]', async () => {
+    await clickOn('[data-tid=copyLinkToClipboardTID]');
+
+    await global.client.dblclick('[data-tid=descriptionTID]');
+    await clickOn('[data-tid=descriptionTID]');
+    const editor = await global.client.waitForSelector(
+      '[data-tid=descriptionTID] .milkdown'
+    );
+
+    const clipboardContent = await global.client.evaluate(() =>
+      navigator.clipboard.readText()
+    );
+    await editor.type(
+      '[sharingLink](' + clipboardContent + ' "sharingLinkTitle")'
+    );
+
+    await clickOn('[data-tid=editDescriptionTID]');
+    await clickOn('[title=sharingLinkTitle]');
+    await expectElementExist(
+      '[data-tid=currentDir_empty_folder]',
+      true,
+      10000
+    );
+  });
 });
