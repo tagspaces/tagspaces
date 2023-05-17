@@ -14,6 +14,7 @@ import {
   getGridFileSelector,
   selectorFile,
   selectorFolder,
+  setInputKeys,
   setInputValue,
   setSettings,
   takeScreenshot,
@@ -27,6 +28,7 @@ import {
 import { openContextEntryMenu } from './test-utils';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage } from './welcome.helpers';
+import { dataTidFormat } from '../../app/services/test';
 
 test.beforeAll(async () => {
   await startTestingApp('extconfig.js');
@@ -310,4 +312,25 @@ test.describe('TST08 - File folder properties', () => {
   test.skip('TST0824 - Change file thumbnail / Reset thumbnail [Pro]', async () => {});
 
   test.skip('TST0825 - Change folder thumbnail / Reset thumbnail [Pro]', async () => {});
+
+  test('TST0827 - Link for internal sharing + copy [web,minio,electron]', async () => {
+    const fileName = 'sample.jpg';
+    await clickOn(getGridFileSelector(fileName));
+    await clickOn('[data-tid=fileContainerToggleProperties]');
+    await clickOn('[data-tid=copyLinkToClipboardTID]');
+    await clickOn('[data-tid=fileContainerCloseOpenedFile]');
+
+    await clickOn('[data-tid=locationManagerMenu]');
+    await clickOn('[data-tid=locationManagerMenuOpenLink]');
+    const clipboardContent = await global.client.evaluate(() =>
+      navigator.clipboard.readText()
+    );
+    await setInputKeys('directoryName', clipboardContent);
+    await clickOn('[data-tid=confirmOpenLink]');
+    await expectElementExist(
+      '[data-tid=OpenedTID' + dataTidFormat(fileName) + ']',
+      true,
+      5000
+    );
+  });
 });
