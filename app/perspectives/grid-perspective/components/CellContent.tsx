@@ -179,6 +179,7 @@ function CellContent(props: Props) {
   function renderGridCell() {
     return (
       <div
+        data-tid={'fsEntryName_' + dataTidFormat(fSystemEntry.name)}
         style={{
           background: fileSystemEntryBgColor,
           borderRadius: 5
@@ -226,10 +227,7 @@ function CellContent(props: Props) {
           {description && (
             <Tooltip title={i18n.t('core:entryDescription')}>
               <Typography
-                data-tid={
-                  'gridCellDescription' +
-                  description.trim().replaceAll(/\s+/g, '-')
-                }
+                data-tid="gridCellDescription"
                 className={classes.gridCellDescription}
                 variant="caption"
               >
@@ -238,11 +236,7 @@ function CellContent(props: Props) {
             </Tooltip>
           )}
         </div>
-        <Typography
-          className={classes.gridCellTitle}
-          data-tid={'fsEntryName_' + dataTidFormat(fSystemEntry.name)}
-          variant="body1"
-        >
+        <Typography className={classes.gridCellTitle} variant="body1">
           {entryTitle}
         </Typography>
         <div className={classes.gridDetails}>

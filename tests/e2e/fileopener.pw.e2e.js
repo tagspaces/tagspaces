@@ -218,8 +218,9 @@ test.describe('TST08 - File folder properties', () => {
    */
   test('TST3001 - Description for files [web,minio,electron,_pro]', async () => {
     const desc = 'testDecr';
+    const fileSelector = getGridFileSelector('sample.pdf');
     // open fileProperties
-    await clickOn(selectorFile);
+    await clickOn(fileSelector);
     await clickOn('[data-tid=fileContainerToggleProperties]');
     await global.client.dblclick('[data-tid=descriptionTID]');
     await clickOn('[data-tid=descriptionTID]');
@@ -231,11 +232,10 @@ test.describe('TST08 - File folder properties', () => {
 
     await clickOn('[data-tid=editDescriptionTID]');
     await expectElementExist(
-      '[data-tid=gridCellDescription' +
-        desc.trim().replaceAll(/\s+/g, '-') +
-        ']',
+      '[data-tid=gridCellDescription]',
       true,
-      10000
+      10000,
+      fileSelector
     );
   });
 
