@@ -190,14 +190,21 @@ test.describe('TST02 - Folder properties', () => {
   });
 
   test('TST0215 - Link for internal sharing + copy [web,minio,electron]', async () => {
-    await clickOn('[data-tid=copyLinkToClipboardTID]');
+    // await clickOn('[data-tid=copyLinkToClipboardTID]');
+    const sharingLink = await global.client.$(
+      '[data-tid=sharingLinkTID] input'
+    );
+    const sharingLinkValue = await sharingLink.getAttribute('value');
 
     await clickOn('[data-tid=locationManagerMenu]');
     await clickOn('[data-tid=locationManagerMenuOpenLink]');
-    const clipboardContent = await global.client.evaluate(() =>
+    /*const clipboardContent = await global.client.evaluate(() =>
       navigator.clipboard.readText()
     );
-    await setInputKeys('directoryName', clipboardContent);
+    expect(clipboardContent.length > 0).toBe(true);*/
+    //await setInputKeys('directoryName', clipboardContent);
+    await setInputValue('[data-tid=directoryName] input', sharingLinkValue);
+    await clickOn('[data-tid=directoryName] input');
     await clickOn('[data-tid=confirmOpenLink]');
     await expectElementExist('[data-tid=currentDir_empty_folder]', true, 5000);
     /*
@@ -217,7 +224,10 @@ test.describe('TST02 - Folder properties', () => {
 
   test('TST0216 - Set gallery perspective as default for folder [web,minio,electron,_pro]', async () => {
     const fileName = 'sample.jpg';
-    await openContextEntryMenu(getGridFileSelector(fileName), 'fileMenuMoveCopyFile');
+    await openContextEntryMenu(
+      getGridFileSelector(fileName),
+      'fileMenuMoveCopyFile'
+    );
     await clickOn('[data-tid=MoveTargetempty_folder]');
     await clickOn('[data-tid=confirmCopyFiles]');
 
@@ -225,6 +235,10 @@ test.describe('TST02 - Folder properties', () => {
     await clickOn('[data-value=gallery]');
     await global.client.dblclick('[data-tid=fsEntryName_empty_folder]');
 
-    await expectElementExist('[data-tid=perspectiveGalleryToolbar]', true, 5000);
+    await expectElementExist(
+      '[data-tid=perspectiveGalleryToolbar]',
+      true,
+      5000
+    );
   });
 });

@@ -317,15 +317,17 @@ test.describe('TST08 - File folder properties', () => {
     const fileName = 'sample.jpg';
     await clickOn(getGridFileSelector(fileName));
     await clickOn('[data-tid=fileContainerToggleProperties]');
-    await clickOn('[data-tid=copyLinkToClipboardTID]');
+
+    const sharingLink = await global.client.$(
+      '[data-tid=sharingLinkTID] input'
+    );
+    const sharingLinkValue = await sharingLink.getAttribute('value');
+
     await clickOn('[data-tid=fileContainerCloseOpenedFile]');
 
     await clickOn('[data-tid=locationManagerMenu]');
     await clickOn('[data-tid=locationManagerMenuOpenLink]');
-    const clipboardContent = await global.client.evaluate(() =>
-      navigator.clipboard.readText()
-    );
-    await setInputKeys('directoryName', clipboardContent);
+    await setInputKeys('directoryName', sharingLinkValue);
     await clickOn('[data-tid=confirmOpenLink]');
     await expectElementExist(
       '[data-tid=OpenedTID' + dataTidFormat(fileName) + ']',

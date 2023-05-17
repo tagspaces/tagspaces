@@ -137,11 +137,9 @@ test.describe('TST06 - Test Search in file structure:', () => {
     //const firstLocationTID = await getPwLocationTid(0);
     await closeLocation(); //lastLocationTID);
     await expectElementExist('[data-tid=WelcomePanelTID]', true);
-    await searchEngine('l:', {}, false);
+    await addSearchCommand('l:', false);
     await clickOn('#textQuery-option-0');
-    await clickOn('[data-tid=folderContainerOpenDirMenu]');
-    await clickOn('[data-tid=showProperties]');
-    await expectElementExist('[data-tid=OpenedTIDempty_folder]', true);
+    await expectElementExist('[data-tid=currentDir_empty_folder]', true, 5000);
   });
 
   test('TST0622 - Search actions - filter [web,electron]', async () => {

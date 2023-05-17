@@ -1075,6 +1075,7 @@ function EntryProperties(props: Props) {
         >
           <Grid item xs={showLinkForDownloading ? 8 : 12}>
             <TextField
+              data-tid="sharingLinkTID"
               margin="dense"
               name="path"
               label={
