@@ -15,7 +15,8 @@ import {
   getGridFileSelector,
   setInputValue,
   createNewDirectory,
-  dnd
+  dnd,
+  setInputKeys
 } from './general.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
@@ -188,28 +189,29 @@ test.describe('TST02 - Folder properties', () => {
     );
   });
 
-  test.skip('TST0215 - Link for internal sharing + copy [web,minio,electron,_pro]', async () => {
+  test('TST0215 - Link for internal sharing + copy [web,minio,electron]', async () => {
     await clickOn('[data-tid=copyLinkToClipboardTID]');
 
+    await clickOn('[data-tid=locationManagerMenu]');
+    await clickOn('[data-tid=locationManagerMenuOpenLink]');
+    const clipboardContent = await global.client.evaluate(() =>
+      navigator.clipboard.readText()
+    );
+    await setInputKeys('directoryName', clipboardContent);
+    await clickOn('[data-tid=confirmOpenLink]');
+    await expectElementExist('[data-tid=currentDir_empty_folder]', true, 5000);
+    /*
+    await clickOn('[data-tid=editDescriptionTID]');
     await global.client.dblclick('[data-tid=descriptionTID]');
     await clickOn('[data-tid=descriptionTID]');
     const editor = await global.client.waitForSelector(
       '[data-tid=descriptionTID] .milkdown'
     );
-
-    const clipboardContent = await global.client.evaluate(() =>
-      navigator.clipboard.readText()
-    );
     await editor.type(
       '[sharingLink](' + clipboardContent + ' "sharingLinkTitle")'
     );
-
-    await clickOn('[data-tid=editDescriptionTID]');
-    await clickOn('[title=sharingLinkTitle]');
-    await expectElementExist(
-      '[data-tid=currentDir_empty_folder]',
-      true,
-      10000
-    );
+    await global.client.waitForSelector('a[title="' + clipboardContent + '"]');
+    await clickOn('[data-tid=descriptionTID] .milkdown a');
+    */
   });
 });
