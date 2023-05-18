@@ -10,6 +10,8 @@ import {
   createTxtFile,
   dnd,
   expectElementExist,
+  expectFileContain,
+  expectMetaFilesExist,
   getGridFileName,
   getGridFileSelector,
   selectorFile,
@@ -26,7 +28,7 @@ import {
   getPropertiesTags
 } from './file.properties.helpers';
 import { openContextEntryMenu } from './test-utils';
-import { startTestingApp, stopApp, testDataRefresh } from './hook';
+import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage } from './welcome.helpers';
 import { dataTidFormat } from '../../app/services/test';
 
@@ -37,7 +39,7 @@ test.beforeAll(async () => {
 
 test.afterAll(async () => {
   await stopApp();
-  await testDataRefresh();
+  // await testDataRefresh();
 });
 
 test.afterEach(async ({ page }, testInfo) => {
@@ -45,6 +47,7 @@ test.afterEach(async ({ page }, testInfo) => {
     await takeScreenshot(testInfo);
   }
   await clearDataStorage();
+  await testDataRefresh();
 });
 
 test.beforeEach(async () => {
@@ -131,38 +134,48 @@ test.describe('TST08 - File folder properties', () => {
   });
 
   test('TST0805 - Rename opened file [web,minio,electron]', async () => {
+    const fileName = 'sample.txt';
     const newTile = 'renamed.txt';
-    // await searchEngine('txt');
+    // set setting PersistTagsInSidecarFile in order to add meta json file
+    await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
+
     // open fileProperties
-    await clickOn(selectorFile);
+    await clickOn(getGridFileSelector(fileName));
     //Toggle Properties
     await clickOn('[data-tid=fileContainerToggleProperties]');
 
+    await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
+      add: true,
+      remove: false
+    });
     const propsFileName = await getPropertiesFileName();
+    expect(propsFileName).toBe(fileName);
+
     await clickOn('[data-tid=startRenameEntryTID]');
-    // await setInputKeys('fileNameProperties', newTile);
     await setInputValue('[data-tid=fileNameProperties] input', newTile);
     await clickOn('[data-tid=confirmRenameEntryTID]');
-    // await waitForNotification();
-    // await isDisplayed('[data-tid=confirmRenameEntryTID]', false);
+
     await global.client.waitForSelector(
       '[data-tid=fileNameProperties] input[value="' + newTile + '"]'
     );
     const propsNewFileName = await getPropertiesFileName();
-    expect(propsFileName).not.toBe(propsNewFileName);
+    expect(propsNewFileName).toBe(newTile);
+
+    const arrayMeta =
+      global.isWeb || global.isMinio
+        ? [propsNewFileName + '.json'] // check meta file renamed, thumbnails are not created on web or minio
+        : [propsNewFileName + '.json', propsNewFileName + '.jpg']; // check meta and thumbnail renamed
+    await expectMetaFilesExist(arrayMeta);
 
     //turn fileName back
-    await clickOn('[data-tid=startRenameEntryTID]');
-    // await setInputKeys('fileNameProperties', propsFileName);
+    /*await clickOn('[data-tid=startRenameEntryTID]');
     await setInputValue('[data-tid=fileNameProperties] input', propsFileName);
     await clickOn('[data-tid=confirmRenameEntryTID]');
-    // await waitForNotification();
-    // await isDisplayed('[data-tid=confirmRenameEntryTID]', false);
     await global.client.waitForSelector(
       '[data-tid=fileNameProperties] input[value="' + propsFileName + '"]'
     );
     const propsOldFileName = await getPropertiesFileName();
-    expect(propsOldFileName).toBe(propsFileName);
+    expect(propsOldFileName).toBe(propsFileName);*/
   });
 
   test.skip('TST0806 - Download file [manual]', async () => {});
@@ -246,13 +259,19 @@ test.describe('TST08 - File folder properties', () => {
   /**
    * reload file button not visible on electron (github app size specific)
    */
-  test('TST0812 - Reload file [web,minio]', async () => {
+  test('TST0812 - Reload file [web,minio,electron]', async () => {
     // open fileProperties
-    await clickOn(selectorFile);
+    await clickOn(getGridFileSelector('sample.txt'));
     //Toggle Properties
     await clickOn('[data-tid=fileContainerToggleProperties]');
-    await clickOn('[data-tid=reloadFileTID]');
-    // TODO externally change the file to check if its reloaded
+
+    await expectFileContain();
+
+    const newFileContent = 'testing_file_content';
+    await createFile('sample.txt', newFileContent, '.');
+
+    await clickOn('[data-tid=reloadPropertiesTID]');
+    await expectFileContain(newFileContent);
   });
 
   test('TST0813 - Delete file [web,minio,electron]', async () => {

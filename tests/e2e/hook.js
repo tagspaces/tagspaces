@@ -186,11 +186,8 @@ export async function testDataRefresh() {
   const dst = pathLib.join(__dirname, '..', 'testdata-tmp', 'file-structure');
 
   let newPath = pathLib.join(dst, pathLib.basename(src));
-  fse.emptyDirSync(newPath);
-  fse.copySync(src, newPath, { overwrite: true });
-  /*if (global.isElectron && global.client) {
-    await global.client.waitForTimeout(1000);
-  }*/
+  await fse.emptyDir(newPath);
+  await fse.copy(src, newPath); //, { overwrite: true });
 }
 
 export async function createFile(

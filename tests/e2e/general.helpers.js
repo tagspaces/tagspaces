@@ -2,7 +2,7 @@
 import path from 'path';
 import { expect } from '@playwright/test';
 import { delay } from './hook';
-import { firstFile } from './test-utils';
+import { firstFile, toContainTID } from './test-utils';
 import AppConfig from '../../app/AppConfig';
 import { dataTidFormat } from '../../app/services/test';
 
@@ -639,6 +639,36 @@ export async function expectTagsExist(gridElement, arrTagNames, exist = true) {
     const tagName = arrTagNames[i];
     expect(tags.includes(tagName)).toBe(exist);
   }
+}
+export async function expectMetaFilesExist(arrMetaFiles) {
+  await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
+  await clickOn('[data-tid=folderContainerOpenDirMenu]');
+  await clickOn('[data-tid=reloadDirectory]');
+  await global.client.dblclick(getGridFileSelector(AppConfig.metaFolder));
+  for (let i = 0; i < arrMetaFiles.length; i++) {
+    await expectElementExist(getGridFileSelector(arrMetaFiles[i]), true);
+  }
+  await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
+}
+
+export async function expectFileContain(
+  txtToContain = 'etete&5435',
+  timeout = 10000
+) {
+  await expect
+    .poll(
+      async () => {
+        const fLocator = await frameLocator();
+        const bodyTxt = await fLocator.locator('body').innerText();
+        return toContainTID(bodyTxt, [txtToContain]);
+      },
+      {
+        message: 'make sure bodyTxt contain ' + txtToContain, // custom error message
+        // Poll for 10 seconds; defaults to 5 seconds. Pass 0 to disable timeout.
+        timeout: timeout
+      }
+    )
+    .toBe(true);
 }
 
 export async function waitForNotification(

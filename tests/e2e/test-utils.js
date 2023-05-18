@@ -31,9 +31,8 @@ export async function checkFilenameForExist(filename, selector) {
   expect(fileTxt).toBe(filename);
 }
 
-export function toContainTID(text) {
+export function toContainTID(text, tids = ['etete&5435']) {
   let pass = false;
-  const tids = ['etete&5435'];
   tids.forEach(tid => {
     pass = text.indexOf(tid) !== -1;
   });
