@@ -586,13 +586,21 @@ function EntryContainer(props: Props) {
               PlatformIO.getDirSeparator()
             );
         try {
-          loadJSONFile(metaFilePath).then(fsEntryMeta => {
-            updateOpenedFile(openedFile.path, {
-              ...fsEntryMeta,
-              editMode: false,
-              shouldReload: !openedFile.shouldReload
-            });
-          });
+          loadJSONFile(metaFilePath)
+            .then(fsEntryMeta => {
+              updateOpenedFile(openedFile.path, {
+                ...fsEntryMeta,
+                editMode: false,
+                shouldReload: !openedFile.shouldReload
+              });
+            })
+            .catch(() =>
+              updateOpenedFile(openedFile.path, {
+                ...openedFile,
+                editMode: false,
+                shouldReload: !openedFile.shouldReload
+              })
+            );
         } catch (e) {
           updateOpenedFile(openedFile.path, {
             ...openedFile,

@@ -640,15 +640,23 @@ export async function expectTagsExist(gridElement, arrTagNames, exist = true) {
     expect(tags.includes(tagName)).toBe(exist);
   }
 }
-export async function expectMetaFilesExist(arrMetaFiles) {
-  await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
+
+export async function expectMetaFilesExist(arrMetaFiles, exist = true) {
+  await checkSettings('[data-tid=settingsSetShowUnixHiddenEntries]', true);
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
   await clickOn('[data-tid=reloadDirectory]');
-  await global.client.dblclick(getGridFileSelector(AppConfig.metaFolder));
-  for (let i = 0; i < arrMetaFiles.length; i++) {
-    await expectElementExist(getGridFileSelector(arrMetaFiles[i]), true);
+  if (exist || (await isDisplayed(getGridFileSelector(AppConfig.metaFolder)))) {
+    await global.client.dblclick(getGridFileSelector(AppConfig.metaFolder));
+    for (let i = 0; i < arrMetaFiles.length; i++) {
+      await expectElementExist(
+        getGridFileSelector(arrMetaFiles[i]),
+        exist,
+        10000
+      );
+    }
+    await checkSettings('[data-tid=settingsSetShowUnixHiddenEntries]', false);
+    await clickOn('[data-tid=gridPerspectiveOnBackButton]');
   }
-  await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
 }
 
 export async function expectFileContain(
@@ -671,6 +679,12 @@ export async function expectFileContain(
     .toBe(true);
 }
 
+/**
+ * @deprecated
+ * @param tid
+ * @param forceClose
+ * @returns {Promise<void>}
+ */
 export async function waitForNotification(
   tid = 'notificationTID',
   forceClose = true
@@ -698,6 +712,12 @@ export async function waitForNotification(
   } */
 }
 
+/**
+ * for check settings use checkSettings instead
+ * @param selector
+ * @param click
+ * @returns {Promise<void>}
+ */
 export async function setSettings(selector, click = false) {
   await clickOn('[data-tid=settings]');
   if (click) {
@@ -706,6 +726,18 @@ export async function setSettings(selector, click = false) {
     // check
     await global.client.check(selector + ' input');
     expect(await global.client.isChecked(selector + ' input')).toBeTruthy();
+  }
+  await clickOn('[data-tid=closeSettingsDialog]');
+}
+
+export async function checkSettings(selector, isChecked = true) {
+  await clickOn('[data-tid=settings]');
+  if (isChecked) {
+    await global.client.check(selector + ' input');
+    expect(await global.client.isChecked(selector + ' input')).toBeTruthy();
+  } else {
+    await global.client.uncheck(selector + ' input');
+    expect(await global.client.isChecked(selector + ' input')).not.toBeTruthy();
   }
   await clickOn('[data-tid=closeSettingsDialog]');
 }
@@ -853,11 +885,11 @@ export async function openCloseAboutDialog(title) {
   await delay(500);
 }
 
-export async function openSettings(selectedTab) {
+/*export async function openSettings(selectedTab) {
   await global.client.waitForVisible('[data-tid=settings]');
   await global.client.click('[data-tid=settings]');
   if (selectedTab) {
     await global.client.waitForVisible('[data-tid=' + selectedTab + ']');
     await global.client.click('[data-tid=' + selectedTab + ']');
   }
-}
+}*/

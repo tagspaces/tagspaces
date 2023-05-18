@@ -6,8 +6,8 @@ import {
   defaultLocationPath
 } from './location.helpers';
 import {
+  checkSettings,
   clickOn,
-  createTxtFile,
   dnd,
   expectElementExist,
   expectFileContain,
@@ -135,7 +135,7 @@ test.describe('TST08 - File folder properties', () => {
 
   test('TST0805 - Rename opened file [web,minio,electron]', async () => {
     const fileName = 'sample.txt';
-    const newTile = 'renamed.txt';
+    const newTitle = 'renamed.txt';
     // set setting PersistTagsInSidecarFile in order to add meta json file
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
 
@@ -152,14 +152,14 @@ test.describe('TST08 - File folder properties', () => {
     expect(propsFileName).toBe(fileName);
 
     await clickOn('[data-tid=startRenameEntryTID]');
-    await setInputValue('[data-tid=fileNameProperties] input', newTile);
+    await setInputValue('[data-tid=fileNameProperties] input', newTitle);
     await clickOn('[data-tid=confirmRenameEntryTID]');
 
     await global.client.waitForSelector(
-      '[data-tid=fileNameProperties] input[value="' + newTile + '"]'
+      '[data-tid=fileNameProperties] input[value="' + newTitle + '"]'
     );
     const propsNewFileName = await getPropertiesFileName();
-    expect(propsNewFileName).toBe(newTile);
+    expect(propsNewFileName).toBe(newTitle);
 
     const arrayMeta =
       global.isWeb || global.isMinio
@@ -275,26 +275,36 @@ test.describe('TST08 - File folder properties', () => {
   });
 
   test('TST0813 - Delete file [web,minio,electron]', async () => {
-    await global.client.dblclick(selectorFolder);
+    const fileName = 'empty_file.txt';
+    await createFile(fileName);
+    await openContextEntryMenu(
+      getGridFileSelector('empty_folder'),
+      'showProperties'
+    );
+    await global.client.dblclick(getGridFileSelector('empty_folder'));
+    await expectElementExist(getGridFileSelector(fileName));
+    await clickOn(getGridFileSelector(fileName));
 
-    await createTxtFile();
-    // await searchEngine('note');
-    // await waitForNotification();
-    // await global.client.waitForTimeout(1500); // To do wait for search results
-    await expectElementExist(selectorFile, true, 5000);
-
-    // open fileProperties
-    await clickOn(selectorFile);
     //Toggle Properties
     await clickOn('[data-tid=fileContainerToggleProperties]');
+    // add meta json to file
+    await checkSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
+    await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
+      add: true,
+      remove: false
+    });
+    const arrayMeta =
+      global.isWeb || global.isMinio
+        ? [fileName + '.json'] // check meta, thumbnails are not created on web or minio
+        : [fileName + '.json', fileName + '.jpg']; // check meta and thumbnail
 
-    // const propsFileName = await getPropertiesFileName();
+    await expectMetaFilesExist(arrayMeta, true);
+
     await clickOn('[data-tid=deleteEntryTID]');
     await clickOn('[data-tid=confirmSaveBeforeCloseDialog]');
-    await waitForNotification();
-    await expectElementExist(selectorFile, false, 2000);
-    //const firstFileName = await getGridFileName(0);
-    //expect(propsFileName).not.toBe(firstFileName);
+    await expectElementExist(getGridFileSelector(fileName), false, 5000);
+
+    await expectMetaFilesExist(arrayMeta, false);
   });
 
   /**
