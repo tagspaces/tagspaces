@@ -134,8 +134,8 @@ test.describe('TST08 - File folder properties', () => {
   });
 
   test('TST0805 - Rename opened file [web,minio,electron]', async () => {
-    const fileName = 'sample.txt';
-    const newTitle = 'renamed.txt';
+    const fileName = 'sample.svg';
+    const newTitle = 'renamed.svg';
     // set setting PersistTagsInSidecarFile in order to add meta json file
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
 
