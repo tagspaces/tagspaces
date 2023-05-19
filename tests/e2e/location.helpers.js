@@ -192,7 +192,6 @@ export async function getFirstFileName() {
   return fileName;
 }
 
-
 /*export async function checkForValidExt(selector, ext) {
   const getExt = await global.client
     .waitForVisible(selector)

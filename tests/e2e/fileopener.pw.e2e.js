@@ -275,8 +275,17 @@ test.describe('TST08 - File folder properties', () => {
   });
 
   test('TST0813 - Delete file [web,minio,electron]', async () => {
-    const fileName = 'empty_file.txt';
-    await createFile(fileName);
+    const fileName = 'new_file.svg';
+    const svg = `<svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 32 32"
+      width="32"
+      height="32"
+      fill="none"
+      stroke="#bbbbbb22"
+    ><path d="M6 2 L6 30 26 30 26 10 18 2 Z M18 2 L18 10 26 10" />
+    </svg>`;
+    await createFile(fileName, svg);
     await openContextEntryMenu(
       getGridFileSelector('empty_folder'),
       'showProperties'
@@ -288,7 +297,7 @@ test.describe('TST08 - File folder properties', () => {
     //Toggle Properties
     await clickOn('[data-tid=fileContainerToggleProperties]');
     // add meta json to file
-    await checkSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
+    await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
       add: true,
       remove: false

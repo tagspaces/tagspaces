@@ -648,6 +648,7 @@ export async function expectMetaFilesExist(arrMetaFiles, exist = true) {
   if (exist || (await isDisplayed(getGridFileSelector(AppConfig.metaFolder)))) {
     await global.client.dblclick(getGridFileSelector(AppConfig.metaFolder));
     for (let i = 0; i < arrMetaFiles.length; i++) {
+      // console.log('check ' + arrMetaFiles[i] + 'exist:' + exist);
       await expectElementExist(
         getGridFileSelector(arrMetaFiles[i]),
         exist,
