@@ -178,6 +178,7 @@ function Revisions(props: Props) {
         }}
       >
         <Table
+          data-tid="tableRevisionsTID"
           sx={{ width: '100%', height: '100%' }}
           stickyHeader
           size="small"
@@ -212,6 +213,7 @@ function Revisions(props: Props) {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map(row => (
                   <TableRow
+                    data-tid={openedFiles[0].uuid}
                     key={row.path}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                   >

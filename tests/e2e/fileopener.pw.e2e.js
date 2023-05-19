@@ -14,13 +14,15 @@ import {
   expectMetaFilesExist,
   getGridFileName,
   getGridFileSelector,
+  getRevision,
   selectorFile,
   selectorFolder,
   setInputKeys,
   setInputValue,
   setSettings,
   takeScreenshot,
-  waitForNotification
+  waitForNotification,
+  writeTextInIframeInput
 } from './general.helpers';
 import {
   AddRemovePropertiesTags,
@@ -274,7 +276,7 @@ test.describe('TST08 - File folder properties', () => {
     await expectFileContain(newFileContent);
   });
 
-  test('TST0813 - Delete file [web,minio,electron]', async () => {
+  test('TST0813 - Delete file and check meta and thumbnails deleted [web,minio,electron]', async () => {
     const fileName = 'new_file.svg';
     const svg = `<svg
       xmlns="http://www.w3.org/2000/svg"
@@ -314,6 +316,28 @@ test.describe('TST08 - File folder properties', () => {
     await expectElementExist(getGridFileSelector(fileName), false, 5000);
 
     await expectMetaFilesExist(arrayMeta, false);
+  });
+
+  test('TST0813a - Delete file and check revisions deleted [web,minio,electron,_pro]', async () => {
+    const fileName = 'sample.txt';
+    await clickOn(getGridFileSelector(fileName));
+    await clickOn('[data-tid=fileContainerEditFile]');
+    await writeTextInIframeInput('txt');
+    await clickOn('[data-tid=fileContainerSaveFile]');
+
+    //Toggle Revisions
+    await clickOn('[data-tid=revisionsTID]');
+    await expectElementExist('[data-tid=viewRevisionTID]');
+
+    const revision = await getRevision(0);
+    expect(revision).not.toBeUndefined();
+    await expectMetaFilesExist([revision.file], true, revision.id);
+
+    await clickOn('[data-tid=deleteEntryTID]');
+    await clickOn('[data-tid=confirmSaveBeforeCloseDialog]');
+    await expectElementExist(getGridFileSelector(fileName), false, 5000);
+
+    await expectMetaFilesExist([revision.file], false, revision.id);
   });
 
   /**

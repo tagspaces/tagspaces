@@ -197,6 +197,26 @@ export async function getGridFileName(fileIndex) {
   return undefined;
 }
 
+export async function getRevision(revIndex) {
+  try {
+    return await global.client.$$eval(
+      'table[data-tid=tableRevisionsTID] tbody tr',
+      rows => {
+        if (rows.length > 0) {
+          return {
+            id: rows[0].getAttribute('data-tid'),
+            file: rows[0].querySelector('th').innerText
+          };
+        }
+        return undefined;
+      }
+    );
+  } catch (e) {
+    console.log("Can't find getRevision:" + revIndex, e);
+  }
+  return undefined;
+}
+
 export async function getElementText(el) {
   return await el.innerText();
 }
@@ -641,12 +661,24 @@ export async function expectTagsExist(gridElement, arrTagNames, exist = true) {
   }
 }
 
-export async function expectMetaFilesExist(arrMetaFiles, exist = true) {
+export async function expectMetaFilesExist(
+  arrMetaFiles,
+  exist = true,
+  subFolder = undefined
+) {
   await checkSettings('[data-tid=settingsSetShowUnixHiddenEntries]', true);
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
   await clickOn('[data-tid=reloadDirectory]');
   if (exist || (await isDisplayed(getGridFileSelector(AppConfig.metaFolder)))) {
     await global.client.dblclick(getGridFileSelector(AppConfig.metaFolder));
+    if (subFolder) {
+      if (await isDisplayed(getGridFileSelector(subFolder))) {
+        await global.client.dblclick(getGridFileSelector(subFolder));
+      } else if (!exist) {
+        await clickOn('[data-tid=gridPerspectiveOnBackButton]');
+        return true;
+      }
+    }
     for (let i = 0; i < arrMetaFiles.length; i++) {
       // console.log('check ' + arrMetaFiles[i] + 'exist:' + exist);
       await expectElementExist(
@@ -655,9 +687,24 @@ export async function expectMetaFilesExist(arrMetaFiles, exist = true) {
         10000
       );
     }
-    await checkSettings('[data-tid=settingsSetShowUnixHiddenEntries]', false);
     await clickOn('[data-tid=gridPerspectiveOnBackButton]');
+    if (subFolder) {
+      await expectElementExist(getGridFileSelector(subFolder), exist, 10000);
+      await clickOn('[data-tid=gridPerspectiveOnBackButton]');
+    }
+    await expectElementExist(
+      getGridFileSelector(AppConfig.metaFolder),
+      exist,
+      10000
+    );
+    await checkSettings('[data-tid=settingsSetShowUnixHiddenEntries]', false);
   }
+}
+
+export async function writeTextInIframeInput(txt) {
+  const fLocator = await frameLocator();
+  const editor = await fLocator.locator('#editorText');
+  await editor.type(txt);
 }
 
 export async function expectFileContain(
