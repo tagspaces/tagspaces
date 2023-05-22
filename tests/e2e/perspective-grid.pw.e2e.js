@@ -9,10 +9,10 @@ import {
   createPwMinioLocation,
   createPwLocation
 } from './location.helpers';
-import { searchEngine } from './search.helpers';
 import {
   clickOn,
   expectElementExist,
+  expectMetaFilesExist,
   expectTagsExistBySelector,
   getGridCellClass,
   getGridFileName,
@@ -23,22 +23,15 @@ import {
   selectorFolder,
   selectRowFiles,
   setInputKeys,
-  takeScreenshot,
-  waitForNotification
+  setSettings,
+  takeScreenshot
 } from './general.helpers';
-import {
-  cleanFileName,
-  extractFileExtension,
-  extractTagsAsObjects
-} from '@tagspaces/tagspaces-common/paths';
-import { sortByCriteria } from '@tagspaces/tagspaces-common/misc';
-import {
-  dirSeparator,
-  tagDelimiter
-} from '@tagspaces/tagspaces-common/AppConfig';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
-import { getPropertiesFileName } from './file.properties.helpers';
-import { startTestingApp, stopApp, testDataRefresh } from './hook';
+import {
+  AddRemovePropertiesTags,
+  getPropertiesFileName
+} from './file.properties.helpers';
+import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage } from './welcome.helpers';
 
 test.beforeAll(async () => {
@@ -198,12 +191,42 @@ test.describe('TST50 - Perspective Grid', () => {
 
   test.skip('TST5009 - Copy file on different partition [manual]', async () => {});
 
-  /**
-   * TODO reindexing don't work in web
-   * TODO search not work SplashWorker windows is disabled
-   */
-  test('TST5010 - Move file', async () => {
-    await searchEngine('epub');
+  test('TST5010 - Move file [web,minio,electron]', async () => {
+    const fileName = 'sample.svg';
+    await clickOn(getGridFileSelector(fileName));
+    //Toggle Properties
+    await clickOn('[data-tid=fileContainerToggleProperties]');
+    // add meta json to file
+    await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
+    await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
+      add: true,
+      remove: false
+    });
+    // open Copy/Move File Dialog
+    await clickOn('[data-tid=gridPerspectiveCopySelectedFiles]');
+    await clickOn('[data-tid=MoveTargetempty_folder]');
+    await clickOn('[data-tid=confirmMoveFiles]');
+
+    await global.client.dblclick(getGridFileSelector('empty_folder'));
+    await expectElementExist(getGridFileSelector(fileName));
+
+    const arrayMeta =
+      global.isWeb || global.isMinio
+        ? [fileName + '.json'] // check meta, thumbnails are not created on web or minio
+        : [fileName + '.json', fileName + '.jpg']; // check meta and thumbnail
+
+    await expectMetaFilesExist(arrayMeta, true);
+
+    await clickOn('[data-tid=gridPerspectiveOnBackButton]');
+
+    await expectElementExist(getGridFileSelector(fileName), false);
+    await expectMetaFilesExist(arrayMeta, false);
+
+    /*
+     * TODO reindexing don't work in web
+     * TODO search not work SplashWorker windows is disabled
+     */
+    /*await searchEngine('epub');
 
     // select file
     await clickOn(selectorFile);
@@ -214,7 +237,6 @@ test.describe('TST50 - Perspective Grid', () => {
       defaultLocationPath + '/empty_folder'
     );
     await clickOn('[data-tid=confirmMoveFiles]');
-    await waitForNotification();
     await clickOn('#clearSearchID');
     await global.client.dblclick(selectorFolder);
     await searchEngine('epub', { reindexing: true }); // TODO temp fix: https://trello.com/c/ZfcGGvOM/527-moved-files-is-not-indexing-not-found-in-search
@@ -222,7 +244,7 @@ test.describe('TST50 - Perspective Grid', () => {
     expect(firstFileName).toBe('sample.epub');
     // cleanup
     await deleteFileFromMenu();
-    await expectElementExist(selectorFile, false);
+    await expectElementExist(selectorFile, false);*/
   });
 
   test.skip('TST5011 - Move file drag&drop in location navigator [manual]', async () => {});
