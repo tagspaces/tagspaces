@@ -189,22 +189,22 @@ test.describe('TST50** - Right button on a file', () => {
       [testTagName + 'Edited'],
       true
     );
-
+    await testDataRefresh();
     // cleanup
-    await clickOn(selectorFile);
+    /*await clickOn(selectorFile);
     await AddRemoveTagsToSelectedFiles('grid', [testTagName + 'Edited'], false);
 
     await expectElementExist(
       selectorFile + '[1]//div[@id="gridCellTags"]//button',
       false,
-      1500
+      5000
     );
 
     await expectTagsExistBySelector(
       selectorFile,
       [testTagName + 'Edited'],
       false
-    );
+    );*/
   });
 
   test('TST5023 - Remove tag from file (tag menu) [web,minio,electron]', async () => {

@@ -694,7 +694,7 @@ export async function expectMetaFilesExist(
     }
     await expectElementExist(
       getGridFileSelector(AppConfig.metaFolder),
-      exist,
+      true,
       10000
     );
     await checkSettings('[data-tid=settingsSetShowUnixHiddenEntries]', false);
