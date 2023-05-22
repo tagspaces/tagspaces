@@ -278,7 +278,7 @@ test.describe('TST50** - Right button on a file', () => {
    * TODO web sometimes: stale element reference: stale element reference: element is not attached to the page document
    * TODO minio sometimes: stale element reference: stale element reference: element is not attached to the page document
    */
-  test('TST5025 - Add - Remove tags (file menu) [web,electron]', async () => {
+  test('TST5025 - Add - Remove tags (file menu) [web,minio,electron]', async () => {
     // await searchEngine('desktop');
     const fileName = 'sample';
     const fileExt = 'desktop';
@@ -402,13 +402,11 @@ test.describe('TST50** - Right button on a file', () => {
     await openContextEntryMenu(selectorFolder, 'renameDirectory');
     const oldDirName = await setInputKeys('renameEntryDialogInput', newDirName);
     await clickOn('[data-tid=confirmRenameEntry]');
-    await waitForNotification();
 
     // turn dir name back
     await openContextEntryMenu(selectorFolder, 'renameDirectory');
     const renamedDir = await setInputKeys('renameEntryDialogInput', oldDirName);
     await clickOn('[data-tid=confirmRenameEntry]');
-    await waitForNotification();
     expect(renamedDir).toBe(newDirName);
   });
 
@@ -438,7 +436,7 @@ test.describe('TST50** - Right button on a file', () => {
     await expectElementExist('[data-tid=fileNameProperties]', true, 5000);
   });
 
-  test('TST5037 - Show sub folders [TST5037,web,minio,electron]', async () => {
+  test('TST5037 - Show sub folders [web,minio,electron]', async () => {
     // click on hide directories
     await setGridOptions('grid', false);
 
@@ -510,7 +508,7 @@ test.describe('TST50** - Right button on a file', () => {
     );
   });
 
-  test('TST5040 - Create file [TST5040,web,minio,electron]', async () => {
+  test('TST5040 - Create file [web,minio,electron]', async () => {
     // Open empty folder
     await global.client.dblclick(selectorFolder);
 

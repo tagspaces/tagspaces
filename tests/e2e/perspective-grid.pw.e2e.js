@@ -41,7 +41,6 @@ test.beforeAll(async () => {
 
 test.afterAll(async () => {
   await stopApp();
-  await testDataRefresh();
 });
 
 test.afterEach(async ({ page }, testInfo) => {
@@ -49,6 +48,7 @@ test.afterEach(async ({ page }, testInfo) => {
     await takeScreenshot(testInfo);
   }
   await clearDataStorage();
+  await testDataRefresh();
 });
 
 test.beforeEach(async () => {
@@ -135,7 +135,7 @@ test.describe('TST50 - Perspective Grid', () => {
   /**
    * todo in [web] its need more time to wait for removed files
    */
-  test('TST5007 - Remove all tags from selected files [minio,electron]', async () => {
+  test('TST5007 - Remove all tags from selected files [web,minio,electron]', async () => {
     const selectedIds = await selectRowFiles([0, 1, 2]);
     const tags = ['test-tag1', 'test-tag2', 'test-tag3'];
     await AddRemoveTagsToSelectedFiles('list', tags, true);
@@ -163,30 +163,35 @@ test.describe('TST50 - Perspective Grid', () => {
   });
 
   test('TST5008 - Copy file [web,minio,electron]', async () => {
-    const sampleFileName = 'sample.txt';
-    // Electron path: ./testdata-tmp/file-structure/supported-filestypes/empty_folder
-    /*const copyLocationPath = global.isElectron
-      ? defaultLocationPath + '/empty_folder'
-      : 'empty_folder';*/
-    // const fileName = await getFirstFileName();
-
-    // select file
-    await clickOn(getGridFileSelector(sampleFileName));
-    // open Copy File Dialog
+    const fileName = 'sample.svg';
+    await clickOn(getGridFileSelector(fileName));
+    //Toggle Properties
+    await clickOn('[data-tid=fileContainerToggleProperties]');
+    // add meta json to file
+    await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
+    await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
+      add: true,
+      remove: false
+    });
+    // open Copy/Move File Dialog
     await clickOn('[data-tid=gridPerspectiveCopySelectedFiles]');
-    //await setInputKeys('targetPathInput', copyLocationPath);
     await clickOn('[data-tid=MoveTargetempty_folder]');
     await clickOn('[data-tid=confirmCopyFiles]');
-    //await waitForNotification();
 
-    await global.client.dblclick(selectorFolder);
-    await global.client.waitForSelector(selectorFile);
-    await expectElementExist(selectorFile, true);
-    // const firstFileName = await getGridFileName(0);
-    // expect(firstFileName).toBe(sampleFileName);
-    // cleanup
-    await deleteFileFromMenu();
-    await expectElementExist(selectorFile, false);
+    await global.client.dblclick(getGridFileSelector('empty_folder'));
+    await expectElementExist(getGridFileSelector(fileName));
+
+    const arrayMeta =
+      global.isWeb || global.isMinio
+        ? [fileName + '.json'] // check meta, thumbnails are not created on web or minio
+        : [fileName + '.json', fileName + '.jpg']; // check meta and thumbnail
+
+    await expectMetaFilesExist(arrayMeta, true);
+
+    await clickOn('[data-tid=gridPerspectiveOnBackButton]');
+
+    await expectElementExist(getGridFileSelector(fileName), true);
+    await expectMetaFilesExist(arrayMeta, true);
   });
 
   test.skip('TST5009 - Copy file on different partition [manual]', async () => {});
