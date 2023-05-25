@@ -73,7 +73,7 @@ export default (theme: any): any => ({
   gridCellTags: {
     padding: 0,
     paddingTop: 2,
-    maxHeight: 100,
+    height: 100,
     overflowY: 'auto',
     overflowX: 'hidden',
     position: 'relative'

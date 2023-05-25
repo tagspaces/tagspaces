@@ -216,6 +216,7 @@ function MainToolbar(props: Props) {
               aria-label={i18n.t('core:deleteSelectedEntries')}
               data-tid={prefixDataTID + 'PerspectiveDeleteMultipleFiles'}
               onClick={openDeleteFileDialog}
+              disabled={selectedEntries.length < 1}
               size="large"
             >
               <DeleteIcon />

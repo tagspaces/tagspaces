@@ -23,6 +23,7 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import Tooltip from '-/components/Tooltip';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
+import IconButton from '@mui/material/IconButton';
 import SelectedIcon from '@mui/icons-material/CheckBox';
 import UnSelectedIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import { bindActionCreators } from 'redux';
@@ -55,6 +56,7 @@ import {
 } from '-/reducers/app';
 import { FolderIcon } from '-/components/CommonIcons';
 import { dataTidFormat } from '-/services/test';
+import { isDesktopMode } from '-/reducers/settings';
 // import { getTagColor } from '-/reducers/settings';
 
 const maxDescriptionPreviewLength = 100;
@@ -62,6 +64,7 @@ const maxDescriptionPreviewLength = 100;
 interface Props {
   selected: boolean;
   isLast?: boolean;
+  isDesktopMode: boolean;
   fsEntry: TS.FileSystemEntry;
   entrySize: string;
   classes: any;
@@ -111,6 +114,7 @@ function CellContent(props: Props) {
     // openFsEntry,
     selectEntry,
     deselectEntry,
+    isDesktopMode,
     isLast
   } = props;
 
@@ -222,6 +226,30 @@ function CellContent(props: Props) {
             <EntryIcon isFile={fSystemEntry.isFile} />
           )}
           <div id="gridCellTags" className={classes.gridCellTags}>
+            <IconButton
+              style={{
+                opacity: selected ? 1 : 0.5,
+                padding: isDesktopMode ? 5 : 8
+              }}
+              onMouseLeave={e => {
+                //@ts-ignore
+                e.target.style.opacity = selected ? 1 : 0.5;
+              }}
+              onMouseOver={e => {
+                //@ts-ignore
+                e.target.style.opacity = 1;
+              }}
+              onClick={e => {
+                e.stopPropagation();
+                if (selected) {
+                  deselectEntry(fSystemEntry);
+                } else {
+                  selectEntry(fSystemEntry);
+                }
+              }}
+            >
+              {selected ? <SelectedIcon /> : <UnSelectedIcon />}
+            </IconButton>
             {showTags && entryTags ? renderTags(entryTags) : tagPlaceholder}
           </div>
           {description && (
@@ -325,54 +353,51 @@ function CellContent(props: Props) {
             display: 'flex'
           }}
         >
-          <Tooltip title={fSystemEntry.path}>
-            <div
-              data-tid="rowCellTID"
-              style={{
-                display: 'flex',
-                flexDirection: isSmall ? 'row' : 'column',
-                flex: 1,
-                padding: 4,
-                borderWidth: 1,
-                color: 'white',
-                textTransform: 'uppercase',
-                fontSize: 12,
-                fontWeight: 'bold',
-                borderRadius: 4,
-                textAlign: 'center',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                backgroundColor: fileSystemEntryColor,
-                // alignSelf: isSmall ? 'center' : 'auto',
-                alignItems: 'center'
-              }}
-              role="presentation"
-              onClick={e => {
-                e.stopPropagation();
-                if (selected) {
-                  deselectEntry(fSystemEntry);
-                } else {
-                  selectEntry(fSystemEntry);
-                }
-              }}
-            >
-              {selected ? <SelectedIcon /> : <UnSelectedIcon />}
-              {fSystemEntry.isFile ? (
-                <span
-                  style={{
-                    width: '100%',
-                    marginTop: isSmall ? 0 : 10,
-                    textShadow: '1px 1px #8f8f8f',
-                    overflowWrap: 'anywhere'
-                  }}
-                >
-                  {fSystemEntry.extension}
-                </span>
-              ) : (
-                <FolderIcon style={{ margin: '0 auto' }} />
-              )}
-            </div>
-          </Tooltip>
+          <div
+            data-tid="rowCellTID"
+            style={{
+              display: 'flex',
+              flexDirection: isSmall ? 'row' : 'column',
+              flex: 1,
+              padding: 4,
+              borderWidth: 1,
+              color: 'white',
+              textTransform: 'uppercase',
+              fontSize: 12,
+              fontWeight: 'bold',
+              borderRadius: 4,
+              textAlign: 'center',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              backgroundColor: fileSystemEntryColor,
+              alignItems: 'center'
+            }}
+            role="button"
+            onClick={e => {
+              e.stopPropagation();
+              if (selected) {
+                deselectEntry(fSystemEntry);
+              } else {
+                selectEntry(fSystemEntry);
+              }
+            }}
+          >
+            {selected ? <SelectedIcon /> : <UnSelectedIcon />}
+            {fSystemEntry.isFile ? (
+              <span
+                style={{
+                  width: '100%',
+                  marginTop: isSmall ? 0 : 10,
+                  textShadow: '1px 1px #8f8f8f',
+                  overflowWrap: 'anywhere'
+                }}
+              >
+                {fSystemEntry.extension}
+              </span>
+            ) : (
+              <FolderIcon style={{ margin: '0 auto' }} />
+            )}
+          </div>
         </Grid>
         {isSmall ? (
           <Grid
@@ -383,23 +408,21 @@ function CellContent(props: Props) {
               display: 'flex'
             }}
           >
-            {/* <Tooltip
-              title={
-                fileSystemEntry.isFile ? entrySizeFormatted + entryLMDTFormatted : ''
-              }
-            > */}
             <Typography style={{ wordBreak: 'break-all', alignSelf: 'center' }}>
-              {entryTitle}
+              <Tooltip title={fSystemEntry.path}>
+                <>{entryTitle}</>
+              </Tooltip>
               &nbsp;
               {showTags && entryTags ? renderTags(entryTags) : tagPlaceholder}
             </Typography>
-            {/* </Tooltip> */}
           </Grid>
         ) : (
           <Grid item xs zeroMinWidth>
-            <Typography style={{ wordBreak: 'break-all' }}>
-              {entryTitle}
-            </Typography>
+            <Tooltip title={fSystemEntry.path}>
+              <Typography style={{ wordBreak: 'break-all' }}>
+                {entryTitle}
+              </Typography>
+            </Tooltip>
             {showTags && entryTags ? renderTags(entryTags) : tagPlaceholder}
             <Typography
               style={{
@@ -549,7 +572,8 @@ function CellContent(props: Props) {
 function mapStateToProps(state) {
   return {
     reorderTags: state.settings.reorderTags,
-    lastThumbnailImageChange: getLastThumbnailImageChange(state)
+    lastThumbnailImageChange: getLastThumbnailImageChange(state),
+    isDesktopMode: isDesktopMode(state)
   };
 }
 
