@@ -20,6 +20,7 @@ import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { format, formatDistanceToNow } from 'date-fns';
+import withStyles from '@mui/styles/withStyles';
 import makeStyles from '@mui/styles/makeStyles';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import Button from '@mui/material/Button';
@@ -73,6 +74,7 @@ import { getSearchOptions } from '-/components/SearchOptionsMenu';
 
 interface Props {
   style?: any;
+  theme: any;
   watchForChanges: () => void;
   searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
   createLocationsIndexes: () => void;
@@ -654,7 +656,7 @@ function SearchAutocomplete(props: Props) {
     }
   };
 
-  const { indexing, isDesktop, open } = props;
+  const { indexing, isDesktop, open, theme } = props;
 
   /*function parseOptions(options: Array<any>) {
 
@@ -1541,7 +1543,8 @@ function SearchAutocomplete(props: Props) {
                 style={{
                   position: 'sticky',
                   top: '-8px',
-                  padding: '4px 10px'
+                  padding: '4px 10px',
+                  backgroundColor: theme.palette.background.default
                 }}
               >
                 {i18n.t(params.group)}
@@ -1715,4 +1718,7 @@ function mapDispatchToProps(dispatch) {
   nextProp.indexedEntriesCount === prevProp.indexedEntriesCount;*/
 
 // @ts-ignore
-export default connect(mapStateToProps, mapDispatchToProps)(SearchAutocomplete); // (React.memo(SearchAutocomplete, areEqual));
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(undefined, { withTheme: true })(SearchAutocomplete)); // (React.memo(SearchAutocomplete, areEqual));
