@@ -218,32 +218,8 @@ test.describe('TST50 - Perspective Grid', () => {
 
     await clickOn('[data-tid=gridPerspectiveOnBackButton]');
 
-    await expectElementExist(getGridFileSelector(fileName), false);
+    await expectElementExist(getGridFileSelector(fileName), false, 8000);
     await expectMetaFilesExist(arrayMeta, false);
-
-    /*
-     * TODO reindexing don't work in web
-     * TODO search not work SplashWorker windows is disabled
-     */
-    /*await searchEngine('epub');
-
-    // select file
-    await clickOn(selectorFile);
-    // open Copy File Dialog
-    await clickOn('[data-tid=gridPerspectiveCopySelectedFiles]');
-    await setInputKeys(
-      'targetPathInput',
-      defaultLocationPath + '/empty_folder'
-    );
-    await clickOn('[data-tid=confirmMoveFiles]');
-    await clickOn('#clearSearchID');
-    await global.client.dblclick(selectorFolder);
-    await searchEngine('epub', { reindexing: true }); // TODO temp fix: https://trello.com/c/ZfcGGvOM/527-moved-files-is-not-indexing-not-found-in-search
-    const firstFileName = await getGridFileName(0);
-    expect(firstFileName).toBe('sample.epub');
-    // cleanup
-    await deleteFileFromMenu();
-    await expectElementExist(selectorFile, false);*/
   });
 
   test.skip('TST5011 - Move file drag&drop in location navigator [manual]', async () => {});
