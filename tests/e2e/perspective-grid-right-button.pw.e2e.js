@@ -28,7 +28,6 @@ import {
   setInputKeys,
   setGridOptions,
   showFilesWithTag,
-  waitForNotification,
   frameLocator,
   takeScreenshot
 } from './general.helpers';
@@ -274,10 +273,6 @@ test.describe('TST50** - Right button on a file', () => {
     await AddRemoveTagsToSelectedFiles([testTagName], false); */
   });
 
-  /**
-   * TODO web sometimes: stale element reference: stale element reference: element is not attached to the page document
-   * TODO minio sometimes: stale element reference: stale element reference: element is not attached to the page document
-   */
   test('TST5025 - Add - Remove tags (file menu) [web,minio,electron]', async () => {
     // await searchEngine('desktop');
     const fileName = 'sample';
@@ -291,18 +286,22 @@ test.describe('TST50** - Right button on a file', () => {
       getGridFileSelector(generateFileName(fileName, fileExt, tags, ' '))
     );
     gridElement = await gridElement.$('..');
-    await expectTagsExist(gridElement, tags, true);
+    for (let i = 0; i < tags.length; i++) {
+      await expectElementExist('[data-tid=tagContainer_' + tags[i] + ']', true);
+    }
     // await expectTagsExistBySelector(selectorFile, tags, true);
 
     // remove tags
     await gridElement.click();
     await AddRemoveTagsToSelectedFiles('grid', tags, false);
-
-    gridElement = await global.client.waitForSelector(
+    for (let i = 0; i < tags.length; i++) {
+      await expectElementExist('[data-tid=tagContainer_' + tags[i] + ']', false);
+    }
+    /*gridElement = await global.client.waitForSelector(
       getGridFileSelector(fileName + '.' + fileExt)
     );
-    gridElement = await gridElement.$('..');
-    await expectTagsExist(gridElement, tags, false);
+    gridElement = await gridElement.$('..');*/
+    // await expectTagsExist(gridElement, tags, false);
     // await expectTagsExistBySelector(selectorFile, tags, false);
   });
 
