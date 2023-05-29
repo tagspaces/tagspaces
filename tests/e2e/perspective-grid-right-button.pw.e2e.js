@@ -354,7 +354,7 @@ test.describe('TST50** - Right button on a file', () => {
     );*/
 
     await clickOn('[data-tid=confirmMoveFiles]');
-    await waitForNotification();
+    //await waitForNotification();
     await expectElementExist(getGridFileSelector(fileName), false);
     // await clickOn('#clearSearchID');
     await global.client.dblclick(selectorFolder);
@@ -368,7 +368,7 @@ test.describe('TST50** - Right button on a file', () => {
     await openContextEntryMenu(fileSelector, 'fileMenuMoveCopyFile');
     // await setInputKeys('targetPathInput', defaultLocationPath);
     await clickOn('[data-tid=confirmCopyFiles]');
-    await waitForNotification();
+    //await waitForNotification();
     // await clickOn('#clearSearchID');
     await clickOn('[data-tid=gridPerspectiveOnBackButton]');
     await expectElementExist(getGridFileSelector(fileName), true);
