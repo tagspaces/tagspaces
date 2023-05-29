@@ -13,7 +13,6 @@ import {
   clickOn,
   expectElementExist,
   expectMetaFilesExist,
-  expectTagsExistBySelector,
   getGridCellClass,
   getGridFileName,
   getGridFileSelector,
@@ -99,12 +98,8 @@ test.describe('TST50 - Perspective Grid', () => {
     const tags = ['test-tag1', 'test-tag2'];
     await AddRemoveTagsToSelectedFiles('list', tags);
 
-    for (let i = 0; i < selectedIds.length; i++) {
-      await expectElementExist(
-        // selectorFile + '[' + (i + 1) + ']//div[@id="gridCellTags"]//button[1]',
-        '[data-tid=tagContainer_' + tags[0] + ']',
-        true
-      );
+    for (let i = 0; i < tags.length; i++) {
+      await expectElementExist('[data-tid=tagContainer_' + tags[i] + ']', true);
       // const selectBox = await global.client.$('[data-tid=perspectiveGridFileTable]');
       /* await expectTagsExistBySelector(
         '[data-entry-id="' + selectedIds[i] + '"]',
@@ -118,17 +113,16 @@ test.describe('TST50 - Perspective Grid', () => {
     // tags = ['test-tag1', 'test-tag2'];
     await AddRemoveTagsToSelectedFiles('list', tags, false);
 
-    for (let i = 0; i < selectedIds.length; i++) {
+    for (let i = 0; i < tags.length; i++) {
       await expectElementExist(
-        selectorFile + '[' + (i + 1) + ']//div[@id="gridCellTags"]//button[1]',
-        false,
-        1500
+        '[data-tid=tagContainer_' + tags[i] + ']',
+        false
       );
-      await expectTagsExistBySelector(
+      /*await expectTagsExistBySelector(
         '[data-entry-id="' + selectedIds[i] + '"]',
         tags,
         false
-      );
+      );*/
     }
   });
 

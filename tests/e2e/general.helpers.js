@@ -642,6 +642,14 @@ export function generateFileName(fileName, fileExt, tags, tagDelimiter = ' ') {
   return newFileName;
 }
 
+/**
+ * @deprecated view expectTagsExist
+ * @param selector
+ * @param arrTagNames
+ * @param exist
+ * @param timeout
+ * @returns {Promise<void>}
+ */
 export async function expectTagsExistBySelector(
   selector,
   arrTagNames,
@@ -652,6 +660,13 @@ export async function expectTagsExistBySelector(
   await expectTagsExist(gridElement, arrTagNames, exist);
 }
 
+/**
+ * @deprecated use: await expectElementExist('[data-tid=tagContainer_' + tagName + ']',true,8000,'[data-tid=perspectiveGridFileTable]')
+ * @param gridElement
+ * @param arrTagNames
+ * @param exist
+ * @returns {Promise<void>}
+ */
 export async function expectTagsExist(gridElement, arrTagNames, exist = true) {
   // await expectExist(gridElement);
   const tags = await extractTags(gridElement);

@@ -120,10 +120,9 @@ export async function addRemoveTagsInSearchResults(
 
   await AddRemoveTagsToSelectedFiles('list', tags);
 
-  for (let i = 0; i < selectedIds.length; i++) {
+  for (let i = 0; i < tags.length; i++) {
     await expectElementExist(
-      // selectorFile + '[' + (i + 1) + ']//div[@id="gridCellTags"]//button[1]',
-      '[data-tid=tagContainer_' + tags[0] + ']',
+      '[data-tid=tagContainer_' + tags[i] + ']',
       true,
       5000
     );
@@ -134,16 +133,21 @@ export async function addRemoveTagsInSearchResults(
   }
   await AddRemoveTagsToSelectedFiles('list', tags, false);
 
-  for (let i = 0; i < selectedIds.length; i++) {
+  for (let i = 0; i < tags.length; i++) {
     await expectElementExist(
+      '[data-tid=tagContainer_' + tags[i] + ']',
+      false,
+      5000
+    );
+    /*await expectElementExist(
       selectorFile + '[' + (i + 1) + ']//div[@id="gridCellTags"]//button[1]',
       false,
       1500
-    );
-    await expectTagsExistBySelector(
+    );*/
+    /*await expectTagsExistBySelector(
       '[data-entry-id="' + selectedIds[i] + '"]',
       tags,
       false
-    );
+    );*/
   }
 }

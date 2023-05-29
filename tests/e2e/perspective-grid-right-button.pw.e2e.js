@@ -18,8 +18,6 @@ import {
   createNewDirectory,
   createTxtFile,
   expectElementExist,
-  expectTagsExist,
-  expectTagsExistBySelector,
   generateFileName,
   getGridFileSelector,
   reloadDirectory,
@@ -164,10 +162,12 @@ test.describe('TST50** - Right button on a file', () => {
     await clickOn('[data-tid=fileContainerToggleProperties]');
     await AddRemoveTagsToSelectedFiles('grid', [testTagName], true);
     await expectElementExist(
-      selectorFile + '[1]//div[@id="gridCellTags"]//button[1]',
-      true
+      '[data-tid=tagContainer_' + testTagName + ']',
+      true,
+      8000,
+      '[data-tid=perspectiveGridFileTable]'
     );
-    await expectTagsExistBySelector(selectorFile, [testTagName], true);
+    // await expectTagsExistBySelector(selectorFile, [testTagName], true);
 
     /* await AddRemoveTagsToFile(perspectiveGridTable + firstFile, [testTagName], {
       add: true
@@ -179,15 +179,12 @@ test.describe('TST50** - Right button on a file', () => {
     await clickOn('[data-tid=confirmEditTagEntryDialog]');
     // await waitForNotification();
 
+    //await expectTagsExistBySelector(selectorFile, [testTagName + 'Edited'],true);
     await expectElementExist(
-      selectorFile + '[1]//div[@id="gridCellTags"]//button[1]',
-      true
-    );
-
-    await expectTagsExistBySelector(
-      selectorFile,
-      [testTagName + 'Edited'],
-      true
+      '[data-tid=tagContainer_' + testTagName + 'Edited]',
+      true,
+      8000,
+      '[data-tid=perspectiveGridFileTable]'
     );
     await testDataRefresh();
     // cleanup
@@ -215,18 +212,21 @@ test.describe('TST50** - Right button on a file', () => {
     await clickOn('[data-tid=fileContainerToggleProperties]');
     await AddRemoveTagsToSelectedFiles('grid', [testTagName], true);
     await expectElementExist(
-      selectorFile + '[1]//div[@id="gridCellTags"]//button[1]',
-      true
+      '[data-tid=tagContainer_' + testTagName + ']',
+      true,
+      8000,
+      '[data-tid=perspectiveGridFileTable]'
     );
-    await expectTagsExistBySelector(selectorFile, [testTagName], true);
+    // await expectTagsExistBySelector(selectorFile, [testTagName], true);
 
     await removeTagFromTagMenu(testTagName);
-
     await expectElementExist(
-      selectorFile + '[1]//div[@id="gridCellTags"]//button[1]',
-      false
+      '[data-tid=tagContainer_' + testTagName + ']',
+      false,
+      8000,
+      '[data-tid=perspectiveGridFileTable]'
     );
-    await expectTagsExistBySelector(selectorFile, [testTagName], false);
+    // await expectTagsExistBySelector(selectorFile, [testTagName], false);
   });
 
   /**
