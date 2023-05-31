@@ -597,20 +597,18 @@ function EntryProperties(props: Props) {
           });
         } else {
           // create-option or select-option
-          const promises = value.map(tag => {
-            if (
-              currentEntry.current.tags === undefined ||
-              currentEntry.current.tags.findIndex(
-                obj => obj.title === tag.title
-              ) === -1
-            ) {
-              return props.addTags([currentEntry.current.path], [tag]);
-            }
-            return Promise.resolve(false);
-          });
-          Promise.all(promises).then(() => {
-            props.switchCurrentLocationType(currentLocationId);
-          });
+          const tags =
+            currentEntry.current.tags === undefined
+              ? value
+              : value.filter(
+                  tag =>
+                    !currentEntry.current.tags.some(
+                      obj => obj.title === tag.title
+                    )
+                );
+          return props
+            .addTags([currentEntry.current.path], tags)
+            .then(() => props.switchCurrentLocationType(currentLocationId));
         }
       });
   };
