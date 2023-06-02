@@ -54,7 +54,7 @@ import TextField from '@mui/material/TextField';
 import FormHelperText from '@mui/material/FormHelperText';
 import { FormControl } from '@mui/material';
 import { fileNameValidation } from '-/services/utils-io';
-import { PerspectiveIDs } from '-/perspectives';
+import { PerspectiveIDs } from '-/perspectives/types';
 
 const styles: any = () => ({
   createButton: {

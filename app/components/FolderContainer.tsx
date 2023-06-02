@@ -65,7 +65,8 @@ import {
   actions as LocationIndexActions,
   getSearchQuery
 } from '-/reducers/location-index';
-import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
+import { AvailablePerspectives } from '-/perspectives';
+import { PerspectiveIDs } from '-/perspectives/types';
 import MainSearchField from '-/components/MainSearchField';
 import LoadingAnimation from '-/components/LoadingAnimation';
 import SearchBox from '-/components/SearchBox';

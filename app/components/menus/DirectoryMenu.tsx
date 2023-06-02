@@ -48,7 +48,7 @@ import FileUploadContainer, {
 } from '-/components/FileUploadContainer';
 import { TS } from '-/tagspaces.namespace';
 import { getRelativeEntryPath } from '-/services/utils-io';
-import { PerspectiveIDs } from '-/perspectives';
+import { PerspectiveIDs } from '-/perspectives/types';
 import PlatformFacade from '-/services/platform-facade';
 import { getDirectoryMenuItems } from '-/perspectives/common/DirectoryMenuItems';
 

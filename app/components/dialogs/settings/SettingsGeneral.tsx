@@ -47,7 +47,7 @@ import PerspectiveSelector from '-/components/PerspectiveSelector';
 import TransparentBackground from '-/components/TransparentBackground';
 import { BetaLabel } from '-/components/HelperComponents';
 import PlatformIO from '-/services/platform-facade';
-import { PerspectiveIDs } from '-/perspectives';
+import { PerspectiveIDs } from '-/perspectives/types';
 
 const styles: any = {
   root: {

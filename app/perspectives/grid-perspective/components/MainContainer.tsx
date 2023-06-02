@@ -72,7 +72,7 @@ import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
 import Links from '-/content/links';
 import { defaultSettings } from '../index';
-import { PerspectiveIDs } from '-/perspectives';
+import { PerspectiveIDs } from '-/perspectives/types';
 import { fileOperationsEnabled } from '-/perspectives/common/main-container';
 import GlobalSearch from '-/services/search-index';
 import useFirstRender from '-/utils/useFirstRender';

@@ -18,19 +18,35 @@
 
 import AppConfig from '-/AppConfig';
 import keyBindings from '-/reducers/keybindings-default';
-import { PerspectiveIDs } from '-/perspectives';
+import { PerspectiveIDs } from '-/perspectives/types';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { supportedFileTypes } from '-/extension-config';
 
 let desktopMode = !AppConfig.isMobile;
-if (window.ExtDisplayMode && window.ExtDisplayMode === 'mobile') {
-  desktopMode = false;
-} else if (window.ExtDisplayMode && window.ExtDisplayMode === 'desktop') {
-  desktopMode = true;
-}
 let checkForUpdates = true;
-if (window.ExtCheckForUpdatesOnStartup !== undefined) {
-  checkForUpdates = window.ExtCheckForUpdatesOnStartup;
+let devMode = false;
+let isRevisionsEnabled = true;
+let isAutoSaveEnabled = false;
+try {
+  if (window.ExtDisplayMode && window.ExtDisplayMode === 'mobile') {
+    desktopMode = false;
+  } else if (window.ExtDisplayMode && window.ExtDisplayMode === 'desktop') {
+    desktopMode = true;
+  }
+  if (window.ExtCheckForUpdatesOnStartup !== undefined) {
+    checkForUpdates = window.ExtCheckForUpdatesOnStartup;
+  }
+  if (window.ExtDevMode !== undefined) {
+    devMode = window.ExtDevMode;
+  }
+  if (typeof window.ExtRevisionsEnabled !== undefined) {
+    isRevisionsEnabled = window.ExtRevisionsEnabled;
+  }
+  if (typeof window.ExtAutoSaveEnabled !== undefined) {
+    isAutoSaveEnabled = window.ExtAutoSaveEnabled;
+  }
+} catch (ex) {
+  console.debug(ex.message);
 }
 
 export default {
@@ -49,7 +65,7 @@ export default {
   tagDelimiter: ' ',
   maxSearchResult: 1000,
   desktopMode,
-  devMode: window.ExtDevMode ? window.ExtDevMode : false,
+  devMode: devMode,
   saveTagInLocation: false,
   newHTMLFileContent:
     '<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body></body></html>',
@@ -100,15 +116,9 @@ export default {
   fileOpenHistory: false,
   folderOpenHistory: false,
   fileEditHistory: false,
-  isRevisionsEnabled:
-    typeof window.ExtRevisionsEnabled === 'undefined'
-      ? true
-      : window.ExtRevisionsEnabled,
+  isRevisionsEnabled: isRevisionsEnabled,
   prefixTagContainer: AppConfig.prefixTagContainer,
-  isAutoSaveEnabled:
-    typeof window.ExtAutoSaveEnabled === 'undefined'
-      ? false
-      : window.ExtAutoSaveEnabled,
+  isAutoSaveEnabled: isAutoSaveEnabled,
   supportedLanguages: [
     {
       iso: 'en',
