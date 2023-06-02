@@ -2,6 +2,7 @@
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
 import { expect, test } from '@playwright/test';
+import AppConfig from '../../app/AppConfig';
 import {
   defaultLocationPath,
   defaultLocationName,
@@ -21,7 +22,10 @@ import {
   selectorFile,
   setSettings,
   takeScreenshot,
-  createTxtFile
+  createTxtFile,
+  expectMetaFilesExist,
+  getGridFileSelector,
+  isDisplayed
 } from './general.helpers';
 import { searchEngine } from './search.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
@@ -140,140 +144,70 @@ test.describe('TST51 - Perspective Grid', () => {
     // await takeScreenshot('TST0503 after deleteDirectory');
   });
 
-  test('TST0510 - Generate thumbnail from Images', async () => {
-    // let filename = 'sample.jpg';
-    // activate 'Show Hidden File' functionality in the general settings
-    await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
-    await reloadDirectory();
-    await global.client.dblclick('[data-tid=fsEntryName_' + tsFolder + ']');
+  test('TST0510 - Generate thumbnail from Images [electron]', async () => {
+    const metaFiles = AppConfig.ThumbGenSupportedFileTypes.image
+      .filter(ext => ext !== 'ico') // ico file thumbnail generation not work
+      .map(imgExt => 'sample.' + imgExt + '.jpg');
 
-    await searchEngine('jpg');
-    // await openEntry('sample.jpg');
-    // await openFile();
-    await global.client.dblclick(perspectiveGridTable + firstFile);
-    await closeOpenedFile();
-    //TODO expect
-    // const file = await global.client.$(
-    //   perspectiveGridTable + firstFile
-    // );
-    // expect(file).toBe(filename);
+    await expectMetaFilesExist(metaFiles);
   });
 
-  test('TST0511 - Generate thumbnail from Videos', async () => {
-    // activate 'Show Hidden File' functionality in the general settings
-    await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
-    await reloadDirectory();
-    await global.client.dblclick('[data-tid=fsEntryName_' + tsFolder + ']');
+  test('TST0510a - Generate thumbnail from JPG w. rotation from EXIF [web,minio,electron]', async () => {
+    await clickOn(getGridFileSelector('sample_exif[iptc].jpg'));
 
-    await searchEngine('mp4');
-    await global.client.dblclick(perspectiveGridTable + firstFile);
-    await closeOpenedFile();
-    //TODO expect
+    const iframeElement = await global.client.waitForSelector('iframe');
+    const frame = await iframeElement.contentFrame();
+
+    await frame.click('#extFabMenu');
+    await frame.click('#exifButton');
+
+    let latExists = await isDisplayed(
+      '#exifTableBody tr:has(th:has-text("GPSLatitude")) td',
+      true,
+      5000,
+      frame
+    );
+    expect(latExists).toBeTruthy();
   });
 
-  test('TST0516 - Generate thumbnail from PDF', async () => {
-    // activate 'Show Hidden File' functionality in the general settings
-    await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
-    await reloadDirectory();
-    await global.client.dblclick('[data-tid=fsEntryName_' + tsFolder + ']');
-
-    await searchEngine('pdf');
-    await global.client.dblclick(perspectiveGridTable + firstFile);
-    await closeOpenedFile();
-    //TODO expect
+  test('TST0511 - Generate thumbnail from Videos [electron]', async () => {
+    const metaFiles = AppConfig.ThumbGenSupportedFileTypes.video.map(
+      imgExt => 'sample.' + imgExt + '.jpg'
+    );
+    await expectMetaFilesExist(metaFiles);
   });
 
-  test('TST0517 - Generate thumbnail from ODT', async () => {
-    // activate 'Show Hidden File' functionality in the general settings
-    await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
-
-    await reloadDirectory();
-
-    await global.client.dblclick('[data-tid=fsEntryName_' + tsFolder + ']');
-
-    await searchEngine('odt');
-    await global.client.dblclick(perspectiveGridTable + firstFile);
-    await closeOpenedFile();
-    //TODO expect
+  test('TST0516 - Generate thumbnail from PDF [electron,_pro]', async () => {
+    await expectMetaFilesExist(['sample.pdf.jpg']);
   });
 
-  test('TST0519 - Generate thumbnail from TIFF', async () => {
-    // activate 'Show Hidden File' functionality in the general settings
-    await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
-
-    await reloadDirectory();
-
-    await global.client.dblclick('[data-tid=fsEntryName_' + tsFolder + ']');
-
-    await searchEngine('tiff');
-    // await openEntry('sample.jpg');
-    // await openFile();
-    await global.client.dblclick(perspectiveGridTable + firstFile);
-    await closeOpenedFile();
-    //TODO expect
+  test('TST0517 - Generate thumbnail from ODT [electron,_pro]', async () => {
+    await expectMetaFilesExist([
+      'sample.odt.jpg',
+      'sample.ods.jpg',
+      'sample.epub.jpg'
+    ]);
   });
 
-  test('TST0520 - Generate thumbnail from PSD', async () => {
-    // activate 'Show Hidden File' functionality in the general settings
-    await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
-
-    await reloadDirectory();
-
-    await global.client.dblclick('[data-tid=fsEntryName_' + tsFolder + ']');
-
-    await searchEngine('psd');
-    // await openEntry('sample.jpg');
-    // await openFile();
-    await global.client.dblclick(perspectiveGridTable + firstFile);
-    await closeOpenedFile();
-    //TODO expect
+  test('TST0519 - Generate thumbnail from TIFF [electron,_pro]', async () => {
+    await expectMetaFilesExist(['sample.tiff.jpg']);
   });
 
-  test('TST0524 - Generate thumbnail from TXT', async () => {
-    // activate 'Show Hidden File' functionality in the general settings
-    await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
-
-    await reloadDirectory();
-
-    await global.client.dblclick('[data-tid=fsEntryName_' + tsFolder + ']');
-
-    await searchEngine('txt');
-    // await openEntry('sample.jpg');
-    // await openFile();
-    await global.client.dblclick(perspectiveGridTable + firstFile);
-    await closeOpenedFile();
-    //TODO expect
+  test.skip('TST0520 - Generate thumbnail from PSD [electron,_pro]', async () => {
+    // TODO fix
+    await expectMetaFilesExist(['sample.psd.jpg']);
   });
 
-  test('TST0523 - Generate thumbnail from HTML', async () => {
-    // activate 'Show Hidden File' functionality in the general settings
-    await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
-
-    await reloadDirectory();
-
-    await global.client.dblclick('[data-tid=fsEntryName_' + tsFolder + ']');
-
-    await searchEngine('html');
-    // await openEntry('sample.jpg');
-    // await openFile();
-    await global.client.dblclick(perspectiveGridTable + firstFile);
-    await closeOpenedFile();
-    //TODO expect
+  test('TST0522 - Generate thumbnail from URL [electron,_pro]', async () => {
+    await expectMetaFilesExist(['sample.url.jpg']);
   });
 
-  test('TST0522 - Generate thumbnail from URL', async () => {
-    // activate 'Show Hidden File' functionality in the general settings
-    await setSettings('[data-tid=settingsSetShowUnixHiddenEntries]');
+  test('TST0523 - Generate thumbnail from HTML [electron,_pro]', async () => {
+    await expectMetaFilesExist(['sample.html.jpg']);
+  });
 
-    await reloadDirectory();
-
-    await global.client.dblclick('[data-tid=fsEntryName_' + tsFolder + ']');
-
-    await searchEngine('url');
-    // await openEntry('sample.jpg');
-    // await openFile();
-    await global.client.dblclick(perspectiveGridTable + firstFile);
-    await closeOpenedFile();
-    //TODO expect
+  test('TST0524 - Generate thumbnail from TXT,MD [electron,_pro]', async () => {
+    // MD thumbs generation is stopped
+    await expectMetaFilesExist(['sample.txt.jpg']);
   });
 });

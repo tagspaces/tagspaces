@@ -695,7 +695,7 @@ export async function expectMetaFilesExist(
       }
     }
     for (let i = 0; i < arrMetaFiles.length; i++) {
-      // console.log('check ' + arrMetaFiles[i] + 'exist:' + exist);
+      console.log('check ' + arrMetaFiles[i] + ' exist:' + exist);
       await expectElementExist(
         getGridFileSelector(arrMetaFiles[i]),
         exist,
