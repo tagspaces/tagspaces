@@ -464,7 +464,9 @@ function FolderContainer(props: Props) {
         <Tooltip
           title={
             perspective.title +
-            (perspective.beta && ' ' + i18n.t('core:betaStatus').toUpperCase())
+            (perspective.beta
+              ? ' ' + i18n.t('core:betaStatus').toUpperCase()
+              : '')
           }
         >
           <div style={{ display: 'flex' }}>{perspective.icon}</div>
