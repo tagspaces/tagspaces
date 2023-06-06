@@ -48,8 +48,8 @@ export const styles = (theme: any) => {
       paddingLeft: 10,
       paddingRight: 10,
       marginTop: 0,
-      height: 'calc(100% - 50px)',
-      maxHeight: 'calc(100% - 50px)',
+      height: 'calc(100% - 80px)',
+      maxHeight: 'calc(100% - 80px)',
       overflowX: 'hidden',
       // @ts-ignore
       overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'

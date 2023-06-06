@@ -183,7 +183,7 @@ function GridPerspective(props: Props) {
       : defaultSettings.orderBy
   );
   const sortedDirContent = useRef<Array<TS.FileSystemEntry>>(
-    !props.lastSearchTimestamp ? props.directoryContent : GlobalSearch.results
+    !props.lastSearchTimestamp ? props.directoryContent : GlobalSearch.getInstance().getResults()
   );
   const layoutType = useRef<string>(
     settings && settings.layoutType
@@ -324,19 +324,19 @@ function GridPerspective(props: Props) {
       if (sortBy.current === 'byRelevance') {
         // initial search results is sorted by relevance
         if (orderBy.current) {
-          sortedDirContent.current = GlobalSearch.results;
+          sortedDirContent.current = GlobalSearch.getInstance().getResults();
         } else {
-          sortedDirContent.current = [...GlobalSearch.results].reverse();
+          sortedDirContent.current = [...GlobalSearch.getInstance().getResults()].reverse();
         }
       } else {
         sortedDirContent.current = sortByCriteria(
           props.searchFilter
-            ? GlobalSearch.results.filter(entry =>
+            ? GlobalSearch.getInstance().getResults().filter(entry =>
                 entry.name
                   .toLowerCase()
                   .includes(props.searchFilter.toLowerCase())
               )
-            : GlobalSearch.results,
+            : GlobalSearch.getInstance().getResults(),
           sortBy.current,
           orderBy.current
         );
@@ -348,7 +348,7 @@ function GridPerspective(props: Props) {
   useEffect(() => {
     // HANDLE (ADD/REMOVE sidecar TAGS) IN SEARCH RESULTS
     if (!firstRender && props.lastSearchTimestamp) {
-      sortedDirContent.current = GlobalSearch.results;
+      sortedDirContent.current = GlobalSearch.getInstance().getResults();
       forceUpdate();
     }
   }, [props.editedEntryPaths]);
@@ -519,7 +519,7 @@ function GridPerspective(props: Props) {
       if (!props.lastSearchTimestamp) {
         props.setSelectedEntries(props.directoryContent);
       } else {
-        props.setSelectedEntries(GlobalSearch.results);
+        props.setSelectedEntries(GlobalSearch.getInstance().getResults());
       }
     }
   };

@@ -31,13 +31,16 @@ import NoteIcon from '@mui/icons-material/Note';
 import AudioIcon from '@mui/icons-material/MusicVideo';
 import VideoIcon from '@mui/icons-material/OndemandVideo';
 import ArchiveIcon from '@mui/icons-material/Archive';
+import DialogActions from '@mui/material/DialogActions';
 import FolderIcon from '@mui/icons-material/FolderOpen';
 import UntaggedIcon from '@mui/icons-material/LabelOffOutlined';
 import FileIcon from '@mui/icons-material/InsertDriveFileOutlined';
+import EditIcon from '@mui/icons-material/Edit';
 import BookmarkIcon from '@mui/icons-material/BookmarkBorder';
 import BookIcon from '@mui/icons-material/LocalLibraryOutlined';
 import DateIcon from '@mui/icons-material/DateRange';
 import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
 import Input from '@mui/material/Input';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import TextField from '@mui/material/TextField';
@@ -58,7 +61,6 @@ import TagsSelect from './TagsSelect';
 import { actions as AppActions, getDirectoryPath } from '../reducers/app';
 import {
   actions as LocationIndexActions,
-  getIndexedEntriesCount,
   isIndexing,
   getSearchQuery
 } from '../reducers/location-index';
@@ -77,6 +79,8 @@ import { getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
 import Links from '-/content/links';
+import { CreateFileIcon } from '-/components/CommonIcons';
+import GlobalSearch from '-/services/search-index';
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
 
@@ -97,14 +101,13 @@ interface Props {
   exitSearchMode: () => void;
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   currentDirectory: string;
-  indexedEntriesCount: number;
   maxSearchResults: number;
   indexing: boolean;
   searches: Array<TS.SearchQuery>;
   showUnixHiddenEntries: boolean;
   // openSearchPanel: () => void;
   onClose: () => void;
-  getTextQuery: () => string;
+  textQuery: string;
   setTextQuery: (value: string) => void;
 }
 
@@ -156,7 +159,7 @@ function SearchPopover(props: Props) {
     props.searchQuery.fileSize ? props.searchQuery.fileSize : ''
   );
 
-  /* useEffect(() => {
+  /*useEffect(() => {
     props.setTextQuery(props.searchQuery.textQuery);
   }, [props.searchQuery]);*/
 
@@ -299,6 +302,12 @@ function SearchPopover(props: Props) {
     }
   };
 
+  const handleSearchTermChange = event => {
+    const { target } = event;
+    const { value } = target;
+    props.setTextQuery(value);
+  };
+
   const handleTimePeriodChange = event => {
     const { target } = event;
     const { value } = target;
@@ -393,24 +402,24 @@ function SearchPopover(props: Props) {
 
   const saveSearch = (isNew = true) => {
     const tagsAND = mergeWithExtractedTags(
-      props.getTextQuery(),
+      props.textQuery,
       props.searchQuery.tagsAND,
       '+'
     );
     const tagsOR = mergeWithExtractedTags(
-      props.getTextQuery(),
+      props.textQuery,
       props.searchQuery.tagsOR,
       '|'
     );
     const tagsNOT = mergeWithExtractedTags(
-      props.getTextQuery(),
+      props.textQuery,
       props.searchQuery.tagsNOT,
       '-'
     );
     setSaveSearchDialogOpened({
       uuid: isNew ? undefined : props.searchQuery.uuid,
       title: props.searchQuery.title,
-      textQuery: props.getTextQuery(),
+      textQuery: props.textQuery,
       tagsAND,
       tagsOR,
       tagsNOT,
@@ -452,22 +461,22 @@ function SearchPopover(props: Props) {
 
   const executeSearch = () => {
     const tagsAND = mergeWithExtractedTags(
-      props.getTextQuery(),
+      props.textQuery,
       props.searchQuery.tagsAND,
       '+'
     );
     const tagsOR = mergeWithExtractedTags(
-      props.getTextQuery(),
+      props.textQuery,
       props.searchQuery.tagsOR,
       '|'
     );
     const tagsNOT = mergeWithExtractedTags(
-      props.getTextQuery(),
+      props.textQuery,
       props.searchQuery.tagsNOT,
       '-'
     );
     const searchQuery: TS.SearchQuery = {
-      textQuery: props.getTextQuery(),
+      textQuery: props.textQuery,
       tagsAND,
       tagsOR,
       tagsNOT,
@@ -491,10 +500,9 @@ function SearchPopover(props: Props) {
     props.onClose();
   };
 
-  const { indexing, indexedEntriesCount } = props;
-
-  const indexStatus = indexedEntriesCount
-    ? indexedEntriesCount + ' indexed entries'
+  const { indexing } = props;
+  const indexStatus = GlobalSearch.getInstance().getIndex()
+    ? GlobalSearch.getInstance().getIndex().length + ' indexed entries'
     : '';
   return (
     <div
@@ -504,9 +512,6 @@ function SearchPopover(props: Props) {
       }}
     >
       <div className={classes.toolbar}>
-        <Typography variant="button" style={{ margin: '12px 0 10px 10px' }}>
-          {i18n.t('core:advancedSearch')}
-        </Typography>
         <IconButton
           size="medium"
           data-tid="helpSearchTID"
@@ -517,6 +522,9 @@ function SearchPopover(props: Props) {
         >
           <HelpIcon />
         </IconButton>
+        {/*<Typography variant="button" style={{ margin: '12px 0 10px 10px' }}>
+          {i18n.t('core:advancedSearch')}
+        </Typography>*/}
         <Typography
           variant="caption"
           className={classes.header}
@@ -534,68 +542,94 @@ function SearchPopover(props: Props) {
         </IconButton>
       </div>
       <div className={classes.searchArea} data-tid="searchAdvancedTID">
-        <FormControl
-          className={classes.formControl}
-          style={{ marginTop: 5 }}
-          disabled={indexing || !Pro}
+        <Grid
+          container
+          spacing={2}
+          style={{ marginBottom: 15 }}
+          direction="row"
+          justifyContent="center"
+          alignItems="flex-end"
         >
-          <ProTooltip tooltip={i18n.t('storedSearchQueriesTooltip')}>
-            <InputLabel shrink htmlFor="saved-searches">
-              {i18n.t('core:savedSearchesTitle')}
-            </InputLabel>
-            <Select
-              onChange={handleSavedSearchChange}
-              input={
-                <OutlinedInput
-                  name="savedSearch"
-                  id="saved-searches"
-                  label={i18n.t('core:savedSearchesTitle')}
-                />
-              }
-              displayEmpty
-              fullWidth
-              value={props.searchQuery.uuid ? props.searchQuery.uuid : -1}
+          <Grid item xs={9}>
+            <ProTooltip tooltip={i18n.t('storedSearchQueriesTooltip')}>
+              <InputLabel shrink htmlFor="saved-searches">
+                {i18n.t('core:savedSearchesTitle')}
+              </InputLabel>
+              <Select
+                disabled={indexing || !Pro}
+                onChange={handleSavedSearchChange}
+                inputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {props.searchQuery.uuid && (
+                        <IconButton
+                          data-tid="editSearchBtnTID"
+                          size="small"
+                          onClick={() => saveSearch(false)}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                      )}
+                    </InputAdornment>
+                  )
+                }}
+                input={<Input name="savedSearch" id="saved-searches" />}
+                displayEmpty
+                fullWidth
+                value={props.searchQuery.uuid ? props.searchQuery.uuid : -1}
+              >
+                <MenuItem value={-1} style={{ display: 'none' }} />
+                {props.searches.length < 1 && (
+                  <MenuItem>{i18n.t('noSavedSearches')}</MenuItem>
+                )}
+                {props.searches.map(search => (
+                  <MenuItem key={search.uuid} value={search.uuid}>
+                    <span style={{ width: '100%' }}>{search.title}</span>
+                  </MenuItem>
+                ))}
+              </Select>
+            </ProTooltip>
+          </Grid>
+          <Grid item xs={3}>
+            <ButtonGroup
+              style={{
+                textAlign: 'center',
+                width: '100%'
+              }}
             >
-              <MenuItem value={-1} style={{ display: 'none' }} />
-              {props.searches.length < 1 && (
-                <MenuItem>{i18n.t('noSavedSearches')}</MenuItem>
+              {props.searchQuery.uuid && (
+                <IconButton
+                  data-tid="editSearchBtnTID"
+                  size="small"
+                  onClick={() => saveSearch(false)}
+                >
+                  <EditIcon />
+                </IconButton>
               )}
-              {props.searches.map(search => (
-                <MenuItem key={search.uuid} value={search.uuid}>
-                  <span style={{ width: '100%' }}>{search.title}</span>
-                </MenuItem>
-              ))}
-            </Select>
-          </ProTooltip>
-        </FormControl>
-        {Pro && (
-          <FormControl className={classes.formControl}>
-            <ButtonGroup fullWidth style={{ justifyContent: 'center' }}>
               <Button
-                data-tid="saveSearchBtnTID"
+                disabled={!Pro}
+                data-tid="addSearchBtnTID"
                 variant="outlined"
                 color="primary"
                 size="small"
-                style={{ flex: 1 }}
                 onClick={() => saveSearch()}
               >
-                {i18n.t('searchSaveBtn')}
+                {'+'}
               </Button>
-              {props.searchQuery.uuid && (
-                <Button
-                  data-tid="editSearchBtnTID"
-                  variant="outlined"
-                  color="primary"
-                  size="small"
-                  style={{ flex: 1 }}
-                  onClick={() => saveSearch(false)}
-                >
-                  {i18n.t('searchEditBtn')}
-                </Button>
-              )}
             </ButtonGroup>
-          </FormControl>
-        )}
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              id="searchTerm"
+              label={i18n.t('searchTitle')}
+              value={props.textQuery}
+              onChange={handleSearchTermChange}
+              onKeyDown={startSearch}
+              style={{ width: '100%' }}
+            />
+          </Grid>
+        </Grid>
+
         <FormControl className={classes.formControl} disabled={indexing}>
           <ToggleButtonGroup
             onChange={switchSearchBoxing}
@@ -669,34 +703,6 @@ function SearchPopover(props: Props) {
               </Tooltip>
             </ToggleButton>
           </ToggleButtonGroup>
-        </FormControl>
-        <FormControl className={classes.formControl} disabled={indexing}>
-          <ButtonGroup style={{ justifyContent: 'center' }}>
-            <Button
-              disabled={indexing}
-              id="searchButtonAdvTID"
-              variant="contained"
-              color="primary"
-              onClick={executeSearch}
-              style={{ flex: 1 }}
-              size="small"
-            >
-              {indexing
-                ? 'Search disabled while indexing'
-                : i18n.t('searchTitle')}
-            </Button>
-            <Tooltip title={i18n.t('clearSearch')}>
-              <Button
-                variant="contained"
-                color="primary"
-                size="small"
-                onClick={clearSearch}
-                id="resetSearchButton"
-              >
-                {i18n.t('resetBtn')}
-              </Button>
-            </Tooltip>
-          </ButtonGroup>
         </FormControl>
         <FormControl className={classes.formControl} disabled={indexing}>
           <TagsSelect
@@ -998,6 +1004,41 @@ function SearchPopover(props: Props) {
           </>
         )}
       </div>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          paddingRight: 8
+        }}
+      >
+        <Button
+          size="small"
+          data-tid="helpSearchButtonTID"
+          title={i18n.t('core:help')}
+          onClick={() =>
+            props.openURLExternally(Links.documentationLinks.search, true)
+          }
+        >
+          {i18n.t('help')}
+        </Button>
+        <ButtonGroup>
+          <Button
+            disabled={indexing}
+            id="searchButtonAdvTID"
+            onClick={executeSearch}
+            size="small"
+          >
+            {indexing
+              ? 'Search disabled while indexing'
+              : i18n.t('searchTitle')}
+          </Button>
+          <Tooltip title={i18n.t('clearSearch')}>
+            <Button size="small" onClick={clearSearch} id="resetSearchButton">
+              {i18n.t('resetBtn')}
+            </Button>
+          </Tooltip>
+        </ButtonGroup>
+      </div>
       {SaveSearchDialog && saveSearchDialogOpened !== undefined && (
         <SaveSearchDialog
           open={true}
@@ -1023,7 +1064,6 @@ function mapStateToProps(state) {
     indexing: isIndexing(state),
     searchQuery: getSearchQuery(state),
     currentDirectory: getDirectoryPath(state),
-    indexedEntriesCount: getIndexedEntriesCount(state),
     maxSearchResults: getMaxSearchResults(state),
     searches: getSearches(state),
     showUnixHiddenEntries: getShowUnixHiddenEntries(state),
@@ -1049,8 +1089,8 @@ const areEqual = (prevProp, nextProp) =>
   nextProp.language === prevProp.language &&
   nextProp.indexing === prevProp.indexing &&
   nextProp.searchQuery === prevProp.searchQuery &&
+  nextProp.textQuery === prevProp.textQuery &&
   nextProp.currentDirectory === prevProp.currentDirectory &&
-  nextProp.indexedEntriesCount === prevProp.indexedEntriesCount &&
   JSON.stringify(nextProp.searches) === JSON.stringify(prevProp.searches) &&
   JSON.stringify(nextProp.classes) === JSON.stringify(prevProp.classes);
 

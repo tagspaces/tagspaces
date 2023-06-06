@@ -20,8 +20,6 @@ import React, { useState, useRef } from 'react';
 import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import i18n from '-/services/i18n';
-import AdvancedSearchIcon from '@mui/icons-material/TuneOutlined';
-import DropDownIcon from '@mui/icons-material/ArrowDropDownOutlined';
 import Popover from '@mui/material/Popover';
 import SearchPopover from '-/components/SearchPopover';
 import SearchAutocomplete from '-/components/SearchAutocomplete';
@@ -35,15 +33,7 @@ function SearchBox(props: Props) {
   const [anchorSearch, setAnchorSearch] = useState<HTMLButtonElement | null>(
     null
   );
-  const textQuery = useRef<string>(props.textQuery || '');
-
-  function getTextQuery() {
-    return textQuery.current;
-  }
-
-  function setTextQuery(value) {
-    textQuery.current = value;
-  }
+  const [textQuery, setTextQuery] = useState<string>(props.textQuery || '');
   // const searchInlineRef = React.useRef<HTMLDivElement | null>(null);
 
   /*  useEffect(() => {
@@ -56,13 +46,14 @@ function SearchBox(props: Props) {
     <>
       <SearchAutocomplete
         open={props.open}
-        getTextQuery={getTextQuery}
+        textQuery={textQuery}
         setTextQuery={setTextQuery}
+        setAnchorSearch={setAnchorSearch}
       />
       {/*<SearchInline open={props.open} />*/}
       {props.open && (
         <>
-          <Tooltip title={i18n.t('core:advancedSearch')}>
+          {/*<Tooltip title={i18n.t('core:advancedSearch')}>
             <IconButton
               id="advancedButton"
               data-tid="advancedSearch"
@@ -73,7 +64,7 @@ function SearchBox(props: Props) {
               <AdvancedSearchIcon />
               <DropDownIcon />
             </IconButton>
-          </Tooltip>
+          </Tooltip>*/}
           <Popover
             open={Boolean(anchorSearch)}
             anchorEl={anchorSearch}
@@ -95,7 +86,7 @@ function SearchBox(props: Props) {
           >
             <SearchPopover
               onClose={() => setAnchorSearch(null)}
-              getTextQuery={getTextQuery}
+              textQuery={textQuery}
               setTextQuery={setTextQuery}
             />
           </Popover>

@@ -81,11 +81,11 @@ export default (state: any = initialState, action: any) => {
       };
     }
     case types.INDEX_DIRECTORY_CLEAR: {
-      // GlobalSearch.index.length = 0;
-      if (GlobalSearch.index) {
+      /*if (GlobalSearch.index) {
         GlobalSearch.index.splice(0, GlobalSearch.index.length);
-      }
-      GlobalSearch.indexLoadedOn = undefined;
+      }*/
+      GlobalSearch.getInstance().setIndex([]);
+      GlobalSearch.getInstance().setIndexLoadedOn(undefined);
       return {
         ...state,
         isIndexing: false
@@ -102,7 +102,6 @@ export default (state: any = initialState, action: any) => {
       };
     }
     case types.INDEX_DIRECTORY_FAILURE: {
-      // GlobalSearch.index.length = 0;
       return {
         ...state,
         lastError: action.error,
@@ -110,50 +109,54 @@ export default (state: any = initialState, action: any) => {
       };
     }
     case types.REFLECT_DELETE_ENTRY: {
-      if (!GlobalSearch.index || GlobalSearch.index.length < 1) {
+      const index = GlobalSearch.getInstance().getIndex();
+      if (!index || index.length < 1) {
         return state;
       }
-      for (let i = 0; i < GlobalSearch.index.length; i += 1) {
-        if (GlobalSearch.index[i].path === action.path) {
-          GlobalSearch.index.splice(i, 1);
+      for (let i = 0; i < index.length; i += 1) {
+        if (index[i].path === action.path) {
+          GlobalSearch.getInstance().setIndex(index.splice(i, 1));
           i -= 1;
         }
       }
       return state;
     }
     case types.REFLECT_CREATE_ENTRY: {
-      if (!GlobalSearch.index || GlobalSearch.index.length < 1) {
+      const index = GlobalSearch.getInstance().getIndex();
+      if (!index || index.length < 1) {
         return state;
       }
       let entryFound = false;
-      for (let i = 0; i < GlobalSearch.index.length; i += 1) {
-        if (GlobalSearch.index[i].path === action.path) {
+      for (let i = 0; i < index.length; i += 1) {
+        if (index[i].path === action.path) {
           entryFound = true;
         }
       }
       if (entryFound) {
         return state;
       }
-      GlobalSearch.index.push(action.newEntry);
+      GlobalSearch.getInstance().setIndex([...index, action.newEntry]);
       return state;
     }
+    // TODO move it from reducer to GlobalSearch singleton
     case types.REFLECT_RENAME_ENTRY: {
-      if (!GlobalSearch.index || GlobalSearch.index.length < 1) {
+      const index = GlobalSearch.getInstance().getIndex();
+      if (!index || index.length < 1) {
         return state;
       }
-      for (let i = 0; i < GlobalSearch.index.length; i += 1) {
-        if (GlobalSearch.index[i].path === action.path) {
-          GlobalSearch.index[i].path = action.newPath;
-          GlobalSearch.index[i].name = extractFileName(
+      for (let i = 0; i < index.length; i += 1) {
+        if (index[i].path === action.path) {
+          index[i].path = action.newPath;
+          index[i].name = extractFileName(
             action.newPath,
             PlatformIO.getDirSeparator()
           );
-          GlobalSearch.index[i].extension = extractFileExtension(
+          index[i].extension = extractFileExtension(
             action.newPath,
             PlatformIO.getDirSeparator()
           );
-          GlobalSearch.index[i].tags = [
-            ...GlobalSearch.index[i].tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
+          index[i].tags = [
+            ...index[i].tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
             ...extractTagsAsObjects(
               action.newPath,
               AppConfig.tagDelimiter,
@@ -165,10 +168,11 @@ export default (state: any = initialState, action: any) => {
       return state;
     }
     case types.REFLECT_UPDATE_SIDECARTAGS: {
-      for (let i = 0; i < GlobalSearch.index.length; i += 1) {
-        if (GlobalSearch.index[i].path === action.path) {
-          GlobalSearch.index[i].tags = [
-            ...GlobalSearch.index[i].tags.filter(tag => tag.type === 'plain'),
+      const index = GlobalSearch.getInstance().getIndex();
+      for (let i = 0; i < index.length; i += 1) {
+        if (index[i].path === action.path) {
+          index[i].tags = [
+            ...index[i].tags.filter(tag => tag.type === 'plain'),
             ...action.tags
           ];
         }
@@ -176,10 +180,11 @@ export default (state: any = initialState, action: any) => {
       return state;
     }
     case types.REFLECT_UPDATE_SIDECARMETA: {
-      for (let i = 0; i < GlobalSearch.index.length; i += 1) {
-        if (GlobalSearch.index[i].path === action.path) {
-          GlobalSearch.index[i] = {
-            ...GlobalSearch.index[i],
+      const index = GlobalSearch.getInstance().getIndex();
+      for (let i = 0; i < index.length; i += 1) {
+        if (index[i].path === action.path) {
+          index[i] = {
+            ...index[i],
             ...action.entryMeta
           };
         }
@@ -251,7 +256,7 @@ export const actions = {
       .then(directoryIndex => {
         if (isCurrentLocation) {
           // Load index only if current location
-          GlobalSearch.index = directoryIndex;
+          GlobalSearch.getInstance().setIndex(directoryIndex);
         }
         dispatch(actions.indexDirectorySuccess());
         /* if (Pro && Pro.Indexer) {
@@ -398,10 +403,11 @@ export const actions = {
       )
     );
     setTimeout(async () => {
+      const index = GlobalSearch.getInstance().getIndex();
       // Workaround used to show the start search notification
       const currentTime = new Date().getTime();
-      const indexAge = GlobalSearch.indexLoadedOn
-        ? currentTime - GlobalSearch.indexLoadedOn
+      const indexAge = GlobalSearch.getInstance().getIndexLoadedOn()
+        ? currentTime - GlobalSearch.getInstance().getIndexLoadedOn()
         : 0;
       const maxIndexAge = currentLocation.maxIndexAge
         ? currentLocation.maxIndexAge
@@ -409,13 +415,13 @@ export const actions = {
       if (
         searchQuery.forceIndexing ||
         (!currentLocation.disableIndexing &&
-          (!GlobalSearch.index ||
-            GlobalSearch.index.length < 1 ||
+          (!index ||
+            index.length < 1 ||
             indexAge > maxIndexAge))
       ) {
         const currentPath = PlatformIO.getLocationPath(currentLocation);
         console.log('Start creating index for : ' + currentPath);
-        GlobalSearch.index = await createDirectoryIndex(
+        const newIndex = await createDirectoryIndex(
           {
             path: currentPath,
             locationID: currentLocation.uuid,
@@ -425,16 +431,17 @@ export const actions = {
           currentLocation.ignorePatternPaths,
           state.settings.enableWS
         );
+        GlobalSearch.getInstance().setIndex(newIndex);
 
-        if (GlobalSearch.index && GlobalSearch.index.length > 0) {
-          GlobalSearch.indexLoadedOn = new Date().getTime();
+        if (newIndex && newIndex.length > 0) {
+          GlobalSearch.getInstance().setIndexLoadedOn(new Date().getTime());
         }
       } else if (
         isCloudLocation ||
-        !GlobalSearch.index ||
-        GlobalSearch.index.length === 0
+        !index ||
+        index.length === 0
       ) {
-        GlobalSearch.index = await loadIndex(
+        const newIndex = await loadIndex(
           {
             path: PlatformIO.getLocationPath(currentLocation),
             locationID: currentLocation.uuid,
@@ -443,8 +450,9 @@ export const actions = {
           PlatformIO.getDirSeparator(),
           PlatformIO.loadTextFilePromise
         );
+        GlobalSearch.getInstance().setIndex(newIndex);
       }
-      Search.searchLocationIndex(GlobalSearch.index, searchQuery)
+      Search.searchLocationIndex(GlobalSearch.getInstance().getIndex(), searchQuery)
         .then(searchResults => {
           if (isCloudLocation) {
             searchResults.forEach((entry: TS.FileSystemEntry) => {
@@ -706,7 +714,5 @@ export const actions = {
 };
 
 // Selectors
-export const getIndexedEntriesCount = (state: any) =>
-  GlobalSearch.index ? GlobalSearch.index.length : 0;
 export const isIndexing = (state: any) => state.locationIndex.isIndexing;
 export const getSearchQuery = (state: any) => state.locationIndex.searchQuery;
