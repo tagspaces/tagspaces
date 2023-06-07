@@ -774,11 +774,15 @@ export default (state: any = initialState, action: any) => {
           }
           const fileNameTags = entry.isFile ? extractedTags : []; // dirs dont have tags in filename
           // const { url, ...rest } = entry;
+          const sidecarTags =
+            entry.tags && entry.tags.length > 0
+              ? entry.tags.filter(tag => tag.type !== 'plain')
+              : [];
           return {
             ...entry,
             path: action.newPath, // TODO handle change extension case
             tags: [
-              ...entry.tags.filter(tag => tag.type !== 'plain'), //'sidecar'), // add only sidecar tags
+              ...sidecarTags, // add only sidecar tags
               ...fileNameTags
             ]
             // shouldReload: true
@@ -2660,7 +2664,7 @@ export const actions = {
           });
       })
       .catch(error => {
-        console.warn('Error while renaming file: ' + error);
+        console.error(`Error while renaming file ${filePath}`, error);
         dispatch(
           actions.showNotification(
             `Error while renaming file ${filePath}`,
@@ -2669,7 +2673,6 @@ export const actions = {
           )
         );
         return false;
-        // throw error;
       }),
   openFileNatively: (selectedFile?: string) => (
     dispatch: (action) => void,
