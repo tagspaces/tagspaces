@@ -1391,7 +1391,7 @@ export const actions = {
       })
       .catch(error => {
         // console.timeEnd('listDirectoryPromise');
-        dispatch(actions.loadDirectoryFailure(directoryPath, error)); // Currently this is never called, due the promise always resolve
+        dispatch(actions.loadDirectoryFailure(directoryPath, error));
         dispatch(
           actions.updateCurrentDirectoryPerspective(
             fsEntryMeta ? fsEntryMeta.perspective : undefined
@@ -1500,16 +1500,18 @@ export const actions = {
   loadDirectoryFailure: (directoryPath: string, error?: any) => (
     dispatch: (action) => void
   ) => {
-    console.warn('Error loading directory: ' + error);
+    console.error('Error loading directory: ', error);
     dispatch(actions.hideNotifications());
+
     dispatch(
       actions.showNotification(
-        i18n.t('core:errorLoadingFolder'),
+        i18n.t('core:errorLoadingFolder') + ': ' + error.message,
         'warning',
-        true
+        false
       )
     );
-    dispatch(actions.loadDirectorySuccess(directoryPath, []));
+    dispatch(actions.closeAllLocations());
+    // dispatch(actions.loadDirectorySuccess(directoryPath, []));
   },
   updateThumbnailUrl: (filePath: string, thumbUrl: string) => ({
     type: types.UPDATE_THUMB_URL,
