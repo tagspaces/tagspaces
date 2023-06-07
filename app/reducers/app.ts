@@ -2367,7 +2367,9 @@ export const actions = {
     const nextFile = getNextFile(
       path,
       lastSelectedEntry ? lastSelectedEntry.path : undefined,
-      getState().app.currentDirectoryEntries
+      getState().app.searchMode
+        ? GlobalSearch.results
+        : getState().app.currentDirectoryEntries
     );
     if (nextFile !== undefined) {
       dispatch(actions.openFsEntry(nextFile));
@@ -2384,7 +2386,9 @@ export const actions = {
     const prevFile = getPrevFile(
       path,
       lastSelectedEntry ? lastSelectedEntry.path : undefined,
-      getState().app.currentDirectoryEntries
+      getState().app.searchMode
+        ? GlobalSearch.results
+        : getState().app.currentDirectoryEntries
     );
     if (prevFile !== undefined) {
       dispatch(actions.openFsEntry(prevFile));
