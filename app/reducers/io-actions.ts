@@ -519,8 +519,21 @@ const actions = {
               dispatch(AppActions.setProgress(filePath, -1, undefined));
             } else {
               // dispatch(AppActions.setProgress(filePath, progress));
+              /*const encryptionKey = 'test_encryption_key';
+              const hash = crypto.createHash('sha256');
+              hash.update(encryptionKey);
+              const key256 = hash.digest().slice(0, 32);
+
+              const keyBase64 = key256.toString('base64');
+
+              const md5hash = crypto.createHash('md5').update(Buffer.from(keyBase64, 'base64')).digest('base64');*/
               return PlatformIO.saveBinaryFilePromise(
-                { path: filePath },
+                {
+                  path: filePath,
+                  SSECustomerAlgorithm: 'AES256',
+                  SSECustomerKey: 'encryptionKey', //keyBase64,
+                  // SSECustomerKeyMd5: md5hash
+                },
                 fileContent,
                 true,
                 onUploadProgress
