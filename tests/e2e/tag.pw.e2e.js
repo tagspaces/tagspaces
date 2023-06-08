@@ -1,14 +1,16 @@
 /* Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved. */
 import { expect, test } from '@playwright/test';
 import {
+  checkSettings,
   clickOn,
   expectElementExist,
   setInputKeys,
   setInputValue,
   takeScreenshot
-} from './general.helpers';
-import { startTestingApp, stopApp, testDataRefresh } from './hook';
+} from "./general.helpers";
+import { createFile, startTestingApp, stopApp, testDataRefresh } from "./hook";
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
+import { createPwLocation, createPwMinioLocation, defaultLocationName, defaultLocationPath } from "./location.helpers";
 
 const testTagName = 'testTag';
 const newTagName = 'newTagName';
@@ -272,4 +274,22 @@ test.describe('TST04 - Testing the tag library:', () => {
   test.skip('TST0416 - Export tag groups / all / some [manual]', async () => {});
 
   test.skip('TST0417 - Collect tags from current location [electron, Pro]', async () => {});
+
+  test('TST0419 - Create location based tag group [electron, _pro]', async () => {
+    const tslContent = '{"appName":"TagSpaces","appVersion":"5.3.6","description":"","lastUpdated":"2023-06-08T16:51:23.926Z","tagGroups":[{"uuid":"collected_tag_group_id","title":"Collected Tags","color":"#61DD61","textcolor":"white","children":[{"title":"Stanimir","color":"#61DD61","textcolor":"white","type":"sidecar"}],"created_date":1686119562860,"modified_date":1686243083871,"expanded":true,"locationId":"dc1ffaaeeb5747e39dd171c7e551afd6"}]}';
+    await createFile('tsl.json', tslContent,'.ts');
+    await checkSettings('[data-tid=saveTagInLocationTID]', true, true);
+    await clickOn('[data-tid=locationManager]');
+    if (global.isMinio) {
+      await createPwMinioLocation('', defaultLocationName, true);
+    } else {
+      await createPwLocation(defaultLocationPath, defaultLocationName, true);
+    }
+    await clickOn('[data-tid=location_' + defaultLocationName + ']');
+    await clickOn('[data-tid=tagLibrary]');
+    await expectElementExist(
+      '[data-tid=tagContainer_Stanimir]',
+      true
+    );
+  });
 });

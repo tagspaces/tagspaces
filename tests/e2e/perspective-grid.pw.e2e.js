@@ -99,7 +99,11 @@ test.describe('TST50 - Perspective Grid', () => {
     await AddRemoveTagsToSelectedFiles('list', tags);
 
     for (let i = 0; i < tags.length; i++) {
-      await expectElementExist('[data-tid=tagContainer_' + tags[i] + ']', true);
+      await expectElementExist(
+        '[data-tid=tagContainer_' + tags[i] + ']',
+        true,
+        5000
+      );
       // const selectBox = await global.client.$('[data-tid=perspectiveGridFileTable]');
       /* await expectTagsExistBySelector(
         '[data-entry-id="' + selectedIds[i] + '"]',
@@ -116,7 +120,8 @@ test.describe('TST50 - Perspective Grid', () => {
     for (let i = 0; i < tags.length; i++) {
       await expectElementExist(
         '[data-tid=tagContainer_' + tags[i] + ']',
-        false
+        false,
+        5000
       );
       /*await expectTagsExistBySelector(
         '[data-entry-id="' + selectedIds[i] + '"]',

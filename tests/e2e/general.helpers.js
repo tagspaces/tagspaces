@@ -793,8 +793,15 @@ export async function setSettings(selector, click = false) {
   await clickOn('[data-tid=closeSettingsDialog]');
 }
 
-export async function checkSettings(selector, isChecked = true) {
+export async function checkSettings(
+  selector,
+  isChecked = true,
+  isAdvanced = false
+) {
   await clickOn('[data-tid=settings]');
+  if (isAdvanced) {
+    await clickOn('[data-tid=advancedSettingsDialogTID]');
+  }
   if (isChecked) {
     await global.client.check(selector + ' input');
     expect(await global.client.isChecked(selector + ' input')).toBeTruthy();
