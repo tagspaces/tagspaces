@@ -214,6 +214,7 @@ function CreateTagGroupDialog(props: Props) {
               {i18n.t('core:tagGroupLocation')}
             </FormHelperText>
             <Select
+              data-tid="tagGroupLocationTID"
               defaultValue={defaultTagGroupLocation}
               onChange={(event: ChangeEvent<HTMLInputElement>) => {
                 locationId.current = event.target.value;
@@ -224,11 +225,16 @@ function CreateTagGroupDialog(props: Props) {
               <MenuItem
                 key={defaultTagGroupLocation}
                 value={defaultTagGroupLocation}
+                data-tid={'tagLibraryTID'}
               >
                 {i18n.t('tagLibrary')}
               </MenuItem>
               {props.locations.map(location => (
-                <MenuItem key={location.uuid} value={location.uuid}>
+                <MenuItem
+                  key={location.uuid}
+                  value={location.uuid}
+                  data-tid={'tglocation_' + location.name}
+                >
                   {i18n.t('core:location') + ': ' + location.name}
                 </MenuItem>
               ))}

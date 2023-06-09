@@ -72,6 +72,7 @@ function TagGroupContainer(props: Props) {
         border,
         backgroundColor
       }}
+      data-tid={'tagGroupContainer_' + props.taggroup.title}
     >
       {props.children}
     </div>

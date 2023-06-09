@@ -311,10 +311,7 @@ function TagLibrary(props: Props) {
           isReadOnly={isReadOnly}
         />
         <Collapse in={tagGroup.expanded} unmountOnExit>
-          <TagGroupContainer
-            taggroup={tagGroup}
-            data-tid={'tagGroupContainer_' + tagGroup.title}
-          >
+          <TagGroupContainer taggroup={tagGroup}>
             {tagGroup.children &&
               tagGroup.children.map((tag: TS.Tag, idx) => {
                 if (props.isReadOnly) {

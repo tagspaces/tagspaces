@@ -3,47 +3,34 @@ import { expect, test } from '@playwright/test';
 import {
   checkSettings,
   clickOn,
+  dnd,
   expectElementExist,
-  setInputKeys,
+  expectMetaFilesExist,
+  getGridFileSelector,
   setInputValue,
   takeScreenshot
-} from "./general.helpers";
-import { createFile, startTestingApp, stopApp, testDataRefresh } from "./hook";
+} from './general.helpers';
+import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
-import { createPwLocation, createPwMinioLocation, defaultLocationName, defaultLocationPath } from "./location.helpers";
-
-const testTagName = 'testTag';
-const newTagName = 'newTagName';
-const arrTags = ['tag1', 'tag2', 'tag3'];
-const testGroup = 'testGroupName';
-const editedGroupName = 'testGroup';
-
-export async function createTagGroup(tagGroupName) {
-  const tagGroup = await global.client.$(
-    '[data-tid=tagLibraryMoreButton_' + testGroup + ']'
-  );
-  if (!tagGroup) {
-    await clickOn('[data-tid=tagLibraryMenu]');
-    await clickOn('[data-tid=createNewTagGroup]');
-
-    await setInputKeys('createTagGroupInput', tagGroupName);
-    await clickOn('[data-tid=createTagGroupConfirmButton]');
-  }
-}
-
-export async function addTags(arrTags) {
-  await clickOn('[data-tid=createTags]');
-  await setInputKeys('addTagsInput', arrTags.join());
-  await clickOn('[data-tid=createTagsConfirmButton]');
-}
-
-export async function tagMenu(tagName, menuOperation) {
-  await clickOn('[data-tid=tagMoreButton_' + tagName + ']');
-  await clickOn('[data-tid=' + menuOperation + ']');
-}
+import {
+  createPwLocation,
+  createPwMinioLocation,
+  defaultLocationName,
+  defaultLocationPath
+} from './location.helpers';
+import {
+  addTags,
+  arrTags,
+  createTagGroup,
+  editedGroupName,
+  newTagName,
+  tagMenu,
+  testGroup,
+  testTagName
+} from './tag.helpers';
 
 test.beforeAll(async () => {
-  await startTestingApp();
+  await startTestingApp('extconfig.js');
   //await clearDataStorage();
 });
 
@@ -275,10 +262,27 @@ test.describe('TST04 - Testing the tag library:', () => {
 
   test.skip('TST0417 - Collect tags from current location [electron, Pro]', async () => {});
 
-  test('TST0419 - Create location based tag group [electron, _pro]', async () => {
-    const tslContent = '{"appName":"TagSpaces","appVersion":"5.3.6","description":"","lastUpdated":"2023-06-08T16:51:23.926Z","tagGroups":[{"uuid":"collected_tag_group_id","title":"Collected Tags","color":"#61DD61","textcolor":"white","children":[{"title":"Stanimir","color":"#61DD61","textcolor":"white","type":"sidecar"}],"created_date":1686119562860,"modified_date":1686243083871,"expanded":true,"locationId":"dc1ffaaeeb5747e39dd171c7e551afd6"}]}';
-    await createFile('tsl.json', tslContent,'.ts');
-    await checkSettings('[data-tid=saveTagInLocationTID]', true, true);
+  test('TST0419 - Create location based tag group [web,minio,electron, _pro]', async () => {
+    await checkSettings(
+      '[data-tid=saveTagInLocationTID]',
+      true,
+      '[data-tid=advancedSettingsDialogTID]'
+    );
+    await createTagGroup(testGroup, defaultLocationName);
+    await clickOn('[data-tid=locationManager]');
+    await clickOn('[data-tid=location_' + defaultLocationName + ']');
+    await expectMetaFilesExist(['tsl.json'], true);
+  });
+
+  test('TST0420 - Load tag groups from location [web,minio,electron, _pro]', async () => {
+    const tslContent =
+      '{"appName":"TagSpaces","appVersion":"5.3.6","description":"","lastUpdated":"2023-06-08T16:51:23.926Z","tagGroups":[{"uuid":"collected_tag_group_id","title":"Collected Tags","color":"#61DD61","textcolor":"white","children":[{"title":"Stanimir","color":"#61DD61","textcolor":"white","type":"sidecar"}],"created_date":1686119562860,"modified_date":1686243083871,"expanded":true,"locationId":"dc1ffaaeeb5747e39dd171c7e551afd6"}]}';
+    await createFile('tsl.json', tslContent, '.ts');
+    await checkSettings(
+      '[data-tid=saveTagInLocationTID]',
+      true,
+      '[data-tid=advancedSettingsDialogTID]'
+    );
     await clickOn('[data-tid=locationManager]');
     if (global.isMinio) {
       await createPwMinioLocation('', defaultLocationName, true);
@@ -287,9 +291,29 @@ test.describe('TST04 - Testing the tag library:', () => {
     }
     await clickOn('[data-tid=location_' + defaultLocationName + ']');
     await clickOn('[data-tid=tagLibrary]');
+    await expectElementExist('[data-tid=tagContainer_Stanimir]', true);
+  });
+
+  test('TST0421 - Move tag to another tag group with DnD [web,minio,electron]', async () => {
+    const tagName = '1star';
+    const sourceTagGroup = 'Ratings';
+    const destinationTagGroup = 'Priorities';
+
     await expectElementExist(
-      '[data-tid=tagContainer_Stanimir]',
-      true
+      '[data-tid=tagContainer_' + tagName + ']',
+      true,
+      3000,
+      '[data-tid=tagGroupContainer_' + sourceTagGroup + ']'
+    );
+    await dnd(
+      '[data-tid=tagContainer_' + tagName + ']',
+      '[data-tid=tagGroupContainer_' + destinationTagGroup + ']'
+    );
+    await expectElementExist(
+      '[data-tid=tagContainer_' + tagName + ']',
+      true,
+      3000,
+      '[data-tid=tagGroupContainer_' + destinationTagGroup + ']'
     );
   });
 });
