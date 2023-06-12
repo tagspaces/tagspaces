@@ -59,3 +59,11 @@ export { default as OpenLinkIcon } from '@mui/icons-material/Link';
 export { default as KeyShortcutsIcon } from '@mui/icons-material/Keyboard';
 
 export { default as CancelIcon } from '@mui/icons-material/Cancel';
+
+export { default as OpenNewWindowIcon } from '@mui/icons-material/OpenInBrowser';
+
+export { default as ReloadIcon } from '@mui/icons-material/Refresh';
+
+export { default as DeleteIcon } from '@mui/icons-material/DeleteForever';
+
+export { default as LinkIcon } from '@mui/icons-material/Link';

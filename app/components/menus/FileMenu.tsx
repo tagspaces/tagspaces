@@ -32,9 +32,7 @@ import MoveToTopIcon from '@mui/icons-material/VerticalAlignTop';
 import MoveToBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import DuplicateFile from '@mui/icons-material/PostAdd';
 import ImageIcon from '@mui/icons-material/Image';
-import ShareIcon from '@mui/icons-material/Link';
 import RenameFile from '@mui/icons-material/FormatTextdirectionLToR';
-import DeleteForever from '@mui/icons-material/DeleteForever';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
 import {
@@ -66,7 +64,11 @@ import {
   getSettings,
   isDevMode
 } from '-/reducers/settings';
-// import AddIcon from '@mui/icons-material/Add';
+import {
+  OpenNewWindowIcon,
+  DeleteIcon,
+  LinkIcon
+} from '-/components/CommonIcons';
 
 interface Props {
   anchorEl: Element;
@@ -114,17 +116,21 @@ function FileMenu(props: Props) {
     locations
   } = props;
 
+  function generateFileLink() {
+    const entryFromIndex = selectedEntries[0].locationID;
+    const locationID = entryFromIndex
+      ? selectedEntries[0].locationID
+      : currentLocation.uuid;
+    const entryPath = selectedEntries[0].path;
+    const tmpLoc = locations.find(location => location.uuid === locationID);
+    const relativePath = getRelativeEntryPath(tmpLoc, entryPath);
+    return generateSharingLink(locationID, relativePath);
+  }
+
   function copySharingLink() {
     onClose();
-    if (selectedEntries.length === 1) {
-      const entryFromIndex = selectedEntries[0].locationID;
-      const locationID = entryFromIndex
-        ? selectedEntries[0].locationID
-        : currentLocation.uuid;
-      const entryPath = selectedEntries[0].path;
-      const tmpLoc = locations.find(location => location.uuid === locationID);
-      const relativePath = getRelativeEntryPath(tmpLoc, entryPath);
-      const sharingLink = generateSharingLink(locationID, relativePath);
+    if (selectedEntries && selectedEntries.length === 1) {
+      const sharingLink = generateFileLink();
       navigator.clipboard
         .writeText(sharingLink)
         .then(() => {
@@ -287,6 +293,17 @@ function FileMenu(props: Props) {
         );
     }
   }
+
+  function openInNewWindow() {
+    onClose();
+    if (selectedEntries && selectedEntries.length === 1) {
+      const sharingLink = generateFileLink();
+      PlatformIO.createNewInstance(
+        window.location.href.split('?')[0] + '?' + sharingLink.split('?')[1]
+      );
+    }
+  }
+
   const menuItems = [];
 
   const pathLowerCase = selectedFilePath.toLowerCase();
@@ -305,6 +322,18 @@ function FileMenu(props: Props) {
           <OpenFile />
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:openFile')} />
+      </MenuItem>
+    );
+    menuItems.push(
+      <MenuItem
+        key="fileMenuOpenFileNewWindow"
+        data-tid="fileMenuOpenFileNewWindow"
+        onClick={openInNewWindow}
+      >
+        <ListItemIcon>
+          <OpenNewWindowIcon />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:openInWindow')} />
       </MenuItem>
     );
     menuItems.push(
@@ -354,7 +383,6 @@ function FileMenu(props: Props) {
     );
     menuItems.push(<Divider key="fmDivider" />);
   }
-
   if (!isReadOnlyMode) {
     menuItems.push(
       <MenuItem
@@ -402,6 +430,7 @@ function FileMenu(props: Props) {
         </MenuItem>
       );
     }
+    menuItems.push(<Divider key="fmDivider3" />);
     menuItems.push(
       <MenuItem
         key="fileMenuRenameFile"
@@ -438,6 +467,19 @@ function FileMenu(props: Props) {
         <ListItemText primary={i18n.t('core:moveCopyFile')} />
       </MenuItem>
     );
+    menuItems.push(
+      <MenuItem
+        key="fileMenuDeleteFile"
+        data-tid="fileMenuDeleteFile"
+        onClick={showDeleteFileDialog}
+      >
+        <ListItemIcon>
+          <DeleteIcon />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:deleteEntry')} />
+      </MenuItem>
+    );
+    menuItems.push(<Divider key="fmDivider2" />);
     if (Pro && selectedEntries.length < 2) {
       menuItems.push(
         <MenuItem
@@ -466,18 +508,6 @@ function FileMenu(props: Props) {
         );
       }
     }
-    menuItems.push(
-      <MenuItem
-        key="fileMenuDeleteFile"
-        data-tid="fileMenuDeleteFile"
-        onClick={showDeleteFileDialog}
-      >
-        <ListItemIcon>
-          <DeleteForever />
-        </ListItemIcon>
-        <ListItemText primary={i18n.t('core:deleteEntry')} />
-      </MenuItem>
-    );
   }
 
   if (selectedEntries.length === 1) {
@@ -488,7 +518,7 @@ function FileMenu(props: Props) {
         onClick={copySharingLink}
       >
         <ListItemIcon>
-          <ShareIcon />
+          <LinkIcon />
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:copySharingLink')} />
       </MenuItem>

@@ -35,7 +35,6 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import InputAdornment from '@mui/material/InputAdornment';
-import ShareIcon from '@mui/icons-material/Link';
 import QRCodeIcon from '@mui/icons-material/QrCode';
 import Tooltip from '-/components/Tooltip';
 import LocationIcon from '@mui/icons-material/WorkOutline';
@@ -105,6 +104,7 @@ import { actions as LocationActions } from '-/reducers/locations';
 import { actions as AppActions } from '-/reducers/app';
 import useFirstRender from '-/utils/useFirstRender';
 import LinkGeneratorDialog from '-/components/dialogs/LinkGeneratorDialog';
+import { LinkIcon } from '-/components/CommonIcons';
 
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
@@ -1089,9 +1089,7 @@ function EntryProperties(props: Props) {
                 readOnly: true,
                 startAdornment: (
                   <InputAdornment position="start">
-                    <ShareIcon
-                      style={{ color: theme.palette.text.secondary }}
-                    />
+                    <LinkIcon style={{ color: theme.palette.text.secondary }} />
                   </InputAdornment>
                 ),
                 endAdornment: (

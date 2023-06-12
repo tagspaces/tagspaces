@@ -4,9 +4,7 @@ import OpenFolderIcon from '@mui/icons-material/SubdirectoryArrowLeft';
 import MoveCopy from '@mui/icons-material/FileCopy';
 import ListItemText from '@mui/material/ListItemText';
 import i18n from '-/services/i18n';
-import AutoRenew from '@mui/icons-material/Autorenew';
 import RenameFolderIcon from '@mui/icons-material/FormatTextdirectionLToR';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
 import OpenFolderNativelyIcon from '@mui/icons-material/Launch';
@@ -17,11 +15,16 @@ import NewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import AddExistingFileIcon from '@mui/icons-material/ExitToApp';
 import { Pro } from '-/pro';
 import ImageIcon from '@mui/icons-material/Image';
-import ShareIcon from '@mui/icons-material/Link';
 import ImportTagsIcon from '@mui/icons-material/FindInPage';
 import { BetaLabel, ProLabel } from '-/components/HelperComponents';
 import { AvailablePerspectives } from '-/perspectives';
 import PropertiesIcon from '@mui/icons-material/Info';
+import {
+  ReloadIcon,
+  OpenNewWindowIcon,
+  DeleteIcon,
+  LinkIcon
+} from '-/components/CommonIcons';
 import React from 'react';
 import { TS } from '-/tagspaces.namespace';
 
@@ -46,7 +49,8 @@ export function getDirectoryMenuItems(
   switchPerspective?: (perspectiveId: string) => void,
   showProperties?: () => void,
   cameraTakePicture?: () => void,
-  showAddRemoveTagsDialog?: () => void
+  showAddRemoveTagsDialog?: () => void,
+  openInNewWindow?: () => void
 ) {
   const menuItems = [];
   if (selectedEntriesLength < 2) {
@@ -68,6 +72,23 @@ export function getDirectoryMenuItems(
           </MenuItem>
         );
       }
+      if (openInNewWindow) {
+        menuItems.push(
+          <MenuItem
+            key="openInNewWindow"
+            data-tid="openInNewWindow"
+            onClick={() => {
+              onClose();
+              openInNewWindow();
+            }}
+          >
+            <ListItemIcon>
+              <OpenNewWindowIcon />
+            </ListItemIcon>
+            <ListItemText primary={i18n.t('core:openInWindow')} />
+          </MenuItem>
+        );
+      }
     } else if (reloadDirectory) {
       menuItems.push(
         <MenuItem
@@ -79,7 +100,7 @@ export function getDirectoryMenuItems(
           }}
         >
           <ListItemIcon>
-            <AutoRenew />
+            <ReloadIcon />
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:reloadDirectory')} />
         </MenuItem>
@@ -138,7 +159,7 @@ export function getDirectoryMenuItems(
         }}
       >
         <ListItemIcon>
-          <DeleteForeverIcon />
+          <DeleteIcon />
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:deleteDirectory')} />
       </MenuItem>
@@ -259,7 +280,7 @@ export function getDirectoryMenuItems(
         }}
       >
         <ListItemIcon>
-          <ShareIcon />
+          <LinkIcon />
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:copySharingLink')} />
       </MenuItem>

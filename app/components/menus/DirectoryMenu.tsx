@@ -30,7 +30,7 @@ import {
   normalizePath,
   generateSharingLink
 } from '@tagspaces/tagspaces-common/paths';
-import { Pro } from '../../pro';
+import { Pro } from '-/pro';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
 import {
@@ -119,20 +119,20 @@ function DirectoryMenu(props: Props) {
     showNotification
   } = props;
 
+  function generateFolderLink() {
+    const entryFromIndex = selectedEntries[0]['locationID'];
+    const locationID = entryFromIndex
+      ? selectedEntries[0]['locationID']
+      : currentLocation.uuid;
+    const entryPath = selectedEntries[0].path;
+    const tmpLoc = locations.find(location => location.uuid === locationID);
+    const relativePath = getRelativeEntryPath(tmpLoc, entryPath);
+    return generateSharingLink(locationID, undefined, relativePath);
+  }
+
   function copySharingLink() {
-    if (selectedEntries.length === 1) {
-      const entryFromIndex = selectedEntries[0]['locationID'];
-      const locationID = entryFromIndex
-        ? selectedEntries[0]['locationID']
-        : currentLocation.uuid;
-      const entryPath = selectedEntries[0].path;
-      const tmpLoc = locations.find(location => location.uuid === locationID);
-      const relativePath = getRelativeEntryPath(tmpLoc, entryPath);
-      const sharingLink = generateSharingLink(
-        locationID,
-        undefined,
-        relativePath
-      );
+    if (selectedEntries && selectedEntries.length === 1) {
+      const sharingLink = generateFolderLink();
       navigator.clipboard
         .writeText(sharingLink)
         .then(() => {
@@ -247,6 +247,16 @@ function DirectoryMenu(props: Props) {
 
   function showInFileManager() {
     props.openDirectory(props.directoryPath);
+  }
+
+  function openInNewWindow() {
+    // onClose();
+    if (selectedEntries && selectedEntries.length === 1) {
+      const sharingLink = generateFolderLink();
+      PlatformIO.createNewInstance(
+        window.location.href.split('?')[0] + '?' + sharingLink.split('?')[1]
+      );
+    }
   }
 
   function addExistingFile() {
@@ -432,7 +442,8 @@ Do you want to continue?`)
     switchPerspective,
     showProperties,
     cameraTakePicture,
-    props.openAddRemoveTagsDialog
+    props.openAddRemoveTagsDialog,
+    openInNewWindow
   );
 
   return (

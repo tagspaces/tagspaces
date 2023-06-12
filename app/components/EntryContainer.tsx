@@ -40,22 +40,22 @@ import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
 import FullScreenIcon from '@mui/icons-material/ZoomOutMap';
 import OpenNativelyIcon from '@mui/icons-material/Launch';
-import OpenNewWindowIcon from '@mui/icons-material/OpenInBrowser';
 import PrevDocumentIcon from '@mui/icons-material/KeyboardArrowUp';
 import NextDocumentIcon from '@mui/icons-material/KeyboardArrowDown';
 import FileDownloadIcon from '@mui/icons-material/AssignmentReturned';
 import DetailsIcon from '@mui/icons-material/Info';
 import ExpandIcon from '@mui/icons-material/SettingsEthernet';
-import DeleteIcon from '@mui/icons-material/Delete';
-import ShareIcon from '@mui/icons-material/Share';
 import withStyles from '@mui/styles/withStyles';
-import RefreshIcon from '@mui/icons-material/Refresh';
 import Box from '@mui/material/Box';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import {
   ParentFolderIcon,
   NavigateToFolderIcon,
-  CancelIcon
+  OpenNewWindowIcon,
+  CancelIcon,
+  ReloadIcon,
+  DeleteIcon,
+  LinkIcon
 } from '-/components/CommonIcons';
 import HistoryIcon from '@mui/icons-material/History';
 import { Split } from 'ts-react-splitter';
@@ -1098,7 +1098,7 @@ function EntryContainer(props: Props) {
               onClick={() => shareFile(`file:///${openedFile.path}`)}
               size="large"
             >
-              <ShareIcon />
+              <LinkIcon />
             </IconButton>
           </Tooltip>
         )}
@@ -1128,7 +1128,7 @@ function EntryContainer(props: Props) {
             onClick={reloadDocument}
             size="large"
           >
-            <RefreshIcon />
+            <ReloadIcon />
           </IconButton>
         </Tooltip>
         {!isReadOnlyMode && (
@@ -1223,7 +1223,7 @@ function EntryContainer(props: Props) {
             onClick={reloadDocument}
             size="large"
           >
-            <RefreshIcon />
+            <ReloadIcon />
           </IconButton>
         </Tooltip>
         {isDesktopMode && (
