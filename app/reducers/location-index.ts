@@ -415,9 +415,7 @@ export const actions = {
       if (
         searchQuery.forceIndexing ||
         (!currentLocation.disableIndexing &&
-          (!index ||
-            index.length < 1 ||
-            indexAge > maxIndexAge))
+          (!index || index.length < 1 || indexAge > maxIndexAge))
       ) {
         const currentPath = PlatformIO.getLocationPath(currentLocation);
         console.log('Start creating index for : ' + currentPath);
@@ -436,11 +434,7 @@ export const actions = {
         if (newIndex && newIndex.length > 0) {
           GlobalSearch.getInstance().setIndexLoadedOn(new Date().getTime());
         }
-      } else if (
-        isCloudLocation ||
-        !index ||
-        index.length === 0
-      ) {
+      } else if (isCloudLocation || !index || index.length === 0) {
         const newIndex = await loadIndex(
           {
             path: PlatformIO.getLocationPath(currentLocation),
@@ -452,7 +446,10 @@ export const actions = {
         );
         GlobalSearch.getInstance().setIndex(newIndex);
       }
-      Search.searchLocationIndex(GlobalSearch.getInstance().getIndex(), searchQuery)
+      Search.searchLocationIndex(
+        GlobalSearch.getInstance().getIndex(),
+        searchQuery
+      )
         .then(searchResults => {
           if (isCloudLocation) {
             searchResults.forEach((entry: TS.FileSystemEntry) => {

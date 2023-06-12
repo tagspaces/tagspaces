@@ -22,7 +22,7 @@
   results: []
 };*/
 
-const GlobalSearch = function() {
+const GlobalSearch = (function() {
   let instance;
 
   function init() {
@@ -55,5 +55,5 @@ const GlobalSearch = function() {
       return instance;
     }
   };
-}();
+})();
 export default GlobalSearch;

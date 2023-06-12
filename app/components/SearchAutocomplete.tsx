@@ -419,10 +419,7 @@ function SearchAutocomplete(props: Props) {
         forceUpdate();
       }
     } else if (event.key === 'Backspace' || event.keyCode === 8) {
-      if (
-        props.textQuery.length === 0 &&
-        actionValues.current.length > 0
-      ) {
+      if (props.textQuery.length === 0 && actionValues.current.length > 0) {
         actionValues.current = actionValues.current.slice(0, -1);
         resetActions(actionValues.current);
         isOpen.current = true;

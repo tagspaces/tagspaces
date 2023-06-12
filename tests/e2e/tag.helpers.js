@@ -1,4 +1,4 @@
-import { clickOn, setInputKeys } from "./general.helpers";
+import { clickOn, setInputKeys } from './general.helpers';
 
 export const testTagName = 'testTag';
 export const newTagName = 'newTagName';

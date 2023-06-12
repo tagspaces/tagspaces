@@ -183,7 +183,9 @@ function GridPerspective(props: Props) {
       : defaultSettings.orderBy
   );
   const sortedDirContent = useRef<Array<TS.FileSystemEntry>>(
-    !props.lastSearchTimestamp ? props.directoryContent : GlobalSearch.getInstance().getResults()
+    !props.lastSearchTimestamp
+      ? props.directoryContent
+      : GlobalSearch.getInstance().getResults()
   );
   const layoutType = useRef<string>(
     settings && settings.layoutType
@@ -326,16 +328,20 @@ function GridPerspective(props: Props) {
         if (orderBy.current) {
           sortedDirContent.current = GlobalSearch.getInstance().getResults();
         } else {
-          sortedDirContent.current = [...GlobalSearch.getInstance().getResults()].reverse();
+          sortedDirContent.current = [
+            ...GlobalSearch.getInstance().getResults()
+          ].reverse();
         }
       } else {
         sortedDirContent.current = sortByCriteria(
           props.searchFilter
-            ? GlobalSearch.getInstance().getResults().filter(entry =>
-                entry.name
-                  .toLowerCase()
-                  .includes(props.searchFilter.toLowerCase())
-              )
+            ? GlobalSearch.getInstance()
+                .getResults()
+                .filter(entry =>
+                  entry.name
+                    .toLowerCase()
+                    .includes(props.searchFilter.toLowerCase())
+                )
             : GlobalSearch.getInstance().getResults(),
           sortBy.current,
           orderBy.current

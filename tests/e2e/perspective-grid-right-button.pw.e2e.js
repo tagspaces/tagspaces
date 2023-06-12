@@ -295,7 +295,10 @@ test.describe('TST50** - Right button on a file', () => {
     await gridElement.click();
     await AddRemoveTagsToSelectedFiles('grid', tags, false);
     for (let i = 0; i < tags.length; i++) {
-      await expectElementExist('[data-tid=tagContainer_' + tags[i] + ']', false);
+      await expectElementExist(
+        '[data-tid=tagContainer_' + tags[i] + ']',
+        false
+      );
     }
     /*gridElement = await global.client.waitForSelector(
       getGridFileSelector(fileName + '.' + fileExt)

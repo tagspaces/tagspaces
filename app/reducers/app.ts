@@ -2377,7 +2377,7 @@ export const actions = {
       path,
       lastSelectedEntry ? lastSelectedEntry.path : undefined,
       getState().app.searchMode
-        ? GlobalSearch.results
+        ? GlobalSearch.getInstance().getResults()
         : getState().app.currentDirectoryEntries
     );
     if (nextFile !== undefined) {
@@ -2396,7 +2396,7 @@ export const actions = {
       path,
       lastSelectedEntry ? lastSelectedEntry.path : undefined,
       getState().app.searchMode
-        ? GlobalSearch.results
+        ? GlobalSearch.getInstance().getResults()
         : getState().app.currentDirectoryEntries
     );
     if (prevFile !== undefined) {
