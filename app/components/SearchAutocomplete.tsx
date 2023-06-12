@@ -27,6 +27,8 @@ import Button from '@mui/material/Button';
 import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import ClearSearchIcon from '@mui/icons-material/Close';
+import AdvancedSearchIcon from '@mui/icons-material/TuneOutlined';
+import DropDownIcon from '@mui/icons-material/ArrowDropDownOutlined';
 import {
   actions as AppActions,
   getDirectoryPath,
@@ -34,7 +36,6 @@ import {
 } from '../reducers/app';
 import {
   actions as LocationIndexActions,
-  getIndexedEntriesCount,
   isIndexing,
   getSearchQuery
 } from '../reducers/location-index';
@@ -86,7 +87,6 @@ interface Props {
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   openLink: (url: string, options?: any) => void;
   currentDirectory: string;
-  indexedEntriesCount: number;
   maxSearchResults: number;
   indexing: boolean;
   showUnixHiddenEntries: boolean;
@@ -104,8 +104,9 @@ interface Props {
   searches: Array<TS.SearchQuery>;
   switchLocationTypeByID: (locationId: string) => Promise<string | null>;
   // editedEntryPaths: Array<TS.EditedEntryPath>;
-  getTextQuery: () => string;
+  textQuery: string;
   setTextQuery: (value: string) => void;
+  setAnchorSearch: (el: HTMLButtonElement) => void;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -253,13 +254,13 @@ function SearchAutocomplete(props: Props) {
       if (props.searchQuery.textQuery) {
         props.setTextQuery(props.searchQuery.textQuery);
         emptySearch = false;
-      } else if (props.getTextQuery()) {
+      } else if (props.textQuery) {
         emptySearch = false;
       }
 
       const searchQuery = {
         ...props.searchQuery,
-        textQuery: props.getTextQuery()
+        textQuery: props.textQuery
       };
 
       /*if (mainSearchField.current) {
@@ -419,7 +420,7 @@ function SearchAutocomplete(props: Props) {
       }
     } else if (event.key === 'Backspace' || event.keyCode === 8) {
       if (
-        props.getTextQuery().length === 0 &&
+        props.textQuery.length === 0 &&
         actionValues.current.length > 0
       ) {
         actionValues.current = actionValues.current.slice(0, -1);
@@ -601,7 +602,7 @@ function SearchAutocomplete(props: Props) {
       // don't execute search on search filter
       return;
     }
-    let query = props.getTextQuery();
+    let query = props.textQuery;
     if (
       query.startsWith('ts:?ts') ||
       query.startsWith(AppConfig.tsProtocol + '?ts')
@@ -1414,19 +1415,33 @@ function SearchAutocomplete(props: Props) {
                         </IconButton>
                       </Tooltip>
                     )}*/
-    <Tooltip title={i18n.t('clearSearch') + ' (ESC)'}>
-      <IconButton
-        id="clearSearchID"
-        onClick={() => {
-          clearSearch();
-          // props.openCurrentDirectory();
-        }}
-        size="small"
-        edge="end"
-      >
-        <ClearSearchIcon />
-      </IconButton>
-    </Tooltip>
+    <>
+      <Tooltip title={i18n.t('core:advancedSearch')}>
+        <IconButton
+          id="advancedButton"
+          data-tid="advancedSearch"
+          onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+            props.setAnchorSearch(event.currentTarget);
+          }}
+        >
+          <AdvancedSearchIcon />
+          <DropDownIcon />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title={i18n.t('clearSearch') + ' (ESC)'}>
+        <IconButton
+          id="clearSearchID"
+          onClick={() => {
+            clearSearch();
+            // props.openCurrentDirectory();
+          }}
+          size="small"
+          edge="end"
+        >
+          <ClearSearchIcon />
+        </IconButton>
+      </Tooltip>
+    </>
   );
 
   function haveEmptyAction(): boolean {
@@ -1473,7 +1488,7 @@ function SearchAutocomplete(props: Props) {
             v.fullName ? v.fullName : v.label
           )}
           onChange={handleChange}
-          inputValue={props.getTextQuery()}
+          inputValue={props.textQuery}
           onInputChange={handleInputChange}
           open={isOpen.current}
           /*onOpen={handleOpen}
@@ -1673,7 +1688,6 @@ function mapStateToProps(state) {
     searchQuery: getSearchQuery(state),
     isDesktop: isDesktopMode(state),
     currentDirectory: getDirectoryPath(state),
-    indexedEntriesCount: getIndexedEntriesCount(state),
     maxSearchResults: getMaxSearchResults(state),
     showUnixHiddenEntries: getShowUnixHiddenEntries(state),
     language: getCurrentLanguage(state),
@@ -1714,8 +1728,7 @@ function mapDispatchToProps(dispatch) {
   nextProp.language === prevProp.language &&
   nextProp.indexing === prevProp.indexing &&
   nextProp.searchQuery === prevProp.searchQuery &&
-  nextProp.currentDirectory === prevProp.currentDirectory &&
-  nextProp.indexedEntriesCount === prevProp.indexedEntriesCount;*/
+  nextProp.currentDirectory === prevProp.currentDirectory && */
 
 // @ts-ignore
 export default connect(

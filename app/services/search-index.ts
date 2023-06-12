@@ -16,9 +16,44 @@
  *
  */
 
-const GlobalSearch = {
+/*const GlobalSearch = {
   indexLoadedOn: undefined,
   index: [],
   results: []
-};
+};*/
+
+const GlobalSearch = function() {
+  let instance;
+
+  function init() {
+    let indexLoadedOn = undefined;
+    let index = [];
+    let results = [];
+
+    return {
+      setIndexLoadedOn: function(loaded) {
+        indexLoadedOn = loaded;
+      },
+      getIndexLoadedOn: () => indexLoadedOn,
+      setIndex: function(i) {
+        index = i;
+      },
+      getIndex: () => index,
+      setResults: function(r) {
+        results = r;
+      },
+      getResults: () => results
+    };
+  }
+
+  return {
+    // get the singleton instance if it exists, or create one if it doesn't
+    getInstance: function() {
+      if (!instance) {
+        instance = init();
+      }
+      return instance;
+    }
+  };
+}();
 export default GlobalSearch;

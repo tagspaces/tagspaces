@@ -553,7 +553,7 @@ export default (state: any = initialState, action: any) => {
       };
     }
     case types.SET_SEARCH_RESULTS: {
-      GlobalSearch.results = action.searchResults;
+      GlobalSearch.getInstance().setResults(action.searchResults);
       return {
         ...state,
         lastSearchTimestamp: new Date().getTime(),
@@ -561,7 +561,7 @@ export default (state: any = initialState, action: any) => {
       };
     }
     case types.EXIT_SEARCH_MODE: {
-      GlobalSearch.results = [];
+      GlobalSearch.getInstance().setResults([]);
       return {
         ...state,
         searchMode: false,
@@ -571,7 +571,7 @@ export default (state: any = initialState, action: any) => {
       };
     }
     case types.ENTER_SEARCH_MODE: {
-      GlobalSearch.results = [];
+      GlobalSearch.getInstance().setResults([]);
       return {
         ...state,
         searchMode: true,
@@ -582,11 +582,14 @@ export default (state: any = initialState, action: any) => {
     case types.APPEND_SEARCH_RESULTS: {
       // const newDirEntries = [...state.currentDirectoryEntries];
       for (let i = 0; i < action.searchResults.length; i += 1) {
-        const index = GlobalSearch.results.findIndex(
-          entry => entry.path === action.searchResults[i].path
-        );
+        const index = GlobalSearch.getInstance()
+          .getResults()
+          .findIndex(entry => entry.path === action.searchResults[i].path);
         if (index === -1) {
-          GlobalSearch.results.push(action.searchResults[i]);
+          GlobalSearch.getInstance().setResults([
+            ...GlobalSearch.getInstance().getResults(),
+            action.searchResults[i]
+          ]);
         }
       }
       return {
@@ -2461,8 +2464,9 @@ export const actions = {
   ) => {
     const { searchMode } = getState().app;
     if (searchMode) {
-      GlobalSearch.results = GlobalSearch.results.map(
-        (fsEntry: TS.FileSystemEntry) => {
+      const results = GlobalSearch.getInstance()
+        .getResults()
+        .map((fsEntry: TS.FileSystemEntry) => {
           if (fsEntry.path === path) {
             return {
               ...fsEntry,
@@ -2471,8 +2475,8 @@ export const actions = {
             };
           }
           return fsEntry;
-        }
-      );
+        });
+      GlobalSearch.getInstance().setResults(results);
     }
     dispatch(actions.reflectRenameEntryInt(path, newPath));
     dispatch(LocationIndexActions.reflectRenameEntry(path, newPath));
@@ -2489,9 +2493,10 @@ export const actions = {
   ) => {
     const { searchMode } = getState().app;
     if (searchMode) {
-      GlobalSearch.results = updateFsEntries(GlobalSearch.results, [
+      const results = updateFsEntries(GlobalSearch.getInstance().getResults(), [
         { ...entry, path }
       ]);
+      GlobalSearch.getInstance().setResults(results);
     } else {
       dispatch(actions.updateCurrentDirEntryInt(path, entry));
     }

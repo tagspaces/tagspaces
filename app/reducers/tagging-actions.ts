@@ -813,7 +813,7 @@ const actions = {
   ) => {
     const { settings } = getState();
 
-    if (GlobalSearch.index.length < 1) {
+    if (GlobalSearch.getInstance().getIndex().length < 1) {
       dispatch(
         AppActions.showNotification(
           'Please index location first',
@@ -825,7 +825,7 @@ const actions = {
     }
 
     const uniqueTags = collectTagsFromIndex(
-      GlobalSearch.index,
+      GlobalSearch.getInstance().getIndex(),
       tagGroup,
       settings
     );
