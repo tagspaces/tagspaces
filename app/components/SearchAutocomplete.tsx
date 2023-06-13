@@ -251,16 +251,19 @@ function SearchAutocomplete(props: Props) {
       }
 
       // inputValue.current = getInputValue();
+      let textQuery = '';
       if (props.searchQuery.textQuery) {
         props.setTextQuery(props.searchQuery.textQuery);
+        textQuery = props.searchQuery.textQuery;
         emptySearch = false;
       } else if (props.textQuery) {
+        textQuery = props.textQuery;
         emptySearch = false;
       }
 
       const searchQuery = {
         ...props.searchQuery,
-        textQuery: props.textQuery
+        textQuery: textQuery
       };
 
       /*if (mainSearchField.current) {
