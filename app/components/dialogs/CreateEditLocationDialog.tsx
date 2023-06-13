@@ -54,7 +54,6 @@ import {
   MenuItem,
   Select
 } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 import ObjectStoreForm from './ObjectStoreForm';
@@ -75,6 +74,7 @@ import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { loadLocationDataPromise } from '-/services/utils-io';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import { ExpandIcon } from '-/components/CommonIcons';
 
 const styles: any = theme => ({
   formControl: {
@@ -543,13 +543,6 @@ function CreateEditLocationDialog(props: Props) {
         }}
       >
         <Accordion defaultExpanded>
-          {/* <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="panelGeneral-content"
-            id="panelGeneral-header"
-          >
-            <Typography>{i18n.t('core:switchGeneral')}</Typography>
-          </AccordionSummary> */}
           <AccordionDetails style={{ paddingTop: 16 }}>
             <FormGroup>
               <FormControl disabled={disableLocationTypeSwitch} fullWidth>
@@ -677,7 +670,7 @@ function CreateEditLocationDialog(props: Props) {
         <Accordion>
           <AccordionSummary
             data-tid="switchAdvancedModeTID"
-            expandIcon={<ExpandMoreIcon />}
+            expandIcon={<ExpandIcon />}
             aria-controls="panelAdvanced-content"
             id="panelAdvanced-header"
           >

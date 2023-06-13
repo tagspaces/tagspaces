@@ -40,7 +40,7 @@ export { default as GoForwardIcon } from '@mui/icons-material/ArrowForward';
 
 export { default as HelpIcon } from '@mui/icons-material/Help';
 
-export { default as InfoIcon } from '@mui/icons-material/AnnouncementOutlined';
+export { default as InfoIcon } from '@mui/icons-material/InfoOutlined';
 
 export { default as FolderPropertiesIcon } from '@mui/icons-material/Info';
 
@@ -67,3 +67,5 @@ export { default as ReloadIcon } from '@mui/icons-material/Refresh';
 export { default as DeleteIcon } from '@mui/icons-material/DeleteForever';
 
 export { default as LinkIcon } from '@mui/icons-material/Link';
+
+export { default as ExpandIcon } from '@mui/icons-material/ExpandMore';

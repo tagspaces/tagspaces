@@ -29,6 +29,7 @@ import Grid from '@mui/material/Grid';
 import withStyles from '@mui/styles/withStyles';
 import Dialog from '@mui/material/Dialog';
 import Paper from '@mui/material/Paper';
+import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import DraggablePaper from '-/components/DraggablePaper';
 import { Progress } from 'aws-sdk/clients/s3';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
@@ -55,6 +56,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 import { FormControl } from '@mui/material';
 import { fileNameValidation } from '-/services/utils-io';
 import { PerspectiveIDs } from '-/perspectives';
+import { ExpandIcon, InfoIcon } from '-/components/CommonIcons';
 
 const styles: any = () => ({
   createButton: {
@@ -341,186 +343,206 @@ function CreateDialog(props: Props) {
       </DialogTitle>
       <DialogContent
         style={{
-          display: 'flex',
           minWidth: 200,
           minHeight: 300,
           marginBottom: 20,
-          overflow: 'overlay',
-          alignSelf: 'center'
+          overflow: 'overlay'
         }}
         data-tid="keyboardShortCutsDialog"
       >
-        <Grid style={{ flexGrow: 1, width: '100%' }} container spacing={1}>
-          <Grid item xs={12}>
-            {noSuitableLocation ? (
-              <Typography variant="caption">
-                {i18n.t('noSuitableLocation')}
-              </Typography>
-            ) : (
-              <Typography variant="caption">
-                {i18n.t('core:entriesWillBeCreatedIn') +
-                  ' ' +
-                  (currentLocation ? currentLocation.name : '') +
-                  ' ' +
-                  targetDirectoryPath}
-              </Typography>
-            )}
-          </Grid>
-          <Grid item xs={12}>
-            <FormControl fullWidth={true} error={inputError}>
-              <TextField
-                autoFocus
-                error={inputError}
-                margin="dense"
-                name="entryName"
-                label={i18n.t('core:newFileName')}
-                onChange={handleInputChange}
-                onFocus={onInputFocus}
-                defaultValue={fileName.current}
-                disabled={noSuitableLocation}
-                fullWidth={true}
-                data-tid="newEntryDialogInputTID"
-              />
-              {inputError && (
-                <FormHelperText>{i18n.t('core:fileNameHelp')}</FormHelperText>
-              )}
-            </FormControl>
-          </Grid>
-          <Grid item xs={12}>
-            <ButtonGroup
-              style={{
-                textAlign: 'center',
-                width: '100%'
-              }}
-            >
-              <Button
-                variant="contained"
-                onClick={createMarkdownFile}
-                className={classes.createButton}
-                data-tid="createMarkdownButton"
-                disabled={noSuitableLocation}
-              >
-                <Tooltip title={i18n.t('createMarkdownTitle')}>
-                  <Typography variant="button" display="block" gutterBottom>
-                    {i18n.t('createMarkdown')}
-                  </Typography>
-                </Tooltip>
-              </Button>
-              <Button
-                variant="contained"
-                onClick={createRichTextFile}
-                className={classes.createButton}
-                data-tid="createRichTextFileButton"
-                disabled={noSuitableLocation}
-              >
-                <Tooltip title={i18n.t('createNoteTitle')}>
-                  <Typography variant="button" display="block" gutterBottom>
-                    {i18n.t('createRichTextFile')}
-                  </Typography>
-                </Tooltip>
-              </Button>
-              <Button
-                variant="contained"
-                onClick={createTextFile}
-                className={classes.createButton}
-                data-tid="createTextFileButton"
-                disabled={noSuitableLocation}
-              >
-                <Tooltip title={i18n.t('createTextFileTitle')}>
-                  <Typography variant="button" display="block" gutterBottom>
-                    {i18n.t('createTextFile')}
-                  </Typography>
-                </Tooltip>
-              </Button>
-            </ButtonGroup>
-          </Grid>
-          <Grid style={{ marginTop: 20 }} item xs={12}>
-            <Button
-              variant="outlined"
-              onClick={() => {
-                onClose();
-                toggleLocationDialog();
-              }}
-              className={classes.createButton}
-              data-tid="createLocationButton"
-            >
-              <Tooltip title={i18n.t('createLocationTitle')}>
-                <Typography variant="button" display="block" gutterBottom>
-                  {i18n.t('core:createLocation')}
-                </Typography>
-              </Tooltip>
-            </Button>
-          </Grid>
-          <Grid style={{ marginTop: 20 }} item xs={12}>
-            <Button
-              variant="outlined"
-              onClick={() => {
-                onClose();
-                toggleCreateDirectoryDialog();
-              }}
-              className={classes.createButton}
-              data-tid="newSubDirectory"
-              disabled={noSuitableLocation}
-            >
-              {i18n.t('core:newSubdirectory')}
-            </Button>
-          </Grid>
-          <Grid style={{ marginTop: 20 }} item xs={12}>
-            <Tooltip title={i18n.t('core:addFilesTitle')}>
+        <Accordion style={{ marginTop: 5 }} defaultExpanded>
+          <AccordionDetails style={{ paddingTop: 16 }}>
+            <Grid style={{ flexGrow: 1, width: '100%' }} container spacing={1}>
+              <Grid item xs={12}>
+                <FormControl fullWidth={true} error={inputError}>
+                  <TextField
+                    autoFocus
+                    error={inputError}
+                    margin="dense"
+                    name="entryName"
+                    label={i18n.t('core:newFileName')}
+                    onChange={handleInputChange}
+                    onFocus={onInputFocus}
+                    defaultValue={fileName.current}
+                    disabled={noSuitableLocation}
+                    fullWidth={true}
+                    data-tid="newEntryDialogInputTID"
+                  />
+                  {inputError && (
+                    <FormHelperText>
+                      {i18n.t('core:fileNameHelp')}
+                    </FormHelperText>
+                  )}
+                </FormControl>
+              </Grid>
+              <Grid item xs={12}>
+                <ButtonGroup
+                  style={{
+                    textAlign: 'center',
+                    width: '100%'
+                  }}
+                >
+                  <Button
+                    // variant="contained"
+                    onClick={createMarkdownFile}
+                    className={classes.createButton}
+                    data-tid="createMarkdownButton"
+                    disabled={noSuitableLocation}
+                  >
+                    <Tooltip title={i18n.t('createMarkdownTitle')}>
+                      <Typography variant="button" display="block" gutterBottom>
+                        {i18n.t('createMarkdown')}
+                      </Typography>
+                    </Tooltip>
+                  </Button>
+                  <Button
+                    // variant="contained"
+                    onClick={createRichTextFile}
+                    className={classes.createButton}
+                    data-tid="createRichTextFileButton"
+                    disabled={noSuitableLocation}
+                  >
+                    <Tooltip title={i18n.t('createNoteTitle')}>
+                      <Typography variant="button" display="block" gutterBottom>
+                        {i18n.t('createRichTextFile')}
+                      </Typography>
+                    </Tooltip>
+                  </Button>
+                  <Button
+                    // variant="contained"
+                    onClick={createTextFile}
+                    className={classes.createButton}
+                    data-tid="createTextFileButton"
+                    disabled={noSuitableLocation}
+                  >
+                    <Tooltip title={i18n.t('createTextFileTitle')}>
+                      <Typography variant="button" display="block" gutterBottom>
+                        {i18n.t('createTextFile')}
+                      </Typography>
+                    </Tooltip>
+                  </Button>
+                </ButtonGroup>
+              </Grid>
+              <Grid style={{ marginTop: 20 }} item xs={12}>
+                <Button
+                  variant="outlined"
+                  onClick={() => {
+                    onClose();
+                    toggleLocationDialog();
+                  }}
+                  className={classes.createButton}
+                  data-tid="createLocationButton"
+                >
+                  <Tooltip title={i18n.t('createLocationTitle')}>
+                    <Typography variant="button" display="block" gutterBottom>
+                      {i18n.t('core:createLocation')}
+                    </Typography>
+                  </Tooltip>
+                </Button>
+              </Grid>
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion>
+          <AccordionSummary
+            expandIcon={<ExpandIcon />}
+            aria-controls="panelGeneral-content"
+            id="panelGeneral-header"
+          >
+            <Typography>{i18n.t('core:moreOperations')}</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Grid item xs={12}>
               <Button
                 variant="outlined"
-                onClick={addFile}
+                onClick={() => {
+                  onClose();
+                  toggleCreateDirectoryDialog();
+                }}
                 className={classes.createButton}
-                data-tid="addFilesButton"
+                data-tid="newSubDirectory"
                 disabled={noSuitableLocation}
               >
-                {i18n.t('addFiles')}
+                {i18n.t('core:newSubdirectory')}
               </Button>
-            </Tooltip>
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              error={invalidURL}
-              label={i18n.t('core:url')}
-              margin="dense"
-              name="name"
-              fullWidth={true}
-              data-tid="newUrlTID"
-              onKeyDown={event => {
-                if (event.key === 'Enter') {
-                  downloadURL();
-                }
-              }}
-              onChange={handleUrlChange}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <ButtonGroup
-              style={{
-                textAlign: 'center',
-                width: '100%'
-              }}
-            >
-              <Button
-                data-tid="cancelRenameEntryTID"
-                className={classes.createButton}
-                onClick={() => downloadURL()}
+            </Grid>
+            <Grid style={{ marginTop: 20 }} item xs={12}>
+              <Tooltip title={i18n.t('core:addFilesTitle')}>
+                <Button
+                  variant="outlined"
+                  onClick={addFile}
+                  className={classes.createButton}
+                  data-tid="addFilesButton"
+                  disabled={noSuitableLocation}
+                >
+                  {i18n.t('addFiles')}
+                </Button>
+              </Tooltip>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                error={invalidURL}
+                label={i18n.t('core:url')}
+                margin="dense"
+                name="name"
+                fullWidth={true}
+                data-tid="newUrlTID"
+                onKeyDown={event => {
+                  if (event.key === 'Enter') {
+                    downloadURL();
+                  }
+                }}
+                onChange={handleUrlChange}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <ButtonGroup
+                style={{
+                  textAlign: 'center',
+                  width: '100%'
+                }}
               >
-                {i18n.t('core:downloadFile')}
-              </Button>
-            </ButtonGroup>
-          </Grid>
+                <Button
+                  data-tid="cancelRenameEntryTID"
+                  className={classes.createButton}
+                  onClick={() => downloadURL()}
+                >
+                  {i18n.t('core:downloadFile')}
+                </Button>
+              </ButtonGroup>
+            </Grid>
+            {/* </Grid> */}
+            <input
+              style={{ display: 'none' }}
+              ref={input => {
+                fileInput = input;
+              }}
+              accept="*"
+              type="file"
+              multiple
+              onChange={handleFileInputChange}
+            />
+          </AccordionDetails>
+        </Accordion>
+        <Grid item style={{ marginTop: 20 }} xs={12}>
+          {noSuitableLocation ? (
+            <Typography variant="caption">
+              {i18n.t('noSuitableLocation')}
+            </Typography>
+          ) : (
+            <Typography
+              style={{ display: 'flex', alignItems: 'center' }}
+              variant="caption"
+            >
+              <InfoIcon style={{ paddingRight: 10 }} />
+              {i18n.t('core:entriesWillBeCreatedIn') +
+                ' ' +
+                (currentLocation ? currentLocation.name : '') +
+                ' ' +
+                targetDirectoryPath}
+            </Typography>
+          )}
         </Grid>
-        <input
-          style={{ display: 'none' }}
-          ref={input => {
-            fileInput = input;
-          }}
-          accept="*"
-          type="file"
-          multiple
-          onChange={handleFileInputChange}
-        />
       </DialogContent>
     </Dialog>
   );
