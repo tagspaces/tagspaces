@@ -39,7 +39,7 @@ import TagLibraryMenu from './menus/TagLibraryMenu';
 import TagGroupMenu from './menus/TagGroupMenu';
 import TaggingActions from '../reducers/tagging-actions';
 import i18n from '../services/i18n';
-import settings, {
+import {
   actions as SettingsActions,
   getCurrentLanguage,
   getTagColor,
@@ -54,7 +54,7 @@ import {
 import SmartTags from '../reducers/smart-tags';
 import EditTagDialog from '-/components/dialogs/EditTagDialog';
 import { TS } from '-/tagspaces.namespace';
-import locations, { getLocations } from '-/reducers/locations';
+import { actions as LocationActions, getLocations } from '-/reducers/locations';
 import { Pro } from '-/pro';
 import TagGroupTitleDnD from '-/components/TagGroupTitleDnD';
 import {
@@ -119,6 +119,8 @@ interface Props {
   // moveTagGroup: (tagGroupUuid: TS.Uuid, position: number) => void;
   reduceHeightBy: number;
   isTagLibraryChanged: boolean;
+  switchLocationType: (locationId: string) => Promise<string | null>;
+  switchCurrentLocationType: (currentLocationId) => Promise<boolean>;
 }
 
 function TagLibrary(props: Props) {
@@ -466,9 +468,21 @@ function TagLibrary(props: Props) {
         <CreateTagGroupDialog
           open={isCreateTagGroupDialogOpened}
           onClose={() => setIsCreateTagGroupDialogOpened(false)}
-          createTagGroup={(entry: TS.TagGroup) =>
-            setTagGroups(createTagGroup(entry, tagGroups, props.locations))
-          }
+          createTagGroup={(entry: TS.TagGroup) => {
+            const location: TS.Location = props.locations.find(
+              l => l.uuid === entry.locationId
+            );
+            if (location) {
+              props
+                .switchLocationType(location.uuid)
+                .then(currentLocationId => {
+                  setTagGroups(createTagGroup(entry, tagGroups, location));
+                  props.switchCurrentLocationType(currentLocationId);
+                });
+            } else {
+              setTagGroups(createTagGroup(entry, tagGroups));
+            }
+          }}
           color={props.tagBackgroundColor}
           textcolor={props.tagTextColor}
         />
@@ -644,7 +658,9 @@ function mapDispatchToProps(dispatch) {
       addTags: TaggingActions.addTags,
       collectTagsFromLocation: TaggingActions.collectTagsFromLocation,
       openURLExternally: AppActions.openURLExternally,
-      showNotification: AppActions.showNotification
+      showNotification: AppActions.showNotification,
+      switchLocationType: LocationActions.switchLocationType,
+      switchCurrentLocationType: AppActions.switchCurrentLocationType
     },
     dispatch
   );

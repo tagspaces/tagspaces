@@ -233,20 +233,15 @@ export function exportTagGroups(entry: Array<TS.TagGroup>, settingsVersion) {
 export function createTagGroup(
   entry: TS.TagGroup,
   tagGroups: Array<TS.TagGroup>,
-  locations: Array<TS.Location>
+  location?: TS.Location
 ): Array<TS.TagGroup> {
   const newEntry = {
     ...entry,
     created_date: new Date().getTime(),
     modified_date: new Date().getTime()
   };
-  if (Pro && entry.locationId) {
-    const location: TS.Location = locations.find(
-      l => l.uuid === entry.locationId
-    );
-    if (location) {
-      Pro.MetaOperations.createTagGroup(location.path, newEntry);
-    }
+  if (Pro && location) {
+    Pro.MetaOperations.createTagGroup(location.path, newEntry);
   }
   return setTagLibrary([...tagGroups, newEntry]);
 }

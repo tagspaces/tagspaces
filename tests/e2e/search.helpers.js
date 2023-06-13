@@ -99,7 +99,7 @@ export async function createSavedSearch(searchQuery) {
   await typeInputValue('#textQuery', searchQuery.textQuery);
   await clickOn('#searchButton');
   await clickOn('[data-tid=advancedSearch]');
-  await clickOn('[data-tid=saveSearchBtnTID]');
+  await clickOn('[data-tid=addSearchBtnTID]');
   await global.client.dblclick('[data-tid=savedSearchTID]');
   await setInputKeys('savedSearchTID', searchQuery.title);
   await clickOn('[data-tid=confirmSavedSearchTID]');

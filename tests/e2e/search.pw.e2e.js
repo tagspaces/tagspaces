@@ -184,6 +184,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
   test('TST0625 - Search actions - execute query from stored searches [web,electron,_pro]', async () => {
     const storedSearchTitle = 'jpgSearch';
     await createSavedSearch({ title: storedSearchTitle, textQuery: 'jpg' });
+    await clickOn('#clearSearchID');
 
     await searchEngine('q:', {}, false);
     await clickOn('#textQuery-option-0');
