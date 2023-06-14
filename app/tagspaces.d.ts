@@ -51,7 +51,6 @@ declare interface Window {
   ExtDarkThemeMainColor?: string;
   ExtShowWelcomePanel?: string;
   ExtShowSmartTags?: string;
-  ExtShowAdvancedSearch?: string;
   ExtUseGenerateThumbnails?: boolean;
   ExtGeoTaggingFormat?: string;
   ExtDemoUser?: any;

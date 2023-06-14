@@ -38,6 +38,7 @@ import { TS } from '-/tagspaces.namespace';
 import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import InfoIcon from '-/components/InfoIcon';
 
 interface Props {
   extension: Array<TS.Extension>;
@@ -107,7 +108,10 @@ function SettingsExtensions(props: Props) {
           aria-controls="internal-content"
           id="internal-header"
         >
-          <Typography variant="h6">Core Extensions</Typography>
+          <Typography variant="h6" style={{ marginRight: 10 }}>
+            Core Extensions
+          </Typography>
+          <InfoIcon tooltip="These are extensions which are packaged with the current version of the app" />
         </AccordionSummary>
         <AccordionDetails>
           <List>
@@ -128,7 +132,10 @@ function SettingsExtensions(props: Props) {
           aria-controls="installed-content"
           id="installed-header"
         >
-          <Typography variant="h6">Installed Extensions</Typography>
+          <Typography variant="h6" style={{ marginRight: 10 }}>
+            Installed Extensions
+          </Typography>
+          <InfoIcon tooltip="Extensions manually installed on top of the current app installation" />
         </AccordionSummary>
         <AccordionDetails>
           <List>

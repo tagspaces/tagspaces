@@ -18,8 +18,8 @@
 
 import React from 'react';
 import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
 import i18n from '-/services/i18n';
+import { CloseIcon } from '../CommonIcons';
 
 interface Props {
   onClose: () => void;

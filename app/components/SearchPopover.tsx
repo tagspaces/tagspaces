@@ -20,12 +20,12 @@ import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Theme } from '@mui/material/styles';
+import withStyles from '@mui/styles/withStyles';
 import makeStyles from '@mui/styles/makeStyles';
 import format from 'date-fns/format';
 import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '-/components/Tooltip';
-import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Input from '@mui/material/Input';
@@ -34,8 +34,6 @@ import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
-import CancelSearchIcon from '@mui/icons-material/CancelOutlined';
 import Select from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -80,7 +78,8 @@ import {
   NoteIcon,
   AudioIcon,
   VideoIcon,
-  ArchiveIcon
+  ArchiveIcon,
+  CloseIcon
 } from '-/components/CommonIcons';
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
@@ -501,7 +500,7 @@ function SearchPopover(props: Props) {
     props.onClose();
   };
 
-  const { indexing } = props;
+  const { indexing, theme } = props;
   const indexStatus = GlobalSearch.getInstance().getIndex()
     ? GlobalSearch.getInstance().getIndex().length + ' indexed entries'
     : '';
@@ -556,45 +555,39 @@ function SearchPopover(props: Props) {
         >
           <Grid item xs={9}>
             <ProTooltip tooltip={i18n.t('storedSearchQueriesTooltip')}>
-              <InputLabel shrink htmlFor="saved-searches">
-                {i18n.t('core:savedSearchesTitle')}
-              </InputLabel>
-              <Select
-                disabled={indexing || !Pro}
-                onChange={handleSavedSearchChange}
-                // inputProps={{
-                //   endAdornment: (
-                //     <InputAdornment position="end">
-                //       {props.searchQuery.uuid && (
-                //         <IconButton
-                //           data-tid="editSearchBtnTID"
-                //           size="small"
-                //           onClick={() => saveSearch(false)}
-                //         >
-                //           <EditIcon />
-                //         </IconButton>
-                //       )}
-                //     </InputAdornment>
-                //   )
-                // }}
-                input={<Input name="savedSearch" id="saved-searches" />}
-                displayEmpty
-                fullWidth
-                value={props.searchQuery.uuid ? props.searchQuery.uuid : -1}
+              <FormControl
+                variant="outlined"
+                style={{ width: '100%', marginTop: 6 }}
               >
-                <MenuItem value={-1} style={{ display: 'none' }} />
-                {props.searches.length < 1 && (
-                  <MenuItem>{i18n.t('noSavedSearches')}</MenuItem>
-                )}
-                {props.searches.map(search => (
-                  <MenuItem key={search.uuid} value={search.uuid}>
-                    <span style={{ width: '100%' }}>{search.title}</span>
-                  </MenuItem>
-                ))}
-              </Select>
+                <InputLabel
+                  id="saved-searches"
+                  style={{ backgroundColor: theme.palette.background.default }}
+                >
+                  {i18n.t('core:savedSearchesTitle')}
+                </InputLabel>
+                <Select
+                  name="savedSearch"
+                  labelId="saved-searches"
+                  disabled={indexing || !Pro}
+                  onChange={handleSavedSearchChange}
+                  displayEmpty
+                  fullWidth
+                  value={props.searchQuery.uuid ? props.searchQuery.uuid : -1}
+                >
+                  <MenuItem value={-1} style={{ display: 'none' }} />
+                  {props.searches.length < 1 && (
+                    <MenuItem>{i18n.t('noSavedSearches')}</MenuItem>
+                  )}
+                  {props.searches.map(search => (
+                    <MenuItem key={search.uuid} value={search.uuid}>
+                      <span style={{ width: '100%' }}>{search.title}</span>
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </ProTooltip>
           </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={3} style={{ display: 'flex', alignSelf: 'center' }}>
             <ButtonGroup
               style={{
                 textAlign: 'center',
@@ -627,7 +620,7 @@ function SearchPopover(props: Props) {
           <Grid item xs={12}>
             <TextField
               id="searchTerm"
-              label={i18n.t('searchTitle')}
+              label={i18n.t('Has the words')}
               value={props.textQuery}
               onChange={handleSearchTermChange}
               onKeyDown={startSearch}
@@ -635,7 +628,6 @@ function SearchPopover(props: Props) {
             />
           </Grid>
         </Grid>
-
         <FormControl className={classes.formControl} disabled={indexing}>
           <ToggleButtonGroup
             onChange={switchSearchBoxing}
@@ -743,248 +735,238 @@ function SearchPopover(props: Props) {
             tagMode="remove"
           />
         </FormControl>
-        {AppConfig.showAdvancedSearch && (
-          <>
-            <FormControl
-              className={classes.formControl}
-              disabled={indexing || !Pro}
-            >
-              <ProTooltip tooltip={i18n.t('filterByTypTooltip')}>
-                <InputLabel htmlFor="file-type">
-                  {i18n.t('core:fileType')}
-                </InputLabel>
-                <Select
-                  style={{ width: '100%' }}
-                  value={JSON.stringify(fileTypes.current)}
-                  onChange={handleFileTypeChange}
-                  input={
-                    <OutlinedInput
-                      name="fileTypes"
-                      id="file-type"
-                      label={i18n.t('core:fileType')}
-                    />
-                  }
-                >
-                  <MenuItem value={JSON.stringify(FileTypeGroups.any)}>
-                    {i18n.t('core:anyType')}
-                  </MenuItem>
-                  <MenuItem value={JSON.stringify(FileTypeGroups.folders)}>
-                    <IconButton size="large">
-                      <FolderIcon />
-                    </IconButton>
-                    {i18n.t('core:searchFolders')}
-                  </MenuItem>
-                  <MenuItem value={JSON.stringify(FileTypeGroups.files)}>
-                    <IconButton size="large">
-                      <FileIcon />
-                    </IconButton>
-                    {i18n.t('core:searchFiles')}
-                  </MenuItem>
-                  <MenuItem value={JSON.stringify(FileTypeGroups.untagged)}>
-                    <IconButton size="large">
-                      <UntaggedIcon />
-                    </IconButton>
-                    {i18n.t('core:searchUntaggedEntries')}
-                  </MenuItem>
-                  <MenuItem
-                    value={JSON.stringify(FileTypeGroups.images)}
-                    title={FileTypeGroups.images.toString()}
-                  >
-                    <IconButton size="large">
-                      <PictureIcon />
-                    </IconButton>
-                    {i18n.t('core:searchPictures')}
-                  </MenuItem>
-                  <MenuItem
-                    value={JSON.stringify(FileTypeGroups.documents)}
-                    title={FileTypeGroups.documents.toString()}
-                  >
-                    <IconButton size="large">
-                      <DocumentIcon />
-                    </IconButton>
-                    {i18n.t('core:searchDocuments')}
-                  </MenuItem>
-                  <MenuItem
-                    value={JSON.stringify(FileTypeGroups.notes)}
-                    title={FileTypeGroups.notes.toString()}
-                  >
-                    <IconButton size="large">
-                      <NoteIcon />
-                    </IconButton>
-                    {i18n.t('core:searchNotes')}
-                  </MenuItem>
-                  <MenuItem
-                    value={JSON.stringify(FileTypeGroups.audio)}
-                    title={FileTypeGroups.audio.toString()}
-                  >
-                    <IconButton size="large">
-                      <AudioIcon />
-                    </IconButton>
-                    {i18n.t('core:searchAudio')}
-                  </MenuItem>
-                  <MenuItem
-                    value={JSON.stringify(FileTypeGroups.video)}
-                    title={FileTypeGroups.video.toString()}
-                  >
-                    <IconButton size="large">
-                      <VideoIcon />
-                    </IconButton>
-                    {i18n.t('core:searchVideoFiles')}
-                  </MenuItem>
-                  <MenuItem
-                    value={JSON.stringify(FileTypeGroups.archives)}
-                    title={FileTypeGroups.archives.toString()}
-                  >
-                    <IconButton size="large">
-                      <ArchiveIcon />
-                    </IconButton>
-                    {i18n.t('core:searchArchives')}
-                  </MenuItem>
-                  <MenuItem
-                    value={JSON.stringify(FileTypeGroups.bookmarks)}
-                    title={FileTypeGroups.bookmarks.toString()}
-                  >
-                    <IconButton size="large">
-                      <BookmarkIcon />
-                    </IconButton>
-                    {i18n.t('core:searchBookmarks')}
-                  </MenuItem>
-                  <MenuItem
-                    value={JSON.stringify(FileTypeGroups.ebooks)}
-                    title={FileTypeGroups.ebooks.toString()}
-                  >
-                    <IconButton size="large">
-                      <BookIcon />
-                    </IconButton>
-                    {i18n.t('core:searchEbooks')}
-                  </MenuItem>
-                </Select>
-                {/* <FormHelperText>{i18n.t('core:searchFileTypes')}</FormHelperText> */}
-              </ProTooltip>
-            </FormControl>
-            <FormControl
-              className={classes.formControl}
-              disabled={indexing || !Pro}
-            >
-              <ProTooltip tooltip={i18n.t('filterBySizeTooltip')}>
-                <InputLabel shrink htmlFor="file-size">
-                  {i18n.t('core:sizeSearchTitle')}
-                </InputLabel>
-                <Select
-                  fullWidth
-                  value={fileSize.current}
-                  onChange={handleFileSizeChange}
-                  input={
-                    <OutlinedInput
-                      name="fileSize"
-                      id="file-size"
-                      label={i18n.t('core:sizeSearchTitle')}
-                    />
-                  }
-                  displayEmpty
-                >
-                  <MenuItem value="">{i18n.t('core:sizeAny')}</MenuItem>
-                  <MenuItem value="sizeEmpty">
-                    {i18n.t('core:sizeEmpty')}
-                  </MenuItem>
-                  <MenuItem value="sizeTiny">
-                    {i18n.t('core:sizeTiny')}
-                    &nbsp;(&lt;&nbsp;10KB)
-                  </MenuItem>
-                  <MenuItem value="sizeVerySmall">
-                    {i18n.t('core:sizeVerySmall')}
-                    &nbsp;(&lt;&nbsp;100KB)
-                  </MenuItem>
-                  <MenuItem value="sizeSmall">
-                    {i18n.t('core:sizeSmall')}
-                    &nbsp;(&lt;&nbsp;1MB)
-                  </MenuItem>
-                  <MenuItem value="sizeMedium">
-                    {i18n.t('core:sizeMedium')}
-                    &nbsp;(&lt;&nbsp;50MB)
-                  </MenuItem>
-                  <MenuItem value="sizeLarge">
-                    {i18n.t('core:sizeLarge')}
-                    &nbsp;(&lt;&nbsp;1GB)
-                  </MenuItem>
-                  <MenuItem value="sizeHuge">
-                    {i18n.t('core:sizeHuge')}
-                    &nbsp;(&gt;&nbsp;1GB)
-                  </MenuItem>
-                </Select>
-              </ProTooltip>
-            </FormControl>
-            <FormControl
-              className={classes.formControl}
-              disabled={indexing || !Pro}
-            >
-              <ProTooltip tooltip={i18n.t('filterByLastModifiedDateTooltip')}>
-                <InputLabel shrink htmlFor="modification-date">
-                  {i18n.t('core:lastModifiedSearchTitle')}
-                </InputLabel>
-                <Select
-                  fullWidth
-                  value={lastModified.current}
-                  onChange={handleLastModifiedChange}
-                  input={
-                    <OutlinedInput
-                      name="lastModified"
-                      id="modification-date"
-                      label={i18n.t('core:lastModifiedSearchTitle')}
-                    />
-                  }
-                  displayEmpty
-                >
-                  <MenuItem value="">{i18n.t('core:anyTime')}</MenuItem>
-                  <MenuItem value="today">{i18n.t('core:today')}</MenuItem>
-                  <MenuItem value="yesterday">
-                    {i18n.t('core:yesterday')}
-                  </MenuItem>
-                  <MenuItem value="past7Days">
-                    {i18n.t('core:past7Days')}
-                  </MenuItem>
-                  <MenuItem value="past30Days">
-                    {i18n.t('core:past30Days')}
-                  </MenuItem>
-                  <MenuItem value="past6Months">
-                    {i18n.t('core:past6Months')}
-                  </MenuItem>
-                  <MenuItem value="pastYear">
-                    {i18n.t('core:pastYear')}
-                  </MenuItem>
-                  <MenuItem value="moreThanYear">
-                    {i18n.t('core:moreThanYear')}
-                  </MenuItem>
-                </Select>
-              </ProTooltip>
-            </FormControl>
-            <FormControl className={classes.formControl}>
-              <ProTooltip tooltip={i18n.t('enterTimePeriodTooltip')}>
-                <TextField
-                  id="tagTimePeriod"
-                  label={i18n.t('enterTimePeriod')}
-                  value={tagTimePeriod.current}
-                  disabled={indexing || !Pro}
-                  onChange={handleTimePeriodChange}
-                  onKeyDown={startSearch}
-                  helperText={tagTimePeriodHelper.current}
-                  error={tagTimePeriodHelper.current.length < 1}
-                  style={{ width: '100%' }}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment
-                        position="end"
-                        title="201905 for May 2019 / 20190412 for 12th of April 2019 / 20190501~124523 for specific time"
-                      >
-                        <IconButton size="large">
-                          <DateIcon />
-                        </IconButton>
-                      </InputAdornment>
-                    )
-                  }}
+        <FormControl
+          className={classes.formControl}
+          disabled={indexing || !Pro}
+        >
+          <ProTooltip tooltip={i18n.t('filterByTypTooltip')}>
+            <InputLabel htmlFor="file-type">
+              {i18n.t('core:fileType')}
+            </InputLabel>
+            <Select
+              style={{ width: '100%' }}
+              value={JSON.stringify(fileTypes.current)}
+              onChange={handleFileTypeChange}
+              input={
+                <OutlinedInput
+                  name="fileTypes"
+                  id="file-type"
+                  label={i18n.t('core:fileType')}
                 />
-              </ProTooltip>
-              {/* <TextField
+              }
+            >
+              <MenuItem value={JSON.stringify(FileTypeGroups.any)}>
+                {i18n.t('core:anyType')}
+              </MenuItem>
+              <MenuItem value={JSON.stringify(FileTypeGroups.folders)}>
+                <IconButton size="large">
+                  <FolderIcon />
+                </IconButton>
+                {i18n.t('core:searchFolders')}
+              </MenuItem>
+              <MenuItem value={JSON.stringify(FileTypeGroups.files)}>
+                <IconButton size="large">
+                  <FileIcon />
+                </IconButton>
+                {i18n.t('core:searchFiles')}
+              </MenuItem>
+              <MenuItem value={JSON.stringify(FileTypeGroups.untagged)}>
+                <IconButton size="large">
+                  <UntaggedIcon />
+                </IconButton>
+                {i18n.t('core:searchUntaggedEntries')}
+              </MenuItem>
+              <MenuItem
+                value={JSON.stringify(FileTypeGroups.images)}
+                title={FileTypeGroups.images.toString()}
+              >
+                <IconButton size="large">
+                  <PictureIcon />
+                </IconButton>
+                {i18n.t('core:searchPictures')}
+              </MenuItem>
+              <MenuItem
+                value={JSON.stringify(FileTypeGroups.documents)}
+                title={FileTypeGroups.documents.toString()}
+              >
+                <IconButton size="large">
+                  <DocumentIcon />
+                </IconButton>
+                {i18n.t('core:searchDocuments')}
+              </MenuItem>
+              <MenuItem
+                value={JSON.stringify(FileTypeGroups.notes)}
+                title={FileTypeGroups.notes.toString()}
+              >
+                <IconButton size="large">
+                  <NoteIcon />
+                </IconButton>
+                {i18n.t('core:searchNotes')}
+              </MenuItem>
+              <MenuItem
+                value={JSON.stringify(FileTypeGroups.audio)}
+                title={FileTypeGroups.audio.toString()}
+              >
+                <IconButton size="large">
+                  <AudioIcon />
+                </IconButton>
+                {i18n.t('core:searchAudio')}
+              </MenuItem>
+              <MenuItem
+                value={JSON.stringify(FileTypeGroups.video)}
+                title={FileTypeGroups.video.toString()}
+              >
+                <IconButton size="large">
+                  <VideoIcon />
+                </IconButton>
+                {i18n.t('core:searchVideoFiles')}
+              </MenuItem>
+              <MenuItem
+                value={JSON.stringify(FileTypeGroups.archives)}
+                title={FileTypeGroups.archives.toString()}
+              >
+                <IconButton size="large">
+                  <ArchiveIcon />
+                </IconButton>
+                {i18n.t('core:searchArchives')}
+              </MenuItem>
+              <MenuItem
+                value={JSON.stringify(FileTypeGroups.bookmarks)}
+                title={FileTypeGroups.bookmarks.toString()}
+              >
+                <IconButton size="large">
+                  <BookmarkIcon />
+                </IconButton>
+                {i18n.t('core:searchBookmarks')}
+              </MenuItem>
+              <MenuItem
+                value={JSON.stringify(FileTypeGroups.ebooks)}
+                title={FileTypeGroups.ebooks.toString()}
+              >
+                <IconButton size="large">
+                  <BookIcon />
+                </IconButton>
+                {i18n.t('core:searchEbooks')}
+              </MenuItem>
+            </Select>
+            {/* <FormHelperText>{i18n.t('core:searchFileTypes')}</FormHelperText> */}
+          </ProTooltip>
+        </FormControl>
+        <FormControl
+          className={classes.formControl}
+          disabled={indexing || !Pro}
+        >
+          <ProTooltip tooltip={i18n.t('filterBySizeTooltip')}>
+            <InputLabel shrink htmlFor="file-size">
+              {i18n.t('core:sizeSearchTitle')}
+            </InputLabel>
+            <Select
+              fullWidth
+              value={fileSize.current}
+              onChange={handleFileSizeChange}
+              input={
+                <OutlinedInput
+                  name="fileSize"
+                  id="file-size"
+                  label={i18n.t('core:sizeSearchTitle')}
+                />
+              }
+              displayEmpty
+            >
+              <MenuItem value="">{i18n.t('core:sizeAny')}</MenuItem>
+              <MenuItem value="sizeEmpty">{i18n.t('core:sizeEmpty')}</MenuItem>
+              <MenuItem value="sizeTiny">
+                {i18n.t('core:sizeTiny')}
+                &nbsp;(&lt;&nbsp;10KB)
+              </MenuItem>
+              <MenuItem value="sizeVerySmall">
+                {i18n.t('core:sizeVerySmall')}
+                &nbsp;(&lt;&nbsp;100KB)
+              </MenuItem>
+              <MenuItem value="sizeSmall">
+                {i18n.t('core:sizeSmall')}
+                &nbsp;(&lt;&nbsp;1MB)
+              </MenuItem>
+              <MenuItem value="sizeMedium">
+                {i18n.t('core:sizeMedium')}
+                &nbsp;(&lt;&nbsp;50MB)
+              </MenuItem>
+              <MenuItem value="sizeLarge">
+                {i18n.t('core:sizeLarge')}
+                &nbsp;(&lt;&nbsp;1GB)
+              </MenuItem>
+              <MenuItem value="sizeHuge">
+                {i18n.t('core:sizeHuge')}
+                &nbsp;(&gt;&nbsp;1GB)
+              </MenuItem>
+            </Select>
+          </ProTooltip>
+        </FormControl>
+        <FormControl
+          className={classes.formControl}
+          disabled={indexing || !Pro}
+        >
+          <ProTooltip tooltip={i18n.t('filterByLastModifiedDateTooltip')}>
+            <InputLabel shrink htmlFor="modification-date">
+              {i18n.t('core:lastModifiedSearchTitle')}
+            </InputLabel>
+            <Select
+              fullWidth
+              value={lastModified.current}
+              onChange={handleLastModifiedChange}
+              input={
+                <OutlinedInput
+                  name="lastModified"
+                  id="modification-date"
+                  label={i18n.t('core:lastModifiedSearchTitle')}
+                />
+              }
+              displayEmpty
+            >
+              <MenuItem value="">{i18n.t('core:anyTime')}</MenuItem>
+              <MenuItem value="today">{i18n.t('core:today')}</MenuItem>
+              <MenuItem value="yesterday">{i18n.t('core:yesterday')}</MenuItem>
+              <MenuItem value="past7Days">{i18n.t('core:past7Days')}</MenuItem>
+              <MenuItem value="past30Days">
+                {i18n.t('core:past30Days')}
+              </MenuItem>
+              <MenuItem value="past6Months">
+                {i18n.t('core:past6Months')}
+              </MenuItem>
+              <MenuItem value="pastYear">{i18n.t('core:pastYear')}</MenuItem>
+              <MenuItem value="moreThanYear">
+                {i18n.t('core:moreThanYear')}
+              </MenuItem>
+            </Select>
+          </ProTooltip>
+        </FormControl>
+        <FormControl className={classes.formControl}>
+          <ProTooltip tooltip={i18n.t('enterTimePeriodTooltip')}>
+            <TextField
+              id="tagTimePeriod"
+              label={i18n.t('enterTimePeriod')}
+              value={tagTimePeriod.current}
+              disabled={indexing || !Pro}
+              onChange={handleTimePeriodChange}
+              onKeyDown={startSearch}
+              helperText={tagTimePeriodHelper.current}
+              error={tagTimePeriodHelper.current.length < 1}
+              style={{ width: '100%' }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment
+                    position="end"
+                    title="201905 for May 2019 / 20190412 for 12th of April 2019 / 20190501~124523 for specific time"
+                  >
+                    <IconButton size="large">
+                      <DateIcon />
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
+            />
+          </ProTooltip>
+          {/* <TextField
                 id="tagPlace"
                 label={i18n.t('GPS coordinates or plus code')}
                 value={tagPlace}
@@ -1006,9 +988,7 @@ function SearchPopover(props: Props) {
                   )
                 }}
               /> */}
-            </FormControl>
-          </>
-        )}
+        </FormControl>
       </div>
       <div
         style={{
@@ -1107,4 +1087,9 @@ const areEqual = (prevProp, nextProp) =>
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(React.memo(SearchPopover, areEqual));
+)(
+  React.memo(
+    withStyles(undefined, { withTheme: true })(SearchPopover),
+    areEqual
+  )
+);

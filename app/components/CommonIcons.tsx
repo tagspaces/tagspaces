@@ -93,3 +93,5 @@ export { default as VideoIcon } from '@mui/icons-material/OndemandVideo';
 export { default as ArchiveIcon } from '@mui/icons-material/Archive';
 
 export { default as SearchIcon } from '@mui/icons-material/Search';
+
+export { default as CloseIcon } from '@mui/icons-material/Close';
