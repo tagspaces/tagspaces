@@ -685,10 +685,10 @@ export async function expectMetaFilesExist(
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
   await clickOn('[data-tid=reloadDirectory]');
   if (exist || (await isDisplayed(getGridFileSelector(AppConfig.metaFolder)))) {
-    await global.client.dblclick(getGridFileSelector(AppConfig.metaFolder), { timeout: 3000 });
+    await global.client.dblclick(getGridFileSelector(AppConfig.metaFolder));
     if (subFolder) {
       if (await isDisplayed(getGridFileSelector(subFolder))) {
-        await global.client.dblclick(getGridFileSelector(subFolder), { timeout: 3000 });
+        await global.client.dblclick(getGridFileSelector(subFolder));
       } else if (!exist) {
         await clickOn('[data-tid=gridPerspectiveOnBackButton]');
         return true;
