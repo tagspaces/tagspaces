@@ -7,14 +7,9 @@ export interface StyleProps {
   header: BaseCSSProperties;
   icon: BaseCSSProperties;
   locationListArea: BaseCSSProperties;
-  searchArea: BaseCSSProperties;
-  topShadow: BaseCSSProperties;
   listItem: BaseCSSProperties;
   listItemSelected: BaseCSSProperties;
   panelTitle: BaseCSSProperties;
-  nested: BaseCSSProperties;
-  listItemTitleText: BaseCSSProperties;
-  hiddenFileInput: BaseCSSProperties;
   toolbar: BaseCSSProperties;
   formControl: BaseCSSProperties;
   mainActionButton: BaseCSSProperties;
@@ -43,22 +38,6 @@ export const styles = (theme: any) => {
       // @ts-ignore
       // overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
     },
-    searchArea: {
-      paddingTop: 0,
-      paddingLeft: 10,
-      paddingRight: 10,
-      marginTop: 0,
-      height: 'calc(100% - 80px)',
-      maxHeight: 'calc(100% - 80px)',
-      overflowX: 'hidden',
-      // @ts-ignore
-      overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
-    },
-    topShadow: {
-      borderTop: '1px solid lightgray',
-      height: 10,
-      boxShadow: '0px -7px 20px 0px rgba(255, 255, 255, 1)'
-    },
     listItem: {
       paddingLeft: 0,
       paddingTop: 2,
@@ -80,15 +59,6 @@ export const styles = (theme: any) => {
       flex: 1,
       paddingLeft: 7,
       paddingTop: 12
-    },
-    nested: {
-      paddingLeft: theme.spacing(4)
-    },
-    listItemTitleText: {
-      fontWeight: 'bold'
-    },
-    hiddenFileInput: {
-      display: 'none'
     },
     toolbar: {
       display: 'flex'

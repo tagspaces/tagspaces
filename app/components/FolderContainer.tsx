@@ -25,13 +25,12 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Tooltip from '-/components/Tooltip';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
-import SearchIcon from '@mui/icons-material/Search';
 import Badge from '@mui/material/Badge';
 import withStyles from '@mui/styles/withStyles';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import AppConfig from '-/AppConfig';
-import LocationMenu from './menus/LocationMenu';
+// import LocationMenu from './menus/LocationMenu';
 import i18n from '../services/i18n';
 import {
   getMaxSearchResults,
@@ -39,7 +38,6 @@ import {
   getCurrentLanguage,
   getDefaultPerspective
 } from '-/reducers/settings';
-
 import {
   actions as AppActions,
   getDirectoryContent,
@@ -55,7 +53,12 @@ import {
 } from '../reducers/app';
 import TaggingActions from '../reducers/tagging-actions';
 import LoadingLazy from '../components/LoadingLazy';
-import { GoBackIcon, GoForwardIcon, MainMenuIcon } from './CommonIcons';
+import {
+  GoBackIcon,
+  GoForwardIcon,
+  MainMenuIcon,
+  SearchIcon
+} from './CommonIcons';
 import { Pro } from '../pro';
 import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
 import { TS } from '-/tagspaces.namespace';

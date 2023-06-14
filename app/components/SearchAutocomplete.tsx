@@ -72,6 +72,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { getTagLibrary } from '-/services/taglibrary-utils';
 import { getSearches } from '-/reducers/searches';
 import { getSearchOptions } from '-/components/SearchOptionsMenu';
+import { SearchIcon } from '-/components/CommonIcons';
 
 interface Props {
   style?: any;
@@ -1363,6 +1364,12 @@ function SearchAutocomplete(props: Props) {
     return null;
   }
 
+  // const startAdornment = (
+  //   <IconButton size="small" edge="end" onClick={clickSearchButton}>
+  //     <SearchIcon />
+  //   </IconButton>
+  // );
+
   /*const startAdornment = isDesktop ? (
     <>
       <Tooltip
@@ -1404,22 +1411,12 @@ function SearchAutocomplete(props: Props) {
   );*/
 
   const endAdornment = (
-    /* {isDesktop && (
-                      <Tooltip title={i18n.t('core:savedSearchesTitle')}>
-                        <IconButton
-                          size="small"
-                          edge="end"
-                          onClick={handleOpenSavedSearches}
-                        >
-                          <ExpandMoreIcon />
-                        </IconButton>
-                      </Tooltip>
-                    )}*/
     <>
       <Tooltip title={i18n.t('core:advancedSearch')}>
         <IconButton
           id="advancedButton"
           data-tid="advancedSearch"
+          style={{ maxHeight: 24 }}
           onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
             props.setAnchorSearch(event.currentTarget);
           }}
@@ -1433,7 +1430,6 @@ function SearchAutocomplete(props: Props) {
           id="clearSearchID"
           onClick={() => {
             clearSearch();
-            // props.openCurrentDirectory();
           }}
           size="small"
           edge="end"

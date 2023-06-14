@@ -28,7 +28,7 @@ export const NavigateToFolderIcon = props => <KeyboardReturnIcon />;
 
 export { default as InfoTooltipIcon } from '@mui/icons-material/InfoOutlined';
 
-export { default as FolderIcon } from '@mui/icons-material/Folder';
+export { default as FolderIcon } from '@mui/icons-material/Folder'; // FolderOpen
 
 export { default as FileIcon } from '@mui/icons-material/InsertDriveFile';
 
@@ -69,3 +69,27 @@ export { default as DeleteIcon } from '@mui/icons-material/DeleteForever';
 export { default as LinkIcon } from '@mui/icons-material/Link';
 
 export { default as ExpandIcon } from '@mui/icons-material/ExpandMore';
+
+export { default as EditIcon } from '@mui/icons-material/Edit';
+
+export { default as UntaggedIcon } from '@mui/icons-material/LabelOffOutlined';
+
+export { default as BookmarkIcon } from '@mui/icons-material/BookmarkBorder';
+
+export { default as BookIcon } from '@mui/icons-material/LocalLibraryOutlined';
+
+export { default as DateIcon } from '@mui/icons-material/DateRange';
+
+export { default as PictureIcon } from '@mui/icons-material/Panorama';
+
+export { default as DocumentIcon } from '@mui/icons-material/PictureAsPdf';
+
+export { default as NoteIcon } from '@mui/icons-material/Note';
+
+export { default as AudioIcon } from '@mui/icons-material/MusicVideo';
+
+export { default as VideoIcon } from '@mui/icons-material/OndemandVideo';
+
+export { default as ArchiveIcon } from '@mui/icons-material/Archive';
+
+export { default as SearchIcon } from '@mui/icons-material/Search';

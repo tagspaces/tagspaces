@@ -25,20 +25,7 @@ import format from 'date-fns/format';
 import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '-/components/Tooltip';
-import PictureIcon from '@mui/icons-material/Panorama';
-import DocumentIcon from '@mui/icons-material/PictureAsPdf';
-import NoteIcon from '@mui/icons-material/Note';
-import AudioIcon from '@mui/icons-material/MusicVideo';
-import VideoIcon from '@mui/icons-material/OndemandVideo';
-import ArchiveIcon from '@mui/icons-material/Archive';
 import DialogActions from '@mui/material/DialogActions';
-import FolderIcon from '@mui/icons-material/FolderOpen';
-import UntaggedIcon from '@mui/icons-material/LabelOffOutlined';
-import FileIcon from '@mui/icons-material/InsertDriveFileOutlined';
-import EditIcon from '@mui/icons-material/Edit';
-import BookmarkIcon from '@mui/icons-material/BookmarkBorder';
-import BookIcon from '@mui/icons-material/LocalLibraryOutlined';
-import DateIcon from '@mui/icons-material/DateRange';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Input from '@mui/material/Input';
@@ -55,7 +42,6 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { mergeWithExtractedTags } from '@tagspaces/tagspaces-common/misc';
-import HelpIcon from '@mui/icons-material/Help';
 import AppConfig from '-/AppConfig';
 import TagsSelect from './TagsSelect';
 import { actions as AppActions, getDirectoryPath } from '../reducers/app';
@@ -79,8 +65,23 @@ import { getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
 import Links from '-/content/links';
-import { CreateFileIcon } from '-/components/CommonIcons';
 import GlobalSearch from '-/services/search-index';
+import {
+  CreateFileIcon,
+  FolderIcon,
+  UntaggedIcon,
+  FileIcon,
+  BookmarkIcon,
+  BookIcon,
+  DateIcon,
+  EditIcon,
+  PictureIcon,
+  DocumentIcon,
+  NoteIcon,
+  AudioIcon,
+  VideoIcon,
+  ArchiveIcon
+} from '-/components/CommonIcons';
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
 
@@ -512,25 +513,15 @@ function SearchPopover(props: Props) {
       }}
     >
       <div className={classes.toolbar}>
-        <IconButton
-          size="medium"
-          data-tid="helpSearchTID"
-          title={i18n.t('core:help')}
-          onClick={() =>
-            props.openURLExternally(Links.documentationLinks.search, true)
-          }
-        >
-          <HelpIcon />
-        </IconButton>
-        {/*<Typography variant="button" style={{ margin: '12px 0 10px 10px' }}>
+        <Typography variant="button" style={{ margin: '12px 0 10px 10px' }}>
           {i18n.t('core:advancedSearch')}
-        </Typography>*/}
+        </Typography>
         <Typography
           variant="caption"
           className={classes.header}
-          style={{ flex: 1, margin: 'auto' }}
+          style={{ flex: 1, margin: 'auto', paddingLeft: 10 }}
         >
-          {indexStatus}
+          {'(' + indexStatus + ')'}
         </Typography>
         <IconButton
           style={{ marginLeft: 'auto' }}
@@ -541,7 +532,20 @@ function SearchPopover(props: Props) {
           <CloseIcon />
         </IconButton>
       </div>
-      <div className={classes.searchArea} data-tid="searchAdvancedTID">
+      <div
+        style={{
+          paddingTop: 0,
+          paddingLeft: 10,
+          paddingRight: 10,
+          marginTop: 0,
+          height: 'calc(100% - 90px)',
+          maxHeight: 'calc(100% - 90px)',
+          overflowX: 'hidden',
+          // @ts-ignore
+          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+        }}
+        data-tid="searchAdvancedTID"
+      >
         <Grid
           container
           spacing={2}
@@ -558,21 +562,21 @@ function SearchPopover(props: Props) {
               <Select
                 disabled={indexing || !Pro}
                 onChange={handleSavedSearchChange}
-                inputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      {props.searchQuery.uuid && (
-                        <IconButton
-                          data-tid="editSearchBtnTID"
-                          size="small"
-                          onClick={() => saveSearch(false)}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                      )}
-                    </InputAdornment>
-                  )
-                }}
+                // inputProps={{
+                //   endAdornment: (
+                //     <InputAdornment position="end">
+                //       {props.searchQuery.uuid && (
+                //         <IconButton
+                //           data-tid="editSearchBtnTID"
+                //           size="small"
+                //           onClick={() => saveSearch(false)}
+                //         >
+                //           <EditIcon />
+                //         </IconButton>
+                //       )}
+                //     </InputAdornment>
+                //   )
+                // }}
                 input={<Input name="savedSearch" id="saved-searches" />}
                 displayEmpty
                 fullWidth
@@ -598,24 +602,26 @@ function SearchPopover(props: Props) {
               }}
             >
               {props.searchQuery.uuid && (
-                <IconButton
-                  data-tid="editSearchBtnTID"
-                  size="small"
-                  onClick={() => saveSearch(false)}
-                >
-                  <EditIcon />
-                </IconButton>
+                <Tooltip title={i18n.t('editSavedSearchTitle')}>
+                  <IconButton
+                    data-tid="editSearchBtnTID"
+                    size="small"
+                    onClick={() => saveSearch(false)}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                </Tooltip>
               )}
-              <Button
-                disabled={!Pro}
-                data-tid="addSearchBtnTID"
-                variant="outlined"
-                color="primary"
-                size="small"
-                onClick={() => saveSearch()}
-              >
-                {'+'}
-              </Button>
+              <Tooltip title={i18n.t('createNewSavedSearchTitle')}>
+                <IconButton
+                  disabled={!Pro}
+                  data-tid="addSearchBtnTID"
+                  size="small"
+                  onClick={() => saveSearch()}
+                >
+                  <CreateFileIcon />
+                </IconButton>
+              </Tooltip>
             </ButtonGroup>
           </Grid>
           <Grid item xs={12}>
@@ -1008,22 +1014,31 @@ function SearchPopover(props: Props) {
         style={{
           display: 'flex',
           justifyContent: 'space-between',
-          paddingRight: 8
+          padding: 5
         }}
       >
         <Button
           size="small"
+          variant="text"
           data-tid="helpSearchButtonTID"
-          title={i18n.t('core:help')}
           onClick={() =>
             props.openURLExternally(Links.documentationLinks.search, true)
           }
         >
           {i18n.t('help')}
         </Button>
-        <ButtonGroup>
+        <div>
+          <Button
+            variant="text"
+            size="small"
+            onClick={clearSearch}
+            id="resetSearchButton"
+          >
+            {i18n.t('resetBtn')}
+          </Button>
           <Button
             disabled={indexing}
+            variant="contained"
             id="searchButtonAdvTID"
             onClick={executeSearch}
             size="small"
@@ -1032,12 +1047,7 @@ function SearchPopover(props: Props) {
               ? 'Search disabled while indexing'
               : i18n.t('searchTitle')}
           </Button>
-          <Tooltip title={i18n.t('clearSearch')}>
-            <Button size="small" onClick={clearSearch} id="resetSearchButton">
-              {i18n.t('resetBtn')}
-            </Button>
-          </Tooltip>
-        </ButtonGroup>
+        </div>
       </div>
       {SaveSearchDialog && saveSearchDialogOpened !== undefined && (
         <SaveSearchDialog

@@ -38,21 +38,6 @@ export default (theme: any) =>
       marginTop: 0,
       overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
     },
-    searchArea: {
-      paddingTop: 0,
-      paddingLeft: 5,
-      paddingRight: 5,
-      marginTop: 0,
-      height: 'calc(100% - 110px)',
-      maxHeight: 'calc(100% - 110px)',
-      overflowX: 'hidden',
-      overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
-    },
-    topShadow: {
-      borderTop: '1px solid lightgray',
-      height: 10,
-      boxShadow: '0px -7px 20px 0px rgba(255, 255, 255, 1)'
-    },
     listItem: {
       paddingLeft: 0,
       paddingTop: 2,
@@ -74,15 +59,6 @@ export default (theme: any) =>
       flex: 1,
       paddingLeft: 7,
       paddingTop: 12
-    },
-    nested: {
-      paddingLeft: theme.spacing(4)
-    },
-    listItemTitleText: {
-      fontWeight: 'bold'
-    },
-    hiddenFileInput: {
-      display: 'none'
     },
     toolbar: {
       display: 'flex'
