@@ -1416,7 +1416,7 @@ function SearchAutocomplete(props: Props) {
         <IconButton
           id="advancedButton"
           data-tid="advancedSearch"
-          style={{ maxHeight: 24 }}
+          style={{ maxHeight: 35 }}
           onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
             props.setAnchorSearch(event.currentTarget);
           }}
