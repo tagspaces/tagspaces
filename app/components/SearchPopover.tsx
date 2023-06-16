@@ -225,7 +225,7 @@ function SearchPopover(props: Props) {
     if (!savedSearch) {
       return true;
     }
-    props.setTextQuery(savedSearch.textQuery);
+    props.setTextQuery(savedSearch.textQuery ? savedSearch.textQuery : '');
     fileTypes.current = savedSearch.fileTypes;
     lastModified.current = savedSearch.lastModified;
     fileSize.current = savedSearch.fileSize;
