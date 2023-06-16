@@ -16,9 +16,8 @@
  *
  */
 
-import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import React, { useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import IconButton from '@mui/material/IconButton';
 import withStyles from '@mui/styles/withStyles';
 import Badge from '@mui/material/Badge';
@@ -28,10 +27,10 @@ import { Pro } from '../pro';
 import TextLogoIcon from '../assets/images/text-logo.svg';
 import WebLogoIcon from '../assets/images/text-logo-web.svg';
 import LogoIcon from '../assets/images/icon100x100.svg';
-import { actions as AppActions } from '../reducers/app';
 import i18n from '../services/i18n';
 import versionMeta from '../version.json';
 import { getCurrentLanguage } from '-/reducers/settings';
+import { actions } from '../reducers/app';
 
 const AppVersionBadge = withStyles(theme => ({
   badge: {
@@ -48,24 +47,25 @@ const AppVersionBadge = withStyles(theme => ({
   }
 }))(Badge);
 
-interface Props {
-  toggleAboutDialog: () => void;
-}
+function CustomLogo(props) {
+  const dispatch = useDispatch();
+  const language = useSelector(getCurrentLanguage);
 
-let logo = Pro ? Pro.TextLogoIcon : TextLogoIcon;
-if (AppConfig.isWeb) {
-  logo = WebLogoIcon;
-}
-if (AppConfig.customLogo) {
-  logo = AppConfig.customLogo;
-}
+  const logo = useMemo(() => {
+    if (AppConfig.isWeb) {
+      return WebLogoIcon;
+    } else if (AppConfig.customLogo) {
+      return AppConfig.customLogo;
+    } else {
+      return Pro ? Pro.TextLogoIcon : TextLogoIcon;
+    }
+  }, []);
 
-function CustomLogo(props: Props) {
   return (
     <AppVersionBadge badgeContent={'v' + versionMeta.version} color="primary">
       <Tooltip title={i18n.t('core:aboutTitle')}>
         <IconButton
-          onClick={props.toggleAboutDialog}
+          onClick={() => dispatch(actions.toggleAboutDialog())}
           style={{ padding: 0, paddingLeft: 5, height: 50 }}
         >
           <img
@@ -81,7 +81,7 @@ function CustomLogo(props: Props) {
         <IconButton
           style={{ height: 50, padding: 0, marginBottom: 15 }}
           data-tid="aboutTagSpaces"
-          onClick={props.toggleAboutDialog}
+          onClick={() => dispatch(actions.toggleAboutDialog())}
         >
           <img
             style={{ maxHeight: 50, maxWidth: 200 }}
@@ -94,17 +94,4 @@ function CustomLogo(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return { language: getCurrentLanguage(state) };
-}
-
-function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators(
-    {
-      toggleAboutDialog: AppActions.toggleAboutDialog
-    },
-    dispatch
-  );
-}
-
-export default connect(mapStateToProps, mapActionCreatorsToProps)(CustomLogo);
+export default CustomLogo;
