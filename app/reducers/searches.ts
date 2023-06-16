@@ -32,10 +32,11 @@ export const types = {
 export default (state: Array<TS.SearchQuery> = initialState, action: any) => {
   switch (action.type) {
     case types.ADD_SEARCH: {
+      const { maxSearchResults, ...search } = action.search;
       return [
         ...state,
         {
-          ...action.search
+          ...search
           // creationDate: new Date().getTime()
         }
       ];
