@@ -17,9 +17,6 @@
  */
 
 import React, { useState, useRef } from 'react';
-import Tooltip from '-/components/Tooltip';
-import IconButton from '@mui/material/IconButton';
-import i18n from '-/services/i18n';
 import Popover from '@mui/material/Popover';
 import SearchPopover from '-/components/SearchPopover';
 import SearchAutocomplete from '-/components/SearchAutocomplete';
@@ -34,13 +31,6 @@ function SearchBox(props: Props) {
     null
   );
   const [textQuery, setTextQuery] = useState<string>(props.textQuery || '');
-  // const searchInlineRef = React.useRef<HTMLDivElement | null>(null);
-
-  /*  useEffect(() => {
-    if (props.open && searchInlineRef.current) {
-      setAnchorSearchItems(searchInlineRef.current);
-    }
-  }, [searchInlineRef.current, props.open]);*/
 
   return (
     <>
@@ -50,21 +40,8 @@ function SearchBox(props: Props) {
         setTextQuery={setTextQuery}
         setAnchorSearch={setAnchorSearch}
       />
-      {/*<SearchInline open={props.open} />*/}
       {props.open && (
         <>
-          {/*<Tooltip title={i18n.t('core:advancedSearch')}>
-            <IconButton
-              id="advancedButton"
-              data-tid="advancedSearch"
-              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-                setAnchorSearch(event.currentTarget);
-              }}
-            >
-              <AdvancedSearchIcon />
-              <DropDownIcon />
-            </IconButton>
-          </Tooltip>*/}
           <Popover
             open={Boolean(anchorSearch)}
             anchorEl={anchorSearch}
