@@ -16,9 +16,13 @@
  *
  */
 
-import React, { useEffect, useReducer, useRef, useState } from 'react';
+import React, { useReducer, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import DateFnsUtils from '@date-io/date-fns';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import Box from '@mui/material/Box';
 import { Theme } from '@mui/material/styles';
 import withStyles from '@mui/styles/withStyles';
 import makeStyles from '@mui/styles/makeStyles';
@@ -125,30 +129,29 @@ function SearchPopover(props: Props) {
       : FileTypeGroups.any
   );
 
-  const searchBoxing = useRef<'location' | 'folder' | 'global'>(
-    props.searchQuery.searchBoxing ? props.searchQuery.searchBoxing : 'location'
-  );
-  const searchType = useRef<'fuzzy' | 'semistrict' | 'strict'>(
-    props.searchQuery.searchType ? props.searchQuery.searchType : 'fuzzy'
-  );
+  const searchBoxing = props.searchQuery.searchBoxing
+    ? props.searchQuery.searchBoxing
+    : 'location';
+  // useRef<'fuzzy' | 'semistrict' | 'strict'>(
+  const searchType = props.searchQuery.searchType
+    ? props.searchQuery.searchType
+    : 'fuzzy';
   const lastModified = useRef<string>(
     props.searchQuery.lastModified ? props.searchQuery.lastModified : ''
   );
   const [saveSearchDialogOpened, setSaveSearchDialogOpened] = useState<
     TS.SearchQuery
   >(undefined);
-  const tagTimePeriod = useRef<string>('');
-  const tagTimePeriodHelper = useRef<string>(' ');
+  // const tagTimePeriod = useRef<string>('');
+  // const tagTimePeriodHelper = useRef<string>(' ');
   const [tagPlace, setTagPlace] = useState<string>(' ');
   const [tagPlaceHelper, setTagPlaceHelper] = useState<string>(' ');
-  const tagTimePeriodFrom = useRef<number | null>(
-    props.searchQuery.tagTimePeriodFrom
-      ? props.searchQuery.tagTimePeriodFrom
-      : null
-  );
-  const tagTimePeriodTo = useRef<number | null>(
-    props.searchQuery.tagTimePeriodTo ? props.searchQuery.tagTimePeriodTo : null
-  );
+  const tagTimePeriodFrom = props.searchQuery.tagTimePeriodFrom // useRef<number | null>(
+    ? props.searchQuery.tagTimePeriodFrom
+    : null;
+  const tagTimePeriodTo = props.searchQuery.tagTimePeriodTo //useRef<number | null>(
+    ? props.searchQuery.tagTimePeriodTo
+    : null;
   const [tagPlaceLat, setTagPlaceLat] = useState<number | null>(null);
   const [tagPlaceLong, setTagPlaceLong] = useState<number | null>(null);
   // const [tagPlaceRadius, setTagPlaceRadius] = useState<number>(0);
@@ -172,9 +175,10 @@ function SearchPopover(props: Props) {
       fileTypes.current = types;
       const searchQuery = {
         ...props.searchQuery,
-        searchBoxing: searchBoxing.current,
+        searchBoxing: searchBoxing,
         fileTypes: types,
-        showUnixHiddenEntries: props.showUnixHiddenEntries
+        showUnixHiddenEntries: props.showUnixHiddenEntries,
+        executeSearch: false
       };
       props.setSearchQuery(searchQuery);
     }
@@ -188,9 +192,10 @@ function SearchPopover(props: Props) {
       fileSize.current = value;
       const searchQuery = {
         ...props.searchQuery,
-        searchBoxing: searchBoxing.current,
+        searchBoxing: searchBoxing,
         fileSize: value,
-        showUnixHiddenEntries: props.showUnixHiddenEntries
+        showUnixHiddenEntries: props.showUnixHiddenEntries,
+        executeSearch: false
       };
 
       props.setSearchQuery(searchQuery);
@@ -207,9 +212,10 @@ function SearchPopover(props: Props) {
       lastModified.current = value;
       const searchQuery = {
         ...props.searchQuery,
-        searchBoxing: searchBoxing.current,
+        searchBoxing: searchBoxing,
         lastModified: value,
-        showUnixHiddenEntries: props.showUnixHiddenEntries
+        showUnixHiddenEntries: props.showUnixHiddenEntries,
+        executeSearch: false
       };
       props.setSearchQuery(searchQuery);
     }
@@ -229,28 +235,30 @@ function SearchPopover(props: Props) {
     fileTypes.current = savedSearch.fileTypes;
     lastModified.current = savedSearch.lastModified;
     fileSize.current = savedSearch.fileSize;
-    searchType.current = savedSearch.searchType;
-    searchBoxing.current = savedSearch.searchBoxing;
+    //searchType.current = savedSearch.searchType;
+    //searchBoxing.current = savedSearch.searchBoxing;
     forceIndexing.current = savedSearch.forceIndexing;
 
-    let ttPeriod;
-    tagTimePeriodFrom.current = savedSearch.tagTimePeriodFrom;
-    if (savedSearch.tagTimePeriodFrom) {
+    //let ttPeriod;
+    // tagTimePeriodFrom.current = savedSearch.tagTimePeriodFrom;
+    /* if (savedSearch.tagTimePeriodFrom) {
       ttPeriod = format(new Date(savedSearch.tagTimePeriodFrom), 'yyyyMMdd');
-    }
+    }*/
 
-    tagTimePeriodTo.current = savedSearch.tagTimePeriodTo;
-    if (savedSearch.tagTimePeriodTo) {
+    // tagTimePeriodTo.current = savedSearch.tagTimePeriodTo;
+    /*if (savedSearch.tagTimePeriodTo) {
       ttPeriod +=
         '-' + format(new Date(savedSearch.tagTimePeriodTo), 'yyyyMMdd');
-    }
+    }*/
 
-    if (ttPeriod) {
+    /*if (ttPeriod) {
       tagTimePeriod.current = ttPeriod;
-    }
+    }*/
 
     props.setSearchQuery({
       ...savedSearch,
+      tagTimePeriodFrom: savedSearch.tagTimePeriodFrom,
+      tagTimePeriodTo: savedSearch.tagTimePeriodTo,
       showUnixHiddenEntries: props.showUnixHiddenEntries
     });
   };
@@ -296,8 +304,9 @@ function SearchPopover(props: Props) {
     } else {
       props.setSearchQuery({
         ...searchQuery,
-        searchBoxing: searchBoxing.current,
-        showUnixHiddenEntries: props.showUnixHiddenEntries
+        searchBoxing: searchBoxing,
+        showUnixHiddenEntries: props.showUnixHiddenEntries,
+        executeSearch: false
       });
     }
   };
@@ -308,7 +317,7 @@ function SearchPopover(props: Props) {
     props.setTextQuery(value);
   };
 
-  const handleTimePeriodChange = event => {
+  /*const handleTimePeriodChange = event => {
     const { target } = event;
     const { value } = target;
     const { fromDateTime, toDateTime } = extractTimePeriod(value);
@@ -327,9 +336,9 @@ function SearchPopover(props: Props) {
       tagTimePeriodTo.current = null;
       tagTimePeriodHelper.current = ' ';
     }
-    tagTimePeriod.current = value;
+    // tagTimePeriod.current = value;
     forceUpdate();
-  };
+  };*/
 
   const handlePlaceChange = event => {
     const { target } = event;
@@ -379,16 +388,16 @@ function SearchPopover(props: Props) {
 
   const clearSearch = () => {
     props.setTextQuery('');
-    searchBoxing.current = 'location';
-    searchType.current = 'fuzzy';
+    //searchBoxing.current = 'location';
+    //searchType.current = 'fuzzy';
     fileTypes.current = FileTypeGroups.any;
     lastModified.current = '';
-    tagTimePeriod.current = '';
-    tagTimePeriodHelper.current = ' ';
+    // tagTimePeriod.current = '';
+    //tagTimePeriodHelper.current = ' ';
     setTagPlace(' ');
     setTagPlaceHelper(' ');
-    tagTimePeriodFrom.current = null;
-    tagTimePeriodTo.current = null;
+    //tagTimePeriodFrom.current = null;
+    //tagTimePeriodTo.current = null;
     setTagPlaceLat(null);
     setTagPlaceLong(null);
     // setTagPlaceRadius(0);
@@ -423,13 +432,13 @@ function SearchPopover(props: Props) {
       tagsAND,
       tagsOR,
       tagsNOT,
-      searchBoxing: searchBoxing.current,
-      searchType: searchType.current,
+      searchBoxing: searchBoxing,
+      searchType: searchType,
       fileTypes: fileTypes.current,
       lastModified: lastModified.current,
       fileSize: fileSize.current,
-      tagTimePeriodFrom: tagTimePeriodFrom.current,
-      tagTimePeriodTo: tagTimePeriodTo.current,
+      tagTimePeriodFrom: tagTimePeriodFrom,
+      tagTimePeriodTo: tagTimePeriodTo,
       tagPlaceLat,
       tagPlaceLong,
       // tagPlaceRadius,
@@ -444,8 +453,15 @@ function SearchPopover(props: Props) {
     boxing: 'location' | 'folder' | 'global'
   ) => {
     if (boxing !== null) {
-      searchBoxing.current = boxing;
-      forceUpdate();
+      const searchQuery = {
+        ...props.searchQuery,
+        searchBoxing: boxing,
+        executeSearch: false
+      };
+      props.setSearchQuery(searchQuery);
+
+      /*searchBoxing.current = boxing;
+      forceUpdate();*/
     }
   };
 
@@ -454,8 +470,15 @@ function SearchPopover(props: Props) {
     type: 'fuzzy' | 'semistrict' | 'strict'
   ) => {
     if (type !== null) {
-      searchType.current = type;
-      forceUpdate();
+      const searchQuery = {
+        ...props.searchQuery,
+        searchType: type,
+        executeSearch: false
+      };
+      props.setSearchQuery(searchQuery);
+
+      /*searchType.current = type;
+      forceUpdate();*/
     }
   };
 
@@ -480,20 +503,21 @@ function SearchPopover(props: Props) {
       tagsAND,
       tagsOR,
       tagsNOT,
-      searchBoxing: searchBoxing.current,
-      searchType: searchType.current,
+      searchBoxing: searchBoxing,
+      searchType: searchType,
       fileTypes: fileTypes.current,
       lastModified: lastModified.current,
       fileSize: fileSize.current,
-      tagTimePeriodFrom: tagTimePeriodFrom.current,
-      tagTimePeriodTo: tagTimePeriodTo.current,
+      tagTimePeriodFrom: tagTimePeriodFrom,
+      tagTimePeriodTo: tagTimePeriodTo,
       tagPlaceLat,
       tagPlaceLong,
       // tagPlaceRadius,
       maxSearchResults: props.maxSearchResults,
       currentDirectory: props.currentDirectory,
       forceIndexing: forceIndexing.current,
-      showUnixHiddenEntries: props.showUnixHiddenEntries
+      showUnixHiddenEntries: props.showUnixHiddenEntries,
+      executeSearch: true
     };
     console.log('Search object: ' + JSON.stringify(searchQuery));
     props.setSearchQuery(searchQuery);
@@ -634,7 +658,7 @@ function SearchPopover(props: Props) {
             size="small"
             exclusive
             style={{ marginBottom: 10, alignSelf: 'center' }}
-            value={searchBoxing.current}
+            value={searchBoxing}
           >
             <ToggleButton value="location">
               <Tooltip title={i18n.t('searchPlaceholder')}>
@@ -660,7 +684,7 @@ function SearchPopover(props: Props) {
             size="small"
             exclusive
             style={{ marginBottom: 10, alignSelf: 'center' }}
-            value={searchType.current}
+            value={searchType}
           >
             <ToggleButton value="fuzzy" data-tid="fuzzySearchTID">
               <Tooltip title={i18n.t('searchTypeFuzzyTooltip')}>
@@ -744,7 +768,7 @@ function SearchPopover(props: Props) {
               {i18n.t('core:fileType')}
             </InputLabel>
             <Select
-              style={{ width: '100%' }}
+              fullWidth
               value={JSON.stringify(fileTypes.current)}
               onChange={handleFileTypeChange}
               input={
@@ -857,7 +881,11 @@ function SearchPopover(props: Props) {
           disabled={indexing || !Pro}
         >
           <ProTooltip tooltip={i18n.t('filterBySizeTooltip')}>
-            <InputLabel shrink htmlFor="file-size">
+            <InputLabel
+              style={{ backgroundColor: theme.palette.background.default }}
+              shrink
+              htmlFor="file-size"
+            >
               {i18n.t('core:sizeSearchTitle')}
             </InputLabel>
             <Select
@@ -907,7 +935,11 @@ function SearchPopover(props: Props) {
           disabled={indexing || !Pro}
         >
           <ProTooltip tooltip={i18n.t('filterByLastModifiedDateTooltip')}>
-            <InputLabel shrink htmlFor="modification-date">
+            <InputLabel
+              style={{ backgroundColor: theme.palette.background.default }}
+              shrink
+              htmlFor="modification-date"
+            >
               {i18n.t('core:lastModifiedSearchTitle')}
             </InputLabel>
             <Select
@@ -942,7 +974,50 @@ function SearchPopover(props: Props) {
         </FormControl>
         <FormControl className={classes.formControl}>
           <ProTooltip tooltip={i18n.t('enterTimePeriodTooltip')}>
-            <TextField
+            <LocalizationProvider
+              dateAdapter={AdapterDateFns}
+              utils={DateFnsUtils}
+            >
+              <Box position="relative" display="inline-flex">
+                <DatePicker
+                  label={i18n.t('enterTagTimePeriodFrom')}
+                  disabled={indexing || !Pro}
+                  inputFormat="yyyy-MM-dd"
+                  value={tagTimePeriodFrom}
+                  onChange={(fromDataTime: Date) => {
+                    if (fromDataTime) {
+                      const searchQuery = {
+                        ...props.searchQuery,
+                        tagTimePeriodFrom: fromDataTime.getTime(),
+                        executeSearch: false
+                      };
+                      props.setSearchQuery(searchQuery);
+                    }
+                  }}
+                  renderInput={params => <TextField {...params} />}
+                />
+                <DatePicker
+                  label={i18n.t('enterTagTimePeriodTo')}
+                  disabled={indexing || !Pro}
+                  inputFormat="yyyy-MM-dd"
+                  value={tagTimePeriodTo}
+                  onChange={(toDataTime: Date) => {
+                    if (toDataTime) {
+                      const searchQuery = {
+                        ...props.searchQuery,
+                        tagTimePeriodTo: toDataTime.getTime(),
+                        executeSearch: false
+                      };
+                      props.setSearchQuery(searchQuery);
+                    }
+                  }}
+                  renderInput={params => (
+                    <TextField style={{ marginLeft: 5 }} {...params} />
+                  )}
+                />
+              </Box>
+            </LocalizationProvider>
+            {/*<TextField
               id="tagTimePeriod"
               label={i18n.t('enterTimePeriod')}
               value={tagTimePeriod.current}
@@ -954,17 +1029,17 @@ function SearchPopover(props: Props) {
               style={{ width: '100%' }}
               InputProps={{
                 endAdornment: (
-                  <InputAdornment
-                    position="end"
-                    title="201905 for May 2019 / 20190412 for 12th of April 2019 / 20190501~124523 for specific time"
-                  >
-                    <IconButton size="large">
-                      <DateIcon />
-                    </IconButton>
-                  </InputAdornment>
+                    <InputAdornment
+                      position="end"
+                      title="201905 for May 2019 / 20190412 for 12th of April 2019 / 20190501~124523 for specific time"
+                    >
+                      <IconButton size="large">
+                        <DateIcon />
+                      </IconButton>
+                    </InputAdornment>
                 )
               }}
-            />
+            />*/}
           </ProTooltip>
           {/* <TextField
                 id="tagPlace"

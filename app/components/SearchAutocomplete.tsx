@@ -273,8 +273,8 @@ function SearchAutocomplete(props: Props) {
           (textQueryMask.current ? ' ' + textQueryMask.current.trim() : '');
       }*/
       if (
-        props.searchQuery.searchBoxing &&
-        props.searchQuery.searchBoxing !== 'location'
+        props.searchQuery.searchBoxing
+        // && props.searchQuery.searchBoxing !== 'location'
       ) {
         setSearchBoxing(props.searchQuery.searchBoxing);
         // searchBoxing.current = props.searchQuery.searchBoxing;
@@ -314,8 +314,8 @@ function SearchAutocomplete(props: Props) {
         });
       }
       if (
-        props.searchQuery.searchType &&
-        props.searchQuery.searchType !== accuracy.fuzzy
+        props.searchQuery.searchType
+        // && props.searchQuery.searchType !== accuracy.fuzzy
       ) {
         searchType.current = props.searchQuery.searchType;
         emptySearch = false;
@@ -370,10 +370,12 @@ function SearchAutocomplete(props: Props) {
           isOpen.current = false;
           forceUpdate();
         }
-        if (searchBoxing === 'global') {
-          props.searchAllLocations(searchQuery);
-        } else {
-          props.searchLocationIndex(searchQuery);
+        if (searchQuery.executeSearch) {
+          if (searchBoxing === 'global') {
+            props.searchAllLocations(searchQuery);
+          } else {
+            props.searchLocationIndex(searchQuery);
+          }
         }
       } /*else {
         clearSearch();
@@ -647,7 +649,8 @@ function SearchAutocomplete(props: Props) {
       maxSearchResults: props.maxSearchResults,
       currentDirectory: props.currentDirectory,
       forceIndexing: forceIndexing.current,
-      showUnixHiddenEntries: props.showUnixHiddenEntries
+      showUnixHiddenEntries: props.showUnixHiddenEntries,
+      executeSearch: true
     };
     if (!haveSearchFilters(searchQuery)) {
       clearSearch();
