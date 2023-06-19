@@ -47,6 +47,9 @@ import MapTileServerDialog from '-/components/dialogs/settings/MapTileServerDial
 import { Pro } from '-/pro';
 import { ProLabel } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
+import { DeleteIcon } from '-/components/CommonIcons';
+import { ListItemIcon } from '@mui/material';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 
 const styles: any = {
   root: {
@@ -88,6 +91,7 @@ const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 
 function SettingsAdvanced(props: Props) {
   const [tileServerDialog, setTileServerDialog] = useState<any>(undefined);
+  const [confirmDialogKey, setConfirmDialogKey] = useState<null | string>(null);
 
   const handleEditTileServerClick = (
     event: any,
@@ -176,6 +180,16 @@ function SettingsAdvanced(props: Props) {
           <>
             <ListItem className={classes.listItem}>
               <ListItemText primary={i18n.t('core:fileOpenHistory')} />
+              <ListItemIcon>
+                <IconButton
+                  aria-label={i18n.t('core:clearHistory')}
+                  onClick={() => setConfirmDialogKey(historyKeys.fileOpenKey)}
+                  data-tid="clearSearchTID"
+                  size="small"
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </ListItemIcon>
               <Select
                 data-tid="fileOpenTID"
                 title={i18n.t('core:fileOpenHistoryTitle')}
@@ -193,6 +207,16 @@ function SettingsAdvanced(props: Props) {
             </ListItem>
             <ListItem className={classes.listItem}>
               <ListItemText primary={i18n.t('core:folderOpenHistory')} />
+              <ListItemIcon>
+                <IconButton
+                  aria-label={i18n.t('core:clearHistory')}
+                  onClick={() => setConfirmDialogKey(historyKeys.folderOpenKey)}
+                  data-tid="clearSearchTID"
+                  size="small"
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </ListItemIcon>
               <Select
                 data-tid="folderOpenTID"
                 title={i18n.t('core:folderOpenHistoryTitle')}
@@ -213,6 +237,16 @@ function SettingsAdvanced(props: Props) {
             </ListItem>
             <ListItem className={classes.listItem}>
               <ListItemText primary={i18n.t('core:fileEditHistory')} />
+              <ListItemIcon>
+                <IconButton
+                  aria-label={i18n.t('core:clearHistory')}
+                  onClick={() => setConfirmDialogKey(historyKeys.fileEditKey)}
+                  data-tid="clearSearchTID"
+                  size="small"
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </ListItemIcon>
               <Select
                 data-tid="fileEditTID"
                 title={i18n.t('core:fileEditHistoryTitle')}
@@ -230,6 +264,18 @@ function SettingsAdvanced(props: Props) {
             </ListItem>
             <ListItem className={classes.listItem}>
               <ListItemText primary={i18n.t('core:searchHistory')} />
+              <ListItemIcon>
+                <IconButton
+                  aria-label={i18n.t('core:clearHistory')}
+                  onClick={() =>
+                    setConfirmDialogKey(historyKeys.searchHistoryKey)
+                  }
+                  data-tid="clearSearchTID"
+                  size="small"
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </ListItemIcon>
               <Select
                 data-tid="searchHistoryTID"
                 title={i18n.t('core:searchHistoryTitle')}
@@ -248,6 +294,24 @@ function SettingsAdvanced(props: Props) {
                 <MenuItem value={100}>100</MenuItem>
               </Select>
             </ListItem>
+            <ConfirmDialog
+              open={confirmDialogKey !== null}
+              onClose={() => {
+                setConfirmDialogKey(null);
+              }}
+              title="Confirm"
+              content={i18n.t('core:confirm' + confirmDialogKey + 'Deletion')}
+              confirmCallback={result => {
+                if (result) {
+                  Pro.history.delAllHistory(confirmDialogKey);
+                }
+              }}
+              cancelDialogTID={'cancelDelete' + confirmDialogKey + 'Dialog'}
+              confirmDialogTID={'confirmDelete' + confirmDialogKey + 'Dialog'}
+              confirmDialogContentTID={
+                'confirmDelete' + confirmDialogKey + 'DialogContent'
+              }
+            />
           </>
         )}
         <ListItem className={classes.listItem}>
