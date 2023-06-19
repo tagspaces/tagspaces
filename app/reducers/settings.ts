@@ -820,13 +820,13 @@ export function getLastVersionPromise(): Promise<string> {
 }
 
 // Selectors
+export const getSettings = (state: any) => state.settings;
 export const getMapTileServer = (state: any): TS.MapTileServer =>
   AppConfig.mapTileServers
     ? AppConfig.mapTileServers[0]
     : state.settings.mapTileServers[0];
 export const getMapTileServers = (state: any): Array<TS.MapTileServer> =>
   AppConfig.mapTileServers || state.settings.mapTileServers;
-export const getSettings = (state: any) => state.settings;
 export const getEnableWS = (state: any) => state.settings.enableWS;
 export const getDesktopMode = (state: any) => {
   if (typeof window.ExtDisplayMode === 'undefined') {

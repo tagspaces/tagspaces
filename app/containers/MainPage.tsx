@@ -659,6 +659,7 @@ function MainPage(props: Props) {
           }
         />
         {isFileOpened && (
+          // @ts-ignore
           <EntryContainer
             key="EntryContainerID"
             loadDirectoryContent={loadDirectoryContent}

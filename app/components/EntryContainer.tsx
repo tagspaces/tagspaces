@@ -24,8 +24,7 @@ import React, {
   useRef,
   useState
 } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { GlobalHotKeys } from 'react-hotkeys';
 import fscreen from 'fscreen';
 import Button from '@mui/material/Button';
@@ -88,7 +87,8 @@ import {
   getKeyBindingObject,
   getMapTileServer,
   getCurrentLanguage,
-  isRevisionsEnabled
+  isRevisionsEnabled,
+  getSettings
 } from '-/reducers/settings';
 import TaggingActions from '-/reducers/tagging-actions';
 import {
@@ -156,7 +156,7 @@ interface Props {
   theme: any;
   openedFiles: Array<OpenedEntry>;
   settings: any;
-  keyBindings: any;
+  // keyBindings: any;
   closeAllFiles: () => void;
   renameFile: () => void;
   renameDirectory: () => void;
@@ -176,7 +176,6 @@ interface Props {
   removeAllTags: () => void;
   deleteFile: (path: string, uuid: string) => void;
   toggleEntryFullWidth: () => void;
-  isReadOnlyMode: boolean;
   setEntryPropertiesSplitSize: (size: string) => void;
   updateOpenedFile: (
     entryPath: string,
@@ -191,27 +190,29 @@ interface Props {
     loadDirMeta?: boolean
   ) => void;
   currentDirectoryPath: string | null;
-  isDesktopMode: boolean;
-  tileServer: TS.MapTileServer;
   switchLocationType: (locationId: string) => Promise<string | null>;
   switchCurrentLocationType: (currentLocationId) => Promise<boolean>;
-  revisionsEnabled: boolean;
-  locations: Array<TS.Location>;
 }
 
 const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 
 function EntryContainer(props: Props) {
+  const dispatch = useDispatch();
+  const settings: any = useSelector(getSettings);
+  const readOnlyMode: boolean = useSelector(isReadOnlyMode);
+  const keyBindings: any = useSelector(getKeyBindingObject);
+  const desktopMode: boolean = useSelector(isDesktopMode);
+  const tileServer: TS.MapTileServer = useSelector(getMapTileServer);
+  const revisionsEnabled: boolean = useSelector(isRevisionsEnabled);
+  const locations: Array<TS.Location> = useSelector(getLocations);
+  const language = useSelector(getCurrentLanguage);
+
   const {
     classes,
-    keyBindings,
     theme,
-    settings,
     openedFiles,
     currentDirectoryPath,
-    isDesktopMode,
     toggleEntryFullWidth,
-    isReadOnlyMode,
     updateOpenedFile,
     updateThumbnailUrl,
     renameFile,
@@ -225,8 +226,7 @@ function EntryContainer(props: Props) {
     openFileNatively,
     openDirectory,
     setEntryPropertiesSplitSize,
-    showNotification,
-    tileServer
+    showNotification
   } = props;
 
   // const [percent, setPercent] = React.useState<number | undefined>(undefined);
@@ -401,7 +401,7 @@ function EntryContainer(props: Props) {
     ) {
       setSaveBeforeReloadConfirmDialogOpened(true);
     }
-  }, [openedFilePath.current, isReadOnlyMode]); // , settings]);
+  }, [openedFilePath.current, readOnlyMode]); // , settings]);
 
   // always open for dirs
   const isPropPanelVisible = openedFile.isFile
@@ -409,7 +409,7 @@ function EntryContainer(props: Props) {
     : true;
 
   const editingSupported: boolean =
-    !isReadOnlyMode &&
+    !readOnlyMode &&
     openedFile.editingExtensionId !== undefined &&
     openedFile.editingExtensionId.length > 3;
 
@@ -425,7 +425,7 @@ function EntryContainer(props: Props) {
       const locationId = params.get('tslid');
       //if (params.has('tsdpath')) {
       // const folderPath2 = params.get('tsdpath');
-      const folderLocation = props.locations.find(
+      const folderLocation = locations.find(
         location => location.uuid === locationId
       );
       const folderPath = extractContainingDirectoryPath(openedFile.path);
@@ -626,7 +626,7 @@ function EntryContainer(props: Props) {
   };
 
   const closeFile = () => {
-    closeAllFiles();
+    // dispatch(AppActions.closeAllFiles());
     // setEditingSupported(false);
   };
 
@@ -724,7 +724,7 @@ function EntryContainer(props: Props) {
   async function save(fileOpen: OpenedEntry): Promise<boolean> {
     // @ts-ignore
     const textContent = fileViewer.current.contentWindow.getContent();
-    if (Pro && props.revisionsEnabled) {
+    if (Pro && revisionsEnabled) {
       const id = await Pro.MetaOperations.getMetadataID(
         fileOpen.path,
         fileOpen.uuid
@@ -795,7 +795,7 @@ function EntryContainer(props: Props) {
           closePanel();
         } else {
           if (settings.entrySplitSize !== p + '%') {
-            setEntryPropertiesSplitSize(p + '%');
+            dispatch(SettingsActions.setEntryPropertiesSplitSize(p + '%'));
           }
           openPanel();
         }
@@ -970,7 +970,7 @@ function EntryContainer(props: Props) {
             />
           </IconButton>
         </Tooltip>
-        {Pro && isEditable && props.revisionsEnabled && (
+        {Pro && isEditable && revisionsEnabled && (
           <Tooltip title={i18n.t('core:revisions')}>
             <IconButton
               aria-label={i18n.t('core:revisions')}
@@ -1055,7 +1055,7 @@ function EntryContainer(props: Props) {
             <FullScreenIcon />
           </IconButton>
         </Tooltip>
-        {isDesktopMode && (
+        {desktopMode && (
           <Tooltip title={i18n.t('core:openInFullWidth')}>
             <IconButton
               data-tid="openInFullWidthTID"
@@ -1131,7 +1131,7 @@ function EntryContainer(props: Props) {
             <ReloadIcon />
           </IconButton>
         </Tooltip>
-        {!isReadOnlyMode && (
+        {!readOnlyMode && (
           <Tooltip title={i18n.t('core:deleteEntry')}>
             <IconButton
               data-tid="deleteEntryTID"
@@ -1226,7 +1226,7 @@ function EntryContainer(props: Props) {
             <ReloadIcon />
           </IconButton>
         </Tooltip>
-        {isDesktopMode && (
+        {desktopMode && (
           <Tooltip title={i18n.t('core:openInFullWidth')}>
             <IconButton
               data-tid="openInFullWidthTID"
@@ -1241,7 +1241,7 @@ function EntryContainer(props: Props) {
             </IconButton>
           </Tooltip>
         )}
-        {!isReadOnlyMode && (
+        {!readOnlyMode && (
           <Tooltip title={i18n.t('core:deleteDirectory')}>
             <IconButton
               data-tid="deleteFolderTID"
@@ -1277,7 +1277,7 @@ function EntryContainer(props: Props) {
     }
   }
   if (!fileName) {
-    const currentLocation = props.locations.find(
+    const currentLocation = locations.find(
       location => location.uuid === openedFile.locationId
     );
     if (currentLocation) {
@@ -1422,7 +1422,7 @@ function EntryContainer(props: Props) {
                   alignItems: 'center'
                 }}
               >
-                {isEditable && props.revisionsEnabled && (
+                {isEditable && revisionsEnabled && (
                   <Tooltip
                     title={
                       i18n.t('core:autosave') +
@@ -1454,7 +1454,7 @@ function EntryContainer(props: Props) {
                         size="small"
                         variant="outlined"
                         color="primary"
-                        startIcon={isDesktopMode && <CancelIcon />}
+                        startIcon={desktopMode && <CancelIcon />}
                       >
                         {fileChanged.current
                           ? i18n.t('core:cancel')
@@ -1477,7 +1477,7 @@ function EntryContainer(props: Props) {
                         size="small"
                         variant="outlined"
                         color="primary"
-                        startIcon={isDesktopMode && <SaveIcon />}
+                        startIcon={desktopMode && <SaveIcon />}
                         loading={isSavingInProgress}
                       >
                         {i18n.t('core:save')}
@@ -1526,7 +1526,7 @@ function EntryContainer(props: Props) {
         openedFile.isFile &&
         Pro &&
         isEditable &&
-        props.revisionsEnabled ? (
+        revisionsEnabled ? (
           <Revisions />
         ) : (
           <EntryProperties
@@ -1541,7 +1541,7 @@ function EntryContainer(props: Props) {
             updateOpenedFile={updateOpenedFile}
             updateThumbnailUrl={updateThumbnailUrl}
             showNotification={showNotification}
-            isReadOnlyMode={isReadOnlyMode}
+            isReadOnlyMode={readOnlyMode}
             currentDirectoryPath={currentDirectoryPath}
             tileServer={tileServer}
             sharingLink={sharingLink}
@@ -1705,7 +1705,7 @@ function EntryContainer(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
+/* function mapStateToProps(state) {
   return {
     settings: state.settings,
     isReadOnlyMode: isReadOnlyMode(state),
@@ -1744,7 +1744,7 @@ function mapActionCreatorsToProps(dispatch) {
     },
     dispatch
   );
-}
+}*/
 const areEqual = (prevProp, nextProp) =>
   // JSON.stringify(nextProp.theme) === JSON.stringify(prevProp.theme) &&
   nextProp.language === prevProp.language &&
@@ -1756,10 +1756,7 @@ const areEqual = (prevProp, nextProp) =>
     prevProp.openedFiles[0].shouldReload &&
   nextProp.openedFiles[0].editMode === prevProp.openedFiles[0].editMode; */
 
-export default connect(
-  mapStateToProps,
-  mapActionCreatorsToProps
-)(
-  // @ts-ignore
-  React.memo(withStyles(styles, { withTheme: true })(EntryContainer), areEqual)
+export default React.memo(
+  withStyles(styles, { withTheme: true })(EntryContainer),
+  areEqual
 );
