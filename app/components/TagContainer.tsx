@@ -16,8 +16,8 @@
  *
  */
 
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useMemo, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import Button from '@mui/material/Button';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PlaceIcon from '@mui/icons-material/Place';
@@ -34,9 +34,6 @@ import { getTagColors } from '-/services/taglibrary-utils';
 interface Props {
   tag: TS.Tag;
   isReadOnlyMode?: boolean;
-  // allTags?: Array<TS.Tag>;
-  defaultTextColor?: string;
-  defaultBackgroundColor?: string;
   tagGroup?: TS.TagGroup;
   handleTagMenu?: (
     event: Object,
@@ -64,11 +61,8 @@ function TagContainer(props: Props) {
     tag,
     deleteIcon,
     isDragging,
-    defaultTextColor,
-    defaultBackgroundColor,
     tagGroup,
     entryPath,
-    // allTags,
     handleRemoveTag,
     handleTagMenu,
     selectedEntries,
@@ -77,18 +71,21 @@ function TagContainer(props: Props) {
   } = props;
   let { title } = tag;
 
-  // Check if tag is plus code
-  let isTagGeo = false;
-  let isTagDate = false;
+  const defaultBackgroundColor = useSelector(getTagColor);
+  const defaultTextColor = useSelector(getTagTextColor);
+
   let isDateSmartTag = false;
   let isGeoSmartTag = false;
-  if (!tagGroup) {
-    isTagGeo = isGeoTag(title); // || isLatLong
-    isTagDate = !isTagGeo && isDateTimeTag(title);
-  }
-
   let textColor: string;
   let backgroundColor: string;
+  const isTagGeo = useMemo(() => !tagGroup && isGeoTag(title), [
+    title,
+    tagGroup
+  ]);
+  const isTagDate = useMemo(
+    () => !isTagGeo && !tagGroup && isDateTimeTag(title),
+    [isTagGeo, title, tagGroup]
+  );
   if (tag.color && tag.textcolor) {
     textColor = tag.textcolor;
     backgroundColor = tag.color;
@@ -275,11 +272,4 @@ function TagContainer(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    defaultBackgroundColor: getTagColor(state),
-    defaultTextColor: getTagTextColor(state)
-    // selectedEntries: getSelectedEntries(state)
-  };
-}
-export default connect(mapStateToProps)(TagContainer);
+export default React.memo(TagContainer);
