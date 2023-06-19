@@ -188,6 +188,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
 
     await searchEngine('q:', {}, false);
     await clickOn('#textQuery-option-0');
+    await clickOn('#searchButton');
     // expect to not exist other than jpg files extensions like txt
     await expectElementExist(getGridFileSelector('sample.pdf'), false, 5000);
   });
