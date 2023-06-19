@@ -784,5 +784,7 @@
   "warningDirectoryIsTruncated": "Directory is truncated!",
   "maxLoops": "Limit list objects in a bucket",
   "maxLoopsHelp": "list-objects-v2 returns some or all (up to this limit) of the objects in a bucket.",
+  "enterTagTimePeriodFrom": "Time period from",
+  "enterTagTimePeriodTo": "Time period to",
   "-": "-"
 }

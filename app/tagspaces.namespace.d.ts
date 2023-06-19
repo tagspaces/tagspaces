@@ -94,6 +94,7 @@ export namespace TS {
     tagPlaceRadius?: number | null;
     maxSearchResults?: number;
     showUnixHiddenEntries?: boolean;
+    executeSearch?: boolean;
   }
 
   type Uuid = string;
