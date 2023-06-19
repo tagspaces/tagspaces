@@ -31,8 +31,6 @@ import {
 import i18n from '../services/i18n';
 import DirectoryMenu from './menus/DirectoryMenu';
 import { TS } from '-/tagspaces.namespace';
-import { connect } from 'react-redux';
-import { getCurrentLanguage } from '-/reducers/settings';
 
 // @ts-ignore
 const StyledBreadcrumb = withStyles((theme: Theme) => ({
@@ -61,6 +59,7 @@ interface Props {
     generateThumbnails: boolean,
     loadDirMeta?: boolean
   ) => void;
+  language: string;
   switchPerspective: (perspectiveId: string) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   openDirectory: () => void;
@@ -84,7 +83,6 @@ function PathBreadcrumbs(props: Props) {
     currentDirectoryPath,
     currentLocationPath,
     loadDirectoryContent,
-    switchPerspective,
     setSelectedEntries,
     openDirectory,
     reflectCreateEntry,
@@ -214,12 +212,9 @@ function PathBreadcrumbs(props: Props) {
         openDirectory={openDirectory}
         reflectCreateEntry={reflectCreateEntry}
         openFsEntry={openFsEntry}
-        /*openAddRemoveTagsDialog={openAddRemoveTagsDialog}*/
       />
     </>
   );
 }
-function mapStateToProps(state) {
-  return { language: getCurrentLanguage(state) };
-}
-export default connect(mapStateToProps)(PathBreadcrumbs);
+
+export default PathBreadcrumbs;

@@ -279,6 +279,7 @@ function FolderContainer(props: Props) {
 
   const {
     currentDirectoryPath = '',
+    language,
     loadDirectoryContent,
     directoryContent,
     classes,
@@ -605,6 +606,7 @@ function FolderContainer(props: Props) {
               )}
               {/* {isDesktopMode && <LocationMenu />} */}
               <PathBreadcrumbs
+                language={language}
                 currentDirectoryPath={currentDirectoryPath}
                 currentLocationPath={currentLocationPath}
                 loadDirectoryContent={loadDirectoryContent}

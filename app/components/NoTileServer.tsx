@@ -1,9 +1,11 @@
 import React from 'react';
 import i18n from '-/services/i18n';
-import { connect } from 'react-redux';
-import { getCurrentLanguage } from '-/reducers/settings';
 
-function NoTileServer() {
+interface Props {
+  language: string;
+}
+
+function NoTileServer(props: Props) {
   return (
     <div style={{ textAlign: 'center' }}>
       <h1>{i18n.t('core:noTileServersTitle')}</h1>
@@ -12,8 +14,4 @@ function NoTileServer() {
   );
 }
 
-function mapStateToProps(state) {
-  return { language: getCurrentLanguage(state) };
-}
-
-export default connect(mapStateToProps)(NoTileServer);
+export default NoTileServer;

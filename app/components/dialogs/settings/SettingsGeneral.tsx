@@ -40,6 +40,7 @@ import i18n from '-/services/i18n';
 import {
   actions as SettingsActions,
   getPersistTagsInSidecarFile,
+  getCurrentLanguage,
   getSettings
 } from '-/reducers/settings';
 import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
@@ -71,6 +72,7 @@ interface Props {
   setTagTextColor: (tagTextColor: string) => void;
   classes: any;
   settings: any;
+  language: string;
   persistTagsInSidecarFile: boolean;
   toggleShowUnixHiddenEntries: () => void;
   setCurrentTheme: (theme: string) => void;
@@ -124,7 +126,7 @@ function SettingsGeneral(props: Props) {
     defaultPerspective = props.settings.defaultPerspective;
   }
 
-  const { classes, persistTagsInSidecarFile } = props;
+  const { classes, persistTagsInSidecarFile, language } = props;
 
   return (
     <List className={classes.root}>
@@ -200,6 +202,7 @@ function SettingsGeneral(props: Props) {
       <ListItem className={classes.listItem}>
         <ListItemText primary={i18n.t('Default Perspective')} />
         <PerspectiveSelector
+          language={language}
           onChange={changePerspective}
           defaultValue={defaultPerspective}
           testId="changePerspectiveInSettingsTID"
@@ -428,6 +431,7 @@ function SettingsGeneral(props: Props) {
 function mapStateToProps(state) {
   return {
     settings: getSettings(state),
+    language: getCurrentLanguage(state),
     persistTagsInSidecarFile: getPersistTagsInSidecarFile(state)
   };
 }

@@ -23,7 +23,6 @@ import React, {
   useRef,
   useState
 } from 'react';
-import { useStateWithCallbackLazy } from 'use-state-with-callback';
 import { getBgndFileLocationForDirectory } from '@tagspaces/tagspaces-common/paths';
 import L from 'leaflet';
 import { Theme } from '@mui/material/styles';
@@ -40,7 +39,6 @@ import Tooltip from '-/components/Tooltip';
 import LocationIcon from '@mui/icons-material/WorkOutline';
 import EditIcon from '@mui/icons-material/Edit';
 import CloudLocationIcon from '@mui/icons-material/CloudQueue';
-import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import SetBackgroundIcon from '@mui/icons-material/OpacityOutlined';
 import ClearBackgroundIcon from '@mui/icons-material/FormatColorResetOutlined';
@@ -80,6 +78,7 @@ import PlatformIO from '../services/platform-facade';
 import TagsSelect from './TagsSelect';
 import TransparentBackground from './TransparentBackground';
 import { getThumbnailURLPromise } from '-/services/thumbsgenerator';
+import { getCurrentLanguage } from '-/reducers/settings';
 import {
   getLastBackgroundImageChange,
   getLastThumbnailImageChange,
@@ -165,6 +164,7 @@ const styles: any = (theme: any) => ({
 interface Props {
   classes: any;
   theme: any;
+  language: string;
   openedEntry: OpenedEntry;
   renameFile: (path: string, nextPath: string) => Promise<boolean>;
   renameDirectory: (path: string, nextPath: string) => Promise<boolean>;
@@ -613,7 +613,7 @@ function EntryProperties(props: Props) {
       });
   };
 
-  const { classes, isReadOnlyMode, theme, sharingLink } = props;
+  const { classes, isReadOnlyMode, theme, sharingLink, language } = props;
 
   if (
     !currentEntry ||
@@ -880,7 +880,7 @@ function EntryProperties(props: Props) {
                   url={props.tileServer.serverURL}
                 />
               ) : (
-                <NoTileServer />
+                <NoTileServer language={language} />
               )}
               <LayerGroup>
                 <Marker
@@ -1161,6 +1161,7 @@ function EntryProperties(props: Props) {
         {!currentEntry.current.isFile && (
           <Grid item xs={12} style={{ marginTop: 10 }}>
             <PerspectiveSelector
+              language={language}
               onChange={changePerspective}
               defaultValue={perspectiveDefault}
               label={i18n.t('core:choosePerspective')}
@@ -1477,7 +1478,8 @@ const ThumbnailTextField = withStyles((theme: Theme) =>
 function mapStateToProps(state) {
   return {
     lastBackgroundImageChange: getLastBackgroundImageChange(state),
-    lastThumbnailImageChange: getLastThumbnailImageChange(state)
+    lastThumbnailImageChange: getLastThumbnailImageChange(state),
+    language: getCurrentLanguage(state)
   };
 }
 
