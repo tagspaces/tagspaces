@@ -181,14 +181,16 @@ function SettingsAdvanced(props: Props) {
             <ListItem className={classes.listItem}>
               <ListItemText primary={i18n.t('core:fileOpenHistory')} />
               <ListItemIcon>
-                <IconButton
-                  aria-label={i18n.t('core:clearHistory')}
-                  onClick={() => setConfirmDialogKey(historyKeys.fileOpenKey)}
-                  data-tid="clearSearchTID"
-                  size="small"
-                >
-                  <DeleteIcon />
-                </IconButton>
+                <Tooltip title={i18n.t('clearHistory')}>
+                  <IconButton
+                    aria-label={i18n.t('core:clearHistory')}
+                    onClick={() => setConfirmDialogKey(historyKeys.fileOpenKey)}
+                    data-tid="clearSearchTID"
+                    size="small"
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Tooltip>
               </ListItemIcon>
               <Select
                 data-tid="fileOpenTID"
@@ -208,14 +210,18 @@ function SettingsAdvanced(props: Props) {
             <ListItem className={classes.listItem}>
               <ListItemText primary={i18n.t('core:folderOpenHistory')} />
               <ListItemIcon>
-                <IconButton
-                  aria-label={i18n.t('core:clearHistory')}
-                  onClick={() => setConfirmDialogKey(historyKeys.folderOpenKey)}
-                  data-tid="clearSearchTID"
-                  size="small"
-                >
-                  <DeleteIcon />
-                </IconButton>
+                <Tooltip title={i18n.t('clearHistory')}>
+                  <IconButton
+                    aria-label={i18n.t('core:clearHistory')}
+                    onClick={() =>
+                      setConfirmDialogKey(historyKeys.folderOpenKey)
+                    }
+                    data-tid="clearSearchTID"
+                    size="small"
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Tooltip>
               </ListItemIcon>
               <Select
                 data-tid="folderOpenTID"
@@ -238,14 +244,16 @@ function SettingsAdvanced(props: Props) {
             <ListItem className={classes.listItem}>
               <ListItemText primary={i18n.t('core:fileEditHistory')} />
               <ListItemIcon>
-                <IconButton
-                  aria-label={i18n.t('core:clearHistory')}
-                  onClick={() => setConfirmDialogKey(historyKeys.fileEditKey)}
-                  data-tid="clearSearchTID"
-                  size="small"
-                >
-                  <DeleteIcon />
-                </IconButton>
+                <Tooltip title={i18n.t('clearHistory')}>
+                  <IconButton
+                    aria-label={i18n.t('core:clearHistory')}
+                    onClick={() => setConfirmDialogKey(historyKeys.fileEditKey)}
+                    data-tid="clearSearchTID"
+                    size="small"
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Tooltip>
               </ListItemIcon>
               <Select
                 data-tid="fileEditTID"
@@ -265,16 +273,18 @@ function SettingsAdvanced(props: Props) {
             <ListItem className={classes.listItem}>
               <ListItemText primary={i18n.t('core:searchHistory')} />
               <ListItemIcon>
-                <IconButton
-                  aria-label={i18n.t('core:clearHistory')}
-                  onClick={() =>
-                    setConfirmDialogKey(historyKeys.searchHistoryKey)
-                  }
-                  data-tid="clearSearchTID"
-                  size="small"
-                >
-                  <DeleteIcon />
-                </IconButton>
+                <Tooltip title={i18n.t('clearHistory')}>
+                  <IconButton
+                    aria-label={i18n.t('core:clearHistory')}
+                    onClick={() =>
+                      setConfirmDialogKey(historyKeys.searchHistoryKey)
+                    }
+                    data-tid="clearSearchTID"
+                    size="small"
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Tooltip>
               </ListItemIcon>
               <Select
                 data-tid="searchHistoryTID"
