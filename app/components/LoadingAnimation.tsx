@@ -17,18 +17,18 @@
  */
 
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import withStyles from '@mui/styles/withStyles';
 import PlatformIO from '-/services/platform-facade';
 import { isLoading } from '-/reducers/app';
 
 interface Props {
   theme: any;
-  loading: boolean;
 }
 
 function LoadingAnimation(props: Props) {
-  const { theme, loading } = props;
+  const { theme } = props;
+  const loading = useSelector(isLoading);
 
   if (
     !loading ||
@@ -49,8 +49,6 @@ function LoadingAnimation(props: Props) {
         alignItems: 'center',
         borderRadius: 10,
         backdropFilter: 'grayscale(1)'
-        // backdropFilter: 'blur(2px)',
-        // backgroundColor: '#fafafa33' // red: '#eb585882' '#d9d9d980'
       }}
     >
       <div className="lds-ellipsis">
@@ -63,17 +61,6 @@ function LoadingAnimation(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    loading: isLoading(state)
-  };
-}
-
-const areEqual = (prevProp: Props, nextProp: Props) =>
-  nextProp.loading === prevProp.loading;
-
-export default connect(mapStateToProps)(
-  withStyles(undefined, { withTheme: true })(
-    React.memo(LoadingAnimation, areEqual)
-  )
+export default withStyles(undefined, { withTheme: true })(
+  React.memo(LoadingAnimation)
 );

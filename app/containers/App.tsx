@@ -17,7 +17,7 @@
  */
 
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { I18nextProvider } from 'react-i18next'; // as we build ourself via webpack
 import {
   createTheme,
@@ -124,34 +124,18 @@ const draculaTheme = createTheme({
   }
 });
 
-// const lightBlueTheme = createMuiTheme({
-//   palette: {
-//     mode: 'light', // Switching the dark mode on is a single property value change.
-//     primary: {
-//       light: '#cbe9fa',
-//       main: '#19aeff',
-//       dark: '#19aeff',
-//       contrastText: '#ffffff',
-//     },
-//     secondary: {
-//       main: '#19aeff',
-//     },
-//     divider: '#ddd'
-//     // secondary: { main: '#cccccc', 200: '#ddd' }
-//   }
-// });
-
 interface Props {
   children: Object;
-  currentTheme: string;
-  defaultRegularTheme: string;
-  defaultDarkTheme: string;
 }
 function App(props: Props) {
   let theme = legacyTheme;
   let regularTheme = legacyTheme;
   let darkTheme = darklegacyTheme;
-  const { currentTheme, defaultRegularTheme, defaultDarkTheme } = props;
+
+  const currentTheme = useSelector(getCurrentTheme);
+  const defaultDarkTheme = useSelector(getDefaultDarkTheme);
+  const defaultRegularTheme = useSelector(getDefaultRegularTheme);
+
   const systemDarkMode = useMediaQuery('(prefers-color-scheme: dark)'); // window.matchMedia().matches;
   switch (defaultRegularTheme) {
     case 'legacy': {
@@ -201,11 +185,4 @@ function App(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    currentTheme: getCurrentTheme(state),
-    defaultDarkTheme: getDefaultDarkTheme(state),
-    defaultRegularTheme: getDefaultRegularTheme(state)
-  };
-}
-export default connect(mapStateToProps)(App);
+export default App;

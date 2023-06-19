@@ -41,13 +41,12 @@ import styles from '-/components/SidePanels.css';
 import i18n from '-/services/i18n';
 import { KeyShortcutsIcon, HelpIcon } from '-/components/CommonIcons';
 import Links from '-/content/links';
-import { connect } from 'react-redux';
-import { getCurrentLanguage } from '-/reducers/settings';
 import { Pro } from '-/pro';
 
 interface Props {
   classes?: any;
   theme?: any;
+  language: string;
   openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   toggleAboutDialog?: () => void;
   toggleKeysDialog: () => void;
@@ -97,7 +96,6 @@ function HelpFeedbackPanel(props: Props) {
         }}
       >
         <ListItem
-          button
           onClick={toggleAboutDialog}
           title="Opens the about dialog"
           data-tid="aboutDialog"
@@ -110,7 +108,6 @@ function HelpFeedbackPanel(props: Props) {
           </Typography>
         </ListItem>
         <ListItem
-          button
           onClick={() =>
             openURLExternally(Links.documentationLinks.general, true)
           }
@@ -122,7 +119,7 @@ function HelpFeedbackPanel(props: Props) {
             {i18n.t('core:documentation')}
           </Typography>
         </ListItem>
-        <ListItem button onClick={toggleKeysDialog}>
+        <ListItem onClick={toggleKeysDialog}>
           <ListItemIcon>
             <KeyShortcutsIcon />
           </ListItemIcon>
@@ -131,7 +128,6 @@ function HelpFeedbackPanel(props: Props) {
           </Typography>
         </ListItem>
         <ListItem
-          button
           onClick={() => openURLExternally(Links.links.changelogURL, true)}
           title="Opens the changelog of the app"
         >
@@ -142,7 +138,7 @@ function HelpFeedbackPanel(props: Props) {
             {i18n.t('core:whatsNew')}
           </Typography>
         </ListItem>
-        <ListItem button onClick={toggleOnboardingDialog}>
+        <ListItem onClick={toggleOnboardingDialog}>
           <ListItemIcon>
             <OnboardingIcon />
           </ListItemIcon>
@@ -151,7 +147,6 @@ function HelpFeedbackPanel(props: Props) {
           </Typography>
         </ListItem>
         <ListItem
-          button
           onClick={() => openURLExternally(Links.links.webClipper, true)}
         >
           <ListItemIcon>
@@ -163,7 +158,6 @@ function HelpFeedbackPanel(props: Props) {
         </ListItem>
         <Divider />
         <ListItem
-          button
           onClick={() => openURLExternally(Links.links.suggestFeature, true)}
         >
           <ListItemIcon>
@@ -174,7 +168,6 @@ function HelpFeedbackPanel(props: Props) {
           </Typography>
         </ListItem>
         <ListItem
-          button
           onClick={() => openURLExternally(Links.links.forumsUrl, true)}
         >
           <ListItemIcon>
@@ -185,7 +178,6 @@ function HelpFeedbackPanel(props: Props) {
           </Typography>
         </ListItem>
         <ListItem
-          button
           onClick={() => openURLExternally(Links.links.reportIssue, true)}
         >
           <ListItemIcon>
@@ -196,7 +188,6 @@ function HelpFeedbackPanel(props: Props) {
           </Typography>
         </ListItem>
         <ListItem
-          button
           onClick={() => openURLExternally(Links.links.helpTranslating, true)}
         >
           <ListItemIcon>
@@ -208,7 +199,6 @@ function HelpFeedbackPanel(props: Props) {
         </ListItem>
         <Divider />
         <ListItem
-          button
           onClick={() => openURLExternally(Links.links.emailContact, true)}
         >
           <ListItemIcon>
@@ -220,7 +210,6 @@ function HelpFeedbackPanel(props: Props) {
         </ListItem>
         {Pro && (
           <ListItem
-            button
             onClick={() =>
               openURLExternally(Links.links.cancelSubscription, true)
             }
@@ -233,10 +222,7 @@ function HelpFeedbackPanel(props: Props) {
             </Typography>
           </ListItem>
         )}
-        <ListItem
-          button
-          onClick={() => openURLExternally(Links.links.twitter, true)}
-        >
+        <ListItem onClick={() => openURLExternally(Links.links.twitter, true)}>
           <ListItemIcon>
             <TwitterIcon />
           </ListItemIcon>
@@ -245,7 +231,7 @@ function HelpFeedbackPanel(props: Props) {
           </Typography>
         </ListItem>
         <Divider />
-        <ListItem button onClick={() => toggleProTeaser()}>
+        <ListItem onClick={() => toggleProTeaser()}>
           <ListItemIcon>
             <ProTeaserIcon />
           </ListItemIcon>
@@ -258,9 +244,4 @@ function HelpFeedbackPanel(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return { language: getCurrentLanguage(state) };
-}
-export default connect(mapStateToProps)(
-  withStyles(styles, { withTheme: true })(HelpFeedbackPanel)
-);
+export default withStyles(styles, { withTheme: true })(HelpFeedbackPanel);

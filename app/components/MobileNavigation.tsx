@@ -72,6 +72,7 @@ const styles: any = (theme: any) => ({
 
 interface Props {
   classes: any;
+  language: string;
   toggleProTeaser: (slidePage?: string) => void;
   toggleOnboardingDialog: () => void;
   toggleCreateFileDialog: () => void;
@@ -125,7 +126,8 @@ function MobileNavigation(props: Props) {
     width,
     theme,
     switchTheme,
-    user
+    user,
+    language
   } = props;
   return (
     <Box
@@ -209,6 +211,7 @@ function MobileNavigation(props: Props) {
         {props.isSearchPanelOpened && <StoredSearches reduceHeightBy={170} />}
         {props.isHelpFeedbackPanelOpened && (
           <HelpFeedbackPanel
+            language={language}
             reduceHeightBy={170}
             openURLExternally={openURLExternally}
             toggleAboutDialog={toggleAboutDialog}
@@ -378,7 +381,6 @@ function mapActionCreatorsToProps(dispatch) {
       openHelpFeedbackPanel: AppActions.openHelpFeedbackPanel,
       openURLExternally: AppActions.openURLExternally,
       showNotification: AppActions.showNotification,
-      // closeAllVerticalPanels: AppActions.closeAllVerticalPanels,
       switchTheme: SettingsActions.switchTheme
     },
     dispatch
