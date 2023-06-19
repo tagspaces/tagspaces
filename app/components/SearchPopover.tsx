@@ -768,7 +768,7 @@ function SearchPopover(props: Props) {
               {i18n.t('core:fileType')}
             </InputLabel>
             <Select
-              style={{ width: '100%' }}
+              fullWidth
               value={JSON.stringify(fileTypes.current)}
               onChange={handleFileTypeChange}
               input={
@@ -881,7 +881,11 @@ function SearchPopover(props: Props) {
           disabled={indexing || !Pro}
         >
           <ProTooltip tooltip={i18n.t('filterBySizeTooltip')}>
-            <InputLabel shrink htmlFor="file-size">
+            <InputLabel
+              style={{ backgroundColor: theme.palette.background.default }}
+              shrink
+              htmlFor="file-size"
+            >
               {i18n.t('core:sizeSearchTitle')}
             </InputLabel>
             <Select
@@ -931,7 +935,11 @@ function SearchPopover(props: Props) {
           disabled={indexing || !Pro}
         >
           <ProTooltip tooltip={i18n.t('filterByLastModifiedDateTooltip')}>
-            <InputLabel shrink htmlFor="modification-date">
+            <InputLabel
+              style={{ backgroundColor: theme.palette.background.default }}
+              shrink
+              htmlFor="modification-date"
+            >
               {i18n.t('core:lastModifiedSearchTitle')}
             </InputLabel>
             <Select
@@ -1003,7 +1011,9 @@ function SearchPopover(props: Props) {
                       props.setSearchQuery(searchQuery);
                     }
                   }}
-                  renderInput={params => <TextField {...params} />}
+                  renderInput={params => (
+                    <TextField style={{ marginLeft: 5 }} {...params} />
+                  )}
                 />
               </Box>
             </LocalizationProvider>
