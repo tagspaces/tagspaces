@@ -786,5 +786,9 @@
   "maxLoopsHelp": "The app can handle as much files in one S3-folder as specified in this setting",
   "enterTagTimePeriodFrom": "Time period from",
   "enterTagTimePeriodTo": "Time period to",
+  "confirmtsSearchHistoryDeletion": "Are you sure you want to delete all search history?",
+  "confirmtsLastEditedFilesHistoryDeletion": "Are you sure you want to delete all last edited files history?",
+  "confirmtsLastOpenedFoldersHistoryDeletion": "Are you sure you want to delete all last opened folders history?",
+  "confirmtsLastOpenedFilesHistoryDeletion": "Are you sure you want to delete all last opened files history?",
   "-": "-"
 }
