@@ -1115,21 +1115,46 @@ function SearchAutocomplete(props: Props) {
           option.action === ExecActions.TAG_SEARCH_OR ||
           option.action === ExecActions.TAG_SEARCH_NOT
         ) {
-          const searchAction: string =
-            option.action === ExecActions.TAG_SEARCH_AND
-              ? SearchQueryComposition.TAG_AND.shortName
-              : option.action === ExecActions.TAG_SEARCH_NOT
-              ? SearchQueryComposition.TAG_NOT.shortName
-              : SearchQueryComposition.TAG_OR.shortName;
-          // executeSearch();
-
           if (actions.length > 0) {
-            const prevAction = actions[actions.length - 1];
+            const searchAction: string =
+              option.action === ExecActions.TAG_SEARCH_AND
+                ? SearchQueryComposition.TAG_AND.shortName
+                : option.action === ExecActions.TAG_SEARCH_NOT
+                ? SearchQueryComposition.TAG_NOT.shortName
+                : SearchQueryComposition.TAG_OR.shortName;
+
+            let prevAction;
+            if (unique) {
+              prevAction = actions.find(a => a.action === searchAction);
+            }
+            if (!prevAction) {
+              prevAction = actions[actions.length - 1];
+            }
             prevAction.label = searchAction + option.label;
             prevAction.fullName = searchAction + option.label;
             prevAction.color = option.color;
             prevAction.textcolor = option.textcolor;
           }
+          const tagsAND = getTags(
+            actionValues.current,
+            SearchQueryComposition.TAG_AND
+          );
+          const tagsOR = getTags(
+            actionValues.current,
+            SearchQueryComposition.TAG_OR
+          );
+          const tagsNOT = getTags(
+            actionValues.current,
+            SearchQueryComposition.TAG_NOT
+          );
+          props.setSearchQuery({
+            ...props.searchQuery,
+            tagsAND,
+            tagsOR,
+            tagsNOT,
+            executeSearch: false
+          });
+          props.setTextQuery('');
           if (hasOptionsChanged) {
             changeOptions(option.action);
           }
@@ -1566,21 +1591,28 @@ function SearchAutocomplete(props: Props) {
                       })
                   }}
                 >
-                  <Button
-                    onClick={() => {
-                      changeOptions(action.action, false);
-                    }}
-                    data-tid={dataTidFormat('menu' + option)}
-                    size="small"
-                    style={{
-                      color: 'black',
-                      backgroundColor: 'transparent',
-                      padding: 0
-                    }}
-                    endIcon={<ArrowDropDownIcon />}
-                  >
-                    {option}
-                  </Button>
+                  {isAction(action.action, SearchQueryComposition.TAG_AND) ||
+                  isAction(action.action, SearchQueryComposition.TAG_OR) ||
+                  isAction(action.action, SearchQueryComposition.TAG_NOT) ? (
+                    option
+                  ) : (
+                    <Button
+                      onClick={() => {
+                        changeOptions(action.action, false);
+                      }}
+                      data-tid={dataTidFormat('menu' + option)}
+                      size="small"
+                      style={{
+                        color: 'black',
+                        backgroundColor: 'transparent',
+                        padding: 0
+                      }}
+                      endIcon={<ArrowDropDownIcon />}
+                    >
+                      {option}
+                    </Button>
+                  )}
+
                   {!isAction(action.action, SearchQueryComposition.SCOPE) &&
                     !isAction(
                       action.action,
