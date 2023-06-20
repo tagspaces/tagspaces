@@ -1549,10 +1549,6 @@ function SearchAutocomplete(props: Props) {
                 <Box
                   key={'button_' + index}
                   style={{
-                    fontSize: 10,
-                    textTransform: 'none',
-                    color: 'black',
-                    backgroundColor: 'white',
                     border: '1px solid gray',
                     minHeight: 0,
                     minWidth: 0,
@@ -1570,16 +1566,21 @@ function SearchAutocomplete(props: Props) {
                       })
                   }}
                 >
-                  <IconButton
+                  <Button
                     onClick={() => {
                       changeOptions(action.action, false);
                     }}
                     data-tid={dataTidFormat('menu' + option)}
                     size="small"
+                    style={{
+                      color: 'black',
+                      backgroundColor: 'transparent',
+                      padding: 0
+                    }}
+                    endIcon={<ArrowDropDownIcon />}
                   >
                     {option}
-                    <ArrowDropDownIcon />
-                  </IconButton>
+                  </Button>
                   {!isAction(action.action, SearchQueryComposition.SCOPE) &&
                     !isAction(
                       action.action,
@@ -1589,6 +1590,7 @@ function SearchAutocomplete(props: Props) {
                         onClick={() => {
                           handleChange(null, [option], 'remove-value');
                         }}
+                        style={{ padding: 0, margin: 0 }}
                         data-tid={dataTidFormat('close' + option)}
                         size="small"
                       >
