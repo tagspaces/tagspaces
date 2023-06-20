@@ -27,23 +27,23 @@ export const SearchQueryComposition = {
   },
   TYPE: {
     shortName: 't:',
-    fullName: 'type:'
+    fullName: 'type'
   },
   SIZE: {
     shortName: 'si:',
-    fullName: 'size:'
+    fullName: 'size'
   },
   LAST_MODIFIED: {
     shortName: 'lm:',
-    fullName: 'last modified:'
+    fullName: 'last modified'
   },
   SCOPE: {
     shortName: 'sc:',
-    fullName: 'scope: '
+    fullName: 'scope'
   },
   ACCURACY: {
     shortName: 'a:',
-    fullName: 'accuracy:'
+    fullName: 'accuracy'
   }
 };
 
@@ -56,27 +56,27 @@ export const SearchQueryComposition = {
 export const SearchActions = {
   LOCATION: {
     shortName: 'l:',
-    fullName: 'locations:'
+    fullName: 'locations'
   },
   FILTER: {
     shortName: 'f:',
-    fullName: 'filter:'
+    fullName: 'filter'
   },
   HISTORY: {
     shortName: 'h:',
-    fullName: 'history:'
+    fullName: 'history'
   },
   BOOK: {
     shortName: 'b:',
-    fullName: 'bookmarks:'
+    fullName: 'bookmarks'
   },
   SEARCH: {
     shortName: 'q:',
-    fullName: 'search-queries:'
+    fullName: 'search-queries'
   },
   SEARCH_HISTORY: {
     shortName: 's:',
-    fullName: 'search-history:'
+    fullName: 'search-history'
   }
 };
 
