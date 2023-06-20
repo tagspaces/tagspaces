@@ -13,6 +13,7 @@ import {
   createNewDirectory,
   expectElementExist,
   getGridFileSelector,
+  rightClickOn,
   setInputKeys,
   takeScreenshot
 } from './general.helpers';
@@ -133,9 +134,10 @@ test.describe('TST09 - Quick access', () => {
 
   test('TST0906 - Create, open and remove bookmark to folder in quickaccess [electron,web,_pro]', async () => {
     const testFolder = 'empty_folder';
-    await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
-    await clickOn('[data-tid=folderContainerOpenDirMenu]');
+    await rightClickOn('[data-tid=fsEntryName_' + testFolder + ']');
     await clickOn('[data-tid=showProperties]');
+    //await clickOn('[data-tid=folderContainerOpenDirMenu]');
+    //await clickOn('[data-tid=showProperties]');
 
     // Create
     await clickOn('[data-tid=toggleBookmarkTID]');
@@ -284,9 +286,10 @@ test.describe('TST09 - Quick access', () => {
   test('TST0912 - Add, open and remove recently opened folder properties [web,electron,_pro]', async () => {
     // Add
     const testFolder = 'empty_folder';
-    await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
-    await clickOn('[data-tid=folderContainerOpenDirMenu]');
+    await rightClickOn('[data-tid=fsEntryName_' + testFolder + ']');
     await clickOn('[data-tid=showProperties]');
+    //await clickOn('[data-tid=folderContainerOpenDirMenu]');
+    //await clickOn('[data-tid=showProperties]');
     await clickOn('[data-tid=fileContainerCloseOpenedFile]');
 
     // Open
@@ -319,9 +322,11 @@ test.describe('TST09 - Quick access', () => {
     for (let i = 0; i < folders.length; i++) {
       const testFolder = await createNewDirectory(folders[i]);
       // Add
-      await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
-      await clickOn('[data-tid=folderContainerOpenDirMenu]');
+      await rightClickOn('[data-tid=fsEntryName_' + testFolder + ']');
       await clickOn('[data-tid=showProperties]');
+      /*await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
+      await clickOn('[data-tid=folderContainerOpenDirMenu]');
+      await clickOn('[data-tid=showProperties]');*/
       await clickOn('[data-tid=fileContainerCloseOpenedFile]');
       await clickOn('[data-tid=gridPerspectiveOnBackButton]');
     }
