@@ -644,7 +644,7 @@ function SearchPopover(props: Props) {
           <Grid item xs={12}>
             <TextField
               id="searchTerm"
-              label={i18n.t('Has the words')}
+              label={i18n.t('core:searchHasTheWords')}
               value={props.textQuery}
               onChange={handleSearchTermChange}
               onKeyDown={startSearch}
