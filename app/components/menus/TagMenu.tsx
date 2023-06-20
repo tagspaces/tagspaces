@@ -74,7 +74,8 @@ function TagMenu(props: Props) {
     if (selectedTag) {
       setSearchQuery({
         tagsAND: [selectedTag],
-        maxSearchResults
+        maxSearchResults,
+        executeSearch: true
       });
     }
     onClose();

@@ -73,7 +73,8 @@ function EntryTagMenu(props: Props) {
     if (props.selectedTag) {
       props.setSearchQuery({
         tagsAND: [props.selectedTag],
-        maxSearchResults: props.maxSearchResults
+        maxSearchResults: props.maxSearchResults,
+        executeSearch: true
       });
     }
     props.onClose();
