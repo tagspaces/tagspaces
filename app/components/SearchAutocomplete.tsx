@@ -24,6 +24,7 @@ import withStyles from '@mui/styles/withStyles';
 import makeStyles from '@mui/styles/makeStyles';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import Button from '@mui/material/Button';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import ClearSearchIcon from '@mui/icons-material/Close';
@@ -73,6 +74,7 @@ import { getTagLibrary } from '-/services/taglibrary-utils';
 import { getSearches } from '-/reducers/searches';
 import { getSearchOptions } from '-/components/SearchOptionsMenu';
 import { SearchIcon } from '-/components/CommonIcons';
+import { dataTidFormat } from '-/services/test';
 
 interface Props {
   style?: any;
@@ -707,7 +709,7 @@ function SearchAutocomplete(props: Props) {
     }));
   }
 
-  function changeOptions(action: string) {
+  function changeOptions(action: string, filter = true) {
     let optionsChanged = false;
     if (isAction(action, SearchActions.LOCATION)) {
       if (currentOptions.current !== action) {
@@ -717,7 +719,8 @@ function SearchAutocomplete(props: Props) {
             id: location.uuid,
             descr: location.path,
             action: ExecActions.OPEN_LOCATION,
-            label: location.name
+            label: location.name,
+            filter
           };
         });
         optionsChanged = true;
@@ -771,7 +774,8 @@ function SearchAutocomplete(props: Props) {
             action: ExecActions.OPEN_BOOKMARK,
             fullName: item.url,
             label: item.path,
-            group: group
+            group: group,
+            filter
           }));
         }
 
@@ -804,7 +808,8 @@ function SearchAutocomplete(props: Props) {
             action: ExecActions.OPEN_SAVED_SEARCHES,
             label: item.title,
             fullName: JSON.stringify(item),
-            group: group
+            group: group,
+            filter
           }));
         }
 
@@ -835,7 +840,8 @@ function SearchAutocomplete(props: Props) {
             label: tag.title,
             color: tag.color,
             textcolor: tag.textcolor,
-            group: tagGroups[j].title
+            group: tagGroups[j].title,
+            filter
           });
         });
       }
@@ -850,7 +856,8 @@ function SearchAutocomplete(props: Props) {
             id: key,
             action: ExecActions.TYPE_SEARCH,
             label: i18n.t('core:' + key),
-            descr: value.join(', ')
+            descr: value.join(', '),
+            filter
           });
         });
         searchOptions.current = options;
@@ -878,7 +885,8 @@ function SearchAutocomplete(props: Props) {
             id: key,
             action: ExecActions.SIZE_SEARCH,
             label: i18n.t('core:' + key),
-            descr: descr
+            descr: descr,
+            filter
           });
         });
         searchOptions.current = options;
@@ -896,7 +904,8 @@ function SearchAutocomplete(props: Props) {
           options.push({
             id: key,
             action: ExecActions.LAST_MODIFIED_SEARCH,
-            label: i18n.t('core:' + key)
+            label: i18n.t('core:' + key),
+            filter
           });
         });
         searchOptions.current = options;
@@ -911,7 +920,8 @@ function SearchAutocomplete(props: Props) {
           options.push({
             id: key,
             action: ExecActions.SCOPE_SEARCH,
-            label: i18n.t('core:' + key)
+            label: i18n.t('core:' + key),
+            filter
           });
         });
         searchOptions.current = options;
@@ -928,7 +938,8 @@ function SearchAutocomplete(props: Props) {
           options.push({
             id: key,
             action: ExecActions.ACCURACY_SEARCH,
-            label: i18n.t('core:' + key)
+            label: i18n.t('core:' + key),
+            filter
           });
         });
         searchOptions.current = options;
@@ -961,15 +972,12 @@ function SearchAutocomplete(props: Props) {
   ) {
     const actions: Array<SearchOptionType> = [];
 
-    function setPreviousAction(
-      key: ActionType,
-      option: SearchOptionType
-    ): string {
+    function setActionLabel(key: ActionType, option: SearchOptionType): string {
       if (actions.length > 0) {
-        const prevAction = actions[actions.length - 1];
-        if (isAction(prevAction.action, key)) {
-          prevAction.label = prevAction.action + option.label;
-          prevAction.fullName = prevAction.action + option.label;
+        const action = actions.find(a => a.action === key.fullName); //[actions.length - 1];
+        if (isAction(action.action, key)) {
+          action.label = action.action + option.label;
+          action.fullName = action.action + option.label;
           return option.id;
         }
       }
@@ -1131,9 +1139,14 @@ function SearchAutocomplete(props: Props) {
           }
           actions.push(option);
         } else if (option.action === ExecActions.TYPE_SEARCH) {
-          const id = setPreviousAction(SearchQueryComposition.TYPE, option);
+          const id = setActionLabel(SearchQueryComposition.TYPE, option);
           if (id) {
             fileTypes.current = option.descr.split(', ');
+            props.setSearchQuery({
+              ...props.searchQuery,
+              fileTypes: fileTypes.current,
+              executeSearch: false
+            });
           }
           if (hasOptionsChanged) {
             changeOptions(option.action);
@@ -1145,9 +1158,14 @@ function SearchAutocomplete(props: Props) {
           }
           actions.push(option);
         } else if (option.action === ExecActions.SIZE_SEARCH) {
-          const id = setPreviousAction(SearchQueryComposition.SIZE, option);
+          const id = setActionLabel(SearchQueryComposition.SIZE, option);
           if (id) {
             fileSize.current = id;
+            props.setSearchQuery({
+              ...props.searchQuery,
+              fileSize: id,
+              executeSearch: false
+            });
           }
           if (hasOptionsChanged) {
             changeOptions(option.action);
@@ -1161,12 +1179,17 @@ function SearchAutocomplete(props: Props) {
           }
           actions.push(option);
         } else if (option.action === ExecActions.LAST_MODIFIED_SEARCH) {
-          const id = setPreviousAction(
+          const id = setActionLabel(
             SearchQueryComposition.LAST_MODIFIED,
             option
           );
           if (id) {
             lastModified.current = id;
+            props.setSearchQuery({
+              ...props.searchQuery,
+              lastModified: id,
+              executeSearch: false
+            });
           }
           if (hasOptionsChanged) {
             changeOptions(option.action);
@@ -1178,23 +1201,32 @@ function SearchAutocomplete(props: Props) {
           }
           actions.push(option);
         } else if (option.action === ExecActions.SCOPE_SEARCH) {
-          const id = setPreviousAction(SearchQueryComposition.SCOPE, option);
+          const id = setActionLabel(SearchQueryComposition.SCOPE, option);
           if (id) {
             setSearchBoxing(scope[id]);
+            props.setSearchQuery({
+              ...props.searchQuery,
+              searchBoxing: scope[id],
+              executeSearch: false
+            });
           }
           if (hasOptionsChanged) {
             changeOptions(option.action);
           }
-          // executeSearch();
         } else if (isAction(option.action, SearchQueryComposition.ACCURACY)) {
           if (hasOptionsChanged) {
             changeOptions(option.action);
           }
           actions.push(option);
         } else if (option.action === ExecActions.ACCURACY_SEARCH) {
-          const id = setPreviousAction(SearchQueryComposition.ACCURACY, option);
+          const id = setActionLabel(SearchQueryComposition.ACCURACY, option);
           if (id) {
             searchType.current = accuracy[id];
+            props.setSearchQuery({
+              ...props.searchQuery,
+              searchType: accuracy[id],
+              executeSearch: false
+            });
           }
           if (hasOptionsChanged) {
             changeOptions(option.action);
@@ -1259,11 +1291,11 @@ function SearchAutocomplete(props: Props) {
     } else if (reason === 'clear') {
       clearSearch();
     } else if (reason === 'reset') {
-      if (event.type === 'keydown' || event.type === 'click') {
+      /*if (event.type === 'keydown' || event.type === 'click') {
         // textQuery.current += ' ' + inputValue.current;
         props.setTextQuery('');
       } else if (event.type === 'blur') {
-      }
+      }*/
       // executeSearch();
     }
   }
@@ -1494,6 +1526,9 @@ function SearchAutocomplete(props: Props) {
           onClose={handleClose}*/
           filterOptions={(options: Array<SearchOptionType>, state: any) => {
             const filteredOptions = options.filter(option => {
+              if (option.filter === false) {
+                return true;
+              }
               return (
                 option.label
                   .toLowerCase()
@@ -1511,11 +1546,10 @@ function SearchAutocomplete(props: Props) {
                 a => a.fullName === option || a.label === option
               );
               return (
-                <Button
+                <Box
                   key={'button_' + index}
-                  size="small"
                   style={{
-                    fontSize: 13,
+                    fontSize: 10,
                     textTransform: 'none',
                     color: 'black',
                     backgroundColor: 'white',
@@ -1535,13 +1569,33 @@ function SearchAutocomplete(props: Props) {
                         border: 'none'
                       })
                   }}
-                  onClick={() => {
-                    handleChange(null, [option], 'remove-value');
-                  }}
                 >
-                  {option}
-                  <CloseIcon />
-                </Button>
+                  <IconButton
+                    onClick={() => {
+                      changeOptions(action.action, false);
+                    }}
+                    data-tid={dataTidFormat('menu' + option)}
+                    size="small"
+                  >
+                    {option}
+                    <ArrowDropDownIcon />
+                  </IconButton>
+                  {!isAction(action.action, SearchQueryComposition.SCOPE) &&
+                    !isAction(
+                      action.action,
+                      SearchQueryComposition.ACCURACY
+                    ) && (
+                      <IconButton
+                        onClick={() => {
+                          handleChange(null, [option], 'remove-value');
+                        }}
+                        data-tid={dataTidFormat('close' + option)}
+                        size="small"
+                      >
+                        <CloseIcon />
+                      </IconButton>
+                    )}
+                </Box>
               );
             })
           }

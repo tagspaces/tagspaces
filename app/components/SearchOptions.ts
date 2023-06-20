@@ -10,6 +10,7 @@ export interface SearchOptionType {
   action: string;
   group?: string;
   searchQuery?: TS.SearchQuery;
+  filter?: boolean;
 }
 
 export type ActionType = { shortName: string; fullName?: string };
