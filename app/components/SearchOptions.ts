@@ -21,29 +21,30 @@ export const SearchQueryComposition = {
   },
   TAG_NOT: {
     shortName: '-'
+    // fullName: '—'
   },
   TAG_OR: {
     shortName: '|'
   },
   TYPE: {
     shortName: 't:',
-    fullName: 'type'
+    fullName: 'type:'
   },
   SIZE: {
     shortName: 'si:',
-    fullName: 'size'
+    fullName: 'size:'
   },
   LAST_MODIFIED: {
     shortName: 'lm:',
-    fullName: 'last modified'
+    fullName: 'modified:'
   },
   SCOPE: {
     shortName: 'sc:',
-    fullName: 'scope'
+    fullName: 'scope:'
   },
   ACCURACY: {
     shortName: 'a:',
-    fullName: 'accuracy'
+    fullName: 'accuracy:'
   }
 };
 

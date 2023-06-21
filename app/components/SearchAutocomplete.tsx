@@ -1594,7 +1594,15 @@ function SearchAutocomplete(props: Props) {
                   {isAction(action.action, SearchQueryComposition.TAG_AND) ||
                   isAction(action.action, SearchQueryComposition.TAG_OR) ||
                   isAction(action.action, SearchQueryComposition.TAG_NOT) ? (
-                    option
+                    <Box
+                      style={{
+                        fontSize: 13,
+                        fontWeight: 'bold',
+                        display: 'inline'
+                      }}
+                    >
+                      {option}
+                    </Box>
                   ) : (
                     <Button
                       onClick={() => {
