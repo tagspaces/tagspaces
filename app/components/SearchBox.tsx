@@ -30,6 +30,7 @@ function SearchBox(props: Props) {
   const [anchorSearch, setAnchorSearch] = useState<HTMLButtonElement | null>(
     null
   );
+  // todo replace with props.setSearchQuery
   const [textQuery, setTextQuery] = useState<string>(props.textQuery || '');
 
   return (
