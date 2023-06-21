@@ -32,7 +32,7 @@
     "gatekeeperAssess": false,
     "entitlements": "resources/entitlements.mac.plist",
     "entitlementsInherit": "resources/entitlements.mac.plist",
-    "notarize": "notarytool",
+    "notarize": { "tool": "notarytool" },
     "icon": "resources/icon.icns"
   },
   "linux": {
