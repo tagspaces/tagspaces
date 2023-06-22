@@ -334,7 +334,11 @@ test.describe('TST06 - Test Search in file structure:', () => {
   });
 
   test('TST0634 - Search q. comp - scope (folder) [web,electron]', async () => {
-    await global.client.dblclick('[data-tid=fsEntryName_empty_folder]');
+    //await global.client.dblclick('[data-tid=fsEntryName_empty_folder]');
+    await openContextEntryMenu(
+      getGridFileSelector('empty_folder'),
+      'openDirectory'
+    );
     await addSearchCommand('sc:', false);
     await clickOn('#textQuery-option-1');
     await addSearchCommand('sample.html', true);
