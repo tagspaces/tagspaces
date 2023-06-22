@@ -4,15 +4,10 @@
 }
 
 ::-webkit-scrollbar {
-  width: 0;
+  width: 8px;
   height: 0;
   -webkit-transform: scaleX(10);
   background-color: transparent;
-}
-
-:hover::-webkit-scrollbar {
-  width: 8px;
-  height: 10px;
 }
 
 ::-webkit-scrollbar-track,
@@ -20,9 +15,13 @@
   background: none;
 }
 
+:hover::-webkit-scrollbar-thumb {
+  background-color: #787f8b;
+}
+
 ::-webkit-scrollbar-thumb {
   border-radius: 5px;
-  background-color: #787f8b;
+  background-color: transparent;
   border: none;
   box-shadow: none !important;
 }

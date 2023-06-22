@@ -537,7 +537,7 @@ function CreateEditLocationDialog(props: Props) {
       </DialogTitle>
       <DialogContent
         style={{
-          overflow: AppConfig.isFirefox ? 'auto' : 'overlay',
+          overflow: 'auto',
           minHeight: 200,
           padding: 8
         }}

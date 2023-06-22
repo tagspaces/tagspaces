@@ -44,7 +44,7 @@ import SettingsExtensions from '-/components/dialogs/settings/SettingsExtensions
 
 const styles: any = () => ({
   mainContent: {
-    overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+    overflowY: 'auto'
   }
 });
 

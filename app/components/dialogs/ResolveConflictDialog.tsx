@@ -73,7 +73,7 @@ function ResolveConflictDialog(props: Props) {
       </DialogTitle>
       <DialogContent
         style={{
-          overflow: AppConfig.isFirefox ? 'auto' : 'overlay',
+          overflow: 'auto',
           minWidth: 400
         }}
       >

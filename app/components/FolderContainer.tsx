@@ -513,8 +513,7 @@ function FolderContainer(props: Props) {
             display: 'flex',
             overflowY: 'hidden',
             alignItems: 'center',
-            // @ts-ignore
-            overflowX: AppConfig.isFirefox ? 'auto' : 'overlay'
+            overflowX: 'auto'
           }}
         >
           <IconButton

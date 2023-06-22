@@ -114,7 +114,7 @@ const BgndImgChooserDialog =
 
 const styles: any = (theme: any) => ({
   entryProperties: {
-    overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
+    overflowY: 'auto',
     overflowX: 'hidden',
     flexGrow: 1,
     padding: 7,

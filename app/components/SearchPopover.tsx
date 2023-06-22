@@ -564,8 +564,8 @@ function SearchPopover(props: Props) {
           height: 'calc(100% - 90px)',
           maxHeight: 'calc(100% - 90px)',
           overflowX: 'hidden',
-          // @ts-ignore
-          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+          overflowY: 'auto',
+          scrollbarGutter: 'stable'
         }}
         data-tid="searchAdvancedTID"
       >

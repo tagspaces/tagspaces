@@ -91,8 +91,7 @@ function HelpFeedbackPanel(props: Props) {
         aria-label="main help area"
         style={{
           height: 'calc(100% - ' + reduceHeightBy + 'px)',
-          // @ts-ignore
-          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+          overflowY: 'auto'
         }}
       >
         <ListItem

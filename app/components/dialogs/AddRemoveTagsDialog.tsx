@@ -129,8 +129,7 @@ function AddRemoveTagsDialog(props: Props) {
         style={{
           minHeight: 330,
           paddingTop: 10,
-          // @ts-ignore
-          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
+          overflowY: 'auto',
           overflowX: 'hidden'
         }}
       >

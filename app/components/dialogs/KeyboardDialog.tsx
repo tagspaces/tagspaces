@@ -72,7 +72,7 @@ function KeyboardDialog(props: Props) {
         data-tid="keyboardShortCutsDialog"
         style={{
           minWidth: 350,
-          overflow: AppConfig.isFirefox ? 'auto' : 'overlay'
+          overflow: 'auto'
         }}
       >
         <List dense={false}>

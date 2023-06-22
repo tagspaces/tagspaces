@@ -220,8 +220,7 @@ function StoredSearches(props: Props) {
           paddingTop: 0,
           marginTop: 0,
           height: 'calc(100% - ' + reduceHeightBy + 'px)',
-          // @ts-ignore
-          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+          overflowY: 'auto'
         }}
       >
         <Grid container direction="row">

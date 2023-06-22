@@ -41,7 +41,7 @@ const styles: any = {
   root: {
     width: 400,
     height: '100%',
-    overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
+    overflowY: 'auto',
     marginBottom: 30
   }
 };

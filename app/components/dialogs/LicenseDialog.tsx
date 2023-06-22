@@ -74,7 +74,7 @@ function LicenseDialog(props: Props) {
         // inputRef={ref => {
         //   licenseElement = ref;
         // }}
-        style={{ overflow: AppConfig.isFirefox ? 'auto' : 'overlay' }}
+        style={{ overflow: 'auto' }}
       >
         <pre style={{ whiteSpace: 'pre-wrap', userSelect: 'text' }}>
           {Pro ? Pro.EULAContent : LicenseContent}

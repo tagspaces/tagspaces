@@ -604,8 +604,7 @@ function TagLibrary(props: Props) {
           marginTop: 0,
           borderRadius: 5,
           height: 'calc(100% - ' + reduceHeightBy + 'px)',
-          // @ts-ignore
-          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+          overflowY: 'auto'
         }}
         data-tid="tagLibraryTagGroupList"
       >

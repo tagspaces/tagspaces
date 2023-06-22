@@ -174,8 +174,7 @@ function DirectoryListView(props: Props) {
         style={{
           borderRadius: 5,
           maxHeight: 300,
-          // @ts-ignore
-          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+          overflowY: 'auto'
         }}
       >
         {getFolderContent()}

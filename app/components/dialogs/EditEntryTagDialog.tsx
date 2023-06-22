@@ -148,7 +148,7 @@ function EditEntryTagDialog(props: Props) {
         data-tid="editEntryTagDialog"
         className={props.classes.root}
         style={{
-          overflow: AppConfig.isFirefox ? 'auto' : 'overlay'
+          overflow: 'auto'
         }}
       >
         <FormControl fullWidth={true} error={haveError('tag')}>

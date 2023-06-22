@@ -74,8 +74,7 @@ function MoveOrCopyFilesDialog(props: Props) {
       <DialogContent
         style={{
           overflowX: 'hidden',
-          // @ts-ignore
-          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+          overflowY: 'auto'
         }}
       >
         <Typography variant="subtitle2">{i18n.t('selectedFiles')}</Typography>

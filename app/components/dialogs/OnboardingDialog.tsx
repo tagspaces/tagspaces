@@ -101,8 +101,7 @@ function OnboardingDialog(props: Props) {
       <DialogContent
         style={{
           marginTop: 20,
-          // @ts-ignore
-          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+          overflowY: 'auto'
         }}
       >
         <SwipeableViews

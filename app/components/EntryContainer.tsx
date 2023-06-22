@@ -136,7 +136,7 @@ const styles: any = (theme: any) => ({
     flex: '1 1',
     display: 'flex',
     alignItems: 'baseline',
-    overflowX: AppConfig.isFirefox ? 'auto' : 'overlay',
+    overflowX: 'auto',
     overflowY: 'hidden',
     paddingRight: 100
   },

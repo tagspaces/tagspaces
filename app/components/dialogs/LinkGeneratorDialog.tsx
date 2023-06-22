@@ -94,9 +94,7 @@ function LinkGeneratorDialog(props: Props) {
         {i18n.t('core:generateDownloadLink')}{' '}
         <DialogCloseButton testId="closeLinkGeneratorTID" onClose={onClose} />
       </DialogTitle>
-      <DialogContent
-        style={{ overflow: AppConfig.isFirefox ? 'auto' : 'overlay' }}
-      >
+      <DialogContent style={{ overflow: 'auto' }}>
         <TextField
           style={{ marginTop: 8 }}
           select

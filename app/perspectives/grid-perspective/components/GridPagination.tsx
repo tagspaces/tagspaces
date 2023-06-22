@@ -413,8 +413,7 @@ function GridPagination(props: Props) {
         }
         style={{
           height: '100%',
-          // @ts-ignore
-          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
+          overflowY: 'auto',
           backgroundImage: 'url("' + folderBgndPath.current + '")',
           backgroundSize: 'cover',
           backgroundRepeat: 'no-repeat'

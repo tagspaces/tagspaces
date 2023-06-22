@@ -102,7 +102,7 @@ export default (theme: any): any => ({
     textAlign: 'center'
   },
   gridSizeDate: {
-    overflow: AppConfig.isFirefox ? 'auto' : 'overlay',
+    overflow: 'auto',
     whiteSpace: 'nowrap',
     marginRight: 5,
     marginLeft: 'auto',
@@ -135,6 +135,6 @@ export default (theme: any): any => ({
     backdropFilter: 'blur(5px)',
     // borderBottom: '1px solid ' + theme.palette.divider,
     width: 'calc(100% - 10px)',
-    overflowX: AppConfig.isFirefox ? 'auto' : 'overlay'
+    overflowX: 'auto'
   }
 });
