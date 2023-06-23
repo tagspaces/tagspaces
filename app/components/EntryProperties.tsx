@@ -118,7 +118,7 @@ const styles: any = (theme: any) => ({
     overflowX: 'hidden',
     flexGrow: 1,
     padding: 7,
-    paddingRight: 14,
+    paddingRight: 2,
     height: '100%'
   },
   tags: {
