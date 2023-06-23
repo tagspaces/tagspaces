@@ -191,7 +191,7 @@ test.describe('TST02 - Folder properties', () => {
 
   test('TST0215 - Link for internal sharing + copy [web,minio,electron]', async () => {
     // await clickOn('[data-tid=copyLinkToClipboardTID]');
-    const sharingLink = await global.client.$(
+    const sharingLink = await global.client.waitForSelector(
       '[data-tid=sharingLinkTID] input'
     );
     const sharingLinkValue = await sharingLink.getAttribute('value');

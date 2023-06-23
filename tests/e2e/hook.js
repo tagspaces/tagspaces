@@ -155,7 +155,7 @@ export async function startTestingApp(extconfig) {
     // Get the first window that the app opens, wait if necessary.
     global.client = await global.app.firstWindow();
     // global.session = await global.client.context().newCDPSession(global.client);
-    // await global.client.setViewportSize({ width: 1920, height: 1080 });
+    await global.client.setViewportSize({ width: 1920, height: 1080 }); // ({ width: 800, height: 600 });
     await global.client.waitForLoadState('load'); //'domcontentloaded'); //'networkidle');
 
     if (process.env.SHOW_CONSOLE) {
