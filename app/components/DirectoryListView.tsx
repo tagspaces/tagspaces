@@ -27,11 +27,17 @@ interface Props {
   currentLocationId: string;
   toggleCreateDirectoryDialog: (props: any) => void;
   showUnixHiddenEntries: boolean;
+  currentDirectoryPath?: string;
 }
 function DirectoryListView(props: Props) {
-  const { locations, currentLocationId, showUnixHiddenEntries } = props;
+  const {
+    locations,
+    currentLocationId,
+    showUnixHiddenEntries,
+    currentDirectoryPath
+  } = props;
   const chosenLocationId = useRef<string>(currentLocationId);
-  const chosenDirectory = useRef<string>();
+  const chosenDirectory = useRef<string>(currentDirectoryPath);
   const [directoryContent, setDirectoryContent] = useState<
     TS.FileSystemEntry[]
   >([]);
@@ -41,7 +47,11 @@ function DirectoryListView(props: Props) {
       location => location.uuid === chosenLocationId.current
     );
     if (chosenLocation) {
-      listDirectory(chosenLocation.path);
+      const path =
+        chosenLocation.uuid === currentLocationId && currentDirectoryPath
+          ? currentDirectoryPath
+          : chosenLocation.path;
+      listDirectory(path);
     }
   }, [chosenLocationId.current]);
 
@@ -162,7 +172,10 @@ function DirectoryListView(props: Props) {
         onClick={() => {
           props.toggleCreateDirectoryDialog({
             rootDirPath: chosenDirectory.current,
-            callback: () => listDirectory(chosenDirectory.current),
+            callback: newDirPath => {
+              listDirectory(chosenDirectory.current);
+              props.setTargetDir(newDirPath);
+            },
             reflect: false
           });
         }}

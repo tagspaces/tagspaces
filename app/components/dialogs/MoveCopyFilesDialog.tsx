@@ -41,7 +41,11 @@ import IOActions from '-/reducers/io-actions';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { actions as AppActions, getSelectedEntries } from '-/reducers/app';
+import {
+  actions as AppActions,
+  getDirectoryPath,
+  getSelectedEntries
+} from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import DirectoryListView from '-/components/DirectoryListView';
 import AppConfig from '-/AppConfig';
@@ -50,6 +54,7 @@ import Tooltip from '-/components/Tooltip';
 interface Props {
   open: boolean;
   onClose: (clearSelection?: boolean) => void;
+  currentDirectoryPath: string | null;
   copyFiles: (files: Array<string>, destination: string) => void;
   copyDirs: (
     dirs: Array<string>,
@@ -73,7 +78,9 @@ interface Props {
 
 function MoveCopyFilesDialog(props: Props) {
   // const [disableConfirmButton, setDisableConfirmButton] = useState(true);
-  const [targetPath, setTargetPath] = useState('');
+  const [targetPath, setTargetPath] = useState(
+    props.currentDirectoryPath ? props.currentDirectoryPath : ''
+  );
   const dirProp = useRef({});
 
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
@@ -239,7 +246,10 @@ function MoveCopyFilesDialog(props: Props) {
             {i18n.t('chooseTargetLocationAndPath')}
           </Typography>
         )}
-        <DirectoryListView setTargetDir={setTargetPath} />
+        <DirectoryListView
+          setTargetDir={setTargetPath}
+          currentDirectoryPath={props.currentDirectoryPath}
+        />
       </DialogContent>
       <DialogActions
       // style={{
@@ -259,7 +269,11 @@ function MoveCopyFilesDialog(props: Props) {
           <span>
             <Button
               data-tid="confirmMoveFiles"
-              disabled={!targetPath || AppConfig.isAndroid}
+              disabled={
+                !targetPath ||
+                AppConfig.isAndroid ||
+                targetPath === props.currentDirectoryPath
+              }
               onClick={handleMoveFiles}
               color="primary"
             >
@@ -270,7 +284,7 @@ function MoveCopyFilesDialog(props: Props) {
         <Button
           onClick={handleCopyFiles}
           data-tid="confirmCopyFiles"
-          disabled={!targetPath}
+          disabled={!targetPath || targetPath === props.currentDirectoryPath}
           color="primary"
         >
           {i18n.t('core:copyEntriesButton')}
@@ -282,7 +296,8 @@ function MoveCopyFilesDialog(props: Props) {
 
 function mapStateToProps(state) {
   return {
-    selectedEntries: getSelectedEntries(state)
+    selectedEntries: getSelectedEntries(state),
+    currentDirectoryPath: getDirectoryPath(state)
   };
 }
 
