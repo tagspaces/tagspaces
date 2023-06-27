@@ -20,6 +20,7 @@ import { actions as AppActions, getCurrentLocationId } from '-/reducers/app';
 import { ParentFolderIcon } from '-/components/CommonIcons';
 import { getLocations } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-facade';
+import { Pro } from '-/pro';
 
 interface Props {
   setTargetDir: (dirPath: string) => void;
@@ -28,6 +29,7 @@ interface Props {
   toggleCreateDirectoryDialog: (props: any) => void;
   showUnixHiddenEntries: boolean;
   currentDirectoryPath?: string;
+  watchForChanges: () => void;
 }
 function DirectoryListView(props: Props) {
   const {
@@ -173,11 +175,15 @@ function DirectoryListView(props: Props) {
         style={{ margin: 5 }}
         data-tid="newSubdirectoryTID"
         onClick={() => {
+          if (Pro && Pro.Watcher) {
+            Pro.Watcher.stopWatching();
+          }
           props.toggleCreateDirectoryDialog({
             rootDirPath: chosenDirectory.current,
             callback: newDirPath => {
               listDirectory(chosenDirectory.current);
               props.setTargetDir(newDirPath);
+              props.watchForChanges();
             },
             reflect: false
           });
@@ -210,7 +216,8 @@ function mapStateToProps(state) {
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
-      toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog
+      toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog,
+      watchForChanges: AppActions.watchForChanges
     },
     dispatch
   );
