@@ -345,42 +345,32 @@ test.describe('TST50** - Right button on a file', () => {
    */
   test('TST5028 - Move - Copy file (file menu) [minio,electron]', async () => {
     // Move file in child folder
-    // const fileExtension = 'pdf'; //'eml' -> todo search found extra files (.gitkeep) with fuseOptions = {threshold: 0.4,
-    // await searchEngine(fileExtension);
     const fileName = 'sample.pdf';
+    const folderName = 'empty_folder';
     const fileSelector = getGridFileSelector(fileName);
     await openContextEntryMenu(fileSelector, 'fileMenuMoveCopyFile');
-    await clickOn('[data-tid=MoveTargetempty_folder]');
-    /*await setInputKeys(
-      'targetPathInput',
-      defaultLocationPath + '/empty_folder'
-    );*/
+    await clickOn('[data-tid=MoveTarget' + folderName + ']');
 
     await clickOn('[data-tid=confirmMoveFiles]');
     //await waitForNotification();
     await expectElementExist(getGridFileSelector(fileName), false);
-    // await clickOn('#clearSearchID');
-    await global.client.dblclick(selectorFolder);
-    // await searchEngine(fileExtension, { reindexing: true }); // TODO temp fix: https://trello.com/c/ZfcGGvOM/527-moved-files-is-not-indexing-not-found-in-search
 
+    //await global.client.dblclick(selectorFolder);
+    await openContextEntryMenu(getGridFileSelector(folderName), 'openDirectory');
     await expectElementExist(getGridFileSelector(fileName), true);
-    // let firstFileName = await getGridFileName(0);
-    // expect(firstFileName).toBe(fileName);
 
     // Copy file in parent directory
     await openContextEntryMenu(fileSelector, 'fileMenuMoveCopyFile');
     // await setInputKeys('targetPathInput', defaultLocationPath);
+    await clickOn('[data-tid=navigateToParentTID]');
     await clickOn('[data-tid=confirmCopyFiles]');
-    //await waitForNotification();
-    // await clickOn('#clearSearchID');
+
     await clickOn('[data-tid=gridPerspectiveOnBackButton]');
     await expectElementExist(getGridFileSelector(fileName), true);
-    // await searchEngine(fileExtension);
-    /* firstFileName = await getGridFileName(0);
-    expect(firstFileName).toBe('sample.' + fileExtension);
-*/
+
     // cleanup
-    await global.client.dblclick(selectorFolder);
+    // await global.client.dblclick(selectorFolder);
+    await openContextEntryMenu(getGridFileSelector(folderName), 'openDirectory');
     await expectElementExist(selectorFile, true);
     await deleteFileFromMenu();
     await expectElementExist(selectorFile, false);
