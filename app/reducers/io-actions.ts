@@ -118,11 +118,11 @@ const actions = {
         dispatch(
           AppActions.showNotification(i18n.t('core:filesMovedSuccessful'))
         );
+        // moved files should be added to the index, if the target dir in index
+        dispatch(AppActions.reflectDeleteEntries(paths));
 
         const moveMetaJobs = [];
         moveJobs.map(job => {
-          dispatch(AppActions.reflectDeleteEntry(job[0])); // moved files should be added to the index, if the target dir in index
-
           // Move revisions
           loadFileMetaDataPromise(job[0]).then(
             (fsEntryMeta: TS.FileSystemEntryMeta) => {
@@ -174,16 +174,16 @@ const actions = {
               false
             )
           ]);
-          renameFilesPromise(moveMetaJobs)
-            .then(() => {
-              console.log('Moving meta and thumbs successful');
-              return true;
-            })
-            .catch(err => {
-              console.warn('At least one meta or thumb was not moved ' + err);
-            });
           return true;
         });
+        renameFilesPromise(moveMetaJobs)
+          .then(() => {
+            console.log('Moving meta and thumbs successful');
+            return true;
+          })
+          .catch(err => {
+            console.warn('At least one meta or thumb was not moved ' + err);
+          });
         return true;
       })
       .catch(err => {

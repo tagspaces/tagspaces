@@ -62,6 +62,17 @@ const GlobalSearch = (function() {
           }
         }
       },
+      reflectDeleteEntries: (paths: string[]) => {
+        if (!index || index.length < 1) {
+          return;
+        }
+        for (let i = 0; i < index.length; i += 1) {
+          if (paths.some(path => index[i].path === path)) {
+            index = index.splice(i, 1);
+            i -= 1;
+          }
+        }
+      },
       reflectCreateEntry: (newEntry: TS.FileSystemEntry) => {
         if (!index || index.length < 1) {
           return;

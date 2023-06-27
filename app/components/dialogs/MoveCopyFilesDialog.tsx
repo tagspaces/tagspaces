@@ -102,13 +102,22 @@ function MoveCopyFilesDialog(props: Props) {
     : [];
 
   useEffect(() => {
-    if (selectedDirs.length > 0 && AppConfig.isElectron) {
-      // getDirProperties have Electron impl only
+    // getDirProperties have Electron impl only
+    if (
+      selectedDirs.length > 0 &&
+      AppConfig.isElectron &&
+      !PlatformIO.haveObjectStoreSupport() &&
+      !PlatformIO.haveWebDavSupport()
+    ) {
       const promises = selectedDirs.map(dirPath => {
-        return PlatformIO.getDirProperties(dirPath).then(prop => {
-          dirProp.current[dirPath] = prop;
-          return true;
-        });
+        try {
+          return PlatformIO.getDirProperties(dirPath).then(prop => {
+            dirProp.current[dirPath] = prop;
+            return true;
+          });
+        } catch (ex) {
+          console.debug('getDirProperties:', ex);
+        }
       });
       Promise.all(promises).then(() => forceUpdate());
     }

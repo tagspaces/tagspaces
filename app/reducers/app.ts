@@ -148,6 +148,7 @@ export const types = {
   OPEN_HELPFEEDBACK_PANEL: 'APP/OPEN_HELPFEEDBACK_PANEL',
   CLOSE_ALLVERTICAL_PANELS: 'APP/CLOSE_ALLVERTICAL_PANELS',
   REFLECT_DELETE_ENTRY: 'APP/REFLECT_DELETE_ENTRY',
+  REFLECT_DELETE_ENTRIES: 'APP/REFLECT_DELETE_ENTRIES',
   REFLECT_RENAME_ENTRY: 'APP/REFLECT_RENAME_ENTRY',
   REFLECT_CREATE_ENTRY: 'APP/REFLECT_CREATE_ENTRY',
   // REFLECT_UPDATE_SIDECARTAGS: 'APP/REFLECT_UPDATE_SIDECARTAGS',
@@ -683,6 +684,34 @@ export default (state: any = initialState, action: any) => {
         entry => entry.path !== action.path
       );
       const editedEntryPaths = [{ action: 'delete', path: action.path }];
+      if (
+        state.currentDirectoryEntries.length > newDirectoryEntries.length ||
+        state.openedFiles.length > newOpenedFiles.length
+      ) {
+        return {
+          ...state,
+          editedEntryPaths,
+          currentDirectoryEntries: newDirectoryEntries,
+          openedFiles: newOpenedFiles,
+          isEntryInFullWidth: false
+        };
+      }
+      return {
+        ...state,
+        editedEntryPaths
+      };
+    }
+    case types.REFLECT_DELETE_ENTRIES: {
+      const newDirectoryEntries = state.currentDirectoryEntries.filter(
+        entry => !action.paths.some(path => path === entry.path)
+      );
+      const newOpenedFiles = state.openedFiles.filter(
+        entry => !action.paths.some(path => path === entry.path)
+      );
+      const editedEntryPaths = action.paths.map(path => ({
+        action: 'delete',
+        path: path
+      }));
       if (
         state.currentDirectoryEntries.length > newDirectoryEntries.length ||
         state.openedFiles.length > newOpenedFiles.length
@@ -2415,9 +2444,17 @@ export const actions = {
     type: types.REFLECT_DELETE_ENTRY,
     path
   }),
+  reflectDeleteEntriesInt: (paths: string[]) => ({
+    type: types.REFLECT_DELETE_ENTRIES,
+    paths
+  }),
   reflectDeleteEntry: (path: string) => (dispatch: (action) => void) => {
     dispatch(actions.reflectDeleteEntryInt(path));
     GlobalSearch.getInstance().reflectDeleteEntry(path);
+  },
+  reflectDeleteEntries: (paths: string[]) => (dispatch: (action) => void) => {
+    dispatch(actions.reflectDeleteEntriesInt(paths));
+    GlobalSearch.getInstance().reflectDeleteEntries(paths);
   },
   reflectCreateEntryInt: (newEntry: TS.FileSystemEntry) => ({
     type: types.REFLECT_CREATE_ENTRY,
