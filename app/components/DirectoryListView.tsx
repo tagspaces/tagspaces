@@ -62,6 +62,7 @@ function DirectoryListView(props: Props) {
     );
     if (chosenLocation) {
       listDirectory(chosenLocation.path);
+      props.setTargetDir(chosenLocation.path);
     }
   };
 
@@ -109,7 +110,7 @@ function DirectoryListView(props: Props) {
             })
             // .sort((a, b) => b.name - a.name)
           );
-          props.setTargetDir(directoryPath);
+          // props.setTargetDir(directoryPath);
         }
         return true;
       })
@@ -158,7 +159,9 @@ function DirectoryListView(props: Props) {
             if (currentPath.endsWith(PlatformIO.getDirSeparator())) {
               currentPath = currentPath.slice(0, -1);
             }
-            listDirectory(extractContainingDirectoryPath(currentPath));
+            const parentDir = extractContainingDirectoryPath(currentPath);
+            listDirectory(parentDir);
+            props.setTargetDir(parentDir);
           }
         }}
       >
