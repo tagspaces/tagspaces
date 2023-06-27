@@ -390,7 +390,12 @@ function CreateDialog(props: Props) {
                     disabled={noSuitableLocation}
                   >
                     <Tooltip title={i18n.t('createMarkdownTitle')}>
-                      <Typography variant="button" display="block" gutterBottom>
+                      <Typography
+                        variant="button"
+                        style={{ fontWeight: 'bold' }}
+                        display="block"
+                        gutterBottom
+                      >
                         {i18n.t('createMarkdown')}
                       </Typography>
                     </Tooltip>
