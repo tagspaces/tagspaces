@@ -18,8 +18,10 @@
 
 import React from 'react';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import { generateSharingLink } from '@tagspaces/tagspaces-common/paths';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
+import Divider from '@mui/material/Divider';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -29,7 +31,7 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import DeleteIcon from '@mui/icons-material/DeleteForever';
 import OpenFolderNativelyIcon from '@mui/icons-material/Launch';
-import CloseIcon from '@mui/icons-material/Close';
+import { OpenNewWindowIcon, CloseIcon } from '-/components/CommonIcons';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
@@ -65,63 +67,83 @@ interface Props {
 }
 
 function LocationContextMenu(props: Props) {
+  const {
+    addLocation,
+    selectedLocation,
+    setEditLocationDialogOpened,
+    setLocationDirectoryContextMenuAnchorEl,
+    createLocationIndex,
+    locationPosition,
+    moveLocationUp,
+    moveLocationDown,
+    setDeleteLocationDialogOpened,
+    closeLocationTree,
+    closeLocation,
+    showInFileManager,
+    locationDirectoryContextMenuAnchorEl
+  } = props;
+
   const indexLocation = () => {
-    props.setLocationDirectoryContextMenuAnchorEl(null);
-    props.createLocationIndex(props.selectedLocation);
+    setLocationDirectoryContextMenuAnchorEl(null);
+    createLocationIndex(selectedLocation);
   };
 
-  const { selectedLocation } = props;
-
   const showEditLocationDialog = () => {
-    props.setLocationDirectoryContextMenuAnchorEl(null);
-    props.setEditLocationDialogOpened(true);
+    setLocationDirectoryContextMenuAnchorEl(null);
+    setEditLocationDialogOpened(true);
   };
 
   const duplicateLocation = () => {
-    props.addLocation(
+    addLocation(
       {
-        ...props.selectedLocation,
+        ...selectedLocation,
         uuid: getUuid(),
-        name: props.selectedLocation.name + ' (copy)',
+        name: selectedLocation.name + ' (copy)',
         isDefault: false
       },
       false,
-      props.locationPosition + 1
+      locationPosition + 1
     );
-    props.setLocationDirectoryContextMenuAnchorEl(null);
+    setLocationDirectoryContextMenuAnchorEl(null);
   };
 
-  const moveLocationUp = () => {
-    props.setLocationDirectoryContextMenuAnchorEl(null);
+  const moveLocationUpInt = () => {
+    setLocationDirectoryContextMenuAnchorEl(null);
     if (selectedLocation && selectedLocation.uuid) {
-      props.moveLocationUp(selectedLocation.uuid);
+      moveLocationUp(selectedLocation.uuid);
     }
   };
 
-  const moveLocationDown = () => {
-    props.setLocationDirectoryContextMenuAnchorEl(null);
+  const moveLocationDownInt = () => {
+    setLocationDirectoryContextMenuAnchorEl(null);
     if (selectedLocation && selectedLocation.uuid) {
-      props.moveLocationDown(selectedLocation.uuid);
+      moveLocationDown(selectedLocation.uuid);
     }
   };
 
   const showDeleteLocationDialog = () => {
-    props.setLocationDirectoryContextMenuAnchorEl(null);
-    props.setDeleteLocationDialogOpened(true);
+    setLocationDirectoryContextMenuAnchorEl(null);
+    setDeleteLocationDialogOpened(true);
   };
 
-  const showInFileManager = () => {
-    props.setLocationDirectoryContextMenuAnchorEl(null);
-    props.showInFileManager(PlatformIO.getLocationPath(props.selectedLocation));
-    // props.openDirectory(selectedLocation.path || selectedLocation.paths[0]);
+  const showInFileManagerInt = () => {
+    setLocationDirectoryContextMenuAnchorEl(null);
+    showInFileManager(PlatformIO.getLocationPath(selectedLocation));
   };
 
-  const closeLocation = () => {
-    props.setLocationDirectoryContextMenuAnchorEl(null);
+  const closeLocationInt = () => {
+    setLocationDirectoryContextMenuAnchorEl(null);
     if (selectedLocation && selectedLocation.uuid) {
-      props.closeLocation(selectedLocation.uuid);
-      props.closeLocationTree();
+      closeLocation(selectedLocation.uuid);
+      closeLocationTree();
     }
+  };
+
+  const openInNewWindow = () => {
+    const sharingLink = generateSharingLink(selectedLocation.uuid);
+    PlatformIO.createNewInstance(
+      window.location.href.split('?')[0] + '?' + sharingLink.split('?')[1]
+    );
   };
 
   const menuItems = [];
@@ -139,6 +161,33 @@ function LocationContextMenu(props: Props) {
       </MenuItem>
     );
   }
+  menuItems.push(
+    <MenuItem
+      key="locationMenuOpenFileNewWindow"
+      data-tid="locationMenuOpenFileNewWindow"
+      onClick={openInNewWindow}
+    >
+      <ListItemIcon>
+        <OpenNewWindowIcon />
+      </ListItemIcon>
+      <ListItemText primary={i18n.t('core:openInWindow')} />
+    </MenuItem>
+  );
+  if (selectedLocation.type === locationType.TYPE_LOCAL) {
+    menuItems.push(
+      <MenuItem
+        key="showInFileManager"
+        data-tid="showInFileManager"
+        onClick={showInFileManagerInt}
+      >
+        <ListItemIcon>
+          <OpenFolderNativelyIcon />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:showInFileManager')} />
+      </MenuItem>
+    );
+  }
+  menuItems.push(<Divider />);
   menuItems.push(
     <MenuItem
       key="duplicateLocation"
@@ -164,11 +213,12 @@ function LocationContextMenu(props: Props) {
     </MenuItem>
   );
   if (!AppConfig.locationsReadOnly) {
+    menuItems.push(<Divider />);
     menuItems.push(
       <MenuItem
         key="moveLocationUp"
         data-tid="moveLocationUp"
-        onClick={moveLocationUp}
+        onClick={moveLocationUpInt}
       >
         <ListItemIcon>
           <ArrowUpwardIcon />
@@ -180,7 +230,7 @@ function LocationContextMenu(props: Props) {
       <MenuItem
         key="moveLocationDown"
         data-tid="moveLocationDown"
-        onClick={moveLocationDown}
+        onClick={moveLocationDownInt}
       >
         <ListItemIcon>
           <ArrowDownwardIcon />
@@ -188,6 +238,7 @@ function LocationContextMenu(props: Props) {
         <ListItemText primary={i18n.t('core:moveDown')} />
       </MenuItem>
     );
+    menuItems.push(<Divider />);
     menuItems.push(
       <MenuItem
         key="removeLocation"
@@ -201,25 +252,11 @@ function LocationContextMenu(props: Props) {
       </MenuItem>
     );
   }
-  if (selectedLocation.type === locationType.TYPE_LOCAL) {
-    menuItems.push(
-      <MenuItem
-        key="showInFileManager"
-        data-tid="showInFileManager"
-        onClick={showInFileManager}
-      >
-        <ListItemIcon>
-          <OpenFolderNativelyIcon />
-        </ListItemIcon>
-        <ListItemText primary={i18n.t('core:showInFileManager')} />
-      </MenuItem>
-    );
-  }
   menuItems.push(
     <MenuItem
       key="closeLocationTID"
       data-tid="closeLocationTID"
-      onClick={closeLocation}
+      onClick={closeLocationInt}
     >
       <ListItemIcon>
         <CloseIcon />
@@ -230,9 +267,9 @@ function LocationContextMenu(props: Props) {
 
   return (
     <Menu
-      anchorEl={props.locationDirectoryContextMenuAnchorEl}
-      open={Boolean(props.locationDirectoryContextMenuAnchorEl)}
-      onClose={() => props.setLocationDirectoryContextMenuAnchorEl(null)}
+      anchorEl={locationDirectoryContextMenuAnchorEl}
+      open={Boolean(locationDirectoryContextMenuAnchorEl)}
+      onClose={() => setLocationDirectoryContextMenuAnchorEl(null)}
     >
       {menuItems}
     </Menu>
