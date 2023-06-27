@@ -1605,7 +1605,7 @@ export const actions = {
       .then(() => {
         if (directoryPath === currentDirectoryPath) {
           dispatch(actions.loadParentDirectoryContent());
-          dispatch(LocationIndexActions.reflectDeleteEntry(directoryPath));
+          GlobalSearch.getInstance().reflectDeleteEntry(directoryPath);
           // close opened entries in deleted dir
           if (
             openedFiles.length > 0 &&
@@ -1675,8 +1675,9 @@ export const actions = {
               dispatch(actions.addToEntryContainer(openedFile));
             }
           }
-          dispatch(
-            LocationIndexActions.reflectRenameEntry(directoryPath, newDirPath)
+          GlobalSearch.getInstance().reflectRenameEntry(
+            directoryPath,
+            newDirPath
           );
         } else {
           dispatch(actions.reflectRenameEntry(directoryPath, newDirPath));
@@ -2416,7 +2417,7 @@ export const actions = {
   }),
   reflectDeleteEntry: (path: string) => (dispatch: (action) => void) => {
     dispatch(actions.reflectDeleteEntryInt(path));
-    dispatch(LocationIndexActions.reflectDeleteEntry(path));
+    GlobalSearch.getInstance().reflectDeleteEntry(path);
   },
   reflectCreateEntryInt: (newEntry: TS.FileSystemEntry) => ({
     type: types.REFLECT_CREATE_ENTRY,
@@ -2451,7 +2452,7 @@ export const actions = {
   ) => {
     dispatch(actions.setSelectedEntries([newEntry]));
     dispatch(actions.reflectCreateEntryInt(newEntry));
-    dispatch(LocationIndexActions.reflectCreateEntry(newEntry));
+    GlobalSearch.getInstance().reflectCreateEntry(newEntry);
   },
   reflectRenameEntryInt: (path: string, newPath: string) => ({
     type: types.REFLECT_RENAME_ENTRY,
@@ -2479,7 +2480,7 @@ export const actions = {
       GlobalSearch.getInstance().setResults(results);
     }
     dispatch(actions.reflectRenameEntryInt(path, newPath));
-    dispatch(LocationIndexActions.reflectRenameEntry(path, newPath));
+    GlobalSearch.getInstance().reflectRenameEntry(path, newPath);
     dispatch(actions.setSelectedEntries([]));
   },
   /**
@@ -2540,7 +2541,7 @@ export const actions = {
     dispatch(actions.updateCurrentDirEntry(path, { tags }));
     // }
     if (updateIndex) {
-      dispatch(LocationIndexActions.reflectUpdateSidecarTags(path, tags));
+      GlobalSearch.getInstance().reflectUpdateSidecarTags(path, tags);
     }
   },
   deleteFile: (filePath: string, uuid: string) => (

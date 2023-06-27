@@ -18,13 +18,7 @@
 
 import { loadIndex, hasIndex } from '@tagspaces/tagspaces-platforms/indexer';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
-import {
-  extractFileExtension,
-  extractFileName,
-  extractTagsAsObjects,
-  getThumbFileLocationForFile,
-  generateSharingLink
-} from '@tagspaces/tagspaces-common/paths';
+import { getThumbFileLocationForFile } from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
 import {
   getCurrentLocation,
@@ -32,16 +26,9 @@ import {
   getLocationByPath,
   getLocations
 } from './locations';
-import {
-  createDirectoryIndex,
-  getRelativeEntryPath
-} from '-/services/utils-io';
+import { createDirectoryIndex } from '-/services/utils-io';
 import Search, { defaultTitle } from '../services/search';
-import {
-  actions as AppActions,
-  getCurrentLocationId,
-  getCurrentLocationPath
-} from './app';
+import { actions as AppActions } from './app';
 import i18n from '../services/i18n';
 import PlatformIO from '../services/platform-facade';
 import GlobalSearch from '../services/search-index';
@@ -56,12 +43,12 @@ export const types = {
   INDEX_DIRECTORY_CANCEL: 'INDEX_DIRECTORY_CANCEL',
   INDEX_DIRECTORY_SUCCESS: 'INDEX_DIRECTORY_SUCCESS',
   INDEX_DIRECTORY_FAILURE: 'INDEX_DIRECTORY_FAILURE',
-  INDEX_DIRECTORY_SEARCH: 'INDEX_DIRECTORY_SEARCH',
-  REFLECT_DELETE_ENTRY: 'INDEX/REFLECT_DELETE_ENTRY',
+  INDEX_DIRECTORY_SEARCH: 'INDEX_DIRECTORY_SEARCH'
+  /*REFLECT_DELETE_ENTRY: 'INDEX/REFLECT_DELETE_ENTRY',
   REFLECT_CREATE_ENTRY: 'INDEX/REFLECT_CREATE_ENTRY',
   REFLECT_RENAME_ENTRY: 'INDEX/REFLECT_RENAME_ENTRY',
   REFLECT_UPDATE_SIDECARTAGS: 'INDEX/REFLECT_UPDATE_SIDECARTAGS',
-  REFLECT_UPDATE_SIDECARMETA: 'INDEX/REFLECT_UPDATE_SIDECARMETA'
+  REFLECT_UPDATE_SIDECARMETA: 'INDEX/REFLECT_UPDATE_SIDECARMETA'*/
 };
 
 export const initialState = {
@@ -108,7 +95,7 @@ export default (state: any = initialState, action: any) => {
         isIndexing: false
       };
     }
-    case types.REFLECT_DELETE_ENTRY: {
+    /*case types.REFLECT_DELETE_ENTRY: {
       const index = GlobalSearch.getInstance().getIndex();
       if (!index || index.length < 1) {
         return state;
@@ -120,8 +107,8 @@ export default (state: any = initialState, action: any) => {
         }
       }
       return state;
-    }
-    case types.REFLECT_CREATE_ENTRY: {
+    }*/
+    /*case types.REFLECT_CREATE_ENTRY: {
       const index = GlobalSearch.getInstance().getIndex();
       if (!index || index.length < 1) {
         return state;
@@ -137,9 +124,9 @@ export default (state: any = initialState, action: any) => {
       }
       GlobalSearch.getInstance().setIndex([...index, action.newEntry]);
       return state;
-    }
+    }*/
     // TODO move it from reducer to GlobalSearch singleton
-    case types.REFLECT_RENAME_ENTRY: {
+    /* case types.REFLECT_RENAME_ENTRY: {
       const index = GlobalSearch.getInstance().getIndex();
       if (!index || index.length < 1) {
         return state;
@@ -166,8 +153,8 @@ export default (state: any = initialState, action: any) => {
         }
       }
       return state;
-    }
-    case types.REFLECT_UPDATE_SIDECARTAGS: {
+    }*/
+    /*case types.REFLECT_UPDATE_SIDECARTAGS: {
       const index = GlobalSearch.getInstance().getIndex();
       for (let i = 0; i < index.length; i += 1) {
         if (index[i].path === action.path) {
@@ -178,8 +165,8 @@ export default (state: any = initialState, action: any) => {
         }
       }
       return state;
-    }
-    case types.REFLECT_UPDATE_SIDECARMETA: {
+    }*/
+    /*case types.REFLECT_UPDATE_SIDECARMETA: {
       const index = GlobalSearch.getInstance().getIndex();
       for (let i = 0; i < index.length; i += 1) {
         if (index[i].path === action.path) {
@@ -190,7 +177,7 @@ export default (state: any = initialState, action: any) => {
         }
       }
       return state;
-    }
+    }*/
     default: {
       return state;
     }
@@ -684,30 +671,30 @@ export const actions = {
   indexDirectoryFailure: (error: string) => ({
     type: types.INDEX_DIRECTORY_FAILURE,
     error
-  }),
-  reflectDeleteEntry: (path: string) => ({
+  })
+  /*reflectDeleteEntry: (path: string) => ({
     type: types.REFLECT_DELETE_ENTRY,
     path
-  }),
-  reflectCreateEntry: (newEntry: Object) => ({
+  }),*/
+  /*reflectCreateEntry: (newEntry: Object) => ({
     type: types.REFLECT_CREATE_ENTRY,
     newEntry
-  }),
-  reflectRenameEntry: (path: string, newPath: string) => ({
+  }),*/
+  /*reflectRenameEntry: (path: string, newPath: string) => ({
     type: types.REFLECT_RENAME_ENTRY,
     path,
     newPath
-  }),
-  reflectUpdateSidecarTags: (path: string, tags: Array<TS.Tag>) => ({
+  }),*/
+  /*reflectUpdateSidecarTags: (path: string, tags: Array<TS.Tag>) => ({
     type: types.REFLECT_UPDATE_SIDECARTAGS,
     path,
     tags
-  }),
-  reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => ({
+  }),*/
+  /*reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => ({
     type: types.REFLECT_UPDATE_SIDECARMETA,
     path,
     entryMeta
-  })
+  })*/
 };
 
 // Selectors
