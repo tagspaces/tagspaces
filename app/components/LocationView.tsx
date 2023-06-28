@@ -27,8 +27,7 @@ import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-import LocationIcon from '@mui/icons-material/WorkOutline';
-import CloudLocationIcon from '@mui/icons-material/CloudQueue';
+import { LocalLocationIcon, CloudLocationIcon } from '-/components/CommonIcons';
 import DefaultLocationIcon from '@mui/icons-material/Highlight';
 import { Progress } from 'aws-sdk/clients/s3';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
@@ -305,7 +304,7 @@ function LocationView(props: Props) {
                 className={props.classes.icon}
               />
             ) : (
-              <LocationIcon
+              <LocalLocationIcon
                 style={{
                   cursor: 'pointer'
                 }}

@@ -24,8 +24,8 @@ import Paper from '@mui/material/Paper';
 import Tooltip from '-/components/Tooltip';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import IconButton from '@mui/material/IconButton';
-import SelectedIcon from '@mui/icons-material/CheckBox';
-import UnSelectedIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import SelectedIcon from '@mui/icons-material/CheckCircle';
+import UnSelectedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import {
@@ -268,7 +268,17 @@ function CellContent(props: Props) {
                 }
               }}
             >
-              {selected ? <SelectedIcon /> : <UnSelectedIcon />}
+              {selected ? (
+                <SelectedIcon />
+              ) : (
+                <UnSelectedIcon
+                  style={{
+                    opacity: 0.5,
+                    borderRadius: 15,
+                    backgroundColor: 'gray'
+                  }}
+                />
+              )}
             </IconButton>
             {showTags && entryTags ? renderTags : tagPlaceholder}
           </div>

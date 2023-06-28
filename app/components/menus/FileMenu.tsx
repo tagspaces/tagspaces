@@ -443,18 +443,21 @@ function FileMenu(props: Props) {
         <ListItemText primary={i18n.t('core:renameFile')} />
       </MenuItem>
     );
-    menuItems.push(
-      <MenuItem
-        key="fileMenuDuplicateFile"
-        data-tid="fileMenuDuplicateFileTID"
-        onClick={duplicateFile}
-      >
-        <ListItemIcon>
-          <DuplicateFile />
-        </ListItemIcon>
-        <ListItemText primary={i18n.t('core:duplicateFile')} />
-      </MenuItem>
-    );
+    if (selectedEntries.length < 2) {
+      menuItems.push(
+        <MenuItem
+          key="fileMenuDuplicateFile"
+          data-tid="fileMenuDuplicateFileTID"
+          onClick={duplicateFile}
+        >
+          <ListItemIcon>
+            <DuplicateFile />
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:duplicateFile')} />
+        </MenuItem>
+      );
+    }
+
     menuItems.push(
       <MenuItem
         key="fileMenuMoveCopyFile"

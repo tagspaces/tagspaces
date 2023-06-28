@@ -54,6 +54,8 @@ export { default as CreateFileIcon } from '@mui/icons-material/Add';
 
 export { default as LocalLocationIcon } from '@mui/icons-material/WorkOutline';
 
+export { default as CloudLocationIcon } from '@mui/icons-material/CloudQueue';
+
 export { default as OpenLinkIcon } from '@mui/icons-material/Link';
 
 export { default as KeyShortcutsIcon } from '@mui/icons-material/Keyboard';
