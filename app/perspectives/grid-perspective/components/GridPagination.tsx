@@ -512,11 +512,11 @@ function GridPagination(props: Props) {
                 <Tooltip title={i18n.t('core:thumbnail')}>
                   <div
                     style={{
-                      // borderRadius: 8,
-                      height: 140,
+                      borderRadius: 8,
+                      height: 100,
                       width: 140,
                       backgroundImage: 'url("' + folderTmbPath.current + '")',
-                      backgroundSize: 'contain', // cover
+                      backgroundSize: 'cover', // cover contain
                       backgroundRepeat: 'no-repeat',
                       backgroundPosition: 'top center',
                       position: 'absolute',
