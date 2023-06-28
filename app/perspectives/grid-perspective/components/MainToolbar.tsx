@@ -22,8 +22,7 @@ import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import SortingIcon from '@mui/icons-material/SwapVerticalCircle';
 import TagIcon from '@mui/icons-material/LocalOffer';
-import SelectAllIcon from '@mui/icons-material/CheckBox';
-import DeSelectAllIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import { SelectedIcon, UnSelectedIcon } from '-/components/CommonIcons';
 import CopyIcon from '@mui/icons-material/FileCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ExportIcon from '@mui/icons-material/AssignmentReturn';
@@ -152,7 +151,7 @@ function MainToolbar(props: Props) {
           onClick={toggleSelectAllFiles}
           size="large"
         >
-          {someFileSelected ? <SelectAllIcon /> : <DeSelectAllIcon />}
+          {someFileSelected ? <SelectedIcon /> : <UnSelectedIcon />}
         </IconButton>
       </Tooltip>
       <Tooltip title={i18n.t('core:directoryPropertiesTitle')}>

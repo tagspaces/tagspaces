@@ -24,8 +24,7 @@ import Paper from '@mui/material/Paper';
 import Tooltip from '-/components/Tooltip';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import IconButton from '@mui/material/IconButton';
-import SelectedIcon from '@mui/icons-material/CheckCircle';
-import UnSelectedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import { SelectedIcon, UnSelectedIcon } from '-/components/CommonIcons';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import {
