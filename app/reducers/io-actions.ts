@@ -36,7 +36,8 @@ import {
   copyFilesPromise,
   getThumbPath,
   loadFileMetaDataPromise,
-  renameFilesPromise
+  renameFilesPromise,
+  toFsEntry
 } from '-/services/utils-io';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
@@ -225,29 +226,27 @@ const actions = {
   copyFiles: (paths: Array<string>, targetPath: string) => (
     dispatch: (actions: Object) => void
   ) => {
-    const copyJobs = [];
-    paths.map(path => {
-      copyJobs.push([
-        path,
+    const copyJobs = paths.map(path => {
+      const targetFile =
         normalizePath(targetPath) +
-          PlatformIO.getDirSeparator() +
-          extractFileName(path, PlatformIO.getDirSeparator())
-      ]);
-      return true;
+        PlatformIO.getDirSeparator() +
+        extractFileName(path, PlatformIO.getDirSeparator());
+      return [path, targetFile];
     });
+
+    const targetFiles: string[] = copyJobs.map(job => job[1]);
+
     copyFilesPromise(copyJobs)
       .then(() => {
         dispatch(
           AppActions.showNotification(i18n.t('core:filesCopiedSuccessful'))
         );
-        const copyMetaJobs = [];
-        copyJobs.map(job => {
-          // dispatch(AppActions.reflectCopyEntry(job[0])); // TODO need only for the index if the target dir is indexed
-          copyMetaJobs.push([
+        const copyMetaJobs = copyJobs.flatMap(job => [
+          [
             getMetaFileLocationForFile(job[0], PlatformIO.getDirSeparator()),
             getMetaFileLocationForFile(job[1], PlatformIO.getDirSeparator())
-          ]);
-          copyMetaJobs.push([
+          ],
+          [
             getThumbFileLocationForFile(
               job[0],
               PlatformIO.getDirSeparator(),
@@ -258,19 +257,26 @@ const actions = {
               PlatformIO.getDirSeparator(),
               false
             )
-          ]);
-          copyFilesPromise(copyMetaJobs)
-            .then(() => {
-              console.log('Copy meta and thumbs successful');
-              dispatch(AppActions.reflectCreateEntry(job[1], true));
-              return true;
-            })
-            .catch(err => {
-              dispatch(AppActions.reflectCreateEntry(job[1], true));
-              console.warn('At least one meta or thumb was not copied ' + err);
-            });
-          return true;
-        });
+          ]
+        ]);
+        copyFilesPromise(copyMetaJobs)
+          .then(() => {
+            console.log('Copy meta and thumbs successful');
+            dispatch(
+              AppActions.reflectCreateEntries(
+                targetFiles.map(filePath => toFsEntry(filePath, true))
+              )
+            );
+            return true;
+          })
+          .catch(err => {
+            dispatch(
+              AppActions.reflectCreateEntries(
+                targetFiles.map(filePath => toFsEntry(filePath, true))
+              )
+            );
+            console.warn('At least one meta or thumb was not copied ' + err);
+          });
         return true;
       })
       .catch(err => {
