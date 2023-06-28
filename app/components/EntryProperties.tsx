@@ -36,9 +36,7 @@ import Button from '@mui/material/Button';
 import InputAdornment from '@mui/material/InputAdornment';
 import QRCodeIcon from '@mui/icons-material/QrCode';
 import Tooltip from '-/components/Tooltip';
-import LocationIcon from '@mui/icons-material/WorkOutline';
-import EditIcon from '@mui/icons-material/Edit';
-import CloudLocationIcon from '@mui/icons-material/CloudQueue';
+import { LocalLocationIcon, CloudLocationIcon } from '-/components/CommonIcons';
 import Stack from '@mui/material/Stack';
 import SetBackgroundIcon from '@mui/icons-material/OpacityOutlined';
 import ClearBackgroundIcon from '@mui/icons-material/FormatColorResetOutlined';
@@ -1036,7 +1034,7 @@ function EntryProperties(props: Props) {
                         style={{ color: theme.palette.text.secondary }}
                       />
                     ) : (
-                      <LocationIcon
+                      <LocalLocationIcon
                         style={{ color: theme.palette.text.secondary }}
                       />
                     )}

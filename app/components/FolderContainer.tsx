@@ -51,6 +51,7 @@ import {
   isSearchMode,
   getLastSearchTimestamp
 } from '../reducers/app';
+import { getCurrentLocation } from '-/reducers/locations';
 import TaggingActions from '../reducers/tagging-actions';
 import LoadingLazy from '../components/LoadingLazy';
 import {
@@ -199,6 +200,7 @@ interface Props {
   defaultPerspective: string;
   currentDirectoryPerspective: string;
   currentLocationPath: string;
+  currentLocation: TS.Location;
   openedFiles: Array<OpenedEntry>;
   updateCurrentDirEntry: (path: string, entry: Object) => void;
   setCurrentDirectoryColor: (color: string) => void;
@@ -289,6 +291,7 @@ function FolderContainer(props: Props) {
     theme,
     currentDirectoryPerspective,
     currentLocationPath,
+    currentLocation,
     setSelectedEntries,
     openDirectory,
     reflectCreateEntry,
@@ -619,6 +622,7 @@ function FolderContainer(props: Props) {
                 openRenameDirectoryDialog={() =>
                   setIsRenameEntryDialogOpened(true)
                 }
+                currentLocation={currentLocation}
                 openMoveCopyFilesDialog={props.openMoveCopyFilesDialog}
               />
             </>
@@ -682,6 +686,7 @@ function mapStateToProps(state) {
     searchQuery: getSearchQuery(state),
     defaultPerspective: getDefaultPerspective(state),
     editedEntryPaths: getEditedEntryPaths(state),
+    currentLocation: getCurrentLocation(state),
     lastSearchTimestamp: getLastSearchTimestamp(state),
     isSearchMode: isSearchMode(state)
   };

@@ -31,12 +31,14 @@ import {
 import i18n from '../services/i18n';
 import DirectoryMenu from './menus/DirectoryMenu';
 import { TS } from '-/tagspaces.namespace';
+import { LocalLocationIcon, CloudLocationIcon } from '-/components/CommonIcons';
+import { locationType } from '@tagspaces/tagspaces-common/misc';
 
 // @ts-ignore
 const StyledBreadcrumb = withStyles((theme: Theme) => ({
   root: {
     backgroundColor: emphasize(theme.palette.background.default, 0.06),
-    height: theme.spacing(3),
+    // height: theme.spacing(3),
     color: theme.palette.text.primary,
     fontWeight: theme.typography.fontWeightRegular,
     '&:hover, &:focus': {
@@ -54,6 +56,7 @@ const NoWrapBreadcrumb = withStyles({
 interface Props {
   currentDirectoryPath: string;
   currentLocationPath: string;
+  currentLocation: TS.Location;
   loadDirectoryContent: (
     path: string,
     generateThumbnails: boolean,
@@ -82,6 +85,7 @@ function PathBreadcrumbs(props: Props) {
   const {
     currentDirectoryPath,
     currentLocationPath,
+    currentLocation,
     loadDirectoryContent,
     setSelectedEntries,
     openDirectory,
@@ -108,18 +112,25 @@ function PathBreadcrumbs(props: Props) {
     currentDirectoryPath.split('\\').join('/')
   );
 
+  const locationTypeIcon =
+    currentLocation && currentLocation.type === locationType.TYPE_CLOUD ? (
+      <CloudLocationIcon />
+    ) : (
+      <LocalLocationIcon />
+    );
+
+  let currentFolderChipIcon = undefined;
+
   if (currentDirectoryPath) {
     // Make the path unix like ending always with /
     const addSlash = PlatformIO.haveObjectStoreSupport() ? '//' : '/';
     let normalizedCurrentPath =
-      addSlash +
-      normalizePath(props.currentDirectoryPath.split('\\').join('/'));
+      addSlash + normalizePath(currentDirectoryPath.split('\\').join('/'));
 
     let normalizedCurrentLocationPath = '';
     if (currentLocationPath) {
       normalizedCurrentLocationPath =
-        addSlash +
-        normalizePath(props.currentLocationPath.split('\\').join('/'));
+        addSlash + normalizePath(currentLocationPath.split('\\').join('/'));
     }
 
     while (
@@ -137,6 +148,8 @@ function PathBreadcrumbs(props: Props) {
         normalizedCurrentPath.lastIndexOf('/')
       );
     }
+
+    currentFolderChipIcon = pathParts.length === 1 && locationTypeIcon;
 
     if (pathParts.length >= 1) {
       pathParts = pathParts.slice(1, pathParts.length); // remove current directory
@@ -158,12 +171,12 @@ function PathBreadcrumbs(props: Props) {
               marginRight: -4
             }}
           >
-            /
+            {'›'}
           </span>
         }
       >
         {pathParts.length > 0 &&
-          pathParts.map(pathPart => (
+          pathParts.map((pathPart, index) => (
             <Tooltip
               key={pathPart}
               title={i18n.t('core:navigateTo') + ' ' + pathPart}
@@ -175,11 +188,12 @@ function PathBreadcrumbs(props: Props) {
                   pathPart,
                   PlatformIO.getDirSeparator()
                 )}
+                icon={index === 0 && locationTypeIcon}
                 onClick={() => loadDirectoryContent(pathPart, false, true)}
               />
             </Tooltip>
           ))}
-        {props.currentDirectoryPath && (
+        {currentDirectoryPath && (
           <Tooltip
             title={
               i18n.t('core:openDirectoryMenu') +
@@ -193,6 +207,7 @@ function PathBreadcrumbs(props: Props) {
                 normalizePath(normalizedCurrentDirPath),
                 '/'
               )}
+              icon={currentFolderChipIcon}
               deleteIcon={<ExpandMoreIcon />}
               onDelete={openDirectoryMenu}
               onClick={openDirectoryMenu}
