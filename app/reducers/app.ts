@@ -686,6 +686,7 @@ export default (state: any = initialState, action: any) => {
         entry => entry.path !== action.path
       );
       const editedEntryPaths = [{ action: 'delete', path: action.path }];
+      // check if currentDirectoryEntries or openedFiles changed
       if (
         state.currentDirectoryEntries.length > newDirectoryEntries.length ||
         state.openedFiles.length > newOpenedFiles.length
@@ -714,6 +715,7 @@ export default (state: any = initialState, action: any) => {
         action: 'delete',
         path: path
       }));
+      // check if currentDirectoryEntries or openedFiles changed
       if (
         state.currentDirectoryEntries.length > newDirectoryEntries.length ||
         state.openedFiles.length > newOpenedFiles.length
@@ -734,9 +736,9 @@ export default (state: any = initialState, action: any) => {
     case types.REFLECT_CREATE_ENTRY: {
       const newEntry: TS.FileSystemEntry = action.newEntry;
       // Prevent adding entry twice e.g. by the watcher
-      const entryIndex = state.currentDirectoryEntries.findIndex(
+      /*const entryIndex = state.currentDirectoryEntries.findIndex(
         entry => entry.path === newEntry.path
-      );
+      );*/
       const editedEntryPaths: Array<TS.EditedEntryPath> = [
         {
           action: newEntry.isFile ? 'createFile' : 'createDir',
@@ -746,12 +748,12 @@ export default (state: any = initialState, action: any) => {
       ];
       // clean all dir separators to have platform independent path match
       if (
-        entryIndex < 0 &&
+        // entryIndex < 0 &&
         extractParentDirectoryPath(
           action.newEntry.path,
           PlatformIO.getDirSeparator()
         ).replace(/[/\\]/g, '') ===
-          state.currentDirectoryPath.replace(/[/\\]/g, '')
+        state.currentDirectoryPath.replace(/[/\\]/g, '')
       ) {
         return {
           ...state,
@@ -769,25 +771,37 @@ export default (state: any = initialState, action: any) => {
     }
     case types.REFLECT_CREATE_ENTRIES: {
       // Prevent adding entry twice e.g. by the watcher
-      const newEntries: Array<TS.FileSystemEntry> = action.fsEntries.filter(
+      /*const newEntries: Array<TS.FileSystemEntry> = action.fsEntries.filter(
         newEntry =>
           !state.currentDirectoryEntries.some(
             entry => entry.path === newEntry.path
           )
-      );
-
-      const editedEntryPaths: Array<TS.EditedEntryPath> = newEntries.map(
-        newEntry => ({
-          action: newEntry.isFile ? 'createFile' : 'createDir',
-          path: newEntry.path,
-          uuid: newEntry.uuid
-        })
-      );
-      return {
-        ...state,
-        editedEntryPaths,
-        currentDirectoryEntries: [...state.currentDirectoryEntries, newEntries]
-      };
+      );*/
+      if (
+        action.fsEntries.length > 0 &&
+        extractParentDirectoryPath(
+          action.fsEntries[0].path,
+          PlatformIO.getDirSeparator()
+        ).replace(/[/\\]/g, '') ===
+          state.currentDirectoryPath.replace(/[/\\]/g, '')
+      ) {
+        const editedEntryPaths: Array<TS.EditedEntryPath> = action.fsEntries.map(
+          newEntry => ({
+            action: newEntry.isFile ? 'createFile' : 'createDir',
+            path: newEntry.path,
+            uuid: newEntry.uuid
+          })
+        );
+        return {
+          ...state,
+          editedEntryPaths,
+          currentDirectoryEntries: [
+            ...state.currentDirectoryEntries,
+            ...action.fsEntries
+          ]
+        };
+      }
+      return state;
     }
     case types.REFLECT_RENAME_ENTRY: {
       const extractedTags = extractTagsAsObjects(

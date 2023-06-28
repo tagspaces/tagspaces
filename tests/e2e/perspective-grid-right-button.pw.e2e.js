@@ -356,7 +356,10 @@ test.describe('TST50** - Right button on a file', () => {
     await expectElementExist(getGridFileSelector(fileName), false);
 
     //await global.client.dblclick(selectorFolder);
-    await openContextEntryMenu(getGridFileSelector(folderName), 'openDirectory');
+    await openContextEntryMenu(
+      getGridFileSelector(folderName),
+      'openDirectory'
+    );
     await expectElementExist(getGridFileSelector(fileName), true);
 
     // Copy file in parent directory
@@ -370,7 +373,10 @@ test.describe('TST50** - Right button on a file', () => {
 
     // cleanup
     // await global.client.dblclick(selectorFolder);
-    await openContextEntryMenu(getGridFileSelector(folderName), 'openDirectory');
+    await openContextEntryMenu(
+      getGridFileSelector(folderName),
+      'openDirectory'
+    );
     await expectElementExist(selectorFile, true);
     await deleteFileFromMenu();
     await expectElementExist(selectorFile, false);

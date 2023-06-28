@@ -230,7 +230,12 @@ export default class PlatformFacade {
     ignorePatterns: Array<string> = [],
     resultsLimit: any = {}
   ): Promise<Array<any>> =>
-    platformListDirectoryPromise(cleanTrailingDirSeparator(path), mode, ignorePatterns, resultsLimit);
+    platformListDirectoryPromise(
+      cleanTrailingDirSeparator(path),
+      mode,
+      ignorePatterns,
+      resultsLimit
+    );
 
   static listMetaDirectoryPromise = (path: string): Promise<Array<any>> =>
     platformListMetaDirectoryPromise(path);
