@@ -96,7 +96,8 @@ function TagGroupMenu(props: Props) {
       // props.openSearchPanel();
       props.setSearchQuery({
         tagsOR: props.selectedTagGroupEntry.children,
-        maxSearchResults: props.maxSearchResults
+        maxSearchResults: props.maxSearchResults,
+        executeSearch: true
       });
     }
     props.handleCloseTagGroupMenu();
