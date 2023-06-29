@@ -523,9 +523,7 @@ function GridPagination(props: Props) {
                       top: 0,
                       right: 0
                     }}
-                  >
-                    {/* <EntryIcon isFile={false} /> */}
-                  </div>
+                  ></div>
                 </Tooltip>
               </div>
             </Grid>

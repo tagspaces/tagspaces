@@ -157,6 +157,14 @@ function PathBreadcrumbs(props: Props) {
     pathParts = pathParts.reverse();
   }
 
+  let currentFolderName = extractShortDirectoryName(
+    normalizePath(normalizedCurrentDirPath),
+    '/'
+  );
+  if (currentLocation && (!currentFolderName || currentFolderName === '/')) {
+    currentFolderName = currentLocation.name;
+  }
+
   return (
     <>
       <NoWrapBreadcrumb
@@ -168,7 +176,7 @@ function PathBreadcrumbs(props: Props) {
           <span
             style={{
               marginLeft: -4,
-              marginRight: -4
+              marginRight: -5
             }}
           >
             {'›'}
@@ -176,23 +184,26 @@ function PathBreadcrumbs(props: Props) {
         }
       >
         {pathParts.length > 0 &&
-          pathParts.map((pathPart, index) => (
-            <Tooltip
-              key={pathPart}
-              title={i18n.t('core:navigateTo') + ' ' + pathPart}
-            >
-              <StyledBreadcrumb
-                component="a"
-                href="#"
-                label={extractShortDirectoryName(
-                  pathPart,
-                  PlatformIO.getDirSeparator()
-                )}
-                icon={index === 0 && locationTypeIcon}
-                onClick={() => loadDirectoryContent(pathPart, false, true)}
-              />
-            </Tooltip>
-          ))}
+          pathParts.map((pathPart, index) => {
+            const folderName = extractShortDirectoryName(
+              pathPart,
+              PlatformIO.getDirSeparator()
+            );
+            return (
+              <Tooltip
+                key={pathPart}
+                title={i18n.t('core:navigateTo') + ' ' + pathPart}
+              >
+                <StyledBreadcrumb
+                  component="a"
+                  href="#"
+                  label={folderName}
+                  icon={index === 0 && locationTypeIcon}
+                  onClick={() => loadDirectoryContent(pathPart, false, true)}
+                />
+              </Tooltip>
+            );
+          })}
         {currentDirectoryPath && (
           <Tooltip
             title={
@@ -203,10 +214,7 @@ function PathBreadcrumbs(props: Props) {
           >
             <StyledBreadcrumb
               data-tid="folderContainerOpenDirMenu"
-              label={extractShortDirectoryName(
-                normalizePath(normalizedCurrentDirPath),
-                '/'
-              )}
+              label={currentFolderName}
               icon={currentFolderChipIcon}
               deleteIcon={<ExpandMoreIcon />}
               onDelete={openDirectoryMenu}
