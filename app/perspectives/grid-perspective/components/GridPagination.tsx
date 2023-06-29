@@ -136,22 +136,39 @@ function GridPagination(props: Props) {
   const {
     style,
     theme,
+    classes,
     directories,
     showDirectories,
     showDetails,
     showDescription,
     showTags,
+    singleClickAction,
     getCellContent,
     isAppLoading,
+    isReadOnlyMode,
+    desktopMode,
+    currentLocation,
     currentDirectoryColor,
     currentDirectoryTags,
     currentDirectoryDescription,
     currentDirectoryPath,
     lastThumbnailImageChange,
     openRenameEntryDialog,
+    lastSelectedEntryPath,
     lastBackgroundImageChange,
+    openFsEntry,
+    openFileNatively,
+    loadDirectoryContent,
+    setFileContextMenuAnchorEl,
+    setDirContextMenuAnchorEl,
+    showNotification,
+    moveFiles,
+    directoryContent,
     gridPageLimit,
     currentPage,
+    selectedEntries,
+    setSelectedEntries,
+    clearSelection,
     files
   } = props;
   const allFilesCount = files.length;
@@ -374,8 +391,11 @@ function GridPagination(props: Props) {
 
   const dirColor = currentDirectoryColor || 'transparent';
 
-  const folderSummary =
+  let folderSummary =
     directories.length + ' folder(s) and ' + allFilesCount + ' file(s) found';
+  if (selectedEntries && selectedEntries.length > 0) {
+    folderSummary = selectedEntries.length + ' entries selected';
+  }
 
   /* let descriptionHTML = '';
   if (showDescription && currentDirectoryDescription) {
@@ -558,25 +578,25 @@ function GridPagination(props: Props) {
                 entry,
                 index,
                 getCellContent,
-                props.classes,
+                classes,
                 theme,
                 showDirectories,
-                props.isReadOnlyMode,
-                props.desktopMode,
-                props.singleClickAction,
-                props.currentLocation,
-                props.selectedEntries,
-                props.setSelectedEntries,
-                props.lastSelectedEntryPath,
-                props.directoryContent,
-                props.openFsEntry,
-                props.openFileNatively,
-                props.loadDirectoryContent,
-                props.setFileContextMenuAnchorEl,
-                props.setDirContextMenuAnchorEl,
-                props.showNotification,
-                props.moveFiles,
-                props.clearSelection
+                isReadOnlyMode,
+                desktopMode,
+                singleClickAction,
+                currentLocation,
+                selectedEntries,
+                setSelectedEntries,
+                lastSelectedEntryPath,
+                directoryContent,
+                openFsEntry,
+                openFileNatively,
+                loadDirectoryContent,
+                setFileContextMenuAnchorEl,
+                setDirContextMenuAnchorEl,
+                showNotification,
+                moveFiles,
+                clearSelection
               )
             )}
           {pageFiles.map((entry, index, dArray) =>
@@ -584,25 +604,25 @@ function GridPagination(props: Props) {
               entry,
               index,
               getCellContent,
-              props.classes,
+              classes,
               theme,
               showDirectories,
-              props.isReadOnlyMode,
-              props.desktopMode,
-              props.singleClickAction,
-              props.currentLocation,
-              props.selectedEntries,
-              props.setSelectedEntries,
-              props.lastSelectedEntryPath,
-              props.directoryContent,
-              props.openFsEntry,
-              props.openFileNatively,
-              props.loadDirectoryContent,
-              props.setFileContextMenuAnchorEl,
-              props.setDirContextMenuAnchorEl,
-              props.showNotification,
-              props.moveFiles,
-              props.clearSelection,
+              isReadOnlyMode,
+              desktopMode,
+              singleClickAction,
+              currentLocation,
+              selectedEntries,
+              setSelectedEntries,
+              lastSelectedEntryPath,
+              directoryContent,
+              openFsEntry,
+              openFileNatively,
+              loadDirectoryContent,
+              setFileContextMenuAnchorEl,
+              setDirContextMenuAnchorEl,
+              showNotification,
+              moveFiles,
+              clearSelection,
               index === dArray.length - 1
             )
           )}
