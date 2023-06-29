@@ -47,7 +47,6 @@ import {
   OpenedEntry,
   getSelectedEntries,
   getProgress,
-  getEditedEntryPaths,
   isSearchMode,
   getLastSearchTimestamp
 } from '../reducers/app';
@@ -213,7 +212,7 @@ interface Props {
   exitSearchMode: () => void;
   openURLExternally?: (url: string, skipConfirmation: boolean) => void;
   language: string;
-  editedEntryPaths: Array<TS.EditedEntryPath>;
+  // editedEntryPaths: Array<TS.EditedEntryPath>;
   goBack: () => void;
   goForward: () => void;
   lastSearchTimestamp: number;
@@ -685,7 +684,7 @@ function mapStateToProps(state) {
     progress: getProgress(state),
     searchQuery: getSearchQuery(state),
     defaultPerspective: getDefaultPerspective(state),
-    editedEntryPaths: getEditedEntryPaths(state),
+    //editedEntryPaths: getEditedEntryPaths(state),
     currentLocation: getCurrentLocation(state),
     lastSearchTimestamp: getLastSearchTimestamp(state),
     isSearchMode: isSearchMode(state)
@@ -737,8 +736,7 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   JSON.stringify(nextProp.openedFiles) ===
     JSON.stringify(prevProp.openedFiles) &&
   JSON.stringify(nextProp.theme) === JSON.stringify(prevProp.theme) &&
-  JSON.stringify(nextProp.editedEntryPaths) ===
-    JSON.stringify(prevProp.editedEntryPaths) &&
+  // JSON.stringify(nextProp.editedEntryPaths) === JSON.stringify(prevProp.editedEntryPaths) &&
   nextProp.windowWidth === prevProp.windowWidth &&
   nextProp.windowHeight === prevProp.windowHeight &&
   nextProp.language === prevProp.language &&

@@ -41,6 +41,7 @@ import {
   getMetaFileLocationForDir,
   extractContainingDirectoryPath,
   extractDirectoryName,
+  extractFileName,
   getThumbFileLocationForFile,
   getThumbFileLocationForDirectory,
   getBgndFileLocationForDirectory,
@@ -1543,6 +1544,22 @@ export function mergeFsEntryMeta(props: any = {}): TS.FileSystemEntryMeta {
     tags: [],
     ...props,
     id: props.id || getUuid()
+  };
+}
+
+export function toFsEntry(path: string, isFile: boolean): TS.FileSystemEntry {
+  return {
+    uuid: getUuid(),
+    name: isFile
+      ? extractFileName(path, PlatformIO.getDirSeparator())
+      : extractDirectoryName(path, PlatformIO.getDirSeparator()),
+    isFile,
+    extension: extractFileExtension(path, PlatformIO.getDirSeparator()),
+    description: '',
+    tags: [],
+    size: 0,
+    lmdt: new Date().getTime(),
+    path
   };
 }
 

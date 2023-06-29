@@ -58,7 +58,8 @@ import {
   getCleanLocationPath,
   updateFsEntries,
   loadMetaDataPromise,
-  mergeByProp
+  mergeByProp,
+  toFsEntry
 } from '-/services/utils-io';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import i18n from '../services/i18n';
@@ -148,8 +149,10 @@ export const types = {
   OPEN_HELPFEEDBACK_PANEL: 'APP/OPEN_HELPFEEDBACK_PANEL',
   CLOSE_ALLVERTICAL_PANELS: 'APP/CLOSE_ALLVERTICAL_PANELS',
   REFLECT_DELETE_ENTRY: 'APP/REFLECT_DELETE_ENTRY',
+  REFLECT_DELETE_ENTRIES: 'APP/REFLECT_DELETE_ENTRIES',
   REFLECT_RENAME_ENTRY: 'APP/REFLECT_RENAME_ENTRY',
   REFLECT_CREATE_ENTRY: 'APP/REFLECT_CREATE_ENTRY',
+  REFLECT_CREATE_ENTRIES: 'APP/REFLECT_CREATE_ENTRIES',
   // REFLECT_UPDATE_SIDECARTAGS: 'APP/REFLECT_UPDATE_SIDECARTAGS',
   // REFLECT_UPDATE_SIDECARMETA: 'APP/REFLECT_UPDATE_SIDECARMETA',
   UPDATE_CURRENTDIR_ENTRY: 'APP/UPDATE_CURRENTDIR_ENTRY',
@@ -683,6 +686,36 @@ export default (state: any = initialState, action: any) => {
         entry => entry.path !== action.path
       );
       const editedEntryPaths = [{ action: 'delete', path: action.path }];
+      // check if currentDirectoryEntries or openedFiles changed
+      if (
+        state.currentDirectoryEntries.length > newDirectoryEntries.length ||
+        state.openedFiles.length > newOpenedFiles.length
+      ) {
+        return {
+          ...state,
+          editedEntryPaths,
+          currentDirectoryEntries: newDirectoryEntries,
+          openedFiles: newOpenedFiles,
+          isEntryInFullWidth: false
+        };
+      }
+      return {
+        ...state,
+        editedEntryPaths
+      };
+    }
+    case types.REFLECT_DELETE_ENTRIES: {
+      const newDirectoryEntries = state.currentDirectoryEntries.filter(
+        entry => !action.paths.some(path => path === entry.path)
+      );
+      const newOpenedFiles = state.openedFiles.filter(
+        entry => !action.paths.some(path => path === entry.path)
+      );
+      const editedEntryPaths = action.paths.map(path => ({
+        action: 'delete',
+        path: path
+      }));
+      // check if currentDirectoryEntries or openedFiles changed
       if (
         state.currentDirectoryEntries.length > newDirectoryEntries.length ||
         state.openedFiles.length > newOpenedFiles.length
@@ -702,10 +735,14 @@ export default (state: any = initialState, action: any) => {
     }
     case types.REFLECT_CREATE_ENTRY: {
       const newEntry: TS.FileSystemEntry = action.newEntry;
-      // Prevent adding entry twice e.g. by the watcher
-      const entryIndex = state.currentDirectoryEntries.findIndex(
-        entry => entry.path === newEntry.path
-      );
+      // Prevent adding entry twice e.g. by entry rename in the watcher
+      if (
+        state.currentDirectoryEntries.some(
+          entry => entry.path === newEntry.path
+        )
+      ) {
+        return state;
+      }
       const editedEntryPaths: Array<TS.EditedEntryPath> = [
         {
           action: newEntry.isFile ? 'createFile' : 'createDir',
@@ -715,12 +752,12 @@ export default (state: any = initialState, action: any) => {
       ];
       // clean all dir separators to have platform independent path match
       if (
-        entryIndex < 0 &&
+        // entryIndex < 0 &&
         extractParentDirectoryPath(
           action.newEntry.path,
           PlatformIO.getDirSeparator()
         ).replace(/[/\\]/g, '') ===
-          state.currentDirectoryPath.replace(/[/\\]/g, '')
+        state.currentDirectoryPath.replace(/[/\\]/g, '')
       ) {
         return {
           ...state,
@@ -735,6 +772,33 @@ export default (state: any = initialState, action: any) => {
         ...state,
         editedEntryPaths
       };
+    }
+    case types.REFLECT_CREATE_ENTRIES: {
+      if (
+        action.fsEntries.length > 0 &&
+        extractParentDirectoryPath(
+          action.fsEntries[0].path,
+          PlatformIO.getDirSeparator()
+        ).replace(/[/\\]/g, '') ===
+          state.currentDirectoryPath.replace(/[/\\]/g, '')
+      ) {
+        const editedEntryPaths: Array<TS.EditedEntryPath> = action.fsEntries.map(
+          newEntry => ({
+            action: newEntry.isFile ? 'createFile' : 'createDir',
+            path: newEntry.path,
+            uuid: newEntry.uuid
+          })
+        );
+        return {
+          ...state,
+          editedEntryPaths,
+          currentDirectoryEntries: [
+            ...state.currentDirectoryEntries,
+            ...action.fsEntries
+          ]
+        };
+      }
+      return state;
     }
     case types.REFLECT_RENAME_ENTRY: {
       const extractedTags = extractTagsAsObjects(
@@ -2415,37 +2479,36 @@ export const actions = {
     type: types.REFLECT_DELETE_ENTRY,
     path
   }),
+  reflectDeleteEntriesInt: (paths: string[]) => ({
+    type: types.REFLECT_DELETE_ENTRIES,
+    paths
+  }),
   reflectDeleteEntry: (path: string) => (dispatch: (action) => void) => {
     dispatch(actions.reflectDeleteEntryInt(path));
     GlobalSearch.getInstance().reflectDeleteEntry(path);
+  },
+  reflectDeleteEntries: (paths: string[]) => (dispatch: (action) => void) => {
+    dispatch(actions.reflectDeleteEntriesInt(paths));
+    GlobalSearch.getInstance().reflectDeleteEntries(paths);
   },
   reflectCreateEntryInt: (newEntry: TS.FileSystemEntry) => ({
     type: types.REFLECT_CREATE_ENTRY,
     newEntry
   }),
+  reflectCreateEntriesInt: (fsEntries: Array<TS.FileSystemEntry>) => ({
+    type: types.REFLECT_CREATE_ENTRIES,
+    fsEntries
+  }),
   reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => (
     dispatch: (action) => void
   ) => {
-    fsEntries.map(entry => dispatch(actions.reflectCreateEntryInt(entry))); // TODO remove map and set state once
+    dispatch(actions.reflectCreateEntriesInt(fsEntries));
     dispatch(actions.setSelectedEntries(fsEntries));
   },
   reflectCreateEntry: (path: string, isFile: boolean) => (
     dispatch: (action) => void
   ) => {
-    const newEntry = {
-      uuid: getUuid(),
-      name: isFile
-        ? extractFileName(path, PlatformIO.getDirSeparator())
-        : extractDirectoryName(path, PlatformIO.getDirSeparator()),
-      isFile,
-      extension: extractFileExtension(path, PlatformIO.getDirSeparator()),
-      description: '',
-      tags: [],
-      size: 0,
-      lmdt: new Date().getTime(),
-      path
-    };
-    dispatch(actions.reflectCreateEntryObj(newEntry));
+    dispatch(actions.reflectCreateEntryObj(toFsEntry(path, isFile)));
   },
   reflectCreateEntryObj: (newEntry: TS.FileSystemEntry) => (
     dispatch: (action) => void
