@@ -55,7 +55,11 @@ interface Props {
   open: boolean;
   onClose: (clearSelection?: boolean) => void;
   currentDirectoryPath: string | null;
-  copyFiles: (files: Array<string>, destination: string) => void;
+  copyFiles: (
+    files: Array<string>,
+    destination: string,
+    onUploadProgress?: (progress: Progress, abort: () => void) => void
+  ) => void;
   copyDirs: (
     dirs: Array<string>,
     totalCount: number,
@@ -144,14 +148,14 @@ function MoveCopyFilesDialog(props: Props) {
 
   function handleCopyFiles() {
     //if (!disableConfirmButton) {
+    props.resetProgress();
+    props.toggleUploadDialog('copyEntriesTitle');
     if (selectedFiles.length > 0) {
-      props.copyFiles(selectedFiles, targetPath);
+      props.copyFiles(selectedFiles, targetPath, props.onUploadProgress);
       //setDisableConfirmButton(true);
       setTargetPath('');
     }
     if (selectedDirs.length > 0) {
-      props.resetProgress();
-      props.toggleUploadDialog('copyEntriesTitle');
       props.copyDirs(
         selectedDirs,
         getEntriesCount(),

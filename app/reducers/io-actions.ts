@@ -27,6 +27,7 @@ import {
   getThumbFileLocationForFile,
   getBackupFileDir,
   normalizePath,
+  getMetaDirectoryPath,
   extractDirectoryName,
   joinPaths
 } from '@tagspaces/tagspaces-common/paths';
@@ -223,25 +224,29 @@ const actions = {
     });
     return Promise.all(promises).then(() => true);
   },
-  copyFiles: (paths: Array<string>, targetPath: string) => (
+  copyFiles: (paths: Array<string>, targetPath: string, onProgress) => (
     dispatch: (actions: Object) => void
   ) => {
-    const copyJobs = paths.map(path => {
+    /*const copyJobs = paths.map(path => {
       const targetFile =
         normalizePath(targetPath) +
         PlatformIO.getDirSeparator() +
         extractFileName(path, PlatformIO.getDirSeparator());
       return [path, targetFile];
-    });
+    });*/
 
-    const targetFiles: string[] = copyJobs.map(job => job[1]);
+    // const targetFiles: string[] = copyJobs.map(job => job[1]);
 
-    copyFilesPromise(copyJobs)
+    copyFilesPromise(paths, targetPath, onProgress)
       .then(() => {
         dispatch(
           AppActions.showNotification(i18n.t('core:filesCopiedSuccessful'))
         );
-        const copyMetaJobs = copyJobs.flatMap(job => [
+        const metaPaths = paths.flatMap(path => [
+          getMetaFileLocationForFile(path, PlatformIO.getDirSeparator()),
+          getThumbFileLocationForFile(path, PlatformIO.getDirSeparator(), false)
+        ]);
+        /*const copyMetaJobs = copyJobs.flatMap(job => [
           [
             getMetaFileLocationForFile(job[0], PlatformIO.getDirSeparator()),
             getMetaFileLocationForFile(job[1], PlatformIO.getDirSeparator())
@@ -258,8 +263,15 @@ const actions = {
               false
             )
           ]
-        ]);
-        copyFilesPromise(copyMetaJobs)
+        ]);*/
+        const targetFiles: string[] = paths.map(
+          path =>
+            normalizePath(targetPath) +
+            PlatformIO.getDirSeparator() +
+            extractFileName(path, PlatformIO.getDirSeparator())
+        );
+
+        copyFilesPromise(metaPaths, getMetaDirectoryPath(targetPath))
           .then(() => {
             console.log('Copy meta and thumbs successful');
             dispatch(

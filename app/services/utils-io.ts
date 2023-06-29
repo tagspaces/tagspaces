@@ -42,6 +42,7 @@ import {
   extractContainingDirectoryPath,
   extractDirectoryName,
   extractFileName,
+  normalizePath,
   getThumbFileLocationForFile,
   getThumbFileLocationForDirectory,
   getBgndFileLocationForDirectory,
@@ -687,12 +688,97 @@ export function renameFilesPromise(
   );
 }
 
-export function copyFilesPromise(copyJobs: Array<Array<string>>) {
-  const ioJobPromises = [];
-  copyJobs.forEach(copyJob => {
-    ioJobPromises.push(PlatformIO.copyFilePromise(copyJob[0], copyJob[1]));
+/*function getCommonFolder(paths: Array<string>) {
+  const rootFolders = paths.map(p =>
+    extractContainingDirectoryPath(p, PlatformIO.getDirSeparator())
+  );
+  const firstRootFolder = rootFolders[0];
+  if (rootFolders.every(rf => rf === firstRootFolder)) {
+    return firstRootFolder;
+  }
+  return false;
+}*/
+
+function trackProgress(promises, abortSignal, progress) {
+  const total = promises.length;
+  let completed = 0;
+  let aborted = false;
+
+  // Create an array of promises that resolve when the original promises resolve
+  const progressPromises = promises.map(({ promise, path }) =>
+    promise.then(() => {
+      if (!aborted) {
+        completed++;
+        console.log(`Progress: ${completed}/${total}`);
+        if (progress) {
+          progress(completed, path);
+        }
+      }
+    })
+  );
+
+  // Use Promise.race() to wait for all progress promises to resolve
+  return Promise.race(progressPromises)
+    .then(() => Promise.all(promises))
+    .catch(err => {
+      if (abortSignal.aborted) {
+        aborted = true;
+        console.warn('Promise execution aborted');
+      } else {
+        throw err;
+      }
+    });
+}
+
+export function copyFilesPromise(
+  paths: Array<string>,
+  targetPath: string,
+  onProgress = undefined
+) {
+  const controller = new AbortController();
+  const signal = controller.signal;
+  //const srcDirPath = getCommonFolder(paths);
+
+  /*if (srcDirPath) {
+    return PlatformIO.copyDirectoryPromise(
+      { path: srcDirPath, filter: paths, total: paths.length },
+      targetPath,
+      onProgress
+    )
+      .then(() => {
+        console.log('Copy files from ' + srcDirPath + ' to ' + targetPath);
+        return true;
+      })
+      .catch(err => {
+        console.warn('Copy files failed ', err);
+      });
+  } else {*/
+  const ioJobPromises = paths.map(path => {
+    const targetFile =
+      normalizePath(targetPath) +
+      PlatformIO.getDirSeparator() +
+      extractFileName(path, PlatformIO.getDirSeparator());
+    return {
+      promise: PlatformIO.copyFilePromise(path, targetFile),
+      path: path
+    };
   });
-  return Promise.all(ioJobPromises);
+  const progress = (completed, path) => {
+    const progress = {
+      loaded: completed, //processedSize,
+      total: ioJobPromises.length,
+      key: targetPath
+    };
+    onProgress(
+      progress,
+      () => {
+        controller.abort();
+      },
+      path
+    );
+  };
+  return trackProgress(ioJobPromises, signal, progress);
+  //}
 }
 
 export async function loadSubFolders(path: string, loadHidden = false) {
