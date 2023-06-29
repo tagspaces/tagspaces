@@ -231,7 +231,7 @@ function WelcomePanel(props: Props) {
         >
           <img src={WelcomeLogo} alt="Organize your files" />
         </div>
-        <ListItem onClick={triggerOpenLocation}>
+        {/* <ListItem onClick={triggerOpenLocation}>
           <ListItemIcon>
             <LocalLocationIcon />
           </ListItemIcon>
@@ -239,8 +239,8 @@ function WelcomePanel(props: Props) {
             primary={i18n.t('core:chooseLocation')}
             className={classes.listItem}
           />
-        </ListItem>
-        {/* <ListItem onClick={toggleCreateFileDialog}>
+        </ListItem> */}
+        <ListItem onClick={toggleCreateFileDialog}>
           <ListItemIcon>
             <CreateFileIcon />
           </ListItemIcon>
@@ -248,7 +248,7 @@ function WelcomePanel(props: Props) {
             primary={i18n.t('core:create')}
             className={classes.listItem}
           />
-        </ListItem> */}
+        </ListItem>
         <ListItem onClick={toggleLocationDialog}>
           <ListItemIcon>
             <LocalLocationIcon />
