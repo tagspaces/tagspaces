@@ -102,7 +102,7 @@ export default (theme: any): any => ({
     textAlign: 'center'
   },
   gridSizeDate: {
-    overflow: 'auto',
+    overflow: 'hidden',
     whiteSpace: 'nowrap',
     marginRight: 5,
     marginLeft: 'auto',

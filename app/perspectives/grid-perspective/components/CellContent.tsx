@@ -242,7 +242,10 @@ function CellContent(props: Props) {
               }}
             />
           ) : (
-            <EntryIcon isFile={fSystemEntry.isFile} />
+            <EntryIcon
+              isFile={fSystemEntry.isFile}
+              fileExtension={fSystemEntry.extension}
+            />
           )}
           <div id="gridCellTags" className={classes.gridCellTags}>
             <IconButton
