@@ -91,8 +91,15 @@ test.describe('TST02 - Folder properties', () => {
 
     await clickOn('[data-tid=reloadFolderTID]');
 
-    propsTags = await getPropertiesTags();
-    expect(propsTags).toContain(tagTitle);
+    // propsTags = await getPropertiesTags();
+    // expect(propsTags).toContain(tagTitle);
+    await expectElementExist(
+      '[data-tid=PropertiesTagsSelectTID] [data-tid=tagContainer_' +
+        tagTitle +
+        ']',
+      true,
+      4000
+    );
 
     const editor = await global.client.waitForSelector(
       '[data-tid=descriptionTID] .milkdown'
