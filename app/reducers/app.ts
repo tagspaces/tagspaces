@@ -735,10 +735,14 @@ export default (state: any = initialState, action: any) => {
     }
     case types.REFLECT_CREATE_ENTRY: {
       const newEntry: TS.FileSystemEntry = action.newEntry;
-      // Prevent adding entry twice e.g. by the watcher
-      /*const entryIndex = state.currentDirectoryEntries.findIndex(
-        entry => entry.path === newEntry.path
-      );*/
+      // Prevent adding entry twice e.g. by entry rename in the watcher
+      if (
+        state.currentDirectoryEntries.some(
+          entry => entry.path === newEntry.path
+        )
+      ) {
+        return state;
+      }
       const editedEntryPaths: Array<TS.EditedEntryPath> = [
         {
           action: newEntry.isFile ? 'createFile' : 'createDir',
@@ -770,13 +774,6 @@ export default (state: any = initialState, action: any) => {
       };
     }
     case types.REFLECT_CREATE_ENTRIES: {
-      // Prevent adding entry twice e.g. by the watcher
-      /*const newEntries: Array<TS.FileSystemEntry> = action.fsEntries.filter(
-        newEntry =>
-          !state.currentDirectoryEntries.some(
-            entry => entry.path === newEntry.path
-          )
-      );*/
       if (
         action.fsEntries.length > 0 &&
         extractParentDirectoryPath(
