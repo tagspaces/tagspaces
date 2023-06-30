@@ -706,15 +706,20 @@ function trackProgress(promises, abortSignal, progress) {
 
   // Create an array of promises that resolve when the original promises resolve
   const progressPromises = promises.map(({ promise, path }) =>
-    promise.then(() => {
-      if (!aborted) {
-        completed++;
-        console.log(`Progress: ${completed}/${total}`);
-        if (progress) {
-          progress(completed, path);
+    promise
+      .then(() => {
+        if (!aborted) {
+          completed++;
+          // console.log(`Progress: ${completed}/${total}`);
+          if (progress) {
+            progress(completed, path);
+          }
         }
-      }
-    })
+      })
+      .catch(err => {
+        console.warn('Promise ' + path + ' error:', err);
+        completed++;
+      })
   );
 
   // Use Promise.race() to wait for all progress promises to resolve

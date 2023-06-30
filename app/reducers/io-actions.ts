@@ -271,7 +271,11 @@ const actions = {
             extractFileName(path, PlatformIO.getDirSeparator())
         );
 
-        copyFilesPromise(metaPaths, getMetaDirectoryPath(targetPath))
+        copyFilesPromise(
+          metaPaths,
+          getMetaDirectoryPath(targetPath),
+          onProgress
+        )
           .then(() => {
             console.log('Copy meta and thumbs successful');
             dispatch(
