@@ -227,18 +227,9 @@ const actions = {
   copyFiles: (paths: Array<string>, targetPath: string, onProgress) => (
     dispatch: (actions: Object) => void
   ) => {
-    /*const copyJobs = paths.map(path => {
-      const targetFile =
-        normalizePath(targetPath) +
-        PlatformIO.getDirSeparator() +
-        extractFileName(path, PlatformIO.getDirSeparator());
-      return [path, targetFile];
-    });*/
-
-    // const targetFiles: string[] = copyJobs.map(job => job[1]);
-
     copyFilesPromise(paths, targetPath, onProgress)
       .then(() => {
+        // todo return only copied paths
         dispatch(
           AppActions.showNotification(i18n.t('core:filesCopiedSuccessful'))
         );
@@ -246,24 +237,7 @@ const actions = {
           getMetaFileLocationForFile(path, PlatformIO.getDirSeparator()),
           getThumbFileLocationForFile(path, PlatformIO.getDirSeparator(), false)
         ]);
-        /*const copyMetaJobs = copyJobs.flatMap(job => [
-          [
-            getMetaFileLocationForFile(job[0], PlatformIO.getDirSeparator()),
-            getMetaFileLocationForFile(job[1], PlatformIO.getDirSeparator())
-          ],
-          [
-            getThumbFileLocationForFile(
-              job[0],
-              PlatformIO.getDirSeparator(),
-              false
-            ),
-            getThumbFileLocationForFile(
-              job[1],
-              PlatformIO.getDirSeparator(),
-              false
-            )
-          ]
-        ]);*/
+
         const targetFiles: string[] = paths.map(
           path =>
             normalizePath(targetPath) +

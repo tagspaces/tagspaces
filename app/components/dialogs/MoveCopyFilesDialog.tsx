@@ -50,6 +50,8 @@ import { TS } from '-/tagspaces.namespace';
 import DirectoryListView from '-/components/DirectoryListView';
 import AppConfig from '-/AppConfig';
 import Tooltip from '-/components/Tooltip';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import { checkFilesExistPromise } from '-/services/utils-io';
 
 interface Props {
   open: boolean;
@@ -58,7 +60,8 @@ interface Props {
   copyFiles: (
     files: Array<string>,
     destination: string,
-    onUploadProgress?: (progress: Progress, abort: () => void) => void
+    onUploadProgress?: (progress: Progress, abort: () => void) => void,
+    setFileExistPath?: (paths: string[]) => void
   ) => void;
   copyDirs: (
     dirs: Array<string>,
@@ -85,6 +88,7 @@ function MoveCopyFilesDialog(props: Props) {
   const [targetPath, setTargetPath] = useState(
     props.currentDirectoryPath ? props.currentDirectoryPath : ''
   );
+  const [fileExistPath, setFileExistPath] = useState<string[]>(undefined);
   const dirProp = useRef({});
 
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
@@ -151,7 +155,18 @@ function MoveCopyFilesDialog(props: Props) {
     props.resetProgress();
     props.toggleUploadDialog('copyEntriesTitle');
     if (selectedFiles.length > 0) {
-      props.copyFiles(selectedFiles, targetPath, props.onUploadProgress);
+      checkFilesExistPromise(selectedFiles, targetPath).then(exist => {
+        if (exist && exist.length > 0) {
+          setFileExistPath(exist);
+        } else {
+          props.copyFiles(
+            selectedFiles,
+            targetPath,
+            props.onUploadProgress,
+            setFileExistPath
+          );
+        }
+      });
       //setDisableConfirmButton(true);
       setTargetPath('');
     }
@@ -294,6 +309,29 @@ function MoveCopyFilesDialog(props: Props) {
             </Button>
           </span>
         </Tooltip>
+        <ConfirmDialog
+          open={fileExistPath !== undefined}
+          onClose={() => {
+            setFileExistPath(undefined);
+          }}
+          title={i18n.t('core:confirm')}
+          content={
+            'File ' + fileExistPath[1] + ' exist do you want to override it?'
+          }
+          confirmCallback={result => {
+            if (result) {
+              return PlatformIO.copyFilePromiseOverwrite(
+                fileExistPath[0],
+                fileExistPath[1]
+              );
+            } else {
+              setFileExistPath(undefined);
+            }
+          }}
+          cancelDialogTID="cancelSaveBeforeCloseDialog"
+          confirmDialogTID="confirmSaveBeforeCloseDialog"
+          confirmDialogContentTID="confirmDialogContent"
+        />
         <Button
           onClick={handleCopyFiles}
           data-tid="confirmCopyFiles"

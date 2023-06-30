@@ -735,6 +735,55 @@ function trackProgress(promises, abortSignal, progress) {
     });
 }
 
+export function isFulfilled<T>(
+  result: PromiseSettledResult<T>
+): result is PromiseFulfilledResult<T> {
+  return result.status === 'fulfilled';
+}
+
+export function isRejected<T>(
+  result: PromiseSettledResult<T>
+): result is PromiseRejectedResult {
+  return result.status === 'rejected';
+}
+
+export function getFulfilledResults<T>(
+  results: Array<PromiseSettledResult<T>>
+) {
+  return results.filter(isFulfilled).map(result => result.value);
+}
+
+interface FileExistenceCheck {
+  promise: Promise<boolean>;
+  path: string;
+}
+
+export function checkFilesExistPromise(
+  paths: string[],
+  targetPath: string
+): Promise<Array<string>> {
+  const promises: FileExistenceCheck[] = paths.map(path => {
+    const targetFile =
+      normalizePath(targetPath) +
+      PlatformIO.getDirSeparator() +
+      extractFileName(path, PlatformIO.getDirSeparator());
+    return { promise: PlatformIO.checkFileExist(targetFile), path };
+  });
+  const progressPromises: Array<Promise<string>> = promises.map(
+    ({ promise, path }) =>
+      promise
+        .then(exists => (exists ? path : ''))
+        .catch(err => {
+          console.warn(`Promise ${path} error:`, err);
+          return '';
+        })
+  );
+
+  return Promise.allSettled(progressPromises).then(results => {
+    return getFulfilledResults(results).filter(r => r);
+  });
+}
+
 export function copyFilesPromise(
   paths: Array<string>,
   targetPath: string,
@@ -742,22 +791,7 @@ export function copyFilesPromise(
 ) {
   const controller = new AbortController();
   const signal = controller.signal;
-  //const srcDirPath = getCommonFolder(paths);
 
-  /*if (srcDirPath) {
-    return PlatformIO.copyDirectoryPromise(
-      { path: srcDirPath, filter: paths, total: paths.length },
-      targetPath,
-      onProgress
-    )
-      .then(() => {
-        console.log('Copy files from ' + srcDirPath + ' to ' + targetPath);
-        return true;
-      })
-      .catch(err => {
-        console.warn('Copy files failed ', err);
-      });
-  } else {*/
   const ioJobPromises = paths.map(path => {
     const targetFile =
       normalizePath(targetPath) +
@@ -783,7 +817,6 @@ export function copyFilesPromise(
     );
   };
   return trackProgress(ioJobPromises, signal, progress);
-  //}
 }
 
 export async function loadSubFolders(path: string, loadHidden = false) {
