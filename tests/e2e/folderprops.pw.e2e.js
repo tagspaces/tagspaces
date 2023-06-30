@@ -237,6 +237,7 @@ test.describe('TST02 - Folder properties', () => {
     );
     await clickOn('[data-tid=MoveTargetempty_folder]');
     await clickOn('[data-tid=confirmCopyFiles]');
+    await clickOn('[data-tid=uploadCloseAndClearTID]');
 
     await clickOn('[data-tid=changePerspectiveTID]');
     await clickOn('[data-value=gallery]');
