@@ -127,7 +127,6 @@ function DirectoryListView(props: Props) {
         <ListItem
           data-tid={'MoveTarget' + entry.name}
           title={'Navigate to: ' + entry.path}
-          style={{ maxWidth: 250 }}
           onClick={() => {
             props.setTargetDir(entry.path);
           }}

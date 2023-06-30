@@ -345,6 +345,22 @@ export async function expectAudioPlay() {
     .toBe(true);
 }
 
+export async function expectElementSelected(
+  selector,
+  isSelected = true,
+  timeout = 2000
+) {
+  await expectElementExist(
+    '[data-tid="fsEntryName_' +
+      dataTidFormat(selector) +
+      '"] [data-testid="' +
+      (isSelected ? 'CheckCircleIcon' : 'RadioButtonUncheckedIcon') +
+      '"]',
+    true,
+    timeout
+  );
+}
+
 export async function expectElementExist(
   selector,
   exist = true,
