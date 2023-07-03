@@ -813,7 +813,8 @@ export function checkDirsExistPromise(
 export function copyFilesPromise(
   paths: Array<string>,
   targetPath: string,
-  onProgress = undefined
+  onProgress = undefined,
+  key = 'single_key'
 ) {
   const controller = new AbortController();
   const signal = controller.signal;
@@ -839,7 +840,8 @@ export function copyFilesPromise(
       () => {
         controller.abort();
       },
-      path
+      path,
+      key
     );
   };
   return trackProgress(ioJobPromises, signal, progress);

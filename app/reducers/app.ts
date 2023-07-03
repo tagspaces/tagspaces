@@ -318,6 +318,7 @@ export default (state: any = initialState, action: any) => {
     case types.PROGRESS: {
       const arrProgress = [
         {
+          ...(action.key && { key: action.key }),
           path: action.path,
           filePath: action.filePath,
           progress: action.progress,
@@ -326,7 +327,9 @@ export default (state: any = initialState, action: any) => {
       ];
       state.progress.map(fileProgress => {
         if (fileProgress.path !== action.path) {
-          arrProgress.push(fileProgress);
+          if (!fileProgress.key || fileProgress.key !== action.key) {
+            arrProgress.push(fileProgress);
+          }
         }
         return true;
       });
@@ -1178,12 +1181,13 @@ export const actions = {
     type: types.SET_NEW_VERSION_AVAILABLE,
     isUpdateAvailable
   }),
-  setProgress: (path, progress, abort, filePath = undefined) => ({
+  setProgress: (path, progress, abort, filePath = undefined, key = undefined) => ({
     type: types.PROGRESS,
     path,
     filePath,
     progress,
-    abort
+    abort,
+    key
   }),
   resetProgress: () => ({ type: types.RESET_PROGRESS }),
   onUploadProgress: (progress, abort, fileName = undefined) => (
