@@ -271,13 +271,19 @@ function CellContent(props: Props) {
               }}
             >
               {selected ? (
-                <SelectedIcon />
+                <SelectedIcon
+                  style={{
+                    opacity: 1,
+                    borderRadius: 15,
+                    backgroundColor: '#d7d7d7'
+                  }}
+                />
               ) : (
                 <UnSelectedIcon
                   style={{
-                    opacity: 0.5,
+                    opacity: 0.7,
                     borderRadius: 15,
-                    backgroundColor: 'gray'
+                    backgroundColor: 'd7d7d7'
                   }}
                 />
               )}
