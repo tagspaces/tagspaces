@@ -21,13 +21,11 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Progress } from 'aws-sdk/clients/s3';
 import { formatBytes } from '@tagspaces/tagspaces-common/misc';
-import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import ListSubheader from '@mui/material/ListSubheader';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -51,7 +49,10 @@ import DirectoryListView from '-/components/DirectoryListView';
 import AppConfig from '-/AppConfig';
 import Tooltip from '-/components/Tooltip';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import { checkFilesExistPromise } from '-/services/utils-io';
+import {
+  checkDirsExistPromise,
+  checkFilesExistPromise
+} from '-/services/utils-io';
 
 interface Props {
   open: boolean;
@@ -60,8 +61,7 @@ interface Props {
   copyFiles: (
     files: Array<string>,
     destination: string,
-    onUploadProgress?: (progress: Progress, abort: () => void) => void,
-    setFileExistPath?: (paths: string[]) => void
+    onUploadProgress?: (progress: Progress, abort: () => void) => void
   ) => void;
   copyDirs: (
     dirs: Array<string>,
@@ -88,7 +88,8 @@ function MoveCopyFilesDialog(props: Props) {
   const [targetPath, setTargetPath] = useState(
     props.currentDirectoryPath ? props.currentDirectoryPath : ''
   );
-  const [fileExistPath, setFileExistPath] = useState<string[]>(undefined);
+  const isCopy = useRef<boolean>(true);
+  const [entriesExistPath, setEntriesExistPath] = useState<string[]>(undefined);
   const dirProp = useRef({});
 
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
@@ -150,23 +151,35 @@ function MoveCopyFilesDialog(props: Props) {
     return total;
   }
 
+  function handleCopyMove(copy = true) {
+    if (selectedFiles.length > 0) {
+      checkFilesExistPromise(selectedFiles, targetPath).then(exist =>
+        handleEntryExist(copy, exist)
+      );
+    }
+    if (selectedDirs.length > 0) {
+      checkDirsExistPromise(selectedDirs, targetPath).then(exist =>
+        handleEntryExist(copy, exist)
+      );
+    }
+  }
+
+  function handleEntryExist(copy: boolean, exist: string[]) {
+    if (exist && exist.length > 0) {
+      isCopy.current = copy;
+      setEntriesExistPath(exist);
+    } else if (copy) {
+      handleCopyFiles();
+    } else {
+      handleMoveFiles();
+    }
+  }
   function handleCopyFiles() {
     //if (!disableConfirmButton) {
     props.resetProgress();
     props.toggleUploadDialog('copyEntriesTitle');
     if (selectedFiles.length > 0) {
-      checkFilesExistPromise(selectedFiles, targetPath).then(exist => {
-        if (exist && exist.length > 0) {
-          setFileExistPath(exist);
-        } else {
-          props.copyFiles(
-            selectedFiles,
-            targetPath,
-            props.onUploadProgress,
-            setFileExistPath
-          );
-        }
-      });
+      props.copyFiles(selectedFiles, targetPath, props.onUploadProgress);
       //setDisableConfirmButton(true);
       setTargetPath('');
     }
@@ -214,6 +227,13 @@ function MoveCopyFilesDialog(props: Props) {
 
   function onCloseDialog() {
     onClose();
+  }
+
+  function formatFileExist(entries) {
+    if (entries !== undefined) {
+      return entries.join(', ');
+    }
+    return '';
   }
 
   const theme = useTheme();
@@ -302,7 +322,7 @@ function MoveCopyFilesDialog(props: Props) {
                 AppConfig.isAndroid ||
                 targetPath === props.currentDirectoryPath
               }
-              onClick={handleMoveFiles}
+              onClick={() => handleCopyMove(false)}
               color="primary"
             >
               {i18n.t('core:moveEntriesButton')}
@@ -310,22 +330,24 @@ function MoveCopyFilesDialog(props: Props) {
           </span>
         </Tooltip>
         <ConfirmDialog
-          open={fileExistPath !== undefined}
+          open={entriesExistPath !== undefined}
           onClose={() => {
-            setFileExistPath(undefined);
+            setEntriesExistPath(undefined);
           }}
           title={i18n.t('core:confirm')}
           content={
-            'File ' + fileExistPath[1] + ' exist do you want to override it?'
+            formatFileExist(entriesExistPath) +
+            ' exist do you want to override it?'
           }
           confirmCallback={result => {
             if (result) {
-              return PlatformIO.copyFilePromiseOverwrite(
-                fileExistPath[0],
-                fileExistPath[1]
-              );
+              if (isCopy.current) {
+                handleCopyFiles();
+              } else {
+                handleMoveFiles();
+              }
             } else {
-              setFileExistPath(undefined);
+              setEntriesExistPath(undefined);
             }
           }}
           cancelDialogTID="cancelSaveBeforeCloseDialog"
@@ -333,7 +355,7 @@ function MoveCopyFilesDialog(props: Props) {
           confirmDialogContentTID="confirmDialogContent"
         />
         <Button
-          onClick={handleCopyFiles}
+          onClick={() => handleCopyMove(true)}
           data-tid="confirmCopyFiles"
           disabled={!targetPath || targetPath === props.currentDirectoryPath}
           color="primary"

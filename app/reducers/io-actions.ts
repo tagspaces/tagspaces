@@ -126,8 +126,9 @@ const actions = {
         const moveMetaJobs = [];
         moveJobs.map(job => {
           // Move revisions
-          loadFileMetaDataPromise(job[0]).then(
-            (fsEntryMeta: TS.FileSystemEntryMeta) => {
+          //try {
+          loadFileMetaDataPromise(job[0])
+            .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
               if (fsEntryMeta.id) {
                 const backupDir = getBackupFileDir(
                   job[0],
@@ -156,8 +157,13 @@ const actions = {
                     console.warn('Moving revisions failed ', err);
                   });
               }
-            }
-          );
+            })
+            .catch(err => {
+              console.warn('loadFileMetaDataPromise', err);
+            });
+          /*} catch (ex) {
+            console.warn('loadFileMetaDataPromise', ex);
+          }*/
 
           // move meta
           moveMetaJobs.push([
@@ -238,12 +244,12 @@ const actions = {
           getThumbFileLocationForFile(path, PlatformIO.getDirSeparator(), false)
         ]);
 
-        const targetFiles: string[] = paths.map(
+        /*const targetFiles: string[] = paths.map(
           path =>
             normalizePath(targetPath) +
             PlatformIO.getDirSeparator() +
             extractFileName(path, PlatformIO.getDirSeparator())
-        );
+        );*/
 
         copyFilesPromise(
           metaPaths,
@@ -252,19 +258,19 @@ const actions = {
         )
           .then(() => {
             console.log('Copy meta and thumbs successful');
-            dispatch(
+            /*dispatch(
               AppActions.reflectCreateEntries(
                 targetFiles.map(filePath => toFsEntry(filePath, true))
               )
-            );
+            );*/
             return true;
           })
           .catch(err => {
-            dispatch(
+            /*dispatch(
               AppActions.reflectCreateEntries(
                 targetFiles.map(filePath => toFsEntry(filePath, true))
               )
-            );
+            );*/
             console.warn('At least one meta or thumb was not copied ' + err);
           });
         return true;

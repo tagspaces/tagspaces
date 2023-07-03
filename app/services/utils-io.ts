@@ -784,6 +784,32 @@ export function checkFilesExistPromise(
   });
 }
 
+export function checkDirsExistPromise(
+  paths: string[],
+  targetPath: string
+): Promise<Array<string>> {
+  const promises: FileExistenceCheck[] = paths.map(path => {
+    const targetDir =
+      normalizePath(targetPath) +
+      PlatformIO.getDirSeparator() +
+      extractDirectoryName(path, PlatformIO.getDirSeparator());
+    return { promise: PlatformIO.checkDirExist(targetDir), path };
+  });
+  const progressPromises: Array<Promise<string>> = promises.map(
+    ({ promise, path }) =>
+      promise
+        .then(exists => (exists ? path : ''))
+        .catch(err => {
+          console.warn(`Promise ${path} error:`, err);
+          return '';
+        })
+  );
+
+  return Promise.allSettled(progressPromises).then(results => {
+    return getFulfilledResults(results).filter(r => r);
+  });
+}
+
 export function copyFilesPromise(
   paths: Array<string>,
   targetPath: string,
@@ -798,7 +824,7 @@ export function copyFilesPromise(
       PlatformIO.getDirSeparator() +
       extractFileName(path, PlatformIO.getDirSeparator());
     return {
-      promise: PlatformIO.copyFilePromise(path, targetFile),
+      promise: PlatformIO.copyFilePromiseOverwrite(path, targetFile),
       path: path
     };
   });
