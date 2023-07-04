@@ -64,15 +64,13 @@ interface Props {
     onUploadProgress?: (progress: Progress, abort: () => void) => void
   ) => void;
   copyDirs: (
-    dirs: Array<string>,
-    totalCount: number,
+    dirs: Array<any>,
     destination: string,
     onUploadProgress?: (progress: Progress, abort: () => void) => void
   ) => void;
   moveFiles: (files: Array<string>, destination: string) => void;
   moveDirs: (
-    dirs: Array<string>,
-    totalCount: number,
+    dirs: Array<any>,
     destination: string,
     onUploadProgress?: (progress: Progress, abort: () => void) => void
   ) => void;
@@ -144,11 +142,19 @@ function MoveCopyFilesDialog(props: Props) {
     }
   }*/
 
-  function getEntriesCount(): number {
-    let total = 0;
+  function getEntriesCount(dirPaths): Array<any> {
+    return dirPaths.map(path => {
+      const currDirProp = dirProp.current[path];
+      let count = 0;
+      if (currDirProp) {
+        count = currDirProp.filesCount + currDirProp.dirsCount;
+      }
+      return { path, count };
+    });
+    /*let total = 0;
     const arr = Object.values(dirProp.current);
     arr.forEach((n: TS.DirProp) => (total += n.filesCount + n.dirsCount));
-    return total;
+    return total;*/
   }
 
   function handleCopyMove(copy = true) {
@@ -185,8 +191,7 @@ function MoveCopyFilesDialog(props: Props) {
     }
     if (selectedDirs.length > 0) {
       props.copyDirs(
-        selectedDirs,
-        getEntriesCount(),
+        getEntriesCount(selectedDirs),
         targetPath,
         props.onUploadProgress
       );
@@ -205,8 +210,7 @@ function MoveCopyFilesDialog(props: Props) {
       props.resetProgress();
       props.toggleUploadDialog('moveEntriesTitle');
       props.moveDirs(
-        selectedDirs,
-        getEntriesCount(),
+        getEntriesCount(selectedDirs),
         targetPath,
         props.onUploadProgress
       );

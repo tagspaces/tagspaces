@@ -75,24 +75,23 @@ const actions = {
     );
   },
   moveDirs: (
-    paths: Array<string>,
-    totalCount: number,
+    dirPaths: Array<any>,
     targetPath: string,
     onProgress = undefined
   ) => (dispatch: (actions: Object) => void) => {
-    const promises = paths.map(dirPath => {
+    const promises = dirPaths.map(({path, count}) => {
       const dirName = extractDirectoryName(
-        dirPath,
+        path,
         PlatformIO.getDirSeparator()
       );
       return PlatformIO.moveDirectoryPromise(
-        { path: dirPath, total: totalCount },
+        { path: path, total: count },
         joinPaths(PlatformIO.getDirSeparator(), targetPath, dirName),
         onProgress
       )
         .then(() => {
-          console.log('Moving dir from ' + dirPath + ' to ' + targetPath);
-          dispatch(AppActions.reflectDeleteEntry(dirPath));
+          console.log('Moving dir from ' + path + ' to ' + targetPath);
+          dispatch(AppActions.reflectDeleteEntry(path));
           return true;
         })
         .catch(err => {
@@ -198,23 +197,22 @@ const actions = {
       });
   },
   copyDirs: (
-    paths: Array<string>,
-    totalCount: number,
+    dirPaths: Array<any>,
     targetPath: string,
     onProgress = undefined
   ) => (dispatch: (actions: Object) => void) => {
-    const promises = paths.map(dirPath => {
+    const promises = dirPaths.map(({path, count}) => {
       const dirName = extractDirectoryName(
-        dirPath,
+        path,
         PlatformIO.getDirSeparator()
       );
       return PlatformIO.copyDirectoryPromise(
-        { path: dirPath, total: totalCount },
+        { path: path, total: count },
         joinPaths(PlatformIO.getDirSeparator(), targetPath, dirName),
         onProgress
       )
         .then(() => {
-          console.log('Copy dir from ' + dirPath + ' to ' + targetPath);
+          console.log('Copy dir from ' + path + ' to ' + targetPath);
           return true;
         })
         .catch(err => {
