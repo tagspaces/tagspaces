@@ -355,8 +355,8 @@ function MoveCopyFilesDialog(props: Props) {
               setEntriesExistPath(undefined);
             }
           }}
-          cancelDialogTID="cancelSaveBeforeCloseDialog"
-          confirmDialogTID="confirmSaveBeforeCloseDialog"
+          cancelDialogTID="cancelOverwriteByCopyMoveDialog"
+          confirmDialogTID="confirmOverwriteByCopyMoveDialog"
           confirmDialogContentTID="confirmDialogContent"
         />
         <Button

@@ -79,11 +79,8 @@ const actions = {
     targetPath: string,
     onProgress = undefined
   ) => (dispatch: (actions: Object) => void) => {
-    const promises = dirPaths.map(({path, count}) => {
-      const dirName = extractDirectoryName(
-        path,
-        PlatformIO.getDirSeparator()
-      );
+    const promises = dirPaths.map(({ path, count }) => {
+      const dirName = extractDirectoryName(path, PlatformIO.getDirSeparator());
       return PlatformIO.moveDirectoryPromise(
         { path: path, total: count },
         joinPaths(PlatformIO.getDirSeparator(), targetPath, dirName),
@@ -201,11 +198,8 @@ const actions = {
     targetPath: string,
     onProgress = undefined
   ) => (dispatch: (actions: Object) => void) => {
-    const promises = dirPaths.map(({path, count}) => {
-      const dirName = extractDirectoryName(
-        path,
-        PlatformIO.getDirSeparator()
-      );
+    const promises = dirPaths.map(({ path, count }) => {
+      const dirName = extractDirectoryName(path, PlatformIO.getDirSeparator());
       return PlatformIO.copyDirectoryPromise(
         { path: path, total: count },
         joinPaths(PlatformIO.getDirSeparator(), targetPath, dirName),
