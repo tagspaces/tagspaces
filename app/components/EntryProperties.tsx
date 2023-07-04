@@ -717,11 +717,11 @@ function EntryProperties(props: Props) {
     iconRetinaUrl: Marker2xIcon,
     shadowUrl: MarkerShadowIcon,
     tooltipAnchor: [16, -28],
-    iconSize:     [25, 41], // size of the icon
-    shadowSize:   [41, 41], // size of the shadow
-    iconAnchor:   [12, 41], // point of the icon which will correspond to marker's location
-    shadowAnchor: [5, 41],  // the same for the shadow
-    popupAnchor:  [1, -34] // point from which the popup should open relative to the iconAnchor
+    iconSize: [25, 41], // size of the icon
+    shadowSize: [41, 41], // size of the shadow
+    iconAnchor: [12, 41], // point of the icon which will correspond to marker's location
+    shadowAnchor: [5, 41], // the same for the shadow
+    popupAnchor: [1, -34] // point from which the popup should open relative to the iconAnchor
   });
 
   function getGeoLocation(tags: Array<TS.Tag>) {
