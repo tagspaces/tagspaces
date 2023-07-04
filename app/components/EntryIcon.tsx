@@ -99,4 +99,4 @@ function EntryIcon(props: Props) {
     </svg>
   );
 }
-export default EntryIcon;
+export default React.memo(EntryIcon);
