@@ -711,15 +711,17 @@ function EntryProperties(props: Props) {
     perspectiveDefault = 'unspecified'; // perspectives.DEFAULT;
   }
 
+  // https://github.com/Leaflet/Leaflet/blob/main/src/layer/marker/Icon.Default.js#L22
   const iconFileMarker = new L.Icon({
     iconUrl: MarkerIcon,
     iconRetinaUrl: Marker2xIcon,
-    iconAnchor: [5, 55],
-    popupAnchor: [5, -20],
-    iconSize: [25, 41],
     shadowUrl: MarkerShadowIcon,
-    shadowSize: [41, 41],
-    shadowAnchor: [5, 55]
+    tooltipAnchor: [16, -28],
+    iconSize:     [25, 41], // size of the icon
+    shadowSize:   [41, 41], // size of the shadow
+    iconAnchor:   [12, 41], // point of the icon which will correspond to marker's location
+    shadowAnchor: [5, 41],  // the same for the shadow
+    popupAnchor:  [1, -34] // point from which the popup should open relative to the iconAnchor
   });
 
   function getGeoLocation(tags: Array<TS.Tag>) {
