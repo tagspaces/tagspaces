@@ -1470,9 +1470,9 @@ export function getBgndPath(bgndPath: string, lastBackgroundImageChange: any) {
   }
   return (
     normalizeUrl(bgndPath) +
-    (lastBackgroundImageChange &&
-    lastBackgroundImageChange.folderPath === bgndPath
-      ? '?' + lastBackgroundImageChange.dt
+    (lastBackgroundImageChange
+      ? // && lastBackgroundImageChange.folderPath === bgndPath
+        '?' + lastBackgroundImageChange.dt
       : '')
   );
 }
