@@ -2818,47 +2818,43 @@ export const actions = {
         // setTimeout is needed for case of a location switch, if no location swith the timer is 0
         setTimeout(() => {
           if (isCloudLocation) {
-            PlatformIO.enableObjectStoreSupport(targetLocation).then(() => {
-              if (directoryPath && directoryPath.length > 0) {
-                const newRelDir = getRelativeEntryPath(
-                  targetLocation,
-                  directoryPath
-                );
-                const dirFullPath =
-                  locationPath.length > 0
-                    ? locationPath + '/' + newRelDir
-                    : directoryPath;
-                dispatch(
-                  actions.loadDirectoryContent(dirFullPath, false, true)
-                );
-              } else {
-                dispatch(
-                  actions.loadDirectoryContent(locationPath, false, true)
-                );
-              }
+            // PlatformIO.enableObjectStoreSupport(targetLocation).then(() => {
+            if (directoryPath && directoryPath.length > 0) {
+              const newRelDir = getRelativeEntryPath(
+                targetLocation,
+                directoryPath
+              );
+              const dirFullPath =
+                locationPath.length > 0
+                  ? locationPath + '/' + newRelDir
+                  : directoryPath;
+              dispatch(actions.loadDirectoryContent(dirFullPath, false, true));
+            } else {
+              dispatch(actions.loadDirectoryContent(locationPath, false, true));
+            }
 
-              if (entryPath) {
-                getAllPropertiesPromise(entryPath)
-                  .then((fsEntry: TS.FileSystemEntry) => {
-                    if (fsEntry) {
-                      dispatch(actions.openFsEntry(fsEntry));
-                      if (options.fullWidth) {
-                        dispatch(actions.setEntryFullWidth(true));
-                      }
+            if (entryPath) {
+              getAllPropertiesPromise(entryPath)
+                .then((fsEntry: TS.FileSystemEntry) => {
+                  if (fsEntry) {
+                    dispatch(actions.openFsEntry(fsEntry));
+                    if (options.fullWidth) {
+                      dispatch(actions.setEntryFullWidth(true));
                     }
-                    return true;
-                  })
-                  .catch(() =>
-                    dispatch(
-                      actions.showNotification(
-                        i18n.t('core:invalidLink'),
-                        'warning',
-                        true
-                      )
+                  }
+                  return true;
+                })
+                .catch(() =>
+                  dispatch(
+                    actions.showNotification(
+                      i18n.t('core:invalidLink'),
+                      'warning',
+                      true
                     )
-                  );
-              }
-            });
+                  )
+                );
+            }
+            // });
           } else {
             // local files case
             if (directoryPath && directoryPath.length > 0) {
