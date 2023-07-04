@@ -285,6 +285,7 @@ function MoveCopyFilesDialog(props: Props) {
               }
               onClick={handleMoveFiles}
               color="primary"
+              variant="contained"
             >
               {i18n.t('core:moveEntriesButton')}
             </Button>

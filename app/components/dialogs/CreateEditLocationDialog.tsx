@@ -1008,6 +1008,7 @@ function CreateEditLocationDialog(props: Props) {
           onClick={onConfirm}
           data-tid="confirmLocationCreation"
           color="primary"
+          variant="contained"
         >
           {i18n.t('core:ok')}
         </Button>

@@ -178,7 +178,12 @@ function LinkGeneratorDialog(props: Props) {
         />
       </DialogContent>
       <DialogActions>
-        <Button data-tid="closeLinkTID" onClick={onClose} color="primary">
+        <Button
+          data-tid="closeLinkTID"
+          onClick={onClose}
+          variant="contained"
+          color="primary"
+        >
           {i18n.t('core:close')}
         </Button>
       </DialogActions>

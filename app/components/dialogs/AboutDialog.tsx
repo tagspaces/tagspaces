@@ -231,6 +231,7 @@ function AboutDialog(props: Props) {
               props.openURLExternally(Links.links.productsOverview, true);
             }}
             color="primary"
+            // variant="outlined"
           >
             Upgrade to PRO
           </Button>
@@ -239,6 +240,7 @@ function AboutDialog(props: Props) {
           data-tid="checkForUpdates"
           title={i18n.t('core:checkForNewVersion')}
           onClick={checkForUpdates}
+          // variant="outlined"
           color="primary"
         >
           {versionInfo}
@@ -255,7 +257,12 @@ function AboutDialog(props: Props) {
       >
         {i18n.t('core:thirdPartyLibs')}
       </Button> */}
-        <Button data-tid="closeAboutDialog" onClick={onClose} color="primary">
+        <Button
+          data-tid="closeAboutDialog"
+          onClick={onClose}
+          variant="contained"
+          color="primary"
+        >
           {i18n.t('core:ok')}
         </Button>
       </DialogActions>

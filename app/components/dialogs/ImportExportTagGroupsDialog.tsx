@@ -157,6 +157,7 @@ function ImportExportTagGroupsDialog(props: Props) {
         onClick={onConfirm}
         data-tid="confirmImportExport"
         color="primary"
+        variant="contained"
       >
         {props.dialogModeImport ? 'Import' : 'Export'}
       </Button>

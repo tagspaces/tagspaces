@@ -98,6 +98,7 @@ function LicenseDialog(props: Props) {
           data-tid="agreeLicenseDialog"
           onClick={props.onClose}
           color="primary"
+          variant="contained"
         >
           {i18n.t('core:agreeLicense')}
         </Button>

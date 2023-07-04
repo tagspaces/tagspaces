@@ -104,6 +104,7 @@ function MoveOrCopyFilesDialog(props: Props) {
           onClick={() => props.handleMoveFiles(props.selectedFiles)}
           data-tid="confirmMoveFilesTID"
           color="primary"
+          variant="contained"
         >
           {i18n.t('core:moveEntriesButton')}
         </Button>
@@ -111,6 +112,7 @@ function MoveOrCopyFilesDialog(props: Props) {
           onClick={() => props.handleCopyFiles(props.selectedFiles)}
           data-tid="confirmCopyFilesTID"
           color="primary"
+          variant="contained"
         >
           {i18n.t('core:copyEntriesButton')}
         </Button>

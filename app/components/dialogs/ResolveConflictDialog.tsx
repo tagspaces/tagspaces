@@ -147,6 +147,7 @@ function ResolveConflictDialog(props: Props) {
                 });
               }}
               color="primary"
+              variant="contained"
             >
               {i18n.t('core:override')}
             </Button>

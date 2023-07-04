@@ -126,6 +126,7 @@ function AddTagToTagGroupDialog(props: Props) {
           onClick={onConfirm}
           data-tid="createTagsConfirmButton"
           color="primary"
+          variant="contained"
         >
           {i18n.t('core:ok')}
         </Button>

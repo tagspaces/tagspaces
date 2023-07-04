@@ -203,6 +203,7 @@ function RenameEntryDialog(props: Props) {
           onClick={onConfirm}
           data-tid="confirmRenameEntry"
           color="primary"
+          variant="contained"
         >
           {i18n.t('core:ok')}
         </Button>

@@ -295,6 +295,7 @@ function CreateTagGroupDialog(props: Props) {
         <Button
           disabled={disableConfirmButton.current}
           onClick={onConfirm}
+          variant="contained"
           data-tid="createTagGroupConfirmButton"
           color="primary"
         >

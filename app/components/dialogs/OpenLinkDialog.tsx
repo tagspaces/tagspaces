@@ -136,6 +136,7 @@ function OpenLinkDialog(props: Props) {
           onClick={onConfirm}
           data-tid="confirmOpenLink"
           color="primary"
+          variant="contained"
         >
           {i18n.t('core:open')}
         </Button>

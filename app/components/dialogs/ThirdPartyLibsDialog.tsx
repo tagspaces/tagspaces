@@ -59,6 +59,7 @@ function ThirdPartyLibsDialog(props: Props) {
           data-tid="confirmThirdPartyLibsDialog"
           onClick={onClose}
           color="primary"
+          variant="contained"
         >
           {i18n.t('core:ok')}
         </Button>

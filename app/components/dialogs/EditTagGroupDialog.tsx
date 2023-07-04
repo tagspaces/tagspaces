@@ -279,6 +279,7 @@ function EditTagGroupDialog(props: Props) {
         onClick={onConfirm}
         data-tid="editTagGroupConfirmButton"
         color="primary"
+        variant="contained"
       >
         {i18n.t('core:ok')}
       </Button>

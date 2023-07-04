@@ -92,6 +92,7 @@ function KeyboardDialog(props: Props) {
           data-tid="closeKeyboardDialog"
           onClick={onClose}
           color="primary"
+          variant="contained"
         >
           {i18n.t('core:ok')}
         </Button>

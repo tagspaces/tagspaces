@@ -228,6 +228,7 @@ function EditEntryTagDialog(props: Props) {
             onClick={onConfirm}
             data-tid="confirmEditTagEntryDialog"
             color="primary"
+            variant="contained"
           >
             {i18n.t('core:ok')}
           </Button>

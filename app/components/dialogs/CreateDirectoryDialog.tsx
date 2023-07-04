@@ -154,6 +154,7 @@ function CreateDirectoryDialog(props: Props) {
         <Button
           disabled={disableConfirmButton}
           onClick={onConfirm}
+          variant="contained"
           data-tid="confirmCreateNewDirectory"
           id="confirmCreateNewDirectory"
           color="primary"

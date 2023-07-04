@@ -132,6 +132,7 @@ function ColorPickerDialog(props: Props) {
         </Button>
         <Button
           onClick={onConfirm}
+          variant="contained"
           data-tid="colorPickerConfirm"
           color="primary"
         >

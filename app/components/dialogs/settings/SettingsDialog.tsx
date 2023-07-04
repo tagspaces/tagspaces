@@ -168,6 +168,7 @@ function SettingsDialog(props: Props) {
         data-tid="closeSettingsDialog"
         onClick={props.onClose}
         color="primary"
+        variant="contained"
       >
         {i18n.t('core:closeButton')}
       </Button>
