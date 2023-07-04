@@ -253,9 +253,9 @@ function DirectoryMenu(props: Props) {
     // onClose();
     if (selectedEntries && selectedEntries.length === 1) {
       const sharingLink = generateFolderLink();
-      PlatformIO.createNewInstance(
-        window.location.href.split('?')[0] + '?' + sharingLink.split('?')[1]
-      );
+      const newInstanceLink =
+        window.location.href.split('?')[0] + '?' + sharingLink.split('?')[1];
+      PlatformIO.createNewInstance(newInstanceLink);
     }
   }
 
