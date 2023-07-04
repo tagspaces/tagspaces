@@ -125,8 +125,8 @@ const actions = {
         const moveMetaJobs = [];
         moveJobs.map(job => {
           // Move revisions
-          loadFileMetaDataPromise(job[0]).then(
-            (fsEntryMeta: TS.FileSystemEntryMeta) => {
+          loadFileMetaDataPromise(job[0])
+            .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
               if (fsEntryMeta.id) {
                 const backupDir = getBackupFileDir(
                   job[0],
@@ -155,8 +155,8 @@ const actions = {
                     console.warn('Moving revisions failed ', err);
                   });
               }
-            }
-          );
+            })
+            .catch(e => console.debug('loadFileMetaDataPromise', e));
 
           // move meta
           moveMetaJobs.push([
