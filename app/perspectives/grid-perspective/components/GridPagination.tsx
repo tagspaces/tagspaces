@@ -453,56 +453,59 @@ function GridPagination(props: Props) {
                   position: 'relative'
                 }}
               >
-                <Box
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    overflow: 'auto',
-                    padding: 10,
-                    marginRight: 160,
-                    width: 'fit-content',
-                    background: theme.palette.background.default,
-                    // background: alpha(theme.palette.background.default, 0.9),
-                    borderRadius: 8,
-                    color: theme.palette.text.primary
-                  }}
-                >
-                  <Tooltip
-                    data-tid={'currentDir_' + folderName}
-                    title={i18n.t('core:renameDirectory')}
+                {((folderName && folderName.length > 0) ||
+                  (currentDirectoryTags &&
+                    currentDirectoryTags.length > 0)) && (
+                  <Box
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      overflow: 'auto',
+                      padding: 10,
+                      marginRight: 160,
+                      width: 'fit-content',
+                      background: theme.palette.background.default,
+                      borderRadius: 8,
+                      color: theme.palette.text.primary
+                    }}
                   >
-                    <ButtonBase
-                      style={{ fontSize: '1.5rem' }}
-                      onClick={openRenameEntryDialog}
+                    <Tooltip
+                      data-tid={'currentDir_' + folderName}
+                      title={i18n.t('core:renameDirectory')}
                     >
-                      {folderName}
-                    </ButtonBase>
-                  </Tooltip>
-                  {showTags ? (
-                    <span style={{ paddingLeft: 5 }}>
-                      {currentDirectoryTags &&
-                        currentDirectoryTags.map((tag: TS.Tag) => {
-                          return (
-                            <TagContainer
-                              isReadOnlyMode
-                              tag={tag}
-                              tagMode="display"
-                            />
-                          );
-                        })}
-                    </span>
-                  ) : (
-                    <TagsPreview tags={currentDirectoryTags} />
-                  )}
-                </Box>
+                      <ButtonBase
+                        style={{ fontSize: '1.5rem' }}
+                        onClick={openRenameEntryDialog}
+                      >
+                        {folderName}
+                      </ButtonBase>
+                    </Tooltip>
+                    {showTags ? (
+                      <span style={{ paddingLeft: 5 }}>
+                        {currentDirectoryTags &&
+                          currentDirectoryTags.map((tag: TS.Tag) => {
+                            return (
+                              <TagContainer
+                                isReadOnlyMode
+                                tag={tag}
+                                tagMode="display"
+                              />
+                            );
+                          })}
+                      </span>
+                    ) : (
+                      <TagsPreview tags={currentDirectoryTags} />
+                    )}
+                  </Box>
+                )}
                 <Box
                   style={{
                     paddingBottom: 5,
                     background: theme.palette.background.default,
-                    marginTop: -12,
+                    marginTop: 10,
                     marginRight: 160,
                     padding: 10,
-                    borderRadius: 8,
+                    borderRadius: 10,
                     width: 'fit-content',
                     color: theme.palette.text.primary
                   }}
@@ -532,7 +535,7 @@ function GridPagination(props: Props) {
                 <Tooltip title={i18n.t('core:thumbnail')}>
                   <div
                     style={{
-                      borderRadius: 8,
+                      borderRadius: 10,
                       height: 100,
                       width: 140,
                       backgroundImage: 'url("' + folderTmbPath.current + '")',
