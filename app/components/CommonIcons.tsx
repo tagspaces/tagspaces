@@ -78,7 +78,9 @@ export { default as UntaggedIcon } from '@mui/icons-material/LabelOffOutlined';
 
 export { default as BookmarkIcon } from '@mui/icons-material/BookmarkBorder';
 
-export { default as BookIcon } from '@mui/icons-material/LocalLibraryOutlined';
+export { default as BookIcon } from '@mui/icons-material/MenuBook';
+
+export { default as EmailIcon } from '@mui/icons-material/MailOutline';
 
 export { default as DateIcon } from '@mui/icons-material/DateRange';
 

@@ -71,6 +71,7 @@ export const FileTypeGroups = {
   archives: ['zip', 'rar', 'gz', 'tgz', 'arc', '7z'],
   bookmarks: ['url', 'lnk', 'sym', 'desktop', 'website'],
   ebooks: ['epub', 'mobi', 'azw', 'prc', 'azw1', 'azw3', 'azw4', 'azw8', 'azk'],
+  emails: ['eml', 'msg'],
   folders: ['folders'],
   files: ['files'],
   untagged: ['untagged']
