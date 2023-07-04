@@ -76,6 +76,7 @@ import {
   BookmarkIcon,
   BookIcon,
   DateIcon,
+  EmailIcon,
   EditIcon,
   PictureIcon,
   DocumentIcon,
@@ -872,8 +873,16 @@ function SearchPopover(props: Props) {
                 </IconButton>
                 {i18n.t('core:searchEbooks')}
               </MenuItem>
+              <MenuItem
+                value={JSON.stringify(FileTypeGroups.emails)}
+                title={FileTypeGroups.emails.toString()}
+              >
+                <IconButton size="large">
+                  <EmailIcon />
+                </IconButton>
+                {i18n.t('core:searchEmails')}
+              </MenuItem>
             </Select>
-            {/* <FormHelperText>{i18n.t('core:searchFileTypes')}</FormHelperText> */}
           </ProTooltip>
         </FormControl>
         <FormControl
