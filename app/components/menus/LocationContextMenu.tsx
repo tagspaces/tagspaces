@@ -140,6 +140,7 @@ function LocationContextMenu(props: Props) {
   };
 
   const openInNewWindow = () => {
+    setLocationDirectoryContextMenuAnchorEl(null);
     const sharingLink = generateSharingLink(selectedLocation.uuid);
     PlatformIO.createNewInstance(
       window.location.href.split('?')[0] + '?' + sharingLink.split('?')[1]
