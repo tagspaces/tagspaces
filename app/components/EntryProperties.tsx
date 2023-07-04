@@ -263,17 +263,13 @@ function EntryProperties(props: Props) {
 
   useEffect(() => {
     if (!currentEntry.current.isFile) {
-      try {
-        PlatformIO.getDirProperties(currentEntry.current.path).then(
-          (dProps: TS.DirProp) => {
-            dirProps.current = dProps;
-            currentEntry.current.size = dProps.totalSize;
-            forceUpdate();
-          }
-        );
-      } catch (ex) {
-        console.debug('getDirProperties:', ex);
-      }
+      PlatformIO.getDirProperties(currentEntry.current.path)
+        .then((dProps: TS.DirProp) => {
+          dirProps.current = dProps;
+          currentEntry.current.size = dProps.totalSize;
+          forceUpdate();
+        })
+        .catch(ex => console.debug('getDirProperties:', ex.message));
     }
   }, []);
 
