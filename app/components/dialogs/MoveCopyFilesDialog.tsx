@@ -296,6 +296,7 @@ function MoveCopyFilesDialog(props: Props) {
           data-tid="confirmCopyFiles"
           disabled={!targetPath || targetPath === props.currentDirectoryPath}
           color="primary"
+          variant="contained"
         >
           {i18n.t('core:copyEntriesButton')}
         </Button>

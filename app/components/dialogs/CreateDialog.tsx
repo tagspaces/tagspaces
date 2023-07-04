@@ -363,6 +363,13 @@ function CreateDialog(props: Props) {
                     label={i18n.t('core:newFileName')}
                     onChange={handleInputChange}
                     onFocus={onInputFocus}
+                    onKeyDown={event => {
+                      if (event.key === 'Enter' || event.keyCode === 13) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        createMarkdownFile();
+                      }
+                    }}
                     defaultValue={fileName.current}
                     disabled={noSuitableLocation}
                     fullWidth={true}
