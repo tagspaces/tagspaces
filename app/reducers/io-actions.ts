@@ -126,7 +126,6 @@ const actions = {
         const moveMetaJobs = [];
         moveJobs.map(job => {
           // Move revisions
-          //try {
           loadFileMetaDataPromise(job[0])
             .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
               if (fsEntryMeta.id) {
@@ -161,9 +160,6 @@ const actions = {
             .catch(err => {
               console.warn('loadFileMetaDataPromise', err);
             });
-          /*} catch (ex) {
-            console.warn('loadFileMetaDataPromise', ex);
-          }*/
 
           // move meta
           moveMetaJobs.push([
