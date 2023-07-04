@@ -27,6 +27,7 @@ import {
   getThumbFileLocationForFile,
   getBackupFileDir,
   normalizePath,
+  getMetaDirectoryPath,
   extractDirectoryName,
   joinPaths
 } from '@tagspaces/tagspaces-common/paths';
@@ -74,24 +75,23 @@ const actions = {
     );
   },
   moveDirs: (
-    paths: Array<string>,
-    totalCount: number,
+    dirPaths: Array<any>,
     targetPath: string,
     onProgress = undefined
   ) => (dispatch: (actions: Object) => void) => {
-    const promises = paths.map(dirPath => {
+    const promises = dirPaths.map(({path, count}) => {
       const dirName = extractDirectoryName(
-        dirPath,
+        path,
         PlatformIO.getDirSeparator()
       );
       return PlatformIO.moveDirectoryPromise(
-        { path: dirPath, total: totalCount },
+        { path: path, total: count },
         joinPaths(PlatformIO.getDirSeparator(), targetPath, dirName),
         onProgress
       )
         .then(() => {
-          console.log('Moving dir from ' + dirPath + ' to ' + targetPath);
-          dispatch(AppActions.reflectDeleteEntry(dirPath));
+          console.log('Moving dir from ' + path + ' to ' + targetPath);
+          dispatch(AppActions.reflectDeleteEntry(path));
           return true;
         })
         .catch(err => {
@@ -156,7 +156,9 @@ const actions = {
                   });
               }
             })
-            .catch(e => console.debug('loadFileMetaDataPromise', e));
+            .catch(err => {
+              console.warn('loadFileMetaDataPromise', err);
+            });
 
           // move meta
           moveMetaJobs.push([
@@ -195,23 +197,22 @@ const actions = {
       });
   },
   copyDirs: (
-    paths: Array<string>,
-    totalCount: number,
+    dirPaths: Array<any>,
     targetPath: string,
     onProgress = undefined
   ) => (dispatch: (actions: Object) => void) => {
-    const promises = paths.map(dirPath => {
+    const promises = dirPaths.map(({path, count}) => {
       const dirName = extractDirectoryName(
-        dirPath,
+        path,
         PlatformIO.getDirSeparator()
       );
       return PlatformIO.copyDirectoryPromise(
-        { path: dirPath, total: totalCount },
+        { path: path, total: count },
         joinPaths(PlatformIO.getDirSeparator(), targetPath, dirName),
         onProgress
       )
         .then(() => {
-          console.log('Copy dir from ' + dirPath + ' to ' + targetPath);
+          console.log('Copy dir from ' + path + ' to ' + targetPath);
           return true;
         })
         .catch(err => {
@@ -223,58 +224,47 @@ const actions = {
     });
     return Promise.all(promises).then(() => true);
   },
-  copyFiles: (paths: Array<string>, targetPath: string) => (
+  copyFiles: (paths: Array<string>, targetPath: string, onProgress) => (
     dispatch: (actions: Object) => void
   ) => {
-    const copyJobs = paths.map(path => {
-      const targetFile =
-        normalizePath(targetPath) +
-        PlatformIO.getDirSeparator() +
-        extractFileName(path, PlatformIO.getDirSeparator());
-      return [path, targetFile];
-    });
-
-    const targetFiles: string[] = copyJobs.map(job => job[1]);
-
-    copyFilesPromise(copyJobs)
+    copyFilesPromise(paths, targetPath, onProgress)
       .then(() => {
+        // todo return only copied paths
         dispatch(
           AppActions.showNotification(i18n.t('core:filesCopiedSuccessful'))
         );
-        const copyMetaJobs = copyJobs.flatMap(job => [
-          [
-            getMetaFileLocationForFile(job[0], PlatformIO.getDirSeparator()),
-            getMetaFileLocationForFile(job[1], PlatformIO.getDirSeparator())
-          ],
-          [
-            getThumbFileLocationForFile(
-              job[0],
-              PlatformIO.getDirSeparator(),
-              false
-            ),
-            getThumbFileLocationForFile(
-              job[1],
-              PlatformIO.getDirSeparator(),
-              false
-            )
-          ]
+        const metaPaths = paths.flatMap(path => [
+          getMetaFileLocationForFile(path, PlatformIO.getDirSeparator()),
+          getThumbFileLocationForFile(path, PlatformIO.getDirSeparator(), false)
         ]);
-        copyFilesPromise(copyMetaJobs)
+
+        /*const targetFiles: string[] = paths.map(
+          path =>
+            normalizePath(targetPath) +
+            PlatformIO.getDirSeparator() +
+            extractFileName(path, PlatformIO.getDirSeparator())
+        );*/
+
+        copyFilesPromise(
+          metaPaths,
+          getMetaDirectoryPath(targetPath),
+          onProgress
+        )
           .then(() => {
             console.log('Copy meta and thumbs successful');
-            dispatch(
+            /*dispatch(
               AppActions.reflectCreateEntries(
                 targetFiles.map(filePath => toFsEntry(filePath, true))
               )
-            );
+            );*/
             return true;
           })
           .catch(err => {
-            dispatch(
+            /*dispatch(
               AppActions.reflectCreateEntries(
                 targetFiles.map(filePath => toFsEntry(filePath, true))
               )
-            );
+            );*/
             console.warn('At least one meta or thumb was not copied ' + err);
           });
         return true;

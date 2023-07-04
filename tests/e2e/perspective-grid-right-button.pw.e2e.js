@@ -352,6 +352,7 @@ test.describe('TST50** - Right button on a file', () => {
     await clickOn('[data-tid=MoveTarget' + folderName + ']');
 
     await clickOn('[data-tid=confirmMoveFiles]');
+
     //await waitForNotification();
     await expectElementExist(getGridFileSelector(fileName), false);
 
@@ -367,6 +368,7 @@ test.describe('TST50** - Right button on a file', () => {
     // await setInputKeys('targetPathInput', defaultLocationPath);
     await clickOn('[data-tid=navigateToParentTID]');
     await clickOn('[data-tid=confirmCopyFiles]');
+    await clickOn('[data-tid=uploadCloseAndClearTID]');
 
     await clickOn('[data-tid=gridPerspectiveOnBackButton]');
     await expectElementExist(getGridFileSelector(fileName), true);
