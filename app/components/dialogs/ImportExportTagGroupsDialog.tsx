@@ -38,7 +38,6 @@ import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 interface Props {
-  classes: any;
   open: boolean;
   tagGroups: Array<any>;
   onClose: () => void;

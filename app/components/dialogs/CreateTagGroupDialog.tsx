@@ -45,7 +45,6 @@ interface Props {
   createTagGroup: (tagGroup: TS.TagGroup) => void;
   color: string;
   textcolor: string;
-  locations: Array<TS.Location>;
 }
 
 const defaultTagGroupLocation = 'TAG_LIBRARY';
