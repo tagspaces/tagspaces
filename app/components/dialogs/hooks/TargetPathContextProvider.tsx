@@ -31,7 +31,7 @@ type TargetPathContextData = {
 };
 
 export const TargetPathContext = createContext<TargetPathContextData>({
-  targetDirectoryPath: ''
+  targetDirectoryPath: undefined
 });
 
 export type TargetPathContextProviderProps = {
