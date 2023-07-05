@@ -135,7 +135,8 @@ export const types = {
   TOGGLE_THIRD_PARTY_LIBS_DIALOG: 'APP/TOGGLE_THIRD_PARTY_LIBS_DIALOG',
   TOGGLE_SETTINGS_DIALOG: 'APP/TOGGLE_SETTINGS_DIALOG',
   TOGGLE_CREATE_DIRECTORY_DIALOG: 'APP/TOGGLE_CREATE_DIRECTORY_DIALOG',
-  TOGGLE_CREATE_FILE_DIALOG: 'APP/TOGGLE_CREATE_FILE_DIALOG',
+  TOGGLE_NEW_ENTRY_DIALOG: 'APP/TOGGLE_NEW_ENTRY_DIALOG',
+  TOGGLE_NEW_FILE_DIALOG: 'APP/TOGGLE_NEW_FILE_DIALOG',
   TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG:
     'APP/TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG',
   TOGGLE_IMPORT_KANBAN_DIALOG: 'APP/TOGGLE_IMPORT_KANBAN_DIALOG',
@@ -250,7 +251,8 @@ export const initialState = {
   proTeaserIndex: -1,
   onboardingDialogOpened: false,
   keysDialogOpened: false,
-  createFileDialogOpened: false,
+  isNewEntryDialogOpened: false,
+  isNewFileDialogOpened: false,
   licenseDialogOpened: false,
   thirdPartyLibsDialogOpened: false,
   settingsDialogOpened: false,
@@ -482,10 +484,16 @@ export default (state: any = initialState, action: any) => {
     case types.TOGGLE_KEYBOARD_DIALOG: {
       return { ...state, keysDialogOpened: !state.keysDialogOpened };
     }
-    case types.TOGGLE_CREATE_FILE_DIALOG: {
+    case types.TOGGLE_NEW_ENTRY_DIALOG: {
       return {
         ...state,
-        createFileDialogOpened: !state.createFileDialogOpened
+        isNewEntryDialogOpened: !state.isNewEntryDialogOpened
+      };
+    }
+    case types.TOGGLE_NEW_FILE_DIALOG: {
+      return {
+        ...state,
+        isNewFileDialogOpened: !state.isNewFileDialogOpened
       };
     }
     case types.TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG: {
@@ -1229,7 +1237,7 @@ export const actions = {
         )
       );
     } else {
-      dispatch(actions.toggleCreateFileDialog());
+      dispatch(actions.toggleNewEntryDialog());
     }
   },
   toggleEditTagDialog: (tag: TS.Tag) => ({
@@ -1254,7 +1262,8 @@ export const actions = {
     type: types.TOGGLE_CREATE_DIRECTORY_DIALOG,
     props
   }),
-  toggleCreateFileDialog: () => ({ type: types.TOGGLE_CREATE_FILE_DIALOG }),
+  toggleNewEntryDialog: () => ({ type: types.TOGGLE_NEW_ENTRY_DIALOG }),
+  toggleNewFileDialog: () => ({ type: types.TOGGLE_NEW_FILE_DIALOG }),
   toggleDeleteMultipleEntriesDialog: () => ({
     type: types.TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG
   }),
@@ -3067,8 +3076,10 @@ export const isSettingsDialogOpened = (state: any) =>
   state.app.settingsDialogOpened;
 export const isCreateDirectoryOpened = (state: any) =>
   state.app.createDirectoryDialogOpened;
-export const isCreateFileDialogOpened = (state: any) =>
-  state.app.createFileDialogOpened;
+export const isNewEntryDialogOpened = (state: any) =>
+  state.app.isNewEntryDialogOpened;
+export const isNewFileDialogOpened = (state: any) =>
+  state.app.isNewFileDialogOpened;
 export const isDeleteMultipleEntriesDialogOpened = (state: any) =>
   state.app.deleteMultipleEntriesDialogOpened;
 export const isImportKanBanDialogOpened = (state: any) =>

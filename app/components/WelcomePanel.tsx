@@ -60,7 +60,7 @@ import HowToStart from '-/components/HowToStart';
 interface Props {
   theme: any;
   classes: any;
-  toggleCreateFileDialog: () => void;
+  toggleNewEntryDialog: () => void;
   toggleLocationDialog: () => void;
   toggleOpenLinkDialog: () => void;
   toggleKeysDialog: () => void;
@@ -101,7 +101,7 @@ function WelcomePanel(props: Props) {
     openFsEntry,
     openURLExternally,
     toggleKeysDialog,
-    toggleCreateFileDialog,
+    toggleNewEntryDialog,
     toggleLocationDialog,
     toggleOpenLinkDialog,
     isDesktopMode
@@ -240,7 +240,7 @@ function WelcomePanel(props: Props) {
             className={classes.listItem}
           />
         </ListItem> */}
-        <ListItem onClick={toggleCreateFileDialog}>
+        <ListItem onClick={toggleNewEntryDialog}>
           <ListItemIcon>
             <CreateFileIcon />
           </ListItemIcon>
@@ -460,7 +460,7 @@ function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
       setFirstRun: SettingsActions.setFirstRun,
-      toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
+      toggleNewEntryDialog: AppActions.toggleNewEntryDialog,
       toggleLocationDialog: AppActions.toggleLocationDialog,
       toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
       openURLExternally: AppActions.openURLExternally,

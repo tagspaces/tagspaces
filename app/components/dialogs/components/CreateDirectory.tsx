@@ -33,6 +33,7 @@ import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
 import Tooltip from '-/components/Tooltip';
 import TextField from '@mui/material/TextField';
+import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
 
 const styles: any = () => ({
   createButton: {
@@ -65,7 +66,6 @@ interface Props {
     notificationType?: string,
     autohide?: boolean
   ) => void;
-  targetDirectoryPath: string;
 }
 
 function CreateDirectory(props: Props) {
@@ -73,9 +73,10 @@ function CreateDirectory(props: Props) {
     classes,
     onClose,
     showNotification,
-    toggleCreateDirectoryDialog,
-    targetDirectoryPath
+    toggleCreateDirectoryDialog
   } = props;
+
+  const { targetDirectoryPath } = useTargetPathContext();
   const fileUrl = useRef<string>();
   const [invalidURL, setInvalidURL] = useState<boolean>(false);
   let fileInput: HTMLInputElement;

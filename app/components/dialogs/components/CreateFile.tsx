@@ -19,45 +19,29 @@
 import React, { useReducer, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { saveAs } from 'file-saver';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Typography from '@mui/material/Typography';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import Grid from '@mui/material/Grid';
 import withStyles from '@mui/styles/withStyles';
-import Dialog from '@mui/material/Dialog';
-import Paper from '@mui/material/Paper';
-import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
-import DraggablePaper from '-/components/DraggablePaper';
-import { Progress } from 'aws-sdk/clients/s3';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
-import { getKeyBindingObject } from '-/reducers/settings';
 import {
   actions as AppActions,
   getDirectoryPath,
   getSelectedEntries,
-  getCurrentDirectoryPerspective,
-  NotificationTypes
+  getCurrentDirectoryPerspective
 } from '-/reducers/app';
-import IOActions from '-/reducers/io-actions';
 import { getFirstRWLocation, getCurrentLocation } from '-/reducers/locations';
 import { TS } from '-/tagspaces.namespace';
-import PlatformIO from '-/services/platform-facade';
-import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Tooltip from '-/components/Tooltip';
-import useTheme from '@mui/styles/useTheme';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import TextField from '@mui/material/TextField';
 import FormHelperText from '@mui/material/FormHelperText';
 import { FormControl } from '@mui/material';
 import { fileNameValidation } from '-/services/utils-io';
 import { PerspectiveIDs } from '-/perspectives';
-import { ExpandIcon, InfoIcon } from '-/components/CommonIcons';
-import CreateDirectory from '-/components/dialogs/components/CreateDirectory';
+import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
 
 const styles: any = () => ({
   createButton: {
@@ -84,7 +68,7 @@ interface Props {
   onClose: () => void;
 }
 
-function CreateDialog(props: Props) {
+function CreateFile(props: Props) {
   const {
     classes,
     onClose,
@@ -96,6 +80,9 @@ function CreateDialog(props: Props) {
     firstRWLocation,
     toggleLocationDialog
   } = props;
+
+  const { targetDirectoryPath } = useTargetPathContext();
+
   const fileName = useRef<string>(
     'note' +
       AppConfig.beginTagContainer +
@@ -105,20 +92,6 @@ function CreateDialog(props: Props) {
   const [inputError, setInputError] = useState<boolean>(false);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
   const fileContent = '';
-
-  let targetDirectoryPath = currentDirectoryPath;
-  if (
-    currentDirectoryPerspective === PerspectiveIDs.KANBAN &&
-    selectedEntries &&
-    selectedEntries.length === 1 &&
-    !selectedEntries[0].isFile
-  ) {
-    targetDirectoryPath = selectedEntries[0].path;
-  }
-
-  if (!targetDirectoryPath && firstRWLocation) {
-    targetDirectoryPath = firstRWLocation.path;
-  }
 
   const noSuitableLocation = !targetDirectoryPath;
 
@@ -329,4 +302,4 @@ function mapActionCreatorsToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
-)(withStyles(styles)(CreateDialog));
+)(withStyles(styles)(CreateFile));

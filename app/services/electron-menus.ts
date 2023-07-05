@@ -39,7 +39,7 @@ export default function buildDesktopMenu(props: any, i18n) {
         {
           label: i18n.t('newFileNote'),
           accelerator: 'CommandOrControl+Shift+n',
-          click: props.toggleCreateFileDialog
+          click: props.toggleNewEntryDialog
         },
         {
           label: i18n.t('createDirectory'),

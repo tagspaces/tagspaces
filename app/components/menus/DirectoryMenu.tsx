@@ -67,7 +67,7 @@ interface Props {
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   openAddRemoveTagsDialog?: () => void;
   reflectCreateEntry?: (path: string, isFile: boolean) => void;
-  toggleCreateFileDialog?: () => void;
+  toggleNewEntryDialog?: () => void;
   uploadFilesAPI: (
     files: Array<File>,
     destination: string,
@@ -242,7 +242,7 @@ function DirectoryMenu(props: Props) {
   }*/
 
   function createNewFile() {
-    props.toggleCreateFileDialog();
+    props.toggleNewEntryDialog();
   }
 
   function showInFileManager() {
@@ -493,7 +493,7 @@ function mapDispatchToProps(dispatch) {
       onUploadProgress: AppActions.onUploadProgress,
       toggleUploadDialog: AppActions.toggleUploadDialog,
       toggleProgressDialog: AppActions.toggleProgressDialog,
-      toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
+      toggleNewEntryDialog: AppActions.toggleNewEntryDialog,
       toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog,
       toggleProTeaser: AppActions.toggleProTeaser,
       resetProgress: AppActions.resetProgress,

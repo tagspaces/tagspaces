@@ -305,7 +305,7 @@ export const getCurrentLocation = (state: any): TS.Location | undefined => {
   );
   return foundLocation ? foundLocation : undefined;
 };
-export const getFirstRWLocation = (state: any): string | undefined => {
+export const getFirstRWLocation = (state: any): TS.Location | undefined => {
   let foundLocation = state.locations.find(
     location => location.isDefault && !location.isReadOnly
   );
