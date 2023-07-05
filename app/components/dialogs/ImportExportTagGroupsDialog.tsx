@@ -37,15 +37,6 @@ import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-const styles: any = {
-  root: {
-    width: 400,
-    height: '100%',
-    overflowY: 'auto',
-    marginBottom: 30
-  }
-};
-
 interface Props {
   classes: any;
   open: boolean;
@@ -129,41 +120,6 @@ function ImportExportTagGroupsDialog(props: Props) {
     </div>
   );
 
-  const renderTitle = () => (
-    <DialogTitle>
-      {props.dialogModeImport
-        ? i18n.t('core:importGroupTagsTitle')
-        : i18n.t('core:exportGroupTagsTitle')}
-      <DialogCloseButton testId="closeIETagGroupsTID" onClose={onClose} />
-    </DialogTitle>
-  );
-
-  const renderContent = () => (
-    <DialogContent className={props.classes.root}>
-      <Button color="primary" onClick={handleToggleSelectAll}>
-        {i18n.t('core:selectAllTagGroups')}
-      </Button>
-      <FormControl fullWidth={true}>
-        {tagGroupList.map(renderTagGroups)}
-      </FormControl>
-    </DialogContent>
-  );
-
-  const renderActions = () => (
-    <DialogActions>
-      <Button onClick={props.onClose}>{i18n.t('core:cancel')}</Button>
-      <Button
-        disabled={!isSelected()}
-        onClick={onConfirm}
-        data-tid="confirmImportExport"
-        color="primary"
-        variant="contained"
-      >
-        {props.dialogModeImport ? 'Import' : 'Export'}
-      </Button>
-    </DialogActions>
-  );
-
   const { onClose, open } = props;
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -174,11 +130,36 @@ function ImportExportTagGroupsDialog(props: Props) {
       onClose={onClose}
       // onEnterKey={(event) => onEnterKeyHandler(event, this.onConfirm)}
     >
-      {renderTitle()}
-      {renderContent()}
-      {renderActions()}
+      <DialogTitle>
+        {props.dialogModeImport
+          ? i18n.t('core:importGroupTagsTitle')
+          : i18n.t('core:exportGroupTagsTitle')}
+        <DialogCloseButton testId="closeIETagGroupsTID" onClose={onClose} />
+      </DialogTitle>
+      <DialogContent>
+        <Button color="primary" onClick={handleToggleSelectAll}>
+          {i18n.t('core:selectAllTagGroups')}
+        </Button>
+        <FormControl fullWidth={true}>
+          {tagGroupList.map(renderTagGroups)}
+        </FormControl>
+      </DialogContent>
+      <DialogActions
+        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
+      >
+        <Button onClick={props.onClose}>{i18n.t('core:cancel')}</Button>
+        <Button
+          disabled={!isSelected()}
+          onClick={onConfirm}
+          data-tid="confirmImportExport"
+          color="primary"
+          variant="contained"
+        >
+          {props.dialogModeImport ? 'Import' : 'Export'}
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 }
 
-export default withStyles(styles)(ImportExportTagGroupsDialog);
+export default ImportExportTagGroupsDialog;

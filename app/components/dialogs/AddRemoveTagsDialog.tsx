@@ -167,7 +167,9 @@ function AddRemoveTagsDialog(props: Props) {
             ))}
         </List>
       </DialogContent>
-      <DialogActions>
+      <DialogActions
+        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
+      >
         <Button
           data-tid="cancelTagsMultipleEntries"
           onClick={() => onCloseDialog()}
@@ -178,7 +180,6 @@ function AddRemoveTagsDialog(props: Props) {
           data-tid="cleanTagsMultipleEntries"
           disabled={selectedEntries.length < 1}
           color="primary"
-          variant="contained"
           onClick={removeAllTags}
         >
           {i18n.t('core:tagOperationCleanTags')}
@@ -187,7 +188,6 @@ function AddRemoveTagsDialog(props: Props) {
           data-tid="removeTagsMultipleEntries"
           disabled={disabledButtons}
           color="primary"
-          variant="contained"
           onClick={removeTags}
         >
           {i18n.t('core:tagOperationRemoveTag')}

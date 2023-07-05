@@ -93,7 +93,9 @@ function ResolveConflictDialog(props: Props) {
           i18n.t('core:resolveConflictDesc')
         )}
       </DialogContent>
-      <DialogActions>
+      <DialogActions
+        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
+      >
         {isSaveAs ? (
           <>
             <Button

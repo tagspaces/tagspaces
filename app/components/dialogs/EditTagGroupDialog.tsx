@@ -286,12 +286,12 @@ function EditTagGroupDialog(props: Props) {
     </DialogActions>
   );
 
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  // const theme = useTheme();
+  // const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={props.open}
-      fullScreen={fullScreen}
+      // fullScreen={fullScreen}
       onClose={props.onClose}
       onKeyDown={event => {
         if (event.key === 'Enter' || event.keyCode === 13) {

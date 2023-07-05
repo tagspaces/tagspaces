@@ -104,13 +104,13 @@ function CreateDirectoryDialog(props: Props) {
     setDisableConfirmButton(true);
   }
 
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  // const theme = useTheme();
+  // const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      fullScreen={fullScreen}
+      // fullScreen={fullScreen}
       keepMounted
       scroll="paper"
       onKeyDown={event => {

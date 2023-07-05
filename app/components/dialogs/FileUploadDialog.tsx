@@ -242,7 +242,7 @@ function FileUploadDialog(props: Props) {
               );
             })}
       </DialogContent>
-      <DialogActions>
+      <DialogActions style={{ padding: '10px 30px 30px 30px' }}>
         {!haveProgress && (
           <Button
             data-tid="uploadCloseAndClearTID"

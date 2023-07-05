@@ -93,7 +93,9 @@ function MoveOrCopyFilesDialog(props: Props) {
             ))}
         </List>
       </DialogContent>
-      <DialogActions>
+      <DialogActions
+        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
+      >
         <Button
           data-tid="closeMoveOrCopyDialog"
           onClick={() => props.onClose()}

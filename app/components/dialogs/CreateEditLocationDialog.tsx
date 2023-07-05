@@ -1001,7 +1001,9 @@ function CreateEditLocationDialog(props: Props) {
           </AccordionDetails>
         </Accordion>
       </DialogContent>
-      <DialogActions>
+      <DialogActions
+        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
+      >
         <Button onClick={() => onClose()}>{i18n.t('core:cancel')}</Button>
         <Button
           disabled={disableConfirmButton()}

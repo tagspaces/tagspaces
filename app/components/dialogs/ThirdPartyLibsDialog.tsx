@@ -54,7 +54,9 @@ function ThirdPartyLibsDialog(props: Props) {
           {ThirdPartyLibs}
         </pre>
       </DialogContent>
-      <DialogActions>
+      <DialogActions
+        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
+      >
         <Button
           data-tid="confirmThirdPartyLibsDialog"
           onClick={onClose}

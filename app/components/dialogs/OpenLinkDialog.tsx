@@ -83,7 +83,7 @@ function OpenLinkDialog(props: Props) {
     setDisableConfirmButton(true);
   }
 
-  const theme = useTheme();
+  // const theme = useTheme();
   // const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog

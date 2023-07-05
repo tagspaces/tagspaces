@@ -304,9 +304,7 @@ function MoveCopyFilesDialog(props: Props) {
         />
       </DialogContent>
       <DialogActions
-      // style={{
-      //   justifyContent: 'space-between'
-      // }}
+        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
       >
         <Button data-tid="closeMoveCopyDialog" onClick={() => props.onClose()}>
           {i18n.t('core:cancel')}

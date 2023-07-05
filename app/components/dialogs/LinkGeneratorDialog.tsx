@@ -35,8 +35,6 @@ import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import PlatformIO from '-/services/platform-facade';
-import AppConfig from '-/AppConfig';
-import useFirstRender from '-/utils/useFirstRender';
 
 interface Props {
   open: boolean;
@@ -177,7 +175,9 @@ function LinkGeneratorDialog(props: Props) {
           }}
         />
       </DialogContent>
-      <DialogActions>
+      <DialogActions
+        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
+      >
         <Button
           data-tid="closeLinkTID"
           onClick={onClose}

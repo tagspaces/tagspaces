@@ -17,6 +17,7 @@
  */
 
 import React, { ChangeEvent, useReducer, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
@@ -27,15 +28,15 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Dialog from '@mui/material/Dialog';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
-import { connect } from 'react-redux';
 import ColorPickerDialog from './ColorPickerDialog';
 import i18n from '-/services/i18n';
 import TransparentBackground from '../TransparentBackground';
 import { TS } from '-/tagspaces.namespace';
 import { getLocations } from '-/reducers/locations';
+import { getSaveTagInLocation } from '-/reducers/settings';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import useTheme from '@mui/styles/useTheme';
-import useMediaQuery from '@mui/material/useMediaQuery';
+// import useTheme from '@mui/styles/useTheme';
+// import useMediaQuery from '@mui/material/useMediaQuery';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 
 interface Props {
@@ -45,12 +46,14 @@ interface Props {
   color: string;
   textcolor: string;
   locations: Array<TS.Location>;
-  saveTagsInLocation: boolean;
 }
 
 const defaultTagGroupLocation = 'TAG_LIBRARY';
 
 function CreateTagGroupDialog(props: Props) {
+  const locations = useSelector(getLocations);
+  const saveTagsInLocation = useSelector(getSaveTagInLocation);
+
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
   const [displayTextColorPicker, setDisplayTextColorPicker] = useState<boolean>(
     false
@@ -65,7 +68,7 @@ function CreateTagGroupDialog(props: Props) {
   // eslint-disable-next-line no-unused-vars
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
-  const { open, saveTagsInLocation, onClose, createTagGroup } = props;
+  const { open, onClose, createTagGroup } = props;
 
   const handleTagGroupTitleChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -167,13 +170,13 @@ function CreateTagGroupDialog(props: Props) {
     }
   };
 
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  // const theme = useTheme();
+  // const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      fullScreen={fullScreen}
+      // fullScreen={fullScreen}
       keepMounted
       scroll="paper"
       onKeyDown={event => {
@@ -208,7 +211,7 @@ function CreateTagGroupDialog(props: Props) {
             </FormHelperText>
           )}
         </FormControl>
-        {props.saveTagsInLocation && (
+        {saveTagsInLocation && (
           <FormControl fullWidth={true} error={inputError}>
             <FormHelperText style={styles.helpText}>
               {i18n.t('core:tagGroupLocation')}
@@ -229,7 +232,7 @@ function CreateTagGroupDialog(props: Props) {
               >
                 {i18n.t('tagLibrary')}
               </MenuItem>
-              {props.locations.map(location => (
+              {locations.map(location => (
                 <MenuItem
                   key={location.uuid}
                   value={location.uuid}
@@ -289,7 +292,7 @@ function CreateTagGroupDialog(props: Props) {
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button data-tid="createTagGroupCancelButton" onClick={props.onClose}>
+        <Button data-tid="createTagGroupCancelButton" onClick={onClose}>
           {i18n.t('core:cancel')}
         </Button>
         <Button
@@ -306,11 +309,4 @@ function CreateTagGroupDialog(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    locations: getLocations(state),
-    saveTagsInLocation: state.settings.saveTagInLocation
-  };
-}
-
-export default connect(mapStateToProps)(CreateTagGroupDialog);
+export default CreateTagGroupDialog;

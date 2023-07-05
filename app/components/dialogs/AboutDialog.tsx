@@ -37,6 +37,7 @@ import Links from '-/content/links';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import useTheme from '@mui/styles/useTheme';
 import AppConfig from '-/AppConfig';
+import { Fullscreen } from '@mui/icons-material';
 
 interface Props {
   open: boolean;
@@ -222,7 +223,9 @@ function AboutDialog(props: Props) {
           </Button>
         </Typography>
       </DialogContent>
-      <DialogActions>
+      <DialogActions
+        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
+      >
         {!Pro && (
           <Button
             data-tid="checkForUpdates"

@@ -125,12 +125,12 @@ function EditTagDialog(props: Props) {
     }
   };
 
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  // const theme = useTheme();
+  // const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}
-      fullScreen={fullScreen}
+      // fullScreen={fullScreen}
       onClose={onClose}
       keepMounted
       scroll="paper"
