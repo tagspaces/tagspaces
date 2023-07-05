@@ -59,7 +59,7 @@ import {
   MainMenuIcon,
   SearchIcon
 } from './CommonIcons';
-import { Pro } from '../pro';
+// import { Pro } from '../pro';
 import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
 import { TS } from '-/tagspaces.namespace';
 import PathBreadcrumbs from './PathBreadcrumbs';
@@ -70,7 +70,7 @@ import {
 } from '-/reducers/location-index';
 import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
 import MainSearchField from '-/components/MainSearchField';
-import LoadingAnimation from '-/components/LoadingAnimation';
+// import LoadingAnimation from '-/components/LoadingAnimation';
 import SearchBox from '-/components/SearchBox';
 import useFirstRender from '-/utils/useFirstRender';
 
@@ -79,74 +79,35 @@ const GridPerspective = React.lazy(() =>
     /* webpackChunkName: "GridPerspective" */ '../perspectives/grid-perspective'
   )
 );
-function GridPerspectiveAsync(props) {
-  return (
-    <React.Suspense fallback={<LoadingLazy />}>
-      <GridPerspective {...props} />
-    </React.Suspense>
-  );
-}
 
 const ListPerspective = React.lazy(() =>
   import(/* webpackChunkName: "ListPerspective" */ '../perspectives/list')
 );
-function ListPerspectiveAsync(props) {
-  return (
-    <React.Suspense fallback={<LoadingLazy />}>
-      <ListPerspective {...props} />
-    </React.Suspense>
-  );
-}
-
-let GalleryPerspective = React.Fragment;
-if (Pro && Pro.Perspectives && Pro.Perspectives.GalleryPerspective) {
-  // GalleryPerspective = React.lazy(() => import(/* webpackChunkName: "GalleryPerspective" */ '../node_modules/@tagspaces/pro/modules/perspectives/gallery'));
-
-  GalleryPerspective = Pro.Perspectives.GalleryPerspective;
-}
-function GalleryPerspectiveAsync(props) {
-  return (
-    <React.Suspense fallback={<LoadingLazy />}>
-      <GalleryPerspective {...props} />
-    </React.Suspense>
-  );
-}
-
-let MapiquePerspective = React.Fragment;
-if (Pro && Pro.Perspectives && Pro.Perspectives.MapiquePerspective) {
-  // MapiquePerspective = React.lazy(() => import(/* webpackChunkName: "MapiquePerspective" */ '../node_modules/@tagspaces/pro/modules/perspectives/mapique'));
-  MapiquePerspective = Pro.Perspectives.MapiquePerspective;
-}
-function MapiquePerspectiveAsync(props) {
-  return (
-    <React.Suspense fallback={<LoadingLazy />}>
-      <MapiquePerspective {...props} />
-    </React.Suspense>
-  );
-}
-
-let KanBanPerspective = React.Fragment;
-if (Pro && Pro.Perspectives && Pro.Perspectives.KanBanPerspective) {
-  KanBanPerspective = Pro.Perspectives.KanBanPerspective;
-}
-function KanBanPerspectiveAsync(props) {
-  return (
-    <React.Suspense fallback={<LoadingLazy />}>
-      <KanBanPerspective {...props} />
-    </React.Suspense>
-  );
-}
+const GalleryPerspective = React.lazy(() =>
+  import('../pro')
+    .then(module => ({
+      default: module.Pro.Perspectives.GalleryPerspective
+    }))
+    .catch(() => ({ default: undefined }))
+);
+const MapiquePerspective = React.lazy(() =>
+  import('../pro')
+    .then(module => ({
+      default: module.Pro.Perspectives.MapiquePerspective
+    }))
+    .catch(() => ({ default: undefined }))
+);
+const KanBanPerspective = React.lazy(() =>
+  import('../pro')
+    .then(module => ({
+      default: module.Pro.Perspectives.KanBanPerspective
+    }))
+    .catch(() => ({ default: undefined }))
+);
 
 const WelcomePanel = React.lazy(() =>
   import(/* webpackChunkName: "WelcomePanel" */ './WelcomePanel')
 );
-function WelcomePanelAsync(props) {
-  return (
-    <React.Suspense fallback={<LoadingLazy />}>
-      <WelcomePanel {...props} />
-    </React.Suspense>
-  );
-}
 
 const CounterBadge: any = withStyles(theme => ({
   badge: {
@@ -314,11 +275,11 @@ function FolderContainer(props: Props) {
 
   const renderPerspective = () => {
     if (showWelcomePanel) {
-      return AppConfig.showWelcomePanel ? <WelcomePanelAsync /> : null;
+      return AppConfig.showWelcomePanel ? <WelcomePanel /> : null;
     }
     if (currentPerspective === PerspectiveIDs.LIST) {
       return (
-        <ListPerspectiveAsync
+        <ListPerspective
           directoryContent={props.directoryContent}
           lastSearchTimestamp={props.lastSearchTimestamp}
           loadDirectoryContent={loadDirectoryContent}
@@ -337,9 +298,9 @@ function FolderContainer(props: Props) {
         />
       );
     }
-    if (Pro && currentPerspective === PerspectiveIDs.GALLERY) {
+    if (GalleryPerspective && currentPerspective === PerspectiveIDs.GALLERY) {
       return (
-        <GalleryPerspectiveAsync
+        <GalleryPerspective
           directoryContent={props.directoryContent}
           lastSearchTimestamp={props.lastSearchTimestamp}
           openFsEntry={openFsEntry}
@@ -349,9 +310,9 @@ function FolderContainer(props: Props) {
         />
       );
     }
-    if (Pro && currentPerspective === PerspectiveIDs.MAPIQUE) {
+    if (MapiquePerspective && currentPerspective === PerspectiveIDs.MAPIQUE) {
       return (
-        <MapiquePerspectiveAsync
+        <MapiquePerspective
           directoryContent={props.directoryContent}
           lastSearchTimestamp={props.lastSearchTimestamp}
           currentDirectoryPath={props.currentDirectoryPath}
@@ -361,9 +322,9 @@ function FolderContainer(props: Props) {
         />
       );
     }
-    if (Pro && currentPerspective === PerspectiveIDs.KANBAN) {
+    if (KanBanPerspective && currentPerspective === PerspectiveIDs.KANBAN) {
       return (
-        <KanBanPerspectiveAsync
+        <KanBanPerspective
           directoryContent={props.directoryContent}
           lastSearchTimestamp={props.lastSearchTimestamp}
           loadDirectoryContent={props.loadDirectoryContent}
@@ -385,7 +346,7 @@ function FolderContainer(props: Props) {
     }
 
     return (
-      <GridPerspectiveAsync
+      <GridPerspective
         directoryContent={props.directoryContent}
         lastSearchTimestamp={props.lastSearchTimestamp}
         loadDirectoryContent={props.loadDirectoryContent}
@@ -443,7 +404,6 @@ function FolderContainer(props: Props) {
 
   const switchPerspective = (perspectiveId: string) => {
     if (
-      Pro ||
       perspectiveId === PerspectiveIDs.GRID ||
       perspectiveId === PerspectiveIDs.LIST
     ) {
@@ -634,8 +594,10 @@ function FolderContainer(props: Props) {
             width: '100%'
           }}
         >
-          <LoadingAnimation />
-          {renderPerspective()}
+          {/*<LoadingAnimation />*/}
+          <React.Suspense fallback={<LoadingLazy />}>
+            {renderPerspective()}
+          </React.Suspense>
           {isRenameEntryDialogOpened && (
             <RenameEntryDialog
               open={isRenameEntryDialogOpened}
