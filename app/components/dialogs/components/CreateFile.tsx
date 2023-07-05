@@ -70,7 +70,6 @@ interface Props {
   open: boolean;
   classes: any;
   firstRWLocation: TS.Location;
-  currentLocation: TS.Location;
   selectedEntries: Array<TS.FileSystemEntry>;
   currentDirectoryPath: string | null;
   currentDirectoryPerspective: string;
@@ -88,14 +87,12 @@ interface Props {
 function CreateDialog(props: Props) {
   const {
     classes,
-    open,
     onClose,
     createFileAdvanced,
     openLocation,
     currentDirectoryPath,
     currentDirectoryPerspective,
     selectedEntries,
-    currentLocation,
     firstRWLocation,
     toggleLocationDialog
   } = props;
@@ -205,172 +202,106 @@ function CreateDialog(props: Props) {
     }
   };
 
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      fullScreen={fullScreen}
-      keepMounted
-      aria-labelledby="draggable-dialog-title"
-      PaperComponent={fullScreen ? Paper : DraggablePaper}
-      scroll="paper"
-    >
-      <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-        {i18n.t('core:create') + '...'}
-        <DialogCloseButton testId="closeCreateDialogTID" onClose={onClose} />
-      </DialogTitle>
-      <DialogContent
-        style={{
-          minWidth: 200,
-          minHeight: 300,
-          marginBottom: 20,
-          overflow: 'overlay'
-        }}
-        data-tid="keyboardShortCutsDialog"
-      >
-        <Accordion style={{ marginTop: 5 }} defaultExpanded>
-          <AccordionDetails style={{ paddingTop: 16 }}>
-            <Grid style={{ flexGrow: 1, width: '100%' }} container spacing={1}>
-              <Grid item xs={12}>
-                <FormControl fullWidth={true} error={inputError}>
-                  <TextField
-                    autoFocus
-                    error={inputError}
-                    margin="dense"
-                    name="entryName"
-                    label={i18n.t('core:newFileName')}
-                    onChange={handleInputChange}
-                    onFocus={onInputFocus}
-                    onKeyDown={event => {
-                      if (event.key === 'Enter' || event.keyCode === 13) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        createMarkdownFile();
-                      }
-                    }}
-                    defaultValue={fileName.current}
-                    disabled={noSuitableLocation}
-                    fullWidth={true}
-                    data-tid="newEntryDialogInputTID"
-                  />
-                  {inputError && (
-                    <FormHelperText>
-                      {i18n.t('core:fileNameHelp')}
-                    </FormHelperText>
-                  )}
-                </FormControl>
-              </Grid>
-              <Grid item xs={12}>
-                <ButtonGroup
-                  style={{
-                    textAlign: 'center',
-                    width: '100%'
-                  }}
-                >
-                  <Button
-                    // variant="contained"
-                    onClick={createMarkdownFile}
-                    className={classes.createButton}
-                    data-tid="createMarkdownButton"
-                    disabled={noSuitableLocation}
-                  >
-                    <Tooltip title={i18n.t('createMarkdownTitle')}>
-                      <Typography
-                        variant="button"
-                        style={{ fontWeight: 'bold' }}
-                        display="block"
-                        gutterBottom
-                      >
-                        {i18n.t('createMarkdown')}
-                      </Typography>
-                    </Tooltip>
-                  </Button>
-                  <Button
-                    // variant="contained"
-                    onClick={createRichTextFile}
-                    className={classes.createButton}
-                    data-tid="createRichTextFileButton"
-                    disabled={noSuitableLocation}
-                  >
-                    <Tooltip title={i18n.t('createNoteTitle')}>
-                      <Typography variant="button" display="block" gutterBottom>
-                        {i18n.t('createRichTextFile')}
-                      </Typography>
-                    </Tooltip>
-                  </Button>
-                  <Button
-                    // variant="contained"
-                    onClick={createTextFile}
-                    className={classes.createButton}
-                    data-tid="createTextFileButton"
-                    disabled={noSuitableLocation}
-                  >
-                    <Tooltip title={i18n.t('createTextFileTitle')}>
-                      <Typography variant="button" display="block" gutterBottom>
-                        {i18n.t('createTextFile')}
-                      </Typography>
-                    </Tooltip>
-                  </Button>
-                </ButtonGroup>
-              </Grid>
-              <Grid style={{ marginTop: 20 }} item xs={12}>
-                <Button
-                  variant="outlined"
-                  onClick={() => {
-                    onClose();
-                    toggleLocationDialog();
-                  }}
-                  className={classes.createButton}
-                  data-tid="createLocationButton"
-                >
-                  <Tooltip title={i18n.t('createLocationTitle')}>
-                    <Typography variant="button" display="block" gutterBottom>
-                      {i18n.t('core:createLocation')}
-                    </Typography>
-                  </Tooltip>
-                </Button>
-              </Grid>
-            </Grid>
-          </AccordionDetails>
-        </Accordion>
-        <Accordion>
-          <AccordionSummary
-            expandIcon={<ExpandIcon />}
-            aria-controls="panelGeneral-content"
-            id="panelGeneral-header"
-          >
-            <Typography>{i18n.t('core:moreOperations')}</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <CreateDirectory
-              targetDirectoryPath={targetDirectoryPath}
-              onClose={onClose}
-            />
-          </AccordionDetails>
-        </Accordion>
-        <Grid item style={{ marginTop: 20 }} xs={12}>
-          {noSuitableLocation ? (
-            <Typography variant="caption">
-              {i18n.t('noSuitableLocation')}
-            </Typography>
-          ) : (
-            <Typography
-              style={{ display: 'flex', alignItems: 'center' }}
-              variant="caption"
-            >
-              <InfoIcon style={{ paddingRight: 10 }} />
-              {i18n.t('core:entriesWillBeCreatedIn') +
-                ' ' +
-                (currentLocation ? currentLocation.name : '') +
-                ' ' +
-                targetDirectoryPath}
-            </Typography>
+    <Grid style={{ flexGrow: 1, width: '100%' }} container spacing={1}>
+      <Grid item xs={12}>
+        <FormControl fullWidth={true} error={inputError}>
+          <TextField
+            autoFocus
+            error={inputError}
+            margin="dense"
+            name="entryName"
+            label={i18n.t('core:newFileName')}
+            onChange={handleInputChange}
+            onFocus={onInputFocus}
+            onKeyDown={event => {
+              if (event.key === 'Enter' || event.keyCode === 13) {
+                event.preventDefault();
+                event.stopPropagation();
+                createMarkdownFile();
+              }
+            }}
+            defaultValue={fileName.current}
+            disabled={noSuitableLocation}
+            fullWidth={true}
+            data-tid="newEntryDialogInputTID"
+          />
+          {inputError && (
+            <FormHelperText>{i18n.t('core:fileNameHelp')}</FormHelperText>
           )}
-        </Grid>
-      </DialogContent>
-    </Dialog>
+        </FormControl>
+      </Grid>
+      <Grid item xs={12}>
+        <ButtonGroup
+          style={{
+            textAlign: 'center',
+            width: '100%'
+          }}
+        >
+          <Button
+            // variant="contained"
+            onClick={createMarkdownFile}
+            className={classes.createButton}
+            data-tid="createMarkdownButton"
+            disabled={noSuitableLocation}
+          >
+            <Tooltip title={i18n.t('createMarkdownTitle')}>
+              <Typography
+                variant="button"
+                style={{ fontWeight: 'bold' }}
+                display="block"
+                gutterBottom
+              >
+                {i18n.t('createMarkdown')}
+              </Typography>
+            </Tooltip>
+          </Button>
+          <Button
+            // variant="contained"
+            onClick={createRichTextFile}
+            className={classes.createButton}
+            data-tid="createRichTextFileButton"
+            disabled={noSuitableLocation}
+          >
+            <Tooltip title={i18n.t('createNoteTitle')}>
+              <Typography variant="button" display="block" gutterBottom>
+                {i18n.t('createRichTextFile')}
+              </Typography>
+            </Tooltip>
+          </Button>
+          <Button
+            // variant="contained"
+            onClick={createTextFile}
+            className={classes.createButton}
+            data-tid="createTextFileButton"
+            disabled={noSuitableLocation}
+          >
+            <Tooltip title={i18n.t('createTextFileTitle')}>
+              <Typography variant="button" display="block" gutterBottom>
+                {i18n.t('createTextFile')}
+              </Typography>
+            </Tooltip>
+          </Button>
+        </ButtonGroup>
+      </Grid>
+      <Grid style={{ marginTop: 20 }} item xs={12}>
+        <Button
+          variant="outlined"
+          onClick={() => {
+            onClose();
+            toggleLocationDialog();
+          }}
+          className={classes.createButton}
+          data-tid="createLocationButton"
+        >
+          <Tooltip title={i18n.t('createLocationTitle')}>
+            <Typography variant="button" display="block" gutterBottom>
+              {i18n.t('core:createLocation')}
+            </Typography>
+          </Tooltip>
+        </Button>
+      </Grid>
+    </Grid>
   );
 }
 
@@ -380,8 +311,7 @@ function mapStateToProps(state) {
     //keyBindings: getKeyBindingObject(state),
     selectedEntries: getSelectedEntries(state),
     currentDirectoryPath: getDirectoryPath(state),
-    currentDirectoryPerspective: getCurrentDirectoryPerspective(state),
-    currentLocation: getCurrentLocation(state)
+    currentDirectoryPerspective: getCurrentDirectoryPerspective(state)
   };
 }
 
