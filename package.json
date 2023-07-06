@@ -112,7 +112,7 @@
     "skip:husky:pre-commit": "node -e \"require('fs').rename('./.git/hooks/pre-commit', './.git/hooks/pre-commit.disabled', function(err) { if (err) console.log(err); console.log('File successfully renamed!') })\"",
     "sort-package-json": "npx sort-package-json",
     "source-map": "npm run source-map-app && npm run source-map-web && npm run source-map-cordova",
-    "source-map-app": "source-map-explorer app/dist/*.* --html reports/source-map-app.html",
+    "source-map-app": "npx source-map-explorer app/dist/*.* --html reports/source-map-app.html",
     "source-map-cordova": "source-map-explorer cordova/www/dist/*.* --html reports/source-map-cordova.html",
     "source-map-web": "source-map-explorer web/dist/*.* --html reports/source-map-web.html",
     "start": "cross-env NODE_ENV=production electron ./app/",
