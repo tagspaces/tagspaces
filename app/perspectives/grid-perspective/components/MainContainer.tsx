@@ -507,7 +507,11 @@ function GridPerspective(props: Props) {
 
   const handleExportCsvMenu = () => {
     if (Pro) {
-      Pro.exportAsCsv.ExportAsCsv(props.directoryContent);
+      if (props.selectedEntries && props.selectedEntries.length > 0) {
+        Pro.exportAsCsv.ExportAsCsv(props.selectedEntries);
+      } else {
+        Pro.exportAsCsv.ExportAsCsv(sortedDirContent.current);
+      }
     }
   };
 
