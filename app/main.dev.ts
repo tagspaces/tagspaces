@@ -359,7 +359,7 @@ function buildTrayMenu() {
       resumePlayback,
       createNewWindowInstance,
       openSearch: showSearch,
-      toggleCreateFileDialog: newTextFile,
+      toggleNewEntryDialog: newTextFile,
       openNextFile: getNextFile,
       openPrevFile: getPreviousFile,
       quitApp: reloadApp
@@ -374,7 +374,7 @@ function buildAppMenu() {
     {
       showTagSpaces,
       openSearch: showSearch,
-      toggleCreateFileDialog: newTextFile,
+      toggleNewEntryDialog: newTextFile,
       openNextFile: getNextFile,
       openPrevFile: getPreviousFile,
       quitApp: reloadApp,
