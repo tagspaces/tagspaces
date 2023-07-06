@@ -388,7 +388,7 @@ export default (state: any = initialState, action: any) => {
         currentDirectoryPerspective:
           action.directoryMeta && action.directoryMeta.perspective
             ? action.directoryMeta.perspective
-            : state.currentDirectoryPerspective,
+            : action.defaultPerspective, // state.currentDirectoryPerspective,
         currentDirectoryPath: directoryPath,
         /**
          * used for reorder files in KanBan
@@ -1515,7 +1515,7 @@ export const actions = {
     directoryPath: string,
     directoryContent: Array<any>,
     directoryMeta?: TS.FileSystemEntryMeta
-  ) => (dispatch: (action) => void) => {
+  ) => (dispatch: (action) => void, getState: () => any) => {
     // const currentLocation: Location = getLocation(
     //  getState(),
     //  getState().app.currentLocationId
@@ -1537,13 +1537,15 @@ export const actions = {
         dispatch(actions.setSelectedEntries(newSelectedEntries));
       }
     } */
+    const { settings } = getState();
     dispatch(actions.hideNotifications(['error']));
     dispatch(
       actions.loadDirectorySuccessInt(
         directoryPath,
         directoryContent,
         false,
-        directoryMeta
+        directoryMeta,
+        settings.defaultPerspective
       )
     );
     dispatch(actions.setIsMetaLoaded(false));
@@ -1552,13 +1554,15 @@ export const actions = {
     directoryPath: string,
     directoryContent: Array<any>,
     showIsLoading?: boolean,
-    directoryMeta?: TS.FileSystemEntryMeta
+    directoryMeta?: TS.FileSystemEntryMeta,
+    defaultPerspective?: string
   ) => ({
     type: types.LOAD_DIRECTORY_SUCCESS,
     directoryPath: directoryPath || PlatformIO.getDirSeparator(),
     directoryContent,
     directoryMeta,
-    showIsLoading
+    showIsLoading,
+    defaultPerspective
   }),
   setDirectoryMeta: (directoryMeta: TS.FileSystemEntryMeta) => ({
     type: types.SET_DIRECTORY_META,

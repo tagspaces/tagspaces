@@ -70,7 +70,7 @@ import {
 } from '-/reducers/location-index';
 import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
 import MainSearchField from '-/components/MainSearchField';
-import LoadingAnimation from '-/components/LoadingAnimation';
+// import LoadingAnimation from '-/components/LoadingAnimation';
 import SearchBox from '-/components/SearchBox';
 import useFirstRender from '-/utils/useFirstRender';
 
@@ -634,7 +634,7 @@ function FolderContainer(props: Props) {
             width: '100%'
           }}
         >
-          <LoadingAnimation />
+          {/*<LoadingAnimation />*/}
           {renderPerspective()}
           {isRenameEntryDialogOpened && (
             <RenameEntryDialog
