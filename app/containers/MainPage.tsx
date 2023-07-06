@@ -186,7 +186,7 @@ interface Props {
   openTagLibraryPanel: () => void;
   // openSearchPanel: () => void;
   openHelpFeedbackPanel: () => void;
-  closeAllVerticalPanels: () => void;
+  // closeAllVerticalPanels: () => void;
   leftSplitSize: number;
   mainSplitSize: any;
   toggleShowUnixHiddenEntries: () => void;
@@ -906,7 +906,7 @@ function MainPage(props: Props) {
             >
               <MobileNavigation
                 width={drawerWidth}
-                hideDrawer={() => props.closeAllVerticalPanels()}
+                hideDrawer={() => setDrawerOpened(false)}
               />
             </SwipeableDrawer>
             {renderContainers()}
@@ -999,7 +999,7 @@ function mapDispatchToProps(dispatch) {
       openTagLibraryPanel: AppActions.openTagLibraryPanel,
       // openSearchPanel: AppActions.openSearchPanel,
       openHelpFeedbackPanel: AppActions.openHelpFeedbackPanel,
-      closeAllVerticalPanels: AppActions.closeAllVerticalPanels,
+      // closeAllVerticalPanels: AppActions.closeAllVerticalPanels,
       toggleDeleteMultipleEntriesDialog:
         AppActions.toggleDeleteMultipleEntriesDialog,
       setFirstRun: SettingsActions.setFirstRun,
