@@ -189,7 +189,7 @@ function CreateDirectory(props: Props) {
 
   return (
     <>
-      <Grid style={{ marginTop: 20 }} item xs={12}>
+      <Grid item xs={12}>
         <Button
           variant="outlined"
           onClick={() => {
@@ -206,7 +206,7 @@ function CreateDirectory(props: Props) {
           </Tooltip>
         </Button>
       </Grid>
-      <Grid item xs={12}>
+      <Grid style={{ marginTop: 20 }} item xs={12}>
         <Button
           variant="outlined"
           onClick={() => {

@@ -29,7 +29,7 @@ export default function listen(props) {
       // console.log('Global events: ' + arg);
       switch (arg) {
         case 'new-text-file':
-          props.toggleNewEntryDialog();
+          props.toggleNewFileDialog();
           break;
         case 'open-search':
           props.setSearchQuery({ textQuery: '' });
