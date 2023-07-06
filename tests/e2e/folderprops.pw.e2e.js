@@ -146,6 +146,8 @@ test.describe('TST02 - Folder properties', () => {
 
   test('TST0207 - Move folder [web,minio,electron]', async () => {
     const newFolder = await createNewDirectory('targetFolder');
+    // select folder to move
+    await clickOn(getGridFileSelector('empty_folder'));
     await clickOn('[data-tid=moveCopyEntryTID]');
     await clickOn('[data-tid=MoveTarget' + newFolder + ']');
     await clickOn('[data-tid=confirmMoveFiles]');

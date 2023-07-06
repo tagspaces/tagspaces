@@ -75,6 +75,7 @@ interface Props {
     onUploadProgress?: (progress: Progress, abort: () => void) => void
   ) => void;
   selectedEntries: Array<TS.FileSystemEntry>;
+  // force to move/copy different entries from selected
   entries?: Array<TS.FileSystemEntry>;
   onUploadProgress: (progress: Progress, abort: () => void) => void;
   toggleUploadDialog: (title?) => void;
@@ -95,17 +96,20 @@ function MoveCopyFilesDialog(props: Props) {
 
   let allEntries =
     props.entries && props.entries.length > 0
+      ? props.entries
+      : props.selectedEntries;
+  /*props.entries && props.entries.length > 0
       ? [
           ...props.entries,
           ...props.selectedEntries.filter(
             e => !props.entries.some(en => en.path === e.path)
           )
         ]
-      : props.selectedEntries;
+      : props.selectedEntries;*/
   //let selectedFiles = props.selectedFiles ? props.selectedFiles : [];
   const selectedFiles = allEntries
-    .filter(fsEntry => fsEntry.isFile)
-    .map(fsentry => fsentry.path);
+    ? allEntries.filter(fsEntry => fsEntry.isFile).map(fsentry => fsentry.path)
+    : [];
 
   const selectedDirs = allEntries
     ? allEntries.filter(fsEntry => !fsEntry.isFile).map(fsentry => fsentry.path)
