@@ -88,21 +88,21 @@ const GalleryPerspective = React.lazy(() =>
     .then(module => ({
       default: module.Pro.Perspectives.GalleryPerspective
     }))
-    .catch(() => ({ default: undefined }))
+    .catch(() => ({ default: () => <div>No Pro</div> }))
 );
 const MapiquePerspective = React.lazy(() =>
   import('../pro')
     .then(module => ({
       default: module.Pro.Perspectives.MapiquePerspective
     }))
-    .catch(() => ({ default: undefined }))
+    .catch(() => ({ default: () => <div>No Pro</div> }))
 );
 const KanBanPerspective = React.lazy(() =>
   import('../pro')
     .then(module => ({
       default: module.Pro.Perspectives.KanBanPerspective
     }))
-    .catch(() => ({ default: undefined }))
+    .catch(() => ({ default: () => <div>No Pro</div> }))
 );
 
 const WelcomePanel = React.lazy(() =>
