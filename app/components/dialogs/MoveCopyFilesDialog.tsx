@@ -75,7 +75,7 @@ interface Props {
     onUploadProgress?: (progress: Progress, abort: () => void) => void
   ) => void;
   selectedEntries: Array<TS.FileSystemEntry>;
-  selectedFiles?: Array<string>;
+  entries?: Array<TS.FileSystemEntry>;
   onUploadProgress: (progress: Progress, abort: () => void) => void;
   toggleUploadDialog: (title?) => void;
   resetProgress: () => void;
@@ -93,19 +93,22 @@ function MoveCopyFilesDialog(props: Props) {
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
   const { open, onClose } = props;
 
-  let selectedFiles = props.selectedFiles ? props.selectedFiles : [];
-  if (props.selectedEntries) {
-    selectedFiles = selectedFiles.concat(
-      props.selectedEntries
-        .filter(fsEntry => fsEntry.isFile)
-        .map(fsentry => fsentry.path)
-    );
-  }
+  let allEntries =
+    props.entries && props.entries.length > 0
+      ? [
+          ...props.entries,
+          ...props.selectedEntries.filter(
+            e => !props.entries.some(en => en.path === e.path)
+          )
+        ]
+      : props.selectedEntries;
+  //let selectedFiles = props.selectedFiles ? props.selectedFiles : [];
+  const selectedFiles = allEntries
+    .filter(fsEntry => fsEntry.isFile)
+    .map(fsentry => fsentry.path);
 
-  const selectedDirs = props.selectedEntries
-    ? props.selectedEntries
-        .filter(fsEntry => !fsEntry.isFile)
-        .map(fsentry => fsentry.path)
+  const selectedDirs = allEntries
+    ? allEntries.filter(fsEntry => !fsEntry.isFile).map(fsentry => fsentry.path)
     : [];
 
   useEffect(() => {
@@ -270,9 +273,8 @@ function MoveCopyFilesDialog(props: Props) {
             marginBottom: 20
           }}
         >
-          {props.selectedEntries &&
-            props.selectedEntries.length > 0 &&
-            props.selectedEntries.map(entry => (
+          {allEntries.length > 0 &&
+            allEntries.map(entry => (
               <ListItem title={entry.path} key={entry.path}>
                 <ListItemIcon>
                   {entry.isFile ? <FileIcon /> : <FolderIcon />}

@@ -409,9 +409,9 @@ function EntryProperties(props: Props) {
   };
 
   const toggleMoveCopyFilesDialog = () => {
-    props.setSelectedEntries([
+    /*props.setSelectedEntries([
       { name: '', isFile: true, tags: [], ...currentEntry.current }
-    ]);
+    ]);*/
     setMoveCopyFilesDialogOpened(!isMoveCopyFilesDialogOpened);
   };
 
@@ -1394,7 +1394,14 @@ function EntryProperties(props: Props) {
           key={getUuid()}
           open={isMoveCopyFilesDialogOpened}
           onClose={toggleMoveCopyFilesDialog}
-          selectedFiles={[currentEntry.current.path]}
+          entries={[
+            {
+              ...currentEntry.current,
+              isFile: currentEntry.current.isFile,
+              name: entryName,
+              tags: []
+            }
+          ]}
         />
       )}
       {ThumbnailChooserDialog && (

@@ -670,11 +670,11 @@ function GridPerspective(props: Props) {
     }
   };
 
-  const selectedFilePaths = selectedEntries
+  /*const selectedFilePaths = selectedEntries
     ? selectedEntries
         .filter(fsEntry => fsEntry.isFile)
         .map(fsentry => fsentry.path)
-    : [];
+    : [];*/
   const sortedDirectories = sortedDirContent.current.filter(
     entry => !entry.isFile
   );
@@ -902,7 +902,7 @@ function GridPerspective(props: Props) {
         <MoveCopyFilesDialog
           open={isMoveCopyFilesDialogOpened}
           onClose={() => setIsMoveCopyFilesDialogOpened(false)}
-          selectedFiles={selectedFilePaths}
+          // selectedFiles={selectedFilePaths}
         />
       )}
       {Boolean(fileContextMenuAnchorEl) && (
