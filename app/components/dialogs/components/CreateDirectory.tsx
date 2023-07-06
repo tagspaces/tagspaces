@@ -34,6 +34,7 @@ import PlatformIO from '-/services/platform-facade';
 import Tooltip from '-/components/Tooltip';
 import TextField from '@mui/material/TextField';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
+import Typography from '@mui/material/Typography';
 
 const styles: any = () => ({
   createButton: {
@@ -66,6 +67,7 @@ interface Props {
     notificationType?: string,
     autohide?: boolean
   ) => void;
+  toggleLocationDialog: () => void;
 }
 
 function CreateDirectory(props: Props) {
@@ -73,7 +75,8 @@ function CreateDirectory(props: Props) {
     classes,
     onClose,
     showNotification,
-    toggleCreateDirectoryDialog
+    toggleCreateDirectoryDialog,
+    toggleLocationDialog
   } = props;
 
   const { targetDirectoryPath } = useTargetPathContext();
@@ -186,6 +189,23 @@ function CreateDirectory(props: Props) {
 
   return (
     <>
+      <Grid style={{ marginTop: 20 }} item xs={12}>
+        <Button
+          variant="outlined"
+          onClick={() => {
+            onClose();
+            toggleLocationDialog();
+          }}
+          className={classes.createButton}
+          data-tid="createLocationButton"
+        >
+          <Tooltip title={i18n.t('createLocationTitle')}>
+            <Typography variant="button" display="block" gutterBottom>
+              {i18n.t('core:createLocation')}
+            </Typography>
+          </Tooltip>
+        </Button>
+      </Grid>
       <Grid item xs={12}>
         <Button
           variant="outlined"
@@ -270,7 +290,8 @@ function mapActionCreatorsToProps(dispatch) {
       onUploadProgress: AppActions.onUploadProgress,
       toggleUploadDialog: AppActions.toggleUploadDialog,
       resetProgress: AppActions.resetProgress,
-      setProgress: AppActions.setProgress
+      setProgress: AppActions.setProgress,
+      toggleLocationDialog: AppActions.toggleLocationDialog
     },
     dispatch
   );

@@ -33,14 +33,13 @@ import {
   getSelectedEntries,
   getCurrentDirectoryPerspective
 } from '-/reducers/app';
-import { getFirstRWLocation, getCurrentLocation } from '-/reducers/locations';
+import { getFirstRWLocation } from '-/reducers/locations';
 import { TS } from '-/tagspaces.namespace';
 import Tooltip from '-/components/Tooltip';
 import TextField from '@mui/material/TextField';
 import FormHelperText from '@mui/material/FormHelperText';
 import { FormControl } from '@mui/material';
 import { fileNameValidation } from '-/services/utils-io';
-import { PerspectiveIDs } from '-/perspectives';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
 
 const styles: any = () => ({
@@ -58,7 +57,6 @@ interface Props {
   currentDirectoryPath: string | null;
   currentDirectoryPerspective: string;
   openLocation: (location: TS.Location) => void;
-  toggleLocationDialog: () => void;
   createFileAdvanced: (
     targetPath: string,
     fileName: string,
@@ -75,10 +73,7 @@ function CreateFile(props: Props) {
     createFileAdvanced,
     openLocation,
     currentDirectoryPath,
-    currentDirectoryPerspective,
-    selectedEntries,
-    firstRWLocation,
-    toggleLocationDialog
+    firstRWLocation
   } = props;
 
   const { targetDirectoryPath } = useTargetPathContext();
@@ -257,23 +252,6 @@ function CreateFile(props: Props) {
           </Button>
         </ButtonGroup>
       </Grid>
-      <Grid style={{ marginTop: 20 }} item xs={12}>
-        <Button
-          variant="outlined"
-          onClick={() => {
-            onClose();
-            toggleLocationDialog();
-          }}
-          className={classes.createButton}
-          data-tid="createLocationButton"
-        >
-          <Tooltip title={i18n.t('createLocationTitle')}>
-            <Typography variant="button" display="block" gutterBottom>
-              {i18n.t('core:createLocation')}
-            </Typography>
-          </Tooltip>
-        </Button>
-      </Grid>
     </Grid>
   );
 }
@@ -292,8 +270,7 @@ function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
       openLocation: AppActions.openLocation,
-      createFileAdvanced: AppActions.createFileAdvanced,
-      toggleLocationDialog: AppActions.toggleLocationDialog
+      createFileAdvanced: AppActions.createFileAdvanced
     },
     dispatch
   );

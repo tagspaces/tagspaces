@@ -58,7 +58,7 @@ function NewFileDialog(props: Props) {
         <DialogContent
           style={{
             minWidth: 200,
-            minHeight: 300,
+            minHeight: 200,
             marginBottom: 20,
             overflow: 'overlay'
           }}
