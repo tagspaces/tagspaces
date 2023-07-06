@@ -177,8 +177,7 @@ export default merge(baseConfig, {
       // Common Image Formats
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
-        use: 'url-loader',
-        type: 'javascript/auto'
+        type: 'asset/resource'
       }
     ]
   },
