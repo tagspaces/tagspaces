@@ -1007,7 +1007,7 @@ export default (state: any = initialState, action: any) => {
         helpFeedbackPanelOpened: true
       };
     }
-    case types.CLOSE_ALLVERTICAL_PANELS: {
+    /*case types.CLOSE_ALLVERTICAL_PANELS: {
       return {
         ...state,
         locationManagerPanelOpened: false,
@@ -1015,7 +1015,7 @@ export default (state: any = initialState, action: any) => {
         searchPanelOpened: false,
         helpFeedbackPanelOpened: false
       };
-    }
+    }*/
     case types.ADD_EXTENSIONS: {
       const extensions = mergeByProp(
         state.extensions,
@@ -1300,7 +1300,7 @@ export const actions = {
   openTagLibraryPanel: () => ({ type: types.OPEN_TAGLIBRARY_PANEL }),
   openSearchPanel: () => ({ type: types.OPEN_SEARCH_PANEL }),
   openHelpFeedbackPanel: () => ({ type: types.OPEN_HELPFEEDBACK_PANEL }),
-  closeAllVerticalPanels: () => ({ type: types.CLOSE_ALLVERTICAL_PANELS }),
+  //closeAllVerticalPanels: () => ({ type: types.CLOSE_ALLVERTICAL_PANELS }),
   setIsLoading: (isLoading: boolean) => ({
     type: types.SET_ISLOADING,
     isLoading
