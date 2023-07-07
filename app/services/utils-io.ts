@@ -700,7 +700,7 @@ export function renameFilesPromise(
 }*/
 
 function trackProgress(promises, abortSignal, progress) {
-  const total = promises.length;
+  // const total = promises.length;
   let completed = 0;
   let aborted = false;
 
@@ -717,8 +717,8 @@ function trackProgress(promises, abortSignal, progress) {
         }
       })
       .catch(err => {
-        console.warn('Promise ' + path + ' error:', err);
         completed++;
+        console.warn('Promise ' + path + ' error:', err);
       })
   );
 
