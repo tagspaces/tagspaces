@@ -101,6 +101,7 @@ interface Props {
   setLastBackgroundImageChange: (path: string, dt: number) => void;
   reorderTop?: () => void;
   reorderBottom?: () => void;
+  onDuplicateFile?: (fileDirPath: string) => void;
   exitSearchMode: () => void;
   prefixTagContainer: string;
 }
@@ -247,11 +248,15 @@ function FileMenu(props: Props) {
 
       PlatformIO.copyFilePromise(selectedFilePath, newFilePath)
         .then(() => {
-          props.loadDirectoryContent(dirPath, true, true);
+          if (props.onDuplicateFile) {
+            props.onDuplicateFile(dirPath);
+          } else {
+            props.loadDirectoryContent(dirPath, true, true);
+          }
           return true;
         })
         .catch(error => {
-          showNotification('Error creating duplicate: ' + error.message);
+          showNotification('Error creating duplicate: ', error);
         });
     }
   }
