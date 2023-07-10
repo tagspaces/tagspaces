@@ -19,6 +19,7 @@
 import React from 'react';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import ShareIcon from '@mui/icons-material/Share';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Divider from '@mui/material/Divider';
@@ -79,6 +80,7 @@ interface Props {
   openDeleteFileDialog: () => void;
   openRenameFileDialog: () => void;
   openMoveCopyFilesDialog: () => void;
+  openShareFilesDialog?: () => void;
   openAddRemoveTagsDialog: () => void;
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   loadDirectoryContent: (
@@ -157,6 +159,11 @@ function FileMenu(props: Props) {
   function showMoveCopyFilesDialog() {
     onClose();
     props.openMoveCopyFilesDialog();
+  }
+
+  function showShareFilesDialog() {
+    onClose();
+    props.openShareFilesDialog();
   }
 
   function setFolderThumbnail() {
@@ -463,6 +470,20 @@ function FileMenu(props: Props) {
       );
     }
 
+    if (Pro && props.openShareFilesDialog) {
+      menuItems.push(
+        <MenuItem
+          key="fileMenuShareFile"
+          data-tid="fileMenuMoveCopyFile"
+          onClick={showShareFilesDialog}
+        >
+          <ListItemIcon>
+            <ShareIcon />
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:shareFile')} />
+        </MenuItem>
+      );
+    }
     menuItems.push(
       <MenuItem
         key="fileMenuMoveCopyFile"

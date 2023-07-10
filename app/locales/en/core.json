@@ -792,5 +792,7 @@
   "confirmtsLastOpenedFoldersHistoryDeletion": "Are you sure you want to clear the list of your recently opened folders?",
   "confirmtsLastOpenedFilesHistoryDeletion": "Are you sure you want to clear the list of your recently opened files?",
   "searchHasTheWords": "Has the words",
+  "saveAsHtml": "Save as HTML",
+  "linkValidityDuration": "Download link valid {{linkValidityDistance}}",
   "-": "-"
 }

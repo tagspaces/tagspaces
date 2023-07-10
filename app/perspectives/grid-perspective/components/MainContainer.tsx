@@ -146,6 +146,8 @@ function GridPerspective(props: Props) {
     props.directoryMeta.perspectiveSettings[PerspectiveIDs.GRID];
   const settings = getSettings(props.directoryMeta);
 
+  const ShareFilesDialog = Pro && Pro.UI ? Pro.UI.ShareFilesDialog : false;
+
   const [mouseX, setMouseX] = useState<number>(undefined);
   const [mouseY, setMouseY] = useState<number>(undefined);
   // const selectedEntry = useRef<FileSystemEntry>(undefined);
@@ -236,6 +238,9 @@ function GridPerspective(props: Props) {
     isMoveCopyFilesDialogOpened,
     setIsMoveCopyFilesDialogOpened
   ] = useState<boolean>(false);
+  const [isShareFilesDialogOpened, setIsShareFilesDialogOpened] = useState<
+    boolean
+  >(false);
   const [
     isAddRemoveTagsDialogOpened,
     setIsAddRemoveTagsDialogOpened
@@ -612,6 +617,10 @@ function GridPerspective(props: Props) {
     setIsMoveCopyFilesDialogOpened(true);
   };
 
+  const openShareFilesDialog = () => {
+    setIsShareFilesDialogOpened(true);
+  };
+
   const openDeleteFileDialog = () => {
     props.toggleDeleteMultipleEntriesDialog();
   };
@@ -911,6 +920,12 @@ function GridPerspective(props: Props) {
           onClose={() => setIsMoveCopyFilesDialogOpened(false)}
         />
       )}
+      {isShareFilesDialogOpened && (
+        <ShareFilesDialog
+          open={isShareFilesDialogOpened}
+          onClose={() => setIsShareFilesDialogOpened(false)}
+        />
+      )}
       {Boolean(fileContextMenuAnchorEl) && (
         <FileMenu
           anchorEl={fileContextMenuAnchorEl}
@@ -921,6 +936,11 @@ function GridPerspective(props: Props) {
           openDeleteFileDialog={openDeleteFileDialog}
           openRenameFileDialog={props.openRenameEntryDialog}
           openMoveCopyFilesDialog={openMoveCopyFilesDialog}
+          openShareFilesDialog={
+            PlatformIO.haveObjectStoreSupport()
+              ? openShareFilesDialog
+              : undefined
+          }
           openAddRemoveTagsDialog={openAddRemoveTagsDialog}
           openFsEntry={props.openFsEntry}
           openFileNatively={props.openFileNatively}
