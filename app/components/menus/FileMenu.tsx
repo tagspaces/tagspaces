@@ -480,7 +480,7 @@ function FileMenu(props: Props) {
           <ListItemIcon>
             <ShareIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:shareFile')} />
+          <ListItemText primary={i18n.t('core:shareFiles')} />
         </MenuItem>
       );
     }

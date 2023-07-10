@@ -793,6 +793,12 @@
   "confirmtsLastOpenedFilesHistoryDeletion": "Are you sure you want to clear the list of your recently opened files?",
   "searchHasTheWords": "Has the words",
   "saveAsHtml": "Save as HTML",
-  "linkValidityDuration": "Download link valid {{linkValidityDistance}}",
+  "linkValidityDuration": "Download links are valid for {{linkValidityDistance}}",
+  "shareFiles": "Share Files",
+  "shareFile": "Share File",
+  "downloadSharedFile": "Download {{fileName}}",
+  "copyToClipboard": "Copy to clipboard",
+  "generatedHTMLCopied": "Generated HTML copied to clipboard",
+  "generatedHTMLFailed": "Error while copying generated HTML to clipboard",
   "-": "-"
 }
