@@ -151,7 +151,8 @@ function SettingsDialog(props: Props) {
   const renderActions = () => (
     <DialogActions
       style={{
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        padding: fullScreen ? '10px 30px 30px 30px' : undefined
       }}
     >
       <Button

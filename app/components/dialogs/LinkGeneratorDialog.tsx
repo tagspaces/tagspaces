@@ -18,6 +18,7 @@
 
 import React, { ChangeEvent, useRef, useReducer, useEffect } from 'react';
 import { Theme } from '@mui/material/styles';
+import { useDispatch } from 'react-redux';
 import withStyles from '@mui/styles/withStyles';
 import createStyles from '@mui/styles/createStyles';
 import Button from '@mui/material/Button';
@@ -35,15 +36,16 @@ import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import PlatformIO from '-/services/platform-facade';
+import { actions } from '-/reducers/app';
 
 interface Props {
   open: boolean;
   onClose: () => void;
   path: string;
-  showNotification: (message: string) => void;
-  locationId: string;
-  switchLocationType: (locationId: string) => Promise<string | null>;
-  switchCurrentLocationType: (currentLocationId: string) => Promise<boolean>;
+  // showNotification: (message: string) => void;
+  locationId?: string;
+  switchLocationType?: (locationId: string) => Promise<string | null>;
+  switchCurrentLocationType?: (currentLocationId: string) => Promise<boolean>;
 }
 
 const QRTextField = withStyles((theme: Theme) =>
@@ -58,7 +60,8 @@ const QRTextField = withStyles((theme: Theme) =>
 )(TextField);
 
 function LinkGeneratorDialog(props: Props) {
-  const { open, onClose, path, showNotification } = props;
+  const { open, onClose, path } = props;
+  const dispatch = useDispatch();
   const linkValidityDuration = useRef<number>(60 * 15);
   const signedLink = useRef<string>(undefined);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
@@ -70,14 +73,22 @@ function LinkGeneratorDialog(props: Props) {
   }, []);
 
   function setSignedLink() {
-    props.switchLocationType(props.locationId).then(currentLocationId => {
+    if (props.switchLocationType) {
+      props.switchLocationType(props.locationId).then(currentLocationId => {
+        signedLink.current = PlatformIO.getURLforPath(
+          path,
+          linkValidityDuration.current
+        );
+        forceUpdate();
+        props.switchCurrentLocationType(currentLocationId);
+      });
+    } else {
       signedLink.current = PlatformIO.getURLforPath(
         path,
         linkValidityDuration.current
       );
       forceUpdate();
-      props.switchCurrentLocationType(currentLocationId);
-    });
+    }
   }
 
   return (
@@ -129,7 +140,9 @@ function LinkGeneratorDialog(props: Props) {
                     navigator.clipboard
                       .writeText(signedLink.current)
                       .then(() => {
-                        showNotification(i18n.t('core:linkCopied'));
+                        dispatch(
+                          actions.showNotification(i18n.t('core:linkCopied'))
+                        );
                       });
                   }}
                   color="primary"
