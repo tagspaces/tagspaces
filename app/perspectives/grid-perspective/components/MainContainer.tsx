@@ -923,7 +923,7 @@ function GridPerspective(props: Props) {
           onClose={() => setIsMoveCopyFilesDialogOpened(false)}
         />
       )}
-      {isShareFilesDialogOpened && (
+      {isShareFilesDialogOpened && Pro && (
         <ShareFilesDialog
           open={isShareFilesDialogOpened}
           onClose={() => setIsShareFilesDialogOpened(false)}
