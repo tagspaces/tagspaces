@@ -1611,7 +1611,6 @@ function SearchAutocomplete(props: Props) {
                       data-tid={dataTidFormat('menu' + option)}
                       size="small"
                       style={{
-                        color: 'black',
                         backgroundColor: 'transparent',
                         padding: 0
                       }}
