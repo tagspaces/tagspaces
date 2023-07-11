@@ -801,6 +801,9 @@ function GridPerspective(props: Props) {
         handleExportCsvMenu={handleExportCsvMenu}
         openSettings={openSettings}
         directoryPath={currentDirectoryPath}
+        openShareFilesDialog={
+          PlatformIO.haveObjectStoreSupport() ? openShareFilesDialog : undefined
+        }
       />
       <GlobalHotKeys
         keyMap={keyMap}

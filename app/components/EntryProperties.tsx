@@ -1418,7 +1418,7 @@ function EntryProperties(props: Props) {
           open={showSharingLinkDialog}
           onClose={() => setShowSharingLinkDialog(false)}
           path={currentEntry.current.path}
-          showNotification={props.showNotification}
+          // showNotification={props.showNotification}
           locationId={currentEntry.current.locationId}
           switchCurrentLocationType={props.switchCurrentLocationType}
           switchLocationType={props.switchLocationType}

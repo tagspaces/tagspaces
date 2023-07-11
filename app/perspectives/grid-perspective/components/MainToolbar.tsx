@@ -22,6 +22,7 @@ import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import SortingIcon from '@mui/icons-material/SwapVerticalCircle';
 import TagIcon from '@mui/icons-material/LocalOffer';
+import ShareIcon from '@mui/icons-material/Share';
 import { SelectedIcon, UnSelectedIcon } from '-/components/CommonIcons';
 import CopyIcon from '@mui/icons-material/FileCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -66,6 +67,7 @@ interface Props {
   searchQuery: TS.SearchQuery;
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   openCurrentDirectory: () => void;
+  openShareFilesDialog?: () => void;
   directoryPath: string;
   keyBindings: Array<any>;
 }
@@ -87,7 +89,8 @@ function MainToolbar(props: Props) {
     fileOperationsEnabled,
     handleSortingMenu,
     openSettings,
-    keyBindings
+    keyBindings,
+    openShareFilesDialog
   } = props;
 
   function showProperties() {
@@ -219,6 +222,21 @@ function MainToolbar(props: Props) {
               size="large"
             >
               <DeleteIcon />
+            </IconButton>
+          </span>
+        </Tooltip>
+      )}
+      {openShareFilesDialog && (
+        <Tooltip title={i18n.t('core:shareFileDialog')}>
+          <span>
+            <IconButton
+              aria-label={i18n.t('core:shareFileDialog')}
+              data-tid={prefixDataTID + 'PerspectiveShareFiles'}
+              onClick={openShareFilesDialog}
+              disabled={selectedEntries.length < 1}
+              size="large"
+            >
+              <ShareIcon />
             </IconButton>
           </span>
         </Tooltip>
