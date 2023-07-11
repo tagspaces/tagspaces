@@ -248,6 +248,7 @@
   "searchArchives": "Archive",
   "searchBookmarks": "Lesezeichen",
   "searchEbooks": "eBooks",
+  "searchEmails": "Emails",
   "searchFolders": "Ordner",
   "searchFiles": "Dateien",
   "searchUntaggedEntries": "Dateien oder Ordner ohne Schlagworte",
@@ -791,5 +792,14 @@
   "confirmtsLastOpenedFoldersHistoryDeletion": "Wollen Sie die List der neulich geöffneten Verzeichnissen löschen?",
   "confirmtsLastOpenedFilesHistoryDeletion": "Wollen Sie die Liste der neulich zugegriffenen Dateien löschen?",
   "searchHasTheWords": "Enthält die Wörter",
+  "saveAsHtml": "Als HTML speichern",
+  "linkValidityDuration": "Links sind bis {{linkValidityDistance}} gültig",
+  "shareFiles": "Dateien teilen",
+  "shareFile": "Datei teilen",
+  "saveShare": "Speichern & Teilen",
+  "downloadSharedFile": "Herunterladen {{fileName}}",
+  "copyToClipboard": "In Zwischenspeicher kopieren",
+  "generatedHTMLCopied": "Link sind in Zwischenspeichert kopiert",
+  "generatedHTMLFailed": "Fehler beim Kopieren in Zwischenspeicher",
   "-": "-"
 }

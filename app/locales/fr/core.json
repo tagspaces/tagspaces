@@ -248,6 +248,7 @@
   "searchArchives": "Archives",
   "searchBookmarks": "Marques pages",
   "searchEbooks": "eBooks",
+  "searchEmails": "Emails",
   "searchFolders": "Dossiers",
   "searchFiles": "Fichiers",
   "searchUntaggedEntries": "Fichiers ou répertoires sans étiquettes",
@@ -791,5 +792,14 @@
   "confirmtsLastOpenedFoldersHistoryDeletion": "Are you sure you want to clear the list of your recently opened folders?",
   "confirmtsLastOpenedFilesHistoryDeletion": "Are you sure you want to clear the list of your recently opened files?",
   "searchHasTheWords": "Has the words",
+  "saveAsHtml": "Save as HTML",
+  "linkValidityDuration": "Download links are valid until {{linkValidityDistance}}",
+  "shareFiles": "Share Files",
+  "shareFile": "Share File",
+  "saveShare": "Save & Share",
+  "downloadSharedFile": "Download {{fileName}}",
+  "copyToClipboard": "Copy to clipboard",
+  "generatedHTMLCopied": "Download links copied to clipboard",
+  "generatedHTMLFailed": "Error while copying to clipboard",
   "-": "-"
 }
