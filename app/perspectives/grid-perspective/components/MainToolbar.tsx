@@ -37,6 +37,7 @@ import { bindActionCreators } from 'redux';
 import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
+import { ProTooltip } from '-/components/HelperComponents';
 import {
   actions as LocationIndexActions,
   getSearchQuery
@@ -227,7 +228,7 @@ function MainToolbar(props: Props) {
         </Tooltip>
       )}
       {openShareFilesDialog && (
-        <Tooltip title={i18n.t('core:shareFileDialog')}>
+        <ProTooltip title={i18n.t('core:shareFileDialog')}>
           <span>
             <IconButton
               aria-label={i18n.t('core:shareFileDialog')}
@@ -239,7 +240,7 @@ function MainToolbar(props: Props) {
               <ShareIcon />
             </IconButton>
           </span>
-        </Tooltip>
+        </ProTooltip>
       )}
       <Tooltip title={i18n.t('core:sort')}>
         <IconButton
