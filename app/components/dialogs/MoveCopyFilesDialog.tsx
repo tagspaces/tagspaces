@@ -316,27 +316,21 @@ function MoveCopyFilesDialog(props: Props) {
           {i18n.t('core:cancel')}
         </Button>
         <Tooltip
-          title={i18n.t(
-            AppConfig.isAndroid
-              ? 'core:platformImplMissing'
-              : 'core:moveEntriesButton'
-          )}
+          title={i18n.t(AppConfig.isAndroid ? 'core:platformImplMissing' : '')}
         >
-          <span>
-            <Button
-              data-tid="confirmMoveFiles"
-              disabled={
-                !targetPath ||
-                AppConfig.isAndroid ||
-                targetPath === props.currentDirectoryPath
-              }
-              onClick={() => handleCopyMove(false)}
-              color="primary"
-              variant="contained"
-            >
-              {i18n.t('core:moveEntriesButton')}
-            </Button>
-          </span>
+          <Button
+            data-tid="confirmMoveFiles"
+            disabled={
+              !targetPath ||
+              AppConfig.isAndroid ||
+              targetPath === props.currentDirectoryPath
+            }
+            onClick={() => handleCopyMove(false)}
+            color="primary"
+            variant="contained"
+          >
+            {i18n.t('core:moveEntriesButton')}
+          </Button>
         </Tooltip>
         <ConfirmDialog
           open={entriesExistPath !== undefined}

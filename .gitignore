@@ -121,3 +121,5 @@ playwright-report/*
 /app/**main.prod.js**
 
 deploy.sh
+
+docker/*.zip
