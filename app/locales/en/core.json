@@ -796,10 +796,10 @@
   "linkValidityDuration": "Download links are valid until {{linkValidityDistance}}",
   "shareFiles": "Share Files",
   "shareFile": "Share File",
-  "saveShare": "Save Share",
+  "saveShare": "Save & Share",
   "downloadSharedFile": "Download {{fileName}}",
   "copyToClipboard": "Copy to clipboard",
-  "generatedHTMLCopied": "Generated HTML copied to clipboard",
-  "generatedHTMLFailed": "Error while copying generated HTML to clipboard",
+  "generatedHTMLCopied": "Download links copied to clipboard",
+  "generatedHTMLFailed": "Error while copying to clipboard",
   "-": "-"
 }
