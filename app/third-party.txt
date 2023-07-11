@@ -2687,8 +2687,8 @@ The following NPM packages may be included in this product:
 
  - @babel/code-frame@7.22.5
  - @babel/compat-data@7.22.6
- - @babel/core@7.22.6
- - @babel/generator@7.22.5
+ - @babel/core@7.22.8
+ - @babel/generator@7.22.7
  - @babel/helper-annotate-as-pure@7.22.5
  - @babel/helper-builder-binary-assignment-operator-visitor@7.22.5
  - @babel/helper-compilation-targets@7.22.6
@@ -2748,7 +2748,7 @@ The following NPM packages may be included in this product:
  - @babel/plugin-syntax-typescript@7.22.5
  - @babel/plugin-syntax-unicode-sets-regex@7.18.6
  - @babel/plugin-transform-arrow-functions@7.22.5
- - @babel/plugin-transform-async-generator-functions@7.22.5
+ - @babel/plugin-transform-async-generator-functions@7.22.7
  - @babel/plugin-transform-async-to-generator@7.22.5
  - @babel/plugin-transform-block-scoped-functions@7.22.5
  - @babel/plugin-transform-block-scoping@7.22.5
@@ -2791,7 +2791,7 @@ The following NPM packages may be included in this product:
  - @babel/plugin-transform-react-jsx@7.22.5
  - @babel/plugin-transform-regenerator@7.22.5
  - @babel/plugin-transform-reserved-words@7.22.5
- - @babel/plugin-transform-runtime@7.22.6
+ - @babel/plugin-transform-runtime@7.22.7
  - @babel/plugin-transform-shorthand-properties@7.22.5
  - @babel/plugin-transform-spread@7.22.5
  - @babel/plugin-transform-sticky-regex@7.22.5
@@ -2802,13 +2802,13 @@ The following NPM packages may be included in this product:
  - @babel/plugin-transform-unicode-property-regex@7.22.5
  - @babel/plugin-transform-unicode-regex@7.22.5
  - @babel/plugin-transform-unicode-sets-regex@7.22.5
- - @babel/preset-env@7.22.6
+ - @babel/preset-env@7.22.7
  - @babel/preset-flow@7.22.5
  - @babel/preset-typescript@7.22.5
  - @babel/register@7.22.5
  - @babel/runtime@7.22.6
  - @babel/template@7.22.5
- - @babel/traverse@7.22.6
+ - @babel/traverse@7.22.8
  - @babel/types@7.22.5
 
 These packages each contain the following license and notice below:
@@ -2840,10 +2840,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following NPM packages may be included in this product:
 
- - @babel/helper-define-polyfill-provider@0.4.0
- - babel-plugin-polyfill-corejs2@0.4.3
- - babel-plugin-polyfill-corejs3@0.8.1
- - babel-plugin-polyfill-regenerator@0.5.0
+ - @babel/helper-define-polyfill-provider@0.4.1
+ - babel-plugin-polyfill-corejs2@0.4.4
+ - babel-plugin-polyfill-corejs3@0.8.2
+ - babel-plugin-polyfill-regenerator@0.5.1
 
 These packages each contain the following license and notice below:
 
@@ -2874,7 +2874,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - @babel/parser@7.22.6
+ - @babel/parser@7.22.7
 
 This package contains the following license and notice below:
 
@@ -3034,7 +3034,7 @@ The following NPM packages may be included in this product:
  - @codemirror/lint@6.4.0
  - @codemirror/search@6.5.0
  - @codemirror/state@6.2.1
- - @codemirror/view@6.14.0
+ - @codemirror/view@6.14.1
 
 These packages each contain the following license and notice below:
 
@@ -5693,20 +5693,20 @@ This package contains the following license and notice below:
 
 The following NPM packages may be included in this product:
 
- - @jest/create-cache-key-function@29.5.0
- - @jest/environment@29.5.0
- - @jest/fake-timers@29.5.0
- - @jest/schemas@29.4.3
- - @jest/types@29.5.0
+ - @jest/create-cache-key-function@29.6.0
+ - @jest/environment@29.6.0
+ - @jest/fake-timers@29.6.0
+ - @jest/schemas@29.6.0
+ - @jest/types@29.6.0
  - hermes-estree@0.8.0
  - hermes-parser@0.8.0
- - jest-environment-node@29.5.0
+ - jest-environment-node@29.6.0
  - jest-get-type@29.4.3
- - jest-message-util@29.5.0
- - jest-mock@29.5.0
- - jest-util@29.5.0
- - jest-validate@29.5.0
- - pretty-format@29.5.0
+ - jest-message-util@29.6.0
+ - jest-mock@29.6.0
+ - jest-util@29.6.0
+ - jest-validate@29.6.0
+ - pretty-format@29.6.0
  - react-native@0.72.1
  - scheduler@0.24.0-canary-efb381bbf-20230505
 
@@ -6020,15 +6020,14 @@ SOFTWARE.
 
 The following NPM packages may be included in this product:
 
- - @mui/base@5.0.0-alpha.107
  - @mui/base@5.0.0-beta.6
  - @mui/core-downloads-tracker@5.13.7
  - @mui/icons-material@5.13.7
  - @mui/lab@5.0.0-alpha.135
- - @mui/material@5.10.15
+ - @mui/material@5.13.7
  - @mui/private-theming@5.13.7
  - @mui/styled-engine@5.13.2
- - @mui/styles@5.10.15
+ - @mui/styles@5.13.7
  - @mui/system@5.13.7
  - @mui/types@7.2.4
  - @mui/utils@5.13.7
@@ -6445,7 +6444,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 The following NPM package may be included in this product:
 
- - @sinclair/typebox@0.25.24
+ - @sinclair/typebox@0.27.8
 
 This package contains the following license and notice below:
 
@@ -6627,7 +6626,7 @@ The following NPM packages may be included in this product:
  - @types/mdast@3.0.11
  - @types/mermaid@9.2.0
  - @types/node-emoji@1.8.2
- - @types/node@20.3.3
+ - @types/node@20.4.0
  - @types/prismjs@1.26.0
  - @types/prop-types@15.7.5
  - @types/react-dom@17.0.20
@@ -6735,7 +6734,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - acorn@8.9.0
+ - acorn@8.10.0
 
 This package contains the following license and notice below:
 
@@ -7659,7 +7658,7 @@ Apache License
 
 The following NPM package may be included in this product:
 
- - aws-sdk@2.1410.0
+ - aws-sdk@2.1411.0
 
 This package contains the following license and notice below:
 
@@ -9838,7 +9837,7 @@ limitations under the License.
 
 The following NPM package may be included in this product:
 
- - core-js-compat@3.31.0
+ - core-js-compat@3.31.1
 
 This package contains the following license and notice below:
 
@@ -11850,7 +11849,7 @@ THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - electron-to-chromium@1.4.449
+ - electron-to-chromium@1.4.451
 
 This package contains the following license and notice below:
 
