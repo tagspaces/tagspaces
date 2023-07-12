@@ -37,6 +37,7 @@ import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import PlatformIO from '-/services/platform-facade';
 import { actions } from '-/reducers/app';
+import Links from '-/content/links';
 
 interface Props {
   open: boolean;
@@ -189,8 +190,20 @@ function LinkGeneratorDialog(props: Props) {
         />
       </DialogContent>
       <DialogActions
-        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
+        style={{
+          justifyContent: 'space-between',
+          padding: fullScreen ? '10px 30px 30px 30px' : undefined
+        }}
       >
+        <Button
+          variant="text"
+          data-tid="helpSearchButtonTID"
+          onClick={() => {
+            PlatformIO.openUrl(Links.documentationLinks.sharing);
+          }}
+        >
+          {i18n.t('help')}
+        </Button>
         <Button
           data-tid="closeLinkTID"
           onClick={onClose}
