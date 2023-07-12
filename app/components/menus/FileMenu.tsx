@@ -474,7 +474,7 @@ function FileMenu(props: Props) {
       menuItems.push(
         <MenuItem
           key="fileMenuShareFile"
-          data-tid="fileMenuMoveCopyFile"
+          data-tid="fileMenuShareFile"
           onClick={showShareFilesDialog}
         >
           <ListItemIcon>
