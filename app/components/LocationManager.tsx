@@ -19,6 +19,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import withStyles from '@mui/styles/withStyles';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { List } from '@mui/material';
@@ -26,7 +27,11 @@ import AppConfig from '-/AppConfig';
 import styles from '-/components/SidePanels.css';
 import LocationManagerMenu from '-/components/menus/LocationManagerMenu';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import { actions as LocationActions, getLocations } from '-/reducers/locations';
+import {
+  actions as LocationActions,
+  getLocations,
+  LocationsDispatch
+} from '-/reducers/locations';
 import { actions as AppActions, isLoading } from '-/reducers/app';
 import {
   getCurrentLanguage,
@@ -60,11 +65,11 @@ interface Props {
   hideDrawer?: () => void;
   openURLExternally: (path: string) => void;
   toggleOpenLinkDialog: () => void;
-  setDefaultLocations: () => void;
-  addLocations: (locations: Array<TS.Location>) => void;
-  editLocation: () => void;
-  removeLocation: (location: TS.Location) => void;
-  moveLocation: (uuid: string, position: number) => void;
+  //setDefaultLocations: () => void;
+  //addLocations: (locations: Array<TS.Location>) => void;
+  //editLocation: () => void;
+  //removeLocation: (location: TS.Location) => void;
+  //moveLocation: (uuid: string, position: number) => void;
   isDesktop: boolean;
   isPersistTagsInSidecar: boolean;
   reduceHeightBy: number;
@@ -81,6 +86,7 @@ type SubFolder = {
 };
 
 function LocationManager(props: Props) {
+  const dispatch: LocationsDispatch = useDispatch();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedLocation, setSelectedLocation] = useState<TS.Location>(null);
   const [isEditLocationDialogOpened, setEditLocationDialogOpened] = useState<
@@ -105,9 +111,9 @@ function LocationManager(props: Props) {
   useEffect(() => {
     if (props.locations.length < 1) {
       // init locations
-      props.setDefaultLocations();
+      dispatch(LocationActions.setDefaultLocations());
     }
-  }, []); // props.locations]);
+  }, []); // props.locatons]);
 
   function handleFileInputChange(selection: any) {
     const target = selection.currentTarget;
@@ -122,7 +128,7 @@ function LocationManager(props: Props) {
       return;
     }
 
-    props.moveLocation(result.draggableId, result.destination.index);
+    dispatch(LocationActions.moveLocation(result.draggableId, result.destination.index));
   };
 
   const { classes, reduceHeightBy, isLoading, show } = props;
@@ -243,7 +249,7 @@ function LocationManager(props: Props) {
           open={isEditLocationDialogOpened}
           onClose={() => setEditLocationDialogOpened(false)}
           location={selectedLocation}
-          editLocation={props.editLocation}
+          editLocation={(location) => dispatch(LocationActions.editLocation(location))}
           isPersistTagsInSidecar={props.isPersistTagsInSidecar}
         />
       )}
@@ -257,7 +263,7 @@ function LocationManager(props: Props) {
           })}
           confirmCallback={result => {
             if (result && selectedLocation) {
-              props.removeLocation(selectedLocation);
+              dispatch(LocationActions.removeLocation(selectedLocation));
             }
           }}
           cancelDialogTID="cancelDeleteLocationDialog"
@@ -278,7 +284,9 @@ function LocationManager(props: Props) {
           open={Boolean(importFile)}
           onClose={() => setImportFile(undefined)}
           importFile={importFile}
-          addLocations={props.addLocations}
+          addLocations={locations =>
+            dispatch(LocationActions.addLocations(locations))
+          }
           locations={props.locations}
         />
       )}
@@ -299,11 +307,11 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      setDefaultLocations: LocationActions.setDefaultLocations,
-      addLocations: LocationActions.addLocations,
-      editLocation: LocationActions.editLocation,
-      removeLocation: LocationActions.removeLocation,
-      moveLocation: LocationActions.moveLocation,
+      //setDefaultLocations: LocationActions.setDefaultLocations,
+      //addLocations: LocationActions.addLocations,
+      //editLocation: LocationActions.editLocation,
+      //removeLocation: LocationActions.removeLocation,
+      //moveLocation: LocationActions.moveLocation,
       toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
       openURLExternally: AppActions.openURLExternally,
       toggleLocationDialog: AppActions.toggleLocationDialog
