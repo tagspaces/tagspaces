@@ -510,15 +510,13 @@ function GridPagination(props: Props) {
                     color: theme.palette.text.primary
                   }}
                 >
-                  {(directories.length > 0 || pageFiles.length > 0) && (
-                    <Typography
-                      style={{
-                        fontSize: '0.9rem'
-                      }}
-                    >
-                      {folderSummary}
-                    </Typography>
-                  )}
+                  <Typography
+                    style={{
+                      fontSize: '0.9rem'
+                    }}
+                  >
+                    {folderSummary}
+                  </Typography>
                   {!showDescription && descriptionPreview && (
                     <Tooltip title={i18n.t('core:filePropertiesDescription')}>
                       <Typography
