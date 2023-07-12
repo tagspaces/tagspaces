@@ -37,6 +37,7 @@ import Links from '-/content/links';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import useTheme from '@mui/styles/useTheme';
 import AppConfig from '-/AppConfig';
+import { Fullscreen } from '@mui/icons-material';
 
 interface Props {
   open: boolean;
@@ -222,7 +223,9 @@ function AboutDialog(props: Props) {
           </Button>
         </Typography>
       </DialogContent>
-      <DialogActions>
+      <DialogActions
+        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
+      >
         {!Pro && (
           <Button
             data-tid="checkForUpdates"
@@ -231,6 +234,7 @@ function AboutDialog(props: Props) {
               props.openURLExternally(Links.links.productsOverview, true);
             }}
             color="primary"
+            // variant="outlined"
           >
             Upgrade to PRO
           </Button>
@@ -239,6 +243,7 @@ function AboutDialog(props: Props) {
           data-tid="checkForUpdates"
           title={i18n.t('core:checkForNewVersion')}
           onClick={checkForUpdates}
+          // variant="outlined"
           color="primary"
         >
           {versionInfo}
@@ -255,7 +260,12 @@ function AboutDialog(props: Props) {
       >
         {i18n.t('core:thirdPartyLibs')}
       </Button> */}
-        <Button data-tid="closeAboutDialog" onClick={onClose} color="primary">
+        <Button
+          data-tid="closeAboutDialog"
+          onClick={onClose}
+          variant="contained"
+          color="primary"
+        >
           {i18n.t('core:ok')}
         </Button>
       </DialogActions>

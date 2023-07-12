@@ -75,7 +75,7 @@ interface Props {
   language: string;
   toggleProTeaser: (slidePage?: string) => void;
   toggleOnboardingDialog: () => void;
-  toggleCreateFileDialog: () => void;
+  toggleNewEntryDialog: () => void;
   toggleAboutDialog: () => void;
   toggleKeysDialog: () => void;
   toggleSettingsDialog: () => void;
@@ -109,7 +109,7 @@ function MobileNavigation(props: Props) {
 
   const {
     classes,
-    toggleCreateFileDialog,
+    toggleNewEntryDialog,
     toggleLocationDialog,
     toggleOnboardingDialog,
     toggleSettingsDialog,
@@ -160,7 +160,7 @@ function MobileNavigation(props: Props) {
             <Button
               data-tid="createNewFileTID"
               onClick={() => {
-                toggleCreateFileDialog();
+                toggleNewEntryDialog();
                 if (hideDrawer) {
                   hideDrawer();
                 }
@@ -368,7 +368,7 @@ function mapStateToProps(state) {
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
-      toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
+      toggleNewEntryDialog: AppActions.toggleNewEntryDialog,
       toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
       toggleSettingsDialog: AppActions.toggleSettingsDialog,
       toggleProTeaser: AppActions.toggleProTeaser,

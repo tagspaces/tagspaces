@@ -78,6 +78,7 @@ import {
   platformUnZip,
   platformDirProperties
 } from '@tagspaces/tagspaces-platforms/platform-io';
+import { cleanTrailingDirSeparator } from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
 import { Pro } from '../pro';
 import { TS } from '-/tagspaces.namespace';
@@ -229,7 +230,12 @@ export default class PlatformFacade {
     ignorePatterns: Array<string> = [],
     resultsLimit: any = {}
   ): Promise<Array<any>> =>
-    platformListDirectoryPromise(path, mode, ignorePatterns, resultsLimit);
+    platformListDirectoryPromise(
+      cleanTrailingDirSeparator(path),
+      mode,
+      ignorePatterns,
+      resultsLimit
+    );
 
   static listMetaDirectoryPromise = (path: string): Promise<Array<any>> =>
     platformListMetaDirectoryPromise(path);

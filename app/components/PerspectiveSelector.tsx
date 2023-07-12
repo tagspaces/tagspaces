@@ -17,7 +17,6 @@
  */
 
 import React from 'react';
-import Input from '@mui/material/Input';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import LayersClearIcon from '@mui/icons-material/LayersClear';
 import ListItemText from '@mui/material/ListItemText';
@@ -26,11 +25,17 @@ import MenuItem from '@mui/material/MenuItem';
 import { AvailablePerspectives, PerspectiveIDs } from '-/perspectives';
 import i18n from '../services/i18n';
 import { Pro } from '-/pro';
-import { connect } from 'react-redux';
-import { getCurrentLanguage } from '-/reducers/settings';
 import { BetaLabel, ProLabel } from '-/components/HelperComponents';
 
-function PerspectiveSelector(props) {
+interface Props {
+  language: string;
+  defaultValue: string;
+  onChange: (event: any) => void;
+  testId: string;
+  label?: string;
+}
+
+function PerspectiveSelector(props: Props) {
   const { defaultValue, onChange, testId, label } = props;
 
   const perspectiveSelectorMenuItems = [];
@@ -86,7 +91,4 @@ function PerspectiveSelector(props) {
   );
 }
 
-function mapStateToProps(state) {
-  return { language: getCurrentLanguage(state) };
-}
-export default connect(mapStateToProps)(PerspectiveSelector);
+export default PerspectiveSelector;

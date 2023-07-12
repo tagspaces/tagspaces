@@ -21,13 +21,11 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Progress } from 'aws-sdk/clients/s3';
 import { formatBytes } from '@tagspaces/tagspaces-common/misc';
-import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import ListSubheader from '@mui/material/ListSubheader';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -41,31 +39,44 @@ import IOActions from '-/reducers/io-actions';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { actions as AppActions, getSelectedEntries } from '-/reducers/app';
+import {
+  actions as AppActions,
+  getDirectoryPath,
+  getSelectedEntries
+} from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import DirectoryListView from '-/components/DirectoryListView';
 import AppConfig from '-/AppConfig';
 import Tooltip from '-/components/Tooltip';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import {
+  checkDirsExistPromise,
+  checkFilesExistPromise
+} from '-/services/utils-io';
 
 interface Props {
   open: boolean;
   onClose: (clearSelection?: boolean) => void;
-  copyFiles: (files: Array<string>, destination: string) => void;
+  currentDirectoryPath: string | null;
+  copyFiles: (
+    files: Array<string>,
+    destination: string,
+    onUploadProgress?: (progress: Progress, abort: () => void) => void
+  ) => void;
   copyDirs: (
-    dirs: Array<string>,
-    totalCount: number,
+    dirs: Array<any>,
     destination: string,
     onUploadProgress?: (progress: Progress, abort: () => void) => void
   ) => void;
   moveFiles: (files: Array<string>, destination: string) => void;
   moveDirs: (
-    dirs: Array<string>,
-    totalCount: number,
+    dirs: Array<any>,
     destination: string,
     onUploadProgress?: (progress: Progress, abort: () => void) => void
   ) => void;
   selectedEntries: Array<TS.FileSystemEntry>;
-  selectedFiles?: Array<string>;
+  // force to move/copy different entries from selected
+  entries?: Array<TS.FileSystemEntry>;
   onUploadProgress: (progress: Progress, abort: () => void) => void;
   toggleUploadDialog: (title?) => void;
   resetProgress: () => void;
@@ -73,35 +84,54 @@ interface Props {
 
 function MoveCopyFilesDialog(props: Props) {
   // const [disableConfirmButton, setDisableConfirmButton] = useState(true);
-  const [targetPath, setTargetPath] = useState('');
+  const [targetPath, setTargetPath] = useState(
+    props.currentDirectoryPath ? props.currentDirectoryPath : ''
+  );
+  const isCopy = useRef<boolean>(true);
+  const [entriesExistPath, setEntriesExistPath] = useState<string[]>(undefined);
   const dirProp = useRef({});
 
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
   const { open, onClose } = props;
 
-  let selectedFiles = props.selectedFiles ? props.selectedFiles : [];
-  if (props.selectedEntries) {
-    selectedFiles = selectedFiles.concat(
-      props.selectedEntries
-        .filter(fsEntry => fsEntry.isFile)
-        .map(fsentry => fsentry.path)
-    );
-  }
+  let allEntries =
+    props.entries && props.entries.length > 0
+      ? props.entries
+      : props.selectedEntries;
+  /*props.entries && props.entries.length > 0
+      ? [
+          ...props.entries,
+          ...props.selectedEntries.filter(
+            e => !props.entries.some(en => en.path === e.path)
+          )
+        ]
+      : props.selectedEntries;*/
+  //let selectedFiles = props.selectedFiles ? props.selectedFiles : [];
+  const selectedFiles = allEntries
+    ? allEntries.filter(fsEntry => fsEntry.isFile).map(fsentry => fsentry.path)
+    : [];
 
-  const selectedDirs = props.selectedEntries
-    ? props.selectedEntries
-        .filter(fsEntry => !fsEntry.isFile)
-        .map(fsentry => fsentry.path)
+  const selectedDirs = allEntries
+    ? allEntries.filter(fsEntry => !fsEntry.isFile).map(fsentry => fsentry.path)
     : [];
 
   useEffect(() => {
-    if (selectedDirs.length > 0 && AppConfig.isElectron) {
-      // getDirProperties have Electron impl only
+    // getDirProperties have Electron impl only
+    if (
+      selectedDirs.length > 0 &&
+      AppConfig.isElectron &&
+      !PlatformIO.haveObjectStoreSupport() &&
+      !PlatformIO.haveWebDavSupport()
+    ) {
       const promises = selectedDirs.map(dirPath => {
-        return PlatformIO.getDirProperties(dirPath).then(prop => {
-          dirProp.current[dirPath] = prop;
-          return true;
-        });
+        try {
+          return PlatformIO.getDirProperties(dirPath).then(prop => {
+            dirProp.current[dirPath] = prop;
+            return true;
+          });
+        } catch (ex) {
+          console.debug('getDirProperties:', ex);
+        }
       });
       Promise.all(promises).then(() => forceUpdate());
     }
@@ -119,26 +149,56 @@ function MoveCopyFilesDialog(props: Props) {
     }
   }*/
 
-  function getEntriesCount(): number {
-    let total = 0;
+  function getEntriesCount(dirPaths): Array<any> {
+    return dirPaths.map(path => {
+      const currDirProp = dirProp.current[path];
+      let count = 0;
+      if (currDirProp) {
+        count = currDirProp.filesCount + currDirProp.dirsCount;
+      }
+      return { path, count };
+    });
+    /*let total = 0;
     const arr = Object.values(dirProp.current);
     arr.forEach((n: TS.DirProp) => (total += n.filesCount + n.dirsCount));
-    return total;
+    return total;*/
   }
 
+  function handleCopyMove(copy = true) {
+    if (selectedFiles.length > 0) {
+      checkFilesExistPromise(selectedFiles, targetPath).then(exist =>
+        handleEntryExist(copy, exist)
+      );
+    }
+    if (selectedDirs.length > 0) {
+      checkDirsExistPromise(selectedDirs, targetPath).then(exist =>
+        handleEntryExist(copy, exist)
+      );
+    }
+  }
+
+  function handleEntryExist(copy: boolean, exist: string[]) {
+    if (exist && exist.length > 0) {
+      isCopy.current = copy;
+      setEntriesExistPath(exist);
+    } else if (copy) {
+      handleCopyFiles();
+    } else {
+      handleMoveFiles();
+    }
+  }
   function handleCopyFiles() {
     //if (!disableConfirmButton) {
+    props.resetProgress();
+    props.toggleUploadDialog('copyEntriesTitle');
     if (selectedFiles.length > 0) {
-      props.copyFiles(selectedFiles, targetPath);
+      props.copyFiles(selectedFiles, targetPath, props.onUploadProgress);
       //setDisableConfirmButton(true);
       setTargetPath('');
     }
     if (selectedDirs.length > 0) {
-      props.resetProgress();
-      props.toggleUploadDialog('copyEntriesTitle');
       props.copyDirs(
-        selectedDirs,
-        getEntriesCount(),
+        getEntriesCount(selectedDirs),
         targetPath,
         props.onUploadProgress
       );
@@ -157,8 +217,7 @@ function MoveCopyFilesDialog(props: Props) {
       props.resetProgress();
       props.toggleUploadDialog('moveEntriesTitle');
       props.moveDirs(
-        selectedDirs,
-        getEntriesCount(),
+        getEntriesCount(selectedDirs),
         targetPath,
         props.onUploadProgress
       );
@@ -179,6 +238,13 @@ function MoveCopyFilesDialog(props: Props) {
 
   function onCloseDialog() {
     onClose();
+  }
+
+  function formatFileExist(entries) {
+    if (entries !== undefined) {
+      return entries.join(', ');
+    }
+    return '';
   }
 
   const theme = useTheme();
@@ -211,9 +277,8 @@ function MoveCopyFilesDialog(props: Props) {
             marginBottom: 20
           }}
         >
-          {props.selectedEntries &&
-            props.selectedEntries.length > 0 &&
-            props.selectedEntries.map(entry => (
+          {allEntries.length > 0 &&
+            allEntries.map(entry => (
               <ListItem title={entry.path} key={entry.path}>
                 <ListItemIcon>
                   {entry.isFile ? <FileIcon /> : <FolderIcon />}
@@ -239,39 +304,65 @@ function MoveCopyFilesDialog(props: Props) {
             {i18n.t('chooseTargetLocationAndPath')}
           </Typography>
         )}
-        <DirectoryListView setTargetDir={setTargetPath} />
+        <DirectoryListView
+          setTargetDir={setTargetPath}
+          currentDirectoryPath={props.currentDirectoryPath}
+        />
       </DialogContent>
       <DialogActions
-      // style={{
-      //   justifyContent: 'space-between'
-      // }}
+        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
       >
         <Button data-tid="closeMoveCopyDialog" onClick={() => props.onClose()}>
           {i18n.t('core:cancel')}
         </Button>
         <Tooltip
-          title={i18n.t(
-            AppConfig.isAndroid
-              ? 'core:platformImplMissing'
-              : 'core:moveEntriesButton'
-          )}
+          title={i18n.t(AppConfig.isAndroid ? 'core:platformImplMissing' : '')}
         >
-          <span>
-            <Button
-              data-tid="confirmMoveFiles"
-              disabled={!targetPath || AppConfig.isAndroid}
-              onClick={handleMoveFiles}
-              color="primary"
-            >
-              {i18n.t('core:moveEntriesButton')}
-            </Button>
-          </span>
+          <Button
+            data-tid="confirmMoveFiles"
+            disabled={
+              !targetPath ||
+              AppConfig.isAndroid ||
+              targetPath === props.currentDirectoryPath
+            }
+            onClick={() => handleCopyMove(false)}
+            color="primary"
+            variant="contained"
+          >
+            {i18n.t('core:moveEntriesButton')}
+          </Button>
         </Tooltip>
+        <ConfirmDialog
+          open={entriesExistPath !== undefined}
+          onClose={() => {
+            setEntriesExistPath(undefined);
+          }}
+          title={i18n.t('core:confirm')}
+          content={
+            formatFileExist(entriesExistPath) +
+            ' exist do you want to override it?'
+          }
+          confirmCallback={result => {
+            if (result) {
+              if (isCopy.current) {
+                handleCopyFiles();
+              } else {
+                handleMoveFiles();
+              }
+            } else {
+              setEntriesExistPath(undefined);
+            }
+          }}
+          cancelDialogTID="cancelOverwriteByCopyMoveDialog"
+          confirmDialogTID="confirmOverwriteByCopyMoveDialog"
+          confirmDialogContentTID="confirmDialogContent"
+        />
         <Button
-          onClick={handleCopyFiles}
+          onClick={() => handleCopyMove(true)}
           data-tid="confirmCopyFiles"
-          disabled={!targetPath}
+          disabled={!targetPath || targetPath === props.currentDirectoryPath}
           color="primary"
+          variant="contained"
         >
           {i18n.t('core:copyEntriesButton')}
         </Button>
@@ -282,7 +373,8 @@ function MoveCopyFilesDialog(props: Props) {
 
 function mapStateToProps(state) {
   return {
-    selectedEntries: getSelectedEntries(state)
+    selectedEntries: getSelectedEntries(state),
+    currentDirectoryPath: getDirectoryPath(state)
   };
 }
 

@@ -40,6 +40,7 @@ interface Props {
 }
 
 function CreateTagsDialog(props: Props) {
+  const { open, onClose, addTag, selectedTagGroupEntry } = props;
   const [inputError, setInputError] = useState<boolean>(false);
   const [tagTitle, setTagTitle] = useState<string>('');
 
@@ -74,20 +75,18 @@ function CreateTagsDialog(props: Props) {
 
   const onConfirm = () => {
     if (!inputError) {
-      props.addTag(tagTitle, props.selectedTagGroupEntry.uuid);
-      props.onClose();
+      addTag(tagTitle, selectedTagGroupEntry.uuid);
+      onClose();
     }
   };
 
-  const { open, onClose } = props;
-
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  // const theme = useTheme();
+  // const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      fullScreen={fullScreen}
+      // fullScreen={fullScreen}
       keepMounted
       scroll="paper"
       onKeyDown={event => {
@@ -95,16 +94,14 @@ function CreateTagsDialog(props: Props) {
           event.preventDefault();
           event.stopPropagation();
           onConfirm();
-        } /*else if (event.key === 'Escape') {
-          onClose();
-        }*/
+        }
       }}
     >
       <DialogTitle>
         {i18n.t('core:addTagsToGroupTitle')}
         <DialogCloseButton testId="closeCreateTagTID" onClose={onClose} />
       </DialogTitle>
-      <DialogContent style={{ minWidth: 400, paddingTop: 10 }}>
+      <DialogContent style={{ minWidth: 350, paddingTop: 10 }}>
         <FormControl fullWidth={true} error={inputError}>
           <TextField
             error={inputError}
@@ -128,6 +125,7 @@ function CreateTagsDialog(props: Props) {
           onClick={onConfirm}
           data-tid="createTagsConfirmButton"
           color="primary"
+          variant="contained"
         >
           {i18n.t('core:ok')}
         </Button>

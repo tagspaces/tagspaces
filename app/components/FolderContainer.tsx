@@ -47,10 +47,10 @@ import {
   OpenedEntry,
   getSelectedEntries,
   getProgress,
-  getEditedEntryPaths,
   isSearchMode,
   getLastSearchTimestamp
 } from '../reducers/app';
+import { getCurrentLocation } from '-/reducers/locations';
 import TaggingActions from '../reducers/tagging-actions';
 import LoadingLazy from '../components/LoadingLazy';
 import {
@@ -70,7 +70,7 @@ import {
 } from '-/reducers/location-index';
 import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
 import MainSearchField from '-/components/MainSearchField';
-import LoadingAnimation from '-/components/LoadingAnimation';
+// import LoadingAnimation from '-/components/LoadingAnimation';
 import SearchBox from '-/components/SearchBox';
 import useFirstRender from '-/utils/useFirstRender';
 
@@ -199,6 +199,7 @@ interface Props {
   defaultPerspective: string;
   currentDirectoryPerspective: string;
   currentLocationPath: string;
+  currentLocation: TS.Location;
   openedFiles: Array<OpenedEntry>;
   updateCurrentDirEntry: (path: string, entry: Object) => void;
   setCurrentDirectoryColor: (color: string) => void;
@@ -211,7 +212,7 @@ interface Props {
   exitSearchMode: () => void;
   openURLExternally?: (url: string, skipConfirmation: boolean) => void;
   language: string;
-  editedEntryPaths: Array<TS.EditedEntryPath>;
+  // editedEntryPaths: Array<TS.EditedEntryPath>;
   goBack: () => void;
   goForward: () => void;
   lastSearchTimestamp: number;
@@ -279,6 +280,7 @@ function FolderContainer(props: Props) {
 
   const {
     currentDirectoryPath = '',
+    language,
     loadDirectoryContent,
     directoryContent,
     classes,
@@ -288,6 +290,7 @@ function FolderContainer(props: Props) {
     theme,
     currentDirectoryPerspective,
     currentLocationPath,
+    currentLocation,
     setSelectedEntries,
     openDirectory,
     reflectCreateEntry,
@@ -512,8 +515,7 @@ function FolderContainer(props: Props) {
             display: 'flex',
             overflowY: 'hidden',
             alignItems: 'center',
-            // @ts-ignore
-            overflowX: AppConfig.isFirefox ? 'auto' : 'overlay'
+            overflowX: 'auto'
           }}
         >
           <IconButton
@@ -605,6 +607,7 @@ function FolderContainer(props: Props) {
               )}
               {/* {isDesktopMode && <LocationMenu />} */}
               <PathBreadcrumbs
+                language={language}
                 currentDirectoryPath={currentDirectoryPath}
                 currentLocationPath={currentLocationPath}
                 loadDirectoryContent={loadDirectoryContent}
@@ -618,6 +621,7 @@ function FolderContainer(props: Props) {
                 openRenameDirectoryDialog={() =>
                   setIsRenameEntryDialogOpened(true)
                 }
+                currentLocation={currentLocation}
                 openMoveCopyFilesDialog={props.openMoveCopyFilesDialog}
               />
             </>
@@ -630,7 +634,7 @@ function FolderContainer(props: Props) {
             width: '100%'
           }}
         >
-          <LoadingAnimation />
+          {/*<LoadingAnimation />*/}
           {renderPerspective()}
           {isRenameEntryDialogOpened && (
             <RenameEntryDialog
@@ -680,7 +684,8 @@ function mapStateToProps(state) {
     progress: getProgress(state),
     searchQuery: getSearchQuery(state),
     defaultPerspective: getDefaultPerspective(state),
-    editedEntryPaths: getEditedEntryPaths(state),
+    //editedEntryPaths: getEditedEntryPaths(state),
+    currentLocation: getCurrentLocation(state),
     lastSearchTimestamp: getLastSearchTimestamp(state),
     isSearchMode: isSearchMode(state)
   };
@@ -731,8 +736,7 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   JSON.stringify(nextProp.openedFiles) ===
     JSON.stringify(prevProp.openedFiles) &&
   JSON.stringify(nextProp.theme) === JSON.stringify(prevProp.theme) &&
-  JSON.stringify(nextProp.editedEntryPaths) ===
-    JSON.stringify(prevProp.editedEntryPaths) &&
+  // JSON.stringify(nextProp.editedEntryPaths) === JSON.stringify(prevProp.editedEntryPaths) &&
   nextProp.windowWidth === prevProp.windowWidth &&
   nextProp.windowHeight === prevProp.windowHeight &&
   nextProp.language === prevProp.language &&

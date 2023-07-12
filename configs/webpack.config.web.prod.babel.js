@@ -192,8 +192,7 @@ export default merge(baseConfig, {
       // Common Image Formats
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
-        use: 'url-loader',
-        type: 'javascript/auto'
+        type: 'asset/resource'
       },
       {
         // https://github.com/microsoft/PowerBI-visuals-tools/issues/365#issuecomment-1099716186

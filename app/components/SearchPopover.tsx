@@ -76,6 +76,7 @@ import {
   BookmarkIcon,
   BookIcon,
   DateIcon,
+  EmailIcon,
   EditIcon,
   PictureIcon,
   DocumentIcon,
@@ -564,8 +565,8 @@ function SearchPopover(props: Props) {
           height: 'calc(100% - 90px)',
           maxHeight: 'calc(100% - 90px)',
           overflowX: 'hidden',
-          // @ts-ignore
-          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+          overflowY: 'auto',
+          scrollbarGutter: 'stable'
         }}
         data-tid="searchAdvancedTID"
       >
@@ -644,7 +645,7 @@ function SearchPopover(props: Props) {
           <Grid item xs={12}>
             <TextField
               id="searchTerm"
-              label={i18n.t('Has the words')}
+              label={i18n.t('core:searchHasTheWords')}
               value={props.textQuery}
               onChange={handleSearchTermChange}
               onKeyDown={startSearch}
@@ -872,8 +873,16 @@ function SearchPopover(props: Props) {
                 </IconButton>
                 {i18n.t('core:searchEbooks')}
               </MenuItem>
+              <MenuItem
+                value={JSON.stringify(FileTypeGroups.emails)}
+                title={FileTypeGroups.emails.toString()}
+              >
+                <IconButton size="large">
+                  <EmailIcon />
+                </IconButton>
+                {i18n.t('core:searchEmails')}
+              </MenuItem>
             </Select>
-            {/* <FormHelperText>{i18n.t('core:searchFileTypes')}</FormHelperText> */}
           </ProTooltip>
         </FormControl>
         <FormControl

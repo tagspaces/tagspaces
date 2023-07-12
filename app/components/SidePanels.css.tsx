@@ -36,7 +36,7 @@ export default (theme: any) =>
     locationListArea: {
       paddingTop: 0,
       marginTop: 0,
-      overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+      overflowY: 'auto'
     },
     listItem: {
       paddingLeft: 0,

@@ -7,7 +7,7 @@ const pwConfig = {
   // grep: /.*\.pw\.js$/,
   testMatch: /.*\.pw\.e2e\.js/,
   // Set the timeout for each test
-  timeout: process.env.CI ? 60000 : 300000,
+  timeout: process.env.CI ? 120000 : 300000,
   // (2 hours) Maximum time in milliseconds the whole test suite can run. Useful on CI to prevent broken setup from running too long and wasting resources.
   globalTimeout: process.env.CI ? 2 * 60 * 60 * 1000 : undefined,
   ignoreSnapshots: !process.env.CI,

@@ -36,7 +36,7 @@ import FolderContainer from '../components/FolderContainer';
 import EntryContainer from '../components/EntryContainer';
 import SettingsDialog from '../components/dialogs/settings/SettingsDialog';
 import CreateDirectoryDialog from '../components/dialogs/CreateDirectoryDialog';
-import CreateDialog from '../components/dialogs/CreateDialog';
+import NewEntryDialog from '../components/dialogs/NewEntryDialog';
 import {
   getDesktopMode,
   getKeyBindingObject,
@@ -60,7 +60,8 @@ import {
   isEditTagDialogOpened,
   isCreateDirectoryOpened,
   isUploadDialogOpened,
-  isCreateFileDialogOpened,
+  isNewEntryDialogOpened,
+  isNewFileDialogOpened,
   isSettingsDialogOpened,
   isOpenLinkDialogOpened,
   isReadOnlyMode,
@@ -91,6 +92,7 @@ import { actions as LocationIndexActions } from '-/reducers/location-index';
 import MoveOrCopyFilesDialog from '-/components/dialogs/MoveOrCopyFilesDialog';
 import PlatformIO from '-/services/platform-facade';
 import { Pro } from '-/pro';
+import NewFileDialog from '-/components/dialogs/NewFileDialog';
 
 const drawerWidth = 320;
 const body = document.getElementsByTagName('body')[0];
@@ -135,7 +137,8 @@ interface Props {
   theme: any;
   isReadOnlyMode: boolean;
   isSettingsDialogOpened: boolean;
-  isCreateFileDialogOpened: boolean;
+  isNewEntryDialogOpened: boolean;
+  isNewFileDialogOpened: boolean;
   isCreateDirectoryOpened: any;
   toggleCreateDirectoryDialog: () => void;
   isAboutDialogOpened: boolean;
@@ -161,7 +164,8 @@ interface Props {
   setZoomResetApp: () => void; // needed by electron-menus
   setZoomInApp: () => void; // needed by electron-menus
   setZoomOutApp: () => void; // needed by electron-menus
-  toggleCreateFileDialog: () => void; // needed by electron-menus
+  toggleNewEntryDialog: () => void; // needed by electron-menus
+  toggleNewFileDialog: () => void; // needed by electron-menus
   showCreateDirectoryDialog: () => void; // needed by electron-menus
   toggleSettingsDialog: () => void; // needed by electron-menus
   toggleKeysDialog: () => void; // needed by electron-menus
@@ -182,7 +186,7 @@ interface Props {
   openTagLibraryPanel: () => void;
   // openSearchPanel: () => void;
   openHelpFeedbackPanel: () => void;
-  closeAllVerticalPanels: () => void;
+  // closeAllVerticalPanels: () => void;
   leftSplitSize: number;
   mainSplitSize: any;
   toggleShowUnixHiddenEntries: () => void;
@@ -582,7 +586,8 @@ function MainPage(props: Props) {
     toggleAboutDialog,
     toggleLocationDialog,
     toggleCreateDirectoryDialog,
-    toggleCreateFileDialog,
+    toggleNewEntryDialog,
+    toggleNewFileDialog,
     toggleUploadDialog,
     toggleProgressDialog,
     toggleEditTagDialog,
@@ -784,14 +789,16 @@ function MainPage(props: Props) {
           reflect={props.isCreateDirectoryOpened?.reflect}
         />
       )}
-      {props.isCreateFileDialogOpened && (
-        <CreateDialog
-          open={props.isCreateFileDialogOpened}
-          onClose={toggleCreateFileDialog}
-          // selectedDirectoryPath={selectedDirectoryPath.current || directoryPath}
-          /*chooseDirectoryPath={currentPath =>
-            setSelectedDirectoryPath(currentPath)
-          }*/
+      {props.isNewEntryDialogOpened && (
+        <NewEntryDialog
+          open={props.isNewEntryDialogOpened}
+          onClose={toggleNewEntryDialog}
+        />
+      )}
+      {props.isNewFileDialogOpened && (
+        <NewFileDialog
+          open={props.isNewFileDialogOpened}
+          onClose={toggleNewFileDialog}
         />
       )}
       <SettingsDialog
@@ -900,7 +907,7 @@ function MainPage(props: Props) {
             >
               <MobileNavigation
                 width={drawerWidth}
-                hideDrawer={() => props.closeAllVerticalPanels()}
+                hideDrawer={() => setDrawerOpened(false)}
               />
             </SwipeableDrawer>
             {renderContainers()}
@@ -915,7 +922,8 @@ function mapStateToProps(state) {
   return {
     isEditTagDialogOpened: isEditTagDialogOpened(state),
     isCreateDirectoryOpened: isCreateDirectoryOpened(state),
-    isCreateFileDialogOpened: isCreateFileDialogOpened(state),
+    isNewEntryDialogOpened: isNewEntryDialogOpened(state),
+    isNewFileDialogOpened: isNewFileDialogOpened(state),
     isSettingsDialogOpened: isSettingsDialogOpened(state),
     isAboutDialogOpened: isAboutDialogOpened(state),
     isLocationDialogOpened: isLocationDialogOpened(state),
@@ -963,7 +971,8 @@ function mapDispatchToProps(dispatch) {
       setZoomResetApp: SettingsActions.setZoomResetApp,
       setZoomInApp: SettingsActions.setZoomInApp,
       setZoomOutApp: SettingsActions.setZoomOutApp,
-      toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
+      toggleNewEntryDialog: AppActions.toggleNewEntryDialog,
+      toggleNewFileDialog: AppActions.toggleNewFileDialog,
       showCreateDirectoryDialog: AppActions.showCreateDirectoryDialog,
       toggleSettingsDialog: AppActions.toggleSettingsDialog,
       toggleKeysDialog: AppActions.toggleKeysDialog,
@@ -991,7 +1000,7 @@ function mapDispatchToProps(dispatch) {
       openTagLibraryPanel: AppActions.openTagLibraryPanel,
       // openSearchPanel: AppActions.openSearchPanel,
       openHelpFeedbackPanel: AppActions.openHelpFeedbackPanel,
-      closeAllVerticalPanels: AppActions.closeAllVerticalPanels,
+      // closeAllVerticalPanels: AppActions.closeAllVerticalPanels,
       toggleDeleteMultipleEntriesDialog:
         AppActions.toggleDeleteMultipleEntriesDialog,
       setFirstRun: SettingsActions.setFirstRun,
@@ -1013,7 +1022,8 @@ const areEqual = (prevProp, nextProp) =>
   nextProp.isAboutDialogOpened === prevProp.isAboutDialogOpened &&
   JSON.stringify(nextProp.isCreateDirectoryOpened) ===
     JSON.stringify(prevProp.isCreateDirectoryOpened) &&
-  nextProp.isCreateFileDialogOpened === prevProp.isCreateFileDialogOpened &&
+  nextProp.isNewEntryDialogOpened === prevProp.isNewEntryDialogOpened &&
+  nextProp.isNewFileDialogOpened === prevProp.isNewFileDialogOpened &&
   nextProp.isDeleteMultipleEntriesDialogOpened ===
     prevProp.isDeleteMultipleEntriesDialogOpened &&
   nextProp.isDesktopMode === prevProp.isDesktopMode &&

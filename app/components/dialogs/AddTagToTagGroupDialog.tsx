@@ -17,6 +17,7 @@
  */
 
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -27,15 +28,12 @@ import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import Input from '@mui/material/Input';
 import MenuItem from '@mui/material/MenuItem';
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
-import { connect } from 'react-redux';
-// import { getTagGroups } from '-/reducers/taglibrary';
+import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import i18n from '-/services/i18n';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
-import useTheme from '@mui/styles/useTheme';
-import useMediaQuery from '@mui/material/useMediaQuery';
+// import useTheme from '@mui/styles/useTheme';
+// import useMediaQuery from '@mui/material/useMediaQuery';
 import { getTagLibrary } from '-/services/taglibrary-utils';
 
 interface Props {
@@ -45,18 +43,19 @@ interface Props {
   selectedTag: TS.Tag;
   defaultBackgroundColor?: string;
   defaultTextColor?: string;
-  // tagGroups: Array<TS.TagGroup>;
 }
 
 function AddTagToTagGroupDialog(props: Props) {
   const [tagGroup, setTagGroup] = useState<string>(undefined);
+  const defaultBackgroundColor = useSelector(getTagColor);
+  const defaultTextColor = useSelector(getTagTextColor);
 
   const handleTagGroupChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTagGroup(event.target.value);
   };
 
   const onConfirm = () => {
-    const { defaultBackgroundColor, defaultTextColor, selectedTag } = props;
+    const { selectedTag } = props;
     if (!selectedTag.textcolor) {
       selectedTag.textcolor = defaultTextColor;
     }
@@ -69,13 +68,13 @@ function AddTagToTagGroupDialog(props: Props) {
 
   const { open, onClose } = props;
 
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  // const theme = useTheme();
+  // const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      fullScreen={fullScreen}
+      // fullScreen={fullScreen}
       keepMounted
       scroll="paper"
       onKeyDown={event => {
@@ -83,27 +82,17 @@ function AddTagToTagGroupDialog(props: Props) {
           event.preventDefault();
           event.stopPropagation();
           onConfirm();
-        } /*else if (event.key === 'Escape') {
-          onClose();
-        }*/
+        }
       }}
     >
       <DialogTitle>
         {i18n.t('core:addTagToTagGroup') + ': ' + props.selectedTag.title}
-        <IconButton
-          aria-label="close"
-          style={{
-            position: 'absolute',
-            right: 5,
-            top: 5
-          }}
-          onClick={onClose}
-          size="large"
-        >
-          <CloseIcon />
-        </IconButton>
+        <DialogCloseButton
+          testId="closeAddTagToGroupDialogTID"
+          onClose={onClose}
+        />
       </DialogTitle>
-      <DialogContent style={{ minWidth: 400 }}>
+      <DialogContent style={{ paddingTop: 10, minWidth: 350 }}>
         <FormControl fullWidth={true}>
           <InputLabel htmlFor="addTagToTagGroupInput">
             {i18n.t('core:chooseTagGroup')}
@@ -126,6 +115,7 @@ function AddTagToTagGroupDialog(props: Props) {
           onClick={onConfirm}
           data-tid="createTagsConfirmButton"
           color="primary"
+          variant="contained"
         >
           {i18n.t('core:ok')}
         </Button>
@@ -134,10 +124,4 @@ function AddTagToTagGroupDialog(props: Props) {
   );
 }
 
-const mapStateToProps = state => ({
-  // tagGroups: getTagGroups(state),
-  defaultBackgroundColor: getTagColor(state),
-  defaultTextColor: getTagTextColor(state)
-});
-
-export default connect(mapStateToProps)(AddTagToTagGroupDialog);
+export default AddTagToTagGroupDialog;

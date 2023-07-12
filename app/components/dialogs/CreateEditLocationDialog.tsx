@@ -537,7 +537,7 @@ function CreateEditLocationDialog(props: Props) {
       </DialogTitle>
       <DialogContent
         style={{
-          overflow: AppConfig.isFirefox ? 'auto' : 'overlay',
+          overflow: 'auto',
           minHeight: 200,
           padding: 8
         }}
@@ -1001,13 +1001,16 @@ function CreateEditLocationDialog(props: Props) {
           </AccordionDetails>
         </Accordion>
       </DialogContent>
-      <DialogActions>
+      <DialogActions
+        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
+      >
         <Button onClick={() => onClose()}>{i18n.t('core:cancel')}</Button>
         <Button
           disabled={disableConfirmButton()}
           onClick={onConfirm}
           data-tid="confirmLocationCreation"
           color="primary"
+          variant="contained"
         >
           {i18n.t('core:ok')}
         </Button>

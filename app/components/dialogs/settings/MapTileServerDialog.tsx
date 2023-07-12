@@ -191,6 +191,7 @@ function MapTileServerDialog(props: Props) {
           data-tid="saveTileServerDialogTID"
           onClick={saveTileServer}
           color="primary"
+          variant="contained"
         >
           {i18n.t('core:confirmSaveButton')}
         </Button>

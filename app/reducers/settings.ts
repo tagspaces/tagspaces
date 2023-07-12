@@ -901,6 +901,8 @@ export const isDesktopMode = (state: any) => state.settings.desktopMode;
 export const getStoredSearchesVisible = (state: any) =>
   state.settings.storedSearchesVisible;
 export const getShowBookmarks = (state: any) => state.settings.showBookmarks;
+export const getSaveTagInLocation = (state: any) =>
+  state.settings.saveTagInLocation;
 export const getFileOpenHistory = (state: any) =>
   state.settings.fileOpenHistory;
 export const getFolderOpenHistory = (state: any) =>

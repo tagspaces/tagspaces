@@ -111,39 +111,43 @@ function TagsSelect(props: Props) {
     selectedTags: Array<TS.Tag>,
     reason: string
   ) {
-    if (reason === 'selectOption') {
-      props.handleChange(props.tagSearchType, selectedTags, reason);
-    } else if (reason === 'createOption') {
-      if (selectedTags && selectedTags.length) {
-        const tagsInput = '' + selectedTags[selectedTags.length - 1];
-        let tags = tagsInput
-          .split(' ')
-          .join(',')
-          .split(','); // handle spaces around commas
-        tags = [...new Set(tags)]; // remove duplicates
-        tags = tags.filter(tag => tag && tag.length > 0); // zero length tags
+    if (!isReadOnlyMode) {
+      if (reason === 'selectOption') {
+        props.handleChange(props.tagSearchType, selectedTags, reason);
+      } else if (reason === 'createOption') {
+        if (selectedTags && selectedTags.length) {
+          const tagsInput = '' + selectedTags[selectedTags.length - 1];
+          let tags = tagsInput
+            .split(' ')
+            .join(',')
+            .split(','); // handle spaces around commas
+          tags = [...new Set(tags)]; // remove duplicates
+          tags = tags.filter(tag => tag && tag.length > 0); // zero length tags
 
-        const newTags = [];
-        tags.map(tag => {
-          const newTag: TS.Tag = {
-            id: getUuid(),
-            title: '' + tag,
-            color: defaultBackgroundColor,
-            textcolor: defaultTextColor
-          };
-          if (isValidNewOption(newTag.title, selectedTags)) {
-            newTags.push(newTag);
-            allTags.current.push(newTag);
-          }
-        });
-        selectedTags.pop();
-        const allNewTags = [...selectedTags, ...newTags];
-        props.handleChange(props.tagSearchType, allNewTags, reason);
+          const newTags = [];
+          tags.map(tag => {
+            const newTag: TS.Tag = {
+              id: getUuid(),
+              title: '' + tag,
+              color: defaultBackgroundColor,
+              textcolor: defaultTextColor
+            };
+            if (isValidNewOption(newTag.title, selectedTags)) {
+              newTags.push(newTag);
+              allTags.current.push(newTag);
+            }
+          });
+          selectedTags.pop();
+          const allNewTags = [...selectedTags, ...newTags];
+          props.handleChange(props.tagSearchType, allNewTags, reason);
+        }
+      } else if (reason === 'remove-value') {
+        props.handleChange(props.tagSearchType, selectedTags, reason);
+      } else if (reason === 'clear') {
+        props.handleChange(props.tagSearchType, [], reason);
       }
-    } else if (reason === 'remove-value') {
-      props.handleChange(props.tagSearchType, selectedTags, reason);
-    } else if (reason === 'clear') {
-      props.handleChange(props.tagSearchType, [], reason);
+    } else {
+      console.debug('tags disabled in read only mode!');
     }
   }
 
@@ -216,6 +220,7 @@ function TagsSelect(props: Props) {
         renderInput={params => (
           <TextField
             {...params}
+            disabled={isReadOnlyMode}
             // variant="filled"
             label={label}
             placeholder={placeholderText}

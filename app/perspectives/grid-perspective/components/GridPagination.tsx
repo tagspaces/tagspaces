@@ -136,22 +136,39 @@ function GridPagination(props: Props) {
   const {
     style,
     theme,
+    classes,
     directories,
     showDirectories,
     showDetails,
     showDescription,
     showTags,
+    singleClickAction,
     getCellContent,
     isAppLoading,
+    isReadOnlyMode,
+    desktopMode,
+    currentLocation,
     currentDirectoryColor,
     currentDirectoryTags,
     currentDirectoryDescription,
     currentDirectoryPath,
     lastThumbnailImageChange,
     openRenameEntryDialog,
+    lastSelectedEntryPath,
     lastBackgroundImageChange,
+    openFsEntry,
+    openFileNatively,
+    loadDirectoryContent,
+    setFileContextMenuAnchorEl,
+    setDirContextMenuAnchorEl,
+    showNotification,
+    moveFiles,
+    directoryContent,
     gridPageLimit,
     currentPage,
+    selectedEntries,
+    setSelectedEntries,
+    clearSelection,
     files
   } = props;
   const allFilesCount = files.length;
@@ -374,8 +391,11 @@ function GridPagination(props: Props) {
 
   const dirColor = currentDirectoryColor || 'transparent';
 
-  const folderSummary =
+  let folderSummary =
     directories.length + ' folder(s) and ' + allFilesCount + ' file(s) found';
+  if (selectedEntries && selectedEntries.length > 0) {
+    folderSummary = selectedEntries.length + ' entries selected';
+  }
 
   /* let descriptionHTML = '';
   if (showDescription && currentDirectoryDescription) {
@@ -413,8 +433,7 @@ function GridPagination(props: Props) {
         }
         style={{
           height: '100%',
-          // @ts-ignore
-          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
+          overflowY: 'auto',
           backgroundImage: 'url("' + folderBgndPath.current + '")',
           backgroundSize: 'cover',
           backgroundRepeat: 'no-repeat'
@@ -434,69 +453,70 @@ function GridPagination(props: Props) {
                   position: 'relative'
                 }}
               >
-                <Box
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    overflow: 'auto',
-                    padding: 10,
-                    marginRight: 160,
-                    width: 'fit-content',
-                    background: theme.palette.background.default,
-                    // background: alpha(theme.palette.background.default, 0.9),
-                    borderRadius: 8,
-                    color: theme.palette.text.primary
-                  }}
-                >
-                  <Tooltip
-                    data-tid={'currentDir_' + folderName}
-                    title={i18n.t('core:renameDirectory')}
+                {((folderName && folderName.length > 0) ||
+                  (currentDirectoryTags &&
+                    currentDirectoryTags.length > 0)) && (
+                  <Box
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      overflow: 'auto',
+                      padding: 10,
+                      marginRight: 160,
+                      width: 'fit-content',
+                      background: theme.palette.background.default,
+                      borderRadius: 8,
+                      color: theme.palette.text.primary
+                    }}
                   >
-                    <ButtonBase
-                      style={{ fontSize: '1.5rem' }}
-                      onClick={openRenameEntryDialog}
+                    <Tooltip
+                      data-tid={'currentDir_' + folderName}
+                      title={i18n.t('core:renameDirectory')}
                     >
-                      {folderName}
-                    </ButtonBase>
-                  </Tooltip>
-                  {showTags ? (
-                    <span style={{ paddingLeft: 5 }}>
-                      {currentDirectoryTags &&
-                        currentDirectoryTags.map((tag: TS.Tag) => {
-                          return (
-                            <TagContainer
-                              isReadOnlyMode
-                              tag={tag}
-                              tagMode="display"
-                            />
-                          );
-                        })}
-                    </span>
-                  ) : (
-                    <TagsPreview tags={currentDirectoryTags} />
-                  )}
-                </Box>
+                      <ButtonBase
+                        style={{ fontSize: '1.5rem' }}
+                        onClick={openRenameEntryDialog}
+                      >
+                        {folderName}
+                      </ButtonBase>
+                    </Tooltip>
+                    {showTags ? (
+                      <span style={{ paddingLeft: 5 }}>
+                        {currentDirectoryTags &&
+                          currentDirectoryTags.map((tag: TS.Tag) => {
+                            return (
+                              <TagContainer
+                                isReadOnlyMode
+                                tag={tag}
+                                tagMode="display"
+                              />
+                            );
+                          })}
+                      </span>
+                    ) : (
+                      <TagsPreview tags={currentDirectoryTags} />
+                    )}
+                  </Box>
+                )}
                 <Box
                   style={{
                     paddingBottom: 5,
                     background: theme.palette.background.default,
-                    marginTop: -12,
+                    marginTop: 10,
                     marginRight: 160,
                     padding: 10,
-                    borderRadius: 8,
+                    borderRadius: 10,
                     width: 'fit-content',
                     color: theme.palette.text.primary
                   }}
                 >
-                  {(directories.length > 0 || pageFiles.length > 0) && (
-                    <Typography
-                      style={{
-                        fontSize: '0.9rem'
-                      }}
-                    >
-                      {folderSummary}
-                    </Typography>
-                  )}
+                  <Typography
+                    style={{
+                      fontSize: '0.9rem'
+                    }}
+                  >
+                    {folderSummary}
+                  </Typography>
                   {!showDescription && descriptionPreview && (
                     <Tooltip title={i18n.t('core:filePropertiesDescription')}>
                       <Typography
@@ -513,20 +533,18 @@ function GridPagination(props: Props) {
                 <Tooltip title={i18n.t('core:thumbnail')}>
                   <div
                     style={{
-                      // borderRadius: 8,
-                      height: 140,
+                      borderRadius: 10,
+                      height: 100,
                       width: 140,
                       backgroundImage: 'url("' + folderTmbPath.current + '")',
-                      backgroundSize: 'contain', // cover
+                      backgroundSize: 'cover', // cover contain
                       backgroundRepeat: 'no-repeat',
                       backgroundPosition: 'top center',
                       position: 'absolute',
                       top: 0,
                       right: 0
                     }}
-                  >
-                    {/* <EntryIcon isFile={false} /> */}
-                  </div>
+                  ></div>
                 </Tooltip>
               </div>
             </Grid>
@@ -561,25 +579,25 @@ function GridPagination(props: Props) {
                 entry,
                 index,
                 getCellContent,
-                props.classes,
+                classes,
                 theme,
                 showDirectories,
-                props.isReadOnlyMode,
-                props.desktopMode,
-                props.singleClickAction,
-                props.currentLocation,
-                props.selectedEntries,
-                props.setSelectedEntries,
-                props.lastSelectedEntryPath,
-                props.directoryContent,
-                props.openFsEntry,
-                props.openFileNatively,
-                props.loadDirectoryContent,
-                props.setFileContextMenuAnchorEl,
-                props.setDirContextMenuAnchorEl,
-                props.showNotification,
-                props.moveFiles,
-                props.clearSelection
+                isReadOnlyMode,
+                desktopMode,
+                singleClickAction,
+                currentLocation,
+                selectedEntries,
+                setSelectedEntries,
+                lastSelectedEntryPath,
+                directoryContent,
+                openFsEntry,
+                openFileNatively,
+                loadDirectoryContent,
+                setFileContextMenuAnchorEl,
+                setDirContextMenuAnchorEl,
+                showNotification,
+                moveFiles,
+                clearSelection
               )
             )}
           {pageFiles.map((entry, index, dArray) =>
@@ -587,25 +605,25 @@ function GridPagination(props: Props) {
               entry,
               index,
               getCellContent,
-              props.classes,
+              classes,
               theme,
               showDirectories,
-              props.isReadOnlyMode,
-              props.desktopMode,
-              props.singleClickAction,
-              props.currentLocation,
-              props.selectedEntries,
-              props.setSelectedEntries,
-              props.lastSelectedEntryPath,
-              props.directoryContent,
-              props.openFsEntry,
-              props.openFileNatively,
-              props.loadDirectoryContent,
-              props.setFileContextMenuAnchorEl,
-              props.setDirContextMenuAnchorEl,
-              props.showNotification,
-              props.moveFiles,
-              props.clearSelection,
+              isReadOnlyMode,
+              desktopMode,
+              singleClickAction,
+              currentLocation,
+              selectedEntries,
+              setSelectedEntries,
+              lastSelectedEntryPath,
+              directoryContent,
+              openFsEntry,
+              openFileNatively,
+              loadDirectoryContent,
+              setFileContextMenuAnchorEl,
+              setDirContextMenuAnchorEl,
+              showNotification,
+              moveFiles,
+              clearSelection,
               index === dArray.length - 1
             )
           )}

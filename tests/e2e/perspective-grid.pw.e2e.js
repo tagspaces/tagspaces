@@ -176,6 +176,7 @@ test.describe('TST50 - Perspective Grid', () => {
     await clickOn('[data-tid=gridPerspectiveCopySelectedFiles]');
     await clickOn('[data-tid=MoveTargetempty_folder]');
     await clickOn('[data-tid=confirmCopyFiles]');
+    await clickOn('[data-tid=uploadCloseAndClearTID]');
 
     await global.client.dblclick(getGridFileSelector('empty_folder'));
     await expectElementExist(getGridFileSelector(fileName));

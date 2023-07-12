@@ -91,8 +91,15 @@ test.describe('TST02 - Folder properties', () => {
 
     await clickOn('[data-tid=reloadFolderTID]');
 
-    propsTags = await getPropertiesTags();
-    expect(propsTags).toContain(tagTitle);
+    // propsTags = await getPropertiesTags();
+    // expect(propsTags).toContain(tagTitle);
+    await expectElementExist(
+      '[data-tid=PropertiesTagsSelectTID] [data-tid=tagContainer_' +
+        tagTitle +
+        ']',
+      true,
+      4000
+    );
 
     const editor = await global.client.waitForSelector(
       '[data-tid=descriptionTID] .milkdown'
@@ -139,6 +146,8 @@ test.describe('TST02 - Folder properties', () => {
 
   test('TST0207 - Move folder [web,minio,electron]', async () => {
     const newFolder = await createNewDirectory('targetFolder');
+    // select folder to move
+    await clickOn(getGridFileSelector('empty_folder'));
     await clickOn('[data-tid=moveCopyEntryTID]');
     await clickOn('[data-tid=MoveTarget' + newFolder + ']');
     await clickOn('[data-tid=confirmMoveFiles]');
@@ -191,7 +200,7 @@ test.describe('TST02 - Folder properties', () => {
 
   test('TST0215 - Link for internal sharing + copy [web,minio,electron]', async () => {
     // await clickOn('[data-tid=copyLinkToClipboardTID]');
-    const sharingLink = await global.client.$(
+    const sharingLink = await global.client.waitForSelector(
       '[data-tid=sharingLinkTID] input'
     );
     const sharingLinkValue = await sharingLink.getAttribute('value');
@@ -230,6 +239,7 @@ test.describe('TST02 - Folder properties', () => {
     );
     await clickOn('[data-tid=MoveTargetempty_folder]');
     await clickOn('[data-tid=confirmCopyFiles]');
+    await clickOn('[data-tid=uploadCloseAndClearTID]');
 
     await clickOn('[data-tid=changePerspectiveTID]');
     await clickOn('[data-value=gallery]');

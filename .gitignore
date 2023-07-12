@@ -102,6 +102,7 @@ tests/*
 !tests/global-teardown-web.js
 !tests/setup-functions.js
 !tests/test-data-refresh.js
+!tests/create-1000files-nothumbs.sh
 
 builds/*
 web/sw-con
@@ -120,3 +121,5 @@ playwright-report/*
 /app/**main.prod.js**
 
 deploy.sh
+
+docker/*.zip

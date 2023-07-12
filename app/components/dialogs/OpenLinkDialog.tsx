@@ -83,7 +83,7 @@ function OpenLinkDialog(props: Props) {
     setDisableConfirmButton(true);
   }
 
-  const theme = useTheme();
+  // const theme = useTheme();
   // const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
@@ -136,6 +136,7 @@ function OpenLinkDialog(props: Props) {
           onClick={onConfirm}
           data-tid="confirmOpenLink"
           color="primary"
+          variant="contained"
         >
           {i18n.t('core:open')}
         </Button>

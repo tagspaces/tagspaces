@@ -74,8 +74,7 @@ function MoveOrCopyFilesDialog(props: Props) {
       <DialogContent
         style={{
           overflowX: 'hidden',
-          // @ts-ignore
-          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+          overflowY: 'auto'
         }}
       >
         <Typography variant="subtitle2">{i18n.t('selectedFiles')}</Typography>
@@ -94,7 +93,9 @@ function MoveOrCopyFilesDialog(props: Props) {
             ))}
         </List>
       </DialogContent>
-      <DialogActions>
+      <DialogActions
+        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
+      >
         <Button
           data-tid="closeMoveOrCopyDialog"
           onClick={() => props.onClose()}
@@ -105,6 +106,7 @@ function MoveOrCopyFilesDialog(props: Props) {
           onClick={() => props.handleMoveFiles(props.selectedFiles)}
           data-tid="confirmMoveFilesTID"
           color="primary"
+          variant="contained"
         >
           {i18n.t('core:moveEntriesButton')}
         </Button>
@@ -112,6 +114,7 @@ function MoveOrCopyFilesDialog(props: Props) {
           onClick={() => props.handleCopyFiles(props.selectedFiles)}
           data-tid="confirmCopyFilesTID"
           color="primary"
+          variant="contained"
         >
           {i18n.t('core:copyEntriesButton')}
         </Button>

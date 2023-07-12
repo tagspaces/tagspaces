@@ -22,7 +22,6 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
-import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 import LicenseContent from '-/LICENSE.txt';
@@ -74,13 +73,15 @@ function LicenseDialog(props: Props) {
         // inputRef={ref => {
         //   licenseElement = ref;
         // }}
-        style={{ overflow: AppConfig.isFirefox ? 'auto' : 'overlay' }}
+        style={{ overflow: 'auto' }}
       >
         <pre style={{ whiteSpace: 'pre-wrap', userSelect: 'text' }}>
           {Pro ? Pro.EULAContent : LicenseContent}
         </pre>
       </DialogContent>
-      <DialogActions>
+      <DialogActions
+        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
+      >
         {/* <Button
           onClick={printLicense}
           color="primary"
@@ -98,6 +99,7 @@ function LicenseDialog(props: Props) {
           data-tid="agreeLicenseDialog"
           onClick={props.onClose}
           color="primary"
+          variant="contained"
         >
           {i18n.t('core:agreeLicense')}
         </Button>

@@ -180,8 +180,7 @@ function LocationManager(props: Props) {
         style={{
           height: 'calc(100% - ' + reduceHeightBy + 'px)',
           borderRadius: 5,
-          // @ts-ignore
-          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+          overflowY: 'auto'
         }}
       >
         <DragDropContext onDragEnd={onDragEnd}>

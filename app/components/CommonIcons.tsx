@@ -54,6 +54,8 @@ export { default as CreateFileIcon } from '@mui/icons-material/Add';
 
 export { default as LocalLocationIcon } from '@mui/icons-material/WorkOutline';
 
+export { default as CloudLocationIcon } from '@mui/icons-material/CloudQueue';
+
 export { default as OpenLinkIcon } from '@mui/icons-material/Link';
 
 export { default as KeyShortcutsIcon } from '@mui/icons-material/Keyboard';
@@ -76,7 +78,9 @@ export { default as UntaggedIcon } from '@mui/icons-material/LabelOffOutlined';
 
 export { default as BookmarkIcon } from '@mui/icons-material/BookmarkBorder';
 
-export { default as BookIcon } from '@mui/icons-material/LocalLibraryOutlined';
+export { default as BookIcon } from '@mui/icons-material/MenuBook';
+
+export { default as EmailIcon } from '@mui/icons-material/MailOutline';
 
 export { default as DateIcon } from '@mui/icons-material/DateRange';
 
@@ -95,3 +99,7 @@ export { default as ArchiveIcon } from '@mui/icons-material/Archive';
 export { default as SearchIcon } from '@mui/icons-material/Search';
 
 export { default as CloseIcon } from '@mui/icons-material/Close';
+
+export { default as SelectedIcon } from '@mui/icons-material/CheckCircle';
+
+export { default as UnSelectedIcon } from '@mui/icons-material/RadioButtonUnchecked';

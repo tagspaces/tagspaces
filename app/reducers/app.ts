@@ -58,7 +58,8 @@ import {
   getCleanLocationPath,
   updateFsEntries,
   loadMetaDataPromise,
-  mergeByProp
+  mergeByProp,
+  toFsEntry
 } from '-/services/utils-io';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import i18n from '../services/i18n';
@@ -134,7 +135,8 @@ export const types = {
   TOGGLE_THIRD_PARTY_LIBS_DIALOG: 'APP/TOGGLE_THIRD_PARTY_LIBS_DIALOG',
   TOGGLE_SETTINGS_DIALOG: 'APP/TOGGLE_SETTINGS_DIALOG',
   TOGGLE_CREATE_DIRECTORY_DIALOG: 'APP/TOGGLE_CREATE_DIRECTORY_DIALOG',
-  TOGGLE_CREATE_FILE_DIALOG: 'APP/TOGGLE_CREATE_FILE_DIALOG',
+  TOGGLE_NEW_ENTRY_DIALOG: 'APP/TOGGLE_NEW_ENTRY_DIALOG',
+  TOGGLE_NEW_FILE_DIALOG: 'APP/TOGGLE_NEW_FILE_DIALOG',
   TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG:
     'APP/TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG',
   TOGGLE_IMPORT_KANBAN_DIALOG: 'APP/TOGGLE_IMPORT_KANBAN_DIALOG',
@@ -148,8 +150,10 @@ export const types = {
   OPEN_HELPFEEDBACK_PANEL: 'APP/OPEN_HELPFEEDBACK_PANEL',
   CLOSE_ALLVERTICAL_PANELS: 'APP/CLOSE_ALLVERTICAL_PANELS',
   REFLECT_DELETE_ENTRY: 'APP/REFLECT_DELETE_ENTRY',
+  REFLECT_DELETE_ENTRIES: 'APP/REFLECT_DELETE_ENTRIES',
   REFLECT_RENAME_ENTRY: 'APP/REFLECT_RENAME_ENTRY',
   REFLECT_CREATE_ENTRY: 'APP/REFLECT_CREATE_ENTRY',
+  REFLECT_CREATE_ENTRIES: 'APP/REFLECT_CREATE_ENTRIES',
   // REFLECT_UPDATE_SIDECARTAGS: 'APP/REFLECT_UPDATE_SIDECARTAGS',
   // REFLECT_UPDATE_SIDECARMETA: 'APP/REFLECT_UPDATE_SIDECARMETA',
   UPDATE_CURRENTDIR_ENTRY: 'APP/UPDATE_CURRENTDIR_ENTRY',
@@ -247,7 +251,8 @@ export const initialState = {
   proTeaserIndex: -1,
   onboardingDialogOpened: false,
   keysDialogOpened: false,
-  createFileDialogOpened: false,
+  isNewEntryDialogOpened: false,
+  isNewFileDialogOpened: false,
   licenseDialogOpened: false,
   thirdPartyLibsDialogOpened: false,
   settingsDialogOpened: false,
@@ -385,7 +390,7 @@ export default (state: any = initialState, action: any) => {
         currentDirectoryPerspective:
           action.directoryMeta && action.directoryMeta.perspective
             ? action.directoryMeta.perspective
-            : state.currentDirectoryPerspective,
+            : action.defaultPerspective, // state.currentDirectoryPerspective,
         currentDirectoryPath: directoryPath,
         /**
          * used for reorder files in KanBan
@@ -479,10 +484,16 @@ export default (state: any = initialState, action: any) => {
     case types.TOGGLE_KEYBOARD_DIALOG: {
       return { ...state, keysDialogOpened: !state.keysDialogOpened };
     }
-    case types.TOGGLE_CREATE_FILE_DIALOG: {
+    case types.TOGGLE_NEW_ENTRY_DIALOG: {
       return {
         ...state,
-        createFileDialogOpened: !state.createFileDialogOpened
+        isNewEntryDialogOpened: !state.isNewEntryDialogOpened
+      };
+    }
+    case types.TOGGLE_NEW_FILE_DIALOG: {
+      return {
+        ...state,
+        isNewFileDialogOpened: !state.isNewFileDialogOpened
       };
     }
     case types.TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG: {
@@ -683,6 +694,36 @@ export default (state: any = initialState, action: any) => {
         entry => entry.path !== action.path
       );
       const editedEntryPaths = [{ action: 'delete', path: action.path }];
+      // check if currentDirectoryEntries or openedFiles changed
+      if (
+        state.currentDirectoryEntries.length > newDirectoryEntries.length ||
+        state.openedFiles.length > newOpenedFiles.length
+      ) {
+        return {
+          ...state,
+          editedEntryPaths,
+          currentDirectoryEntries: newDirectoryEntries,
+          openedFiles: newOpenedFiles,
+          isEntryInFullWidth: false
+        };
+      }
+      return {
+        ...state,
+        editedEntryPaths
+      };
+    }
+    case types.REFLECT_DELETE_ENTRIES: {
+      const newDirectoryEntries = state.currentDirectoryEntries.filter(
+        entry => !action.paths.some(path => path === entry.path)
+      );
+      const newOpenedFiles = state.openedFiles.filter(
+        entry => !action.paths.some(path => path === entry.path)
+      );
+      const editedEntryPaths = action.paths.map(path => ({
+        action: 'delete',
+        path: path
+      }));
+      // check if currentDirectoryEntries or openedFiles changed
       if (
         state.currentDirectoryEntries.length > newDirectoryEntries.length ||
         state.openedFiles.length > newOpenedFiles.length
@@ -702,10 +743,14 @@ export default (state: any = initialState, action: any) => {
     }
     case types.REFLECT_CREATE_ENTRY: {
       const newEntry: TS.FileSystemEntry = action.newEntry;
-      // Prevent adding entry twice e.g. by the watcher
-      const entryIndex = state.currentDirectoryEntries.findIndex(
-        entry => entry.path === newEntry.path
-      );
+      // Prevent adding entry twice e.g. by entry rename in the watcher
+      if (
+        state.currentDirectoryEntries.some(
+          entry => entry.path === newEntry.path
+        )
+      ) {
+        return state;
+      }
       const editedEntryPaths: Array<TS.EditedEntryPath> = [
         {
           action: newEntry.isFile ? 'createFile' : 'createDir',
@@ -715,12 +760,12 @@ export default (state: any = initialState, action: any) => {
       ];
       // clean all dir separators to have platform independent path match
       if (
-        entryIndex < 0 &&
+        // entryIndex < 0 &&
         extractParentDirectoryPath(
           action.newEntry.path,
           PlatformIO.getDirSeparator()
         ).replace(/[/\\]/g, '') ===
-          state.currentDirectoryPath.replace(/[/\\]/g, '')
+        state.currentDirectoryPath.replace(/[/\\]/g, '')
       ) {
         return {
           ...state,
@@ -735,6 +780,33 @@ export default (state: any = initialState, action: any) => {
         ...state,
         editedEntryPaths
       };
+    }
+    case types.REFLECT_CREATE_ENTRIES: {
+      if (
+        action.fsEntries.length > 0 &&
+        extractParentDirectoryPath(
+          action.fsEntries[0].path,
+          PlatformIO.getDirSeparator()
+        ).replace(/[/\\]/g, '') ===
+          state.currentDirectoryPath.replace(/[/\\]/g, '')
+      ) {
+        const editedEntryPaths: Array<TS.EditedEntryPath> = action.fsEntries.map(
+          newEntry => ({
+            action: newEntry.isFile ? 'createFile' : 'createDir',
+            path: newEntry.path,
+            uuid: newEntry.uuid
+          })
+        );
+        return {
+          ...state,
+          editedEntryPaths,
+          currentDirectoryEntries: [
+            ...state.currentDirectoryEntries,
+            ...action.fsEntries
+          ]
+        };
+      }
+      return state;
     }
     case types.REFLECT_RENAME_ENTRY: {
       const extractedTags = extractTagsAsObjects(
@@ -935,7 +1007,7 @@ export default (state: any = initialState, action: any) => {
         helpFeedbackPanelOpened: true
       };
     }
-    case types.CLOSE_ALLVERTICAL_PANELS: {
+    /*case types.CLOSE_ALLVERTICAL_PANELS: {
       return {
         ...state,
         locationManagerPanelOpened: false,
@@ -943,7 +1015,7 @@ export default (state: any = initialState, action: any) => {
         searchPanelOpened: false,
         helpFeedbackPanelOpened: false
       };
-    }
+    }*/
     case types.ADD_EXTENSIONS: {
       const extensions = mergeByProp(
         state.extensions,
@@ -1165,7 +1237,7 @@ export const actions = {
         )
       );
     } else {
-      dispatch(actions.toggleCreateFileDialog());
+      dispatch(actions.toggleNewEntryDialog());
     }
   },
   toggleEditTagDialog: (tag: TS.Tag) => ({
@@ -1190,7 +1262,8 @@ export const actions = {
     type: types.TOGGLE_CREATE_DIRECTORY_DIALOG,
     props
   }),
-  toggleCreateFileDialog: () => ({ type: types.TOGGLE_CREATE_FILE_DIALOG }),
+  toggleNewEntryDialog: () => ({ type: types.TOGGLE_NEW_ENTRY_DIALOG }),
+  toggleNewFileDialog: () => ({ type: types.TOGGLE_NEW_FILE_DIALOG }),
   toggleDeleteMultipleEntriesDialog: () => ({
     type: types.TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG
   }),
@@ -1227,7 +1300,7 @@ export const actions = {
   openTagLibraryPanel: () => ({ type: types.OPEN_TAGLIBRARY_PANEL }),
   openSearchPanel: () => ({ type: types.OPEN_SEARCH_PANEL }),
   openHelpFeedbackPanel: () => ({ type: types.OPEN_HELPFEEDBACK_PANEL }),
-  closeAllVerticalPanels: () => ({ type: types.CLOSE_ALLVERTICAL_PANELS }),
+  //closeAllVerticalPanels: () => ({ type: types.CLOSE_ALLVERTICAL_PANELS }),
   setIsLoading: (isLoading: boolean) => ({
     type: types.SET_ISLOADING,
     isLoading
@@ -1451,7 +1524,7 @@ export const actions = {
     directoryPath: string,
     directoryContent: Array<any>,
     directoryMeta?: TS.FileSystemEntryMeta
-  ) => (dispatch: (action) => void) => {
+  ) => (dispatch: (action) => void, getState: () => any) => {
     // const currentLocation: Location = getLocation(
     //  getState(),
     //  getState().app.currentLocationId
@@ -1473,13 +1546,15 @@ export const actions = {
         dispatch(actions.setSelectedEntries(newSelectedEntries));
       }
     } */
+    const { settings } = getState();
     dispatch(actions.hideNotifications(['error']));
     dispatch(
       actions.loadDirectorySuccessInt(
         directoryPath,
         directoryContent,
         false,
-        directoryMeta
+        directoryMeta,
+        settings.defaultPerspective
       )
     );
     dispatch(actions.setIsMetaLoaded(false));
@@ -1488,13 +1563,15 @@ export const actions = {
     directoryPath: string,
     directoryContent: Array<any>,
     showIsLoading?: boolean,
-    directoryMeta?: TS.FileSystemEntryMeta
+    directoryMeta?: TS.FileSystemEntryMeta,
+    defaultPerspective?: string
   ) => ({
     type: types.LOAD_DIRECTORY_SUCCESS,
     directoryPath: directoryPath || PlatformIO.getDirSeparator(),
     directoryContent,
     directoryMeta,
-    showIsLoading
+    showIsLoading,
+    defaultPerspective
   }),
   setDirectoryMeta: (directoryMeta: TS.FileSystemEntryMeta) => ({
     type: types.SET_DIRECTORY_META,
@@ -1605,7 +1682,7 @@ export const actions = {
       .then(() => {
         if (directoryPath === currentDirectoryPath) {
           dispatch(actions.loadParentDirectoryContent());
-          dispatch(LocationIndexActions.reflectDeleteEntry(directoryPath));
+          GlobalSearch.getInstance().reflectDeleteEntry(directoryPath);
           // close opened entries in deleted dir
           if (
             openedFiles.length > 0 &&
@@ -1675,8 +1752,9 @@ export const actions = {
               dispatch(actions.addToEntryContainer(openedFile));
             }
           }
-          dispatch(
-            LocationIndexActions.reflectRenameEntry(directoryPath, newDirPath)
+          GlobalSearch.getInstance().reflectRenameEntry(
+            directoryPath,
+            newDirPath
           );
         } else {
           dispatch(actions.reflectRenameEntry(directoryPath, newDirPath));
@@ -2414,44 +2492,43 @@ export const actions = {
     type: types.REFLECT_DELETE_ENTRY,
     path
   }),
+  reflectDeleteEntriesInt: (paths: string[]) => ({
+    type: types.REFLECT_DELETE_ENTRIES,
+    paths
+  }),
   reflectDeleteEntry: (path: string) => (dispatch: (action) => void) => {
     dispatch(actions.reflectDeleteEntryInt(path));
-    dispatch(LocationIndexActions.reflectDeleteEntry(path));
+    GlobalSearch.getInstance().reflectDeleteEntry(path);
+  },
+  reflectDeleteEntries: (paths: string[]) => (dispatch: (action) => void) => {
+    dispatch(actions.reflectDeleteEntriesInt(paths));
+    GlobalSearch.getInstance().reflectDeleteEntries(paths);
   },
   reflectCreateEntryInt: (newEntry: TS.FileSystemEntry) => ({
     type: types.REFLECT_CREATE_ENTRY,
     newEntry
   }),
+  reflectCreateEntriesInt: (fsEntries: Array<TS.FileSystemEntry>) => ({
+    type: types.REFLECT_CREATE_ENTRIES,
+    fsEntries
+  }),
   reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => (
     dispatch: (action) => void
   ) => {
-    fsEntries.map(entry => dispatch(actions.reflectCreateEntryInt(entry))); // TODO remove map and set state once
+    dispatch(actions.reflectCreateEntriesInt(fsEntries));
     dispatch(actions.setSelectedEntries(fsEntries));
   },
   reflectCreateEntry: (path: string, isFile: boolean) => (
     dispatch: (action) => void
   ) => {
-    const newEntry = {
-      uuid: getUuid(),
-      name: isFile
-        ? extractFileName(path, PlatformIO.getDirSeparator())
-        : extractDirectoryName(path, PlatformIO.getDirSeparator()),
-      isFile,
-      extension: extractFileExtension(path, PlatformIO.getDirSeparator()),
-      description: '',
-      tags: [],
-      size: 0,
-      lmdt: new Date().getTime(),
-      path
-    };
-    dispatch(actions.reflectCreateEntryObj(newEntry));
+    dispatch(actions.reflectCreateEntryObj(toFsEntry(path, isFile)));
   },
   reflectCreateEntryObj: (newEntry: TS.FileSystemEntry) => (
     dispatch: (action) => void
   ) => {
     dispatch(actions.setSelectedEntries([newEntry]));
     dispatch(actions.reflectCreateEntryInt(newEntry));
-    dispatch(LocationIndexActions.reflectCreateEntry(newEntry));
+    GlobalSearch.getInstance().reflectCreateEntry(newEntry);
   },
   reflectRenameEntryInt: (path: string, newPath: string) => ({
     type: types.REFLECT_RENAME_ENTRY,
@@ -2479,7 +2556,7 @@ export const actions = {
       GlobalSearch.getInstance().setResults(results);
     }
     dispatch(actions.reflectRenameEntryInt(path, newPath));
-    dispatch(LocationIndexActions.reflectRenameEntry(path, newPath));
+    GlobalSearch.getInstance().reflectRenameEntry(path, newPath);
     dispatch(actions.setSelectedEntries([]));
   },
   /**
@@ -2540,7 +2617,7 @@ export const actions = {
     dispatch(actions.updateCurrentDirEntry(path, { tags }));
     // }
     if (updateIndex) {
-      dispatch(LocationIndexActions.reflectUpdateSidecarTags(path, tags));
+      GlobalSearch.getInstance().reflectUpdateSidecarTags(path, tags);
     }
   },
   deleteFile: (filePath: string, uuid: string) => (
@@ -2754,47 +2831,43 @@ export const actions = {
         // setTimeout is needed for case of a location switch, if no location swith the timer is 0
         setTimeout(() => {
           if (isCloudLocation) {
-            PlatformIO.enableObjectStoreSupport(targetLocation).then(() => {
-              if (directoryPath && directoryPath.length > 0) {
-                const newRelDir = getRelativeEntryPath(
-                  targetLocation,
-                  directoryPath
-                );
-                const dirFullPath =
-                  locationPath.length > 0
-                    ? locationPath + '/' + newRelDir
-                    : directoryPath;
-                dispatch(
-                  actions.loadDirectoryContent(dirFullPath, false, true)
-                );
-              } else {
-                dispatch(
-                  actions.loadDirectoryContent(locationPath, false, true)
-                );
-              }
+            // PlatformIO.enableObjectStoreSupport(targetLocation).then(() => {
+            if (directoryPath && directoryPath.length > 0) {
+              const newRelDir = getRelativeEntryPath(
+                targetLocation,
+                directoryPath
+              );
+              const dirFullPath =
+                locationPath.length > 0
+                  ? locationPath + '/' + newRelDir
+                  : directoryPath;
+              dispatch(actions.loadDirectoryContent(dirFullPath, false, true));
+            } else {
+              dispatch(actions.loadDirectoryContent(locationPath, false, true));
+            }
 
-              if (entryPath) {
-                getAllPropertiesPromise(entryPath)
-                  .then((fsEntry: TS.FileSystemEntry) => {
-                    if (fsEntry) {
-                      dispatch(actions.openFsEntry(fsEntry));
-                      if (options.fullWidth) {
-                        dispatch(actions.setEntryFullWidth(true));
-                      }
+            if (entryPath) {
+              getAllPropertiesPromise(entryPath)
+                .then((fsEntry: TS.FileSystemEntry) => {
+                  if (fsEntry) {
+                    dispatch(actions.openFsEntry(fsEntry));
+                    if (options.fullWidth) {
+                      dispatch(actions.setEntryFullWidth(true));
                     }
-                    return true;
-                  })
-                  .catch(() =>
-                    dispatch(
-                      actions.showNotification(
-                        i18n.t('core:invalidLink'),
-                        'warning',
-                        true
-                      )
+                  }
+                  return true;
+                })
+                .catch(() =>
+                  dispatch(
+                    actions.showNotification(
+                      i18n.t('core:invalidLink'),
+                      'warning',
+                      true
                     )
-                  );
-              }
-            });
+                  )
+                );
+            }
+            // });
           } else {
             // local files case
             if (directoryPath && directoryPath.length > 0) {
@@ -3007,8 +3080,10 @@ export const isSettingsDialogOpened = (state: any) =>
   state.app.settingsDialogOpened;
 export const isCreateDirectoryOpened = (state: any) =>
   state.app.createDirectoryDialogOpened;
-export const isCreateFileDialogOpened = (state: any) =>
-  state.app.createFileDialogOpened;
+export const isNewEntryDialogOpened = (state: any) =>
+  state.app.isNewEntryDialogOpened;
+export const isNewFileDialogOpened = (state: any) =>
+  state.app.isNewFileDialogOpened;
 export const isDeleteMultipleEntriesDialogOpened = (state: any) =>
   state.app.deleteMultipleEntriesDialogOpened;
 export const isImportKanBanDialogOpened = (state: any) =>

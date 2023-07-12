@@ -44,7 +44,7 @@ import SettingsExtensions from '-/components/dialogs/settings/SettingsExtensions
 
 const styles: any = () => ({
   mainContent: {
-    overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+    overflowY: 'auto'
   }
 });
 
@@ -151,7 +151,8 @@ function SettingsDialog(props: Props) {
   const renderActions = () => (
     <DialogActions
       style={{
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        padding: fullScreen ? '10px 30px 30px 30px' : undefined
       }}
     >
       <Button
@@ -168,6 +169,7 @@ function SettingsDialog(props: Props) {
         data-tid="closeSettingsDialog"
         onClick={props.onClose}
         color="primary"
+        variant="contained"
       >
         {i18n.t('core:closeButton')}
       </Button>

@@ -73,7 +73,7 @@ function ResolveConflictDialog(props: Props) {
       </DialogTitle>
       <DialogContent
         style={{
-          overflow: AppConfig.isFirefox ? 'auto' : 'overlay',
+          overflow: 'auto',
           minWidth: 400
         }}
       >
@@ -93,7 +93,9 @@ function ResolveConflictDialog(props: Props) {
           i18n.t('core:resolveConflictDesc')
         )}
       </DialogContent>
-      <DialogActions>
+      <DialogActions
+        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
+      >
         {isSaveAs ? (
           <>
             <Button
@@ -147,6 +149,7 @@ function ResolveConflictDialog(props: Props) {
                 });
               }}
               color="primary"
+              variant="contained"
             >
               {i18n.t('core:override')}
             </Button>

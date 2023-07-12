@@ -22,8 +22,8 @@ import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import SortingIcon from '@mui/icons-material/SwapVerticalCircle';
 import TagIcon from '@mui/icons-material/LocalOffer';
-import SelectAllIcon from '@mui/icons-material/CheckBox';
-import DeSelectAllIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import ShareIcon from '@mui/icons-material/Share';
+import { SelectedIcon, UnSelectedIcon } from '-/components/CommonIcons';
 import CopyIcon from '@mui/icons-material/FileCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ExportIcon from '@mui/icons-material/AssignmentReturn';
@@ -37,6 +37,7 @@ import { bindActionCreators } from 'redux';
 import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
+import { ProTooltip } from '-/components/HelperComponents';
 import {
   actions as LocationIndexActions,
   getSearchQuery
@@ -67,6 +68,7 @@ interface Props {
   searchQuery: TS.SearchQuery;
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   openCurrentDirectory: () => void;
+  openShareFilesDialog?: () => void;
   directoryPath: string;
   keyBindings: Array<any>;
 }
@@ -88,7 +90,8 @@ function MainToolbar(props: Props) {
     fileOperationsEnabled,
     handleSortingMenu,
     openSettings,
-    keyBindings
+    keyBindings,
+    openShareFilesDialog
   } = props;
 
   function showProperties() {
@@ -152,7 +155,7 @@ function MainToolbar(props: Props) {
           onClick={toggleSelectAllFiles}
           size="large"
         >
-          {someFileSelected ? <SelectAllIcon /> : <DeSelectAllIcon />}
+          {someFileSelected ? <SelectedIcon /> : <UnSelectedIcon />}
         </IconButton>
       </Tooltip>
       <Tooltip title={i18n.t('core:directoryPropertiesTitle')}>
@@ -223,6 +226,21 @@ function MainToolbar(props: Props) {
             </IconButton>
           </span>
         </Tooltip>
+      )}
+      {openShareFilesDialog && (
+        <ProTooltip title={i18n.t('core:shareFileDialog')}>
+          <span>
+            <IconButton
+              aria-label={i18n.t('core:shareFileDialog')}
+              data-tid={prefixDataTID + 'PerspectiveShareFiles'}
+              onClick={openShareFilesDialog}
+              disabled={selectedEntries.length < 1}
+              size="large"
+            >
+              <ShareIcon />
+            </IconButton>
+          </span>
+        </ProTooltip>
       )}
       <Tooltip title={i18n.t('core:sort')}>
         <IconButton

@@ -191,10 +191,8 @@ export function getDirectoryMenuItems(
       </MenuItem>
     );
   }
-  if (!perspectiveMode) {
-    menuItems.push(<Divider key="divider1" />);
-  }
   if (!isReadOnlyMode && !perspectiveMode) {
+    menuItems.push(<Divider key="divider1" />);
     if (createNewFile) {
       menuItems.push(
         <MenuItem
@@ -249,6 +247,7 @@ export function getDirectoryMenuItems(
   }
   if (
     Pro &&
+    !isReadOnlyMode &&
     perspectiveMode &&
     selectedEntriesLength < 2 &&
     setFolderThumbnail

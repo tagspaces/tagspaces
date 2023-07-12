@@ -44,7 +44,7 @@ import TaggingActions from '-/reducers/tagging-actions';
 import { isDateTimeTag } from '-/utils/dates';
 import { TS } from '-/tagspaces.namespace';
 import useValidation from '-/utils/useValidation';
-import { getMapTileServer } from '-/reducers/settings';
+import { getMapTileServer, getCurrentLanguage } from '-/reducers/settings';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -59,6 +59,7 @@ const styles = () => ({
 
 interface Props {
   classes: any;
+  language: string;
   open: boolean;
   onClose: () => void;
   editTagForEntry: (path: string, tag: TS.Tag, title: string) => void;
@@ -98,7 +99,7 @@ function EditEntryTagDialog(props: Props) {
     isShowDatePeriodEditor
   );
   const { setError, haveError } = useValidation();
-  const { onClose, open } = props;
+  const { onClose, open, language } = props;
 
   useEffect(() => {
     if (titleRef && titleRef.current) {
@@ -147,7 +148,7 @@ function EditEntryTagDialog(props: Props) {
         data-tid="editEntryTagDialog"
         className={props.classes.root}
         style={{
-          overflow: AppConfig.isFirefox ? 'auto' : 'overlay'
+          overflow: 'auto'
         }}
       >
         <FormControl fullWidth={true} error={haveError('tag')}>
@@ -178,6 +179,7 @@ function EditEntryTagDialog(props: Props) {
         </FormControl>
         {showGeoEditor && (
           <GeoTagEditor
+            language={language}
             geoTag={title}
             onChange={setTitle}
             // zoom={title === defaultTagLocation ? 2 : undefined} TODO defaultTagLocation can be in MGRS format
@@ -226,6 +228,7 @@ function EditEntryTagDialog(props: Props) {
             onClick={onConfirm}
             data-tid="confirmEditTagEntryDialog"
             color="primary"
+            variant="contained"
           >
             {i18n.t('core:ok')}
           </Button>
@@ -261,9 +264,6 @@ function EditEntryTagDialog(props: Props) {
 function mapStateToProps(state) {
   return {
     selectedTag: getSelectedTag(state),
-    /* currentEntryPath: getSelectedTag(state)
-      ? getSelectedTag(state).path
-      : undefined, */
     selectedEntries: getSelectedEntries(state),
     tileServer: getMapTileServer(state),
     geoTaggingFormat: state.settings.geoTaggingFormat

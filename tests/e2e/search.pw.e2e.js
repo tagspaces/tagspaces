@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import {
   clickOn,
   expectElementExist,
+  expectElementSelected,
   getGridFileName,
   getGridFileSelector,
   selectorFile,
@@ -212,13 +213,28 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await clickOn(getGridFileSelector('sample.' + file1));
     await AddRemoveTagsToSelectedFiles('grid', tags1, true);
 
+    await expectElementSelected(
+      'sample' + ' ' + tags1.join(' ') + '.' + file1,
+      false
+    );
+
     const file2 = 'jpg';
     await clickOn(getGridFileSelector('sample.' + file2));
     await AddRemoveTagsToSelectedFiles('grid', tags2, true);
 
+    await expectElementSelected(
+      'sample' + ' ' + tags2.join(' ') + '.' + file2,
+      false
+    );
+
     const file3 = 'gif';
     await clickOn(getGridFileSelector('sample.' + file3));
     await AddRemoveTagsToSelectedFiles('grid', tags3, true);
+
+    await expectElementSelected(
+      'sample' + ' ' + tags3.join(' ') + '.' + file3,
+      false
+    );
 
     function getFileName(fileExt, tags) {
       return getGridFileSelector('sample[' + tags.join(' ') + '].' + fileExt);
@@ -334,7 +350,11 @@ test.describe('TST06 - Test Search in file structure:', () => {
   });
 
   test('TST0634 - Search q. comp - scope (folder) [web,electron]', async () => {
-    await global.client.dblclick('[data-tid=fsEntryName_empty_folder]');
+    //await global.client.dblclick('[data-tid=fsEntryName_empty_folder]');
+    await openContextEntryMenu(
+      getGridFileSelector('empty_folder'),
+      'openDirectory'
+    );
     await addSearchCommand('sc:', false);
     await clickOn('#textQuery-option-1');
     await addSearchCommand('sample.html', true);

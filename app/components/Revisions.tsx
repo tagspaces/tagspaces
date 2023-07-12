@@ -173,8 +173,7 @@ function Revisions(props: Props) {
         component={Paper}
         sx={{
           maxHeight: '100%',
-          // @ts-ignore
-          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+          overflowY: 'auto'
         }}
       >
         <Table

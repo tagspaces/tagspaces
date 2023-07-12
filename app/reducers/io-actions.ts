@@ -27,6 +27,7 @@ import {
   getThumbFileLocationForFile,
   getBackupFileDir,
   normalizePath,
+  getMetaDirectoryPath,
   extractDirectoryName,
   joinPaths
 } from '@tagspaces/tagspaces-common/paths';
@@ -36,7 +37,8 @@ import {
   copyFilesPromise,
   getThumbPath,
   loadFileMetaDataPromise,
-  renameFilesPromise
+  renameFilesPromise,
+  toFsEntry
 } from '-/services/utils-io';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
@@ -73,24 +75,20 @@ const actions = {
     );
   },
   moveDirs: (
-    paths: Array<string>,
-    totalCount: number,
+    dirPaths: Array<any>,
     targetPath: string,
     onProgress = undefined
   ) => (dispatch: (actions: Object) => void) => {
-    const promises = paths.map(dirPath => {
-      const dirName = extractDirectoryName(
-        dirPath,
-        PlatformIO.getDirSeparator()
-      );
+    const promises = dirPaths.map(({ path, count }) => {
+      const dirName = extractDirectoryName(path, PlatformIO.getDirSeparator());
       return PlatformIO.moveDirectoryPromise(
-        { path: dirPath, total: totalCount },
+        { path: path, total: count },
         joinPaths(PlatformIO.getDirSeparator(), targetPath, dirName),
         onProgress
       )
         .then(() => {
-          console.log('Moving dir from ' + dirPath + ' to ' + targetPath);
-          dispatch(AppActions.reflectDeleteEntry(dirPath));
+          console.log('Moving dir from ' + path + ' to ' + targetPath);
+          dispatch(AppActions.reflectDeleteEntry(path));
           return true;
         })
         .catch(err => {
@@ -118,14 +116,14 @@ const actions = {
         dispatch(
           AppActions.showNotification(i18n.t('core:filesMovedSuccessful'))
         );
+        // moved files should be added to the index, if the target dir in index
+        dispatch(AppActions.reflectDeleteEntries(paths));
 
         const moveMetaJobs = [];
         moveJobs.map(job => {
-          dispatch(AppActions.reflectDeleteEntry(job[0])); // moved files should be added to the index, if the target dir in index
-
           // Move revisions
-          loadFileMetaDataPromise(job[0]).then(
-            (fsEntryMeta: TS.FileSystemEntryMeta) => {
+          loadFileMetaDataPromise(job[0])
+            .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
               if (fsEntryMeta.id) {
                 const backupDir = getBackupFileDir(
                   job[0],
@@ -154,8 +152,10 @@ const actions = {
                     console.warn('Moving revisions failed ', err);
                   });
               }
-            }
-          );
+            })
+            .catch(err => {
+              console.warn('loadFileMetaDataPromise', err);
+            });
 
           // move meta
           moveMetaJobs.push([
@@ -174,16 +174,16 @@ const actions = {
               false
             )
           ]);
-          renameFilesPromise(moveMetaJobs)
-            .then(() => {
-              console.log('Moving meta and thumbs successful');
-              return true;
-            })
-            .catch(err => {
-              console.warn('At least one meta or thumb was not moved ' + err);
-            });
           return true;
         });
+        renameFilesPromise(moveMetaJobs)
+          .then(() => {
+            console.log('Moving meta and thumbs successful');
+            return true;
+          })
+          .catch(err => {
+            console.warn('At least one meta or thumb was not moved ' + err);
+          });
         return true;
       })
       .catch(err => {
@@ -194,23 +194,19 @@ const actions = {
       });
   },
   copyDirs: (
-    paths: Array<string>,
-    totalCount: number,
+    dirPaths: Array<any>,
     targetPath: string,
     onProgress = undefined
   ) => (dispatch: (actions: Object) => void) => {
-    const promises = paths.map(dirPath => {
-      const dirName = extractDirectoryName(
-        dirPath,
-        PlatformIO.getDirSeparator()
-      );
+    const promises = dirPaths.map(({ path, count }) => {
+      const dirName = extractDirectoryName(path, PlatformIO.getDirSeparator());
       return PlatformIO.copyDirectoryPromise(
-        { path: dirPath, total: totalCount },
+        { path: path, total: count },
         joinPaths(PlatformIO.getDirSeparator(), targetPath, dirName),
         onProgress
       )
         .then(() => {
-          console.log('Copy dir from ' + dirPath + ' to ' + targetPath);
+          console.log('Copy dir from ' + path + ' to ' + targetPath);
           return true;
         })
         .catch(err => {
@@ -222,55 +218,49 @@ const actions = {
     });
     return Promise.all(promises).then(() => true);
   },
-  copyFiles: (paths: Array<string>, targetPath: string) => (
+  copyFiles: (paths: Array<string>, targetPath: string, onProgress) => (
     dispatch: (actions: Object) => void
   ) => {
-    const copyJobs = [];
-    paths.map(path => {
-      copyJobs.push([
-        path,
-        normalizePath(targetPath) +
-          PlatformIO.getDirSeparator() +
-          extractFileName(path, PlatformIO.getDirSeparator())
-      ]);
-      return true;
-    });
-    copyFilesPromise(copyJobs)
+    copyFilesPromise(paths, targetPath, onProgress)
       .then(() => {
+        // todo return only copied paths
         dispatch(
           AppActions.showNotification(i18n.t('core:filesCopiedSuccessful'))
         );
-        const copyMetaJobs = [];
-        copyJobs.map(job => {
-          // dispatch(AppActions.reflectCopyEntry(job[0])); // TODO need only for the index if the target dir is indexed
-          copyMetaJobs.push([
-            getMetaFileLocationForFile(job[0], PlatformIO.getDirSeparator()),
-            getMetaFileLocationForFile(job[1], PlatformIO.getDirSeparator())
-          ]);
-          copyMetaJobs.push([
-            getThumbFileLocationForFile(
-              job[0],
-              PlatformIO.getDirSeparator(),
-              false
-            ),
-            getThumbFileLocationForFile(
-              job[1],
-              PlatformIO.getDirSeparator(),
-              false
-            )
-          ]);
-          copyFilesPromise(copyMetaJobs)
-            .then(() => {
-              console.log('Copy meta and thumbs successful');
-              dispatch(AppActions.reflectCreateEntry(job[1], true));
-              return true;
-            })
-            .catch(err => {
-              dispatch(AppActions.reflectCreateEntry(job[1], true));
-              console.warn('At least one meta or thumb was not copied ' + err);
-            });
-          return true;
-        });
+        const metaPaths = paths.flatMap(path => [
+          getMetaFileLocationForFile(path, PlatformIO.getDirSeparator()),
+          getThumbFileLocationForFile(path, PlatformIO.getDirSeparator(), false)
+        ]);
+
+        /*const targetFiles: string[] = paths.map(
+          path =>
+            normalizePath(targetPath) +
+            PlatformIO.getDirSeparator() +
+            extractFileName(path, PlatformIO.getDirSeparator())
+        );*/
+
+        copyFilesPromise(
+          metaPaths,
+          getMetaDirectoryPath(targetPath),
+          onProgress
+        )
+          .then(() => {
+            console.log('Copy meta and thumbs successful');
+            /*dispatch(
+              AppActions.reflectCreateEntries(
+                targetFiles.map(filePath => toFsEntry(filePath, true))
+              )
+            );*/
+            return true;
+          })
+          .catch(err => {
+            /*dispatch(
+              AppActions.reflectCreateEntries(
+                targetFiles.map(filePath => toFsEntry(filePath, true))
+              )
+            );*/
+            console.warn('At least one meta or thumb was not copied ' + err);
+          });
         return true;
       })
       .catch(err => {

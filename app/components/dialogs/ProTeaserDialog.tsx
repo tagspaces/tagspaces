@@ -197,8 +197,7 @@ function ProTeaserDialog(props: Props) {
       <DialogContent
         style={{
           paddingBottom: 0,
-          // @ts-ignore
-          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+          overflowY: 'auto'
         }}
       >
         <SwipeableViews

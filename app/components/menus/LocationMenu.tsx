@@ -21,8 +21,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import LocationIcon from '@mui/icons-material/WorkOutline';
-import CloudLocationIcon from '@mui/icons-material/CloudQueue';
+import { LocalLocationIcon, CloudLocationIcon } from '-/components/CommonIcons';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubHeader from '@mui/material/ListSubheader';
@@ -67,7 +66,7 @@ function LocationMenu(props: Props) {
     currentLocation && currentLocation.type === locationType.TYPE_CLOUD ? (
       <CloudLocationIcon />
     ) : (
-      <LocationIcon />
+      <LocalLocationIcon />
     );
 
   return (
@@ -133,7 +132,7 @@ function LocationMenu(props: Props) {
                 {location.type === locationType.TYPE_CLOUD ? (
                   <CloudLocationIcon />
                 ) : (
-                  <LocationIcon />
+                  <LocalLocationIcon />
                 )}
               </ListItemIcon>
               <ListItemText primary={location.name} />

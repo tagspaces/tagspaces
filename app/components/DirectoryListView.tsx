@@ -20,6 +20,7 @@ import { actions as AppActions, getCurrentLocationId } from '-/reducers/app';
 import { ParentFolderIcon } from '-/components/CommonIcons';
 import { getLocations } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-facade';
+import { Pro } from '-/pro';
 
 interface Props {
   setTargetDir: (dirPath: string) => void;
@@ -27,11 +28,18 @@ interface Props {
   currentLocationId: string;
   toggleCreateDirectoryDialog: (props: any) => void;
   showUnixHiddenEntries: boolean;
+  currentDirectoryPath?: string;
+  watchForChanges: () => void;
 }
 function DirectoryListView(props: Props) {
-  const { locations, currentLocationId, showUnixHiddenEntries } = props;
+  const {
+    locations,
+    currentLocationId,
+    showUnixHiddenEntries,
+    currentDirectoryPath
+  } = props;
   const chosenLocationId = useRef<string>(currentLocationId);
-  const chosenDirectory = useRef<string>();
+  const chosenDirectory = useRef<string>(currentDirectoryPath);
   const [directoryContent, setDirectoryContent] = useState<
     TS.FileSystemEntry[]
   >([]);
@@ -41,7 +49,11 @@ function DirectoryListView(props: Props) {
       location => location.uuid === chosenLocationId.current
     );
     if (chosenLocation) {
-      listDirectory(chosenLocation.path);
+      const path =
+        chosenLocation.uuid === currentLocationId && currentDirectoryPath
+          ? currentDirectoryPath
+          : chosenLocation.path;
+      listDirectory(path);
     }
   }, [chosenLocationId.current]);
 
@@ -52,6 +64,7 @@ function DirectoryListView(props: Props) {
     );
     if (chosenLocation) {
       listDirectory(chosenLocation.path);
+      props.setTargetDir(chosenLocation.path);
     }
   };
 
@@ -99,7 +112,7 @@ function DirectoryListView(props: Props) {
             })
             // .sort((a, b) => b.name - a.name)
           );
-          props.setTargetDir(directoryPath);
+          // props.setTargetDir(directoryPath);
         }
         return true;
       })
@@ -112,9 +125,9 @@ function DirectoryListView(props: Props) {
     if (directoryContent && directoryContent.length > 0) {
       return directoryContent.map(entry => (
         <ListItem
+          key={entry.path}
           data-tid={'MoveTarget' + entry.name}
           title={'Navigate to: ' + entry.path}
-          style={{ maxWidth: 250 }}
           onClick={() => {
             props.setTargetDir(entry.path);
           }}
@@ -148,7 +161,9 @@ function DirectoryListView(props: Props) {
             if (currentPath.endsWith(PlatformIO.getDirSeparator())) {
               currentPath = currentPath.slice(0, -1);
             }
-            listDirectory(extractContainingDirectoryPath(currentPath));
+            const parentDir = extractContainingDirectoryPath(currentPath);
+            listDirectory(parentDir);
+            props.setTargetDir(parentDir);
           }
         }}
       >
@@ -160,9 +175,16 @@ function DirectoryListView(props: Props) {
         style={{ margin: 5 }}
         data-tid="newSubdirectoryTID"
         onClick={() => {
+          if (Pro && Pro.Watcher) {
+            Pro.Watcher.stopWatching();
+          }
           props.toggleCreateDirectoryDialog({
             rootDirPath: chosenDirectory.current,
-            callback: () => listDirectory(chosenDirectory.current),
+            callback: newDirPath => {
+              listDirectory(chosenDirectory.current);
+              props.setTargetDir(newDirPath);
+              props.watchForChanges();
+            },
             reflect: false
           });
         }}
@@ -174,8 +196,7 @@ function DirectoryListView(props: Props) {
         style={{
           borderRadius: 5,
           maxHeight: 300,
-          // @ts-ignore
-          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+          overflowY: 'auto'
         }}
       >
         {getFolderContent()}
@@ -195,7 +216,8 @@ function mapStateToProps(state) {
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
-      toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog
+      toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog,
+      watchForChanges: AppActions.watchForChanges
     },
     dispatch
   );

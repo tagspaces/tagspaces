@@ -146,6 +146,8 @@ function GridPerspective(props: Props) {
     props.directoryMeta.perspectiveSettings[PerspectiveIDs.GRID];
   const settings = getSettings(props.directoryMeta);
 
+  const ShareFilesDialog = Pro && Pro.UI ? Pro.UI.ShareFilesDialog : false;
+
   const [mouseX, setMouseX] = useState<number>(undefined);
   const [mouseY, setMouseY] = useState<number>(undefined);
   // const selectedEntry = useRef<FileSystemEntry>(undefined);
@@ -236,6 +238,9 @@ function GridPerspective(props: Props) {
     isMoveCopyFilesDialogOpened,
     setIsMoveCopyFilesDialogOpened
   ] = useState<boolean>(false);
+  const [isShareFilesDialogOpened, setIsShareFilesDialogOpened] = useState<
+    boolean
+  >(false);
   const [
     isAddRemoveTagsDialogOpened,
     setIsAddRemoveTagsDialogOpened
@@ -507,7 +512,11 @@ function GridPerspective(props: Props) {
 
   const handleExportCsvMenu = () => {
     if (Pro) {
-      Pro.exportAsCsv.ExportAsCsv(props.directoryContent);
+      if (props.selectedEntries && props.selectedEntries.length > 0) {
+        Pro.exportAsCsv.ExportAsCsv(props.selectedEntries);
+      } else {
+        Pro.exportAsCsv.ExportAsCsv(sortedDirContent.current);
+      }
     }
   };
 
@@ -606,6 +615,10 @@ function GridPerspective(props: Props) {
 
   const openMoveCopyFilesDialog = () => {
     setIsMoveCopyFilesDialogOpened(true);
+  };
+
+  const openShareFilesDialog = () => {
+    setIsShareFilesDialogOpened(true);
   };
 
   const openDeleteFileDialog = () => {
@@ -788,6 +801,9 @@ function GridPerspective(props: Props) {
         handleExportCsvMenu={handleExportCsvMenu}
         openSettings={openSettings}
         directoryPath={currentDirectoryPath}
+        openShareFilesDialog={
+          PlatformIO.haveObjectStoreSupport() ? openShareFilesDialog : undefined
+        }
       />
       <GlobalHotKeys
         keyMap={keyMap}
@@ -907,6 +923,12 @@ function GridPerspective(props: Props) {
           onClose={() => setIsMoveCopyFilesDialogOpened(false)}
         />
       )}
+      {isShareFilesDialogOpened && Pro && (
+        <ShareFilesDialog
+          open={isShareFilesDialogOpened}
+          onClose={() => setIsShareFilesDialogOpened(false)}
+        />
+      )}
       {Boolean(fileContextMenuAnchorEl) && (
         <FileMenu
           anchorEl={fileContextMenuAnchorEl}
@@ -917,6 +939,11 @@ function GridPerspective(props: Props) {
           openDeleteFileDialog={openDeleteFileDialog}
           openRenameFileDialog={props.openRenameEntryDialog}
           openMoveCopyFilesDialog={openMoveCopyFilesDialog}
+          openShareFilesDialog={
+            PlatformIO.haveObjectStoreSupport()
+              ? openShareFilesDialog
+              : undefined
+          }
           openAddRemoveTagsDialog={openAddRemoveTagsDialog}
           openFsEntry={props.openFsEntry}
           openFileNatively={props.openFileNatively}

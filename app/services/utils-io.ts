@@ -41,6 +41,8 @@ import {
   getMetaFileLocationForDir,
   extractContainingDirectoryPath,
   extractDirectoryName,
+  extractFileName,
+  normalizePath,
   getThumbFileLocationForFile,
   getThumbFileLocationForDirectory,
   getBgndFileLocationForDirectory,
@@ -686,12 +688,161 @@ export function renameFilesPromise(
   );
 }
 
-export function copyFilesPromise(copyJobs: Array<Array<string>>) {
-  const ioJobPromises = [];
-  copyJobs.forEach(copyJob => {
-    ioJobPromises.push(PlatformIO.copyFilePromise(copyJob[0], copyJob[1]));
+/*function getCommonFolder(paths: Array<string>) {
+  const rootFolders = paths.map(p =>
+    extractContainingDirectoryPath(p, PlatformIO.getDirSeparator())
+  );
+  const firstRootFolder = rootFolders[0];
+  if (rootFolders.every(rf => rf === firstRootFolder)) {
+    return firstRootFolder;
+  }
+  return false;
+}*/
+
+function trackProgress(promises, abortSignal, progress) {
+  // const total = promises.length;
+  let completed = 0;
+  let aborted = false;
+
+  // Create an array of promises that resolve when the original promises resolve
+  const progressPromises = promises.map(({ promise, path }) =>
+    promise
+      .then(() => {
+        if (!aborted) {
+          completed++;
+          // console.log(`Progress: ${completed}/${total}`);
+          if (progress) {
+            progress(completed, path);
+          }
+        }
+      })
+      .catch(err => {
+        completed++;
+        console.warn('Promise ' + path + ' error:', err);
+      })
+  );
+
+  // Use Promise.race() to wait for all progress promises to resolve
+  return Promise.race(progressPromises)
+    .then(() => Promise.all(promises))
+    .catch(err => {
+      if (abortSignal.aborted) {
+        aborted = true;
+        console.warn('Promise execution aborted');
+      } else {
+        throw err;
+      }
+    });
+}
+
+export function isFulfilled<T>(
+  result: PromiseSettledResult<T>
+): result is PromiseFulfilledResult<T> {
+  return result.status === 'fulfilled';
+}
+
+export function isRejected<T>(
+  result: PromiseSettledResult<T>
+): result is PromiseRejectedResult {
+  return result.status === 'rejected';
+}
+
+export function getFulfilledResults<T>(
+  results: Array<PromiseSettledResult<T>>
+) {
+  return results.filter(isFulfilled).map(result => result.value);
+}
+
+interface FileExistenceCheck {
+  promise: Promise<boolean>;
+  path: string;
+}
+
+export function checkFilesExistPromise(
+  paths: string[],
+  targetPath: string
+): Promise<Array<string>> {
+  const promises: FileExistenceCheck[] = paths.map(path => {
+    const targetFile =
+      normalizePath(targetPath) +
+      PlatformIO.getDirSeparator() +
+      extractFileName(path, PlatformIO.getDirSeparator());
+    return { promise: PlatformIO.checkFileExist(targetFile), path };
   });
-  return Promise.all(ioJobPromises);
+  const progressPromises: Array<Promise<string>> = promises.map(
+    ({ promise, path }) =>
+      promise
+        .then(exists => (exists ? path : ''))
+        .catch(err => {
+          console.warn(`Promise ${path} error:`, err);
+          return '';
+        })
+  );
+
+  return Promise.allSettled(progressPromises).then(results => {
+    return getFulfilledResults(results).filter(r => r);
+  });
+}
+
+export function checkDirsExistPromise(
+  paths: string[],
+  targetPath: string
+): Promise<Array<string>> {
+  const promises: FileExistenceCheck[] = paths.map(path => {
+    const targetDir =
+      normalizePath(targetPath) +
+      PlatformIO.getDirSeparator() +
+      extractDirectoryName(path, PlatformIO.getDirSeparator());
+    return { promise: PlatformIO.checkDirExist(targetDir), path };
+  });
+  const progressPromises: Array<Promise<string>> = promises.map(
+    ({ promise, path }) =>
+      promise
+        .then(exists => (exists ? path : ''))
+        .catch(err => {
+          console.warn(`Promise ${path} error:`, err);
+          return '';
+        })
+  );
+
+  return Promise.allSettled(progressPromises).then(results => {
+    return getFulfilledResults(results).filter(r => r);
+  });
+}
+
+export function copyFilesPromise(
+  paths: Array<string>,
+  targetPath: string,
+  onProgress = undefined
+) {
+  const controller = new AbortController();
+  const signal = controller.signal;
+
+  const ioJobPromises = paths.map(path => {
+    const targetFile =
+      normalizePath(targetPath) +
+      PlatformIO.getDirSeparator() +
+      extractFileName(path, PlatformIO.getDirSeparator());
+    return {
+      promise: PlatformIO.copyFilePromiseOverwrite(path, targetFile),
+      path: path
+    };
+  });
+  const progress = (completed, path) => {
+    const progress = {
+      loaded: completed, //processedSize,
+      total: ioJobPromises.length,
+      key: targetPath
+    };
+    onProgress(
+      progress,
+      () => {
+        controller.abort();
+      },
+      path
+    );
+  };
+  return trackProgress(ioJobPromises, signal, progress);
 }
 
 export async function loadSubFolders(path: string, loadHidden = false) {
@@ -1469,9 +1620,9 @@ export function getBgndPath(bgndPath: string, lastBackgroundImageChange: any) {
   }
   return (
     normalizeUrl(bgndPath) +
-    (lastBackgroundImageChange &&
-    lastBackgroundImageChange.folderPath === bgndPath
-      ? '?' + lastBackgroundImageChange.dt
+    (lastBackgroundImageChange
+      ? // && lastBackgroundImageChange.folderPath === bgndPath
+        '?' + lastBackgroundImageChange.dt
       : '')
   );
 }
@@ -1543,6 +1694,22 @@ export function mergeFsEntryMeta(props: any = {}): TS.FileSystemEntryMeta {
     tags: [],
     ...props,
     id: props.id || getUuid()
+  };
+}
+
+export function toFsEntry(path: string, isFile: boolean): TS.FileSystemEntry {
+  return {
+    uuid: getUuid(),
+    name: isFile
+      ? extractFileName(path, PlatformIO.getDirSeparator())
+      : extractDirectoryName(path, PlatformIO.getDirSeparator()),
+    isFile,
+    extension: extractFileExtension(path, PlatformIO.getDirSeparator()),
+    description: '',
+    tags: [],
+    size: 0,
+    lmdt: new Date().getTime(),
+    path
   };
 }
 

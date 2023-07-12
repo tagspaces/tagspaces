@@ -21,7 +21,6 @@ import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import withStyles from '@mui/styles/withStyles';
 import Dialog from '@mui/material/Dialog';
 import { SketchPicker } from 'react-color';
 import i18n from '-/services/i18n';
@@ -56,21 +55,12 @@ const presetColors = [
 ];
 
 interface Props {
-  classes: any;
   open: boolean;
   color: string;
   setColor: (color: string) => void;
   presetColors?: Array<string>;
   onClose: () => void;
 }
-
-const styles = {
-  noBorder: {
-    padding: '0 !important',
-    boxShadow: 'none !important',
-    backgroundColor: 'transparent !important'
-  }
-};
 
 function ColorPickerDialog(props: Props) {
   const [color, setColor] = useState(undefined);
@@ -101,9 +91,7 @@ function ColorPickerDialog(props: Props) {
           event.preventDefault();
           event.stopPropagation();
           onConfirm();
-        } /*else if (event.key === 'Escape') {
-          onClose();
-        }*/
+        }
       }}
     >
       <DialogTitle data-tid="colorPickerDialogTitle">
@@ -119,7 +107,11 @@ function ColorPickerDialog(props: Props) {
         }}
       >
         <SketchPicker
-          className={props.classes.noBorder}
+          style={{
+            padding: '0 !important',
+            boxShadow: 'none !important',
+            backgroundColor: 'transparent !important'
+          }}
           name="color"
           presetColors={props.presetColors ? props.presetColors : presetColors}
           color={color || props.color}
@@ -132,6 +124,7 @@ function ColorPickerDialog(props: Props) {
         </Button>
         <Button
           onClick={onConfirm}
+          variant="contained"
           data-tid="colorPickerConfirm"
           color="primary"
         >
@@ -142,4 +135,4 @@ function ColorPickerDialog(props: Props) {
   );
 }
 
-export default withStyles(styles)(ColorPickerDialog);
+export default ColorPickerDialog;

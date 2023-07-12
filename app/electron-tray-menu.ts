@@ -65,7 +65,7 @@ export default function buildTrayIconMenu(mainPageProps: any, i18n, isMacLike) {
     },
     {
       label: i18n.t('newFileNote') + cKey + '+Shift+N',
-      click: mainPageProps.toggleCreateFileDialog
+      click: mainPageProps.toggleNewFileDialog
     },
     {
       type: 'separator'

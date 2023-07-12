@@ -60,7 +60,7 @@ import HowToStart from '-/components/HowToStart';
 interface Props {
   theme: any;
   classes: any;
-  toggleCreateFileDialog: () => void;
+  toggleNewFileDialog: () => void;
   toggleLocationDialog: () => void;
   toggleOpenLinkDialog: () => void;
   toggleKeysDialog: () => void;
@@ -101,7 +101,7 @@ function WelcomePanel(props: Props) {
     openFsEntry,
     openURLExternally,
     toggleKeysDialog,
-    toggleCreateFileDialog,
+    toggleNewFileDialog,
     toggleLocationDialog,
     toggleOpenLinkDialog,
     isDesktopMode
@@ -231,7 +231,7 @@ function WelcomePanel(props: Props) {
         >
           <img src={WelcomeLogo} alt="Organize your files" />
         </div>
-        <ListItem onClick={triggerOpenLocation}>
+        {/* <ListItem onClick={triggerOpenLocation}>
           <ListItemIcon>
             <LocalLocationIcon />
           </ListItemIcon>
@@ -239,8 +239,8 @@ function WelcomePanel(props: Props) {
             primary={i18n.t('core:chooseLocation')}
             className={classes.listItem}
           />
-        </ListItem>
-        {/* <ListItem onClick={toggleCreateFileDialog}>
+        </ListItem> */}
+        <ListItem onClick={toggleNewFileDialog}>
           <ListItemIcon>
             <CreateFileIcon />
           </ListItemIcon>
@@ -248,7 +248,7 @@ function WelcomePanel(props: Props) {
             primary={i18n.t('core:create')}
             className={classes.listItem}
           />
-        </ListItem> */}
+        </ListItem>
         <ListItem onClick={toggleLocationDialog}>
           <ListItemIcon>
             <LocalLocationIcon />
@@ -460,7 +460,7 @@ function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
       setFirstRun: SettingsActions.setFirstRun,
-      toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
+      toggleNewFileDialog: AppActions.toggleNewFileDialog,
       toggleLocationDialog: AppActions.toggleLocationDialog,
       toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
       openURLExternally: AppActions.openURLExternally,

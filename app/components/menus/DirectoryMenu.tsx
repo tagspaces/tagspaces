@@ -67,7 +67,7 @@ interface Props {
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   openAddRemoveTagsDialog?: () => void;
   reflectCreateEntry?: (path: string, isFile: boolean) => void;
-  toggleCreateFileDialog?: () => void;
+  toggleNewFileDialog?: () => void;
   uploadFilesAPI: (
     files: Array<File>,
     destination: string,
@@ -242,7 +242,7 @@ function DirectoryMenu(props: Props) {
   }*/
 
   function createNewFile() {
-    props.toggleCreateFileDialog();
+    props.toggleNewFileDialog();
   }
 
   function showInFileManager() {
@@ -253,9 +253,9 @@ function DirectoryMenu(props: Props) {
     // onClose();
     if (selectedEntries && selectedEntries.length === 1) {
       const sharingLink = generateFolderLink();
-      PlatformIO.createNewInstance(
-        window.location.href.split('?')[0] + '?' + sharingLink.split('?')[1]
-      );
+      const newInstanceLink =
+        window.location.href.split('?')[0] + '?' + sharingLink.split('?')[1];
+      PlatformIO.createNewInstance(newInstanceLink);
     }
   }
 
@@ -493,7 +493,7 @@ function mapDispatchToProps(dispatch) {
       onUploadProgress: AppActions.onUploadProgress,
       toggleUploadDialog: AppActions.toggleUploadDialog,
       toggleProgressDialog: AppActions.toggleProgressDialog,
-      toggleCreateFileDialog: AppActions.toggleCreateFileDialog,
+      toggleNewFileDialog: AppActions.toggleNewFileDialog,
       toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog,
       toggleProTeaser: AppActions.toggleProTeaser,
       resetProgress: AppActions.resetProgress,

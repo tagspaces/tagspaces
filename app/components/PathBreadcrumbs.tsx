@@ -31,14 +31,14 @@ import {
 import i18n from '../services/i18n';
 import DirectoryMenu from './menus/DirectoryMenu';
 import { TS } from '-/tagspaces.namespace';
-import { connect } from 'react-redux';
-import { getCurrentLanguage } from '-/reducers/settings';
+import { LocalLocationIcon, CloudLocationIcon } from '-/components/CommonIcons';
+import { locationType } from '@tagspaces/tagspaces-common/misc';
 
 // @ts-ignore
 const StyledBreadcrumb = withStyles((theme: Theme) => ({
   root: {
     backgroundColor: emphasize(theme.palette.background.default, 0.06),
-    height: theme.spacing(3),
+    // height: theme.spacing(3),
     color: theme.palette.text.primary,
     fontWeight: theme.typography.fontWeightRegular,
     '&:hover, &:focus': {
@@ -56,11 +56,13 @@ const NoWrapBreadcrumb = withStyles({
 interface Props {
   currentDirectoryPath: string;
   currentLocationPath: string;
+  currentLocation: TS.Location;
   loadDirectoryContent: (
     path: string,
     generateThumbnails: boolean,
     loadDirMeta?: boolean
   ) => void;
+  language: string;
   switchPerspective: (perspectiveId: string) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   openDirectory: () => void;
@@ -83,8 +85,8 @@ function PathBreadcrumbs(props: Props) {
   const {
     currentDirectoryPath,
     currentLocationPath,
+    currentLocation,
     loadDirectoryContent,
-    switchPerspective,
     setSelectedEntries,
     openDirectory,
     reflectCreateEntry,
@@ -110,18 +112,25 @@ function PathBreadcrumbs(props: Props) {
     currentDirectoryPath.split('\\').join('/')
   );
 
+  const locationTypeIcon =
+    currentLocation && currentLocation.type === locationType.TYPE_CLOUD ? (
+      <CloudLocationIcon />
+    ) : (
+      <LocalLocationIcon />
+    );
+
+  let currentFolderChipIcon = undefined;
+
   if (currentDirectoryPath) {
     // Make the path unix like ending always with /
     const addSlash = PlatformIO.haveObjectStoreSupport() ? '//' : '/';
     let normalizedCurrentPath =
-      addSlash +
-      normalizePath(props.currentDirectoryPath.split('\\').join('/'));
+      addSlash + normalizePath(currentDirectoryPath.split('\\').join('/'));
 
     let normalizedCurrentLocationPath = '';
     if (currentLocationPath) {
       normalizedCurrentLocationPath =
-        addSlash +
-        normalizePath(props.currentLocationPath.split('\\').join('/'));
+        addSlash + normalizePath(currentLocationPath.split('\\').join('/'));
     }
 
     while (
@@ -140,10 +149,20 @@ function PathBreadcrumbs(props: Props) {
       );
     }
 
+    currentFolderChipIcon = pathParts.length === 1 && locationTypeIcon;
+
     if (pathParts.length >= 1) {
       pathParts = pathParts.slice(1, pathParts.length); // remove current directory
     }
     pathParts = pathParts.reverse();
+  }
+
+  let currentFolderName = extractShortDirectoryName(
+    normalizePath(normalizedCurrentDirPath),
+    '/'
+  );
+  if (currentLocation && (!currentFolderName || currentFolderName === '/')) {
+    currentFolderName = currentLocation.name;
   }
 
   return (
@@ -157,31 +176,35 @@ function PathBreadcrumbs(props: Props) {
           <span
             style={{
               marginLeft: -4,
-              marginRight: -4
+              marginRight: -5
             }}
           >
-            /
+            {'›'}
           </span>
         }
       >
         {pathParts.length > 0 &&
-          pathParts.map(pathPart => (
-            <Tooltip
-              key={pathPart}
-              title={i18n.t('core:navigateTo') + ' ' + pathPart}
-            >
-              <StyledBreadcrumb
-                component="a"
-                href="#"
-                label={extractShortDirectoryName(
-                  pathPart,
-                  PlatformIO.getDirSeparator()
-                )}
-                onClick={() => loadDirectoryContent(pathPart, false, true)}
-              />
-            </Tooltip>
-          ))}
-        {props.currentDirectoryPath && (
+          pathParts.map((pathPart, index) => {
+            const folderName = extractShortDirectoryName(
+              pathPart,
+              PlatformIO.getDirSeparator()
+            );
+            return (
+              <Tooltip
+                key={pathPart}
+                title={i18n.t('core:navigateTo') + ' ' + pathPart}
+              >
+                <StyledBreadcrumb
+                  component="a"
+                  href="#"
+                  label={folderName}
+                  icon={index === 0 && locationTypeIcon}
+                  onClick={() => loadDirectoryContent(pathPart, false, true)}
+                />
+              </Tooltip>
+            );
+          })}
+        {currentDirectoryPath && (
           <Tooltip
             title={
               i18n.t('core:openDirectoryMenu') +
@@ -191,10 +214,8 @@ function PathBreadcrumbs(props: Props) {
           >
             <StyledBreadcrumb
               data-tid="folderContainerOpenDirMenu"
-              label={extractShortDirectoryName(
-                normalizePath(normalizedCurrentDirPath),
-                '/'
-              )}
+              label={currentFolderName}
+              icon={currentFolderChipIcon}
               deleteIcon={<ExpandMoreIcon />}
               onDelete={openDirectoryMenu}
               onClick={openDirectoryMenu}
@@ -214,12 +235,9 @@ function PathBreadcrumbs(props: Props) {
         openDirectory={openDirectory}
         reflectCreateEntry={reflectCreateEntry}
         openFsEntry={openFsEntry}
-        /*openAddRemoveTagsDialog={openAddRemoveTagsDialog}*/
       />
     </>
   );
 }
-function mapStateToProps(state) {
-  return { language: getCurrentLanguage(state) };
-}
-export default connect(mapStateToProps)(PathBreadcrumbs);
+
+export default PathBreadcrumbs;

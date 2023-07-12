@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import classNames from 'classnames';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -24,8 +24,7 @@ import Paper from '@mui/material/Paper';
 import Tooltip from '-/components/Tooltip';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import IconButton from '@mui/material/IconButton';
-import SelectedIcon from '@mui/icons-material/CheckBox';
-import UnSelectedIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import { SelectedIcon, UnSelectedIcon } from '-/components/CommonIcons';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import {
@@ -103,6 +102,7 @@ function CellContent(props: Props) {
     thumbnailMode,
     addTags,
     addTag,
+    editTagForEntry,
     selectedEntries,
     isReadOnlyMode,
     handleTagMenu,
@@ -110,10 +110,13 @@ function CellContent(props: Props) {
     handleGridContextMenu,
     handleGridCellDblClick,
     handleGridCellClick,
+    lastThumbnailImageChange,
+    showEntriesDescription,
     showTags,
     // openFsEntry,
     selectEntry,
     deselectEntry,
+    reorderTags,
     isDesktopMode,
     isLast
   } = props;
@@ -130,7 +133,7 @@ function CellContent(props: Props) {
   );
 
   let description;
-  if (props.showEntriesDescription) {
+  if (showEntriesDescription) {
     description = fSystemEntry.description;
     if (description && description.length > maxDescriptionPreviewLength) {
       description = getDescriptionPreview(
@@ -165,6 +168,23 @@ function CellContent(props: Props) {
     ...fileSystemEntryTags,
     ...fileNameTags.filter(tag => !sideCarTagsTitles.includes(tag.title))
   ];
+
+  const entrySizeFormatted =
+    fSystemEntry.isFile && formatFileSize(fSystemEntry.size) + ' | ';
+  const entryLMDTFormatted =
+    fSystemEntry.isFile &&
+    fSystemEntry.lmdt &&
+    formatDateTime(fSystemEntry.lmdt, true);
+
+  let tmbSize = 85;
+  const isSmall = entrySize === 'small';
+  if (isSmall) {
+    tmbSize = 30;
+  } else if (entrySize === 'normal') {
+    tmbSize = 70;
+  } else if (entrySize === 'big') {
+    tmbSize = 100;
+  }
 
   let tagTitles = '';
   if (entryTags) {
@@ -203,13 +223,12 @@ function CellContent(props: Props) {
               className={classes.gridCellThumb}
               src={
                 fSystemEntry.thumbPath +
-                (props.lastThumbnailImageChange &&
-                props.lastThumbnailImageChange.thumbPath ===
-                  fSystemEntry.thumbPath &&
+                (lastThumbnailImageChange &&
+                lastThumbnailImageChange.thumbPath === fSystemEntry.thumbPath &&
                 !PlatformIO.haveObjectStoreSupport() &&
                 !PlatformIO.haveWebDavSupport()
                   ? urlGetDelim(fSystemEntry.thumbPath) +
-                    props.lastThumbnailImageChange.dt
+                    lastThumbnailImageChange.dt
                   : '')
               }
               // @ts-ignore
@@ -223,7 +242,10 @@ function CellContent(props: Props) {
               }}
             />
           ) : (
-            <EntryIcon isFile={fSystemEntry.isFile} />
+            <EntryIcon
+              isFile={fSystemEntry.isFile}
+              fileExtension={fSystemEntry.extension}
+            />
           )}
           <div id="gridCellTags" className={classes.gridCellTags}>
             <IconButton
@@ -248,9 +270,25 @@ function CellContent(props: Props) {
                 }
               }}
             >
-              {selected ? <SelectedIcon /> : <UnSelectedIcon />}
+              {selected ? (
+                <SelectedIcon
+                  style={{
+                    opacity: 1,
+                    borderRadius: 15,
+                    backgroundColor: '#d7d7d7'
+                  }}
+                />
+              ) : (
+                <UnSelectedIcon
+                  style={{
+                    opacity: 0.7,
+                    borderRadius: 15,
+                    backgroundColor: 'd7d7d7'
+                  }}
+                />
+              )}
             </IconButton>
-            {showTags && entryTags ? renderTags(entryTags) : tagPlaceholder}
+            {showTags && entryTags ? renderTags : tagPlaceholder}
           </div>
           {description && (
             <Tooltip title={i18n.t('core:entryDescription')}>
@@ -310,26 +348,10 @@ function CellContent(props: Props) {
     );
   }
 
-  function renderRowCell(selected: boolean) {
-    const isSmall = entrySize === 'small';
-    let tmbSize = 85;
-    if (isSmall) {
-      tmbSize = 30;
-    } else if (entrySize === 'normal') {
-      tmbSize = 70;
-    } else if (entrySize === 'big') {
-      tmbSize = 100;
-    }
+  function renderRowCell() {
     const backgroundColor = selected
       ? theme.palette.primary.light
       : fileSystemEntryBgColor;
-
-    const entrySizeFormatted =
-      fSystemEntry.isFile && formatFileSize(fSystemEntry.size) + ' | ';
-    const entryLMDTFormatted =
-      fSystemEntry.isFile &&
-      fSystemEntry.lmdt &&
-      formatDateTime(fSystemEntry.lmdt, true);
 
     return (
       <Grid
@@ -413,7 +435,7 @@ function CellContent(props: Props) {
                 <>{entryTitle}</>
               </Tooltip>
               &nbsp;
-              {showTags && entryTags ? renderTags(entryTags) : tagPlaceholder}
+              {showTags && entryTags ? renderTags : tagPlaceholder}
             </Typography>
           </Grid>
         ) : (
@@ -423,7 +445,7 @@ function CellContent(props: Props) {
                 {entryTitle}
               </Typography>
             </Tooltip>
-            {showTags && entryTags ? renderTags(entryTags) : tagPlaceholder}
+            {showTags && entryTags ? renderTags : tagPlaceholder}
             <Typography
               style={{
                 color: 'gray'
@@ -457,13 +479,12 @@ function CellContent(props: Props) {
               className={classes.gridCellThumb}
               src={
                 fSystemEntry.thumbPath +
-                (props.lastThumbnailImageChange &&
-                props.lastThumbnailImageChange.thumbPath ===
-                  fSystemEntry.thumbPath &&
+                (lastThumbnailImageChange &&
+                lastThumbnailImageChange.thumbPath === fSystemEntry.thumbPath &&
                 !PlatformIO.haveObjectStoreSupport() &&
                 !PlatformIO.haveWebDavSupport()
                   ? urlGetDelim(fSystemEntry.thumbPath) +
-                    props.lastThumbnailImageChange.dt
+                    lastThumbnailImageChange.dt
                   : '')
               }
               // @ts-ignore
@@ -483,14 +504,16 @@ function CellContent(props: Props) {
     );
   }
 
-  function renderTags(tags: Array<TS.Tag>) {
+  const entryPath = fSystemEntry.path;
+
+  const renderTags = useMemo(() => {
     let sideCarLength = 0;
-    return tags.map((tag: TS.Tag, index) => {
+    return entryTags.map((tag: TS.Tag, index) => {
       const tagContainer = isReadOnlyMode ? (
         <TagContainer
           tag={tag}
-          key={fSystemEntry.path + tag.title}
-          entryPath={fSystemEntry.path}
+          key={entryPath + tag.title}
+          entryPath={entryPath}
           addTags={addTags}
           handleTagMenu={handleTagMenu}
           selectedEntries={selectedEntries}
@@ -499,14 +522,14 @@ function CellContent(props: Props) {
         <TagContainerDnd
           tag={tag}
           index={tag.type === 'sidecar' ? index : index - sideCarLength}
-          key={fSystemEntry.path + tag.title}
-          entryPath={fSystemEntry.path}
+          key={entryPath + tag.title}
+          entryPath={entryPath}
           addTags={addTags}
           addTag={addTag}
           handleTagMenu={handleTagMenu}
           selectedEntries={selectedEntries}
-          editTagForEntry={props.editTagForEntry}
-          reorderTags={props.reorderTags}
+          editTagForEntry={editTagForEntry}
+          reorderTags={reorderTags}
         />
       );
 
@@ -515,7 +538,7 @@ function CellContent(props: Props) {
       }
       return tagContainer;
     });
-  }
+  }, [entryTags, isReadOnlyMode, reorderTags, entryPath, selectedEntries]);
 
   let entryHeight = 130;
   if (entrySize === 'small') {
@@ -524,13 +547,6 @@ function CellContent(props: Props) {
     entryHeight = 70;
   } else if (entrySize === 'big') {
     entryHeight = 100;
-  }
-
-  let gridCell: any = React.Fragment;
-  if (layoutType === 'grid') {
-    gridCell = renderGridCell();
-  } else if (layoutType === 'row') {
-    gridCell = renderRowCell(selected);
   }
 
   return (
@@ -550,7 +566,6 @@ function CellContent(props: Props) {
       }}
       onContextMenu={event => handleGridContextMenu(event, fSystemEntry)}
       onDoubleClick={event => {
-        // props.exitSearchMode();
         handleGridCellDblClick(event, fSystemEntry);
       }}
       onClick={event => {
@@ -560,11 +575,11 @@ function CellContent(props: Props) {
           : handleGridCellClick(event, fSystemEntry);
       }}
       onDrag={event => {
-        // event.stopPropagation();
         handleGridCellClick(event, fSystemEntry);
       }}
     >
-      {gridCell}
+      {layoutType === 'grid' && renderGridCell()}
+      {layoutType === 'row' && renderRowCell()}
     </Paper>
   );
 }

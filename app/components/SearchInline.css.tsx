@@ -35,8 +35,6 @@ export const styles = (theme: any) => {
     locationListArea: {
       paddingTop: 0,
       marginTop: 0
-      // @ts-ignore
-      // overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
     },
     listItem: {
       paddingLeft: 0,

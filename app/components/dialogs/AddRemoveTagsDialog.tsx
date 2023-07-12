@@ -129,8 +129,7 @@ function AddRemoveTagsDialog(props: Props) {
         style={{
           minHeight: 330,
           paddingTop: 10,
-          // @ts-ignore
-          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
+          overflowY: 'auto',
           overflowX: 'hidden'
         }}
       >
@@ -168,7 +167,9 @@ function AddRemoveTagsDialog(props: Props) {
             ))}
         </List>
       </DialogContent>
-      <DialogActions>
+      <DialogActions
+        style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
+      >
         <Button
           data-tid="cancelTagsMultipleEntries"
           onClick={() => onCloseDialog()}
@@ -195,6 +196,7 @@ function AddRemoveTagsDialog(props: Props) {
           data-tid="addTagsMultipleEntries"
           disabled={disabledButtons}
           color="primary"
+          variant="contained"
           onClick={addTags}
         >
           {i18n.t('core:tagOperationAddTag')}

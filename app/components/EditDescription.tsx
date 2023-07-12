@@ -105,8 +105,7 @@ function EditDescription(props: Props) {
           minHeight: 50,
           maxHeight: noDescription && !editMode ? 100 : 250,
           width: 'calc(100% - 8px)',
-          // @ts-ignore
-          overflowY: AppConfig.isFirefox ? 'auto' : 'overlay'
+          overflowY: 'auto'
         }}
       >
         {noDescription && !editMode ? (

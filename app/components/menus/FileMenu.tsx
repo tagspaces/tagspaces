@@ -19,6 +19,7 @@
 import React from 'react';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import ShareIcon from '@mui/icons-material/Share';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Divider from '@mui/material/Divider';
@@ -79,6 +80,7 @@ interface Props {
   openDeleteFileDialog: () => void;
   openRenameFileDialog: () => void;
   openMoveCopyFilesDialog: () => void;
+  openShareFilesDialog?: () => void;
   openAddRemoveTagsDialog: () => void;
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   loadDirectoryContent: (
@@ -101,6 +103,7 @@ interface Props {
   setLastBackgroundImageChange: (path: string, dt: number) => void;
   reorderTop?: () => void;
   reorderBottom?: () => void;
+  onDuplicateFile?: (fileDirPath: string) => void;
   exitSearchMode: () => void;
   prefixTagContainer: string;
 }
@@ -156,6 +159,11 @@ function FileMenu(props: Props) {
   function showMoveCopyFilesDialog() {
     onClose();
     props.openMoveCopyFilesDialog();
+  }
+
+  function showShareFilesDialog() {
+    onClose();
+    props.openShareFilesDialog();
   }
 
   function setFolderThumbnail() {
@@ -247,11 +255,15 @@ function FileMenu(props: Props) {
 
       PlatformIO.copyFilePromise(selectedFilePath, newFilePath)
         .then(() => {
-          props.loadDirectoryContent(dirPath, true, true);
+          if (props.onDuplicateFile) {
+            props.onDuplicateFile(dirPath);
+          } else {
+            props.loadDirectoryContent(dirPath, true, true);
+          }
           return true;
         })
         .catch(error => {
-          showNotification('Error creating duplicate: ' + error.message);
+          showNotification('Error creating duplicate: ', error);
         });
     }
   }
@@ -298,9 +310,9 @@ function FileMenu(props: Props) {
     onClose();
     if (selectedEntries && selectedEntries.length === 1) {
       const sharingLink = generateFileLink();
-      PlatformIO.createNewInstance(
-        window.location.href.split('?')[0] + '?' + sharingLink.split('?')[1]
-      );
+      const newInstanceLink =
+        window.location.href.split('?')[0] + '?' + sharingLink.split('?')[1];
+      PlatformIO.createNewInstance(newInstanceLink);
     }
   }
 
@@ -443,18 +455,35 @@ function FileMenu(props: Props) {
         <ListItemText primary={i18n.t('core:renameFile')} />
       </MenuItem>
     );
-    menuItems.push(
-      <MenuItem
-        key="fileMenuDuplicateFile"
-        data-tid="fileMenuDuplicateFileTID"
-        onClick={duplicateFile}
-      >
-        <ListItemIcon>
-          <DuplicateFile />
-        </ListItemIcon>
-        <ListItemText primary={i18n.t('core:duplicateFile')} />
-      </MenuItem>
-    );
+    if (selectedEntries.length < 2) {
+      menuItems.push(
+        <MenuItem
+          key="fileMenuDuplicateFile"
+          data-tid="fileMenuDuplicateFileTID"
+          onClick={duplicateFile}
+        >
+          <ListItemIcon>
+            <DuplicateFile />
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:duplicateFile')} />
+        </MenuItem>
+      );
+    }
+
+    if (Pro && props.openShareFilesDialog) {
+      menuItems.push(
+        <MenuItem
+          key="fileMenuShareFile"
+          data-tid="fileMenuShareFile"
+          onClick={showShareFilesDialog}
+        >
+          <ListItemIcon>
+            <ShareIcon />
+          </ListItemIcon>
+          <ListItemText primary={i18n.t('core:shareFiles')} />
+        </MenuItem>
+      );
+    }
     menuItems.push(
       <MenuItem
         key="fileMenuMoveCopyFile"

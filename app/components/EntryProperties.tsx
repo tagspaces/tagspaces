@@ -23,7 +23,6 @@ import React, {
   useRef,
   useState
 } from 'react';
-import { useStateWithCallbackLazy } from 'use-state-with-callback';
 import { getBgndFileLocationForDirectory } from '@tagspaces/tagspaces-common/paths';
 import L from 'leaflet';
 import { Theme } from '@mui/material/styles';
@@ -37,10 +36,7 @@ import Button from '@mui/material/Button';
 import InputAdornment from '@mui/material/InputAdornment';
 import QRCodeIcon from '@mui/icons-material/QrCode';
 import Tooltip from '-/components/Tooltip';
-import LocationIcon from '@mui/icons-material/WorkOutline';
-import EditIcon from '@mui/icons-material/Edit';
-import CloudLocationIcon from '@mui/icons-material/CloudQueue';
-import MenuItem from '@mui/material/MenuItem';
+import { LocalLocationIcon, CloudLocationIcon } from '-/components/CommonIcons';
 import Stack from '@mui/material/Stack';
 import SetBackgroundIcon from '@mui/icons-material/OpacityOutlined';
 import ClearBackgroundIcon from '@mui/icons-material/FormatColorResetOutlined';
@@ -80,6 +76,7 @@ import PlatformIO from '../services/platform-facade';
 import TagsSelect from './TagsSelect';
 import TransparentBackground from './TransparentBackground';
 import { getThumbnailURLPromise } from '-/services/thumbsgenerator';
+import { getCurrentLanguage } from '-/reducers/settings';
 import {
   getLastBackgroundImageChange,
   getLastThumbnailImageChange,
@@ -115,11 +112,11 @@ const BgndImgChooserDialog =
 
 const styles: any = (theme: any) => ({
   entryProperties: {
-    overflowY: AppConfig.isFirefox ? 'auto' : 'overlay',
+    overflowY: 'auto',
     overflowX: 'hidden',
     flexGrow: 1,
     padding: 7,
-    paddingRight: 14,
+    paddingRight: 2,
     height: '100%'
   },
   tags: {
@@ -165,6 +162,7 @@ const styles: any = (theme: any) => ({
 interface Props {
   classes: any;
   theme: any;
+  language: string;
   openedEntry: OpenedEntry;
   renameFile: (path: string, nextPath: string) => Promise<boolean>;
   renameDirectory: (path: string, nextPath: string) => Promise<boolean>;
@@ -265,17 +263,13 @@ function EntryProperties(props: Props) {
 
   useEffect(() => {
     if (!currentEntry.current.isFile) {
-      try {
-        PlatformIO.getDirProperties(currentEntry.current.path).then(
-          (dProps: TS.DirProp) => {
-            dirProps.current = dProps;
-            currentEntry.current.size = dProps.totalSize;
-            forceUpdate();
-          }
-        );
-      } catch (ex) {
-        console.debug('getDirProperties:', ex);
-      }
+      PlatformIO.getDirProperties(currentEntry.current.path)
+        .then((dProps: TS.DirProp) => {
+          dirProps.current = dProps;
+          currentEntry.current.size = dProps.totalSize;
+          forceUpdate();
+        })
+        .catch(ex => console.debug('getDirProperties:', ex.message));
     }
   }, []);
 
@@ -415,9 +409,9 @@ function EntryProperties(props: Props) {
   };
 
   const toggleMoveCopyFilesDialog = () => {
-    props.setSelectedEntries([
+    /*props.setSelectedEntries([
       { name: '', isFile: true, tags: [], ...currentEntry.current }
-    ]);
+    ]);*/
     setMoveCopyFilesDialogOpened(!isMoveCopyFilesDialogOpened);
   };
 
@@ -613,7 +607,7 @@ function EntryProperties(props: Props) {
       });
   };
 
-  const { classes, isReadOnlyMode, theme, sharingLink } = props;
+  const { classes, isReadOnlyMode, theme, sharingLink, language } = props;
 
   if (
     !currentEntry ||
@@ -713,15 +707,17 @@ function EntryProperties(props: Props) {
     perspectiveDefault = 'unspecified'; // perspectives.DEFAULT;
   }
 
+  // https://github.com/Leaflet/Leaflet/blob/main/src/layer/marker/Icon.Default.js#L22
   const iconFileMarker = new L.Icon({
     iconUrl: MarkerIcon,
     iconRetinaUrl: Marker2xIcon,
-    iconAnchor: [5, 55],
-    popupAnchor: [5, -20],
-    iconSize: [25, 41],
     shadowUrl: MarkerShadowIcon,
-    shadowSize: [41, 41],
-    shadowAnchor: [5, 55]
+    tooltipAnchor: [16, -28],
+    iconSize: [25, 41], // size of the icon
+    shadowSize: [41, 41], // size of the shadow
+    iconAnchor: [12, 41], // point of the icon which will correspond to marker's location
+    shadowAnchor: [5, 41], // the same for the shadow
+    popupAnchor: [1, -34] // point from which the popup should open relative to the iconAnchor
   });
 
   function getGeoLocation(tags: Array<TS.Tag>) {
@@ -880,7 +876,7 @@ function EntryProperties(props: Props) {
                   url={props.tileServer.serverURL}
                 />
               ) : (
-                <NoTileServer />
+                <NoTileServer language={language} />
               )}
               <LayerGroup>
                 <Marker
@@ -1036,7 +1032,7 @@ function EntryProperties(props: Props) {
                         style={{ color: theme.palette.text.secondary }}
                       />
                     ) : (
-                      <LocationIcon
+                      <LocalLocationIcon
                         style={{ color: theme.palette.text.secondary }}
                       />
                     )}
@@ -1161,6 +1157,7 @@ function EntryProperties(props: Props) {
         {!currentEntry.current.isFile && (
           <Grid item xs={12} style={{ marginTop: 10 }}>
             <PerspectiveSelector
+              language={language}
               onChange={changePerspective}
               defaultValue={perspectiveDefault}
               label={i18n.t('core:choosePerspective')}
@@ -1397,7 +1394,14 @@ function EntryProperties(props: Props) {
           key={getUuid()}
           open={isMoveCopyFilesDialogOpened}
           onClose={toggleMoveCopyFilesDialog}
-          selectedFiles={[currentEntry.current.path]}
+          entries={[
+            {
+              ...currentEntry.current,
+              isFile: currentEntry.current.isFile,
+              name: entryName,
+              tags: []
+            }
+          ]}
         />
       )}
       {ThumbnailChooserDialog && (
@@ -1414,7 +1418,7 @@ function EntryProperties(props: Props) {
           open={showSharingLinkDialog}
           onClose={() => setShowSharingLinkDialog(false)}
           path={currentEntry.current.path}
-          showNotification={props.showNotification}
+          // showNotification={props.showNotification}
           locationId={currentEntry.current.locationId}
           switchCurrentLocationType={props.switchCurrentLocationType}
           switchLocationType={props.switchLocationType}
@@ -1477,7 +1481,8 @@ const ThumbnailTextField = withStyles((theme: Theme) =>
 function mapStateToProps(state) {
   return {
     lastBackgroundImageChange: getLastBackgroundImageChange(state),
-    lastThumbnailImageChange: getLastThumbnailImageChange(state)
+    lastThumbnailImageChange: getLastThumbnailImageChange(state),
+    language: getCurrentLanguage(state)
   };
 }
 
