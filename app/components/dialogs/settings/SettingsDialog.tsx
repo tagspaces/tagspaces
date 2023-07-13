@@ -16,8 +16,8 @@
  *
  */
 
-import React, { useState } from 'react';
-import { connect } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import Button from '@mui/material/Button';
 import withStyles from '@mui/styles/withStyles';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -29,7 +29,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import AppConfig from '-/AppConfig';
 import ConfirmDialog from '../ConfirmDialog';
 import SettingsGeneral from '../settings/SettingsGeneral';
 import SettingsKeyBindings from '../settings/SettingsKeyBindings';
@@ -56,6 +55,7 @@ interface Props {
 }
 
 function SettingsDialog(props: Props) {
+  const language = useSelector(getCurrentLanguage);
   const [currentTab, setCurrentTab] = useState<number>(0);
   const [
     isResetSettingsDialogOpened,
@@ -194,8 +194,4 @@ function SettingsDialog(props: Props) {
   );
 }
 
-const mapStateToProps = state => ({
-  language: getCurrentLanguage(state)
-});
-
-export default connect(mapStateToProps)(withStyles(styles)(SettingsDialog));
+export default withStyles(styles)(SettingsDialog);

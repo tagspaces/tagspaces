@@ -17,8 +17,7 @@
  */
 
 import React, { ChangeEvent, useRef, useState } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import Tooltip from '-/components/Tooltip';
@@ -30,9 +29,12 @@ import IconButton from '@mui/material/IconButton';
 import Switch from '@mui/material/Switch';
 import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Progress } from 'aws-sdk/clients/s3';
 import { actions as SettingsActions, isDevMode } from '-/reducers/settings';
-import { actions as AppActions, getExtensions } from '-/reducers/app';
+import {
+  actions as AppActions,
+  AppDispatch,
+  getExtensions
+} from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
 import { TS } from '-/tagspaces.namespace';
 import i18n from '-/services/i18n';
@@ -40,43 +42,38 @@ import PlatformIO from '-/services/platform-facade';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import InfoIcon from '-/components/InfoIcon';
 
-interface Props {
-  extension: Array<TS.Extension>;
-  isDevMode: boolean;
-  removeExtension: (extensionId: string) => void;
-  updateExtension: (extension: TS.Extension) => void;
-  removeSupportedFileTypes: (extensionId: string) => void;
-  enableExtension: (extensionId: string, enabled: boolean) => void;
-  resetProgress: () => void;
-  onUploadProgress: (progress: Progress, response: any) => void;
-  toggleUploadDialog: () => void;
-  uploadFilesAPI: (
-    files: Array<File>,
-    destination: string,
-    onUploadProgress?: (progress: Progress, response: any) => void,
-    uploadMeta?: boolean
-  ) => any;
-  switchCurrentLocationType: (currentLocationId?) => void;
-}
-
-function SettingsExtensions(props: Props) {
+function SettingsExtensions() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [removeExtDialogOpened, setRemoveExtDialogOpened] = useState<
     TS.Extension
   >(undefined);
 
-  function handleFileInputChange(selection: any) {
+  const extension = useSelector(getExtensions);
+  const devMode = useSelector(isDevMode);
+  const dispatch: AppDispatch = useDispatch();
+
+  const onUploadProgress = (progress, abort, fileName) => {
+    dispatch(AppActions.onUploadProgress(progress, abort, fileName));
+  };
+
+  const handleFileInputChange = (selection: any) => {
     const files: File[] = Array.from(selection.currentTarget.files);
     PlatformIO.getUserDataDir().then(dataDir => {
-      props.resetProgress();
-      props.toggleUploadDialog();
+      dispatch(AppActions.resetProgress());
+      dispatch(AppActions.toggleUploadDialog());
       PlatformIO.disableObjectStoreSupport();
       PlatformIO.disableWebdavSupport();
       const destinationPath =
         dataDir + PlatformIO.getDirSeparator() + 'tsplugins';
-      props
-        .uploadFilesAPI(files, destinationPath, props.onUploadProgress, false)
-        .then(fsEntries => {
+      dispatch(
+        IOActions.uploadFilesAPI(
+          files,
+          destinationPath,
+          onUploadProgress,
+          false
+        )
+      )
+        .then((fsEntries: Array<TS.FileSystemEntry>) => {
           const targetPath =
             destinationPath +
             PlatformIO.getDirSeparator() +
@@ -86,19 +83,18 @@ function SettingsExtensions(props: Props) {
           const promises = fsEntries.map(fsEntry =>
             PlatformIO.unZip(fsEntry.path, targetPath)
           );
-          // fsEntries.name.substring(0, fsEntries.extension.length + 1);
           return Promise.all(promises).then(paths => {
             PlatformIO.loadExtensions();
             paths.forEach(path => PlatformIO.deleteFilePromise(path));
-            return props.switchCurrentLocationType();
+            return dispatch(AppActions.switchCurrentLocationType());
           });
         })
         .catch(error => {
           console.log('uploadFiles', error);
-          return props.switchCurrentLocationType();
+          return dispatch(AppActions.switchCurrentLocationType());
         });
     });
-  }
+  };
 
   return (
     <div style={{ minHeight: 400 }}>
@@ -115,8 +111,8 @@ function SettingsExtensions(props: Props) {
         </AccordionSummary>
         <AccordionDetails>
           <List>
-            {props.extension &&
-              props.extension
+            {extension &&
+              extension
                 .filter(ext => !ext.extensionExternal)
                 .map(ext => (
                   <ListItem key={ext.extensionId} disablePadding>
@@ -139,8 +135,8 @@ function SettingsExtensions(props: Props) {
         </AccordionSummary>
         <AccordionDetails>
           <List>
-            {props.extension &&
-              props.extension
+            {extension &&
+              extension
                 .filter(ext => ext.extensionExternal)
                 .map(ext => (
                   <ListItem key={ext.extensionId} disablePadding>
@@ -151,20 +147,37 @@ function SettingsExtensions(props: Props) {
                       checked={ext.extensionEnabled}
                       onChange={(event: ChangeEvent<HTMLInputElement>) => {
                         if (event.target.checked) {
-                          props.updateExtension({
-                            ...ext,
-                            extensionEnabled: true
-                          });
-                          props.enableExtension(ext.extensionId, true);
-                          //reload default file types
+                          dispatch(
+                            AppActions.updateExtension({
+                              ...ext,
+                              extensionEnabled: true
+                            })
+                          );
+                          dispatch(
+                            SettingsActions.enableExtension(
+                              ext.extensionId,
+                              true
+                            )
+                          );
                           PlatformIO.loadExtensions();
                         } else {
-                          props.updateExtension({
-                            ...ext,
-                            extensionEnabled: false
-                          });
-                          props.enableExtension(ext.extensionId, false);
-                          props.removeSupportedFileTypes(ext.extensionId);
+                          dispatch(
+                            AppActions.updateExtension({
+                              ...ext,
+                              extensionEnabled: false
+                            })
+                          );
+                          dispatch(
+                            SettingsActions.enableExtension(
+                              ext.extensionId,
+                              false
+                            )
+                          );
+                          dispatch(
+                            SettingsActions.removeSupportedFileTypes(
+                              ext.extensionId
+                            )
+                          );
                         }
                       }}
                     />
@@ -194,9 +207,13 @@ function SettingsExtensions(props: Props) {
             })}
             confirmCallback={result => {
               if (result) {
-                props.removeExtension(removeExtDialogOpened.extensionId);
-                props.removeSupportedFileTypes(
-                  removeExtDialogOpened.extensionId
+                dispatch(
+                  AppActions.removeExtension(removeExtDialogOpened.extensionId)
+                );
+                dispatch(
+                  SettingsActions.removeSupportedFileTypes(
+                    removeExtDialogOpened.extensionId
+                  )
                 );
                 PlatformIO.removeExtension(removeExtDialogOpened.extensionId);
               }
@@ -205,11 +222,11 @@ function SettingsExtensions(props: Props) {
             confirmDialogTID="confirmRemoveExtDialogTID"
             confirmDialogContentTID="confirmRemoveExtDialogContentTID"
           />
-          {props.extension &&
-            props.extension.filter(ext => ext.extensionExternal).length < 1 && (
+          {extension &&
+            extension.filter(ext => ext.extensionExternal).length < 1 && (
               <Typography variant="subtitle1">No extensions found</Typography>
             )}
-          {props.isDevMode && (
+          {devMode && (
             <Box style={{ textAlign: 'center' }}>
               <Button
                 data-tid="installExtensionTID"
@@ -233,31 +250,4 @@ function SettingsExtensions(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    extension: getExtensions(state),
-    isDevMode: isDevMode(state)
-  };
-}
-
-function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators(
-    {
-      removeExtension: AppActions.removeExtension,
-      updateExtension: AppActions.updateExtension,
-      removeSupportedFileTypes: SettingsActions.removeSupportedFileTypes,
-      enableExtension: SettingsActions.enableExtension,
-      onUploadProgress: AppActions.onUploadProgress,
-      uploadFilesAPI: IOActions.uploadFilesAPI,
-      toggleUploadDialog: AppActions.toggleUploadDialog,
-      resetProgress: AppActions.resetProgress,
-      switchCurrentLocationType: AppActions.switchCurrentLocationType
-    },
-    dispatch
-  );
-}
-
-export default connect(
-  mapStateToProps,
-  mapActionCreatorsToProps
-)(SettingsExtensions);
+export default SettingsExtensions;

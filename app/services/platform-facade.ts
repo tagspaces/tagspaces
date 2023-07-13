@@ -569,7 +569,7 @@ export default class PlatformFacade {
     return platformGetUserDataDir();
   }
 
-  static unZip(filePath, targetPath): Promise<boolean> {
+  static unZip(filePath, targetPath): Promise<string> {
     return platformUnZip(filePath, targetPath);
   }
 
