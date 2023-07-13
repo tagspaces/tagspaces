@@ -42,8 +42,7 @@ import RemoveIcon from '@mui/icons-material/RemoveCircleOutline';
 import IdIcon from '@mui/icons-material/Abc';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
 import {
@@ -64,7 +63,11 @@ import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import InfoIcon from '-/components/InfoIcon';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
 import { actions as LocationActions, getLocations } from '-/reducers/locations';
-import { NotificationTypes, actions as AppActions } from '-/reducers/app';
+import {
+  NotificationTypes,
+  actions as AppActions,
+  AppDispatch
+} from '-/reducers/app';
 import { getPersistTagsInSidecarFile, isDevMode } from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
@@ -85,26 +88,20 @@ const styles: any = theme => ({
 
 interface Props {
   location?: TS.Location;
-  locations: Array<TS.Location>;
   open: boolean;
   onClose: () => void;
   classes: any;
-  addLocation: (location: TS.Location, openAfterCreate?: boolean) => void;
   editLocation?: (location: TS.Location) => void;
-  isPersistTagsInSidecar: boolean;
-  createLocationIndex: (location: TS.Location) => void;
-  showNotification: (
-    text: string,
-    notificationType?: string, // NotificationTypes
-    autohide?: boolean
-  ) => void;
-  isDevMode: boolean;
 }
 
 function CreateEditLocationDialog(props: Props) {
+  const dispatch: AppDispatch = useDispatch();
+  const isPersistTagsInSidecar = useSelector(getPersistTagsInSidecarFile);
+  const locations: Array<TS.Location> = useSelector(getLocations);
+  const devMode: boolean = useSelector(isDevMode);
   const IgnorePatternDialog =
     Pro && Pro.UI ? Pro.UI.IgnorePatternDialog : false;
-  const { location, showNotification, locations } = props;
+  const { location } = props;
   const [showSecretAccessKey, setShowSecretAccessKey] = useState<boolean>(
     false
   );
@@ -265,9 +262,11 @@ function CreateEditLocationDialog(props: Props) {
     if (!locations.some(ln => ln.uuid === newId)) {
       setNewUuid(newId);
     } else {
-      showNotification(
-        'Location with this ID already exists',
-        NotificationTypes.error
+      dispatch(
+        AppActions.showNotification(
+          'Location with this ID already exists',
+          NotificationTypes.error
+        )
       );
     }
   }
@@ -416,8 +415,8 @@ function CreateEditLocationDialog(props: Props) {
         loc = { ...loc, persistTagsInSidecarFile };
       }
 
-      if (!props.location && props.addLocation) {
-        props.addLocation(loc);
+      if (!props.location) {
+        dispatch(LocationActions.addLocation(loc));
       } else if (props.editLocation) {
         loc.newuuid = newuuid;
         props.editLocation(loc);
@@ -502,7 +501,7 @@ function CreateEditLocationDialog(props: Props) {
   const currentTagsSetting =
     props.location && props.location.persistTagsInSidecarFile !== null
       ? location.persistTagsInSidecarFile
-      : props.isPersistTagsInSidecar;
+      : isPersistTagsInSidecar;
 
   const disableLocationTypeSwitch: boolean = props.location !== undefined;
 
@@ -566,7 +565,7 @@ function CreateEditLocationDialog(props: Props) {
                   <MenuItem key="TYPE_CLOUD" value={locationType.TYPE_CLOUD}>
                     {i18n.t('core:objectStorage') + ' (AWS, MinIO, Wasabi,...)'}
                   </MenuItem>
-                  {Pro && props.isDevMode && (
+                  {Pro && devMode && (
                     <MenuItem
                       key="TYPE_WEBDAV"
                       value={locationType.TYPE_WEBDAV}
@@ -628,7 +627,9 @@ function CreateEditLocationDialog(props: Props) {
                   content={i18n.t('core:fullTextIndexRegenerate')}
                   confirmCallback={result => {
                     if (result) {
-                      props.createLocationIndex(location);
+                      dispatch(
+                        LocationIndexActions.createLocationIndex(location)
+                      );
                     } else {
                       setFullTextIndexConfirmDialogOpened(false);
                     }
@@ -1019,26 +1020,4 @@ function CreateEditLocationDialog(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    isPersistTagsInSidecar: getPersistTagsInSidecarFile(state),
-    locations: getLocations(state),
-    isDevMode: isDevMode(state)
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      addLocation: LocationActions.addLocation,
-      createLocationIndex: LocationIndexActions.createLocationIndex,
-      showNotification: AppActions.showNotification
-    },
-    dispatch
-  );
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles)(CreateEditLocationDialog));
+export default withStyles(styles)(CreateEditLocationDialog);

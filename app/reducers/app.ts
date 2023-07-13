@@ -2009,7 +2009,7 @@ export const actions = {
    * return Promise<currentLocationId> if location is changed or null if location and type is changed
    */
   switchLocationType: (location: TS.Location) => (
-    dispatch: (action) => void,
+    dispatch: (action) => string | null,
     getState: () => any
   ): Promise<string | null> => {
     const { currentLocationId } = getState().app;
@@ -2032,7 +2032,7 @@ export const actions = {
     return Promise.resolve(null);
   },
   switchCurrentLocationType: (currentLocationId?: string) => (
-    dispatch: (action) => void,
+    dispatch: (action) => boolean,
     getState: () => any
   ): Promise<boolean> => {
     // dispatch(actions.setCurrentLocationId(location.uuid));

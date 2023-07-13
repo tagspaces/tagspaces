@@ -17,7 +17,7 @@
  */
 
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -47,12 +47,12 @@ const styles = theme => ({
 interface Props {
   open: boolean;
   classes: any;
-  keyBindings: Array<any>;
   onClose: () => void;
 }
 
 function KeyboardDialog(props: Props) {
-  const { open, onClose, keyBindings, classes } = props;
+  const { open, onClose, classes } = props;
+  const keyBindings = useSelector(getKeyBindingObject);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
@@ -102,10 +102,4 @@ function KeyboardDialog(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    keyBindings: getKeyBindingObject(state)
-  };
-}
-
-export default connect(mapStateToProps)(withStyles(styles)(KeyboardDialog));
+export default withStyles(styles)(KeyboardDialog);

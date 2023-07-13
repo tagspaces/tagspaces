@@ -17,8 +17,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { useDispatch } from 'react-redux';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
@@ -28,26 +27,21 @@ import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import Dialog from '@mui/material/Dialog';
 import i18n from '-/services/i18n';
-import { actions as AppActions } from '-/reducers/app';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { joinPaths } from '@tagspaces/tagspaces-common/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import PlatformIO from '-/services/platform-facade';
-import useTheme from '@mui/styles/useTheme';
-import useMediaQuery from '@mui/material/useMediaQuery';
 
 interface Props {
   open: boolean;
   onClose: () => void;
   selectedDirectoryPath: string;
-  createDirectory: (
-    directoryPath: string,
-    reflect: boolean
-  ) => Promise<boolean>;
   callback?: (newDirPath: string) => void;
   reflect?: boolean;
 }
 
 function CreateDirectoryDialog(props: Props) {
+  const dispatch: AppDispatch = useDispatch();
   const [inputError, setInputError] = useState(false);
   const isFirstRun = useRef(true);
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
@@ -81,13 +75,16 @@ function CreateDirectoryDialog(props: Props) {
         props.selectedDirectoryPath,
         name
       );
-      props
-        .createDirectory(dirPath, reflect !== undefined ? reflect : true)
-        .then(() => {
-          if (props.callback) {
-            props.callback(dirPath);
-          }
-        });
+      dispatch(
+        AppActions.createDirectory(
+          dirPath,
+          reflect !== undefined ? reflect : true
+        )
+      ).then(() => {
+        if (props.callback) {
+          props.callback(dirPath);
+        }
+      });
       resetState();
       props.onClose();
     }
@@ -166,18 +163,4 @@ function CreateDirectoryDialog(props: Props) {
   );
 }
 
-function mapActionCreatorsToProps(dispatch) {
-  //: Dispatch<CreateDirectoryAction>) {
-  return bindActionCreators(
-    {
-      createDirectory: AppActions.createDirectory
-    },
-    dispatch
-  );
-}
-
-export default connect(
-  undefined,
-  mapActionCreatorsToProps
-  // @ts-ignore
-)(CreateDirectoryDialog);
+export default CreateDirectoryDialog;

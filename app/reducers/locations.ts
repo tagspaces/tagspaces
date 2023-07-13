@@ -259,9 +259,9 @@ export const actions = {
     }
   },
   switchLocationType: (locationId: string) => (
-    dispatch: (actions) => Promise<boolean>,
+    dispatch: (actions) => Promise<string | null>,
     getState: () => any
-  ): Promise<boolean> => {
+  ): Promise<string | null> => {
     const { locations } = getState();
     const location: TS.Location = locations.find(
       location => location.uuid === locationId
