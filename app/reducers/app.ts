@@ -84,6 +84,12 @@ import { getProTeaserSlideIndex } from '-/content/ProTeaserSlides';
 import GlobalSearch from '-/services/search-index';
 import { extensionsFound } from '-/extension-config';
 
+import { ThunkDispatch } from 'redux-thunk';
+import { AnyAction } from 'redux';
+
+type State = {};
+export type AppDispatch = ThunkDispatch<State, any, AnyAction>;
+
 export const types = {
   DEVICE_ONLINE: 'APP/DEVICE_ONLINE',
   DEVICE_OFFLINE: 'APP/DEVICE_OFFLINE',

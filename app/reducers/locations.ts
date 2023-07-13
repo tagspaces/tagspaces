@@ -26,12 +26,12 @@ import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 
-import { ThunkDispatch } from 'redux-thunk';
+/* import { ThunkDispatch } from 'redux-thunk';
 import { AnyAction } from 'redux';
 
 type State = Array<TS.Location>;
 export type LocationsDispatch = ThunkDispatch<State, any, AnyAction>;
-
+  */
 export const types = {
   ADD_LOCATION: 'APP/ADD_LOCATION',
   MOVE_LOCATION: 'APP/MOVE_LOCATION',
