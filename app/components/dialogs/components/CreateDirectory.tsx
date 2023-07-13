@@ -17,17 +17,19 @@
  */
 
 import React, { useRef, useState } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { useDispatch } from 'react-redux';
 import { saveAs } from 'file-saver';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Grid from '@mui/material/Grid';
 import withStyles from '@mui/styles/withStyles';
-import { Progress } from 'aws-sdk/clients/s3';
 import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
-import { actions as AppActions, NotificationTypes } from '-/reducers/app';
+import {
+  actions as AppActions,
+  AppDispatch,
+  NotificationTypes
+} from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
 import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
@@ -46,38 +48,11 @@ const styles: any = () => ({
 interface Props {
   classes: any;
   onClose: () => void;
-  onUploadProgress: (progress: Progress, response: any) => void;
-  toggleUploadDialog: () => void;
-  resetProgress: () => void;
-  setProgress: (path: string, progress: number, abort?: string) => void;
-  downloadFile: (
-    url: string,
-    destination: string,
-    onDownloadProgress?: (progress: Progress, response: any) => void
-  ) => any;
-  uploadFilesAPI: (
-    files: Array<File>,
-    destination: string,
-    onUploadProgress?: (progress: Progress, response: any) => void
-  ) => any;
-  toggleCreateDirectoryDialog: () => void;
-  reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => void;
-  showNotification: (
-    message: string,
-    notificationType?: string,
-    autohide?: boolean
-  ) => void;
-  toggleLocationDialog: () => void;
 }
 
 function CreateDirectory(props: Props) {
-  const {
-    classes,
-    onClose,
-    showNotification,
-    toggleCreateDirectoryDialog,
-    toggleLocationDialog
-  } = props;
+  const { classes, onClose } = props;
+  const dispatch: AppDispatch = useDispatch();
 
   const { targetDirectoryPath } = useTargetPathContext();
   const fileUrl = useRef<string>();
@@ -97,19 +72,23 @@ function CreateDirectory(props: Props) {
     fileInput.click();
   }
 
+  const onUploadProgress = (progress, abort, fileName) => {
+    dispatch(AppActions.onUploadProgress(progress, abort, fileName));
+  };
   function handleFileInputChange(selection: any) {
     // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
     // const file = selection.currentTarget.files[0];
-    props.resetProgress();
-    props.toggleUploadDialog();
-    props
-      .uploadFilesAPI(
+    dispatch(AppActions.resetProgress());
+    dispatch(AppActions.toggleUploadDialog());
+    dispatch(
+      IOActions.uploadFilesAPI(
         Array.from(selection.currentTarget.files),
         targetDirectoryPath,
-        props.onUploadProgress
+        onUploadProgress
       )
-      .then(fsEntries => {
-        props.reflectCreateEntries(fsEntries);
+    )
+      .then((fsEntries: Array<TS.FileSystemEntry>) => {
+        dispatch(AppActions.reflectCreateEntries(fsEntries));
         return true;
       })
       .catch(error => {
@@ -151,29 +130,38 @@ function CreateDirectory(props: Props) {
           fileName = url.hostname + '-' + fileName + '.html';
         }
         if (PlatformIO.haveObjectStoreSupport() || AppConfig.isElectron) {
-          props.resetProgress();
-          props.toggleUploadDialog();
-          props
-            .downloadFile(
+          dispatch(AppActions.resetProgress());
+          dispatch(AppActions.toggleUploadDialog());
+          dispatch(
+            IOActions.downloadFile(
               fileUrl.current,
               targetDirectoryPath +
                 PlatformIO.getDirSeparator() +
                 decodeURIComponent(fileName),
-              props.onUploadProgress
+              onUploadProgress
             )
+          )
             .then(() => {
               if (PlatformIO.haveObjectStoreSupport()) {
                 // currently objectStore location in downloadFile use saveFilePromise and this function not have progress handling
-                props.setProgress(fileUrl.current, 100);
+                dispatch(AppActions.setProgress(fileUrl.current, 100));
               }
             })
             .catch(e => {
               console.log('downloadFile error:', e);
-              props.setProgress(fileUrl.current, -1, i18n.t('core:errorCORS'));
-              showNotification(
-                'downloadFile error' + e.message,
-                NotificationTypes.error,
-                true
+              dispatch(
+                AppActions.setProgress(
+                  fileUrl.current,
+                  -1,
+                  i18n.t('core:errorCORS')
+                )
+              );
+              dispatch(
+                AppActions.showNotification(
+                  'downloadFile error' + e.message,
+                  NotificationTypes.error,
+                  true
+                )
               );
             });
         } else {
@@ -194,7 +182,7 @@ function CreateDirectory(props: Props) {
           variant="outlined"
           onClick={() => {
             onClose();
-            toggleLocationDialog();
+            dispatch(AppActions.toggleLocationDialog());
           }}
           className={classes.createButton}
           data-tid="createLocationButton"
@@ -211,7 +199,7 @@ function CreateDirectory(props: Props) {
           variant="outlined"
           onClick={() => {
             onClose();
-            toggleCreateDirectoryDialog();
+            dispatch(AppActions.toggleCreateDirectoryDialog());
           }}
           className={classes.createButton}
           data-tid="newSubDirectory"
@@ -279,25 +267,4 @@ function CreateDirectory(props: Props) {
   );
 }
 
-function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators(
-    {
-      showNotification: AppActions.showNotification,
-      reflectCreateEntries: AppActions.reflectCreateEntries,
-      toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog,
-      uploadFilesAPI: IOActions.uploadFilesAPI,
-      downloadFile: IOActions.downloadFile,
-      onUploadProgress: AppActions.onUploadProgress,
-      toggleUploadDialog: AppActions.toggleUploadDialog,
-      resetProgress: AppActions.resetProgress,
-      setProgress: AppActions.setProgress,
-      toggleLocationDialog: AppActions.toggleLocationDialog
-    },
-    dispatch
-  );
-}
-
-export default connect(
-  undefined,
-  mapActionCreatorsToProps
-)(withStyles(styles)(CreateDirectory));
+export default withStyles(styles)(CreateDirectory);

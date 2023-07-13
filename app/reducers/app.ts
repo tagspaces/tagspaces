@@ -1192,7 +1192,7 @@ export const actions = {
     type: types.SET_NEW_VERSION_AVAILABLE,
     isUpdateAvailable
   }),
-  setProgress: (path, progress, abort, filePath = undefined) => ({
+  setProgress: (path, progress, abort?, filePath = undefined) => ({
     type: types.PROGRESS,
     path,
     filePath,

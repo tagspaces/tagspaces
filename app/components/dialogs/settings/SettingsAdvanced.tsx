@@ -17,8 +17,7 @@
  */
 
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { useSelector, useDispatch } from 'react-redux';
 import withStyles from '@mui/styles/withStyles';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -39,7 +38,6 @@ import {
   actions as SettingsActions,
   getSettings,
   getMapTileServers,
-  getEnableWS,
   isDevMode
 } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
@@ -50,6 +48,7 @@ import InfoIcon from '-/components/InfoIcon';
 import { DeleteIcon } from '-/components/CommonIcons';
 import { ListItemIcon } from '@mui/material';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import { AppDispatch } from '-/reducers/app';
 
 const styles: any = {
   root: {
@@ -70,42 +69,58 @@ const styles: any = {
 
 interface Props {
   classes: any;
-  settings: any;
-  setDesktopMode: (desktopMode: boolean) => void;
-  setDevMode: (devMode: boolean) => void;
-  isDevMode: boolean;
-  setEnableWS: (enableWS: boolean) => void;
-  setWarningOpeningFilesExternally: (
-    warningOpeningFilesExternally: boolean
-  ) => void;
-  setSaveTagInLocation: (saveTagInLocation: boolean) => void;
-  setRevisionsEnabled: (enabled: boolean) => void;
   showResetSettings: (showDialog: boolean) => void;
-  tileServers: Array<TS.MapTileServer>;
-  setGeoTaggingFormat: (geoTaggingFormat: string) => void;
-  setHistory: (key: string, value: number) => void;
-  setPrefixTagContainer: (prefix: string) => void;
 }
 
 const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 
 function SettingsAdvanced(props: Props) {
+  const { classes, showResetSettings } = props;
+  const dispatch: AppDispatch = useDispatch();
+  const settings = useSelector(getSettings);
+  const tileServers: Array<TS.MapTileServer> = useSelector(getMapTileServers);
+  //const enableWS = useSelector(getEnableWS);
+  const devMode = useSelector(isDevMode);
   const [tileServerDialog, setTileServerDialog] = useState<any>(undefined);
   const [confirmDialogKey, setConfirmDialogKey] = useState<null | string>(null);
 
-  const handleEditTileServerClick = (
-    event: any,
-    tileServer: any,
-    isDefault: boolean
-  ) => {
+  const handleEditTileServerClick = (event, tileServer, isDefault: boolean) => {
     event.preventDefault();
     event.stopPropagation();
     setTileServerDialog({ ...tileServer, isDefault });
   };
 
-  const { classes } = props;
-
   const geoTaggingFormatDisabled = AppConfig.geoTaggingFormat !== undefined;
+
+  const setDesktopMode = desktopMode =>
+    dispatch(SettingsActions.setDesktopMode(desktopMode));
+
+  const setDevMode = devMode => dispatch(SettingsActions.setDevMode(devMode));
+
+  const setEnableWS = enableWS =>
+    dispatch(SettingsActions.setEnableWS(enableWS));
+
+  const setWarningOpeningFilesExternally = warningOpeningFilesExternally =>
+    dispatch(
+      SettingsActions.setWarningOpeningFilesExternally(
+        warningOpeningFilesExternally
+      )
+    );
+
+  const setSaveTagInLocation = saveTagInLocation =>
+    dispatch(SettingsActions.setSaveTagInLocation(saveTagInLocation));
+
+  const setRevisionsEnabled = enabled =>
+    dispatch(SettingsActions.setRevisionsEnabled(enabled));
+
+  const setGeoTaggingFormat = geoTaggingFormat =>
+    dispatch(SettingsActions.setGeoTaggingFormat(geoTaggingFormat));
+
+  const setHistory = (key, value) =>
+    dispatch(SettingsActions.setHistory(key, value));
+
+  const setPrefixTagContainer = prefix =>
+    dispatch(SettingsActions.setPrefixTagContainer(prefix));
 
   return (
     <div style={{ width: '100%' }}>
@@ -113,7 +128,7 @@ function SettingsAdvanced(props: Props) {
         <ListItem className={classes.listItem}>
           <Button
             data-tid="resetSettingsTID"
-            onClick={() => props.showResetSettings(true)}
+            onClick={() => showResetSettings(true)}
             color="secondary"
             style={{ marginLeft: -7 }}
           >
@@ -134,8 +149,8 @@ function SettingsAdvanced(props: Props) {
           <Switch
             data-tid="settingsSetDesktopMode"
             disabled={!(typeof window.ExtDisplayMode === 'undefined')}
-            onClick={() => props.setDesktopMode(!props.settings.desktopMode)}
-            checked={!props.settings.desktopMode}
+            onClick={() => setDesktopMode(!settings.desktopMode)}
+            checked={!settings.desktopMode}
           />
         </ListItem>
         <ListItem className={classes.listItem}>
@@ -143,16 +158,16 @@ function SettingsAdvanced(props: Props) {
           <Switch
             data-tid="settingsEnableDevMode"
             disabled={window.ExtDevMode && window.ExtDevMode === true}
-            onClick={() => props.setDevMode(!props.settings.devMode)}
-            checked={props.isDevMode}
+            onClick={() => setDevMode(!devMode)}
+            checked={devMode}
           />
         </ListItem>
         <ListItem className={classes.listItem}>
           <ListItemText primary={i18n.t('enableWS')} />
           <Switch
             data-tid="settingsEnableWS"
-            onClick={() => props.setEnableWS(!props.settings.enableWS)}
-            checked={props.settings.enableWS}
+            onClick={() => setEnableWS(!settings.enableWS)}
+            checked={settings.enableWS}
           />
         </ListItem>
         <ListItem className={classes.listItem}>
@@ -160,11 +175,11 @@ function SettingsAdvanced(props: Props) {
           <Switch
             data-tid="warningOpeningFilesExternally"
             onClick={() =>
-              props.setWarningOpeningFilesExternally(
-                !props.settings.warningOpeningFilesExternally
+              setWarningOpeningFilesExternally(
+                !settings.warningOpeningFilesExternally
               )
             }
-            checked={props.settings.warningOpeningFilesExternally}
+            checked={settings.warningOpeningFilesExternally}
           />
         </ListItem>
         <ListItem className={classes.listItem}>
@@ -172,8 +187,8 @@ function SettingsAdvanced(props: Props) {
           <Input
             style={{ maxWidth: '100px' }}
             data-tid="prefixTagContainerTID"
-            value={props.settings.prefixTagContainer}
-            onChange={event => props.setPrefixTagContainer(event.target.value)}
+            value={settings.prefixTagContainer}
+            onChange={event => setPrefixTagContainer(event.target.value)}
           />
         </ListItem>
         {Pro && (
@@ -195,9 +210,9 @@ function SettingsAdvanced(props: Props) {
               <Select
                 data-tid="fileOpenTID"
                 title={i18n.t('core:fileOpenHistoryTitle')}
-                value={props.settings[historyKeys.fileOpenKey]}
-                onChange={(event: any) =>
-                  props.setHistory(historyKeys.fileOpenKey, event.target.value)
+                value={settings[historyKeys.fileOpenKey]}
+                onChange={event =>
+                  setHistory(historyKeys.fileOpenKey, event.target.value)
                 }
                 input={<Input id="fileOpenSelector" />}
               >
@@ -226,12 +241,9 @@ function SettingsAdvanced(props: Props) {
               <Select
                 data-tid="folderOpenTID"
                 title={i18n.t('core:folderOpenHistoryTitle')}
-                value={props.settings[historyKeys.folderOpenKey]}
+                value={settings[historyKeys.folderOpenKey]}
                 onChange={(event: any) =>
-                  props.setHistory(
-                    historyKeys.folderOpenKey,
-                    event.target.value
-                  )
+                  setHistory(historyKeys.folderOpenKey, event.target.value)
                 }
                 input={<Input id="folderOpenSelector" />}
               >
@@ -258,9 +270,9 @@ function SettingsAdvanced(props: Props) {
               <Select
                 data-tid="fileEditTID"
                 title={i18n.t('core:fileEditHistoryTitle')}
-                value={props.settings[historyKeys.fileEditKey]}
+                value={settings[historyKeys.fileEditKey]}
                 onChange={(event: any) =>
-                  props.setHistory(historyKeys.fileEditKey, event.target.value)
+                  setHistory(historyKeys.fileEditKey, event.target.value)
                 }
                 input={<Input id="fileEditSelector" />}
               >
@@ -289,12 +301,9 @@ function SettingsAdvanced(props: Props) {
               <Select
                 data-tid="searchHistoryTID"
                 title={i18n.t('core:searchHistoryTitle')}
-                value={props.settings[historyKeys.searchHistoryKey]}
+                value={settings[historyKeys.searchHistoryKey]}
                 onChange={(event: any) =>
-                  props.setHistory(
-                    historyKeys.searchHistoryKey,
-                    event.target.value
-                  )
+                  setHistory(historyKeys.searchHistoryKey, event.target.value)
                 }
                 input={<Input id="searchHistorySelector" />}
               >
@@ -337,10 +346,8 @@ function SettingsAdvanced(props: Props) {
           <Switch
             data-tid="setRevisionsEnabledTID"
             disabled={!Pro}
-            onClick={() =>
-              props.setRevisionsEnabled(!props.settings.isRevisionsEnabled)
-            }
-            checked={props.settings.isRevisionsEnabled}
+            onClick={() => setRevisionsEnabled(!settings.isRevisionsEnabled)}
+            checked={settings.isRevisionsEnabled}
           />
         </ListItem>
         <ListItem className={classes.listItem}>
@@ -356,10 +363,8 @@ function SettingsAdvanced(props: Props) {
           <Switch
             data-tid="saveTagInLocationTID"
             disabled={!Pro}
-            onClick={() =>
-              props.setSaveTagInLocation(!props.settings.saveTagInLocation)
-            }
-            checked={props.settings.saveTagInLocation}
+            onClick={() => setSaveTagInLocation(!settings.saveTagInLocation)}
+            checked={settings.saveTagInLocation}
           />
         </ListItem>
         <ListItem className={classes.listItem}>
@@ -375,14 +380,12 @@ function SettingsAdvanced(props: Props) {
             value={
               geoTaggingFormatDisabled
                 ? AppConfig.geoTaggingFormat
-                : props.settings.geoTaggingFormat
+                : settings.geoTaggingFormat
             }
-            onChange={(event: any) =>
-              props.setGeoTaggingFormat(event.target.value)
-            }
+            onChange={(event: any) => setGeoTaggingFormat(event.target.value)}
             input={<Input id="geoTaggingFormatSelector" />}
           >
-            {props.settings.supportedGeoTagging.map(geoTagging => (
+            {settings.supportedGeoTagging.map(geoTagging => (
               <MenuItem key={geoTagging} value={geoTagging}>
                 {geoTagging.toUpperCase()}
               </MenuItem>
@@ -409,8 +412,8 @@ function SettingsAdvanced(props: Props) {
           }}
           dense
         >
-          {props.tileServers.length > 0 ? (
-            props.tileServers.map((tileServer, index) => (
+          {tileServers.length > 0 ? (
+            tileServers.map((tileServer, index) => (
               <ListItem key={tileServer.uuid} className={classes.listItem}>
                 <ListItemText
                   primary={tileServer.name}
@@ -463,34 +466,4 @@ function SettingsAdvanced(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    settings: getSettings(state),
-    tileServers: getMapTileServers(state),
-    enableWS: getEnableWS(state),
-    isDevMode: isDevMode(state)
-  };
-}
-
-function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators(
-    {
-      setWarningOpeningFilesExternally:
-        SettingsActions.setWarningOpeningFilesExternally,
-      setDesktopMode: SettingsActions.setDesktopMode,
-      setDevMode: SettingsActions.setDevMode,
-      setEnableWS: SettingsActions.setEnableWS,
-      setSaveTagInLocation: SettingsActions.setSaveTagInLocation,
-      setGeoTaggingFormat: SettingsActions.setGeoTaggingFormat,
-      setHistory: SettingsActions.setHistory,
-      setRevisionsEnabled: SettingsActions.setRevisionsEnabled,
-      setPrefixTagContainer: SettingsActions.setPrefixTagContainer
-    },
-    dispatch
-  );
-}
-
-export default connect(
-  mapStateToProps,
-  mapActionCreatorsToProps
-)(withStyles(styles, { withTheme: true })(SettingsAdvanced));
+export default withStyles(styles, { withTheme: true })(SettingsAdvanced);
