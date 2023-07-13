@@ -629,7 +629,7 @@ function FolderContainer(props: Props) {
         </div>
         <div
           style={{
-            height: props.windowHeight,
+            height: props.windowHeight + 1,
             flex: '1 1 auto',
             width: '100%'
           }}
