@@ -25,20 +25,18 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
 import MobileStepper from '@mui/material/MobileStepper';
 import Dialog from '@mui/material/Dialog';
-import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { getProTeaserIndex } from '-/reducers/app';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { getProTeaserSlides } from '-/content/ProTeaserSlides';
 import Links from '-/content/links';
 import { openURLExternally } from "-/services/utils-io";
 
 interface Props {
   open: boolean;
-  slideIndex: number;
   onClose: () => void;
 }
 
@@ -153,8 +151,9 @@ function Slide(props: SlideProps) {
 }
 
 function ProTeaserDialog(props: Props) {
+  const slideIndex = useSelector(getProTeaserIndex);
   const [activeStep, setActiveStep] = useState<number>(
-    props.slideIndex && props.slideIndex > -1 ? props.slideIndex : 0
+    slideIndex && slideIndex > -1 ? slideIndex : 0
   );
 
   const maxSteps = Object.keys(slidesEN).length;
@@ -214,7 +213,7 @@ function ProTeaserDialog(props: Props) {
           activeStep={activeStep}
           nextButton={
             activeStep === maxSteps - 1 ? (
-              <Button size="small" onClick={props.onClose}>
+              <Button size="small" onClick={onClose}>
                 {i18n.t('core:closeButton')}
               </Button>
             ) : (
@@ -238,9 +237,4 @@ function ProTeaserDialog(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    slideIndex: getProTeaserIndex(state)
-  };
-}
-export default connect(mapStateToProps)(ProTeaserDialog);
+export default ProTeaserDialog;

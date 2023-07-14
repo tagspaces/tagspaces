@@ -17,8 +17,7 @@
  */
 
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { useSelector, useDispatch } from 'react-redux';
 import SwipeableViews from 'react-swipeable-views';
 import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
@@ -33,60 +32,64 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import MobileStepper from '@mui/material/MobileStepper';
 import Dialog from '@mui/material/Dialog';
-import AppConfig from '-/AppConfig';
 import BrowserExtension from '-/assets/images/collectcontent.svg';
 import WizardFinished from '-/assets/images/computer-desk.svg';
 import ChooseTagging from '-/assets/images/abacus.svg';
 import NewLook from '-/assets/images/desktop.svg';
 import i18n from '-/services/i18n';
 import {
-  isFirstRun,
   getCurrentTheme,
   getPersistTagsInSidecarFile,
   actions as SettingsActions
 } from '-/reducers/settings';
-import { actions as AppActions } from '-/reducers/app';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Links from '-/content/links';
 import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { openURLExternally } from "-/services/utils-io";
+import { AppDispatch } from "-/reducers/app";
 
 interface Props {
   classes: any;
   open: boolean;
-  isPersistTagsInSidecar: boolean;
-  currentTheme: string;
-  // setFirstRun: (isFirstRun: boolean) => void,
-  setPersistTagsInSidecarFile: (isPersistTagsInSidecar: boolean) => void;
-  setCurrentTheme: (theme: string) => void;
   onClose: () => void;
 }
 
 function OnboardingDialog(props: Props) {
   const [activeStep, setActiveStep] = useState(0);
   const { open, onClose } = props;
+  const isPersistTagsInSidecar = useSelector(getPersistTagsInSidecarFile);
+  const currentTheme = useSelector(getCurrentTheme);
+  const dispatch: AppDispatch = useDispatch();
 
+  const setPersistTagsInSidecarFile = (isPersistTagsInSidecar) => {
+    dispatch(SettingsActions.setPersistTagsInSidecarFile(isPersistTagsInSidecar));
+  };
   const maxSteps = 4;
 
-  function handleNext() {
+  const setCurrentTheme = (theme) => {
+    dispatch(SettingsActions.setCurrentTheme(theme));
+  };
+
+  const handleNext = () => {
     setActiveStep(step => step + 1);
-  }
+  };
 
-  function handleBack() {
+  const handleBack = () => {
     setActiveStep(step => step - 1);
-  }
+  };
 
-  function handleStepChange(step: number) {
+  const handleStepChange = (step) => {
     setActiveStep(step);
-  }
+  };
 
-  function toggleTaggingType() {
-    props.setPersistTagsInSidecarFile(!props.isPersistTagsInSidecar);
-  }
+  const toggleTaggingType = () => {
+    setPersistTagsInSidecarFile(!isPersistTagsInSidecar);
+  };
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+
   return (
     <Dialog
       open={open}
@@ -126,10 +129,10 @@ function OnboardingDialog(props: Props) {
             <Typography variant="h6">Try our dark theme!</Typography>
             <Typography variant="h6">&nbsp;</Typography>
             <ToggleButtonGroup
-              value={props.currentTheme}
+              value={currentTheme}
               exclusive
               onChange={(event, theme) => {
-                props.setCurrentTheme(theme);
+                setCurrentTheme(theme);
               }}
               style={{ boxShadow: 'none' }}
             >
@@ -161,7 +164,7 @@ function OnboardingDialog(props: Props) {
               >
                 <FormControlLabel
                   value="false"
-                  control={<Radio checked={!props.isPersistTagsInSidecar} />}
+                  control={<Radio checked={!isPersistTagsInSidecar} />}
                   label={
                     <Typography
                       variant="subtitle1"
@@ -178,7 +181,7 @@ function OnboardingDialog(props: Props) {
                 <FormControlLabel
                   style={{ marginTop: 20 }}
                   value="true"
-                  control={<Radio checked={props.isPersistTagsInSidecar} />}
+                  control={<Radio checked={isPersistTagsInSidecar} />}
                   label={
                     <Typography
                       variant="subtitle1"
@@ -269,7 +272,7 @@ function OnboardingDialog(props: Props) {
             activeStep === maxSteps - 1 ? (
               <Button
                 size="small"
-                onClick={props.onClose}
+                onClick={onClose}
                 variant="contained"
                 color="primary"
                 style={{ marginLeft: 5 }}
@@ -302,26 +305,4 @@ function OnboardingDialog(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    isFirstRun: isFirstRun(state),
-    isPersistTagsInSidecar: getPersistTagsInSidecarFile(state),
-    currentTheme: getCurrentTheme(state)
-  };
-}
-
-function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators(
-    {
-      setFirstRun: SettingsActions.setFirstRun,
-      setPersistTagsInSidecarFile: SettingsActions.setPersistTagsInSidecarFile,
-      setCurrentTheme: SettingsActions.setCurrentTheme
-    },
-    dispatch
-  );
-}
-
-export default connect(
-  mapStateToProps,
-  mapActionCreatorsToProps
-)(OnboardingDialog);
+export default OnboardingDialog;
