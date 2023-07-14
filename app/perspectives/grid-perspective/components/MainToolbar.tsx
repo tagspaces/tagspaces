@@ -228,10 +228,10 @@ function MainToolbar(props: Props) {
         </Tooltip>
       )}
       {openShareFilesDialog && (
-        <ProTooltip title={i18n.t('core:shareFileDialog')}>
+        <ProTooltip tooltip={i18n.t('core:shareFiles')}>
           <span>
             <IconButton
-              aria-label={i18n.t('core:shareFileDialog')}
+              aria-label={i18n.t('core:shareFiles')}
               data-tid={prefixDataTID + 'PerspectiveShareFiles'}
               onClick={openShareFilesDialog}
               disabled={selectedEntries.length < 1}
