@@ -17,8 +17,7 @@
  */
 
 import React, { useState } from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteForever';
 import AddIcon from '@mui/icons-material/Add';
@@ -31,7 +30,7 @@ import ConfirmDialog from '../dialogs/ConfirmDialog';
 import i18n from '-/services/i18n';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { getMaxSearchResults } from '-/reducers/settings';
-import { actions as AppActions } from '-/reducers/app';
+import { actions as AppActions, AppDispatch, isReadOnlyMode } from "-/reducers/app";
 import { TS } from '-/tagspaces.namespace';
 
 interface Props {
@@ -41,43 +40,58 @@ interface Props {
   selectedTag: TS.Tag | null;
   currentEntryPath: string;
   removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
-  setSearchQuery: (searchQuery: TS.SearchQuery) => void;
-  maxSearchResults?: number;
   setIsAddTagDialogOpened?: (tag: TS.Tag) => void;
-  toggleEditTagDialog?: (tag: TS.Tag) => void;
-  isReadOnlyMode?: boolean;
 }
 
 function EntryTagMenu(props: Props) {
+  const {
+    open,
+    onClose,
+    anchorEl,
+    selectedTag,
+    currentEntryPath,
+    removeTags,
+    setIsAddTagDialogOpened
+  } = props;
   const [isDeleteTagDialogOpened, setIsDeleteTagDialogOpened] = useState(false);
+  const dispatch: AppDispatch = useDispatch();
+  const maxSearchResults: number = useSelector(getMaxSearchResults);
+  const readOnlyMode = useSelector(isReadOnlyMode);
+
+  const setSearchQuery = searchQuery => {
+    dispatch(LocationIndexActions.setSearchQuery(searchQuery));
+  };
+
+  const toggleEditTagDialog = tag => {
+    dispatch(AppActions.toggleEditTagDialog(tag));
+  };
 
   function showEditTagDialog() {
-    props.onClose();
-    // setIsEditTagDialogOpened(true);
-    const tag = props.selectedTag;
-    tag.path = props.currentEntryPath;
-    props.toggleEditTagDialog(tag);
+    onClose();
+    const tag = selectedTag;
+    tag.path = currentEntryPath;
+    toggleEditTagDialog(tag);
   }
 
   function showDeleteTagDialog() {
-    props.onClose();
+    onClose();
     setIsDeleteTagDialogOpened(true);
   }
 
   function showAddTagDialog() {
-    props.onClose();
-    props.setIsAddTagDialogOpened(props.selectedTag);
+    onClose();
+    setIsAddTagDialogOpened(selectedTag);
   }
 
   function showFilesWithThisTag() {
-    if (props.selectedTag) {
-      props.setSearchQuery({
-        tagsAND: [props.selectedTag],
-        maxSearchResults: props.maxSearchResults,
+    if (selectedTag) {
+      setSearchQuery({
+        tagsAND: [selectedTag],
+        maxSearchResults: maxSearchResults,
         executeSearch: true
       });
     }
-    props.onClose();
+    onClose();
   }
 
   function handleCloseDialogs() {
@@ -85,7 +99,7 @@ function EntryTagMenu(props: Props) {
   }
 
   function confirmRemoveTag() {
-    props.removeTags([props.currentEntryPath], [props.selectedTag]);
+    removeTags([currentEntryPath], [selectedTag]);
     handleCloseDialogs();
   }
 
@@ -101,8 +115,8 @@ function EntryTagMenu(props: Props) {
       <ListItemText primary={i18n.t('core:showFilesWithThisTag')} />
     </MenuItem>
   ];
-  if (!props.isReadOnlyMode) {
-    if (props.setIsAddTagDialogOpened) {
+  if (!readOnlyMode) {
+    if (setIsAddTagDialogOpened) {
       menuItems.push(
         <MenuItem
           key="addTagMenu"
@@ -144,7 +158,7 @@ function EntryTagMenu(props: Props) {
 
   return (
     <div style={{ overflowY: 'hidden' }}>
-      <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
+      <Menu anchorEl={anchorEl} open={open} onClose={onClose}>
         {menuItems}
       </Menu>
       <ConfirmDialog
@@ -165,20 +179,4 @@ function EntryTagMenu(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    maxSearchResults: getMaxSearchResults(state)
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      setSearchQuery: LocationIndexActions.setSearchQuery,
-      toggleEditTagDialog: AppActions.toggleEditTagDialog
-    },
-    dispatch
-  );
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(EntryTagMenu);
+export default EntryTagMenu;

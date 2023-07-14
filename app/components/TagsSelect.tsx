@@ -239,7 +239,6 @@ function TagsSelect(props: Props) {
           selectedTag={selectedTag}
           currentEntryPath={selectedEntryPath}
           removeTags={handleRemoveTag}
-          isReadOnlyMode={props.isReadOnlyMode}
         />
       )}
     </div>

@@ -16,11 +16,9 @@
  *
  */
 
-import React, { useRef, useState } from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import React, { useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import Menu from '@mui/material/Menu';
-import { Progress } from 'aws-sdk/clients/s3';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
 import {
@@ -35,6 +33,7 @@ import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
 import {
   actions as AppActions,
+  AppDispatch,
   getDirectoryPath,
   getLastSelectedEntryPath,
   getSelectedEntries,
@@ -67,56 +66,109 @@ interface Props {
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   openAddRemoveTagsDialog?: () => void;
   reflectCreateEntry?: (path: string, isFile: boolean) => void;
-  toggleNewFileDialog?: () => void;
-  uploadFilesAPI: (
-    files: Array<File>,
-    destination: string,
-    onUploadProgress?: (progress: Progress, response: any) => void
-  ) => any;
-  reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => void;
-  onUploadProgress: (progress: Progress, response: any) => void;
   switchPerspective?: (perspectiveId: string) => void;
-  toggleProTeaser?: (slidePage?: string) => void;
-  setCurrentDirectoryPerspective: (perspective: string) => void;
   perspectiveMode?: boolean;
-  showNotification?: (
-    text: string,
-    notificationType?: string,
-    autohide?: boolean
-  ) => void;
-  toggleUploadDialog: () => void;
-  toggleProgressDialog: () => void;
-  resetProgress: () => void;
-  addTags: (
-    paths: Array<string>,
-    tags: Array<TS.Tag>,
-    updateIndex: boolean
-  ) => void;
-  toggleDeleteMultipleEntriesDialog: () => void;
   openRenameDirectoryDialog: () => void;
   openMoveCopyFilesDialog: () => void;
-  selectedEntries: Array<TS.FileSystemEntry>;
-  currentDirectoryPath: string;
-  lastSelectedEntryPath: string;
-  isReadOnlyMode: boolean;
-  setSelectedEntries: (selectedEntries: Array<TS.FileSystemEntry>) => void;
   mouseX?: number;
   mouseY?: number;
   currentLocation?: TS.Location;
   locations?: Array<TS.Location>;
-  toggleCreateDirectoryDialog: () => void;
 }
 
 function DirectoryMenu(props: Props) {
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
-
   const {
-    selectedEntries,
+    open,
+    onClose,
+    anchorEl,
+    mouseX,
+    mouseY,
+    directoryPath,
     currentLocation,
     locations,
-    toggleProTeaser,
-    showNotification
+    openAddRemoveTagsDialog,
+    openMoveCopyFilesDialog,
+    openRenameDirectoryDialog
   } = props;
+
+  const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
+    getSelectedEntries
+  );
+  const currentDirectoryPath = useSelector(getDirectoryPath);
+  const lastSelectedEntryPath = useSelector(getLastSelectedEntryPath);
+  const readOnlyMode = useSelector(isReadOnlyMode);
+  const dispatch: AppDispatch = useDispatch();
+
+  const loadDirectoryContent = (path, generateThumbnails, loadDirMeta) => {
+    dispatch(
+      AppActions.loadDirectoryContent(path, generateThumbnails, loadDirMeta)
+    );
+  };
+
+  const toggleCreateDirectoryDialog = () => {
+    dispatch(AppActions.toggleCreateDirectoryDialog());
+  };
+
+  const openFsEntry = fsEntry => {
+    dispatch(AppActions.openFsEntry(fsEntry));
+  };
+
+  const reflectCreateEntry = (path, isFile) => {
+    dispatch(AppActions.reflectCreateEntry(path, isFile));
+  };
+
+  const toggleNewFileDialog = () => {
+    dispatch(AppActions.toggleNewFileDialog());
+  };
+
+  const uploadFilesAPI = (files, destination, onUploadProgress) => {
+    dispatch(IOActions.uploadFilesAPI(files, destination, onUploadProgress));
+  };
+
+  const reflectCreateEntries = fsEntries => {
+    dispatch(AppActions.reflectCreateEntries(fsEntries));
+  };
+
+  const onUploadProgress = (progress, response) => {
+    dispatch(AppActions.onUploadProgress(progress, response));
+  };
+
+  const toggleUploadDialog = () => {
+    dispatch(AppActions.toggleUploadDialog());
+  };
+
+  const toggleProgressDialog = () => {
+    dispatch(AppActions.toggleProgressDialog());
+  };
+
+  const resetProgress = () => {
+    dispatch(AppActions.resetProgress());
+  };
+
+  const addTags = (paths, tags, updateIndex) => {
+    dispatch(TaggingActions.addTags(paths, tags, updateIndex));
+  };
+
+  const toggleDeleteMultipleEntriesDialog = () => {
+    dispatch(AppActions.toggleDeleteMultipleEntriesDialog());
+  };
+
+  const setSelectedEntries = selectedEntries => {
+    dispatch(AppActions.setSelectedEntries(selectedEntries));
+  };
+
+  const showNotification = (text, notificationType?, autohide?) => {
+    dispatch(AppActions.showNotification(text, notificationType, autohide));
+  };
+
+  const toggleProTeaser = slidePage => {
+    dispatch(AppActions.toggleProTeaser(slidePage));
+  };
+
+  const setCurrentDirectoryPerspective = perspective => {
+    dispatch(AppActions.setCurrentDirectoryPerspective(perspective));
+  };
 
   function generateFolderLink() {
     const entryFromIndex = selectedEntries[0]['locationID'];
@@ -150,25 +202,22 @@ function DirectoryMenu(props: Props) {
   ] = useState(false);*/
 
   function reloadDirectory() {
-    props.loadDirectoryContent(props.directoryPath, true, true);
+    loadDirectoryContent(directoryPath, true, true);
   }
 
   function openDirectory() {
-    props.loadDirectoryContent(props.directoryPath, true, true);
+    loadDirectoryContent(directoryPath, true, true);
   }
 
   function showProperties() {
-    getAllPropertiesPromise(props.directoryPath)
+    getAllPropertiesPromise(directoryPath)
       .then((fsEntry: TS.FileSystemEntry) => {
-        props.openFsEntry(fsEntry);
+        openFsEntry(fsEntry);
         return true;
       })
       .catch(error =>
         console.warn(
-          'Error getting properties for entry: ' +
-            props.directoryPath +
-            ' - ' +
-            error
+          'Error getting properties for entry: ' + directoryPath + ' - ' + error
         )
       );
   }
@@ -179,16 +228,16 @@ function DirectoryMenu(props: Props) {
       perspectiveId === PerspectiveIDs.GRID ||
       perspectiveId === PerspectiveIDs.LIST
     ) {
-      if (props.switchPerspective) {
-        props.switchPerspective(perspectiveId);
+      if (switchPerspective) {
+        switchPerspective(perspectiveId);
       } else {
-        props.setCurrentDirectoryPerspective(perspectiveId);
+        setCurrentDirectoryPerspective(perspectiveId);
       }
     } else if (perspectiveId === PerspectiveIDs.GALLERY) {
       toggleProTeaser(PerspectiveIDs.GALLERY);
       // const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
       // if (openPersDocs) {
-      //   props.openURLExternally(
+      //   openURLExternally(
       //     Links.documentationLinks.galleryPerspective,
       //     true
       //   );
@@ -197,7 +246,7 @@ function DirectoryMenu(props: Props) {
       toggleProTeaser(PerspectiveIDs.MAPIQUE);
       // const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
       // if (openPersDocs) {
-      //   props.openURLExternally(
+      //   openURLExternally(
       //     Links.documentationLinks.mapiquePerspective,
       //     true
       //   );
@@ -206,7 +255,7 @@ function DirectoryMenu(props: Props) {
       toggleProTeaser(PerspectiveIDs.KANBAN);
       // const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
       // if (openPersDocs) {
-      //   props.openURLExternally(
+      //   openURLExternally(
       //     Links.documentationLinks.kanbanPerspective,
       //     true
       //   );
@@ -215,25 +264,17 @@ function DirectoryMenu(props: Props) {
   }
 
   function showDeleteDirectoryDialog() {
-    props.setSelectedEntries([
+    setSelectedEntries([
       {
         isFile: false,
-        name: props.directoryPath,
-        path: props.directoryPath,
+        name: directoryPath,
+        path: directoryPath,
         tags: [],
         size: 0,
         lmdt: 0
       }
     ]);
-    props.toggleDeleteMultipleEntriesDialog();
-  }
-
-  function showRenameDirectoryDialog() {
-    props.openRenameDirectoryDialog();
-  }
-
-  function openMoveCopyDialog() {
-    props.openMoveCopyFilesDialog();
+    toggleDeleteMultipleEntriesDialog();
   }
 
   /*function showCreateDirectoryDialog() {
@@ -241,11 +282,11 @@ function DirectoryMenu(props: Props) {
   }*/
 
   function createNewFile() {
-    props.toggleNewFileDialog();
+    toggleNewFileDialog();
   }
 
   function showInFileManager() {
-    props.openDirectory(props.directoryPath);
+    dispatch(AppActions.openDirectory(directoryPath));
   }
 
   function openInNewWindow() {
@@ -271,13 +312,13 @@ Do you want to continue?`)
       ) {
         return false;
       }
-      props.toggleProgressDialog();
+      toggleProgressDialog();
 
       const entryCallback = entry => {
         PlatformFacade.readMacOSTags(entry.path)
           .then(tags => {
             if (tags.length > 0) {
-              props.addTags([entry.path], tags, true);
+              addTags([entry.path], tags, true);
             }
             return tags;
           })
@@ -285,13 +326,13 @@ Do you want to continue?`)
             console.warn('Error creating tags: ' + err);
           });
       };
-      Pro.MacTagsImport.importTags(props.directoryPath, entryCallback)
+      Pro.MacTagsImport.importTags(directoryPath, entryCallback)
         .then(() => {
-          // props.loadDirectoryContent(props.directoryPath); // TODO after first import tags is not imported without reloadDirContent
-          props.toggleProgressDialog();
-          console.log('Import tags succeeded ' + props.directoryPath);
-          props.showNotification(
-            'Tags from ' + props.directoryPath + ' are imported successfully.',
+          // loadDirectoryContent(directoryPath); // TODO after first import tags is not imported without reloadDirContent
+          toggleProgressDialog();
+          console.log('Import tags succeeded ' + directoryPath);
+          showNotification(
+            'Tags from ' + directoryPath + ' are imported successfully.',
             'default',
             true
           );
@@ -299,10 +340,10 @@ Do you want to continue?`)
         })
         .catch(err => {
           console.warn('Error importing tags: ' + err);
-          props.toggleProgressDialog();
+          toggleProgressDialog();
         });
     } else {
-      props.showNotification(
+      showNotification(
         i18n.t('core:thisFunctionalityIsAvailableInPro'),
         'default',
         true
@@ -335,24 +376,22 @@ Do you want to continue?`)
       AppConfig.endTagContainer +
       '.jpg';
     const newFilePath =
-      normalizePath(props.directoryPath) +
-      PlatformIO.getDirSeparator() +
-      fileName;
+      normalizePath(directoryPath) + PlatformIO.getDirSeparator() + fileName;
 
     PlatformIO.renameFilePromise(filePath, newFilePath)
       .then(() => {
-        props.showNotification(
+        showNotification(
           'File ' + newFilePath + ' successfully imported.',
           'default',
           true
         );
-        props.reflectCreateEntry(newFilePath, true);
+        reflectCreateEntry(newFilePath, true);
         return true;
       })
       .catch(error => {
         // TODO showAlertDialog("Saving " + filePath + " failed.");
         console.error('Save to file ' + newFilePath + ' failed ' + error);
-        props.showNotification(
+        showNotification(
           'Importing file ' + newFilePath + ' failed.',
           'error',
           true
@@ -362,7 +401,7 @@ Do you want to continue?`)
   }
 
   // function loadImageLocal() {
-  //   props.onClose();
+  //   onClose();
   //   navigator.camera.getPicture(onCameraSuccess, onFail, {
   //     destinationType: Camera.DestinationType.FILE_URI,
   //     sourceType: Camera.PictureSourceType.PHOTOLIBRARY
@@ -383,7 +422,7 @@ Do you want to continue?`)
 
   function setFolderThumbnail() {
     const parentDirectoryPath = extractContainingDirectoryPath(
-      props.directoryPath,
+      directoryPath,
       PlatformIO.getDirSeparator()
     );
     const parentDirectoryName = extractDirectoryName(
@@ -393,7 +432,7 @@ Do you want to continue?`)
 
     PlatformIO.copyFilePromise(
       getThumbFileLocationForDirectory(
-        props.directoryPath,
+        directoryPath,
         PlatformIO.getDirSeparator()
       ),
       getThumbFileLocationForDirectory(
@@ -403,7 +442,7 @@ Do you want to continue?`)
       i18n.t('core:thumbAlreadyExists', { directoryName: parentDirectoryName })
     )
       .then(() => {
-        props.showNotification(
+        showNotification(
           'Thumbnail created for: ' + parentDirectoryPath,
           'default',
           true
@@ -411,29 +450,26 @@ Do you want to continue?`)
         return true;
       })
       .catch(error => {
-        props.showNotification('Thumbnail creation failed.', 'default', true);
-        console.warn(
-          'Error setting Thumb for entry: ' + props.directoryPath,
-          error
-        );
+        showNotification('Thumbnail creation failed.', 'default', true);
+        console.warn('Error setting Thumb for entry: ' + directoryPath, error);
         return true;
       });
   }
 
   const menuItems = getDirectoryMenuItems(
     currentLocation,
-    props.selectedEntries.length,
-    props.lastSelectedEntryPath !== props.currentDirectoryPath,
-    props.isReadOnlyMode,
-    props.onClose,
+    selectedEntries.length,
+    lastSelectedEntryPath !== currentDirectoryPath,
+    readOnlyMode,
+    onClose,
     openDirectory,
     reloadDirectory,
-    showRenameDirectoryDialog,
-    openMoveCopyDialog,
+    openRenameDirectoryDialog,
+    openMoveCopyFilesDialog,
     showDeleteDirectoryDialog,
     showInFileManager,
     createNewFile,
-    props.toggleCreateDirectoryDialog,
+    toggleCreateDirectoryDialog,
     addExistingFile,
     setFolderThumbnail,
     copySharingLink,
@@ -441,72 +477,35 @@ Do you want to continue?`)
     switchPerspective,
     showProperties,
     cameraTakePicture,
-    props.openAddRemoveTagsDialog,
+    openAddRemoveTagsDialog,
     openInNewWindow
   );
 
   return (
     <div style={{ overflowY: 'hidden' }}>
       <Menu
-        anchorEl={props.anchorEl}
-        open={props.open}
-        onClose={props.onClose}
-        anchorReference={
-          props.mouseY && props.mouseX ? 'anchorPosition' : undefined
-        }
+        anchorEl={anchorEl}
+        open={open}
+        onClose={onClose}
+        anchorReference={mouseY && mouseX ? 'anchorPosition' : undefined}
         anchorPosition={
-          props.mouseY && props.mouseX
-            ? { top: props.mouseY, left: props.mouseX }
-            : undefined
+          mouseY && mouseX ? { top: mouseY, left: mouseX } : undefined
         }
       >
         {menuItems}
       </Menu>
       <FileUploadContainer
         ref={fileUploadContainerRef}
-        directoryPath={props.directoryPath}
-        onUploadProgress={props.onUploadProgress}
-        toggleUploadDialog={props.toggleUploadDialog}
-        toggleProgressDialog={props.toggleProgressDialog}
-        resetProgress={props.resetProgress}
-        reflectCreateEntries={props.reflectCreateEntries}
-        uploadFilesAPI={props.uploadFilesAPI}
+        directoryPath={directoryPath}
+        onUploadProgress={onUploadProgress}
+        toggleUploadDialog={toggleUploadDialog}
+        toggleProgressDialog={toggleProgressDialog}
+        resetProgress={resetProgress}
+        reflectCreateEntries={reflectCreateEntries}
+        uploadFilesAPI={uploadFilesAPI}
       />
     </div>
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    selectedEntries: getSelectedEntries(state),
-    currentDirectoryPath: getDirectoryPath(state),
-    lastSelectedEntryPath: getLastSelectedEntryPath(state),
-    isReadOnlyMode: isReadOnlyMode(state)
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      showNotification: AppActions.showNotification,
-      onUploadProgress: AppActions.onUploadProgress,
-      toggleUploadDialog: AppActions.toggleUploadDialog,
-      toggleProgressDialog: AppActions.toggleProgressDialog,
-      toggleNewFileDialog: AppActions.toggleNewFileDialog,
-      toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog,
-      toggleProTeaser: AppActions.toggleProTeaser,
-      resetProgress: AppActions.resetProgress,
-      reflectCreateEntries: AppActions.reflectCreateEntries,
-      setCurrentDirectoryPerspective: AppActions.setCurrentDirectoryPerspective,
-      extractContent: IOActions.extractContent,
-      uploadFilesAPI: IOActions.uploadFilesAPI,
-      addTags: TaggingActions.addTags,
-      toggleDeleteMultipleEntriesDialog:
-        AppActions.toggleDeleteMultipleEntriesDialog,
-      setSelectedEntries: AppActions.setSelectedEntries
-    },
-    dispatch
-  );
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(DirectoryMenu);
+export default DirectoryMenu;

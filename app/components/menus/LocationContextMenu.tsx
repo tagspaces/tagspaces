@@ -17,6 +17,7 @@
  */
 
 import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { generateSharingLink } from '@tagspaces/tagspaces-common/paths';
 import ListItemText from '@mui/material/ListItemText';
@@ -32,8 +33,6 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import DeleteIcon from '@mui/icons-material/DeleteForever';
 import OpenFolderNativelyIcon from '@mui/icons-material/Launch';
 import { OpenNewWindowIcon, CloseIcon } from '-/components/CommonIcons';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
 import {
@@ -42,46 +41,56 @@ import {
 } from '-/reducers/locations';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import i18n from '-/services/i18n';
-import { actions as AppActions } from '-/reducers/app';
+import { actions as AppActions, AppDispatch } from "-/reducers/app";
 import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
 
 interface Props {
   setEditLocationDialogOpened: (open: boolean) => void;
   setDeleteLocationDialogOpened: (open: boolean) => void;
-  createLocationIndex: (location: TS.Location) => void;
   selectedLocation: TS.Location;
-  moveLocationUp: (locationId: string) => void;
-  moveLocationDown: (locationId: string) => void;
-  showInFileManager: (path: string) => void;
-  closeLocation: (locationId: string) => void;
   closeLocationTree: () => void;
   locationDirectoryContextMenuAnchorEl: HTMLElement;
   setLocationDirectoryContextMenuAnchorEl: (el: HTMLElement) => void;
-  addLocation: (
-    location: TS.Location,
-    openAfterCreate?: boolean,
-    locationPosition?: number
-  ) => void;
-  locationPosition: number;
 }
 
 function LocationContextMenu(props: Props) {
   const {
-    addLocation,
     selectedLocation,
     setEditLocationDialogOpened,
-    setLocationDirectoryContextMenuAnchorEl,
-    createLocationIndex,
-    locationPosition,
-    moveLocationUp,
-    moveLocationDown,
     setDeleteLocationDialogOpened,
+    setLocationDirectoryContextMenuAnchorEl,
     closeLocationTree,
-    closeLocation,
-    showInFileManager,
-    locationDirectoryContextMenuAnchorEl
+    locationDirectoryContextMenuAnchorEl,
   } = props;
+
+  const dispatch: AppDispatch = useDispatch();
+  const locationPosition = useSelector(state => getLocationPosition(state, selectedLocation.uuid));
+
+
+  const createLocationIndex = (location) => {
+    dispatch(LocationIndexActions.createLocationIndex(location));
+  };
+
+  const moveLocationUp = (locationId) => {
+    dispatch(LocationActions.moveLocationUp(locationId));
+  };
+
+  const moveLocationDown = (locationId) => {
+    dispatch(LocationActions.moveLocationDown(locationId));
+  };
+
+  const showInFileManager = (path) => {
+    dispatch(AppActions.showInFileManager(path));
+  };
+
+  const closeLocation = (locationId) => {
+    dispatch(AppActions.closeLocation(locationId));
+  };
+
+  const addLocation = (location, openAfterCreate, locationPosition) => {
+    dispatch(LocationActions.addLocation(location, openAfterCreate, locationPosition));
+  };
 
   const indexLocation = () => {
     setLocationDirectoryContextMenuAnchorEl(null);
@@ -277,27 +286,4 @@ function LocationContextMenu(props: Props) {
   );
 }
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      createLocationIndex: LocationIndexActions.createLocationIndex,
-      moveLocationUp: LocationActions.moveLocationUp,
-      moveLocationDown: LocationActions.moveLocationDown,
-      showInFileManager: AppActions.showInFileManager,
-      closeLocation: AppActions.closeLocation,
-      addLocation: LocationActions.addLocation
-    },
-    dispatch
-  );
-}
-
-function mapStateToProps(state, ownProps) {
-  return {
-    locationPosition: getLocationPosition(state, ownProps.selectedLocation.uuid)
-  };
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(LocationContextMenu);
+export default LocationContextMenu;

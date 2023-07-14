@@ -552,7 +552,6 @@ function TagLibrary(props: Props) {
           onClose={() => setTagMenuAnchorEl(null)}
           showEditTagDialog={() => setIsEditTagDialogOpened(true)}
           showDeleteTagDialog={() => setIsDeleteTagDialogOpened(true)}
-          isReadOnlyMode={isReadOnly}
           selectedTag={selectedTag}
         />
       )}

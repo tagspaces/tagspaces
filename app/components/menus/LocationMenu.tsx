@@ -17,8 +17,7 @@
  */
 
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { LocalLocationIcon, CloudLocationIcon } from '-/components/CommonIcons';
@@ -32,32 +31,31 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import i18n from '-/services/i18n';
 import { getLocations } from '-/reducers/locations';
-import { actions as AppActions, getCurrentLocationId } from '-/reducers/app';
+import {
+  actions as AppActions,
+  AppDispatch,
+  getCurrentLocationId
+} from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 
 interface Props {
-  currentLocationId: string | null;
   theme: any;
-  locations: Array<TS.Location>;
   menuAnchorEl?: Element;
-  openLocation: (location: TS.Location) => void;
 }
 
 function LocationMenu(props: Props) {
+  const dispatch: AppDispatch = useDispatch();
+  const locations: Array<TS.Location> = useSelector(getLocations);
+  const currentLocationId: string | null = useSelector(getCurrentLocationId);
   const [
     locationChooserMenuAnchorEl,
     setLocationChooserMenuAnchorEl
   ] = useState<null | HTMLElement>(null);
 
-  const openLocation = location => {
-    props.openLocation(location);
-    setLocationChooserMenuAnchorEl(null);
-  };
-
   let currentLocation;
-  if (props.currentLocationId && props.locations) {
-    currentLocation = props.locations.find(
-      (location: TS.Location) => location.uuid === props.currentLocationId
+  if (currentLocationId && locations) {
+    currentLocation = locations.find(
+      (location: TS.Location) => location.uuid === currentLocationId
     );
   }
 
@@ -117,11 +115,14 @@ function LocationMenu(props: Props) {
           >
             {i18n.t('core:chooseLocation')}
           </ListSubHeader>
-          {props.locations.map((location: TS.Location) => (
+          {locations.map((location: TS.Location) => (
             <MenuItem
               data-tid="folderContainerMenuOpenLocation"
               key={location.uuid}
-              onClick={() => openLocation(location)}
+              onClick={() => {
+                dispatch(AppActions.openLocation(location));
+                setLocationChooserMenuAnchorEl(null);
+              }}
               style={
                 currentLocation && currentLocation.uuid === location.uuid
                   ? { backgroundColor: theme.palette.primary.light }
@@ -144,23 +145,4 @@ function LocationMenu(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    locations: getLocations(state),
-    currentLocationId: getCurrentLocationId(state)
-  };
-}
-
-function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators(
-    {
-      openLocation: AppActions.openLocation
-    },
-    dispatch
-  );
-}
-
-export default connect(
-  mapStateToProps,
-  mapActionCreatorsToProps
-)(withTheme(LocationMenu));
+export default withTheme(LocationMenu);

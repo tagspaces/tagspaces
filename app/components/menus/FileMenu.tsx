@@ -54,17 +54,10 @@ import {
 } from '-/services/utils-io';
 import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
-import { bindActionCreators } from 'redux';
-import { actions as AppActions } from '-/reducers/app';
-import { connect } from 'react-redux';
+import { actions as AppActions, AppDispatch, isReadOnlyMode } from "-/reducers/app";
+import { useSelector, useDispatch } from 'react-redux';
 import { supportedImgs } from '-/services/thumbsgenerator';
-import {
-  getEnableWS,
-  getMapTileServers,
-  getPrefixTagContainer,
-  getSettings,
-  isDevMode
-} from '-/reducers/settings';
+import { getPrefixTagContainer } from '-/reducers/settings';
 import {
   OpenNewWindowIcon,
   DeleteIcon,
@@ -82,7 +75,6 @@ interface Props {
   openMoveCopyFilesDialog: () => void;
   openShareFilesDialog?: () => void;
   openAddRemoveTagsDialog: () => void;
-  openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   loadDirectoryContent: (
     path: string,
     generateThumbnails: boolean,
@@ -90,34 +82,41 @@ interface Props {
   ) => void;
   openFileNatively: (path: string) => void;
   showInFileManager: (path: string) => void;
-  showNotification: (
-    text: string,
-    notificationType?: string,
-    autohide?: boolean
-  ) => void;
   selectedFilePath?: string;
-  isReadOnlyMode: boolean;
   selectedEntries: Array<any>;
   currentLocation: TS.Location;
   locations: Array<TS.Location>;
-  setLastBackgroundImageChange: (path: string, dt: number) => void;
   reorderTop?: () => void;
   reorderBottom?: () => void;
   onDuplicateFile?: (fileDirPath: string) => void;
-  exitSearchMode: () => void;
-  prefixTagContainer: string;
 }
 
 function FileMenu(props: Props) {
   const {
+    openDeleteFileDialog,
+    openRenameFileDialog,
+    openMoveCopyFilesDialog,
+    openShareFilesDialog,
+    openAddRemoveTagsDialog,
+    showInFileManager,
+    onDuplicateFile,
+    loadDirectoryContent,
     selectedEntries,
-    isReadOnlyMode,
+    openFileNatively,
     currentLocation,
+    reorderTop,
+    reorderBottom,
+    anchorEl,
+    mouseX,
+    mouseY,
+    open,
     onClose,
     selectedFilePath,
-    showNotification,
     locations
   } = props;
+  const dispatch: AppDispatch = useDispatch();
+  const readOnlyMode = useSelector(isReadOnlyMode);
+  const prefixTagContainer = useSelector(getPrefixTagContainer);
 
   function generateFileLink() {
     const entryFromIndex = selectedEntries[0].locationID;
@@ -137,46 +136,52 @@ function FileMenu(props: Props) {
       navigator.clipboard
         .writeText(sharingLink)
         .then(() => {
-          showNotification(i18n.t('core:sharingLinkCopied'));
+          dispatch(
+            AppActions.showNotification(i18n.t('core:sharingLinkCopied'))
+          );
           return true;
         })
         .catch(() => {
-          showNotification(i18n.t('core:sharingLinkFailed'));
+          dispatch(
+            AppActions.showNotification(i18n.t('core:sharingLinkFailed'))
+          );
         });
     }
   }
 
   function showDeleteFileDialog() {
     onClose();
-    props.openDeleteFileDialog();
+    openDeleteFileDialog();
   }
 
   function showRenameFileDialog() {
     onClose();
-    props.openRenameFileDialog();
+    openRenameFileDialog();
   }
 
   function showMoveCopyFilesDialog() {
     onClose();
-    props.openMoveCopyFilesDialog();
+    openMoveCopyFilesDialog();
   }
 
   function showShareFilesDialog() {
     onClose();
-    props.openShareFilesDialog();
+    openShareFilesDialog();
   }
 
   function setFolderThumbnail() {
     onClose();
-    setFolderThumbnailPromise(props.selectedFilePath)
+    setFolderThumbnailPromise(selectedFilePath)
       .then((directoryPath: string) => {
-        showNotification('Thumbnail created for: ' + directoryPath);
+        dispatch(
+          AppActions.showNotification('Thumbnail created for: ' + directoryPath)
+        );
         return true;
       })
       .catch(error => {
-        showNotification('Thumbnail creation failed.');
+        dispatch(AppActions.showNotification('Thumbnail creation failed.'));
         console.warn(
-          'Error setting Thumb for entry: ' + props.selectedFilePath,
+          'Error setting Thumb for entry: ' + selectedFilePath,
           error
         );
         return true;
@@ -187,24 +192,30 @@ function FileMenu(props: Props) {
     onClose();
     let path =
       PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()
-        ? PlatformIO.getURLforPath(props.selectedFilePath)
-        : props.selectedFilePath;
+        ? PlatformIO.getURLforPath(selectedFilePath)
+        : selectedFilePath;
 
     const directoryPath = extractContainingDirectoryPath(
-      props.selectedFilePath,
+      selectedFilePath,
       PlatformIO.getDirSeparator()
     );
 
     setFolderBackgroundPromise(path, directoryPath)
       .then((directoryPath: string) => {
-        props.setLastBackgroundImageChange(path, new Date().getTime());
-        showNotification('Background created for: ' + directoryPath);
+        dispatch(
+          AppActions.setLastBackgroundImageChange(path, new Date().getTime())
+        );
+        dispatch(
+          AppActions.showNotification(
+            'Background created for: ' + directoryPath
+          )
+        );
         return true;
       })
       .catch(error => {
-        showNotification('Background creation failed.');
+        dispatch(AppActions.showNotification('Background creation failed.'));
         console.warn(
-          'Error setting Background for entry: ' + props.selectedFilePath,
+          'Error setting Background for entry: ' + selectedFilePath,
           error
         );
         return true;
@@ -213,14 +224,7 @@ function FileMenu(props: Props) {
 
   function showAddRemoveTagsDialog() {
     onClose();
-    props.openAddRemoveTagsDialog();
-  }
-
-  function showInFileManager() {
-    onClose();
-    if (props.selectedFilePath) {
-      props.showInFileManager(props.selectedFilePath);
-    }
+    openAddRemoveTagsDialog();
   }
 
   function duplicateFile() {
@@ -250,28 +254,23 @@ function FileMenu(props: Props) {
           fileName,
           extractedTags,
           AppConfig.tagDelimiter,
-          props.prefixTagContainer
+          prefixTagContainer
         );
 
       PlatformIO.copyFilePromise(selectedFilePath, newFilePath)
         .then(() => {
-          if (props.onDuplicateFile) {
-            props.onDuplicateFile(dirPath);
+          if (onDuplicateFile) {
+            onDuplicateFile(dirPath);
           } else {
-            props.loadDirectoryContent(dirPath, true, true);
+            loadDirectoryContent(dirPath, true, true);
           }
           return true;
         })
         .catch(error => {
-          showNotification('Error creating duplicate: ', error);
+          dispatch(
+            AppActions.showNotification('Error creating duplicate: ', error)
+          );
         });
-    }
-  }
-
-  function openFileNatively() {
-    onClose();
-    if (props.selectedFilePath) {
-      props.openFileNatively(props.selectedFilePath);
     }
   }
 
@@ -282,8 +281,8 @@ function FileMenu(props: Props) {
         selectedFilePath,
         PlatformIO.getDirSeparator()
       );
-      props.exitSearchMode();
-      props.loadDirectoryContent(parentFolder, false, true);
+      dispatch(AppActions.exitSearchMode());
+      loadDirectoryContent(parentFolder, false, true);
     }
   }
 
@@ -292,13 +291,13 @@ function FileMenu(props: Props) {
     if (selectedFilePath) {
       getAllPropertiesPromise(selectedFilePath)
         .then((fsEntry: TS.FileSystemEntry) => {
-          props.openFsEntry(fsEntry);
+          dispatch(AppActions.openFsEntry(fsEntry));
           return true;
         })
         .catch(error =>
           console.warn(
             'Error getting properties for entry: ' +
-              props.selectedFilePath +
+              selectedFilePath +
               ' - ' +
               error
           )
@@ -373,7 +372,12 @@ function FileMenu(props: Props) {
       <MenuItem
         key="fileMenuOpenFileNatively"
         data-tid="fileMenuOpenFileNatively"
-        onClick={openFileNatively}
+        onClick={() => {
+          onClose();
+          if (selectedFilePath) {
+            openFileNatively(selectedFilePath);
+          }
+        }}
       >
         <ListItemIcon>
           <OpenFileNatively />
@@ -385,7 +389,12 @@ function FileMenu(props: Props) {
       <MenuItem
         key="fileMenuOpenContainingFolder"
         data-tid="fileMenuOpenContainingFolder"
-        onClick={showInFileManager}
+        onClick={() => {
+          onClose();
+          if (selectedFilePath) {
+            showInFileManager(selectedFilePath);
+          }
+        }}
       >
         <ListItemIcon>
           <OpenFolderInternally />
@@ -395,7 +404,7 @@ function FileMenu(props: Props) {
     );
     menuItems.push(<Divider key="fmDivider" />);
   }
-  if (!isReadOnlyMode) {
+  if (!readOnlyMode) {
     menuItems.push(
       <MenuItem
         key="fileMenuAddRemoveTags"
@@ -408,14 +417,14 @@ function FileMenu(props: Props) {
         <ListItemText primary={i18n.t('core:addRemoveTags')} />
       </MenuItem>
     );
-    if (props.reorderTop) {
+    if (reorderTop) {
       menuItems.push(
         <MenuItem
           key="reorderTop"
           data-tid="reorderTopTID"
           onClick={() => {
             onClose();
-            props.reorderTop();
+            reorderTop();
           }}
         >
           <ListItemIcon>
@@ -425,14 +434,14 @@ function FileMenu(props: Props) {
         </MenuItem>
       );
     }
-    if (props.reorderBottom) {
+    if (reorderBottom) {
       menuItems.push(
         <MenuItem
           key="reorderBottom"
           data-tid="reorderBottomTID"
           onClick={() => {
             onClose();
-            props.reorderBottom();
+            reorderBottom();
           }}
         >
           <ListItemIcon>
@@ -470,7 +479,7 @@ function FileMenu(props: Props) {
       );
     }
 
-    if (Pro && props.openShareFilesDialog) {
+    if (Pro && openShareFilesDialog) {
       menuItems.push(
         <MenuItem
           key="fileMenuShareFile"
@@ -557,17 +566,13 @@ function FileMenu(props: Props) {
   return (
     <div style={{ overflowY: 'hidden' }}>
       <Menu
-        anchorEl={props.anchorEl}
-        anchorReference={
-          props.mouseY && props.mouseX ? 'anchorPosition' : undefined
-        }
+        anchorEl={anchorEl}
+        anchorReference={mouseY && mouseX ? 'anchorPosition' : undefined}
         anchorPosition={
-          props.mouseY && props.mouseX
-            ? { top: props.mouseY, left: props.mouseX }
-            : undefined
+          mouseY && mouseX ? { top: mouseY, left: mouseX } : undefined
         }
-        open={props.open}
-        onClose={props.onClose}
+        open={open}
+        onClose={onClose}
       >
         {menuItems}
       </Menu>
@@ -575,20 +580,4 @@ function FileMenu(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    prefixTagContainer: getPrefixTagContainer(state)
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      setLastBackgroundImageChange: AppActions.setLastBackgroundImageChange,
-      exitSearchMode: AppActions.exitSearchMode
-    },
-    dispatch
-  );
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(FileMenu);
+export default FileMenu;

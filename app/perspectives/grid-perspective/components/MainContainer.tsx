@@ -945,12 +945,9 @@ function GridPerspective(props: Props) {
               : undefined
           }
           openAddRemoveTagsDialog={openAddRemoveTagsDialog}
-          openFsEntry={props.openFsEntry}
           openFileNatively={props.openFileNatively}
           loadDirectoryContent={props.loadDirectoryContent}
           showInFileManager={props.showInFileManager}
-          showNotification={props.showNotification}
-          isReadOnlyMode={props.isReadOnlyMode}
           selectedFilePath={props.lastSelectedEntryPath}
           selectedEntries={props.selectedEntries}
           currentLocation={props.currentLocation}
@@ -986,7 +983,6 @@ function GridPerspective(props: Props) {
         selectedTag={selectedTag.current}
         currentEntryPath={selectedEntryPath.current} // getSelEntryPath()}
         removeTags={props.removeTags}
-        isReadOnlyMode={props.isReadOnlyMode}
       />
       {Boolean(sortingContextMenuAnchorEl) && (
         <SortingMenu
