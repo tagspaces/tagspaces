@@ -85,7 +85,6 @@ interface Props {
   tagBackgroundColor: string;
   //tagGroups: Array<TS.TagGroup>;
   //allTags: Array<TS.Tag>;
-  openURLExternally: (path: string) => void;
   toggleTagGroup: (uuid: string) => void;
   settingsVersion: number;
   // removeTagGroup: (uuid: string) => void;
@@ -542,7 +541,6 @@ function TagLibrary(props: Props) {
         exportTagGroups={tg => exportTagGroups(tg, props.settingsVersion)}
         showCreateTagGroupDialog={showCreateTagGroupDialog}
         showNotification={showNotification}
-        openURLExternally={props.openURLExternally}
         saveTagInLocation={props.saveTagInLocation}
         refreshTagsFromLocation={refreshTagsFromLocation}
       />
@@ -656,7 +654,6 @@ function mapDispatchToProps(dispatch) {
       // addTag: TagLibraryActions.addTag,
       addTags: TaggingActions.addTags,
       collectTagsFromLocation: TaggingActions.collectTagsFromLocation,
-      openURLExternally: AppActions.openURLExternally,
       showNotification: AppActions.showNotification,
       switchLocationType: LocationActions.switchLocationType,
       switchCurrentLocationType: AppActions.switchCurrentLocationType

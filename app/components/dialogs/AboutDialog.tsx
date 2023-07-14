@@ -38,10 +38,10 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import useTheme from '@mui/styles/useTheme';
 import AppConfig from '-/AppConfig';
 import { Fullscreen } from '@mui/icons-material';
+import { openURLExternally } from "-/services/utils-io";
 
 interface Props {
   open: boolean;
-  openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   toggleLicenseDialog: () => void;
   toggleThirdPartyLibsDialog: () => void;
   onClose: () => void;
@@ -62,7 +62,7 @@ function AboutDialog(props: Props) {
 
   function checkForUpdates() {
     if (updateAvailable) {
-      props.openURLExternally(Links.links.downloadURL, true);
+      openURLExternally(Links.links.downloadURL, true);
     } else {
       getLastVersionPromise()
         .then(lastVersion => {
@@ -187,7 +187,7 @@ function AboutDialog(props: Props) {
               size="small"
               color="primary"
               onClick={() => {
-                props.openURLExternally(imprintURL, true);
+                openURLExternally(imprintURL, true);
               }}
             >
               Imprint
@@ -198,7 +198,7 @@ function AboutDialog(props: Props) {
               size="small"
               color="primary"
               onClick={() => {
-                props.openURLExternally(privacyURL, true);
+                openURLExternally(privacyURL, true);
               }}
             >
               Privacy Policy
@@ -208,7 +208,7 @@ function AboutDialog(props: Props) {
             size="small"
             color="primary"
             onClick={() => {
-              props.openURLExternally(Links.links.changelogURL, true);
+              openURLExternally(Links.links.changelogURL, true);
             }}
           >
             Changelog
@@ -231,7 +231,7 @@ function AboutDialog(props: Props) {
             data-tid="checkForUpdates"
             title={i18n.t('core:checkForNewVersion')}
             onClick={() => {
-              props.openURLExternally(Links.links.productsOverview, true);
+              openURLExternally(Links.links.productsOverview, true);
             }}
             color="primary"
             // variant="outlined"

@@ -77,7 +77,6 @@ interface Props {
   // searchAllLocations: (searchQuery: TS.SearchQuery) => void;
   showUnixHiddenEntries: boolean;
   addSearches: (searches: Array<TS.SearchQuery>) => void;
-  openURLExternally: (url: string) => void;
   reduceHeightBy: number;
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   openLink: (url: string, options: any) => void;
@@ -260,7 +259,6 @@ function StoredSearches(props: Props) {
               anchorEl={searchMenuAnchorEl}
               open={Boolean(searchMenuAnchorEl)}
               onClose={handleCloseSearchMenu}
-              openURLExternally={props.openURLExternally}
               exportSearches={() => {
                 setExportSearchesDialogOpened(true);
               }}
@@ -637,7 +635,6 @@ function mapDispatchToProps(dispatch) {
       setSearchQuery: LocationIndexActions.setSearchQuery,
       // searchAllLocations: LocationIndexActions.searchAllLocations,
       // searchLocationIndex: LocationIndexActions.searchLocationIndex,
-      openURLExternally: AppActions.openURLExternally,
       openFsEntry: AppActions.openFsEntry,
       openLink: AppActions.openLink,
       openLocationById: AppActions.openLocationById,

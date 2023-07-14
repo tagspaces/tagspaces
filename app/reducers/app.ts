@@ -59,7 +59,8 @@ import {
   updateFsEntries,
   loadMetaDataPromise,
   mergeByProp,
-  toFsEntry
+  toFsEntry,
+  openURLExternally
 } from '-/services/utils-io';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import i18n from '../services/i18n';
@@ -2945,18 +2946,9 @@ export const actions = {
       decodedURI.startsWith('https://') ||
       decodedURI.startsWith('file://')
     ) {
-      dispatch(actions.openURLExternally(decodedURI));
+      openURLExternally(decodedURI);
     } else {
       console.log('Not supported URL format: ' + decodedURI);
-    }
-  },
-  openURLExternally: (url: string, skipConfirmation = false) => () => {
-    if (skipConfirmation) {
-      PlatformIO.openUrl(url);
-    } else if (
-      window.confirm('Do you really want to open this url: ' + url + ' ?')
-    ) {
-      PlatformIO.openUrl(url);
     }
   },
   saveFile: () => (dispatch: (action) => void) => {

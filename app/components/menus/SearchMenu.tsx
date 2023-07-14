@@ -27,13 +27,13 @@ import i18n from '-/services/i18n';
 import { Pro } from '../../pro';
 import Links from '-/content/links';
 import { ProLabel } from '-/components/HelperComponents';
+import { openURLExternally } from "-/services/utils-io";
 
 interface Props {
   classes?: any;
   open: boolean;
   anchorEl: Element;
   onClose: () => void;
-  openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   importSearches: () => void;
   exportSearches: () => void;
 }
@@ -92,7 +92,7 @@ function SearchMenu(props: Props) {
       data-tid="searchMenuHelp"
       onClick={() => {
         props.onClose();
-        props.openURLExternally(Links.documentationLinks.search, true);
+        openURLExternally(Links.documentationLinks.search, true);
       }}
     >
       <ListItemIcon>

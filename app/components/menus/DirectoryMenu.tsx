@@ -102,7 +102,6 @@ interface Props {
   setSelectedEntries: (selectedEntries: Array<TS.FileSystemEntry>) => void;
   mouseX?: number;
   mouseY?: number;
-  openURLExternally?: (url: string, skipConfirmation: boolean) => void;
   currentLocation?: TS.Location;
   locations?: Array<TS.Location>;
   toggleCreateDirectoryDialog: () => void;
@@ -504,8 +503,7 @@ function mapDispatchToProps(dispatch) {
       addTags: TaggingActions.addTags,
       toggleDeleteMultipleEntriesDialog:
         AppActions.toggleDeleteMultipleEntriesDialog,
-      setSelectedEntries: AppActions.setSelectedEntries,
-      openURLExternally: AppActions.openURLExternally
+      setSelectedEntries: AppActions.setSelectedEntries
     },
     dispatch
   );

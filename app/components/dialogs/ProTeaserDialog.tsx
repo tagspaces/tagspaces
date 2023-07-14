@@ -34,17 +34,16 @@ import { getProTeaserIndex } from '-/reducers/app';
 import { connect } from 'react-redux';
 import { getProTeaserSlides } from '-/content/ProTeaserSlides';
 import Links from '-/content/links';
+import { openURLExternally } from "-/services/utils-io";
 
 interface Props {
   open: boolean;
   slideIndex: number;
-  openURLExternally: (url: string, skipConfirmation: boolean) => void;
   onClose: () => void;
 }
 
 interface SlideProps {
   title: string;
-  openURL?: (url: string, skipConfirmation: boolean) => void;
   description?: '';
   ctaURL?: string;
   ctaTitle?: string;
@@ -69,8 +68,7 @@ function Slide(props: SlideProps) {
     videoURL,
     videoPosterUrl,
     pictureHeight,
-    pictureShadow,
-    openURL
+    pictureShadow
   } = props;
   return (
     <div
@@ -98,7 +96,7 @@ function Slide(props: SlideProps) {
           <a
             href="#"
             onClick={() => {
-              openURL(ctaURL, true);
+              openURLExternally(ctaURL, true);
             }}
           >
             <img
@@ -130,17 +128,17 @@ function Slide(props: SlideProps) {
         <br />
         <Button
           onClick={() => {
-            openURL(Links.links.productsOverview, true);
+            openURLExternally(Links.links.productsOverview, true);
           }}
           variant="contained"
           color="primary"
         >
           Compare TagSpaces Products
         </Button>
-        {ctaTitle && openURL && (
+        {ctaTitle && (
           <Button
             onClick={() => {
-              openURL(ctaURL, true);
+              openURLExternally(ctaURL, true);
             }}
             style={{ marginLeft: 10 }}
             variant="contained"
@@ -173,14 +171,14 @@ function ProTeaserDialog(props: Props) {
     setActiveStep(step);
   };
 
-  const { open, onClose, openURLExternally } = props;
+  const { open, onClose } = props;
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const slides = [];
   for (let index in slidesEN) {
-    slides.push(<Slide {...slidesEN[index]} openURL={openURLExternally} />);
+    slides.push(<Slide {...slidesEN[index]} />);
   }
 
   return (

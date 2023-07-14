@@ -50,6 +50,7 @@ import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Links from '-/content/links';
 import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { openURLExternally } from "-/services/utils-io";
 
 interface Props {
   classes: any;
@@ -59,7 +60,6 @@ interface Props {
   // setFirstRun: (isFirstRun: boolean) => void,
   setPersistTagsInSidecarFile: (isPersistTagsInSidecar: boolean) => void;
   setCurrentTheme: (theme: string) => void;
-  openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   onClose: () => void;
 }
 
@@ -231,7 +231,7 @@ function OnboardingDialog(props: Props) {
             <Button
               style={{ marginTop: 20 }}
               onClick={() => {
-                props.openURLExternally(Links.links.webClipper, true);
+                openURLExternally(Links.links.webClipper, true);
               }}
               variant="contained"
               color="primary"
@@ -315,8 +315,7 @@ function mapActionCreatorsToProps(dispatch) {
     {
       setFirstRun: SettingsActions.setFirstRun,
       setPersistTagsInSidecarFile: SettingsActions.setPersistTagsInSidecarFile,
-      setCurrentTheme: SettingsActions.setCurrentTheme,
-      openURLExternally: AppActions.openURLExternally
+      setCurrentTheme: SettingsActions.setCurrentTheme
     },
     dispatch
   );

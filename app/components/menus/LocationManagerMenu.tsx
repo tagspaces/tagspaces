@@ -39,6 +39,7 @@ import Links from '-/content/links';
 import { ProLabel } from '-/components/HelperComponents';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { OpenLinkIcon, HelpIcon } from '-/components/CommonIcons';
+import { openURLExternally } from "-/services/utils-io";
 
 interface Props {
   classes: any;
@@ -47,7 +48,6 @@ interface Props {
   showCreateLocationDialog: () => void;
   toggleOpenLinkDialog: () => void;
   closeAllLocations: () => void;
-  openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   createLocationsIndexes: () => void;
 }
 
@@ -180,7 +180,7 @@ function LocationManagerMenu(props: Props) {
       data-tid="locationManagerMenuHelp"
       onClick={() => {
         setLocationManagerMenuAnchorEl(null);
-        props.openURLExternally(Links.documentationLinks.locations, true);
+        openURLExternally(Links.documentationLinks.locations, true);
       }}
     >
       <ListItemIcon>

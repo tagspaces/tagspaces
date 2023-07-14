@@ -40,6 +40,7 @@ import SettingsAdvanced from '-/components/dialogs/settings/SettingsAdvanced';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Links from '-/content/links';
 import SettingsExtensions from '-/components/dialogs/settings/SettingsExtensions';
+import { openURLExternally } from "-/services/utils-io";
 
 const styles: any = () => ({
   mainContent: {
@@ -51,7 +52,6 @@ interface Props {
   open: boolean;
   classes?: any;
   onClose: () => void;
-  openURLExternally: (url: string, skipConfirmation?: boolean) => void;
 }
 
 function SettingsDialog(props: Props) {
@@ -176,7 +176,7 @@ function SettingsDialog(props: Props) {
     </DialogActions>
   );
 
-  const { open, onClose, openURLExternally } = props;
+  const { open, onClose } = props;
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (

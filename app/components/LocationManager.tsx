@@ -158,9 +158,6 @@ function LocationManager(props: Props) {
         // importLocations={() => setImportLocationsDialogOpened(true)}
         exportLocations={() => setExportLocationsDialogOpened(true)}
         classes={classes}
-        openURLExternally={(url, skipConfirmation) =>
-          dispatch(AppActions.openURLExternally(url, skipConfirmation))
-        }
         showCreateLocationDialog={() =>
           dispatch(AppActions.toggleLocationDialog())
         }

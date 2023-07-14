@@ -56,6 +56,7 @@ import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
 import { renderHistory } from '-/components/RenderHistory';
 import HowToStart from '-/components/HowToStart';
+import { openURLExternally } from "-/services/utils-io";
 
 interface Props {
   theme: any;
@@ -64,7 +65,6 @@ interface Props {
   toggleLocationDialog: () => void;
   toggleOpenLinkDialog: () => void;
   toggleKeysDialog: () => void;
-  openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   toggleAboutDialog: () => void;
   isDesktopMode: boolean;
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
@@ -99,7 +99,6 @@ function WelcomePanel(props: Props) {
     openLink,
     openLocationById,
     openFsEntry,
-    openURLExternally,
     toggleKeysDialog,
     toggleNewFileDialog,
     toggleLocationDialog,
@@ -422,7 +421,7 @@ function WelcomePanel(props: Props) {
                 backgroundColor: theme.palette.background.default
               }}
             >
-              <HowToStart openURLExternally={openURLExternally} />
+              <HowToStart />
             </div>
           </Grid>
         )}
@@ -463,7 +462,6 @@ function mapActionCreatorsToProps(dispatch) {
       toggleNewFileDialog: AppActions.toggleNewFileDialog,
       toggleLocationDialog: AppActions.toggleLocationDialog,
       toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
-      openURLExternally: AppActions.openURLExternally,
       toggleKeysDialog: AppActions.toggleKeysDialog,
       toggleAboutDialog: AppActions.toggleAboutDialog,
       openFsEntry: AppActions.openFsEntry,

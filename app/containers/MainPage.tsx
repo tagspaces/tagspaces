@@ -179,7 +179,6 @@ interface Props {
   // setLastSelectedEntry: (path: string) => void; // needed by electron-menus
   setSelectedEntries: (selectedEntries: Array<Object>) => void; // needed by electron-menus
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void; // needed by electron-menus
-  openURLExternally: (url: string, skipConfirm: boolean) => void;
   openNextFile: (path?: string) => void; // needed by electron-menus
   openPrevFile: (path?: string) => void; // needed by electron-menus
   openLocationManagerPanel: () => void;
@@ -594,7 +593,6 @@ function MainPage(props: Props) {
     toggleOpenLinkDialog,
     toggleProTeaser,
     setFirstRun,
-    openURLExternally,
     loadDirectoryContent,
     directoryPath,
     mainSplitSize,
@@ -705,7 +703,6 @@ function MainPage(props: Props) {
       {props.isAboutDialogOpened && (
         <AboutDialogAsync
           open={props.isAboutDialogOpened}
-          openURLExternally={openURLExternally}
           toggleLicenseDialog={toggleLicenseDialog}
           toggleThirdPartyLibsDialog={toggleThirdPartyLibsDialog}
           onClose={toggleAboutDialog}
@@ -758,7 +755,6 @@ function MainPage(props: Props) {
         <ProTeaserDialogAsync
           open={props.isProTeaserVisible}
           onClose={toggleProTeaser}
-          openURLExternally={openURLExternally}
         />
       )}
       {props.isUploadProgressDialogOpened !== undefined && (
@@ -802,7 +798,6 @@ function MainPage(props: Props) {
       )}
       <SettingsDialog
         open={props.isSettingsDialogOpened}
-        openURLExternally={openURLExternally}
         onClose={toggleSettingsDialog}
       />
       {KanBanImportDialog && props.selectedEntries[0] && (
@@ -986,7 +981,6 @@ function mapDispatchToProps(dispatch) {
       setSelectedEntries: AppActions.setSelectedEntries,
       // setGeneratingThumbnails: AppActions.setGeneratingThumbnails,
       openFsEntry: AppActions.openFsEntry,
-      openURLExternally: AppActions.openURLExternally,
       setEntryFullWidth: AppActions.setEntryFullWidth,
       openNextFile: AppActions.openNextFile,
       openPrevFile: AppActions.openPrevFile,

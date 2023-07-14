@@ -83,8 +83,6 @@ interface Props {
   searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
   createLocationsIndexes: () => void;
   searchAllLocations: (searchQuery: TS.SearchQuery) => void;
-  // loadDirectoryContent: (path: string, generateThumbnails: boolean, loadDirMeta?: boolean) => void;
-  openURLExternally: (url: string) => void;
   searchQuery: TS.SearchQuery; // () => any;
   // openCurrentDirectory: () => void;
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
@@ -1803,7 +1801,6 @@ function mapDispatchToProps(dispatch) {
       createLocationsIndexes: LocationIndexActions.createLocationsIndexes,
       // loadDirectoryContent: AppActions.loadDirectoryContent,
       openLink: AppActions.openLink,
-      openURLExternally: AppActions.openURLExternally,
       // openCurrentDirectory: AppActions.openCurrentDirectory,
       watchForChanges: AppActions.watchForChanges,
       openLocationById: AppActions.openLocationById,

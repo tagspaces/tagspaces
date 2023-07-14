@@ -16,7 +16,7 @@
  *
  */
 
-import { app, Menu } from 'electron';
+import { app, Menu, shell } from 'electron';
 import Links from '-/content/links';
 
 export default function buildDesktopMenu(props: any, i18n) {
@@ -216,18 +216,13 @@ export default function buildDesktopMenu(props: any, i18n) {
         {
           label: '&' + i18n.t('whatsNew'),
           click: () => {
-            props.openURLExternally({
-              url: Links.links.changelogURL,
-              skipConfirm: true
-            });
+            shell.openExternal(Links.links.changelogURL);
           }
         },
         {
           label: '&' + i18n.t('followOnTwitter'),
           click: () => {
-            props.openURLExternally({
-              url: Links.links.twitter
-            });
+            shell.openExternal(Links.links.twitter);
           }
         },
         {
@@ -236,17 +231,13 @@ export default function buildDesktopMenu(props: any, i18n) {
         {
           label: '&' + i18n.t('suggestNewFeatures'),
           click: () => {
-            props.openURLExternally({
-              url: Links.links.suggestFeature
-            });
+            shell.openExternal(Links.links.suggestFeature);
           }
         },
         {
           label: '&' + i18n.t('reportIssues'),
           click: () => {
-            props.openURLExternally({
-              url: Links.links.reportIssue
-            });
+            shell.openExternal(Links.links.reportIssue);
           }
         },
         {
@@ -255,19 +246,13 @@ export default function buildDesktopMenu(props: any, i18n) {
         {
           label: i18n.t('webClipperChrome'),
           click: () => {
-            props.openURLExternally({
-              url: Links.links.webClipperChrome,
-              skipConfirm: true
-            });
+            shell.openExternal(Links.links.webClipperChrome);
           }
         },
         {
           label: i18n.t('webClipperFirefox'),
           click: () => {
-            props.openURLExternally({
-              url: Links.links.webClipperFirefox,
-              skipConfirm: true
-            });
+            shell.openExternal(Links.links.webClipperFirefox);
           }
         },
         {
@@ -280,10 +265,7 @@ export default function buildDesktopMenu(props: any, i18n) {
         {
           label: i18n.t('cancelSubscription'),
           click: () => {
-            props.openURLExternally({
-              url: Links.links.cancelSubscription,
-              skipConfirm: true
-            });
+            shell.openExternal(Links.links.cancelSubscription);
           }
         },
         {

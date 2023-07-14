@@ -76,6 +76,7 @@ import { PerspectiveIDs } from '-/perspectives';
 import { fileOperationsEnabled } from '-/perspectives/common/main-container';
 import GlobalSearch from '-/services/search-index';
 import useFirstRender from '-/utils/useFirstRender';
+import { openURLExternally } from "-/services/utils-io";
 
 interface Props {
   classes: any;
@@ -99,7 +100,6 @@ interface Props {
   openDirectory: (path: string) => void;
   showInFileManager: (path: string) => void;
   openFileNatively: (path?: string) => void;
-  openURLExternally: (path: string) => void;
   loadParentDirectoryContent: () => void;
   setSelectedEntries: (selectedEntries: Array<TS.FileSystemEntry>) => void;
   addTags: () => void;
@@ -588,7 +588,7 @@ function GridPerspective(props: Props) {
 
   const openHelpWebPage = () => {
     closeOptionsMenu();
-    props.openURLExternally(Links.documentationLinks.defaultPerspective);
+    openURLExternally(Links.documentationLinks.defaultPerspective);
   };
 
   const openSettings = () => {
@@ -1029,7 +1029,6 @@ function mapActionCreatorsToProps(dispatch) {
       setSelectedEntries: AppActions.setSelectedEntries,
       showNotification: AppActions.showNotification,
       openFileNatively: AppActions.openFileNatively,
-      openURLExternally: AppActions.openURLExternally,
       openNextFile: AppActions.openNextFile,
       openPrevFile: AppActions.openPrevFile,
       setDirectoryMeta: AppActions.setDirectoryMeta,

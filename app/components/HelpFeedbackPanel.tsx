@@ -42,12 +42,12 @@ import i18n from '-/services/i18n';
 import { KeyShortcutsIcon, HelpIcon } from '-/components/CommonIcons';
 import Links from '-/content/links';
 import { Pro } from '-/pro';
+import { openURLExternally } from "-/services/utils-io";
 
 interface Props {
   classes?: any;
   theme?: any;
   language: string;
-  openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   toggleAboutDialog?: () => void;
   toggleKeysDialog: () => void;
   toggleOnboardingDialog: () => void;
@@ -59,7 +59,6 @@ interface Props {
 function HelpFeedbackPanel(props: Props) {
   const {
     classes,
-    openURLExternally,
     toggleAboutDialog,
     toggleKeysDialog,
     toggleOnboardingDialog,

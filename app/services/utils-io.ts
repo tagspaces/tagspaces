@@ -1745,3 +1745,12 @@ export function getDefaultEditor(fileType) {
   }
   return undefined;
 }
+export function openURLExternally(url: string, skipConfirmation = false) {
+  if (skipConfirmation) {
+    PlatformIO.openUrl(url);
+  } else if (
+    window.confirm('Do you really want to open this url: ' + url + ' ?')
+  ) {
+    PlatformIO.openUrl(url);
+  }
+}

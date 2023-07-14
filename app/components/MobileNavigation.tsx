@@ -90,7 +90,6 @@ interface Props {
   openHelpFeedbackPanel: () => void;
   // closeAllVerticalPanels: () => void;
   toggleLocationDialog: () => void;
-  openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   switchTheme: () => void;
   hideDrawer?: () => void;
   isReadOnlyMode: boolean;
@@ -121,7 +120,6 @@ function MobileNavigation(props: Props) {
     openHelpFeedbackPanel,
     showNotification,
     hideDrawer,
-    openURLExternally,
     directoryPath,
     width,
     theme,
@@ -213,7 +211,6 @@ function MobileNavigation(props: Props) {
           <HelpFeedbackPanel
             language={language}
             reduceHeightBy={170}
-            openURLExternally={openURLExternally}
             toggleAboutDialog={toggleAboutDialog}
             toggleKeysDialog={toggleKeysDialog}
             toggleOnboardingDialog={toggleOnboardingDialog}
@@ -230,7 +227,6 @@ function MobileNavigation(props: Props) {
           <ProTeaser
             toggleProTeaser={props.toggleProTeaser}
             setShowTeaserBanner={setShowTeaserBanner}
-            openURLExternally={openURLExternally}
           />
         )}
         <Tooltip title={i18n.t('core:settings')}>
@@ -379,7 +375,6 @@ function mapActionCreatorsToProps(dispatch) {
       openSearchPanel: AppActions.openSearchPanel,
       toggleLocationDialog: AppActions.toggleLocationDialog,
       openHelpFeedbackPanel: AppActions.openHelpFeedbackPanel,
-      openURLExternally: AppActions.openURLExternally,
       showNotification: AppActions.showNotification,
       switchTheme: SettingsActions.switchTheme
     },

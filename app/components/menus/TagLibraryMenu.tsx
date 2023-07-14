@@ -32,12 +32,12 @@ import { TS } from '-/tagspaces.namespace';
 import Links from '-/content/links';
 import { ProLabel, ProTooltip } from '-/components/HelperComponents';
 import { Pro } from '-/pro';
+import { openURLExternally } from "-/services/utils-io";
 
 interface Props {
   classes?: any;
   anchorEl: Element;
   tagGroups: Array<Object>;
-  openURLExternally: (path: string, skipConfirmation?: boolean) => void;
   open: boolean;
   onClose: () => void;
   importTagGroups: (entries: Array<TS.TagGroup>, replace?: boolean) => void;
@@ -179,7 +179,7 @@ function TagLibraryMenu(props: Props) {
           data-tid="taglibraryHelp"
           onClick={() => {
             props.onClose();
-            props.openURLExternally(Links.documentationLinks.taglibrary, true);
+            openURLExternally(Links.documentationLinks.taglibrary, true);
           }}
         >
           <ListItemIcon>
