@@ -153,6 +153,23 @@ function Revisions(props: Props) {
       )
     );
   }
+  function titleFormat(lmdt) {
+    if (lmdt) {
+      return format(lmdt, 'dd.MM.yyyy HH:mm:ss');
+    }
+    return '';
+  }
+
+  function cellFormat(lmdt) {
+    if (lmdt) {
+      return formatDistanceToNow(lmdt, {
+        includeSeconds: true,
+        addSuffix: true
+        // locale: https://date-fns.org/v2.29.3/docs/formatDistanceToNow#usage
+      });
+    }
+    return '';
+  }
 
   return (
     <Paper
@@ -223,15 +240,8 @@ function Revisions(props: Props) {
                     >
                       {row.name}
                     </TableCell>
-                    <TableCell
-                      align="right"
-                      title={format(row.lmdt, 'dd.MM.yyyy HH:mm:ss')}
-                    >
-                      {formatDistanceToNow(row.lmdt, {
-                        includeSeconds: true,
-                        addSuffix: true
-                        // locale: https://date-fns.org/v2.29.3/docs/formatDistanceToNow#usage
-                      })}
+                    <TableCell align="right" title={titleFormat(row.lmdt)}>
+                      {cellFormat(row.lmdt)}
                     </TableCell>
                     <TableCell align="right">
                       <Tooltip title={i18n.t('core:view')}>
