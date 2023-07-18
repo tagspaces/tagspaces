@@ -52,13 +52,14 @@ function CustomLogo(props) {
   const language = useSelector(getCurrentLanguage);
 
   const logo = useMemo(() => {
+    let customLogo = Pro ? Pro.TextLogoIcon : TextLogoIcon;
     if (AppConfig.isWeb) {
-      return WebLogoIcon;
-    } else if (AppConfig.customLogo) {
-      return AppConfig.customLogo;
-    } else {
-      return Pro ? Pro.TextLogoIcon : TextLogoIcon;
+      customLogo = WebLogoIcon;
     }
+    if (AppConfig.customLogo) {
+      customLogo = AppConfig.customLogo;
+    }
+    return customLogo;
   }, []);
 
   return (
