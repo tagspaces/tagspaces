@@ -718,6 +718,9 @@ function trackProgress(promises, abortSignal, progress) {
       })
       .catch(err => {
         completed++;
+        if (progress) {
+          progress(completed, path);
+        }
         console.warn('Promise ' + path + ' error:', err);
       })
   );
