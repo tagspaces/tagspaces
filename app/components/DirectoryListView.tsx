@@ -1,6 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Button from '@mui/material/Button';
 import NewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import Select from '@mui/material/Select';
@@ -16,7 +15,11 @@ import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
 import { TS } from '-/tagspaces.namespace';
-import { actions as AppActions, getCurrentLocationId } from '-/reducers/app';
+import {
+  actions as AppActions,
+  AppDispatch,
+  getCurrentLocationId
+} from '-/reducers/app';
 import { ParentFolderIcon } from '-/components/CommonIcons';
 import { getLocations } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-facade';
@@ -24,20 +27,13 @@ import { Pro } from '-/pro';
 
 interface Props {
   setTargetDir: (dirPath: string) => void;
-  locations: Array<TS.Location>;
-  currentLocationId: string;
-  toggleCreateDirectoryDialog: (props: any) => void;
-  showUnixHiddenEntries: boolean;
   currentDirectoryPath?: string;
-  watchForChanges: () => void;
 }
 function DirectoryListView(props: Props) {
-  const {
-    locations,
-    currentLocationId,
-    showUnixHiddenEntries,
-    currentDirectoryPath
-  } = props;
+  const { currentDirectoryPath, setTargetDir } = props;
+  const locations: Array<TS.Location> = useSelector(getLocations);
+  const currentLocationId: string = useSelector(getCurrentLocationId);
+  const showUnixHiddenEntries: boolean = useSelector(getShowUnixHiddenEntries);
   const chosenLocationId = useRef<string>(currentLocationId);
   const chosenDirectory = useRef<string>(currentDirectoryPath);
   const [directoryContent, setDirectoryContent] = useState<
@@ -57,6 +53,8 @@ function DirectoryListView(props: Props) {
     }
   }, [chosenLocationId.current]);
 
+  const dispatch: AppDispatch = useDispatch();
+
   const handleLocationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     chosenLocationId.current = event.target.value;
     const chosenLocation = locations.find(
@@ -64,11 +62,11 @@ function DirectoryListView(props: Props) {
     );
     if (chosenLocation) {
       listDirectory(chosenLocation.path);
-      props.setTargetDir(chosenLocation.path);
+      setTargetDir(chosenLocation.path);
     }
   };
 
-  function getLocations() {
+  function getDirLocations() {
     const currentLocation = locations.find(
       location => location.uuid === chosenLocationId.current
     );
@@ -129,7 +127,7 @@ function DirectoryListView(props: Props) {
           data-tid={'MoveTarget' + entry.name}
           title={'Navigate to: ' + entry.path}
           onClick={() => {
-            props.setTargetDir(entry.path);
+            setTargetDir(entry.path);
           }}
           onDoubleClick={() => {
             listDirectory(entry.path);
@@ -149,7 +147,7 @@ function DirectoryListView(props: Props) {
 
   return (
     <div style={{ marginTop: 10 }}>
-      {getLocations()}
+      {getDirLocations()}
       <Button
         variant="text"
         startIcon={<ParentFolderIcon />}
@@ -163,7 +161,7 @@ function DirectoryListView(props: Props) {
             }
             const parentDir = extractContainingDirectoryPath(currentPath);
             listDirectory(parentDir);
-            props.setTargetDir(parentDir);
+            setTargetDir(parentDir);
           }
         }}
       >
@@ -178,15 +176,17 @@ function DirectoryListView(props: Props) {
           if (Pro && Pro.Watcher) {
             Pro.Watcher.stopWatching();
           }
-          props.toggleCreateDirectoryDialog({
-            rootDirPath: chosenDirectory.current,
-            callback: newDirPath => {
-              listDirectory(chosenDirectory.current);
-              props.setTargetDir(newDirPath);
-              props.watchForChanges();
-            },
-            reflect: false
-          });
+          dispatch(
+            AppActions.toggleCreateDirectoryDialog({
+              rootDirPath: chosenDirectory.current,
+              callback: newDirPath => {
+                listDirectory(chosenDirectory.current);
+                setTargetDir(newDirPath);
+                dispatch(AppActions.watchForChanges());
+              },
+              reflect: false
+            })
+          );
         }}
       >
         {i18n.t('core:newSubdirectory')}
@@ -205,25 +205,4 @@ function DirectoryListView(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    locations: getLocations(state),
-    currentLocationId: getCurrentLocationId(state),
-    showUnixHiddenEntries: getShowUnixHiddenEntries(state)
-  };
-}
-
-function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators(
-    {
-      toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog,
-      watchForChanges: AppActions.watchForChanges
-    },
-    dispatch
-  );
-}
-
-export default connect(
-  mapStateToProps,
-  mapActionCreatorsToProps
-)(DirectoryListView);
+export default DirectoryListView;

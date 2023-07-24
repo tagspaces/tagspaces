@@ -17,8 +17,7 @@
  */
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
 import withStyles from '@mui/styles/withStyles';
 import Typography from '@mui/material/Typography';
@@ -42,11 +41,14 @@ import i18n from '../services/i18n';
 import {
   actions as SettingsActions,
   getCurrentLanguage,
+  getSaveTagInLocation,
   getTagColor,
+  getTagGroupCollapsed,
   getTagTextColor
 } from '../reducers/settings';
 import {
   actions as AppActions,
+  AppDispatch,
   getSelectedEntries,
   isReadOnlyMode,
   isTagLibraryChanged
@@ -64,7 +66,6 @@ import {
   deleteTag,
   editTag,
   editTagGroup,
-  exportTagGroups,
   getAllTags,
   getTagLibrary,
   importTagGroups,
@@ -80,49 +81,31 @@ import useFirstRender from '-/utils/useFirstRender';
 interface Props {
   classes?: any;
   style?: any;
-  isReadOnly: boolean;
-  tagTextColor: string;
-  tagBackgroundColor: string;
-  //tagGroups: Array<TS.TagGroup>;
-  //allTags: Array<TS.Tag>;
-  toggleTagGroup: (uuid: string) => void;
-  settingsVersion: number;
-  // removeTagGroup: (uuid: string) => void;
-  // moveTagGroupUp: (uuid: string) => void;
-  // moveTagGroupDown: (uuid: string) => void;
-  // sortTagGroup: (uuid: string) => void;
-  collectTagsFromLocation: (tagGroup: TS.TagGroup) => void;
-  addTags: () => void;
-  // importTagGroups: (entries: Array<TS.TagGroup>, replace?: boolean) => void;
-  // exportTagGroups: () => void;
-  // createTagGroup: () => void;
-  // addTag: () => void;
-  // moveTag: () => void;
-  /*changeTagOrder: (
-    tagGroupUuid: TS.Uuid,
-    fromIndex: number,
-    toIndex: number
-  ) => void;*/
-  // editTagGroup: () => void;
-  // editTag: () => void;
-  // deleteTag: (tagTitle: string, parentTagGroupUuid: TS.Uuid) => void;
-  showNotification: (
-    text: string,
-    notificationType?: string, // NotificationTypes
-    autohide?: boolean
-  ) => void;
-  selectedEntries: Array<TS.FileSystemEntry>;
-  tagGroupCollapsed: Array<string>;
-  locations: Array<TS.Location>;
-  saveTagInLocation: boolean;
-  // moveTagGroup: (tagGroupUuid: TS.Uuid, position: number) => void;
   reduceHeightBy: number;
-  isTagLibraryChanged: boolean;
-  switchLocationType: (locationId: string) => Promise<string | null>;
-  switchCurrentLocationType: (currentLocationId) => Promise<boolean>;
 }
 
 function TagLibrary(props: Props) {
+  const dispatch: AppDispatch = useDispatch();
+  const tagBackgroundColor = useSelector(getTagColor);
+  const tagTextColor = useSelector(getTagTextColor);
+  const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
+    getSelectedEntries
+  );
+  const readOnly = useSelector(isReadOnlyMode);
+  const tagGroupCollapsed: Array<string> = useSelector(getTagGroupCollapsed);
+  const locations: Array<TS.Location> = useSelector(getLocations);
+  const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
+  const tagLibraryChanged = useSelector(isTagLibraryChanged);
+  const language = useSelector(getCurrentLanguage);
+
+  const toggleTagGroupDispatch = uuid =>
+    dispatch(SettingsActions.toggleTagGroup(uuid));
+  const addTagsDispatch = (
+    paths: Array<string>,
+    tags: Array<TS.Tag>,
+    updateIndex
+  ) => dispatch(TaggingActions.addTags(paths, tags, updateIndex));
+
   const [tagGroups, setTagGroups] = useState<Array<TS.TagGroup>>(
     getTagLibrary()
   );
@@ -167,7 +150,7 @@ function TagLibrary(props: Props) {
   const firstRender = useFirstRender();
 
   useEffect(() => {
-    if (Pro && props.saveTagInLocation) {
+    if (Pro && saveTagInLocation) {
       refreshTagsFromLocation();
     }
   }, []);
@@ -176,10 +159,10 @@ function TagLibrary(props: Props) {
     if (!firstRender) {
       setTagGroups(getTagLibrary());
     }
-  }, [props.isTagLibraryChanged]);
+  }, [tagLibraryChanged]);
 
   const refreshTagsFromLocation = () => {
-    props.locations.map(location =>
+    locations.map(location =>
       Pro.MetaOperations.getTagGroups(location.path)
         .then((tg: Array<TS.TagGroup>) => {
           if (tg && tg.length > 0) {
@@ -293,7 +276,7 @@ function TagLibrary(props: Props) {
   const renderTagGroup = (tagGroup, index) => {
     // eslint-disable-next-line no-param-reassign
     tagGroup.expanded = !(
-      props.tagGroupCollapsed && props.tagGroupCollapsed.includes(tagGroup.uuid)
+      tagGroupCollapsed && tagGroupCollapsed.includes(tagGroup.uuid)
     );
     const isReadOnly = tagGroup.readOnly || isTagLibraryReadOnly;
     return (
@@ -306,23 +289,23 @@ function TagLibrary(props: Props) {
             setTagGroups(moveTagGroup(tagGroupUuid, position, tagGroups));
           }}
           handleTagGroupMenu={handleTagGroupMenu}
-          toggleTagGroup={props.toggleTagGroup}
-          locations={props.locations}
-          tagGroupCollapsed={props.tagGroupCollapsed}
+          toggleTagGroup={toggleTagGroupDispatch}
+          locations={locations}
+          tagGroupCollapsed={tagGroupCollapsed}
           isReadOnly={isReadOnly}
         />
         <Collapse in={tagGroup.expanded} unmountOnExit>
           <TagGroupContainer taggroup={tagGroup}>
             {tagGroup.children &&
               tagGroup.children.map((tag: TS.Tag, idx) => {
-                if (props.isReadOnly) {
+                if (readOnly) {
                   return (
                     <TagContainer
                       key={tagGroup.uuid + tag.title}
                       tag={tag}
                       tagGroup={tagGroup}
                       handleTagMenu={handleTagMenuCallback}
-                      addTags={props.addTags}
+                      addTags={addTagsDispatch}
                       /*moveTag={(
                         tagTitle: string,
                         fromTagGroupId: TS.Uuid,
@@ -335,7 +318,7 @@ function TagLibrary(props: Props) {
                           tagGroups
                         )
                       }*/
-                      selectedEntries={props.selectedEntries}
+                      selectedEntries={selectedEntries}
                     />
                   );
                 }
@@ -347,7 +330,7 @@ function TagLibrary(props: Props) {
                     tag={tag}
                     tagGroup={tagGroup}
                     handleTagMenu={handleTagMenuCallback}
-                    addTags={props.addTags}
+                    addTags={addTagsDispatch}
                     moveTag={(
                       tagTitle: string,
                       fromTagGroupId: TS.Uuid,
@@ -376,7 +359,7 @@ function TagLibrary(props: Props) {
                         )
                       )
                     }
-                    selectedEntries={props.selectedEntries}
+                    selectedEntries={selectedEntries}
                   />
                 );
               })}
@@ -393,19 +376,13 @@ function TagLibrary(props: Props) {
           selectedTag.title,
           selectedTagGroupEntry.uuid,
           tagGroups,
-          props.locations
+          locations
         )
       );
     }
   }
 
-  const {
-    classes,
-    // allTags,
-    showNotification,
-    isReadOnly,
-    reduceHeightBy
-  } = props;
+  const { classes, reduceHeightBy } = props;
 
   const allTags = getAllTags(tagGroups);
   return (
@@ -451,11 +428,7 @@ function TagLibrary(props: Props) {
           confirmCallback={result => {
             if (result && selectedTagGroupEntry) {
               setTagGroups(
-                removeTagGroup(
-                  selectedTagGroupEntry.uuid,
-                  tagGroups,
-                  props.locations
-                )
+                removeTagGroup(selectedTagGroupEntry.uuid, tagGroups, locations)
               );
             }
           }}
@@ -468,22 +441,24 @@ function TagLibrary(props: Props) {
           open={isCreateTagGroupDialogOpened}
           onClose={() => setIsCreateTagGroupDialogOpened(false)}
           createTagGroup={(entry: TS.TagGroup) => {
-            const location: TS.Location = props.locations.find(
+            const location: TS.Location = locations.find(
               l => l.uuid === entry.locationId
             );
             if (location) {
-              props
-                .switchLocationType(location.uuid)
-                .then(currentLocationId => {
+              dispatch(LocationActions.switchLocationType(location.uuid)).then(
+                currentLocationId => {
                   setTagGroups(createTagGroup(entry, tagGroups, location));
-                  props.switchCurrentLocationType(currentLocationId);
-                });
+                  dispatch(
+                    AppActions.switchCurrentLocationType(currentLocationId)
+                  );
+                }
+              );
             } else {
               setTagGroups(createTagGroup(entry, tagGroups));
             }
           }}
-          color={props.tagBackgroundColor}
-          textcolor={props.tagTextColor}
+          color={tagBackgroundColor}
+          textcolor={tagTextColor}
         />
       )}
       {isCreateTagDialogOpened && (
@@ -491,9 +466,7 @@ function TagLibrary(props: Props) {
           open={isCreateTagDialogOpened}
           onClose={() => setIsCreateTagDialogOpened(false)}
           addTag={(tag: any, parentTagGroupUuid: TS.Uuid) =>
-            setTagGroups(
-              addTag(tag, parentTagGroupUuid, tagGroups, props.locations)
-            )
+            setTagGroups(addTag(tag, parentTagGroupUuid, tagGroups, locations))
           }
           selectedTagGroupEntry={selectedTagGroupEntry}
         />
@@ -503,7 +476,7 @@ function TagLibrary(props: Props) {
           open={isEditTagGroupDialogOpened}
           onClose={() => setIsEditTagGroupDialogOpened(false)}
           editTagGroup={(entry: TS.TagGroup) =>
-            setTagGroups(editTagGroup(entry, tagGroups, props.locations))
+            setTagGroups(editTagGroup(entry, tagGroups, locations))
           }
           selectedTagGroupEntry={selectedTagGroupEntry}
         />
@@ -527,7 +500,6 @@ function TagLibrary(props: Props) {
           sortTagGroup={parentTagGroupUuid =>
             setTagGroups(sortTagGroup(parentTagGroupUuid, tagGroups))
           }
-          collectTagsFromLocation={props.collectTagsFromLocation}
         />
       )}
       <TagLibraryMenu
@@ -538,10 +510,8 @@ function TagLibrary(props: Props) {
         importTagGroups={(newGroups, replace) =>
           setTagGroups(importTagGroups(newGroups, tagGroups, replace))
         }
-        exportTagGroups={tg => exportTagGroups(tg, props.settingsVersion)}
         showCreateTagGroupDialog={showCreateTagGroupDialog}
-        showNotification={showNotification}
-        saveTagInLocation={props.saveTagInLocation}
+        saveTagInLocation={saveTagInLocation}
         refreshTagsFromLocation={refreshTagsFromLocation}
       />
       {Boolean(tagMenuAnchorEl) && (
@@ -565,13 +535,7 @@ function TagLibrary(props: Props) {
             origTitle: string
           ) =>
             setTagGroups(
-              editTag(
-                tag,
-                parentTagGroupUuid,
-                origTitle,
-                tagGroups,
-                props.locations
-              )
+              editTag(tag, parentTagGroupUuid, origTitle, tagGroups, locations)
             )
           }
           selectedTagGroupEntry={selectedTagGroupEntry}
@@ -616,53 +580,4 @@ function TagLibrary(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    // tagGroups: getTagGroups(state),
-    tagBackgroundColor: getTagColor(state),
-    tagTextColor: getTagTextColor(state),
-    selectedEntries: getSelectedEntries(state),
-    // allTags: getAllTags(state),
-    isReadOnly: isReadOnlyMode(state),
-    tagGroupCollapsed: state.settings.tagGroupCollapsed,
-    locations: getLocations(state),
-    saveTagInLocation: state.settings.saveTagInLocation,
-    settingsVersion: state.settings.settingsVersion,
-    language: getCurrentLanguage(state),
-    isTagLibraryChanged: isTagLibraryChanged(state)
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      toggleTagGroup: SettingsActions.toggleTagGroup,
-      // removeTagGroup: TagLibraryActions.removeTagGroup,
-      // moveTagGroupUp: TagLibraryActions.moveTagGroupUp,
-      // moveTagGroup: TagLibraryActions.moveTagGroup,
-      // moveTagGroupDown: TagLibraryActions.moveTagGroupDown,
-      // sortTagGroup: TagLibraryActions.sortTagGroup,
-      // importTagGroups: TagLibraryActions.importTagGroups,
-      // exportTagGroups: TagLibraryActions.exportTagGroups,
-      // createTagGroup: TagLibraryActions.createTagGroup,
-      // editTag: TagLibraryActions.editTag,
-      // moveTag: TagLibraryActions.moveTag,
-      // changeTagOrder: TagLibraryActions.changeTagOrder,
-      // editTagGroup: TagLibraryActions.editTagGroup,
-      // deleteTag: TagLibraryActions.deleteTag,
-      // addTag: TagLibraryActions.addTag,
-      addTags: TaggingActions.addTags,
-      collectTagsFromLocation: TaggingActions.collectTagsFromLocation,
-      showNotification: AppActions.showNotification,
-      switchLocationType: LocationActions.switchLocationType,
-      switchCurrentLocationType: AppActions.switchCurrentLocationType
-    },
-    dispatch
-  );
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-  // @ts-ignore
-)(withStyles(styles)(TagLibrary));
+export default withStyles(styles)(TagLibrary);

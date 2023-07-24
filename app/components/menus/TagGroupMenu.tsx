@@ -37,6 +37,7 @@ import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import InfoIcon from '-/components/InfoIcon';
+import TaggingActions from "-/reducers/tagging-actions";
 
 interface Props {
   classes?: any;
@@ -50,7 +51,6 @@ interface Props {
   moveTagGroupUp: (tagGroupId: string) => void;
   moveTagGroupDown: (tagGroupId: string) => void;
   sortTagGroup: (tagGroupId: string) => void;
-  collectTagsFromLocation: (tagGroup: TS.TagGroup) => void;
   handleCloseTagGroupMenu: () => void;
 }
 
@@ -59,7 +59,6 @@ function TagGroupMenu(props: Props) {
     open,
     onClose,
     selectedTagGroupEntry,
-    collectTagsFromLocation,
     handleCloseTagGroupMenu,
     moveTagGroupUp,
     moveTagGroupDown,
@@ -76,7 +75,7 @@ function TagGroupMenu(props: Props) {
     onClose();
 
     if (selectedTagGroupEntry) {
-      collectTagsFromLocation(selectedTagGroupEntry);
+      dispatch(TaggingActions.collectTagsFromLocation(selectedTagGroupEntry));
     }
     handleCloseTagGroupMenu();
     dispatch(AppActions.tagLibraryChanged());

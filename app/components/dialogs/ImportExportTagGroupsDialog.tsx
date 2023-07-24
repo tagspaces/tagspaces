@@ -36,6 +36,7 @@ import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { exportTagGroups } from '-/services/taglibrary-utils';
 
 interface Props {
   open: boolean;
@@ -44,7 +45,6 @@ interface Props {
   dialogModeImport: boolean;
   showNotification?: (text: string) => void;
   importTagGroups: (taggroups: Array<TS.TagGroup>) => void;
-  exportTagGroups: (taggroups: Array<TS.TagGroup>) => void;
 }
 
 function ImportExportTagGroupsDialog(props: Props) {
@@ -84,7 +84,7 @@ function ImportExportTagGroupsDialog(props: Props) {
         showNotification(i18n.t('core:successfullyImportedGroupTags'));
       }
     } else {
-      props.exportTagGroups(groupList);
+      exportTagGroups(groupList);
       if (isFunc(showNotification)) {
         showNotification(i18n.t('core:successfullyExportedGroupTags'));
       }

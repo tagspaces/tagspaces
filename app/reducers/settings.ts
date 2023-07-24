@@ -894,6 +894,8 @@ export const isGlobalKeyBindingEnabled = (state: any) =>
   state.settings.enableGlobalKeyboardShortcuts;
 export const getMainVerticalSplitSize = (state: any) =>
   state.settings.mainVSplitSize;
+export const getTagGroupCollapsed = (state: any) =>
+  state.settings.tagGroupCollapsed;
 export const getTagDelimiter = (state: any) => state.settings.tagDelimiter;
 export const getMaxSearchResults = (state: any) =>
   state.settings.maxSearchResult;

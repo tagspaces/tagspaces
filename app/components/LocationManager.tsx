@@ -50,7 +50,6 @@ function CreateEditLocationDialogAsync(props) {
 interface Props {
   classes?: any;
   style?: any;
-  hideDrawer?: () => void;
   reduceHeightBy: number;
   show: boolean;
 }
@@ -113,7 +112,7 @@ function LocationManager(props: Props) {
     );
   };
 
-  const { classes, reduceHeightBy, show, hideDrawer } = props;
+  const { classes, reduceHeightBy, show } = props;
   return (
     <div
       className={classes.panel}
@@ -200,7 +199,6 @@ function LocationManager(props: Props) {
                           key={location.uuid}
                           classes={classes}
                           location={location}
-                          hideDrawer={hideDrawer}
                           setEditLocationDialogOpened={
                             setEditLocationDialogOpened
                           }

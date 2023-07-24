@@ -17,8 +17,7 @@
  */
 
 import React, { useReducer } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { useSelector, useDispatch } from 'react-redux';
 import withStyles from '@mui/styles/withStyles';
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
@@ -44,33 +43,23 @@ import {
   KeyShortcutsIcon,
   HelpIcon
 } from '-/components/CommonIcons';
-import { actions as AppActions, getCurrentLocationId } from '-/reducers/app';
-import i18n from '-/services/i18n';
 import {
-  isFirstRun,
-  getDesktopMode,
-  actions as SettingsActions
-} from '-/reducers/settings';
+  actions as AppActions,
+  AppDispatch,
+  getCurrentLocationId
+} from '-/reducers/app';
+import i18n from '-/services/i18n';
+import { getDesktopMode } from '-/reducers/settings';
 import Links from '-/content/links';
 import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
 import { renderHistory } from '-/components/RenderHistory';
 import HowToStart from '-/components/HowToStart';
-import { openURLExternally } from "-/services/utils-io";
+import { openURLExternally } from '-/services/utils-io';
 
 interface Props {
   theme: any;
   classes: any;
-  toggleNewFileDialog: () => void;
-  toggleLocationDialog: () => void;
-  toggleOpenLinkDialog: () => void;
-  toggleKeysDialog: () => void;
-  toggleAboutDialog: () => void;
-  isDesktopMode: boolean;
-  openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
-  openLink: (url: string, options: any) => void;
-  openLocationById: (locationId: string) => void;
-  currentLocationId: string;
 }
 
 export const styles: any = (theme: any) => ({
@@ -92,19 +81,26 @@ export const styles: any = (theme: any) => ({
 });
 
 function WelcomePanel(props: Props) {
-  const {
-    theme,
-    classes,
-    currentLocationId,
-    openLink,
-    openLocationById,
-    openFsEntry,
-    toggleKeysDialog,
-    toggleNewFileDialog,
-    toggleLocationDialog,
-    toggleOpenLinkDialog,
-    isDesktopMode
-  } = props;
+  const { theme, classes } = props;
+
+  const dispatch: AppDispatch = useDispatch();
+  const desktopMode = useSelector(getDesktopMode);
+  const currentLocationId = useSelector(getCurrentLocationId);
+
+  const toggleNewFileDialogDispatch = () =>
+    dispatch(AppActions.toggleNewFileDialog());
+  const toggleLocationDialogDispatch = () =>
+    dispatch(AppActions.toggleLocationDialog());
+  const toggleOpenLinkDialogDispatch = () =>
+    dispatch(AppActions.toggleOpenLinkDialog());
+  const toggleKeysDialogDispatch = () =>
+    dispatch(AppActions.toggleKeysDialog());
+  const openFsEntryDispatch = fsEntry =>
+    dispatch(AppActions.openFsEntry(fsEntry));
+  const openLinkDispatch = link => dispatch(AppActions.openLink(link));
+  const openLocationByIdDispatch = locationId =>
+    dispatch(AppActions.openLocationById(locationId));
+
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
   const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
@@ -121,12 +117,12 @@ function WelcomePanel(props: Props) {
   const showDelete = false;
   const maxRecentItems = 5;
 
-  function triggerOpenLocation() {
+  /*function triggerOpenLocation() {
     const button = document.getElementById(
-      isDesktopMode ? 'locationMenuButton' : 'mobileMenuButton'
+      desktopMode ? 'locationMenuButton' : 'mobileMenuButton'
     );
     button.click();
-  }
+  }*/
 
   function renderRecentItems() {
     return (
@@ -148,9 +144,9 @@ function WelcomePanel(props: Props) {
               fileOpenHistoryItems,
               forceUpdate,
               currentLocationId,
-              openLink,
-              openLocationById,
-              openFsEntry,
+              openLinkDispatch,
+              openLocationByIdDispatch,
+              openFsEntryDispatch,
               maxRecentItems,
               showDelete
             )}
@@ -169,10 +165,10 @@ function WelcomePanel(props: Props) {
               historyKeys.fileEditKey,
               fileEditHistoryItems,
               forceUpdate,
-              props.currentLocationId,
-              props.openLink,
-              props.openLocationById,
-              props.openFsEntry,
+              currentLocationId,
+              openLinkDispatch,
+              openLocationByIdDispatch,
+              openFsEntryDispatch,
               maxRecentItems,
               showDelete
             )}
@@ -191,10 +187,10 @@ function WelcomePanel(props: Props) {
               historyKeys.folderOpenKey,
               folderOpenHistoryItems,
               forceUpdate,
-              props.currentLocationId,
-              props.openLink,
-              props.openLocationById,
-              props.openFsEntry,
+              currentLocationId,
+              openLinkDispatch,
+              openLocationByIdDispatch,
+              openFsEntryDispatch,
               maxRecentItems,
               showDelete
             )}
@@ -226,7 +222,7 @@ function WelcomePanel(props: Props) {
           role="button"
           aria-hidden="true"
           tabIndex={0}
-          onClick={props.toggleAboutDialog}
+          onClick={() => dispatch(AppActions.toggleAboutDialog())}
         >
           <img src={WelcomeLogo} alt="Organize your files" />
         </div>
@@ -239,7 +235,7 @@ function WelcomePanel(props: Props) {
             className={classes.listItem}
           />
         </ListItem> */}
-        <ListItem onClick={toggleNewFileDialog}>
+        <ListItem onClick={toggleNewFileDialogDispatch}>
           <ListItemIcon>
             <CreateFileIcon />
           </ListItemIcon>
@@ -248,7 +244,7 @@ function WelcomePanel(props: Props) {
             className={classes.listItem}
           />
         </ListItem>
-        <ListItem onClick={toggleLocationDialog}>
+        <ListItem onClick={toggleLocationDialogDispatch}>
           <ListItemIcon>
             <LocalLocationIcon />
           </ListItemIcon>
@@ -257,7 +253,7 @@ function WelcomePanel(props: Props) {
             className={classes.listItem}
           />
         </ListItem>
-        <ListItem onClick={toggleOpenLinkDialog}>
+        <ListItem onClick={toggleOpenLinkDialogDispatch}>
           <ListItemIcon>
             <OpenLinkIcon />
           </ListItemIcon>
@@ -280,7 +276,7 @@ function WelcomePanel(props: Props) {
             className={classes.listItem}
           />
         </ListItem>
-        <ListItem onClick={toggleKeysDialog}>
+        <ListItem onClick={toggleKeysDialogDispatch}>
           <ListItemIcon>
             <KeyShortcutsIcon />
           </ListItemIcon>
@@ -408,7 +404,7 @@ function WelcomePanel(props: Props) {
         >
           {renderQuickLinks()}
         </Grid>
-        {isDesktopMode && (
+        {desktopMode && (
           <Grid item xs="auto" style={{ height: '100%' }}>
             <div
               style={{
@@ -447,32 +443,4 @@ function WelcomePanel(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    isFirstRun: isFirstRun(state),
-    isDesktopMode: getDesktopMode(state),
-    currentLocationId: getCurrentLocationId(state)
-  };
-}
-
-function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators(
-    {
-      setFirstRun: SettingsActions.setFirstRun,
-      toggleNewFileDialog: AppActions.toggleNewFileDialog,
-      toggleLocationDialog: AppActions.toggleLocationDialog,
-      toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
-      toggleKeysDialog: AppActions.toggleKeysDialog,
-      toggleAboutDialog: AppActions.toggleAboutDialog,
-      openFsEntry: AppActions.openFsEntry,
-      openLink: AppActions.openLink,
-      openLocationById: AppActions.openLocationById
-    },
-    dispatch
-  );
-}
-
-export default connect(
-  mapStateToProps,
-  mapActionCreatorsToProps
-)(withStyles(styles, { withTheme: true })(WelcomePanel));
+export default withStyles(styles, { withTheme: true })(WelcomePanel);

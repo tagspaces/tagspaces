@@ -17,7 +17,7 @@
  */
 
 import React, { useRef } from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Tooltip from '-/components/Tooltip';
 import { TS } from '-/tagspaces.namespace';
 
@@ -27,22 +27,19 @@ import {
   getTagTextColor
 } from '-/reducers/settings';
 import i18n from '-/services/i18n';
-import {
-  getAllTags,
-  getTagColors,
-  getTagLibrary
-} from '-/services/taglibrary-utils';
+import { getTagColors } from '-/services/taglibrary-utils';
 
 interface Props {
   tags: Array<TS.Tag>;
-  // allTags?: Array<TS.Tag>;
-  defaultTextColor?: string;
-  defaultBackgroundColor?: string;
 }
 
 function TagsPreview(props: Props) {
-  const { tags, defaultBackgroundColor, defaultTextColor } = props;
-  const allTags = useRef<Array<TS.Tag>>(getAllTags(getTagLibrary()));
+  const defaultBackgroundColor = useSelector(getTagColor);
+  const defaultTextColor = useSelector(getTagTextColor);
+  const language = useSelector(getCurrentLanguage);
+
+  const { tags } = props;
+  // const allTags = useRef<Array<TS.Tag>>(getAllTags(getTagLibrary()));
   if (!tags || tags.length < 1) {
     return <></>;
   }
@@ -104,13 +101,4 @@ function TagsPreview(props: Props) {
     </Tooltip>
   );
 }
-
-function mapStateToProps(state) {
-  return {
-    // allTags: getAllTags(state),
-    defaultBackgroundColor: getTagColor(state),
-    defaultTextColor: getTagTextColor(state),
-    language: getCurrentLanguage(state)
-  };
-}
-export default connect(mapStateToProps)(TagsPreview);
+export default TagsPreview;

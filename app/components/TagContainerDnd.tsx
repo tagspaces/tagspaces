@@ -197,7 +197,7 @@ interface Props {
   isDragging?: boolean;
   tagMode?: 'default' | 'display' | 'remove';
   entryPath?: string;
-  addTags?: (paths: Array<string>, tags: Array<TS.Tag>) => void;
+  addTags?: (paths: Array<string>, tags: Array<TS.Tag>, updateIndex?) => void;
   addTag?: (tag: TS.Tag, parentTagGroupUuid: TS.Uuid) => void;
   moveTag?: (
     tagTitle: string,

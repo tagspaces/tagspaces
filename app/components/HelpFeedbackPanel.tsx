@@ -17,6 +17,7 @@
  */
 
 import React from 'react';
+import { useSelector } from 'react-redux';
 import withStyles from '@mui/styles/withStyles';
 import classNames from 'classnames';
 import Typography from '@mui/material/Typography';
@@ -43,11 +44,11 @@ import { KeyShortcutsIcon, HelpIcon } from '-/components/CommonIcons';
 import Links from '-/content/links';
 import { Pro } from '-/pro';
 import { openURLExternally } from "-/services/utils-io";
+import { getCurrentLanguage } from "-/reducers/settings";
 
 interface Props {
   classes?: any;
   theme?: any;
-  language: string;
   toggleAboutDialog?: () => void;
   toggleKeysDialog: () => void;
   toggleOnboardingDialog: () => void;
@@ -57,6 +58,7 @@ interface Props {
 }
 
 function HelpFeedbackPanel(props: Props) {
+  const language = useSelector(getCurrentLanguage);
   const {
     classes,
     toggleAboutDialog,
