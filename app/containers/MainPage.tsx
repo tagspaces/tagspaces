@@ -851,7 +851,9 @@ function MainPage(props: Props) {
               .default-splitter {
                 --default-splitter-line-margin: 2px !important;
                 --default-splitter-line-size: 1px !important;
-                --default-splitter-line-color: ${theme.palette.divider} !important;
+                --default-splitter-line-color: ${
+                  theme.palette.divider
+                } !important;
               }
 
               .react-split .split-container.vertical .splitter {
@@ -859,7 +861,11 @@ function MainPage(props: Props) {
               }
 
               .react-split .split-container {
-                --react-split-splitter:3px !important;
+                --react-split-splitter: ${
+                  props.openedFiles.length < 1 || props.isEntryInFullWidth
+                    ? '0'
+                    : '3px'
+                } !important;
               }
           `}
         </style>

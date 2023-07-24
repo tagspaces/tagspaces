@@ -734,7 +734,11 @@ function EntryContainer(props: Props) {
         id,
         PlatformIO.getDirSeparator()
       );
-      await PlatformIO.copyFilePromiseOverwrite(fileOpen.path, targetPath);
+      try {
+        await PlatformIO.copyFilePromiseOverwrite(fileOpen.path, targetPath); // todo test what happened if remove await?
+      } catch (error) {
+        console.error('copyFilePromiseOverwrite', error);
+      }
     }
     return PlatformIO.saveTextFilePromise(
       { path: fileOpen.path, lmdt: fileOpen.lmdt },

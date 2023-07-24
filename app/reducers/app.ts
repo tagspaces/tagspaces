@@ -575,7 +575,8 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         lastSearchTimestamp: new Date().getTime(),
-        isLoading: false
+        isLoading: false,
+        selectedEntries: []
       };
     }
     case types.EXIT_SEARCH_MODE: {
@@ -585,7 +586,8 @@ export default (state: any = initialState, action: any) => {
         searchMode: false,
         lastSearchTimestamp: undefined,
         searchFilter: undefined,
-        isLoading: false
+        isLoading: false,
+        selectedEntries: []
       };
     }
     case types.ENTER_SEARCH_MODE: {

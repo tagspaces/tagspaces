@@ -846,7 +846,11 @@ function GridPerspective(props: Props) {
           setSelectedEntries={props.setSelectedEntries}
           singleClickAction={singleClickAction.current}
           currentLocation={props.currentLocation}
-          directoryContent={props.directoryContent}
+          directoryContent={
+            props.lastSearchTimestamp
+              ? GlobalSearch.getInstance().getResults()
+              : props.directoryContent
+          }
           supportedFileTypes={props.supportedFileTypes}
           openFsEntry={props.openFsEntry}
           openFileNatively={props.openFileNatively}
