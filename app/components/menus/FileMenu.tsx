@@ -63,6 +63,7 @@ import {
   DeleteIcon,
   LinkIcon
 } from '-/components/CommonIcons';
+import { getLocations } from "-/reducers/locations";
 
 interface Props {
   anchorEl: Element;
@@ -85,7 +86,6 @@ interface Props {
   selectedFilePath?: string;
   selectedEntries: Array<any>;
   currentLocation: TS.Location;
-  locations: Array<TS.Location>;
   reorderTop?: () => void;
   reorderBottom?: () => void;
   onDuplicateFile?: (fileDirPath: string) => void;
@@ -111,10 +111,10 @@ function FileMenu(props: Props) {
     mouseY,
     open,
     onClose,
-    selectedFilePath,
-    locations
+    selectedFilePath
   } = props;
   const dispatch: AppDispatch = useDispatch();
+  const locations: Array<TS.Location> = useSelector(getLocations);
   const readOnlyMode = useSelector(isReadOnlyMode);
   const prefixTagContainer = useSelector(getPrefixTagContainer);
 

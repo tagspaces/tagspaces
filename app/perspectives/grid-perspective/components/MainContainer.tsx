@@ -16,54 +16,37 @@
  *
  */
 
-import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import React, { useEffect, useReducer, useRef, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { GlobalHotKeys } from 'react-hotkeys';
 import withStyles from '@mui/styles/withStyles';
-import {
-  isObj,
-  locationType,
-  sortByCriteria
-} from '@tagspaces/tagspaces-common/misc';
-import AppConfig from '-/AppConfig';
+import { isObj, sortByCriteria } from '@tagspaces/tagspaces-common/misc';
 import { isVisibleOnScreen } from '-/utils/dom';
-// import { actions as TagLibraryActions } from '-/reducers/taglibrary';
-import {
-  getSupportedFileTypes,
-  getDesktopMode,
-  getKeyBindingObject
-  // isDesktopMode
-} from '-/reducers/settings';
+import { getDesktopMode, getKeyBindingObject } from '-/reducers/settings';
 import styles from './styles.css';
 import FileMenu from '-/components/menus/FileMenu';
 import DirectoryMenu from '-/components/menus/DirectoryMenu';
 import EntryTagMenu from '-/components/menus/EntryTagMenu';
-import i18n from '-/services/i18n';
+//import i18n from '-/services/i18n';
 import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
 import MoveCopyFilesDialog from '-/components/dialogs/MoveCopyFilesDialog';
-import TargetMoveFileBox from '-/components/TargetMoveFileBox';
-import FileSourceDnd from '-/components/FileSourceDnd';
-import DragItemTypes from '-/components/DragItemTypes';
 import TagDropContainer from '-/components/TagDropContainer';
 import IOActions from '-/reducers/io-actions';
 import {
   actions as AppActions,
+  AppDispatch,
   getDirectoryMeta,
   getEditedEntryPaths,
-  getLastSelectedEntry,
   getLastSelectedEntryPath,
   getSearchFilter,
   getSelectedEntries,
-  isDeleteMultipleEntriesDialogOpened,
   isReadOnlyMode
 } from '-/reducers/app';
-import TaggingActions from '-/reducers/tagging-actions';
 import CellContent from './CellContent';
 import MainToolbar from './MainToolbar';
 import SortingMenu from './SortingMenu';
 import GridOptionsMenu from './GridOptionsMenu';
-import { getLocation, getLocations } from '-/reducers/locations';
+import { getCurrentLocation } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-facade';
 import GridPagination from '-/perspectives/grid-perspective/components/GridPagination';
 import GridSettingsDialog from '-/perspectives/grid-perspective/components/GridSettingsDialog';
@@ -76,21 +59,13 @@ import { PerspectiveIDs } from '-/perspectives';
 import { fileOperationsEnabled } from '-/perspectives/common/main-container';
 import GlobalSearch from '-/services/search-index';
 import useFirstRender from '-/utils/useFirstRender';
-import { openURLExternally } from "-/services/utils-io";
+import { openURLExternally } from '-/services/utils-io';
 
 interface Props {
   classes: any;
   theme: any;
-  desktopMode: boolean;
   currentDirectoryPath: string;
-  lastSelectedEntry: any;
-  selectedEntries: Array<TS.FileSystemEntry>;
-  lastSelectedEntryPath: string;
-  supportedFileTypes: Array<any>;
-  isReadOnlyMode: boolean;
   openFsEntry: (fsEntry?: TS.FileSystemEntry) => void;
-  openNextFile: () => any;
-  openPrevFile: () => any;
   openRenameEntryDialog: () => void;
   loadDirectoryContent: (
     path: string,
@@ -99,29 +74,11 @@ interface Props {
   ) => void;
   openDirectory: (path: string) => void;
   showInFileManager: (path: string) => void;
-  openFileNatively: (path?: string) => void;
   loadParentDirectoryContent: () => void;
-  setSelectedEntries: (selectedEntries: Array<TS.FileSystemEntry>) => void;
-  addTags: () => void;
-  addTag: (tag: TS.Tag, parentTagGroupUuid: TS.Uuid) => void;
   removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
   removeAllTags: () => void;
   directoryContent: Array<TS.FileSystemEntry>;
-  moveFiles: (files: Array<string>, destination: string) => Promise<boolean>;
-  keyBindings: any;
-  showNotification: (
-    text: string,
-    notificationType: string,
-    autohide: boolean
-  ) => void;
-  currentLocation: TS.Location;
-  locations: Array<TS.Location>;
-  toggleDeleteMultipleEntriesDialog: () => void;
-  directoryMeta: TS.FileSystemEntryMeta;
-  setDirectoryMeta: (fsEntryMeta: TS.FileSystemEntryMeta) => void;
   lastSearchTimestamp: number;
-  searchFilter: string;
-  editedEntryPaths: Array<TS.EditedEntryPath>;
 }
 
 function getSettings(directoryMeta: TS.FileSystemEntryMeta): TS.FolderSettings {
@@ -139,12 +96,64 @@ function getSettings(directoryMeta: TS.FileSystemEntryMeta): TS.FolderSettings {
 }
 
 function GridPerspective(props: Props) {
+  const {
+    classes,
+    loadParentDirectoryContent,
+    theme,
+    currentDirectoryPath,
+    openRenameEntryDialog,
+    directoryContent,
+    lastSearchTimestamp,
+    openFsEntry,
+    loadDirectoryContent,
+    removeTags,
+    removeAllTags,
+    showInFileManager,
+    openDirectory
+  } = props;
+
+  const directoryMeta: TS.FileSystemEntryMeta = useSelector(getDirectoryMeta);
+  const readOnlyMode = useSelector(isReadOnlyMode);
+  const desktopMode = useSelector(getDesktopMode);
+  const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
+    getSelectedEntries
+  );
+  const lastSelectedEntryPath = useSelector(getLastSelectedEntryPath);
+  const keyBindings = useSelector(getKeyBindingObject);
+  const currentLocation: TS.Location = useSelector(getCurrentLocation);
+  const searchFilter: string = useSelector(getSearchFilter);
+  const editedEntryPaths: Array<TS.EditedEntryPath> = useSelector(
+    getEditedEntryPaths
+  );
+
+  const dispatch: AppDispatch = useDispatch();
+
+  // Create functions that dispatch actions
+  const handleMoveFiles = (files: Array<string>, destination: string) =>
+    dispatch(IOActions.moveFiles(files, destination));
+
+  const handleSetSelectedEntries = (entries: Array<TS.FileSystemEntry>) => {
+    dispatch(AppActions.setSelectedEntries(entries));
+  };
+
+  const handleShowNotification = (
+    text: string,
+    notificationType: string,
+    autohide: boolean
+  ) => {
+    dispatch(AppActions.showNotification(text, notificationType, autohide));
+  };
+
+  const handleOpenFileNatively = (path?: string) => {
+    dispatch(AppActions.openFileNatively(path));
+  };
+
   const isLocal =
     Pro &&
-    props.directoryMeta &&
-    props.directoryMeta.perspectiveSettings &&
-    props.directoryMeta.perspectiveSettings[PerspectiveIDs.GRID];
-  const settings = getSettings(props.directoryMeta);
+    directoryMeta &&
+    directoryMeta.perspectiveSettings &&
+    directoryMeta.perspectiveSettings[PerspectiveIDs.GRID];
+  const settings = getSettings(directoryMeta);
 
   const ShareFilesDialog = Pro && Pro.UI ? Pro.UI.ShareFilesDialog : false;
 
@@ -185,8 +194,8 @@ function GridPerspective(props: Props) {
       : defaultSettings.orderBy
   );
   const sortedDirContent = useRef<Array<TS.FileSystemEntry>>(
-    !props.lastSearchTimestamp
-      ? props.directoryContent
+    !lastSearchTimestamp
+      ? directoryContent
       : GlobalSearch.getInstance().getResults()
   );
   const layoutType = useRef<string>(
@@ -258,51 +267,40 @@ function GridPerspective(props: Props) {
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
   const firstRender = useFirstRender();
 
-  const {
-    classes,
-    selectedEntries,
-    loadParentDirectoryContent,
-    theme,
-    currentDirectoryPath
-  } = props;
-
   useEffect(() => {
-    if (props.selectedEntries.length === 1) {
+    if (selectedEntries.length === 1) {
       makeFirstSelectedEntryVisible();
     }
-  }, [props.selectedEntries]);
+  }, [selectedEntries]);
 
   useEffect(() => {
     if (!firstRender) {
       sortedDirContent.current = sortByCriteria(
-        props.searchFilter
-          ? props.directoryContent.filter(entry =>
-              entry.name
-                .toLowerCase()
-                .includes(props.searchFilter.toLowerCase())
+        searchFilter
+          ? directoryContent.filter(entry =>
+              entry.name.toLowerCase().includes(searchFilter.toLowerCase())
             )
-          : props.directoryContent,
+          : directoryContent,
         sortBy.current,
         orderBy.current
       );
       forceUpdate();
     }
-  }, [props.searchFilter]);
+  }, [searchFilter]);
 
   useEffect(() => {
     if (!firstRender) {
       setSortedDirContent();
     }
   }, [
-    // props.currentDirectoryPath, // open subdirs
-    props.directoryContent, // open subdirs todo rethink this (replace with useEffect for currDirPath changes only)
+    directoryContent, // open subdirs todo rethink this (replace with useEffect for currDirPath changes only)
     sortBy.current,
     orderBy.current
   ]);
 
   useEffect(() => {
     if (!firstRender) {
-      if (props.lastSearchTimestamp) {
+      if (lastSearchTimestamp) {
         sortBy.current = 'byRelevance';
         // orderBy.current = false;
       } else {
@@ -317,13 +315,13 @@ function GridPerspective(props: Props) {
       }
       setSortedDirContent();
     }
-  }, [props.lastSearchTimestamp]);
+  }, [lastSearchTimestamp]);
 
   function setSortedDirContent() {
-    if (!props.lastSearchTimestamp) {
+    if (!lastSearchTimestamp) {
       // not in search mode
       sortedDirContent.current = sortByCriteria(
-        props.directoryContent,
+        directoryContent,
         sortBy.current,
         orderBy.current
       );
@@ -339,13 +337,11 @@ function GridPerspective(props: Props) {
         }
       } else {
         sortedDirContent.current = sortByCriteria(
-          props.searchFilter
+          searchFilter
             ? GlobalSearch.getInstance()
                 .getResults()
                 .filter(entry =>
-                  entry.name
-                    .toLowerCase()
-                    .includes(props.searchFilter.toLowerCase())
+                  entry.name.toLowerCase().includes(searchFilter.toLowerCase())
                 )
             : GlobalSearch.getInstance().getResults(),
           sortBy.current,
@@ -358,15 +354,15 @@ function GridPerspective(props: Props) {
 
   useEffect(() => {
     // HANDLE (ADD/REMOVE sidecar TAGS) IN SEARCH RESULTS
-    if (!firstRender && props.lastSearchTimestamp) {
+    if (!firstRender && lastSearchTimestamp) {
       sortedDirContent.current = GlobalSearch.getInstance().getResults();
       forceUpdate();
     }
-  }, [props.editedEntryPaths]);
+  }, [editedEntryPaths]);
 
   useEffect(() => {
     if (!firstRender) {
-      const perspectiveSettings = getSettings(props.directoryMeta);
+      const perspectiveSettings = getSettings(directoryMeta);
       showDirectories.current =
         perspectiveSettings && perspectiveSettings.showDirectories !== undefined
           ? perspectiveSettings.showDirectories
@@ -416,7 +412,7 @@ function GridPerspective(props: Props) {
           : defaultSettings.gridPageLimit;
       forceUpdate();
     }
-  }, [props.directoryMeta]);
+  }, [directoryMeta]);
 
   useEffect(() => {
     if (!firstRender && isDefaultSetting.current !== undefined) {
@@ -440,7 +436,7 @@ function GridPerspective(props: Props) {
           PerspectiveIDs.GRID,
           perspectiveSettings
         ).then((fsEntryMeta: TS.FileSystemEntryMeta) => {
-          props.setDirectoryMeta(fsEntryMeta);
+          dispatch(AppActions.setDirectoryMeta(fsEntryMeta));
         });
       } else {
         localStorage.setItem(
@@ -512,8 +508,8 @@ function GridPerspective(props: Props) {
 
   const handleExportCsvMenu = () => {
     if (Pro) {
-      if (props.selectedEntries && props.selectedEntries.length > 0) {
-        Pro.exportAsCsv.ExportAsCsv(props.selectedEntries);
+      if (selectedEntries && selectedEntries.length > 0) {
+        Pro.exportAsCsv.ExportAsCsv(selectedEntries);
       } else {
         Pro.exportAsCsv.ExportAsCsv(sortedDirContent.current);
       }
@@ -521,7 +517,7 @@ function GridPerspective(props: Props) {
   };
 
   const clearSelection = () => {
-    props.setSelectedEntries([]);
+    handleSetSelectedEntries([]);
     selectedEntryPath.current = undefined;
   };
 
@@ -531,10 +527,10 @@ function GridPerspective(props: Props) {
     if (someFileSelected) {
       clearSelection();
     } else {
-      if (!props.lastSearchTimestamp) {
-        props.setSelectedEntries(props.directoryContent);
+      if (!lastSearchTimestamp) {
+        handleSetSelectedEntries(directoryContent);
       } else {
-        props.setSelectedEntries(GlobalSearch.getInstance().getResults());
+        handleSetSelectedEntries(GlobalSearch.getInstance().getResults());
       }
     }
   };
@@ -622,7 +618,7 @@ function GridPerspective(props: Props) {
   };
 
   const openDeleteFileDialog = () => {
-    props.toggleDeleteMultipleEntriesDialog();
+    dispatch(AppActions.toggleDeleteMultipleEntriesDialog());
   };
 
   const openAddRemoveTagsDialog = () => {
@@ -630,70 +626,65 @@ function GridPerspective(props: Props) {
   };
 
   const keyMap = {
-    nextDocument: props.keyBindings.nextDocument,
-    prevDocument: props.keyBindings.prevDocument,
-    selectAll: props.keyBindings.selectAll,
-    deleteDocument: props.keyBindings.deleteDocument,
-    addRemoveTags: props.keyBindings.addRemoveTags,
-    renameFile: props.keyBindings.renameFile,
-    openEntry: props.keyBindings.openEntry,
-    openFileExternally: props.keyBindings.openFileExternally
+    nextDocument: keyBindings.nextDocument,
+    prevDocument: keyBindings.prevDocument,
+    selectAll: keyBindings.selectAll,
+    deleteDocument: keyBindings.deleteDocument,
+    addRemoveTags: keyBindings.addRemoveTags,
+    renameFile: keyBindings.renameFile,
+    openEntry: keyBindings.openEntry,
+    openFileExternally: keyBindings.openFileExternally
   };
 
   const onContextMenu = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
     setMouseX(event.clientX);
     setMouseY(event.clientY);
-    if (props.selectedEntries.length > 0) {
-      props.setSelectedEntries([]);
+    if (selectedEntries.length > 0) {
+      handleSetSelectedEntries([]);
     }
     setDirContextMenuAnchorEl(event.currentTarget);
   };
 
   const onClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
-    if (props.selectedEntries.length > 0) {
-      props.setSelectedEntries([]);
+    if (selectedEntries.length > 0) {
+      handleSetSelectedEntries([]);
     }
   };
 
   const keyBindingHandlers = {
-    nextDocument: () => props.openNextFile(),
-    prevDocument: () => props.openPrevFile(),
+    nextDocument: () => dispatch(AppActions.openNextFile()),
+    prevDocument: () => dispatch(AppActions.openPrevFile()),
     selectAll: () => toggleSelectAllFiles(),
     deleteDocument: () => {
-      if (fileOperationsEnabled(props.selectedEntries)) {
+      if (fileOperationsEnabled(selectedEntries)) {
         openDeleteFileDialog();
       }
     },
     addRemoveTags: () => {
-      if (props.lastSelectedEntryPath) {
+      if (lastSelectedEntryPath) {
         openAddRemoveTagsDialog();
       }
     },
     renameFile: () => {
-      props.openRenameEntryDialog();
+      openRenameEntryDialog();
     },
     openEntry: e => {
       e.preventDefault();
-      props.openFsEntry();
+      openFsEntry();
     },
     openFileExternally: () => {
-      props.openFileNatively();
+      handleOpenFileNatively();
     }
   };
 
-  /*const selectedFilePaths = selectedEntries
-    ? selectedEntries
-        .filter(fsEntry => fsEntry.isFile)
-        .map(fsentry => fsentry.path)
-    : [];*/
   const sortedDirectories = sortedDirContent.current.filter(
     entry => !entry.isFile
   );
   const sortedFiles = sortedDirContent.current.filter(entry => entry.isFile);
-  const locationPath = props.currentLocation
-    ? PlatformIO.getLocationPath(props.currentLocation)
+  const locationPath = currentLocation
+    ? PlatformIO.getLocationPath(currentLocation)
     : '';
   let entryWidth = 200;
   if (entrySize.current === 'small') {
@@ -724,14 +715,14 @@ function GridPerspective(props: Props) {
       selected = true;
     }
     const selectEntry = (fsEntry: TS.FileSystemEntry) => {
-      props.setSelectedEntries([...selectedEntries, fsEntry]);
+      handleSetSelectedEntries([...selectedEntries, fsEntry]);
     };
 
     const deselectEntry = (fsEntry: TS.FileSystemEntry) => {
       const newSelection = selectedEntries.filter(
         data => data.path !== fsEntry.path
       );
-      props.setSelectedEntries(newSelection);
+      handleSetSelectedEntries(newSelection);
     };
     return (
       <TagDropContainer
@@ -748,18 +739,14 @@ function GridPerspective(props: Props) {
           classes={classes}
           isLast={isLast}
           theme={theme}
-          supportedFileTypes={props.supportedFileTypes}
           thumbnailMode={thumbnailMode.current}
-          addTags={props.addTags}
-          addTag={props.addTag}
           selectedEntries={selectedEntries}
           selectEntry={selectEntry}
           deselectEntry={deselectEntry}
-          isReadOnlyMode={props.isReadOnlyMode}
           handleTagMenu={handleTagMenu}
           layoutType={layoutType.current}
           showTags={showTags.current}
-          openFsEntry={props.openFsEntry}
+          openFsEntry={openFsEntry}
           handleGridContextMenu={(
             event: React.MouseEvent<HTMLDivElement>,
             fsEntry: TS.FileSystemEntry
@@ -786,17 +773,16 @@ function GridPerspective(props: Props) {
         classes={classes}
         prefixDataTID={'grid'}
         layoutType={layoutType.current}
-        isReadOnlyMode={props.isReadOnlyMode}
         selectedEntries={selectedEntries}
         loadParentDirectoryContent={loadParentDirectoryContent}
         toggleSelectAllFiles={toggleSelectAllFiles}
         someFileSelected={someFileSelected}
         handleLayoutSwitch={handleLayoutSwitch}
         openAddRemoveTagsDialog={openAddRemoveTagsDialog}
-        fileOperationsEnabled={fileOperationsEnabled(props.selectedEntries)}
+        fileOperationsEnabled={fileOperationsEnabled(selectedEntries)}
         openMoveCopyFilesDialog={openMoveCopyFilesDialog}
         openDeleteFileDialog={openDeleteFileDialog}
-        openFsEntry={props.openFsEntry}
+        openFsEntry={openFsEntry}
         handleSortingMenu={handleSortingMenu}
         handleExportCsvMenu={handleExportCsvMenu}
         openSettings={openSettings}
@@ -827,10 +813,10 @@ function GridPerspective(props: Props) {
           showDetails={showDetails.current}
           showDescription={showDescription.current}
           showDirectories={showDirectories.current}
-          isReadOnlyMode={props.isReadOnlyMode}
+          isReadOnlyMode={readOnlyMode}
           layoutType={layoutType.current}
-          desktopMode={props.desktopMode}
-          openRenameEntryDialog={props.openRenameEntryDialog}
+          desktopMode={desktopMode}
+          openRenameEntryDialog={openRenameEntryDialog}
           showTags={showTags.current}
           thumbnailMode={thumbnailMode.current}
           entrySize={entrySize.current}
@@ -838,27 +824,26 @@ function GridPerspective(props: Props) {
           getCellContent={getCellContent}
           currentPage={1}
           currentLocationPath={locationPath}
-          currentDirectoryPath={props.currentDirectoryPath}
+          currentDirectoryPath={currentDirectoryPath}
           onClick={onClick}
           onContextMenu={onContextMenu}
           settings={settings}
-          selectedEntries={props.selectedEntries}
-          setSelectedEntries={props.setSelectedEntries}
+          selectedEntries={selectedEntries}
+          setSelectedEntries={handleSetSelectedEntries}
           singleClickAction={singleClickAction.current}
-          currentLocation={props.currentLocation}
+          currentLocation={currentLocation}
           directoryContent={
-            props.lastSearchTimestamp
+            lastSearchTimestamp
               ? GlobalSearch.getInstance().getResults()
-              : props.directoryContent
+              : directoryContent
           }
-          supportedFileTypes={props.supportedFileTypes}
-          openFsEntry={props.openFsEntry}
-          openFileNatively={props.openFileNatively}
-          loadDirectoryContent={props.loadDirectoryContent}
+          openFsEntry={openFsEntry}
+          openFileNatively={handleOpenFileNatively}
+          loadDirectoryContent={loadDirectoryContent}
           setFileContextMenuAnchorEl={setFileContextMenuAnchorEl}
           setDirContextMenuAnchorEl={setDirContextMenuAnchorEl}
-          showNotification={props.showNotification}
-          moveFiles={props.moveFiles}
+          showNotification={handleShowNotification}
+          moveFiles={handleMoveFiles}
           clearSelection={clearSelection}
         />
       </GlobalHotKeys>
@@ -866,17 +851,15 @@ function GridPerspective(props: Props) {
         <AddRemoveTagsDialog
           open={isAddRemoveTagsDialogOpened}
           onClose={() => setIsAddRemoveTagsDialogOpened(false)}
-          addTags={props.addTags}
-          removeTags={props.removeTags}
-          removeAllTags={props.removeAllTags}
-          selectedEntries={props.selectedEntries}
+          removeTags={removeTags}
+          removeAllTags={removeAllTags}
+          selectedEntries={selectedEntries}
         />
       )}
       {isAddTagDialogOpened !== undefined && (
         <AddTagToTagGroupDialog
           open={true}
           onClose={() => setIsAddTagDialogOpened(undefined)}
-          addTag={props.addTag}
           selectedTag={isAddTagDialogOpened}
         />
       )}
@@ -915,7 +898,7 @@ function GridPerspective(props: Props) {
               currentDirectoryPath,
               PerspectiveIDs.GRID
             ).then((fsEntryMeta: TS.FileSystemEntryMeta) => {
-              props.setDirectoryMeta(fsEntryMeta);
+              dispatch(AppActions.setDirectoryMeta(fsEntryMeta));
               setIsGridSettingsDialogOpened(false);
             });
           }}
@@ -941,7 +924,7 @@ function GridPerspective(props: Props) {
           open={Boolean(fileContextMenuAnchorEl)}
           onClose={() => setFileContextMenuAnchorEl(null)}
           openDeleteFileDialog={openDeleteFileDialog}
-          openRenameFileDialog={props.openRenameEntryDialog}
+          openRenameFileDialog={openRenameEntryDialog}
           openMoveCopyFilesDialog={openMoveCopyFilesDialog}
           openShareFilesDialog={
             PlatformIO.haveObjectStoreSupport()
@@ -949,13 +932,12 @@ function GridPerspective(props: Props) {
               : undefined
           }
           openAddRemoveTagsDialog={openAddRemoveTagsDialog}
-          openFileNatively={props.openFileNatively}
-          loadDirectoryContent={props.loadDirectoryContent}
-          showInFileManager={props.showInFileManager}
-          selectedFilePath={props.lastSelectedEntryPath}
-          selectedEntries={props.selectedEntries}
-          currentLocation={props.currentLocation}
-          locations={props.locations}
+          openFileNatively={handleOpenFileNatively}
+          loadDirectoryContent={loadDirectoryContent}
+          showInFileManager={showInFileManager}
+          selectedFilePath={lastSelectedEntryPath}
+          selectedEntries={selectedEntries}
+          currentLocation={currentLocation}
         />
       )}
       {/* {Boolean(dirContextMenuAnchorEl) && ( // todo move dialogs from DirectoryMenu */}
@@ -965,17 +947,14 @@ function GridPerspective(props: Props) {
         anchorEl={dirContextMenuAnchorEl}
         mouseX={mouseX}
         mouseY={mouseY}
-        directoryPath={props.lastSelectedEntryPath}
-        loadDirectoryContent={props.loadDirectoryContent}
-        openRenameDirectoryDialog={props.openRenameEntryDialog}
+        directoryPath={lastSelectedEntryPath}
+        loadDirectoryContent={loadDirectoryContent}
+        openRenameDirectoryDialog={openRenameEntryDialog}
         openMoveCopyFilesDialog={openMoveCopyFilesDialog}
-        openDirectory={props.openDirectory}
-        openFsEntry={props.openFsEntry}
-        perspectiveMode={
-          props.lastSelectedEntryPath !== props.currentDirectoryPath
-        }
-        currentLocation={props.currentLocation}
-        locations={props.locations}
+        openDirectory={openDirectory}
+        openFsEntry={openFsEntry}
+        perspectiveMode={lastSelectedEntryPath !== currentDirectoryPath}
+        currentLocation={currentLocation}
         openAddRemoveTagsDialog={openAddRemoveTagsDialog}
       />
       {/* {Boolean(tagContextMenuAnchorEl) && ( // TODO EntryTagMenu is used in TagSelect we cannot move confirm dialog from menu */}
@@ -986,7 +965,7 @@ function GridPerspective(props: Props) {
         setIsAddTagDialogOpened={setIsAddTagDialogOpened}
         selectedTag={selectedTag.current}
         currentEntryPath={selectedEntryPath.current} // getSelEntryPath()}
-        removeTags={props.removeTags}
+        removeTags={removeTags}
       />
       {Boolean(sortingContextMenuAnchorEl) && (
         <SortingMenu
@@ -996,7 +975,7 @@ function GridPerspective(props: Props) {
           sortBy={sortBy.current}
           orderBy={orderBy.current}
           handleSortBy={handleSortBy}
-          searchModeEnabled={props.lastSearchTimestamp !== undefined}
+          searchModeEnabled={lastSearchTimestamp !== undefined}
         />
       )}
       {Boolean(optionsContextMenuAnchorEl) && (
@@ -1022,47 +1001,4 @@ function GridPerspective(props: Props) {
   );
 }
 
-function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators(
-    {
-      moveFiles: IOActions.moveFiles,
-      setSelectedEntries: AppActions.setSelectedEntries,
-      showNotification: AppActions.showNotification,
-      openFileNatively: AppActions.openFileNatively,
-      openNextFile: AppActions.openNextFile,
-      openPrevFile: AppActions.openPrevFile,
-      setDirectoryMeta: AppActions.setDirectoryMeta,
-      toggleDeleteMultipleEntriesDialog:
-        AppActions.toggleDeleteMultipleEntriesDialog,
-      addTags: TaggingActions.addTags,
-      addTag: AppActions.addTag
-    },
-    dispatch
-  );
-}
-
-function mapStateToProps(state) {
-  return {
-    directoryMeta: getDirectoryMeta(state),
-    supportedFileTypes: getSupportedFileTypes(state),
-    isReadOnlyMode: isReadOnlyMode(state),
-    lastSelectedEntry: getLastSelectedEntry(state),
-    desktopMode: getDesktopMode(state),
-    selectedEntries: getSelectedEntries(state),
-    lastSelectedEntryPath: getLastSelectedEntryPath(state),
-    keyBindings: getKeyBindingObject(state),
-    currentLocation: getLocation(state, state.app.currentLocationId),
-    locations: getLocations(state),
-    isDeleteMultipleEntriesDialogOpened: isDeleteMultipleEntriesDialogOpened(
-      state
-    ),
-    searchFilter: getSearchFilter(state),
-    editedEntryPaths: getEditedEntryPaths(state)
-  };
-}
-
-export default connect(
-  mapStateToProps,
-  mapActionCreatorsToProps
-  // @ts-ignore
-)(withStyles(styles, { withTheme: true })(GridPerspective));
+export default withStyles(styles, { withTheme: true })(GridPerspective);

@@ -191,6 +191,7 @@ const actions = {
         dispatch(
           AppActions.showNotification(i18n.t('core:copyingFilesFailed'))
         );
+        return false;
       });
   },
   copyDirs: (

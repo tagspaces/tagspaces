@@ -17,6 +17,7 @@
  */
 
 import React, { useMemo } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -25,8 +26,6 @@ import Tooltip from '-/components/Tooltip';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import IconButton from '@mui/material/IconButton';
 import { SelectedIcon, UnSelectedIcon } from '-/components/CommonIcons';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import {
   formatFileSize,
   formatDateTime
@@ -51,43 +50,39 @@ import { TS } from '-/tagspaces.namespace';
 import TaggingActions from '-/reducers/tagging-actions';
 import {
   actions as AppActions,
-  getLastThumbnailImageChange
-} from '-/reducers/app';
+  AppDispatch,
+  getLastThumbnailImageChange,
+  isReadOnlyMode
+} from "-/reducers/app";
 import { FolderIcon } from '-/components/CommonIcons';
 import { dataTidFormat } from '-/services/test';
-import { isDesktopMode } from '-/reducers/settings';
-// import { getTagColor } from '-/reducers/settings';
+import {
+  getSupportedFileTypes,
+  isDesktopMode,
+  isReorderTags
+} from '-/reducers/settings';
 
 const maxDescriptionPreviewLength = 100;
 
 interface Props {
   selected: boolean;
   isLast?: boolean;
-  isDesktopMode: boolean;
   fsEntry: TS.FileSystemEntry;
   entrySize: string;
   classes: any;
   style?: any;
   theme: any;
-  supportedFileTypes: Array<Object>;
   thumbnailMode: any;
-  addTags: () => void;
-  addTag: (tag: TS.Tag, parentTagGroupUuid: TS.Uuid) => void;
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   selectedEntries: Array<TS.FileSystemEntry>;
   selectEntry: (fsEntry: TS.FileSystemEntry) => void;
   deselectEntry: (fsEntry: TS.FileSystemEntry) => void;
-  isReadOnlyMode: boolean;
   showTags: boolean;
   handleTagMenu: (event: Object, tag: TS.Tag, entryPath: string) => void;
   layoutType: string;
   handleGridContextMenu: (event: Object, fsEntry: TS.FileSystemEntry) => void;
   handleGridCellDblClick: (event: Object, fsEntry: TS.FileSystemEntry) => void;
   handleGridCellClick: (event: Object, fsEntry: TS.FileSystemEntry) => void;
-  editTagForEntry?: (path: string, tag: TS.Tag) => void;
-  reorderTags: boolean;
-  lastThumbnailImageChange: any;
-  exitSearchMode: () => void;
   showEntriesDescription?: boolean;
 }
 
@@ -98,28 +93,45 @@ function CellContent(props: Props) {
     entrySize,
     classes,
     theme,
-    supportedFileTypes,
     thumbnailMode,
-    addTags,
-    addTag,
-    editTagForEntry,
     selectedEntries,
-    isReadOnlyMode,
     handleTagMenu,
     layoutType,
     handleGridContextMenu,
     handleGridCellDblClick,
     handleGridCellClick,
-    lastThumbnailImageChange,
     showEntriesDescription,
     showTags,
     // openFsEntry,
     selectEntry,
     deselectEntry,
-    reorderTags,
-    isDesktopMode,
     isLast
   } = props;
+  const readOnlyMode = useSelector(isReadOnlyMode);
+  const supportedFileTypes = useSelector(getSupportedFileTypes);
+  const reorderTags: boolean = useSelector(isReorderTags);
+  const lastThumbnailImageChange = useSelector(getLastThumbnailImageChange);
+  const desktopMode = useSelector(isDesktopMode);
+
+  const dispatch: AppDispatch = useDispatch();
+
+  // You can use the dispatch function to dispatch actions
+  const handleEditTag = (path: string, tag: TS.Tag, newTagTitle?: string) => {
+    dispatch(TaggingActions.editTagForEntry(path, tag, newTagTitle));
+  };
+  const handleAddTags = (
+    paths: Array<string>,
+    tags: Array<TS.Tag>,
+    updateIndex?
+  ) => {
+    dispatch(TaggingActions.addTags(paths, tags, updateIndex));
+  };
+
+  const handleAddTag = (
+    tag: TS.Tag, parentTagGroupUuid: TS.Uuid
+  ) => {
+    dispatch(AppActions.addTag(tag, parentTagGroupUuid));
+  };
 
   // remove isNewFile on Cell click it will open file in editMode
   const fSystemEntry: TS.FileSystemEntry = (({ isNewFile, ...o }) => o)(
@@ -251,7 +263,7 @@ function CellContent(props: Props) {
             <IconButton
               style={{
                 opacity: selected ? 1 : 0.5,
-                padding: isDesktopMode ? 5 : 8
+                padding: desktopMode ? 5 : 8
               }}
               onMouseLeave={e => {
                 //@ts-ignore
@@ -509,12 +521,12 @@ function CellContent(props: Props) {
   const renderTags = useMemo(() => {
     let sideCarLength = 0;
     return entryTags.map((tag: TS.Tag, index) => {
-      const tagContainer = isReadOnlyMode ? (
+      const tagContainer = readOnlyMode ? (
         <TagContainer
           tag={tag}
           key={entryPath + tag.title}
           entryPath={entryPath}
-          addTags={addTags}
+          addTags={handleAddTags}
           handleTagMenu={handleTagMenu}
           selectedEntries={selectedEntries}
         />
@@ -524,11 +536,11 @@ function CellContent(props: Props) {
           index={tag.type === 'sidecar' ? index : index - sideCarLength}
           key={entryPath + tag.title}
           entryPath={entryPath}
-          addTags={addTags}
-          addTag={addTag}
+          addTags={handleAddTags}
+          addTag={handleAddTag}
           handleTagMenu={handleTagMenu}
           selectedEntries={selectedEntries}
-          editTagForEntry={editTagForEntry}
+          editTagForEntry={handleEditTag}
           reorderTags={reorderTags}
         />
       );
@@ -538,7 +550,7 @@ function CellContent(props: Props) {
       }
       return tagContainer;
     });
-  }, [entryTags, isReadOnlyMode, reorderTags, entryPath, selectedEntries]);
+  }, [entryTags, readOnlyMode, reorderTags, entryPath, selectedEntries]);
 
   let entryHeight = 130;
   if (entrySize === 'small') {
@@ -584,22 +596,4 @@ function CellContent(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    reorderTags: state.settings.reorderTags,
-    lastThumbnailImageChange: getLastThumbnailImageChange(state),
-    isDesktopMode: isDesktopMode(state)
-  };
-}
-
-function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators(
-    {
-      editTagForEntry: TaggingActions.editTagForEntry,
-      exitSearchMode: AppActions.exitSearchMode
-    },
-    dispatch
-  );
-}
-
-export default connect(mapStateToProps, mapActionCreatorsToProps)(CellContent);
+export default CellContent;

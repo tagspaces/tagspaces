@@ -17,7 +17,7 @@
  */
 
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -32,20 +32,19 @@ import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import i18n from '-/services/i18n';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
-// import useTheme from '@mui/styles/useTheme';
-// import useMediaQuery from '@mui/material/useMediaQuery';
 import { getTagLibrary } from '-/services/taglibrary-utils';
+import { actions as AppActions, AppDispatch } from "-/reducers/app";
 
 interface Props {
   open: boolean;
   onClose: () => void;
-  addTag: (tag: TS.Tag, uuid: string) => void;
   selectedTag: TS.Tag;
   defaultBackgroundColor?: string;
   defaultTextColor?: string;
 }
 
 function AddTagToTagGroupDialog(props: Props) {
+  const dispatch: AppDispatch = useDispatch();
   const [tagGroup, setTagGroup] = useState<string>(undefined);
   const defaultBackgroundColor = useSelector(getTagColor);
   const defaultTextColor = useSelector(getTagTextColor);
@@ -62,7 +61,7 @@ function AddTagToTagGroupDialog(props: Props) {
     if (!selectedTag.color) {
       selectedTag.color = defaultBackgroundColor;
     }
-    props.addTag(selectedTag, tagGroup);
+    dispatch(AppActions.addTag(selectedTag, tagGroup));
     props.onClose();
   };
 

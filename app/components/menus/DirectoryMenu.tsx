@@ -50,6 +50,7 @@ import { getRelativeEntryPath } from '-/services/utils-io';
 import { PerspectiveIDs } from '-/perspectives';
 import PlatformFacade from '-/services/platform-facade';
 import { getDirectoryMenuItems } from '-/perspectives/common/DirectoryMenuItems';
+import { getLocations } from "-/reducers/locations";
 
 interface Props {
   open: boolean;
@@ -73,7 +74,6 @@ interface Props {
   mouseX?: number;
   mouseY?: number;
   currentLocation?: TS.Location;
-  locations?: Array<TS.Location>;
 }
 
 function DirectoryMenu(props: Props) {
@@ -86,7 +86,6 @@ function DirectoryMenu(props: Props) {
     mouseY,
     directoryPath,
     currentLocation,
-    locations,
     openAddRemoveTagsDialog,
     openMoveCopyFilesDialog,
     openRenameDirectoryDialog
@@ -95,6 +94,7 @@ function DirectoryMenu(props: Props) {
   const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
     getSelectedEntries
   );
+  const locations: Array<TS.Location> = useSelector(getLocations);
   const currentDirectoryPath = useSelector(getDirectoryPath);
   const lastSelectedEntryPath = useSelector(getLastSelectedEntryPath);
   const readOnlyMode = useSelector(isReadOnlyMode);
