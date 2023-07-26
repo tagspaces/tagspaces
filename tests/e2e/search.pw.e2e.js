@@ -10,6 +10,7 @@ import {
   takeScreenshot
 } from './general.helpers';
 import {
+  checkFileExist,
   createFile,
   startTestingApp,
   stopApp,
@@ -133,6 +134,20 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await searchEngine(testFileInSubDirectory, searchTag, true);
     // expected to reset all search engine
   });*/
+
+  test('TST0609 - Show thumbnails of image files in the search results [web,minio,electron]', async () => {
+    const searchQuery = 'jpg'; //'sample_exif.jpg';
+    await addSearchCommand(searchQuery, true);
+    await global.client.waitForSelector('img[alt=thumbnail]', {
+      visible: true
+    });
+    const images = await global.client.$$('img[alt=thumbnail]');
+    for (let i = 0; i < images.length; i++) {
+      const src = await images[i].getAttribute('src');
+      const fileExists = checkFileExist(src);
+      expect(fileExists).toBe(true);
+    }
+  });
 
   test('TST0621 - Search actions - open location [web,electron]', async () => {
     //const firstLocationTID = await getPwLocationTid(0);
