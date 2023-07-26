@@ -17,8 +17,7 @@
  */
 
 import React, { useState, useEffect, useRef, useReducer } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import withStyles from '@mui/styles/withStyles';
 import MenuItem from '@mui/material/MenuItem';
@@ -45,7 +44,6 @@ import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
 import i18n from '-/services/i18n';
 import TransparentBackground from '-/components/TransparentBackground';
 import { TS } from '-/tagspaces.namespace';
-import AppConfig from '-/AppConfig';
 import {
   actions as SettingsActions,
   getSupportedFileTypes,
@@ -53,8 +51,8 @@ import {
 } from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import PlatformFacade from '-/services/platform-facade';
-import { getExtensions } from '-/reducers/app';
-import { supportedFileTypes } from '-/extension-config';
+import { AppDispatch, getExtensions } from '-/reducers/app';
+import { supportedFileTypes as defaultSupportedFileTypes } from '-/extension-config';
 import useFirstRender from '-/utils/useFirstRender';
 
 const styles: any = (theme: any) => ({
@@ -76,15 +74,12 @@ const styles: any = (theme: any) => ({
 });
 
 interface Props {
-  supportedFileTypes: Array<TS.FileTypes>;
-  setSupportedFileTypes?: (fileTypes: Array<any>) => void;
   classes: any;
-  extensions: Array<TS.Extension>;
-  isDevMode: boolean;
 }
 
 function SettingsFileTypes(props: Props) {
-  const items = useRef<Array<TS.FileTypes>>(props.supportedFileTypes);
+  const supportedFileTypes = useSelector(getSupportedFileTypes);
+  const items = useRef<Array<TS.FileTypes>>(supportedFileTypes);
   const selectedItem = useRef<TS.FileTypes>(undefined);
   const isValidationInProgress = useRef<boolean>(false);
   const [isConfirmDialogOpened, setIsConfirmDialogOpened] = useState<boolean>(
@@ -98,9 +93,13 @@ function SettingsFileTypes(props: Props) {
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
   const firstRender = useFirstRender();
 
+  const extensions = useSelector(getExtensions);
+  const devMode = useSelector(isDevMode);
+  const dispatch: AppDispatch = useDispatch();
+
   useEffect(() => {
     if (!firstRender) {
-      items.current = props.supportedFileTypes;
+      items.current = supportedFileTypes;
       isValidationInProgress.current = false;
       if (selectedItem.current !== undefined) {
         const timer = scrollToItem(selectedItem.current);
@@ -111,7 +110,7 @@ function SettingsFileTypes(props: Props) {
         };
       }
     }
-  }, [props.supportedFileTypes]);
+  }, [supportedFileTypes]);
 
   type ScrollToIndexArgs = {
     index: number;
@@ -193,7 +192,7 @@ function SettingsFileTypes(props: Props) {
       forceUpdate();
       return false;
     }
-    props.setSupportedFileTypes(newItems);
+    dispatch(SettingsActions.setSupportedFileTypes(newItems));
   };
 
   const validateSelectedFileTypes = newItems => {
@@ -366,7 +365,7 @@ function SettingsFileTypes(props: Props) {
               sx={{ width: 180 }}
               input={<Input id="" />}
               onChange={event => {
-                const extension: TS.Extension = props.extensions.find(
+                const extension: TS.Extension = extensions.find(
                   ext => ext.extensionId === event.target.value
                 );
                 if (extension.extensionExternal) {
@@ -384,7 +383,7 @@ function SettingsFileTypes(props: Props) {
               }}
             >
               <MenuItem value="" />
-              {props.extensions.map(
+              {extensions.map(
                 extension =>
                   (extension.extensionTypes.includes('viewer') ||
                     extension.extensionTypes.includes('editor')) && (
@@ -407,7 +406,7 @@ function SettingsFileTypes(props: Props) {
             onChange={event => updateItems(item, 'editor', event.target.value)}
           >
             <MenuItem value="">{i18n.t('clearEditor')}</MenuItem>
-            {props.extensions
+            {extensions
               .filter(
                 extension =>
                   extension.extensionTypes &&
@@ -477,13 +476,15 @@ function SettingsFileTypes(props: Props) {
         >
           {i18n.t('core:addNewFileType')}
         </Button>
-        {props.isDevMode && (
+        {devMode && (
           <Button
             data-tid="resetFileTypesTID"
             onClick={() => {
               selectedItem.current = undefined;
-              items.current = supportedFileTypes;
-              props.setSupportedFileTypes(supportedFileTypes);
+              items.current = defaultSupportedFileTypes;
+              dispatch(
+                SettingsActions.setSupportedFileTypes(supportedFileTypes)
+              );
             }}
             color="secondary"
             style={{ width: '50%' }}
@@ -533,22 +534,4 @@ function SettingsFileTypes(props: Props) {
   );
 }
 
-const mapStateToProps = state => ({
-  supportedFileTypes: getSupportedFileTypes(state),
-  extensions: getExtensions(state),
-  isDevMode: isDevMode(state)
-});
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      setSupportedFileTypes: SettingsActions.setSupportedFileTypes
-    },
-    dispatch
-  );
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles)(SettingsFileTypes));
+export default withStyles(styles)(SettingsFileTypes);

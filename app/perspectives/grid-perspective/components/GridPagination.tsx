@@ -112,7 +112,6 @@ interface Props {
   currentLocation: TS.Location;
   lastSelectedEntryPath: string;
   directoryContent: Array<TS.FileSystemEntry>;
-  supportedFileTypes: Array<any>;
   openFsEntry: (fsEntry?: TS.FileSystemEntry) => void;
   openFileNatively: (path?: string) => void;
   loadDirectoryContent: (

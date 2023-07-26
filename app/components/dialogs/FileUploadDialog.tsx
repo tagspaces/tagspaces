@@ -23,9 +23,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import CloseIcon from '@mui/icons-material/Close';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { cleanFrontDirSeparator } from '@tagspaces/tagspaces-common/paths';
-import { bindActionCreators } from 'redux';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { LinearProgress, Grid, Tooltip } from '@mui/material';
@@ -34,6 +33,7 @@ import PlatformIO from '-/services/platform-facade';
 import DraggablePaper from '-/components/DraggablePaper';
 import {
   actions as AppActions,
+  AppDispatch,
   getCurrentDirectoryPerspective,
   getDirectoryPath,
   getProgress
@@ -43,26 +43,23 @@ import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { PerspectiveIDs } from '-/perspectives';
 import { getCurrentLocation } from '-/reducers/locations';
-import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   open: boolean;
-  progress?: Array<any>;
   title: string;
   onClose: () => void;
-  clearUploadDialog: () => void;
-  currentDirectoryPerspective: string;
-  currentDirectoryPath: string;
-  currentLocation: TS.Location;
-  loadDirectoryContent: (
-    path: string,
-    generateThumbnails: boolean,
-    loadDirMeta?: boolean
-  ) => void;
 }
 
 function FileUploadDialog(props: Props) {
-  const { open = false, onClose } = props;
+  const { open = false, title, onClose } = props;
+  const dispatch: AppDispatch = useDispatch();
+  const progress = useSelector(getProgress);
+  const currentDirectoryPerspective = useSelector(
+    getCurrentDirectoryPerspective
+  );
+  const currentDirectoryPath = useSelector(getDirectoryPath);
+  const currentLocation = useSelector(getCurrentLocation);
+
   const targetPath = React.useRef<string>(getTargetPath());
 
   function LinearProgressWithLabel(prop) {
@@ -81,8 +78,8 @@ function FileUploadDialog(props: Props) {
   }
 
   const stopAll = () => {
-    if (props.progress) {
-      props.progress.map(fileProgress => {
+    if (progress) {
+      progress.map(fileProgress => {
         const { abort } = fileProgress;
         if (abort !== undefined && typeof abort === 'function') {
           abort();
@@ -95,7 +92,7 @@ function FileUploadDialog(props: Props) {
   let haveProgress = false;
 
   function getTargetPath() {
-    const pathProgress = props.progress.find(fileProgress => fileProgress.path);
+    const pathProgress = progress.find(fileProgress => fileProgress.path);
     if (pathProgress) {
       return pathProgress.path;
     }
@@ -103,43 +100,38 @@ function FileUploadDialog(props: Props) {
   }
 
   function getTargetURL() {
-    if (props.currentLocation) {
-      if (props.currentLocation.endpointURL) {
+    if (currentLocation) {
+      if (currentLocation.endpointURL) {
         return (
-          (props.currentLocation.endpointURL.endsWith('/')
-            ? props.currentLocation.endpointURL
-            : props.currentLocation.endpointURL + '/') +
-          (props.currentLocation.path
-            ? cleanFrontDirSeparator(props.currentLocation.path)
+          (currentLocation.endpointURL.endsWith('/')
+            ? currentLocation.endpointURL
+            : currentLocation.endpointURL + '/') +
+          (currentLocation.path
+            ? cleanFrontDirSeparator(currentLocation.path)
             : '') +
-          (props.currentDirectoryPath
-            ? cleanFrontDirSeparator(props.currentDirectoryPath)
+          (currentDirectoryPath
+            ? cleanFrontDirSeparator(currentDirectoryPath)
             : '')
         );
-      } else if (
-        props.currentLocation.region &&
-        props.currentLocation.bucketName
-      ) {
+      } else if (currentLocation.region && currentLocation.bucketName) {
         return (
           'https://s3.' +
-          props.currentLocation.region +
+          currentLocation.region +
           '.amazonaws.com' +
-          (props.currentLocation.bucketName
-            ? '/' + props.currentLocation.bucketName
+          (currentLocation.bucketName ? '/' + currentLocation.bucketName : '') +
+          (currentLocation.path
+            ? '/' + cleanFrontDirSeparator(currentLocation.path)
             : '') +
-          (props.currentLocation.path
-            ? '/' + cleanFrontDirSeparator(props.currentLocation.path)
-            : '') +
-          (props.currentDirectoryPath
-            ? '/' + cleanFrontDirSeparator(props.currentDirectoryPath)
+          (currentDirectoryPath
+            ? '/' + cleanFrontDirSeparator(currentDirectoryPath)
             : '')
         );
       }
     }
     if (targetPath.current) {
       return targetPath.current;
-    } else if (props.currentDirectoryPath) {
-      return props.currentDirectoryPath;
+    } else if (currentDirectoryPath) {
+      return currentDirectoryPath;
     }
     return '/';
   }
@@ -162,10 +154,7 @@ function FileUploadDialog(props: Props) {
         id="draggable-dialog-title"
       >
         {i18n.t(
-          'core:' +
-            (props.title && props.title.length > 0
-              ? props.title
-              : 'importDialogTitle')
+          'core:' + (title && title.length > 0 ? title : 'importDialogTitle')
         )}
         <DialogCloseButton testId="closeFileUploadTID" onClose={onClose} />
       </DialogTitle>
@@ -178,8 +167,8 @@ function FileUploadDialog(props: Props) {
         }}
       >
         <p>{i18n.t('core:moveCopyToPath') + ': ' + getTargetURL()}</p>
-        {props.progress &&
-          props.progress
+        {progress &&
+          progress
             .sort((a, b) => ('' + a.path).localeCompare(b.path))
             .map(fileProgress => {
               const percentage = fileProgress.progress;
@@ -248,9 +237,11 @@ function FileUploadDialog(props: Props) {
             data-tid="uploadCloseAndClearTID"
             onClick={() => {
               onClose();
-              props.clearUploadDialog();
-              if (props.currentDirectoryPerspective === PerspectiveIDs.GRID) {
-                props.loadDirectoryContent(props.currentDirectoryPath, false);
+              dispatch(AppActions.clearUploadDialog());
+              if (currentDirectoryPerspective === PerspectiveIDs.GRID) {
+                dispatch(
+                  AppActions.loadDirectoryContent(currentDirectoryPath, false)
+                );
               }
             }}
             color="primary"
@@ -260,7 +251,7 @@ function FileUploadDialog(props: Props) {
         )}
         <Button
           data-tid="uploadMinimizeDialogTID"
-          onClick={props.onClose}
+          onClick={onClose}
           color="primary"
         >
           {i18n.t('core:minimize')}
@@ -277,21 +268,8 @@ function FileUploadDialog(props: Props) {
 
 function mapStateToProps(state) {
   return {
-    progress: getProgress(state),
-    currentDirectoryPerspective: getCurrentDirectoryPerspective(state),
-    currentDirectoryPath: getDirectoryPath(state),
     currentLocation: getCurrentLocation(state)
   };
 }
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      clearUploadDialog: AppActions.clearUploadDialog,
-      loadDirectoryContent: AppActions.loadDirectoryContent
-    },
-    dispatch
-  );
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(FileUploadDialog);
+export default FileUploadDialog;

@@ -17,6 +17,7 @@
  */
 
 import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import Edit from '@mui/icons-material/Edit';
 import ArrowDownward from '@mui/icons-material/ArrowDownward';
 import ArrowUpward from '@mui/icons-material/ArrowUpward';
@@ -30,15 +31,13 @@ import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 import CollectTagsIcon from '@mui/icons-material/Voicemail';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import i18n from '-/services/i18n';
 import { getMaxSearchResults } from '-/reducers/settings';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
-import { actions as AppActions } from '-/reducers/app';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import InfoIcon from '-/components/InfoIcon';
-import { ProLabel } from '-/components/HelperComponents';
+import TaggingActions from '-/reducers/tagging-actions';
 
 interface Props {
   classes?: any;
@@ -52,92 +51,99 @@ interface Props {
   moveTagGroupUp: (tagGroupId: string) => void;
   moveTagGroupDown: (tagGroupId: string) => void;
   sortTagGroup: (tagGroupId: string) => void;
-  collectTagsFromLocation: (tagGroup: TS.TagGroup) => void;
   handleCloseTagGroupMenu: () => void;
-  setSearchQuery: (searchQuery: TS.SearchQuery) => void;
-  tagLibraryChanged: () => void;
-  maxSearchResults: number;
 }
 
 function TagGroupMenu(props: Props) {
+  const {
+    open,
+    onClose,
+    selectedTagGroupEntry,
+    handleCloseTagGroupMenu,
+    moveTagGroupUp,
+    moveTagGroupDown,
+    sortTagGroup,
+    anchorEl,
+    showCreateTagsDialog,
+    showEditTagGroupDialog,
+    showDeleteTagGroupDialog
+  } = props;
+  const dispatch: AppDispatch = useDispatch();
+  const maxSearchResults = useSelector(getMaxSearchResults);
+
   function handleCollectTags() {
-    props.onClose();
+    onClose();
 
-    if (props.selectedTagGroupEntry) {
-      props.collectTagsFromLocation(props.selectedTagGroupEntry);
+    if (selectedTagGroupEntry) {
+      dispatch(TaggingActions.collectTagsFromLocation(selectedTagGroupEntry));
     }
-    props.handleCloseTagGroupMenu();
-    props.tagLibraryChanged();
+    handleCloseTagGroupMenu();
+    dispatch(AppActions.tagLibraryChanged());
   }
 
-  function moveTagGroupUp() {
-    if (props.selectedTagGroupEntry) {
-      props.moveTagGroupUp(props.selectedTagGroupEntry.uuid);
+  function moveTagGroupUpInt() {
+    if (selectedTagGroupEntry) {
+      moveTagGroupUp(selectedTagGroupEntry.uuid);
     }
-    props.handleCloseTagGroupMenu();
+    handleCloseTagGroupMenu();
   }
 
-  function moveTagGroupDown() {
-    if (props.selectedTagGroupEntry) {
-      props.moveTagGroupDown(props.selectedTagGroupEntry.uuid);
+  function moveTagGroupDownInt() {
+    if (selectedTagGroupEntry) {
+      moveTagGroupDown(selectedTagGroupEntry.uuid);
     }
-    props.handleCloseTagGroupMenu();
+    handleCloseTagGroupMenu();
   }
 
-  function sortTagGroup() {
-    if (props.selectedTagGroupEntry) {
-      props.sortTagGroup(props.selectedTagGroupEntry.uuid);
+  function sortTagGroupInt() {
+    if (selectedTagGroupEntry) {
+      sortTagGroup(selectedTagGroupEntry.uuid);
     }
-    props.handleCloseTagGroupMenu();
+    handleCloseTagGroupMenu();
   }
 
   function showFilesWithTags() {
-    if (props.selectedTagGroupEntry) {
-      // props.openSearchPanel();
-      props.setSearchQuery({
-        tagsOR: props.selectedTagGroupEntry.children,
-        maxSearchResults: props.maxSearchResults,
-        executeSearch: true
-      });
+    if (selectedTagGroupEntry) {
+      // openSearchPanel();
+      dispatch(
+        LocationIndexActions.setSearchQuery({
+          tagsOR: selectedTagGroupEntry.children,
+          maxSearchResults: maxSearchResults,
+          executeSearch: true
+        })
+      );
     }
-    props.handleCloseTagGroupMenu();
+    handleCloseTagGroupMenu();
   }
 
   return (
     <div style={{ overflowY: 'hidden' }}>
-      <Menu
-        anchorEl={props.anchorEl}
-        open={props.open}
-        onClose={props.handleCloseTagGroupMenu}
-      >
-        <MenuItem data-tid="createTags" onClick={props.showCreateTagsDialog}>
+      <Menu anchorEl={anchorEl} open={open} onClose={handleCloseTagGroupMenu}>
+        <MenuItem data-tid="createTags" onClick={showCreateTagsDialog}>
           <ListItemIcon>
             <TagIcon />
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:addTags')} />
         </MenuItem>
-        <MenuItem
-          data-tid="editTagGroup"
-          onClick={props.showEditTagGroupDialog}
-        >
+        <MenuItem data-tid="editTagGroup" onClick={showEditTagGroupDialog}>
           <ListItemIcon>
             <Edit />
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:editTagGroup')} />
         </MenuItem>
-        <MenuItem data-tid="moveTagGroupUp" onClick={moveTagGroupUp}>
+        <MenuItem data-tid="moveTagGroupUp" onClick={moveTagGroupUpInt}>
           <ListItemIcon>
             <ArrowUpward />
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:moveTagGroupUp')} />
         </MenuItem>
-        <MenuItem data-tid="moveTagGroupDown" onClick={moveTagGroupDown}>
+        <MenuItem data-tid="moveTagGroupDown" onClick={moveTagGroupDownInt}>
           <ListItemIcon>
             <ArrowDownward />
           </ListItemIcon>
           <ListItemText primary={i18n.t('core:moveTagGroupDown')} />
         </MenuItem>
-        <MenuItem data-tid="sortTagGroup" onClick={sortTagGroup}>
+        <MenuItem data-tid="sortTagGroup" onClick={sortTagGroupInt}>
           <ListItemIcon>
             <SortTagGroupIcon />
           </ListItemIcon>
@@ -152,10 +158,7 @@ function TagGroupMenu(props: Props) {
             <InfoIcon tooltip={i18n.t('core:showFilesWithTagsTooltip')} />
           </ListItemSecondaryAction>
         </MenuItem>
-        <MenuItem
-          data-tid="deleteTagGroup"
-          onClick={props.showDeleteTagGroupDialog}
-        >
+        <MenuItem data-tid="deleteTagGroup" onClick={showDeleteTagGroupDialog}>
           <ListItemIcon>
             <DeleteTagGroupIcon />
           </ListItemIcon>
@@ -178,20 +181,4 @@ function TagGroupMenu(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    maxSearchResults: getMaxSearchResults(state)
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      setSearchQuery: LocationIndexActions.setSearchQuery,
-      tagLibraryChanged: AppActions.tagLibraryChanged
-    },
-    dispatch
-  );
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(TagGroupMenu);
+export default TagGroupMenu;

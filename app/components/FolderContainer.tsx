@@ -210,7 +210,6 @@ interface Props {
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   enterSearchMode: () => void;
   exitSearchMode: () => void;
-  openURLExternally?: (url: string, skipConfirmation: boolean) => void;
   language: string;
   // editedEntryPaths: Array<TS.EditedEntryPath>;
   goBack: () => void;
@@ -714,8 +713,7 @@ function mapActionCreatorsToProps(dispatch) {
       setCurrentDirectoryColor: AppActions.setCurrentDirectoryColor,
       enterSearchMode: AppActions.enterSearchMode,
       exitSearchMode: AppActions.exitSearchMode,
-      setSearchQuery: LocationIndexActions.setSearchQuery,
-      openURLExternally: AppActions.openURLExternally
+      setSearchQuery: LocationIndexActions.setSearchQuery
     },
     dispatch
   );

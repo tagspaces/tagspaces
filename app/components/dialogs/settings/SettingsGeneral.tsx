@@ -17,8 +17,7 @@
  */
 
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { useSelector, useDispatch } from 'react-redux';
 import withStyles from '@mui/styles/withStyles';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -49,6 +48,7 @@ import TransparentBackground from '-/components/TransparentBackground';
 import { BetaLabel } from '-/components/HelperComponents';
 import PlatformIO from '-/services/platform-facade';
 import { PerspectiveIDs } from '-/perspectives';
+import { AppDispatch } from '-/reducers/app';
 
 const styles: any = {
   root: {
@@ -68,26 +68,7 @@ const styles: any = {
 };
 
 interface Props {
-  setTagColor: (tagColor: string) => void;
-  setTagTextColor: (tagTextColor: string) => void;
   classes: any;
-  settings: any;
-  language: string;
-  persistTagsInSidecarFile: boolean;
-  toggleShowUnixHiddenEntries: () => void;
-  setCurrentTheme: (theme: string) => void;
-  setCurrentRegularTheme: (theme: string) => void;
-  setCurrentDarkTheme: (theme: string) => void;
-  setLanguage: (language: string) => void;
-  setCheckForUpdates: (check: boolean) => void;
-  reorderTags: (check: boolean) => void;
-  setUseTrashCan: (useTrashCan: boolean) => void;
-  setPersistTagsInSidecarFile: (tagInSidecar: boolean) => void;
-  setAddTagsToLibrary: (addTagsToLibrary: boolean) => void;
-  setUseGenerateThumbnails: (useGenerateThumbnails: boolean) => void;
-  setTagDelimiter: (tagDelimiter: string) => void;
-  setDefaultPerspective: (defaultPerspective: string) => void;
-  setMaxSearchResult: (maxResult: string) => void;
 }
 
 function SettingsGeneral(props: Props) {
@@ -95,6 +76,10 @@ function SettingsGeneral(props: Props) {
   const [displayTextColorPicker, setDisplayTextColorPicker] = useState<boolean>(
     false
   );
+  const dispatch: AppDispatch = useDispatch();
+  const settings = useSelector(getSettings);
+  const language = useSelector(getCurrentLanguage);
+  const persistTagsInSidecarFile = useSelector(getPersistTagsInSidecarFile);
 
   const toggleDefaultTagBackgroundColorPicker = () => {
     setDisplayColorPicker(!displayColorPicker);
@@ -113,20 +98,20 @@ function SettingsGeneral(props: Props) {
   }; */
 
   const handleMaxSearchResult = event => {
-    props.setMaxSearchResult(event.target.value);
+    dispatch(SettingsActions.setMaxSearchResult(event.target.value));
   };
 
   const changePerspective = (event: any) => {
     const perspective = event.target.value;
-    props.setDefaultPerspective(perspective);
+    dispatch(SettingsActions.setDefaultPerspective(perspective));
   };
 
   let defaultPerspective = PerspectiveIDs.UNSPECIFIED;
-  if (props.settings.defaultPerspective) {
-    defaultPerspective = props.settings.defaultPerspective;
+  if (settings.defaultPerspective) {
+    defaultPerspective = settings.defaultPerspective;
   }
 
-  const { classes, persistTagsInSidecarFile, language } = props;
+  const { classes } = props;
 
   return (
     <List className={classes.root}>
@@ -134,14 +119,14 @@ function SettingsGeneral(props: Props) {
         <ListItemText primary={i18n.t('core:interfaceLanguage')} />
         <Select
           data-tid="settingsSetLanguage"
-          value={props.settings.interfaceLanguage}
+          value={settings.interfaceLanguage}
           onChange={(event: any) => {
-            props.setLanguage(event.target.value);
+            dispatch(SettingsActions.setLanguage(event.target.value));
             PlatformIO.setLanguage(event.target.value);
           }}
           input={<Input id="languageSelector" />}
         >
-          {props.settings.supportedLanguages.map(language => (
+          {settings.supportedLanguages.map(language => (
             <MenuItem key={language.iso} value={language.iso}>
               {language.title}
             </MenuItem>
@@ -152,11 +137,13 @@ function SettingsGeneral(props: Props) {
         <ListItemText primary={i18n.t('core:themeSelector')} />
         <Select
           data-tid="settingsSetCurrentTheme"
-          value={props.settings.currentTheme}
-          onChange={(event: any) => props.setCurrentTheme(event.target.value)}
+          value={settings.currentTheme}
+          onChange={(event: any) =>
+            dispatch(SettingsActions.setCurrentTheme(event.target.value))
+          }
           input={<Input id="themeSelector" />}
         >
-          {props.settings.supportedThemes.map(theme => (
+          {settings.supportedThemes.map(theme => (
             <MenuItem key={theme} value={theme}>
               {theme === 'light' && i18n.t('core:regularScheme')}
               {theme === 'dark' && i18n.t('core:darkScheme')}
@@ -169,13 +156,13 @@ function SettingsGeneral(props: Props) {
         <ListItemText primary={i18n.t('core:themeRegularSelector')} />
         <Select
           data-tid="settingsCurrentRegularThemeTID"
-          value={props.settings.currentRegularTheme}
+          value={settings.currentRegularTheme}
           onChange={(event: any) =>
-            props.setCurrentRegularTheme(event.target.value)
+            dispatch(SettingsActions.setCurrentRegularTheme(event.target.value))
           }
           input={<Input id="themeRegularSelector" />}
         >
-          {props.settings.supportedRegularThemes.map(theme => (
+          {settings.supportedRegularThemes.map(theme => (
             <MenuItem key={theme} value={theme}>
               {theme.charAt(0).toUpperCase() + theme.slice(1)}
             </MenuItem>
@@ -186,13 +173,13 @@ function SettingsGeneral(props: Props) {
         <ListItemText primary={i18n.t('core:themeDarkSelector')} />
         <Select
           data-tid="settingsCurrentDarkThemeTID"
-          value={props.settings.currentDarkTheme}
+          value={settings.currentDarkTheme}
           onChange={(event: any) =>
-            props.setCurrentDarkTheme(event.target.value)
+            dispatch(SettingsActions.setCurrentDarkTheme(event.target.value))
           }
           input={<Input id="themeDarkSelector" />}
         >
-          {props.settings.supportedDarkThemes.map(theme => (
+          {settings.supportedDarkThemes.map(theme => (
             <MenuItem key={theme} value={theme}>
               {theme.charAt(0).toUpperCase() + theme.slice(1)}
             </MenuItem>
@@ -232,7 +219,9 @@ function SettingsGeneral(props: Props) {
             <ToggleButton
               value={false}
               data-tid="settingsSetPersistTagsInFileName"
-              onClick={() => props.setPersistTagsInSidecarFile(false)}
+              onClick={() =>
+                dispatch(SettingsActions.setPersistTagsInSidecarFile(false))
+              }
             >
               <Tooltip
                 title={
@@ -251,7 +240,9 @@ function SettingsGeneral(props: Props) {
             <ToggleButton
               value={true}
               data-tid="settingsSetPersistTagsInSidecarFile"
-              onClick={() => props.setPersistTagsInSidecarFile(true)}
+              onClick={() =>
+                dispatch(SettingsActions.setPersistTagsInSidecarFile(true))
+              }
             >
               <Tooltip
                 title={
@@ -275,9 +266,11 @@ function SettingsGeneral(props: Props) {
         <Switch
           data-tid="settingsSetCheckForUpdates"
           onClick={() =>
-            props.setCheckForUpdates(!props.settings.checkForUpdates)
+            dispatch(
+              SettingsActions.setCheckForUpdates(!settings.checkForUpdates)
+            )
           }
-          checked={props.settings.checkForUpdates}
+          checked={settings.checkForUpdates}
         />
       </ListItem>
       <ListItem className={classes.listItem}>
@@ -291,8 +284,10 @@ function SettingsGeneral(props: Props) {
         />
         <Switch
           data-tid="reorderTagsTID"
-          onClick={() => props.reorderTags(!props.settings.reorderTags)}
-          checked={props.settings.reorderTags}
+          onClick={() =>
+            dispatch(SettingsActions.reorderTags(!settings.reorderTags))
+          }
+          checked={settings.reorderTags}
         />
       </ListItem>
       <ListItem className={classes.listItem}>
@@ -300,9 +295,11 @@ function SettingsGeneral(props: Props) {
         <Switch
           data-tid="settingsSetAddTagsToLibrary"
           onClick={() =>
-            props.setAddTagsToLibrary(!props.settings.addTagsToLibrary)
+            dispatch(
+              SettingsActions.setAddTagsToLibrary(!settings.addTagsToLibrary)
+            )
           }
-          checked={props.settings.addTagsToLibrary}
+          checked={settings.addTagsToLibrary}
         />
       </ListItem>
       <ListItem className={classes.listItem}>
@@ -311,14 +308,16 @@ function SettingsGeneral(props: Props) {
           disabled={AppConfig.useGenerateThumbnails !== undefined}
           data-tid="settingsUseGenerateThumbnails"
           onClick={() =>
-            props.setUseGenerateThumbnails(
-              !props.settings.useGenerateThumbnails
+            dispatch(
+              SettingsActions.setUseGenerateThumbnails(
+                !settings.useGenerateThumbnails
+              )
             )
           }
           checked={
             AppConfig.useGenerateThumbnails !== undefined
               ? AppConfig.useGenerateThumbnails
-              : props.settings.useGenerateThumbnails
+              : settings.useGenerateThumbnails
           }
         />
       </ListItem>
@@ -330,7 +329,7 @@ function SettingsGeneral(props: Props) {
             className={classes.colorChooserButton}
             size="small"
             style={{
-              backgroundColor: props.settings.tagBackgroundColor
+              backgroundColor: settings.tagBackgroundColor
             }}
             onClick={toggleDefaultTagBackgroundColorPicker}
           >
@@ -341,10 +340,10 @@ function SettingsGeneral(props: Props) {
           <ColorPickerDialog
             open={displayColorPicker}
             setColor={color => {
-              props.setTagColor(color);
+              dispatch(SettingsActions.setTagColor(color));
             }}
             onClose={toggleDefaultTagBackgroundColorPicker}
-            color={props.settings.tagBackgroundColor}
+            color={settings.tagBackgroundColor}
           />
         )}
       </ListItem>
@@ -355,7 +354,7 @@ function SettingsGeneral(props: Props) {
             data-tid="settingsToggleDefaultTagForegroundColor"
             className={classes.colorChooserButton}
             size="small"
-            style={{ backgroundColor: props.settings.tagTextColor }}
+            style={{ backgroundColor: settings.tagTextColor }}
             onClick={toggleDefaultTagTextColorPicker}
           >
             &nbsp;
@@ -365,10 +364,10 @@ function SettingsGeneral(props: Props) {
           <ColorPickerDialog
             open={displayTextColorPicker}
             setColor={color => {
-              props.setTagTextColor(color);
+              dispatch(SettingsActions.setTagTextColor(color));
             }}
             onClose={toggleDefaultTagTextColorPicker}
-            color={props.settings.tagTextColor}
+            color={settings.tagTextColor}
           />
         )}
       </ListItem>
@@ -384,8 +383,10 @@ function SettingsGeneral(props: Props) {
           />
           <Switch
             data-tid="settingsSetUseTrashCan"
-            onClick={() => props.setUseTrashCan(!props.settings.useTrashCan)}
-            checked={props.settings.useTrashCan}
+            onClick={() =>
+              dispatch(SettingsActions.setUseTrashCan(!settings.useTrashCan))
+            }
+            checked={settings.useTrashCan}
           />
         </ListItem>
       )}
@@ -393,8 +394,10 @@ function SettingsGeneral(props: Props) {
         <ListItemText primary={i18n.t('core:showUnixHiddenFiles')} />
         <Switch
           data-tid="settingsSetShowUnixHiddenEntries"
-          onClick={props.toggleShowUnixHiddenEntries}
-          checked={props.settings.showUnixHiddenEntries}
+          onClick={() =>
+            dispatch(SettingsActions.toggleShowUnixHiddenEntries())
+          }
+          checked={settings.showUnixHiddenEntries}
         />
       </ListItem>
       {/* <ListItem className={classes.listItem}>
@@ -402,7 +405,7 @@ function SettingsGeneral(props: Props) {
           <Select
             style={{ minWidth: '170px' }}
             data-tid="settingsTagDelimiterChoose"
-            value={this.props.settings.tagDelimiter}
+            value={this.settings.tagDelimiter}
             onChange={this.handleTagDelimiterChange}
             inputProps={{
               name: 'tagDelimiter',
@@ -420,7 +423,7 @@ function SettingsGeneral(props: Props) {
           style={{ maxWidth: '100px' }}
           type="number"
           data-tid="settingsMaxSearchResult"
-          value={props.settings.maxSearchResult}
+          value={settings.maxSearchResult}
           onChange={handleMaxSearchResult}
         />
       </ListItem>
@@ -428,20 +431,4 @@ function SettingsGeneral(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    settings: getSettings(state),
-    language: getCurrentLanguage(state),
-    persistTagsInSidecarFile: getPersistTagsInSidecarFile(state)
-  };
-}
-
-function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators(SettingsActions, dispatch);
-}
-
-export default connect(
-  mapStateToProps,
-  mapActionCreatorsToProps
-  // @ts-ignore
-)(withStyles(styles, { withTheme: true })(SettingsGeneral));
+export default withStyles(styles, { withTheme: true })(SettingsGeneral);

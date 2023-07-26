@@ -28,15 +28,15 @@ import ProTeaserImage from '-/assets/images/pro-teaser.svg';
 import ProTextLogo from '-/assets/images/text-logo-pro.svg';
 import i18n from '../services/i18n';
 import Links from '-/content/links';
+import { openURLExternally } from '-/services/utils-io';
 
 interface Props {
   toggleProTeaser: (slidePage?: string) => void;
   setShowTeaserBanner: (teaserVisibility: boolean) => void;
-  openURLExternally: (url: string, skipConfirmation?: boolean) => void;
 }
 
 function ProTeaser(props: Props) {
-  const { toggleProTeaser, setShowTeaserBanner, openURLExternally } = props;
+  const { toggleProTeaser, setShowTeaserBanner } = props;
   return (
     <>
       <CardContent

@@ -17,8 +17,7 @@
  */
 
 import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { useSelector, useDispatch } from 'react-redux';
 import withStyles from '@mui/styles/withStyles';
 import TextField from '@mui/material/TextField';
 import Switch from '@mui/material/Switch';
@@ -33,6 +32,7 @@ import {
   isGlobalKeyBindingEnabled
 } from '-/reducers/settings';
 import DefaultSettings from '-/reducers/settings-default';
+import { AppDispatch } from '-/reducers/app';
 
 const styles: any = (theme: any) => ({
   keyBinding: {
@@ -43,20 +43,22 @@ const styles: any = (theme: any) => ({
 
 interface Props {
   classes: any;
-  keyBindings: Array<any>;
-  setKeyBinding: (kbName: string, kbCommand: string) => void;
-  setGlobalKeyBinding: (value: boolean) => void;
-  globalKeyBindingEnabled: boolean;
 }
-
 function SettingsKeyBindings(props: Props) {
-  const {
-    keyBindings,
-    classes,
-    setKeyBinding,
-    setGlobalKeyBinding,
-    globalKeyBindingEnabled
-  } = props;
+  const { classes } = props;
+  const keyBindings = useSelector(getKeyBindings);
+  const globalKeyBindingEnabled = useSelector(isGlobalKeyBindingEnabled);
+  const dispatch: AppDispatch = useDispatch();
+
+  const setKeyBinding = (kbName, kbCommand) => {
+    dispatch(SettingsActions.setKeyBinding(kbName, kbCommand));
+  };
+
+  const setGlobalKeyBinding = value => {
+    dispatch(SettingsActions.setGlobalKeyBinding(value));
+    PlatformIO.setGlobalShortcuts(value);
+  };
+
   return (
     <form className={classes.root} noValidate autoComplete="off">
       <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
@@ -64,7 +66,6 @@ function SettingsKeyBindings(props: Props) {
         <Switch
           onClick={() => {
             setGlobalKeyBinding(!globalKeyBindingEnabled);
-            PlatformIO.setGlobalShortcuts(!globalKeyBindingEnabled);
           }}
           checked={globalKeyBindingEnabled}
         />
@@ -93,24 +94,4 @@ function SettingsKeyBindings(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    keyBindings: getKeyBindings(state),
-    globalKeyBindingEnabled: isGlobalKeyBindingEnabled(state)
-  };
-}
-
-function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators(
-    {
-      setKeyBinding: SettingsActions.setKeyBinding,
-      setGlobalKeyBinding: SettingsActions.setGlobalKeyBinding
-    },
-    dispatch
-  );
-}
-
-export default connect(
-  mapStateToProps,
-  mapActionCreatorsToProps
-)(withStyles(styles)(SettingsKeyBindings));
+export default withStyles(styles)(SettingsKeyBindings);

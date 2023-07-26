@@ -17,8 +17,7 @@
  */
 
 import React, { useReducer, useRef, useState } from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
@@ -35,7 +34,11 @@ import {
 import DraggablePaper from '-/components/DraggablePaper';
 import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
-import { actions as AppActions, getLastSelectedEntry } from '-/reducers/app';
+import {
+  actions as AppActions,
+  AppDispatch,
+  getLastSelectedEntry
+} from '-/reducers/app';
 import PlatformIO from '-/services/platform-facade';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { dirNameValidation, fileNameValidation } from '-/services/utils-io';
@@ -43,43 +46,51 @@ import { dirNameValidation, fileNameValidation } from '-/services/utils-io';
 interface Props {
   open: boolean;
   currentDirectoryPath?: string;
-  lastSelectedEntry: any;
   onClose: () => void;
-  renameFile: (source: string, target: string) => void;
-  renameDirectory: (directoryPath: string, newDirectoryName: string) => void;
 }
 
 function RenameEntryDialog(props: Props) {
+  const { open, onClose, currentDirectoryPath } = props;
   const [inputError, setInputError] = useState<boolean>(false);
   const disableConfirmButton = useRef<boolean>(true);
+  const lastSelectedEntry = useSelector(getLastSelectedEntry);
+  const dispatch: AppDispatch = useDispatch();
+
+  const renameFile = (source, target) => {
+    dispatch(AppActions.renameFile(source, target));
+  };
+
+  const renameDirectory = (directoryPath, newDirectoryName) => {
+    dispatch(AppActions.renameDirectory(directoryPath, newDirectoryName));
+  };
 
   let defaultName = '';
   let originPath;
   let isFile;
-  if (props.lastSelectedEntry) {
-    ({ isFile } = props.lastSelectedEntry);
+  if (lastSelectedEntry) {
+    ({ isFile } = lastSelectedEntry);
     if (isFile) {
       defaultName = extractFileName(
-        props.lastSelectedEntry.path,
+        lastSelectedEntry.path,
         PlatformIO.getDirSeparator()
       );
     } else {
       defaultName = extractDirectoryName(
-        props.lastSelectedEntry.path,
+        lastSelectedEntry.path,
         PlatformIO.getDirSeparator()
       );
     }
-    originPath = props.lastSelectedEntry.path;
-  } else if (props.currentDirectoryPath) {
+    originPath = lastSelectedEntry.path;
+  } else if (currentDirectoryPath) {
     isFile = false;
     defaultName = extractDirectoryName(
-      props.currentDirectoryPath,
+      currentDirectoryPath,
       PlatformIO.getDirSeparator()
     );
-    originPath = props.currentDirectoryPath;
+    originPath = currentDirectoryPath;
   } else {
     return (
-      <Dialog open={props.open} onClose={props.onClose}>
+      <Dialog open={open} onClose={onClose}>
         <DialogTitle>{i18n.t('core:noSelectedEntryError')}</DialogTitle>
       </Dialog>
     );
@@ -134,20 +145,18 @@ function RenameEntryDialog(props: Props) {
     if (!disableConfirmButton.current) {
       if (isFile) {
         const fileDirectory = extractContainingDirectoryPath(
-          props.lastSelectedEntry.path,
+          lastSelectedEntry.path,
           PlatformIO.getDirSeparator()
         );
         const newFilePath =
           fileDirectory + PlatformIO.getDirSeparator() + name.current;
-        props.renameFile(originPath, newFilePath);
+        renameFile(originPath, newFilePath);
       } else {
-        props.renameDirectory(originPath, name.current);
+        renameDirectory(originPath, name.current);
       }
-      props.onClose();
+      onClose();
     }
   };
-
-  const { open, onClose } = props;
 
   return (
     <Dialog
@@ -195,7 +204,7 @@ function RenameEntryDialog(props: Props) {
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button data-tid="closeRenameEntryDialog" onClick={props.onClose}>
+        <Button data-tid="closeRenameEntryDialog" onClick={onClose}>
           {i18n.t('core:cancel')}
         </Button>
         <Button
@@ -212,23 +221,4 @@ function RenameEntryDialog(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    lastSelectedEntry: getLastSelectedEntry(state)
-  };
-}
-
-function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators(
-    {
-      renameFile: AppActions.renameFile,
-      renameDirectory: AppActions.renameDirectory
-    },
-    dispatch
-  );
-}
-
-export default connect(
-  mapStateToProps,
-  mapActionCreatorsToProps
-)(RenameEntryDialog);
+export default RenameEntryDialog;

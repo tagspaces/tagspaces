@@ -28,7 +28,7 @@ import Switch from '@mui/material/Switch';
 import Dialog from '@mui/material/Dialog';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import ColorPickerDialog from './ColorPickerDialog';
 import i18n from '-/services/i18n';
 import TransparentBackground from '../TransparentBackground';
@@ -36,8 +36,7 @@ import { TS } from '-/tagspaces.namespace';
 import { getLocations } from '-/reducers/locations';
 import { Pro } from '-/pro';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import useTheme from '@mui/styles/useTheme';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import { getSaveTagInLocation } from '-/reducers/settings';
 
 const defaultTagGroupLocation = 'TAG_LIBRARY';
 
@@ -46,11 +45,12 @@ interface Props {
   editTagGroup: (tagGroup: TS.TagGroup) => void;
   selectedTagGroupEntry: TS.TagGroup;
   onClose: () => void;
-  locations: Array<TS.Location>;
-  saveTagInLocation: boolean;
 }
 
 function EditTagGroupDialog(props: Props) {
+  const { editTagGroup, selectedTagGroupEntry, open, onClose } = props;
+  const locations: Array<TS.Location> = useSelector(getLocations);
+  const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
   const [displayTextColorPicker, setDisplayTextColorPicker] = useState<boolean>(
     false
@@ -58,14 +58,13 @@ function EditTagGroupDialog(props: Props) {
   const [inputError, setInputError] = useState<boolean>(false);
   const [applyChanges, setApplyChanges] = useState<boolean>(false);
   const [locationId, setLocationId] = useState<string>(
-    props.selectedTagGroupEntry.locationId ?? defaultTagGroupLocation
+    selectedTagGroupEntry.locationId ?? defaultTagGroupLocation
   );
-  const [title, setTitle] = useState<string>(props.selectedTagGroupEntry.title);
-  const [color, setColor] = useState<string>(props.selectedTagGroupEntry.color);
+  const [title, setTitle] = useState<string>(selectedTagGroupEntry.title);
+  const [color, setColor] = useState<string>(selectedTagGroupEntry.color);
   const [textcolor, setTextcolor] = useState<string>(
-    props.selectedTagGroupEntry.textcolor
+    selectedTagGroupEntry.textcolor
   );
-  const { selectedTagGroupEntry, onClose } = props;
 
   useEffect(() => {
     handleValidation();
@@ -99,7 +98,7 @@ function EditTagGroupDialog(props: Props) {
 
     if (selectedTagGroupEntry && selectedTagGroupEntry.children) {
       if (Pro && locationId !== selectedTagGroupEntry.locationId) {
-        const location: TS.Location = props.locations.find(
+        const location: TS.Location = locations.find(
           l => l.uuid === selectedTagGroupEntry.locationId
         );
         if (location) {
@@ -109,7 +108,7 @@ function EditTagGroupDialog(props: Props) {
           );
         }
       }
-      props.editTagGroup({
+      editTagGroup({
         ...selectedTagGroupEntry,
         title,
         color,
@@ -187,7 +186,7 @@ function EditTagGroupDialog(props: Props) {
             </FormHelperText>
           )}
         </FormControl>
-        {props.saveTagInLocation && (
+        {saveTagInLocation && (
           <FormControl fullWidth={true} error={inputError}>
             <FormHelperText style={styles.helpText}>
               {i18n.t('core:tagGroupLocation')}
@@ -204,7 +203,7 @@ function EditTagGroupDialog(props: Props) {
               >
                 {i18n.t('core:tagLibrary')}
               </MenuItem>
-              {props.locations.map(location => (
+              {locations.map(location => (
                 <MenuItem key={location.uuid} value={location.uuid}>
                   {i18n.t('core:location') + ': ' + location.name}
                 </MenuItem>
@@ -273,7 +272,7 @@ function EditTagGroupDialog(props: Props) {
 
   const renderActions = () => (
     <DialogActions>
-      <Button onClick={props.onClose}>{i18n.t('core:cancel')}</Button>
+      <Button onClick={onClose}>{i18n.t('core:cancel')}</Button>
       <Button
         disabled={disableConfirmButton()}
         onClick={onConfirm}
@@ -290,9 +289,9 @@ function EditTagGroupDialog(props: Props) {
   // const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <Dialog
-      open={props.open}
+      open={open}
       // fullScreen={fullScreen}
-      onClose={props.onClose}
+      onClose={onClose}
       onKeyDown={event => {
         if (event.key === 'Enter' || event.keyCode === 13) {
           event.preventDefault();
@@ -310,11 +309,4 @@ function EditTagGroupDialog(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    locations: getLocations(state),
-    saveTagInLocation: state.settings.saveTagInLocation
-  };
-}
-
-export default connect(mapStateToProps)(EditTagGroupDialog);
+export default EditTagGroupDialog;

@@ -1,25 +1,5 @@
-/**
- * TagSpaces - universal file and folder organizer
- * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License (version 3) as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- */
-
 import React, { useState, useRef, useReducer, useEffect } from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { Progress } from 'aws-sdk/clients/s3';
+import { useDispatch, useSelector } from 'react-redux';
 import { formatBytes } from '@tagspaces/tagspaces-common/misc';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
@@ -41,6 +21,7 @@ import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import {
   actions as AppActions,
+  AppDispatch,
   getDirectoryPath,
   getSelectedEntries
 } from '-/reducers/app';
@@ -57,56 +38,29 @@ import {
 interface Props {
   open: boolean;
   onClose: (clearSelection?: boolean) => void;
-  currentDirectoryPath: string | null;
-  copyFiles: (
-    files: Array<string>,
-    destination: string,
-    onUploadProgress?: (progress: Progress, abort: () => void) => void
-  ) => void;
-  copyDirs: (
-    dirs: Array<any>,
-    destination: string,
-    onUploadProgress?: (progress: Progress, abort: () => void) => void
-  ) => void;
-  moveFiles: (files: Array<string>, destination: string) => void;
-  moveDirs: (
-    dirs: Array<any>,
-    destination: string,
-    onUploadProgress?: (progress: Progress, abort: () => void) => void
-  ) => void;
-  selectedEntries: Array<TS.FileSystemEntry>;
   // force to move/copy different entries from selected
   entries?: Array<TS.FileSystemEntry>;
-  onUploadProgress: (progress: Progress, abort: () => void) => void;
-  toggleUploadDialog: (title?) => void;
-  resetProgress: () => void;
 }
 
 function MoveCopyFilesDialog(props: Props) {
-  // const [disableConfirmButton, setDisableConfirmButton] = useState(true);
+  const dispatch: AppDispatch = useDispatch();
+
+  const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
+    getSelectedEntries
+  );
+  const currentDirectoryPath: string | null = useSelector(getDirectoryPath);
   const [targetPath, setTargetPath] = useState(
-    props.currentDirectoryPath ? props.currentDirectoryPath : ''
+    currentDirectoryPath ? currentDirectoryPath : ''
   );
   const isCopy = useRef<boolean>(true);
   const [entriesExistPath, setEntriesExistPath] = useState<string[]>(undefined);
   const dirProp = useRef({});
 
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
-  const { open, onClose } = props;
+  const { open, entries, onClose } = props;
 
-  let allEntries =
-    props.entries && props.entries.length > 0
-      ? props.entries
-      : props.selectedEntries;
-  /*props.entries && props.entries.length > 0
-      ? [
-          ...props.entries,
-          ...props.selectedEntries.filter(
-            e => !props.entries.some(en => en.path === e.path)
-          )
-        ]
-      : props.selectedEntries;*/
-  //let selectedFiles = props.selectedFiles ? props.selectedFiles : [];
+  let allEntries = entries && entries.length > 0 ? entries : selectedEntries;
+
   const selectedFiles = allEntries
     ? allEntries.filter(fsEntry => fsEntry.isFile).map(fsentry => fsentry.path)
     : [];
@@ -187,42 +141,49 @@ function MoveCopyFilesDialog(props: Props) {
       handleMoveFiles();
     }
   }
+
   function handleCopyFiles() {
-    //if (!disableConfirmButton) {
-    props.resetProgress();
-    props.toggleUploadDialog('copyEntriesTitle');
+    dispatch(AppActions.resetProgress());
+    dispatch(AppActions.toggleUploadDialog('copyEntriesTitle'));
     if (selectedFiles.length > 0) {
-      props.copyFiles(selectedFiles, targetPath, props.onUploadProgress);
-      //setDisableConfirmButton(true);
+      dispatch(
+        IOActions.copyFiles(selectedFiles, targetPath, onUploadProgress)
+      );
       setTargetPath('');
     }
     if (selectedDirs.length > 0) {
-      props.copyDirs(
-        getEntriesCount(selectedDirs),
-        targetPath,
-        props.onUploadProgress
+      dispatch(
+        IOActions.copyDirs(
+          getEntriesCount(selectedDirs),
+          targetPath,
+          onUploadProgress
+        )
       );
     }
-    props.onClose(true);
+    onClose(true);
   }
 
+  const onUploadProgress = (progress, abort, fileName) => {
+    dispatch(AppActions.onUploadProgress(progress, abort, fileName));
+  };
+
   function handleMoveFiles() {
-    // if (!disableConfirmButton) {
     if (selectedFiles.length > 0) {
-      props.moveFiles(selectedFiles, targetPath);
-      // setDisableConfirmButton(true);
+      dispatch(IOActions.moveFiles(selectedFiles, targetPath));
       setTargetPath('');
     }
     if (selectedDirs.length > 0) {
-      props.resetProgress();
-      props.toggleUploadDialog('moveEntriesTitle');
-      props.moveDirs(
-        getEntriesCount(selectedDirs),
-        targetPath,
-        props.onUploadProgress
+      dispatch(AppActions.resetProgress());
+      dispatch(AppActions.toggleUploadDialog('moveEntriesTitle'));
+      dispatch(
+        IOActions.moveDirs(
+          getEntriesCount(selectedDirs),
+          targetPath,
+          onUploadProgress
+        )
       );
     }
-    props.onClose(true);
+    onClose(true);
   }
 
   /*function selectDirectory() {
@@ -236,10 +197,6 @@ function MoveCopyFilesDialog(props: Props) {
       });
   }*/
 
-  function onCloseDialog() {
-    onClose();
-  }
-
   function formatFileExist(entries) {
     if (entries !== undefined) {
       return entries.join(', ');
@@ -252,7 +209,7 @@ function MoveCopyFilesDialog(props: Props) {
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={() => onClose()}
       keepMounted
       scroll="paper"
       aria-labelledby="draggable-dialog-title"
@@ -261,7 +218,7 @@ function MoveCopyFilesDialog(props: Props) {
     >
       <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
         {i18n.t('core:copyMoveEntriesTitle')}
-        <DialogCloseButton testId="closeMCFilesTID" onClose={onCloseDialog} />
+        <DialogCloseButton testId="closeMCFilesTID" onClose={() => onClose()} />
       </DialogTitle>
       <DialogContent style={{ overflow: 'hidden' }}>
         <Typography variant="subtitle2">
@@ -306,13 +263,13 @@ function MoveCopyFilesDialog(props: Props) {
         )}
         <DirectoryListView
           setTargetDir={setTargetPath}
-          currentDirectoryPath={props.currentDirectoryPath}
+          currentDirectoryPath={currentDirectoryPath}
         />
       </DialogContent>
       <DialogActions
         style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
       >
-        <Button data-tid="closeMoveCopyDialog" onClick={() => props.onClose()}>
+        <Button data-tid="closeMoveCopyDialog" onClick={() => onClose()}>
           {i18n.t('core:cancel')}
         </Button>
         <Tooltip
@@ -323,7 +280,7 @@ function MoveCopyFilesDialog(props: Props) {
             disabled={
               !targetPath ||
               AppConfig.isAndroid ||
-              targetPath === props.currentDirectoryPath
+              targetPath === currentDirectoryPath
             }
             onClick={() => handleCopyMove(false)}
             color="primary"
@@ -360,7 +317,7 @@ function MoveCopyFilesDialog(props: Props) {
         <Button
           onClick={() => handleCopyMove(true)}
           data-tid="confirmCopyFiles"
-          disabled={!targetPath || targetPath === props.currentDirectoryPath}
+          disabled={!targetPath || targetPath === currentDirectoryPath}
           color="primary"
           variant="contained"
         >
@@ -371,29 +328,4 @@ function MoveCopyFilesDialog(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    selectedEntries: getSelectedEntries(state),
-    currentDirectoryPath: getDirectoryPath(state)
-  };
-}
-
-function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators(
-    {
-      copyFiles: IOActions.copyFiles,
-      moveFiles: IOActions.moveFiles,
-      moveDirs: IOActions.moveDirs,
-      copyDirs: IOActions.copyDirs,
-      toggleUploadDialog: AppActions.toggleUploadDialog,
-      onUploadProgress: AppActions.onUploadProgress,
-      resetProgress: AppActions.resetProgress
-    },
-    dispatch
-  );
-}
-
-export default connect(
-  mapStateToProps,
-  mapActionCreatorsToProps
-)(MoveCopyFilesDialog);
+export default MoveCopyFilesDialog;

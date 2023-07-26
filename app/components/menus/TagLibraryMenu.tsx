@@ -17,6 +17,7 @@
  */
 
 import React, { useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Menu from '@mui/material/Menu';
@@ -32,27 +33,23 @@ import { TS } from '-/tagspaces.namespace';
 import Links from '-/content/links';
 import { ProLabel, ProTooltip } from '-/components/HelperComponents';
 import { Pro } from '-/pro';
+import { openURLExternally } from '-/services/utils-io';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 
 interface Props {
   classes?: any;
   anchorEl: Element;
   tagGroups: Array<Object>;
-  openURLExternally: (path: string, skipConfirmation?: boolean) => void;
   open: boolean;
   onClose: () => void;
   importTagGroups: (entries: Array<TS.TagGroup>, replace?: boolean) => void;
-  exportTagGroups: (entries: Array<TS.TagGroup>) => void;
   showCreateTagGroupDialog: () => void;
-  showNotification: (
-    text: string,
-    notificationType?: string, // NotificationTypes
-    autohide?: boolean
-  ) => void;
   saveTagInLocation: boolean;
   refreshTagsFromLocation: () => void;
 }
 
 function TagLibraryMenu(props: Props) {
+  const dispatch: AppDispatch = useDispatch();
   const fileInput = useRef<HTMLInputElement>(null);
   const tagGroupsImported = useRef([]);
   // const [tagGroups, setTagGroups] = useState(null);
@@ -91,17 +88,21 @@ function TagLibraryMenu(props: Props) {
           tagGroupsImported.current = jsonObj.tagGroups;
           setIsImportExportTagGroupDialogOpened(true);
         } else {
-          props.showNotification(
-            i18n.t('core:invalidImportFile'),
-            'warning',
-            true
+          dispatch(
+            AppActions.showNotification(
+              i18n.t('core:invalidImportFile'),
+              'warning',
+              true
+            )
           );
         }
       } catch (e) {
-        props.showNotification(
-          i18n.t('core:invalidImportFile'),
-          'warning',
-          true
+        dispatch(
+          AppActions.showNotification(
+            i18n.t('core:invalidImportFile'),
+            'warning',
+            true
+          )
         );
       }
     };
@@ -119,7 +120,6 @@ function TagLibraryMenu(props: Props) {
             dialogModeImport ? tagGroupsImported.current : props.tagGroups
           }
           dialogModeImport={dialogModeImport}
-          exportTagGroups={props.exportTagGroups}
           importTagGroups={props.importTagGroups}
         />
       )}
@@ -179,7 +179,7 @@ function TagLibraryMenu(props: Props) {
           data-tid="taglibraryHelp"
           onClick={() => {
             props.onClose();
-            props.openURLExternally(Links.documentationLinks.taglibrary, true);
+            openURLExternally(Links.documentationLinks.taglibrary, true);
           }}
         >
           <ListItemIcon>

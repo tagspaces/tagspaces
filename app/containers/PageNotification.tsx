@@ -40,6 +40,7 @@ import {
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import Links from '-/content/links';
+import { openURLExternally } from '-/services/utils-io';
 
 interface Props {
   notificationStatus: any;
@@ -56,7 +57,6 @@ interface Props {
   lastPublishedVersion: string;
   setUpdateAvailable: (isUpdateAvailable: boolean) => void;
   setGeneratingThumbnails: (isGenerating: boolean) => void;
-  openURLExternally: (url: string, skipConfirm: boolean) => void;
 }
 
 const TSNotification = withStyles((theme: Theme) =>
@@ -75,7 +75,7 @@ function PageNotification(props: Props) {
   };
 
   const openChangelogPage = () => {
-    props.openURLExternally(Links.links.changelogURL, true);
+    openURLExternally(Links.links.changelogURL, true);
   };
 
   const getLatestVersion = () => {
@@ -86,7 +86,7 @@ function PageNotification(props: Props) {
         false
       );
     } else {
-      props.openURLExternally(Links.links.downloadURL, true);
+      openURLExternally(Links.links.downloadURL, true);
     }
     props.setUpdateAvailable(false);
   };
@@ -202,8 +202,7 @@ function mapDispatchToProps(dispatch) {
       hideNotifications: AppActions.hideNotifications,
       cancelDirectoryIndexing: LocationIndexActions.cancelDirectoryIndexing,
       setUpdateAvailable: AppActions.setUpdateAvailable,
-      setGeneratingThumbnails: AppActions.setGeneratingThumbnails,
-      openURLExternally: AppActions.openURLExternally
+      setGeneratingThumbnails: AppActions.setGeneratingThumbnails
     },
     dispatch
   );

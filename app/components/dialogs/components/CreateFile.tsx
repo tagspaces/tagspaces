@@ -17,8 +17,7 @@
  */
 
 import React, { useReducer, useRef, useState } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Typography from '@mui/material/Typography';
@@ -30,8 +29,7 @@ import i18n from '-/services/i18n';
 import {
   actions as AppActions,
   getDirectoryPath,
-  getSelectedEntries,
-  getCurrentDirectoryPerspective
+  AppDispatch
 } from '-/reducers/app';
 import { getFirstRWLocation } from '-/reducers/locations';
 import { TS } from '-/tagspaces.namespace';
@@ -50,32 +48,17 @@ const styles: any = () => ({
 });
 
 interface Props {
-  open: boolean;
+  //open: boolean;
   classes: any;
-  firstRWLocation: TS.Location;
-  selectedEntries: Array<TS.FileSystemEntry>;
-  currentDirectoryPath: string | null;
-  currentDirectoryPerspective: string;
-  openLocation: (location: TS.Location) => void;
-  createFileAdvanced: (
-    targetPath: string,
-    fileName: string,
-    content: string,
-    fileType: string
-  ) => void;
   onClose: () => void;
 }
 
 function CreateFile(props: Props) {
-  const {
-    classes,
-    onClose,
-    createFileAdvanced,
-    openLocation,
-    currentDirectoryPath,
-    firstRWLocation
-  } = props;
+  const { classes, onClose } = props;
 
+  const dispatch: AppDispatch = useDispatch();
+  const firstRWLocation = useSelector(getFirstRWLocation);
+  const currentDirectoryPath: string | null = useSelector(getDirectoryPath);
   const { targetDirectoryPath } = useTargetPathContext();
 
   const fileName = useRef<string>(
@@ -92,18 +75,20 @@ function CreateFile(props: Props) {
 
   function loadLocation() {
     if (!currentDirectoryPath && firstRWLocation) {
-      openLocation(firstRWLocation);
+      dispatch(AppActions.openLocation(firstRWLocation));
     }
   }
 
   function createRichTextFile() {
     if (targetDirectoryPath && !fileNameValidation(fileName.current)) {
       loadLocation();
-      createFileAdvanced(
-        targetDirectoryPath,
-        fileName.current,
-        fileContent,
-        'html'
+      dispatch(
+        AppActions.createFileAdvanced(
+          targetDirectoryPath,
+          fileName.current,
+          fileContent,
+          'html'
+        )
       );
       onClose();
     }
@@ -112,11 +97,13 @@ function CreateFile(props: Props) {
   function createTextFile() {
     if (targetDirectoryPath && !fileNameValidation(fileName.current)) {
       loadLocation();
-      createFileAdvanced(
-        targetDirectoryPath,
-        fileName.current,
-        fileContent,
-        'txt'
+      dispatch(
+        AppActions.createFileAdvanced(
+          targetDirectoryPath,
+          fileName.current,
+          fileContent,
+          'txt'
+        )
       );
       onClose();
     }
@@ -125,11 +112,13 @@ function CreateFile(props: Props) {
   function createMarkdownFile() {
     if (targetDirectoryPath && !fileNameValidation(fileName.current)) {
       loadLocation();
-      createFileAdvanced(
-        targetDirectoryPath,
-        fileName.current,
-        fileContent,
-        'md'
+      dispatch(
+        AppActions.createFileAdvanced(
+          targetDirectoryPath,
+          fileName.current,
+          fileContent,
+          'md'
+        )
       );
       onClose();
     }
@@ -256,27 +245,4 @@ function CreateFile(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    firstRWLocation: getFirstRWLocation(state),
-    //keyBindings: getKeyBindingObject(state),
-    selectedEntries: getSelectedEntries(state),
-    currentDirectoryPath: getDirectoryPath(state),
-    currentDirectoryPerspective: getCurrentDirectoryPerspective(state)
-  };
-}
-
-function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators(
-    {
-      openLocation: AppActions.openLocation,
-      createFileAdvanced: AppActions.createFileAdvanced
-    },
-    dispatch
-  );
-}
-
-export default connect(
-  mapStateToProps,
-  mapActionCreatorsToProps
-)(withStyles(styles)(CreateFile));
+export default withStyles(styles)(CreateFile);

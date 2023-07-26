@@ -24,7 +24,11 @@ import Dialog from '@mui/material/Dialog';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
 import DraggablePaper from '-/components/DraggablePaper';
-import { actions as AppActions, OpenedEntry } from '-/reducers/app';
+import {
+  actions as AppActions,
+  AppDispatch,
+  OpenedEntry
+} from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { findExtensionsForEntry } from '-/services/utils-io';
 import {
@@ -32,28 +36,26 @@ import {
   getCurrentTheme,
   getSupportedFileTypes
 } from '-/reducers/settings';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import i18n from '-/services/i18n';
 import FileView from '-/components/FileView';
 import useEventListener from '-/utils/useEventListener';
 import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
-import { bindActionCreators } from 'redux';
 import { actions as LocationActions } from '-/reducers/locations';
 
 interface Props {
   open: boolean;
   onClose: () => void;
   fsEntry: TS.FileSystemEntry;
-  supportedFileTypes: Array<any>;
-  currentTheme: string;
-  switchCurrentLocationType: (currentLocationId) => Promise<boolean>;
-  switchLocationType: (locationId: string) => Promise<string | null>;
 }
 
 function FilePreviewDialog(props: Props) {
   const { open = false, onClose, fsEntry } = props;
-  // const [fileOpenerURL, setFileOpenerURL] = useState<string>('about:blank');
+  const dispatch: AppDispatch = useDispatch();
+  const language = useSelector(getCurrentLanguage);
+  const supportedFileTypes = useSelector(getSupportedFileTypes);
+  const currentTheme = useSelector(getCurrentTheme);
   const fileViewer: MutableRefObject<HTMLIFrameElement> = useRef<
     HTMLIFrameElement
   >(null);
@@ -65,7 +67,7 @@ function FilePreviewDialog(props: Props) {
   const openedFile: OpenedEntry = fsEntry
     ? findExtensionsForEntry(
         fsEntry.uuid,
-        props.supportedFileTypes,
+        supportedFileTypes,
         fsEntry.path,
         fsEntry.isFile
       )
@@ -73,7 +75,6 @@ function FilePreviewDialog(props: Props) {
 
   useEventListener('message', e => {
     if (typeof e.data === 'string') {
-      // console.log(e.data);
       try {
         const dataObj = JSON.parse(e.data);
         if (dataObj.eventID === eventID.current) {
@@ -96,7 +97,6 @@ function FilePreviewDialog(props: Props) {
     ) {
       case 'loadDefaultTextContent':
         if (!openedFile || !openedFile.path) {
-          // || openedFile.changed) {
           break;
         }
         textFilePath = openedFile.path;
@@ -109,64 +109,64 @@ function FilePreviewDialog(props: Props) {
           fileViewer.current.contentWindow.setTheme
         ) {
           // @ts-ignore call setContent from iframe
-          fileViewer.current.contentWindow.setTheme(props.currentTheme);
+          fileViewer.current.contentWindow.setTheme(currentTheme);
         }
-        // TODO make loading index.html for folders configurable
-        // if (!this.state.currentEntry.isFile) {
-        //   textFilePath += '/index.html';
-        // }
-        props
-          .switchLocationType(openedFile.locationId)
-          .then(currentLocationId => {
-            PlatformIO.loadTextFilePromise(
-              textFilePath,
-              data.preview ? data.preview : false
-            )
-              .then(content => {
-                const UTF8_BOM = '\ufeff';
-                if (content.indexOf(UTF8_BOM) === 0) {
-                  // eslint-disable-next-line no-param-reassign
-                  content = content.substr(1);
-                }
-                let fileDirectory = extractContainingDirectoryPath(
-                  textFilePath,
-                  PlatformIO.getDirSeparator()
+
+        dispatch(
+          LocationActions.switchLocationType(openedFile.locationId)
+        ).then((currentLocationId: string) => {
+          PlatformIO.loadTextFilePromise(
+            textFilePath,
+            data.preview ? data.preview : false
+          )
+            .then(content => {
+              const UTF8_BOM = '\ufeff';
+              if (content.indexOf(UTF8_BOM) === 0) {
+                content = content.substr(1);
+              }
+              let fileDirectory = extractContainingDirectoryPath(
+                textFilePath,
+                PlatformIO.getDirSeparator()
+              );
+              if (AppConfig.isWeb) {
+                fileDirectory =
+                  extractContainingDirectoryPath(
+                    // eslint-disable-next-line no-restricted-globals
+                    location.href,
+                    PlatformIO.getDirSeparator()
+                  ) +
+                  '/' +
+                  fileDirectory;
+              }
+              if (
+                fileViewer &&
+                fileViewer.current &&
+                fileViewer.current.contentWindow &&
+                // @ts-ignore
+                fileViewer.current.contentWindow.setContent
+              ) {
+                // @ts-ignore call setContent from iframe
+                fileViewer.current.contentWindow.setContent(
+                  content,
+                  fileDirectory,
+                  !openedFile.editMode
                 );
-                if (AppConfig.isWeb) {
-                  fileDirectory =
-                    extractContainingDirectoryPath(
-                      // eslint-disable-next-line no-restricted-globals
-                      location.href,
-                      PlatformIO.getDirSeparator()
-                    ) +
-                    '/' +
-                    fileDirectory;
-                }
-                if (
-                  fileViewer &&
-                  fileViewer.current &&
-                  fileViewer.current.contentWindow &&
-                  // @ts-ignore
-                  fileViewer.current.contentWindow.setContent
-                ) {
-                  // @ts-ignore call setContent from iframe
-                  fileViewer.current.contentWindow.setContent(
-                    content,
-                    fileDirectory,
-                    !openedFile.editMode
-                  );
-                }
-                if (currentLocationId) {
-                  return props.switchCurrentLocationType(currentLocationId);
-                }
-              })
-              .catch(err => {
-                console.warn('Error loading text content ' + err);
-                if (currentLocationId) {
-                  return props.switchCurrentLocationType(currentLocationId);
-                }
-              });
-          });
+              }
+              if (currentLocationId) {
+                dispatch(
+                  AppActions.switchCurrentLocationType(currentLocationId)
+                );
+              }
+            })
+            .catch(err => {
+              console.warn('Error loading text content ' + err);
+              if (currentLocationId) {
+                dispatch(
+                  AppActions.switchCurrentLocationType(currentLocationId)
+                );
+              }
+            });
+        });
         break;
     }
   };
@@ -205,14 +205,14 @@ function FilePreviewDialog(props: Props) {
           flexGrow: 1
         }}
       >
-        <p>{props.fsEntry.path}</p>
+        <p>{fsEntry.path}</p>
         <FileView
           key="FileViewPreviewID"
           openedFile={openedFile}
           fileViewer={fileViewer}
           fileViewerContainer={fileViewerContainer}
           height={'90%'}
-          currentTheme={props.currentTheme}
+          currentTheme={currentTheme}
           eventID={eventID.current}
         />
       </DialogContent>
@@ -220,26 +220,4 @@ function FilePreviewDialog(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    language: getCurrentLanguage(state),
-    supportedFileTypes: getSupportedFileTypes(state),
-    currentTheme: getCurrentTheme(state)
-  };
-}
-
-function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators(
-    {
-      switchCurrentLocationType: AppActions.switchCurrentLocationType,
-      switchLocationType: LocationActions.switchLocationType
-    },
-    dispatch
-  );
-}
-
-export default connect(
-  mapStateToProps,
-  mapActionCreatorsToProps
-  // @ts-ignore
-)(FilePreviewDialog);
+export default FilePreviewDialog;

@@ -21,21 +21,19 @@ import {
   getBackupFileLocation,
   extractContainingDirectoryPath
 } from '@tagspaces/tagspaces-common/paths';
-import Typography from '@mui/material/Typography';
 import Tooltip from '-/components/Tooltip';
-import withStyles from '@mui/styles/withStyles';
 import {
   actions as AppActions,
+  AppDispatch,
   getOpenedFiles,
   OpenedEntry
 } from '-/reducers/app';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { getCurrentLanguage } from '-/reducers/settings';
 import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
 import { format, formatDistanceToNow } from 'date-fns';
 import i18n from '-/services/i18n';
-import { bindActionCreators } from 'redux';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PreviewIcon from '@mui/icons-material/Preview';
 import RestoreIcon from '@mui/icons-material/Restore';
@@ -54,28 +52,20 @@ import {
 import { Pro } from '-/pro';
 import FilePreviewDialog from '-/components/dialogs/FilePreviewDialog';
 
-interface Props {
-  // openedFile: OpenedEntry;
-  openedFiles: Array<OpenedEntry>;
-  updateOpenedFile: (
-    entryPath: string,
-    fsEntryMeta: any // FileSystemEntryMeta
-  ) => Promise<boolean>;
-  theme: any;
-}
-
 const initialRowsPerPage = 10;
 
-function Revisions(props: Props) {
-  const [rows, setRows] = useState<Array<TS.FileSystemEntry>>();
-  const [page, setPage] = React.useState<number>(0);
+function Revisions() {
+  const dispatch: AppDispatch = useDispatch();
+  const language = useSelector(getCurrentLanguage);
+  const openedFiles: Array<OpenedEntry> = useSelector(getOpenedFiles);
+  const [rows, setRows] = useState<Array<TS.FileSystemEntry>>([]);
+  const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(
     initialRowsPerPage
   );
   const [previewDialogEntry, setPreviewDialogEntry] = useState<
-    TS.FileSystemEntry
+    TS.FileSystemEntry | undefined
   >(undefined);
-  const { openedFiles, theme } = props;
   // const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
   useEffect(() => {
@@ -106,7 +96,7 @@ function Revisions(props: Props) {
     );
   }
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };
 
@@ -145,37 +135,40 @@ function Revisions(props: Props) {
     ).then(() =>
       PlatformIO.copyFilePromiseOverwrite(revisionPath, openedFile.path).then(
         () =>
-          props.updateOpenedFile(openedFile.path, {
-            ...openedFile,
-            editMode: false,
-            shouldReload: !openedFile.shouldReload
-          })
+          dispatch(
+            AppActions.updateOpenedFile(openedFile.path, {
+              ...openedFile,
+              editMode: false,
+              shouldReload: !openedFile.shouldReload
+            })
+          )
       )
     );
   }
   function titleFormat(lmdt) {
-    if (lmdt) {
-      return format(lmdt, 'dd.MM.yyyy HH:mm:ss');
-    }
-    return '';
+    return lmdt ? format(lmdt, 'dd.MM.yyyy HH:mm:ss') : '';
   }
 
   function cellFormat(lmdt) {
-    if (lmdt) {
-      return formatDistanceToNow(lmdt, {
-        includeSeconds: true,
-        addSuffix: true
-        // locale: https://date-fns.org/v2.29.3/docs/formatDistanceToNow#usage
-      });
-    }
-    return '';
+    return lmdt
+      ? formatDistanceToNow(lmdt, {
+          includeSeconds: true,
+          addSuffix: true
+          // locale: https://date-fns.org/v2.29.3/docs/formatDistanceToNow#usage
+        })
+      : '';
   }
+
+  const paginatedRows = React.useMemo(
+    () => rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+    [rows, page, rowsPerPage]
+  );
 
   return (
     <Paper
       sx={{ width: '100%', overflow: 'hidden', height: 'calc(100% - 30px)' }}
     >
-      {rows && rows.length > initialRowsPerPage && (
+      {rows.length > initialRowsPerPage && (
         <TablePagination
           rowsPerPageOptions={[10, 25]}
           component="div"
@@ -224,67 +217,56 @@ function Revisions(props: Props) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows &&
-              rows
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map(row => (
-                  <TableRow
-                    data-tid={openedFiles[0].uuid}
-                    key={row.path}
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell
-                      component="th"
-                      scope="row"
+            {paginatedRows.map(row => (
+              <TableRow
+                data-tid={openedFiles[0].uuid}
+                key={row.path}
+                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+              >
+                <TableCell
+                  component="th"
+                  scope="row"
+                  onClick={() => setPreviewDialogEntry(row)}
+                >
+                  {row.name}
+                </TableCell>
+                <TableCell align="right" title={titleFormat(row.lmdt)}>
+                  {cellFormat(row.lmdt)}
+                </TableCell>
+                <TableCell align="right">
+                  <Tooltip title={i18n.t('core:view')}>
+                    <IconButton
+                      aria-label="view revision"
                       onClick={() => setPreviewDialogEntry(row)}
+                      data-tid="viewRevisionTID"
+                      size="large"
                     >
-                      {row.name}
-                    </TableCell>
-                    <TableCell align="right" title={titleFormat(row.lmdt)}>
-                      {cellFormat(row.lmdt)}
-                    </TableCell>
-                    <TableCell align="right">
-                      <Tooltip title={i18n.t('core:view')}>
-                        <IconButton
-                          aria-label="view revision"
-                          onClick={() => setPreviewDialogEntry(row)}
-                          data-tid="viewRevisionTID"
-                          size="large"
-                        >
-                          <PreviewIcon color="primary" />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title={i18n.t('core:restore')}>
-                        <IconButton
-                          aria-label="restore revision"
-                          onClick={() =>
-                            confirm(
-                              'The content of the current file will be replaced with the content of the selected revision. Do you want to continue?'
-                            ) && restoreRevision(row.path)
-                          }
-                          data-tid="restoreRevisionTID"
-                          size="large"
-                        >
-                          <RestoreIcon color="primary" />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title={i18n.t('core:delete')}>
-                        <IconButton
-                          aria-label="delete revision"
-                          onClick={() =>
-                            confirm(
-                              'The selected revision will be deleted. Do you want to continue?'
-                            ) && deleteRevision(row.path)
-                          }
-                          data-tid="deleteRevisionTID"
-                          size="large"
-                        >
-                          <DeleteIcon color="primary" />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                      <PreviewIcon color="primary" />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title={i18n.t('core:restore')}>
+                    <IconButton
+                      aria-label="restore revision"
+                      onClick={() => restoreRevision(row.path)}
+                      data-tid="restoreRevisionTID"
+                      size="large"
+                    >
+                      <RestoreIcon color="primary" />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title={i18n.t('core:delete')}>
+                    <IconButton
+                      aria-label="delete revision"
+                      onClick={() => deleteRevision(row.path)}
+                      data-tid="deleteRevisionTID"
+                      size="large"
+                    >
+                      <DeleteIcon color="primary" />
+                    </IconButton>
+                  </Tooltip>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
@@ -297,22 +279,4 @@ function Revisions(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    language: getCurrentLanguage(state),
-    openedFiles: getOpenedFiles(state)
-  };
-}
-
-function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators(
-    {
-      updateOpenedFile: AppActions.updateOpenedFile
-    },
-    dispatch
-  );
-}
-export default connect(
-  mapStateToProps,
-  mapActionCreatorsToProps
-)(withStyles(undefined, { withTheme: true })(Revisions));
+export default Revisions;

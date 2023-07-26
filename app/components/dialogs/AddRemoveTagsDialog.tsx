@@ -17,21 +17,20 @@
  */
 
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import Button from '@mui/material/Button';
-import Paper, { PaperProps } from '@mui/material/Paper';
+import Paper from '@mui/material/Paper';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import ListSubheader from '@mui/material/ListSubheader';
 import FolderIcon from '@mui/icons-material/FolderOpen';
 import FileIcon from '@mui/icons-material/InsertDriveFileOutlined';
 import Typography from '@mui/material/Typography';
 import Dialog from '@mui/material/Dialog';
 import DraggablePaper from '-/components/DraggablePaper';
-import AppConfig from '-/AppConfig';
 import TagsSelect from '../TagsSelect';
 import i18n from '-/services/i18n';
 import {
@@ -43,17 +42,19 @@ import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import TaggingActions from '-/reducers/tagging-actions';
+import { AppDispatch } from '-/reducers/app';
 
 interface Props {
   open: boolean;
   selectedEntries: Array<any>;
   onClose: (clearSelection?: boolean) => void;
-  addTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
   removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
   removeAllTags: (paths: Array<string>) => void;
 }
 
 function AddRemoveTagsDialog(props: Props) {
+  const dispatch: AppDispatch = useDispatch();
   const [newlyAddedTags, setNewlyAddedTags] = useState<Array<TS.Tag>>([]);
 
   const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
@@ -78,9 +79,11 @@ function AddRemoveTagsDialog(props: Props) {
 
   const addTags = () => {
     if (props.selectedEntries && props.selectedEntries.length > 0) {
-      props.addTags(
-        selectedEntries.map(entry => entry.path),
-        newlyAddedTags
+      dispatch(
+        TaggingActions.addTags(
+          selectedEntries.map(entry => entry.path),
+          newlyAddedTags
+        )
       );
     }
     onCloseDialog(true);

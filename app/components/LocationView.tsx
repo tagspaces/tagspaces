@@ -17,8 +17,7 @@
  */
 
 import React, { useRef, useState } from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import withStyles from '@mui/styles/withStyles';
 import Tooltip from '-/components/Tooltip';
 import ListItem from '@mui/material/ListItem';
@@ -29,12 +28,12 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import { LocalLocationIcon, CloudLocationIcon } from '-/components/CommonIcons';
 import DefaultLocationIcon from '@mui/icons-material/Highlight';
-import { Progress } from 'aws-sdk/clients/s3';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
 import styles from './SidePanels.css';
 import {
   actions as AppActions,
+  AppDispatch,
   getCurrentLocationId,
   isReadOnlyMode
 } from '../reducers/app';
@@ -56,38 +55,11 @@ import { TS } from '-/tagspaces.namespace';
 interface Props {
   classes: any;
   location: TS.Location;
-  currentLocationId: string;
-  openLocation: (location: TS.Location) => void;
-  loadDirectoryContent: (
-    path: string,
-    generateThumbnails: boolean,
-    loadDirMeta?: boolean
-  ) => void;
-  setSelectedEntries: (selectedEntries: Array<Object>) => void;
-  hideDrawer: () => void;
-  isReadOnlyMode: boolean;
-  showNotification: (
-    text: string,
-    notificationType: string,
-    autohide: boolean
-  ) => void;
-  resetProgress: () => void;
-  uploadFiles: (
-    files: Array<string>,
-    destination: string,
-    onUploadProgress?: (progress: Progress, response: any) => void
-  ) => Promise<Array<TS.FileSystemEntry>>;
-  onUploadProgress: (progress: Progress, response: any) => void;
-  reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => void;
-  toggleUploadDialog: () => void;
-  moveFiles: (files: Array<string>, destination: string) => void;
-  showUnixHiddenEntries: boolean;
+  hideDrawer?: () => void;
   setEditLocationDialogOpened: (open: boolean) => void;
   setDeleteLocationDialogOpened: (open: boolean) => void;
   selectedLocation: TS.Location;
   setSelectedLocation: (loc: TS.Location) => void;
-  changeLocation: (loc: TS.Location) => void;
-  exitSearchMode: () => void;
 }
 
 function LocationView(props: Props) {
@@ -97,10 +69,25 @@ function LocationView(props: Props) {
     setLocationDirectoryContextMenuAnchorEl
   ] = useState<null | HTMLElement>(null);
 
-  const { location } = props;
+  const dispatch: AppDispatch = useDispatch();
+  const language = useSelector(getCurrentLanguage);
+  const currentLocationId: string = useSelector(getCurrentLocationId);
+  const readOnlyMode = useSelector(isReadOnlyMode);
+
+  const {
+    classes,
+    location,
+    hideDrawer,
+    setSelectedLocation,
+    setEditLocationDialogOpened,
+    setDeleteLocationDialogOpened,
+    selectedLocation
+  } = props;
   const isCloudLocation = location.type === locationType.TYPE_CLOUD;
 
-  const handleLocationIconClick = event => {
+  const handleLocationIconClick = (
+    event: React.MouseEvent<HTMLSpanElement, MouseEvent>
+  ) => {
     event.preventDefault();
     event.stopPropagation();
     if (directoryTreeRef.current) {
@@ -109,20 +96,23 @@ function LocationView(props: Props) {
   };
 
   const handleLocationClick = () => {
-    if (location.uuid === props.currentLocationId) {
+    if (location.uuid === currentLocationId) {
       // the same location click
-      props.loadDirectoryContent(
-        PlatformIO.getLocationPath(location),
-        true,
-        true
+
+      dispatch(
+        AppActions.loadDirectoryContent(
+          PlatformIO.getLocationPath(location),
+          true,
+          true
+        )
       );
     } else {
       // this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
-      props.setSelectedEntries([]);
-      props.exitSearchMode();
-      props.openLocation(location);
-      if (props.hideDrawer) {
-        props.hideDrawer();
+      dispatch(AppActions.setSelectedEntries([]));
+      dispatch(AppActions.exitSearchMode());
+      dispatch(AppActions.openLocation(location));
+      if (hideDrawer) {
+        hideDrawer();
       }
     }
   };
@@ -135,7 +125,11 @@ function LocationView(props: Props) {
     event.preventDefault();
     event.stopPropagation();
     setLocationDirectoryContextMenuAnchorEl(event.currentTarget);
-    props.setSelectedLocation(location);
+    setSelectedLocation(location);
+  };
+
+  const onUploadProgress = (progress, response) => {
+    dispatch(AppActions.onUploadProgress(progress, response));
   };
 
   /**
@@ -155,27 +149,33 @@ function LocationView(props: Props) {
       } else {
         arrPath.push(path);
       }
-      if (props.isReadOnlyMode) {
-        props.showNotification(
-          i18n.t('core:dndDisabledReadOnlyMode'),
-          'error',
-          true
+      if (readOnlyMode) {
+        dispatch(
+          AppActions.showNotification(
+            i18n.t('core:dndDisabledReadOnlyMode'),
+            'error',
+            true
+          )
         );
         return;
       }
       if (!AppConfig.isWin && !path.startsWith('/')) {
-        props.showNotification(
-          i18n.t('Moving file not possible'),
-          'error',
-          true
+        dispatch(
+          AppActions.showNotification(
+            i18n.t('Moving file not possible'),
+            'error',
+            true
+          )
         );
         return;
       }
       if (AppConfig.isWin && !path.substr(1).startsWith(':')) {
-        props.showNotification(
-          i18n.t('Moving file not possible'),
-          'error',
-          true
+        dispatch(
+          AppActions.showNotification(
+            i18n.t('Moving file not possible'),
+            'error',
+            true
+          )
         );
         return;
       }
@@ -184,11 +184,7 @@ function LocationView(props: Props) {
       if (targetPath === undefined) {
         targetPath = targetLocation.path;
       }
-      /* if (item.children && item.children.props && item.children.props.path) {
-        targetPath = item.children.props.path;
-      } else {
-        targetPath = item.children[1].props.record.path;
-      } */
+
       if (monitor && targetPath !== undefined && targetLocation !== undefined) {
         // TODO handle monitor -> isOver and change folder icon
         console.log('Dropped files: ' + path);
@@ -196,12 +192,13 @@ function LocationView(props: Props) {
           // TODO Webdav
           PlatformIO.enableObjectStoreSupport(targetLocation)
             .then(() => {
-              props.resetProgress();
-              props.toggleUploadDialog();
-              props
-                .uploadFiles(arrPath, targetPath, props.onUploadProgress)
+              dispatch(AppActions.resetProgress());
+              dispatch(AppActions.toggleUploadDialog());
+              dispatch(
+                IOActions.uploadFiles(arrPath, targetPath, onUploadProgress)
+              )
                 .then((fsEntries: Array<TS.FileSystemEntry>) => {
-                  props.reflectCreateEntries(fsEntries);
+                  dispatch(AppActions.reflectCreateEntries(fsEntries));
                   return true;
                 })
                 .catch(error => {
@@ -214,9 +211,9 @@ function LocationView(props: Props) {
             });
         } else if (targetLocation.type === locationType.TYPE_LOCAL) {
           PlatformIO.disableObjectStoreSupport();
-          props.moveFiles(arrPath, targetPath);
+          dispatch(IOActions.moveFiles(arrPath, targetPath));
         }
-        props.setSelectedEntries([]);
+        dispatch(AppActions.setSelectedEntries([]));
       }
     }
   };
@@ -246,7 +243,7 @@ function LocationView(props: Props) {
             paddingLeft: 5,
             paddingRight: 5
           }}
-          className={props.classes.header}
+          className={classes.header}
           data-tid="locationTitleElement"
           noWrap
         >
@@ -261,9 +258,9 @@ function LocationView(props: Props) {
     <>
       {locationDirectoryContextMenuAnchorEl && (
         <LocationContextMenu
-          setEditLocationDialogOpened={props.setEditLocationDialogOpened}
-          setDeleteLocationDialogOpened={props.setDeleteLocationDialogOpened}
-          selectedLocation={props.selectedLocation}
+          setEditLocationDialogOpened={setEditLocationDialogOpened}
+          setDeleteLocationDialogOpened={setDeleteLocationDialogOpened}
+          selectedLocation={selectedLocation}
           locationDirectoryContextMenuAnchorEl={
             locationDirectoryContextMenuAnchorEl
           }
@@ -276,9 +273,9 @@ function LocationView(props: Props) {
       <ListItem
         data-tid={'location_' + location.name.replace(/ /g, '_')}
         className={
-          props.currentLocationId === location.uuid
-            ? props.classes.listItemSelected
-            : props.classes.listItem
+          currentLocationId === location.uuid
+            ? classes.listItemSelected
+            : classes.listItem
         }
         button
         onClick={handleLocationClick}
@@ -301,14 +298,14 @@ function LocationView(props: Props) {
                 style={{
                   cursor: 'pointer'
                 }}
-                className={props.classes.icon}
+                className={classes.icon}
               />
             ) : (
               <LocalLocationIcon
                 style={{
                   cursor: 'pointer'
                 }}
-                className={props.classes.icon}
+                className={classes.icon}
               />
             )}
           </Tooltip>
@@ -347,48 +344,12 @@ function LocationView(props: Props) {
       <DirectoryTreeView
         key={'tree_' + location.uuid}
         ref={directoryTreeRef}
-        classes={props.classes}
-        loadDirectoryContent={props.loadDirectoryContent}
+        classes={classes}
         location={location}
-        showUnixHiddenEntries={props.showUnixHiddenEntries}
         handleFileMoveDrop={handleFileMoveDrop}
-        changeLocation={props.changeLocation}
       />
     </>
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    currentLocationId: getCurrentLocationId(state),
-    isReadOnlyMode: isReadOnlyMode(state),
-    showUnixHiddenEntries: getShowUnixHiddenEntries(state),
-    language: getCurrentLanguage(state)
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      showNotification: AppActions.showNotification,
-      toggleUploadDialog: AppActions.toggleUploadDialog,
-      reflectCreateEntries: AppActions.reflectCreateEntries,
-      resetProgress: AppActions.resetProgress,
-      uploadFiles: IOActions.uploadFiles,
-      moveFiles: IOActions.moveFiles,
-      onUploadProgress: AppActions.onUploadProgress,
-      setSelectedEntries: AppActions.setSelectedEntries,
-      openLocation: AppActions.openLocation,
-      loadDirectoryContent: AppActions.loadDirectoryContent,
-      changeLocation: AppActions.changeLocation,
-      exitSearchMode: AppActions.exitSearchMode
-    },
-    dispatch
-  );
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-  // @ts-ignore
-)(withStyles(styles)(React.memo(LocationView)));
+export default withStyles(styles)(React.memo(LocationView));

@@ -1689,7 +1689,6 @@ function EntryContainer(props: Props) {
         <AddRemoveTagsDialog
           open={isEditTagsModalOpened}
           onClose={() => setEditTagsModalOpened(false)}
-          addTags={addTags}
           removeTags={removeTags}
           removeAllTags={removeAllTags}
           selectedEntries={openedFile ? [openedFile] : []}

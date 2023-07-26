@@ -46,7 +46,7 @@ interface Props {
   tagMode?: 'default' | 'display' | 'remove';
   entryPath?: string;
   deleteIcon?: Object;
-  addTags?: (paths: Array<string>, tags: Array<TS.Tag>) => void;
+  addTags?: (paths: Array<string>, tags: Array<TS.Tag>, updateIndex?) => void;
   moveTag?: (
     tagTitle: string,
     fromTagGroupId: TS.Uuid,

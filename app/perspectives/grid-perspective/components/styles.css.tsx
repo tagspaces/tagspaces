@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-import AppConfig from '-/AppConfig';
+// import AppConfig from '-/AppConfig';
 import { alpha } from '@mui/material/styles';
 
 export default (theme: any): any => ({

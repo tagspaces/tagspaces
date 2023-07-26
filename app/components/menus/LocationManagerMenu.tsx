@@ -30,15 +30,16 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
 import { Pro } from '../../pro';
-import { actions as AppActions } from '-/reducers/app';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import Links from '-/content/links';
 import { ProLabel } from '-/components/HelperComponents';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { OpenLinkIcon, HelpIcon } from '-/components/CommonIcons';
+import { openURLExternally } from '-/services/utils-io';
 
 interface Props {
   classes: any;
@@ -46,17 +47,21 @@ interface Props {
   importLocations: () => void;
   showCreateLocationDialog: () => void;
   toggleOpenLinkDialog: () => void;
-  closeAllLocations: () => void;
-  openURLExternally: (url: string, skipConfirmation?: boolean) => void;
-  createLocationsIndexes: () => void;
 }
 
 function LocationManagerMenu(props: Props) {
+  const {
+    classes,
+    exportLocations,
+    importLocations,
+    showCreateLocationDialog,
+    toggleOpenLinkDialog
+  } = props;
   const [
     locationManagerMenuAnchorEl,
     setLocationManagerMenuAnchorEl
   ] = useState<null | HTMLElement>(null);
-
+  const dispatch: AppDispatch = useDispatch();
   const menuItems = [];
   if (!AppConfig.locationsReadOnly) {
     menuItems.push(
@@ -65,7 +70,7 @@ function LocationManagerMenu(props: Props) {
         data-tid="locationManagerMenuCreateLocation"
         onClick={() => {
           setLocationManagerMenuAnchorEl(null);
-          props.showCreateLocationDialog();
+          showCreateLocationDialog();
         }}
       >
         <ListItemIcon>
@@ -82,7 +87,7 @@ function LocationManagerMenu(props: Props) {
       data-tid="locationManagerMenuOpenLink"
       onClick={() => {
         setLocationManagerMenuAnchorEl(null);
-        props.toggleOpenLinkDialog();
+        toggleOpenLinkDialog();
       }}
     >
       <ListItemIcon>
@@ -101,7 +106,7 @@ function LocationManagerMenu(props: Props) {
         data-tid="locationManagerMenuExportLocationsTID"
         onClick={() => {
           setLocationManagerMenuAnchorEl(null);
-          props.exportLocations();
+          exportLocations();
         }}
       >
         <ListItemIcon>
@@ -124,7 +129,7 @@ function LocationManagerMenu(props: Props) {
         data-tid="locationManagerMenuImportLocationsTID"
         onClick={() => {
           setLocationManagerMenuAnchorEl(null);
-          props.importLocations();
+          importLocations();
         }}
       >
         <ListItemIcon>
@@ -148,7 +153,7 @@ function LocationManagerMenu(props: Props) {
       data-tid="locationManagerMenuCloseAll"
       onClick={() => {
         setLocationManagerMenuAnchorEl(null);
-        props.closeAllLocations();
+        dispatch(AppActions.closeAllLocations());
       }}
     >
       <ListItemIcon>
@@ -164,7 +169,7 @@ function LocationManagerMenu(props: Props) {
       data-tid="updateAllLocationIndexes"
       onClick={() => {
         setLocationManagerMenuAnchorEl(null);
-        props.createLocationsIndexes();
+        dispatch(LocationIndexActions.createLocationsIndexes());
       }}
     >
       <ListItemIcon>
@@ -180,7 +185,7 @@ function LocationManagerMenu(props: Props) {
       data-tid="locationManagerMenuHelp"
       onClick={() => {
         setLocationManagerMenuAnchorEl(null);
-        props.openURLExternally(Links.documentationLinks.locations, true);
+        openURLExternally(Links.documentationLinks.locations, true);
       }}
     >
       <ListItemIcon>
@@ -192,9 +197,9 @@ function LocationManagerMenu(props: Props) {
 
   return (
     <>
-      <div className={props.classes.toolbar}>
+      <div className={classes.toolbar}>
         <Typography
-          className={classNames(props.classes.panelTitle, props.classes.header)}
+          className={classNames(classes.panelTitle, classes.header)}
           variant="subtitle1"
         >
           {i18n.t('core:locationManager')}
@@ -219,14 +224,4 @@ function LocationManagerMenu(props: Props) {
     </>
   );
 }
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      closeAllLocations: AppActions.closeAllLocations,
-      createLocationsIndexes: LocationIndexActions.createLocationsIndexes
-    },
-    dispatch
-  );
-}
-export default connect(undefined, mapDispatchToProps)(LocationManagerMenu);
+export default LocationManagerMenu;

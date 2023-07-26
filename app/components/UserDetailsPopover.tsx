@@ -29,28 +29,29 @@ import Button from '@mui/material/Button';
 import Auth from '@aws-amplify/auth';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import withStyles from '@mui/styles/withStyles';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { clearAllURLParams } from '-/utils/dom';
 import i18n from '-/services/i18n';
 import styles from '-/components/SidePanels.css';
 import { Pro } from '-/pro';
+import { currentUser } from '-/reducers/app';
 
 interface Props {
   classes?: any;
   theme?: any;
-  user: CognitoUserInterface;
-  // closeAllVerticalPanels: () => void;
   onClose: () => void;
 }
 
 function UserDetailsPopover(props: Props) {
+  const { classes, theme, onClose } = props;
+  const cognitoUser: CognitoUserInterface = useSelector(currentUser);
   const [isSetupTOTPOpened, setSetupTOTPOpened] = useState<boolean>(false);
   const SetupTOTPDialog = Pro && Pro.UI ? Pro.UI.SetupTOTPDialog : false;
 
   let email;
   let initials;
-  if (props.user && props.user.attributes && props.user.attributes.email) {
-    ({ email } = props.user.attributes);
+  if (cognitoUser && cognitoUser.attributes && cognitoUser.attributes.email) {
+    ({ email } = cognitoUser.attributes);
     const fullName = email.split('@')[0].split('.');
     const firstName = fullName[0];
     const lastName = fullName[fullName.length - 1];
@@ -65,11 +66,8 @@ function UserDetailsPopover(props: Props) {
   const signOut = () => {
     Auth.signOut();
     clearAllURLParams();
-    // props.closeAllVerticalPanels();
-    props.onClose();
+    onClose();
   };
-
-  const { classes, theme } = props;
 
   return (
     <div
@@ -114,7 +112,7 @@ function UserDetailsPopover(props: Props) {
               <SetupTOTPDialog
                 open={isSetupTOTPOpened}
                 onClose={() => setSetupTOTPOpened(false)}
-                user={props.user}
+                user={cognitoUser}
                 confirmCallback={result => {
                   if (result) {
                     window.location.reload(); // TODO SOFTWARE_TOKEN_MFA is not refreshed in signed user without window.reload()
@@ -123,7 +121,7 @@ function UserDetailsPopover(props: Props) {
                 }}
               />
             )}
-            {'SOFTWARE_TOKEN_MFA'.indexOf(props.user.preferredMFA) === -1 ? (
+            {'SOFTWARE_TOKEN_MFA'.indexOf(cognitoUser.preferredMFA) === -1 ? (
               <Tooltip title={i18n.t('core:setupTOTPHelp')}>
                 <Button
                   data-tid="setupTOTP"
@@ -148,7 +146,7 @@ function UserDetailsPopover(props: Props) {
                   className={classes.mainActionButton}
                   onClick={async () => {
                     try {
-                      await Auth.setPreferredMFA(props.user, 'NOMFA');
+                      await Auth.setPreferredMFA(cognitoUser, 'NOMFA');
                       signOut();
                     } catch (error) {
                       console.error(error);
@@ -191,21 +189,4 @@ function UserDetailsPopover(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    user: state.app.user
-  };
-}
-
-/* function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      closeAllVerticalPanels: AppActions.closeAllVerticalPanels
-    },
-    dispatch
-  );
-} */
-
-export default connect(mapStateToProps)(
-  withStyles(styles, { withTheme: true })(UserDetailsPopover)
-);
+export default withStyles(styles, { withTheme: true })(UserDetailsPopover);

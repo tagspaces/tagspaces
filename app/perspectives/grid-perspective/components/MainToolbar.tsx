@@ -17,6 +17,7 @@
  */
 
 import React from 'react';
+import { useSelector } from 'react-redux';
 import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
@@ -45,12 +46,11 @@ import {
 import { getKeyBindingObject } from '-/reducers/settings';
 import { getAllPropertiesPromise } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
-import { actions as AppActions } from '-/reducers/app';
+import { actions as AppActions, isReadOnlyMode } from '-/reducers/app';
 
 interface Props {
   classes: any;
   prefixDataTID?: string;
-  isReadOnlyMode: boolean;
   selectedEntries: Array<TS.FileSystemEntry>;
   loadParentDirectoryContent: () => void;
   toggleSelectAllFiles: (event: any) => void;
@@ -83,7 +83,6 @@ function MainToolbar(props: Props) {
     loadParentDirectoryContent,
     layoutType,
     handleLayoutSwitch,
-    isReadOnlyMode,
     openAddRemoveTagsDialog,
     openMoveCopyFilesDialog,
     openDeleteFileDialog,
@@ -93,6 +92,7 @@ function MainToolbar(props: Props) {
     keyBindings,
     openShareFilesDialog
   } = props;
+  const readOnlyMode = useSelector(isReadOnlyMode);
 
   function showProperties() {
     getAllPropertiesPromise(props.directoryPath)
@@ -168,7 +168,7 @@ function MainToolbar(props: Props) {
           <FolderPropertiesIcon />
         </IconButton>
       </Tooltip>
-      {!isReadOnlyMode && (
+      {!readOnlyMode && (
         <Tooltip
           title={
             i18n.t('core:tagSelectedEntries') +
@@ -190,7 +190,7 @@ function MainToolbar(props: Props) {
           </span>
         </Tooltip>
       )}
-      {!isReadOnlyMode && (
+      {!readOnlyMode && (
         <Tooltip title={i18n.t('core:copyMoveSelectedEntries')}>
           <span>
             <IconButton
@@ -205,7 +205,7 @@ function MainToolbar(props: Props) {
           </span>
         </Tooltip>
       )}
-      {!isReadOnlyMode && (
+      {!readOnlyMode && (
         <Tooltip
           title={
             i18n.t('core:deleteSelectedEntries') +

@@ -201,7 +201,10 @@ export function importTagGroups(
   return setTagLibrary(arr);
 }
 
-export function exportTagGroups(entry: Array<TS.TagGroup>, settingsVersion) {
+export function exportTagGroups(
+  entry: Array<TS.TagGroup>,
+  settingsVersion = 3
+) {
   const tagLibrary = entry;
   const jsonFormat =
     '{ "appName": "' +

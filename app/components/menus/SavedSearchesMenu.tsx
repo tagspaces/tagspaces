@@ -17,46 +17,50 @@
  */
 
 import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { TS } from '-/tagspaces.namespace';
 import { getSearches } from '-/reducers/searches';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import i18n from '-/services/i18n';
 import { getShowUnixHiddenEntries } from '-/reducers/settings';
+import { AppDispatch } from '-/reducers/app';
 
 interface Props {
-  classes?: any;
   open: boolean;
   anchorEl: Element;
   onClose: () => void;
-  searches: Array<TS.SearchQuery>;
-  setSearchQuery: (searchQuery: TS.SearchQuery) => void;
-  showUnixHiddenEntries: boolean;
 }
 
 function SavedSearchesMenu(props: Props) {
+  const { open, onClose, anchorEl } = props;
+  const dispatch: AppDispatch = useDispatch();
+  const searches = useSelector(state => getSearches(state));
+  const showUnixHiddenEntries = useSelector(state =>
+    getShowUnixHiddenEntries(state)
+  );
+
   const handleSavedSearchClick = (uuid: string) => {
-    const savedSearch = props.searches.find(search => search.uuid === uuid);
+    const savedSearch = searches.find(search => search.uuid === uuid);
     if (!savedSearch) {
       return true;
     }
 
-    props.setSearchQuery({
-      ...savedSearch,
-      showUnixHiddenEntries: props.showUnixHiddenEntries
-    });
+    dispatch(
+      LocationIndexActions.setSearchQuery({
+        ...savedSearch,
+        showUnixHiddenEntries: showUnixHiddenEntries
+      })
+    );
   };
 
-  const menuItems = props.searches.length ? (
-    props.searches.map(search => (
+  const menuItems = searches.length ? (
+    searches.map(search => (
       <MenuItem
         key={search.uuid}
         onClick={() => {
           handleSavedSearchClick(search.uuid);
-          props.onClose();
+          onClose();
         }}
       >
         {search.title}
@@ -69,9 +73,9 @@ function SavedSearchesMenu(props: Props) {
   return (
     <div style={{ overflowY: 'hidden' }}>
       <Menu
-        anchorEl={props.anchorEl}
-        open={props.open}
-        onClose={props.onClose}
+        anchorEl={anchorEl}
+        open={open}
+        onClose={onClose}
         id="search-menu"
         MenuListProps={{
           'aria-labelledby': 'basic-button'
@@ -111,19 +115,4 @@ function SavedSearchesMenu(props: Props) {
     </div>
   );
 }
-
-function mapStateToProps(state) {
-  return {
-    searches: getSearches(state),
-    showUnixHiddenEntries: getShowUnixHiddenEntries(state)
-  };
-}
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      setSearchQuery: LocationIndexActions.setSearchQuery
-    },
-    dispatch
-  );
-}
-export default connect(mapStateToProps, mapDispatchToProps)(SavedSearchesMenu);
+export default SavedSearchesMenu;

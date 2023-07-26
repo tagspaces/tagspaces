@@ -722,7 +722,7 @@ export const actions = {
     type: types.IMPORT_TAGGROUP,
     entries,
     replace
-  }),
+  })
   /**
    * GraphQL API return TagGroup Tags array like String
    * This migrate tagGroups model to children []
@@ -739,38 +739,6 @@ export const actions = {
       dispatch(actions.importTagGroups(tagGroups, true));
     }
   }, */
-  exportTagGroups: (entry: Array<TS.TagGroup>) => (
-    dispatch: (actions: Object) => void,
-    getState: () => any
-  ) => {
-    const { settings } = getState();
-    const tagLibrary = entry;
-    const jsonFormat =
-      '{ "appName": "' +
-      versionMeta.name +
-      '", "appVersion": "' +
-      versionMeta.version +
-      '", "settingsVersion": ' +
-      settings.settingsVersion +
-      ', "tagGroups": ';
-    const allTagGroups = [];
-    tagLibrary.forEach(value => {
-      const preparedTagGroup = prepareTagGroupForExport(value);
-      if (preparedTagGroup.title && preparedTagGroup.uuid) {
-        allTagGroups.push(preparedTagGroup);
-      }
-    });
-
-    const blob = new Blob(
-      [jsonFormat + JSON.stringify(allTagGroups, null, 2) + '}'],
-      {
-        type: 'application/json'
-      }
-    );
-    const dateTimeTag = formatDateTime4Tag(new Date(), true);
-    saveAsTextFile(blob, 'tag-library [tagspaces ' + dateTimeTag + '].json');
-    console.log('Tag library exported...');
-  }
 };
 
 // Selectors

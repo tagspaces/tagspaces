@@ -26,25 +26,23 @@ import TextField from '@mui/material/TextField';
 import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
 import Switch from '@mui/material/Switch';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { useDispatch } from 'react-redux';
 import i18n from '-/services/i18n';
 import useValidation from '-/utils/useValidation';
 import { TS } from '-/tagspaces.namespace';
 import { actions as SettingsActions } from '-/reducers/settings';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import { AppDispatch } from '-/reducers/app';
 
 interface Props {
   open: boolean;
   onClose: () => void;
   tileServer: TS.MapTileServer;
   isDefault: boolean;
-  editTileServers: (tileServer: TS.MapTileServer, isDefault: boolean) => void;
-  addTileServers: (tileServer: TS.MapTileServer, isDefault: boolean) => void;
-  deleteTileServer: (uuid: string) => void;
 }
 
 function MapTileServerDialog(props: Props) {
+  const dispatch: AppDispatch = useDispatch();
   const name = useRef<string>(props.tileServer.name);
   const serverURL = useRef<string>(props.tileServer.serverURL);
   const serverInfo = useRef<string>(props.tileServer.serverInfo);
@@ -74,24 +72,28 @@ function MapTileServerDialog(props: Props) {
   const saveTileServer = () => {
     if (validateForm()) {
       if (props.tileServer.uuid) {
-        props.editTileServers(
-          {
-            uuid: props.tileServer.uuid,
-            name: name.current,
-            serverInfo: serverInfo.current,
-            serverURL: serverURL.current
-          },
-          isDefault.current
+        dispatch(
+          SettingsActions.editTileServers(
+            {
+              uuid: props.tileServer.uuid,
+              name: name.current,
+              serverInfo: serverInfo.current,
+              serverURL: serverURL.current
+            },
+            isDefault.current
+          )
         );
       } else {
-        props.addTileServers(
-          {
-            uuid: props.tileServer.uuid,
-            name: name.current,
-            serverInfo: serverInfo.current,
-            serverURL: serverURL.current
-          },
-          isDefault.current
+        dispatch(
+          SettingsActions.addTileServers(
+            {
+              uuid: props.tileServer.uuid,
+              name: name.current,
+              serverInfo: serverInfo.current,
+              serverURL: serverURL.current
+            },
+            isDefault.current
+          )
         );
       }
       props.onClose();
@@ -172,7 +174,7 @@ function MapTileServerDialog(props: Props) {
           }}
           data-tid="deleteTileServerTID"
           onClick={() => {
-            props.deleteTileServer(props.tileServer.uuid);
+            dispatch(SettingsActions.deleteTileServer(props.tileServer.uuid));
             props.onClose();
           }}
         >
@@ -209,18 +211,4 @@ function MapTileServerDialog(props: Props) {
   );
 }
 
-function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators(
-    {
-      editTileServers: SettingsActions.editTileServers,
-      addTileServers: SettingsActions.addTileServers,
-      deleteTileServer: SettingsActions.deleteTileServer
-    },
-    dispatch
-  );
-}
-
-export default connect(
-  undefined,
-  mapActionCreatorsToProps
-)(MapTileServerDialog);
+export default MapTileServerDialog;

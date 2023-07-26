@@ -17,8 +17,7 @@
  */
 
 import React from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import ShowEntriesWithTagIcon from '@mui/icons-material/SearchOutlined';
 import ApplyTagIcon from '@mui/icons-material/LocalOfferOutlined';
 import Edit from '@mui/icons-material/Edit';
@@ -30,7 +29,11 @@ import MenuItem from '@mui/material/MenuItem';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import i18n from '-/services/i18n';
 import { getMaxSearchResults } from '-/reducers/settings';
-import { getSelectedEntries } from '-/reducers/app';
+import {
+  AppDispatch,
+  getSelectedEntries,
+  isReadOnlyMode
+} from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import TaggingActions from '-/reducers/tagging-actions';
 
@@ -42,41 +45,33 @@ interface Props {
   open?: boolean;
   onClose: () => void;
   selectedTag?: TS.Tag;
-  setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   showEditTagDialog: () => void;
   showDeleteTagDialog: () => void;
-  maxSearchResults: number;
-  selectedEntries: Array<any>;
-  isReadOnlyMode: boolean;
-  addTags: (
-    paths: Array<string>,
-    tags: Array<TS.Tag>,
-    updateIndex?: boolean
-  ) => void;
 }
 
 function TagMenu(props: Props) {
   const {
-    isReadOnlyMode,
     selectedTag,
-    setSearchQuery,
     onClose,
     showEditTagDialog,
     showDeleteTagDialog,
-    maxSearchResults,
-    selectedEntries,
-    addTags,
     anchorEl,
     open
   } = props;
+  const dispatch: AppDispatch = useDispatch();
+  const readOnlyMode = useSelector(isReadOnlyMode);
+  const maxSearchResults: number = useSelector(getMaxSearchResults);
+  const selectedEntries = useSelector(getSelectedEntries);
 
   function showFilesWithThisTag() {
     if (selectedTag) {
-      setSearchQuery({
-        tagsAND: [selectedTag],
-        maxSearchResults,
-        executeSearch: true
-      });
+      dispatch(
+        LocationIndexActions.setSearchQuery({
+          tagsAND: [selectedTag],
+          maxSearchResults: maxSearchResults,
+          executeSearch: true
+        })
+      );
     }
     onClose();
   }
@@ -93,7 +88,7 @@ function TagMenu(props: Props) {
 
   function applyTag() {
     const selectedEntryPaths = selectedEntries.map(entry => entry.path);
-    addTags(selectedEntryPaths, [selectedTag]);
+    dispatch(TaggingActions.addTags(selectedEntryPaths, [selectedTag]));
     onClose();
   }
 
@@ -115,7 +110,7 @@ function TagMenu(props: Props) {
           </MenuItem>
         )}
 
-        {selectedEntries && selectedEntries.length > 0 && !isReadOnlyMode && (
+        {selectedEntries && selectedEntries.length > 0 && !readOnlyMode && (
           <MenuItem data-tid="applyTagTID" onClick={applyTag}>
             <ListItemIcon>
               <ApplyTagIcon />
@@ -144,21 +139,4 @@ function TagMenu(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    maxSearchResults: getMaxSearchResults(state),
-    selectedEntries: getSelectedEntries(state)
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      setSearchQuery: LocationIndexActions.setSearchQuery,
-      addTags: TaggingActions.addTags
-    },
-    dispatch
-  );
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(TagMenu);
+export default TagMenu;

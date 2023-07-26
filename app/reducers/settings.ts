@@ -838,6 +838,7 @@ export const isDevMode = (state: any) =>
   window.ExtDevMode ? window.ExtDevMode : state.settings.devMode;
 export const isRevisionsEnabled = (state: any) =>
   state.settings.isRevisionsEnabled;
+export const isReorderTags = (state: any) => state.settings.reorderTags;
 export const getPrefixTagContainer = (state: any) =>
   state.settings.prefixTagContainer;
 export const getWarningOpeningFilesExternally = (state: any) =>
@@ -894,6 +895,8 @@ export const isGlobalKeyBindingEnabled = (state: any) =>
   state.settings.enableGlobalKeyboardShortcuts;
 export const getMainVerticalSplitSize = (state: any) =>
   state.settings.mainVSplitSize;
+export const getTagGroupCollapsed = (state: any) =>
+  state.settings.tagGroupCollapsed;
 export const getTagDelimiter = (state: any) => state.settings.tagDelimiter;
 export const getMaxSearchResults = (state: any) =>
   state.settings.maxSearchResult;
@@ -917,7 +920,7 @@ export const isFirstRun = (state: any) => {
 };
 
 function generateKeyBindingObject(keyBindings: Array<Object>) {
-  const kbObject = {};
+  const kbObject: any = {};
   keyBindings.map((kb: any) => {
     kbObject[kb.name] = kb.command;
     return true;

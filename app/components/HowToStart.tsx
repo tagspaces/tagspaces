@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import i18n from '-/services/i18n';
 import Links from '-/content/links';
 import { ProSign } from '-/components/HelperComponents';
+import { openURLExternally } from '-/services/utils-io';
 
 export const styles: any = (theme: any) => ({
   recentTitle: {
@@ -41,11 +42,10 @@ function clearHighlights() {
 interface Props {
   theme: any;
   classes: any;
-  openURLExternally: (url: string, skipConfirmation?: boolean) => void;
 }
 
 function HowToStart(props: Props) {
-  const { classes, openURLExternally, theme } = props;
+  const { classes, theme } = props;
   const steps = [
     {
       label: 'Introduction',

@@ -34,7 +34,6 @@ if (window.ExtCheckForUpdatesOnStartup !== undefined) {
 }
 
 export default {
-  settingsVersion: 3,
   isLoading: false,
   error: null,
   userId: null,

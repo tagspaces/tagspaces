@@ -17,8 +17,7 @@
  */
 
 import React, { useEffect, useReducer, useRef, useState } from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { format, formatDistanceToNow } from 'date-fns';
 import withStyles from '@mui/styles/withStyles';
 import makeStyles from '@mui/styles/makeStyles';
@@ -32,6 +31,7 @@ import AdvancedSearchIcon from '@mui/icons-material/TuneOutlined';
 import DropDownIcon from '@mui/icons-material/ArrowDropDownOutlined';
 import {
   actions as AppActions,
+  AppDispatch,
   getDirectoryPath,
   isSearchMode
 } from '../reducers/app';
@@ -41,7 +41,6 @@ import {
   getSearchQuery
 } from '../reducers/location-index';
 import {
-  isDesktopMode,
   getMaxSearchResults,
   getShowUnixHiddenEntries,
   getCurrentLanguage
@@ -73,40 +72,12 @@ import CloseIcon from '@mui/icons-material/Close';
 import { getTagLibrary } from '-/services/taglibrary-utils';
 import { getSearches } from '-/reducers/searches';
 import { getSearchOptions } from '-/components/SearchOptionsMenu';
-import { SearchIcon } from '-/components/CommonIcons';
 import { dataTidFormat } from '-/services/test';
 
 interface Props {
   style?: any;
   theme: any;
-  watchForChanges: () => void;
-  searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
-  createLocationsIndexes: () => void;
-  searchAllLocations: (searchQuery: TS.SearchQuery) => void;
-  // loadDirectoryContent: (path: string, generateThumbnails: boolean, loadDirMeta?: boolean) => void;
-  openURLExternally: (url: string) => void;
-  searchQuery: TS.SearchQuery; // () => any;
-  // openCurrentDirectory: () => void;
-  setSearchQuery: (searchQuery: TS.SearchQuery) => void;
-  openLink: (url: string, options?: any) => void;
-  currentDirectory: string;
-  maxSearchResults: number;
-  indexing: boolean;
-  showUnixHiddenEntries: boolean;
-  isDesktop: boolean;
   open: boolean;
-  locations: TS.Location[];
-  currentLocation: TS.Location;
-  openLocationById: (locationId: string) => void;
-  changeLocationByID: (locationId: string) => void;
-  isSearchMode: boolean;
-  exitSearchMode: () => void;
-  setSearchFilter: (filter) => void;
-  // currentLocationId: string;
-  openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
-  searches: Array<TS.SearchQuery>;
-  switchLocationTypeByID: (locationId: string) => Promise<string | null>;
-  // editedEntryPaths: Array<TS.EditedEntryPath>;
   textQuery: string;
   setTextQuery: (value: string) => void;
   setAnchorSearch: (el: HTMLButtonElement) => void;
@@ -122,6 +93,27 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function SearchAutocomplete(props: Props) {
+  const dispatch: AppDispatch = useDispatch();
+  const indexing = useSelector(isIndexing);
+  const searchQuery: TS.SearchQuery = useSelector(getSearchQuery);
+  // const isDesktop = useSelector(isDesktopMode);
+  const currentDirectory = useSelector(getDirectoryPath);
+  const maxSearchResults = useSelector(getMaxSearchResults);
+  const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
+  const language = useSelector(getCurrentLanguage);
+  const locations: TS.Location[] = useSelector(getLocations);
+  const currentLocation: TS.Location = useSelector(getCurrentLocation);
+  const searchMode: boolean = useSelector(isSearchMode);
+  const searches: Array<TS.SearchQuery> = useSelector(getSearches);
+
+  const openLinkDispatch = (link, options) =>
+    dispatch(AppActions.openLink(link, options));
+  const openLocationByIdDispatch = locationId =>
+    dispatch(AppActions.openLocationById(locationId));
+  const openFsEntryDispatch = fsEntry =>
+    dispatch(AppActions.openFsEntry(fsEntry));
+
+  const { setTextQuery, textQuery, open, theme, setAnchorSearch } = props;
   // const [, forceUpdate] = useReducer(x => x + 1, 0);
   const [
     openSavedSearches,
@@ -129,12 +121,9 @@ function SearchAutocomplete(props: Props) {
   ] = useState<null | HTMLElement>(null);
   const searchOptions = useRef<Array<SearchOptionType>>(getSearchOptions());
   const currentOptions = useRef<string>(undefined);
-  // const textQuery = useRef<string>(props.searchQuery.textQuery || ''); // rethink to use inputValue instead
   // const textQueryMask = useRef<string>('');
   const fileTypes = useRef<Array<string>>(
-    props.searchQuery.fileTypes
-      ? props.searchQuery.fileTypes
-      : FileTypeGroups.any
+    searchQuery.fileTypes ? searchQuery.fileTypes : FileTypeGroups.any
   );
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
@@ -148,39 +137,32 @@ function SearchAutocomplete(props: Props) {
   const actionValues = useRef<Array<SearchOptionType>>(
     [] //parseSearchQuery(textQueryMask.current)
   );
-  // const inputValue = useRef<string>(props.searchQuery.textQuery || ''); //getInputValue());
-
-  // const searchBoxing = useRef<'location' | 'folder' | 'global'>(
-  //   props.searchQuery.searchBoxing ? props.searchQuery.searchBoxing : 'location'
-  // );
   const [searchBoxing, setSearchBoxing] = useState<ScopeType>(
-    props.searchQuery.searchBoxing || 'location'
+    searchQuery.searchBoxing || 'location'
   );
 
   const searchType = useRef<'fuzzy' | 'semistrict' | 'strict'>(
-    props.searchQuery.searchType ? props.searchQuery.searchType : 'fuzzy'
+    searchQuery.searchType ? searchQuery.searchType : 'fuzzy'
   );
   const lastModified = useRef<string>(
-    props.searchQuery.lastModified ? props.searchQuery.lastModified : ''
+    searchQuery.lastModified ? searchQuery.lastModified : ''
   );
   const tagTimePeriod = useRef<string>('');
   const tagTimePeriodHelper = useRef<string>(' ');
   const tagTimePeriodFrom = useRef<number | null>(
-    props.searchQuery.tagTimePeriodFrom
-      ? props.searchQuery.tagTimePeriodFrom
-      : null
+    searchQuery.tagTimePeriodFrom ? searchQuery.tagTimePeriodFrom : null
   );
   const tagTimePeriodTo = useRef<number | null>(
-    props.searchQuery.tagTimePeriodTo ? props.searchQuery.tagTimePeriodTo : null
+    searchQuery.tagTimePeriodTo ? searchQuery.tagTimePeriodTo : null
   );
   const [tagPlaceLat, setTagPlaceLat] = useState<number | null>(null);
   const [tagPlaceLong, setTagPlaceLong] = useState<number | null>(null);
   // const [tagPlaceRadius, setTagPlaceRadius] = useState<number>(0);
   const forceIndexing = useRef<boolean>(
-    props.searchQuery.forceIndexing ? props.searchQuery.forceIndexing : false
+    searchQuery.forceIndexing ? searchQuery.forceIndexing : false
   );
   const fileSize = useRef<string>(
-    props.searchQuery.fileSize ? props.searchQuery.fileSize : ''
+    searchQuery.fileSize ? searchQuery.fileSize : ''
   );
 
   // const mainSearchField = useRef<HTMLInputElement>(null);
@@ -189,24 +171,13 @@ function SearchAutocomplete(props: Props) {
   const firstRender = useFirstRender();
   const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 
-  /*useEffect(() => {
-    // Handle CHANGE LOCATION IN SEARCH MODE
-    if (!firstRender) {
-      if (props.isSearchMode && Object.keys(props.searchQuery).length > 0) {
-        // if (props.open && (inputValue.current.length > 0 || actionValues.current.length > 0)
-        // executeSearch();  // will execute the same searchQuery in new location
-        props.exitSearchMode();
-      }
-    }
-  }, [props.currentLocation]);*/
-
   useEffect(() => {
     if (!firstRender) {
-      if (!props.isSearchMode) {
+      if (!searchMode) {
         clearSearch();
       }
     }
-  }, [props.isSearchMode]);
+  }, [searchMode]);
 
   /* let searchBoxingName = i18n.t('location');
   if (searchBoxing === 'global') {
@@ -216,13 +187,13 @@ function SearchAutocomplete(props: Props) {
   }*/
 
   useEffect(() => {
-    if (Object.keys(props.searchQuery).length > 0) {
+    if (Object.keys(searchQuery).length > 0) {
       let emptySearch = true;
       const actions: SearchOptionType[] = [];
       // textQueryMask.current = '';
 
-      if (props.searchQuery.tagsAND && props.searchQuery.tagsAND.length > 0) {
-        props.searchQuery.tagsAND.forEach(tag => {
+      if (searchQuery.tagsAND && searchQuery.tagsAND.length > 0) {
+        searchQuery.tagsAND.forEach(tag => {
           // textQueryMask.current += ' +' + tag.title;
 
           actions.push({
@@ -232,8 +203,8 @@ function SearchAutocomplete(props: Props) {
         });
         emptySearch = false;
       }
-      if (props.searchQuery.tagsOR && props.searchQuery.tagsOR.length > 0) {
-        props.searchQuery.tagsOR.forEach(tag => {
+      if (searchQuery.tagsOR && searchQuery.tagsOR.length > 0) {
+        searchQuery.tagsOR.forEach(tag => {
           // textQueryMask.current += ' |' + tag.title;
           actions.push({
             action: SearchQueryComposition.TAG_OR.shortName,
@@ -242,8 +213,8 @@ function SearchAutocomplete(props: Props) {
         });
         emptySearch = false;
       }
-      if (props.searchQuery.tagsNOT && props.searchQuery.tagsNOT.length > 0) {
-        props.searchQuery.tagsNOT.forEach(tag => {
+      if (searchQuery.tagsNOT && searchQuery.tagsNOT.length > 0) {
+        searchQuery.tagsNOT.forEach(tag => {
           // textQueryMask.current += ' -' + tag.title;
           actions.push({
             action: SearchQueryComposition.TAG_NOT.shortName,
@@ -254,54 +225,37 @@ function SearchAutocomplete(props: Props) {
       }
 
       // inputValue.current = getInputValue();
-      let textQuery = '';
-      if (props.searchQuery.textQuery) {
-        props.setTextQuery(props.searchQuery.textQuery);
-        textQuery = props.searchQuery.textQuery;
+      let txtQuery = '';
+      if (searchQuery.textQuery) {
+        setTextQuery(searchQuery.textQuery);
+        txtQuery = searchQuery.textQuery;
         emptySearch = false;
-      } else if (props.textQuery) {
-        textQuery = props.textQuery;
+      } else if (textQuery) {
+        txtQuery = textQuery;
         emptySearch = false;
       }
 
-      const searchQuery = {
-        ...props.searchQuery,
-        textQuery: textQuery
-      };
-
-      /*if (mainSearchField.current) {
-        mainSearchField.current.value =
-          inputValue.current +
-          (textQueryMask.current ? ' ' + textQueryMask.current.trim() : '');
-      }*/
-      if (
-        props.searchQuery.searchBoxing
-        // && props.searchQuery.searchBoxing !== 'location'
-      ) {
-        setSearchBoxing(props.searchQuery.searchBoxing);
-        // searchBoxing.current = props.searchQuery.searchBoxing;
+      if (searchQuery.searchBoxing) {
+        setSearchBoxing(searchQuery.searchBoxing);
         emptySearch = false;
         actions.push({
           action: SearchQueryComposition.SCOPE.fullName,
           label:
             SearchQueryComposition.SCOPE.fullName +
             ' ' +
-            props.searchQuery.searchBoxing
+            searchQuery.searchBoxing
         });
       }
       if (
-        props.searchQuery.fileTypes &&
+        searchQuery.fileTypes &&
         JSON.stringify(searchQuery.fileTypes) !==
           JSON.stringify(FileTypeGroups.any)
       ) {
-        fileTypes.current = props.searchQuery.fileTypes;
+        fileTypes.current = searchQuery.fileTypes;
         emptySearch = false;
         let keyFileType;
         Object.entries(FileTypeGroups).forEach(([key, value]) => {
-          if (
-            JSON.stringify(value) ===
-            JSON.stringify(props.searchQuery.fileTypes)
-          ) {
+          if (JSON.stringify(value) === JSON.stringify(searchQuery.fileTypes)) {
             keyFileType = key;
           }
         });
@@ -312,54 +266,51 @@ function SearchAutocomplete(props: Props) {
             ' ' +
             (keyFileType
               ? i18n.t('core:' + keyFileType)
-              : props.searchQuery.fileTypes)
+              : searchQuery.fileTypes)
         });
       }
-      if (
-        props.searchQuery.searchType
-        // && props.searchQuery.searchType !== accuracy.fuzzy
-      ) {
-        searchType.current = props.searchQuery.searchType;
+      if (searchQuery.searchType) {
+        searchType.current = searchQuery.searchType;
         emptySearch = false;
         actions.push({
           action: SearchQueryComposition.ACCURACY.fullName,
           label:
             SearchQueryComposition.ACCURACY.fullName +
             ' ' +
-            i18n.t('core:' + props.searchQuery.searchType)
+            i18n.t('core:' + searchQuery.searchType)
         });
       }
-      if (props.searchQuery.lastModified) {
-        lastModified.current = props.searchQuery.lastModified;
+      if (searchQuery.lastModified) {
+        lastModified.current = searchQuery.lastModified;
         emptySearch = false;
         actions.push({
           action: SearchQueryComposition.LAST_MODIFIED.fullName,
           label:
             SearchQueryComposition.LAST_MODIFIED.fullName +
             ' ' +
-            i18n.t('core:' + props.searchQuery.lastModified)
+            i18n.t('core:' + searchQuery.lastModified)
         });
       }
-      if (props.searchQuery.tagTimePeriodFrom) {
-        tagTimePeriodFrom.current = props.searchQuery.tagTimePeriodFrom;
+      if (searchQuery.tagTimePeriodFrom) {
+        tagTimePeriodFrom.current = searchQuery.tagTimePeriodFrom;
         emptySearch = false;
       }
-      if (props.searchQuery.tagTimePeriodTo) {
-        tagTimePeriodTo.current = props.searchQuery.tagTimePeriodTo;
+      if (searchQuery.tagTimePeriodTo) {
+        tagTimePeriodTo.current = searchQuery.tagTimePeriodTo;
         emptySearch = false;
       }
-      if (props.searchQuery.forceIndexing) {
-        forceIndexing.current = props.searchQuery.forceIndexing;
+      if (searchQuery.forceIndexing) {
+        forceIndexing.current = searchQuery.forceIndexing;
       }
-      if (props.searchQuery.fileSize) {
-        fileSize.current = props.searchQuery.fileSize;
+      if (searchQuery.fileSize) {
+        fileSize.current = searchQuery.fileSize;
         emptySearch = false;
         actions.push({
           action: SearchQueryComposition.SIZE.fullName,
           label:
             SearchQueryComposition.SIZE.fullName +
             ' ' +
-            i18n.t('core:' + props.searchQuery.fileSize)
+            i18n.t('core:' + searchQuery.fileSize)
         });
       }
       if (!emptySearch) {
@@ -373,17 +324,21 @@ function SearchAutocomplete(props: Props) {
           forceUpdate();
         }
         if (searchQuery.executeSearch) {
+          const sQuery = {
+            ...searchQuery,
+            textQuery: txtQuery
+          };
           if (searchBoxing === 'global') {
-            props.searchAllLocations(searchQuery);
+            dispatch(LocationIndexActions.searchAllLocations(sQuery));
           } else {
-            props.searchLocationIndex(searchQuery);
+            dispatch(LocationIndexActions.searchLocationIndex(sQuery));
           }
         }
       } /*else {
         clearSearch();
       }*/
     }
-  }, [props.searchQuery]);
+  }, [searchQuery]);
 
   /*function getInputValue() {
     const txtQuery = removeActionsFromQuery(
@@ -420,14 +375,13 @@ function SearchAutocomplete(props: Props) {
       }
     } else if (event.key === 'Escape' || event.keyCode === 27) {
       clearSearch();
-      // props.openCurrentDirectory();
     } else if (event.key === 'ArrowDown' || event.keyCode === 40) {
       if (!isOpen.current) {
         isOpen.current = true;
         forceUpdate();
       }
     } else if (event.key === 'Backspace' || event.keyCode === 8) {
-      if (props.textQuery.length === 0 && actionValues.current.length > 0) {
+      if (textQuery.length === 0 && actionValues.current.length > 0) {
         actionValues.current = actionValues.current.slice(0, -1);
         resetActions(actionValues.current);
         isOpen.current = true;
@@ -439,7 +393,7 @@ function SearchAutocomplete(props: Props) {
   };
 
   function resetValues(exceptions: Array<SearchOptionType>) {
-    props.setTextQuery('');
+    setTextQuery('');
     if (
       !exceptions.some(action =>
         isAction(action.action, SearchQueryComposition.SCOPE)
@@ -485,11 +439,9 @@ function SearchAutocomplete(props: Props) {
   }
   const clearSearch = () => {
     resetValues([]);
-    props.setSearchQuery({});
-    props.exitSearchMode();
-    // props.setSearchResults([]);
-    props.watchForChanges();
-    // props.openCurrentDirectory();
+    dispatch(LocationIndexActions.setSearchQuery({}));
+    dispatch(AppActions.exitSearchMode());
+    dispatch(AppActions.watchForChanges());
   };
 
   function removeActionsFromQuery(
@@ -607,12 +559,11 @@ function SearchAutocomplete(props: Props) {
       // don't execute search on search filter
       return;
     }
-    let query = props.textQuery;
     if (
-      query.startsWith('ts:?ts') ||
-      query.startsWith(AppConfig.tsProtocol + '?ts')
+      textQuery.startsWith('ts:?ts') ||
+      textQuery.startsWith(AppConfig.tsProtocol + '?ts')
     ) {
-      props.openLink(query, { fullWidth: false });
+      openLinkDispatch(textQuery, { fullWidth: false });
       clearSearch();
       return;
     }
@@ -633,8 +584,8 @@ function SearchAutocomplete(props: Props) {
     // query = removeTagsFromQuery(tagsNOT, query, '-');
     // query = removeActionsFromQuery(query, actionValues.current);
 
-    const searchQuery: TS.SearchQuery = {
-      textQuery: query,
+    const sQuery: TS.SearchQuery = {
+      textQuery: textQuery,
       tagsAND,
       tagsOR,
       tagsNOT,
@@ -648,22 +599,19 @@ function SearchAutocomplete(props: Props) {
       tagPlaceLat,
       tagPlaceLong,
       // tagPlaceRadius,
-      maxSearchResults: props.maxSearchResults,
-      currentDirectory: props.currentDirectory,
+      maxSearchResults: maxSearchResults,
+      currentDirectory: currentDirectory,
       forceIndexing: forceIndexing.current,
-      showUnixHiddenEntries: props.showUnixHiddenEntries,
+      showUnixHiddenEntries: showUnixHiddenEntries,
       executeSearch: true
     };
-    if (!haveSearchFilters(searchQuery)) {
+    if (!haveSearchFilters(sQuery)) {
       clearSearch();
-      // props.openLocationById(props.currentLocationId);
     } else {
-      console.log('Search object: ' + JSON.stringify(searchQuery));
-      props.setSearchQuery(searchQuery);
+      console.log('Search object: ' + JSON.stringify(sQuery));
+      dispatch(LocationIndexActions.setSearchQuery(sQuery));
     }
   };
-
-  const { indexing, isDesktop, open, theme } = props;
 
   /*function parseOptions(options: Array<any>) {
 
@@ -714,7 +662,7 @@ function SearchAutocomplete(props: Props) {
     if (isAction(action, SearchActions.LOCATION)) {
       if (currentOptions.current !== action) {
         currentOptions.current = action;
-        searchOptions.current = props.locations.map(location => {
+        searchOptions.current = locations.map(location => {
           return {
             id: location.uuid,
             descr: location.path,
@@ -814,7 +762,7 @@ function SearchAutocomplete(props: Props) {
         }
 
         searchOptions.current = getOptions(
-          props.searches,
+          searches,
           i18n.t('core:savedSearchesTitle')
         );
       }
@@ -1010,11 +958,11 @@ function SearchAutocomplete(props: Props) {
           }
           actions.push(option);
         } else if (option.action === ExecActions.OPEN_LOCATION) {
-          props.exitSearchMode();
+          dispatch(AppActions.exitSearchMode());
           // isOpen.current = false;
           searchOptions.current = getSearchOptions();
           currentOptions.current = undefined;
-          props.openLocationById(option.id);
+          openLocationByIdDispatch(option.id);
           return [];
         } else if (isAction(option.action, SearchActions.FILTER)) {
           actions.push(option);
@@ -1046,14 +994,14 @@ function SearchAutocomplete(props: Props) {
         } else if (option.action === ExecActions.OPEN_HISTORY) {
           if (option.searchQuery) {
             if (option.id) {
-              //if (props.currentLocation === undefined) {
-              //  props.openLocationById(option.id, true);
-              //  props.setSearchQuery(option.searchQuery);
-              //} else {
-              props.switchLocationTypeByID(option.id).then(() => {
-                props.changeLocationByID(option.id);
-                props.setSearchQuery(option.searchQuery);
-              });
+              dispatch(AppActions.switchLocationTypeByID(option.id)).then(
+                () => {
+                  dispatch(AppActions.changeLocationByID(option.id));
+                  dispatch(
+                    LocationIndexActions.setSearchQuery(option.searchQuery)
+                  );
+                }
+              );
             } else {
             }
           } else if (Pro && Pro.history) {
@@ -1065,10 +1013,10 @@ function SearchAutocomplete(props: Props) {
             };
             Pro.history.openItem(
               item,
-              props.currentLocation.uuid,
-              props.openLink,
-              props.openLocationById,
-              props.openFsEntry
+              currentLocation.uuid,
+              openLinkDispatch,
+              openLocationByIdDispatch,
+              openFsEntryDispatch
             );
           }
           searchOptions.current = getSearchOptions();
@@ -1085,10 +1033,10 @@ function SearchAutocomplete(props: Props) {
             };
             Pro.history.openItem(
               item,
-              props.currentLocation.uuid,
-              props.openLink,
-              props.openLocationById,
-              props.openFsEntry
+              currentLocation.uuid,
+              openLinkDispatch,
+              openLocationByIdDispatch,
+              openFsEntryDispatch
             );
           }
           searchOptions.current = getSearchOptions();
@@ -1096,7 +1044,9 @@ function SearchAutocomplete(props: Props) {
           isOpen.current = false;
           return [];
         } else if (option.action === ExecActions.OPEN_SAVED_SEARCHES) {
-          props.setSearchQuery(JSON.parse(option.fullName));
+          dispatch(
+            LocationIndexActions.setSearchQuery(JSON.parse(option.fullName))
+          );
           searchOptions.current = getSearchOptions();
           currentOptions.current = undefined;
           isOpen.current = false;
@@ -1147,14 +1097,16 @@ function SearchAutocomplete(props: Props) {
             actionValues.current,
             SearchQueryComposition.TAG_NOT
           );
-          props.setSearchQuery({
-            ...props.searchQuery,
-            tagsAND,
-            tagsOR,
-            tagsNOT,
-            executeSearch: false
-          });
-          props.setTextQuery('');
+          dispatch(
+            LocationIndexActions.setSearchQuery({
+              ...searchQuery,
+              tagsAND,
+              tagsOR,
+              tagsNOT,
+              executeSearch: false
+            })
+          );
+          setTextQuery('');
           if (hasOptionsChanged) {
             changeOptions(option.action);
           }
@@ -1167,11 +1119,13 @@ function SearchAutocomplete(props: Props) {
           const id = setActionLabel(SearchQueryComposition.TYPE, option);
           if (id) {
             fileTypes.current = option.descr.split(', ');
-            props.setSearchQuery({
-              ...props.searchQuery,
-              fileTypes: fileTypes.current,
-              executeSearch: false
-            });
+            dispatch(
+              LocationIndexActions.setSearchQuery({
+                ...searchQuery,
+                fileTypes: fileTypes.current,
+                executeSearch: false
+              })
+            );
           }
           if (hasOptionsChanged) {
             changeOptions(option.action);
@@ -1186,11 +1140,13 @@ function SearchAutocomplete(props: Props) {
           const id = setActionLabel(SearchQueryComposition.SIZE, option);
           if (id) {
             fileSize.current = id;
-            props.setSearchQuery({
-              ...props.searchQuery,
-              fileSize: id,
-              executeSearch: false
-            });
+            dispatch(
+              LocationIndexActions.setSearchQuery({
+                ...searchQuery,
+                fileSize: id,
+                executeSearch: false
+              })
+            );
           }
           if (hasOptionsChanged) {
             changeOptions(option.action);
@@ -1210,11 +1166,13 @@ function SearchAutocomplete(props: Props) {
           );
           if (id) {
             lastModified.current = id;
-            props.setSearchQuery({
-              ...props.searchQuery,
-              lastModified: id,
-              executeSearch: false
-            });
+            dispatch(
+              LocationIndexActions.setSearchQuery({
+                ...searchQuery,
+                lastModified: id,
+                executeSearch: false
+              })
+            );
           }
           if (hasOptionsChanged) {
             changeOptions(option.action);
@@ -1229,11 +1187,13 @@ function SearchAutocomplete(props: Props) {
           const id = setActionLabel(SearchQueryComposition.SCOPE, option);
           if (id) {
             setSearchBoxing(scope[id]);
-            props.setSearchQuery({
-              ...props.searchQuery,
-              searchBoxing: scope[id],
-              executeSearch: false
-            });
+            dispatch(
+              LocationIndexActions.setSearchQuery({
+                ...searchQuery,
+                searchBoxing: scope[id],
+                executeSearch: false
+              })
+            );
           }
           if (hasOptionsChanged) {
             changeOptions(option.action);
@@ -1247,11 +1207,13 @@ function SearchAutocomplete(props: Props) {
           const id = setActionLabel(SearchQueryComposition.ACCURACY, option);
           if (id) {
             searchType.current = accuracy[id];
-            props.setSearchQuery({
-              ...props.searchQuery,
-              searchType: accuracy[id],
-              executeSearch: false
-            });
+            dispatch(
+              LocationIndexActions.setSearchQuery({
+                ...searchQuery,
+                searchType: accuracy[id],
+                executeSearch: false
+              })
+            );
           }
           if (hasOptionsChanged) {
             changeOptions(option.action);
@@ -1259,7 +1221,7 @@ function SearchAutocomplete(props: Props) {
           // executeSearch();
         } else if (option.action === undefined) {
           // text query
-          props.setTextQuery(option.label);
+          setTextQuery(option.label);
 
           const pAction = actions[actions.length - 1];
           if (pAction && isAction(pAction.action, SearchActions.FILTER)) {
@@ -1267,7 +1229,7 @@ function SearchAutocomplete(props: Props) {
               o => !(typeof o === 'object') && o.action === undefined
             );
             if (filterArr.length > 0) {
-              props.setSearchFilter(filterArr.join(' '));
+              dispatch(AppActions.setSearchFilter(filterArr.join(' ')));
               isOpen.current = false;
               return actions;
             }
@@ -1281,23 +1243,6 @@ function SearchAutocomplete(props: Props) {
     return actions;
   }
 
-  /*function setTextQuery(actions) {
-    let txtQuery = '';
-    if (actions.length > 0) {
-      actions.forEach(action => {
-        if (
-          action.action === ExecActions.TAG_SEARCH_AND ||
-          ExecActions.TAG_SEARCH_OR ||
-          ExecActions.TAG_SEARCH_NOT
-        ) {
-          txtQuery += ' ' + action.label;
-        }
-      });
-    }
-    textQuery.current =
-      txtQuery.trim() + (inputValue.current ? ' ' + inputValue.current : '');
-  }*/
-
   function handleInputChange(event: any, value: string, reason: string) {
     // handleChange(event, value.split(' '), 'createOption');
     if (reason === 'input') {
@@ -1310,7 +1255,7 @@ function SearchAutocomplete(props: Props) {
       const inputArr = valueArr.filter(
         action => !actionValues.current.some(v => v.label === action)
       );
-      props.setTextQuery(inputArr.join(' '));
+      setTextQuery(inputArr.join(' '));
       //textQuery.current += ' ' + inputValue.current;
       forceUpdate();
     } else if (reason === 'clear') {
@@ -1478,7 +1423,7 @@ function SearchAutocomplete(props: Props) {
           data-tid="advancedSearch"
           style={{ maxHeight: 35 }}
           onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-            props.setAnchorSearch(event.currentTarget);
+            setAnchorSearch(event.currentTarget);
           }}
         >
           <AdvancedSearchIcon />
@@ -1544,7 +1489,7 @@ function SearchAutocomplete(props: Props) {
             v.fullName ? v.fullName : v.label
           )}
           onChange={handleChange}
-          inputValue={props.textQuery}
+          inputValue={textQuery}
           onInputChange={handleInputChange}
           open={isOpen.current}
           /*onOpen={handleOpen}
@@ -1698,15 +1643,6 @@ function SearchAutocomplete(props: Props) {
           onKeyDown={onKeyDownHandler}
           disableClearable={true}
           renderInput={params => {
-            /*if (params.InputProps.startAdornment) {
-              params.InputProps.startAdornment = [
-                startAdornment,
-                ...(Array.isArray(params.InputProps.startAdornment) &&
-                  params.InputProps.startAdornment)
-              ];
-            } else {
-              params.InputProps.startAdornment = [startAdornment];
-            }*/
             if (params.InputProps.endAdornment) {
               params.InputProps.endAdornment = [
                 params.InputProps.endAdornment,
@@ -1776,56 +1712,5 @@ function SearchAutocomplete(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    indexing: isIndexing(state),
-    searchQuery: getSearchQuery(state),
-    isDesktop: isDesktopMode(state),
-    currentDirectory: getDirectoryPath(state),
-    maxSearchResults: getMaxSearchResults(state),
-    showUnixHiddenEntries: getShowUnixHiddenEntries(state),
-    language: getCurrentLanguage(state),
-    locations: getLocations(state),
-    currentLocation: getCurrentLocation(state),
-    isSearchMode: isSearchMode(state),
-    //currentLocationId: getCurrentLocationId(state),
-    searches: getSearches(state)
-    // editedEntryPaths: getEditedEntryPaths(state)
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      searchAllLocations: LocationIndexActions.searchAllLocations,
-      setSearchQuery: LocationIndexActions.setSearchQuery,
-      searchLocationIndex: LocationIndexActions.searchLocationIndex,
-      createLocationsIndexes: LocationIndexActions.createLocationsIndexes,
-      // loadDirectoryContent: AppActions.loadDirectoryContent,
-      openLink: AppActions.openLink,
-      openURLExternally: AppActions.openURLExternally,
-      // openCurrentDirectory: AppActions.openCurrentDirectory,
-      watchForChanges: AppActions.watchForChanges,
-      openLocationById: AppActions.openLocationById,
-      changeLocationByID: AppActions.changeLocationByID,
-      exitSearchMode: AppActions.exitSearchMode,
-      setSearchFilter: AppActions.setSearchFilter,
-      openFsEntry: AppActions.openFsEntry,
-      switchLocationTypeByID: AppActions.switchLocationTypeByID
-    },
-    dispatch
-  );
-}
-
-/*const areEqual = (prevProp, nextProp) =>
-  nextProp.open === prevProp.open &&
-  nextProp.language === prevProp.language &&
-  nextProp.indexing === prevProp.indexing &&
-  nextProp.searchQuery === prevProp.searchQuery &&
-  nextProp.currentDirectory === prevProp.currentDirectory && */
-
 // @ts-ignore
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(undefined, { withTheme: true })(SearchAutocomplete)); // (React.memo(SearchAutocomplete, areEqual));
+export default withStyles(undefined, { withTheme: true })(SearchAutocomplete);

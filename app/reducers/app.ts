@@ -59,7 +59,8 @@ import {
   updateFsEntries,
   loadMetaDataPromise,
   mergeByProp,
-  toFsEntry
+  toFsEntry,
+  openURLExternally
 } from '-/services/utils-io';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import i18n from '../services/i18n';
@@ -83,6 +84,12 @@ import {
 import { getProTeaserSlideIndex } from '-/content/ProTeaserSlides';
 import GlobalSearch from '-/services/search-index';
 import { extensionsFound } from '-/extension-config';
+
+import { ThunkDispatch } from 'redux-thunk';
+import { AnyAction } from 'redux';
+
+type State = {};
+export type AppDispatch = ThunkDispatch<State, any, AnyAction>;
 
 export const types = {
   DEVICE_ONLINE: 'APP/DEVICE_ONLINE',
@@ -1188,7 +1195,7 @@ export const actions = {
     type: types.SET_NEW_VERSION_AVAILABLE,
     isUpdateAvailable
   }),
-  setProgress: (path, progress, abort, filePath = undefined) => ({
+  setProgress: (path, progress, abort?, filePath = undefined) => ({
     type: types.PROGRESS,
     path,
     filePath,
@@ -2005,7 +2012,7 @@ export const actions = {
    * return Promise<currentLocationId> if location is changed or null if location and type is changed
    */
   switchLocationType: (location: TS.Location) => (
-    dispatch: (action) => void,
+    dispatch: (action) => string | null,
     getState: () => any
   ): Promise<string | null> => {
     const { currentLocationId } = getState().app;
@@ -2028,7 +2035,7 @@ export const actions = {
     return Promise.resolve(null);
   },
   switchCurrentLocationType: (currentLocationId?: string) => (
-    dispatch: (action) => void,
+    dispatch: (action) => boolean,
     getState: () => any
   ): Promise<boolean> => {
     // dispatch(actions.setCurrentLocationId(location.uuid));
@@ -2941,18 +2948,9 @@ export const actions = {
       decodedURI.startsWith('https://') ||
       decodedURI.startsWith('file://')
     ) {
-      dispatch(actions.openURLExternally(decodedURI));
+      openURLExternally(decodedURI);
     } else {
       console.log('Not supported URL format: ' + decodedURI);
-    }
-  },
-  openURLExternally: (url: string, skipConfirmation = false) => () => {
-    if (skipConfirmation) {
-      PlatformIO.openUrl(url);
-    } else if (
-      window.confirm('Do you really want to open this url: ' + url + ' ?')
-    ) {
-      PlatformIO.openUrl(url);
     }
   },
   saveFile: () => (dispatch: (action) => void) => {

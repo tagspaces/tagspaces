@@ -17,6 +17,7 @@
  */
 
 import React, { useState, forwardRef, useImperativeHandle, Ref } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Table from 'rc-table';
 import FolderIcon from '@mui/icons-material/FolderOpen';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
@@ -25,25 +26,14 @@ import DragItemTypes from '-/components/DragItemTypes';
 import PlatformIO from '-/services/platform-facade';
 import TargetTableMoveFileBox from '-/components/TargetTableMoveFileBox';
 import { TS } from '-/tagspaces.namespace';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
+import { getShowUnixHiddenEntries } from '-/reducers/settings';
 
 interface Props {
   classes: any;
-  loadDirectoryContent: (
-    path: string,
-    generateThumbnails: boolean,
-    loadDirMeta?: boolean
-  ) => void;
   location: TS.Location;
-  data?: any;
-  isReadOnlyMode?: boolean;
-  showUnixHiddenEntries: boolean;
-  showNotification?: (
-    text: string,
-    notificationType: string,
-    autohide: boolean
-  ) => void;
+  //data?: any;
   handleFileMoveDrop: (item, monitor) => void;
-  changeLocation: (loc: TS.Location) => void;
 }
 
 export interface DirectoryTreeViewRef {
@@ -54,8 +44,11 @@ export interface DirectoryTreeViewRef {
 
 const DirectoryTreeView = forwardRef(
   (props: Props, ref: Ref<DirectoryTreeViewRef>) => {
+    const { classes, location, handleFileMoveDrop } = props;
     const [data, setData] = useState(undefined);
     const [isExpanded, setExpanded] = useState(false);
+    const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
+    const dispatch: AppDispatch = useDispatch();
 
     useImperativeHandle(ref, () => ({
       changeLocation(location: TS.Location) {
@@ -109,16 +102,13 @@ const DirectoryTreeView = forwardRef(
   ); */
 
     const renderBodyRow = props => {
-      if (
-        AppConfig.isElectron ||
-        props.location.type !== locationType.TYPE_CLOUD
-      ) {
+      if (AppConfig.isElectron || location.type !== locationType.TYPE_CLOUD) {
         // DnD to S3 location is not permitted in web browser without <input> element
         return (
           <TargetTableMoveFileBox
             accepts={[DragItemTypes.FILE]}
-            onDrop={props.handleFileMoveDrop}
-            location={props.location}
+            onDrop={handleFileMoveDrop}
+            location={location}
             {...props}
           />
         );
@@ -136,7 +126,7 @@ const DirectoryTreeView = forwardRef(
               marginRight: 6,
               marginBottom: -8
             }}
-            className={props.classes.icon}
+            className={classes.icon}
           />
           {field && field.length > 25 ? field.substr(0, 25) + '...' : field}
         </span>
@@ -172,8 +162,8 @@ const DirectoryTreeView = forwardRef(
         PlatformIO.enableObjectStoreSupport(subDir)
           .then(() => {
             loadSubDirectories(subDir);
-            props.changeLocation(subDir);
-            props.loadDirectoryContent(subDir.path, true, true);
+            dispatch(AppActions.changeLocation(subDir));
+            dispatch(AppActions.loadDirectoryContent(subDir.path, true, true));
             return true;
           })
           .catch(error => {
@@ -182,8 +172,8 @@ const DirectoryTreeView = forwardRef(
       } else if (subDir.type === locationType.TYPE_LOCAL) {
         PlatformIO.disableObjectStoreSupport();
         loadSubDirectories(subDir);
-        props.changeLocation(subDir);
-        props.loadDirectoryContent(subDir.path, true, true);
+        dispatch(AppActions.changeLocation(subDir));
+        dispatch(AppActions.loadDirectoryContent(subDir.path, true, true));
       }
     };
 
@@ -269,7 +259,7 @@ const DirectoryTreeView = forwardRef(
                 if (
                   entry.name === AppConfig.metaFolder ||
                   entry.name.endsWith('/' + AppConfig.metaFolder) ||
-                  (!props.showUnixHiddenEntries && entry.name.startsWith('.'))
+                  (!showUnixHiddenEntries && entry.name.startsWith('.'))
                 ) {
                   return true;
                 }
@@ -388,7 +378,7 @@ const DirectoryTreeView = forwardRef(
     if (isExpanded && data != undefined) {
       return (
         <Table
-          key={props.location.uuid}
+          key={location.uuid}
           // defaultExpandAllRows
           // className={classes.locationListArea}
           components={{
@@ -398,7 +388,7 @@ const DirectoryTreeView = forwardRef(
           showHeader={false}
           // className="table"
           rowKey="path"
-          data={data[props.location.uuid]}
+          data={data[location.uuid]}
           columns={columns}
           indentSize={20}
           expandable={{ onExpand }}
@@ -408,7 +398,7 @@ const DirectoryTreeView = forwardRef(
           onRow={(record, index) => ({
             index,
             location: record,
-            handleFileMoveDrop: props.handleFileMoveDrop
+            handleFileMoveDrop: handleFileMoveDrop
           })}
         />
       );

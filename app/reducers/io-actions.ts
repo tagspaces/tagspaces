@@ -191,6 +191,7 @@ const actions = {
         dispatch(
           AppActions.showNotification(i18n.t('core:copyingFilesFailed'))
         );
+        return false;
       });
   },
   copyDirs: (
@@ -279,8 +280,8 @@ const actions = {
   downloadFile: (
     url: string,
     targetPath: string,
-    onDownloadProgress?: (progress: Progress, response: any) => void
-  ) => (dispatch: (actions: Object) => void) => {
+    onDownloadProgress?: (progress: Progress, abort, fileName?) => void
+  ) => (dispatch: (actions: Object) => TS.FileSystemEntry) => {
     function saveFile(response: Response): Promise<TS.FileSystemEntry> {
       if (AppConfig.isElectron && !PlatformIO.haveObjectStoreSupport()) {
         return PlatformIO.saveBinaryFilePromise(
@@ -343,9 +344,9 @@ const actions = {
   uploadFilesAPI: (
     files: Array<File>,
     targetPath: string,
-    onUploadProgress?: (progress: Progress, response: any) => void,
+    onUploadProgress?: (progress: Progress, abort, fileName?) => void,
     uploadMeta = true
-  ) => (dispatch: (actions: Object) => void) => {
+  ) => (dispatch: (actions: Object) => Promise<Array<TS.FileSystemEntry>>) => {
     if (AppConfig.isElectron || AppConfig.isCordovaiOS) {
       const arrFiles = [];
       for (let i = 0; i < files.length; i += 1) {

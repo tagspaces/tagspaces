@@ -86,6 +86,7 @@ import {
   ArchiveIcon,
   CloseIcon
 } from '-/components/CommonIcons';
+import { openURLExternally } from '-/services/utils-io';
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
 
@@ -99,7 +100,6 @@ interface Props {
     generateThumbnails: boolean,
     loadDirMeta?: boolean
   ) => void;
-  openURLExternally: (url: string, skipConfirmation?: boolean) => void;
   hideDrawer?: () => void;
   searchQuery: TS.SearchQuery; // () => any;
   setSearchResults: (entries: Array<any>) => void;
@@ -1086,7 +1086,7 @@ function SearchPopover(props: Props) {
           variant="text"
           data-tid="helpSearchButtonTID"
           onClick={() =>
-            props.openURLExternally(Links.documentationLinks.search, true)
+            openURLExternally(Links.documentationLinks.search, true)
           }
         >
           {i18n.t('help')}
@@ -1151,7 +1151,6 @@ function mapDispatchToProps(dispatch) {
       setSearchQuery: LocationIndexActions.setSearchQuery,
       createLocationsIndexes: LocationIndexActions.createLocationsIndexes,
       loadDirectoryContent: AppActions.loadDirectoryContent,
-      openURLExternally: AppActions.openURLExternally,
       setSearchResults: AppActions.setSearchResults,
       exitSearchMode: AppActions.exitSearchMode
     },

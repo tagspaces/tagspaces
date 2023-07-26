@@ -99,10 +99,10 @@ export default function listen(props) {
           props.toggleOnboardingDialog();
           break;
         }
-        case 'open-url-externally': {
+        /*case 'open-url-externally': {
           props.openURLExternally();
           break;
-        }
+        }*/
         case 'toggle-license-dialog': {
           props.toggleLicenseDialog();
           break;
@@ -120,10 +120,10 @@ export default function listen(props) {
       }
     });
 
-    ipcRenderer.on('open-url-externally', (event, arg) => {
+    /*ipcRenderer.on('open-url-externally', (event, arg) => {
       const { url, skipConfirm } = arg;
       props.openURLExternally(url, skipConfirm);
-    });
+    });*/
 
     ipcRenderer.on('play-pause', (event, arg) => {
       // Create the event.

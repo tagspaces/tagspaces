@@ -17,8 +17,7 @@
  */
 
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import Box from '@mui/material/Box';
 import Tooltip from '-/components/Tooltip';
@@ -46,18 +45,14 @@ import HelpFeedbackPanel from '-/components/HelpFeedbackPanel';
 import i18n from '-/services/i18n';
 import {
   actions as AppActions,
-  isSettingsDialogOpened,
   isLocationManagerPanelOpened,
   isTagLibraryPanelOpened,
   isSearchPanelOpened,
   isHelpFeedbackPanelOpened,
-  isReadOnlyMode,
-  getDirectoryPath
+  AppDispatch,
+  currentUser
 } from '../reducers/app';
-import {
-  actions as SettingsActions,
-  getCurrentLanguage
-} from '-/reducers/settings';
+import { actions as SettingsActions } from '-/reducers/settings';
 import StoredSearches from '-/components/StoredSearches';
 import UserDetailsPopover from '-/components/UserDetailsPopover';
 import { CreateFileIcon, LocalLocationIcon } from '-/components/CommonIcons';
@@ -72,63 +67,48 @@ const styles: any = (theme: any) => ({
 
 interface Props {
   classes: any;
-  language: string;
-  toggleProTeaser: (slidePage?: string) => void;
-  toggleOnboardingDialog: () => void;
-  toggleNewEntryDialog: () => void;
-  toggleAboutDialog: () => void;
-  toggleKeysDialog: () => void;
-  toggleSettingsDialog: () => void;
-  isSettingsDialogOpened: () => void;
-  isLocationManagerPanelOpened: boolean;
-  openLocationManagerPanel: () => void;
-  isTagLibraryPanelOpened: boolean;
-  openTagLibraryPanel: () => void;
-  isSearchPanelOpened: boolean;
-  openSearchPanel: () => void;
-  isHelpFeedbackPanelOpened: boolean;
-  openHelpFeedbackPanel: () => void;
-  // closeAllVerticalPanels: () => void;
-  toggleLocationDialog: () => void;
-  openURLExternally: (url: string, skipConfirmation?: boolean) => void;
-  switchTheme: () => void;
   hideDrawer?: () => void;
-  isReadOnlyMode: boolean;
-  showNotification: (message: string) => void;
-  directoryPath: string;
-  user: CognitoUserInterface;
   width?: number;
-  theme: any;
 }
 
 function MobileNavigation(props: Props) {
+  const dispatch: AppDispatch = useDispatch();
+
+  const isLocationManagerPanelOpenedSelector = useSelector(
+    isLocationManagerPanelOpened
+  );
+  const isTagLibraryPanelOpenedSelector = useSelector(isTagLibraryPanelOpened);
+  const isSearchPanelOpenedSelector = useSelector(isSearchPanelOpened);
+  const isHelpFeedbackPanelOpenedSelector = useSelector(
+    isHelpFeedbackPanelOpened
+  );
+  const cognitoUser: CognitoUserInterface = useSelector(currentUser);
+
   const [showTeaserBanner, setShowTeaserBanner] = useState<boolean>(true);
   const [anchorUser, setAnchorUser] = useState<HTMLButtonElement | null>(null);
 
   const showProTeaser = !Pro && showTeaserBanner;
 
-  const {
-    classes,
-    toggleNewEntryDialog,
-    toggleLocationDialog,
-    toggleOnboardingDialog,
-    toggleSettingsDialog,
-    toggleKeysDialog,
-    toggleAboutDialog,
-    openLocationManagerPanel,
-    openTagLibraryPanel,
-    openSearchPanel,
-    openHelpFeedbackPanel,
-    showNotification,
-    hideDrawer,
-    openURLExternally,
-    directoryPath,
-    width,
-    theme,
-    switchTheme,
-    user,
-    language
-  } = props;
+  const { classes, hideDrawer, width } = props;
+
+  const toggleNewEntryDialog = () =>
+    dispatch(AppActions.toggleNewEntryDialog());
+  // const toggleLocationDialog = () => dispatch(AppActions.toggleLocationDialog());
+  const toggleOnboardingDialog = () =>
+    dispatch(AppActions.toggleOnboardingDialog());
+  const toggleSettingsDialog = () =>
+    dispatch(AppActions.toggleSettingsDialog());
+  const toggleKeysDialog = () => dispatch(AppActions.toggleKeysDialog());
+  const toggleAboutDialog = () => dispatch(AppActions.toggleAboutDialog());
+  const openLocationManagerPanel = () =>
+    dispatch(AppActions.openLocationManagerPanel());
+  const openTagLibraryPanel = () => dispatch(AppActions.openTagLibraryPanel());
+  const openSearchPanel = () => dispatch(AppActions.openSearchPanel());
+  const openHelpFeedbackPanel = () =>
+    dispatch(AppActions.openHelpFeedbackPanel());
+  const toggleProTeaser = () => dispatch(AppActions.toggleProTeaser());
+  const switchTheme = () => dispatch(SettingsActions.switchTheme());
+
   return (
     <Box
       style={{
@@ -205,19 +185,17 @@ function MobileNavigation(props: Props) {
         </ButtonGroup>
         <LocationManager
           reduceHeightBy={170}
-          show={props.isLocationManagerPanelOpened}
+          show={isLocationManagerPanelOpenedSelector}
         />
-        {props.isTagLibraryPanelOpened && <TagLibrary reduceHeightBy={170} />}
-        {props.isSearchPanelOpened && <StoredSearches reduceHeightBy={170} />}
-        {props.isHelpFeedbackPanelOpened && (
+        {isTagLibraryPanelOpenedSelector && <TagLibrary reduceHeightBy={170} />}
+        {isSearchPanelOpenedSelector && <StoredSearches reduceHeightBy={170} />}
+        {isHelpFeedbackPanelOpenedSelector && (
           <HelpFeedbackPanel
-            language={language}
             reduceHeightBy={170}
-            openURLExternally={openURLExternally}
             toggleAboutDialog={toggleAboutDialog}
             toggleKeysDialog={toggleKeysDialog}
             toggleOnboardingDialog={toggleOnboardingDialog}
-            toggleProTeaser={() => props.toggleProTeaser()}
+            toggleProTeaser={toggleProTeaser}
           />
         )}
       </Box>
@@ -228,9 +206,8 @@ function MobileNavigation(props: Props) {
       >
         {showProTeaser && (
           <ProTeaser
-            toggleProTeaser={props.toggleProTeaser}
+            toggleProTeaser={toggleProTeaser}
             setShowTeaserBanner={setShowTeaserBanner}
-            openURLExternally={openURLExternally}
           />
         )}
         <Tooltip title={i18n.t('core:settings')}>
@@ -251,7 +228,7 @@ function MobileNavigation(props: Props) {
             <ToggleButton
               onClick={openLocationManagerPanel}
               className={
-                props.isLocationManagerPanelOpened
+                isLocationManagerPanelOpenedSelector
                   ? classNames(classes.button, classes.selectedButton)
                   : classes.button
               }
@@ -266,7 +243,7 @@ function MobileNavigation(props: Props) {
               data-tid="tagLibrary"
               onClick={openTagLibraryPanel}
               className={
-                props.isTagLibraryPanelOpened
+                isTagLibraryPanelOpenedSelector
                   ? classNames(classes.button, classes.selectedButton)
                   : classes.button
               }
@@ -280,7 +257,7 @@ function MobileNavigation(props: Props) {
               data-tid="quickAccessButton"
               onClick={openSearchPanel}
               className={
-                props.isSearchPanelOpened
+                isSearchPanelOpenedSelector
                   ? classNames(classes.button, classes.selectedButton)
                   : classes.button
               }
@@ -294,7 +271,7 @@ function MobileNavigation(props: Props) {
               data-tid="helpFeedback"
               onClick={openHelpFeedbackPanel}
               className={
-                props.isHelpFeedbackPanelOpened
+                isHelpFeedbackPanelOpenedSelector
                   ? classNames(classes.button, classes.selectedButton)
                   : classes.button
               }
@@ -304,7 +281,7 @@ function MobileNavigation(props: Props) {
             </ToggleButton>
           </Tooltip>
         </ToggleButtonGroup>
-        {user ? (
+        {cognitoUser ? (
           <>
             <Tooltip title={i18n.t('core:userAccount')}>
               <IconButton
@@ -350,44 +327,4 @@ function MobileNavigation(props: Props) {
     </Box>
   );
 }
-
-function mapStateToProps(state) {
-  return {
-    isSettingsDialogOpened: isSettingsDialogOpened(state),
-    isLocationManagerPanelOpened: isLocationManagerPanelOpened(state),
-    isTagLibraryPanelOpened: isTagLibraryPanelOpened(state),
-    isSearchPanelOpened: isSearchPanelOpened(state),
-    isHelpFeedbackPanelOpened: isHelpFeedbackPanelOpened(state),
-    isReadOnlyMode: isReadOnlyMode(state),
-    directoryPath: getDirectoryPath(state),
-    user: state.app.user,
-    language: getCurrentLanguage(state)
-  };
-}
-
-function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators(
-    {
-      toggleNewEntryDialog: AppActions.toggleNewEntryDialog,
-      toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
-      toggleSettingsDialog: AppActions.toggleSettingsDialog,
-      toggleProTeaser: AppActions.toggleProTeaser,
-      toggleAboutDialog: AppActions.toggleAboutDialog,
-      toggleKeysDialog: AppActions.toggleKeysDialog,
-      openLocationManagerPanel: AppActions.openLocationManagerPanel,
-      openTagLibraryPanel: AppActions.openTagLibraryPanel,
-      openSearchPanel: AppActions.openSearchPanel,
-      toggleLocationDialog: AppActions.toggleLocationDialog,
-      openHelpFeedbackPanel: AppActions.openHelpFeedbackPanel,
-      openURLExternally: AppActions.openURLExternally,
-      showNotification: AppActions.showNotification,
-      switchTheme: SettingsActions.switchTheme
-    },
-    dispatch
-  );
-}
-
-export default connect(
-  mapStateToProps,
-  mapActionCreatorsToProps
-)(withStyles(styles)(MobileNavigation));
+export default withStyles(styles)(MobileNavigation);
