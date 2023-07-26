@@ -78,7 +78,9 @@ interface Props {
 }
 
 function SettingsFileTypes(props: Props) {
-  const items = useRef<Array<TS.FileTypes>>([]); //props.supportedFileTypes);
+
+  const supportedFileTypes = useSelector(getSupportedFileTypes);
+  const items = useRef<Array<TS.FileTypes>>(supportedFileTypes);
   const selectedItem = useRef<TS.FileTypes>(undefined);
   const isValidationInProgress = useRef<boolean>(false);
   const [isConfirmDialogOpened, setIsConfirmDialogOpened] = useState<boolean>(
@@ -92,7 +94,6 @@ function SettingsFileTypes(props: Props) {
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
   const firstRender = useFirstRender();
 
-  const supportedFileTypes = useSelector(getSupportedFileTypes);
   const extensions = useSelector(getExtensions);
   const devMode = useSelector(isDevMode);
   const dispatch: AppDispatch = useDispatch();
