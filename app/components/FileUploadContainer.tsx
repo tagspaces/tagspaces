@@ -23,6 +23,7 @@ import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
 
 interface Props {
+  id: string;
   directoryPath: string;
   //toggleProgressDialog: () => void;
 }
@@ -34,6 +35,7 @@ export interface FileUploadContainerRef {
 const FileUploadContainer = forwardRef(
   (props: Props, ref: Ref<FileUploadContainerRef>) => {
     const dispatch: AppDispatch = useDispatch();
+    const { id, directoryPath } = props;
 
     const onUploadProgress = (progress, abort, fileName) => {
       dispatch(AppActions.onUploadProgress(progress, abort, fileName));
@@ -87,7 +89,7 @@ const FileUploadContainer = forwardRef(
       dispatch(
         IOActions.uploadFilesAPI(
           Array.from(selection.currentTarget.files),
-          props.directoryPath,
+          directoryPath,
           onUploadProgress
         )
       )
@@ -102,6 +104,7 @@ const FileUploadContainer = forwardRef(
 
     return (
       <input
+        id={id}
         style={{ display: 'none' }}
         ref={fileInput}
         accept="*"

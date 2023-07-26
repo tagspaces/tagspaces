@@ -474,6 +474,7 @@ Do you want to continue?`)
         {menuItems}
       </Menu>
       <FileUploadContainer
+        id="dirMenuId"
         ref={fileUploadContainerRef}
         directoryPath={directoryPath}
       />

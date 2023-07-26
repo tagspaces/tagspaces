@@ -37,7 +37,9 @@ import Tooltip from '-/components/Tooltip';
 import TextField from '@mui/material/TextField';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
 import Typography from '@mui/material/Typography';
-import FileUploadContainer, { FileUploadContainerRef } from "-/components/FileUploadContainer";
+import FileUploadContainer, {
+  FileUploadContainerRef
+} from '-/components/FileUploadContainer';
 
 const styles: any = () => ({
   createButton: {
@@ -235,6 +237,7 @@ function CreateDirectory(props: Props) {
         </ButtonGroup>
       </Grid>
       <FileUploadContainer
+        id="createDirId"
         ref={fileUploadContainerRef}
         directoryPath={targetDirectoryPath}
       />
