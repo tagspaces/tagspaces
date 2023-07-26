@@ -89,11 +89,7 @@ function MobileNavigation(props: Props) {
 
   const showProTeaser = !Pro && showTeaserBanner;
 
-  const {
-    classes,
-    hideDrawer,
-    width,
-  } = props;
+  const { classes, hideDrawer, width } = props;
 
   const toggleNewEntryDialog = () =>
     dispatch(AppActions.toggleNewEntryDialog());

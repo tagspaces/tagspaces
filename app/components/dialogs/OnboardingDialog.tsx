@@ -46,8 +46,8 @@ import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Links from '-/content/links';
 import useTheme from '@mui/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { openURLExternally } from "-/services/utils-io";
-import { AppDispatch } from "-/reducers/app";
+import { openURLExternally } from '-/services/utils-io';
+import { AppDispatch } from '-/reducers/app';
 
 interface Props {
   classes: any;
@@ -62,12 +62,14 @@ function OnboardingDialog(props: Props) {
   const currentTheme = useSelector(getCurrentTheme);
   const dispatch: AppDispatch = useDispatch();
 
-  const setPersistTagsInSidecarFile = (isPersistTagsInSidecar) => {
-    dispatch(SettingsActions.setPersistTagsInSidecarFile(isPersistTagsInSidecar));
+  const setPersistTagsInSidecarFile = isPersistTagsInSidecar => {
+    dispatch(
+      SettingsActions.setPersistTagsInSidecarFile(isPersistTagsInSidecar)
+    );
   };
   const maxSteps = 4;
 
-  const setCurrentTheme = (theme) => {
+  const setCurrentTheme = theme => {
     dispatch(SettingsActions.setCurrentTheme(theme));
   };
 
@@ -79,7 +81,7 @@ function OnboardingDialog(props: Props) {
     setActiveStep(step => step - 1);
   };
 
-  const handleStepChange = (step) => {
+  const handleStepChange = step => {
     setActiveStep(step);
   };
 

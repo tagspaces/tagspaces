@@ -722,7 +722,7 @@ export const actions = {
     type: types.IMPORT_TAGGROUP,
     entries,
     replace
-  }),
+  })
   /**
    * GraphQL API return TagGroup Tags array like String
    * This migrate tagGroups model to children []

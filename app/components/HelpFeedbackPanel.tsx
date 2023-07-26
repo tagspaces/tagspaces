@@ -43,8 +43,8 @@ import i18n from '-/services/i18n';
 import { KeyShortcutsIcon, HelpIcon } from '-/components/CommonIcons';
 import Links from '-/content/links';
 import { Pro } from '-/pro';
-import { openURLExternally } from "-/services/utils-io";
-import { getCurrentLanguage } from "-/reducers/settings";
+import { openURLExternally } from '-/services/utils-io';
+import { getCurrentLanguage } from '-/reducers/settings';
 
 interface Props {
   classes?: any;

@@ -28,7 +28,7 @@ import ProTeaserImage from '-/assets/images/pro-teaser.svg';
 import ProTextLogo from '-/assets/images/text-logo-pro.svg';
 import i18n from '../services/i18n';
 import Links from '-/content/links';
-import { openURLExternally } from "-/services/utils-io";
+import { openURLExternally } from '-/services/utils-io';
 
 interface Props {
   toggleProTeaser: (slidePage?: string) => void;

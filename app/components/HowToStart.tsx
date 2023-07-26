@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import i18n from '-/services/i18n';
 import Links from '-/content/links';
 import { ProSign } from '-/components/HelperComponents';
-import { openURLExternally } from "-/services/utils-io";
+import { openURLExternally } from '-/services/utils-io';
 
 export const styles: any = (theme: any) => ({
   recentTitle: {

@@ -50,7 +50,7 @@ import { getRelativeEntryPath } from '-/services/utils-io';
 import { PerspectiveIDs } from '-/perspectives';
 import PlatformFacade from '-/services/platform-facade';
 import { getDirectoryMenuItems } from '-/perspectives/common/DirectoryMenuItems';
-import { getLocations } from "-/reducers/locations";
+import { getLocations } from '-/reducers/locations';
 
 interface Props {
   open: boolean;

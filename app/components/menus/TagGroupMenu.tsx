@@ -37,7 +37,7 @@ import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import InfoIcon from '-/components/InfoIcon';
-import TaggingActions from "-/reducers/tagging-actions";
+import TaggingActions from '-/reducers/tagging-actions';
 
 interface Props {
   classes?: any;

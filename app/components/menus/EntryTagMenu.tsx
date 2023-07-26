@@ -30,7 +30,11 @@ import ConfirmDialog from '../dialogs/ConfirmDialog';
 import i18n from '-/services/i18n';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { getMaxSearchResults } from '-/reducers/settings';
-import { actions as AppActions, AppDispatch, isReadOnlyMode } from "-/reducers/app";
+import {
+  actions as AppActions,
+  AppDispatch,
+  isReadOnlyMode
+} from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 
 interface Props {

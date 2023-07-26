@@ -27,7 +27,7 @@ import i18n from '-/services/i18n';
 import { Pro } from '../../pro';
 import Links from '-/content/links';
 import { ProLabel } from '-/components/HelperComponents';
-import { openURLExternally } from "-/services/utils-io";
+import { openURLExternally } from '-/services/utils-io';
 
 interface Props {
   classes?: any;

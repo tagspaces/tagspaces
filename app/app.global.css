@@ -8,7 +8,6 @@
 @import '~react-image-gallery/styles/css/image-gallery.css';
 @import '~@tagspaces/tagspaces-md/lib/milkdown.css';
 
-
 /* Needed to disable border on focused HotKey element */
 div[tabindex='-1']:focus {
   outline: 0;

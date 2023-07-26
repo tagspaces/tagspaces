@@ -54,7 +54,11 @@ import {
 } from '-/services/utils-io';
 import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
-import { actions as AppActions, AppDispatch, isReadOnlyMode } from "-/reducers/app";
+import {
+  actions as AppActions,
+  AppDispatch,
+  isReadOnlyMode
+} from '-/reducers/app';
 import { useSelector, useDispatch } from 'react-redux';
 import { supportedImgs } from '-/services/thumbsgenerator';
 import { getPrefixTagContainer } from '-/reducers/settings';
@@ -63,7 +67,7 @@ import {
   DeleteIcon,
   LinkIcon
 } from '-/components/CommonIcons';
-import { getLocations } from "-/reducers/locations";
+import { getLocations } from '-/reducers/locations';
 
 interface Props {
   anchorEl: Element;

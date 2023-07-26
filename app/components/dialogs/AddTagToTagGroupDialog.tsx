@@ -33,7 +33,7 @@ import i18n from '-/services/i18n';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { getTagLibrary } from '-/services/taglibrary-utils';
-import { actions as AppActions, AppDispatch } from "-/reducers/app";
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 
 interface Props {
   open: boolean;

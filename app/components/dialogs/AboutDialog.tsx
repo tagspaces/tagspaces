@@ -38,7 +38,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import useTheme from '@mui/styles/useTheme';
 import AppConfig from '-/AppConfig';
 import { Fullscreen } from '@mui/icons-material';
-import { openURLExternally } from "-/services/utils-io";
+import { openURLExternally } from '-/services/utils-io';
 
 interface Props {
   open: boolean;

@@ -41,7 +41,7 @@ import {
 } from '-/reducers/locations';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import i18n from '-/services/i18n';
-import { actions as AppActions, AppDispatch } from "-/reducers/app";
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
 
@@ -61,35 +61,38 @@ function LocationContextMenu(props: Props) {
     setDeleteLocationDialogOpened,
     setLocationDirectoryContextMenuAnchorEl,
     closeLocationTree,
-    locationDirectoryContextMenuAnchorEl,
+    locationDirectoryContextMenuAnchorEl
   } = props;
 
   const dispatch: AppDispatch = useDispatch();
-  const locationPosition = useSelector(state => getLocationPosition(state, selectedLocation.uuid));
+  const locationPosition = useSelector(state =>
+    getLocationPosition(state, selectedLocation.uuid)
+  );
 
-
-  const createLocationIndex = (location) => {
+  const createLocationIndex = location => {
     dispatch(LocationIndexActions.createLocationIndex(location));
   };
 
-  const moveLocationUp = (locationId) => {
+  const moveLocationUp = locationId => {
     dispatch(LocationActions.moveLocationUp(locationId));
   };
 
-  const moveLocationDown = (locationId) => {
+  const moveLocationDown = locationId => {
     dispatch(LocationActions.moveLocationDown(locationId));
   };
 
-  const showInFileManager = (path) => {
+  const showInFileManager = path => {
     dispatch(AppActions.showInFileManager(path));
   };
 
-  const closeLocation = (locationId) => {
+  const closeLocation = locationId => {
     dispatch(AppActions.closeLocation(locationId));
   };
 
   const addLocation = (location, openAfterCreate, locationPosition) => {
-    dispatch(LocationActions.addLocation(location, openAfterCreate, locationPosition));
+    dispatch(
+      LocationActions.addLocation(location, openAfterCreate, locationPosition)
+    );
   };
 
   const indexLocation = () => {

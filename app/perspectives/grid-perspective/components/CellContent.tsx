@@ -53,7 +53,7 @@ import {
   AppDispatch,
   getLastThumbnailImageChange,
   isReadOnlyMode
-} from "-/reducers/app";
+} from '-/reducers/app';
 import { FolderIcon } from '-/components/CommonIcons';
 import { dataTidFormat } from '-/services/test';
 import {
@@ -127,9 +127,7 @@ function CellContent(props: Props) {
     dispatch(TaggingActions.addTags(paths, tags, updateIndex));
   };
 
-  const handleAddTag = (
-    tag: TS.Tag, parentTagGroupUuid: TS.Uuid
-  ) => {
+  const handleAddTag = (tag: TS.Tag, parentTagGroupUuid: TS.Uuid) => {
     dispatch(AppActions.addTag(tag, parentTagGroupUuid));
   };
 

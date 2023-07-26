@@ -86,7 +86,7 @@ import {
   ArchiveIcon,
   CloseIcon
 } from '-/components/CommonIcons';
-import { openURLExternally } from "-/services/utils-io";
+import { openURLExternally } from '-/services/utils-io';
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
 

@@ -394,7 +394,9 @@ function SettingsGeneral(props: Props) {
         <ListItemText primary={i18n.t('core:showUnixHiddenFiles')} />
         <Switch
           data-tid="settingsSetShowUnixHiddenEntries"
-          onClick={() => dispatch(SettingsActions.toggleShowUnixHiddenEntries())}
+          onClick={() =>
+            dispatch(SettingsActions.toggleShowUnixHiddenEntries())
+          }
           checked={settings.showUnixHiddenEntries}
         />
       </ListItem>

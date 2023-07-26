@@ -40,7 +40,7 @@ import SettingsAdvanced from '-/components/dialogs/settings/SettingsAdvanced';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Links from '-/content/links';
 import SettingsExtensions from '-/components/dialogs/settings/SettingsExtensions';
-import { openURLExternally } from "-/services/utils-io";
+import { openURLExternally } from '-/services/utils-io';
 
 const styles: any = () => ({
   mainContent: {

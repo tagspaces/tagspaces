@@ -33,7 +33,7 @@ import { getProTeaserIndex } from '-/reducers/app';
 import { useSelector } from 'react-redux';
 import { getProTeaserSlides } from '-/content/ProTeaserSlides';
 import Links from '-/content/links';
-import { openURLExternally } from "-/services/utils-io";
+import { openURLExternally } from '-/services/utils-io';
 
 interface Props {
   open: boolean;

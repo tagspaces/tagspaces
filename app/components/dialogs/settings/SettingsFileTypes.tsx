@@ -78,7 +78,6 @@ interface Props {
 }
 
 function SettingsFileTypes(props: Props) {
-
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const items = useRef<Array<TS.FileTypes>>(supportedFileTypes);
   const selectedItem = useRef<TS.FileTypes>(undefined);
