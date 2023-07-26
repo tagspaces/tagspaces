@@ -37,6 +37,7 @@ import Tooltip from '-/components/Tooltip';
 import TextField from '@mui/material/TextField';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
 import Typography from '@mui/material/Typography';
+import FileUploadContainer, { FileUploadContainerRef } from "-/components/FileUploadContainer";
 
 const styles: any = () => ({
   createButton: {
@@ -52,12 +53,12 @@ interface Props {
 
 function CreateDirectory(props: Props) {
   const { classes, onClose } = props;
+  const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
   const dispatch: AppDispatch = useDispatch();
 
   const { targetDirectoryPath } = useTargetPathContext();
   const fileUrl = useRef<string>();
   const [invalidURL, setInvalidURL] = useState<boolean>(false);
-  let fileInput: HTMLInputElement;
 
   const noSuitableLocation = !targetDirectoryPath;
 
@@ -69,33 +70,13 @@ function CreateDirectory(props: Props) {
 
   function addFile() {
     // loadLocation();
-    fileInput.click();
+    fileUploadContainerRef.current.onFileUpload();
+    onClose();
   }
 
   const onUploadProgress = (progress, abort, fileName) => {
     dispatch(AppActions.onUploadProgress(progress, abort, fileName));
   };
-  function handleFileInputChange(selection: any) {
-    // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
-    // const file = selection.currentTarget.files[0];
-    dispatch(AppActions.resetProgress());
-    dispatch(AppActions.toggleUploadDialog());
-    dispatch(
-      IOActions.uploadFilesAPI(
-        Array.from(selection.currentTarget.files),
-        targetDirectoryPath,
-        onUploadProgress
-      )
-    )
-      .then((fsEntries: Array<TS.FileSystemEntry>) => {
-        dispatch(AppActions.reflectCreateEntries(fsEntries));
-        return true;
-      })
-      .catch(error => {
-        console.log('uploadFiles', error);
-      });
-    onClose();
-  }
 
   const handleUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     fileUrl.current = event.target.value;
@@ -253,15 +234,9 @@ function CreateDirectory(props: Props) {
           </Button>
         </ButtonGroup>
       </Grid>
-      <input
-        style={{ display: 'none' }}
-        ref={input => {
-          fileInput = input;
-        }}
-        accept="*"
-        type="file"
-        multiple
-        onChange={handleFileInputChange}
+      <FileUploadContainer
+        ref={fileUploadContainerRef}
+        directoryPath={targetDirectoryPath}
       />
     </>
   );
