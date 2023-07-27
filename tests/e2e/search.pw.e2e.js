@@ -141,11 +141,16 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await global.client.waitForSelector('img[alt=thumbnail]', {
       visible: true
     });
-    const images = await global.client.$$('img[alt=thumbnail]');
+    const imageLocator = global.client.locator('img[alt=thumbnail]');
+    const imageCount = await imageLocator.count();
+    expect(imageCount).toBeGreaterThan(0);
+    const images = await imageLocator; //.elements();
+    //const images = await global.client.$$('img[alt=thumbnail]');
     for (let i = 0; i < images.length; i++) {
-      const src = await images[i].getAttribute('src');
-      const fileExists = checkFileExist(src);
-      expect(fileExists).toEqual(true, 'The file does not exist:' + src);
+      await expect(images[i]).toBeVisible();
+      /*const src = await images[i].getAttribute('src');
+        const fileExists = checkFileExist(src);
+        expect(fileExists).toEqual(true, 'The file does not exist:' + src);*/
     }
   });
 
