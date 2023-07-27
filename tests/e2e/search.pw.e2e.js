@@ -145,7 +145,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     for (let i = 0; i < images.length; i++) {
       const src = await images[i].getAttribute('src');
       const fileExists = checkFileExist(src);
-      expect(fileExists).toBe(true);
+      expect(fileExists).toEqual(true, 'The file does not exist:' + src);
     }
   });
 
