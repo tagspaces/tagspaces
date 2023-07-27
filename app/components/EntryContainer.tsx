@@ -333,10 +333,12 @@ function EntryContainer(props: Props) {
   }, []);
 
   const toggleFullScreen = useCallback(() => {
-    if (isFullscreen) {
-      fscreen.exitFullscreen();
-    } else {
-      fscreen.requestFullscreen(fileViewerContainer.current);
+    if (openedFile.isFile) {
+      if (isFullscreen) {
+        fscreen.exitFullscreen();
+      } else {
+        fscreen.requestFullscreen(fileViewerContainer.current);
+      }
     }
   }, [isFullscreen]);
 
