@@ -51,10 +51,11 @@ const styles: any = () => ({
 interface Props {
   classes: any;
   onClose: () => void;
+  tidPrefix?: string;
 }
 
 function CreateDirectory(props: Props) {
-  const { classes, onClose } = props;
+  const { classes, onClose, tidPrefix } = props;
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
   const dispatch: AppDispatch = useDispatch();
 
@@ -158,6 +159,13 @@ function CreateDirectory(props: Props) {
     }
   }
 
+  function tid(tid) {
+    if (tidPrefix) {
+      return tidPrefix + tid;
+    }
+    return tid;
+  }
+
   return (
     <>
       <Grid item xs={12}>
@@ -168,7 +176,7 @@ function CreateDirectory(props: Props) {
             dispatch(AppActions.toggleLocationDialog());
           }}
           className={classes.createButton}
-          data-tid="createLocationButton"
+          data-tid={tid('createLocationButton')}
         >
           <Tooltip title={i18n.t('createLocationTitle')}>
             <Typography variant="button" display="block" gutterBottom>
@@ -185,7 +193,7 @@ function CreateDirectory(props: Props) {
             dispatch(AppActions.toggleCreateDirectoryDialog());
           }}
           className={classes.createButton}
-          data-tid="newSubDirTID"
+          data-tid={tid('newSubDirTID')}
           disabled={noSuitableLocation}
         >
           {i18n.t('core:newSubdirectory')}
@@ -197,7 +205,7 @@ function CreateDirectory(props: Props) {
             variant="outlined"
             onClick={addFile}
             className={classes.createButton}
-            data-tid="addFilesButton"
+            data-tid={tid('addFilesButton')}
             disabled={noSuitableLocation}
           >
             {i18n.t('addFiles')}
@@ -211,7 +219,7 @@ function CreateDirectory(props: Props) {
           margin="dense"
           name="name"
           fullWidth={true}
-          data-tid="newUrlTID"
+          data-tid={tid('newUrlTID')}
           onKeyDown={event => {
             if (event.key === 'Enter') {
               downloadURL();
@@ -228,7 +236,7 @@ function CreateDirectory(props: Props) {
           }}
         >
           <Button
-            data-tid="cancelRenameEntryTID"
+            data-tid={tid('cancelRenameEntryTID')}
             className={classes.createButton}
             onClick={() => downloadURL()}
           >
