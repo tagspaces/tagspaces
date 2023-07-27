@@ -185,7 +185,7 @@ function CreateDirectory(props: Props) {
             dispatch(AppActions.toggleCreateDirectoryDialog());
           }}
           className={classes.createButton}
-          data-tid="newSubDirectory"
+          data-tid="newSubDirTID"
           disabled={noSuitableLocation}
         >
           {i18n.t('core:newSubdirectory')}
