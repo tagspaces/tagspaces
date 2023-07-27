@@ -18,6 +18,9 @@ export const getRandomInt = (min, max) =>
 export function writeFile(filePath, fileContent) {
   fse.writeFileSync(filePath, fileContent);
 }
+export function checkFileExist(filePath) {
+  return fse.existsSync(filePath);
+}
 // use this pause only for visual debuging on places where you want to see the result after a given operation
 // global.msDebugPause = 0;
 
