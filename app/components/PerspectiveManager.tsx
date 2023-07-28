@@ -17,24 +17,20 @@
  */
 
 import React from 'react';
-import withStyles from '@mui/styles/withStyles';
 import Typography from '@mui/material/Typography';
-import styles from './SidePanels.css';
+import { classes, SidePanel } from '-/components/SidePanels.css';
 
 interface Props {
-  classes: any;
   style: any;
 }
 
 function PerspectiveManager(props: Props) {
-  const { classes } = props;
-
   return (
-    <div className={classes.panel} style={props.style}>
+    <SidePanel className={classes.panel} style={props.style}>
       <Typography className={classes.panelTitle}>Perspectives</Typography>
-    </div>
+    </SidePanel>
   );
   //         <Button onClick={() => history.push('/login')}>Login</Button>
 }
 
-export default withStyles(styles)(PerspectiveManager);
+export default PerspectiveManager;

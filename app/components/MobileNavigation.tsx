@@ -17,6 +17,7 @@
  */
 
 import React, { useState } from 'react';
+import { styled } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import Box from '@mui/material/Box';
@@ -33,7 +34,6 @@ import HelpIcon from '@mui/icons-material/HelpOutline';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SettingsIcon from '@mui/icons-material/Settings';
-import withStyles from '@mui/styles/withStyles';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
 import Popover from '@mui/material/Popover';
 import { Pro } from '-/pro';
@@ -59,14 +59,25 @@ import { CreateFileIcon, LocalLocationIcon } from '-/components/CommonIcons';
 import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
 
-const styles: any = (theme: any) => ({
+const PREFIX = 'MobileNavigation';
+
+const classes = {
+  button: `${PREFIX}-button`,
+  selectedButton: `${PREFIX}-selectedButton`
+};
+
+const Root = styled(Box)(({ theme }) => ({
+  button: {
+    position: 'relative',
+    padding: '8px 12px 6px 8px',
+    margin: '0'
+  },
   selectedButton: {
     backgroundColor: theme.palette.primary.light
   }
-});
+}));
 
 interface Props {
-  classes: any;
   hideDrawer?: () => void;
   width?: number;
 }
@@ -89,7 +100,7 @@ function MobileNavigation(props: Props) {
 
   const showProTeaser = !Pro && showTeaserBanner;
 
-  const { classes, hideDrawer, width } = props;
+  const { hideDrawer, width } = props;
 
   const toggleNewEntryDialog = () =>
     dispatch(AppActions.toggleNewEntryDialog());
@@ -110,7 +121,7 @@ function MobileNavigation(props: Props) {
   const switchTheme = () => dispatch(SettingsActions.switchTheme());
 
   return (
-    <Box
+    <Root
       style={{
         // backgroundColor: theme.palette.background.default,
         height: '100%',
@@ -292,7 +303,7 @@ function MobileNavigation(props: Props) {
                 style={{ marginTop: -15, marginRight: 2 }}
                 size="large"
               >
-                <AccountCircleIcon className={classes.buttonIcon} />
+                <AccountCircleIcon />
               </IconButton>
             </Tooltip>
             <Popover
@@ -319,12 +330,12 @@ function MobileNavigation(props: Props) {
               style={{ marginTop: -15, marginRight: 2 }}
               size="large"
             >
-              <ThemingIcon className={classes.buttonIcon} />
+              <ThemingIcon />
             </IconButton>
           </Tooltip>
         )}
       </Box>
-    </Box>
+    </Root>
   );
 }
-export default withStyles(styles)(MobileNavigation);
+export default MobileNavigation;

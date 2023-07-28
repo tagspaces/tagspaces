@@ -1,3 +1,4 @@
+/*
 import AppConfig from '-/AppConfig';
 import { BaseCSSProperties } from '@mui/styles';
 
@@ -76,3 +77,4 @@ export const styles = (theme: any) => {
   };
   return baseStyle as any;
 };
+*/

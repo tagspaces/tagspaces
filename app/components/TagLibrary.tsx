@@ -19,7 +19,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
-import withStyles from '@mui/styles/withStyles';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Collapse from '@mui/material/Collapse';
@@ -28,7 +27,6 @@ import AppConfig from '-/AppConfig';
 import TagContainerDnd from './TagContainerDnd';
 import TagContainer from './TagContainer';
 import ConfirmDialog from './dialogs/ConfirmDialog';
-import styles from './SidePanels.css';
 import CreateTagGroupDialog from './dialogs/CreateTagGroupDialog';
 import CreateTagsDialog from './dialogs/CreateTagsDialog';
 import EditTagGroupDialog from './dialogs/EditTagGroupDialog';
@@ -77,9 +75,9 @@ import {
   sortTagGroup
 } from '-/services/taglibrary-utils';
 import useFirstRender from '-/utils/useFirstRender';
+import { classes, SidePanel } from '-/components/SidePanels.css';
 
 interface Props {
-  classes?: any;
   style?: any;
   reduceHeightBy: number;
 }
@@ -283,7 +281,6 @@ function TagLibrary(props: Props) {
       <div key={tagGroup.uuid}>
         <TagGroupTitleDnD
           index={index}
-          classes={classes}
           tagGroup={tagGroup}
           moveTagGroup={(tagGroupUuid, position) => {
             setTagGroups(moveTagGroup(tagGroupUuid, position, tagGroups));
@@ -382,11 +379,11 @@ function TagLibrary(props: Props) {
     }
   }
 
-  const { classes, reduceHeightBy } = props;
+  const { reduceHeightBy } = props;
 
   const allTags = getAllTags(tagGroups);
   return (
-    <div
+    <SidePanel
       className={classes.panel}
       style={{
         display: 'flex',
@@ -576,8 +573,8 @@ function TagLibrary(props: Props) {
         )}
         <div style={{ paddingTop: 0 }}>{tagGroups.map(renderTagGroup)}</div>
       </div>
-    </div>
+    </SidePanel>
   );
 }
 
-export default withStyles(styles)(TagLibrary);
+export default TagLibrary;

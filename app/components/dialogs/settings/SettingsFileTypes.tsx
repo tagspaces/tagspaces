@@ -17,9 +17,9 @@
  */
 
 import React, { useState, useEffect, useRef, useReducer } from 'react';
+import { styled } from '@mui/material/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import withStyles from '@mui/styles/withStyles';
 import MenuItem from '@mui/material/MenuItem';
 import Input from '@mui/material/Input';
 import FormControl from '@mui/material/FormControl';
@@ -55,29 +55,36 @@ import { AppDispatch, getExtensions } from '-/reducers/app';
 import { supportedFileTypes as defaultSupportedFileTypes } from '-/extension-config';
 import useFirstRender from '-/utils/useFirstRender';
 
-const styles: any = (theme: any) => ({
-  fileTypeColorDialog: {
+const PREFIX = 'SettingsFileTypes';
+
+const classes = {
+  fileTypeColorDialog: `${PREFIX}-fileTypeColorDialog`,
+  colorChooserButton: `${PREFIX}-colorChooserButton`,
+  fileExtRemove: `${PREFIX}-fileExtRemove`
+};
+
+// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
+const Root = styled('div')(({ theme: any }) => ({
+  [`& .${classes.fileTypeColorDialog}`]: {
     width: 60,
     padding: '0 12px 0 0'
   },
-  colorChooserButton: {
+
+  [`& .${classes.colorChooserButton}`]: {
     maxWidth: 30,
     width: 30,
     border: '1px solid lightgray'
   },
-  fileExtRemove: {
+
+  [`& .${classes.fileExtRemove}`]: {
     height: '38px',
     cursor: 'pointer',
     marginLeft: 10,
     padding: '0'
   }
-});
+}));
 
-interface Props {
-  classes: any;
-}
-
-function SettingsFileTypes(props: Props) {
+function SettingsFileTypes() {
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const items = useRef<Array<TS.FileTypes>>(supportedFileTypes);
   const selectedItem = useRef<TS.FileTypes>(undefined);
@@ -232,8 +239,6 @@ function SettingsFileTypes(props: Props) {
 
   const sanitizeFileTypeInput = fileTypeInput =>
     fileTypeInput.replace(/[^a-zA-Z0-9 ]/g, '');
-
-  const { classes } = props;
 
   interface ColumnData {
     dataKey: keyof TS.FileTypes;
@@ -439,7 +444,7 @@ function SettingsFileTypes(props: Props) {
                 }}
               >
                 &nbsp;
-                <div style={styles.color} />
+                <div />
               </Button>
             </Tooltip>
           </TransparentBackground>
@@ -459,7 +464,7 @@ function SettingsFileTypes(props: Props) {
   }
 
   return (
-    <>
+    <Root>
       <Paper
         style={{
           height: 600,
@@ -523,15 +528,14 @@ function SettingsFileTypes(props: Props) {
           ref={settingsFileTypeRef}
         />
       </Paper>
-
       <ColorPickerDialog
         open={isColorPickerVisible}
         setColor={handleChangeColor}
         onClose={closeColorPicker}
         color={selectedItem.current && selectedItem.current.color}
       />
-    </>
+    </Root>
   );
 }
 
-export default withStyles(styles)(SettingsFileTypes);
+export default SettingsFileTypes;

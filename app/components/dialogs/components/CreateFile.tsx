@@ -17,12 +17,12 @@
  */
 
 import React, { useReducer, useRef, useState } from 'react';
+import { styled } from '@mui/material/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-import withStyles from '@mui/styles/withStyles';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
@@ -40,21 +40,26 @@ import { FormControl } from '@mui/material';
 import { fileNameValidation } from '-/services/utils-io';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
 
-const styles: any = () => ({
-  createButton: {
+const PREFIX = 'CreateFile';
+
+const classes = {
+  createButton: `${PREFIX}-createButton`
+};
+
+const StyledGrid = styled(Grid)(() => ({
+  [`& .${classes.createButton}`]: {
     width: '100%',
     textAlign: 'center'
   }
-});
+}));
 
 interface Props {
   //open: boolean;
-  classes: any;
   onClose: () => void;
 }
 
 function CreateFile(props: Props) {
-  const { classes, onClose } = props;
+  const { onClose } = props;
 
   const dispatch: AppDispatch = useDispatch();
   const firstRWLocation = useSelector(getFirstRWLocation);
@@ -160,7 +165,7 @@ function CreateFile(props: Props) {
   };
 
   return (
-    <Grid style={{ flexGrow: 1, width: '100%' }} container spacing={1}>
+    <StyledGrid style={{ flexGrow: 1, width: '100%' }} container spacing={1}>
       <Grid item xs={12}>
         <FormControl fullWidth={true} error={inputError}>
           <TextField
@@ -241,8 +246,8 @@ function CreateFile(props: Props) {
           </Button>
         </ButtonGroup>
       </Grid>
-    </Grid>
+    </StyledGrid>
   );
 }
 
-export default withStyles(styles)(CreateFile);
+export default CreateFile;

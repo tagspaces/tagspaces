@@ -18,11 +18,17 @@
 
 import React, { ReactNode, useRef } from 'react';
 import { DropTargetMonitor, useDrop } from 'react-dnd';
-import withStyles from '@mui/styles/withStyles';
 import i18n from '../services/i18n';
+import { styled } from '@mui/material/styles';
 
-const styles: any = (theme: any) => ({
-  dropzone: {
+const PREFIX = 'TargetFileBox';
+
+const classes = {
+  dropzone: `${PREFIX}-dropzone`
+};
+
+const Root = styled('div')(({ theme }) => ({
+  [`& .${classes.dropzone}`]: {
     margin: 5,
     position: 'absolute',
     top: 0,
@@ -40,7 +46,7 @@ const styles: any = (theme: any) => ({
     fontWeight: 'bold',
     color: 'white'
   }
-});
+}));
 
 interface Props {
   classes?: any;
@@ -76,11 +82,11 @@ function TargetFileBox(props: Props) {
     undefined
   );
   return (
-    <div ref={ref} style={{ height: '100%' }}>
+    <Root ref={ref} style={{ height: '100%' }}>
       {dragContent}
       {children}
-    </div>
+    </Root>
   );
 }
 
-export default withStyles(styles, { withTheme: true })(TargetFileBox);
+export default TargetFileBox;

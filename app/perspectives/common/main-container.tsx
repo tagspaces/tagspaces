@@ -45,8 +45,8 @@ export const renderCell = (
     handleGridCellDblClick,
     isLast?: boolean
   ) => any,
-  classes,
-  theme,
+  /* classes,
+  theme,*/
   showDirectories: boolean,
   isReadOnlyMode: boolean,
   desktopMode: boolean,

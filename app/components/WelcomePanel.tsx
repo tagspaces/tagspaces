@@ -18,7 +18,6 @@
 
 import React, { useReducer } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import withStyles from '@mui/styles/withStyles';
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -56,33 +55,36 @@ import { TS } from '-/tagspaces.namespace';
 import { renderHistory } from '-/components/RenderHistory';
 import HowToStart from '-/components/HowToStart';
 import { openURLExternally } from '-/services/utils-io';
+import { styled, useTheme } from '@mui/material/styles';
 
-interface Props {
-  theme: any;
-  classes: any;
-}
+const PREFIX = 'WelcomePanel';
 
-export const styles: any = (theme: any) => ({
-  listItem: {
+const classes = {
+  listItem: `${PREFIX}-listItem`,
+  recentTitle: `${PREFIX}-recentTitle`,
+  noRecentItems: `${PREFIX}-noRecentItems`
+};
+
+const Root = styled('div')(({ theme }) => ({
+  [`& .${classes.listItem}`]: {
     color: theme.palette.text.primary,
     textTransform: 'uppercase',
     marginTop: 10
   },
-  recentTitle: {
+  [`& .${classes.recentTitle}`]: {
     color: theme.palette.text.primary,
     textTransform: 'uppercase',
     textAlign: 'center'
   },
-  noRecentItems: {
+  [`& .${classes.noRecentItems}`]: {
     color: theme.palette.text.primary,
     padding: 30,
     alignSelf: 'center'
   }
-});
+}));
 
-function WelcomePanel(props: Props) {
-  const { theme, classes } = props;
-
+function WelcomePanel() {
+  const theme = useTheme();
   const dispatch: AppDispatch = useDispatch();
   const desktopMode = useSelector(getDesktopMode);
   const currentLocationId = useSelector(getCurrentLocationId);
@@ -367,7 +369,7 @@ function WelcomePanel(props: Props) {
   }
 
   return (
-    <div
+    <Root
       data-tid="WelcomePanelTID"
       style={{
         overflow: 'hidden',
@@ -439,8 +441,8 @@ function WelcomePanel(props: Props) {
           </Grid>
         )}
       </Grid>
-    </div>
+    </Root>
   );
 }
 
-export default withStyles(styles, { withTheme: true })(WelcomePanel);
+export default WelcomePanel;

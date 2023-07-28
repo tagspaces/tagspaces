@@ -47,9 +47,35 @@ import { getKeyBindingObject } from '-/reducers/settings';
 import { getAllPropertiesPromise } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { actions as AppActions, isReadOnlyMode } from '-/reducers/app';
+import { alpha, styled } from '@mui/material/styles';
+
+const PREFIX = 'MainToolbar';
+const classes = {
+  topToolbar: `${PREFIX}-topToolbar`
+};
+
+const Root = styled('div')(({ theme }) => ({
+  topToolbar: {
+    paddingLeft: 5,
+    paddingRight: 5,
+    minHeight: 40,
+    height: 53,
+    position: 'absolute',
+    zIndex: 1,
+    background:
+      'linear-gradient(0deg, ' +
+      alpha(theme.palette.background.default, 0.67) +
+      ' 0%, ' +
+      theme.palette.background.default +
+      ' 99%)',
+    backdropFilter: 'blur(5px)',
+    // borderBottom: '1px solid ' + theme.palette.divider,
+    width: 'calc(100% - 10px)',
+    overflowX: 'auto'
+  }
+}));
 
 interface Props {
-  classes: any;
   prefixDataTID?: string;
   selectedEntries: Array<TS.FileSystemEntry>;
   loadParentDirectoryContent: () => void;
@@ -75,7 +101,6 @@ interface Props {
 
 function MainToolbar(props: Props) {
   const {
-    classes,
     prefixDataTID,
     selectedEntries,
     toggleSelectAllFiles,

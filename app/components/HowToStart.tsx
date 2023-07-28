@@ -1,5 +1,4 @@
 import * as React from 'react';
-import withStyles from '@mui/styles/withStyles';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Stepper from '@mui/material/Stepper';
@@ -12,6 +11,7 @@ import i18n from '-/services/i18n';
 import Links from '-/content/links';
 import { ProSign } from '-/components/HelperComponents';
 import { openURLExternally } from '-/services/utils-io';
+import { useTheme } from '@mui/material/styles';
 
 export const styles: any = (theme: any) => ({
   recentTitle: {
@@ -39,13 +39,8 @@ function clearHighlights() {
   selectByTID('floatingPerspectiveSwitcher').classList.remove('highlighterOn');
 }
 
-interface Props {
-  theme: any;
-  classes: any;
-}
-
-function HowToStart(props: Props) {
-  const { classes, theme } = props;
+function HowToStart() {
+  const theme = useTheme();
   const steps = [
     {
       label: 'Introduction',
@@ -322,10 +317,12 @@ function HowToStart(props: Props) {
       </style>
       <Typography
         variant="inherit"
-        style={{
+        sx={{
+          color: theme.palette.text.primary,
+          textTransform: 'uppercase',
+          textAlign: 'center',
           paddingTop: 20
         }}
-        className={classes.recentTitle}
         noWrap
       >
         {i18n.t('Get Started with TagSpaces')}
@@ -379,4 +376,4 @@ function HowToStart(props: Props) {
   );
 }
 
-export default withStyles(styles, { withTheme: true })(HowToStart);
+export default HowToStart;

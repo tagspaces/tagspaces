@@ -17,10 +17,9 @@
  */
 
 import React, { ChangeEvent, useRef, useReducer, useEffect } from 'react';
+import { styled } from '@mui/material/styles';
 import { Theme } from '@mui/material/styles';
 import { useDispatch } from 'react-redux';
-import withStyles from '@mui/styles/withStyles';
-import createStyles from '@mui/styles/createStyles';
 import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -28,7 +27,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import useTheme from '@mui/styles/useTheme';
+import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { QRCode } from 'react-qrcode-logo';
 import InfoIcon from '-/components/InfoIcon';
@@ -38,6 +37,21 @@ import MenuItem from '@mui/material/MenuItem';
 import PlatformIO from '-/services/platform-facade';
 import { actions } from '-/reducers/app';
 import Links from '-/content/links';
+
+const PREFIX = 'LinkGeneratorDialog';
+
+const classes = {
+  root: `${PREFIX}-root`
+};
+
+const StyledDialog = styled(Dialog)(({ theme: Theme }) => ({
+  root: {
+    marginTop: 12,
+    '& .MuiInputBase-root': {
+      height: 450
+    }
+  }
+}));
 
 interface Props {
   open: boolean;
@@ -49,16 +63,7 @@ interface Props {
   switchCurrentLocationType?: (currentLocationId: string) => Promise<boolean>;
 }
 
-const QRTextField = withStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      marginTop: 12,
-      '& .MuiInputBase-root': {
-        height: 450
-      }
-    }
-  })
-)(TextField);
+const QRTextField = TextField;
 
 function LinkGeneratorDialog(props: Props) {
   const { open, onClose, path } = props;
@@ -93,7 +98,7 @@ function LinkGeneratorDialog(props: Props) {
   }
 
   return (
-    <Dialog
+    <StyledDialog
       open={open}
       onClose={onClose}
       fullScreen={fullScreen}
@@ -187,6 +192,9 @@ function LinkGeneratorDialog(props: Props) {
               </InputAdornment>
             )
           }}
+          classes={{
+            root: classes.root
+          }}
         />
       </DialogContent>
       <DialogActions
@@ -213,7 +221,7 @@ function LinkGeneratorDialog(props: Props) {
           {i18n.t('core:close')}
         </Button>
       </DialogActions>
-    </Dialog>
+    </StyledDialog>
   );
 }
 

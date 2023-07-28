@@ -23,11 +23,10 @@ import React, {
   useRef,
   useState
 } from 'react';
+import { styled, useTheme } from '@mui/material/styles';
 import { getBgndFileLocationForDirectory } from '@tagspaces/tagspaces-common/paths';
 import L from 'leaflet';
 import { Theme } from '@mui/material/styles';
-import withStyles from '@mui/styles/withStyles';
-import createStyles from '@mui/styles/createStyles';
 import Grid from '@mui/material/Grid';
 import FormControl from '@mui/material/FormControl';
 import Typography from '@mui/material/Typography';
@@ -103,15 +102,23 @@ import useFirstRender from '-/utils/useFirstRender';
 import LinkGeneratorDialog from '-/components/dialogs/LinkGeneratorDialog';
 import { LinkIcon } from '-/components/CommonIcons';
 
-const ThumbnailChooserDialog =
-  Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
-const CustomBackgroundDialog =
-  Pro && Pro.UI ? Pro.UI.CustomBackgroundDialog : false;
-const BgndImgChooserDialog =
-  Pro && Pro.UI ? Pro.UI.BgndImgChooserDialog : false;
+const PREFIX = 'EntryProperties';
 
-const styles: any = (theme: any) => ({
-  entryProperties: {
+const classes = {
+  entryProperties: `${PREFIX}-entryProperties`,
+  tags: `${PREFIX}-tags`,
+  editTagsButton: `${PREFIX}-editTagsButton`,
+  textField: `${PREFIX}-textField`,
+  dropText: `${PREFIX}-dropText`,
+  propertyName: `${PREFIX}-propertyName`,
+  actionPlaceholder: `${PREFIX}-actionPlaceholder`,
+  button: `${PREFIX}-button`,
+  mdHelpers: `${PREFIX}-mdHelpers`,
+  formControl: `${PREFIX}-formControl`
+};
+
+const Root = styled('div')(({ theme }) => ({
+  [`& .${classes.entryProperties}`]: {
     overflowY: 'auto',
     overflowX: 'hidden',
     flexGrow: 1,
@@ -119,49 +126,66 @@ const styles: any = (theme: any) => ({
     paddingRight: 2,
     height: '100%'
   },
-  tags: {
+
+  [`& .${classes.tags}`]: {
     padding: '5px 5px 2px 2px',
     margin: 6,
     clear: 'both',
     boxShadow: '0 1px 1px 0 rgba(0,0,0,0.16),0 1px 1px 0 rgba(239,239,239,0.12)'
   },
-  editTagsButton: {
+
+  [`& .${classes.editTagsButton}`]: {
     float: 'right',
     margin: '0 0 10px 0'
   },
-  textField: {
+
+  [`& .${classes.textField}`]: {
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
     width: '100vh'
   },
-  dropText: {
+
+  [`& .${classes.dropText}`]: {
     display: 'flex',
     width: '100%',
     padding: '20px',
     color: '#728496'
   },
-  propertyName: {
+
+  [`& .${classes.propertyName}`]: {
     marginTop: 10
   },
-  actionPlaceholder: {
+
+  [`& .${classes.actionPlaceholder}`]: {
     textAlign: 'end'
   },
-  button: {
+
+  [`& .${classes.button}`]: {
     position: 'relative',
     padding: '8px 12px 6px 8px',
     margin: '0'
   },
-  mdHelpers: {
+
+  [`& .${classes.mdHelpers}`]: {
     borderRadius: '0.25rem',
     paddingLeft: '0.25rem',
     paddingRight: '0.25rem',
     backgroundColor: '#bcc0c561'
+  },
+  [`& .${classes.formControl}`]: {
+    marginLeft: theme.spacing(0),
+    width: '100%'
   }
-});
+}));
+
+const ThumbnailChooserDialog =
+  Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
+const CustomBackgroundDialog =
+  Pro && Pro.UI ? Pro.UI.CustomBackgroundDialog : false;
+const BgndImgChooserDialog =
+  Pro && Pro.UI ? Pro.UI.BgndImgChooserDialog : false;
 
 interface Props {
-  classes: any;
-  theme: any;
   language: string;
   openedEntry: OpenedEntry;
   renameFile: (path: string, nextPath: string) => Promise<boolean>;
@@ -196,7 +220,7 @@ const defaultBackgrounds = [
 ];
 
 function EntryProperties(props: Props) {
-  // const EntryProperties = React.memo((props: Props) => {
+  const theme = useTheme();
   const fileNameRef = useRef<HTMLInputElement>(null);
   const sharingLinkRef = useRef<HTMLInputElement>(null);
   const fileDescriptionRef = useRef<MilkdownRef>(null);
@@ -607,14 +631,14 @@ function EntryProperties(props: Props) {
       });
   };
 
-  const { classes, isReadOnlyMode, theme, sharingLink, language } = props;
+  const { isReadOnlyMode, sharingLink, language } = props;
 
   if (
     !currentEntry ||
     !currentEntry.current.path ||
     currentEntry.current.path === ''
   ) {
-    return <div />;
+    return <Root />;
   }
 
   function getBgndUrl() {
@@ -1468,15 +1492,7 @@ function EntryProperties(props: Props) {
   );
 }
 
-const ThumbnailTextField = withStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      '& .MuiInputBase-root': {
-        height: 220
-      }
-    }
-  })
-)(TextField);
+const ThumbnailTextField = TextField;
 
 function mapStateToProps(state) {
   return {
@@ -1512,9 +1528,6 @@ export default withLeaflet(
     mapActionCreatorsToProps
   )(
     // @ts-ignore
-    React.memo(
-      withStyles(styles, { withTheme: true })(EntryProperties),
-      areEqual
-    )
+    React.memo(EntryProperties, areEqual)
   )
 );

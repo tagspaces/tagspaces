@@ -147,7 +147,6 @@
     "@mui/icons-material": "^5.13.7",
     "@mui/lab": "^5.0.0-alpha.135",
     "@mui/material": "^5.13.7",
-    "@mui/styles": "^5.13.7",
     "@mui/x-date-pickers": "^5.0.20",
     "@tagspaces/tagspaces-md": "2.1.6",
     "@tagspaces/tagspaces-platforms": "2.1.56",

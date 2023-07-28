@@ -22,7 +22,6 @@ import { I18nextProvider } from 'react-i18next'; // as we build ourself via webp
 import {
   createTheme,
   ThemeProvider,
-  Theme,
   StyledEngineProvider
 } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -34,9 +33,10 @@ import {
   getDefaultDarkTheme
 } from '-/reducers/settings';
 
-declare module '@mui/styles/defaultTheme' {
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  interface DefaultTheme extends Theme {}
+declare module '@mui/material/styles' {
+  interface Theme extends Record<string, any> {
+    // Any additional properties or overrides
+  }
 }
 
 const legacyTheme = createTheme({

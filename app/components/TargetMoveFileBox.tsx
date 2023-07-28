@@ -18,8 +18,8 @@
 
 import React from 'react';
 import { DropTarget } from 'react-dnd';
-import withStyles from '@mui/styles/withStyles';
 import { TS } from '-/tagspaces.namespace';
+import { styled } from '@mui/material/styles';
 
 const styles: any = () => ({
   dropzone: {
@@ -42,10 +42,36 @@ const boxTarget = {
   }
 };
 
+const PREFIX = 'TargetMoveFileBox';
+
+const classes = {
+  dropzone: `${PREFIX}-dropzone`
+};
+
+const Root = styled('div')(({ theme }) => ({
+  [`& .${classes.dropzone}`]: {
+    margin: 5,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: '#1dd19f40',
+    zIndex: 1000,
+    border: '3px dashed white',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center',
+    fontSize: '40px',
+    fontWeight: 'bold',
+    color: 'white'
+  }
+}));
+
 interface Props {
   accepts: Array<string>;
   onDrop: (item: any, monitor: any) => void;
-  classes?: any;
   canDrop: boolean;
   isOver: boolean;
   connectDropTarget: any;
@@ -55,10 +81,10 @@ interface Props {
 }
 
 const TargetMoveFileBox = (props: Props) => {
-  const { classes, canDrop, isOver, connectDropTarget, children } = props;
+  const { canDrop, isOver, connectDropTarget, children } = props;
   const dragContent =
     canDrop && isOver ? (
-      <div
+      <Root
         className={classes.dropzone}
       /> /* {i18n.t('core:releaseToMoveDrop')} */
     ) : (
@@ -72,14 +98,12 @@ const TargetMoveFileBox = (props: Props) => {
   );
 };
 
-export default withStyles(styles, { withTheme: true })(
-  DropTarget(
-    props => props.accepts,
-    boxTarget,
-    (connect, monitor) => ({
-      connectDropTarget: connect.dropTarget(),
-      isOver: monitor.isOver(),
-      canDrop: monitor.canDrop()
-    })
-  )(TargetMoveFileBox)
-);
+export default DropTarget(
+  props => props.accepts,
+  boxTarget,
+  (connect, monitor) => ({
+    connectDropTarget: connect.dropTarget(),
+    isOver: monitor.isOver(),
+    canDrop: monitor.canDrop()
+  })
+)(TargetMoveFileBox);

@@ -15,10 +15,27 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-// import AppConfig from '-/AppConfig';
-import { alpha } from '@mui/material/styles';
+import { alpha, styled } from '@mui/material/styles';
 
-export default (theme: any): any => ({
+const PREFIX = 'GridStyles';
+export const classes = {
+  gridCell: `${PREFIX}-gridCell`,
+  rowCell: `${PREFIX}-rowCell`,
+  rowHover: `${PREFIX}-rowHover`,
+  selectedGridCell: `${PREFIX}-selectedGridCell`,
+  selectedRowCell: `${PREFIX}-selectedRowCell`,
+  gridCellThumb: `${PREFIX}-gridCellThumb`,
+  gridCellTitle: `${PREFIX}-gridCellTitle`,
+  gridCellTags: `${PREFIX}-gridCellTags`,
+  gridCellDescription: `${PREFIX}-gridCellDescription`,
+  gridFileExtension: `${PREFIX}-gridFileExtension`,
+  gridSizeDate: `${PREFIX}-gridSizeDate`,
+  gridDetails: `${PREFIX}-gridDetails`,
+  gridFolder: `${PREFIX}-gridFolder`,
+  topToolbar: `${PREFIX}-topToolbar`
+};
+
+export const GridStyles = styled('div')(({ theme }) => ({
   // rowContainer: {
   //   display: 'grid',
   //   gridGap: '0px 0px',
@@ -137,4 +154,4 @@ export default (theme: any): any => ({
     width: 'calc(100% - 10px)',
     overflowX: 'auto'
   }
-});
+}));

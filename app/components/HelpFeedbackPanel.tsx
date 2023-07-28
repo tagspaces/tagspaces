@@ -18,7 +18,6 @@
 
 import React from 'react';
 import { useSelector } from 'react-redux';
-import withStyles from '@mui/styles/withStyles';
 import classNames from 'classnames';
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
@@ -37,18 +36,16 @@ import NewFeatureIcon from '@mui/icons-material/Gesture';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import ForumIcon from '@mui/icons-material/Forum';
 import ProTeaserIcon from '@mui/icons-material/FlightTakeoff';
-import AppConfig from '-/AppConfig';
-import styles from '-/components/SidePanels.css';
 import i18n from '-/services/i18n';
 import { KeyShortcutsIcon, HelpIcon } from '-/components/CommonIcons';
 import Links from '-/content/links';
 import { Pro } from '-/pro';
 import { openURLExternally } from '-/services/utils-io';
 import { getCurrentLanguage } from '-/reducers/settings';
+import { classes, SidePanel } from '-/components/SidePanels.css';
+import { useTheme } from '@mui/material/styles';
 
 interface Props {
-  classes?: any;
-  theme?: any;
   toggleAboutDialog?: () => void;
   toggleKeysDialog: () => void;
   toggleOnboardingDialog: () => void;
@@ -58,19 +55,18 @@ interface Props {
 }
 
 function HelpFeedbackPanel(props: Props) {
+  const theme = useTheme();
   const language = useSelector(getCurrentLanguage);
   const {
-    classes,
     toggleAboutDialog,
     toggleKeysDialog,
     toggleOnboardingDialog,
     toggleProTeaser,
-    theme,
     reduceHeightBy
   } = props;
 
   return (
-    <div
+    <SidePanel
       className={classes.panel}
       style={{
         display: 'flex',
@@ -240,8 +236,8 @@ function HelpFeedbackPanel(props: Props) {
           </Typography>
         </ListItem>
       </List>
-    </div>
+    </SidePanel>
   );
 }
 
-export default withStyles(styles, { withTheme: true })(HelpFeedbackPanel);
+export default HelpFeedbackPanel;

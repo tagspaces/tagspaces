@@ -18,7 +18,6 @@
 
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import withStyles from '@mui/styles/withStyles';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -49,33 +48,42 @@ import { DeleteIcon } from '-/components/CommonIcons';
 import { ListItemIcon } from '@mui/material';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { AppDispatch } from '-/reducers/app';
+import { styled } from '@mui/material/styles';
 
-const styles: any = {
-  root: {
+const PREFIX = 'SettingsGeneral';
+
+const classes = {
+  root: `${PREFIX}-root`,
+  listItem: `${PREFIX}-listItem`,
+  pro: `${PREFIX}-pro`,
+  colorChooserButton: `${PREFIX}-colorChooserButton`
+};
+
+const Root = styled('div')(({ theme }) => ({
+  [`& .${classes.root}`]: {
     overflowX: 'hidden'
   },
-  listItem: {
+  [`& .${classes.listItem}`]: {
     paddingLeft: 0,
     paddingRight: 0
   },
-  pro: {
+  [`& .${classes.pro}`]: {
     backgroundColor: '#1DD19F'
   },
-  colorChooserButton: {
+  [`& .${classes.colorChooserButton}`]: {
     minHeight: 30,
     border: '1px solid lightgray'
   }
-};
+}));
 
 interface Props {
-  classes: any;
   showResetSettings: (showDialog: boolean) => void;
 }
 
 const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 
 function SettingsAdvanced(props: Props) {
-  const { classes, showResetSettings } = props;
+  const { showResetSettings } = props;
   const dispatch: AppDispatch = useDispatch();
   const settings = useSelector(getSettings);
   const tileServers: Array<TS.MapTileServer> = useSelector(getMapTileServers);
@@ -123,7 +131,7 @@ function SettingsAdvanced(props: Props) {
     dispatch(SettingsActions.setPrefixTagContainer(prefix));
 
   return (
-    <div style={{ width: '100%' }}>
+    <Root style={{ width: '100%' }}>
       <List className={classes.root}>
         <ListItem className={classes.listItem}>
           <Button
@@ -462,8 +470,8 @@ function SettingsAdvanced(props: Props) {
           isDefault={tileServerDialog.isDefault}
         />
       )}
-    </div>
+    </Root>
   );
 }
 
-export default withStyles(styles, { withTheme: true })(SettingsAdvanced);
+export default SettingsAdvanced;

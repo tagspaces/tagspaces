@@ -31,9 +31,9 @@ import {
 import Grid from '@mui/material/Grid';
 import { TS } from '-/tagspaces.namespace';
 import DragItemTypes from '-/components/DragItemTypes';
+import { classes, SidePanel } from '-/components/SidePanels.css';
 
 interface Props {
-  classes: any;
   index: number;
   tagGroup: TS.TagGroup;
   handleTagGroupMenu: (
@@ -74,9 +74,9 @@ function TagGroupTitleDnD(props: Props) {
   } = props;
 
   const tagGroupTitle = (
-    <div
+    <SidePanel
       data-tid={'tagLibraryTagGroupTitle_' + tagGroup.title}
-      className={props.classes.listItem}
+      className={classes.listItem}
       title={'Number of tags in this tag group: ' + tagGroup.children.length}
     >
       <Grid
@@ -98,7 +98,7 @@ function TagGroupTitleDnD(props: Props) {
         <Grid item xs={8} style={{ alignSelf: 'center' }}>
           <Typography
             variant="inherit"
-            className={props.classes.header}
+            className={classes.header}
             style={{ paddingLeft: 0 }}
             data-tid="locationTitleElement"
             noWrap
@@ -143,7 +143,7 @@ function TagGroupTitleDnD(props: Props) {
           )}
         </Grid>
       </Grid>
-    </div>
+    </SidePanel>
   );
   if (tagGroup.readOnly) {
     return tagGroupTitle;

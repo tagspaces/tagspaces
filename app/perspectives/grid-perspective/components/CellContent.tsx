@@ -18,6 +18,7 @@
 
 import React, { useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useTheme } from '@mui/material/styles';
 import classNames from 'classnames';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -61,6 +62,11 @@ import {
   isDesktopMode,
   isReorderTags
 } from '-/reducers/settings';
+import { styled } from '@mui/material/styles';
+import {
+  classes,
+  GridStyles
+} from '-/perspectives/grid-perspective/components/styles.css';
 
 const maxDescriptionPreviewLength = 100;
 
@@ -69,9 +75,7 @@ interface Props {
   isLast?: boolean;
   fsEntry: TS.FileSystemEntry;
   entrySize: string;
-  classes: any;
   style?: any;
-  theme: any;
   thumbnailMode: any;
   openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   selectedEntries: Array<TS.FileSystemEntry>;
@@ -91,8 +95,6 @@ function CellContent(props: Props) {
     selected,
     fsEntry,
     entrySize,
-    classes,
-    theme,
     thumbnailMode,
     selectedEntries,
     handleTagMenu,
@@ -107,6 +109,8 @@ function CellContent(props: Props) {
     deselectEntry,
     isLast
   } = props;
+
+  const theme = useTheme();
   const readOnlyMode = useSelector(isReadOnlyMode);
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const reorderTags: boolean = useSelector(isReorderTags);
@@ -368,11 +372,7 @@ function CellContent(props: Props) {
         container
         wrap="nowrap"
         className={classes.rowHover}
-        style={{
-          // opacity: fileSystemEntry.isIgnored ? 0.3 : 1,
-          backgroundColor,
-          borderRadius: 5
-        }}
+        sx={{ backgroundColor }}
       >
         <Grid
           item
@@ -560,37 +560,39 @@ function CellContent(props: Props) {
   }
 
   return (
-    <Paper
-      elevation={2}
-      data-entry-id={fSystemEntry.uuid}
-      className={classNames(
-        layoutType === 'grid' && classes.gridCell,
-        layoutType === 'row' && classes.rowCell,
-        selected && layoutType === 'grid' && classes.selectedGridCell,
-        selected && layoutType === 'row' && classes.selectedRowCell
-      )}
-      style={{
-        minHeight: layoutType === 'row' ? entryHeight : 'auto',
-        marginBottom: isLast ? 40 : 'auto',
-        backgroundColor: theme.palette.background.default
-      }}
-      onContextMenu={event => handleGridContextMenu(event, fSystemEntry)}
-      onDoubleClick={event => {
-        handleGridCellDblClick(event, fSystemEntry);
-      }}
-      onClick={event => {
-        event.stopPropagation();
-        AppConfig.isCordovaiOS // TODO DoubleClick not fired in Cordova IOS
-          ? handleGridCellDblClick(event, fSystemEntry)
-          : handleGridCellClick(event, fSystemEntry);
-      }}
-      onDrag={event => {
-        handleGridCellClick(event, fSystemEntry);
-      }}
-    >
-      {layoutType === 'grid' && renderGridCell()}
-      {layoutType === 'row' && renderRowCell()}
-    </Paper>
+    <GridStyles>
+      <Paper
+        elevation={2}
+        data-entry-id={fSystemEntry.uuid}
+        className={classNames(
+          layoutType === 'grid' && classes.gridCell,
+          layoutType === 'row' && classes.rowCell,
+          selected && layoutType === 'grid' && classes.selectedGridCell,
+          selected && layoutType === 'row' && classes.selectedRowCell
+        )}
+        style={{
+          minHeight: layoutType === 'row' ? entryHeight : 'auto',
+          marginBottom: isLast ? 40 : 'auto',
+          backgroundColor: theme.palette.background.default
+        }}
+        onContextMenu={event => handleGridContextMenu(event, fSystemEntry)}
+        onDoubleClick={event => {
+          handleGridCellDblClick(event, fSystemEntry);
+        }}
+        onClick={event => {
+          event.stopPropagation();
+          AppConfig.isCordovaiOS // TODO DoubleClick not fired in Cordova IOS
+            ? handleGridCellDblClick(event, fSystemEntry)
+            : handleGridCellClick(event, fSystemEntry);
+        }}
+        onDrag={event => {
+          handleGridCellClick(event, fSystemEntry);
+        }}
+      >
+        {layoutType === 'grid' && renderGridCell()}
+        {layoutType === 'row' && renderRowCell()}
+      </Paper>
+    </GridStyles>
   );
 }
 

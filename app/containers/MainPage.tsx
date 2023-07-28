@@ -20,7 +20,6 @@ import React, { useEffect, useReducer, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import withStyles from '@mui/styles/withStyles';
 import { translate } from 'react-i18next';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import Drawer from '@mui/material/Drawer';
@@ -93,6 +92,7 @@ import MoveOrCopyFilesDialog from '-/components/dialogs/MoveOrCopyFilesDialog';
 import PlatformIO from '-/services/platform-facade';
 import { Pro } from '-/pro';
 import NewFileDialog from '-/components/dialogs/NewFileDialog';
+import { styled, useTheme } from '@mui/material/styles';
 
 const drawerWidth = 320;
 const body = document.getElementsByTagName('body')[0];
@@ -103,8 +103,15 @@ const bufferedLeftSplitResize = buffer({
 
 const KanBanImportDialog = Pro && Pro.UI ? Pro.UI.KanBanImportDialog : false;
 
-const styles: any = (theme: any) => ({
-  content: {
+const PREFIX = 'MainPage';
+
+const classes = {
+  content: `${PREFIX}-content`,
+  contentShift: `${PREFIX}-contentShift`
+};
+
+const Root = styled('div')(({ theme }) => ({
+  [`& .${classes.content}`]: {
     height: '100%',
     flexGrow: 1,
     padding: 0,
@@ -114,7 +121,7 @@ const styles: any = (theme: any) => ({
       duration: theme.transitions.duration.leavingScreen
     })
   },
-  contentShift: {
+  [`& .${classes.contentShift}`]: {
     height: '100%',
     padding: 0,
     transition: theme.transitions.create('margin', {
@@ -123,7 +130,7 @@ const styles: any = (theme: any) => ({
     }),
     marginLeft: 0
   }
-});
+}));
 
 interface Props {
   isFirstRun: boolean;
@@ -133,8 +140,6 @@ interface Props {
   isGeneratingThumbs: boolean;
   // setGeneratingThumbnails: (isGenerating: boolean) => void;
   isEntryInFullWidth: boolean;
-  classes: any;
-  theme: any;
   isReadOnlyMode: boolean;
   isSettingsDialogOpened: boolean;
   isNewEntryDialogOpened: boolean;
@@ -341,6 +346,7 @@ function ProTeaserDialogAsync(props) {
 }
 
 function MainPage(props: Props) {
+  const theme = useTheme();
   const percent = useRef<number | undefined>(undefined);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
@@ -576,7 +582,6 @@ function MainPage(props: Props) {
   };
 
   const {
-    theme,
     toggleOnboardingDialog,
     toggleSettingsDialog,
     toggleKeysDialog,
@@ -597,8 +602,7 @@ function MainPage(props: Props) {
     directoryPath,
     mainSplitSize,
     openedFiles,
-    openLink,
-    classes
+    openLink
   } = props;
   const { FILE } = NativeTypes;
 
@@ -674,180 +678,181 @@ function MainPage(props: Props) {
   };
 
   return (
-    <HotKeys
-      handlers={keyBindingHandlers}
-      keyMap={keyMap}
-      style={{ height: '100%' }}
-    >
-      <MoveOrCopyFilesDialog
-        open={moveCopyDialogOpened !== undefined}
-        onClose={() => {
-          setMoveCopyDialogOpened(undefined);
-        }}
-        selectedFiles={moveCopyDialogOpened}
-        handleMoveFiles={files => {
-          handleMoveCopyFiles(files, true);
-          setMoveCopyDialogOpened(undefined);
-        }}
-        handleCopyFiles={files => {
-          handleMoveCopyFiles(files, false);
-          setMoveCopyDialogOpened(undefined);
-        }}
-      />
-      {props.isLocationDialogOpened && (
-        <CreateEditLocationDialogAsync
-          open={props.isLocationDialogOpened}
-          onClose={toggleLocationDialog}
-        />
-      )}
-      {props.isAboutDialogOpened && (
-        <AboutDialogAsync
-          open={props.isAboutDialogOpened}
-          toggleLicenseDialog={toggleLicenseDialog}
-          toggleThirdPartyLibsDialog={toggleThirdPartyLibsDialog}
-          onClose={toggleAboutDialog}
-        />
-      )}
-      {props.isKeysDialogOpened && (
-        <KeyboardDialogAsync
-          open={props.isKeysDialogOpened}
-          onClose={toggleKeysDialog}
-        />
-      )}
-      {props.isLicenseDialogOpened && (
-        <LicenseDialogAsync
-          open={props.isLicenseDialogOpened}
-          onClose={(event, reason) => {
-            if (reason === 'backdropClick' || reason === 'escapeKeyDown') {
-              return true;
-            }
-            setFirstRun(false);
-            toggleLicenseDialog();
-          }}
-        />
-      )}
-      {props.isOnboardingDialogOpened && (
-        <OnboardingDialogAsync
-          open={props.isOnboardingDialogOpened}
-          onClose={toggleOnboardingDialog}
-        />
-      )}
-      {props.isThirdPartyLibsDialogOpened && (
-        <ThirdPartyLibsDialogAsync
-          open={props.isThirdPartyLibsDialogOpened}
-          onClose={toggleThirdPartyLibsDialog}
-        />
-      )}
-      {props.isEditTagDialogOpened && (
-        <EditEntryTagDialogAsync
-          open={props.isEditTagDialogOpened}
-          onClose={() => toggleEditTagDialog(undefined)}
-        />
-      )}
-      {props.isOpenLinkDialogOpened && (
-        <OpenLinkDialogAsync
-          open={props.isOpenLinkDialogOpened}
-          onClose={toggleOpenLinkDialog}
-          openLink={openLink}
-        />
-      )}
-      {props.isProTeaserVisible && (
-        <ProTeaserDialogAsync
-          open={props.isProTeaserVisible}
-          onClose={toggleProTeaser}
-        />
-      )}
-      {props.isUploadProgressDialogOpened !== undefined && (
-        <FileUploadDialog
-          open={true}
-          onClose={toggleUploadDialog}
-          title={props.isUploadProgressDialogOpened}
-        />
-      )}
-      {props.isProgressDialogOpened && (
-        <ProgressDialog
-          open={props.isProgressDialogOpened}
-          onClose={toggleProgressDialog}
-        />
-      )}
-      {props.isCreateDirectoryOpened !== null && (
-        <CreateDirectoryDialog
-          open={true}
-          onClose={toggleCreateDirectoryDialog}
-          selectedDirectoryPath={
-            props.isCreateDirectoryOpened &&
-            props.isCreateDirectoryOpened.rootDirPath
-              ? props.isCreateDirectoryOpened.rootDirPath
-              : directoryPath
-          }
-          callback={props.isCreateDirectoryOpened?.callback}
-          reflect={props.isCreateDirectoryOpened?.reflect}
-        />
-      )}
-      {props.isNewEntryDialogOpened && (
-        <NewEntryDialog
-          open={props.isNewEntryDialogOpened}
-          onClose={toggleNewEntryDialog}
-        />
-      )}
-      {props.isNewFileDialogOpened && (
-        <NewFileDialog
-          open={props.isNewFileDialogOpened}
-          onClose={toggleNewFileDialog}
-        />
-      )}
-      <SettingsDialog
-        open={props.isSettingsDialogOpened}
-        onClose={toggleSettingsDialog}
-      />
-      {KanBanImportDialog && props.selectedEntries[0] && (
-        <KanBanImportDialog
-          open={props.isImportKanBanDialogOpened}
-          onClose={props.toggleImportKanBanDialog}
-        />
-      )}
-      {props.isDeleteMultipleEntriesDialogOpened && (
-        <ConfirmDialog
-          open={props.isDeleteMultipleEntriesDialogOpened}
-          onClose={() => props.toggleDeleteMultipleEntriesDialog()}
-          title={i18n.t('core:deleteConfirmationTitle')}
-          content={i18n.t('core:deleteConfirmationContent')}
-          list={props.selectedEntries.map(fsEntry => fsEntry.name)}
-          confirmCallback={result => {
-            if (result && props.selectedEntries) {
-              const deletePromises = props.selectedEntries.map(fsEntry => {
-                if (fsEntry.isFile) {
-                  return props.deleteFile(fsEntry.path, fsEntry.uuid);
-                }
-                return props.deleteDirectory(fsEntry.path);
-              });
-              Promise.all(deletePromises)
-                .then(delResult => {
-                  // console.debug(delResult);
-                  if (delResult.some(del => del)) {
-                    props.setSelectedEntries([]);
-                  } // TODO else { remove only deleted from setSelectedEntries}
-                  return true;
-                })
-                .catch(err => {
-                  console.warn('Deleting file failed', err);
-                });
-            }
-          }}
-          cancelDialogTID="cancelDeleteFileDialog"
-          confirmDialogTID="confirmDeleteFileDialog"
-          confirmDialogContentTID="confirmDeleteDialogContent"
-        />
-      )}
-      <PageNotification />
-      <div
-        style={{
-          // backgroundColor: theme.palette.background.default,
-          height: '100%'
-        }}
+    <Root>
+      <HotKeys
+        handlers={keyBindingHandlers}
+        keyMap={keyMap}
+        style={{ height: '100%' }}
       >
-        <style>
-          {`
+        <MoveOrCopyFilesDialog
+          open={moveCopyDialogOpened !== undefined}
+          onClose={() => {
+            setMoveCopyDialogOpened(undefined);
+          }}
+          selectedFiles={moveCopyDialogOpened}
+          handleMoveFiles={files => {
+            handleMoveCopyFiles(files, true);
+            setMoveCopyDialogOpened(undefined);
+          }}
+          handleCopyFiles={files => {
+            handleMoveCopyFiles(files, false);
+            setMoveCopyDialogOpened(undefined);
+          }}
+        />
+        {props.isLocationDialogOpened && (
+          <CreateEditLocationDialogAsync
+            open={props.isLocationDialogOpened}
+            onClose={toggleLocationDialog}
+          />
+        )}
+        {props.isAboutDialogOpened && (
+          <AboutDialogAsync
+            open={props.isAboutDialogOpened}
+            toggleLicenseDialog={toggleLicenseDialog}
+            toggleThirdPartyLibsDialog={toggleThirdPartyLibsDialog}
+            onClose={toggleAboutDialog}
+          />
+        )}
+        {props.isKeysDialogOpened && (
+          <KeyboardDialogAsync
+            open={props.isKeysDialogOpened}
+            onClose={toggleKeysDialog}
+          />
+        )}
+        {props.isLicenseDialogOpened && (
+          <LicenseDialogAsync
+            open={props.isLicenseDialogOpened}
+            onClose={(event, reason) => {
+              if (reason === 'backdropClick' || reason === 'escapeKeyDown') {
+                return true;
+              }
+              setFirstRun(false);
+              toggleLicenseDialog();
+            }}
+          />
+        )}
+        {props.isOnboardingDialogOpened && (
+          <OnboardingDialogAsync
+            open={props.isOnboardingDialogOpened}
+            onClose={toggleOnboardingDialog}
+          />
+        )}
+        {props.isThirdPartyLibsDialogOpened && (
+          <ThirdPartyLibsDialogAsync
+            open={props.isThirdPartyLibsDialogOpened}
+            onClose={toggleThirdPartyLibsDialog}
+          />
+        )}
+        {props.isEditTagDialogOpened && (
+          <EditEntryTagDialogAsync
+            open={props.isEditTagDialogOpened}
+            onClose={() => toggleEditTagDialog(undefined)}
+          />
+        )}
+        {props.isOpenLinkDialogOpened && (
+          <OpenLinkDialogAsync
+            open={props.isOpenLinkDialogOpened}
+            onClose={toggleOpenLinkDialog}
+            openLink={openLink}
+          />
+        )}
+        {props.isProTeaserVisible && (
+          <ProTeaserDialogAsync
+            open={props.isProTeaserVisible}
+            onClose={toggleProTeaser}
+          />
+        )}
+        {props.isUploadProgressDialogOpened !== undefined && (
+          <FileUploadDialog
+            open={true}
+            onClose={toggleUploadDialog}
+            title={props.isUploadProgressDialogOpened}
+          />
+        )}
+        {props.isProgressDialogOpened && (
+          <ProgressDialog
+            open={props.isProgressDialogOpened}
+            onClose={toggleProgressDialog}
+          />
+        )}
+        {props.isCreateDirectoryOpened !== null && (
+          <CreateDirectoryDialog
+            open={true}
+            onClose={toggleCreateDirectoryDialog}
+            selectedDirectoryPath={
+              props.isCreateDirectoryOpened &&
+              props.isCreateDirectoryOpened.rootDirPath
+                ? props.isCreateDirectoryOpened.rootDirPath
+                : directoryPath
+            }
+            callback={props.isCreateDirectoryOpened?.callback}
+            reflect={props.isCreateDirectoryOpened?.reflect}
+          />
+        )}
+        {props.isNewEntryDialogOpened && (
+          <NewEntryDialog
+            open={props.isNewEntryDialogOpened}
+            onClose={toggleNewEntryDialog}
+          />
+        )}
+        {props.isNewFileDialogOpened && (
+          <NewFileDialog
+            open={props.isNewFileDialogOpened}
+            onClose={toggleNewFileDialog}
+          />
+        )}
+        <SettingsDialog
+          open={props.isSettingsDialogOpened}
+          onClose={toggleSettingsDialog}
+        />
+        {KanBanImportDialog && props.selectedEntries[0] && (
+          <KanBanImportDialog
+            open={props.isImportKanBanDialogOpened}
+            onClose={props.toggleImportKanBanDialog}
+          />
+        )}
+        {props.isDeleteMultipleEntriesDialogOpened && (
+          <ConfirmDialog
+            open={props.isDeleteMultipleEntriesDialogOpened}
+            onClose={() => props.toggleDeleteMultipleEntriesDialog()}
+            title={i18n.t('core:deleteConfirmationTitle')}
+            content={i18n.t('core:deleteConfirmationContent')}
+            list={props.selectedEntries.map(fsEntry => fsEntry.name)}
+            confirmCallback={result => {
+              if (result && props.selectedEntries) {
+                const deletePromises = props.selectedEntries.map(fsEntry => {
+                  if (fsEntry.isFile) {
+                    return props.deleteFile(fsEntry.path, fsEntry.uuid);
+                  }
+                  return props.deleteDirectory(fsEntry.path);
+                });
+                Promise.all(deletePromises)
+                  .then(delResult => {
+                    // console.debug(delResult);
+                    if (delResult.some(del => del)) {
+                      props.setSelectedEntries([]);
+                    } // TODO else { remove only deleted from setSelectedEntries}
+                    return true;
+                  })
+                  .catch(err => {
+                    console.warn('Deleting file failed', err);
+                  });
+              }
+            }}
+            cancelDialogTID="cancelDeleteFileDialog"
+            confirmDialogTID="confirmDeleteFileDialog"
+            confirmDialogContentTID="confirmDeleteDialogContent"
+          />
+        )}
+        <PageNotification />
+        <div
+          style={{
+            // backgroundColor: theme.palette.background.default,
+            height: '100%'
+          }}
+        >
+          <style>
+            {`
               .default-splitter {
                 --default-splitter-line-margin: 2px !important;
                 --default-splitter-line-size: 1px !important;
@@ -868,53 +873,54 @@ function MainPage(props: Props) {
                 } !important;
               }
           `}
-        </style>
-        {props.isDesktopMode || (AppConfig.isAmplify && !props.user) ? (
-          <TargetFileBox
-            accepts={[FILE]}
-            onDrop={(item: any) => {
-              if (
-                AppConfig.isElectron &&
-                !PlatformIO.haveObjectStoreSupport() &&
-                !PlatformIO.haveWebDavSupport()
-              ) {
-                setMoveCopyDialogOpened(item.files);
-              } else {
-                handleCopyFiles(item.files);
-              }
-            }}
-          >
-            <CustomDragLayer />
-            <Drawer variant="persistent" anchor="left" open={drawerOpened}>
-              <MobileNavigation width={drawerWidth} />
-            </Drawer>
-            <main
-              className={clsx(classes.content, {
-                [classes.contentShift]: !drawerOpened
-              })}
+          </style>
+          {props.isDesktopMode || (AppConfig.isAmplify && !props.user) ? (
+            <TargetFileBox
+              accepts={[FILE]}
+              onDrop={(item: any) => {
+                if (
+                  AppConfig.isElectron &&
+                  !PlatformIO.haveObjectStoreSupport() &&
+                  !PlatformIO.haveWebDavSupport()
+                ) {
+                  setMoveCopyDialogOpened(item.files);
+                } else {
+                  handleCopyFiles(item.files);
+                }
+              }}
             >
+              <CustomDragLayer />
+              <Drawer variant="persistent" anchor="left" open={drawerOpened}>
+                <MobileNavigation width={drawerWidth} />
+              </Drawer>
+              <main
+                className={clsx(classes.content, {
+                  [classes.contentShift]: !drawerOpened
+                })}
+              >
+                {renderContainers()}
+              </main>
+            </TargetFileBox>
+          ) : (
+            <>
+              <SwipeableDrawer
+                open={drawerOpened}
+                onClose={() => setDrawerOpened(false)}
+                onOpen={() => setDrawerOpened(true)}
+                hysteresis={0.1}
+                disableBackdropTransition={!AppConfig.isIOS}
+              >
+                <MobileNavigation
+                  width={drawerWidth}
+                  hideDrawer={() => setDrawerOpened(false)}
+                />
+              </SwipeableDrawer>
               {renderContainers()}
-            </main>
-          </TargetFileBox>
-        ) : (
-          <>
-            <SwipeableDrawer
-              open={drawerOpened}
-              onClose={() => setDrawerOpened(false)}
-              onOpen={() => setDrawerOpened(true)}
-              hysteresis={0.1}
-              disableBackdropTransition={!AppConfig.isIOS}
-            >
-              <MobileNavigation
-                width={drawerWidth}
-                hideDrawer={() => setDrawerOpened(false)}
-              />
-            </SwipeableDrawer>
-            {renderContainers()}
-          </>
-        )}
-      </div>
-    </HotKeys>
+            </>
+          )}
+        </div>
+      </HotKeys>
+    </Root>
   );
 }
 
@@ -1055,9 +1061,5 @@ export default withDnDContext(
   connect(
     mapStateToProps,
     mapDispatchToProps
-  )(
-    translate(['core'], { wait: true })(
-      React.memo(withStyles(styles, { withTheme: true })(MainPage), areEqual)
-    )
-  )
+  )(translate(['core'], { wait: true })(React.memo(MainPage, areEqual)))
 );

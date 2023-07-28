@@ -17,9 +17,9 @@
  */
 
 import React, { useMemo } from 'react';
+import { styled } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import IconButton from '@mui/material/IconButton';
-import withStyles from '@mui/styles/withStyles';
 import Badge from '@mui/material/Badge';
 import Tooltip from '-/components/Tooltip';
 import AppConfig from '-/AppConfig';
@@ -30,10 +30,16 @@ import LogoIcon from '../assets/images/icon100x100.svg';
 import i18n from '../services/i18n';
 import versionMeta from '../version.json';
 import { getCurrentLanguage } from '-/reducers/settings';
-import { actions } from '../reducers/app';
+import { actions } from '-/reducers/app';
 
-const AppVersionBadge = withStyles(theme => ({
-  badge: {
+const PREFIX = 'CustomLogo';
+
+const classes = {
+  badge: `${PREFIX}-badge`
+};
+
+const StyledAppVersionBadge = styled(Badge)(({ theme }) => ({
+  [`& .${classes.badge}`]: {
     top: '25%',
     right: -25,
     color:
@@ -45,7 +51,7 @@ const AppVersionBadge = withStyles(theme => ({
         ? theme.palette.grey[200]
         : theme.palette.grey[900]
   }
-}))(Badge);
+}));
 
 function CustomLogo(props) {
   const dispatch = useDispatch();
@@ -63,7 +69,10 @@ function CustomLogo(props) {
   }, []);
 
   return (
-    <AppVersionBadge badgeContent={'v' + versionMeta.version} color="primary">
+    <StyledAppVersionBadge
+      badgeContent={'v' + versionMeta.version}
+      color="primary"
+    >
       <Tooltip title={i18n.t('core:aboutTitle')}>
         <IconButton
           onClick={() => dispatch(actions.toggleAboutDialog())}
@@ -91,7 +100,7 @@ function CustomLogo(props) {
           />
         </IconButton>
       </Tooltip>
-    </AppVersionBadge>
+    </StyledAppVersionBadge>
   );
 }
 

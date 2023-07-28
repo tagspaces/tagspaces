@@ -23,6 +23,7 @@ import React, {
   ChangeEvent,
   useRef
 } from 'react';
+import { styled } from '@mui/material/styles';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Button from '@mui/material/Button';
@@ -30,7 +31,6 @@ import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import withStyles from '@mui/styles/withStyles';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import Dialog from '@mui/material/Dialog';
@@ -46,16 +46,22 @@ import { TS } from '-/tagspaces.namespace';
 import useValidation from '-/utils/useValidation';
 import { getMapTileServer, getCurrentLanguage } from '-/reducers/settings';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import useTheme from '@mui/styles/useTheme';
+import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-const styles = () => ({
-  root: {
+const PREFIX = 'EditEntryTagDialog';
+
+const classes = {
+  root: `${PREFIX}-root`
+};
+
+const StyledDialog = styled(Dialog)(() => ({
+  [`& .${classes.root}`]: {
     minWidth: 400,
     height: '100%',
     marginBottom: 30
   }
-});
+}));
 
 interface Props {
   classes: any;
@@ -146,7 +152,7 @@ function EditEntryTagDialog(props: Props) {
     return (
       <DialogContent
         data-tid="editEntryTagDialog"
-        className={props.classes.root}
+        className={classes.root}
         style={{
           overflow: 'auto'
         }}
@@ -240,7 +246,7 @@ function EditEntryTagDialog(props: Props) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
-    <Dialog
+    <StyledDialog
       open={open}
       fullScreen={fullScreen}
       onClose={onClose}
@@ -257,7 +263,7 @@ function EditEntryTagDialog(props: Props) {
       {renderTitle()}
       {renderContent()}
       {renderActions()}
-    </Dialog>
+    </StyledDialog>
   );
 }
 
@@ -285,4 +291,4 @@ const areEqual = (prevProp, nextProp) =>
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(React.memo(withStyles(styles)(EditEntryTagDialog), areEqual));
+)(React.memo(EditEntryTagDialog, areEqual));
