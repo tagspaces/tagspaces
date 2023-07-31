@@ -486,7 +486,7 @@ function FolderContainer(props: Props) {
               : '')
           }
         >
-          <Root style={{ display: 'flex' }}>{perspective.icon}</Root>
+          <div style={{ display: 'flex' }}>{perspective.icon}</div>
         </Tooltip>
       </ToggleButton>
     );
@@ -507,7 +507,7 @@ function FolderContainer(props: Props) {
     : '';
   // keyBindings['openSearch'].toUpperCase()
   return (
-    <div data-tid="folderContainerTID" style={{ position: 'relative' }}>
+    <Root data-tid="folderContainerTID" style={{ position: 'relative' }}>
       <div
         style={{
           flex: '1 1 100%',
@@ -675,7 +675,7 @@ function FolderContainer(props: Props) {
           {perspectiveToggleButtons}
         </ToggleButtonGroup>
       )}
-    </div>
+    </Root>
   );
 }
 

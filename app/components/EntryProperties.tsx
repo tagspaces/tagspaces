@@ -26,13 +26,15 @@ import React, {
 import { styled, useTheme } from '@mui/material/styles';
 import { getBgndFileLocationForDirectory } from '@tagspaces/tagspaces-common/paths';
 import L from 'leaflet';
-import { Theme } from '@mui/material/styles';
-import Grid from '@mui/material/Grid';
-import FormControl from '@mui/material/FormControl';
-import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import InputAdornment from '@mui/material/InputAdornment';
+import {
+  Grid,
+  FormControl,
+  Typography,
+  TextField,
+  inputBaseClasses,
+  Button,
+  InputAdornment
+} from '@mui/material';
 import QRCodeIcon from '@mui/icons-material/QrCode';
 import Tooltip from '-/components/Tooltip';
 import { LocalLocationIcon, CloudLocationIcon } from '-/components/CommonIcons';
@@ -57,7 +59,6 @@ import {
   extractFileName,
   extractDirectoryName
 } from '@tagspaces/tagspaces-common/paths';
-import AppConfig from '-/AppConfig';
 import TagDropContainer from './TagDropContainer';
 import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
 import i18n from '../services/i18n';
@@ -118,14 +119,12 @@ const classes = {
 };
 
 const Root = styled('div')(({ theme }) => ({
-  [`& .${classes.entryProperties}`]: {
-    overflowY: 'auto',
-    overflowX: 'hidden',
-    flexGrow: 1,
-    padding: 7,
-    paddingRight: 2,
-    height: '100%'
-  },
+  overflowY: 'auto',
+  overflowX: 'hidden',
+  flexGrow: 1,
+  padding: 7,
+  paddingRight: 2,
+  height: '100%',
 
   [`& .${classes.tags}`]: {
     padding: '5px 5px 2px 2px',
@@ -175,6 +174,13 @@ const Root = styled('div')(({ theme }) => ({
   [`& .${classes.formControl}`]: {
     marginLeft: theme.spacing(0),
     width: '100%'
+  }
+}));
+
+const ThumbnailTextField = styled(TextField)(({ theme }) => ({
+  //[`& .MuiInputBase-root}`]: {
+  [`& .${inputBaseClasses.root}`]: {
+    height: 220
   }
 }));
 
@@ -638,7 +644,7 @@ function EntryProperties(props: Props) {
     !currentEntry.current.path ||
     currentEntry.current.path === ''
   ) {
-    return <Root />;
+    return <div />;
   }
 
   function getBgndUrl() {
@@ -770,7 +776,7 @@ function EntryProperties(props: Props) {
   const showLinkForDownloading = isCloudLocation && currentEntry.current.isFile;
 
   return (
-    <div className={classes.entryProperties}>
+    <Root>
       <Grid container>
         <Grid item xs={12}>
           <TextField
@@ -1488,11 +1494,9 @@ function EntryProperties(props: Props) {
         ]}*/
         />
       )}
-    </div>
+    </Root>
   );
 }
-
-const ThumbnailTextField = TextField;
 
 function mapStateToProps(state) {
   return {
