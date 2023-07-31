@@ -34,26 +34,26 @@ export const classes = {
 };
 
 export const SidePanel = styled('div')(({ theme }) => ({
-  panel: {
+  [`& .${classes.panel}`]: {
     height: '100%',
     paddingLeft: 5,
     paddingRight: 5
   },
-  fontIcon: {
+  [`& .${classes.fontIcon}`]: {
     color: theme.palette.text.primary
   },
-  header: {
+  [`& .${classes.header}`]: {
     color: theme.palette.text.primary
   },
-  icon: {
+  [`& .${classes.icon}`]: {
     margin: theme.spacing(1)
   },
-  locationListArea: {
+  [`& .${classes.locationListArea}`]: {
     paddingTop: 0,
     marginTop: 0,
     overflowY: 'auto'
   },
-  listItem: {
+  [`& .${classes.listItem}`]: {
     paddingLeft: 0,
     paddingTop: 2,
     paddingBottom: 2,
@@ -61,7 +61,7 @@ export const SidePanel = styled('div')(({ theme }) => ({
     borderRadius: 5,
     backgroundColor: 'transparent'
   },
-  listItemSelected: {
+  [`& .${classes.listItemSelected}`]: {
     paddingLeft: 0,
     paddingRight: 0,
     paddingTop: 2,
@@ -69,25 +69,25 @@ export const SidePanel = styled('div')(({ theme }) => ({
     borderRadius: 5,
     backgroundColor: theme.palette.primary.light
   },
-  panelTitle: {
+  [`& .${classes.panelTitle}`]: {
     textTransform: 'uppercase',
     flex: 1,
     paddingLeft: 7,
     paddingTop: 12
   },
-  toolbar: {
+  [`& .${classes.toolbar}`]: {
     display: 'flex'
   },
-  formControl: {
+  [`& .${classes.formControl}`]: {
     width: '100%',
     marginBottom: 10
   },
-  mainActionButton: {
+  [`& .${classes.mainActionButton}`]: {
     marginTop: 10,
     marginLeft: 0,
     paddingLeft: 8
   },
-  leftIcon: {
+  [`& .${classes.leftIcon}`]: {
     marginRight: theme.spacing(1)
   }
 }));

@@ -19,37 +19,9 @@
 import React, { ReactNode, useRef } from 'react';
 import { DropTargetMonitor, useDrop } from 'react-dnd';
 import i18n from '../services/i18n';
-import { styled } from '@mui/material/styles';
-
-const PREFIX = 'TargetFileBox';
-
-const classes = {
-  dropzone: `${PREFIX}-dropzone`
-};
-
-const Root = styled('div')(({ theme }) => ({
-  [`& .${classes.dropzone}`]: {
-    margin: 5,
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: '#1dd19f40',
-    zIndex: 1000,
-    border: '3px dashed white',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    textAlign: 'center',
-    fontSize: '40px',
-    fontWeight: 'bold',
-    color: 'white'
-  }
-}));
+import { classes, DnD } from '-/components/DnD.css';
 
 interface Props {
-  classes?: any;
   children: ReactNode;
   accepts: Array<string>;
   onDrop: (item) => void;
@@ -75,17 +47,17 @@ function TargetFileBox(props: Props) {
   drop(ref);
 
   const { isActive } = collectedProps;
-  const { classes, children } = props;
+  const { children } = props;
   const dragContent = isActive ? (
     <div className={classes.dropzone}>{i18n.t('core:releaseToDrop')}</div>
   ) : (
     undefined
   );
   return (
-    <Root ref={ref} style={{ height: '100%' }}>
+    <DnD ref={ref} style={{ height: '100%' }}>
       {dragContent}
       {children}
-    </Root>
+    </DnD>
   );
 }
 

@@ -67,12 +67,12 @@ const classes = {
 };
 
 const Root = styled(Box)(({ theme }) => ({
-  button: {
+  [`& .${classes.button}`]: {
     position: 'relative',
     padding: '8px 12px 6px 8px',
     margin: '0'
   },
-  selectedButton: {
+  [`& .${classes.selectedButton}`]: {
     backgroundColor: theme.palette.primary.light
   }
 }));

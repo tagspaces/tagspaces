@@ -20,7 +20,7 @@ import React, { useMemo } from 'react';
 import { styled } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import IconButton from '@mui/material/IconButton';
-import Badge from '@mui/material/Badge';
+import Badge, { badgeClasses } from '@mui/base/Badge';
 import Tooltip from '-/components/Tooltip';
 import AppConfig from '-/AppConfig';
 import { Pro } from '../pro';
@@ -32,14 +32,8 @@ import versionMeta from '../version.json';
 import { getCurrentLanguage } from '-/reducers/settings';
 import { actions } from '-/reducers/app';
 
-const PREFIX = 'CustomLogo';
-
-const classes = {
-  badge: `${PREFIX}-badge`
-};
-
 const StyledAppVersionBadge = styled(Badge)(({ theme }) => ({
-  [`& .${classes.badge}`]: {
+  [`& .${badgeClasses.badge}`]: {
     top: '25%',
     right: -25,
     color:
@@ -53,7 +47,7 @@ const StyledAppVersionBadge = styled(Badge)(({ theme }) => ({
   }
 }));
 
-function CustomLogo(props) {
+function CustomLogo() {
   const dispatch = useDispatch();
   const language = useSelector(getCurrentLanguage);
 

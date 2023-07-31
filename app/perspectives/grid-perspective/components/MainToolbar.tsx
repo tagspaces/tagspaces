@@ -47,33 +47,10 @@ import { getKeyBindingObject } from '-/reducers/settings';
 import { getAllPropertiesPromise } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { actions as AppActions, isReadOnlyMode } from '-/reducers/app';
-import { alpha, styled } from '@mui/material/styles';
-
-const PREFIX = 'MainToolbar';
-const classes = {
-  topToolbar: `${PREFIX}-topToolbar`
-};
-
-const Root = styled('div')(({ theme }) => ({
-  topToolbar: {
-    paddingLeft: 5,
-    paddingRight: 5,
-    minHeight: 40,
-    height: 53,
-    position: 'absolute',
-    zIndex: 1,
-    background:
-      'linear-gradient(0deg, ' +
-      alpha(theme.palette.background.default, 0.67) +
-      ' 0%, ' +
-      theme.palette.background.default +
-      ' 99%)',
-    backdropFilter: 'blur(5px)',
-    // borderBottom: '1px solid ' + theme.palette.divider,
-    width: 'calc(100% - 10px)',
-    overflowX: 'auto'
-  }
-}));
+import {
+  classes,
+  GridStyles
+} from '-/perspectives/grid-perspective/components/styles.css';
 
 interface Props {
   prefixDataTID?: string;
@@ -136,173 +113,175 @@ function MainToolbar(props: Props) {
   }
 
   return (
-    <Toolbar
-      className={classes.topToolbar}
-      data-tid={prefixDataTID + 'perspectiveToolbar'}
-    >
-      <Tooltip
-        title={
-          i18n.t('core:navigateToParentDirectory') +
-          ' (' +
-          keyBindings['openParentDirectory'].toUpperCase() +
-          ')'
-        }
+    <GridStyles>
+      <Toolbar
+        className={classes.topToolbar}
+        data-tid={prefixDataTID + 'perspectiveToolbar'}
       >
-        <IconButton
-          aria-label={i18n.t('core:navigateToParentDirectory')}
-          data-tid={prefixDataTID + 'PerspectiveOnBackButton'}
-          onClick={() => {
-            if (
-              props.searchQuery &&
-              Object.keys(props.searchQuery).length > 0
-            ) {
-              props.setSearchQuery({});
-              props.openCurrentDirectory();
-            } else {
-              loadParentDirectoryContent();
+        <Tooltip
+          title={
+            i18n.t('core:navigateToParentDirectory') +
+            ' (' +
+            keyBindings['openParentDirectory'].toUpperCase() +
+            ')'
+          }
+        >
+          <IconButton
+            aria-label={i18n.t('core:navigateToParentDirectory')}
+            data-tid={prefixDataTID + 'PerspectiveOnBackButton'}
+            onClick={() => {
+              if (
+                props.searchQuery &&
+                Object.keys(props.searchQuery).length > 0
+              ) {
+                props.setSearchQuery({});
+                props.openCurrentDirectory();
+              } else {
+                loadParentDirectoryContent();
+              }
+            }}
+            size="large"
+          >
+            <ParentFolderIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip
+          title={
+            i18n.t('core:toggleSelectAllFiles') +
+            ' (' +
+            keyBindings['selectAll'].toUpperCase() +
+            ')'
+          }
+        >
+          <IconButton
+            data-tid={prefixDataTID + 'PerspectiveSelectAllFiles'}
+            onClick={toggleSelectAllFiles}
+            size="large"
+          >
+            {someFileSelected ? <SelectedIcon /> : <UnSelectedIcon />}
+          </IconButton>
+        </Tooltip>
+        <Tooltip title={i18n.t('core:directoryPropertiesTitle')}>
+          <IconButton
+            aria-label={i18n.t('core:directoryPropertiesTitle')}
+            data-tid="openFolderProperties"
+            onClick={showProperties}
+            size="large"
+          >
+            <FolderPropertiesIcon />
+          </IconButton>
+        </Tooltip>
+        {!readOnlyMode && (
+          <Tooltip
+            title={
+              i18n.t('core:tagSelectedEntries') +
+              ' (' +
+              keyBindings['addRemoveTags'].toUpperCase() +
+              ')'
             }
-          }}
-          size="large"
-        >
-          <ParentFolderIcon />
-        </IconButton>
-      </Tooltip>
-      <Tooltip
-        title={
-          i18n.t('core:toggleSelectAllFiles') +
-          ' (' +
-          keyBindings['selectAll'].toUpperCase() +
-          ')'
-        }
-      >
-        <IconButton
-          data-tid={prefixDataTID + 'PerspectiveSelectAllFiles'}
-          onClick={toggleSelectAllFiles}
-          size="large"
-        >
-          {someFileSelected ? <SelectedIcon /> : <UnSelectedIcon />}
-        </IconButton>
-      </Tooltip>
-      <Tooltip title={i18n.t('core:directoryPropertiesTitle')}>
-        <IconButton
-          aria-label={i18n.t('core:directoryPropertiesTitle')}
-          data-tid="openFolderProperties"
-          onClick={showProperties}
-          size="large"
-        >
-          <FolderPropertiesIcon />
-        </IconButton>
-      </Tooltip>
-      {!readOnlyMode && (
-        <Tooltip
-          title={
-            i18n.t('core:tagSelectedEntries') +
-            ' (' +
-            keyBindings['addRemoveTags'].toUpperCase() +
-            ')'
-          }
-        >
-          <span>
-            <IconButton
-              aria-label={i18n.t('core:tagSelectedEntries')}
-              data-tid={prefixDataTID + 'PerspectiveAddRemoveTags'}
-              disabled={selectedEntries.length < 1}
-              onClick={openAddRemoveTagsDialog}
-              size="large"
-            >
-              <TagIcon />
-            </IconButton>
-          </span>
-        </Tooltip>
-      )}
-      {!readOnlyMode && (
-        <Tooltip title={i18n.t('core:copyMoveSelectedEntries')}>
-          <span>
-            <IconButton
-              aria-label={i18n.t('core:copyMoveSelectedEntries')}
-              data-tid={prefixDataTID + 'PerspectiveCopySelectedFiles'}
-              disabled={selectedEntries.length < 1}
-              onClick={openMoveCopyFilesDialog}
-              size="large"
-            >
-              <CopyIcon />
-            </IconButton>
-          </span>
-        </Tooltip>
-      )}
-      {!readOnlyMode && (
-        <Tooltip
-          title={
-            i18n.t('core:deleteSelectedEntries') +
-            ' (' +
-            keyBindings['deleteDocument'].toUpperCase() +
-            ')'
-          }
-        >
-          <span>
-            <IconButton
-              aria-label={i18n.t('core:deleteSelectedEntries')}
-              data-tid={prefixDataTID + 'PerspectiveDeleteMultipleFiles'}
-              onClick={openDeleteFileDialog}
-              disabled={selectedEntries.length < 1}
-              size="large"
-            >
-              <DeleteIcon />
-            </IconButton>
-          </span>
-        </Tooltip>
-      )}
-      {openShareFilesDialog && (
-        <ProTooltip tooltip={i18n.t('core:shareFiles')}>
-          <span>
-            <IconButton
-              aria-label={i18n.t('core:shareFiles')}
-              data-tid={prefixDataTID + 'PerspectiveShareFiles'}
-              onClick={openShareFilesDialog}
-              disabled={selectedEntries.length < 1}
-              size="large"
-            >
-              <ShareIcon />
-            </IconButton>
-          </span>
-        </ProTooltip>
-      )}
-      <Tooltip title={i18n.t('core:sort')}>
-        <IconButton
-          // title={i18n.t('core:sort')}
-          aria-label={i18n.t('core:sort')}
-          data-tid={prefixDataTID + 'PerspectiveSortMenu'}
-          onClick={e => {
-            handleSortingMenu(e);
-          }}
-          size="large"
-        >
-          <SortingIcon />
-        </IconButton>
-      </Tooltip>
-      {Pro &&
-      !AppConfig.isCordovaAndroid && ( // https://trello.com/c/z6ESlqxz/697-exports-to-json-or-csv-do-not-work-on-android
-          <Tooltip title={i18n.t('core:exportCsv')}>
-            <IconButton
-              data-tid={prefixDataTID + 'PerspectiveExportCsvMenuTID'}
-              onClick={props.handleExportCsvMenu}
-              style={{ transform: 'scale(-1, 1)' }}
-              size="large"
-            >
-              <ExportIcon />
-            </IconButton>
+          >
+            <span>
+              <IconButton
+                aria-label={i18n.t('core:tagSelectedEntries')}
+                data-tid={prefixDataTID + 'PerspectiveAddRemoveTags'}
+                disabled={selectedEntries.length < 1}
+                onClick={openAddRemoveTagsDialog}
+                size="large"
+              >
+                <TagIcon />
+              </IconButton>
+            </span>
           </Tooltip>
         )}
-      <Tooltip title={i18n.t('core:perspectiveSettingsTitle')}>
-        <IconButton
-          data-tid={prefixDataTID + 'PerspectiveOptionsMenu'}
-          onClick={openSettings}
-          size="large"
-        >
-          <PerspectiveSettingsIcon />
-        </IconButton>
-      </Tooltip>
-    </Toolbar>
+        {!readOnlyMode && (
+          <Tooltip title={i18n.t('core:copyMoveSelectedEntries')}>
+            <span>
+              <IconButton
+                aria-label={i18n.t('core:copyMoveSelectedEntries')}
+                data-tid={prefixDataTID + 'PerspectiveCopySelectedFiles'}
+                disabled={selectedEntries.length < 1}
+                onClick={openMoveCopyFilesDialog}
+                size="large"
+              >
+                <CopyIcon />
+              </IconButton>
+            </span>
+          </Tooltip>
+        )}
+        {!readOnlyMode && (
+          <Tooltip
+            title={
+              i18n.t('core:deleteSelectedEntries') +
+              ' (' +
+              keyBindings['deleteDocument'].toUpperCase() +
+              ')'
+            }
+          >
+            <span>
+              <IconButton
+                aria-label={i18n.t('core:deleteSelectedEntries')}
+                data-tid={prefixDataTID + 'PerspectiveDeleteMultipleFiles'}
+                onClick={openDeleteFileDialog}
+                disabled={selectedEntries.length < 1}
+                size="large"
+              >
+                <DeleteIcon />
+              </IconButton>
+            </span>
+          </Tooltip>
+        )}
+        {openShareFilesDialog && (
+          <ProTooltip tooltip={i18n.t('core:shareFiles')}>
+            <span>
+              <IconButton
+                aria-label={i18n.t('core:shareFiles')}
+                data-tid={prefixDataTID + 'PerspectiveShareFiles'}
+                onClick={openShareFilesDialog}
+                disabled={selectedEntries.length < 1}
+                size="large"
+              >
+                <ShareIcon />
+              </IconButton>
+            </span>
+          </ProTooltip>
+        )}
+        <Tooltip title={i18n.t('core:sort')}>
+          <IconButton
+            // title={i18n.t('core:sort')}
+            aria-label={i18n.t('core:sort')}
+            data-tid={prefixDataTID + 'PerspectiveSortMenu'}
+            onClick={e => {
+              handleSortingMenu(e);
+            }}
+            size="large"
+          >
+            <SortingIcon />
+          </IconButton>
+        </Tooltip>
+        {Pro &&
+        !AppConfig.isCordovaAndroid && ( // https://trello.com/c/z6ESlqxz/697-exports-to-json-or-csv-do-not-work-on-android
+            <Tooltip title={i18n.t('core:exportCsv')}>
+              <IconButton
+                data-tid={prefixDataTID + 'PerspectiveExportCsvMenuTID'}
+                onClick={props.handleExportCsvMenu}
+                style={{ transform: 'scale(-1, 1)' }}
+                size="large"
+              >
+                <ExportIcon />
+              </IconButton>
+            </Tooltip>
+          )}
+        <Tooltip title={i18n.t('core:perspectiveSettingsTitle')}>
+          <IconButton
+            data-tid={prefixDataTID + 'PerspectiveOptionsMenu'}
+            onClick={openSettings}
+            size="large"
+          >
+            <PerspectiveSettingsIcon />
+          </IconButton>
+        </Tooltip>
+      </Toolbar>
+    </GridStyles>
   );
 }
 

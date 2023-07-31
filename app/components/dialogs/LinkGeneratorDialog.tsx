@@ -45,7 +45,7 @@ const classes = {
 };
 
 const StyledDialog = styled(Dialog)(({ theme: Theme }) => ({
-  root: {
+  [`& .${classes.root}`]: {
     marginTop: 12,
     '& .MuiInputBase-root': {
       height: 450

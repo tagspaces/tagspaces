@@ -127,7 +127,7 @@ const classes = {
 };
 
 const Root = styled('div')(({ theme }) => ({
-  toolbar2: {
+  [`& .${classes.toolbar2}`]: {
     width: '100%',
     paddingLeft: 0,
     paddingRight: 5,
@@ -138,7 +138,7 @@ const Root = styled('div')(({ theme }) => ({
     zIndex: 2
     // borderBottom: '1px solid ' + theme.palette.divider
   },
-  flexLeft: {
+  [`& .${classes.flexLeft}`]: {
     flexDirection: 'row',
     flex: '1 1',
     display: 'flex',
@@ -147,7 +147,7 @@ const Root = styled('div')(({ theme }) => ({
     overflowY: 'hidden',
     paddingRight: 100
   },
-  fileBadge: {
+  [`& .${classes.fileBadge}`]: {
     color: 'white',
     backgroundColor: AppConfig.defaultFileColor,
     padding: 3,

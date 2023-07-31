@@ -77,12 +77,19 @@ import useFirstRender from '-/utils/useFirstRender';
 const PREFIX = 'FolderContainer';
 
 const classes = {
-  badge: `${PREFIX}-badge`,
   button: `${PREFIX}-button`
 };
 
 const Root = styled('div')(({ theme }) => ({
-  [`& .${classes.badge}`]: {
+  [`& .${classes.button}`]: {
+    position: 'relative',
+    padding: '8px 12px 6px 8px',
+    margin: '0'
+  }
+}));
+
+/*const CounterBadge: any = withStyles(theme => ({
+  badge: {
     top: '50%',
     right: -15,
     color:
@@ -93,13 +100,8 @@ const Root = styled('div')(({ theme }) => ({
       theme.palette.mode === 'light'
         ? theme.palette.grey[200]
         : theme.palette.grey[900]
-  },
-  [`& .${classes.button}`]: {
-    position: 'relative',
-    padding: '8px 12px 6px 8px',
-    margin: '0'
   }
-}));
+}))(Badge);*/
 
 const GridPerspective = React.lazy(() =>
   import(

@@ -44,7 +44,6 @@ const classes = {
   createButton: `${PREFIX}-createButton`
 };
 
-// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
 const Root = styled('div')(() => ({
   [`& .${classes.createButton}`]: {
     width: '100%',

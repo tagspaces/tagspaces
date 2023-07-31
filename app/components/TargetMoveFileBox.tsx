@@ -19,7 +19,7 @@
 import React from 'react';
 import { DropTarget } from 'react-dnd';
 import { TS } from '-/tagspaces.namespace';
-import { styled } from '@mui/material/styles';
+import { classes, DnD } from '-/components/DnD.css';
 
 const styles: any = () => ({
   dropzone: {
@@ -42,33 +42,6 @@ const boxTarget = {
   }
 };
 
-const PREFIX = 'TargetMoveFileBox';
-
-const classes = {
-  dropzone: `${PREFIX}-dropzone`
-};
-
-const Root = styled('div')(({ theme }) => ({
-  [`& .${classes.dropzone}`]: {
-    margin: 5,
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: '#1dd19f40',
-    zIndex: 1000,
-    border: '3px dashed white',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    textAlign: 'center',
-    fontSize: '40px',
-    fontWeight: 'bold',
-    color: 'white'
-  }
-}));
-
 interface Props {
   accepts: Array<string>;
   onDrop: (item: any, monitor: any) => void;
@@ -84,7 +57,7 @@ const TargetMoveFileBox = (props: Props) => {
   const { canDrop, isOver, connectDropTarget, children } = props;
   const dragContent =
     canDrop && isOver ? (
-      <Root
+      <DnD
         className={classes.dropzone}
       /> /* {i18n.t('core:releaseToMoveDrop')} */
     ) : (

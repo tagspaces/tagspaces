@@ -62,7 +62,6 @@ import {
   isDesktopMode,
   isReorderTags
 } from '-/reducers/settings';
-import { styled } from '@mui/material/styles';
 import {
   classes,
   GridStyles
