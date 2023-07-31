@@ -81,14 +81,13 @@ import {
   CloseIcon
 } from '-/components/CommonIcons';
 import { openURLExternally } from '-/services/utils-io';
-import { styled } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import { classes, SidePanel } from '-/components/SidePanels.css';
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
 
 interface Props {
   style?: any;
-  theme?: any;
   loadDirectoryContent: (
     path: string,
     generateThumbnails: boolean,
@@ -111,6 +110,7 @@ interface Props {
 }
 
 function SearchPopover(props: Props) {
+  const theme = useTheme();
   const [, forceUpdate] = useReducer(x => x + 1, 0);
   // const textQuery = useRef<string>(props.searchQuery.textQuery);
   // const tagsAND = useRef<Array<TS.Tag>>(props.searchQuery.tagsAND);
@@ -515,7 +515,7 @@ function SearchPopover(props: Props) {
     props.onClose();
   };
 
-  const { indexing, theme } = props;
+  const { indexing } = props;
   const indexStatus = GlobalSearch.getInstance().getIndex()
     ? GlobalSearch.getInstance().getIndex().length + ' indexed entries'
     : '';

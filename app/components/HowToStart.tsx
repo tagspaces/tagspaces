@@ -13,13 +13,13 @@ import { ProSign } from '-/components/HelperComponents';
 import { openURLExternally } from '-/services/utils-io';
 import { useTheme } from '@mui/material/styles';
 
-export const styles: any = (theme: any) => ({
+/*export const styles: any = (theme: any) => ({
   recentTitle: {
     color: theme.palette.text.primary,
     textTransform: 'uppercase',
     textAlign: 'center'
   }
-});
+});*/
 
 const selectByTID: any = tid =>
   document.querySelector('[data-tid="' + tid + '"]');
