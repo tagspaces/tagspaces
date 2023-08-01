@@ -82,12 +82,23 @@ test.describe('TST50 - Perspective Grid', () => {
 
     expect(classNotSelected).not.toBe(classSelected);
 
-    const filesList = await global.client.$$(selectorFile);
+    let filesList = await global.client.$$(selectorFile);
     for (let i = 0; i < filesList.length; i++) {
       let file = await filesList[i].$('div');
       file = await file.$('div');
+      file = await file.$('div');
       const style = await file.getAttribute('class');
       expect(style).toBe(classSelected);
+    }
+    //deselect
+    await selectAllFiles();
+    filesList = await global.client.$$(selectorFile);
+    for (let i = 0; i < filesList.length; i++) {
+      let file = await filesList[i].$('div');
+      file = await file.$('div');
+      file = await file.$('div');
+      const style = await file.getAttribute('class');
+      expect(style).toBe(classNotSelected);
     }
   });
 
