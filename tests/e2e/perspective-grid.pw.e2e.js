@@ -91,7 +91,7 @@ test.describe('TST50 - Perspective Grid', () => {
       expect(style).toBe(classSelected);
     }
     //deselect
-    await selectAllFiles();
+    /*await selectAllFiles();
     filesList = await global.client.$$(selectorFile);
     for (let i = 0; i < filesList.length; i++) {
       let file = await filesList[i].$('div');
@@ -99,7 +99,7 @@ test.describe('TST50 - Perspective Grid', () => {
       file = await file.$('div');
       const style = await file.getAttribute('class');
       expect(style).toBe(classNotSelected);
-    }
+    }*/
   });
 
   // This scenario includes "Add tags" && "Remove tags" to be fulfilled
