@@ -24,6 +24,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContentText from '@mui/material/DialogContentText';
 import DraggablePaper from '-/components/DraggablePaper';
 import Dialog from '@mui/material/Dialog';
+import { locationType } from '@tagspaces/tagspaces-common/misc';
 import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import MaxLoopsSelect from '-/components/dialogs/MaxLoopsSelect';
@@ -34,7 +35,15 @@ import {
   actions as LocationActions,
   getCurrentLocation
 } from '-/reducers/locations';
-import { AppDispatch } from '-/reducers/app';
+import {
+  actions as AppActions,
+  AppDispatch,
+  getDirectoryPath
+} from '-/reducers/app';
+import Typography from '@mui/material/Typography';
+import InfoIcon from '-/components/InfoIcon';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import PlatformIO from '-/services/platform-facade';
 
 interface Props {
   open: boolean;
@@ -45,20 +54,39 @@ function IsTruncatedConfirmDialog(props: Props) {
   const { open, onClose } = props;
   const dispatch: AppDispatch = useDispatch();
   const location: TS.Location = useSelector(getCurrentLocation);
+  const currentDirectoryPath = useSelector(getDirectoryPath);
 
   let defaultMaxLoops = AppConfig.maxLoops;
   if (location && location.maxLoops && location.maxLoops > 0) {
     const maxLoopsAsString = location.maxLoops + '';
     defaultMaxLoops = parseInt(maxLoopsAsString, 10);
   }
-  const [maxLoops, setMaxLoops] = useState<number>(defaultMaxLoops);
+  //const [maxLoops, setMaxLoops] = useState<number>(defaultMaxLoops);
 
   function changeMaxLoops(event: React.ChangeEvent<HTMLInputElement>) {
     const loops = event.target.value;
     if (loops) {
-      setMaxLoops(parseInt(loops, 10));
-      dispatch(LocationActions.editLocation({ ...location, maxLoops }));
+      dispatch(
+        LocationActions.editLocation(
+          {
+            ...location,
+            maxLoops: parseInt(loops, 10)
+          },
+          false
+        )
+      );
       onClose();
+      if (location.type === locationType.TYPE_CLOUD) {
+        PlatformIO.enableObjectStoreSupport(location)
+          .then(() =>
+            dispatch(
+              AppActions.loadDirectoryContent(currentDirectoryPath, true, true)
+            )
+          )
+          .catch(error => {
+            console.log('enableObjectStoreSupport', error);
+          });
+      }
     }
   }
 
@@ -72,12 +100,27 @@ function IsTruncatedConfirmDialog(props: Props) {
       scroll="paper"
     >
       <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-        {i18n.t('core:isTruncatedDialogTitle')}
+        {i18n.t('core:warningDirectoryIsTruncated')}
         <DialogCloseButton testId="closeIsTruncatedTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent>
         <DialogContentText component="span">
-          <MaxLoopsSelect maxLoops={maxLoops} changeMaxLoops={changeMaxLoops} />
+          <FormControlLabel
+            labelPlacement="start"
+            style={{ justifyContent: 'space-between' }}
+            control={
+              <MaxLoopsSelect
+                maxLoops={defaultMaxLoops}
+                changeMaxLoops={changeMaxLoops}
+              />
+            }
+            label={
+              <Typography>
+                {i18n.t('core:maxLoops')}
+                <InfoIcon tooltip={i18n.t('core:maxLoopsHelp')} />
+              </Typography>
+            }
+          />
         </DialogContentText>
       </DialogContent>
       <DialogActions>

@@ -1054,6 +1054,8 @@ const areEqual = (prevProp, nextProp) =>
   nextProp.isSearchPanelOpened === prevProp.isSearchPanelOpened &&
   nextProp.isSettingsDialogOpened === prevProp.isSettingsDialogOpened &&
   nextProp.isTagLibraryPanelOpened === prevProp.isTagLibraryPanelOpened &&
+  nextProp.isTruncatedConfirmDialogOpened ===
+    prevProp.isTruncatedConfirmDialogOpened &&
   nextProp.isThirdPartyLibsDialogOpened ===
     prevProp.isThirdPartyLibsDialogOpened &&
   nextProp.isUploadProgressDialogOpened ===
