@@ -17,7 +17,7 @@
  */
 
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
@@ -44,9 +44,12 @@ import {
   getSearchQuery
 } from '-/reducers/location-index';
 import { getKeyBindingObject } from '-/reducers/settings';
-import { getAllPropertiesPromise } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
-import { actions as AppActions, isReadOnlyMode } from '-/reducers/app';
+import {
+  actions as AppActions,
+  AppDispatch,
+  isReadOnlyMode
+} from '-/reducers/app';
 
 interface Props {
   classes: any;
@@ -56,7 +59,6 @@ interface Props {
   toggleSelectAllFiles: (event: any) => void;
   someFileSelected: boolean;
   handleLayoutSwitch: (event: Object) => void;
-  openFsEntry: (fsEntry?: TS.FileSystemEntry) => void;
   openAddRemoveTagsDialog: () => void;
   fileOperationsEnabled: boolean;
   openMoveCopyFilesDialog: () => void;
@@ -92,22 +94,11 @@ function MainToolbar(props: Props) {
     keyBindings,
     openShareFilesDialog
   } = props;
+  const dispatch: AppDispatch = useDispatch();
   const readOnlyMode = useSelector(isReadOnlyMode);
 
   function showProperties() {
-    getAllPropertiesPromise(props.directoryPath)
-      .then((fsEntry: TS.FileSystemEntry) => {
-        props.openFsEntry(fsEntry);
-        return true;
-      })
-      .catch(error =>
-        console.warn(
-          'Error getting properties for entry: ' +
-            props.directoryPath +
-            ' - ' +
-            error
-        )
-      );
+    return dispatch(AppActions.openEntry(props.directoryPath));
   }
 
   return (

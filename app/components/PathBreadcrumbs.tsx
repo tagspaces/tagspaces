@@ -67,7 +67,6 @@ interface Props {
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   openDirectory: () => void;
   reflectCreateEntry: (path: string, isFile: boolean) => void;
-  openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   isReadOnlyMode: boolean;
   openRenameDirectoryDialog: () => void;
   openMoveCopyFilesDialog: () => void;
@@ -90,8 +89,6 @@ function PathBreadcrumbs(props: Props) {
     setSelectedEntries,
     openDirectory,
     reflectCreateEntry,
-    openFsEntry,
-    isReadOnlyMode,
     openRenameDirectoryDialog,
     openMoveCopyFilesDialog,
     isDesktopMode
@@ -234,7 +231,6 @@ function PathBreadcrumbs(props: Props) {
         openMoveCopyFilesDialog={openMoveCopyFilesDialog}
         openDirectory={openDirectory}
         reflectCreateEntry={reflectCreateEntry}
-        openFsEntry={openFsEntry}
       />
     </>
   );

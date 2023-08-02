@@ -56,7 +56,7 @@ export const renderCell = (
   setSelectedEntries,
   lastSelectedEntryPath,
   directoryContent,
-  openFsEntry,
+  openEntry,
   openFileNatively,
   loadDirectoryContent,
   setFileContextMenuAnchorEl,
@@ -134,7 +134,7 @@ export const renderCell = (
   const openLocation = (fsEntry: TS.FileSystemEntry) => {
     if (fsEntry.isFile) {
       setSelectedEntries([fsEntry]);
-      openFsEntry(fsEntry);
+      openEntry(fsEntry.path);
     } else {
       console.log('Handle Grid cell db click, selected path : ', fsEntry.path);
       loadDirectoryContent(fsEntry.path, true, true);
@@ -229,7 +229,7 @@ export const renderCell = (
       setSelectedEntries([fsEntry]);
       if (fsEntry.isFile) {
         if (singleClickAction === 'openInternal') {
-          openFsEntry(fsEntry);
+          openEntry(fsEntry.path);
         } else if (singleClickAction === 'openExternal') {
           openFileNatively(fsEntry.path);
         }

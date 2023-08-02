@@ -181,7 +181,13 @@ export async function getMetaForEntry(
   const meta: TS.FileSystemEntryMeta = await loadJSONFile(metaFilePath);
   if (meta) {
     const entryEnhanced = enhanceEntry(
-      { ...entry, meta },
+      {
+        ...entry,
+        meta: {
+          ...meta,
+          description: getDescriptionPreview(meta.description, 200)
+        }
+      },
       AppConfig.tagDelimiter,
       PlatformIO.getDirSeparator()
     );
@@ -626,6 +632,9 @@ export function createDirectoryIndex(
     });
 }
 
+/**
+ *  get full entry properties - with full description
+ */
 export async function getAllPropertiesPromise(
   entryPath: string
 ): Promise<TS.FileSystemEntry> {
@@ -1012,6 +1021,10 @@ export async function loadLocationDataPromise(
     let metaData;
     try {
       metaData = await loadJSONFile(metaFilePath);
+      metaData = {
+        ...metaData,
+        description: getDescriptionPreview(metaData.description, 200)
+      };
     } catch (e) {
       console.debug('cannot load json:' + metaFilePath, e);
     }
@@ -1052,7 +1065,7 @@ export function loadFileMetaDataPromise(
     return {
       ...metaData,
       isFile: true,
-      description: metaData.description || '',
+      description: getDescriptionPreview(metaData.description, 200),
       color: metaData.color || '',
       tags: metaData.tags || [],
       appName: metaData.appName || '',
@@ -1077,7 +1090,7 @@ export function loadDirMetaDataPromise(
       ...metaData,
       id: metaData.id || getUuid(),
       isFile: false,
-      description: metaData.description || '',
+      description: getDescriptionPreview(metaData.description, 200),
       color: metaData.color || '',
       perspective: metaData.perspective || '',
       tags: metaData.tags || [],

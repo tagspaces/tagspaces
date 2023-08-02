@@ -107,7 +107,11 @@ import { Switch } from '@mui/material';
 import useFirstRender from '-/utils/useFirstRender';
 import ResolveConflictDialog from '-/components/dialogs/ResolveConflictDialog';
 import { dataTidFormat } from '-/services/test';
-import { getMetaForEntry, loadJSONFile } from '-/services/utils-io';
+import {
+  getDescriptionPreview,
+  getMetaForEntry,
+  loadJSONFile
+} from '-/services/utils-io';
 
 const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
 // const openedSplitSize = AppConfig.isElectron ? 560 : 360;
@@ -162,7 +166,6 @@ interface Props {
   renameDirectory: () => void;
   addTags: () => void;
   removeTags: () => void;
-  openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   openPrevFile: (path: string) => void;
   openNextFile: (path: string) => void;
   openFileNatively: (path: string) => void;
@@ -341,6 +344,13 @@ function EntryContainer(props: Props) {
       }
     }
   }, [isFullscreen]);
+
+  /*useEffect(() => {
+    // description is saved as Preview
+    if (isPropertiesPanelVisible && openedFile.description) {
+      reloadOpenedFile();
+    }
+  }, [isPropertiesPanelVisible]);*/
 
   useEffect(() => {
     if (fscreen.fullscreenEnabled) {
@@ -572,44 +582,50 @@ function EntryContainer(props: Props) {
     }
   };
 
+  const reloadOpenedFile = () => {
+    if (openedFile) {
+      const metaFilePath = openedFile.isFile
+        ? getMetaFileLocationForFile(
+            openedFile.path,
+            PlatformIO.getDirSeparator()
+          )
+        : getMetaFileLocationForDir(
+            openedFile.path,
+            PlatformIO.getDirSeparator()
+          );
+      try {
+        loadJSONFile(metaFilePath)
+          .then(fsEntryMeta => {
+            updateOpenedFile(openedFile.path, {
+              ...fsEntryMeta,
+              editMode: false,
+              shouldReload: !openedFile.shouldReload
+            });
+          })
+          .catch(() =>
+            updateOpenedFile(openedFile.path, {
+              ...openedFile,
+              editMode: false,
+              shouldReload: !openedFile.shouldReload
+            })
+          );
+      } catch (e) {
+        updateOpenedFile(openedFile.path, {
+          ...openedFile,
+          editMode: false,
+          shouldReload: !openedFile.shouldReload
+        });
+      }
+    }
+  };
+
   const reloadDocument = () => {
     if (openedFile) {
       if (openedFile.editMode && fileChanged.current) {
         // openedFile.changed) {
         setSaveBeforeReloadConfirmDialogOpened(true);
       } else {
-        const metaFilePath = openedFile.isFile
-          ? getMetaFileLocationForFile(
-              openedFile.path,
-              PlatformIO.getDirSeparator()
-            )
-          : getMetaFileLocationForDir(
-              openedFile.path,
-              PlatformIO.getDirSeparator()
-            );
-        try {
-          loadJSONFile(metaFilePath)
-            .then(fsEntryMeta => {
-              updateOpenedFile(openedFile.path, {
-                ...fsEntryMeta,
-                editMode: false,
-                shouldReload: !openedFile.shouldReload
-              });
-            })
-            .catch(() =>
-              updateOpenedFile(openedFile.path, {
-                ...openedFile,
-                editMode: false,
-                shouldReload: !openedFile.shouldReload
-              })
-            );
-        } catch (e) {
-          updateOpenedFile(openedFile.path, {
-            ...openedFile,
-            editMode: false,
-            shouldReload: !openedFile.shouldReload
-          });
-        }
+        reloadOpenedFile();
       }
     }
   };
@@ -1730,7 +1746,6 @@ function mapActionCreatorsToProps(dispatch) {
       closeAllFiles: AppActions.closeAllFiles,
       renameFile: AppActions.renameFile,
       renameDirectory: AppActions.renameDirectory,
-      openFsEntry: AppActions.openFsEntry,
       openFileNatively: AppActions.openFileNatively,
       openDirectory: AppActions.openDirectory,
       openLink: AppActions.openLink,

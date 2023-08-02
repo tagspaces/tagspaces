@@ -41,7 +41,6 @@ import {
 } from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
 import TaggingActions from '-/reducers/tagging-actions';
-import { getAllPropertiesPromise } from '-/services/utils-io';
 import FileUploadContainer, {
   FileUploadContainerRef
 } from '-/components/FileUploadContainer';
@@ -64,7 +63,6 @@ interface Props {
     loadDirMeta?: boolean
   ) => void;
   openDirectory: (path: string) => void;
-  openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   openAddRemoveTagsDialog?: () => void;
   reflectCreateEntry?: (path: string, isFile: boolean) => void;
   switchPerspective?: (perspectiveId: string) => void;
@@ -110,9 +108,7 @@ function DirectoryMenu(props: Props) {
     dispatch(AppActions.toggleCreateDirectoryDialog());
   };
 
-  const openFsEntry = fsEntry => {
-    dispatch(AppActions.openFsEntry(fsEntry));
-  };
+  const openEntry = path => dispatch(AppActions.openEntry(path));
 
   const reflectCreateEntry = (path, isFile) => {
     dispatch(AppActions.reflectCreateEntry(path, isFile));
@@ -210,16 +206,7 @@ function DirectoryMenu(props: Props) {
   }
 
   function showProperties() {
-    getAllPropertiesPromise(directoryPath)
-      .then((fsEntry: TS.FileSystemEntry) => {
-        openFsEntry(fsEntry);
-        return true;
-      })
-      .catch(error =>
-        console.warn(
-          'Error getting properties for entry: ' + directoryPath + ' - ' + error
-        )
-      );
+    return openEntry(directoryPath);
   }
 
   function switchPerspective(perspectiveId) {
