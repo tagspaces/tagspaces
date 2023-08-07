@@ -29,7 +29,7 @@ import i18n from '-/services/i18n';
 import useFirstRender from '-/utils/useFirstRender';
 import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import useTheme from '@mui/styles/useTheme';
+import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 interface Props {

@@ -16,21 +16,30 @@
  *
  */
 
-import React from 'react';
-import Typography from '@mui/material/Typography';
-import { classes, SidePanel } from '-/components/SidePanels.css';
+import { styled } from '@mui/material/styles';
 
-interface Props {
-  style: any;
-}
+const PREFIX = 'DnD';
+export const classes = {
+  dropzone: `${PREFIX}-dropzone`
+};
 
-function PerspectiveManager(props: Props) {
-  return (
-    <SidePanel style={props.style}>
-      <Typography className={classes.panelTitle}>Perspectives</Typography>
-    </SidePanel>
-  );
-  //         <Button onClick={() => history.push('/login')}>Login</Button>
-}
-
-export default PerspectiveManager;
+export const DnD = styled('div')(({ theme }) => ({
+  [`& .${classes.dropzone}`]: {
+    margin: 5,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: '#1dd19f40',
+    zIndex: 1000,
+    border: '3px dashed white',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center',
+    fontSize: '40px',
+    fontWeight: 'bold',
+    color: 'white'
+  }
+}));

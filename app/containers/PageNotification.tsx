@@ -19,9 +19,7 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Theme } from '@mui/material/styles';
-import withStyles from '@mui/styles/withStyles';
-import createStyles from '@mui/styles/createStyles';
+import { emphasize, styled, Theme } from '@mui/material/styles';
 import Snackbar from '@mui/material/Snackbar';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
@@ -41,6 +39,7 @@ import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import Links from '-/content/links';
 import { openURLExternally } from '-/services/utils-io';
+import Chip from '@mui/material/Chip';
 
 interface Props {
   notificationStatus: any;
@@ -59,15 +58,15 @@ interface Props {
   setGeneratingThumbnails: (isGenerating: boolean) => void;
 }
 
-const TSNotification = withStyles((theme: Theme) =>
-  createStyles({
+const TSNotification = styled(Snackbar)(({ theme }) => {
+  return {
     root: {
       '& .MuiSnackbarContent-root': {
         borderRadius: 10
       }
     }
-  })
-)(Snackbar);
+  };
+}) as typeof Snackbar;
 
 function PageNotification(props: Props) {
   const skipRelease = () => {

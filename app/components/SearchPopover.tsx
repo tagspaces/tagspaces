@@ -23,9 +23,6 @@ import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import Box from '@mui/material/Box';
-import { Theme } from '@mui/material/styles';
-import withStyles from '@mui/styles/withStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import format from 'date-fns/format';
 import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
@@ -36,7 +33,6 @@ import Input from '@mui/material/Input';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
-import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import Select from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
@@ -44,7 +40,6 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { mergeWithExtractedTags } from '@tagspaces/tagspaces-common/misc';
-import AppConfig from '-/AppConfig';
 import TagsSelect from './TagsSelect';
 import { actions as AppActions, getDirectoryPath } from '../reducers/app';
 import {
@@ -57,7 +52,6 @@ import {
   getMaxSearchResults,
   getShowUnixHiddenEntries
 } from '-/reducers/settings';
-import { styles, StyleProps } from './SearchInline.css';
 import i18n from '../services/i18n';
 import { FileTypeGroups, haveSearchFilters } from '-/services/search';
 import { Pro } from '../pro';
@@ -87,14 +81,13 @@ import {
   CloseIcon
 } from '-/components/CommonIcons';
 import { openURLExternally } from '-/services/utils-io';
+import { useTheme } from '@mui/material/styles';
+import { classes, SidePanel } from '-/components/SidePanels.css';
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
 
-type PropsClasses = Record<keyof StyleProps, string>;
-
 interface Props {
   style?: any;
-  theme?: any;
   loadDirectoryContent: (
     path: string,
     generateThumbnails: boolean,
@@ -116,11 +109,8 @@ interface Props {
   setTextQuery: (value: string) => void;
 }
 
-const useStyles = makeStyles<Theme, StyleProps>(styles);
-
 function SearchPopover(props: Props) {
-  // @ts-ignore
-  const classes: PropsClasses = useStyles({} as StyleProps);
+  const theme = useTheme();
   const [, forceUpdate] = useReducer(x => x + 1, 0);
   // const textQuery = useRef<string>(props.searchQuery.textQuery);
   // const tagsAND = useRef<Array<TS.Tag>>(props.searchQuery.tagsAND);
@@ -525,12 +515,12 @@ function SearchPopover(props: Props) {
     props.onClose();
   };
 
-  const { indexing, theme } = props;
+  const { indexing } = props;
   const indexStatus = GlobalSearch.getInstance().getIndex()
     ? GlobalSearch.getInstance().getIndex().length + ' indexed entries'
     : '';
   return (
-    <div
+    <SidePanel
       style={{
         maxWidth: 400,
         height: '100%'
@@ -1129,7 +1119,7 @@ function SearchPopover(props: Props) {
           searchQuery={saveSearchDialogOpened}
         />
       )}
-    </div>
+    </SidePanel>
   );
 }
 
@@ -1170,9 +1160,4 @@ const areEqual = (prevProp, nextProp) =>
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(
-  React.memo(
-    withStyles(undefined, { withTheme: true })(SearchPopover),
-    areEqual
-  )
-);
+)(React.memo(SearchPopover, areEqual));

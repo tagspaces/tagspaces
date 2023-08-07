@@ -17,50 +17,44 @@
  */
 
 import React from 'react';
-import { Theme } from '@mui/material/styles';
-import withStyles from '@mui/styles/withStyles';
-import createStyles from '@mui/styles/createStyles';
+import { styled } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 
-const MainSearchField = withStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      overflow: 'hidden',
-      '& input': {
-        padding: 6
-      },
-      '& .MuiInputBase-root': {
-        borderRadius: 7,
-        paddingRight: 5,
-        paddingLeft: 5
-      },
-      '& .Mui-focused': {
-        color:
-          theme.palette.mode === 'light'
-            ? theme.palette.grey[900]
-            : theme.palette.grey[200],
-        backgroundColor:
-          theme.palette.mode === 'light'
-            ? theme.palette.grey[200]
-            : theme.palette.grey[900]
-        // backgroundColor: 'gray',
-        // outline: '2px solid red',
-        // border: 'none',
-        // boxShadow: 'none'
-      },
-      // '&$focused': {
-      //   outline: 'none',
-      //   boxShadow: '0 0 0 4px rgba(21, 156, 228, 0.4)'
-      // },
-      '&:hover': {
-        backgroundColor: theme.palette.background.paper
-        // boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`
-      }
-      // '&:active': {
-      //   backgroundColor: theme.palette.background.paper
-      // }
-    }
-  })
-)(TextField);
+const MainSearchField = styled(TextField)(({ theme }) => ({
+  overflow: 'hidden',
+  '& input': {
+    padding: 6
+  },
+  '& .MuiInputBase-root': {
+    borderRadius: 7,
+    paddingRight: 5,
+    paddingLeft: 5
+  },
+  '& .Mui-focused': {
+    color:
+      theme.palette.mode === 'light'
+        ? theme.palette.grey[900]
+        : theme.palette.grey[200],
+    backgroundColor:
+      theme.palette.mode === 'light'
+        ? theme.palette.grey[200]
+        : theme.palette.grey[900]
+    // backgroundColor: 'gray',
+    // outline: '2px solid red',
+    // border: 'none',
+    // boxShadow: 'none'
+  },
+  // '&$focused': {
+  //   outline: 'none',
+  //   boxShadow: '0 0 0 4px rgba(21, 156, 228, 0.4)'
+  // },
+  '&:hover': {
+    backgroundColor: theme.palette.background.paper
+    // boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`
+  }
+  // '&:active': {
+  //   backgroundColor: theme.palette.background.paper
+  // }
+}));
 
 export default MainSearchField;

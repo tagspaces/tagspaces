@@ -17,12 +17,12 @@
  */
 
 import React, { useRef, useState } from 'react';
+import { styled } from '@mui/material/styles';
 import { useDispatch } from 'react-redux';
 import { saveAs } from 'file-saver';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Grid from '@mui/material/Grid';
-import withStyles from '@mui/styles/withStyles';
 import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
 import {
@@ -41,21 +41,26 @@ import FileUploadContainer, {
   FileUploadContainerRef
 } from '-/components/FileUploadContainer';
 
-const styles: any = () => ({
-  createButton: {
+const PREFIX = 'CreateDirectory';
+
+const classes = {
+  createButton: `${PREFIX}-createButton`
+};
+
+const Root = styled('div')(() => ({
+  [`& .${classes.createButton}`]: {
     width: '100%',
     textAlign: 'center'
   }
-});
+}));
 
 interface Props {
-  classes: any;
   onClose: () => void;
   tidPrefix?: string;
 }
 
 function CreateDirectory(props: Props) {
-  const { classes, onClose, tidPrefix } = props;
+  const { onClose, tidPrefix } = props;
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
   const dispatch: AppDispatch = useDispatch();
 
@@ -167,7 +172,7 @@ function CreateDirectory(props: Props) {
   }
 
   return (
-    <>
+    <Root>
       <Grid item xs={12}>
         <Button
           variant="outlined"
@@ -249,8 +254,8 @@ function CreateDirectory(props: Props) {
         ref={fileUploadContainerRef}
         directoryPath={targetDirectoryPath}
       />
-    </>
+    </Root>
   );
 }
 
-export default withStyles(styles)(CreateDirectory);
+export default CreateDirectory;

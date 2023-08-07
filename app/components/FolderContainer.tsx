@@ -17,6 +17,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
+import { styled, useTheme } from '@mui/material/styles';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import IconButton from '@mui/material/IconButton';
@@ -26,7 +27,6 @@ import Tooltip from '-/components/Tooltip';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 import Badge from '@mui/material/Badge';
-import withStyles from '@mui/styles/withStyles';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import AppConfig from '-/AppConfig';
@@ -73,6 +73,35 @@ import MainSearchField from '-/components/MainSearchField';
 // import LoadingAnimation from '-/components/LoadingAnimation';
 import SearchBox from '-/components/SearchBox';
 import useFirstRender from '-/utils/useFirstRender';
+
+const PREFIX = 'FolderContainer';
+
+const classes = {
+  button: `${PREFIX}-button`
+};
+
+const Root = styled('div')(({ theme }) => ({
+  [`& .${classes.button}`]: {
+    position: 'relative',
+    padding: '8px 12px 6px 8px',
+    margin: '0'
+  }
+}));
+
+/*const CounterBadge: any = withStyles(theme => ({
+  badge: {
+    top: '50%',
+    right: -15,
+    color:
+      theme.palette.mode === 'light'
+        ? theme.palette.grey[900]
+        : theme.palette.grey[200],
+    backgroundColor:
+      theme.palette.mode === 'light'
+        ? theme.palette.grey[200]
+        : theme.palette.grey[900]
+  }
+}))(Badge);*/
 
 const GridPerspective = React.lazy(() =>
   import(
@@ -148,24 +177,8 @@ function WelcomePanelAsync(props) {
   );
 }
 
-const CounterBadge: any = withStyles(theme => ({
-  badge: {
-    top: '50%',
-    right: -15,
-    color:
-      theme.palette.mode === 'light'
-        ? theme.palette.grey[900]
-        : theme.palette.grey[200],
-    backgroundColor:
-      theme.palette.mode === 'light'
-        ? theme.palette.grey[200]
-        : theme.palette.grey[900]
-  }
-}))(Badge);
 interface Props {
-  classes: any;
   settings: any;
-  theme: any;
   windowHeight: number;
   windowWidth: number;
   directoryContent: Array<TS.FileSystemEntry>;
@@ -220,6 +233,7 @@ interface Props {
 }
 
 function FolderContainer(props: Props) {
+  const theme = useTheme();
   const havePrevOpenedFile = React.useRef<boolean>(false);
   const firstRender = useFirstRender();
 
@@ -282,11 +296,9 @@ function FolderContainer(props: Props) {
     language,
     loadDirectoryContent,
     directoryContent,
-    classes,
     toggleDrawer,
     toggleProTeaser,
     isDesktopMode,
-    theme,
     currentDirectoryPerspective,
     currentLocationPath,
     currentLocation,
@@ -495,7 +507,7 @@ function FolderContainer(props: Props) {
     : '';
   // keyBindings['openSearch'].toUpperCase()
   return (
-    <div data-tid="folderContainerTID" style={{ position: 'relative' }}>
+    <Root data-tid="folderContainerTID" style={{ position: 'relative' }}>
       <div
         style={{
           flex: '1 1 100%',
@@ -599,7 +611,7 @@ function FolderContainer(props: Props) {
                   title={i18n.t('core:progress')}
                   data-tid="uploadProgress"
                   onClick={() => props.toggleUploadDialog()}
-                  className={[classes.button, classes.upgradeButton].join(' ')}
+                  className={classes.button}
                 >
                   <CircularProgressWithLabel value={getProgressValue()} />
                 </IconButton>
@@ -615,7 +627,6 @@ function FolderContainer(props: Props) {
                 openDirectory={openDirectory}
                 reflectCreateEntry={reflectCreateEntry}
                 openFsEntry={openFsEntry}
-                isReadOnlyMode={props.isReadOnlyMode}
                 isDesktopMode={isDesktopMode}
                 openRenameDirectoryDialog={() =>
                   setIsRenameEntryDialogOpened(true)
@@ -664,7 +675,7 @@ function FolderContainer(props: Props) {
           {perspectiveToggleButtons}
         </ToggleButtonGroup>
       )}
-    </div>
+    </Root>
   );
 }
 
@@ -733,7 +744,7 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
     JSON.stringify(prevProp.directoryContent) &&
   JSON.stringify(nextProp.openedFiles) ===
     JSON.stringify(prevProp.openedFiles) &&
-  JSON.stringify(nextProp.theme) === JSON.stringify(prevProp.theme) &&
+  //JSON.stringify(nextProp.theme) === JSON.stringify(prevProp.theme) &&
   // JSON.stringify(nextProp.editedEntryPaths) === JSON.stringify(prevProp.editedEntryPaths) &&
   nextProp.windowWidth === prevProp.windowWidth &&
   nextProp.windowHeight === prevProp.windowHeight &&
@@ -748,8 +759,5 @@ export default connect(
   mapActionCreatorsToProps
 )(
   // @ts-ignore
-  React.memo(
-    withStyles(undefined, { withTheme: true })(FolderContainer),
-    areEqual
-  )
+  React.memo(FolderContainer, areEqual)
 );

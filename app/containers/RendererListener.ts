@@ -80,7 +80,13 @@ export default function listen(props) {
           break;
         }
         case 'exit-fullscreen': {
-          document.exitFullscreen();
+          try {
+            if (document.fullscreenElement) {
+              document.exitFullscreen();
+            }
+          } catch (e) {
+            console.error('Failed to exit fullscreen mode:', e);
+          }
           break;
         }
         case 'toggle-settings-dialog': {

@@ -28,22 +28,49 @@ import Tooltip from '-/components/Tooltip';
 import Button from '@mui/material/Button';
 import Auth from '@aws-amplify/auth';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import withStyles from '@mui/styles/withStyles';
 import { useSelector } from 'react-redux';
 import { clearAllURLParams } from '-/utils/dom';
 import i18n from '-/services/i18n';
-import styles from '-/components/SidePanels.css';
 import { Pro } from '-/pro';
 import { currentUser } from '-/reducers/app';
+import { styled, useTheme } from '@mui/material/styles';
+
+const PREFIX = 'UserDetailsPopover';
+
+const classes = {
+  panelTitle: `${PREFIX}-panelTitle`,
+  header: `${PREFIX}-header`,
+  mainActionButton: `${PREFIX}-mainActionButton`,
+  leftIcon: `${PREFIX}-leftIcon`
+};
+
+const Root = styled('div')(({ theme }) => ({
+  [`& .${classes.panelTitle}`]: {
+    textTransform: 'uppercase',
+    flex: 1,
+    paddingLeft: 7,
+    paddingTop: 12
+  },
+  [`& .${classes.header}`]: {
+    color: theme.palette.text.primary
+  },
+  [`& .${classes.mainActionButton}`]: {
+    marginTop: 10,
+    marginLeft: 0,
+    paddingLeft: 8
+  },
+  [`& .${classes.leftIcon}`]: {
+    marginRight: theme.spacing(1)
+  }
+}));
 
 interface Props {
-  classes?: any;
-  theme?: any;
   onClose: () => void;
 }
 
 function UserDetailsPopover(props: Props) {
-  const { classes, theme, onClose } = props;
+  const theme = useTheme();
+  const { onClose } = props;
   const cognitoUser: CognitoUserInterface = useSelector(currentUser);
   const [isSetupTOTPOpened, setSetupTOTPOpened] = useState<boolean>(false);
   const SetupTOTPDialog = Pro && Pro.UI ? Pro.UI.SetupTOTPDialog : false;
@@ -70,7 +97,7 @@ function UserDetailsPopover(props: Props) {
   };
 
   return (
-    <div
+    <Root
       style={{
         maxWidth: 400,
         height: '100%'
@@ -185,8 +212,8 @@ function UserDetailsPopover(props: Props) {
           </Button>
         </Box>
       </Box>
-    </div>
+    </Root>
   );
 }
 
-export default withStyles(styles, { withTheme: true })(UserDetailsPopover);
+export default UserDetailsPopover;

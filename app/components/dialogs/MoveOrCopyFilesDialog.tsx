@@ -34,7 +34,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
 import Dialog from '@mui/material/Dialog';
-import useTheme from '@mui/styles/useTheme';
+import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import DraggablePaper from '-/components/DraggablePaper';
 import i18n from '-/services/i18n';

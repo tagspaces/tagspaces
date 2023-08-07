@@ -18,10 +18,8 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import withStyles from '@mui/styles/withStyles';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { List } from '@mui/material';
-import styles from '-/components/SidePanels.css';
 import LocationManagerMenu from '-/components/menus/LocationManagerMenu';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { actions as LocationActions, getLocations } from '-/reducers/locations';
@@ -33,6 +31,7 @@ import LocationView from '-/components/LocationView';
 import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
+import { classes, SidePanel } from '-/components/SidePanels.css';
 
 const CreateEditLocationDialog = React.lazy(() =>
   import(
@@ -48,7 +47,6 @@ function CreateEditLocationDialogAsync(props) {
 }
 
 interface Props {
-  classes?: any;
   style?: any;
   reduceHeightBy: number;
   show: boolean;
@@ -112,10 +110,9 @@ function LocationManager(props: Props) {
     );
   };
 
-  const { classes, reduceHeightBy, show } = props;
+  const { reduceHeightBy, show } = props;
   return (
-    <div
-      className={classes.panel}
+    <SidePanel
       style={{
         display: show ? 'flex' : 'none',
         flexDirection: 'column'
@@ -197,7 +194,6 @@ function LocationManager(props: Props) {
                       >
                         <LocationView
                           key={location.uuid}
-                          classes={classes}
                           location={location}
                           setEditLocationDialogOpened={
                             setEditLocationDialogOpened
@@ -268,8 +264,8 @@ function LocationManager(props: Props) {
           locations={locations}
         />
       )}
-    </div>
+    </SidePanel>
   );
 }
 
-export default withStyles(styles)(LocationManager);
+export default LocationManager;
