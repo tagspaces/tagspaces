@@ -78,7 +78,7 @@ jobs:
       - name: Checkout TagspacesPro
         uses: actions/checkout@v2
         with:
-          ref: Refactor-to-use-useDispatch-and-useSelector-v2
+          ref: Rethink-writing-entry-properties-description-in-redux
           repository: tagspaces/tagspacespro
           token: ${{ secrets.CHECKOUT_TSPRO  }}
           path: extensions/tagspacespro
