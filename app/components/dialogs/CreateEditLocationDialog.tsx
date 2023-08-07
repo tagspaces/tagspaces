@@ -17,8 +17,8 @@
  */
 
 import React, { ChangeEvent, useEffect, useState } from 'react';
+import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
-import withStyles from '@mui/styles/withStyles';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -73,19 +73,25 @@ import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import PlatformIO from '-/services/platform-facade';
 import WebdavForm from '-/components/dialogs/WebdavForm';
-import useTheme from '@mui/styles/useTheme';
+import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { loadLocationDataPromise } from '-/services/utils-io';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { ExpandIcon } from '-/components/CommonIcons';
 import MaxLoopsSelect from '-/components/dialogs/MaxLoopsSelect';
 
-const styles: any = theme => ({
-  formControl: {
+const PREFIX = 'CreateEditLocationDialog';
+
+const classes = {
+  formControl: `${PREFIX}-formControl`
+};
+
+const StyledDialog = styled(Dialog)(({ theme }) => ({
+  [`& .${classes.formControl}`]: {
     marginLeft: theme.spacing(0),
     width: '100%'
   }
-});
+}));
 
 interface Props {
   location?: TS.Location;
@@ -350,7 +356,7 @@ function CreateEditLocationDialog(props: Props) {
     );
   };
 
-  const { open, onClose, classes } = props;
+  const { open, onClose } = props;
 
   const onConfirm = () => {
     if (!disableConfirmButton()) {
@@ -509,7 +515,7 @@ function CreateEditLocationDialog(props: Props) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
-    <Dialog
+    <StyledDialog
       open={open}
       onClose={onClose}
       fullScreen={fullScreen}
@@ -987,8 +993,8 @@ function CreateEditLocationDialog(props: Props) {
           {i18n.t('core:ok')}
         </Button>
       </DialogActions>
-    </Dialog>
+    </StyledDialog>
   );
 }
 
-export default withStyles(styles)(CreateEditLocationDialog);
+export default CreateEditLocationDialog;

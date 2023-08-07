@@ -20,8 +20,6 @@ import React, { useReducer, useRef, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import withStyles from '@mui/styles/withStyles';
-import styles from './SidePanels.css';
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
@@ -66,10 +64,10 @@ import PlatformIO from '-/services/platform-facade';
 import HistoryMenu from '-/components/menus/HistoryMenu';
 import BookmarksMenu from '-/components/menus/BookmarksMenu';
 import { renderHistory } from '-/components/RenderHistory';
+import { classes, SidePanel } from '-/components/SidePanels.css';
 
 interface Props {
   style?: any;
-  classes?: any;
   searchQuery: TS.SearchQuery;
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   searches: Array<TS.SearchQuery>;
@@ -170,7 +168,7 @@ function StoredSearches(props: Props) {
 
   const noSearchesFound = props.searches.length < 1;
 
-  const { reduceHeightBy, classes } = props;
+  const { reduceHeightBy } = props;
 
   const bookmarkItems: Array<TS.BookmarkItem> = Pro
     ? Pro.bookmarks.getBookmarks()
@@ -194,8 +192,7 @@ function StoredSearches(props: Props) {
     folderOpenHistoryItems && folderOpenHistoryItems.length > 0;
 
   return (
-    <div
-      className={classes.panel}
+    <SidePanel
       data-tid="quickAccessArea"
       style={{
         display: 'flex',
@@ -609,7 +606,7 @@ function StoredSearches(props: Props) {
           searches={props.searches}
         />
       )}
-    </div>
+    </SidePanel>
   );
 }
 
@@ -659,10 +656,10 @@ const areEqual = (prevProp, nextProp) =>
   nextProp.searchQuery === prevProp.searchQuery &&
   nextProp.currentDirectory === prevProp.currentDirectory &&
   nextProp.indexedEntriesCount === prevProp.indexedEntriesCount &&
-  JSON.stringify(nextProp.searches) === JSON.stringify(prevProp.searches) &&
-  JSON.stringify(nextProp.classes) === JSON.stringify(prevProp.classes);
+  JSON.stringify(nextProp.searches) === JSON.stringify(prevProp.searches);
+//  JSON.stringify(nextProp.classes) === JSON.stringify(prevProp.classes);
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(React.memo(withStyles(styles)(StoredSearches), areEqual));
+)(React.memo(StoredSearches, areEqual));

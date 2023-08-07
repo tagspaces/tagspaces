@@ -18,7 +18,6 @@
 
 import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import withStyles from '@mui/styles/withStyles';
 import Tooltip from '-/components/Tooltip';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -30,7 +29,6 @@ import { LocalLocationIcon, CloudLocationIcon } from '-/components/CommonIcons';
 import DefaultLocationIcon from '@mui/icons-material/Highlight';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
-import styles from './SidePanels.css';
 import {
   actions as AppActions,
   AppDispatch,
@@ -51,9 +49,9 @@ import {
 } from '-/reducers/settings';
 import LocationContextMenu from '-/components/menus/LocationContextMenu';
 import { TS } from '-/tagspaces.namespace';
+import { classes, SidePanel } from '-/components/SidePanels.css';
 
 interface Props {
-  classes: any;
   location: TS.Location;
   hideDrawer?: () => void;
   setEditLocationDialogOpened: (open: boolean) => void;
@@ -75,7 +73,6 @@ function LocationView(props: Props) {
   const readOnlyMode = useSelector(isReadOnlyMode);
 
   const {
-    classes,
     location,
     hideDrawer,
     setSelectedLocation,
@@ -255,7 +252,7 @@ function LocationView(props: Props) {
 
   return (
     /* <div key={location.uuid}> */
-    <>
+    <SidePanel>
       {locationDirectoryContextMenuAnchorEl && (
         <LocationContextMenu
           setEditLocationDialogOpened={setEditLocationDialogOpened}
@@ -348,8 +345,8 @@ function LocationView(props: Props) {
         location={location}
         handleFileMoveDrop={handleFileMoveDrop}
       />
-    </>
+    </SidePanel>
   );
 }
 
-export default withStyles(styles)(React.memo(LocationView));
+export default React.memo(LocationView);

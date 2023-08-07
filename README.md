@@ -4,21 +4,22 @@
 
 **TagSpaces** is a free, no vendor lock-in, open source application for organizing, annotating and managing local files with the help of tags. It features advanced note taking functionalities and some capabilities of to-do apps. The application is available for Windows, Linux, Mac OS and Android. We provide a web clipper extension for Firefox, Edge and Chrome for easy collecting of online content in the form of local files.
 
-![tagspaces-screenshot ubuntu v4 0](https://user-images.githubusercontent.com/1249777/139649315-7d5b40cc-5c18-450a-8de8-414c26adad1e.png)
+![tagspaces with the markdown editor](https://www.tagspaces.org/content/hero/hero-mdeditor-light.jpg)
 
 More information about can be found from the following sources:
 
 - [Website](https://www.tagspaces.org/) - official web site of the project.
 - [Blog](https://www.tagspaces.org/blog/) for news about TagSpaces
-- [Documentation](https://docs.tagspaces.org/) for our latest generated documentation
-- [Video Introduction](https://www.youtube.com/embed/CJ2hYU6U-C8) - This is a short video presenting the main concepts of the application. It is made from a pretty old application version but it is still valid for the most of the use cases.
-- [Issues Tracker](https://github.com/tagspaces/tagspaces/issues) for developer support requests
+- [Docs](https://docs.tagspaces.org/) - the user documentation of the application
+- [Forum](https://tagspaces.discourse.group/) - for feature request and support requests
+- [Issues](https://github.com/tagspaces/tagspaces/issues) for filing bug reports
+- [Intro Video](https://www.youtube.com/watch?v=Xjwxq4c0RBQ) - A video on Youtube showing the main concepts of the application.
 
 ## Downloads
 
 You can find the latest release of TagSpaces in the Github [release section](https://github.com/tagspaces/tagspaces/releases/)
 
-A full list of the changes is available in the [changelog](CHANGELOG.md)
+A full list of the changes is available in the [changelog](https://www.tagspaces.org/whatsnew/)
 
 ## Main Features
 
@@ -35,7 +36,7 @@ A full list of the changes is available in the [changelog](CHANGELOG.md)
 
 ## Infos for developers
 
-The core of TagSpaces starting from version 3 is built with [react.js](https://reactjs.org/) and the great [material-ui](https://material-ui.com/) framework.
+The core of TagSpaces starting from version 3 is built with [react.js](https://reactjs.org/) and the great [material-ui](https://mui.com/) framework.
 
 The native Windows, Linux and Mac OS versions of TagSpaces are built with [Electron](https://electron.atom.io/). Electron is an app runtime based on Chromium and node.js. In order to combine it with react we have used the [electron-react-boilerplate](https://github.com/chentsulin/electron-react-boilerplate).
 
@@ -46,6 +47,7 @@ The native Windows, Linux and Mac OS versions of TagSpaces are built with [Elect
     ./app/node_modules... contains the TagSpaces extension modules
     ./cordova............ contains the code needed for running the Android version
     ./dll................ contains the files needed for live reload in development mode
+    ./docker............. files needed for the creation of a docker container
     ./internals.......... contains files needed for supporting Flow and Eslint
     ./node_modules....... after npm install, you will find here the external dependencies of the application
     ./resources.......... contains images and other files needed for the application building
@@ -89,11 +91,13 @@ Starting from v4 of the application, a web service is running locally as a separ
 
 Having a custom key, ensures that another instance of TagSpaces will not communicate with the web service of the initial instance, since it is always running on the same port.
 
-Now you are ready and can build and start (bs) the application with:
+Now you are ready and can build and start the application with:
 
-    $ npm run bs
+    $ npm run build
 
-If you want to try the development mode, you can start it by:
+    $ npm run start
+
+If you want to try the development mode, you can start the app with:
 
     $ npm run dev
 
@@ -164,7 +168,7 @@ TagSpaces is currently available in more than 20 languages. You can help the tra
 
 ## Ideas and Suggestion
 
-If you have ideas or suggestions on how we can improve our application, you can check the following [Trello board](https://trello.com/b/TGeG5bi9/tagspaces-ideas). Here you will find numerous ideas already proposed by other users. If you want to post something new, please follow [this link](https://trello.com/c/mG97iOqo/19-how-to-use-this-board-and-add-new-ideas)
+If you have ideas or suggestions on how we can improve our application, you can check the dedicated [section](https://tagspaces.discourse.group/c/feature-requests/6) in our forum. Here you will find numerous ideas already proposed by other users.
 
 ## Support and Bugs
 

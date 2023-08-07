@@ -17,6 +17,7 @@
  */
 
 import React from 'react';
+import { styled } from '@mui/material/styles';
 import { useSelector } from 'react-redux';
 import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
@@ -26,23 +27,28 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 import ListItemText from '@mui/material/ListItemText';
-import withStyles from '@mui/styles/withStyles';
 import Dialog from '@mui/material/Dialog';
 import i18n from '-/services/i18n';
 import { getKeyBindingObject } from '-/reducers/settings';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import useTheme from '@mui/styles/useTheme';
+import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-const styles = theme => ({
-  shortcutKey: {
+const PREFIX = 'KeyboardDialog';
+
+const classes = {
+  shortcutKey: `${PREFIX}-shortcutKey`
+};
+
+const StyledDialog = styled(Dialog)(({ theme }) => ({
+  [`& .${classes.shortcutKey}`]: {
     backgroundColor: theme.palette.primary.main,
     font: 'Console',
     fontFamily: 'monospace',
     padding: '5px',
     borderRadius: '5px'
   }
-});
+}));
 
 interface Props {
   open: boolean;
@@ -51,12 +57,12 @@ interface Props {
 }
 
 function KeyboardDialog(props: Props) {
-  const { open, onClose, classes } = props;
+  const { open, onClose } = props;
   const keyBindings = useSelector(getKeyBindingObject);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
-    <Dialog
+    <StyledDialog
       open={open}
       onClose={onClose}
       fullScreen={fullScreen}
@@ -98,8 +104,8 @@ function KeyboardDialog(props: Props) {
           {i18n.t('core:ok')}
         </Button>
       </DialogActions>
-    </Dialog>
+    </StyledDialog>
   );
 }
 
-export default withStyles(styles)(KeyboardDialog);
+export default KeyboardDialog;

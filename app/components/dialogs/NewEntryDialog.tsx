@@ -26,7 +26,7 @@ import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import DraggablePaper from '-/components/DraggablePaper';
 import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import useTheme from '@mui/styles/useTheme';
+import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { ExpandIcon } from '-/components/CommonIcons';
 import CreateDirectory from '-/components/dialogs/components/CreateDirectory';

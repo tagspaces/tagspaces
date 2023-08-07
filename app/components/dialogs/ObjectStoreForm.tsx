@@ -17,7 +17,6 @@
  */
 
 import React from 'react';
-import withStyles from '@mui/styles/withStyles';
 import Autocomplete from '@mui/material/Autocomplete';
 import Grid from '@mui/material/Grid';
 import FormControl from '@mui/material/FormControl';
@@ -78,8 +77,6 @@ export const regions = [
 ];
 
 interface Props {
-  classes: any;
-  theme: any;
   cloudErrorTextName: boolean;
   cloudErrorTextPath: boolean;
   cloudErrorAccessKey: boolean;
@@ -307,4 +304,4 @@ function ObjectStoreForm(props: Props) {
   );
 }
 
-export default withStyles(undefined, { withTheme: true })(ObjectStoreForm);
+export default ObjectStoreForm;

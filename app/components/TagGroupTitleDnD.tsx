@@ -31,9 +31,9 @@ import {
 import Grid from '@mui/material/Grid';
 import { TS } from '-/tagspaces.namespace';
 import DragItemTypes from '-/components/DragItemTypes';
+import { classes, SidePanel } from '-/components/SidePanels.css';
 
 interface Props {
-  classes: any;
   index: number;
   tagGroup: TS.TagGroup;
   handleTagGroupMenu: (
@@ -74,75 +74,81 @@ function TagGroupTitleDnD(props: Props) {
   } = props;
 
   const tagGroupTitle = (
-    <div
-      data-tid={'tagLibraryTagGroupTitle_' + tagGroup.title}
-      className={props.classes.listItem}
-      title={'Number of tags in this tag group: ' + tagGroup.children.length}
-    >
-      <Grid
-        container
-        direction="row"
-        alignItems="stretch"
-        alignContent="center"
-        style={{ flexWrap: 'nowrap' }}
+    <div>
+      <SidePanel
+        data-tid={'tagLibraryTagGroupTitle_' + tagGroup.title}
+        className={classes.listItem}
+        title={'Number of tags in this tag group: ' + tagGroup.children.length}
       >
-        <Grid item xs={2} style={{ maxWidth: 40 }}>
-          <IconButton
-            style={{ minWidth: 'auto', padding: 7 }}
-            onClick={(event: any) => handleTagGroupTitleClick(event, tagGroup)}
-            size="large"
-          >
-            {tagGroup.expanded ? <ArrowDownIcon /> : <ArrowRightIcon />}
-          </IconButton>
-        </Grid>
-        <Grid item xs={8} style={{ alignSelf: 'center' }}>
-          <Typography
-            variant="inherit"
-            className={props.classes.header}
-            style={{ paddingLeft: 0 }}
-            data-tid="locationTitleElement"
-            noWrap
-            onClick={(event: any) => handleTagGroupTitleClick(event, tagGroup)}
-          >
-            {tagGroup.title + getLocationName(tagGroup.locationId)}
-            {!tagGroup.expanded && (
-              <span
-                style={{
-                  display: 'inline-block',
-                  minWidth: 10,
-                  padding: '3px 7px',
-                  fontSize: 10,
-                  fontWeight: 'normal',
-                  marginLeft: 4,
-                  color: '#ffffff',
-                  lineHeight: 1,
-                  verticalAlign: 'middle',
-                  whiteSpace: 'nowrap',
-                  textAlign: 'center',
-                  backgroundColor: '#bbbbbb',
-                  borderRadius: 10
-                }}
-              >
-                {tagGroup.children.length}
-              </span>
-            )}
-          </Typography>
-        </Grid>
-        <Grid item xs={2} style={{ textAlign: 'end' }}>
-          {!props.isReadOnly && (
+        <Grid
+          container
+          direction="row"
+          alignItems="stretch"
+          alignContent="center"
+          style={{ flexWrap: 'nowrap' }}
+        >
+          <Grid item xs={2} style={{ maxWidth: 40 }}>
             <IconButton
               style={{ minWidth: 'auto', padding: 7 }}
-              data-tid={
-                'tagLibraryMoreButton_' + tagGroup.title.replace(/ /g, '_')
+              onClick={(event: any) =>
+                handleTagGroupTitleClick(event, tagGroup)
               }
-              onClick={(event: any) => handleTagGroupMenu(event, tagGroup)}
               size="large"
             >
-              <MoreVertIcon />
+              {tagGroup.expanded ? <ArrowDownIcon /> : <ArrowRightIcon />}
             </IconButton>
-          )}
+          </Grid>
+          <Grid item xs={8} style={{ alignSelf: 'center' }}>
+            <Typography
+              variant="inherit"
+              className={classes.header}
+              style={{ paddingLeft: 0 }}
+              data-tid="locationTitleElement"
+              noWrap
+              onClick={(event: any) =>
+                handleTagGroupTitleClick(event, tagGroup)
+              }
+            >
+              {tagGroup.title + getLocationName(tagGroup.locationId)}
+              {!tagGroup.expanded && (
+                <span
+                  style={{
+                    display: 'inline-block',
+                    minWidth: 10,
+                    padding: '3px 7px',
+                    fontSize: 10,
+                    fontWeight: 'normal',
+                    marginLeft: 4,
+                    color: '#ffffff',
+                    lineHeight: 1,
+                    verticalAlign: 'middle',
+                    whiteSpace: 'nowrap',
+                    textAlign: 'center',
+                    backgroundColor: '#bbbbbb',
+                    borderRadius: 10
+                  }}
+                >
+                  {tagGroup.children.length}
+                </span>
+              )}
+            </Typography>
+          </Grid>
+          <Grid item xs={2} style={{ textAlign: 'end' }}>
+            {!props.isReadOnly && (
+              <IconButton
+                style={{ minWidth: 'auto', padding: 7 }}
+                data-tid={
+                  'tagLibraryMoreButton_' + tagGroup.title.replace(/ /g, '_')
+                }
+                onClick={(event: any) => handleTagGroupMenu(event, tagGroup)}
+                size="large"
+              >
+                <MoreVertIcon />
+              </IconButton>
+            )}
+          </Grid>
         </Grid>
-      </Grid>
+      </SidePanel>
     </div>
   );
   if (tagGroup.readOnly) {

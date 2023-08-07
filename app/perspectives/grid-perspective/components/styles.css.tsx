@@ -15,10 +15,27 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-// import AppConfig from '-/AppConfig';
-import { alpha } from '@mui/material/styles';
+import { alpha, styled } from '@mui/material/styles';
 
-export default (theme: any): any => ({
+const PREFIX = 'GridStyles';
+export const classes = {
+  gridCell: `${PREFIX}-gridCell`,
+  rowCell: `${PREFIX}-rowCell`,
+  rowHover: `${PREFIX}-rowHover`,
+  selectedGridCell: `${PREFIX}-selectedGridCell`,
+  selectedRowCell: `${PREFIX}-selectedRowCell`,
+  gridCellThumb: `${PREFIX}-gridCellThumb`,
+  gridCellTitle: `${PREFIX}-gridCellTitle`,
+  gridCellTags: `${PREFIX}-gridCellTags`,
+  gridCellDescription: `${PREFIX}-gridCellDescription`,
+  gridFileExtension: `${PREFIX}-gridFileExtension`,
+  gridSizeDate: `${PREFIX}-gridSizeDate`,
+  gridDetails: `${PREFIX}-gridDetails`,
+  gridFolder: `${PREFIX}-gridFolder`,
+  topToolbar: `${PREFIX}-topToolbar`
+};
+
+export const GridStyles = styled('div')(({ theme }) => ({
   // rowContainer: {
   //   display: 'grid',
   //   gridGap: '0px 0px',
@@ -26,14 +43,14 @@ export default (theme: any): any => ({
   //   margin: 0,
   //   paddingBottom: 10
   // },
-  gridCell: {
+  [`& .${classes.gridCell}`]: {
     border: '2px solid transparent',
     marginTop: 1,
     marginLeft: 2,
     marginBottom: 1,
     marginRight: 1
   },
-  rowCell: {
+  [`& .${classes.rowCell}`]: {
     boxShadow: 'none',
     borderLeft: '1px solid transparent',
     borderRight: '1px solid transparent',
@@ -43,25 +60,25 @@ export default (theme: any): any => ({
     marginTop: 0,
     marginBottom: 0
   },
-  rowHover: {
+  [`& .${classes.rowHover}`]: {
     '&:hover': {
       backgroundColor: theme.palette.divider + ' !important'
     }
   },
-  selectedGridCell: {
+  [`& .${classes.selectedGridCell}`]: {
     border: '2px solid' + theme.palette.primary.main,
     backgroundColor: theme.palette.primary.light + ' !important'
   },
-  selectedRowCell: {
+  [`& .${classes.selectedRowCell}`]: {
     border: '1px solid' + theme.palette.primary.main + ' !important'
   },
-  gridCellThumb: {
+  [`& .${classes.gridCellThumb}`]: {
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'center',
     borderRadius: 5,
     marginBottom: 5
   },
-  gridCellTitle: {
+  [`& .${classes.gridCellTitle}`]: {
     padding: '0px 5px 0 5px',
     minHeight: 45,
     display: '-webkit-box',
@@ -70,7 +87,7 @@ export default (theme: any): any => ({
     textOverflow: 'ellipsis',
     overflow: 'hidden'
   },
-  gridCellTags: {
+  [`& .${classes.gridCellTags}`]: {
     padding: 0,
     paddingTop: 2,
     height: 100,
@@ -78,7 +95,7 @@ export default (theme: any): any => ({
     overflowX: 'hidden',
     position: 'relative'
   },
-  gridCellDescription: {
+  [`& .${classes.gridCellDescription}`]: {
     padding: 2,
     margin: 2,
     backgroundColor: theme.palette.background.paper,
@@ -87,7 +104,7 @@ export default (theme: any): any => ({
     wordBreak: 'break-word',
     display: 'block'
   },
-  gridFileExtension: {
+  [`& .${classes.gridFileExtension}`]: {
     paddingTop: 1,
     paddingBottom: 7,
     paddingLeft: 3,
@@ -101,25 +118,25 @@ export default (theme: any): any => ({
     borderRadius: 3,
     textAlign: 'center'
   },
-  gridSizeDate: {
+  [`& .${classes.gridSizeDate}`]: {
     overflow: 'hidden',
     whiteSpace: 'nowrap',
     marginRight: 5,
     marginLeft: 'auto',
     paddingTop: 12
   },
-  gridDetails: {
+  [`& .${classes.gridDetails}`]: {
     display: 'flex',
     whiteSpace: 'nowrap'
   },
-  gridFolder: {
+  [`& .${classes.gridFolder}`]: {
     color: 'white',
     padding: 5,
     minHeight: 15,
     height: 20,
     borderRadius: 3
   },
-  topToolbar: {
+  [`& .${classes.topToolbar}`]: {
     paddingLeft: 5,
     paddingRight: 5,
     minHeight: 40,
@@ -137,4 +154,4 @@ export default (theme: any): any => ({
     width: 'calc(100% - 10px)',
     overflowX: 'auto'
   }
-});
+}));

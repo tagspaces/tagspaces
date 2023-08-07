@@ -17,8 +17,7 @@
  */
 
 import React, { MutableRefObject } from 'react';
-import withStyles from '@mui/styles/withStyles';
-import { rgbToHex } from '@mui/material/styles';
+import { rgbToHex, useTheme } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
 import i18n from '-/services/i18n';
 import { OpenedEntry } from '-/reducers/app';
@@ -36,15 +35,14 @@ interface Props {
   searchQuery: TS.SearchQuery;
   toggleFullScreen?: () => void;
   height?: string;
-  theme: any;
   currentTheme: string;
   eventID: string;
 }
 
 function FileView(props: Props) {
+  const theme = useTheme();
   const {
     openedFile,
-    theme,
     fileViewer,
     isFullscreen,
     fileViewerContainer,
@@ -196,6 +194,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(
-  React.memo(withStyles(undefined, { withTheme: true })(FileView), areEqual)
-);
+export default connect(mapStateToProps)(React.memo(FileView, areEqual));
