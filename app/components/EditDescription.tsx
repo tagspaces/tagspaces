@@ -12,13 +12,14 @@ interface Props {
   classes: any;
   toggleEditDescriptionField: () => void;
   printHTML: () => void;
-  fileDescriptionRef: MutableRefObject<MilkdownRef>;
+  // fileDescriptionRef: MutableRefObject<MilkdownRef>;
   isDarkTheme: boolean;
   description: string;
   setEditDescription: (md: string) => void;
   currentFolder: string;
 }
 function EditDescription(props: Props) {
+  const fileDescriptionRef = useRef<MilkdownRef>(null);
   const {
     currentFolder,
     description,
@@ -26,7 +27,6 @@ function EditDescription(props: Props) {
     classes,
     printHTML,
     toggleEditDescriptionField,
-    fileDescriptionRef,
     primaryColor,
     isDarkTheme
   } = props;
@@ -126,8 +126,8 @@ function EditDescription(props: Props) {
             onChange={milkdownListener}
             onFocus={milkdownOnFocus}
             readOnly={!editMode}
-            dark={isDarkTheme}
-            lightMode={true}
+            // dark={dark}
+            lightMode={false}
             currentFolder={currentFolder}
           />
         )}

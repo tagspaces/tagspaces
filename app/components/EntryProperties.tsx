@@ -229,7 +229,7 @@ function EntryProperties(props: Props) {
   const theme = useTheme();
   const fileNameRef = useRef<HTMLInputElement>(null);
   const sharingLinkRef = useRef<HTMLInputElement>(null);
-  const fileDescriptionRef = useRef<MilkdownRef>(null);
+  // const fileDescriptionRef = useRef<MilkdownRef>(null);
   const disableConfirmButton = useRef<boolean>(true);
   const fileNameError = useRef<boolean>(false);
 
@@ -987,7 +987,6 @@ function EntryProperties(props: Props) {
               toggleEditDescriptionField
             }
             printHTML={printHTML}
-            fileDescriptionRef={fileDescriptionRef}
             description={currentEntry.current.description}
             setEditDescription={md => (editDescription.current = md)}
             isDarkTheme={theme.palette.mode === 'dark'}
