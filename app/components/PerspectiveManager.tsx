@@ -26,7 +26,7 @@ interface Props {
 
 function PerspectiveManager(props: Props) {
   return (
-    <SidePanel className={classes.panel} style={props.style}>
+    <SidePanel style={props.style}>
       <Typography className={classes.panelTitle}>Perspectives</Typography>
     </SidePanel>
   );

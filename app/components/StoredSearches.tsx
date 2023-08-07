@@ -193,7 +193,6 @@ function StoredSearches(props: Props) {
 
   return (
     <SidePanel
-      className={classes.panel}
       data-tid="quickAccessArea"
       style={{
         display: 'flex',

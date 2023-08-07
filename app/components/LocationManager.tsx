@@ -113,7 +113,6 @@ function LocationManager(props: Props) {
   const { reduceHeightBy, show } = props;
   return (
     <SidePanel
-      className={classes.panel}
       style={{
         display: show ? 'flex' : 'none',
         flexDirection: 'column'

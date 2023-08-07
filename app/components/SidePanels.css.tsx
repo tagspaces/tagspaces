@@ -34,11 +34,9 @@ export const classes = {
 };
 
 export const SidePanel = styled('div')(({ theme }) => ({
-  [`& .${classes.panel}`]: {
-    height: '100%',
-    paddingLeft: 5,
-    paddingRight: 5
-  },
+  height: '100%',
+  paddingLeft: 5,
+  paddingRight: 5,
   [`& .${classes.fontIcon}`]: {
     color: theme.palette.text.primary
   },

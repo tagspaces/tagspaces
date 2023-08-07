@@ -67,7 +67,6 @@ function HelpFeedbackPanel(props: Props) {
 
   return (
     <SidePanel
-      className={classes.panel}
       style={{
         display: 'flex',
         flexDirection: 'column'

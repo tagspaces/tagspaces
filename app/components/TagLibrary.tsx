@@ -384,7 +384,6 @@ function TagLibrary(props: Props) {
   const allTags = getAllTags(tagGroups);
   return (
     <SidePanel
-      className={classes.panel}
       style={{
         display: 'flex',
         flexDirection: 'column'
