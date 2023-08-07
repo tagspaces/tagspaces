@@ -18,8 +18,8 @@
 
 import React from 'react';
 import { DropTarget } from 'react-dnd';
-import withStyles from '@mui/styles/withStyles';
 import { TS } from '-/tagspaces.namespace';
+import { classes, DnD } from '-/components/DnD.css';
 
 const styles: any = () => ({
   dropzone: {
@@ -45,7 +45,6 @@ const boxTarget = {
 interface Props {
   accepts: Array<string>;
   onDrop: (item: any, monitor: any) => void;
-  classes?: any;
   canDrop: boolean;
   isOver: boolean;
   connectDropTarget: any;
@@ -55,10 +54,10 @@ interface Props {
 }
 
 const TargetMoveFileBox = (props: Props) => {
-  const { classes, canDrop, isOver, connectDropTarget, children } = props;
+  const { canDrop, isOver, connectDropTarget, children } = props;
   const dragContent =
     canDrop && isOver ? (
-      <div
+      <DnD
         className={classes.dropzone}
       /> /* {i18n.t('core:releaseToMoveDrop')} */
     ) : (
@@ -72,14 +71,12 @@ const TargetMoveFileBox = (props: Props) => {
   );
 };
 
-export default withStyles(styles, { withTheme: true })(
-  DropTarget(
-    props => props.accepts,
-    boxTarget,
-    (connect, monitor) => ({
-      connectDropTarget: connect.dropTarget(),
-      isOver: monitor.isOver(),
-      canDrop: monitor.canDrop()
-    })
-  )(TargetMoveFileBox)
-);
+export default DropTarget(
+  props => props.accepts,
+  boxTarget,
+  (connect, monitor) => ({
+    connectDropTarget: connect.dropTarget(),
+    isOver: monitor.isOver(),
+    canDrop: monitor.canDrop()
+  })
+)(TargetMoveFileBox);

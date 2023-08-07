@@ -41,10 +41,10 @@ import ThumbnailCoverIcon from '@mui/icons-material/PhotoSizeSelectActual';
 import ThumbnailContainIcon from '@mui/icons-material/PhotoSizeSelectLarge';
 import RadioCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import RadioUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
-import withStyles from '@mui/styles/withStyles';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
+import { useTheme } from '@mui/material/styles';
 
 const styles: any = {
   root: {
@@ -65,7 +65,6 @@ const styles: any = {
 
 interface Props {
   open: boolean;
-  theme?: any;
   gridPageLimit: number;
   onClose: (isDefault?: boolean) => void;
   setGridPageLimit: (number) => void;
@@ -89,7 +88,6 @@ interface Props {
   sortBy: string;
   orderBy: boolean;
   handleSortingMenu: (event) => void;
-  classes: any;
   isLocal: boolean;
   resetLocalSettings: () => void;
   // setShowDirectories: (check: boolean) => void;
@@ -100,6 +98,8 @@ function GridSettingsDialog(props: Props) {
   const thumbnailMode = useRef<string>(props.thumbnailMode);
   const entrySize = useRef<string>(props.entrySize);
   const singleClickAction = useRef<string>(props.singleClickAction);
+
+  const theme = useTheme();
   const {
     open,
     onClose,
@@ -117,8 +117,7 @@ function GridSettingsDialog(props: Props) {
     toggleThumbnailsMode,
     changeEntrySize,
     changeSingleClickAction,
-    openHelpWebPage,
-    theme
+    openHelpWebPage
   } = props;
 
   let newGridPageLimit = gridPageLimit;
@@ -443,4 +442,4 @@ function GridSettingsDialog(props: Props) {
   );
 }
 
-export default withStyles(styles, { withTheme: true })(GridSettingsDialog);
+export default GridSettingsDialog;

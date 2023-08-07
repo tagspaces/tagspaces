@@ -19,8 +19,6 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { format, formatDistanceToNow } from 'date-fns';
-import withStyles from '@mui/styles/withStyles';
-import makeStyles from '@mui/styles/makeStyles';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import Button from '@mui/material/Button';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
@@ -73,26 +71,27 @@ import { getTagLibrary } from '-/services/taglibrary-utils';
 import { getSearches } from '-/reducers/searches';
 import { getSearchOptions } from '-/components/SearchOptionsMenu';
 import { dataTidFormat } from '-/services/test';
+import { useTheme } from '@mui/material/styles';
 
 interface Props {
   style?: any;
-  theme: any;
   open: boolean;
   textQuery: string;
   setTextQuery: (value: string) => void;
   setAnchorSearch: (el: HTMLButtonElement) => void;
 }
 
-const useStyles = makeStyles(theme => ({
+/*const useStyles = makeStyles(theme => ({
   customWidth: {
     maxWidth: 550
   },
   noMaxWidth: {
     maxWidth: 'none'
   }
-}));
+}));*/
 
 function SearchAutocomplete(props: Props) {
+  const theme = useTheme();
   const dispatch: AppDispatch = useDispatch();
   const indexing = useSelector(isIndexing);
   const searchQuery: TS.SearchQuery = useSelector(getSearchQuery);
@@ -113,7 +112,7 @@ function SearchAutocomplete(props: Props) {
   const openEntryDispatch = entryPath =>
     dispatch(AppActions.openEntry(entryPath));
 
-  const { setTextQuery, textQuery, open, theme, setAnchorSearch } = props;
+  const { setTextQuery, textQuery, open, setAnchorSearch } = props;
   // const [, forceUpdate] = useReducer(x => x + 1, 0);
   const [
     openSavedSearches,
@@ -485,12 +484,11 @@ function SearchAutocomplete(props: Props) {
     setOpenSavedSearches(event.currentTarget);
   };
 
-  const classes = useStyles();
+  // const classes = useStyles();
 
   function HelpTooltip(hClasses) {
     return (
       <Tooltip
-        classes={{ tooltip: hClasses.customWidth }}
         title={
           <span style={{ fontSize: 14 }}>
             The search query consists of a tag part and a search term. This term
@@ -1712,5 +1710,4 @@ function SearchAutocomplete(props: Props) {
   );
 }
 
-// @ts-ignore
-export default withStyles(undefined, { withTheme: true })(SearchAutocomplete);
+export default SearchAutocomplete;

@@ -23,17 +23,18 @@ import React, {
   useRef,
   useState
 } from 'react';
+import { styled, useTheme } from '@mui/material/styles';
 import { getBgndFileLocationForDirectory } from '@tagspaces/tagspaces-common/paths';
 import L from 'leaflet';
-import { Theme } from '@mui/material/styles';
-import withStyles from '@mui/styles/withStyles';
-import createStyles from '@mui/styles/createStyles';
-import Grid from '@mui/material/Grid';
-import FormControl from '@mui/material/FormControl';
-import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import InputAdornment from '@mui/material/InputAdornment';
+import {
+  Grid,
+  FormControl,
+  Typography,
+  TextField,
+  inputBaseClasses,
+  Button,
+  InputAdornment
+} from '@mui/material';
 import QRCodeIcon from '@mui/icons-material/QrCode';
 import Tooltip from '-/components/Tooltip';
 import { LocalLocationIcon, CloudLocationIcon } from '-/components/CommonIcons';
@@ -58,7 +59,6 @@ import {
   extractFileName,
   extractDirectoryName
 } from '@tagspaces/tagspaces-common/paths';
-import AppConfig from '-/AppConfig';
 import TagDropContainer from './TagDropContainer';
 import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
 import i18n from '../services/i18n';
@@ -103,6 +103,87 @@ import useFirstRender from '-/utils/useFirstRender';
 import LinkGeneratorDialog from '-/components/dialogs/LinkGeneratorDialog';
 import { LinkIcon } from '-/components/CommonIcons';
 
+const PREFIX = 'EntryProperties';
+
+const classes = {
+  entryProperties: `${PREFIX}-entryProperties`,
+  tags: `${PREFIX}-tags`,
+  editTagsButton: `${PREFIX}-editTagsButton`,
+  textField: `${PREFIX}-textField`,
+  dropText: `${PREFIX}-dropText`,
+  propertyName: `${PREFIX}-propertyName`,
+  actionPlaceholder: `${PREFIX}-actionPlaceholder`,
+  button: `${PREFIX}-button`,
+  mdHelpers: `${PREFIX}-mdHelpers`,
+  formControl: `${PREFIX}-formControl`
+};
+
+const Root = styled('div')(({ theme }) => ({
+  overflowY: 'auto',
+  overflowX: 'hidden',
+  flexGrow: 1,
+  padding: 7,
+  paddingRight: 2,
+  height: '100%',
+
+  [`& .${classes.tags}`]: {
+    padding: '5px 5px 2px 2px',
+    margin: 6,
+    clear: 'both',
+    boxShadow: '0 1px 1px 0 rgba(0,0,0,0.16),0 1px 1px 0 rgba(239,239,239,0.12)'
+  },
+
+  [`& .${classes.editTagsButton}`]: {
+    float: 'right',
+    margin: '0 0 10px 0'
+  },
+
+  [`& .${classes.textField}`]: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    width: '100vh'
+  },
+
+  [`& .${classes.dropText}`]: {
+    display: 'flex',
+    width: '100%',
+    padding: '20px',
+    color: '#728496'
+  },
+
+  [`& .${classes.propertyName}`]: {
+    marginTop: 10
+  },
+
+  [`& .${classes.actionPlaceholder}`]: {
+    textAlign: 'end'
+  },
+
+  [`& .${classes.button}`]: {
+    position: 'relative',
+    padding: '8px 12px 6px 8px',
+    margin: '0'
+  },
+
+  [`& .${classes.mdHelpers}`]: {
+    borderRadius: '0.25rem',
+    paddingLeft: '0.25rem',
+    paddingRight: '0.25rem',
+    backgroundColor: '#bcc0c561'
+  },
+  [`& .${classes.formControl}`]: {
+    marginLeft: theme.spacing(0),
+    width: '100%'
+  }
+}));
+
+const ThumbnailTextField = styled(TextField)(({ theme }) => ({
+  //[`& .MuiInputBase-root}`]: {
+  [`& .${inputBaseClasses.root}`]: {
+    height: 220
+  }
+}));
+
 const ThumbnailChooserDialog =
   Pro && Pro.UI ? Pro.UI.ThumbnailChooserDialog : false;
 const CustomBackgroundDialog =
@@ -110,58 +191,7 @@ const CustomBackgroundDialog =
 const BgndImgChooserDialog =
   Pro && Pro.UI ? Pro.UI.BgndImgChooserDialog : false;
 
-const styles: any = (theme: any) => ({
-  entryProperties: {
-    overflowY: 'auto',
-    overflowX: 'hidden',
-    flexGrow: 1,
-    padding: 7,
-    paddingRight: 2,
-    height: '100%'
-  },
-  tags: {
-    padding: '5px 5px 2px 2px',
-    margin: 6,
-    clear: 'both',
-    boxShadow: '0 1px 1px 0 rgba(0,0,0,0.16),0 1px 1px 0 rgba(239,239,239,0.12)'
-  },
-  editTagsButton: {
-    float: 'right',
-    margin: '0 0 10px 0'
-  },
-  textField: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    width: '100vh'
-  },
-  dropText: {
-    display: 'flex',
-    width: '100%',
-    padding: '20px',
-    color: '#728496'
-  },
-  propertyName: {
-    marginTop: 10
-  },
-  actionPlaceholder: {
-    textAlign: 'end'
-  },
-  button: {
-    position: 'relative',
-    padding: '8px 12px 6px 8px',
-    margin: '0'
-  },
-  mdHelpers: {
-    borderRadius: '0.25rem',
-    paddingLeft: '0.25rem',
-    paddingRight: '0.25rem',
-    backgroundColor: '#bcc0c561'
-  }
-});
-
 interface Props {
-  classes: any;
-  theme: any;
   language: string;
   openedEntry: OpenedEntry;
   renameFile: (path: string, nextPath: string) => Promise<boolean>;
@@ -196,7 +226,7 @@ const defaultBackgrounds = [
 ];
 
 function EntryProperties(props: Props) {
-  // const EntryProperties = React.memo((props: Props) => {
+  const theme = useTheme();
   const fileNameRef = useRef<HTMLInputElement>(null);
   const sharingLinkRef = useRef<HTMLInputElement>(null);
   const fileDescriptionRef = useRef<MilkdownRef>(null);
@@ -607,7 +637,7 @@ function EntryProperties(props: Props) {
       });
   };
 
-  const { classes, isReadOnlyMode, theme, sharingLink, language } = props;
+  const { isReadOnlyMode, sharingLink, language } = props;
 
   if (
     !currentEntry ||
@@ -746,7 +776,7 @@ function EntryProperties(props: Props) {
   const showLinkForDownloading = isCloudLocation && currentEntry.current.isFile;
 
   return (
-    <div className={classes.entryProperties}>
+    <Root>
       <Grid container>
         <Grid item xs={12}>
           <TextField
@@ -1464,19 +1494,9 @@ function EntryProperties(props: Props) {
         ]}*/
         />
       )}
-    </div>
+    </Root>
   );
 }
-
-const ThumbnailTextField = withStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      '& .MuiInputBase-root': {
-        height: 220
-      }
-    }
-  })
-)(TextField);
 
 function mapStateToProps(state) {
   return {
@@ -1512,9 +1532,6 @@ export default withLeaflet(
     mapActionCreatorsToProps
   )(
     // @ts-ignore
-    React.memo(
-      withStyles(styles, { withTheme: true })(EntryProperties),
-      areEqual
-    )
+    React.memo(EntryProperties, areEqual)
   )
 );

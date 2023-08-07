@@ -18,7 +18,6 @@
 
 import React, { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import withStyles from '@mui/styles/withStyles';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
@@ -29,7 +28,7 @@ import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { getAllTags } from '-/services/taglibrary-utils';
 import { Box } from '@mui/material';
 
-const styles: any = (theme: any) => ({
+/*const styles: any = (theme: any) => ({
   root: {
     flexGrow: 1
   },
@@ -64,12 +63,10 @@ const styles: any = (theme: any) => ({
     left: 0,
     right: 0
   }
-});
+});*/
 
 interface Props {
   dataTid?: string;
-  classes?: any;
-  theme?: any;
   tags: TS.Tag[];
   label?: string;
   tagSearchType?: string;
@@ -96,7 +93,6 @@ function TagsSelect(props: Props) {
   const defaultBackgroundColor = useSelector(getTagColor);
   const defaultTextColor = useSelector(getTagTextColor);
   const {
-    classes,
     placeholderText = '',
     label,
     selectedEntryPath,
@@ -184,7 +180,7 @@ function TagsSelect(props: Props) {
   };
 
   return (
-    <div className={classes.root}>
+    <Box sx={{ flexGrow: 1 }}>
       <Autocomplete
         data-tid={props.dataTid}
         multiple
@@ -241,8 +237,8 @@ function TagsSelect(props: Props) {
           removeTags={handleRemoveTag}
         />
       )}
-    </div>
+    </Box>
   );
 }
 
-export default withStyles(styles, { withTheme: true })(TagsSelect);
+export default TagsSelect;

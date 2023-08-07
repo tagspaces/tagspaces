@@ -17,8 +17,8 @@
  */
 
 import React, { useState } from 'react';
+import { styled } from '@mui/material/styles';
 import { emphasize, Theme } from '@mui/material/styles';
-import withStyles from '@mui/styles/withStyles';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Tooltip from '-/components/Tooltip';
 import Chip from '@mui/material/Chip';
@@ -34,24 +34,29 @@ import { TS } from '-/tagspaces.namespace';
 import { LocalLocationIcon, CloudLocationIcon } from '-/components/CommonIcons';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 
-// @ts-ignore
-const StyledBreadcrumb = withStyles((theme: Theme) => ({
-  root: {
-    backgroundColor: emphasize(theme.palette.background.default, 0.06),
-    // height: theme.spacing(3),
+const StyledBreadcrumb = styled(Chip)(({ theme }) => {
+  const backgroundColor =
+    theme.palette.mode === 'light'
+      ? theme.palette.grey[100]
+      : theme.palette.grey[800];
+  return {
+    backgroundColor,
+    height: theme.spacing(3),
     color: theme.palette.text.primary,
     fontWeight: theme.typography.fontWeightRegular,
     '&:hover, &:focus': {
-      backgroundColor: emphasize(theme.palette.background.default, 0.22)
+      backgroundColor: emphasize(backgroundColor, 0.06)
+    },
+    '&:active': {
+      boxShadow: theme.shadows[1],
+      backgroundColor: emphasize(backgroundColor, 0.12)
     }
-  }
-}))(Chip) as typeof Chip;
+  };
+}) as typeof Chip; // TypeScript only: need a type cast here because https://github.com/Microsoft/TypeScript/issues/26591
 
-const NoWrapBreadcrumb = withStyles({
-  ol: {
-    flexWrap: 'nowrap'
-  }
-})(Breadcrumbs);
+const NoWrapBreadcrumb = styled(StyledBreadcrumb)(({ theme }) => {
+  return { flexWrap: 'nowrap' };
+});
 
 interface Props {
   currentDirectoryPath: string;
@@ -67,7 +72,6 @@ interface Props {
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   openDirectory: () => void;
   reflectCreateEntry: (path: string, isFile: boolean) => void;
-  isReadOnlyMode: boolean;
   openRenameDirectoryDialog: () => void;
   openMoveCopyFilesDialog: () => void;
   isDesktopMode: boolean;
@@ -162,9 +166,59 @@ function PathBreadcrumbs(props: Props) {
     currentFolderName = currentLocation.name;
   }
 
+  function getBreadcrumbs() {
+    let breadcrumbs = [];
+    if (pathParts.length > 0) {
+      breadcrumbs = pathParts.map((pathPart, index) => {
+        const folderName = extractShortDirectoryName(
+          pathPart,
+          PlatformIO.getDirSeparator()
+        );
+        return (
+          <Tooltip
+            key={pathPart}
+            title={i18n.t('core:navigateTo') + ' ' + pathPart}
+          >
+            <StyledBreadcrumb
+              component="a"
+              href="#"
+              label={folderName}
+              icon={index === 0 && locationTypeIcon}
+              onClick={() => loadDirectoryContent(pathPart, false, true)}
+            />
+          </Tooltip>
+        );
+      });
+    }
+    if (currentDirectoryPath) {
+      const curDirBreadcrumb = (
+        <Tooltip
+          title={
+            i18n.t('core:openDirectoryMenu') +
+            ' - ' +
+            (currentDirectoryPath || '')
+          }
+        >
+          <StyledBreadcrumb
+            data-tid="folderContainerOpenDirMenu"
+            label={currentFolderName}
+            icon={currentFolderChipIcon}
+            deleteIcon={<ExpandMoreIcon />}
+            onDelete={openDirectoryMenu}
+            onClick={openDirectoryMenu}
+            onContextMenu={openDirectoryMenu}
+          />
+        </Tooltip>
+      );
+      breadcrumbs = [...breadcrumbs, curDirBreadcrumb];
+    }
+    return breadcrumbs;
+  }
+
   return (
     <>
-      <NoWrapBreadcrumb
+      <Breadcrumbs
+        sx={{ display: 'flex', flexWrap: 'nowrap' }}
         maxItems={isDesktopMode ? 3 : 1}
         itemsAfterCollapse={isDesktopMode ? 2 : 1}
         itemsBeforeCollapse={isDesktopMode ? 1 : 0}
@@ -180,47 +234,8 @@ function PathBreadcrumbs(props: Props) {
           </span>
         }
       >
-        {pathParts.length > 0 &&
-          pathParts.map((pathPart, index) => {
-            const folderName = extractShortDirectoryName(
-              pathPart,
-              PlatformIO.getDirSeparator()
-            );
-            return (
-              <Tooltip
-                key={pathPart}
-                title={i18n.t('core:navigateTo') + ' ' + pathPart}
-              >
-                <StyledBreadcrumb
-                  component="a"
-                  href="#"
-                  label={folderName}
-                  icon={index === 0 && locationTypeIcon}
-                  onClick={() => loadDirectoryContent(pathPart, false, true)}
-                />
-              </Tooltip>
-            );
-          })}
-        {currentDirectoryPath && (
-          <Tooltip
-            title={
-              i18n.t('core:openDirectoryMenu') +
-              ' - ' +
-              (currentDirectoryPath || '')
-            }
-          >
-            <StyledBreadcrumb
-              data-tid="folderContainerOpenDirMenu"
-              label={currentFolderName}
-              icon={currentFolderChipIcon}
-              deleteIcon={<ExpandMoreIcon />}
-              onDelete={openDirectoryMenu}
-              onClick={openDirectoryMenu}
-              onContextMenu={openDirectoryMenu}
-            />
-          </Tooltip>
-        )}
-      </NoWrapBreadcrumb>
+        {getBreadcrumbs()}
+      </Breadcrumbs>
       <DirectoryMenu
         open={Boolean(directoryContextMenuAnchorEl)}
         onClose={closeDirectoryMenu}

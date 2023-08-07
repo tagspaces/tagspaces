@@ -17,12 +17,12 @@
  */
 
 import React, { useRef, useState } from 'react';
+import { styled } from '@mui/material/styles';
 import { useDispatch } from 'react-redux';
 import { saveAs } from 'file-saver';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Grid from '@mui/material/Grid';
-import withStyles from '@mui/styles/withStyles';
 import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
 import {
@@ -38,20 +38,25 @@ import TextField from '@mui/material/TextField';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
 import Typography from '@mui/material/Typography';
 
-const styles: any = () => ({
-  createButton: {
+const PREFIX = 'CreateDirectory';
+
+const classes = {
+  createButton: `${PREFIX}-createButton`
+};
+
+const Root = styled('div')(() => ({
+  [`& .${classes.createButton}`]: {
     width: '100%',
     textAlign: 'center'
   }
-});
+}));
 
 interface Props {
-  classes: any;
   onClose: () => void;
 }
 
 function CreateDirectory(props: Props) {
-  const { classes, onClose } = props;
+  const { onClose } = props;
   const dispatch: AppDispatch = useDispatch();
 
   const { targetDirectoryPath } = useTargetPathContext();
@@ -176,7 +181,7 @@ function CreateDirectory(props: Props) {
   }
 
   return (
-    <>
+    <Root>
       <Grid item xs={12}>
         <Button
           variant="outlined"
@@ -263,8 +268,8 @@ function CreateDirectory(props: Props) {
         multiple
         onChange={handleFileInputChange}
       />
-    </>
+    </Root>
   );
 }
 
-export default withStyles(styles)(CreateDirectory);
+export default CreateDirectory;

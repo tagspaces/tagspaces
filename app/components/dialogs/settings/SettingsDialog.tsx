@@ -17,11 +17,11 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { styled } from '@mui/material/styles';
 import { useSelector } from 'react-redux';
 import Button from '@mui/material/Button';
-import withStyles from '@mui/styles/withStyles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import useTheme from '@mui/styles/useTheme';
+import { useTheme } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -42,11 +42,17 @@ import Links from '-/content/links';
 import SettingsExtensions from '-/components/dialogs/settings/SettingsExtensions';
 import { openURLExternally } from '-/services/utils-io';
 
-const styles: any = () => ({
-  mainContent: {
+const PREFIX = 'SettingsDialog';
+
+const classes = {
+  mainContent: `${PREFIX}-mainContent`
+};
+
+const StyledDialog = styled(Dialog)(() => ({
+  [`& .${classes.mainContent}`]: {
     overflowY: 'auto'
   }
-});
+}));
 
 interface Props {
   open: boolean;
@@ -106,7 +112,7 @@ function SettingsDialog(props: Props) {
   );
 
   const renderContent = () => (
-    <DialogContent className={props.classes.mainContent}>
+    <DialogContent className={classes.mainContent}>
       {isResetSettingsDialogOpened && (
         <ConfirmDialog
           open={isResetSettingsDialogOpened}
@@ -134,7 +140,7 @@ function SettingsDialog(props: Props) {
         />
       )}
 
-      <div data-tid="settingsDialog" className={props.classes.mainContent}>
+      <div data-tid="settingsDialog" className={classes.mainContent}>
         {currentTab === 0 && <SettingsGeneral />}
         {currentTab === 1 && <SettingsFileTypes />}
         {currentTab === 2 && <SettingsKeyBindings />}
@@ -180,7 +186,7 @@ function SettingsDialog(props: Props) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
-    <Dialog
+    <StyledDialog
       fullScreen={fullScreen}
       open={open}
       keepMounted
@@ -190,8 +196,8 @@ function SettingsDialog(props: Props) {
       {renderTitle()}
       {renderContent()}
       {renderActions()}
-    </Dialog>
+    </StyledDialog>
   );
 }
 
-export default withStyles(styles)(SettingsDialog);
+export default SettingsDialog;

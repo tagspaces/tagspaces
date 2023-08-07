@@ -19,11 +19,9 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { GlobalHotKeys } from 'react-hotkeys';
-import withStyles from '@mui/styles/withStyles';
 import { isObj, sortByCriteria } from '@tagspaces/tagspaces-common/misc';
 import { isVisibleOnScreen } from '-/utils/dom';
 import { getDesktopMode, getKeyBindingObject } from '-/reducers/settings';
-import styles from '-/perspectives/grid-perspective/components/styles.css';
 import FileMenu from '-/components/menus/FileMenu';
 import DirectoryMenu from '-/components/menus/DirectoryMenu';
 import EntryTagMenu from '-/components/menus/EntryTagMenu';
@@ -62,8 +60,6 @@ import useFirstRender from '-/utils/useFirstRender';
 import { openURLExternally } from '-/services/utils-io';
 
 interface Props {
-  classes: any;
-  theme: any;
   currentDirectoryPath: string;
   openEntry: (entryPath?: string) => void;
   openRenameEntryDialog: () => void;
@@ -95,11 +91,9 @@ function getSettings(directoryMeta: TS.FileSystemEntryMeta): TS.FolderSettings {
   }
 }
 
-function GridPerspective(props: Props) {
+function ListPerspective(props: Props) {
   const {
-    classes,
     loadParentDirectoryContent,
-    theme,
     currentDirectoryPath,
     openRenameEntryDialog,
     directoryContent,
@@ -736,9 +730,7 @@ function GridPerspective(props: Props) {
           fsEntry={fsEntry}
           showEntriesDescription={showEntriesDescription.current}
           entrySize={entrySize.current}
-          classes={classes}
           isLast={isLast}
-          theme={theme}
           thumbnailMode={thumbnailMode.current}
           selectedEntries={selectedEntries}
           selectEntry={selectEntry}
@@ -769,7 +761,6 @@ function GridPerspective(props: Props) {
       data-tid={defaultSettings.testID}
     >
       <MainToolbar
-        classes={classes}
         prefixDataTID={'list'}
         layoutType={layoutType.current}
         selectedEntries={selectedEntries}
@@ -802,8 +793,6 @@ function GridPerspective(props: Props) {
             paddingLeft: 4,
             gridTemplateColumns: 'none'
           }}
-          classes={classes}
-          theme={theme}
           directories={sortedDirectories}
           showDetails={showDetails.current}
           showDescription={showDescription.current}
@@ -995,4 +984,4 @@ function GridPerspective(props: Props) {
   );
 }
 
-export default withStyles(styles, { withTheme: true })(GridPerspective);
+export default ListPerspective;

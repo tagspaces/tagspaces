@@ -18,7 +18,6 @@
 
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import withStyles from '@mui/styles/withStyles';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -49,29 +48,35 @@ import { BetaLabel } from '-/components/HelperComponents';
 import PlatformIO from '-/services/platform-facade';
 import { PerspectiveIDs } from '-/perspectives';
 import { AppDispatch } from '-/reducers/app';
+import { styled } from '@mui/material/styles';
 
-const styles: any = {
-  root: {
+const PREFIX = 'SettingsGeneral';
+
+const classes = {
+  root: `${PREFIX}-root`,
+  listItem: `${PREFIX}-listItem`,
+  pro: `${PREFIX}-pro`,
+  colorChooserButton: `${PREFIX}-colorChooserButton`
+};
+
+const Root = styled('div')(({ theme }) => ({
+  [`& .${classes.root}`]: {
     overflowX: 'hidden'
   },
-  listItem: {
+  [`& .${classes.listItem}`]: {
     paddingLeft: 0,
     paddingRight: 0
   },
-  pro: {
+  [`& .${classes.pro}`]: {
     backgroundColor: '#1DD19F'
   },
-  colorChooserButton: {
+  [`& .${classes.colorChooserButton}`]: {
     minHeight: 30,
     border: '1px solid lightgray'
   }
-};
+}));
 
-interface Props {
-  classes: any;
-}
-
-function SettingsGeneral(props: Props) {
+function SettingsGeneral() {
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
   const [displayTextColorPicker, setDisplayTextColorPicker] = useState<boolean>(
     false
@@ -111,296 +116,297 @@ function SettingsGeneral(props: Props) {
     defaultPerspective = settings.defaultPerspective;
   }
 
-  const { classes } = props;
-
   return (
-    <List className={classes.root}>
-      <ListItem className={classes.listItem}>
-        <ListItemText primary={i18n.t('core:interfaceLanguage')} />
-        <Select
-          data-tid="settingsSetLanguage"
-          value={settings.interfaceLanguage}
-          onChange={(event: any) => {
-            dispatch(SettingsActions.setLanguage(event.target.value));
-            PlatformIO.setLanguage(event.target.value);
-          }}
-          input={<Input id="languageSelector" />}
-        >
-          {settings.supportedLanguages.map(language => (
-            <MenuItem key={language.iso} value={language.iso}>
-              {language.title}
-            </MenuItem>
-          ))}
-        </Select>
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <ListItemText primary={i18n.t('core:themeSelector')} />
-        <Select
-          data-tid="settingsSetCurrentTheme"
-          value={settings.currentTheme}
-          onChange={(event: any) =>
-            dispatch(SettingsActions.setCurrentTheme(event.target.value))
-          }
-          input={<Input id="themeSelector" />}
-        >
-          {settings.supportedThemes.map(theme => (
-            <MenuItem key={theme} value={theme}>
-              {theme === 'light' && i18n.t('core:regularScheme')}
-              {theme === 'dark' && i18n.t('core:darkScheme')}
-              {theme === 'system' && i18n.t('core:systemScheme')}
-            </MenuItem>
-          ))}
-        </Select>
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <ListItemText primary={i18n.t('core:themeRegularSelector')} />
-        <Select
-          data-tid="settingsCurrentRegularThemeTID"
-          value={settings.currentRegularTheme}
-          onChange={(event: any) =>
-            dispatch(SettingsActions.setCurrentRegularTheme(event.target.value))
-          }
-          input={<Input id="themeRegularSelector" />}
-        >
-          {settings.supportedRegularThemes.map(theme => (
-            <MenuItem key={theme} value={theme}>
-              {theme.charAt(0).toUpperCase() + theme.slice(1)}
-            </MenuItem>
-          ))}
-        </Select>
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <ListItemText primary={i18n.t('core:themeDarkSelector')} />
-        <Select
-          data-tid="settingsCurrentDarkThemeTID"
-          value={settings.currentDarkTheme}
-          onChange={(event: any) =>
-            dispatch(SettingsActions.setCurrentDarkTheme(event.target.value))
-          }
-          input={<Input id="themeDarkSelector" />}
-        >
-          {settings.supportedDarkThemes.map(theme => (
-            <MenuItem key={theme} value={theme}>
-              {theme.charAt(0).toUpperCase() + theme.slice(1)}
-            </MenuItem>
-          ))}
-        </Select>
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <ListItemText primary={i18n.t('Default Perspective')} />
-        <PerspectiveSelector
-          language={language}
-          onChange={changePerspective}
-          defaultValue={defaultPerspective}
-          testId="changePerspectiveInSettingsTID"
-        />
-      </ListItem>
-      <ListItem
-        className={classes.listItem}
-        title={
-          AppConfig.useSidecarsForFileTaggingDisableSetting
-            ? i18n.t('core:settingExternallyConfigured')
-            : ''
-        }
-      >
-        <ListItemText primary={i18n.t('core:fileTaggingSetting')} />
-        {AppConfig.useSidecarsForFileTaggingDisableSetting ? (
-          <Button size="small" variant="outlined" disabled>
-            {persistTagsInSidecarFile
-              ? i18n.t('core:useSidecarFile')
-              : i18n.t('core:renameFile')}
-          </Button>
-        ) : (
-          <ToggleButtonGroup
-            value={persistTagsInSidecarFile}
-            size="small"
-            exclusive
+    <Root>
+      <List className={classes.root}>
+        <ListItem className={classes.listItem}>
+          <ListItemText primary={i18n.t('core:interfaceLanguage')} />
+          <Select
+            data-tid="settingsSetLanguage"
+            value={settings.interfaceLanguage}
+            onChange={(event: any) => {
+              dispatch(SettingsActions.setLanguage(event.target.value));
+              PlatformIO.setLanguage(event.target.value);
+            }}
+            input={<Input id="languageSelector" />}
           >
-            <ToggleButton
-              value={false}
-              data-tid="settingsSetPersistTagsInFileName"
-              onClick={() =>
-                dispatch(SettingsActions.setPersistTagsInSidecarFile(false))
-              }
-            >
-              <Tooltip
-                title={
-                  <Typography color="inherit">
-                    {i18n.t('core:tagsInFilenameExplanation')}
-                  </Typography>
-                }
-              >
-                <div style={{ display: 'flex' }}>
-                  {!persistTagsInSidecarFile && <CheckIcon />}
-                  &nbsp;{i18n.t('core:renameFile')}&nbsp;&nbsp;
-                  <InfoMuiIcon />
-                </div>
-              </Tooltip>
-            </ToggleButton>
-            <ToggleButton
-              value={true}
-              data-tid="settingsSetPersistTagsInSidecarFile"
-              onClick={() =>
-                dispatch(SettingsActions.setPersistTagsInSidecarFile(true))
-              }
-            >
-              <Tooltip
-                title={
-                  <Typography color="inherit">
-                    {i18n.t('core:tagsInSidecarFileExplanation')}
-                  </Typography>
-                }
-              >
-                <div style={{ display: 'flex' }}>
-                  {persistTagsInSidecarFile && <CheckIcon />}
-                  &nbsp;{i18n.t('core:useSidecarFile')}&nbsp;&nbsp;
-                  <InfoMuiIcon />
-                </div>
-              </Tooltip>
-            </ToggleButton>
-          </ToggleButtonGroup>
-        )}
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <ListItemText primary={i18n.t('core:checkForNewVersionOnStartup')} />
-        <Switch
-          data-tid="settingsSetCheckForUpdates"
-          onClick={() =>
-            dispatch(
-              SettingsActions.setCheckForUpdates(!settings.checkForUpdates)
-            )
-          }
-          checked={settings.checkForUpdates}
-        />
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <ListItemText
-          primary={
-            <>
-              {i18n.t('core:reorderTags')}
-              <BetaLabel />
-            </>
-          }
-        />
-        <Switch
-          data-tid="reorderTagsTID"
-          onClick={() =>
-            dispatch(SettingsActions.reorderTags(!settings.reorderTags))
-          }
-          checked={settings.reorderTags}
-        />
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <ListItemText primary={i18n.t('core:addTagsToLibrary')} />
-        <Switch
-          data-tid="settingsSetAddTagsToLibrary"
-          onClick={() =>
-            dispatch(
-              SettingsActions.setAddTagsToLibrary(!settings.addTagsToLibrary)
-            )
-          }
-          checked={settings.addTagsToLibrary}
-        />
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <ListItemText primary={i18n.t('core:useGenerateThumbnails')} />
-        <Switch
-          disabled={AppConfig.useGenerateThumbnails !== undefined}
-          data-tid="settingsUseGenerateThumbnails"
-          onClick={() =>
-            dispatch(
-              SettingsActions.setUseGenerateThumbnails(
-                !settings.useGenerateThumbnails
+            {settings.supportedLanguages.map(language => (
+              <MenuItem key={language.iso} value={language.iso}>
+                {language.title}
+              </MenuItem>
+            ))}
+          </Select>
+        </ListItem>
+        <ListItem className={classes.listItem}>
+          <ListItemText primary={i18n.t('core:themeSelector')} />
+          <Select
+            data-tid="settingsSetCurrentTheme"
+            value={settings.currentTheme}
+            onChange={(event: any) =>
+              dispatch(SettingsActions.setCurrentTheme(event.target.value))
+            }
+            input={<Input id="themeSelector" />}
+          >
+            {settings.supportedThemes.map(theme => (
+              <MenuItem key={theme} value={theme}>
+                {theme === 'light' && i18n.t('core:regularScheme')}
+                {theme === 'dark' && i18n.t('core:darkScheme')}
+                {theme === 'system' && i18n.t('core:systemScheme')}
+              </MenuItem>
+            ))}
+          </Select>
+        </ListItem>
+        <ListItem className={classes.listItem}>
+          <ListItemText primary={i18n.t('core:themeRegularSelector')} />
+          <Select
+            data-tid="settingsCurrentRegularThemeTID"
+            value={settings.currentRegularTheme}
+            onChange={(event: any) =>
+              dispatch(
+                SettingsActions.setCurrentRegularTheme(event.target.value)
               )
-            )
-          }
-          checked={
-            AppConfig.useGenerateThumbnails !== undefined
-              ? AppConfig.useGenerateThumbnails
-              : settings.useGenerateThumbnails
-          }
-        />
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <ListItemText primary={i18n.t('core:tagBackgroundColor')} />
-        <TransparentBackground>
-          <Button
-            data-tid="settingsToggleDefaultTagBackgroundColor"
-            className={classes.colorChooserButton}
-            size="small"
-            style={{
-              backgroundColor: settings.tagBackgroundColor
-            }}
-            onClick={toggleDefaultTagBackgroundColorPicker}
+            }
+            input={<Input id="themeRegularSelector" />}
           >
-            &nbsp;
-          </Button>
-        </TransparentBackground>
-        {displayColorPicker && (
-          <ColorPickerDialog
-            open={displayColorPicker}
-            setColor={color => {
-              dispatch(SettingsActions.setTagColor(color));
-            }}
-            onClose={toggleDefaultTagBackgroundColorPicker}
-            color={settings.tagBackgroundColor}
-          />
-        )}
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <ListItemText primary={i18n.t('core:tagForegroundColor')} />
-        <TransparentBackground>
-          <Button
-            data-tid="settingsToggleDefaultTagForegroundColor"
-            className={classes.colorChooserButton}
-            size="small"
-            style={{ backgroundColor: settings.tagTextColor }}
-            onClick={toggleDefaultTagTextColorPicker}
+            {settings.supportedRegularThemes.map(theme => (
+              <MenuItem key={theme} value={theme}>
+                {theme.charAt(0).toUpperCase() + theme.slice(1)}
+              </MenuItem>
+            ))}
+          </Select>
+        </ListItem>
+        <ListItem className={classes.listItem}>
+          <ListItemText primary={i18n.t('core:themeDarkSelector')} />
+          <Select
+            data-tid="settingsCurrentDarkThemeTID"
+            value={settings.currentDarkTheme}
+            onChange={(event: any) =>
+              dispatch(SettingsActions.setCurrentDarkTheme(event.target.value))
+            }
+            input={<Input id="themeDarkSelector" />}
           >
-            &nbsp;
-          </Button>
-        </TransparentBackground>
-        {displayTextColorPicker && (
-          <ColorPickerDialog
-            open={displayTextColorPicker}
-            setColor={color => {
-              dispatch(SettingsActions.setTagTextColor(color));
-            }}
-            onClose={toggleDefaultTagTextColorPicker}
-            color={settings.tagTextColor}
+            {settings.supportedDarkThemes.map(theme => (
+              <MenuItem key={theme} value={theme}>
+                {theme.charAt(0).toUpperCase() + theme.slice(1)}
+              </MenuItem>
+            ))}
+          </Select>
+        </ListItem>
+        <ListItem className={classes.listItem}>
+          <ListItemText primary={i18n.t('Default Perspective')} />
+          <PerspectiveSelector
+            language={language}
+            onChange={changePerspective}
+            defaultValue={defaultPerspective}
+            testId="changePerspectiveInSettingsTID"
           />
-        )}
-      </ListItem>
-      {AppConfig.isElectron && (
+        </ListItem>
+        <ListItem
+          className={classes.listItem}
+          title={
+            AppConfig.useSidecarsForFileTaggingDisableSetting
+              ? i18n.t('core:settingExternallyConfigured')
+              : ''
+          }
+        >
+          <ListItemText primary={i18n.t('core:fileTaggingSetting')} />
+          {AppConfig.useSidecarsForFileTaggingDisableSetting ? (
+            <Button size="small" variant="outlined" disabled>
+              {persistTagsInSidecarFile
+                ? i18n.t('core:useSidecarFile')
+                : i18n.t('core:renameFile')}
+            </Button>
+          ) : (
+            <ToggleButtonGroup
+              value={persistTagsInSidecarFile}
+              size="small"
+              exclusive
+            >
+              <ToggleButton
+                value={false}
+                data-tid="settingsSetPersistTagsInFileName"
+                onClick={() =>
+                  dispatch(SettingsActions.setPersistTagsInSidecarFile(false))
+                }
+              >
+                <Tooltip
+                  title={
+                    <Typography color="inherit">
+                      {i18n.t('core:tagsInFilenameExplanation')}
+                    </Typography>
+                  }
+                >
+                  <div style={{ display: 'flex' }}>
+                    {!persistTagsInSidecarFile && <CheckIcon />}
+                    &nbsp;{i18n.t('core:renameFile')}&nbsp;&nbsp;
+                    <InfoMuiIcon />
+                  </div>
+                </Tooltip>
+              </ToggleButton>
+              <ToggleButton
+                value={true}
+                data-tid="settingsSetPersistTagsInSidecarFile"
+                onClick={() =>
+                  dispatch(SettingsActions.setPersistTagsInSidecarFile(true))
+                }
+              >
+                <Tooltip
+                  title={
+                    <Typography color="inherit">
+                      {i18n.t('core:tagsInSidecarFileExplanation')}
+                    </Typography>
+                  }
+                >
+                  <div style={{ display: 'flex' }}>
+                    {persistTagsInSidecarFile && <CheckIcon />}
+                    &nbsp;{i18n.t('core:useSidecarFile')}&nbsp;&nbsp;
+                    <InfoMuiIcon />
+                  </div>
+                </Tooltip>
+              </ToggleButton>
+            </ToggleButtonGroup>
+          )}
+        </ListItem>
+        <ListItem className={classes.listItem}>
+          <ListItemText primary={i18n.t('core:checkForNewVersionOnStartup')} />
+          <Switch
+            data-tid="settingsSetCheckForUpdates"
+            onClick={() =>
+              dispatch(
+                SettingsActions.setCheckForUpdates(!settings.checkForUpdates)
+              )
+            }
+            checked={settings.checkForUpdates}
+          />
+        </ListItem>
         <ListItem className={classes.listItem}>
           <ListItemText
             primary={
-              <Typography>
-                {i18n.t('core:useTrashCan')}
-                <InfoIcon tooltip={i18n.t('core:useTrashCanInfo')} />
-              </Typography>
+              <>
+                {i18n.t('core:reorderTags')}
+                <BetaLabel />
+              </>
             }
           />
           <Switch
-            data-tid="settingsSetUseTrashCan"
+            data-tid="reorderTagsTID"
             onClick={() =>
-              dispatch(SettingsActions.setUseTrashCan(!settings.useTrashCan))
+              dispatch(SettingsActions.reorderTags(!settings.reorderTags))
             }
-            checked={settings.useTrashCan}
+            checked={settings.reorderTags}
           />
         </ListItem>
-      )}
-      <ListItem className={classes.listItem}>
-        <ListItemText primary={i18n.t('core:showUnixHiddenFiles')} />
-        <Switch
-          data-tid="settingsSetShowUnixHiddenEntries"
-          onClick={() =>
-            dispatch(SettingsActions.toggleShowUnixHiddenEntries())
-          }
-          checked={settings.showUnixHiddenEntries}
-        />
-      </ListItem>
-      {/* <ListItem className={classes.listItem}>
+        <ListItem className={classes.listItem}>
+          <ListItemText primary={i18n.t('core:addTagsToLibrary')} />
+          <Switch
+            data-tid="settingsSetAddTagsToLibrary"
+            onClick={() =>
+              dispatch(
+                SettingsActions.setAddTagsToLibrary(!settings.addTagsToLibrary)
+              )
+            }
+            checked={settings.addTagsToLibrary}
+          />
+        </ListItem>
+        <ListItem className={classes.listItem}>
+          <ListItemText primary={i18n.t('core:useGenerateThumbnails')} />
+          <Switch
+            disabled={AppConfig.useGenerateThumbnails !== undefined}
+            data-tid="settingsUseGenerateThumbnails"
+            onClick={() =>
+              dispatch(
+                SettingsActions.setUseGenerateThumbnails(
+                  !settings.useGenerateThumbnails
+                )
+              )
+            }
+            checked={
+              AppConfig.useGenerateThumbnails !== undefined
+                ? AppConfig.useGenerateThumbnails
+                : settings.useGenerateThumbnails
+            }
+          />
+        </ListItem>
+        <ListItem className={classes.listItem}>
+          <ListItemText primary={i18n.t('core:tagBackgroundColor')} />
+          <TransparentBackground>
+            <Button
+              data-tid="settingsToggleDefaultTagBackgroundColor"
+              className={classes.colorChooserButton}
+              size="small"
+              style={{
+                backgroundColor: settings.tagBackgroundColor
+              }}
+              onClick={toggleDefaultTagBackgroundColorPicker}
+            >
+              &nbsp;
+            </Button>
+          </TransparentBackground>
+          {displayColorPicker && (
+            <ColorPickerDialog
+              open={displayColorPicker}
+              setColor={color => {
+                dispatch(SettingsActions.setTagColor(color));
+              }}
+              onClose={toggleDefaultTagBackgroundColorPicker}
+              color={settings.tagBackgroundColor}
+            />
+          )}
+        </ListItem>
+        <ListItem className={classes.listItem}>
+          <ListItemText primary={i18n.t('core:tagForegroundColor')} />
+          <TransparentBackground>
+            <Button
+              data-tid="settingsToggleDefaultTagForegroundColor"
+              className={classes.colorChooserButton}
+              size="small"
+              style={{ backgroundColor: settings.tagTextColor }}
+              onClick={toggleDefaultTagTextColorPicker}
+            >
+              &nbsp;
+            </Button>
+          </TransparentBackground>
+          {displayTextColorPicker && (
+            <ColorPickerDialog
+              open={displayTextColorPicker}
+              setColor={color => {
+                dispatch(SettingsActions.setTagTextColor(color));
+              }}
+              onClose={toggleDefaultTagTextColorPicker}
+              color={settings.tagTextColor}
+            />
+          )}
+        </ListItem>
+        {AppConfig.isElectron && (
+          <ListItem className={classes.listItem}>
+            <ListItemText
+              primary={
+                <Typography>
+                  {i18n.t('core:useTrashCan')}
+                  <InfoIcon tooltip={i18n.t('core:useTrashCanInfo')} />
+                </Typography>
+              }
+            />
+            <Switch
+              data-tid="settingsSetUseTrashCan"
+              onClick={() =>
+                dispatch(SettingsActions.setUseTrashCan(!settings.useTrashCan))
+              }
+              checked={settings.useTrashCan}
+            />
+          </ListItem>
+        )}
+        <ListItem className={classes.listItem}>
+          <ListItemText primary={i18n.t('core:showUnixHiddenFiles')} />
+          <Switch
+            data-tid="settingsSetShowUnixHiddenEntries"
+            onClick={() =>
+              dispatch(SettingsActions.toggleShowUnixHiddenEntries())
+            }
+            checked={settings.showUnixHiddenEntries}
+          />
+        </ListItem>
+        {/* <ListItem className={classes.listItem}>
           <ListItemText style={{ maxWidth: '300px' }} primary={i18n.t('core:tagDelimiterChoose')} />
           <Select
             style={{ minWidth: '170px' }}
@@ -417,18 +423,19 @@ function SettingsGeneral(props: Props) {
             <MenuItem value=",">{i18n.t('core:tagDelimiterComma')}</MenuItem>
           </Select>
         </ListItem> */}
-      <ListItem className={classes.listItem}>
-        <ListItemText primary={i18n.t('core:maxSearchResultChoose')} />
-        <Input
-          style={{ maxWidth: '100px' }}
-          type="number"
-          data-tid="settingsMaxSearchResult"
-          value={settings.maxSearchResult}
-          onChange={handleMaxSearchResult}
-        />
-      </ListItem>
-    </List>
+        <ListItem className={classes.listItem}>
+          <ListItemText primary={i18n.t('core:maxSearchResultChoose')} />
+          <Input
+            style={{ maxWidth: '100px' }}
+            type="number"
+            data-tid="settingsMaxSearchResult"
+            value={settings.maxSearchResult}
+            onChange={handleMaxSearchResult}
+          />
+        </ListItem>
+      </List>
+    </Root>
   );
 }
 
-export default withStyles(styles, { withTheme: true })(SettingsGeneral);
+export default SettingsGeneral;

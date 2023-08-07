@@ -18,6 +18,7 @@
 
 import React, { useEffect, useReducer, useRef } from 'react';
 import { connect } from 'react-redux';
+import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import Tooltip from '-/components/Tooltip';
 import Grid from '@mui/material/Grid';
@@ -64,8 +65,6 @@ interface Props {
   isMetaLoaded: boolean;
   setIsMetaLoaded: (isLoaded: boolean) => void;
   style?: any;
-  classes: any;
-  theme: any;
   // gridRef: Object;
   directories: Array<TS.FileSystemEntry>;
   showDirectories: boolean;
@@ -134,8 +133,6 @@ interface Props {
 function GridPagination(props: Props) {
   const {
     style,
-    theme,
-    classes,
     directories,
     showDirectories,
     showDetails,
@@ -170,6 +167,7 @@ function GridPagination(props: Props) {
     clearSelection,
     files
   } = props;
+  const theme = useTheme();
   const allFilesCount = files.length;
   const showPagination = gridPageLimit && files.length > gridPageLimit;
   const paginationCount = showPagination
@@ -571,8 +569,6 @@ function GridPagination(props: Props) {
                 entry,
                 index,
                 getCellContent,
-                classes,
-                theme,
                 showDirectories,
                 isReadOnlyMode,
                 desktopMode,
@@ -597,8 +593,6 @@ function GridPagination(props: Props) {
               entry,
               index,
               getCellContent,
-              classes,
-              theme,
               showDirectories,
               isReadOnlyMode,
               desktopMode,
@@ -728,7 +722,7 @@ function mapActionCreatorsToProps(dispatch) {
 }
 
 const areEqual = (prevProp: Props, nextProp: Props) =>
-  nextProp.theme === prevProp.theme &&
+  //  nextProp.theme === prevProp.theme &&
   JSON.stringify(nextProp.lastBackgroundImageChange) ===
     JSON.stringify(prevProp.lastBackgroundImageChange) &&
   JSON.stringify(nextProp.lastThumbnailImageChange) ===
