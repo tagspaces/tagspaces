@@ -17,8 +17,8 @@
  */
 
 import React from 'react';
+import { styled } from '@mui/material/styles';
 import { useSelector, useDispatch } from 'react-redux';
-import withStyles from '@mui/styles/withStyles';
 import TextField from '@mui/material/TextField';
 import Switch from '@mui/material/Switch';
 import ListItem from '@mui/material/ListItem';
@@ -34,18 +34,20 @@ import {
 import DefaultSettings from '-/reducers/settings-default';
 import { AppDispatch } from '-/reducers/app';
 
-const styles: any = (theme: any) => ({
-  keyBinding: {
+const PREFIX = 'SettingsKeyBindings';
+
+const classes = {
+  keyBinding: `${PREFIX}-keyBinding`
+};
+
+const Root = styled('form')(({ theme }) => ({
+  [`& .${classes.keyBinding}`]: {
     marginTop: 10,
     marginBottom: 10
   }
-});
+}));
 
-interface Props {
-  classes: any;
-}
-function SettingsKeyBindings(props: Props) {
-  const { classes } = props;
+function SettingsKeyBindings() {
   const keyBindings = useSelector(getKeyBindings);
   const globalKeyBindingEnabled = useSelector(isGlobalKeyBindingEnabled);
   const dispatch: AppDispatch = useDispatch();
@@ -60,7 +62,7 @@ function SettingsKeyBindings(props: Props) {
   };
 
   return (
-    <form className={classes.root} noValidate autoComplete="off">
+    <Root className={classes.keyBinding} noValidate autoComplete="off">
       <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
         <ListItemText primary={i18n.t('core:enableGlobalKeyboardShortcuts')} />
         <Switch
@@ -90,8 +92,8 @@ function SettingsKeyBindings(props: Props) {
           />
         );
       })}
-    </form>
+    </Root>
   );
 }
 
-export default withStyles(styles)(SettingsKeyBindings);
+export default SettingsKeyBindings;

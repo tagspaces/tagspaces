@@ -35,7 +35,7 @@ import { getLastVersionPromise } from '-/reducers/settings';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Links from '-/content/links';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import useTheme from '@mui/styles/useTheme';
+import { useTheme } from '@mui/material/styles';
 import AppConfig from '-/AppConfig';
 import { Fullscreen } from '@mui/icons-material';
 import { openURLExternally } from '-/services/utils-io';

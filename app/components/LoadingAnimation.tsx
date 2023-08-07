@@ -18,16 +18,12 @@
 
 import React from 'react';
 import { useSelector } from 'react-redux';
-import withStyles from '@mui/styles/withStyles';
 import PlatformIO from '-/services/platform-facade';
 import { isLoading } from '-/reducers/app';
+import { useTheme } from '@mui/material/styles';
 
-interface Props {
-  theme: any;
-}
-
-function LoadingAnimation(props: Props) {
-  const { theme } = props;
+function LoadingAnimation() {
+  const theme = useTheme();
   const loading = useSelector(isLoading);
 
   if (
@@ -61,6 +57,4 @@ function LoadingAnimation(props: Props) {
   );
 }
 
-export default withStyles(undefined, { withTheme: true })(
-  React.memo(LoadingAnimation)
-);
+export default React.memo(LoadingAnimation);

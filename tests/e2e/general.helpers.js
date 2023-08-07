@@ -313,8 +313,9 @@ export async function getGridElement(fileIndex = 0) {
 }
 
 export async function getGridCellClass(fileIndex = 0) {
-  const file = await getGridElement(fileIndex);
+  let file = await getGridElement(fileIndex);
   if (file !== undefined) {
+    file = await file.$('div');
     return file.getAttribute('class');
   }
   return undefined;

@@ -27,7 +27,7 @@ import MobileStepper from '@mui/material/MobileStepper';
 import Dialog from '@mui/material/Dialog';
 import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import useTheme from '@mui/styles/useTheme';
+import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { getProTeaserIndex } from '-/reducers/app';
 import { useSelector } from 'react-redux';

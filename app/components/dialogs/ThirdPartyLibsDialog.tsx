@@ -25,7 +25,7 @@ import Dialog from '@mui/material/Dialog';
 import i18n from '-/services/i18n';
 import ThirdPartyLibs from '-/third-party.txt';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import useTheme from '@mui/styles/useTheme';
+import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 interface Props {

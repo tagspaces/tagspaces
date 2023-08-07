@@ -25,7 +25,6 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubHeader from '@mui/material/ListSubheader';
 import Tooltip from '-/components/Tooltip';
-import withTheme from '@mui/styles/withTheme';
 import IconButton from '@mui/material/IconButton';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
@@ -37,13 +36,14 @@ import {
   getCurrentLocationId
 } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
+import { useTheme } from '@mui/material/styles';
 
 interface Props {
-  theme: any;
   menuAnchorEl?: Element;
 }
 
 function LocationMenu(props: Props) {
+  const theme = useTheme();
   const dispatch: AppDispatch = useDispatch();
   const locations: Array<TS.Location> = useSelector(getLocations);
   const currentLocationId: string | null = useSelector(getCurrentLocationId);
@@ -59,7 +59,6 @@ function LocationMenu(props: Props) {
     );
   }
 
-  const { theme } = props;
   const locationIcon =
     currentLocation && currentLocation.type === locationType.TYPE_CLOUD ? (
       <CloudLocationIcon />
@@ -145,4 +144,4 @@ function LocationMenu(props: Props) {
   );
 }
 
-export default withTheme(LocationMenu);
+export default LocationMenu;

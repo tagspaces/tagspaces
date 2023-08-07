@@ -45,7 +45,6 @@ import NextDocumentIcon from '@mui/icons-material/KeyboardArrowDown';
 import FileDownloadIcon from '@mui/icons-material/AssignmentReturned';
 import DetailsIcon from '@mui/icons-material/Info';
 import ExpandIcon from '@mui/icons-material/SettingsEthernet';
-import withStyles from '@mui/styles/withStyles';
 import Box from '@mui/material/Box';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import {
@@ -107,7 +106,8 @@ import { Switch } from '@mui/material';
 import useFirstRender from '-/utils/useFirstRender';
 import ResolveConflictDialog from '-/components/dialogs/ResolveConflictDialog';
 import { dataTidFormat } from '-/services/test';
-import { getMetaForEntry, loadJSONFile } from '-/services/utils-io';
+import { loadJSONFile } from '-/services/utils-io';
+import { styled, useTheme } from '@mui/material/styles';
 
 const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
 // const openedSplitSize = AppConfig.isElectron ? 560 : 360;
@@ -119,8 +119,15 @@ const bufferedSplitResize = buffer({
   id: 'buffered-split-resize'
 });
 
-const styles: any = (theme: any) => ({
-  toolbar2: {
+const PREFIX = 'EntryContainer';
+const classes = {
+  toolbar2: `${PREFIX}-toolbar2`,
+  flexLeft: `${PREFIX}-flexLeft`,
+  fileBadge: `${PREFIX}-fileBadge`
+};
+
+const Root = styled('div')(({ theme }) => ({
+  [`& .${classes.toolbar2}`]: {
     width: '100%',
     paddingLeft: 0,
     paddingRight: 5,
@@ -131,7 +138,7 @@ const styles: any = (theme: any) => ({
     zIndex: 2
     // borderBottom: '1px solid ' + theme.palette.divider
   },
-  flexLeft: {
+  [`& .${classes.flexLeft}`]: {
     flexDirection: 'row',
     flex: '1 1',
     display: 'flex',
@@ -140,7 +147,7 @@ const styles: any = (theme: any) => ({
     overflowY: 'hidden',
     paddingRight: 100
   },
-  fileBadge: {
+  [`& .${classes.fileBadge}`]: {
     color: 'white',
     backgroundColor: AppConfig.defaultFileColor,
     padding: 3,
@@ -149,11 +156,9 @@ const styles: any = (theme: any) => ({
     marginLeft: 3,
     borderRadius: 3
   }
-});
+}));
 
 interface Props {
-  classes: any;
-  theme: any;
   openedFiles: Array<OpenedEntry>;
   settings: any;
   keyBindings: any;
@@ -203,9 +208,7 @@ const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 
 function EntryContainer(props: Props) {
   const {
-    classes,
     keyBindings,
-    theme,
     settings,
     openedFiles,
     currentDirectoryPath,
@@ -229,6 +232,7 @@ function EntryContainer(props: Props) {
     tileServer
   } = props;
 
+  const theme = useTheme();
   // const [percent, setPercent] = React.useState<number | undefined>(undefined);
   const percent = useRef<number | undefined>(undefined);
   const timer = useRef(null);
@@ -1705,7 +1709,7 @@ function EntryContainer(props: Props) {
       />
       {/* eslint-disable-next-line jsx-a11y/anchor-has-content,jsx-a11y/anchor-is-valid */}
       <a href="#" id="downloadFile" />
-      {renderPanels()}
+      <Root>{renderPanels()}</Root>
     </GlobalHotKeys>
   );
 }
@@ -1766,5 +1770,5 @@ export default connect(
   mapActionCreatorsToProps
 )(
   // @ts-ignore
-  React.memo(withStyles(styles, { withTheme: true })(EntryContainer), areEqual)
+  React.memo(EntryContainer, areEqual)
 );

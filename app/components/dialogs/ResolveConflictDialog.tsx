@@ -26,7 +26,7 @@ import Dialog from '@mui/material/Dialog';
 import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import useTheme from '@mui/styles/useTheme';
+import { useTheme } from '@mui/material/styles';
 import { OpenedEntry } from '-/reducers/app';
 import {
   extractContainingDirectoryPath,

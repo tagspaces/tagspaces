@@ -18,7 +18,6 @@
 
 import React, { useRef, useState } from 'react';
 import Button from '@mui/material/Button';
-import withStyles from '@mui/styles/withStyles';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -34,7 +33,7 @@ import TagContainer from '../TagContainer';
 import i18n from '-/services/i18n';
 import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import useTheme from '@mui/styles/useTheme';
+import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { exportTagGroups } from '-/services/taglibrary-utils';
 

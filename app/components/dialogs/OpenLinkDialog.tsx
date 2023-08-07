@@ -27,7 +27,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Dialog from '@mui/material/Dialog';
 import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import useTheme from '@mui/styles/useTheme';
+import { useTheme } from '@mui/material/styles';
 // import useMediaQuery from '@mui/material/useMediaQuery';
 import InfoIcon from '-/components/InfoIcon';
 
