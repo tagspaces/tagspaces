@@ -20,7 +20,7 @@ import React, { useMemo } from 'react';
 import { styled } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import IconButton from '@mui/material/IconButton';
-import Badge, { badgeClasses } from '@mui/base/Badge';
+import Badge, { badgeClasses } from '@mui/material/Badge';
 import Tooltip from '-/components/Tooltip';
 import AppConfig from '-/AppConfig';
 import { Pro } from '../pro';
