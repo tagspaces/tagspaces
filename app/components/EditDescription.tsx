@@ -127,7 +127,7 @@ function EditDescription(props: Props) {
             onFocus={milkdownOnFocus}
             readOnly={!editMode}
             // dark={dark}
-            lightMode={false}
+            lightMode={!editMode}
             currentFolder={currentFolder}
           />
         )}
