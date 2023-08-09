@@ -103,6 +103,7 @@ tests/*
 !tests/setup-functions.js
 !tests/test-data-refresh.js
 !tests/create-1000files-nothumbs.sh
+!tests/create-1000files.js
 
 builds/*
 web/sw-con

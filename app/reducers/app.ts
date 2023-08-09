@@ -148,6 +148,7 @@ export const types = {
     'APP/TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG',
   TOGGLE_IMPORT_KANBAN_DIALOG: 'APP/TOGGLE_IMPORT_KANBAN_DIALOG',
   TOGGLE_UPLOAD_DIALOG: 'APP/TOGGLE_UPLOAD_DIALOG',
+  TOGGLE_TRUNCATED_DIALOG: 'APP/TOGGLE_TRUNCATED_DIALOG',
   SET_CURRENT_DIRECTORY_DIRS: 'APP/SET_CURRENT_DIRECTORY_DIRS',
   CLEAR_UPLOAD_DIALOG: 'APP/CLEAR_UPLOAD_DIALOG',
   TOGGLE_PROGRESS_DIALOG: 'APP/TOGGLE_PROGRESS_DIALOG',
@@ -546,6 +547,12 @@ export default (state: any = initialState, action: any) => {
       };
       //}
       // return state;
+    }
+    case types.TOGGLE_TRUNCATED_DIALOG: {
+      return {
+        ...state,
+        isTruncatedConfirmDialogOpened: !state.isTruncatedConfirmDialogOpened
+      };
     }
     case types.SET_CURRENT_DIRECTORY_DIRS: {
       return {
@@ -1283,6 +1290,9 @@ export const actions = {
     type: types.TOGGLE_UPLOAD_DIALOG,
     title
   }),
+  toggleTruncatedConfirmDialog: () => ({
+    type: types.TOGGLE_TRUNCATED_DIALOG
+  }),
   setCurrentDirectoryDirs: dirs => ({
     type: types.SET_CURRENT_DIRECTORY_DIRS,
     dirs
@@ -1446,13 +1456,15 @@ export const actions = {
     )
       .then(results => {
         if (resultsLimit.IsTruncated) {
-          dispatch(
+          // TO DO OPEN ISTRUNCATED dialog
+          dispatch(actions.toggleTruncatedConfirmDialog());
+          /*dispatch(
             actions.showNotification(
               i18n.t('warningDirectoryIsTruncated') + ': ' + directoryPath,
               'error',
               false
             )
-          );
+          );*/
         }
         updateHistory(currentLocation, directoryPath);
         if (results !== undefined) {
@@ -3090,6 +3102,8 @@ export const isImportKanBanDialogOpened = (state: any) =>
   state.app.importKanBanDialogOpened;
 export const isUploadDialogOpened = (state: any) =>
   state.app.uploadDialogOpened;
+export const isTruncatedConfirmDialogOpened = (state: any) =>
+  state.app.isTruncatedConfirmDialogOpened;
 export const isOpenLinkDialogOpened = (state: any) =>
   state.app.openLinkDialogOpened;
 export const isProTeaserVisible = (state: any) => state.app.proTeaserIndex > -1;
