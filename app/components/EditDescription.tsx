@@ -127,7 +127,8 @@ function EditDescription(props: Props) {
             onFocus={milkdownOnFocus}
             readOnly={!editMode}
             // dark={dark}
-            lightMode={!editMode}
+            lightMode={false}
+            excludePlugins={!editMode ? ['menu', 'upload'] : []}
             currentFolder={currentFolder}
           />
         )}

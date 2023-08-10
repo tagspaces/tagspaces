@@ -241,6 +241,10 @@ function EntryProperties(props: Props) {
     : props.openedEntry.path;
 
   const printHTML = () => {
+    const sanitizedDescription = currentEntry.current.description
+      ? convertMarkDown(currentEntry.current.description, directoryPath)
+      : i18n.t('core:addMarkdownDescription');
+
     const printWin = window.open('', 'PRINT', 'height=400,width=600');
     printWin.document.write(
       '<html><head><title>' + entryName + ' description</title>'
@@ -768,10 +772,6 @@ function EntryProperties(props: Props) {
 
   const isCloudLocation =
     currentEntry.current.url && currentEntry.current.url.length > 5;
-
-  const sanitizedDescription = currentEntry.current.description
-    ? convertMarkDown(currentEntry.current.description, directoryPath)
-    : i18n.t('core:addMarkdownDescription');
 
   const showLinkForDownloading = isCloudLocation && currentEntry.current.isFile;
 
