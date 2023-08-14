@@ -72,7 +72,8 @@ import {
   getSelectedEntries,
   currentUser,
   isLocationDialogOpened,
-  isProTeaserVisible
+  isProTeaserVisible,
+  isTruncatedConfirmDialogOpened
 } from '../reducers/app';
 import TargetFileBox from '../components/TargetFileBox';
 import i18n from '../services/i18n';
@@ -92,6 +93,7 @@ import MoveOrCopyFilesDialog from '-/components/dialogs/MoveOrCopyFilesDialog';
 import PlatformIO from '-/services/platform-facade';
 import { Pro } from '-/pro';
 import NewFileDialog from '-/components/dialogs/NewFileDialog';
+import IsTruncatedConfirmDialog from '-/components/dialogs/IsTruncatedConfirmDialog';
 import { styled, useTheme } from '@mui/material/styles';
 
 const drawerWidth = 320;
@@ -153,6 +155,7 @@ interface Props {
   isThirdPartyLibsDialogOpened: boolean;
   isOnboardingDialogOpened: boolean;
   isUploadProgressDialogOpened: string | undefined;
+  isTruncatedConfirmDialogOpened: boolean;
   isProgressDialogOpened: boolean;
   isProTeaserVisible: boolean;
   toggleUploadDialog: () => void;
@@ -194,6 +197,7 @@ interface Props {
   leftSplitSize: number;
   mainSplitSize: any;
   toggleShowUnixHiddenEntries: () => void;
+  toggleTruncatedConfirmDialog: () => void;
   setMainVerticalSplitSize: (splitSize: string) => void;
   isLocationManagerPanelOpened: boolean;
   isOpenLinkDialogOpened: boolean;
@@ -769,7 +773,13 @@ function MainPage(props: Props) {
             title={props.isUploadProgressDialogOpened}
           />
         )}
-        {props.isProgressDialogOpened && (
+        {props.isTruncatedConfirmDialogOpened && (
+        <IsTruncatedConfirmDialog
+          open={true}
+          onClose={props.toggleTruncatedConfirmDialog}
+        />
+      )}
+      {props.isProgressDialogOpened && (
           <ProgressDialog
             open={props.isProgressDialogOpened}
             onClose={toggleProgressDialog}
@@ -938,6 +948,7 @@ function mapStateToProps(state) {
     isLicenseDialogOpened: isLicenseDialogOpened(state),
     isThirdPartyLibsDialogOpened: isThirdPartyLibsDialogOpened(state),
     isUploadProgressDialogOpened: isUploadDialogOpened(state),
+    isTruncatedConfirmDialogOpened: isTruncatedConfirmDialogOpened(state),
     isOpenLinkDialogOpened: isOpenLinkDialogOpened(state),
     isProTeaserVisible: isProTeaserVisible(state),
     isProgressDialogOpened: isProgressOpened(state),
@@ -971,6 +982,7 @@ function mapDispatchToProps(dispatch) {
       toggleProgressDialog: AppActions.toggleProgressDialog,
       resetProgress: AppActions.resetProgress,
       toggleEditTagDialog: AppActions.toggleEditTagDialog,
+      toggleTruncatedConfirmDialog: AppActions.toggleTruncatedConfirmDialog,
       onUploadProgress: AppActions.onUploadProgress,
       saveFile: AppActions.saveFile,
       openLink: AppActions.openLink,
@@ -1048,6 +1060,8 @@ const areEqual = (prevProp, nextProp) =>
   nextProp.isSearchPanelOpened === prevProp.isSearchPanelOpened &&
   nextProp.isSettingsDialogOpened === prevProp.isSettingsDialogOpened &&
   nextProp.isTagLibraryPanelOpened === prevProp.isTagLibraryPanelOpened &&
+  nextProp.isTruncatedConfirmDialogOpened ===
+    prevProp.isTruncatedConfirmDialogOpened &&
   nextProp.isThirdPartyLibsDialogOpened ===
     prevProp.isThirdPartyLibsDialogOpened &&
   nextProp.isUploadProgressDialogOpened ===
