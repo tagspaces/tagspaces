@@ -657,10 +657,10 @@ export default (state: any = initialState, action: any) => {
           action.file
           // ...state.openedFiles // TODO uncomment for multiple file support
         ],
-        ...(action.file.path === state.currentDirectoryPath &&
+        /*...(action.file.path === state.currentDirectoryPath &&
           action.file.description && {
             currentDirectoryDescription: action.file.description
-          })
+          })*/
       };
     }
     case types.TOGGLE_ENTRY_FULLWIDTH: {
