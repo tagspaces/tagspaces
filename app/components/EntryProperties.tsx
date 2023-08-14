@@ -989,7 +989,6 @@ function EntryProperties(props: Props) {
             printHTML={printHTML}
             description={currentEntry.current.description}
             setEditDescription={md => (editDescription.current = md)}
-            isDarkTheme={theme.palette.mode === 'dark'}
             currentFolder={directoryPath}
           />
         </Grid>

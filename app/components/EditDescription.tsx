@@ -1,7 +1,7 @@
-import React, { MutableRefObject, useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
+import { useTheme } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import AppConfig from '-/AppConfig';
 import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
 import i18n from '-/services/i18n';
 import { ProTooltip } from '-/components/HelperComponents';
@@ -13,12 +13,12 @@ interface Props {
   toggleEditDescriptionField: () => void;
   printHTML: () => void;
   // fileDescriptionRef: MutableRefObject<MilkdownRef>;
-  isDarkTheme: boolean;
   description: string;
   setEditDescription: (md: string) => void;
   currentFolder: string;
 }
 function EditDescription(props: Props) {
+  const theme = useTheme();
   const fileDescriptionRef = useRef<MilkdownRef>(null);
   const {
     currentFolder,
@@ -27,11 +27,14 @@ function EditDescription(props: Props) {
     classes,
     printHTML,
     toggleEditDescriptionField,
-    primaryColor,
-    isDarkTheme
+    primaryColor
   } = props;
   const [editMode, setEditMode] = useState<boolean>(false);
   const descriptionFocus = useRef<boolean>(false);
+
+  useEffect(() => {
+    fileDescriptionRef.current?.setDarkMode(theme.palette.mode === 'dark');
+  }, [theme]); // , settings]);
 
   const milkdownOnFocus = React.useCallback(
     () => (descriptionFocus.current = true),
@@ -126,8 +129,7 @@ function EditDescription(props: Props) {
             onChange={milkdownListener}
             onFocus={milkdownOnFocus}
             readOnly={!editMode}
-            // dark={dark}
-            lightMode={false}
+            lightMode={theme.palette.mode === 'light'}
             excludePlugins={!editMode ? ['menu', 'upload'] : []}
             currentFolder={currentFolder}
           />
