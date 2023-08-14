@@ -129,7 +129,7 @@ function EditDescription(props: Props) {
             onChange={milkdownListener}
             onFocus={milkdownOnFocus}
             readOnly={!editMode}
-            lightMode={theme.palette.mode === 'light'}
+            lightMode={false}
             excludePlugins={!editMode ? ['menu', 'upload'] : []}
             currentFolder={currentFolder}
           />
