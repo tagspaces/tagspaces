@@ -96,7 +96,7 @@ function EditDescription(props: Props) {
       <div
         data-tid="descriptionTID"
         onDoubleClick={() => {
-          if (toggleEditDescriptionField) {
+          if (!editMode && toggleEditDescriptionField) {
             setEditMode(true);
             toggleEditDescriptionField();
           }
@@ -104,7 +104,6 @@ function EditDescription(props: Props) {
         style={{
           border: '1px solid lightgray',
           borderRadius: 5,
-          padding: 2,
           minHeight: 50,
           maxHeight: noDescription && !editMode ? 100 : 250,
           width: 'calc(100% - 8px)',
@@ -123,16 +122,25 @@ function EditDescription(props: Props) {
             {i18n.t('core:addMarkdownDescription')}
           </Typography>
         ) : (
-          <MilkdownEditor
-            ref={fileDescriptionRef}
-            content={description || ''}
-            onChange={milkdownListener}
-            onFocus={milkdownOnFocus}
-            readOnly={!editMode}
-            lightMode={false}
-            excludePlugins={!editMode ? ['menu', 'upload'] : []}
-            currentFolder={currentFolder}
-          />
+          <>
+            <style>
+              {`
+        .prose a {
+             color: ${theme.palette.primary.main};
+        }
+        `}
+            </style>
+            <MilkdownEditor
+              ref={fileDescriptionRef}
+              content={description || ''}
+              onChange={milkdownListener}
+              onFocus={milkdownOnFocus}
+              readOnly={!editMode}
+              lightMode={false}
+              excludePlugins={!editMode ? ['menu', 'upload'] : []}
+              currentFolder={currentFolder}
+            />
+          </>
         )}
       </div>
       <Typography
