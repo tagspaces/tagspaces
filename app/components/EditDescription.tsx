@@ -122,7 +122,7 @@ function EditDescription(props: Props) {
             {i18n.t('core:addMarkdownDescription')}
           </Typography>
         ) : (
-          <>
+          <div style={{ padding: editMode ? 0 : 5 }}>
             <style>
               {`
         .prose a {
@@ -143,7 +143,7 @@ function EditDescription(props: Props) {
               excludePlugins={!editMode ? ['menu', 'upload'] : []}
               currentFolder={currentFolder}
             />
-          </>
+          </div>
         )}
       </div>
       <Typography
