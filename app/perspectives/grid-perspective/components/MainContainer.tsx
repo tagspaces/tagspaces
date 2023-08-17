@@ -61,7 +61,7 @@ import { openURLExternally } from '-/services/utils-io';
 
 interface Props {
   currentDirectoryPath: string;
-  openFsEntry: (fsEntry?: TS.FileSystemEntry) => void;
+  openEntry: (entryPath?: string) => void;
   openRenameEntryDialog: () => void;
   loadDirectoryContent: (
     path: string,
@@ -98,7 +98,7 @@ function GridPerspective(props: Props) {
     openRenameEntryDialog,
     directoryContent,
     lastSearchTimestamp,
-    openFsEntry,
+    openEntry,
     loadDirectoryContent,
     removeTags,
     removeAllTags,
@@ -666,7 +666,7 @@ function GridPerspective(props: Props) {
     },
     openEntry: e => {
       e.preventDefault();
-      openFsEntry();
+      openEntry();
     },
     openFileExternally: () => {
       handleOpenFileNatively();
@@ -738,7 +738,6 @@ function GridPerspective(props: Props) {
           handleTagMenu={handleTagMenu}
           layoutType={layoutType.current}
           showTags={showTags.current}
-          openFsEntry={openFsEntry}
           handleGridContextMenu={(
             event: React.MouseEvent<HTMLDivElement>,
             fsEntry: TS.FileSystemEntry
@@ -773,7 +772,6 @@ function GridPerspective(props: Props) {
         fileOperationsEnabled={fileOperationsEnabled(selectedEntries)}
         openMoveCopyFilesDialog={openMoveCopyFilesDialog}
         openDeleteFileDialog={openDeleteFileDialog}
-        openFsEntry={openFsEntry}
         handleSortingMenu={handleSortingMenu}
         handleExportCsvMenu={handleExportCsvMenu}
         openSettings={openSettings}
@@ -826,7 +824,7 @@ function GridPerspective(props: Props) {
               ? GlobalSearch.getInstance().getResults()
               : directoryContent
           }
-          openFsEntry={openFsEntry}
+          openEntry={openEntry}
           openFileNatively={handleOpenFileNatively}
           loadDirectoryContent={loadDirectoryContent}
           setFileContextMenuAnchorEl={setFileContextMenuAnchorEl}
@@ -941,7 +939,6 @@ function GridPerspective(props: Props) {
         openRenameDirectoryDialog={openRenameEntryDialog}
         openMoveCopyFilesDialog={openMoveCopyFilesDialog}
         openDirectory={openDirectory}
-        openFsEntry={openFsEntry}
         perspectiveMode={lastSelectedEntryPath !== currentDirectoryPath}
         currentLocation={currentLocation}
         openAddRemoveTagsDialog={openAddRemoveTagsDialog}

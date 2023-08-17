@@ -47,7 +47,6 @@ import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
 import {
   generateFileName,
-  getAllPropertiesPromise,
   setFolderBackgroundPromise,
   setFolderThumbnailPromise,
   getRelativeEntryPath
@@ -293,19 +292,7 @@ function FileMenu(props: Props) {
   function openFile() {
     onClose();
     if (selectedFilePath) {
-      getAllPropertiesPromise(selectedFilePath)
-        .then((fsEntry: TS.FileSystemEntry) => {
-          dispatch(AppActions.openFsEntry(fsEntry));
-          return true;
-        })
-        .catch(error =>
-          console.warn(
-            'Error getting properties for entry: ' +
-              selectedFilePath +
-              ' - ' +
-              error
-          )
-        );
+      return dispatch(AppActions.openEntry(selectedFilePath));
     }
   }
 

@@ -60,7 +60,8 @@ import {
   loadMetaDataPromise,
   mergeByProp,
   toFsEntry,
-  openURLExternally
+  openURLExternally,
+  getDescriptionPreview
 } from '-/services/utils-io';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import i18n from '../services/i18n';
@@ -663,10 +664,10 @@ export default (state: any = initialState, action: any) => {
           action.file
           // ...state.openedFiles // TODO uncomment for multiple file support
         ],
-        ...(action.file.path === state.currentDirectoryPath &&
+        /*...(action.file.path === state.currentDirectoryPath &&
           action.file.description && {
             currentDirectoryDescription: action.file.description
-          })
+          })*/
       };
     }
     case types.TOGGLE_ENTRY_FULLWIDTH: {
@@ -1523,11 +1524,10 @@ export const actions = {
         ); */
         // console.debug('Loading meta succeeded for:' + directoryPath);
         dispatch(
-          actions.loadDirectoryContentInt(
-            directoryPath,
-            generateThumbnails,
-            fsEntryMeta
-          )
+          actions.loadDirectoryContentInt(directoryPath, generateThumbnails, {
+            ...fsEntryMeta,
+            description: getDescriptionPreview(fsEntryMeta.description, 200)
+          })
         );
       } catch (err) {
         console.debug('Error loading meta of:' + directoryPath + ' ' + err);
@@ -1868,20 +1868,7 @@ export const actions = {
               true
             )
           );
-          getAllPropertiesPromise(filePath)
-            .then((fsEntry: TS.FileSystemEntry) => {
-              dispatch(actions.openFsEntry(fsEntry)); // TODO return fsEntry from saveFilePromise and simplify
-              // dispatch(actions.setSelectedEntries([fsEntry])); -> moved in reflectCreateEntry
-              return true;
-            })
-            .catch(error =>
-              console.warn(
-                'Error getting properties for entry: ' +
-                  filePath +
-                  ' - ' +
-                  error
-              )
-            );
+          dispatch(actions.openEntry(filePath));
           return true;
         })
         .catch(err => {
@@ -1941,7 +1928,7 @@ export const actions = {
     PlatformIO.saveFilePromise({ path: filePath }, fileContent, false)
       .then((fsEntry: TS.FileSystemEntry) => {
         dispatch(actions.reflectCreateEntry(filePath, true));
-        dispatch(actions.openFsEntry(fsEntry)); // TODO return fsEntry from saveFilePromise and simplify
+        dispatch(actions.openFsEntry(fsEntry));
 
         // dispatch(actions.setSelectedEntries([fsEntry]));
         dispatch(
@@ -2312,7 +2299,10 @@ export const actions = {
     }
     return Promise.resolve(false);
   },
-  openEntry: (path: string) => (dispatch: (action) => void) => {
+  openEntry: (path?: string) => (dispatch: (action) => void) => {
+    if (path === undefined) {
+      return dispatch(actions.openFsEntry());
+    }
     return getAllPropertiesPromise(path)
       .then((fsEntry: TS.FileSystemEntry) =>
         dispatch(actions.openFsEntry(fsEntry))

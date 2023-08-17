@@ -54,7 +54,6 @@ import { actions as SearchActions, getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
 import SearchMenu from '-/components/menus/SearchMenu';
 import { actions as AppActions, getCurrentLocationId } from '-/reducers/app';
-import { getAllPropertiesPromise } from '-/services/utils-io';
 import { Tooltip } from '@mui/material';
 import {
   extractFileName,
@@ -76,7 +75,7 @@ interface Props {
   showUnixHiddenEntries: boolean;
   addSearches: (searches: Array<TS.SearchQuery>) => void;
   reduceHeightBy: number;
-  openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
+  openEntry: (entryPath: string) => void;
   openLink: (url: string, options: any) => void;
   openLocationById: (locationId: string) => void;
   currentLocationId: string;
@@ -373,7 +372,7 @@ function StoredSearches(props: Props) {
             props.currentLocationId,
             props.openLink,
             props.openLocationById,
-            props.openFsEntry
+            props.openEntry
           )}
         <Grid container direction="row">
           <Grid item xs={10} style={{ alignSelf: 'center' }}>
@@ -423,7 +422,7 @@ function StoredSearches(props: Props) {
             props.currentLocationId,
             props.openLink,
             props.openLocationById,
-            props.openFsEntry
+            props.openEntry
           )}
         <Grid container direction="row">
           <Grid item xs={10} style={{ alignSelf: 'center' }}>
@@ -474,7 +473,7 @@ function StoredSearches(props: Props) {
             props.currentLocationId,
             props.openLink,
             props.openLocationById,
-            props.openFsEntry
+            props.openEntry
           )}
         <Grid container direction="row">
           <Grid item xs={10} style={{ alignSelf: 'center' }}>
@@ -552,7 +551,7 @@ function StoredSearches(props: Props) {
             props.currentLocationId,
             props.openLink,
             props.openLocationById,
-            props.openFsEntry
+            props.openEntry
           )}
         {SaveSearchDialog && saveSearchDialogOpened !== undefined && (
           <SaveSearchDialog
@@ -632,7 +631,7 @@ function mapDispatchToProps(dispatch) {
       setSearchQuery: LocationIndexActions.setSearchQuery,
       // searchAllLocations: LocationIndexActions.searchAllLocations,
       // searchLocationIndex: LocationIndexActions.searchLocationIndex,
-      openFsEntry: AppActions.openFsEntry,
+      openEntry: AppActions.openEntry,
       openLink: AppActions.openLink,
       openLocationById: AppActions.openLocationById,
       setStoredSearchesVisible: SettingsActions.setStoredSearchesVisible,

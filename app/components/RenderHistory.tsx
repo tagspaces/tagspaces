@@ -41,7 +41,7 @@ export const renderHistory = (
   currentLocationId: string,
   openLink: (url: string, options: any) => void,
   openLocationById: (locationId: string) => void,
-  openFsEntry: (fsEntry: TS.FileSystemEntry) => void,
+  openEntry: (entryPath: string) => void,
   maxItems: number | undefined = undefined,
   showDelete: boolean = true
 ) => (
@@ -71,7 +71,7 @@ export const renderHistory = (
                     currentLocationId,
                     openLink,
                     openLocationById,
-                    openFsEntry
+                    openEntry
                   )
                 }
               >

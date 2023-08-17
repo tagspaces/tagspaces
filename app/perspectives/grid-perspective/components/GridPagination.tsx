@@ -111,7 +111,7 @@ interface Props {
   currentLocation: TS.Location;
   lastSelectedEntryPath: string;
   directoryContent: Array<TS.FileSystemEntry>;
-  openFsEntry: (fsEntry?: TS.FileSystemEntry) => void;
+  openEntry: (entryPath?: string) => void;
   openFileNatively: (path?: string) => void;
   loadDirectoryContent: (
     path: string,
@@ -152,7 +152,7 @@ function GridPagination(props: Props) {
     openRenameEntryDialog,
     lastSelectedEntryPath,
     lastBackgroundImageChange,
-    openFsEntry,
+    openEntry,
     openFileNatively,
     loadDirectoryContent,
     setFileContextMenuAnchorEl,
@@ -402,13 +402,6 @@ function GridPagination(props: Props) {
     );
   }
   */
-  let descriptionPreview = '';
-  if (currentDirectoryDescription) {
-    descriptionPreview = getDescriptionPreview(
-      currentDirectoryDescription,
-      200
-    );
-  }
 
   const displayDescription = showDescription && currentDirectoryDescription;
 
@@ -514,7 +507,7 @@ function GridPagination(props: Props) {
                   >
                     {folderSummary}
                   </Typography>
-                  {!showDescription && descriptionPreview && (
+                  {!showDescription && currentDirectoryDescription && (
                     <Tooltip title={i18n.t('core:filePropertiesDescription')}>
                       <Typography
                         style={{
@@ -522,7 +515,7 @@ function GridPagination(props: Props) {
                           wordBreak: 'break-all'
                         }}
                       >
-                        {descriptionPreview}
+                        {currentDirectoryDescription}
                       </Typography>
                     </Tooltip>
                   )}
@@ -585,7 +578,7 @@ function GridPagination(props: Props) {
                 setSelectedEntries,
                 lastSelectedEntryPath,
                 directoryContent,
-                openFsEntry,
+                openEntry,
                 openFileNatively,
                 loadDirectoryContent,
                 setFileContextMenuAnchorEl,
@@ -609,7 +602,7 @@ function GridPagination(props: Props) {
               setSelectedEntries,
               lastSelectedEntryPath,
               directoryContent,
-              openFsEntry,
+              openEntry,
               openFileNatively,
               loadDirectoryContent,
               setFileContextMenuAnchorEl,

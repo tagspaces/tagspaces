@@ -97,8 +97,8 @@ function WelcomePanel() {
     dispatch(AppActions.toggleOpenLinkDialog());
   const toggleKeysDialogDispatch = () =>
     dispatch(AppActions.toggleKeysDialog());
-  const openFsEntryDispatch = fsEntry =>
-    dispatch(AppActions.openFsEntry(fsEntry));
+  const openEntryDispatch = entryPath =>
+    dispatch(AppActions.openEntry(entryPath));
   const openLinkDispatch = link => dispatch(AppActions.openLink(link));
   const openLocationByIdDispatch = locationId =>
     dispatch(AppActions.openLocationById(locationId));
@@ -148,7 +148,7 @@ function WelcomePanel() {
               currentLocationId,
               openLinkDispatch,
               openLocationByIdDispatch,
-              openFsEntryDispatch,
+              openEntryDispatch,
               maxRecentItems,
               showDelete
             )}
@@ -170,7 +170,7 @@ function WelcomePanel() {
               currentLocationId,
               openLinkDispatch,
               openLocationByIdDispatch,
-              openFsEntryDispatch,
+              openEntryDispatch,
               maxRecentItems,
               showDelete
             )}
@@ -192,7 +192,7 @@ function WelcomePanel() {
               currentLocationId,
               openLinkDispatch,
               openLocationByIdDispatch,
-              openFsEntryDispatch,
+              openEntryDispatch,
               maxRecentItems,
               showDelete
             )}

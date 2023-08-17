@@ -109,8 +109,8 @@ function SearchAutocomplete(props: Props) {
     dispatch(AppActions.openLink(link, options));
   const openLocationByIdDispatch = locationId =>
     dispatch(AppActions.openLocationById(locationId));
-  const openFsEntryDispatch = fsEntry =>
-    dispatch(AppActions.openFsEntry(fsEntry));
+  const openEntryDispatch = entryPath =>
+    dispatch(AppActions.openEntry(entryPath));
 
   const { setTextQuery, textQuery, open, setAnchorSearch } = props;
   // const [, forceUpdate] = useReducer(x => x + 1, 0);
@@ -1014,7 +1014,7 @@ function SearchAutocomplete(props: Props) {
               currentLocation.uuid,
               openLinkDispatch,
               openLocationByIdDispatch,
-              openFsEntryDispatch
+              openEntryDispatch
             );
           }
           searchOptions.current = getSearchOptions();
@@ -1034,7 +1034,7 @@ function SearchAutocomplete(props: Props) {
               currentLocation.uuid,
               openLinkDispatch,
               openLocationByIdDispatch,
-              openFsEntryDispatch
+              openEntryDispatch
             );
           }
           searchOptions.current = getSearchOptions();

@@ -191,7 +191,6 @@ interface Props {
   renameFile: () => void;
   openDirectory: () => void;
   showInFileManager: () => void;
-  openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   openEntry: (path: string) => void;
   reflectCreateEntry: (path: string, isFile: boolean) => void;
   loadDirectoryContent: (
@@ -305,7 +304,7 @@ function FolderContainer(props: Props) {
     setSelectedEntries,
     openDirectory,
     reflectCreateEntry,
-    openFsEntry,
+    openEntry,
     defaultPerspective,
     goBack,
     goForward
@@ -333,7 +332,7 @@ function FolderContainer(props: Props) {
           directoryContent={props.directoryContent}
           lastSearchTimestamp={props.lastSearchTimestamp}
           loadDirectoryContent={loadDirectoryContent}
-          openFsEntry={openFsEntry}
+          openEntry={openEntry}
           openRenameEntryDialog={() => setIsRenameEntryDialogOpened(true)}
           loadParentDirectoryContent={props.loadParentDirectoryContent}
           renameFile={props.renameFile}
@@ -353,7 +352,7 @@ function FolderContainer(props: Props) {
         <GalleryPerspectiveAsync
           directoryContent={props.directoryContent}
           lastSearchTimestamp={props.lastSearchTimestamp}
-          openFsEntry={openFsEntry}
+          openEntry={openEntry}
           currentDirectoryPath={props.currentDirectoryPath}
           windowWidth={props.windowWidth}
           switchPerspective={switchPerspective}
@@ -378,7 +377,7 @@ function FolderContainer(props: Props) {
           directoryContent={props.directoryContent}
           lastSearchTimestamp={props.lastSearchTimestamp}
           loadDirectoryContent={props.loadDirectoryContent}
-          openFsEntry={props.openFsEntry}
+          openEntry={props.openEntry}
           openRenameEntryDialog={() => setIsRenameEntryDialogOpened(true)}
           loadParentDirectoryContent={props.loadParentDirectoryContent}
           renameFile={props.renameFile}
@@ -400,7 +399,7 @@ function FolderContainer(props: Props) {
         directoryContent={props.directoryContent}
         lastSearchTimestamp={props.lastSearchTimestamp}
         loadDirectoryContent={props.loadDirectoryContent}
-        openFsEntry={props.openFsEntry}
+        openEntry={props.openEntry}
         openRenameEntryDialog={() => setIsRenameEntryDialogOpened(true)}
         loadParentDirectoryContent={props.loadParentDirectoryContent}
         renameFile={props.renameFile}
@@ -626,7 +625,6 @@ function FolderContainer(props: Props) {
                 setSelectedEntries={setSelectedEntries}
                 openDirectory={openDirectory}
                 reflectCreateEntry={reflectCreateEntry}
-                openFsEntry={openFsEntry}
                 isDesktopMode={isDesktopMode}
                 openRenameDirectoryDialog={() =>
                   setIsRenameEntryDialogOpened(true)
@@ -712,7 +710,6 @@ function mapActionCreatorsToProps(dispatch) {
       renameFile: AppActions.renameFile,
       openDirectory: AppActions.openDirectory,
       showInFileManager: AppActions.showInFileManager,
-      openFsEntry: AppActions.openFsEntry,
       openEntry: AppActions.openEntry,
       reflectCreateEntry: AppActions.reflectCreateEntry,
       loadDirectoryContent: AppActions.loadDirectoryContent,

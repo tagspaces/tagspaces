@@ -76,7 +76,6 @@ interface Props {
   entrySize: string;
   style?: any;
   thumbnailMode: any;
-  openFsEntry: (fsEntry: TS.FileSystemEntry) => void;
   selectedEntries: Array<TS.FileSystemEntry>;
   selectEntry: (fsEntry: TS.FileSystemEntry) => void;
   deselectEntry: (fsEntry: TS.FileSystemEntry) => void;
@@ -103,7 +102,6 @@ function CellContent(props: Props) {
     handleGridCellClick,
     showEntriesDescription,
     showTags,
-    // openFsEntry,
     selectEntry,
     deselectEntry,
     isLast
