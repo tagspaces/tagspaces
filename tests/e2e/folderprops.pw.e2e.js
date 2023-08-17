@@ -182,13 +182,15 @@ test.describe('TST02 - Folder properties', () => {
   test('TST0213 - Add description to folder [web,minio,electron,_pro]', async () => {
     const desc = 'test description';
 
-    await global.client.dblclick('[data-tid=descriptionTID]');
+    await clickOn('[data-tid=editDescriptionTID]');
+    // await global.client.dblclick('[data-tid=descriptionTID]');
     await clickOn('[data-tid=descriptionTID]');
     const editor = await global.client.waitForSelector(
       '[data-tid=descriptionTID] .milkdown'
     );
     await editor.type(desc);
-
+    const editorContent = await editor.innerText();
+    await expect(editorContent).toBe(desc);
     await clickOn('[data-tid=editDescriptionTID]');
     await expectElementExist(
       '[data-tid=gridCellDescription]',

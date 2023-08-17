@@ -239,7 +239,8 @@ test.describe('TST08 - File folder properties', () => {
     // open fileProperties
     await clickOn(fileSelector);
     await clickOn('[data-tid=fileContainerToggleProperties]');
-    await global.client.dblclick('[data-tid=descriptionTID]');
+    await clickOn('[data-tid=editDescriptionTID]');
+    //await global.client.dblclick('[data-tid=descriptionTID]');
     await clickOn('[data-tid=descriptionTID]');
 
     const editor = await global.client.waitForSelector(
@@ -256,6 +257,9 @@ test.describe('TST08 - File folder properties', () => {
     );
   });
 
+  /**
+   * duplicate TST0213
+   */
   test.skip('TST3005 - Description for folders [Pro]', async () => {});
 
   /**

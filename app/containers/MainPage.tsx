@@ -774,12 +774,12 @@ function MainPage(props: Props) {
           />
         )}
         {props.isTruncatedConfirmDialogOpened && (
-        <IsTruncatedConfirmDialog
-          open={true}
-          onClose={props.toggleTruncatedConfirmDialog}
-        />
-      )}
-      {props.isProgressDialogOpened && (
+          <IsTruncatedConfirmDialog
+            open={true}
+            onClose={props.toggleTruncatedConfirmDialog}
+          />
+        )}
+        {props.isProgressDialogOpened && (
           <ProgressDialog
             open={props.isProgressDialogOpened}
             onClose={toggleProgressDialog}

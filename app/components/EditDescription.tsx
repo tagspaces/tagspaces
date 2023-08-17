@@ -1,7 +1,7 @@
-import React, { MutableRefObject, useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
+import { useTheme } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import AppConfig from '-/AppConfig';
 import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
 import i18n from '-/services/i18n';
 import { ProTooltip } from '-/components/HelperComponents';
@@ -12,13 +12,14 @@ interface Props {
   classes: any;
   toggleEditDescriptionField: () => void;
   printHTML: () => void;
-  fileDescriptionRef: MutableRefObject<MilkdownRef>;
-  isDarkTheme: boolean;
+  // fileDescriptionRef: MutableRefObject<MilkdownRef>;
   description: string;
   setEditDescription: (md: string) => void;
   currentFolder: string;
 }
 function EditDescription(props: Props) {
+  const theme = useTheme();
+  const fileDescriptionRef = useRef<MilkdownRef>(null);
   const {
     currentFolder,
     description,
@@ -26,12 +27,14 @@ function EditDescription(props: Props) {
     classes,
     printHTML,
     toggleEditDescriptionField,
-    fileDescriptionRef,
-    primaryColor,
-    isDarkTheme
+    primaryColor
   } = props;
   const [editMode, setEditMode] = useState<boolean>(false);
   const descriptionFocus = useRef<boolean>(false);
+
+  useEffect(() => {
+    fileDescriptionRef.current?.setDarkMode(theme.palette.mode === 'dark');
+  }, [theme]); // , settings]);
 
   const milkdownOnFocus = React.useCallback(
     () => (descriptionFocus.current = true),
@@ -93,7 +96,7 @@ function EditDescription(props: Props) {
       <div
         data-tid="descriptionTID"
         onDoubleClick={() => {
-          if (toggleEditDescriptionField) {
+          if (!editMode && toggleEditDescriptionField) {
             setEditMode(true);
             toggleEditDescriptionField();
           }
@@ -101,7 +104,6 @@ function EditDescription(props: Props) {
         style={{
           border: '1px solid lightgray',
           borderRadius: 5,
-          padding: 2,
           minHeight: 50,
           maxHeight: noDescription && !editMode ? 100 : 250,
           width: 'calc(100% - 8px)',
@@ -120,16 +122,28 @@ function EditDescription(props: Props) {
             {i18n.t('core:addMarkdownDescription')}
           </Typography>
         ) : (
-          <MilkdownEditor
-            ref={fileDescriptionRef}
-            content={description || ''}
-            onChange={milkdownListener}
-            onFocus={milkdownOnFocus}
-            readOnly={!editMode}
-            dark={isDarkTheme}
-            lightMode={true}
-            currentFolder={currentFolder}
-          />
+          <>
+            <style>
+              {`
+        .prose a {
+             color: ${theme.palette.primary.main};
+        }
+        .prose img {
+             max-width: 99%;
+        }
+        `}
+            </style>
+            <MilkdownEditor
+              ref={fileDescriptionRef}
+              content={description || ''}
+              onChange={milkdownListener}
+              onFocus={milkdownOnFocus}
+              readOnly={!editMode}
+              lightMode={false}
+              excludePlugins={!editMode ? ['menu', 'upload'] : []}
+              currentFolder={currentFolder}
+            />
+          </>
         )}
       </div>
       <Typography
