@@ -128,6 +128,9 @@ function EditDescription(props: Props) {
         .prose a {
              color: ${theme.palette.primary.main};
         }
+        .prose img {
+             max-width: 99%;
+        }
         `}
             </style>
             <MilkdownEditor
