@@ -86,7 +86,8 @@ function DirectoryMenu(props: Props) {
     currentLocation,
     openAddRemoveTagsDialog,
     openMoveCopyFilesDialog,
-    openRenameDirectoryDialog
+    openRenameDirectoryDialog,
+    switchPerspective
   } = props;
 
   const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
@@ -209,7 +210,7 @@ function DirectoryMenu(props: Props) {
     return openEntry(directoryPath);
   }
 
-  function switchPerspective(perspectiveId) {
+  function perspectiveSwitch(perspectiveId) {
     if (
       Pro ||
       perspectiveId === PerspectiveIDs.GRID ||
@@ -461,7 +462,7 @@ Do you want to continue?`)
     setFolderThumbnail,
     copySharingLink,
     importMacTags,
-    switchPerspective,
+    perspectiveSwitch,
     showProperties,
     cameraTakePicture,
     openAddRemoveTagsDialog,
