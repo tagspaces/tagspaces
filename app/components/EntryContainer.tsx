@@ -126,7 +126,13 @@ const classes = {
   fileBadge: `${PREFIX}-fileBadge`
 };
 
-const Root = styled('div')(({ theme }) => ({
+const Root = styled(Box)(({ theme }) => ({
+  width: '100%',
+  flexDirection: 'column',
+  flex: '1 1 100%',
+  display: 'flex',
+  backgroundColor: theme.palette.background.default,
+  height: '100%', // filePropsHeight ||
   [`& .${classes.toolbar2}`]: {
     width: '100%',
     paddingLeft: 0,
@@ -1324,211 +1330,200 @@ function EntryContainer(props: Props) {
     const toolbarButtons = () => {
       if (openedFile.path !== undefined) {
         return (
-          <Root>
+          <>
             <Box
               style={{
-                width: '100%',
-                flexDirection: 'column',
-                flex: '1 1 100%',
+                paddingLeft: 0,
+                paddingRight: 50,
+                paddingTop: 0,
+                minHeight: 50,
                 display: 'flex',
-                backgroundColor: theme.palette.background.default,
-                height: '100%' // filePropsHeight ||
+                flexDirection: 'row',
+                justifyContent: 'flex-start'
               }}
             >
               <Box
+                className={classes.flexLeft}
                 style={{
-                  paddingLeft: 0,
-                  paddingRight: 50,
-                  paddingTop: 0,
-                  minHeight: 50,
+                  paddingLeft: 10,
                   display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'flex-start'
+                  alignItems: 'center',
+                  paddingRight: editingSupported ? 85 : 5
                 }}
               >
-                <Box
-                  className={classes.flexLeft}
-                  style={{
-                    paddingLeft: 10,
-                    display: 'flex',
-                    alignItems: 'center',
-                    paddingRight: editingSupported ? 85 : 5
-                  }}
-                >
-                  <Tooltip title={fileName}>
-                    <Box
-                      data-tid={'OpenedTID' + dataTidFormat(fileName)}
-                      style={{
-                        color: theme.palette.text.primary,
-                        display: 'inline',
-                        fontSize: 17,
-                        maxHeight: 40,
-                        overflowY: 'auto'
-                      }}
-                    >
-                      {fileTitle}
-                    </Box>
-                  </Tooltip>
-                  {openedFile.isFile ? (
-                    <>
-                      {fileChanged.current ? (
-                        <Tooltip title={i18n.t('core:fileChanged')}>
-                          <span
-                            style={{
-                              color: theme.palette.text.primary,
-                              margin: 3
-                            }}
-                          >
-                            {String.fromCharCode(0x25cf)}
-                          </span>
-                        </Tooltip>
-                      ) : (
-                        ''
-                      )}
-                      <span
-                        className={classes.fileBadge}
-                        style={{
-                          backgroundColor: openedFile.color,
-                          textTransform: 'uppercase'
-                        }}
-                      >
-                        {'.' +
-                          extractFileExtension(
-                            openedFile.path,
-                            PlatformIO.getDirSeparator()
-                          )}
-                      </span>
-                    </>
-                  ) : (
+                <Tooltip title={fileName}>
+                  <Box
+                    data-tid={'OpenedTID' + dataTidFormat(fileName)}
+                    style={{
+                      color: theme.palette.text.primary,
+                      display: 'inline',
+                      fontSize: 17,
+                      maxHeight: 40,
+                      overflowY: 'auto'
+                    }}
+                  >
+                    {fileTitle}
+                  </Box>
+                </Tooltip>
+                {openedFile.isFile ? (
+                  <>
+                    {fileChanged.current ? (
+                      <Tooltip title={i18n.t('core:fileChanged')}>
+                        <span
+                          style={{
+                            color: theme.palette.text.primary,
+                            margin: 3
+                          }}
+                        >
+                          {String.fromCharCode(0x25cf)}
+                        </span>
+                      </Tooltip>
+                    ) : (
+                      ''
+                    )}
                     <span
                       className={classes.fileBadge}
-                      title={i18n.t('core:toggleEntryProperties')}
                       style={{
-                        backgroundColor: AppConfig.defaultFolderColor
+                        backgroundColor: openedFile.color,
+                        textTransform: 'uppercase'
                       }}
                     >
-                      {i18n.t('core:folder')}
+                      {'.' +
+                        extractFileExtension(
+                          openedFile.path,
+                          PlatformIO.getDirSeparator()
+                        )}
                     </span>
-                  )}
-                  <ProTooltip tooltip={i18n.t('core:toggleBookmark')}>
-                    <IconButton
-                      data-tid="toggleBookmarkTID"
-                      aria-label="bookmark"
-                      size="small"
-                      onClick={bookmarkClick}
-                    >
-                      {haveBookmark ? (
-                        <BookmarkIcon
-                          style={{
-                            color: theme.palette.primary.main
-                          }}
-                        />
-                      ) : (
-                        <BookmarkAddIcon
-                          style={{
-                            color: theme.palette.text.secondary
-                          }}
-                        />
-                      )}
-                    </IconButton>
-                  </ProTooltip>
-                  <TagsPreview tags={openedFile.tags} />
-                </Box>
-                <div
-                  style={{
-                    zIndex: 1,
-                    position: 'absolute',
-                    right: 0,
-                    backgroundColor: theme.palette.background.default,
-                    display: 'flex',
-                    alignItems: 'center'
-                  }}
-                >
-                  {isEditable && props.revisionsEnabled && (
-                    <Tooltip
-                      title={
-                        i18n.t('core:autosave') +
-                        (!Pro
-                          ? ' - ' +
-                            i18n.t('core:thisFunctionalityIsAvailableInPro')
-                          : '')
-                      }
-                    >
-                      <Switch
-                        data-tid="autoSaveTID"
-                        checked={
-                          openedFile.isAutoSaveEnabled !== undefined &&
-                          openedFile.isAutoSaveEnabled
-                        }
-                        onChange={toggleAutoSave}
-                        name="autoSave"
-                        color="primary"
+                  </>
+                ) : (
+                  <span
+                    className={classes.fileBadge}
+                    title={i18n.t('core:toggleEntryProperties')}
+                    style={{
+                      backgroundColor: AppConfig.defaultFolderColor
+                    }}
+                  >
+                    {i18n.t('core:folder')}
+                  </span>
+                )}
+                <ProTooltip tooltip={i18n.t('core:toggleBookmark')}>
+                  <IconButton
+                    data-tid="toggleBookmarkTID"
+                    aria-label="bookmark"
+                    size="small"
+                    onClick={bookmarkClick}
+                  >
+                    {haveBookmark ? (
+                      <BookmarkIcon
+                        style={{
+                          color: theme.palette.primary.main
+                        }}
                       />
-                    </Tooltip>
-                  )}
+                    ) : (
+                      <BookmarkAddIcon
+                        style={{
+                          color: theme.palette.text.secondary
+                        }}
+                      />
+                    )}
+                  </IconButton>
+                </ProTooltip>
+                <TagsPreview tags={openedFile.tags} />
+              </Box>
+              <div
+                style={{
+                  zIndex: 1,
+                  position: 'absolute',
+                  right: 0,
+                  backgroundColor: theme.palette.background.default,
+                  display: 'flex',
+                  alignItems: 'center'
+                }}
+              >
+                {isEditable && props.revisionsEnabled && (
+                  <Tooltip
+                    title={
+                      i18n.t('core:autosave') +
+                      (!Pro
+                        ? ' - ' +
+                          i18n.t('core:thisFunctionalityIsAvailableInPro')
+                        : '')
+                    }
+                  >
+                    <Switch
+                      data-tid="autoSaveTID"
+                      checked={
+                        openedFile.isAutoSaveEnabled !== undefined &&
+                        openedFile.isAutoSaveEnabled
+                      }
+                      onChange={toggleAutoSave}
+                      name="autoSave"
+                      color="primary"
+                    />
+                  </Tooltip>
+                )}
 
-                  {editingSupported && openedFile.editMode && (
-                    <ButtonGroup>
-                      <Tooltip title={i18n.t('core:cancelEditing')}>
-                        <Button
-                          onClick={reloadDocument}
-                          aria-label={i18n.t('core:cancelEditing')}
-                          size="small"
-                          variant="outlined"
-                          color="primary"
-                          startIcon={isDesktopMode && <CancelIcon />}
-                        >
-                          {fileChanged.current
-                            ? i18n.t('core:cancel')
-                            : i18n.t('core:closeButton')}
-                        </Button>
-                      </Tooltip>
-                      <Tooltip
-                        title={
-                          i18n.t('core:saveFile') +
-                          ' (' +
-                          (AppConfig.isMaclike ? '⌘' : 'CTRL') +
-                          ' + S)'
-                        }
-                      >
-                        <LoadingButton
-                          disabled={false}
-                          onClick={startSavingFile}
-                          aria-label={i18n.t('core:saveFile')}
-                          data-tid="fileContainerSaveFile"
-                          size="small"
-                          variant="outlined"
-                          color="primary"
-                          startIcon={isDesktopMode && <SaveIcon />}
-                          loading={isSavingInProgress}
-                        >
-                          {i18n.t('core:save')}
-                        </LoadingButton>
-                      </Tooltip>
-                    </ButtonGroup>
-                  )}
-                  {editingSupported && !openedFile.editMode && (
-                    <Tooltip title={i18n.t('core:editFile')}>
+                {editingSupported && openedFile.editMode && (
+                  <ButtonGroup>
+                    <Tooltip title={i18n.t('core:cancelEditing')}>
                       <Button
-                        disabled={false}
+                        onClick={reloadDocument}
+                        aria-label={i18n.t('core:cancelEditing')}
                         size="small"
                         variant="outlined"
                         color="primary"
-                        onClick={editFile}
-                        aria-label={i18n.t('core:editFile')}
-                        data-tid="fileContainerEditFile"
-                        startIcon={<EditIcon />}
+                        startIcon={isDesktopMode && <CancelIcon />}
                       >
-                        {i18n.t('core:edit')}
+                        {fileChanged.current
+                          ? i18n.t('core:cancel')
+                          : i18n.t('core:closeButton')}
                       </Button>
                     </Tooltip>
-                  )}
-                  {closeButton}
-                </div>
-              </Box>
-              {entryProperties}
+                    <Tooltip
+                      title={
+                        i18n.t('core:saveFile') +
+                        ' (' +
+                        (AppConfig.isMaclike ? '⌘' : 'CTRL') +
+                        ' + S)'
+                      }
+                    >
+                      <LoadingButton
+                        disabled={false}
+                        onClick={startSavingFile}
+                        aria-label={i18n.t('core:saveFile')}
+                        data-tid="fileContainerSaveFile"
+                        size="small"
+                        variant="outlined"
+                        color="primary"
+                        startIcon={isDesktopMode && <SaveIcon />}
+                        loading={isSavingInProgress}
+                      >
+                        {i18n.t('core:save')}
+                      </LoadingButton>
+                    </Tooltip>
+                  </ButtonGroup>
+                )}
+                {editingSupported && !openedFile.editMode && (
+                  <Tooltip title={i18n.t('core:editFile')}>
+                    <Button
+                      disabled={false}
+                      size="small"
+                      variant="outlined"
+                      color="primary"
+                      onClick={editFile}
+                      aria-label={i18n.t('core:editFile')}
+                      data-tid="fileContainerEditFile"
+                      startIcon={<EditIcon />}
+                    >
+                      {i18n.t('core:edit')}
+                    </Button>
+                  </Tooltip>
+                )}
+                {closeButton}
+              </div>
             </Box>
-          </Root>
+            {entryProperties}
+          </>
         );
       }
       return <div>{i18n.t('core:noEntrySelected')}</div>;
@@ -1588,7 +1583,7 @@ function EntryContainer(props: Props) {
         percent={percent.current}
         setPercent={setPercent}
       >
-        {toolbarButtons()}
+        <Root>{toolbarButtons()}</Root>
         <FileView
           key="FileViewID"
           openedFile={openedFiles[0]}

@@ -81,6 +81,7 @@ const classes = {
 };
 
 const Root = styled('div')(({ theme }) => ({
+  position: 'relative',
   [`& .${classes.button}`]: {
     position: 'relative',
     padding: '8px 12px 6px 8px',
@@ -506,7 +507,7 @@ function FolderContainer(props: Props) {
     : '';
   // keyBindings['openSearch'].toUpperCase()
   return (
-    <Root data-tid="folderContainerTID" style={{ position: 'relative' }}>
+    <Root data-tid="folderContainerTID">
       <div
         style={{
           flex: '1 1 100%',
