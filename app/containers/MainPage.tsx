@@ -799,12 +799,10 @@ function MainPage(props: Props) {
             reflect={props.isCreateDirectoryOpened?.reflect}
           />
         )}
-        {props.isNewEntryDialogOpened && (
-          <NewEntryDialog
-            open={props.isNewEntryDialogOpened}
-            onClose={toggleNewEntryDialog}
-          />
-        )}
+        <NewEntryDialog
+        open={props.isNewEntryDialogOpened}
+        onClose={toggleNewEntryDialog}
+        />
         {props.isNewFileDialogOpened && (
           <NewFileDialog
             open={props.isNewFileDialogOpened}

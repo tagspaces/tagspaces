@@ -39,7 +39,6 @@ import {
   getSelectedEntries,
   isReadOnlyMode
 } from '-/reducers/app';
-import IOActions from '-/reducers/io-actions';
 import TaggingActions from '-/reducers/tagging-actions';
 import FileUploadContainer, {
   FileUploadContainerRef
@@ -119,28 +118,8 @@ function DirectoryMenu(props: Props) {
     dispatch(AppActions.toggleNewFileDialog());
   };
 
-  const uploadFilesAPI = (files, destination, onUploadProgress) => {
-    dispatch(IOActions.uploadFilesAPI(files, destination, onUploadProgress));
-  };
-
-  const reflectCreateEntries = fsEntries => {
-    dispatch(AppActions.reflectCreateEntries(fsEntries));
-  };
-
-  const onUploadProgress = (progress, response) => {
-    dispatch(AppActions.onUploadProgress(progress, response));
-  };
-
-  const toggleUploadDialog = () => {
-    dispatch(AppActions.toggleUploadDialog());
-  };
-
   const toggleProgressDialog = () => {
     dispatch(AppActions.toggleProgressDialog());
-  };
-
-  const resetProgress = () => {
-    dispatch(AppActions.resetProgress());
   };
 
   const addTags = (paths, tags, updateIndex) => {
@@ -483,14 +462,9 @@ Do you want to continue?`)
         {menuItems}
       </Menu>
       <FileUploadContainer
+        id="dirMenuId"
         ref={fileUploadContainerRef}
         directoryPath={directoryPath}
-        onUploadProgress={onUploadProgress}
-        toggleUploadDialog={toggleUploadDialog}
-        toggleProgressDialog={toggleProgressDialog}
-        resetProgress={resetProgress}
-        reflectCreateEntries={reflectCreateEntries}
-        uploadFilesAPI={uploadFilesAPI}
       />
     </div>
   );

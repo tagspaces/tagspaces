@@ -56,10 +56,11 @@ const StyledGrid = styled(Grid)(() => ({
 interface Props {
   //open: boolean;
   onClose: () => void;
+  tidPrefix?: string;
 }
 
 function CreateFile(props: Props) {
-  const { onClose } = props;
+  const { onClose, tidPrefix } = props;
 
   const dispatch: AppDispatch = useDispatch();
   const firstRWLocation = useSelector(getFirstRWLocation);
@@ -77,6 +78,13 @@ function CreateFile(props: Props) {
   const fileContent = '';
 
   const noSuitableLocation = !targetDirectoryPath;
+
+  function tid(tid) {
+    if (tidPrefix) {
+      return tidPrefix + tid;
+    }
+    return tid;
+  }
 
   function loadLocation() {
     if (!currentDirectoryPath && firstRWLocation) {
@@ -186,7 +194,7 @@ function CreateFile(props: Props) {
             defaultValue={fileName.current}
             disabled={noSuitableLocation}
             fullWidth={true}
-            data-tid="newEntryDialogInputTID"
+            data-tid={tid('newEntryDialogInputTID')}
           />
           {inputError && (
             <FormHelperText>{i18n.t('core:fileNameHelp')}</FormHelperText>
@@ -204,7 +212,7 @@ function CreateFile(props: Props) {
             // variant="contained"
             onClick={createMarkdownFile}
             className={classes.createButton}
-            data-tid="createMarkdownButton"
+            data-tid={tid('createMarkdownButton')}
             disabled={noSuitableLocation}
           >
             <Tooltip title={i18n.t('createMarkdownTitle')}>
@@ -222,7 +230,7 @@ function CreateFile(props: Props) {
             // variant="contained"
             onClick={createRichTextFile}
             className={classes.createButton}
-            data-tid="createRichTextFileButton"
+            data-tid={tid('createRichTextFileButton')}
             disabled={noSuitableLocation}
           >
             <Tooltip title={i18n.t('createNoteTitle')}>
@@ -235,7 +243,7 @@ function CreateFile(props: Props) {
             // variant="contained"
             onClick={createTextFile}
             className={classes.createButton}
-            data-tid="createTextFileButton"
+            data-tid={tid('createTextFileButton')}
             disabled={noSuitableLocation}
           >
             <Tooltip title={i18n.t('createTextFileTitle')}>

@@ -17,21 +17,15 @@
  */
 
 import React, { forwardRef, Ref, useImperativeHandle, useRef } from 'react';
-import { Progress } from 'aws-sdk/clients/s3';
+import { useDispatch } from 'react-redux';
 import { TS } from '-/tagspaces.namespace';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
+import IOActions from '-/reducers/io-actions';
 
 interface Props {
+  id: string;
   directoryPath: string;
-  uploadFilesAPI: (
-    files: Array<File>,
-    destination: string,
-    onUploadProgress?: (progress: Progress, response: any) => void
-  ) => any;
-  reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => void;
-  onUploadProgress: (progress: Progress, response: any) => void;
-  toggleUploadDialog: () => void;
-  toggleProgressDialog: () => void;
-  resetProgress: () => void;
+  //toggleProgressDialog: () => void;
 }
 
 export interface FileUploadContainerRef {
@@ -40,6 +34,13 @@ export interface FileUploadContainerRef {
 
 const FileUploadContainer = forwardRef(
   (props: Props, ref: Ref<FileUploadContainerRef>) => {
+    const dispatch: AppDispatch = useDispatch();
+    const { id, directoryPath } = props;
+
+    const onUploadProgress = (progress, abort, fileName) => {
+      dispatch(AppActions.onUploadProgress(progress, abort, fileName));
+    };
+
     useImperativeHandle(ref, () => ({
       onFileUpload() {
         /* if (AppConfig.isCordovaAndroid) {
@@ -83,16 +84,17 @@ const FileUploadContainer = forwardRef(
     function handleFileInputChange(selection: any) {
       // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
       // const file = selection.currentTarget.files[0];
-      props.resetProgress();
-      props.toggleUploadDialog();
-      props
-        .uploadFilesAPI(
+      dispatch(AppActions.resetProgress());
+      dispatch(AppActions.toggleUploadDialog());
+      dispatch(
+        IOActions.uploadFilesAPI(
           Array.from(selection.currentTarget.files),
-          props.directoryPath,
-          props.onUploadProgress
+          directoryPath,
+          onUploadProgress
         )
-        .then(fsEntries => {
-          props.reflectCreateEntries(fsEntries);
+      )
+        .then((fsEntries: Array<TS.FileSystemEntry>) => {
+          dispatch(AppActions.reflectCreateEntries(fsEntries));
           return true;
         })
         .catch(error => {
@@ -102,6 +104,7 @@ const FileUploadContainer = forwardRef(
 
     return (
       <input
+        id={id}
         style={{ display: 'none' }}
         ref={fileInput}
         accept="*"
@@ -112,20 +115,5 @@ const FileUploadContainer = forwardRef(
     );
   }
 );
-
-/* function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      onUploadProgress: AppActions.onUploadProgress,
-      toggleUploadDialog: AppActions.toggleUploadDialog,
-      toggleProgressDialog: AppActions.toggleProgressDialog,
-      resetProgress: AppActions.resetProgress,
-      reflectCreateEntries: AppActions.reflectCreateEntries,
-      uploadFilesAPI: IOActions.uploadFilesAPI,
-      uploadFiles: IOActions.uploadFiles
-    },
-    dispatch
-  );
-} */
 
 export default FileUploadContainer;

@@ -70,7 +70,7 @@ function NewEntryDialog(props: Props) {
         >
           <Accordion style={{ marginTop: 5 }} defaultExpanded>
             <AccordionDetails style={{ paddingTop: 16 }}>
-              <CreateFile onClose={onClose} />
+              <CreateFile onClose={onClose} tidPrefix="entry" />
             </AccordionDetails>
           </Accordion>
           <Accordion>
@@ -82,7 +82,7 @@ function NewEntryDialog(props: Props) {
               <Typography>{i18n.t('core:moreOperations')}</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <CreateDirectory onClose={onClose} />
+              <CreateDirectory onClose={onClose} tidPrefix="entry" />
             </AccordionDetails>
           </Accordion>
           <TargetPath />
