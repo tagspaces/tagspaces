@@ -1395,7 +1395,7 @@ function EntryProperties(props: Props) {
             </Grid>
           )}
         </Grid>
-        {/*<Grid container item xs={12} style={{ height: 150 }}></Grid>*/}
+        <Grid container item xs={12} style={{ height: 150 }}/>
       </Grid>
       {isConfirmResetColorDialogOpened && (
         <ConfirmDialog
