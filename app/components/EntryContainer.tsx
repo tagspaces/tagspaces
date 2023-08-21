@@ -1715,9 +1715,11 @@ function EntryContainer(props: Props) {
         saveAs={saveAs}
         override={override}
       />
-      {/* eslint-disable-next-line jsx-a11y/anchor-has-content,jsx-a11y/anchor-is-valid */}
-      <a href="#" id="downloadFile" />
-      {renderPanels()}
+      <div style={{ height: 'calc(100% - 47px)' }}>
+        {/* eslint-disable-next-line jsx-a11y/anchor-has-content,jsx-a11y/anchor-is-valid */}
+        <a href="#" id="downloadFile" />
+        {renderPanels()}
+      </div>
     </GlobalHotKeys>
   );
 }
