@@ -31,7 +31,7 @@ import fscreen from 'fscreen';
 import Button from '@mui/material/Button';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Tooltip from '-/components/Tooltip';
-import Divider from '@mui/material/Divider';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import IconButton from '@mui/material/IconButton';
 import BookmarkIcon from '@mui/icons-material/BookmarkTwoTone';
 import BookmarkAddIcon from '@mui/icons-material/BookmarkAddTwoTone';
@@ -39,9 +39,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
 import FullScreenIcon from '@mui/icons-material/ZoomOutMap';
-import OpenNativelyIcon from '@mui/icons-material/Launch';
-import PrevDocumentIcon from '@mui/icons-material/KeyboardArrowUp';
-import NextDocumentIcon from '@mui/icons-material/KeyboardArrowDown';
 import FileDownloadIcon from '@mui/icons-material/AssignmentReturned';
 import DetailsIcon from '@mui/icons-material/Info';
 import ExpandIcon from '@mui/icons-material/SettingsEthernet';
@@ -67,15 +64,11 @@ import {
   extractContainingDirectoryPath,
   extractTitle,
   extractFileExtension,
-  baseName,
   extractFileName,
   extractDirectoryName,
-  generateSharingLink,
-  getBackupFileLocation,
-  cleanRootPath
+  getBackupFileLocation
 } from '@tagspaces/tagspaces-common/paths';
 import { ProTooltip } from '-/components/HelperComponents';
-import EntryProperties from '-/components/EntryProperties';
 import TagsPreview from '-/components/TagsPreview';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import PlatformIO from '-/services/platform-facade';
@@ -85,11 +78,9 @@ import {
   actions as SettingsActions,
   isDesktopMode,
   getKeyBindingObject,
-  getMapTileServer,
   getCurrentLanguage,
   isRevisionsEnabled
 } from '-/reducers/settings';
-import TaggingActions from '-/reducers/tagging-actions';
 import {
   OpenedEntry,
   NotificationTypes,
@@ -106,8 +97,11 @@ import { Switch } from '@mui/material';
 import useFirstRender from '-/utils/useFirstRender';
 import ResolveConflictDialog from '-/components/dialogs/ResolveConflictDialog';
 import { dataTidFormat } from '-/services/test';
-import { loadJSONFile } from '-/services/utils-io';
+import { getSharingLink, loadJSONFile } from '-/services/utils-io';
 import { styled, useTheme } from '@mui/material/styles';
+import EntryContainerTabs from '-/components/EntryContainerTabs';
+import EntryContainerNav from '-/components/EntryContainerNav';
+import EntryContainerMenu from '-/components/EntryContainerMenu';
 
 const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
 // const openedSplitSize = AppConfig.isElectron ? 560 : 360;
@@ -169,10 +163,6 @@ interface Props {
   settings: any;
   keyBindings: any;
   closeAllFiles: () => void;
-  renameFile: () => void;
-  renameDirectory: () => void;
-  addTags: () => void;
-  removeTags: () => void;
   openPrevFile: (path: string) => void;
   openNextFile: (path: string) => void;
   openFileNatively: (path: string) => void;
@@ -183,7 +173,6 @@ interface Props {
     notificationType?: string, // NotificationTypes
     autohide?: boolean
   ) => void;
-  removeAllTags: () => void;
   deleteFile: (path: string, uuid: string) => void;
   toggleEntryFullWidth: () => void;
   isReadOnlyMode: boolean;
@@ -193,7 +182,6 @@ interface Props {
     fsEntryMeta: any // FileSystemEntryMeta
   ) => Promise<boolean>;
   // reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
-  updateThumbnailUrl: (path: string, thumbUrl: string) => void;
   // setLastSelectedEntry: (path: string) => void;
   loadDirectoryContent: (
     path: string,
@@ -201,8 +189,7 @@ interface Props {
     loadDirMeta?: boolean
   ) => void;
   currentDirectoryPath: string | null;
-  isDesktopMode: boolean;
-  tileServer: TS.MapTileServer;
+  desktopMode: boolean;
   switchLocationType: (locationId: string) => Promise<string | null>;
   switchCurrentLocationType: (currentLocationId) => Promise<boolean>;
   revisionsEnabled: boolean;
@@ -217,26 +204,20 @@ function EntryContainer(props: Props) {
     settings,
     openedFiles,
     currentDirectoryPath,
-    isDesktopMode,
+    desktopMode,
     toggleEntryFullWidth,
     isReadOnlyMode,
     updateOpenedFile,
-    updateThumbnailUrl,
-    renameFile,
-    renameDirectory,
-    addTags,
-    removeTags,
-    removeAllTags,
     deleteFile,
     openLink,
     closeAllFiles,
     openFileNatively,
     openDirectory,
     setEntryPropertiesSplitSize,
-    showNotification,
-    tileServer
+    showNotification
   } = props;
 
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const theme = useTheme();
   // const [percent, setPercent] = React.useState<number | undefined>(undefined);
   const percent = useRef<number | undefined>(undefined);
@@ -270,9 +251,6 @@ function EntryContainer(props: Props) {
   const [isConflictDialogOpen, setConflictDialogOpen] = useState<boolean>(
     false
   );
-  const [isDeleteEntryModalOpened, setDeleteEntryModalOpened] = useState<
-    boolean
-  >(false);
   const [isSavingInProgress, setSavingInProgress] = useState<boolean>(false);
   const fileViewer: MutableRefObject<HTMLIFrameElement> = useRef<
     HTMLIFrameElement
@@ -434,44 +412,10 @@ function EntryContainer(props: Props) {
   const haveBookmark =
     Pro && Pro.bookmarks && Pro.bookmarks.haveBookmark(openedFile.path);
 
-  let sharingLink = '';
-  let sharingParentFolderLink = '';
-  if (window.location.href.indexOf('?') > 0) {
-    const sharingURL = new URL(window.location.href);
-    const params = new URLSearchParams(sharingURL.search);
-    if (params.has('tslid')) {
-      const locationId = params.get('tslid');
-      //if (params.has('tsdpath')) {
-      // const folderPath2 = params.get('tsdpath');
-      const folderLocation = props.locations.find(
-        location => location.uuid === locationId
-      );
-      const folderPath = extractContainingDirectoryPath(openedFile.path);
-      if (folderPath.indexOf(folderLocation.path) === 0) {
-        sharingParentFolderLink = generateSharingLink(
-          locationId,
-          undefined,
-          cleanRootPath(
-            folderPath,
-            folderLocation.path,
-            PlatformIO.getDirSeparator()
-          )
-        );
-      }
-
-      //}
-      if (params.has('tsepath')) {
-        const entryPath = params.get('tsepath');
-        if (openedFile.isFile) {
-          sharingLink = generateSharingLink(locationId, entryPath);
-        } else {
-          sharingLink = generateSharingLink(locationId, undefined, entryPath);
-        }
-      } else {
-        sharingLink = generateSharingLink(locationId);
-      }
-    }
-  }
+  const { sharingLink, sharingParentFolderLink } = getSharingLink(
+    openedFile,
+    props.locations
+  );
 
   const handleMessage = (data: any) => {
     let message;
@@ -808,10 +752,6 @@ function EntryContainer(props: Props) {
     });
   };
 
-  const shareFile = (filePath: string) => {
-    PlatformIO.shareFiles([filePath]);
-  };
-
   const setPercent = (p: number | undefined) => {
     percent.current = p;
     // console.log('Percent ' + percent.current);
@@ -894,65 +834,6 @@ function EntryContainer(props: Props) {
     }
   };
 
-  const openNatively = () => {
-    if (openedFile.path) {
-      if (openedFile.isFile) {
-        openFileNatively(openedFile.path);
-      } else {
-        openDirectory(openedFile.path);
-      }
-    }
-  };
-
-  const navigateToFolder = () => {
-    // let folderPath = '';
-    if (openedFile.isFile) {
-      // folderPath = extractContainingDirectoryPath(openedFile.path);
-      openLink(sharingParentFolderLink);
-    } else {
-      openLink(sharingLink);
-      // folderPath = openedFile.path;
-    }
-    // loadDirectoryContent(folderPath, false, true);
-  };
-
-  const openInNewWindow = () => {
-    PlatformIO.createNewInstance(window.location.href);
-  };
-
-  const downloadCordova = (uri, filename) => {
-    const { Downloader } = window.plugins;
-
-    const downloadSuccessCallback = result => {
-      // result is an object
-      /* {
-        path: "file:///storage/sdcard0/documents/My Pdf.pdf", // Returns full file path
-        file: "My Pdf.pdf", // Returns Filename
-        folder: "documents" // Returns folder name
-      } */
-      console.log(result.file); // My Pdf.pdf
-    };
-
-    const downloadErrorCallback = error => {
-      console.log(error);
-    };
-
-    const options = {
-      title: 'Downloading File:' + filename, // Download Notification Title
-      url: uri, // File Url
-      path: filename, // The File Name with extension
-      description: 'The file is downloading', // Download description Notification String
-      visible: true, // This download is visible and shows in the notifications while in progress and after completion.
-      folder: 'documents' // Folder to save the downloaded file, if not exist it will be created
-    };
-
-    Downloader.download(
-      options,
-      downloadSuccessCallback,
-      downloadErrorCallback
-    );
-  };
-
   const isEditable = AppConfig.editableFiles.some(ext =>
     openedFile.path.endsWith(ext)
   );
@@ -979,7 +860,7 @@ function EntryContainer(props: Props) {
     }
   };
 
-  const renderFileToolbar = () => (
+  /*const renderFileToolbar = () => (
     <div className={classes.toolbar2}>
       <div className={classes.flexLeft}>
         <Tooltip title={i18n.t('core:toggleProperties')}>
@@ -1283,7 +1164,7 @@ function EntryContainer(props: Props) {
         )}
       </div>
     </div>
-  );
+  );*/
 
   let fileTitle: string = openedFile.path
     ? extractTitle(
@@ -1314,222 +1195,155 @@ function EntryContainer(props: Props) {
   }
 
   const renderPanels = () => {
-    const closeButton = (
-      <Tooltip title={i18n.t('core:closeEntry')}>
-        <IconButton
-          onClick={startClosingFile}
-          aria-label={i18n.t('core:closeEntry')}
-          data-tid="fileContainerCloseOpenedFile"
-          size="large"
-        >
-          <CloseIcon />
-        </IconButton>
-      </Tooltip>
-    );
-
     const toolbarButtons = () => {
-      if (openedFile.path !== undefined) {
-        return (
-          <>
-            <Box
-              style={{
-                paddingLeft: 0,
-                paddingRight: 50,
-                paddingTop: 0,
-                minHeight: 50,
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'flex-start'
+      return (
+        <Box
+          style={{
+            paddingLeft: 0,
+            paddingRight: 50,
+            paddingTop: 0,
+            minHeight: 50,
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'flex-start'
+          }}
+        >
+          <Box
+            className={classes.flexLeft}
+            style={{
+              paddingLeft: 5,
+              display: 'flex',
+              alignItems: 'center',
+              paddingRight: editingSupported ? 85 : 5
+            }}
+          >
+            <Button
+              id="actions-button"
+              aria-haspopup="true"
+              endIcon={<MoreVertIcon sx={{ fontSize: 20 }} />}
+              onClick={(event: React.MouseEvent<HTMLElement>) => {
+                setAnchorEl(event.currentTarget);
               }}
             >
-              <Box
-                className={classes.flexLeft}
-                style={{
-                  paddingLeft: 10,
-                  display: 'flex',
-                  alignItems: 'center',
-                  paddingRight: editingSupported ? 85 : 5
-                }}
-              >
-                <Tooltip title={fileName}>
-                  <Box
-                    data-tid={'OpenedTID' + dataTidFormat(fileName)}
-                    style={{
-                      color: theme.palette.text.primary,
-                      display: 'inline',
-                      fontSize: 17,
-                      maxHeight: 40,
-                      overflowY: 'auto'
-                    }}
-                  >
-                    {fileTitle}
-                  </Box>
-                </Tooltip>
-                {openedFile.isFile ? (
-                  <>
-                    {fileChanged.current ? (
-                      <Tooltip title={i18n.t('core:fileChanged')}>
-                        <span
-                          style={{
-                            color: theme.palette.text.primary,
-                            margin: 3
-                          }}
-                        >
-                          {String.fromCharCode(0x25cf)}
-                        </span>
-                      </Tooltip>
-                    ) : (
-                      ''
-                    )}
-                    <span
-                      className={classes.fileBadge}
-                      style={{
-                        backgroundColor: openedFile.color,
-                        textTransform: 'uppercase'
-                      }}
-                    >
-                      {'.' +
-                        extractFileExtension(
-                          openedFile.path,
-                          PlatformIO.getDirSeparator()
-                        )}
-                    </span>
-                  </>
-                ) : (
+              {openedFile.isFile ? (
+                <>
+                  {fileChanged.current ? (
+                    <Tooltip title={i18n.t('core:fileChanged')}>
+                      <span
+                        style={{
+                          color: theme.palette.text.primary,
+                          margin: 3
+                        }}
+                      >
+                        {String.fromCharCode(0x25cf)}
+                      </span>
+                    </Tooltip>
+                  ) : (
+                    ''
+                  )}
                   <span
                     className={classes.fileBadge}
-                    title={i18n.t('core:toggleEntryProperties')}
                     style={{
-                      backgroundColor: AppConfig.defaultFolderColor
+                      backgroundColor: openedFile.color,
+                      textTransform: 'uppercase'
                     }}
                   >
-                    {i18n.t('core:folder')}
+                    {'.' +
+                      extractFileExtension(
+                        openedFile.path,
+                        PlatformIO.getDirSeparator()
+                      )}
                   </span>
-                )}
-                <ProTooltip tooltip={i18n.t('core:toggleBookmark')}>
-                  <IconButton
-                    data-tid="toggleBookmarkTID"
-                    aria-label="bookmark"
-                    size="small"
-                    onClick={bookmarkClick}
-                  >
-                    {haveBookmark ? (
-                      <BookmarkIcon
-                        style={{
-                          color: theme.palette.primary.main
-                        }}
-                      />
-                    ) : (
-                      <BookmarkAddIcon
-                        style={{
-                          color: theme.palette.text.secondary
-                        }}
-                      />
-                    )}
-                  </IconButton>
-                </ProTooltip>
-                <TagsPreview tags={openedFile.tags} />
-              </Box>
-              <div
+                </>
+              ) : (
+                <span
+                  className={classes.fileBadge}
+                  title={i18n.t('core:toggleEntryProperties')}
+                  style={{
+                    backgroundColor: AppConfig.defaultFolderColor
+                  }}
+                >
+                  {i18n.t('core:folder')}
+                </span>
+              )}
+            </Button>
+            <EntryContainerMenu
+              anchorEl={anchorEl}
+              handleClose={() => setAnchorEl(null)}
+              openedEntry={openedFile}
+              reloadDocument={reloadDocument}
+              sharingLink={sharingLink}
+              sharingParentFolderLink={sharingParentFolderLink}
+              toggleFullScreen={toggleFullScreen}
+            />
+            <Tooltip title={fileName}>
+              <Box
+                data-tid={'OpenedTID' + dataTidFormat(fileName)}
                 style={{
-                  zIndex: 1,
-                  position: 'absolute',
-                  right: 0,
-                  backgroundColor: theme.palette.background.default,
-                  display: 'flex',
-                  alignItems: 'center'
+                  color: theme.palette.text.primary,
+                  display: 'inline',
+                  fontSize: 17,
+                  maxHeight: 40,
+                  overflowY: 'auto'
                 }}
               >
-                {isEditable && props.revisionsEnabled && (
-                  <Tooltip
-                    title={
-                      i18n.t('core:autosave') +
-                      (!Pro
-                        ? ' - ' +
-                          i18n.t('core:thisFunctionalityIsAvailableInPro')
-                        : '')
-                    }
-                  >
-                    <Switch
-                      data-tid="autoSaveTID"
-                      checked={
-                        openedFile.isAutoSaveEnabled !== undefined &&
-                        openedFile.isAutoSaveEnabled
-                      }
-                      onChange={toggleAutoSave}
-                      name="autoSave"
-                      color="primary"
-                    />
-                  </Tooltip>
+                {fileTitle}
+              </Box>
+            </Tooltip>
+            <ProTooltip tooltip={i18n.t('core:toggleBookmark')}>
+              <IconButton
+                data-tid="toggleBookmarkTID"
+                aria-label="bookmark"
+                size="small"
+                onClick={bookmarkClick}
+              >
+                {haveBookmark ? (
+                  <BookmarkIcon
+                    style={{
+                      color: theme.palette.primary.main
+                    }}
+                  />
+                ) : (
+                  <BookmarkAddIcon
+                    style={{
+                      color: theme.palette.text.secondary
+                    }}
+                  />
                 )}
-
-                {editingSupported && openedFile.editMode && (
-                  <ButtonGroup>
-                    <Tooltip title={i18n.t('core:cancelEditing')}>
-                      <Button
-                        onClick={reloadDocument}
-                        aria-label={i18n.t('core:cancelEditing')}
-                        size="small"
-                        variant="outlined"
-                        color="primary"
-                        startIcon={isDesktopMode && <CancelIcon />}
-                      >
-                        {fileChanged.current
-                          ? i18n.t('core:cancel')
-                          : i18n.t('core:closeButton')}
-                      </Button>
-                    </Tooltip>
-                    <Tooltip
-                      title={
-                        i18n.t('core:saveFile') +
-                        ' (' +
-                        (AppConfig.isMaclike ? '⌘' : 'CTRL') +
-                        ' + S)'
-                      }
-                    >
-                      <LoadingButton
-                        disabled={false}
-                        onClick={startSavingFile}
-                        aria-label={i18n.t('core:saveFile')}
-                        data-tid="fileContainerSaveFile"
-                        size="small"
-                        variant="outlined"
-                        color="primary"
-                        startIcon={isDesktopMode && <SaveIcon />}
-                        loading={isSavingInProgress}
-                      >
-                        {i18n.t('core:save')}
-                      </LoadingButton>
-                    </Tooltip>
-                  </ButtonGroup>
-                )}
-                {editingSupported && !openedFile.editMode && (
-                  <Tooltip title={i18n.t('core:editFile')}>
-                    <Button
-                      disabled={false}
-                      size="small"
-                      variant="outlined"
-                      color="primary"
-                      onClick={editFile}
-                      aria-label={i18n.t('core:editFile')}
-                      data-tid="fileContainerEditFile"
-                      startIcon={<EditIcon />}
-                    >
-                      {i18n.t('core:edit')}
-                    </Button>
-                  </Tooltip>
-                )}
-                {closeButton}
-              </div>
-            </Box>
-            {entryProperties}
-          </>
-        );
-      }
-      return <div>{i18n.t('core:noEntrySelected')}</div>;
+              </IconButton>
+            </ProTooltip>
+            <TagsPreview tags={openedFile.tags} />
+            {isEditable && props.revisionsEnabled && (
+              <Tooltip
+                title={
+                  i18n.t('core:autosave') +
+                  (!Pro
+                    ? ' - ' + i18n.t('core:thisFunctionalityIsAvailableInPro')
+                    : '')
+                }
+              >
+                <Switch
+                  data-tid="autoSaveTID"
+                  checked={
+                    openedFile.isAutoSaveEnabled !== undefined &&
+                    openedFile.isAutoSaveEnabled
+                  }
+                  onChange={toggleAutoSave}
+                  name="autoSave"
+                  color="primary"
+                />
+              </Tooltip>
+            )}
+          </Box>
+          <EntryContainerNav
+            isFile={openedFile.isFile}
+            startClosingFile={startClosingFile}
+          />
+        </Box>
+      );
     };
 
-    const entryProperties = (
+    /*const entryProperties = (
       <div
         style={{
           display: 'inline',
@@ -1566,7 +1380,7 @@ function EntryContainer(props: Props) {
           />
         )}
       </div>
-    );
+    );*/
 
     let initSize;
     if (isPropPanelVisible) {
@@ -1583,7 +1397,94 @@ function EntryContainer(props: Props) {
         percent={percent.current}
         setPercent={setPercent}
       >
-        <Root>{toolbarButtons()}</Root>
+        <Root>
+          {openedFile.path !== undefined ? (
+            <>
+              {toolbarButtons()}
+              <div
+                style={{
+                  position: 'relative'
+                }}
+              >
+                <EntryContainerTabs
+                  openedFile={openedFile}
+                  openPanel={openPanel}
+                  toggleProperties={toggleProperties}
+                />
+                <div
+                  style={{
+                    zIndex: 1,
+                    position: 'absolute',
+                    right: 10,
+                    top: 8,
+                    backgroundColor: theme.palette.background.default,
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}
+                >
+                  {editingSupported && openedFile.editMode && (
+                    <ButtonGroup>
+                      <Tooltip title={i18n.t('core:cancelEditing')}>
+                        <Button
+                          onClick={reloadDocument}
+                          aria-label={i18n.t('core:cancelEditing')}
+                          size="small"
+                          variant="outlined"
+                          color="primary"
+                          startIcon={desktopMode && <CancelIcon />}
+                        >
+                          {fileChanged.current
+                            ? i18n.t('core:cancel')
+                            : i18n.t('core:closeButton')}
+                        </Button>
+                      </Tooltip>
+                      <Tooltip
+                        title={
+                          i18n.t('core:saveFile') +
+                          ' (' +
+                          (AppConfig.isMaclike ? '⌘' : 'CTRL') +
+                          ' + S)'
+                        }
+                      >
+                        <LoadingButton
+                          disabled={false}
+                          onClick={startSavingFile}
+                          aria-label={i18n.t('core:saveFile')}
+                          data-tid="fileContainerSaveFile"
+                          size="small"
+                          variant="outlined"
+                          color="primary"
+                          startIcon={desktopMode && <SaveIcon />}
+                          loading={isSavingInProgress}
+                        >
+                          {i18n.t('core:save')}
+                        </LoadingButton>
+                      </Tooltip>
+                    </ButtonGroup>
+                  )}
+                  {editingSupported && !openedFile.editMode && (
+                    <Tooltip title={i18n.t('core:editFile')}>
+                      <Button
+                        disabled={false}
+                        size="small"
+                        variant="outlined"
+                        color="primary"
+                        onClick={editFile}
+                        aria-label={i18n.t('core:editFile')}
+                        data-tid="fileContainerEditFile"
+                        startIcon={<EditIcon />}
+                      >
+                        {i18n.t('core:edit')}
+                      </Button>
+                    </Tooltip>
+                  )}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div>{i18n.t('core:noEntrySelected')}</div>
+          )}
+        </Root>
         <FileView
           key="FileViewID"
           openedFile={openedFiles[0]}
@@ -1666,45 +1567,10 @@ function EntryContainer(props: Props) {
           confirmDialogContentTID="confirmDialogContent"
         />
       )}
-      {isDeleteEntryModalOpened && (
-        <ConfirmDialog
-          open={isDeleteEntryModalOpened}
-          onClose={() => {
-            setDeleteEntryModalOpened(false);
-          }}
-          title={
-            openedFile.isFile
-              ? i18n.t('core:deleteConfirmationTitle')
-              : i18n.t('core:deleteDirectory')
-          }
-          content={
-            openedFile.isFile
-              ? i18n.t('core:doYouWantToDeleteFile')
-              : i18n.t('core:deleteDirectoryContentConfirm', {
-                  dirPath: openedFile.path
-                    ? extractDirectoryName(
-                        openedFile.path,
-                        PlatformIO.getDirSeparator()
-                      )
-                    : ''
-                })
-          }
-          confirmCallback={result => {
-            if (result) {
-              deleteFile(openedFile.path, openedFile.uuid);
-            }
-          }}
-          cancelDialogTID="cancelSaveBeforeCloseDialog"
-          confirmDialogTID="confirmSaveBeforeCloseDialog"
-          confirmDialogContentTID="confirmDialogContent"
-        />
-      )}
       {isEditTagsModalOpened && (
         <AddRemoveTagsDialog
           open={isEditTagsModalOpened}
           onClose={() => setEditTagsModalOpened(false)}
-          removeTags={removeTags}
-          removeAllTags={removeAllTags}
           selectedEntries={openedFile ? [openedFile] : []}
         />
       )}
@@ -1729,8 +1595,7 @@ function mapStateToProps(state) {
     settings: state.settings,
     isReadOnlyMode: isReadOnlyMode(state),
     keyBindings: getKeyBindingObject(state),
-    isDesktopMode: isDesktopMode(state),
-    tileServer: getMapTileServer(state),
+    desktopMode: isDesktopMode(state),
     revisionsEnabled: isRevisionsEnabled(state),
     language: getCurrentLanguage(state),
     locations: getLocations(state)
@@ -1742,8 +1607,6 @@ function mapActionCreatorsToProps(dispatch) {
     {
       setEntryPropertiesSplitSize: SettingsActions.setEntryPropertiesSplitSize,
       closeAllFiles: AppActions.closeAllFiles,
-      renameFile: AppActions.renameFile,
-      renameDirectory: AppActions.renameDirectory,
       openFileNatively: AppActions.openFileNatively,
       openDirectory: AppActions.openDirectory,
       openLink: AppActions.openLink,
@@ -1752,11 +1615,7 @@ function mapActionCreatorsToProps(dispatch) {
       openPrevFile: AppActions.openPrevFile,
       deleteFile: AppActions.deleteFile,
       toggleEntryFullWidth: AppActions.toggleEntryFullWidth,
-      addTags: TaggingActions.addTags,
-      removeTags: TaggingActions.removeTags,
-      removeAllTags: TaggingActions.removeAllTags,
       updateOpenedFile: AppActions.updateOpenedFile,
-      updateThumbnailUrl: AppActions.updateThumbnailUrl,
       switchLocationType: LocationActions.switchLocationType,
       switchCurrentLocationType: AppActions.switchCurrentLocationType
     },

@@ -46,7 +46,9 @@ import {
   getThumbFileLocationForFile,
   getThumbFileLocationForDirectory,
   getBgndFileLocationForDirectory,
-  cleanFrontDirSeparator
+  cleanFrontDirSeparator,
+  generateSharingLink,
+  cleanRootPath
 } from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
 import PlatformIO from './platform-facade';
@@ -1769,4 +1771,49 @@ export function openURLExternally(url: string, skipConfirmation = false) {
   ) {
     PlatformIO.openUrl(url);
   }
+}
+
+export function getSharingLink(
+  openedFile: OpenedEntry,
+  locations: Array<TS.Location>
+) {
+  let sharingLink = '';
+  let sharingParentFolderLink = '';
+  if (window.location.href.indexOf('?') > 0) {
+    const sharingURL = new URL(window.location.href);
+    const params = new URLSearchParams(sharingURL.search);
+    if (params.has('tslid')) {
+      const locationId = params.get('tslid');
+      //if (params.has('tsdpath')) {
+      // const folderPath2 = params.get('tsdpath');
+      const folderLocation = locations.find(
+        location => location.uuid === locationId
+      );
+      const folderPath = extractContainingDirectoryPath(openedFile.path);
+      if (folderPath.indexOf(folderLocation.path) === 0) {
+        sharingParentFolderLink = generateSharingLink(
+          locationId,
+          undefined,
+          cleanRootPath(
+            folderPath,
+            folderLocation.path,
+            PlatformIO.getDirSeparator()
+          )
+        );
+      }
+
+      //}
+      if (params.has('tsepath')) {
+        const entryPath = params.get('tsepath');
+        if (openedFile.isFile) {
+          sharingLink = generateSharingLink(locationId, entryPath);
+        } else {
+          sharingLink = generateSharingLink(locationId, undefined, entryPath);
+        }
+      } else {
+        sharingLink = generateSharingLink(locationId);
+      }
+    }
+  }
+  return { sharingLink, sharingParentFolderLink };
 }

@@ -801,5 +801,6 @@
   "copyToClipboard": "Copy to clipboard",
   "generatedHTMLCopied": "Download links copied to clipboard",
   "generatedHTMLFailed": "Error while copying to clipboard",
+  "details": "Details",
   "-": "-"
 }

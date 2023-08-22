@@ -72,7 +72,6 @@ interface Props {
   showInFileManager: (path: string) => void;
   loadParentDirectoryContent: () => void;
   removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
-  removeAllTags: () => void;
   directoryContent: Array<TS.FileSystemEntry>;
   lastSearchTimestamp: number;
 }
@@ -101,7 +100,6 @@ function ListPerspective(props: Props) {
     openEntry,
     loadDirectoryContent,
     removeTags,
-    removeAllTags,
     showInFileManager,
     openDirectory
   } = props;
@@ -835,8 +833,6 @@ function ListPerspective(props: Props) {
         <AddRemoveTagsDialog
           open={isAddRemoveTagsDialogOpened}
           onClose={() => setIsAddRemoveTagsDialogOpened(false)}
-          removeTags={removeTags}
-          removeAllTags={removeAllTags}
           selectedEntries={selectedEntries}
         />
       )}
