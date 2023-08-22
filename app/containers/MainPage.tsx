@@ -113,6 +113,7 @@ const classes = {
 };
 
 const Root = styled('div')(({ theme }) => ({
+  height: '100%',
   [`& .${classes.content}`]: {
     height: '100%',
     flexGrow: 1,
@@ -683,11 +684,7 @@ function MainPage(props: Props) {
 
   return (
     <Root>
-      <HotKeys
-        handlers={keyBindingHandlers}
-        keyMap={keyMap}
-        style={{ height: '100%' }}
-      >
+      <HotKeys handlers={keyBindingHandlers} keyMap={keyMap}>
         <MoveOrCopyFilesDialog
           open={moveCopyDialogOpened !== undefined}
           onClose={() => {
@@ -800,8 +797,8 @@ function MainPage(props: Props) {
           />
         )}
         <NewEntryDialog
-        open={props.isNewEntryDialogOpened}
-        onClose={toggleNewEntryDialog}
+          open={props.isNewEntryDialogOpened}
+          onClose={toggleNewEntryDialog}
         />
         {props.isNewFileDialogOpened && (
           <NewFileDialog
