@@ -17,7 +17,7 @@
  */
 
 import React, { useRef } from 'react';
-import { useTheme } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -39,6 +39,53 @@ import { TS } from '-/tagspaces.namespace';
 import { getMapTileServer } from '-/reducers/settings';
 import EditDescription from '-/components/EditDescription';
 
+interface StyledTabsProps {
+  children?: React.ReactNode;
+  value: number;
+  onChange: (event: React.SyntheticEvent, newValue: number) => void;
+}
+
+const StyledTabs = styled((props: StyledTabsProps) => (
+  <Tabs
+    {...props}
+    variant="scrollable"
+    scrollButtons="auto"
+    TabIndicatorProps={{ children: <span className="MuiTabs-indicatorSpan" /> }}
+  />
+))(({ theme }) => ({
+  '& .MuiTabs-indicator': {
+    display: 'flex',
+    justifyContent: 'center',
+    backgroundColor: 'transparent'
+  },
+  '& .MuiTabs-indicatorSpan': {
+    maxWidth: 40,
+    width: '100%',
+    backgroundColor: theme.palette.text.primary //theme.palette.background.default //'#635ee7',
+  }
+}));
+
+interface StyledTabProps {
+  label: string;
+  onClick: (event: React.SyntheticEvent) => void;
+}
+
+const StyledTab = styled((props: StyledTabProps) => (
+  <Tab disableRipple {...props} />
+))(({ theme }) => ({
+  textTransform: 'none',
+  fontWeight: theme.typography.fontWeightRegular,
+  fontSize: theme.typography.pxToRem(15),
+  marginRight: theme.spacing(1)
+  // color: 'rgba(255, 255, 255, 0.7)',
+  /*'&.Mui-selected': {
+    color: '#fff',
+  },*/
+  /*'&.Mui-focusVisible': {
+    backgroundColor: 'rgba(100, 95, 228, 0.32)',
+  },*/
+}));
+
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -57,7 +104,8 @@ function TsTabPanel(props: TabPanelProps) {
       {...other}
       style={{
         height: '100%',
-        overflowY: 'auto'
+        overflowY: 'auto',
+        maxHeight: 300
       }}
     >
       {value === index && (
@@ -84,7 +132,7 @@ interface Props {
 
 function EntryContainerTabs(props: Props) {
   const [value, setValue] = React.useState(0);
-  const { openedFile, toggleProperties, openPanel } = props;
+  const { openedFile, openPanel, toggleProperties } = props;
   const editDescription = useRef<string>(undefined);
   //const theme = useTheme();
   const readOnlyMode = useSelector(isReadOnlyMode);
@@ -114,6 +162,7 @@ function EntryContainerTabs(props: Props) {
   const handleTabClick = (event: React.SyntheticEvent) => {
     if (value === parseInt(event.currentTarget.id.split('-')[1], 10)) {
       // when selected tab is clicked...
+      setValue(undefined);
       toggleProperties();
     }
   };
@@ -190,17 +239,13 @@ function EntryContainerTabs(props: Props) {
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Box
-        sx={{ borderBottom: 1, borderColor: 'divider', marginRight: '160px' }}
-      >
-        <Tabs
+      <Box sx={{ marginRight: '160px' }}>
+        <StyledTabs
           value={value}
-          variant="scrollable"
-          scrollButtons="auto"
           onChange={handleChange}
           aria-label="basic tabs example"
         >
-          <Tab
+          <StyledTab
             label={i18n.t('core:details')}
             {...a11yProps(0)}
             onClick={handleTabClick}
@@ -215,7 +260,7 @@ function EntryContainerTabs(props: Props) {
             {...a11yProps(2)}
             onClick={handleTabClick}
           />
-        </Tabs>
+        </StyledTabs>
       </Box>
       <TsTabPanel value={value} index={0}>
         <EntryProperties

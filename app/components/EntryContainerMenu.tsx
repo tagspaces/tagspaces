@@ -5,7 +5,13 @@ import {
   extractDirectoryName
 } from '@tagspaces/tagspaces-common/paths';
 import PlatformIO from '-/services/platform-facade';
-import { ListItemIcon, Menu, MenuItem, Typography } from '@mui/material';
+import {
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Typography
+} from '@mui/material';
 import {
   actions as AppActions,
   AppDispatch,
@@ -18,13 +24,13 @@ import AppConfig from '-/AppConfig';
 import i18n from '-/services/i18n';
 import {
   DeleteIcon,
-  ExpandIcon,
   LinkIcon,
   NavigateToFolderIcon,
   OpenNewWindowIcon,
   ParentFolderIcon,
   ReloadIcon
 } from '-/components/CommonIcons';
+import ExpandIcon from '@mui/icons-material/SettingsEthernet';
 import OpenNativelyIcon from '@mui/icons-material/Launch';
 import FullScreenIcon from '@mui/icons-material/ZoomOutMap';
 import FileDownloadIcon from '@mui/icons-material/AssignmentReturned';
@@ -140,6 +146,7 @@ function EntryContainerMenu(props: Props) {
         downloadLink.click();
       }
     }
+    handleClose();
   }
 
   const navigateToFolder = () => {
@@ -148,14 +155,17 @@ function EntryContainerMenu(props: Props) {
     } else {
       dispatch(AppActions.openLink(sharingLink));
     }
+    handleClose();
   };
 
   const openInNewWindow = () => {
     PlatformIO.createNewInstance(window.location.href);
+    handleClose();
   };
 
   const shareFile = (filePath: string) => {
     PlatformIO.shareFiles([filePath]);
+    handleClose();
   };
 
   const openNatively = () => {
@@ -166,6 +176,7 @@ function EntryContainerMenu(props: Props) {
         dispatch(AppActions.openDirectory(openedEntry.path));
       }
     }
+    handleClose();
   };
 
   const menuItems = [];
@@ -178,24 +189,23 @@ function EntryContainerMenu(props: Props) {
       >
         <ListItemIcon>
           <FileDownloadIcon />
-          <Typography variant="inherit">
-            {i18n.t('core:downloadFile')}
-          </Typography>
         </ListItemIcon>
+        <ListItemText primary={i18n.t('core:downloadFile')} />
       </MenuItem>
     );
     menuItems.push(
       <MenuItem
         data-tid="fileContainerSwitchToFullScreen"
         aria-label={i18n.t('core:switchToFullscreen')}
-        onClick={() => toggleFullScreen()}
+        onClick={() => {
+          toggleFullScreen();
+          handleClose();
+        }}
       >
         <ListItemIcon>
           <FullScreenIcon />
-          <Typography variant="inherit">
-            {i18n.t('core:switchToFullscreen')}
-          </Typography>
         </ListItemIcon>
+        <ListItemText primary={i18n.t('core:switchToFullscreen')} />
       </MenuItem>
     );
     if (desktopMode) {
@@ -205,14 +215,13 @@ function EntryContainerMenu(props: Props) {
           aria-label={i18n.t('core:openInFullWidth')}
           onClick={() => {
             dispatch(AppActions.toggleEntryFullWidth());
+            handleClose();
           }}
         >
           <ListItemIcon>
             <ExpandIcon />
-            <Typography variant="inherit">
-              {i18n.t('core:openInFullWidth')}
-            </Typography>
           </ListItemIcon>
+          <ListItemText primary={i18n.t('core:openInFullWidth')} />
         </MenuItem>
       );
     }
@@ -224,10 +233,8 @@ function EntryContainerMenu(props: Props) {
       >
         <ListItemIcon>
           <ParentFolderIcon />
-          <Typography variant="inherit">
-            {i18n.t('core:navigateToParentDirectory')}
-          </Typography>
         </ListItemIcon>
+        <ListItemText primary={i18n.t('core:navigateToParentDirectory')} />
       </MenuItem>
     );
     if (!AppConfig.isCordova) {
@@ -239,10 +246,8 @@ function EntryContainerMenu(props: Props) {
         >
           <ListItemIcon>
             <OpenNewWindowIcon />
-            <Typography variant="inherit">
-              {i18n.t('core:openInWindow')}
-            </Typography>
           </ListItemIcon>
+          <ListItemText primary={i18n.t('core:openInWindow')} />
         </MenuItem>
       );
     }
@@ -255,10 +260,8 @@ function EntryContainerMenu(props: Props) {
         >
           <ListItemIcon>
             <LinkIcon />
-            <Typography variant="inherit">
-              {i18n.t('core:shareFile')}
-            </Typography>
           </ListItemIcon>
+          <ListItemText primary={i18n.t('core:shareFile')} />
         </MenuItem>
       );
     }
@@ -277,10 +280,8 @@ function EntryContainerMenu(props: Props) {
         >
           <ListItemIcon>
             <OpenNativelyIcon />
-            <Typography variant="inherit">
-              {i18n.t('core:openFileExternally')}
-            </Typography>
           </ListItemIcon>
+          <ListItemText primary={i18n.t('core:openFileExternally')} />
         </MenuItem>
       );
     }
@@ -288,12 +289,15 @@ function EntryContainerMenu(props: Props) {
       <MenuItem
         data-tid="reloadPropertiesTID"
         aria-label={i18n.t('core:reloadFile')}
-        onClick={reloadDocument}
+        onClick={() => {
+          reloadDocument();
+          handleClose();
+        }}
       >
         <ListItemIcon>
           <ReloadIcon />
-          <Typography variant="inherit">{i18n.t('core:reloadFile')}</Typography>
         </ListItemIcon>
+        <ListItemText primary={i18n.t('core:reloadFile')} />
       </MenuItem>
     );
     if (!readOnlyMode) {
@@ -301,14 +305,15 @@ function EntryContainerMenu(props: Props) {
         <MenuItem
           data-tid="deleteEntryTID"
           aria-label={i18n.t('core:deleteEntry')}
-          onClick={() => setDeleteEntryModalOpened(true)}
+          onClick={() => {
+            setDeleteEntryModalOpened(true);
+            handleClose();
+          }}
         >
           <ListItemIcon>
             <DeleteIcon />
-            <Typography variant="inherit">
-              {i18n.t('core:deleteEntry')}
-            </Typography>
           </ListItemIcon>
+          <ListItemText primary={i18n.t('core:deleteEntry')} />
         </MenuItem>
       );
     }
@@ -322,10 +327,8 @@ function EntryContainerMenu(props: Props) {
       >
         <ListItemIcon>
           <NavigateToFolderIcon />
-          <Typography variant="inherit">
-            {i18n.t('core:openInMainArea')}
-          </Typography>
         </ListItemIcon>
+        <ListItemText primary={i18n.t('core:openInMainArea')} />
       </MenuItem>
     );
     if (!AppConfig.isCordova) {
@@ -337,10 +340,8 @@ function EntryContainerMenu(props: Props) {
         >
           <ListItemIcon>
             <OpenNewWindowIcon />
-            <Typography variant="inherit">
-              {i18n.t('core:openInWindow')}
-            </Typography>
           </ListItemIcon>
+          <ListItemText primary={i18n.t('core:openInWindow')} />
         </MenuItem>
       );
     }
@@ -359,10 +360,8 @@ function EntryContainerMenu(props: Props) {
         >
           <ListItemIcon>
             <OpenNativelyIcon />
-            <Typography variant="inherit">
-              {i18n.t('core:openDirectoryExternally')}
-            </Typography>
           </ListItemIcon>
+          <ListItemText primary={i18n.t('core:openDirectoryExternally')} />
         </MenuItem>
       );
     }
@@ -370,14 +369,15 @@ function EntryContainerMenu(props: Props) {
       <MenuItem
         data-tid="reloadFolderTID"
         aria-label={i18n.t('core:reloadDirectory')}
-        onClick={reloadDocument}
+        onClick={() => {
+          reloadDocument();
+          handleClose();
+        }}
       >
         <ListItemIcon>
           <ReloadIcon />
-          <Typography variant="inherit">
-            {i18n.t('core:reloadDirectory')}
-          </Typography>
         </ListItemIcon>
+        <ListItemText primary={i18n.t('core:reloadDirectory')} />
       </MenuItem>
     );
     if (desktopMode) {
@@ -387,14 +387,13 @@ function EntryContainerMenu(props: Props) {
           aria-label={i18n.t('core:openInFullWidth')}
           onClick={() => {
             dispatch(AppActions.toggleEntryFullWidth());
+            handleClose();
           }}
         >
           <ListItemIcon>
             <ExpandIcon />
-            <Typography variant="inherit">
-              {i18n.t('core:openInFullWidth')}
-            </Typography>
           </ListItemIcon>
+          <ListItemText primary={i18n.t('core:openInFullWidth')} />
         </MenuItem>
       );
     }
@@ -403,14 +402,15 @@ function EntryContainerMenu(props: Props) {
         <MenuItem
           data-tid="deleteFolderTID"
           aria-label={i18n.t('core:deleteDirectory')}
-          onClick={() => setDeleteEntryModalOpened(true)}
+          onClick={() => {
+            setDeleteEntryModalOpened(true);
+            handleClose();
+          }}
         >
           <ListItemIcon>
             <DeleteIcon />
-            <Typography variant="inherit">
-              {i18n.t('core:deleteDirectory')}
-            </Typography>
           </ListItemIcon>
+          <ListItemText primary={i18n.t('core:deleteDirectory')} />
         </MenuItem>
       );
     }
@@ -419,11 +419,12 @@ function EntryContainerMenu(props: Props) {
   return (
     <>
       <Menu
+        id="basic-menu"
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleClose}
         anchorOrigin={{
-          vertical: 'top',
+          vertical: 'bottom',
           horizontal: 'left'
         }}
         transformOrigin={{

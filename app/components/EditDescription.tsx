@@ -131,11 +131,22 @@ function EditDescription(props: Props) {
     <Root>
       <span style={{ verticalAlign: 'sub', paddingLeft: 5 }}>
         <Typography
+          variant="caption"
+          style={{
+            color: theme.palette.text.primary
+          }}
+        >
+        Markdown help: <i className={classes.mdHelpers}>_italic_</i>{' '}
+          <b className={classes.mdHelpers}>**bold**</b>{' '}
+          <span className={classes.mdHelpers}>* list item</span>{' '}
+          <span className={classes.mdHelpers}>[Link text](http://...)</span>
+      </Typography>
+        {/*<Typography
           style={{ color: theme.palette.text.primary }}
           variant="caption"
         >
           {i18n.t('core:filePropertiesDescription')}
-        </Typography>
+        </Typography>*/}
       </span>
       {toggleEditDescriptionField && editSaveActions}
       <div
@@ -192,17 +203,6 @@ function EditDescription(props: Props) {
           </div>
         )}
       </div>
-      <Typography
-        variant="caption"
-        style={{
-          color: theme.palette.text.primary
-        }}
-      >
-        Markdown help: <i className={classes.mdHelpers}>_italic_</i>{' '}
-        <b className={classes.mdHelpers}>**bold**</b>{' '}
-        <span className={classes.mdHelpers}>* list item</span>{' '}
-        <span className={classes.mdHelpers}>[Link text](http://...)</span>
-      </Typography>
     </Root>
   );
 }

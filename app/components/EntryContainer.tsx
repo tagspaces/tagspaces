@@ -93,7 +93,7 @@ import FileView from '-/components/FileView';
 import { Pro } from '-/pro';
 import { actions as LocationActions, getLocations } from '-/reducers/locations';
 import Revisions from '-/components/Revisions';
-import { Switch } from '@mui/material';
+import { Grid, Switch } from '@mui/material';
 import useFirstRender from '-/utils/useFirstRender';
 import ResolveConflictDialog from '-/components/dialogs/ResolveConflictDialog';
 import { dataTidFormat } from '-/services/test';
@@ -126,7 +126,7 @@ const Root = styled(Box)(({ theme }) => ({
   flex: '1 1 100%',
   display: 'flex',
   backgroundColor: theme.palette.background.default,
-  height: '100%', // filePropsHeight ||
+  // height: '100%', // filePropsHeight ||
   [`& .${classes.toolbar2}`]: {
     width: '100%',
     paddingLeft: 0,
@@ -229,6 +229,10 @@ function EntryContainer(props: Props) {
   const [isPropertiesPanelVisible, setPropertiesPanelVisible] = useState<
     boolean
   >(false);
+
+  const [propertiesStyles, setPropertiesStyles] = useState<React.CSSProperties>(
+    { display: 'flex', flexDirection: 'column' }
+  );
 
   const [isRevisionPanelVisible, setRevisionPanelVisible] = useState<boolean>(
     false
@@ -773,21 +777,27 @@ function EntryContainer(props: Props) {
   };
 
   const openPanel = () => {
-    if (!isPropertiesPanelVisible) {
+    setPropertiesStyles({ display: 'flex', flexDirection: 'column' });
+    /*if (!isPropertiesPanelVisible) {
       percent.current = parseFloat(settings.entrySplitSize);
       setPropertiesPanelVisible(true);
-    }
+    }*/
   };
 
   const closePanel = () => {
-    if (isPropertiesPanelVisible) {
+    /*if (isPropertiesPanelVisible) {
       percent.current = undefined;
       setPropertiesPanelVisible(false);
-    }
+    }*/
   };
 
   const toggleProperties = () => {
-    if (isPropPanelVisible && !isRevisionPanelVisible) {
+    if (propertiesStyles !== undefined) {
+      setPropertiesStyles(undefined);
+    } else {
+      setPropertiesStyles({ display: 'flex', flexDirection: 'column' });
+    }
+    /*if (isPropPanelVisible && !isRevisionPanelVisible) {
       closePanel();
     } else {
       openPanel();
@@ -795,7 +805,7 @@ function EntryContainer(props: Props) {
 
     if (isRevisionPanelVisible) {
       setRevisionPanelVisible(false);
-    }
+    }*/
   };
 
   const toggleRevisions = () => {
@@ -1219,7 +1229,9 @@ function EntryContainer(props: Props) {
           >
             <Button
               id="actions-button"
+              aria-controls={Boolean(anchorEl) ? 'basic-menu' : undefined}
               aria-haspopup="true"
+              aria-expanded={Boolean(anchorEl) ? 'true' : undefined}
               endIcon={<MoreVertIcon sx={{ fontSize: 20 }} />}
               onClick={(event: React.MouseEvent<HTMLElement>) => {
                 setAnchorEl(event.currentTarget);
@@ -1313,27 +1325,6 @@ function EntryContainer(props: Props) {
               </IconButton>
             </ProTooltip>
             <TagsPreview tags={openedFile.tags} />
-            {isEditable && props.revisionsEnabled && (
-              <Tooltip
-                title={
-                  i18n.t('core:autosave') +
-                  (!Pro
-                    ? ' - ' + i18n.t('core:thisFunctionalityIsAvailableInPro')
-                    : '')
-                }
-              >
-                <Switch
-                  data-tid="autoSaveTID"
-                  checked={
-                    openedFile.isAutoSaveEnabled !== undefined &&
-                    openedFile.isAutoSaveEnabled
-                  }
-                  onChange={toggleAutoSave}
-                  name="autoSave"
-                  color="primary"
-                />
-              </Tooltip>
-            )}
           </Box>
           <EntryContainerNav
             isFile={openedFile.isFile}
@@ -1343,59 +1334,20 @@ function EntryContainer(props: Props) {
       );
     };
 
-    /*const entryProperties = (
-      <div
-        style={{
-          display: 'inline',
-          flex: '1 1 100%',
-          backgroundColor: theme.palette.background.default,
-          padding: '0',
-          height: '100%'
-        }}
-      >
-        {openedFile.isFile ? renderFileToolbar() : renderFolderToolbar()}
-        {isRevisionPanelVisible &&
-        openedFile.isFile &&
-        Pro &&
-        isEditable &&
-        props.revisionsEnabled ? (
-          <Revisions />
-        ) : (
-          <EntryProperties
-            key={openedFile.path}
-            openedEntry={openedFile}
-            tagDelimiter={settings.tagDelimiter}
-            renameFile={renameFile}
-            renameDirectory={renameDirectory}
-            addTags={addTags}
-            removeTags={removeTags}
-            removeAllTags={removeAllTags}
-            updateOpenedFile={updateOpenedFile}
-            updateThumbnailUrl={updateThumbnailUrl}
-            showNotification={showNotification}
-            isReadOnlyMode={isReadOnlyMode}
-            currentDirectoryPath={currentDirectoryPath}
-            tileServer={tileServer}
-            sharingLink={sharingLink}
-          />
-        )}
-      </div>
-    );*/
-
-    let initSize;
+    /*let initSize;
     if (isPropPanelVisible) {
       initSize = openedFile.isFile ? settings.entrySplitSize : '100%';
     } else {
       initSize = defaultSplitSize; // '0%';
-    }
+    }*/
 
     return (
-      <Split
-        horizontal
-        minPrimarySize="98px"
-        initialPrimarySize={initSize}
-        percent={percent.current}
-        setPercent={setPercent}
+      <div
+        style={{
+          height: '100%',
+          minHeight: '100%',
+          ...propertiesStyles
+        }}
       >
         <Root>
           {openedFile.path !== undefined ? (
@@ -1422,6 +1374,28 @@ function EntryContainer(props: Props) {
                     alignItems: 'center'
                   }}
                 >
+                  {isEditable && props.revisionsEnabled && (
+                    <Tooltip
+                      title={
+                        i18n.t('core:autosave') +
+                        (!Pro
+                          ? ' - ' +
+                            i18n.t('core:thisFunctionalityIsAvailableInPro')
+                          : '')
+                      }
+                    >
+                      <Switch
+                        data-tid="autoSaveTID"
+                        checked={
+                          openedFile.isAutoSaveEnabled !== undefined &&
+                          openedFile.isAutoSaveEnabled
+                        }
+                        onChange={toggleAutoSave}
+                        name="autoSave"
+                        color="primary"
+                      />
+                    </Tooltip>
+                  )}
                   {editingSupported && openedFile.editMode && (
                     <ButtonGroup>
                       <Tooltip title={i18n.t('core:cancelEditing')}>
@@ -1495,7 +1469,7 @@ function EntryContainer(props: Props) {
           currentTheme={settings.currentTheme}
           eventID={eventID.current}
         />
-      </Split>
+      </div>
     );
   };
 

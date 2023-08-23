@@ -136,7 +136,8 @@ function FileView(props: Props) {
         height: height || '100%',
         flex: '1 1 100%',
         display: 'flex',
-        backgroundColor: theme.palette.background.default
+        backgroundColor: theme.palette.background.default,
+        borderTop: 'outset'
       }}
     >
       {isFullscreen && (
