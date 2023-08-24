@@ -129,7 +129,7 @@ function EntryContainerTabs(props: Props) {
         style={{
           height: '100%',
           overflowY: 'auto',
-          ...(openedFile.isFile && { maxHeight: 300 })
+          ...(openedFile.isFile && { maxHeight: 400 })
         }}
       >
         {value === index && (
@@ -250,16 +250,19 @@ function EntryContainerTabs(props: Props) {
           aria-label="basic tabs example"
         >
           <StyledTab
+            data-tid="detailsTabTID"
             label={i18n.t('core:details')}
             {...a11yProps(0)}
             onClick={handleTabClick}
           />
           <StyledTab
+            data-tid="descriptionTabTID"
             label={i18n.t('core:filePropertiesDescription')}
             {...a11yProps(1)}
             onClick={handleTabClick}
           />
           <StyledTab
+            data-tid="revisionsTabTID"
             label={i18n.t('core:revisions')}
             {...a11yProps(2)}
             onClick={handleTabClick}

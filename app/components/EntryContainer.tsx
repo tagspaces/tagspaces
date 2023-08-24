@@ -1229,6 +1229,7 @@ function EntryContainer(props: Props) {
           >
             <Button
               id="actions-button"
+              data-tid="propsActionsMenuTID"
               aria-controls={Boolean(anchorEl) ? 'basic-menu' : undefined}
               aria-haspopup="true"
               aria-expanded={Boolean(anchorEl) ? 'true' : undefined}
