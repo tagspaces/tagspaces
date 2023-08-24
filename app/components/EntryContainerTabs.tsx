@@ -86,37 +86,6 @@ const StyledTab = styled((props: StyledTabProps) => (
   },*/
 }));
 
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-
-function TsTabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-      style={{
-        height: '100%',
-        overflowY: 'auto',
-        maxHeight: 300
-      }}
-    >
-      {value === index && (
-        <Box sx={{ p: 3, height: '100%' }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
 function a11yProps(index: number) {
   return {
     id: `tab-${index}`,
@@ -128,17 +97,49 @@ interface Props {
   openedFile: OpenedEntry;
   openPanel: () => void;
   toggleProperties: () => void;
+  marginRight: string;
+}
+
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
 }
 
 function EntryContainerTabs(props: Props) {
   const [value, setValue] = React.useState(0);
-  const { openedFile, openPanel, toggleProperties } = props;
+  const { openedFile, openPanel, toggleProperties, marginRight } = props;
   const editDescription = useRef<string>(undefined);
   //const theme = useTheme();
   const readOnlyMode = useSelector(isReadOnlyMode);
   const directoryPath = useSelector(getDirectoryPath);
   const tileServer = useSelector(getMapTileServer);
   const dispatch: AppDispatch = useDispatch();
+
+  function TsTabPanel(tprops: TabPanelProps) {
+    const { children, value, index, ...other } = tprops;
+
+    return (
+      <div
+        role="tabpanel"
+        hidden={value !== index}
+        id={`simple-tabpanel-${index}`}
+        aria-labelledby={`simple-tab-${index}`}
+        {...other}
+        style={{
+          height: '100%',
+          overflowY: 'auto',
+          ...(openedFile.isFile && { maxHeight: 300 })
+        }}
+      >
+        {value === index && (
+          <Box sx={{ p: 3, height: '100%' }}>
+            <Typography>{children}</Typography>
+          </Box>
+        )}
+      </div>
+    );
+  }
 
   // Create functions that dispatch actions
   const handleRenameFile = (filePath: string, newFilePath: string) =>
@@ -160,7 +161,10 @@ function EntryContainerTabs(props: Props) {
     openPanel();
   };
   const handleTabClick = (event: React.SyntheticEvent) => {
-    if (value === parseInt(event.currentTarget.id.split('-')[1], 10)) {
+    if (
+      openedFile.isFile &&
+      value === parseInt(event.currentTarget.id.split('-')[1], 10)
+    ) {
       // when selected tab is clicked...
       setValue(undefined);
       toggleProperties();
@@ -238,8 +242,8 @@ function EntryContainerTabs(props: Props) {
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Box sx={{ marginRight: '160px' }}>
+    <Box sx={{ width: '100%', height: '100%' }}>
+      <Box sx={{ ...(marginRight && { marginRight }) }}>
         <StyledTabs
           value={value}
           onChange={handleChange}
@@ -250,12 +254,12 @@ function EntryContainerTabs(props: Props) {
             {...a11yProps(0)}
             onClick={handleTabClick}
           />
-          <Tab
+          <StyledTab
             label={i18n.t('core:filePropertiesDescription')}
             {...a11yProps(1)}
             onClick={handleTabClick}
           />
-          <Tab
+          <StyledTab
             label={i18n.t('core:revisions')}
             {...a11yProps(2)}
             onClick={handleTabClick}

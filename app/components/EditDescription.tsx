@@ -136,11 +136,11 @@ function EditDescription(props: Props) {
             color: theme.palette.text.primary
           }}
         >
-        Markdown help: <i className={classes.mdHelpers}>_italic_</i>{' '}
+          Markdown help: <i className={classes.mdHelpers}>_italic_</i>{' '}
           <b className={classes.mdHelpers}>**bold**</b>{' '}
           <span className={classes.mdHelpers}>* list item</span>{' '}
           <span className={classes.mdHelpers}>[Link text](http://...)</span>
-      </Typography>
+        </Typography>
         {/*<Typography
           style={{ color: theme.palette.text.primary }}
           variant="caption"
@@ -160,9 +160,10 @@ function EditDescription(props: Props) {
         style={{
           border: '1px solid lightgray',
           borderRadius: 5,
-          minHeight: 50,
-          maxHeight: 250,
+          //minHeight: 150,
+          //maxHeight: 200,
           // maxHeight: noDescription && !editMode ? 100 : 250,
+          height: '100%',
           width: 'calc(100% - 8px)',
           overflowY: 'auto'
         }}
