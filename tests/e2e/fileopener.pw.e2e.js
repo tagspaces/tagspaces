@@ -248,7 +248,7 @@ test.describe('TST08 - File folder properties', () => {
     await clickOn('[data-tid=descriptionTID]');
 
     const editor = await global.client.waitForSelector(
-      '[data-tid=descriptionTID] .milkdown'
+      '[data-tid=descriptionTID] [contenteditable=true]'
     );
     await editor.type(desc);
 
