@@ -103,9 +103,9 @@ test.describe('TST02 - Folder properties', () => {
     );
 
     await clickOn('[data-tid=descriptionTabTID]');
-    await clickOn('[data-tid=editDescriptionTID]');
+    // await clickOn('[data-tid=editDescriptionTID]');
     const editor = await global.client.waitForSelector(
-      '[data-tid=descriptionTID] [contenteditable=true]'
+      '[data-tid=descriptionTID] .milkdown' //[contenteditable=true]'
     );
     const description = await editor.innerText();
     expect(description.replace(/[\s*#]/g, '')).toMatch(
