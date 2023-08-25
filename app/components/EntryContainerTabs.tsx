@@ -261,12 +261,14 @@ function EntryContainerTabs(props: Props) {
             {...a11yProps(1)}
             onClick={handleTabClick}
           />
-          <StyledTab
-            data-tid="revisionsTabTID"
-            label={i18n.t('core:revisions')}
-            {...a11yProps(2)}
-            onClick={handleTabClick}
-          />
+          {openedFile.isFile && (
+            <StyledTab
+              data-tid="revisionsTabTID"
+              label={i18n.t('core:revisions')}
+              {...a11yProps(2)}
+              onClick={handleTabClick}
+            />
+          )}
         </StyledTabs>
       </Box>
       <TsTabPanel value={value} index={0}>
@@ -291,9 +293,11 @@ function EntryContainerTabs(props: Props) {
           currentFolder={directoryPath}
         />
       </TsTabPanel>
-      <TsTabPanel value={value} index={2}>
-        <Revisions />
-      </TsTabPanel>
+      {openedFile.isFile && (
+        <TsTabPanel value={value} index={2}>
+          <Revisions />
+        </TsTabPanel>
+      )}
     </Box>
   );
 }

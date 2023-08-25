@@ -1524,10 +1524,14 @@ export const actions = {
         ); */
         // console.debug('Loading meta succeeded for:' + directoryPath);
         dispatch(
-          actions.loadDirectoryContentInt(directoryPath, generateThumbnails, {
+          actions.loadDirectoryContentInt(
+            directoryPath,
+            generateThumbnails,
+            fsEntryMeta /*{
             ...fsEntryMeta,
             description: getDescriptionPreview(fsEntryMeta.description, 200)
-          })
+          }*/
+          )
         );
       } catch (err) {
         console.debug('Error loading meta of:' + directoryPath + ' ' + err);

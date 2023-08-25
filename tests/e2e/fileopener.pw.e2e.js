@@ -335,7 +335,8 @@ test.describe('TST08 - File folder properties', () => {
     await clickOn('[data-tid=fileContainerSaveFile]');
 
     //Toggle Revisions
-    await clickOn('[data-tid=revisionsTID]');
+    await clickOn('[data-tid=revisionsTabTID]');
+    //await clickOn('[data-tid=revisionsTID]');
     await expectElementExist('[data-tid=viewRevisionTID]');
 
     const revision = await getRevision(0);

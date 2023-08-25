@@ -187,7 +187,7 @@ function SettingsExtensions() {
                         onClick={() => {
                           setRemoveExtDialogOpened(ext);
                         }}
-                        data-tid="revisionsTID"
+                        data-tid="removeExtensionTID"
                         size="large"
                       >
                         <DeleteIcon color={'action'} />

@@ -437,7 +437,7 @@ function EntryContainer(props: Props) {
         break;
       case 'editDocument':
         if (editingSupported) {
-          editFile();
+          editOpenedFile();
         }
         break;
       case 'playbackEnded':
@@ -744,7 +744,7 @@ function EntryContainer(props: Props) {
       });
   }
 
-  const editFile = () => {
+  const editOpenedFile = () => {
     props.switchLocationType(openedFile.locationId).then(currentLocationId => {
       updateOpenedFile(openedFile.path, {
         ...openedFile,
@@ -1409,7 +1409,7 @@ function EntryContainer(props: Props) {
                 size="small"
                 variant="outlined"
                 color="primary"
-                onClick={editFile}
+                onClick={editOpenedFile}
                 aria-label={i18n.t('core:editFile')}
                 data-tid="fileContainerEditFile"
                 startIcon={<EditIcon />}
@@ -1505,7 +1505,7 @@ function EntryContainer(props: Props) {
       handlers={{
         closeViewer: startClosingFile,
         saveDocument: startSavingFile,
-        editDocument: editFile,
+        editDocument: editOpenedFile,
         nextDocument: openNextFile,
         prevDocument: openPrevFile,
         toggleFullScreen
