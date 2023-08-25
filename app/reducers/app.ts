@@ -556,10 +556,16 @@ export default (state: any = initialState, action: any) => {
       };
     }
     case types.SET_CURRENT_DIRECTORY_DIRS: {
-      return {
-        ...state,
-        currentDirectoryDirs: action.dirs
-      };
+      if (
+        JSON.stringify(state.currentDirectoryDirs) !==
+        JSON.stringify(action.dirs)
+      ) {
+        return {
+          ...state,
+          currentDirectoryDirs: action.dirs
+        };
+      }
+      return state;
     }
     case types.CLEAR_UPLOAD_DIALOG: {
       // if (PlatformIO.haveObjectStoreSupport()) {

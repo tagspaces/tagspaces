@@ -465,7 +465,10 @@ function GridPagination(props: Props) {
                     >
                       <ButtonBase
                         style={{ fontSize: '1.5rem' }}
-                        onClick={openRenameEntryDialog}
+                        onClick={() => {
+                          setSelectedEntries([]);
+                          openRenameEntryDialog();
+                        }}
                       >
                         {folderName}
                       </ButtonBase>
