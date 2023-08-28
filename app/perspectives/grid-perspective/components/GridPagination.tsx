@@ -131,9 +131,9 @@ interface Props {
 }
 
 function GridPagination(props: Props) {
+  let { directories } = props;
   const {
     style,
-    directories,
     showDirectories,
     showDetails,
     showDescription,
@@ -167,6 +167,9 @@ function GridPagination(props: Props) {
     clearSelection,
     files
   } = props;
+  if (!showDirectories) {
+    directories = [];
+  }
   const theme = useTheme();
   const allFilesCount = files.length;
   const showPagination = gridPageLimit && files.length > gridPageLimit;
@@ -389,7 +392,9 @@ function GridPagination(props: Props) {
   const dirColor = currentDirectoryColor || 'transparent';
 
   let folderSummary =
-    directories.length + ' folder(s) and ' + allFilesCount + ' file(s) found';
+    (directories.length > 0 ? directories.length + ' folder(s) and ' : '') +
+    allFilesCount +
+    ' file(s) found';
   if (selectedEntries && selectedEntries.length > 0) {
     folderSummary = selectedEntries.length + ' entries selected';
   }
