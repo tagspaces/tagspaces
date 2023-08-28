@@ -35,7 +35,7 @@ interface Props {
   searchQuery: TS.SearchQuery;
   toggleFullScreen?: () => void;
   height?: string;
-  currentTheme: string;
+  //currentTheme: string;
   eventID: string;
 }
 
@@ -49,7 +49,7 @@ function FileView(props: Props) {
     toggleFullScreen,
     searchQuery,
     height,
-    currentTheme,
+    //currentTheme,
     eventID
   } = props; // .openedFiles[0];
 
@@ -99,7 +99,7 @@ function FileView(props: Props) {
       : '';
     const locale = '&locale=' + i18n.language;
     const theming =
-      '&theme=' + currentTheme + extPrimaryColor + extTextColor + extBgndColor;
+      '&theme=' + theme.palette.mode + extPrimaryColor + extTextColor + extBgndColor;
 
     if (openedFile.editMode && openedFile.editingExtensionPath) {
       fileOpenerURL =

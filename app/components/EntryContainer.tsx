@@ -395,7 +395,8 @@ function EntryContainer(props: Props) {
     };
   }, [openedFile.isAutoSaveEnabled, fileChanged.current]);
 
-  useEffect(() => {
+  // editor is not loaded in this time - change theme after loadDefaultTextContent
+  /*useEffect(() => {
     if (
       fileViewer &&
       fileViewer.current &&
@@ -406,7 +407,7 @@ function EntryContainer(props: Props) {
       // @ts-ignore call setContent from iframe
       fileViewer.current.contentWindow.setTheme(settings.currentTheme);
     }
-  }, [settings.currentTheme]);
+  }, [settings.currentTheme]);*/
 
   useEffect(() => {
     // if (openedFiles.length > 0) {
@@ -505,7 +506,7 @@ function EntryContainer(props: Props) {
         }
         textFilePath = openedFile.path;
 
-        if (
+        /*if (
           fileViewer &&
           fileViewer.current &&
           fileViewer.current.contentWindow &&
@@ -514,7 +515,7 @@ function EntryContainer(props: Props) {
         ) {
           // @ts-ignore call setContent from iframe
           fileViewer.current.contentWindow.setTheme(settings.currentTheme);
-        }
+        }*/
         // TODO make loading index.html for folders configurable
         // if (!this.state.currentEntry.isFile) {
         //   textFilePath += '/index.html';
@@ -557,7 +558,8 @@ function EntryContainer(props: Props) {
                   fileViewer.current.contentWindow.setContent(
                     content,
                     fileDirectory,
-                    !openedFile.editMode
+                    !openedFile.editMode,
+                    settings.currentTheme
                   );
                 }
                 if (currentLocationId) {
@@ -1591,7 +1593,6 @@ function EntryContainer(props: Props) {
           fileViewer={fileViewer}
           fileViewerContainer={fileViewerContainer}
           toggleFullScreen={toggleFullScreen}
-          currentTheme={settings.currentTheme}
           eventID={eventID.current}
         />
       </Split>
