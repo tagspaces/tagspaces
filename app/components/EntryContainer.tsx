@@ -169,10 +169,10 @@ interface Props {
   settings: any;
   keyBindings: any;
   closeAllFiles: () => void;
-  renameFile: () => void;
-  renameDirectory: () => void;
-  addTags: () => void;
-  removeTags: () => void;
+  renameFile: (filePath: string, newFilePath: string) => Promise<boolean>;
+  renameDirectory: (path: string, nextPath: string) => Promise<boolean>;
+  addTags: (paths: string[], tags: TS.Tag[]) => Promise<boolean>;
+  removeTags: (paths: string[], tags: TS.Tag[]) => Promise<boolean>;
   openPrevFile: (path: string) => void;
   openNextFile: (path: string) => void;
   openFileNatively: (path: string) => void;
@@ -183,7 +183,7 @@ interface Props {
     notificationType?: string, // NotificationTypes
     autohide?: boolean
   ) => void;
-  removeAllTags: () => void;
+  removeAllTags: (paths: string[]) => Promise<boolean>;
   deleteFile: (path: string, uuid: string) => void;
   toggleEntryFullWidth: () => void;
   isReadOnlyMode: boolean;
@@ -1560,7 +1560,7 @@ function EntryContainer(props: Props) {
             updateThumbnailUrl={updateThumbnailUrl}
             showNotification={showNotification}
             isReadOnlyMode={isReadOnlyMode}
-            currentDirectoryPath={currentDirectoryPath}
+            // currentDirectoryPath={currentDirectoryPath}
             tileServer={tileServer}
             sharingLink={sharingLink}
           />

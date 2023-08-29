@@ -16,9 +16,10 @@
  *
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import SwipeableViews from 'react-swipeable-views';
+//import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination, Mousewheel, Keyboard } from 'swiper/modules';
 import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -49,6 +50,16 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { openURLExternally } from '-/services/utils-io';
 import { AppDispatch } from '-/reducers/app';
 
+// Import Swiper styles
+//import 'swiper/css';
+//import 'swiper/css/navigation';
+//import 'swiper/css/pagination';
+
+import { register } from 'swiper/element/bundle';
+// import { SwiperRef } from 'swiper/swiper-react';
+
+register();
+
 interface Props {
   classes: any;
   open: boolean;
@@ -61,6 +72,21 @@ function OnboardingDialog(props: Props) {
   const isPersistTagsInSidecar = useSelector(getPersistTagsInSidecarFile);
   const currentTheme = useSelector(getCurrentTheme);
   const dispatch: AppDispatch = useDispatch();
+  const swiperElRef = useRef(null); //<SwiperRef>
+
+  /*useEffect(() => {
+  if(swiperElRef.current){
+    // listen for Swiper events using addEventListener
+    swiperElRef.current.addEventListener('progress', (e) => {
+      const [swiper, progress] = e.detail;
+      console.log(progress);
+    });
+
+    swiperElRef.current.addEventListener('slidechange', (e) => {
+      console.log('slide changed');
+    });
+    }
+  }, []);*/
 
   const setPersistTagsInSidecarFile = isPersistTagsInSidecar => {
     dispatch(
@@ -109,10 +135,14 @@ function OnboardingDialog(props: Props) {
           overflowY: 'auto'
         }}
       >
-        <SwipeableViews
-          index={activeStep}
-          onChangeIndex={handleStepChange}
-          enableMouseEvents
+        <swiper-container
+          ref={swiperElRef}
+          slides-per-view="3"
+          navigation="true"
+          pagination={{
+            clickable: true
+          }}
+          modules={[Pagination, Navigation]}
         >
           <div
             style={{
@@ -262,7 +292,19 @@ function OnboardingDialog(props: Props) {
               introduction from the welcome screen.
             </Typography>
           </div>
-        </SwipeableViews>
+          <swiper-slide>
+            <article>
+              <h3 className="text-center">
+                If you are benefited from these challenges for interviews or
+                learning, please consider adding your testimonial by submitting
+                the details{' '}
+                <a href="https://forms.gle/2hJGa3foKuPctiWE7" target="_blank">
+                  here
+                </a>
+              </h3>
+            </article>
+          </swiper-slide>
+        </swiper-container>
       </DialogContent>
       <DialogActions style={{ justifyContent: 'center' }}>
         <MobileStepper

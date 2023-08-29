@@ -48,7 +48,7 @@ interface Props {
   canDrop: boolean;
   isOver: boolean;
   connectDropTarget: any;
-  children: Object;
+  children: any;
   path?: string;
   location?: TS.Location;
 }

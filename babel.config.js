@@ -22,7 +22,7 @@ const electronVersion = parseInt(
 
 const developmentEnvironments = ['development', 'test'];
 
-const developmentPlugins = [require('react-hot-loader/babel')];
+const developmentPlugins = []; //require('react-hot-loader/babel')];
 
 const productionPlugins = [
   require('babel-plugin-dev-expression'),

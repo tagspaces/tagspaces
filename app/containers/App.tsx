@@ -125,7 +125,7 @@ const draculaTheme = createTheme({
 });
 
 interface Props {
-  children: Object;
+  children: any;
 }
 function App(props: Props) {
   let theme = legacyTheme;

@@ -22,7 +22,7 @@ import { getEmptyImage } from 'react-dnd-html5-backend';
 import DragItemTypes from './DragItemTypes';
 
 interface Props {
-  children: Array<Object>;
+  children: Array<any>;
   connectDragSource: ConnectDragSource;
   connectDragPreview: ConnectDragPreview;
 }

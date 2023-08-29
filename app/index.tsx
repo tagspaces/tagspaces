@@ -18,7 +18,7 @@
 
 import React from 'react';
 import { render } from 'react-dom';
-import { AppContainer } from 'react-hot-loader';
+// import { AppContainer } from 'react-hot-loader';
 import Root from './containers/Root';
 import configureStore from './store/configureStore';
 import './app.global.css';
@@ -34,10 +34,9 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 render(
-  <AppContainer>
-    <Root store={store} persistor={persistor} />
-  </AppContainer>,
-  document.getElementById('root')
+  /*<AppContainer>*/
+  <Root store={store} persistor={persistor} />,
+  /*</AppContainer>*/ document.getElementById('root')
 );
 
 /* if (module.hot) {

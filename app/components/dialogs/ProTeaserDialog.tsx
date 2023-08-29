@@ -17,7 +17,6 @@
  */
 
 import React, { useState } from 'react';
-import SwipeableViews from 'react-swipeable-views';
 import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -34,6 +33,7 @@ import { useSelector } from 'react-redux';
 import { getProTeaserSlides } from '-/content/ProTeaserSlides';
 import Links from '-/content/links';
 import { openURLExternally } from '-/services/utils-io';
+import { Navigation, Pagination } from 'swiper/modules';
 
 interface Props {
   open: boolean;
@@ -197,13 +197,16 @@ function ProTeaserDialog(props: Props) {
           overflowY: 'auto'
         }}
       >
-        <SwipeableViews
-          index={activeStep}
-          onChangeIndex={handleStepChange}
-          enableMouseEvents
+        <swiper-container
+          slides-per-view="3"
+          navigation="true"
+          pagination={{
+            clickable: true
+          }}
+          modules={[Pagination, Navigation]}
         >
           {slides ? slides : <></>}
-        </SwipeableViews>
+        </swiper-container>
       </DialogContent>
       <DialogActions style={{ justifyContent: 'center' }}>
         <MobileStepper

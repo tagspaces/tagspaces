@@ -20,7 +20,8 @@ import React, { useEffect, useReducer, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { translate } from 'react-i18next';
+//import { translate } from 'react-i18next';
+//import { initReactI18next } from 'react-i18next';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import Drawer from '@mui/material/Drawer';
 import { HotKeys } from 'react-hotkeys';
@@ -1067,8 +1068,5 @@ const areEqual = (prevProp, nextProp) =>
   JSON.stringify(nextProp.openedFiles) === JSON.stringify(prevProp.openedFiles);
 
 export default withDnDContext(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(translate(['core'], { wait: true })(React.memo(MainPage, areEqual)))
+  connect(mapStateToProps, mapDispatchToProps)(React.memo(MainPage, areEqual)) //translate(['core'], { wait: true })(React.memo(MainPage, areEqual)))
 );

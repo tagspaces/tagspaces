@@ -43,12 +43,11 @@ import SetBackgroundIcon from '@mui/icons-material/OpacityOutlined';
 import ClearBackgroundIcon from '@mui/icons-material/FormatColorResetOutlined';
 import {
   AttributionControl,
-  Map,
+  MapContainer,
   LayerGroup,
   Marker,
   Popup,
-  TileLayer,
-  withLeaflet
+  TileLayer
 } from 'react-leaflet';
 import { ButtonGroup, IconButton } from '@mui/material';
 import { formatBytes } from '@tagspaces/tagspaces-common/misc';
@@ -880,7 +879,7 @@ function EntryProperties(props: Props) {
 
         {geoLocation && (
           <Grid item xs={12}>
-            <Map
+            <MapContainer
               tap={true}
               style={{
                 height: '200px',
@@ -890,7 +889,6 @@ function EntryProperties(props: Props) {
                 borderRadius: 5,
                 border: '1px solid rgba(0, 0, 0, 0.38)'
               }}
-              animate={false}
               doubleClickZoom={true}
               keyboard={false}
               dragging={true}
@@ -972,7 +970,7 @@ function EntryProperties(props: Props) {
                 </Marker>
               </LayerGroup>
               <AttributionControl position="bottomright" prefix="" />
-            </Map>
+            </MapContainer>
           </Grid>
         )}
 
@@ -1524,12 +1522,10 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   JSON.stringify(nextProp.lastBackgroundImageChange) ===
     JSON.stringify(prevProp.lastBackgroundImageChange);
 
-export default withLeaflet(
-  connect(
-    mapStateToProps,
-    mapActionCreatorsToProps
-  )(
-    // @ts-ignore
-    React.memo(EntryProperties, areEqual)
-  )
+export default connect(
+  mapStateToProps,
+  mapActionCreatorsToProps
+)(
+  // @ts-ignore
+  React.memo(EntryProperties, areEqual)
 );

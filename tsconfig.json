@@ -13,7 +13,7 @@
     "sourceMap": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "lib": ["esnext", "dom"], // "lib": ["es2015", "dom"],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "paths": {
       "-/*": ["app/*"]
     }
