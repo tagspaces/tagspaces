@@ -132,11 +132,7 @@ function EntryContainerTabs(props: Props) {
           ...(openedFile.isFile && { maxHeight: 400 })
         }}
       >
-        {value === index && (
-          <Box sx={{ p: 3, height: '100%' }}>
-            <Typography>{children}</Typography>
-          </Box>
-        )}
+        {value === index && children}
       </div>
     );
   }
@@ -171,28 +167,6 @@ function EntryContainerTabs(props: Props) {
     }
   };
 
-  /*const entryProperties = (
-    <div
-      style={{
-        display: 'inline',
-        flex: '1 1 100%',
-        backgroundColor: theme.palette.background.default,
-        padding: '0',
-        height: '100%'
-      }}
-    >
-      {openedFile.isFile ? renderFileToolbar() : renderFolderToolbar()}
-      {isRevisionPanelVisible &&
-      openedFile.isFile &&
-      Pro &&
-      isEditable &&
-      props.revisionsEnabled ? (
-        <Revisions />
-      ) : (
-
-      )}
-    </div>
-  );*/
   const toggleEditDescriptionField = () => {
     if (readOnlyMode) {
       editDescription.current = undefined;

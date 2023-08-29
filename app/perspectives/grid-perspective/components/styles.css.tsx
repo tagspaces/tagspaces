@@ -152,6 +152,7 @@ export const GridStyles = styled('div')(({ theme }) => ({
     backdropFilter: 'blur(5px)',
     // borderBottom: '1px solid ' + theme.palette.divider,
     width: 'calc(100% - 10px)',
-    overflowX: 'auto'
+    overflowX: 'auto',
+    overflowY: 'hidden'
   }
 }));

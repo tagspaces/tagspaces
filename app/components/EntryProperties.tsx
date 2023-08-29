@@ -122,8 +122,6 @@ const Root = styled('div')(({ theme }) => ({
   overflowY: 'auto',
   overflowX: 'hidden',
   flexGrow: 1,
-  padding: 7,
-  paddingRight: 2,
   height: '100%',
 
   [`& .${classes.tags}`]: {
