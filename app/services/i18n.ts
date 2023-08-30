@@ -21,9 +21,9 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import enUs from '../locales/en_US/core.json';
 import en from '../locales/en/core.json';
 import { initReactI18next } from 'react-i18next';
-import HttpBackend, { HttpBackendOptions } from 'i18next-http-backend';
-/*import HttpApi from 'i18next-http-backend'
-import type HttpBackendOptions from 'i18next-http-backend'*/
+import HttpApi from 'i18next-http-backend';
+//import HttpBackend, { HttpBackendOptions } from 'i18next-http-backend';
+// import type HttpBackendOptions from 'i18next-http-backend'
 
 let defaultLanguage: any = enUs;
 if (
@@ -408,13 +408,15 @@ function loadLocales(options, url, payload, callback) {
   }
 }
 
-const options: InitOptions<HttpBackendOptions> = {
+// @ts-ignore
+const options: InitOptions = {
   debug: true,
   fallbackLng: 'en',
   // load: 'all', // ['en', 'de'], // we only provide en, de -> no region specific locals like en-US, de-DE
   // ns: ['core'],
   // defaultNS: 'core',
   // attributes: ['t', 'i18n'],
+  keySeparator: false,
   backend: {
     loadPath: '{{lng}}',
     // parse: data => data, // comment to have working i18n switch
@@ -435,13 +437,13 @@ const options: InitOptions<HttpBackendOptions> = {
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
-  .use(HttpBackend);
+  .use(HttpApi);
 
 /*.use(initReactI18next) // passes i18n down to react-i18next
   .use(HttpBackend)
   .use(LanguageDetector);*/
 if (!i18n.isInitialized) {
-  i18n.init<HttpBackendOptions>(options, (err, t) => {
+  i18n.init(options, (err, t) => {
     // i18n.use(XHR).init(options, (err, t) => {
     if (err) {
       return console.log('something went wrong loading', err);
