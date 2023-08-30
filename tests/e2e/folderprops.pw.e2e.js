@@ -62,7 +62,7 @@ test.describe('TST02 - Folder properties', () => {
   test('TST0201 - Open in main area [web,minio,electron]', async () => {
     const testFile = 'file_in_empty_folder.txt';
     await createFile(testFile);
-
+    await clickOn('[data-tid=propsActionsMenuTID]');
     await clickOn('[data-tid=openInMainAreaTID]');
     await expectElementExist(getGridFileSelector(testFile), true, 5000);
   });
@@ -89,6 +89,7 @@ test.describe('TST02 - Folder properties', () => {
     };
     await createFile('tsm.json', JSON.stringify(tsmJson), 'empty_folder/.ts');
 
+    await clickOn('[data-tid=propsActionsMenuTID]');
     await clickOn('[data-tid=reloadFolderTID]');
 
     // propsTags = await getPropertiesTags();
@@ -101,8 +102,10 @@ test.describe('TST02 - Folder properties', () => {
       4000
     );
 
+    await clickOn('[data-tid=descriptionTabTID]');
+    // await clickOn('[data-tid=editDescriptionTID]');
     const editor = await global.client.waitForSelector(
-      '[data-tid=descriptionTID] .milkdown'
+      '[data-tid=descriptionTID] .milkdown' //[contenteditable=true]'
     );
     const description = await editor.innerText();
     expect(description.replace(/[\s*#]/g, '')).toMatch(
@@ -111,6 +114,7 @@ test.describe('TST02 - Folder properties', () => {
   });
 
   test('TST0205 - Delete folder from toolbar [web,minio,electron]', async () => {
+    await clickOn('[data-tid=propsActionsMenuTID]');
     await clickOn('[data-tid=deleteFolderTID]');
     await clickOn('[data-tid=confirmSaveBeforeCloseDialog]');
     await expectElementExist('OpenedTIDempty_folder', false, 5000);
@@ -182,11 +186,12 @@ test.describe('TST02 - Folder properties', () => {
   test('TST0213 - Add description to folder [web,minio,electron,_pro]', async () => {
     const desc = 'test description';
 
+    await clickOn('[data-tid=descriptionTabTID]');
     await clickOn('[data-tid=editDescriptionTID]');
     // await global.client.dblclick('[data-tid=descriptionTID]');
     await clickOn('[data-tid=descriptionTID]');
     const editor = await global.client.waitForSelector(
-      '[data-tid=descriptionTID] .milkdown'
+      '[data-tid=descriptionTID] [contenteditable=true]'
     );
     await editor.type(desc);
     const editorContent = await editor.innerText();

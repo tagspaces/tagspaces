@@ -49,8 +49,6 @@ interface Props {
   open: boolean;
   selectedEntries: Array<any>;
   onClose: (clearSelection?: boolean) => void;
-  removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
-  removeAllTags: (paths: Array<string>) => void;
 }
 
 function AddRemoveTagsDialog(props: Props) {
@@ -92,9 +90,11 @@ function AddRemoveTagsDialog(props: Props) {
   const removeTags = () => {
     const { selectedEntries } = props;
     if (selectedEntries && selectedEntries.length > 0) {
-      props.removeTags(
-        selectedEntries.map(entry => entry.path),
-        newlyAddedTags
+      dispatch(
+        TaggingActions.removeTags(
+          selectedEntries.map(entry => entry.path),
+          newlyAddedTags
+        )
       );
     }
     onCloseDialog(true);
@@ -103,7 +103,9 @@ function AddRemoveTagsDialog(props: Props) {
   const removeAllTags = () => {
     const { selectedEntries } = props;
     if (selectedEntries && selectedEntries.length > 0) {
-      props.removeAllTags(selectedEntries.map(entry => entry.path));
+      dispatch(
+        TaggingActions.removeAllTags(selectedEntries.map(entry => entry.path))
+      );
     }
     onCloseDialog(true);
   };
