@@ -129,6 +129,7 @@ function EntryContainerTabs(props: Props) {
         style={{
           height: '100%',
           overflowY: 'auto',
+          padding: 10,
           ...(openedFile.isFile && { maxHeight: 400 })
         }}
       >

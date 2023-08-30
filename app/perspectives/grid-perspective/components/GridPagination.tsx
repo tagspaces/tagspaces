@@ -439,7 +439,8 @@ function GridPagination(props: Props) {
                   marginRight: 10,
                   marginTop: 0,
                   marginBottom: 0,
-                  height: 150,
+                  height:
+                    !showDescription && currentDirectoryDescription ? 150 : 110,
                   position: 'relative'
                 }}
               >
@@ -511,16 +512,16 @@ function GridPagination(props: Props) {
                     {folderSummary}
                   </Typography>
                   {!showDescription && currentDirectoryDescription && (
-                    <Tooltip title={i18n.t('core:filePropertiesDescription')}>
-                      <Typography
-                        style={{
-                          fontSize: '0.8rem',
-                          wordBreak: 'break-all'
-                        }}
-                      >
-                        {currentDirectoryDescription}
-                      </Typography>
-                    </Tooltip>
+                    <Typography
+                      style={{
+                        fontSize: '0.8rem',
+                        wordBreak: 'break-all',
+                        height: 45,
+                        overflowY: 'auto'
+                      }}
+                    >
+                      {currentDirectoryDescription}
+                    </Typography>
                   )}
                 </Box>
                 <Tooltip title={i18n.t('core:thumbnail')}>
@@ -532,7 +533,7 @@ function GridPagination(props: Props) {
                       backgroundImage: 'url("' + folderTmbPath.current + '")',
                       backgroundSize: 'cover', // cover contain
                       backgroundRepeat: 'no-repeat',
-                      backgroundPosition: 'top center',
+                      backgroundPosition: 'center center',
                       position: 'absolute',
                       top: 0,
                       right: 0
@@ -551,8 +552,8 @@ function GridPagination(props: Props) {
                 marginTop: showDetails ? 0 : 10,
                 marginLeft: 25,
                 marginRight: 10,
-                padding: 2,
-                borderRadius: 5
+                padding: 10,
+                borderRadius: 10
               }}
             >
               <MilkdownEditor
