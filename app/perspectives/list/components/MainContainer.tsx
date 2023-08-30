@@ -125,7 +125,10 @@ function ListPerspective(props: Props) {
     dispatch(IOActions.moveFiles(files, destination));
 
   const handleSetSelectedEntries = (entries: Array<TS.FileSystemEntry>) => {
-    dispatch(AppActions.setSelectedEntries(entries));
+    const selected = showDirectories.current
+      ? entries
+      : entries.filter(entry => entry.isFile);
+    dispatch(AppActions.setSelectedEntries(selected));
   };
 
   const handleShowNotification = (
