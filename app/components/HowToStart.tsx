@@ -317,7 +317,7 @@ function HowToStart() {
       </style>
       <Typography
         variant="inherit"
-        sx={{
+        style={{
           color: theme.palette.text.primary,
           textTransform: 'uppercase',
           textAlign: 'center',
