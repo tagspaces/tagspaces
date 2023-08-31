@@ -2309,13 +2309,15 @@ export const actions = {
     }
     return Promise.resolve(false);
   },
-  openEntry: (path?: string) => (dispatch: (action) => void) => {
+  openEntry: (path?: string, showDetails = false) => (
+    dispatch: (action) => void
+  ) => {
     if (path === undefined) {
-      return dispatch(actions.openFsEntry());
+      return dispatch(actions.openFsEntry(undefined, showDetails));
     }
     return getAllPropertiesPromise(path)
       .then((fsEntry: TS.FileSystemEntry) =>
-        dispatch(actions.openFsEntry(fsEntry))
+        dispatch(actions.openFsEntry(fsEntry, showDetails))
       )
       .catch(error =>
         console.warn(
@@ -2323,10 +2325,11 @@ export const actions = {
         )
       );
   },
-  openFsEntry: (fsEntry?: TS.FileSystemEntry) => (
+  openFsEntry: (fsEntry?: TS.FileSystemEntry, showDetails = false) => (
     dispatch: (action) => void,
     getState: () => any
   ) => {
+    dispatch(SettingsActions.setShowDetails(showDetails));
     if (fsEntry === undefined) {
       // eslint-disable-next-line no-param-reassign
       fsEntry = getLastSelectedEntry(getState());

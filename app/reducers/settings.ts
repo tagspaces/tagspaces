@@ -38,6 +38,8 @@ export const types = {
   UPGRADE_SETTINGS: 'SETTINGS/UPGRADE_SETTINGS',
   SET_LANGUAGE: 'SETTINGS/SET_LANGUAGE',
   TOGGLE_SHOWUNIXHIDDENENTRIES: 'SETTINGS/TOGGLE_SHOWUNIXHIDDENENTRIES',
+  SET_ENTRY_CONTAINER_TAB: 'SETTINGS/SET_ENTRY_CONTAINER_TAB',
+  SET_SHOW_DETAILS: 'SETTINGS/SET_SHOW_DETAILS',
   SET_DESKTOPMODE: 'SETTINGS/SET_DESKTOPMODE',
   SET_DEVMODE: 'SETTINGS/SET_DEVMODE',
   SET_ENABLE_WS: 'SETTINGS/SET_ENABLE_WS',
@@ -137,6 +139,21 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.TOGGLE_SHOWUNIXHIDDENENTRIES: {
       return { ...state, showUnixHiddenEntries: !state.showUnixHiddenEntries };
+    }
+    case types.SET_ENTRY_CONTAINER_TAB: {
+      return { ...state, entryContainerTab: action.entryContainerTab };
+    }
+    case types.SET_SHOW_DETAILS: {
+      if (action.showDetails) {
+        if (state.entryContainerTab !== 0) {
+          return { ...state, entryContainerTab: 0 };
+        }
+      } /*else {
+        if (state.entryContainerTab !== undefined) {
+          return { ...state, entryContainerTab: undefined };
+        }
+      }*/
+      return state;
     }
     case types.SET_TAG_DELIMITER: {
       return { ...state, tagDelimiter: action.delimiter };
@@ -561,6 +578,14 @@ export const actions = {
   toggleShowUnixHiddenEntries: () => ({
     type: types.TOGGLE_SHOWUNIXHIDDENENTRIES
   }),
+  setEntryContainerTab: (tabIndex: number) => ({
+    type: types.SET_ENTRY_CONTAINER_TAB,
+    entryContainerTab: tabIndex
+  }),
+  setShowDetails: (showDetails: boolean) => ({
+    type: types.SET_SHOW_DETAILS,
+    showDetails: showDetails
+  }),
   setCheckForUpdates: (checkForUpdates: boolean) => ({
     type: types.SET_CHECKFORUPDATES,
     checkForUpdates
@@ -849,6 +874,8 @@ export const getLastPublishedVersion = (state: any) =>
   state.settings.lastPublishedVersion;
 export const getShowUnixHiddenEntries = (state: any) =>
   state.settings.showUnixHiddenEntries;
+export const getEntryContainerTab = (state: any) =>
+  state.settings.entryContainerTab;
 export const getUseDefaultLocation = (state: any) =>
   state.settings.useDefaultLocation;
 export const getDefaultPerspective = (state: any) =>

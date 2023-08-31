@@ -21,7 +21,6 @@ import { styled, useTheme } from '@mui/material/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import {
   actions as AppActions,
@@ -36,7 +35,11 @@ import Revisions from '-/components/Revisions';
 import EntryProperties from '-/components/EntryProperties';
 import TaggingActions from '-/reducers/tagging-actions';
 import { TS } from '-/tagspaces.namespace';
-import { getMapTileServer } from '-/reducers/settings';
+import {
+  actions as SettingsActions,
+  getEntryContainerTab,
+  getMapTileServer
+} from '-/reducers/settings';
 import EditDescription from '-/components/EditDescription';
 
 interface StyledTabsProps {
@@ -107,7 +110,8 @@ interface TabPanelProps {
 }
 
 function EntryContainerTabs(props: Props) {
-  const [value, setValue] = React.useState(0);
+  const tabIndex = useSelector(getEntryContainerTab);
+  // const [value, setValue] = React.useState(0);
   const { openedFile, openPanel, toggleProperties, marginRight } = props;
   const editDescription = useRef<string>(undefined);
   //const theme = useTheme();
@@ -154,16 +158,16 @@ function EntryContainerTabs(props: Props) {
   ) => dispatch(TaggingActions.addTags(paths, tags, updateIndex));
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
+    dispatch(SettingsActions.setEntryContainerTab(newValue));
     openPanel();
   };
   const handleTabClick = (event: React.SyntheticEvent) => {
     if (
       openedFile.isFile &&
-      value === parseInt(event.currentTarget.id.split('-')[1], 10)
+      tabIndex === parseInt(event.currentTarget.id.split('-')[1], 10)
     ) {
       // when selected tab is clicked...
-      setValue(undefined);
+      dispatch(SettingsActions.setEntryContainerTab(undefined));
       toggleProperties();
     }
   };
@@ -220,7 +224,7 @@ function EntryContainerTabs(props: Props) {
     <Box sx={{ width: '100%', height: '100%' }}>
       <Box sx={{ ...(marginRight && { marginRight }) }}>
         <StyledTabs
-          value={value}
+          value={tabIndex}
           onChange={handleChange}
           aria-label="basic tabs example"
         >
@@ -246,7 +250,7 @@ function EntryContainerTabs(props: Props) {
           )}
         </StyledTabs>
       </Box>
-      <TsTabPanel value={value} index={0}>
+      <TsTabPanel value={tabIndex} index={0}>
         <EntryProperties
           key={openedFile.path}
           openedEntry={openedFile}
@@ -258,7 +262,7 @@ function EntryContainerTabs(props: Props) {
           tileServer={tileServer}
         />
       </TsTabPanel>
-      <TsTabPanel value={value} index={1}>
+      <TsTabPanel value={tabIndex} index={1}>
         <EditDescription
           toggleEditDescriptionField={
             !readOnlyMode && !openedFile.editMode && toggleEditDescriptionField
@@ -269,7 +273,7 @@ function EntryContainerTabs(props: Props) {
         />
       </TsTabPanel>
       {openedFile.isFile && (
-        <TsTabPanel value={value} index={2}>
+        <TsTabPanel value={tabIndex} index={2}>
           <Revisions />
         </TsTabPanel>
       )}

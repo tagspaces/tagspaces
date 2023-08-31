@@ -24,7 +24,7 @@ import React, {
   useRef,
   useState
 } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { GlobalHotKeys } from 'react-hotkeys';
 import fscreen from 'fscreen';
@@ -79,7 +79,8 @@ import {
   isDesktopMode,
   getKeyBindingObject,
   getCurrentLanguage,
-  isRevisionsEnabled
+  isRevisionsEnabled,
+  getEntryContainerTab
 } from '-/reducers/settings';
 import {
   OpenedEntry,
@@ -165,16 +166,16 @@ interface Props {
   closeAllFiles: () => void;
   openPrevFile: (path: string) => void;
   openNextFile: (path: string) => void;
-  openFileNatively: (path: string) => void;
-  openLink: (url: string, options?: any) => void;
-  openDirectory: (path: string) => void;
+  //openFileNatively: (path: string) => void;
+  //openLink: (url: string, options?: any) => void;
+  //openDirectory: (path: string) => void;
   showNotification: (
     text: string,
     notificationType?: string, // NotificationTypes
     autohide?: boolean
   ) => void;
-  deleteFile: (path: string, uuid: string) => void;
-  toggleEntryFullWidth: () => void;
+  //deleteFile: (path: string, uuid: string) => void;
+  //toggleEntryFullWidth: () => void;
   isReadOnlyMode: boolean;
   setEntryPropertiesSplitSize: (size: string) => void;
   updateOpenedFile: (
@@ -205,18 +206,14 @@ function EntryContainer(props: Props) {
     openedFiles,
     currentDirectoryPath,
     desktopMode,
-    toggleEntryFullWidth,
     isReadOnlyMode,
     updateOpenedFile,
-    deleteFile,
-    openLink,
     closeAllFiles,
-    openFileNatively,
-    openDirectory,
     setEntryPropertiesSplitSize,
     showNotification
   } = props;
 
+  const tabIndex = useSelector(getEntryContainerTab);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const theme = useTheme();
   // const [percent, setPercent] = React.useState<number | undefined>(undefined);
@@ -226,9 +223,9 @@ function EntryContainer(props: Props) {
   const openedFilePath = useRef(openedFile.path);
   // const [currentEntry, setCurrentEntry] = useState<OpenedEntry>(openedFile);
 
-  const [isPropertiesPanelVisible, setPropertiesPanelVisible] = useState<
+  /*const [isPropertiesPanelVisible, setPropertiesPanelVisible] = useState<
     boolean
-  >(false);
+  >(false);*/
 
   const [propertiesStyles, setPropertiesStyles] = useState<React.CSSProperties>(
     { display: 'flex', flexDirection: 'column' }
@@ -405,9 +402,9 @@ function EntryContainer(props: Props) {
   }, [openedFilePath.current, isReadOnlyMode]); // , settings]);
 
   // always open for dirs
-  const isPropPanelVisible = openedFile.isFile
+  /*const isPropPanelVisible = openedFile.isFile
     ? isPropertiesPanelVisible
-    : true;
+    : true;*/
 
   const editingSupported: boolean =
     !isReadOnlyMode &&
@@ -1179,7 +1176,7 @@ function EntryContainer(props: Props) {
           height: 'calc(100% - 47px)',
           //height: '100%',
           //minHeight: '100%',
-          ...propertiesStyles
+          ...(tabIndex !== undefined && propertiesStyles)
         }}
       >
         <Root>
@@ -1314,14 +1311,9 @@ function mapActionCreatorsToProps(dispatch) {
     {
       setEntryPropertiesSplitSize: SettingsActions.setEntryPropertiesSplitSize,
       closeAllFiles: AppActions.closeAllFiles,
-      openFileNatively: AppActions.openFileNatively,
-      openDirectory: AppActions.openDirectory,
-      openLink: AppActions.openLink,
       showNotification: AppActions.showNotification,
       openNextFile: AppActions.openNextFile,
       openPrevFile: AppActions.openPrevFile,
-      deleteFile: AppActions.deleteFile,
-      toggleEntryFullWidth: AppActions.toggleEntryFullWidth,
       updateOpenedFile: AppActions.updateOpenedFile,
       switchLocationType: LocationActions.switchLocationType,
       switchCurrentLocationType: AppActions.switchCurrentLocationType

@@ -67,6 +67,7 @@ import {
   LinkIcon
 } from '-/components/CommonIcons';
 import { getLocations } from '-/reducers/locations';
+import PropertiesIcon from '@mui/icons-material/Info';
 
 interface Props {
   anchorEl: Element;
@@ -130,6 +131,13 @@ function FileMenu(props: Props) {
     const tmpLoc = locations.find(location => location.uuid === locationID);
     const relativePath = getRelativeEntryPath(tmpLoc, entryPath);
     return generateSharingLink(locationID, relativePath);
+  }
+
+  function showProperties() {
+    onClose();
+    if (selectedEntries && selectedEntries.length === 1) {
+      dispatch(AppActions.openEntry(selectedEntries[0].path, true));
+    }
   }
 
   function copySharingLink() {
@@ -442,7 +450,7 @@ function FileMenu(props: Props) {
         </MenuItem>
       );
     }
-    menuItems.push(<Divider key="fmDivider3" />);
+    menuItems.push(<Divider key="fmDivider1" />);
     menuItems.push(
       <MenuItem
         key="fileMenuRenameFile"
@@ -550,6 +558,22 @@ function FileMenu(props: Props) {
           <LinkIcon />
         </ListItemIcon>
         <ListItemText primary={i18n.t('core:copySharingLink')} />
+      </MenuItem>
+    );
+  }
+
+  if (selectedEntries.length < 2) {
+    menuItems.push(<Divider key="fmDivider3" />);
+    menuItems.push(
+      <MenuItem
+        key="showProperties"
+        data-tid="showPropertiesTID"
+        onClick={showProperties}
+      >
+        <ListItemIcon>
+          <PropertiesIcon />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:filePropertiesTitle')} />
       </MenuItem>
     );
   }
