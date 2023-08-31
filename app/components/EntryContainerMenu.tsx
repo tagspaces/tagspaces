@@ -10,6 +10,7 @@ import {
   ListItemText,
   Menu,
   MenuItem,
+  Divider,
   Typography
 } from '@mui/material';
 import {
@@ -193,6 +194,7 @@ function EntryContainerMenu(props: Props) {
         <ListItemText primary={i18n.t('core:downloadFile')} />
       </MenuItem>
     );
+    menuItems.push(<Divider />);
     menuItems.push(
       <MenuItem
         data-tid="fileContainerSwitchToFullScreen"
@@ -225,6 +227,7 @@ function EntryContainerMenu(props: Props) {
         </MenuItem>
       );
     }
+    menuItems.push(<Divider />);
     menuItems.push(
       <MenuItem
         data-tid="navigateToParentTID"
@@ -301,6 +304,7 @@ function EntryContainerMenu(props: Props) {
       </MenuItem>
     );
     if (!readOnlyMode) {
+      menuItems.push(<Divider />);
       menuItems.push(
         <MenuItem
           data-tid="deleteEntryTID"
@@ -365,21 +369,6 @@ function EntryContainerMenu(props: Props) {
         </MenuItem>
       );
     }
-    menuItems.push(
-      <MenuItem
-        data-tid="reloadFolderTID"
-        aria-label={i18n.t('core:reloadDirectory')}
-        onClick={() => {
-          reloadDocument();
-          handleClose();
-        }}
-      >
-        <ListItemIcon>
-          <ReloadIcon />
-        </ListItemIcon>
-        <ListItemText primary={i18n.t('core:reloadDirectory')} />
-      </MenuItem>
-    );
     if (desktopMode) {
       menuItems.push(
         <MenuItem
@@ -397,6 +386,22 @@ function EntryContainerMenu(props: Props) {
         </MenuItem>
       );
     }
+    menuItems.push(<Divider />);
+    menuItems.push(
+      <MenuItem
+        data-tid="reloadFolderTID"
+        aria-label={i18n.t('core:reloadDirectory')}
+        onClick={() => {
+          reloadDocument();
+          handleClose();
+        }}
+      >
+        <ListItemIcon>
+          <ReloadIcon />
+        </ListItemIcon>
+        <ListItemText primary={i18n.t('core:reloadDirectory')} />
+      </MenuItem>
+    );
     if (!readOnlyMode) {
       menuItems.push(
         <MenuItem

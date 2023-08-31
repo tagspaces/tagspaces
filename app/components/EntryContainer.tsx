@@ -921,59 +921,71 @@ function EntryContainer(props: Props) {
               paddingRight: editingSupported ? 85 : 5
             }}
           >
-            <Button
-              id="actions-button"
-              data-tid="propsActionsMenuTID"
-              aria-controls={Boolean(anchorEl) ? 'basic-menu' : undefined}
-              aria-haspopup="true"
-              aria-expanded={Boolean(anchorEl) ? 'true' : undefined}
-              endIcon={<MoreVertIcon sx={{ fontSize: 20 }} />}
-              onClick={(event: React.MouseEvent<HTMLElement>) => {
-                setAnchorEl(event.currentTarget);
-              }}
-            >
-              {openedFile.isFile ? (
-                <>
-                  {fileChanged.current ? (
-                    <Tooltip title={i18n.t('core:fileChanged')}>
-                      <span
-                        style={{
-                          color: theme.palette.text.primary,
-                          margin: 3
-                        }}
-                      >
-                        {String.fromCharCode(0x25cf)}
-                      </span>
-                    </Tooltip>
-                  ) : (
-                    ''
-                  )}
-                  <span
-                    className={classes.fileBadge}
-                    style={{
-                      backgroundColor: openedFile.color,
-                      textTransform: 'uppercase'
-                    }}
-                  >
-                    {'.' +
-                      extractFileExtension(
-                        openedFile.path,
-                        PlatformIO.getDirSeparator()
-                      )}
-                  </span>
-                </>
-              ) : (
+            {openedFile.isFile ? (
+              <>
+                {fileChanged.current ? (
+                  <Tooltip title={i18n.t('core:fileChanged')}>
+                    <span
+                      style={{
+                        color: theme.palette.text.primary,
+                        margin: 3
+                      }}
+                    >
+                      {String.fromCharCode(0x25cf)}
+                    </span>
+                  </Tooltip>
+                ) : (
+                  ''
+                )}
                 <span
                   className={classes.fileBadge}
                   title={i18n.t('core:toggleEntryProperties')}
+                  data-tid="propsActionsMenuTID"
+                  aria-controls={Boolean(anchorEl) ? 'basic-menu' : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={Boolean(anchorEl) ? 'true' : undefined}
+                  // endIcon={<MoreVertIcon sx={{ fontSize: 20 }} />}
+                  onClick={(event: React.MouseEvent<HTMLElement>) => {
+                    setAnchorEl(event.currentTarget);
+                  }}
                   style={{
-                    backgroundColor: AppConfig.defaultFolderColor
+                    backgroundColor: openedFile.color,
+                    display: 'flex',
+                    alignItems: 'center',
+                    textTransform: 'uppercase',
+                    paddingLeft: 10
                   }}
                 >
-                  {i18n.t('core:folder')}
+                  {//'.' +
+                  extractFileExtension(
+                    openedFile.path,
+                    PlatformIO.getDirSeparator()
+                  )}
+                  <MoreVertIcon style={{ fontSize: 20 }} />
                 </span>
-              )}
-            </Button>
+              </>
+            ) : (
+              <span
+                className={classes.fileBadge}
+                title={i18n.t('core:toggleEntryProperties')}
+                data-tid="propsActionsMenuTID"
+                aria-controls={Boolean(anchorEl) ? 'basic-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={Boolean(anchorEl) ? 'true' : undefined}
+                // endIcon={<MoreVertIcon sx={{ fontSize: 20 }} />}
+                onClick={(event: React.MouseEvent<HTMLElement>) => {
+                  setAnchorEl(event.currentTarget);
+                }}
+                style={{
+                  backgroundColor: AppConfig.defaultFolderColor,
+                  display: 'flex',
+                  alignItems: 'center'
+                }}
+              >
+                {i18n.t('core:folder')}
+                <MoreVertIcon style={{ fontSize: 20 }} />
+              </span>
+            )}
             <EntryContainerMenu
               anchorEl={anchorEl}
               handleClose={() => setAnchorEl(null)}
@@ -983,13 +995,14 @@ function EntryContainer(props: Props) {
               sharingParentFolderLink={sharingParentFolderLink}
               toggleFullScreen={toggleFullScreen}
             />
-            <Tooltip title={fileName}>
+            <Tooltip title={openedFile.isFile && fileName}>
               <Box
                 data-tid={'OpenedTID' + dataTidFormat(fileName)}
                 style={{
                   color: theme.palette.text.primary,
                   display: 'inline',
                   fontSize: 17,
+                  marginLeft: 5,
                   maxHeight: 40,
                   overflowY: 'auto'
                 }}
