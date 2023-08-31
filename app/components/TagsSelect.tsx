@@ -183,6 +183,7 @@ function TagsSelect(props: Props) {
     <Box sx={{ flexGrow: 1 }}>
       <Autocomplete
         data-tid={props.dataTid}
+        disabled={isReadOnlyMode}
         multiple
         options={!props.isReadOnlyMode ? allTags.current : []}
         getOptionLabel={(option: TS.Tag) => option.title}
@@ -216,7 +217,6 @@ function TagsSelect(props: Props) {
         renderInput={params => (
           <TextField
             {...params}
-            disabled={isReadOnlyMode}
             // variant="filled"
             label={label}
             placeholder={placeholderText}

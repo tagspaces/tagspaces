@@ -556,10 +556,16 @@ export default (state: any = initialState, action: any) => {
       };
     }
     case types.SET_CURRENT_DIRECTORY_DIRS: {
-      return {
-        ...state,
-        currentDirectoryDirs: action.dirs
-      };
+      if (
+        JSON.stringify(state.currentDirectoryDirs) !==
+        JSON.stringify(action.dirs)
+      ) {
+        return {
+          ...state,
+          currentDirectoryDirs: action.dirs
+        };
+      }
+      return state;
     }
     case types.CLEAR_UPLOAD_DIALOG: {
       // if (PlatformIO.haveObjectStoreSupport()) {
@@ -1524,10 +1530,14 @@ export const actions = {
         ); */
         // console.debug('Loading meta succeeded for:' + directoryPath);
         dispatch(
-          actions.loadDirectoryContentInt(directoryPath, generateThumbnails, {
+          actions.loadDirectoryContentInt(
+            directoryPath,
+            generateThumbnails,
+            fsEntryMeta /*{
             ...fsEntryMeta,
             description: getDescriptionPreview(fsEntryMeta.description, 200)
-          })
+          }*/
+          )
         );
       } catch (err) {
         console.debug('Error loading meta of:' + directoryPath + ' ' + err);

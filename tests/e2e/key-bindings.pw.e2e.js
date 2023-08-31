@@ -64,7 +64,7 @@ test.describe('TST13 - Settings Key Bindings [electron]', () => {
   test('TST1313 - Test open file [electron]', async () => {
     await clickOn(selectorFile);
     await global.client.keyboard.press('Enter');
-    await expectElementExist('[data-tid=fileContainerToggleProperties]', true);
+    await expectElementExist('[data-tid=detailsTabTID]', true);
   });
 
   test('TST1315 - Test delete file [electron]', async () => {

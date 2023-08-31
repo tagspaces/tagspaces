@@ -68,7 +68,7 @@ test.describe('TST08 - File folder properties', () => {
     // open fileProperties
     await clickOn(selectorFile);
     //Toggle Properties
-    await clickOn('[data-tid=fileContainerToggleProperties]');
+    //await clickOn('[data-tid=fileContainerToggleProperties]');
 
     const propsFileName = await getPropertiesFileName();
     const firstFileName = await getGridFileName(0);
@@ -88,7 +88,7 @@ test.describe('TST08 - File folder properties', () => {
     // open fileProperties
     await clickOn(selectorFile);
     //Toggle Properties
-    await clickOn('[data-tid=fileContainerToggleProperties]');
+    //await clickOn('[data-tid=fileContainerToggleProperties]');
 
     const propsFileName = await getPropertiesFileName();
     const firstFileName = await getGridFileName(0);
@@ -105,7 +105,7 @@ test.describe('TST08 - File folder properties', () => {
     // open fileProperties
     await clickOn(selectorFile);
     //Toggle Properties
-    await clickOn('[data-tid=fileContainerToggleProperties]');
+    //await clickOn('[data-tid=fileContainerToggleProperties]');
 
     const propsFileName = await getPropertiesFileName();
     const firstFileName = await getGridFileName(0);
@@ -126,12 +126,15 @@ test.describe('TST08 - File folder properties', () => {
     //await clickOn('[data-tid=location_supported-filestypes]');
     // open fileProperties
     await clickOn(selectorFile);
-    //await clickOn('[data-tid=openInFullWidthTID]'); // dummy click -first click in openInFullWidthTID dont work
+    await clickOn('[data-tid=propsActionsMenuTID]');
     await clickOn('[data-tid=openInFullWidthTID]');
     const folderSelector = await global.client.$(
       '[data-tid=folderContainerTID]'
     ); //.isHidden();
     expect(await folderSelector.isHidden()).toBe(true);
+    await clickOn('[data-tid=propsActionsMenuTID]');
+    await clickOn('[data-tid=openInFullWidthTID]');
+    await clickOn('[id=mobileMenuButton]');
     // expect(global.client).toHaveSelector('[data-tid=folderContainerTID]');
   });
 
@@ -144,7 +147,7 @@ test.describe('TST08 - File folder properties', () => {
     // open fileProperties
     await clickOn(getGridFileSelector(fileName));
     //Toggle Properties
-    await clickOn('[data-tid=fileContainerToggleProperties]');
+    //await clickOn('[data-tid=fileContainerToggleProperties]');
 
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
       add: true,
@@ -187,7 +190,7 @@ test.describe('TST08 - File folder properties', () => {
     // open fileProperties
     await clickOn(selectorFile);
     //Toggle Properties
-    await clickOn('[data-tid=fileContainerToggleProperties]');
+    //await clickOn('[data-tid=fileContainerToggleProperties]');
 
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
   });
@@ -199,7 +202,7 @@ test.describe('TST08 - File folder properties', () => {
     // open fileProperties
     await clickOn(selectorFile);
     //Toggle Properties
-    await clickOn('[data-tid=fileContainerToggleProperties]');
+    //await clickOn('[data-tid=fileContainerToggleProperties]');
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
   });
 
@@ -217,7 +220,7 @@ test.describe('TST08 - File folder properties', () => {
       '[data-tid=perspectiveGridFileTable]'
     );
     await clickOn(getGridFileSelector('sample[' + tagName + '].txt'));
-    await clickOn('[data-tid=fileContainerToggleProperties]');
+    //await clickOn('[data-tid=fileContainerToggleProperties]');
 
     const propsTags = await getPropertiesTags();
     expect(propsTags).toContain(tagName);
@@ -238,13 +241,14 @@ test.describe('TST08 - File folder properties', () => {
     const fileSelector = getGridFileSelector('sample.pdf');
     // open fileProperties
     await clickOn(fileSelector);
-    await clickOn('[data-tid=fileContainerToggleProperties]');
+    //await clickOn('[data-tid=fileContainerToggleProperties]');
+    await clickOn('[data-tid=descriptionTabTID]');
     await clickOn('[data-tid=editDescriptionTID]');
     //await global.client.dblclick('[data-tid=descriptionTID]');
     await clickOn('[data-tid=descriptionTID]');
 
     const editor = await global.client.waitForSelector(
-      '[data-tid=descriptionTID] .milkdown'
+      '[data-tid=descriptionTID] [contenteditable=true]'
     );
     await editor.type(desc);
 
@@ -269,13 +273,13 @@ test.describe('TST08 - File folder properties', () => {
     // open fileProperties
     await clickOn(getGridFileSelector('sample.txt'));
     //Toggle Properties
-    await clickOn('[data-tid=fileContainerToggleProperties]');
+    //await clickOn('[data-tid=fileContainerToggleProperties]');
 
     await expectFileContain();
 
     const newFileContent = 'testing_file_content';
     await createFile('sample.txt', newFileContent, '.');
-
+    await clickOn('[data-tid=propsActionsMenuTID]');
     await clickOn('[data-tid=reloadPropertiesTID]');
     await expectFileContain(newFileContent);
   });
@@ -301,7 +305,7 @@ test.describe('TST08 - File folder properties', () => {
     await clickOn(getGridFileSelector(fileName));
 
     //Toggle Properties
-    await clickOn('[data-tid=fileContainerToggleProperties]');
+    //await clickOn('[data-tid=fileContainerToggleProperties]');
     // add meta json to file
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
@@ -315,6 +319,7 @@ test.describe('TST08 - File folder properties', () => {
 
     await expectMetaFilesExist(arrayMeta, true);
 
+    await clickOn('[data-tid=propsActionsMenuTID]');
     await clickOn('[data-tid=deleteEntryTID]');
     await clickOn('[data-tid=confirmSaveBeforeCloseDialog]');
     await expectElementExist(getGridFileSelector(fileName), false, 5000);
@@ -330,13 +335,15 @@ test.describe('TST08 - File folder properties', () => {
     await clickOn('[data-tid=fileContainerSaveFile]');
 
     //Toggle Revisions
-    await clickOn('[data-tid=revisionsTID]');
+    await clickOn('[data-tid=revisionsTabTID]');
+    //await clickOn('[data-tid=revisionsTID]');
     await expectElementExist('[data-tid=viewRevisionTID]');
 
     const revision = await getRevision(0);
     expect(revision).not.toBeUndefined();
     await expectMetaFilesExist([revision.file], true, revision.id);
 
+    await clickOn('[data-tid=propsActionsMenuTID]');
     await clickOn('[data-tid=deleteEntryTID]');
     await clickOn('[data-tid=confirmSaveBeforeCloseDialog]');
     await expectElementExist(getGridFileSelector(fileName), false, 5000);
@@ -352,6 +359,7 @@ test.describe('TST08 - File folder properties', () => {
     if (global.isWin) {
       // open fileProperties
       await clickOn(selectorFile);
+      await clickOn('[data-tid=propsActionsMenuTID]');
       await clickOn('[data-tid=fileContainerSwitchToFullScreen]');
       await expectElementExist('[data-tid=fullscreenTID]', true, 10000);
       // await takeScreenshot('TST0814 fullscreenTID exist true');
@@ -382,7 +390,7 @@ test.describe('TST08 - File folder properties', () => {
   test('TST0827 - Link for internal sharing + copy [web,minio,electron]', async () => {
     const fileName = 'sample.jpg';
     await clickOn(getGridFileSelector(fileName));
-    await clickOn('[data-tid=fileContainerToggleProperties]');
+    //await clickOn('[data-tid=fileContainerToggleProperties]');
 
     const sharingLink = await global.client.$(
       '[data-tid=sharingLinkTID] input'
