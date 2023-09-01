@@ -31,29 +31,11 @@ import fscreen from 'fscreen';
 import Button from '@mui/material/Button';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Tooltip from '-/components/Tooltip';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import IconButton from '@mui/material/IconButton';
-import BookmarkIcon from '@mui/icons-material/BookmarkTwoTone';
-import BookmarkAddIcon from '@mui/icons-material/BookmarkAddTwoTone';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
-import CloseIcon from '@mui/icons-material/Close';
-import FullScreenIcon from '@mui/icons-material/ZoomOutMap';
-import FileDownloadIcon from '@mui/icons-material/AssignmentReturned';
-import DetailsIcon from '@mui/icons-material/Info';
-import ExpandIcon from '@mui/icons-material/SettingsEthernet';
 import Box from '@mui/material/Box';
 import ButtonGroup from '@mui/material/ButtonGroup';
-import {
-  ParentFolderIcon,
-  NavigateToFolderIcon,
-  OpenNewWindowIcon,
-  CancelIcon,
-  ReloadIcon,
-  DeleteIcon,
-  LinkIcon
-} from '-/components/CommonIcons';
-import HistoryIcon from '@mui/icons-material/History';
+import { CancelIcon } from '-/components/CommonIcons';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { buffer } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
@@ -61,14 +43,8 @@ import {
   getMetaFileLocationForDir,
   getMetaFileLocationForFile,
   extractContainingDirectoryPath,
-  extractTitle,
-  extractFileExtension,
-  extractFileName,
-  extractDirectoryName,
   getBackupFileLocation
 } from '@tagspaces/tagspaces-common/paths';
-import { ProTooltip } from '-/components/HelperComponents';
-import TagsPreview from '-/components/TagsPreview';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import PlatformIO from '-/services/platform-facade';
 import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
@@ -91,23 +67,18 @@ import useEventListener from '-/utils/useEventListener';
 import { TS } from '-/tagspaces.namespace';
 import FileView from '-/components/FileView';
 import { Pro } from '-/pro';
-import { actions as LocationActions, getLocations } from '-/reducers/locations';
-import Revisions from '-/components/Revisions';
-import { Grid, Switch } from '@mui/material';
+import { actions as LocationActions } from '-/reducers/locations';
+import { Switch } from '@mui/material';
 import useFirstRender from '-/utils/useFirstRender';
 import ResolveConflictDialog from '-/components/dialogs/ResolveConflictDialog';
-import { dataTidFormat } from '-/services/test';
-import { getSharingLink, loadJSONFile } from '-/services/utils-io';
+import { loadJSONFile } from '-/services/utils-io';
 import { styled, useTheme } from '@mui/material/styles';
 import EntryContainerTabs from '-/components/EntryContainerTabs';
 import EntryContainerNav from '-/components/EntryContainerNav';
-import EntryContainerMenu from '-/components/EntryContainerMenu';
+import EntryContainerTitle from '-/components/EntryContainerTitle';
 
-const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
-// const openedSplitSize = AppConfig.isElectron ? 560 : 360;
-/* const fullSplitSize = 750;
-// const maxCharactersTitleLength = 50;
-*/
+//const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
+
 const bufferedSplitResize = buffer({
   timeout: 300,
   id: 'buffered-split-resize'
@@ -116,8 +87,7 @@ const bufferedSplitResize = buffer({
 const PREFIX = 'EntryContainer';
 const classes = {
   toolbar2: `${PREFIX}-toolbar2`,
-  flexLeft: `${PREFIX}-flexLeft`,
-  fileBadge: `${PREFIX}-fileBadge`
+  flexLeft: `${PREFIX}-flexLeft`
 };
 
 const Root = styled(Box)(({ theme }) => ({
@@ -147,15 +117,6 @@ const Root = styled(Box)(({ theme }) => ({
     overflowX: 'auto',
     overflowY: 'hidden',
     paddingRight: 100
-  },
-  [`& .${classes.fileBadge}`]: {
-    color: 'white',
-    backgroundColor: AppConfig.defaultFileColor,
-    padding: 3,
-    textShadow: '1px 1px #8f8f8f',
-    fontSize: 13,
-    marginLeft: 3,
-    borderRadius: 3
   }
 }));
 
@@ -194,7 +155,6 @@ interface Props {
   switchLocationType: (locationId: string) => Promise<string | null>;
   switchCurrentLocationType: (currentLocationId) => Promise<boolean>;
   revisionsEnabled: boolean;
-  locations: Array<TS.Location>;
 }
 
 const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
@@ -214,18 +174,12 @@ function EntryContainer(props: Props) {
   } = props;
 
   const tabIndex = useSelector(getEntryContainerTab);
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const theme = useTheme();
   // const [percent, setPercent] = React.useState<number | undefined>(undefined);
   const percent = useRef<number | undefined>(undefined);
   const timer = useRef(null);
   const openedFile = openedFiles[0];
   const openedFilePath = useRef(openedFile.path);
-  // const [currentEntry, setCurrentEntry] = useState<OpenedEntry>(openedFile);
-
-  /*const [isPropertiesPanelVisible, setPropertiesPanelVisible] = useState<
-    boolean
-  >(false);*/
 
   const [propertiesStyles, setPropertiesStyles] = useState<React.CSSProperties>(
     { display: 'flex', flexDirection: 'column' }
@@ -410,14 +364,6 @@ function EntryContainer(props: Props) {
     !isReadOnlyMode &&
     openedFile.editingExtensionId !== undefined &&
     openedFile.editingExtensionId.length > 3;
-
-  const haveBookmark =
-    Pro && Pro.bookmarks && Pro.bookmarks.haveBookmark(openedFile.path);
-
-  const { sharingLink, sharingParentFolderLink } = getSharingLink(
-    openedFile,
-    props.locations
-  );
 
   const handleMessage = (data: any) => {
     let message;
@@ -825,24 +771,6 @@ function EntryContainer(props: Props) {
     props.openPrevFile(openedFile.path);
   };
 
-  const bookmarkClick = () => {
-    if (Pro) {
-      if (haveBookmark) {
-        Pro.bookmarks.delBookmark(openedFile.path);
-      } else {
-        Pro.bookmarks.setBookmark(openedFile.path, sharingLink);
-      }
-      forceUpdate();
-    } else {
-      showNotification(
-        i18n.t('core:toggleBookmark') +
-          ' - ' +
-          i18n.t('thisFunctionalityIsAvailableInPro'),
-        NotificationTypes.default
-      );
-    }
-  };
-
   const isEditable = AppConfig.editableFiles.some(ext =>
     openedFile.path.endsWith(ext)
   );
@@ -869,34 +797,6 @@ function EntryContainer(props: Props) {
     }
   };
 
-  let fileTitle: string = openedFile.path
-    ? extractTitle(
-        openedFile.path,
-        !openedFile.isFile,
-        PlatformIO.getDirSeparator()
-      )
-    : '';
-
-  let fileName: string;
-  if (openedFile.path) {
-    if (openedFile.isFile) {
-      fileName = extractFileName(openedFile.path, PlatformIO.getDirSeparator());
-    } else {
-      fileName = extractDirectoryName(
-        openedFile.path,
-        PlatformIO.getDirSeparator()
-      );
-    }
-  }
-  if (!fileName) {
-    const currentLocation = props.locations.find(
-      location => location.uuid === openedFile.locationId
-    );
-    if (currentLocation) {
-      fileName = currentLocation.name;
-    }
-  }
-
   const renderPanels = () => {
     const toolbarButtons = () => {
       return (
@@ -920,118 +820,12 @@ function EntryContainer(props: Props) {
               paddingRight: editingSupported ? 85 : 5
             }}
           >
-            {openedFile.isFile ? (
-              <>
-                {fileChanged.current ? (
-                  <Tooltip title={i18n.t('core:fileChanged')}>
-                    <span
-                      style={{
-                        color: theme.palette.text.primary,
-                        margin: 3
-                      }}
-                    >
-                      {String.fromCharCode(0x25cf)}
-                    </span>
-                  </Tooltip>
-                ) : (
-                  ''
-                )}
-                <span
-                  className={classes.fileBadge}
-                  title={i18n.t('core:toggleEntryProperties')}
-                  data-tid="propsActionsMenuTID"
-                  aria-controls={Boolean(anchorEl) ? 'basic-menu' : undefined}
-                  aria-haspopup="true"
-                  aria-expanded={Boolean(anchorEl) ? 'true' : undefined}
-                  // endIcon={<MoreVertIcon sx={{ fontSize: 20 }} />}
-                  onClick={(event: React.MouseEvent<HTMLElement>) => {
-                    setAnchorEl(event.currentTarget);
-                  }}
-                  style={{
-                    backgroundColor: openedFile.color,
-                    display: 'flex',
-                    alignItems: 'center',
-                    textTransform: 'uppercase',
-                    paddingLeft: 10
-                  }}
-                >
-                  {//'.' +
-                  extractFileExtension(
-                    openedFile.path,
-                    PlatformIO.getDirSeparator()
-                  )}
-                  <MoreVertIcon style={{ fontSize: 20 }} />
-                </span>
-              </>
-            ) : (
-              <span
-                className={classes.fileBadge}
-                title={i18n.t('core:toggleEntryProperties')}
-                data-tid="propsActionsMenuTID"
-                aria-controls={Boolean(anchorEl) ? 'basic-menu' : undefined}
-                aria-haspopup="true"
-                aria-expanded={Boolean(anchorEl) ? 'true' : undefined}
-                // endIcon={<MoreVertIcon sx={{ fontSize: 20 }} />}
-                onClick={(event: React.MouseEvent<HTMLElement>) => {
-                  setAnchorEl(event.currentTarget);
-                }}
-                style={{
-                  backgroundColor: AppConfig.defaultFolderColor,
-                  display: 'flex',
-                  alignItems: 'center'
-                }}
-              >
-                {i18n.t('core:folder')}
-                <MoreVertIcon style={{ fontSize: 20 }} />
-              </span>
-            )}
-            <EntryContainerMenu
-              anchorEl={anchorEl}
-              handleClose={() => setAnchorEl(null)}
-              openedEntry={openedFile}
+            <EntryContainerTitle
+              isFileChanged={fileChanged.current}
+              openedFile={openedFile}
               reloadDocument={reloadDocument}
-              sharingLink={sharingLink}
-              sharingParentFolderLink={sharingParentFolderLink}
               toggleFullScreen={toggleFullScreen}
             />
-            <Tooltip title={openedFile.isFile && fileName}>
-              <Box
-                data-tid={'OpenedTID' + dataTidFormat(fileName)}
-                style={{
-                  color: theme.palette.text.primary,
-                  display: 'inline',
-                  fontSize: 17,
-                  marginLeft: 5,
-                  maxHeight: 40,
-                  overflowY: 'auto'
-                }}
-              >
-                {fileTitle}
-              </Box>
-            </Tooltip>
-            <ProTooltip tooltip={i18n.t('core:toggleBookmark')}>
-              <IconButton
-                data-tid="toggleBookmarkTID"
-                aria-label="bookmark"
-                size="small"
-                onClick={bookmarkClick}
-              >
-                {haveBookmark ? (
-                  <BookmarkIcon
-                    style={{
-                      color: theme.palette.primary.main
-                    }}
-                  />
-                ) : (
-                  <BookmarkAddIcon
-                    style={{
-                      color: theme.palette.text.secondary
-                    }}
-                  />
-                )}
-              </IconButton>
-            </ProTooltip>
-            <TagsPreview tags={openedFile.tags} />
           </Box>
           <EntryContainerNav
             isFile={openedFile.isFile}
@@ -1302,8 +1096,7 @@ function mapStateToProps(state) {
     keyBindings: getKeyBindingObject(state),
     desktopMode: isDesktopMode(state),
     revisionsEnabled: isRevisionsEnabled(state),
-    language: getCurrentLanguage(state),
-    locations: getLocations(state)
+    language: getCurrentLanguage(state)
   };
 }
 
