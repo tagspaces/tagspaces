@@ -54,7 +54,6 @@ import {
   LinkIcon
 } from '-/components/CommonIcons';
 import HistoryIcon from '@mui/icons-material/History';
-import { Split } from 'ts-react-splitter';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { buffer } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
@@ -127,6 +126,7 @@ const Root = styled(Box)(({ theme }) => ({
   flex: '1 1 100%',
   display: 'flex',
   backgroundColor: theme.palette.background.default,
+  overflow: 'hidden',
   // height: '100%', // filePropsHeight ||
   [`& .${classes.toolbar2}`]: {
     width: '100%',
@@ -1142,7 +1142,8 @@ function EntryContainer(props: Props) {
       return (
         <div
           style={{
-            position: 'relative'
+            position: 'relative',
+            overflow: 'hidden'
           }}
         >
           {tabsComponent('160px')}
@@ -1173,8 +1174,8 @@ function EntryContainer(props: Props) {
     return (
       <div
         style={{
-          height: 'calc(100% - 47px)',
-          //height: '100%',
+          // height: 'calc(100% - 47px)',
+          height: '100%',
           //minHeight: '100%',
           ...(tabIndex !== undefined && propertiesStyles)
         }}

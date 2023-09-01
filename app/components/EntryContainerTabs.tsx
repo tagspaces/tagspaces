@@ -133,8 +133,8 @@ function EntryContainerTabs(props: Props) {
         style={{
           height: '100%',
           overflowY: 'auto',
-          padding: 10,
-          ...(openedFile.isFile && { maxHeight: 400 })
+          padding: 10
+          // ...(openedFile.isFile && { maxHeight: 400 })
         }}
       >
         {value === index && children}
@@ -221,7 +221,15 @@ function EntryContainerTabs(props: Props) {
   };
 
   return (
-    <Box sx={{ width: '100%', height: '100%' }}>
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden'
+      }}
+    >
       <Box sx={{ ...(marginRight && { marginRight }) }}>
         <StyledTabs
           value={tabIndex}
@@ -277,7 +285,7 @@ function EntryContainerTabs(props: Props) {
           <Revisions />
         </TsTabPanel>
       )}
-    </Box>
+    </div>
   );
 }
 
