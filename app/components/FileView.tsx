@@ -35,7 +35,7 @@ interface Props {
   searchQuery: TS.SearchQuery;
   toggleFullScreen?: () => void;
   height?: string;
-  currentTheme: string;
+  //currentTheme: string;
   eventID: string;
 }
 
@@ -49,7 +49,7 @@ function FileView(props: Props) {
     toggleFullScreen,
     searchQuery,
     height,
-    currentTheme,
+    //currentTheme,
     eventID
   } = props; // .openedFiles[0];
 
@@ -99,7 +99,11 @@ function FileView(props: Props) {
       : '';
     const locale = '&locale=' + i18n.language;
     const theming =
-      '&theme=' + currentTheme + extPrimaryColor + extTextColor + extBgndColor;
+      '&theme=' +
+      theme.palette.mode +
+      extPrimaryColor +
+      extTextColor +
+      extBgndColor;
 
     if (openedFile.editMode && openedFile.editingExtensionPath) {
       fileOpenerURL =
@@ -134,9 +138,10 @@ function FileView(props: Props) {
       style={{
         width: '100%',
         height: height || '100%',
-        flex: '1 1 100%',
         display: 'flex',
-        backgroundColor: theme.palette.background.default
+        flex: '1 1 100%',
+        backgroundColor: theme.palette.background.default,
+        borderTop: 'outset'
       }}
     >
       {isFullscreen && (
@@ -162,6 +167,7 @@ function FileView(props: Props) {
           ref={fileViewer}
           style={{
             width: '100%',
+            height: '100%',
             zIndex: 3,
             border: 0
           }}
@@ -181,7 +187,8 @@ const areEqual = (prevProp, nextProp) =>
   nextProp.openedFile.url === prevProp.openedFile.url &&
   nextProp.openedFile.editMode === prevProp.openedFile.editMode &&
   nextProp.openedFile.shouldReload === prevProp.openedFile.shouldReload &&
-  nextProp.isFullscreen === prevProp.isFullscreen;
+  nextProp.isFullscreen === prevProp.isFullscreen &&
+  nextProp.height === prevProp.height;
 // nextProp.currentTheme === prevProp.currentTheme; // Commented due to reloading of the editors with changed content
 /* ((nextProp.openedFile.editMode === undefined &&
     prevProp.openedFile.editMode === true) ||

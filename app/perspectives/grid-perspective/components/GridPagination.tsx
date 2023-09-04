@@ -131,9 +131,9 @@ interface Props {
 }
 
 function GridPagination(props: Props) {
+  let { directories } = props;
   const {
     style,
-    directories,
     showDirectories,
     showDetails,
     showDescription,
@@ -167,6 +167,9 @@ function GridPagination(props: Props) {
     clearSelection,
     files
   } = props;
+  if (!showDirectories) {
+    directories = [];
+  }
   const theme = useTheme();
   const allFilesCount = files.length;
   const showPagination = gridPageLimit && files.length > gridPageLimit;
@@ -389,7 +392,9 @@ function GridPagination(props: Props) {
   const dirColor = currentDirectoryColor || 'transparent';
 
   let folderSummary =
-    directories.length + ' folder(s) and ' + allFilesCount + ' file(s) found';
+    (directories.length > 0 ? directories.length + ' folder(s) and ' : '') +
+    allFilesCount +
+    ' file(s) found';
   if (selectedEntries && selectedEntries.length > 0) {
     folderSummary = selectedEntries.length + ' entries selected';
   }
@@ -402,8 +407,6 @@ function GridPagination(props: Props) {
     );
   }
   */
-
-  const displayDescription = showDescription && currentDirectoryDescription;
 
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions,jsx-a11y/no-static-element-interactions
@@ -439,7 +442,8 @@ function GridPagination(props: Props) {
                   marginRight: 10,
                   marginTop: 0,
                   marginBottom: 0,
-                  height: 150,
+                  height:
+                    !showDescription && currentDirectoryDescription ? 150 : 110,
                   position: 'relative'
                 }}
               >
@@ -465,7 +469,10 @@ function GridPagination(props: Props) {
                     >
                       <ButtonBase
                         style={{ fontSize: '1.5rem' }}
-                        onClick={openRenameEntryDialog}
+                        onClick={() => {
+                          setSelectedEntries([]);
+                          openRenameEntryDialog();
+                        }}
                       >
                         {folderName}
                       </ButtonBase>
@@ -508,16 +515,16 @@ function GridPagination(props: Props) {
                     {folderSummary}
                   </Typography>
                   {!showDescription && currentDirectoryDescription && (
-                    <Tooltip title={i18n.t('core:filePropertiesDescription')}>
-                      <Typography
-                        style={{
-                          fontSize: '0.8rem',
-                          wordBreak: 'break-all'
-                        }}
-                      >
-                        {currentDirectoryDescription}
-                      </Typography>
-                    </Tooltip>
+                    <Typography
+                      style={{
+                        fontSize: '0.8rem',
+                        wordBreak: 'break-all',
+                        height: 45,
+                        overflowY: 'auto'
+                      }}
+                    >
+                      {getDescriptionPreview(currentDirectoryDescription, 200)}
+                    </Typography>
                   )}
                 </Box>
                 <Tooltip title={i18n.t('core:thumbnail')}>
@@ -529,7 +536,7 @@ function GridPagination(props: Props) {
                       backgroundImage: 'url("' + folderTmbPath.current + '")',
                       backgroundSize: 'cover', // cover contain
                       backgroundRepeat: 'no-repeat',
-                      backgroundPosition: 'top center',
+                      backgroundPosition: 'center center',
                       position: 'absolute',
                       top: 0,
                       right: 0
@@ -539,7 +546,7 @@ function GridPagination(props: Props) {
               </div>
             </Grid>
           )}
-          {displayDescription && (
+          {showDescription && currentDirectoryDescription && (
             <Grid
               item
               xs={12}
@@ -548,8 +555,8 @@ function GridPagination(props: Props) {
                 marginTop: showDetails ? 0 : 10,
                 marginLeft: 25,
                 marginRight: 10,
-                padding: 2,
-                borderRadius: 5
+                padding: 10,
+                borderRadius: 10
               }}
             >
               <MilkdownEditor
@@ -615,7 +622,7 @@ function GridPagination(props: Props) {
           )}
           {!isAppLoading && pageFiles.length < 1 && directories.length < 1 && (
             <div style={{ textAlign: 'center' }}>
-              {!displayDescription && (
+              {!showDescription && currentDirectoryDescription && (
                 <div style={{ position: 'relative', marginBottom: 150 }}>
                   <EntryIcon isFile={false} />
                 </div>
@@ -637,7 +644,7 @@ function GridPagination(props: Props) {
             directories.length >= 1 &&
             !showDirectories && (
               <div style={{ textAlign: 'center' }}>
-                {!displayDescription && (
+                {!showDescription && currentDirectoryDescription && (
                   <div style={{ position: 'relative', marginBottom: 150 }}>
                     <EntryIcon isFile={false} />
                   </div>

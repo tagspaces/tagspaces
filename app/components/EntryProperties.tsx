@@ -66,7 +66,8 @@ import {
   convertMarkDown,
   fileNameValidation,
   dirNameValidation,
-  normalizeUrl
+  normalizeUrl,
+  getSharingLink
 } from '-/services/utils-io';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { parseGeoLocation } from '-/utils/geo';
@@ -75,7 +76,7 @@ import PlatformIO from '../services/platform-facade';
 import TagsSelect from './TagsSelect';
 import TransparentBackground from './TransparentBackground';
 import { getThumbnailURLPromise } from '-/services/thumbsgenerator';
-import { getCurrentLanguage } from '-/reducers/settings';
+import { getCurrentLanguage, getTagDelimiter } from '-/reducers/settings';
 import {
   getLastBackgroundImageChange,
   getLastThumbnailImageChange,
@@ -93,14 +94,13 @@ import { ProTooltip } from '-/components/HelperComponents';
 import PerspectiveSelector from '-/components/PerspectiveSelector';
 import { connect } from 'react-redux';
 import FormHelperText from '@mui/material/FormHelperText';
-import { MilkdownRef } from '@tagspaces/tagspaces-md';
-import EditDescription from '-/components/EditDescription';
 import { bindActionCreators } from 'redux';
-import { actions as LocationActions } from '-/reducers/locations';
+import { actions as LocationActions, getLocations } from '-/reducers/locations';
 import { actions as AppActions } from '-/reducers/app';
 import useFirstRender from '-/utils/useFirstRender';
 import LinkGeneratorDialog from '-/components/dialogs/LinkGeneratorDialog';
 import { LinkIcon } from '-/components/CommonIcons';
+import TaggingActions from '-/reducers/tagging-actions';
 
 const PREFIX = 'EntryProperties';
 
@@ -118,12 +118,10 @@ const classes = {
 };
 
 const Root = styled('div')(({ theme }) => ({
-  overflowY: 'auto',
+  /*overflowY: 'auto',
   overflowX: 'hidden',
   flexGrow: 1,
-  padding: 7,
-  paddingRight: 2,
-  height: '100%',
+  height: '100%',*/
 
   [`& .${classes.tags}`]: {
     padding: '5px 5px 2px 2px',
@@ -193,6 +191,7 @@ const BgndImgChooserDialog =
 interface Props {
   language: string;
   openedEntry: OpenedEntry;
+  locations: Array<TS.Location>;
   renameFile: (path: string, nextPath: string) => Promise<boolean>;
   renameDirectory: (path: string, nextPath: string) => Promise<boolean>;
   showNotification: (message: string) => void;
@@ -206,7 +205,6 @@ interface Props {
   isReadOnlyMode: boolean;
   // currentDirectoryPath: string | null;
   tagDelimiter: string;
-  sharingLink: string;
   tileServer: TS.MapTileServer;
   lastBackgroundImageChange: any;
   lastThumbnailImageChange: any;
@@ -239,25 +237,6 @@ function EntryProperties(props: Props) {
       )
     : props.openedEntry.path;
 
-  const printHTML = () => {
-    const sanitizedDescription = currentEntry.current.description
-      ? convertMarkDown(currentEntry.current.description, directoryPath)
-      : i18n.t('core:addMarkdownDescription');
-
-    const printWin = window.open('', 'PRINT', 'height=400,width=600');
-    printWin.document.write(
-      '<html><head><title>' + entryName + ' description</title>'
-    );
-    printWin.document.write('</head><body >');
-    printWin.document.write(sanitizedDescription);
-    printWin.document.write('</body></html>');
-    printWin.document.close(); // necessary for IE >= 10
-    printWin.focus(); // necessary for IE >= 10*/
-    printWin.print();
-    // printWin.close();
-    return true;
-  };
-
   const entryName = props.openedEntry.isFile
     ? extractFileName(props.openedEntry.path, PlatformIO.getDirSeparator())
     : extractDirectoryName(
@@ -269,7 +248,6 @@ function EntryProperties(props: Props) {
     enhanceOpenedEntry(props.openedEntry, props.tagDelimiter)
   );
   const [editName, setEditName] = useState<string>(undefined);
-  const editDescription = useRef<string>(undefined);
   const [isMoveCopyFilesDialogOpened, setMoveCopyFilesDialogOpened] = useState<
     boolean
   >(false);
@@ -401,46 +379,6 @@ function EntryProperties(props: Props) {
     }
   };
 
-  const toggleEditDescriptionField = () => {
-    if (props.isReadOnlyMode) {
-      editDescription.current = undefined;
-      return;
-    }
-    if (!Pro) {
-      props.showNotification(i18n.t('core:thisFunctionalityIsAvailableInPro'));
-      return;
-    }
-    if (!Pro.MetaOperations) {
-      props.showNotification(i18n.t('Saving description not supported'));
-      return;
-    }
-    if (editDescription.current !== undefined) {
-      props
-        .switchLocationType(props.openedEntry.locationId)
-        .then(currentLocationId => {
-          Pro.MetaOperations.saveFsEntryMeta(currentEntry.current.path, {
-            description: editDescription.current
-          })
-            .then(entryMeta => {
-              editDescription.current = undefined;
-              props.updateOpenedFile(currentEntry.current.path, entryMeta);
-              props.switchCurrentLocationType(currentLocationId);
-              return true;
-            })
-            .catch(error => {
-              console.warn('Error saving description ' + error);
-              editDescription.current = undefined;
-              props.switchCurrentLocationType(currentLocationId);
-              props.showNotification(i18n.t('Error saving description'));
-            });
-        });
-    } else if (currentEntry.current.description) {
-      editDescription.current = currentEntry.current.description;
-    } else {
-      editDescription.current = '';
-    }
-  };
-
   const toggleMoveCopyFilesDialog = () => {
     /*props.setSelectedEntries([
       { name: '', isFile: true, tags: [], ...currentEntry.current }
@@ -453,11 +391,7 @@ function EntryProperties(props: Props) {
       props.showNotification(i18n.t('core:thisFunctionalityIsAvailableInPro'));
       return true;
     }
-    if (
-      !currentEntry.current.editMode &&
-      editName === undefined &&
-      editDescription.current === undefined
-    ) {
+    if (!currentEntry.current.editMode && editName === undefined) {
       setFileThumbChooseDialogOpened(!isFileThumbChooseDialogOpened);
     }
   };
@@ -467,11 +401,7 @@ function EntryProperties(props: Props) {
       props.showNotification(i18n.t('core:thisFunctionalityIsAvailableInPro'));
       return true;
     }
-    if (
-      !currentEntry.current.editMode &&
-      editName === undefined &&
-      editDescription.current === undefined
-    ) {
+    if (!currentEntry.current.editMode && editName === undefined) {
       setBgndImgChooseDialogOpened(!isBgndImgChooseDialogOpened);
     }
   };
@@ -640,7 +570,7 @@ function EntryProperties(props: Props) {
       });
   };
 
-  const { isReadOnlyMode, sharingLink, language } = props;
+  const { isReadOnlyMode, language } = props;
 
   if (
     !currentEntry ||
@@ -773,6 +703,10 @@ function EntryProperties(props: Props) {
     currentEntry.current.url && currentEntry.current.url.length > 5;
 
   const showLinkForDownloading = isCloudLocation && currentEntry.current.isFile;
+  const { sharingLink, sharingParentFolderLink } = getSharingLink(
+    currentEntry.current,
+    props.locations
+  );
 
   return (
     <Root>
@@ -789,38 +723,36 @@ function EntryProperties(props: Props) {
               readOnly: editName === undefined,
               endAdornment: (
                 <InputAdornment position="end">
-                  {!isReadOnlyMode &&
-                    !currentEntry.current.editMode &&
-                    editDescription.current === undefined && (
-                      <div style={{ textAlign: 'right' }}>
-                        {editName !== undefined ? (
-                          <div>
-                            <Button
-                              data-tid="cancelRenameEntryTID"
-                              onClick={deactivateEditNameField}
-                            >
-                              {i18n.t('core:cancel')}
-                            </Button>
-                            <Button
-                              data-tid="confirmRenameEntryTID"
-                              color="primary"
-                              onClick={renameEntry}
-                              disabled={disableConfirmButton.current}
-                            >
-                              {i18n.t('core:confirmSaveButton')}
-                            </Button>
-                          </div>
-                        ) : (
+                  {!isReadOnlyMode && !currentEntry.current.editMode && (
+                    <div style={{ textAlign: 'right' }}>
+                      {editName !== undefined ? (
+                        <div>
                           <Button
-                            data-tid="startRenameEntryTID"
-                            color="primary"
-                            onClick={activateEditNameField}
+                            data-tid="cancelRenameEntryTID"
+                            onClick={deactivateEditNameField}
                           >
-                            {i18n.t('core:rename')}
+                            {i18n.t('core:cancel')}
                           </Button>
-                        )}
-                      </div>
-                    )}
+                          <Button
+                            data-tid="confirmRenameEntryTID"
+                            color="primary"
+                            onClick={renameEntry}
+                            disabled={disableConfirmButton.current}
+                          >
+                            {i18n.t('core:confirmSaveButton')}
+                          </Button>
+                        </div>
+                      ) : (
+                        <Button
+                          data-tid="startRenameEntryTID"
+                          color="primary"
+                          onClick={activateEditNameField}
+                        >
+                          {i18n.t('core:rename')}
+                        </Button>
+                      )}
+                    </div>
+                  )}
                 </InputAdornment>
               )
             }}
@@ -831,11 +763,7 @@ function EntryProperties(props: Props) {
             defaultValue={entryName} // currentEntry.current.name}
             inputRef={fileNameRef}
             onClick={() => {
-              if (
-                !currentEntry.current.editMode &&
-                editName === undefined &&
-                editDescription.current === undefined
-              ) {
+              if (!currentEntry.current.editMode && editName === undefined) {
                 activateEditNameField();
               }
             }}
@@ -866,7 +794,6 @@ function EntryProperties(props: Props) {
               isReadOnlyMode={
                 isReadOnlyMode ||
                 currentEntry.current.editMode ||
-                editDescription.current !== undefined ||
                 editName !== undefined
               }
               tags={currentEntry.current.tags}
@@ -974,23 +901,6 @@ function EntryProperties(props: Props) {
           </Grid>
         )}
 
-        <Grid item xs={12}>
-          <EditDescription
-            classes={classes}
-            primaryColor={theme.palette.text.primary}
-            toggleEditDescriptionField={
-              !isReadOnlyMode &&
-              !currentEntry.current.editMode &&
-              editName === undefined &&
-              toggleEditDescriptionField
-            }
-            printHTML={printHTML}
-            description={currentEntry.current.description}
-            setEditDescription={md => (editDescription.current = md)}
-            currentFolder={directoryPath}
-          />
-        </Grid>
-
         <Grid container item xs={12} spacing={1}>
           <Grid item xs={6}>
             <TextField
@@ -1068,8 +978,7 @@ function EntryProperties(props: Props) {
                   <InputAdornment position="end">
                     {!isReadOnlyMode &&
                       !currentEntry.current.editMode &&
-                      editName === undefined &&
-                      editDescription.current === undefined && (
+                      editName === undefined && (
                         <Button
                           data-tid="moveCopyEntryTID"
                           color="primary"
@@ -1288,8 +1197,7 @@ function EntryProperties(props: Props) {
                     >
                       {!isReadOnlyMode &&
                         !currentEntry.current.editMode &&
-                        editName === undefined &&
-                        editDescription.current === undefined && (
+                        editName === undefined && (
                           <ProTooltip tooltip={i18n.t('changeThumbnail')}>
                             <Button fullWidth onClick={toggleThumbFilesDialog}>
                               {i18n.t('core:change')}
@@ -1347,8 +1255,7 @@ function EntryProperties(props: Props) {
                       >
                         {!isReadOnlyMode &&
                           !currentEntry.current.editMode &&
-                          editName === undefined &&
-                          editDescription.current === undefined && (
+                          editName === undefined && (
                             <ProTooltip
                               tooltip={i18n.t('changeBackgroundImage')}
                             >
@@ -1393,7 +1300,7 @@ function EntryProperties(props: Props) {
             </Grid>
           )}
         </Grid>
-        <Grid container item xs={12} style={{ height: 150 }} />
+        {/*<Grid container item xs={12} style={{ height: 150 }} />*/}
       </Grid>
       {isConfirmResetColorDialogOpened && (
         <ConfirmDialog
@@ -1496,8 +1403,10 @@ function EntryProperties(props: Props) {
 
 function mapStateToProps(state) {
   return {
+    tagDelimiter: getTagDelimiter(state),
     lastBackgroundImageChange: getLastBackgroundImageChange(state),
     lastThumbnailImageChange: getLastThumbnailImageChange(state),
+    locations: getLocations(state),
     language: getCurrentLanguage(state)
   };
 }
@@ -1508,7 +1417,12 @@ function mapActionCreatorsToProps(dispatch) {
       switchLocationType: LocationActions.switchLocationType,
       switchCurrentLocationType: AppActions.switchCurrentLocationType,
       setLastBackgroundColorChange: AppActions.setLastBackgroundColorChange,
-      setSelectedEntries: AppActions.setSelectedEntries
+      setSelectedEntries: AppActions.setSelectedEntries,
+      removeTags: TaggingActions.removeTags,
+      removeAllTags: TaggingActions.removeAllTags,
+      updateOpenedFile: AppActions.updateOpenedFile,
+      updateThumbnailUrl: AppActions.updateThumbnailUrl,
+      showNotification: AppActions.showNotification
     },
     dispatch
   );

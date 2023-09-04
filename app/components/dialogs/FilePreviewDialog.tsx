@@ -101,7 +101,7 @@ function FilePreviewDialog(props: Props) {
         }
         textFilePath = openedFile.path;
 
-        if (
+        /*if (
           fileViewer &&
           fileViewer.current &&
           fileViewer.current.contentWindow &&
@@ -110,7 +110,7 @@ function FilePreviewDialog(props: Props) {
         ) {
           // @ts-ignore call setContent from iframe
           fileViewer.current.contentWindow.setTheme(currentTheme);
-        }
+        }*/
 
         dispatch(
           LocationActions.switchLocationType(openedFile.locationId)
@@ -149,7 +149,8 @@ function FilePreviewDialog(props: Props) {
                 fileViewer.current.contentWindow.setContent(
                   content,
                   fileDirectory,
-                  !openedFile.editMode
+                  !openedFile.editMode,
+                  currentTheme
                 );
               }
               if (currentLocationId) {
@@ -212,7 +213,6 @@ function FilePreviewDialog(props: Props) {
           fileViewer={fileViewer}
           fileViewerContainer={fileViewerContainer}
           height={'90%'}
-          currentTheme={currentTheme}
           eventID={eventID.current}
         />
       </DialogContent>

@@ -413,8 +413,8 @@ const options: InitOptions = {
   debug: true,
   fallbackLng: 'en',
   // load: 'all', // ['en', 'de'], // we only provide en, de -> no region specific locals like en-US, de-DE
-  // ns: ['core'],
-  // defaultNS: 'core',
+  ns: ['core'],
+  defaultNS: 'core',
   // attributes: ['t', 'i18n'],
   keySeparator: false,
   backend: {

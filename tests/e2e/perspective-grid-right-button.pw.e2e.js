@@ -158,7 +158,7 @@ test.describe('TST50** - Right button on a file', () => {
     // Select file
     await clickOn(selectorFile);
     //Toggle Properties
-    await clickOn('[data-tid=fileContainerToggleProperties]');
+    // await clickOn('[data-tid=fileContainerToggleProperties]');
     await AddRemoveTagsToSelectedFiles('grid', [testTagName], true);
     await expectElementExist(
       '[data-tid=tagContainer_' + testTagName + ']',
@@ -208,7 +208,7 @@ test.describe('TST50** - Right button on a file', () => {
     // select file
     await clickOn(selectorFile);
     //Toggle Properties
-    await clickOn('[data-tid=fileContainerToggleProperties]');
+    //await clickOn('[data-tid=fileContainerToggleProperties]');
     await AddRemoveTagsToSelectedFiles('grid', [testTagName], true);
     await expectElementExist(
       '[data-tid=tagContainer_' + testTagName + ']',
@@ -366,6 +366,7 @@ test.describe('TST50** - Right button on a file', () => {
     // Copy file in parent directory
     await openContextEntryMenu(fileSelector, 'fileMenuMoveCopyFile');
     // await setInputKeys('targetPathInput', defaultLocationPath);
+    await clickOn('[data-tid=propsActionsMenuTID]');
     await clickOn('[data-tid=navigateToParentTID]');
     await clickOn('[data-tid=confirmCopyFiles]');
     await clickOn('[data-tid=uploadCloseAndClearTID]');

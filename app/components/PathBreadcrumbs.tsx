@@ -207,6 +207,7 @@ function PathBreadcrumbs(props: Props) {
             onDelete={openDirectoryMenu}
             onClick={openDirectoryMenu}
             onContextMenu={openDirectoryMenu}
+            style={{ marginRight: 2 }}
           />
         </Tooltip>
       );

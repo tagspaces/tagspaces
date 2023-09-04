@@ -685,7 +685,11 @@ function MainPage(props: Props) {
 
   return (
     <Root>
-      <HotKeys handlers={keyBindingHandlers} keyMap={keyMap}>
+      <HotKeys
+        handlers={keyBindingHandlers}
+        keyMap={keyMap}
+        style={{ height: '100%' }}
+      >
         <MoveOrCopyFilesDialog
           open={moveCopyDialogOpened !== undefined}
           onClose={() => {
@@ -877,6 +881,10 @@ function MainPage(props: Props) {
                     ? '0'
                     : '3px'
                 } !important;
+              }
+              .react-split .secondary .full-content {
+                display: flex;
+                flex-direction: column;
               }
           `}
           </style>

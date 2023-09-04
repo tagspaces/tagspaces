@@ -46,7 +46,9 @@ import {
   getThumbFileLocationForFile,
   getThumbFileLocationForDirectory,
   getBgndFileLocationForDirectory,
-  cleanFrontDirSeparator
+  cleanFrontDirSeparator,
+  generateSharingLink,
+  cleanRootPath
 } from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
 import PlatformIO from './platform-facade';
@@ -1036,23 +1038,26 @@ export async function loadLocationDataPromise(
 /**
  * if you have entryProperties.isFile prefer to use loadFileMetaDataPromise/loadDirMetaDataPromise
  * @param path
+ * @param fullDescription
  */
 export function loadMetaDataPromise(
-  path: string
+  path: string,
+  fullDescription = false
 ): Promise<TS.FileSystemEntryMeta> {
   return PlatformIO.getPropertiesPromise(path).then(entryProperties => {
     if (entryProperties) {
       if (entryProperties.isFile) {
-        return loadFileMetaDataPromise(path);
+        return loadFileMetaDataPromise(path, fullDescription);
       }
-      return loadDirMetaDataPromise(path);
+      return loadDirMetaDataPromise(path, fullDescription);
     }
     throw new Error('loadMetaDataPromise not exist' + path);
   });
 }
 
 export function loadFileMetaDataPromise(
-  path: string
+  path: string,
+  fullDescription = false
 ): Promise<TS.FileSystemEntryMeta> {
   const metaFilePath = getMetaFileLocationForFile(
     path,
@@ -1065,7 +1070,9 @@ export function loadFileMetaDataPromise(
     return {
       ...metaData,
       isFile: true,
-      description: getDescriptionPreview(metaData.description, 200),
+      description: fullDescription
+        ? metaData.description
+        : getDescriptionPreview(metaData.description, 200),
       color: metaData.color || '',
       tags: metaData.tags || [],
       appName: metaData.appName || '',
@@ -1076,7 +1083,8 @@ export function loadFileMetaDataPromise(
 }
 
 export function loadDirMetaDataPromise(
-  path: string
+  path: string,
+  fullDescription = false
 ): Promise<TS.FileSystemEntryMeta> {
   const metaDirPath = getMetaFileLocationForDir(
     path,
@@ -1090,7 +1098,9 @@ export function loadDirMetaDataPromise(
       ...metaData,
       id: metaData.id || getUuid(),
       isFile: false,
-      description: getDescriptionPreview(metaData.description, 200),
+      description: fullDescription
+        ? metaData.description
+        : getDescriptionPreview(metaData.description, 200),
       color: metaData.color || '',
       perspective: metaData.perspective || '',
       tags: metaData.tags || [],
@@ -1769,4 +1779,49 @@ export function openURLExternally(url: string, skipConfirmation = false) {
   ) {
     PlatformIO.openUrl(url);
   }
+}
+
+export function getSharingLink(
+  openedFile: OpenedEntry,
+  locations: Array<TS.Location>
+) {
+  let sharingLink = '';
+  let sharingParentFolderLink = '';
+  if (window.location.href.indexOf('?') > 0) {
+    const sharingURL = new URL(window.location.href);
+    const params = new URLSearchParams(sharingURL.search);
+    if (params.has('tslid')) {
+      const locationId = params.get('tslid');
+      //if (params.has('tsdpath')) {
+      // const folderPath2 = params.get('tsdpath');
+      const folderLocation = locations.find(
+        location => location.uuid === locationId
+      );
+      const folderPath = extractContainingDirectoryPath(openedFile.path);
+      if (folderPath.indexOf(folderLocation.path) === 0) {
+        sharingParentFolderLink = generateSharingLink(
+          locationId,
+          undefined,
+          cleanRootPath(
+            folderPath,
+            folderLocation.path,
+            PlatformIO.getDirSeparator()
+          )
+        );
+      }
+
+      //}
+      if (params.has('tsepath')) {
+        const entryPath = params.get('tsepath');
+        if (openedFile.isFile) {
+          sharingLink = generateSharingLink(locationId, entryPath);
+        } else {
+          sharingLink = generateSharingLink(locationId, undefined, entryPath);
+        }
+      } else {
+        sharingLink = generateSharingLink(locationId);
+      }
+    }
+  }
+  return { sharingLink, sharingParentFolderLink };
 }
