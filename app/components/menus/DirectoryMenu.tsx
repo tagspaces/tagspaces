@@ -108,7 +108,7 @@ function DirectoryMenu(props: Props) {
     dispatch(AppActions.toggleCreateDirectoryDialog());
   };
 
-  const openEntry = path => dispatch(AppActions.openEntry(path));
+  const openEntry = path => dispatch(AppActions.openEntry(path, true));
 
   const reflectCreateEntry = (path, isFile) => {
     dispatch(AppActions.reflectCreateEntry(path, isFile));

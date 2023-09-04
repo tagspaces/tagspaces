@@ -166,7 +166,7 @@ function Revisions() {
 
   return (
     <Paper
-      sx={{ width: '100%', overflow: 'hidden', height: 'calc(100% - 30px)' }}
+      sx={{ width: '100%', overflow: 'hidden', height: '100%' }} //'calc(100% - 30px)' }}
     >
       {rows.length > initialRowsPerPage && (
         <TablePagination

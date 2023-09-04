@@ -138,8 +138,8 @@ function FileView(props: Props) {
       style={{
         width: '100%',
         height: height || '100%',
-        //flex: '1 1 100%',
-        //display: 'flex',
+        display: 'flex',
+        flex: '1 1 100%',
         backgroundColor: theme.palette.background.default,
         borderTop: 'outset'
       }}

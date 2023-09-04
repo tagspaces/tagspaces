@@ -24,7 +24,7 @@ const classes = {
 };
 
 const Root = styled('div')(({ theme }) => ({
-  height: 250,
+  height: '90%',
   [`& .${classes.button}`]: {
     position: 'relative',
     padding: '8px 12px 6px 8px',
