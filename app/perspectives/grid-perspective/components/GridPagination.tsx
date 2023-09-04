@@ -408,8 +408,6 @@ function GridPagination(props: Props) {
   }
   */
 
-  const displayDescription = showDescription && currentDirectoryDescription;
-
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions,jsx-a11y/no-static-element-interactions
     <div
@@ -525,7 +523,7 @@ function GridPagination(props: Props) {
                         overflowY: 'auto'
                       }}
                     >
-                      {currentDirectoryDescription}
+                      {getDescriptionPreview(currentDirectoryDescription, 200)}
                     </Typography>
                   )}
                 </Box>
@@ -548,7 +546,7 @@ function GridPagination(props: Props) {
               </div>
             </Grid>
           )}
-          {displayDescription && (
+          {showDescription && currentDirectoryDescription && (
             <Grid
               item
               xs={12}
@@ -624,7 +622,7 @@ function GridPagination(props: Props) {
           )}
           {!isAppLoading && pageFiles.length < 1 && directories.length < 1 && (
             <div style={{ textAlign: 'center' }}>
-              {!displayDescription && (
+              {!showDescription && currentDirectoryDescription && (
                 <div style={{ position: 'relative', marginBottom: 150 }}>
                   <EntryIcon isFile={false} />
                 </div>
@@ -646,7 +644,7 @@ function GridPagination(props: Props) {
             directories.length >= 1 &&
             !showDirectories && (
               <div style={{ textAlign: 'center' }}>
-                {!displayDescription && (
+                {!showDescription && currentDirectoryDescription && (
                   <div style={{ position: 'relative', marginBottom: 150 }}>
                     <EntryIcon isFile={false} />
                   </div>

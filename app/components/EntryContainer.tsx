@@ -937,7 +937,8 @@ function EntryContainer(props: Props) {
         <div
           style={{
             position: 'relative',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            height: '100%'
           }}
         >
           {tabsComponent('160px')}
