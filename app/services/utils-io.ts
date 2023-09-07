@@ -1421,11 +1421,14 @@ export function loadFileContentPromise(
  */
 export function getDescriptionPreview(mdContent, maxLength = 200) {
   if (!mdContent) return '';
-  let preview = mdContent.replace(
-    /\[(.*?)\]\(.*?\)/g, // remove link href, also dataurls
-    // /\(data:([\w\/\+]+);(charset=[\w-]+|base64).*,([a-zA-Z0-9+/]+={0,2})\)/g,
-    ''
-  );
+  let preview = mdContent
+    .replace(
+      /\[(.*?)\]\(.*?\)/g, // remove link href, also dataurls
+      // /\(data:([\w\/\+]+);(charset=[\w-]+|base64).*,([a-zA-Z0-9+/]+={0,2})\)/g,
+      ''
+    )
+    .replace(/<[^>]*>/g, '') // remove html
+    .replace(/\*|~|#|_/g, '');
   if (preview.length > maxLength) {
     preview = preview.substring(0, maxLength) + '...';
   }
