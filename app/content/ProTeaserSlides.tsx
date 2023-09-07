@@ -1,6 +1,5 @@
 import Links from '-/content/links';
 import ProTeaserImage from '-/assets/images/pro-teaser.svg';
-import i18n from '-/services/i18n';
 import KanbanImage from '-/assets/images/kanban-perspective.jpg';
 import GalleryImage from '-/assets/images/gallery-perspective.jpg';
 import MapImage from '-/assets/images/mapique-perspective.jpg';
@@ -11,6 +10,7 @@ import RevisionsAutosave from '-/assets/images/revisions-autosave.png';
 import EnterpriseImage from '-/assets/images/world-undraw.svg';
 import { PerspectiveIDs } from '-/perspectives';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 export function getProTeaserSlideIndex(slideName: string): number {
   if (!slideName) {
@@ -20,6 +20,7 @@ export function getProTeaserSlideIndex(slideName: string): number {
 }
 
 export function getProTeaserSlides() {
+  const { t } = useTranslation();
   const slidesEN = [];
   slidesEN['general'] = {
     title: 'Why TagSpaces Pro ?',
@@ -57,7 +58,7 @@ export function getProTeaserSlides() {
       </>
     ),
     ctaURL: Links.documentationLinks.kanbanPerspective,
-    ctaTitle: i18n.t('showMeMore'),
+    ctaTitle: t('showMeMore'),
     pictureURL: KanbanImage,
     pictureShadow: true,
     pictureHeight: 300
@@ -74,7 +75,7 @@ export function getProTeaserSlides() {
       </>
     ),
     ctaURL: Links.documentationLinks.galleryPerspective,
-    ctaTitle: i18n.t('showMeMore'),
+    ctaTitle: t('showMeMore'),
     pictureURL: GalleryImage,
     pictureShadow: true,
     pictureHeight: 300
@@ -98,7 +99,7 @@ export function getProTeaserSlides() {
       </>
     ),
     ctaURL: Links.documentationLinks.mapiquePerspective,
-    ctaTitle: i18n.t('showMeMore'),
+    ctaTitle: t('showMeMore'),
     pictureURL: MapImage,
     pictureShadow: true,
     pictureHeight: 300
@@ -131,7 +132,7 @@ export function getProTeaserSlides() {
       </>
     ],
     ctaURL: Links.links.productProFileFolderMeta,
-    ctaTitle: i18n.t('showMeMore'),
+    ctaTitle: t('showMeMore'),
     pictureURL: EntryDescription,
     pictureShadow: true,
     pictureHeight: 300
@@ -156,7 +157,7 @@ export function getProTeaserSlides() {
       </>
     ),
     ctaURL: Links.documentationLinks.revisions,
-    ctaTitle: i18n.t('showMeMore'),
+    ctaTitle: t('showMeMore'),
     pictureURL: RevisionsAutosave,
     pictureShadow: true,
     pictureHeight: 400
@@ -188,7 +189,7 @@ export function getProTeaserSlides() {
       <>Filter by size and date</>
     ],
     ctaURL: Links.links.productProAdvancedSearch,
-    ctaTitle: i18n.t('showMeMore'),
+    ctaTitle: t('showMeMore'),
     pictureURL: SearchImage,
     pictureHeight: 150
   };
@@ -205,7 +206,7 @@ export function getProTeaserSlides() {
       </>
     ),
     ctaURL: Links.links.productProFolderColor,
-    ctaTitle: i18n.t('showMeMore'),
+    ctaTitle: t('showMeMore'),
     pictureURL: CustomFolderColor,
     pictureShadow: true,
     pictureHeight: 300
@@ -238,7 +239,7 @@ export function getProTeaserSlides() {
       <>Premium technical support</>
     ],
     ctaURL: Links.links.emailContact,
-    ctaTitle: i18n.t('contactUs'),
+    ctaTitle: t('contactUs'),
     pictureURL: EnterpriseImage,
     pictureHeight: 200
   };

@@ -23,8 +23,8 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import DeleteIcon from '@mui/icons-material/Delete';
-import i18n from '-/services/i18n';
 import { Pro } from '../../pro';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   classes?: any;
@@ -36,6 +36,7 @@ interface Props {
 }
 
 function HistoryMenu(props: Props) {
+  const { t } = useTranslation();
   const menuItems = [];
   menuItems.push(
     <MenuItem
@@ -50,7 +51,7 @@ function HistoryMenu(props: Props) {
       <ListItemIcon>
         <RefreshIcon />
       </ListItemIcon>
-      <ListItemText primary={<>{i18n.t('core:refresh')}</>} />
+      <ListItemText primary={<>{t('core:refresh')}</>} />
     </MenuItem>
   );
   menuItems.push(
@@ -66,7 +67,7 @@ function HistoryMenu(props: Props) {
       <ListItemIcon>
         <DeleteIcon />
       </ListItemIcon>
-      <ListItemText primary={<>{i18n.t('core:clearHistory')}</>} />
+      <ListItemText primary={<>{t('core:clearHistory')}</>} />
     </MenuItem>
   );
 

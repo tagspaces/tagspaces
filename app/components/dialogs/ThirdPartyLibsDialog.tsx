@@ -22,11 +22,11 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
-import i18n from '-/services/i18n';
 import ThirdPartyLibs from '-/third-party.txt';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -35,6 +35,7 @@ interface Props {
 
 function ThirdPartyLibsDialog(props: Props) {
   const { open, onClose } = props;
+  const { t } = useTranslation();
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
@@ -46,7 +47,7 @@ function ThirdPartyLibsDialog(props: Props) {
       scroll="paper"
     >
       <DialogTitle>
-        {i18n.t('core:thirdPartyLibs')}{' '}
+        {t('core:thirdPartyLibs')}{' '}
         <DialogCloseButton testId="closeThirdPartyTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent style={{ overflowX: 'auto' }}>
@@ -63,7 +64,7 @@ function ThirdPartyLibsDialog(props: Props) {
           color="primary"
           variant="contained"
         >
-          {i18n.t('core:ok')}
+          {t('core:ok')}
         </Button>
       </DialogActions>
     </Dialog>

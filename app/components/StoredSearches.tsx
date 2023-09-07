@@ -48,7 +48,6 @@ import {
   getShowUnixHiddenEntries,
   getStoredSearchesVisible
 } from '-/reducers/settings';
-import i18n from '-/services/i18n';
 import { Pro } from '../pro';
 import { actions as SearchActions, getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
@@ -64,6 +63,7 @@ import HistoryMenu from '-/components/menus/HistoryMenu';
 import BookmarksMenu from '-/components/menus/BookmarksMenu';
 import { renderHistory } from '-/components/RenderHistory';
 import { classes, SidePanel } from '-/components/SidePanels.css';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   style?: any;
@@ -95,6 +95,7 @@ const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
 const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 
 function StoredSearches(props: Props) {
+  const { t } = useTranslation();
   const [saveSearchDialogOpened, setSaveSearchDialogOpened] = useState<
     TS.SearchQuery
   >(undefined);
@@ -207,7 +208,7 @@ function StoredSearches(props: Props) {
           variant="subtitle1"
           style={{ paddingLeft: 14 }}
         >
-          {i18n.t('core:quickAccess')}
+          {t('core:quickAccess')}
         </Typography>
       </div>
       <div
@@ -247,7 +248,7 @@ function StoredSearches(props: Props) {
                 props.setStoredSearchesVisible(!props.storedSearchesVisible)
               }
             >
-              {i18n.t('core:savedSearchesTitle')}
+              {t('core:savedSearchesTitle')}
             </Typography>
           </Grid>
           <Grid item xs={2} style={{ alignSelf: 'center' }}>
@@ -275,9 +276,7 @@ function StoredSearches(props: Props) {
         <Grid container direction="row">
           {props.storedSearchesVisible && noSearchesFound && (
             <Grid item xs={12} style={{ textAlign: 'center' }}>
-              <Typography variant="caption">
-                {i18n.t('noSavedSearches')}
-              </Typography>
+              <Typography variant="caption">{t('noSavedSearches')}</Typography>
             </Grid>
           )}
         </Grid>
@@ -313,7 +312,7 @@ function StoredSearches(props: Props) {
               </Grid>
               <Grid item xs={2}>
                 <IconButton
-                  aria-label={i18n.t('core:searchEditBtn')}
+                  aria-label={t('core:searchEditBtn')}
                   onClick={() => editSearch(search.uuid)}
                   data-tid="editSearchTID"
                   size="small"
@@ -339,7 +338,7 @@ function StoredSearches(props: Props) {
               noWrap
               onClick={() => props.setShowBookmarks(!props.showBookmarks)}
             >
-              {i18n.t('core:showBookmarks')}
+              {t('core:showBookmarks')}
             </Typography>
           </Grid>
           <Grid item xs={2} style={{ alignSelf: 'center' }}>
@@ -359,7 +358,7 @@ function StoredSearches(props: Props) {
         <Grid container direction="row">
           {props.showBookmarks && !bookmarksAvailable && (
             <Grid item xs={12} style={{ textAlign: 'center' }}>
-              <Typography variant="caption">{i18n.t('noItems')}</Typography>
+              <Typography variant="caption">{t('noItems')}</Typography>
             </Grid>
           )}
         </Grid>
@@ -390,7 +389,7 @@ function StoredSearches(props: Props) {
               noWrap
               onClick={() => props.setFileOpenHistory(!props.fileOpenHistory)}
             >
-              {i18n.t('core:fileOpenHistory')}
+              {t('core:fileOpenHistory')}
             </Typography>
           </Grid>
           <Grid item xs={2} style={{ alignSelf: 'center' }}>
@@ -410,7 +409,7 @@ function StoredSearches(props: Props) {
         <Grid container direction="row">
           {props.fileOpenHistory && !openedFilesAvailable && (
             <Grid item xs={12} style={{ textAlign: 'center' }}>
-              <Typography variant="caption">{i18n.t('noItems')}</Typography>
+              <Typography variant="caption">{t('noItems')}</Typography>
             </Grid>
           )}
         </Grid>
@@ -441,7 +440,7 @@ function StoredSearches(props: Props) {
               noWrap
               onClick={() => props.setFileEditHistory(!props.fileEditHistory)}
             >
-              {i18n.t('core:fileEditHistory')}
+              {t('core:fileEditHistory')}
             </Typography>
           </Grid>
           <Grid item xs={2} style={{ alignSelf: 'center' }}>
@@ -461,7 +460,7 @@ function StoredSearches(props: Props) {
         <Grid container direction="row">
           {props.fileEditHistory && !editedFilesAvailable && (
             <Grid item xs={12} style={{ textAlign: 'center' }}>
-              <Typography variant="caption">{i18n.t('noItems')}</Typography>
+              <Typography variant="caption">{t('noItems')}</Typography>
             </Grid>
           )}
         </Grid>
@@ -495,7 +494,7 @@ function StoredSearches(props: Props) {
                 props.setFolderOpenHistory(!props.folderOpenHistory)
               }
             >
-              {i18n.t('core:folderOpenHistory')}
+              {t('core:folderOpenHistory')}
             </Typography>
           </Grid>
           <Grid item xs={2} style={{ alignSelf: 'center' }}>
@@ -539,7 +538,7 @@ function StoredSearches(props: Props) {
         <Grid container direction="row">
           {props.folderOpenHistory && !openedFoldersAvailable && (
             <Grid item xs={12} style={{ textAlign: 'center' }}>
-              <Typography variant="caption">{i18n.t('noItems')}</Typography>
+              <Typography variant="caption">{t('noItems')}</Typography>
             </Grid>
           )}
         </Grid>

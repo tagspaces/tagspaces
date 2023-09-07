@@ -44,7 +44,6 @@ import {
 import TagContainerDnd from '-/components/TagContainerDnd';
 import TagContainer from '-/components/TagContainer';
 import TagsPreview from '-/components/TagsPreview';
-import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
 import EntryIcon from '-/components/EntryIcon';
 import { TS } from '-/tagspaces.namespace';
@@ -66,6 +65,7 @@ import {
   classes,
   GridStyles
 } from '-/perspectives/grid-perspective/components/styles.css';
+import { useTranslation } from 'react-i18next';
 
 const maxDescriptionPreviewLength = 100;
 
@@ -106,6 +106,8 @@ function CellContent(props: Props) {
     deselectEntry,
     isLast
   } = props;
+
+  const { t } = useTranslation();
 
   const theme = useTheme();
   const readOnlyMode = useSelector(isReadOnlyMode);
@@ -302,7 +304,7 @@ function CellContent(props: Props) {
             {showTags && entryTags ? renderTags : tagPlaceholder}
           </div>
           {description && (
-            <Tooltip title={i18n.t('core:entryDescription')}>
+            <Tooltip title={t('core:entryDescription')}>
               <Typography
                 data-tid="gridCellDescription"
                 className={classes.gridCellDescription}
@@ -340,16 +342,14 @@ function CellContent(props: Props) {
             <Typography className={classes.gridSizeDate} variant="caption">
               <Tooltip
                 title={
-                  i18n.t('core:modifiedDate') +
+                  t('core:modifiedDate') +
                   ': ' +
                   formatDateTime(fSystemEntry.lmdt, true)
                 }
               >
                 <span>{formatDateTime(fSystemEntry.lmdt, false)}</span>
               </Tooltip>
-              <Tooltip
-                title={fSystemEntry.size + ' ' + i18n.t('core:sizeInBytes')}
-              >
+              <Tooltip title={fSystemEntry.size + ' ' + t('core:sizeInBytes')}>
                 <span>{' | ' + formatFileSize(fSystemEntry.size)}</span>
               </Tooltip>
             </Typography>
@@ -459,21 +459,19 @@ function CellContent(props: Props) {
               }}
               variant="body2"
             >
-              <Tooltip
-                title={fSystemEntry.size + ' ' + i18n.t('core:sizeInBytes')}
-              >
+              <Tooltip title={fSystemEntry.size + ' ' + t('core:sizeInBytes')}>
                 <span>{entrySizeFormatted}</span>
               </Tooltip>
               <Tooltip
                 title={
-                  i18n.t('core:modifiedDate') +
+                  t('core:modifiedDate') +
                   ': ' +
                   formatDateTime(fSystemEntry.lmdt, true)
                 }
               >
                 <span>{entryLMDTFormatted}</span>
               </Tooltip>
-              {/* <Tooltip title={i18n.t('core:entryDescription')}> */}
+              {/* <Tooltip title={t('core:entryDescription')}> */}
               <span>{description}</span>
               {/* </Tooltip> */}
             </Typography>

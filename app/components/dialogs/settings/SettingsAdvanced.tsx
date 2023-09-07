@@ -32,7 +32,6 @@ import Select from '@mui/material/Select';
 import Input from '@mui/material/Input';
 import MenuItem from '@mui/material/MenuItem';
 import AppConfig from '-/AppConfig';
-import i18n from '-/services/i18n';
 import {
   actions as SettingsActions,
   getSettings,
@@ -49,6 +48,7 @@ import { ListItemIcon } from '@mui/material';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { AppDispatch } from '-/reducers/app';
 import { styled } from '@mui/material/styles';
+import { useTranslation } from 'react-i18next';
 
 const PREFIX = 'SettingsGeneral';
 
@@ -84,6 +84,7 @@ const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 
 function SettingsAdvanced(props: Props) {
   const { showResetSettings } = props;
+  const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const settings = useSelector(getSettings);
   const tileServers: Array<TS.MapTileServer> = useSelector(getMapTileServers);
@@ -140,7 +141,7 @@ function SettingsAdvanced(props: Props) {
             color="secondary"
             style={{ marginLeft: -7 }}
           >
-            {i18n.t('core:resetSettings')}
+            {t('core:resetSettings')}
           </Button>
           <Button
             data-tid="reloadAppTID"
@@ -149,11 +150,11 @@ function SettingsAdvanced(props: Props) {
             }}
             color="secondary"
           >
-            {i18n.t('core:reloadApplication')}
+            {t('core:reloadApplication')}
           </Button>
         </ListItem>
         <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('enableMobileMode')} />
+          <ListItemText primary={t('enableMobileMode')} />
           <Switch
             data-tid="settingsSetDesktopMode"
             disabled={!(typeof window.ExtDisplayMode === 'undefined')}
@@ -162,7 +163,7 @@ function SettingsAdvanced(props: Props) {
           />
         </ListItem>
         <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('enableDevMode')} />
+          <ListItemText primary={t('enableDevMode')} />
           <Switch
             data-tid="settingsEnableDevMode"
             disabled={window.ExtDevMode && window.ExtDevMode === true}
@@ -171,7 +172,7 @@ function SettingsAdvanced(props: Props) {
           />
         </ListItem>
         <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('enableWS')} />
+          <ListItemText primary={t('enableWS')} />
           <Switch
             data-tid="settingsEnableWS"
             onClick={() => setEnableWS(!settings.enableWS)}
@@ -179,7 +180,7 @@ function SettingsAdvanced(props: Props) {
           />
         </ListItem>
         <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('warningOpeningFilesExternally')} />
+          <ListItemText primary={t('warningOpeningFilesExternally')} />
           <Switch
             data-tid="warningOpeningFilesExternally"
             onClick={() =>
@@ -191,7 +192,7 @@ function SettingsAdvanced(props: Props) {
           />
         </ListItem>
         <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:prefixTagContainer')} />
+          <ListItemText primary={t('core:prefixTagContainer')} />
           <Input
             style={{ maxWidth: '100px' }}
             data-tid="prefixTagContainerTID"
@@ -202,11 +203,11 @@ function SettingsAdvanced(props: Props) {
         {Pro && (
           <>
             <ListItem className={classes.listItem}>
-              <ListItemText primary={i18n.t('core:fileOpenHistory')} />
+              <ListItemText primary={t('core:fileOpenHistory')} />
               <ListItemIcon>
-                <Tooltip title={i18n.t('clearHistory')}>
+                <Tooltip title={t('clearHistory')}>
                   <IconButton
-                    aria-label={i18n.t('core:clearHistory')}
+                    aria-label={t('core:clearHistory')}
                     onClick={() => setConfirmDialogKey(historyKeys.fileOpenKey)}
                     data-tid="clearSearchTID"
                     size="small"
@@ -217,25 +218,25 @@ function SettingsAdvanced(props: Props) {
               </ListItemIcon>
               <Select
                 data-tid="fileOpenTID"
-                title={i18n.t('core:fileOpenHistoryTitle')}
+                title={t('core:fileOpenHistoryTitle')}
                 value={settings[historyKeys.fileOpenKey]}
                 onChange={event =>
                   setHistory(historyKeys.fileOpenKey, event.target.value)
                 }
                 input={<Input id="fileOpenSelector" />}
               >
-                <MenuItem value={0}>{i18n.t('core:disabled')}</MenuItem>
+                <MenuItem value={0}>{t('core:disabled')}</MenuItem>
                 <MenuItem value={10}>10</MenuItem>
                 <MenuItem value={50}>50</MenuItem>
                 <MenuItem value={100}>100</MenuItem>
               </Select>
             </ListItem>
             <ListItem className={classes.listItem}>
-              <ListItemText primary={i18n.t('core:folderOpenHistory')} />
+              <ListItemText primary={t('core:folderOpenHistory')} />
               <ListItemIcon>
-                <Tooltip title={i18n.t('clearHistory')}>
+                <Tooltip title={t('clearHistory')}>
                   <IconButton
-                    aria-label={i18n.t('core:clearHistory')}
+                    aria-label={t('core:clearHistory')}
                     onClick={() =>
                       setConfirmDialogKey(historyKeys.folderOpenKey)
                     }
@@ -248,25 +249,25 @@ function SettingsAdvanced(props: Props) {
               </ListItemIcon>
               <Select
                 data-tid="folderOpenTID"
-                title={i18n.t('core:folderOpenHistoryTitle')}
+                title={t('core:folderOpenHistoryTitle')}
                 value={settings[historyKeys.folderOpenKey]}
                 onChange={(event: any) =>
                   setHistory(historyKeys.folderOpenKey, event.target.value)
                 }
                 input={<Input id="folderOpenSelector" />}
               >
-                <MenuItem value={0}>{i18n.t('core:disabled')}</MenuItem>
+                <MenuItem value={0}>{t('core:disabled')}</MenuItem>
                 <MenuItem value={10}>10</MenuItem>
                 <MenuItem value={50}>50</MenuItem>
                 <MenuItem value={100}>100</MenuItem>
               </Select>
             </ListItem>
             <ListItem className={classes.listItem}>
-              <ListItemText primary={i18n.t('core:fileEditHistory')} />
+              <ListItemText primary={t('core:fileEditHistory')} />
               <ListItemIcon>
-                <Tooltip title={i18n.t('clearHistory')}>
+                <Tooltip title={t('clearHistory')}>
                   <IconButton
-                    aria-label={i18n.t('core:clearHistory')}
+                    aria-label={t('core:clearHistory')}
                     onClick={() => setConfirmDialogKey(historyKeys.fileEditKey)}
                     data-tid="clearSearchTID"
                     size="small"
@@ -277,25 +278,25 @@ function SettingsAdvanced(props: Props) {
               </ListItemIcon>
               <Select
                 data-tid="fileEditTID"
-                title={i18n.t('core:fileEditHistoryTitle')}
+                title={t('core:fileEditHistoryTitle')}
                 value={settings[historyKeys.fileEditKey]}
                 onChange={(event: any) =>
                   setHistory(historyKeys.fileEditKey, event.target.value)
                 }
                 input={<Input id="fileEditSelector" />}
               >
-                <MenuItem value={0}>{i18n.t('core:disabled')}</MenuItem>
+                <MenuItem value={0}>{t('core:disabled')}</MenuItem>
                 <MenuItem value={10}>10</MenuItem>
                 <MenuItem value={50}>50</MenuItem>
                 <MenuItem value={100}>100</MenuItem>
               </Select>
             </ListItem>
             <ListItem className={classes.listItem}>
-              <ListItemText primary={i18n.t('core:searchHistory')} />
+              <ListItemText primary={t('core:searchHistory')} />
               <ListItemIcon>
-                <Tooltip title={i18n.t('clearHistory')}>
+                <Tooltip title={t('clearHistory')}>
                   <IconButton
-                    aria-label={i18n.t('core:clearHistory')}
+                    aria-label={t('core:clearHistory')}
                     onClick={() =>
                       setConfirmDialogKey(historyKeys.searchHistoryKey)
                     }
@@ -308,14 +309,14 @@ function SettingsAdvanced(props: Props) {
               </ListItemIcon>
               <Select
                 data-tid="searchHistoryTID"
-                title={i18n.t('core:searchHistoryTitle')}
+                title={t('core:searchHistoryTitle')}
                 value={settings[historyKeys.searchHistoryKey]}
                 onChange={(event: any) =>
                   setHistory(historyKeys.searchHistoryKey, event.target.value)
                 }
                 input={<Input id="searchHistorySelector" />}
               >
-                <MenuItem value={0}>{i18n.t('core:disabled')}</MenuItem>
+                <MenuItem value={0}>{t('core:disabled')}</MenuItem>
                 <MenuItem value={10}>10</MenuItem>
                 <MenuItem value={50}>50</MenuItem>
                 <MenuItem value={100}>100</MenuItem>
@@ -327,7 +328,7 @@ function SettingsAdvanced(props: Props) {
                 setConfirmDialogKey(null);
               }}
               title="Confirm"
-              content={i18n.t('core:confirm' + confirmDialogKey + 'Deletion')}
+              content={t('core:confirm' + confirmDialogKey + 'Deletion')}
               confirmCallback={result => {
                 if (result) {
                   Pro.history.delAllHistory(confirmDialogKey);
@@ -345,8 +346,8 @@ function SettingsAdvanced(props: Props) {
           <ListItemText
             primary={
               <>
-                {i18n.t('setRevisionsEnabled')}
-                <InfoIcon tooltip={i18n.t('core:setRevisionsEnabledHelp')} />
+                {t('setRevisionsEnabled')}
+                <InfoIcon tooltip={t('core:setRevisionsEnabledHelp')} />
                 <ProLabel />
               </>
             }
@@ -362,8 +363,8 @@ function SettingsAdvanced(props: Props) {
           <ListItemText
             primary={
               <>
-                {i18n.t('enableTagsFromLocation')}
-                <InfoIcon tooltip={i18n.t('core:enableTagsFromLocationHelp')} />
+                {t('enableTagsFromLocation')}
+                <InfoIcon tooltip={t('core:enableTagsFromLocationHelp')} />
                 <ProLabel />
               </>
             }
@@ -376,13 +377,13 @@ function SettingsAdvanced(props: Props) {
           />
         </ListItem>
         <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:geoTaggingFormat')} />
+          <ListItemText primary={t('core:geoTaggingFormat')} />
           <Select
             disabled={geoTaggingFormatDisabled}
             data-tid="geoTaggingFormatTID"
             title={
               geoTaggingFormatDisabled
-                ? i18n.t('core:settingExternallyConfigured')
+                ? t('core:settingExternallyConfigured')
                 : ''
             }
             value={
@@ -401,13 +402,13 @@ function SettingsAdvanced(props: Props) {
           </Select>
         </ListItem>
         <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:tileServerTitle')} />
+          <ListItemText primary={t('core:tileServerTitle')} />
           <ListItemSecondaryAction style={{ right: 0 }}>
             <Button
               color="primary"
               onClick={event => handleEditTileServerClick(event, {}, true)}
             >
-              {i18n.t('tileServerDialogAdd')}
+              {t('tileServerDialogAdd')}
             </Button>
           </ListItemSecondaryAction>
         </ListItem>
@@ -430,7 +431,7 @@ function SettingsAdvanced(props: Props) {
                 />
                 <ListItemSecondaryAction>
                   {index === 0 && (
-                    <Tooltip title={i18n.t('core:serverIsDefaultHelp')}>
+                    <Tooltip title={t('core:serverIsDefaultHelp')}>
                       <CheckIcon
                         data-tid="tileServerDefaultIndication"
                         style={{ marginLeft: 10 }}
@@ -438,7 +439,7 @@ function SettingsAdvanced(props: Props) {
                     </Tooltip>
                   )}
                   <IconButton
-                    aria-label={i18n.t('core:options')}
+                    aria-label={t('core:options')}
                     aria-haspopup="true"
                     edge="end"
                     data-tid={'tileServerEdit_' + tileServer.name}
@@ -455,8 +456,8 @@ function SettingsAdvanced(props: Props) {
           ) : (
             <ListItem key="noTileServers" className={classes.listItem}>
               <ListItemText
-                primary={i18n.t('core:noTileServersTitle')}
-                secondary={i18n.t('core:addTileServersHelp')}
+                primary={t('core:noTileServersTitle')}
+                secondary={t('core:addTileServersHelp')}
               />
             </ListItem>
           )}

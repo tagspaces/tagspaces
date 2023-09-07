@@ -41,7 +41,6 @@ import {
 } from 'react-virtuoso';
 import Tooltip from '-/components/Tooltip';
 import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
-import i18n from '-/services/i18n';
 import TransparentBackground from '-/components/TransparentBackground';
 import { TS } from '-/tagspaces.namespace';
 import {
@@ -54,6 +53,7 @@ import PlatformFacade from '-/services/platform-facade';
 import { AppDispatch, getExtensions } from '-/reducers/app';
 import { supportedFileTypes as defaultSupportedFileTypes } from '-/extension-config';
 import useFirstRender from '-/utils/useFirstRender';
+import { useTranslation } from 'react-i18next';
 
 const PREFIX = 'SettingsFileTypes';
 
@@ -84,6 +84,7 @@ const Root = styled('div')(({ theme: any }) => ({
 }));
 
 function SettingsFileTypes() {
+  const { t } = useTranslation();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const items = useRef<Array<TS.FileTypes>>(supportedFileTypes);
   const selectedItem = useRef<TS.FileTypes>(undefined);
@@ -248,22 +249,22 @@ function SettingsFileTypes() {
   const columns: ColumnData[] = [
     {
       width: 60,
-      label: i18n.t('core:fileExtension'),
+      label: t('core:fileExtension'),
       dataKey: 'type'
     },
     {
       width: 170,
-      label: i18n.t('core:fileOpener'),
+      label: t('core:fileOpener'),
       dataKey: 'viewer'
     },
     {
       width: 170,
-      label: i18n.t('core:fileEditor'),
+      label: t('core:fileEditor'),
       dataKey: 'editor'
     },
     {
       width: 80,
-      label: i18n.t('core:actions'),
+      label: t('core:actions'),
       dataKey: 'color'
     }
   ];
@@ -409,7 +410,7 @@ function SettingsFileTypes() {
             sx={{ width: 180 }}
             onChange={event => updateItems(item, 'editor', event.target.value)}
           >
-            <MenuItem value="">{i18n.t('clearEditor')}</MenuItem>
+            <MenuItem value="">{t('clearEditor')}</MenuItem>
             {extensions
               .filter(
                 extension =>
@@ -428,7 +429,7 @@ function SettingsFileTypes() {
         </TableCell>
         <TableCell sx={{ padding: '0 5px 20px 5px' }}>
           <TransparentBackground>
-            <Tooltip title={i18n.t('core:colorPickerDialogTitle')}>
+            <Tooltip title={t('core:colorPickerDialogTitle')}>
               <Button
                 data-tid="settingsFileTypes_openColorPicker_"
                 className={classes.colorChooserButton}
@@ -447,7 +448,7 @@ function SettingsFileTypes() {
               </Button>
             </Tooltip>
           </TransparentBackground>
-          <Tooltip title={i18n.t('removeFileType', { itemType: item.type })}>
+          <Tooltip title={t('removeFileType', { itemType: item.type })}>
             <IconButton
               data-tid="settingsFileTypes_remove_"
               className={classes.fileExtRemove}
@@ -478,7 +479,7 @@ function SettingsFileTypes() {
           color="secondary"
           style={{ width: '50%' }}
         >
-          {i18n.t('core:addNewFileType')}
+          {t('core:addNewFileType')}
         </Button>
         {devMode && (
           <Button
@@ -493,7 +494,7 @@ function SettingsFileTypes() {
             color="secondary"
             style={{ width: '50%' }}
           >
-            {i18n.t('core:resetFileType')}
+            {t('core:resetFileType')}
           </Button>
         )}
         {isConfirmDialogOpened && (
@@ -503,7 +504,7 @@ function SettingsFileTypes() {
               setIsConfirmDialogOpened(false);
             }}
             title="Confirm"
-            content={i18n.t('core:confirmFileTypeDeletion')}
+            content={t('core:confirmFileTypeDeletion')}
             confirmCallback={result => {
               if (result) {
                 removeItem(selectedItem.current);

@@ -27,8 +27,8 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid';
 import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
-import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   errorTextPath: boolean;
@@ -41,6 +41,7 @@ interface Props {
 
 function LocalForm(props: Props) {
   const { errorTextPath, errorTextName, setName, setPath, path, name } = props;
+  const { t } = useTranslation();
 
   const openDirectory = () => {
     PlatformIO.selectDirectoryDialog()
@@ -76,7 +77,7 @@ function LocalForm(props: Props) {
             data-tid="locationName"
             fullWidth={true}
             // helperText="Please enter location name"
-            label={i18n.t('core:createLocationName')}
+            label={t('core:createLocationName')}
           />
         </FormControl>
       </Grid>
@@ -101,7 +102,7 @@ function LocalForm(props: Props) {
                 </InputAdornment>
               )
             }}
-            label={i18n.t('core:createLocationPath')}
+            label={t('core:createLocationPath')}
           />
           {AppConfig.isCordovaAndroid && (
             <FormHelperText>

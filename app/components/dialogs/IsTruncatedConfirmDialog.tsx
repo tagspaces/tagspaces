@@ -25,7 +25,6 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DraggablePaper from '-/components/DraggablePaper';
 import Dialog from '@mui/material/Dialog';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
-import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import MaxLoopsSelect from '-/components/dialogs/MaxLoopsSelect';
 import AppConfig from '-/AppConfig';
@@ -44,6 +43,7 @@ import Typography from '@mui/material/Typography';
 import InfoIcon from '-/components/InfoIcon';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import PlatformIO from '-/services/platform-facade';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -52,6 +52,7 @@ interface Props {
 
 function IsTruncatedConfirmDialog(props: Props) {
   const { open, onClose } = props;
+  const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const location: TS.Location = useSelector(getCurrentLocation);
   const currentDirectoryPath = useSelector(getDirectoryPath);
@@ -100,7 +101,7 @@ function IsTruncatedConfirmDialog(props: Props) {
       scroll="paper"
     >
       <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-        {i18n.t('core:warningDirectoryIsTruncated')}
+        {t('core:warningDirectoryIsTruncated')}
         <DialogCloseButton testId="closeIsTruncatedTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent>
@@ -116,8 +117,8 @@ function IsTruncatedConfirmDialog(props: Props) {
             }
             label={
               <Typography>
-                {i18n.t('core:maxLoops')}
-                <InfoIcon tooltip={i18n.t('core:maxLoopsHelp')} />
+                {t('core:maxLoops')}
+                <InfoIcon tooltip={t('core:maxLoopsHelp')} />
               </Typography>
             }
           />
@@ -125,7 +126,7 @@ function IsTruncatedConfirmDialog(props: Props) {
       </DialogContent>
       <DialogActions>
         <Button onClick={() => onClose()} color="primary">
-          {i18n.t('core:continue')}
+          {t('core:continue')}
         </Button>
       </DialogActions>
     </Dialog>

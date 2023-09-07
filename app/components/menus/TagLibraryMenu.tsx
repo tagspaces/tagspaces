@@ -28,13 +28,13 @@ import AddIcon from '@mui/icons-material/Add';
 import ReloadIcon from '@mui/icons-material/Sync';
 import AppConfig from '-/AppConfig';
 import ImportExportTagGroupsDialog from '../dialogs/ImportExportTagGroupsDialog';
-import i18n from '-/services/i18n';
 import { TS } from '-/tagspaces.namespace';
 import Links from '-/content/links';
 import { ProLabel, ProTooltip } from '-/components/HelperComponents';
 import { Pro } from '-/pro';
 import { openURLExternally } from '-/services/utils-io';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   classes?: any;
@@ -49,6 +49,7 @@ interface Props {
 }
 
 function TagLibraryMenu(props: Props) {
+  const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const fileInput = useRef<HTMLInputElement>(null);
   const tagGroupsImported = useRef([]);
@@ -90,7 +91,7 @@ function TagLibraryMenu(props: Props) {
         } else {
           dispatch(
             AppActions.showNotification(
-              i18n.t('core:invalidImportFile'),
+              t('core:invalidImportFile'),
               'warning',
               true
             )
@@ -99,7 +100,7 @@ function TagLibraryMenu(props: Props) {
       } catch (e) {
         dispatch(
           AppActions.showNotification(
-            i18n.t('core:invalidImportFile'),
+            t('core:invalidImportFile'),
             'warning',
             true
           )
@@ -134,11 +135,11 @@ function TagLibraryMenu(props: Props) {
           <ListItemIcon>
             <AddIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:createTagGroupTitle')} />
+          <ListItemText primary={t('core:createTagGroupTitle')} />
         </MenuItem>
         <ProTooltip
           placement="right"
-          tooltip={i18n.t('core:enableTagsFromLocationHelp')}
+          tooltip={t('core:enableTagsFromLocationHelp')}
         >
           <MenuItem
             disabled={!Pro || !props.saveTagInLocation}
@@ -154,7 +155,7 @@ function TagLibraryMenu(props: Props) {
             <ListItemText
               primary={
                 <>
-                  {i18n.t('core:refreshTagGroups')}
+                  {t('core:refreshTagGroups')}
                   <ProLabel />
                 </>
               }
@@ -165,14 +166,14 @@ function TagLibraryMenu(props: Props) {
           <ListItemIcon>
             <ImportExportIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:importTags')} />
+          <ListItemText primary={t('core:importTags')} />
         </MenuItem>
         {!AppConfig.isCordovaAndroid && (
           <MenuItem data-tid="exportTagGroup" onClick={handleExportTagGroup}>
             <ListItemIcon>
               <ImportExportIcon />
             </ListItemIcon>
-            <ListItemText primary={i18n.t('core:exportTagGroupsButton')} />
+            <ListItemText primary={t('core:exportTagGroupsButton')} />
           </MenuItem>
         )}
         <MenuItem
@@ -185,7 +186,7 @@ function TagLibraryMenu(props: Props) {
           <ListItemIcon>
             <HelpIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:help')} />
+          <ListItemText primary={t('core:help')} />
         </MenuItem>
       </Menu>
       <input

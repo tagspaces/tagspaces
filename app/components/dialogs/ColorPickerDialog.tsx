@@ -23,8 +23,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import { SketchPicker } from 'react-color';
-import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import { useTranslation } from 'react-i18next';
 
 const presetColors = [
   '#ffffff',
@@ -63,6 +63,7 @@ interface Props {
 }
 
 function ColorPickerDialog(props: Props) {
+  const { t } = useTranslation();
   const [color, setColor] = useState(undefined);
   const [colorHex, setColorHex] = useState(undefined);
   const { open = false, onClose } = props;
@@ -95,7 +96,7 @@ function ColorPickerDialog(props: Props) {
       }}
     >
       <DialogTitle data-tid="colorPickerDialogTitle">
-        {i18n.t('core:colorPickerDialogTitle')}
+        {t('core:colorPickerDialogTitle')}
         <DialogCloseButton testId="closeColorPickerTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent
@@ -120,7 +121,7 @@ function ColorPickerDialog(props: Props) {
       </DialogContent>
       <DialogActions>
         <Button data-tid="colorPickerCloseDialog" onClick={props.onClose}>
-          {i18n.t('core:cancel')}
+          {t('core:cancel')}
         </Button>
         <Button
           onClick={onConfirm}
@@ -128,7 +129,7 @@ function ColorPickerDialog(props: Props) {
           data-tid="colorPickerConfirm"
           color="primary"
         >
-          {i18n.t('core:ok')}
+          {t('core:ok')}
         </Button>
       </DialogActions>
     </Dialog>

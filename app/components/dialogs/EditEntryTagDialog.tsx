@@ -35,8 +35,6 @@ import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import Dialog from '@mui/material/Dialog';
 import EditIcon from '@mui/icons-material/Edit';
-import AppConfig from '-/AppConfig';
-import i18n from '-/services/i18n';
 import { isGeoTag } from '-/utils/geo';
 import { Pro } from '-/pro';
 import { getSelectedEntries, getSelectedTag } from '-/reducers/app';
@@ -48,6 +46,7 @@ import { getMapTileServer, getCurrentLanguage } from '-/reducers/settings';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTranslation } from 'react-i18next';
 
 const PREFIX = 'EditEntryTagDialog';
 
@@ -79,6 +78,7 @@ const GeoTagEditor = Pro && Pro.UI ? Pro.UI.GeoTagEditor : React.Fragment;
 const DateTagEditor = Pro && Pro.UI ? Pro.UI.DateTagEditor : React.Fragment;
 
 function EditEntryTagDialog(props: Props) {
+  const { t } = useTranslation();
   const [showAdvancedMode, setShowAdvancedMode] = useState<boolean>(false);
   const [title, setTitle] = useState(
     props.selectedTag && props.selectedTag.title
@@ -140,7 +140,7 @@ function EditEntryTagDialog(props: Props) {
   function renderTitle() {
     return (
       <DialogTitle>
-        {i18n.t('core:tagProperties')}{' '}
+        {t('core:tagProperties')}{' '}
         <DialogCloseButton testId="closeEditEntryTagTID" onClose={onClose} />
       </DialogTitle>
     );
@@ -166,7 +166,7 @@ function EditEntryTagDialog(props: Props) {
             margin="dense"
             name="title"
             autoFocus
-            label={i18n.t('core:editTag')}
+            label={t('core:editTag')}
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
               const { target } = event;
               setTitle(target.value);
@@ -180,7 +180,7 @@ function EditEntryTagDialog(props: Props) {
             }}
           />
           {haveError('tag') && (
-            <FormHelperText>{i18n.t('core:tagTitleHelper')}</FormHelperText>
+            <FormHelperText>{t('core:tagTitleHelper')}</FormHelperText>
           )}
         </FormControl>
         {showGeoEditor && (
@@ -219,15 +219,15 @@ function EditEntryTagDialog(props: Props) {
             onClick={() => setShowAdvancedMode(!showAdvancedMode)}
           >
             {showAdvancedMode
-              ? i18n.t('core:switchSimpleMode')
-              : i18n.t('core:switchAdvancedMode')}
+              ? t('core:switchSimpleMode')
+              : t('core:switchAdvancedMode')}
           </Button>
         ) : (
           <div />
         )}
         <div>
           <Button data-tid="closeEditTagEntryDialog" onClick={props.onClose}>
-            {i18n.t('core:cancel')}
+            {t('core:cancel')}
           </Button>
           <Button
             disabled={haveError()}
@@ -236,7 +236,7 @@ function EditEntryTagDialog(props: Props) {
             color="primary"
             variant="contained"
           >
-            {i18n.t('core:ok')}
+            {t('core:ok')}
           </Button>
         </div>
       </DialogActions>

@@ -19,15 +19,16 @@
 import React from 'react';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import i18n from '../services/i18n';
 import { Pro } from '-/pro';
+import { useTranslation } from 'react-i18next';
 
 export function BetaLabel() {
+  const { t } = useTranslation();
   return (
-    <Tooltip title={i18n.t('featureInBetaStatus')}>
+    <Tooltip title={t('featureInBetaStatus')}>
       <Typography style={{ display: 'initial' }}>
         <sup style={{ marginLeft: 5, textTransform: 'uppercase' }}>
-          {i18n.t('betaStatus')}
+          {t('betaStatus')}
         </sup>
       </Typography>
     </Tooltip>
@@ -35,12 +36,10 @@ export function BetaLabel() {
 }
 
 export function ProLabel() {
+  const { t } = useTranslation();
   return (
     !Pro && (
-      <Tooltip
-        placement="top"
-        title={i18n.t('thisFunctionalityIsAvailableInPro')}
-      >
+      <Tooltip placement="top" title={t('thisFunctionalityIsAvailableInPro')}>
         <Typography style={{ display: 'initial' }}>
           <sup style={{ marginLeft: 5 }}>PRO</sup>
         </Typography>
@@ -50,12 +49,10 @@ export function ProLabel() {
 }
 
 export function ProSign() {
+  const { t } = useTranslation();
   return (
     !Pro && (
-      <Tooltip
-        placement="top"
-        title={i18n.t('thisFunctionalityIsAvailableInPro')}
-      >
+      <Tooltip placement="top" title={t('thisFunctionalityIsAvailableInPro')}>
         <Typography style={{ display: 'initial' }}>
           <sup
             style={{
@@ -75,11 +72,12 @@ export function ProSign() {
 
 export function ProTooltip(props) {
   const { tooltip, placement } = props;
+  const { t } = useTranslation();
   const proTooltip = tooltip && tooltip;
   const tooltipPlacement = placement || 'top';
   const noProTooltip = tooltip
-    ? tooltip + ' - ' + i18n.t('thisFunctionalityIsAvailableInPro')
-    : i18n.t('thisFunctionalityIsAvailableInPro');
+    ? tooltip + ' - ' + t('thisFunctionalityIsAvailableInPro')
+    : t('thisFunctionalityIsAvailableInPro');
   return (
     <Tooltip
       arrow

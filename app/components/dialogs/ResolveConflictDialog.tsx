@@ -23,7 +23,6 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
-import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
@@ -35,6 +34,7 @@ import {
 } from '@tagspaces/tagspaces-common/paths';
 import PlatformFacade from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -46,6 +46,7 @@ interface Props {
 
 function ResolveConflictDialog(props: Props) {
   const { open, onClose } = props;
+  const { t } = useTranslation();
   const copyFileName = React.useRef<string>(getFileName());
   const [isSaveAs, setSaveAs] = React.useState<boolean>(false);
 
@@ -68,7 +69,7 @@ function ResolveConflictDialog(props: Props) {
       aria-labelledby="draggable-dialog-title"
     >
       <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-        {i18n.t('core:resolveConflictTitle')}
+        {t('core:resolveConflictTitle')}
         <DialogCloseButton testId="closeResolveConflictTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent
@@ -79,7 +80,7 @@ function ResolveConflictDialog(props: Props) {
       >
         {isSaveAs ? (
           <TextField
-            label={i18n.t('core:newFileName')}
+            label={t('core:newFileName')}
             margin="dense"
             name="name"
             fullWidth={true}
@@ -90,7 +91,7 @@ function ResolveConflictDialog(props: Props) {
             }}
           />
         ) : (
-          i18n.t('core:resolveConflictDesc')
+          t('core:resolveConflictDesc')
         )}
       </DialogContent>
       <DialogActions
@@ -100,18 +101,18 @@ function ResolveConflictDialog(props: Props) {
           <>
             <Button
               data-tid="backTID"
-              title={i18n.t('core:cancel')}
+              title={t('core:cancel')}
               onClick={() => {
                 setSaveAs(false);
                 onClose();
               }}
               color="primary"
             >
-              {i18n.t('core:cancel')}
+              {t('core:cancel')}
             </Button>
             <Button
               data-tid="saveTID"
-              title={i18n.t('core:save')}
+              title={t('core:save')}
               onClick={() => {
                 props
                   .saveAs(
@@ -125,24 +126,24 @@ function ResolveConflictDialog(props: Props) {
               }}
               color="primary"
             >
-              {i18n.t('core:save')}
+              {t('core:save')}
             </Button>
           </>
         ) : (
           <>
             <Button
               data-tid="saveas"
-              title={i18n.t('core:saveAs')}
+              title={t('core:saveAs')}
               onClick={() => {
                 setSaveAs(true);
               }}
               color="primary"
             >
-              {i18n.t('core:saveAs')}
+              {t('core:saveAs')}
             </Button>
             <Button
               data-tid="overrideTID"
-              title={i18n.t('core:override')}
+              title={t('core:override')}
               onClick={() => {
                 props.override().then(() => {
                   onClose();
@@ -151,7 +152,7 @@ function ResolveConflictDialog(props: Props) {
               color="primary"
               variant="contained"
             >
-              {i18n.t('core:override')}
+              {t('core:override')}
             </Button>
           </>
         )}

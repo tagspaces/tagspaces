@@ -28,13 +28,14 @@ import windowStateKeeper from 'electron-window-state';
 import path from 'path';
 import fs from 'fs-extra';
 import pm2 from '@elife/pm2';
-import fp from 'find-free-port';
+import findFreePorts from 'find-free-ports';
 import propertiesReader from 'properties-reader';
-import i18n from '-/services/i18n'; // '-/i18nBackend';
+//import i18n from '-/services/i18n'; // '-/i18nBackend';
 import buildTrayIconMenu from '-/electron-tray-menu';
 import buildDesktopMenu from '-/services/electron-menus';
 import settings from '-/settings';
 import { getExtensions } from '-/utils/extension-utils';
+import i18nInit from '-/services/i18nInit';
 
 // delete process.env.ELECTRON_ENABLE_SECURITY_WARNINGS;
 // process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
@@ -339,7 +340,7 @@ function createNewWindowInstance(url?) {
   }
 }
 
-function buildTrayMenu() {
+function buildTrayMenu(i18n) {
   /* let iconPath;
   if (devMode) {
     iconPath = path.resolve(__dirname, 'assets', 'icons', 'trayIcon@2x.png');
@@ -369,7 +370,7 @@ function buildTrayMenu() {
   );
 }
 
-function buildAppMenu() {
+function buildAppMenu(i18n) {
   buildDesktopMenu(
     {
       showTagSpaces,
@@ -422,10 +423,8 @@ async function startWS() {
     const properties = propertiesReader(envPath);
 
     const results = await new Promise((resolve, reject) => {
-      fp(settings.getInitWsPort(), '127.0.0.1', function(err, freePort) {
-        if (err) {
-          reject(err);
-        } else {
+      findFreePorts(1, { startPort: settings.getInitWsPort() }).then(
+        ([freePort]) => {
           pm2.start(
             {
               name: 'Tagspaces WS',
@@ -456,7 +455,7 @@ async function startWS() {
             }
           );
         }
-      });
+      );
     });
     console.debug(results);
   } catch (ex) {
@@ -559,10 +558,12 @@ app.on('ready', async () => {
     await installExtensions();
   }
 
+  const i18n = await i18nInit();
+
   try {
-    buildAppMenu();
+    buildAppMenu(i18n);
     await createAppWindow();
-    buildTrayMenu();
+    buildTrayMenu(i18n);
   } catch (ex) {
     console.log('buildMenus', ex);
   }
@@ -570,8 +571,8 @@ app.on('ready', async () => {
   i18n.on('languageChanged', lng => {
     try {
       console.log('languageChanged:' + lng);
-      buildAppMenu();
-      buildTrayMenu();
+      buildAppMenu(i18n);
+      buildTrayMenu(i18n);
     } catch (ex) {
       console.log('languageChanged', ex);
     }

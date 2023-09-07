@@ -29,11 +29,11 @@ import Select from '@mui/material/Select';
 import Input from '@mui/material/Input';
 import MenuItem from '@mui/material/MenuItem';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import i18n from '-/services/i18n';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { getTagLibrary } from '-/services/taglibrary-utils';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -44,6 +44,7 @@ interface Props {
 }
 
 function AddTagToTagGroupDialog(props: Props) {
+  const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const [tagGroup, setTagGroup] = useState<string>(undefined);
   const defaultBackgroundColor = useSelector(getTagColor);
@@ -85,7 +86,7 @@ function AddTagToTagGroupDialog(props: Props) {
       }}
     >
       <DialogTitle>
-        {i18n.t('core:addTagToTagGroup') + ': ' + props.selectedTag.title}
+        {t('core:addTagToTagGroup') + ': ' + props.selectedTag.title}
         <DialogCloseButton
           testId="closeAddTagToGroupDialogTID"
           onClose={onClose}
@@ -94,7 +95,7 @@ function AddTagToTagGroupDialog(props: Props) {
       <DialogContent style={{ paddingTop: 10, minWidth: 350 }}>
         <FormControl fullWidth={true}>
           <InputLabel htmlFor="addTagToTagGroupInput">
-            {i18n.t('core:chooseTagGroup')}
+            {t('core:chooseTagGroup')}
           </InputLabel>
           <Select
             value={tagGroup}
@@ -108,7 +109,7 @@ function AddTagToTagGroupDialog(props: Props) {
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>{i18n.t('core:cancel')}</Button>
+        <Button onClick={onClose}>{t('core:cancel')}</Button>
         <Button
           disabled={tagGroup === undefined}
           onClick={onConfirm}
@@ -116,7 +117,7 @@ function AddTagToTagGroupDialog(props: Props) {
           color="primary"
           variant="contained"
         >
-          {i18n.t('core:ok')}
+          {t('core:ok')}
         </Button>
       </DialogActions>
     </Dialog>

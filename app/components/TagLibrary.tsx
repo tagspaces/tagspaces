@@ -35,7 +35,6 @@ import TagMenu from './menus/TagMenu';
 import TagLibraryMenu from './menus/TagLibraryMenu';
 import TagGroupMenu from './menus/TagGroupMenu';
 import TaggingActions from '../reducers/tagging-actions';
-import i18n from '../services/i18n';
 import {
   actions as SettingsActions,
   getCurrentLanguage,
@@ -76,6 +75,7 @@ import {
 } from '-/services/taglibrary-utils';
 import useFirstRender from '-/utils/useFirstRender';
 import { classes, SidePanel } from '-/components/SidePanels.css';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   style?: any;
@@ -83,6 +83,7 @@ interface Props {
 }
 
 function TagLibrary(props: Props) {
+  const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const tagBackgroundColor = useSelector(getTagColor);
   const tagTextColor = useSelector(getTagTextColor);
@@ -401,7 +402,7 @@ function TagLibrary(props: Props) {
           }
           variant="subtitle1"
         >
-          {i18n.t('core:tagLibrary')}
+          {t('core:tagLibrary')}
         </Typography>
         {!isTagLibraryReadOnly && (
           <IconButton
@@ -417,8 +418,8 @@ function TagLibrary(props: Props) {
         <ConfirmDialog
           open={isDeleteTagGroupDialogOpened}
           onClose={() => setIsDeleteTagGroupDialogOpened(false)}
-          title={i18n.t('core:deleteTagGroup')}
-          content={i18n.t('core:deleteTagGroupContentConfirm', {
+          title={t('core:deleteTagGroup')}
+          content={t('core:deleteTagGroupContentConfirm', {
             tagGroup: selectedTagGroupEntry ? selectedTagGroupEntry.title : ''
           })}
           confirmCallback={result => {
@@ -542,8 +543,8 @@ function TagLibrary(props: Props) {
         <ConfirmDialog
           open={isDeleteTagDialogOpened}
           onClose={() => setIsDeleteTagDialogOpened(false)}
-          title={i18n.t('core:deleteTagFromTagGroup')}
-          content={i18n.t('core:deleteTagFromTagGroupContentConfirm', {
+          title={t('core:deleteTagFromTagGroup')}
+          content={t('core:deleteTagFromTagGroupContentConfirm', {
             tagName: selectedTag ? selectedTag.title : ''
           })}
           confirmCallback={result => {
@@ -567,7 +568,7 @@ function TagLibrary(props: Props) {
       >
         {AppConfig.showSmartTags && (
           <div style={{ paddingTop: 0, paddingBottom: 0 }}>
-            {SmartTags(i18n).map(renderTagGroup)}
+            {SmartTags(t).map(renderTagGroup)}
           </div>
         )}
         <div style={{ paddingTop: 0 }}>{tagGroups.map(renderTagGroup)}</div>

@@ -23,11 +23,11 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import HelpIcon from '@mui/icons-material/Help';
 import ExportImportIcon from '@mui/icons-material/SwapHoriz';
-import i18n from '-/services/i18n';
 import { Pro } from '../../pro';
 import Links from '-/content/links';
 import { ProLabel } from '-/components/HelperComponents';
 import { openURLExternally } from '-/services/utils-io';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   classes?: any;
@@ -39,6 +39,7 @@ interface Props {
 }
 
 function SearchMenu(props: Props) {
+  const { t } = useTranslation();
   const menuItems = [];
   menuItems.push(
     <MenuItem
@@ -56,7 +57,7 @@ function SearchMenu(props: Props) {
       <ListItemText
         primary={
           <>
-            {i18n.t('core:exportSavedSearch')}
+            {t('core:exportSavedSearch')}
             <ProLabel />
           </>
         }
@@ -79,7 +80,7 @@ function SearchMenu(props: Props) {
       <ListItemText
         primary={
           <>
-            {i18n.t('core:importSavedSearch')}
+            {t('core:importSavedSearch')}
             <ProLabel />
           </>
         }
@@ -98,7 +99,7 @@ function SearchMenu(props: Props) {
       <ListItemIcon>
         <HelpIcon />
       </ListItemIcon>
-      <ListItemText primary={i18n.t('core:help')} />
+      <ListItemText primary={t('core:help')} />
     </MenuItem>
   );
 

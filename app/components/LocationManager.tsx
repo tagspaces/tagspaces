@@ -24,14 +24,13 @@ import LocationManagerMenu from '-/components/menus/LocationManagerMenu';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { actions as LocationActions, getLocations } from '-/reducers/locations';
 import { actions as AppActions, AppDispatch, isLoading } from '-/reducers/app';
-import { getCurrentLanguage } from '-/reducers/settings';
-import i18n from '-/services/i18n';
 import LoadingLazy from '-/components/LoadingLazy';
 import LocationView from '-/components/LocationView';
 import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
 import { classes, SidePanel } from '-/components/SidePanels.css';
+import { useTranslation } from 'react-i18next';
 
 const CreateEditLocationDialog = React.lazy(() =>
   import(
@@ -60,6 +59,7 @@ type SubFolder = {
 };
 
 function LocationManager(props: Props) {
+  const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const locations: Array<TS.Location> = useSelector(getLocations);
   const loading: boolean = useSelector(isLoading);
@@ -88,7 +88,7 @@ function LocationManager(props: Props) {
   useEffect(() => {
     if (locations.length < 1) {
       // init locations
-      dispatch(LocationActions.setDefaultLocations());
+      dispatch(LocationActions.setDefaultLocations(t));
     }
   }, [locations]);
 
@@ -235,8 +235,8 @@ function LocationManager(props: Props) {
         <ConfirmDialog
           open={isDeleteLocationDialogOpened}
           onClose={() => setDeleteLocationDialogOpened(false)}
-          title={i18n.t('core:deleteLocationTitleAlert')}
-          content={i18n.t('core:deleteLocationContentAlert', {
+          title={t('core:deleteLocationTitleAlert')}
+          content={t('core:deleteLocationContentAlert', {
             locationName: selectedLocation ? selectedLocation.name : ''
           })}
           confirmCallback={result => {

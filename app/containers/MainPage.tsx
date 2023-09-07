@@ -77,7 +77,6 @@ import {
   isTruncatedConfirmDialogOpened
 } from '../reducers/app';
 import TargetFileBox from '../components/TargetFileBox';
-import i18n from '../services/i18n';
 import LoadingLazy from '../components/LoadingLazy';
 import withDnDContext from '-/containers/withDnDContext';
 import CustomDragLayer from '-/components/CustomDragLayer';
@@ -96,6 +95,7 @@ import { Pro } from '-/pro';
 import NewFileDialog from '-/components/dialogs/NewFileDialog';
 import IsTruncatedConfirmDialog from '-/components/dialogs/IsTruncatedConfirmDialog';
 import { styled, useTheme } from '@mui/material/styles';
+import { useTranslation } from 'react-i18next';
 
 const drawerWidth = 320;
 const body = document.getElementsByTagName('body')[0];
@@ -352,6 +352,7 @@ function ProTeaserDialogAsync(props) {
 }
 
 function MainPage(props: Props) {
+  const { t } = useTranslation();
   const theme = useTheme();
   const percent = useRef<number | undefined>(undefined);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
@@ -522,12 +523,8 @@ function MainPage(props: Props) {
 
   const handleCopyFiles = files => {
     if (props.isReadOnlyMode) {
-      props.showNotification(
-        i18n.t('core:dndDisabledReadOnlyMode'),
-        'error',
-        true
-      );
-      return Promise.reject(i18n.t('core:dndDisabledReadOnlyMode'));
+      props.showNotification(t('core:dndDisabledReadOnlyMode'), 'error', true);
+      return Promise.reject(t('core:dndDisabledReadOnlyMode'));
     }
     if (files) {
       console.log('Dropped files: ' + JSON.stringify(files));
@@ -825,8 +822,8 @@ function MainPage(props: Props) {
           <ConfirmDialog
             open={props.isDeleteMultipleEntriesDialogOpened}
             onClose={() => props.toggleDeleteMultipleEntriesDialog()}
-            title={i18n.t('core:deleteConfirmationTitle')}
-            content={i18n.t('core:deleteConfirmationContent')}
+            title={t('core:deleteConfirmationTitle')}
+            content={t('core:deleteConfirmationContent')}
             list={props.selectedEntries.map(fsEntry => fsEntry.name)}
             confirmCallback={result => {
               if (result && props.selectedEntries) {

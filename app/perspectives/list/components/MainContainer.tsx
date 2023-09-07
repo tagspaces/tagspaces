@@ -25,7 +25,6 @@ import { getDesktopMode, getKeyBindingObject } from '-/reducers/settings';
 import FileMenu from '-/components/menus/FileMenu';
 import DirectoryMenu from '-/components/menus/DirectoryMenu';
 import EntryTagMenu from '-/components/menus/EntryTagMenu';
-//import i18n from '-/services/i18n';
 import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
 import MoveCopyFilesDialog from '-/components/dialogs/MoveCopyFilesDialog';
 import TagDropContainer from '-/components/TagDropContainer';

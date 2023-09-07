@@ -52,7 +52,6 @@ import {
 } from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
 import PlatformIO from './platform-facade';
-import i18n from '../services/i18n';
 import versionMeta from '../version.json';
 import { OpenedEntry, actions as AppActions } from '-/reducers/app';
 import { getLocation } from '-/reducers/locations';
@@ -301,7 +300,7 @@ export function prepareDirectoryContent(
     dispatch(AppActions.setGeneratingThumbnails(false));
     dispatch(
       AppActions.showNotification(
-        i18n.t('core:generatingThumbnailsFailed'),
+        'Generating thumbnails failed', //t('core:generatingThumbnailsFailed'),
         'warning',
         true
       )
@@ -1307,8 +1306,12 @@ export async function saveMetaDataPromise(
 /**
  * @param filePath
  * return Promise<directoryPath> of directory in order to open Folder properties next
+ * @param t translation
  */
-export function setFolderThumbnailPromise(filePath: string): Promise<string> {
+export function setFolderThumbnailPromise(
+  filePath: string,
+  t
+): Promise<string> {
   const directoryPath = extractContainingDirectoryPath(
     filePath,
     PlatformIO.getDirSeparator()
@@ -1323,7 +1326,7 @@ export function setFolderThumbnailPromise(filePath: string): Promise<string> {
       directoryPath,
       PlatformIO.getDirSeparator()
     ),
-    i18n.t('core:thumbAlreadyExists', { directoryName })
+    t('core:thumbAlreadyExists', { directoryName })
   ).then(() => directoryPath);
 }
 

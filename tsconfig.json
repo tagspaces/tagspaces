@@ -4,15 +4,21 @@
     "target": "esnext", // es5
     "baseUrl": "./",
     "rootDir": "./",
-    "jsx": "react",
+    "jsx": "react-jsx",
     "module": "esnext", // esnext, commonjs
     "moduleResolution": "node",
     "noUnusedLocals": false,
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    //"strict": true,
+    //"forceConsistentCasingInFileNames": true,
+    //"noFallthroughCasesInSwitch": true,
     "pretty": true,
     "sourceMap": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
+    "isolatedModules": true,
+    //"noEmit": true,
     "lib": ["dom", "dom.iterable", "esnext"],
     "paths": {
       "-/*": ["app/*"]

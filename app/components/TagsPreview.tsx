@@ -26,14 +26,15 @@ import {
   getTagColor,
   getTagTextColor
 } from '-/reducers/settings';
-import i18n from '-/services/i18n';
 import { getTagColors } from '-/services/taglibrary-utils';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   tags: Array<TS.Tag>;
 }
 
 function TagsPreview(props: Props) {
+  const { t } = useTranslation();
   const defaultBackgroundColor = useSelector(getTagColor);
   const defaultTextColor = useSelector(getTagTextColor);
   const language = useSelector(getCurrentLanguage);
@@ -43,7 +44,7 @@ function TagsPreview(props: Props) {
   if (!tags || tags.length < 1) {
     return <></>;
   }
-  let tagNames = i18n.t('core:searchTags') + ': ';
+  let tagNames = t('core:searchTags') + ': ';
   tags.forEach(tag => {
     tagNames = tagNames + tag.title + ' ';
   });

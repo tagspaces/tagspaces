@@ -29,10 +29,8 @@ import classNames from 'classnames';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { bindActionCreators } from 'redux';
 import { useDispatch } from 'react-redux';
 import AppConfig from '-/AppConfig';
-import i18n from '-/services/i18n';
 import { Pro } from '../../pro';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import Links from '-/content/links';
@@ -40,6 +38,7 @@ import { ProLabel } from '-/components/HelperComponents';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { OpenLinkIcon, HelpIcon } from '-/components/CommonIcons';
 import { openURLExternally } from '-/services/utils-io';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   classes: any;
@@ -57,6 +56,7 @@ function LocationManagerMenu(props: Props) {
     showCreateLocationDialog,
     toggleOpenLinkDialog
   } = props;
+  const { t } = useTranslation();
   const [
     locationManagerMenuAnchorEl,
     setLocationManagerMenuAnchorEl
@@ -76,7 +76,7 @@ function LocationManagerMenu(props: Props) {
         <ListItemIcon>
           <CreateLocationIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:createLocationTitle')} />
+        <ListItemText primary={t('core:createLocationTitle')} />
       </MenuItem>
     );
   }
@@ -93,7 +93,7 @@ function LocationManagerMenu(props: Props) {
       <ListItemIcon>
         <OpenLinkIcon />
       </ListItemIcon>
-      <ListItemText primary={i18n.t('core:openLink')} />
+      <ListItemText primary={t('core:openLink')} />
     </MenuItem>
   );
 
@@ -115,7 +115,7 @@ function LocationManagerMenu(props: Props) {
         <ListItemText
           primary={
             <>
-              {i18n.t('core:exportLocationTitle')}
+              {t('core:exportLocationTitle')}
               <ProLabel />
             </>
           }
@@ -138,7 +138,7 @@ function LocationManagerMenu(props: Props) {
         <ListItemText
           primary={
             <>
-              {i18n.t('core:importLocationTitle')}
+              {t('core:importLocationTitle')}
               <ProLabel />
             </>
           }
@@ -159,7 +159,7 @@ function LocationManagerMenu(props: Props) {
       <ListItemIcon>
         <CloseIcon />
       </ListItemIcon>
-      <ListItemText primary={i18n.t('core:closeAllLocations')} />
+      <ListItemText primary={t('core:closeAllLocations')} />
     </MenuItem>
   );
 
@@ -175,7 +175,7 @@ function LocationManagerMenu(props: Props) {
       <ListItemIcon>
         <UpdateIndexIcon />
       </ListItemIcon>
-      <ListItemText primary={i18n.t('core:updateAllLocationIndexes')} />
+      <ListItemText primary={t('core:updateAllLocationIndexes')} />
     </MenuItem>
   );
 
@@ -191,7 +191,7 @@ function LocationManagerMenu(props: Props) {
       <ListItemIcon>
         <HelpIcon />
       </ListItemIcon>
-      <ListItemText primary={i18n.t('core:help')} />
+      <ListItemText primary={t('core:help')} />
     </MenuItem>
   );
 
@@ -202,7 +202,7 @@ function LocationManagerMenu(props: Props) {
           className={classNames(classes.panelTitle, classes.header)}
           variant="subtitle1"
         >
-          {i18n.t('core:locationManager')}
+          {t('core:locationManager')}
         </Typography>
         <IconButton
           data-tid="locationManagerMenu"

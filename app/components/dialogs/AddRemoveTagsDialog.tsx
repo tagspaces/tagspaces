@@ -32,7 +32,6 @@ import Typography from '@mui/material/Typography';
 import Dialog from '@mui/material/Dialog';
 import DraggablePaper from '-/components/DraggablePaper';
 import TagsSelect from '../TagsSelect';
-import i18n from '-/services/i18n';
 import {
   extractFileName,
   extractDirectoryName
@@ -44,6 +43,7 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import TaggingActions from '-/reducers/tagging-actions';
 import { AppDispatch } from '-/reducers/app';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -52,6 +52,7 @@ interface Props {
 }
 
 function AddRemoveTagsDialog(props: Props) {
+  const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const [newlyAddedTags, setNewlyAddedTags] = useState<Array<TS.Tag>>([]);
 
@@ -127,7 +128,7 @@ function AddRemoveTagsDialog(props: Props) {
       aria-labelledby="draggable-dialog-title"
     >
       <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-        {i18n.t('core:tagOperationTitle')}
+        {t('core:tagOperationTitle')}
         <DialogCloseButton testId="closeAddRemoveTagsTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent
@@ -140,15 +141,15 @@ function AddRemoveTagsDialog(props: Props) {
       >
         <TagsSelect
           dataTid="AddRemoveTagsSelectTID"
-          placeholderText={i18n.t('core:selectTags')}
-          label={i18n.t('core:fileTags')}
+          placeholderText={t('core:selectTags')}
+          label={t('core:fileTags')}
           tags={newlyAddedTags}
           handleChange={handleChange}
           tagMode="remove"
           autoFocus={true}
         />
         <Typography style={{ marginTop: 10 }} variant="subtitle2">
-          {i18n.t('selectedFilesAndFolders')}
+          {t('selectedFilesAndFolders')}
         </Typography>
         <List dense style={{ width: 550, marginLeft: -15 }}>
           {selectedEntries.length > 0 &&
@@ -179,7 +180,7 @@ function AddRemoveTagsDialog(props: Props) {
           data-tid="cancelTagsMultipleEntries"
           onClick={() => onCloseDialog()}
         >
-          {i18n.t('core:cancel')}
+          {t('core:cancel')}
         </Button>
         <Button
           data-tid="cleanTagsMultipleEntries"
@@ -187,7 +188,7 @@ function AddRemoveTagsDialog(props: Props) {
           color="primary"
           onClick={removeAllTags}
         >
-          {i18n.t('core:tagOperationCleanTags')}
+          {t('core:tagOperationCleanTags')}
         </Button>
         <Button
           data-tid="removeTagsMultipleEntries"
@@ -195,7 +196,7 @@ function AddRemoveTagsDialog(props: Props) {
           color="primary"
           onClick={removeTags}
         >
-          {i18n.t('core:tagOperationRemoveTag')}
+          {t('core:tagOperationRemoveTag')}
         </Button>
         <Button
           data-tid="addTagsMultipleEntries"
@@ -204,7 +205,7 @@ function AddRemoveTagsDialog(props: Props) {
           variant="contained"
           onClick={addTags}
         >
-          {i18n.t('core:tagOperationAddTag')}
+          {t('core:tagOperationAddTag')}
         </Button>
       </DialogActions>
     </Dialog>

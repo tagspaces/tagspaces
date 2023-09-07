@@ -29,8 +29,8 @@ import BulletIcon from '@mui/icons-material/Remove';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Dialog from '@mui/material/Dialog';
-import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -46,6 +46,7 @@ interface Props {
 
 function ConfirmDialog(props: Props) {
   const { open, onClose, confirmCallback } = props;
+  const { t } = useTranslation();
 
   function onConfirm(result) {
     confirmCallback(result);
@@ -91,14 +92,14 @@ function ConfirmDialog(props: Props) {
           color="primary"
           data-tid={props.cancelDialogTID}
         >
-          {i18n.t('core:no')}
+          {t('core:no')}
         </Button>
         <Button
           data-tid={props.confirmDialogTID}
           onClick={() => onConfirm(true)}
           color="primary"
         >
-          {i18n.t('core:yes')}
+          {t('core:yes')}
         </Button>
       </DialogActions>
     </Dialog>

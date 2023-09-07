@@ -22,9 +22,9 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { getSearches } from '-/reducers/searches';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
-import i18n from '-/services/i18n';
 import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import { AppDispatch } from '-/reducers/app';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -34,6 +34,7 @@ interface Props {
 
 function SavedSearchesMenu(props: Props) {
   const { open, onClose, anchorEl } = props;
+  const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const searches = useSelector(state => getSearches(state));
   const showUnixHiddenEntries = useSelector(state =>
@@ -67,7 +68,7 @@ function SavedSearchesMenu(props: Props) {
       </MenuItem>
     ))
   ) : (
-    <MenuItem key={'noSavedSearches'}>{i18n.t('noSavedSearches')}</MenuItem>
+    <MenuItem key={'noSavedSearches'}>{t('noSavedSearches')}</MenuItem>
   );
 
   return (

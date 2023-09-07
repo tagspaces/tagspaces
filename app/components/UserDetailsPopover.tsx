@@ -30,10 +30,10 @@ import Auth from '@aws-amplify/auth';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { useSelector } from 'react-redux';
 import { clearAllURLParams } from '-/utils/dom';
-import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 import { currentUser } from '-/reducers/app';
 import { styled, useTheme } from '@mui/material/styles';
+import { useTranslation } from 'react-i18next';
 
 const PREFIX = 'UserDetailsPopover';
 
@@ -69,6 +69,7 @@ interface Props {
 }
 
 function UserDetailsPopover(props: Props) {
+  const { t } = useTranslation();
   const theme = useTheme();
   const { onClose } = props;
   const cognitoUser: CognitoUserInterface = useSelector(currentUser);
@@ -149,7 +150,7 @@ function UserDetailsPopover(props: Props) {
               />
             )}
             {'SOFTWARE_TOKEN_MFA'.indexOf(cognitoUser.preferredMFA) === -1 ? (
-              <Tooltip title={i18n.t('core:setupTOTPHelp')}>
+              <Tooltip title={t('core:setupTOTPHelp')}>
                 <Button
                   data-tid="setupTOTP"
                   className={classes.mainActionButton}
@@ -161,13 +162,13 @@ function UserDetailsPopover(props: Props) {
                   color="primary"
                   style={{ width: '95%' }}
                 >
-                  {i18n.t('core:setupTOTP')}
+                  {t('core:setupTOTP')}
                 </Button>
               </Tooltip>
             ) : (
               <>
                 <Typography style={{ color: theme.palette.text.primary }}>
-                  {i18n.t('core:TOTPEnabled')}
+                  {t('core:TOTPEnabled')}
                 </Typography>
                 <Button
                   className={classes.mainActionButton}
@@ -184,7 +185,7 @@ function UserDetailsPopover(props: Props) {
                   color="primary"
                   style={{ width: '95%' }}
                 >
-                  {i18n.t('core:disableTOTP')}
+                  {t('core:disableTOTP')}
                 </Button>
               </>
             )}
@@ -199,7 +200,7 @@ function UserDetailsPopover(props: Props) {
         >
           <Button
             data-tid="signOutTID"
-            title={i18n.t('core:signOut')}
+            title={t('core:signOut')}
             className={classes.mainActionButton}
             onClick={signOut}
             size="small"
@@ -208,7 +209,7 @@ function UserDetailsPopover(props: Props) {
             style={{ width: '95%' }}
           >
             <ExitToAppIcon className={classNames(classes.leftIcon)} />
-            {i18n.t('core:signOut')}
+            {t('core:signOut')}
           </Button>
         </Box>
       </Box>

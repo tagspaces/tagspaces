@@ -42,11 +42,11 @@ import ThumbnailContainIcon from '@mui/icons-material/PhotoSizeSelectLarge';
 import RadioCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import RadioUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 import { useTheme } from '@mui/material/styles';
+import { useTranslation } from 'react-i18next';
 
-const styles: any = {
+/*const styles: any = {
   root: {
     overflowX: 'hidden'
   },
@@ -61,7 +61,7 @@ const styles: any = {
     minHeight: 30,
     border: '1px solid lightgray'
   }
-};
+};*/
 
 interface Props {
   open: boolean;
@@ -94,6 +94,7 @@ interface Props {
 }
 
 function GridSettingsDialog(props: Props) {
+  const { t } = useTranslation();
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
   const thumbnailMode = useRef<string>(props.thumbnailMode);
   const entrySize = useRef<string>(props.entrySize);
@@ -145,7 +146,7 @@ function GridSettingsDialog(props: Props) {
   return (
     <Dialog open={open} onClose={() => onClose()} keepMounted scroll="paper">
       <DialogTitle>
-        {i18n.t('core:perspectiveSettingsTitle')}
+        {t('core:perspectiveSettingsTitle')}
         <DialogCloseButton
           testId="closePerspectiveSettingsTID"
           onClose={() => onClose()}
@@ -158,18 +159,18 @@ function GridSettingsDialog(props: Props) {
               style={{ color: theme.palette.text.primary }}
               variant="caption"
             >
-              {i18n.t('core:folderWithCustomPerspectiveSetting')}
+              {t('core:folderWithCustomPerspectiveSetting')}
             </Typography>
             <br />
             <Button
               data-tid="resetLocalSettingsTID"
-              title={i18n.t('core:resetLocalSettings')}
+              title={t('core:resetLocalSettings')}
               onClick={() => {
                 props.resetLocalSettings();
                 // forceUpdate();
               }}
             >
-              {i18n.t('core:resetLocalSettings')}
+              {t('core:resetLocalSettings')}
             </Button>
           </>
         )}
@@ -184,7 +185,7 @@ function GridSettingsDialog(props: Props) {
                 color="primary"
               />
             }
-            label={i18n.t('core:showHideDirectories')}
+            label={t('core:showHideDirectories')}
           />
           <FormControlLabel
             control={
@@ -196,7 +197,7 @@ function GridSettingsDialog(props: Props) {
                 color="primary"
               />
             }
-            label={i18n.t('core:showTags')}
+            label={t('core:showTags')}
           />
           <FormControlLabel
             control={
@@ -204,11 +205,11 @@ function GridSettingsDialog(props: Props) {
                 data-tid="gridPerspectiveToggleShowEntriesDescription"
                 defaultChecked={showEntriesDescription}
                 onChange={toggleShowEntriesDescription}
-                name={i18n.t('core:showHideEntriesDescription')}
+                name={t('core:showHideEntriesDescription')}
                 color="primary"
               />
             }
-            label={i18n.t('core:showHideEntriesDescription')}
+            label={t('core:showHideEntriesDescription')}
           />
           <Divider />
           <FormControlLabel
@@ -217,11 +218,11 @@ function GridSettingsDialog(props: Props) {
                 data-tid="gridPerspectiveToggleShowDetails"
                 defaultChecked={showDetails}
                 onChange={toggleShowDetails}
-                name={i18n.t('core:showHideDetails')}
+                name={t('core:showHideDetails')}
                 color="primary"
               />
             }
-            label={i18n.t('core:showHideDetails')}
+            label={t('core:showHideDetails')}
           />
           {toggleShowDescription && (
             <FormControlLabel
@@ -230,19 +231,19 @@ function GridSettingsDialog(props: Props) {
                   data-tid="gridPerspectiveToggleShowDescription"
                   defaultChecked={showDescription}
                   onChange={toggleShowDescription}
-                  name={i18n.t('core:showHideDescription')}
+                  name={t('core:showHideDescription')}
                   color="primary"
                 />
               }
-              label={i18n.t('core:showHideDescription')}
+              label={t('core:showHideDescription')}
             />
           )}
         </FormGroup>
         <Divider />
         <MenuItem
           data-tid="gridPerspectiveToggleThumbnailsMode"
-          title={i18n.t('core:toggleThumbnailModeTitle')}
-          aria-label={i18n.t('core:toggleThumbnailMode')}
+          title={t('core:toggleThumbnailModeTitle')}
+          aria-label={t('core:toggleThumbnailMode')}
           onClick={() => {
             thumbnailMode.current = toggleThumbnailsMode();
             forceUpdate();
@@ -255,22 +256,22 @@ function GridSettingsDialog(props: Props) {
               <ThumbnailContainIcon />
             )}
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:toggleThumbnailMode')} />
+          <ListItemText primary={t('core:toggleThumbnailMode')} />
         </MenuItem>
         <Divider />
         <MenuItem
           data-tid="sortByMenuTID"
-          title={i18n.t('core:sortBy')}
-          aria-label={i18n.t('core:sortBy')}
+          title={t('core:sortBy')}
+          aria-label={t('core:sortBy')}
           onClick={e => {
             props.handleSortingMenu(e);
           }}
         >
           <ListItemText
             primary={
-              i18n.t('core:sort') +
+              t('core:sort') +
               ': ' +
-              i18n.t(props.sortBy) +
+              t(props.sortBy) +
               ' ' +
               (props.orderBy ? 'ASC' : 'DESC')
             }
@@ -279,8 +280,8 @@ function GridSettingsDialog(props: Props) {
         <Divider />
         <MenuItem
           data-tid="gridPerspectiveEntrySizeSmall"
-          title={i18n.t('core:entrySizeSmall')}
-          aria-label={i18n.t('core:entrySizeSmall')}
+          title={t('core:entrySizeSmall')}
+          aria-label={t('core:entrySizeSmall')}
           onClick={() => {
             changeEntrySize('small');
             entrySize.current = 'small';
@@ -294,12 +295,12 @@ function GridSettingsDialog(props: Props) {
               <RadioUncheckedIcon />
             )}
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:entrySizeSmall')} />
+          <ListItemText primary={t('core:entrySizeSmall')} />
         </MenuItem>
         <MenuItem
           data-tid="gridPerspectiveEntrySizeNormal"
-          title={i18n.t('core:entrySizeNormal')}
-          aria-label={i18n.t('core:entrySizeNormal')}
+          title={t('core:entrySizeNormal')}
+          aria-label={t('core:entrySizeNormal')}
           onClick={() => {
             changeEntrySize('normal');
             entrySize.current = 'normal';
@@ -313,12 +314,12 @@ function GridSettingsDialog(props: Props) {
               <RadioUncheckedIcon />
             )}
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:entrySizeNormal')} />
+          <ListItemText primary={t('core:entrySizeNormal')} />
         </MenuItem>
         <MenuItem
           data-tid="gridPerspectiveEntrySizeBig"
-          title={i18n.t('core:entrySizeBig')}
-          aria-label={i18n.t('core:entrySizeBig')}
+          title={t('core:entrySizeBig')}
+          aria-label={t('core:entrySizeBig')}
           onClick={() => {
             changeEntrySize('big');
             entrySize.current = 'big';
@@ -332,13 +333,13 @@ function GridSettingsDialog(props: Props) {
               <RadioUncheckedIcon />
             )}
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:entrySizeBig')} />
+          <ListItemText primary={t('core:entrySizeBig')} />
         </MenuItem>
         <Divider />
         <MenuItem
           data-tid="gridPerspectiveSingleClickOpenInternally"
-          title={i18n.t('core:singleClickOpenInternally')}
-          aria-label={i18n.t('core:singleClickOpenInternally')}
+          title={t('core:singleClickOpenInternally')}
+          aria-label={t('core:singleClickOpenInternally')}
           onClick={() => {
             changeSingleClickAction('openInternal');
             singleClickAction.current = 'openInternal';
@@ -352,12 +353,12 @@ function GridSettingsDialog(props: Props) {
               <RadioUncheckedIcon />
             )}
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:singleClickOpenInternally')} />
+          <ListItemText primary={t('core:singleClickOpenInternally')} />
         </MenuItem>
         <MenuItem
           data-tid="gridPerspectiveSingleClickOpenExternally"
-          title={i18n.t('core:singleClickOpenExternally')}
-          aria-label={i18n.t('core:singleClickOpenExternally')}
+          title={t('core:singleClickOpenExternally')}
+          aria-label={t('core:singleClickOpenExternally')}
           onClick={() => {
             changeSingleClickAction('openExternal');
             singleClickAction.current = 'openExternal';
@@ -371,12 +372,12 @@ function GridSettingsDialog(props: Props) {
               <RadioUncheckedIcon />
             )}
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:singleClickOpenExternally')} />
+          <ListItemText primary={t('core:singleClickOpenExternally')} />
         </MenuItem>
         <MenuItem
           data-tid="gridPerspectiveSingleClickSelects"
-          title={i18n.t('core:singleClickSelects')}
-          aria-label={i18n.t('core:singleClickSelects')}
+          title={t('core:singleClickSelects')}
+          aria-label={t('core:singleClickSelects')}
           onClick={() => {
             changeSingleClickAction('selects');
             singleClickAction.current = 'selects';
@@ -390,7 +391,7 @@ function GridSettingsDialog(props: Props) {
               <RadioUncheckedIcon />
             )}
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:singleClickSelects')} />
+          <ListItemText primary={t('core:singleClickSelects')} />
         </MenuItem>
         <Divider />
         <FormControl
@@ -399,7 +400,7 @@ function GridSettingsDialog(props: Props) {
         >
           <TextField
             select
-            label={i18n.t('core:pageLimit')}
+            label={t('core:pageLimit')}
             name="limit"
             defaultValue={gridPageLimit}
             onChange={handleGridPaginationLimit}
@@ -410,12 +411,12 @@ function GridSettingsDialog(props: Props) {
             <MenuItem value={500}>500</MenuItem>
             <MenuItem value={1000}>1000</MenuItem>
           </TextField>
-          <FormHelperText>{i18n.t('core:pageLimitHelp')}</FormHelperText>
+          <FormHelperText>{t('core:pageLimitHelp')}</FormHelperText>
         </FormControl>
       </DialogContent>
       <DialogActions style={{ justifyContent: 'space-between' }}>
         <Button data-tid="gridPerspectiveHelp" onClick={openHelpWebPage}>
-          {i18n.t('core:help')}
+          {t('core:help')}
         </Button>
         <Button
           data-tid="defaultSettings"
@@ -424,7 +425,7 @@ function GridSettingsDialog(props: Props) {
           }}
           color="primary"
         >
-          {i18n.t('core:defaultSettings')}
+          {t('core:defaultSettings')}
         </Button>
         {Pro && (
           <Button
@@ -434,7 +435,7 @@ function GridSettingsDialog(props: Props) {
             }}
             color="primary"
           >
-            {i18n.t('core:directorySettings')}
+            {t('core:directorySettings')}
           </Button>
         )}
       </DialogActions>

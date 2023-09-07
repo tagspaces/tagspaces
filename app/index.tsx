@@ -17,7 +17,7 @@
  */
 
 import React from 'react';
-import { render } from 'react-dom';
+import ReactDOM from 'react-dom/client';
 // import { AppContainer } from 'react-hot-loader';
 import Root from './containers/Root';
 import configureStore from './store/configureStore';
@@ -33,10 +33,11 @@ if (process.env.NODE_ENV === 'production') {
   console.timeEnd = () => {};
 }
 
-render(
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
   /*<AppContainer>*/
-  <Root store={store} persistor={persistor} />,
-  /*</AppContainer>*/ document.getElementById('root')
+  <Root store={store} persistor={persistor} />
+  /*</AppContainer>*/
 );
 
 /* if (module.hot) {

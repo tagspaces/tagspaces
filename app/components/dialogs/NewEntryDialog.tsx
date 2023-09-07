@@ -24,7 +24,6 @@ import Dialog from '@mui/material/Dialog';
 import Paper from '@mui/material/Paper';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import DraggablePaper from '-/components/DraggablePaper';
-import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -33,6 +32,7 @@ import CreateDirectory from '-/components/dialogs/components/CreateDirectory';
 import CreateFile from '-/components/dialogs/components/CreateFile';
 import TargetPath from '-/components/dialogs/components/TargetPath';
 import { TargetPathContextProvider } from '-/components/dialogs/hooks/TargetPathContextProvider';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -41,6 +41,7 @@ interface Props {
 
 function NewEntryDialog(props: Props) {
   const { open, onClose } = props;
+  const { t } = useTranslation();
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -56,7 +57,7 @@ function NewEntryDialog(props: Props) {
         scroll="paper"
       >
         <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-          {i18n.t('core:create') + '...'}
+          {t('core:create') + '...'}
           <DialogCloseButton testId="closeCreateDialogTID" onClose={onClose} />
         </DialogTitle>
         <DialogContent
@@ -79,7 +80,7 @@ function NewEntryDialog(props: Props) {
               aria-controls="panelGeneral-content"
               id="panelGeneral-header"
             >
-              <Typography>{i18n.t('core:moreOperations')}</Typography>
+              <Typography>{t('core:moreOperations')}</Typography>
             </AccordionSummary>
             <AccordionDetails>
               <CreateDirectory onClose={onClose} tidPrefix="entry" />

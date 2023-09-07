@@ -3,10 +3,10 @@ import { styled, useTheme } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
-import i18n from '-/services/i18n';
 import { ProTooltip } from '-/components/HelperComponents';
 import { Pro } from '-/pro';
 import { convertMarkDown } from '-/services/utils-io';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   toggleEditDescriptionField: () => void;
@@ -44,6 +44,7 @@ const Root = styled('div')(({ theme }) => ({
 }));
 
 function EditDescription(props: Props) {
+  const { t } = useTranslation();
   const theme = useTheme();
   const fileDescriptionRef = useRef<MilkdownRef>(null);
   const {
@@ -76,7 +77,7 @@ function EditDescription(props: Props) {
   const printHTML = () => {
     const sanitizedDescription = description
       ? convertMarkDown(description, currentFolder)
-      : i18n.t('core:addMarkdownDescription');
+      : t('core:addMarkdownDescription');
 
     const printWin = window.open('', 'PRINT', 'height=400,width=600');
     printWin.document.write(
@@ -101,15 +102,15 @@ function EditDescription(props: Props) {
             setEditMode(false);
           }}
         >
-          {i18n.t('core:cancel')}
+          {t('core:cancel')}
         </Button>
       )}
       {!editMode && (
         <Button className={classes.button} onClick={printHTML}>
-          {i18n.t('core:print')}
+          {t('core:print')}
         </Button>
       )}
-      <ProTooltip tooltip={i18n.t('editDescription')}>
+      <ProTooltip tooltip={t('editDescription')}>
         <Button
           data-tid="editDescriptionTID"
           color="primary"
@@ -120,7 +121,7 @@ function EditDescription(props: Props) {
             toggleEditDescriptionField();
           }}
         >
-          {editMode ? i18n.t('core:confirmSaveButton') : i18n.t('core:edit')}
+          {editMode ? t('core:confirmSaveButton') : t('core:edit')}
         </Button>
       </ProTooltip>
     </span>
@@ -145,7 +146,7 @@ function EditDescription(props: Props) {
           style={{ color: theme.palette.text.primary }}
           variant="caption"
         >
-          {i18n.t('core:filePropertiesDescription')}
+          {t('core:filePropertiesDescription')}
         </Typography>*/}
       </span>
       {toggleEditDescriptionField && editSaveActions}
@@ -177,7 +178,7 @@ function EditDescription(props: Props) {
               lineHeight: 4
             }}
           >
-            {i18n.t('core:addMarkdownDescription')}
+            {t('core:addMarkdownDescription')}
           </Typography>
         ) : (
           <>

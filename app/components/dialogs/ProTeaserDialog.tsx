@@ -24,7 +24,6 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
 import MobileStepper from '@mui/material/MobileStepper';
 import Dialog from '@mui/material/Dialog';
-import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -34,6 +33,7 @@ import { getProTeaserSlides } from '-/content/ProTeaserSlides';
 import Links from '-/content/links';
 import { openURLExternally } from '-/services/utils-io';
 import { Navigation, Pagination } from 'swiper/modules';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -151,6 +151,7 @@ function Slide(props: SlideProps) {
 }
 
 function ProTeaserDialog(props: Props) {
+  const { t } = useTranslation();
   const slideIndex = useSelector(getProTeaserIndex);
   const [activeStep, setActiveStep] = useState<number>(
     slideIndex && slideIndex > -1 ? slideIndex : 0
@@ -217,11 +218,11 @@ function ProTeaserDialog(props: Props) {
           nextButton={
             activeStep === maxSteps - 1 ? (
               <Button size="small" onClick={onClose}>
-                {i18n.t('core:closeButton')}
+                {t('core:closeButton')}
               </Button>
             ) : (
               <Button size="small" onClick={handleNext}>
-                {i18n.t('core:next')}
+                {t('core:next')}
               </Button>
             )
           }
@@ -231,7 +232,7 @@ function ProTeaserDialog(props: Props) {
               onClick={handleBack}
               disabled={activeStep === 0}
             >
-              {i18n.t('core:prev')}
+              {t('core:prev')}
             </Button>
           }
         />

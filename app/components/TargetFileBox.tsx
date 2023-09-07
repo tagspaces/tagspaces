@@ -18,8 +18,8 @@
 
 import React, { ReactNode, useRef } from 'react';
 import { DropTargetMonitor, useDrop } from 'react-dnd';
-import i18n from '../services/i18n';
 import { classes, DnD } from '-/components/DnD.css';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   children: ReactNode;
@@ -28,6 +28,7 @@ interface Props {
 }
 
 function TargetFileBox(props: Props) {
+  const { t } = useTranslation();
   const ref = useRef<HTMLDivElement>(null);
 
   const [collectedProps, drop] = useDrop({
@@ -49,7 +50,7 @@ function TargetFileBox(props: Props) {
   const { isActive } = collectedProps;
   const { children } = props;
   const dragContent = isActive ? (
-    <div className={classes.dropzone}>{i18n.t('core:releaseToDrop')}</div>
+    <div className={classes.dropzone}>{t('core:releaseToDrop')}</div>
   ) : (
     undefined
   );

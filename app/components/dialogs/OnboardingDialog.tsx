@@ -37,7 +37,6 @@ import BrowserExtension from '-/assets/images/collectcontent.svg';
 import WizardFinished from '-/assets/images/computer-desk.svg';
 import ChooseTagging from '-/assets/images/abacus.svg';
 import NewLook from '-/assets/images/desktop.svg';
-import i18n from '-/services/i18n';
 import {
   getCurrentTheme,
   getPersistTagsInSidecarFile,
@@ -56,6 +55,7 @@ import { AppDispatch } from '-/reducers/app';
 //import 'swiper/css/pagination';
 
 import { register } from 'swiper/element/bundle';
+import { useTranslation } from 'react-i18next';
 // import { SwiperRef } from 'swiper/swiper-react';
 
 register();
@@ -67,6 +67,7 @@ interface Props {
 }
 
 function OnboardingDialog(props: Props) {
+  const { t } = useTranslation();
   const [activeStep, setActiveStep] = useState(0);
   const { open, onClose } = props;
   const isPersistTagsInSidecar = useSelector(getPersistTagsInSidecarFile);
@@ -150,9 +151,7 @@ function OnboardingDialog(props: Props) {
               overflowX: 'hidden'
             }}
           >
-            <Typography variant="h5">
-              {i18n.t('core:welcomeToTagSpaces')}
-            </Typography>
+            <Typography variant="h5">{t('core:welcomeToTagSpaces')}</Typography>
             <img
               style={{ maxHeight: 300, marginTop: 15, marginBottom: 40 }}
               src={NewLook}
@@ -322,7 +321,7 @@ function OnboardingDialog(props: Props) {
                 style={{ marginLeft: 5 }}
                 data-tid="startTagSpacesAfterOnboarding"
               >
-                {i18n.t('core:startUsingTagSpaces')}
+                {t('core:startUsingTagSpaces')}
               </Button>
             ) : (
               <Button
@@ -330,7 +329,7 @@ function OnboardingDialog(props: Props) {
                 onClick={handleNext}
                 data-tid="nextStepOnboarding"
               >
-                {i18n.t('core:next')}
+                {t('core:next')}
               </Button>
             )
           }
@@ -340,7 +339,7 @@ function OnboardingDialog(props: Props) {
               onClick={handleBack}
               disabled={activeStep === 0}
             >
-              {i18n.t('core:prev')}
+              {t('core:prev')}
             </Button>
           }
         />

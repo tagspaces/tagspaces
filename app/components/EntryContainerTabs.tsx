@@ -29,7 +29,6 @@ import {
   isReadOnlyMode,
   OpenedEntry
 } from '-/reducers/app';
-import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 import Revisions from '-/components/Revisions';
 import EntryProperties from '-/components/EntryProperties';
@@ -41,6 +40,7 @@ import {
   getMapTileServer
 } from '-/reducers/settings';
 import EditDescription from '-/components/EditDescription';
+import { useTranslation } from 'react-i18next';
 
 interface StyledTabsProps {
   children?: React.ReactNode;
@@ -110,6 +110,7 @@ interface TabPanelProps {
 }
 
 function EntryContainerTabs(props: Props) {
+  const { t } = useTranslation();
   const tabIndex = useSelector(getEntryContainerTab);
   // const [value, setValue] = React.useState(0);
   const { openedFile, openPanel, toggleProperties, marginRight } = props;
@@ -179,15 +180,13 @@ function EntryContainerTabs(props: Props) {
     }
     if (!Pro) {
       dispatch(
-        AppActions.showNotification(
-          i18n.t('core:thisFunctionalityIsAvailableInPro')
-        )
+        AppActions.showNotification(t('core:thisFunctionalityIsAvailableInPro'))
       );
       return;
     }
     if (!Pro.MetaOperations) {
       dispatch(
-        AppActions.showNotification(i18n.t('Saving description not supported'))
+        AppActions.showNotification(t('Saving description not supported'))
       );
       return;
     }
@@ -208,7 +207,7 @@ function EntryContainerTabs(props: Props) {
               editDescription.current = undefined;
               dispatch(AppActions.switchCurrentLocationType(currentLocationId));
               dispatch(
-                AppActions.showNotification(i18n.t('Error saving description'))
+                AppActions.showNotification(t('Error saving description'))
               );
             });
         }
@@ -238,20 +237,20 @@ function EntryContainerTabs(props: Props) {
         >
           <StyledTab
             data-tid="detailsTabTID"
-            label={i18n.t('core:details')}
+            label={t('core:details')}
             {...a11yProps(0)}
             onClick={handleTabClick}
           />
           <StyledTab
             data-tid="descriptionTabTID"
-            label={i18n.t('core:filePropertiesDescription')}
+            label={t('core:filePropertiesDescription')}
             {...a11yProps(1)}
             onClick={handleTabClick}
           />
           {openedFile.isFile && (
             <StyledTab
               data-tid="revisionsTabTID"
-              label={i18n.t('core:revisions')}
+              label={t('core:revisions')}
               {...a11yProps(2)}
               onClick={handleTabClick}
             />

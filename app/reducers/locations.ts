@@ -21,7 +21,6 @@ import {
   locationType
 } from '@tagspaces/tagspaces-common/misc';
 import { actions as AppActions } from '-/reducers/app';
-import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
@@ -155,7 +154,7 @@ export default (state: Array<TS.Location> = initialState, action: any) => {
 };
 
 export const actions = {
-  setDefaultLocations: () => (dispatch: (actions: Object) => void) => {
+  setDefaultLocations: t => (dispatch: (actions: Object) => void) => {
     PlatformIO.getDevicePaths()
       .then(devicePaths => {
         if (devicePaths) {
@@ -165,8 +164,8 @@ export const actions = {
                 {
                   uuid: getUuid(),
                   type: locationType.TYPE_LOCAL,
-                  name: i18n.t(key),
-                  path: devicePaths[key],
+                  name: t('core:' + key) as string,
+                  path: devicePaths[key] as string,
                   isDefault: false, // AppConfig.isWeb && devicePaths[key] === '/files/', // Used for the web ts demo
                   isReadOnly: false,
                   disableIndexing: false

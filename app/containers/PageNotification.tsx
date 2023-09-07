@@ -35,11 +35,11 @@ import {
   actions as LocationIndexActions,
   isIndexing
 } from '../reducers/location-index';
-import i18n from '../services/i18n';
 import { Pro } from '../pro';
 import Links from '-/content/links';
 import { openURLExternally } from '-/services/utils-io';
 import Chip from '@mui/material/Chip';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   notificationStatus: any;
@@ -69,6 +69,7 @@ const TSNotification = styled(Snackbar)(({ theme }) => {
 }) as typeof Snackbar;
 
 function PageNotification(props: Props) {
+  const { t } = useTranslation();
   const skipRelease = () => {
     props.setUpdateAvailable(false);
   };
@@ -79,11 +80,7 @@ function PageNotification(props: Props) {
 
   const getLatestVersion = () => {
     if (Pro) {
-      props.showNotification(
-        i18n.t('core:getLatestVersionPro'),
-        'default',
-        false
-      );
+      props.showNotification(t('core:getLatestVersionPro'), 'default', false);
     } else {
       openURLExternally(Links.links.downloadURL, true);
     }
@@ -103,7 +100,7 @@ function PageNotification(props: Props) {
           <IconButton
             data-tid={'close' + props.notificationStatus.tid}
             key="close"
-            aria-label={i18n.t('core:closeButton')}
+            aria-label={t('core:closeButton')}
             color="inherit"
             onClick={() => props.hideNotifications()}
             size="large"
@@ -117,11 +114,11 @@ function PageNotification(props: Props) {
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           open={props.isGeneratingThumbs}
           autoHideDuration={undefined}
-          message={i18n.t('core:loadingOrGeneratingThumbnails')}
+          message={t('core:loadingOrGeneratingThumbnails')}
           action={[
             <IconButton
               key="closeButton"
-              aria-label={i18n.t('core:closeButton')}
+              aria-label={t('core:closeButton')}
               color="inherit"
               onClick={() => props.setGeneratingThumbnails(false)}
               size="large"
@@ -144,7 +141,7 @@ function PageNotification(props: Props) {
             onClick={props.cancelDirectoryIndexing}
             data-tid="cancelDirectoryIndexing"
           >
-            {i18n.t('core:cancelIndexing')}
+            {t('core:cancelIndexing')}
           </Button>
         ]}
       />
@@ -160,7 +157,7 @@ function PageNotification(props: Props) {
             size="small"
             onClick={skipRelease}
           >
-            {i18n.t('core:later')}
+            {t('core:later')}
           </Button>,
           <Button
             key="changelogButton"
@@ -168,7 +165,7 @@ function PageNotification(props: Props) {
             size="small"
             onClick={openChangelogPage}
           >
-            {i18n.t('core:releaseNotes')}
+            {t('core:releaseNotes')}
           </Button>,
           <Button
             key="latestVersionButton"
@@ -176,7 +173,7 @@ function PageNotification(props: Props) {
             size="small"
             onClick={getLatestVersion}
           >
-            {i18n.t('core:getItNow')}
+            {t('core:getItNow')}
           </Button>
         ]}
       />

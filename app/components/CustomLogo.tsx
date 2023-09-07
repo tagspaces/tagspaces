@@ -27,10 +27,10 @@ import { Pro } from '../pro';
 import TextLogoIcon from '../assets/images/text-logo.svg';
 import WebLogoIcon from '../assets/images/text-logo-web.svg';
 import LogoIcon from '../assets/images/icon100x100.svg';
-import i18n from '../services/i18n';
 import versionMeta from '../version.json';
 import { getCurrentLanguage } from '-/reducers/settings';
 import { actions } from '-/reducers/app';
+import { useTranslation } from 'react-i18next';
 
 const StyledAppVersionBadge = styled(Badge)(({ theme }) => ({
   [`& .${badgeClasses.badge}`]: {
@@ -48,6 +48,7 @@ const StyledAppVersionBadge = styled(Badge)(({ theme }) => ({
 }));
 
 function CustomLogo() {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const language = useSelector(getCurrentLanguage);
 
@@ -67,7 +68,7 @@ function CustomLogo() {
       badgeContent={'v' + versionMeta.version}
       color="primary"
     >
-      <Tooltip title={i18n.t('core:aboutTitle')}>
+      <Tooltip title={t('core:aboutTitle')}>
         <IconButton
           onClick={() => dispatch(actions.toggleAboutDialog())}
           style={{ padding: 0, paddingLeft: 5, height: 50 }}
@@ -81,7 +82,7 @@ function CustomLogo() {
           />
         </IconButton>
       </Tooltip>
-      <Tooltip title={i18n.t('core:aboutTitle')}>
+      <Tooltip title={t('core:aboutTitle')}>
         <IconButton
           style={{ height: 50, padding: 0, marginBottom: 15 }}
           data-tid="aboutTagSpaces"

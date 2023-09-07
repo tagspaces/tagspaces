@@ -3,7 +3,6 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import OpenFolderIcon from '@mui/icons-material/SubdirectoryArrowLeft';
 import MoveCopy from '@mui/icons-material/FileCopy';
 import ListItemText from '@mui/material/ListItemText';
-import i18n from '-/services/i18n';
 import RenameFolderIcon from '@mui/icons-material/FormatTextdirectionLToR';
 import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
@@ -34,6 +33,7 @@ export function getDirectoryMenuItems(
   perspectiveMode: boolean,
   isReadOnlyMode: boolean,
   onClose: () => void,
+  t: (txt: string) => string,
   openDirectory?: () => void,
   reloadDirectory?: () => void,
   showRenameDirectoryDialog?: () => void,
@@ -68,7 +68,7 @@ export function getDirectoryMenuItems(
             <ListItemIcon>
               <OpenFolderIcon />
             </ListItemIcon>
-            <ListItemText primary={i18n.t('core:openDirectory')} />
+            <ListItemText primary={t('core:openDirectory')} />
           </MenuItem>
         );
       }
@@ -85,7 +85,7 @@ export function getDirectoryMenuItems(
             <ListItemIcon>
               <OpenNewWindowIcon />
             </ListItemIcon>
-            <ListItemText primary={i18n.t('core:openInWindow')} />
+            <ListItemText primary={t('core:openInWindow')} />
           </MenuItem>
         );
       }
@@ -102,7 +102,7 @@ export function getDirectoryMenuItems(
           <ListItemIcon>
             <ReloadIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:reloadDirectory')} />
+          <ListItemText primary={t('core:reloadDirectory')} />
         </MenuItem>
       );
     }
@@ -119,7 +119,7 @@ export function getDirectoryMenuItems(
           <ListItemIcon>
             <RenameFolderIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:renameDirectory')} />
+          <ListItemText primary={t('core:renameDirectory')} />
         </MenuItem>
       );
     }
@@ -143,7 +143,7 @@ export function getDirectoryMenuItems(
         <ListItemIcon>
           <MoveCopy />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:moveCopyDirectory')} />
+        <ListItemText primary={t('core:moveCopyDirectory')} />
       </MenuItem>
     );
   }
@@ -161,7 +161,7 @@ export function getDirectoryMenuItems(
         <ListItemIcon>
           <DeleteIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:deleteDirectory')} />
+        <ListItemText primary={t('core:deleteDirectory')} />
       </MenuItem>
     );
   }
@@ -187,7 +187,7 @@ export function getDirectoryMenuItems(
         <ListItemIcon>
           <OpenFolderNativelyIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:showInFileManager')} />
+        <ListItemText primary={t('core:showInFileManager')} />
       </MenuItem>
     );
   }
@@ -206,7 +206,7 @@ export function getDirectoryMenuItems(
           <ListItemIcon>
             <NewFileIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:newFileNote')} />
+          <ListItemText primary={t('core:newFileNote')} />
         </MenuItem>
       );
     }
@@ -223,7 +223,7 @@ export function getDirectoryMenuItems(
           <ListItemIcon>
             <NewFolderIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:newSubdirectory')} />
+          <ListItemText primary={t('core:newSubdirectory')} />
         </MenuItem>
       );
     }
@@ -240,7 +240,7 @@ export function getDirectoryMenuItems(
           <ListItemIcon>
             <AddExistingFileIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:addFiles')} />
+          <ListItemText primary={t('core:addFiles')} />
         </MenuItem>
       );
     }
@@ -264,7 +264,7 @@ export function getDirectoryMenuItems(
         <ListItemIcon>
           <ImageIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:setAsParentFolderThumbnail')} />
+        <ListItemText primary={t('core:setAsParentFolderThumbnail')} />
       </MenuItem>
     );
   }
@@ -281,7 +281,7 @@ export function getDirectoryMenuItems(
         <ListItemIcon>
           <LinkIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:copySharingLink')} />
+        <ListItemText primary={t('core:copySharingLink')} />
       </MenuItem>
     );
   }
@@ -299,7 +299,7 @@ export function getDirectoryMenuItems(
         <ListItemIcon>
           <AddRemoveTags />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:addRemoveTags')} />
+        <ListItemText primary={t('core:addRemoveTags')} />
       </MenuItem>
     );
   }
@@ -325,7 +325,7 @@ export function getDirectoryMenuItems(
         <ListItemText
           primary={
             <>
-              {i18n.t('core:importMacTags')}
+              {t('core:importMacTags')}
               {Pro ? <BetaLabel /> : <ProLabel />}
             </>
           }
@@ -348,7 +348,7 @@ export function getDirectoryMenuItems(
         <ListItemIcon>
           <AddExistingFileIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:cameraTakePicture')} />
+        <ListItemText primary={t('core:cameraTakePicture')} />
       </MenuItem>
     );
   }
@@ -402,7 +402,7 @@ export function getDirectoryMenuItems(
         <ListItemIcon>
           <PropertiesIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:directoryPropertiesTitle')} />
+        <ListItemText primary={t('core:directoryPropertiesTitle')} />
       </MenuItem>
     );
   }

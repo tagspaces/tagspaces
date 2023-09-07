@@ -18,7 +18,7 @@
 
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { I18nextProvider } from 'react-i18next'; // as we build ourself via webpack
+import { I18nextProvider, useTranslation } from 'react-i18next'; // as we build ourself via webpack
 import {
   createTheme,
   ThemeProvider,
@@ -26,7 +26,6 @@ import {
 } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import AppConfig from '-/AppConfig';
-import i18n from '../services/i18n';
 import {
   getCurrentTheme,
   getDefaultRegularTheme,
@@ -128,6 +127,7 @@ interface Props {
   children: any;
 }
 function App(props: Props) {
+  const { i18n } = useTranslation();
   let theme = legacyTheme;
   let regularTheme = legacyTheme;
   let darkTheme = darklegacyTheme;

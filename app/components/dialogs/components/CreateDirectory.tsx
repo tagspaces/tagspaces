@@ -24,7 +24,6 @@ import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Grid from '@mui/material/Grid';
 import AppConfig from '-/AppConfig';
-import i18n from '-/services/i18n';
 import {
   actions as AppActions,
   AppDispatch,
@@ -40,6 +39,7 @@ import Typography from '@mui/material/Typography';
 import FileUploadContainer, {
   FileUploadContainerRef
 } from '-/components/FileUploadContainer';
+import { useTranslation } from 'react-i18next';
 
 const PREFIX = 'CreateDirectory';
 
@@ -61,6 +61,7 @@ interface Props {
 
 function CreateDirectory(props: Props) {
   const { onClose, tidPrefix } = props;
+  const { t } = useTranslation();
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
   const dispatch: AppDispatch = useDispatch();
 
@@ -139,11 +140,7 @@ function CreateDirectory(props: Props) {
             .catch(e => {
               console.log('downloadFile error:', e);
               dispatch(
-                AppActions.setProgress(
-                  fileUrl.current,
-                  -1,
-                  i18n.t('core:errorCORS')
-                )
+                AppActions.setProgress(fileUrl.current, -1, t('core:errorCORS'))
               );
               dispatch(
                 AppActions.showNotification(
@@ -183,9 +180,9 @@ function CreateDirectory(props: Props) {
           className={classes.createButton}
           data-tid={tid('createLocationButton')}
         >
-          <Tooltip title={i18n.t('createLocationTitle')}>
+          <Tooltip title={t('createLocationTitle')}>
             <Typography variant="button" display="block" gutterBottom>
-              {i18n.t('core:createLocation')}
+              {t('core:createLocation')}
             </Typography>
           </Tooltip>
         </Button>
@@ -201,11 +198,11 @@ function CreateDirectory(props: Props) {
           data-tid={tid('newSubDirTID')}
           disabled={noSuitableLocation}
         >
-          {i18n.t('core:newSubdirectory')}
+          {t('core:newSubdirectory')}
         </Button>
       </Grid>
       <Grid style={{ marginTop: 20 }} item xs={12}>
-        <Tooltip title={i18n.t('core:addFilesTitle')}>
+        <Tooltip title={t('core:addFilesTitle')}>
           <Button
             variant="outlined"
             onClick={addFile}
@@ -213,14 +210,14 @@ function CreateDirectory(props: Props) {
             data-tid={tid('addFilesButton')}
             disabled={noSuitableLocation}
           >
-            {i18n.t('addFiles')}
+            {t('addFiles')}
           </Button>
         </Tooltip>
       </Grid>
       <Grid item xs={12}>
         <TextField
           error={invalidURL}
-          label={i18n.t('core:url')}
+          label={t('core:url')}
           margin="dense"
           name="name"
           fullWidth={true}
@@ -245,7 +242,7 @@ function CreateDirectory(props: Props) {
             className={classes.createButton}
             onClick={() => downloadURL()}
           >
-            {i18n.t('core:downloadFile')}
+            {t('core:downloadFile')}
           </Button>
         </ButtonGroup>
       </Grid>

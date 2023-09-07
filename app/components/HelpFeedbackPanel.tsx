@@ -36,7 +36,6 @@ import NewFeatureIcon from '@mui/icons-material/Gesture';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import ForumIcon from '@mui/icons-material/Forum';
 import ProTeaserIcon from '@mui/icons-material/FlightTakeoff';
-import i18n from '-/services/i18n';
 import { KeyShortcutsIcon, HelpIcon } from '-/components/CommonIcons';
 import Links from '-/content/links';
 import { Pro } from '-/pro';
@@ -44,6 +43,7 @@ import { openURLExternally } from '-/services/utils-io';
 import { getCurrentLanguage } from '-/reducers/settings';
 import { classes, SidePanel } from '-/components/SidePanels.css';
 import { useTheme } from '@mui/material/styles';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   toggleAboutDialog?: () => void;
@@ -55,6 +55,7 @@ interface Props {
 }
 
 function HelpFeedbackPanel(props: Props) {
+  const { t } = useTranslation();
   const theme = useTheme();
   const language = useSelector(getCurrentLanguage);
   const {
@@ -78,7 +79,7 @@ function HelpFeedbackPanel(props: Props) {
           variant="subtitle1"
           style={{ paddingLeft: 14 }}
         >
-          {i18n.t('core:helpFeedback')}
+          {t('core:helpFeedback')}
         </Typography>
       </div>
       <List
@@ -99,7 +100,7 @@ function HelpFeedbackPanel(props: Props) {
             <AboutIcon />
           </ListItemIcon>
           <Typography style={{ color: theme.palette.text.primary }}>
-            {i18n.t('core:aboutTitle')}
+            {t('core:aboutTitle')}
           </Typography>
         </ListItem>
         <ListItem
@@ -111,7 +112,7 @@ function HelpFeedbackPanel(props: Props) {
             <HelpIcon />
           </ListItemIcon>
           <Typography style={{ color: theme.palette.text.primary }}>
-            {i18n.t('core:documentation')}
+            {t('core:documentation')}
           </Typography>
         </ListItem>
         <ListItem onClick={toggleKeysDialog}>
@@ -119,7 +120,7 @@ function HelpFeedbackPanel(props: Props) {
             <KeyShortcutsIcon />
           </ListItemIcon>
           <Typography style={{ color: theme.palette.text.primary }}>
-            {i18n.t('core:shortcutKeys')}
+            {t('core:shortcutKeys')}
           </Typography>
         </ListItem>
         <ListItem
@@ -130,7 +131,7 @@ function HelpFeedbackPanel(props: Props) {
             <ChangeLogIcon />
           </ListItemIcon>
           <Typography style={{ color: theme.palette.text.primary }}>
-            {i18n.t('core:whatsNew')}
+            {t('core:whatsNew')}
           </Typography>
         </ListItem>
         <ListItem onClick={toggleOnboardingDialog}>
@@ -138,7 +139,7 @@ function HelpFeedbackPanel(props: Props) {
             <OnboardingIcon />
           </ListItemIcon>
           <Typography style={{ color: theme.palette.text.primary }}>
-            {i18n.t('core:onboardingWizard')}
+            {t('core:onboardingWizard')}
           </Typography>
         </ListItem>
         <ListItem
@@ -148,7 +149,7 @@ function HelpFeedbackPanel(props: Props) {
             <WebClipperIcon />
           </ListItemIcon>
           <Typography style={{ color: theme.palette.text.primary }}>
-            {i18n.t('core:webClipper')}
+            {t('core:webClipper')}
           </Typography>
         </ListItem>
         <Divider />
@@ -159,7 +160,7 @@ function HelpFeedbackPanel(props: Props) {
             <NewFeatureIcon />
           </ListItemIcon>
           <Typography style={{ color: theme.palette.text.primary }}>
-            {i18n.t('core:suggestNewFeatures')}
+            {t('core:suggestNewFeatures')}
           </Typography>
         </ListItem>
         <ListItem
@@ -169,7 +170,7 @@ function HelpFeedbackPanel(props: Props) {
             <ForumIcon />
           </ListItemIcon>
           <Typography style={{ color: theme.palette.text.primary }}>
-            {i18n.t('core:forums')}
+            {t('core:forums')}
           </Typography>
         </ListItem>
         <ListItem
@@ -179,7 +180,7 @@ function HelpFeedbackPanel(props: Props) {
             <IssueIcon />
           </ListItemIcon>
           <Typography style={{ color: theme.palette.text.primary }}>
-            {i18n.t('core:reportIssues')}
+            {t('core:reportIssues')}
           </Typography>
         </ListItem>
         <ListItem
@@ -189,7 +190,7 @@ function HelpFeedbackPanel(props: Props) {
             <TranslationIcon />
           </ListItemIcon>
           <Typography style={{ color: theme.palette.text.primary }}>
-            {i18n.t('core:helpWithTranslation')}
+            {t('core:helpWithTranslation')}
           </Typography>
         </ListItem>
         <Divider />
@@ -200,7 +201,7 @@ function HelpFeedbackPanel(props: Props) {
             <EmailIcon />
           </ListItemIcon>
           <Typography style={{ color: theme.palette.text.primary }}>
-            {i18n.t('core:emailContact')}
+            {t('core:emailContact')}
           </Typography>
         </ListItem>
         {Pro && (
@@ -213,7 +214,7 @@ function HelpFeedbackPanel(props: Props) {
               <CancelSubscriptionIcon />
             </ListItemIcon>
             <Typography style={{ color: theme.palette.text.primary }}>
-              {i18n.t('core:cancelSubscription')}
+              {t('core:cancelSubscription')}
             </Typography>
           </ListItem>
         )}
@@ -222,7 +223,7 @@ function HelpFeedbackPanel(props: Props) {
             <TwitterIcon />
           </ListItemIcon>
           <Typography style={{ color: theme.palette.text.primary }}>
-            {i18n.t('core:followOnTwitter')}
+            {t('core:followOnTwitter')}
           </Typography>
         </ListItem>
         <Divider />
@@ -231,7 +232,7 @@ function HelpFeedbackPanel(props: Props) {
             <ProTeaserIcon />
           </ListItemIcon>
           <Typography style={{ color: theme.palette.text.primary }}>
-            {i18n.t('achieveMore') + ' TagSpaces Pro'}
+            {t('achieveMore') + ' TagSpaces Pro'}
           </Typography>
         </ListItem>
       </List>

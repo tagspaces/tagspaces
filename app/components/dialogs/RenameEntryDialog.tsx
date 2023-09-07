@@ -33,7 +33,6 @@ import {
 } from '@tagspaces/tagspaces-common/paths';
 import DraggablePaper from '-/components/DraggablePaper';
 import AppConfig from '-/AppConfig';
-import i18n from '-/services/i18n';
 import {
   actions as AppActions,
   AppDispatch,
@@ -42,6 +41,7 @@ import {
 import PlatformIO from '-/services/platform-facade';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { dirNameValidation, fileNameValidation } from '-/services/utils-io';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -51,6 +51,7 @@ interface Props {
 
 function RenameEntryDialog(props: Props) {
   const { open, onClose, currentDirectoryPath } = props;
+  const { t } = useTranslation();
   const [inputError, setInputError] = useState<boolean>(false);
   const disableConfirmButton = useRef<boolean>(true);
   const lastSelectedEntry = useSelector(getLastSelectedEntry);
@@ -91,7 +92,7 @@ function RenameEntryDialog(props: Props) {
   } else {
     return (
       <Dialog open={open} onClose={onClose}>
-        <DialogTitle>{i18n.t('core:noSelectedEntryError')}</DialogTitle>
+        <DialogTitle>{t('core:noSelectedEntryError')}</DialogTitle>
       </Dialog>
     );
   }
@@ -177,7 +178,7 @@ function RenameEntryDialog(props: Props) {
       }}
     >
       <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-        {i18n.t('core:' + (isFile ? 'renameFile' : 'renameDirectory'))}
+        {t('core:' + (isFile ? 'renameFile' : 'renameDirectory'))}
         <DialogCloseButton testId="closeRenameEntryTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent>
@@ -188,7 +189,7 @@ function RenameEntryDialog(props: Props) {
             error={inputError}
             margin="dense"
             name="entryName"
-            label={i18n.t(
+            label={t(
               'core:' +
                 (isFile ? 'renameNewFileName' : 'createNewDirectoryTitleName')
             )}
@@ -199,13 +200,13 @@ function RenameEntryDialog(props: Props) {
             data-tid="renameEntryDialogInput"
           />
           <FormHelperText>
-            {i18n.t('core:' + (isFile ? 'fileNameHelp' : 'directoryNameHelp'))}
+            {t('core:' + (isFile ? 'fileNameHelp' : 'directoryNameHelp'))}
           </FormHelperText>
         </FormControl>
       </DialogContent>
       <DialogActions>
         <Button data-tid="closeRenameEntryDialog" onClick={onClose}>
-          {i18n.t('core:cancel')}
+          {t('core:cancel')}
         </Button>
         <Button
           disabled={disableConfirmButton.current}
@@ -214,7 +215,7 @@ function RenameEntryDialog(props: Props) {
           color="primary"
           variant="contained"
         >
-          {i18n.t('core:ok')}
+          {t('core:ok')}
         </Button>
       </DialogActions>
     </Dialog>

@@ -27,15 +27,14 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Dialog from '@mui/material/Dialog';
 import { isFunc } from '@tagspaces/tagspaces-common/misc';
-import AppConfig from '-/AppConfig';
 import TagGroupContainer from '../TagGroupContainer';
 import TagContainer from '../TagContainer';
-import i18n from '-/services/i18n';
 import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { exportTagGroups } from '-/services/taglibrary-utils';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -48,6 +47,7 @@ interface Props {
 
 function ImportExportTagGroupsDialog(props: Props) {
   // const [selectedAll, setSelectedAll] = useState<boolean>(true);
+  const { t } = useTranslation();
   const selectedAll = useRef(true);
   const [tagGroupList, setTagGroupList] = useState<Array<any>>(
     props.tagGroups.map(entry => ({ ...entry, selected: selectedAll.current }))
@@ -80,12 +80,12 @@ function ImportExportTagGroupsDialog(props: Props) {
     if (props.dialogModeImport) {
       props.importTagGroups(groupList);
       if (isFunc(showNotification)) {
-        showNotification(i18n.t('core:successfullyImportedGroupTags'));
+        showNotification(t('core:successfullyImportedGroupTags'));
       }
     } else {
       exportTagGroups(groupList);
       if (isFunc(showNotification)) {
-        showNotification(i18n.t('core:successfullyExportedGroupTags'));
+        showNotification(t('core:successfullyExportedGroupTags'));
       }
     }
   };
@@ -130,13 +130,13 @@ function ImportExportTagGroupsDialog(props: Props) {
     >
       <DialogTitle>
         {props.dialogModeImport
-          ? i18n.t('core:importGroupTagsTitle')
-          : i18n.t('core:exportGroupTagsTitle')}
+          ? t('core:importGroupTagsTitle')
+          : t('core:exportGroupTagsTitle')}
         <DialogCloseButton testId="closeIETagGroupsTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent>
         <Button color="primary" onClick={handleToggleSelectAll}>
-          {i18n.t('core:selectAllTagGroups')}
+          {t('core:selectAllTagGroups')}
         </Button>
         <FormControl fullWidth={true}>
           {tagGroupList.map(renderTagGroups)}
@@ -145,7 +145,7 @@ function ImportExportTagGroupsDialog(props: Props) {
       <DialogActions
         style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
       >
-        <Button onClick={props.onClose}>{i18n.t('core:cancel')}</Button>
+        <Button onClick={props.onClose}>{t('core:cancel')}</Button>
         <Button
           disabled={!isSelected()}
           onClick={onConfirm}

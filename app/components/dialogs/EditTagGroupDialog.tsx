@@ -30,13 +30,13 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { useSelector } from 'react-redux';
 import ColorPickerDialog from './ColorPickerDialog';
-import i18n from '-/services/i18n';
 import TransparentBackground from '../TransparentBackground';
 import { TS } from '-/tagspaces.namespace';
 import { getLocations } from '-/reducers/locations';
 import { Pro } from '-/pro';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { getSaveTagInLocation } from '-/reducers/settings';
+import { useTranslation } from 'react-i18next';
 
 const defaultTagGroupLocation = 'TAG_LIBRARY';
 
@@ -49,6 +49,7 @@ interface Props {
 
 function EditTagGroupDialog(props: Props) {
   const { editTagGroup, selectedTagGroupEntry, open, onClose } = props;
+  const { t } = useTranslation();
   const locations: Array<TS.Location> = useSelector(getLocations);
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
@@ -127,7 +128,7 @@ function EditTagGroupDialog(props: Props) {
 
   const renderTitle = () => (
     <DialogTitle style={{ overflow: 'visible' }}>
-      {i18n.t('core:editTagGroupTitle')}
+      {t('core:editTagGroupTitle')}
       <DialogCloseButton testId="closeEditTagGroupTID" onClose={onClose} />
     </DialogTitle>
   );
@@ -168,28 +169,26 @@ function EditTagGroupDialog(props: Props) {
           error={inputError}
           style={{ overflow: 'visible' }}
         >
-          <FormHelperText>{i18n.t('core:editTagGroupNewName')}</FormHelperText>
+          <FormHelperText>{t('core:editTagGroupNewName')}</FormHelperText>
           <TextField
             error={inputError}
             margin="dense"
             name="title"
             autoFocus
-            // label={i18n.t('core:editTagGroupNewName')}
+            // label={t('core:editTagGroupNewName')}
             onChange={handleTagGroupTitleChange}
             value={title}
             data-tid="editTagGroupInput"
             fullWidth={true}
           />
           {inputError && (
-            <FormHelperText>
-              {i18n.t('core:taggroupTitleHelper')}
-            </FormHelperText>
+            <FormHelperText>{t('core:taggroupTitleHelper')}</FormHelperText>
           )}
         </FormControl>
         {saveTagInLocation && (
           <FormControl fullWidth={true} error={inputError}>
             <FormHelperText style={styles.helpText}>
-              {i18n.t('core:tagGroupLocation')}
+              {t('core:tagGroupLocation')}
             </FormHelperText>
             <Select
               defaultValue={locationId}
@@ -201,11 +200,11 @@ function EditTagGroupDialog(props: Props) {
                 key={defaultTagGroupLocation}
                 value={defaultTagGroupLocation}
               >
-                {i18n.t('core:tagLibrary')}
+                {t('core:tagLibrary')}
               </MenuItem>
               {locations.map(location => (
                 <MenuItem key={location.uuid} value={location.uuid}>
-                  {i18n.t('core:location') + ': ' + location.name}
+                  {t('core:location') + ': ' + location.name}
                 </MenuItem>
               ))}
             </Select>
@@ -213,7 +212,7 @@ function EditTagGroupDialog(props: Props) {
         )}
         <FormControl fullWidth={true}>
           <FormHelperText style={styles.helpText}>
-            {i18n.t('core:tagBackgroundColor')}
+            {t('core:tagBackgroundColor')}
           </FormHelperText>
           <TransparentBackground>
             <Button
@@ -235,7 +234,7 @@ function EditTagGroupDialog(props: Props) {
         </FormControl>
         <FormControl fullWidth={true}>
           <FormHelperText style={styles.helpText}>
-            {i18n.t('core:tagForegroundColor')}
+            {t('core:tagForegroundColor')}
           </FormHelperText>
           <TransparentBackground>
             <Button
@@ -258,7 +257,7 @@ function EditTagGroupDialog(props: Props) {
         </FormControl>
         <FormControl>
           <FormHelperText style={styles.helpText}>
-            {i18n.t('core:colorChangesToAllTags')}
+            {t('core:colorChangesToAllTags')}
           </FormHelperText>
           <Switch
             data-tid="editTagGroupSwitch"
@@ -272,7 +271,7 @@ function EditTagGroupDialog(props: Props) {
 
   const renderActions = () => (
     <DialogActions>
-      <Button onClick={onClose}>{i18n.t('core:cancel')}</Button>
+      <Button onClick={onClose}>{t('core:cancel')}</Button>
       <Button
         disabled={disableConfirmButton()}
         onClick={onConfirm}
@@ -280,7 +279,7 @@ function EditTagGroupDialog(props: Props) {
         color="primary"
         variant="contained"
       >
-        {i18n.t('core:ok')}
+        {t('core:ok')}
       </Button>
     </DialogActions>
   );

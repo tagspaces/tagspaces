@@ -29,7 +29,6 @@ import {
   generateSharingLink
 } from '@tagspaces/tagspaces-common/paths';
 import { Pro } from '-/pro';
-import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
 import {
   actions as AppActions,
@@ -49,6 +48,7 @@ import { PerspectiveIDs } from '-/perspectives';
 import PlatformFacade from '-/services/platform-facade';
 import { getDirectoryMenuItems } from '-/perspectives/common/DirectoryMenuItems';
 import { getLocations } from '-/reducers/locations';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -74,6 +74,7 @@ interface Props {
 }
 
 function DirectoryMenu(props: Props) {
+  const { t } = useTranslation();
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
   const {
     open,
@@ -163,11 +164,11 @@ function DirectoryMenu(props: Props) {
       navigator.clipboard
         .writeText(sharingLink)
         .then(() => {
-          showNotification(i18n.t('core:sharingLinkCopied'));
+          showNotification(t('core:sharingLinkCopied'));
           return true;
         })
         .catch(() => {
-          showNotification(i18n.t('core:sharingLinkFailed'));
+          showNotification(t('core:sharingLinkFailed'));
         });
     }
   }
@@ -202,7 +203,7 @@ function DirectoryMenu(props: Props) {
       }
     } else if (perspectiveId === PerspectiveIDs.GALLERY) {
       toggleProTeaser(PerspectiveIDs.GALLERY);
-      // const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
+      // const openPersDocs = window.confirm(t('perspectiveInPro'));
       // if (openPersDocs) {
       //   openURLExternally(
       //     Links.documentationLinks.galleryPerspective,
@@ -211,7 +212,7 @@ function DirectoryMenu(props: Props) {
       // }
     } else if (perspectiveId === PerspectiveIDs.MAPIQUE) {
       toggleProTeaser(PerspectiveIDs.MAPIQUE);
-      // const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
+      // const openPersDocs = window.confirm(t('perspectiveInPro'));
       // if (openPersDocs) {
       //   openURLExternally(
       //     Links.documentationLinks.mapiquePerspective,
@@ -220,7 +221,7 @@ function DirectoryMenu(props: Props) {
       // }
     } else if (perspectiveId === PerspectiveIDs.KANBAN) {
       toggleProTeaser(PerspectiveIDs.KANBAN);
-      // const openPersDocs = window.confirm(i18n.t('perspectiveInPro'));
+      // const openPersDocs = window.confirm(t('perspectiveInPro'));
       // if (openPersDocs) {
       //   openURLExternally(
       //     Links.documentationLinks.kanbanPerspective,
@@ -311,7 +312,7 @@ Do you want to continue?`)
         });
     } else {
       showNotification(
-        i18n.t('core:thisFunctionalityIsAvailableInPro'),
+        t('core:thisFunctionalityIsAvailableInPro'),
         'default',
         true
       );
@@ -406,7 +407,7 @@ Do you want to continue?`)
         parentDirectoryPath,
         PlatformIO.getDirSeparator()
       ),
-      i18n.t('core:thumbAlreadyExists', { directoryName: parentDirectoryName })
+      t('core:thumbAlreadyExists', { directoryName: parentDirectoryName })
     )
       .then(() => {
         showNotification(
@@ -429,6 +430,7 @@ Do you want to continue?`)
     lastSelectedEntryPath !== currentDirectoryPath,
     readOnlyMode,
     onClose,
+    t,
     openDirectory,
     reloadDirectory,
     openRenameDirectoryDialog,

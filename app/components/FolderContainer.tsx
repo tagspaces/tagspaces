@@ -31,7 +31,6 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import AppConfig from '-/AppConfig';
 // import LocationMenu from './menus/LocationMenu';
-import i18n from '../services/i18n';
 import {
   getMaxSearchResults,
   getDesktopMode,
@@ -73,6 +72,7 @@ import MainSearchField from '-/components/MainSearchField';
 // import LoadingAnimation from '-/components/LoadingAnimation';
 import SearchBox from '-/components/SearchBox';
 import useFirstRender from '-/utils/useFirstRender';
+import { useTranslation } from 'react-i18next';
 
 const PREFIX = 'FolderContainer';
 
@@ -233,6 +233,7 @@ interface Props {
 }
 
 function FolderContainer(props: Props) {
+  const { t } = useTranslation();
   const theme = useTheme();
   const havePrevOpenedFile = React.useRef<boolean>(false);
   const firstRender = useFirstRender();
@@ -481,9 +482,7 @@ function FolderContainer(props: Props) {
         <Tooltip
           title={
             perspective.title +
-            (perspective.beta
-              ? ' ' + i18n.t('core:betaStatus').toUpperCase()
-              : '')
+            (perspective.beta ? ' ' + t('core:betaStatus').toUpperCase() : '')
           }
         >
           <div style={{ display: 'flex' }}>{perspective.icon}</div>
@@ -541,9 +540,7 @@ function FolderContainer(props: Props) {
           </IconButton>
           <Tooltip
             title={
-              i18n.t('core:goback') +
-              ' - BETA - ' +
-              i18n.t('core:gobackClarification')
+              t('core:goback') + ' - BETA - ' + t('core:gobackClarification')
             }
           >
             <IconButton
@@ -555,7 +552,7 @@ function FolderContainer(props: Props) {
             </IconButton>
           </Tooltip>
           {isDesktopMode && (
-            <Tooltip title={i18n.t('core:goforward') + ' - BETA'}>
+            <Tooltip title={t('core:goforward') + ' - BETA'}>
               <IconButton
                 id="goForwardButton"
                 disabled={window.history.length < 2}
@@ -594,7 +591,7 @@ function FolderContainer(props: Props) {
                 onKeyDown={toggleSearchMode}
                 onClick={toggleSearchMode}
                 margin="dense"
-                placeholder={i18n.t('core:searchTitle') + openSearchKeyBinding}
+                placeholder={t('core:searchTitle') + openSearchKeyBinding}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start" style={{ marginRight: 0 }}>
@@ -608,7 +605,7 @@ function FolderContainer(props: Props) {
               {props.progress && props.progress.length > 0 && (
                 <IconButton
                   id="progressButton"
-                  title={i18n.t('core:progress')}
+                  title={t('core:progress')}
                   data-tid="uploadProgress"
                   onClick={() => props.toggleUploadDialog()}
                   className={classes.button}
