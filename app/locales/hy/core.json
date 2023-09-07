@@ -41,7 +41,8 @@
   "errorDeletingDirectoryAlert": "Deleting '{{dirPath}}' failed. Folder probably not empty.",
   "deletingDirectorySuccessfull": "Folder '{{dirPath}}' successfully deleted.",
   "filePropertiesDescription": "Նկարագրություն",
-  "directoryPropertiesTitle": "Folder Properties",
+  "directoryPropertiesTitle": "Folder Details",
+  "filePropertiesTitle": "File Details",
   "createLocationTitle": "Ավելացրու պանակ",
   "createLocation": "New location",
   "exportLocationTitle": "Արտահանել պանակի կարգավորումները",
@@ -801,5 +802,6 @@
   "copyToClipboard": "Copy to clipboard",
   "generatedHTMLCopied": "Download links copied to clipboard",
   "generatedHTMLFailed": "Error while copying to clipboard",
+  "details": "Details",
   "-": "-"
 }
