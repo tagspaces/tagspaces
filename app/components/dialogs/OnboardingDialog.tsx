@@ -101,16 +101,18 @@ function OnboardingDialog(props: Props) {
   };
 
   const handleNext = () => {
-    setActiveStep(step => step + 1);
+    swiperElRef.current.slideNext();
+    //setActiveStep(step => step + 1);
   };
 
   const handleBack = () => {
-    setActiveStep(step => step - 1);
+    swiperElRef.current.slidePrev();
+    //setActiveStep(step => step - 1);
   };
 
-  const handleStepChange = step => {
+  /* const handleStepChange = step => {
     setActiveStep(step);
-  };
+  };*/
 
   const toggleTaggingType = () => {
     setPersistTagsInSidecarFile(!isPersistTagsInSidecar);
@@ -138,175 +140,174 @@ function OnboardingDialog(props: Props) {
       >
         <swiper-container
           ref={swiperElRef}
-          slides-per-view="3"
+          slidesPerView={1}
           navigation="true"
           pagination={{
             clickable: true
           }}
           modules={[Pagination, Navigation]}
         >
-          <div
-            style={{
-              textAlign: 'center',
-              overflowX: 'hidden'
-            }}
-          >
-            <Typography variant="h5">{t('core:welcomeToTagSpaces')}</Typography>
-            <img
-              style={{ maxHeight: 300, marginTop: 15, marginBottom: 40 }}
-              src={NewLook}
-              alt=""
-            />
-            <Typography variant="h6">Try our dark theme!</Typography>
-            <Typography variant="h6">&nbsp;</Typography>
-            <ToggleButtonGroup
-              value={currentTheme}
-              exclusive
-              onChange={(event, theme) => {
-                setCurrentTheme(theme);
-              }}
-              style={{ boxShadow: 'none' }}
-            >
-              <ToggleButton value="light">Light</ToggleButton>
-              <ToggleButton value="dark">Dark</ToggleButton>
-            </ToggleButtonGroup>
-          </div>
-          <div
-            style={{
-              textAlign: 'center'
-            }}
-          >
-            <Typography variant="h5">
-              Choose your the default tagging method for files
-            </Typography>
-            <Typography variant="h5">&nbsp;</Typography>
-            <Typography variant="body1">
-              Core functionality of the application the tagging of files and
-              folders. Here you can choose how tags will attached to files.
-            </Typography>
-            <FormControl
-              style={{ marginTop: 20, marginBottom: 20 }}
-              component="fieldset"
-            >
-              <RadioGroup
-                aria-label="fileTaggingType"
-                name="isPersistTagsInSidecar"
-                onChange={toggleTaggingType}
-              >
-                <FormControlLabel
-                  value="false"
-                  control={<Radio checked={!isPersistTagsInSidecar} />}
-                  label={
-                    <Typography
-                      variant="subtitle1"
-                      style={{ textAlign: 'left' }}
-                    >
-                      Use the name of file for saving the tags - Tagging the
-                      file <strong>image.jpg</strong> with a tag{' '}
-                      <strong>sunset</strong> will rename it to{' '}
-                      <strong>image[sunset].jpg</strong>
-                    </Typography>
-                  }
-                />
-
-                <FormControlLabel
-                  style={{ marginTop: 20 }}
-                  value="true"
-                  control={<Radio checked={isPersistTagsInSidecar} />}
-                  label={
-                    <Typography
-                      variant="subtitle1"
-                      style={{ textAlign: 'left' }}
-                    >
-                      Use sidecar file for saving the tags - Tagging the file{' '}
-                      <strong>image.jpg</strong> with a tag{' '}
-                      <strong>sunset</strong> will save this tag in an
-                      additional sidecar file called{' '}
-                      <strong>image.jpg.json</strong> located in a sub folder
-                      with the name
-                      <strong>.ts</strong>
-                    </Typography>
-                  }
-                />
-                <img
-                  style={{ maxHeight: 200, marginTop: 15 }}
-                  src={ChooseTagging}
-                  alt=""
-                />
-              </RadioGroup>
-            </FormControl>
-            <Typography variant="body1">
-              You can always revise you decision and change the tagging method.
-              But files already tagged with the renaming method will stay
-              renamed and the created sidecar file with the tags will stay.
-            </Typography>
-          </div>
-          <div
-            style={{
-              textAlign: 'center'
-            }}
-          >
-            <Typography variant="h5">
-              Collect web pages, create bookmarks or take screenshot from
-              websites directly in your web browser.
-            </Typography>
-            <img
-              style={{ maxHeight: 300, marginTop: 15, marginBottom: 20 }}
-              src={BrowserExtension}
-              alt=""
-            />
-            <Typography variant="h6">
-              Check out our web clipper browser extension for Chrome, Edge and
-              Firefox.
-            </Typography>
-            <Typography variant="h6">
-              It is available for free in the official browser stores.
-            </Typography>
-            <Button
-              style={{ marginTop: 20 }}
-              onClick={() => {
-                openURLExternally(Links.links.webClipper, true);
-              }}
-              variant="contained"
-              color="primary"
-            >
-              Get the web clipper
-            </Button>
-          </div>
-          <div
-            style={{
-              textAlign: 'center'
-            }}
-          >
-            <Typography variant="h5">
-              We hope you will love TagSpaces as much as we do!
-            </Typography>
-            <img
-              style={{ maxHeight: 300, marginTop: 100 }}
-              src={WizardFinished}
-              alt=""
-            />
-            <Typography variant="h6">
-              If you want to learn more about the application, you can start the
-              introduction from the welcome screen.
-            </Typography>
-          </div>
           <swiper-slide>
-            <article>
-              <h3 className="text-center">
-                If you are benefited from these challenges for interviews or
-                learning, please consider adding your testimonial by submitting
-                the details{' '}
-                <a href="https://forms.gle/2hJGa3foKuPctiWE7" target="_blank">
-                  here
-                </a>
-              </h3>
-            </article>
+            <div
+              style={{
+                textAlign: 'center',
+                overflowX: 'hidden'
+              }}
+            >
+              <Typography variant="h5">
+                {t('core:welcomeToTagSpaces')}
+              </Typography>
+              <img
+                style={{ maxHeight: 300, marginTop: 15, marginBottom: 40 }}
+                src={NewLook}
+                alt=""
+              />
+              <Typography variant="h6">Try our dark theme!</Typography>
+              <Typography variant="h6">&nbsp;</Typography>
+              <ToggleButtonGroup
+                value={currentTheme}
+                exclusive
+                onChange={(event, theme) => {
+                  setCurrentTheme(theme);
+                }}
+                style={{ boxShadow: 'none' }}
+              >
+                <ToggleButton value="light">Light</ToggleButton>
+                <ToggleButton value="dark">Dark</ToggleButton>
+              </ToggleButtonGroup>
+            </div>
+          </swiper-slide>
+          <swiper-slide>
+            <div
+              style={{
+                textAlign: 'center'
+              }}
+            >
+              <Typography variant="h5">
+                Choose your the default tagging method for files
+              </Typography>
+              <Typography variant="h5">&nbsp;</Typography>
+              <Typography variant="body1">
+                Core functionality of the application the tagging of files and
+                folders. Here you can choose how tags will attached to files.
+              </Typography>
+              <FormControl
+                style={{ marginTop: 20, marginBottom: 20 }}
+                component="fieldset"
+              >
+                <RadioGroup
+                  aria-label="fileTaggingType"
+                  name="isPersistTagsInSidecar"
+                  onChange={toggleTaggingType}
+                >
+                  <FormControlLabel
+                    value="false"
+                    control={<Radio checked={!isPersistTagsInSidecar} />}
+                    label={
+                      <Typography
+                        variant="subtitle1"
+                        style={{ textAlign: 'left' }}
+                      >
+                        Use the name of file for saving the tags - Tagging the
+                        file <strong>image.jpg</strong> with a tag{' '}
+                        <strong>sunset</strong> will rename it to{' '}
+                        <strong>image[sunset].jpg</strong>
+                      </Typography>
+                    }
+                  />
+
+                  <FormControlLabel
+                    style={{ marginTop: 20 }}
+                    value="true"
+                    control={<Radio checked={isPersistTagsInSidecar} />}
+                    label={
+                      <Typography
+                        variant="subtitle1"
+                        style={{ textAlign: 'left' }}
+                      >
+                        Use sidecar file for saving the tags - Tagging the file{' '}
+                        <strong>image.jpg</strong> with a tag{' '}
+                        <strong>sunset</strong> will save this tag in an
+                        additional sidecar file called{' '}
+                        <strong>image.jpg.json</strong> located in a sub folder
+                        with the name
+                        <strong>.ts</strong>
+                      </Typography>
+                    }
+                  />
+                  <img
+                    style={{ maxHeight: 200, marginTop: 15 }}
+                    src={ChooseTagging}
+                    alt=""
+                  />
+                </RadioGroup>
+              </FormControl>
+              <Typography variant="body1">
+                You can always revise you decision and change the tagging
+                method. But files already tagged with the renaming method will
+                stay renamed and the created sidecar file with the tags will
+                stay.
+              </Typography>
+            </div>
+          </swiper-slide>
+          <swiper-slide>
+            <div
+              style={{
+                textAlign: 'center'
+              }}
+            >
+              <Typography variant="h5">
+                Collect web pages, create bookmarks or take screenshot from
+                websites directly in your web browser.
+              </Typography>
+              <img
+                style={{ maxHeight: 300, marginTop: 15, marginBottom: 20 }}
+                src={BrowserExtension}
+                alt=""
+              />
+              <Typography variant="h6">
+                Check out our web clipper browser extension for Chrome, Edge and
+                Firefox.
+              </Typography>
+              <Typography variant="h6">
+                It is available for free in the official browser stores.
+              </Typography>
+              <Button
+                style={{ marginTop: 20 }}
+                onClick={() => {
+                  openURLExternally(Links.links.webClipper, true);
+                }}
+                variant="contained"
+                color="primary"
+              >
+                Get the web clipper
+              </Button>
+            </div>
+          </swiper-slide>
+          <swiper-slide>
+            <div
+              style={{
+                textAlign: 'center'
+              }}
+            >
+              <Typography variant="h5">
+                We hope you will love TagSpaces as much as we do!
+              </Typography>
+              <img
+                style={{ maxHeight: 300, marginTop: 100 }}
+                src={WizardFinished}
+                alt=""
+              />
+              <Typography variant="h6">
+                If you want to learn more about the application, you can start
+                the introduction from the welcome screen.
+              </Typography>
+            </div>
           </swiper-slide>
         </swiper-container>
       </DialogContent>
       <DialogActions style={{ justifyContent: 'center' }}>
-        <MobileStepper
+        {/*<MobileStepper
           style={{ marginTop: 10, backgroundColor: 'transparent' }}
           steps={maxSteps}
           position="static"
@@ -342,7 +343,7 @@ function OnboardingDialog(props: Props) {
               {t('core:prev')}
             </Button>
           }
-        />
+        />*/}
       </DialogActions>
     </Dialog>
   );
