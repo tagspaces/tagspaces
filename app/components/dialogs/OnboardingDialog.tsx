@@ -100,20 +100,6 @@ function OnboardingDialog(props: Props) {
     dispatch(SettingsActions.setCurrentTheme(theme));
   };
 
-  const handleNext = () => {
-    swiperElRef.current.slideNext();
-    //setActiveStep(step => step + 1);
-  };
-
-  const handleBack = () => {
-    swiperElRef.current.slidePrev();
-    //setActiveStep(step => step - 1);
-  };
-
-  /* const handleStepChange = step => {
-    setActiveStep(step);
-  };*/
-
   const toggleTaggingType = () => {
     setPersistTagsInSidecarFile(!isPersistTagsInSidecar);
   };

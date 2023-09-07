@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -32,8 +32,11 @@ import { useSelector } from 'react-redux';
 import { getProTeaserSlides } from '-/content/ProTeaserSlides';
 import Links from '-/content/links';
 import { openURLExternally } from '-/services/utils-io';
+import { register } from 'swiper/element/bundle';
 import { Navigation, Pagination } from 'swiper/modules';
 import { useTranslation } from 'react-i18next';
+
+register();
 
 interface Props {
   open: boolean;
@@ -53,8 +56,6 @@ interface SlideProps {
   pictureHeight?: number;
 }
 
-const slidesEN = getProTeaserSlides();
-
 function Slide(props: SlideProps) {
   const {
     title,
@@ -69,93 +70,98 @@ function Slide(props: SlideProps) {
     pictureShadow
   } = props;
   return (
-    <div
-      style={{
-        padding: 5,
-        textAlign: 'left'
-      }}
-    >
-      <Typography
-        variant="h5"
-        style={{ textAlign: 'center', paddingBottom: 10 }}
+    <swiper-slide>
+      <div
+        style={{
+          padding: 5,
+          textAlign: 'left'
+        }}
       >
-        {title}
-      </Typography>
-      {description && (
-        <Typography variant="subtitle1">{description}</Typography>
-      )}
-      {items &&
-        items.map(item => (
-          <Typography variant="subtitle1">&#x2605;&nbsp;{item}</Typography>
-        ))}
-      <Typography variant="subtitle1">&nbsp;</Typography>
-      <div style={{ textAlign: 'center' }}>
-        {pictureURL && (
-          <a
-            href="#"
-            onClick={() => {
-              openURLExternally(ctaURL, true);
-            }}
-          >
-            <img
-              style={{
-                cursor: 'pointer',
-                maxHeight: pictureHeight,
-                marginTop: 15,
-                marginBottom: 15,
-                boxShadow: pictureShadow
-                  ? '2px 2px 13px 0 rgb(0 0 0 / 75%'
-                  : 'none',
-                maxWidth: '95%'
-              }}
-              src={pictureURL}
-              alt=""
-            />
-          </a>
-        )}
-        {videoURL && (
-          <video
-            src={videoURL}
-            poster={videoPosterUrl}
-            autoPlay={true}
-            loop
-            controls
-            style={{ width: '100%', marginBottom: 15 }}
-          />
-        )}
-        <br />
-        <Button
-          onClick={() => {
-            openURLExternally(Links.links.productsOverview, true);
-          }}
-          variant="contained"
-          color="primary"
+        <Typography
+          variant="h5"
+          style={{ textAlign: 'center', paddingBottom: 10 }}
         >
-          Compare TagSpaces Products
-        </Button>
-        {ctaTitle && (
+          {title}
+        </Typography>
+        {description && (
+          <Typography variant="subtitle1">{description}</Typography>
+        )}
+        {items &&
+          items.map(item => (
+            <Typography variant="subtitle1">&#x2605;&nbsp;{item}</Typography>
+          ))}
+        <Typography variant="subtitle1">&nbsp;</Typography>
+        <div style={{ textAlign: 'center' }}>
+          {pictureURL && (
+            <a
+              href="#"
+              onClick={() => {
+                openURLExternally(ctaURL, true);
+              }}
+            >
+              <img
+                style={{
+                  cursor: 'pointer',
+                  maxHeight: pictureHeight,
+                  marginTop: 15,
+                  marginBottom: 15,
+                  boxShadow: pictureShadow
+                    ? '2px 2px 13px 0 rgb(0 0 0 / 75%'
+                    : 'none',
+                  maxWidth: '95%'
+                }}
+                src={pictureURL}
+                alt=""
+              />
+            </a>
+          )}
+          {videoURL && (
+            <video
+              src={videoURL}
+              poster={videoPosterUrl}
+              autoPlay={true}
+              loop
+              controls
+              style={{ width: '100%', marginBottom: 15 }}
+            />
+          )}
+          <br />
           <Button
             onClick={() => {
-              openURLExternally(ctaURL, true);
+              openURLExternally(Links.links.productsOverview, true);
             }}
-            style={{ marginLeft: 10 }}
             variant="contained"
             color="primary"
           >
-            {ctaTitle}
+            Compare TagSpaces Products
           </Button>
-        )}
+          {ctaTitle && (
+            <Button
+              onClick={() => {
+                openURLExternally(ctaURL, true);
+              }}
+              style={{ marginLeft: 10 }}
+              variant="contained"
+              color="primary"
+            >
+              {ctaTitle}
+            </Button>
+          )}
+        </div>
       </div>
-    </div>
+    </swiper-slide>
   );
 }
 
 function ProTeaserDialog(props: Props) {
   const { t } = useTranslation();
+  const swiperElRef = useRef(null); //<SwiperRef>
   const slideIndex = useSelector(getProTeaserIndex);
   const [activeStep, setActiveStep] = useState<number>(
     slideIndex && slideIndex > -1 ? slideIndex : 0
   );
+
+  const slidesEN = getProTeaserSlides(t);
 
   const maxSteps = Object.keys(slidesEN).length;
 
@@ -175,6 +181,32 @@ function ProTeaserDialog(props: Props) {
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+
+  useEffect(() => {
+    //const swiperContainer = swiperElRef.current;
+    if (swiperElRef.current) {
+      const params = {
+        slidesPerView: 1,
+        navigation: true,
+        scrollbar: true,
+        pagination: {
+          clickable: true
+        },
+
+        modules: [Pagination, Navigation],
+        injectStyles: [
+          `
+          swiper-container::part(bullet-active) {
+            background-color: red;
+          }
+      `
+        ]
+      };
+      Object.assign(swiperElRef.current, params);
+
+      swiperElRef.current.initialize();
+    }
+  }, [swiperElRef.current]);
 
   const slides = [];
   for (let index in slidesEN) {
@@ -198,19 +230,12 @@ function ProTeaserDialog(props: Props) {
           overflowY: 'auto'
         }}
       >
-        <swiper-container
-          slides-per-view="3"
-          navigation="true"
-          pagination={{
-            clickable: true
-          }}
-          modules={[Pagination, Navigation]}
-        >
+        <swiper-container ref={swiperElRef} init={false}>
           {slides ? slides : <></>}
         </swiper-container>
       </DialogContent>
       <DialogActions style={{ justifyContent: 'center' }}>
-        <MobileStepper
+        {/*<MobileStepper
           style={{ marginTop: 10, backgroundColor: 'transparent' }}
           steps={maxSteps}
           position="static"
@@ -235,7 +260,7 @@ function ProTeaserDialog(props: Props) {
               {t('core:prev')}
             </Button>
           }
-        />
+        />*/}
       </DialogActions>
     </Dialog>
   );

@@ -10,19 +10,29 @@ import RevisionsAutosave from '-/assets/images/revisions-autosave.png';
 import EnterpriseImage from '-/assets/images/world-undraw.svg';
 import { PerspectiveIDs } from '-/perspectives';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+
+export const slidesNames = [
+  'general',
+  PerspectiveIDs.KANBAN,
+  PerspectiveIDs.GALLERY,
+  PerspectiveIDs.MAPIQUE,
+  'annotation',
+  'revisions',
+  'search',
+  'folderColor',
+  'enterprise'
+];
 
 export function getProTeaserSlideIndex(slideName: string): number {
   if (!slideName) {
     return -1;
   }
-  return Object.keys(getProTeaserSlides()).findIndex(key => key === slideName);
+  return slidesNames.findIndex(key => key === slideName);
 }
 
-export function getProTeaserSlides() {
-  const { t } = useTranslation();
+export function getProTeaserSlides(t) {
   const slidesEN = [];
-  slidesEN['general'] = {
+  slidesEN[slidesNames[0]] = {
     title: 'Why TagSpaces Pro ?',
     description: (
       <>
@@ -44,7 +54,7 @@ export function getProTeaserSlides() {
     pictureURL: ProTeaserImage,
     pictureHeight: 150
   };
-  slidesEN[PerspectiveIDs.KANBAN] = {
+  slidesEN[slidesNames[1]] = {
     title: 'TagSpaces Pro - Kanban Perspectives',
     description: (
       <>
@@ -63,7 +73,7 @@ export function getProTeaserSlides() {
     pictureShadow: true,
     pictureHeight: 300
   };
-  slidesEN[PerspectiveIDs.GALLERY] = {
+  slidesEN[slidesNames[2]] = {
     title: 'TagSpaces Pro - Gallery Perspectives',
     description: (
       <>
@@ -80,7 +90,7 @@ export function getProTeaserSlides() {
     pictureShadow: true,
     pictureHeight: 300
   };
-  slidesEN[PerspectiveIDs.MAPIQUE] = {
+  slidesEN[slidesNames[3]] = {
     title: 'TagSpaces Pro - Mapique Perspective & Geo tagging',
     description: (
       <>
@@ -104,7 +114,7 @@ export function getProTeaserSlides() {
     pictureShadow: true,
     pictureHeight: 300
   };
-  slidesEN['annotation'] = {
+  slidesEN[slidesNames[4]] = {
     title: 'Annotate and link your files and folders',
     description: (
       <>
@@ -137,7 +147,7 @@ export function getProTeaserSlides() {
     pictureShadow: true,
     pictureHeight: 300
   };
-  slidesEN['revisions'] = {
+  slidesEN[slidesNames[5]] = {
     title: 'Revisions and auto-save for editable files',
     description: (
       <>
@@ -162,7 +172,7 @@ export function getProTeaserSlides() {
     pictureShadow: true,
     pictureHeight: 400
   };
-  slidesEN['search'] = {
+  slidesEN[slidesNames[6]] = {
     title: 'Extended Search',
     description: (
       <>
@@ -193,7 +203,7 @@ export function getProTeaserSlides() {
     pictureURL: SearchImage,
     pictureHeight: 150
   };
-  slidesEN['folderColor'] = {
+  slidesEN[slidesNames[7]] = {
     title: 'Folders with custom backgrounds',
     description: (
       <>
@@ -211,7 +221,7 @@ export function getProTeaserSlides() {
     pictureShadow: true,
     pictureHeight: 300
   };
-  slidesEN['enterprise'] = {
+  slidesEN[slidesNames[8]] = {
     title: 'TagSpaces Web Pro & Enterprise',
     description: (
       <>
