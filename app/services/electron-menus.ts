@@ -62,7 +62,7 @@ export default function buildDesktopMenu(props: any, i18n) {
           accelerator: 'CmdOrCtrl+p',
           click: (item, focusedWindow) => {
             if (focusedWindow.webContents && focusedWindow.webContents.print) {
-              focusedWindow.webContents.prini18n.t();
+              focusedWindow.webContents.print();
             }
           }
         },

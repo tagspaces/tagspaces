@@ -16,12 +16,10 @@
  *
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-//import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Mousewheel, Keyboard } from 'swiper/modules';
+import { Navigation, Pagination } from 'swiper/modules';
 import Button from '@mui/material/Button';
-import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
@@ -31,7 +29,6 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import MobileStepper from '@mui/material/MobileStepper';
 import Dialog from '@mui/material/Dialog';
 import BrowserExtension from '-/assets/images/collectcontent.svg';
 import WizardFinished from '-/assets/images/computer-desk.svg';
@@ -49,14 +46,8 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { openURLExternally } from '-/services/utils-io';
 import { AppDispatch } from '-/reducers/app';
 
-// Import Swiper styles
-//import 'swiper/css';
-//import 'swiper/css/navigation';
-//import 'swiper/css/pagination';
-
 import { register } from 'swiper/element/bundle';
 import { useTranslation } from 'react-i18next';
-// import { SwiperRef } from 'swiper/swiper-react';
 
 register();
 
@@ -68,7 +59,7 @@ interface Props {
 
 function OnboardingDialog(props: Props) {
   const { t } = useTranslation();
-  const [activeStep, setActiveStep] = useState(0);
+  //const [activeStep, setActiveStep] = useState(0);
   const { open, onClose } = props;
   const isPersistTagsInSidecar = useSelector(getPersistTagsInSidecarFile);
   const currentTheme = useSelector(getCurrentTheme);
@@ -94,7 +85,7 @@ function OnboardingDialog(props: Props) {
       SettingsActions.setPersistTagsInSidecarFile(isPersistTagsInSidecar)
     );
   };
-  const maxSteps = 4;
+  //const maxSteps = 4;
 
   const setCurrentTheme = theme => {
     dispatch(SettingsActions.setCurrentTheme(theme));
@@ -124,6 +115,19 @@ function OnboardingDialog(props: Props) {
           overflowY: 'auto'
         }}
       >
+        <style>
+          {`
+        swiper-container::part(bullet-active) {
+          background-color: ${theme.palette.primary.main};
+        }
+        swiper-container::part(button-prev) {
+          color: ${theme.palette.primary.main};
+        }
+        swiper-container::part(button-next) {
+          color: ${theme.palette.primary.main};
+        }
+        `}
+        </style>
         <swiper-container
           ref={swiperElRef}
           slidesPerView={1}
@@ -137,7 +141,8 @@ function OnboardingDialog(props: Props) {
             <div
               style={{
                 textAlign: 'center',
-                overflowX: 'hidden'
+                overflowX: 'hidden',
+                padding: 50
               }}
             >
               <Typography variant="h5">
@@ -166,7 +171,8 @@ function OnboardingDialog(props: Props) {
           <swiper-slide>
             <div
               style={{
-                textAlign: 'center'
+                textAlign: 'center',
+                padding: 50
               }}
             >
               <Typography variant="h5">
@@ -239,7 +245,8 @@ function OnboardingDialog(props: Props) {
           <swiper-slide>
             <div
               style={{
-                textAlign: 'center'
+                textAlign: 'center',
+                padding: 50
               }}
             >
               <Typography variant="h5">
@@ -273,7 +280,8 @@ function OnboardingDialog(props: Props) {
           <swiper-slide>
             <div
               style={{
-                textAlign: 'center'
+                textAlign: 'center',
+                padding: 50
               }}
             >
               <Typography variant="h5">
@@ -292,45 +300,6 @@ function OnboardingDialog(props: Props) {
           </swiper-slide>
         </swiper-container>
       </DialogContent>
-      <DialogActions style={{ justifyContent: 'center' }}>
-        {/*<MobileStepper
-          style={{ marginTop: 10, backgroundColor: 'transparent' }}
-          steps={maxSteps}
-          position="static"
-          activeStep={activeStep}
-          nextButton={
-            activeStep === maxSteps - 1 ? (
-              <Button
-                size="small"
-                onClick={onClose}
-                variant="contained"
-                color="primary"
-                style={{ marginLeft: 5 }}
-                data-tid="startTagSpacesAfterOnboarding"
-              >
-                {t('core:startUsingTagSpaces')}
-              </Button>
-            ) : (
-              <Button
-                size="small"
-                onClick={handleNext}
-                data-tid="nextStepOnboarding"
-              >
-                {t('core:next')}
-              </Button>
-            )
-          }
-          backButton={
-            <Button
-              size="small"
-              onClick={handleBack}
-              disabled={activeStep === 0}
-            >
-              {t('core:prev')}
-            </Button>
-          }
-        />*/}
-      </DialogActions>
     </Dialog>
   );
 }

@@ -16,13 +16,11 @@
  *
  */
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import Button from '@mui/material/Button';
-import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
-import MobileStepper from '@mui/material/MobileStepper';
 import Dialog from '@mui/material/Dialog';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTheme } from '@mui/material/styles';
@@ -73,7 +71,7 @@ function Slide(props: SlideProps) {
     <swiper-slide>
       <div
         style={{
-          padding: 5,
+          padding: 50,
           textAlign: 'left'
         }}
       >
@@ -157,60 +155,17 @@ function ProTeaserDialog(props: Props) {
   const { t } = useTranslation();
   const swiperElRef = useRef(null); //<SwiperRef>
   const slideIndex = useSelector(getProTeaserIndex);
-  const [activeStep, setActiveStep] = useState<number>(
-    slideIndex && slideIndex > -1 ? slideIndex : 0
-  );
 
   const slidesEN = getProTeaserSlides(t);
-
-  const maxSteps = Object.keys(slidesEN).length;
-
-  const handleNext = () => {
-    setActiveStep(activeStep + 1);
-  };
-
-  const handleBack = () => {
-    setActiveStep(activeStep - 1);
-  };
-
-  const handleStepChange = step => {
-    setActiveStep(step);
-  };
 
   const { open, onClose } = props;
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
-  useEffect(() => {
-    //const swiperContainer = swiperElRef.current;
-    if (swiperElRef.current) {
-      const params = {
-        slidesPerView: 1,
-        navigation: true,
-        scrollbar: true,
-        pagination: {
-          clickable: true
-        },
-
-        modules: [Pagination, Navigation],
-        injectStyles: [
-          `
-          swiper-container::part(bullet-active) {
-            background-color: red;
-          }
-      `
-        ]
-      };
-      Object.assign(swiperElRef.current, params);
-
-      swiperElRef.current.initialize();
-    }
-  }, [swiperElRef.current]);
-
   const slides = [];
   for (let index in slidesEN) {
-    slides.push(<Slide {...slidesEN[index]} />);
+    slides.push(<Slide key={index} {...slidesEN[index]} />);
   }
 
   return (
@@ -230,38 +185,37 @@ function ProTeaserDialog(props: Props) {
           overflowY: 'auto'
         }}
       >
-        <swiper-container ref={swiperElRef} init={false}>
-          {slides ? slides : <></>}
+        <style>
+          {`
+        swiper-container::part(bullet-active) {
+          background-color: ${theme.palette.primary.main};
+        }
+        swiper-container::part(button-prev) {
+          color: ${theme.palette.primary.main};
+        }
+        swiper-container::part(button-next) {
+          color: ${theme.palette.primary.main};
+        }
+        `}
+        </style>
+        <swiper-container
+          ref={swiperElRef}
+          initialSlide={slideIndex && slideIndex > -1 ? Number(slideIndex) : 0}
+          slidesPerView={1}
+          navigation={true}
+          /*scrollbar={true}*/
+          pagination={{
+            clickable: true
+          }}
+          cssMode={false}
+          /*keyboard={{
+            enabled: true
+          }}*/
+          modules={[Pagination, Navigation]}
+        >
+          {slides}
         </swiper-container>
       </DialogContent>
-      <DialogActions style={{ justifyContent: 'center' }}>
-        {/*<MobileStepper
-          style={{ marginTop: 10, backgroundColor: 'transparent' }}
-          steps={maxSteps}
-          position="static"
-          activeStep={activeStep}
-          nextButton={
-            activeStep === maxSteps - 1 ? (
-              <Button size="small" onClick={onClose}>
-                {t('core:closeButton')}
-              </Button>
-            ) : (
-              <Button size="small" onClick={handleNext}>
-                {t('core:next')}
-              </Button>
-            )
-          }
-          backButton={
-            <Button
-              size="small"
-              onClick={handleBack}
-              disabled={activeStep === 0}
-            >
-              {t('core:prev')}
-            </Button>
-          }
-        />*/}
-      </DialogActions>
     </Dialog>
   );
 }
