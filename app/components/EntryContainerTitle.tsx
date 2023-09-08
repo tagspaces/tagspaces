@@ -33,7 +33,7 @@ import {
 import i18n from '-/services/i18n';
 import Tooltip from '-/components/Tooltip';
 import PlatformIO from '-/services/platform-facade';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { FolderIcon, MoreMenuIcon } from '-/components/CommonIcons';
 import AppConfig from '-/AppConfig';
 import EntryContainerMenu from '-/components/EntryContainerMenu';
 import { getSharingLink, loadJSONFile } from '-/services/utils-io';
@@ -166,7 +166,7 @@ function EntryContainerTitle(props: Props) {
           >
             {//'.' +
             extractFileExtension(openedFile.path, PlatformIO.getDirSeparator())}
-            <MoreVertIcon style={{ fontSize: 20 }} />
+            <MoreMenuIcon style={{ fontSize: 20 }} />
           </FileBadge>
         </>
       ) : (
@@ -183,11 +183,12 @@ function EntryContainerTitle(props: Props) {
           style={{
             backgroundColor: AppConfig.defaultFolderColor,
             display: 'flex',
-            alignItems: 'center'
+            alignItems: 'center',
+            paddingLeft: 10
           }}
         >
-          {i18n.t('core:folder')}
-          <MoreVertIcon style={{ fontSize: 20 }} />
+          <FolderIcon style={{ fontSize: 20 }} />
+          <MoreMenuIcon style={{ fontSize: 20 }} />
         </FileBadge>
       )}
       <Tooltip title={openedFile.isFile && fileName}>

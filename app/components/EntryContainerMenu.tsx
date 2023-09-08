@@ -10,6 +10,7 @@ import {
   ListItemText,
   Menu,
   MenuItem,
+  MenuList,
   Divider,
   Typography
 } from '@mui/material';
@@ -437,7 +438,7 @@ function EntryContainerMenu(props: Props) {
           horizontal: 'left'
         }}
       >
-        {menuItems}
+        <MenuList>{menuItems}</MenuList>
       </Menu>
       {isDeleteEntryModalOpened && (
         <ConfirmDialog

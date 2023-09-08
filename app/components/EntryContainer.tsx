@@ -35,7 +35,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import Box from '@mui/material/Box';
 import ButtonGroup from '@mui/material/ButtonGroup';
-import { CancelIcon } from '-/components/CommonIcons';
+import { CancelIcon, CloseEditIcon } from '-/components/CommonIcons';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { buffer } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
@@ -858,6 +858,15 @@ function EntryContainer(props: Props) {
         </Tooltip>
       );
 
+      let closeCancelIcon;
+      if (desktopMode) {
+        closeCancelIcon = fileChanged.current ? (
+          <CancelIcon />
+        ) : (
+          <CloseEditIcon />
+        );
+      }
+
       let editFile = null;
       if (editingSupported) {
         if (openedFile.editMode) {
@@ -870,7 +879,7 @@ function EntryContainer(props: Props) {
                   size="small"
                   variant="outlined"
                   color="primary"
-                  startIcon={desktopMode && <CancelIcon />}
+                  startIcon={closeCancelIcon}
                 >
                   {fileChanged.current
                     ? i18n.t('core:cancel')

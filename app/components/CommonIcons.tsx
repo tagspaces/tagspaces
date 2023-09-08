@@ -60,7 +60,9 @@ export { default as OpenLinkIcon } from '@mui/icons-material/Link';
 
 export { default as KeyShortcutsIcon } from '@mui/icons-material/Keyboard';
 
-export { default as CancelIcon } from '@mui/icons-material/Cancel';
+export { default as CancelIcon } from '@mui/icons-material/Undo';
+
+export { default as CloseEditIcon } from '@mui/icons-material/DisabledByDefault';
 
 export { default as OpenNewWindowIcon } from '@mui/icons-material/OpenInBrowser';
 
@@ -103,3 +105,5 @@ export { default as CloseIcon } from '@mui/icons-material/Close';
 export { default as SelectedIcon } from '@mui/icons-material/CheckCircle';
 
 export { default as UnSelectedIcon } from '@mui/icons-material/RadioButtonUnchecked';
+
+export { default as MoreMenuIcon } from '@mui/icons-material/MoreVert';
