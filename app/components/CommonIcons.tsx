@@ -44,7 +44,7 @@ export { default as InfoIcon } from '@mui/icons-material/InfoOutlined';
 
 export { default as FolderPropertiesIcon } from '@mui/icons-material/Info';
 
-export { default as RemoveIcon } from '@mui/icons-material/Remove';
+export { default as RemoveIcon } from '@mui/icons-material/DeleteOutline';
 
 export { default as HistoryIcon } from '@mui/icons-material/History';
 
