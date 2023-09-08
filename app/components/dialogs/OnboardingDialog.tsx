@@ -288,7 +288,7 @@ function OnboardingDialog(props: Props) {
                 We hope you will love TagSpaces as much as we do!
               </Typography>
               <img
-                style={{ maxHeight: 300, marginTop: 100 }}
+                style={{ maxHeight: 300, maxWidth: '90%', marginTop: 100 }}
                 src={WizardFinished}
                 alt=""
               />
@@ -296,6 +296,14 @@ function OnboardingDialog(props: Props) {
                 If you want to learn more about the application, you can start
                 the introduction from the welcome screen.
               </Typography>
+              <Button
+                style={{ marginTop: 20 }}
+                onClick={onClose}
+                variant="contained"
+                color="primary"
+              >
+                Start using TagSpaces
+              </Button>
             </div>
           </swiper-slide>
         </swiper-container>
