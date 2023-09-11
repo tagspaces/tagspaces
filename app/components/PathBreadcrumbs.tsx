@@ -191,6 +191,7 @@ function PathBreadcrumbs(props: Props) {
     if (currentDirectoryPath) {
       const curDirBreadcrumb = (
         <Tooltip
+          key={currentDirectoryPath}
           title={
             t('core:openDirectoryMenu') + ' - ' + (currentDirectoryPath || '')
           }
