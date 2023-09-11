@@ -39,6 +39,11 @@ import {
   getEntryContainerTab,
   getMapTileServer
 } from '-/reducers/settings';
+import {
+  FolderPropertiesIcon,
+  DescriptionIcon,
+  RevisionIcon
+} from '-/components/CommonIcons';
 import EditDescription from '-/components/EditDescription';
 import { useTranslation } from 'react-i18next';
 
@@ -70,11 +75,12 @@ const StyledTabs = styled((props: StyledTabsProps) => (
 
 interface StyledTabProps {
   label: string;
+  icon: any;
   onClick: (event: React.SyntheticEvent) => void;
 }
 
 const StyledTab = styled((props: StyledTabProps) => (
-  <Tab disableRipple {...props} />
+  <Tab disableRipple iconPosition="start" {...props} />
 ))(({ theme }) => ({
   textTransform: 'none',
   fontWeight: theme.typography.fontWeightRegular,
@@ -100,6 +106,7 @@ interface Props {
   openedFile: OpenedEntry;
   openPanel: () => void;
   toggleProperties: () => void;
+  isDesktopMode: boolean;
   marginRight: string;
 }
 
@@ -120,6 +127,7 @@ function EntryContainerTabs(props: Props) {
   const directoryPath = useSelector(getDirectoryPath);
   const tileServer = useSelector(getMapTileServer);
   const dispatch: AppDispatch = useDispatch();
+  const { isDesktopMode } = props;
 
   function TsTabPanel(tprops: TabPanelProps) {
     const { children, value, index, ...other } = tprops;
@@ -237,20 +245,23 @@ function EntryContainerTabs(props: Props) {
         >
           <StyledTab
             data-tid="detailsTabTID"
-            label={t('core:details')}
+            icon={<FolderPropertiesIcon />}
+            label={isDesktopMode && t('core:details')}
             {...a11yProps(0)}
             onClick={handleTabClick}
           />
           <StyledTab
             data-tid="descriptionTabTID"
-            label={t('core:filePropertiesDescription')}
+            icon={<DescriptionIcon />}
+            label={isDesktopMode && t('core:filePropertiesDescription')}
             {...a11yProps(1)}
             onClick={handleTabClick}
           />
           {openedFile.isFile && (
             <StyledTab
               data-tid="revisionsTabTID"
-              label={t('core:revisions')}
+              icon={<RevisionIcon />}
+              label={isDesktopMode && t('core:revisions')}
               {...a11yProps(2)}
               onClick={handleTabClick}
             />

@@ -107,3 +107,7 @@ export { default as SelectedIcon } from '@mui/icons-material/CheckCircle';
 export { default as UnSelectedIcon } from '@mui/icons-material/RadioButtonUnchecked';
 
 export { default as MoreMenuIcon } from '@mui/icons-material/MoreVert';
+
+export { default as RevisionIcon } from '@mui/icons-material/Restore';
+
+export { default as DescriptionIcon } from '@mui/icons-material/Subject';

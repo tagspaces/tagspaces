@@ -41,7 +41,7 @@ export default function Root({ store, persistor }: RootType) {
   }, []);
 
   if (!initialized) {
-    return <LoadingScreen />;
+    return <span />;
   }
 
   let appContent = (
@@ -67,7 +67,7 @@ export default function Root({ store, persistor }: RootType) {
        * @see https://github.com/rt2zz/redux-persist/blob/master/docs/PersistGate.md
        */}
       <PersistGate
-        loading={<LoadingScreen />}
+        // loading={<LoadingScreen />}
         onBeforeLift={() => {
           // eslint-disable-next-line react/prop-types
           if (!AppConfig.isAmplify) {

@@ -35,7 +35,7 @@ import { TS } from '-/tagspaces.namespace';
 import { format, formatDistanceToNow } from 'date-fns';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PreviewIcon from '@mui/icons-material/Preview';
-import RestoreIcon from '@mui/icons-material/Restore';
+import RestoreIcon from '@mui/icons-material/SettingsBackupRestore';
 import IconButton from '@mui/material/IconButton';
 import AppConfig from '-/AppConfig';
 import {

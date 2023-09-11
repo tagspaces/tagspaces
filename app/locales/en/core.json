@@ -337,7 +337,7 @@
   "taggroupTitleHelper": "Empty Title",
   "toggleProperties": "Toggle properties",
   "switchToFullscreen": "Switch to fullscreen",
-  "openInFullWidth": "Open in full width",
+  "openInFullWidth": "Toggle full width",
   "openDirectoryExternally": "Open Folder Externally",
   "toggleEntryProperties": "Toggle entry properties",
   "closeEntry": "Close entry",

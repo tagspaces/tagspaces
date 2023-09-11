@@ -933,6 +933,7 @@ function EntryContainer(props: Props) {
           openPanel={openPanel}
           toggleProperties={toggleProperties}
           marginRight={marginRight}
+          isDesktopMode={desktopMode}
         />
       );
 
