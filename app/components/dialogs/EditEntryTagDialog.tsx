@@ -42,7 +42,7 @@ import TaggingActions from '-/reducers/tagging-actions';
 import { isDateTimeTag } from '-/utils/dates';
 import { TS } from '-/tagspaces.namespace';
 import useValidation from '-/utils/useValidation';
-import { getMapTileServer, getCurrentLanguage } from '-/reducers/settings';
+import { getMapTileServer } from '-/reducers/settings';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -64,7 +64,6 @@ const StyledDialog = styled(Dialog)(() => ({
 
 interface Props {
   classes: any;
-  language: string;
   open: boolean;
   onClose: () => void;
   editTagForEntry: (path: string, tag: TS.Tag, title: string) => void;
@@ -105,7 +104,7 @@ function EditEntryTagDialog(props: Props) {
     isShowDatePeriodEditor
   );
   const { setError, haveError } = useValidation();
-  const { onClose, open, language } = props;
+  const { onClose, open } = props;
 
   useEffect(() => {
     if (titleRef && titleRef.current) {
@@ -185,7 +184,6 @@ function EditEntryTagDialog(props: Props) {
         </FormControl>
         {showGeoEditor && (
           <GeoTagEditor
-            language={language}
             geoTag={title}
             onChange={setTitle}
             // zoom={title === defaultTagLocation ? 2 : undefined} TODO defaultTagLocation can be in MGRS format

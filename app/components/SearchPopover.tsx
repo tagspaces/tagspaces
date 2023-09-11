@@ -48,7 +48,6 @@ import {
   getSearchQuery
 } from '../reducers/location-index';
 import {
-  getCurrentLanguage,
   getMaxSearchResults,
   getShowUnixHiddenEntries
 } from '-/reducers/settings';
@@ -1121,8 +1120,7 @@ function mapStateToProps(state) {
     currentDirectory: getDirectoryPath(state),
     maxSearchResults: getMaxSearchResults(state),
     searches: getSearches(state),
-    showUnixHiddenEntries: getShowUnixHiddenEntries(state),
-    language: getCurrentLanguage(state)
+    showUnixHiddenEntries: getShowUnixHiddenEntries(state)
   };
 }
 
@@ -1140,7 +1138,6 @@ function mapDispatchToProps(dispatch) {
 }
 
 const areEqual = (prevProp, nextProp) =>
-  nextProp.language === prevProp.language &&
   nextProp.indexing === prevProp.indexing &&
   nextProp.searchQuery === prevProp.searchQuery &&
   nextProp.textQuery === prevProp.textQuery &&

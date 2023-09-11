@@ -33,7 +33,6 @@ import ConfirmDialog from '../ConfirmDialog';
 import SettingsGeneral from '../settings/SettingsGeneral';
 import SettingsKeyBindings from '../settings/SettingsKeyBindings';
 import SettingsFileTypes from '../settings/SettingsFileTypes';
-import { getCurrentLanguage } from '-/reducers/settings';
 import { clearAllURLParams } from '-/utils/dom';
 import SettingsAdvanced from '-/components/dialogs/settings/SettingsAdvanced';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
@@ -62,7 +61,6 @@ interface Props {
 
 function SettingsDialog(props: Props) {
   const { t } = useTranslation();
-  const language = useSelector(getCurrentLanguage);
   const [currentTab, setCurrentTab] = useState<number>(0);
   const [
     isResetSettingsDialogOpened,

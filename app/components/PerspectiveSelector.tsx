@@ -28,7 +28,7 @@ import { BetaLabel, ProLabel } from '-/components/HelperComponents';
 import { useTranslation } from 'react-i18next';
 
 interface Props {
-  language: string;
+  //language: string;
   defaultValue: string;
   onChange: (event: any) => void;
   testId: string;

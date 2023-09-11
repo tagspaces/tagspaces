@@ -65,7 +65,7 @@ import {
   DeleteIcon,
   LinkIcon
 } from '-/components/CommonIcons';
-import { getLocations } from '-/reducers/locations';
+import { getCurrentLocation, getLocations } from '-/reducers/locations';
 import PropertiesIcon from '@mui/icons-material/Info';
 import { useTranslation } from 'react-i18next';
 
@@ -89,7 +89,6 @@ interface Props {
   showInFileManager: (path: string) => void;
   selectedFilePath?: string;
   selectedEntries: Array<any>;
-  currentLocation: TS.Location;
   reorderTop?: () => void;
   reorderBottom?: () => void;
   onDuplicateFile?: (fileDirPath: string) => void;
@@ -107,7 +106,6 @@ function FileMenu(props: Props) {
     loadDirectoryContent,
     selectedEntries,
     openFileNatively,
-    currentLocation,
     reorderTop,
     reorderBottom,
     anchorEl,
@@ -120,6 +118,7 @@ function FileMenu(props: Props) {
 
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
+  const currentLocation: TS.Location = useSelector(getCurrentLocation);
   const locations: Array<TS.Location> = useSelector(getLocations);
   const readOnlyMode = useSelector(isReadOnlyMode);
   const prefixTagContainer = useSelector(getPrefixTagContainer);

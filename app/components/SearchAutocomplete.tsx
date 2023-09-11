@@ -40,8 +40,7 @@ import {
 } from '../reducers/location-index';
 import {
   getMaxSearchResults,
-  getShowUnixHiddenEntries,
-  getCurrentLanguage
+  getShowUnixHiddenEntries
 } from '-/reducers/settings';
 import { FileTypeGroups, haveSearchFilters } from '-/services/search';
 import { TS } from '-/tagspaces.namespace';
@@ -100,7 +99,6 @@ function SearchAutocomplete(props: Props) {
   const currentDirectory = useSelector(getDirectoryPath);
   const maxSearchResults = useSelector(getMaxSearchResults);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
-  const language = useSelector(getCurrentLanguage);
   const locations: TS.Location[] = useSelector(getLocations);
   const currentLocation: TS.Location = useSelector(getCurrentLocation);
   const searchMode: boolean = useSelector(isSearchMode);

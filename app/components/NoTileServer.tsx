@@ -1,11 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface Props {
-  language: string;
-}
-
-function NoTileServer(props: Props) {
+function NoTileServer() {
   const { t } = useTranslation();
   return (
     <div style={{ textAlign: 'center' }}>

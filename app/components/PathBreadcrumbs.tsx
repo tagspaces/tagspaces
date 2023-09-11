@@ -33,6 +33,8 @@ import { TS } from '-/tagspaces.namespace';
 import { LocalLocationIcon, CloudLocationIcon } from '-/components/CommonIcons';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+import { getCurrentLocation } from '-/reducers/locations';
 
 const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   const backgroundColor =
@@ -60,14 +62,11 @@ const NoWrapBreadcrumb = styled(StyledBreadcrumb)(({ theme }) => {
 
 interface Props {
   currentDirectoryPath: string;
-  currentLocationPath: string;
-  currentLocation: TS.Location;
   loadDirectoryContent: (
     path: string,
     generateThumbnails: boolean,
     loadDirMeta?: boolean
   ) => void;
-  language: string;
   switchPerspective: (perspectiveId: string) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   openDirectory: () => void;
@@ -80,6 +79,7 @@ interface Props {
 function PathBreadcrumbs(props: Props) {
   const { t } = useTranslation();
   let pathParts: Array<string> = [];
+  const currentLocation = useSelector(getCurrentLocation);
 
   const [
     directoryContextMenuAnchorEl,
@@ -88,8 +88,6 @@ function PathBreadcrumbs(props: Props) {
 
   const {
     currentDirectoryPath,
-    currentLocationPath,
-    currentLocation,
     loadDirectoryContent,
     setSelectedEntries,
     openDirectory,
@@ -130,9 +128,9 @@ function PathBreadcrumbs(props: Props) {
       addSlash + normalizePath(currentDirectoryPath.split('\\').join('/'));
 
     let normalizedCurrentLocationPath = '';
-    if (currentLocationPath) {
+    if (currentLocation && currentLocation.path) {
       normalizedCurrentLocationPath =
-        addSlash + normalizePath(currentLocationPath.split('\\').join('/'));
+        addSlash + normalizePath(currentLocation.path.split('\\').join('/'));
     }
 
     while (

@@ -37,7 +37,6 @@ import TagGroupMenu from './menus/TagGroupMenu';
 import TaggingActions from '../reducers/tagging-actions';
 import {
   actions as SettingsActions,
-  getCurrentLanguage,
   getSaveTagInLocation,
   getTagColor,
   getTagGroupCollapsed,
@@ -95,7 +94,6 @@ function TagLibrary(props: Props) {
   const locations: Array<TS.Location> = useSelector(getLocations);
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
   const tagLibraryChanged = useSelector(isTagLibraryChanged);
-  const language = useSelector(getCurrentLanguage);
 
   const toggleTagGroupDispatch = uuid =>
     dispatch(SettingsActions.toggleTagGroup(uuid));

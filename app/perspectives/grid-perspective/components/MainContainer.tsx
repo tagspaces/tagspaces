@@ -43,7 +43,6 @@ import CellContent from './CellContent';
 import MainToolbar from './MainToolbar';
 import SortingMenu from './SortingMenu';
 import GridOptionsMenu from './GridOptionsMenu';
-import { getCurrentLocation } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-facade';
 import GridPagination from '-/perspectives/grid-perspective/components/GridPagination';
 import GridSettingsDialog from '-/perspectives/grid-perspective/components/GridSettingsDialog';
@@ -111,7 +110,6 @@ function GridPerspective(props: Props) {
   );
   const lastSelectedEntryPath = useSelector(getLastSelectedEntryPath);
   const keyBindings = useSelector(getKeyBindingObject);
-  const currentLocation: TS.Location = useSelector(getCurrentLocation);
   const searchFilter: string = useSelector(getSearchFilter);
   const editedEntryPaths: Array<TS.EditedEntryPath> = useSelector(
     getEditedEntryPaths
@@ -677,9 +675,9 @@ function GridPerspective(props: Props) {
     entry => !entry.isFile
   );
   const sortedFiles = sortedDirContent.current.filter(entry => entry.isFile);
-  const locationPath = currentLocation
+  /*const locationPath = currentLocation
     ? PlatformIO.getLocationPath(currentLocation)
-    : '';
+    : '';*/
   let entryWidth = 200;
   if (entrySize.current === 'small') {
     entryWidth = 150;
@@ -810,7 +808,6 @@ function GridPerspective(props: Props) {
           files={sortedFiles}
           getCellContent={getCellContent}
           currentPage={1}
-          currentLocationPath={locationPath}
           currentDirectoryPath={currentDirectoryPath}
           onClick={onClick}
           onContextMenu={onContextMenu}
@@ -818,7 +815,6 @@ function GridPerspective(props: Props) {
           selectedEntries={selectedEntries}
           setSelectedEntries={handleSetSelectedEntries}
           singleClickAction={singleClickAction.current}
-          currentLocation={currentLocation}
           directoryContent={
             lastSearchTimestamp
               ? GlobalSearch.getInstance().getResults()
@@ -922,7 +918,6 @@ function GridPerspective(props: Props) {
           showInFileManager={showInFileManager}
           selectedFilePath={lastSelectedEntryPath}
           selectedEntries={selectedEntries}
-          currentLocation={currentLocation}
         />
       )}
       {/* {Boolean(dirContextMenuAnchorEl) && ( // todo move dialogs from DirectoryMenu */}
@@ -938,7 +933,6 @@ function GridPerspective(props: Props) {
         openMoveCopyFilesDialog={openMoveCopyFilesDialog}
         openDirectory={openDirectory}
         perspectiveMode={lastSelectedEntryPath !== currentDirectoryPath}
-        currentLocation={currentLocation}
         openAddRemoveTagsDialog={openAddRemoveTagsDialog}
       />
       {/* {Boolean(tagContextMenuAnchorEl) && ( // TODO EntryTagMenu is used in TagSelect we cannot move confirm dialog from menu */}
@@ -984,5 +978,6 @@ function GridPerspective(props: Props) {
     </div>
   );
 }
+const areEqual = (prevProp: Props, nextProp: Props) => false;
 
-export default GridPerspective;
+export default React.memo(GridPerspective, areEqual);

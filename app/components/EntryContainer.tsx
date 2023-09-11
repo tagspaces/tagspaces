@@ -52,7 +52,6 @@ import {
   actions as SettingsActions,
   isDesktopMode,
   getKeyBindingObject,
-  getCurrentLanguage,
   isRevisionsEnabled,
   getEntryContainerTab
 } from '-/reducers/settings';
@@ -1104,8 +1103,7 @@ function mapStateToProps(state) {
     isReadOnlyMode: isReadOnlyMode(state),
     keyBindings: getKeyBindingObject(state),
     desktopMode: isDesktopMode(state),
-    revisionsEnabled: isRevisionsEnabled(state),
-    language: getCurrentLanguage(state)
+    revisionsEnabled: isRevisionsEnabled(state)
   };
 }
 
@@ -1126,7 +1124,6 @@ function mapActionCreatorsToProps(dispatch) {
 }
 const areEqual = (prevProp, nextProp) =>
   // JSON.stringify(nextProp.theme) === JSON.stringify(prevProp.theme) &&
-  nextProp.language === prevProp.language &&
   nextProp.settings.currentTheme === prevProp.settings.currentTheme &&
   nextProp.settings.entrySplitSize === prevProp.settings.entrySplitSize &&
   JSON.stringify(nextProp.openedFiles) === JSON.stringify(prevProp.openedFiles);

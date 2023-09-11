@@ -40,7 +40,6 @@ import { KeyShortcutsIcon, HelpIcon } from '-/components/CommonIcons';
 import Links from '-/content/links';
 import { Pro } from '-/pro';
 import { openURLExternally } from '-/services/utils-io';
-import { getCurrentLanguage } from '-/reducers/settings';
 import { classes, SidePanel } from '-/components/SidePanels.css';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
@@ -57,7 +56,6 @@ interface Props {
 function HelpFeedbackPanel(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
-  const language = useSelector(getCurrentLanguage);
   const {
     toggleAboutDialog,
     toggleKeysDialog,

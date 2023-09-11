@@ -34,14 +34,12 @@ import AppConfig from '-/AppConfig';
 import {
   getMaxSearchResults,
   getDesktopMode,
-  getCurrentLanguage,
   getDefaultPerspective
 } from '-/reducers/settings';
 import {
   actions as AppActions,
   getDirectoryContent,
   isReadOnlyMode,
-  getCurrentLocationPath,
   getCurrentDirectoryPerspective,
   OpenedEntry,
   getSelectedEntries,
@@ -49,7 +47,6 @@ import {
   isSearchMode,
   getLastSearchTimestamp
 } from '../reducers/app';
-import { getCurrentLocation } from '-/reducers/locations';
 import TaggingActions from '../reducers/tagging-actions';
 import LoadingLazy from '../components/LoadingLazy';
 import {
@@ -211,8 +208,6 @@ interface Props {
   maxSearchResults: number;
   defaultPerspective: string;
   currentDirectoryPerspective: string;
-  currentLocationPath: string;
-  currentLocation: TS.Location;
   openedFiles: Array<OpenedEntry>;
   updateCurrentDirEntry: (path: string, entry: Object) => void;
   setCurrentDirectoryColor: (color: string) => void;
@@ -223,7 +218,6 @@ interface Props {
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   enterSearchMode: () => void;
   exitSearchMode: () => void;
-  language: string;
   // editedEntryPaths: Array<TS.EditedEntryPath>;
   goBack: () => void;
   goForward: () => void;
@@ -294,15 +288,12 @@ function FolderContainer(props: Props) {
 
   const {
     currentDirectoryPath = '',
-    language,
     loadDirectoryContent,
     directoryContent,
     toggleDrawer,
     toggleProTeaser,
     isDesktopMode,
     currentDirectoryPerspective,
-    currentLocationPath,
-    currentLocation,
     setSelectedEntries,
     openDirectory,
     reflectCreateEntry,
@@ -615,9 +606,7 @@ function FolderContainer(props: Props) {
               )}
               {/* {isDesktopMode && <LocationMenu />} */}
               <PathBreadcrumbs
-                language={language}
                 currentDirectoryPath={currentDirectoryPath}
-                currentLocationPath={currentLocationPath}
                 loadDirectoryContent={loadDirectoryContent}
                 switchPerspective={switchPerspective}
                 setSelectedEntries={setSelectedEntries}
@@ -627,7 +616,6 @@ function FolderContainer(props: Props) {
                 openRenameDirectoryDialog={() =>
                   setIsRenameEntryDialogOpened(true)
                 }
-                currentLocation={currentLocation}
                 openMoveCopyFilesDialog={props.openMoveCopyFilesDialog}
               />
             </>
@@ -682,16 +670,13 @@ function mapStateToProps(state) {
     directoryContent: getDirectoryContent(state),
     currentDirectoryPerspective: getCurrentDirectoryPerspective(state),
     //searchResultCount: getSearchResultCount(state),
-    currentLocationPath: getCurrentLocationPath(state),
     maxSearchResults: getMaxSearchResults(state),
     isDesktopMode: getDesktopMode(state),
     isReadOnlyMode: isReadOnlyMode(state),
-    language: getCurrentLanguage(state),
     progress: getProgress(state),
     searchQuery: getSearchQuery(state),
     defaultPerspective: getDefaultPerspective(state),
     //editedEntryPaths: getEditedEntryPaths(state),
-    currentLocation: getCurrentLocation(state),
     lastSearchTimestamp: getLastSearchTimestamp(state),
     isSearchMode: isSearchMode(state)
   };
@@ -733,7 +718,6 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   nextProp.currentDirectoryPerspective ===
     prevProp.currentDirectoryPerspective &&
   /* this props is set before currentDirectoryEntries is loaded and will reload FolderContainer */
-  /* nextProp.currentLocationPath === prevProp.currentLocationPath &&  */
   JSON.stringify(nextProp.progress) === JSON.stringify(prevProp.progress) &&
   JSON.stringify(nextProp.directoryContent) ===
     JSON.stringify(prevProp.directoryContent) &&
@@ -743,9 +727,9 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   // JSON.stringify(nextProp.editedEntryPaths) === JSON.stringify(prevProp.editedEntryPaths) &&
   nextProp.windowWidth === prevProp.windowWidth &&
   nextProp.windowHeight === prevProp.windowHeight &&
-  nextProp.language === prevProp.language &&
   nextProp.windowHeight === prevProp.windowHeight &&
-  nextProp.searchQuery === prevProp.searchQuery &&
+  JSON.stringify(nextProp.searchQuery) ===
+    JSON.stringify(prevProp.searchQuery) &&
   nextProp.lastSearchTimestamp === prevProp.lastSearchTimestamp &&
   nextProp.isSearchMode === prevProp.isSearchMode;
 

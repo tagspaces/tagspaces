@@ -47,7 +47,7 @@ import { getRelativeEntryPath } from '-/services/utils-io';
 import { PerspectiveIDs } from '-/perspectives';
 import PlatformFacade from '-/services/platform-facade';
 import { getDirectoryMenuItems } from '-/perspectives/common/DirectoryMenuItems';
-import { getLocations } from '-/reducers/locations';
+import { getCurrentLocation, getLocations } from '-/reducers/locations';
 import { useTranslation } from 'react-i18next';
 
 interface Props {
@@ -70,7 +70,6 @@ interface Props {
   openMoveCopyFilesDialog: () => void;
   mouseX?: number;
   mouseY?: number;
-  currentLocation?: TS.Location;
 }
 
 function DirectoryMenu(props: Props) {
@@ -83,13 +82,12 @@ function DirectoryMenu(props: Props) {
     mouseX,
     mouseY,
     directoryPath,
-    currentLocation,
     openAddRemoveTagsDialog,
     openMoveCopyFilesDialog,
     openRenameDirectoryDialog,
     switchPerspective
   } = props;
-
+  const currentLocation: TS.Location = useSelector(getCurrentLocation);
   const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
     getSelectedEntries
   );

@@ -16,10 +16,10 @@
  *
  */
 
-import React from 'react';
+/*import React from 'react';
 import { useSelector } from 'react-redux';
 import PlatformIO from '-/services/platform-facade';
-import { isLoading } from '-/reducers/app';
+//import { isLoading } from '-/reducers/app';
 import { useTheme } from '@mui/material/styles';
 
 function LoadingAnimation() {
@@ -57,4 +57,4 @@ function LoadingAnimation() {
   );
 }
 
-export default React.memo(LoadingAnimation);
+export default React.memo(LoadingAnimation);*/

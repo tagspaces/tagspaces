@@ -677,9 +677,9 @@ function ListPerspective(props: Props) {
     entry => !entry.isFile
   );
   const sortedFiles = sortedDirContent.current.filter(entry => entry.isFile);
-  const locationPath = currentLocation
+  /*const locationPath = currentLocation
     ? PlatformIO.getLocationPath(currentLocation)
-    : '';
+    : '';*/
   let entryWidth = 200;
   if (entrySize.current === 'small') {
     entryWidth = 150;
@@ -807,7 +807,6 @@ function ListPerspective(props: Props) {
           files={sortedFiles}
           getCellContent={getCellContent}
           currentPage={1}
-          currentLocationPath={locationPath}
           currentDirectoryPath={currentDirectoryPath}
           onClick={onClick}
           onContextMenu={onContextMenu}
@@ -815,7 +814,6 @@ function ListPerspective(props: Props) {
           selectedEntries={selectedEntries}
           setSelectedEntries={handleSetSelectedEntries}
           singleClickAction={singleClickAction.current}
-          currentLocation={currentLocation}
           directoryContent={
             lastSearchTimestamp
               ? GlobalSearch.getInstance().getResults()
@@ -919,7 +917,6 @@ function ListPerspective(props: Props) {
           showInFileManager={showInFileManager}
           selectedFilePath={lastSelectedEntryPath}
           selectedEntries={selectedEntries}
-          currentLocation={currentLocation}
         />
       )}
       {/* {Boolean(dirContextMenuAnchorEl) && ( // todo move dialogs from DirectoryMenu */}
@@ -935,7 +932,6 @@ function ListPerspective(props: Props) {
         openMoveCopyFilesDialog={openMoveCopyFilesDialog}
         openDirectory={openDirectory}
         perspectiveMode={lastSelectedEntryPath !== currentDirectoryPath}
-        currentLocation={currentLocation}
         openAddRemoveTagsDialog={openAddRemoveTagsDialog}
       />
       {/* {Boolean(tagContextMenuAnchorEl) && ( // TODO EntryTagMenu is used in TagSelect we cannot move confirm dialog from menu */}
