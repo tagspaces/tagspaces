@@ -16,6 +16,18 @@
  *
  */
 import { InitOptions } from 'i18next';
+import enUs from '-/locales/en_US/core.json';
+import en from '-/locales/en/core.json';
+
+let defaultLanguage: any = enUs;
+if (
+  typeof process !== 'undefined' &&
+  process.env &&
+  process.env.NODE_ENV &&
+  process.env.NODE_ENV === 'development'
+) {
+  defaultLanguage = en;
+}
 
 async function loadLocales(options, url: string, payload, callback) {
   try {
@@ -24,18 +36,6 @@ async function loadLocales(options, url: string, payload, callback) {
     callback(null, { status: 200, data: locale });
   } catch (e) {
     console.error(`Unable to load locale at ${url}\n`, e);
-    // callback(null, { status: 404, data: String(e) });
-    let defaultLanguage;
-    if (
-      typeof process !== 'undefined' &&
-      process.env &&
-      process.env.NODE_ENV &&
-      process.env.NODE_ENV === 'development'
-    ) {
-      defaultLanguage = await import(`../locales/en/core.json`);
-    } else {
-      defaultLanguage = await import(`../locales/en_US/core.json`);
-    }
     callback(null, { status: 200, data: defaultLanguage });
   }
 
