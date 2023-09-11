@@ -27,7 +27,6 @@ import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
-import i18n from '-/services/i18n';
 import { getMaxSearchResults } from '-/reducers/settings';
 import {
   AppDispatch,
@@ -36,6 +35,7 @@ import {
 } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import TaggingActions from '-/reducers/tagging-actions';
+import { useTranslation } from 'react-i18next';
 
 const isTagLibraryReadOnly =
   window.ExtTagLibrary && window.ExtTagLibrary.length > 0;
@@ -58,6 +58,8 @@ function TagMenu(props: Props) {
     anchorEl,
     open
   } = props;
+
+  const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const readOnlyMode = useSelector(isReadOnlyMode);
   const maxSearchResults: number = useSelector(getMaxSearchResults);
@@ -106,7 +108,7 @@ function TagMenu(props: Props) {
             <ListItemIcon>
               <ShowEntriesWithTagIcon />
             </ListItemIcon>
-            <ListItemText primary={i18n.t('core:showFilesWithThisTag')} />
+            <ListItemText primary={t('core:showFilesWithThisTag')} />
           </MenuItem>
         )}
 
@@ -115,7 +117,7 @@ function TagMenu(props: Props) {
             <ListItemIcon>
               <ApplyTagIcon />
             </ListItemIcon>
-            <ListItemText primary={i18n.t('core:applyTag')} />
+            <ListItemText primary={t('core:applyTag')} />
           </MenuItem>
         )}
         {!isSmartTag && !isTagLibraryReadOnly && (
@@ -123,7 +125,7 @@ function TagMenu(props: Props) {
             <ListItemIcon>
               <Edit />
             </ListItemIcon>
-            <ListItemText primary={i18n.t('core:editTag')} />
+            <ListItemText primary={t('core:editTag')} />
           </MenuItem>
         )}
         {!isSmartTag && !isTagLibraryReadOnly && (
@@ -131,7 +133,7 @@ function TagMenu(props: Props) {
             <ListItemIcon>
               <DeleteIcon />
             </ListItemIcon>
-            <ListItemText primary={i18n.t('core:deleteTagFromTagGroup')} />
+            <ListItemText primary={t('core:deleteTagFromTagGroup')} />
           </MenuItem>
         )}
       </Menu>

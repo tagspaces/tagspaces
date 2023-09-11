@@ -23,7 +23,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import ArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import i18n from '-/services/i18n';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -46,6 +46,7 @@ function SortingMenu(props: Props) {
     searchModeEnabled
   } = props;
 
+  const { t } = useTranslation();
   return (
     <Menu anchorEl={anchorEl} open={open} onClose={onClose}>
       {/* <ListSubHeader>Sort by</ListSubHeader> */}
@@ -60,7 +61,7 @@ function SortingMenu(props: Props) {
             {sortBy === 'byRelevance' &&
               (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:relevance')} />
+          <ListItemText primary={t('core:relevance')} />
         </MenuItem>
       )}
       <MenuItem
@@ -73,7 +74,7 @@ function SortingMenu(props: Props) {
           {sortBy === 'byName' &&
             (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:fileTitle')} />
+        <ListItemText primary={t('core:fileTitle')} />
       </MenuItem>
       <MenuItem
         data-tid="gridPerspectiveSortBySize"
@@ -85,7 +86,7 @@ function SortingMenu(props: Props) {
           {sortBy === 'byFileSize' &&
             (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:fileSize')} />
+        <ListItemText primary={t('core:fileSize')} />
       </MenuItem>
       <MenuItem
         data-tid="gridPerspectiveSortByDate"
@@ -97,7 +98,7 @@ function SortingMenu(props: Props) {
           {sortBy === 'byDateModified' &&
             (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:fileLDTM')} />
+        <ListItemText primary={t('core:fileLDTM')} />
       </MenuItem>
       <MenuItem
         data-tid="gridPerspectiveSortByFirstTag"
@@ -109,7 +110,7 @@ function SortingMenu(props: Props) {
           {sortBy === 'byFirstTag' &&
             (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:fileFirstTag')} />
+        <ListItemText primary={t('core:fileFirstTag')} />
       </MenuItem>
       <MenuItem
         data-tid="gridPerspectiveSortByExt"
@@ -121,7 +122,7 @@ function SortingMenu(props: Props) {
           {sortBy === 'byExtension' &&
             (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:fileExtension')} />
+        <ListItemText primary={t('core:fileExtension')} />
       </MenuItem>
       <MenuItem
         data-tid="gridPerspectiveSortRandom"
@@ -132,7 +133,7 @@ function SortingMenu(props: Props) {
         <ListItemIcon style={{ minWidth: 25 }}>
           {sortBy === 'random' && <ArrowDownIcon />}
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:random')} />
+        <ListItemText primary={t('core:random')} />
       </MenuItem>
     </Menu>
   );

@@ -27,12 +27,12 @@ import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
 import Switch from '@mui/material/Switch';
 import { useDispatch } from 'react-redux';
-import i18n from '-/services/i18n';
 import useValidation from '-/utils/useValidation';
 import { TS } from '-/tagspaces.namespace';
 import { actions as SettingsActions } from '-/reducers/settings';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { AppDispatch } from '-/reducers/app';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -42,6 +42,7 @@ interface Props {
 }
 
 function MapTileServerDialog(props: Props) {
+  const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const name = useRef<string>(props.tileServer.name);
   const serverURL = useRef<string>(props.tileServer.serverURL);
@@ -51,7 +52,7 @@ function MapTileServerDialog(props: Props) {
   const { setError, haveError } = useValidation();
   const renderTitle = () => (
     <DialogTitle>
-      {i18n.t(
+      {t(
         props.tileServer.uuid
           ? 'core:tileServerDialogEdit'
           : 'core:tileServerDialogAdd'
@@ -109,7 +110,7 @@ function MapTileServerDialog(props: Props) {
           margin="dense"
           autoFocus
           name="name"
-          label={i18n.t('core:tileServerNameTitle')}
+          label={t('core:tileServerNameTitle')}
           onChange={event => {
             const { target } = event;
             name.current = target.value;
@@ -124,7 +125,7 @@ function MapTileServerDialog(props: Props) {
           fullWidth
           margin="dense"
           name="serverURL"
-          label={i18n.t('core:tileServerUrlTitle')}
+          label={t('core:tileServerUrlTitle')}
           onChange={event => {
             const { target } = event;
             serverURL.current = target.value;
@@ -132,14 +133,14 @@ function MapTileServerDialog(props: Props) {
           defaultValue={serverURL.current}
           data-tid="tileServerUrlTID"
         />
-        <FormHelperText>{i18n.t('core:tileServerUrlHelp')}</FormHelperText>
+        <FormHelperText>{t('core:tileServerUrlHelp')}</FormHelperText>
       </FormControl>
       <FormControl fullWidth={true}>
         <TextField
           fullWidth
           margin="dense"
           name="serverInfo"
-          label={i18n.t('core:tileServerInfoTitle')}
+          label={t('core:tileServerInfoTitle')}
           onChange={event => {
             const { target } = event;
             serverInfo.current = target.value;
@@ -156,7 +157,7 @@ function MapTileServerDialog(props: Props) {
           }}
           defaultChecked={isDefault.current}
         />
-        <FormHelperText>{i18n.t('core:serverIsDefaultHelp')}</FormHelperText>
+        <FormHelperText>{t('core:serverIsDefaultHelp')}</FormHelperText>
       </FormControl>
     </DialogContent>
   );
@@ -178,7 +179,7 @@ function MapTileServerDialog(props: Props) {
             props.onClose();
           }}
         >
-          {i18n.t('core:delete')}
+          {t('core:delete')}
         </Button>
       )}
       <div>
@@ -187,7 +188,7 @@ function MapTileServerDialog(props: Props) {
           onClick={props.onClose}
           color="primary"
         >
-          {i18n.t('core:closeButton')}
+          {t('core:closeButton')}
         </Button>
         <Button
           data-tid="saveTileServerDialogTID"
@@ -195,7 +196,7 @@ function MapTileServerDialog(props: Props) {
           color="primary"
           variant="contained"
         >
-          {i18n.t('core:confirmSaveButton')}
+          {t('core:confirmSaveButton')}
         </Button>
       </div>
     </DialogActions>

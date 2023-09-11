@@ -40,10 +40,10 @@ import {
   getLocationPosition
 } from '-/reducers/locations';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
-import i18n from '-/services/i18n';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   setEditLocationDialogOpened: (open: boolean) => void;
@@ -63,7 +63,7 @@ function LocationContextMenu(props: Props) {
     closeLocationTree,
     locationDirectoryContextMenuAnchorEl
   } = props;
-
+  const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const locationPosition = useSelector(state =>
     getLocationPosition(state, selectedLocation.uuid)
@@ -170,7 +170,7 @@ function LocationContextMenu(props: Props) {
         <ListItemIcon>
           <EditIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:editLocationTitle')} />
+        <ListItemText primary={t('core:editLocationTitle')} />
       </MenuItem>
     );
   }
@@ -183,7 +183,7 @@ function LocationContextMenu(props: Props) {
       <ListItemIcon>
         <OpenNewWindowIcon />
       </ListItemIcon>
-      <ListItemText primary={i18n.t('core:openInWindow')} />
+      <ListItemText primary={t('core:openInWindow')} />
     </MenuItem>
   );
   if (selectedLocation.type === locationType.TYPE_LOCAL) {
@@ -196,7 +196,7 @@ function LocationContextMenu(props: Props) {
         <ListItemIcon>
           <OpenFolderNativelyIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:showInFileManager')} />
+        <ListItemText primary={t('core:showInFileManager')} />
       </MenuItem>
     );
   }
@@ -210,7 +210,7 @@ function LocationContextMenu(props: Props) {
       <ListItemIcon>
         <ContentCopyIcon />
       </ListItemIcon>
-      <ListItemText primary={i18n.t('core:duplicateLocationTitle')} />
+      <ListItemText primary={t('core:duplicateLocationTitle')} />
     </MenuItem>
   );
   menuItems.push(
@@ -222,7 +222,7 @@ function LocationContextMenu(props: Props) {
       <ListItemIcon>
         <RefreshIcon />
       </ListItemIcon>
-      <ListItemText primary={i18n.t('core:indexLocation')} />
+      <ListItemText primary={t('core:indexLocation')} />
     </MenuItem>
   );
   if (!AppConfig.locationsReadOnly) {
@@ -236,7 +236,7 @@ function LocationContextMenu(props: Props) {
         <ListItemIcon>
           <ArrowUpwardIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:moveUp')} />
+        <ListItemText primary={t('core:moveUp')} />
       </MenuItem>
     );
     menuItems.push(
@@ -248,7 +248,7 @@ function LocationContextMenu(props: Props) {
         <ListItemIcon>
           <ArrowDownwardIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:moveDown')} />
+        <ListItemText primary={t('core:moveDown')} />
       </MenuItem>
     );
     menuItems.push(<Divider />);
@@ -261,7 +261,7 @@ function LocationContextMenu(props: Props) {
         <ListItemIcon>
           <DeleteIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:removeLocation')} />
+        <ListItemText primary={t('core:removeLocation')} />
       </MenuItem>
     );
   }
@@ -274,7 +274,7 @@ function LocationContextMenu(props: Props) {
       <ListItemIcon>
         <CloseIcon />
       </ListItemIcon>
-      <ListItemText primary={i18n.t('core:closeLocation')} />
+      <ListItemText primary={t('core:closeLocation')} />
     </MenuItem>
   );
 

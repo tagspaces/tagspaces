@@ -28,11 +28,11 @@ import {
   normalizePath,
   extractShortDirectoryName
 } from '@tagspaces/tagspaces-common/paths';
-import i18n from '../services/i18n';
 import DirectoryMenu from './menus/DirectoryMenu';
 import { TS } from '-/tagspaces.namespace';
 import { LocalLocationIcon, CloudLocationIcon } from '-/components/CommonIcons';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
+import { useTranslation } from 'react-i18next';
 
 const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   const backgroundColor =
@@ -78,6 +78,7 @@ interface Props {
 }
 
 function PathBreadcrumbs(props: Props) {
+  const { t } = useTranslation();
   let pathParts: Array<string> = [];
 
   const [
@@ -175,10 +176,7 @@ function PathBreadcrumbs(props: Props) {
           PlatformIO.getDirSeparator()
         );
         return (
-          <Tooltip
-            key={pathPart}
-            title={i18n.t('core:navigateTo') + ' ' + pathPart}
-          >
+          <Tooltip key={pathPart} title={t('core:navigateTo') + ' ' + pathPart}>
             <StyledBreadcrumb
               component="a"
               href="#"
@@ -194,9 +192,7 @@ function PathBreadcrumbs(props: Props) {
       const curDirBreadcrumb = (
         <Tooltip
           title={
-            i18n.t('core:openDirectoryMenu') +
-            ' - ' +
-            (currentDirectoryPath || '')
+            t('core:openDirectoryMenu') + ' - ' + (currentDirectoryPath || '')
           }
         >
           <StyledBreadcrumb

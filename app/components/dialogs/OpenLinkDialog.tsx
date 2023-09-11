@@ -25,11 +25,10 @@ import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
 import InputAdornment from '@mui/material/InputAdornment';
 import Dialog from '@mui/material/Dialog';
-import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import { useTheme } from '@mui/material/styles';
 // import useMediaQuery from '@mui/material/useMediaQuery';
 import InfoIcon from '-/components/InfoIcon';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -38,6 +37,7 @@ interface Props {
 }
 
 function OpenLinkDialog(props: Props) {
+  const { t } = useTranslation();
   const [inputError, setInputError] = useState(false);
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [linkURL, setLinkURL] = useState('');
@@ -100,7 +100,7 @@ function OpenLinkDialog(props: Props) {
       }}
     >
       <DialogTitle>
-        {i18n.t('core:openLink')}
+        {t('core:openLink')}
         <DialogCloseButton testId="closeOpenLinkTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent>
@@ -110,7 +110,7 @@ function OpenLinkDialog(props: Props) {
             margin="dense"
             autoFocus
             name="name"
-            label={i18n.t('core:link')}
+            label={t('core:link')}
             onChange={event => {
               const { target } = event;
               setLinkURL(target.value);
@@ -129,7 +129,7 @@ function OpenLinkDialog(props: Props) {
       </DialogContent>
       <DialogActions>
         <Button data-tid="closeOpenLinkDialog" onClick={onCancel}>
-          {i18n.t('core:cancel')}
+          {t('core:cancel')}
         </Button>
         <Button
           disabled={disableConfirmButton}
@@ -138,7 +138,7 @@ function OpenLinkDialog(props: Props) {
           color="primary"
           variant="contained"
         >
-          {i18n.t('core:open')}
+          {t('core:open')}
         </Button>
       </DialogActions>
     </Dialog>

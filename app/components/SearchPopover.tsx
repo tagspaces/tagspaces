@@ -52,7 +52,6 @@ import {
   getMaxSearchResults,
   getShowUnixHiddenEntries
 } from '-/reducers/settings';
-import i18n from '../services/i18n';
 import { FileTypeGroups, haveSearchFilters } from '-/services/search';
 import { Pro } from '../pro';
 import { formatDateTime, extractTimePeriod } from '-/utils/dates';
@@ -83,6 +82,7 @@ import {
 import { openURLExternally } from '-/services/utils-io';
 import { useTheme } from '@mui/material/styles';
 import { classes, SidePanel } from '-/components/SidePanels.css';
+import { useTranslation } from 'react-i18next';
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
 
@@ -110,6 +110,7 @@ interface Props {
 }
 
 function SearchPopover(props: Props) {
+  const { t } = useTranslation();
   const theme = useTheme();
   const [, forceUpdate] = useReducer(x => x + 1, 0);
   // const textQuery = useRef<string>(props.searchQuery.textQuery);
@@ -528,7 +529,7 @@ function SearchPopover(props: Props) {
     >
       <div className={classes.toolbar}>
         <Typography variant="button" style={{ margin: '12px 0 10px 10px' }}>
-          {i18n.t('core:advancedSearch')}
+          {t('core:advancedSearch')}
         </Typography>
         <Typography
           variant="caption"
@@ -569,7 +570,7 @@ function SearchPopover(props: Props) {
           alignItems="flex-end"
         >
           <Grid item xs={9}>
-            <ProTooltip tooltip={i18n.t('storedSearchQueriesTooltip')}>
+            <ProTooltip tooltip={t('storedSearchQueriesTooltip')}>
               <FormControl
                 variant="outlined"
                 style={{ width: '100%', marginTop: 6 }}
@@ -578,7 +579,7 @@ function SearchPopover(props: Props) {
                   id="saved-searches"
                   style={{ backgroundColor: theme.palette.background.default }}
                 >
-                  {i18n.t('core:savedSearchesTitle')}
+                  {t('core:savedSearchesTitle')}
                 </InputLabel>
                 <Select
                   name="savedSearch"
@@ -591,7 +592,7 @@ function SearchPopover(props: Props) {
                 >
                   <MenuItem value={-1} style={{ display: 'none' }} />
                   {props.searches.length < 1 && (
-                    <MenuItem>{i18n.t('noSavedSearches')}</MenuItem>
+                    <MenuItem>{t('noSavedSearches')}</MenuItem>
                   )}
                   {props.searches.map(search => (
                     <MenuItem key={search.uuid} value={search.uuid}>
@@ -610,7 +611,7 @@ function SearchPopover(props: Props) {
               }}
             >
               {props.searchQuery.uuid && (
-                <Tooltip title={i18n.t('editSavedSearchTitle')}>
+                <Tooltip title={t('editSavedSearchTitle')}>
                   <IconButton
                     data-tid="editSearchBtnTID"
                     size="small"
@@ -620,7 +621,7 @@ function SearchPopover(props: Props) {
                   </IconButton>
                 </Tooltip>
               )}
-              <Tooltip title={i18n.t('createNewSavedSearchTitle')}>
+              <Tooltip title={t('createNewSavedSearchTitle')}>
                 <IconButton
                   disabled={!Pro}
                   data-tid="addSearchBtnTID"
@@ -635,7 +636,7 @@ function SearchPopover(props: Props) {
           <Grid item xs={12}>
             <TextField
               id="searchTerm"
-              label={i18n.t('core:searchHasTheWords')}
+              label={t('core:searchHasTheWords')}
               value={props.textQuery}
               onChange={handleSearchTermChange}
               onKeyDown={startSearch}
@@ -652,18 +653,18 @@ function SearchPopover(props: Props) {
             value={searchBoxing}
           >
             <ToggleButton value="location">
-              <Tooltip title={i18n.t('searchPlaceholder')}>
-                <div>{i18n.t('location')}</div>
+              <Tooltip title={t('searchPlaceholder')}>
+                <div>{t('location')}</div>
               </Tooltip>
             </ToggleButton>
             <ToggleButton value="folder">
-              <Tooltip title={i18n.t('searchCurrentFolderWithSubFolders')}>
-                <div>{i18n.t('folder')}</div>
+              <Tooltip title={t('searchCurrentFolderWithSubFolders')}>
+                <div>{t('folder')}</div>
               </Tooltip>
             </ToggleButton>
             <ToggleButton disabled={!Pro} value="global">
-              <Tooltip title={i18n.t('searchInAllLocationTooltip')}>
-                <div>{i18n.t('globalSearch')}</div>
+              <Tooltip title={t('searchInAllLocationTooltip')}>
+                <div>{t('globalSearch')}</div>
               </Tooltip>
               {Pro ? <BetaLabel /> : <ProLabel />}
             </ToggleButton>
@@ -678,18 +679,18 @@ function SearchPopover(props: Props) {
             value={searchType}
           >
             <ToggleButton value="fuzzy" data-tid="fuzzySearchTID">
-              <Tooltip title={i18n.t('searchTypeFuzzyTooltip')}>
-                <div>{i18n.t('searchTypeFuzzy')}</div>
+              <Tooltip title={t('searchTypeFuzzyTooltip')}>
+                <div>{t('searchTypeFuzzy')}</div>
               </Tooltip>
             </ToggleButton>
             <ToggleButton value="semistrict" data-tid="semiStrictSearchTID">
-              <Tooltip title={i18n.t('searchTypeSemiStrictTooltip')}>
-                <div>{i18n.t('searchTypeSemiStrict')}</div>
+              <Tooltip title={t('searchTypeSemiStrictTooltip')}>
+                <div>{t('searchTypeSemiStrict')}</div>
               </Tooltip>
             </ToggleButton>
             <ToggleButton value="strict" data-tid="strictSearchTID">
-              <Tooltip title={i18n.t('searchTypeStrictTooltip')}>
-                <div>{i18n.t('searchTypeStrict')}</div>
+              <Tooltip title={t('searchTypeStrictTooltip')}>
+                <div>{t('searchTypeStrict')}</div>
               </Tooltip>
             </ToggleButton>
           </ToggleButtonGroup>
@@ -706,13 +707,13 @@ function SearchPopover(props: Props) {
             value={forceIndexing.current}
           >
             <ToggleButton value={false}>
-              <Tooltip title={i18n.t('useCurrentIndexTooltip')}>
-                <div>{i18n.t('useCurrentIndex')}</div>
+              <Tooltip title={t('useCurrentIndexTooltip')}>
+                <div>{t('useCurrentIndex')}</div>
               </Tooltip>
             </ToggleButton>
             <ToggleButton value={true} data-tid="forceIndexingTID">
-              <Tooltip title={i18n.t('forceReindexTooltip')}>
-                <div>{i18n.t('forceReindex')}</div>
+              <Tooltip title={t('forceReindexTooltip')}>
+                <div>{t('forceReindex')}</div>
               </Tooltip>
             </ToggleButton>
           </ToggleButtonGroup>
@@ -720,8 +721,8 @@ function SearchPopover(props: Props) {
         <FormControl className={classes.formControl} disabled={indexing}>
           <TagsSelect
             dataTid="searchTagsAndTID"
-            placeholderText={i18n.t('core:selectTags')}
-            label={i18n.t('core:mustContainTheseTags')}
+            placeholderText={t('core:selectTags')}
+            label={t('core:mustContainTheseTags')}
             tags={props.searchQuery.tagsAND}
             handleChange={handleTagFieldChange}
             tagSearchType="tagsAND"
@@ -731,9 +732,9 @@ function SearchPopover(props: Props) {
         <FormControl className={classes.formControl} disabled={indexing}>
           <TagsSelect
             dataTid="searchTagsOrTID"
-            placeholderText={i18n.t('core:selectTags')}
+            placeholderText={t('core:selectTags')}
             tags={props.searchQuery.tagsOR}
-            label={i18n.t('core:atLeastOneOfTheseTags')}
+            label={t('core:atLeastOneOfTheseTags')}
             handleChange={handleTagFieldChange}
             tagSearchType="tagsOR"
             tagMode="remove"
@@ -742,9 +743,9 @@ function SearchPopover(props: Props) {
         <FormControl className={classes.formControl} disabled={indexing}>
           <TagsSelect
             dataTid="searchTagsNotTID"
-            placeholderText={i18n.t('core:selectTags')}
+            placeholderText={t('core:selectTags')}
             tags={props.searchQuery.tagsNOT}
-            label={i18n.t('core:noneOfTheseTags')}
+            label={t('core:noneOfTheseTags')}
             handleChange={handleTagFieldChange}
             tagSearchType="tagsNOT"
             tagMode="remove"
@@ -754,10 +755,8 @@ function SearchPopover(props: Props) {
           className={classes.formControl}
           disabled={indexing || !Pro}
         >
-          <ProTooltip tooltip={i18n.t('filterByTypTooltip')}>
-            <InputLabel htmlFor="file-type">
-              {i18n.t('core:fileType')}
-            </InputLabel>
+          <ProTooltip tooltip={t('filterByTypTooltip')}>
+            <InputLabel htmlFor="file-type">{t('core:fileType')}</InputLabel>
             <Select
               fullWidth
               value={JSON.stringify(fileTypes.current)}
@@ -766,30 +765,30 @@ function SearchPopover(props: Props) {
                 <OutlinedInput
                   name="fileTypes"
                   id="file-type"
-                  label={i18n.t('core:fileType')}
+                  label={t('core:fileType')}
                 />
               }
             >
               <MenuItem value={JSON.stringify(FileTypeGroups.any)}>
-                {i18n.t('core:anyType')}
+                {t('core:anyType')}
               </MenuItem>
               <MenuItem value={JSON.stringify(FileTypeGroups.folders)}>
                 <IconButton size="large">
                   <FolderIcon />
                 </IconButton>
-                {i18n.t('core:searchFolders')}
+                {t('core:searchFolders')}
               </MenuItem>
               <MenuItem value={JSON.stringify(FileTypeGroups.files)}>
                 <IconButton size="large">
                   <FileIcon />
                 </IconButton>
-                {i18n.t('core:searchFiles')}
+                {t('core:searchFiles')}
               </MenuItem>
               <MenuItem value={JSON.stringify(FileTypeGroups.untagged)}>
                 <IconButton size="large">
                   <UntaggedIcon />
                 </IconButton>
-                {i18n.t('core:searchUntaggedEntries')}
+                {t('core:searchUntaggedEntries')}
               </MenuItem>
               <MenuItem
                 value={JSON.stringify(FileTypeGroups.images)}
@@ -798,7 +797,7 @@ function SearchPopover(props: Props) {
                 <IconButton size="large">
                   <PictureIcon />
                 </IconButton>
-                {i18n.t('core:searchPictures')}
+                {t('core:searchPictures')}
               </MenuItem>
               <MenuItem
                 value={JSON.stringify(FileTypeGroups.documents)}
@@ -807,7 +806,7 @@ function SearchPopover(props: Props) {
                 <IconButton size="large">
                   <DocumentIcon />
                 </IconButton>
-                {i18n.t('core:searchDocuments')}
+                {t('core:searchDocuments')}
               </MenuItem>
               <MenuItem
                 value={JSON.stringify(FileTypeGroups.notes)}
@@ -816,7 +815,7 @@ function SearchPopover(props: Props) {
                 <IconButton size="large">
                   <NoteIcon />
                 </IconButton>
-                {i18n.t('core:searchNotes')}
+                {t('core:searchNotes')}
               </MenuItem>
               <MenuItem
                 value={JSON.stringify(FileTypeGroups.audio)}
@@ -825,7 +824,7 @@ function SearchPopover(props: Props) {
                 <IconButton size="large">
                   <AudioIcon />
                 </IconButton>
-                {i18n.t('core:searchAudio')}
+                {t('core:searchAudio')}
               </MenuItem>
               <MenuItem
                 value={JSON.stringify(FileTypeGroups.video)}
@@ -834,7 +833,7 @@ function SearchPopover(props: Props) {
                 <IconButton size="large">
                   <VideoIcon />
                 </IconButton>
-                {i18n.t('core:searchVideoFiles')}
+                {t('core:searchVideoFiles')}
               </MenuItem>
               <MenuItem
                 value={JSON.stringify(FileTypeGroups.archives)}
@@ -843,7 +842,7 @@ function SearchPopover(props: Props) {
                 <IconButton size="large">
                   <ArchiveIcon />
                 </IconButton>
-                {i18n.t('core:searchArchives')}
+                {t('core:searchArchives')}
               </MenuItem>
               <MenuItem
                 value={JSON.stringify(FileTypeGroups.bookmarks)}
@@ -852,7 +851,7 @@ function SearchPopover(props: Props) {
                 <IconButton size="large">
                   <BookmarkIcon />
                 </IconButton>
-                {i18n.t('core:searchBookmarks')}
+                {t('core:searchBookmarks')}
               </MenuItem>
               <MenuItem
                 value={JSON.stringify(FileTypeGroups.ebooks)}
@@ -861,7 +860,7 @@ function SearchPopover(props: Props) {
                 <IconButton size="large">
                   <BookIcon />
                 </IconButton>
-                {i18n.t('core:searchEbooks')}
+                {t('core:searchEbooks')}
               </MenuItem>
               <MenuItem
                 value={JSON.stringify(FileTypeGroups.emails)}
@@ -870,7 +869,7 @@ function SearchPopover(props: Props) {
                 <IconButton size="large">
                   <EmailIcon />
                 </IconButton>
-                {i18n.t('core:searchEmails')}
+                {t('core:searchEmails')}
               </MenuItem>
             </Select>
           </ProTooltip>
@@ -879,13 +878,13 @@ function SearchPopover(props: Props) {
           className={classes.formControl}
           disabled={indexing || !Pro}
         >
-          <ProTooltip tooltip={i18n.t('filterBySizeTooltip')}>
+          <ProTooltip tooltip={t('filterBySizeTooltip')}>
             <InputLabel
               style={{ backgroundColor: theme.palette.background.default }}
               shrink
               htmlFor="file-size"
             >
-              {i18n.t('core:sizeSearchTitle')}
+              {t('core:sizeSearchTitle')}
             </InputLabel>
             <Select
               fullWidth
@@ -895,35 +894,35 @@ function SearchPopover(props: Props) {
                 <OutlinedInput
                   name="fileSize"
                   id="file-size"
-                  label={i18n.t('core:sizeSearchTitle')}
+                  label={t('core:sizeSearchTitle')}
                 />
               }
               displayEmpty
             >
-              <MenuItem value="">{i18n.t('core:sizeAny')}</MenuItem>
-              <MenuItem value="sizeEmpty">{i18n.t('core:sizeEmpty')}</MenuItem>
+              <MenuItem value="">{t('core:sizeAny')}</MenuItem>
+              <MenuItem value="sizeEmpty">{t('core:sizeEmpty')}</MenuItem>
               <MenuItem value="sizeTiny">
-                {i18n.t('core:sizeTiny')}
+                {t('core:sizeTiny')}
                 &nbsp;(&lt;&nbsp;10KB)
               </MenuItem>
               <MenuItem value="sizeVerySmall">
-                {i18n.t('core:sizeVerySmall')}
+                {t('core:sizeVerySmall')}
                 &nbsp;(&lt;&nbsp;100KB)
               </MenuItem>
               <MenuItem value="sizeSmall">
-                {i18n.t('core:sizeSmall')}
+                {t('core:sizeSmall')}
                 &nbsp;(&lt;&nbsp;1MB)
               </MenuItem>
               <MenuItem value="sizeMedium">
-                {i18n.t('core:sizeMedium')}
+                {t('core:sizeMedium')}
                 &nbsp;(&lt;&nbsp;50MB)
               </MenuItem>
               <MenuItem value="sizeLarge">
-                {i18n.t('core:sizeLarge')}
+                {t('core:sizeLarge')}
                 &nbsp;(&lt;&nbsp;1GB)
               </MenuItem>
               <MenuItem value="sizeHuge">
-                {i18n.t('core:sizeHuge')}
+                {t('core:sizeHuge')}
                 &nbsp;(&gt;&nbsp;1GB)
               </MenuItem>
             </Select>
@@ -933,13 +932,13 @@ function SearchPopover(props: Props) {
           className={classes.formControl}
           disabled={indexing || !Pro}
         >
-          <ProTooltip tooltip={i18n.t('filterByLastModifiedDateTooltip')}>
+          <ProTooltip tooltip={t('filterByLastModifiedDateTooltip')}>
             <InputLabel
               style={{ backgroundColor: theme.palette.background.default }}
               shrink
               htmlFor="modification-date"
             >
-              {i18n.t('core:lastModifiedSearchTitle')}
+              {t('core:lastModifiedSearchTitle')}
             </InputLabel>
             <Select
               fullWidth
@@ -949,37 +948,31 @@ function SearchPopover(props: Props) {
                 <OutlinedInput
                   name="lastModified"
                   id="modification-date"
-                  label={i18n.t('core:lastModifiedSearchTitle')}
+                  label={t('core:lastModifiedSearchTitle')}
                 />
               }
               displayEmpty
             >
-              <MenuItem value="">{i18n.t('core:anyTime')}</MenuItem>
-              <MenuItem value="today">{i18n.t('core:today')}</MenuItem>
-              <MenuItem value="yesterday">{i18n.t('core:yesterday')}</MenuItem>
-              <MenuItem value="past7Days">{i18n.t('core:past7Days')}</MenuItem>
-              <MenuItem value="past30Days">
-                {i18n.t('core:past30Days')}
-              </MenuItem>
-              <MenuItem value="past6Months">
-                {i18n.t('core:past6Months')}
-              </MenuItem>
-              <MenuItem value="pastYear">{i18n.t('core:pastYear')}</MenuItem>
-              <MenuItem value="moreThanYear">
-                {i18n.t('core:moreThanYear')}
-              </MenuItem>
+              <MenuItem value="">{t('core:anyTime')}</MenuItem>
+              <MenuItem value="today">{t('core:today')}</MenuItem>
+              <MenuItem value="yesterday">{t('core:yesterday')}</MenuItem>
+              <MenuItem value="past7Days">{t('core:past7Days')}</MenuItem>
+              <MenuItem value="past30Days">{t('core:past30Days')}</MenuItem>
+              <MenuItem value="past6Months">{t('core:past6Months')}</MenuItem>
+              <MenuItem value="pastYear">{t('core:pastYear')}</MenuItem>
+              <MenuItem value="moreThanYear">{t('core:moreThanYear')}</MenuItem>
             </Select>
           </ProTooltip>
         </FormControl>
         <FormControl className={classes.formControl}>
-          <ProTooltip tooltip={i18n.t('enterTimePeriodTooltip')}>
+          <ProTooltip tooltip={t('enterTimePeriodTooltip')}>
             <LocalizationProvider
               dateAdapter={AdapterDateFns}
               utils={DateFnsUtils}
             >
               <Box position="relative" display="inline-flex">
                 <DatePicker
-                  label={i18n.t('enterTagTimePeriodFrom')}
+                  label={t('enterTagTimePeriodFrom')}
                   disabled={indexing || !Pro}
                   inputFormat="yyyy-MM-dd"
                   value={tagTimePeriodFrom}
@@ -996,7 +989,7 @@ function SearchPopover(props: Props) {
                   renderInput={params => <TextField {...params} />}
                 />
                 <DatePicker
-                  label={i18n.t('enterTagTimePeriodTo')}
+                  label={t('enterTagTimePeriodTo')}
                   disabled={indexing || !Pro}
                   inputFormat="yyyy-MM-dd"
                   value={tagTimePeriodTo}
@@ -1018,7 +1011,7 @@ function SearchPopover(props: Props) {
             </LocalizationProvider>
             {/*<TextField
               id="tagTimePeriod"
-              label={i18n.t('enterTimePeriod')}
+              label={t('enterTimePeriod')}
               value={tagTimePeriod.current}
               disabled={indexing || !Pro}
               onChange={handleTimePeriodChange}
@@ -1042,7 +1035,7 @@ function SearchPopover(props: Props) {
           </ProTooltip>
           {/* <TextField
                 id="tagPlace"
-                label={i18n.t('GPS coordinates or plus code')}
+                label={t('GPS coordinates or plus code')}
                 value={tagPlace}
                 disabled={indexing || !Pro}
                 onChange={handlePlaceChange}
@@ -1079,7 +1072,7 @@ function SearchPopover(props: Props) {
             openURLExternally(Links.documentationLinks.search, true)
           }
         >
-          {i18n.t('help')}
+          {t('help')}
         </Button>
         <div>
           <Button
@@ -1088,7 +1081,7 @@ function SearchPopover(props: Props) {
             onClick={clearSearch}
             id="resetSearchButton"
           >
-            {i18n.t('resetBtn')}
+            {t('resetBtn')}
           </Button>
           <Button
             disabled={indexing}
@@ -1097,9 +1090,7 @@ function SearchPopover(props: Props) {
             onClick={executeSearch}
             size="small"
           >
-            {indexing
-              ? 'Search disabled while indexing'
-              : i18n.t('searchTitle')}
+            {indexing ? 'Search disabled while indexing' : t('searchTitle')}
           </Button>
         </div>
       </div>

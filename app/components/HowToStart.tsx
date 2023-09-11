@@ -7,11 +7,11 @@ import StepLabel from '@mui/material/StepLabel';
 import StepContent from '@mui/material/StepContent';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import i18n from '-/services/i18n';
 import Links from '-/content/links';
 import { ProSign } from '-/components/HelperComponents';
 import { openURLExternally } from '-/services/utils-io';
 import { useTheme } from '@mui/material/styles';
+import { useTranslation } from 'react-i18next';
 
 /*export const styles: any = (theme: any) => ({
   recentTitle: {
@@ -40,6 +40,7 @@ function clearHighlights() {
 }
 
 function HowToStart() {
+  const { t } = useTranslation();
   const theme = useTheme();
   const steps = [
     {
@@ -325,7 +326,7 @@ function HowToStart() {
         }}
         noWrap
       >
-        {i18n.t('Get Started with TagSpaces')}
+        {t('Get Started with TagSpaces')}
       </Typography>
       <Stepper activeStep={activeStep} orientation="vertical">
         {steps.map((step, index) => (
@@ -343,15 +344,15 @@ function HowToStart() {
                     sx={{ mt: 1, mr: 1 }}
                   >
                     {index === steps.length - 1
-                      ? i18n.t('core:finish')
-                      : i18n.t('core:goforward')}
+                      ? t('core:finish')
+                      : t('core:goforward')}
                   </Button>
                   <Button
                     disabled={index === 0}
                     onClick={handleBack}
                     sx={{ mt: 1, mr: 1 }}
                   >
-                    {i18n.t('core:goback')}
+                    {t('core:goback')}
                   </Button>
                 </div>
               </Box>
@@ -368,7 +369,7 @@ function HowToStart() {
         >
           <Typography>All steps completed - you&apos;re finished.</Typography>
           <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
-            {i18n.t('core:resetBtn')}
+            {t('core:resetBtn')}
           </Button>
         </Paper>
       )}

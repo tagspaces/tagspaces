@@ -34,7 +34,6 @@ import CheckIcon from '@mui/icons-material/Check';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import AppConfig from '-/AppConfig';
-import i18n from '-/services/i18n';
 import {
   actions as SettingsActions,
   getPersistTagsInSidecarFile,
@@ -49,6 +48,7 @@ import PlatformIO from '-/services/platform-facade';
 import { PerspectiveIDs } from '-/perspectives';
 import { AppDispatch } from '-/reducers/app';
 import { styled } from '@mui/material/styles';
+import { useTranslation } from 'react-i18next';
 
 const PREFIX = 'SettingsGeneral';
 
@@ -77,6 +77,7 @@ const Root = styled('div')(({ theme }) => ({
 }));
 
 function SettingsGeneral() {
+  const { t } = useTranslation();
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
   const [displayTextColorPicker, setDisplayTextColorPicker] = useState<boolean>(
     false
@@ -120,7 +121,7 @@ function SettingsGeneral() {
     <Root>
       <List className={classes.root}>
         <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:interfaceLanguage')} />
+          <ListItemText primary={t('core:interfaceLanguage')} />
           <Select
             data-tid="settingsSetLanguage"
             value={settings.interfaceLanguage}
@@ -138,7 +139,7 @@ function SettingsGeneral() {
           </Select>
         </ListItem>
         <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:themeSelector')} />
+          <ListItemText primary={t('core:themeSelector')} />
           <Select
             data-tid="settingsSetCurrentTheme"
             value={settings.currentTheme}
@@ -149,15 +150,15 @@ function SettingsGeneral() {
           >
             {settings.supportedThemes.map(theme => (
               <MenuItem key={theme} value={theme}>
-                {theme === 'light' && i18n.t('core:regularScheme')}
-                {theme === 'dark' && i18n.t('core:darkScheme')}
-                {theme === 'system' && i18n.t('core:systemScheme')}
+                {theme === 'light' && t('core:regularScheme')}
+                {theme === 'dark' && t('core:darkScheme')}
+                {theme === 'system' && t('core:systemScheme')}
               </MenuItem>
             ))}
           </Select>
         </ListItem>
         <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:themeRegularSelector')} />
+          <ListItemText primary={t('core:themeRegularSelector')} />
           <Select
             data-tid="settingsCurrentRegularThemeTID"
             value={settings.currentRegularTheme}
@@ -176,7 +177,7 @@ function SettingsGeneral() {
           </Select>
         </ListItem>
         <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:themeDarkSelector')} />
+          <ListItemText primary={t('core:themeDarkSelector')} />
           <Select
             data-tid="settingsCurrentDarkThemeTID"
             value={settings.currentDarkTheme}
@@ -193,7 +194,7 @@ function SettingsGeneral() {
           </Select>
         </ListItem>
         <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('Default Perspective')} />
+          <ListItemText primary={t('createLocationDefaultPerspective')} />
           <PerspectiveSelector
             language={language}
             onChange={changePerspective}
@@ -205,16 +206,16 @@ function SettingsGeneral() {
           className={classes.listItem}
           title={
             AppConfig.useSidecarsForFileTaggingDisableSetting
-              ? i18n.t('core:settingExternallyConfigured')
+              ? t('core:settingExternallyConfigured')
               : ''
           }
         >
-          <ListItemText primary={i18n.t('core:fileTaggingSetting')} />
+          <ListItemText primary={t('core:fileTaggingSetting')} />
           {AppConfig.useSidecarsForFileTaggingDisableSetting ? (
             <Button size="small" variant="outlined" disabled>
               {persistTagsInSidecarFile
-                ? i18n.t('core:useSidecarFile')
-                : i18n.t('core:renameFile')}
+                ? t('core:useSidecarFile')
+                : t('core:renameFile')}
             </Button>
           ) : (
             <ToggleButtonGroup
@@ -232,13 +233,13 @@ function SettingsGeneral() {
                 <Tooltip
                   title={
                     <Typography color="inherit">
-                      {i18n.t('core:tagsInFilenameExplanation')}
+                      {t('core:tagsInFilenameExplanation')}
                     </Typography>
                   }
                 >
                   <div style={{ display: 'flex' }}>
                     {!persistTagsInSidecarFile && <CheckIcon />}
-                    &nbsp;{i18n.t('core:renameFile')}&nbsp;&nbsp;
+                    &nbsp;{t('core:renameFile')}&nbsp;&nbsp;
                     <InfoMuiIcon />
                   </div>
                 </Tooltip>
@@ -253,13 +254,13 @@ function SettingsGeneral() {
                 <Tooltip
                   title={
                     <Typography color="inherit">
-                      {i18n.t('core:tagsInSidecarFileExplanation')}
+                      {t('core:tagsInSidecarFileExplanation')}
                     </Typography>
                   }
                 >
                   <div style={{ display: 'flex' }}>
                     {persistTagsInSidecarFile && <CheckIcon />}
-                    &nbsp;{i18n.t('core:useSidecarFile')}&nbsp;&nbsp;
+                    &nbsp;{t('core:useSidecarFile')}&nbsp;&nbsp;
                     <InfoMuiIcon />
                   </div>
                 </Tooltip>
@@ -268,7 +269,7 @@ function SettingsGeneral() {
           )}
         </ListItem>
         <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:checkForNewVersionOnStartup')} />
+          <ListItemText primary={t('core:checkForNewVersionOnStartup')} />
           <Switch
             data-tid="settingsSetCheckForUpdates"
             onClick={() =>
@@ -283,7 +284,7 @@ function SettingsGeneral() {
           <ListItemText
             primary={
               <>
-                {i18n.t('core:reorderTags')}
+                {t('core:reorderTags')}
                 <BetaLabel />
               </>
             }
@@ -297,7 +298,7 @@ function SettingsGeneral() {
           />
         </ListItem>
         <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:addTagsToLibrary')} />
+          <ListItemText primary={t('core:addTagsToLibrary')} />
           <Switch
             data-tid="settingsSetAddTagsToLibrary"
             onClick={() =>
@@ -309,7 +310,7 @@ function SettingsGeneral() {
           />
         </ListItem>
         <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:useGenerateThumbnails')} />
+          <ListItemText primary={t('core:useGenerateThumbnails')} />
           <Switch
             disabled={AppConfig.useGenerateThumbnails !== undefined}
             data-tid="settingsUseGenerateThumbnails"
@@ -328,7 +329,7 @@ function SettingsGeneral() {
           />
         </ListItem>
         <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:tagBackgroundColor')} />
+          <ListItemText primary={t('core:tagBackgroundColor')} />
           <TransparentBackground>
             <Button
               data-tid="settingsToggleDefaultTagBackgroundColor"
@@ -354,7 +355,7 @@ function SettingsGeneral() {
           )}
         </ListItem>
         <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:tagForegroundColor')} />
+          <ListItemText primary={t('core:tagForegroundColor')} />
           <TransparentBackground>
             <Button
               data-tid="settingsToggleDefaultTagForegroundColor"
@@ -382,8 +383,8 @@ function SettingsGeneral() {
             <ListItemText
               primary={
                 <Typography>
-                  {i18n.t('core:useTrashCan')}
-                  <InfoIcon tooltip={i18n.t('core:useTrashCanInfo')} />
+                  {t('core:useTrashCan')}
+                  <InfoIcon tooltip={t('core:useTrashCanInfo')} />
                 </Typography>
               }
             />
@@ -397,7 +398,7 @@ function SettingsGeneral() {
           </ListItem>
         )}
         <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:showUnixHiddenFiles')} />
+          <ListItemText primary={t('core:showUnixHiddenFiles')} />
           <Switch
             data-tid="settingsSetShowUnixHiddenEntries"
             onClick={() =>
@@ -407,7 +408,7 @@ function SettingsGeneral() {
           />
         </ListItem>
         {/* <ListItem className={classes.listItem}>
-          <ListItemText style={{ maxWidth: '300px' }} primary={i18n.t('core:tagDelimiterChoose')} />
+          <ListItemText style={{ maxWidth: '300px' }} primary={t('core:tagDelimiterChoose')} />
           <Select
             style={{ minWidth: '170px' }}
             data-tid="settingsTagDelimiterChoose"
@@ -418,13 +419,13 @@ function SettingsGeneral() {
               id: 'tag-delimiter',
             }}
           >
-            <MenuItem value=" ">{i18n.t('core:tagDelimiterSpace')}</MenuItem>
-            <MenuItem value="_">{i18n.t('core:tagDelimiterUnderscore')}</MenuItem>
-            <MenuItem value=",">{i18n.t('core:tagDelimiterComma')}</MenuItem>
+            <MenuItem value=" ">{t('core:tagDelimiterSpace')}</MenuItem>
+            <MenuItem value="_">{t('core:tagDelimiterUnderscore')}</MenuItem>
+            <MenuItem value=",">{t('core:tagDelimiterComma')}</MenuItem>
           </Select>
         </ListItem> */}
         <ListItem className={classes.listItem}>
-          <ListItemText primary={i18n.t('core:maxSearchResultChoose')} />
+          <ListItemText primary={t('core:maxSearchResultChoose')} />
           <Input
             style={{ maxWidth: '100px' }}
             type="number"

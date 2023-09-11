@@ -18,8 +18,8 @@
 
 import React from 'react';
 import IconButton from '@mui/material/IconButton';
-import i18n from '-/services/i18n';
 import { CloseIcon } from '../CommonIcons';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   onClose: () => void;
@@ -28,9 +28,10 @@ interface Props {
 
 function DialogCloseButton(props: Props) {
   const { onClose, testId } = props;
+  const { t } = useTranslation();
   return (
     <IconButton
-      title={i18n.t('closeButtonDialog')}
+      title={t('closeButtonDialog')}
       aria-label="close"
       tabIndex={-1}
       style={{

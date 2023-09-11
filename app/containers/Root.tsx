@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Store } from 'redux';
@@ -26,6 +26,7 @@ import { actions as AppActions } from '../reducers/app';
 import App from '-/containers/App';
 import MainPage from '-/containers/MainPage';
 import TsAuth from '-/containers/TsAuth';
+import init from '-/services/i18nInit';
 
 type RootType = {
   store: Store<{}>;
@@ -33,6 +34,16 @@ type RootType = {
 };
 
 export default function Root({ store, persistor }: RootType) {
+  const [initialized, setInitialized] = useState(false);
+
+  useEffect(() => {
+    init().then(() => setInitialized(true));
+  }, []);
+
+  if (!initialized) {
+    return <LoadingScreen />;
+  }
+
   let appContent = (
     <App>
       <MainPage />
@@ -62,7 +73,6 @@ export default function Root({ store, persistor }: RootType) {
           if (!AppConfig.isAmplify) {
             // || store.app.user !== undefined
             // @ts-ignore
-            // eslint-disable-next-line react/prop-types
             store.dispatch(AppActions.initApp());
           }
         }}

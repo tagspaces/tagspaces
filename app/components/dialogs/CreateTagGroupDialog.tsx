@@ -29,15 +29,13 @@ import Dialog from '@mui/material/Dialog';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import ColorPickerDialog from './ColorPickerDialog';
-import i18n from '-/services/i18n';
 import TransparentBackground from '../TransparentBackground';
 import { TS } from '-/tagspaces.namespace';
 import { getLocations } from '-/reducers/locations';
 import { getSaveTagInLocation } from '-/reducers/settings';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-// import { useTheme } from '@mui/material/styles';
-// import useMediaQuery from '@mui/material/useMediaQuery';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -50,6 +48,7 @@ interface Props {
 const defaultTagGroupLocation = 'TAG_LIBRARY';
 
 function CreateTagGroupDialog(props: Props) {
+  const { t } = useTranslation();
   const locations = useSelector(getLocations);
   const saveTagsInLocation = useSelector(getSaveTagInLocation);
 
@@ -189,7 +188,7 @@ function CreateTagGroupDialog(props: Props) {
       }}
     >
       <DialogTitle>
-        {i18n.t('core:createTagGroupTitle')}
+        {t('core:createTagGroupTitle')}
         <DialogCloseButton testId="closeCreateTagGroupTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent style={{ paddingTop: 10 }}>
@@ -199,21 +198,19 @@ function CreateTagGroupDialog(props: Props) {
             error={inputError}
             autoFocus
             name="title"
-            label={i18n.t('core:createTagGroupName')}
+            label={t('core:createTagGroupName')}
             defaultValue={title.current}
             onChange={handleTagGroupTitleChange}
             data-tid="createTagGroupInput"
           />
           {inputError && (
-            <FormHelperText>
-              {i18n.t('core:taggroupTitleHelper')}
-            </FormHelperText>
+            <FormHelperText>{t('core:taggroupTitleHelper')}</FormHelperText>
           )}
         </FormControl>
         {saveTagsInLocation && (
           <FormControl fullWidth={true} error={inputError}>
             <FormHelperText style={styles.helpText}>
-              {i18n.t('core:tagGroupLocation')}
+              {t('core:tagGroupLocation')}
             </FormHelperText>
             <Select
               data-tid="tagGroupLocationTID"
@@ -229,7 +226,7 @@ function CreateTagGroupDialog(props: Props) {
                 value={defaultTagGroupLocation}
                 data-tid={'tagLibraryTID'}
               >
-                {i18n.t('tagLibrary')}
+                {t('tagLibrary')}
               </MenuItem>
               {locations.map(location => (
                 <MenuItem
@@ -237,7 +234,7 @@ function CreateTagGroupDialog(props: Props) {
                   value={location.uuid}
                   data-tid={'tglocation_' + location.name}
                 >
-                  {i18n.t('core:location') + ': ' + location.name}
+                  {t('core:location') + ': ' + location.name}
                 </MenuItem>
               ))}
             </Select>
@@ -245,7 +242,7 @@ function CreateTagGroupDialog(props: Props) {
         )}
         <FormControl fullWidth={true}>
           <FormHelperText style={styles.helpText}>
-            {i18n.t('core:tagBackgroundColor')}
+            {t('core:tagBackgroundColor')}
           </FormHelperText>
           <TransparentBackground>
             <Button
@@ -268,7 +265,7 @@ function CreateTagGroupDialog(props: Props) {
         </FormControl>
         <FormControl fullWidth={true}>
           <FormHelperText style={styles.helpText}>
-            {i18n.t('core:tagForegroundColor')}
+            {t('core:tagForegroundColor')}
           </FormHelperText>
           <TransparentBackground>
             <Button
@@ -292,7 +289,7 @@ function CreateTagGroupDialog(props: Props) {
       </DialogContent>
       <DialogActions>
         <Button data-tid="createTagGroupCancelButton" onClick={onClose}>
-          {i18n.t('core:cancel')}
+          {t('core:cancel')}
         </Button>
         <Button
           disabled={disableConfirmButton.current}
@@ -301,7 +298,7 @@ function CreateTagGroupDialog(props: Props) {
           data-tid="createTagGroupConfirmButton"
           color="primary"
         >
-          {i18n.t('core:ok')}
+          {t('core:ok')}
         </Button>
       </DialogActions>
     </Dialog>

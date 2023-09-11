@@ -22,12 +22,12 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
-import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 import LicenseContent from '-/LICENSE.txt';
 import PlatformIO from '-/services/platform-facade';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTranslation } from 'react-i18next';
 
 // import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 
@@ -51,6 +51,7 @@ interface Props {
 
 function LicenseDialog(props: Props) {
   const { open, onClose } = props;
+  const { t } = useTranslation();
   // let licenseElement;
   // function printLicense() {
   //   // printElem(licenseElement);
@@ -68,7 +69,7 @@ function LicenseDialog(props: Props) {
       fullScreen={fullScreen}
       scroll="paper"
     >
-      <DialogTitle>{i18n.t('core:license')}</DialogTitle>
+      <DialogTitle>{t('core:license')}</DialogTitle>
       <DialogContent
         // inputRef={ref => {
         //   licenseElement = ref;
@@ -86,14 +87,14 @@ function LicenseDialog(props: Props) {
           onClick={printLicense}
           color="primary"
         >
-          {i18n.t('core:print')}
+          {t('core:print')}
         </Button> */}
         <Button
           data-tid="confirmLicenseDialog"
           onClick={PlatformIO.quitApp}
           color="primary"
         >
-          {i18n.t('core:quit')}
+          {t('core:quit')}
         </Button>
         <Button
           data-tid="agreeLicenseDialog"
@@ -101,7 +102,7 @@ function LicenseDialog(props: Props) {
           color="primary"
           variant="contained"
         >
-          {i18n.t('core:agreeLicense')}
+          {t('core:agreeLicense')}
         </Button>
       </DialogActions>
     </Dialog>

@@ -26,11 +26,11 @@ import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import Dialog from '@mui/material/Dialog';
-import i18n from '-/services/i18n';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { joinPaths } from '@tagspaces/tagspaces-common/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import PlatformIO from '-/services/platform-facade';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -41,6 +41,7 @@ interface Props {
 }
 
 function CreateDirectoryDialog(props: Props) {
+  const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const [inputError, setInputError] = useState(false);
   const isFirstRun = useRef(true);
@@ -121,7 +122,7 @@ function CreateDirectoryDialog(props: Props) {
       }}
     >
       <DialogTitle>
-        {i18n.t('core:createNewDirectoryTitle')}
+        {t('core:createNewDirectoryTitle')}
         <DialogCloseButton testId="closeCreateDirectoryTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent>
@@ -132,7 +133,7 @@ function CreateDirectoryDialog(props: Props) {
             margin="dense"
             autoFocus
             name="name"
-            label={i18n.t('core:createNewDirectoryTitleName')}
+            label={t('core:createNewDirectoryTitleName')}
             onChange={event => {
               const { target } = event;
               setName(target.value);
@@ -141,12 +142,12 @@ function CreateDirectoryDialog(props: Props) {
             data-tid="directoryName"
             id="directoryName"
           />
-          <FormHelperText>{i18n.t('core:directoryNameHelp')}</FormHelperText>
+          <FormHelperText>{t('core:directoryNameHelp')}</FormHelperText>
         </FormControl>
       </DialogContent>
       <DialogActions>
         <Button data-tid="closeCreateNewDirectory" onClick={onCancel}>
-          {i18n.t('core:cancel')}
+          {t('core:cancel')}
         </Button>
         <Button
           disabled={disableConfirmButton}
@@ -156,7 +157,7 @@ function CreateDirectoryDialog(props: Props) {
           id="confirmCreateNewDirectory"
           color="primary"
         >
-          {i18n.t('core:ok')}
+          {t('core:ok')}
         </Button>
       </DialogActions>
     </Dialog>

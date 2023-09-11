@@ -21,8 +21,8 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import { Menu, MenuList, MenuItem } from '@mui/material';
 import { DeleteIcon, ReloadIcon } from '-/components/CommonIcons';
-import i18n from '-/services/i18n';
 import { Pro } from '../../pro';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   classes?: any;
@@ -34,6 +34,7 @@ interface Props {
 }
 
 function BookmarksMenu(props: Props) {
+  const { t } = useTranslation();
   const menuItems = [];
   menuItems.push(
     <MenuItem
@@ -48,7 +49,7 @@ function BookmarksMenu(props: Props) {
       <ListItemIcon>
         <ReloadIcon />
       </ListItemIcon>
-      <ListItemText primary={<>{i18n.t('core:refresh')}</>} />
+      <ListItemText primary={<>{t('core:refresh')}</>} />
     </MenuItem>
   );
   menuItems.push(
@@ -64,7 +65,7 @@ function BookmarksMenu(props: Props) {
       <ListItemIcon>
         <DeleteIcon />
       </ListItemIcon>
-      <ListItemText primary={<>{i18n.t('core:deleteBookmarks')}</>} />
+      <ListItemText primary={<>{t('core:deleteBookmarks')}</>} />
     </MenuItem>
   );
 

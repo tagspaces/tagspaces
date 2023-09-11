@@ -26,9 +26,10 @@ import {
 import { Amplify } from 'aws-amplify';
 import HandleAuth from '-/utils/HandleAuth';
 import LogoIcon from '-/assets/images/icon100x100.svg';
-import i18n from '-/services/i18n';
+import { useTranslation } from 'react-i18next';
 
 const TsAuth: React.FC<any> = props => {
+  const { t } = useTranslation();
   let awsconfig;
   try {
     // eslint-disable-next-line global-require
@@ -60,7 +61,7 @@ const TsAuth: React.FC<any> = props => {
           <AmplifyTotpSetup
             headerText="TagSpaces Time-Based One-Time Password Login"
             slot="totp-setup"
-            issuer={i18n.t('core:name') + ' ' + window.location.hostname}
+            issuer={t('core:name') + ' ' + window.location.hostname}
             // user={props.user}
           />
           <AmplifySignUp

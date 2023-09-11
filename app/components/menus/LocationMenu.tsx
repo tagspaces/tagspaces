@@ -28,7 +28,6 @@ import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
-import i18n from '-/services/i18n';
 import { getLocations } from '-/reducers/locations';
 import {
   actions as AppActions,
@@ -37,12 +36,14 @@ import {
 } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { useTheme } from '@mui/material/styles';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   menuAnchorEl?: Element;
 }
 
 function LocationMenu(props: Props) {
+  const { t } = useTranslation();
   const theme = useTheme();
   const dispatch: AppDispatch = useDispatch();
   const locations: Array<TS.Location> = useSelector(getLocations);
@@ -75,8 +76,8 @@ function LocationMenu(props: Props) {
       <Tooltip
         title={
           currentLocation
-            ? i18n.t('currentLocation') + ': ' + currentLocation.name
-            : i18n.t('core:pleaseOpenLocation')
+            ? t('currentLocation') + ': ' + currentLocation.name
+            : t('core:pleaseOpenLocation')
         }
       >
         <IconButton
@@ -90,7 +91,7 @@ function LocationMenu(props: Props) {
           }}
           size="large"
         >
-          {currentLocation ? locationIcon : i18n.t('core:pleaseOpenLocation')}
+          {currentLocation ? locationIcon : t('core:pleaseOpenLocation')}
           <ArrowDropDownIcon />
         </IconButton>
       </Tooltip>
@@ -112,7 +113,7 @@ function LocationMenu(props: Props) {
               backgroundColor: theme.palette.background.default
             }}
           >
-            {i18n.t('core:chooseLocation')}
+            {t('core:chooseLocation')}
           </ListSubHeader>
           {locations.map((location: TS.Location) => (
             <MenuItem

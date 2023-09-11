@@ -47,7 +47,6 @@ import {
   AppDispatch,
   getCurrentLocationId
 } from '-/reducers/app';
-import i18n from '-/services/i18n';
 import { getDesktopMode } from '-/reducers/settings';
 import Links from '-/content/links';
 import { Pro } from '-/pro';
@@ -56,6 +55,7 @@ import { renderHistory } from '-/components/RenderHistory';
 import HowToStart from '-/components/HowToStart';
 import { openURLExternally } from '-/services/utils-io';
 import { styled, useTheme } from '@mui/material/styles';
+import { useTranslation } from 'react-i18next';
 
 const PREFIX = 'WelcomePanel';
 
@@ -84,6 +84,7 @@ const Root = styled('div')(({ theme }) => ({
 }));
 
 function WelcomePanel() {
+  const { t } = useTranslation();
   const theme = useTheme();
   const dispatch: AppDispatch = useDispatch();
   const desktopMode = useSelector(getDesktopMode);
@@ -137,7 +138,7 @@ function WelcomePanel() {
           className={classes.recentTitle}
           noWrap
         >
-          {i18n.t('core:fileOpenHistory')}
+          {t('core:fileOpenHistory')}
         </Typography>
         {fileOpenHistoryItems ? (
           <List>
@@ -155,11 +156,11 @@ function WelcomePanel() {
           </List>
         ) : (
           <Typography className={classes.noRecentItems} variant="caption">
-            {i18n.t('noItems')}
+            {t('noItems')}
           </Typography>
         )}
         <Typography variant="inherit" className={classes.recentTitle} noWrap>
-          {i18n.t('core:fileEditHistory')}
+          {t('core:fileEditHistory')}
         </Typography>
         {fileEditHistoryItems ? (
           <List>
@@ -177,11 +178,11 @@ function WelcomePanel() {
           </List>
         ) : (
           <Typography className={classes.noRecentItems} variant="caption">
-            {i18n.t('noItems')}
+            {t('noItems')}
           </Typography>
         )}
         <Typography variant="inherit" className={classes.recentTitle} noWrap>
-          {i18n.t('core:folderOpenHistory')}
+          {t('core:folderOpenHistory')}
         </Typography>
         {folderOpenHistoryItems ? (
           <List>
@@ -199,7 +200,7 @@ function WelcomePanel() {
           </List>
         ) : (
           <Typography className={classes.noRecentItems} variant="caption">
-            {i18n.t('noItems')}
+            {t('noItems')}
           </Typography>
         )}
       </Box>
@@ -233,7 +234,7 @@ function WelcomePanel() {
             <LocalLocationIcon />
           </ListItemIcon>
           <ListItemText
-            primary={i18n.t('core:chooseLocation')}
+            primary={t('core:chooseLocation')}
             className={classes.listItem}
           />
         </ListItem> */}
@@ -242,7 +243,7 @@ function WelcomePanel() {
             <CreateFileIcon />
           </ListItemIcon>
           <ListItemText
-            primary={i18n.t('core:create')}
+            primary={t('core:create')}
             className={classes.listItem}
           />
         </ListItem>
@@ -251,7 +252,7 @@ function WelcomePanel() {
             <LocalLocationIcon />
           </ListItemIcon>
           <ListItemText
-            primary={i18n.t('createLocationTitle')}
+            primary={t('createLocationTitle')}
             className={classes.listItem}
           />
         </ListItem>
@@ -259,10 +260,7 @@ function WelcomePanel() {
           <ListItemIcon>
             <OpenLinkIcon />
           </ListItemIcon>
-          <ListItemText
-            primary={i18n.t('openLink')}
-            className={classes.listItem}
-          />
+          <ListItemText primary={t('openLink')} className={classes.listItem} />
         </ListItem>
         <Divider />
         <ListItem
@@ -274,7 +272,7 @@ function WelcomePanel() {
             <HelpIcon />
           </ListItemIcon>
           <ListItemText
-            primary={i18n.t('documentation')}
+            primary={t('documentation')}
             className={classes.listItem}
           />
         </ListItem>
@@ -283,7 +281,7 @@ function WelcomePanel() {
             <KeyShortcutsIcon />
           </ListItemIcon>
           <ListItemText
-            primary={i18n.t('shortcutKeys')}
+            primary={t('shortcutKeys')}
             className={classes.listItem}
           />
         </ListItem>
@@ -294,7 +292,7 @@ function WelcomePanel() {
             <ChangeLogIcon />
           </ListItemIcon>
           <ListItemText
-            primary={i18n.t('core:whatsNew')}
+            primary={t('core:whatsNew')}
             className={classes.listItem}
           />
         </ListItem>
@@ -305,7 +303,7 @@ function WelcomePanel() {
             <WebClipperIcon />
           </ListItemIcon>
           <ListItemText
-            primary={i18n.t('core:webClipper')}
+            primary={t('core:webClipper')}
             className={classes.listItem}
           />
         </ListItem>
@@ -317,7 +315,7 @@ function WelcomePanel() {
             <NewFeatureIcon />
           </ListItemIcon>
           <ListItemText
-            primary={i18n.t('core:suggestNewFeatures')}
+            primary={t('core:suggestNewFeatures')}
             className={classes.listItem}
           />
         </ListItem>
@@ -328,7 +326,7 @@ function WelcomePanel() {
             <IssueIcon />
           </ListItemIcon>
           <ListItemText
-            primary={i18n.t('core:reportIssues')}
+            primary={t('core:reportIssues')}
             className={classes.listItem}
           />
         </ListItem>
@@ -339,7 +337,7 @@ function WelcomePanel() {
             <TranslationIcon />
           </ListItemIcon>
           <ListItemText
-            primary={i18n.t('core:helpWithTranslation')}
+            primary={t('core:helpWithTranslation')}
             className={classes.listItem}
           />
         </ListItem>
@@ -351,7 +349,7 @@ function WelcomePanel() {
             <EmailIcon />
           </ListItemIcon>
           <ListItemText
-            primary={i18n.t('core:emailContact')}
+            primary={t('core:emailContact')}
             className={classes.listItem}
           />
         </ListItem>
@@ -360,7 +358,7 @@ function WelcomePanel() {
             <TwitterIcon />
           </ListItemIcon>
           <ListItemText
-            primary={i18n.t('core:followOnTwitter')}
+            primary={t('core:followOnTwitter')}
             className={classes.listItem}
           />
         </ListItem>

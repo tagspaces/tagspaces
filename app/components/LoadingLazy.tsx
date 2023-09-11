@@ -17,8 +17,7 @@
  */
 
 import React from 'react';
-// import i18n from '../services/i18n';
-// {i18n.t('core:loading')}
+// {t('core:loading')}
 // <div style={{ padding: 10, backgroundColor: 'transparent' }}>...</div>
 
 function LoadingLazy() {

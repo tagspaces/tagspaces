@@ -13,7 +13,6 @@ import Typography from '@mui/material/Typography';
 import Dialog from '@mui/material/Dialog';
 import { FolderIcon, FileIcon } from '-/components/CommonIcons';
 import DraggablePaper from '-/components/DraggablePaper';
-import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
 import IOActions from '-/reducers/io-actions';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
@@ -34,6 +33,7 @@ import {
   checkDirsExistPromise,
   checkFilesExistPromise
 } from '-/services/utils-io';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -43,6 +43,7 @@ interface Props {
 }
 
 function MoveCopyFilesDialog(props: Props) {
+  const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
 
   const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
@@ -217,12 +218,12 @@ function MoveCopyFilesDialog(props: Props) {
       fullScreen={fullScreen}
     >
       <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-        {i18n.t('core:copyMoveEntriesTitle')}
+        {t('core:copyMoveEntriesTitle')}
         <DialogCloseButton testId="closeMCFilesTID" onClose={() => onClose()} />
       </DialogTitle>
       <DialogContent style={{ overflow: 'hidden' }}>
         <Typography variant="subtitle2">
-          {i18n.t('selectedFilesAndFolders')}
+          {t('selectedFilesAndFolders')}
         </Typography>
         <List
           dense
@@ -244,7 +245,7 @@ function MoveCopyFilesDialog(props: Props) {
                   {entry.name}
                   {dirProp.current[entry.path] &&
                     ' (' +
-                      i18n.t('fileSize') +
+                      t('fileSize') +
                       ': ' +
                       formatBytes(dirProp.current[entry.path]['totalSize']) +
                       ')'}
@@ -254,11 +255,11 @@ function MoveCopyFilesDialog(props: Props) {
         </List>
         {targetPath ? (
           <Typography variant="subtitle2">
-            {i18n.t('moveCopyToPath') + ': ' + targetPath}
+            {t('moveCopyToPath') + ': ' + targetPath}
           </Typography>
         ) : (
           <Typography variant="subtitle2">
-            {i18n.t('chooseTargetLocationAndPath')}
+            {t('chooseTargetLocationAndPath')}
           </Typography>
         )}
         <DirectoryListView
@@ -270,10 +271,10 @@ function MoveCopyFilesDialog(props: Props) {
         style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
       >
         <Button data-tid="closeMoveCopyDialog" onClick={() => onClose()}>
-          {i18n.t('core:cancel')}
+          {t('core:cancel')}
         </Button>
         <Tooltip
-          title={i18n.t(AppConfig.isAndroid ? 'core:platformImplMissing' : '')}
+          title={t(AppConfig.isAndroid ? 'core:platformImplMissing' : '')}
         >
           <Button
             data-tid="confirmMoveFiles"
@@ -286,7 +287,7 @@ function MoveCopyFilesDialog(props: Props) {
             color="primary"
             variant="contained"
           >
-            {i18n.t('core:moveEntriesButton')}
+            {t('core:moveEntriesButton')}
           </Button>
         </Tooltip>
         <ConfirmDialog
@@ -294,7 +295,7 @@ function MoveCopyFilesDialog(props: Props) {
           onClose={() => {
             setEntriesExistPath(undefined);
           }}
-          title={i18n.t('core:confirm')}
+          title={t('core:confirm')}
           content={
             formatFileExist(entriesExistPath) +
             ' exist do you want to override it?'
@@ -321,7 +322,7 @@ function MoveCopyFilesDialog(props: Props) {
           color="primary"
           variant="contained"
         >
-          {i18n.t('core:copyEntriesButton')}
+          {t('core:copyEntriesButton')}
         </Button>
       </DialogActions>
     </Dialog>

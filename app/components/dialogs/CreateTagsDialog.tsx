@@ -25,12 +25,10 @@ import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import Dialog from '@mui/material/Dialog';
-import i18n from '-/services/i18n';
 import useFirstRender from '-/utils/useFirstRender';
 import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -41,6 +39,7 @@ interface Props {
 
 function CreateTagsDialog(props: Props) {
   const { open, onClose, addTag, selectedTagGroupEntry } = props;
+  const { t } = useTranslation();
   const [inputError, setInputError] = useState<boolean>(false);
   const [tagTitle, setTagTitle] = useState<string>('');
 
@@ -98,7 +97,7 @@ function CreateTagsDialog(props: Props) {
       }}
     >
       <DialogTitle>
-        {i18n.t('core:addTagsToGroupTitle')}
+        {t('core:addTagsToGroupTitle')}
         <DialogCloseButton testId="closeCreateTagTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent style={{ minWidth: 350, paddingTop: 10 }}>
@@ -107,19 +106,19 @@ function CreateTagsDialog(props: Props) {
             error={inputError}
             name="tagTitle"
             autoFocus
-            label={i18n.t('core:addTagsToGroupTagsPlaceholder')}
+            label={t('core:addTagsToGroupTagsPlaceholder')}
             onChange={handleTagTitleChange}
             value={tagTitle}
             data-tid="addTagsInput"
             fullWidth={true}
           />
           {inputError && (
-            <FormHelperText>{i18n.t('core:tagTitleHelper')}</FormHelperText>
+            <FormHelperText>{t('core:tagTitleHelper')}</FormHelperText>
           )}
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>{i18n.t('core:cancel')}</Button>
+        <Button onClick={onClose}>{t('core:cancel')}</Button>
         <Button
           disabled={inputError}
           onClick={onConfirm}
@@ -127,7 +126,7 @@ function CreateTagsDialog(props: Props) {
           color="primary"
           variant="contained"
         >
-          {i18n.t('core:ok')}
+          {t('core:ok')}
         </Button>
       </DialogActions>
     </Dialog>

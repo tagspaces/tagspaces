@@ -26,9 +26,9 @@ import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
 import ProTeaserImage from '-/assets/images/pro-teaser.svg';
 import ProTextLogo from '-/assets/images/text-logo-pro.svg';
-import i18n from '../services/i18n';
 import Links from '-/content/links';
 import { openURLExternally } from '-/services/utils-io';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   toggleProTeaser: (slidePage?: string) => void;
@@ -37,6 +37,8 @@ interface Props {
 
 function ProTeaser(props: Props) {
   const { toggleProTeaser, setShowTeaserBanner } = props;
+
+  const { t } = useTranslation();
   return (
     <>
       <CardContent
@@ -82,7 +84,7 @@ function ProTeaser(props: Props) {
             toggleProTeaser();
           }}
         >
-          {i18n.t('showMeMore')}
+          {t('showMeMore')}
         </Button>
         <Button
           size="small"
@@ -92,7 +94,7 @@ function ProTeaser(props: Props) {
             openURLExternally(Links.links.productsOverview, true);
           }}
         >
-          {i18n.t('getItNow')}
+          {t('getItNow')}
         </Button>
       </CardActions>
     </>

@@ -37,9 +37,9 @@ import Dialog from '@mui/material/Dialog';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import DraggablePaper from '-/components/DraggablePaper';
-import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import AppConfig from '-/AppConfig';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -51,6 +51,7 @@ interface Props {
 
 function MoveOrCopyFilesDialog(props: Props) {
   const { open, onClose } = props;
+  const { t } = useTranslation();
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -65,7 +66,7 @@ function MoveOrCopyFilesDialog(props: Props) {
       fullScreen={fullScreen}
     >
       <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-        {i18n.t('core:copyMoveEntriesTitle')}
+        {t('core:copyMoveEntriesTitle')}
         <DialogCloseButton
           testId="closeMoveOrCopyTID"
           onClose={() => onClose()}
@@ -77,7 +78,7 @@ function MoveOrCopyFilesDialog(props: Props) {
           overflowY: 'auto'
         }}
       >
-        <Typography variant="subtitle2">{i18n.t('selectedFiles')}</Typography>
+        <Typography variant="subtitle2">{t('selectedFiles')}</Typography>
         <List dense style={{ width: 550, marginLeft: -15 }}>
           {props.selectedFiles &&
             props.selectedFiles.length > 0 &&
@@ -100,7 +101,7 @@ function MoveOrCopyFilesDialog(props: Props) {
           data-tid="closeMoveOrCopyDialog"
           onClick={() => props.onClose()}
         >
-          {i18n.t('core:cancel')}
+          {t('core:cancel')}
         </Button>
         <Button
           onClick={() => props.handleMoveFiles(props.selectedFiles)}
@@ -108,7 +109,7 @@ function MoveOrCopyFilesDialog(props: Props) {
           color="primary"
           variant="contained"
         >
-          {i18n.t('core:moveEntriesButton')}
+          {t('core:moveEntriesButton')}
         </Button>
         <Button
           onClick={() => props.handleCopyFiles(props.selectedFiles)}
@@ -116,7 +117,7 @@ function MoveOrCopyFilesDialog(props: Props) {
           color="primary"
           variant="contained"
         >
-          {i18n.t('core:copyEntriesButton')}
+          {t('core:copyEntriesButton')}
         </Button>
       </DialogActions>
     </Dialog>

@@ -33,7 +33,6 @@ import ConfirmDialog from '../ConfirmDialog';
 import SettingsGeneral from '../settings/SettingsGeneral';
 import SettingsKeyBindings from '../settings/SettingsKeyBindings';
 import SettingsFileTypes from '../settings/SettingsFileTypes';
-import i18n from '-/services/i18n';
 import { getCurrentLanguage } from '-/reducers/settings';
 import { clearAllURLParams } from '-/utils/dom';
 import SettingsAdvanced from '-/components/dialogs/settings/SettingsAdvanced';
@@ -41,6 +40,7 @@ import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Links from '-/content/links';
 import SettingsExtensions from '-/components/dialogs/settings/SettingsExtensions';
 import { openURLExternally } from '-/services/utils-io';
+import { useTranslation } from 'react-i18next';
 
 const PREFIX = 'SettingsDialog';
 
@@ -61,6 +61,7 @@ interface Props {
 }
 
 function SettingsDialog(props: Props) {
+  const { t } = useTranslation();
   const language = useSelector(getCurrentLanguage);
   const [currentTab, setCurrentTab] = useState<number>(0);
   const [
@@ -75,7 +76,7 @@ function SettingsDialog(props: Props) {
   const renderTitle = () => (
     <>
       <DialogTitle>
-        {i18n.t('core:settings')}
+        {t('core:settings')}
         <DialogCloseButton testId="closeSettingsTID" onClose={onClose} />
       </DialogTitle>
       <AppBar position="static" color="default">
@@ -86,25 +87,22 @@ function SettingsDialog(props: Props) {
           scrollButtons="auto"
           variant="scrollable"
         >
-          <Tab
-            data-tid="generalSettingsDialog"
-            label={i18n.t('core:generalTab')}
-          />
+          <Tab data-tid="generalSettingsDialog" label={t('core:generalTab')} />
           <Tab
             data-tid="fileTypeSettingsDialog"
-            label={i18n.t('core:fileTypeTab')}
+            label={t('core:fileTypeTab')}
           />
           <Tab
             data-tid="keyBindingsSettingsDialog"
-            label={i18n.t('core:keyBindingsTab')}
+            label={t('core:keyBindingsTab')}
           />
           <Tab
             data-tid="extensionsSettingsDialog"
-            label={i18n.t('core:extensionsTab')}
+            label={t('core:extensionsTab')}
           />
           <Tab
             data-tid="advancedSettingsDialogTID"
-            label={i18n.t('core:advancedSettingsTab')}
+            label={t('core:advancedSettingsTab')}
           />
         </Tabs>
       </AppBar>
@@ -120,7 +118,7 @@ function SettingsDialog(props: Props) {
             setIsResetSettingsDialogOpened(false);
           }}
           title="Confirm"
-          content={i18n.t('core:confirmResetSettings')}
+          content={t('core:confirmResetSettings')}
           confirmCallback={result => {
             if (result) {
               clearAllURLParams();
@@ -168,7 +166,7 @@ function SettingsDialog(props: Props) {
         color="secondary"
         style={{ float: 'left' }}
       >
-        {i18n.t('core:help')}
+        {t('core:help')}
       </Button>
 
       <Button
@@ -177,7 +175,7 @@ function SettingsDialog(props: Props) {
         color="primary"
         variant="contained"
       >
-        {i18n.t('core:closeButton')}
+        {t('core:closeButton')}
       </Button>
     </DialogActions>
   );

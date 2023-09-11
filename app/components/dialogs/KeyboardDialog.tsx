@@ -28,11 +28,11 @@ import ListItem from '@mui/material/ListItem';
 import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 import ListItemText from '@mui/material/ListItemText';
 import Dialog from '@mui/material/Dialog';
-import i18n from '-/services/i18n';
 import { getKeyBindingObject } from '-/reducers/settings';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTranslation } from 'react-i18next';
 
 const PREFIX = 'KeyboardDialog';
 
@@ -58,6 +58,7 @@ interface Props {
 
 function KeyboardDialog(props: Props) {
   const { open, onClose } = props;
+  const { t } = useTranslation();
   const keyBindings = useSelector(getKeyBindingObject);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -70,7 +71,7 @@ function KeyboardDialog(props: Props) {
       scroll="paper"
     >
       <DialogTitle>
-        {i18n.t('core:shortcutKeys')}
+        {t('core:shortcutKeys')}
         <DialogCloseButton testId="closeKeyboardTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent
@@ -84,7 +85,7 @@ function KeyboardDialog(props: Props) {
           {keyBindings &&
             Object.keys(keyBindings).map(shortcutKey => (
               <ListItem key={shortcutKey}>
-                <ListItemText primary={i18n.t('core:' + shortcutKey)} />
+                <ListItemText primary={t('core:' + shortcutKey)} />
                 <ListItemSecondaryAction className={classes.shortcutKey}>
                   {keyBindings[shortcutKey].toUpperCase()}
                 </ListItemSecondaryAction>
@@ -101,7 +102,7 @@ function KeyboardDialog(props: Props) {
           color="primary"
           variant="contained"
         >
-          {i18n.t('core:ok')}
+          {t('core:ok')}
         </Button>
       </DialogActions>
     </StyledDialog>

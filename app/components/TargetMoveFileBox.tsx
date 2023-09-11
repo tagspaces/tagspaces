@@ -48,7 +48,7 @@ interface Props {
   canDrop: boolean;
   isOver: boolean;
   connectDropTarget: any;
-  children: Object;
+  children: any;
   path?: string;
   location?: TS.Location;
 }
@@ -57,9 +57,7 @@ const TargetMoveFileBox = (props: Props) => {
   const { canDrop, isOver, connectDropTarget, children } = props;
   const dragContent =
     canDrop && isOver ? (
-      <DnD
-        className={classes.dropzone}
-      /> /* {i18n.t('core:releaseToMoveDrop')} */
+      <DnD className={classes.dropzone} /> /* {t('core:releaseToMoveDrop')} */
     ) : (
       undefined
     );

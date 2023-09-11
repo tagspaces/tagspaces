@@ -28,7 +28,6 @@ import Dialog from '@mui/material/Dialog';
 import semver from 'semver';
 import DraggablePaper from '-/components/DraggablePaper';
 import LogoIcon from '-/assets/images/icon100x100.svg';
-import i18n from '-/services/i18n';
 import versionMeta from '-/version.json';
 import { Pro } from '-/pro';
 import { getLastVersionPromise } from '-/reducers/settings';
@@ -39,6 +38,7 @@ import { useTheme } from '@mui/material/styles';
 import AppConfig from '-/AppConfig';
 import { Fullscreen } from '@mui/icons-material';
 import { openURLExternally } from '-/services/utils-io';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -56,6 +56,7 @@ const productName = versionMeta.name + (Pro ? ' Pro' : '');
 document.title = productName + ' ' + versionMeta.version;
 
 function AboutDialog(props: Props) {
+  const { t } = useTranslation();
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [newVersion, setNewVersion] = useState('');
   const { open, onClose } = props;
@@ -90,9 +91,9 @@ function AboutDialog(props: Props) {
   let versionInfo = 'Check for updates';
   if (newVersion && newVersion.length > 1) {
     if (updateAvailable) {
-      versionInfo = i18n.t('getNewVersion', { newVersion });
+      versionInfo = t('getNewVersion', { newVersion });
     } else {
-      versionInfo = i18n.t('latestVersion', { productName });
+      versionInfo = t('latestVersion', { productName });
     }
   }
 
@@ -229,7 +230,7 @@ function AboutDialog(props: Props) {
         {!Pro && (
           <Button
             data-tid="checkForUpdates"
-            title={i18n.t('core:checkForNewVersion')}
+            title={t('core:checkForNewVersion')}
             onClick={() => {
               openURLExternally(Links.links.productsOverview, true);
             }}
@@ -241,7 +242,7 @@ function AboutDialog(props: Props) {
         )}
         <Button
           data-tid="checkForUpdates"
-          title={i18n.t('core:checkForNewVersion')}
+          title={t('core:checkForNewVersion')}
           onClick={checkForUpdates}
           // variant="outlined"
           color="primary"
@@ -252,13 +253,13 @@ function AboutDialog(props: Props) {
         data-tid="openLicenseDialog"
         onClick={this.props.toggleLicenseDialog}
       >
-        {i18n.t('core:license')}
+        {t('core:license')}
       </Button>
       <Button
         data-tid="openThirdPartyLibsDialog"
         onClick={this.props.toggleThirdPartyLibsDialog}
       >
-        {i18n.t('core:thirdPartyLibs')}
+        {t('core:thirdPartyLibs')}
       </Button> */}
         <Button
           data-tid="closeAboutDialog"
@@ -266,7 +267,7 @@ function AboutDialog(props: Props) {
           variant="contained"
           color="primary"
         >
-          {i18n.t('core:ok')}
+          {t('core:ok')}
         </Button>
       </DialogActions>
     </Dialog>

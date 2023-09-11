@@ -43,7 +43,6 @@ import {
   extractTags,
   generateSharingLink
 } from '@tagspaces/tagspaces-common/paths';
-import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
 import {
   generateFileName,
@@ -68,6 +67,7 @@ import {
 } from '-/components/CommonIcons';
 import { getLocations } from '-/reducers/locations';
 import PropertiesIcon from '@mui/icons-material/Info';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   anchorEl: Element;
@@ -117,6 +117,8 @@ function FileMenu(props: Props) {
     onClose,
     selectedFilePath
   } = props;
+
+  const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const locations: Array<TS.Location> = useSelector(getLocations);
   const readOnlyMode = useSelector(isReadOnlyMode);
@@ -147,15 +149,11 @@ function FileMenu(props: Props) {
       navigator.clipboard
         .writeText(sharingLink)
         .then(() => {
-          dispatch(
-            AppActions.showNotification(i18n.t('core:sharingLinkCopied'))
-          );
+          dispatch(AppActions.showNotification(t('core:sharingLinkCopied')));
           return true;
         })
         .catch(() => {
-          dispatch(
-            AppActions.showNotification(i18n.t('core:sharingLinkFailed'))
-          );
+          dispatch(AppActions.showNotification(t('core:sharingLinkFailed')));
         });
     }
   }
@@ -182,7 +180,7 @@ function FileMenu(props: Props) {
 
   function setFolderThumbnail() {
     onClose();
-    setFolderThumbnailPromise(selectedFilePath)
+    setFolderThumbnailPromise(selectedFilePath, t)
       .then((directoryPath: string) => {
         dispatch(
           AppActions.showNotification('Thumbnail created for: ' + directoryPath)
@@ -331,7 +329,7 @@ function FileMenu(props: Props) {
         <ListItemIcon>
           <OpenFile />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:openFile')} />
+        <ListItemText primary={t('core:openFile')} />
       </MenuItem>
     );
     menuItems.push(
@@ -343,7 +341,7 @@ function FileMenu(props: Props) {
         <ListItemIcon>
           <OpenNewWindowIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:openInWindow')} />
+        <ListItemText primary={t('core:openInWindow')} />
       </MenuItem>
     );
     menuItems.push(
@@ -355,7 +353,7 @@ function FileMenu(props: Props) {
         <ListItemIcon>
           <ParentFolderIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:openParentFolder')} />
+        <ListItemText primary={t('core:openParentFolder')} />
       </MenuItem>
     );
   }
@@ -381,7 +379,7 @@ function FileMenu(props: Props) {
         <ListItemIcon>
           <OpenFileNatively />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:openFileNatively')} />
+        <ListItemText primary={t('core:openFileNatively')} />
       </MenuItem>
     );
     menuItems.push(
@@ -398,7 +396,7 @@ function FileMenu(props: Props) {
         <ListItemIcon>
           <OpenFolderInternally />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:showInFileManager')} />
+        <ListItemText primary={t('core:showInFileManager')} />
       </MenuItem>
     );
     menuItems.push(<Divider key="fmDivider" />);
@@ -413,7 +411,7 @@ function FileMenu(props: Props) {
         <ListItemIcon>
           <AddRemoveTags />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:addRemoveTags')} />
+        <ListItemText primary={t('core:addRemoveTags')} />
       </MenuItem>
     );
     if (reorderTop) {
@@ -429,7 +427,7 @@ function FileMenu(props: Props) {
           <ListItemIcon>
             <MoveToTopIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:moveToTop')} />
+          <ListItemText primary={t('core:moveToTop')} />
         </MenuItem>
       );
     }
@@ -446,7 +444,7 @@ function FileMenu(props: Props) {
           <ListItemIcon>
             <MoveToBottomIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:moveToBottom')} />
+          <ListItemText primary={t('core:moveToBottom')} />
         </MenuItem>
       );
     }
@@ -460,7 +458,7 @@ function FileMenu(props: Props) {
         <ListItemIcon>
           <RenameFile />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:renameFile')} />
+        <ListItemText primary={t('core:renameFile')} />
       </MenuItem>
     );
     if (selectedEntries.length < 2) {
@@ -473,7 +471,7 @@ function FileMenu(props: Props) {
           <ListItemIcon>
             <DuplicateFile />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:duplicateFile')} />
+          <ListItemText primary={t('core:duplicateFile')} />
         </MenuItem>
       );
     }
@@ -488,7 +486,7 @@ function FileMenu(props: Props) {
           <ListItemIcon>
             <ShareIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:shareFiles')} />
+          <ListItemText primary={t('core:shareFiles')} />
         </MenuItem>
       );
     }
@@ -501,7 +499,7 @@ function FileMenu(props: Props) {
         <ListItemIcon>
           <MoveCopy />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:moveCopyFile')} />
+        <ListItemText primary={t('core:moveCopyFile')} />
       </MenuItem>
     );
     menuItems.push(
@@ -513,7 +511,7 @@ function FileMenu(props: Props) {
         <ListItemIcon>
           <DeleteIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:deleteEntry')} />
+        <ListItemText primary={t('core:deleteEntry')} />
       </MenuItem>
     );
     menuItems.push(<Divider key="fmDivider2" />);
@@ -527,7 +525,7 @@ function FileMenu(props: Props) {
           <ListItemIcon>
             <ImageIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:setAsThumbnail')} />
+          <ListItemText primary={t('core:setAsThumbnail')} />
         </MenuItem>
       );
       if (isImageFile) {
@@ -540,7 +538,7 @@ function FileMenu(props: Props) {
             <ListItemIcon>
               <ImageIcon />
             </ListItemIcon>
-            <ListItemText primary={i18n.t('core:setAsBackground')} />
+            <ListItemText primary={t('core:setAsBackground')} />
           </MenuItem>
         );
       }
@@ -557,7 +555,7 @@ function FileMenu(props: Props) {
         <ListItemIcon>
           <LinkIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:copySharingLink')} />
+        <ListItemText primary={t('core:copySharingLink')} />
       </MenuItem>
     );
   }
@@ -573,7 +571,7 @@ function FileMenu(props: Props) {
         <ListItemIcon>
           <PropertiesIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:filePropertiesTitle')} />
+        <ListItemText primary={t('core:filePropertiesTitle')} />
       </MenuItem>
     );
   }

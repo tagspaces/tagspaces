@@ -31,13 +31,13 @@ import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 import CollectTagsIcon from '@mui/icons-material/Voicemail';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import i18n from '-/services/i18n';
 import { getMaxSearchResults } from '-/reducers/settings';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import InfoIcon from '-/components/InfoIcon';
 import TaggingActions from '-/reducers/tagging-actions';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   classes?: any;
@@ -68,6 +68,7 @@ function TagGroupMenu(props: Props) {
     showEditTagGroupDialog,
     showDeleteTagGroupDialog
   } = props;
+  const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const maxSearchResults = useSelector(getMaxSearchResults);
 
@@ -123,58 +124,56 @@ function TagGroupMenu(props: Props) {
           <ListItemIcon>
             <TagIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:addTags')} />
+          <ListItemText primary={t('core:addTags')} />
         </MenuItem>
         <MenuItem data-tid="editTagGroup" onClick={showEditTagGroupDialog}>
           <ListItemIcon>
             <Edit />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:editTagGroup')} />
+          <ListItemText primary={t('core:editTagGroup')} />
         </MenuItem>
         <MenuItem data-tid="moveTagGroupUp" onClick={moveTagGroupUpInt}>
           <ListItemIcon>
             <ArrowUpward />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:moveTagGroupUp')} />
+          <ListItemText primary={t('core:moveTagGroupUp')} />
         </MenuItem>
         <MenuItem data-tid="moveTagGroupDown" onClick={moveTagGroupDownInt}>
           <ListItemIcon>
             <ArrowDownward />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:moveTagGroupDown')} />
+          <ListItemText primary={t('core:moveTagGroupDown')} />
         </MenuItem>
         <MenuItem data-tid="sortTagGroup" onClick={sortTagGroupInt}>
           <ListItemIcon>
             <SortTagGroupIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:sortTagGroup')} />
+          <ListItemText primary={t('core:sortTagGroup')} />
         </MenuItem>
         <MenuItem data-tid="showFilesWithTagsTID" onClick={showFilesWithTags}>
           <ListItemIcon>
             <ShowEntriesWithTagIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:showFilesWithTags')} />
+          <ListItemText primary={t('core:showFilesWithTags')} />
           <ListItemSecondaryAction>
-            <InfoIcon tooltip={i18n.t('core:showFilesWithTagsTooltip')} />
+            <InfoIcon tooltip={t('core:showFilesWithTagsTooltip')} />
           </ListItemSecondaryAction>
         </MenuItem>
         <MenuItem data-tid="deleteTagGroup" onClick={showDeleteTagGroupDialog}>
           <ListItemIcon>
             <DeleteTagGroupIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:deleteTagGroup')} />
+          <ListItemText primary={t('core:deleteTagGroup')} />
         </MenuItem>
         <MenuItem
           data-tid="collectTags"
           onClick={handleCollectTags}
-          title={i18n.t('collectTagsFromLocationTitle')}
+          title={t('collectTagsFromLocationTitle')}
         >
           <ListItemIcon>
             <CollectTagsIcon />
           </ListItemIcon>
-          <ListItemText
-            primary={<>{i18n.t('core:collectTagsFromLocation')}</>}
-          />
+          <ListItemText primary={<>{t('core:collectTagsFromLocation')}</>} />
         </MenuItem>
       </Menu>
     </div>

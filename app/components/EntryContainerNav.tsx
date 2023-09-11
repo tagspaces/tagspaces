@@ -1,12 +1,12 @@
 import React from 'react';
 import { useTheme } from '@mui/material/styles';
-import i18n from '-/services/i18n';
 import { IconButton, Tooltip } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import PrevDocumentIcon from '@mui/icons-material/KeyboardArrowUp';
 import NextDocumentIcon from '@mui/icons-material/KeyboardArrowDown';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   isFile: boolean;
@@ -15,6 +15,7 @@ interface Props {
 
 function EntryContainerNav(props: Props) {
   const { isFile, startClosingFile } = props;
+  const { t } = useTranslation();
   const theme = useTheme();
   const dispatch: AppDispatch = useDispatch();
 
@@ -31,9 +32,9 @@ function EntryContainerNav(props: Props) {
     >
       {isFile && (
         <>
-          <Tooltip title={i18n.t('core:openPrevFileTooltip')}>
+          <Tooltip title={t('core:openPrevFileTooltip')}>
             <IconButton
-              aria-label={i18n.t('core:openPrevFileTooltip')}
+              aria-label={t('core:openPrevFileTooltip')}
               data-tid="fileContainerPrevFile"
               onClick={() => dispatch(AppActions.openPrevFile())}
               size="large"
@@ -41,9 +42,9 @@ function EntryContainerNav(props: Props) {
               <PrevDocumentIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title={i18n.t('core:openNextFileTooltip')}>
+          <Tooltip title={t('core:openNextFileTooltip')}>
             <IconButton
-              aria-label={i18n.t('core:openNextFileTooltip')}
+              aria-label={t('core:openNextFileTooltip')}
               data-tid="fileContainerNextFile"
               onClick={() => dispatch(AppActions.openNextFile())}
               size="large"
@@ -53,10 +54,10 @@ function EntryContainerNav(props: Props) {
           </Tooltip>
         </>
       )}
-      <Tooltip title={i18n.t('core:closeEntry')}>
+      <Tooltip title={t('core:closeEntry')}>
         <IconButton
           onClick={startClosingFile}
-          aria-label={i18n.t('core:closeEntry')}
+          aria-label={t('core:closeEntry')}
           data-tid="fileContainerCloseOpenedFile"
           size="large"
         >

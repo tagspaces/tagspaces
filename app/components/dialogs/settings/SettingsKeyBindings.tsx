@@ -25,7 +25,6 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import { isStr } from '@tagspaces/tagspaces-common/misc';
 import PlatformIO from '-/services/platform-facade';
-import i18n from '-/services/i18n';
 import {
   actions as SettingsActions,
   getKeyBindings,
@@ -33,6 +32,7 @@ import {
 } from '-/reducers/settings';
 import DefaultSettings from '-/reducers/settings-default';
 import { AppDispatch } from '-/reducers/app';
+import { useTranslation } from 'react-i18next';
 
 const PREFIX = 'SettingsKeyBindings';
 
@@ -48,6 +48,7 @@ const Root = styled('form')(({ theme }) => ({
 }));
 
 function SettingsKeyBindings() {
+  const { t } = useTranslation();
   const keyBindings = useSelector(getKeyBindings);
   const globalKeyBindingEnabled = useSelector(isGlobalKeyBindingEnabled);
   const dispatch: AppDispatch = useDispatch();
@@ -64,7 +65,7 @@ function SettingsKeyBindings() {
   return (
     <Root className={classes.keyBinding} noValidate autoComplete="off">
       <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
-        <ListItemText primary={i18n.t('core:enableGlobalKeyboardShortcuts')} />
+        <ListItemText primary={t('core:enableGlobalKeyboardShortcuts')} />
         <Switch
           onClick={() => {
             setGlobalKeyBinding(!globalKeyBindingEnabled);
@@ -83,7 +84,7 @@ function SettingsKeyBindings() {
             InputLabelProps={{ shrink: true }}
             fullWidth
             onBlur={event => setKeyBinding(keyBinding.name, event.target.value)}
-            label={i18n.t('core:' + keyBinding.name)}
+            label={t('core:' + keyBinding.name)}
             placeholder={
               'suggested binding: ' +
               (defaultBinding ? defaultBinding.command : '')

@@ -43,7 +43,6 @@ import {
   getShowUnixHiddenEntries,
   getCurrentLanguage
 } from '-/reducers/settings';
-import i18n from '-/services/i18n';
 import { FileTypeGroups, haveSearchFilters } from '-/services/search';
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
@@ -72,6 +71,7 @@ import { getSearches } from '-/reducers/searches';
 import { getSearchOptions } from '-/components/SearchOptionsMenu';
 import { dataTidFormat } from '-/services/test';
 import { useTheme } from '@mui/material/styles';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   style?: any;
@@ -91,6 +91,7 @@ interface Props {
 }));*/
 
 function SearchAutocomplete(props: Props) {
+  const { t } = useTranslation();
   const theme = useTheme();
   const dispatch: AppDispatch = useDispatch();
   const indexing = useSelector(isIndexing);
@@ -178,11 +179,11 @@ function SearchAutocomplete(props: Props) {
     }
   }, [searchMode]);
 
-  /* let searchBoxingName = i18n.t('location');
+  /* let searchBoxingName = t('location');
   if (searchBoxing === 'global') {
-    searchBoxingName = i18n.t('globalSearch');
+    searchBoxingName = t('globalSearch');
   } else if (searchBoxing === 'folder') {
-    searchBoxingName = i18n.t('folder');
+    searchBoxingName = t('folder');
   }*/
 
   useEffect(() => {
@@ -263,9 +264,7 @@ function SearchAutocomplete(props: Props) {
           label:
             SearchQueryComposition.TYPE.fullName +
             ' ' +
-            (keyFileType
-              ? i18n.t('core:' + keyFileType)
-              : searchQuery.fileTypes)
+            (keyFileType ? t('core:' + keyFileType) : searchQuery.fileTypes)
         });
       }
       if (searchQuery.searchType) {
@@ -276,7 +275,7 @@ function SearchAutocomplete(props: Props) {
           label:
             SearchQueryComposition.ACCURACY.fullName +
             ' ' +
-            i18n.t('core:' + searchQuery.searchType)
+            t('core:' + searchQuery.searchType)
         });
       }
       if (searchQuery.lastModified) {
@@ -287,7 +286,7 @@ function SearchAutocomplete(props: Props) {
           label:
             SearchQueryComposition.LAST_MODIFIED.fullName +
             ' ' +
-            i18n.t('core:' + searchQuery.lastModified)
+            t('core:' + searchQuery.lastModified)
         });
       }
       if (searchQuery.tagTimePeriodFrom) {
@@ -309,7 +308,7 @@ function SearchAutocomplete(props: Props) {
           label:
             SearchQueryComposition.SIZE.fullName +
             ' ' +
-            i18n.t('core:' + searchQuery.fileSize)
+            t('core:' + searchQuery.fileSize)
         });
       }
       if (!emptySearch) {
@@ -686,18 +685,12 @@ function SearchAutocomplete(props: Props) {
           : [];
 
         searchOptions.current = [
-          ...getHistoryOptions(
-            fileOpenHistoryItems,
-            i18n.t('core:fileOpenHistory')
-          ),
+          ...getHistoryOptions(fileOpenHistoryItems, t('core:fileOpenHistory')),
           ...getHistoryOptions(
             folderOpenHistoryItems,
-            i18n.t('core:folderOpenHistory')
+            t('core:folderOpenHistory')
           ),
-          ...getHistoryOptions(
-            fileEditHistoryItems,
-            i18n.t('core:fileEditHistory')
-          )
+          ...getHistoryOptions(fileEditHistoryItems, t('core:fileEditHistory'))
         ];
       }
     } else if (isAction(action, SearchActions.BOOK)) {
@@ -727,7 +720,7 @@ function SearchAutocomplete(props: Props) {
 
         searchOptions.current = getOptions(
           bookmarks,
-          i18n.t('core:searchBookmarks')
+          t('core:searchBookmarks')
         );
       }
     } else if (isAction(action, SearchActions.SEARCH_HISTORY)) {
@@ -736,7 +729,7 @@ function SearchAutocomplete(props: Props) {
         : [];
       searchOptions.current = getHistoryOptions(
         searchHistoryItems,
-        i18n.t('core:searchHistory')
+        t('core:searchHistory')
       );
     } else if (isAction(action, SearchActions.SEARCH)) {
       if (currentOptions.current !== action) {
@@ -761,7 +754,7 @@ function SearchAutocomplete(props: Props) {
 
         searchOptions.current = getOptions(
           searches,
-          i18n.t('core:savedSearchesTitle')
+          t('core:savedSearchesTitle')
         );
       }
     } else if (
@@ -801,7 +794,7 @@ function SearchAutocomplete(props: Props) {
           options.push({
             id: key,
             action: ExecActions.TYPE_SEARCH,
-            label: i18n.t('core:' + key),
+            label: t('core:' + key),
             descr: value.join(', '),
             filter
           });
@@ -830,7 +823,7 @@ function SearchAutocomplete(props: Props) {
           options.push({
             id: key,
             action: ExecActions.SIZE_SEARCH,
-            label: i18n.t('core:' + key),
+            label: t('core:' + key),
             descr: descr,
             filter
           });
@@ -850,7 +843,7 @@ function SearchAutocomplete(props: Props) {
           options.push({
             id: key,
             action: ExecActions.LAST_MODIFIED_SEARCH,
-            label: i18n.t('core:' + key),
+            label: t('core:' + key),
             filter
           });
         });
@@ -866,7 +859,7 @@ function SearchAutocomplete(props: Props) {
           options.push({
             id: key,
             action: ExecActions.SCOPE_SEARCH,
-            label: i18n.t('core:' + key),
+            label: t('core:' + key),
             filter
           });
         });
@@ -884,7 +877,7 @@ function SearchAutocomplete(props: Props) {
           options.push({
             id: key,
             action: ExecActions.ACCURACY_SEARCH,
-            label: i18n.t('core:' + key),
+            label: t('core:' + key),
             filter
           });
         });
@@ -1379,15 +1372,15 @@ function SearchAutocomplete(props: Props) {
         classes={{ tooltip: classes.customWidth }}
         title={
           <span style={{ fontSize: 14 }}>
-            {i18n.t('searchScope')}:
+            {t('searchScope')}:
             <br />
-            &bull; {i18n.t('location')} - {i18n.t('searchPlaceholder')}
+            &bull; {t('location')} - {t('searchPlaceholder')}
             <br />
-            &bull; {i18n.t('folder')} -{' '}
-            {i18n.t('searchCurrentFolderWithSubFolders')}
+            &bull; {t('folder')} -{' '}
+            {t('searchCurrentFolderWithSubFolders')}
             <br />
-            &bull; {i18n.t('globalSearch')} -{' '}
-            {i18n.t('searchInAllLocationTooltip')} ({i18n.t('betaStatus')})
+            &bull; {t('globalSearch')} -{' '}
+            {t('searchInAllLocationTooltip')} ({t('betaStatus')})
             <br />
           </span>
         }
@@ -1415,7 +1408,7 @@ function SearchAutocomplete(props: Props) {
 
   const endAdornment = (
     <>
-      <Tooltip title={i18n.t('core:advancedSearch')}>
+      <Tooltip title={t('core:advancedSearch')}>
         <IconButton
           id="advancedButton"
           data-tid="advancedSearch"
@@ -1428,7 +1421,7 @@ function SearchAutocomplete(props: Props) {
           <DropDownIcon />
         </IconButton>
       </Tooltip>
-      <Tooltip title={i18n.t('clearSearch') + ' (ESC)'}>
+      <Tooltip title={t('clearSearch') + ' (ESC)'}>
         <IconButton
           id="clearSearchID"
           onClick={() => {
@@ -1599,7 +1592,7 @@ function SearchAutocomplete(props: Props) {
                   backgroundColor: theme.palette.background.default
                 }}
               >
-                {i18n.t(params.group)}
+                {t(params.group)}
               </div>
               <ul style={{ padding: 0 }}>{params.children}</ul>
             </li>
@@ -1664,7 +1657,7 @@ function SearchAutocomplete(props: Props) {
                 fullWidth
                 /*id="textQuery"
               name="textQuery"*/
-                // label={i18n.t('core:searchTitle')}
+                // label={t('core:searchTitle')}
                 /*defaultValue={textQuery.current}*/
                 /*onChange={event => {
                 textQuery.current = event.target.value;
@@ -1675,7 +1668,7 @@ function SearchAutocomplete(props: Props) {
                 /*inputRef={mainSearchField}*/
                 autoFocus
                 /*onKeyDown={startSearch}*/
-                placeholder={i18n.t('core:searchTitle')}
+                placeholder={t('core:searchTitle')}
                 size="small"
                 margin="dense"
                 variant="outlined"
@@ -1683,7 +1676,7 @@ function SearchAutocomplete(props: Props) {
             );
           }}
         />
-        <Tooltip title={indexing ? i18n.t('searchDisabledWhileIndexing') : ''}>
+        <Tooltip title={indexing ? t('searchDisabledWhileIndexing') : ''}>
           <Button
             id="searchButton"
             variant="outlined"
@@ -1697,7 +1690,7 @@ function SearchAutocomplete(props: Props) {
             color="primary"
             onClick={clickSearchButton}
           >
-            {i18n.t('searchTitle')}
+            {t('searchTitle')}
           </Button>
         </Tooltip>
       </div>

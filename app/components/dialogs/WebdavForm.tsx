@@ -29,7 +29,7 @@ import {
   Select
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import i18n from '-/services/i18n';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   errorTextName: boolean;
@@ -69,6 +69,7 @@ function WebdavForm(props: Props) {
     secretAccessKey,
     setSecretAccessKey
   } = props;
+  const { t } = useTranslation();
 
   const AuthTypes = {
     None: 'none',
@@ -88,7 +89,7 @@ function WebdavForm(props: Props) {
             inputProps={{ autoCorrect: 'off' }}
             onChange={event => setName(event.target.value)}
             value={name}
-            label={i18n.t('core:createLocationName')}
+            label={t('core:createLocationName')}
             data-tid="locationName"
             fullWidth={true}
           />
@@ -96,12 +97,12 @@ function WebdavForm(props: Props) {
       </Grid>
       <Grid item>
         <FormControl fullWidth={true} error={errorTextName}>
-          <InputLabel id="AuthID">{i18n.t('core:WebdavAuth')}</InputLabel>
+          <InputLabel id="AuthID">{t('core:WebdavAuth')}</InputLabel>
           <Select
             labelId="AuthID"
             id="AuthTypeID"
             value={authType}
-            label={i18n.t('core:WebdavAuth')}
+            label={t('core:WebdavAuth')}
             onChange={(event: ChangeEvent<HTMLInputElement>) =>
               setAuthType(event.target.value)
             }
@@ -125,7 +126,7 @@ function WebdavForm(props: Props) {
                 data-tid="userNameIdTID"
                 inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
                 onChange={event => setUserName(event.target.value)}
-                label={i18n.t('core:userName')}
+                label={t('core:userName')}
                 value={userName}
               />
             </FormControl>
@@ -141,7 +142,7 @@ function WebdavForm(props: Props) {
                 inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
                 onChange={event => setPassword(event.target.value)}
                 value={password}
-                label={i18n.t('core:password')}
+                label={t('core:password')}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -172,7 +173,7 @@ function WebdavForm(props: Props) {
               inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
               onChange={event => setSecretAccessKey(event.target.value)}
               value={secretAccessKey}
-              label={i18n.t('core:webDavToken')}
+              label={t('core:webDavToken')}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -197,10 +198,10 @@ function WebdavForm(props: Props) {
             name="endpointURL"
             fullWidth={true}
             data-tid="endpointURL"
-            placeholder={i18n.t('webdavServiceURL')}
+            placeholder={t('webdavServiceURL')}
             onChange={event => setEndpointURL(event.target.value)}
             value={endpointURL}
-            label={i18n.t('core:endpointURL')}
+            label={t('core:endpointURL')}
           />
         </FormControl>
       </Grid>

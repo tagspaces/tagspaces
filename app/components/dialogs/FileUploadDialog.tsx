@@ -39,10 +39,10 @@ import {
   getProgress
 } from '-/reducers/app';
 import { extractFileName } from '@tagspaces/tagspaces-common/paths';
-import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { PerspectiveIDs } from '-/perspectives';
 import { getCurrentLocation } from '-/reducers/locations';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -52,6 +52,7 @@ interface Props {
 
 function FileUploadDialog(props: Props) {
   const { open = false, title, onClose } = props;
+  const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const progress = useSelector(getProgress);
   const currentDirectoryPerspective = useSelector(
@@ -153,9 +154,7 @@ function FileUploadDialog(props: Props) {
         style={{ cursor: 'move' }}
         id="draggable-dialog-title"
       >
-        {i18n.t(
-          'core:' + (title && title.length > 0 ? title : 'importDialogTitle')
-        )}
+        {t('core:' + (title && title.length > 0 ? title : 'importDialogTitle'))}
         <DialogCloseButton testId="closeFileUploadTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent
@@ -166,7 +165,7 @@ function FileUploadDialog(props: Props) {
           flexGrow: 1
         }}
       >
-        <p>{i18n.t('core:moveCopyToPath') + ': ' + getTargetURL()}</p>
+        <p>{t('core:moveCopyToPath') + ': ' + getTargetURL()}</p>
         {progress &&
           progress
             .sort((a, b) => ('' + a.path).localeCompare(b.path))
@@ -208,7 +207,7 @@ function FileUploadDialog(props: Props) {
                         title={
                           abort && typeof abort === 'string'
                             ? abort
-                            : i18n.t('core:fileExist')
+                            : t('core:fileExist')
                         }
                       >
                         <WarningIcon color="secondary" />
@@ -246,7 +245,7 @@ function FileUploadDialog(props: Props) {
             }}
             color="primary"
           >
-            {i18n.t('core:closeAndClear')}
+            {t('core:closeAndClear')}
           </Button>
         )}
         <Button
@@ -254,22 +253,16 @@ function FileUploadDialog(props: Props) {
           onClick={onClose}
           color="primary"
         >
-          {i18n.t('core:minimize')}
+          {t('core:minimize')}
         </Button>
         {haveProgress && (
           <Button data-tid="uploadStopAllTID" onClick={stopAll} color="primary">
-            {i18n.t('core:stopAll')}
+            {t('core:stopAll')}
           </Button>
         )}
       </DialogActions>
     </Dialog>
   );
-}
-
-function mapStateToProps(state) {
-  return {
-    currentLocation: getCurrentLocation(state)
-  };
 }
 
 export default FileUploadDialog;

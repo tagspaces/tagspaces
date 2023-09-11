@@ -19,13 +19,13 @@
 import React, { MutableRefObject } from 'react';
 import { rgbToHex, useTheme } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
-import i18n from '-/services/i18n';
 import { OpenedEntry } from '-/reducers/app';
 import useEventListener from '-/utils/useEventListener';
 import { connect } from 'react-redux';
 import { getCurrentLanguage } from '-/reducers/settings';
 import { getSearchQuery } from '-/reducers/location-index';
 import { TS } from '-/tagspaces.namespace';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   openedFile: OpenedEntry;
@@ -40,6 +40,7 @@ interface Props {
 }
 
 function FileView(props: Props) {
+  const { i18n } = useTranslation();
   const theme = useTheme();
   const {
     openedFile,

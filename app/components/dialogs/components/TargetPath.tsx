@@ -20,12 +20,13 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-import i18n from '-/services/i18n';
 import { getCurrentLocation } from '-/reducers/locations';
 import { InfoIcon } from '-/components/CommonIcons';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
+import { useTranslation } from 'react-i18next';
 
 function TargetPath() {
+  const { t } = useTranslation();
   const currentLocation = useSelector(getCurrentLocation);
   const { targetDirectoryPath } = useTargetPathContext();
 
@@ -37,16 +38,14 @@ function TargetPath() {
           variant="caption"
         >
           <InfoIcon style={{ paddingRight: 10 }} />
-          {i18n.t('core:entriesWillBeCreatedIn') +
+          {t('core:entriesWillBeCreatedIn') +
             ' ' +
             (currentLocation ? currentLocation.name : '') +
             ' ' +
             targetDirectoryPath}
         </Typography>
       ) : (
-        <Typography variant="caption">
-          {i18n.t('noSuitableLocation')}
-        </Typography>
+        <Typography variant="caption">{t('noSuitableLocation')}</Typography>
       )}
     </Grid>
   );

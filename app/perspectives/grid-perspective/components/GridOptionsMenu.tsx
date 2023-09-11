@@ -30,7 +30,7 @@ import RadioCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import RadioUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import SettingsIcon from '@mui/icons-material/Settings';
 import HelpIcon from '@mui/icons-material/Help';
-import i18n from '-/services/i18n';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -69,35 +69,37 @@ function GridOptionsMenu(props: Props) {
     openSettings
   } = props;
 
+  const { t } = useTranslation();
+
   return (
     <Menu anchorEl={anchorEl} open={open} onClose={onClose}>
       <MenuItem
         data-tid="gridPerspectiveToggleShowDirectories"
-        title={i18n.t('core:showHideDirectories')}
-        aria-label={i18n.t('core:showHideDirectories')}
+        title={t('core:showHideDirectories')}
+        aria-label={t('core:showHideDirectories')}
         onClick={toggleShowDirectories}
       >
         <ListItemIcon>
           {showDirectories ? <CheckBoxIcon /> : <CheckBoxEmptyIcon />}
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:showHideDirectories')} />
+        <ListItemText primary={t('core:showHideDirectories')} />
       </MenuItem>
       <MenuItem
         data-tid="gridPerspectiveToggleShowTags"
-        title={i18n.t('core:showTags')}
-        aria-label={i18n.t('core:showTags')}
+        title={t('core:showTags')}
+        aria-label={t('core:showTags')}
         onClick={toggleShowTags}
       >
         <ListItemIcon>
           {showTags ? <CheckBoxIcon /> : <CheckBoxEmptyIcon />}
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:showTags')} />
+        <ListItemText primary={t('core:showTags')} />
       </MenuItem>
       <Divider />
       <MenuItem
         data-tid="gridPerspectiveToggleThumbnailsMode"
-        title={i18n.t('core:toggleThumbnailModeTitle')}
-        aria-label={i18n.t('core:toggleThumbnailMode')}
+        title={t('core:toggleThumbnailModeTitle')}
+        aria-label={t('core:toggleThumbnailMode')}
         onClick={toggleThumbnailsMode}
       >
         <ListItemIcon>
@@ -107,13 +109,13 @@ function GridOptionsMenu(props: Props) {
             <ThumbnailContainIcon />
           )}
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:toggleThumbnailMode')} />
+        <ListItemText primary={t('core:toggleThumbnailMode')} />
       </MenuItem>
       <Divider />
       <MenuItem
         data-tid="gridPerspectiveEntrySizeSmall"
-        title={i18n.t('core:entrySizeSmall')}
-        aria-label={i18n.t('core:entrySizeSmall')}
+        title={t('core:entrySizeSmall')}
+        aria-label={t('core:entrySizeSmall')}
         onClick={() => changeEntrySize('small')}
       >
         <ListItemIcon>
@@ -123,12 +125,12 @@ function GridOptionsMenu(props: Props) {
             <RadioUncheckedIcon />
           )}
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:entrySizeSmall')} />
+        <ListItemText primary={t('core:entrySizeSmall')} />
       </MenuItem>
       <MenuItem
         data-tid="gridPerspectiveEntrySizeNormal"
-        title={i18n.t('core:entrySizeNormal')}
-        aria-label={i18n.t('core:entrySizeNormal')}
+        title={t('core:entrySizeNormal')}
+        aria-label={t('core:entrySizeNormal')}
         onClick={() => changeEntrySize('normal')}
       >
         <ListItemIcon>
@@ -138,24 +140,24 @@ function GridOptionsMenu(props: Props) {
             <RadioUncheckedIcon />
           )}
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:entrySizeNormal')} />
+        <ListItemText primary={t('core:entrySizeNormal')} />
       </MenuItem>
       <MenuItem
         data-tid="gridPerspectiveEntrySizeBig"
-        title={i18n.t('core:entrySizeBig')}
-        aria-label={i18n.t('core:entrySizeBig')}
+        title={t('core:entrySizeBig')}
+        aria-label={t('core:entrySizeBig')}
         onClick={() => changeEntrySize('big')}
       >
         <ListItemIcon>
           {entrySize === 'big' ? <RadioCheckedIcon /> : <RadioUncheckedIcon />}
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:entrySizeBig')} />
+        <ListItemText primary={t('core:entrySizeBig')} />
       </MenuItem>
       <Divider />
       <MenuItem
         data-tid="gridPerspectiveSingleClickOpenInternally"
-        title={i18n.t('core:singleClickOpenInternally')}
-        aria-label={i18n.t('core:singleClickOpenInternally')}
+        title={t('core:singleClickOpenInternally')}
+        aria-label={t('core:singleClickOpenInternally')}
         onClick={() => changeSingleClickAction('openInternal')}
       >
         <ListItemIcon>
@@ -165,12 +167,12 @@ function GridOptionsMenu(props: Props) {
             <RadioUncheckedIcon />
           )}
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:singleClickOpenInternally')} />
+        <ListItemText primary={t('core:singleClickOpenInternally')} />
       </MenuItem>
       <MenuItem
         data-tid="gridPerspectiveSingleClickOpenExternally"
-        title={i18n.t('core:singleClickOpenExternally')}
-        aria-label={i18n.t('core:singleClickOpenExternally')}
+        title={t('core:singleClickOpenExternally')}
+        aria-label={t('core:singleClickOpenExternally')}
         onClick={() => changeSingleClickAction('openExternal')}
       >
         <ListItemIcon>
@@ -180,12 +182,12 @@ function GridOptionsMenu(props: Props) {
             <RadioUncheckedIcon />
           )}
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:singleClickOpenExternally')} />
+        <ListItemText primary={t('core:singleClickOpenExternally')} />
       </MenuItem>
       <MenuItem
         data-tid="gridPerspectiveSingleClickSelects"
-        title={i18n.t('core:singleClickSelects')}
-        aria-label={i18n.t('core:singleClickSelects')}
+        title={t('core:singleClickSelects')}
+        aria-label={t('core:singleClickSelects')}
         onClick={() => changeSingleClickAction('selects')}
       >
         <ListItemIcon>
@@ -195,31 +197,31 @@ function GridOptionsMenu(props: Props) {
             <RadioUncheckedIcon />
           )}
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:singleClickSelects')} />
+        <ListItemText primary={t('core:singleClickSelects')} />
       </MenuItem>
       <Divider />
       <MenuItem
         data-tid="gridPerspectiveSettings"
-        title={i18n.t('core:settings')}
-        aria-label={i18n.t('core:settings')}
+        title={t('core:settings')}
+        aria-label={t('core:settings')}
         onClick={openSettings}
       >
         <ListItemIcon>
           <SettingsIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:settings')} />
+        <ListItemText primary={t('core:settings')} />
       </MenuItem>
       <Divider />
       <MenuItem
         data-tid="gridPerspectiveHelp"
-        title={i18n.t('core:help')}
-        aria-label={i18n.t('core:perspectiveHelp')}
+        title={t('core:help')}
+        aria-label={t('core:perspectiveHelp')}
         onClick={openHelpWebPage}
       >
         <ListItemIcon>
           <HelpIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:help')} />
+        <ListItemText primary={t('core:help')} />
       </MenuItem>
     </Menu>
   );

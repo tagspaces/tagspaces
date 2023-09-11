@@ -48,7 +48,6 @@ import {
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import PlatformIO from '-/services/platform-facade';
 import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
-import i18n from '-/services/i18n';
 import {
   actions as SettingsActions,
   isDesktopMode,
@@ -76,6 +75,7 @@ import { styled, useTheme } from '@mui/material/styles';
 import EntryContainerTabs from '-/components/EntryContainerTabs';
 import EntryContainerNav from '-/components/EntryContainerNav';
 import EntryContainerTitle from '-/components/EntryContainerTitle';
+import { useTranslation } from 'react-i18next';
 
 //const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
 
@@ -172,7 +172,7 @@ function EntryContainer(props: Props) {
     setEntryPropertiesSplitSize,
     showNotification
   } = props;
-
+  const { t } = useTranslation();
   const tabIndex = useSelector(getEntryContainerTab);
   const theme = useTheme();
   // const [percent, setPercent] = React.useState<number | undefined>(undefined);
@@ -565,7 +565,7 @@ function EntryContainer(props: Props) {
             if (success) {
               fileChanged.current = false;
               // showNotification(
-              //   i18n.t('core:fileSavedSuccessfully'),
+              //   t('core:fileSavedSuccessfully'),
               //   NotificationTypes.default
               // );
             }
@@ -791,7 +791,7 @@ function EntryContainer(props: Props) {
         });
     } else {
       showNotification(
-        i18n.t('core:thisFunctionalityIsAvailableInPro'),
+        t('core:thisFunctionalityIsAvailableInPro'),
         NotificationTypes.default
       );
     }
@@ -839,10 +839,8 @@ function EntryContainer(props: Props) {
       const autoSave = isEditable && props.revisionsEnabled && (
         <Tooltip
           title={
-            i18n.t('core:autosave') +
-            (!Pro
-              ? ' - ' + i18n.t('core:thisFunctionalityIsAvailableInPro')
-              : '')
+            t('core:autosave') +
+            (!Pro ? ' - ' + t('core:thisFunctionalityIsAvailableInPro') : '')
           }
         >
           <Switch
@@ -872,23 +870,23 @@ function EntryContainer(props: Props) {
         if (openedFile.editMode) {
           editFile = (
             <ButtonGroup>
-              <Tooltip title={i18n.t('core:cancelEditing')}>
+              <Tooltip title={t('core:cancelEditing')}>
                 <Button
                   onClick={reloadDocument}
-                  aria-label={i18n.t('core:cancelEditing')}
+                  aria-label={t('core:cancelEditing')}
                   size="small"
                   variant="outlined"
                   color="primary"
                   startIcon={closeCancelIcon}
                 >
                   {fileChanged.current
-                    ? i18n.t('core:cancel')
-                    : i18n.t('core:closeButton')}
+                    ? t('core:cancel')
+                    : t('core:closeButton')}
                 </Button>
               </Tooltip>
               <Tooltip
                 title={
-                  i18n.t('core:saveFile') +
+                  t('core:saveFile') +
                   ' (' +
                   (AppConfig.isMaclike ? '⌘' : 'CTRL') +
                   ' + S)'
@@ -897,7 +895,7 @@ function EntryContainer(props: Props) {
                 <LoadingButton
                   disabled={false}
                   onClick={startSavingFile}
-                  aria-label={i18n.t('core:saveFile')}
+                  aria-label={t('core:saveFile')}
                   data-tid="fileContainerSaveFile"
                   size="small"
                   variant="outlined"
@@ -905,25 +903,25 @@ function EntryContainer(props: Props) {
                   startIcon={desktopMode && <SaveIcon />}
                   loading={isSavingInProgress}
                 >
-                  {i18n.t('core:save')}
+                  {t('core:save')}
                 </LoadingButton>
               </Tooltip>
             </ButtonGroup>
           );
         } else {
           editFile = (
-            <Tooltip title={i18n.t('core:editFile')}>
+            <Tooltip title={t('core:editFile')}>
               <Button
                 disabled={false}
                 size="small"
                 variant="outlined"
                 color="primary"
                 onClick={editOpenedFile}
-                aria-label={i18n.t('core:editFile')}
+                aria-label={t('core:editFile')}
                 data-tid="fileContainerEditFile"
                 startIcon={<EditIcon />}
               >
-                {i18n.t('core:edit')}
+                {t('core:edit')}
               </Button>
             </Tooltip>
           );
@@ -991,7 +989,7 @@ function EntryContainer(props: Props) {
               {tabs()}
             </>
           ) : (
-            <div>{i18n.t('core:noEntrySelected')}</div>
+            <div>{t('core:noEntrySelected')}</div>
           )}
         </Root>
         {openedFile.isFile && (
@@ -1035,8 +1033,8 @@ function EntryContainer(props: Props) {
           onClose={() => {
             setSaveBeforeCloseConfirmDialogOpened(false);
           }}
-          title={i18n.t('core:confirm')}
-          content={i18n.t('core:saveFileBeforeClosingFile')}
+          title={t('core:confirm')}
+          content={t('core:saveFileBeforeClosingFile')}
           confirmCallback={result => {
             if (result) {
               startSavingFile();
@@ -1056,7 +1054,7 @@ function EntryContainer(props: Props) {
           onClose={() => {
             setSaveBeforeReloadConfirmDialogOpened(false);
           }}
-          title={i18n.t('core:confirm')}
+          title={t('core:confirm')}
           content="File was modified, do you want to save the changes?"
           confirmCallback={result => {
             if (result) {

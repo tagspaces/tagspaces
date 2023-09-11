@@ -27,7 +27,6 @@ import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ConfirmDialog from '../dialogs/ConfirmDialog';
-import i18n from '-/services/i18n';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { getMaxSearchResults } from '-/reducers/settings';
 import {
@@ -36,6 +35,7 @@ import {
   isReadOnlyMode
 } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -57,6 +57,7 @@ function EntryTagMenu(props: Props) {
     removeTags,
     setIsAddTagDialogOpened
   } = props;
+  const { t } = useTranslation();
   const [isDeleteTagDialogOpened, setIsDeleteTagDialogOpened] = useState(false);
   const dispatch: AppDispatch = useDispatch();
   const maxSearchResults: number = useSelector(getMaxSearchResults);
@@ -116,7 +117,7 @@ function EntryTagMenu(props: Props) {
       <ListItemIcon>
         <ShowEntriesWithTagIcon />
       </ListItemIcon>
-      <ListItemText primary={i18n.t('core:showFilesWithThisTag')} />
+      <ListItemText primary={t('core:showFilesWithThisTag')} />
     </MenuItem>
   ];
   if (!readOnlyMode) {
@@ -130,7 +131,7 @@ function EntryTagMenu(props: Props) {
           <ListItemIcon>
             <AddIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:addTagToTagGroup')} />
+          <ListItemText primary={t('core:addTagToTagGroup')} />
         </MenuItem>
       );
     }
@@ -143,7 +144,7 @@ function EntryTagMenu(props: Props) {
         <ListItemIcon>
           <EditIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:editTagTitle')} />
+        <ListItemText primary={t('core:editTagTitle')} />
       </MenuItem>
     );
     menuItems.push(
@@ -155,7 +156,7 @@ function EntryTagMenu(props: Props) {
         <ListItemIcon>
           <DeleteIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:removeTag')} />
+        <ListItemText primary={t('core:removeTag')} />
       </MenuItem>
     );
   }
@@ -168,8 +169,8 @@ function EntryTagMenu(props: Props) {
       <ConfirmDialog
         open={isDeleteTagDialogOpened}
         onClose={handleCloseDialogs}
-        title={i18n.t('core:removeTag')}
-        content={i18n.t('core:removeTagTooltip')}
+        title={t('core:removeTag')}
+        content={t('core:removeTagTooltip')}
         confirmCallback={result => {
           if (result) {
             confirmRemoveTag();

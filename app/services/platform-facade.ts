@@ -144,7 +144,7 @@ export default class PlatformFacade {
 
   static focusWindow = (): void => platformFocusWindow();
 
-  static getDevicePaths = (): Promise<Object> => platformGetDevicePaths();
+  static getDevicePaths = (): Promise<any> => platformGetDevicePaths();
 
   /* static getAppDataPath = (): string => nativeAPI.getAppDataPath();
 

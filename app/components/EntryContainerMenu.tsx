@@ -11,8 +11,7 @@ import {
   Menu,
   MenuItem,
   MenuList,
-  Divider,
-  Typography
+  Divider
 } from '@mui/material';
 import {
   actions as AppActions,
@@ -23,7 +22,6 @@ import {
 } from '-/reducers/app';
 import { useDispatch, useSelector } from 'react-redux';
 import AppConfig from '-/AppConfig';
-import i18n from '-/services/i18n';
 import {
   DeleteIcon,
   LinkIcon,
@@ -38,6 +36,7 @@ import FullScreenIcon from '@mui/icons-material/ZoomOutMap';
 import FileDownloadIcon from '@mui/icons-material/AssignmentReturned';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { isDesktopMode } from '-/reducers/settings';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   anchorEl: null | HTMLElement;
@@ -59,6 +58,7 @@ function EntryContainerMenu(props: Props) {
     sharingParentFolderLink,
     reloadDocument
   } = props;
+  const { t } = useTranslation();
   // const theme = useTheme();
   const readOnlyMode = useSelector(isReadOnlyMode);
   const desktopMode = useSelector(isDesktopMode);
@@ -115,7 +115,7 @@ function EntryContainerMenu(props: Props) {
         console.log('Can only download HTTP/HTTPS URIs');
         dispatch(
           AppActions.showNotification(
-            i18n.t('core:cantDownloadLocalFile'),
+            t('core:cantDownloadLocalFile'),
             NotificationTypes.default
           )
         );
@@ -186,20 +186,20 @@ function EntryContainerMenu(props: Props) {
     menuItems.push(
       <MenuItem
         data-tid="downloadFileTID"
-        aria-label={i18n.t('core:downloadFile')}
+        aria-label={t('core:downloadFile')}
         onClick={() => downloadFile()}
       >
         <ListItemIcon>
           <FileDownloadIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:downloadFile')} />
+        <ListItemText primary={t('core:downloadFile')} />
       </MenuItem>
     );
     menuItems.push(<Divider />);
     menuItems.push(
       <MenuItem
         data-tid="fileContainerSwitchToFullScreen"
-        aria-label={i18n.t('core:switchToFullscreen')}
+        aria-label={t('core:switchToFullscreen')}
         onClick={() => {
           toggleFullScreen();
           handleClose();
@@ -208,14 +208,14 @@ function EntryContainerMenu(props: Props) {
         <ListItemIcon>
           <FullScreenIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:switchToFullscreen')} />
+        <ListItemText primary={t('core:switchToFullscreen')} />
       </MenuItem>
     );
     if (desktopMode) {
       menuItems.push(
         <MenuItem
           data-tid="openInFullWidthTID"
-          aria-label={i18n.t('core:openInFullWidth')}
+          aria-label={t('core:openInFullWidth')}
           onClick={() => {
             dispatch(AppActions.toggleEntryFullWidth());
             handleClose();
@@ -224,7 +224,7 @@ function EntryContainerMenu(props: Props) {
           <ListItemIcon>
             <ExpandIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:openInFullWidth')} />
+          <ListItemText primary={t('core:openInFullWidth')} />
         </MenuItem>
       );
     }
@@ -232,26 +232,26 @@ function EntryContainerMenu(props: Props) {
     menuItems.push(
       <MenuItem
         data-tid="navigateToParentTID"
-        aria-label={i18n.t('core:navigateToParentDirectory')}
+        aria-label={t('core:navigateToParentDirectory')}
         onClick={navigateToFolder}
       >
         <ListItemIcon>
           <ParentFolderIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:navigateToParentDirectory')} />
+        <ListItemText primary={t('core:navigateToParentDirectory')} />
       </MenuItem>
     );
     if (!AppConfig.isCordova) {
       menuItems.push(
         <MenuItem
           data-tid="openInWindowTID"
-          aria-label={i18n.t('core:openInWindow')}
+          aria-label={t('core:openInWindow')}
           onClick={openInNewWindow}
         >
           <ListItemIcon>
             <OpenNewWindowIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:openInWindow')} />
+          <ListItemText primary={t('core:openInWindow')} />
         </MenuItem>
       );
     }
@@ -259,13 +259,13 @@ function EntryContainerMenu(props: Props) {
       menuItems.push(
         <MenuItem
           data-tid="shareFileTID"
-          aria-label={i18n.t('core:shareFile')}
+          aria-label={t('core:shareFile')}
           onClick={() => shareFile(`file:///${openedEntry.path}`)}
         >
           <ListItemIcon>
             <LinkIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:shareFile')} />
+          <ListItemText primary={t('core:shareFile')} />
         </MenuItem>
       );
     }
@@ -279,20 +279,20 @@ function EntryContainerMenu(props: Props) {
       menuItems.push(
         <MenuItem
           data-tid="openFileExternallyTID"
-          aria-label={i18n.t('core:openFileExternally')}
+          aria-label={t('core:openFileExternally')}
           onClick={openNatively}
         >
           <ListItemIcon>
             <OpenNativelyIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:openFileExternally')} />
+          <ListItemText primary={t('core:openFileExternally')} />
         </MenuItem>
       );
     }
     menuItems.push(
       <MenuItem
         data-tid="reloadPropertiesTID"
-        aria-label={i18n.t('core:reloadFile')}
+        aria-label={t('core:reloadFile')}
         onClick={() => {
           reloadDocument();
           handleClose();
@@ -301,7 +301,7 @@ function EntryContainerMenu(props: Props) {
         <ListItemIcon>
           <ReloadIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:reloadFile')} />
+        <ListItemText primary={t('core:reloadFile')} />
       </MenuItem>
     );
     if (!readOnlyMode) {
@@ -309,7 +309,7 @@ function EntryContainerMenu(props: Props) {
       menuItems.push(
         <MenuItem
           data-tid="deleteEntryTID"
-          aria-label={i18n.t('core:deleteEntry')}
+          aria-label={t('core:deleteEntry')}
           onClick={() => {
             setDeleteEntryModalOpened(true);
             handleClose();
@@ -318,7 +318,7 @@ function EntryContainerMenu(props: Props) {
           <ListItemIcon>
             <DeleteIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:deleteEntry')} />
+          <ListItemText primary={t('core:deleteEntry')} />
         </MenuItem>
       );
     }
@@ -327,26 +327,26 @@ function EntryContainerMenu(props: Props) {
     menuItems.push(
       <MenuItem
         data-tid="openInMainAreaTID"
-        aria-label={i18n.t('core:openInMainArea')}
+        aria-label={t('core:openInMainArea')}
         onClick={navigateToFolder}
       >
         <ListItemIcon>
           <NavigateToFolderIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:openInMainArea')} />
+        <ListItemText primary={t('core:openInMainArea')} />
       </MenuItem>
     );
     if (!AppConfig.isCordova) {
       menuItems.push(
         <MenuItem
           data-tid="openInWindowTID"
-          aria-label={i18n.t('core:openInWindow')}
+          aria-label={t('core:openInWindow')}
           onClick={openInNewWindow}
         >
           <ListItemIcon>
             <OpenNewWindowIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:openInWindow')} />
+          <ListItemText primary={t('core:openInWindow')} />
         </MenuItem>
       );
     }
@@ -360,13 +360,13 @@ function EntryContainerMenu(props: Props) {
       menuItems.push(
         <MenuItem
           data-tid="openDirectoryExternallyTID"
-          aria-label={i18n.t('core:openDirectoryExternally')}
+          aria-label={t('core:openDirectoryExternally')}
           onClick={openNatively}
         >
           <ListItemIcon>
             <OpenNativelyIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:openDirectoryExternally')} />
+          <ListItemText primary={t('core:openDirectoryExternally')} />
         </MenuItem>
       );
     }
@@ -374,7 +374,7 @@ function EntryContainerMenu(props: Props) {
       menuItems.push(
         <MenuItem
           data-tid="openInFullWidthTID"
-          aria-label={i18n.t('core:openInFullWidth')}
+          aria-label={t('core:openInFullWidth')}
           onClick={() => {
             dispatch(AppActions.toggleEntryFullWidth());
             handleClose();
@@ -383,7 +383,7 @@ function EntryContainerMenu(props: Props) {
           <ListItemIcon>
             <ExpandIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:openInFullWidth')} />
+          <ListItemText primary={t('core:openInFullWidth')} />
         </MenuItem>
       );
     }
@@ -391,7 +391,7 @@ function EntryContainerMenu(props: Props) {
     menuItems.push(
       <MenuItem
         data-tid="reloadFolderTID"
-        aria-label={i18n.t('core:reloadDirectory')}
+        aria-label={t('core:reloadDirectory')}
         onClick={() => {
           reloadDocument();
           handleClose();
@@ -400,14 +400,14 @@ function EntryContainerMenu(props: Props) {
         <ListItemIcon>
           <ReloadIcon />
         </ListItemIcon>
-        <ListItemText primary={i18n.t('core:reloadDirectory')} />
+        <ListItemText primary={t('core:reloadDirectory')} />
       </MenuItem>
     );
     if (!readOnlyMode) {
       menuItems.push(
         <MenuItem
           data-tid="deleteFolderTID"
-          aria-label={i18n.t('core:deleteDirectory')}
+          aria-label={t('core:deleteDirectory')}
           onClick={() => {
             setDeleteEntryModalOpened(true);
             handleClose();
@@ -416,7 +416,7 @@ function EntryContainerMenu(props: Props) {
           <ListItemIcon>
             <DeleteIcon />
           </ListItemIcon>
-          <ListItemText primary={i18n.t('core:deleteDirectory')} />
+          <ListItemText primary={t('core:deleteDirectory')} />
         </MenuItem>
       );
     }
@@ -448,13 +448,13 @@ function EntryContainerMenu(props: Props) {
           }}
           title={
             openedEntry.isFile
-              ? i18n.t('core:deleteConfirmationTitle')
-              : i18n.t('core:deleteDirectory')
+              ? t('core:deleteConfirmationTitle')
+              : t('core:deleteDirectory')
           }
           content={
             openedEntry.isFile
-              ? i18n.t('core:doYouWantToDeleteFile')
-              : i18n.t('core:deleteDirectoryContentConfirm', {
+              ? t('core:doYouWantToDeleteFile')
+              : t('core:deleteDirectoryContentConfirm', {
                   dirPath: openedEntry.path
                     ? extractDirectoryName(
                         openedEntry.path,

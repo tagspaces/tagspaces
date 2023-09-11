@@ -43,12 +43,11 @@ import SetBackgroundIcon from '@mui/icons-material/OpacityOutlined';
 import ClearBackgroundIcon from '@mui/icons-material/FormatColorResetOutlined';
 import {
   AttributionControl,
-  Map,
+  MapContainer,
   LayerGroup,
   Marker,
   Popup,
-  TileLayer,
-  withLeaflet
+  TileLayer
 } from 'react-leaflet';
 import { ButtonGroup, IconButton } from '@mui/material';
 import { formatBytes } from '@tagspaces/tagspaces-common/misc';
@@ -61,10 +60,8 @@ import {
 } from '@tagspaces/tagspaces-common/paths';
 import TagDropContainer from './TagDropContainer';
 import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
-import i18n from '../services/i18n';
 import {
   enhanceOpenedEntry,
-  convertMarkDown,
   fileNameValidation,
   dirNameValidation,
   normalizeUrl,
@@ -102,6 +99,7 @@ import useFirstRender from '-/utils/useFirstRender';
 import LinkGeneratorDialog from '-/components/dialogs/LinkGeneratorDialog';
 import { LinkIcon } from '-/components/CommonIcons';
 import TaggingActions from '-/reducers/tagging-actions';
+import { useTranslation } from 'react-i18next';
 
 const PREFIX = 'EntryProperties';
 
@@ -224,6 +222,7 @@ const defaultBackgrounds = [
 ];
 
 function EntryProperties(props: Props) {
+  const { t } = useTranslation();
   const theme = useTheme();
   const fileNameRef = useRef<HTMLInputElement>(null);
   const sharingLinkRef = useRef<HTMLInputElement>(null);
@@ -389,7 +388,7 @@ function EntryProperties(props: Props) {
 
   const toggleThumbFilesDialog = () => {
     if (!Pro) {
-      props.showNotification(i18n.t('core:thisFunctionalityIsAvailableInPro'));
+      props.showNotification(t('core:thisFunctionalityIsAvailableInPro'));
       return true;
     }
     if (!currentEntry.current.editMode && editName === undefined) {
@@ -399,7 +398,7 @@ function EntryProperties(props: Props) {
 
   const toggleBgndImgDialog = () => {
     if (!Pro) {
-      props.showNotification(i18n.t('core:thisFunctionalityIsAvailableInPro'));
+      props.showNotification(t('core:thisFunctionalityIsAvailableInPro'));
       return true;
     }
     if (!currentEntry.current.editMode && editName === undefined) {
@@ -459,11 +458,11 @@ function EntryProperties(props: Props) {
       return;
     }
     if (!Pro) {
-      props.showNotification(i18n.t('core:thisFunctionalityIsAvailableInPro'));
+      props.showNotification(t('core:thisFunctionalityIsAvailableInPro'));
       return;
     }
     if (!Pro.MetaOperations) {
-      props.showNotification(i18n.t('Saving color not supported'));
+      props.showNotification(t('Saving color not supported'));
       return;
     }
     setDisplayColorPicker(!displayColorPicker);
@@ -496,7 +495,7 @@ function EntryProperties(props: Props) {
           .catch(error => {
             props.switchCurrentLocationType(currentLocationId);
             console.warn('Error saving color for folder ' + error);
-            props.showNotification(i18n.t('Error saving color for folder'));
+            props.showNotification(t('Error saving color for folder'));
           });
       });
   };
@@ -660,7 +659,7 @@ function EntryProperties(props: Props) {
       })
       .catch(error => {
         console.warn('Error saving perspective for folder ' + error);
-        props.showNotification(i18n.t('Error saving perspective for folder'));
+        props.showNotification(t('Error saving perspective for folder'));
       });
   };
 
@@ -717,8 +716,8 @@ function EntryProperties(props: Props) {
             error={fileNameError.current}
             label={
               currentEntry.current.isFile
-                ? i18n.t('core:fileName')
-                : i18n.t('core:folderName')
+                ? t('core:fileName')
+                : t('core:folderName')
             }
             InputProps={{
               readOnly: editName === undefined,
@@ -732,7 +731,7 @@ function EntryProperties(props: Props) {
                             data-tid="cancelRenameEntryTID"
                             onClick={deactivateEditNameField}
                           >
-                            {i18n.t('core:cancel')}
+                            {t('core:cancel')}
                           </Button>
                           <Button
                             data-tid="confirmRenameEntryTID"
@@ -740,7 +739,7 @@ function EntryProperties(props: Props) {
                             onClick={renameEntry}
                             disabled={disableConfirmButton.current}
                           >
-                            {i18n.t('core:confirmSaveButton')}
+                            {t('core:confirmSaveButton')}
                           </Button>
                         </div>
                       ) : (
@@ -749,7 +748,7 @@ function EntryProperties(props: Props) {
                           color="primary"
                           onClick={activateEditNameField}
                         >
-                          {i18n.t('core:rename')}
+                          {t('core:rename')}
                         </Button>
                       )}
                     </div>
@@ -777,7 +776,7 @@ function EntryProperties(props: Props) {
           />
           {fileNameError.current && (
             <FormHelperText>
-              {i18n.t(
+              {t(
                 'core:' +
                   (currentEntry.current.isFile
                     ? 'fileNameHelp'
@@ -789,9 +788,9 @@ function EntryProperties(props: Props) {
         <Grid item xs={12} style={{ marginTop: 10 }}>
           <TagDropContainer entryPath={currentEntry.current.path}>
             <TagsSelect
-              label={i18n.t('core:fileTags')}
+              label={t('core:fileTags')}
               dataTid="PropertiesTagsSelectTID"
-              placeholderText={i18n.t('core:dropHere')}
+              placeholderText={t('core:dropHere')}
               isReadOnlyMode={
                 isReadOnlyMode ||
                 currentEntry.current.editMode ||
@@ -807,7 +806,7 @@ function EntryProperties(props: Props) {
 
         {geoLocation && (
           <Grid item xs={12}>
-            <Map
+            <MapContainer
               tap={true}
               style={{
                 height: '200px',
@@ -817,7 +816,6 @@ function EntryProperties(props: Props) {
                 borderRadius: 5,
                 border: '1px solid rgba(0, 0, 0, 0.38)'
               }}
-              animate={false}
               doubleClickZoom={true}
               keyboard={false}
               dragging={true}
@@ -844,9 +842,9 @@ function EntryProperties(props: Props) {
                     <Typography
                       style={{ margin: 0, color: theme.palette.text.primary }}
                     >
-                      {i18n.t('core:lat') + ' : ' + geoLocation.lat}
+                      {t('core:lat') + ' : ' + geoLocation.lat}
                       <br />
-                      {i18n.t('core:lat') + ' : ' + geoLocation.lng}
+                      {t('core:lat') + ' : ' + geoLocation.lng}
                     </Typography>
                     <br />
                     <ButtonGroup>
@@ -899,7 +897,7 @@ function EntryProperties(props: Props) {
                 </Marker>
               </LayerGroup>
               <AttributionControl position="bottomright" prefix="" />
-            </Map>
+            </MapContainer>
           </Grid>
         )}
 
@@ -909,7 +907,7 @@ function EntryProperties(props: Props) {
               margin="dense"
               fullWidth={true}
               value={ldtm}
-              label={i18n.t('core:fileLDTM')}
+              label={t('core:fileLDTM')}
               InputProps={{
                 readOnly: true
               }}
@@ -923,11 +921,11 @@ function EntryProperties(props: Props) {
                 !currentEntry.current.isFile &&
                 dirProps.current.dirsCount +
                   ' ' +
-                  i18n.t('core:directories') +
+                  t('core:directories') +
                   ', ' +
                   dirProps.current.filesCount +
                   ' ' +
-                  i18n.t('core:files')
+                  t('core:files')
               }
             >
               <TextField
@@ -936,13 +934,13 @@ function EntryProperties(props: Props) {
                 value={
                   currentEntry.current.size
                     ? formatBytes(currentEntry.current.size)
-                    : i18n.t(
+                    : t(
                         PlatformIO.haveObjectStoreSupport()
                           ? 'core:notAvailable'
                           : 'core:counting'
                       )
                 }
-                label={i18n.t('core:fileSize')}
+                label={t('core:fileSize')}
                 InputProps={{
                   readOnly: true
                 }}
@@ -958,7 +956,7 @@ function EntryProperties(props: Props) {
               name="path"
               title={currentEntry.current.url || currentEntry.current.path}
               fullWidth={true}
-              label={i18n.t('core:filePath')}
+              label={t('core:filePath')}
               data-tid="filePathProperties"
               value={currentEntry.current.path || ''}
               InputProps={{
@@ -986,7 +984,7 @@ function EntryProperties(props: Props) {
                           color="primary"
                           onClick={toggleMoveCopyFilesDialog}
                         >
-                          {i18n.t('core:move')}
+                          {t('core:move')}
                         </Button>
                       )}
                   </InputAdornment>
@@ -1011,8 +1009,8 @@ function EntryProperties(props: Props) {
               name="path"
               label={
                 <>
-                  {i18n.t('core:sharingLink')}
-                  <InfoIcon tooltip={i18n.t('core:sharingLinkTooltip')} />
+                  {t('core:sharingLink')}
+                  <InfoIcon tooltip={t('core:sharingLinkTooltip')} />
                 </>
               }
               fullWidth={true}
@@ -1027,7 +1025,7 @@ function EntryProperties(props: Props) {
                 ),
                 endAdornment: (
                   <InputAdornment position="end">
-                    <Tooltip title={i18n.t('core:copyLinkToClipboard')}>
+                    <Tooltip title={t('core:copyLinkToClipboard')}>
                       <Button
                         data-tid="copyLinkToClipboardTID"
                         color="primary"
@@ -1035,10 +1033,10 @@ function EntryProperties(props: Props) {
                           const promise = navigator.clipboard.writeText(
                             sharingLink
                           );
-                          props.showNotification(i18n.t('core:linkCopied'));
+                          props.showNotification(t('core:linkCopied'));
                         }}
                       >
-                        {i18n.t('core:copy')}
+                        {t('core:copy')}
                       </Button>
                     </Tooltip>
                   </InputAdornment>
@@ -1054,8 +1052,8 @@ function EntryProperties(props: Props) {
                 name="downloadLink"
                 label={
                   <>
-                    {i18n.t('core:downloadLink')}
-                    <InfoIcon tooltip={i18n.t('core:downloadLinkTooltip')} />
+                    {t('core:downloadLink')}
+                    <InfoIcon tooltip={t('core:downloadLinkTooltip')} />
                   </>
                 }
                 fullWidth
@@ -1064,7 +1062,7 @@ function EntryProperties(props: Props) {
                   readOnly: true,
                   startAdornment: (
                     <InputAdornment position="start" style={{ width: '100%' }}>
-                      <Tooltip title={i18n.t('core:generateDownloadLink')}>
+                      <Tooltip title={t('core:generateDownloadLink')}>
                         <Button
                           onClick={() => setShowSharingLinkDialog(true)}
                           startIcon={
@@ -1079,7 +1077,7 @@ function EntryProperties(props: Props) {
                               textOverflow: 'ellipsis'
                             }}
                           >
-                            {i18n.t('core:generateDownloadLink')}
+                            {t('core:generateDownloadLink')}
                           </span>
                         </Button>
                       </Tooltip>
@@ -1097,7 +1095,7 @@ function EntryProperties(props: Props) {
               language={language}
               onChange={changePerspective}
               defaultValue={perspectiveDefault}
-              label={i18n.t('core:choosePerspective')}
+              label={t('core:choosePerspective')}
               testId="changePerspectiveTID"
             />
           </Grid>
@@ -1110,9 +1108,9 @@ function EntryProperties(props: Props) {
               name="path"
               label={
                 <>
-                  {i18n.t('core:backgroundColor')}
+                  {t('core:backgroundColor')}
                   <InfoIcon
-                    tooltip={i18n.t(
+                    tooltip={t(
                       'The background color will not be visible if you have set a background image'
                     )}
                   />
@@ -1123,7 +1121,7 @@ function EntryProperties(props: Props) {
                 readOnly: true,
                 startAdornment: (
                   <InputAdornment position="start" style={{ marginTop: 10 }}>
-                    {/* <Tooltip title={i18n.t('core:changeBackgroundColor')}> */}
+                    {/* <Tooltip title={t('core:changeBackgroundColor')}> */}
                     <TransparentBackground>
                       <Button
                         fullWidth
@@ -1143,7 +1141,7 @@ function EntryProperties(props: Props) {
                   <InputAdornment position="end">
                     <Stack direction="row" spacing={1}>
                       {defaultBackgrounds.map((background, cnt) => (
-                        <ProTooltip tooltip={i18n.t('changeBackgroundColor')}>
+                        <ProTooltip tooltip={t('changeBackgroundColor')}>
                           <IconButton
                             key={cnt}
                             aria-label="fingerprint"
@@ -1158,7 +1156,7 @@ function EntryProperties(props: Props) {
                       ))}
                       {currentEntry.current.color && (
                         <>
-                          <ProTooltip tooltip={i18n.t('clearFolderColor')}>
+                          <ProTooltip tooltip={t('clearFolderColor')}>
                             <span>
                               <IconButton
                                 disabled={!Pro}
@@ -1186,7 +1184,7 @@ function EntryProperties(props: Props) {
           <Grid item xs={currentEntry.current.isFile ? 12 : 6}>
             <ThumbnailTextField
               margin="dense"
-              label={i18n.t('core:thumbnail')}
+              label={t('core:thumbnail')}
               fullWidth
               InputProps={{
                 readOnly: true,
@@ -1200,9 +1198,9 @@ function EntryProperties(props: Props) {
                       {!isReadOnlyMode &&
                         !currentEntry.current.editMode &&
                         editName === undefined && (
-                          <ProTooltip tooltip={i18n.t('changeThumbnail')}>
+                          <ProTooltip tooltip={t('changeThumbnail')}>
                             <Button fullWidth onClick={toggleThumbFilesDialog}>
-                              {i18n.t('core:change')}
+                              {t('core:change')}
                             </Button>
                             {/* <IconButton
                               disabled={!Pro}
@@ -1215,7 +1213,7 @@ function EntryProperties(props: Props) {
                             </IconButton> */}
                           </ProTooltip>
                         )}
-                      {/* <ProTooltip tooltip={i18n.t('changeThumbnail')}> */}
+                      {/* <ProTooltip tooltip={t('changeThumbnail')}> */}
                       <div
                         role="button"
                         tabIndex={0}
@@ -1244,7 +1242,7 @@ function EntryProperties(props: Props) {
             <Grid item xs={6}>
               <ThumbnailTextField
                 margin="dense"
-                label={i18n.t('core:backgroundImage')}
+                label={t('core:backgroundImage')}
                 fullWidth
                 InputProps={{
                   readOnly: true,
@@ -1258,11 +1256,9 @@ function EntryProperties(props: Props) {
                         {!isReadOnlyMode &&
                           !currentEntry.current.editMode &&
                           editName === undefined && (
-                            <ProTooltip
-                              tooltip={i18n.t('changeBackgroundImage')}
-                            >
+                            <ProTooltip tooltip={t('changeBackgroundImage')}>
                               <Button fullWidth onClick={toggleBgndImgDialog}>
-                                {i18n.t('core:change')}
+                                {t('core:change')}
                               </Button>
                               {/* <IconButton
                                 disabled={!Pro}
@@ -1275,7 +1271,7 @@ function EntryProperties(props: Props) {
                               </IconButton> */}
                             </ProTooltip>
                           )}
-                        {/* <ProTooltip tooltip={i18n.t('changeBackgroundImage')}> */}
+                        {/* <ProTooltip tooltip={t('changeBackgroundImage')}> */}
                         <div
                           role="button"
                           tabIndex={0}
@@ -1310,8 +1306,8 @@ function EntryProperties(props: Props) {
           onClose={() => {
             setConfirmResetColorDialogOpened(false);
           }}
-          title={i18n.t('core:confirm')}
-          content={i18n.t('core:confirmResetColor')}
+          title={t('core:confirm')}
+          content={t('core:confirmResetColor')}
           confirmCallback={result => {
             if (result) {
               handleChangeColor('transparent');
@@ -1438,12 +1434,10 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   JSON.stringify(nextProp.lastBackgroundImageChange) ===
     JSON.stringify(prevProp.lastBackgroundImageChange);
 
-export default withLeaflet(
-  connect(
-    mapStateToProps,
-    mapActionCreatorsToProps
-  )(
-    // @ts-ignore
-    React.memo(EntryProperties, areEqual)
-  )
+export default connect(
+  mapStateToProps,
+  mapActionCreatorsToProps
+)(
+  // @ts-ignore
+  React.memo(EntryProperties, areEqual)
 );

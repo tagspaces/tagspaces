@@ -6,7 +6,6 @@ import React from 'react';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
-import i18n from '-/services/i18n';
 import TagDropContainer from '-/components/TagDropContainer';
 
 export const fileOperationsEnabled = selectedEntries => {
@@ -237,7 +236,11 @@ export const renderCell = (
 
   const handleFileMoveDrop = (item, monitor) => {
     if (isReadOnlyMode) {
-      showNotification(i18n.t('core:dndDisabledReadOnlyMode'), 'error', true);
+      showNotification(
+        'Importing files is disabled because the location is in read-only mode.',
+        'error',
+        true
+      ); //i18n.t('core:dndDisabledReadOnlyMode')
       return;
     }
     if (monitor) {

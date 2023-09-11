@@ -23,9 +23,9 @@ import ListItemText from '@mui/material/ListItemText';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import { AvailablePerspectives, PerspectiveIDs } from '-/perspectives';
-import i18n from '../services/i18n';
 import { Pro } from '-/pro';
 import { BetaLabel, ProLabel } from '-/components/HelperComponents';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   language: string;
@@ -38,6 +38,8 @@ interface Props {
 function PerspectiveSelector(props: Props) {
   const { defaultValue, onChange, testId, label } = props;
 
+  const { t } = useTranslation();
+
   const perspectiveSelectorMenuItems = [];
   perspectiveSelectorMenuItems.push(
     <MenuItem
@@ -49,7 +51,7 @@ function PerspectiveSelector(props: Props) {
         <ListItemIcon style={{ paddingLeft: 3, paddingTop: 3 }}>
           <LayersClearIcon />
         </ListItemIcon>
-        <ListItemText>{i18n.t('core:unspecified')}</ListItemText>
+        <ListItemText>{t('core:unspecified')}</ListItemText>
       </div>
     </MenuItem>
   );

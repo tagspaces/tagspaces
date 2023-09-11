@@ -25,7 +25,7 @@ import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import i18n from '-/services/i18n';
+import { useTranslation } from 'react-i18next';
 
 /**
  * https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html
@@ -129,6 +129,7 @@ function ObjectStoreForm(props: Props) {
     setEndpointURL,
     setRegion
   } = props;
+  const { t } = useTranslation();
 
   function handleRegionChange(inputValue: any, value: string, reason: string) {
     if (reason === 'input') {
@@ -155,10 +156,10 @@ function ObjectStoreForm(props: Props) {
             data-tid="locationName"
             onChange={event => setStoreName(event.target.value)}
             value={storeName}
-            label={i18n.t('core:createLocationName')}
+            label={t('core:createLocationName')}
           />
           {/* {state.cloudErrorTextName && (
-          <FormHelperText>{i18n.t('core:invalidName')}</FormHelperText>
+          <FormHelperText>{t('core:invalidName')}</FormHelperText>
           )} */}
         </FormControl>
       </Grid>
@@ -172,10 +173,10 @@ function ObjectStoreForm(props: Props) {
             data-tid="locationPath"
             onChange={event => setStorePath(event.target.value)}
             value={storePath}
-            label={i18n.t('core:createLocationPath')}
+            label={t('core:createLocationPath')}
           />
           {/* {state.cloudErrorTextPath && (
-          <FormHelperText>{i18n.t('core:invalidPath')}</FormHelperText>
+          <FormHelperText>{t('core:invalidPath')}</FormHelperText>
           )} */}
         </FormControl>
       </Grid>
@@ -190,10 +191,10 @@ function ObjectStoreForm(props: Props) {
             inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
             onChange={event => setAccessKeyId(event.target.value)}
             value={accessKeyId}
-            label={i18n.t('core:accessKeyId')}
+            label={t('core:accessKeyId')}
           />
           {/* {state.cloudErrorAccessKey && (
-          <FormHelperText>{i18n.t('core:invalidAccessKey')}</FormHelperText>
+          <FormHelperText>{t('core:invalidAccessKey')}</FormHelperText>
           )} */}
         </FormControl>
       </Grid>
@@ -209,7 +210,7 @@ function ObjectStoreForm(props: Props) {
             inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
             onChange={event => setSecretAccessKey(event.target.value)}
             value={secretAccessKey}
-            label={i18n.t('core:secretAccessKey')}
+            label={t('core:secretAccessKey')}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -226,7 +227,7 @@ function ObjectStoreForm(props: Props) {
           />
           {/* {state.cloudErrorSecretAccessKey && (
           <FormHelperText>
-            {i18n.t('core:invalidSecretAccessKey')}
+            {t('core:invalidSecretAccessKey')}
           </FormHelperText>
           )} */}
         </FormControl>
@@ -241,7 +242,7 @@ function ObjectStoreForm(props: Props) {
             inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
             onChange={event => setSessionToken(event.target.value)}
             value={sessionToken}
-            label={i18n.t('core:sessionToken')}
+            label={t('core:sessionToken')}
           />
         </FormControl>
       </Grid>
@@ -255,11 +256,11 @@ function ObjectStoreForm(props: Props) {
             inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
             onChange={event => setBucketName(event.target.value)}
             value={bucketName}
-            label={i18n.t('core:bucketName')}
+            label={t('core:bucketName')}
           />
           {/* {state.cloudErrorBucketName && (
           <FormHelperText>
-            {i18n.t('core:invalidBucketName')}
+            {t('core:invalidBucketName')}
           </FormHelperText>
           )} */}
         </FormControl>
@@ -271,13 +272,13 @@ function ObjectStoreForm(props: Props) {
             name="endpointURL"
             fullWidth={true}
             data-tid="endpointURL"
-            placeholder={i18n.t('s3serviceURL')}
+            placeholder={t('s3serviceURL')}
             onChange={event => setEndpointURL(event.target.value)}
             value={endpointURL}
-            label={i18n.t('core:endpointURL')}
+            label={t('core:endpointURL')}
           />
           {/* {state.cloudErrorId && (
-          <FormHelperText>{i18n.t('core:missingId')}</FormHelperText>
+          <FormHelperText>{t('core:missingId')}</FormHelperText>
           )} */}
         </FormControl>
       </Grid>
@@ -289,11 +290,11 @@ function ObjectStoreForm(props: Props) {
             freeSolo
             onChange={handleRegionChange}
             onInputChange={handleRegionChange}
-            placeholder={i18n.t('core:regionSearch')}
+            placeholder={t('core:regionSearch')}
             renderInput={params => (
               <TextField
                 {...params}
-                label={i18n.t('core:regionSearch')}
+                label={t('core:regionSearch')}
                 margin="normal"
               />
             )}

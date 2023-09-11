@@ -33,7 +33,6 @@ import { getCurrentLanguage } from '-/reducers/settings';
 import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
 import { format, formatDistanceToNow } from 'date-fns';
-import i18n from '-/services/i18n';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PreviewIcon from '@mui/icons-material/Preview';
 import RestoreIcon from '@mui/icons-material/Restore';
@@ -51,10 +50,12 @@ import {
 } from '@mui/material';
 import { Pro } from '-/pro';
 import FilePreviewDialog from '-/components/dialogs/FilePreviewDialog';
+import { useTranslation } from 'react-i18next';
 
 const initialRowsPerPage = 10;
 
 function Revisions() {
+  const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const language = useSelector(getCurrentLanguage);
   const openedFiles: Array<OpenedEntry> = useSelector(getOpenedFiles);
@@ -196,8 +197,8 @@ function Revisions() {
           <TableHead>
             <TableRow>
               <TableCell>
-                {i18n.t('revisions')}
-                <Tooltip title={i18n.t('core:deleteAllRevisions')}>
+                {t('revisions')}
+                <Tooltip title={t('core:deleteAllRevisions')}>
                   <IconButton
                     aria-label="delete all revisions"
                     onClick={() =>
@@ -212,8 +213,8 @@ function Revisions() {
                   </IconButton>
                 </Tooltip>
               </TableCell>
-              <TableCell align="right">{i18n.t('created')}</TableCell>
-              <TableCell align="right">{i18n.t('actions')}</TableCell>
+              <TableCell align="right">{t('created')}</TableCell>
+              <TableCell align="right">{t('actions')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -234,7 +235,7 @@ function Revisions() {
                   {cellFormat(row.lmdt)}
                 </TableCell>
                 <TableCell align="right">
-                  <Tooltip title={i18n.t('core:view')}>
+                  <Tooltip title={t('core:view')}>
                     <IconButton
                       aria-label="view revision"
                       onClick={() => setPreviewDialogEntry(row)}
@@ -244,7 +245,7 @@ function Revisions() {
                       <PreviewIcon color="primary" />
                     </IconButton>
                   </Tooltip>
-                  <Tooltip title={i18n.t('core:restore')}>
+                  <Tooltip title={t('core:restore')}>
                     <IconButton
                       aria-label="restore revision"
                       onClick={() => restoreRevision(row.path)}
@@ -254,7 +255,7 @@ function Revisions() {
                       <RestoreIcon color="primary" />
                     </IconButton>
                   </Tooltip>
-                  <Tooltip title={i18n.t('core:delete')}>
+                  <Tooltip title={t('core:delete')}>
                     <IconButton
                       aria-label="delete revision"
                       onClick={() => deleteRevision(row.path)}

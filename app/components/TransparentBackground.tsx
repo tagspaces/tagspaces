@@ -18,7 +18,7 @@
 import React from 'react';
 
 interface Props {
-  children: Object;
+  children: any;
 }
 
 function TransparentBackground(props: Props) {

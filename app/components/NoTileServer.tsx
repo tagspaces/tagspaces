@@ -1,15 +1,16 @@
 import React from 'react';
-import i18n from '-/services/i18n';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   language: string;
 }
 
 function NoTileServer(props: Props) {
+  const { t } = useTranslation();
   return (
     <div style={{ textAlign: 'center' }}>
-      <h1>{i18n.t('core:noTileServersTitle')}</h1>
-      <h3>{i18n.t('core:addTileServersSettings')}</h3>
+      <h1>{t('core:noTileServersTitle')}</h1>
+      <h3>{t('core:addTileServersSettings')}</h3>
     </div>
   );
 }

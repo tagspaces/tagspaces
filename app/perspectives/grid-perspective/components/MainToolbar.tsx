@@ -36,7 +36,6 @@ import {
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AppConfig from '-/AppConfig';
-import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 import { ProTooltip } from '-/components/HelperComponents';
 import {
@@ -54,6 +53,7 @@ import {
   classes,
   GridStyles
 } from '-/perspectives/grid-perspective/components/styles.css';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   prefixDataTID?: string;
@@ -96,6 +96,8 @@ function MainToolbar(props: Props) {
     keyBindings,
     openShareFilesDialog
   } = props;
+
+  const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const readOnlyMode = useSelector(isReadOnlyMode);
 
@@ -111,14 +113,14 @@ function MainToolbar(props: Props) {
       >
         <Tooltip
           title={
-            i18n.t('core:navigateToParentDirectory') +
+            t('core:navigateToParentDirectory') +
             ' (' +
             keyBindings['openParentDirectory'].toUpperCase() +
             ')'
           }
         >
           <IconButton
-            aria-label={i18n.t('core:navigateToParentDirectory')}
+            aria-label={t('core:navigateToParentDirectory')}
             data-tid={prefixDataTID + 'PerspectiveOnBackButton'}
             onClick={() => {
               if (
@@ -138,7 +140,7 @@ function MainToolbar(props: Props) {
         </Tooltip>
         <Tooltip
           title={
-            i18n.t('core:toggleSelectAllFiles') +
+            t('core:toggleSelectAllFiles') +
             ' (' +
             keyBindings['selectAll'].toUpperCase() +
             ')'
@@ -152,9 +154,9 @@ function MainToolbar(props: Props) {
             {someFileSelected ? <SelectedIcon /> : <UnSelectedIcon />}
           </IconButton>
         </Tooltip>
-        <Tooltip title={i18n.t('core:directoryPropertiesTitle')}>
+        <Tooltip title={t('core:directoryPropertiesTitle')}>
           <IconButton
-            aria-label={i18n.t('core:directoryPropertiesTitle')}
+            aria-label={t('core:directoryPropertiesTitle')}
             data-tid="openFolderProperties"
             onClick={showProperties}
             size="large"
@@ -165,7 +167,7 @@ function MainToolbar(props: Props) {
         {!readOnlyMode && (
           <Tooltip
             title={
-              i18n.t('core:tagSelectedEntries') +
+              t('core:tagSelectedEntries') +
               ' (' +
               keyBindings['addRemoveTags'].toUpperCase() +
               ')'
@@ -173,7 +175,7 @@ function MainToolbar(props: Props) {
           >
             <span>
               <IconButton
-                aria-label={i18n.t('core:tagSelectedEntries')}
+                aria-label={t('core:tagSelectedEntries')}
                 data-tid={prefixDataTID + 'PerspectiveAddRemoveTags'}
                 disabled={selectedEntries.length < 1}
                 onClick={openAddRemoveTagsDialog}
@@ -185,10 +187,10 @@ function MainToolbar(props: Props) {
           </Tooltip>
         )}
         {!readOnlyMode && (
-          <Tooltip title={i18n.t('core:copyMoveSelectedEntries')}>
+          <Tooltip title={t('core:copyMoveSelectedEntries')}>
             <span>
               <IconButton
-                aria-label={i18n.t('core:copyMoveSelectedEntries')}
+                aria-label={t('core:copyMoveSelectedEntries')}
                 data-tid={prefixDataTID + 'PerspectiveCopySelectedFiles'}
                 disabled={selectedEntries.length < 1}
                 onClick={openMoveCopyFilesDialog}
@@ -202,7 +204,7 @@ function MainToolbar(props: Props) {
         {!readOnlyMode && (
           <Tooltip
             title={
-              i18n.t('core:deleteSelectedEntries') +
+              t('core:deleteSelectedEntries') +
               ' (' +
               keyBindings['deleteDocument'].toUpperCase() +
               ')'
@@ -210,7 +212,7 @@ function MainToolbar(props: Props) {
           >
             <span>
               <IconButton
-                aria-label={i18n.t('core:deleteSelectedEntries')}
+                aria-label={t('core:deleteSelectedEntries')}
                 data-tid={prefixDataTID + 'PerspectiveDeleteMultipleFiles'}
                 onClick={openDeleteFileDialog}
                 disabled={selectedEntries.length < 1}
@@ -222,10 +224,10 @@ function MainToolbar(props: Props) {
           </Tooltip>
         )}
         {openShareFilesDialog && (
-          <ProTooltip tooltip={i18n.t('core:shareFiles')}>
+          <ProTooltip tooltip={t('core:shareFiles')}>
             <span>
               <IconButton
-                aria-label={i18n.t('core:shareFiles')}
+                aria-label={t('core:shareFiles')}
                 data-tid={prefixDataTID + 'PerspectiveShareFiles'}
                 onClick={openShareFilesDialog}
                 disabled={selectedEntries.length < 1}
@@ -236,10 +238,10 @@ function MainToolbar(props: Props) {
             </span>
           </ProTooltip>
         )}
-        <Tooltip title={i18n.t('core:sort')}>
+        <Tooltip title={t('core:sort')}>
           <IconButton
-            // title={i18n.t('core:sort')}
-            aria-label={i18n.t('core:sort')}
+            // title={t('core:sort')}
+            aria-label={t('core:sort')}
             data-tid={prefixDataTID + 'PerspectiveSortMenu'}
             onClick={e => {
               handleSortingMenu(e);
@@ -251,7 +253,7 @@ function MainToolbar(props: Props) {
         </Tooltip>
         {Pro &&
         !AppConfig.isCordovaAndroid && ( // https://trello.com/c/z6ESlqxz/697-exports-to-json-or-csv-do-not-work-on-android
-            <Tooltip title={i18n.t('core:exportCsv')}>
+            <Tooltip title={t('core:exportCsv')}>
               <IconButton
                 data-tid={prefixDataTID + 'PerspectiveExportCsvMenuTID'}
                 onClick={props.handleExportCsvMenu}
@@ -262,7 +264,7 @@ function MainToolbar(props: Props) {
               </IconButton>
             </Tooltip>
           )}
-        <Tooltip title={i18n.t('core:perspectiveSettingsTitle')}>
+        <Tooltip title={t('core:perspectiveSettingsTitle')}>
           <IconButton
             data-tid={prefixDataTID + 'PerspectiveOptionsMenu'}
             onClick={openSettings}

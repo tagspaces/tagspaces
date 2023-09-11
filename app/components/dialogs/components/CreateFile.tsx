@@ -25,7 +25,6 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
-import i18n from '-/services/i18n';
 import {
   actions as AppActions,
   getDirectoryPath,
@@ -39,6 +38,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 import { FormControl } from '@mui/material';
 import { fileNameValidation } from '-/services/utils-io';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
+import { useTranslation } from 'react-i18next';
 
 const PREFIX = 'CreateFile';
 
@@ -61,6 +61,7 @@ interface Props {
 
 function CreateFile(props: Props) {
   const { onClose, tidPrefix } = props;
+  const { t } = useTranslation();
 
   const dispatch: AppDispatch = useDispatch();
   const firstRWLocation = useSelector(getFirstRWLocation);
@@ -181,7 +182,7 @@ function CreateFile(props: Props) {
             error={inputError}
             margin="dense"
             name="entryName"
-            label={i18n.t('core:newFileName')}
+            label={t('core:newFileName')}
             onChange={handleInputChange}
             onFocus={onInputFocus}
             onKeyDown={event => {
@@ -197,7 +198,7 @@ function CreateFile(props: Props) {
             data-tid={tid('newEntryDialogInputTID')}
           />
           {inputError && (
-            <FormHelperText>{i18n.t('core:fileNameHelp')}</FormHelperText>
+            <FormHelperText>{t('core:fileNameHelp')}</FormHelperText>
           )}
         </FormControl>
       </Grid>
@@ -215,14 +216,14 @@ function CreateFile(props: Props) {
             data-tid={tid('createMarkdownButton')}
             disabled={noSuitableLocation}
           >
-            <Tooltip title={i18n.t('createMarkdownTitle')}>
+            <Tooltip title={t('createMarkdownTitle')}>
               <Typography
                 variant="button"
                 style={{ fontWeight: 'bold' }}
                 display="block"
                 gutterBottom
               >
-                {i18n.t('createMarkdown')}
+                {t('createMarkdown')}
               </Typography>
             </Tooltip>
           </Button>
@@ -233,9 +234,9 @@ function CreateFile(props: Props) {
             data-tid={tid('createRichTextFileButton')}
             disabled={noSuitableLocation}
           >
-            <Tooltip title={i18n.t('createNoteTitle')}>
+            <Tooltip title={t('createNoteTitle')}>
               <Typography variant="button" display="block" gutterBottom>
-                {i18n.t('createRichTextFile')}
+                {t('createRichTextFile')}
               </Typography>
             </Tooltip>
           </Button>
@@ -246,9 +247,9 @@ function CreateFile(props: Props) {
             data-tid={tid('createTextFileButton')}
             disabled={noSuitableLocation}
           >
-            <Tooltip title={i18n.t('createTextFileTitle')}>
+            <Tooltip title={t('createTextFileTitle')}>
               <Typography variant="button" display="block" gutterBottom>
-                {i18n.t('createTextFile')}
+                {t('createTextFile')}
               </Typography>
             </Tooltip>
           </Button>

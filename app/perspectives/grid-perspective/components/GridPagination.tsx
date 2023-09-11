@@ -34,7 +34,6 @@ import {
   getThumbFileLocationForFile,
   extractDirectoryName
 } from '@tagspaces/tagspaces-common/paths';
-import i18n from '-/services/i18n';
 import {
   actions as AppActions,
   getCurrentDirectoryColor,
@@ -60,6 +59,7 @@ import {
 import PlatformIO from '-/services/platform-facade';
 import { MilkdownEditor } from '@tagspaces/tagspaces-md';
 import { renderCell } from '-/perspectives/common/main-container';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   isMetaLoaded: boolean;
@@ -132,6 +132,7 @@ interface Props {
 
 function GridPagination(props: Props) {
   let { directories } = props;
+  const { t } = useTranslation();
   const {
     style,
     showDirectories,
@@ -465,7 +466,7 @@ function GridPagination(props: Props) {
                   >
                     <Tooltip
                       data-tid={'currentDir_' + folderName}
-                      title={i18n.t('core:renameDirectory')}
+                      title={t('core:renameDirectory')}
                     >
                       <ButtonBase
                         style={{ fontSize: '1.5rem' }}
@@ -527,7 +528,7 @@ function GridPagination(props: Props) {
                     </Typography>
                   )}
                 </Box>
-                <Tooltip title={i18n.t('core:thumbnail')}>
+                <Tooltip title={t('core:thumbnail')}>
                   <div
                     style={{
                       borderRadius: 10,
@@ -630,11 +631,11 @@ function GridPagination(props: Props) {
               <Typography
                 style={{ padding: 15, color: theme.palette.text.secondary }}
               >
-                {i18n.t('core:noFileFolderFound')}
+                {t('core:noFileFolderFound')}
               </Typography>
               {!AppConfig.isCordova && (
                 <Typography style={{ color: theme.palette.text.secondary }}>
-                  {i18n.t('core:dragAndDropToImport')}
+                  {t('core:dragAndDropToImport')}
                 </Typography>
               )}
             </div>
@@ -652,11 +653,11 @@ function GridPagination(props: Props) {
                 <Typography
                   style={{ padding: 15, color: theme.palette.text.secondary }}
                 >
-                  {i18n.t('core:noFileButFoldersFound')}
+                  {t('core:noFileButFoldersFound')}
                 </Typography>
                 {!AppConfig.isCordova && (
                   <Typography style={{ color: theme.palette.text.secondary }}>
-                    {i18n.t('core:dragAndDropToImport')}
+                    {t('core:dragAndDropToImport')}
                   </Typography>
                 )}
               </div>

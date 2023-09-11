@@ -1,7 +1,7 @@
 import React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Chip from '@mui/material/Chip';
-import i18n from '-/services/i18n';
+import { useTranslation } from 'react-i18next';
 
 export interface Props {
   entries: Array<any>;
@@ -10,12 +10,13 @@ export interface Props {
 
 export function FilesDragPreview(props: Props) {
   const { entries, path } = props;
+  const { t } = useTranslation();
   return (
     <Chip
       size="small"
       avatar={<Avatar>{entries.length}</Avatar>}
       style={{ marginLeft: 15 }}
-      label={i18n.t('core:selectedFiles')}
+      label={t('core:selectedFiles')}
       color="primary"
     />
   );

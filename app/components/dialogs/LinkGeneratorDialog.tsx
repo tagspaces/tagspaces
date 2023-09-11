@@ -18,14 +18,12 @@
 
 import React, { ChangeEvent, useRef, useReducer, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
-import { Theme } from '@mui/material/styles';
 import { useDispatch } from 'react-redux';
 import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
-import i18n from '-/services/i18n';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -37,6 +35,7 @@ import MenuItem from '@mui/material/MenuItem';
 import PlatformIO from '-/services/platform-facade';
 import { actions } from '-/reducers/app';
 import Links from '-/content/links';
+import { useTranslation } from 'react-i18next';
 
 const PREFIX = 'LinkGeneratorDialog';
 
@@ -67,6 +66,7 @@ const QRTextField = TextField;
 
 function LinkGeneratorDialog(props: Props) {
   const { open, onClose, path } = props;
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const linkValidityDuration = useRef<number>(60 * 15);
   const signedLink = useRef<string>(undefined);
@@ -106,7 +106,7 @@ function LinkGeneratorDialog(props: Props) {
       scroll="paper"
     >
       <DialogTitle>
-        {i18n.t('core:generateDownloadLink')}{' '}
+        {t('core:generateDownloadLink')}{' '}
         <DialogCloseButton testId="closeLinkGeneratorTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent style={{ overflow: 'auto' }}>
@@ -116,8 +116,8 @@ function LinkGeneratorDialog(props: Props) {
           fullWidth={true}
           label={
             <>
-              {i18n.t('core:linkValidity')}
-              <InfoIcon tooltip={i18n.t('core:linkValidityTooltip')} />
+              {t('core:linkValidity')}
+              <InfoIcon tooltip={t('core:linkValidityTooltip')} />
             </>
           }
           value={linkValidityDuration.current}
@@ -126,11 +126,11 @@ function LinkGeneratorDialog(props: Props) {
             setSignedLink();
           }}
         >
-          <MenuItem value={60 * 15}>15 {i18n.t('core:minutes')}</MenuItem>
-          <MenuItem value={60 * 60}>60 {i18n.t('core:minutes')}</MenuItem>
-          <MenuItem value={60 * 60 * 24}>1 {i18n.t('core:day')}</MenuItem>
-          <MenuItem value={60 * 60 * 24 * 3}>3 {i18n.t('core:days')}</MenuItem>
-          <MenuItem value={60 * 60 * 24 * 7}>7 {i18n.t('core:days')}</MenuItem>
+          <MenuItem value={60 * 15}>15 {t('core:minutes')}</MenuItem>
+          <MenuItem value={60 * 60}>60 {t('core:minutes')}</MenuItem>
+          <MenuItem value={60 * 60 * 24}>1 {t('core:day')}</MenuItem>
+          <MenuItem value={60 * 60 * 24 * 3}>3 {t('core:days')}</MenuItem>
+          <MenuItem value={60 * 60 * 24 * 7}>7 {t('core:days')}</MenuItem>
         </TextField>
         <TextField
           margin="dense"
@@ -147,22 +147,22 @@ function LinkGeneratorDialog(props: Props) {
                       .writeText(signedLink.current)
                       .then(() => {
                         dispatch(
-                          actions.showNotification(i18n.t('core:linkCopied'))
+                          actions.showNotification(t('core:linkCopied'))
                         );
                       });
                   }}
                   color="primary"
                 >
-                  {i18n.t('core:copy')}
+                  {t('core:copy')}
                 </Button>
               </InputAdornment>
             )
           }}
           label={
             <>
-              {i18n.t('core:downloadLink')}
+              {t('core:downloadLink')}
               {/* <InfoIcon
-                tooltip={i18n.t(
+                tooltip={t(
                   'Link for time limited sharing on the Internet'
                 )}
               /> */}
@@ -174,7 +174,7 @@ function LinkGeneratorDialog(props: Props) {
         <QRTextField
           margin="dense"
           name="path"
-          label={i18n.t('core:qrCode')}
+          label={t('core:qrCode')}
           value={' '}
           InputProps={{
             readOnly: true,
@@ -210,7 +210,7 @@ function LinkGeneratorDialog(props: Props) {
             PlatformIO.openUrl(Links.documentationLinks.sharing);
           }}
         >
-          {i18n.t('help')}
+          {t('help')}
         </Button>
         <Button
           data-tid="closeLinkTID"
@@ -218,7 +218,7 @@ function LinkGeneratorDialog(props: Props) {
           variant="contained"
           color="primary"
         >
-          {i18n.t('core:close')}
+          {t('core:close')}
         </Button>
       </DialogActions>
     </StyledDialog>

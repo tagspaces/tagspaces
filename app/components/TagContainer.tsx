@@ -16,13 +16,11 @@
  *
  */
 
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import Button from '@mui/material/Button';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PlaceIcon from '@mui/icons-material/Place';
 import DateIcon from '@mui/icons-material/DateRange';
-import RemoveTagIcon from '@mui/icons-material/Close';
 import Tooltip from '-/components/Tooltip';
 import { formatDateTime } from '@tagspaces/tagspaces-common/misc';
 import { getTagColor, getTagTextColor } from '-/reducers/settings';
@@ -30,6 +28,7 @@ import { isGeoTag } from '-/utils/geo';
 import { isDateTimeTag, convertToDateTime, convertToDate } from '-/utils/dates';
 import { TS } from '-/tagspaces.namespace';
 import { getTagColors } from '-/services/taglibrary-utils';
+import TagContainerMenu from '-/components/TagContainerMenu';
 
 interface Props {
   tag: TS.Tag;
@@ -45,7 +44,7 @@ interface Props {
   isDragging?: boolean;
   tagMode?: 'default' | 'display' | 'remove';
   entryPath?: string;
-  deleteIcon?: Object;
+  deleteIcon?: any;
   addTags?: (paths: Array<string>, tags: Array<TS.Tag>, updateIndex?) => void;
   moveTag?: (
     tagTitle: string,
@@ -102,37 +101,6 @@ function TagContainer(props: Props) {
   let tid = 'tagContainer_';
   if (title && title.length > 0) {
     tid += title.replace(/ /g, '_');
-  }
-
-  function getActionMenu() {
-    if (
-      props.isReadOnlyMode // || (tag.functionality && tag.functionality.length > 0)
-    ) {
-      return <div style={{ width: 10 }} />;
-    }
-    return tagMode === 'remove' ? (
-      deleteIcon || (
-        <RemoveTagIcon
-          data-tid={'tagRemoveButton_' + title.replace(/ /g, '_')}
-          style={{
-            color: tag.textcolor,
-            fontSize: 20
-          }}
-          onClick={event => handleRemoveTag(event, [tag])}
-        />
-      )
-    ) : (
-      <MoreVertIcon
-        data-tid={'tagMoreButton_' + title.replace(/ /g, '_')}
-        style={{
-          color: tag.textcolor,
-          marginLeft: -5,
-          marginRight: -5,
-          height: 20,
-          top: 0
-        }}
-      />
-    );
   }
 
   if (tag.functionality && tag.functionality.length > 0) {
@@ -265,7 +233,12 @@ function TagContainer(props: Props) {
             )}
             {!isTagGeo && title}
           </span>
-          {getActionMenu()}
+          <TagContainerMenu
+            handleRemoveTag={handleRemoveTag}
+            tag={tag}
+            tagMode={tagMode}
+            deleteIcon={deleteIcon}
+          />
         </Button>
       </Tooltip>
     </div>

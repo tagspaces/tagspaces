@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useReducer, useRef } from 'react';
+import React, { useReducer } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import {
   extractTitle,
@@ -30,7 +30,6 @@ import {
   NotificationTypes,
   OpenedEntry
 } from '-/reducers/app';
-import i18n from '-/services/i18n';
 import Tooltip from '-/components/Tooltip';
 import PlatformIO from '-/services/platform-facade';
 import { FolderIcon, MoreMenuIcon } from '-/components/CommonIcons';
@@ -47,6 +46,7 @@ import BookmarkIcon from '@mui/icons-material/BookmarkTwoTone';
 import BookmarkAddIcon from '@mui/icons-material/BookmarkAddTwoTone';
 import TagsPreview from '-/components/TagsPreview';
 import { Pro } from '-/pro';
+import { useTranslation } from 'react-i18next';
 
 const FileBadge = styled('span')(({ theme }) => ({
   color: 'white',
@@ -67,6 +67,7 @@ interface Props {
 
 function EntryContainerTitle(props: Props) {
   const { openedFile, isFileChanged, reloadDocument, toggleFullScreen } = props;
+  const { t } = useTranslation();
   const theme = useTheme();
   const dispatch: AppDispatch = useDispatch();
   const locations = useSelector(getLocations);
@@ -91,9 +92,9 @@ function EntryContainerTitle(props: Props) {
     } else {
       dispatch(
         AppActions.showNotification(
-          i18n.t('core:toggleBookmark') +
+          t('core:toggleBookmark') +
             ' - ' +
-            i18n.t('thisFunctionalityIsAvailableInPro'),
+            t('thisFunctionalityIsAvailableInPro'),
           NotificationTypes.default
         )
       );
@@ -133,7 +134,7 @@ function EntryContainerTitle(props: Props) {
       {openedFile.isFile ? (
         <>
           {isFileChanged ? (
-            <Tooltip title={i18n.t('core:fileChanged')}>
+            <Tooltip title={t('core:fileChanged')}>
               <span
                 style={{
                   color: theme.palette.text.primary,
@@ -147,7 +148,7 @@ function EntryContainerTitle(props: Props) {
             ''
           )}
           <FileBadge
-            title={i18n.t('core:toggleEntryProperties')}
+            title={t('core:toggleEntryProperties')}
             data-tid="propsActionsMenuTID"
             aria-controls={Boolean(anchorEl) ? 'basic-menu' : undefined}
             aria-haspopup="true"
@@ -171,7 +172,7 @@ function EntryContainerTitle(props: Props) {
         </>
       ) : (
         <FileBadge
-          title={i18n.t('core:toggleEntryProperties')}
+          title={t('core:toggleEntryProperties')}
           data-tid="propsActionsMenuTID"
           aria-controls={Boolean(anchorEl) ? 'basic-menu' : undefined}
           aria-haspopup="true"
@@ -206,7 +207,7 @@ function EntryContainerTitle(props: Props) {
           {fileTitle}
         </Box>
       </Tooltip>
-      <ProTooltip tooltip={i18n.t('core:toggleBookmark')}>
+      <ProTooltip tooltip={t('core:toggleBookmark')}>
         <IconButton
           data-tid="toggleBookmarkTID"
           aria-label="bookmark"

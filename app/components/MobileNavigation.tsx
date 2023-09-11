@@ -42,7 +42,6 @@ import ProTeaser from '-/components/ProTeaser';
 import TagLibrary from '-/components/TagLibrary';
 import LocationManager from '-/components/LocationManager';
 import HelpFeedbackPanel from '-/components/HelpFeedbackPanel';
-import i18n from '-/services/i18n';
 import {
   actions as AppActions,
   isLocationManagerPanelOpened,
@@ -58,6 +57,7 @@ import UserDetailsPopover from '-/components/UserDetailsPopover';
 import { CreateFileIcon, LocalLocationIcon } from '-/components/CommonIcons';
 import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
+import { useTranslation } from 'react-i18next';
 
 const PREFIX = 'MobileNavigation';
 
@@ -83,6 +83,7 @@ interface Props {
 }
 
 function MobileNavigation(props: Props) {
+  const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
 
   const isLocationManagerPanelOpenedSelector = useSelector(
@@ -147,7 +148,7 @@ function MobileNavigation(props: Props) {
             marginLeft: 15
           }}
         >
-          <Tooltip title={i18n.t('core:createFileTitle')}>
+          <Tooltip title={t('core:createFileTitle')}>
             <Button
               data-tid="createNewFileTID"
               onClick={() => {
@@ -167,12 +168,12 @@ function MobileNavigation(props: Props) {
                   overflow: 'hidden'
                 }}
               >
-                {i18n.t('core:create')}
+                {t('core:create')}
               </span>
             </Button>
           </Tooltip>
           {!AppConfig.isCordova && (
-            <Tooltip title={i18n.t('core:openNewInstance')}>
+            <Tooltip title={t('core:openNewInstance')}>
               <Button
                 data-tid="newAppWindow"
                 onClick={() => PlatformIO.createNewInstance()}
@@ -188,7 +189,7 @@ function MobileNavigation(props: Props) {
                     overflow: 'hidden'
                   }}
                 >
-                  {i18n.t('core:newWindow')}
+                  {t('core:newWindow')}
                 </span>
               </Button>
             </Tooltip>
@@ -221,7 +222,7 @@ function MobileNavigation(props: Props) {
             setShowTeaserBanner={setShowTeaserBanner}
           />
         )}
-        <Tooltip title={i18n.t('core:settings')}>
+        <Tooltip title={t('core:settings')}>
           <IconButton
             id="verticalNavButton"
             data-tid="settings"
@@ -235,7 +236,7 @@ function MobileNavigation(props: Props) {
           </IconButton>
         </Tooltip>
         <ToggleButtonGroup exclusive>
-          <Tooltip title={i18n.t('core:locationManager')}>
+          <Tooltip title={t('core:locationManager')}>
             <ToggleButton
               onClick={openLocationManagerPanel}
               className={
@@ -249,7 +250,7 @@ function MobileNavigation(props: Props) {
               <LocalLocationIcon />
             </ToggleButton>
           </Tooltip>
-          <Tooltip title={i18n.t('core:tagLibrary')}>
+          <Tooltip title={t('core:tagLibrary')}>
             <ToggleButton
               data-tid="tagLibrary"
               onClick={openTagLibraryPanel}
@@ -263,7 +264,7 @@ function MobileNavigation(props: Props) {
               <TagLibraryIcon />
             </ToggleButton>
           </Tooltip>
-          <Tooltip title={i18n.t('core:quickAccess')}>
+          <Tooltip title={t('core:quickAccess')}>
             <ToggleButton
               data-tid="quickAccessButton"
               onClick={openSearchPanel}
@@ -277,7 +278,7 @@ function MobileNavigation(props: Props) {
               <RecentThingsIcon />
             </ToggleButton>
           </Tooltip>
-          <Tooltip title={i18n.t('core:helpFeedback')}>
+          <Tooltip title={t('core:helpFeedback')}>
             <ToggleButton
               data-tid="helpFeedback"
               onClick={openHelpFeedbackPanel}
@@ -294,7 +295,7 @@ function MobileNavigation(props: Props) {
         </ToggleButtonGroup>
         {cognitoUser ? (
           <>
-            <Tooltip title={i18n.t('core:userAccount')}>
+            <Tooltip title={t('core:userAccount')}>
               <IconButton
                 data-tid="accountCircleIconTID"
                 onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
@@ -323,7 +324,7 @@ function MobileNavigation(props: Props) {
             </Popover>
           </>
         ) : (
-          <Tooltip title={i18n.t('core:switchTheme')}>
+          <Tooltip title={t('core:switchTheme')}>
             <IconButton
               data-tid="switchTheme"
               onClick={switchTheme}

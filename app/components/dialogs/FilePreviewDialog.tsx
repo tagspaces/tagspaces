@@ -37,7 +37,6 @@ import {
   getSupportedFileTypes
 } from '-/reducers/settings';
 import { useSelector, useDispatch } from 'react-redux';
-import i18n from '-/services/i18n';
 import FileView from '-/components/FileView';
 import useEventListener from '-/utils/useEventListener';
 import PlatformIO from '-/services/platform-facade';
@@ -194,7 +193,7 @@ function FilePreviewDialog(props: Props) {
         style={{ cursor: 'move' }}
         id="draggable-dialog-title"
       >
-        {/*{i18n.t('core:importDialogTitle')}*/}
+        {/*{t('core:importDialogTitle')}*/}
         <DialogCloseButton testId="closeFilePreviewTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent

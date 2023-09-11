@@ -28,11 +28,9 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Dialog from '@mui/material/Dialog';
 import ColorPickerDialog from './ColorPickerDialog';
 import TransparentBackground from '../TransparentBackground';
-import i18n from '-/services/i18n';
 import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -43,6 +41,7 @@ interface Props {
 }
 
 function EditTagDialog(props: Props) {
+  const { t } = useTranslation();
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
   const [displayTextColorPicker, setDisplayTextColorPicker] = useState<boolean>(
     false
@@ -145,7 +144,7 @@ function EditTagDialog(props: Props) {
       }}
     >
       <DialogTitle style={{ overflow: 'visible' }}>
-        {i18n.t('core:editTagTitle')}
+        {t('core:editTagTitle')}
         {` '${title}'`}
         <DialogCloseButton testId="closeEditTagTID" onClose={onClose} />
       </DialogTitle>
@@ -166,7 +165,7 @@ function EditTagDialog(props: Props) {
               }}
             >
               <span className="text" style={{ fontWeight: 600 }}>
-                {`${i18n.t('core:modifiedDate')}: `}
+                {`${t('core:modifiedDate')}: `}
               </span>
               <time>
                 {format(
@@ -181,7 +180,7 @@ function EditTagDialog(props: Props) {
             margin="dense"
             name="title"
             autoFocus
-            label={i18n.t('core:editTag')}
+            label={t('core:editTag')}
             onChange={handleTagTitleChange}
             value={title}
             data-tid="editTagInput"
@@ -189,13 +188,13 @@ function EditTagDialog(props: Props) {
           />
           {inputError && (
             <FormHelperText style={styles.helpText}>
-              {i18n.t('core:tagTitleHelper')}
+              {t('core:tagTitleHelper')}
             </FormHelperText>
           )}
         </FormControl>
         <FormControl fullWidth={true}>
           <FormHelperText style={styles.helpText}>
-            {i18n.t('core:tagBackgroundColor')}
+            {t('core:tagBackgroundColor')}
           </FormHelperText>
           <TransparentBackground>
             <Button
@@ -218,7 +217,7 @@ function EditTagDialog(props: Props) {
         </FormControl>
         <FormControl fullWidth={true}>
           <FormHelperText style={styles.helpText}>
-            {i18n.t('core:tagForegroundColor')}
+            {t('core:tagForegroundColor')}
           </FormHelperText>
           <TransparentBackground>
             <Button
@@ -242,7 +241,7 @@ function EditTagDialog(props: Props) {
       </DialogContent>
       <DialogActions>
         <Button onClick={props.onClose} data-tid="closeEditTagDialog">
-          {i18n.t('core:cancel')}
+          {t('core:cancel')}
         </Button>
         <Button
           disabled={inputError}
@@ -251,7 +250,7 @@ function EditTagDialog(props: Props) {
           color="primary"
           variant="contained"
         >
-          {i18n.t('core:ok')}
+          {t('core:ok')}
         </Button>
       </DialogActions>
     </Dialog>

@@ -35,7 +35,6 @@ import {
   getCurrentLocationId,
   isReadOnlyMode
 } from '../reducers/app';
-import i18n from '../services/i18n';
 import PlatformIO from '../services/platform-facade';
 import TargetMoveFileBox from './TargetMoveFileBox';
 import DragItemTypes from './DragItemTypes';
@@ -43,13 +42,11 @@ import IOActions from '../reducers/io-actions';
 import DirectoryTreeView, {
   DirectoryTreeViewRef
 } from '-/components/DirectoryTreeView';
-import {
-  getCurrentLanguage,
-  getShowUnixHiddenEntries
-} from '-/reducers/settings';
+import { getCurrentLanguage } from '-/reducers/settings';
 import LocationContextMenu from '-/components/menus/LocationContextMenu';
 import { TS } from '-/tagspaces.namespace';
 import { classes, SidePanel } from '-/components/SidePanels.css';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   location: TS.Location;
@@ -61,6 +58,7 @@ interface Props {
 }
 
 function LocationView(props: Props) {
+  const { t } = useTranslation();
   const directoryTreeRef = useRef<DirectoryTreeViewRef>(null);
   const [
     locationDirectoryContextMenuAnchorEl,
@@ -149,7 +147,7 @@ function LocationView(props: Props) {
       if (readOnlyMode) {
         dispatch(
           AppActions.showNotification(
-            i18n.t('core:dndDisabledReadOnlyMode'),
+            t('core:dndDisabledReadOnlyMode'),
             'error',
             true
           )
@@ -159,7 +157,7 @@ function LocationView(props: Props) {
       if (!AppConfig.isWin && !path.startsWith('/')) {
         dispatch(
           AppActions.showNotification(
-            i18n.t('Moving file not possible'),
+            t('Moving file not possible'),
             'error',
             true
           )
@@ -169,7 +167,7 @@ function LocationView(props: Props) {
       if (AppConfig.isWin && !path.substr(1).startsWith(':')) {
         dispatch(
           AppActions.showNotification(
-            i18n.t('Moving file not possible'),
+            t('Moving file not possible'),
             'error',
             true
           )
@@ -289,7 +287,7 @@ function LocationView(props: Props) {
           }}
           onClick={handleLocationIconClick}
         >
-          <Tooltip title={i18n.t('clickToExpand')}>
+          <Tooltip title={t('clickToExpand')}>
             {isCloudLocation ? (
               <CloudLocationIcon
                 style={{
@@ -321,7 +319,7 @@ function LocationView(props: Props) {
         )}
         <ListItemSecondaryAction>
           <IconButton
-            aria-label={i18n.t('core:options')}
+            aria-label={t('core:options')}
             aria-haspopup="true"
             edge="end"
             data-tid={'locationMoreButton_' + location.name}
@@ -330,7 +328,7 @@ function LocationView(props: Props) {
             size="large"
           >
             {location.isDefault && (
-              <Tooltip title={i18n.t('core:thisIsStartupLocation')}>
+              <Tooltip title={t('core:thisIsStartupLocation')}>
                 <DefaultLocationIcon data-tid="startupIndication" />
               </Tooltip>
             )}

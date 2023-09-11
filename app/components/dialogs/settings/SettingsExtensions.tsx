@@ -37,12 +37,13 @@ import {
 } from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
 import { TS } from '-/tagspaces.namespace';
-import i18n from '-/services/i18n';
 import PlatformIO from '-/services/platform-facade';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import InfoIcon from '-/components/InfoIcon';
+import { useTranslation } from 'react-i18next';
 
 function SettingsExtensions() {
+  const { t } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [removeExtDialogOpened, setRemoveExtDialogOpened] = useState<
     TS.Extension
@@ -181,9 +182,9 @@ function SettingsExtensions() {
                         }
                       }}
                     />
-                    <Tooltip title={i18n.t('core:removeExtension')}>
+                    <Tooltip title={t('core:removeExtension')}>
                       <IconButton
-                        aria-label={i18n.t('core:delete')}
+                        aria-label={t('core:delete')}
                         onClick={() => {
                           setRemoveExtDialogOpened(ext);
                         }}
@@ -199,8 +200,8 @@ function SettingsExtensions() {
           <ConfirmDialog
             open={removeExtDialogOpened !== undefined}
             onClose={() => setRemoveExtDialogOpened(undefined)}
-            title={i18n.t('core:removeExtension')}
-            content={i18n.t('core:removeExtensionTooltip', {
+            title={t('core:removeExtension')}
+            content={t('core:removeExtensionTooltip', {
               extensionName: removeExtDialogOpened
                 ? removeExtDialogOpened.extensionName
                 : ''
@@ -233,7 +234,7 @@ function SettingsExtensions() {
                 onClick={() => fileInputRef.current.click()}
                 color="secondary"
               >
-                {i18n.t('core:installExtension')}
+                {t('core:installExtension')}
               </Button>
               <input
                 style={{ display: 'none' }}

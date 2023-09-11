@@ -19,7 +19,6 @@
 
 import Fuse from 'fuse.js';
 import jmespath from '@gorillastack/jmespath';
-import i18n from 'i18next';
 import { isPathStartsWith } from '@tagspaces/tagspaces-common/paths';
 import { parseGeoLocation } from '-/utils/geo';
 import { extractTimePeriod } from '-/utils/dates';
@@ -356,7 +355,7 @@ export default class Search {
     new Promise((resolve, reject) => {
       console.time('searchtime');
       if (!locationContent || locationContent.length === 0) {
-        reject(new Error(i18n.t('core:noIndex')));
+        reject(new Error('No Index')); //t('core:noIndex')));
       }
       const jmespathQuery = constructjmespathQuery(searchQuery);
       let results = prepareIndex(

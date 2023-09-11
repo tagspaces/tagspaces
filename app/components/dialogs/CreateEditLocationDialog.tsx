@@ -53,7 +53,6 @@ import {
   MenuItem,
   Select
 } from '@mui/material';
-import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 import ObjectStoreForm from './ObjectStoreForm';
 import LocalForm from './LocalForm';
@@ -79,6 +78,7 @@ import { loadLocationDataPromise } from '-/services/utils-io';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { ExpandIcon } from '-/components/CommonIcons';
 import MaxLoopsSelect from '-/components/dialogs/MaxLoopsSelect';
+import { useTranslation } from 'react-i18next';
 
 const PREFIX = 'CreateEditLocationDialog';
 
@@ -102,6 +102,7 @@ interface Props {
 }
 
 function CreateEditLocationDialog(props: Props) {
+  const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const isPersistTagsInSidecar = useSelector(getPersistTagsInSidecarFile);
   const locations: Array<TS.Location> = useSelector(getLocations);
@@ -534,8 +535,8 @@ function CreateEditLocationDialog(props: Props) {
     >
       <DialogTitle>
         {props.location
-          ? i18n.t('core:editLocationTitle')
-          : i18n.t('core:createLocationTitle')}
+          ? t('core:editLocationTitle')
+          : t('core:createLocationTitle')}
         <DialogCloseButton
           testId="closeCreateEditLocationTID"
           onClose={onClose}
@@ -553,31 +554,31 @@ function CreateEditLocationDialog(props: Props) {
             <FormGroup>
               <FormControl disabled={disableLocationTypeSwitch} fullWidth>
                 <InputLabel id="locationLabelID">
-                  {i18n.t('core:locationType')}
+                  {t('core:locationType')}
                 </InputLabel>
                 <Select
                   labelId="locationLabelID"
                   id="locationTypeID"
                   value={type}
-                  label={i18n.t('core:locationType')}
+                  label={t('core:locationType')}
                   onChange={(event: ChangeEvent<HTMLInputElement>) =>
                     setType(event.target.value)
                   }
                 >
                   {!AppConfig.isWeb && (
                     <MenuItem key="TYPE_LOCAL" value={locationType.TYPE_LOCAL}>
-                      {i18n.t('core:localLocation')}
+                      {t('core:localLocation')}
                     </MenuItem>
                   )}
                   <MenuItem key="TYPE_CLOUD" value={locationType.TYPE_CLOUD}>
-                    {i18n.t('core:objectStorage') + ' (AWS, MinIO, Wasabi,...)'}
+                    {t('core:objectStorage') + ' (AWS, MinIO, Wasabi,...)'}
                   </MenuItem>
                   {Pro && devMode && (
                     <MenuItem
                       key="TYPE_WEBDAV"
                       value={locationType.TYPE_WEBDAV}
                     >
-                      {i18n.t('core:webdavLocation') + ' (experimental)'}
+                      {t('core:webdavLocation') + ' (experimental)'}
                     </MenuItem>
                   )}
                 </Select>
@@ -597,7 +598,7 @@ function CreateEditLocationDialog(props: Props) {
                     }
                   />
                 }
-                label={i18n.t('core:startupLocation')}
+                label={t('core:startupLocation')}
               />
               <FormControlLabel
                 className={classes.formControl}
@@ -619,7 +620,7 @@ function CreateEditLocationDialog(props: Props) {
                 }
                 label={
                   <>
-                    {i18n.t('core:createFullTextIndex')}
+                    {t('core:createFullTextIndex')}
                     {Pro ? <BetaLabel /> : <ProLabel />}
                   </>
                 }
@@ -630,8 +631,8 @@ function CreateEditLocationDialog(props: Props) {
                   onClose={() => {
                     setFullTextIndexConfirmDialogOpened(false);
                   }}
-                  title={i18n.t('core:confirm')}
-                  content={i18n.t('core:fullTextIndexRegenerate')}
+                  title={t('core:confirm')}
+                  content={t('core:fullTextIndexRegenerate')}
                   confirmCallback={result => {
                     if (result) {
                       dispatch(
@@ -667,7 +668,7 @@ function CreateEditLocationDialog(props: Props) {
                 }
                 label={
                   <>
-                    {i18n.t('core:watchForChangesInLocation')}
+                    {t('core:watchForChangesInLocation')}
                     <ProLabel />
                   </>
                 }
@@ -682,7 +683,7 @@ function CreateEditLocationDialog(props: Props) {
             aria-controls="panelAdvanced-content"
             id="panelAdvanced-header"
           >
-            <Typography>{i18n.t('core:switchAdvanced')}</Typography>
+            <Typography>{t('core:switchAdvanced')}</Typography>
           </AccordionSummary>
           <AccordionDetails>
             <FormGroup style={{ width: '100%' }}>
@@ -696,7 +697,7 @@ function CreateEditLocationDialog(props: Props) {
                   placeholder="Unique location identifier"
                   onChange={event => setNewLocationID(event.target.value)}
                   value={newuuid}
-                  label={i18n.t('core:locationId')}
+                  label={t('core:locationId')}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end" style={{ height: 32 }}>
@@ -737,7 +738,7 @@ function CreateEditLocationDialog(props: Props) {
                 }
                 label={
                   <>
-                    {i18n.t('core:readonlyModeSwitch')}
+                    {t('core:readonlyModeSwitch')}
                     <ProLabel />
                   </>
                 }
@@ -759,7 +760,7 @@ function CreateEditLocationDialog(props: Props) {
                 }
                 label={
                   <>
-                    {i18n.t('core:disableIndexing')}
+                    {t('core:disableIndexing')}
                     <ProLabel />
                   </>
                 }
@@ -785,8 +786,8 @@ function CreateEditLocationDialog(props: Props) {
                 }
                 label={
                   <Typography>
-                    {i18n.t('core:maxIndexAge')}
-                    <InfoIcon tooltip={i18n.t('core:maxIndexAgeHelp')} />
+                    {t('core:maxIndexAge')}
+                    <InfoIcon tooltip={t('core:maxIndexAgeHelp')} />
                   </Typography>
                 }
               />
@@ -803,8 +804,8 @@ function CreateEditLocationDialog(props: Props) {
                   }
                   label={
                     <Typography>
-                      {i18n.t('core:maxLoops')}
-                      <InfoIcon tooltip={i18n.t('core:maxLoopsHelp')} />
+                      {t('core:maxLoops')}
+                      <InfoIcon tooltip={t('core:maxLoopsHelp')} />
                     </Typography>
                   }
                 />
@@ -817,13 +818,13 @@ function CreateEditLocationDialog(props: Props) {
                   control={
                     <Button size="small" variant="outlined" disabled>
                       {currentTagsSetting
-                        ? i18n.t('core:useSidecarFile')
-                        : i18n.t('core:renameFile')}
+                        ? t('core:useSidecarFile')
+                        : t('core:renameFile')}
                     </Button>
                   }
                   label={
                     <Typography variant="caption" display="block" gutterBottom>
-                      {i18n.t('core:fileTaggingSetting')}
+                      {t('core:fileTaggingSetting')}
                     </Typography>
                   }
                 />
@@ -846,18 +847,18 @@ function CreateEditLocationDialog(props: Props) {
                         <Tooltip
                           title={
                             <Typography color="inherit">
-                              {i18n.t('core:useDefaultTaggingType')}:{' '}
+                              {t('core:useDefaultTaggingType')}:{' '}
                               <b>
                                 {currentTagsSetting
-                                  ? i18n.t('core:useSidecarFile')
-                                  : i18n.t('core:renameFile')}
+                                  ? t('core:useSidecarFile')
+                                  : t('core:renameFile')}
                               </b>
                             </Typography>
                           }
                         >
                           <div style={{ display: 'flex' }}>
                             {persistTagsInSidecarFile === null && <CheckIcon />}
-                            &nbsp;{i18n.t('core:defaultSetting')}&nbsp;&nbsp;
+                            &nbsp;{t('core:defaultSetting')}&nbsp;&nbsp;
                           </div>
                         </Tooltip>
                       </ToggleButton>
@@ -869,14 +870,14 @@ function CreateEditLocationDialog(props: Props) {
                         <Tooltip
                           title={
                             <Typography color="inherit">
-                              {i18n.t('core:tagsInFilenameExplanation')}
+                              {t('core:tagsInFilenameExplanation')}
                             </Typography>
                           }
                         >
                           <div style={{ display: 'flex' }}>
                             {persistTagsInSidecarFile !== null &&
                               !persistTagsInSidecarFile && <CheckIcon />}
-                            &nbsp;{i18n.t('core:renameFile')}&nbsp;&nbsp;
+                            &nbsp;{t('core:renameFile')}&nbsp;&nbsp;
                           </div>
                         </Tooltip>
                       </ToggleButton>
@@ -888,14 +889,14 @@ function CreateEditLocationDialog(props: Props) {
                         <Tooltip
                           title={
                             <Typography color="inherit">
-                              {i18n.t('core:tagsInSidecarFileExplanation')}
+                              {t('core:tagsInSidecarFileExplanation')}
                             </Typography>
                           }
                         >
                           <div style={{ display: 'flex' }}>
                             {persistTagsInSidecarFile !== null &&
                               persistTagsInSidecarFile && <CheckIcon />}
-                            &nbsp;{i18n.t('core:useSidecarFile')}&nbsp;&nbsp;
+                            &nbsp;{t('core:useSidecarFile')}&nbsp;&nbsp;
                           </div>
                         </Tooltip>
                       </ToggleButton>
@@ -903,7 +904,7 @@ function CreateEditLocationDialog(props: Props) {
                   }
                   label={
                     <Typography gutterBottom>
-                      {i18n.t('core:fileTaggingSetting')}
+                      {t('core:fileTaggingSetting')}
                     </Typography>
                   }
                 />
@@ -915,7 +916,7 @@ function CreateEditLocationDialog(props: Props) {
                   labelPlacement="start"
                   style={{ justifyContent: 'space-between' }}
                   control={
-                    <ProTooltip tooltip={i18n.t('ignorePatternDialogTitle')}>
+                    <ProTooltip tooltip={t('ignorePatternDialogTitle')}>
                       <Button
                         color="primary"
                         disabled={!Pro}
@@ -923,14 +924,14 @@ function CreateEditLocationDialog(props: Props) {
                           setIgnorePatternDialogOpen(true);
                         }}
                       >
-                        {i18n.t('addEntryTags')}
+                        {t('addEntryTags')}
                       </Button>
                     </ProTooltip>
                   }
                   label={
                     <Typography>
-                      {i18n.t('core:ignorePatterns')}
-                      <InfoIcon tooltip={i18n.t('core:ignorePatternsHelp')} />
+                      {t('core:ignorePatterns')}
+                      <InfoIcon tooltip={t('core:ignorePatternsHelp')} />
                       <ProLabel />
                     </Typography>
                   }
@@ -949,7 +950,7 @@ function CreateEditLocationDialog(props: Props) {
                         <ListItemText primary={ignorePatternPath} />
                         <ListItemIcon
                           style={{ minWidth: 0 }}
-                          title={i18n.t('core:ignorePatternRemove')}
+                          title={t('core:ignorePatternRemove')}
                           onClick={() => {
                             const array = [...ignorePatternPaths];
                             const index = array.indexOf(ignorePatternPath);
@@ -982,7 +983,7 @@ function CreateEditLocationDialog(props: Props) {
       <DialogActions
         style={fullScreen ? { padding: '10px 30px 30px 30px' } : {}}
       >
-        <Button onClick={() => onClose()}>{i18n.t('core:cancel')}</Button>
+        <Button onClick={() => onClose()}>{t('core:cancel')}</Button>
         <Button
           disabled={disableConfirmButton()}
           onClick={onConfirm}
@@ -990,7 +991,7 @@ function CreateEditLocationDialog(props: Props) {
           color="primary"
           variant="contained"
         >
-          {i18n.t('core:ok')}
+          {t('core:ok')}
         </Button>
       </DialogActions>
     </StyledDialog>

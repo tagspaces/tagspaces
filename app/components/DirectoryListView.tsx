@@ -13,7 +13,6 @@ import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
 import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import AppConfig from '-/AppConfig';
-import i18n from '-/services/i18n';
 import { TS } from '-/tagspaces.namespace';
 import {
   actions as AppActions,
@@ -24,6 +23,7 @@ import { ParentFolderIcon } from '-/components/CommonIcons';
 import { getLocations } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-facade';
 import { Pro } from '-/pro';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   setTargetDir: (dirPath: string) => void;
@@ -31,6 +31,7 @@ interface Props {
 }
 function DirectoryListView(props: Props) {
   const { currentDirectoryPath, setTargetDir } = props;
+  const { t } = useTranslation();
   const locations: Array<TS.Location> = useSelector(getLocations);
   const currentLocationId: string = useSelector(getCurrentLocationId);
   const showUnixHiddenEntries: boolean = useSelector(getShowUnixHiddenEntries);
@@ -140,9 +141,7 @@ function DirectoryListView(props: Props) {
         </ListItem>
       ));
     }
-    return (
-      <div style={{ padding: 10 }}>{i18n.t('core:noSubFoldersFound')}</div>
-    );
+    return <div style={{ padding: 10 }}>{t('core:noSubFoldersFound')}</div>;
   }
 
   return (
@@ -165,7 +164,7 @@ function DirectoryListView(props: Props) {
           }
         }}
       >
-        {i18n.t('core:navigateToParentDirectory')}
+        {t('core:navigateToParentDirectory')}
       </Button>
       <Button
         variant="text"
@@ -189,7 +188,7 @@ function DirectoryListView(props: Props) {
           );
         }}
       >
-        {i18n.t('core:newSubdirectory')}
+        {t('core:newSubdirectory')}
       </Button>
       <List
         dense
