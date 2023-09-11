@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import AppConfig from '@tagspaces/tagspaces-common/AppConfig';
+import { AppConfig } from '@tagspaces/tagspaces-common';
 
 const {
   baseName,
