@@ -1,4 +1,4 @@
-import * as AppConfig from '@tagspaces/tagspaces-common/AppConfig';
+import { AppConfig } from '@tagspaces/tagspaces-common';
 
 AppConfig.mainToolbarHeight = 101;
 AppConfig.editableFiles = [

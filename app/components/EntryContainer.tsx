@@ -177,7 +177,7 @@ function EntryContainer(props: Props) {
   const theme = useTheme();
   // const [percent, setPercent] = React.useState<number | undefined>(undefined);
   const percent = useRef<number | undefined>(undefined);
-  const timer = useRef(null);
+  const timer = useRef<NodeJS.Timeout>(null);
   const openedFile = openedFiles[0];
   const openedFilePath = useRef(openedFile.path);
 
