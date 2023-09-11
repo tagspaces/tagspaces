@@ -19,10 +19,8 @@
 import React from 'react';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import RefreshIcon from '@mui/icons-material/Refresh';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Menu, MenuList, MenuItem } from '@mui/material';
+import { DeleteIcon, ReloadIcon } from '-/components/CommonIcons';
 import { Pro } from '../../pro';
 import { useTranslation } from 'react-i18next';
 
@@ -49,7 +47,7 @@ function BookmarksMenu(props: Props) {
       }}
     >
       <ListItemIcon>
-        <RefreshIcon />
+        <ReloadIcon />
       </ListItemIcon>
       <ListItemText primary={<>{t('core:refresh')}</>} />
     </MenuItem>
@@ -72,11 +70,9 @@ function BookmarksMenu(props: Props) {
   );
 
   return (
-    <div style={{ overflowY: 'hidden' }}>
-      <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
-        {menuItems}
-      </Menu>
-    </div>
+    <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
+      <MenuList>{menuItems}</MenuList>
+    </Menu>
   );
 }
 

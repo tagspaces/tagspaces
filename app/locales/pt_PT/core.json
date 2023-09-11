@@ -41,7 +41,8 @@
   "errorDeletingDirectoryAlert": "Deleting '{{dirPath}}' failed. Folder probably not empty.",
   "deletingDirectorySuccessfull": "Folder '{{dirPath}}' successfully deleted.",
   "filePropertiesDescription": "Descrição",
-  "directoryPropertiesTitle": "Folder Properties",
+  "directoryPropertiesTitle": "Folder Details",
+  "filePropertiesTitle": "File Details",
   "createLocationTitle": "Ligar uma Localização",
   "createLocation": "New location",
   "exportLocationTitle": "Configuração de Diretório de Exportação",
@@ -801,5 +802,6 @@
   "copyToClipboard": "Copy to clipboard",
   "generatedHTMLCopied": "Download links copied to clipboard",
   "generatedHTMLFailed": "Error while copying to clipboard",
+  "details": "Details",
   "-": "-"
 }

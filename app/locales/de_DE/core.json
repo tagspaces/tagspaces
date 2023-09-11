@@ -41,7 +41,8 @@
   "errorDeletingDirectoryAlert": "Löschen von '{{dirPath}}' fehlgeschlagen, Ordner möglicherweise nicht leer.",
   "deletingDirectorySuccessfull": "Ordner '{{dirPath}}' erfolgreich gelöscht.",
   "filePropertiesDescription": "Beschreibung",
-  "directoryPropertiesTitle": "Ordner Eigenschaften",
+  "directoryPropertiesTitle": "Verzeichnis Details",
+  "filePropertiesTitle": "Datei Details",
   "createLocationTitle": "Mit Ort verbinden",
   "createLocation": "Neues Ort",
   "exportLocationTitle": "Exportiere Ort-Konfigurationen",
@@ -782,7 +783,7 @@
   "switchToMasonry": "Switch to masonry view",
   "switchToDefaultPerspective": "Zur Standardperspektive wechseln",
   "noImagesInFolder": "Dieser Ordner enthält keine Bilder",
-  "warningDirectoryIsTruncated": "Folder content is truncated!",
+  "warningDirectoryIsTruncated": "Inhalt des Verzeichnisses ist abgeschnitten",
   "maxLoops": "Limit list objects in a bucket",
   "maxLoopsHelp": "The app can handle as much files in one S3-folder as specified in this setting",
   "enterTagTimePeriodFrom": "Zeitinterval von",
@@ -801,5 +802,6 @@
   "copyToClipboard": "In Zwischenspeicher kopieren",
   "generatedHTMLCopied": "Link sind in Zwischenspeichert kopiert",
   "generatedHTMLFailed": "Fehler beim Kopieren in Zwischenspeicher",
+  "details": "Details",
   "-": "-"
 }

@@ -59,7 +59,7 @@ export const renderHistory = (
               style={{ paddingLeft: 0 }}
               key={item.creationTimeStamp}
             >
-              <Grid item xs={10} style={{ width: '100%' }}>
+              <Grid item xs={10} style={{ minWidth: 245, maxWidth: 245 }}>
                 <Button
                   data-tid={key + 'TID' + dataTidFormat(itemName)}
                   style={{

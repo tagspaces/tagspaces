@@ -24,16 +24,12 @@ import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/RemoveCircleOutline';
-import BookmarkTwoToneIcon from '@mui/icons-material/BookmarkTwoTone';
 import MenuIcon from '@mui/icons-material/MoreVert';
 import SearchIcon from '@mui/icons-material/FilterAltTwoTone';
-import HistoryIcon from '@mui/icons-material/ChangeHistoryTwoTone';
 import ArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import ArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import Typography from '@mui/material/Typography';
 import ListItem from '@mui/material/ListItem';
-import AppConfig from '-/AppConfig';
 import {
   actions as LocationIndexActions,
   getSearchQuery
@@ -53,12 +49,6 @@ import { actions as SearchActions, getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
 import SearchMenu from '-/components/menus/SearchMenu';
 import { actions as AppActions, getCurrentLocationId } from '-/reducers/app';
-import { Tooltip } from '@mui/material';
-import {
-  extractFileName,
-  extractDirectoryName
-} from '@tagspaces/tagspaces-common/paths';
-import PlatformIO from '-/services/platform-facade';
 import HistoryMenu from '-/components/menus/HistoryMenu';
 import BookmarksMenu from '-/components/menus/BookmarksMenu';
 import { renderHistory } from '-/components/RenderHistory';
@@ -216,7 +206,8 @@ function StoredSearches(props: Props) {
           paddingTop: 0,
           marginTop: 0,
           height: 'calc(100% - ' + reduceHeightBy + 'px)',
-          overflowY: 'auto'
+          overflowY: 'auto',
+          overflowX: 'hidden'
         }}
       >
         <Grid container direction="row">
@@ -283,7 +274,7 @@ function StoredSearches(props: Props) {
         {props.storedSearchesVisible &&
           props.searches.map(search => (
             <ListItem dense style={{ paddingLeft: 0 }} key={search.uuid}>
-              <Grid item xs={10} style={{ width: '100%' }}>
+              <Grid item xs={10} style={{ width: 250 }}>
                 <Button
                   data-tid={
                     'StoredSearchTID' +
