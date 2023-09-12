@@ -777,7 +777,7 @@ function GridPerspective(props: Props) {
             display: 'grid',
             gridGap: '5px 5px',
             padding: 5,
-            paddingBottom: 10,
+            paddingBottom: 70,
             gridTemplateColumns:
               'repeat(auto-fit,minmax(' + entryWidth + 'px,1fr))'
           }}

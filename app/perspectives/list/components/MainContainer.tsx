@@ -776,6 +776,7 @@ function ListPerspective(props: Props) {
           gridPageLimit={gridPageLimit.current}
           style={{
             marginTop: 5,
+            marginBottom: 70,
             paddingRight: 4,
             paddingLeft: 4,
             gridTemplateColumns: 'none'
