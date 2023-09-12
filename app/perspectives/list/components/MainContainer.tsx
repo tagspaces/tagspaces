@@ -69,7 +69,6 @@ interface Props {
   ) => void;
   openDirectory: (path: string) => void;
   showInFileManager: (path: string) => void;
-  loadParentDirectoryContent: () => void;
   removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
   directoryContent: Array<TS.FileSystemEntry>;
   lastSearchTimestamp: number;
@@ -91,7 +90,6 @@ function getSettings(directoryMeta: TS.FileSystemEntryMeta): TS.FolderSettings {
 
 function ListPerspective(props: Props) {
   const {
-    loadParentDirectoryContent,
     currentDirectoryPath,
     openRenameEntryDialog,
     directoryContent,
@@ -111,7 +109,6 @@ function ListPerspective(props: Props) {
   );
   const lastSelectedEntryPath = useSelector(getLastSelectedEntryPath);
   const keyBindings = useSelector(getKeyBindingObject);
-  const currentLocation: TS.Location = useSelector(getCurrentLocation);
   const searchFilter: string = useSelector(getSearchFilter);
   const editedEntryPaths: Array<TS.EditedEntryPath> = useSelector(
     getEditedEntryPaths
@@ -475,10 +472,10 @@ function ListPerspective(props: Props) {
     }
   };
 
-  const handleLayoutSwitch = (type: string) => {
+  /*const handleLayoutSwitch = (type: string) => {
     layoutType.current = type;
     // forceUpdate();
-  };
+  };*/
 
   const handleGridPageLimit = (limit: number) => {
     gridPageLimit.current = limit;
@@ -515,10 +512,8 @@ function ListPerspective(props: Props) {
     selectedEntryPath.current = undefined;
   };
 
-  const someFileSelected = selectedEntries.length > 1;
-
   const toggleSelectAllFiles = () => {
-    if (someFileSelected) {
+    if (selectedEntries.length > 1) {
       clearSelection();
     } else {
       if (!lastSearchTimestamp) {
@@ -756,26 +751,18 @@ function ListPerspective(props: Props) {
   return (
     <div
       style={{
-        height: 'calc(100% - 48px)'
+        height: '100%' //'calc(100% - 48px)'
       }}
       data-tid={defaultSettings.testID}
     >
       <MainToolbar
         prefixDataTID={'list'}
-        layoutType={layoutType.current}
-        selectedEntries={selectedEntries}
-        loadParentDirectoryContent={loadParentDirectoryContent}
         toggleSelectAllFiles={toggleSelectAllFiles}
-        someFileSelected={someFileSelected}
-        handleLayoutSwitch={handleLayoutSwitch}
         openAddRemoveTagsDialog={openAddRemoveTagsDialog}
-        fileOperationsEnabled={fileOperationsEnabled(selectedEntries)}
         openMoveCopyFilesDialog={openMoveCopyFilesDialog}
-        openDeleteFileDialog={openDeleteFileDialog}
         handleSortingMenu={handleSortingMenu}
         handleExportCsvMenu={handleExportCsvMenu}
         openSettings={openSettings}
-        directoryPath={currentDirectoryPath}
         openShareFilesDialog={
           PlatformIO.haveObjectStoreSupport() ? openShareFilesDialog : undefined
         }

@@ -35,6 +35,7 @@ import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { getCurrentLocation } from '-/reducers/locations';
+import { getDirectoryPath } from '-/reducers/app';
 
 const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   const backgroundColor =
@@ -61,7 +62,6 @@ const NoWrapBreadcrumb = styled(StyledBreadcrumb)(({ theme }) => {
 });
 
 interface Props {
-  currentDirectoryPath: string;
   loadDirectoryContent: (
     path: string,
     generateThumbnails: boolean,
@@ -80,6 +80,7 @@ function PathBreadcrumbs(props: Props) {
   const { t } = useTranslation();
   let pathParts: Array<string> = [];
   const currentLocation = useSelector(getCurrentLocation);
+  const currentDirectoryPath = useSelector(getDirectoryPath);
 
   const [
     directoryContextMenuAnchorEl,
@@ -87,7 +88,6 @@ function PathBreadcrumbs(props: Props) {
   ] = useState<null | HTMLElement>(null);
 
   const {
-    currentDirectoryPath,
     loadDirectoryContent,
     setSelectedEntries,
     openDirectory,

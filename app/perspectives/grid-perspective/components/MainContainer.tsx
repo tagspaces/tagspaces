@@ -68,7 +68,6 @@ interface Props {
   ) => void;
   openDirectory: (path: string) => void;
   showInFileManager: (path: string) => void;
-  loadParentDirectoryContent: () => void;
   removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
   directoryContent: Array<TS.FileSystemEntry>;
   lastSearchTimestamp: number;
@@ -90,7 +89,6 @@ function getSettings(directoryMeta: TS.FileSystemEntryMeta): TS.FolderSettings {
 
 function GridPerspective(props: Props) {
   const {
-    loadParentDirectoryContent,
     currentDirectoryPath,
     openRenameEntryDialog,
     directoryContent,
@@ -102,6 +100,7 @@ function GridPerspective(props: Props) {
     openDirectory
   } = props;
 
+  const dispatch: AppDispatch = useDispatch();
   const directoryMeta: TS.FileSystemEntryMeta = useSelector(getDirectoryMeta);
   const readOnlyMode = useSelector(isReadOnlyMode);
   const desktopMode = useSelector(getDesktopMode);
@@ -114,8 +113,6 @@ function GridPerspective(props: Props) {
   const editedEntryPaths: Array<TS.EditedEntryPath> = useSelector(
     getEditedEntryPaths
   );
-
-  const dispatch: AppDispatch = useDispatch();
 
   // Create functions that dispatch actions
   const handleMoveFiles = (files: Array<string>, destination: string) =>
@@ -473,10 +470,10 @@ function GridPerspective(props: Props) {
     }
   };
 
-  const handleLayoutSwitch = (type: string) => {
+  /*const handleLayoutSwitch = (type: string) => {
     layoutType.current = type;
     // forceUpdate();
-  };
+  };*/
 
   const handleGridPageLimit = (limit: number) => {
     gridPageLimit.current = limit;
@@ -513,10 +510,8 @@ function GridPerspective(props: Props) {
     selectedEntryPath.current = undefined;
   };
 
-  const someFileSelected = selectedEntries.length > 1;
-
   const toggleSelectAllFiles = () => {
-    if (someFileSelected) {
+    if (selectedEntries.length > 1) {
       clearSelection();
     } else {
       if (!lastSearchTimestamp) {
@@ -754,26 +749,18 @@ function GridPerspective(props: Props) {
   return (
     <div
       style={{
-        height: 'calc(100% - 48px)'
+        height: '100%' //'calc(100% - 48px)'
       }}
       data-tid={defaultSettings.testID}
     >
       <MainToolbar
         prefixDataTID={'grid'}
-        layoutType={layoutType.current}
-        selectedEntries={selectedEntries}
-        loadParentDirectoryContent={loadParentDirectoryContent}
         toggleSelectAllFiles={toggleSelectAllFiles}
-        someFileSelected={someFileSelected}
-        handleLayoutSwitch={handleLayoutSwitch}
         openAddRemoveTagsDialog={openAddRemoveTagsDialog}
-        fileOperationsEnabled={fileOperationsEnabled(selectedEntries)}
         openMoveCopyFilesDialog={openMoveCopyFilesDialog}
-        openDeleteFileDialog={openDeleteFileDialog}
         handleSortingMenu={handleSortingMenu}
         handleExportCsvMenu={handleExportCsvMenu}
         openSettings={openSettings}
-        directoryPath={currentDirectoryPath}
         openShareFilesDialog={
           PlatformIO.haveObjectStoreSupport() ? openShareFilesDialog : undefined
         }
@@ -978,6 +965,4 @@ function GridPerspective(props: Props) {
     </div>
   );
 }
-const areEqual = (prevProp: Props, nextProp: Props) => false;
-
-export default React.memo(GridPerspective, areEqual);
+export default GridPerspective;

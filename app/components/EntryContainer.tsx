@@ -59,7 +59,8 @@ import {
   OpenedEntry,
   NotificationTypes,
   isReadOnlyMode,
-  actions as AppActions
+  actions as AppActions,
+  getDirectoryPath
 } from '-/reducers/app';
 import useEventListener from '-/utils/useEventListener';
 import { TS } from '-/tagspaces.namespace';
@@ -149,7 +150,6 @@ interface Props {
     generateThumbnails: boolean,
     loadDirMeta?: boolean
   ) => void;
-  currentDirectoryPath: string | null;
   desktopMode: boolean;
   switchLocationType: (locationId: string) => Promise<string | null>;
   switchCurrentLocationType: (currentLocationId) => Promise<boolean>;
@@ -163,7 +163,6 @@ function EntryContainer(props: Props) {
     keyBindings,
     settings,
     openedFiles,
-    currentDirectoryPath,
     desktopMode,
     isReadOnlyMode,
     updateOpenedFile,
@@ -173,6 +172,7 @@ function EntryContainer(props: Props) {
   } = props;
   const { t } = useTranslation();
   const tabIndex = useSelector(getEntryContainerTab);
+  const currentDirectoryPath = useSelector(getDirectoryPath);
   const theme = useTheme();
   // const [percent, setPercent] = React.useState<number | undefined>(undefined);
   const percent = useRef<number | undefined>(undefined);

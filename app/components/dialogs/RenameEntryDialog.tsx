@@ -36,6 +36,7 @@ import AppConfig from '-/AppConfig';
 import {
   actions as AppActions,
   AppDispatch,
+  getDirectoryPath,
   getLastSelectedEntry
 } from '-/reducers/app';
 import PlatformIO from '-/services/platform-facade';
@@ -45,13 +46,13 @@ import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
-  currentDirectoryPath?: string;
   onClose: () => void;
 }
 
 function RenameEntryDialog(props: Props) {
-  const { open, onClose, currentDirectoryPath } = props;
+  const { open, onClose } = props;
   const { t } = useTranslation();
+  const currentDirectoryPath = useSelector(getDirectoryPath);
   const [inputError, setInputError] = useState<boolean>(false);
   const disableConfirmButton = useRef<boolean>(true);
   const lastSelectedEntry = useSelector(getLastSelectedEntry);
