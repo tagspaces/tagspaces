@@ -640,7 +640,7 @@ function FolderContainer(props: Props) {
           aria-label="change perspective"
           exclusive
           style={{
-            bottom: 65,
+            bottom: 15,
             right: 15,
             zIndex: 1000,
             opacity: 0.9,
