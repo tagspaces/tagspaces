@@ -715,7 +715,9 @@ function mapActionCreatorsToProps(dispatch) {
     {
       // setMetaForCurrentDir: AppActions.setMetaForCurrentDir,
       updateCurrentDirEntries: AppActions.updateCurrentDirEntries,
-      setIsMetaLoaded: AppActions.setIsMetaLoaded
+      setIsMetaLoaded: AppActions.setIsMetaLoaded,
+      loadDirectoryContent: AppActions.loadDirectoryContent,
+      openEntry: AppActions.openEntry
     },
     dispatch
   );

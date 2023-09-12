@@ -80,13 +80,7 @@ interface Props {
   openMoveCopyFilesDialog: () => void;
   openShareFilesDialog?: () => void;
   openAddRemoveTagsDialog: () => void;
-  loadDirectoryContent: (
-    path: string,
-    generateThumbnails: boolean,
-    loadDirMeta?: boolean
-  ) => void;
   openFileNatively: (path: string) => void;
-  showInFileManager: (path: string) => void;
   selectedFilePath?: string;
   selectedEntries: Array<any>;
   reorderTop?: () => void;
@@ -101,9 +95,7 @@ function FileMenu(props: Props) {
     openMoveCopyFilesDialog,
     openShareFilesDialog,
     openAddRemoveTagsDialog,
-    showInFileManager,
     onDuplicateFile,
-    loadDirectoryContent,
     selectedEntries,
     openFileNatively,
     reorderTop,
@@ -270,7 +262,7 @@ function FileMenu(props: Props) {
           if (onDuplicateFile) {
             onDuplicateFile(dirPath);
           } else {
-            loadDirectoryContent(dirPath, true, true);
+            dispatch(AppActions.loadDirectoryContent(dirPath, true, true));
           }
           return true;
         })
@@ -290,7 +282,9 @@ function FileMenu(props: Props) {
         PlatformIO.getDirSeparator()
       );
       dispatch(AppActions.exitSearchMode());
-      loadDirectoryContent(parentFolder, false, true);
+      return dispatch(
+        AppActions.loadDirectoryContent(parentFolder, false, true)
+      );
     }
   }
 
@@ -388,7 +382,7 @@ function FileMenu(props: Props) {
         onClick={() => {
           onClose();
           if (selectedFilePath) {
-            showInFileManager(selectedFilePath);
+            dispatch(AppActions.showInFileManager(selectedFilePath));
           }
         }}
       >

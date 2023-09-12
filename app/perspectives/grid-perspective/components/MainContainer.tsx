@@ -32,8 +32,10 @@ import IOActions from '-/reducers/io-actions';
 import {
   actions as AppActions,
   AppDispatch,
+  getDirectoryContent,
   getDirectoryMeta,
   getEditedEntryPaths,
+  getLastSearchTimestamp,
   getLastSelectedEntryPath,
   getSearchFilter,
   getSelectedEntries,
@@ -59,18 +61,7 @@ import { openURLExternally } from '-/services/utils-io';
 
 interface Props {
   currentDirectoryPath: string;
-  openEntry: (entryPath?: string) => void;
   openRenameEntryDialog: () => void;
-  loadDirectoryContent: (
-    path: string,
-    generateThumbnails: boolean,
-    loadDirMeta?: boolean
-  ) => void;
-  openDirectory: (path: string) => void;
-  showInFileManager: (path: string) => void;
-  removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
-  directoryContent: Array<TS.FileSystemEntry>;
-  lastSearchTimestamp: number;
 }
 
 function getSettings(directoryMeta: TS.FileSystemEntryMeta): TS.FolderSettings {
@@ -88,21 +79,15 @@ function getSettings(directoryMeta: TS.FileSystemEntryMeta): TS.FolderSettings {
 }
 
 function GridPerspective(props: Props) {
-  const {
-    currentDirectoryPath,
-    openRenameEntryDialog,
-    directoryContent,
-    lastSearchTimestamp,
-    openEntry,
-    loadDirectoryContent,
-    removeTags,
-    showInFileManager,
-    openDirectory
-  } = props;
+  const { currentDirectoryPath, openRenameEntryDialog } = props;
 
   const dispatch: AppDispatch = useDispatch();
+  const directoryContent: Array<TS.FileSystemEntry> = useSelector(
+    getDirectoryContent
+  );
   const directoryMeta: TS.FileSystemEntryMeta = useSelector(getDirectoryMeta);
   const readOnlyMode = useSelector(isReadOnlyMode);
+  const lastSearchTimestamp = useSelector(getLastSearchTimestamp);
   const desktopMode = useSelector(getDesktopMode);
   const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
     getSelectedEntries
@@ -659,7 +644,7 @@ function GridPerspective(props: Props) {
     },
     openEntry: e => {
       e.preventDefault();
-      openEntry();
+      dispatch(AppActions.openEntry());
     },
     openFileExternally: () => {
       handleOpenFileNatively();
@@ -807,9 +792,7 @@ function GridPerspective(props: Props) {
               ? GlobalSearch.getInstance().getResults()
               : directoryContent
           }
-          openEntry={openEntry}
           openFileNatively={handleOpenFileNatively}
-          loadDirectoryContent={loadDirectoryContent}
           setFileContextMenuAnchorEl={setFileContextMenuAnchorEl}
           setDirContextMenuAnchorEl={setDirContextMenuAnchorEl}
           showNotification={handleShowNotification}
@@ -901,8 +884,6 @@ function GridPerspective(props: Props) {
           }
           openAddRemoveTagsDialog={openAddRemoveTagsDialog}
           openFileNatively={handleOpenFileNatively}
-          loadDirectoryContent={loadDirectoryContent}
-          showInFileManager={showInFileManager}
           selectedFilePath={lastSelectedEntryPath}
           selectedEntries={selectedEntries}
         />
@@ -915,10 +896,8 @@ function GridPerspective(props: Props) {
         mouseX={mouseX}
         mouseY={mouseY}
         directoryPath={lastSelectedEntryPath}
-        loadDirectoryContent={loadDirectoryContent}
         openRenameDirectoryDialog={openRenameEntryDialog}
         openMoveCopyFilesDialog={openMoveCopyFilesDialog}
-        openDirectory={openDirectory}
         perspectiveMode={lastSelectedEntryPath !== currentDirectoryPath}
         openAddRemoveTagsDialog={openAddRemoveTagsDialog}
       />
@@ -929,8 +908,7 @@ function GridPerspective(props: Props) {
         onClose={() => setTagContextMenuAnchorEl(null)}
         setIsAddTagDialogOpened={setIsAddTagDialogOpened}
         selectedTag={selectedTag.current}
-        currentEntryPath={selectedEntryPath.current} // getSelEntryPath()}
-        removeTags={removeTags}
+        currentEntryPath={selectedEntryPath.current}
       />
       {Boolean(sortingContextMenuAnchorEl) && (
         <SortingMenu

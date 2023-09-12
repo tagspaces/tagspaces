@@ -36,6 +36,7 @@ import {
 } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { useTranslation } from 'react-i18next';
+import TaggingActions from '-/reducers/tagging-actions';
 
 interface Props {
   open: boolean;
@@ -43,7 +44,7 @@ interface Props {
   anchorEl: Element | null;
   selectedTag: TS.Tag | null;
   currentEntryPath: string;
-  removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
+  removeTags?: (paths: Array<string>, tags: Array<TS.Tag>) => void;
   setIsAddTagDialogOpened?: (tag: TS.Tag) => void;
 }
 
@@ -104,8 +105,13 @@ function EntryTagMenu(props: Props) {
   }
 
   function confirmRemoveTag() {
-    removeTags([currentEntryPath], [selectedTag]);
-    handleCloseDialogs();
+    if (removeTags) {
+      removeTags([currentEntryPath], [selectedTag]);
+    } else {
+      dispatch(
+        TaggingActions.removeTags([currentEntryPath], [selectedTag])
+      ).then(() => handleCloseDialogs());
+    }
   }
 
   const menuItems = [

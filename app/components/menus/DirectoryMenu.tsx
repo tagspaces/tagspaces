@@ -56,12 +56,6 @@ interface Props {
   onClose: (param?: any) => void;
   anchorEl: Element;
   directoryPath: string;
-  loadDirectoryContent: (
-    path: string,
-    generateThumbnails: boolean,
-    loadDirMeta?: boolean
-  ) => void;
-  openDirectory: (path: string) => void;
   openAddRemoveTagsDialog?: () => void;
   reflectCreateEntry?: (path: string, isFile: boolean) => void;
   switchPerspective?: (perspectiveId: string) => void;
@@ -98,7 +92,7 @@ function DirectoryMenu(props: Props) {
   const dispatch: AppDispatch = useDispatch();
 
   const loadDirectoryContent = (path, generateThumbnails, loadDirMeta) => {
-    dispatch(
+    return dispatch(
       AppActions.loadDirectoryContent(path, generateThumbnails, loadDirMeta)
     );
   };
@@ -177,11 +171,11 @@ function DirectoryMenu(props: Props) {
   ] = useState(false);*/
 
   function reloadDirectory() {
-    loadDirectoryContent(directoryPath, true, true);
+    return loadDirectoryContent(directoryPath, true, true);
   }
 
   function openDirectory() {
-    loadDirectoryContent(directoryPath, true, true);
+    return loadDirectoryContent(directoryPath, true, true);
   }
 
   function showProperties() {

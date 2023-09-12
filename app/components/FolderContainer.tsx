@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import { connect, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -182,19 +182,11 @@ interface Props {
   directoryContent: Array<TS.FileSystemEntry>;
   //searchResultCount: number;
   addTags: () => void;
-  removeTags: () => void;
   removeAllTags: () => void;
   editTagForEntry: () => void;
   renameFile: () => void;
-  openDirectory: () => void;
-  showInFileManager: () => void;
   openEntry: (path: string) => void;
   reflectCreateEntry: (path: string, isFile: boolean) => void;
-  loadDirectoryContent: (
-    path: string,
-    generateThumbnails: boolean,
-    loadDirMeta?: boolean
-  ) => void;
   loadParentDirectoryContent: () => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   isReadOnlyMode: boolean;
@@ -287,14 +279,12 @@ function FolderContainer(props: Props) {
   >(false);
 
   const {
-    loadDirectoryContent,
     directoryContent,
     toggleDrawer,
     toggleProTeaser,
     isDesktopMode,
     currentDirectoryPerspective,
     setSelectedEntries,
-    openDirectory,
     reflectCreateEntry,
     openEntry,
     defaultPerspective,
@@ -314,6 +304,10 @@ function FolderContainer(props: Props) {
     directoryContent.length < 1 &&
     !(props.isSearchMode && props.lastSearchTimestamp);
 
+  const openRenameEntryDialog = useCallback(
+    () => setIsRenameEntryDialogOpened(true),
+    []
+  );
   const renderPerspective = () => {
     if (showWelcomePanel) {
       return AppConfig.showWelcomePanel ? <WelcomePanelAsync /> : null;
@@ -321,20 +315,8 @@ function FolderContainer(props: Props) {
     if (currentPerspective === PerspectiveIDs.LIST) {
       return (
         <ListPerspectiveAsync
-          directoryContent={props.directoryContent}
-          lastSearchTimestamp={props.lastSearchTimestamp}
-          loadDirectoryContent={loadDirectoryContent}
-          openEntry={openEntry}
-          openRenameEntryDialog={() => setIsRenameEntryDialogOpened(true)}
-          loadParentDirectoryContent={props.loadParentDirectoryContent}
-          renameFile={props.renameFile}
-          openDirectory={props.openDirectory}
-          showInFileManager={props.showInFileManager}
+          openRenameEntryDialog={openRenameEntryDialog}
           currentDirectoryPath={currentDirectoryPath}
-          addTags={props.addTags}
-          editTagForEntry={props.editTagForEntry}
-          removeTags={props.removeTags}
-          removeAllTags={props.removeAllTags}
         />
       );
     }
@@ -365,17 +347,13 @@ function FolderContainer(props: Props) {
         <KanBanPerspectiveAsync
           directoryContent={props.directoryContent}
           lastSearchTimestamp={props.lastSearchTimestamp}
-          loadDirectoryContent={props.loadDirectoryContent}
           openEntry={props.openEntry}
-          openRenameEntryDialog={() => setIsRenameEntryDialogOpened(true)}
+          openRenameEntryDialog={openRenameEntryDialog}
           loadParentDirectoryContent={props.loadParentDirectoryContent}
           renameFile={props.renameFile}
-          openDirectory={props.openDirectory}
-          showInFileManager={props.showInFileManager}
           currentDirectoryPath={currentDirectoryPath}
           addTags={props.addTags}
           editTagForEntry={props.editTagForEntry}
-          removeTags={props.removeTags}
           removeAllTags={props.removeAllTags}
           switchPerspective={switchPerspective}
         />
@@ -384,20 +362,8 @@ function FolderContainer(props: Props) {
 
     return (
       <GridPerspectiveAsync
-        directoryContent={props.directoryContent}
-        lastSearchTimestamp={props.lastSearchTimestamp}
-        loadDirectoryContent={props.loadDirectoryContent}
-        openEntry={props.openEntry}
-        openRenameEntryDialog={() => setIsRenameEntryDialogOpened(true)}
-        loadParentDirectoryContent={props.loadParentDirectoryContent}
-        renameFile={props.renameFile}
-        openDirectory={props.openDirectory}
-        showInFileManager={props.showInFileManager}
+        openRenameEntryDialog={openRenameEntryDialog}
         currentDirectoryPath={currentDirectoryPath}
-        addTags={props.addTags}
-        editTagForEntry={props.editTagForEntry}
-        removeTags={props.removeTags}
-        removeAllTags={props.removeAllTags}
       />
     );
   };
@@ -600,10 +566,8 @@ function FolderContainer(props: Props) {
               )}
               {/* {isDesktopMode && <LocationMenu />} */}
               <PathBreadcrumbs
-                loadDirectoryContent={loadDirectoryContent}
                 switchPerspective={switchPerspective}
                 setSelectedEntries={setSelectedEntries}
-                openDirectory={openDirectory}
                 reflectCreateEntry={reflectCreateEntry}
                 isDesktopMode={isDesktopMode}
                 openRenameDirectoryDialog={() =>
@@ -679,15 +643,11 @@ function mapActionCreatorsToProps(dispatch) {
     {
       toggleUploadDialog: AppActions.toggleUploadDialog,
       addTags: TaggingActions.addTags,
-      removeTags: TaggingActions.removeTags,
       removeAllTags: TaggingActions.removeAllTags,
       editTagForEntry: TaggingActions.editTagForEntry,
       renameFile: AppActions.renameFile,
-      openDirectory: AppActions.openDirectory,
-      showInFileManager: AppActions.showInFileManager,
       openEntry: AppActions.openEntry,
       reflectCreateEntry: AppActions.reflectCreateEntry,
-      loadDirectoryContent: AppActions.loadDirectoryContent,
       loadParentDirectoryContent: AppActions.loadParentDirectoryContent,
       setSelectedEntries: AppActions.setSelectedEntries,
       showNotification: AppActions.showNotification,
