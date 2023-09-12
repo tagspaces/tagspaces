@@ -748,12 +748,15 @@ function MainPage(props: Props) {
         <PageNotification />
         <div
           style={{
-            // backgroundColor: theme.palette.background.default,
+            backgroundColor: theme.palette.background.default,
             height: '100%'
           }}
         >
           <style>
             {`
+              body { background-color: ${
+                theme.palette.background.default
+              } !important;}
               .default-splitter {
                 --default-splitter-line-margin: 2px !important;
                 --default-splitter-line-size: 1px !important;
