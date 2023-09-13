@@ -15,7 +15,6 @@ import IconButton from '@mui/material/IconButton';
 import { RemoveIcon, HistoryIcon } from '-/components/CommonIcons';
 import { dataTidFormat } from '-/services/test';
 import { useTranslation } from 'react-i18next';
-import MainToolbar from '../../extensions/tagspacespro/modules/perspectives/kanban/components/MainToolbar';
 
 /**
  * TagSpaces - universal file and folder organizer
