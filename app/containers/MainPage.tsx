@@ -806,6 +806,7 @@ function MainPage(props: Props) {
                 onOpen={() => setDrawerOpened(true)}
                 hysteresis={0.1}
                 disableBackdropTransition={!AppConfig.isIOS}
+                disableDiscovery={AppConfig.isIOS}
               >
                 <MobileNavigation
                   width={drawerWidth}
