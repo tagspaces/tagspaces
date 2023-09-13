@@ -33,19 +33,30 @@ import { useTranslation } from 'react-i18next';
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
-export const renderHistory = (
-  key: string,
-  items: Array<TS.HistoryItem> | Array<TS.BookmarkItem>,
-  update: () => void,
-  currentLocationId: string,
-  openLink: (url: string, options: any) => void,
-  openLocationById: (locationId: string) => void,
-  openEntry: (entryPath: string) => void,
-  maxItems: number | undefined = undefined,
-  showDelete: boolean = true
-) => {
+interface Props {
+  key: string;
+  items: Array<TS.HistoryItem> | Array<TS.BookmarkItem>;
+  update: () => void;
+  currentLocationId: string;
+  openLink: (url: string, options: any) => void;
+  openLocationById: (locationId: string) => void;
+  openEntry: (entryPath: string) => void;
+  maxItems?: number | undefined;
+  showDelete?: boolean;
+}
+function RenderHistory(props: Props) {
   const { t } = useTranslation();
+  const {
+    key,
+    items,
+    update,
+    currentLocationId,
+    openLink,
+    openLocationById,
+    openEntry,
+    maxItems,
+    showDelete
+  } = props;
   return (
     <>
       {items &&
@@ -131,4 +142,6 @@ export const renderHistory = (
         })}
     </>
   );
-};
+}
+
+export default RenderHistory;

@@ -89,7 +89,6 @@ import PageNotification from '-/containers/PageNotification';
 import listen from '-/containers/RendererListener';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import MoveOrCopyFilesDialog from '-/components/dialogs/MoveOrCopyFilesDialog';
-import PlatformIO from '-/services/platform-facade';
 import { Pro } from '-/pro';
 import NewFileDialog from '-/components/dialogs/NewFileDialog';
 import IsTruncatedConfirmDialog from '-/components/dialogs/IsTruncatedConfirmDialog';

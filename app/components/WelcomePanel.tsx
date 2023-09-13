@@ -51,11 +51,11 @@ import { getDesktopMode } from '-/reducers/settings';
 import Links from '-/content/links';
 import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
-import { renderHistory } from '-/components/RenderHistory';
 import HowToStart from '-/components/HowToStart';
 import { openURLExternally } from '-/services/utils-io';
 import { styled, useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
+import RenderHistory from '-/components/RenderHistory';
 
 const PREFIX = 'WelcomePanel';
 
@@ -142,17 +142,17 @@ function WelcomePanel() {
         </Typography>
         {fileOpenHistoryItems ? (
           <List>
-            {renderHistory(
-              historyKeys.fileOpenKey,
-              fileOpenHistoryItems,
-              forceUpdate,
-              currentLocationId,
-              openLinkDispatch,
-              openLocationByIdDispatch,
-              openEntryDispatch,
-              maxRecentItems,
-              showDelete
-            )}
+            <RenderHistory
+              key={historyKeys.fileOpenKey}
+              items={fileOpenHistoryItems}
+              update={forceUpdate}
+              currentLocationId={currentLocationId}
+              openLink={openLinkDispatch}
+              openLocationById={openLocationByIdDispatch}
+              openEntry={openEntryDispatch}
+              maxItems={maxRecentItems}
+              showDelete={showDelete}
+            />
           </List>
         ) : (
           <Typography className={classes.noRecentItems} variant="caption">
@@ -164,17 +164,17 @@ function WelcomePanel() {
         </Typography>
         {fileEditHistoryItems ? (
           <List>
-            {renderHistory(
-              historyKeys.fileEditKey,
-              fileEditHistoryItems,
-              forceUpdate,
-              currentLocationId,
-              openLinkDispatch,
-              openLocationByIdDispatch,
-              openEntryDispatch,
-              maxRecentItems,
-              showDelete
-            )}
+            <RenderHistory
+              key={historyKeys.fileEditKey}
+              items={fileEditHistoryItems}
+              update={forceUpdate}
+              currentLocationId={currentLocationId}
+              openLink={openLinkDispatch}
+              openLocationById={openLocationByIdDispatch}
+              openEntry={openEntryDispatch}
+              maxItems={maxRecentItems}
+              showDelete={showDelete}
+            />
           </List>
         ) : (
           <Typography className={classes.noRecentItems} variant="caption">
@@ -186,17 +186,17 @@ function WelcomePanel() {
         </Typography>
         {folderOpenHistoryItems ? (
           <List>
-            {renderHistory(
-              historyKeys.folderOpenKey,
-              folderOpenHistoryItems,
-              forceUpdate,
-              currentLocationId,
-              openLinkDispatch,
-              openLocationByIdDispatch,
-              openEntryDispatch,
-              maxRecentItems,
-              showDelete
-            )}
+            <RenderHistory
+              key={historyKeys.folderOpenKey}
+              items={folderOpenHistoryItems}
+              update={forceUpdate}
+              currentLocationId={currentLocationId}
+              openLink={openLinkDispatch}
+              openLocationById={openLocationByIdDispatch}
+              openEntry={openEntryDispatch}
+              maxItems={maxRecentItems}
+              showDelete={showDelete}
+            />
           </List>
         ) : (
           <Typography className={classes.noRecentItems} variant="caption">

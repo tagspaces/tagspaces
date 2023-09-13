@@ -43,7 +43,8 @@ import {
   getLastBackgroundImageChange,
   getLastThumbnailImageChange,
   getLastSelectedEntryPath,
-  getLastSearchTimestamp
+  getLastSearchTimestamp,
+  getDirectoryContent
 } from '-/reducers/app';
 import EntryIcon from '-/components/EntryIcon';
 import TagsPreview from '-/components/TagsPreview';
@@ -60,6 +61,7 @@ import { MilkdownEditor } from '@tagspaces/tagspaces-md';
 import { renderCell } from '-/perspectives/common/main-container';
 import { useTranslation } from 'react-i18next';
 import { getCurrentLocation } from '-/reducers/locations';
+import GlobalSearch from '-/services/search-index';
 
 interface Props {
   isMetaLoaded: boolean;
@@ -107,7 +109,6 @@ interface Props {
   setSelectedEntries: (selectedEntries: Array<TS.FileSystemEntry>) => void;
   singleClickAction: string;
   lastSelectedEntryPath: string;
-  directoryContent: Array<TS.FileSystemEntry>;
   openEntry: (entryPath?: string) => void;
   openFileNatively: (path?: string) => void;
   loadDirectoryContent: (
@@ -155,14 +156,18 @@ function GridPagination(props: Props) {
     setDirContextMenuAnchorEl,
     showNotification,
     moveFiles,
-    directoryContent,
     gridPageLimit,
     currentPage,
     selectedEntries,
     setSelectedEntries,
     clearSelection,
-    files
+    files,
+    lastSearchTimestamp
   } = props;
+
+  const directoryContent: Array<TS.FileSystemEntry> = useSelector(
+    getDirectoryContent
+  );
   const currentLocation: TS.Location = useSelector(getCurrentLocation);
   if (!showDirectories) {
     directories = [];
@@ -244,7 +249,7 @@ function GridPagination(props: Props) {
   }, [
     //props.currentLocationPath,
     props.currentDirectoryPath,
-    props.lastSearchTimestamp
+    lastSearchTimestamp
   ]);
 
   const setThumbs = (
@@ -581,7 +586,9 @@ function GridPagination(props: Props) {
                 selectedEntries,
                 setSelectedEntries,
                 lastSelectedEntryPath,
-                directoryContent,
+                lastSearchTimestamp
+                  ? GlobalSearch.getInstance().getResults()
+                  : directoryContent,
                 openEntry,
                 openFileNatively,
                 loadDirectoryContent,
@@ -605,7 +612,9 @@ function GridPagination(props: Props) {
               selectedEntries,
               setSelectedEntries,
               lastSelectedEntryPath,
-              directoryContent,
+              lastSearchTimestamp
+                ? GlobalSearch.getInstance().getResults()
+                : directoryContent,
               openEntry,
               openFileNatively,
               loadDirectoryContent,

@@ -120,6 +120,7 @@ export const types = {
   SET_GENERATING_THUMBNAILS: 'APP/SET_GENERATING_THUMBNAILS',
   SET_NEW_VERSION_AVAILABLE: 'APP/SET_NEW_VERSION_AVAILABLE',
   SET_CURRENLOCATIONID: 'APP/SET_CURRENLOCATIONID',
+  SET_CURRENT_LOCATION: 'APP/SET_CURRENT_LOCATION',
   SET_CURRENDIRECTORYCOLOR: 'APP/SET_CURRENDIRECTORYCOLOR',
   SET_CURRENDIRECTORYPERSPECTIVE: 'APP/SET_CURRENDIRECTORYPERSPECTIVE',
   SET_IS_META_LOADED: 'APP/SET_IS_META_LOADED',
@@ -350,10 +351,13 @@ export default (state: any = initialState, action: any) => {
       return state;
     }
     case types.SET_NEW_VERSION_AVAILABLE: {
-      return {
-        ...state,
-        isUpdateAvailable: action.isUpdateAvailable
-      };
+      if (action.isUpdateAvailable !== state.isUpdateAvailable) {
+        return {
+          ...state,
+          isUpdateAvailable: action.isUpdateAvailable
+        };
+      }
+      return state;
     }
     case types.SET_DIRECTORY_META: {
       return {
@@ -420,10 +424,23 @@ export default (state: any = initialState, action: any) => {
       };
     }
     case types.SET_CURRENLOCATIONID: {
-      return {
-        ...state,
-        currentLocationId: action.locationId
-      };
+      if (action.currentLocationId !== state.currentLocationId) {
+        return {
+          ...state,
+          currentLocationId: action.locationId
+        };
+      }
+      return state;
+    }
+    case types.SET_CURRENT_LOCATION: {
+      if (action.location.uuid !== state.currentLocationId) {
+        return {
+          ...state,
+          currentDirectoryPath: action.location.path,
+          currentLocationId: action.location.uuid
+        };
+      }
+      return state;
     }
     /* case types.SET_LAST_SELECTED_ENTRY: {
       return { ...state, lastSelectedEntry: action.entryPath };
@@ -664,10 +681,13 @@ export default (state: any = initialState, action: any) => {
       };
     }*/
     case types.SET_GENERATING_THUMBNAILS: {
-      return {
-        ...state,
-        isGeneratingThumbs: action.isGeneratingThumbs
-      };
+      if (action.isGeneratingThumbs !== state.isGeneratingThumbs) {
+        return {
+          ...state,
+          isGeneratingThumbs: action.isGeneratingThumbs
+        };
+      }
+      return state;
     }
     case types.OPEN_FILE: {
       return {
@@ -686,7 +706,10 @@ export default (state: any = initialState, action: any) => {
       return { ...state, isEntryInFullWidth: !state.isEntryInFullWidth };
     }
     case types.SET_ENTRY_FULLWIDTH: {
-      return { ...state, isEntryInFullWidth: action.isFullWidth };
+      if (action.isEntryInFullWidth !== state.isEntryInFullWidth) {
+        return { ...state, isEntryInFullWidth: action.isFullWidth };
+      }
+      return state;
     }
     case types.UPDATE_THUMB_URL: {
       const dirEntries = state.currentDirectoryEntries.map(entry => {
@@ -2005,8 +2028,21 @@ export const actions = {
     type: types.SET_CURRENLOCATIONID,
     locationId
   }),
-  changeLocation: (location: TS.Location) => (dispatch: (action) => void) => {
-    dispatch(actions.changeLocationByID(location.uuid));
+  setCurrentLocation: (location: TS.Location) => ({
+    type: types.SET_CURRENT_LOCATION,
+    location
+  }),
+  changeLocation: (location: TS.Location) => (
+    dispatch: (action) => void,
+    getState: () => any
+  ) => {
+    //dispatch(actions.changeLocationByID(location.uuid));
+    const { currentLocationId } = getState().app;
+    if (location.uuid !== currentLocationId) {
+      // dispatch(actions.exitSearchMode());
+      dispatch(LocationIndexActions.clearDirectoryIndex());
+      dispatch(actions.setCurrentLocation(location));
+    }
   },
   changeLocationByID: (locationId: string) => (
     dispatch: (action) => void,
@@ -2634,7 +2670,7 @@ export const actions = {
     tags: Array<TS.Tag>,
     updateIndex = true
   ) => (dispatch: (action) => void, getState: () => any) => {
-    const { openedFiles, selectedEntries } = getState().app;
+    // const { openedFiles, selectedEntries } = getState().app;
     // to reload cell in KanBan if add/remove sidecar tags
     const action: TS.EditedEntryAction = `edit${tags
       .map(tag => tag.title)
