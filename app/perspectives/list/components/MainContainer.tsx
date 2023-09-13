@@ -734,7 +734,7 @@ function ListPerspective(props: Props) {
   return (
     <div
       style={{
-        height: '100%' //'calc(100% - 48px)'
+        height: 'calc(100% - 47px)'
       }}
       data-tid={defaultSettings.testID}
     >

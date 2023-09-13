@@ -201,7 +201,8 @@ function EntryContainerTitle(props: Props) {
             fontSize: 17,
             marginLeft: 5,
             maxHeight: 40,
-            overflowY: 'auto'
+            overflowY: 'auto',
+            overflowX: 'hidden'
           }}
         >
           {fileTitle}

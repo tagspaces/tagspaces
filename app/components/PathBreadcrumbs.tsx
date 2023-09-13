@@ -214,8 +214,8 @@ function PathBreadcrumbs(props: Props) {
     <>
       <Breadcrumbs
         sx={{ display: 'flex', flexWrap: 'nowrap' }}
-        maxItems={isDesktopMode ? 3 : 1}
-        itemsAfterCollapse={isDesktopMode ? 2 : 1}
+        maxItems={isDesktopMode ? 2 : 1}
+        itemsAfterCollapse={isDesktopMode ? 1 : 1}
         itemsBeforeCollapse={isDesktopMode ? 1 : 0}
         aria-label="breadcrumb"
         separator={
