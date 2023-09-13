@@ -32,8 +32,10 @@ import IOActions from '-/reducers/io-actions';
 import {
   actions as AppActions,
   AppDispatch,
+  getDirectoryContent,
   getDirectoryMeta,
   getEditedEntryPaths,
+  getLastSearchTimestamp,
   getLastSelectedEntryPath,
   getSearchFilter,
   getSelectedEntries,
@@ -43,7 +45,6 @@ import CellContent from '-/perspectives/grid-perspective/components/CellContent'
 import MainToolbar from '-/perspectives/grid-perspective/components/MainToolbar';
 import SortingMenu from '-/perspectives/grid-perspective/components/SortingMenu';
 import GridOptionsMenu from '-/perspectives/grid-perspective/components/GridOptionsMenu';
-import { getCurrentLocation } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-facade';
 import GridPagination from '-/perspectives/grid-perspective/components/GridPagination';
 import GridSettingsDialog from '-/perspectives/grid-perspective/components/GridSettingsDialog';
@@ -60,19 +61,7 @@ import { openURLExternally } from '-/services/utils-io';
 
 interface Props {
   currentDirectoryPath: string;
-  openEntry: (entryPath?: string) => void;
   openRenameEntryDialog: () => void;
-  loadDirectoryContent: (
-    path: string,
-    generateThumbnails: boolean,
-    loadDirMeta?: boolean
-  ) => void;
-  openDirectory: (path: string) => void;
-  showInFileManager: (path: string) => void;
-  loadParentDirectoryContent: () => void;
-  removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => void;
-  directoryContent: Array<TS.FileSystemEntry>;
-  lastSearchTimestamp: number;
 }
 
 function getSettings(directoryMeta: TS.FileSystemEntryMeta): TS.FolderSettings {
@@ -90,34 +79,25 @@ function getSettings(directoryMeta: TS.FileSystemEntryMeta): TS.FolderSettings {
 }
 
 function ListPerspective(props: Props) {
-  const {
-    loadParentDirectoryContent,
-    currentDirectoryPath,
-    openRenameEntryDialog,
-    directoryContent,
-    lastSearchTimestamp,
-    openEntry,
-    loadDirectoryContent,
-    removeTags,
-    showInFileManager,
-    openDirectory
-  } = props;
+  const { currentDirectoryPath, openRenameEntryDialog } = props;
 
+  const dispatch: AppDispatch = useDispatch();
+  const directoryContent: Array<TS.FileSystemEntry> = useSelector(
+    getDirectoryContent
+  );
   const directoryMeta: TS.FileSystemEntryMeta = useSelector(getDirectoryMeta);
   const readOnlyMode = useSelector(isReadOnlyMode);
+  const lastSearchTimestamp = useSelector(getLastSearchTimestamp);
   const desktopMode = useSelector(getDesktopMode);
   const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
     getSelectedEntries
   );
   const lastSelectedEntryPath = useSelector(getLastSelectedEntryPath);
   const keyBindings = useSelector(getKeyBindingObject);
-  const currentLocation: TS.Location = useSelector(getCurrentLocation);
   const searchFilter: string = useSelector(getSearchFilter);
   const editedEntryPaths: Array<TS.EditedEntryPath> = useSelector(
     getEditedEntryPaths
   );
-
-  const dispatch: AppDispatch = useDispatch();
 
   // Create functions that dispatch actions
   const handleMoveFiles = (files: Array<string>, destination: string) =>
@@ -475,10 +455,10 @@ function ListPerspective(props: Props) {
     }
   };
 
-  const handleLayoutSwitch = (type: string) => {
+  /*const handleLayoutSwitch = (type: string) => {
     layoutType.current = type;
     // forceUpdate();
-  };
+  };*/
 
   const handleGridPageLimit = (limit: number) => {
     gridPageLimit.current = limit;
@@ -515,10 +495,8 @@ function ListPerspective(props: Props) {
     selectedEntryPath.current = undefined;
   };
 
-  const someFileSelected = selectedEntries.length > 1;
-
   const toggleSelectAllFiles = () => {
-    if (someFileSelected) {
+    if (selectedEntries.length > 1) {
       clearSelection();
     } else {
       if (!lastSearchTimestamp) {
@@ -666,7 +644,7 @@ function ListPerspective(props: Props) {
     },
     openEntry: e => {
       e.preventDefault();
-      openEntry();
+      dispatch(AppActions.openEntry());
     },
     openFileExternally: () => {
       handleOpenFileNatively();
@@ -677,9 +655,9 @@ function ListPerspective(props: Props) {
     entry => !entry.isFile
   );
   const sortedFiles = sortedDirContent.current.filter(entry => entry.isFile);
-  const locationPath = currentLocation
+  /*const locationPath = currentLocation
     ? PlatformIO.getLocationPath(currentLocation)
-    : '';
+    : '';*/
   let entryWidth = 200;
   if (entrySize.current === 'small') {
     entryWidth = 150;
@@ -756,26 +734,18 @@ function ListPerspective(props: Props) {
   return (
     <div
       style={{
-        height: 'calc(100% - 48px)'
+        height: '100%' //'calc(100% - 48px)'
       }}
       data-tid={defaultSettings.testID}
     >
       <MainToolbar
         prefixDataTID={'list'}
-        layoutType={layoutType.current}
-        selectedEntries={selectedEntries}
-        loadParentDirectoryContent={loadParentDirectoryContent}
         toggleSelectAllFiles={toggleSelectAllFiles}
-        someFileSelected={someFileSelected}
-        handleLayoutSwitch={handleLayoutSwitch}
         openAddRemoveTagsDialog={openAddRemoveTagsDialog}
-        fileOperationsEnabled={fileOperationsEnabled(selectedEntries)}
         openMoveCopyFilesDialog={openMoveCopyFilesDialog}
-        openDeleteFileDialog={openDeleteFileDialog}
         handleSortingMenu={handleSortingMenu}
         handleExportCsvMenu={handleExportCsvMenu}
         openSettings={openSettings}
-        directoryPath={currentDirectoryPath}
         openShareFilesDialog={
           PlatformIO.haveObjectStoreSupport() ? openShareFilesDialog : undefined
         }
@@ -789,6 +759,7 @@ function ListPerspective(props: Props) {
           gridPageLimit={gridPageLimit.current}
           style={{
             marginTop: 5,
+            marginBottom: 70,
             paddingRight: 4,
             paddingLeft: 4,
             gridTemplateColumns: 'none'
@@ -807,7 +778,6 @@ function ListPerspective(props: Props) {
           files={sortedFiles}
           getCellContent={getCellContent}
           currentPage={1}
-          currentLocationPath={locationPath}
           currentDirectoryPath={currentDirectoryPath}
           onClick={onClick}
           onContextMenu={onContextMenu}
@@ -815,15 +785,12 @@ function ListPerspective(props: Props) {
           selectedEntries={selectedEntries}
           setSelectedEntries={handleSetSelectedEntries}
           singleClickAction={singleClickAction.current}
-          currentLocation={currentLocation}
           directoryContent={
             lastSearchTimestamp
               ? GlobalSearch.getInstance().getResults()
               : directoryContent
           }
-          openEntry={openEntry}
           openFileNatively={handleOpenFileNatively}
-          loadDirectoryContent={loadDirectoryContent}
           setFileContextMenuAnchorEl={setFileContextMenuAnchorEl}
           setDirContextMenuAnchorEl={setDirContextMenuAnchorEl}
           showNotification={handleShowNotification}
@@ -915,11 +882,8 @@ function ListPerspective(props: Props) {
           }
           openAddRemoveTagsDialog={openAddRemoveTagsDialog}
           openFileNatively={handleOpenFileNatively}
-          loadDirectoryContent={loadDirectoryContent}
-          showInFileManager={showInFileManager}
           selectedFilePath={lastSelectedEntryPath}
           selectedEntries={selectedEntries}
-          currentLocation={currentLocation}
         />
       )}
       {/* {Boolean(dirContextMenuAnchorEl) && ( // todo move dialogs from DirectoryMenu */}
@@ -930,12 +894,9 @@ function ListPerspective(props: Props) {
         mouseX={mouseX}
         mouseY={mouseY}
         directoryPath={lastSelectedEntryPath}
-        loadDirectoryContent={loadDirectoryContent}
         openRenameDirectoryDialog={openRenameEntryDialog}
         openMoveCopyFilesDialog={openMoveCopyFilesDialog}
-        openDirectory={openDirectory}
         perspectiveMode={lastSelectedEntryPath !== currentDirectoryPath}
-        currentLocation={currentLocation}
         openAddRemoveTagsDialog={openAddRemoveTagsDialog}
       />
       {/* {Boolean(tagContextMenuAnchorEl) && ( // TODO EntryTagMenu is used in TagSelect we cannot move confirm dialog from menu */}
@@ -945,8 +906,7 @@ function ListPerspective(props: Props) {
         onClose={() => setTagContextMenuAnchorEl(null)}
         setIsAddTagDialogOpened={setIsAddTagDialogOpened}
         selectedTag={selectedTag.current}
-        currentEntryPath={selectedEntryPath.current} // getSelEntryPath()}
-        removeTags={removeTags}
+        currentEntryPath={selectedEntryPath.current}
       />
       {Boolean(sortingContextMenuAnchorEl) && (
         <SortingMenu

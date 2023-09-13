@@ -34,7 +34,7 @@ if (window.ExtCheckForUpdatesOnStartup !== undefined) {
 }
 
 export default {
-  isLoading: false,
+  //isLoading: false,
   error: null,
   userId: null,
   loggedIn: false,

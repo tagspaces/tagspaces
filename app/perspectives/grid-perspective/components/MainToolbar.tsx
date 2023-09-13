@@ -33,8 +33,6 @@ import {
   FolderPropertiesIcon,
   PerspectiveSettingsIcon
 } from '-/components/CommonIcons';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import AppConfig from '-/AppConfig';
 import { Pro } from '-/pro';
 import { ProTooltip } from '-/components/HelperComponents';
@@ -47,6 +45,8 @@ import { TS } from '-/tagspaces.namespace';
 import {
   actions as AppActions,
   AppDispatch,
+  getDirectoryPath,
+  getSelectedEntries,
   isReadOnlyMode
 } from '-/reducers/app';
 import {
@@ -57,52 +57,39 @@ import { useTranslation } from 'react-i18next';
 
 interface Props {
   prefixDataTID?: string;
-  selectedEntries: Array<TS.FileSystemEntry>;
-  loadParentDirectoryContent: () => void;
   toggleSelectAllFiles: (event: any) => void;
-  someFileSelected: boolean;
-  handleLayoutSwitch: (event: Object) => void;
   openAddRemoveTagsDialog: () => void;
-  fileOperationsEnabled: boolean;
   openMoveCopyFilesDialog: () => void;
-  openDeleteFileDialog: () => void;
   handleSortingMenu: (event: Object) => void;
   handleExportCsvMenu: () => void;
-  layoutType: string;
   openSettings: () => void;
-  searchQuery: TS.SearchQuery;
-  setSearchQuery: (searchQuery: TS.SearchQuery) => void;
-  openCurrentDirectory: () => void;
   openShareFilesDialog?: () => void;
-  directoryPath: string;
-  keyBindings: Array<any>;
 }
 
 function MainToolbar(props: Props) {
   const {
     prefixDataTID,
-    selectedEntries,
     toggleSelectAllFiles,
-    someFileSelected,
-    loadParentDirectoryContent,
-    layoutType,
-    handleLayoutSwitch,
     openAddRemoveTagsDialog,
     openMoveCopyFilesDialog,
-    openDeleteFileDialog,
-    fileOperationsEnabled,
     handleSortingMenu,
+    handleExportCsvMenu,
     openSettings,
-    keyBindings,
     openShareFilesDialog
   } = props;
 
   const { t } = useTranslation();
+  const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
+    getSelectedEntries
+  );
+  const searchQuery: TS.SearchQuery = useSelector(getSearchQuery);
+  const keyBindings = useSelector(getKeyBindingObject);
   const dispatch: AppDispatch = useDispatch();
   const readOnlyMode = useSelector(isReadOnlyMode);
+  const directoryPath = useSelector(getDirectoryPath);
 
   function showProperties() {
-    return dispatch(AppActions.openEntry(props.directoryPath));
+    return dispatch(AppActions.openEntry(directoryPath));
   }
 
   return (
@@ -123,14 +110,11 @@ function MainToolbar(props: Props) {
             aria-label={t('core:navigateToParentDirectory')}
             data-tid={prefixDataTID + 'PerspectiveOnBackButton'}
             onClick={() => {
-              if (
-                props.searchQuery &&
-                Object.keys(props.searchQuery).length > 0
-              ) {
-                props.setSearchQuery({});
-                props.openCurrentDirectory();
+              if (searchQuery && Object.keys(searchQuery).length > 0) {
+                dispatch(LocationIndexActions.setSearchQuery({}));
+                dispatch(AppActions.openCurrentDirectory());
               } else {
-                loadParentDirectoryContent();
+                dispatch(AppActions.loadParentDirectoryContent());
               }
             }}
             size="large"
@@ -151,7 +135,7 @@ function MainToolbar(props: Props) {
             onClick={toggleSelectAllFiles}
             size="large"
           >
-            {someFileSelected ? <SelectedIcon /> : <UnSelectedIcon />}
+            {selectedEntries.length > 1 ? <SelectedIcon /> : <UnSelectedIcon />}
           </IconButton>
         </Tooltip>
         <Tooltip title={t('core:directoryPropertiesTitle')}>
@@ -214,7 +198,9 @@ function MainToolbar(props: Props) {
               <IconButton
                 aria-label={t('core:deleteSelectedEntries')}
                 data-tid={prefixDataTID + 'PerspectiveDeleteMultipleFiles'}
-                onClick={openDeleteFileDialog}
+                onClick={() =>
+                  dispatch(AppActions.toggleDeleteMultipleEntriesDialog())
+                }
                 disabled={selectedEntries.length < 1}
                 size="large"
               >
@@ -256,7 +242,7 @@ function MainToolbar(props: Props) {
             <Tooltip title={t('core:exportCsv')}>
               <IconButton
                 data-tid={prefixDataTID + 'PerspectiveExportCsvMenuTID'}
-                onClick={props.handleExportCsvMenu}
+                onClick={handleExportCsvMenu}
                 style={{ transform: 'scale(-1, 1)' }}
                 size="large"
               >
@@ -278,20 +264,4 @@ function MainToolbar(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    searchQuery: getSearchQuery(state),
-    keyBindings: getKeyBindingObject(state)
-  };
-}
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      setSearchQuery: LocationIndexActions.setSearchQuery,
-      openCurrentDirectory: AppActions.openCurrentDirectory
-    },
-    dispatch
-  );
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(MainToolbar);
+export default MainToolbar;

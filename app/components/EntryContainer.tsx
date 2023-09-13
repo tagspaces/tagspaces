@@ -52,7 +52,6 @@ import {
   actions as SettingsActions,
   isDesktopMode,
   getKeyBindingObject,
-  getCurrentLanguage,
   isRevisionsEnabled,
   getEntryContainerTab
 } from '-/reducers/settings';
@@ -60,7 +59,8 @@ import {
   OpenedEntry,
   NotificationTypes,
   isReadOnlyMode,
-  actions as AppActions
+  actions as AppActions,
+  getDirectoryPath
 } from '-/reducers/app';
 import useEventListener from '-/utils/useEventListener';
 import { TS } from '-/tagspaces.namespace';
@@ -150,7 +150,6 @@ interface Props {
     generateThumbnails: boolean,
     loadDirMeta?: boolean
   ) => void;
-  currentDirectoryPath: string | null;
   desktopMode: boolean;
   switchLocationType: (locationId: string) => Promise<string | null>;
   switchCurrentLocationType: (currentLocationId) => Promise<boolean>;
@@ -164,7 +163,6 @@ function EntryContainer(props: Props) {
     keyBindings,
     settings,
     openedFiles,
-    currentDirectoryPath,
     desktopMode,
     isReadOnlyMode,
     updateOpenedFile,
@@ -174,6 +172,7 @@ function EntryContainer(props: Props) {
   } = props;
   const { t } = useTranslation();
   const tabIndex = useSelector(getEntryContainerTab);
+  const currentDirectoryPath = useSelector(getDirectoryPath);
   const theme = useTheme();
   // const [percent, setPercent] = React.useState<number | undefined>(undefined);
   const percent = useRef<number | undefined>(undefined);
@@ -1104,8 +1103,7 @@ function mapStateToProps(state) {
     isReadOnlyMode: isReadOnlyMode(state),
     keyBindings: getKeyBindingObject(state),
     desktopMode: isDesktopMode(state),
-    revisionsEnabled: isRevisionsEnabled(state),
-    language: getCurrentLanguage(state)
+    revisionsEnabled: isRevisionsEnabled(state)
   };
 }
 
@@ -1126,7 +1124,6 @@ function mapActionCreatorsToProps(dispatch) {
 }
 const areEqual = (prevProp, nextProp) =>
   // JSON.stringify(nextProp.theme) === JSON.stringify(prevProp.theme) &&
-  nextProp.language === prevProp.language &&
   nextProp.settings.currentTheme === prevProp.settings.currentTheme &&
   nextProp.settings.entrySplitSize === prevProp.settings.entrySplitSize &&
   JSON.stringify(nextProp.openedFiles) === JSON.stringify(prevProp.openedFiles);

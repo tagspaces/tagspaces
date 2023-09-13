@@ -74,7 +74,7 @@ import PlatformIO from '../services/platform-facade';
 import TagsSelect from './TagsSelect';
 import TransparentBackground from './TransparentBackground';
 import { getThumbnailURLPromise } from '-/services/thumbsgenerator';
-import { getCurrentLanguage, getTagDelimiter } from '-/reducers/settings';
+import { getTagDelimiter } from '-/reducers/settings';
 import {
   getLastBackgroundImageChange,
   getLastThumbnailImageChange,
@@ -188,7 +188,6 @@ const BgndImgChooserDialog =
   Pro && Pro.UI ? Pro.UI.BgndImgChooserDialog : false;
 
 interface Props {
-  language: string;
   openedEntry: OpenedEntry;
   locations: Array<TS.Location>;
   renameFile: (path: string, nextPath: string) => Promise<boolean>;
@@ -570,7 +569,7 @@ function EntryProperties(props: Props) {
       });
   };
 
-  const { isReadOnlyMode, language } = props;
+  const { isReadOnlyMode } = props;
 
   if (
     !currentEntry ||
@@ -831,7 +830,7 @@ function EntryProperties(props: Props) {
                   url={props.tileServer.serverURL}
                 />
               ) : (
-                <NoTileServer language={language} />
+                <NoTileServer />
               )}
               <LayerGroup>
                 <Marker
@@ -1092,7 +1091,6 @@ function EntryProperties(props: Props) {
         {!currentEntry.current.isFile && (
           <Grid item xs={12} style={{ marginTop: 10 }}>
             <PerspectiveSelector
-              language={language}
               onChange={changePerspective}
               defaultValue={perspectiveDefault}
               label={t('core:choosePerspective')}
@@ -1404,8 +1402,7 @@ function mapStateToProps(state) {
     tagDelimiter: getTagDelimiter(state),
     lastBackgroundImageChange: getLastBackgroundImageChange(state),
     lastThumbnailImageChange: getLastThumbnailImageChange(state),
-    locations: getLocations(state),
-    language: getCurrentLanguage(state)
+    locations: getLocations(state)
   };
 }
 

@@ -27,7 +27,7 @@ import Paper from '@mui/material/Paper';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import ListSubheader from '@mui/material/ListSubheader';
+import PlatformIO from '-/services/platform-facade';
 import FileIcon from '@mui/icons-material/InsertDriveFileOutlined';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -40,13 +40,17 @@ import DraggablePaper from '-/components/DraggablePaper';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import AppConfig from '-/AppConfig';
 import { useTranslation } from 'react-i18next';
+import {
+  actions as AppActions,
+  AppDispatch,
+  getDirectoryPath
+} from '-/reducers/app';
+import { useDispatch, useSelector } from 'react-redux';
 
 interface Props {
   open: boolean;
   onClose: (clearSelection?: boolean) => void;
   selectedFiles: Array<File>;
-  handleMoveFiles: (files: Array<File>) => void;
-  handleCopyFiles: (files: Array<File>) => void;
 }
 
 function MoveOrCopyFilesDialog(props: Props) {
@@ -54,7 +58,46 @@ function MoveOrCopyFilesDialog(props: Props) {
   const { t } = useTranslation();
 
   const theme = useTheme();
+  const dispatch: AppDispatch = useDispatch();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const directoryPath = useSelector(getDirectoryPath);
+
+  const handleMoveCopyFiles = (files: Array<File>, move = false) => {
+    const promises = [];
+    for (const file of files) {
+      if (move) {
+        promises.push(
+          PlatformIO.renameFilePromise(
+            file.path,
+            directoryPath + AppConfig.dirSeparator + file.name
+          )
+            .then(() => true)
+            .catch(error => {
+              console.log('renameFilePromise', error);
+            })
+        );
+      } else {
+        promises.push(
+          PlatformIO.copyFilePromise(
+            file.path,
+            directoryPath + AppConfig.dirSeparator + file.name
+          )
+            .then(() => true)
+            .catch(error => {
+              console.log('copyFilePromise', error);
+            })
+        );
+      }
+    }
+    Promise.all(promises)
+      .then(() =>
+        dispatch(AppActions.loadDirectoryContent(directoryPath, true, true))
+      )
+      .catch(error => {
+        console.log('promises', error);
+      });
+  };
+
   return (
     <Dialog
       open={open}
@@ -104,7 +147,10 @@ function MoveOrCopyFilesDialog(props: Props) {
           {t('core:cancel')}
         </Button>
         <Button
-          onClick={() => props.handleMoveFiles(props.selectedFiles)}
+          onClick={() => {
+            handleMoveCopyFiles(props.selectedFiles, true);
+            props.onClose();
+          }}
           data-tid="confirmMoveFilesTID"
           color="primary"
           variant="contained"
@@ -112,7 +158,10 @@ function MoveOrCopyFilesDialog(props: Props) {
           {t('core:moveEntriesButton')}
         </Button>
         <Button
-          onClick={() => props.handleCopyFiles(props.selectedFiles)}
+          onClick={() => {
+            handleMoveCopyFiles(props.selectedFiles);
+            props.onClose();
+          }}
           data-tid="confirmCopyFilesTID"
           color="primary"
           variant="contained"

@@ -36,7 +36,6 @@ import {
 } from '-/reducers/location-index';
 import {
   actions as SettingsActions,
-  getCurrentLanguage,
   getFileEditHistory,
   getFileOpenHistory,
   getFolderOpenHistory,
@@ -601,7 +600,6 @@ function StoredSearches(props: Props) {
 
 function mapStateToProps(state) {
   return {
-    language: getCurrentLanguage(state),
     searchQuery: getSearchQuery(state),
     searches: getSearches(state),
     showUnixHiddenEntries: getShowUnixHiddenEntries(state),
@@ -640,7 +638,6 @@ const areEqual = (prevProp, nextProp) =>
   nextProp.fileOpenHistory === prevProp.fileOpenHistory &&
   nextProp.folderOpenHistory === prevProp.folderOpenHistory &&
   nextProp.fileEditHistory === prevProp.fileEditHistory &&
-  nextProp.language === prevProp.language &&
   nextProp.indexing === prevProp.indexing &&
   nextProp.searchQuery === prevProp.searchQuery &&
   nextProp.currentDirectory === prevProp.currentDirectory &&

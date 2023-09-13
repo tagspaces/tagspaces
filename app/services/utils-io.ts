@@ -903,7 +903,7 @@ export async function loadSubFolders(path: string, loadHidden = false) {
 
 export function generateFileName(
   fileName: string,
-  tags: Array<string>,
+  tags: string[],
   tagDelimiter: string,
   prefixTagContainer = AppConfig.prefixTagContainer
 ) {

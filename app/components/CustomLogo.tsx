@@ -28,7 +28,6 @@ import TextLogoIcon from '../assets/images/text-logo.svg';
 import WebLogoIcon from '../assets/images/text-logo-web.svg';
 import LogoIcon from '../assets/images/icon100x100.svg';
 import versionMeta from '../version.json';
-import { getCurrentLanguage } from '-/reducers/settings';
 import { actions } from '-/reducers/app';
 import { useTranslation } from 'react-i18next';
 
@@ -50,7 +49,6 @@ const StyledAppVersionBadge = styled(Badge)(({ theme }) => ({
 function CustomLogo() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const language = useSelector(getCurrentLanguage);
 
   const logo = useMemo(() => {
     let customLogo = Pro ? Pro.TextLogoIcon : TextLogoIcon;

@@ -17,7 +17,7 @@
  */
 
 import React, { useEffect, useReducer, useRef } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import Tooltip from '-/components/Tooltip';
@@ -39,7 +39,6 @@ import {
   getCurrentDirectoryColor,
   getIsMetaLoaded,
   getCurrentDirectoryTags,
-  isLoading,
   getCurrentDirectoryDescription,
   getLastBackgroundImageChange,
   getLastThumbnailImageChange,
@@ -60,6 +59,7 @@ import PlatformIO from '-/services/platform-facade';
 import { MilkdownEditor } from '@tagspaces/tagspaces-md';
 import { renderCell } from '-/perspectives/common/main-container';
 import { useTranslation } from 'react-i18next';
+import { getCurrentLocation } from '-/reducers/locations';
 
 interface Props {
   isMetaLoaded: boolean;
@@ -90,10 +90,8 @@ interface Props {
   ) => void;
   currentDirectoryColor: string;
   currentDirectoryTags: Array<TS.Tag>;
-  isAppLoading: boolean;
   currentPage: number;
   gridPageLimit: number;
-  currentLocationPath: string;
   currentDirectoryPath: string;
   onContextMenu: (event: React.MouseEvent<HTMLDivElement>) => void;
   openRenameEntryDialog: () => void;
@@ -108,7 +106,6 @@ interface Props {
   lastThumbnailImageChange: any;
   setSelectedEntries: (selectedEntries: Array<TS.FileSystemEntry>) => void;
   singleClickAction: string;
-  currentLocation: TS.Location;
   lastSelectedEntryPath: string;
   directoryContent: Array<TS.FileSystemEntry>;
   openEntry: (entryPath?: string) => void;
@@ -141,10 +138,8 @@ function GridPagination(props: Props) {
     showTags,
     singleClickAction,
     getCellContent,
-    isAppLoading,
     isReadOnlyMode,
     desktopMode,
-    currentLocation,
     currentDirectoryColor,
     currentDirectoryTags,
     currentDirectoryDescription,
@@ -168,6 +163,7 @@ function GridPagination(props: Props) {
     clearSelection,
     files
   } = props;
+  const currentLocation: TS.Location = useSelector(getCurrentLocation);
   if (!showDirectories) {
     directories = [];
   }
@@ -246,7 +242,7 @@ function GridPagination(props: Props) {
       containerEl.current.scrollTop = 0;
     }
   }, [
-    props.currentLocationPath,
+    //props.currentLocationPath,
     props.currentDirectoryPath,
     props.lastSearchTimestamp
   ]);
@@ -621,7 +617,7 @@ function GridPagination(props: Props) {
               index === dArray.length - 1
             )
           )}
-          {!isAppLoading && pageFiles.length < 1 && directories.length < 1 && (
+          {pageFiles.length < 1 && directories.length < 1 && (
             <div style={{ textAlign: 'center' }}>
               {!showDescription && currentDirectoryDescription && (
                 <div style={{ position: 'relative', marginBottom: 150 }}>
@@ -640,35 +636,32 @@ function GridPagination(props: Props) {
               )}
             </div>
           )}
-          {!isAppLoading &&
-            pageFiles.length < 1 &&
-            directories.length >= 1 &&
-            !showDirectories && (
-              <div style={{ textAlign: 'center' }}>
-                {!showDescription && currentDirectoryDescription && (
-                  <div style={{ position: 'relative', marginBottom: 150 }}>
-                    <EntryIcon isFile={false} />
-                  </div>
-                )}
-                <Typography
-                  style={{ padding: 15, color: theme.palette.text.secondary }}
-                >
-                  {t('core:noFileButFoldersFound')}
+          {pageFiles.length < 1 && directories.length >= 1 && !showDirectories && (
+            <div style={{ textAlign: 'center' }}>
+              {!showDescription && currentDirectoryDescription && (
+                <div style={{ position: 'relative', marginBottom: 150 }}>
+                  <EntryIcon isFile={false} />
+                </div>
+              )}
+              <Typography
+                style={{ padding: 15, color: theme.palette.text.secondary }}
+              >
+                {t('core:noFileButFoldersFound')}
+              </Typography>
+              {!AppConfig.isCordova && (
+                <Typography style={{ color: theme.palette.text.secondary }}>
+                  {t('core:dragAndDropToImport')}
                 </Typography>
-                {!AppConfig.isCordova && (
-                  <Typography style={{ color: theme.palette.text.secondary }}>
-                    {t('core:dragAndDropToImport')}
-                  </Typography>
-                )}
-              </div>
-            )}
+              )}
+            </div>
+          )}
         </div>
         {showPagination && (
           <Tooltip title={folderSummary}>
             <Pagination
               style={{
                 left: 15,
-                bottom: 65,
+                bottom: 15,
                 zIndex: 1100,
                 position: 'absolute',
                 backgroundColor: theme.palette.background.default,
@@ -704,7 +697,6 @@ function GridPagination(props: Props) {
 
 function mapStateToProps(state) {
   return {
-    isAppLoading: isLoading(state),
     currentDirectoryColor: getCurrentDirectoryColor(state),
     lastSearchTimestamp: getLastSearchTimestamp(state),
     // searchResultCount: getSearchResultCount(state),
@@ -723,7 +715,9 @@ function mapActionCreatorsToProps(dispatch) {
     {
       // setMetaForCurrentDir: AppActions.setMetaForCurrentDir,
       updateCurrentDirEntries: AppActions.updateCurrentDirEntries,
-      setIsMetaLoaded: AppActions.setIsMetaLoaded
+      setIsMetaLoaded: AppActions.setIsMetaLoaded,
+      loadDirectoryContent: AppActions.loadDirectoryContent,
+      openEntry: AppActions.openEntry
     },
     dispatch
   );

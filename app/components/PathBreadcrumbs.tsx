@@ -33,6 +33,13 @@ import { TS } from '-/tagspaces.namespace';
 import { LocalLocationIcon, CloudLocationIcon } from '-/components/CommonIcons';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
+import { getCurrentLocation } from '-/reducers/locations';
+import {
+  actions as AppActions,
+  AppDispatch,
+  getDirectoryPath
+} from '-/reducers/app';
 
 const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   const backgroundColor =
@@ -59,18 +66,8 @@ const NoWrapBreadcrumb = styled(StyledBreadcrumb)(({ theme }) => {
 });
 
 interface Props {
-  currentDirectoryPath: string;
-  currentLocationPath: string;
-  currentLocation: TS.Location;
-  loadDirectoryContent: (
-    path: string,
-    generateThumbnails: boolean,
-    loadDirMeta?: boolean
-  ) => void;
-  language: string;
   switchPerspective: (perspectiveId: string) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
-  openDirectory: () => void;
   reflectCreateEntry: (path: string, isFile: boolean) => void;
   openRenameDirectoryDialog: () => void;
   openMoveCopyFilesDialog: () => void;
@@ -79,7 +76,10 @@ interface Props {
 
 function PathBreadcrumbs(props: Props) {
   const { t } = useTranslation();
+  const dispatch: AppDispatch = useDispatch();
   let pathParts: Array<string> = [];
+  const currentLocation = useSelector(getCurrentLocation);
+  const currentDirectoryPath = useSelector(getDirectoryPath);
 
   const [
     directoryContextMenuAnchorEl,
@@ -87,12 +87,7 @@ function PathBreadcrumbs(props: Props) {
   ] = useState<null | HTMLElement>(null);
 
   const {
-    currentDirectoryPath,
-    currentLocationPath,
-    currentLocation,
-    loadDirectoryContent,
     setSelectedEntries,
-    openDirectory,
     reflectCreateEntry,
     openRenameDirectoryDialog,
     openMoveCopyFilesDialog,
@@ -130,9 +125,9 @@ function PathBreadcrumbs(props: Props) {
       addSlash + normalizePath(currentDirectoryPath.split('\\').join('/'));
 
     let normalizedCurrentLocationPath = '';
-    if (currentLocationPath) {
+    if (currentLocation && currentLocation.path) {
       normalizedCurrentLocationPath =
-        addSlash + normalizePath(currentLocationPath.split('\\').join('/'));
+        addSlash + normalizePath(currentLocation.path.split('\\').join('/'));
     }
 
     while (
@@ -182,7 +177,9 @@ function PathBreadcrumbs(props: Props) {
               href="#"
               label={folderName}
               icon={index === 0 && locationTypeIcon}
-              onClick={() => loadDirectoryContent(pathPart, false, true)}
+              onClick={() =>
+                dispatch(AppActions.loadDirectoryContent(pathPart, false, true))
+              }
             />
           </Tooltip>
         );
@@ -239,10 +236,8 @@ function PathBreadcrumbs(props: Props) {
         onClose={closeDirectoryMenu}
         anchorEl={directoryContextMenuAnchorEl}
         directoryPath={currentDirectoryPath}
-        loadDirectoryContent={loadDirectoryContent}
         openRenameDirectoryDialog={openRenameDirectoryDialog}
         openMoveCopyFilesDialog={openMoveCopyFilesDialog}
-        openDirectory={openDirectory}
         reflectCreateEntry={reflectCreateEntry}
       />
     </>

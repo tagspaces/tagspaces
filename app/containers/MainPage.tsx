@@ -19,7 +19,7 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 //import { translate } from 'react-i18next';
 //import { initReactI18next } from 'react-i18next';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
@@ -52,7 +52,6 @@ import {
   isLicenseDialogOpened,
   isThirdPartyLibsDialogOpened,
   isEntryInFullWidth,
-  getDirectoryPath,
   isLocationManagerPanelOpened,
   isTagLibraryPanelOpened,
   isSearchPanelOpened,
@@ -206,7 +205,6 @@ interface Props {
   isTagLibraryPanelOpened: boolean;
   isSearchPanelOpened: boolean;
   isHelpFeedbackPanelOpened: boolean;
-  directoryPath: string;
   showNotification: (
     text: string,
     notificationType?: string,
@@ -469,92 +467,6 @@ function MainPage(props: Props) {
     setDrawerOpened(prevOpen => !prevOpen);
   };
 
-  const handleMoveCopyFiles = (files: Array<File>, move = false) => {
-    const promises = [];
-    for (const file of files) {
-      if (move) {
-        promises.push(
-          PlatformIO.renameFilePromise(
-            file.path,
-            props.directoryPath + AppConfig.dirSeparator + file.name
-          )
-            .then(() => true)
-            .catch(error => {
-              console.log('renameFilePromise', error);
-            })
-        );
-      } else {
-        promises.push(
-          PlatformIO.copyFilePromise(
-            file.path,
-            props.directoryPath + AppConfig.dirSeparator + file.name
-          )
-            .then(() => true)
-            .catch(error => {
-              console.log('copyFilePromise', error);
-            })
-        );
-      }
-    }
-    Promise.all(promises)
-      .then(() => loadDirectoryContent(props.directoryPath, true, true))
-      .catch(error => {
-        console.log('promises', error);
-      });
-  };
-  /* const handleMoveFiles = (files: Array<File>) => {
-    handleCopyFiles(files)
-      .then(success => {
-        if (AppConfig.isElectron && success) {
-          for (const file of files) {
-            PlatformIO.deleteFilePromise(file.path)
-              .then(() => true)
-              .catch(error => {
-                console.log('deleteFilePromise', error);
-              });
-          }
-        }
-        return true;
-      })
-      .catch(error => {
-        console.log('handleCopyFiles', error);
-      });
-  }; */
-
-  const handleCopyFiles = files => {
-    if (props.isReadOnlyMode) {
-      props.showNotification(t('core:dndDisabledReadOnlyMode'), 'error', true);
-      return Promise.reject(t('core:dndDisabledReadOnlyMode'));
-    }
-    if (files) {
-      console.log('Dropped files: ' + JSON.stringify(files));
-      if (!props.directoryPath) {
-        props.showNotification(
-          'Importing files failed, because no folder is opened in TagSpaces!',
-          'error',
-          true
-        );
-        return Promise.reject(
-          new Error(
-            'Importing files failed, because no folder is opened in TagSpaces!'
-          )
-        );
-      }
-      props.resetProgress();
-      props.toggleUploadDialog();
-      return props
-        .uploadFilesAPI(files, props.directoryPath, props.onUploadProgress)
-        .then(fsEntries => {
-          props.reflectCreateEntries(fsEntries);
-          return true;
-        })
-        .catch(error => {
-          console.log('uploadFiles', error);
-        });
-    }
-    return Promise.reject(new Error('on files'));
-  };
-
   const keyBindingHandlers = {
     openParentDirectory: props.loadParentDirectoryContent,
     toggleShowHiddenEntries: props.toggleShowUnixHiddenEntries,
@@ -602,7 +514,6 @@ function MainPage(props: Props) {
     toggleProTeaser,
     setFirstRun,
     loadDirectoryContent,
-    directoryPath,
     mainSplitSize,
     openedFiles,
     openLink
@@ -655,13 +566,10 @@ function MainPage(props: Props) {
         setPercent={setPercent}
       >
         <FolderContainer
-          windowHeight={dimensions.height}
-          windowWidth={dimensions.width}
           toggleDrawer={toggleDrawer}
           toggleProTeaser={toggleProTeaser}
           drawerOpened={drawerOpened}
           openedFiles={openedFiles}
-          currentDirectoryPath={directoryPath}
           goBack={goBack}
           goForward={goForward}
           openMoveCopyFilesDialog={() =>
@@ -673,7 +581,6 @@ function MainPage(props: Props) {
             key="EntryContainerID"
             loadDirectoryContent={loadDirectoryContent}
             openedFiles={openedFiles}
-            currentDirectoryPath={directoryPath}
           />
         )}
       </Split>
@@ -693,14 +600,6 @@ function MainPage(props: Props) {
             setMoveCopyDialogOpened(undefined);
           }}
           selectedFiles={moveCopyDialogOpened}
-          handleMoveFiles={files => {
-            handleMoveCopyFiles(files, true);
-            setMoveCopyDialogOpened(undefined);
-          }}
-          handleCopyFiles={files => {
-            handleMoveCopyFiles(files, false);
-            setMoveCopyDialogOpened(undefined);
-          }}
         />
         {props.isLocationDialogOpened && (
           <CreateEditLocationDialogAsync
@@ -788,12 +687,7 @@ function MainPage(props: Props) {
           <CreateDirectoryDialog
             open={true}
             onClose={toggleCreateDirectoryDialog}
-            selectedDirectoryPath={
-              props.isCreateDirectoryOpened &&
-              props.isCreateDirectoryOpened.rootDirPath
-                ? props.isCreateDirectoryOpened.rootDirPath
-                : directoryPath
-            }
+            selectedDirectoryPath={props.isCreateDirectoryOpened?.rootDirPath}
             callback={props.isCreateDirectoryOpened?.callback}
             reflect={props.isCreateDirectoryOpened?.reflect}
           />
@@ -854,12 +748,15 @@ function MainPage(props: Props) {
         <PageNotification />
         <div
           style={{
-            // backgroundColor: theme.palette.background.default,
+            backgroundColor: theme.palette.background.default,
             height: '100%'
           }}
         >
           <style>
             {`
+              body { background-color: ${
+                theme.palette.background.default
+              } !important;}
               .default-splitter {
                 --default-splitter-line-margin: 2px !important;
                 --default-splitter-line-size: 1px !important;
@@ -888,17 +785,7 @@ function MainPage(props: Props) {
           {props.isDesktopMode || (AppConfig.isAmplify && !props.user) ? (
             <TargetFileBox
               accepts={[FILE]}
-              onDrop={(item: any) => {
-                if (
-                  AppConfig.isElectron &&
-                  !PlatformIO.haveObjectStoreSupport() &&
-                  !PlatformIO.haveWebDavSupport()
-                ) {
-                  setMoveCopyDialogOpened(item.files);
-                } else {
-                  handleCopyFiles(item.files);
-                }
-              }}
+              setMoveCopyDialogOpened={setMoveCopyDialogOpened}
             >
               <CustomDragLayer />
               <Drawer variant="persistent" anchor="left" open={drawerOpened}>
@@ -964,7 +851,6 @@ function mapStateToProps(state) {
     isTagLibraryPanelOpened: isTagLibraryPanelOpened(state),
     isSearchPanelOpened: isSearchPanelOpened(state),
     isHelpFeedbackPanelOpened: isHelpFeedbackPanelOpened(state),
-    directoryPath: getDirectoryPath(state),
     isDeleteMultipleEntriesDialogOpened: isDeleteMultipleEntriesDialogOpened(
       state
     ),
@@ -1036,7 +922,6 @@ function mapDispatchToProps(dispatch) {
 const areEqual = (prevProp, nextProp) =>
   /* JSON.stringify(nextProp.theme.palette) ===
     JSON.stringify(prevProp.theme.palette) && */
-  nextProp.directoryPath === prevProp.directoryPath &&
   nextProp.isAboutDialogOpened === prevProp.isAboutDialogOpened &&
   JSON.stringify(nextProp.isCreateDirectoryOpened) ===
     JSON.stringify(prevProp.isCreateDirectoryOpened) &&

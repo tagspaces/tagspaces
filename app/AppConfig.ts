@@ -1,6 +1,5 @@
 import { AppConfig } from '@tagspaces/tagspaces-common';
 
-AppConfig.mainToolbarHeight = 101;
 AppConfig.editableFiles = [
   'txt',
   'md',

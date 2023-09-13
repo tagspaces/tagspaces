@@ -17,7 +17,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
@@ -26,7 +26,11 @@ import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import Dialog from '@mui/material/Dialog';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
+import {
+  actions as AppActions,
+  AppDispatch,
+  getDirectoryPath
+} from '-/reducers/app';
 import { joinPaths } from '@tagspaces/tagspaces-common/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import PlatformIO from '-/services/platform-facade';
@@ -35,7 +39,7 @@ import { useTranslation } from 'react-i18next';
 interface Props {
   open: boolean;
   onClose: () => void;
-  selectedDirectoryPath: string;
+  selectedDirectoryPath?: string;
   callback?: (newDirPath: string) => void;
   reflect?: boolean;
 }
@@ -47,7 +51,8 @@ function CreateDirectoryDialog(props: Props) {
   const isFirstRun = useRef(true);
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [name, setName] = useState('');
-  const { open, onClose, reflect } = props;
+  const currentDirectoryPath = useSelector(getDirectoryPath);
+  const { open, onClose, selectedDirectoryPath, reflect } = props;
 
   useEffect(() => {
     if (isFirstRun.current) {
@@ -73,7 +78,9 @@ function CreateDirectoryDialog(props: Props) {
     if (!disableConfirmButton && name) {
       const dirPath = joinPaths(
         PlatformIO.getDirSeparator(),
-        props.selectedDirectoryPath,
+        selectedDirectoryPath !== undefined
+          ? selectedDirectoryPath
+          : currentDirectoryPath,
         name
       );
       dispatch(

@@ -21,11 +21,7 @@ import { useSelector } from 'react-redux';
 import Tooltip from '-/components/Tooltip';
 import { TS } from '-/tagspaces.namespace';
 
-import {
-  getCurrentLanguage,
-  getTagColor,
-  getTagTextColor
-} from '-/reducers/settings';
+import { getTagColor, getTagTextColor } from '-/reducers/settings';
 import { getTagColors } from '-/services/taglibrary-utils';
 import { useTranslation } from 'react-i18next';
 
@@ -37,7 +33,6 @@ function TagsPreview(props: Props) {
   const { t } = useTranslation();
   const defaultBackgroundColor = useSelector(getTagColor);
   const defaultTextColor = useSelector(getTagTextColor);
-  const language = useSelector(getCurrentLanguage);
 
   const { tags } = props;
   // const allTags = useRef<Array<TS.Tag>>(getAllTags(getTagLibrary()));

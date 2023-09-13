@@ -29,7 +29,6 @@ import {
   OpenedEntry
 } from '-/reducers/app';
 import { useSelector, useDispatch } from 'react-redux';
-import { getCurrentLanguage } from '-/reducers/settings';
 import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
 import { format, formatDistanceToNow } from 'date-fns';
@@ -57,7 +56,6 @@ const initialRowsPerPage = 10;
 function Revisions() {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
-  const language = useSelector(getCurrentLanguage);
   const openedFiles: Array<OpenedEntry> = useSelector(getOpenedFiles);
   const [rows, setRows] = useState<Array<TS.FileSystemEntry>>([]);
   const [page, setPage] = useState<number>(0);

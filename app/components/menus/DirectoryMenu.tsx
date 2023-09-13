@@ -47,7 +47,7 @@ import { getRelativeEntryPath } from '-/services/utils-io';
 import { PerspectiveIDs } from '-/perspectives';
 import PlatformFacade from '-/services/platform-facade';
 import { getDirectoryMenuItems } from '-/perspectives/common/DirectoryMenuItems';
-import { getLocations } from '-/reducers/locations';
+import { getCurrentLocation, getLocations } from '-/reducers/locations';
 import { useTranslation } from 'react-i18next';
 
 interface Props {
@@ -56,12 +56,6 @@ interface Props {
   onClose: (param?: any) => void;
   anchorEl: Element;
   directoryPath: string;
-  loadDirectoryContent: (
-    path: string,
-    generateThumbnails: boolean,
-    loadDirMeta?: boolean
-  ) => void;
-  openDirectory: (path: string) => void;
   openAddRemoveTagsDialog?: () => void;
   reflectCreateEntry?: (path: string, isFile: boolean) => void;
   switchPerspective?: (perspectiveId: string) => void;
@@ -70,7 +64,6 @@ interface Props {
   openMoveCopyFilesDialog: () => void;
   mouseX?: number;
   mouseY?: number;
-  currentLocation?: TS.Location;
 }
 
 function DirectoryMenu(props: Props) {
@@ -83,13 +76,12 @@ function DirectoryMenu(props: Props) {
     mouseX,
     mouseY,
     directoryPath,
-    currentLocation,
     openAddRemoveTagsDialog,
     openMoveCopyFilesDialog,
     openRenameDirectoryDialog,
     switchPerspective
   } = props;
-
+  const currentLocation: TS.Location = useSelector(getCurrentLocation);
   const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
     getSelectedEntries
   );
@@ -100,7 +92,7 @@ function DirectoryMenu(props: Props) {
   const dispatch: AppDispatch = useDispatch();
 
   const loadDirectoryContent = (path, generateThumbnails, loadDirMeta) => {
-    dispatch(
+    return dispatch(
       AppActions.loadDirectoryContent(path, generateThumbnails, loadDirMeta)
     );
   };
@@ -179,11 +171,11 @@ function DirectoryMenu(props: Props) {
   ] = useState(false);*/
 
   function reloadDirectory() {
-    loadDirectoryContent(directoryPath, true, true);
+    return loadDirectoryContent(directoryPath, true, true);
   }
 
   function openDirectory() {
-    loadDirectoryContent(directoryPath, true, true);
+    return loadDirectoryContent(directoryPath, true, true);
   }
 
   function showProperties() {

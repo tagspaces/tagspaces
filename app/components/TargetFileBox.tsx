@@ -20,30 +20,103 @@ import React, { ReactNode, useRef } from 'react';
 import { DropTargetMonitor, useDrop } from 'react-dnd';
 import { classes, DnD } from '-/components/DnD.css';
 import { useTranslation } from 'react-i18next';
+import AppConfig from '-/AppConfig';
+import PlatformIO from '-/services/platform-facade';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  actions as AppActions,
+  AppDispatch,
+  getDirectoryPath,
+  isReadOnlyMode
+} from '-/reducers/app';
+import IOActions from '-/reducers/io-actions';
+import { TS } from '-/tagspaces.namespace';
+import { Identifier } from 'dnd-core';
+
+type DragItem = { files: File[]; items: DataTransferItemList };
+type DragProps = { isActive: boolean; handlerId: Identifier | null };
 
 interface Props {
   children: ReactNode;
   accepts: Array<string>;
-  onDrop: (item) => void;
+  setMoveCopyDialogOpened: (files: Array<File>) => void;
 }
 
 function TargetFileBox(props: Props) {
   const { t } = useTranslation();
+  const dispatch: AppDispatch = useDispatch();
   const ref = useRef<HTMLDivElement>(null);
+  const readOnlyMode = useSelector(isReadOnlyMode);
+  const directoryPath = useSelector(getDirectoryPath);
+  const { setMoveCopyDialogOpened } = props;
 
-  const [collectedProps, drop] = useDrop({
-    accept: props.accepts,
-    collect(monitor: DropTargetMonitor) {
-      const isActive = monitor.isOver({ shallow: true }) && monitor.canDrop();
-      return {
-        handlerId: monitor.getHandlerId(),
-        isActive
-      };
-    },
-    drop(item, monitor) {
-      return props.onDrop(item); // collectedProps, monitor);
+  const onUploadProgress = (progress, abort, fileName) => {
+    dispatch(AppActions.onUploadProgress(progress, abort, fileName));
+  };
+
+  const handleCopyFiles = (files: Array<File>) => {
+    if (readOnlyMode) {
+      dispatch(
+        AppActions.showNotification(
+          t('core:dndDisabledReadOnlyMode'),
+          'error',
+          true
+        )
+      );
+      return Promise.reject(t('core:dndDisabledReadOnlyMode'));
     }
-  });
+    if (files) {
+      console.log('Dropped files: ' + JSON.stringify(files));
+      if (!directoryPath) {
+        dispatch(
+          AppActions.showNotification(
+            'Importing files failed, because no folder is opened in TagSpaces!',
+            'error',
+            true
+          )
+        );
+        return Promise.reject(
+          new Error(
+            'Importing files failed, because no folder is opened in TagSpaces!'
+          )
+        );
+      }
+      dispatch(AppActions.resetProgress());
+      dispatch(AppActions.toggleUploadDialog());
+      return dispatch(
+        IOActions.uploadFilesAPI(files, directoryPath, onUploadProgress)
+      )
+        .then((fsEntries: Array<TS.FileSystemEntry>) => {
+          dispatch(AppActions.reflectCreateEntries(fsEntries));
+          return true;
+        })
+        .catch(error => {
+          console.log('uploadFiles', error);
+        });
+    }
+    return Promise.reject(new Error('on files'));
+  };
+
+  const [collectedProps, drop] = useDrop<DragItem, unknown, DragProps>(() => ({
+    accept: props.accepts,
+    drop: ({ files }) => {
+      if (files && files.length) {
+        if (
+          AppConfig.isElectron &&
+          !PlatformIO.haveObjectStoreSupport() &&
+          !PlatformIO.haveWebDavSupport()
+        ) {
+          return setMoveCopyDialogOpened(files);
+        } else {
+          return handleCopyFiles(files);
+        }
+      }
+    },
+    collect: (m: DropTargetMonitor) => ({
+      handlerId: m.getHandlerId(),
+      isActive: m.isOver({ shallow: true }) && m.canDrop()
+    })
+  }));
 
   drop(ref);
 

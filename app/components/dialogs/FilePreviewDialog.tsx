@@ -31,11 +31,7 @@ import {
 } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { findExtensionsForEntry } from '-/services/utils-io';
-import {
-  getCurrentLanguage,
-  getCurrentTheme,
-  getSupportedFileTypes
-} from '-/reducers/settings';
+import { getCurrentTheme, getSupportedFileTypes } from '-/reducers/settings';
 import { useSelector, useDispatch } from 'react-redux';
 import FileView from '-/components/FileView';
 import useEventListener from '-/utils/useEventListener';
@@ -52,7 +48,6 @@ interface Props {
 function FilePreviewDialog(props: Props) {
   const { open = false, onClose, fsEntry } = props;
   const dispatch: AppDispatch = useDispatch();
-  const language = useSelector(getCurrentLanguage);
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const currentTheme = useSelector(getCurrentTheme);
   const fileViewer: MutableRefObject<HTMLIFrameElement> = useRef<

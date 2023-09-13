@@ -165,7 +165,7 @@ export const types = {
   UPDATE_CURRENTDIR_ENTRY: 'APP/UPDATE_CURRENTDIR_ENTRY',
   UPDATE_CURRENTDIR_ENTRIES: 'APP/UPDATE_CURRENTDIR_ENTRIES',
   REFLECT_EDITED_ENTRY_PATHS: 'APP/REFLECT_EDITED_ENTRY_PATHS',
-  SET_ISLOADING: 'APP/SET_ISLOADING',
+  // SET_ISLOADING: 'APP/SET_ISLOADING',
   ADD_EXTENSIONS: 'APP/ADD_EXTENSIONS',
   REMOVE_EXTENSIONS: 'APP/REMOVE_EXTENSIONS',
   UPDATE_EXTENSION: 'APP/UPDATE_EXTENSION'
@@ -227,7 +227,7 @@ if (window.ExtDefaultVerticalPanel === 'none') {
 
 export const initialState = {
   extensions: extensionsFound,
-  isLoading: false,
+  //isLoading: false,
   error: null,
   loggedIn: false,
   isOnline: false,
@@ -344,7 +344,10 @@ export default (state: any = initialState, action: any) => {
       return { ...state, progress: [] };
     }
     case types.SET_READONLYMODE: {
-      return { ...state, isReadOnlyMode: action.isReadOnlyMode };
+      if (action.isReadOnlyMode !== state.isReadOnlyMode) {
+        return { ...state, isReadOnlyMode: action.isReadOnlyMode };
+      }
+      return state;
     }
     case types.SET_NEW_VERSION_AVAILABLE: {
       return {
@@ -405,8 +408,8 @@ export default (state: any = initialState, action: any) => {
         /**
          * used for reorder dirs in KanBan
          */
-        currentDirectoryDirs: currentDirectoryDirs,
-        isLoading: action.showIsLoading || false
+        currentDirectoryDirs: currentDirectoryDirs
+        // isLoading: action.showIsLoading || false
       };
     }
     case types.CLEAR_DIRECTORY_CONTENT: {
@@ -426,7 +429,13 @@ export default (state: any = initialState, action: any) => {
       return { ...state, lastSelectedEntry: action.entryPath };
     } */
     case types.SET_SELECTED_ENTRIES: {
-      return { ...state, selectedEntries: action.selectedEntries };
+      if (
+        JSON.stringify(action.selectedEntries) !==
+        JSON.stringify(state.selectedEntries)
+      ) {
+        return { ...state, selectedEntries: action.selectedEntries };
+      }
+      return state;
     }
     case types.SET_TAG_LIBRARY_CHANGED: {
       return { ...state, tagLibraryChanged: !state.tagLibraryChanged };
@@ -586,7 +595,7 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         lastSearchTimestamp: new Date().getTime(),
-        isLoading: false,
+        //isLoading: false,
         selectedEntries: []
       };
     }
@@ -597,7 +606,7 @@ export default (state: any = initialState, action: any) => {
         searchMode: false,
         lastSearchTimestamp: undefined,
         searchFilter: undefined,
-        isLoading: false,
+        //isLoading: false,
         selectedEntries: []
       };
     }
@@ -606,8 +615,8 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         searchMode: true,
-        searchFilter: undefined,
-        isLoading: false
+        searchFilter: undefined
+        //isLoading: false
       };
     }
     case types.APPEND_SEARCH_RESULTS: {
@@ -625,9 +634,9 @@ export default (state: any = initialState, action: any) => {
       }
       return {
         ...state,
-        lastSearchTimestamp: new Date().getTime(),
+        lastSearchTimestamp: new Date().getTime()
         // currentDirectoryEntries: newDirEntries,
-        isLoading: false
+        //isLoading: false
       };
     }
     case types.SET_SEARCH_FILTER: {
@@ -648,12 +657,12 @@ export default (state: any = initialState, action: any) => {
         }
       };
     }
-    case types.SET_ISLOADING: {
+    /*case types.SET_ISLOADING: {
       return {
         ...state,
         isLoading: action.isLoading
       };
-    }
+    }*/
     case types.SET_GENERATING_THUMBNAILS: {
       return {
         ...state,
@@ -1166,7 +1175,11 @@ export const actions = {
       langURLParam.length > 1 &&
       /^[a-zA-Z\-_]+$/.test('langURLParam')
     ) {
-      dispatch(SettingsActions.setLanguage(langURLParam));
+      i18n.changeLanguage(langURLParam).then(() => {
+        dispatch(SettingsActions.setLanguage(langURLParam));
+        PlatformIO.setLanguage(langURLParam);
+        return true;
+      });
     }
 
     let openDefaultLocation = true;
@@ -1324,10 +1337,10 @@ export const actions = {
   openSearchPanel: () => ({ type: types.OPEN_SEARCH_PANEL }),
   openHelpFeedbackPanel: () => ({ type: types.OPEN_HELPFEEDBACK_PANEL }),
   //closeAllVerticalPanels: () => ({ type: types.CLOSE_ALLVERTICAL_PANELS }),
-  setIsLoading: (isLoading: boolean) => ({
+  /*setIsLoading: (isLoading: boolean) => ({
     type: types.SET_ISLOADING,
     isLoading
-  }),
+  }),*/
   /* setMetaForCurrentDir: (metaFiles: Array<any>) => (
     dispatch: (action: any) => void,
     getState: () => any
@@ -1378,7 +1391,7 @@ export const actions = {
     const { currentDirectoryPath } = state.app;
     const currentLocationPath = normalizePath(getCurrentLocationPath(state));
 
-    dispatch(actions.setIsLoading(true));
+    // dispatch(actions.setIsLoading(true));
 
     if (currentDirectoryPath) {
       const parentDirectory = extractParentDirectoryPath(
@@ -1396,7 +1409,7 @@ export const actions = {
             true
           )
         );
-        dispatch(actions.setIsLoading(false));
+        // dispatch(actions.setIsLoading(false));
       }
     } else {
       dispatch(
@@ -1406,7 +1419,7 @@ export const actions = {
           true
         )
       );
-      dispatch(actions.setIsLoading(false));
+      // dispatch(actions.setIsLoading(false));
     }
   },
   updateCurrentDirectoryPerspective: (perspective: string) => (
@@ -1508,7 +1521,7 @@ export const actions = {
     // console.debug('loadDirectoryContent:' + directoryPath);
     window.walkCanceled = false;
 
-    dispatch(actions.setIsLoading(true));
+    // dispatch(actions.setIsLoading(true));
 
     const state = getState();
     const { selectedEntries } = state.app;
@@ -3120,7 +3133,7 @@ export const getSearchResultCount = (state: any) =>
 */
 export const getCurrentLocationId = (state: any) => state.app.currentLocationId;
 export const isEntryInFullWidth = (state: any) => state.app.isEntryInFullWidth;
-export const isLoading = (state: any) => state.app.isLoading;
+//export const isLoading = (state: any) => state.app.isLoading;
 export const isLocationManagerPanelOpened = (state: any) =>
   state.app.locationManagerPanelOpened;
 export const isTagLibraryPanelOpened = (state: any) =>

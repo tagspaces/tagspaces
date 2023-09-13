@@ -65,7 +65,7 @@ import {
   DeleteIcon,
   LinkIcon
 } from '-/components/CommonIcons';
-import { getLocations } from '-/reducers/locations';
+import { getCurrentLocation, getLocations } from '-/reducers/locations';
 import PropertiesIcon from '@mui/icons-material/Info';
 import { useTranslation } from 'react-i18next';
 
@@ -80,16 +80,9 @@ interface Props {
   openMoveCopyFilesDialog: () => void;
   openShareFilesDialog?: () => void;
   openAddRemoveTagsDialog: () => void;
-  loadDirectoryContent: (
-    path: string,
-    generateThumbnails: boolean,
-    loadDirMeta?: boolean
-  ) => void;
   openFileNatively: (path: string) => void;
-  showInFileManager: (path: string) => void;
   selectedFilePath?: string;
   selectedEntries: Array<any>;
-  currentLocation: TS.Location;
   reorderTop?: () => void;
   reorderBottom?: () => void;
   onDuplicateFile?: (fileDirPath: string) => void;
@@ -102,12 +95,9 @@ function FileMenu(props: Props) {
     openMoveCopyFilesDialog,
     openShareFilesDialog,
     openAddRemoveTagsDialog,
-    showInFileManager,
     onDuplicateFile,
-    loadDirectoryContent,
     selectedEntries,
     openFileNatively,
-    currentLocation,
     reorderTop,
     reorderBottom,
     anchorEl,
@@ -120,6 +110,7 @@ function FileMenu(props: Props) {
 
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
+  const currentLocation: TS.Location = useSelector(getCurrentLocation);
   const locations: Array<TS.Location> = useSelector(getLocations);
   const readOnlyMode = useSelector(isReadOnlyMode);
   const prefixTagContainer = useSelector(getPrefixTagContainer);
@@ -271,7 +262,7 @@ function FileMenu(props: Props) {
           if (onDuplicateFile) {
             onDuplicateFile(dirPath);
           } else {
-            loadDirectoryContent(dirPath, true, true);
+            dispatch(AppActions.loadDirectoryContent(dirPath, true, true));
           }
           return true;
         })
@@ -291,7 +282,9 @@ function FileMenu(props: Props) {
         PlatformIO.getDirSeparator()
       );
       dispatch(AppActions.exitSearchMode());
-      loadDirectoryContent(parentFolder, false, true);
+      return dispatch(
+        AppActions.loadDirectoryContent(parentFolder, false, true)
+      );
     }
   }
 
@@ -389,7 +382,7 @@ function FileMenu(props: Props) {
         onClick={() => {
           onClose();
           if (selectedFilePath) {
-            showInFileManager(selectedFilePath);
+            dispatch(AppActions.showInFileManager(selectedFilePath));
           }
         }}
       >

@@ -254,7 +254,7 @@ export default (state: any = defaultSettings, action: any) => {
     case types.SET_EMAIL: {
       return {
         ...state,
-        isLoading: true,
+        //isLoading: true,
         email: action.email
       };
     }
@@ -594,12 +594,12 @@ export const actions = {
     type: types.SET_REORDER_TAGS,
     reorderTags
   }),
-  setLanguage: (language: string) => (dispatch: (action) => void) => {
+  /*setLanguage: (language: string) => (dispatch: (action) => void) => {
     return i18n.changeLanguage(language).then(() => {
       dispatch(actions.setLanguageInt(language));
     });
-  },
-  setLanguageInt: (language: string) => ({
+  },*/
+  setLanguage: (language: string) => ({
     type: types.SET_LANGUAGE,
     language
   }),

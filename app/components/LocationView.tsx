@@ -42,7 +42,6 @@ import IOActions from '../reducers/io-actions';
 import DirectoryTreeView, {
   DirectoryTreeViewRef
 } from '-/components/DirectoryTreeView';
-import { getCurrentLanguage } from '-/reducers/settings';
 import LocationContextMenu from '-/components/menus/LocationContextMenu';
 import { TS } from '-/tagspaces.namespace';
 import { classes, SidePanel } from '-/components/SidePanels.css';
@@ -66,7 +65,6 @@ function LocationView(props: Props) {
   ] = useState<null | HTMLElement>(null);
 
   const dispatch: AppDispatch = useDispatch();
-  const language = useSelector(getCurrentLanguage);
   const currentLocationId: string = useSelector(getCurrentLocationId);
   const readOnlyMode = useSelector(isReadOnlyMode);
 

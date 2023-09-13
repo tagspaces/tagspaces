@@ -23,7 +23,7 @@ import { List } from '@mui/material';
 import LocationManagerMenu from '-/components/menus/LocationManagerMenu';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { actions as LocationActions, getLocations } from '-/reducers/locations';
-import { actions as AppActions, AppDispatch, isLoading } from '-/reducers/app';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import LoadingLazy from '-/components/LoadingLazy';
 import LocationView from '-/components/LocationView';
 import { Pro } from '-/pro';
@@ -62,7 +62,7 @@ function LocationManager(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const locations: Array<TS.Location> = useSelector(getLocations);
-  const loading: boolean = useSelector(isLoading);
+  // const loading: boolean = useSelector(isLoading);
   //const language: string = useSelector(getCurrentLanguage);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedLocation, setSelectedLocation] = useState<TS.Location>(null);
@@ -118,12 +118,12 @@ function LocationManager(props: Props) {
         flexDirection: 'column'
       }}
     >
-      {loading &&
-        (PlatformIO.haveObjectStoreSupport() ||
-          PlatformIO.haveWebDavSupport()) && (
-          <>
-            <style>
-              {`
+      {//loading &&
+      (PlatformIO.haveObjectStoreSupport() ||
+        PlatformIO.haveWebDavSupport()) && (
+        <>
+          <style>
+            {`
                 @keyframes hide {
                   to {
                       width: 0;
@@ -131,22 +131,22 @@ function LocationManager(props: Props) {
                 }
               }
             `}
-            </style>
-            <div
-              style={{
-                position: 'absolute',
-                zIndex: 1000,
-                height: 'calc(100% - 180px)',
-                width: 310,
-                backdropFilter: 'grayscale(1)',
-                animation: 'hide 1ms linear 5s 1 forwards'
-                // backgroundColor: 'red'
-                // backdropFilter: 'blur(2px)',
-                // backgroundColor: '#fafafaAA' // red: '#eb585882' '#d9d9d980'
-              }}
-            />
-          </>
-        )}
+          </style>
+          <div
+            style={{
+              position: 'absolute',
+              zIndex: 1000,
+              height: 'calc(100% - 180px)',
+              width: 310,
+              backdropFilter: 'grayscale(1)',
+              animation: 'hide 1ms linear 5s 1 forwards'
+              // backgroundColor: 'red'
+              // backdropFilter: 'blur(2px)',
+              // backgroundColor: '#fafafaAA' // red: '#eb585882' '#d9d9d980'
+            }}
+          />
+        </>
+      )}
       <LocationManagerMenu
         importLocations={() => {
           fileInputRef.current.click();

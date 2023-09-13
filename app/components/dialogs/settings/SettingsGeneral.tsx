@@ -37,7 +37,7 @@ import AppConfig from '-/AppConfig';
 import {
   actions as SettingsActions,
   getPersistTagsInSidecarFile,
-  getCurrentLanguage,
+  //getCurrentLanguage,
   getSettings
 } from '-/reducers/settings';
 import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
@@ -77,14 +77,13 @@ const Root = styled('div')(({ theme }) => ({
 }));
 
 function SettingsGeneral() {
-  const { t } = useTranslation();
+  const { i18n, t } = useTranslation();
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
   const [displayTextColorPicker, setDisplayTextColorPicker] = useState<boolean>(
     false
   );
   const dispatch: AppDispatch = useDispatch();
   const settings = useSelector(getSettings);
-  const language = useSelector(getCurrentLanguage);
   const persistTagsInSidecarFile = useSelector(getPersistTagsInSidecarFile);
 
   const toggleDefaultTagBackgroundColorPicker = () => {
@@ -126,8 +125,11 @@ function SettingsGeneral() {
             data-tid="settingsSetLanguage"
             value={settings.interfaceLanguage}
             onChange={(event: any) => {
-              dispatch(SettingsActions.setLanguage(event.target.value));
-              PlatformIO.setLanguage(event.target.value);
+              return i18n.changeLanguage(event.target.value).then(() => {
+                dispatch(SettingsActions.setLanguage(event.target.value));
+                PlatformIO.setLanguage(event.target.value);
+                return true;
+              });
             }}
             input={<Input id="languageSelector" />}
           >
@@ -196,7 +198,6 @@ function SettingsGeneral() {
         <ListItem className={classes.listItem}>
           <ListItemText primary={t('createLocationDefaultPerspective')} />
           <PerspectiveSelector
-            language={language}
             onChange={changePerspective}
             defaultValue={defaultPerspective}
             testId="changePerspectiveInSettingsTID"

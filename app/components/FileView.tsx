@@ -22,7 +22,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import { OpenedEntry } from '-/reducers/app';
 import useEventListener from '-/utils/useEventListener';
 import { connect } from 'react-redux';
-import { getCurrentLanguage } from '-/reducers/settings';
 import { getSearchQuery } from '-/reducers/location-index';
 import { TS } from '-/tagspaces.namespace';
 import { useTranslation } from 'react-i18next';
@@ -183,7 +182,6 @@ function FileView(props: Props) {
 }
 
 const areEqual = (prevProp, nextProp) =>
-  nextProp.language === prevProp.language &&
   nextProp.openedFile.path === prevProp.openedFile.path &&
   nextProp.openedFile.url === prevProp.openedFile.url &&
   nextProp.openedFile.editMode === prevProp.openedFile.editMode &&
@@ -197,7 +195,6 @@ const areEqual = (prevProp, nextProp) =>
 
 function mapStateToProps(state) {
   return {
-    language: getCurrentLanguage(state),
     searchQuery: getSearchQuery(state)
   };
 }
