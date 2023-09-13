@@ -50,9 +50,9 @@ import SearchMenu from '-/components/menus/SearchMenu';
 import { actions as AppActions, getCurrentLocationId } from '-/reducers/app';
 import HistoryMenu from '-/components/menus/HistoryMenu';
 import BookmarksMenu from '-/components/menus/BookmarksMenu';
-import { renderHistory } from '-/components/RenderHistory';
 import { classes, SidePanel } from '-/components/SidePanels.css';
 import { useTranslation } from 'react-i18next';
+import RenderHistory from '-/components/RenderHistory';
 
 interface Props {
   style?: any;
@@ -352,17 +352,17 @@ function StoredSearches(props: Props) {
             </Grid>
           )}
         </Grid>
-        {Pro &&
-          props.showBookmarks &&
-          renderHistory(
-            Pro.bookmarks.bookmarksKey,
-            bookmarkItems,
-            forceUpdate,
-            props.currentLocationId,
-            props.openLink,
-            props.openLocationById,
-            props.openEntry
-          )}
+        {Pro && props.showBookmarks && (
+          <RenderHistory
+            key={Pro.bookmarks.bookmarksKey}
+            items={bookmarkItems}
+            update={forceUpdate}
+            currentLocationId={props.currentLocationId}
+            openLink={props.openLink}
+            openLocationById={props.openLocationById}
+            openEntry={props.openEntry}
+          />
+        )}
         <Grid container direction="row">
           <Grid item xs={10} style={{ alignSelf: 'center' }}>
             <IconButton
@@ -403,16 +403,17 @@ function StoredSearches(props: Props) {
             </Grid>
           )}
         </Grid>
-        {props.fileOpenHistory &&
-          renderHistory(
-            historyKeys.fileOpenKey,
-            fileOpenHistoryItems,
-            forceUpdate,
-            props.currentLocationId,
-            props.openLink,
-            props.openLocationById,
-            props.openEntry
-          )}
+        {props.fileOpenHistory && (
+          <RenderHistory
+            key={historyKeys.fileOpenKey}
+            items={fileOpenHistoryItems}
+            update={forceUpdate}
+            currentLocationId={props.currentLocationId}
+            openLink={props.openLink}
+            openLocationById={props.openLocationById}
+            openEntry={props.openEntry}
+          />
+        )}
         <Grid container direction="row">
           <Grid item xs={10} style={{ alignSelf: 'center' }}>
             <IconButton
@@ -454,16 +455,17 @@ function StoredSearches(props: Props) {
             </Grid>
           )}
         </Grid>
-        {props.fileEditHistory &&
-          renderHistory(
-            historyKeys.fileEditKey,
-            fileEditHistoryItems,
-            forceUpdate,
-            props.currentLocationId,
-            props.openLink,
-            props.openLocationById,
-            props.openEntry
-          )}
+        {props.fileEditHistory && (
+          <RenderHistory
+            key={historyKeys.fileEditKey}
+            items={fileEditHistoryItems}
+            update={forceUpdate}
+            currentLocationId={props.currentLocationId}
+            openLink={props.openLink}
+            openLocationById={props.openLocationById}
+            openEntry={props.openEntry}
+          />
+        )}
         <Grid container direction="row">
           <Grid item xs={10} style={{ alignSelf: 'center' }}>
             <IconButton
@@ -532,16 +534,17 @@ function StoredSearches(props: Props) {
             </Grid>
           )}
         </Grid>
-        {props.folderOpenHistory &&
-          renderHistory(
-            historyKeys.folderOpenKey,
-            folderOpenHistoryItems,
-            forceUpdate,
-            props.currentLocationId,
-            props.openLink,
-            props.openLocationById,
-            props.openEntry
-          )}
+        {props.folderOpenHistory && (
+          <RenderHistory
+            key={historyKeys.folderOpenKey}
+            items={folderOpenHistoryItems}
+            update={forceUpdate}
+            currentLocationId={props.currentLocationId}
+            openLink={props.openLink}
+            openLocationById={props.openLocationById}
+            openEntry={props.openEntry}
+          />
+        )}
         {SaveSearchDialog && saveSearchDialogOpened !== undefined && (
           <SaveSearchDialog
             open={true}
