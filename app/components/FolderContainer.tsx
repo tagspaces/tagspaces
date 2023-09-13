@@ -71,6 +71,7 @@ import MainSearchField from '-/components/MainSearchField';
 import SearchBox from '-/components/SearchBox';
 import useFirstRender from '-/utils/useFirstRender';
 import { useTranslation } from 'react-i18next';
+import { SortedDirContextProvider } from '-/perspectives/grid-perspective/hooks/SortedDirContextProvider';
 
 const PREFIX = 'FolderContainer';
 
@@ -111,7 +112,9 @@ const GridPerspective = React.lazy(() =>
 function GridPerspectiveAsync(props) {
   return (
     <React.Suspense fallback={<LoadingLazy />}>
-      <GridPerspective {...props} />
+      <SortedDirContextProvider>
+        <GridPerspective {...props} />
+      </SortedDirContextProvider>
     </React.Suspense>
   );
 }
@@ -122,7 +125,9 @@ const ListPerspective = React.lazy(() =>
 function ListPerspectiveAsync(props) {
   return (
     <React.Suspense fallback={<LoadingLazy />}>
-      <ListPerspective {...props} />
+      <SortedDirContextProvider>
+        <ListPerspective {...props} />
+      </SortedDirContextProvider>
     </React.Suspense>
   );
 }
@@ -218,6 +223,20 @@ interface Props {
 }
 
 function FolderContainer(props: Props) {
+  const {
+    directoryContent,
+    toggleDrawer,
+    toggleProTeaser,
+    isDesktopMode,
+    currentDirectoryPerspective,
+    setSelectedEntries,
+    reflectCreateEntry,
+    openEntry,
+    defaultPerspective,
+    goBack,
+    goForward
+  } = props;
+
   const { t } = useTranslation();
   const theme = useTheme();
   const havePrevOpenedFile = React.useRef<boolean>(false);
@@ -278,20 +297,6 @@ function FolderContainer(props: Props) {
     boolean
   >(false);
 
-  const {
-    directoryContent,
-    toggleDrawer,
-    toggleProTeaser,
-    isDesktopMode,
-    currentDirectoryPerspective,
-    setSelectedEntries,
-    reflectCreateEntry,
-    openEntry,
-    defaultPerspective,
-    goBack,
-    goForward
-  } = props;
-
   let currentPerspective =
     currentDirectoryPerspective || defaultPerspective || PerspectiveIDs.GRID;
 
@@ -308,6 +313,7 @@ function FolderContainer(props: Props) {
     () => setIsRenameEntryDialogOpened(true),
     []
   );
+
   const renderPerspective = () => {
     if (showWelcomePanel) {
       return AppConfig.showWelcomePanel ? <WelcomePanelAsync /> : null;
