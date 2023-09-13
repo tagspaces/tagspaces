@@ -218,6 +218,7 @@ function WelcomePanel() {
           marginBottom: 15,
           // @ts-ignore
           overflowY: 'overlay',
+          overflowX: 'hidden',
           backgroundColor: theme.palette.background.default
         }}
       >

@@ -43,7 +43,8 @@ import {
   getMetaFileLocationForDir,
   getMetaFileLocationForFile,
   extractContainingDirectoryPath,
-  getBackupFileLocation
+  getBackupFileLocation,
+  extractFileExtension
 } from '@tagspaces/tagspaces-common/paths';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import PlatformIO from '-/services/platform-facade';
@@ -96,6 +97,7 @@ const Root = styled(Box)(({ theme }) => ({
   flex: '1 1 100%',
   display: 'flex',
   backgroundColor: theme.palette.background.default,
+  borderBottom: '5px solid ' + theme.palette.background.default,
   overflow: 'hidden',
   // height: '100%', // filePropsHeight ||
   [`& .${classes.toolbar2}`]: {
@@ -770,9 +772,12 @@ function EntryContainer(props: Props) {
     props.openPrevFile(openedFile.path);
   };
 
-  const isEditable = AppConfig.editableFiles.some(ext =>
-    openedFile.path.endsWith(ext)
+  const fileExtension = extractFileExtension(
+    openedFile.path,
+    PlatformIO.getDirSeparator()
   );
+  const isEditable =
+    openedFile.isFile && AppConfig.editableFiles.includes(fileExtension);
 
   const toggleAutoSave = (event: React.ChangeEvent<HTMLInputElement>) => {
     const autoSave = event.target.checked;
@@ -928,6 +933,7 @@ function EntryContainer(props: Props) {
       }
       const tabsComponent = (marginRight = undefined) => (
         <EntryContainerTabs
+          isEditable={isEditable}
           openedFile={openedFile}
           openPanel={openPanel}
           toggleProperties={toggleProperties}

@@ -103,11 +103,12 @@ function a11yProps(index: number) {
   };
 }
 
-interface Props {
+interface EntryContainerTabsProps {
   openedFile: OpenedEntry;
   openPanel: () => void;
   toggleProperties: () => void;
   isDesktopMode: boolean;
+  isEditable: boolean;
   marginRight: string;
 }
 
@@ -117,11 +118,17 @@ interface TabPanelProps {
   value: number;
 }
 
-function EntryContainerTabs(props: Props) {
+function EntryContainerTabs(props: EntryContainerTabsProps) {
   const { t } = useTranslation();
   const tabIndex = useSelector(getEntryContainerTab);
   // const [value, setValue] = React.useState(0);
-  const { openedFile, openPanel, toggleProperties, marginRight } = props;
+  const {
+    openedFile,
+    openPanel,
+    toggleProperties,
+    marginRight,
+    isEditable
+  } = props;
   const editDescription = useRef<string>(undefined);
   //const theme = useTheme();
   const readOnlyMode = useSelector(isReadOnlyMode);
@@ -143,6 +150,7 @@ function EntryContainerTabs(props: Props) {
         style={{
           height: '100%',
           overflowY: 'auto',
+          overflowX: 'hidden',
           padding: 10
           // ...(openedFile.isFile && { maxHeight: 400 })
         }}
@@ -258,7 +266,7 @@ function EntryContainerTabs(props: Props) {
             {...a11yProps(1)}
             onClick={handleTabClick}
           />
-          {openedFile.isFile && (
+          {isEditable && (
             <StyledTab
               data-tid="revisionsTabTID"
               icon={<RevisionIcon />}
@@ -290,7 +298,7 @@ function EntryContainerTabs(props: Props) {
           currentFolder={directoryPath}
         />
       </TsTabPanel>
-      {openedFile.isFile && (
+      {isEditable && (
         <TsTabPanel value={tabIndex} index={2}>
           <Revisions />
         </TsTabPanel>
