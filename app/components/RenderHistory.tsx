@@ -33,31 +33,34 @@ import IconButton from '@mui/material/IconButton';
 import { RemoveIcon, HistoryIcon } from '-/components/CommonIcons';
 import { dataTidFormat } from '-/services/test';
 import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  actions as AppActions,
+  AppDispatch,
+  getCurrentLocationId
+} from '-/reducers/app';
 
 interface Props {
-  key: string;
+  historyKey: string;
   items: Array<TS.HistoryItem> | Array<TS.BookmarkItem>;
   update: () => void;
-  currentLocationId: string;
-  openLink: (url: string, options: any) => void;
-  openLocationById: (locationId: string) => void;
-  openEntry: (entryPath: string) => void;
   maxItems?: number | undefined;
   showDelete?: boolean;
 }
 function RenderHistory(props: Props) {
   const { t } = useTranslation();
-  const {
-    key,
-    items,
-    update,
-    currentLocationId,
-    openLink,
-    openLocationById,
-    openEntry,
-    maxItems,
-    showDelete = true
-  } = props;
+  const dispatch: AppDispatch = useDispatch();
+  const currentLocationId = useSelector(getCurrentLocationId);
+  const { historyKey, items, update, maxItems, showDelete = true } = props;
+
+  const openLinkDispatch = link => dispatch(AppActions.openLink(link));
+
+  const openLocationByIdDispatch = locationId =>
+    dispatch(AppActions.openLocationById(locationId));
+
+  const openEntryDispatch = entryPath =>
+    dispatch(AppActions.openEntry(entryPath));
+
   return (
     <>
       {items &&
@@ -73,7 +76,7 @@ function RenderHistory(props: Props) {
             >
               <Grid item xs={10} style={{ minWidth: 245, maxWidth: 245 }}>
                 <Button
-                  data-tid={key + 'TID' + dataTidFormat(itemName)}
+                  data-tid={historyKey + 'TID' + dataTidFormat(itemName)}
                   style={{
                     textTransform: 'none',
                     fontWeight: 'normal',
@@ -83,9 +86,9 @@ function RenderHistory(props: Props) {
                     Pro.history.openItem(
                       item,
                       currentLocationId,
-                      openLink,
-                      openLocationById,
-                      openEntry
+                      openLinkDispatch,
+                      openLocationByIdDispatch,
+                      openEntryDispatch
                     )
                   }
                 >
@@ -104,7 +107,7 @@ function RenderHistory(props: Props) {
                       </span>
                     }
                   >
-                    {key === Pro.bookmarks.bookmarksKey ? (
+                    {historyKey === Pro.bookmarks.bookmarksKey ? (
                       <BookmarkTwoToneIcon fontSize="small" />
                     ) : (
                       <HistoryIcon fontSize="small" />
@@ -128,7 +131,7 @@ function RenderHistory(props: Props) {
                   <IconButton
                     aria-label={t('core:clearHistory')}
                     onClick={() => {
-                      Pro.history.delItem(item, key);
+                      Pro.history.delItem(item, historyKey);
                       update();
                     }}
                     data-tid="deleteHistoryItemTID"

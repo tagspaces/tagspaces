@@ -45,6 +45,7 @@ import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { Pro } from '-/pro';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
+import { useSortedDirContext } from '-/perspectives/grid-perspective/hooks/useSortedDirContext';
 
 /*const styles: any = {
   root: {
@@ -85,8 +86,6 @@ interface Props {
   changeSingleClickAction: (actionType: string) => void;
   singleClickAction: string;
   openHelpWebPage: () => void;
-  sortBy: string;
-  orderBy: boolean;
   handleSortingMenu: (event) => void;
   isLocal: boolean;
   resetLocalSettings: () => void;
@@ -95,7 +94,8 @@ interface Props {
 
 function GridSettingsDialog(props: Props) {
   const { t } = useTranslation();
-  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  const { sortBy, orderBy } = useSortedDirContext();
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
   const thumbnailMode = useRef<string>(props.thumbnailMode);
   const entrySize = useRef<string>(props.entrySize);
   const singleClickAction = useRef<string>(props.singleClickAction);
@@ -271,9 +271,9 @@ function GridSettingsDialog(props: Props) {
             primary={
               t('core:sort') +
               ': ' +
-              t(props.sortBy) +
+              t(sortBy) +
               ' ' +
-              (props.orderBy ? 'ASC' : 'DESC')
+              (orderBy ? 'ASC' : 'DESC')
             }
           />
         </MenuItem>

@@ -81,7 +81,13 @@ function ListPerspective(props: Props) {
 
   const dispatch: AppDispatch = useDispatch();
 
-  const { sortedDirContent } = useSortedDirContext();
+  const {
+    sortedDirContent,
+    sortBy,
+    orderBy,
+    setSortBy,
+    setOrderBy
+  } = useSortedDirContext();
   const directoryMeta: TS.FileSystemEntryMeta = useSelector(getDirectoryMeta);
   const readOnlyMode = useSelector(isReadOnlyMode);
   const lastSearchTimestamp = useSelector(getLastSearchTimestamp);
@@ -156,14 +162,14 @@ function ListPerspective(props: Props) {
   const [isAddTagDialogOpened, setIsAddTagDialogOpened] = useState<TS.Tag>(
     undefined
   );
-  const sortBy = useRef<string>(
+  /*const sortBy = useRef<string>(
     settings && settings.sortBy ? settings.sortBy : defaultSettings.sortBy
   );
   const orderBy = useRef<null | boolean>(
     settings && typeof settings.orderBy !== 'undefined'
       ? settings.orderBy
       : defaultSettings.orderBy
-  );
+  );*/
   const layoutType = useRef<string>(
     settings && settings.layoutType
       ? settings.layoutType
@@ -239,90 +245,6 @@ function ListPerspective(props: Props) {
     }
   }, [selectedEntries]);
 
-  /*useEffect(() => {
-    if (!firstRender) {
-      sortedDirContent.current = sortByCriteria(
-        searchFilter
-          ? directoryContent.filter(entry =>
-              entry.name.toLowerCase().includes(searchFilter.toLowerCase())
-            )
-          : directoryContent,
-        sortBy.current,
-        orderBy.current
-      );
-      forceUpdate();
-    }
-  }, [searchFilter]);*/
-
-  /*useEffect(() => {
-    if (!firstRender) {
-      sortedDirContent.current = getSortedDirContent();
-      forceUpdate();
-    }
-  }, [
-    directoryContent, // open subdirs todo rethink this (replace with useEffect for currDirPath changes only)
-    // currentDirectoryPath,
-    sortBy.current,
-    orderBy.current
-  ]);*/
-
-  /*useEffect(() => {
-    if (!firstRender) {
-      if (lastSearchTimestamp) {
-        sortBy.current = 'byRelevance';
-        // orderBy.current = false;
-      } else {
-        sortBy.current =
-          settings && settings.sortBy
-            ? settings.sortBy
-            : defaultSettings.sortBy;
-        orderBy.current =
-          settings && typeof settings.orderBy !== 'undefined'
-            ? settings.orderBy
-            : defaultSettings.orderBy;
-      }
-      sortedDirContent.current = getSortedDirContent();
-      forceUpdate();
-    }
-  }, [lastSearchTimestamp]);*/
-
-  /*function getSortedDirContent() {
-    if (!lastSearchTimestamp) {
-      // not in search mode
-      return sortByCriteria(directoryContent, sortBy.current, orderBy.current);
-    } else {
-      if (sortBy.current === 'byRelevance') {
-        // initial search results is sorted by relevance
-        if (orderBy.current) {
-          return GlobalSearch.getInstance().getResults();
-        } else {
-          return [...GlobalSearch.getInstance().getResults()].reverse();
-        }
-      } else {
-        return sortByCriteria(
-          searchFilter
-            ? GlobalSearch.getInstance()
-                .getResults()
-                .filter(entry =>
-                  entry.name.toLowerCase().includes(searchFilter.toLowerCase())
-                )
-            : GlobalSearch.getInstance().getResults(),
-          sortBy.current,
-          orderBy.current
-        );
-      }
-    }
-    //forceUpdate();
-  }*/
-
-  /*useEffect(() => {
-    // HANDLE (ADD/REMOVE sidecar TAGS) IN SEARCH RESULTS
-    if (!firstRender && lastSearchTimestamp) {
-      sortedDirContent.current = GlobalSearch.getInstance().getResults();
-      forceUpdate();
-    }
-  }, [editedEntryPaths]);*/
-
   useEffect(() => {
     if (!firstRender) {
       const perspectiveSettings = getSettings(directoryMeta);
@@ -348,14 +270,16 @@ function ListPerspective(props: Props) {
           ? perspectiveSettings.showTags
           : defaultSettings.showTags;
       layoutType.current = defaultSettings.layoutType;
-      orderBy.current =
+      setOrderBy(
         perspectiveSettings && perspectiveSettings.orderBy !== undefined
           ? perspectiveSettings.orderBy
-          : defaultSettings.orderBy;
-      sortBy.current =
+          : defaultSettings.orderBy
+      );
+      setSortBy(
         perspectiveSettings && perspectiveSettings.sortBy !== undefined
           ? perspectiveSettings.sortBy
-          : defaultSettings.sortBy;
+          : defaultSettings.sortBy
+      );
       singleClickAction.current =
         perspectiveSettings &&
         perspectiveSettings.singleClickAction !== undefined
@@ -386,8 +310,8 @@ function ListPerspective(props: Props) {
         showDetails: showDetails.current,
         showTags: showTags.current,
         layoutType: layoutType.current,
-        orderBy: orderBy.current,
-        sortBy: sortBy.current,
+        orderBy: orderBy,
+        sortBy: sortBy,
         singleClickAction: singleClickAction.current,
         entrySize: entrySize.current,
         thumbnailMode: thumbnailMode.current,
@@ -418,8 +342,8 @@ function ListPerspective(props: Props) {
     showDetails.current,
     showTags.current,
     layoutType.current,
-    orderBy.current,
-    sortBy.current,
+    orderBy,
+    sortBy,
     singleClickAction.current,
     entrySize.current,
     thumbnailMode.current,
@@ -455,10 +379,10 @@ function ListPerspective(props: Props) {
   };
 
   const handleSortBy = handleSort => {
-    if (sortBy.current !== handleSort) {
-      sortBy.current = handleSort;
+    if (sortBy !== handleSort) {
+      setSortBy(handleSort);
     } else {
-      orderBy.current = !orderBy.current;
+      setOrderBy(!orderBy);
     }
     // forceUpdate();
     setSortingContextMenuAnchorEl(null);
@@ -820,8 +744,6 @@ function ListPerspective(props: Props) {
           changeSingleClickAction={changeSingleClickAction}
           singleClickAction={singleClickAction.current}
           openHelpWebPage={openHelpWebPage}
-          sortBy={sortBy.current}
-          orderBy={orderBy.current}
           handleSortingMenu={handleSortingMenu}
           isLocal={isLocal}
           resetLocalSettings={() => {
@@ -895,8 +817,6 @@ function ListPerspective(props: Props) {
           open={Boolean(sortingContextMenuAnchorEl)}
           onClose={() => setSortingContextMenuAnchorEl(null)}
           anchorEl={sortingContextMenuAnchorEl}
-          sortBy={sortBy.current}
-          orderBy={orderBy.current}
           handleSortBy={handleSortBy}
           searchModeEnabled={lastSearchTimestamp !== undefined}
         />
