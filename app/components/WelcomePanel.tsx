@@ -42,11 +42,7 @@ import {
   KeyShortcutsIcon,
   HelpIcon
 } from '-/components/CommonIcons';
-import {
-  actions as AppActions,
-  AppDispatch,
-  getCurrentLocationId
-} from '-/reducers/app';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { getDesktopMode } from '-/reducers/settings';
 import Links from '-/content/links';
 import { Pro } from '-/pro';
@@ -88,7 +84,6 @@ function WelcomePanel() {
   const theme = useTheme();
   const dispatch: AppDispatch = useDispatch();
   const desktopMode = useSelector(getDesktopMode);
-  const currentLocationId = useSelector(getCurrentLocationId);
 
   const toggleNewFileDialogDispatch = () =>
     dispatch(AppActions.toggleNewFileDialog());
@@ -98,11 +93,6 @@ function WelcomePanel() {
     dispatch(AppActions.toggleOpenLinkDialog());
   const toggleKeysDialogDispatch = () =>
     dispatch(AppActions.toggleKeysDialog());
-  const openEntryDispatch = entryPath =>
-    dispatch(AppActions.openEntry(entryPath));
-  const openLinkDispatch = link => dispatch(AppActions.openLink(link));
-  const openLocationByIdDispatch = locationId =>
-    dispatch(AppActions.openLocationById(locationId));
 
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
@@ -143,13 +133,9 @@ function WelcomePanel() {
         {fileOpenHistoryItems ? (
           <List>
             <RenderHistory
-              key={historyKeys.fileOpenKey}
+              historyKey={historyKeys.fileOpenKey}
               items={fileOpenHistoryItems}
               update={forceUpdate}
-              currentLocationId={currentLocationId}
-              openLink={openLinkDispatch}
-              openLocationById={openLocationByIdDispatch}
-              openEntry={openEntryDispatch}
               maxItems={maxRecentItems}
               showDelete={showDelete}
             />
@@ -165,13 +151,9 @@ function WelcomePanel() {
         {fileEditHistoryItems ? (
           <List>
             <RenderHistory
-              key={historyKeys.fileEditKey}
+              historyKey={historyKeys.fileEditKey}
               items={fileEditHistoryItems}
               update={forceUpdate}
-              currentLocationId={currentLocationId}
-              openLink={openLinkDispatch}
-              openLocationById={openLocationByIdDispatch}
-              openEntry={openEntryDispatch}
               maxItems={maxRecentItems}
               showDelete={showDelete}
             />
@@ -187,13 +169,9 @@ function WelcomePanel() {
         {folderOpenHistoryItems ? (
           <List>
             <RenderHistory
-              key={historyKeys.folderOpenKey}
+              historyKey={historyKeys.folderOpenKey}
               items={folderOpenHistoryItems}
               update={forceUpdate}
-              currentLocationId={currentLocationId}
-              openLink={openLinkDispatch}
-              openLocationById={openLocationByIdDispatch}
-              openEntry={openEntryDispatch}
               maxItems={maxRecentItems}
               showDelete={showDelete}
             />

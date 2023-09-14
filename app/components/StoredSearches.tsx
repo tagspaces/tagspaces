@@ -47,7 +47,7 @@ import { Pro } from '../pro';
 import { actions as SearchActions, getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
 import SearchMenu from '-/components/menus/SearchMenu';
-import { actions as AppActions, getCurrentLocationId } from '-/reducers/app';
+import { actions as AppActions } from '-/reducers/app';
 import HistoryMenu from '-/components/menus/HistoryMenu';
 import BookmarksMenu from '-/components/menus/BookmarksMenu';
 import { classes, SidePanel } from '-/components/SidePanels.css';
@@ -64,10 +64,6 @@ interface Props {
   showUnixHiddenEntries: boolean;
   addSearches: (searches: Array<TS.SearchQuery>) => void;
   reduceHeightBy: number;
-  openEntry: (entryPath: string) => void;
-  openLink: (url: string, options: any) => void;
-  openLocationById: (locationId: string) => void;
-  currentLocationId: string;
   storedSearchesVisible: boolean;
   showBookmarks: boolean;
   fileOpenHistory: boolean;
@@ -354,13 +350,9 @@ function StoredSearches(props: Props) {
         </Grid>
         {Pro && props.showBookmarks && (
           <RenderHistory
-            key={Pro.bookmarks.bookmarksKey}
+            historyKey={Pro.bookmarks.bookmarksKey}
             items={bookmarkItems}
             update={forceUpdate}
-            currentLocationId={props.currentLocationId}
-            openLink={props.openLink}
-            openLocationById={props.openLocationById}
-            openEntry={props.openEntry}
           />
         )}
         <Grid container direction="row">
@@ -405,13 +397,9 @@ function StoredSearches(props: Props) {
         </Grid>
         {props.fileOpenHistory && (
           <RenderHistory
-            key={historyKeys.fileOpenKey}
+            historyKey={historyKeys.fileOpenKey}
             items={fileOpenHistoryItems}
             update={forceUpdate}
-            currentLocationId={props.currentLocationId}
-            openLink={props.openLink}
-            openLocationById={props.openLocationById}
-            openEntry={props.openEntry}
           />
         )}
         <Grid container direction="row">
@@ -457,13 +445,9 @@ function StoredSearches(props: Props) {
         </Grid>
         {props.fileEditHistory && (
           <RenderHistory
-            key={historyKeys.fileEditKey}
+            historyKey={historyKeys.fileEditKey}
             items={fileEditHistoryItems}
             update={forceUpdate}
-            currentLocationId={props.currentLocationId}
-            openLink={props.openLink}
-            openLocationById={props.openLocationById}
-            openEntry={props.openEntry}
           />
         )}
         <Grid container direction="row">
@@ -536,13 +520,9 @@ function StoredSearches(props: Props) {
         </Grid>
         {props.folderOpenHistory && (
           <RenderHistory
-            key={historyKeys.folderOpenKey}
+            historyKey={historyKeys.folderOpenKey}
             items={folderOpenHistoryItems}
             update={forceUpdate}
-            currentLocationId={props.currentLocationId}
-            openLink={props.openLink}
-            openLocationById={props.openLocationById}
-            openEntry={props.openEntry}
           />
         )}
         {SaveSearchDialog && saveSearchDialogOpened !== undefined && (
@@ -606,7 +586,6 @@ function mapStateToProps(state) {
     searchQuery: getSearchQuery(state),
     searches: getSearches(state),
     showUnixHiddenEntries: getShowUnixHiddenEntries(state),
-    currentLocationId: getCurrentLocationId(state),
     storedSearchesVisible: getStoredSearchesVisible(state),
     showBookmarks: getShowBookmarks(state),
     fileOpenHistory: getFileOpenHistory(state),
@@ -620,11 +599,6 @@ function mapDispatchToProps(dispatch) {
     {
       addSearches: SearchActions.addSearches,
       setSearchQuery: LocationIndexActions.setSearchQuery,
-      // searchAllLocations: LocationIndexActions.searchAllLocations,
-      // searchLocationIndex: LocationIndexActions.searchLocationIndex,
-      openEntry: AppActions.openEntry,
-      openLink: AppActions.openLink,
-      openLocationById: AppActions.openLocationById,
       setStoredSearchesVisible: SettingsActions.setStoredSearchesVisible,
       setShowBookmarks: SettingsActions.setShowBookmarks,
       setFileOpenHistory: SettingsActions.setFileOpenHistory,
