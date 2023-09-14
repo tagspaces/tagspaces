@@ -470,7 +470,7 @@ function FolderContainer(props: Props) {
           width: '100%',
           height: '100%',
           maxHeight: '100%',
-          overflow: 'hidden',
+          overflow: 'unset',
           backgroundColor: theme.palette.background.default,
           display: 'flex',
           flexDirection: 'column'
@@ -479,6 +479,7 @@ function FolderContainer(props: Props) {
         <div
           style={{
             paddingLeft: 5,
+            paddingRight: 5,
             display: 'flex',
             //overflowY: 'hidden',
             alignItems: 'center'

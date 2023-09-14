@@ -213,7 +213,13 @@ function PathBreadcrumbs(props: Props) {
   return (
     <>
       <Breadcrumbs
-        sx={{ display: 'flex', flexWrap: 'nowrap' }}
+        style={{
+          minWidth: 100,
+          maxWidth: '100%',
+          display: 'flex',
+          flexWrap: 'nowrap',
+          flexDirection: 'row-reverse'
+        }}
         maxItems={isDesktopMode ? 2 : 1}
         itemsAfterCollapse={isDesktopMode ? 1 : 1}
         itemsBeforeCollapse={isDesktopMode ? 1 : 0}
