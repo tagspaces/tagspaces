@@ -214,7 +214,6 @@ function PathBreadcrumbs(props: Props) {
     <>
       <Breadcrumbs
         style={{
-          minWidth: 100,
           maxWidth: '100%',
           display: 'flex',
           flexWrap: 'nowrap',

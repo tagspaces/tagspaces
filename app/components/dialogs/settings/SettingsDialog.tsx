@@ -49,7 +49,8 @@ const classes = {
 
 const StyledDialog = styled(Dialog)(() => ({
   [`& .${classes.mainContent}`]: {
-    overflowY: 'auto'
+    overflowY: 'auto',
+    overflowX: 'hidden'
   }
 }));
 
