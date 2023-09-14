@@ -178,7 +178,11 @@ function EditDescription(props: Props) {
               lineHeight: 4
             }}
           >
-            {t('core:addMarkdownDescription')}
+            {t(
+              toggleEditDescriptionField
+                ? 'core:addMarkdownDescription'
+                : 'core:editDisabled'
+            )}
           </Typography>
         ) : (
           <>
