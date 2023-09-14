@@ -119,9 +119,6 @@ interface TabPanelProps {
 }
 
 function EntryContainerTabs(props: EntryContainerTabsProps) {
-  const { t } = useTranslation();
-  const tabIndex = useSelector(getEntryContainerTab);
-  // const [value, setValue] = React.useState(0);
   const {
     openedFile,
     openPanel,
@@ -129,6 +126,10 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     marginRight,
     isEditable
   } = props;
+
+  const { t } = useTranslation();
+  const tabIndex = useSelector(getEntryContainerTab);
+  // const [value, setValue] = React.useState(0);
   const editDescription = useRef<string>(undefined);
   //const theme = useTheme();
   const readOnlyMode = useSelector(isReadOnlyMode);
@@ -236,6 +237,10 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     }
   };
 
+  // directories must be always opened
+  const selectedTabIndex =
+    !openedFile.isFile && tabIndex === undefined ? 0 : tabIndex;
+
   return (
     <div
       style={{
@@ -248,7 +253,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     >
       <Box sx={{ ...(marginRight && { marginRight }) }}>
         <StyledTabs
-          value={tabIndex}
+          value={selectedTabIndex}
           onChange={handleChange}
           aria-label="basic tabs example"
         >
@@ -277,7 +282,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
           )}
         </StyledTabs>
       </Box>
-      <TsTabPanel value={tabIndex} index={0}>
+      <TsTabPanel value={selectedTabIndex} index={0}>
         <EntryProperties
           key={openedFile.path}
           openedEntry={openedFile}
@@ -288,7 +293,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
           tileServer={tileServer}
         />
       </TsTabPanel>
-      <TsTabPanel value={tabIndex} index={1}>
+      <TsTabPanel value={selectedTabIndex} index={1}>
         <EditDescription
           toggleEditDescriptionField={
             !readOnlyMode && !openedFile.editMode && toggleEditDescriptionField
@@ -299,7 +304,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
         />
       </TsTabPanel>
       {isEditable && (
-        <TsTabPanel value={tabIndex} index={2}>
+        <TsTabPanel value={selectedTabIndex} index={2}>
           <Revisions />
         </TsTabPanel>
       )}
