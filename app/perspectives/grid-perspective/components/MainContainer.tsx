@@ -728,7 +728,7 @@ function GridPerspective(props: Props) {
   return (
     <div
       style={{
-        height: 'calc(100% - 47px)'
+        height: '100%' // 'calc(100% - 47px)'
       }}
       data-tid={defaultSettings.testID}
     >
