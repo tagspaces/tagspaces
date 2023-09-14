@@ -53,7 +53,7 @@ export default {
   newHTMLFileContent:
     '<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body></body></html>',
   showUnixHiddenEntries: false,
-  entryContainerTab: 0,
+  entryContainerTab: undefined,
   checkForUpdates,
   reorderTags: false,
   coloredFileExtension: false,
