@@ -16,7 +16,7 @@
  *
  */
 
-import React, { createContext, useMemo } from 'react';
+import React, { createContext, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
   getDirectoryContent,
@@ -34,10 +34,18 @@ import { defaultSettings } from '-/perspectives/grid-perspective';
 
 type SortedDirContextData = {
   sortedDirContent: Array<TS.FileSystemEntry>;
+  sortBy: string;
+  orderBy: null | boolean;
+  setSortBy: (sort: string) => void;
+  setOrderBy: (isAsc: null | boolean) => void;
 };
 
 export const SortedDirContext = createContext<SortedDirContextData>({
-  sortedDirContent: undefined
+  sortedDirContent: undefined,
+  sortBy: defaultSettings.sortBy,
+  orderBy: defaultSettings.orderBy,
+  setSortBy: () => {},
+  setOrderBy: () => {}
 });
 
 export type SortedDirContextProviderProps = {
@@ -56,6 +64,15 @@ export const SortedDirContextProvider = ({
   const editedEntryPaths: Array<TS.EditedEntryPath> = useSelector(
     getEditedEntryPaths
   );
+  const settings = getSettings();
+  const [sortBy, setSortBy] = useState<string>(
+    settings && settings.sortBy ? settings.sortBy : defaultSettings.sortBy
+  );
+  const [orderBy, setOrderBy] = useState<null | boolean>(
+    settings && typeof settings.orderBy !== 'undefined'
+      ? settings.orderBy
+      : defaultSettings.orderBy
+  );
 
   function getSettings(): TS.FolderSettings {
     if (
@@ -72,13 +89,6 @@ export const SortedDirContextProvider = ({
   }
 
   function getSortedDirContent() {
-    const settings = getSettings();
-    const sortBy =
-      settings && settings.sortBy ? settings.sortBy : defaultSettings.sortBy;
-    const orderBy =
-      settings && typeof settings.orderBy !== 'undefined'
-        ? settings.orderBy
-        : defaultSettings.orderBy;
     if (!lastSearchTimestamp) {
       // not in search mode
       return sortByCriteria(directoryContent, sortBy, orderBy);
@@ -107,18 +117,21 @@ export const SortedDirContextProvider = ({
   }
 
   const context = useMemo(() => {
-    const sortedDirContent = !lastSearchTimestamp
-      ? getSortedDirContent()
-      : GlobalSearch.getInstance().getResults();
     return {
-      sortedDirContent
+      sortedDirContent: getSortedDirContent(),
+      sortBy,
+      orderBy,
+      setSortBy,
+      setOrderBy
     };
   }, [
     directoryContent,
     lastSearchTimestamp,
     directoryMeta,
     searchFilter,
-    editedEntryPaths
+    editedEntryPaths,
+    sortBy,
+    orderBy
   ]);
 
   return (
