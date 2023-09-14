@@ -94,6 +94,7 @@ import NewFileDialog from '-/components/dialogs/NewFileDialog';
 import IsTruncatedConfirmDialog from '-/components/dialogs/IsTruncatedConfirmDialog';
 import { styled, useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
+import { DescriptionContextProvider } from '-/components/hooks/DescriptionContextProvider';
 
 const drawerWidth = 320;
 const body = document.getElementsByTagName('body')[0];
@@ -576,11 +577,13 @@ function MainPage(props: Props) {
           }
         />
         {isFileOpened && (
-          <EntryContainer
-            key="EntryContainerID"
-            loadDirectoryContent={loadDirectoryContent}
-            openedFiles={openedFiles}
-          />
+          <DescriptionContextProvider>
+            <EntryContainer
+              key="EntryContainerID"
+              loadDirectoryContent={loadDirectoryContent}
+              openedFiles={openedFiles}
+            />
+          </DescriptionContextProvider>
         )}
       </Split>
     );

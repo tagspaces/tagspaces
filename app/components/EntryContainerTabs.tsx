@@ -16,8 +16,8 @@
  *
  */
 
-import React, { useRef } from 'react';
-import { styled, useTheme } from '@mui/material/styles';
+import React from 'react';
+import { styled } from '@mui/material/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -25,11 +25,9 @@ import Box from '@mui/material/Box';
 import {
   actions as AppActions,
   AppDispatch,
-  getDirectoryPath,
   isReadOnlyMode,
   OpenedEntry
 } from '-/reducers/app';
-import { Pro } from '-/pro';
 import Revisions from '-/components/Revisions';
 import EntryProperties from '-/components/EntryProperties';
 import TaggingActions from '-/reducers/tagging-actions';
@@ -129,11 +127,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
 
   const { t } = useTranslation();
   const tabIndex = useSelector(getEntryContainerTab);
-  // const [value, setValue] = React.useState(0);
-  const editDescription = useRef<string>(undefined);
-  //const theme = useTheme();
   const readOnlyMode = useSelector(isReadOnlyMode);
-  const directoryPath = useSelector(getDirectoryPath);
   const tileServer = useSelector(getMapTileServer);
   const dispatch: AppDispatch = useDispatch();
   const { isDesktopMode } = props;
@@ -191,7 +185,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     }
   };
 
-  const toggleEditDescriptionField = () => {
+  /*const toggleEditDescriptionField = () => {
     if (readOnlyMode) {
       editDescription.current = undefined;
       return;
@@ -235,7 +229,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     } else {
       editDescription.current = '';
     }
-  };
+  };*/
 
   // directories must be always opened
   const selectedTabIndex =
@@ -294,14 +288,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
         />
       </TsTabPanel>
       <TsTabPanel value={selectedTabIndex} index={1}>
-        <EditDescription
-          toggleEditDescriptionField={
-            !readOnlyMode && !openedFile.editMode && toggleEditDescriptionField
-          }
-          description={openedFile.description}
-          setEditDescription={md => (editDescription.current = md)}
-          currentFolder={directoryPath}
-        />
+        <EditDescription />
       </TsTabPanel>
       {isEditable && (
         <TsTabPanel value={selectedTabIndex} index={2}>

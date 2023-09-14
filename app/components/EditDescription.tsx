@@ -7,14 +7,10 @@ import { ProTooltip } from '-/components/HelperComponents';
 import { Pro } from '-/pro';
 import { convertMarkDown } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+import { getDirectoryPath, getOpenedFiles, OpenedEntry } from '-/reducers/app';
+import { useDescriptionContext } from '-/components/hooks/useDescriptionContext';
 
-interface Props {
-  toggleEditDescriptionField: () => void;
-  // fileDescriptionRef: MutableRefObject<MilkdownRef>;
-  description: string;
-  setEditDescription: (md: string) => void;
-  currentFolder: string;
-}
 const PREFIX = 'EditDescription';
 
 const classes = {
@@ -43,16 +39,18 @@ const Root = styled('div')(({ theme }) => ({
   }
 }));
 
-function EditDescription(props: Props) {
+function EditDescription() {
   const { t } = useTranslation();
   const theme = useTheme();
+  const openedFiles: Array<OpenedEntry> = useSelector(getOpenedFiles);
+  const openedFile: OpenedEntry = openedFiles[0];
+  const currentFolder = useSelector(getDirectoryPath);
   const fileDescriptionRef = useRef<MilkdownRef>(null);
   const {
-    currentFolder,
     description,
-    setEditDescription,
-    toggleEditDescriptionField
-  } = props;
+    setDescription,
+    saveDescription
+  } = useDescriptionContext();
   const [editMode, setEditMode] = useState<boolean>(false);
   const descriptionFocus = useRef<boolean>(false);
 
@@ -60,13 +58,20 @@ function EditDescription(props: Props) {
     fileDescriptionRef.current?.setDarkMode(theme.palette.mode === 'dark');
   }, [theme]); // , settings]);
 
+  /*const keyBindingHandlers = {
+    saveDocument: () => {
+      //setEditMode(!editMode);
+      toggleEditDescriptionField();
+    } /!*dispatch(AppActions.openNextFile())*!/
+  };*/
+
   const milkdownOnFocus = React.useCallback(
     () => (descriptionFocus.current = true),
     []
   );
   const milkdownListener = React.useCallback((markdown: string) => {
     if (descriptionFocus.current && markdown !== description) {
-      setEditDescription(markdown);
+      setDescription(markdown);
     }
     // update codeMirror
     /*const { current } = codeMirrorRef;
@@ -118,7 +123,7 @@ function EditDescription(props: Props) {
           disabled={!Pro}
           onClick={() => {
             setEditMode(!editMode);
-            toggleEditDescriptionField();
+            saveDescription();
           }}
         >
           {editMode ? t('core:confirmSaveButton') : t('core:edit')}
@@ -149,13 +154,12 @@ function EditDescription(props: Props) {
           {t('core:filePropertiesDescription')}
         </Typography>*/}
       </span>
-      {toggleEditDescriptionField && editSaveActions}
+      {!openedFile.editMode && editSaveActions}
       <div
         data-tid="descriptionTID"
         onDoubleClick={() => {
-          if (!editMode && toggleEditDescriptionField) {
+          if (!editMode && !openedFile.editMode) {
             setEditMode(true);
-            toggleEditDescriptionField();
           }
         }}
         style={{
@@ -179,9 +183,9 @@ function EditDescription(props: Props) {
             }}
           >
             {t(
-              toggleEditDescriptionField
-                ? 'core:addMarkdownDescription'
-                : 'core:editDisabled'
+              openedFile.editMode
+                ? 'core:editDisabled'
+                : 'core:addMarkdownDescription'
             )}
           </Typography>
         ) : (
