@@ -89,10 +89,20 @@ export const SortedDirContextProvider = ({
   }
 
   function getSortedDirContent() {
-    if (!lastSearchTimestamp) {
-      // not in search mode
-      return sortByCriteria(directoryContent, sortBy, orderBy);
-    } else {
+    if (searchFilter) {
+      if (lastSearchTimestamp) {
+        return GlobalSearch.getInstance()
+          .getResults()
+          .filter(entry =>
+            entry.name.toLowerCase().includes(searchFilter.toLowerCase())
+          );
+      } else {
+        return sortByCriteria(directoryContent, sortBy, orderBy).filter(entry =>
+          entry.name.toLowerCase().includes(searchFilter.toLowerCase())
+        );
+      }
+    }
+    if (lastSearchTimestamp) {
       if (sortBy === 'byRelevance') {
         // initial search results is sorted by relevance
         if (orderBy) {
@@ -102,18 +112,14 @@ export const SortedDirContextProvider = ({
         }
       } else {
         return sortByCriteria(
-          searchFilter
-            ? GlobalSearch.getInstance()
-                .getResults()
-                .filter(entry =>
-                  entry.name.toLowerCase().includes(searchFilter.toLowerCase())
-                )
-            : GlobalSearch.getInstance().getResults(),
+          GlobalSearch.getInstance().getResults(),
           sortBy,
           orderBy
         );
       }
     }
+    // not in search mode
+    return sortByCriteria(directoryContent, sortBy, orderBy);
   }
 
   const context = useMemo(() => {

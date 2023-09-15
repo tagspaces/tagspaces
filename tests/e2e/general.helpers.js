@@ -487,6 +487,7 @@ export async function selectFilesByID(arrEntryIds = []) {
  * @returns {Promise<*>}
  */
 export async function selectRowFiles(arrIndex = []) {
+  await global.client.waitForSelector('[data-tid=openListPerspective]');
   await clickOn('[data-tid=openListPerspective]');
   await setGridOptions('list', false, 'gridPerspectiveEntrySizeNormal');
   // const filesList = await global.client.$('[data-tid=perspectiveGridFileTable]');
@@ -746,7 +747,7 @@ export async function expectFileContain(
   await expect
     .poll(
       async () => {
-        const fLocator = await frameLocator();
+        const fLocator = await frameLocator('iframe[allowfullscreen]');
         const bodyTxt = await fLocator.locator('body').innerText();
         return toContainTID(bodyTxt, [txtToContain]);
       },
