@@ -1015,7 +1015,7 @@ function EntryContainer(props: Props) {
             fileViewerContainer={fileViewerContainer}
             toggleFullScreen={toggleFullScreen}
             eventID={eventID.current}
-            height={propertiesStyles ? '100%' : 'calc(100% - 100px)'}
+            height={tabIndex !== undefined ? '100%' : 'calc(100% - 100px)'}
           />
         )}
       </div>
