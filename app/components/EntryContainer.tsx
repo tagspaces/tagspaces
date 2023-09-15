@@ -77,6 +77,7 @@ import EntryContainerTabs from '-/components/EntryContainerTabs';
 import EntryContainerNav from '-/components/EntryContainerNav';
 import EntryContainerTitle from '-/components/EntryContainerTitle';
 import { useTranslation } from 'react-i18next';
+import { useDescriptionContext } from '-/components/hooks/useDescriptionContext';
 
 //const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
 
@@ -173,6 +174,7 @@ function EntryContainer(props: Props) {
     showNotification
   } = props;
   const { t } = useTranslation();
+  const { saveDescription } = useDescriptionContext();
   const tabIndex = useSelector(getEntryContainerTab);
   const currentDirectoryPath = useSelector(getDirectoryPath);
   const theme = useTheme();
@@ -548,7 +550,13 @@ function EntryContainer(props: Props) {
     // setEditingSupported(false);
   };
 
-  const startSavingFile = () => savingFile();
+  const startSavingFile = () => {
+    if (openedFile.editMode) {
+      savingFile();
+    } else {
+      saveDescription();
+    }
+  };
 
   function savingFile(force = false) {
     if (

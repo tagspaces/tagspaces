@@ -16,8 +16,8 @@
  *
  */
 
-import React, { useRef } from 'react';
-import { styled, useTheme } from '@mui/material/styles';
+import React from 'react';
+import { styled } from '@mui/material/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -25,11 +25,9 @@ import Box from '@mui/material/Box';
 import {
   actions as AppActions,
   AppDispatch,
-  getDirectoryPath,
   isReadOnlyMode,
   OpenedEntry
 } from '-/reducers/app';
-import { Pro } from '-/pro';
 import Revisions from '-/components/Revisions';
 import EntryProperties from '-/components/EntryProperties';
 import TaggingActions from '-/reducers/tagging-actions';
@@ -119,9 +117,6 @@ interface TabPanelProps {
 }
 
 function EntryContainerTabs(props: EntryContainerTabsProps) {
-  const { t } = useTranslation();
-  const tabIndex = useSelector(getEntryContainerTab);
-  // const [value, setValue] = React.useState(0);
   const {
     openedFile,
     openPanel,
@@ -129,10 +124,10 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     marginRight,
     isEditable
   } = props;
-  const editDescription = useRef<string>(undefined);
-  //const theme = useTheme();
+
+  const { t } = useTranslation();
+  const tabIndex = useSelector(getEntryContainerTab);
   const readOnlyMode = useSelector(isReadOnlyMode);
-  const directoryPath = useSelector(getDirectoryPath);
   const tileServer = useSelector(getMapTileServer);
   const dispatch: AppDispatch = useDispatch();
   const { isDesktopMode } = props;
@@ -190,7 +185,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     }
   };
 
-  const toggleEditDescriptionField = () => {
+  /*const toggleEditDescriptionField = () => {
     if (readOnlyMode) {
       editDescription.current = undefined;
       return;
@@ -234,7 +229,11 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     } else {
       editDescription.current = '';
     }
-  };
+  };*/
+
+  // directories must be always opened
+  const selectedTabIndex =
+    !openedFile.isFile && tabIndex === undefined ? 0 : tabIndex;
 
   return (
     <div
@@ -248,7 +247,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     >
       <Box sx={{ ...(marginRight && { marginRight }) }}>
         <StyledTabs
-          value={tabIndex}
+          value={selectedTabIndex}
           onChange={handleChange}
           aria-label="basic tabs example"
         >
@@ -277,7 +276,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
           )}
         </StyledTabs>
       </Box>
-      <TsTabPanel value={tabIndex} index={0}>
+      <TsTabPanel value={selectedTabIndex} index={0}>
         <EntryProperties
           key={openedFile.path}
           openedEntry={openedFile}
@@ -288,18 +287,11 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
           tileServer={tileServer}
         />
       </TsTabPanel>
-      <TsTabPanel value={tabIndex} index={1}>
-        <EditDescription
-          toggleEditDescriptionField={
-            !readOnlyMode && !openedFile.editMode && toggleEditDescriptionField
-          }
-          description={openedFile.description}
-          setEditDescription={md => (editDescription.current = md)}
-          currentFolder={directoryPath}
-        />
+      <TsTabPanel value={selectedTabIndex} index={1}>
+        <EditDescription />
       </TsTabPanel>
       {isEditable && (
-        <TsTabPanel value={tabIndex} index={2}>
+        <TsTabPanel value={selectedTabIndex} index={2}>
           <Revisions />
         </TsTabPanel>
       )}

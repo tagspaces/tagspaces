@@ -89,7 +89,7 @@ function MainToolbar(props: Props) {
   const directoryPath = useSelector(getDirectoryPath);
 
   function showProperties() {
-    return dispatch(AppActions.openEntry(directoryPath));
+    return dispatch(AppActions.openEntry(directoryPath, true));
   }
 
   return (
