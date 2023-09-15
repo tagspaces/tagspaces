@@ -53,7 +53,8 @@ function RenderHistory(props: Props) {
   const currentLocationId = useSelector(getCurrentLocationId);
   const { historyKey, items, update, maxItems, showDelete = true } = props;
 
-  const openLinkDispatch = link => dispatch(AppActions.openLink(link));
+  const openLinkDispatch = link =>
+    dispatch(AppActions.openLink(link, { fullWidth: false }));
 
   const openLocationByIdDispatch = locationId =>
     dispatch(AppActions.openLocationById(locationId));

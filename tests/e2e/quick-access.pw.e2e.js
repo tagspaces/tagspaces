@@ -123,6 +123,9 @@ test.describe('TST09 - Quick access', () => {
 
     //Delete
     await clickOn('[data-tid=toggleBookmarkTID]');
+    //await clickOn('[data-tid=fileContainerCloseOpenedFile]');
+    //await clickOn('[id=mobileMenuButton]');
+
     await clickOn('[data-tid=BookmarksMenuTID]');
     await clickOn('[data-tid=refreshBookmarksTID]');
 
