@@ -194,7 +194,7 @@ test.describe('TST08 - File folder properties', () => {
     await clickOn(selectorFile);
     //Toggle Properties
     //await clickOn('[data-tid=fileContainerToggleProperties]');
-
+    await clickOn('[data-tid=detailsTabTID]');
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
   });
 
@@ -205,7 +205,7 @@ test.describe('TST08 - File folder properties', () => {
     // open fileProperties
     await clickOn(selectorFile);
     //Toggle Properties
-    //await clickOn('[data-tid=fileContainerToggleProperties]');
+    await clickOn('[data-tid=detailsTabTID]');
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
   });
 
@@ -223,7 +223,7 @@ test.describe('TST08 - File folder properties', () => {
       '[data-tid=perspectiveGridFileTable]'
     );
     await clickOn(getGridFileSelector('sample[' + tagName + '].txt'));
-    //await clickOn('[data-tid=fileContainerToggleProperties]');
+    await clickOn('[data-tid=detailsTabTID]');
 
     const propsTags = await getPropertiesTags();
     expect(propsTags).toContain(tagName);
@@ -393,7 +393,7 @@ test.describe('TST08 - File folder properties', () => {
   test('TST0827 - Link for internal sharing + copy [web,minio,electron]', async () => {
     const fileName = 'sample.jpg';
     await clickOn(getGridFileSelector(fileName));
-    //await clickOn('[data-tid=fileContainerToggleProperties]');
+    await clickOn('[data-tid=detailsTabTID]');
 
     const sharingLink = await global.client.$(
       '[data-tid=sharingLinkTID] input'

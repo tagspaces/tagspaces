@@ -177,7 +177,7 @@ test.describe('TST50 - Perspective Grid', () => {
     const fileName = 'sample.svg';
     await clickOn(getGridFileSelector(fileName));
     //Toggle Properties
-    //await clickOn('[data-tid=fileContainerToggleProperties]');
+    await clickOn('[data-tid=detailsTabTID]');
     // add meta json to file
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
@@ -212,7 +212,7 @@ test.describe('TST50 - Perspective Grid', () => {
     const fileName = 'sample.svg';
     await clickOn(getGridFileSelector(fileName));
     //Toggle Properties
-    //await clickOn('[data-tid=fileContainerToggleProperties]');
+    await clickOn('[data-tid=detailsTabTID]');
     // add meta json to file
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {

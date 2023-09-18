@@ -32,6 +32,7 @@ export const FileTypeGroups = {
   images: [
     'jpg',
     'jpeg',
+    'jfif',
     'jif',
     'jiff',
     'png',
