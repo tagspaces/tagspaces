@@ -125,7 +125,7 @@
     "test-pw-web-browsers": "npm run test-refresh-data && cross-env DEBUG=pw:api npx playwright test --config ./playwright.config.web.browsers.js -g '/\\bweb\\b/'",
     "test-playwright-web-headless": "npm run test-refresh-data && cross-env HEADLESS_MODE=true npx playwright test --config ./playwright.config.web.js -g '/\\bweb\\b/'",
     "test-clone-data": "rimraf tests/testdata && git clone https://github.com/tagspaces/testdata tests/testdata",
-    "test-refresh-data": "rimraf tests/testdata-tmp && shx mkdir -p tests/testdata-tmp/file-structure && shx cp -rL tests/testdata/file-structure tests/testdata-tmp",
+    "test-refresh-data": "rimraf tests/testdata-tmp && shx mkdir -p tests/testdata-tmp/file-structure && shx cp -rL tests/testdata/file-structure tests/testdata-tmp && npx playwright install --with-deps",
     "test-unit": "npx playwright test --config ./playwright.unit.js",
     "test-watch": "npm run test --watch",
     "third-party": "npx generate-license-file --input package.json --output app/third-party.txt --overwrite",
