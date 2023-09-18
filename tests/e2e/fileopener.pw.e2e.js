@@ -70,6 +70,7 @@ test.describe('TST08 - File folder properties', () => {
     //Toggle Properties
     //await clickOn('[data-tid=fileContainerToggleProperties]');
 
+    await clickOn('[data-tid=detailsTabTID]');
     const propsFileName = await getPropertiesFileName();
     const firstFileName = await getGridFileName(0);
     expect(firstFileName).toBe(propsFileName);
@@ -90,6 +91,7 @@ test.describe('TST08 - File folder properties', () => {
     //Toggle Properties
     //await clickOn('[data-tid=fileContainerToggleProperties]');
 
+    await clickOn('[data-tid=detailsTabTID]');
     const propsFileName = await getPropertiesFileName();
     const firstFileName = await getGridFileName(0);
     expect(firstFileName).toBe(propsFileName);
@@ -107,6 +109,7 @@ test.describe('TST08 - File folder properties', () => {
     //Toggle Properties
     //await clickOn('[data-tid=fileContainerToggleProperties]');
 
+    await clickOn('[data-tid=detailsTabTID]');
     const propsFileName = await getPropertiesFileName();
     const firstFileName = await getGridFileName(0);
     expect(firstFileName).toBe(propsFileName);
@@ -147,7 +150,7 @@ test.describe('TST08 - File folder properties', () => {
     // open fileProperties
     await clickOn(getGridFileSelector(fileName));
     //Toggle Properties
-    //await clickOn('[data-tid=fileContainerToggleProperties]');
+    await clickOn('[data-tid=detailsTabTID]');
 
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
       add: true,

@@ -67,7 +67,8 @@ test.describe('TST50 - Perspective Grid', () => {
     const fileName = 'sample.txt';
 
     // const firstFileName = await getGridFileName(0);
-    await clickOn(getGridFileSelector(fileName)); // perspectiveGridTable + firstFile);
+    await clickOn(getGridFileSelector(fileName));
+    await clickOn('[data-tid=detailsTabTID]');
     // Toggle Properties
     //await clickOn('[data-tid=fileContainerToggleProperties]');
     const propsFileName = await getPropertiesFileName();
