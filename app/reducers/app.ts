@@ -2841,14 +2841,17 @@ export const getCurrentLocationPath = (state: any) => {
   }
   return undefined;
 };
-export const isPersistTagsInSidecarFile = state => {
+export const isPersistTagsInSidecarFile = (state: any): boolean => {
   const locationPersistTagsInSidecarFile = getLocationPersistTagsInSidecarFile(
     state
   );
   if (locationPersistTagsInSidecarFile !== undefined) {
     return locationPersistTagsInSidecarFile;
   }
-  return getPersistTagsInSidecarFile(state);
+  if (AppConfig.useSidecarsForFileTaggingDisableSetting) {
+    return AppConfig.useSidecarsForFileTagging;
+  }
+  return state.settings.persistTagsInSidecarFile;
 };
 export const getLocationPersistTagsInSidecarFile = (state: any) => {
   if (state.locations) {

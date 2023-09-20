@@ -228,12 +228,12 @@ function EntryProperties(props: Props) {
   const disableConfirmButton = useRef<boolean>(true);
   const fileNameError = useRef<boolean>(false);
   const openedEntry = openedEntries[0];
-  const directoryPath = openedEntry.isFile
+  /*const directoryPath = openedEntry.isFile
     ? extractContainingDirectoryPath(
         openedEntry.path,
         PlatformIO.getDirSeparator()
       )
-    : openedEntry.path;
+    : openedEntry.path;*/
 
   const entryName = openedEntry.isFile
     ? extractFileName(openedEntry.path, PlatformIO.getDirSeparator())

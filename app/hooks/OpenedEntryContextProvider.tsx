@@ -23,6 +23,7 @@ import {
   AppDispatch,
   getDirectoryContent,
   getDirectoryPath,
+  getEditedEntryPaths,
   getLastSelectedEntry,
   getOpenLink,
   isSearchMode,
@@ -52,6 +53,7 @@ import { getCurrentLocation, getLocations } from '-/reducers/locations';
 import { clearURLParam, getURLParameter, updateHistory } from '-/utils/dom';
 import {
   extractContainingDirectoryPath,
+  extractTagsAsObjects,
   generateSharingLink,
   getMetaFileLocationForDir,
   getMetaFileLocationForFile,
@@ -65,6 +67,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import versionMeta from '-/version.json';
 import AppConfig from '-/AppConfig';
+import useFirstRender from '-/utils/useFirstRender';
 
 type OpenedEntryContextData = {
   openedEntries: OpenedEntry[];
@@ -138,17 +141,77 @@ export const OpenedEntryContextProvider = ({
   const folderOpenHistory = useSelector(getFolderOpenHistoryKey);
   const newHTMLFileContent = useSelector(getNewHTMLFileContent);
   const initOpenLink = useSelector(getOpenLink);
+  const editedEntryPaths = useSelector(getEditedEntryPaths);
   /*  const checkForUpdates = useSelector(getCheckForUpdateOnStartup);
   const firstRun = useSelector(isFirstRun);
   const enableGlobalKeyboardShortcuts = useSelector(isGlobalKeyBindingEnabled);*/
   const [openedEntries, setOpenedEntries] = useState([]);
   const [isEntryInFullWidth, setEntryInFullWidth] = useState(false);
+  const firstRender = useFirstRender();
 
+  /**
+   * Handle openLink from initApp
+   */
   useEffect(() => {
     if (initOpenLink && initOpenLink.url) {
       openLink(initOpenLink.url, initOpenLink.options);
     }
   }, [openLink]);
+
+  /**
+   * HANDLE REFLECT_RENAME_ENTRY
+   */
+  useEffect(() => {
+    if (!firstRender && editedEntryPaths && editedEntryPaths.length > 0) {
+      let action;
+      for (const editedEntryPath of editedEntryPaths) {
+        action = editedEntryPath.action;
+      }
+      if (action === 'rename') {
+        const oldFilePath = editedEntryPaths[0].path;
+        const newFilePath = editedEntryPaths[1].path;
+
+        if (openedEntries.some(entry => entry.path === oldFilePath)) {
+          const extractedTags = extractTagsAsObjects(
+            newFilePath,
+            AppConfig.tagDelimiter,
+            PlatformIO.getDirSeparator()
+          );
+
+          const newEntries = openedEntries.map(entry => {
+            if (entry.path !== oldFilePath) {
+              return entry;
+            }
+            const fileNameTags = entry.isFile ? extractedTags : []; // dirs dont have tags in filename
+            // const { url, ...rest } = entry;
+            const sidecarTags =
+              entry.tags && entry.tags.length > 0
+                ? entry.tags.filter(tag => tag.type !== 'plain')
+                : [];
+            return {
+              ...entry,
+              path: newFilePath, // TODO handle change extension case
+              tags: [
+                ...sidecarTags, // add only sidecar tags
+                ...fileNameTags
+              ]
+              // shouldReload: true
+            };
+          });
+          setOpenedEntries(newEntries);
+        }
+      } else if (action === 'delete') {
+        const filePath = editedEntryPaths[0].path;
+        if (
+          openedEntries &&
+          openedEntries.length > 0 &&
+          openedEntries.some(file => file.path === filePath)
+        ) {
+          closeAllFiles();
+        }
+      }
+    }
+  }, [editedEntryPaths]);
 
   /*function initApp() {
     disableBackGestureMac();
@@ -214,10 +277,14 @@ export const OpenedEntryContextProvider = ({
     setOpenedEntries([fsEntry]); // [...openedEntries, fsEntry] // TODO uncomment for multiple file support
   }
 
+  function closeOpenedEntries() {
+    setOpenedEntries([]);
+  }
+
   function closeAllFiles() {
     document.title = 'TagSpaces'; // TODO move to AppConfig
     clearURLParam('tsepath');
-    setOpenedEntries([]); // [...openedEntries, fsEntry] // TODO uncomment for multiple file support
+    closeOpenedEntries(); // [...openedEntries, fsEntry] // TODO uncomment for multiple file support
     if (isEntryInFullWidth) {
       setEntryInFullWidth(false);
     }

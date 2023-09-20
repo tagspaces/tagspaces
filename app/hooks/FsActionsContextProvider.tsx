@@ -54,6 +54,7 @@ export const FsActionsContextProvider = ({
 }: FsActionsContextProviderProps) => {
   const { t } = useTranslation();
   const {
+    openedEntries,
     reflectRenameDirectory,
     reflectDeleteDirectory
   } = useOpenedEntryContext();
@@ -196,7 +197,7 @@ export const FsActionsContextProvider = ({
       createDirectory,
       deleteDirectory
     };
-  }, []);
+  }, [openedEntries]);
 
   return (
     <FsActionsContext.Provider value={context}>

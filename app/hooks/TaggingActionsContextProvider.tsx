@@ -92,7 +92,7 @@ export const TaggingActionsContextProvider = ({
   children
 }: TaggingActionsContextProviderProps) => {
   const { t } = useTranslation();
-  const { updateOpenedFile } = useOpenedEntryContext();
+  const { openedEntries, updateOpenedFile } = useOpenedEntryContext();
   const dispatch: AppDispatch = useDispatch();
   const geoTaggingFormat = useSelector(getGeoTaggingFormat);
   const addTagsToLibrary = useSelector(getAddTagsToLibrary);
@@ -828,7 +828,7 @@ export const TaggingActionsContextProvider = ({
       removeAllTags,
       collectTagsFromLocation
     };
-  }, []);
+  }, [openedEntries]);
 
   return (
     <TaggingActionsContext.Provider value={context}>

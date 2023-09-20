@@ -902,7 +902,7 @@ export const getAppDataPath = (state: any) => state.settings.appDataPath;
 export const getSupportedLanguages = (state: any) => state.settings.languages;
 export const getCalculateTags = (state: any) => state.settings.calculateTags;
 export const getUseTrashCan = (state: any) => state.settings.useTrashCan;
-export const getPersistTagsInSidecarFile = (state: any) =>
+export const getPersistTagsInSidecarFile = (state: any): boolean =>
   AppConfig.useSidecarsForFileTaggingDisableSetting
     ? AppConfig.useSidecarsForFileTagging
     : state.settings.persistTagsInSidecarFile;
