@@ -34,8 +34,9 @@ import {
   isReadOnlyMode
 } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
-import TaggingActions from '-/reducers/tagging-actions';
 import { useTranslation } from 'react-i18next';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 
 const isTagLibraryReadOnly =
   window.ExtTagLibrary && window.ExtTagLibrary.length > 0;
@@ -61,6 +62,7 @@ function TagMenu(props: Props) {
 
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
+  const { addTags } = useTaggingActionsContext();
   const readOnlyMode = useSelector(isReadOnlyMode);
   const maxSearchResults: number = useSelector(getMaxSearchResults);
   const selectedEntries = useSelector(getSelectedEntries);
@@ -90,7 +92,7 @@ function TagMenu(props: Props) {
 
   function applyTag() {
     const selectedEntryPaths = selectedEntries.map(entry => entry.path);
-    dispatch(TaggingActions.addTags(selectedEntryPaths, [selectedTag]));
+    addTags(selectedEntryPaths, [selectedTag]);
     onClose();
   }
 

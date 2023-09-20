@@ -1,5 +1,4 @@
-/*
-/!**
+/**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
  *
@@ -15,57 +14,104 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- *!/
-import OpenLocationCode from 'open-location-code-typescript';
-import mgrs from 'mgrs';
-import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
-import i18n from '../services/i18n';
+ */
+
+import React, { createContext, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   actions as AppActions,
-  getLocationPersistTagsInSidecarFile
-} from './app';
-import {
-  extractFileExtension,
-  extractFileName,
-  extractTags,
-  extractTitle,
-  extractContainingDirectoryPath
-} from '@tagspaces/tagspaces-common/paths';
-import {
-  loadMetaDataPromise,
-  saveMetaDataPromise,
-  generateFileName,
-  loadFileMetaDataPromise,
-  loadDirMetaDataPromise
-} from '-/services/utils-io';
-import { isGeoTag } from '-/utils/geo';
-import PlatformIO from '../services/platform-facade';
-import { Pro } from '../pro';
-import GlobalSearch from '../services/search-index';
-import { getPersistTagsInSidecarFile } from './settings';
+  AppDispatch,
+  isPersistTagsInSidecarFile
+} from '-/reducers/app';
+import mgrs from 'mgrs';
+import { Pro } from '-/pro';
+import { useTranslation } from 'react-i18next';
 import { TS } from '-/tagspaces.namespace';
+import OpenLocationCode from 'open-location-code-typescript';
+import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import { getTagLibrary, mergeTagGroup } from '-/services/taglibrary-utils';
+import { isGeoTag } from '-/utils/geo';
+import {
+  getAddTagsToLibrary,
+  getGeoTaggingFormat,
+  getPrefixTagContainer,
+  getTagColor,
+  getTagDelimiter,
+  getTagTextColor
+} from '-/reducers/settings';
+import PlatformIO from '-/services/platform-facade';
+import {
+  generateFileName,
+  loadDirMetaDataPromise,
+  loadFileMetaDataPromise,
+  loadMetaDataPromise,
+  saveMetaDataPromise
+} from '-/services/utils-io';
+import {
+  extractContainingDirectoryPath,
+  extractFileName,
+  extractTags
+} from '@tagspaces/tagspaces-common/paths';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import GlobalSearch from '-/services/search-index';
+import { getLocations } from '-/reducers/locations';
 
-// export const defaultTagLocation = OpenLocationCode.encode(51.48, 0, undefined); // default tag coordinate Greenwich
-
-const persistTagsInSidecarFile = state => {
-  const locationPersistTagsInSidecarFile = getLocationPersistTagsInSidecarFile(
-    state
-  );
-  if (locationPersistTagsInSidecarFile !== undefined) {
-    return locationPersistTagsInSidecarFile;
-  }
-  return getPersistTagsInSidecarFile(state);
+type TaggingActionsContextData = {
+  addTags: (
+    paths: Array<string>,
+    tags: Array<TS.Tag>,
+    updateIndex?: boolean
+  ) => Promise<boolean>;
+  addTagsToEntry: (
+    path: string,
+    tags: Array<TS.Tag>,
+    updateIndex?: boolean
+  ) => Promise<boolean>;
+  editTagForEntry: (path: string, tag: TS.Tag, newTagTitle?: string) => void;
+  removeTags: (paths: Array<string>, tags?: Array<TS.Tag>) => Promise<boolean>;
+  removeTagsFromEntry: (path: string, tags?: Array<TS.Tag>) => Promise<boolean>;
+  removeAllTags: (paths: Array<string>) => Promise<boolean>;
+  collectTagsFromLocation: (tagGroup: TS.TagGroup) => void;
 };
 
-const actions = {
-  addTags: (paths: Array<string>, tags: Array<TS.Tag>, updateIndex = true) => (
-    dispatch: (action) => void,
-    getState: () => any
-  ): Promise<boolean> => {
-    const { settings } = getState();
+export const TaggingActionsContext = createContext<TaggingActionsContextData>({
+  addTags: () => Promise.resolve(false),
+  addTagsToEntry: () => Promise.resolve(false),
+  editTagForEntry: () => {},
+  removeTags: () => Promise.resolve(false),
+  removeTagsFromEntry: () => Promise.resolve(false),
+  removeAllTags: () => Promise.resolve(false),
+  collectTagsFromLocation: () => {}
+});
+
+export type TaggingActionsContextProviderProps = {
+  children: React.ReactNode;
+};
+
+export const TaggingActionsContextProvider = ({
+  children
+}: TaggingActionsContextProviderProps) => {
+  const { t } = useTranslation();
+  const { updateOpenedFile } = useOpenedEntryContext();
+  const dispatch: AppDispatch = useDispatch();
+  const geoTaggingFormat = useSelector(getGeoTaggingFormat);
+  const addTagsToLibrary = useSelector(getAddTagsToLibrary);
+  const tagBackgroundColor: string = useSelector(getTagColor);
+  const tagTextColor: string = useSelector(getTagTextColor);
+  const persistTagsInSidecarFile: boolean = useSelector(
+    isPersistTagsInSidecarFile
+  );
+  const tagDelimiter: string = useSelector(getTagDelimiter);
+  const prefixTagContainer: boolean = useSelector(getPrefixTagContainer);
+  const locations: TS.Location[] = useSelector(getLocations);
+
+  function addTags(
+    paths: Array<string>,
+    tags: Array<TS.Tag>,
+    updateIndex = true
+  ): Promise<boolean> {
     let defaultTagLocation;
-    if (settings.geoTaggingFormat.toLowerCase() === 'mgrs') {
+    if (geoTaggingFormat.toLowerCase() === 'mgrs') {
       defaultTagLocation = mgrs.forward([0, 51.48]);
     } else {
       defaultTagLocation = OpenLocationCode.encode(51.48, 0, undefined);
@@ -92,7 +138,7 @@ const actions = {
           } else {
             dispatch(
               AppActions.showNotification(
-                i18n.t('core:thisFunctionalityIsAvailableInPro')
+                t('core:thisFunctionalityIsAvailableInPro' as any) as string
               )
             );
           }
@@ -105,7 +151,7 @@ const actions = {
           } else {
             dispatch(
               AppActions.showNotification(
-                i18n.t('core:thisFunctionalityIsAvailableInPro')
+                t('core:thisFunctionalityIsAvailableInPro' as any) as string
               )
             );
           }
@@ -122,13 +168,13 @@ const actions = {
 
     if (processedTags.length > 0) {
       const promises = paths.map(path =>
-        dispatch(actions.addTagsToEntry(path, processedTags, updateIndex))
+        addTagsToEntry(path, processedTags, updateIndex)
       );
 
-      if (settings.addTagsToLibrary) {
+      if (addTagsToLibrary) {
         // collecting tags
         // filter existed in tagLibrary
-        const uniqueTags = [];
+        const uniqueTags: TS.Tag[] = [];
         processedTags.map(tag => {
           if (
             getTagLibrary().findIndex(
@@ -141,8 +187,8 @@ const actions = {
           ) {
             uniqueTags.push({
               ...tag,
-              color: tag.color || settings.tagBackgroundColor,
-              textcolor: tag.textcolor || settings.tagTextColor
+              color: tag.color || tagBackgroundColor,
+              textcolor: tag.textcolor || tagTextColor
             });
           }
           return true;
@@ -150,9 +196,9 @@ const actions = {
         if (uniqueTags.length > 0) {
           const tagGroup = {
             uuid: 'collected_tag_group_id', // uuid needs to be constant here (see mergeTagGroup)
-            title: i18n.t('core:collectedTags'),
-            color: settings.tagBackgroundColor,
-            textcolor: settings.tagTextColor,
+            title: t('core:collectedTags' as any) as string,
+            color: tagBackgroundColor,
+            textcolor: tagTextColor,
             children: uniqueTags,
             created_date: new Date().getTime(),
             modified_date: new Date().getTime()
@@ -164,16 +210,55 @@ const actions = {
       return Promise.all(promises).then(() => true);
     }
     return Promise.resolve(false);
-  },
-  addTagsToEntry: (
+  }
+
+  function generateTagValue(tag) {
+    let tagTitle = tag.functionality;
+    switch (tag.functionality) {
+      case 'today': {
+        tagTitle = formatDateTime4Tag(new Date(), false);
+        break;
+      }
+      case 'tomorrow': {
+        const d = new Date();
+        d.setDate(d.getDate() + 1);
+        tagTitle = formatDateTime4Tag(d, false);
+        break;
+      }
+      case 'yesterday': {
+        const d = new Date();
+        d.setDate(d.getDate() - 1);
+        tagTitle = formatDateTime4Tag(d, false);
+        break;
+      }
+      case 'currentMonth': {
+        let cMonth = '' + (new Date().getMonth() + 1);
+        if (cMonth.length === 1) {
+          cMonth = '0' + cMonth;
+        }
+        tagTitle = '' + new Date().getFullYear() + cMonth;
+        break;
+      }
+      case 'currentYear': {
+        tagTitle = '' + new Date().getFullYear();
+        break;
+      }
+      case 'now': {
+        tagTitle = formatDateTime4Tag(new Date(), true);
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+    return tagTitle;
+  }
+
+  async function addTagsToEntry(
     path: string,
     tags: Array<TS.Tag>,
     updateIndex = true
-  ) => async (
-    dispatch: (actions: Object) => Promise<boolean>,
-    getState: () => any
-  ): Promise<boolean> => {
-    const { settings } = getState();
+  ): Promise<boolean> {
     const entryProperties = await PlatformIO.getPropertiesPromise(path);
     let fsEntryMeta;
     try {
@@ -184,45 +269,37 @@ const actions = {
       console.log('No sidecar found ' + error);
     }
 
-    if (!entryProperties.isFile || persistTagsInSidecarFile(getState())) {
+    if (!entryProperties.isFile || persistTagsInSidecarFile) {
       // Handling adding tags in sidecar
       if (fsEntryMeta) {
         const uniqueTags = getNonExistingTags(
           tags,
-          extractTags(
-            path,
-            settings.tagDelimiter,
-            PlatformIO.getDirSeparator()
-          ),
+          extractTags(path, tagDelimiter, PlatformIO.getDirSeparator()),
           fsEntryMeta.tags
         );
         if (uniqueTags.length > 0) {
-          const newTags = [...fsEntryMeta.tags, ...uniqueTags];
+          const newTags: TS.Tag[] = [...fsEntryMeta.tags, ...uniqueTags];
           const updatedFsEntryMeta = {
             ...fsEntryMeta,
             tags: newTags
           };
           return saveMetaDataPromise(path, updatedFsEntryMeta)
             .then(() => {
+              // TODO rethink this updateCurrentDirEntry and not need for KanBan
               dispatch(
-                // TODO rethink this updateCurrentDirEntry and not need for KanBan
                 AppActions.reflectUpdateSidecarTags(path, newTags, updateIndex)
               );
-              const { openedFiles } = getState().app;
-              if (openedFiles.find(obj => obj.path === path)) {
-                return dispatch(
-                  AppActions.updateOpenedFile(path, {
-                    tags: newTags
-                  })
-                );
-              }
+              updateOpenedFile(path, {
+                id: 'opened_entry_id',
+                tags: newTags
+              });
               return true;
             })
             .catch(err => {
               console.warn('Error adding tags for ' + path + ' with ' + err);
               dispatch(
                 AppActions.showNotification(
-                  i18n.t('core:addingTagsFailed'),
+                  t('core:addingTagsFailed' as any) as string,
                   'error',
                   true
                 )
@@ -234,23 +311,17 @@ const actions = {
         const newFsEntryMeta = { tags };
         return saveMetaDataPromise(path, newFsEntryMeta)
           .then(() => {
+            // TODO rethink this updateCurrentDirEntry and not need for KanBan
             dispatch(
-              // TODO rethink this updateCurrentDirEntry and not need for KanBan
               AppActions.reflectUpdateSidecarTags(path, tags, updateIndex)
             );
-            const { openedFiles } = getState().app;
-            if (openedFiles.find(obj => obj.path === path)) {
-              return dispatch(
-                AppActions.updateOpenedFile(path, { tags, changed: true })
-              );
-            }
-            return true;
+            return updateOpenedFile(path, { id: '', tags }); //, changed: true });
           })
           .catch(error => {
             console.warn('Error adding tags for ' + path + ' with ' + error);
             dispatch(
               AppActions.showNotification(
-                i18n.t('core:addingTagsFailed'),
+                t('core:addingTagsFailed' as any) as string,
                 'error',
                 true
               )
@@ -262,7 +333,7 @@ const actions = {
       // Handling tags in filename by existing sidecar
       const extractedTags = extractTags(
         path,
-        settings.tagDelimiter,
+        tagDelimiter,
         PlatformIO.getDirSeparator()
       );
       const uniqueTags = getNonExistingTags(
@@ -287,8 +358,8 @@ const actions = {
           generateFileName(
             fileName,
             extractedTags,
-            settings.tagDelimiter,
-            settings.prefixTagContainer
+            tagDelimiter,
+            prefixTagContainer
           );
         return dispatch(AppActions.renameFile(path, newFilePath));
       }
@@ -301,7 +372,7 @@ const actions = {
       );
       const extractedTags = extractTags(
         path,
-        settings.tagDelimiter,
+        tagDelimiter,
         PlatformIO.getDirSeparator()
       );
       for (let i = 0; i < tags.length; i += 1) {
@@ -318,8 +389,8 @@ const actions = {
         generateFileName(
           fileName,
           extractedTags,
-          settings.tagDelimiter,
-          settings.prefixTagContainer
+          tagDelimiter,
+          prefixTagContainer
         );
       if (path !== newFilePath) {
         return dispatch(AppActions.renameFile(path, newFilePath));
@@ -348,19 +419,20 @@ const actions = {
       }
       return newTags;
     }
-  },
-  /!**
+  }
+
+  /**
    * if Tag not exist in meta it will be added see: addMode
    * @param path
    * @param tag
    * @param newTagTitle
    * @returns {Function}
-   *!/
-  editTagForEntry: (path: string, tag: TS.Tag, newTagTitle?: string) => async (
-    dispatch: (actions: Object) => void,
-    getState: () => any
-  ) => {
-    const { settings } = getState();
+   */
+  async function editTagForEntry(
+    path: string,
+    tag: TS.Tag,
+    newTagTitle?: string
+  ) {
     if (newTagTitle === undefined) {
       // eslint-disable-next-line no-param-reassign
       newTagTitle = tag.title;
@@ -372,7 +444,7 @@ const actions = {
       // Work around solution
       delete tag.functionality;
       const entryProperties = await PlatformIO.getPropertiesPromise(path);
-      if (entryProperties.isFile && !persistTagsInSidecarFile(getState())) {
+      if (entryProperties.isFile && !persistTagsInSidecarFile) {
         tag.type = 'plain';
       }
     }
@@ -383,7 +455,7 @@ const actions = {
 
     const extractedTags: string[] = extractTags(
       path,
-      settings.tagDelimiter,
+      tagDelimiter,
       PlatformIO.getDirSeparator()
     );
     // TODO: Handle adding already added tags
@@ -415,11 +487,11 @@ const actions = {
       const newFileName = generateFileName(
         fileName,
         extractedTags,
-        settings.tagDelimiter,
-        settings.prefixTagContainer
+        tagDelimiter,
+        prefixTagContainer
       );
       if (newFileName !== fileName) {
-        dispatch(
+        await dispatch(
           AppActions.renameFile(
             path,
             containingDirectoryPath + PlatformIO.getDirSeparator() + newFileName
@@ -461,14 +533,10 @@ const actions = {
             tags: newTagsArray
           })
             .then(() => {
-              const { openedFiles } = getState().app;
-              if (openedFiles.find(obj => obj.path === path)) {
-                dispatch(
-                  AppActions.updateOpenedFile(path, {
-                    tags: newTagsArray
-                  })
-                );
-              }
+              updateOpenedFile(path, {
+                id: '',
+                tags: newTagsArray
+              });
               // TODO rethink this updateCurrentDirEntry and not need for KanBan
               dispatch(
                 AppActions.reflectUpdateSidecarTags(path, newTagsArray, true)
@@ -479,7 +547,7 @@ const actions = {
               console.warn('Error adding tags for ' + path + ' with ' + err);
               dispatch(
                 AppActions.showNotification(
-                  i18n.t('core:addingTagsFailed'),
+                  t('core:addingTagsFailed' as any) as string,
                   'error',
                   true
                 )
@@ -492,20 +560,16 @@ const actions = {
           console.warn(
             'json metadata not exist create new ' + path + ' with ' + error
           );
-          // dispatch(AppActions.showNotification(i18n.t('core:addingTagsFailed'), 'error', true));
+          // dispatch(AppActions.showNotification(t('core:addingTagsFailed'), 'error', true));
           // eslint-disable-next-line no-param-reassign
           tag.title = newTagTitle;
           const fsEntryMeta = { tags: [tag] };
           saveMetaDataPromise(path, fsEntryMeta)
             .then(() => {
-              const { openedFiles } = getState().app;
-              if (openedFiles.find(obj => obj.path === path)) {
-                dispatch(
-                  AppActions.updateOpenedFile(path, {
-                    tags: fsEntryMeta.tags
-                  })
-                );
-              }
+              updateOpenedFile(path, {
+                id: '',
+                tags: fsEntryMeta.tags
+              });
               // TODO rethink this updateCurrentDirEntry and not need for KanBan
               dispatch(
                 AppActions.reflectUpdateSidecarTags(path, fsEntryMeta.tags)
@@ -516,7 +580,7 @@ const actions = {
               console.warn('Error adding tags for ' + path + ' with ' + err);
               dispatch(
                 AppActions.showNotification(
-                  i18n.t('core:addingTagsFailed'),
+                  t('core:addingTagsFailed' as any) as string,
                   'error',
                   true
                 )
@@ -525,7 +589,7 @@ const actions = {
         });
     }
 
-    if (settings.addTagsToLibrary) {
+    if (addTagsToLibrary) {
       // collecting tags
       // filter existed in tagLibrary
       const uniqueTags = [];
@@ -540,16 +604,16 @@ const actions = {
         uniqueTags.push({
           ...tag,
           title: newTagTitle,
-          color: tag.color || settings.tagBackgroundColor,
-          textcolor: tag.textcolor || settings.tagTextColor
+          color: tag.color || tagBackgroundColor,
+          textcolor: tag.textcolor || tagTextColor
         });
       }
       if (uniqueTags.length > 0) {
         const tagGroup = {
           uuid: 'collected_tag_group_id', // uuid needs to be constant here (see mergeTagGroup)
-          title: i18n.t('core:collectedTags'),
-          color: settings.tagBackgroundColor,
-          textcolor: settings.tagTextColor,
+          title: t('core:collectedTags' as any) as string,
+          color: tagBackgroundColor,
+          textcolor: tagTextColor,
           children: uniqueTags,
           created_date: new Date().getTime(),
           modified_date: new Date().getTime()
@@ -558,27 +622,24 @@ const actions = {
         dispatch(AppActions.tagLibraryChanged());
       }
     }
-  },
-  removeTags: (paths: Array<string>, tags?: Array<TS.Tag>) => async (
-    dispatch: (actions: Object) => Promise<boolean>
-  ): Promise<boolean> => {
-    for (const path of paths) {
-      const success = await dispatch(actions.removeTagsFromEntry(path, tags));
-      if (!success) {
-        return Promise.resolve(false);
-      }
-    }
-    return Promise.resolve(true);
-  },
-  /!**
+  }
+
+  async function removeTags(
+    paths: Array<string>,
+    tags?: Array<TS.Tag>
+  ): Promise<boolean> {
+    const promises = paths.map(path => removeTagsFromEntry(path, tags));
+    return Promise.all(promises).then(() => true);
+  }
+
+  /**
    * @param path
    * @param tags? if undefined will remove all tags
-   *!/
-  removeTagsFromEntry: (path: string, tags?: Array<TS.Tag>) => (
-    dispatch: (actions: Object) => Promise<boolean>,
-    getState: () => any
-  ): Promise<boolean> => {
-    const { settings } = getState();
+   */
+  function removeTagsFromEntry(
+    path: string,
+    tags?: Array<TS.Tag>
+  ): Promise<boolean> {
     const tagTitlesForRemoving = tags ? tags.map(tag => tag.title) : undefined;
     return loadMetaDataPromise(path)
       .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
@@ -592,22 +653,17 @@ const actions = {
           return removeTagsFromSideCar(fsEntryMeta, newTags, newFilePath).then(
             () => {
               // dispatch(AppActions.reflectEditedEntryPaths([newFilePath]));
-              const { openedFiles } = getState().app;
-              if (openedFiles.find(obj => obj.path === path)) {
-                return dispatch(
-                  AppActions.updateOpenedFile(path, {
-                    tags: newTags
-                  })
-                );
-              }
-              return true;
+              return updateOpenedFile(path, {
+                id: '',
+                tags: newTags
+              });
             }
           );
         });
       })
       .catch(error => {
         console.warn('Error removing tags for ' + path + ' with ' + error);
-        // dispatch(AppActions.showNotification(i18n.t('core:removingSidecarTagsFailed'), 'error', true));
+        // dispatch(AppActions.showNotification(t('core:removingSidecarTagsFailed'), 'error', true));
         return removeTagsFromFilename().then(() => true);
       });
 
@@ -633,7 +689,7 @@ const actions = {
             );
             dispatch(
               AppActions.showNotification(
-                i18n.t('core:removingSidecarTagsFailed'),
+                t('core:removingSidecarTagsFailed' as any) as string,
                 'error',
                 true
               )
@@ -643,10 +699,10 @@ const actions = {
       }
       return Promise.resolve(true);
     }
-    /!**
+    /**
      * return new file path
      * @param isFile
-     *!/
+     */
     function removeTagsFromFilename(isFile: boolean = true): Promise<string> {
       if (!isFile) {
         return Promise.resolve(path);
@@ -654,7 +710,7 @@ const actions = {
       return new Promise(async (resolve, reject) => {
         let extractedTags = extractTags(
           path,
-          settings.tagDelimiter,
+          tagDelimiter,
           PlatformIO.getDirSeparator()
         );
         if (extractedTags.length > 0) {
@@ -684,8 +740,8 @@ const actions = {
             generateFileName(
               fileName,
               extractedTags,
-              settings.tagDelimiter,
-              settings.prefixTagContainer
+              tagDelimiter,
+              prefixTagContainer
             );
           if (path !== newFilePath) {
             const success = await dispatch(
@@ -702,118 +758,13 @@ const actions = {
         }
       });
     }
-  },
-  removeAllTags: (paths: Array<string>) => async (
-    dispatch: (action) => Promise<boolean>
-  ): Promise<boolean> => {
-    return dispatch(actions.removeTags(paths));
-    /!*for (const path of paths) {
-      const success = await dispatch(actions.removeAllTagsFromFilename(path));
-      if (success) {
-        await dispatch(actions.removeAllTagsFromMetaData(path));
-      } else {
-        return Promise.resolve(false);
-      }
-    }
-    return Promise.resolve(true);*!/
-  },
-  /!*removeAllTagsFromFilename: (path: string) => (
-    dispatch: (action) => Promise<boolean>,
-    getState: () => any
-  ): Promise<boolean> => {
-    const { settings } = getState();
-    // Tags in file name case, check is file
-    const extractedTags = extractTags(
-      path,
-      settings.tagDelimiter,
-      PlatformIO.getDirSeparator()
-    );
-    if (extractedTags.length > 0) {
-      const fileTitle = extractTitle(path, false, PlatformIO.getDirSeparator());
-      let fileExt = extractFileExtension(path, PlatformIO.getDirSeparator());
-      const containingDirectoryPath = extractContainingDirectoryPath(
-        path,
-        PlatformIO.getDirSeparator()
-      );
-      if (fileExt.length > 0) {
-        fileExt = '.' + fileExt;
-      }
-      const newFilePath =
-        (containingDirectoryPath
-          ? containingDirectoryPath + PlatformIO.getDirSeparator()
-          : '') +
-        fileTitle +
-        fileExt;
-      return dispatch(AppActions.renameFile(path, newFilePath));
-    }
-    return Promise.resolve(true);
-  },
-  removeAllTagsFromMetaData: (path: string) => (
-    dispatch: (action) => void,
-    getState: () => any
-  ): Promise<boolean> =>
-    loadMetaDataPromise(path)
-      .then(fsEntryMeta => {
-        const updatedFsEntryMeta = {
-          ...fsEntryMeta,
-          tags: []
-        };
-        return saveMetaDataPromise(path, updatedFsEntryMeta)
-          .then(() => {
-            // TODO rethink this updateCurrentDirEntry and not need for KanBan
-            dispatch(AppActions.reflectUpdateSidecarTags(path, []));
-            const { openedFiles } = getState().app;
-            if (openedFiles.find(obj => obj.path === path)) {
-              dispatch(AppActions.updateOpenedFile(path, { tags: [] }));
-            }
-            return true;
-          })
-          .catch(err => {
-            console.warn(
-              'Removing sidecar tags failed for ' + path + ' with ' + err
-            );
-            dispatch(
-              AppActions.showNotification(
-                i18n.t('core:removingTagsInSidecarFileFailed'),
-                'error',
-                true
-              )
-            );
-            return false;
-          });
-      })
-      .catch(error => {
-        console.warn('Could not find meta file for ' + path + ' with ' + error);
-        // dispatch(AppActions.showNotification('Adding tags failed', 'error', true));
-        return false;
-      }),*!/
-  // smart tagging -> PRO
-  addDateTag: (paths: Array<string>) => () =>
-    // dispatch: (actions: Object) => void
-    {
-      // dispatch(actions.createLocation(location));
-    },
-  editDateTag: (path: string) => () =>
-    // dispatch: (actions: Object) => void
-    {
-      // dispatch(actions.createLocation(location));
-    },
-  addGeoTag: (paths: Array<string>) => () =>
-    // dispatch: (actions: Object) => void
-    {
-      // dispatch(actions.createLocation(location));
-    },
-  editGeoTag: (path: string) => () =>
-    // dispatch: (actions: Object) => void
-    {
-      // dispatch(actions.createLocation(location));
-    },
-  collectTagsFromLocation: (tagGroup: TS.TagGroup) => (
-    dispatch: (actions: Object) => void,
-    getState: () => any
-  ) => {
-    const { settings } = getState();
+  }
 
+  function removeAllTags(paths: Array<string>): Promise<boolean> {
+    return removeTags(paths);
+  }
+
+  function collectTagsFromLocation(tagGroup: TS.TagGroup) {
     if (GlobalSearch.getInstance().getIndex().length < 1) {
       dispatch(
         AppActions.showNotification(
@@ -827,8 +778,7 @@ const actions = {
 
     const uniqueTags = collectTagsFromIndex(
       GlobalSearch.getInstance().getIndex(),
-      tagGroup,
-      settings
+      tagGroup
     );
     if (uniqueTags.length > 0) {
       const changedTagGroup = {
@@ -836,85 +786,53 @@ const actions = {
         children: uniqueTags,
         modified_date: new Date().getTime()
       };
-      const { locations } = getState();
       mergeTagGroup(changedTagGroup, getTagLibrary(), locations);
       // dispatch(TagLibraryActions.mergeTagGroup(changedTagGroup));
     }
   }
-};
 
-function generateTagValue(tag) {
-  let tagTitle = tag.functionality;
-  switch (tag.functionality) {
-    case 'today': {
-      tagTitle = formatDateTime4Tag(new Date(), false);
-      break;
-    }
-    case 'tomorrow': {
-      const d = new Date();
-      d.setDate(d.getDate() + 1);
-      tagTitle = formatDateTime4Tag(d, false);
-      break;
-    }
-    case 'yesterday': {
-      const d = new Date();
-      d.setDate(d.getDate() - 1);
-      tagTitle = formatDateTime4Tag(d, false);
-      break;
-    }
-    case 'currentMonth': {
-      let cMonth = '' + (new Date().getMonth() + 1);
-      if (cMonth.length === 1) {
-        cMonth = '0' + cMonth;
+  function collectTagsFromIndex(locationIndex: any, tagGroup: any) {
+    const uniqueTags = [];
+    const defaultTagColor = tagBackgroundColor;
+    const defaultTagTextColor = tagTextColor;
+    locationIndex.map(entry => {
+      if (entry.tags && entry.tags.length > 0) {
+        entry.tags.map(tag => {
+          if (
+            uniqueTags.findIndex(obj => obj.title === tag.title) < 0 && // element not already added
+            tagGroup.children.findIndex(obj => obj.title === tag.title) < 0 && // element not already added
+            !/^(?:\d+~\d+|\d+)$/.test(tag.title) && // skip adding of tag containing only digits
+            !isGeoTag(tag.title) // skip adding of tag containing geo information
+          ) {
+            uniqueTags.push({
+              ...tag,
+              color: tag.color || defaultTagColor,
+              textcolor: tag.textcolor || defaultTagTextColor
+            });
+          }
+          return true;
+        });
       }
-      tagTitle = '' + new Date().getFullYear() + cMonth;
-      break;
-    }
-    case 'currentYear': {
-      tagTitle = '' + new Date().getFullYear();
-      break;
-    }
-    case 'now': {
-      tagTitle = formatDateTime4Tag(new Date(), true);
-      break;
-    }
-    default: {
-      break;
-    }
+      return true;
+    });
+    return uniqueTags;
   }
-  return tagTitle;
-}
 
-function collectTagsFromIndex(
-  locationIndex: any,
-  tagGroup: any,
-  settings: any
-) {
-  const uniqueTags = [];
-  const defaultTagColor = settings.tagBackgroundColor;
-  const defaultTagTextColor = settings.tagTextColor;
-  locationIndex.map(entry => {
-    if (entry.tags && entry.tags.length > 0) {
-      entry.tags.map(tag => {
-        if (
-          uniqueTags.findIndex(obj => obj.title === tag.title) < 0 && // element not already added
-          tagGroup.children.findIndex(obj => obj.title === tag.title) < 0 && // element not already added
-          !/^(?:\d+~\d+|\d+)$/.test(tag.title) && // skip adding of tag containing only digits
-          !isGeoTag(tag.title) // skip adding of tag containing geo information
-        ) {
-          uniqueTags.push({
-            ...tag,
-            color: tag.color || defaultTagColor,
-            textcolor: tag.textcolor || defaultTagTextColor
-          });
-        }
-        return true;
-      });
-    }
-    return true;
-  });
-  return uniqueTags;
-}
+  const context = useMemo(() => {
+    return {
+      addTags,
+      addTagsToEntry,
+      editTagForEntry,
+      removeTags,
+      removeTagsFromEntry,
+      removeAllTags,
+      collectTagsFromLocation
+    };
+  }, []);
 
-export default actions;
-*/
+  return (
+    <TaggingActionsContext.Provider value={context}>
+      {children}
+    </TaggingActionsContext.Provider>
+  );
+};

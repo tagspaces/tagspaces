@@ -68,6 +68,7 @@ import {
 import { getCurrentLocation, getLocations } from '-/reducers/locations';
 import PropertiesIcon from '@mui/icons-material/Info';
 import { useTranslation } from 'react-i18next';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 interface Props {
   anchorEl: Element;
@@ -110,6 +111,7 @@ function FileMenu(props: Props) {
 
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
+  const { openEntry } = useOpenedEntryContext();
   const currentLocation: TS.Location = useSelector(getCurrentLocation);
   const locations: Array<TS.Location> = useSelector(getLocations);
   const readOnlyMode = useSelector(isReadOnlyMode);
@@ -129,7 +131,7 @@ function FileMenu(props: Props) {
   function showProperties() {
     onClose();
     if (selectedEntries && selectedEntries.length === 1) {
-      dispatch(AppActions.openEntry(selectedEntries[0].path, true));
+      openEntry(selectedEntries[0].path, true);
     }
   }
 
@@ -291,7 +293,7 @@ function FileMenu(props: Props) {
   function openFile() {
     onClose();
     if (selectedFilePath) {
-      return dispatch(AppActions.openEntry(selectedFilePath));
+      return openEntry(selectedFilePath);
     }
   }
 

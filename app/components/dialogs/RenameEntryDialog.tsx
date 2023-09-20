@@ -43,6 +43,8 @@ import PlatformIO from '-/services/platform-facade';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { dirNameValidation, fileNameValidation } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useFsActionsContext } from '-/hooks/useFsActionsContext';
 
 interface Props {
   open: boolean;
@@ -52,6 +54,7 @@ interface Props {
 function RenameEntryDialog(props: Props) {
   const { open, onClose } = props;
   const { t } = useTranslation();
+  const { renameDirectory } = useFsActionsContext();
   const currentDirectoryPath = useSelector(getDirectoryPath);
   const [inputError, setInputError] = useState<boolean>(false);
   const disableConfirmButton = useRef<boolean>(true);
@@ -60,10 +63,6 @@ function RenameEntryDialog(props: Props) {
 
   const renameFile = (source, target) => {
     dispatch(AppActions.renameFile(source, target));
-  };
-
-  const renameDirectory = (directoryPath, newDirectoryName) => {
-    dispatch(AppActions.renameDirectory(directoryPath, newDirectoryName));
   };
 
   let defaultName = '';

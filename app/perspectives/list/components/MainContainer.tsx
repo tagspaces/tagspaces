@@ -56,6 +56,7 @@ import GlobalSearch from '-/services/search-index';
 import useFirstRender from '-/utils/useFirstRender';
 import { openURLExternally } from '-/services/utils-io';
 import { useSortedDirContext } from '-/perspectives/grid-perspective/hooks/useSortedDirContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 interface Props {
   currentDirectoryPath: string;
@@ -88,6 +89,7 @@ function ListPerspective(props: Props) {
     setSortBy,
     setOrderBy
   } = useSortedDirContext();
+  const { openEntry, openPrevFile, openNextFile } = useOpenedEntryContext();
   const directoryMeta: TS.FileSystemEntryMeta = useSelector(getDirectoryMeta);
   const readOnlyMode = useSelector(isReadOnlyMode);
   const lastSearchTimestamp = useSelector(getLastSearchTimestamp);
@@ -539,8 +541,8 @@ function ListPerspective(props: Props) {
   };
 
   const keyBindingHandlers = {
-    nextDocument: () => dispatch(AppActions.openNextFile()),
-    prevDocument: () => dispatch(AppActions.openPrevFile()),
+    nextDocument: () => openNextFile(),
+    prevDocument: () => openPrevFile(),
     selectAll: () => toggleSelectAllFiles(),
     deleteDocument: () => {
       if (fileOperationsEnabled(selectedEntries)) {
@@ -557,7 +559,7 @@ function ListPerspective(props: Props) {
     },
     openEntry: e => {
       e.preventDefault();
-      dispatch(AppActions.openEntry());
+      openEntry();
     },
     openFileExternally: () => {
       handleOpenFileNatively();

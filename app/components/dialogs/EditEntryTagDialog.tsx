@@ -38,7 +38,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import { isGeoTag } from '-/utils/geo';
 import { Pro } from '-/pro';
 import { getSelectedEntries, getSelectedTag } from '-/reducers/app';
-import TaggingActions from '-/reducers/tagging-actions';
 import { isDateTimeTag } from '-/utils/dates';
 import { TS } from '-/tagspaces.namespace';
 import useValidation from '-/utils/useValidation';
@@ -47,6 +46,7 @@ import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTranslation } from 'react-i18next';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 
 const PREFIX = 'EditEntryTagDialog';
 
@@ -66,7 +66,6 @@ interface Props {
   classes: any;
   open: boolean;
   onClose: () => void;
-  editTagForEntry: (path: string, tag: TS.Tag, title: string) => void;
   selectedEntries: Array<TS.FileSystemEntry>;
   selectedTag: TS.Tag;
   tileServer: TS.MapTileServer;
@@ -78,6 +77,8 @@ const DateTagEditor = Pro && Pro.UI ? Pro.UI.DateTagEditor : React.Fragment;
 
 function EditEntryTagDialog(props: Props) {
   const { t } = useTranslation();
+
+  const { editTagForEntry } = useTaggingActionsContext();
   const [showAdvancedMode, setShowAdvancedMode] = useState<boolean>(false);
   const [title, setTitle] = useState(
     props.selectedTag && props.selectedTag.title
@@ -131,7 +132,7 @@ function EditEntryTagDialog(props: Props) {
           props.editTagForEntry(entry.path, props.selectedTag, title)
         );
       } else { */
-      props.editTagForEntry(props.selectedTag.path, props.selectedTag, title);
+      editTagForEntry(props.selectedTag.path, props.selectedTag, title);
       props.onClose();
     }
   }
@@ -274,19 +275,9 @@ function mapStateToProps(state) {
   };
 }
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      editTagForEntry: TaggingActions.editTagForEntry
-    },
-    dispatch
-  );
-}
-
 const areEqual = (prevProp, nextProp) =>
   JSON.stringify(nextProp.selectedTag) === JSON.stringify(prevProp.selectedTag);
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(React.memo(EditEntryTagDialog, areEqual));
+export default connect(mapStateToProps)(
+  React.memo(EditEntryTagDialog, areEqual)
+);

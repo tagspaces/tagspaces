@@ -26,6 +26,8 @@ import App from '-/containers/App';
 import MainPage from '-/containers/MainPage';
 import TsAuth from '-/containers/TsAuth';
 import init from '-/services/i18nInit';
+import { FsActionsContextProvider } from '-/hooks/FsActionsContextProvider';
+import { OpenedEntryContextProvider } from '-/hooks/OpenedEntryContextProvider';
 
 type RootType = {
   store: Store<{}>;
@@ -45,7 +47,11 @@ export default function Root({ store, persistor }: RootType) {
 
   let appContent = (
     <App>
-      <MainPage />
+      <OpenedEntryContextProvider>
+        <FsActionsContextProvider>
+          <MainPage />
+        </FsActionsContextProvider>
+      </OpenedEntryContextProvider>
     </App>
   );
 

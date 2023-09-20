@@ -34,7 +34,6 @@ import TagGroupContainer from './TagGroupContainer';
 import TagMenu from './menus/TagMenu';
 import TagLibraryMenu from './menus/TagLibraryMenu';
 import TagGroupMenu from './menus/TagGroupMenu';
-import TaggingActions from '../reducers/tagging-actions';
 import {
   actions as SettingsActions,
   getSaveTagInLocation,
@@ -75,6 +74,8 @@ import {
 import useFirstRender from '-/utils/useFirstRender';
 import { classes, SidePanel } from '-/components/SidePanels.css';
 import { useTranslation } from 'react-i18next';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 
 interface Props {
   style?: any;
@@ -83,6 +84,7 @@ interface Props {
 
 function TagLibrary(props: Props) {
   const { t } = useTranslation();
+  const { addTags } = useTaggingActionsContext();
   const dispatch: AppDispatch = useDispatch();
   const tagBackgroundColor = useSelector(getTagColor);
   const tagTextColor = useSelector(getTagTextColor);
@@ -97,11 +99,6 @@ function TagLibrary(props: Props) {
 
   const toggleTagGroupDispatch = uuid =>
     dispatch(SettingsActions.toggleTagGroup(uuid));
-  const addTagsDispatch = (
-    paths: Array<string>,
-    tags: Array<TS.Tag>,
-    updateIndex
-  ) => dispatch(TaggingActions.addTags(paths, tags, updateIndex));
 
   const [tagGroups, setTagGroups] = useState<Array<TS.TagGroup>>(
     getTagLibrary()
@@ -301,7 +298,7 @@ function TagLibrary(props: Props) {
                       tag={tag}
                       tagGroup={tagGroup}
                       handleTagMenu={handleTagMenuCallback}
-                      addTags={addTagsDispatch}
+                      addTags={addTags}
                       /*moveTag={(
                         tagTitle: string,
                         fromTagGroupId: TS.Uuid,
@@ -326,7 +323,7 @@ function TagLibrary(props: Props) {
                     tag={tag}
                     tagGroup={tagGroup}
                     handleTagMenu={handleTagMenuCallback}
-                    addTags={addTagsDispatch}
+                    addTags={addTags}
                     moveTag={(
                       tagTitle: string,
                       fromTagGroupId: TS.Uuid,

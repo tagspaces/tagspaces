@@ -36,7 +36,7 @@ import {
 } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { useTranslation } from 'react-i18next';
-import TaggingActions from '-/reducers/tagging-actions';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 
 interface Props {
   open: boolean;
@@ -55,10 +55,12 @@ function EntryTagMenu(props: Props) {
     anchorEl,
     selectedTag,
     currentEntryPath,
-    removeTags,
     setIsAddTagDialogOpened
   } = props;
+  const removeTagsProps = props.removeTags;
   const { t } = useTranslation();
+
+  const { removeTags } = useTaggingActionsContext();
   const [isDeleteTagDialogOpened, setIsDeleteTagDialogOpened] = useState(false);
   const dispatch: AppDispatch = useDispatch();
   const maxSearchResults: number = useSelector(getMaxSearchResults);
@@ -105,12 +107,12 @@ function EntryTagMenu(props: Props) {
   }
 
   function confirmRemoveTag() {
-    if (removeTags) {
-      removeTags([currentEntryPath], [selectedTag]);
+    if (removeTagsProps) {
+      removeTagsProps([currentEntryPath], [selectedTag]);
     } else {
-      dispatch(
-        TaggingActions.removeTags([currentEntryPath], [selectedTag])
-      ).then(() => handleCloseDialogs());
+      removeTags([currentEntryPath], [selectedTag]).then(() =>
+        handleCloseDialogs()
+      );
     }
   }
 

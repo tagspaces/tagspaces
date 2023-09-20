@@ -161,13 +161,15 @@ export namespace TS {
     description?: string;
     isFile?: boolean;
     autoSave?: boolean;
+    editMode?: boolean;
+    shouldReload?: boolean;
     tags?: Array<TS.Tag>;
     tagGroups?: Array<TS.TagGroup>;
     color?: string;
     perspective?: string;
-    appName: string;
-    appVersion: string;
-    lastUpdated: number;
+    appName?: string;
+    appVersion?: string;
+    lastUpdated?: number;
     customOrder?: CustomOrder;
     perspectiveSettings?: PerspectiveSettings;
   }

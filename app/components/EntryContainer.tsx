@@ -24,8 +24,7 @@ import React, {
   useRef,
   useState
 } from 'react';
-import { connect, useSelector } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { GlobalHotKeys } from 'react-hotkeys';
 import fscreen from 'fscreen';
 import Button from '@mui/material/Button';
@@ -40,8 +39,6 @@ import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { buffer } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
 import {
-  getMetaFileLocationForDir,
-  getMetaFileLocationForFile,
   extractContainingDirectoryPath,
   getBackupFileLocation,
   extractFileExtension
@@ -50,34 +47,34 @@ import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import PlatformIO from '-/services/platform-facade';
 import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
 import {
-  actions as SettingsActions,
   isDesktopMode,
   getKeyBindingObject,
   isRevisionsEnabled,
-  getEntryContainerTab
+  getEntryContainerTab,
+  getFileEditHistoryKey
 } from '-/reducers/settings';
 import {
   OpenedEntry,
   NotificationTypes,
   isReadOnlyMode,
   actions as AppActions,
-  getDirectoryPath
+  getDirectoryPath,
+  AppDispatch
 } from '-/reducers/app';
 import useEventListener from '-/utils/useEventListener';
 import { TS } from '-/tagspaces.namespace';
 import FileView from '-/components/FileView';
 import { Pro } from '-/pro';
-import { actions as LocationActions } from '-/reducers/locations';
 import { Switch } from '@mui/material';
 import useFirstRender from '-/utils/useFirstRender';
 import ResolveConflictDialog from '-/components/dialogs/ResolveConflictDialog';
-import { loadJSONFile } from '-/services/utils-io';
 import { styled, useTheme } from '@mui/material/styles';
 import EntryContainerTabs from '-/components/EntryContainerTabs';
 import EntryContainerNav from '-/components/EntryContainerNav';
 import EntryContainerTitle from '-/components/EntryContainerTitle';
 import { useTranslation } from 'react-i18next';
-import { useDescriptionContext } from '-/components/hooks/useDescriptionContext';
+import { useDescriptionContext } from '-/hooks/useDescriptionContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 //const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
 
@@ -123,66 +120,33 @@ const Root = styled(Box)(({ theme }) => ({
   }
 }));
 
-interface Props {
-  openedFiles: Array<OpenedEntry>;
-  settings: any;
-  keyBindings: any;
-  closeAllFiles: () => void;
-  openPrevFile: (path: string) => void;
-  openNextFile: (path: string) => void;
-  //openFileNatively: (path: string) => void;
-  //openLink: (url: string, options?: any) => void;
-  //openDirectory: (path: string) => void;
-  showNotification: (
-    text: string,
-    notificationType?: string, // NotificationTypes
-    autohide?: boolean
-  ) => void;
-  //deleteFile: (path: string, uuid: string) => void;
-  //toggleEntryFullWidth: () => void;
-  isReadOnlyMode: boolean;
-  setEntryPropertiesSplitSize: (size: string) => void;
-  updateOpenedFile: (
-    entryPath: string,
-    fsEntryMeta: any // FileSystemEntryMeta
-  ) => Promise<boolean>;
-  // reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
-  // setLastSelectedEntry: (path: string) => void;
-  loadDirectoryContent: (
-    path: string,
-    generateThumbnails: boolean,
-    loadDirMeta?: boolean
-  ) => void;
-  desktopMode: boolean;
-  switchLocationType: (locationId: string) => Promise<string | null>;
-  switchCurrentLocationType: (currentLocationId) => Promise<boolean>;
-  revisionsEnabled: boolean;
-}
-
 const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 
-function EntryContainer(props: Props) {
-  const {
-    keyBindings,
-    settings,
-    openedFiles,
-    desktopMode,
-    isReadOnlyMode,
-    updateOpenedFile,
-    closeAllFiles,
-    setEntryPropertiesSplitSize,
-    showNotification
-  } = props;
+function EntryContainer() {
   const { t } = useTranslation();
+  const dispatch: AppDispatch = useDispatch();
+  const {
+    openedEntries,
+    closeAllFiles,
+    openNextFile,
+    openPrevFile,
+    updateOpenedFile,
+    reloadOpenedFile
+  } = useOpenedEntryContext();
   const { saveDescription } = useDescriptionContext();
   const tabIndex = useSelector(getEntryContainerTab);
   const currentDirectoryPath = useSelector(getDirectoryPath);
+  const fileEditHistoryKey = useSelector(getFileEditHistoryKey);
+  const readOnlyMode = useSelector(isReadOnlyMode);
+  const keyBindings = useSelector(getKeyBindingObject);
+  const desktopMode = useSelector(isDesktopMode);
+  const revisionsEnabled = useSelector(isRevisionsEnabled);
   const theme = useTheme();
   // const [percent, setPercent] = React.useState<number | undefined>(undefined);
-  const percent = useRef<number | undefined>(undefined);
+  // const percent = useRef<number | undefined>(undefined);
   const timer = useRef<NodeJS.Timeout>(null);
-  const openedFile = openedFiles[0];
-  const openedFilePath = useRef(openedFile.path);
+  const openedFile = openedEntries[0];
+  //const openedFilePath = useRef(openedFile.path);
 
   const [propertiesStyles, setPropertiesStyles] = useState<React.CSSProperties>(
     { display: 'flex', flexDirection: 'column' }
@@ -345,7 +309,7 @@ function EntryContainer(props: Props) {
     }
   }, [settings.currentTheme]);*/
 
-  useEffect(() => {
+  /*  useEffect(() => {
     // if (openedFiles.length > 0) {
     if (
       !firstRender &&
@@ -356,7 +320,7 @@ function EntryContainer(props: Props) {
     ) {
       setSaveBeforeReloadConfirmDialogOpened(true);
     }
-  }, [openedFilePath.current, isReadOnlyMode]); // , settings]);
+  }, [openedFilePath.current, readOnlyMode]);*/
 
   // always open for dirs
   /*const isPropPanelVisible = openedFile.isFile
@@ -364,7 +328,7 @@ function EntryContainer(props: Props) {
     : true;*/
 
   const editingSupported: boolean =
-    !isReadOnlyMode &&
+    !readOnlyMode &&
     openedFile.editingExtensionId !== undefined &&
     openedFile.editingExtensionId.length > 3;
 
@@ -377,7 +341,9 @@ function EntryContainer(props: Props) {
         if (data.message) {
           message = message + ': ' + data.message;
         }
-        showNotification(message, NotificationTypes.default);
+        dispatch(
+          AppActions.showNotification(message, NotificationTypes.default)
+        );
         break;
       case 'saveDocument':
         savingFile(data.force !== undefined ? data.force : false);
@@ -388,7 +354,7 @@ function EntryContainer(props: Props) {
         }
         break;
       case 'playbackEnded':
-        openNextFile();
+        openNextFileAction();
         break;
       // case 'openLinkExternally':
       //   // openLink(data.link);
@@ -414,9 +380,8 @@ function EntryContainer(props: Props) {
         // if (!this.state.currentEntry.isFile) {
         //   textFilePath += '/index.html';
         // }
-        props
-          .switchLocationType(openedFile.locationId)
-          .then(currentLocationId => {
+        dispatch(AppActions.switchLocationTypeByID(openedFile.locationId)).then(
+          currentLocationId => {
             PlatformIO.loadTextFilePromise(
               textFilePath,
               data.preview ? data.preview : false
@@ -453,20 +418,25 @@ function EntryContainer(props: Props) {
                     content,
                     fileDirectory,
                     !openedFile.editMode,
-                    settings.currentTheme
+                    theme.palette.mode
                   );
                 }
                 if (currentLocationId) {
-                  return props.switchCurrentLocationType(currentLocationId);
+                  return dispatch(
+                    AppActions.switchCurrentLocationType(currentLocationId)
+                  );
                 }
               })
               .catch(err => {
                 console.warn('Error loading text content ' + err);
                 if (currentLocationId) {
-                  return props.switchCurrentLocationType(currentLocationId);
+                  return dispatch(
+                    AppActions.switchCurrentLocationType(currentLocationId)
+                  );
                 }
               });
-          });
+          }
+        );
         break;
       case 'contentChangedInEditor': {
         if (!fileChanged.current) {
@@ -484,7 +454,7 @@ function EntryContainer(props: Props) {
     }
   };
 
-  const reloadOpenedFile = () => {
+  /*const reloadOpenedFile = () => {
     if (openedFile) {
       const metaFilePath = openedFile.isFile
         ? getMetaFileLocationForFile(
@@ -519,7 +489,7 @@ function EntryContainer(props: Props) {
         });
       }
     }
-  };
+  };*/
 
   const reloadDocument = () => {
     if (openedFile) {
@@ -590,67 +560,67 @@ function EntryContainer(props: Props) {
   }
 
   const override = (): Promise<boolean> => {
-    return props
-      .switchLocationType(openedFile.locationId)
-      .then(currentLocationId =>
-        PlatformIO.getPropertiesPromise(
-          openedFile.path
-        ).then((entryProp: TS.FileSystemEntry) =>
-          save({ ...openedFile, lmdt: entryProp.lmdt }).then(() =>
-            props.switchCurrentLocationType(currentLocationId)
-          )
+    return dispatch(
+      AppActions.switchLocationTypeByID(openedFile.locationId)
+    ).then(currentLocationId =>
+      PlatformIO.getPropertiesPromise(
+        openedFile.path
+      ).then((entryProp: TS.FileSystemEntry) =>
+        save({ ...openedFile, lmdt: entryProp.lmdt }).then(() =>
+          dispatch(AppActions.switchCurrentLocationType(currentLocationId))
         )
-      );
+      )
+    );
   };
 
   const saveAs = (newFilePath: string): Promise<boolean> => {
-    return props
-      .switchLocationType(openedFile.locationId)
-      .then(currentLocationId =>
-        PlatformIO.copyFilePromise(openedFile.path, newFilePath).then(() =>
-          PlatformIO.getPropertiesPromise(newFilePath).then(
-            (entryProp: TS.FileSystemEntry) =>
-              save({
-                ...openedFile,
-                path: entryProp.path,
-                lmdt: entryProp.lmdt
-              }).then(() => {
-                const openedFileDir = extractContainingDirectoryPath(
-                  entryProp.path
-                );
-                if (currentDirectoryPath === openedFileDir) {
-                  props.loadDirectoryContent(
-                    openedFileDir,
-                    true,
-                    true
-                  ); /*
+    return dispatch(
+      AppActions.switchLocationTypeByID(openedFile.locationId)
+    ).then(currentLocationId =>
+      PlatformIO.copyFilePromise(openedFile.path, newFilePath).then(() =>
+        PlatformIO.getPropertiesPromise(newFilePath).then(
+          (entryProp: TS.FileSystemEntry) =>
+            save({
+              ...openedFile,
+              path: entryProp.path,
+              lmdt: entryProp.lmdt
+            }).then(() => {
+              const openedFileDir = extractContainingDirectoryPath(
+                entryProp.path
+              );
+              if (currentDirectoryPath === openedFileDir) {
+                dispatch(
+                  AppActions.loadDirectoryContent(openedFileDir, true, true)
+                ); /*
                   updateOpenedFile(openedFile.path, {
                     ...openedFile,
                     editMode: false,
                     shouldReload: !openedFile.shouldReload
                   });*/
-                }
-                return props.switchCurrentLocationType(currentLocationId);
-              })
-          )
+              }
+              return dispatch(
+                AppActions.switchCurrentLocationType(currentLocationId)
+              );
+            })
         )
-      );
+      )
+    );
   };
 
   const saveFile = (): Promise<boolean> => {
-    return props
-      .switchLocationType(openedFile.locationId)
-      .then(currentLocationId =>
-        save(openedFile).then(() =>
-          props.switchCurrentLocationType(currentLocationId)
-        )
-      );
+    return dispatch(
+      AppActions.switchLocationTypeByID(openedFile.locationId)
+    ).then(currentLocationId =>
+      save(openedFile).then(() =>
+        dispatch(AppActions.switchCurrentLocationType(currentLocationId))
+      )
+    );
   };
 
   async function save(fileOpen: OpenedEntry): Promise<boolean> {
     // @ts-ignore
     const textContent = fileViewer.current.contentWindow.getContent();
-    if (Pro && props.revisionsEnabled) {
+    if (Pro && revisionsEnabled) {
       const id = await Pro.MetaOperations.getMetadataID(
         fileOpen.path,
         fileOpen.uuid
@@ -680,14 +650,15 @@ function EntryContainer(props: Props) {
               url: fileOpen.url,
               lid: fileOpen.locationId
             },
-            settings[historyKeys.fileEditKey]
+            fileEditHistoryKey
           );
         }
 
         return updateOpenedFile(fileOpen.path, {
+          id: '',
           ...fileOpen,
           editMode: true,
-          changed: false,
+          //changed: false,
           shouldReload: undefined
         }).then(() => true);
       })
@@ -699,18 +670,21 @@ function EntryContainer(props: Props) {
   }
 
   const editOpenedFile = () => {
-    props.switchLocationType(openedFile.locationId).then(currentLocationId => {
-      updateOpenedFile(openedFile.path, {
-        ...openedFile,
-        editMode: true,
-        shouldReload: undefined
-      }).then(() => {
-        props.switchCurrentLocationType(currentLocationId);
-      });
-    });
+    dispatch(AppActions.switchLocationTypeByID(openedFile.locationId)).then(
+      currentLocationId => {
+        updateOpenedFile(openedFile.path, {
+          id: '',
+          ...openedFile,
+          editMode: true,
+          shouldReload: undefined
+        }).then(() => {
+          dispatch(AppActions.switchCurrentLocationType(currentLocationId));
+        });
+      }
+    );
   };
 
-  const setPercent = (p: number | undefined) => {
+  /*const setPercent = (p: number | undefined) => {
     percent.current = p;
     // console.log('Percent ' + percent.current);
     if (p !== undefined) {
@@ -720,7 +694,7 @@ function EntryContainer(props: Props) {
           // parseInt(defaultSplitSize, 10)) {
           closePanel();
         } else {
-          if (settings.entrySplitSize !== p + '%') {
+          if (entrySplitSize !== p + '%') {
             setEntryPropertiesSplitSize(p + '%');
           }
           openPanel();
@@ -728,7 +702,7 @@ function EntryContainer(props: Props) {
       });
     }
     forceUpdate();
-  };
+  };*/
 
   const openPanel = () => {
     setPropertiesStyles({ display: 'flex', flexDirection: 'column' });
@@ -762,7 +736,7 @@ function EntryContainer(props: Props) {
     }*/
   };
 
-  const toggleRevisions = () => {
+  /*const toggleRevisions = () => {
     if (isRevisionPanelVisible) {
       setRevisionPanelVisible(false);
       closePanel();
@@ -770,14 +744,14 @@ function EntryContainer(props: Props) {
       setRevisionPanelVisible(true);
       openPanel();
     }
+  };*/
+
+  const openNextFileAction = () => {
+    openNextFile(openedFile.path);
   };
 
-  const openNextFile = () => {
-    props.openNextFile(openedFile.path);
-  };
-
-  const openPrevFile = () => {
-    props.openPrevFile(openedFile.path);
+  const openPrevFileAction = () => {
+    openPrevFile(openedFile.path);
   };
 
   const fileExtension = extractFileExtension(
@@ -790,21 +764,23 @@ function EntryContainer(props: Props) {
   const toggleAutoSave = (event: React.ChangeEvent<HTMLInputElement>) => {
     const autoSave = event.target.checked;
     if (Pro && Pro.MetaOperations) {
-      props
-        .switchLocationType(openedFile.locationId)
-        .then(currentLocationId => {
+      dispatch(AppActions.switchLocationTypeByID(openedFile.locationId)).then(
+        currentLocationId => {
           Pro.MetaOperations.saveFsEntryMeta(openedFile.path, {
             autoSave
           }).then(entryMeta => {
             updateOpenedFile(openedFile.path, entryMeta).then(() => {
-              props.switchCurrentLocationType(currentLocationId);
+              dispatch(AppActions.switchCurrentLocationType(currentLocationId));
             });
           });
-        });
+        }
+      );
     } else {
-      showNotification(
-        t('core:thisFunctionalityIsAvailableInPro'),
-        NotificationTypes.default
+      dispatch(
+        AppActions.showNotification(
+          t('core:thisFunctionalityIsAvailableInPro'),
+          NotificationTypes.default
+        )
       );
     }
   };
@@ -848,7 +824,7 @@ function EntryContainer(props: Props) {
     };
 
     const tabs = () => {
-      const autoSave = isEditable && props.revisionsEnabled && (
+      const autoSave = isEditable && revisionsEnabled && (
         <Tooltip
           title={
             t('core:autosave') +
@@ -946,7 +922,6 @@ function EntryContainer(props: Props) {
           openPanel={openPanel}
           toggleProperties={toggleProperties}
           marginRight={marginRight}
-          isDesktopMode={desktopMode}
         />
       );
 
@@ -1028,8 +1003,8 @@ function EntryContainer(props: Props) {
         closeViewer: startClosingFile,
         saveDocument: startSavingFile,
         editDocument: editOpenedFile,
-        nextDocument: openNextFile,
-        prevDocument: openPrevFile,
+        nextDocument: openNextFileAction,
+        prevDocument: openPrevFileAction,
         toggleFullScreen
       }}
       keyMap={{
@@ -1077,6 +1052,7 @@ function EntryContainer(props: Props) {
             } else {
               setSaveBeforeReloadConfirmDialogOpened(false);
               updateOpenedFile(openedFile.path, {
+                id: '',
                 ...openedFile,
                 editMode: false,
                 // changed: false,
@@ -1111,45 +1087,4 @@ function EntryContainer(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    settings: state.settings,
-    isReadOnlyMode: isReadOnlyMode(state),
-    keyBindings: getKeyBindingObject(state),
-    desktopMode: isDesktopMode(state),
-    revisionsEnabled: isRevisionsEnabled(state)
-  };
-}
-
-function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators(
-    {
-      setEntryPropertiesSplitSize: SettingsActions.setEntryPropertiesSplitSize,
-      closeAllFiles: AppActions.closeAllFiles,
-      showNotification: AppActions.showNotification,
-      openNextFile: AppActions.openNextFile,
-      openPrevFile: AppActions.openPrevFile,
-      updateOpenedFile: AppActions.updateOpenedFile,
-      switchLocationType: LocationActions.switchLocationType,
-      switchCurrentLocationType: AppActions.switchCurrentLocationType
-    },
-    dispatch
-  );
-}
-const areEqual = (prevProp, nextProp) =>
-  // JSON.stringify(nextProp.theme) === JSON.stringify(prevProp.theme) &&
-  nextProp.settings.currentTheme === prevProp.settings.currentTheme &&
-  nextProp.settings.entrySplitSize === prevProp.settings.entrySplitSize &&
-  JSON.stringify(nextProp.openedFiles) === JSON.stringify(prevProp.openedFiles);
-/* nextProp.openedFiles[0].path === prevProp.openedFiles[0].path &&
-  nextProp.openedFiles[0].shouldReload ===
-    prevProp.openedFiles[0].shouldReload &&
-  nextProp.openedFiles[0].editMode === prevProp.openedFiles[0].editMode; */
-
-export default connect(
-  mapStateToProps,
-  mapActionCreatorsToProps
-)(
-  // @ts-ignore
-  React.memo(EntryContainer, areEqual)
-);
+export default EntryContainer;

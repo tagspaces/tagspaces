@@ -22,13 +22,7 @@ import {
   extractContainingDirectoryPath
 } from '@tagspaces/tagspaces-common/paths';
 import Tooltip from '-/components/Tooltip';
-import {
-  actions as AppActions,
-  AppDispatch,
-  getOpenedFiles,
-  OpenedEntry
-} from '-/reducers/app';
-import { useSelector, useDispatch } from 'react-redux';
+import { OpenedEntry } from '-/reducers/app';
 import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
 import { format, formatDistanceToNow } from 'date-fns';
@@ -50,13 +44,14 @@ import {
 import { Pro } from '-/pro';
 import FilePreviewDialog from '-/components/dialogs/FilePreviewDialog';
 import { useTranslation } from 'react-i18next';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 const initialRowsPerPage = 10;
 
 function Revisions() {
   const { t } = useTranslation();
-  const dispatch: AppDispatch = useDispatch();
-  const openedFiles: Array<OpenedEntry> = useSelector(getOpenedFiles);
+  // const dispatch: AppDispatch = useDispatch();
+  const { openedEntries, updateOpenedFile } = useOpenedEntryContext();
   const [rows, setRows] = useState<Array<TS.FileSystemEntry>>([]);
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(
@@ -69,11 +64,11 @@ function Revisions() {
 
   useEffect(() => {
     // if no history item path - not loadHistoryItems for items in metaFolder
-    const openedFile = openedFiles[0];
+    const openedFile = openedEntries[0];
     if (openedFile && openedFile.path.indexOf(AppConfig.metaFolder) === -1) {
       loadHistoryItems(openedFile);
     }
-  }, [openedFiles]);
+  }, [openedEntries]);
 
   function loadHistoryItems(openedFile: OpenedEntry) {
     Pro.MetaOperations.getMetadataID(openedFile.path, openedFile.uuid).then(
@@ -108,7 +103,7 @@ function Revisions() {
 
   function deleteRevision(path) {
     PlatformIO.deleteFilePromise(path, true).then(() =>
-      loadHistoryItems(openedFiles[0])
+      loadHistoryItems(openedEntries[0])
     );
   }
 
@@ -117,12 +112,12 @@ function Revisions() {
       const promises = rows.map(row =>
         PlatformIO.deleteFilePromise(row.path, true)
       );
-      Promise.all(promises).then(() => loadHistoryItems(openedFiles[0]));
+      Promise.all(promises).then(() => loadHistoryItems(openedEntries[0]));
     }
   }
 
   function restoreRevision(revisionPath) {
-    const openedFile = openedFiles[0];
+    const openedFile = openedEntries[0];
     const targetPath = getBackupFileLocation(
       openedFile.path,
       openedFile.uuid,
@@ -134,13 +129,12 @@ function Revisions() {
     ).then(() =>
       PlatformIO.copyFilePromiseOverwrite(revisionPath, openedFile.path).then(
         () =>
-          dispatch(
-            AppActions.updateOpenedFile(openedFile.path, {
-              ...openedFile,
-              editMode: false,
-              shouldReload: !openedFile.shouldReload
-            })
-          )
+          updateOpenedFile(openedFile.path, {
+            id: '',
+            ...openedFile,
+            editMode: false,
+            shouldReload: !openedFile.shouldReload
+          })
       )
     );
   }
@@ -218,7 +212,7 @@ function Revisions() {
           <TableBody>
             {paginatedRows.map(row => (
               <TableRow
-                data-tid={openedFiles[0].uuid}
+                data-tid={openedEntries[0].uuid}
                 key={row.path}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >

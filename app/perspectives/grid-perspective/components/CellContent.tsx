@@ -47,7 +47,6 @@ import TagsPreview from '-/components/TagsPreview';
 import PlatformIO from '-/services/platform-facade';
 import EntryIcon from '-/components/EntryIcon';
 import { TS } from '-/tagspaces.namespace';
-import TaggingActions from '-/reducers/tagging-actions';
 import {
   actions as AppActions,
   AppDispatch,
@@ -66,6 +65,7 @@ import {
   GridStyles
 } from '-/perspectives/grid-perspective/components/styles.css';
 import { useTranslation } from 'react-i18next';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 
 const maxDescriptionPreviewLength = 100;
 
@@ -108,6 +108,7 @@ function CellContent(props: Props) {
   } = props;
 
   const { t } = useTranslation();
+  const { addTags, editTagForEntry } = useTaggingActionsContext();
 
   const theme = useTheme();
   const readOnlyMode = useSelector(isReadOnlyMode);
@@ -120,14 +121,14 @@ function CellContent(props: Props) {
 
   // You can use the dispatch function to dispatch actions
   const handleEditTag = (path: string, tag: TS.Tag, newTagTitle?: string) => {
-    dispatch(TaggingActions.editTagForEntry(path, tag, newTagTitle));
+    editTagForEntry(path, tag, newTagTitle);
   };
   const handleAddTags = (
     paths: Array<string>,
     tags: Array<TS.Tag>,
     updateIndex?
   ) => {
-    dispatch(TaggingActions.addTags(paths, tags, updateIndex));
+    addTags(paths, tags, updateIndex);
   };
 
   const handleAddTag = (tag: TS.Tag, parentTagGroupUuid: TS.Uuid) => {

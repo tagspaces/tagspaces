@@ -4,9 +4,8 @@ import { IconButton, Tooltip } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import PrevDocumentIcon from '@mui/icons-material/KeyboardArrowUp';
 import NextDocumentIcon from '@mui/icons-material/KeyboardArrowDown';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 interface Props {
   isFile: boolean;
@@ -16,8 +15,8 @@ interface Props {
 function EntryContainerNav(props: Props) {
   const { isFile, startClosingFile } = props;
   const { t } = useTranslation();
+  const { openNextFile, openPrevFile } = useOpenedEntryContext();
   const theme = useTheme();
-  const dispatch: AppDispatch = useDispatch();
 
   return (
     <div
@@ -36,7 +35,7 @@ function EntryContainerNav(props: Props) {
             <IconButton
               aria-label={t('core:openPrevFileTooltip')}
               data-tid="fileContainerPrevFile"
-              onClick={() => dispatch(AppActions.openPrevFile())}
+              onClick={() => openPrevFile()}
               size="large"
             >
               <PrevDocumentIcon />
@@ -46,7 +45,7 @@ function EntryContainerNav(props: Props) {
             <IconButton
               aria-label={t('core:openNextFileTooltip')}
               data-tid="fileContainerNextFile"
-              onClick={() => dispatch(AppActions.openNextFile())}
+              onClick={() => openNextFile()}
               size="large"
             >
               <NextDocumentIcon />

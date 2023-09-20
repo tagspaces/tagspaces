@@ -68,6 +68,7 @@ import { actions as tagLibraryActions } from './taglibrary';
 import {
   actions as SettingsActions,
   getCheckForUpdateOnStartup,
+  getPersistTagsInSidecarFile,
   isFirstRun,
   isGlobalKeyBindingEnabled
 } from '-/reducers/settings';
@@ -97,6 +98,7 @@ export const types = {
   LAST_BACKGROUND_IMAGE_CHANGE: 'APP/LAST_BACKGROUND_IMAGE_CHANGE',
   LAST_BACKGROUND_COLOR_CHANGE: 'APP/LAST_BACKGROUND_COLOR_CHANGE',
   LAST_THUMBNAIL_IMAGE_CHANGE: 'APP/LAST_THUMBNAIL_IMAGE_CHANGE',
+  OPEN_LINK: 'APP/OPEN_LINK',
   LOGIN_SUCCESS: 'APP/LOGIN_SUCCESS',
   LOGIN_FAILURE: 'APP/LOGIN_FAILURE',
   LOGOUT: 'APP/LOGOUT',
@@ -110,10 +112,10 @@ export const types = {
   ENTER_SEARCH_MODE: 'APP/ENTER_SEARCH_MODE',
   APPEND_SEARCH_RESULTS: 'APP/APPEND_SEARCH_RESULTS',
   SET_SEARCH_FILTER: 'APP/SET_SEARCH_FILTER',
-  OPEN_FILE: 'APP/OPEN_FILE',
-  TOGGLE_ENTRY_FULLWIDTH: 'APP/TOGGLE_ENTRY_FULLWIDTH',
-  SET_ENTRY_FULLWIDTH: 'APP/SET_ENTRY_FULLWIDTH',
-  CLOSE_ALL_FILES: 'APP/CLOSE_ALL_FILES',
+  //OPEN_FILE: 'APP/OPEN_FILE',
+  //TOGGLE_ENTRY_FULLWIDTH: 'APP/TOGGLE_ENTRY_FULLWIDTH',
+  //SET_ENTRY_FULLWIDTH: 'APP/SET_ENTRY_FULLWIDTH',
+  //CLOSE_ALL_FILES: 'APP/CLOSE_ALL_FILES',
   UPDATE_THUMB_URL: 'APP/UPDATE_THUMB_URL',
   UPDATE_THUMB_URLS: 'APP/UPDATE_THUMB_URLS',
   SET_NOTIFICATION: 'APP/SET_NOTIFICATION',
@@ -250,7 +252,6 @@ export const initialState = {
     notificationType: '',
     autohide: false
   },
-  openedFiles: [],
   editTagDialogOpened: false,
   aboutDialogOpened: false,
   locationDialogOpened: false,
@@ -312,6 +313,15 @@ export default (state: any = initialState, action: any) => {
         lastThumbnailImageChange: {
           thumbPath: action.thumbPath,
           dt: action.lastThumbnailImageChange
+        }
+      };
+    }
+    case types.OPEN_LINK: {
+      return {
+        ...state,
+        openLink: {
+          url: action.url,
+          options: action.options
         }
       };
     }
@@ -689,28 +699,24 @@ export default (state: any = initialState, action: any) => {
       }
       return state;
     }
-    case types.OPEN_FILE: {
+    /*case types.OPEN_FILE: {
       return {
         ...state,
         openedFiles: [
           action.file
           // ...state.openedFiles // TODO uncomment for multiple file support
         ]
-        /*...(action.file.path === state.currentDirectoryPath &&
-          action.file.description && {
-            currentDirectoryDescription: action.file.description
-          })*/
       };
-    }
-    case types.TOGGLE_ENTRY_FULLWIDTH: {
+    }*/
+    /*case types.TOGGLE_ENTRY_FULLWIDTH: {
       return { ...state, isEntryInFullWidth: !state.isEntryInFullWidth };
-    }
-    case types.SET_ENTRY_FULLWIDTH: {
+    }*/
+    /*case types.SET_ENTRY_FULLWIDTH: {
       if (action.isEntryInFullWidth !== state.isEntryInFullWidth) {
         return { ...state, isEntryInFullWidth: action.isFullWidth };
       }
       return state;
-    }
+    }*/
     case types.UPDATE_THUMB_URL: {
       const dirEntries = state.currentDirectoryEntries.map(entry => {
         if (entry.path === action.filePath) {
@@ -742,21 +748,21 @@ export default (state: any = initialState, action: any) => {
       const newDirectoryEntries = state.currentDirectoryEntries.filter(
         entry => entry.path !== action.path
       );
-      const newOpenedFiles = state.openedFiles.filter(
+      /*const newOpenedFiles = state.openedFiles.filter(
         entry => entry.path !== action.path
-      );
+      );*/
       const editedEntryPaths = [{ action: 'delete', path: action.path }];
       // check if currentDirectoryEntries or openedFiles changed
       if (
-        state.currentDirectoryEntries.length > newDirectoryEntries.length ||
-        state.openedFiles.length > newOpenedFiles.length
+        state.currentDirectoryEntries.length > newDirectoryEntries.length
+        // || state.openedFiles.length > newOpenedFiles.length
       ) {
         return {
           ...state,
           editedEntryPaths,
-          currentDirectoryEntries: newDirectoryEntries,
-          openedFiles: newOpenedFiles,
-          isEntryInFullWidth: false
+          currentDirectoryEntries: newDirectoryEntries
+          //openedFiles: newOpenedFiles
+          //isEntryInFullWidth: false
         };
       }
       return {
@@ -768,24 +774,24 @@ export default (state: any = initialState, action: any) => {
       const newDirectoryEntries = state.currentDirectoryEntries.filter(
         entry => !action.paths.some(path => path === entry.path)
       );
-      const newOpenedFiles = state.openedFiles.filter(
+      /*const newOpenedFiles = state.openedFiles.filter(
         entry => !action.paths.some(path => path === entry.path)
-      );
+      );*/
       const editedEntryPaths = action.paths.map(path => ({
         action: 'delete',
         path: path
       }));
       // check if currentDirectoryEntries or openedFiles changed
       if (
-        state.currentDirectoryEntries.length > newDirectoryEntries.length ||
-        state.openedFiles.length > newOpenedFiles.length
+        state.currentDirectoryEntries.length > newDirectoryEntries.length
+        //|| state.openedFiles.length > newOpenedFiles.length
       ) {
         return {
           ...state,
           editedEntryPaths,
-          currentDirectoryEntries: newDirectoryEntries,
-          openedFiles: newOpenedFiles,
-          isEntryInFullWidth: false
+          currentDirectoryEntries: newDirectoryEntries
+          //openedFiles: newOpenedFiles
+          //isEntryInFullWidth: false
         };
       }
       return {
@@ -894,8 +900,8 @@ export default (state: any = initialState, action: any) => {
               ...fileNameTags
             ]
           };
-        }),
-        openedFiles: state.openedFiles.map(entry => {
+        })
+        /*openedFiles: state.openedFiles.map(entry => {
           if (entry.path !== action.path) {
             return entry;
           }
@@ -914,7 +920,7 @@ export default (state: any = initialState, action: any) => {
             ]
             // shouldReload: true
           };
-        })
+        })*/
       };
     }
     /* case types.REFLECT_UPDATE_SIDECARTAGS: {
@@ -1015,14 +1021,14 @@ export default (state: any = initialState, action: any) => {
         })
       };
     } */
-    case types.CLOSE_ALL_FILES: {
+    /*case types.CLOSE_ALL_FILES: {
       clearURLParam('tsepath');
       return {
         ...state,
         openedFiles: [],
         isEntryInFullWidth: false
       };
-    }
+    }*/
     case types.OPEN_LOCATIONMANAGER_PANEL: {
       return {
         ...state,
@@ -1165,6 +1171,11 @@ export const actions = {
     lastThumbnailImageChange: lastThumbnailImageChange || new Date().getTime()
   }),
   loggedIn: user => ({ type: types.LOGIN_SUCCESS, user }),
+  openLink: (url: string, options = { fullWidth: true }) => ({
+    type: types.OPEN_LINK,
+    url,
+    options
+  }),
   initApp: () => (dispatch: (action) => void, getState: () => any) => {
     disableBackGestureMac();
     // migrate TagLibrary from redux state
@@ -1478,9 +1489,10 @@ export const actions = {
       getState().app.currentLocationId
     );
     const resultsLimit = {
-      maxLoops: currentLocation.maxLoops
-        ? currentLocation.maxLoops
-        : AppConfig.maxLoops,
+      maxLoops:
+        currentLocation && currentLocation.maxLoops
+          ? currentLocation.maxLoops
+          : AppConfig.maxLoops,
       IsTruncated: false
     };
     PlatformIO.listDirectoryPromise(
@@ -1733,266 +1745,11 @@ export const actions = {
   tagLibraryChanged: () => ({
     type: types.SET_TAG_LIBRARY_CHANGED
   }),
-  deleteDirectory: (directoryPath: string) => (
-    dispatch: (action) => void,
-    getState: () => any
-  ) => {
-    const { settings } = getState();
-    const { currentDirectoryPath, openedFiles } = getState().app;
-    return PlatformIO.deleteDirectoryPromise(
-      directoryPath,
-      settings.useTrashCan
-    )
-      .then(() => {
-        if (directoryPath === currentDirectoryPath) {
-          dispatch(actions.loadParentDirectoryContent());
-          GlobalSearch.getInstance().reflectDeleteEntry(directoryPath);
-          // close opened entries in deleted dir
-          if (
-            openedFiles.length > 0 &&
-            openedFiles.some(
-              file =>
-                extractContainingDirectoryPath(
-                  file.path,
-                  PlatformIO.getDirSeparator()
-                ) === directoryPath
-            )
-          ) {
-            dispatch(actions.closeAllFiles());
-          }
-        } else {
-          dispatch(actions.reflectDeleteEntry(directoryPath));
-        }
-        dispatch(
-          actions.showNotification(
-            i18n.t('deletingDirectorySuccessfull', {
-              dirPath: extractDirectoryName(
-                directoryPath,
-                PlatformIO.getDirSeparator()
-              )
-            }),
-            'default',
-            true
-          )
-        );
-        return true;
-      })
-      .catch(error => {
-        console.warn('Error while deleting directory: ' + error);
-        dispatch(
-          actions.showNotification(
-            i18n.t('errorDeletingDirectoryAlert', {
-              dirPath: extractDirectoryName(
-                directoryPath,
-                PlatformIO.getDirSeparator()
-              )
-            }),
-            'error',
-            true
-          )
-        );
-        // dispatch stopLoadingAnimation
-      });
-  },
   openDirectory: (directoryPath: string) => () => {
     PlatformIO.openDirectory(directoryPath);
   },
   showInFileManager: (filePath: string) => () => {
     PlatformIO.showInFileManager(filePath);
-  },
-  renameDirectory: (directoryPath: string, newDirectoryName: string) => (
-    dispatch: (action) => void,
-    getState: () => any
-  ) =>
-    PlatformIO.renameDirectoryPromise(directoryPath, newDirectoryName)
-      .then(newDirPath => {
-        const { currentDirectoryPath, openedFiles } = getState().app;
-        if (currentDirectoryPath === directoryPath) {
-          dispatch(actions.loadDirectoryContent(newDirPath, false, true));
-          if (openedFiles && openedFiles.length > 0) {
-            if (openedFiles[0].path === directoryPath) {
-              const openedFile = openedFiles[0];
-              openedFile.path = newDirPath;
-              dispatch(actions.addToEntryContainer(openedFile));
-            }
-          }
-          GlobalSearch.getInstance().reflectRenameEntry(
-            directoryPath,
-            newDirPath
-          );
-        } else {
-          dispatch(actions.reflectRenameEntry(directoryPath, newDirPath));
-        }
-
-        dispatch(
-          actions.showNotification(
-            `Renaming directory ${extractDirectoryName(
-              directoryPath,
-              PlatformIO.getDirSeparator()
-            )} successful.`,
-            'default',
-            true
-          )
-        );
-        return true;
-      })
-      .catch(error => {
-        console.warn('Error while renaming directory: ' + error);
-        dispatch(
-          actions.showNotification(
-            `Error renaming directory '${extractDirectoryName(
-              directoryPath,
-              PlatformIO.getDirSeparator()
-            )}'`,
-            'error',
-            true
-          )
-        );
-        throw error;
-      }),
-  createDirectory: (directoryPath: string, reflect = true) => (
-    dispatch: (action) => void
-  ) =>
-    PlatformIO.createDirectoryPromise(directoryPath)
-      .then(result => {
-        if (result !== undefined && result.dirPath !== undefined) {
-          // eslint-disable-next-line no-param-reassign
-          directoryPath = result.dirPath;
-        }
-        console.log(`Creating directory ${directoryPath} successful.`);
-        if (reflect) {
-          dispatch(actions.reflectCreateEntry(directoryPath, false));
-        }
-        dispatch(
-          actions.showNotification(
-            `Creating directory ${extractDirectoryName(
-              directoryPath,
-              PlatformIO.getDirSeparator()
-            )} successful.`,
-            'default',
-            true
-          )
-        );
-        return true;
-      })
-      .catch(error => {
-        console.warn('Error creating directory: ' + error);
-        dispatch(
-          actions.showNotification(
-            `Error creating directory '${extractDirectoryName(
-              directoryPath,
-              PlatformIO.getDirSeparator()
-            )}'`,
-            'error',
-            true
-          )
-        );
-        return false;
-        // dispatch stopLoadingAnimation
-      }),
-  createFile: () => (dispatch: (action) => void, getState: () => any) => {
-    const { app } = getState();
-    if (app.currentDirectoryPath) {
-      const filePath =
-        app.currentDirectoryPath +
-        PlatformIO.getDirSeparator() +
-        'textfile' +
-        AppConfig.beginTagContainer +
-        formatDateTime4Tag(new Date(), true) +
-        AppConfig.endTagContainer +
-        '.txt';
-      PlatformIO.saveFilePromise({ path: filePath }, '', true)
-        .then(() => {
-          dispatch(actions.reflectCreateEntry(filePath, true));
-          dispatch(
-            actions.showNotification(
-              i18n.t('core:fileCreateSuccessfully'),
-              'info',
-              true
-            )
-          );
-          dispatch(actions.openEntry(filePath));
-          return true;
-        })
-        .catch(err => {
-          console.warn('File creation failed with ' + err);
-          dispatch(
-            actions.showNotification(
-              i18n.t('core:errorCreatingFile'),
-              'warning',
-              true
-            )
-          );
-        });
-    } else {
-      dispatch(
-        actions.showNotification(
-          i18n.t('core:firstOpenaFolder'),
-          'warning',
-          true
-        )
-      );
-    }
-  },
-  createFileAdvanced: (
-    targetPath: string,
-    fileName: string,
-    content: string,
-    fileType: 'md' | 'txt' | 'html'
-  ) => (dispatch: (action) => void, getState: () => any) => {
-    const creationDate = new Date().toISOString();
-    const fileNameAndExt = fileName + '.' + fileType;
-    const creationMeta =
-      'Created in ' +
-      versionMeta.name +
-      ' on ' +
-      creationDate.substring(0, 10) +
-      '.';
-    const filePath =
-      normalizePath(targetPath) + PlatformIO.getDirSeparator() + fileNameAndExt;
-    let fileContent = content;
-    if (fileType === 'html') {
-      const { newHTMLFileContent } = getState().settings;
-      fileContent =
-        newHTMLFileContent.split('<body></body>')[0] +
-        '<body data-createdwith="' +
-        versionMeta.name +
-        '" data-createdon="' +
-        creationDate +
-        '" >' +
-        content +
-        '\n<br />\n' +
-        creationMeta +
-        '\n';
-      '</body>' + newHTMLFileContent.split('<body></body>')[1];
-    } else if (fileType === 'md') {
-      fileContent = content + ' \n\n' + creationMeta + '\n';
-    }
-    PlatformIO.saveFilePromise({ path: filePath }, fileContent, false)
-      .then((fsEntry: TS.FileSystemEntry) => {
-        dispatch(actions.reflectCreateEntry(filePath, true));
-        dispatch(actions.openFsEntry(fsEntry));
-
-        // dispatch(actions.setSelectedEntries([fsEntry]));
-        dispatch(
-          actions.showNotification(
-            `File '${fileNameAndExt}' created.`,
-            'default',
-            true
-          )
-        );
-        return true;
-      })
-      .catch(error => {
-        console.warn('Error creating file: ' + error);
-        dispatch(
-          actions.showNotification(
-            `Error creating file '${fileNameAndExt}'`,
-            'error',
-            true
-          )
-        );
-      });
   },
   setSearchResults: (searchResults: Array<any> | []) => ({
     type: types.SET_SEARCH_RESULTS,
@@ -2263,10 +2020,10 @@ export const actions = {
     notificationType: 'default',
     autohide: true
   }),
-  addToEntryContainer: (fsEntry: OpenedEntry) => ({
+  /*addToEntryContainer: (fsEntry: OpenedEntry) => ({
     type: types.OPEN_FILE,
     file: fsEntry
-  }),
+  }),*/
   /* setFileDragged: (isFileDragged: boolean) => ({
     type: types.SET_FILEDRAGGED,
     isFileDragged
@@ -2275,7 +2032,7 @@ export const actions = {
     type: types.SET_READONLYMODE,
     isReadOnlyMode
   }),
-  reflectUpdateOpenedFileContent: (entryPath: string) => (
+  /*reflectUpdateOpenedFileContent: (entryPath: string) => (
     dispatch: (action) => void,
     getState: () => any
   ) => {
@@ -2289,8 +2046,8 @@ export const actions = {
         dispatch(actions.addToEntryContainer(openedFile));
       }
     }
-  },
-  updateOpenedFile: (
+  },*/
+  /*updateOpenedFile: (
     entryPath: string,
     fsEntryMeta: any // TS.FileSystemEntryMeta,
     // isFile: boolean = true
@@ -2316,9 +2073,9 @@ export const actions = {
               entryForOpening = { ...entryExist };
             }
 
-            /* if (fsEntryMeta.changed !== undefined) {
+            /!* if (fsEntryMeta.changed !== undefined) {
               entryForOpening.changed = fsEntryMeta.changed;
-            } */
+            } *!/
             if (fsEntryMeta.editMode !== undefined) {
               entryForOpening.editMode = fsEntryMeta.editMode;
             }
@@ -2354,8 +2111,8 @@ export const actions = {
         });
     }
     return Promise.resolve(false);
-  },
-  openEntry: (path?: string, showDetails = false) => (
+  },*/
+  /*openEntry: (path?: string, showDetails = false) => (
     dispatch: (action) => void
   ) => {
     if (path === undefined) {
@@ -2370,8 +2127,8 @@ export const actions = {
           'Error getting properties for entry: ' + path + ' - ' + error
         )
       );
-  },
-  openFsEntry: (fsEntry?: TS.FileSystemEntry, showDetails = false) => (
+  },*/
+  /*openFsEntry: (fsEntry?: TS.FileSystemEntry, showDetails = false) => (
     dispatch: (action) => void,
     getState: () => any
   ) => {
@@ -2390,9 +2147,9 @@ export const actions = {
     let entryForOpening: OpenedEntry;
     const { openedFiles } = getState().app;
 
-    /**
+    /!**
      * check for editMode in order to show save changes dialog (shouldReload: false)
-     */
+     *!/
     if (openedFiles.length > 0) {
       const openFile = openedFiles[0];
       if (openFile.editMode) {
@@ -2508,15 +2265,15 @@ export const actions = {
         }
       }
     }
-  },
-  toggleEntryFullWidth: () => ({
+  },*/
+  /*toggleEntryFullWidth: () => ({
     type: types.TOGGLE_ENTRY_FULLWIDTH
-  }),
-  setEntryFullWidth: (isFullWidth: boolean) => ({
+  }),*/
+  /*setEntryFullWidth: (isFullWidth: boolean) => ({
     type: types.SET_ENTRY_FULLWIDTH,
     isFullWidth
-  }),
-  openNextFile: (path?: string) => (
+  }),*/
+  /*openNextFile: (path?: string) => (
     dispatch: (action) => void,
     getState: () => any
   ) => {
@@ -2552,12 +2309,12 @@ export const actions = {
       // dispatch(actions.setLastSelectedEntry(prevFile.path));
       dispatch(actions.setSelectedEntries([prevFile]));
     }
-  },
-  closeAllFiles: () => (dispatch: (action) => void) => {
+  },*/
+  /*closeAllFiles: () => (dispatch: (action) => void) => {
     document.title = 'TagSpaces'; // TODO move to AppConfig
     dispatch(actions.closeAllFilesInt());
   },
-  closeAllFilesInt: () => ({ type: types.CLOSE_ALL_FILES }),
+  closeAllFilesInt: () => ({ type: types.CLOSE_ALL_FILES }),*/
   reflectDeleteEntryInt: (path: string) => ({
     type: types.REFLECT_DELETE_ENTRY,
     path
@@ -2849,7 +2606,7 @@ export const actions = {
       PlatformIO.openFile(selectedFile, warningOpeningFilesExternally);
     }
   },
-  openLink: (url: string, options = { fullWidth: true }) => (
+  /*openLink: (url: string, options = { fullWidth: true }) => (
     dispatch: (action) => void,
     getState: () => any
   ) => {
@@ -3013,7 +2770,7 @@ export const actions = {
     } else {
       console.log('Not supported URL format: ' + decodedURI);
     }
-  },
+  },*/
   saveFile: () => (dispatch: (action) => void) => {
     dispatch(
       actions.showNotification(
@@ -3083,6 +2840,15 @@ export const getCurrentLocationPath = (state: any) => {
     }
   }
   return undefined;
+};
+export const isPersistTagsInSidecarFile = state => {
+  const locationPersistTagsInSidecarFile = getLocationPersistTagsInSidecarFile(
+    state
+  );
+  if (locationPersistTagsInSidecarFile !== undefined) {
+    return locationPersistTagsInSidecarFile;
+  }
+  return getPersistTagsInSidecarFile(state);
 };
 export const getLocationPersistTagsInSidecarFile = (state: any) => {
   if (state.locations) {
@@ -3158,7 +2924,7 @@ export const isOpenLinkDialogOpened = (state: any) =>
 export const isProTeaserVisible = (state: any) => state.app.proTeaserIndex > -1;
 export const getProTeaserIndex = (state: any) => state.app.proTeaserIndex;
 export const isProgressOpened = (state: any) => state.app.progressDialogOpened;
-export const getOpenedFiles = (state: any) => state.app.openedFiles;
+export const getOpenLink = (state: any) => state.app.openLink;
 export const getNotificationStatus = (state: any) =>
   state.app.notificationStatus;
 /*

@@ -37,12 +37,10 @@ import {
   copyFilesPromise,
   getThumbPath,
   loadFileMetaDataPromise,
-  renameFilesPromise,
-  toFsEntry
+  renameFilesPromise
 } from '-/services/utils-io';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
-import TaggingActions from './tagging-actions';
 import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
 import { generateThumbnailPromise } from '-/services/thumbsgenerator';
@@ -55,7 +53,8 @@ const actions = {
       EXIFDateTime: true,
       IPTCDescription: true,
       IPTCTags: true
-    }
+    },
+    addTags?
   ) => (dispatch: (actions: any) => void, getState: () => any) => {
     const { currentDirectoryEntries } = getState().app;
     if (!Pro || !Pro.ContentExtractor) {
@@ -70,7 +69,7 @@ const actions = {
       currentDirectoryEntries,
       dispatch,
       AppActions,
-      TaggingActions,
+      addTags,
       options
     );
   },

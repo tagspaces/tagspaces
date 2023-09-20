@@ -16,26 +16,39 @@
  *
  */
 
-import React, { createContext, useEffect, useMemo, useRef } from 'react';
+import React, {
+  createContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   actions as AppActions,
   AppDispatch,
-  getOpenedFiles,
   isReadOnlyMode,
   OpenedEntry
 } from '-/reducers/app';
 import { Pro } from '-/pro';
 import { useTranslation } from 'react-i18next';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 type DescriptionContextData = {
   description: string;
+  isChanged: boolean;
+  isSaveDescriptionConfirmOpened: boolean;
+  setSaveDescriptionConfirmOpened: (open: boolean) => void;
   setDescription: (description: string) => void;
   saveDescription: () => void;
 };
 
 export const DescriptionContext = createContext<DescriptionContextData>({
   description: undefined,
+  isChanged: false,
+  isSaveDescriptionConfirmOpened: false,
+  setSaveDescriptionConfirmOpened: () => {},
   setDescription: () => {},
   saveDescription: () => {}
 });
@@ -48,21 +61,25 @@ export const DescriptionContextProvider = ({
   children
 }: DescriptionContextProviderProps) => {
   const { t } = useTranslation();
+  const { openedEntries, updateOpenedFile } = useOpenedEntryContext();
   const dispatch: AppDispatch = useDispatch();
   const readOnlyMode = useSelector(isReadOnlyMode);
-  const openedFiles: Array<OpenedEntry> = useSelector(getOpenedFiles);
-  const openedFile: OpenedEntry = openedFiles[0];
-  // const [ignored, forceUpdate] = useReducer(x => x + 1, 0, undefined);
+  const openedFile: OpenedEntry = openedEntries[0];
+  const [
+    isSaveDescriptionConfirmOpened,
+    setSaveDescriptionConfirmOpened
+  ] = useState<boolean>(false);
+  const [ignored, forceUpdate] = useReducer(x => x + 1, 0, undefined);
 
   const description = useRef<string>(openedFile.description);
 
   useEffect(() => {
-    if (openedFile.description !== description.current) {
-      description.current = openedFile.description;
-    } /*else {
+    //if (openedFile.description !== description.current) {
+    description.current = openedFile.description;
+    /*else {
       forceUpdate();
     }*/
-  }, [openedFile.description]);
+  }, [openedFile]);
 
   const saveDescription = () => {
     if (readOnlyMode) {
@@ -81,6 +98,7 @@ export const DescriptionContextProvider = ({
       return;
     }
     if (description.current !== undefined) {
+      forceUpdate();
       if (openedFile.locationId) {
         dispatch(AppActions.switchLocationTypeByID(openedFile.locationId)).then(
           currentLocationId => {
@@ -115,9 +133,7 @@ export const DescriptionContextProvider = ({
   function saveMetaData() {
     return Pro.MetaOperations.saveFsEntryMeta(openedFile.path, {
       description: description.current
-    }).then(entryMeta =>
-      dispatch(AppActions.updateOpenedFile(openedFile.path, entryMeta))
-    );
+    }).then(entryMeta => updateOpenedFile(openedFile.path, entryMeta));
   }
 
   function setDescription(d: string) {
@@ -127,10 +143,13 @@ export const DescriptionContextProvider = ({
   const context = useMemo(() => {
     return {
       description: description.current,
+      isChanged: description.current != openedFile.description,
+      isSaveDescriptionConfirmOpened,
+      setSaveDescriptionConfirmOpened,
       setDescription,
       saveDescription
     };
-  }, [description.current, openedFile.description]);
+  }, [description.current, openedFile]);
 
   return (
     <DescriptionContext.Provider value={context}>

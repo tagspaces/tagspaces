@@ -51,7 +51,6 @@ import {
   isKeysDialogOpened,
   isLicenseDialogOpened,
   isThirdPartyLibsDialogOpened,
-  isEntryInFullWidth,
   isLocationManagerPanelOpened,
   isTagLibraryPanelOpened,
   isSearchPanelOpened,
@@ -65,8 +64,6 @@ import {
   isOpenLinkDialogOpened,
   isReadOnlyMode,
   isProgressOpened,
-  getOpenedFiles,
-  OpenedEntry,
   isDeleteMultipleEntriesDialogOpened,
   isImportKanBanDialogOpened,
   getSelectedEntries,
@@ -94,7 +91,11 @@ import NewFileDialog from '-/components/dialogs/NewFileDialog';
 import IsTruncatedConfirmDialog from '-/components/dialogs/IsTruncatedConfirmDialog';
 import { styled, useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
-import { DescriptionContextProvider } from '-/components/hooks/DescriptionContextProvider';
+import { DescriptionContextProvider } from '-/hooks/DescriptionContextProvider';
+import { OpenedEntryContextProvider } from '-/hooks/OpenedEntryContextProvider';
+import { TaggingActionsContextProvider } from '-/hooks/TaggingActionsContextProvider';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useFsActionsContext } from '-/hooks/useFsActionsContext';
 
 const drawerWidth = 320;
 const body = document.getElementsByTagName('body')[0];
@@ -139,10 +140,8 @@ interface Props {
   isFirstRun: boolean;
   setFirstRun: (isFirstRun: boolean) => void;
   isDesktopMode: boolean;
-  openedFiles: Array<OpenedEntry>;
   isGeneratingThumbs: boolean;
   // setGeneratingThumbnails: (isGenerating: boolean) => void;
-  isEntryInFullWidth: boolean;
   isReadOnlyMode: boolean;
   isSettingsDialogOpened: boolean;
   isNewEntryDialogOpened: boolean;
@@ -166,7 +165,6 @@ interface Props {
   isEditTagDialogOpened: boolean;
   keyBindings: any;
   toggleEditTagDialog: (tag: TS.Tag) => void;
-  setEntryFullWidth: (isFullWidth: boolean) => void;
   loadParentDirectoryContent: () => void;
   openLink: (linkURL: string, options?: any) => void;
   saveFile: () => void; // needed by electron-menus
@@ -187,9 +185,6 @@ interface Props {
   toggleProTeaser: () => void; // needed by electron-menus
   // setLastSelectedEntry: (path: string) => void; // needed by electron-menus
   setSelectedEntries: (selectedEntries: Array<Object>) => void; // needed by electron-menus
-  openFsEntry: (fsEntry: TS.FileSystemEntry) => void; // needed by electron-menus
-  openNextFile: (path?: string) => void; // needed by electron-menus
-  openPrevFile: (path?: string) => void; // needed by electron-menus
   openLocationManagerPanel: () => void;
   openTagLibraryPanel: () => void;
   // openSearchPanel: () => void;
@@ -211,11 +206,6 @@ interface Props {
     autohide?: boolean
   ) => void;
   reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => void;
-  loadDirectoryContent: (
-    path: string,
-    generateThumbnails: boolean,
-    loadDirMeta?: boolean
-  ) => void;
   uploadFilesAPI: (
     files: Array<File>,
     destination: string,
@@ -227,7 +217,6 @@ interface Props {
   toggleDeleteMultipleEntriesDialog: () => void;
   selectedEntries: Array<any>;
   deleteFile: (path: string, uuid: string) => void;
-  deleteDirectory: (path: string) => void;
   user: CognitoUserInterface;
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
 }
@@ -351,6 +340,15 @@ function ProTeaserDialogAsync(props) {
 
 function MainPage(props: Props) {
   const { t } = useTranslation();
+  const { deleteDirectory } = useFsActionsContext();
+  const {
+    openedEntries,
+    isEntryInFullWidth,
+    openFsEntry,
+    setEntryInFullWidth,
+    openNextFile,
+    openPrevFile
+  } = useOpenedEntryContext();
   const theme = useTheme();
   const percent = useRef<number | undefined>(undefined);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
@@ -422,19 +420,26 @@ function MainPage(props: Props) {
     if (!AppConfig.isCordova) {
       updateDimensions();
     }
-    listen({ ...props, goBack, goForward });
+    listen({
+      ...props,
+      goBack,
+      goForward,
+      openFsEntry,
+      openNextFile,
+      openPrevFile
+    });
   }, []);
 
   useEffect(() => {
     // setPercent(undefined);
-    if (props.isEntryInFullWidth) {
+    if (isEntryInFullWidth) {
       setDrawerOpened(false); // !props.isEntryInFullWidth);
     }
-  }, [props.isEntryInFullWidth]);
+  }, [isEntryInFullWidth]);
 
   useEffect(() => {
     updateDimensions();
-  }, [props.openedFiles]);
+  }, [openedEntries]);
 
   useEventListener('resize', () => {
     if (!AppConfig.isCordova) {
@@ -455,10 +460,10 @@ function MainPage(props: Props) {
     // console.log('Width: ' + width + ' Height: ' + height);
     setDimensions({ width: w, height: h });
 
-    if (props.openedFiles.length > 0 && !props.isEntryInFullWidth) {
+    if (openedEntries.length > 0 && !isEntryInFullWidth) {
       const isFillWidth = h > w;
-      if (isFillWidth !== props.isEntryInFullWidth) {
-        props.setEntryFullWidth(isFillWidth);
+      if (isFillWidth !== isEntryInFullWidth) {
+        setEntryInFullWidth(isFillWidth);
       }
     }
   };
@@ -513,14 +518,12 @@ function MainPage(props: Props) {
     toggleOpenLinkDialog,
     toggleProTeaser,
     setFirstRun,
-    loadDirectoryContent,
     mainSplitSize,
-    openedFiles,
     openLink
   } = props;
   const { FILE } = NativeTypes;
 
-  const isFileOpened = openedFiles.length > 0;
+  const isFileOpened = openedEntries.length > 0;
 
   const setPercent = (p: number | undefined) => {
     percent.current = p;
@@ -548,7 +551,7 @@ function MainPage(props: Props) {
         return null;
       };
     }
-    if (props.isEntryInFullWidth) {
+    if (isEntryInFullWidth) {
       percent.current = undefined;
       initialPrimarySize = '0%';
       minPrimarySize = '0%';
@@ -557,35 +560,32 @@ function MainPage(props: Props) {
       };
     }
     return (
-      <Split
-        initialPrimarySize={initialPrimarySize}
-        minPrimarySize={minPrimarySize}
-        minSecondarySize={minSecondarySize}
-        renderSplitter={renderSplitter}
-        percent={percent.current}
-        setPercent={setPercent}
-      >
-        <FolderContainer
-          toggleDrawer={toggleDrawer}
-          toggleProTeaser={toggleProTeaser}
-          drawerOpened={drawerOpened}
-          openedFiles={openedFiles}
-          goBack={goBack}
-          goForward={goForward}
-          openMoveCopyFilesDialog={() =>
-            setMoveCopyDialogOpened(props.selectedEntries)
-          }
-        />
-        {isFileOpened && (
-          <DescriptionContextProvider>
-            <EntryContainer
-              key="EntryContainerID"
-              loadDirectoryContent={loadDirectoryContent}
-              openedFiles={openedFiles}
-            />
-          </DescriptionContextProvider>
-        )}
-      </Split>
+      <TaggingActionsContextProvider>
+        <Split
+          initialPrimarySize={initialPrimarySize}
+          minPrimarySize={minPrimarySize}
+          minSecondarySize={minSecondarySize}
+          renderSplitter={renderSplitter}
+          percent={percent.current}
+          setPercent={setPercent}
+        >
+          <FolderContainer
+            toggleDrawer={toggleDrawer}
+            toggleProTeaser={toggleProTeaser}
+            drawerOpened={drawerOpened}
+            goBack={goBack}
+            goForward={goForward}
+            openMoveCopyFilesDialog={() =>
+              setMoveCopyDialogOpened(props.selectedEntries)
+            }
+          />
+          {isFileOpened && (
+            <DescriptionContextProvider>
+              <EntryContainer key="EntryContainerID" />
+            </DescriptionContextProvider>
+          )}
+        </Split>
+      </TaggingActionsContextProvider>
     );
   };
 
@@ -727,7 +727,7 @@ function MainPage(props: Props) {
                   if (fsEntry.isFile) {
                     return props.deleteFile(fsEntry.path, fsEntry.uuid);
                   }
-                  return props.deleteDirectory(fsEntry.path);
+                  return deleteDirectory(fsEntry.path);
                 });
                 Promise.all(deletePromises)
                   .then(delResult => {
@@ -773,9 +773,7 @@ function MainPage(props: Props) {
 
               .react-split .split-container {
                 --react-split-splitter: ${
-                  props.openedFiles.length < 1 || props.isEntryInFullWidth
-                    ? '0'
-                    : '3px'
+                  openedEntries.length < 1 || isEntryInFullWidth ? '0' : '3px'
                 } !important;
               }
               .react-split .secondary .full-content {
@@ -845,8 +843,6 @@ function mapStateToProps(state) {
     isProgressDialogOpened: isProgressOpened(state),
     isReadOnlyMode: isReadOnlyMode(state),
     isGeneratingThumbs: isGeneratingThumbs(state),
-    openedFiles: getOpenedFiles(state),
-    isEntryInFullWidth: isEntryInFullWidth(state),
     isDesktopMode: getDesktopMode(state),
     keyBindings: getKeyBindingObject(state),
     mainSplitSize: getMainVerticalSplitSize(state),
@@ -893,16 +889,10 @@ function mapDispatchToProps(dispatch) {
       toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
       toggleProTeaser: AppActions.toggleProTeaser,
       setSelectedEntries: AppActions.setSelectedEntries,
-      // setGeneratingThumbnails: AppActions.setGeneratingThumbnails,
-      openFsEntry: AppActions.openFsEntry,
-      setEntryFullWidth: AppActions.setEntryFullWidth,
-      openNextFile: AppActions.openNextFile,
-      openPrevFile: AppActions.openPrevFile,
       toggleShowUnixHiddenEntries: SettingsActions.toggleShowUnixHiddenEntries,
       setMainVerticalSplitSize: SettingsActions.setMainVerticalSplitSize,
       showNotification: AppActions.showNotification,
       reflectCreateEntries: AppActions.reflectCreateEntries,
-      loadDirectoryContent: AppActions.loadDirectoryContent,
       openLocationManagerPanel: AppActions.openLocationManagerPanel,
       openTagLibraryPanel: AppActions.openTagLibraryPanel,
       // openSearchPanel: AppActions.openSearchPanel,
@@ -912,7 +902,6 @@ function mapDispatchToProps(dispatch) {
         AppActions.toggleDeleteMultipleEntriesDialog,
       setFirstRun: SettingsActions.setFirstRun,
       uploadFilesAPI: IOActions.uploadFilesAPI,
-      deleteDirectory: AppActions.deleteDirectory,
       deleteFile: AppActions.deleteFile,
       setSearchQuery: LocationIndexActions.setSearchQuery,
       addExtensions: AppActions.addExtensions,
@@ -934,7 +923,6 @@ const areEqual = (prevProp, nextProp) =>
     prevProp.isDeleteMultipleEntriesDialogOpened &&
   nextProp.isDesktopMode === prevProp.isDesktopMode &&
   nextProp.isEditTagDialogOpened === prevProp.isEditTagDialogOpened &&
-  nextProp.isEntryInFullWidth === prevProp.isEntryInFullWidth &&
   nextProp.isHelpFeedbackPanelOpened === prevProp.isHelpFeedbackPanelOpened &&
   nextProp.isKeysDialogOpened === prevProp.isKeysDialogOpened &&
   nextProp.isLicenseDialogOpened === prevProp.isLicenseDialogOpened &&
@@ -957,8 +945,7 @@ const areEqual = (prevProp, nextProp) =>
     prevProp.isUploadProgressDialogOpened &&
   nextProp.isImportKanBanDialogOpened === prevProp.isImportKanBanDialogOpened &&
   JSON.stringify(nextProp.selectedEntries) ===
-    JSON.stringify(prevProp.selectedEntries) &&
-  JSON.stringify(nextProp.openedFiles) === JSON.stringify(prevProp.openedFiles);
+    JSON.stringify(prevProp.selectedEntries);
 
 export default withDnDContext(
   connect(mapStateToProps, mapDispatchToProps)(React.memo(MainPage, areEqual)) //translate(['core'], { wait: true })(React.memo(MainPage, areEqual)))

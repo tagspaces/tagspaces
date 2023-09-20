@@ -33,6 +33,7 @@ import {
   mergeByProp,
   updateByProp
 } from '-/services/utils-io';
+import { historyKeys } from '../../extensions/tagspacespro/modules/history';
 
 export const types = {
   UPGRADE_SETTINGS: 'SETTINGS/UPGRADE_SETTINGS',
@@ -845,6 +846,7 @@ export function getLastVersionPromise(): Promise<string> {
 }
 
 // Selectors
+export const getEntrySplitSize = (state: any) => state.settings.entrySplitSize;
 export const getMapTileServer = (state: any): TS.MapTileServer =>
   AppConfig.mapTileServers
     ? AppConfig.mapTileServers[0]
@@ -866,6 +868,10 @@ export const isRevisionsEnabled = (state: any) =>
 export const isReorderTags = (state: any) => state.settings.reorderTags;
 export const getPrefixTagContainer = (state: any) =>
   state.settings.prefixTagContainer;
+export const getGeoTaggingFormat = (state: any) =>
+  state.settings.geoTaggingFormat;
+export const getAddTagsToLibrary = (state: any) =>
+  state.settings.addTagsToLibrary;
 export const getWarningOpeningFilesExternally = (state: any) =>
   state.settings.warningOpeningFilesExternally;
 export const getCheckForUpdateOnStartup = (state: any) =>
@@ -920,8 +926,16 @@ export const getDefaultDarkTheme = (state: any) =>
   state.settings.currentDarkTheme;
 export const isGlobalKeyBindingEnabled = (state: any) =>
   state.settings.enableGlobalKeyboardShortcuts;
+export const getFileOpenHistoryKey = (state: any) =>
+  state.settings[historyKeys.fileOpenKey];
+export const getFolderOpenHistoryKey = (state: any) =>
+  state.settings[historyKeys.folderOpenKey];
+export const getFileEditHistoryKey = (state: any) =>
+  state.settings[historyKeys.fileEditKey];
 export const getMainVerticalSplitSize = (state: any) =>
   state.settings.mainVSplitSize;
+export const getNewHTMLFileContent = (state: any) =>
+  state.settings.newHTMLFileContent;
 export const getTagGroupCollapsed = (state: any) =>
   state.settings.tagGroupCollapsed;
 export const getTagDelimiter = (state: any) => state.settings.tagDelimiter;

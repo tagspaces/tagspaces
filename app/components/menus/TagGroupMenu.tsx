@@ -36,8 +36,8 @@ import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import InfoIcon from '-/components/InfoIcon';
-import TaggingActions from '-/reducers/tagging-actions';
 import { useTranslation } from 'react-i18next';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 
 interface Props {
   classes?: any;
@@ -69,6 +69,8 @@ function TagGroupMenu(props: Props) {
     showDeleteTagGroupDialog
   } = props;
   const { t } = useTranslation();
+
+  const { collectTagsFromLocation } = useTaggingActionsContext();
   const dispatch: AppDispatch = useDispatch();
   const maxSearchResults = useSelector(getMaxSearchResults);
 
@@ -76,7 +78,7 @@ function TagGroupMenu(props: Props) {
     onClose();
 
     if (selectedTagGroupEntry) {
-      dispatch(TaggingActions.collectTagsFromLocation(selectedTagGroupEntry));
+      collectTagsFromLocation(selectedTagGroupEntry);
     }
     handleCloseTagGroupMenu();
     dispatch(AppActions.tagLibraryChanged());

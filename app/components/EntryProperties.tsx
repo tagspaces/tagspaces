@@ -98,8 +98,10 @@ import { actions as AppActions } from '-/reducers/app';
 import useFirstRender from '-/utils/useFirstRender';
 import LinkGeneratorDialog from '-/components/dialogs/LinkGeneratorDialog';
 import { LinkIcon } from '-/components/CommonIcons';
-import TaggingActions from '-/reducers/tagging-actions';
 import { useTranslation } from 'react-i18next';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { useFsActionsContext } from '-/hooks/useFsActionsContext';
 
 const PREFIX = 'EntryProperties';
 
@@ -188,16 +190,10 @@ const BgndImgChooserDialog =
   Pro && Pro.UI ? Pro.UI.BgndImgChooserDialog : false;
 
 interface Props {
-  openedEntry: OpenedEntry;
   locations: Array<TS.Location>;
   renameFile: (path: string, nextPath: string) => Promise<boolean>;
-  renameDirectory: (path: string, nextPath: string) => Promise<boolean>;
   showNotification: (message: string) => void;
-  updateOpenedFile: (entryPath: string, fsEntryMeta: any) => Promise<boolean>;
   updateThumbnailUrl: (path: string, thumbUrl: string) => void;
-  addTags: (paths: Array<string>, tags: Array<TS.Tag>) => Promise<boolean>;
-  removeTags: (paths: Array<string>, tags: Array<TS.Tag>) => Promise<boolean>;
-  removeAllTags: (paths: Array<string>) => Promise<boolean>;
   switchLocationType: (locationId: string) => Promise<string | null>;
   switchCurrentLocationType: (currentLocationId: string) => Promise<boolean>;
   isReadOnlyMode: boolean;
@@ -223,28 +219,28 @@ const defaultBackgrounds = [
 function EntryProperties(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
+  const { openedEntries, updateOpenedFile } = useOpenedEntryContext();
+  const { renameDirectory } = useFsActionsContext();
+  const { addTags, removeTags, removeAllTags } = useTaggingActionsContext();
   const fileNameRef = useRef<HTMLInputElement>(null);
   const sharingLinkRef = useRef<HTMLInputElement>(null);
   // const fileDescriptionRef = useRef<MilkdownRef>(null);
   const disableConfirmButton = useRef<boolean>(true);
   const fileNameError = useRef<boolean>(false);
-
-  const directoryPath = props.openedEntry.isFile
+  const openedEntry = openedEntries[0];
+  const directoryPath = openedEntry.isFile
     ? extractContainingDirectoryPath(
-        props.openedEntry.path,
+        openedEntry.path,
         PlatformIO.getDirSeparator()
       )
-    : props.openedEntry.path;
+    : openedEntry.path;
 
-  const entryName = props.openedEntry.isFile
-    ? extractFileName(props.openedEntry.path, PlatformIO.getDirSeparator())
-    : extractDirectoryName(
-        props.openedEntry.path,
-        PlatformIO.getDirSeparator()
-      );
+  const entryName = openedEntry.isFile
+    ? extractFileName(openedEntry.path, PlatformIO.getDirSeparator())
+    : extractDirectoryName(openedEntry.path, PlatformIO.getDirSeparator());
 
   const currentEntry = useRef<OpenedEntry>(
-    enhanceOpenedEntry(props.openedEntry, props.tagDelimiter)
+    enhanceOpenedEntry(openedEntry, props.tagDelimiter)
   );
   const [editName, setEditName] = useState<string>(undefined);
   const [isMoveCopyFilesDialogOpened, setMoveCopyFilesDialogOpened] = useState<
@@ -306,12 +302,12 @@ function EntryProperties(props: Props) {
   useEffect(() => {
     if (
       !firstRender &&
-      props.openedEntry != undefined
+      openedEntry != undefined
       // && currentEntry.current.description !== props.openedEntry.description
     ) {
       // update description
       currentEntry.current = enhanceOpenedEntry(
-        props.openedEntry,
+        openedEntry,
         props.tagDelimiter
       );
       forceUpdate();
@@ -320,11 +316,11 @@ function EntryProperties(props: Props) {
       if (!current) return;
       current.update(currentEntry.current.description);*/
     }
-  }, [props.openedEntry]);
+  }, [openedEntries]);
 
   const renameEntry = () => {
     if (editName !== undefined) {
-      const { renameFile, renameDirectory } = props;
+      const { renameFile } = props;
 
       const path = extractContainingDirectoryPath(
         currentEntry.current.path,
@@ -333,7 +329,7 @@ function EntryProperties(props: Props) {
       const nextPath = path + PlatformIO.getDirSeparator() + editName;
 
       props
-        .switchLocationType(props.openedEntry.locationId)
+        .switchLocationType(openedEntry.locationId)
         .then(currentLocationId => {
           if (currentEntry.current.isFile) {
             renameFile(currentEntry.current.path, nextPath)
@@ -347,7 +343,7 @@ function EntryProperties(props: Props) {
               });
           } else {
             renameDirectory(currentEntry.current.path, editName)
-              .then(() => {
+              .then(newDirPath => {
                 props.switchCurrentLocationType(currentLocationId);
                 return true;
               })
@@ -408,7 +404,7 @@ function EntryProperties(props: Props) {
   const setThumb = (filePath, thumbFilePath) => {
     if (filePath !== undefined) {
       return props
-        .switchLocationType(props.openedEntry.locationId)
+        .switchLocationType(openedEntry.locationId)
         .then(currentLocationId => {
           if (
             PlatformIO.haveObjectStoreSupport() ||
@@ -473,30 +469,30 @@ function EntryProperties(props: Props) {
       color = 'transparent';
     }
     currentEntry.current.color = color;
-    props
-      .switchLocationType(props.openedEntry.locationId)
-      .then(currentLocationId => {
-        Pro.MetaOperations.saveFsEntryMeta(currentEntry.current.path, { color })
-          .then(entryMeta => {
-            // if (props.entryPath === props.currentDirectoryPath) {
-            props.setLastBackgroundColorChange(
-              currentEntry.current.path,
-              new Date().getTime()
-            );
-            // todo handle LastBackgroundColorChange and skip updateOpenedFile
-            props.updateOpenedFile(currentEntry.current.path, entryMeta);
-            props.switchCurrentLocationType(currentLocationId);
-            /* } else {
+    props.switchLocationType(openedEntry.locationId).then(currentLocationId => {
+      Pro.MetaOperations.saveFsEntryMeta(currentEntry.current.path, { color })
+        .then(entryMeta => {
+          // if (props.entryPath === props.currentDirectoryPath) {
+          props.setLastBackgroundColorChange(
+            currentEntry.current.path,
+            new Date().getTime()
+          );
+          // todo handle LastBackgroundColorChange and skip updateOpenedFile
+          updateOpenedFile(currentEntry.current.path, entryMeta).then(() =>
+            props.switchCurrentLocationType(currentLocationId)
+          );
+
+          /* } else {
             setCurrentEntry({ ...currentEntry, color });
           } */
-            return true;
-          })
-          .catch(error => {
-            props.switchCurrentLocationType(currentLocationId);
-            console.warn('Error saving color for folder ' + error);
-            props.showNotification(t('Error saving color for folder'));
-          });
-      });
+          return true;
+        })
+        .catch(error => {
+          props.switchCurrentLocationType(currentLocationId);
+          console.warn('Error saving color for folder ' + error);
+          props.showNotification(t('Error saving color for folder'));
+        });
+    });
   };
 
   const handleFileNameChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -529,44 +525,43 @@ function EntryProperties(props: Props) {
   };*/
 
   const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
-    props
-      .switchLocationType(props.openedEntry.locationId)
-      .then(currentLocationId => {
-        if (action === 'remove-value') {
-          if (!value) {
-            // no tags left in the select element
-            props.removeAllTags([currentEntry.current.path]).then(() => {
-              props
-                .updateOpenedFile(currentEntry.current.path, { tags: [] })
-                .then(() => {
-                  props.switchCurrentLocationType(currentLocationId);
-                });
-            });
-          } else {
-            props.removeTags([currentEntry.current.path], value).then(() => {
+    props.switchLocationType(openedEntry.locationId).then(currentLocationId => {
+      if (action === 'remove-value') {
+        if (!value) {
+          // no tags left in the select element
+          removeAllTags([currentEntry.current.path]).then(() => {
+            updateOpenedFile(currentEntry.current.path, {
+              id: '',
+              tags: []
+            }).then(() => {
               props.switchCurrentLocationType(currentLocationId);
             });
-          }
-        } else if (action === 'clear') {
-          props.removeAllTags([currentEntry.current.path]).then(() => {
-            props.switchCurrentLocationType(currentLocationId);
           });
         } else {
-          // create-option or select-option
-          const tags =
-            currentEntry.current.tags === undefined
-              ? value
-              : value.filter(
-                  tag =>
-                    !currentEntry.current.tags.some(
-                      obj => obj.title === tag.title
-                    )
-                );
-          return props
-            .addTags([currentEntry.current.path], tags)
-            .then(() => props.switchCurrentLocationType(currentLocationId));
+          removeTags([currentEntry.current.path], value).then(() => {
+            props.switchCurrentLocationType(currentLocationId);
+          });
         }
-      });
+      } else if (action === 'clear') {
+        removeAllTags([currentEntry.current.path]).then(() => {
+          props.switchCurrentLocationType(currentLocationId);
+        });
+      } else {
+        // create-option or select-option
+        const tags =
+          currentEntry.current.tags === undefined
+            ? value
+            : value.filter(
+                tag =>
+                  !currentEntry.current.tags.some(
+                    obj => obj.title === tag.title
+                  )
+              );
+        return addTags([currentEntry.current.path], tags).then(() =>
+          props.switchCurrentLocationType(currentLocationId)
+        );
+      }
+    });
   };
 
   const { isReadOnlyMode } = props;
@@ -653,7 +648,7 @@ function EntryProperties(props: Props) {
     const perspective = event.target.value;
     savePerspective(currentEntry.current.path, perspective)
       .then((entryMeta: TS.FileSystemEntryMeta) => {
-        props.updateOpenedFile(currentEntry.current.path, entryMeta);
+        updateOpenedFile(currentEntry.current.path, entryMeta);
         return true;
       })
       .catch(error => {
@@ -1413,9 +1408,6 @@ function mapActionCreatorsToProps(dispatch) {
       switchCurrentLocationType: AppActions.switchCurrentLocationType,
       setLastBackgroundColorChange: AppActions.setLastBackgroundColorChange,
       setSelectedEntries: AppActions.setSelectedEntries,
-      removeTags: TaggingActions.removeTags,
-      removeAllTags: TaggingActions.removeAllTags,
-      updateOpenedFile: AppActions.updateOpenedFile,
       updateThumbnailUrl: AppActions.updateThumbnailUrl,
       showNotification: AppActions.showNotification
     },
@@ -1424,8 +1416,6 @@ function mapActionCreatorsToProps(dispatch) {
 }
 
 const areEqual = (prevProp: Props, nextProp: Props) =>
-  JSON.stringify(nextProp.openedEntry) ===
-    JSON.stringify(prevProp.openedEntry) &&
   JSON.stringify(nextProp.lastThumbnailImageChange) ===
     JSON.stringify(prevProp.lastThumbnailImageChange) &&
   JSON.stringify(nextProp.lastBackgroundImageChange) ===

@@ -56,6 +56,7 @@ import GlobalSearch from '-/services/search-index';
 import useFirstRender from '-/utils/useFirstRender';
 import { openURLExternally } from '-/services/utils-io';
 import { useSortedDirContext } from '-/perspectives/grid-perspective/hooks/useSortedDirContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 interface Props {
   currentDirectoryPath: string;
@@ -79,6 +80,7 @@ function getSettings(directoryMeta: TS.FileSystemEntryMeta): TS.FolderSettings {
 function GridPerspective(props: Props) {
   const { currentDirectoryPath, openRenameEntryDialog } = props;
 
+  const { openEntry, openPrevFile, openNextFile } = useOpenedEntryContext();
   const dispatch: AppDispatch = useDispatch();
 
   const {
@@ -546,8 +548,8 @@ function GridPerspective(props: Props) {
   };
 
   const keyBindingHandlers = {
-    nextDocument: () => dispatch(AppActions.openNextFile()),
-    prevDocument: () => dispatch(AppActions.openPrevFile()),
+    nextDocument: () => openNextFile(),
+    prevDocument: () => openPrevFile(),
     selectAll: () => toggleSelectAllFiles(),
     deleteDocument: () => {
       if (fileOperationsEnabled(selectedEntries)) {
@@ -564,7 +566,7 @@ function GridPerspective(props: Props) {
     },
     openEntry: e => {
       e.preventDefault();
-      dispatch(AppActions.openEntry());
+      openEntry();
     },
     openFileExternally: () => {
       handleOpenFileNatively();

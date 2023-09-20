@@ -62,6 +62,7 @@ import { renderCell } from '-/perspectives/common/main-container';
 import { useTranslation } from 'react-i18next';
 import { getCurrentLocation } from '-/reducers/locations';
 import GlobalSearch from '-/services/search-index';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 interface Props {
   isMetaLoaded: boolean;
@@ -109,7 +110,6 @@ interface Props {
   setSelectedEntries: (selectedEntries: Array<TS.FileSystemEntry>) => void;
   singleClickAction: string;
   lastSelectedEntryPath: string;
-  openEntry: (entryPath?: string) => void;
   openFileNatively: (path?: string) => void;
   loadDirectoryContent: (
     path: string,
@@ -149,7 +149,6 @@ function GridPagination(props: Props) {
     openRenameEntryDialog,
     lastSelectedEntryPath,
     lastBackgroundImageChange,
-    openEntry,
     openFileNatively,
     loadDirectoryContent,
     setFileContextMenuAnchorEl,
@@ -164,6 +163,7 @@ function GridPagination(props: Props) {
     files,
     lastSearchTimestamp
   } = props;
+  const { openEntry } = useOpenedEntryContext();
 
   const directoryContent: Array<TS.FileSystemEntry> = useSelector(
     getDirectoryContent
@@ -722,11 +722,9 @@ function mapStateToProps(state) {
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
-      // setMetaForCurrentDir: AppActions.setMetaForCurrentDir,
       updateCurrentDirEntries: AppActions.updateCurrentDirEntries,
       setIsMetaLoaded: AppActions.setIsMetaLoaded,
-      loadDirectoryContent: AppActions.loadDirectoryContent,
-      openEntry: AppActions.openEntry
+      loadDirectoryContent: AppActions.loadDirectoryContent
     },
     dispatch
   );

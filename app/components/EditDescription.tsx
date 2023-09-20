@@ -8,8 +8,10 @@ import { Pro } from '-/pro';
 import { convertMarkDown } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { getDirectoryPath, getOpenedFiles, OpenedEntry } from '-/reducers/app';
-import { useDescriptionContext } from '-/components/hooks/useDescriptionContext';
+import { getDirectoryPath, OpenedEntry } from '-/reducers/app';
+import { useDescriptionContext } from '-/hooks/useDescriptionContext';
+import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 const PREFIX = 'EditDescription';
 
@@ -42,21 +44,30 @@ const Root = styled('div')(({ theme }) => ({
 function EditDescription() {
   const { t } = useTranslation();
   const theme = useTheme();
-  const openedFiles: Array<OpenedEntry> = useSelector(getOpenedFiles);
-  const openedFile: OpenedEntry = openedFiles[0];
+  const { openedEntries } = useOpenedEntryContext();
+  const openedFile: OpenedEntry = openedEntries[0];
   const currentFolder = useSelector(getDirectoryPath);
   const fileDescriptionRef = useRef<MilkdownRef>(null);
   const {
     description,
     setDescription,
-    saveDescription
+    isSaveDescriptionConfirmOpened,
+    setSaveDescriptionConfirmOpened,
+    saveDescription,
+    isChanged
   } = useDescriptionContext();
   const [editMode, setEditMode] = useState<boolean>(false);
   const descriptionFocus = useRef<boolean>(false);
 
   useEffect(() => {
     fileDescriptionRef.current?.setDarkMode(theme.palette.mode === 'dark');
-  }, [theme]); // , settings]);
+  }, [theme]);
+
+  /*  useEffect(() => {
+    if (isChanged) {
+      setSaveDescriptionConfirmOpened(true);
+    }
+  }, [openedFile]);*/
 
   /*const keyBindingHandlers = {
     saveDocument: () => {
@@ -122,13 +133,33 @@ function EditDescription() {
           className={classes.button}
           disabled={!Pro}
           onClick={() => {
+            if (editMode) {
+              saveDescription();
+            }
             setEditMode(!editMode);
-            saveDescription();
           }}
         >
           {editMode ? t('core:confirmSaveButton') : t('core:edit')}
         </Button>
       </ProTooltip>
+      <ConfirmDialog
+        open={isSaveDescriptionConfirmOpened}
+        onClose={() => {
+          setSaveDescriptionConfirmOpened(false);
+        }}
+        title={t('core:confirm')}
+        content={t('core:saveFileBeforeClosingFile')}
+        confirmCallback={result => {
+          if (result) {
+            saveDescription();
+          } else {
+            setSaveDescriptionConfirmOpened(false);
+          }
+        }}
+        cancelDialogTID="cancelSaveDescCloseDialog"
+        confirmDialogTID="confirmSaveDescCloseDialog"
+        confirmDialogContentTID="confirmDescDialogContent"
+      />
     </span>
   );
 
