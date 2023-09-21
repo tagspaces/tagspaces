@@ -92,7 +92,6 @@ import IsTruncatedConfirmDialog from '-/components/dialogs/IsTruncatedConfirmDia
 import { styled, useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { DescriptionContextProvider } from '-/hooks/DescriptionContextProvider';
-import { OpenedEntryContextProvider } from '-/hooks/OpenedEntryContextProvider';
 import { TaggingActionsContextProvider } from '-/hooks/TaggingActionsContextProvider';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useFsActionsContext } from '-/hooks/useFsActionsContext';
@@ -560,32 +559,30 @@ function MainPage(props: Props) {
       };
     }
     return (
-      <TaggingActionsContextProvider>
-        <Split
-          initialPrimarySize={initialPrimarySize}
-          minPrimarySize={minPrimarySize}
-          minSecondarySize={minSecondarySize}
-          renderSplitter={renderSplitter}
-          percent={percent.current}
-          setPercent={setPercent}
-        >
-          <FolderContainer
-            toggleDrawer={toggleDrawer}
-            toggleProTeaser={toggleProTeaser}
-            drawerOpened={drawerOpened}
-            goBack={goBack}
-            goForward={goForward}
-            openMoveCopyFilesDialog={() =>
-              setMoveCopyDialogOpened(props.selectedEntries)
-            }
-          />
-          {isFileOpened && (
-            <DescriptionContextProvider>
-              <EntryContainer key="EntryContainerID" />
-            </DescriptionContextProvider>
-          )}
-        </Split>
-      </TaggingActionsContextProvider>
+      <Split
+        initialPrimarySize={initialPrimarySize}
+        minPrimarySize={minPrimarySize}
+        minSecondarySize={minSecondarySize}
+        renderSplitter={renderSplitter}
+        percent={percent.current}
+        setPercent={setPercent}
+      >
+        <FolderContainer
+          toggleDrawer={toggleDrawer}
+          toggleProTeaser={toggleProTeaser}
+          drawerOpened={drawerOpened}
+          goBack={goBack}
+          goForward={goForward}
+          openMoveCopyFilesDialog={() =>
+            setMoveCopyDialogOpened(props.selectedEntries)
+          }
+        />
+        {isFileOpened && (
+          <DescriptionContextProvider>
+            <EntryContainer key="EntryContainerID" />
+          </DescriptionContextProvider>
+        )}
+      </Split>
     );
   };
 
@@ -596,166 +593,167 @@ function MainPage(props: Props) {
         keyMap={keyMap}
         style={{ height: '100%' }}
       >
-        <MoveOrCopyFilesDialog
-          open={moveCopyDialogOpened !== undefined}
-          onClose={() => {
-            setMoveCopyDialogOpened(undefined);
-          }}
-          selectedFiles={moveCopyDialogOpened}
-        />
-        {props.isLocationDialogOpened && (
-          <CreateEditLocationDialogAsync
-            open={props.isLocationDialogOpened}
-            onClose={toggleLocationDialog}
-          />
-        )}
-        {props.isAboutDialogOpened && (
-          <AboutDialogAsync
-            open={props.isAboutDialogOpened}
-            toggleLicenseDialog={toggleLicenseDialog}
-            toggleThirdPartyLibsDialog={toggleThirdPartyLibsDialog}
-            onClose={toggleAboutDialog}
-          />
-        )}
-        {props.isKeysDialogOpened && (
-          <KeyboardDialogAsync
-            open={props.isKeysDialogOpened}
-            onClose={toggleKeysDialog}
-          />
-        )}
-        {props.isLicenseDialogOpened && (
-          <LicenseDialogAsync
-            open={props.isLicenseDialogOpened}
-            onClose={(event, reason) => {
-              if (reason === 'backdropClick' || reason === 'escapeKeyDown') {
-                return true;
-              }
-              setFirstRun(false);
-              toggleLicenseDialog();
+        <TaggingActionsContextProvider>
+          <MoveOrCopyFilesDialog
+            open={moveCopyDialogOpened !== undefined}
+            onClose={() => {
+              setMoveCopyDialogOpened(undefined);
             }}
+            selectedFiles={moveCopyDialogOpened}
           />
-        )}
-        {props.isOnboardingDialogOpened && (
-          <OnboardingDialogAsync
-            open={props.isOnboardingDialogOpened}
-            onClose={toggleOnboardingDialog}
+          {props.isLocationDialogOpened && (
+            <CreateEditLocationDialogAsync
+              open={props.isLocationDialogOpened}
+              onClose={toggleLocationDialog}
+            />
+          )}
+          {props.isAboutDialogOpened && (
+            <AboutDialogAsync
+              open={props.isAboutDialogOpened}
+              toggleLicenseDialog={toggleLicenseDialog}
+              toggleThirdPartyLibsDialog={toggleThirdPartyLibsDialog}
+              onClose={toggleAboutDialog}
+            />
+          )}
+          {props.isKeysDialogOpened && (
+            <KeyboardDialogAsync
+              open={props.isKeysDialogOpened}
+              onClose={toggleKeysDialog}
+            />
+          )}
+          {props.isLicenseDialogOpened && (
+            <LicenseDialogAsync
+              open={props.isLicenseDialogOpened}
+              onClose={(event, reason) => {
+                if (reason === 'backdropClick' || reason === 'escapeKeyDown') {
+                  return true;
+                }
+                setFirstRun(false);
+                toggleLicenseDialog();
+              }}
+            />
+          )}
+          {props.isOnboardingDialogOpened && (
+            <OnboardingDialogAsync
+              open={props.isOnboardingDialogOpened}
+              onClose={toggleOnboardingDialog}
+            />
+          )}
+          {props.isThirdPartyLibsDialogOpened && (
+            <ThirdPartyLibsDialogAsync
+              open={props.isThirdPartyLibsDialogOpened}
+              onClose={toggleThirdPartyLibsDialog}
+            />
+          )}
+          {props.isEditTagDialogOpened && (
+            <EditEntryTagDialogAsync
+              open={props.isEditTagDialogOpened}
+              onClose={() => toggleEditTagDialog(undefined)}
+            />
+          )}
+          {props.isOpenLinkDialogOpened && (
+            <OpenLinkDialogAsync
+              open={props.isOpenLinkDialogOpened}
+              onClose={toggleOpenLinkDialog}
+              openLink={openLink}
+            />
+          )}
+          {props.isProTeaserVisible && (
+            <ProTeaserDialogAsync
+              open={props.isProTeaserVisible}
+              onClose={toggleProTeaser}
+            />
+          )}
+          {props.isUploadProgressDialogOpened !== undefined && (
+            <FileUploadDialog
+              open={true}
+              onClose={toggleUploadDialog}
+              title={props.isUploadProgressDialogOpened}
+            />
+          )}
+          {props.isTruncatedConfirmDialogOpened && (
+            <IsTruncatedConfirmDialog
+              open={true}
+              onClose={props.toggleTruncatedConfirmDialog}
+            />
+          )}
+          {props.isProgressDialogOpened && (
+            <ProgressDialog
+              open={props.isProgressDialogOpened}
+              onClose={toggleProgressDialog}
+            />
+          )}
+          {props.isCreateDirectoryOpened !== null && (
+            <CreateDirectoryDialog
+              open={true}
+              onClose={toggleCreateDirectoryDialog}
+              selectedDirectoryPath={props.isCreateDirectoryOpened?.rootDirPath}
+              callback={props.isCreateDirectoryOpened?.callback}
+              reflect={props.isCreateDirectoryOpened?.reflect}
+            />
+          )}
+          <NewEntryDialog
+            open={props.isNewEntryDialogOpened}
+            onClose={toggleNewEntryDialog}
           />
-        )}
-        {props.isThirdPartyLibsDialogOpened && (
-          <ThirdPartyLibsDialogAsync
-            open={props.isThirdPartyLibsDialogOpened}
-            onClose={toggleThirdPartyLibsDialog}
+          {props.isNewFileDialogOpened && (
+            <NewFileDialog
+              open={props.isNewFileDialogOpened}
+              onClose={toggleNewFileDialog}
+            />
+          )}
+          <SettingsDialog
+            open={props.isSettingsDialogOpened}
+            onClose={toggleSettingsDialog}
           />
-        )}
-        {props.isEditTagDialogOpened && (
-          <EditEntryTagDialogAsync
-            open={props.isEditTagDialogOpened}
-            onClose={() => toggleEditTagDialog(undefined)}
-          />
-        )}
-        {props.isOpenLinkDialogOpened && (
-          <OpenLinkDialogAsync
-            open={props.isOpenLinkDialogOpened}
-            onClose={toggleOpenLinkDialog}
-            openLink={openLink}
-          />
-        )}
-        {props.isProTeaserVisible && (
-          <ProTeaserDialogAsync
-            open={props.isProTeaserVisible}
-            onClose={toggleProTeaser}
-          />
-        )}
-        {props.isUploadProgressDialogOpened !== undefined && (
-          <FileUploadDialog
-            open={true}
-            onClose={toggleUploadDialog}
-            title={props.isUploadProgressDialogOpened}
-          />
-        )}
-        {props.isTruncatedConfirmDialogOpened && (
-          <IsTruncatedConfirmDialog
-            open={true}
-            onClose={props.toggleTruncatedConfirmDialog}
-          />
-        )}
-        {props.isProgressDialogOpened && (
-          <ProgressDialog
-            open={props.isProgressDialogOpened}
-            onClose={toggleProgressDialog}
-          />
-        )}
-        {props.isCreateDirectoryOpened !== null && (
-          <CreateDirectoryDialog
-            open={true}
-            onClose={toggleCreateDirectoryDialog}
-            selectedDirectoryPath={props.isCreateDirectoryOpened?.rootDirPath}
-            callback={props.isCreateDirectoryOpened?.callback}
-            reflect={props.isCreateDirectoryOpened?.reflect}
-          />
-        )}
-        <NewEntryDialog
-          open={props.isNewEntryDialogOpened}
-          onClose={toggleNewEntryDialog}
-        />
-        {props.isNewFileDialogOpened && (
-          <NewFileDialog
-            open={props.isNewFileDialogOpened}
-            onClose={toggleNewFileDialog}
-          />
-        )}
-        <SettingsDialog
-          open={props.isSettingsDialogOpened}
-          onClose={toggleSettingsDialog}
-        />
-        {KanBanImportDialog && props.selectedEntries[0] && (
-          <KanBanImportDialog
-            open={props.isImportKanBanDialogOpened}
-            onClose={props.toggleImportKanBanDialog}
-          />
-        )}
-        {props.isDeleteMultipleEntriesDialogOpened && (
-          <ConfirmDialog
-            open={props.isDeleteMultipleEntriesDialogOpened}
-            onClose={() => props.toggleDeleteMultipleEntriesDialog()}
-            title={t('core:deleteConfirmationTitle')}
-            content={t('core:deleteConfirmationContent')}
-            list={props.selectedEntries.map(fsEntry => fsEntry.name)}
-            confirmCallback={result => {
-              if (result && props.selectedEntries) {
-                const deletePromises = props.selectedEntries.map(fsEntry => {
-                  if (fsEntry.isFile) {
-                    return props.deleteFile(fsEntry.path, fsEntry.uuid);
-                  }
-                  return deleteDirectory(fsEntry.path);
-                });
-                Promise.all(deletePromises)
-                  .then(delResult => {
-                    // console.debug(delResult);
-                    if (delResult.some(del => del)) {
-                      props.setSelectedEntries([]);
-                    } // TODO else { remove only deleted from setSelectedEntries}
-                    return true;
-                  })
-                  .catch(err => {
-                    console.warn('Deleting file failed', err);
+          {KanBanImportDialog && props.selectedEntries[0] && (
+            <KanBanImportDialog
+              open={props.isImportKanBanDialogOpened}
+              onClose={props.toggleImportKanBanDialog}
+            />
+          )}
+          {props.isDeleteMultipleEntriesDialogOpened && (
+            <ConfirmDialog
+              open={props.isDeleteMultipleEntriesDialogOpened}
+              onClose={() => props.toggleDeleteMultipleEntriesDialog()}
+              title={t('core:deleteConfirmationTitle')}
+              content={t('core:deleteConfirmationContent')}
+              list={props.selectedEntries.map(fsEntry => fsEntry.name)}
+              confirmCallback={result => {
+                if (result && props.selectedEntries) {
+                  const deletePromises = props.selectedEntries.map(fsEntry => {
+                    if (fsEntry.isFile) {
+                      return props.deleteFile(fsEntry.path, fsEntry.uuid);
+                    }
+                    return deleteDirectory(fsEntry.path);
                   });
-              }
+                  Promise.all(deletePromises)
+                    .then(delResult => {
+                      // console.debug(delResult);
+                      if (delResult.some(del => del)) {
+                        props.setSelectedEntries([]);
+                      } // TODO else { remove only deleted from setSelectedEntries}
+                      return true;
+                    })
+                    .catch(err => {
+                      console.warn('Deleting file failed', err);
+                    });
+                }
+              }}
+              cancelDialogTID="cancelDeleteFileDialog"
+              confirmDialogTID="confirmDeleteFileDialog"
+              confirmDialogContentTID="confirmDeleteDialogContent"
+            />
+          )}
+          <PageNotification />
+          <div
+            style={{
+              backgroundColor: theme.palette.background.default,
+              height: '100%'
             }}
-            cancelDialogTID="cancelDeleteFileDialog"
-            confirmDialogTID="confirmDeleteFileDialog"
-            confirmDialogContentTID="confirmDeleteDialogContent"
-          />
-        )}
-        <PageNotification />
-        <div
-          style={{
-            backgroundColor: theme.palette.background.default,
-            height: '100%'
-          }}
-        >
-          <style>
-            {`
+          >
+            <style>
+              {`
               body { background-color: ${
                 theme.palette.background.default
               } !important;}
@@ -781,43 +779,44 @@ function MainPage(props: Props) {
                 flex-direction: column;
               }
           `}
-          </style>
-          {props.isDesktopMode || (AppConfig.isAmplify && !props.user) ? (
-            <TargetFileBox
-              accepts={[FILE]}
-              setMoveCopyDialogOpened={setMoveCopyDialogOpened}
-            >
-              <CustomDragLayer />
-              <Drawer variant="persistent" anchor="left" open={drawerOpened}>
-                <MobileNavigation width={drawerWidth} />
-              </Drawer>
-              <main
-                className={clsx(classes.content, {
-                  [classes.contentShift]: !drawerOpened
-                })}
+            </style>
+            {props.isDesktopMode || (AppConfig.isAmplify && !props.user) ? (
+              <TargetFileBox
+                accepts={[FILE]}
+                setMoveCopyDialogOpened={setMoveCopyDialogOpened}
               >
+                <CustomDragLayer />
+                <Drawer variant="persistent" anchor="left" open={drawerOpened}>
+                  <MobileNavigation width={drawerWidth} />
+                </Drawer>
+                <main
+                  className={clsx(classes.content, {
+                    [classes.contentShift]: !drawerOpened
+                  })}
+                >
+                  {renderContainers()}
+                </main>
+              </TargetFileBox>
+            ) : (
+              <>
+                <SwipeableDrawer
+                  open={drawerOpened}
+                  onClose={() => setDrawerOpened(false)}
+                  onOpen={() => setDrawerOpened(true)}
+                  hysteresis={0.1}
+                  disableBackdropTransition={!AppConfig.isIOS}
+                  disableDiscovery={AppConfig.isIOS}
+                >
+                  <MobileNavigation
+                    width={drawerWidth}
+                    hideDrawer={() => setDrawerOpened(false)}
+                  />
+                </SwipeableDrawer>
                 {renderContainers()}
-              </main>
-            </TargetFileBox>
-          ) : (
-            <>
-              <SwipeableDrawer
-                open={drawerOpened}
-                onClose={() => setDrawerOpened(false)}
-                onOpen={() => setDrawerOpened(true)}
-                hysteresis={0.1}
-                disableBackdropTransition={!AppConfig.isIOS}
-                disableDiscovery={AppConfig.isIOS}
-              >
-                <MobileNavigation
-                  width={drawerWidth}
-                  hideDrawer={() => setDrawerOpened(false)}
-                />
-              </SwipeableDrawer>
-              {renderContainers()}
-            </>
-          )}
-        </div>
+              </>
+            )}
+          </div>
+        </TaggingActionsContextProvider>
       </HotKeys>
     </Root>
   );
