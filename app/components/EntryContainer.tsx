@@ -182,7 +182,7 @@ function EntryContainer() {
   >(null);
   const fileChanged = useRef<boolean>(false);
   const eventID = useRef<string>(getUuid());
-  const firstRender = useFirstRender();
+  // const firstRender = useFirstRender();
 
   useEventListener('message', e => {
     if (typeof e.data === 'string') {

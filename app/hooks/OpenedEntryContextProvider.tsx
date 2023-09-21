@@ -585,178 +585,186 @@ export const OpenedEntryContextProvider = ({
   }
 
   function openLink(url: string, options = { fullWidth: true }) {
-    const decodedURI = decodeURI(url);
-    const lid = getURLParameter('tslid', url);
-    const dPath = getURLParameter('tsdpath', url);
-    const ePath = getURLParameter('tsepath', url);
-    const cmdOpen = getURLParameter('cmdopen', url);
-    if (cmdOpen && cmdOpen.length > 0) {
-      const entryPath = decodeURIComponent(cmdOpen);
-      getAllPropertiesPromise(entryPath)
-        .then((fsEntry: TS.FileSystemEntry) => {
-          if (fsEntry.isFile) {
-            openFsEntry(fsEntry);
-            setEntryInFullWidth(options.fullWidth);
-          } else {
+    try {
+      const decodedURI = decodeURI(url);
+      const lid = getURLParameter('tslid', url);
+      const dPath = getURLParameter('tsdpath', url);
+      const ePath = getURLParameter('tsepath', url);
+      const cmdOpen = getURLParameter('cmdopen', url);
+      if (cmdOpen && cmdOpen.length > 0) {
+        const entryPath = decodeURIComponent(cmdOpen);
+        getAllPropertiesPromise(entryPath)
+          .then((fsEntry: TS.FileSystemEntry) => {
+            if (fsEntry.isFile) {
+              openFsEntry(fsEntry);
+              setEntryInFullWidth(options.fullWidth);
+            } else {
+              dispatch(
+                AppActions.loadDirectoryContent(fsEntry.path, false, true)
+              );
+            }
+            return true;
+          })
+          .catch(err => {
+            // console.log('Error opening from cmd ' + JSON.stringify(err));
             dispatch(
-              AppActions.loadDirectoryContent(fsEntry.path, false, true)
+              AppActions.showNotification(
+                t('Missing file or folder'),
+                'warning',
+                true
+              )
             );
-          }
-          return true;
-        })
-        .catch(err => {
-          // console.log('Error opening from cmd ' + JSON.stringify(err));
-          dispatch(
-            AppActions.showNotification(
-              t('Missing file or folder'),
-              'warning',
-              true
-            )
-          );
-        });
-    } else if (lid && lid.length > 0) {
-      const locationId = decodeURIComponent(lid);
-      const directoryPath = dPath && decodeURIComponent(dPath);
-      const entryPath = ePath && decodeURIComponent(ePath);
-      // Check for relative paths
-      const targetLocation: TS.Location = locations.find(
-        location => location.uuid === locationId
-      );
-      if (targetLocation) {
-        let openLocationTimer = 1000;
-        const isCloudLocation = targetLocation.type === locationType.TYPE_CLOUD;
-        let skipListingLocation = directoryPath && directoryPath.length > 0;
-        if (!currentLocation || targetLocation.uuid !== currentLocation.uuid) {
-          dispatch(
-            AppActions.openLocation(targetLocation, skipListingLocation)
-          );
-        } else {
-          openLocationTimer = 0;
-        }
-        const locationPath = getCleanLocationPath(targetLocation);
-
-        // setTimeout is needed for case of a location switch, if no location swith the timer is 0
-        setTimeout(() => {
-          if (isCloudLocation) {
-            // PlatformIO.enableObjectStoreSupport(targetLocation).then(() => {
-            if (directoryPath && directoryPath.length > 0) {
-              const newRelDir = getRelativeEntryPath(
-                targetLocation,
-                directoryPath
-              );
-              const dirFullPath =
-                locationPath.length > 0
-                  ? locationPath + '/' + newRelDir
-                  : directoryPath;
-              dispatch(
-                AppActions.loadDirectoryContent(dirFullPath, false, true)
-              );
-            } else {
-              dispatch(
-                AppActions.loadDirectoryContent(locationPath, false, true)
-              );
-            }
-
-            if (entryPath) {
-              getAllPropertiesPromise(entryPath)
-                .then((fsEntry: TS.FileSystemEntry) => {
-                  if (fsEntry) {
-                    openFsEntry(fsEntry);
-                    if (options.fullWidth) {
-                      setEntryInFullWidth(true);
-                    }
-                  }
-                  return true;
-                })
-                .catch(() =>
-                  dispatch(
-                    AppActions.showNotification(
-                      t('core:invalidLink'),
-                      'warning',
-                      true
-                    )
-                  )
-                );
-            }
-            // });
-          } else {
-            // local files case
-            if (directoryPath && directoryPath.length > 0) {
-              if (
-                directoryPath.includes('../') ||
-                directoryPath.includes('..\\')
-              ) {
-                dispatch(
-                  AppActions.showNotification(
-                    t('core:invalidLink'),
-                    'warning',
-                    true
-                  )
-                );
-                return true;
-              }
-              const dirFullPath =
-                locationPath + PlatformIO.getDirSeparator() + directoryPath;
-              dispatch(
-                AppActions.loadDirectoryContent(dirFullPath, false, true)
-              );
-            } else {
-              dispatch(
-                AppActions.loadDirectoryContent(locationPath, false, true)
-              );
-            }
-
-            if (entryPath && entryPath.length > 0) {
-              if (entryPath.includes('../') || entryPath.includes('..\\')) {
-                dispatch(
-                  AppActions.showNotification(
-                    t('core:invalidLink'),
-                    'warning',
-                    true
-                  )
-                );
-                return true;
-              }
-              const entryFullPath =
-                locationPath + PlatformIO.getDirSeparator() + entryPath;
-              getAllPropertiesPromise(entryFullPath)
-                .then((fsEntry: TS.FileSystemEntry) => {
-                  if (fsEntry) {
-                    openFsEntry(fsEntry);
-                    if (options.fullWidth) {
-                      setEntryInFullWidth(true);
-                    }
-                  }
-                  return true;
-                })
-                .catch(() =>
-                  dispatch(
-                    AppActions.showNotification(
-                      t('core:invalidLink'),
-                      'warning',
-                      true
-                    )
-                  )
-                );
-            }
-          }
-        }, openLocationTimer);
-      } else {
-        dispatch(
-          AppActions.showNotification(t('core:invalidLink'), 'warning', true)
+          });
+      } else if (lid && lid.length > 0) {
+        const locationId = decodeURIComponent(lid);
+        const directoryPath = dPath && decodeURIComponent(dPath);
+        const entryPath = ePath && decodeURIComponent(ePath);
+        // Check for relative paths
+        const targetLocation: TS.Location = locations.find(
+          location => location.uuid === locationId
         );
+        if (targetLocation) {
+          let openLocationTimer = 1000;
+          const isCloudLocation =
+            targetLocation.type === locationType.TYPE_CLOUD;
+          let skipListingLocation = directoryPath && directoryPath.length > 0;
+          if (
+            !currentLocation ||
+            targetLocation.uuid !== currentLocation.uuid
+          ) {
+            dispatch(
+              AppActions.openLocation(targetLocation, skipListingLocation)
+            );
+          } else {
+            openLocationTimer = 0;
+          }
+          const locationPath = getCleanLocationPath(targetLocation);
+
+          // setTimeout is needed for case of a location switch, if no location swith the timer is 0
+          setTimeout(() => {
+            if (isCloudLocation) {
+              // PlatformIO.enableObjectStoreSupport(targetLocation).then(() => {
+              if (directoryPath && directoryPath.length > 0) {
+                const newRelDir = getRelativeEntryPath(
+                  targetLocation,
+                  directoryPath
+                );
+                const dirFullPath =
+                  locationPath.length > 0
+                    ? locationPath + '/' + newRelDir
+                    : directoryPath;
+                dispatch(
+                  AppActions.loadDirectoryContent(dirFullPath, false, true)
+                );
+              } else {
+                dispatch(
+                  AppActions.loadDirectoryContent(locationPath, false, true)
+                );
+              }
+
+              if (entryPath) {
+                getAllPropertiesPromise(entryPath)
+                  .then((fsEntry: TS.FileSystemEntry) => {
+                    if (fsEntry) {
+                      openFsEntry(fsEntry);
+                      if (options.fullWidth) {
+                        setEntryInFullWidth(true);
+                      }
+                    }
+                    return true;
+                  })
+                  .catch(() =>
+                    dispatch(
+                      AppActions.showNotification(
+                        t('core:invalidLink'),
+                        'warning',
+                        true
+                      )
+                    )
+                  );
+              }
+              // });
+            } else {
+              // local files case
+              if (directoryPath && directoryPath.length > 0) {
+                if (
+                  directoryPath.includes('../') ||
+                  directoryPath.includes('..\\')
+                ) {
+                  dispatch(
+                    AppActions.showNotification(
+                      t('core:invalidLink'),
+                      'warning',
+                      true
+                    )
+                  );
+                  return true;
+                }
+                const dirFullPath =
+                  locationPath + PlatformIO.getDirSeparator() + directoryPath;
+                dispatch(
+                  AppActions.loadDirectoryContent(dirFullPath, false, true)
+                );
+              } else {
+                dispatch(
+                  AppActions.loadDirectoryContent(locationPath, false, true)
+                );
+              }
+
+              if (entryPath && entryPath.length > 0) {
+                if (entryPath.includes('../') || entryPath.includes('..\\')) {
+                  dispatch(
+                    AppActions.showNotification(
+                      t('core:invalidLink'),
+                      'warning',
+                      true
+                    )
+                  );
+                  return true;
+                }
+                const entryFullPath =
+                  locationPath + PlatformIO.getDirSeparator() + entryPath;
+                getAllPropertiesPromise(entryFullPath)
+                  .then((fsEntry: TS.FileSystemEntry) => {
+                    if (fsEntry) {
+                      openFsEntry(fsEntry);
+                      if (options.fullWidth) {
+                        setEntryInFullWidth(true);
+                      }
+                    }
+                    return true;
+                  })
+                  .catch(() =>
+                    dispatch(
+                      AppActions.showNotification(
+                        t('core:invalidLink'),
+                        'warning',
+                        true
+                      )
+                    )
+                  );
+              }
+            }
+          }, openLocationTimer);
+        } else {
+          dispatch(
+            AppActions.showNotification(t('core:invalidLink'), 'warning', true)
+          );
+        }
+      } else if (decodedURI.endsWith(location.pathname)) {
+        return true;
+      } else if (
+        // External URL case
+        decodedURI.startsWith('http://') ||
+        decodedURI.startsWith('https://') ||
+        decodedURI.startsWith('file://')
+      ) {
+        openURLExternally(decodedURI);
+      } else {
+        console.log('Not supported URL format: ' + decodedURI);
       }
-    } else if (decodedURI.endsWith(location.pathname)) {
-      return true;
-    } else if (
-      // External URL case
-      decodedURI.startsWith('http://') ||
-      decodedURI.startsWith('https://') ||
-      decodedURI.startsWith('file://')
-    ) {
-      openURLExternally(decodedURI);
-    } else {
-      console.log('Not supported URL format: ' + decodedURI);
+    } catch (e) {
+      console.error('OpenLink:', e);
     }
   }
 
