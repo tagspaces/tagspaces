@@ -156,7 +156,7 @@ export const OpenedEntryContextProvider = ({
     if (initOpenLink && initOpenLink.url) {
       openLink(initOpenLink.url, initOpenLink.options);
     }
-  }, [openLink]);
+  }, [initOpenLink]);
 
   /**
    * HANDLE REFLECT_RENAME_ENTRY
@@ -626,7 +626,7 @@ export const OpenedEntryContextProvider = ({
         let openLocationTimer = 1000;
         const isCloudLocation = targetLocation.type === locationType.TYPE_CLOUD;
         let skipListingLocation = directoryPath && directoryPath.length > 0;
-        if (currentLocation && targetLocation.uuid !== currentLocation.uuid) {
+        if (!currentLocation || targetLocation.uuid !== currentLocation.uuid) {
           dispatch(
             AppActions.openLocation(targetLocation, skipListingLocation)
           );
