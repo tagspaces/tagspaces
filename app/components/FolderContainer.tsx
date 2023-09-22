@@ -17,7 +17,7 @@
  */
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { styled, useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import { connect, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import IconButton from '@mui/material/IconButton';
@@ -26,7 +26,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Tooltip from '-/components/Tooltip';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
-import Badge from '@mui/material/Badge';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import AppConfig from '-/AppConfig';
@@ -41,7 +40,6 @@ import {
   getDirectoryContent,
   isReadOnlyMode,
   getCurrentDirectoryPerspective,
-  OpenedEntry,
   getSelectedEntries,
   getProgress,
   isSearchMode,
@@ -72,37 +70,6 @@ import useFirstRender from '-/utils/useFirstRender';
 import { useTranslation } from 'react-i18next';
 import { SortedDirContextProvider } from '-/perspectives/grid-perspective/hooks/SortedDirContextProvider';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-
-const PREFIX = 'FolderContainer';
-
-const classes = {
-  button: `${PREFIX}-button`
-};
-
-const Root = styled('div')(({ theme }) => ({
-  position: 'relative',
-  height: '100%',
-  [`& .${classes.button}`]: {
-    position: 'relative',
-    padding: '8px 12px 6px 8px',
-    margin: '0'
-  }
-}));
-
-/*const CounterBadge: any = withStyles(theme => ({
-  badge: {
-    top: '50%',
-    right: -15,
-    color:
-      theme.palette.mode === 'light'
-        ? theme.palette.grey[900]
-        : theme.palette.grey[200],
-    backgroundColor:
-      theme.palette.mode === 'light'
-        ? theme.palette.grey[200]
-        : theme.palette.grey[900]
-  }
-}))(Badge);*/
 
 const GridPerspective = React.lazy(() =>
   import(
@@ -208,7 +175,6 @@ interface Props {
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   enterSearchMode: () => void;
   exitSearchMode: () => void;
-  // editedEntryPaths: Array<TS.EditedEntryPath>;
   goBack: () => void;
   goForward: () => void;
   lastSearchTimestamp: number;
@@ -451,145 +417,145 @@ function FolderContainer(props: Props) {
     ? ' (' + (AppConfig.isMaclike ? '⌘' : 'Ctrl') + '+Shift+F)'
     : '';
   // keyBindings['openSearch'].toUpperCase()
+
   return (
-    <Root data-tid="folderContainerTID">
+    <div
+      style={{
+        width: '100%',
+        height: 'calc(100% - 50px)',
+        backgroundColor: theme.palette.background.default,
+        display: 'flex',
+        flexDirection: 'column',
+        position: 'relative'
+      }}
+      data-tid="folderContainerTID"
+    >
       <div
         style={{
-          flex: '1 1 100%',
-          width: '100%',
-          height: '100%',
-          maxHeight: '100%',
-          overflow: 'unset',
-          backgroundColor: theme.palette.background.default,
+          paddingLeft: 5,
+          paddingRight: 5,
           display: 'flex',
-          flexDirection: 'column'
+          alignItems: 'center',
+          minHeight: 50
         }}
       >
-        <div
-          style={{
-            paddingLeft: 5,
-            paddingRight: 5,
-            display: 'flex',
-            //overflowY: 'hidden',
-            alignItems: 'center'
-            //overflowX: 'auto'
-          }}
+        <IconButton
+          id="mobileMenuButton"
+          // style={{
+          //   transform: drawerOpened ? 'rotate(0deg)' : 'rotate(180deg)',
+          //   width: 50
+          // }}
+          onClick={toggleDrawer}
+        >
+          <MainMenuIcon />
+        </IconButton>
+        <Tooltip
+          title={
+            t('core:goback') + ' - BETA - ' + t('core:gobackClarification')
+          }
         >
           <IconButton
-            id="mobileMenuButton"
-            // style={{
-            //   transform: drawerOpened ? 'rotate(0deg)' : 'rotate(180deg)',
-            //   width: 50
-            // }}
-            onClick={toggleDrawer}
+            id="goBackButton"
+            disabled={window.history.length < 2}
+            onClick={goBack}
           >
-            <MainMenuIcon />
+            <GoBackIcon />
           </IconButton>
-          <Tooltip
-            title={
-              t('core:goback') + ' - BETA - ' + t('core:gobackClarification')
-            }
-          >
+        </Tooltip>
+        {isDesktopMode && (
+          <Tooltip title={t('core:goforward') + ' - BETA'}>
             <IconButton
-              id="goBackButton"
+              id="goForwardButton"
               disabled={window.history.length < 2}
-              onClick={goBack}
+              onClick={goForward}
             >
-              <GoBackIcon />
+              <GoForwardIcon />
             </IconButton>
           </Tooltip>
-          {isDesktopMode && (
-            <Tooltip title={t('core:goforward') + ' - BETA'}>
+        )}
+        {props.isSearchMode ? (
+          /* todo rethink if open props is needed */
+          <SearchBox
+            open={props.isSearchMode}
+            textQuery={props.searchQuery.textQuery}
+          />
+        ) : (
+          <>
+            <div
+              style={{
+                flex: '1 1 1%',
+                display: 'flex',
+                flexDirection: 'column'
+              }}
+            />
+            <MainSearchField
+              fullWidth
+              data-tid="toggleSearch"
+              defaultValue=""
+              variant="outlined"
+              size="small"
+              style={{
+                minWidth: 40,
+                width: 220,
+                marginRight: 10
+              }}
+              onKeyDown={toggleSearchMode}
+              onClick={toggleSearchMode}
+              margin="dense"
+              placeholder={t('core:searchTitle') + openSearchKeyBinding}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start" style={{ marginRight: 0 }}>
+                    <IconButton size="small" edge="end">
+                      <SearchIcon />
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
+            />
+            {props.progress && props.progress.length > 0 && (
               <IconButton
-                id="goForwardButton"
-                disabled={window.history.length < 2}
-                onClick={goForward}
+                id="progressButton"
+                title={t('core:progress')}
+                data-tid="uploadProgress"
+                onClick={() => props.toggleUploadDialog()}
+                style={{
+                  position: 'relative',
+                  padding: '8px 12px 6px 8px',
+                  margin: '0'
+                }}
               >
-                <GoForwardIcon />
+                <CircularProgressWithLabel value={getProgressValue()} />
               </IconButton>
-            </Tooltip>
-          )}
-          {props.isSearchMode ? (
-            /* todo rethink if open props is needed */
-            <SearchBox
-              open={props.isSearchMode}
-              textQuery={props.searchQuery.textQuery}
+            )}
+            {/* {isDesktopMode && <LocationMenu />} */}
+            <PathBreadcrumbs
+              switchPerspective={switchPerspective}
+              setSelectedEntries={setSelectedEntries}
+              reflectCreateEntry={reflectCreateEntry}
+              isDesktopMode={isDesktopMode}
+              openRenameDirectoryDialog={() =>
+                setIsRenameEntryDialogOpened(true)
+              }
+              openMoveCopyFilesDialog={props.openMoveCopyFilesDialog}
             />
-          ) : (
-            <>
-              <div
-                style={{
-                  flex: '1 1 1%',
-                  display: 'flex',
-                  flexDirection: 'column'
-                }}
-              />
-              <MainSearchField
-                fullWidth
-                data-tid="toggleSearch"
-                defaultValue=""
-                variant="outlined"
-                size="small"
-                style={{
-                  minWidth: 40,
-                  width: 220,
-                  marginRight: 10
-                }}
-                onKeyDown={toggleSearchMode}
-                onClick={toggleSearchMode}
-                margin="dense"
-                placeholder={t('core:searchTitle') + openSearchKeyBinding}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start" style={{ marginRight: 0 }}>
-                      <IconButton size="small" edge="end">
-                        <SearchIcon />
-                      </IconButton>
-                    </InputAdornment>
-                  )
-                }}
-              />
-              {props.progress && props.progress.length > 0 && (
-                <IconButton
-                  id="progressButton"
-                  title={t('core:progress')}
-                  data-tid="uploadProgress"
-                  onClick={() => props.toggleUploadDialog()}
-                  className={classes.button}
-                >
-                  <CircularProgressWithLabel value={getProgressValue()} />
-                </IconButton>
-              )}
-              {/* {isDesktopMode && <LocationMenu />} */}
-              <PathBreadcrumbs
-                switchPerspective={switchPerspective}
-                setSelectedEntries={setSelectedEntries}
-                reflectCreateEntry={reflectCreateEntry}
-                isDesktopMode={isDesktopMode}
-                openRenameDirectoryDialog={() =>
-                  setIsRenameEntryDialogOpened(true)
-                }
-                openMoveCopyFilesDialog={props.openMoveCopyFilesDialog}
-              />
-            </>
-          )}
-        </div>
-        <div
-          style={{
-            height: '100%', // props.windowHeight + 1,
-            flex: '1 1 auto',
-            width: '100%'
-          }}
-        >
-          {/*<LoadingAnimation />*/}
-          {renderPerspective()}
-          {isRenameEntryDialogOpened && (
-            <RenameEntryDialog
-              open={isRenameEntryDialogOpened}
-              onClose={() => setIsRenameEntryDialogOpened(false)}
-            />
-          )}
-        </div>
+          </>
+        )}
+      </div>
+      <div
+        style={{
+          minHeight: '100%',
+          width: '100%'
+        }}
+      >
+        {/*<LoadingAnimation />*/}
+        {renderPerspective()}
+        {isRenameEntryDialogOpened && (
+          <RenameEntryDialog
+            open={isRenameEntryDialogOpened}
+            onClose={() => setIsRenameEntryDialogOpened(false)}
+          />
+        )}
       </div>
       {props.isDesktopMode && (
         <ToggleButtonGroup
@@ -600,7 +566,7 @@ function FolderContainer(props: Props) {
           aria-label="change perspective"
           exclusive
           style={{
-            bottom: 15,
+            bottom: -40,
             right: 15,
             zIndex: 1000,
             opacity: 0.9,
@@ -611,7 +577,7 @@ function FolderContainer(props: Props) {
           {perspectiveToggleButtons}
         </ToggleButtonGroup>
       )}
-    </Root>
+    </div>
   );
 }
 
@@ -664,8 +630,6 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   JSON.stringify(nextProp.progress) === JSON.stringify(prevProp.progress) &&
   JSON.stringify(nextProp.directoryContent) ===
     JSON.stringify(prevProp.directoryContent) &&
-  //JSON.stringify(nextProp.theme) === JSON.stringify(prevProp.theme) &&
-  // JSON.stringify(nextProp.editedEntryPaths) === JSON.stringify(prevProp.editedEntryPaths) &&
   JSON.stringify(nextProp.searchQuery) ===
     JSON.stringify(prevProp.searchQuery) &&
   nextProp.lastSearchTimestamp === prevProp.lastSearchTimestamp &&

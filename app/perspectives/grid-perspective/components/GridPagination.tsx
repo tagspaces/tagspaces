@@ -529,22 +529,22 @@ function GridPagination(props: Props) {
                     </Typography>
                   )}
                 </Box>
-                <Tooltip title={t('core:thumbnail')}>
-                  <div
-                    style={{
-                      borderRadius: 10,
-                      height: 100,
-                      width: 140,
-                      backgroundImage: 'url("' + folderTmbPath.current + '")',
-                      backgroundSize: 'cover', // cover contain
-                      backgroundRepeat: 'no-repeat',
-                      backgroundPosition: 'center center',
-                      position: 'absolute',
-                      top: 0,
-                      right: 0
-                    }}
-                  ></div>
-                </Tooltip>
+                {/* <Tooltip title={t('core:thumbnail')}> */}
+                <div
+                  style={{
+                    borderRadius: 10,
+                    height: 100,
+                    width: 140,
+                    backgroundImage: 'url("' + folderTmbPath.current + '")',
+                    backgroundSize: 'cover', // cover contain
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center center',
+                    position: 'absolute',
+                    top: 0,
+                    right: 0
+                  }}
+                ></div>
+                {/* </Tooltip> */}
               </div>
             </Grid>
           )}
