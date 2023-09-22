@@ -136,6 +136,9 @@ function EntryContainer() {
     false
   );
   const [isSavingInProgress, setSavingInProgress] = useState<boolean>(false);
+  const [entryPropertiesHeight, setEntryPropertiesHeight] = useState<number>(
+    100
+  );
   const fileViewer: MutableRefObject<HTMLIFrameElement> = useRef<
     HTMLIFrameElement
   >(null);
@@ -490,7 +493,7 @@ function EntryContainer() {
     }
   };
 
-  function savingFile(force = false) {
+  const savingFile = (force = false) => {
     if (
       fileViewer &&
       fileViewer.current &&
@@ -519,7 +522,7 @@ function EntryContainer() {
         console.debug('function getContent not exist for video file:', e);
       }
     }
-  }
+  };
 
   const override = (): Promise<boolean> => {
     return dispatch(
@@ -727,6 +730,16 @@ function EntryContainer() {
     }
   };
 
+  const toggleEntryPropertiesHeight = () => {
+    if (entryPropertiesHeight === 100) {
+      setEntryPropertiesHeight(150);
+    } else if (entryPropertiesHeight === 150) {
+      setEntryPropertiesHeight(50);
+    } else if (entryPropertiesHeight === 50) {
+      setEntryPropertiesHeight(100);
+    }
+  };
+
   const tabs = () => {
     const autoSave = isEditable && revisionsEnabled && (
       <Tooltip
@@ -883,9 +896,7 @@ function EntryContainer() {
     >
       <div
         style={{
-          // height: 'calc(100% - 47px)',
           height: '100%',
-          //minHeight: '100%',
           ...(tabIndex !== undefined && propertiesStyles)
         }}
       >
@@ -893,10 +904,9 @@ function EntryContainer() {
           style={{
             width: '100%',
             flexDirection: 'column',
-            flex: '1 1 100%',
+            flex: '1 1 ' + entryPropertiesHeight + '%',
             display: 'flex',
             backgroundColor: theme.palette.background.default,
-            borderBottom: '5px solid ' + theme.palette.background.default,
             overflow: 'hidden'
           }}
         >
@@ -923,6 +933,24 @@ function EntryContainer() {
             />
           </Box>
           {tabs()}
+          {openedFile.isFile && (
+            <Tooltip title="Toggle preview height">
+              <div
+                style={{
+                  textAlign: 'center',
+                  // paddingRight: 5,
+                  maxHeight: 9,
+                  minHeight: 9,
+                  backgroundColor: theme.palette.background.default,
+                  borderBottom: '1px solid ' + theme.palette.divider
+                  // color: theme.palette.divider
+                }}
+                onClick={toggleEntryPropertiesHeight}
+              >
+                |||
+              </div>
+            </Tooltip>
+          )}
         </div>
         {openedFile.isFile && (
           <FileView
