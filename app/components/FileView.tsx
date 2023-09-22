@@ -17,11 +17,11 @@
  */
 
 import React, { MutableRefObject } from 'react';
+import { useSelector } from 'react-redux';
 import { rgbToHex, useTheme } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
 import { OpenedEntry } from '-/reducers/app';
 import useEventListener from '-/utils/useEventListener';
-import { connect } from 'react-redux';
 import { getSearchQuery } from '-/reducers/location-index';
 import { TS } from '-/tagspaces.namespace';
 import { useTranslation } from 'react-i18next';
@@ -31,25 +31,22 @@ interface Props {
   isFullscreen?: boolean;
   fileViewer: MutableRefObject<HTMLIFrameElement>;
   fileViewerContainer: MutableRefObject<HTMLDivElement>;
-  searchQuery: TS.SearchQuery;
   toggleFullScreen?: () => void;
   height?: string;
-  //currentTheme: string;
   eventID: string;
 }
 
 function FileView(props: Props) {
   const { i18n } = useTranslation();
   const theme = useTheme();
+  const searchQuery = useSelector(getSearchQuery);
   const {
     openedFile,
     fileViewer,
     isFullscreen,
     fileViewerContainer,
     toggleFullScreen,
-    searchQuery,
     height,
-    //currentTheme,
     eventID
   } = props; // .openedFiles[0];
 
@@ -132,6 +129,7 @@ function FileView(props: Props) {
   } else {
     fileOpenerURL = 'about:blank';
   }
+
   return (
     <div
       ref={fileViewerContainer}
@@ -187,15 +185,5 @@ const areEqual = (prevProp, nextProp) =>
   nextProp.openedFile.shouldReload === prevProp.openedFile.shouldReload &&
   nextProp.isFullscreen === prevProp.isFullscreen &&
   nextProp.height === prevProp.height;
-// nextProp.currentTheme === prevProp.currentTheme; // Commented due to reloading of the editors with changed content
-/* ((nextProp.openedFile.editMode === undefined &&
-    prevProp.openedFile.editMode === true) ||
-    nextProp.openedFile.editMode === prevProp.openedFile.editMode); */
 
-function mapStateToProps(state) {
-  return {
-    searchQuery: getSearchQuery(state)
-  };
-}
-
-export default connect(mapStateToProps)(React.memo(FileView, areEqual));
+export default React.memo(FileView, areEqual);

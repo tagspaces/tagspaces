@@ -77,48 +77,10 @@ import { useDescriptionContext } from '-/hooks/useDescriptionContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 //const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
-
-const bufferedSplitResize = buffer({
-  timeout: 300,
-  id: 'buffered-split-resize'
-});
-
-const PREFIX = 'EntryContainer';
-const classes = {
-  toolbar2: `${PREFIX}-toolbar2`,
-  flexLeft: `${PREFIX}-flexLeft`
-};
-
-const Root = styled(Box)(({ theme }) => ({
-  width: '100%',
-  flexDirection: 'column',
-  flex: '1 1 100%',
-  display: 'flex',
-  backgroundColor: theme.palette.background.default,
-  borderBottom: '5px solid ' + theme.palette.background.default,
-  overflow: 'hidden',
-  // height: '100%', // filePropsHeight ||
-  [`& .${classes.toolbar2}`]: {
-    width: '100%',
-    paddingLeft: 0,
-    paddingRight: 5,
-    paddingTop: 0,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    zIndex: 2
-    // borderBottom: '1px solid ' + theme.palette.divider
-  },
-  [`& .${classes.flexLeft}`]: {
-    flexDirection: 'row',
-    flex: '1 1',
-    display: 'flex',
-    alignItems: 'baseline',
-    overflowX: 'auto',
-    overflowY: 'hidden',
-    paddingRight: 100
-  }
-}));
+// const bufferedSplitResize = buffer({
+//   timeout: 300,
+//   id: 'buffered-split-resize'
+// });
 
 const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 
@@ -712,12 +674,12 @@ function EntryContainer() {
     }*/
   };
 
-  const closePanel = () => {
-    /*if (isPropertiesPanelVisible) {
+  /* const closePanel = () => {
+    if (isPropertiesPanelVisible) {
       percent.current = undefined;
       setPropertiesPanelVisible(false);
-    }*/
-  };
+    }
+  }; */
 
   const toggleProperties = () => {
     if (propertiesStyles !== undefined) {
@@ -725,27 +687,7 @@ function EntryContainer() {
     } else {
       setPropertiesStyles({ display: 'flex', flexDirection: 'column' });
     }
-    /*if (isPropPanelVisible && !isRevisionPanelVisible) {
-      closePanel();
-    } else {
-      openPanel();
-    }
-
-    if (isRevisionPanelVisible) {
-      setRevisionPanelVisible(false);
-    }*/
   };
-
-  /*const toggleRevisions = () => {
-    if (isRevisionPanelVisible) {
-      setRevisionPanelVisible(false);
-      closePanel();
-    } else {
-      setRevisionPanelVisible(true);
-      openPanel();
-    }
-  };*/
-
   const openNextFileAction = () => {
     openNextFile(openedFile.path);
   };
@@ -785,217 +727,140 @@ function EntryContainer() {
     }
   };
 
-  const renderPanels = () => {
-    const toolbarButtons = () => {
-      return (
-        <Box
-          style={{
-            paddingLeft: 0,
-            paddingRight: 50,
-            paddingTop: 0,
-            minHeight: 50,
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'flex-start'
-          }}
-        >
-          <Box
-            className={classes.flexLeft}
-            style={{
-              paddingLeft: 5,
-              display: 'flex',
-              alignItems: 'center',
-              paddingRight: editingSupported ? 85 : 5
-            }}
-          >
-            <EntryContainerTitle
-              isFileChanged={fileChanged.current}
-              openedFile={openedFile}
-              reloadDocument={reloadDocument}
-              toggleFullScreen={toggleFullScreen}
-            />
-          </Box>
-          <EntryContainerNav
-            isFile={openedFile.isFile}
-            startClosingFile={startClosingFile}
-          />
-        </Box>
-      );
-    };
-
-    const tabs = () => {
-      const autoSave = isEditable && revisionsEnabled && (
-        <Tooltip
-          title={
-            t('core:autosave') +
-            (!Pro ? ' - ' + t('core:thisFunctionalityIsAvailableInPro') : '')
+  const tabs = () => {
+    const autoSave = isEditable && revisionsEnabled && (
+      <Tooltip
+        title={
+          t('core:autosave') +
+          (!Pro ? ' - ' + t('core:thisFunctionalityIsAvailableInPro') : '')
+        }
+      >
+        <Switch
+          data-tid="autoSaveTID"
+          checked={
+            openedFile.isAutoSaveEnabled !== undefined &&
+            openedFile.isAutoSaveEnabled
           }
-        >
-          <Switch
-            data-tid="autoSaveTID"
-            checked={
-              openedFile.isAutoSaveEnabled !== undefined &&
-              openedFile.isAutoSaveEnabled
-            }
-            onChange={toggleAutoSave}
-            name="autoSave"
-            color="primary"
-          />
-        </Tooltip>
+          onChange={toggleAutoSave}
+          name="autoSave"
+          color="primary"
+        />
+      </Tooltip>
+    );
+
+    let closeCancelIcon;
+    if (desktopMode) {
+      closeCancelIcon = fileChanged.current ? (
+        <CancelIcon />
+      ) : (
+        <CloseEditIcon />
       );
+    }
 
-      let closeCancelIcon;
-      if (desktopMode) {
-        closeCancelIcon = fileChanged.current ? (
-          <CancelIcon />
-        ) : (
-          <CloseEditIcon />
-        );
-      }
-
-      let editFile = null;
-      if (editingSupported) {
-        if (openedFile.editMode) {
-          editFile = (
-            <ButtonGroup>
-              <Tooltip title={t('core:cancelEditing')}>
-                <Button
-                  onClick={reloadDocument}
-                  aria-label={t('core:cancelEditing')}
-                  size="small"
-                  variant="outlined"
-                  color="primary"
-                  startIcon={closeCancelIcon}
-                >
-                  {fileChanged.current
-                    ? t('core:cancel')
-                    : t('core:closeButton')}
-                </Button>
-              </Tooltip>
-              <Tooltip
-                title={
-                  t('core:saveFile') +
-                  ' (' +
-                  (AppConfig.isMaclike ? '⌘' : 'CTRL') +
-                  ' + S)'
-                }
-              >
-                <LoadingButton
-                  disabled={false}
-                  onClick={startSavingFile}
-                  aria-label={t('core:saveFile')}
-                  data-tid="fileContainerSaveFile"
-                  size="small"
-                  variant="outlined"
-                  color="primary"
-                  startIcon={desktopMode && <SaveIcon />}
-                  loading={isSavingInProgress}
-                >
-                  {t('core:save')}
-                </LoadingButton>
-              </Tooltip>
-            </ButtonGroup>
-          );
-        } else {
-          editFile = (
-            <Tooltip title={t('core:editFile')}>
+    let editFile = null;
+    if (editingSupported) {
+      if (openedFile.editMode) {
+        editFile = (
+          <ButtonGroup>
+            <Tooltip title={t('core:cancelEditing')}>
               <Button
-                disabled={false}
+                onClick={reloadDocument}
+                aria-label={t('core:cancelEditing')}
                 size="small"
                 variant="outlined"
                 color="primary"
-                onClick={editOpenedFile}
-                aria-label={t('core:editFile')}
-                data-tid="fileContainerEditFile"
-                startIcon={<EditIcon />}
+                startIcon={closeCancelIcon}
               >
-                {t('core:edit')}
+                {fileChanged.current ? t('core:cancel') : t('core:closeButton')}
               </Button>
             </Tooltip>
-          );
-        }
+            <Tooltip
+              title={
+                t('core:saveFile') +
+                ' (' +
+                (AppConfig.isMaclike ? '⌘' : 'CTRL') +
+                ' + S)'
+              }
+            >
+              <LoadingButton
+                disabled={false}
+                onClick={startSavingFile}
+                aria-label={t('core:saveFile')}
+                data-tid="fileContainerSaveFile"
+                size="small"
+                variant="outlined"
+                color="primary"
+                startIcon={desktopMode && <SaveIcon />}
+                loading={isSavingInProgress}
+              >
+                {t('core:save')}
+              </LoadingButton>
+            </Tooltip>
+          </ButtonGroup>
+        );
+      } else {
+        editFile = (
+          <Tooltip title={t('core:editFile')}>
+            <Button
+              disabled={false}
+              size="small"
+              variant="outlined"
+              color="primary"
+              onClick={editOpenedFile}
+              aria-label={t('core:editFile')}
+              data-tid="fileContainerEditFile"
+              startIcon={<EditIcon />}
+            >
+              {t('core:edit')}
+            </Button>
+          </Tooltip>
+        );
       }
-      const tabsComponent = (marginRight = undefined) => (
-        <EntryContainerTabs
-          isEditable={isEditable}
-          openedFile={openedFile}
-          openPanel={openPanel}
-          toggleProperties={toggleProperties}
-          marginRight={marginRight}
-        />
-      );
+    }
+    const tabsComponent = (marginRight = undefined) => (
+      <EntryContainerTabs
+        isEditable={isEditable}
+        openedFile={openedFile}
+        openPanel={openPanel}
+        toggleProperties={toggleProperties}
+        marginRight={marginRight}
+      />
+    );
 
-      if (!autoSave && !editFile) {
-        return tabsComponent();
-      }
-
-      return (
-        <div
-          style={{
-            position: 'relative',
-            overflow: 'hidden',
-            height: '100%'
-          }}
-        >
-          {tabsComponent('160px')}
-          <div
-            style={{
-              zIndex: 1,
-              position: 'absolute',
-              right: 10,
-              top: 8,
-              backgroundColor: theme.palette.background.default,
-              display: 'flex',
-              alignItems: 'center'
-            }}
-          >
-            {autoSave}
-            {editFile}
-          </div>
-        </div>
-      );
-    };
-    /*let initSize;
-    if (isPropPanelVisible) {
-      initSize = openedFile.isFile ? settings.entrySplitSize : '100%';
-    } else {
-      initSize = defaultSplitSize; // '0%';
-    }*/
+    if (!autoSave && !editFile) {
+      return tabsComponent();
+    }
 
     return (
       <div
         style={{
-          // height: 'calc(100% - 47px)',
-          height: '100%',
-          //minHeight: '100%',
-          ...(tabIndex !== undefined && propertiesStyles)
+          position: 'relative',
+          overflow: 'hidden',
+          height: '100%'
         }}
       >
-        <Root>
-          {openedFile.path !== undefined ? (
-            <>
-              {toolbarButtons()}
-              {tabs()}
-            </>
-          ) : (
-            <div>{t('core:noEntrySelected')}</div>
-          )}
-        </Root>
-        {openedFile.isFile && (
-          <FileView
-            key="FileViewID"
-            openedFile={openedFile}
-            isFullscreen={isFullscreen}
-            fileViewer={fileViewer}
-            fileViewerContainer={fileViewerContainer}
-            toggleFullScreen={toggleFullScreen}
-            eventID={eventID.current}
-            height={tabIndex !== undefined ? '100%' : 'calc(100% - 100px)'}
-          />
-        )}
+        {tabsComponent('160px')}
+        <div
+          style={{
+            zIndex: 1,
+            position: 'absolute',
+            right: 10,
+            top: 8,
+            backgroundColor: theme.palette.background.default,
+            display: 'flex',
+            alignItems: 'center'
+          }}
+        >
+          {autoSave}
+          {editFile}
+        </div>
       </div>
     );
   };
+
+  if (openedFile.path === undefined) {
+    return <div>{t('core:noEntrySelected')}</div>;
+  }
 
   return (
     <GlobalHotKeys
@@ -1016,6 +881,62 @@ function EntryContainer() {
         toggleFullScreen: keyBindings.toggleFullScreen
       }}
     >
+      <div
+        style={{
+          // height: 'calc(100% - 47px)',
+          height: '100%',
+          //minHeight: '100%',
+          ...(tabIndex !== undefined && propertiesStyles)
+        }}
+      >
+        <div
+          style={{
+            width: '100%',
+            flexDirection: 'column',
+            flex: '1 1 100%',
+            display: 'flex',
+            backgroundColor: theme.palette.background.default,
+            borderBottom: '5px solid ' + theme.palette.background.default,
+            overflow: 'hidden'
+          }}
+        >
+          <Box
+            style={{
+              paddingLeft: 0,
+              paddingRight: 50,
+              paddingTop: 0,
+              minHeight: 50,
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'flex-start'
+            }}
+          >
+            <EntryContainerTitle
+              isFileChanged={fileChanged.current}
+              openedFile={openedFile}
+              reloadDocument={reloadDocument}
+              toggleFullScreen={toggleFullScreen}
+            />
+            <EntryContainerNav
+              isFile={openedFile.isFile}
+              startClosingFile={startClosingFile}
+            />
+          </Box>
+          {tabs()}
+        </div>
+        {openedFile.isFile && (
+          <FileView
+            key="FileViewID"
+            openedFile={openedFile}
+            isFullscreen={isFullscreen}
+            fileViewer={fileViewer}
+            fileViewerContainer={fileViewerContainer}
+            toggleFullScreen={toggleFullScreen}
+            eventID={eventID.current}
+            height={tabIndex !== undefined ? '100%' : 'calc(100% - 100px)'}
+          />
+        )}
+      </div>
       {isSaveBeforeCloseConfirmDialogOpened && (
         <ConfirmDialog
           open={isSaveBeforeCloseConfirmDialogOpened}
@@ -1082,7 +1003,6 @@ function EntryContainer() {
       />
       {/* eslint-disable-next-line jsx-a11y/anchor-has-content,jsx-a11y/anchor-is-valid */}
       <a href="#" id="downloadFile" />
-      {renderPanels()}
     </GlobalHotKeys>
   );
 }
