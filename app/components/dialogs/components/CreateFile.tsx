@@ -39,6 +39,8 @@ import { FormControl } from '@mui/material';
 import { fileNameValidation } from '-/services/utils-io';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
 import { useTranslation } from 'react-i18next';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 const PREFIX = 'CreateFile';
 
@@ -75,7 +77,9 @@ function CreateFile(props: Props) {
       AppConfig.endTagContainer
   );
   const [inputError, setInputError] = useState<boolean>(false);
-  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+
+  const { createFileAdvanced } = useOpenedEntryContext();
+  const [ignored, forceUpdate] = useReducer(x => x + 1, 0, undefined);
   const fileContent = '';
 
   const noSuitableLocation = !targetDirectoryPath;
@@ -96,13 +100,11 @@ function CreateFile(props: Props) {
   function createRichTextFile() {
     if (targetDirectoryPath && !fileNameValidation(fileName.current)) {
       loadLocation();
-      dispatch(
-        AppActions.createFileAdvanced(
-          targetDirectoryPath,
-          fileName.current,
-          fileContent,
-          'html'
-        )
+      createFileAdvanced(
+        targetDirectoryPath,
+        fileName.current,
+        fileContent,
+        'html'
       );
       onClose();
     }
@@ -111,13 +113,11 @@ function CreateFile(props: Props) {
   function createTextFile() {
     if (targetDirectoryPath && !fileNameValidation(fileName.current)) {
       loadLocation();
-      dispatch(
-        AppActions.createFileAdvanced(
-          targetDirectoryPath,
-          fileName.current,
-          fileContent,
-          'txt'
-        )
+      createFileAdvanced(
+        targetDirectoryPath,
+        fileName.current,
+        fileContent,
+        'txt'
       );
       onClose();
     }
@@ -126,13 +126,11 @@ function CreateFile(props: Props) {
   function createMarkdownFile() {
     if (targetDirectoryPath && !fileNameValidation(fileName.current)) {
       loadLocation();
-      dispatch(
-        AppActions.createFileAdvanced(
-          targetDirectoryPath,
-          fileName.current,
-          fileContent,
-          'md'
-        )
+      createFileAdvanced(
+        targetDirectoryPath,
+        fileName.current,
+        fileContent,
+        'md'
       );
       onClose();
     }

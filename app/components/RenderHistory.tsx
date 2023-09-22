@@ -39,6 +39,7 @@ import {
   AppDispatch,
   getCurrentLocationId
 } from '-/reducers/app';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 interface Props {
   historyKey: string;
@@ -50,6 +51,7 @@ interface Props {
 function RenderHistory(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
+  const { openEntry } = useOpenedEntryContext();
   const currentLocationId = useSelector(getCurrentLocationId);
   const { historyKey, items, update, maxItems, showDelete = true } = props;
 
@@ -58,9 +60,6 @@ function RenderHistory(props: Props) {
 
   const openLocationByIdDispatch = locationId =>
     dispatch(AppActions.openLocationById(locationId));
-
-  const openEntryDispatch = entryPath =>
-    dispatch(AppActions.openEntry(entryPath));
 
   return (
     <>
@@ -89,7 +88,7 @@ function RenderHistory(props: Props) {
                       currentLocationId,
                       openLinkDispatch,
                       openLocationByIdDispatch,
-                      openEntryDispatch
+                      openEntry
                     )
                   }
                 >

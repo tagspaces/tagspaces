@@ -71,6 +71,7 @@ import { getSearchOptions } from '-/components/SearchOptionsMenu';
 import { dataTidFormat } from '-/services/test';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 interface Props {
   style?: any;
@@ -92,6 +93,7 @@ interface Props {
 function SearchAutocomplete(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
+  const { openEntry } = useOpenedEntryContext();
   const dispatch: AppDispatch = useDispatch();
   const indexing = useSelector(isIndexing);
   const searchQuery: TS.SearchQuery = useSelector(getSearchQuery);
@@ -108,8 +110,6 @@ function SearchAutocomplete(props: Props) {
     dispatch(AppActions.openLink(link, options));
   const openLocationByIdDispatch = locationId =>
     dispatch(AppActions.openLocationById(locationId));
-  const openEntryDispatch = entryPath =>
-    dispatch(AppActions.openEntry(entryPath));
 
   const { setTextQuery, textQuery, open, setAnchorSearch } = props;
   // const [, forceUpdate] = useReducer(x => x + 1, 0);
@@ -1005,7 +1005,7 @@ function SearchAutocomplete(props: Props) {
               currentLocation.uuid,
               openLinkDispatch,
               openLocationByIdDispatch,
-              openEntryDispatch
+              openEntry
             );
           }
           searchOptions.current = getSearchOptions();
@@ -1025,7 +1025,7 @@ function SearchAutocomplete(props: Props) {
               currentLocation.uuid,
               openLinkDispatch,
               openLocationByIdDispatch,
-              openEntryDispatch
+              openEntry
             );
           }
           searchOptions.current = getSearchOptions();

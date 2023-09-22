@@ -30,12 +30,12 @@ import {
 } from '-/reducers/app';
 import Revisions from '-/components/Revisions';
 import EntryProperties from '-/components/EntryProperties';
-import TaggingActions from '-/reducers/tagging-actions';
 import { TS } from '-/tagspaces.namespace';
 import {
   actions as SettingsActions,
   getEntryContainerTab,
-  getMapTileServer
+  getMapTileServer,
+  isDesktopMode
 } from '-/reducers/settings';
 import {
   FolderPropertiesIcon,
@@ -56,6 +56,8 @@ const StyledTabs = styled((props: StyledTabsProps) => (
     {...props}
     variant="scrollable"
     scrollButtons="auto"
+    allowScrollButtonsMobile
+    selectionFollowsFocus
     TabIndicatorProps={{ children: <span className="MuiTabs-indicatorSpan" /> }}
   />
 ))(({ theme }) => ({
@@ -105,7 +107,6 @@ interface EntryContainerTabsProps {
   openedFile: OpenedEntry;
   openPanel: () => void;
   toggleProperties: () => void;
-  isDesktopMode: boolean;
   isEditable: boolean;
   marginRight: string;
 }
@@ -126,11 +127,12 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   } = props;
 
   const { t } = useTranslation();
+
   const tabIndex = useSelector(getEntryContainerTab);
   const readOnlyMode = useSelector(isReadOnlyMode);
   const tileServer = useSelector(getMapTileServer);
+  const desktopMode = useSelector(isDesktopMode);
   const dispatch: AppDispatch = useDispatch();
-  const { isDesktopMode } = props;
 
   function TsTabPanel(tprops: TabPanelProps) {
     const { children, value, index, ...other } = tprops;
@@ -158,17 +160,6 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   // Create functions that dispatch actions
   const handleRenameFile = (filePath: string, newFilePath: string) =>
     dispatch(AppActions.renameFile(filePath, newFilePath));
-
-  const handleRenameDirectory = (
-    directoryPath: string,
-    newDirectoryName: string
-  ) => dispatch(AppActions.renameDirectory(directoryPath, newDirectoryName));
-
-  const handleAddTags = (
-    paths: Array<string>,
-    tags: Array<TS.Tag>,
-    updateIndex = true
-  ) => dispatch(TaggingActions.addTags(paths, tags, updateIndex));
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     dispatch(SettingsActions.setEntryContainerTab(newValue));
@@ -254,14 +245,14 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
           <StyledTab
             data-tid="detailsTabTID"
             icon={<FolderPropertiesIcon />}
-            label={isDesktopMode && t('core:details')}
+            label={desktopMode && t('core:details')}
             {...a11yProps(0)}
             onClick={handleTabClick}
           />
           <StyledTab
             data-tid="descriptionTabTID"
             icon={<DescriptionIcon />}
-            label={isDesktopMode && t('core:filePropertiesDescription')}
+            label={desktopMode && t('core:filePropertiesDescription')}
             {...a11yProps(1)}
             onClick={handleTabClick}
           />
@@ -269,7 +260,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
             <StyledTab
               data-tid="revisionsTabTID"
               icon={<RevisionIcon />}
-              label={isDesktopMode && t('core:revisions')}
+              label={desktopMode && t('core:revisions')}
               {...a11yProps(2)}
               onClick={handleTabClick}
             />
@@ -279,10 +270,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
       <TsTabPanel value={selectedTabIndex} index={0}>
         <EntryProperties
           key={openedFile.path}
-          openedEntry={openedFile}
           renameFile={handleRenameFile}
-          renameDirectory={handleRenameDirectory}
-          addTags={handleAddTags}
           isReadOnlyMode={readOnlyMode}
           tileServer={tileServer}
         />

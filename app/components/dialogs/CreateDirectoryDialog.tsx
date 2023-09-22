@@ -35,6 +35,8 @@ import { joinPaths } from '@tagspaces/tagspaces-common/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import PlatformIO from '-/services/platform-facade';
 import { useTranslation } from 'react-i18next';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useFsActionsContext } from '-/hooks/useFsActionsContext';
 
 interface Props {
   open: boolean;
@@ -46,7 +48,7 @@ interface Props {
 
 function CreateDirectoryDialog(props: Props) {
   const { t } = useTranslation();
-  const dispatch: AppDispatch = useDispatch();
+  const { createDirectory } = useFsActionsContext();
   const [inputError, setInputError] = useState(false);
   const isFirstRun = useRef(true);
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
@@ -83,16 +85,13 @@ function CreateDirectoryDialog(props: Props) {
           : currentDirectoryPath,
         name
       );
-      dispatch(
-        AppActions.createDirectory(
-          dirPath,
-          reflect !== undefined ? reflect : true
-        )
-      ).then(() => {
-        if (props.callback) {
-          props.callback(dirPath);
+      createDirectory(dirPath, reflect !== undefined ? reflect : true).then(
+        () => {
+          if (props.callback) {
+            props.callback(dirPath);
+          }
         }
-      });
+      );
       resetState();
       props.onClose();
     }

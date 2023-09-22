@@ -38,7 +38,6 @@ import {
   getSelectedEntries,
   isReadOnlyMode
 } from '-/reducers/app';
-import TaggingActions from '-/reducers/tagging-actions';
 import FileUploadContainer, {
   FileUploadContainerRef
 } from '-/components/FileUploadContainer';
@@ -49,6 +48,8 @@ import PlatformFacade from '-/services/platform-facade';
 import { getDirectoryMenuItems } from '-/perspectives/common/DirectoryMenuItems';
 import { getCurrentLocation, getLocations } from '-/reducers/locations';
 import { useTranslation } from 'react-i18next';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 
 interface Props {
   open: boolean;
@@ -68,6 +69,8 @@ interface Props {
 
 function DirectoryMenu(props: Props) {
   const { t } = useTranslation();
+  const { openEntry } = useOpenedEntryContext();
+  const { addTags } = useTaggingActionsContext();
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
   const {
     open,
@@ -101,8 +104,6 @@ function DirectoryMenu(props: Props) {
     dispatch(AppActions.toggleCreateDirectoryDialog());
   };
 
-  const openEntry = path => dispatch(AppActions.openEntry(path, true));
-
   const reflectCreateEntry = (path, isFile) => {
     dispatch(AppActions.reflectCreateEntry(path, isFile));
   };
@@ -113,10 +114,6 @@ function DirectoryMenu(props: Props) {
 
   const toggleProgressDialog = () => {
     dispatch(AppActions.toggleProgressDialog());
-  };
-
-  const addTags = (paths, tags, updateIndex) => {
-    dispatch(TaggingActions.addTags(paths, tags, updateIndex));
   };
 
   const toggleDeleteMultipleEntriesDialog = () => {

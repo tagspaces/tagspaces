@@ -54,6 +54,7 @@ import {
   GridStyles
 } from '-/perspectives/grid-perspective/components/styles.css';
 import { useTranslation } from 'react-i18next';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 interface Props {
   prefixDataTID?: string;
@@ -79,6 +80,7 @@ function MainToolbar(props: Props) {
   } = props;
 
   const { t } = useTranslation();
+  const { openEntry } = useOpenedEntryContext();
   const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
     getSelectedEntries
   );
@@ -89,7 +91,7 @@ function MainToolbar(props: Props) {
   const directoryPath = useSelector(getDirectoryPath);
 
   function showProperties() {
-    return dispatch(AppActions.openEntry(directoryPath, true));
+    return openEntry(directoryPath, true);
   }
 
   return (

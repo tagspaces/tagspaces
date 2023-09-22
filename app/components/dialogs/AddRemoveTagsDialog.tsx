@@ -41,9 +41,9 @@ import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import TaggingActions from '-/reducers/tagging-actions';
 import { AppDispatch } from '-/reducers/app';
 import { useTranslation } from 'react-i18next';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 
 interface Props {
   open: boolean;
@@ -53,7 +53,8 @@ interface Props {
 
 function AddRemoveTagsDialog(props: Props) {
   const { t } = useTranslation();
-  const dispatch: AppDispatch = useDispatch();
+
+  const { addTags, removeTags, removeAllTags } = useTaggingActionsContext();
   const [newlyAddedTags, setNewlyAddedTags] = useState<Array<TS.Tag>>([]);
 
   const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
@@ -76,37 +77,31 @@ function AddRemoveTagsDialog(props: Props) {
     props.onClose(clearSelection);
   };
 
-  const addTags = () => {
+  const addTagsAction = () => {
     if (props.selectedEntries && props.selectedEntries.length > 0) {
-      dispatch(
-        TaggingActions.addTags(
-          selectedEntries.map(entry => entry.path),
-          newlyAddedTags
-        )
+      addTags(
+        selectedEntries.map(entry => entry.path),
+        newlyAddedTags
       );
     }
     onCloseDialog(true);
   };
 
-  const removeTags = () => {
+  const removeTagsAction = () => {
     const { selectedEntries } = props;
     if (selectedEntries && selectedEntries.length > 0) {
-      dispatch(
-        TaggingActions.removeTags(
-          selectedEntries.map(entry => entry.path),
-          newlyAddedTags
-        )
+      removeTags(
+        selectedEntries.map(entry => entry.path),
+        newlyAddedTags
       );
     }
     onCloseDialog(true);
   };
 
-  const removeAllTags = () => {
+  const removeAllTagsAction = () => {
     const { selectedEntries } = props;
     if (selectedEntries && selectedEntries.length > 0) {
-      dispatch(
-        TaggingActions.removeAllTags(selectedEntries.map(entry => entry.path))
-      );
+      removeAllTags(selectedEntries.map(entry => entry.path));
     }
     onCloseDialog(true);
   };
@@ -186,7 +181,7 @@ function AddRemoveTagsDialog(props: Props) {
           data-tid="cleanTagsMultipleEntries"
           disabled={selectedEntries.length < 1}
           color="primary"
-          onClick={removeAllTags}
+          onClick={removeAllTagsAction}
         >
           {t('core:tagOperationCleanTags')}
         </Button>
@@ -194,7 +189,7 @@ function AddRemoveTagsDialog(props: Props) {
           data-tid="removeTagsMultipleEntries"
           disabled={disabledButtons}
           color="primary"
-          onClick={removeTags}
+          onClick={removeTagsAction}
         >
           {t('core:tagOperationRemoveTag')}
         </Button>
@@ -203,7 +198,7 @@ function AddRemoveTagsDialog(props: Props) {
           disabled={disabledButtons}
           color="primary"
           variant="contained"
-          onClick={addTags}
+          onClick={addTagsAction}
         >
           {t('core:tagOperationAddTag')}
         </Button>

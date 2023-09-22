@@ -37,6 +37,7 @@ import FileDownloadIcon from '@mui/icons-material/AssignmentReturned';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { isDesktopMode } from '-/reducers/settings';
 import { useTranslation } from 'react-i18next';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 interface Props {
   anchorEl: null | HTMLElement;
@@ -60,6 +61,7 @@ function EntryContainerMenu(props: Props) {
   } = props;
   const { t } = useTranslation();
   // const theme = useTheme();
+  const { toggleEntryFullWidth } = useOpenedEntryContext();
   const readOnlyMode = useSelector(isReadOnlyMode);
   const desktopMode = useSelector(isDesktopMode);
   const dispatch: AppDispatch = useDispatch();
@@ -185,6 +187,7 @@ function EntryContainerMenu(props: Props) {
   if (openedEntry.isFile) {
     menuItems.push(
       <MenuItem
+        key={'downloadFileKey'}
         data-tid="downloadFileTID"
         aria-label={t('core:downloadFile')}
         onClick={() => downloadFile()}
@@ -195,9 +198,10 @@ function EntryContainerMenu(props: Props) {
         <ListItemText primary={t('core:downloadFile')} />
       </MenuItem>
     );
-    menuItems.push(<Divider />);
+    menuItems.push(<Divider key={'divider1'} />);
     menuItems.push(
       <MenuItem
+        key={'fileContainerSwitchToFullScreenKey'}
         data-tid="fileContainerSwitchToFullScreen"
         aria-label={t('core:switchToFullscreen')}
         onClick={() => {
@@ -214,10 +218,11 @@ function EntryContainerMenu(props: Props) {
     if (desktopMode) {
       menuItems.push(
         <MenuItem
+          key={'openInFullWidthKey'}
           data-tid="openInFullWidthTID"
           aria-label={t('core:openInFullWidth')}
           onClick={() => {
-            dispatch(AppActions.toggleEntryFullWidth());
+            toggleEntryFullWidth();
             handleClose();
           }}
         >
@@ -228,9 +233,10 @@ function EntryContainerMenu(props: Props) {
         </MenuItem>
       );
     }
-    menuItems.push(<Divider />);
+    menuItems.push(<Divider key={'divider2'} />);
     menuItems.push(
       <MenuItem
+        key={'navigateToParentKey'}
         data-tid="navigateToParentTID"
         aria-label={t('core:navigateToParentDirectory')}
         onClick={navigateToFolder}
@@ -244,6 +250,7 @@ function EntryContainerMenu(props: Props) {
     if (!AppConfig.isCordova) {
       menuItems.push(
         <MenuItem
+          key={'openInWindowKey'}
           data-tid="openInWindowTID"
           aria-label={t('core:openInWindow')}
           onClick={openInNewWindow}
@@ -258,6 +265,7 @@ function EntryContainerMenu(props: Props) {
     if (AppConfig.isCordova) {
       menuItems.push(
         <MenuItem
+          key={'shareFileKey'}
           data-tid="shareFileTID"
           aria-label={t('core:shareFile')}
           onClick={() => shareFile(`file:///${openedEntry.path}`)}
@@ -278,6 +286,7 @@ function EntryContainerMenu(props: Props) {
     ) {
       menuItems.push(
         <MenuItem
+          key={'openFileExternallyKey'}
           data-tid="openFileExternallyTID"
           aria-label={t('core:openFileExternally')}
           onClick={openNatively}
@@ -291,6 +300,7 @@ function EntryContainerMenu(props: Props) {
     }
     menuItems.push(
       <MenuItem
+        key={'reloadPropertiesKey'}
         data-tid="reloadPropertiesTID"
         aria-label={t('core:reloadFile')}
         onClick={() => {
@@ -305,9 +315,10 @@ function EntryContainerMenu(props: Props) {
       </MenuItem>
     );
     if (!readOnlyMode) {
-      menuItems.push(<Divider />);
+      menuItems.push(<Divider key={'divider3'} />);
       menuItems.push(
         <MenuItem
+          key={'deleteEntryKey'}
           data-tid="deleteEntryTID"
           aria-label={t('core:deleteEntry')}
           onClick={() => {
@@ -326,6 +337,7 @@ function EntryContainerMenu(props: Props) {
     // folder
     menuItems.push(
       <MenuItem
+        key={'openInMainAreaKey'}
         data-tid="openInMainAreaTID"
         aria-label={t('core:openInMainArea')}
         onClick={navigateToFolder}
@@ -339,6 +351,7 @@ function EntryContainerMenu(props: Props) {
     if (!AppConfig.isCordova) {
       menuItems.push(
         <MenuItem
+          key={'openInWindowKey'}
           data-tid="openInWindowTID"
           aria-label={t('core:openInWindow')}
           onClick={openInNewWindow}
@@ -359,6 +372,7 @@ function EntryContainerMenu(props: Props) {
     ) {
       menuItems.push(
         <MenuItem
+          key={'openDirectoryExternallyKey'}
           data-tid="openDirectoryExternallyTID"
           aria-label={t('core:openDirectoryExternally')}
           onClick={openNatively}
@@ -373,10 +387,11 @@ function EntryContainerMenu(props: Props) {
     if (desktopMode) {
       menuItems.push(
         <MenuItem
+          key={'openInFullWidthKey'}
           data-tid="openInFullWidthTID"
           aria-label={t('core:openInFullWidth')}
           onClick={() => {
-            dispatch(AppActions.toggleEntryFullWidth());
+            toggleEntryFullWidth();
             handleClose();
           }}
         >
@@ -387,9 +402,10 @@ function EntryContainerMenu(props: Props) {
         </MenuItem>
       );
     }
-    menuItems.push(<Divider />);
+    menuItems.push(<Divider key={'divider4'} />);
     menuItems.push(
       <MenuItem
+        key={'reloadFolderKey'}
         data-tid="reloadFolderTID"
         aria-label={t('core:reloadDirectory')}
         onClick={() => {
@@ -406,6 +422,7 @@ function EntryContainerMenu(props: Props) {
     if (!readOnlyMode) {
       menuItems.push(
         <MenuItem
+          key={'deleteFolderKey'}
           data-tid="deleteFolderTID"
           aria-label={t('core:deleteDirectory')}
           onClick={() => {

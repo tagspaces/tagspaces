@@ -1,32 +1,23 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
-import { ProTooltip } from '-/components/HelperComponents';
-import { Pro } from '-/pro';
-import { convertMarkDown } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { getDirectoryPath, getOpenedFiles, OpenedEntry } from '-/reducers/app';
-import { useDescriptionContext } from '-/components/hooks/useDescriptionContext';
+import { getDirectoryPath, OpenedEntry } from '-/reducers/app';
+import { useDescriptionContext } from '-/hooks/useDescriptionContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import EditDescriptionButtons from '-/components/EditDescriptionButtons';
 
 const PREFIX = 'EditDescription';
 
 const classes = {
-  button: `${PREFIX}-button`,
   mdHelpers: `${PREFIX}-mdHelpers`,
   formControl: `${PREFIX}-formControl`
 };
 
 const Root = styled('div')(({ theme }) => ({
   height: '90%',
-  [`& .${classes.button}`]: {
-    position: 'relative',
-    padding: '8px 12px 6px 8px',
-    margin: '0'
-  },
-
   [`& .${classes.mdHelpers}`]: {
     borderRadius: '0.25rem',
     paddingLeft: '0.25rem',
@@ -42,21 +33,19 @@ const Root = styled('div')(({ theme }) => ({
 function EditDescription() {
   const { t } = useTranslation();
   const theme = useTheme();
-  const openedFiles: Array<OpenedEntry> = useSelector(getOpenedFiles);
-  const openedFile: OpenedEntry = openedFiles[0];
+  const { openedEntries } = useOpenedEntryContext();
+  const openedFile: OpenedEntry = openedEntries[0];
   const currentFolder = useSelector(getDirectoryPath);
   const fileDescriptionRef = useRef<MilkdownRef>(null);
-  const {
-    description,
-    setDescription,
-    saveDescription
-  } = useDescriptionContext();
+  const { description, setDescription } = useDescriptionContext();
+
   const [editMode, setEditMode] = useState<boolean>(false);
   const descriptionFocus = useRef<boolean>(false);
+  const descriptionButtonsRef = useRef(null);
 
   useEffect(() => {
     fileDescriptionRef.current?.setDarkMode(theme.palette.mode === 'dark');
-  }, [theme]); // , settings]);
+  }, [theme]);
 
   /*const keyBindingHandlers = {
     saveDocument: () => {
@@ -72,65 +61,13 @@ function EditDescription() {
   const milkdownListener = React.useCallback((markdown: string) => {
     if (descriptionFocus.current && markdown !== description) {
       setDescription(markdown);
+      descriptionButtonsRef.current.setDescriptionChanged(true);
     }
     // update codeMirror
     /*const { current } = codeMirrorRef;
       if (!current) return;
       current.update(markdown);*/
   }, []);
-
-  const printHTML = () => {
-    const sanitizedDescription = description
-      ? convertMarkDown(description, currentFolder)
-      : t('core:addMarkdownDescription');
-
-    const printWin = window.open('', 'PRINT', 'height=400,width=600');
-    printWin.document.write(
-      '<html><head><title>' + currentFolder + ' description</title>'
-    );
-    printWin.document.write('</head><body >');
-    printWin.document.write(sanitizedDescription);
-    printWin.document.write('</body></html>');
-    printWin.document.close(); // necessary for IE >= 10
-    printWin.focus(); // necessary for IE >= 10*/
-    printWin.print();
-    // printWin.close();
-    return true;
-  };
-
-  const editSaveActions = (
-    <span style={{ float: 'right' }}>
-      {editMode && (
-        <Button
-          className={classes.button}
-          onClick={() => {
-            setEditMode(false);
-          }}
-        >
-          {t('core:cancel')}
-        </Button>
-      )}
-      {!editMode && (
-        <Button className={classes.button} onClick={printHTML}>
-          {t('core:print')}
-        </Button>
-      )}
-      <ProTooltip tooltip={t('editDescription')}>
-        <Button
-          data-tid="editDescriptionTID"
-          color="primary"
-          className={classes.button}
-          disabled={!Pro}
-          onClick={() => {
-            setEditMode(!editMode);
-            saveDescription();
-          }}
-        >
-          {editMode ? t('core:confirmSaveButton') : t('core:edit')}
-        </Button>
-      </ProTooltip>
-    </span>
-  );
 
   const noDescription = !description || description.length < 1;
   return (
@@ -154,7 +91,13 @@ function EditDescription() {
           {t('core:filePropertiesDescription')}
         </Typography>*/}
       </span>
-      {!openedFile.editMode && editSaveActions}
+      {!openedFile.editMode && (
+        <EditDescriptionButtons
+          buttonsRef={descriptionButtonsRef}
+          editMode={editMode}
+          setEditMode={setEditMode}
+        />
+      )}
       <div
         data-tid="descriptionTID"
         onDoubleClick={() => {

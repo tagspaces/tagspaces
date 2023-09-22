@@ -130,7 +130,18 @@ function EntryContainerTitle(props: Props) {
   }
 
   return (
-    <>
+    <Box
+      style={{
+        paddingLeft: 5,
+        display: 'flex',
+        alignItems: 'center',
+        marginRight: openedFile.isFile ? 90 : 0,
+        flexDirection: 'row',
+        flex: '1 1',
+        overflowX: 'auto',
+        overflowY: 'hidden'
+      }}
+    >
       {openedFile.isFile ? (
         <>
           {isFileChanged ? (
@@ -240,7 +251,7 @@ function EntryContainerTitle(props: Props) {
         sharingParentFolderLink={sharingParentFolderLink}
         toggleFullScreen={toggleFullScreen}
       />
-    </>
+    </Box>
   );
 }
 
