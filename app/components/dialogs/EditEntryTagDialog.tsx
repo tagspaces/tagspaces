@@ -48,22 +48,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 
-const PREFIX = 'EditEntryTagDialog';
-
-const classes = {
-  root: `${PREFIX}-root`
-};
-
-const StyledDialog = styled(Dialog)(() => ({
-  [`& .${classes.root}`]: {
-    minWidth: 400,
-    height: '100%',
-    marginBottom: 30
-  }
-}));
-
 interface Props {
-  classes: any;
   open: boolean;
   onClose: () => void;
   selectedEntries: Array<TS.FileSystemEntry>;
@@ -152,7 +137,6 @@ function EditEntryTagDialog(props: Props) {
     return (
       <DialogContent
         data-tid="editEntryTagDialog"
-        className={classes.root}
         style={{
           overflow: 'auto'
         }}
@@ -245,10 +229,15 @@ function EditEntryTagDialog(props: Props) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
-    <StyledDialog
+    <Dialog
       open={open}
       fullScreen={fullScreen}
       onClose={onClose}
+      style={{
+        minWidth: 400,
+        height: '100%',
+        marginBottom: 30
+      }}
       onKeyDown={event => {
         if (event.key === 'Enter' || event.keyCode === 13) {
           event.preventDefault();
@@ -262,7 +251,7 @@ function EditEntryTagDialog(props: Props) {
       {renderTitle()}
       {renderContent()}
       {renderActions()}
-    </StyledDialog>
+    </Dialog>
   );
 }
 
