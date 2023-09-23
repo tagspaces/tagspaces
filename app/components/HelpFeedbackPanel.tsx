@@ -68,14 +68,15 @@ function HelpFeedbackPanel(props: Props) {
     <SidePanel
       style={{
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        marginLeft: 5
       }}
     >
       <div className={classes.toolbar}>
         <Typography
           className={classNames(classes.panelTitle, classes.header)}
           variant="subtitle1"
-          style={{ paddingLeft: 14 }}
+          style={{ paddingLeft: 0 }}
         >
           {t('core:helpFeedback')}
         </Typography>

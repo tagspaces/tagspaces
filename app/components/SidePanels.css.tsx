@@ -1,5 +1,3 @@
-import { styled } from '@mui/material/styles';
-
 /**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
@@ -17,6 +15,8 @@ import { styled } from '@mui/material/styles';
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
+import { styled } from '@mui/material/styles';
+
 const PREFIX = 'SidePanel';
 export const classes = {
   panel: `${PREFIX}-panel`,
@@ -36,7 +36,7 @@ export const classes = {
 export const SidePanel = styled('div')(({ theme }) => ({
   height: '100%',
   paddingLeft: 5,
-  paddingRight: 5,
+  paddingRight: 0,
   [`& .${classes.fontIcon}`]: {
     color: theme.palette.text.primary
   },

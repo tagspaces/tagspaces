@@ -184,14 +184,14 @@ function StoredSearches(props: Props) {
         flexDirection: 'column',
         borderRadius: 5,
         marginLeft: 5,
-        marginRight: 5
+        marginRight: 0
       }}
     >
       <div className={classes.toolbar}>
         <Typography
           className={classNames(classes.panelTitle, classes.header)}
           variant="subtitle1"
-          style={{ paddingLeft: 14 }}
+          style={{ paddingLeft: 0 }}
         >
           {t('core:quickAccess')}
         </Typography>
