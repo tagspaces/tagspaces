@@ -20,7 +20,7 @@ const Root = styled('span')(({ theme }) => ({
   float: 'right',
   [`& .${classes.button}`]: {
     position: 'relative',
-    padding: '8px 12px 6px 8px',
+    padding: '4px 10px 4px 10px',
     margin: '0'
   }
 }));

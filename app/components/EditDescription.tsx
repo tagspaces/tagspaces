@@ -12,21 +12,16 @@ import EditDescriptionButtons from '-/components/EditDescriptionButtons';
 const PREFIX = 'EditDescription';
 
 const classes = {
-  mdHelpers: `${PREFIX}-mdHelpers`,
-  formControl: `${PREFIX}-formControl`
+  mdHelpers: `${PREFIX}-mdHelpers`
 };
 
-const Root = styled('div')(({ theme }) => ({
+const EditDescriptionRoot = styled('div')(({ theme }) => ({
   height: '90%',
   [`& .${classes.mdHelpers}`]: {
     borderRadius: '0.25rem',
     paddingLeft: '0.25rem',
     paddingRight: '0.25rem',
     backgroundColor: '#bcc0c561'
-  },
-  [`& .${classes.formControl}`]: {
-    marginLeft: theme.spacing(0),
-    width: '100%'
   }
 }));
 
@@ -71,26 +66,7 @@ function EditDescription() {
 
   const noDescription = !description || description.length < 1;
   return (
-    <Root>
-      <span style={{ verticalAlign: 'sub', paddingLeft: 5 }}>
-        <Typography
-          variant="caption"
-          style={{
-            color: theme.palette.text.primary
-          }}
-        >
-          Markdown help: <i className={classes.mdHelpers}>_italic_</i>{' '}
-          <b className={classes.mdHelpers}>**bold**</b>{' '}
-          <span className={classes.mdHelpers}>* list item</span>{' '}
-          <span className={classes.mdHelpers}>[Link text](http://...)</span>
-        </Typography>
-        {/*<Typography
-          style={{ color: theme.palette.text.primary }}
-          variant="caption"
-        >
-          {t('core:filePropertiesDescription')}
-        </Typography>*/}
-      </span>
+    <EditDescriptionRoot>
       {!openedFile.editMode && (
         <EditDescriptionButtons
           buttonsRef={descriptionButtonsRef}
@@ -108,10 +84,7 @@ function EditDescription() {
         style={{
           border: '1px solid lightgray',
           borderRadius: 5,
-          //minHeight: 150,
-          //maxHeight: 200,
-          // maxHeight: noDescription && !editMode ? 100 : 250,
-          height: '100%',
+          height: 'calc(100% - 40px)',
           width: 'calc(100% - 8px)',
           overflowY: 'auto'
         }}
@@ -135,13 +108,13 @@ function EditDescription() {
           <>
             <style>
               {`
-        .prose a {
-             color: ${theme.palette.primary.main};
-        }
-        .prose img {
-             max-width: 99%;
-        }
-        `}
+                .prose a {
+                    color: ${theme.palette.primary.main};
+                }
+                .prose img {
+                    max-width: 99%;
+                }
+             `}
             </style>
             <MilkdownEditor
               ref={fileDescriptionRef}
@@ -156,7 +129,20 @@ function EditDescription() {
           </>
         )}
       </div>
-    </Root>
+      <span style={{ verticalAlign: 'sub', paddingLeft: 5 }}>
+        <Typography
+          variant="caption"
+          style={{
+            color: theme.palette.text.primary
+          }}
+        >
+          Markdown help: <i className={classes.mdHelpers}>_italic_</i>{' '}
+          <b className={classes.mdHelpers}>**bold**</b>{' '}
+          <span className={classes.mdHelpers}>* list item</span>{' '}
+          <span className={classes.mdHelpers}>[Link text](http://...)</span>
+        </Typography>
+      </span>
+    </EditDescriptionRoot>
   );
 }
 

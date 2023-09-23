@@ -87,13 +87,6 @@ const StyledTab = styled((props: StyledTabProps) => (
   fontSize: theme.typography.pxToRem(15),
   marginRight: theme.spacing(1),
   minHeight: 45
-  // color: 'rgba(255, 255, 255, 0.7)',
-  /*'&.Mui-selected': {
-    color: '#fff',
-  },*/
-  /*'&.Mui-focusVisible': {
-    backgroundColor: 'rgba(100, 95, 228, 0.32)',
-  },*/
 }));
 
 function a11yProps(index: number) {
@@ -148,8 +141,9 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
           height: '100%',
           overflowY: 'auto',
           overflowX: 'hidden',
-          padding: 10
-          // ...(openedFile.isFile && { maxHeight: 400 })
+          paddingTop: 5,
+          paddingLeft: 10,
+          paddingRight: 10
         }}
       >
         {value === index && children}
@@ -175,52 +169,6 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
       toggleProperties();
     }
   };
-
-  /*const toggleEditDescriptionField = () => {
-    if (readOnlyMode) {
-      editDescription.current = undefined;
-      return;
-    }
-    if (!Pro) {
-      dispatch(
-        AppActions.showNotification(t('core:thisFunctionalityIsAvailableInPro'))
-      );
-      return;
-    }
-    if (!Pro.MetaOperations) {
-      dispatch(
-        AppActions.showNotification(t('Saving description not supported'))
-      );
-      return;
-    }
-    if (editDescription.current !== undefined) {
-      dispatch(AppActions.switchLocationTypeByID(openedFile.locationId)).then(
-        currentLocationId => {
-          Pro.MetaOperations.saveFsEntryMeta(openedFile.path, {
-            description: editDescription.current
-          })
-            .then(entryMeta => {
-              editDescription.current = undefined;
-              dispatch(AppActions.updateOpenedFile(openedFile.path, entryMeta));
-              dispatch(AppActions.switchCurrentLocationType(currentLocationId));
-              return true;
-            })
-            .catch(error => {
-              console.warn('Error saving description ' + error);
-              editDescription.current = undefined;
-              dispatch(AppActions.switchCurrentLocationType(currentLocationId));
-              dispatch(
-                AppActions.showNotification(t('Error saving description'))
-              );
-            });
-        }
-      );
-    } else if (openedFile.description) {
-      editDescription.current = openedFile.description;
-    } else {
-      editDescription.current = '';
-    }
-  };*/
 
   // directories must be always opened
   const selectedTabIndex =
