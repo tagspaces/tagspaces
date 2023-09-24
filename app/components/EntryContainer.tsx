@@ -938,16 +938,20 @@ function EntryContainer() {
               <div
                 style={{
                   textAlign: 'center',
-                  // paddingRight: 5,
                   maxHeight: 9,
                   minHeight: 9,
                   backgroundColor: theme.palette.background.default,
                   borderBottom: '1px solid ' + theme.palette.divider
-                  // color: theme.palette.divider
                 }}
                 onClick={toggleEntryPropertiesHeight}
               >
-                |||
+                <div
+                  style={{
+                    width: '30%',
+                    border: '1px solid ' + theme.palette.divider,
+                    margin: '2px auto'
+                  }}
+                ></div>
               </div>
             </Tooltip>
           )}
