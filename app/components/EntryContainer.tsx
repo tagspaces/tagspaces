@@ -933,7 +933,7 @@ function EntryContainer() {
             />
           </Box>
           {tabs()}
-          {openedFile.isFile && (
+          {openedFile.isFile && propertiesStyles !== undefined && (
             <Tooltip title="Toggle preview height">
               <div
                 style={{
