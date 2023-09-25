@@ -828,7 +828,7 @@ export const TaggingActionsContextProvider = ({
       removeAllTags,
       collectTagsFromLocation
     };
-  }, [openedEntries]);
+  }, [openedEntries, persistTagsInSidecarFile, addTagsToLibrary]);
 
   return (
     <TaggingActionsContext.Provider value={context}>
