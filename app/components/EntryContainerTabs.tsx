@@ -160,7 +160,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     previousTab.current = tabIndex;
     dispatch(SettingsActions.setEntryContainerTab(newValue));
     openPanel();
-    console.error('tab changed to:' + newValue);
+    // console.error('tab changed to:' + newValue);
   };
   const handleTabClick = (event: React.SyntheticEvent) => {
     if (
@@ -171,7 +171,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
       // when selected tab is clicked...
       dispatch(SettingsActions.setEntryContainerTab(undefined));
       toggleProperties();
-      console.error('tab click:' + tabIndex);
+      // console.error('tab click:' + tabIndex);
     } else {
       previousTab.current = tabIndex;
     }

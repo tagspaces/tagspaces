@@ -915,7 +915,7 @@ export const OpenedEntryContextProvider = ({
       reflectRenameDirectory,
       reflectDeleteDirectory
     };
-  }, [openedEntries]);
+  }, [openedEntries, isEntryInFullWidth]);
 
   return (
     <OpenedEntryContext.Provider value={context}>
