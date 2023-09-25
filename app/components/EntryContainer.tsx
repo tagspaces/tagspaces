@@ -110,13 +110,17 @@ function EntryContainer() {
   const openedFile = openedEntries[0];
   //const openedFilePath = useRef(openedFile.path);
 
-  const [propertiesStyles, setPropertiesStyles] = useState<React.CSSProperties>(
-    { display: 'flex', flexDirection: 'column' }
+  const openedPanelStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column'
+  };
+  const [isPanelOpened, setPanelOpened] = useState<boolean>(
+    tabIndex !== undefined
   );
 
-  const [isRevisionPanelVisible, setRevisionPanelVisible] = useState<boolean>(
+  /*const [isRevisionPanelVisible, setRevisionPanelVisible] = useState<boolean>(
     false
-  );
+  );*/
   const [isFullscreen, setFullscreen] = useState<boolean>(false);
   // eslint-disable-next-line no-unused-vars
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
@@ -670,26 +674,13 @@ function EntryContainer() {
   };*/
 
   const openPanel = () => {
-    setPropertiesStyles({ display: 'flex', flexDirection: 'column' });
-    /*if (!isPropertiesPanelVisible) {
-      percent.current = parseFloat(settings.entrySplitSize);
-      setPropertiesPanelVisible(true);
-    }*/
+    if (!isPanelOpened) {
+      setPanelOpened(true);
+    }
   };
 
-  /* const closePanel = () => {
-    if (isPropertiesPanelVisible) {
-      percent.current = undefined;
-      setPropertiesPanelVisible(false);
-    }
-  }; */
-
   const toggleProperties = () => {
-    if (propertiesStyles !== undefined) {
-      setPropertiesStyles(undefined);
-    } else {
-      setPropertiesStyles({ display: 'flex', flexDirection: 'column' });
-    }
+    setPanelOpened(!isPanelOpened);
   };
   const openNextFileAction = () => {
     openNextFile(openedFile.path);
@@ -897,7 +888,7 @@ function EntryContainer() {
       <div
         style={{
           height: '100%',
-          ...(tabIndex !== undefined && propertiesStyles)
+          ...(isPanelOpened && openedPanelStyle)
         }}
       >
         <div
@@ -933,7 +924,7 @@ function EntryContainer() {
             />
           </Box>
           {tabs()}
-          {openedFile.isFile && propertiesStyles !== undefined && (
+          {openedFile.isFile && isPanelOpened && (
             <Tooltip title="Toggle preview height">
               <div
                 style={{

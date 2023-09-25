@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { styled } from '@mui/material/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import Tabs from '@mui/material/Tabs';
@@ -126,6 +126,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   const tileServer = useSelector(getMapTileServer);
   const desktopMode = useSelector(isDesktopMode);
   const dispatch: AppDispatch = useDispatch();
+  const previousTab = useRef<number>(undefined);
 
   function TsTabPanel(tprops: TabPanelProps) {
     const { children, value, index, ...other } = tprops;
@@ -156,17 +157,23 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     dispatch(AppActions.renameFile(filePath, newFilePath));
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    previousTab.current = tabIndex;
     dispatch(SettingsActions.setEntryContainerTab(newValue));
     openPanel();
+    console.error('tab changed to:' + newValue);
   };
   const handleTabClick = (event: React.SyntheticEvent) => {
     if (
       openedFile.isFile &&
+      previousTab.current === tabIndex &&
       tabIndex === parseInt(event.currentTarget.id.split('-')[1], 10)
     ) {
       // when selected tab is clicked...
       dispatch(SettingsActions.setEntryContainerTab(undefined));
       toggleProperties();
+      console.error('tab click:' + tabIndex);
+    } else {
+      previousTab.current = tabIndex;
     }
   };
 
