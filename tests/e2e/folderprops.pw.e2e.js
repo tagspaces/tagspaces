@@ -248,6 +248,9 @@ test.describe('TST02 - Folder properties', () => {
     await clickOn('[data-tid=confirmCopyFiles]');
     await clickOn('[data-tid=uploadCloseAndClearTID]');
 
+    //const perspectiveEl = await global.client.waitForSelector('[data-tid=changePerspectiveTID]');
+    //await perspectiveEl.focus();
+    await clickOn('[data-tid=changePerspectiveTID]'); // todo double click
     await clickOn('[data-tid=changePerspectiveTID]');
     await clickOn('[data-value=gallery]');
     await global.client.dblclick('[data-tid=fsEntryName_empty_folder]');
