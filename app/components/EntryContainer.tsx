@@ -956,7 +956,7 @@ function EntryContainer() {
             fileViewerContainer={fileViewerContainer}
             toggleFullScreen={toggleFullScreen}
             eventID={eventID.current}
-            height={tabIndex !== undefined ? '100%' : 'calc(100% - 100px)'}
+            height={tabIndex !== undefined ? '100%' : 'calc(100% - 98px)'}
           />
         )}
       </div>
