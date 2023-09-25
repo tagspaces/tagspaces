@@ -948,7 +948,7 @@ function EntryContainer() {
                 <div
                   style={{
                     width: '30%',
-                    border: '1px solid ' + theme.palette.divider,
+                    border: '1px solid ' + theme.palette.text.secondary,
                     margin: '2px auto'
                   }}
                 ></div>
