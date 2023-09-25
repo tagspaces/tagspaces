@@ -152,7 +152,7 @@ test.describe('TST02 - Folder properties', () => {
     const newFolder = await createNewDirectory('targetFolder');
     // select folder to move
     await clickOn(getGridFileSelector('empty_folder'));
-    await clickOn('[data-tid=moveCopyEntryTID]');
+    await clickOn('[data-tid=gridPerspectiveCopySelectedFiles]'); //todo moveCopyEntryTID
     await clickOn('[data-tid=MoveTarget' + newFolder + ']');
     await clickOn('[data-tid=confirmMoveFiles]');
     await clickOn('[data-tid=uploadCloseAndClearTID]');
