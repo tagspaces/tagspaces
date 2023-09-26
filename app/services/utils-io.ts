@@ -1787,7 +1787,7 @@ export function openURLExternally(url: string, skipConfirmation = false) {
   }
 }
 
-export function getSharingLink(
+/*export function getSharingLink(
   openedFile: OpenedEntry,
   locations: Array<TS.Location>
 ) {
@@ -1830,4 +1830,4 @@ export function getSharingLink(
     }
   }
   return { sharingLink, sharingParentFolderLink };
-}
+}*/

@@ -57,7 +57,6 @@ const StyledTabs = styled((props: StyledTabsProps) => (
     variant="scrollable"
     scrollButtons="auto"
     allowScrollButtonsMobile
-    selectionFollowsFocus
     TabIndicatorProps={{ children: <span className="MuiTabs-indicatorSpan" /> }}
   />
 ))(({ theme }) => ({

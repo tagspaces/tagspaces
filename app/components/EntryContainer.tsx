@@ -914,7 +914,6 @@ function EntryContainer() {
           >
             <EntryContainerTitle
               isFileChanged={fileChanged.current}
-              openedFile={openedFile}
               reloadDocument={reloadDocument}
               toggleFullScreen={toggleFullScreen}
             />

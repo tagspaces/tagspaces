@@ -16,7 +16,13 @@
  *
  */
 
-import React, { createContext, useEffect, useMemo, useState } from 'react';
+import React, {
+  createContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   actions as AppActions,
@@ -52,6 +58,7 @@ import {
 import { getCurrentLocation, getLocations } from '-/reducers/locations';
 import { clearURLParam, getURLParameter, updateHistory } from '-/utils/dom';
 import {
+  cleanRootPath,
   extractContainingDirectoryPath,
   extractTagsAsObjects,
   generateSharingLink,
@@ -72,6 +79,8 @@ import useFirstRender from '-/utils/useFirstRender';
 type OpenedEntryContextData = {
   openedEntries: OpenedEntry[];
   isEntryInFullWidth: boolean;
+  sharingLink: string;
+  sharingParentFolderLink: string;
   setEntryInFullWidth: (fullWidth: boolean) => void;
   addToEntryContainer: (fsEntry: OpenedEntry) => void;
   closeAllFiles: () => void;
@@ -101,6 +110,8 @@ type OpenedEntryContextData = {
 export const OpenedEntryContext = createContext<OpenedEntryContextData>({
   openedEntries: [],
   isEntryInFullWidth: false,
+  sharingLink: undefined,
+  sharingParentFolderLink: undefined,
   setEntryInFullWidth: () => {},
   addToEntryContainer: () => {},
   closeAllFiles: () => {},
@@ -147,6 +158,8 @@ export const OpenedEntryContextProvider = ({
   const enableGlobalKeyboardShortcuts = useSelector(isGlobalKeyBindingEnabled);*/
   const [openedEntries, setOpenedEntries] = useState([]);
   const [isEntryInFullWidth, setEntryInFullWidth] = useState(false);
+  const sharingLink = useRef<string>(undefined);
+  const sharingParentFolderLink = useRef<string>(undefined);
   const firstRender = useFirstRender();
 
   /**
@@ -198,6 +211,7 @@ export const OpenedEntryContextProvider = ({
               // shouldReload: true
             };
           });
+          setSharedLinks(newEntries[0]);
           setOpenedEntries(newEntries);
         }
       } else if (action === 'delete') {
@@ -213,6 +227,53 @@ export const OpenedEntryContextProvider = ({
     }
   }, [editedEntryPaths]);
 
+  function setSharedLinks(openedFile?) {
+    if (openedFile) {
+      if (window.location.href.indexOf('?') > 0) {
+        const sharingURL = new URL(window.location.href);
+        const params = new URLSearchParams(sharingURL.search);
+        if (params.has('tslid')) {
+          const locationId = params.get('tslid');
+          //if (params.has('tsdpath')) {
+          // const folderPath2 = params.get('tsdpath');
+          const folderLocation = locations.find(
+            location => location.uuid === locationId
+          );
+          const folderPath = extractContainingDirectoryPath(openedFile.path);
+          if (folderPath.indexOf(folderLocation.path) === 0) {
+            sharingParentFolderLink.current = generateSharingLink(
+              locationId,
+              undefined,
+              cleanRootPath(
+                folderPath,
+                folderLocation.path,
+                PlatformIO.getDirSeparator()
+              )
+            );
+          }
+
+          //}
+          if (params.has('tsepath')) {
+            const entryPath = params.get('tsepath');
+            if (openedFile.isFile) {
+              sharingLink.current = generateSharingLink(locationId, entryPath);
+            } else {
+              sharingLink.current = generateSharingLink(
+                locationId,
+                undefined,
+                entryPath
+              );
+            }
+          } else {
+            sharingLink.current = generateSharingLink(locationId);
+          }
+        }
+      }
+    } else {
+      sharingLink.current = undefined;
+      sharingParentFolderLink.current = undefined;
+    }
+  }
   /*function initApp() {
     disableBackGestureMac();
     // migrate TagLibrary from redux state
@@ -274,10 +335,12 @@ export const OpenedEntryContextProvider = ({
   }*/
 
   function addToEntryContainer(fsEntry: OpenedEntry) {
+    setSharedLinks(fsEntry);
     setOpenedEntries([fsEntry]); // [...openedEntries, fsEntry] // TODO uncomment for multiple file support
   }
 
   function closeOpenedEntries() {
+    setSharedLinks();
     setOpenedEntries([]);
   }
 
@@ -898,6 +961,8 @@ export const OpenedEntryContextProvider = ({
     return {
       openedEntries,
       isEntryInFullWidth,
+      sharingLink: sharingLink.current,
+      sharingParentFolderLink: sharingParentFolderLink.current,
       setEntryInFullWidth,
       addToEntryContainer,
       closeAllFiles,
@@ -915,7 +980,12 @@ export const OpenedEntryContextProvider = ({
       reflectRenameDirectory,
       reflectDeleteDirectory
     };
-  }, [openedEntries, isEntryInFullWidth]);
+  }, [
+    openedEntries,
+    isEntryInFullWidth,
+    currentLocation,
+    currentDirectoryPath
+  ]);
 
   return (
     <OpenedEntryContext.Provider value={context}>

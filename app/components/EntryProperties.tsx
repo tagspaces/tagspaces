@@ -64,8 +64,7 @@ import {
   enhanceOpenedEntry,
   fileNameValidation,
   dirNameValidation,
-  normalizeUrl,
-  getSharingLink
+  normalizeUrl
 } from '-/services/utils-io';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { parseGeoLocation } from '-/utils/geo';
@@ -219,7 +218,11 @@ const defaultBackgrounds = [
 function EntryProperties(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { openedEntries, updateOpenedFile } = useOpenedEntryContext();
+  const {
+    openedEntries,
+    updateOpenedFile,
+    sharingLink
+  } = useOpenedEntryContext();
   const { renameDirectory } = useFsActionsContext();
   const { addTags, removeTags, removeAllTags } = useTaggingActionsContext();
   const fileNameRef = useRef<HTMLInputElement>(null);
@@ -697,10 +700,6 @@ function EntryProperties(props: Props) {
     currentEntry.current.url && currentEntry.current.url.length > 5;
 
   const showLinkForDownloading = isCloudLocation && currentEntry.current.isFile;
-  const { sharingLink, sharingParentFolderLink } = getSharingLink(
-    currentEntry.current,
-    props.locations
-  );
 
   return (
     <Root>
