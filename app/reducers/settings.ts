@@ -18,7 +18,6 @@
 
 import semver from 'semver';
 import AppConfig from '-/AppConfig';
-import i18n from '-/services/i18n';
 import defaultSettings from './settings-default';
 import PlatformIO from '-/services/platform-facade';
 import Links from '-/content/links';
@@ -33,7 +32,8 @@ import {
   mergeByProp,
   updateByProp
 } from '-/services/utils-io';
-import { historyKeys } from '../../extensions/tagspacespro/modules/history';
+
+const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 
 export const types = {
   UPGRADE_SETTINGS: 'SETTINGS/UPGRADE_SETTINGS',
