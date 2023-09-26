@@ -418,6 +418,8 @@ function FolderContainer(props: Props) {
     : '';
   // keyBindings['openSearch'].toUpperCase()
 
+  const isEntryOpened = openedEntries.length > 0;
+
   return (
     <div
       style={{
@@ -488,7 +490,7 @@ function FolderContainer(props: Props) {
                 flexDirection: 'column'
               }}
             />
-            <MainSearchField
+            {/* <MainSearchField
               fullWidth
               data-tid="toggleSearch"
               defaultValue=""
@@ -496,7 +498,7 @@ function FolderContainer(props: Props) {
               size="small"
               style={{
                 minWidth: 40,
-                width: 220,
+                width: isEntryOpened ? 40 : 220,
                 marginRight: 10
               }}
               onKeyDown={toggleSearchMode}
@@ -512,7 +514,12 @@ function FolderContainer(props: Props) {
                   </InputAdornment>
                 )
               }}
-            />
+            /> */}
+            <Tooltip title={t('core:searchTitle') + openSearchKeyBinding}>
+              <IconButton data-tid="toggleSearch" onClick={toggleSearchMode}>
+                <SearchIcon />
+              </IconButton>
+            </Tooltip>
             {props.progress && props.progress.length > 0 && (
               <IconButton
                 id="progressButton"
@@ -528,7 +535,6 @@ function FolderContainer(props: Props) {
                 <CircularProgressWithLabel value={getProgressValue()} />
               </IconButton>
             )}
-            {/* {isDesktopMode && <LocationMenu />} */}
             <PathBreadcrumbs
               switchPerspective={switchPerspective}
               setSelectedEntries={setSelectedEntries}

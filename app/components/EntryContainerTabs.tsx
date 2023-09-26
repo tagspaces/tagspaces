@@ -85,8 +85,8 @@ const StyledTab = styled((props: StyledTabProps) => (
   fontWeight: theme.typography.fontWeightRegular,
   fontSize: theme.typography.pxToRem(15),
   marginRight: theme.spacing(1),
-  minHeight: 53,
-  maxHeight: 53
+  minHeight: 50,
+  maxHeight: 50
 }));
 
 function a11yProps(index: number) {

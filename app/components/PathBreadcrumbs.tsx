@@ -57,13 +57,24 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
     '&:active': {
       boxShadow: theme.shadows[1],
       backgroundColor: emphasize(backgroundColor, 0.12)
+    },
+    '& ol': {
+      flexWrap: 'nowrap'
     }
   };
 }) as typeof Chip; // TypeScript only: need a type cast here because https://github.com/Microsoft/TypeScript/issues/26591
 
-const NoWrapBreadcrumb = styled(StyledBreadcrumb)(({ theme }) => {
-  return { flexWrap: 'nowrap' };
-});
+// const NoWrapBreadcrumb = styled(StyledBreadcrumb)(({ theme }) => {
+//   return { flexWrap: 'nowrap' };
+// });
+
+const StyledBreadcrumbs = styled(Breadcrumbs)(({ theme }) => {
+  return {
+    '& ol': {
+      flexWrap: 'nowrap'
+    }
+  };
+}) as typeof Breadcrumbs; // TypeScript only: need a type cast here because https://github.com/Microsoft/TypeScript/issues/26591
 
 interface Props {
   switchPerspective: (perspectiveId: string) => void;
@@ -212,12 +223,10 @@ function PathBreadcrumbs(props: Props) {
 
   return (
     <>
-      <Breadcrumbs
+      <StyledBreadcrumbs
         style={{
-          maxWidth: '100%',
-          display: 'flex',
-          flexWrap: 'nowrap',
-          flexDirection: 'row-reverse'
+          overflowX: 'scroll',
+          marginTop: 8
         }}
         maxItems={isDesktopMode ? 2 : 1}
         itemsAfterCollapse={isDesktopMode ? 1 : 1}
@@ -235,7 +244,7 @@ function PathBreadcrumbs(props: Props) {
         }
       >
         {getBreadcrumbs()}
-      </Breadcrumbs>
+      </StyledBreadcrumbs>
       <DirectoryMenu
         open={Boolean(directoryContextMenuAnchorEl)}
         onClose={closeDirectoryMenu}
