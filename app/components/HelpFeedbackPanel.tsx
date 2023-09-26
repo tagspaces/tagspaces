@@ -87,7 +87,8 @@ function HelpFeedbackPanel(props: Props) {
         aria-label="main help area"
         style={{
           height: 'calc(100% - ' + reduceHeightBy + 'px)',
-          overflowY: 'auto'
+          overflowY: 'auto',
+          marginRight: 5
         }}
       >
         <ListItem

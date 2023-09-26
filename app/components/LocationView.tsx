@@ -270,7 +270,6 @@ function LocationView(props: Props) {
             ? classes.listItemSelected
             : classes.listItem
         }
-        button
         onClick={handleLocationClick}
         onContextMenu={event => handleLocationContextMenuClick(event)}
       >
