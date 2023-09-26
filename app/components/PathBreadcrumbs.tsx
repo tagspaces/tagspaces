@@ -105,9 +105,9 @@ function PathBreadcrumbs(props: Props) {
     setDirectoryContextMenuAnchorEl(null);
   };
 
-  const normalizedCurrentDirPath = normalizePath(
-    currentDirectoryPath.split('\\').join('/')
-  );
+  const normalizedCurrentDirPath = currentDirectoryPath
+    ? normalizePath(currentDirectoryPath.split('\\').join('/'))
+    : undefined;
 
   const locationTypeIcon =
     currentLocation && currentLocation.type === locationType.TYPE_CLOUD ? (
