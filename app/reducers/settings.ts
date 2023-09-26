@@ -33,8 +33,6 @@ import {
   updateByProp
 } from '-/services/utils-io';
 
-const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
-
 export const types = {
   UPGRADE_SETTINGS: 'SETTINGS/UPGRADE_SETTINGS',
   SET_LANGUAGE: 'SETTINGS/SET_LANGUAGE',
@@ -806,6 +804,9 @@ export const actions = {
   }
 };
 
+/**
+ * TODO move out of reducer
+ */
 export function getLastVersionPromise(): Promise<string> {
   return new Promise((resolve, reject) => {
     console.log('Checking for new version...');
@@ -926,12 +927,6 @@ export const getDefaultDarkTheme = (state: any) =>
   state.settings.currentDarkTheme;
 export const isGlobalKeyBindingEnabled = (state: any) =>
   state.settings.enableGlobalKeyboardShortcuts;
-export const getFileOpenHistoryKey = (state: any) =>
-  state.settings[historyKeys.fileOpenKey];
-export const getFolderOpenHistoryKey = (state: any) =>
-  state.settings[historyKeys.folderOpenKey];
-export const getFileEditHistoryKey = (state: any) =>
-  state.settings[historyKeys.fileEditKey];
 export const getMainVerticalSplitSize = (state: any) =>
   state.settings.mainVSplitSize;
 export const getNewHTMLFileContent = (state: any) =>

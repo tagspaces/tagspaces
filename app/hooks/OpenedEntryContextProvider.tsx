@@ -50,8 +50,6 @@ import {
 } from '-/services/utils-io';
 import {
   actions as SettingsActions,
-  getFileOpenHistoryKey,
-  getFolderOpenHistoryKey,
   getNewHTMLFileContent,
   getSupportedFileTypes
 } from '-/reducers/settings';
@@ -148,8 +146,13 @@ export const OpenedEntryContextProvider = ({
   const locations: TS.Location[] = useSelector(getLocations);
   const currentLocation: TS.Location = useSelector(getCurrentLocation);
   const currentDirectoryPath = useSelector(getDirectoryPath);
-  const fileOpenHistory = useSelector(getFileOpenHistoryKey);
-  const folderOpenHistory = useSelector(getFolderOpenHistoryKey);
+  const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
+  const fileOpenHistory = useSelector(
+    (state: any) => state.settings[historyKeys.fileOpenKey]
+  );
+  const folderOpenHistory = useSelector(
+    (state: any) => state.settings[historyKeys.folderOpenKey]
+  );
   const newHTMLFileContent = useSelector(getNewHTMLFileContent);
   const initOpenLink = useSelector(getOpenLink);
   const editedEntryPaths = useSelector(getEditedEntryPaths);
@@ -984,7 +987,9 @@ export const OpenedEntryContextProvider = ({
     openedEntries,
     isEntryInFullWidth,
     currentLocation,
-    currentDirectoryPath
+    currentDirectoryPath,
+    fileOpenHistory,
+    folderOpenHistory
   ]);
 
   return (

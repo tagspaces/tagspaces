@@ -50,8 +50,7 @@ import {
   isDesktopMode,
   getKeyBindingObject,
   isRevisionsEnabled,
-  getEntryContainerTab,
-  getFileEditHistoryKey
+  getEntryContainerTab
 } from '-/reducers/settings';
 import {
   OpenedEntry,
@@ -98,7 +97,9 @@ function EntryContainer() {
   const { saveDescription } = useDescriptionContext();
   const tabIndex = useSelector(getEntryContainerTab);
   const currentDirectoryPath = useSelector(getDirectoryPath);
-  const fileEditHistoryKey = useSelector(getFileEditHistoryKey);
+  const fileEditHistoryKey = useSelector(
+    (state: any) => state.settings[historyKeys.fileEditKey]
+  );
   const readOnlyMode = useSelector(isReadOnlyMode);
   const keyBindings = useSelector(getKeyBindingObject);
   const desktopMode = useSelector(isDesktopMode);
