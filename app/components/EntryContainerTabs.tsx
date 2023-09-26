@@ -17,7 +17,7 @@
  */
 
 import React, { useRef } from 'react';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -85,7 +85,8 @@ const StyledTab = styled((props: StyledTabProps) => (
   fontWeight: theme.typography.fontWeightRegular,
   fontSize: theme.typography.pxToRem(15),
   marginRight: theme.spacing(1),
-  minHeight: 45
+  minHeight: 53,
+  maxHeight: 53
 }));
 
 function a11yProps(index: number) {
@@ -100,6 +101,7 @@ interface EntryContainerTabsProps {
   openPanel: () => void;
   toggleProperties: () => void;
   isEditable: boolean;
+  isPanelOpened: boolean;
   marginRight: string;
 }
 
@@ -115,11 +117,12 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     openPanel,
     toggleProperties,
     marginRight,
-    isEditable
+    isEditable,
+    isPanelOpened
   } = props;
 
   const { t } = useTranslation();
-
+  const theme = useTheme();
   const tabIndex = useSelector(getEntryContainerTab);
   const readOnlyMode = useSelector(isReadOnlyMode);
   const tileServer = useSelector(getMapTileServer);
@@ -182,7 +185,12 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        borderBottom:
+          openedFile.isFile && !isPanelOpened
+            ? '1px solid ' + theme.palette.divider
+            : 'none',
+        minHeight: 53
       }}
     >
       <Box sx={{ ...(marginRight && { marginRight }) }}>
