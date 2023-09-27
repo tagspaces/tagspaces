@@ -144,7 +144,7 @@
   "fileOperations": "Dosya İşlemleri",
   "addRemoveTags": "Etiketleri Ekle/Kaldır",
   "openFile": "Dosyayı Aç",
-  "downloadFile": "Start the download",
+  "downloadFile": "Download File",
   "openFileNatively": "Dosyayı Yerel Uygulama ile Aç",
   "openParentFolder": "Open Parent Folder",
   "openContainingFolder": "İçeren Klasörü Aç",
@@ -337,7 +337,7 @@
   "taggroupTitleHelper": "Başlığı Sil",
   "toggleProperties": "Özellikleri aç/kapa",
   "switchToFullscreen": "Tam ekrana geç",
-  "openInFullWidth": "Tam genişlikte aç",
+  "openInFullWidth": "Toggle full width",
   "openDirectoryExternally": "Open Folder Externally",
   "toggleEntryProperties": "Girdi özelliklerini aç/kapa",
   "closeEntry": "Girdiyi kapat",
@@ -803,5 +803,7 @@
   "generatedHTMLCopied": "Download links copied to clipboard",
   "generatedHTMLFailed": "Error while copying to clipboard",
   "details": "Details",
+  "editDisabled": "Editing the description is disabled while editing the current file",
+  "togglePreviewSize": "Toggle file preview size",
   "-": "-"
 }

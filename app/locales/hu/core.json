@@ -144,7 +144,7 @@
   "fileOperations": "Fájl műveletek",
   "addRemoveTags": "Címkék hozzáadása / eltávolítás",
   "openFile": "Fájl megnyitása",
-  "downloadFile": "Start the download",
+  "downloadFile": "Download File",
   "openFileNatively": "Fájl megnyitása natívan",
   "openParentFolder": "Open Parent Folder",
   "openContainingFolder": "Tartalmazó mappa megnyitása",
@@ -337,7 +337,7 @@
   "taggroupTitleHelper": "Üres cím",
   "toggleProperties": "Tulajdonságok részletezése",
   "switchToFullscreen": "Teljes képernyős nézet",
-  "openInFullWidth": "Megnyitás teljes szélességben",
+  "openInFullWidth": "Toggle full width",
   "openDirectoryExternally": "Open Folder Externally",
   "toggleEntryProperties": "Belépő tulajdonságok részletezése",
   "closeEntry": "Bejegyzés bezárása",
@@ -803,5 +803,7 @@
   "generatedHTMLCopied": "Download links copied to clipboard",
   "generatedHTMLFailed": "Error while copying to clipboard",
   "details": "Details",
+  "editDisabled": "Editing the description is disabled while editing the current file",
+  "togglePreviewSize": "Toggle file preview size",
   "-": "-"
 }

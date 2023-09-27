@@ -144,7 +144,7 @@
   "fileOperations": "Գործողություններ նիշքի հետ",
   "addRemoveTags": "Ավելացնել/ջնջել պիտակներ",
   "openFile": "Բացել նիշքը",
-  "downloadFile": "Start the download",
+  "downloadFile": "Download File",
   "openFileNatively": "Բացել նիշքը հիմնական ծրագրով",
   "openParentFolder": "Բացել ծնող պանակը",
   "openContainingFolder": "Բացել նիշքի պանակը",
@@ -337,7 +337,7 @@
   "taggroupTitleHelper": "Դատարկ անուն",
   "toggleProperties": "Հատկությունները միացնել/անջատել",
   "switchToFullscreen": "Ամբողջ էկրանով",
-  "openInFullWidth": "Բացել ամբողջական լայնքով",
+  "openInFullWidth": "Toggle full width",
   "openDirectoryExternally": "Open Folder Externally",
   "toggleEntryProperties": "Միացնել/անջատել նիշքի հատկությունները",
   "closeEntry": "Փակել նիշքը",
@@ -803,5 +803,7 @@
   "generatedHTMLCopied": "Download links copied to clipboard",
   "generatedHTMLFailed": "Error while copying to clipboard",
   "details": "Details",
+  "editDisabled": "Editing the description is disabled while editing the current file",
+  "togglePreviewSize": "Toggle file preview size",
   "-": "-"
 }

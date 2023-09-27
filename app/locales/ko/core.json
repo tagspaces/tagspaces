@@ -144,7 +144,7 @@
   "fileOperations": "파일 작업하기",
   "addRemoveTags": "태그 추가 / 제거",
   "openFile": "파일 열기",
-  "downloadFile": "Start the download",
+  "downloadFile": "Download File",
   "openFileNatively": "원래 프로그램으로 열기",
   "openParentFolder": "Open Parent Folder",
   "openContainingFolder": "위치한 폴더 열기",
@@ -337,7 +337,7 @@
   "taggroupTitleHelper": "빈 제목",
   "toggleProperties": "속성 전환",
   "switchToFullscreen": "전체 화면으로 변경",
-  "openInFullWidth": "전체 너비로 열기",
+  "openInFullWidth": "Toggle full width",
   "openDirectoryExternally": "Open Folder Externally",
   "toggleEntryProperties": "항목 속성 전환",
   "closeEntry": "항목 닫기",
@@ -803,5 +803,7 @@
   "generatedHTMLCopied": "Download links copied to clipboard",
   "generatedHTMLFailed": "Error while copying to clipboard",
   "details": "Details",
+  "editDisabled": "Editing the description is disabled while editing the current file",
+  "togglePreviewSize": "Toggle file preview size",
   "-": "-"
 }
