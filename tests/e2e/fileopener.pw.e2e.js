@@ -305,7 +305,11 @@ test.describe('TST08 - File folder properties', () => {
     );
     await global.client.dblclick(getGridFileSelector('empty_folder'));
     await expectElementExist(getGridFileSelector(fileName));
-    await clickOn(getGridFileSelector(fileName));
+    //await clickOn(getGridFileSelector(fileName));
+    await openContextEntryMenu(
+      getGridFileSelector(fileName),
+      'showPropertiesTID' //'fileMenuOpenFile'
+    );
 
     //Toggle Properties
     //await clickOn('[data-tid=fileContainerToggleProperties]');

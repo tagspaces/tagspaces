@@ -137,7 +137,9 @@ test.describe('TST02 - Folder properties', () => {
     expect(propsFolderName).not.toBe(propsNewFolderName);
 
     //turn folderName back
+    await clickOn('[data-tid=fileNameProperties] input');
     await clickOn('[data-tid=startRenameEntryTID]');
+    await clickOn('[data-tid=fileNameProperties] input');
     await setInputValue('[data-tid=fileNameProperties] input', propsFolderName);
     await clickOn('[data-tid=confirmRenameEntryTID]');
     // await waitForNotification();
@@ -250,7 +252,10 @@ test.describe('TST02 - Folder properties', () => {
 
     //const perspectiveEl = await global.client.waitForSelector('[data-tid=changePerspectiveTID]');
     //await perspectiveEl.focus();
-    await clickOn('[data-tid=changePerspectiveTID]'); // todo double click
+    await clickOn('[data-tid=changePerspectiveTID]', {
+      // force: true,
+      timeout: 15000
+    }); // todo double click
     await clickOn('[data-tid=changePerspectiveTID]');
     await clickOn('[data-value=gallery]');
     await global.client.dblclick('[data-tid=fsEntryName_empty_folder]');
