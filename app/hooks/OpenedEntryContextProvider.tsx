@@ -27,11 +27,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   actions as AppActions,
   AppDispatch,
-  getDirectoryContent,
   getDirectoryPath,
   getEditedEntryPaths,
   getLastSelectedEntry,
-  getOpenLink,
   isSearchMode,
   OpenedEntry
 } from '-/reducers/app';
@@ -53,7 +51,7 @@ import {
   getNewHTMLFileContent,
   getSupportedFileTypes
 } from '-/reducers/settings';
-import { getCurrentLocation, getLocations } from '-/reducers/locations';
+import { getLocations } from '-/reducers/locations';
 import { clearURLParam, getURLParameter, updateHistory } from '-/utils/dom';
 import {
   cleanRootPath,
@@ -73,6 +71,8 @@ import { useTranslation } from 'react-i18next';
 import versionMeta from '-/version.json';
 import AppConfig from '-/AppConfig';
 import useFirstRender from '-/utils/useFirstRender';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 type OpenedEntryContextData = {
   openedEntries: OpenedEntry[];
@@ -137,14 +137,18 @@ export const OpenedEntryContextProvider = ({
 }: OpenedEntryContextProviderProps) => {
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
+
+  const {
+    currentDirectoryEntries,
+    loadDirectoryContent
+  } = useDirectoryContentContext();
+  const { openLocation, currentLocation } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const searchMode = useSelector(isSearchMode);
-  const currentDirectoryEntries = useSelector(getDirectoryContent);
   const lastSelectedEntry: TS.FileSystemEntry = useSelector(
     getLastSelectedEntry
   );
   const locations: TS.Location[] = useSelector(getLocations);
-  const currentLocation: TS.Location = useSelector(getCurrentLocation);
   const currentDirectoryPath = useSelector(getDirectoryPath);
   const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
   const fileOpenHistory = useSelector(
@@ -154,7 +158,7 @@ export const OpenedEntryContextProvider = ({
     (state: any) => state.settings[historyKeys.folderOpenKey]
   );
   const newHTMLFileContent = useSelector(getNewHTMLFileContent);
-  const initOpenLink = useSelector(getOpenLink);
+  //const initOpenLink = useSelector(getOpenLink);
   const editedEntryPaths = useSelector(getEditedEntryPaths);
   /*  const checkForUpdates = useSelector(getCheckForUpdateOnStartup);
   const firstRun = useSelector(isFirstRun);
@@ -169,10 +173,31 @@ export const OpenedEntryContextProvider = ({
    * Handle openLink from initApp
    */
   useEffect(() => {
-    if (initOpenLink && initOpenLink.url) {
-      openLink(initOpenLink.url, initOpenLink.options);
+    if (firstRender && openedEntries.length === 0) {
+      const lid = getURLParameter('tslid');
+      const dPath = getURLParameter('tsdpath');
+      const ePath = getURLParameter('tsepath');
+      const cmdOpen = getURLParameter('cmdopen');
+      if (lid || dPath || ePath) {
+        // openDefaultLocation = false;
+        setTimeout(() => {
+          openLink(window.location.href);
+        }, 1000);
+      } else if (cmdOpen) {
+        // openDefaultLocation = false;
+        setTimeout(() => {
+          openLink(
+            // window.location.href.split('?')[0] +
+            'ts://?cmdopen=' + cmdOpen,
+            { fullWidth: true }
+          );
+        }, 1000);
+      }
     }
-  }, [initOpenLink]);
+    /*if (initOpenLink && initOpenLink.url) {
+      openLink(initOpenLink.url, initOpenLink.options);
+    }*/
+  }, []);
 
   /**
    * HANDLE REFLECT_RENAME_ENTRY
@@ -495,9 +520,7 @@ export const OpenedEntryContextProvider = ({
         return;
       }
       if (!lastSelectedEntry.isFile) {
-        dispatch(
-          AppActions.loadDirectoryContent(lastSelectedEntry.path, false)
-        );
+        loadDirectoryContent(lastSelectedEntry.path, false);
         return;
       }
     }
@@ -665,9 +688,7 @@ export const OpenedEntryContextProvider = ({
               openFsEntry(fsEntry);
               setEntryInFullWidth(options.fullWidth);
             } else {
-              dispatch(
-                AppActions.loadDirectoryContent(fsEntry.path, false, true)
-              );
+              loadDirectoryContent(fsEntry.path, false, true);
             }
             return true;
           })
@@ -698,9 +719,7 @@ export const OpenedEntryContextProvider = ({
             !currentLocation ||
             targetLocation.uuid !== currentLocation.uuid
           ) {
-            dispatch(
-              AppActions.openLocation(targetLocation, skipListingLocation)
-            );
+            openLocation(targetLocation, skipListingLocation);
           } else {
             openLocationTimer = 0;
           }
@@ -719,13 +738,9 @@ export const OpenedEntryContextProvider = ({
                   locationPath.length > 0
                     ? locationPath + '/' + newRelDir
                     : directoryPath;
-                dispatch(
-                  AppActions.loadDirectoryContent(dirFullPath, false, true)
-                );
+                loadDirectoryContent(dirFullPath, false, true);
               } else {
-                dispatch(
-                  AppActions.loadDirectoryContent(locationPath, false, true)
-                );
+                loadDirectoryContent(locationPath, false, true);
               }
 
               if (entryPath) {
@@ -768,13 +783,9 @@ export const OpenedEntryContextProvider = ({
                 }
                 const dirFullPath =
                   locationPath + PlatformIO.getDirSeparator() + directoryPath;
-                dispatch(
-                  AppActions.loadDirectoryContent(dirFullPath, false, true)
-                );
+                loadDirectoryContent(dirFullPath, false, true);
               } else {
-                dispatch(
-                  AppActions.loadDirectoryContent(locationPath, false, true)
-                );
+                loadDirectoryContent(locationPath, false, true);
               }
 
               if (entryPath && entryPath.length > 0) {

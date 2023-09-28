@@ -28,6 +28,11 @@ import TsAuth from '-/containers/TsAuth';
 import init from '-/services/i18nInit';
 import { FsActionsContextProvider } from '-/hooks/FsActionsContextProvider';
 import { OpenedEntryContextProvider } from '-/hooks/OpenedEntryContextProvider';
+import {
+  DirectoryContentContext,
+  DirectoryContentContextProvider
+} from '-/hooks/DirectoryContentContextProvider';
+import { CurrentLocationContextProvider } from '-/hooks/CurrentLocationContextProvider';
 
 type RootType = {
   store: Store<{}>;
@@ -47,11 +52,15 @@ export default function Root({ store, persistor }: RootType) {
 
   let appContent = (
     <App>
-      <OpenedEntryContextProvider>
-        <FsActionsContextProvider>
-          <MainPage />
-        </FsActionsContextProvider>
-      </OpenedEntryContextProvider>
+      <CurrentLocationContextProvider>
+        <DirectoryContentContextProvider>
+          <OpenedEntryContextProvider>
+            <FsActionsContextProvider>
+              <MainPage />
+            </FsActionsContextProvider>
+          </OpenedEntryContextProvider>
+        </DirectoryContentContextProvider>
+      </CurrentLocationContextProvider>
     </App>
   );
 

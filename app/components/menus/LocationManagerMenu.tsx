@@ -39,6 +39,7 @@ import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { OpenLinkIcon, HelpIcon } from '-/components/CommonIcons';
 import { openURLExternally } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   classes: any;
@@ -57,6 +58,8 @@ function LocationManagerMenu(props: Props) {
     toggleOpenLinkDialog
   } = props;
   const { t } = useTranslation();
+
+  const { closeAllLocations } = useCurrentLocationContext();
   const [
     locationManagerMenuAnchorEl,
     setLocationManagerMenuAnchorEl
@@ -153,7 +156,7 @@ function LocationManagerMenu(props: Props) {
       data-tid="locationManagerMenuCloseAll"
       onClick={() => {
         setLocationManagerMenuAnchorEl(null);
-        dispatch(AppActions.closeAllLocations());
+        closeAllLocations();
       }}
     >
       <ListItemIcon>

@@ -101,6 +101,8 @@ import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { useFsActionsContext } from '-/hooks/useFsActionsContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 const PREFIX = 'EntryProperties';
 
@@ -192,10 +194,6 @@ interface Props {
   locations: Array<TS.Location>;
   renameFile: (path: string, nextPath: string) => Promise<boolean>;
   showNotification: (message: string) => void;
-  updateThumbnailUrl: (path: string, thumbUrl: string) => void;
-  switchLocationType: (locationId: string) => Promise<string | null>;
-  switchCurrentLocationType: (currentLocationId: string) => Promise<boolean>;
-  isReadOnlyMode: boolean;
   // currentDirectoryPath: string | null;
   tagDelimiter: string;
   tileServer: TS.MapTileServer;
@@ -225,6 +223,14 @@ function EntryProperties(props: Props) {
   } = useOpenedEntryContext();
   const { renameDirectory } = useFsActionsContext();
   const { addTags, removeTags, removeAllTags } = useTaggingActionsContext();
+  const { updateThumbnailUrl } = useDirectoryContentContext();
+  const {
+    switchLocationTypeByID,
+    switchCurrentLocationType,
+    isReadOnlyMode
+  } = useCurrentLocationContext();
+  const readOnlyMode = isReadOnlyMode();
+
   const fileNameRef = useRef<HTMLInputElement>(null);
   const sharingLinkRef = useRef<HTMLInputElement>(null);
   // const fileDescriptionRef = useRef<MilkdownRef>(null);
@@ -331,38 +337,30 @@ function EntryProperties(props: Props) {
       );
       const nextPath = path + PlatformIO.getDirSeparator() + editName;
 
-      props
-        .switchLocationType(openedEntry.locationId)
-        .then(currentLocationId => {
-          if (currentEntry.current.isFile) {
-            renameFile(currentEntry.current.path, nextPath)
-              .then(() => {
-                props.switchCurrentLocationType(currentLocationId);
-                return true;
-              })
-              .catch(() => {
-                props.switchCurrentLocationType(currentLocationId);
-                fileNameRef.current.value = entryName;
-              });
-          } else {
-            renameDirectory(currentEntry.current.path, editName)
-              .then(newDirPath => {
-                props.switchCurrentLocationType(currentLocationId);
-                return true;
-              })
-              .catch(() => {
-                props.switchCurrentLocationType(currentLocationId);
-                fileNameRef.current.value = entryName;
-              });
-          }
-        });
+      switchLocationTypeByID(openedEntry.locationId).then(currentLocationId => {
+        if (currentEntry.current.isFile) {
+          renameFile(currentEntry.current.path, nextPath)
+            .then(() => switchCurrentLocationType())
+            .catch(() => {
+              switchCurrentLocationType();
+              fileNameRef.current.value = entryName;
+            });
+        } else {
+          renameDirectory(currentEntry.current.path, editName)
+            .then(newDirPath => switchCurrentLocationType())
+            .catch(() => {
+              switchCurrentLocationType();
+              fileNameRef.current.value = entryName;
+            });
+        }
+      });
 
       setEditName(undefined);
     }
   };
 
   const activateEditNameField = () => {
-    if (props.isReadOnlyMode) {
+    if (readOnlyMode) {
       setEditName(undefined);
       return;
     }
@@ -406,14 +404,13 @@ function EntryProperties(props: Props) {
 
   const setThumb = (filePath, thumbFilePath) => {
     if (filePath !== undefined) {
-      return props
-        .switchLocationType(openedEntry.locationId)
-        .then(currentLocationId => {
+      return switchLocationTypeByID(openedEntry.locationId).then(
+        currentLocationId => {
           if (
             PlatformIO.haveObjectStoreSupport() ||
             PlatformIO.haveWebDavSupport()
           ) {
-            props.updateThumbnailUrl(
+            updateThumbnailUrl(
               currentEntry.current.path,
               PlatformIO.getURLforPath(thumbFilePath)
             );
@@ -421,7 +418,7 @@ function EntryProperties(props: Props) {
           }
           /*return replaceThumbnailURLPromise(filePath, thumbFilePath)
           .then(objUrl => {*/
-          props.updateThumbnailUrl(
+          updateThumbnailUrl(
             currentEntry.current.path,
             thumbFilePath
             // objUrl.tmbPath
@@ -429,19 +426,20 @@ function EntryProperties(props: Props) {
                   ? '?' + props.lastThumbnailImageChange
                   : '')*/
           );
-          return props.switchCurrentLocationType(currentLocationId);
+          return switchCurrentLocationType();
           /*})
           .catch(err => {
             props.switchCurrentLocationType();
             console.warn('Error replaceThumbnailURLPromise ' + err);
             props.showNotification('Error replacing thumbnail');
           });*/
-        });
+        }
+      );
     } else {
       // reset Thumbnail
       return getThumbnailURLPromise(currentEntry.current.path)
         .then(objUrl => {
-          props.updateThumbnailUrl(currentEntry.current.path, objUrl.tmbPath);
+          updateThumbnailUrl(currentEntry.current.path, objUrl.tmbPath);
           return true;
         })
         .catch(err => {
@@ -452,7 +450,7 @@ function EntryProperties(props: Props) {
   };
 
   const toggleBackgroundColorPicker = () => {
-    if (props.isReadOnlyMode) {
+    if (readOnlyMode) {
       return;
     }
     if (!Pro) {
@@ -472,7 +470,7 @@ function EntryProperties(props: Props) {
       color = 'transparent';
     }
     currentEntry.current.color = color;
-    props.switchLocationType(openedEntry.locationId).then(currentLocationId => {
+    switchLocationTypeByID(openedEntry.locationId).then(currentLocationId => {
       Pro.MetaOperations.saveFsEntryMeta(currentEntry.current.path, { color })
         .then(entryMeta => {
           // if (props.entryPath === props.currentDirectoryPath) {
@@ -482,7 +480,7 @@ function EntryProperties(props: Props) {
           );
           // todo handle LastBackgroundColorChange and skip updateOpenedFile
           updateOpenedFile(currentEntry.current.path, entryMeta).then(() =>
-            props.switchCurrentLocationType(currentLocationId)
+            switchCurrentLocationType()
           );
 
           /* } else {
@@ -491,7 +489,7 @@ function EntryProperties(props: Props) {
           return true;
         })
         .catch(error => {
-          props.switchCurrentLocationType(currentLocationId);
+          switchCurrentLocationType();
           console.warn('Error saving color for folder ' + error);
           props.showNotification(t('Error saving color for folder'));
         });
@@ -528,7 +526,7 @@ function EntryProperties(props: Props) {
   };*/
 
   const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
-    props.switchLocationType(openedEntry.locationId).then(currentLocationId => {
+    switchLocationTypeByID(openedEntry.locationId).then(currentLocationId => {
       if (action === 'remove-value') {
         if (!value) {
           // no tags left in the select element
@@ -537,18 +535,18 @@ function EntryProperties(props: Props) {
               id: '',
               tags: []
             }).then(() => {
-              props.switchCurrentLocationType(currentLocationId);
+              switchCurrentLocationType();
             });
           });
         } else {
-          removeTags([currentEntry.current.path], value).then(() => {
-            props.switchCurrentLocationType(currentLocationId);
-          });
+          removeTags([currentEntry.current.path], value).then(() =>
+            switchCurrentLocationType()
+          );
         }
       } else if (action === 'clear') {
-        removeAllTags([currentEntry.current.path]).then(() => {
-          props.switchCurrentLocationType(currentLocationId);
-        });
+        removeAllTags([currentEntry.current.path]).then(() =>
+          switchCurrentLocationType()
+        );
       } else {
         // create-option or select-option
         const tags =
@@ -561,13 +559,11 @@ function EntryProperties(props: Props) {
                   )
               );
         return addTags([currentEntry.current.path], tags).then(() =>
-          props.switchCurrentLocationType(currentLocationId)
+          switchCurrentLocationType()
         );
       }
     });
   };
-
-  const { isReadOnlyMode } = props;
 
   if (
     !currentEntry ||
@@ -716,7 +712,7 @@ function EntryProperties(props: Props) {
               readOnly: editName === undefined,
               endAdornment: (
                 <InputAdornment position="end">
-                  {!isReadOnlyMode && !currentEntry.current.editMode && (
+                  {!readOnlyMode && !currentEntry.current.editMode && (
                     <div style={{ textAlign: 'right' }}>
                       {editName !== undefined ? (
                         <div>
@@ -784,11 +780,11 @@ function EntryProperties(props: Props) {
               label={t('core:fileTags')}
               dataTid="PropertiesTagsSelectTID"
               placeholderText={t('core:dropHere')}
-              isReadOnlyMode={
+              /*isReadOnlyMode={
                 isReadOnlyMode ||
                 currentEntry.current.editMode ||
                 editName !== undefined
-              }
+              }*/
               tags={currentEntry.current.tags}
               tagMode="default"
               handleChange={handleChange}
@@ -969,7 +965,7 @@ function EntryProperties(props: Props) {
                 ),
                 endAdornment: (
                   <InputAdornment position="end">
-                    {!isReadOnlyMode &&
+                    {!readOnlyMode &&
                       !currentEntry.current.editMode &&
                       editName === undefined && (
                         <Button
@@ -1187,7 +1183,7 @@ function EntryProperties(props: Props) {
                       spacing={1}
                       style={{ alignItems: 'center' }}
                     >
-                      {!isReadOnlyMode &&
+                      {!readOnlyMode &&
                         !currentEntry.current.editMode &&
                         editName === undefined && (
                           <ProTooltip tooltip={t('changeThumbnail')}>
@@ -1245,7 +1241,7 @@ function EntryProperties(props: Props) {
                         spacing={1}
                         style={{ alignItems: 'center' }}
                       >
-                        {!isReadOnlyMode &&
+                        {!readOnlyMode &&
                           !currentEntry.current.editMode &&
                           editName === undefined && (
                             <ProTooltip tooltip={t('changeBackgroundImage')}>
@@ -1343,8 +1339,6 @@ function EntryProperties(props: Props) {
           path={currentEntry.current.path}
           // showNotification={props.showNotification}
           locationId={currentEntry.current.locationId}
-          switchCurrentLocationType={props.switchCurrentLocationType}
-          switchLocationType={props.switchLocationType}
         />
       )}
       {BgndImgChooserDialog && (
@@ -1403,11 +1397,8 @@ function mapStateToProps(state) {
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
-      switchLocationType: LocationActions.switchLocationType,
-      switchCurrentLocationType: AppActions.switchCurrentLocationType,
       setLastBackgroundColorChange: AppActions.setLastBackgroundColorChange,
       setSelectedEntries: AppActions.setSelectedEntries,
-      updateThumbnailUrl: AppActions.updateThumbnailUrl,
       showNotification: AppActions.showNotification
     },
     dispatch

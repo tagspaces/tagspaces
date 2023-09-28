@@ -32,8 +32,7 @@ import AppConfig from '-/AppConfig';
 import {
   actions as AppActions,
   AppDispatch,
-  getCurrentLocationId,
-  isReadOnlyMode
+  getCurrentLocationId
 } from '../reducers/app';
 import PlatformIO from '../services/platform-facade';
 import TargetMoveFileBox from './TargetMoveFileBox';
@@ -46,6 +45,9 @@ import LocationContextMenu from '-/components/menus/LocationContextMenu';
 import { TS } from '-/tagspaces.namespace';
 import { classes, SidePanel } from '-/components/SidePanels.css';
 import { useTranslation } from 'react-i18next';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   location: TS.Location;
@@ -58,6 +60,11 @@ interface Props {
 
 function LocationView(props: Props) {
   const { t } = useTranslation();
+
+  const { loadDirectoryContent } = useDirectoryContentContext();
+  const { openLocation } = useCurrentLocationContext();
+  const { isReadOnlyMode } = useCurrentLocationContext();
+  const readOnlyMode = isReadOnlyMode();
   const directoryTreeRef = useRef<DirectoryTreeViewRef>(null);
   const [
     locationDirectoryContextMenuAnchorEl,
@@ -66,7 +73,6 @@ function LocationView(props: Props) {
 
   const dispatch: AppDispatch = useDispatch();
   const currentLocationId: string = useSelector(getCurrentLocationId);
-  const readOnlyMode = useSelector(isReadOnlyMode);
 
   const {
     location,
@@ -92,18 +98,12 @@ function LocationView(props: Props) {
     if (location.uuid === currentLocationId) {
       // the same location click
 
-      dispatch(
-        AppActions.loadDirectoryContent(
-          PlatformIO.getLocationPath(location),
-          true,
-          true
-        )
-      );
+      loadDirectoryContent(PlatformIO.getLocationPath(location), true, true);
     } else {
       // this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
       dispatch(AppActions.setSelectedEntries([]));
       dispatch(AppActions.exitSearchMode());
-      dispatch(AppActions.openLocation(location));
+      openLocation(location);
       if (hideDrawer) {
         hideDrawer();
       }

@@ -16,50 +16,26 @@
  *
  */
 
-import {
-  formatDateTime4Tag,
-  locationType
-} from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
 import {
   extractFileExtension,
-  extractDirectoryName,
   extractFileName,
   getMetaFileLocationForFile,
   getThumbFileLocationForFile,
   extractParentDirectoryPath,
   extractTagsAsObjects,
-  normalizePath,
   extractContainingDirectoryPath,
-  getMetaFileLocationForDir,
-  generateSharingLink,
   getBackupFileLocation
 } from '@tagspaces/tagspaces-common/paths';
-import {
-  getURLParameter,
-  clearURLParam,
-  updateHistory,
-  clearAllURLParams
-} from '-/utils/dom';
-import { getLocation, getDefaultLocationId } from './locations';
+import { getURLParameter, clearAllURLParams } from '-/utils/dom';
 import PlatformIO from '../services/platform-facade';
 import {
   deleteFilesPromise,
   renameFilesPromise,
-  getAllPropertiesPromise,
-  prepareDirectoryContent,
-  findExtensionsForEntry,
-  getNextFile,
-  getPrevFile,
-  loadJSONFile,
   merge,
-  setLocationType,
-  getRelativeEntryPath,
-  getCleanLocationPath,
   updateFsEntries,
   mergeByProp,
-  toFsEntry,
-  openURLExternally
+  toFsEntry
 } from '-/services/utils-io';
 import i18n from '../services/i18n';
 import { Pro } from '../pro';
@@ -68,13 +44,10 @@ import { actions as tagLibraryActions } from './taglibrary';
 import {
   actions as SettingsActions,
   getCheckForUpdateOnStartup,
-  getPersistTagsInSidecarFile,
   isFirstRun,
   isGlobalKeyBindingEnabled
 } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
-import { PerspectiveIDs } from '-/perspectives';
-import versionMeta from '-/version.json';
 import {
   addTag,
   getTagLibrary,
@@ -98,14 +71,14 @@ export const types = {
   LAST_BACKGROUND_IMAGE_CHANGE: 'APP/LAST_BACKGROUND_IMAGE_CHANGE',
   LAST_BACKGROUND_COLOR_CHANGE: 'APP/LAST_BACKGROUND_COLOR_CHANGE',
   LAST_THUMBNAIL_IMAGE_CHANGE: 'APP/LAST_THUMBNAIL_IMAGE_CHANGE',
-  OPEN_LINK: 'APP/OPEN_LINK',
+  //OPEN_LINK: 'APP/OPEN_LINK',
   LOGIN_SUCCESS: 'APP/LOGIN_SUCCESS',
   LOGIN_FAILURE: 'APP/LOGIN_FAILURE',
   LOGOUT: 'APP/LOGOUT',
-  LOAD_DIRECTORY_SUCCESS: 'APP/LOAD_DIRECTORY_SUCCESS',
+  // LOAD_DIRECTORY_SUCCESS: 'APP/LOAD_DIRECTORY_SUCCESS',
   SET_DIRECTORY_META: 'APP/SET_DIRECTORY_META',
-  LOAD_DIRECTORY_FAILURE: 'APP/LOAD_DIRECTORY_FAILURE',
-  CLEAR_DIRECTORY_CONTENT: 'APP/CLEAR_DIRECTORY_CONTENT',
+  //LOAD_DIRECTORY_FAILURE: 'APP/LOAD_DIRECTORY_FAILURE',
+  //CLEAR_DIRECTORY_CONTENT: 'APP/CLEAR_DIRECTORY_CONTENT',
   // LOAD_PAGE_CONTENT: 'APP/LOAD_PAGE_CONTENT',
   SET_SEARCH_RESULTS: 'APP/SET_SEARCH_RESULTS',
   EXIT_SEARCH_MODE: 'APP/EXIT_SEARCH_MODE',
@@ -116,21 +89,21 @@ export const types = {
   //TOGGLE_ENTRY_FULLWIDTH: 'APP/TOGGLE_ENTRY_FULLWIDTH',
   //SET_ENTRY_FULLWIDTH: 'APP/SET_ENTRY_FULLWIDTH',
   //CLOSE_ALL_FILES: 'APP/CLOSE_ALL_FILES',
-  UPDATE_THUMB_URL: 'APP/UPDATE_THUMB_URL',
-  UPDATE_THUMB_URLS: 'APP/UPDATE_THUMB_URLS',
+  //UPDATE_THUMB_URL: 'APP/UPDATE_THUMB_URL',
+  //UPDATE_THUMB_URLS: 'APP/UPDATE_THUMB_URLS',
   SET_NOTIFICATION: 'APP/SET_NOTIFICATION',
   SET_GENERATING_THUMBNAILS: 'APP/SET_GENERATING_THUMBNAILS',
   SET_NEW_VERSION_AVAILABLE: 'APP/SET_NEW_VERSION_AVAILABLE',
   SET_CURRENLOCATIONID: 'APP/SET_CURRENLOCATIONID',
-  SET_CURRENT_LOCATION: 'APP/SET_CURRENT_LOCATION',
-  SET_CURRENDIRECTORYCOLOR: 'APP/SET_CURRENDIRECTORYCOLOR',
-  SET_CURRENDIRECTORYPERSPECTIVE: 'APP/SET_CURRENDIRECTORYPERSPECTIVE',
+  //SET_CURRENT_LOCATION: 'APP/SET_CURRENT_LOCATION',
+  //SET_CURRENDIRECTORYCOLOR: 'APP/SET_CURRENDIRECTORYCOLOR',
+  //SET_CURRENDIRECTORYPERSPECTIVE: 'APP/SET_CURRENDIRECTORYPERSPECTIVE',
   SET_IS_META_LOADED: 'APP/SET_IS_META_LOADED',
   SET_LAST_SELECTED_ENTRY: 'APP/SET_LAST_SELECTED_ENTRY',
   SET_SELECTED_ENTRIES: 'APP/SET_SELECTED_ENTRIES',
   SET_TAG_LIBRARY_CHANGED: 'APP/SET_TAG_LIBRARY_CHANGED',
   SET_FILEDRAGGED: 'APP/SET_FILEDRAGGED',
-  SET_READONLYMODE: 'APP/SET_READONLYMODE',
+  //SET_READONLYMODE: 'APP/SET_READONLYMODE',
   RENAME_FILE: 'APP/RENAME_FILE',
   TOGGLE_EDIT_TAG_DIALOG: 'APP/TOGGLE_EDIT_TAG_DIALOG',
   TOGGLE_ABOUT_DIALOG: 'APP/TOGGLE_ABOUT_DIALOG',
@@ -150,7 +123,7 @@ export const types = {
   TOGGLE_IMPORT_KANBAN_DIALOG: 'APP/TOGGLE_IMPORT_KANBAN_DIALOG',
   TOGGLE_UPLOAD_DIALOG: 'APP/TOGGLE_UPLOAD_DIALOG',
   TOGGLE_TRUNCATED_DIALOG: 'APP/TOGGLE_TRUNCATED_DIALOG',
-  SET_CURRENT_DIRECTORY_DIRS: 'APP/SET_CURRENT_DIRECTORY_DIRS',
+  //SET_CURRENT_DIRECTORY_DIRS: 'APP/SET_CURRENT_DIRECTORY_DIRS',
   CLEAR_UPLOAD_DIALOG: 'APP/CLEAR_UPLOAD_DIALOG',
   TOGGLE_PROGRESS_DIALOG: 'APP/TOGGLE_PROGRESS_DIALOG',
   OPEN_LOCATIONMANAGER_PANEL: 'APP/OPEN_LOCATIONMANAGER_PANEL',
@@ -165,8 +138,8 @@ export const types = {
   REFLECT_CREATE_ENTRIES: 'APP/REFLECT_CREATE_ENTRIES',
   // REFLECT_UPDATE_SIDECARTAGS: 'APP/REFLECT_UPDATE_SIDECARTAGS',
   // REFLECT_UPDATE_SIDECARMETA: 'APP/REFLECT_UPDATE_SIDECARMETA',
-  UPDATE_CURRENTDIR_ENTRY: 'APP/UPDATE_CURRENTDIR_ENTRY',
-  UPDATE_CURRENTDIR_ENTRIES: 'APP/UPDATE_CURRENTDIR_ENTRIES',
+  //UPDATE_CURRENTDIR_ENTRY: 'APP/UPDATE_CURRENTDIR_ENTRY',
+  //UPDATE_CURRENTDIR_ENTRIES: 'APP/UPDATE_CURRENTDIR_ENTRIES',
   REFLECT_EDITED_ENTRY_PATHS: 'APP/REFLECT_EDITED_ENTRY_PATHS',
   // SET_ISLOADING: 'APP/SET_ISLOADING',
   ADD_EXTENSIONS: 'APP/ADD_EXTENSIONS',
@@ -243,8 +216,8 @@ export const initialState = {
   currentDirectoryColor: '',
   currentDirectoryDescription: '',
   currentDirectoryTags: [],
-  currentDirectoryEntries: [],
-  isReadOnlyMode: false,
+  //currentDirectoryEntries: [],
+  //isReadOnlyMode: false,
   searchResults: [],
   notificationStatus: {
     visible: false,
@@ -316,7 +289,7 @@ export default (state: any = initialState, action: any) => {
         }
       };
     }
-    case types.OPEN_LINK: {
+    /*case types.OPEN_LINK: {
       return {
         ...state,
         openLink: {
@@ -324,7 +297,7 @@ export default (state: any = initialState, action: any) => {
           options: action.options
         }
       };
-    }
+    }*/
     case types.LOGIN_SUCCESS: {
       return { ...state, user: action.user };
     }
@@ -354,12 +327,12 @@ export default (state: any = initialState, action: any) => {
     case types.RESET_PROGRESS: {
       return { ...state, progress: [] };
     }
-    case types.SET_READONLYMODE: {
+    /*case types.SET_READONLYMODE: {
       if (action.isReadOnlyMode !== state.isReadOnlyMode) {
         return { ...state, isReadOnlyMode: action.isReadOnlyMode };
       }
       return state;
-    }
+    }*/
     case types.SET_NEW_VERSION_AVAILABLE: {
       if (action.isUpdateAvailable !== state.isUpdateAvailable) {
         return {
@@ -369,13 +342,13 @@ export default (state: any = initialState, action: any) => {
       }
       return state;
     }
-    case types.SET_DIRECTORY_META: {
+    /*case types.SET_DIRECTORY_META: {
       return {
         ...state,
         directoryMeta: action.directoryMeta
       };
-    }
-    case types.LOAD_DIRECTORY_SUCCESS: {
+    }*/
+    /*case types.LOAD_DIRECTORY_SUCCESS: {
       let { directoryPath } = action;
       if (directoryPath && directoryPath.startsWith('./')) {
         // relative paths
@@ -415,25 +388,25 @@ export default (state: any = initialState, action: any) => {
             ? action.directoryMeta.perspective
             : action.defaultPerspective, // state.currentDirectoryPerspective,
         currentDirectoryPath: directoryPath,
-        /**
+        /!**
          * used for reorder files in KanBan
-         */
+         *!/
         currentDirectoryFiles: currentDirectoryFiles,
-        /**
+        /!**
          * used for reorder dirs in KanBan
-         */
+         *!/
         currentDirectoryDirs: currentDirectoryDirs
         // isLoading: action.showIsLoading || false
       };
-    }
-    case types.CLEAR_DIRECTORY_CONTENT: {
+    }*/
+    /*case types.CLEAR_DIRECTORY_CONTENT: {
       return {
         ...state,
         currentDirectoryEntries: [],
         currentDirectoryPath: ''
       };
-    }
-    case types.SET_CURRENLOCATIONID: {
+    }*/
+    /*case types.SET_CURRENLOCATIONID: {
       if (action.currentLocationId !== state.currentLocationId) {
         return {
           ...state,
@@ -441,8 +414,8 @@ export default (state: any = initialState, action: any) => {
         };
       }
       return state;
-    }
-    case types.SET_CURRENT_LOCATION: {
+    }*/
+    /* case types.SET_CURRENT_LOCATION: {
       if (action.location.uuid !== state.currentLocationId) {
         return {
           ...state,
@@ -451,7 +424,7 @@ export default (state: any = initialState, action: any) => {
         };
       }
       return state;
-    }
+    }*/
     case types.SET_SELECTED_ENTRIES: {
       if (
         JSON.stringify(action.selectedEntries) !==
@@ -464,18 +437,18 @@ export default (state: any = initialState, action: any) => {
     case types.SET_TAG_LIBRARY_CHANGED: {
       return { ...state, tagLibraryChanged: !state.tagLibraryChanged };
     }
-    case types.SET_CURRENDIRECTORYCOLOR: {
+    /*case types.SET_CURRENDIRECTORYCOLOR: {
       if (state.currentDirectoryColor !== action.color) {
         return { ...state, currentDirectoryColor: action.color };
       }
       return state;
-    }
-    case types.SET_CURRENDIRECTORYPERSPECTIVE: {
+    }*/
+    /*case types.SET_CURRENDIRECTORYPERSPECTIVE: {
       if (state.currentDirectoryPerspective !== action.perspective) {
         return { ...state, currentDirectoryPerspective: action.perspective };
       }
       return state;
-    }
+    }*/
     case types.SET_IS_META_LOADED: {
       if (state.isMetaLoaded !== action.isMetaLoaded) {
         return { ...state, isMetaLoaded: action.isMetaLoaded };
@@ -585,7 +558,7 @@ export default (state: any = initialState, action: any) => {
         isTruncatedConfirmDialogOpened: !state.isTruncatedConfirmDialogOpened
       };
     }
-    case types.SET_CURRENT_DIRECTORY_DIRS: {
+    /* case types.SET_CURRENT_DIRECTORY_DIRS: {
       if (
         JSON.stringify(state.currentDirectoryDirs) !==
         JSON.stringify(action.dirs)
@@ -596,7 +569,7 @@ export default (state: any = initialState, action: any) => {
         };
       }
       return state;
-    }
+    }*/
     case types.CLEAR_UPLOAD_DIALOG: {
       // if (PlatformIO.haveObjectStoreSupport()) {
       // upload dialog have objectStore support only
@@ -690,7 +663,7 @@ export default (state: any = initialState, action: any) => {
       }
       return state;
     }
-    case types.UPDATE_THUMB_URL: {
+    /*case types.UPDATE_THUMB_URL: {
       const dirEntries = state.currentDirectoryEntries.map(entry => {
         if (entry.path === action.filePath) {
           return { ...entry, thumbPath: action.thumbUrl };
@@ -701,8 +674,8 @@ export default (state: any = initialState, action: any) => {
         ...state,
         currentDirectoryEntries: dirEntries
       };
-    }
-    case types.UPDATE_THUMB_URLS: {
+    }*/
+    /*case types.UPDATE_THUMB_URLS: {
       const dirEntries = [...state.currentDirectoryEntries];
       for (let i = 0; i < dirEntries.length; i++) {
         const entry = dirEntries[i];
@@ -716,44 +689,43 @@ export default (state: any = initialState, action: any) => {
         ...state,
         currentDirectoryEntries: dirEntries
       };
-    }
+    }*/
     case types.REFLECT_DELETE_ENTRY: {
-      const newDirectoryEntries = state.currentDirectoryEntries.filter(
+      /*const newDirectoryEntries = state.currentDirectoryEntries.filter(
         entry => entry.path !== action.path
-      );
+      );*/
       const editedEntryPaths = [{ action: 'delete', path: action.path }];
       // check if currentDirectoryEntries or openedFiles changed
-      if (
+      /*if (
         state.currentDirectoryEntries.length > newDirectoryEntries.length
-        // || state.openedFiles.length > newOpenedFiles.length
       ) {
         return {
           ...state,
           editedEntryPaths,
           currentDirectoryEntries: newDirectoryEntries
         };
-      }
+      }*/
       return {
         ...state,
         editedEntryPaths
       };
     }
     case types.REFLECT_DELETE_ENTRIES: {
-      const newDirectoryEntries = state.currentDirectoryEntries.filter(
+      /*const newDirectoryEntries = state.currentDirectoryEntries.filter(
         entry => !action.paths.some(path => path === entry.path)
-      );
+      );*/
       const editedEntryPaths = action.paths.map(path => ({
         action: 'delete',
         path: path
       }));
       // check if currentDirectoryEntries or openedFiles changed
-      if (state.currentDirectoryEntries.length > newDirectoryEntries.length) {
+      /*if (state.currentDirectoryEntries.length > newDirectoryEntries.length) {
         return {
           ...state,
           editedEntryPaths,
           currentDirectoryEntries: newDirectoryEntries
         };
-      }
+      }*/
       return {
         ...state,
         editedEntryPaths
@@ -762,13 +734,13 @@ export default (state: any = initialState, action: any) => {
     case types.REFLECT_CREATE_ENTRY: {
       const newEntry: TS.FileSystemEntry = action.newEntry;
       // Prevent adding entry twice e.g. by entry rename in the watcher
-      if (
+      /*if (
         state.currentDirectoryEntries.some(
           entry => entry.path === newEntry.path
         )
       ) {
         return state;
-      }
+      }*/
       const editedEntryPaths: Array<TS.EditedEntryPath> = [
         {
           action: newEntry.isFile ? 'createFile' : 'createDir',
@@ -777,7 +749,7 @@ export default (state: any = initialState, action: any) => {
         }
       ];
       // clean all dir separators to have platform independent path match
-      if (
+      /*if (
         // entryIndex < 0 &&
         extractParentDirectoryPath(
           action.newEntry.path,
@@ -793,14 +765,14 @@ export default (state: any = initialState, action: any) => {
             action.newEntry
           ]
         };
-      }
+      }*/
       return {
         ...state,
         editedEntryPaths
       };
     }
     case types.REFLECT_CREATE_ENTRIES: {
-      if (
+      /*if (
         action.fsEntries.length > 0 &&
         extractParentDirectoryPath(
           action.fsEntries[0].path,
@@ -823,15 +795,15 @@ export default (state: any = initialState, action: any) => {
             ...action.fsEntries
           ]
         };
-      }
+      }*/
       return state;
     }
     case types.REFLECT_RENAME_ENTRY: {
-      const extractedTags = extractTagsAsObjects(
+      /*const extractedTags = extractTagsAsObjects(
         action.newPath,
         AppConfig.tagDelimiter,
         PlatformIO.getDirSeparator()
-      );
+      );*/
 
       const editedEntryPaths = [
         { action: 'rename', path: action.path },
@@ -840,8 +812,8 @@ export default (state: any = initialState, action: any) => {
 
       return {
         ...state,
-        editedEntryPaths,
-        currentDirectoryEntries: state.currentDirectoryEntries.map(entry => {
+        editedEntryPaths
+        /*currentDirectoryEntries: state.currentDirectoryEntries.map(entry => {
           if (entry.path !== action.path) {
             return entry;
           }
@@ -860,10 +832,10 @@ export default (state: any = initialState, action: any) => {
               ...fileNameTags
             ]
           };
-        })
+        })*/
       };
     }
-    case types.UPDATE_CURRENTDIR_ENTRIES: {
+    /*case types.UPDATE_CURRENTDIR_ENTRIES: {
       if (
         state.currentDirectoryEntries &&
         state.currentDirectoryEntries.length > 0
@@ -894,14 +866,14 @@ export default (state: any = initialState, action: any) => {
         ...state,
         currentDirectoryEntries: action.dirEntries
       };
-    }
+    }*/
     case types.REFLECT_EDITED_ENTRY_PATHS: {
       return {
         ...state,
         editedEntryPaths: action.editedEntryPaths // .map(path => ({ action: 'edit', path }))
       };
     }
-    case types.UPDATE_CURRENTDIR_ENTRY: {
+    /*case types.UPDATE_CURRENTDIR_ENTRY: {
       return {
         ...state,
         // warning: edit action is handled in FolderContainer; to reload column in KanBan if properties is changed (dir color)
@@ -911,7 +883,7 @@ export default (state: any = initialState, action: any) => {
           [action.entry]
         )
       };
-    }
+    }*/
     case types.OPEN_LOCATIONMANAGER_PANEL: {
       return {
         ...state,
@@ -1045,11 +1017,11 @@ export const actions = {
     lastThumbnailImageChange: lastThumbnailImageChange || new Date().getTime()
   }),
   loggedIn: user => ({ type: types.LOGIN_SUCCESS, user }),
-  openLink: (url: string, options = { fullWidth: true }) => ({
+  /*openLink: (url: string, options = { fullWidth: true }) => ({
     type: types.OPEN_LINK,
     url,
     options
-  }),
+  }),*/
   initApp: () => (dispatch: (action) => void, getState: () => any) => {
     disableBackGestureMac();
     // migrate TagLibrary from redux state
@@ -1090,18 +1062,19 @@ export const actions = {
       });
     }
 
-    let openDefaultLocation = true;
-    const lid = getURLParameter('tslid');
+    // let openDefaultLocation = true;
+    /*const lid = getURLParameter('tslid');
     const dPath = getURLParameter('tsdpath');
     const ePath = getURLParameter('tsepath');
     const cmdOpen = getURLParameter('cmdopen');
     if (lid || dPath || ePath) {
-      openDefaultLocation = false;
+      // openDefaultLocation = false;
       setTimeout(() => {
+        // todo move this in OpenEntryContextProvider -> useEffect
         dispatch(actions.openLink(window.location.href));
       }, 1000);
     } else if (cmdOpen) {
-      openDefaultLocation = false;
+      // openDefaultLocation = false;
       setTimeout(() => {
         dispatch(
           actions.openLink(
@@ -1111,15 +1084,15 @@ export const actions = {
           )
         );
       }, 1000);
-    }
-    const defaultLocationId = getDefaultLocationId(state);
+    }*/
+    /*const defaultLocationId = getDefaultLocationId(state);
     if (
       openDefaultLocation &&
       defaultLocationId &&
       defaultLocationId.length > 0
     ) {
       dispatch(actions.openLocationById(defaultLocationId));
-    }
+    }*/
   },
   goOnline: () => ({ type: types.DEVICE_ONLINE }),
   goOffline: () => ({ type: types.DEVICE_OFFLINE }),
@@ -1218,10 +1191,10 @@ export const actions = {
   toggleTruncatedConfirmDialog: () => ({
     type: types.TOGGLE_TRUNCATED_DIALOG
   }),
-  setCurrentDirectoryDirs: dirs => ({
+  /*setCurrentDirectoryDirs: dirs => ({
     type: types.SET_CURRENT_DIRECTORY_DIRS,
     dirs
-  }),
+  }),*/
   clearUploadDialog: () => ({
     type: types.CLEAR_UPLOAD_DIALOG
   }),
@@ -1237,46 +1210,8 @@ export const actions = {
     type: types.SET_ISLOADING,
     isLoading
   }),*/
-  loadParentDirectoryContent: () => (
-    dispatch: (action) => void,
-    getState: () => any
-  ) => {
-    const state = getState();
-    const { currentDirectoryPath } = state.app;
-    const currentLocationPath = normalizePath(getCurrentLocationPath(state));
 
-    // dispatch(actions.setIsLoading(true));
-
-    if (currentDirectoryPath) {
-      const parentDirectory = extractParentDirectoryPath(
-        currentDirectoryPath,
-        PlatformIO.getDirSeparator()
-      );
-      // console.log('parentDirectory: ' + parentDirectory  + ' - currentLocationPath: ' + currentLocationPath);
-      if (parentDirectory.includes(currentLocationPath)) {
-        dispatch(actions.loadDirectoryContent(parentDirectory, false, true));
-      } else {
-        dispatch(
-          actions.showNotification(
-            i18n.t('core:parentDirNotInLocation'),
-            'warning',
-            true
-          )
-        );
-        // dispatch(actions.setIsLoading(false));
-      }
-    } else {
-      dispatch(
-        actions.showNotification(
-          i18n.t('core:firstOpenaFolder'),
-          'warning',
-          true
-        )
-      );
-      // dispatch(actions.setIsLoading(false));
-    }
-  },
-  updateCurrentDirectoryPerspective: (perspective: string) => (
+  /*updateCurrentDirectoryPerspective: (perspective: string) => (
     dispatch: (action) => void,
     getState: () => any
   ) => {
@@ -1290,8 +1225,8 @@ export const actions = {
         actions.setCurrentDirectoryPerspective(PerspectiveIDs.UNSPECIFIED)
       );
     }
-  },
-  loadDirectoryContentInt: (
+  },*/
+  /*loadDirectoryContentInt: (
     directoryPath: string,
     generateThumbnails: boolean,
     fsEntryMeta?: TS.FileSystemEntryMeta
@@ -1355,8 +1290,8 @@ export const actions = {
           )
         );
       });
-  },
-  loadDirectoryContent: (
+  },*/
+  /*loadDirectoryContent: (
     directoryPath: string,
     generateThumbnails: boolean,
     loadDirMeta = false
@@ -1398,44 +1333,13 @@ export const actions = {
         actions.loadDirectoryContentInt(directoryPath, generateThumbnails)
       );
     }
-  },
-  loadDirectorySuccess: (
-    directoryPath: string,
-    directoryContent: Array<any>,
-    directoryMeta?: TS.FileSystemEntryMeta
-  ) => (dispatch: (action) => void, getState: () => any) => {
-    const { settings } = getState();
-    dispatch(actions.hideNotifications(['error']));
-    dispatch(
-      actions.loadDirectorySuccessInt(
-        directoryPath,
-        directoryContent,
-        false,
-        directoryMeta,
-        settings.defaultPerspective
-      )
-    );
-    dispatch(actions.setIsMetaLoaded(false));
-  },
-  loadDirectorySuccessInt: (
-    directoryPath: string,
-    directoryContent: Array<any>,
-    showIsLoading?: boolean,
-    directoryMeta?: TS.FileSystemEntryMeta,
-    defaultPerspective?: string
-  ) => ({
-    type: types.LOAD_DIRECTORY_SUCCESS,
-    directoryPath: directoryPath || PlatformIO.getDirSeparator(),
-    directoryContent,
-    directoryMeta,
-    showIsLoading,
-    defaultPerspective
-  }),
-  setDirectoryMeta: (directoryMeta: TS.FileSystemEntryMeta) => ({
+  },*/
+
+  /*setDirectoryMeta: (directoryMeta: TS.FileSystemEntryMeta) => ({
     type: types.SET_DIRECTORY_META,
     directoryMeta
-  }),
-  loadDirectoryFailure: (directoryPath: string, error?: any) => (
+  }),*/
+  /*loadDirectoryFailure: (directoryPath: string, error?: any) => (
     dispatch: (action) => void
   ) => {
     console.error('Error loading directory: ', error);
@@ -1450,8 +1354,8 @@ export const actions = {
     );
     dispatch(actions.closeAllLocations());
     // dispatch(actions.loadDirectorySuccess(directoryPath, []));
-  },
-  updateThumbnailUrl: (filePath: string, thumbUrl: string) => ({
+  },*/
+  /*updateThumbnailUrl: (filePath: string, thumbUrl: string) => ({
     type: types.UPDATE_THUMB_URL,
     filePath,
     thumbUrl // + '?' + new Date().getTime()
@@ -1459,19 +1363,19 @@ export const actions = {
   updateThumbnailUrls: (tmbURLs: Array<any>) => ({
     type: types.UPDATE_THUMB_URLS,
     tmbURLs
-  }),
+  }),*/
   setGeneratingThumbnails: (isGeneratingThumbs: boolean) => ({
     type: types.SET_GENERATING_THUMBNAILS,
     isGeneratingThumbs
   }),
-  setCurrentDirectoryColor: (color: string) => ({
+  /*setCurrentDirectoryColor: (color: string) => ({
     type: types.SET_CURRENDIRECTORYCOLOR,
     color
-  }),
-  setCurrentDirectoryPerspective: (perspective: string) => ({
+  }),*/
+  /*setCurrentDirectoryPerspective: (perspective: string) => ({
     type: types.SET_CURRENDIRECTORYPERSPECTIVE,
     perspective
-  }),
+  }),*/
   setIsMetaLoaded: (isMetaLoaded: boolean) => ({
     type: types.SET_IS_META_LOADED,
     isMetaLoaded
@@ -1536,214 +1440,15 @@ export const actions = {
     type: types.SET_SEARCH_FILTER,
     searchFilter
   }),
-  setCurrentLocationId: (locationId: string | null) => ({
+  /*setCurrentLocationId: (locationId: string | null) => ({
     type: types.SET_CURRENLOCATIONID,
     locationId
   }),
   setCurrentLocation: (location: TS.Location) => ({
     type: types.SET_CURRENT_LOCATION,
     location
-  }),
-  changeLocation: (location: TS.Location) => (
-    dispatch: (action) => void,
-    getState: () => any
-  ) => {
-    //dispatch(actions.changeLocationByID(location.uuid));
-    const { currentLocationId } = getState().app;
-    if (location.uuid !== currentLocationId) {
-      // dispatch(actions.exitSearchMode());
-      dispatch(LocationIndexActions.clearDirectoryIndex());
-      dispatch(actions.setCurrentLocation(location));
-    }
-  },
-  changeLocationByID: (locationId: string) => (
-    dispatch: (action) => void,
-    getState: () => any
-  ) => {
-    const { currentLocationId } = getState().app;
-    if (locationId !== currentLocationId) {
-      // dispatch(actions.exitSearchMode());
-      dispatch(LocationIndexActions.clearDirectoryIndex());
-      dispatch(actions.setCurrentLocationId(locationId));
-    }
-  },
-  switchLocationTypeByID: (locationID: string) => (
-    dispatch: (action) => Promise<string | null>,
-    getState: () => any
-  ): Promise<string | null> => {
-    const location: TS.Location = getLocation(getState(), locationID);
-    return dispatch(actions.switchLocationType(location));
-  },
-  /**
-   * @param location
-   * return Promise<currentLocationId> if location is changed or null if location and type is changed
-   */
-  switchLocationType: (location: TS.Location) => (
-    dispatch: (action) => string | null,
-    getState: () => any
-  ): Promise<string | null> => {
-    const { currentLocationId } = getState().app;
-    if (location.uuid !== currentLocationId) {
-      const currentLocation: TS.Location = getLocation(
-        getState(),
-        currentLocationId
-      );
-      if (
-        currentLocation === undefined ||
-        location.type !== currentLocation.type
-      ) {
-        return setLocationType(location).then(() => null);
-      } else {
-        // handle the same location type but different location
-        // dispatch(actions.setCurrentLocationId(location.uuid));
-        return setLocationType(location).then(() => currentLocationId);
-      }
-    }
-    return Promise.resolve(null);
-  },
-  switchCurrentLocationType: (currentLocationId?: string) => (
-    dispatch: (action) => boolean,
-    getState: () => any
-  ): Promise<boolean> => {
-    // dispatch(actions.setCurrentLocationId(location.uuid));
-    const location: TS.Location = getLocation(
-      getState(),
-      currentLocationId || getState().app.currentLocationId
-    );
+  }),*/
 
-    return setLocationType(location);
-  },
-  openLocationById: (locationId: string, skipInitialDirList?: boolean) => (
-    dispatch: (action) => void,
-    getState: () => any
-  ) => {
-    const { locations } = getState();
-    locations.map(location => {
-      if (location.uuid === locationId) {
-        dispatch(actions.openLocation(location, skipInitialDirList));
-      }
-      return true;
-    });
-  },
-  openLocation: (location: TS.Location, skipInitialDirList?: boolean) => (
-    dispatch: (action) => void,
-    getState: () => any
-  ) => {
-    if (Pro && Pro.Watcher) {
-      Pro.Watcher.stopWatching();
-    }
-    if (location.type === locationType.TYPE_CLOUD) {
-      PlatformIO.enableObjectStoreSupport(location)
-        .then(() => {
-          dispatch(
-            actions.showNotification(
-              i18n.t('core:connectedtoObjectStore'),
-              'default',
-              true
-            )
-          );
-          dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
-          dispatch(actions.changeLocation(location));
-          if (!skipInitialDirList) {
-            dispatch(
-              actions.loadDirectoryContent(
-                PlatformIO.getLocationPath(location),
-                false,
-                true
-              )
-            );
-          }
-          return true;
-        })
-        .catch(e => {
-          console.log('connectedtoObjectStoreFailed', e);
-          dispatch(
-            actions.showNotification(
-              i18n.t('core:connectedtoObjectStoreFailed'),
-              'warning',
-              true
-            )
-          );
-          PlatformIO.disableObjectStoreSupport();
-        });
-    } else {
-      if (location.type === locationType.TYPE_WEBDAV) {
-        PlatformIO.enableWebdavSupport(location);
-      } else {
-        PlatformIO.disableObjectStoreSupport();
-        PlatformIO.disableWebdavSupport();
-      }
-      dispatch(actions.setReadOnlyMode(location.isReadOnly || false));
-      dispatch(actions.changeLocation(location));
-      if (!skipInitialDirList) {
-        dispatch(
-          actions.loadDirectoryContent(
-            PlatformIO.getLocationPath(location),
-            true,
-            true
-          )
-        );
-      }
-      dispatch(actions.watchForChanges(location));
-    }
-  },
-  watchForChanges: (location?: TS.Location) => (
-    dispatch: (action) => void,
-    getState: () => any
-  ) => {
-    if (location === undefined) {
-      location = getLocation(getState(), getState().app.currentLocationId);
-    }
-    if (Pro && Pro.Watcher && location && location.watchForChanges) {
-      const perspective = getCurrentDirectoryPerspective(getState());
-      const depth = perspective === PerspectiveIDs.KANBAN ? 3 : 1;
-      Pro.Watcher.watchFolder(
-        PlatformIO.getLocationPath(location),
-        dispatch,
-        actions,
-        depth
-      );
-    }
-  },
-  closeLocation: (locationId: string) => (
-    dispatch: (action) => void,
-    getState: () => any
-  ) => {
-    const { locations } = getState();
-    const { currentLocationId } = getState().app;
-    if (currentLocationId === locationId) {
-      locations.map(location => {
-        if (location.uuid === locationId) {
-          // location needed evtl. to unwatch many loc. root folders if available
-          dispatch(actions.setCurrentLocationId(null));
-          dispatch(actions.clearDirectoryContent());
-          dispatch(LocationIndexActions.clearDirectoryIndex());
-          dispatch(actions.setSelectedEntries([]));
-          dispatch(actions.exitSearchMode());
-          if (Pro && Pro.Watcher) {
-            Pro.Watcher.stopWatching();
-          }
-        }
-        clearAllURLParams();
-        return true;
-      });
-    }
-  },
-  closeAllLocations: () => (dispatch: (action) => void) => {
-    // location needed evtl. to unwatch many loc. root folders if available
-    dispatch(actions.setCurrentLocationId(null));
-    dispatch(actions.clearDirectoryContent());
-    dispatch(LocationIndexActions.clearDirectoryIndex());
-    dispatch(actions.setSelectedEntries([]));
-    if (Pro && Pro.Watcher) {
-      Pro.Watcher.stopWatching();
-    }
-    clearAllURLParams();
-    return true;
-  },
-  clearDirectoryContent: () => ({
-    type: types.CLEAR_DIRECTORY_CONTENT
-  }),
   showNotification: (
     text: string,
     notificationType = 'default',
@@ -1775,10 +1480,10 @@ export const actions = {
     notificationType: 'default',
     autohide: true
   }),
-  setReadOnlyMode: (isReadOnlyMode: boolean) => ({
+  /*setReadOnlyMode: (isReadOnlyMode: boolean) => ({
     type: types.SET_READONLYMODE,
     isReadOnlyMode
-  }),
+  }),*/
   reflectDeleteEntryInt: (path: string) => ({
     type: types.REFLECT_DELETE_ENTRY,
     path
@@ -1855,7 +1560,7 @@ export const actions = {
    * @param path
    * @param entry
    */
-  updateCurrentDirEntry: (path: string, entry: any) => (
+  /*updateCurrentDirEntry: (path: string, entry: any) => (
     dispatch: (action) => void,
     getState: () => any
   ) => {
@@ -1868,15 +1573,15 @@ export const actions = {
     } else {
       dispatch(actions.updateCurrentDirEntryInt(path, entry));
     }
-  },
-  updateCurrentDirEntryInt: (path: string, entry: any) => ({
+  },*/
+  /*updateCurrentDirEntryInt: (path: string, entry: any) => ({
     type: types.UPDATE_CURRENTDIR_ENTRY,
     entry: { ...entry, path }
-  }),
-  updateCurrentDirEntries: (dirEntries: TS.FileSystemEntry[]) => ({
+  }),*/
+  /*updateCurrentDirEntries: (dirEntries: TS.FileSystemEntry[]) => ({
     type: types.UPDATE_CURRENTDIR_ENTRIES,
     dirEntries
-  }),
+  }),*/
   reflectEditedEntryPaths: (editedEntryPaths: Array<TS.EditedEntryPath>) => ({
     type: types.REFLECT_EDITED_ENTRY_PATHS,
     editedEntryPaths
@@ -1886,7 +1591,7 @@ export const actions = {
    * @param tags
    * @param updateIndex
    */
-  reflectUpdateSidecarTags: (
+  /*reflectUpdateSidecarTags: (
     path: string,
     tags: Array<TS.Tag>,
     updateIndex = true
@@ -1902,7 +1607,7 @@ export const actions = {
     if (updateIndex) {
       GlobalSearch.getInstance().reflectUpdateSidecarTags(path, tags);
     }
-  },
+  },*/
   deleteFile: (filePath: string, uuid: string) => (
     dispatch: (action) => void,
     getState: () => any
@@ -2070,24 +1775,6 @@ export const actions = {
         true
       )
     );
-  },
-  isCurrentLocation: (uuid: string) => (
-    dispatch: (action) => void,
-    getState: () => any
-  ) => {
-    const { currentLocationId } = getState().app;
-    return currentLocationId === uuid;
-  },
-  openCurrentDirectory: () => (
-    dispatch: (action) => void,
-    getState: () => any
-  ) => {
-    const { currentDirectoryPath } = getState().app;
-    if (currentDirectoryPath) {
-      dispatch(actions.loadDirectoryContent(currentDirectoryPath, false, true));
-    } else {
-      dispatch(actions.setSearchResults([]));
-    }
   }
 };
 
@@ -2100,22 +1787,22 @@ export const getLastThumbnailImageChange = (state: any) =>
   state.app.lastThumbnailImageChange;
 export const currentUser = (state: any) => state.app.user;
 export const getIsMetaLoaded = (state: any) => state.app.isMetaLoaded;
-export const getDirectoryContent = (state: any) =>
-  state.app.currentDirectoryEntries;
+/*export const getDirectoryContent = (state: any) =>
+  state.app.currentDirectoryEntries;*/
 // export const getPageEntries = (state: any) => state.app.pageEntries;
 export const getEditedEntryPaths = (state: any) => state.app.editedEntryPaths;
-export const getCurrentDirectoryFiles = (state: any) =>
-  state.app.currentDirectoryFiles;
-export const getCurrentDirectoryDirs = (state: any) =>
-  state.app.currentDirectoryDirs;
+/*export const getCurrentDirectoryFiles = (state: any) =>
+  state.app.currentDirectoryFiles;*/
+/*export const getCurrentDirectoryDirs = (state: any) =>
+  state.app.currentDirectoryDirs;*/
 export const getCurrentDirectoryColor = (state: any) =>
   state.app.currentDirectoryColor;
 export const getCurrentDirectoryDescription = (state: any) =>
   state.app.currentDirectoryDescription;
 export const getCurrentDirectoryTags = (state: any) =>
   state.app.currentDirectoryTags;
-export const getCurrentDirectoryPerspective = (state: any) =>
-  state.app.currentDirectoryPerspective;
+/*export const getCurrentDirectoryPerspective = (state: any) =>
+  state.app.currentDirectoryPerspective;*/
 export const getDirectoryPath = (state: any) => state.app.currentDirectoryPath;
 export const getProgress = (state: any) => state.app.progress;
 export const getCurrentLocationPath = (state: any) => {
@@ -2182,9 +1869,9 @@ export const getSelectedEntries = (state: any) =>
 export const getSelectedEntriesLength = (state: any) =>
   state.app.selectedEntries ? state.app.selectedEntries.length : 0;
 export const getExtensions = (state: any) => state.app.extensions;
-export const getDirectoryMeta = (state: any) => state.app.directoryMeta;
+// export const getDirectoryMeta = (state: any) => state.app.directoryMeta;
 export const isGeneratingThumbs = (state: any) => state.app.isGeneratingThumbs;
-export const isReadOnlyMode = (state: any) => state.app.isReadOnlyMode;
+//export const isReadOnlyMode = (state: any) => state.app.isReadOnlyMode;
 export const isOnboardingDialogOpened = (state: any) =>
   state.app.onboardingDialogOpened;
 export const isEditTagDialogOpened = (state: any) =>
@@ -2218,7 +1905,7 @@ export const isOpenLinkDialogOpened = (state: any) =>
 export const isProTeaserVisible = (state: any) => state.app.proTeaserIndex > -1;
 export const getProTeaserIndex = (state: any) => state.app.proTeaserIndex;
 export const isProgressOpened = (state: any) => state.app.progressDialogOpened;
-export const getOpenLink = (state: any) => state.app.openLink;
+//export const getOpenLink = (state: any) => state.app.openLink;
 export const getNotificationStatus = (state: any) =>
   state.app.notificationStatus;
 export const getCurrentLocationId = (state: any) => state.app.currentLocationId;

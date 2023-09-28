@@ -55,6 +55,7 @@ import {
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import GlobalSearch from '-/services/search-index';
 import { getLocations } from '-/reducers/locations';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 type TaggingActionsContextData = {
   addTags: (
@@ -93,6 +94,7 @@ export const TaggingActionsContextProvider = ({
 }: TaggingActionsContextProviderProps) => {
   const { t } = useTranslation();
   const { openedEntries, updateOpenedFile } = useOpenedEntryContext();
+  const { updateCurrentDirEntry } = useDirectoryContentContext();
   const dispatch: AppDispatch = useDispatch();
   const geoTaggingFormat = useSelector(getGeoTaggingFormat);
   const addTagsToLibrary = useSelector(getAddTagsToLibrary);
@@ -286,9 +288,7 @@ export const TaggingActionsContextProvider = ({
           return saveMetaDataPromise(path, updatedFsEntryMeta)
             .then(() => {
               // TODO rethink this updateCurrentDirEntry and not need for KanBan
-              dispatch(
-                AppActions.reflectUpdateSidecarTags(path, newTags, updateIndex)
-              );
+              reflectUpdateSidecarTags(path, newTags, updateIndex);
               updateOpenedFile(path, {
                 id: 'opened_entry_id',
                 tags: newTags
@@ -312,9 +312,7 @@ export const TaggingActionsContextProvider = ({
         return saveMetaDataPromise(path, newFsEntryMeta)
           .then(() => {
             // TODO rethink this updateCurrentDirEntry and not need for KanBan
-            dispatch(
-              AppActions.reflectUpdateSidecarTags(path, tags, updateIndex)
-            );
+            reflectUpdateSidecarTags(path, tags, updateIndex);
             return updateOpenedFile(path, { id: '', tags }); //, changed: true });
           })
           .catch(error => {
@@ -538,9 +536,7 @@ export const TaggingActionsContextProvider = ({
                 tags: newTagsArray
               });
               // TODO rethink this updateCurrentDirEntry and not need for KanBan
-              dispatch(
-                AppActions.reflectUpdateSidecarTags(path, newTagsArray, true)
-              );
+              reflectUpdateSidecarTags(path, newTagsArray, true);
               return true;
             })
             .catch(err => {
@@ -571,9 +567,7 @@ export const TaggingActionsContextProvider = ({
                 tags: fsEntryMeta.tags
               });
               // TODO rethink this updateCurrentDirEntry and not need for KanBan
-              dispatch(
-                AppActions.reflectUpdateSidecarTags(path, fsEntryMeta.tags)
-              );
+              reflectUpdateSidecarTags(path, fsEntryMeta.tags);
               return true;
             })
             .catch(err => {
@@ -680,7 +674,7 @@ export const TaggingActionsContextProvider = ({
         };
         return saveMetaDataPromise(path, updatedFsEntryMeta)
           .then(() => {
-            dispatch(AppActions.reflectUpdateSidecarTags(newFilePath, newTags));
+            reflectUpdateSidecarTags(newFilePath, newTags);
             return true;
           })
           .catch(err => {
@@ -816,6 +810,25 @@ export const TaggingActionsContextProvider = ({
       return true;
     });
     return uniqueTags;
+  }
+
+  function reflectUpdateSidecarTags(
+    path: string,
+    tags: Array<TS.Tag>,
+    updateIndex = true
+  ) {
+    // to reload cell in KanBan if add/remove sidecar tags
+    // @ts-ignore
+    const action: TS.EditedEntryAction = `edit${tags
+      .map(tag => tag.title)
+      .join()}`;
+    dispatch(AppActions.reflectEditedEntryPaths([{ action, path }])); //[{ [path]: tags }]));
+    // @ts-ignore
+    updateCurrentDirEntry(path, { tags });
+
+    if (updateIndex) {
+      GlobalSearch.getInstance().reflectUpdateSidecarTags(path, tags);
+    }
   }
 
   const context = useMemo(() => {

@@ -32,11 +32,9 @@ import IOActions from '-/reducers/io-actions';
 import {
   actions as AppActions,
   AppDispatch,
-  getDirectoryMeta,
   getLastSearchTimestamp,
   getLastSelectedEntryPath,
-  getSelectedEntries,
-  isReadOnlyMode
+  getSelectedEntries
 } from '-/reducers/app';
 import CellContent from './CellContent';
 import MainToolbar from './MainToolbar';
@@ -57,6 +55,7 @@ import useFirstRender from '-/utils/useFirstRender';
 import { openURLExternally } from '-/services/utils-io';
 import { useSortedDirContext } from '-/perspectives/grid-perspective/hooks/useSortedDirContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
   currentDirectoryPath: string;
@@ -81,6 +80,7 @@ function GridPerspective(props: Props) {
   const { currentDirectoryPath, openRenameEntryDialog } = props;
 
   const { openEntry, openPrevFile, openNextFile } = useOpenedEntryContext();
+  const { directoryMeta, setDirectoryMeta } = useDirectoryContentContext();
   const dispatch: AppDispatch = useDispatch();
 
   const {
@@ -90,8 +90,6 @@ function GridPerspective(props: Props) {
     setSortBy,
     setOrderBy
   } = useSortedDirContext();
-  const directoryMeta: TS.FileSystemEntryMeta = useSelector(getDirectoryMeta);
-  const readOnlyMode = useSelector(isReadOnlyMode);
   const lastSearchTimestamp = useSelector(getLastSearchTimestamp);
   const desktopMode = useSelector(getDesktopMode);
   const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
@@ -325,7 +323,7 @@ function GridPerspective(props: Props) {
           PerspectiveIDs.GRID,
           perspectiveSettings
         ).then((fsEntryMeta: TS.FileSystemEntryMeta) => {
-          dispatch(AppActions.setDirectoryMeta(fsEntryMeta));
+          setDirectoryMeta(fsEntryMeta);
         });
       } else {
         localStorage.setItem(
@@ -690,7 +688,6 @@ function GridPerspective(props: Props) {
           showDetails={showDetails.current}
           showDescription={showDescription.current}
           showDirectories={showDirectories.current}
-          isReadOnlyMode={readOnlyMode}
           layoutType={layoutType.current}
           desktopMode={desktopMode}
           openRenameEntryDialog={openRenameEntryDialog}
@@ -762,7 +759,7 @@ function GridPerspective(props: Props) {
               currentDirectoryPath,
               PerspectiveIDs.GRID
             ).then((fsEntryMeta: TS.FileSystemEntryMeta) => {
-              dispatch(AppActions.setDirectoryMeta(fsEntryMeta));
+              setDirectoryMeta(fsEntryMeta);
               setIsGridSettingsDialogOpened(false);
             });
           }}

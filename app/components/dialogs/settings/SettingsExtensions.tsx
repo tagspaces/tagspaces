@@ -41,9 +41,11 @@ import PlatformIO from '-/services/platform-facade';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import InfoIcon from '-/components/InfoIcon';
 import { useTranslation } from 'react-i18next';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 function SettingsExtensions() {
   const { t } = useTranslation();
+  const { switchCurrentLocationType } = useCurrentLocationContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [removeExtDialogOpened, setRemoveExtDialogOpened] = useState<
     TS.Extension
@@ -87,12 +89,12 @@ function SettingsExtensions() {
           return Promise.all(promises).then(paths => {
             PlatformIO.loadExtensions();
             paths.forEach(path => PlatformIO.deleteFilePromise(path));
-            return dispatch(AppActions.switchCurrentLocationType());
+            return switchCurrentLocationType();
           });
         })
         .catch(error => {
           console.log('uploadFiles', error);
-          return dispatch(AppActions.switchCurrentLocationType());
+          return switchCurrentLocationType();
         });
     });
   };

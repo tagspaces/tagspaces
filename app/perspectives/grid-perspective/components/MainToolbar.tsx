@@ -46,8 +46,7 @@ import {
   actions as AppActions,
   AppDispatch,
   getDirectoryPath,
-  getSelectedEntries,
-  isReadOnlyMode
+  getSelectedEntries
 } from '-/reducers/app';
 import {
   classes,
@@ -55,6 +54,8 @@ import {
 } from '-/perspectives/grid-perspective/components/styles.css';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   prefixDataTID?: string;
@@ -81,13 +82,18 @@ function MainToolbar(props: Props) {
 
   const { t } = useTranslation();
   const { openEntry } = useOpenedEntryContext();
+  const {
+    loadParentDirectoryContent,
+    openCurrentDirectory
+  } = useDirectoryContentContext();
   const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
     getSelectedEntries
   );
   const searchQuery: TS.SearchQuery = useSelector(getSearchQuery);
   const keyBindings = useSelector(getKeyBindingObject);
   const dispatch: AppDispatch = useDispatch();
-  const readOnlyMode = useSelector(isReadOnlyMode);
+  const { isReadOnlyMode } = useCurrentLocationContext();
+  const readOnlyMode = isReadOnlyMode();
   const directoryPath = useSelector(getDirectoryPath);
 
   function showProperties() {
@@ -114,9 +120,9 @@ function MainToolbar(props: Props) {
             onClick={() => {
               if (searchQuery && Object.keys(searchQuery).length > 0) {
                 dispatch(LocationIndexActions.setSearchQuery({}));
-                dispatch(AppActions.openCurrentDirectory());
+                openCurrentDirectory();
               } else {
-                dispatch(AppActions.loadParentDirectoryContent());
+                loadParentDirectoryContent();
               }
             }}
             size="large"

@@ -79,6 +79,7 @@ import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { ExpandIcon } from '-/components/CommonIcons';
 import MaxLoopsSelect from '-/components/dialogs/MaxLoopsSelect';
 import { useTranslation } from 'react-i18next';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 const PREFIX = 'CreateEditLocationDialog';
 
@@ -104,6 +105,8 @@ interface Props {
 function CreateEditLocationDialog(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
+
+  const { addLocation } = useCurrentLocationContext();
   const isPersistTagsInSidecar = useSelector(getPersistTagsInSidecarFile);
   const locations: Array<TS.Location> = useSelector(getLocations);
   const devMode: boolean = useSelector(isDevMode);
@@ -424,7 +427,7 @@ function CreateEditLocationDialog(props: Props) {
       }
 
       if (!props.location) {
-        dispatch(LocationActions.addLocation(loc));
+        addLocation(loc);
       } else if (props.editLocation) {
         loc.newuuid = newuuid;
         props.editLocation(loc);

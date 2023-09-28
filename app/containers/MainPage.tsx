@@ -62,7 +62,6 @@ import {
   isNewFileDialogOpened,
   isSettingsDialogOpened,
   isOpenLinkDialogOpened,
-  isReadOnlyMode,
   isProgressOpened,
   isDeleteMultipleEntriesDialogOpened,
   isImportKanBanDialogOpened,
@@ -95,6 +94,7 @@ import { DescriptionContextProvider } from '-/hooks/DescriptionContextProvider';
 import { TaggingActionsContextProvider } from '-/hooks/TaggingActionsContextProvider';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useFsActionsContext } from '-/hooks/useFsActionsContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 const drawerWidth = 320;
 const body = document.getElementsByTagName('body')[0];
@@ -140,8 +140,6 @@ interface Props {
   setFirstRun: (isFirstRun: boolean) => void;
   isDesktopMode: boolean;
   isGeneratingThumbs: boolean;
-  // setGeneratingThumbnails: (isGenerating: boolean) => void;
-  isReadOnlyMode: boolean;
   isSettingsDialogOpened: boolean;
   isNewEntryDialogOpened: boolean;
   isNewFileDialogOpened: boolean;
@@ -164,8 +162,6 @@ interface Props {
   isEditTagDialogOpened: boolean;
   keyBindings: any;
   toggleEditTagDialog: (tag: TS.Tag) => void;
-  loadParentDirectoryContent: () => void;
-  openLink: (linkURL: string, options?: any) => void;
   saveFile: () => void; // needed by electron-menus
   setZoomResetApp: () => void; // needed by electron-menus
   setZoomInApp: () => void; // needed by electron-menus
@@ -341,6 +337,7 @@ function MainPage(props: Props) {
   const { t } = useTranslation();
   const { deleteDirectory } = useFsActionsContext();
   const {
+    openLink,
     openedEntries,
     isEntryInFullWidth,
     openFsEntry,
@@ -348,6 +345,8 @@ function MainPage(props: Props) {
     openNextFile,
     openPrevFile
   } = useOpenedEntryContext();
+
+  const { loadParentDirectoryContent } = useDirectoryContentContext();
   const theme = useTheme();
   const percent = useRef<number | undefined>(undefined);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
@@ -392,7 +391,7 @@ function MainPage(props: Props) {
     window.addEventListener(
       'popstate',
       () => {
-        props.openLink(window.location.href, { fullWidth: false });
+        openLink(window.location.href, { fullWidth: false });
       },
       { once: true }
     );
@@ -406,7 +405,7 @@ function MainPage(props: Props) {
     window.addEventListener(
       'popstate',
       () => {
-        props.openLink(window.location.href, { fullWidth: false });
+        openLink(window.location.href, { fullWidth: false });
         // console.log(
         //   '>>> last href: ' + decodeURIComponent(window.location.href)
         // );
@@ -472,7 +471,7 @@ function MainPage(props: Props) {
   };
 
   const keyBindingHandlers = {
-    openParentDirectory: props.loadParentDirectoryContent,
+    openParentDirectory: loadParentDirectoryContent,
     toggleShowHiddenEntries: props.toggleShowUnixHiddenEntries,
     showLocationManager: () => {
       props.openLocationManagerPanel();
@@ -517,8 +516,7 @@ function MainPage(props: Props) {
     toggleOpenLinkDialog,
     toggleProTeaser,
     setFirstRun,
-    mainSplitSize,
-    openLink
+    mainSplitSize
   } = props;
   const { FILE } = NativeTypes;
 
@@ -655,7 +653,6 @@ function MainPage(props: Props) {
             <OpenLinkDialogAsync
               open={props.isOpenLinkDialogOpened}
               onClose={toggleOpenLinkDialog}
-              openLink={openLink}
             />
           )}
           {props.isProTeaserVisible && (
@@ -840,7 +837,6 @@ function mapStateToProps(state) {
     isOpenLinkDialogOpened: isOpenLinkDialogOpened(state),
     isProTeaserVisible: isProTeaserVisible(state),
     isProgressDialogOpened: isProgressOpened(state),
-    isReadOnlyMode: isReadOnlyMode(state),
     isGeneratingThumbs: isGeneratingThumbs(state),
     isDesktopMode: getDesktopMode(state),
     keyBindings: getKeyBindingObject(state),
@@ -861,7 +857,6 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      loadParentDirectoryContent: AppActions.loadParentDirectoryContent,
       toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog,
       toggleUploadDialog: AppActions.toggleUploadDialog,
       toggleProgressDialog: AppActions.toggleProgressDialog,
@@ -870,7 +865,6 @@ function mapDispatchToProps(dispatch) {
       toggleTruncatedConfirmDialog: AppActions.toggleTruncatedConfirmDialog,
       onUploadProgress: AppActions.onUploadProgress,
       saveFile: AppActions.saveFile,
-      openLink: AppActions.openLink,
       setZoomResetApp: SettingsActions.setZoomResetApp,
       setZoomInApp: SettingsActions.setZoomInApp,
       setZoomOutApp: SettingsActions.setZoomOutApp,
@@ -932,7 +926,6 @@ const areEqual = (prevProp, nextProp) =>
   nextProp.isOpenLinkDialogOpened === prevProp.isOpenLinkDialogOpened &&
   nextProp.isProTeaserVisible === prevProp.isProTeaserVisible &&
   nextProp.isProgressDialogOpened === prevProp.isProgressDialogOpened &&
-  nextProp.isReadOnlyMode === prevProp.isReadOnlyMode &&
   nextProp.isSearchPanelOpened === prevProp.isSearchPanelOpened &&
   nextProp.isSettingsDialogOpened === prevProp.isSettingsDialogOpened &&
   nextProp.isTagLibraryPanelOpened === prevProp.isTagLibraryPanelOpened &&

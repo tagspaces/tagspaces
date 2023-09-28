@@ -37,6 +37,7 @@ import {
 import { TS } from '-/tagspaces.namespace';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   menuAnchorEl?: Element;
@@ -45,7 +46,8 @@ interface Props {
 function LocationMenu(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
-  const dispatch: AppDispatch = useDispatch();
+  const { openLocation } = useCurrentLocationContext();
+  //const dispatch: AppDispatch = useDispatch();
   const locations: Array<TS.Location> = useSelector(getLocations);
   const currentLocationId: string | null = useSelector(getCurrentLocationId);
   const [
@@ -120,7 +122,7 @@ function LocationMenu(props: Props) {
               data-tid="folderContainerMenuOpenLocation"
               key={location.uuid}
               onClick={() => {
-                dispatch(AppActions.openLocation(location));
+                openLocation(location);
                 setLocationChooserMenuAnchorEl(null);
               }}
               style={

@@ -19,8 +19,6 @@
 import React, { createContext, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
-  getDirectoryContent,
-  getDirectoryMeta,
   getEditedEntryPaths,
   getLastSearchTimestamp,
   getSearchFilter
@@ -31,6 +29,7 @@ import { sortByCriteria } from '@tagspaces/tagspaces-common/misc';
 import { Pro } from '-/pro';
 import { PerspectiveIDs } from '-/perspectives';
 import { defaultSettings } from '-/perspectives/grid-perspective';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 type SortedDirContextData = {
   sortedDirContent: Array<TS.FileSystemEntry>;
@@ -55,12 +54,12 @@ export type SortedDirContextProviderProps = {
 export const SortedDirContextProvider = ({
   children
 }: SortedDirContextProviderProps) => {
-  const directoryContent: Array<TS.FileSystemEntry> = useSelector(
-    getDirectoryContent
-  );
+  const {
+    currentDirectoryEntries,
+    directoryMeta
+  } = useDirectoryContentContext();
   const lastSearchTimestamp = useSelector(getLastSearchTimestamp);
   const searchFilter: string = useSelector(getSearchFilter);
-  const directoryMeta: TS.FileSystemEntryMeta = useSelector(getDirectoryMeta);
   const editedEntryPaths: Array<TS.EditedEntryPath> = useSelector(
     getEditedEntryPaths
   );
@@ -97,7 +96,11 @@ export const SortedDirContextProvider = ({
             entry.name.toLowerCase().includes(searchFilter.toLowerCase())
           );
       } else {
-        return sortByCriteria(directoryContent, sortBy, orderBy).filter(entry =>
+        return sortByCriteria(
+          currentDirectoryEntries,
+          sortBy,
+          orderBy
+        ).filter(entry =>
           entry.name.toLowerCase().includes(searchFilter.toLowerCase())
         );
       }
@@ -119,7 +122,7 @@ export const SortedDirContextProvider = ({
       }
     }
     // not in search mode
-    return sortByCriteria(directoryContent, sortBy, orderBy);
+    return sortByCriteria(currentDirectoryEntries, sortBy, orderBy);
   }
 
   const context = useMemo(() => {
@@ -131,7 +134,7 @@ export const SortedDirContextProvider = ({
       setOrderBy
     };
   }, [
-    directoryContent,
+    currentDirectoryEntries,
     lastSearchTimestamp,
     directoryMeta,
     searchFilter,

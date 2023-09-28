@@ -33,13 +33,10 @@ import IconButton from '@mui/material/IconButton';
 import { RemoveIcon, HistoryIcon } from '-/components/CommonIcons';
 import { dataTidFormat } from '-/services/test';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  actions as AppActions,
-  AppDispatch,
-  getCurrentLocationId
-} from '-/reducers/app';
+import { useSelector } from 'react-redux';
+import { getCurrentLocationId } from '-/reducers/app';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   historyKey: string;
@@ -50,16 +47,13 @@ interface Props {
 }
 function RenderHistory(props: Props) {
   const { t } = useTranslation();
-  const dispatch: AppDispatch = useDispatch();
-  const { openEntry } = useOpenedEntryContext();
+  // const dispatch: AppDispatch = useDispatch();
+  const { openEntry, openLink } = useOpenedEntryContext();
+  const { openLocationById } = useCurrentLocationContext();
   const currentLocationId = useSelector(getCurrentLocationId);
   const { historyKey, items, update, maxItems, showDelete = true } = props;
 
-  const openLinkDispatch = link =>
-    dispatch(AppActions.openLink(link, { fullWidth: false }));
-
-  const openLocationByIdDispatch = locationId =>
-    dispatch(AppActions.openLocationById(locationId));
+  const openLinkDispatch = link => openLink(link, { fullWidth: false });
 
   return (
     <>
@@ -87,7 +81,7 @@ function RenderHistory(props: Props) {
                       item,
                       currentLocationId,
                       openLinkDispatch,
-                      openLocationByIdDispatch,
+                      openLocationById,
                       openEntry
                     )
                   }

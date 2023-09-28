@@ -27,12 +27,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   actions as AppActions,
   AppDispatch,
-  isReadOnlyMode,
   OpenedEntry
 } from '-/reducers/app';
 import { Pro } from '-/pro';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 type DescriptionContextData = {
   description: string;
@@ -58,14 +58,19 @@ export const DescriptionContextProvider = ({
   children
 }: DescriptionContextProviderProps) => {
   const { t } = useTranslation();
+  const dispatch: AppDispatch = useDispatch();
   const {
     openedEntries,
     addToEntryContainer,
     updateOpenedFile,
     reloadOpenedFile
   } = useOpenedEntryContext();
-  const dispatch: AppDispatch = useDispatch();
-  const readOnlyMode = useSelector(isReadOnlyMode);
+  const {
+    switchLocationTypeByID,
+    switchCurrentLocationType,
+    isReadOnlyMode
+  } = useCurrentLocationContext();
+  const readOnlyMode = isReadOnlyMode();
   const openedFile = useRef<OpenedEntry>(openedEntries[0]);
   const isChanged = useRef<boolean>(false);
   const [
@@ -113,21 +118,20 @@ export const DescriptionContextProvider = ({
       //forceUpdate();
       //setDescriptionChanged(false);
       if (openedFile.current.locationId) {
-        dispatch(
-          AppActions.switchLocationTypeByID(openedFile.current.locationId)
-        ).then(currentLocationId => {
-          saveMetaData()
-            .then(() =>
-              dispatch(AppActions.switchCurrentLocationType(currentLocationId))
-            )
-            .catch(error => {
-              console.warn('Error saving description ' + error);
-              dispatch(AppActions.switchCurrentLocationType(currentLocationId));
-              dispatch(
-                AppActions.showNotification(t('Error saving description'))
-              );
-            });
-        });
+        switchLocationTypeByID(openedFile.current.locationId).then(
+          currentLocationId => {
+            saveMetaData()
+              .then(() => switchCurrentLocationType())
+              .catch(error => {
+                console.warn('Error saving description ' + error);
+                switchCurrentLocationType().then(() =>
+                  dispatch(
+                    AppActions.showNotification(t('Error saving description'))
+                  )
+                );
+              });
+          }
+        );
       } else {
         console.debug(
           'openedFile:' +

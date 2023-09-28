@@ -28,15 +28,12 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { getMaxSearchResults } from '-/reducers/settings';
-import {
-  AppDispatch,
-  getSelectedEntries,
-  isReadOnlyMode
-} from '-/reducers/app';
+import { AppDispatch, getSelectedEntries } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 const isTagLibraryReadOnly =
   window.ExtTagLibrary && window.ExtTagLibrary.length > 0;
@@ -63,7 +60,8 @@ function TagMenu(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const { addTags } = useTaggingActionsContext();
-  const readOnlyMode = useSelector(isReadOnlyMode);
+  const { isReadOnlyMode } = useCurrentLocationContext();
+  const readOnlyMode = isReadOnlyMode();
   const maxSearchResults: number = useSelector(getMaxSearchResults);
   const selectedEntries = useSelector(getSelectedEntries);
 

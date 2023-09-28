@@ -29,17 +29,13 @@ import {
   extractShortDirectoryName
 } from '@tagspaces/tagspaces-common/paths';
 import DirectoryMenu from './menus/DirectoryMenu';
-import { TS } from '-/tagspaces.namespace';
 import { LocalLocationIcon, CloudLocationIcon } from '-/components/CommonIcons';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
-import { getCurrentLocation } from '-/reducers/locations';
-import {
-  actions as AppActions,
-  AppDispatch,
-  getDirectoryPath
-} from '-/reducers/app';
+import { useSelector } from 'react-redux';
+import { getDirectoryPath } from '-/reducers/app';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   const backgroundColor =
@@ -87,9 +83,10 @@ interface Props {
 
 function PathBreadcrumbs(props: Props) {
   const { t } = useTranslation();
-  const dispatch: AppDispatch = useDispatch();
+  //const dispatch: AppDispatch = useDispatch();
+  const { loadDirectoryContent } = useDirectoryContentContext();
+  const { currentLocation } = useCurrentLocationContext();
   let pathParts: Array<string> = [];
-  const currentLocation = useSelector(getCurrentLocation);
   const currentDirectoryPath = useSelector(getDirectoryPath);
 
   const [
@@ -188,9 +185,7 @@ function PathBreadcrumbs(props: Props) {
               href="#"
               label={folderName}
               icon={index === 0 && locationTypeIcon}
-              onClick={() =>
-                dispatch(AppActions.loadDirectoryContent(pathPart, false, true))
-              }
+              onClick={() => loadDirectoryContent(pathPart, false, true)}
             />
           </Tooltip>
         );

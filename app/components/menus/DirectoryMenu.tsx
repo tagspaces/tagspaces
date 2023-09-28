@@ -35,8 +35,7 @@ import {
   AppDispatch,
   getDirectoryPath,
   getLastSelectedEntryPath,
-  getSelectedEntries,
-  isReadOnlyMode
+  getSelectedEntries
 } from '-/reducers/app';
 import FileUploadContainer, {
   FileUploadContainerRef
@@ -46,10 +45,12 @@ import { getRelativeEntryPath } from '-/services/utils-io';
 import { PerspectiveIDs } from '-/perspectives';
 import PlatformFacade from '-/services/platform-facade';
 import { getDirectoryMenuItems } from '-/perspectives/common/DirectoryMenuItems';
-import { getCurrentLocation, getLocations } from '-/reducers/locations';
+import { getLocations } from '-/reducers/locations';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
   open: boolean;
@@ -71,6 +72,12 @@ function DirectoryMenu(props: Props) {
   const { t } = useTranslation();
   const { openEntry } = useOpenedEntryContext();
   const { addTags } = useTaggingActionsContext();
+  const { currentLocation, isReadOnlyMode } = useCurrentLocationContext();
+  const {
+    loadDirectoryContent,
+    setCurrentDirectoryPerspective
+  } = useDirectoryContentContext();
+  const readOnlyMode = isReadOnlyMode();
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
   const {
     open,
@@ -84,21 +91,13 @@ function DirectoryMenu(props: Props) {
     openRenameDirectoryDialog,
     switchPerspective
   } = props;
-  const currentLocation: TS.Location = useSelector(getCurrentLocation);
   const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
     getSelectedEntries
   );
   const locations: Array<TS.Location> = useSelector(getLocations);
   const currentDirectoryPath = useSelector(getDirectoryPath);
   const lastSelectedEntryPath = useSelector(getLastSelectedEntryPath);
-  const readOnlyMode = useSelector(isReadOnlyMode);
   const dispatch: AppDispatch = useDispatch();
-
-  const loadDirectoryContent = (path, generateThumbnails, loadDirMeta) => {
-    return dispatch(
-      AppActions.loadDirectoryContent(path, generateThumbnails, loadDirMeta)
-    );
-  };
 
   const toggleCreateDirectoryDialog = () => {
     dispatch(AppActions.toggleCreateDirectoryDialog());
@@ -130,10 +129,6 @@ function DirectoryMenu(props: Props) {
 
   const toggleProTeaser = slidePage => {
     dispatch(AppActions.toggleProTeaser(slidePage));
-  };
-
-  const setCurrentDirectoryPerspective = perspective => {
-    dispatch(AppActions.setCurrentDirectoryPerspective(perspective));
   };
 
   function generateFolderLink() {

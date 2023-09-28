@@ -31,6 +31,7 @@ import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
 import { classes, SidePanel } from '-/components/SidePanels.css';
 import { useTranslation } from 'react-i18next';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 const CreateEditLocationDialog = React.lazy(() =>
   import(
@@ -61,6 +62,7 @@ type SubFolder = {
 function LocationManager(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
+  const { addLocations, editLocation } = useCurrentLocationContext();
   const locations: Array<TS.Location> = useSelector(getLocations);
   // const loading: boolean = useSelector(isLoading);
   //const language: string = useSelector(getCurrentLanguage);
@@ -84,13 +86,6 @@ function LocationManager(props: Props) {
 
   const ImportLocationsDialog =
     Pro && Pro.UI ? Pro.UI.ImportLocationsDialog : false;
-
-  useEffect(() => {
-    if (locations.length < 1) {
-      // init locations
-      dispatch(LocationActions.setDefaultLocations(t));
-    }
-  }, [locations]);
 
   function handleFileInputChange(selection: any) {
     const target = selection.currentTarget;
@@ -226,9 +221,7 @@ function LocationManager(props: Props) {
           open={isEditLocationDialogOpened}
           onClose={() => setEditLocationDialogOpened(false)}
           location={selectedLocation}
-          editLocation={location =>
-            dispatch(LocationActions.editLocation(location))
-          }
+          editLocation={location => editLocation(location)}
         />
       )}
       {isDeleteLocationDialogOpened && (
@@ -241,7 +234,7 @@ function LocationManager(props: Props) {
           })}
           confirmCallback={result => {
             if (result && selectedLocation) {
-              dispatch(LocationActions.removeLocation(selectedLocation));
+              dispatch(LocationActions.deleteLocation(selectedLocation));
             }
           }}
           cancelDialogTID="cancelDeleteLocationDialog"
@@ -260,7 +253,7 @@ function LocationManager(props: Props) {
           open={Boolean(importFile)}
           onClose={() => setImportFile(undefined)}
           importFile={importFile}
-          addLocations={loc => dispatch(LocationActions.addLocations(loc))}
+          addLocations={loc => addLocations(loc)}
           locations={locations}
         />
       )}

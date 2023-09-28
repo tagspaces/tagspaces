@@ -41,6 +41,7 @@ import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathCo
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 const PREFIX = 'CreateFile';
 
@@ -65,7 +66,8 @@ function CreateFile(props: Props) {
   const { onClose, tidPrefix } = props;
   const { t } = useTranslation();
 
-  const dispatch: AppDispatch = useDispatch();
+  //const dispatch: AppDispatch = useDispatch();
+  const { openLocation } = useCurrentLocationContext();
   const firstRWLocation = useSelector(getFirstRWLocation);
   const currentDirectoryPath: string | null = useSelector(getDirectoryPath);
   const { targetDirectoryPath } = useTargetPathContext();
@@ -93,7 +95,7 @@ function CreateFile(props: Props) {
 
   function loadLocation() {
     if (!currentDirectoryPath && firstRWLocation) {
-      dispatch(AppActions.openLocation(firstRWLocation));
+      openLocation(firstRWLocation);
     }
   }
 

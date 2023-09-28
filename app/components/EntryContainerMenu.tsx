@@ -16,7 +16,6 @@ import {
 import {
   actions as AppActions,
   AppDispatch,
-  isReadOnlyMode,
   NotificationTypes,
   OpenedEntry
 } from '-/reducers/app';
@@ -38,6 +37,7 @@ import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { isDesktopMode } from '-/reducers/settings';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   anchorEl: null | HTMLElement;
@@ -61,8 +61,9 @@ function EntryContainerMenu(props: Props) {
   } = props;
   const { t } = useTranslation();
   // const theme = useTheme();
-  const { toggleEntryFullWidth } = useOpenedEntryContext();
-  const readOnlyMode = useSelector(isReadOnlyMode);
+  const { toggleEntryFullWidth, openLink } = useOpenedEntryContext();
+  const { isReadOnlyMode } = useCurrentLocationContext();
+  const readOnlyMode = isReadOnlyMode();
   const desktopMode = useSelector(isDesktopMode);
   const dispatch: AppDispatch = useDispatch();
 
@@ -155,9 +156,9 @@ function EntryContainerMenu(props: Props) {
 
   const navigateToFolder = () => {
     if (openedEntry.isFile) {
-      dispatch(AppActions.openLink(sharingParentFolderLink));
+      openLink(sharingParentFolderLink);
     } else {
-      dispatch(AppActions.openLink(sharingLink));
+      openLink(sharingLink);
     }
     handleClose();
   };

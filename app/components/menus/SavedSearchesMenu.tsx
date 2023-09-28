@@ -37,9 +37,7 @@ function SavedSearchesMenu(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const searches = useSelector(state => getSearches(state));
-  const showUnixHiddenEntries = useSelector(state =>
-    getShowUnixHiddenEntries(state)
-  );
+  const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
 
   const handleSavedSearchClick = (uuid: string) => {
     const savedSearch = searches.find(search => search.uuid === uuid);

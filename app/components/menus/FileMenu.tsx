@@ -52,11 +52,7 @@ import {
 } from '-/services/utils-io';
 import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
-import {
-  actions as AppActions,
-  AppDispatch,
-  isReadOnlyMode
-} from '-/reducers/app';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useSelector, useDispatch } from 'react-redux';
 import { supportedImgs } from '-/services/thumbsgenerator';
 import { getPrefixTagContainer } from '-/reducers/settings';
@@ -65,10 +61,12 @@ import {
   DeleteIcon,
   LinkIcon
 } from '-/components/CommonIcons';
-import { getCurrentLocation, getLocations } from '-/reducers/locations';
+import { getLocations } from '-/reducers/locations';
 import PropertiesIcon from '@mui/icons-material/Info';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   anchorEl: Element;
@@ -112,9 +110,10 @@ function FileMenu(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const { openEntry } = useOpenedEntryContext();
-  const currentLocation: TS.Location = useSelector(getCurrentLocation);
+  const { loadDirectoryContent } = useDirectoryContentContext();
+  const { currentLocation, isReadOnlyMode } = useCurrentLocationContext();
+  const readOnlyMode = isReadOnlyMode();
   const locations: Array<TS.Location> = useSelector(getLocations);
-  const readOnlyMode = useSelector(isReadOnlyMode);
   const prefixTagContainer = useSelector(getPrefixTagContainer);
 
   function generateFileLink() {
@@ -264,7 +263,7 @@ function FileMenu(props: Props) {
           if (onDuplicateFile) {
             onDuplicateFile(dirPath);
           } else {
-            dispatch(AppActions.loadDirectoryContent(dirPath, true, true));
+            loadDirectoryContent(dirPath, true, true);
           }
           return true;
         })
@@ -284,9 +283,7 @@ function FileMenu(props: Props) {
         PlatformIO.getDirSeparator()
       );
       dispatch(AppActions.exitSearchMode());
-      return dispatch(
-        AppActions.loadDirectoryContent(parentFolder, false, true)
-      );
+      return loadDirectoryContent(parentFolder, false, true);
     }
   }
 

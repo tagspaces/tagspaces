@@ -50,8 +50,7 @@ import { TS } from '-/tagspaces.namespace';
 import {
   actions as AppActions,
   AppDispatch,
-  getLastThumbnailImageChange,
-  isReadOnlyMode
+  getLastThumbnailImageChange
 } from '-/reducers/app';
 import { FolderIcon } from '-/components/CommonIcons';
 import { dataTidFormat } from '-/services/test';
@@ -66,6 +65,7 @@ import {
 } from '-/perspectives/grid-perspective/components/styles.css';
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 const maxDescriptionPreviewLength = 100;
 
@@ -108,10 +108,10 @@ function CellContent(props: Props) {
   } = props;
 
   const { t } = useTranslation();
-  const { addTags, editTagForEntry } = useTaggingActionsContext();
-
   const theme = useTheme();
-  const readOnlyMode = useSelector(isReadOnlyMode);
+  const { addTags, editTagForEntry } = useTaggingActionsContext();
+  const { isReadOnlyMode } = useCurrentLocationContext();
+  const readOnlyMode = isReadOnlyMode();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const reorderTags: boolean = useSelector(isReorderTags);
   const lastThumbnailImageChange = useSelector(getLastThumbnailImageChange);

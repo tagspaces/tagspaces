@@ -82,16 +82,12 @@ import { openURLExternally } from '-/services/utils-io';
 import { useTheme } from '@mui/material/styles';
 import { classes, SidePanel } from '-/components/SidePanels.css';
 import { useTranslation } from 'react-i18next';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
 
 interface Props {
   style?: any;
-  loadDirectoryContent: (
-    path: string,
-    generateThumbnails: boolean,
-    loadDirMeta?: boolean
-  ) => void;
   hideDrawer?: () => void;
   searchQuery: TS.SearchQuery; // () => any;
   setSearchResults: (entries: Array<any>) => void;
@@ -111,6 +107,7 @@ interface Props {
 function SearchPopover(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
+  const { loadDirectoryContent } = useDirectoryContentContext();
   const [, forceUpdate] = useReducer(x => x + 1, 0);
   // const textQuery = useRef<string>(props.searchQuery.textQuery);
   // const tagsAND = useRef<Array<TS.Tag>>(props.searchQuery.tagsAND);
@@ -371,7 +368,7 @@ function SearchPopover(props: Props) {
 
   function openCurrentDirectory() {
     if (props.currentDirectory) {
-      props.loadDirectoryContent(props.currentDirectory, false, true);
+      loadDirectoryContent(props.currentDirectory, false, true);
     } else {
       props.exitSearchMode();
     }
@@ -1129,7 +1126,6 @@ function mapDispatchToProps(dispatch) {
     {
       setSearchQuery: LocationIndexActions.setSearchQuery,
       createLocationsIndexes: LocationIndexActions.createLocationsIndexes,
-      loadDirectoryContent: AppActions.loadDirectoryContent,
       setSearchResults: AppActions.setSearchResults,
       exitSearchMode: AppActions.exitSearchMode
     },

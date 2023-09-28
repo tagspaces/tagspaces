@@ -34,15 +34,15 @@ import DraggablePaper from '-/components/DraggablePaper';
 import {
   actions as AppActions,
   AppDispatch,
-  getCurrentDirectoryPerspective,
   getDirectoryPath,
   getProgress
 } from '-/reducers/app';
 import { extractFileName } from '@tagspaces/tagspaces-common/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { PerspectiveIDs } from '-/perspectives';
-import { getCurrentLocation } from '-/reducers/locations';
 import { useTranslation } from 'react-i18next';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   open: boolean;
@@ -54,12 +54,14 @@ function FileUploadDialog(props: Props) {
   const { open = false, title, onClose } = props;
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
+
+  const {
+    loadDirectoryContent,
+    currentDirectoryPerspective
+  } = useDirectoryContentContext();
+  const { currentLocation } = useCurrentLocationContext();
   const progress = useSelector(getProgress);
-  const currentDirectoryPerspective = useSelector(
-    getCurrentDirectoryPerspective
-  );
   const currentDirectoryPath = useSelector(getDirectoryPath);
-  const currentLocation = useSelector(getCurrentLocation);
 
   const targetPath = React.useRef<string>(getTargetPath());
 
@@ -238,9 +240,7 @@ function FileUploadDialog(props: Props) {
               onClose();
               dispatch(AppActions.clearUploadDialog());
               if (currentDirectoryPerspective === PerspectiveIDs.GRID) {
-                dispatch(
-                  AppActions.loadDirectoryContent(currentDirectoryPath, false)
-                );
+                loadDirectoryContent(currentDirectoryPath, false);
               }
             }}
             color="primary"

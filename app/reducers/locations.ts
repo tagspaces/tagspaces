@@ -154,62 +154,6 @@ export default (state: Array<TS.Location> = initialState, action: any) => {
 };
 
 export const actions = {
-  setDefaultLocations: t => (dispatch: (actions: Object) => void) => {
-    PlatformIO.getDevicePaths()
-      .then(devicePaths => {
-        if (devicePaths) {
-          Object.keys(devicePaths).forEach(key => {
-            dispatch(
-              actions.addLocation(
-                {
-                  uuid: getUuid(),
-                  type: locationType.TYPE_LOCAL,
-                  name: t('core:' + key) as string,
-                  path: devicePaths[key] as string,
-                  isDefault: false, // AppConfig.isWeb && devicePaths[key] === '/files/', // Used for the web ts demo
-                  isReadOnly: false,
-                  disableIndexing: false
-                },
-                false
-              )
-            );
-          });
-        }
-        return true;
-      })
-      .catch(ex => console.error(ex));
-  },
-  addLocation: (
-    location: TS.Location,
-    openAfterCreate = true,
-    locationPosition: number = undefined
-  ) => (dispatch: (actions: Object) => void) => {
-    dispatch(actions.createLocation(location, locationPosition));
-    if (openAfterCreate) {
-      dispatch(AppActions.openLocation(location));
-    }
-  },
-  /**
-   * @param arrLocations
-   * @param override = true - if location exist override else skip
-   */
-  addLocations: (arrLocations: Array<TS.Location>, override = true) => (
-    dispatch: (actions: Object) => void,
-    getState: () => any
-  ) => {
-    arrLocations.forEach((newLocation: TS.Location, idx, array) => {
-      const { locations } = getState();
-      const locationExist: boolean = locations.some(
-        location => location.uuid === newLocation.uuid
-      );
-      const isLast = idx === array.length - 1;
-      if (!locationExist) {
-        dispatch(actions.addLocation(newLocation, isLast));
-      } else if (override) {
-        dispatch(actions.editLocation(newLocation, isLast));
-      }
-    });
-  },
   createLocation: (
     location: TS.Location,
     locationPosition: number = undefined
@@ -228,7 +172,7 @@ export const actions = {
     type: types.MOVE_DOWN_LOCATION,
     uuid
   }),
-  editLocation: (location: TS.Location, openAfterEdit = true) => (
+  /*editLocation: (location: TS.Location, openAfterEdit = true) => (
     dispatch: (actions: Object) => void
   ) => {
     dispatch(actions.changeLocation(location));
@@ -241,9 +185,9 @@ export const actions = {
       PlatformIO.disableWebdavSupport();
     }
     if (openAfterEdit) {
-      /**
+      /!**
        * check if location uuid is changed
-       */
+       *!/
       if (
         location.newuuid !== undefined &&
         location.newuuid !== location.uuid
@@ -256,8 +200,8 @@ export const actions = {
       }
       dispatch(AppActions.setReadOnlyMode(location.isReadOnly || false));
     }
-  },
-  switchLocationType: (locationId: string) => (
+  },*/
+  /*switchLocationType: (locationId: string) => (
     dispatch: (actions) => Promise<string | null>,
     getState: () => any
   ): Promise<string | null> => {
@@ -269,17 +213,17 @@ export const actions = {
       return dispatch(AppActions.switchLocationType(location));
     }
     return Promise.resolve(null);
-  },
+  },*/
   changeLocation: (location: TS.Location) => ({
     type: types.EDIT_LOCATION,
     location
   }),
-  removeLocation: (location: TS.Location) => (
+  /*removeLocation: (location: TS.Location) => (
     dispatch: (actions: Object) => void
   ) => {
-    dispatch(AppActions.closeLocation(location.uuid));
+    //dispatch(AppActions.closeLocation(location.uuid));
     dispatch(actions.deleteLocation(location));
-  },
+  },*/
   deleteLocation: (location: TS.Location) => ({
     type: types.REMOVE_LOCATION,
     location
@@ -304,12 +248,12 @@ export const getDefaultLocationId = (state: any): string | undefined => {
   let foundLocation = state.locations.find(location => location.isDefault);
   return foundLocation ? foundLocation.uuid : undefined;
 };
-export const getCurrentLocation = (state: any): TS.Location | undefined => {
+/*export const getCurrentLocation = (state: any): TS.Location | undefined => {
   let foundLocation = state.locations.find(
     location => location.uuid === state.app.currentLocationId
   );
   return foundLocation ? foundLocation : undefined;
-};
+};*/
 export const getFirstRWLocation = (state: any): TS.Location | undefined => {
   let foundLocation = state.locations.find(
     location => location.isDefault && !location.isReadOnly

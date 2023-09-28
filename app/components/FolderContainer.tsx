@@ -37,14 +37,12 @@ import {
 } from '-/reducers/settings';
 import {
   actions as AppActions,
-  getDirectoryContent,
-  isReadOnlyMode,
-  getCurrentDirectoryPerspective,
   getSelectedEntries,
   getProgress,
   isSearchMode,
   getLastSearchTimestamp,
-  getDirectoryPath
+  getDirectoryPath,
+  OpenedEntry
 } from '../reducers/app';
 import LoadingLazy from '../components/LoadingLazy';
 import {
@@ -57,7 +55,7 @@ import { Pro } from '../pro';
 import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
 import { TS } from '-/tagspaces.namespace';
 import PathBreadcrumbs from './PathBreadcrumbs';
-import { enhanceOpenedEntry } from '-/services/utils-io';
+import { enhanceOpenedEntry, openedToFsEntry } from '-/services/utils-io';
 import {
   actions as LocationIndexActions,
   getSearchQuery
@@ -70,6 +68,7 @@ import useFirstRender from '-/utils/useFirstRender';
 import { useTranslation } from 'react-i18next';
 import { SortedDirContextProvider } from '-/perspectives/grid-perspective/hooks/SortedDirContextProvider';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 const GridPerspective = React.lazy(() =>
   import(
@@ -151,23 +150,16 @@ function WelcomePanelAsync(props) {
 
 interface Props {
   settings: any;
-  directoryContent: Array<TS.FileSystemEntry>;
   renameFile: () => void;
   reflectCreateEntry: (path: string, isFile: boolean) => void;
-  loadParentDirectoryContent: () => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
-  isReadOnlyMode: boolean;
   isDesktopMode: boolean;
   showNotification: (content: string) => void;
   toggleDrawer?: () => void;
   toggleProTeaser: (slidePage?: string) => void;
   drawerOpened: boolean;
-  setCurrentDirectoryPerspective: (perspective: string) => void;
   maxSearchResults: number;
   defaultPerspective: string;
-  currentDirectoryPerspective: string;
-  updateCurrentDirEntry: (path: string, entry: Object) => void;
-  setCurrentDirectoryColor: (color: string) => void;
   selectedEntries: Array<TS.FileSystemEntry>;
   toggleUploadDialog: () => void;
   progress?: Array<any>;
@@ -184,11 +176,9 @@ interface Props {
 
 function FolderContainer(props: Props) {
   const {
-    directoryContent,
     toggleDrawer,
     toggleProTeaser,
     isDesktopMode,
-    currentDirectoryPerspective,
     setSelectedEntries,
     reflectCreateEntry,
     defaultPerspective,
@@ -199,6 +189,14 @@ function FolderContainer(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const { openedEntries } = useOpenedEntryContext();
+  const {
+    currentDirectoryEntries,
+    currentDirectoryPerspective,
+    setCurrentDirectoryColor,
+    setCurrentDirectoryPerspective,
+    loadParentDirectoryContent,
+    updateCurrentDirEntry
+  } = useDirectoryContentContext();
   const havePrevOpenedFile = React.useRef<boolean>(false);
   const firstRender = useFirstRender();
   const currentDirectoryPath = useSelector(getDirectoryPath) || '';
@@ -214,20 +212,20 @@ function FolderContainer(props: Props) {
         const openedFile = openedEntries[0];
         if (openedFile.path === currentDirectoryPath) {
           if (openedFile.color) {
-            props.setCurrentDirectoryColor(openedFile.color);
+            setCurrentDirectoryColor(openedFile.color);
           } else if (openedFile.color === undefined) {
-            props.setCurrentDirectoryColor(undefined);
+            setCurrentDirectoryColor(undefined);
           }
           if (openedFile.perspective) {
-            props.setCurrentDirectoryPerspective(openedFile.perspective);
+            setCurrentDirectoryPerspective(openedFile.perspective);
           }
         } else {
           // update openedFile meta in grid perspective list (like description)
-          const currentEntry = enhanceOpenedEntry(
+          const currentEntry: OpenedEntry = enhanceOpenedEntry(
             openedFile,
             props.settings.tagDelimiter
           );
-          props.updateCurrentDirEntry(openedFile.path, currentEntry);
+          updateCurrentDirEntry(openedFile.path, openedToFsEntry(currentEntry));
         }
       }
     }
@@ -267,7 +265,7 @@ function FolderContainer(props: Props) {
 
   const showWelcomePanel =
     !currentDirectoryPath &&
-    directoryContent.length < 1 &&
+    currentDirectoryEntries.length < 1 &&
     !(props.isSearchMode && props.lastSearchTimestamp);
 
   const openRenameEntryDialog = useCallback(
@@ -290,7 +288,7 @@ function FolderContainer(props: Props) {
     if (Pro && currentPerspective === PerspectiveIDs.GALLERY) {
       return (
         <GalleryPerspectiveAsync
-          directoryContent={props.directoryContent}
+          directoryContent={currentDirectoryEntries}
           lastSearchTimestamp={props.lastSearchTimestamp}
           currentDirectoryPath={currentDirectoryPath}
           switchPerspective={switchPerspective}
@@ -300,7 +298,7 @@ function FolderContainer(props: Props) {
     if (Pro && currentPerspective === PerspectiveIDs.MAPIQUE) {
       return (
         <MapiquePerspectiveAsync
-          directoryContent={props.directoryContent}
+          directoryContent={currentDirectoryEntries}
           lastSearchTimestamp={props.lastSearchTimestamp}
           currentDirectoryPath={currentDirectoryPath}
           switchPerspective={switchPerspective}
@@ -310,10 +308,10 @@ function FolderContainer(props: Props) {
     if (Pro && currentPerspective === PerspectiveIDs.KANBAN) {
       return (
         <KanBanPerspectiveAsync
-          directoryContent={props.directoryContent}
+          directoryContent={currentDirectoryEntries}
           lastSearchTimestamp={props.lastSearchTimestamp}
           openRenameEntryDialog={openRenameEntryDialog}
-          loadParentDirectoryContent={props.loadParentDirectoryContent}
+          loadParentDirectoryContent={loadParentDirectoryContent}
           renameFile={props.renameFile}
           currentDirectoryPath={currentDirectoryPath}
           switchPerspective={switchPerspective}
@@ -371,7 +369,7 @@ function FolderContainer(props: Props) {
       perspectiveId === PerspectiveIDs.GRID ||
       perspectiveId === PerspectiveIDs.LIST
     ) {
-      props.setCurrentDirectoryPerspective(perspectiveId);
+      setCurrentDirectoryPerspective(perspectiveId);
     } else if (perspectiveId === PerspectiveIDs.GALLERY) {
       toggleProTeaser(PerspectiveIDs.GALLERY);
     } else if (perspectiveId === PerspectiveIDs.MAPIQUE) {
@@ -591,16 +589,11 @@ function mapStateToProps(state) {
   return {
     settings: state.settings,
     selectedEntries: getSelectedEntries(state),
-    directoryContent: getDirectoryContent(state),
-    currentDirectoryPerspective: getCurrentDirectoryPerspective(state),
-    //searchResultCount: getSearchResultCount(state),
     maxSearchResults: getMaxSearchResults(state),
     isDesktopMode: getDesktopMode(state),
-    isReadOnlyMode: isReadOnlyMode(state),
     progress: getProgress(state),
     searchQuery: getSearchQuery(state),
     defaultPerspective: getDefaultPerspective(state),
-    //editedEntryPaths: getEditedEntryPaths(state),
     lastSearchTimestamp: getLastSearchTimestamp(state),
     isSearchMode: isSearchMode(state)
   };
@@ -612,12 +605,8 @@ function mapActionCreatorsToProps(dispatch) {
       toggleUploadDialog: AppActions.toggleUploadDialog,
       renameFile: AppActions.renameFile,
       reflectCreateEntry: AppActions.reflectCreateEntry,
-      loadParentDirectoryContent: AppActions.loadParentDirectoryContent,
       setSelectedEntries: AppActions.setSelectedEntries,
       showNotification: AppActions.showNotification,
-      setCurrentDirectoryPerspective: AppActions.setCurrentDirectoryPerspective,
-      updateCurrentDirEntry: AppActions.updateCurrentDirEntry,
-      setCurrentDirectoryColor: AppActions.setCurrentDirectoryColor,
       enterSearchMode: AppActions.enterSearchMode,
       exitSearchMode: AppActions.exitSearchMode,
       setSearchQuery: LocationIndexActions.setSearchQuery
@@ -630,12 +619,8 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   nextProp.settings.currentTheme === prevProp.settings.currentTheme &&
   nextProp.drawerOpened === prevProp.drawerOpened &&
   nextProp.isDesktopMode === prevProp.isDesktopMode &&
-  nextProp.currentDirectoryPerspective ===
-    prevProp.currentDirectoryPerspective &&
   /* this props is set before currentDirectoryEntries is loaded and will reload FolderContainer */
   JSON.stringify(nextProp.progress) === JSON.stringify(prevProp.progress) &&
-  JSON.stringify(nextProp.directoryContent) ===
-    JSON.stringify(prevProp.directoryContent) &&
   JSON.stringify(nextProp.searchQuery) ===
     JSON.stringify(prevProp.searchQuery) &&
   nextProp.lastSearchTimestamp === prevProp.lastSearchTimestamp &&

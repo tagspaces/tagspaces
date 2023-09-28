@@ -29,14 +29,11 @@ import MenuItem from '@mui/material/MenuItem';
 import ConfirmDialog from '../dialogs/ConfirmDialog';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { getMaxSearchResults } from '-/reducers/settings';
-import {
-  actions as AppActions,
-  AppDispatch,
-  isReadOnlyMode
-} from '-/reducers/app';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   open: boolean;
@@ -61,10 +58,11 @@ function EntryTagMenu(props: Props) {
   const { t } = useTranslation();
 
   const { removeTags } = useTaggingActionsContext();
+  const { isReadOnlyMode } = useCurrentLocationContext();
+  const readOnlyMode = isReadOnlyMode();
   const [isDeleteTagDialogOpened, setIsDeleteTagDialogOpened] = useState(false);
   const dispatch: AppDispatch = useDispatch();
   const maxSearchResults: number = useSelector(getMaxSearchResults);
-  const readOnlyMode = useSelector(isReadOnlyMode);
 
   const setSearchQuery = searchQuery => {
     dispatch(LocationIndexActions.setSearchQuery(searchQuery));

@@ -63,7 +63,7 @@ import {
   SearchOptionType,
   SearchQueryComposition
 } from '-/components/SearchOptions';
-import { getCurrentLocation, getLocations } from '-/reducers/locations';
+import { getLocations } from '-/reducers/locations';
 import CloseIcon from '@mui/icons-material/Close';
 import { getTagLibrary } from '-/services/taglibrary-utils';
 import { getSearches } from '-/reducers/searches';
@@ -72,6 +72,7 @@ import { dataTidFormat } from '-/services/test';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   style?: any;
@@ -93,7 +94,14 @@ interface Props {
 function SearchAutocomplete(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { openEntry } = useOpenedEntryContext();
+  const { openEntry, openLink } = useOpenedEntryContext();
+  const {
+    currentLocation,
+    changeLocationByID,
+    switchLocationTypeByID,
+    watchForChanges,
+    openLocationById
+  } = useCurrentLocationContext();
   const dispatch: AppDispatch = useDispatch();
   const indexing = useSelector(isIndexing);
   const searchQuery: TS.SearchQuery = useSelector(getSearchQuery);
@@ -102,14 +110,10 @@ function SearchAutocomplete(props: Props) {
   const maxSearchResults = useSelector(getMaxSearchResults);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
   const locations: TS.Location[] = useSelector(getLocations);
-  const currentLocation: TS.Location = useSelector(getCurrentLocation);
   const searchMode: boolean = useSelector(isSearchMode);
   const searches: Array<TS.SearchQuery> = useSelector(getSearches);
 
-  const openLinkDispatch = (link, options) =>
-    dispatch(AppActions.openLink(link, options));
-  const openLocationByIdDispatch = locationId =>
-    dispatch(AppActions.openLocationById(locationId));
+  const openLinkDispatch = (link, options) => openLink(link, options);
 
   const { setTextQuery, textQuery, open, setAnchorSearch } = props;
   // const [, forceUpdate] = useReducer(x => x + 1, 0);
@@ -437,7 +441,7 @@ function SearchAutocomplete(props: Props) {
     resetValues([]);
     dispatch(LocationIndexActions.setSearchQuery({}));
     dispatch(AppActions.exitSearchMode());
-    dispatch(AppActions.watchForChanges());
+    watchForChanges();
   };
 
   function removeActionsFromQuery(
@@ -951,7 +955,7 @@ function SearchAutocomplete(props: Props) {
           // isOpen.current = false;
           searchOptions.current = getSearchOptions();
           currentOptions.current = undefined;
-          openLocationByIdDispatch(option.id);
+          openLocationById(option.id);
           return [];
         } else if (isAction(option.action, SearchActions.FILTER)) {
           actions.push(option);
@@ -983,14 +987,12 @@ function SearchAutocomplete(props: Props) {
         } else if (option.action === ExecActions.OPEN_HISTORY) {
           if (option.searchQuery) {
             if (option.id) {
-              dispatch(AppActions.switchLocationTypeByID(option.id)).then(
-                () => {
-                  dispatch(AppActions.changeLocationByID(option.id));
-                  dispatch(
-                    LocationIndexActions.setSearchQuery(option.searchQuery)
-                  );
-                }
-              );
+              switchLocationTypeByID(option.id).then(() => {
+                changeLocationByID(option.id);
+                dispatch(
+                  LocationIndexActions.setSearchQuery(option.searchQuery)
+                );
+              });
             } else {
             }
           } else if (Pro && Pro.history) {
@@ -1004,7 +1006,7 @@ function SearchAutocomplete(props: Props) {
               item,
               currentLocation.uuid,
               openLinkDispatch,
-              openLocationByIdDispatch,
+              openLocationById,
               openEntry
             );
           }
@@ -1024,7 +1026,7 @@ function SearchAutocomplete(props: Props) {
               item,
               currentLocation.uuid,
               openLinkDispatch,
-              openLocationByIdDispatch,
+              openLocationById,
               openEntry
             );
           }

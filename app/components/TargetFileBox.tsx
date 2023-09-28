@@ -26,12 +26,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   actions as AppActions,
   AppDispatch,
-  getDirectoryPath,
-  isReadOnlyMode
+  getDirectoryPath
 } from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
 import { TS } from '-/tagspaces.namespace';
 import { Identifier } from 'dnd-core';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 type DragItem = { files: File[]; items: DataTransferItemList };
 type DragProps = { isActive: boolean; handlerId: Identifier | null };
@@ -45,8 +45,9 @@ interface Props {
 function TargetFileBox(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
+  const { isReadOnlyMode } = useCurrentLocationContext();
+  const readOnlyMode = isReadOnlyMode();
   const ref = useRef<HTMLDivElement>(null);
-  const readOnlyMode = useSelector(isReadOnlyMode);
   const directoryPath = useSelector(getDirectoryPath);
   const { setMoveCopyDialogOpened } = props;
 

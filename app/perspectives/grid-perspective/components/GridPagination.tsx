@@ -43,8 +43,7 @@ import {
   getLastBackgroundImageChange,
   getLastThumbnailImageChange,
   getLastSelectedEntryPath,
-  getLastSearchTimestamp,
-  getDirectoryContent
+  getLastSearchTimestamp
 } from '-/reducers/app';
 import EntryIcon from '-/components/EntryIcon';
 import TagsPreview from '-/components/TagsPreview';
@@ -60,9 +59,10 @@ import PlatformIO from '-/services/platform-facade';
 import { MilkdownEditor } from '@tagspaces/tagspaces-md';
 import { renderCell } from '-/perspectives/common/main-container';
 import { useTranslation } from 'react-i18next';
-import { getCurrentLocation } from '-/reducers/locations';
 import GlobalSearch from '-/services/search-index';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
   isMetaLoaded: boolean;
@@ -73,7 +73,6 @@ interface Props {
   showDirectories: boolean;
   showDetails: boolean;
   showDescription: boolean;
-  isReadOnlyMode: boolean;
   layoutType: string;
   showTags: boolean;
   desktopMode: boolean;
@@ -99,7 +98,6 @@ interface Props {
   onContextMenu: (event: React.MouseEvent<HTMLDivElement>) => void;
   openRenameEntryDialog: () => void;
   onClick: (event: React.MouseEvent<HTMLDivElement>) => void;
-  updateCurrentDirEntries: (dirEntries: TS.FileSystemEntry[]) => void;
   // eslint-disable-next-line react/no-unused-prop-types
   settings; // cache only
   // eslint-disable-next-line react/no-unused-prop-types
@@ -111,11 +109,6 @@ interface Props {
   singleClickAction: string;
   lastSelectedEntryPath: string;
   openFileNatively: (path?: string) => void;
-  loadDirectoryContent: (
-    path: string,
-    generateThumbnails: boolean,
-    loadDirMeta?: boolean
-  ) => void;
   setFileContextMenuAnchorEl: (HTMLElement) => void;
   setDirContextMenuAnchorEl: (HTMLElement) => void;
   showNotification: (
@@ -139,7 +132,6 @@ function GridPagination(props: Props) {
     showTags,
     singleClickAction,
     getCellContent,
-    isReadOnlyMode,
     desktopMode,
     currentDirectoryColor,
     currentDirectoryTags,
@@ -150,7 +142,6 @@ function GridPagination(props: Props) {
     lastSelectedEntryPath,
     lastBackgroundImageChange,
     openFileNatively,
-    loadDirectoryContent,
     setFileContextMenuAnchorEl,
     setDirContextMenuAnchorEl,
     showNotification,
@@ -164,11 +155,13 @@ function GridPagination(props: Props) {
     lastSearchTimestamp
   } = props;
   const { openEntry } = useOpenedEntryContext();
-
-  const directoryContent: Array<TS.FileSystemEntry> = useSelector(
-    getDirectoryContent
-  );
-  const currentLocation: TS.Location = useSelector(getCurrentLocation);
+  const { isReadOnlyMode, currentLocation } = useCurrentLocationContext();
+  const {
+    currentDirectoryEntries,
+    loadDirectoryContent,
+    updateCurrentDirEntries
+  } = useDirectoryContentContext();
+  const readOnlyMode = isReadOnlyMode();
   if (!showDirectories) {
     directories = [];
   }
@@ -343,7 +336,7 @@ function GridPagination(props: Props) {
     const catchHandler = error => undefined;
     Promise.all(metaPromises.map(promise => promise.catch(catchHandler)))
       .then(entries => {
-        updateCurrentDirEntries(entries); // .filter(entry => entry !== undefined));
+        updateCurrentDirectoryEntries(entries); // .filter(entry => entry !== undefined));
         // entriesUpdated.current = entries;
         return true;
       })
@@ -352,7 +345,7 @@ function GridPagination(props: Props) {
       });
   };
 
-  const updateCurrentDirEntries = entries => {
+  const updateCurrentDirectoryEntries = entries => {
     const entriesEnhanced = [];
     entries.forEach(entry => {
       if (entry) {
@@ -365,7 +358,7 @@ function GridPagination(props: Props) {
       }
     });
     if (entriesEnhanced.length > 0) {
-      props.updateCurrentDirEntries(entriesEnhanced);
+      updateCurrentDirEntries(entriesEnhanced);
     }
   };
 
@@ -483,13 +476,7 @@ function GridPagination(props: Props) {
                       <span style={{ paddingLeft: 5 }}>
                         {currentDirectoryTags &&
                           currentDirectoryTags.map((tag: TS.Tag) => {
-                            return (
-                              <TagContainer
-                                isReadOnlyMode
-                                tag={tag}
-                                tagMode="display"
-                              />
-                            );
+                            return <TagContainer tag={tag} tagMode="display" />;
                           })}
                       </span>
                     ) : (
@@ -579,7 +566,7 @@ function GridPagination(props: Props) {
                 index,
                 getCellContent,
                 showDirectories,
-                isReadOnlyMode,
+                readOnlyMode,
                 desktopMode,
                 singleClickAction,
                 currentLocation,
@@ -588,7 +575,7 @@ function GridPagination(props: Props) {
                 lastSelectedEntryPath,
                 lastSearchTimestamp
                   ? GlobalSearch.getInstance().getResults()
-                  : directoryContent,
+                  : currentDirectoryEntries,
                 openEntry,
                 openFileNatively,
                 loadDirectoryContent,
@@ -605,7 +592,7 @@ function GridPagination(props: Props) {
               index,
               getCellContent,
               showDirectories,
-              isReadOnlyMode,
+              readOnlyMode,
               desktopMode,
               singleClickAction,
               currentLocation,
@@ -614,7 +601,7 @@ function GridPagination(props: Props) {
               lastSelectedEntryPath,
               lastSearchTimestamp
                 ? GlobalSearch.getInstance().getResults()
-                : directoryContent,
+                : currentDirectoryEntries,
               openEntry,
               openFileNatively,
               loadDirectoryContent,
@@ -722,9 +709,7 @@ function mapStateToProps(state) {
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
-      updateCurrentDirEntries: AppActions.updateCurrentDirEntries,
-      setIsMetaLoaded: AppActions.setIsMetaLoaded,
-      loadDirectoryContent: AppActions.loadDirectoryContent
+      setIsMetaLoaded: AppActions.setIsMetaLoaded
     },
     dispatch
   );

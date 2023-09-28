@@ -32,7 +32,6 @@ import TagContainerMenu from '-/components/TagContainerMenu';
 
 interface Props {
   tag: TS.Tag;
-  isReadOnlyMode?: boolean;
   tagGroup?: TS.TagGroup;
   handleTagMenu?: (
     event: Object,

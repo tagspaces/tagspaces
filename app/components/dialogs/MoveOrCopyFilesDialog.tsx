@@ -46,6 +46,7 @@ import {
   getDirectoryPath
 } from '-/reducers/app';
 import { useDispatch, useSelector } from 'react-redux';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
   open: boolean;
@@ -58,7 +59,9 @@ function MoveOrCopyFilesDialog(props: Props) {
   const { t } = useTranslation();
 
   const theme = useTheme();
-  const dispatch: AppDispatch = useDispatch();
+
+  const { loadDirectoryContent } = useDirectoryContentContext();
+  // const dispatch: AppDispatch = useDispatch();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const directoryPath = useSelector(getDirectoryPath);
 
@@ -90,9 +93,7 @@ function MoveOrCopyFilesDialog(props: Props) {
       }
     }
     Promise.all(promises)
-      .then(() =>
-        dispatch(AppActions.loadDirectoryContent(directoryPath, true, true))
-      )
+      .then(() => loadDirectoryContent(directoryPath, true, true))
       .catch(error => {
         console.log('promises', error);
       });

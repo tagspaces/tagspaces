@@ -12,15 +12,15 @@ import { actions as LocationActions } from '-/reducers/locations';
 import { actions as AppActions } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { importTagGroups } from '-/services/taglibrary-utils';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   loggedIn: (user: CognitoUserInterface) => void;
   initApp: () => void;
-  addLocations: (locations: Array<TS.Location>, override: boolean) => void;
-  // importTagGroups: (tagGroups: Array<TS.TagGroup>, replace: boolean) => void;
 }
 function HandleAuth(props: Props) {
   const username = useRef(undefined);
+  const { addLocations } = useCurrentLocationContext();
 
   React.useEffect(() => {
     onAuthUIStateChange((nextAuthState, authData) => {
@@ -46,7 +46,7 @@ function HandleAuth(props: Props) {
           fetchTenant()
             .then(async tenant => {
               if (tenant) {
-                await addLocations(tenant, queries.getExtconfig);
+                await saveLocations(tenant, queries.getExtconfig);
                 await addTagGroups(tenant, queries.tagGroupsByTenant);
               }
               return true;
@@ -67,7 +67,7 @@ function HandleAuth(props: Props) {
     });
   }, []);
 
-  const addLocations = async (tenant: string, query: any) => {
+  const saveLocations = async (tenant: string, query: any) => {
     // @ts-ignore
     const { data } = await API.graphql({
       query,
@@ -75,7 +75,7 @@ function HandleAuth(props: Props) {
     });
     if (data) {
       // console.log(data.getExtconfig.Locations.items);
-      props.addLocations(JSON.parse(data.getExtconfig.Locations), false);
+      addLocations(JSON.parse(data.getExtconfig.Locations), false);
     }
   };
 
@@ -123,8 +123,7 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
       loggedIn: AppActions.loggedIn,
-      initApp: AppActions.initApp,
-      addLocations: LocationActions.addLocations
+      initApp: AppActions.initApp
       // importTagGroups: TagGroupActions.importTagGroups
     },
     dispatch

@@ -25,12 +25,10 @@ import Box from '@mui/material/Box';
 import {
   actions as AppActions,
   AppDispatch,
-  isReadOnlyMode,
   OpenedEntry
 } from '-/reducers/app';
 import Revisions from '-/components/Revisions';
 import EntryProperties from '-/components/EntryProperties';
-import { TS } from '-/tagspaces.namespace';
 import {
   actions as SettingsActions,
   getEntryContainerTab,
@@ -124,7 +122,6 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   const { t } = useTranslation();
   const theme = useTheme();
   const tabIndex = useSelector(getEntryContainerTab);
-  const readOnlyMode = useSelector(isReadOnlyMode);
   const tileServer = useSelector(getMapTileServer);
   const desktopMode = useSelector(isDesktopMode);
   const dispatch: AppDispatch = useDispatch();
@@ -228,7 +225,6 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
         <EntryProperties
           key={openedFile.path}
           renameFile={handleRenameFile}
-          isReadOnlyMode={readOnlyMode}
           tileServer={tileServer}
         />
       </TsTabPanel>

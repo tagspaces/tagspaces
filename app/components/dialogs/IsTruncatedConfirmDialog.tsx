@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useState } from 'react';
+import React from 'react';
 import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -28,22 +28,15 @@ import { locationType } from '@tagspaces/tagspaces-common/misc';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import MaxLoopsSelect from '-/components/dialogs/MaxLoopsSelect';
 import AppConfig from '-/AppConfig';
-import { TS } from '-/tagspaces.namespace';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  actions as LocationActions,
-  getCurrentLocation
-} from '-/reducers/locations';
-import {
-  actions as AppActions,
-  AppDispatch,
-  getDirectoryPath
-} from '-/reducers/app';
+import { useSelector } from 'react-redux';
+import { getDirectoryPath } from '-/reducers/app';
 import Typography from '@mui/material/Typography';
 import InfoIcon from '-/components/InfoIcon';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import PlatformIO from '-/services/platform-facade';
 import { useTranslation } from 'react-i18next';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   open: boolean;
@@ -53,13 +46,19 @@ interface Props {
 function IsTruncatedConfirmDialog(props: Props) {
   const { open, onClose } = props;
   const { t } = useTranslation();
-  const dispatch: AppDispatch = useDispatch();
-  const location: TS.Location = useSelector(getCurrentLocation);
+
+  const { loadDirectoryContent } = useDirectoryContentContext();
+  const { currentLocation, editLocation } = useCurrentLocationContext();
+  // const dispatch: AppDispatch = useDispatch();
   const currentDirectoryPath = useSelector(getDirectoryPath);
 
   let defaultMaxLoops = AppConfig.maxLoops;
-  if (location && location.maxLoops && location.maxLoops > 0) {
-    const maxLoopsAsString = location.maxLoops + '';
+  if (
+    currentLocation &&
+    currentLocation.maxLoops &&
+    currentLocation.maxLoops > 0
+  ) {
+    const maxLoopsAsString = currentLocation.maxLoops + '';
     defaultMaxLoops = parseInt(maxLoopsAsString, 10);
   }
   //const [maxLoops, setMaxLoops] = useState<number>(defaultMaxLoops);
@@ -67,23 +66,17 @@ function IsTruncatedConfirmDialog(props: Props) {
   function changeMaxLoops(event: React.ChangeEvent<HTMLInputElement>) {
     const loops = event.target.value;
     if (loops) {
-      dispatch(
-        LocationActions.editLocation(
-          {
-            ...location,
-            maxLoops: parseInt(loops, 10)
-          },
-          false
-        )
+      editLocation(
+        {
+          ...currentLocation,
+          maxLoops: parseInt(loops, 10)
+        },
+        false
       );
       onClose();
-      if (location.type === locationType.TYPE_CLOUD) {
-        PlatformIO.enableObjectStoreSupport(location)
-          .then(() =>
-            dispatch(
-              AppActions.loadDirectoryContent(currentDirectoryPath, true, true)
-            )
-          )
+      if (currentLocation.type === locationType.TYPE_CLOUD) {
+        PlatformIO.enableObjectStoreSupport(currentLocation)
+          .then(() => loadDirectoryContent(currentDirectoryPath, true, true))
           .catch(error => {
             console.log('enableObjectStoreSupport', error);
           });

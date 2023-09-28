@@ -44,6 +44,7 @@ import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
 import { useTranslation } from 'react-i18next';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   setEditLocationDialogOpened: (open: boolean) => void;
@@ -64,6 +65,8 @@ function LocationContextMenu(props: Props) {
     locationDirectoryContextMenuAnchorEl
   } = props;
   const { t } = useTranslation();
+
+  const { addLocation, closeLocation } = useCurrentLocationContext();
   const dispatch: AppDispatch = useDispatch();
   const locationPosition = useSelector(state =>
     getLocationPosition(state, selectedLocation.uuid)
@@ -83,16 +86,6 @@ function LocationContextMenu(props: Props) {
 
   const showInFileManager = path => {
     dispatch(AppActions.showInFileManager(path));
-  };
-
-  const closeLocation = locationId => {
-    dispatch(AppActions.closeLocation(locationId));
-  };
-
-  const addLocation = (location, openAfterCreate, locationPosition) => {
-    dispatch(
-      LocationActions.addLocation(location, openAfterCreate, locationPosition)
-    );
   };
 
   const indexLocation = () => {

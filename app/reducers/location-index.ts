@@ -20,12 +20,7 @@ import { loadIndex, hasIndex } from '@tagspaces/tagspaces-platforms/indexer';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { getThumbFileLocationForFile } from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
-import {
-  getCurrentLocation,
-  getLocation,
-  getLocationByPath,
-  getLocations
-} from './locations';
+import { getLocation, getLocationByPath, getLocations } from './locations';
 import { createDirectoryIndex } from '-/services/utils-io';
 import Search, { defaultTitle } from '../services/search';
 import { actions as AppActions } from './app';
@@ -197,7 +192,8 @@ export const actions = {
       const searchTitle = defaultTitle(searchQuery);
       if (searchTitle.length > 0 && Pro && Pro.history) {
         const historyKeys = Pro.history.historyKeys;
-        const currentLocation = getCurrentLocation(getState());
+        // TODO rethink where to move this!!
+        /*const currentLocation = getCurrentLocation(getState());
         if (currentLocation) {
           Pro.history.saveHistory(
             historyKeys.searchHistoryKey,
@@ -214,7 +210,7 @@ export const actions = {
             },
             getState().settings[historyKeys.searchHistoryKey]
           );
-        }
+        }*/
       }
       dispatch(AppActions.enterSearchMode());
     }

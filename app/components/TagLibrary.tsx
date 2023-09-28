@@ -42,12 +42,10 @@ import {
   getTagTextColor
 } from '../reducers/settings';
 import {
-  actions as AppActions,
   AppDispatch,
   getSelectedEntries,
-  isReadOnlyMode,
   isTagLibraryChanged
-} from '../reducers/app';
+} from '-/reducers/app';
 import SmartTags from '../reducers/smart-tags';
 import EditTagDialog from '-/components/dialogs/EditTagDialog';
 import { TS } from '-/tagspaces.namespace';
@@ -76,6 +74,7 @@ import { classes, SidePanel } from '-/components/SidePanels.css';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   style?: any;
@@ -85,13 +84,18 @@ interface Props {
 function TagLibrary(props: Props) {
   const { t } = useTranslation();
   const { addTags } = useTaggingActionsContext();
+  const {
+    switchLocationTypeByID,
+    switchCurrentLocationType,
+    isReadOnlyMode
+  } = useCurrentLocationContext();
   const dispatch: AppDispatch = useDispatch();
+  const readOnlyMode = isReadOnlyMode();
   const tagBackgroundColor = useSelector(getTagColor);
   const tagTextColor = useSelector(getTagTextColor);
   const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
     getSelectedEntries
   );
-  const readOnly = useSelector(isReadOnlyMode);
   const tagGroupCollapsed: Array<string> = useSelector(getTagGroupCollapsed);
   const locations: Array<TS.Location> = useSelector(getLocations);
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
@@ -272,7 +276,7 @@ function TagLibrary(props: Props) {
     tagGroup.expanded = !(
       tagGroupCollapsed && tagGroupCollapsed.includes(tagGroup.uuid)
     );
-    const isReadOnly = tagGroup.readOnly || isTagLibraryReadOnly;
+
     return (
       <div key={tagGroup.uuid}>
         <TagGroupTitleDnD
@@ -285,13 +289,13 @@ function TagLibrary(props: Props) {
           toggleTagGroup={toggleTagGroupDispatch}
           locations={locations}
           tagGroupCollapsed={tagGroupCollapsed}
-          isReadOnly={isReadOnly}
+          isReadOnly={tagGroup.readOnly || isTagLibraryReadOnly}
         />
         <Collapse in={tagGroup.expanded} unmountOnExit>
           <TagGroupContainer taggroup={tagGroup}>
             {tagGroup.children &&
               tagGroup.children.map((tag: TS.Tag, idx) => {
-                if (readOnly) {
+                if (readOnlyMode) {
                   return (
                     <TagContainer
                       key={tagGroup.uuid + tag.title}
@@ -437,14 +441,10 @@ function TagLibrary(props: Props) {
               l => l.uuid === entry.locationId
             );
             if (location) {
-              dispatch(LocationActions.switchLocationType(location.uuid)).then(
-                currentLocationId => {
-                  setTagGroups(createTagGroup(entry, tagGroups, location));
-                  dispatch(
-                    AppActions.switchCurrentLocationType(currentLocationId)
-                  );
-                }
-              );
+              switchLocationTypeByID(location.uuid).then(currentLocationId => {
+                setTagGroups(createTagGroup(entry, tagGroups, location));
+                switchCurrentLocationType();
+              });
             } else {
               setTagGroups(createTagGroup(entry, tagGroups));
             }

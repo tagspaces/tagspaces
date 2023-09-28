@@ -29,6 +29,7 @@ import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import GlobalSearch from '-/services/search-index';
 import { getUseTrashCan } from '-/reducers/settings';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 type FsActionsContextData = {
   renameDirectory: (
@@ -58,6 +59,10 @@ export const FsActionsContextProvider = ({
     reflectRenameDirectory,
     reflectDeleteDirectory
   } = useOpenedEntryContext();
+  const {
+    loadDirectoryContent,
+    loadParentDirectoryContent
+  } = useDirectoryContentContext();
   const dispatch: AppDispatch = useDispatch();
   const currentDirectoryPath = useSelector(getDirectoryPath);
   const useTrashCan = useSelector(getUseTrashCan);
@@ -66,15 +71,12 @@ export const FsActionsContextProvider = ({
     return PlatformIO.renameDirectoryPromise(directoryPath, newDirectoryName)
       .then(newDirPath => {
         if (currentDirectoryPath === directoryPath) {
-          dispatch(
-            AppActions.loadDirectoryContent(newDirPath, false, true)
-          ).then(() => {
-            reflectRenameDirectory(directoryPath, newDirPath);
-            GlobalSearch.getInstance().reflectRenameEntry(
-              directoryPath,
-              newDirPath
-            );
-          });
+          loadDirectoryContent(newDirPath, false, true);
+          reflectRenameDirectory(directoryPath, newDirPath);
+          GlobalSearch.getInstance().reflectRenameEntry(
+            directoryPath,
+            newDirPath
+          );
         } else {
           dispatch(AppActions.reflectRenameEntry(directoryPath, newDirPath));
         }
@@ -151,7 +153,7 @@ export const FsActionsContextProvider = ({
     return PlatformIO.deleteDirectoryPromise(directoryPath, useTrashCan)
       .then(() => {
         if (directoryPath === currentDirectoryPath) {
-          dispatch(AppActions.loadParentDirectoryContent());
+          loadParentDirectoryContent();
           GlobalSearch.getInstance().reflectDeleteEntry(directoryPath);
           // close opened entries in deleted dir
           reflectDeleteDirectory(directoryPath);
@@ -160,12 +162,15 @@ export const FsActionsContextProvider = ({
         }
         dispatch(
           AppActions.showNotification(
-            t('deletingDirectorySuccessfull', {
-              dirPath: extractDirectoryName(
-                directoryPath,
-                PlatformIO.getDirSeparator()
-              )
-            }),
+            t(
+              'deletingDirectorySuccessfull' as any,
+              {
+                dirPath: extractDirectoryName(
+                  directoryPath,
+                  PlatformIO.getDirSeparator()
+                )
+              } as any
+            ) as string,
             'default',
             true
           )
@@ -176,12 +181,15 @@ export const FsActionsContextProvider = ({
         console.warn('Error while deleting directory: ' + error);
         dispatch(
           AppActions.showNotification(
-            t('errorDeletingDirectoryAlert', {
-              dirPath: extractDirectoryName(
-                directoryPath,
-                PlatformIO.getDirSeparator()
-              )
-            }),
+            t(
+              'errorDeletingDirectoryAlert' as any,
+              {
+                dirPath: extractDirectoryName(
+                  directoryPath,
+                  PlatformIO.getDirSeparator()
+                )
+              } as any
+            ) as string,
             'error',
             true
           )

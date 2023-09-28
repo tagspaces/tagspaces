@@ -29,15 +29,16 @@ import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 // import useMediaQuery from '@mui/material/useMediaQuery';
 import InfoIcon from '-/components/InfoIcon';
 import { useTranslation } from 'react-i18next';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 interface Props {
   open: boolean;
   onClose: () => void;
-  openLink: (url: string, options?: any) => void;
 }
 
 function OpenLinkDialog(props: Props) {
   const { t } = useTranslation();
+  const { openLink } = useOpenedEntryContext();
   const [inputError, setInputError] = useState(false);
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [linkURL, setLinkURL] = useState('');
@@ -66,7 +67,7 @@ function OpenLinkDialog(props: Props) {
 
   function onConfirm() {
     if (!disableConfirmButton && linkURL) {
-      props.openLink(linkURL, { fullWidth: false });
+      openLink(linkURL, { fullWidth: false });
       resetState();
       props.onClose();
     }
