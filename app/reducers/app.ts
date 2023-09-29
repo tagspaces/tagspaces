@@ -212,7 +212,7 @@ export const initialState = {
   isUpdateInProgress: false,
   isUpdateAvailable: false,
   currentLocationId: null,
-  currentDirectoryPath: '',
+  //currentDirectoryPath: '',
   currentDirectoryColor: '',
   currentDirectoryDescription: '',
   currentDirectoryTags: [],
@@ -1124,7 +1124,7 @@ export const actions = {
     dispatch: (action) => void,
     getState: () => any
   ) => {
-    const { app } = getState();
+    /* const { app } = getState();
     if (!app.currentDirectoryPath) {
       dispatch(
         actions.showNotification(
@@ -1133,15 +1133,15 @@ export const actions = {
           true
         )
       );
-    } else {
-      dispatch(actions.toggleCreateDirectoryDialog());
-    }
+    } else {*/
+    dispatch(actions.toggleCreateDirectoryDialog());
+    //}
   },
   showCreateFileDialog: () => (
     dispatch: (action) => void,
     getState: () => any
   ) => {
-    const { app } = getState();
+    /*const { app } = getState();
     if (!app.currentDirectoryPath) {
       dispatch(
         actions.showNotification(
@@ -1150,9 +1150,9 @@ export const actions = {
           true
         )
       );
-    } else {
-      dispatch(actions.toggleNewEntryDialog());
-    }
+    } else {*/
+    dispatch(actions.toggleNewEntryDialog());
+    // }
   },
   toggleEditTagDialog: (tag: TS.Tag) => ({
     type: types.TOGGLE_EDIT_TAG_DIALOG,
@@ -1803,7 +1803,7 @@ export const getCurrentDirectoryTags = (state: any) =>
   state.app.currentDirectoryTags;
 /*export const getCurrentDirectoryPerspective = (state: any) =>
   state.app.currentDirectoryPerspective;*/
-export const getDirectoryPath = (state: any) => state.app.currentDirectoryPath;
+// export const getDirectoryPath = (state: any) => state.app.currentDirectoryPath;
 export const getProgress = (state: any) => state.app.progress;
 export const getCurrentLocationPath = (state: any) => {
   if (state.locations) {
@@ -1856,11 +1856,11 @@ export const getLastSelectedEntry = (state: any) => {
   return undefined;
 };
 export const getLastSelectedEntryPath = (state: any) => {
-  const { selectedEntries, currentDirectoryPath } = state.app;
+  const { selectedEntries } = state.app;
   if (selectedEntries && selectedEntries.length > 0) {
     return selectedEntries[selectedEntries.length - 1].path;
   }
-  return currentDirectoryPath;
+  return undefined;
 };
 export const getSelectedTag = (state: any) => state.app.tag;
 export const isTagLibraryChanged = (state: any) => state.app.tagLibraryChanged;

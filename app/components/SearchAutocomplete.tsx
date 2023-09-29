@@ -30,7 +30,6 @@ import DropDownIcon from '@mui/icons-material/ArrowDropDownOutlined';
 import {
   actions as AppActions,
   AppDispatch,
-  getDirectoryPath,
   isSearchMode
 } from '../reducers/app';
 import {
@@ -73,6 +72,7 @@ import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
   style?: any;
@@ -99,14 +99,16 @@ function SearchAutocomplete(props: Props) {
     currentLocation,
     changeLocationByID,
     switchLocationTypeByID,
-    watchForChanges,
     openLocationById
   } = useCurrentLocationContext();
+  const {
+    watchForChanges,
+    currentDirectoryPath
+  } = useDirectoryContentContext();
   const dispatch: AppDispatch = useDispatch();
   const indexing = useSelector(isIndexing);
   const searchQuery: TS.SearchQuery = useSelector(getSearchQuery);
   // const isDesktop = useSelector(isDesktopMode);
-  const currentDirectory = useSelector(getDirectoryPath);
   const maxSearchResults = useSelector(getMaxSearchResults);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
   const locations: TS.Location[] = useSelector(getLocations);
@@ -599,7 +601,7 @@ function SearchAutocomplete(props: Props) {
       tagPlaceLong,
       // tagPlaceRadius,
       maxSearchResults: maxSearchResults,
-      currentDirectory: currentDirectory,
+      currentDirectory: currentDirectoryPath,
       forceIndexing: forceIndexing.current,
       showUnixHiddenEntries: showUnixHiddenEntries,
       executeSearch: true

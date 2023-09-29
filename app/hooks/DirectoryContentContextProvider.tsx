@@ -16,7 +16,13 @@
  *
  */
 
-import React, { createContext, useMemo, useRef, useState } from 'react';
+import React, {
+  createContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import {
@@ -53,6 +59,7 @@ import {
 } from '-/services/thumbsgenerator';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import GlobalSearch from '-/services/search-index';
+import { Pro } from '-/pro';
 
 type DirectoryContentContextData = {
   currentDirectoryEntries: TS.FileSystemEntry[];
@@ -89,8 +96,8 @@ type DirectoryContentContextData = {
   updateCurrentDirEntry: (path: string, entry: TS.FileSystemEntry) => void;
   updateCurrentDirEntries: (dirEntries: TS.FileSystemEntry[]) => void;
   updateThumbnailUrl: (filePath: string, thumbUrl: string) => void;
-  updateThumbnailUrls: (tmbURLs: Array<any>) => void;
   setDirectoryMeta: (meta: TS.FileSystemEntryMeta) => void;
+  watchForChanges: (location?: TS.Location) => void;
 };
 
 export const DirectoryContentContext = createContext<
@@ -115,8 +122,8 @@ export const DirectoryContentContext = createContext<
   updateCurrentDirEntry: () => {},
   updateCurrentDirEntries: () => {},
   updateThumbnailUrl: () => {},
-  updateThumbnailUrls: () => {},
-  setDirectoryMeta: () => {}
+  setDirectoryMeta: () => {},
+  watchForChanges: () => {}
 });
 
 export type DirectoryContentContextProviderProps = {
@@ -146,14 +153,35 @@ export const DirectoryContentContextProvider = ({
   const currentDirectoryFiles = useRef<TS.OrderVisibilitySettings[]>([]);
   const currentDirectoryDirs = useRef<TS.OrderVisibilitySettings[]>([]);
 
+  useEffect(() => {
+    if (currentLocation) {
+      currentDirectoryPath.current = PlatformIO.getLocationPath(
+        currentLocation
+      );
+      loadDirectoryContent(
+        currentDirectoryPath.current,
+        currentLocation.type !== locationType.TYPE_CLOUD,
+        true
+      );
+      if (currentLocation.type !== locationType.TYPE_CLOUD) {
+        watchForChanges(currentLocation);
+      }
+    } else {
+      clearDirectoryContent();
+      if (Pro && Pro.Watcher) {
+        Pro.Watcher.stopWatching();
+      }
+    }
+  }, [currentLocation]);
+
   function loadParentDirectoryContent() {
     const currentLocationPath = normalizePath(currentLocation.path);
 
     // dispatch(actions.setIsLoading(true));
 
-    if (currentDirectoryPath) {
+    if (currentDirectoryPath.current) {
       const parentDirectory = extractParentDirectoryPath(
-        currentDirectoryPath,
+        currentDirectoryPath.current,
         PlatformIO.getDirSeparator()
       );
       // console.log('parentDirectory: ' + parentDirectory  + ' - currentLocationPath: ' + currentLocationPath);
@@ -221,8 +249,8 @@ export const DirectoryContentContextProvider = ({
     setCurrentDirectoryEntries(dirEntries);
   }
 
-  function updateThumbnailUrls(tmbURLs: Array<any>) {
-    const dirEntries = currentDirectoryEntries.map(entry => {
+  function updateThumbnailUrls(directoryContent, tmbURLs: Array<any>) {
+    const dirEntries = directoryContent.map(entry => {
       const tmbUrl = tmbURLs.find(tmbUrl => tmbUrl.filePath == entry.path);
       if (tmbUrl) {
         return { ...entry, thumbPath: tmbUrl };
@@ -323,7 +351,7 @@ export const DirectoryContentContextProvider = ({
   }
 
   function clearDirectoryContent() {
-    currentDirectoryPath.current = '';
+    currentDirectoryPath.current = undefined;
     setCurrentDirectoryEntries([]);
   }
 
@@ -376,7 +404,7 @@ export const DirectoryContentContextProvider = ({
       dispatch(AppActions.setGeneratingThumbnails(false));
       // dispatch(actions.hideNotifications());
       if (tmbURLs.length > 0) {
-        updateThumbnailUrls(tmbURLs);
+        updateThumbnailUrls(directoryContent, tmbURLs);
       }
       return true;
     }
@@ -454,6 +482,7 @@ export const DirectoryContentContextProvider = ({
     ) {
       currentDirectoryDirs.current = directoryMeta.customOrder.folders;
     }
+    setCurrentDirectoryEntries(directoryContent);
     // isMetaLoaded.current = false;
     // dispatch(actions.setIsMetaLoaded(false));
   }
@@ -584,6 +613,22 @@ export const DirectoryContentContextProvider = ({
     directoryMeta.current = meta;
   }
 
+  function watchForChanges(location?: TS.Location) {
+    if (location === undefined) {
+      location = currentLocation;
+    }
+    if (Pro && Pro.Watcher && location && location.watchForChanges) {
+      const depth =
+        currentDirectoryPerspective.current === PerspectiveIDs.KANBAN ? 3 : 1;
+      Pro.Watcher.watchFolder(
+        PlatformIO.getLocationPath(location),
+        dispatch,
+        loadDirectoryContent,
+        depth
+      );
+    }
+  }
+
   const context = useMemo(() => {
     return {
       currentDirectoryEntries: currentDirectoryEntries,
@@ -605,11 +650,13 @@ export const DirectoryContentContextProvider = ({
       updateCurrentDirEntry,
       updateCurrentDirEntries,
       updateThumbnailUrl,
-      updateThumbnailUrls,
-      setDirectoryMeta
+      setDirectoryMeta,
+      watchForChanges
     };
   }, [
+    currentLocation,
     currentDirectoryEntries,
+    currentDirectoryPath.current,
     directoryMeta.current,
     currentDirectoryPerspective.current,
     currentDirectoryFiles.current,

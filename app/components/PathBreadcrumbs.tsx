@@ -32,8 +32,6 @@ import DirectoryMenu from './menus/DirectoryMenu';
 import { LocalLocationIcon, CloudLocationIcon } from '-/components/CommonIcons';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
-import { getDirectoryPath } from '-/reducers/app';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
@@ -84,10 +82,12 @@ interface Props {
 function PathBreadcrumbs(props: Props) {
   const { t } = useTranslation();
   //const dispatch: AppDispatch = useDispatch();
-  const { loadDirectoryContent } = useDirectoryContentContext();
+  const {
+    loadDirectoryContent,
+    currentDirectoryPath
+  } = useDirectoryContentContext();
   const { currentLocation } = useCurrentLocationContext();
   let pathParts: Array<string> = [];
-  const currentDirectoryPath = useSelector(getDirectoryPath);
 
   const [
     directoryContextMenuAnchorEl,
@@ -244,7 +244,6 @@ function PathBreadcrumbs(props: Props) {
         open={Boolean(directoryContextMenuAnchorEl)}
         onClose={closeDirectoryMenu}
         anchorEl={directoryContextMenuAnchorEl}
-        directoryPath={currentDirectoryPath}
         openRenameDirectoryDialog={openRenameDirectoryDialog}
         openMoveCopyFilesDialog={openMoveCopyFilesDialog}
         reflectCreateEntry={reflectCreateEntry}

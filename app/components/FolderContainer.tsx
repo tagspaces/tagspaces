@@ -41,7 +41,6 @@ import {
   getProgress,
   isSearchMode,
   getLastSearchTimestamp,
-  getDirectoryPath,
   OpenedEntry
 } from '../reducers/app';
 import LoadingLazy from '../components/LoadingLazy';
@@ -191,6 +190,7 @@ function FolderContainer(props: Props) {
   const { openedEntries } = useOpenedEntryContext();
   const {
     currentDirectoryEntries,
+    currentDirectoryPath,
     currentDirectoryPerspective,
     setCurrentDirectoryColor,
     setCurrentDirectoryPerspective,
@@ -199,7 +199,6 @@ function FolderContainer(props: Props) {
   } = useDirectoryContentContext();
   const havePrevOpenedFile = React.useRef<boolean>(false);
   const firstRender = useFirstRender();
-  const currentDirectoryPath = useSelector(getDirectoryPath) || '';
 
   // TODO rethink to move this in openedEntryContextProvider
   useEffect(() => {

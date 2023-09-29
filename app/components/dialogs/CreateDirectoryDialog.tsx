@@ -17,7 +17,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
@@ -26,17 +26,12 @@ import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import Dialog from '@mui/material/Dialog';
-import {
-  actions as AppActions,
-  AppDispatch,
-  getDirectoryPath
-} from '-/reducers/app';
 import { joinPaths } from '@tagspaces/tagspaces-common/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import PlatformIO from '-/services/platform-facade';
 import { useTranslation } from 'react-i18next';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useFsActionsContext } from '-/hooks/useFsActionsContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
   open: boolean;
@@ -49,11 +44,12 @@ interface Props {
 function CreateDirectoryDialog(props: Props) {
   const { t } = useTranslation();
   const { createDirectory } = useFsActionsContext();
+  const { currentDirectoryPath } = useDirectoryContentContext();
+
   const [inputError, setInputError] = useState(false);
   const isFirstRun = useRef(true);
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [name, setName] = useState('');
-  const currentDirectoryPath = useSelector(getDirectoryPath);
   const { open, onClose, selectedDirectoryPath, reflect } = props;
 
   useEffect(() => {

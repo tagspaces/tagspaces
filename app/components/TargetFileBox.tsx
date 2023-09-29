@@ -23,15 +23,12 @@ import { useTranslation } from 'react-i18next';
 import AppConfig from '-/AppConfig';
 import PlatformIO from '-/services/platform-facade';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  actions as AppActions,
-  AppDispatch,
-  getDirectoryPath
-} from '-/reducers/app';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import IOActions from '-/reducers/io-actions';
 import { TS } from '-/tagspaces.namespace';
 import { Identifier } from 'dnd-core';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 type DragItem = { files: File[]; items: DataTransferItemList };
 type DragProps = { isActive: boolean; handlerId: Identifier | null };
@@ -46,9 +43,9 @@ function TargetFileBox(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const { isReadOnlyMode } = useCurrentLocationContext();
+  const { currentDirectoryPath } = useDirectoryContentContext();
   const readOnlyMode = isReadOnlyMode();
   const ref = useRef<HTMLDivElement>(null);
-  const directoryPath = useSelector(getDirectoryPath);
   const { setMoveCopyDialogOpened } = props;
 
   const onUploadProgress = (progress, abort, fileName) => {
@@ -68,7 +65,7 @@ function TargetFileBox(props: Props) {
     }
     if (files) {
       console.log('Dropped files: ' + JSON.stringify(files));
-      if (!directoryPath) {
+      if (!currentDirectoryPath) {
         dispatch(
           AppActions.showNotification(
             'Importing files failed, because no folder is opened in TagSpaces!',
@@ -85,7 +82,7 @@ function TargetFileBox(props: Props) {
       dispatch(AppActions.resetProgress());
       dispatch(AppActions.toggleUploadDialog());
       return dispatch(
-        IOActions.uploadFilesAPI(files, directoryPath, onUploadProgress)
+        IOActions.uploadFilesAPI(files, currentDirectoryPath, onUploadProgress)
       )
         .then((fsEntries: Array<TS.FileSystemEntry>) => {
           dispatch(AppActions.reflectCreateEntries(fsEntries));
@@ -119,7 +116,7 @@ function TargetFileBox(props: Props) {
         isActive: m.isOver({ shallow: true }) && m.canDrop()
       })
     }),
-    [directoryPath]
+    [currentDirectoryPath]
   );
 
   drop(ref);

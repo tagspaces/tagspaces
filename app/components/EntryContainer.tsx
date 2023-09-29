@@ -36,7 +36,6 @@ import Box from '@mui/material/Box';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import { CancelIcon, CloseEditIcon } from '-/components/CommonIcons';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import { buffer } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
 import {
   extractContainingDirectoryPath,
@@ -56,7 +55,6 @@ import {
   OpenedEntry,
   NotificationTypes,
   actions as AppActions,
-  getDirectoryPath,
   AppDispatch
 } from '-/reducers/app';
 import useEventListener from '-/utils/useEventListener';
@@ -64,9 +62,8 @@ import { TS } from '-/tagspaces.namespace';
 import FileView from '-/components/FileView';
 import { Pro } from '-/pro';
 import { Switch } from '@mui/material';
-import useFirstRender from '-/utils/useFirstRender';
 import ResolveConflictDialog from '-/components/dialogs/ResolveConflictDialog';
-import { styled, useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import EntryContainerTabs from '-/components/EntryContainerTabs';
 import EntryContainerNav from '-/components/EntryContainerNav';
 import EntryContainerTitle from '-/components/EntryContainerTitle';
@@ -102,9 +99,11 @@ function EntryContainer() {
     switchCurrentLocationType
   } = useCurrentLocationContext();
   const readOnlyMode = isReadOnlyMode();
-  const { loadDirectoryContent } = useDirectoryContentContext();
+  const {
+    loadDirectoryContent,
+    currentDirectoryPath
+  } = useDirectoryContentContext();
   const tabIndex = useSelector(getEntryContainerTab);
-  const currentDirectoryPath = useSelector(getDirectoryPath);
   const fileEditHistoryKey = useSelector(
     (state: any) => state.settings[historyKeys.fileEditKey]
   );

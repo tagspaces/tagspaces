@@ -805,7 +805,6 @@ function GridPerspective(props: Props) {
         anchorEl={dirContextMenuAnchorEl}
         mouseX={mouseX}
         mouseY={mouseY}
-        directoryPath={lastSelectedEntryPath}
         openRenameDirectoryDialog={openRenameEntryDialog}
         openMoveCopyFilesDialog={openMoveCopyFilesDialog}
         perspectiveMode={lastSelectedEntryPath !== currentDirectoryPath}

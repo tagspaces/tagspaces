@@ -45,7 +45,6 @@ import { TS } from '-/tagspaces.namespace';
 import {
   actions as AppActions,
   AppDispatch,
-  getDirectoryPath,
   getSelectedEntries
 } from '-/reducers/app';
 import {
@@ -84,6 +83,7 @@ function MainToolbar(props: Props) {
   const { openEntry } = useOpenedEntryContext();
   const {
     loadParentDirectoryContent,
+    currentDirectoryPath,
     openCurrentDirectory
   } = useDirectoryContentContext();
   const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
@@ -94,10 +94,9 @@ function MainToolbar(props: Props) {
   const dispatch: AppDispatch = useDispatch();
   const { isReadOnlyMode } = useCurrentLocationContext();
   const readOnlyMode = isReadOnlyMode();
-  const directoryPath = useSelector(getDirectoryPath);
 
   function showProperties() {
-    return openEntry(directoryPath, true);
+    return openEntry(currentDirectoryPath, true);
   }
 
   return (

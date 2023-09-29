@@ -21,7 +21,6 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import {
   actions as AppActions,
   AppDispatch,
-  getDirectoryPath,
   getSelectedEntries
 } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
@@ -34,6 +33,7 @@ import {
   checkFilesExistPromise
 } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
   open: boolean;
@@ -45,11 +45,11 @@ interface Props {
 function MoveCopyFilesDialog(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
+  const { currentDirectoryPath } = useDirectoryContentContext();
 
   const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
     getSelectedEntries
   );
-  const currentDirectoryPath: string | null = useSelector(getDirectoryPath);
   const [targetPath, setTargetPath] = useState(
     currentDirectoryPath ? currentDirectoryPath : ''
   );

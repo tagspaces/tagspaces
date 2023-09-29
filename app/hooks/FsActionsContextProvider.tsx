@@ -18,11 +18,7 @@
 
 import React, { createContext, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  actions as AppActions,
-  AppDispatch,
-  getDirectoryPath
-} from '-/reducers/app';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useTranslation } from 'react-i18next';
 import PlatformIO from '-/services/platform-facade';
 import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
@@ -61,10 +57,10 @@ export const FsActionsContextProvider = ({
   } = useOpenedEntryContext();
   const {
     loadDirectoryContent,
+    currentDirectoryPath,
     loadParentDirectoryContent
   } = useDirectoryContentContext();
   const dispatch: AppDispatch = useDispatch();
-  const currentDirectoryPath = useSelector(getDirectoryPath);
   const useTrashCan = useSelector(getUseTrashCan);
 
   function renameDirectory(directoryPath: string, newDirectoryName: string) {

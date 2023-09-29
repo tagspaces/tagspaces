@@ -27,7 +27,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   actions as AppActions,
   AppDispatch,
-  getDirectoryPath,
   getEditedEntryPaths,
   getLastSelectedEntry,
   isSearchMode,
@@ -140,6 +139,7 @@ export const OpenedEntryContextProvider = ({
 
   const {
     currentDirectoryEntries,
+    currentDirectoryPath,
     loadDirectoryContent
   } = useDirectoryContentContext();
   const { openLocation, currentLocation } = useCurrentLocationContext();
@@ -149,7 +149,6 @@ export const OpenedEntryContextProvider = ({
     getLastSelectedEntry
   );
   const locations: TS.Location[] = useSelector(getLocations);
-  const currentDirectoryPath = useSelector(getDirectoryPath);
   const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
   const fileOpenHistory = useSelector(
     (state: any) => state.settings[historyKeys.fileOpenKey]

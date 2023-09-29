@@ -54,7 +54,6 @@ type CurrentLocationContextData = {
   switchCurrentLocationType: () => Promise<boolean>;
   switchLocationTypeByID: (locationId: string) => Promise<boolean>;
   changeLocationByID: (locationId: string) => void;
-  watchForChanges: (location?: TS.Location) => void;
   openLocationById: (locationId: string, skipInitialDirList?: boolean) => void;
 };
 
@@ -72,7 +71,6 @@ export const CurrentLocationContext = createContext<CurrentLocationContextData>(
     switchCurrentLocationType: () => Promise.resolve(false),
     switchLocationTypeByID: () => Promise.resolve(false),
     changeLocationByID: () => {},
-    watchForChanges: () => {},
     openLocationById: () => {}
   }
 );
@@ -86,11 +84,6 @@ export const CurrentLocationContextProvider = ({
 }: CurrentLocationContextProviderProps) => {
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
-  const {
-    loadDirectoryContent,
-    currentDirectoryPerspective,
-    clearDirectoryContent
-  } = useDirectoryContentContext();
 
   const [currentLocation, setCurrentLocation] = useState<TS.Location>(
     undefined
@@ -211,7 +204,7 @@ export const CurrentLocationContextProvider = ({
   }
 
   function changeLocation(location: TS.Location) {
-    if (location.uuid !== currentLocation.uuid) {
+    if (!currentLocation || location.uuid !== currentLocation.uuid) {
       // dispatch(actions.exitSearchMode());
       dispatch(LocationIndexActions.clearDirectoryIndex());
       setCurrentLocation(location);
@@ -219,7 +212,7 @@ export const CurrentLocationContextProvider = ({
   }
 
   function changeLocationByID(locationId: string) {
-    if (locationId !== currentLocation.uuid) {
+    if (!currentLocation || locationId !== currentLocation.uuid) {
       dispatch(LocationIndexActions.clearDirectoryIndex());
       const location = locations.find(location => location.uuid === locationId);
       if (location) {
@@ -280,13 +273,13 @@ export const CurrentLocationContextProvider = ({
           );
           //dispatch(AppActions.setReadOnlyMode(location.isReadOnly || false));
           changeLocation(location);
-          if (!skipInitialDirList) {
+          /*if (!skipInitialDirList) {
             loadDirectoryContent(
               PlatformIO.getLocationPath(location),
               false,
               true
             );
-          }
+          }*/
           return true;
         })
         .catch(e => {
@@ -309,26 +302,22 @@ export const CurrentLocationContextProvider = ({
       }
       //dispatch(AppActions.setReadOnlyMode(location.isReadOnly || false));
       changeLocation(location);
-      if (!skipInitialDirList) {
+      /*if (!skipInitialDirList) {
         loadDirectoryContent(PlatformIO.getLocationPath(location), true, true);
-      }
-      watchForChanges(location);
+      }*/
+      // watchForChanges(location);
     }
   }
 
   function closeLocation(locationId: string) {
-    if (currentLocation.uuid === locationId) {
+    if (currentLocation && currentLocation.uuid === locationId) {
       locations.map(location => {
         if (location.uuid === locationId) {
           // location needed evtl. to unwatch many loc. root folders if available
           setCurrentLocation(undefined);
-          clearDirectoryContent();
           dispatch(LocationIndexActions.clearDirectoryIndex());
           dispatch(AppActions.setSelectedEntries([]));
           dispatch(AppActions.exitSearchMode());
-          if (Pro && Pro.Watcher) {
-            Pro.Watcher.stopWatching();
-          }
         }
         clearAllURLParams();
         return true;
@@ -339,34 +328,14 @@ export const CurrentLocationContextProvider = ({
   function closeAllLocations() {
     // location needed evtl. to unwatch many loc. root folders if available
     setCurrentLocation(undefined);
-    clearDirectoryContent();
     dispatch(LocationIndexActions.clearDirectoryIndex());
     dispatch(AppActions.setSelectedEntries([]));
-    if (Pro && Pro.Watcher) {
-      Pro.Watcher.stopWatching();
-    }
     clearAllURLParams();
     return true;
   }
 
   function isCurrentLocation(uuid: string) {
-    return currentLocation.uuid === uuid;
-  }
-
-  function watchForChanges(location?: TS.Location) {
-    if (location === undefined) {
-      location = currentLocation;
-    }
-    if (Pro && Pro.Watcher && location && location.watchForChanges) {
-      const depth =
-        currentDirectoryPerspective === PerspectiveIDs.KANBAN ? 3 : 1;
-      Pro.Watcher.watchFolder(
-        PlatformIO.getLocationPath(location),
-        dispatch,
-        loadDirectoryContent,
-        depth
-      );
-    }
+    return currentLocation && currentLocation.uuid === uuid;
   }
 
   const context = useMemo(() => {
@@ -383,7 +352,6 @@ export const CurrentLocationContextProvider = ({
       switchCurrentLocationType,
       switchLocationTypeByID,
       changeLocationByID,
-      watchForChanges,
       openLocationById
     };
   }, [currentLocation]);

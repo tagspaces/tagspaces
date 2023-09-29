@@ -41,7 +41,7 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { mergeWithExtractedTags } from '@tagspaces/tagspaces-common/misc';
 import TagsSelect from './TagsSelect';
-import { actions as AppActions, getDirectoryPath } from '../reducers/app';
+import { actions as AppActions } from '../reducers/app';
 import {
   actions as LocationIndexActions,
   isIndexing,
@@ -53,7 +53,6 @@ import {
 } from '-/reducers/settings';
 import { FileTypeGroups, haveSearchFilters } from '-/services/search';
 import { Pro } from '../pro';
-import { formatDateTime, extractTimePeriod } from '-/utils/dates';
 import { parseGeoLocation, parseLatLon } from '-/utils/geo';
 import { getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
@@ -1114,7 +1113,6 @@ function mapStateToProps(state) {
   return {
     indexing: isIndexing(state),
     searchQuery: getSearchQuery(state),
-    currentDirectory: getDirectoryPath(state),
     maxSearchResults: getMaxSearchResults(state),
     searches: getSearches(state),
     showUnixHiddenEntries: getShowUnixHiddenEntries(state)

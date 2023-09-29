@@ -36,15 +36,14 @@ import AppConfig from '-/AppConfig';
 import {
   actions as AppActions,
   AppDispatch,
-  getDirectoryPath,
   getLastSelectedEntry
 } from '-/reducers/app';
 import PlatformIO from '-/services/platform-facade';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { dirNameValidation, fileNameValidation } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useFsActionsContext } from '-/hooks/useFsActionsContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
   open: boolean;
@@ -55,7 +54,7 @@ function RenameEntryDialog(props: Props) {
   const { open, onClose } = props;
   const { t } = useTranslation();
   const { renameDirectory } = useFsActionsContext();
-  const currentDirectoryPath = useSelector(getDirectoryPath);
+  const { currentDirectoryPath } = useDirectoryContentContext();
   const [inputError, setInputError] = useState<boolean>(false);
   const disableConfirmButton = useRef<boolean>(true);
   const lastSelectedEntry = useSelector(getLastSelectedEntry);

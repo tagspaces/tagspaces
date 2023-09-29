@@ -33,7 +33,6 @@ import PlatformIO from '-/services/platform-facade';
 import {
   actions as AppActions,
   AppDispatch,
-  getDirectoryPath,
   getLastSelectedEntryPath,
   getSelectedEntries
 } from '-/reducers/app';
@@ -57,7 +56,6 @@ interface Props {
   classes?: any;
   onClose: (param?: any) => void;
   anchorEl: Element;
-  directoryPath: string;
   openAddRemoveTagsDialog?: () => void;
   reflectCreateEntry?: (path: string, isFile: boolean) => void;
   switchPerspective?: (perspectiveId: string) => void;
@@ -75,6 +73,7 @@ function DirectoryMenu(props: Props) {
   const { currentLocation, isReadOnlyMode } = useCurrentLocationContext();
   const {
     loadDirectoryContent,
+    currentDirectoryPath,
     setCurrentDirectoryPerspective
   } = useDirectoryContentContext();
   const readOnlyMode = isReadOnlyMode();
@@ -85,7 +84,6 @@ function DirectoryMenu(props: Props) {
     anchorEl,
     mouseX,
     mouseY,
-    directoryPath,
     openAddRemoveTagsDialog,
     openMoveCopyFilesDialog,
     openRenameDirectoryDialog,
@@ -95,7 +93,6 @@ function DirectoryMenu(props: Props) {
     getSelectedEntries
   );
   const locations: Array<TS.Location> = useSelector(getLocations);
-  const currentDirectoryPath = useSelector(getDirectoryPath);
   const lastSelectedEntryPath = useSelector(getLastSelectedEntryPath);
   const dispatch: AppDispatch = useDispatch();
 
@@ -163,15 +160,15 @@ function DirectoryMenu(props: Props) {
   ] = useState(false);*/
 
   function reloadDirectory() {
-    return loadDirectoryContent(directoryPath, true, true);
+    return loadDirectoryContent(currentDirectoryPath, true, true);
   }
 
   function openDirectory() {
-    return loadDirectoryContent(directoryPath, true, true);
+    return loadDirectoryContent(currentDirectoryPath, true, true);
   }
 
   function showProperties() {
-    return openEntry(directoryPath);
+    return openEntry(currentDirectoryPath);
   }
 
   function perspectiveSwitch(perspectiveId) {
@@ -219,8 +216,8 @@ function DirectoryMenu(props: Props) {
     setSelectedEntries([
       {
         isFile: false,
-        name: directoryPath,
-        path: directoryPath,
+        name: currentDirectoryPath,
+        path: currentDirectoryPath,
         tags: [],
         size: 0,
         lmdt: 0
@@ -238,7 +235,7 @@ function DirectoryMenu(props: Props) {
   }
 
   function showInFileManager() {
-    dispatch(AppActions.openDirectory(directoryPath));
+    dispatch(AppActions.openDirectory(currentDirectoryPath));
   }
 
   function openInNewWindow() {
@@ -278,13 +275,13 @@ Do you want to continue?`)
             console.warn('Error creating tags: ' + err);
           });
       };
-      Pro.MacTagsImport.importTags(directoryPath, entryCallback)
+      Pro.MacTagsImport.importTags(currentDirectoryPath, entryCallback)
         .then(() => {
-          // loadDirectoryContent(directoryPath); // TODO after first import tags is not imported without reloadDirContent
+          // loadDirectoryContent(currentDirectoryPath); // TODO after first import tags is not imported without reloadDirContent
           toggleProgressDialog();
-          console.log('Import tags succeeded ' + directoryPath);
+          console.log('Import tags succeeded ' + currentDirectoryPath);
           showNotification(
-            'Tags from ' + directoryPath + ' are imported successfully.',
+            'Tags from ' + currentDirectoryPath + ' are imported successfully.',
             'default',
             true
           );
@@ -328,7 +325,9 @@ Do you want to continue?`)
       AppConfig.endTagContainer +
       '.jpg';
     const newFilePath =
-      normalizePath(directoryPath) + PlatformIO.getDirSeparator() + fileName;
+      normalizePath(currentDirectoryPath) +
+      PlatformIO.getDirSeparator() +
+      fileName;
 
     PlatformIO.renameFilePromise(filePath, newFilePath)
       .then(() => {
@@ -374,7 +373,7 @@ Do you want to continue?`)
 
   function setFolderThumbnail() {
     const parentDirectoryPath = extractContainingDirectoryPath(
-      directoryPath,
+      currentDirectoryPath,
       PlatformIO.getDirSeparator()
     );
     const parentDirectoryName = extractDirectoryName(
@@ -384,7 +383,7 @@ Do you want to continue?`)
 
     PlatformIO.copyFilePromise(
       getThumbFileLocationForDirectory(
-        directoryPath,
+        currentDirectoryPath,
         PlatformIO.getDirSeparator()
       ),
       getThumbFileLocationForDirectory(
@@ -403,7 +402,10 @@ Do you want to continue?`)
       })
       .catch(error => {
         showNotification('Thumbnail creation failed.', 'default', true);
-        console.warn('Error setting Thumb for entry: ' + directoryPath, error);
+        console.warn(
+          'Error setting Thumb for entry: ' + currentDirectoryPath,
+          error
+        );
         return true;
       });
   }
@@ -450,7 +452,7 @@ Do you want to continue?`)
       <FileUploadContainer
         id="dirMenuId"
         ref={fileUploadContainerRef}
-        directoryPath={directoryPath}
+        directoryPath={currentDirectoryPath}
       />
     </div>
   );

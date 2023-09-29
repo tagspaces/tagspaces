@@ -34,7 +34,6 @@ import DraggablePaper from '-/components/DraggablePaper';
 import {
   actions as AppActions,
   AppDispatch,
-  getDirectoryPath,
   getProgress
 } from '-/reducers/app';
 import { extractFileName } from '@tagspaces/tagspaces-common/paths';
@@ -57,11 +56,11 @@ function FileUploadDialog(props: Props) {
 
   const {
     loadDirectoryContent,
-    currentDirectoryPerspective
+    currentDirectoryPerspective,
+    currentDirectoryPath
   } = useDirectoryContentContext();
   const { currentLocation } = useCurrentLocationContext();
   const progress = useSelector(getProgress);
-  const currentDirectoryPath = useSelector(getDirectoryPath);
 
   const targetPath = React.useRef<string>(getTargetPath());
 

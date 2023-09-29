@@ -20,6 +20,7 @@ import React, { useState, useRef } from 'react';
 import Popover from '@mui/material/Popover';
 import SearchPopover from '-/components/SearchPopover';
 import SearchAutocomplete from '-/components/SearchAutocomplete';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
   open: boolean;
@@ -27,6 +28,7 @@ interface Props {
 }
 
 function SearchBox(props: Props) {
+  const { currentDirectoryPath } = useDirectoryContentContext();
   const [anchorSearch, setAnchorSearch] = useState<HTMLButtonElement | null>(
     null
   );
@@ -66,6 +68,7 @@ function SearchBox(props: Props) {
               onClose={() => setAnchorSearch(null)}
               textQuery={textQuery}
               setTextQuery={setTextQuery}
+              currentDirectory={currentDirectoryPath}
             />
           </Popover>
         </>

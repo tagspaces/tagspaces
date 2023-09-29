@@ -28,8 +28,6 @@ import { locationType } from '@tagspaces/tagspaces-common/misc';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import MaxLoopsSelect from '-/components/dialogs/MaxLoopsSelect';
 import AppConfig from '-/AppConfig';
-import { useSelector } from 'react-redux';
-import { getDirectoryPath } from '-/reducers/app';
 import Typography from '@mui/material/Typography';
 import InfoIcon from '-/components/InfoIcon';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -47,10 +45,11 @@ function IsTruncatedConfirmDialog(props: Props) {
   const { open, onClose } = props;
   const { t } = useTranslation();
 
-  const { loadDirectoryContent } = useDirectoryContentContext();
+  const {
+    loadDirectoryContent,
+    currentDirectoryPath
+  } = useDirectoryContentContext();
   const { currentLocation, editLocation } = useCurrentLocationContext();
-  // const dispatch: AppDispatch = useDispatch();
-  const currentDirectoryPath = useSelector(getDirectoryPath);
 
   let defaultMaxLoops = AppConfig.maxLoops;
   if (
