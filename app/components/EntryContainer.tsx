@@ -908,7 +908,7 @@ function EntryContainer() {
           </Box>
           {tabs()}
           {openedFile.isFile && isPanelOpened && (
-            <Tooltip title="Toggle preview height">
+            <Tooltip title={t('core:togglePreviewSize')}>
               <div
                 style={{
                   textAlign: 'center',

@@ -144,7 +144,7 @@
   "fileOperations": "Операции",
   "addRemoveTags": "Добавить или удалить теги",
   "openFile": "Открыть",
-  "downloadFile": "Start the download",
+  "downloadFile": "Download File",
   "openFileNatively": "Открыть вне TagSpaces",
   "openParentFolder": "Open Parent Folder",
   "openContainingFolder": "Расположение файла",
@@ -337,7 +337,7 @@
   "taggroupTitleHelper": "Пустое название",
   "toggleProperties": "Переключить свойства",
   "switchToFullscreen": "Переключиться в полноэкранный режим",
-  "openInFullWidth": "Открыть во всю ширину",
+  "openInFullWidth": "Toggle full width",
   "openDirectoryExternally": "Open Folder Externally",
   "toggleEntryProperties": "Переключить свойства записи",
   "closeEntry": "Закрыть запись",
@@ -803,5 +803,7 @@
   "generatedHTMLCopied": "Download links copied to clipboard",
   "generatedHTMLFailed": "Error while copying to clipboard",
   "details": "Details",
+  "editDisabled": "Editing the description is disabled while editing the current file",
+  "togglePreviewSize": "Toggle file preview size",
   "-": "-"
 }

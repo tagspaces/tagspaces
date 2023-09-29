@@ -804,5 +804,6 @@
   "generatedHTMLFailed": "Error while copying to clipboard",
   "details": "Details",
   "editDisabled": "Editing the description is disabled while editing the current file",
+  "togglePreviewSize": "Toggle file preview size",
   "-": "-"
 }

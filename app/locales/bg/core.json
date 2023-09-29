@@ -144,7 +144,7 @@
   "fileOperations": "Операции с файлове",
   "addRemoveTags": "Добави / премахни тагове",
   "openFile": "Отвори файла",
-  "downloadFile": "Start the download",
+  "downloadFile": "Download File",
   "openFileNatively": "Отвори файла с приложението по подразбиране",
   "openParentFolder": "Open Parent Folder",
   "openContainingFolder": "Отвори съдържащата директория",
@@ -337,7 +337,7 @@
   "taggroupTitleHelper": "Empty Title",
   "toggleProperties": "Toggle properties",
   "switchToFullscreen": "Switch to fullscreen",
-  "openInFullWidth": "Open in full width",
+  "openInFullWidth": "Toggle full width",
   "openDirectoryExternally": "Open Folder Externally",
   "toggleEntryProperties": "Toggle entry properties",
   "closeEntry": "Close entry",
@@ -803,5 +803,7 @@
   "generatedHTMLCopied": "Download links copied to clipboard",
   "generatedHTMLFailed": "Error while copying to clipboard",
   "details": "Details",
+  "editDisabled": "Editing the description is disabled while editing the current file",
+  "togglePreviewSize": "Toggle file preview size",
   "-": "-"
 }

@@ -132,6 +132,16 @@ if (devMode || testMode) {
 
 app.commandLine.appendSwitch('--disable-http-cache');
 
+app.on('web-contents-created', (event, contents) => {
+  contents.on('will-navigate', (event, navigationUrl) => {
+    const parsedUrl = new URL(navigationUrl);
+
+    if (parsedUrl.origin !== 'file://') {
+      event.preventDefault();
+    }
+  });
+});
+
 const installExtensions = () => {
   const {
     default: installExtension,

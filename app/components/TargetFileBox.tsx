@@ -98,26 +98,29 @@ function TargetFileBox(props: Props) {
     return Promise.reject(new Error('on files'));
   };
 
-  const [collectedProps, drop] = useDrop<DragItem, unknown, DragProps>(() => ({
-    accept: props.accepts,
-    drop: ({ files }) => {
-      if (files && files.length) {
-        if (
-          AppConfig.isElectron &&
-          !PlatformIO.haveObjectStoreSupport() &&
-          !PlatformIO.haveWebDavSupport()
-        ) {
-          return setMoveCopyDialogOpened(files);
-        } else {
-          return handleCopyFiles(files);
+  const [collectedProps, drop] = useDrop<DragItem, unknown, DragProps>(
+    () => ({
+      accept: props.accepts,
+      drop: ({ files }) => {
+        if (files && files.length) {
+          if (
+            AppConfig.isElectron &&
+            !PlatformIO.haveObjectStoreSupport() &&
+            !PlatformIO.haveWebDavSupport()
+          ) {
+            return setMoveCopyDialogOpened(files);
+          } else {
+            return handleCopyFiles(files);
+          }
         }
-      }
-    },
-    collect: (m: DropTargetMonitor) => ({
-      handlerId: m.getHandlerId(),
-      isActive: m.isOver({ shallow: true }) && m.canDrop()
-    })
-  }));
+      },
+      collect: (m: DropTargetMonitor) => ({
+        handlerId: m.getHandlerId(),
+        isActive: m.isOver({ shallow: true }) && m.canDrop()
+      })
+    }),
+    [directoryPath]
+  );
 
   drop(ref);
 

@@ -144,7 +144,7 @@
   "fileOperations": "ファイル操作",
   "addRemoveTags": "タグの追加/削除",
   "openFile": "ファイルを開く",
-  "downloadFile": "Start the download",
+  "downloadFile": "Download File",
   "openFileNatively": "元のファイルを開く",
   "openParentFolder": "親フォルダーを開く",
   "openContainingFolder": "フォルダを開く",
@@ -337,7 +337,7 @@
   "taggroupTitleHelper": "空のタイトル",
   "toggleProperties": "プロパティの切り替え",
   "switchToFullscreen": "フルスクリーンに切り替え",
-  "openInFullWidth": "最大の横幅で開く",
+  "openInFullWidth": "Toggle full width",
   "openDirectoryExternally": "Open Folder Externally",
   "toggleEntryProperties": "エントリのプロパティを切り替え",
   "closeEntry": "エントリを閉じる",
@@ -803,5 +803,7 @@
   "generatedHTMLCopied": "Download links copied to clipboard",
   "generatedHTMLFailed": "Error while copying to clipboard",
   "details": "Details",
+  "editDisabled": "Editing the description is disabled while editing the current file",
+  "togglePreviewSize": "Toggle file preview size",
   "-": "-"
 }

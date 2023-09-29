@@ -144,7 +144,7 @@
   "fileOperations": "Dateioperationen",
   "addRemoveTags": "Schlagwörter hinzufügen / entfernen",
   "openFile": "Datei öffnen",
-  "downloadFile": "Herunterladen starten",
+  "downloadFile": "Download File",
   "openFileNatively": "Datei nativ öffnen",
   "openParentFolder": "Elternverzeichnis öffnen",
   "openContainingFolder": "Beinhaltenden Ordner öffnen",
@@ -337,7 +337,7 @@
   "taggroupTitleHelper": "Leerer Titel",
   "toggleProperties": "Umschalt-Einstellungen",
   "switchToFullscreen": "Schalte auf Vollbildmodus um",
-  "openInFullWidth": "Öffnen in voller Länge",
+  "openInFullWidth": "Toggle full width",
   "openDirectoryExternally": "Ordner extern öffnen",
   "toggleEntryProperties": "Details ein-/ausblenden",
   "closeEntry": "Eintrag schließen",
@@ -803,5 +803,7 @@
   "generatedHTMLCopied": "Link sind in Zwischenspeichert kopiert",
   "generatedHTMLFailed": "Fehler beim Kopieren in Zwischenspeicher",
   "details": "Details",
+  "editDisabled": "Editing the description is disabled while editing the current file",
+  "togglePreviewSize": "Toggle file preview size",
   "-": "-"
 }
