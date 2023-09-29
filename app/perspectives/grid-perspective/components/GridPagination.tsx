@@ -670,7 +670,7 @@ function GridPagination(props: Props) {
             <Pagination
               style={{
                 left: 15,
-                bottom: 15,
+                bottom: -40,
                 zIndex: 1100,
                 position: 'absolute',
                 backgroundColor: theme.palette.background.default,
