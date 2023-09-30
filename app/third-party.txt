@@ -2051,7 +2051,7 @@ The following NPM packages may be included in this product:
  - @aws-sdk/smithy-client@3.186.0
  - @aws-sdk/smithy-client@3.6.1
  - @aws-sdk/util-create-request@3.6.1
- - @smithy/types@2.3.3
+ - @smithy/types@2.3.4
 
 These packages each contain the following license and notice below:
 
@@ -6402,6 +6402,8 @@ The following NPM packages may be included in this product:
  - @sindresorhus/transliterate@1.6.0
  - camelcase@6.3.0
  - cli-spinners@2.9.1
+ - electron-context-menu@3.6.1
+ - electron-is-dev@2.0.0
  - escape-string-regexp@4.0.0
  - escape-string-regexp@5.0.0
  - execa@5.1.1
@@ -6594,7 +6596,7 @@ The following NPM packages may be included in this product:
  - @types/mdast@3.0.13
  - @types/ms@0.7.32
  - @types/node-emoji@1.8.2
- - @types/node@18.18.0
+ - @types/node@18.18.1
  - @types/prismjs@1.26.1
  - @types/prop-types@15.7.7
  - @types/react-dom@18.2.8
@@ -6609,7 +6611,7 @@ The following NPM packages may be included in this product:
  - @types/yargs-parser@21.0.1
  - @types/yargs@15.0.16
  - @types/yargs@16.0.6
- - @types/yargs@17.0.25
+ - @types/yargs@17.0.26
 
 These packages each contain the following license and notice below:
 
@@ -7074,6 +7076,9 @@ The following NPM packages may be included in this product:
  - chalk@2.4.2
  - chalk@4.1.2
  - cli-cursor@3.1.0
+ - cli-truncate@2.1.0
+ - electron-dl@3.5.0
+ - escape-goat@2.1.1
  - escape-string-regexp@2.0.0
  - find-up@3.0.0
  - find-up@4.1.0
@@ -7100,6 +7105,7 @@ The following NPM packages may be included in this product:
  - path-type@4.0.0
  - pify@4.0.1
  - pkg-dir@3.0.0
+ - pupa@2.1.1
  - quick-lru@4.0.1
  - resolve-from@4.0.0
  - restore-cursor@3.1.0
@@ -7113,6 +7119,7 @@ The following NPM packages may be included in this product:
  - supports-color@5.5.0
  - supports-color@7.2.0
  - type-fest@0.7.1
+ - unused-filename@2.1.0
  - wrap-ansi@6.2.0
 
 These packages each contain the following license and notice below:
@@ -7324,6 +7331,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 The following NPM packages may be included in this product:
 
  - astral-regex@1.0.0
+ - astral-regex@2.0.0
  - shebang-command@2.0.0
 
 These packages each contain the following license and notice below:
@@ -7627,7 +7635,7 @@ Apache License
 
 The following NPM package may be included in this product:
 
- - aws-sdk@2.1466.0
+ - aws-sdk@2.1467.0
 
 This package contains the following license and notice below:
 
@@ -8407,7 +8415,7 @@ THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - browserslist@4.22.0
+ - browserslist@4.22.1
 
 This package contains the following license and notice below:
 
@@ -8687,12 +8695,15 @@ The following NPM packages may be included in this product:
  - escape-string-regexp@1.0.5
  - import-fresh@2.0.0
  - is-fullwidth-code-point@2.0.0
+ - is-plain-obj@1.1.0
  - is-wsl@1.1.0
+ - modify-filename@1.1.0
  - object-assign@4.1.1
  - path-exists@3.0.0
  - path-is-absolute@1.0.1
  - resolve-from@3.0.0
  - serialize-error@2.1.0
+ - sort-keys@1.1.2
 
 These packages each contain the following license and notice below:
 
@@ -12048,7 +12059,7 @@ THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - electron-to-chromium@1.4.532
+ - electron-to-chromium@1.4.537
 
 This package contains the following license and notice below:
 
@@ -12796,6 +12807,37 @@ This package contains the following license and notice below:
 The MIT License (MIT)
 
 Copyright (c) 2008 Jacob Seidelin
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+-----------
+
+The following NPM packages may be included in this product:
+
+ - ext-list@2.2.2
+ - ext-name@5.0.0
+
+These packages each contain the following license and notice below:
+
+The MIT License (MIT)
+
+Copyright (c) Kevin Mårtensson <kevinmartensson@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26052,11 +26094,12 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 -----------
 
-The following NPM package may be included in this product:
+The following NPM packages may be included in this product:
 
  - slice-ansi@2.1.0
+ - slice-ansi@3.0.0
 
-This package contains the following license and notice below:
+These packages each contain the following license and notice below:
 
 MIT License
 
@@ -26067,6 +26110,34 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+-----------
+
+The following NPM package may be included in this product:
+
+ - sort-keys-length@1.0.1
+
+This package contains the following license and notice below:
+
+Copyright (c) Kevin Mårtensson
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 -----------
 
