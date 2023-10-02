@@ -66,6 +66,7 @@ import { useTranslation } from 'react-i18next';
 import { SortedDirContextProvider } from '-/perspectives/grid-perspective/hooks/SortedDirContextProvider';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { PaginationContextProvider } from '-/hooks/PaginationContextProvider';
 
 const GridPerspective = React.lazy(() =>
   import(
@@ -76,7 +77,9 @@ function GridPerspectiveAsync(props) {
   return (
     <React.Suspense fallback={<LoadingLazy />}>
       <SortedDirContextProvider>
-        <GridPerspective {...props} />
+        <PaginationContextProvider>
+          <GridPerspective {...props} />
+        </PaginationContextProvider>
       </SortedDirContextProvider>
     </React.Suspense>
   );
@@ -89,7 +92,9 @@ function ListPerspectiveAsync(props) {
   return (
     <React.Suspense fallback={<LoadingLazy />}>
       <SortedDirContextProvider>
-        <ListPerspective {...props} />
+        <PaginationContextProvider>
+          <ListPerspective {...props} />
+        </PaginationContextProvider>
       </SortedDirContextProvider>
     </React.Suspense>
   );

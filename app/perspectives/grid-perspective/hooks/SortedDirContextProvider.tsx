@@ -32,7 +32,8 @@ import { defaultSettings } from '-/perspectives/grid-perspective';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 type SortedDirContextData = {
-  sortedDirContent: Array<TS.FileSystemEntry>;
+  sortedDirContent: TS.FileSystemEntry[];
+  getSettings: (perspective?: string) => TS.FolderSettings;
   sortBy: string;
   orderBy: null | boolean;
   setSortBy: (sort: string) => void;
@@ -41,6 +42,7 @@ type SortedDirContextData = {
 
 export const SortedDirContext = createContext<SortedDirContextData>({
   sortedDirContent: undefined,
+  getSettings: () => undefined,
   sortBy: defaultSettings.sortBy,
   orderBy: defaultSettings.orderBy,
   setSortBy: () => {},
@@ -60,9 +62,9 @@ export const SortedDirContextProvider = ({
   } = useDirectoryContentContext();
   const lastSearchTimestamp = useSelector(getLastSearchTimestamp);
   const searchFilter: string = useSelector(getSearchFilter);
-  const editedEntryPaths: Array<TS.EditedEntryPath> = useSelector(
+  /*const editedEntryPaths: Array<TS.EditedEntryPath> = useSelector(
     getEditedEntryPaths
-  );
+  );*/
   const settings = getSettings();
   const [sortBy, setSortBy] = useState<string>(
     settings && settings.sortBy ? settings.sortBy : defaultSettings.sortBy
@@ -73,21 +75,21 @@ export const SortedDirContextProvider = ({
       : defaultSettings.orderBy
   );
 
-  function getSettings(): TS.FolderSettings {
+  function getSettings(perspective = PerspectiveIDs.GRID): TS.FolderSettings {
     if (
       Pro &&
       directoryMeta &&
       directoryMeta.perspectiveSettings &&
-      directoryMeta.perspectiveSettings[PerspectiveIDs.GRID]
+      directoryMeta.perspectiveSettings[perspective]
     ) {
-      return directoryMeta.perspectiveSettings[PerspectiveIDs.GRID];
+      return directoryMeta.perspectiveSettings[perspective];
     } else {
       // loading settings for not Pro
       return JSON.parse(localStorage.getItem(defaultSettings.settingsKey));
     }
   }
 
-  function getSortedDirContent() {
+  const sortedDirContent = useMemo(() => {
     if (searchFilter) {
       if (lastSearchTimestamp) {
         return GlobalSearch.getInstance()
@@ -123,24 +125,27 @@ export const SortedDirContextProvider = ({
     }
     // not in search mode
     return sortByCriteria(currentDirectoryEntries, sortBy, orderBy);
-  }
+  }, [
+    currentDirectoryEntries,
+    lastSearchTimestamp,
+    searchFilter,
+    sortBy,
+    orderBy
+  ]);
 
   const context = useMemo(() => {
     return {
-      sortedDirContent: getSortedDirContent(),
+      sortedDirContent,
+      getSettings,
       sortBy,
       orderBy,
       setSortBy,
       setOrderBy
     };
   }, [
-    currentDirectoryEntries,
-    lastSearchTimestamp,
-    directoryMeta,
-    searchFilter,
-    editedEntryPaths,
-    sortBy,
-    orderBy
+    sortedDirContent,
+    directoryMeta
+    // editedEntryPaths,
   ]);
 
   return (

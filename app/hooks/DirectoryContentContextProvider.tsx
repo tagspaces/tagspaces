@@ -145,6 +145,9 @@ export const DirectoryContentContextProvider = ({
 
   const [currentDirectoryEntries, setCurrentDirectoryEntries] = useState([]);
   const directoryMeta = useRef<TS.FileSystemEntryMeta>({ id: getUuid() });
+  /**
+   * isMetaLoaded boolean is using why directoryMeta can be loaded but empty
+   */
   const isMetaLoaded = useRef<boolean>(false);
   const currentDirectoryPath = useRef<string>(undefined);
   const currentDirectoryPerspective = useRef<string>(
@@ -291,8 +294,14 @@ export const DirectoryContentContextProvider = ({
     fsEntryMeta?: TS.FileSystemEntryMeta
   ) {
     dispatch(AppActions.showNotification(t('core:loading'), 'info', false));
-    if (fsEntryMeta && fsEntryMeta.perspective) {
-      currentDirectoryPerspective.current = fsEntryMeta.perspective;
+    if (fsEntryMeta) {
+      directoryMeta.current = fsEntryMeta;
+      isMetaLoaded.current = true;
+      if (fsEntryMeta.perspective) {
+        currentDirectoryPerspective.current = fsEntryMeta.perspective;
+      }
+    } else {
+      isMetaLoaded.current = false;
     }
     const resultsLimit = {
       maxLoops:
@@ -373,7 +382,8 @@ export const DirectoryContentContextProvider = ({
     dirEntryMeta,
     generateThumbnails
   ) {
-    const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
+    const isCloudLocation =
+      currentLocation && currentLocation.type === locationType.TYPE_CLOUD;
 
     const {
       directoryContent,
@@ -488,8 +498,6 @@ export const DirectoryContentContextProvider = ({
       currentDirectoryDirs.current = directoryMeta.customOrder.folders;
     }
     setCurrentDirectoryEntries(directoryContent);
-    // isMetaLoaded.current = false;
-    // dispatch(actions.setIsMetaLoaded(false));
   }
 
   function setCurrentDirectoryColor(color: string) {
@@ -616,6 +624,7 @@ export const DirectoryContentContextProvider = ({
 
   function setDirectoryMeta(meta: TS.FileSystemEntryMeta) {
     directoryMeta.current = meta;
+    isMetaLoaded.current = true;
   }
 
   function watchForChanges(location?: TS.Location) {

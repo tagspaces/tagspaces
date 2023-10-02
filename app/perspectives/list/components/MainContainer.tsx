@@ -690,7 +690,6 @@ function ListPerspective(props: Props) {
           entrySize={entrySize.current}
           files={sortedFiles}
           getCellContent={getCellContent}
-          currentPage={1}
           currentDirectoryPath={currentDirectoryPath}
           onClick={onClick}
           onContextMenu={onContextMenu}

@@ -98,7 +98,7 @@ export const types = {
   //SET_CURRENT_LOCATION: 'APP/SET_CURRENT_LOCATION',
   //SET_CURRENDIRECTORYCOLOR: 'APP/SET_CURRENDIRECTORYCOLOR',
   //SET_CURRENDIRECTORYPERSPECTIVE: 'APP/SET_CURRENDIRECTORYPERSPECTIVE',
-  SET_IS_META_LOADED: 'APP/SET_IS_META_LOADED',
+  //SET_IS_META_LOADED: 'APP/SET_IS_META_LOADED',
   SET_LAST_SELECTED_ENTRY: 'APP/SET_LAST_SELECTED_ENTRY',
   SET_SELECTED_ENTRIES: 'APP/SET_SELECTED_ENTRIES',
   SET_TAG_LIBRARY_CHANGED: 'APP/SET_TAG_LIBRARY_CHANGED',
@@ -449,12 +449,12 @@ export default (state: any = initialState, action: any) => {
       }
       return state;
     }*/
-    case types.SET_IS_META_LOADED: {
+    /*case types.SET_IS_META_LOADED: {
       if (state.isMetaLoaded !== action.isMetaLoaded) {
         return { ...state, isMetaLoaded: action.isMetaLoaded };
       }
       return state;
-    }
+    }*/
     case types.TOGGLE_EDIT_TAG_DIALOG: {
       return {
         ...state,
@@ -1376,10 +1376,10 @@ export const actions = {
     type: types.SET_CURRENDIRECTORYPERSPECTIVE,
     perspective
   }),*/
-  setIsMetaLoaded: (isMetaLoaded: boolean) => ({
+  /*setIsMetaLoaded: (isMetaLoaded: boolean) => ({
     type: types.SET_IS_META_LOADED,
     isMetaLoaded
-  }),
+  }),*/
   setSelectedEntries: (selectedEntries: Array<TS.FileSystemEntry>) => (
     dispatch: (action) => void
   ) => {
