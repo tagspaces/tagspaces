@@ -36,6 +36,7 @@ import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
 import {
+  enhanceOpenedEntry,
   findExtensionsForEntry,
   getAllPropertiesPromise,
   getCleanLocationPath,
@@ -43,6 +44,7 @@ import {
   getPrevFile,
   getRelativeEntryPath,
   loadJSONFile,
+  openedToFsEntry,
   openURLExternally
 } from '-/services/utils-io';
 import {
@@ -140,7 +142,10 @@ export const OpenedEntryContextProvider = ({
   const {
     currentDirectoryEntries,
     currentDirectoryPath,
-    loadDirectoryContent
+    loadDirectoryContent,
+    setCurrentDirectoryColor,
+    setCurrentDirectoryPerspective,
+    updateCurrentDirEntry
   } = useDirectoryContentContext();
   const { openLocation, currentLocation } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
@@ -166,6 +171,7 @@ export const OpenedEntryContextProvider = ({
   const [isEntryInFullWidth, setEntryInFullWidth] = useState(false);
   const sharingLink = useRef<string>(undefined);
   const sharingParentFolderLink = useRef<string>(undefined);
+  const havePrevOpenedFile = React.useRef<boolean>(false);
   const firstRender = useFirstRender();
 
   /**
@@ -197,6 +203,36 @@ export const OpenedEntryContextProvider = ({
       openLink(initOpenLink.url, initOpenLink.options);
     }*/
   }, []);
+
+  useEffect(() => {
+    if (
+      !firstRender &&
+      havePrevOpenedFile.current
+      // && selectedEntries.length < 2
+    ) {
+      if (openedEntries.length > 0) {
+        const openedFile = openedEntries[0];
+        if (openedFile.path === currentDirectoryPath) {
+          if (openedFile.color) {
+            setCurrentDirectoryColor(openedFile.color);
+          } else if (openedFile.color === undefined) {
+            setCurrentDirectoryColor(undefined);
+          }
+          if (openedFile.perspective) {
+            setCurrentDirectoryPerspective(openedFile.perspective);
+          }
+        } else {
+          // update openedFile meta in grid perspective list (like description)
+          const currentEntry: OpenedEntry = enhanceOpenedEntry(
+            openedFile,
+            AppConfig.tagDelimiter
+          );
+          updateCurrentDirEntry(openedFile.path, openedToFsEntry(currentEntry));
+        }
+      }
+    }
+    havePrevOpenedFile.current = openedEntries.length > 0;
+  }, [openedEntries]);
 
   /**
    * HANDLE REFLECT_RENAME_ENTRY

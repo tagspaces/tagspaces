@@ -58,7 +58,6 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
-  currentDirectoryPath: string;
   openRenameEntryDialog: () => void;
 }
 
@@ -77,10 +76,14 @@ function getSettings(directoryMeta: TS.FileSystemEntryMeta): TS.FolderSettings {
 }
 
 function GridPerspective(props: Props) {
-  const { currentDirectoryPath, openRenameEntryDialog } = props;
+  const { openRenameEntryDialog } = props;
 
   const { openEntry, openPrevFile, openNextFile } = useOpenedEntryContext();
-  const { directoryMeta, setDirectoryMeta } = useDirectoryContentContext();
+  const {
+    directoryMeta,
+    currentDirectoryPath,
+    setDirectoryMeta
+  } = useDirectoryContentContext();
   const dispatch: AppDispatch = useDispatch();
 
   const {

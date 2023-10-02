@@ -235,25 +235,15 @@ export const DirectoryContentContextProvider = ({
       });
 
       setCurrentDirectoryEntries(newDirEntries);
+    } else {
+      setCurrentDirectoryEntries(dirEntries);
     }
-    setCurrentDirectoryEntries(dirEntries);
   }
 
   function updateThumbnailUrl(filePath: string, thumbUrl: string) {
     const dirEntries = currentDirectoryEntries.map(entry => {
       if (entry.path === filePath) {
         return { ...entry, thumbPath: thumbUrl };
-      }
-      return entry;
-    });
-    setCurrentDirectoryEntries(dirEntries);
-  }
-
-  function updateThumbnailUrls(directoryContent, tmbURLs: Array<any>) {
-    const dirEntries = directoryContent.map(entry => {
-      const tmbUrl = tmbURLs.find(tmbUrl => tmbUrl.filePath == entry.path);
-      if (tmbUrl) {
-        return { ...entry, thumbPath: tmbUrl };
       }
       return entry;
     });
@@ -275,22 +265,22 @@ export const DirectoryContentContextProvider = ({
       dispatch(AppActions.setSelectedEntries([]));
     }
     if (loadDirMeta) {
-      try {
-        const metaFilePath = getMetaFileLocationForDir(
-          directoryPath,
-          PlatformIO.getDirSeparator()
-        );
-        loadJSONFile(metaFilePath).then(fsEntryMeta =>
+      const metaFilePath = getMetaFileLocationForDir(
+        directoryPath,
+        PlatformIO.getDirSeparator()
+      );
+      loadJSONFile(metaFilePath)
+        .then(fsEntryMeta =>
           loadDirectoryContentInt(
             generateThumbnails,
             fsEntryMeta
             // description: getDescriptionPreview(fsEntryMeta.description, 200)
           )
-        );
-      } catch (err) {
-        console.debug('Error loading meta of:' + directoryPath + ' ' + err);
-        loadDirectoryContentInt(generateThumbnails);
-      }
+        )
+        .catch(err => {
+          console.debug('Error loading meta of:' + directoryPath + ' ' + err);
+          loadDirectoryContentInt(generateThumbnails);
+        });
     } else {
       loadDirectoryContentInt(generateThumbnails);
     }
@@ -391,10 +381,21 @@ export const DirectoryContentContextProvider = ({
       tmbGenerationList
     } = enhanceDirectoryContent(dirEntries, isCloudLocation, true, undefined);
 
+    function updateThumbnailUrls(directoryContent, tmbURLs: Array<any>) {
+      const dirEntries = directoryContent.map(entry => {
+        const tmbUrl = tmbURLs.find(tmbUrl => tmbUrl.filePath == entry.path);
+        if (tmbUrl) {
+          return { ...entry, thumbPath: tmbUrl.tmbPath };
+        }
+        return entry;
+      });
+      setCurrentDirectoryEntries(dirEntries);
+    }
+
     function handleTmbGenerationResults(results) {
       // console.log('tmb results' + JSON.stringify(results));
       const tmbURLs = [];
-      results.map(tmbResult => {
+      results.flat(1).map(tmbResult => {
         if (tmbResult.tmbPath && tmbResult.tmbPath.length > 0) {
           // dispatch(actions.updateThumbnailUrl(tmbResult.filePath, tmbResult.tmbPath));
           tmbURLs.push(tmbResult);
@@ -427,16 +428,20 @@ export const DirectoryContentContextProvider = ({
     ) {
       dispatch(AppActions.setGeneratingThumbnails(true));
       if (tmbGenerationList.length > 0) {
-        PlatformIO.createThumbnailsInWorker(tmbGenerationList)
-          .then(handleTmbGenerationResults)
-          .catch(() => {
-            // WS error handle
-            Promise.all(
-              tmbGenerationList.map(tmbPath => getThumbnailURLPromise(tmbPath))
-            )
-              .then(handleTmbGenerationResults)
-              .catch(handleTmbGenerationFailed);
-          });
+        tmbGenerationPromises.push(
+          PlatformIO.createThumbnailsInWorker(tmbGenerationList)
+            //.then(handleTmbGenerationResults)
+            .catch(() => {
+              // WS error handle
+              Promise.all(
+                tmbGenerationList.map(tmbPath =>
+                  getThumbnailURLPromise(tmbPath)
+                )
+              )
+                .then(handleTmbGenerationResults)
+                .catch(handleTmbGenerationFailed);
+            })
+        );
       }
       if (tmbGenerationPromises.length > 0) {
         Promise.all(tmbGenerationPromises)

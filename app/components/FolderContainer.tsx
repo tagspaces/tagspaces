@@ -18,14 +18,13 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTheme } from '@mui/material/styles';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Tooltip from '-/components/Tooltip';
 import Typography from '@mui/material/Typography';
-import InputAdornment from '@mui/material/InputAdornment';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import AppConfig from '-/AppConfig';
@@ -60,7 +59,6 @@ import {
   getSearchQuery
 } from '-/reducers/location-index';
 import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
-import MainSearchField from '-/components/MainSearchField';
 // import LoadingAnimation from '-/components/LoadingAnimation';
 import SearchBox from '-/components/SearchBox';
 import useFirstRender from '-/utils/useFirstRender';
@@ -192,44 +190,9 @@ function FolderContainer(props: Props) {
     currentDirectoryEntries,
     currentDirectoryPath,
     currentDirectoryPerspective,
-    setCurrentDirectoryColor,
     setCurrentDirectoryPerspective,
-    loadParentDirectoryContent,
-    updateCurrentDirEntry
+    loadParentDirectoryContent
   } = useDirectoryContentContext();
-  const havePrevOpenedFile = React.useRef<boolean>(false);
-  const firstRender = useFirstRender();
-
-  // TODO rethink to move this in openedEntryContextProvider
-  useEffect(() => {
-    if (
-      !firstRender &&
-      havePrevOpenedFile.current &&
-      props.selectedEntries.length < 2
-    ) {
-      if (openedEntries.length > 0) {
-        const openedFile = openedEntries[0];
-        if (openedFile.path === currentDirectoryPath) {
-          if (openedFile.color) {
-            setCurrentDirectoryColor(openedFile.color);
-          } else if (openedFile.color === undefined) {
-            setCurrentDirectoryColor(undefined);
-          }
-          if (openedFile.perspective) {
-            setCurrentDirectoryPerspective(openedFile.perspective);
-          }
-        } else {
-          // update openedFile meta in grid perspective list (like description)
-          const currentEntry: OpenedEntry = enhanceOpenedEntry(
-            openedFile,
-            props.settings.tagDelimiter
-          );
-          updateCurrentDirEntry(openedFile.path, openedToFsEntry(currentEntry));
-        }
-      }
-    }
-    havePrevOpenedFile.current = openedEntries.length > 0;
-  }, [openedEntries]);
 
   /**
    * reflect update openedFile from perspective
@@ -278,10 +241,7 @@ function FolderContainer(props: Props) {
     }
     if (currentPerspective === PerspectiveIDs.LIST) {
       return (
-        <ListPerspectiveAsync
-          openRenameEntryDialog={openRenameEntryDialog}
-          currentDirectoryPath={currentDirectoryPath}
-        />
+        <ListPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />
       );
     }
     if (Pro && currentPerspective === PerspectiveIDs.GALLERY) {
@@ -289,7 +249,6 @@ function FolderContainer(props: Props) {
         <GalleryPerspectiveAsync
           directoryContent={currentDirectoryEntries}
           lastSearchTimestamp={props.lastSearchTimestamp}
-          currentDirectoryPath={currentDirectoryPath}
           switchPerspective={switchPerspective}
         />
       );
@@ -299,7 +258,6 @@ function FolderContainer(props: Props) {
         <MapiquePerspectiveAsync
           directoryContent={currentDirectoryEntries}
           lastSearchTimestamp={props.lastSearchTimestamp}
-          currentDirectoryPath={currentDirectoryPath}
           switchPerspective={switchPerspective}
         />
       );
@@ -312,17 +270,13 @@ function FolderContainer(props: Props) {
           openRenameEntryDialog={openRenameEntryDialog}
           loadParentDirectoryContent={loadParentDirectoryContent}
           renameFile={props.renameFile}
-          currentDirectoryPath={currentDirectoryPath}
           switchPerspective={switchPerspective}
         />
       );
     }
 
     return (
-      <GridPerspectiveAsync
-        openRenameEntryDialog={openRenameEntryDialog}
-        currentDirectoryPath={currentDirectoryPath}
-      />
+      <GridPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />
     );
   };
 

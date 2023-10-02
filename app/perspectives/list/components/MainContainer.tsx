@@ -58,7 +58,6 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
-  currentDirectoryPath: string;
   openRenameEntryDialog: () => void;
 }
 
@@ -77,8 +76,14 @@ function getSettings(directoryMeta: TS.FileSystemEntryMeta): TS.FolderSettings {
 }
 
 function ListPerspective(props: Props) {
-  const { currentDirectoryPath, openRenameEntryDialog } = props;
+  const { openRenameEntryDialog } = props;
 
+  const { openEntry, openPrevFile, openNextFile } = useOpenedEntryContext();
+  const {
+    directoryMeta,
+    currentDirectoryPath,
+    setDirectoryMeta
+  } = useDirectoryContentContext();
   const dispatch: AppDispatch = useDispatch();
 
   const {
@@ -88,8 +93,6 @@ function ListPerspective(props: Props) {
     setSortBy,
     setOrderBy
   } = useSortedDirContext();
-  const { openEntry, openPrevFile, openNextFile } = useOpenedEntryContext();
-  const { directoryMeta, setDirectoryMeta } = useDirectoryContentContext();
   const lastSearchTimestamp = useSelector(getLastSearchTimestamp);
   const desktopMode = useSelector(getDesktopMode);
   const selectedEntries: Array<TS.FileSystemEntry> = useSelector(

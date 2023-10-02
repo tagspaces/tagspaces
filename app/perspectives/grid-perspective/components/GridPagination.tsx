@@ -215,6 +215,7 @@ function GridPagination(props: Props) {
     }
   }, [page.current, props.isMetaLoaded, files]);
 
+  // TODO move in DirectoryContentContextProvider
   useEffect(() => {
     folderTmbPath.current = getFolderThumbPath(
       props.currentDirectoryPath,
