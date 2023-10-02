@@ -45,6 +45,7 @@ const contextMenu = require('electron-context-menu');
 contextMenu({
   showInspectElement: false,
   showSearchWithGoogle: false,
+  showLookUpSelection: false,
   showServices: false
 });
 
