@@ -69,14 +69,14 @@ import { base64ToArrayBuffer } from '-/utils/dom';
 import { Pro } from '-/pro';
 import { supportedFileTypes } from '-/extension-config';
 
-export async function getMetaForEntry(
+export function getMetaForEntry(
   entry: TS.FileSystemEntry,
   metaFilePath?: string
-): Promise<any> {
+): Promise<TS.FileSystemEntry> {
   if (entry.meta) {
     // && Object.keys(entry.meta).length > 0) {
     // entry is Enhanced
-    return { [entry.path]: { ...entry } };
+    return Promise.resolve(entry);
   }
   if (!metaFilePath) {
     if (entry.isFile) {
@@ -91,22 +91,22 @@ export async function getMetaForEntry(
       );
     }
   }
-  const meta: TS.FileSystemEntryMeta = await loadJSONFile(metaFilePath);
-  if (meta) {
-    const entryEnhanced = enhanceEntry(
-      {
-        ...entry,
-        meta: {
-          ...meta,
-          description: getDescriptionPreview(meta.description, 200)
-        }
-      },
-      AppConfig.tagDelimiter,
-      PlatformIO.getDirSeparator()
-    );
-    return { [entry.path]: entryEnhanced };
-  }
-  return Promise.resolve({ [entry.path]: undefined });
+  return loadJSONFile(metaFilePath).then((meta: TS.FileSystemEntryMeta) => {
+    if (meta) {
+      return enhanceEntry(
+        {
+          ...entry,
+          meta: {
+            ...meta,
+            description: getDescriptionPreview(meta.description, 200)
+          }
+        },
+        AppConfig.tagDelimiter,
+        PlatformIO.getDirSeparator()
+      );
+    }
+    return entry;
+  });
 }
 
 export function enhanceOpenedEntry(

@@ -36,10 +36,16 @@ import { useTranslation } from 'react-i18next';
 import {
   extractParentDirectoryPath,
   getMetaFileLocationForDir,
+  getThumbFileLocationForDirectory,
   normalizePath
 } from '@tagspaces/tagspaces-common/paths';
 import PlatformIO from '-/services/platform-facade';
-import { loadJSONFile, merge, updateFsEntries } from '-/services/utils-io';
+import {
+  getMetaForEntry,
+  loadJSONFile,
+  merge,
+  updateFsEntries
+} from '-/services/utils-io';
 import AppConfig from '-/AppConfig';
 import { PerspectiveIDs } from '-/perspectives';
 import { updateHistory } from '-/utils/dom';
@@ -98,6 +104,7 @@ type DirectoryContentContextData = {
   updateThumbnailUrl: (filePath: string, thumbUrl: string) => void;
   setDirectoryMeta: (meta: TS.FileSystemEntryMeta) => void;
   watchForChanges: (location?: TS.Location) => void;
+  getEnhancedDir: (entry: TS.FileSystemEntry) => Promise<TS.FileSystemEntry>;
 };
 
 export const DirectoryContentContext = createContext<
@@ -123,7 +130,8 @@ export const DirectoryContentContext = createContext<
   updateCurrentDirEntries: () => {},
   updateThumbnailUrl: () => {},
   setDirectoryMeta: () => {},
-  watchForChanges: () => {}
+  watchForChanges: () => {},
+  getEnhancedDir: () => Promise.resolve(undefined)
 });
 
 export type DirectoryContentContextProviderProps = {
@@ -221,11 +229,11 @@ export const DirectoryContentContextProvider = ({
     }
   }
 
-  function updateCurrentDirEntries(dirEntries: TS.FileSystemEntry[]) {
-    if (currentDirectoryEntries && currentDirectoryEntries.length > 0) {
-      const newDirEntries = currentDirectoryEntries.map(currentEntry => {
-        const updatedEntries = dirEntries.filter(
-          newEntry => newEntry.path === currentEntry.path
+  const getMergedEntries = (entries1, entries2) => {
+    if (entries1 && entries1.length > 0) {
+      return entries1.map(currentEntry => {
+        const updatedEntries = entries2.filter(
+          newEntry => newEntry && newEntry.path === currentEntry.path
         );
         if (updatedEntries && updatedEntries.length > 0) {
           const updatedEntry = updatedEntries.reduce(
@@ -236,12 +244,21 @@ export const DirectoryContentContextProvider = ({
         }
         return currentEntry;
       });
-
-      setCurrentDirectoryEntries(newDirEntries);
-    } else {
-      setCurrentDirectoryEntries(dirEntries);
     }
-  }
+    return entries2;
+  };
+
+  const updateCurrentDirEntries = useMemo(() => {
+    return (dirEntries: TS.FileSystemEntry[]) => {
+      if (currentDirectoryEntries && currentDirectoryEntries.length > 0) {
+        setCurrentDirectoryEntries(
+          getMergedEntries(currentDirectoryEntries, dirEntries)
+        );
+      } else {
+        setCurrentDirectoryEntries(dirEntries);
+      }
+    };
+  }, [currentDirectoryEntries]);
 
   function updateThumbnailUrl(filePath: string, thumbUrl: string) {
     const dirEntries = currentDirectoryEntries.map(entry => {
@@ -252,6 +269,55 @@ export const DirectoryContentContextProvider = ({
     });
     setCurrentDirectoryEntries(dirEntries);
   }
+
+  /*const getEnhancedDirs: Promise<TS.FileSystemEntry>[] = useMemo(() => {
+    return currentDirectoryEntries
+      .filter(entry => !entry.isFile)
+      .map(entry => getEnhancedDir(entry));
+  }, [currentDirectoryEntries]);*/
+
+  const getEnhancedDir = (
+    entry: TS.FileSystemEntry
+  ): Promise<TS.FileSystemEntry> => {
+    if (!entry) {
+      return Promise.resolve(undefined);
+    }
+    if (entry.isFile) {
+      return Promise.reject(
+        new Error('getEnhancedDir accept dir only:' + entry.path)
+      );
+    }
+    if (entry.name === AppConfig.metaFolder) {
+      return Promise.resolve(undefined);
+    }
+    return PlatformIO.listMetaDirectoryPromise(entry.path).then(meta => {
+      const metaFilePath = getMetaFileLocationForDir(
+        entry.path,
+        PlatformIO.getDirSeparator()
+      );
+      const thumbDirPath = getThumbFileLocationForDirectory(
+        entry.path,
+        PlatformIO.getDirSeparator()
+      );
+      let enhancedEntry;
+      if (meta.some(metaFile => thumbDirPath.endsWith(metaFile.path))) {
+        const thumbPath =
+          PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()
+            ? PlatformIO.getURLforPath(thumbDirPath)
+            : thumbDirPath;
+        enhancedEntry = { ...entry, thumbPath };
+      }
+      if (
+        meta.some(metaFile => metaFilePath.endsWith(metaFile.path)) &&
+        entry.path.indexOf(
+          AppConfig.metaFolder + PlatformIO.getDirSeparator()
+        ) === -1
+      ) {
+        return getMetaForEntry(enhancedEntry || entry, metaFilePath);
+      }
+      return enhancedEntry;
+    });
+  };
 
   function loadDirectoryContent(
     directoryPath: string,
@@ -385,21 +451,47 @@ export const DirectoryContentContextProvider = ({
     const isCloudLocation =
       currentLocation && currentLocation.type === locationType.TYPE_CLOUD;
 
-    const {
+    let {
       directoryContent,
       tmbGenerationPromises,
-      tmbGenerationList
-    } = enhanceDirectoryContent(dirEntries, isCloudLocation, true, undefined);
+      tmbGenerationList,
+      dirsMetaPromises
+    } = enhanceDirectoryContent(
+      dirEntries,
+      isCloudLocation,
+      true,
+      undefined,
+      true
+    );
 
-    function updateThumbnailUrls(directoryContent, tmbURLs: Array<any>) {
-      const dirEntries = directoryContent.map(entry => {
+    function setUpdatedDirMeta(directoryContent) {
+      if (dirsMetaPromises.length > 0) {
+        Promise.all(dirsMetaPromises)
+          .then(entries => {
+            setCurrentDirectoryEntries(
+              getMergedEntries(directoryContent, entries)
+            );
+            return true;
+          })
+          .catch(err => {
+            console.error('err Enhanced Dir entries:', err);
+            setCurrentDirectoryEntries(directoryContent);
+            return false;
+          });
+      } else {
+        setCurrentDirectoryEntries(directoryContent);
+      }
+    }
+
+    function getUpdatedThumbnailUrls(directoryContent, tmbURLs: Array<any>) {
+      return directoryContent.map(entry => {
         const tmbUrl = tmbURLs.find(tmbUrl => tmbUrl.filePath == entry.path);
         if (tmbUrl) {
           return { ...entry, thumbPath: tmbUrl.tmbPath };
         }
         return entry;
       });
-      setCurrentDirectoryEntries(dirEntries);
+      // setCurrentDirectoryEntries(dirEntries);
     }
 
     function handleTmbGenerationResults(results) {
@@ -415,8 +507,9 @@ export const DirectoryContentContextProvider = ({
       dispatch(AppActions.setGeneratingThumbnails(false));
       // dispatch(actions.hideNotifications());
       if (tmbURLs.length > 0) {
-        updateThumbnailUrls(directoryContent, tmbURLs);
+        directoryContent = getUpdatedThumbnailUrls(directoryContent, tmbURLs);
       }
+      setUpdatedDirMeta(directoryContent);
       return true;
     }
 
@@ -528,11 +621,13 @@ export const DirectoryContentContextProvider = ({
     dirEntries,
     isCloudLocation,
     showDirs = true,
-    limit = undefined
+    limit = undefined,
+    getDirMeta = false
   ) {
     const directoryContent = [];
     const tmbGenerationPromises = [];
     const tmbGenerationList = [];
+    const dirsMetaPromises = [];
     const isWorkerAvailable = enableWS && PlatformIO.isWorkerAvailable();
     const supportedImgsWS = [
       'jpg',
@@ -561,6 +656,10 @@ export const DirectoryContentContextProvider = ({
 
       if (limit !== undefined && directoryContent.length >= limit) {
         return true;
+      }
+
+      if (getDirMeta && !entry.isFile) {
+        dirsMetaPromises.push(getEnhancedDir(entry));
       }
 
       const enhancedEntry: TS.FileSystemEntry = enhanceEntry(
@@ -606,7 +705,8 @@ export const DirectoryContentContextProvider = ({
     return {
       directoryContent,
       tmbGenerationPromises,
-      tmbGenerationList
+      tmbGenerationList,
+      dirsMetaPromises
     };
   }
 
@@ -665,7 +765,8 @@ export const DirectoryContentContextProvider = ({
       updateCurrentDirEntries,
       updateThumbnailUrl,
       setDirectoryMeta,
-      watchForChanges
+      watchForChanges,
+      getEnhancedDir
     };
   }, [
     currentLocation,
@@ -674,7 +775,8 @@ export const DirectoryContentContextProvider = ({
     directoryMeta.current,
     currentDirectoryPerspective.current,
     currentDirectoryFiles.current,
-    currentDirectoryDirs.current
+    currentDirectoryDirs.current,
+    updateCurrentDirEntries
   ]);
 
   return (
