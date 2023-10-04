@@ -812,24 +812,22 @@ export const TaggingActionsContextProvider = ({
     return uniqueTags;
   }
 
-  function reflectUpdateSidecarTags(
-    path: string,
-    tags: Array<TS.Tag>,
-    updateIndex = true
-  ) {
-    // to reload cell in KanBan if add/remove sidecar tags
-    // @ts-ignore
-    const action: TS.EditedEntryAction = `edit${tags
-      .map(tag => tag.title)
-      .join()}`;
-    dispatch(AppActions.reflectEditedEntryPaths([{ action, path }])); //[{ [path]: tags }]));
-    // @ts-ignore
-    updateCurrentDirEntry(path, { tags });
+  const reflectUpdateSidecarTags = useMemo(() => {
+    return (path: string, tags: Array<TS.Tag>, updateIndex = true) => {
+      // to reload cell in KanBan if add/remove sidecar tags
+      // @ts-ignore
+      const action: TS.EditedEntryAction = `edit${tags
+        .map(tag => tag.title)
+        .join()}`;
+      dispatch(AppActions.reflectEditedEntryPaths([{ action, path }])); //[{ [path]: tags }]));
+      // @ts-ignore
+      updateCurrentDirEntry(path, { tags });
 
-    if (updateIndex) {
-      GlobalSearch.getInstance().reflectUpdateSidecarTags(path, tags);
-    }
-  }
+      if (updateIndex) {
+        GlobalSearch.getInstance().reflectUpdateSidecarTags(path, tags);
+      }
+    };
+  }, [updateCurrentDirEntry]);
 
   const context = useMemo(() => {
     return {
@@ -841,7 +839,12 @@ export const TaggingActionsContextProvider = ({
       removeAllTags,
       collectTagsFromLocation
     };
-  }, [openedEntries, persistTagsInSidecarFile, addTagsToLibrary]);
+  }, [
+    openedEntries,
+    persistTagsInSidecarFile,
+    addTagsToLibrary,
+    reflectUpdateSidecarTags
+  ]);
 
   return (
     <TaggingActionsContext.Provider value={context}>

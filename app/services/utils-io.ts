@@ -1609,7 +1609,7 @@ export function getRelativeEntryPath(
 
 /**
  * @param entries
- * @param entriesChanges Array<TS.FileSystemEntry> but partly changes from FileSystemEntry model like { tags:[] } are acceptable
+ * @param entriesChanges Array<TS.FileSystemEntry> but partly changes from FileSystemEntry model like { path, tags:[] } are acceptable
  * return entries: Array<TS.FileSystemEntry> updated from
  */
 export function updateFsEntries(

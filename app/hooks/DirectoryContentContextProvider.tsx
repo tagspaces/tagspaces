@@ -28,12 +28,16 @@ import { locationType } from '@tagspaces/tagspaces-common/misc';
 import {
   actions as AppActions,
   AppDispatch,
+  getEditedEntryPaths,
   getSelectedEntries,
   isSearchMode
 } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { useTranslation } from 'react-i18next';
 import {
+  extractFileName,
+  extractFileExtension,
+  extractTagsAsObjects,
   extractParentDirectoryPath,
   getMetaFileLocationForDir,
   getThumbFileLocationForDirectory,
@@ -66,6 +70,7 @@ import {
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import GlobalSearch from '-/services/search-index';
 import { Pro } from '-/pro';
+import useFirstRender from '-/utils/useFirstRender';
 
 type DirectoryContentContextData = {
   currentDirectoryEntries: TS.FileSystemEntry[];
@@ -148,6 +153,7 @@ export const DirectoryContentContextProvider = ({
   const searchMode = useSelector(isSearchMode);
   const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
+  const editedEntryPaths = useSelector(getEditedEntryPaths);
   const enableWS = useSelector(getEnableWS);
   //const defaultPerspective = useSelector(getDefaultPerspective);
 
@@ -163,6 +169,7 @@ export const DirectoryContentContextProvider = ({
   );
   const currentDirectoryFiles = useRef<TS.OrderVisibilitySettings[]>([]);
   const currentDirectoryDirs = useRef<TS.OrderVisibilitySettings[]>([]);
+  const firstRender = useFirstRender();
 
   useEffect(() => {
     if (currentLocation) {
@@ -184,6 +191,64 @@ export const DirectoryContentContextProvider = ({
       }
     }
   }, [currentLocation]);
+
+  /**
+   * HANDLE REFLECT_RENAME_ENTRY
+   */
+  useEffect(() => {
+    if (!firstRender && editedEntryPaths && editedEntryPaths.length > 0) {
+      let action;
+      for (const editedEntryPath of editedEntryPaths) {
+        action = editedEntryPath.action;
+      }
+      if (action === 'rename') {
+        const oldFilePath = editedEntryPaths[0].path;
+        const newFilePath = editedEntryPaths[1].path;
+        const entry = currentDirectoryEntries.find(e => e.path === oldFilePath);
+        if (entry) {
+          const fileNameTags = entry.isFile
+            ? extractTagsAsObjects(
+                newFilePath,
+                AppConfig.tagDelimiter,
+                PlatformIO.getDirSeparator()
+              )
+            : []; // dirs dont have tags in filename
+          const newEntry = {
+            ...entry,
+            path: newFilePath,
+            name: extractFileName(newFilePath, PlatformIO.getDirSeparator()),
+            extension: extractFileExtension(
+              newFilePath,
+              PlatformIO.getDirSeparator()
+            ),
+            tags: [
+              ...entry.tags.filter(tag => tag.type !== 'plain'), //'sidecar'), // add only sidecar tags
+              ...fileNameTags
+            ]
+          };
+          const newDirectoryEntries = currentDirectoryEntries.map(entry =>
+            entry.path === oldFilePath ? newEntry : entry
+          );
+          if (searchMode) {
+            GlobalSearch.getInstance().setResults(newDirectoryEntries);
+          } else {
+            setCurrentDirectoryEntries(newDirectoryEntries);
+          }
+        }
+      } else if (action === 'delete') {
+        const filePath = editedEntryPaths[0].path;
+        const newDirectoryEntries = currentDirectoryEntries.filter(
+          entry => entry.path !== filePath
+        );
+
+        if (searchMode) {
+          GlobalSearch.getInstance().setResults(newDirectoryEntries);
+        } else {
+          setCurrentDirectoryEntries(newDirectoryEntries);
+        }
+      }
+    }
+  }, [editedEntryPaths]);
 
   function loadParentDirectoryContent() {
     const currentLocationPath = normalizePath(currentLocation.path);
@@ -216,18 +281,22 @@ export const DirectoryContentContextProvider = ({
     }
   }
 
-  function updateCurrentDirEntry(path: string, entry: any) {
-    if (searchMode) {
-      const results = updateFsEntries(GlobalSearch.getInstance().getResults(), [
-        { ...entry, path }
-      ]);
-      GlobalSearch.getInstance().setResults(results);
-    } else {
-      setCurrentDirectoryEntries(
-        updateFsEntries(currentDirectoryEntries, [entry])
-      );
-    }
-  }
+  const updateCurrentDirEntry = useMemo(() => {
+    return (path: string, entry: any) => {
+      const entryUpdated = { ...entry, ...(!entry.path && { path: path }) };
+      if (searchMode) {
+        const results = updateFsEntries(
+          GlobalSearch.getInstance().getResults(),
+          [entryUpdated]
+        );
+        GlobalSearch.getInstance().setResults(results);
+      } else {
+        setCurrentDirectoryEntries(
+          updateFsEntries(currentDirectoryEntries, [entryUpdated])
+        );
+      }
+    };
+  }, [currentDirectoryEntries]);
 
   const getMergedEntries = (entries1, entries2) => {
     if (entries1 && entries1.length > 0) {

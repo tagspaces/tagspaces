@@ -32,8 +32,6 @@ import PlatformIO from '../services/platform-facade';
 import {
   deleteFilesPromise,
   renameFilesPromise,
-  merge,
-  updateFsEntries,
   mergeByProp,
   toFsEntry
 } from '-/services/utils-io';
@@ -104,7 +102,7 @@ export const types = {
   SET_TAG_LIBRARY_CHANGED: 'APP/SET_TAG_LIBRARY_CHANGED',
   SET_FILEDRAGGED: 'APP/SET_FILEDRAGGED',
   //SET_READONLYMODE: 'APP/SET_READONLYMODE',
-  RENAME_FILE: 'APP/RENAME_FILE',
+  //RENAME_FILE: 'APP/RENAME_FILE',
   TOGGLE_EDIT_TAG_DIALOG: 'APP/TOGGLE_EDIT_TAG_DIALOG',
   TOGGLE_ABOUT_DIALOG: 'APP/TOGGLE_ABOUT_DIALOG',
   TOGGLE_LOCATION_DIALOG: 'APP/TOGGLE_LOCATION_DIALOG',
