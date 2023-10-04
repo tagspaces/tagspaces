@@ -161,7 +161,8 @@ export const DirectoryContentContextProvider = ({
   const [currentDirectoryEntries, setCurrentDirectoryEntries] = useState([]);
   const directoryMeta = useRef<TS.FileSystemEntryMeta>({ id: getUuid() });
   /**
-   * isMetaLoaded boolean is using why directoryMeta can be loaded but empty
+   * isMetaLoaded boolean if thumbs and description from meta are loaded
+   * is using why directoryMeta can be loaded but empty
    */
   const isMetaLoaded = useRef<boolean>(false);
   const currentDirectoryPath = useRef<string>(undefined);
@@ -431,7 +432,7 @@ export const DirectoryContentContextProvider = ({
     dispatch(AppActions.showNotification(t('core:loading'), 'info', false));
     if (fsEntryMeta) {
       directoryMeta.current = fsEntryMeta;
-      isMetaLoaded.current = true;
+      isMetaLoaded.current = generateThumbnails;
       if (fsEntryMeta.perspective) {
         currentPerspective.current = fsEntryMeta.perspective;
       } else {
@@ -533,7 +534,8 @@ export const DirectoryContentContextProvider = ({
       isCloudLocation,
       true,
       undefined,
-      true
+      true,
+      generateThumbnails
     );
 
     function setUpdatedDirMeta(directoryContent) {
@@ -598,31 +600,36 @@ export const DirectoryContentContextProvider = ({
     }
 
     if (
-      generateThumbnails &&
-      (tmbGenerationList.length > 0 || tmbGenerationPromises.length > 0)
+      tmbGenerationList.length > 0 ||
+      tmbGenerationPromises.length > 0 ||
+      dirsMetaPromises.length > 0
     ) {
-      dispatch(AppActions.setGeneratingThumbnails(true));
-      if (tmbGenerationList.length > 0) {
-        tmbGenerationPromises.push(
-          PlatformIO.createThumbnailsInWorker(tmbGenerationList)
-            //.then(handleTmbGenerationResults)
-            .catch(() => {
-              // WS error handle
-              Promise.all(
-                tmbGenerationList.map(tmbPath =>
-                  getThumbnailURLPromise(tmbPath)
+      if (generateThumbnails) {
+        dispatch(AppActions.setGeneratingThumbnails(true));
+        if (tmbGenerationList.length > 0) {
+          tmbGenerationPromises.push(
+            PlatformIO.createThumbnailsInWorker(tmbGenerationList)
+              //.then(handleTmbGenerationResults)
+              .catch(() => {
+                // WS error handle
+                Promise.all(
+                  tmbGenerationList.map(tmbPath =>
+                    getThumbnailURLPromise(tmbPath)
+                  )
                 )
-              )
-                .then(handleTmbGenerationResults)
-                .catch(handleTmbGenerationFailed);
-            })
-        );
-      }
-      if (tmbGenerationPromises.length > 0) {
-        Promise.all(tmbGenerationPromises)
-          .then(handleTmbGenerationResults)
-          .catch(handleTmbGenerationFailed);
-      }
+                  .then(handleTmbGenerationResults)
+                  .catch(handleTmbGenerationFailed);
+              })
+          );
+        }
+        if (tmbGenerationPromises.length > 0) {
+          Promise.all(tmbGenerationPromises)
+            .then(handleTmbGenerationResults)
+            .catch(handleTmbGenerationFailed);
+        }
+      } /*else {
+        isMetaLoaded.current = false;
+      }*/
     }
 
     console.log(
@@ -694,7 +701,8 @@ export const DirectoryContentContextProvider = ({
     isCloudLocation,
     showDirs = true,
     limit = undefined,
-    getDirMeta = false
+    getDirMeta = false,
+    generateThumbnails = true
   ) {
     const directoryContent = [];
     const tmbGenerationPromises = [];
@@ -742,6 +750,7 @@ export const DirectoryContentContextProvider = ({
       directoryContent.push(enhancedEntry);
       if (
         // Enable thumb generation by
+        generateThumbnails &&
         !AppConfig.isWeb && // not in webdav mode
         !PlatformIO.haveObjectStoreSupport() && // not in object store mode
         !PlatformIO.haveWebDavSupport() && // not in webdav mode
@@ -802,7 +811,7 @@ export const DirectoryContentContextProvider = ({
 
   function setDirectoryMeta(meta: TS.FileSystemEntryMeta) {
     directoryMeta.current = meta;
-    isMetaLoaded.current = true;
+    //isMetaLoaded.current = true;
   }
 
   function watchForChanges(location?: TS.Location) {
@@ -851,6 +860,7 @@ export const DirectoryContentContextProvider = ({
     currentDirectoryEntries,
     currentDirectoryPath.current,
     directoryMeta.current,
+    isMetaLoaded.current,
     currentDirectoryPerspective,
     currentDirectoryFiles.current,
     currentDirectoryDirs.current,

@@ -32,6 +32,7 @@ import { TS } from '-/tagspaces.namespace';
 import AppConfig from '-/AppConfig';
 import { useSelector } from 'react-redux';
 import { getLastSearchTimestamp } from '-/reducers/app';
+import useFirstRender from '-/utils/useFirstRender';
 
 type PaginationContextData = {
   page: number;
@@ -58,12 +59,14 @@ export const PaginationContextProvider = ({
     currentDirectoryPath,
     updateCurrentDirEntries,
     getEnhancedDir,
-    currentDirectoryPerspective
+    currentDirectoryPerspective,
+    isMetaLoaded
   } = useDirectoryContentContext();
   const lastSearchTimestamp = useSelector(getLastSearchTimestamp);
   const { getSettings, sortedDirContent } = useSortedDirContext();
 
   const [page, setPage] = useState<number>(initPage);
+  const firstRender = useFirstRender();
   //const pageFiles = useRef<TS.FileSystemEntry[]>(getPageFiles(page));
 
   useEffect(() => {
@@ -71,22 +74,13 @@ export const PaginationContextProvider = ({
     if (page !== initPage) {
       setPage(initPage);
     }
-    /*if (sortedDirContent) {
-      // set initial thumbs and meta for dirs
-      const dirEntriesPromises = sortedDirContent
-        .filter(entry => !entry.isFile)
-        .map(entry => getEnhancedDir(entry));
-      Promise.all(dirEntriesPromises)
-        .then(entries => {
-          updateCurrentDirEntries(entries);
-          return true;
-        })
-        .catch(err => {
-          console.error('err Enhanced Dir entries:', err);
-          return false;
-        });
-    }*/
   }, [currentDirectoryPath, lastSearchTimestamp]);
+
+  useEffect(() => {
+    if (!firstRender && !isMetaLoaded) {
+      loadCurrentDirMeta().then(() => console.debug('meta loaded'));
+    }
+  }, [isMetaLoaded]);
 
   const pageFiles: TS.FileSystemEntry[] = useMemo(() => {
     const settings = getSettings(currentDirectoryPerspective);
@@ -109,6 +103,10 @@ export const PaginationContextProvider = ({
     }*/
     //pageFiles.current = getPageFiles(currentPage);
     setPage(currentPage);
+    return loadCurrentDirMeta();
+  }
+
+  function loadCurrentDirMeta() {
     return PlatformIO.listMetaDirectoryPromise(currentDirectoryPath)
       .then(meta => {
         //metaLoadedLock.current = false;
@@ -132,9 +130,11 @@ export const PaginationContextProvider = ({
   const getDirEntriesPromises = (): Promise<any>[] =>
     sortedDirContent
       .filter(entry => !entry.isFile)
-      .map(entry => Promise.resolve({ [entry.path]: getEnhancedDir(entry) }));
+      .map(entry => getEnhancedDir(entry)); //Promise.resolve({ [entry.path]: getEnhancedDir(entry) }));
 
-  const getFileEntriesPromises = (meta: Array<any>): Promise<any>[] =>
+  const getFileEntriesPromises = (
+    meta: Array<any>
+  ): Promise<TS.FileSystemEntry>[] =>
     pageFiles.map(entry => {
       const metaFilePath = getMetaFileLocationForFile(
         entry.path,
@@ -148,17 +148,19 @@ export const PaginationContextProvider = ({
           AppConfig.metaFolder + PlatformIO.getDirSeparator()
         ) === -1
       ) {
-        return Promise.resolve({
+        return getMetaForEntry(
+          entry,
+          metaFilePath
+        ); /*Promise.resolve({
           [entry.path]: getMetaForEntry(entry, metaFilePath)
-        });
+        });*/
       }
-      return Promise.resolve({ [entry.path]: undefined });
+      return Promise.resolve(undefined); //Promise.resolve({ [entry.path]: undefined });
     });
 
-  const getThumbs = (meta: Array<any>): Promise<any>[] =>
-    pageFiles.map(entry =>
-      Promise.resolve({ [entry.path]: setThumbs(entry, meta) })
-    );
+  const getThumbs = (meta: Array<any>): Promise<TS.FileSystemEntry>[] =>
+    pageFiles.map(entry => Promise.resolve(setThumbs(entry, meta)));
+  //Promise.resolve({ [entry.path]: setThumbs(entry, meta) })
 
   const setThumbs = (
     entry: TS.FileSystemEntry,
@@ -193,7 +195,8 @@ export const PaginationContextProvider = ({
     const catchHandler = error => undefined;
     return Promise.all(metaPromises.map(promise => promise.catch(catchHandler)))
       .then(entries => {
-        updateCurrentDirectoryEntries(entries); // .filter(entry => entry !== undefined));
+        updateCurrentDirEntries(entries);
+        //updateCurrentDirectoryEntries(entries); // .filter(entry => entry !== undefined));
         // entriesUpdated.current = entries;
         return true;
       })
@@ -203,7 +206,7 @@ export const PaginationContextProvider = ({
       });
   };
 
-  const updateCurrentDirectoryEntries = entries => {
+  /*const updateCurrentDirectoryEntries = entries => {
     const entriesEnhanced = [];
     entries.forEach(entry => {
       if (entry) {
@@ -218,7 +221,7 @@ export const PaginationContextProvider = ({
     if (entriesEnhanced.length > 0) {
       updateCurrentDirEntries(entriesEnhanced);
     }
-  };
+  };*/
 
   const context = useMemo(() => {
     return {

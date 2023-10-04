@@ -29,7 +29,6 @@ import AppConfig from '-/AppConfig';
 import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
 import {
   getCurrentDirectoryColor,
-  getIsMetaLoaded,
   getCurrentDirectoryTags,
   getCurrentDirectoryDescription,
   getLastBackgroundImageChange,
@@ -57,8 +56,6 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { usePaginationContext } from '-/hooks/usePaginationContext';
 
 interface Props {
-  isMetaLoaded: boolean;
-  //setIsMetaLoaded: (isLoaded: boolean) => void;
   style?: any;
   // gridRef: Object;
   directories: Array<TS.FileSystemEntry>;
@@ -523,7 +520,6 @@ function mapStateToProps(state) {
     currentDirectoryColor: getCurrentDirectoryColor(state),
     lastSearchTimestamp: getLastSearchTimestamp(state),
     currentDirectoryTags: getCurrentDirectoryTags(state),
-    isMetaLoaded: getIsMetaLoaded(state),
     currentDirectoryDescription: getCurrentDirectoryDescription(state),
     lastBackgroundImageChange: getLastBackgroundImageChange(state),
     lastThumbnailImageChange: getLastThumbnailImageChange(state),
@@ -538,7 +534,6 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   JSON.stringify(nextProp.lastThumbnailImageChange) ===
     JSON.stringify(prevProp.lastThumbnailImageChange) &&
   nextProp.currentDirectoryPath === prevProp.currentDirectoryPath &&
-  nextProp.isMetaLoaded === prevProp.isMetaLoaded &&
   nextProp.showDirectories === prevProp.showDirectories &&
   nextProp.showDetails === prevProp.showDetails &&
   nextProp.showDescription === prevProp.showDescription &&

@@ -1784,7 +1784,7 @@ export const getLastBackgroundColorChange = (state: any) =>
 export const getLastThumbnailImageChange = (state: any) =>
   state.app.lastThumbnailImageChange;
 export const currentUser = (state: any) => state.app.user;
-export const getIsMetaLoaded = (state: any) => state.app.isMetaLoaded;
+//export const getIsMetaLoaded = (state: any) => state.app.isMetaLoaded;
 /*export const getDirectoryContent = (state: any) =>
   state.app.currentDirectoryEntries;*/
 // export const getPageEntries = (state: any) => state.app.pageEntries;

@@ -56,6 +56,7 @@ interface Props {
   classes?: any;
   onClose: (param?: any) => void;
   anchorEl: Element;
+  directoryPath: string;
   openAddRemoveTagsDialog?: () => void;
   reflectCreateEntry?: (path: string, isFile: boolean) => void;
   switchPerspective?: (perspectiveId: string) => void;
@@ -81,6 +82,7 @@ function DirectoryMenu(props: Props) {
     open,
     onClose,
     anchorEl,
+    directoryPath,
     mouseX,
     mouseY,
     openAddRemoveTagsDialog,
@@ -163,11 +165,11 @@ function DirectoryMenu(props: Props) {
   }
 
   function openDirectory() {
-    return loadDirectoryContent(currentDirectoryPath, true, true);
+    return loadDirectoryContent(directoryPath, true, true);
   }
 
   function showProperties() {
-    return openEntry(currentDirectoryPath);
+    return openEntry(directoryPath);
   }
 
   function perspectiveSwitch(perspectiveId) {
@@ -215,8 +217,8 @@ function DirectoryMenu(props: Props) {
     setSelectedEntries([
       {
         isFile: false,
-        name: currentDirectoryPath,
-        path: currentDirectoryPath,
+        name: directoryPath,
+        path: directoryPath,
         tags: [],
         size: 0,
         lmdt: 0
@@ -234,7 +236,7 @@ function DirectoryMenu(props: Props) {
   }
 
   function showInFileManager() {
-    dispatch(AppActions.openDirectory(currentDirectoryPath));
+    dispatch(AppActions.openDirectory(directoryPath));
   }
 
   function openInNewWindow() {
@@ -274,13 +276,13 @@ Do you want to continue?`)
             console.warn('Error creating tags: ' + err);
           });
       };
-      Pro.MacTagsImport.importTags(currentDirectoryPath, entryCallback)
+      Pro.MacTagsImport.importTags(directoryPath, entryCallback)
         .then(() => {
           // loadDirectoryContent(currentDirectoryPath); // TODO after first import tags is not imported without reloadDirContent
           toggleProgressDialog();
-          console.log('Import tags succeeded ' + currentDirectoryPath);
+          console.log('Import tags succeeded ' + directoryPath);
           showNotification(
-            'Tags from ' + currentDirectoryPath + ' are imported successfully.',
+            'Tags from ' + directoryPath + ' are imported successfully.',
             'default',
             true
           );
@@ -324,9 +326,7 @@ Do you want to continue?`)
       AppConfig.endTagContainer +
       '.jpg';
     const newFilePath =
-      normalizePath(currentDirectoryPath) +
-      PlatformIO.getDirSeparator() +
-      fileName;
+      normalizePath(directoryPath) + PlatformIO.getDirSeparator() + fileName;
 
     PlatformIO.renameFilePromise(filePath, newFilePath)
       .then(() => {
@@ -372,7 +372,7 @@ Do you want to continue?`)
 
   function setFolderThumbnail() {
     const parentDirectoryPath = extractContainingDirectoryPath(
-      currentDirectoryPath,
+      directoryPath,
       PlatformIO.getDirSeparator()
     );
     const parentDirectoryName = extractDirectoryName(
@@ -382,7 +382,7 @@ Do you want to continue?`)
 
     PlatformIO.copyFilePromise(
       getThumbFileLocationForDirectory(
-        currentDirectoryPath,
+        directoryPath,
         PlatformIO.getDirSeparator()
       ),
       getThumbFileLocationForDirectory(
@@ -401,10 +401,7 @@ Do you want to continue?`)
       })
       .catch(error => {
         showNotification('Thumbnail creation failed.', 'default', true);
-        console.warn(
-          'Error setting Thumb for entry: ' + currentDirectoryPath,
-          error
-        );
+        console.warn('Error setting Thumb for entry: ' + directoryPath, error);
         return true;
       });
   }
@@ -451,7 +448,7 @@ Do you want to continue?`)
       <FileUploadContainer
         id="dirMenuId"
         ref={fileUploadContainerRef}
-        directoryPath={currentDirectoryPath}
+        directoryPath={directoryPath}
       />
     </div>
   );
