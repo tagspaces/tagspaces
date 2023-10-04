@@ -58,8 +58,7 @@ function EntryTagMenu(props: Props) {
   const { t } = useTranslation();
 
   const { removeTags } = useTaggingActionsContext();
-  const { isReadOnlyMode } = useCurrentLocationContext();
-  const readOnlyMode = isReadOnlyMode();
+  const { readOnlyMode } = useCurrentLocationContext();
   const [isDeleteTagDialogOpened, setIsDeleteTagDialogOpened] = useState(false);
   const dispatch: AppDispatch = useDispatch();
   const maxSearchResults: number = useSelector(getMaxSearchResults);

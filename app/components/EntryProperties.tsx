@@ -227,9 +227,8 @@ function EntryProperties(props: Props) {
   const {
     switchLocationTypeByID,
     switchCurrentLocationType,
-    isReadOnlyMode
+    readOnlyMode
   } = useCurrentLocationContext();
-  const readOnlyMode = isReadOnlyMode();
 
   const fileNameRef = useRef<HTMLInputElement>(null);
   const sharingLinkRef = useRef<HTMLInputElement>(null);

@@ -111,8 +111,7 @@ function FileMenu(props: Props) {
   const dispatch: AppDispatch = useDispatch();
   const { openEntry } = useOpenedEntryContext();
   const { loadDirectoryContent } = useDirectoryContentContext();
-  const { currentLocation, isReadOnlyMode } = useCurrentLocationContext();
-  const readOnlyMode = isReadOnlyMode();
+  const { currentLocation, readOnlyMode } = useCurrentLocationContext();
   const locations: Array<TS.Location> = useSelector(getLocations);
   const prefixTagContainer = useSelector(getPrefixTagContainer);
 

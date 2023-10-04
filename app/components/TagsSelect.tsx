@@ -83,8 +83,7 @@ interface Props {
 }
 
 function TagsSelect(props: Props) {
-  const { isReadOnlyMode } = useCurrentLocationContext();
-  const readOnlyMode = isReadOnlyMode();
+  const { readOnlyMode } = useCurrentLocationContext();
   const [tagMenuAnchorEl, setTagMenuAnchorEl] = useState<null | HTMLElement>(
     null
   );

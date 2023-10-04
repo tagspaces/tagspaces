@@ -20,6 +20,7 @@ import React, {
   createContext,
   useEffect,
   useMemo,
+  useReducer,
   useRef,
   useState
 } from 'react';
@@ -117,7 +118,7 @@ export const DirectoryContentContext = createContext<
 >({
   currentDirectoryEntries: [],
   directoryMeta: undefined,
-  currentDirectoryPerspective: PerspectiveIDs.GRID,
+  currentDirectoryPerspective: undefined,
   currentDirectoryPath: undefined,
   currentDirectoryFiles: [],
   currentDirectoryDirs: [],
@@ -164,12 +165,11 @@ export const DirectoryContentContextProvider = ({
    */
   const isMetaLoaded = useRef<boolean>(false);
   const currentDirectoryPath = useRef<string>(undefined);
-  const currentDirectoryPerspective = useRef<string>(
-    PerspectiveIDs.UNSPECIFIED
-  );
+  const currentPerspective = useRef<string>(PerspectiveIDs.UNSPECIFIED);
   const currentDirectoryFiles = useRef<TS.OrderVisibilitySettings[]>([]);
   const currentDirectoryDirs = useRef<TS.OrderVisibilitySettings[]>([]);
   const firstRender = useFirstRender();
+  const [ignored, forceUpdate] = useReducer(x => x + 1, 0, undefined);
 
   useEffect(() => {
     if (currentLocation) {
@@ -433,10 +433,13 @@ export const DirectoryContentContextProvider = ({
       directoryMeta.current = fsEntryMeta;
       isMetaLoaded.current = true;
       if (fsEntryMeta.perspective) {
-        currentDirectoryPerspective.current = fsEntryMeta.perspective;
+        currentPerspective.current = fsEntryMeta.perspective;
+      } else {
+        currentPerspective.current = PerspectiveIDs.UNSPECIFIED;
       }
     } else {
       isMetaLoaded.current = false;
+      currentPerspective.current = PerspectiveIDs.UNSPECIFIED;
     }
     const resultsLimit = {
       maxLoops:
@@ -780,8 +783,14 @@ export const DirectoryContentContextProvider = ({
   }
 
   function setCurrentDirectoryPerspective(perspective: string) {
-    currentDirectoryPerspective.current = perspective;
+    currentPerspective.current = perspective;
+    forceUpdate();
   }
+
+  const currentDirectoryPerspective: string = useMemo(
+    () => currentPerspective.current,
+    [currentDirectoryPath.current, currentPerspective.current]
+  );
 
   function setCurrentDirectoryDirs(dirs: TS.OrderVisibilitySettings[]) {
     currentDirectoryDirs.current = dirs;
@@ -802,7 +811,7 @@ export const DirectoryContentContextProvider = ({
     }
     if (Pro && Pro.Watcher && location && location.watchForChanges) {
       const depth =
-        currentDirectoryPerspective.current === PerspectiveIDs.KANBAN ? 3 : 1;
+        currentPerspective.current === PerspectiveIDs.KANBAN ? 3 : 1;
       Pro.Watcher.watchFolder(
         PlatformIO.getLocationPath(location),
         dispatch,
@@ -816,7 +825,7 @@ export const DirectoryContentContextProvider = ({
     return {
       currentDirectoryEntries: currentDirectoryEntries,
       directoryMeta: directoryMeta.current,
-      currentDirectoryPerspective: currentDirectoryPerspective.current,
+      currentDirectoryPerspective,
       currentDirectoryPath: currentDirectoryPath.current,
       currentDirectoryFiles: currentDirectoryFiles.current,
       currentDirectoryDirs: currentDirectoryDirs.current,
@@ -842,7 +851,7 @@ export const DirectoryContentContextProvider = ({
     currentDirectoryEntries,
     currentDirectoryPath.current,
     directoryMeta.current,
-    currentDirectoryPerspective.current,
+    currentDirectoryPerspective,
     currentDirectoryFiles.current,
     currentDirectoryDirs.current,
     updateCurrentDirEntries

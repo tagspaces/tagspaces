@@ -68,9 +68,8 @@ export const DescriptionContextProvider = ({
   const {
     switchLocationTypeByID,
     switchCurrentLocationType,
-    isReadOnlyMode
+    readOnlyMode
   } = useCurrentLocationContext();
-  const readOnlyMode = isReadOnlyMode();
   const openedFile = useRef<OpenedEntry>(openedEntries[0]);
   const isChanged = useRef<boolean>(false);
   const [

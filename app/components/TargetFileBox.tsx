@@ -42,9 +42,8 @@ interface Props {
 function TargetFileBox(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
-  const { isReadOnlyMode } = useCurrentLocationContext();
+  const { readOnlyMode } = useCurrentLocationContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
-  const readOnlyMode = isReadOnlyMode();
   const ref = useRef<HTMLDivElement>(null);
   const { setMoveCopyDialogOpened } = props;
 

@@ -70,13 +70,12 @@ function DirectoryMenu(props: Props) {
   const { t } = useTranslation();
   const { openEntry } = useOpenedEntryContext();
   const { addTags } = useTaggingActionsContext();
-  const { currentLocation, isReadOnlyMode } = useCurrentLocationContext();
+  const { currentLocation, readOnlyMode } = useCurrentLocationContext();
   const {
     loadDirectoryContent,
     currentDirectoryPath,
     setCurrentDirectoryPerspective
   } = useDirectoryContentContext();
-  const readOnlyMode = isReadOnlyMode();
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
   const {
     open,

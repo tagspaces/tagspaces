@@ -92,8 +92,7 @@ function MainToolbar(props: Props) {
   const searchQuery: TS.SearchQuery = useSelector(getSearchQuery);
   const keyBindings = useSelector(getKeyBindingObject);
   const dispatch: AppDispatch = useDispatch();
-  const { isReadOnlyMode } = useCurrentLocationContext();
-  const readOnlyMode = isReadOnlyMode();
+  const { readOnlyMode } = useCurrentLocationContext();
 
   function showProperties() {
     return openEntry(currentDirectoryPath, true);

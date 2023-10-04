@@ -62,8 +62,7 @@ function EntryContainerMenu(props: Props) {
   const { t } = useTranslation();
   // const theme = useTheme();
   const { toggleEntryFullWidth, openLink } = useOpenedEntryContext();
-  const { isReadOnlyMode } = useCurrentLocationContext();
-  const readOnlyMode = isReadOnlyMode();
+  const { readOnlyMode } = useCurrentLocationContext();
   const desktopMode = useSelector(isDesktopMode);
   const dispatch: AppDispatch = useDispatch();
 

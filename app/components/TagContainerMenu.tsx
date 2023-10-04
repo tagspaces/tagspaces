@@ -31,8 +31,7 @@ interface Props {
 }
 
 function TagContainerMenu(props: Props) {
-  const { isReadOnlyMode } = useCurrentLocationContext();
-  const readOnlyMode = isReadOnlyMode();
+  const { readOnlyMode } = useCurrentLocationContext();
   const { deleteIcon, tag, handleRemoveTag, tagMode } = props;
   if (readOnlyMode) {
     return <div style={{ width: 10 }} />;

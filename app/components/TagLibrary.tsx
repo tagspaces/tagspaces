@@ -87,10 +87,9 @@ function TagLibrary(props: Props) {
   const {
     switchLocationTypeByID,
     switchCurrentLocationType,
-    isReadOnlyMode
+    readOnlyMode
   } = useCurrentLocationContext();
   const dispatch: AppDispatch = useDispatch();
-  const readOnlyMode = isReadOnlyMode();
   const tagBackgroundColor = useSelector(getTagColor);
   const tagTextColor = useSelector(getTagTextColor);
   const selectedEntries: Array<TS.FileSystemEntry> = useSelector(

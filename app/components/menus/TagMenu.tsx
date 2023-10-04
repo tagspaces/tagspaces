@@ -60,8 +60,7 @@ function TagMenu(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const { addTags } = useTaggingActionsContext();
-  const { isReadOnlyMode } = useCurrentLocationContext();
-  const readOnlyMode = isReadOnlyMode();
+  const { readOnlyMode } = useCurrentLocationContext();
   const maxSearchResults: number = useSelector(getMaxSearchResults);
   const selectedEntries = useSelector(getSelectedEntries);
 

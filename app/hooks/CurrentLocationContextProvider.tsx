@@ -34,12 +34,11 @@ import { clearAllURLParams, getURLParameter } from '-/utils/dom';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { Pro } from '-/pro';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 
 type CurrentLocationContextData = {
   currentLocation: TS.Location;
-  isReadOnlyMode: () => boolean;
+  readOnlyMode: boolean;
   changeLocation: (location: TS.Location) => void;
   editLocation: (location: TS.Location, openAfterEdit?: boolean) => void;
   addLocation: (
@@ -60,7 +59,7 @@ type CurrentLocationContextData = {
 export const CurrentLocationContext = createContext<CurrentLocationContextData>(
   {
     currentLocation: undefined,
-    isReadOnlyMode: () => false,
+    readOnlyMode: false,
     changeLocation: () => {},
     editLocation: () => {},
     addLocation: () => {},
@@ -199,9 +198,10 @@ export const CurrentLocationContextProvider = ({
     }
   }
 
-  function isReadOnlyMode() {
-    return currentLocation && currentLocation.isReadOnly;
-  }
+  const readOnlyMode: boolean = useMemo(
+    () => currentLocation && currentLocation.isReadOnly,
+    [currentLocation]
+  );
 
   function changeLocation(location: TS.Location) {
     if (!currentLocation || location.uuid !== currentLocation.uuid) {
@@ -341,7 +341,7 @@ export const CurrentLocationContextProvider = ({
   const context = useMemo(() => {
     return {
       currentLocation,
-      isReadOnlyMode,
+      readOnlyMode,
       changeLocation,
       addLocation,
       addLocations,

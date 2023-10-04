@@ -145,13 +145,12 @@ function GridPagination(props: Props) {
     lastSearchTimestamp
   } = props;
   const { openEntry } = useOpenedEntryContext();
-  const { isReadOnlyMode, currentLocation } = useCurrentLocationContext();
+  const { readOnlyMode, currentLocation } = useCurrentLocationContext();
   const {
     currentDirectoryEntries,
     loadDirectoryContent
   } = useDirectoryContentContext();
   const { page, pageFiles, setCurrentPage } = usePaginationContext();
-  const readOnlyMode = isReadOnlyMode();
   if (!showDirectories) {
     directories = [];
   }

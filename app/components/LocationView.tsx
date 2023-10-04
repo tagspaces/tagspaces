@@ -63,8 +63,7 @@ function LocationView(props: Props) {
 
   const { loadDirectoryContent } = useDirectoryContentContext();
   const { openLocation } = useCurrentLocationContext();
-  const { isReadOnlyMode } = useCurrentLocationContext();
-  const readOnlyMode = isReadOnlyMode();
+  const { readOnlyMode } = useCurrentLocationContext();
   const directoryTreeRef = useRef<DirectoryTreeViewRef>(null);
   const [
     locationDirectoryContextMenuAnchorEl,

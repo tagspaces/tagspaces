@@ -110,8 +110,7 @@ function CellContent(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const { addTags, editTagForEntry } = useTaggingActionsContext();
-  const { isReadOnlyMode } = useCurrentLocationContext();
-  const readOnlyMode = isReadOnlyMode();
+  const { readOnlyMode } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const reorderTags: boolean = useSelector(isReorderTags);
   const lastThumbnailImageChange = useSelector(getLastThumbnailImageChange);

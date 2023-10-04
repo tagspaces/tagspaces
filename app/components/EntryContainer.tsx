@@ -94,11 +94,10 @@ function EntryContainer() {
   } = useOpenedEntryContext();
   const { saveDescription } = useDescriptionContext();
   const {
-    isReadOnlyMode,
+    readOnlyMode,
     switchLocationTypeByID,
     switchCurrentLocationType
   } = useCurrentLocationContext();
-  const readOnlyMode = isReadOnlyMode();
   const {
     loadDirectoryContent,
     currentDirectoryPath
