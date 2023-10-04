@@ -136,7 +136,7 @@ function EntryContainerTitle(props: Props) {
         paddingLeft: 5,
         display: 'flex',
         alignItems: 'center',
-        marginRight: openedFile.isFile ? 90 : 0,
+        marginRight: openedFile.isFile ? 100 : 0,
         flexDirection: 'row',
         flex: '1 1',
         overflowX: 'auto',

@@ -53,8 +53,8 @@ const StyledTabs = styled((props: StyledTabsProps) => (
   <Tabs
     {...props}
     variant="scrollable"
-    scrollButtons="auto"
-    allowScrollButtonsMobile
+    // scrollButtons={}
+    // allowScrollButtonsMobile
     TabIndicatorProps={{ children: <span className="MuiTabs-indicatorSpan" /> }}
   />
 ))(({ theme }) => ({

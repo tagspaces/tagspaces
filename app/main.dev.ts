@@ -36,9 +36,18 @@ import buildDesktopMenu from '-/services/electron-menus';
 import settings from '-/settings';
 import { getExtensions } from '-/utils/extension-utils';
 import i18nInit from '-/services/i18nInit';
+const contextMenu = require('electron-context-menu');
 
 // delete process.env.ELECTRON_ENABLE_SECURITY_WARNINGS;
 // process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
+
+// Enable the context with menu items such as cut, copy, paste or select all
+contextMenu({
+  showInspectElement: false,
+  showSearchWithGoogle: false,
+  showLookUpSelection: false,
+  showServices: false
+});
 
 const isMac = process.platform === 'darwin';
 let mainWindow = null;

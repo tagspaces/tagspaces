@@ -188,6 +188,22 @@ function EntryContainerMenu(props: Props) {
   if (openedEntry.isFile) {
     menuItems.push(
       <MenuItem
+        key={'reloadPropertiesKey'}
+        data-tid="reloadPropertiesTID"
+        aria-label={t('core:reloadFile')}
+        onClick={() => {
+          reloadDocument();
+          handleClose();
+        }}
+      >
+        <ListItemIcon>
+          <ReloadIcon />
+        </ListItemIcon>
+        <ListItemText primary={t('core:reloadFile')} />
+      </MenuItem>
+    );
+    menuItems.push(
+      <MenuItem
         key={'downloadFileKey'}
         data-tid="downloadFileTID"
         aria-label={t('core:downloadFile')}
@@ -231,6 +247,25 @@ function EntryContainerMenu(props: Props) {
             <ExpandIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:openInFullWidth')} />
+        </MenuItem>
+      );
+    }
+    if (!readOnlyMode) {
+      menuItems.push(<Divider key={'divider3'} />);
+      menuItems.push(
+        <MenuItem
+          key={'deleteEntryKey'}
+          data-tid="deleteEntryTID"
+          aria-label={t('core:deleteEntry')}
+          onClick={() => {
+            setDeleteEntryModalOpened(true);
+            handleClose();
+          }}
+        >
+          <ListItemIcon>
+            <DeleteIcon />
+          </ListItemIcon>
+          <ListItemText primary={t('core:deleteEntry')} />
         </MenuItem>
       );
     }
@@ -299,11 +334,13 @@ function EntryContainerMenu(props: Props) {
         </MenuItem>
       );
     }
+  } else {
+    // folder
     menuItems.push(
       <MenuItem
-        key={'reloadPropertiesKey'}
-        data-tid="reloadPropertiesTID"
-        aria-label={t('core:reloadFile')}
+        key={'reloadFolderKey'}
+        data-tid="reloadFolderTID"
+        aria-label={t('core:reloadDirectory')}
         onClick={() => {
           reloadDocument();
           handleClose();
@@ -312,30 +349,10 @@ function EntryContainerMenu(props: Props) {
         <ListItemIcon>
           <ReloadIcon />
         </ListItemIcon>
-        <ListItemText primary={t('core:reloadFile')} />
+        <ListItemText primary={t('core:reloadDirectory')} />
       </MenuItem>
     );
-    if (!readOnlyMode) {
-      menuItems.push(<Divider key={'divider3'} />);
-      menuItems.push(
-        <MenuItem
-          key={'deleteEntryKey'}
-          data-tid="deleteEntryTID"
-          aria-label={t('core:deleteEntry')}
-          onClick={() => {
-            setDeleteEntryModalOpened(true);
-            handleClose();
-          }}
-        >
-          <ListItemIcon>
-            <DeleteIcon />
-          </ListItemIcon>
-          <ListItemText primary={t('core:deleteEntry')} />
-        </MenuItem>
-      );
-    }
-  } else {
-    // folder
+    menuItems.push(<Divider key={'divider6'} />);
     menuItems.push(
       <MenuItem
         key={'openInMainAreaKey'}
@@ -403,24 +420,8 @@ function EntryContainerMenu(props: Props) {
         </MenuItem>
       );
     }
-    menuItems.push(<Divider key={'divider4'} />);
-    menuItems.push(
-      <MenuItem
-        key={'reloadFolderKey'}
-        data-tid="reloadFolderTID"
-        aria-label={t('core:reloadDirectory')}
-        onClick={() => {
-          reloadDocument();
-          handleClose();
-        }}
-      >
-        <ListItemIcon>
-          <ReloadIcon />
-        </ListItemIcon>
-        <ListItemText primary={t('core:reloadDirectory')} />
-      </MenuItem>
-    );
     if (!readOnlyMode) {
+      menuItems.push(<Divider key={'divider4'} />);
       menuItems.push(
         <MenuItem
           key={'deleteFolderKey'}
