@@ -90,7 +90,7 @@ export const types = {
   //UPDATE_THUMB_URL: 'APP/UPDATE_THUMB_URL',
   //UPDATE_THUMB_URLS: 'APP/UPDATE_THUMB_URLS',
   SET_NOTIFICATION: 'APP/SET_NOTIFICATION',
-  SET_GENERATING_THUMBNAILS: 'APP/SET_GENERATING_THUMBNAILS',
+  //SET_GENERATING_THUMBNAILS: 'APP/SET_GENERATING_THUMBNAILS',
   SET_NEW_VERSION_AVAILABLE: 'APP/SET_NEW_VERSION_AVAILABLE',
   SET_CURRENLOCATIONID: 'APP/SET_CURRENLOCATIONID',
   //SET_CURRENT_LOCATION: 'APP/SET_CURRENT_LOCATION',
@@ -241,7 +241,7 @@ export const initialState = {
   selectedEntries: [],
   tagLibraryChanged: false,
   isEntryInFullWidth: false,
-  isGeneratingThumbs: false,
+  //isGeneratingThumbs: false,
   locationManagerPanelOpened: showLocations,
   tagLibraryPanelOpened: showTagLibrary,
   searchPanelOpened: showSearch,
@@ -652,7 +652,7 @@ export default (state: any = initialState, action: any) => {
         }
       };
     }
-    case types.SET_GENERATING_THUMBNAILS: {
+    /*case types.SET_GENERATING_THUMBNAILS: {
       if (action.isGeneratingThumbs !== state.isGeneratingThumbs) {
         return {
           ...state,
@@ -660,7 +660,7 @@ export default (state: any = initialState, action: any) => {
         };
       }
       return state;
-    }
+    }*/
     /*case types.UPDATE_THUMB_URL: {
       const dirEntries = state.currentDirectoryEntries.map(entry => {
         if (entry.path === action.filePath) {
@@ -1362,10 +1362,10 @@ export const actions = {
     type: types.UPDATE_THUMB_URLS,
     tmbURLs
   }),*/
-  setGeneratingThumbnails: (isGeneratingThumbs: boolean) => ({
+  /*setGeneratingThumbnails: (isGeneratingThumbs: boolean) => ({
     type: types.SET_GENERATING_THUMBNAILS,
     isGeneratingThumbs
-  }),
+  }),*/
   /*setCurrentDirectoryColor: (color: string) => ({
     type: types.SET_CURRENDIRECTORYCOLOR,
     color
@@ -1868,8 +1868,8 @@ export const getSelectedEntriesLength = (state: any) =>
   state.app.selectedEntries ? state.app.selectedEntries.length : 0;
 export const getExtensions = (state: any) => state.app.extensions;
 // export const getDirectoryMeta = (state: any) => state.app.directoryMeta;
-export const isGeneratingThumbs = (state: any) => state.app.isGeneratingThumbs;
-//export const isReadOnlyMode = (state: any) => state.app.isReadOnlyMode;
+// export const isGeneratingThumbs = (state: any) => state.app.isGeneratingThumbs;
+// export const isReadOnlyMode = (state: any) => state.app.isReadOnlyMode;
 export const isOnboardingDialogOpened = (state: any) =>
   state.app.onboardingDialogOpened;
 export const isEditTagDialogOpened = (state: any) =>

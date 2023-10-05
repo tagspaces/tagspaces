@@ -60,14 +60,6 @@ import {
   getUseGenerateThumbnails
 } from '-/reducers/settings';
 import { enhanceEntry, getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import {
-  getThumbnailURLPromise,
-  supportedContainers,
-  supportedImgs,
-  supportedMisc,
-  supportedText,
-  supportedVideos
-} from '-/services/thumbsgenerator';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import GlobalSearch from '-/services/search-index';
 import { Pro } from '-/pro';
@@ -87,6 +79,7 @@ type DirectoryContentContextData = {
    */
   currentDirectoryDirs: TS.OrderVisibilitySettings[];
   isMetaLoaded: boolean;
+  isGeneratingThumbs: boolean;
   loadParentDirectoryContent: () => void;
   loadDirectoryContent: (
     directoryPath: string,
@@ -97,7 +90,9 @@ type DirectoryContentContextData = {
     dirEntries,
     isCloudLocation,
     showDirs?: boolean,
-    limit?: number
+    limit?: number,
+    getDirMeta?: boolean,
+    generateThumbnails?: boolean
   ) => any;
   openCurrentDirectory: () => void;
   clearDirectoryContent: () => void;
@@ -123,6 +118,7 @@ export const DirectoryContentContext = createContext<
   currentDirectoryFiles: [],
   currentDirectoryDirs: [],
   isMetaLoaded: false,
+  isGeneratingThumbs: false,
   loadParentDirectoryContent: () => {},
   loadDirectoryContent: () => {},
   enhanceDirectoryContent: () => {},
@@ -165,6 +161,7 @@ export const DirectoryContentContextProvider = ({
    * is using why directoryMeta can be loaded but empty
    */
   const isMetaLoaded = useRef<boolean>(false);
+  const isGeneratingThumbs = useRef<boolean>(false);
   const currentDirectoryPath = useRef<string>(undefined);
   const currentPerspective = useRef<string>(PerspectiveIDs.UNSPECIFIED);
   const currentDirectoryFiles = useRef<TS.OrderVisibilitySettings[]>([]);
@@ -174,11 +171,8 @@ export const DirectoryContentContextProvider = ({
 
   useEffect(() => {
     if (currentLocation) {
-      currentDirectoryPath.current = PlatformIO.getLocationPath(
-        currentLocation
-      );
       loadDirectoryContent(
-        currentDirectoryPath.current,
+        PlatformIO.getLocationPath(currentLocation),
         currentLocation.type !== locationType.TYPE_CLOUD,
         true
       );
@@ -396,7 +390,6 @@ export const DirectoryContentContextProvider = ({
   ) {
     // console.debug('loadDirectoryContent:' + directoryPath);
     window.walkCanceled = false;
-    currentDirectoryPath.current = directoryPath;
 
     // dispatch(actions.setIsLoading(true));
 
@@ -411,6 +404,7 @@ export const DirectoryContentContextProvider = ({
       loadJSONFile(metaFilePath)
         .then(fsEntryMeta =>
           loadDirectoryContentInt(
+            directoryPath,
             generateThumbnails,
             fsEntryMeta
             // description: getDescriptionPreview(fsEntryMeta.description, 200)
@@ -418,21 +412,22 @@ export const DirectoryContentContextProvider = ({
         )
         .catch(err => {
           console.debug('Error loading meta of:' + directoryPath + ' ' + err);
-          loadDirectoryContentInt(generateThumbnails);
+          loadDirectoryContentInt(directoryPath, generateThumbnails);
         });
     } else {
-      loadDirectoryContentInt(generateThumbnails);
+      loadDirectoryContentInt(directoryPath, generateThumbnails);
     }
   }
 
   function loadDirectoryContentInt(
+    directoryPath: string,
     generateThumbnails: boolean,
     fsEntryMeta?: TS.FileSystemEntryMeta
   ) {
     dispatch(AppActions.showNotification(t('core:loading'), 'info', false));
     if (fsEntryMeta) {
       directoryMeta.current = fsEntryMeta;
-      isMetaLoaded.current = generateThumbnails;
+      isMetaLoaded.current = false; //generateThumbnails;
       if (fsEntryMeta.perspective) {
         currentPerspective.current = fsEntryMeta.perspective;
       } else {
@@ -450,12 +445,12 @@ export const DirectoryContentContextProvider = ({
       IsTruncated: false
     };
     PlatformIO.listDirectoryPromise(
-      currentDirectoryPath.current,
+      directoryPath,
       fsEntryMeta &&
         fsEntryMeta.perspective &&
         (fsEntryMeta.perspective === PerspectiveIDs.KANBAN ||
           fsEntryMeta.perspective === PerspectiveIDs.GALLERY)
-        ? ['extractThumbPath']
+        ? [] //'extractThumbPath']
         : [], // mode,
       currentLocation ? currentLocation.ignorePatternPaths : [],
       resultsLimit
@@ -465,10 +460,15 @@ export const DirectoryContentContextProvider = ({
           //OPEN ISTRUNCATED dialog
           dispatch(AppActions.toggleTruncatedConfirmDialog());
         }
-        updateHistory(currentLocation, currentDirectoryPath.current);
+        updateHistory(currentLocation, directoryPath);
         if (results !== undefined) {
           // console.debug('app listDirectoryPromise resolved:' + results.length);
-          prepareDirectoryContent(results, fsEntryMeta, generateThumbnails);
+          prepareDirectoryContent(
+            directoryPath,
+            results,
+            fsEntryMeta,
+            generateThumbnails
+          );
         }
         /*dispatch(
           AppActions.updateCurrentDirectoryPerspective(
@@ -501,22 +501,8 @@ export const DirectoryContentContextProvider = ({
     }
   }
 
-  function loadDirectoryFailure(error?: any) {
-    console.error('Error loading directory: ', error);
-    dispatch(AppActions.hideNotifications());
-
-    dispatch(
-      AppActions.showNotification(
-        t('core:errorLoadingFolder') + ': ' + error.message,
-        'warning',
-        false
-      )
-    );
-    closeAllLocations();
-    // dispatch(actions.loadDirectorySuccess(directoryPath, []));
-  }
-
   function prepareDirectoryContent(
+    directoryPath: string,
     dirEntries,
     dirEntryMeta,
     generateThumbnails
@@ -524,12 +510,7 @@ export const DirectoryContentContextProvider = ({
     const isCloudLocation =
       currentLocation && currentLocation.type === locationType.TYPE_CLOUD;
 
-    let {
-      directoryContent,
-      tmbGenerationPromises,
-      tmbGenerationList,
-      dirsMetaPromises
-    } = enhanceDirectoryContent(
+    const directoryContent = enhanceDirectoryContent(
       dirEntries,
       isCloudLocation,
       true,
@@ -538,123 +519,22 @@ export const DirectoryContentContextProvider = ({
       generateThumbnails
     );
 
-    function setUpdatedDirMeta(directoryContent) {
-      if (dirsMetaPromises.length > 0) {
-        Promise.all(dirsMetaPromises)
-          .then(entries => {
-            setCurrentDirectoryEntries(
-              getMergedEntries(directoryContent, entries)
-            );
-            return true;
-          })
-          .catch(err => {
-            console.error('err Enhanced Dir entries:', err);
-            setCurrentDirectoryEntries(directoryContent);
-            return false;
-          });
-      } else {
-        setCurrentDirectoryEntries(directoryContent);
-      }
-    }
-
-    function getUpdatedThumbnailUrls(directoryContent, tmbURLs: Array<any>) {
-      return directoryContent.map(entry => {
-        const tmbUrl = tmbURLs.find(tmbUrl => tmbUrl.filePath == entry.path);
-        if (tmbUrl) {
-          return { ...entry, thumbPath: tmbUrl.tmbPath };
-        }
-        return entry;
-      });
-      // setCurrentDirectoryEntries(dirEntries);
-    }
-
-    function handleTmbGenerationResults(results) {
-      // console.log('tmb results' + JSON.stringify(results));
-      const tmbURLs = [];
-      results.flat(1).map(tmbResult => {
-        if (tmbResult.tmbPath && tmbResult.tmbPath.length > 0) {
-          // dispatch(actions.updateThumbnailUrl(tmbResult.filePath, tmbResult.tmbPath));
-          tmbURLs.push(tmbResult);
-        }
-        return true;
-      });
-      dispatch(AppActions.setGeneratingThumbnails(false));
-      // dispatch(actions.hideNotifications());
-      if (tmbURLs.length > 0) {
-        directoryContent = getUpdatedThumbnailUrls(directoryContent, tmbURLs);
-      }
-      setUpdatedDirMeta(directoryContent);
-      return true;
-    }
-
-    function handleTmbGenerationFailed(error) {
-      console.warn('Thumb generation failed: ' + error);
-      dispatch(AppActions.setGeneratingThumbnails(false));
-      dispatch(
-        AppActions.showNotification(
-          'Generating thumbnails failed', //t('core:generatingThumbnailsFailed'),
-          'warning',
-          true
-        )
-      );
-    }
-
-    if (
-      tmbGenerationList.length > 0 ||
-      tmbGenerationPromises.length > 0 ||
-      dirsMetaPromises.length > 0
-    ) {
-      if (generateThumbnails) {
-        dispatch(AppActions.setGeneratingThumbnails(true));
-        if (tmbGenerationList.length > 0) {
-          tmbGenerationPromises.push(
-            PlatformIO.createThumbnailsInWorker(tmbGenerationList)
-              //.then(handleTmbGenerationResults)
-              .catch(() => {
-                // WS error handle
-                Promise.all(
-                  tmbGenerationList.map(tmbPath =>
-                    getThumbnailURLPromise(tmbPath)
-                  )
-                )
-                  .then(handleTmbGenerationResults)
-                  .catch(handleTmbGenerationFailed);
-              })
-          );
-        }
-        if (tmbGenerationPromises.length > 0) {
-          Promise.all(tmbGenerationPromises)
-            .then(handleTmbGenerationResults)
-            .catch(handleTmbGenerationFailed);
-        }
-      } /*else {
-        isMetaLoaded.current = false;
-      }*/
-    }
-
-    console.log(
+    /*console.log(
       'Dir ' +
         currentDirectoryPath.current +
         ' contains ' +
         directoryContent.length
-    );
-    loadDirectorySuccess(directoryContent, dirEntryMeta);
+    );*/
+    loadDirectorySuccess(directoryPath, directoryContent, dirEntryMeta);
   }
 
   function loadDirectorySuccess(
-    directoryContent: Array<any>,
+    directoryPath: string,
+    directoryContent: TS.FileSystemEntry[],
     directoryMeta?: TS.FileSystemEntryMeta
   ) {
     dispatch(AppActions.hideNotifications(['error']));
-    if (
-      currentDirectoryPath.current &&
-      currentDirectoryPath.current.startsWith('./')
-    ) {
-      // relative paths
-      currentDirectoryPath.current = PlatformIO.resolveFilePath(
-        currentDirectoryPath.current
-      );
-    }
+
     if (
       directoryMeta &&
       directoryMeta.customOrder &&
@@ -670,30 +550,37 @@ export const DirectoryContentContextProvider = ({
       currentDirectoryDirs.current = directoryMeta.customOrder.folders;
     }
     setCurrentDirectoryEntries(directoryContent);
+    if (
+      currentDirectoryPath.current &&
+      currentDirectoryPath.current.startsWith('./')
+    ) {
+      // relative paths
+      currentDirectoryPath.current = PlatformIO.resolveFilePath(
+        currentDirectoryPath.current
+      );
+    } else {
+      currentDirectoryPath.current = directoryPath;
+    }
+  }
+
+  function loadDirectoryFailure(error?: any) {
+    console.error('Error loading directory: ', error);
+    dispatch(AppActions.hideNotifications());
+
+    dispatch(
+      AppActions.showNotification(
+        t('core:errorLoadingFolder') + ': ' + error.message,
+        'warning',
+        false
+      )
+    );
+    closeAllLocations();
   }
 
   function setCurrentDirectoryColor(color: string) {
     if (directoryMeta) {
       directoryMeta.current.color = color;
     }
-  }
-
-  function genThumbnails() {
-    if (
-      !currentDirectoryPath.current ||
-      currentDirectoryPath.current.endsWith(
-        AppConfig.dirSeparator + AppConfig.metaFolder
-      ) ||
-      currentDirectoryPath.current.endsWith(
-        AppConfig.dirSeparator + AppConfig.metaFolder + AppConfig.dirSeparator
-      )
-    ) {
-      return false; // dont generate thumbnails in meta folder
-    }
-    if (AppConfig.useGenerateThumbnails !== undefined) {
-      return AppConfig.useGenerateThumbnails;
-    }
-    return useGenerateThumbnails;
   }
 
   function enhanceDirectoryContent(
@@ -705,10 +592,10 @@ export const DirectoryContentContextProvider = ({
     generateThumbnails = true
   ) {
     const directoryContent = [];
-    const tmbGenerationPromises = [];
-    const tmbGenerationList = [];
-    const dirsMetaPromises = [];
-    const isWorkerAvailable = enableWS && PlatformIO.isWorkerAvailable();
+    //const tmbGenerationPromises = [];
+    //const tmbGenerationList = [];
+    //const dirsMetaPromises = [];
+    /*const isWorkerAvailable = enableWS && PlatformIO.isWorkerAvailable();
     const supportedImgsWS = [
       'jpg',
       'jpeg',
@@ -723,7 +610,7 @@ export const DirectoryContentContextProvider = ({
       'webp',
       'avif'
       // 'bmp' currently electron main processed: https://github.com/lovell/sharp/issues/806
-    ];
+    ];*/
 
     dirEntries.map(entry => {
       if (!showUnixHiddenEntries && entry.name.startsWith('.')) {
@@ -738,9 +625,9 @@ export const DirectoryContentContextProvider = ({
         return true;
       }
 
-      if (getDirMeta && !entry.isFile) {
+      /*if (getDirMeta && !entry.isFile) {
         dirsMetaPromises.push(getEnhancedDir(entry));
-      }
+      }*/
 
       const enhancedEntry: TS.FileSystemEntry = enhanceEntry(
         entry,
@@ -748,7 +635,7 @@ export const DirectoryContentContextProvider = ({
         PlatformIO.getDirSeparator()
       );
       directoryContent.push(enhancedEntry);
-      if (
+      /*if (
         // Enable thumb generation by
         generateThumbnails &&
         !AppConfig.isWeb && // not in webdav mode
@@ -779,16 +666,17 @@ export const DirectoryContentContextProvider = ({
             'Unsupported thumbgeneration ext:' + enhancedEntry.extension
           );
         }
-      }
+      }*/
       return true;
     });
 
-    return {
+    return directoryContent;
+    /*return {
       directoryContent,
       tmbGenerationPromises,
       tmbGenerationList,
       dirsMetaPromises
-    };
+    };*/
   }
 
   function setCurrentDirectoryPerspective(perspective: string) {
@@ -839,6 +727,7 @@ export const DirectoryContentContextProvider = ({
       currentDirectoryFiles: currentDirectoryFiles.current,
       currentDirectoryDirs: currentDirectoryDirs.current,
       isMetaLoaded: isMetaLoaded.current,
+      isGeneratingThumbs: isGeneratingThumbs.current,
       loadDirectoryContent,
       loadParentDirectoryContent,
       enhanceDirectoryContent,
@@ -861,6 +750,7 @@ export const DirectoryContentContextProvider = ({
     currentDirectoryPath.current,
     directoryMeta.current,
     isMetaLoaded.current,
+    isGeneratingThumbs.current,
     currentDirectoryPerspective,
     currentDirectoryFiles.current,
     currentDirectoryDirs.current,

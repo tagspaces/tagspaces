@@ -67,6 +67,7 @@ import { SortedDirContextProvider } from '-/perspectives/grid-perspective/hooks/
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { PaginationContextProvider } from '-/hooks/PaginationContextProvider';
+import { ThumbGenerationContextProvider } from '-/hooks/ThumbGenerationContextProvider';
 
 const GridPerspective = React.lazy(() =>
   import(
@@ -78,7 +79,9 @@ function GridPerspectiveAsync(props) {
     <React.Suspense fallback={<LoadingLazy />}>
       <SortedDirContextProvider>
         <PaginationContextProvider>
-          <GridPerspective {...props} />
+          <ThumbGenerationContextProvider>
+            <GridPerspective {...props} />
+          </ThumbGenerationContextProvider>
         </PaginationContextProvider>
       </SortedDirContextProvider>
     </React.Suspense>
@@ -93,7 +96,9 @@ function ListPerspectiveAsync(props) {
     <React.Suspense fallback={<LoadingLazy />}>
       <SortedDirContextProvider>
         <PaginationContextProvider>
-          <ListPerspective {...props} />
+          <ThumbGenerationContextProvider>
+            <ListPerspective {...props} />
+          </ThumbGenerationContextProvider>
         </PaginationContextProvider>
       </SortedDirContextProvider>
     </React.Suspense>
@@ -109,7 +114,9 @@ if (Pro && Pro.Perspectives && Pro.Perspectives.GalleryPerspective) {
 function GalleryPerspectiveAsync(props) {
   return (
     <React.Suspense fallback={<LoadingLazy />}>
-      <GalleryPerspective {...props} />
+      <ThumbGenerationContextProvider>
+        <GalleryPerspective {...props} />
+      </ThumbGenerationContextProvider>
     </React.Suspense>
   );
 }
@@ -122,7 +129,9 @@ if (Pro && Pro.Perspectives && Pro.Perspectives.MapiquePerspective) {
 function MapiquePerspectiveAsync(props) {
   return (
     <React.Suspense fallback={<LoadingLazy />}>
-      <MapiquePerspective {...props} />
+      <ThumbGenerationContextProvider>
+        <MapiquePerspective {...props} />
+      </ThumbGenerationContextProvider>
     </React.Suspense>
   );
 }
@@ -134,7 +143,9 @@ if (Pro && Pro.Perspectives && Pro.Perspectives.KanBanPerspective) {
 function KanBanPerspectiveAsync(props) {
   return (
     <React.Suspense fallback={<LoadingLazy />}>
-      <KanBanPerspective {...props} />
+      <ThumbGenerationContextProvider>
+        <KanBanPerspective {...props} />
+      </ThumbGenerationContextProvider>
     </React.Suspense>
   );
 }

@@ -45,7 +45,6 @@ import {
 } from '../reducers/settings';
 import {
   actions as AppActions,
-  isGeneratingThumbs,
   isAboutDialogOpened,
   isOnboardingDialogOpened,
   isKeysDialogOpened,
@@ -139,7 +138,6 @@ interface Props {
   isFirstRun: boolean;
   setFirstRun: (isFirstRun: boolean) => void;
   isDesktopMode: boolean;
-  isGeneratingThumbs: boolean;
   isSettingsDialogOpened: boolean;
   isNewEntryDialogOpened: boolean;
   isNewFileDialogOpened: boolean;
@@ -346,7 +344,10 @@ function MainPage(props: Props) {
     openPrevFile
   } = useOpenedEntryContext();
 
-  const { loadParentDirectoryContent } = useDirectoryContentContext();
+  const {
+    loadParentDirectoryContent
+    // isGeneratingThumbs
+  } = useDirectoryContentContext();
   const theme = useTheme();
   const percent = useRef<number | undefined>(undefined);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
@@ -837,7 +838,6 @@ function mapStateToProps(state) {
     isOpenLinkDialogOpened: isOpenLinkDialogOpened(state),
     isProTeaserVisible: isProTeaserVisible(state),
     isProgressDialogOpened: isProgressOpened(state),
-    isGeneratingThumbs: isGeneratingThumbs(state),
     isDesktopMode: getDesktopMode(state),
     keyBindings: getKeyBindingObject(state),
     mainSplitSize: getMainVerticalSplitSize(state),

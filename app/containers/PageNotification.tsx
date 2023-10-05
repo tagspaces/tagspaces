@@ -28,7 +28,6 @@ import { getLastPublishedVersion } from '-/reducers/settings';
 import {
   actions as AppActions,
   getNotificationStatus,
-  isGeneratingThumbs,
   isUpdateAvailable
 } from '../reducers/app';
 import {
@@ -40,11 +39,11 @@ import Links from '-/content/links';
 import { openURLExternally } from '-/services/utils-io';
 import Chip from '@mui/material/Chip';
 import { useTranslation } from 'react-i18next';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
   notificationStatus: any;
   isIndexing: boolean;
-  isGeneratingThumbs: boolean;
   showNotification: (
     text: string,
     notificationType?: string,
@@ -55,7 +54,6 @@ interface Props {
   isUpdateAvailable: boolean;
   lastPublishedVersion: string;
   setUpdateAvailable: (isUpdateAvailable: boolean) => void;
-  setGeneratingThumbnails: (isGenerating: boolean) => void;
 }
 
 const TSNotification = styled(Snackbar)(({ theme }) => {
@@ -70,6 +68,7 @@ const TSNotification = styled(Snackbar)(({ theme }) => {
 
 function PageNotification(props: Props) {
   const { t } = useTranslation();
+  let { isGeneratingThumbs } = useDirectoryContentContext();
   const skipRelease = () => {
     props.setUpdateAvailable(false);
   };
@@ -109,10 +108,10 @@ function PageNotification(props: Props) {
           </IconButton>
         ]}
       />
-      {props.isGeneratingThumbs && (
+      {isGeneratingThumbs && (
         <TSNotification
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-          open={props.isGeneratingThumbs}
+          open={isGeneratingThumbs}
           autoHideDuration={undefined}
           message={t('core:loadingOrGeneratingThumbnails')}
           action={[
@@ -120,7 +119,11 @@ function PageNotification(props: Props) {
               key="closeButton"
               aria-label={t('core:closeButton')}
               color="inherit"
-              onClick={() => props.setGeneratingThumbnails(false)}
+              onClick={
+                () => {
+                  isGeneratingThumbs = false;
+                } /*props.setGeneratingThumbnails(false)*/
+              }
               size="large"
             >
               <CloseIcon />
@@ -186,8 +189,7 @@ function mapStateToProps(state) {
     notificationStatus: getNotificationStatus(state),
     isIndexing: isIndexing(state),
     isUpdateAvailable: isUpdateAvailable(state),
-    lastPublishedVersion: getLastPublishedVersion(state),
-    isGeneratingThumbs: isGeneratingThumbs(state)
+    lastPublishedVersion: getLastPublishedVersion(state)
   };
 }
 
@@ -197,8 +199,7 @@ function mapDispatchToProps(dispatch) {
       showNotification: AppActions.showNotification,
       hideNotifications: AppActions.hideNotifications,
       cancelDirectoryIndexing: LocationIndexActions.cancelDirectoryIndexing,
-      setUpdateAvailable: AppActions.setUpdateAvailable,
-      setGeneratingThumbnails: AppActions.setGeneratingThumbnails
+      setUpdateAvailable: AppActions.setUpdateAvailable
     },
     dispatch
   );
@@ -208,7 +209,6 @@ const areEqual = (prevProp, nextProp) =>
   JSON.stringify(nextProp.notificationStatus) ===
     JSON.stringify(prevProp.notificationStatus) &&
   nextProp.isIndexing === prevProp.isIndexing &&
-  nextProp.isGeneratingThumbs === prevProp.isGeneratingThumbs &&
   nextProp.isUpdateAvailable === prevProp.isUpdateAvailable;
 
 export default connect(

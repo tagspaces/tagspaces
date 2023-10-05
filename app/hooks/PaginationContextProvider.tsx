@@ -66,7 +66,7 @@ export const PaginationContextProvider = ({
   const { getSettings, sortedDirContent } = useSortedDirContext();
 
   const [page, setPage] = useState<number>(initPage);
-  const firstRender = useFirstRender();
+  // const firstRender = useFirstRender();
   //const pageFiles = useRef<TS.FileSystemEntry[]>(getPageFiles(page));
 
   useEffect(() => {
@@ -74,13 +74,8 @@ export const PaginationContextProvider = ({
     if (page !== initPage) {
       setPage(initPage);
     }
+    loadCurrentDirMeta().then(() => console.debug('meta loaded'));
   }, [currentDirectoryPath, lastSearchTimestamp]);
-
-  useEffect(() => {
-    if (!firstRender && !isMetaLoaded) {
-      loadCurrentDirMeta().then(() => console.debug('meta loaded'));
-    }
-  }, [isMetaLoaded]);
 
   const pageFiles: TS.FileSystemEntry[] = useMemo(() => {
     const settings = getSettings(currentDirectoryPerspective);
