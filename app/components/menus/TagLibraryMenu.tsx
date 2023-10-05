@@ -35,6 +35,7 @@ import { Pro } from '-/pro';
 import { openURLExternally } from '-/services/utils-io';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useTranslation } from 'react-i18next';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 interface Props {
   classes?: any;
@@ -50,7 +51,7 @@ interface Props {
 
 function TagLibraryMenu(props: Props) {
   const { t } = useTranslation();
-  const dispatch: AppDispatch = useDispatch();
+  const { showNotification } = useNotificationContext();
   const fileInput = useRef<HTMLInputElement>(null);
   const tagGroupsImported = useRef([]);
   // const [tagGroups, setTagGroups] = useState(null);
@@ -89,22 +90,10 @@ function TagLibraryMenu(props: Props) {
           tagGroupsImported.current = jsonObj.tagGroups;
           setIsImportExportTagGroupDialogOpened(true);
         } else {
-          dispatch(
-            AppActions.showNotification(
-              t('core:invalidImportFile'),
-              'warning',
-              true
-            )
-          );
+          showNotification(t('core:invalidImportFile'), 'warning', true);
         }
       } catch (e) {
-        dispatch(
-          AppActions.showNotification(
-            t('core:invalidImportFile'),
-            'warning',
-            true
-          )
-        );
+        showNotification(t('core:invalidImportFile'), 'warning', true);
       }
     };
     reader.readAsText(file);

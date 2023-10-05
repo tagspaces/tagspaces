@@ -16,7 +16,6 @@ import {
 import {
   actions as AppActions,
   AppDispatch,
-  NotificationTypes,
   OpenedEntry
 } from '-/reducers/app';
 import { useDispatch, useSelector } from 'react-redux';
@@ -38,6 +37,8 @@ import { isDesktopMode } from '-/reducers/settings';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useFsActionsContext } from '-/hooks/useFsActionsContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 interface Props {
   anchorEl: null | HTMLElement;
@@ -63,6 +64,8 @@ function EntryContainerMenu(props: Props) {
   // const theme = useTheme();
   const { toggleEntryFullWidth, openLink } = useOpenedEntryContext();
   const { readOnlyMode } = useCurrentLocationContext();
+  const { deleteFile } = useFsActionsContext();
+  const { showNotification } = useNotificationContext();
   const desktopMode = useSelector(isDesktopMode);
   const dispatch: AppDispatch = useDispatch();
 
@@ -115,12 +118,7 @@ function EntryContainerMenu(props: Props) {
         downloadCordova(openedEntry.url, entryName);
       } else {
         console.log('Can only download HTTP/HTTPS URIs');
-        dispatch(
-          AppActions.showNotification(
-            t('core:cantDownloadLocalFile'),
-            NotificationTypes.default
-          )
-        );
+        showNotification(t('core:cantDownloadLocalFile'));
       }
     } else {
       const downloadLink = document.getElementById('downloadFile');
@@ -483,9 +481,7 @@ function EntryContainerMenu(props: Props) {
           }
           confirmCallback={result => {
             if (result) {
-              dispatch(
-                AppActions.deleteFile(openedEntry.path, openedEntry.uuid)
-              );
+              return deleteFile(openedEntry.path, openedEntry.uuid);
             }
           }}
           cancelDialogTID="cancelSaveBeforeCloseDialog"

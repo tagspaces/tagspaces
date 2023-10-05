@@ -24,11 +24,12 @@ import AppConfig from '-/AppConfig';
 import PlatformIO from '-/services/platform-facade';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import IOActions from '-/reducers/io-actions';
 import { TS } from '-/tagspaces.namespace';
 import { Identifier } from 'dnd-core';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 
 type DragItem = { files: File[]; items: DataTransferItemList };
 type DragProps = { isActive: boolean; handlerId: Identifier | null };
@@ -44,6 +45,8 @@ function TargetFileBox(props: Props) {
   const dispatch: AppDispatch = useDispatch();
   const { readOnlyMode } = useCurrentLocationContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
+  const { uploadFilesAPI } = useIOActionsContext();
+  const { showNotification } = useNotificationContext();
   const ref = useRef<HTMLDivElement>(null);
   const { setMoveCopyDialogOpened } = props;
 
@@ -53,24 +56,16 @@ function TargetFileBox(props: Props) {
 
   const handleCopyFiles = (files: Array<File>) => {
     if (readOnlyMode) {
-      dispatch(
-        AppActions.showNotification(
-          t('core:dndDisabledReadOnlyMode'),
-          'error',
-          true
-        )
-      );
+      showNotification(t('core:dndDisabledReadOnlyMode'), 'error', true);
       return Promise.reject(t('core:dndDisabledReadOnlyMode'));
     }
     if (files) {
       console.log('Dropped files: ' + JSON.stringify(files));
       if (!currentDirectoryPath) {
-        dispatch(
-          AppActions.showNotification(
-            'Importing files failed, because no folder is opened in TagSpaces!',
-            'error',
-            true
-          )
+        showNotification(
+          'Importing files failed, because no folder is opened in TagSpaces!',
+          'error',
+          true
         );
         return Promise.reject(
           new Error(
@@ -80,9 +75,7 @@ function TargetFileBox(props: Props) {
       }
       dispatch(AppActions.resetProgress());
       dispatch(AppActions.toggleUploadDialog());
-      return dispatch(
-        IOActions.uploadFilesAPI(files, currentDirectoryPath, onUploadProgress)
-      )
+      return uploadFilesAPI(files, currentDirectoryPath, onUploadProgress)
         .then((fsEntries: Array<TS.FileSystemEntry>) => {
           dispatch(AppActions.reflectCreateEntries(fsEntries));
           return true;

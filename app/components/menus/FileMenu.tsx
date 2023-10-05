@@ -67,6 +67,7 @@ import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 interface Props {
   anchorEl: Element;
@@ -111,6 +112,7 @@ function FileMenu(props: Props) {
   const dispatch: AppDispatch = useDispatch();
   const { openEntry } = useOpenedEntryContext();
   const { loadDirectoryContent } = useDirectoryContentContext();
+  const { showNotification } = useNotificationContext();
   const { currentLocation, readOnlyMode } = useCurrentLocationContext();
   const locations: Array<TS.Location> = useSelector(getLocations);
   const prefixTagContainer = useSelector(getPrefixTagContainer);
@@ -140,11 +142,11 @@ function FileMenu(props: Props) {
       navigator.clipboard
         .writeText(sharingLink)
         .then(() => {
-          dispatch(AppActions.showNotification(t('core:sharingLinkCopied')));
+          showNotification(t('core:sharingLinkCopied'));
           return true;
         })
         .catch(() => {
-          dispatch(AppActions.showNotification(t('core:sharingLinkFailed')));
+          showNotification(t('core:sharingLinkFailed'));
         });
     }
   }
@@ -173,13 +175,11 @@ function FileMenu(props: Props) {
     onClose();
     setFolderThumbnailPromise(selectedFilePath, t)
       .then((directoryPath: string) => {
-        dispatch(
-          AppActions.showNotification('Thumbnail created for: ' + directoryPath)
-        );
+        showNotification('Thumbnail created for: ' + directoryPath);
         return true;
       })
       .catch(error => {
-        dispatch(AppActions.showNotification('Thumbnail creation failed.'));
+        showNotification('Thumbnail creation failed.');
         console.warn(
           'Error setting Thumb for entry: ' + selectedFilePath,
           error
@@ -205,15 +205,11 @@ function FileMenu(props: Props) {
         dispatch(
           AppActions.setLastBackgroundImageChange(path, new Date().getTime())
         );
-        dispatch(
-          AppActions.showNotification(
-            'Background created for: ' + directoryPath
-          )
-        );
+        showNotification('Background created for: ' + directoryPath);
         return true;
       })
       .catch(error => {
-        dispatch(AppActions.showNotification('Background creation failed.'));
+        showNotification('Background creation failed.');
         console.warn(
           'Error setting Background for entry: ' + selectedFilePath,
           error
@@ -267,9 +263,7 @@ function FileMenu(props: Props) {
           return true;
         })
         .catch(error => {
-          dispatch(
-            AppActions.showNotification('Error creating duplicate: ', error)
-          );
+          showNotification('Error creating duplicate: ', error);
         });
     }
   }

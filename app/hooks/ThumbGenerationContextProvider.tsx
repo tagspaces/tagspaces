@@ -36,15 +36,14 @@ import {
 } from '-/services/thumbsgenerator';
 import { usePaginationContext } from '-/hooks/usePaginationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 type ThumbGenerationContextData = {
-  isGeneratingThumbs: boolean;
   generateThumbnails: (dirEntries: TS.FileSystemEntry[]) => void;
 };
 
 export const ThumbGenerationContext = createContext<ThumbGenerationContextData>(
   {
-    isGeneratingThumbs: false,
     generateThumbnails: () => {}
   }
 );
@@ -60,11 +59,11 @@ export const ThumbGenerationContextProvider = ({
     currentDirectoryPath,
     currentDirectoryEntries
   } = useDirectoryContentContext();
+  const { setGeneratingThumbs } = useNotificationContext();
   const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);
   const { pageFiles } = usePaginationContext();
   const enableWS = useSelector(getEnableWS);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
-  const [isGeneratingThumbs, setGeneratingThumbs] = useState<boolean>(false);
 
   const entries =
     pageFiles && pageFiles.length > 0 ? pageFiles : currentDirectoryEntries;
@@ -185,10 +184,9 @@ export const ThumbGenerationContextProvider = ({
 
   const context = useMemo(() => {
     return {
-      isGeneratingThumbs,
       generateThumbnails
     };
-  }, [isGeneratingThumbs]);
+  }, []);
 
   return (
     <ThumbGenerationContext.Provider value={context}>

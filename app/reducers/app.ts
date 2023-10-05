@@ -89,7 +89,7 @@ export const types = {
   //CLOSE_ALL_FILES: 'APP/CLOSE_ALL_FILES',
   //UPDATE_THUMB_URL: 'APP/UPDATE_THUMB_URL',
   //UPDATE_THUMB_URLS: 'APP/UPDATE_THUMB_URLS',
-  SET_NOTIFICATION: 'APP/SET_NOTIFICATION',
+  //SET_NOTIFICATION: 'APP/SET_NOTIFICATION',
   //SET_GENERATING_THUMBNAILS: 'APP/SET_GENERATING_THUMBNAILS',
   SET_NEW_VERSION_AVAILABLE: 'APP/SET_NEW_VERSION_AVAILABLE',
   SET_CURRENLOCATIONID: 'APP/SET_CURRENLOCATIONID',
@@ -143,11 +143,6 @@ export const types = {
   ADD_EXTENSIONS: 'APP/ADD_EXTENSIONS',
   REMOVE_EXTENSIONS: 'APP/REMOVE_EXTENSIONS',
   UPDATE_EXTENSION: 'APP/UPDATE_EXTENSION'
-};
-
-export const NotificationTypes = {
-  default: 'default',
-  error: 'error'
 };
 
 export type OpenedEntry = {
@@ -640,7 +635,7 @@ export default (state: any = initialState, action: any) => {
         searchFilter: action.searchFilter
       };
     }
-    case types.SET_NOTIFICATION: {
+    /*case types.SET_NOTIFICATION: {
       return {
         ...state,
         notificationStatus: {
@@ -651,7 +646,7 @@ export default (state: any = initialState, action: any) => {
           autohide: action.autohide
         }
       };
-    }
+    }*/
     /*case types.SET_GENERATING_THUMBNAILS: {
       if (action.isGeneratingThumbs !== state.isGeneratingThumbs) {
         return {
@@ -1447,7 +1442,7 @@ export const actions = {
     location
   }),*/
 
-  showNotification: (
+  /*showNotification: (
     text: string,
     notificationType = 'default',
     autohide = true,
@@ -1477,7 +1472,7 @@ export const actions = {
     text: null,
     notificationType: 'default',
     autohide: true
-  }),
+  }),*/
   /*setReadOnlyMode: (isReadOnlyMode: boolean) => ({
     type: types.SET_READONLYMODE,
     isReadOnlyMode
@@ -1584,166 +1579,6 @@ export const actions = {
     type: types.REFLECT_EDITED_ENTRY_PATHS,
     editedEntryPaths
   }),
-  /**
-   * @param path
-   * @param tags
-   * @param updateIndex
-   */
-  /*reflectUpdateSidecarTags: (
-    path: string,
-    tags: Array<TS.Tag>,
-    updateIndex = true
-  ) => (dispatch: (action) => void, getState: () => any) => {
-    // const { openedFiles, selectedEntries } = getState().app;
-    // to reload cell in KanBan if add/remove sidecar tags
-    const action: TS.EditedEntryAction = `edit${tags
-      .map(tag => tag.title)
-      .join()}`;
-    dispatch(actions.reflectEditedEntryPaths([{ action, path }])); //[{ [path]: tags }]));
-    dispatch(actions.updateCurrentDirEntry(path, { tags }));
-
-    if (updateIndex) {
-      GlobalSearch.getInstance().reflectUpdateSidecarTags(path, tags);
-    }
-  },*/
-  deleteFile: (filePath: string, uuid: string) => (
-    dispatch: (action) => void,
-    getState: () => any
-  ) => {
-    const { settings } = getState();
-    return PlatformIO.deleteFilePromise(filePath, settings.useTrashCan)
-      .then(() => {
-        // TODO close file opener if this file is opened
-        dispatch(actions.reflectDeleteEntry(filePath));
-        dispatch(
-          actions.showNotification(
-            `Deleting file ${filePath} successful.`,
-            'default',
-            true
-          )
-        );
-        // Delete revisions
-        const backupFilePath = getBackupFileLocation(
-          filePath,
-          uuid,
-          PlatformIO.getDirSeparator()
-        );
-        const backupPath = extractContainingDirectoryPath(
-          backupFilePath,
-          PlatformIO.getDirSeparator()
-        );
-        PlatformIO.deleteDirectoryPromise(backupPath)
-          .then(() => {
-            console.log('Cleaning revisions successful for ' + filePath);
-            return true;
-          })
-          .catch(err => {
-            console.warn('Cleaning revisions failed ', err);
-          });
-        // Delete sidecar file and thumb
-        deleteFilesPromise([
-          getMetaFileLocationForFile(filePath, PlatformIO.getDirSeparator()),
-          getThumbFileLocationForFile(
-            filePath,
-            PlatformIO.getDirSeparator(),
-            false
-          )
-        ])
-          .then(() => {
-            console.log(
-              'Cleaning meta file and thumb successful for ' + filePath
-            );
-            return true;
-          })
-          .catch(err => {
-            console.warn('Cleaning meta file and thumb failed with ' + err);
-          });
-        return true;
-      })
-      .catch(error => {
-        console.warn('Error while deleting file: ' + error);
-        dispatch(
-          actions.showNotification(
-            `Error while deleting file ${filePath}`,
-            'error',
-            true
-          )
-        );
-      });
-  },
-  renameFile: (filePath: string, newFilePath: string) => (
-    dispatch: (action) => void
-  ): Promise<boolean> =>
-    PlatformIO.renameFilePromise(filePath, newFilePath)
-      .then(result => {
-        const newFilePathFromPromise = result[1];
-        console.info('File renamed ' + filePath + ' to ' + newFilePath);
-        dispatch(
-          actions.showNotification(
-            i18n.t('core:renamingSuccessfully'),
-            'default',
-            true
-          )
-        );
-        // Update sidecar file and thumb
-        return renameFilesPromise([
-          [
-            getMetaFileLocationForFile(filePath, PlatformIO.getDirSeparator()),
-            getMetaFileLocationForFile(
-              newFilePath,
-              PlatformIO.getDirSeparator()
-            )
-          ],
-          [
-            getThumbFileLocationForFile(
-              filePath,
-              PlatformIO.getDirSeparator(),
-              false
-            ),
-            getThumbFileLocationForFile(
-              newFilePath,
-              PlatformIO.getDirSeparator(),
-              false
-            )
-          ]
-        ])
-          .then(() => {
-            dispatch(
-              actions.reflectRenameEntry(filePath, newFilePathFromPromise)
-            );
-            console.info(
-              'Renaming meta file and thumb successful from ' +
-                filePath +
-                ' to:' +
-                newFilePath
-            );
-            return true;
-          })
-          .catch(err => {
-            dispatch(
-              actions.reflectRenameEntry(filePath, newFilePathFromPromise)
-            );
-            console.warn(
-              'Renaming meta file and thumb failed from ' +
-                filePath +
-                ' to:' +
-                newFilePath,
-              err
-            );
-            return false;
-          });
-      })
-      .catch(error => {
-        console.error(`Error while renaming file ${filePath}`, error);
-        dispatch(
-          actions.showNotification(
-            `Error while renaming file ${filePath}`,
-            'error',
-            true
-          )
-        );
-        return false;
-      }),
   openFileNatively: (selectedFile?: string) => (
     dispatch: (action) => void,
     getState: () => any
@@ -1764,8 +1599,8 @@ export const actions = {
       const { warningOpeningFilesExternally } = getState().settings;
       PlatformIO.openFile(selectedFile, warningOpeningFilesExternally);
     }
-  },
-  saveFile: () => (dispatch: (action) => void) => {
+  }
+  /*saveFile: () => (dispatch: (action) => void) => {
     dispatch(
       actions.showNotification(
         i18n.t('core:notImplementedYet'),
@@ -1773,7 +1608,7 @@ export const actions = {
         true
       )
     );
-  }
+  }*/
 };
 
 // Selectors

@@ -53,16 +53,11 @@ interface Props {
 function RenameEntryDialog(props: Props) {
   const { open, onClose } = props;
   const { t } = useTranslation();
-  const { renameDirectory } = useFsActionsContext();
+  const { renameDirectory, renameFile } = useFsActionsContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
   const [inputError, setInputError] = useState<boolean>(false);
   const disableConfirmButton = useRef<boolean>(true);
   const lastSelectedEntry = useSelector(getLastSelectedEntry);
-  const dispatch: AppDispatch = useDispatch();
-
-  const renameFile = (source, target) => {
-    dispatch(AppActions.renameFile(source, target));
-  };
 
   let defaultName = '';
   let originPath;
@@ -143,6 +138,7 @@ function RenameEntryDialog(props: Props) {
 
   const onConfirm = () => {
     if (!disableConfirmButton.current) {
+      onClose();
       if (isFile) {
         const fileDirectory = extractContainingDirectoryPath(
           lastSelectedEntry.path,
@@ -150,11 +146,10 @@ function RenameEntryDialog(props: Props) {
         );
         const newFilePath =
           fileDirectory + PlatformIO.getDirSeparator() + name.current;
-        renameFile(originPath, newFilePath);
+        return renameFile(originPath, newFilePath);
       } else {
-        renameDirectory(originPath, name.current);
+        return renameDirectory(originPath, name.current);
       }
-      onClose();
     }
   };
 

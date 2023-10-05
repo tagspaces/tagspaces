@@ -14,7 +14,6 @@ import Dialog from '@mui/material/Dialog';
 import { FolderIcon, FileIcon } from '-/components/CommonIcons';
 import DraggablePaper from '-/components/DraggablePaper';
 import PlatformIO from '-/services/platform-facade';
-import IOActions from '-/reducers/io-actions';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -34,6 +33,7 @@ import {
 } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 
 interface Props {
   open: boolean;
@@ -46,6 +46,7 @@ function MoveCopyFilesDialog(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const { currentDirectoryPath } = useDirectoryContentContext();
+  const { copyFiles, copyDirs, moveFiles, moveDirs } = useIOActionsContext();
 
   const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
     getSelectedEntries
@@ -147,19 +148,11 @@ function MoveCopyFilesDialog(props: Props) {
     dispatch(AppActions.resetProgress());
     dispatch(AppActions.toggleUploadDialog('copyEntriesTitle'));
     if (selectedFiles.length > 0) {
-      dispatch(
-        IOActions.copyFiles(selectedFiles, targetPath, onUploadProgress)
-      );
+      copyFiles(selectedFiles, targetPath, onUploadProgress);
       setTargetPath('');
     }
     if (selectedDirs.length > 0) {
-      dispatch(
-        IOActions.copyDirs(
-          getEntriesCount(selectedDirs),
-          targetPath,
-          onUploadProgress
-        )
-      );
+      copyDirs(getEntriesCount(selectedDirs), targetPath, onUploadProgress);
     }
     onClose(true);
   }
@@ -170,19 +163,13 @@ function MoveCopyFilesDialog(props: Props) {
 
   function handleMoveFiles() {
     if (selectedFiles.length > 0) {
-      dispatch(IOActions.moveFiles(selectedFiles, targetPath));
+      moveFiles(selectedFiles, targetPath);
       setTargetPath('');
     }
     if (selectedDirs.length > 0) {
       dispatch(AppActions.resetProgress());
       dispatch(AppActions.toggleUploadDialog('moveEntriesTitle'));
-      dispatch(
-        IOActions.moveDirs(
-          getEntriesCount(selectedDirs),
-          targetPath,
-          onUploadProgress
-        )
-      );
+      moveDirs(getEntriesCount(selectedDirs), targetPath, onUploadProgress);
     }
     onClose(true);
   }

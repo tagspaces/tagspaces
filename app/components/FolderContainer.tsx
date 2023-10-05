@@ -163,11 +163,9 @@ function WelcomePanelAsync(props) {
 
 interface Props {
   settings: any;
-  renameFile: () => void;
   reflectCreateEntry: (path: string, isFile: boolean) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   isDesktopMode: boolean;
-  showNotification: (content: string) => void;
   toggleDrawer?: () => void;
   toggleProTeaser: (slidePage?: string) => void;
   drawerOpened: boolean;
@@ -285,7 +283,6 @@ function FolderContainer(props: Props) {
           lastSearchTimestamp={props.lastSearchTimestamp}
           openRenameEntryDialog={openRenameEntryDialog}
           loadParentDirectoryContent={loadParentDirectoryContent}
-          renameFile={props.renameFile}
           switchPerspective={switchPerspective}
         />
       );
@@ -572,10 +569,8 @@ function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
       toggleUploadDialog: AppActions.toggleUploadDialog,
-      renameFile: AppActions.renameFile,
       reflectCreateEntry: AppActions.reflectCreateEntry,
       setSelectedEntries: AppActions.setSelectedEntries,
-      showNotification: AppActions.showNotification,
       enterSearchMode: AppActions.enterSearchMode,
       exitSearchMode: AppActions.exitSearchMode,
       setSearchQuery: LocationIndexActions.setSearchQuery

@@ -51,12 +51,7 @@ import {
   isRevisionsEnabled,
   getEntryContainerTab
 } from '-/reducers/settings';
-import {
-  OpenedEntry,
-  NotificationTypes,
-  actions as AppActions,
-  AppDispatch
-} from '-/reducers/app';
+import { OpenedEntry, AppDispatch } from '-/reducers/app';
 import useEventListener from '-/utils/useEventListener';
 import { TS } from '-/tagspaces.namespace';
 import FileView from '-/components/FileView';
@@ -72,6 +67,7 @@ import { useDescriptionContext } from '-/hooks/useDescriptionContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 //const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
 // const bufferedSplitResize = buffer({
@@ -102,6 +98,7 @@ function EntryContainer() {
     loadDirectoryContent,
     currentDirectoryPath
   } = useDirectoryContentContext();
+  const { showNotification } = useNotificationContext();
   const tabIndex = useSelector(getEntryContainerTab);
   const fileEditHistoryKey = useSelector(
     (state: any) => state.settings[historyKeys.fileEditKey]
@@ -316,9 +313,7 @@ function EntryContainer() {
         if (data.message) {
           message = message + ': ' + data.message;
         }
-        dispatch(
-          AppActions.showNotification(message, NotificationTypes.default)
-        );
+        showNotification(message);
         break;
       case 'saveDocument':
         savingFile(data.force !== undefined ? data.force : false);
@@ -693,12 +688,7 @@ function EntryContainer() {
         });
       });
     } else {
-      dispatch(
-        AppActions.showNotification(
-          t('core:thisFunctionalityIsAvailableInPro'),
-          NotificationTypes.default
-        )
-      );
+      showNotification(t('core:thisFunctionalityIsAvailableInPro'));
     }
   };
 

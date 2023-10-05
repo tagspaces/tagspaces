@@ -54,6 +54,8 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { usePaginationContext } from '-/hooks/usePaginationContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 interface Props {
   style?: any;
@@ -99,12 +101,6 @@ interface Props {
   openFileNatively: (path?: string) => void;
   setFileContextMenuAnchorEl: (HTMLElement) => void;
   setDirContextMenuAnchorEl: (HTMLElement) => void;
-  showNotification: (
-    text: string,
-    notificationType: string,
-    autohide: boolean
-  ) => void;
-  moveFiles: (files: Array<string>, destination: string) => Promise<boolean>;
   clearSelection: () => void;
   lastSearchTimestamp: number;
 }
@@ -132,8 +128,6 @@ function GridPagination(props: Props) {
     openFileNatively,
     setFileContextMenuAnchorEl,
     setDirContextMenuAnchorEl,
-    showNotification,
-    moveFiles,
     gridPageLimit,
     selectedEntries,
     setSelectedEntries,
@@ -142,6 +136,8 @@ function GridPagination(props: Props) {
     lastSearchTimestamp
   } = props;
   const { openEntry } = useOpenedEntryContext();
+  const { moveFiles } = useIOActionsContext();
+  const { showNotification } = useNotificationContext();
   const { readOnlyMode, currentLocation } = useCurrentLocationContext();
   const {
     currentDirectoryEntries,

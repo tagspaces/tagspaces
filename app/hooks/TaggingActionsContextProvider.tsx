@@ -56,6 +56,8 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import GlobalSearch from '-/services/search-index';
 import { getLocations } from '-/reducers/locations';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useFsActionsContext } from '-/hooks/useFsActionsContext';
 
 type TaggingActionsContextData = {
   addTags: (
@@ -95,6 +97,8 @@ export const TaggingActionsContextProvider = ({
   const { t } = useTranslation();
   const { openedEntries, updateOpenedFile } = useOpenedEntryContext();
   const { updateCurrentDirEntry } = useDirectoryContentContext();
+  const { renameFile } = useFsActionsContext();
+  const { showNotification } = useNotificationContext();
   const dispatch: AppDispatch = useDispatch();
   const geoTaggingFormat = useSelector(getGeoTaggingFormat);
   const addTagsToLibrary = useSelector(getAddTagsToLibrary);
@@ -138,10 +142,8 @@ export const TaggingActionsContextProvider = ({
             tag.title = defaultTagLocation;
             dispatch(AppActions.toggleEditTagDialog(tag));
           } else {
-            dispatch(
-              AppActions.showNotification(
-                t('core:thisFunctionalityIsAvailableInPro' as any) as string
-              )
+            showNotification(
+              t('core:thisFunctionalityIsAvailableInPro' as any) as string
             );
           }
         } else if (tag.functionality === 'dateTagging') {
@@ -151,10 +153,8 @@ export const TaggingActionsContextProvider = ({
             tag.title = formatDateTime4Tag(new Date(), true); // defaultTagDate;
             dispatch(AppActions.toggleEditTagDialog(tag));
           } else {
-            dispatch(
-              AppActions.showNotification(
-                t('core:thisFunctionalityIsAvailableInPro' as any) as string
-              )
+            showNotification(
+              t('core:thisFunctionalityIsAvailableInPro' as any) as string
             );
           }
         } else {
@@ -297,12 +297,10 @@ export const TaggingActionsContextProvider = ({
             })
             .catch(err => {
               console.warn('Error adding tags for ' + path + ' with ' + err);
-              dispatch(
-                AppActions.showNotification(
-                  t('core:addingTagsFailed' as any) as string,
-                  'error',
-                  true
-                )
+              showNotification(
+                t('core:addingTagsFailed' as any) as string,
+                'error',
+                true
               );
               return false;
             });
@@ -317,12 +315,10 @@ export const TaggingActionsContextProvider = ({
           })
           .catch(error => {
             console.warn('Error adding tags for ' + path + ' with ' + error);
-            dispatch(
-              AppActions.showNotification(
-                t('core:addingTagsFailed' as any) as string,
-                'error',
-                true
-              )
+            showNotification(
+              t('core:addingTagsFailed' as any) as string,
+              'error',
+              true
             );
             return true;
           });
@@ -359,7 +355,7 @@ export const TaggingActionsContextProvider = ({
             tagDelimiter,
             prefixTagContainer
           );
-        return dispatch(AppActions.renameFile(path, newFilePath));
+        return renameFile(path, newFilePath);
       }
     } else {
       // Handling tags in filename by no sidecar
@@ -391,7 +387,7 @@ export const TaggingActionsContextProvider = ({
           prefixTagContainer
         );
       if (path !== newFilePath) {
-        return dispatch(AppActions.renameFile(path, newFilePath));
+        return renameFile(path, newFilePath);
       }
     }
     return Promise.resolve(false);
@@ -489,11 +485,9 @@ export const TaggingActionsContextProvider = ({
         prefixTagContainer
       );
       if (newFileName !== fileName) {
-        await dispatch(
-          AppActions.renameFile(
-            path,
-            containingDirectoryPath + PlatformIO.getDirSeparator() + newFileName
-          )
+        await renameFile(
+          path,
+          containingDirectoryPath + PlatformIO.getDirSeparator() + newFileName
         );
       }
     } else {
@@ -541,12 +535,10 @@ export const TaggingActionsContextProvider = ({
             })
             .catch(err => {
               console.warn('Error adding tags for ' + path + ' with ' + err);
-              dispatch(
-                AppActions.showNotification(
-                  t('core:addingTagsFailed' as any) as string,
-                  'error',
-                  true
-                )
+              showNotification(
+                t('core:addingTagsFailed' as any) as string,
+                'error',
+                true
               );
             });
           return true;
@@ -572,12 +564,10 @@ export const TaggingActionsContextProvider = ({
             })
             .catch(err => {
               console.warn('Error adding tags for ' + path + ' with ' + err);
-              dispatch(
-                AppActions.showNotification(
-                  t('core:addingTagsFailed' as any) as string,
-                  'error',
-                  true
-                )
+              showNotification(
+                t('core:addingTagsFailed' as any) as string,
+                'error',
+                true
               );
             });
         });
@@ -681,12 +671,10 @@ export const TaggingActionsContextProvider = ({
             console.warn(
               'Removing sidecar tags failed ' + path + ' with ' + err
             );
-            dispatch(
-              AppActions.showNotification(
-                t('core:removingSidecarTagsFailed' as any) as string,
-                'error',
-                true
-              )
+            showNotification(
+              t('core:removingSidecarTagsFailed' as any) as string,
+              'error',
+              true
             );
             return false;
           });
@@ -738,9 +726,7 @@ export const TaggingActionsContextProvider = ({
               prefixTagContainer
             );
           if (path !== newFilePath) {
-            const success = await dispatch(
-              AppActions.renameFile(path, newFilePath)
-            );
+            const success = await renameFile(path, newFilePath);
             if (!success) {
               reject(new Error('Error renaming file'));
               return;
@@ -760,13 +746,7 @@ export const TaggingActionsContextProvider = ({
 
   function collectTagsFromLocation(tagGroup: TS.TagGroup) {
     if (GlobalSearch.getInstance().getIndex().length < 1) {
-      dispatch(
-        AppActions.showNotification(
-          'Please index location first',
-          'error',
-          true
-        )
-      );
+      showNotification('Please index location first', 'error', true);
       return true;
     }
 

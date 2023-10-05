@@ -35,6 +35,7 @@ import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { Pro } from '-/pro';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 type CurrentLocationContextData = {
   currentLocation: TS.Location;
@@ -83,6 +84,7 @@ export const CurrentLocationContextProvider = ({
 }: CurrentLocationContextProviderProps) => {
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
+  const { showNotification } = useNotificationContext();
 
   const [currentLocation, setCurrentLocation] = useState<TS.Location>(
     undefined
@@ -264,12 +266,10 @@ export const CurrentLocationContextProvider = ({
     if (location.type === locationType.TYPE_CLOUD) {
       PlatformIO.enableObjectStoreSupport(location)
         .then(() => {
-          dispatch(
-            AppActions.showNotification(
-              t('core:connectedtoObjectStore' as any) as string,
-              'default',
-              true
-            )
+          showNotification(
+            t('core:connectedtoObjectStore' as any) as string,
+            'default',
+            true
           );
           //dispatch(AppActions.setReadOnlyMode(location.isReadOnly || false));
           changeLocation(location);
@@ -284,12 +284,10 @@ export const CurrentLocationContextProvider = ({
         })
         .catch(e => {
           console.log('connectedtoObjectStoreFailed', e);
-          dispatch(
-            AppActions.showNotification(
-              t('core:connectedtoObjectStoreFailed' as any) as string,
-              'warning',
-              true
-            )
+          showNotification(
+            t('core:connectedtoObjectStoreFailed' as any) as string,
+            'warning',
+            true
           );
           PlatformIO.disableObjectStoreSupport();
         });

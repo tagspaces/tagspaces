@@ -73,6 +73,7 @@ import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 interface Props {
   style?: any;
@@ -105,6 +106,7 @@ function SearchAutocomplete(props: Props) {
     watchForChanges,
     currentDirectoryPath
   } = useDirectoryContentContext();
+  const { showNotification, hideNotifications } = useNotificationContext();
   const dispatch: AppDispatch = useDispatch();
   const indexing = useSelector(isIndexing);
   const searchQuery: TS.SearchQuery = useSelector(getSearchQuery);
@@ -331,9 +333,21 @@ function SearchAutocomplete(props: Props) {
             textQuery: txtQuery
           };
           if (searchBoxing === 'global') {
-            dispatch(LocationIndexActions.searchAllLocations(sQuery));
+            dispatch(
+              LocationIndexActions.searchAllLocations(
+                sQuery,
+                showNotification,
+                hideNotifications
+              )
+            );
           } else {
-            dispatch(LocationIndexActions.searchLocationIndex(sQuery));
+            dispatch(
+              LocationIndexActions.searchLocationIndex(
+                sQuery,
+                showNotification,
+                hideNotifications
+              )
+            );
           }
         }
       } /*else {

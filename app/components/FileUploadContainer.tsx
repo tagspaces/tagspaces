@@ -20,7 +20,7 @@ import React, { forwardRef, Ref, useImperativeHandle, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { TS } from '-/tagspaces.namespace';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import IOActions from '-/reducers/io-actions';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 
 interface Props {
   id: string;
@@ -36,6 +36,7 @@ const FileUploadContainer = forwardRef(
   (props: Props, ref: Ref<FileUploadContainerRef>) => {
     const dispatch: AppDispatch = useDispatch();
     const { id, directoryPath } = props;
+    const { uploadFilesAPI } = useIOActionsContext();
 
     const onUploadProgress = (progress, abort, fileName) => {
       dispatch(AppActions.onUploadProgress(progress, abort, fileName));
@@ -86,12 +87,10 @@ const FileUploadContainer = forwardRef(
       // const file = selection.currentTarget.files[0];
       dispatch(AppActions.resetProgress());
       dispatch(AppActions.toggleUploadDialog());
-      dispatch(
-        IOActions.uploadFilesAPI(
-          Array.from(selection.currentTarget.files),
-          directoryPath,
-          onUploadProgress
-        )
+      uploadFilesAPI(
+        Array.from(selection.currentTarget.files),
+        directoryPath,
+        onUploadProgress
       )
         .then((fsEntries: Array<TS.FileSystemEntry>) => {
           dispatch(AppActions.reflectCreateEntries(fsEntries));

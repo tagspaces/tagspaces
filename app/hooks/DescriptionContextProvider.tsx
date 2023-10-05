@@ -33,6 +33,7 @@ import { Pro } from '-/pro';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 type DescriptionContextData = {
   description: string;
@@ -70,6 +71,7 @@ export const DescriptionContextProvider = ({
     switchCurrentLocationType,
     readOnlyMode
   } = useCurrentLocationContext();
+  const { showNotification } = useNotificationContext();
   const openedFile = useRef<OpenedEntry>(openedEntries[0]);
   const isChanged = useRef<boolean>(false);
   const [
@@ -102,15 +104,11 @@ export const DescriptionContextProvider = ({
       return;
     }
     if (!Pro) {
-      dispatch(
-        AppActions.showNotification(t('core:thisFunctionalityIsAvailableInPro'))
-      );
+      showNotification(t('core:thisFunctionalityIsAvailableInPro'));
       return;
     }
     if (!Pro.MetaOperations) {
-      dispatch(
-        AppActions.showNotification(t('Saving description not supported'))
-      );
+      showNotification(t('Saving description not supported'));
       return;
     }
     if (openedFile.current.description !== undefined) {
@@ -124,9 +122,7 @@ export const DescriptionContextProvider = ({
               .catch(error => {
                 console.warn('Error saving description ' + error);
                 switchCurrentLocationType().then(() =>
-                  dispatch(
-                    AppActions.showNotification(t('Error saving description'))
-                  )
+                  showNotification(t('Error saving description'))
                 );
               });
           }

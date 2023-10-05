@@ -28,7 +28,6 @@ import EntryTagMenu from '-/components/menus/EntryTagMenu';
 import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
 import MoveCopyFilesDialog from '-/components/dialogs/MoveCopyFilesDialog';
 import TagDropContainer from '-/components/TagDropContainer';
-import IOActions from '-/reducers/io-actions';
 import {
   actions as AppActions,
   AppDispatch,
@@ -106,22 +105,11 @@ function GridPerspective(props: Props) {
   );*/
 
   // Create functions that dispatch actions
-  const handleMoveFiles = (files: Array<string>, destination: string) =>
-    dispatch(IOActions.moveFiles(files, destination));
-
   const handleSetSelectedEntries = (entries: Array<TS.FileSystemEntry>) => {
     const selected = showDirectories.current
       ? entries
       : entries.filter(entry => entry.isFile);
     dispatch(AppActions.setSelectedEntries(selected));
-  };
-
-  const handleShowNotification = (
-    text: string,
-    notificationType: string,
-    autohide: boolean
-  ) => {
-    dispatch(AppActions.showNotification(text, notificationType, autohide));
   };
 
   const handleOpenFileNatively = (path?: string) => {
@@ -709,8 +697,6 @@ function GridPerspective(props: Props) {
           openFileNatively={handleOpenFileNatively}
           setFileContextMenuAnchorEl={setFileContextMenuAnchorEl}
           setDirContextMenuAnchorEl={setDirContextMenuAnchorEl}
-          showNotification={handleShowNotification}
-          moveFiles={handleMoveFiles}
           clearSelection={clearSelection}
         />
       </GlobalHotKeys>

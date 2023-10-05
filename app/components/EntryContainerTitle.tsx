@@ -24,18 +24,12 @@ import {
   extractFileName,
   extractDirectoryName
 } from '@tagspaces/tagspaces-common/paths';
-import {
-  actions as AppActions,
-  AppDispatch,
-  NotificationTypes,
-  OpenedEntry
-} from '-/reducers/app';
 import Tooltip from '-/components/Tooltip';
 import PlatformIO from '-/services/platform-facade';
 import { FolderIcon, MoreMenuIcon } from '-/components/CommonIcons';
 import AppConfig from '-/AppConfig';
 import EntryContainerMenu from '-/components/EntryContainerMenu';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { getLocations } from '-/reducers/locations';
 import Box from '@mui/material/Box';
 import { dataTidFormat } from '-/services/test';
@@ -47,6 +41,7 @@ import TagsPreview from '-/components/TagsPreview';
 import { Pro } from '-/pro';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 const FileBadge = styled('span')(({ theme }) => ({
   color: 'white',
@@ -73,8 +68,8 @@ function EntryContainerTitle(props: Props) {
     sharingLink,
     sharingParentFolderLink
   } = useOpenedEntryContext();
+  const { showNotification } = useNotificationContext();
   const openedFile = openedEntries[0];
-  const dispatch: AppDispatch = useDispatch();
   const locations = useSelector(getLocations);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
@@ -91,13 +86,10 @@ function EntryContainerTitle(props: Props) {
       }
       forceUpdate();
     } else {
-      dispatch(
-        AppActions.showNotification(
-          t('core:toggleBookmark') +
-            ' - ' +
-            t('thisFunctionalityIsAvailableInPro'),
-          NotificationTypes.default
-        )
+      showNotification(
+        t('core:toggleBookmark') +
+          ' - ' +
+          t('thisFunctionalityIsAvailableInPro')
       );
     }
   };

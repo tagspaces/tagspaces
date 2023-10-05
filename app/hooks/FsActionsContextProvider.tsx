@@ -21,11 +21,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useTranslation } from 'react-i18next';
 import PlatformIO from '-/services/platform-facade';
-import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
+import {
+  extractContainingDirectoryPath,
+  extractDirectoryName,
+  getBackupFileLocation,
+  getMetaFileLocationForFile,
+  getThumbFileLocationForFile
+} from '@tagspaces/tagspaces-common/paths';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import GlobalSearch from '-/services/search-index';
 import { getUseTrashCan } from '-/reducers/settings';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { deleteFilesPromise, renameFilesPromise } from '-/services/utils-io';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 type FsActionsContextData = {
   renameDirectory: (
@@ -34,12 +42,16 @@ type FsActionsContextData = {
   ) => Promise<string>;
   createDirectory: (directoryPath: string, reflect?) => Promise<boolean>;
   deleteDirectory: (directoryPath: string) => Promise<boolean>;
+  renameFile: (filePath: string, newFilePath: string) => Promise<boolean>;
+  deleteFile: (filePath: string, uuid: string) => Promise<boolean>;
 };
 
 export const FsActionsContext = createContext<FsActionsContextData>({
   renameDirectory: () => Promise.resolve(''),
   createDirectory: () => Promise.resolve(false),
-  deleteDirectory: () => Promise.resolve(false)
+  deleteDirectory: () => Promise.resolve(false),
+  renameFile: () => Promise.resolve(false),
+  deleteFile: () => Promise.resolve(false)
 });
 
 export type FsActionsContextProviderProps = {
@@ -60,6 +72,7 @@ export const FsActionsContextProvider = ({
     currentDirectoryPath,
     loadParentDirectoryContent
   } = useDirectoryContentContext();
+  const { showNotification } = useNotificationContext();
   const dispatch: AppDispatch = useDispatch();
   const useTrashCan = useSelector(getUseTrashCan);
 
@@ -77,29 +90,25 @@ export const FsActionsContextProvider = ({
           dispatch(AppActions.reflectRenameEntry(directoryPath, newDirPath));
         }
 
-        dispatch(
-          AppActions.showNotification(
-            `Renaming directory ${extractDirectoryName(
-              directoryPath,
-              PlatformIO.getDirSeparator()
-            )} successful.`,
-            'default',
-            true
-          )
+        showNotification(
+          `Renaming directory ${extractDirectoryName(
+            directoryPath,
+            PlatformIO.getDirSeparator()
+          )} successful.`,
+          'default',
+          true
         );
         return newDirPath;
       })
       .catch(error => {
         console.warn('Error while renaming directory: ' + error);
-        dispatch(
-          AppActions.showNotification(
-            `Error renaming directory '${extractDirectoryName(
-              directoryPath,
-              PlatformIO.getDirSeparator()
-            )}'`,
-            'error',
-            true
-          )
+        showNotification(
+          `Error renaming directory '${extractDirectoryName(
+            directoryPath,
+            PlatformIO.getDirSeparator()
+          )}'`,
+          'error',
+          true
         );
         throw error;
       });
@@ -116,29 +125,25 @@ export const FsActionsContextProvider = ({
         if (reflect) {
           dispatch(AppActions.reflectCreateEntry(directoryPath, false));
         }
-        dispatch(
-          AppActions.showNotification(
-            `Creating directory ${extractDirectoryName(
-              directoryPath,
-              PlatformIO.getDirSeparator()
-            )} successful.`,
-            'default',
-            true
-          )
+        showNotification(
+          `Creating directory ${extractDirectoryName(
+            directoryPath,
+            PlatformIO.getDirSeparator()
+          )} successful.`,
+          'default',
+          true
         );
         return true;
       })
       .catch(error => {
         console.warn('Error creating directory: ' + error);
-        dispatch(
-          AppActions.showNotification(
-            `Error creating directory '${extractDirectoryName(
-              directoryPath,
-              PlatformIO.getDirSeparator()
-            )}'`,
-            'error',
-            true
-          )
+        showNotification(
+          `Error creating directory '${extractDirectoryName(
+            directoryPath,
+            PlatformIO.getDirSeparator()
+          )}'`,
+          'error',
+          true
         );
         return false;
         // dispatch stopLoadingAnimation
@@ -156,42 +161,162 @@ export const FsActionsContextProvider = ({
         } else {
           dispatch(AppActions.reflectDeleteEntry(directoryPath));
         }
-        dispatch(
-          AppActions.showNotification(
-            t(
-              'deletingDirectorySuccessfull' as any,
-              {
-                dirPath: extractDirectoryName(
-                  directoryPath,
-                  PlatformIO.getDirSeparator()
-                )
-              } as any
-            ) as string,
-            'default',
-            true
-          )
+        showNotification(
+          t(
+            'deletingDirectorySuccessfull' as any,
+            {
+              dirPath: extractDirectoryName(
+                directoryPath,
+                PlatformIO.getDirSeparator()
+              )
+            } as any
+          ) as string,
+          'default',
+          true
         );
         return true;
       })
       .catch(error => {
         console.warn('Error while deleting directory: ' + error);
-        dispatch(
-          AppActions.showNotification(
-            t(
-              'errorDeletingDirectoryAlert' as any,
-              {
-                dirPath: extractDirectoryName(
-                  directoryPath,
-                  PlatformIO.getDirSeparator()
-                )
-              } as any
-            ) as string,
-            'error',
-            true
-          )
+        showNotification(
+          t(
+            'errorDeletingDirectoryAlert' as any,
+            {
+              dirPath: extractDirectoryName(
+                directoryPath,
+                PlatformIO.getDirSeparator()
+              )
+            } as any
+          ) as string,
+          'error',
+          true
         );
         return false;
         // dispatch stopLoadingAnimation
+      });
+  }
+
+  function renameFile(filePath: string, newFilePath: string): Promise<boolean> {
+    return PlatformIO.renameFilePromise(filePath, newFilePath)
+      .then(result => {
+        const newFilePathFromPromise = result[1];
+        console.info('File renamed ' + filePath + ' to ' + newFilePath);
+        showNotification(t('core:renamingSuccessfully'), 'default', true);
+        // Update sidecar file and thumb
+        return renameFilesPromise([
+          [
+            getMetaFileLocationForFile(filePath, PlatformIO.getDirSeparator()),
+            getMetaFileLocationForFile(
+              newFilePath,
+              PlatformIO.getDirSeparator()
+            )
+          ],
+          [
+            getThumbFileLocationForFile(
+              filePath,
+              PlatformIO.getDirSeparator(),
+              false
+            ),
+            getThumbFileLocationForFile(
+              newFilePath,
+              PlatformIO.getDirSeparator(),
+              false
+            )
+          ]
+        ])
+          .then(() => {
+            dispatch(
+              AppActions.reflectRenameEntry(filePath, newFilePathFromPromise)
+            );
+            console.info(
+              'Renaming meta file and thumb successful from ' +
+                filePath +
+                ' to:' +
+                newFilePath
+            );
+            return true;
+          })
+          .catch(err => {
+            dispatch(
+              AppActions.reflectRenameEntry(filePath, newFilePathFromPromise)
+            );
+            console.warn(
+              'Renaming meta file and thumb failed from ' +
+                filePath +
+                ' to:' +
+                newFilePath,
+              err
+            );
+            return false;
+          });
+      })
+      .catch(error => {
+        console.error(`Error while renaming file ${filePath}`, error);
+        showNotification(
+          `Error while renaming file ${filePath}`,
+          'error',
+          true
+        );
+        return false;
+      });
+  }
+
+  function deleteFile(filePath: string, uuid: string): Promise<boolean> {
+    return PlatformIO.deleteFilePromise(filePath, useTrashCan)
+      .then(() => {
+        // TODO close file opener if this file is opened
+        dispatch(AppActions.reflectDeleteEntry(filePath));
+        showNotification(
+          `Deleting file ${filePath} successful.`,
+          'default',
+          true
+        );
+        // Delete revisions
+        const backupFilePath = getBackupFileLocation(
+          filePath,
+          uuid,
+          PlatformIO.getDirSeparator()
+        );
+        const backupPath = extractContainingDirectoryPath(
+          backupFilePath,
+          PlatformIO.getDirSeparator()
+        );
+        PlatformIO.deleteDirectoryPromise(backupPath)
+          .then(() => {
+            console.log('Cleaning revisions successful for ' + filePath);
+            return true;
+          })
+          .catch(err => {
+            console.warn('Cleaning revisions failed ', err);
+          });
+        // Delete sidecar file and thumb
+        deleteFilesPromise([
+          getMetaFileLocationForFile(filePath, PlatformIO.getDirSeparator()),
+          getThumbFileLocationForFile(
+            filePath,
+            PlatformIO.getDirSeparator(),
+            false
+          )
+        ])
+          .then(() => {
+            console.log(
+              'Cleaning meta file and thumb successful for ' + filePath
+            );
+            return true;
+          })
+          .catch(err => {
+            console.warn('Cleaning meta file and thumb failed with ' + err);
+          });
+        return true;
+      })
+      .catch(error => {
+        console.warn('Error while deleting file: ' + error);
+        showNotification(
+          `Error while deleting file ${filePath}`,
+          'error',
+          true
+        );
+        return false;
       });
   }
 
@@ -199,7 +324,9 @@ export const FsActionsContextProvider = ({
     return {
       renameDirectory,
       createDirectory,
-      deleteDirectory
+      deleteDirectory,
+      renameFile,
+      deleteFile
     };
   }, [openedEntries]);
 

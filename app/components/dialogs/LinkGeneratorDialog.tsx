@@ -37,6 +37,7 @@ import { actions } from '-/reducers/app';
 import Links from '-/content/links';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 const PREFIX = 'LinkGeneratorDialog';
 
@@ -57,7 +58,6 @@ interface Props {
   open: boolean;
   onClose: () => void;
   path: string;
-  // showNotification: (message: string) => void;
   locationId?: string;
 }
 
@@ -66,7 +66,7 @@ const QRTextField = TextField;
 function LinkGeneratorDialog(props: Props) {
   const { open, onClose, path } = props;
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const { showNotification } = useNotificationContext();
   const {
     switchLocationTypeByID,
     switchCurrentLocationType
@@ -89,7 +89,7 @@ function LinkGeneratorDialog(props: Props) {
         linkValidityDuration.current
       );
       forceUpdate();
-      switchCurrentLocationType();
+      return switchCurrentLocationType();
     });
     /*} else {
       signedLink.current = PlatformIO.getURLforPath(
@@ -149,9 +149,7 @@ function LinkGeneratorDialog(props: Props) {
                     navigator.clipboard
                       .writeText(signedLink.current)
                       .then(() => {
-                        dispatch(
-                          actions.showNotification(t('core:linkCopied'))
-                        );
+                        showNotification(t('core:linkCopied'));
                       });
                   }}
                   color="primary"

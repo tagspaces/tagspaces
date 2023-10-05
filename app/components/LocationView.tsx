@@ -37,7 +37,6 @@ import {
 import PlatformIO from '../services/platform-facade';
 import TargetMoveFileBox from './TargetMoveFileBox';
 import DragItemTypes from './DragItemTypes';
-import IOActions from '../reducers/io-actions';
 import DirectoryTreeView, {
   DirectoryTreeViewRef
 } from '-/components/DirectoryTreeView';
@@ -48,6 +47,8 @@ import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 
 interface Props {
   location: TS.Location;
@@ -62,8 +63,10 @@ function LocationView(props: Props) {
   const { t } = useTranslation();
 
   const { loadDirectoryContent } = useDirectoryContentContext();
+  const { moveFiles, uploadFiles } = useIOActionsContext();
   const { openLocation } = useCurrentLocationContext();
   const { readOnlyMode } = useCurrentLocationContext();
+  const { showNotification } = useNotificationContext();
   const directoryTreeRef = useRef<DirectoryTreeViewRef>(null);
   const [
     locationDirectoryContextMenuAnchorEl,
@@ -142,33 +145,15 @@ function LocationView(props: Props) {
         arrPath.push(path);
       }
       if (readOnlyMode) {
-        dispatch(
-          AppActions.showNotification(
-            t('core:dndDisabledReadOnlyMode'),
-            'error',
-            true
-          )
-        );
+        showNotification(t('core:dndDisabledReadOnlyMode'), 'error', true);
         return;
       }
       if (!AppConfig.isWin && !path.startsWith('/')) {
-        dispatch(
-          AppActions.showNotification(
-            t('Moving file not possible'),
-            'error',
-            true
-          )
-        );
+        showNotification(t('Moving file not possible'), 'error', true);
         return;
       }
       if (AppConfig.isWin && !path.substr(1).startsWith(':')) {
-        dispatch(
-          AppActions.showNotification(
-            t('Moving file not possible'),
-            'error',
-            true
-          )
-        );
+        showNotification(t('Moving file not possible'), 'error', true);
         return;
       }
       let targetPath = item.path;
@@ -186,9 +171,7 @@ function LocationView(props: Props) {
             .then(() => {
               dispatch(AppActions.resetProgress());
               dispatch(AppActions.toggleUploadDialog());
-              dispatch(
-                IOActions.uploadFiles(arrPath, targetPath, onUploadProgress)
-              )
+              uploadFiles(arrPath, targetPath, onUploadProgress)
                 .then((fsEntries: Array<TS.FileSystemEntry>) => {
                   dispatch(AppActions.reflectCreateEntries(fsEntries));
                   return true;
@@ -203,7 +186,7 @@ function LocationView(props: Props) {
             });
         } else if (targetLocation.type === locationType.TYPE_LOCAL) {
           PlatformIO.disableObjectStoreSupport();
-          dispatch(IOActions.moveFiles(arrPath, targetPath));
+          moveFiles(arrPath, targetPath);
         }
         dispatch(AppActions.setSelectedEntries([]));
       }

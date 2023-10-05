@@ -74,6 +74,7 @@ import AppConfig from '-/AppConfig';
 import useFirstRender from '-/utils/useFirstRender';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 type OpenedEntryContextData = {
   openedEntries: OpenedEntry[];
@@ -147,6 +148,7 @@ export const OpenedEntryContextProvider = ({
     setCurrentDirectoryPerspective,
     updateCurrentDirEntry
   } = useDirectoryContentContext();
+  const { showNotification } = useNotificationContext();
   const { openLocation, currentLocation } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const searchMode = useSelector(isSearchMode);
@@ -575,12 +577,10 @@ export const OpenedEntryContextProvider = ({
               : undefined
         }; // false };
         addToEntryContainer(entryForOpening);
-        dispatch(
-          AppActions.showNotification(
-            `You can't open another file, because '${openFile.path}' is opened for editing`,
-            'default',
-            true
-          )
+        showNotification(
+          `You can't open another file, because '${openFile.path}' is opened for editing`,
+          'default',
+          true
         );
         return false;
       }
@@ -729,13 +729,7 @@ export const OpenedEntryContextProvider = ({
           })
           .catch(err => {
             // console.log('Error opening from cmd ' + JSON.stringify(err));
-            dispatch(
-              AppActions.showNotification(
-                t('Missing file or folder'),
-                'warning',
-                true
-              )
-            );
+            showNotification(t('Missing file or folder'), 'warning', true);
           });
       } else if (lid && lid.length > 0) {
         const locationId = decodeURIComponent(lid);
@@ -790,13 +784,7 @@ export const OpenedEntryContextProvider = ({
                     return true;
                   })
                   .catch(() =>
-                    dispatch(
-                      AppActions.showNotification(
-                        t('core:invalidLink'),
-                        'warning',
-                        true
-                      )
-                    )
+                    showNotification(t('core:invalidLink'), 'warning', true)
                   );
               }
               // });
@@ -807,13 +795,7 @@ export const OpenedEntryContextProvider = ({
                   directoryPath.includes('../') ||
                   directoryPath.includes('..\\')
                 ) {
-                  dispatch(
-                    AppActions.showNotification(
-                      t('core:invalidLink'),
-                      'warning',
-                      true
-                    )
-                  );
+                  showNotification(t('core:invalidLink'), 'warning', true);
                   return true;
                 }
                 const dirFullPath =
@@ -825,13 +807,7 @@ export const OpenedEntryContextProvider = ({
 
               if (entryPath && entryPath.length > 0) {
                 if (entryPath.includes('../') || entryPath.includes('..\\')) {
-                  dispatch(
-                    AppActions.showNotification(
-                      t('core:invalidLink'),
-                      'warning',
-                      true
-                    )
-                  );
+                  showNotification(t('core:invalidLink'), 'warning', true);
                   return true;
                 }
                 const entryFullPath =
@@ -847,21 +823,13 @@ export const OpenedEntryContextProvider = ({
                     return true;
                   })
                   .catch(() =>
-                    dispatch(
-                      AppActions.showNotification(
-                        t('core:invalidLink'),
-                        'warning',
-                        true
-                      )
-                    )
+                    showNotification(t('core:invalidLink'), 'warning', true)
                   );
               }
             }
           }, openLocationTimer);
         } else {
-          dispatch(
-            AppActions.showNotification(t('core:invalidLink'), 'warning', true)
-          );
+          showNotification(t('core:invalidLink'), 'warning', true);
         }
       } else if (decodedURI.endsWith(location.pathname)) {
         return true;
@@ -893,30 +861,16 @@ export const OpenedEntryContextProvider = ({
       PlatformIO.saveFilePromise({ path: filePath }, '', true)
         .then(() => {
           dispatch(AppActions.reflectCreateEntry(filePath, true));
-          dispatch(
-            AppActions.showNotification(
-              t('core:fileCreateSuccessfully'),
-              'info',
-              true
-            )
-          );
+          showNotification(t('core:fileCreateSuccessfully'), 'info', true);
           openEntry(filePath);
           return true;
         })
         .catch(err => {
           console.warn('File creation failed with ' + err);
-          dispatch(
-            AppActions.showNotification(
-              t('core:errorCreatingFile'),
-              'warning',
-              true
-            )
-          );
+          showNotification(t('core:errorCreatingFile'), 'warning', true);
         });
     } else {
-      dispatch(
-        AppActions.showNotification(t('core:firstOpenaFolder'), 'warning', true)
-      );
+      showNotification(t('core:firstOpenaFolder'), 'warning', true);
     }
   }
 
@@ -959,23 +913,15 @@ export const OpenedEntryContextProvider = ({
         openFsEntry(fsEntry);
 
         // dispatch(actions.setSelectedEntries([fsEntry]));
-        dispatch(
-          AppActions.showNotification(
-            `File '${fileNameAndExt}' created.`,
-            'default',
-            true
-          )
-        );
+        showNotification(`File '${fileNameAndExt}' created.`, 'default', true);
         return true;
       })
       .catch(error => {
         console.warn('Error creating file: ' + error);
-        dispatch(
-          AppActions.showNotification(
-            `Error creating file '${fileNameAndExt}'`,
-            'error',
-            true
-          )
+        showNotification(
+          `Error creating file '${fileNameAndExt}'`,
+          'error',
+          true
         );
       });
   }

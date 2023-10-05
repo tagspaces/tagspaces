@@ -347,10 +347,11 @@ export const actions = {
   clearDirectoryIndex: () => ({
     type: types.INDEX_DIRECTORY_CLEAR
   }),
-  searchLocationIndex: (searchQuery: TS.SearchQuery) => (
-    dispatch: (actions: Object) => void,
-    getState: () => any
-  ) => {
+  searchLocationIndex: (
+    searchQuery: TS.SearchQuery,
+    showNotification,
+    hideNotifications
+  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
     const state = getState();
     let currentLocation: TS.Location = getLocation(
       state,
@@ -366,24 +367,16 @@ export const actions = {
       }
     }
     if (!currentLocation) {
-      dispatch(
-        AppActions.showNotification(
-          i18n.t('core:pleaseOpenLocation'),
-          'warning',
-          true
-        )
-      );
+      showNotification(i18n.t('core:pleaseOpenLocation'), 'warning', true);
       return;
     }
 
     const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
-    dispatch(
-      AppActions.showNotification(
-        i18n.t('core:searching'),
-        'default',
-        false,
-        'TIDSearching'
-      )
+    showNotification(
+      i18n.t('core:searching'),
+      'default',
+      false,
+      'TIDSearching'
     );
     setTimeout(async () => {
       const index = GlobalSearch.getInstance().getIndex();
@@ -455,40 +448,37 @@ export const actions = {
             });
           }
           dispatch(AppActions.setSearchResults(searchResults));
-          dispatch(AppActions.hideNotifications());
+          hideNotifications();
           return true;
         })
         .catch(err => {
           dispatch(AppActions.setSearchResults([]));
           // dispatch(AppActions.hideNotifications());
           console.error('Searching Index failed: ', err);
-          dispatch(
-            AppActions.showNotification(
-              i18n.t('core:searchingFailed') + ' ' + err.message,
-              'warning',
-              true
-            )
+          showNotification(
+            i18n.t('core:searchingFailed') + ' ' + err.message,
+            'warning',
+            true
           );
         });
     }, 50);
   },
-  searchAllLocations: (searchQuery: TS.SearchQuery) => (
-    dispatch: (actions: Object) => void,
-    getState: () => any
-  ) => {
+  searchAllLocations: (
+    searchQuery: TS.SearchQuery,
+    showNotification,
+    hideNotifications
+  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
     const state = getState();
     const currentLocation: TS.Location = getLocation(
       state,
       state.app.currentLocationId
     );
     console.time('globalSearch');
-    dispatch(
-      AppActions.showNotification(
-        i18n.t('core:searching'),
-        'default',
-        false,
-        'TIDSearching'
-      )
+    showNotification(
+      i18n.t('core:searching'),
+      'default',
+      false,
+      'TIDSearching'
     );
 
     // Preparing for global search
@@ -514,13 +504,11 @@ export const actions = {
           let indexExist = false;
           const isCloudLocation = location.type === locationType.TYPE_CLOUD;
           console.log('Searching in: ' + nextPath);
-          dispatch(
-            AppActions.showNotification(
-              i18n.t('core:searching') + ' ' + location.name,
-              'default',
-              true,
-              'TIDSearching'
-            )
+          showNotification(
+            i18n.t('core:searching') + ' ' + location.name,
+            'default',
+            true,
+            'TIDSearching'
           );
           if (isCloudLocation) {
             await PlatformIO.enableObjectStoreSupport(location);
@@ -594,7 +582,7 @@ export const actions = {
 
               searchResultCount += enhancedSearchResult.length;
               dispatch(AppActions.appendSearchResults(enhancedSearchResult));
-              dispatch(AppActions.hideNotifications());
+              hideNotifications();
               if (isCloudLocation) {
                 PlatformIO.disableObjectStoreSupport();
               }
@@ -607,12 +595,10 @@ export const actions = {
               console.error('Searching Index failed: ', e);
               dispatch(AppActions.setSearchResults([]));
               // dispatch(AppActions.hideNotifications());
-              dispatch(
-                AppActions.showNotification(
-                  i18n.t('core:searchingFailed') + ' ' + e.message,
-                  'warning',
-                  true
-                )
+              showNotification(
+                i18n.t('core:searchingFailed') + ' ' + e.message,
+                'warning',
+                true
               );
             });
         }),
@@ -623,23 +609,15 @@ export const actions = {
       .then(() => {
         console.timeEnd('globalSearch');
         if (maxSearchResultReached) {
-          dispatch(
-            AppActions.showNotification(
-              'Global search finished, reaching the max. search results. The first ' +
-                searchResultCount +
-                ' entries are listed.',
-              'default',
-              true
-            )
+          showNotification(
+            'Global search finished, reaching the max. search results. The first ' +
+              searchResultCount +
+              ' entries are listed.',
+            'default',
+            true
           );
         } else {
-          dispatch(
-            AppActions.showNotification(
-              i18n.t('Global search completed'),
-              'default',
-              true
-            )
-          );
+          showNotification(i18n.t('Global search completed'), 'default', true);
         }
         console.log('Global search completed!');
         if (

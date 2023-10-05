@@ -64,6 +64,7 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import GlobalSearch from '-/services/search-index';
 import { Pro } from '-/pro';
 import useFirstRender from '-/utils/useFirstRender';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 type DirectoryContentContextData = {
   currentDirectoryEntries: TS.FileSystemEntry[];
@@ -79,7 +80,6 @@ type DirectoryContentContextData = {
    */
   currentDirectoryDirs: TS.OrderVisibilitySettings[];
   isMetaLoaded: boolean;
-  isGeneratingThumbs: boolean;
   loadParentDirectoryContent: () => void;
   loadDirectoryContent: (
     directoryPath: string,
@@ -118,7 +118,6 @@ export const DirectoryContentContext = createContext<
   currentDirectoryFiles: [],
   currentDirectoryDirs: [],
   isMetaLoaded: false,
-  isGeneratingThumbs: false,
   loadParentDirectoryContent: () => {},
   loadDirectoryContent: () => {},
   enhanceDirectoryContent: () => {},
@@ -146,13 +145,13 @@ export const DirectoryContentContextProvider = ({
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
   const { closeAllLocations, currentLocation } = useCurrentLocationContext();
+  const { showNotification, hideNotifications } = useNotificationContext();
   const selectedEntries = useSelector(getSelectedEntries);
   const searchMode = useSelector(isSearchMode);
-  const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);
+  //const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
   const editedEntryPaths = useSelector(getEditedEntryPaths);
-  const enableWS = useSelector(getEnableWS);
-  //const defaultPerspective = useSelector(getDefaultPerspective);
+  //const enableWS = useSelector(getEnableWS);
 
   const [currentDirectoryEntries, setCurrentDirectoryEntries] = useState([]);
   const directoryMeta = useRef<TS.FileSystemEntryMeta>({ id: getUuid() });
@@ -161,7 +160,6 @@ export const DirectoryContentContextProvider = ({
    * is using why directoryMeta can be loaded but empty
    */
   const isMetaLoaded = useRef<boolean>(false);
-  const isGeneratingThumbs = useRef<boolean>(false);
   const currentDirectoryPath = useRef<string>(undefined);
   const currentPerspective = useRef<string>(PerspectiveIDs.UNSPECIFIED);
   const currentDirectoryFiles = useRef<TS.OrderVisibilitySettings[]>([]);
@@ -259,19 +257,11 @@ export const DirectoryContentContextProvider = ({
       if (parentDirectory.includes(currentLocationPath)) {
         loadDirectoryContent(parentDirectory, false, true);
       } else {
-        dispatch(
-          AppActions.showNotification(
-            t('core:parentDirNotInLocation'),
-            'warning',
-            true
-          )
-        );
+        showNotification(t('core:parentDirNotInLocation'), 'warning', true);
         // dispatch(actions.setIsLoading(false));
       }
     } else {
-      dispatch(
-        AppActions.showNotification(t('core:firstOpenaFolder'), 'warning', true)
-      );
+      showNotification(t('core:firstOpenaFolder'), 'warning', true);
       // dispatch(actions.setIsLoading(false));
     }
   }
@@ -424,7 +414,7 @@ export const DirectoryContentContextProvider = ({
     generateThumbnails: boolean,
     fsEntryMeta?: TS.FileSystemEntryMeta
   ) {
-    dispatch(AppActions.showNotification(t('core:loading'), 'info', false));
+    showNotification(t('core:loading'), 'info', false);
     if (fsEntryMeta) {
       directoryMeta.current = fsEntryMeta;
       isMetaLoaded.current = false; //generateThumbnails;
@@ -533,7 +523,7 @@ export const DirectoryContentContextProvider = ({
     directoryContent: TS.FileSystemEntry[],
     directoryMeta?: TS.FileSystemEntryMeta
   ) {
-    dispatch(AppActions.hideNotifications(['error']));
+    hideNotifications(['error']);
 
     if (
       directoryMeta &&
@@ -565,14 +555,12 @@ export const DirectoryContentContextProvider = ({
 
   function loadDirectoryFailure(error?: any) {
     console.error('Error loading directory: ', error);
-    dispatch(AppActions.hideNotifications());
+    //hideNotifications();
 
-    dispatch(
-      AppActions.showNotification(
-        t('core:errorLoadingFolder') + ': ' + error.message,
-        'warning',
-        false
-      )
+    showNotification(
+      t('core:errorLoadingFolder') + ': ' + error.message,
+      'warning',
+      false
     );
     closeAllLocations();
   }
@@ -727,7 +715,6 @@ export const DirectoryContentContextProvider = ({
       currentDirectoryFiles: currentDirectoryFiles.current,
       currentDirectoryDirs: currentDirectoryDirs.current,
       isMetaLoaded: isMetaLoaded.current,
-      isGeneratingThumbs: isGeneratingThumbs.current,
       loadDirectoryContent,
       loadParentDirectoryContent,
       enhanceDirectoryContent,
@@ -750,7 +737,6 @@ export const DirectoryContentContextProvider = ({
     currentDirectoryPath.current,
     directoryMeta.current,
     isMetaLoaded.current,
-    isGeneratingThumbs.current,
     currentDirectoryPerspective,
     currentDirectoryFiles.current,
     currentDirectoryDirs.current,

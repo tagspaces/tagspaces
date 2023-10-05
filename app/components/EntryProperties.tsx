@@ -103,6 +103,7 @@ import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { useFsActionsContext } from '-/hooks/useFsActionsContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 const PREFIX = 'EntryProperties';
 
@@ -192,9 +193,6 @@ const BgndImgChooserDialog =
 
 interface Props {
   locations: Array<TS.Location>;
-  renameFile: (path: string, nextPath: string) => Promise<boolean>;
-  showNotification: (message: string) => void;
-  // currentDirectoryPath: string | null;
   tagDelimiter: string;
   tileServer: TS.MapTileServer;
   lastBackgroundImageChange: any;
@@ -221,7 +219,7 @@ function EntryProperties(props: Props) {
     updateOpenedFile,
     sharingLink
   } = useOpenedEntryContext();
-  const { renameDirectory } = useFsActionsContext();
+  const { renameDirectory, renameFile } = useFsActionsContext();
   const { addTags, removeTags, removeAllTags } = useTaggingActionsContext();
   const { updateThumbnailUrl } = useDirectoryContentContext();
   const {
@@ -229,6 +227,7 @@ function EntryProperties(props: Props) {
     switchCurrentLocationType,
     readOnlyMode
   } = useCurrentLocationContext();
+  const { showNotification } = useNotificationContext();
 
   const fileNameRef = useRef<HTMLInputElement>(null);
   const sharingLinkRef = useRef<HTMLInputElement>(null);
@@ -328,8 +327,6 @@ function EntryProperties(props: Props) {
 
   const renameEntry = () => {
     if (editName !== undefined) {
-      const { renameFile } = props;
-
       const path = extractContainingDirectoryPath(
         currentEntry.current.path,
         PlatformIO.getDirSeparator()
@@ -383,7 +380,7 @@ function EntryProperties(props: Props) {
 
   const toggleThumbFilesDialog = () => {
     if (!Pro) {
-      props.showNotification(t('core:thisFunctionalityIsAvailableInPro'));
+      showNotification(t('core:thisFunctionalityIsAvailableInPro'));
       return true;
     }
     if (!currentEntry.current.editMode && editName === undefined) {
@@ -393,7 +390,7 @@ function EntryProperties(props: Props) {
 
   const toggleBgndImgDialog = () => {
     if (!Pro) {
-      props.showNotification(t('core:thisFunctionalityIsAvailableInPro'));
+      showNotification(t('core:thisFunctionalityIsAvailableInPro'));
       return true;
     }
     if (!currentEntry.current.editMode && editName === undefined) {
@@ -426,12 +423,6 @@ function EntryProperties(props: Props) {
                   : '')*/
           );
           return switchCurrentLocationType();
-          /*})
-          .catch(err => {
-            props.switchCurrentLocationType();
-            console.warn('Error replaceThumbnailURLPromise ' + err);
-            props.showNotification('Error replacing thumbnail');
-          });*/
         }
       );
     } else {
@@ -443,7 +434,7 @@ function EntryProperties(props: Props) {
         })
         .catch(err => {
           console.warn('Error getThumbnailURLPromise ' + err);
-          props.showNotification('Error reset Thumbnail');
+          showNotification('Error reset Thumbnail');
         });
     }
   };
@@ -453,11 +444,11 @@ function EntryProperties(props: Props) {
       return;
     }
     if (!Pro) {
-      props.showNotification(t('core:thisFunctionalityIsAvailableInPro'));
+      showNotification(t('core:thisFunctionalityIsAvailableInPro'));
       return;
     }
     if (!Pro.MetaOperations) {
-      props.showNotification(t('Saving color not supported'));
+      showNotification(t('Saving color not supported'));
       return;
     }
     setDisplayColorPicker(!displayColorPicker);
@@ -490,7 +481,7 @@ function EntryProperties(props: Props) {
         .catch(error => {
           switchCurrentLocationType();
           console.warn('Error saving color for folder ' + error);
-          props.showNotification(t('Error saving color for folder'));
+          showNotification(t('Error saving color for folder'));
         });
     });
   };
@@ -651,7 +642,7 @@ function EntryProperties(props: Props) {
       })
       .catch(error => {
         console.warn('Error saving perspective for folder ' + error);
-        props.showNotification(t('Error saving perspective for folder'));
+        showNotification(t('Error saving perspective for folder'));
       });
   };
 
@@ -1021,7 +1012,7 @@ function EntryProperties(props: Props) {
                           const promise = navigator.clipboard.writeText(
                             sharingLink
                           );
-                          props.showNotification(t('core:linkCopied'));
+                          showNotification(t('core:linkCopied'));
                         }}
                       >
                         {t('core:copy')}
@@ -1336,7 +1327,6 @@ function EntryProperties(props: Props) {
           open={showSharingLinkDialog}
           onClose={() => setShowSharingLinkDialog(false)}
           path={currentEntry.current.path}
-          // showNotification={props.showNotification}
           locationId={currentEntry.current.locationId}
         />
       )}
@@ -1397,8 +1387,7 @@ function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
       setLastBackgroundColorChange: AppActions.setLastBackgroundColorChange,
-      setSelectedEntries: AppActions.setSelectedEntries,
-      showNotification: AppActions.showNotification
+      setSelectedEntries: AppActions.setSelectedEntries
     },
     dispatch
   );

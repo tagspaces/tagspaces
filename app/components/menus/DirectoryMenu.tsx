@@ -50,6 +50,7 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 interface Props {
   open: boolean;
@@ -72,6 +73,7 @@ function DirectoryMenu(props: Props) {
   const { openEntry } = useOpenedEntryContext();
   const { addTags } = useTaggingActionsContext();
   const { currentLocation, readOnlyMode } = useCurrentLocationContext();
+  const { showNotification } = useNotificationContext();
   const {
     loadDirectoryContent,
     currentDirectoryPath,
@@ -119,10 +121,6 @@ function DirectoryMenu(props: Props) {
 
   const setSelectedEntries = selectedEntries => {
     dispatch(AppActions.setSelectedEntries(selectedEntries));
-  };
-
-  const showNotification = (text, notificationType?, autohide?) => {
-    dispatch(AppActions.showNotification(text, notificationType, autohide));
   };
 
   const toggleProTeaser = slidePage => {

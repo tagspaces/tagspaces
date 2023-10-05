@@ -61,12 +61,8 @@ import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import InfoIcon from '-/components/InfoIcon';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
-import { actions as LocationActions, getLocations } from '-/reducers/locations';
-import {
-  NotificationTypes,
-  actions as AppActions,
-  AppDispatch
-} from '-/reducers/app';
+import { getLocations } from '-/reducers/locations';
+import { AppDispatch } from '-/reducers/app';
 import { getPersistTagsInSidecarFile, isDevMode } from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { actions as LocationIndexActions } from '-/reducers/location-index';
@@ -80,6 +76,7 @@ import { ExpandIcon } from '-/components/CommonIcons';
 import MaxLoopsSelect from '-/components/dialogs/MaxLoopsSelect';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 const PREFIX = 'CreateEditLocationDialog';
 
@@ -106,6 +103,7 @@ function CreateEditLocationDialog(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
 
+  const { showNotification } = useNotificationContext();
   const { addLocation } = useCurrentLocationContext();
   const isPersistTagsInSidecar = useSelector(getPersistTagsInSidecarFile);
   const locations: Array<TS.Location> = useSelector(getLocations);
@@ -273,12 +271,7 @@ function CreateEditLocationDialog(props: Props) {
     if (!locations.some(ln => ln.uuid === newId)) {
       setNewUuid(newId);
     } else {
-      dispatch(
-        AppActions.showNotification(
-          'Location with this ID already exists',
-          NotificationTypes.error
-        )
-      );
+      showNotification('Location with this ID already exists', 'error');
     }
   }
   /**

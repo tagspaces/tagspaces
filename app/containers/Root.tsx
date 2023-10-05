@@ -33,6 +33,9 @@ import {
   DirectoryContentContextProvider
 } from '-/hooks/DirectoryContentContextProvider';
 import { CurrentLocationContextProvider } from '-/hooks/CurrentLocationContextProvider';
+import { NotificationContextProvider } from '-/hooks/NotificationContextProvider';
+import { IOActionsContextProvider } from '-/hooks/IOActionsContextProvider';
+import { TaggingActionsContextProvider } from '-/hooks/TaggingActionsContextProvider';
 
 type RootType = {
   store: Store<{}>;
@@ -52,15 +55,21 @@ export default function Root({ store, persistor }: RootType) {
 
   let appContent = (
     <App>
-      <CurrentLocationContextProvider>
-        <DirectoryContentContextProvider>
-          <OpenedEntryContextProvider>
-            <FsActionsContextProvider>
-              <MainPage />
-            </FsActionsContextProvider>
-          </OpenedEntryContextProvider>
-        </DirectoryContentContextProvider>
-      </CurrentLocationContextProvider>
+      <NotificationContextProvider>
+        <CurrentLocationContextProvider>
+          <DirectoryContentContextProvider>
+            <OpenedEntryContextProvider>
+              <FsActionsContextProvider>
+                <IOActionsContextProvider>
+                  <TaggingActionsContextProvider>
+                    <MainPage />
+                  </TaggingActionsContextProvider>
+                </IOActionsContextProvider>
+              </FsActionsContextProvider>
+            </OpenedEntryContextProvider>
+          </DirectoryContentContextProvider>
+        </CurrentLocationContextProvider>
+      </NotificationContextProvider>
     </App>
   );
 
