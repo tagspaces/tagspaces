@@ -204,7 +204,7 @@ export const initialState = {
   progress: [],
   isUpdateInProgress: false,
   isUpdateAvailable: false,
-  currentLocationId: null,
+  //currentLocationId: null,
   //currentDirectoryPath: '',
   currentDirectoryColor: '',
   currentDirectoryDescription: '',
@@ -1638,7 +1638,7 @@ export const getCurrentDirectoryTags = (state: any) =>
   state.app.currentDirectoryPerspective;*/
 // export const getDirectoryPath = (state: any) => state.app.currentDirectoryPath;
 export const getProgress = (state: any) => state.app.progress;
-export const getCurrentLocationPath = (state: any) => {
+/*export const getCurrentLocationPath = (state: any) => {
   if (state.locations) {
     for (let i = 0; i < state.locations.length; i += 1) {
       const location = state.locations[i];
@@ -1651,8 +1651,8 @@ export const getCurrentLocationPath = (state: any) => {
     }
   }
   return undefined;
-};
-export const isPersistTagsInSidecarFile = (state: any): boolean => {
+};*/
+/*export const isPersistTagsInSidecarFile = (state: any): boolean => {
   const locationPersistTagsInSidecarFile = getLocationPersistTagsInSidecarFile(
     state
   );
@@ -1663,8 +1663,8 @@ export const isPersistTagsInSidecarFile = (state: any): boolean => {
     return AppConfig.useSidecarsForFileTagging;
   }
   return state.settings.persistTagsInSidecarFile;
-};
-export const getLocationPersistTagsInSidecarFile = (state: any) => {
+};*/
+/*export const getLocationPersistTagsInSidecarFile = (state: any) => {
   if (state.locations) {
     for (let i = 0; i < state.locations.length; i += 1) {
       const location = state.locations[i];
@@ -1677,7 +1677,7 @@ export const getLocationPersistTagsInSidecarFile = (state: any) => {
     }
   }
   return undefined;
-};
+};*/
 export const isUpdateAvailable = (state: any) => state.app.isUpdateAvailable;
 export const isUpdateInProgress = (state: any) => state.app.isUpdateInProgress;
 export const isOnline = (state: any) => state.app.isOnline;
@@ -1741,7 +1741,7 @@ export const isProgressOpened = (state: any) => state.app.progressDialogOpened;
 //export const getOpenLink = (state: any) => state.app.openLink;
 export const getNotificationStatus = (state: any) =>
   state.app.notificationStatus;
-export const getCurrentLocationId = (state: any) => state.app.currentLocationId;
+//export const getCurrentLocationId = (state: any) => state.app.currentLocationId;
 export const isEntryInFullWidth = (state: any) => state.app.isEntryInFullWidth;
 //export const isLoading = (state: any) => state.app.isLoading;
 export const isLocationManagerPanelOpened = (state: any) =>

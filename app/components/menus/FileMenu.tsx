@@ -258,7 +258,7 @@ function FileMenu(props: Props) {
           if (onDuplicateFile) {
             onDuplicateFile(dirPath);
           } else {
-            loadDirectoryContent(dirPath, true, true);
+            loadDirectoryContent(dirPath, true);
           }
           return true;
         })
@@ -276,7 +276,7 @@ function FileMenu(props: Props) {
         PlatformIO.getDirSeparator()
       );
       dispatch(AppActions.exitSearchMode());
-      return loadDirectoryContent(parentFolder, false, true);
+      return loadDirectoryContent(parentFolder, true);
     }
   }
 

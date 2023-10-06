@@ -62,12 +62,16 @@ type SubFolder = {
 function LocationManager(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
-  const { addLocations, editLocation } = useCurrentLocationContext();
+  const {
+    addLocations,
+    editLocation,
+    selectedLocation
+  } = useCurrentLocationContext();
   const locations: Array<TS.Location> = useSelector(getLocations);
   // const loading: boolean = useSelector(isLoading);
   //const language: string = useSelector(getCurrentLanguage);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [selectedLocation, setSelectedLocation] = useState<TS.Location>(null);
+  //const selectedLocation = useRef<TS.Location>(null);
   const [isEditLocationDialogOpened, setEditLocationDialogOpened] = useState<
     boolean
   >(false);
@@ -87,6 +91,9 @@ function LocationManager(props: Props) {
   const ImportLocationsDialog =
     Pro && Pro.UI ? Pro.UI.ImportLocationsDialog : false;
 
+  /*function setSelectedLocation(location: TS.Location) {
+    selectedLocation.current = location;
+  }*/
   function handleFileInputChange(selection: any) {
     const target = selection.currentTarget;
     const file = target.files[0];
@@ -196,8 +203,8 @@ function LocationManager(props: Props) {
                           setDeleteLocationDialogOpened={
                             setDeleteLocationDialogOpened
                           }
-                          selectedLocation={selectedLocation}
-                          setSelectedLocation={setSelectedLocation}
+                          /*selectedLocation={selectedLocation.current}
+                          setSelectedLocation={setSelectedLocation}*/
                         />
                       </div>
                     )}
@@ -220,7 +227,7 @@ function LocationManager(props: Props) {
         <CreateEditLocationDialogAsync
           open={isEditLocationDialogOpened}
           onClose={() => setEditLocationDialogOpened(false)}
-          location={selectedLocation}
+          /*location={selectedLocation.current}*/
           editLocation={location => editLocation(location)}
         />
       )}

@@ -81,11 +81,7 @@ type DirectoryContentContextData = {
   currentDirectoryDirs: TS.OrderVisibilitySettings[];
   isMetaLoaded: boolean;
   loadParentDirectoryContent: () => void;
-  loadDirectoryContent: (
-    directoryPath: string,
-    generateThumbnails: boolean,
-    loadDirMeta?: boolean
-  ) => void;
+  loadDirectoryContent: (directoryPath: string, loadDirMeta?: boolean) => void;
   enhanceDirectoryContent: (
     dirEntries,
     isCloudLocation,
@@ -169,11 +165,7 @@ export const DirectoryContentContextProvider = ({
 
   useEffect(() => {
     if (currentLocation) {
-      loadDirectoryContent(
-        PlatformIO.getLocationPath(currentLocation),
-        currentLocation.type !== locationType.TYPE_CLOUD,
-        true
-      );
+      loadDirectoryContent(PlatformIO.getLocationPath(currentLocation));
       if (currentLocation.type !== locationType.TYPE_CLOUD) {
         watchForChanges(currentLocation);
       }
@@ -255,7 +247,7 @@ export const DirectoryContentContextProvider = ({
       );
       // console.log('parentDirectory: ' + parentDirectory  + ' - currentLocationPath: ' + currentLocationPath);
       if (parentDirectory.includes(currentLocationPath)) {
-        loadDirectoryContent(parentDirectory, false, true);
+        loadDirectoryContent(parentDirectory, true);
       } else {
         showNotification(t('core:parentDirNotInLocation'), 'warning', true);
         // dispatch(actions.setIsLoading(false));
@@ -373,11 +365,7 @@ export const DirectoryContentContextProvider = ({
     });
   };
 
-  function loadDirectoryContent(
-    directoryPath: string,
-    generateThumbnails: boolean,
-    loadDirMeta = false
-  ) {
+  function loadDirectoryContent(directoryPath: string, loadDirMeta = false) {
     // console.debug('loadDirectoryContent:' + directoryPath);
     window.walkCanceled = false;
 
@@ -395,23 +383,21 @@ export const DirectoryContentContextProvider = ({
         .then(fsEntryMeta =>
           loadDirectoryContentInt(
             directoryPath,
-            generateThumbnails,
             fsEntryMeta
             // description: getDescriptionPreview(fsEntryMeta.description, 200)
           )
         )
         .catch(err => {
           console.debug('Error loading meta of:' + directoryPath + ' ' + err);
-          loadDirectoryContentInt(directoryPath, generateThumbnails);
+          loadDirectoryContentInt(directoryPath);
         });
     } else {
-      loadDirectoryContentInt(directoryPath, generateThumbnails);
+      loadDirectoryContentInt(directoryPath);
     }
   }
 
   function loadDirectoryContentInt(
     directoryPath: string,
-    generateThumbnails: boolean,
     fsEntryMeta?: TS.FileSystemEntryMeta
   ) {
     showNotification(t('core:loading'), 'info', false);
@@ -453,12 +439,7 @@ export const DirectoryContentContextProvider = ({
         updateHistory(currentLocation, directoryPath);
         if (results !== undefined) {
           // console.debug('app listDirectoryPromise resolved:' + results.length);
-          prepareDirectoryContent(
-            directoryPath,
-            results,
-            fsEntryMeta,
-            generateThumbnails
-          );
+          prepareDirectoryContent(directoryPath, results, fsEntryMeta);
         }
         /*dispatch(
           AppActions.updateCurrentDirectoryPerspective(
@@ -485,7 +466,7 @@ export const DirectoryContentContextProvider = ({
 
   function openCurrentDirectory() {
     if (currentDirectoryPath.current) {
-      loadDirectoryContent(currentDirectoryPath.current, false, true);
+      loadDirectoryContent(currentDirectoryPath.current, true);
     } else {
       dispatch(AppActions.setSearchResults([]));
     }
@@ -494,8 +475,7 @@ export const DirectoryContentContextProvider = ({
   function prepareDirectoryContent(
     directoryPath: string,
     dirEntries,
-    dirEntryMeta,
-    generateThumbnails
+    dirEntryMeta
   ) {
     const isCloudLocation =
       currentLocation && currentLocation.type === locationType.TYPE_CLOUD;
@@ -503,10 +483,7 @@ export const DirectoryContentContextProvider = ({
     const directoryContent = enhanceDirectoryContent(
       dirEntries,
       isCloudLocation,
-      true,
-      undefined,
-      true,
-      generateThumbnails
+      true
     );
 
     /*console.log(
@@ -575,31 +552,9 @@ export const DirectoryContentContextProvider = ({
     dirEntries,
     isCloudLocation,
     showDirs = true,
-    limit = undefined,
-    getDirMeta = false,
-    generateThumbnails = true
+    limit = undefined
   ) {
     const directoryContent = [];
-    //const tmbGenerationPromises = [];
-    //const tmbGenerationList = [];
-    //const dirsMetaPromises = [];
-    /*const isWorkerAvailable = enableWS && PlatformIO.isWorkerAvailable();
-    const supportedImgsWS = [
-      'jpg',
-      'jpeg',
-      'jif',
-      'jfif',
-      'png',
-      'gif',
-      'svg',
-      'tif',
-      'tiff',
-      'ico',
-      'webp',
-      'avif'
-      // 'bmp' currently electron main processed: https://github.com/lovell/sharp/issues/806
-    ];*/
-
     dirEntries.map(entry => {
       if (!showUnixHiddenEntries && entry.name.startsWith('.')) {
         return true;

@@ -33,8 +33,6 @@ import IconButton from '@mui/material/IconButton';
 import { RemoveIcon, HistoryIcon } from '-/components/CommonIcons';
 import { dataTidFormat } from '-/services/test';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
-import { getCurrentLocationId } from '-/reducers/app';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
@@ -49,8 +47,7 @@ function RenderHistory(props: Props) {
   const { t } = useTranslation();
   // const dispatch: AppDispatch = useDispatch();
   const { openEntry, openLink } = useOpenedEntryContext();
-  const { openLocationById } = useCurrentLocationContext();
-  const currentLocationId = useSelector(getCurrentLocationId);
+  const { openLocationById, currentLocation } = useCurrentLocationContext();
   const { historyKey, items, update, maxItems, showDelete = true } = props;
 
   const openLinkDispatch = link => openLink(link, { fullWidth: false });
@@ -79,7 +76,7 @@ function RenderHistory(props: Props) {
                   onClick={() =>
                     Pro.history.openItem(
                       item,
-                      currentLocationId,
+                      currentLocation.uuid,
                       openLinkDispatch,
                       openLocationById,
                       openEntry

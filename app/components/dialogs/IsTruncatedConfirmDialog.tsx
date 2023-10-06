@@ -75,7 +75,7 @@ function IsTruncatedConfirmDialog(props: Props) {
       onClose();
       if (currentLocation.type === locationType.TYPE_CLOUD) {
         PlatformIO.enableObjectStoreSupport(currentLocation)
-          .then(() => loadDirectoryContent(currentDirectoryPath, true, true))
+          .then(() => loadDirectoryContent(currentDirectoryPath, true))
           .catch(error => {
             console.log('enableObjectStoreSupport', error);
           });

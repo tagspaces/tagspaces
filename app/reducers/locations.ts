@@ -237,8 +237,8 @@ export const getLocation = (
   locationId: string
 ): TS.Location | null =>
   state.locations.find(location => location.uuid === locationId);
-export const getLocationPosition = (state: any, locationId: string): number =>
-  state.locations.findIndex(location => location.uuid === locationId);
+/*export const getLocationPosition = (state: any, locationId: string): number =>
+  state.locations.findIndex(location => location.uuid === locationId);*/
 export const getLocationByPath = (
   state: any,
   path: string

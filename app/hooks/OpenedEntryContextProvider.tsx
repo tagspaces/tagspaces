@@ -723,7 +723,7 @@ export const OpenedEntryContextProvider = ({
               openFsEntry(fsEntry);
               setEntryInFullWidth(options.fullWidth);
             } else {
-              loadDirectoryContent(fsEntry.path, false, true);
+              loadDirectoryContent(fsEntry.path, true);
             }
             return true;
           })
@@ -767,9 +767,9 @@ export const OpenedEntryContextProvider = ({
                   locationPath.length > 0
                     ? locationPath + '/' + newRelDir
                     : directoryPath;
-                loadDirectoryContent(dirFullPath, false, true);
+                loadDirectoryContent(dirFullPath, true);
               } else {
-                loadDirectoryContent(locationPath, false, true);
+                loadDirectoryContent(locationPath, true);
               }
 
               if (entryPath) {
@@ -800,9 +800,9 @@ export const OpenedEntryContextProvider = ({
                 }
                 const dirFullPath =
                   locationPath + PlatformIO.getDirSeparator() + directoryPath;
-                loadDirectoryContent(dirFullPath, false, true);
+                loadDirectoryContent(dirFullPath, true);
               } else {
-                loadDirectoryContent(locationPath, false, true);
+                loadDirectoryContent(locationPath, true);
               }
 
               if (entryPath && entryPath.length > 0) {

@@ -29,11 +29,7 @@ import { LocalLocationIcon, CloudLocationIcon } from '-/components/CommonIcons';
 import DefaultLocationIcon from '@mui/icons-material/Highlight';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
-import {
-  actions as AppActions,
-  AppDispatch,
-  getCurrentLocationId
-} from '../reducers/app';
+import { actions as AppActions, AppDispatch } from '../reducers/app';
 import PlatformIO from '../services/platform-facade';
 import TargetMoveFileBox from './TargetMoveFileBox';
 import DragItemTypes from './DragItemTypes';
@@ -44,7 +40,6 @@ import LocationContextMenu from '-/components/menus/LocationContextMenu';
 import { TS } from '-/tagspaces.namespace';
 import { classes, SidePanel } from '-/components/SidePanels.css';
 import { useTranslation } from 'react-i18next';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
@@ -55,8 +50,6 @@ interface Props {
   hideDrawer?: () => void;
   setEditLocationDialogOpened: (open: boolean) => void;
   setDeleteLocationDialogOpened: (open: boolean) => void;
-  selectedLocation: TS.Location;
-  setSelectedLocation: (loc: TS.Location) => void;
 }
 
 function LocationView(props: Props) {
@@ -64,25 +57,28 @@ function LocationView(props: Props) {
 
   const { loadDirectoryContent } = useDirectoryContentContext();
   const { moveFiles, uploadFiles } = useIOActionsContext();
-  const { openLocation } = useCurrentLocationContext();
-  const { readOnlyMode } = useCurrentLocationContext();
-  const { showNotification } = useNotificationContext();
-  const directoryTreeRef = useRef<DirectoryTreeViewRef>(null);
-  const [
+  const {
+    openLocation,
+    currentLocation,
+    readOnlyMode,
+    setSelectedLocation,
     locationDirectoryContextMenuAnchorEl,
     setLocationDirectoryContextMenuAnchorEl
-  ] = useState<null | HTMLElement>(null);
+  } = useCurrentLocationContext();
+  const { showNotification } = useNotificationContext();
+  const directoryTreeRef = useRef<DirectoryTreeViewRef>(null);
+  /*  const [
+    locationDirectoryContextMenuAnchorEl,
+    setLocationDirectoryContextMenuAnchorEl
+  ] = useState<null | HTMLElement>(null);*/
 
   const dispatch: AppDispatch = useDispatch();
-  const currentLocationId: string = useSelector(getCurrentLocationId);
 
   const {
     location,
     hideDrawer,
-    setSelectedLocation,
     setEditLocationDialogOpened,
-    setDeleteLocationDialogOpened,
-    selectedLocation
+    setDeleteLocationDialogOpened
   } = props;
   const isCloudLocation = location.type === locationType.TYPE_CLOUD;
 
@@ -97,10 +93,13 @@ function LocationView(props: Props) {
   };
 
   const handleLocationClick = () => {
-    if (location.uuid === currentLocationId) {
+    if (currentLocation && location.uuid === currentLocation.uuid) {
       // the same location click
 
-      loadDirectoryContent(PlatformIO.getLocationPath(location), true, true);
+      loadDirectoryContent(PlatformIO.getLocationPath(location));
+      /*if (genThumbnailsEnabled()) { // TODO Gen Thumbs after click on the same location
+        generateThumbnails(entries);
+      }*/
     } else {
       // this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
       dispatch(AppActions.setSelectedEntries([]));
@@ -116,11 +115,11 @@ function LocationView(props: Props) {
     directoryTreeRef.current.closeLocation();
   };
 
-  const handleLocationContextMenuClick = (event: any) => {
+  const handleLocationContextMenuClick = (event: any, chosenLocation) => {
     event.preventDefault();
     event.stopPropagation();
+    setSelectedLocation(chosenLocation);
     setLocationDirectoryContextMenuAnchorEl(event.currentTarget);
-    setSelectedLocation(location);
   };
 
   const onUploadProgress = (progress, response) => {
@@ -235,25 +234,18 @@ function LocationView(props: Props) {
         <LocationContextMenu
           setEditLocationDialogOpened={setEditLocationDialogOpened}
           setDeleteLocationDialogOpened={setDeleteLocationDialogOpened}
-          selectedLocation={selectedLocation}
-          locationDirectoryContextMenuAnchorEl={
-            locationDirectoryContextMenuAnchorEl
-          }
-          setLocationDirectoryContextMenuAnchorEl={
-            setLocationDirectoryContextMenuAnchorEl
-          }
           closeLocationTree={closeLocationTree}
         />
       )}
       <ListItem
         data-tid={'location_' + location.name.replace(/ /g, '_')}
         className={
-          currentLocationId === location.uuid
+          currentLocation && currentLocation.uuid === location.uuid
             ? classes.listItemSelected
             : classes.listItem
         }
         onClick={handleLocationClick}
-        onContextMenu={event => handleLocationContextMenuClick(event)}
+        onContextMenu={event => handleLocationContextMenuClick(event, location)}
       >
         <ListItemIcon
           // onClick={(e) => {
@@ -302,8 +294,10 @@ function LocationView(props: Props) {
             aria-haspopup="true"
             edge="end"
             data-tid={'locationMoreButton_' + location.name}
-            onClick={event => handleLocationContextMenuClick(event)}
-            onContextMenu={event => handleLocationContextMenuClick(event)}
+            onClick={event => handleLocationContextMenuClick(event, location)}
+            onContextMenu={event =>
+              handleLocationContextMenuClick(event, location)
+            }
             size="large"
           >
             {location.isDefault && (
@@ -326,4 +320,4 @@ function LocationView(props: Props) {
   );
 }
 
-export default React.memo(LocationView);
+export default LocationView;

@@ -14,17 +14,14 @@ import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/path
 import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import AppConfig from '-/AppConfig';
 import { TS } from '-/tagspaces.namespace';
-import {
-  actions as AppActions,
-  AppDispatch,
-  getCurrentLocationId
-} from '-/reducers/app';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { ParentFolderIcon } from '-/components/CommonIcons';
 import { getLocations } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-facade';
 import { Pro } from '-/pro';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   setTargetDir: (dirPath: string) => void;
@@ -34,10 +31,10 @@ function DirectoryListView(props: Props) {
   const { currentDirectoryPath, setTargetDir } = props;
   const { t } = useTranslation();
   const { watchForChanges } = useDirectoryContentContext();
+  const { currentLocation } = useCurrentLocationContext();
   const locations: Array<TS.Location> = useSelector(getLocations);
-  const currentLocationId: string = useSelector(getCurrentLocationId);
   const showUnixHiddenEntries: boolean = useSelector(getShowUnixHiddenEntries);
-  const chosenLocationId = useRef<string>(currentLocationId);
+  const chosenLocationId = useRef<string>(currentLocation.uuid);
   const chosenDirectory = useRef<string>(currentDirectoryPath);
   const [directoryContent, setDirectoryContent] = useState<
     TS.FileSystemEntry[]
@@ -49,7 +46,7 @@ function DirectoryListView(props: Props) {
     );
     if (chosenLocation) {
       const path =
-        chosenLocation.uuid === currentLocationId && currentDirectoryPath
+        chosenLocation.uuid === currentLocation.uuid && currentDirectoryPath
           ? currentDirectoryPath
           : chosenLocation.path;
       listDirectory(path);
@@ -70,10 +67,10 @@ function DirectoryListView(props: Props) {
   };
 
   function getDirLocations() {
-    const currentLocation = locations.find(
+    const chosenLocation = locations.find(
       location => location.uuid === chosenLocationId.current
     );
-    if (currentLocation.type !== locationType.TYPE_LOCAL) {
+    if (chosenLocation.type !== locationType.TYPE_LOCAL) {
       return null;
     }
     return (

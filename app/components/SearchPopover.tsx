@@ -367,7 +367,7 @@ function SearchPopover(props: Props) {
 
   function openCurrentDirectory() {
     if (props.currentDirectory) {
-      loadDirectoryContent(props.currentDirectory, false, true);
+      loadDirectoryContent(props.currentDirectory, true);
     } else {
       props.exitSearchMode();
     }

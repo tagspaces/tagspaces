@@ -89,7 +89,7 @@ function MoveOrCopyFilesDialog(props: Props) {
       }
     }
     Promise.all(promises)
-      .then(() => loadDirectoryContent(currentDirectoryPath, true, true))
+      .then(() => loadDirectoryContent(currentDirectoryPath, true))
       .catch(error => {
         console.log('promises', error);
       });

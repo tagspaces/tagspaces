@@ -16,7 +16,13 @@
  *
  */
 
-import React, { createContext, useEffect, useMemo, useState } from 'react';
+import React, {
+  createContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
@@ -55,6 +61,11 @@ type CurrentLocationContextData = {
   switchLocationTypeByID: (locationId: string) => Promise<boolean>;
   changeLocationByID: (locationId: string) => void;
   openLocationById: (locationId: string, skipInitialDirList?: boolean) => void;
+  selectedLocation: TS.Location;
+  setSelectedLocation: (location: TS.Location) => void;
+  getLocationPosition: (locationId: string) => number;
+  locationDirectoryContextMenuAnchorEl: null | HTMLElement;
+  setLocationDirectoryContextMenuAnchorEl: (el: HTMLElement) => void;
 };
 
 export const CurrentLocationContext = createContext<CurrentLocationContextData>(
@@ -71,7 +82,12 @@ export const CurrentLocationContext = createContext<CurrentLocationContextData>(
     switchCurrentLocationType: () => Promise.resolve(false),
     switchLocationTypeByID: () => Promise.resolve(false),
     changeLocationByID: () => {},
-    openLocationById: () => {}
+    openLocationById: () => {},
+    selectedLocation: undefined,
+    setSelectedLocation: () => {},
+    getLocationPosition: () => 0,
+    locationDirectoryContextMenuAnchorEl: undefined,
+    setLocationDirectoryContextMenuAnchorEl: () => {}
   }
 );
 
@@ -89,6 +105,12 @@ export const CurrentLocationContextProvider = ({
   const [currentLocation, setCurrentLocation] = useState<TS.Location>(
     undefined
   );
+  const selectedLocation = useRef<TS.Location>(undefined);
+  const [
+    locationDirectoryContextMenuAnchorEl,
+    setLocationDirectoryContextMenuAnchorEl
+  ] = useState<null | HTMLElement>(null);
+
   const locations: TS.Location[] = useSelector(getLocations);
   const defaultLocationId = useSelector(getDefaultLocationId);
 
@@ -121,6 +143,10 @@ export const CurrentLocationContextProvider = ({
       }
     }
   }, [locations]);
+
+  function setSelectedLocation(location: TS.Location) {
+    selectedLocation.current = location;
+  }
 
   function setDefaultLocations() {
     PlatformIO.getDevicePaths()
@@ -332,6 +358,10 @@ export const CurrentLocationContextProvider = ({
     return true;
   }
 
+  function getLocationPosition(locationId: string): number {
+    return locations.findIndex(location => location.uuid === locationId);
+  }
+
   function isCurrentLocation(uuid: string) {
     return currentLocation && currentLocation.uuid === uuid;
   }
@@ -350,9 +380,14 @@ export const CurrentLocationContextProvider = ({
       switchCurrentLocationType,
       switchLocationTypeByID,
       changeLocationByID,
-      openLocationById
+      openLocationById,
+      selectedLocation: selectedLocation.current,
+      locationDirectoryContextMenuAnchorEl,
+      setLocationDirectoryContextMenuAnchorEl,
+      setSelectedLocation,
+      getLocationPosition
     };
-  }, [currentLocation]);
+  }, [currentLocation, locationDirectoryContextMenuAnchorEl]);
 
   return (
     <CurrentLocationContext.Provider value={context}>

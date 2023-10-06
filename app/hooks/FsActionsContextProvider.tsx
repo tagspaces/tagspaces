@@ -80,7 +80,7 @@ export const FsActionsContextProvider = ({
     return PlatformIO.renameDirectoryPromise(directoryPath, newDirectoryName)
       .then(newDirPath => {
         if (currentDirectoryPath === directoryPath) {
-          loadDirectoryContent(newDirPath, false, true);
+          loadDirectoryContent(newDirPath, true);
           reflectRenameDirectory(directoryPath, newDirPath);
           GlobalSearch.getInstance().reflectRenameEntry(
             directoryPath,

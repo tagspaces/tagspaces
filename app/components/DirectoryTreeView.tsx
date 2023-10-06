@@ -168,7 +168,7 @@ const DirectoryTreeView = forwardRef(
           .then(() => {
             loadSubDirectories(subDir);
             changeLocation(subDir);
-            loadDirectoryContent(subDir.path, true, true);
+            loadDirectoryContent(subDir.path, true);
             return true;
           })
           .catch(error => {
@@ -178,7 +178,7 @@ const DirectoryTreeView = forwardRef(
         PlatformIO.disableObjectStoreSupport();
         loadSubDirectories(subDir);
         changeLocation(subDir);
-        loadDirectoryContent(subDir.path, true, true);
+        loadDirectoryContent(subDir.path, true);
       }
     };
 

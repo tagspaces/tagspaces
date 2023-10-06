@@ -17,7 +17,7 @@
  */
 
 import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { LocalLocationIcon, CloudLocationIcon } from '-/components/CommonIcons';
@@ -29,11 +29,6 @@ import IconButton from '@mui/material/IconButton';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { getLocations } from '-/reducers/locations';
-import {
-  actions as AppActions,
-  AppDispatch,
-  getCurrentLocationId
-} from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
@@ -46,21 +41,13 @@ interface Props {
 function LocationMenu(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { openLocation } = useCurrentLocationContext();
+  const { openLocation, currentLocation } = useCurrentLocationContext();
   //const dispatch: AppDispatch = useDispatch();
   const locations: Array<TS.Location> = useSelector(getLocations);
-  const currentLocationId: string | null = useSelector(getCurrentLocationId);
   const [
     locationChooserMenuAnchorEl,
     setLocationChooserMenuAnchorEl
   ] = useState<null | HTMLElement>(null);
-
-  let currentLocation;
-  if (currentLocationId && locations) {
-    currentLocation = locations.find(
-      (location: TS.Location) => location.uuid === currentLocationId
-    );
-  }
 
   const locationIcon =
     currentLocation && currentLocation.type === locationType.TYPE_CLOUD ? (

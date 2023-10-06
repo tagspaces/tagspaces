@@ -18,11 +18,7 @@
 
 import React, { createContext, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  actions as AppActions,
-  AppDispatch,
-  isPersistTagsInSidecarFile
-} from '-/reducers/app';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import mgrs from 'mgrs';
 import { Pro } from '-/pro';
 import { useTranslation } from 'react-i18next';
@@ -34,6 +30,7 @@ import { isGeoTag } from '-/utils/geo';
 import {
   getAddTagsToLibrary,
   getGeoTaggingFormat,
+  getPersistTagsInSidecarFile,
   getPrefixTagContainer,
   getTagColor,
   getTagDelimiter,
@@ -58,6 +55,8 @@ import { getLocations } from '-/reducers/locations';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useFsActionsContext } from '-/hooks/useFsActionsContext';
+import AppConfig from '-/AppConfig';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 type TaggingActionsContextData = {
   addTags: (
@@ -97,6 +96,7 @@ export const TaggingActionsContextProvider = ({
   const { t } = useTranslation();
   const { openedEntries, updateOpenedFile } = useOpenedEntryContext();
   const { updateCurrentDirEntry } = useDirectoryContentContext();
+  const { currentLocation } = useCurrentLocationContext();
   const { renameFile } = useFsActionsContext();
   const { showNotification } = useNotificationContext();
   const dispatch: AppDispatch = useDispatch();
@@ -104,12 +104,24 @@ export const TaggingActionsContextProvider = ({
   const addTagsToLibrary = useSelector(getAddTagsToLibrary);
   const tagBackgroundColor: string = useSelector(getTagColor);
   const tagTextColor: string = useSelector(getTagTextColor);
-  const persistTagsInSidecarFile: boolean = useSelector(
-    isPersistTagsInSidecarFile
-  );
   const tagDelimiter: string = useSelector(getTagDelimiter);
   const prefixTagContainer: boolean = useSelector(getPrefixTagContainer);
   const locations: TS.Location[] = useSelector(getLocations);
+  const settingsPersistTagsInSidecarFile: boolean = useSelector(
+    getPersistTagsInSidecarFile
+  );
+
+  const persistTagsInSidecarFile = useMemo(() => {
+    const locationPersistTagsInSidecarFile =
+      currentLocation && currentLocation.persistTagsInSidecarFile;
+    if (locationPersistTagsInSidecarFile !== undefined) {
+      return locationPersistTagsInSidecarFile;
+    }
+    /*if (AppConfig.useSidecarsForFileTaggingDisableSetting) {
+      return AppConfig.useSidecarsForFileTagging;
+    }*/
+    return settingsPersistTagsInSidecarFile;
+  }, [currentLocation]);
 
   function addTags(
     paths: Array<string>,

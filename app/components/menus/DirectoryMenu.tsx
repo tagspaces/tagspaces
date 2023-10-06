@@ -159,11 +159,11 @@ function DirectoryMenu(props: Props) {
   ] = useState(false);*/
 
   function reloadDirectory() {
-    return loadDirectoryContent(currentDirectoryPath, true, true);
+    return loadDirectoryContent(currentDirectoryPath, true);
   }
 
   function openDirectory() {
-    return loadDirectoryContent(directoryPath, true, true);
+    return loadDirectoryContent(directoryPath, true);
   }
 
   function showProperties() {

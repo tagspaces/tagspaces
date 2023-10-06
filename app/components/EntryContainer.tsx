@@ -547,7 +547,7 @@ function EntryContainer() {
                 entryProp.path
               );
               if (currentDirectoryPath === openedFileDir) {
-                loadDirectoryContent(openedFileDir, true, true);
+                loadDirectoryContent(openedFileDir, true);
                 /*
                   updateOpenedFile(openedFile.path, {
                     ...openedFile,
