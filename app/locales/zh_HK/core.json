@@ -144,7 +144,7 @@
   "fileOperations": "檔案操作",
   "addRemoveTags": "新增/移除标签",
   "openFile": "打開檔案",
-  "downloadFile": "Download File",
+  "downloadFile": "下載檔案",
   "openFileNatively": "用原生應用打開檔案",
   "openParentFolder": "打开上级文件夹",
   "openContainingFolder": "打開包含資料夾",
@@ -337,7 +337,7 @@
   "taggroupTitleHelper": "空白標題",
   "toggleProperties": "切換屬性",
   "switchToFullscreen": "切換至全螢幕",
-  "openInFullWidth": "Toggle full width",
+  "openInFullWidth": "切換全螢幕",
   "openDirectoryExternally": "用外部應用打開資料夾",
   "toggleEntryProperties": "切換項目屬性",
   "closeEntry": "關閉項目",
@@ -803,7 +803,7 @@
   "generatedHTMLCopied": "下載連結已複製到剪貼簿",
   "generatedHTMLFailed": "複製到剪貼簿時發生錯誤",
   "details": "詳細資訊",
-  "editDisabled": "Editing the description is disabled while editing the current file",
-  "togglePreviewSize": "Toggle file preview size",
+  "editDisabled": "編輯當前檔案時禁用編輯說明",
+  "togglePreviewSize": "切換為檔案預覽",
   "-": "-"
 }
