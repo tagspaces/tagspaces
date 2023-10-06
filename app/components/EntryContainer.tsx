@@ -336,7 +336,8 @@ function EntryContainer() {
         }
         textFilePath = openedFile.path;
 
-        /*if (
+        // TODO setTheme in milkdown v6 editor only
+        if (
           fileViewer &&
           fileViewer.current &&
           fileViewer.current.contentWindow &&
@@ -344,8 +345,8 @@ function EntryContainer() {
           fileViewer.current.contentWindow.setTheme
         ) {
           // @ts-ignore call setContent from iframe
-          fileViewer.current.contentWindow.setTheme(settings.currentTheme);
-        }*/
+          fileViewer.current.contentWindow.setTheme(theme.palette.mode);
+        }
         // TODO make loading index.html for folders configurable
         // if (!this.state.currentEntry.isFile) {
         //   textFilePath += '/index.html';

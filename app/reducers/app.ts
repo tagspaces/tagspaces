@@ -1583,7 +1583,7 @@ export const actions = {
     getState: () => any
   ): Promise<string | null> => {
     const { currentLocationId } = getState().app;
-    if (location.uuid !== currentLocationId) {
+    if (location && location.uuid !== currentLocationId) {
       const currentLocation: TS.Location = getLocation(
         getState(),
         currentLocationId
