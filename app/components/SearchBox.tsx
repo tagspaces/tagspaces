@@ -16,24 +16,28 @@
  *
  */
 
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import Popover from '@mui/material/Popover';
 import SearchPopover from '-/components/SearchPopover';
 import SearchAutocomplete from '-/components/SearchAutocomplete';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { getSearchQuery } from '-/reducers/location-index';
+import { useSelector } from 'react-redux';
 
 interface Props {
   open: boolean;
-  textQuery: string;
 }
 
 function SearchBox(props: Props) {
   const { currentDirectoryPath } = useDirectoryContentContext();
+  const { searchQuery } = useSelector(getSearchQuery);
   const [anchorSearch, setAnchorSearch] = useState<HTMLButtonElement | null>(
     null
   );
   // todo replace with props.setSearchQuery
-  const [textQuery, setTextQuery] = useState<string>(props.textQuery || '');
+  const [textQuery, setTextQuery] = useState<string>(
+    searchQuery.textQuery || ''
+  );
 
   return (
     <>

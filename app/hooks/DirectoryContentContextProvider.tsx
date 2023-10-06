@@ -165,7 +165,7 @@ export const DirectoryContentContextProvider = ({
 
   useEffect(() => {
     if (currentLocation) {
-      loadDirectoryContent(PlatformIO.getLocationPath(currentLocation));
+      loadDirectoryContent(PlatformIO.getLocationPath(currentLocation), true);
       if (currentLocation.type !== locationType.TYPE_CLOUD) {
         watchForChanges(currentLocation);
       }
@@ -622,9 +622,14 @@ export const DirectoryContentContextProvider = ({
     };*/
   }
 
-  function setCurrentDirectoryPerspective(perspective: string) {
+  function setCurrentDirectoryPerspective(
+    perspective: string,
+    reload: boolean = true
+  ) {
     currentPerspective.current = perspective;
-    forceUpdate();
+    if (reload) {
+      forceUpdate();
+    }
   }
 
   const currentDirectoryPerspective: string = useMemo(

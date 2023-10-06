@@ -53,11 +53,7 @@ import { Pro } from '../pro';
 import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
 import { TS } from '-/tagspaces.namespace';
 import PathBreadcrumbs from './PathBreadcrumbs';
-import { enhanceOpenedEntry, openedToFsEntry } from '-/services/utils-io';
-import {
-  actions as LocationIndexActions,
-  getSearchQuery
-} from '-/reducers/location-index';
+import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
 // import LoadingAnimation from '-/components/LoadingAnimation';
 import SearchBox from '-/components/SearchBox';
@@ -174,7 +170,6 @@ interface Props {
   selectedEntries: Array<TS.FileSystemEntry>;
   toggleUploadDialog: () => void;
   progress?: Array<any>;
-  searchQuery: TS.SearchQuery;
   setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   enterSearchMode: () => void;
   exitSearchMode: () => void;
@@ -441,10 +436,7 @@ function FolderContainer(props: Props) {
         )}
         {props.isSearchMode ? (
           /* todo rethink if open props is needed */
-          <SearchBox
-            open={props.isSearchMode}
-            textQuery={props.searchQuery.textQuery}
-          />
+          <SearchBox open={props.isSearchMode} />
         ) : (
           <>
             <div
@@ -558,7 +550,6 @@ function mapStateToProps(state) {
     maxSearchResults: getMaxSearchResults(state),
     isDesktopMode: getDesktopMode(state),
     progress: getProgress(state),
-    searchQuery: getSearchQuery(state),
     defaultPerspective: getDefaultPerspective(state),
     lastSearchTimestamp: getLastSearchTimestamp(state),
     isSearchMode: isSearchMode(state)
@@ -585,8 +576,6 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   nextProp.isDesktopMode === prevProp.isDesktopMode &&
   /* this props is set before currentDirectoryEntries is loaded and will reload FolderContainer */
   JSON.stringify(nextProp.progress) === JSON.stringify(prevProp.progress) &&
-  JSON.stringify(nextProp.searchQuery) ===
-    JSON.stringify(prevProp.searchQuery) &&
   nextProp.lastSearchTimestamp === prevProp.lastSearchTimestamp &&
   nextProp.isSearchMode === prevProp.isSearchMode;
 

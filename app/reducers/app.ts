@@ -83,26 +83,12 @@ export const types = {
   ENTER_SEARCH_MODE: 'APP/ENTER_SEARCH_MODE',
   APPEND_SEARCH_RESULTS: 'APP/APPEND_SEARCH_RESULTS',
   SET_SEARCH_FILTER: 'APP/SET_SEARCH_FILTER',
-  //OPEN_FILE: 'APP/OPEN_FILE',
-  //TOGGLE_ENTRY_FULLWIDTH: 'APP/TOGGLE_ENTRY_FULLWIDTH',
-  //SET_ENTRY_FULLWIDTH: 'APP/SET_ENTRY_FULLWIDTH',
-  //CLOSE_ALL_FILES: 'APP/CLOSE_ALL_FILES',
-  //UPDATE_THUMB_URL: 'APP/UPDATE_THUMB_URL',
-  //UPDATE_THUMB_URLS: 'APP/UPDATE_THUMB_URLS',
-  //SET_NOTIFICATION: 'APP/SET_NOTIFICATION',
-  //SET_GENERATING_THUMBNAILS: 'APP/SET_GENERATING_THUMBNAILS',
   SET_NEW_VERSION_AVAILABLE: 'APP/SET_NEW_VERSION_AVAILABLE',
   SET_CURRENLOCATIONID: 'APP/SET_CURRENLOCATIONID',
-  //SET_CURRENT_LOCATION: 'APP/SET_CURRENT_LOCATION',
-  //SET_CURRENDIRECTORYCOLOR: 'APP/SET_CURRENDIRECTORYCOLOR',
-  //SET_CURRENDIRECTORYPERSPECTIVE: 'APP/SET_CURRENDIRECTORYPERSPECTIVE',
-  //SET_IS_META_LOADED: 'APP/SET_IS_META_LOADED',
   SET_LAST_SELECTED_ENTRY: 'APP/SET_LAST_SELECTED_ENTRY',
   SET_SELECTED_ENTRIES: 'APP/SET_SELECTED_ENTRIES',
   SET_TAG_LIBRARY_CHANGED: 'APP/SET_TAG_LIBRARY_CHANGED',
   SET_FILEDRAGGED: 'APP/SET_FILEDRAGGED',
-  //SET_READONLYMODE: 'APP/SET_READONLYMODE',
-  //RENAME_FILE: 'APP/RENAME_FILE',
   TOGGLE_EDIT_TAG_DIALOG: 'APP/TOGGLE_EDIT_TAG_DIALOG',
   TOGGLE_ABOUT_DIALOG: 'APP/TOGGLE_ABOUT_DIALOG',
   TOGGLE_LOCATION_DIALOG: 'APP/TOGGLE_LOCATION_DIALOG',
@@ -282,15 +268,6 @@ export default (state: any = initialState, action: any) => {
         }
       };
     }
-    /*case types.OPEN_LINK: {
-      return {
-        ...state,
-        openLink: {
-          url: action.url,
-          options: action.options
-        }
-      };
-    }*/
     case types.LOGIN_SUCCESS: {
       return { ...state, user: action.user };
     }
@@ -320,12 +297,6 @@ export default (state: any = initialState, action: any) => {
     case types.RESET_PROGRESS: {
       return { ...state, progress: [] };
     }
-    /*case types.SET_READONLYMODE: {
-      if (action.isReadOnlyMode !== state.isReadOnlyMode) {
-        return { ...state, isReadOnlyMode: action.isReadOnlyMode };
-      }
-      return state;
-    }*/
     case types.SET_NEW_VERSION_AVAILABLE: {
       if (action.isUpdateAvailable !== state.isUpdateAvailable) {
         return {
@@ -335,89 +306,6 @@ export default (state: any = initialState, action: any) => {
       }
       return state;
     }
-    /*case types.SET_DIRECTORY_META: {
-      return {
-        ...state,
-        directoryMeta: action.directoryMeta
-      };
-    }*/
-    /*case types.LOAD_DIRECTORY_SUCCESS: {
-      let { directoryPath } = action;
-      if (directoryPath && directoryPath.startsWith('./')) {
-        // relative paths
-        directoryPath = PlatformIO.resolveFilePath(directoryPath);
-      }
-      let currentDirectoryFiles: Array<TS.OrderVisibilitySettings> = [];
-      if (
-        action.directoryMeta &&
-        action.directoryMeta.customOrder &&
-        action.directoryMeta.customOrder.files
-      ) {
-        currentDirectoryFiles = action.directoryMeta.customOrder.files;
-      }
-      let currentDirectoryDirs: Array<TS.OrderVisibilitySettings> = [];
-      if (
-        action.directoryMeta &&
-        action.directoryMeta.customOrder &&
-        action.directoryMeta.customOrder.folders
-      ) {
-        currentDirectoryDirs = action.directoryMeta.customOrder.folders;
-      }
-      return {
-        ...state,
-        currentDirectoryEntries: action.directoryContent,
-        directoryMeta: action.directoryMeta,
-        currentDirectoryColor: action.directoryMeta
-          ? action.directoryMeta.color || ''
-          : '',
-        currentDirectoryTags: action.directoryMeta
-          ? action.directoryMeta.tags || []
-          : '',
-        currentDirectoryDescription: action.directoryMeta
-          ? action.directoryMeta.description || ''
-          : '',
-        currentDirectoryPerspective:
-          action.directoryMeta && action.directoryMeta.perspective
-            ? action.directoryMeta.perspective
-            : action.defaultPerspective, // state.currentDirectoryPerspective,
-        currentDirectoryPath: directoryPath,
-        /!**
-         * used for reorder files in KanBan
-         *!/
-        currentDirectoryFiles: currentDirectoryFiles,
-        /!**
-         * used for reorder dirs in KanBan
-         *!/
-        currentDirectoryDirs: currentDirectoryDirs
-        // isLoading: action.showIsLoading || false
-      };
-    }*/
-    /*case types.CLEAR_DIRECTORY_CONTENT: {
-      return {
-        ...state,
-        currentDirectoryEntries: [],
-        currentDirectoryPath: ''
-      };
-    }*/
-    /*case types.SET_CURRENLOCATIONID: {
-      if (action.currentLocationId !== state.currentLocationId) {
-        return {
-          ...state,
-          currentLocationId: action.locationId
-        };
-      }
-      return state;
-    }*/
-    /* case types.SET_CURRENT_LOCATION: {
-      if (action.location.uuid !== state.currentLocationId) {
-        return {
-          ...state,
-          currentDirectoryPath: action.location.path,
-          currentLocationId: action.location.uuid
-        };
-      }
-      return state;
-    }*/
     case types.SET_SELECTED_ENTRIES: {
       if (
         JSON.stringify(action.selectedEntries) !==
@@ -430,24 +318,6 @@ export default (state: any = initialState, action: any) => {
     case types.SET_TAG_LIBRARY_CHANGED: {
       return { ...state, tagLibraryChanged: !state.tagLibraryChanged };
     }
-    /*case types.SET_CURRENDIRECTORYCOLOR: {
-      if (state.currentDirectoryColor !== action.color) {
-        return { ...state, currentDirectoryColor: action.color };
-      }
-      return state;
-    }*/
-    /*case types.SET_CURRENDIRECTORYPERSPECTIVE: {
-      if (state.currentDirectoryPerspective !== action.perspective) {
-        return { ...state, currentDirectoryPerspective: action.perspective };
-      }
-      return state;
-    }*/
-    /*case types.SET_IS_META_LOADED: {
-      if (state.isMetaLoaded !== action.isMetaLoaded) {
-        return { ...state, isMetaLoaded: action.isMetaLoaded };
-      }
-      return state;
-    }*/
     case types.TOGGLE_EDIT_TAG_DIALOG: {
       return {
         ...state,
@@ -1198,181 +1068,6 @@ export const actions = {
   openTagLibraryPanel: () => ({ type: types.OPEN_TAGLIBRARY_PANEL }),
   openSearchPanel: () => ({ type: types.OPEN_SEARCH_PANEL }),
   openHelpFeedbackPanel: () => ({ type: types.OPEN_HELPFEEDBACK_PANEL }),
-  //closeAllVerticalPanels: () => ({ type: types.CLOSE_ALLVERTICAL_PANELS }),
-  /*setIsLoading: (isLoading: boolean) => ({
-    type: types.SET_ISLOADING,
-    isLoading
-  }),*/
-
-  /*updateCurrentDirectoryPerspective: (perspective: string) => (
-    dispatch: (action) => void,
-    getState: () => any
-  ) => {
-    const { currentDirectoryPerspective } = getState();
-    if (perspective) {
-      if (currentDirectoryPerspective !== perspective) {
-        dispatch(actions.setCurrentDirectoryPerspective(perspective));
-      }
-    } else if (currentDirectoryPerspective !== PerspectiveIDs.UNSPECIFIED) {
-      dispatch(
-        actions.setCurrentDirectoryPerspective(PerspectiveIDs.UNSPECIFIED)
-      );
-    }
-  },*/
-  /*loadDirectoryContentInt: (
-    directoryPath: string,
-    generateThumbnails: boolean,
-    fsEntryMeta?: TS.FileSystemEntryMeta
-  ) => (dispatch: (action) => void, getState: () => any) => {
-    const { settings } = getState();
-
-    dispatch(actions.showNotification(i18n.t('core:loading'), 'info', false));
-    const currentLocation: TS.Location = getLocation(
-      getState(),
-      getState().app.currentLocationId
-    );
-    const resultsLimit = {
-      maxLoops:
-        currentLocation && currentLocation.maxLoops
-          ? currentLocation.maxLoops
-          : AppConfig.maxLoops,
-      IsTruncated: false
-    };
-    PlatformIO.listDirectoryPromise(
-      directoryPath,
-      fsEntryMeta &&
-        fsEntryMeta.perspective &&
-        (fsEntryMeta.perspective === PerspectiveIDs.KANBAN ||
-          fsEntryMeta.perspective === PerspectiveIDs.GALLERY)
-        ? ['extractThumbPath']
-        : [], // mode,
-      currentLocation ? currentLocation.ignorePatternPaths : [],
-      resultsLimit
-    )
-      .then(results => {
-        if (resultsLimit.IsTruncated) {
-          //OPEN ISTRUNCATED dialog
-          dispatch(actions.toggleTruncatedConfirmDialog());
-        }
-        updateHistory(currentLocation, directoryPath);
-        if (results !== undefined) {
-          // console.debug('app listDirectoryPromise resolved:' + results.length);
-          prepareDirectoryContent(
-            results,
-            directoryPath,
-            settings,
-            dispatch,
-            getState,
-            fsEntryMeta,
-            generateThumbnails
-          );
-        }
-        dispatch(
-          actions.updateCurrentDirectoryPerspective(
-            fsEntryMeta ? fsEntryMeta.perspective : undefined
-          )
-        );
-        return true;
-      })
-      .catch(error => {
-        // console.timeEnd('listDirectoryPromise');
-        dispatch(actions.loadDirectoryFailure(directoryPath, error));
-        dispatch(
-          actions.updateCurrentDirectoryPerspective(
-            fsEntryMeta ? fsEntryMeta.perspective : undefined
-          )
-        );
-      });
-  },*/
-  /*loadDirectoryContent: (
-    directoryPath: string,
-    generateThumbnails: boolean,
-    loadDirMeta = false
-  ) => async (dispatch: (action) => void, getState: () => any) => {
-    // console.debug('loadDirectoryContent:' + directoryPath);
-    window.walkCanceled = false;
-
-    // dispatch(actions.setIsLoading(true));
-
-    const state = getState();
-    const { selectedEntries } = state.app;
-    if (selectedEntries.length > 0) {
-      dispatch(actions.setSelectedEntries([]));
-    }
-    if (loadDirMeta) {
-      try {
-        const metaFilePath = getMetaFileLocationForDir(
-          directoryPath,
-          PlatformIO.getDirSeparator()
-        );
-        const fsEntryMeta = await loadJSONFile(metaFilePath);
-        // console.debug('Loading meta succeeded for:' + directoryPath);
-        dispatch(
-          actions.loadDirectoryContentInt(
-            directoryPath,
-            generateThumbnails,
-            fsEntryMeta
-            // description: getDescriptionPreview(fsEntryMeta.description, 200)
-          )
-        );
-      } catch (err) {
-        console.debug('Error loading meta of:' + directoryPath + ' ' + err);
-        dispatch(
-          actions.loadDirectoryContentInt(directoryPath, generateThumbnails)
-        );
-      }
-    } else {
-      dispatch(
-        actions.loadDirectoryContentInt(directoryPath, generateThumbnails)
-      );
-    }
-  },*/
-
-  /*setDirectoryMeta: (directoryMeta: TS.FileSystemEntryMeta) => ({
-    type: types.SET_DIRECTORY_META,
-    directoryMeta
-  }),*/
-  /*loadDirectoryFailure: (directoryPath: string, error?: any) => (
-    dispatch: (action) => void
-  ) => {
-    console.error('Error loading directory: ', error);
-    dispatch(actions.hideNotifications());
-
-    dispatch(
-      actions.showNotification(
-        i18n.t('core:errorLoadingFolder') + ': ' + error.message,
-        'warning',
-        false
-      )
-    );
-    dispatch(actions.closeAllLocations());
-    // dispatch(actions.loadDirectorySuccess(directoryPath, []));
-  },*/
-  /*updateThumbnailUrl: (filePath: string, thumbUrl: string) => ({
-    type: types.UPDATE_THUMB_URL,
-    filePath,
-    thumbUrl // + '?' + new Date().getTime()
-  }),
-  updateThumbnailUrls: (tmbURLs: Array<any>) => ({
-    type: types.UPDATE_THUMB_URLS,
-    tmbURLs
-  }),*/
-  /*setGeneratingThumbnails: (isGeneratingThumbs: boolean) => ({
-    type: types.SET_GENERATING_THUMBNAILS,
-    isGeneratingThumbs
-  }),*/
-  /*setCurrentDirectoryColor: (color: string) => ({
-    type: types.SET_CURRENDIRECTORYCOLOR,
-    color
-  }),*/
-  /*setCurrentDirectoryPerspective: (perspective: string) => ({
-    type: types.SET_CURRENDIRECTORYPERSPECTIVE,
-    perspective
-  }),*/
-  /*setIsMetaLoaded: (isMetaLoaded: boolean) => ({
-    type: types.SET_IS_META_LOADED,
-    isMetaLoaded
-  }),*/
   setSelectedEntries: (selectedEntries: Array<TS.FileSystemEntry>) => (
     dispatch: (action) => void
   ) => {
@@ -1600,15 +1295,6 @@ export const actions = {
       PlatformIO.openFile(selectedFile, warningOpeningFilesExternally);
     }
   }
-  /*saveFile: () => (dispatch: (action) => void) => {
-    dispatch(
-      actions.showNotification(
-        i18n.t('core:notImplementedYet'),
-        'warning',
-        true
-      )
-    );
-  }*/
 };
 
 // Selectors
@@ -1619,65 +1305,14 @@ export const getLastBackgroundColorChange = (state: any) =>
 export const getLastThumbnailImageChange = (state: any) =>
   state.app.lastThumbnailImageChange;
 export const currentUser = (state: any) => state.app.user;
-//export const getIsMetaLoaded = (state: any) => state.app.isMetaLoaded;
-/*export const getDirectoryContent = (state: any) =>
-  state.app.currentDirectoryEntries;*/
-// export const getPageEntries = (state: any) => state.app.pageEntries;
 export const getEditedEntryPaths = (state: any) => state.app.editedEntryPaths;
-/*export const getCurrentDirectoryFiles = (state: any) =>
-  state.app.currentDirectoryFiles;*/
-/*export const getCurrentDirectoryDirs = (state: any) =>
-  state.app.currentDirectoryDirs;*/
 export const getCurrentDirectoryColor = (state: any) =>
   state.app.currentDirectoryColor;
 export const getCurrentDirectoryDescription = (state: any) =>
   state.app.currentDirectoryDescription;
 export const getCurrentDirectoryTags = (state: any) =>
   state.app.currentDirectoryTags;
-/*export const getCurrentDirectoryPerspective = (state: any) =>
-  state.app.currentDirectoryPerspective;*/
-// export const getDirectoryPath = (state: any) => state.app.currentDirectoryPath;
 export const getProgress = (state: any) => state.app.progress;
-/*export const getCurrentLocationPath = (state: any) => {
-  if (state.locations) {
-    for (let i = 0; i < state.locations.length; i += 1) {
-      const location = state.locations[i];
-      if (
-        state.app.currentLocationId &&
-        location.uuid === state.app.currentLocationId
-      ) {
-        return PlatformIO.getLocationPath(location);
-      }
-    }
-  }
-  return undefined;
-};*/
-/*export const isPersistTagsInSidecarFile = (state: any): boolean => {
-  const locationPersistTagsInSidecarFile = getLocationPersistTagsInSidecarFile(
-    state
-  );
-  if (locationPersistTagsInSidecarFile !== undefined) {
-    return locationPersistTagsInSidecarFile;
-  }
-  if (AppConfig.useSidecarsForFileTaggingDisableSetting) {
-    return AppConfig.useSidecarsForFileTagging;
-  }
-  return state.settings.persistTagsInSidecarFile;
-};*/
-/*export const getLocationPersistTagsInSidecarFile = (state: any) => {
-  if (state.locations) {
-    for (let i = 0; i < state.locations.length; i += 1) {
-      const location = state.locations[i];
-      if (
-        state.app.currentLocationId &&
-        location.uuid === state.app.currentLocationId
-      ) {
-        return location.persistTagsInSidecarFile;
-      }
-    }
-  }
-  return undefined;
-};*/
 export const isUpdateAvailable = (state: any) => state.app.isUpdateAvailable;
 export const isUpdateInProgress = (state: any) => state.app.isUpdateInProgress;
 export const isOnline = (state: any) => state.app.isOnline;
