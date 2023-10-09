@@ -401,7 +401,7 @@ export const DirectoryContentContextProvider = ({
     fsEntryMeta?: TS.FileSystemEntryMeta
   ) {
     showNotification(t('core:loading'), 'info', false);
-    if (fsEntryMeta) {
+    /*if (fsEntryMeta) {
       directoryMeta.current = fsEntryMeta;
       isMetaLoaded.current = false; //generateThumbnails;
       if (fsEntryMeta.perspective) {
@@ -412,7 +412,7 @@ export const DirectoryContentContextProvider = ({
     } else {
       isMetaLoaded.current = false;
       currentPerspective.current = PerspectiveIDs.UNSPECIFIED;
-    }
+    }*/
     const resultsLimit = {
       maxLoops:
         currentLocation && currentLocation.maxLoops
@@ -422,12 +422,13 @@ export const DirectoryContentContextProvider = ({
     };
     PlatformIO.listDirectoryPromise(
       directoryPath,
-      fsEntryMeta &&
+      [],
+      /*fsEntryMeta &&
         fsEntryMeta.perspective &&
         (fsEntryMeta.perspective === PerspectiveIDs.KANBAN ||
           fsEntryMeta.perspective === PerspectiveIDs.GALLERY)
         ? [] //'extractThumbPath']
-        : [], // mode,
+        : [], // mode,*/
       currentLocation ? currentLocation.ignorePatternPaths : [],
       resultsLimit
     )
@@ -492,6 +493,18 @@ export const DirectoryContentContextProvider = ({
         ' contains ' +
         directoryContent.length
     );*/
+    if (dirEntryMeta) {
+      directoryMeta.current = dirEntryMeta;
+      isMetaLoaded.current = false; //generateThumbnails;
+      if (dirEntryMeta.perspective) {
+        currentPerspective.current = dirEntryMeta.perspective;
+      } else {
+        currentPerspective.current = PerspectiveIDs.UNSPECIFIED;
+      }
+    } else {
+      isMetaLoaded.current = false;
+      currentPerspective.current = PerspectiveIDs.UNSPECIFIED;
+    }
     loadDirectorySuccess(directoryPath, directoryContent, dirEntryMeta);
   }
 
@@ -632,10 +645,10 @@ export const DirectoryContentContextProvider = ({
     }
   }
 
-  const currentDirectoryPerspective: string = useMemo(
+  /*const currentDirectoryPerspective: string = useMemo(
     () => currentPerspective.current,
     [currentDirectoryPath.current, currentPerspective.current]
-  );
+  );*/
 
   function setCurrentDirectoryDirs(dirs: TS.OrderVisibilitySettings[]) {
     currentDirectoryDirs.current = dirs;
@@ -670,7 +683,7 @@ export const DirectoryContentContextProvider = ({
     return {
       currentDirectoryEntries: currentDirectoryEntries,
       directoryMeta: directoryMeta.current,
-      currentDirectoryPerspective,
+      currentDirectoryPerspective: currentPerspective.current,
       currentDirectoryPath: currentDirectoryPath.current,
       currentDirectoryFiles: currentDirectoryFiles.current,
       currentDirectoryDirs: currentDirectoryDirs.current,
@@ -696,8 +709,8 @@ export const DirectoryContentContextProvider = ({
     currentDirectoryEntries,
     currentDirectoryPath.current,
     directoryMeta.current,
+    currentPerspective.current,
     isMetaLoaded.current,
-    currentDirectoryPerspective,
     currentDirectoryFiles.current,
     currentDirectoryDirs.current,
     updateCurrentDirEntries

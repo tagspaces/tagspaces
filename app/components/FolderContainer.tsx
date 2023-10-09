@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -39,10 +39,8 @@ import {
   getSelectedEntries,
   getProgress,
   isSearchMode,
-  getLastSearchTimestamp,
-  OpenedEntry
+  getLastSearchTimestamp
 } from '../reducers/app';
-import LoadingLazy from '../components/LoadingLazy';
 import {
   GoBackIcon,
   GoForwardIcon,
@@ -57,108 +55,12 @@ import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
 // import LoadingAnimation from '-/components/LoadingAnimation';
 import SearchBox from '-/components/SearchBox';
-import useFirstRender from '-/utils/useFirstRender';
 import { useTranslation } from 'react-i18next';
-import { SortedDirContextProvider } from '-/perspectives/grid-perspective/hooks/SortedDirContextProvider';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { PaginationContextProvider } from '-/hooks/PaginationContextProvider';
-import { ThumbGenerationContextProvider } from '-/hooks/ThumbGenerationContextProvider';
-
-const GridPerspective = React.lazy(() =>
-  import(
-    /* webpackChunkName: "GridPerspective" */ '../perspectives/grid-perspective'
-  )
-);
-function GridPerspectiveAsync(props) {
-  return (
-    <React.Suspense fallback={<LoadingLazy />}>
-      <SortedDirContextProvider>
-        <PaginationContextProvider>
-          <ThumbGenerationContextProvider>
-            <GridPerspective {...props} />
-          </ThumbGenerationContextProvider>
-        </PaginationContextProvider>
-      </SortedDirContextProvider>
-    </React.Suspense>
-  );
-}
-
-const ListPerspective = React.lazy(() =>
-  import(/* webpackChunkName: "ListPerspective" */ '../perspectives/list')
-);
-function ListPerspectiveAsync(props) {
-  return (
-    <React.Suspense fallback={<LoadingLazy />}>
-      <SortedDirContextProvider>
-        <PaginationContextProvider>
-          <ThumbGenerationContextProvider>
-            <ListPerspective {...props} />
-          </ThumbGenerationContextProvider>
-        </PaginationContextProvider>
-      </SortedDirContextProvider>
-    </React.Suspense>
-  );
-}
-
-let GalleryPerspective = React.Fragment;
-if (Pro && Pro.Perspectives && Pro.Perspectives.GalleryPerspective) {
-  // GalleryPerspective = React.lazy(() => import(/* webpackChunkName: "GalleryPerspective" */ '../node_modules/@tagspaces/pro/modules/perspectives/gallery'));
-
-  GalleryPerspective = Pro.Perspectives.GalleryPerspective;
-}
-function GalleryPerspectiveAsync(props) {
-  return (
-    <React.Suspense fallback={<LoadingLazy />}>
-      <ThumbGenerationContextProvider>
-        <GalleryPerspective {...props} />
-      </ThumbGenerationContextProvider>
-    </React.Suspense>
-  );
-}
-
-let MapiquePerspective = React.Fragment;
-if (Pro && Pro.Perspectives && Pro.Perspectives.MapiquePerspective) {
-  // MapiquePerspective = React.lazy(() => import(/* webpackChunkName: "MapiquePerspective" */ '../node_modules/@tagspaces/pro/modules/perspectives/mapique'));
-  MapiquePerspective = Pro.Perspectives.MapiquePerspective;
-}
-function MapiquePerspectiveAsync(props) {
-  return (
-    <React.Suspense fallback={<LoadingLazy />}>
-      <ThumbGenerationContextProvider>
-        <MapiquePerspective {...props} />
-      </ThumbGenerationContextProvider>
-    </React.Suspense>
-  );
-}
-
-let KanBanPerspective = React.Fragment;
-if (Pro && Pro.Perspectives && Pro.Perspectives.KanBanPerspective) {
-  KanBanPerspective = Pro.Perspectives.KanBanPerspective;
-}
-function KanBanPerspectiveAsync(props) {
-  return (
-    <React.Suspense fallback={<LoadingLazy />}>
-      <ThumbGenerationContextProvider>
-        <KanBanPerspective {...props} />
-      </ThumbGenerationContextProvider>
-    </React.Suspense>
-  );
-}
-
-const WelcomePanel = React.lazy(() =>
-  import(/* webpackChunkName: "WelcomePanel" */ './WelcomePanel')
-);
-function WelcomePanelAsync(props) {
-  return (
-    <React.Suspense fallback={<LoadingLazy />}>
-      <WelcomePanel {...props} />
-    </React.Suspense>
-  );
-}
+import RenderPerspective from '-/components/RenderPerspective';
 
 interface Props {
-  settings: any;
   reflectCreateEntry: (path: string, isFile: boolean) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   isDesktopMode: boolean;
@@ -199,8 +101,7 @@ function FolderContainer(props: Props) {
     currentDirectoryEntries,
     currentDirectoryPath,
     currentDirectoryPerspective,
-    setCurrentDirectoryPerspective,
-    loadParentDirectoryContent
+    setCurrentDirectoryPerspective
   } = useDirectoryContentContext();
 
   /**
@@ -223,7 +124,7 @@ function FolderContainer(props: Props) {
     }
   }, [props.editedEntryPaths]);*/
 
-  const [isRenameEntryDialogOpened, setIsRenameEntryDialogOpened] = useState<
+  const [isRenameEntryDialogOpened, setRenameEntryDialogOpened] = useState<
     boolean
   >(false);
 
@@ -240,53 +141,9 @@ function FolderContainer(props: Props) {
     !(props.isSearchMode && props.lastSearchTimestamp);
 
   const openRenameEntryDialog = useCallback(
-    () => setIsRenameEntryDialogOpened(true),
+    () => setRenameEntryDialogOpened(true),
     []
   );
-
-  const renderPerspective = () => {
-    if (showWelcomePanel) {
-      return AppConfig.showWelcomePanel ? <WelcomePanelAsync /> : null;
-    }
-    if (currentPerspective === PerspectiveIDs.LIST) {
-      return (
-        <ListPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />
-      );
-    }
-    if (Pro && currentPerspective === PerspectiveIDs.GALLERY) {
-      return (
-        <GalleryPerspectiveAsync
-          directoryContent={currentDirectoryEntries}
-          lastSearchTimestamp={props.lastSearchTimestamp}
-          switchPerspective={switchPerspective}
-        />
-      );
-    }
-    if (Pro && currentPerspective === PerspectiveIDs.MAPIQUE) {
-      return (
-        <MapiquePerspectiveAsync
-          directoryContent={currentDirectoryEntries}
-          lastSearchTimestamp={props.lastSearchTimestamp}
-          switchPerspective={switchPerspective}
-        />
-      );
-    }
-    if (Pro && currentPerspective === PerspectiveIDs.KANBAN) {
-      return (
-        <KanBanPerspectiveAsync
-          directoryContent={currentDirectoryEntries}
-          lastSearchTimestamp={props.lastSearchTimestamp}
-          openRenameEntryDialog={openRenameEntryDialog}
-          loadParentDirectoryContent={loadParentDirectoryContent}
-          switchPerspective={switchPerspective}
-        />
-      );
-    }
-
-    return (
-      <GridPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />
-    );
-  };
 
   function CircularProgressWithLabel(prop) {
     return (
@@ -496,9 +353,7 @@ function FolderContainer(props: Props) {
               setSelectedEntries={setSelectedEntries}
               reflectCreateEntry={reflectCreateEntry}
               isDesktopMode={isDesktopMode}
-              openRenameDirectoryDialog={() =>
-                setIsRenameEntryDialogOpened(true)
-              }
+              openRenameDirectoryDialog={() => setRenameEntryDialogOpened(true)}
               openMoveCopyFilesDialog={props.openMoveCopyFilesDialog}
             />
           </>
@@ -511,11 +366,11 @@ function FolderContainer(props: Props) {
         }}
       >
         {/*<LoadingAnimation />*/}
-        {renderPerspective()}
+        <RenderPerspective openRenameEntryDialog={openRenameEntryDialog} />
         {isRenameEntryDialogOpened && (
           <RenameEntryDialog
             open={isRenameEntryDialogOpened}
-            onClose={() => setIsRenameEntryDialogOpened(false)}
+            onClose={() => setRenameEntryDialogOpened(false)}
           />
         )}
       </div>
@@ -545,7 +400,6 @@ function FolderContainer(props: Props) {
 
 function mapStateToProps(state) {
   return {
-    settings: state.settings,
     selectedEntries: getSelectedEntries(state),
     maxSearchResults: getMaxSearchResults(state),
     isDesktopMode: getDesktopMode(state),
@@ -571,7 +425,6 @@ function mapActionCreatorsToProps(dispatch) {
 }
 
 const areEqual = (prevProp: Props, nextProp: Props) =>
-  nextProp.settings.currentTheme === prevProp.settings.currentTheme &&
   nextProp.drawerOpened === prevProp.drawerOpened &&
   nextProp.isDesktopMode === prevProp.isDesktopMode &&
   /* this props is set before currentDirectoryEntries is loaded and will reload FolderContainer */
