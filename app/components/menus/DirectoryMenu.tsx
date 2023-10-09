@@ -90,7 +90,8 @@ function DirectoryMenu(props: Props) {
     openAddRemoveTagsDialog,
     openMoveCopyFilesDialog,
     openRenameDirectoryDialog,
-    switchPerspective
+    switchPerspective,
+    perspectiveMode
   } = props;
   const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
     getSelectedEntries
@@ -407,7 +408,7 @@ Do you want to continue?`)
   const menuItems = getDirectoryMenuItems(
     currentLocation,
     selectedEntries.length,
-    lastSelectedEntryPath !== currentDirectoryPath,
+    perspectiveMode, // lastSelectedEntryPath !== currentDirectoryPath,
     readOnlyMode,
     onClose,
     t,
