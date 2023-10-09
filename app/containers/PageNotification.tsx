@@ -53,8 +53,9 @@ const TSNotification = styled(Snackbar)(({ theme }) => {
 function PageNotification() {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
-  const { isGeneratingThumbs, setGeneratingThumbs } = useNotificationContext();
   const {
+    isGeneratingThumbs,
+    setGeneratingThumbs,
     notificationStatus,
     showNotification,
     hideNotifications

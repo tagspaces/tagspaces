@@ -42,7 +42,8 @@ import {
   extractParentDirectoryPath,
   getMetaFileLocationForDir,
   getThumbFileLocationForDirectory,
-  normalizePath
+  normalizePath,
+  getMetaDirectoryPath
 } from '@tagspaces/tagspaces-common/paths';
 import PlatformIO from '-/services/platform-facade';
 import {
@@ -79,9 +80,13 @@ type DirectoryContentContextData = {
    * used for reorder dirs in KanBan
    */
   currentDirectoryDirs: TS.OrderVisibilitySettings[];
-  isMetaLoaded: boolean;
+  //isMetaLoaded: boolean;
+  isMetaFolderExist: boolean;
   loadParentDirectoryContent: () => void;
-  loadDirectoryContent: (directoryPath: string, loadDirMeta?: boolean) => void;
+  loadDirectoryContent: (
+    directoryPath: string,
+    loadDirMeta?: boolean
+  ) => Promise<boolean>;
   enhanceDirectoryContent: (
     dirEntries,
     isCloudLocation,
@@ -113,9 +118,10 @@ export const DirectoryContentContext = createContext<
   currentDirectoryPath: undefined,
   currentDirectoryFiles: [],
   currentDirectoryDirs: [],
-  isMetaLoaded: false,
+  //isMetaLoaded: undefined,
+  isMetaFolderExist: false,
   loadParentDirectoryContent: () => {},
-  loadDirectoryContent: () => {},
+  loadDirectoryContent: () => Promise.resolve(false),
   enhanceDirectoryContent: () => {},
   openCurrentDirectory: () => {},
   clearDirectoryContent: () => {},
@@ -154,8 +160,10 @@ export const DirectoryContentContextProvider = ({
   /**
    * isMetaLoaded boolean if thumbs and description from meta are loaded
    * is using why directoryMeta can be loaded but empty
+   * undefined means no .ts folder exist
    */
-  const isMetaLoaded = useRef<boolean>(false);
+  const isMetaLoaded = useRef<boolean>(undefined);
+  const isMetaFolderExist = useRef<boolean>(undefined);
   const currentDirectoryPath = useRef<string>(undefined);
   const currentPerspective = useRef<string>(PerspectiveIDs.UNSPECIFIED);
   const currentDirectoryFiles = useRef<TS.OrderVisibilitySettings[]>([]);
@@ -365,7 +373,10 @@ export const DirectoryContentContextProvider = ({
     });
   };
 
-  function loadDirectoryContent(directoryPath: string, loadDirMeta = false) {
+  function loadDirectoryContent(
+    directoryPath: string,
+    loadDirMeta = false
+  ): Promise<boolean> {
     // console.debug('loadDirectoryContent:' + directoryPath);
     window.walkCanceled = false;
 
@@ -375,44 +386,46 @@ export const DirectoryContentContextProvider = ({
       dispatch(AppActions.setSelectedEntries([]));
     }
     if (loadDirMeta) {
-      const metaFilePath = getMetaFileLocationForDir(
-        directoryPath,
-        PlatformIO.getDirSeparator()
-      );
-      loadJSONFile(metaFilePath)
-        .then(fsEntryMeta =>
-          loadDirectoryContentInt(
+      const metaDirectory = getMetaDirectoryPath(directoryPath);
+      return PlatformIO.checkDirExist(metaDirectory).then(exist => {
+        if (exist) {
+          isMetaFolderExist.current = true;
+          const metaFilePath = getMetaFileLocationForDir(
             directoryPath,
-            fsEntryMeta
-            // description: getDescriptionPreview(fsEntryMeta.description, 200)
-          )
-        )
-        .catch(err => {
-          console.debug('Error loading meta of:' + directoryPath + ' ' + err);
-          loadDirectoryContentInt(directoryPath);
-        });
+            PlatformIO.getDirSeparator()
+          );
+          return loadJSONFile(metaFilePath)
+            .then(fsEntryMeta => {
+              isMetaLoaded.current = true;
+              return loadDirectoryContentInt(
+                directoryPath,
+                fsEntryMeta
+                // description: getDescriptionPreview(fsEntryMeta.description, 200)
+              );
+            })
+            .catch(err => {
+              console.debug(
+                'Error loading meta of:' + directoryPath + ' ' + err
+              );
+              isMetaLoaded.current = false;
+              return loadDirectoryContentInt(directoryPath);
+            });
+        } else {
+          isMetaFolderExist.current = false;
+          return loadDirectoryContentInt(directoryPath);
+        }
+      });
     } else {
-      loadDirectoryContentInt(directoryPath);
+      isMetaLoaded.current = false;
+      return loadDirectoryContentInt(directoryPath);
     }
   }
 
   function loadDirectoryContentInt(
     directoryPath: string,
     fsEntryMeta?: TS.FileSystemEntryMeta
-  ) {
+  ): Promise<boolean> {
     showNotification(t('core:loading'), 'info', false);
-    /*if (fsEntryMeta) {
-      directoryMeta.current = fsEntryMeta;
-      isMetaLoaded.current = false; //generateThumbnails;
-      if (fsEntryMeta.perspective) {
-        currentPerspective.current = fsEntryMeta.perspective;
-      } else {
-        currentPerspective.current = PerspectiveIDs.UNSPECIFIED;
-      }
-    } else {
-      isMetaLoaded.current = false;
-      currentPerspective.current = PerspectiveIDs.UNSPECIFIED;
-    }*/
     const resultsLimit = {
       maxLoops:
         currentLocation && currentLocation.maxLoops
@@ -420,7 +433,7 @@ export const DirectoryContentContextProvider = ({
           : AppConfig.maxLoops,
       IsTruncated: false
     };
-    PlatformIO.listDirectoryPromise(
+    return PlatformIO.listDirectoryPromise(
       directoryPath,
       [],
       /*fsEntryMeta &&
@@ -440,7 +453,7 @@ export const DirectoryContentContextProvider = ({
         updateHistory(currentLocation, directoryPath);
         if (results !== undefined) {
           // console.debug('app listDirectoryPromise resolved:' + results.length);
-          prepareDirectoryContent(directoryPath, results, fsEntryMeta);
+          return loadDirectorySuccess(directoryPath, results, fsEntryMeta);
         }
         /*dispatch(
           AppActions.updateCurrentDirectoryPerspective(
@@ -451,7 +464,7 @@ export const DirectoryContentContextProvider = ({
       })
       .catch(error => {
         // console.timeEnd('listDirectoryPromise');
-        loadDirectoryFailure(error);
+        return loadDirectoryFailure(error);
         /*dispatch(
           AppActions.updateCurrentDirectoryPerspective(
             fsEntryMeta ? fsEntryMeta.perspective : undefined
@@ -473,63 +486,39 @@ export const DirectoryContentContextProvider = ({
     }
   }
 
-  function prepareDirectoryContent(
+  function loadDirectorySuccess(
     directoryPath: string,
-    dirEntries,
-    dirEntryMeta
-  ) {
-    const isCloudLocation =
-      currentLocation && currentLocation.type === locationType.TYPE_CLOUD;
+    dirEntries: TS.FileSystemEntry[],
+    dirMeta?: TS.FileSystemEntryMeta
+  ): boolean {
+    hideNotifications(['error']);
 
-    const directoryContent = enhanceDirectoryContent(
-      dirEntries,
-      isCloudLocation,
-      true
-    );
-
-    /*console.log(
-      'Dir ' +
-        currentDirectoryPath.current +
-        ' contains ' +
-        directoryContent.length
-    );*/
-    if (dirEntryMeta) {
-      directoryMeta.current = dirEntryMeta;
-      isMetaLoaded.current = false; //generateThumbnails;
-      if (dirEntryMeta.perspective) {
-        currentPerspective.current = dirEntryMeta.perspective;
+    if (dirMeta) {
+      directoryMeta.current = dirMeta;
+      if (dirMeta.perspective) {
+        currentPerspective.current = dirMeta.perspective;
       } else {
         currentPerspective.current = PerspectiveIDs.UNSPECIFIED;
       }
+      if (dirMeta.customOrder) {
+        if (dirMeta.customOrder.files) {
+          currentDirectoryFiles.current = dirMeta.customOrder.files;
+        }
+        if (dirMeta.customOrder.folders) {
+          currentDirectoryDirs.current = dirMeta.customOrder.folders;
+        }
+      }
     } else {
-      isMetaLoaded.current = false;
       currentPerspective.current = PerspectiveIDs.UNSPECIFIED;
     }
-    loadDirectorySuccess(directoryPath, directoryContent, dirEntryMeta);
-  }
+    const directoryContent = enhanceDirectoryContent(
+      dirEntries,
+      currentLocation && currentLocation.type === locationType.TYPE_CLOUD,
+      true
+    );
 
-  function loadDirectorySuccess(
-    directoryPath: string,
-    directoryContent: TS.FileSystemEntry[],
-    directoryMeta?: TS.FileSystemEntryMeta
-  ) {
-    hideNotifications(['error']);
-
-    if (
-      directoryMeta &&
-      directoryMeta.customOrder &&
-      directoryMeta.customOrder.files
-    ) {
-      currentDirectoryFiles.current = directoryMeta.customOrder.files;
-    }
-    if (
-      directoryMeta &&
-      directoryMeta.customOrder &&
-      directoryMeta.customOrder.folders
-    ) {
-      currentDirectoryDirs.current = directoryMeta.customOrder.folders;
-    }
     setCurrentDirectoryEntries(directoryContent);
+
     if (
       currentDirectoryPath.current &&
       currentDirectoryPath.current.startsWith('./')
@@ -541,9 +530,10 @@ export const DirectoryContentContextProvider = ({
     } else {
       currentDirectoryPath.current = directoryPath;
     }
+    return true;
   }
 
-  function loadDirectoryFailure(error?: any) {
+  function loadDirectoryFailure(error?: any): boolean {
     console.error('Error loading directory: ', error);
     //hideNotifications();
 
@@ -553,6 +543,7 @@ export const DirectoryContentContextProvider = ({
       false
     );
     closeAllLocations();
+    return false;
   }
 
   function setCurrentDirectoryColor(color: string) {
@@ -660,7 +651,7 @@ export const DirectoryContentContextProvider = ({
 
   function setDirectoryMeta(meta: TS.FileSystemEntryMeta) {
     directoryMeta.current = meta;
-    //isMetaLoaded.current = true;
+    isMetaLoaded.current = true;
   }
 
   function watchForChanges(location?: TS.Location) {
@@ -687,7 +678,7 @@ export const DirectoryContentContextProvider = ({
       currentDirectoryPath: currentDirectoryPath.current,
       currentDirectoryFiles: currentDirectoryFiles.current,
       currentDirectoryDirs: currentDirectoryDirs.current,
-      isMetaLoaded: isMetaLoaded.current,
+      isMetaFolderExist: isMetaFolderExist.current,
       loadDirectoryContent,
       loadParentDirectoryContent,
       enhanceDirectoryContent,
@@ -710,7 +701,7 @@ export const DirectoryContentContextProvider = ({
     currentDirectoryPath.current,
     directoryMeta.current,
     currentPerspective.current,
-    isMetaLoaded.current,
+    isMetaFolderExist.current,
     currentDirectoryFiles.current,
     currentDirectoryDirs.current,
     updateCurrentDirEntries

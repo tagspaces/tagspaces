@@ -16,7 +16,13 @@
  *
  */
 
-import React, { createContext, useEffect, useMemo, useState } from 'react';
+import React, {
+  createContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import { useSelector } from 'react-redux';
 import {
   getEnableWS,
@@ -59,14 +65,21 @@ export const ThumbGenerationContextProvider = ({
 }: ThumbGenerationContextProviderProps) => {
   const {
     currentDirectoryPath,
-    currentDirectoryEntries
+    currentDirectoryEntries,
+    isMetaFolderExist
   } = useDirectoryContentContext();
   const { currentLocation } = useCurrentLocationContext();
+  const { pageFiles, getThumbs, updateEntries } = usePaginationContext();
   const { setGeneratingThumbs } = useNotificationContext();
   const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);
-  const { pageFiles } = usePaginationContext();
   const enableWS = useSelector(getEnableWS);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
+  const isGeneratingThumbs = useRef(false);
+
+  function setGenThumbs(isGen: boolean) {
+    isGeneratingThumbs.current = isGen;
+    setGeneratingThumbs(isGen);
+  }
 
   const entries =
     pageFiles && pageFiles.length > 0 ? pageFiles : currentDirectoryEntries;
@@ -88,10 +101,29 @@ export const ThumbGenerationContextProvider = ({
   ];
 
   useEffect(() => {
-    if (entries && entries.length > 0 && genThumbnailsEnabled()) {
-      generateThumbnails(entries);
+    if (
+      entries &&
+      entries.length > 0 &&
+      genThumbnailsEnabled() &&
+      isGeneratingThumbs.current === false
+    ) {
+      generateThumbnails(entries).then(() => {
+        if (!isMetaFolderExist) {
+          // initial thumbnail generation without .ts folder
+          PlatformIO.listMetaDirectoryPromise(currentDirectoryPath)
+            .then(meta => {
+              const thumbs = getThumbs(meta);
+              return updateEntries(thumbs);
+            })
+            .catch(ex => {
+              console.error(ex);
+              return false;
+            });
+        }
+        return true;
+      });
     }
-  }, [entries, currentDirectoryPath]);
+  }, [currentDirectoryPath, isMetaFolderExist]);
 
   function genThumbnailsEnabled(): boolean {
     if (
@@ -114,14 +146,16 @@ export const ThumbGenerationContextProvider = ({
     return useGenerateThumbnails;
   }
 
-  function generateThumbnails(dirEntries: TS.FileSystemEntry[]) {
+  function generateThumbnails(
+    dirEntries: TS.FileSystemEntry[]
+  ): Promise<boolean> {
     if (
       AppConfig.isWeb || // not in web mode
       PlatformIO.haveObjectStoreSupport() || // not in object store mode
       PlatformIO.haveWebDavSupport() // not in webdav mode
       // genThumbnails() // enabled in the settings
     ) {
-      return false;
+      return Promise.resolve(false);
     }
 
     const isWorkerAvailable = enableWS && PlatformIO.isWorkerAvailable();
@@ -151,28 +185,33 @@ export const ThumbGenerationContextProvider = ({
     });
 
     if (workerEntries.length > 0) {
-      setGeneratingThumbs(true);
-      PlatformIO.createThumbnailsInWorker(workerEntries)
+      setGenThumbs(true);
+      return PlatformIO.createThumbnailsInWorker(workerEntries)
         .then(() =>
           thumbnailMainGeneration(mainEntries).then(() => {
-            setGeneratingThumbs(false);
+            setGenThumbs(false);
+            return true;
           })
         )
         .catch(e => {
           // WS error handle let process thumbgeneration in Main process Generator
           console.error('createThumbnailsInWorker', e);
-          thumbnailMainGeneration([...workerEntries, ...mainEntries]).then(
-            () => {
-              setGeneratingThumbs(false);
-            }
-          );
+          return thumbnailMainGeneration([
+            ...workerEntries,
+            ...mainEntries
+          ]).then(() => {
+            setGenThumbs(false);
+            return true;
+          });
         });
     } else if (mainEntries.length > 0) {
-      setGeneratingThumbs(true);
-      thumbnailMainGeneration(mainEntries).then(() => {
-        setGeneratingThumbs(false);
+      setGenThumbs(true);
+      return thumbnailMainGeneration(mainEntries).then(() => {
+        setGenThumbs(false);
+        return true;
       });
     }
+    return Promise.resolve(false);
   }
 
   function thumbnailMainGeneration(mainEntries: string[]): Promise<boolean> {

@@ -44,6 +44,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { usePaginationContext } from '-/hooks/usePaginationContext';
 
 interface Props {
   location: TS.Location;
@@ -65,6 +66,7 @@ function LocationView(props: Props) {
     locationDirectoryContextMenuAnchorEl,
     setLocationDirectoryContextMenuAnchorEl
   } = useCurrentLocationContext();
+  const { loadCurrentDirMeta } = usePaginationContext();
   const { showNotification } = useNotificationContext();
   const directoryTreeRef = useRef<DirectoryTreeViewRef>(null);
   /*  const [
@@ -96,7 +98,13 @@ function LocationView(props: Props) {
     if (currentLocation && location.uuid === currentLocation.uuid) {
       // the same location click
 
-      loadDirectoryContent(PlatformIO.getLocationPath(location));
+      loadDirectoryContent(PlatformIO.getLocationPath(location), true).then(
+        success => {
+          if (success) {
+            return loadCurrentDirMeta();
+          }
+        }
+      );
       /*if (genThumbnailsEnabled()) { // TODO Gen Thumbs after click on the same location
         generateThumbnails(entries);
       }*/

@@ -38,12 +38,18 @@ type PaginationContextData = {
   page: number;
   pageFiles: TS.FileSystemEntry[];
   setCurrentPage: (page: number) => Promise<boolean>;
+  getThumbs: (meta: Array<any>) => Promise<TS.FileSystemEntry>[];
+  updateEntries: (meta: Promise<TS.FileSystemEntry>[]) => Promise<boolean>;
+  loadCurrentDirMeta: () => Promise<boolean>;
 };
 
 export const PaginationContext = createContext<PaginationContextData>({
   page: 1,
   pageFiles: [],
-  setCurrentPage: () => Promise.resolve(false)
+  setCurrentPage: () => Promise.resolve(false),
+  getThumbs: () => [],
+  updateEntries: () => Promise.resolve(false),
+  loadCurrentDirMeta: () => Promise.resolve(false)
 });
 
 export type PaginationContextProviderProps = {
@@ -60,7 +66,7 @@ export const PaginationContextProvider = ({
     updateCurrentDirEntries,
     getEnhancedDir,
     currentDirectoryPerspective,
-    isMetaLoaded
+    isMetaFolderExist
   } = useDirectoryContentContext();
   const lastSearchTimestamp = useSelector(getLastSearchTimestamp);
   const { getSettings, sortedDirContent } = useSortedDirContext();
@@ -74,8 +80,10 @@ export const PaginationContextProvider = ({
     if (page !== initPage) {
       setPage(initPage);
     }
-    loadCurrentDirMeta().then(() => console.debug('meta loaded'));
-  }, [currentDirectoryPath, lastSearchTimestamp]);
+    if (isMetaFolderExist) {
+      loadCurrentDirMeta().then(() => console.debug('meta loaded'));
+    }
+  }, [currentDirectoryPath, lastSearchTimestamp, isMetaFolderExist]);
 
   const pageFiles: TS.FileSystemEntry[] = useMemo(() => {
     const settings = getSettings(currentDirectoryPerspective);
@@ -101,7 +109,7 @@ export const PaginationContextProvider = ({
     return loadCurrentDirMeta();
   }
 
-  function loadCurrentDirMeta() {
+  function loadCurrentDirMeta(): Promise<boolean> {
     return PlatformIO.listMetaDirectoryPromise(currentDirectoryPath)
       .then(meta => {
         //metaLoadedLock.current = false;
@@ -222,9 +230,12 @@ export const PaginationContextProvider = ({
     return {
       page,
       pageFiles,
-      setCurrentPage
+      setCurrentPage,
+      getThumbs,
+      updateEntries,
+      loadCurrentDirMeta
     };
-  }, [page, pageFiles]);
+  }, [page, pageFiles, currentDirectoryPath]);
 
   return (
     <PaginationContext.Provider value={context}>

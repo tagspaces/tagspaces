@@ -18,11 +18,7 @@
 
 import React, { createContext, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import {
-  getEditedEntryPaths,
-  getLastSearchTimestamp,
-  getSearchFilter
-} from '-/reducers/app';
+import { getLastSearchTimestamp, getSearchFilter } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import GlobalSearch from '-/services/search-index';
 import { sortByCriteria } from '@tagspaces/tagspaces-common/misc';
@@ -43,8 +39,8 @@ type SortedDirContextData = {
 export const SortedDirContext = createContext<SortedDirContextData>({
   sortedDirContent: undefined,
   getSettings: () => undefined,
-  sortBy: defaultSettings.sortBy,
-  orderBy: defaultSettings.orderBy,
+  sortBy: undefined,
+  orderBy: undefined,
   setSortBy: () => {},
   setOrderBy: () => {}
 });
