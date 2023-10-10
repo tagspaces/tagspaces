@@ -59,9 +59,6 @@ export const SortedDirContextProvider = ({
   } = useDirectoryContentContext();
   const lastSearchTimestamp = useSelector(getLastSearchTimestamp);
   const searchFilter: string = useSelector(getSearchFilter);
-  /*const editedEntryPaths: Array<TS.EditedEntryPath> = useSelector(
-    getEditedEntryPaths
-  );*/
 
   const settings: TS.FolderSettings = useMemo(() => {
     return getSettings(directoryMeta, currentDirectoryPerspective);
@@ -131,7 +128,7 @@ export const SortedDirContextProvider = ({
       }
     }
     // not in search mode
-    return sortByCriteria(currentDirectoryEntries, sortBy, orderBy);
+    return sortByCriteria(currentDirectoryEntries, sortBy, orderBy).map(o => o);
   }, [
     currentDirectoryEntries,
     lastSearchTimestamp,
@@ -149,13 +146,7 @@ export const SortedDirContextProvider = ({
       setSortBy,
       setOrderBy
     };
-  }, [
-    sortedDirContent,
-    directoryMeta,
-    currentDirectoryPerspective,
-    settings
-    // editedEntryPaths,
-  ]);
+  }, [sortedDirContent, settings, sortBy, orderBy]);
 
   return (
     <SortedDirContext.Provider value={context}>

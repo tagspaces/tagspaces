@@ -17,22 +17,12 @@
  */
 
 import React, { createContext, useEffect, useMemo, useState } from 'react';
-import {
-  getMetaFileLocationForDir,
-  getMetaFileLocationForFile,
-  getThumbFileLocationForDirectory,
-  getThumbFileLocationForFile
-} from '@tagspaces/tagspaces-common/paths';
-import { getMetaForEntry } from '-/services/utils-io';
-import PlatformIO from '-/services/platform-facade';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { defaultSettings } from '-/perspectives/grid-perspective';
 import { useSortedDirContext } from '-/perspectives/grid-perspective/hooks/useSortedDirContext';
 import { TS } from '-/tagspaces.namespace';
-import AppConfig from '-/AppConfig';
 import { useSelector } from 'react-redux';
 import { getLastSearchTimestamp } from '-/reducers/app';
-import useFirstRender from '-/utils/useFirstRender';
 import { useMetaLoaderContext } from '-/hooks/useMetaLoaderContext';
 
 type PaginationContextData = {
@@ -106,7 +96,7 @@ export const PaginationContextProvider = ({
       pageFiles,
       setCurrentPage
     };
-  }, [page, pageFiles, currentDirectoryPath, settings]);
+  }, [page, pageFiles, currentDirectoryPath]);
 
   return (
     <PaginationContext.Provider value={context}>
