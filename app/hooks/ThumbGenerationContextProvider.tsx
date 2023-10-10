@@ -45,6 +45,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useMetaLoaderContext } from '-/hooks/useMetaLoaderContext';
 
 type ThumbGenerationContextData = {
   generateThumbnails: (dirEntries: TS.FileSystemEntry[]) => void;
@@ -69,7 +70,8 @@ export const ThumbGenerationContextProvider = ({
     isMetaFolderExist
   } = useDirectoryContentContext();
   const { currentLocation } = useCurrentLocationContext();
-  const { pageFiles, getThumbs, updateEntries } = usePaginationContext();
+  const { pageFiles } = usePaginationContext();
+  const { loadCurrentDirMeta } = useMetaLoaderContext();
   const { setGeneratingThumbs } = useNotificationContext();
   const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);
   const enableWS = useSelector(getEnableWS);
@@ -110,7 +112,10 @@ export const ThumbGenerationContextProvider = ({
       generateThumbnails(entries).then(() => {
         if (!isMetaFolderExist) {
           // initial thumbnail generation without .ts folder
-          PlatformIO.listMetaDirectoryPromise(currentDirectoryPath)
+          loadCurrentDirMeta(pageFiles).then(() =>
+            console.debug('meta loaded')
+          );
+          /*PlatformIO.listMetaDirectoryPromise(currentDirectoryPath)
             .then(meta => {
               const thumbs = getThumbs(meta);
               return updateEntries(thumbs);
@@ -118,7 +123,7 @@ export const ThumbGenerationContextProvider = ({
             .catch(ex => {
               console.error(ex);
               return false;
-            });
+            });*/
         }
         return true;
       });

@@ -51,6 +51,7 @@ import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 
 interface Props {
   open: boolean;
@@ -76,9 +77,9 @@ function DirectoryMenu(props: Props) {
   const { showNotification } = useNotificationContext();
   const {
     loadDirectoryContent,
-    currentDirectoryPath,
     setCurrentDirectoryPerspective
   } = useDirectoryContentContext();
+  const { reloadDirectory } = useIOActionsContext();
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
   const {
     open,
@@ -97,7 +98,6 @@ function DirectoryMenu(props: Props) {
     getSelectedEntries
   );
   const locations: Array<TS.Location> = useSelector(getLocations);
-  const lastSelectedEntryPath = useSelector(getLastSelectedEntryPath);
   const dispatch: AppDispatch = useDispatch();
 
   const toggleCreateDirectoryDialog = () => {
@@ -158,10 +158,6 @@ function DirectoryMenu(props: Props) {
     isCreateDirectoryDialogOpened,
     setIsCreateDirectoryDialogOpened
   ] = useState(false);*/
-
-  function reloadDirectory() {
-    return loadDirectoryContent(currentDirectoryPath, true);
-  }
 
   function openDirectory() {
     return loadDirectoryContent(directoryPath, true);

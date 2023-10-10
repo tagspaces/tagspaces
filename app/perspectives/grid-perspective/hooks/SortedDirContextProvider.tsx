@@ -29,7 +29,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 type SortedDirContextData = {
   sortedDirContent: TS.FileSystemEntry[];
-  getSettings: (perspective?: string) => TS.FolderSettings;
+  settings: TS.FolderSettings;
   sortBy: string;
   orderBy: null | boolean;
   setSortBy: (sort: string) => void;
@@ -38,7 +38,7 @@ type SortedDirContextData = {
 
 export const SortedDirContext = createContext<SortedDirContextData>({
   sortedDirContent: undefined,
-  getSettings: () => undefined,
+  settings: undefined,
   sortBy: undefined,
   orderBy: undefined,
   setSortBy: () => {},
@@ -54,14 +54,19 @@ export const SortedDirContextProvider = ({
 }: SortedDirContextProviderProps) => {
   const {
     currentDirectoryEntries,
-    directoryMeta
+    directoryMeta,
+    currentDirectoryPerspective
   } = useDirectoryContentContext();
   const lastSearchTimestamp = useSelector(getLastSearchTimestamp);
   const searchFilter: string = useSelector(getSearchFilter);
   /*const editedEntryPaths: Array<TS.EditedEntryPath> = useSelector(
     getEditedEntryPaths
   );*/
-  const settings = getSettings();
+
+  const settings: TS.FolderSettings = useMemo(() => {
+    return getSettings(directoryMeta, currentDirectoryPerspective);
+  }, [directoryMeta, currentDirectoryPerspective]);
+
   const [sortBy, setSortBy] = useState<string>(
     settings && settings.sortBy ? settings.sortBy : defaultSettings.sortBy
   );
@@ -71,14 +76,20 @@ export const SortedDirContextProvider = ({
       : defaultSettings.orderBy
   );
 
-  function getSettings(perspective = PerspectiveIDs.GRID): TS.FolderSettings {
+  function getSettings(
+    meta,
+    perspective = PerspectiveIDs.GRID
+  ): TS.FolderSettings {
+    if (perspective === PerspectiveIDs.UNSPECIFIED) {
+      perspective = PerspectiveIDs.GRID;
+    }
     if (
       Pro &&
-      directoryMeta &&
-      directoryMeta.perspectiveSettings &&
-      directoryMeta.perspectiveSettings[perspective]
+      meta &&
+      meta.perspectiveSettings &&
+      meta.perspectiveSettings[perspective]
     ) {
-      return directoryMeta.perspectiveSettings[perspective];
+      return meta.perspectiveSettings[perspective];
     } else {
       // loading settings for not Pro
       return JSON.parse(localStorage.getItem(defaultSettings.settingsKey));
@@ -132,7 +143,7 @@ export const SortedDirContextProvider = ({
   const context = useMemo(() => {
     return {
       sortedDirContent,
-      getSettings,
+      settings,
       sortBy,
       orderBy,
       setSortBy,
@@ -140,7 +151,9 @@ export const SortedDirContextProvider = ({
     };
   }, [
     sortedDirContent,
-    directoryMeta
+    directoryMeta,
+    currentDirectoryPerspective,
+    settings
     // editedEntryPaths,
   ]);
 

@@ -36,6 +36,7 @@ import { CurrentLocationContextProvider } from '-/hooks/CurrentLocationContextPr
 import { NotificationContextProvider } from '-/hooks/NotificationContextProvider';
 import { IOActionsContextProvider } from '-/hooks/IOActionsContextProvider';
 import { TaggingActionsContextProvider } from '-/hooks/TaggingActionsContextProvider';
+import { MetaLoaderContextProvider } from '-/hooks/MetaLoaderContextProvider';
 
 type RootType = {
   store: Store<{}>;
@@ -58,15 +59,17 @@ export default function Root({ store, persistor }: RootType) {
       <NotificationContextProvider>
         <CurrentLocationContextProvider>
           <DirectoryContentContextProvider>
-            <OpenedEntryContextProvider>
-              <FsActionsContextProvider>
-                <IOActionsContextProvider>
-                  <TaggingActionsContextProvider>
-                    <MainPage />
-                  </TaggingActionsContextProvider>
-                </IOActionsContextProvider>
-              </FsActionsContextProvider>
-            </OpenedEntryContextProvider>
+            <MetaLoaderContextProvider>
+              <OpenedEntryContextProvider>
+                <FsActionsContextProvider>
+                  <IOActionsContextProvider>
+                    <TaggingActionsContextProvider>
+                      <MainPage />
+                    </TaggingActionsContextProvider>
+                  </IOActionsContextProvider>
+                </FsActionsContextProvider>
+              </OpenedEntryContextProvider>
+            </MetaLoaderContextProvider>
           </DirectoryContentContextProvider>
         </CurrentLocationContextProvider>
       </NotificationContextProvider>

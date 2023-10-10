@@ -49,6 +49,7 @@ import {
   enhanceEntry,
   loadJSONString
 } from '@tagspaces/tagspaces-common/utils-io';
+import { useMetaLoaderContext } from '-/hooks/useMetaLoaderContext';
 
 type extractOptions = {
   EXIFGeo?: boolean;
@@ -95,6 +96,7 @@ type IOActionsContextData = {
     onUploadProgress?: (progress: Progress, abort, fileName?) => void,
     uploadMeta?: boolean
   ) => Promise<TS.FileSystemEntry[]>;
+  reloadDirectory: (dirPath?: string) => Promise<boolean>;
 };
 
 export const IOActionsContext = createContext<IOActionsContextData>({
@@ -105,7 +107,8 @@ export const IOActionsContext = createContext<IOActionsContextData>({
   copyFiles: () => Promise.resolve(false),
   downloadFile: () => Promise.resolve(undefined),
   uploadFilesAPI: () => Promise.resolve([]),
-  uploadFiles: () => Promise.resolve([])
+  uploadFiles: () => Promise.resolve([]),
+  reloadDirectory: () => Promise.resolve(false)
 });
 
 export type IOActionsContextProviderProps = {
@@ -118,7 +121,12 @@ export const IOActionsContextProvider = ({
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const { showNotification, hideNotifications } = useNotificationContext();
-  const { currentDirectoryEntries } = useDirectoryContentContext();
+  const { loadCurrentDirMeta } = useMetaLoaderContext();
+  const {
+    currentDirectoryEntries,
+    currentDirectoryPath,
+    loadDirectoryContent
+  } = useDirectoryContentContext();
 
   function extractContent(
     options: extractOptions = {
@@ -737,6 +745,17 @@ export const IOActionsContextProvider = ({
     });
   }
 
+  function reloadDirectory(directoryPath?: string) {
+    return loadDirectoryContent(
+      directoryPath ? directoryPath : currentDirectoryPath,
+      true
+    ).then(success => {
+      if (success) {
+        return loadCurrentDirMeta();
+      }
+    });
+  }
+
   const context = useMemo(() => {
     return {
       extractContent,
@@ -746,7 +765,8 @@ export const IOActionsContextProvider = ({
       copyFiles,
       downloadFile,
       uploadFilesAPI,
-      uploadFiles
+      uploadFiles,
+      reloadDirectory
     };
   }, [currentDirectoryEntries]);
 
