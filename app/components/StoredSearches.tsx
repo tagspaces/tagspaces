@@ -137,7 +137,8 @@ function StoredSearches(props: Props) {
 
     props.setSearchQuery({
       ...savedSearch,
-      showUnixHiddenEntries: props.showUnixHiddenEntries
+      showUnixHiddenEntries: props.showUnixHiddenEntries,
+      executeSearch: true
     });
   };
 

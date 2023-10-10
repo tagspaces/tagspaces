@@ -1509,10 +1509,13 @@ export function getFolderThumbPath(
   path: string,
   lastThumbnailImageChange: any
 ) {
-  return getThumbPath(
-    getThumbFileLocationForDirectory(path, PlatformIO.getDirSeparator()),
-    lastThumbnailImageChange
-  );
+  if (path) {
+    return getThumbPath(
+      getThumbFileLocationForDirectory(path, PlatformIO.getDirSeparator()),
+      lastThumbnailImageChange
+    );
+  }
+  return undefined;
 }
 
 export function getThumbPath(
@@ -1549,10 +1552,13 @@ export function getFolderBgndPath(
   path: string,
   lastBackgroundImageChange: any
 ) {
-  return getBgndPath(
-    getBgndFileLocationForDirectory(path, PlatformIO.getDirSeparator()),
-    lastBackgroundImageChange
-  );
+  if (path) {
+    return getBgndPath(
+      getBgndFileLocationForDirectory(path, PlatformIO.getDirSeparator()),
+      lastBackgroundImageChange
+    );
+  }
+  return undefined;
 }
 
 export function getBgndPath(bgndPath: string, lastBackgroundImageChange: any) {
