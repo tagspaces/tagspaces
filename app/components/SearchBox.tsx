@@ -30,11 +30,11 @@ interface Props {
 
 function SearchBox(props: Props) {
   const { currentDirectoryPath } = useDirectoryContentContext();
-  const { searchQuery } = useSelector(getSearchQuery);
+  const searchQuery = useSelector(getSearchQuery);
   const [anchorSearch, setAnchorSearch] = useState<HTMLButtonElement | null>(
     null
   );
-  // todo replace with props.setSearchQuery
+
   const [textQuery, setTextQuery] = useState<string>(
     searchQuery.textQuery || ''
   );

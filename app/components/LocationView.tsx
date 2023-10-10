@@ -57,7 +57,6 @@ interface Props {
 function LocationView(props: Props) {
   const { t } = useTranslation();
 
-  const { loadDirectoryContent } = useDirectoryContentContext();
   const { moveFiles, uploadFiles } = useIOActionsContext();
   const {
     openLocation,
