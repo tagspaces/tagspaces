@@ -409,4 +409,18 @@ test.describe('TST06 - Test Search in file structure:', () => {
   test('TST0638 - Add/Remove filename tags in search results [web,electron]', async () => {
     await addRemoveTagsInSearchResults(['filename-tag5', 'filename-tag6']);
   });
+
+  test('TST0646 - Open directory from search results [web,electron]', async () => {
+    await createFile(
+      'text_file.txt',
+      'testing open subfolder from search results'
+    );
+    await addSearchCommand('empty_folder', true);
+    await expectElementExist(getGridFileSelector('empty_folder'), true, 5000);
+    await openContextEntryMenu(
+      getGridFileSelector('empty_folder'),
+      'openDirectory'
+    );
+    await expectElementExist(getGridFileSelector('text_file.txt'), true, 5000);
+  });
 });
