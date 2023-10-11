@@ -1406,6 +1406,7 @@ export const actions = {
   ) => (dispatch: (action) => void, getState: () => any) => {
     const { settings } = getState();
     dispatch(actions.hideNotifications(['error']));
+    dispatch(actions.exitSearchMode());
     dispatch(
       actions.loadDirectorySuccessInt(
         directoryPath,
