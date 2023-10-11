@@ -250,6 +250,7 @@ test.describe('TST01 - Folder management', () => {
 
   test('TST0118 - Switch to Gallery Perspective [web,minio,electron,_pro]', async () => {
     await clickOn('[data-tid=openGalleryPerspective]');
+    await clickOn('[data-tid=openGalleryPerspective]');
     await expectElementExist(
       '[data-tid=perspectiveGalleryToolbar]',
       true,
@@ -260,6 +261,7 @@ test.describe('TST01 - Folder management', () => {
 
   test('TST0119 - Switch to Mapique Perspective [web,minio,electron,_pro]', async () => {
     await clickOn('[data-tid=openMapiquePerspective]');
+    await clickOn('[data-tid=openMapiquePerspective]');
     await expectElementExist(
       '[data-tid=perspectiveMapiqueToolbar]',
       true,
@@ -269,6 +271,7 @@ test.describe('TST01 - Folder management', () => {
   });
 
   test('TST0120 - Switch to Kanban Perspective [web,minio,electron,_pro]', async () => {
+    await clickOn('[data-tid=openKanbanPerspective]');
     await clickOn('[data-tid=openKanbanPerspective]');
     await expectElementExist(
       '[data-tid=kanbanSettingsDialogOpenTID]',

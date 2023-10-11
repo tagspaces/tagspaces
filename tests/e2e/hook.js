@@ -155,6 +155,9 @@ export async function startTestingApp(extconfig) {
       }
     });
 
+    // Get the Electron context.
+    global.context = await global.app.context();
+
     // Get the first window that the app opens, wait if necessary.
     global.client = await global.app.firstWindow();
     // global.session = await global.client.context().newCDPSession(global.client);

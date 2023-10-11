@@ -2,6 +2,8 @@ import { clearStorage } from './clearstorage.helpers';
 
 export async function clearDataStorage() {
   if (global.isWeb) {
+    //await global.context.clearCookies();
+    //await global.context.clearStorageState();
     await global.client.evaluate(() => {
       window.history.pushState('', document.title, window.location.pathname);
       localStorage.clear();
