@@ -1,0 +1,30 @@
+Index: app/main.dev.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/main.dev.ts b/app/main.dev.ts
+--- a/app/main.dev.ts	(revision d0f660fb4378c8eb8c59c516ecd10ff161c63d67)
++++ b/app/main.dev.ts	(date 1697032441057)
+@@ -90,6 +90,8 @@
+ const devMode =
+   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
+ 
++process.argv = [...process.argv, 'C:\\Users\\Stanimir\\search_history.png'];
++
+ process.argv.forEach((arg, count) => {
+   console.log('Opening file: ' + arg);
+   if (
+@@ -102,10 +104,10 @@
+   } else if (arg.toLowerCase() === '-p' || arg.toLowerCase() === '--portable') {
+     app.setPath('userData', process.cwd() + '/tsprofile'); // making the app portable
+     portableMode = true;
+-  } else if (testMode || devMode) {
++  } /* else if (testMode || devMode) {
+     // ignoring the spectron testing
+     arg = '';
+-  } else if (
++  } */ else if (
+     arg.endsWith('main.prod.js') ||
+     arg === './app/main.dev.babel.js' ||
+     arg === '.' ||

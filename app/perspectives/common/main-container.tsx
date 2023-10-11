@@ -134,7 +134,7 @@ export const renderCell = (
       openEntry(fsEntry.path);
     } else {
       console.log('Handle Grid cell db click, selected path : ', fsEntry.path);
-      loadDirectoryContent(fsEntry.path, true, true);
+      loadDirectoryContent(fsEntry.path, true);
     }
   };
 

@@ -48,6 +48,7 @@
     "cordova-remove-android": "cd cordova && cordova platform remove android && cd ..",
     "cordova-remove-ios": "cd cordova && cordova platform remove ios && cd ..",
     "dev": "npm run prepare-node && npm run generate-jwt && npm run generate-extensions && node -r @babel/register ./internals/scripts/CheckPortInUse.js && cross-env START_HOT=0 npm run start-renderer-dev",
+    "dev-open-file": "git apply run-with-args.patch && npm run dev",
     "generate-jwt": "node scripts/jwt_generate.js",
     "generate-extensions": "node scripts/generateExtensionsConfig.js",
     "install-ext-node-check": "npx cross-env PD_PLATFORM=node node scripts/checkWSinstalled.js",
