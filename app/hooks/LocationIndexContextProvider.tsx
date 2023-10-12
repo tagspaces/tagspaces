@@ -1,6 +1,6 @@
 /**
  * TagSpaces - universal file and folder organizer
- * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
+ * Copyright (C) 2023-present TagSpaces UG (haftungsbeschraenkt)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License (version 3) as
@@ -16,232 +16,114 @@
  *
  */
 
-import { loadIndex, hasIndex } from '@tagspaces/tagspaces-platforms/indexer';
-import { locationType } from '@tagspaces/tagspaces-common/misc';
-import { getThumbFileLocationForFile } from '@tagspaces/tagspaces-common/paths';
-import AppConfig from '-/AppConfig';
-import { getLocation, getLocationByPath, getLocations } from './locations';
-import { createDirectoryIndex } from '-/services/utils-io';
-import Search, { defaultTitle } from '../services/search';
-import { actions as AppActions } from './app';
-import i18n from '../services/i18n';
-import PlatformIO from '../services/platform-facade';
-import GlobalSearch from '../services/search-index';
+import React, {
+  createContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch } from '-/reducers/app';
+import { useTranslation } from 'react-i18next';
 import { TS } from '-/tagspaces.namespace';
-import { Pro } from '-/pro';
+import { createDirectoryIndex } from '-/services/utils-io';
+import GlobalSearch from '-/services/search-index';
+import { getEnableWS } from '-/reducers/settings';
+import { locationType } from '@tagspaces/tagspaces-common/misc';
+import PlatformIO from '-/services/platform-facade';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { getLocations } from '-/reducers/locations';
+import AppConfig from '-/AppConfig';
+import { hasIndex, loadIndex } from '@tagspaces/tagspaces-platforms/indexer';
+import Search from '-/services/search';
+import { getThumbFileLocationForFile } from '@tagspaces/tagspaces-common/paths';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
-export const types = {
-  SET_SEARCH_QUERY: 'SET_SEARCH_QUERY',
-  INDEX_DIRECTORY: 'INDEX_DIRECTORY',
-  INDEX_DIRECTORY_CLEAR: 'INDEX_DIRECTORY_CLEAR',
-  INDEX_DIRECTORY_START: 'INDEX_DIRECTORY_START',
-  INDEX_DIRECTORY_CANCEL: 'INDEX_DIRECTORY_CANCEL',
-  INDEX_DIRECTORY_SUCCESS: 'INDEX_DIRECTORY_SUCCESS',
-  INDEX_DIRECTORY_FAILURE: 'INDEX_DIRECTORY_FAILURE',
-  INDEX_DIRECTORY_SEARCH: 'INDEX_DIRECTORY_SEARCH'
-  /*REFLECT_DELETE_ENTRY: 'INDEX/REFLECT_DELETE_ENTRY',
-  REFLECT_CREATE_ENTRY: 'INDEX/REFLECT_CREATE_ENTRY',
-  REFLECT_RENAME_ENTRY: 'INDEX/REFLECT_RENAME_ENTRY',
-  REFLECT_UPDATE_SIDECARTAGS: 'INDEX/REFLECT_UPDATE_SIDECARTAGS',
-  REFLECT_UPDATE_SIDECARMETA: 'INDEX/REFLECT_UPDATE_SIDECARMETA'*/
+type LocationIndexContextData = {
+  searchQuery: TS.SearchQuery;
+  isIndexing: boolean;
+  cancelDirectoryIndexing: () => void;
+  setSearchQuery: (searchQuery: TS.SearchQuery) => void;
+  createLocationIndex: (location: TS.Location) => Promise<boolean>;
+  createLocationsIndexes: (extractText?: boolean) => Promise<boolean>;
+  clearDirectoryIndex: () => void;
+  searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
+  searchAllLocations: (searchQuery: TS.SearchQuery) => void;
 };
 
-export const initialState = {
+export const LocationIndexContext = createContext<LocationIndexContextData>({
+  searchQuery: {},
   isIndexing: false,
-  searchQuery: {}
+  cancelDirectoryIndexing: () => {},
+  setSearchQuery: () => {},
+  createLocationIndex: () => Promise.resolve(false),
+  createLocationsIndexes: () => Promise.resolve(false),
+  clearDirectoryIndex: () => {},
+  searchLocationIndex: () => {},
+  searchAllLocations: () => {}
+});
+
+export type LocationIndexContextProviderProps = {
+  children: React.ReactNode;
 };
 
-export default (state: any = initialState, action: any) => {
-  switch (action.type) {
-    case types.SET_SEARCH_QUERY: {
-      return { ...state, searchQuery: action.searchQuery };
-    }
-    case types.INDEX_DIRECTORY_START: {
-      return {
-        ...state,
-        isIndexing: true
-      };
-    }
-    case types.INDEX_DIRECTORY_CLEAR: {
-      /*if (GlobalSearch.index) {
-        GlobalSearch.index.splice(0, GlobalSearch.index.length);
-      }*/
-      GlobalSearch.getInstance().setIndex([]);
-      GlobalSearch.getInstance().setIndexLoadedOn(undefined);
-      return {
-        ...state,
-        isIndexing: false
-      };
-    }
-    case types.INDEX_DIRECTORY_CANCEL: {
-      window.walkCanceled = true;
-      return { ...state, isIndexing: false };
-    }
-    case types.INDEX_DIRECTORY_SUCCESS: {
-      return {
-        ...state,
-        isIndexing: false
-      };
-    }
-    case types.INDEX_DIRECTORY_FAILURE: {
-      return {
-        ...state,
-        lastError: action.error,
-        isIndexing: false
-      };
-    }
-    /*case types.REFLECT_DELETE_ENTRY: {
-      const index = GlobalSearch.getInstance().getIndex();
-      if (!index || index.length < 1) {
-        return state;
-      }
-      for (let i = 0; i < index.length; i += 1) {
-        if (index[i].path === action.path) {
-          GlobalSearch.getInstance().setIndex(index.splice(i, 1));
-          i -= 1;
-        }
-      }
-      return state;
-    }*/
-    /*case types.REFLECT_CREATE_ENTRY: {
-      const index = GlobalSearch.getInstance().getIndex();
-      if (!index || index.length < 1) {
-        return state;
-      }
-      let entryFound = false;
-      for (let i = 0; i < index.length; i += 1) {
-        if (index[i].path === action.path) {
-          entryFound = true;
-        }
-      }
-      if (entryFound) {
-        return state;
-      }
-      GlobalSearch.getInstance().setIndex([...index, action.newEntry]);
-      return state;
-    }*/
-    // TODO move it from reducer to GlobalSearch singleton
-    /* case types.REFLECT_RENAME_ENTRY: {
-      const index = GlobalSearch.getInstance().getIndex();
-      if (!index || index.length < 1) {
-        return state;
-      }
-      for (let i = 0; i < index.length; i += 1) {
-        if (index[i].path === action.path) {
-          index[i].path = action.newPath;
-          index[i].name = extractFileName(
-            action.newPath,
-            PlatformIO.getDirSeparator()
-          );
-          index[i].extension = extractFileExtension(
-            action.newPath,
-            PlatformIO.getDirSeparator()
-          );
-          index[i].tags = [
-            ...index[i].tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
-            ...extractTagsAsObjects(
-              action.newPath,
-              AppConfig.tagDelimiter,
-              PlatformIO.getDirSeparator()
-            )
-          ];
-        }
-      }
-      return state;
-    }*/
-    /*case types.REFLECT_UPDATE_SIDECARTAGS: {
-      const index = GlobalSearch.getInstance().getIndex();
-      for (let i = 0; i < index.length; i += 1) {
-        if (index[i].path === action.path) {
-          index[i].tags = [
-            ...index[i].tags.filter(tag => tag.type === 'plain'),
-            ...action.tags
-          ];
-        }
-      }
-      return state;
-    }*/
-    /*case types.REFLECT_UPDATE_SIDECARMETA: {
-      const index = GlobalSearch.getInstance().getIndex();
-      for (let i = 0; i < index.length; i += 1) {
-        if (index[i].path === action.path) {
-          index[i] = {
-            ...index[i],
-            ...action.entryMeta
-          };
-        }
-      }
-      return state;
-    }*/
-    default: {
-      return state;
-    }
+export const LocationIndexContextProvider = ({
+  children
+}: LocationIndexContextProviderProps) => {
+  const { t } = useTranslation();
+
+  const { currentLocation } = useCurrentLocationContext();
+  const {
+    setSearchResults,
+    appendSearchResults
+  } = useDirectoryContentContext();
+  const { showNotification, hideNotifications } = useNotificationContext();
+
+  const enableWS = useSelector(getEnableWS);
+  const allLocations = useSelector(getLocations);
+
+  const [searchQuery, setSearchQueryInt] = useState<TS.SearchQuery>({});
+  const isIndexing = useRef<boolean>(false);
+  const lastError = useRef(undefined);
+
+  useEffect(() => {
+    clearDirectoryIndex();
+  }, [currentLocation]);
+
+  function cancelDirectoryIndexing() {
+    window.walkCanceled = true;
+    isIndexing.current = false;
   }
-};
 
-export const actions = {
-  setSearchQuery: (searchQuery: TS.SearchQuery) => (
-    dispatch: (action) => void,
-    getState: () => any
-  ) => {
-    dispatch(actions.setSearchQueryInt(searchQuery));
-    // TODO rethink right place for this -to switch search mode based on searchQuery
-    if (Object.keys(searchQuery).length === 0) {
-      dispatch(AppActions.exitSearchMode());
-    } else {
-      const searchTitle = defaultTitle(searchQuery);
-      if (searchTitle.length > 0 && Pro && Pro.history) {
-        const historyKeys = Pro.history.historyKeys;
-        // TODO rethink where to move this!!
-        /*const currentLocation = getCurrentLocation(getState());
-        if (currentLocation) {
-          Pro.history.saveHistory(
-            historyKeys.searchHistoryKey,
-            {
-              path:
-                searchTitle +
-                ' ' +
-                (currentLocation.path
-                  ? currentLocation.path
-                  : currentLocation.name),
-              url: '/',
-              lid: currentLocation.uuid,
-              searchQuery: searchQuery
-            },
-            getState().settings[historyKeys.searchHistoryKey]
-          );
-        }*/
-      }
-      dispatch(AppActions.enterSearchMode());
-    }
-  },
-  setSearchQueryInt: (searchQuery: TS.SearchQuery) => ({
-    type: types.SET_SEARCH_QUERY,
-    searchQuery
-  }),
-  startDirectoryIndexing: () => ({ type: types.INDEX_DIRECTORY_START }),
-  cancelDirectoryIndexing: () => ({ type: types.INDEX_DIRECTORY_CANCEL }),
-  createDirectoryIndex: (
+  function setSearchQuery(searchQuery: TS.SearchQuery) {
+    setSearchQueryInt(searchQuery);
+    /*if (Object.keys(searchQuery).length === 0) {
+     //exitSearchMode();
+   }*/
+  }
+
+  function createDirIndex(
     directoryPath: string,
     extractText: boolean,
     isCurrentLocation = true,
     locationID: string = undefined,
     ignorePatterns: Array<string> = []
-  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
-    const { settings } = getState();
-    dispatch(actions.startDirectoryIndexing());
-    createDirectoryIndex(
+  ): Promise<boolean> {
+    isIndexing.current = true;
+    return createDirectoryIndex(
       { path: directoryPath, locationID },
       extractText,
       ignorePatterns,
-      settings.enableWS
+      enableWS
     )
       .then(directoryIndex => {
         if (isCurrentLocation) {
           // Load index only if current location
           GlobalSearch.getInstance().setIndex(directoryIndex);
         }
-        dispatch(actions.indexDirectorySuccess());
+        isIndexing.current = false;
         /* if (Pro && Pro.Indexer) {
           Pro.Indexer.persistIndex(
             directoryPath,
@@ -252,63 +134,53 @@ export const actions = {
         return true;
       })
       .catch(err => {
-        dispatch(actions.indexDirectoryFailure(err));
+        isIndexing.current = false;
+        lastError.current = err;
+        return false;
       });
-  },
-  createLocationIndex: (location: TS.Location) => (
-    dispatch: (actions: Object) => void,
-    getState: () => any
-  ) => {
+  }
+
+  function createLocationIndex(location: TS.Location): Promise<boolean> {
     if (location) {
-      const { currentLocationId } = getState().app;
-      const isCurrentLocation = currentLocationId === location.uuid;
+      const isCurrentLocation =
+        currentLocation && currentLocation.uuid === location.uuid;
       if (location.type === locationType.TYPE_CLOUD) {
-        PlatformIO.enableObjectStoreSupport(location)
-          .then(() => {
-            dispatch(
-              actions.createDirectoryIndex(
-                PlatformIO.getLocationPath(location),
-                location.fullTextIndex,
-                isCurrentLocation,
-                location.uuid
-              )
-            );
-            return true;
-          })
+        return PlatformIO.enableObjectStoreSupport(location)
+          .then(() =>
+            createDirIndex(
+              PlatformIO.getLocationPath(location),
+              location.fullTextIndex,
+              isCurrentLocation,
+              location.uuid
+            )
+          )
           .catch(() => {
             PlatformIO.disableObjectStoreSupport();
+            return false;
           });
       } else if (location.type === locationType.TYPE_WEBDAV) {
         PlatformIO.enableWebdavSupport(location);
-        dispatch(
-          actions.createDirectoryIndex(
-            PlatformIO.getLocationPath(location),
-            location.fullTextIndex,
-            isCurrentLocation,
-            location.uuid
-          )
+        return createDirIndex(
+          PlatformIO.getLocationPath(location),
+          location.fullTextIndex,
+          isCurrentLocation,
+          location.uuid
         );
       } else if (location.type === locationType.TYPE_LOCAL) {
         PlatformIO.disableObjectStoreSupport();
-        dispatch(
-          actions.createDirectoryIndex(
-            PlatformIO.getLocationPath(location),
-            location.fullTextIndex,
-            isCurrentLocation,
-            location.uuid
-          )
+        return createDirIndex(
+          PlatformIO.getLocationPath(location),
+          location.fullTextIndex,
+          isCurrentLocation,
+          location.uuid
         );
       }
     }
-  },
-  createLocationsIndexes: (extractText = true) => (
-    dispatch: (actions: Object) => void,
-    getState: () => any
-  ) => {
-    const state = getState();
-    dispatch(actions.startDirectoryIndexing());
-    const allLocations = getLocations(state);
+    return Promise.resolve(false);
+  }
 
+  function createLocationsIndexes(extractText = true): Promise<boolean> {
+    isIndexing.current = true;
     const promises = allLocations.map((location: TS.Location) => {
       const nextPath = PlatformIO.getLocationPath(location);
       return (
@@ -316,7 +188,7 @@ export const actions = {
           { path: nextPath, location: location.uuid },
           extractText,
           location.ignorePatternPaths,
-          state.settings.enableWS
+          enableWS
         )
           /* .then(directoryIndex => {
           if (Pro && Pro.Indexer) {
@@ -329,55 +201,47 @@ export const actions = {
           return true;
         }) */
           .catch(err => {
-            dispatch(actions.indexDirectoryFailure(err));
+            isIndexing.current = false;
+            lastError.current = err;
           })
       );
     });
 
-    Promise.all(promises)
+    return Promise.all(promises)
       .then(e => {
-        dispatch(actions.indexDirectorySuccess());
+        isIndexing.current = false;
         console.log('Resolution is complete!', e);
         return true;
       })
       .catch(e => {
-        console.warn('Resolution is faled!', e);
+        console.warn('Resolution is failed!', e);
+        return false;
       });
-  },
-  clearDirectoryIndex: () => ({
-    type: types.INDEX_DIRECTORY_CLEAR
-  }),
-  searchLocationIndex: (
-    searchQuery: TS.SearchQuery,
-    showNotification,
-    hideNotifications
-  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
-    const state = getState();
-    let currentLocation: TS.Location = getLocation(
-      state,
-      state.app.currentLocationId
-    );
+  }
+
+  function clearDirectoryIndex() {
+    isIndexing.current = false;
+    GlobalSearch.getInstance().setIndex([]);
+    GlobalSearch.getInstance().setIndexLoadedOn(undefined);
+  }
+
+  function searchLocationIndex(searchQuery: TS.SearchQuery) {
     window.walkCanceled = false;
-    if (!currentLocation) {
+    /*if (!currentLocation) {
       if (searchQuery.currentDirectory) {
         currentLocation = getLocationByPath(
           state,
           searchQuery.currentDirectory
         );
       }
-    }
+    }*/
     if (!currentLocation) {
-      showNotification(i18n.t('core:pleaseOpenLocation'), 'warning', true);
+      showNotification(t('core:pleaseOpenLocation'), 'warning', true);
       return;
     }
 
     const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
-    showNotification(
-      i18n.t('core:searching'),
-      'default',
-      false,
-      'TIDSearching'
-    );
+    showNotification(t('core:searching'), 'default', false, 'TIDSearching');
     setTimeout(async () => {
       const index = GlobalSearch.getInstance().getIndex();
       // Workaround used to show the start search notification
@@ -403,7 +267,7 @@ export const actions = {
           },
           currentLocation.fullTextIndex,
           currentLocation.ignorePatternPaths,
-          state.settings.enableWS
+          enableWS
         );
         GlobalSearch.getInstance().setIndex(newIndex);
 
@@ -447,47 +311,33 @@ export const actions = {
               }
             });
           }
-          dispatch(AppActions.setSearchResults(searchResults));
+          setSearchResults(searchResults);
           hideNotifications();
           return true;
         })
         .catch(err => {
-          dispatch(AppActions.setSearchResults([]));
+          setSearchResults([]);
           // dispatch(AppActions.hideNotifications());
           console.error('Searching Index failed: ', err);
           showNotification(
-            i18n.t('core:searchingFailed') + ' ' + err.message,
+            t('core:searchingFailed') + ' ' + err.message,
             'warning',
             true
           );
         });
     }, 50);
-  },
-  searchAllLocations: (
-    searchQuery: TS.SearchQuery,
-    showNotification,
-    hideNotifications
-  ) => (dispatch: (actions: Object) => void, getState: () => any) => {
-    const state = getState();
-    const currentLocation: TS.Location = getLocation(
-      state,
-      state.app.currentLocationId
-    );
+  }
+
+  function searchAllLocations(searchQuery: TS.SearchQuery) {
     console.time('globalSearch');
-    showNotification(
-      i18n.t('core:searching'),
-      'default',
-      false,
-      'TIDSearching'
-    );
+    showNotification(t('core:searching'), 'default', false, 'TIDSearching');
 
     // Preparing for global search
-    dispatch(AppActions.setSearchResults([]));
+    // setSearchResults([]);
     if (currentLocation && currentLocation.type === locationType.TYPE_CLOUD) {
       PlatformIO.disableObjectStoreSupport();
     }
     window.walkCanceled = false;
-    const allLocations = getLocations(state);
     let searchResultCount = 0;
     let maxSearchResultReached = false;
 
@@ -505,7 +355,7 @@ export const actions = {
           const isCloudLocation = location.type === locationType.TYPE_CLOUD;
           console.log('Searching in: ' + nextPath);
           showNotification(
-            i18n.t('core:searching') + ' ' + location.name,
+            t('core:searching') + ' ' + location.name,
             'default',
             true,
             'TIDSearching'
@@ -532,7 +382,7 @@ export const actions = {
               },
               location.fullTextIndex,
               location.ignorePatternPaths,
-              state.settings.enableWS
+              enableWS
             );
             /* if (Pro && Pro.Indexer && Pro.Indexer.persistIndex) {
               Pro.Indexer.persistIndex(
@@ -581,7 +431,7 @@ export const actions = {
               }
 
               searchResultCount += enhancedSearchResult.length;
-              dispatch(AppActions.appendSearchResults(enhancedSearchResult));
+              appendSearchResults(enhancedSearchResult);
               hideNotifications();
               if (isCloudLocation) {
                 PlatformIO.disableObjectStoreSupport();
@@ -593,10 +443,10 @@ export const actions = {
                 PlatformIO.disableObjectStoreSupport();
               }
               console.error('Searching Index failed: ', e);
-              dispatch(AppActions.setSearchResults([]));
+              setSearchResults([]);
               // dispatch(AppActions.hideNotifications());
               showNotification(
-                i18n.t('core:searchingFailed') + ' ' + e.message,
+                t('core:searchingFailed') + ' ' + e.message,
                 'warning',
                 true
               );
@@ -617,7 +467,7 @@ export const actions = {
             true
           );
         } else {
-          showNotification(i18n.t('Global search completed'), 'default', true);
+          showNotification(t('Global search completed'), 'default', true);
         }
         console.log('Global search completed!');
         if (
@@ -638,39 +488,25 @@ export const actions = {
         console.timeEnd('globalSearch');
         console.warn('Global search failed!', e);
       });
-  },
-  indexDirectorySuccess: () => ({
-    type: types.INDEX_DIRECTORY_SUCCESS
-  }),
-  indexDirectoryFailure: (error: string) => ({
-    type: types.INDEX_DIRECTORY_FAILURE,
-    error
-  })
-  /*reflectDeleteEntry: (path: string) => ({
-    type: types.REFLECT_DELETE_ENTRY,
-    path
-  }),*/
-  /*reflectCreateEntry: (newEntry: Object) => ({
-    type: types.REFLECT_CREATE_ENTRY,
-    newEntry
-  }),*/
-  /*reflectRenameEntry: (path: string, newPath: string) => ({
-    type: types.REFLECT_RENAME_ENTRY,
-    path,
-    newPath
-  }),*/
-  /*reflectUpdateSidecarTags: (path: string, tags: Array<TS.Tag>) => ({
-    type: types.REFLECT_UPDATE_SIDECARTAGS,
-    path,
-    tags
-  }),*/
-  /*reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => ({
-    type: types.REFLECT_UPDATE_SIDECARMETA,
-    path,
-    entryMeta
-  })*/
-};
+  }
 
-// Selectors
-export const isIndexing = (state: any) => state.locationIndex.isIndexing;
-export const getSearchQuery = (state: any) => state.locationIndex.searchQuery;
+  const context = useMemo(() => {
+    return {
+      searchQuery,
+      isIndexing: isIndexing.current,
+      cancelDirectoryIndexing,
+      setSearchQuery,
+      createLocationIndex,
+      createLocationsIndexes,
+      clearDirectoryIndex,
+      searchLocationIndex,
+      searchAllLocations
+    };
+  }, [searchQuery, isIndexing.current]);
+
+  return (
+    <LocationIndexContext.Provider value={context}>
+      {children}
+    </LocationIndexContext.Provider>
+  );
+};

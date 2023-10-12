@@ -29,7 +29,6 @@ import {
   AppDispatch,
   getEditedEntryPaths,
   getLastSelectedEntry,
-  isSearchMode,
   OpenedEntry
 } from '-/reducers/app';
 import { Pro } from '-/pro';
@@ -151,7 +150,6 @@ export const OpenedEntryContextProvider = ({
   const { showNotification } = useNotificationContext();
   const { openLocation, currentLocation } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
-  const searchMode = useSelector(isSearchMode);
   const lastSelectedEntry: TS.FileSystemEntry = useSelector(
     getLastSelectedEntry
   );
@@ -677,9 +675,7 @@ export const OpenedEntryContextProvider = ({
     const nextFile = getNextFile(
       path,
       lastSelectedEntry ? lastSelectedEntry.path : undefined,
-      searchMode
-        ? GlobalSearch.getInstance().getResults()
-        : currentDirectoryEntries
+      currentDirectoryEntries
     );
     if (nextFile !== undefined) {
       openFsEntry(nextFile);
@@ -693,9 +689,7 @@ export const OpenedEntryContextProvider = ({
     const prevFile = getPrevFile(
       path,
       lastSelectedEntry ? lastSelectedEntry.path : undefined,
-      searchMode
-        ? GlobalSearch.getInstance().getResults()
-        : currentDirectoryEntries
+      currentDirectoryEntries
     );
     if (prevFile !== undefined) {
       openFsEntry(prevFile);

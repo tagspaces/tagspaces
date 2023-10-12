@@ -17,19 +17,16 @@
  */
 
 import React, { useReducer, useRef, useState } from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import Box from '@mui/material/Box';
-import format from 'date-fns/format';
 import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '-/components/Tooltip';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
-import Input from '@mui/material/Input';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
@@ -41,12 +38,6 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { mergeWithExtractedTags } from '@tagspaces/tagspaces-common/misc';
 import TagsSelect from './TagsSelect';
-import { actions as AppActions } from '../reducers/app';
-import {
-  actions as LocationIndexActions,
-  isIndexing,
-  getSearchQuery
-} from '../reducers/location-index';
 import {
   getMaxSearchResults,
   getShowUnixHiddenEntries
@@ -82,22 +73,13 @@ import { useTheme } from '@mui/material/styles';
 import { classes, SidePanel } from '-/components/SidePanels.css';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 
 const SaveSearchDialog = Pro && Pro.UI ? Pro.UI.SaveSearchDialog : false;
 
 interface Props {
   style?: any;
   hideDrawer?: () => void;
-  searchQuery: TS.SearchQuery; // () => any;
-  setSearchResults: (entries: Array<any>) => void;
-  exitSearchMode: () => void;
-  setSearchQuery: (searchQuery: TS.SearchQuery) => void;
-  currentDirectory: string;
-  maxSearchResults: number;
-  indexing: boolean;
-  searches: Array<TS.SearchQuery>;
-  showUnixHiddenEntries: boolean;
-  // openSearchPanel: () => void;
   onClose: () => void;
   textQuery: string;
   setTextQuery: (value: string) => void;
@@ -106,25 +88,29 @@ interface Props {
 function SearchPopover(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { loadDirectoryContent } = useDirectoryContentContext();
+  const {
+    openCurrentDirectory,
+    currentDirectoryPath,
+    exitSearchMode
+  } = useDirectoryContentContext();
+  const { searchQuery, setSearchQuery, isIndexing } = useLocationIndexContext();
   const [, forceUpdate] = useReducer(x => x + 1, 0);
-  // const textQuery = useRef<string>(props.searchQuery.textQuery);
-  // const tagsAND = useRef<Array<TS.Tag>>(props.searchQuery.tagsAND);
+  const maxSearchResults = useSelector(getMaxSearchResults);
+  const searches = useSelector(getSearches);
+  const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
+  // const textQuery = useRef<string>(searchQuery.textQuery);
+  // const tagsAND = useRef<Array<TS.Tag>>(searchQuery.tagsAND);
   const fileTypes = useRef<Array<string>>(
-    props.searchQuery.fileTypes
-      ? props.searchQuery.fileTypes
-      : FileTypeGroups.any
+    searchQuery.fileTypes ? searchQuery.fileTypes : FileTypeGroups.any
   );
 
-  const searchBoxing = props.searchQuery.searchBoxing
-    ? props.searchQuery.searchBoxing
+  const searchBoxing = searchQuery.searchBoxing
+    ? searchQuery.searchBoxing
     : 'location';
   // useRef<'fuzzy' | 'semistrict' | 'strict'>(
-  const searchType = props.searchQuery.searchType
-    ? props.searchQuery.searchType
-    : 'fuzzy';
+  const searchType = searchQuery.searchType ? searchQuery.searchType : 'fuzzy';
   const lastModified = useRef<string>(
-    props.searchQuery.lastModified ? props.searchQuery.lastModified : ''
+    searchQuery.lastModified ? searchQuery.lastModified : ''
   );
   const [saveSearchDialogOpened, setSaveSearchDialogOpened] = useState<
     TS.SearchQuery
@@ -133,25 +119,25 @@ function SearchPopover(props: Props) {
   // const tagTimePeriodHelper = useRef<string>(' ');
   const [tagPlace, setTagPlace] = useState<string>(' ');
   const [tagPlaceHelper, setTagPlaceHelper] = useState<string>(' ');
-  const tagTimePeriodFrom = props.searchQuery.tagTimePeriodFrom // useRef<number | null>(
-    ? props.searchQuery.tagTimePeriodFrom
+  const tagTimePeriodFrom = searchQuery.tagTimePeriodFrom // useRef<number | null>(
+    ? searchQuery.tagTimePeriodFrom
     : null;
-  const tagTimePeriodTo = props.searchQuery.tagTimePeriodTo //useRef<number | null>(
-    ? props.searchQuery.tagTimePeriodTo
+  const tagTimePeriodTo = searchQuery.tagTimePeriodTo //useRef<number | null>(
+    ? searchQuery.tagTimePeriodTo
     : null;
   const [tagPlaceLat, setTagPlaceLat] = useState<number | null>(null);
   const [tagPlaceLong, setTagPlaceLong] = useState<number | null>(null);
   // const [tagPlaceRadius, setTagPlaceRadius] = useState<number>(0);
   const forceIndexing = useRef<boolean>(
-    props.searchQuery.forceIndexing ? props.searchQuery.forceIndexing : false
+    searchQuery.forceIndexing ? searchQuery.forceIndexing : false
   );
   const fileSize = useRef<string>(
-    props.searchQuery.fileSize ? props.searchQuery.fileSize : ''
+    searchQuery.fileSize ? searchQuery.fileSize : ''
   );
 
   /*useEffect(() => {
-    props.setTextQuery(props.searchQuery.textQuery);
-  }, [props.searchQuery]);*/
+    props.setTextQuery(searchQuery.textQuery);
+  }, [searchQuery]);*/
 
   const handleFileTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target } = event;
@@ -160,14 +146,13 @@ function SearchPopover(props: Props) {
     if (name === 'fileTypes') {
       const types = JSON.parse(value);
       fileTypes.current = types;
-      const searchQuery = {
-        ...props.searchQuery,
+      setSearchQuery({
+        ...searchQuery,
         searchBoxing: searchBoxing,
         fileTypes: types,
-        showUnixHiddenEntries: props.showUnixHiddenEntries,
+        showUnixHiddenEntries,
         executeSearch: false
-      };
-      props.setSearchQuery(searchQuery);
+      });
     }
   };
 
@@ -177,15 +162,14 @@ function SearchPopover(props: Props) {
 
     if (name === 'fileSize') {
       fileSize.current = value;
-      const searchQuery = {
-        ...props.searchQuery,
+
+      setSearchQuery({
+        ...searchQuery,
         searchBoxing: searchBoxing,
         fileSize: value,
-        showUnixHiddenEntries: props.showUnixHiddenEntries,
+        showUnixHiddenEntries,
         executeSearch: false
-      };
-
-      props.setSearchQuery(searchQuery);
+      });
     }
   };
 
@@ -197,14 +181,13 @@ function SearchPopover(props: Props) {
 
     if (name === 'lastModified') {
       lastModified.current = value;
-      const searchQuery = {
-        ...props.searchQuery,
+      setSearchQuery({
+        ...searchQuery,
         searchBoxing: searchBoxing,
         lastModified: value,
-        showUnixHiddenEntries: props.showUnixHiddenEntries,
+        showUnixHiddenEntries,
         executeSearch: false
-      };
-      props.setSearchQuery(searchQuery);
+      });
     }
   };
 
@@ -214,7 +197,7 @@ function SearchPopover(props: Props) {
     const { target } = event;
     const { value } = target;
 
-    const savedSearch = props.searches.find(search => search.uuid === value);
+    const savedSearch = searches.find(search => search.uuid === value);
     if (!savedSearch) {
       return true;
     }
@@ -242,11 +225,11 @@ function SearchPopover(props: Props) {
       tagTimePeriod.current = ttPeriod;
     }*/
 
-    props.setSearchQuery({
+    setSearchQuery({
       ...savedSearch,
       tagTimePeriodFrom: savedSearch.tagTimePeriodFrom,
       tagTimePeriodTo: savedSearch.tagTimePeriodTo,
-      showUnixHiddenEntries: props.showUnixHiddenEntries
+      showUnixHiddenEntries
     });
   };
 
@@ -262,37 +245,37 @@ function SearchPopover(props: Props) {
     if (reason === 'remove-value') {
       if (name === 'tagsAND') {
         searchQuery = {
-          ...props.searchQuery,
-          tagsAND: removeTags(props.searchQuery.tagsAND, value)
+          ...searchQuery,
+          tagsAND: removeTags(searchQuery.tagsAND, value)
         };
       } else if (name === 'tagsNOT') {
         searchQuery = {
-          ...props.searchQuery,
-          tagsNOT: removeTags(props.searchQuery.tagsNOT, value)
+          ...searchQuery,
+          tagsNOT: removeTags(searchQuery.tagsNOT, value)
         };
       } else if (name === 'tagsOR') {
         searchQuery = {
-          ...props.searchQuery,
-          tagsOR: removeTags(props.searchQuery.tagsOR, value)
+          ...searchQuery,
+          tagsOR: removeTags(searchQuery.tagsOR, value)
         };
       }
     } else {
       // eslint-disable-next-line no-lonely-if
       if (name === 'tagsAND') {
-        searchQuery = { ...props.searchQuery, tagsAND: value };
+        searchQuery = { ...searchQuery, tagsAND: value };
       } else if (name === 'tagsNOT') {
-        searchQuery = { ...props.searchQuery, tagsNOT: value };
+        searchQuery = { ...searchQuery, tagsNOT: value };
       } else if (name === 'tagsOR') {
-        searchQuery = { ...props.searchQuery, tagsOR: value };
+        searchQuery = { ...searchQuery, tagsOR: value };
       }
     }
     if (!haveSearchFilters(searchQuery)) {
       clearSearch();
     } else {
-      props.setSearchQuery({
+      setSearchQuery({
         ...searchQuery,
         searchBoxing: searchBoxing,
-        showUnixHiddenEntries: props.showUnixHiddenEntries,
+        showUnixHiddenEntries,
         executeSearch: false
       });
     }
@@ -365,14 +348,6 @@ function SearchPopover(props: Props) {
     }
   };
 
-  function openCurrentDirectory() {
-    if (props.currentDirectory) {
-      loadDirectoryContent(props.currentDirectory, true);
-    } else {
-      props.exitSearchMode();
-    }
-  }
-
   const clearSearch = () => {
     props.setTextQuery('');
     //searchBoxing.current = 'location';
@@ -390,31 +365,31 @@ function SearchPopover(props: Props) {
     // setTagPlaceRadius(0);
     forceIndexing.current = false;
     fileSize.current = '';
-    props.setSearchQuery({});
-    props.exitSearchMode();
-    openCurrentDirectory();
+    setSearchQuery({});
+    exitSearchMode();
     props.onClose();
+    openCurrentDirectory();
   };
 
   const saveSearch = (isNew = true) => {
     const tagsAND = mergeWithExtractedTags(
       props.textQuery,
-      props.searchQuery.tagsAND,
+      searchQuery.tagsAND,
       '+'
     );
     const tagsOR = mergeWithExtractedTags(
       props.textQuery,
-      props.searchQuery.tagsOR,
+      searchQuery.tagsOR,
       '|'
     );
     const tagsNOT = mergeWithExtractedTags(
       props.textQuery,
-      props.searchQuery.tagsNOT,
+      searchQuery.tagsNOT,
       '-'
     );
     setSaveSearchDialogOpened({
-      uuid: isNew ? undefined : props.searchQuery.uuid,
-      title: props.searchQuery.title,
+      uuid: isNew ? undefined : searchQuery.uuid,
+      title: searchQuery.title,
       textQuery: props.textQuery,
       tagsAND,
       tagsOR,
@@ -429,8 +404,8 @@ function SearchPopover(props: Props) {
       tagPlaceLat,
       tagPlaceLong,
       // tagPlaceRadius,
-      maxSearchResults: props.maxSearchResults,
-      currentDirectory: props.currentDirectory,
+      maxSearchResults: maxSearchResults,
+      currentDirectory: currentDirectoryPath,
       forceIndexing: forceIndexing.current
     });
   };
@@ -440,12 +415,11 @@ function SearchPopover(props: Props) {
     boxing: 'location' | 'folder' | 'global'
   ) => {
     if (boxing !== null) {
-      const searchQuery = {
-        ...props.searchQuery,
+      setSearchQuery({
+        ...searchQuery,
         searchBoxing: boxing,
         executeSearch: false
-      };
-      props.setSearchQuery(searchQuery);
+      });
 
       /*searchBoxing.current = boxing;
       forceUpdate();*/
@@ -457,12 +431,11 @@ function SearchPopover(props: Props) {
     type: 'fuzzy' | 'semistrict' | 'strict'
   ) => {
     if (type !== null) {
-      const searchQuery = {
-        ...props.searchQuery,
+      setSearchQuery({
+        ...searchQuery,
         searchType: type,
         executeSearch: false
-      };
-      props.setSearchQuery(searchQuery);
+      });
 
       /*searchType.current = type;
       forceUpdate();*/
@@ -472,20 +445,20 @@ function SearchPopover(props: Props) {
   const executeSearch = () => {
     const tagsAND = mergeWithExtractedTags(
       props.textQuery,
-      props.searchQuery.tagsAND,
+      searchQuery.tagsAND,
       '+'
     );
     const tagsOR = mergeWithExtractedTags(
       props.textQuery,
-      props.searchQuery.tagsOR,
+      searchQuery.tagsOR,
       '|'
     );
     const tagsNOT = mergeWithExtractedTags(
       props.textQuery,
-      props.searchQuery.tagsNOT,
+      searchQuery.tagsNOT,
       '-'
     );
-    const searchQuery: TS.SearchQuery = {
+    const query: TS.SearchQuery = {
       textQuery: props.textQuery,
       tagsAND,
       tagsOR,
@@ -500,18 +473,17 @@ function SearchPopover(props: Props) {
       tagPlaceLat,
       tagPlaceLong,
       // tagPlaceRadius,
-      maxSearchResults: props.maxSearchResults,
-      currentDirectory: props.currentDirectory,
+      maxSearchResults: maxSearchResults,
+      currentDirectory: currentDirectoryPath,
       forceIndexing: forceIndexing.current,
-      showUnixHiddenEntries: props.showUnixHiddenEntries,
+      showUnixHiddenEntries,
       executeSearch: true
     };
     console.log('Search object: ' + JSON.stringify(searchQuery));
-    props.setSearchQuery(searchQuery);
+    setSearchQuery(query);
     props.onClose();
   };
 
-  const { indexing } = props;
   const indexStatus = GlobalSearch.getInstance().getIndex()
     ? GlobalSearch.getInstance().getIndex().length + ' indexed entries'
     : '';
@@ -579,17 +551,17 @@ function SearchPopover(props: Props) {
                 <Select
                   name="savedSearch"
                   labelId="saved-searches"
-                  disabled={indexing || !Pro}
+                  disabled={isIndexing || !Pro}
                   onChange={handleSavedSearchChange}
                   displayEmpty
                   fullWidth
-                  value={props.searchQuery.uuid ? props.searchQuery.uuid : -1}
+                  value={searchQuery.uuid ? searchQuery.uuid : -1}
                 >
                   <MenuItem value={-1} style={{ display: 'none' }} />
-                  {props.searches.length < 1 && (
+                  {searches.length < 1 && (
                     <MenuItem>{t('noSavedSearches')}</MenuItem>
                   )}
-                  {props.searches.map(search => (
+                  {searches.map(search => (
                     <MenuItem key={search.uuid} value={search.uuid}>
                       <span style={{ width: '100%' }}>{search.title}</span>
                     </MenuItem>
@@ -605,7 +577,7 @@ function SearchPopover(props: Props) {
                 width: '100%'
               }}
             >
-              {props.searchQuery.uuid && (
+              {searchQuery.uuid && (
                 <Tooltip title={t('editSavedSearchTitle')}>
                   <IconButton
                     data-tid="editSearchBtnTID"
@@ -639,7 +611,7 @@ function SearchPopover(props: Props) {
             />
           </Grid>
         </Grid>
-        <FormControl className={classes.formControl} disabled={indexing}>
+        <FormControl className={classes.formControl} disabled={isIndexing}>
           <ToggleButtonGroup
             onChange={switchSearchBoxing}
             size="small"
@@ -665,7 +637,7 @@ function SearchPopover(props: Props) {
             </ToggleButton>
           </ToggleButtonGroup>
         </FormControl>
-        <FormControl className={classes.formControl} disabled={indexing}>
+        <FormControl className={classes.formControl} disabled={isIndexing}>
           <ToggleButtonGroup
             onChange={switchSearchType}
             size="small"
@@ -690,7 +662,7 @@ function SearchPopover(props: Props) {
             </ToggleButton>
           </ToggleButtonGroup>
         </FormControl>
-        <FormControl className={classes.formControl} disabled={indexing}>
+        <FormControl className={classes.formControl} disabled={isIndexing}>
           <ToggleButtonGroup
             onChange={() => {
               forceIndexing.current = !forceIndexing.current;
@@ -713,33 +685,33 @@ function SearchPopover(props: Props) {
             </ToggleButton>
           </ToggleButtonGroup>
         </FormControl>
-        <FormControl className={classes.formControl} disabled={indexing}>
+        <FormControl className={classes.formControl} disabled={isIndexing}>
           <TagsSelect
             dataTid="searchTagsAndTID"
             placeholderText={t('core:selectTags')}
             label={t('core:mustContainTheseTags')}
-            tags={props.searchQuery.tagsAND}
+            tags={searchQuery.tagsAND}
             handleChange={handleTagFieldChange}
             tagSearchType="tagsAND"
             tagMode="remove"
           />
         </FormControl>
-        <FormControl className={classes.formControl} disabled={indexing}>
+        <FormControl className={classes.formControl} disabled={isIndexing}>
           <TagsSelect
             dataTid="searchTagsOrTID"
             placeholderText={t('core:selectTags')}
-            tags={props.searchQuery.tagsOR}
+            tags={searchQuery.tagsOR}
             label={t('core:atLeastOneOfTheseTags')}
             handleChange={handleTagFieldChange}
             tagSearchType="tagsOR"
             tagMode="remove"
           />
         </FormControl>
-        <FormControl className={classes.formControl} disabled={indexing}>
+        <FormControl className={classes.formControl} disabled={isIndexing}>
           <TagsSelect
             dataTid="searchTagsNotTID"
             placeholderText={t('core:selectTags')}
-            tags={props.searchQuery.tagsNOT}
+            tags={searchQuery.tagsNOT}
             label={t('core:noneOfTheseTags')}
             handleChange={handleTagFieldChange}
             tagSearchType="tagsNOT"
@@ -748,7 +720,7 @@ function SearchPopover(props: Props) {
         </FormControl>
         <FormControl
           className={classes.formControl}
-          disabled={indexing || !Pro}
+          disabled={isIndexing || !Pro}
         >
           <ProTooltip tooltip={t('filterByTypTooltip')}>
             <InputLabel htmlFor="file-type">{t('core:fileType')}</InputLabel>
@@ -871,7 +843,7 @@ function SearchPopover(props: Props) {
         </FormControl>
         <FormControl
           className={classes.formControl}
-          disabled={indexing || !Pro}
+          disabled={isIndexing || !Pro}
         >
           <ProTooltip tooltip={t('filterBySizeTooltip')}>
             <InputLabel
@@ -925,7 +897,7 @@ function SearchPopover(props: Props) {
         </FormControl>
         <FormControl
           className={classes.formControl}
-          disabled={indexing || !Pro}
+          disabled={isIndexing || !Pro}
         >
           <ProTooltip tooltip={t('filterByLastModifiedDateTooltip')}>
             <InputLabel
@@ -968,34 +940,32 @@ function SearchPopover(props: Props) {
               <Box position="relative" display="inline-flex">
                 <DatePicker
                   label={t('enterTagTimePeriodFrom')}
-                  disabled={indexing || !Pro}
+                  disabled={isIndexing || !Pro}
                   inputFormat="yyyy-MM-dd"
                   value={tagTimePeriodFrom}
                   onChange={(fromDataTime: Date) => {
                     if (fromDataTime) {
-                      const searchQuery = {
-                        ...props.searchQuery,
+                      setSearchQuery({
+                        ...searchQuery,
                         tagTimePeriodFrom: fromDataTime.getTime(),
                         executeSearch: false
-                      };
-                      props.setSearchQuery(searchQuery);
+                      });
                     }
                   }}
                   renderInput={params => <TextField {...params} />}
                 />
                 <DatePicker
                   label={t('enterTagTimePeriodTo')}
-                  disabled={indexing || !Pro}
+                  disabled={isIndexing || !Pro}
                   inputFormat="yyyy-MM-dd"
                   value={tagTimePeriodTo}
                   onChange={(toDataTime: Date) => {
                     if (toDataTime) {
-                      const searchQuery = {
-                        ...props.searchQuery,
+                      setSearchQuery({
+                        ...searchQuery,
                         tagTimePeriodTo: toDataTime.getTime(),
                         executeSearch: false
-                      };
-                      props.setSearchQuery(searchQuery);
+                      });
                     }
                   }}
                   renderInput={params => (
@@ -1079,13 +1049,13 @@ function SearchPopover(props: Props) {
             {t('resetBtn')}
           </Button>
           <Button
-            disabled={indexing}
+            disabled={isIndexing}
             variant="contained"
             id="searchButtonAdvTID"
             onClick={executeSearch}
             size="small"
           >
-            {indexing ? 'Search disabled while indexing' : t('searchTitle')}
+            {isIndexing ? 'Search disabled while indexing' : t('searchTitle')}
           </Button>
         </div>
       </div>
@@ -1095,9 +1065,9 @@ function SearchPopover(props: Props) {
           onClose={(searchQuery: TS.SearchQuery) => {
             setSaveSearchDialogOpened(undefined);
             if (searchQuery) {
-              props.setSearchQuery({
+              setSearchQuery({
                 ...searchQuery,
-                showUnixHiddenEntries: props.showUnixHiddenEntries
+                showUnixHiddenEntries
               });
             }
           }}
@@ -1109,37 +1079,4 @@ function SearchPopover(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    indexing: isIndexing(state),
-    searchQuery: getSearchQuery(state),
-    maxSearchResults: getMaxSearchResults(state),
-    searches: getSearches(state),
-    showUnixHiddenEntries: getShowUnixHiddenEntries(state)
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      setSearchQuery: LocationIndexActions.setSearchQuery,
-      createLocationsIndexes: LocationIndexActions.createLocationsIndexes,
-      setSearchResults: AppActions.setSearchResults,
-      exitSearchMode: AppActions.exitSearchMode
-    },
-    dispatch
-  );
-}
-
-const areEqual = (prevProp, nextProp) =>
-  nextProp.indexing === prevProp.indexing &&
-  nextProp.searchQuery === prevProp.searchQuery &&
-  nextProp.textQuery === prevProp.textQuery &&
-  nextProp.currentDirectory === prevProp.currentDirectory &&
-  JSON.stringify(nextProp.searches) === JSON.stringify(prevProp.searches) &&
-  JSON.stringify(nextProp.classes) === JSON.stringify(prevProp.classes);
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(React.memo(SearchPopover, areEqual));
+export default SearchPopover;

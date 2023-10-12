@@ -27,16 +27,7 @@ import IconButton from '@mui/material/IconButton';
 import ClearSearchIcon from '@mui/icons-material/Close';
 import AdvancedSearchIcon from '@mui/icons-material/TuneOutlined';
 import DropDownIcon from '@mui/icons-material/ArrowDropDownOutlined';
-import {
-  actions as AppActions,
-  AppDispatch,
-  isSearchMode
-} from '../reducers/app';
-import {
-  actions as LocationIndexActions,
-  isIndexing,
-  getSearchQuery
-} from '../reducers/location-index';
+import { actions as AppActions, AppDispatch } from '../reducers/app';
 import {
   getMaxSearchResults,
   getShowUnixHiddenEntries
@@ -74,6 +65,7 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 
 interface Props {
   style?: any;
@@ -104,17 +96,20 @@ function SearchAutocomplete(props: Props) {
   } = useCurrentLocationContext();
   const {
     watchForChanges,
-    currentDirectoryPath
+    currentDirectoryPath,
+    exitSearchMode
   } = useDirectoryContentContext();
-  const { showNotification, hideNotifications } = useNotificationContext();
+  const {
+    searchQuery,
+    isIndexing,
+    setSearchQuery,
+    searchAllLocations,
+    searchLocationIndex
+  } = useLocationIndexContext();
   const dispatch: AppDispatch = useDispatch();
-  const indexing = useSelector(isIndexing);
-  const searchQuery: TS.SearchQuery = useSelector(getSearchQuery);
-  // const isDesktop = useSelector(isDesktopMode);
   const maxSearchResults = useSelector(getMaxSearchResults);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
   const locations: TS.Location[] = useSelector(getLocations);
-  const searchMode: boolean = useSelector(isSearchMode);
   const searches: Array<TS.SearchQuery> = useSelector(getSearches);
 
   const openLinkDispatch = (link, options) => openLink(link, options);
@@ -174,16 +169,16 @@ function SearchAutocomplete(props: Props) {
   // const mainSearchField = useRef<HTMLInputElement>(null);
   const isOpen = useRef<boolean>(true);
 
-  const firstRender = useFirstRender();
+  // const firstRender = useFirstRender();
   const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (!firstRender) {
       if (!searchMode) {
         clearSearch();
       }
     }
-  }, [searchMode]);
+  }, [searchMode]);*/
 
   /* let searchBoxingName = t('location');
   if (searchBoxing === 'global') {
@@ -333,21 +328,9 @@ function SearchAutocomplete(props: Props) {
             textQuery: txtQuery
           };
           if (searchBoxing === 'global') {
-            dispatch(
-              LocationIndexActions.searchAllLocations(
-                sQuery,
-                showNotification,
-                hideNotifications
-              )
-            );
+            searchAllLocations(sQuery);
           } else {
-            dispatch(
-              LocationIndexActions.searchLocationIndex(
-                sQuery,
-                showNotification,
-                hideNotifications
-              )
-            );
+            searchLocationIndex(sQuery);
           }
         }
       } /*else {
@@ -455,8 +438,8 @@ function SearchAutocomplete(props: Props) {
   }
   const clearSearch = () => {
     resetValues([]);
-    dispatch(LocationIndexActions.setSearchQuery({}));
-    dispatch(AppActions.exitSearchMode());
+    setSearchQuery({});
+    exitSearchMode();
     watchForChanges();
   };
 
@@ -624,7 +607,7 @@ function SearchAutocomplete(props: Props) {
       clearSearch();
     } else {
       console.log('Search object: ' + JSON.stringify(sQuery));
-      dispatch(LocationIndexActions.setSearchQuery(sQuery));
+      setSearchQuery(sQuery);
     }
   };
 
@@ -967,7 +950,7 @@ function SearchAutocomplete(props: Props) {
           }
           actions.push(option);
         } else if (option.action === ExecActions.OPEN_LOCATION) {
-          dispatch(AppActions.exitSearchMode());
+          exitSearchMode();
           // isOpen.current = false;
           searchOptions.current = getSearchOptions();
           currentOptions.current = undefined;
@@ -1005,9 +988,7 @@ function SearchAutocomplete(props: Props) {
             if (option.id) {
               switchLocationTypeByID(option.id).then(() => {
                 changeLocationByID(option.id);
-                dispatch(
-                  LocationIndexActions.setSearchQuery(option.searchQuery)
-                );
+                setSearchQuery(option.searchQuery);
               });
             } else {
             }
@@ -1051,9 +1032,7 @@ function SearchAutocomplete(props: Props) {
           isOpen.current = false;
           return [];
         } else if (option.action === ExecActions.OPEN_SAVED_SEARCHES) {
-          dispatch(
-            LocationIndexActions.setSearchQuery(JSON.parse(option.fullName))
-          );
+          setSearchQuery(JSON.parse(option.fullName));
           searchOptions.current = getSearchOptions();
           currentOptions.current = undefined;
           isOpen.current = false;
@@ -1104,15 +1083,13 @@ function SearchAutocomplete(props: Props) {
             actionValues.current,
             SearchQueryComposition.TAG_NOT
           );
-          dispatch(
-            LocationIndexActions.setSearchQuery({
-              ...searchQuery,
-              tagsAND,
-              tagsOR,
-              tagsNOT,
-              executeSearch: false
-            })
-          );
+          setSearchQuery({
+            ...searchQuery,
+            tagsAND,
+            tagsOR,
+            tagsNOT,
+            executeSearch: false
+          });
           setTextQuery('');
           if (hasOptionsChanged) {
             changeOptions(option.action);
@@ -1126,13 +1103,11 @@ function SearchAutocomplete(props: Props) {
           const id = setActionLabel(SearchQueryComposition.TYPE, option);
           if (id) {
             fileTypes.current = option.descr.split(', ');
-            dispatch(
-              LocationIndexActions.setSearchQuery({
-                ...searchQuery,
-                fileTypes: fileTypes.current,
-                executeSearch: false
-              })
-            );
+            setSearchQuery({
+              ...searchQuery,
+              fileTypes: fileTypes.current,
+              executeSearch: false
+            });
           }
           if (hasOptionsChanged) {
             changeOptions(option.action);
@@ -1147,13 +1122,11 @@ function SearchAutocomplete(props: Props) {
           const id = setActionLabel(SearchQueryComposition.SIZE, option);
           if (id) {
             fileSize.current = id;
-            dispatch(
-              LocationIndexActions.setSearchQuery({
-                ...searchQuery,
-                fileSize: id,
-                executeSearch: false
-              })
-            );
+            setSearchQuery({
+              ...searchQuery,
+              fileSize: id,
+              executeSearch: false
+            });
           }
           if (hasOptionsChanged) {
             changeOptions(option.action);
@@ -1173,13 +1146,11 @@ function SearchAutocomplete(props: Props) {
           );
           if (id) {
             lastModified.current = id;
-            dispatch(
-              LocationIndexActions.setSearchQuery({
-                ...searchQuery,
-                lastModified: id,
-                executeSearch: false
-              })
-            );
+            setSearchQuery({
+              ...searchQuery,
+              lastModified: id,
+              executeSearch: false
+            });
           }
           if (hasOptionsChanged) {
             changeOptions(option.action);
@@ -1194,13 +1165,11 @@ function SearchAutocomplete(props: Props) {
           const id = setActionLabel(SearchQueryComposition.SCOPE, option);
           if (id) {
             setSearchBoxing(scope[id]);
-            dispatch(
-              LocationIndexActions.setSearchQuery({
-                ...searchQuery,
-                searchBoxing: scope[id],
-                executeSearch: false
-              })
-            );
+            setSearchQuery({
+              ...searchQuery,
+              searchBoxing: scope[id],
+              executeSearch: false
+            });
           }
           if (hasOptionsChanged) {
             changeOptions(option.action);
@@ -1214,13 +1183,11 @@ function SearchAutocomplete(props: Props) {
           const id = setActionLabel(SearchQueryComposition.ACCURACY, option);
           if (id) {
             searchType.current = accuracy[id];
-            dispatch(
-              LocationIndexActions.setSearchQuery({
-                ...searchQuery,
-                searchType: accuracy[id],
-                executeSearch: false
-              })
-            );
+            setSearchQuery({
+              ...searchQuery,
+              searchType: accuracy[id],
+              executeSearch: false
+            });
           }
           if (hasOptionsChanged) {
             changeOptions(option.action);
@@ -1692,12 +1659,12 @@ function SearchAutocomplete(props: Props) {
             );
           }}
         />
-        <Tooltip title={indexing ? t('searchDisabledWhileIndexing') : ''}>
+        <Tooltip title={isIndexing ? t('searchDisabledWhileIndexing') : ''}>
           <Button
             id="searchButton"
             variant="outlined"
             size="small"
-            disabled={indexing}
+            disabled={isIndexing}
             style={{
               marginRight: 10,
               marginLeft: 10,

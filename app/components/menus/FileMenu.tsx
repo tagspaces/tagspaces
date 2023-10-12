@@ -275,7 +275,6 @@ function FileMenu(props: Props) {
         selectedFilePath,
         PlatformIO.getDirSeparator()
       );
-      dispatch(AppActions.exitSearchMode());
       return loadDirectoryContent(parentFolder, true);
     }
   }

@@ -21,10 +21,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { getSearches } from '-/reducers/searches';
-import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import { AppDispatch } from '-/reducers/app';
 import { useTranslation } from 'react-i18next';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 
 interface Props {
   open: boolean;
@@ -35,7 +35,7 @@ interface Props {
 function SavedSearchesMenu(props: Props) {
   const { open, onClose, anchorEl } = props;
   const { t } = useTranslation();
-  const dispatch: AppDispatch = useDispatch();
+  const { setSearchQuery } = useLocationIndexContext();
   const searches = useSelector(state => getSearches(state));
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
 
@@ -45,12 +45,10 @@ function SavedSearchesMenu(props: Props) {
       return true;
     }
 
-    dispatch(
-      LocationIndexActions.setSearchQuery({
-        ...savedSearch,
-        showUnixHiddenEntries: showUnixHiddenEntries
-      })
-    );
+    setSearchQuery({
+      ...savedSearch,
+      showUnixHiddenEntries: showUnixHiddenEntries
+    });
   };
 
   const menuItems = searches.length ? (

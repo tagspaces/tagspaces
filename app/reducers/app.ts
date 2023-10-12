@@ -36,8 +36,6 @@ import {
   toFsEntry
 } from '-/services/utils-io';
 import i18n from '../services/i18n';
-import { Pro } from '../pro';
-import { actions as LocationIndexActions } from './location-index';
 import { actions as tagLibraryActions } from './taglibrary';
 import {
   actions as SettingsActions,
@@ -78,10 +76,10 @@ export const types = {
   //LOAD_DIRECTORY_FAILURE: 'APP/LOAD_DIRECTORY_FAILURE',
   //CLEAR_DIRECTORY_CONTENT: 'APP/CLEAR_DIRECTORY_CONTENT',
   // LOAD_PAGE_CONTENT: 'APP/LOAD_PAGE_CONTENT',
-  SET_SEARCH_RESULTS: 'APP/SET_SEARCH_RESULTS',
-  EXIT_SEARCH_MODE: 'APP/EXIT_SEARCH_MODE',
-  ENTER_SEARCH_MODE: 'APP/ENTER_SEARCH_MODE',
-  APPEND_SEARCH_RESULTS: 'APP/APPEND_SEARCH_RESULTS',
+  //SET_SEARCH_RESULTS: 'APP/SET_SEARCH_RESULTS',
+  //EXIT_SEARCH_MODE: 'APP/EXIT_SEARCH_MODE',
+  //ENTER_SEARCH_MODE: 'APP/ENTER_SEARCH_MODE',
+  //APPEND_SEARCH_RESULTS: 'APP/APPEND_SEARCH_RESULTS',
   SET_SEARCH_FILTER: 'APP/SET_SEARCH_FILTER',
   SET_NEW_VERSION_AVAILABLE: 'APP/SET_NEW_VERSION_AVAILABLE',
   SET_CURRENLOCATIONID: 'APP/SET_CURRENLOCATIONID',
@@ -450,7 +448,7 @@ export default (state: any = initialState, action: any) => {
         progressDialogOpened: !state.progressDialogOpened
       };
     }
-    case types.SET_SEARCH_RESULTS: {
+    /*case types.SET_SEARCH_RESULTS: {
       GlobalSearch.getInstance().setResults(action.searchResults);
       return {
         ...state,
@@ -478,8 +476,8 @@ export default (state: any = initialState, action: any) => {
         searchFilter: undefined
         //isLoading: false
       };
-    }
-    case types.APPEND_SEARCH_RESULTS: {
+    }*/
+    /*case types.APPEND_SEARCH_RESULTS: {
       // const newDirEntries = [...state.currentDirectoryEntries];
       for (let i = 0; i < action.searchResults.length; i += 1) {
         const index = GlobalSearch.getInstance()
@@ -498,7 +496,7 @@ export default (state: any = initialState, action: any) => {
         // currentDirectoryEntries: newDirEntries,
         //isLoading: false
       };
-    }
+    }*/
     case types.SET_SEARCH_FILTER: {
       return {
         ...state,
@@ -1098,11 +1096,11 @@ export const actions = {
   showInFileManager: (filePath: string) => () => {
     PlatformIO.showInFileManager(filePath);
   },
-  setSearchResults: (searchResults: Array<any> | []) => ({
+  /*setSearchResults: (searchResults: Array<any> | []) => ({
     type: types.SET_SEARCH_RESULTS,
     searchResults
-  }),
-  exitSearchMode: () => (dispatch: (action) => void, getState: () => any) => {
+  }),*/
+  /*exitSearchMode: () => (dispatch: (action) => void, getState: () => any) => {
     const { searchMode } = getState().app;
     if (searchMode) {
       dispatch(actions.exitSearchModeInt());
@@ -1119,11 +1117,11 @@ export const actions = {
   },
   enterSearchModeInt: () => ({
     type: types.ENTER_SEARCH_MODE
-  }),
-  appendSearchResults: (searchResults: Array<any> | []) => ({
+  }),*/
+  /*appendSearchResults: (searchResults: Array<any> | []) => ({
     type: types.APPEND_SEARCH_RESULTS,
     searchResults
-  }),
+  }),*/
   setSearchFilter: (searchFilter: string) => ({
     type: types.SET_SEARCH_FILTER,
     searchFilter
@@ -1220,10 +1218,9 @@ export const actions = {
     newPath
   }),
   reflectRenameEntry: (path: string, newPath: string) => (
-    dispatch: (action) => void,
-    getState: () => any
+    dispatch: (action) => void
   ) => {
-    const { searchMode } = getState().app;
+    /*const { searchMode } = getState().app;
     if (searchMode) {
       const results = GlobalSearch.getInstance()
         .getResults()
@@ -1238,7 +1235,7 @@ export const actions = {
           return fsEntry;
         });
       GlobalSearch.getInstance().setResults(results);
-    }
+    }*/
     dispatch(actions.reflectRenameEntryInt(path, newPath));
     GlobalSearch.getInstance().reflectRenameEntry(path, newPath);
     dispatch(actions.setSelectedEntries([]));
@@ -1386,9 +1383,9 @@ export const isTagLibraryPanelOpened = (state: any) =>
 export const isSearchPanelOpened = (state: any) => state.app.searchPanelOpened;
 export const isHelpFeedbackPanelOpened = (state: any) =>
   state.app.helpFeedbackPanelOpened;
-export const getLastSearchTimestamp = (state: any) =>
-  state.app.lastSearchTimestamp;
-export const isSearchMode = (state: any) => state.app.searchMode;
+/*export const getLastSearchTimestamp = (state: any) =>
+  state.app.lastSearchTimestamp;*/
+//export const isSearchMode = (state: any) => state.app.searchMode;
 export const getSearchFilter = (state: any) => state.app.searchFilter;
 
 // export type CreateDirectoryAction = ReturnType<typeof actions.createDirectory>;

@@ -36,10 +36,6 @@ import {
 import AppConfig from '-/AppConfig';
 import { Pro } from '-/pro';
 import { ProTooltip } from '-/components/HelperComponents';
-import {
-  actions as LocationIndexActions,
-  getSearchQuery
-} from '-/reducers/location-index';
 import { getKeyBindingObject } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import {
@@ -55,6 +51,7 @@ import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 
 interface Props {
   prefixDataTID?: string;
@@ -86,10 +83,10 @@ function MainToolbar(props: Props) {
     currentDirectoryPath,
     openCurrentDirectory
   } = useDirectoryContentContext();
+  const { searchQuery } = useLocationIndexContext();
   const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
     getSelectedEntries
   );
-  const searchQuery: TS.SearchQuery = useSelector(getSearchQuery);
   const keyBindings = useSelector(getKeyBindingObject);
   const dispatch: AppDispatch = useDispatch();
   const { readOnlyMode } = useCurrentLocationContext();
@@ -116,12 +113,11 @@ function MainToolbar(props: Props) {
             aria-label={t('core:navigateToParentDirectory')}
             data-tid={prefixDataTID + 'PerspectiveOnBackButton'}
             onClick={() => {
-              if (searchQuery && Object.keys(searchQuery).length > 0) {
+              /*if (searchQuery && Object.keys(searchQuery).length > 0) {
                 dispatch(LocationIndexActions.setSearchQuery({}));
                 openCurrentDirectory();
-              } else {
-                loadParentDirectoryContent();
-              }
+              } else {*/
+              loadParentDirectoryContent();
             }}
             size="large"
           >

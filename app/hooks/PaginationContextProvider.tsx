@@ -22,7 +22,6 @@ import { defaultSettings } from '-/perspectives/grid-perspective';
 import { useSortedDirContext } from '-/perspectives/grid-perspective/hooks/useSortedDirContext';
 import { TS } from '-/tagspaces.namespace';
 import { useSelector } from 'react-redux';
-import { getLastSearchTimestamp } from '-/reducers/app';
 import { useMetaLoaderContext } from '-/hooks/useMetaLoaderContext';
 
 type PaginationContextData = {
@@ -50,7 +49,6 @@ export const PaginationContextProvider = ({
     isMetaFolderExist
   } = useDirectoryContentContext();
   const { loadCurrentDirMeta } = useMetaLoaderContext();
-  const lastSearchTimestamp = useSelector(getLastSearchTimestamp);
   const { settings, sortedDirContent } = useSortedDirContext();
 
   const [page, setPage] = useState<number>(initPage);
@@ -65,7 +63,7 @@ export const PaginationContextProvider = ({
     if (isMetaFolderExist) {
       loadCurrentDirMeta(pageFiles).then(() => console.debug('meta loaded'));
     }
-  }, [currentDirectoryPath, lastSearchTimestamp, isMetaFolderExist]);
+  }, [currentDirectoryPath, isMetaFolderExist]);
 
   const pageFiles: TS.FileSystemEntry[] = useMemo(() => {
     return getPageFiles(page, sortedDirContent);

@@ -30,8 +30,7 @@ import {
   actions as AppActions,
   AppDispatch,
   getEditedEntryPaths,
-  getSelectedEntries,
-  isSearchMode
+  getSelectedEntries
 } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { useTranslation } from 'react-i18next';
@@ -55,14 +54,9 @@ import {
 import AppConfig from '-/AppConfig';
 import { PerspectiveIDs } from '-/perspectives';
 import { updateHistory } from '-/utils/dom';
-import {
-  getEnableWS,
-  getShowUnixHiddenEntries,
-  getUseGenerateThumbnails
-} from '-/reducers/settings';
+import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import { enhanceEntry, getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import GlobalSearch from '-/services/search-index';
 import { Pro } from '-/pro';
 import useFirstRender from '-/utils/useFirstRender';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
@@ -82,6 +76,7 @@ type DirectoryContentContextData = {
   currentDirectoryDirs: TS.OrderVisibilitySettings[];
   //isMetaLoaded: boolean;
   isMetaFolderExist: boolean;
+  isSearchMode: boolean;
   loadParentDirectoryContent: () => void;
   loadDirectoryContent: (
     directoryPath: string,
@@ -95,7 +90,7 @@ type DirectoryContentContextData = {
     getDirMeta?: boolean,
     generateThumbnails?: boolean
   ) => any;
-  openCurrentDirectory: () => void;
+  openCurrentDirectory: () => Promise<boolean>;
   clearDirectoryContent: () => void;
   setCurrentDirectoryPerspective: (perspective: string) => void;
   setCurrentDirectoryColor: (color: string) => void;
@@ -107,6 +102,10 @@ type DirectoryContentContextData = {
   setDirectoryMeta: (meta: TS.FileSystemEntryMeta) => void;
   watchForChanges: (location?: TS.Location) => void;
   getEnhancedDir: (entry: TS.FileSystemEntry) => Promise<TS.FileSystemEntry>;
+  setSearchResults: (entries: TS.FileSystemEntry[]) => void;
+  appendSearchResults: (entries: TS.FileSystemEntry[]) => void;
+  enterSearchMode: () => void;
+  exitSearchMode: () => void;
 };
 
 export const DirectoryContentContext = createContext<
@@ -120,10 +119,11 @@ export const DirectoryContentContext = createContext<
   currentDirectoryDirs: [],
   //isMetaLoaded: undefined,
   isMetaFolderExist: false,
+  isSearchMode: false,
   loadParentDirectoryContent: () => {},
   loadDirectoryContent: () => Promise.resolve(false),
   enhanceDirectoryContent: () => {},
-  openCurrentDirectory: () => {},
+  openCurrentDirectory: () => Promise.resolve(false),
   clearDirectoryContent: () => {},
   setCurrentDirectoryPerspective: () => {},
   setCurrentDirectoryColor: () => {},
@@ -134,7 +134,11 @@ export const DirectoryContentContext = createContext<
   updateThumbnailUrl: () => {},
   setDirectoryMeta: () => {},
   watchForChanges: () => {},
-  getEnhancedDir: () => Promise.resolve(undefined)
+  getEnhancedDir: () => Promise.resolve(undefined),
+  setSearchResults: () => {},
+  appendSearchResults: () => {},
+  enterSearchMode: () => {},
+  exitSearchMode: () => {}
 });
 
 export type DirectoryContentContextProviderProps = {
@@ -149,13 +153,16 @@ export const DirectoryContentContextProvider = ({
   const { closeAllLocations, currentLocation } = useCurrentLocationContext();
   const { showNotification, hideNotifications } = useNotificationContext();
   const selectedEntries = useSelector(getSelectedEntries);
-  const searchMode = useSelector(isSearchMode);
   //const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
   const editedEntryPaths = useSelector(getEditedEntryPaths);
   //const enableWS = useSelector(getEnableWS);
 
-  const [currentDirectoryEntries, setCurrentDirectoryEntries] = useState([]);
+  const [currentDirectoryEntries, setCurrentDirectoryEntries] = useState<
+    TS.FileSystemEntry[]
+  >([]);
+  const isSearchMode = useRef<boolean>(false);
+  const lastSearchTimestamp = useRef<number>(undefined);
   const directoryMeta = useRef<TS.FileSystemEntryMeta>({ id: getUuid() });
   /**
    * isMetaLoaded boolean if thumbs and description from meta are loaded
@@ -179,6 +186,7 @@ export const DirectoryContentContextProvider = ({
       }
     } else {
       clearDirectoryContent();
+      exitSearchMode();
       if (Pro && Pro.Watcher) {
         Pro.Watcher.stopWatching();
       }
@@ -222,11 +230,11 @@ export const DirectoryContentContextProvider = ({
           const newDirectoryEntries = currentDirectoryEntries.map(entry =>
             entry.path === oldFilePath ? newEntry : entry
           );
-          if (searchMode) {
+          /*if (searchMode.current) {
             GlobalSearch.getInstance().setResults(newDirectoryEntries);
-          } else {
-            setCurrentDirectoryEntries(newDirectoryEntries);
-          }
+          } else {*/
+          setCurrentDirectoryEntries(newDirectoryEntries);
+          //}
         }
       } else if (action === 'delete') {
         const filePath = editedEntryPaths[0].path;
@@ -234,16 +242,42 @@ export const DirectoryContentContextProvider = ({
           entry => entry.path !== filePath
         );
 
-        if (searchMode) {
+        /*if (searchMode.current) {
           GlobalSearch.getInstance().setResults(newDirectoryEntries);
-        } else {
-          setCurrentDirectoryEntries(newDirectoryEntries);
-        }
+        } else {*/
+        setCurrentDirectoryEntries(newDirectoryEntries);
       }
     }
   }, [editedEntryPaths]);
 
+  function exitSearchMode() {
+    isSearchMode.current = false;
+    forceUpdate();
+  }
+
+  function enterSearchMode() {
+    isSearchMode.current = true;
+    forceUpdate();
+  }
+
+  function setSearchResults(searchResults: TS.FileSystemEntry[]) {
+    setCurrentDirectoryEntries(searchResults);
+  }
+
+  function appendSearchResults(searchResults: TS.FileSystemEntry[]) {
+    const newSearchResults = searchResults.filter(
+      result =>
+        !currentDirectoryEntries.some(entry => entry.path === result.path)
+    );
+    if (newSearchResults.length > 0) {
+      setSearchResults([...currentDirectoryEntries, ...newSearchResults]);
+    }
+  }
+
   function loadParentDirectoryContent() {
+    if (isSearchMode.current) {
+      exitSearchMode();
+    }
     const currentLocationPath = normalizePath(currentLocation.path);
 
     // dispatch(actions.setIsLoading(true));
@@ -269,17 +303,16 @@ export const DirectoryContentContextProvider = ({
   const updateCurrentDirEntry = useMemo(() => {
     return (path: string, entry: any) => {
       const entryUpdated = { ...entry, ...(!entry.path && { path: path }) };
-      if (searchMode) {
+      /*if (searchMode.current) {
         const results = updateFsEntries(
           GlobalSearch.getInstance().getResults(),
           [entryUpdated]
         );
         GlobalSearch.getInstance().setResults(results);
-      } else {
-        setCurrentDirectoryEntries(
-          updateFsEntries(currentDirectoryEntries, [entryUpdated])
-        );
-      }
+      } else {*/
+      setCurrentDirectoryEntries(
+        updateFsEntries(currentDirectoryEntries, [entryUpdated])
+      );
     };
   }, [currentDirectoryEntries]);
 
@@ -478,12 +511,11 @@ export const DirectoryContentContextProvider = ({
     setCurrentDirectoryEntries([]);
   }
 
-  function openCurrentDirectory() {
+  function openCurrentDirectory(): Promise<boolean> {
     if (currentDirectoryPath.current) {
-      loadDirectoryContent(currentDirectoryPath.current, true);
-    } else {
-      dispatch(AppActions.setSearchResults([]));
+      return loadDirectoryContent(currentDirectoryPath.current, true);
     }
+    return Promise.resolve(false);
   }
 
   function loadDirectorySuccess(
@@ -517,6 +549,7 @@ export const DirectoryContentContextProvider = ({
       true
     );
 
+    isSearchMode.current = false;
     setCurrentDirectoryEntries(directoryContent);
 
     if (
@@ -679,6 +712,7 @@ export const DirectoryContentContextProvider = ({
       currentDirectoryFiles: currentDirectoryFiles.current,
       currentDirectoryDirs: currentDirectoryDirs.current,
       isMetaFolderExist: isMetaFolderExist.current,
+      isSearchMode: isSearchMode.current,
       loadDirectoryContent,
       loadParentDirectoryContent,
       enhanceDirectoryContent,
@@ -693,7 +727,11 @@ export const DirectoryContentContextProvider = ({
       updateThumbnailUrl,
       setDirectoryMeta,
       watchForChanges,
-      getEnhancedDir
+      getEnhancedDir,
+      setSearchResults,
+      appendSearchResults,
+      enterSearchMode,
+      exitSearchMode
     };
   }, [
     currentLocation,
@@ -704,7 +742,8 @@ export const DirectoryContentContextProvider = ({
     isMetaFolderExist.current,
     currentDirectoryFiles.current,
     currentDirectoryDirs.current,
-    updateCurrentDirEntries
+    updateCurrentDirEntries,
+    isSearchMode.current
   ]);
 
   return (

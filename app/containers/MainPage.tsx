@@ -19,9 +19,7 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { bindActionCreators } from 'redux';
-import { connect, useSelector } from 'react-redux';
-//import { translate } from 'react-i18next';
-//import { initReactI18next } from 'react-i18next';
+import { connect } from 'react-redux';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import Drawer from '@mui/material/Drawer';
 import { HotKeys } from 'react-hotkeys';
@@ -81,7 +79,6 @@ import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { TS } from '-/tagspaces.namespace';
 import PageNotification from '-/containers/PageNotification';
 import listen from '-/containers/RendererListener';
-import { actions as LocationIndexActions } from '-/reducers/location-index';
 import MoveOrCopyFilesDialog from '-/components/dialogs/MoveOrCopyFilesDialog';
 import { Pro } from '-/pro';
 import NewFileDialog from '-/components/dialogs/NewFileDialog';
@@ -89,11 +86,9 @@ import IsTruncatedConfirmDialog from '-/components/dialogs/IsTruncatedConfirmDia
 import { styled, useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { DescriptionContextProvider } from '-/hooks/DescriptionContextProvider';
-import { TaggingActionsContextProvider } from '-/hooks/TaggingActionsContextProvider';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useFsActionsContext } from '-/hooks/useFsActionsContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { IOActionsContextProvider } from '-/hooks/IOActionsContextProvider';
 
 const drawerWidth = 320;
 const body = document.getElementsByTagName('body')[0];
@@ -200,7 +195,6 @@ interface Props {
   toggleDeleteMultipleEntriesDialog: () => void;
   selectedEntries: Array<any>;
   user: CognitoUserInterface;
-  setSearchQuery: (searchQuery: TS.SearchQuery) => void;
 }
 
 const CreateEditLocationDialog = React.lazy(() =>
@@ -336,8 +330,9 @@ function MainPage(props: Props) {
   const { deleteFile } = useFsActionsContext();
 
   const {
-    loadParentDirectoryContent
-    // isGeneratingThumbs
+    loadParentDirectoryContent,
+    enterSearchMode,
+    exitSearchMode
   } = useDirectoryContentContext();
   const theme = useTheme();
   const percent = useRef<number | undefined>(undefined);
@@ -473,8 +468,8 @@ function MainPage(props: Props) {
       props.openTagLibraryPanel();
       setDrawerOpened(true);
     },
-    openSearch: () => props.setSearchQuery({ textQuery: '' }), // props.openSearchPanel,
-    closeSearch: () => props.setSearchQuery({}),
+    openSearch: () => enterSearchMode(),
+    closeSearch: () => exitSearchMode(),
     showHelp: () => {
       props.openHelpFeedbackPanel();
       setDrawerOpened(true);
@@ -882,7 +877,6 @@ function mapDispatchToProps(dispatch) {
       toggleDeleteMultipleEntriesDialog:
         AppActions.toggleDeleteMultipleEntriesDialog,
       setFirstRun: SettingsActions.setFirstRun,
-      setSearchQuery: LocationIndexActions.setSearchQuery,
       addExtensions: AppActions.addExtensions,
       addSupportedFileTypes: SettingsActions.addSupportedFileTypes
     },

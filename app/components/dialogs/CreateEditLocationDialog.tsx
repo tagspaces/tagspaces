@@ -65,7 +65,6 @@ import { getLocations } from '-/reducers/locations';
 import { AppDispatch } from '-/reducers/app';
 import { getPersistTagsInSidecarFile, isDevMode } from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import { actions as LocationIndexActions } from '-/reducers/location-index';
 import PlatformIO from '-/services/platform-facade';
 import WebdavForm from '-/components/dialogs/WebdavForm';
 import { useTheme } from '@mui/material/styles';
@@ -77,6 +76,7 @@ import MaxLoopsSelect from '-/components/dialogs/MaxLoopsSelect';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 
 const PREFIX = 'CreateEditLocationDialog';
 
@@ -101,9 +101,9 @@ interface Props {
 
 function CreateEditLocationDialog(props: Props) {
   const { t } = useTranslation();
-  const dispatch: AppDispatch = useDispatch();
 
   const { showNotification } = useNotificationContext();
+  const { createLocationIndex } = useLocationIndexContext();
   const { addLocation, selectedLocation } = useCurrentLocationContext();
   const isPersistTagsInSidecar = useSelector(getPersistTagsInSidecarFile);
   const locations: Array<TS.Location> = useSelector(getLocations);
@@ -645,11 +645,7 @@ function CreateEditLocationDialog(props: Props) {
                   content={t('core:fullTextIndexRegenerate')}
                   confirmCallback={result => {
                     if (result) {
-                      dispatch(
-                        LocationIndexActions.createLocationIndex(
-                          selectedLocation
-                        )
-                      );
+                      createLocationIndex(selectedLocation);
                     } else {
                       setFullTextIndexConfirmDialogOpened(false);
                     }

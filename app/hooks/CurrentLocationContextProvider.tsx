@@ -34,10 +34,7 @@ import {
 } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-facade';
 import { setLocationType } from '-/services/utils-io';
-import { PerspectiveIDs } from '-/perspectives';
 import { clearAllURLParams, getURLParameter } from '-/utils/dom';
-
-import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { Pro } from '-/pro';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
@@ -233,15 +230,12 @@ export const CurrentLocationContextProvider = ({
 
   function changeLocation(location: TS.Location) {
     if (!currentLocation || location.uuid !== currentLocation.uuid) {
-      // dispatch(actions.exitSearchMode());
-      dispatch(LocationIndexActions.clearDirectoryIndex());
       setCurrentLocation(location);
     }
   }
 
   function changeLocationByID(locationId: string) {
     if (!currentLocation || locationId !== currentLocation.uuid) {
-      dispatch(LocationIndexActions.clearDirectoryIndex());
       const location = locations.find(location => location.uuid === locationId);
       if (location) {
         setCurrentLocation(location);
@@ -339,9 +333,7 @@ export const CurrentLocationContextProvider = ({
         if (location.uuid === locationId) {
           // location needed evtl. to unwatch many loc. root folders if available
           setCurrentLocation(undefined);
-          dispatch(LocationIndexActions.clearDirectoryIndex());
           dispatch(AppActions.setSelectedEntries([]));
-          dispatch(AppActions.exitSearchMode());
         }
         clearAllURLParams();
         return true;
@@ -352,7 +344,6 @@ export const CurrentLocationContextProvider = ({
   function closeAllLocations() {
     // location needed evtl. to unwatch many loc. root folders if available
     setCurrentLocation(undefined);
-    dispatch(LocationIndexActions.clearDirectoryIndex());
     dispatch(AppActions.setSelectedEntries([]));
     clearAllURLParams();
     return true;

@@ -31,7 +31,6 @@ import TagDropContainer from '-/components/TagDropContainer';
 import {
   actions as AppActions,
   AppDispatch,
-  getLastSearchTimestamp,
   getLastSelectedEntryPath,
   getSelectedEntries
 } from '-/reducers/app';
@@ -92,7 +91,6 @@ function ListPerspective(props: Props) {
     setSortBy,
     setOrderBy
   } = useSortedDirContext();
-  const lastSearchTimestamp = useSelector(getLastSearchTimestamp);
   const desktopMode = useSelector(getDesktopMode);
   const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
     getSelectedEntries
@@ -403,11 +401,7 @@ function ListPerspective(props: Props) {
     if (selectedEntries.length > 1) {
       clearSelection();
     } else {
-      if (!lastSearchTimestamp) {
-        handleSetSelectedEntries(sortedDirContent);
-      } else {
-        handleSetSelectedEntries(GlobalSearch.getInstance().getResults());
-      }
+      handleSetSelectedEntries(sortedDirContent);
     }
   };
 
@@ -807,7 +801,6 @@ function ListPerspective(props: Props) {
           onClose={() => setSortingContextMenuAnchorEl(null)}
           anchorEl={sortingContextMenuAnchorEl}
           handleSortBy={handleSortBy}
-          searchModeEnabled={lastSearchTimestamp !== undefined}
         />
       )}
       {Boolean(optionsContextMenuAnchorEl) && (

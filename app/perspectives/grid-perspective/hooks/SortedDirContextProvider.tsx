@@ -18,9 +18,8 @@
 
 import React, { createContext, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { getLastSearchTimestamp, getSearchFilter } from '-/reducers/app';
+import { getSearchFilter } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
-import GlobalSearch from '-/services/search-index';
 import { sortByCriteria } from '@tagspaces/tagspaces-common/misc';
 import { Pro } from '-/pro';
 import { PerspectiveIDs } from '-/perspectives';
@@ -57,7 +56,6 @@ export const SortedDirContextProvider = ({
     directoryMeta,
     currentDirectoryPerspective
   } = useDirectoryContentContext();
-  const lastSearchTimestamp = useSelector(getLastSearchTimestamp);
   const searchFilter: string = useSelector(getSearchFilter);
 
   const settings: TS.FolderSettings = useMemo(() => {
@@ -95,47 +93,32 @@ export const SortedDirContextProvider = ({
 
   const sortedDirContent = useMemo(() => {
     if (searchFilter) {
-      if (lastSearchTimestamp) {
+      /*if (lastSearchTimestamp) {
         return GlobalSearch.getInstance()
           .getResults()
           .filter(entry =>
             entry.name.toLowerCase().includes(searchFilter.toLowerCase())
           );
-      } else {
-        return sortByCriteria(
-          currentDirectoryEntries,
-          sortBy,
-          orderBy
-        ).filter(entry =>
-          entry.name.toLowerCase().includes(searchFilter.toLowerCase())
-        );
-      }
+      } else {*/
+      return sortByCriteria(
+        currentDirectoryEntries,
+        sortBy,
+        orderBy
+      ).filter(entry =>
+        entry.name.toLowerCase().includes(searchFilter.toLowerCase())
+      );
     }
-    if (lastSearchTimestamp) {
-      if (sortBy === 'byRelevance') {
-        // initial search results is sorted by relevance
-        if (orderBy) {
-          return GlobalSearch.getInstance().getResults();
-        } else {
-          return [...GlobalSearch.getInstance().getResults()].reverse();
-        }
+    if (sortBy === 'byRelevance') {
+      // initial search results is sorted by relevance
+      if (orderBy) {
+        return currentDirectoryEntries;
       } else {
-        return sortByCriteria(
-          GlobalSearch.getInstance().getResults(),
-          sortBy,
-          orderBy
-        );
+        return [...currentDirectoryEntries].reverse();
       }
     }
     // not in search mode
     return sortByCriteria(currentDirectoryEntries, sortBy, orderBy).map(o => o);
-  }, [
-    currentDirectoryEntries,
-    lastSearchTimestamp,
-    searchFilter,
-    sortBy,
-    orderBy
-  ]);
+  }, [currentDirectoryEntries, searchFilter, sortBy, orderBy]);
 
   const context = useMemo(() => {
     return {

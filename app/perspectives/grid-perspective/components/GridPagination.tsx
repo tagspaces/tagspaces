@@ -33,8 +33,7 @@ import {
   getCurrentDirectoryDescription,
   getLastBackgroundImageChange,
   getLastThumbnailImageChange,
-  getLastSelectedEntryPath,
-  getLastSearchTimestamp
+  getLastSelectedEntryPath
 } from '-/reducers/app';
 import EntryIcon from '-/components/EntryIcon';
 import TagsPreview from '-/components/TagsPreview';
@@ -102,7 +101,6 @@ interface Props {
   setFileContextMenuAnchorEl: (HTMLElement) => void;
   setDirContextMenuAnchorEl: (HTMLElement) => void;
   clearSelection: () => void;
-  lastSearchTimestamp: number;
 }
 
 function GridPagination(props: Props) {
@@ -132,8 +130,7 @@ function GridPagination(props: Props) {
     selectedEntries,
     setSelectedEntries,
     clearSelection,
-    files,
-    lastSearchTimestamp
+    files
   } = props;
   const { openEntry } = useOpenedEntryContext();
   const { moveFiles } = useIOActionsContext();
@@ -185,11 +182,7 @@ function GridPagination(props: Props) {
     if (containerEl && containerEl.current) {
       containerEl.current.scrollTop = 0;
     }
-  }, [
-    //props.currentLocationPath,
-    props.currentDirectoryPath,
-    lastSearchTimestamp
-  ]);
+  }, [currentDirectoryEntries]);
 
   const handleChange = (event, value) => {
     setCurrentPage(value).then(() => {
@@ -393,9 +386,7 @@ function GridPagination(props: Props) {
                 selectedEntries,
                 setSelectedEntries,
                 lastSelectedEntryPath,
-                lastSearchTimestamp
-                  ? GlobalSearch.getInstance().getResults()
-                  : currentDirectoryEntries,
+                currentDirectoryEntries,
                 openEntry,
                 openFileNatively,
                 loadDirectoryContent,
@@ -419,9 +410,7 @@ function GridPagination(props: Props) {
               selectedEntries,
               setSelectedEntries,
               lastSelectedEntryPath,
-              lastSearchTimestamp
-                ? GlobalSearch.getInstance().getResults()
-                : currentDirectoryEntries,
+              currentDirectoryEntries,
               openEntry,
               openFileNatively,
               loadDirectoryContent,
@@ -514,7 +503,6 @@ function GridPagination(props: Props) {
 function mapStateToProps(state) {
   return {
     currentDirectoryColor: getCurrentDirectoryColor(state),
-    lastSearchTimestamp: getLastSearchTimestamp(state),
     currentDirectoryTags: getCurrentDirectoryTags(state),
     currentDirectoryDescription: getCurrentDirectoryDescription(state),
     lastBackgroundImageChange: getLastBackgroundImageChange(state),
@@ -537,7 +525,6 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   nextProp.thumbnailMode === prevProp.thumbnailMode &&
   nextProp.entrySize === prevProp.entrySize &&
   nextProp.gridPageLimit === prevProp.gridPageLimit &&
-  nextProp.lastSearchTimestamp === prevProp.lastSearchTimestamp &&
   nextProp.currentDirectoryDescription ===
     prevProp.currentDirectoryDescription &&
   JSON.stringify(nextProp.files) === JSON.stringify(prevProp.files) &&

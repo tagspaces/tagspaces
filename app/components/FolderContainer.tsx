@@ -37,9 +37,7 @@ import {
 import {
   actions as AppActions,
   getSelectedEntries,
-  getProgress,
-  isSearchMode,
-  getLastSearchTimestamp
+  getProgress
 } from '../reducers/app';
 import {
   GoBackIcon,
@@ -51,7 +49,6 @@ import { Pro } from '../pro';
 import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
 import { TS } from '-/tagspaces.namespace';
 import PathBreadcrumbs from './PathBreadcrumbs';
-import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { PerspectiveIDs, AvailablePerspectives } from '-/perspectives';
 // import LoadingAnimation from '-/components/LoadingAnimation';
 import SearchBox from '-/components/SearchBox';
@@ -59,6 +56,7 @@ import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import RenderPerspective from '-/components/RenderPerspective';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 
 interface Props {
   reflectCreateEntry: (path: string, isFile: boolean) => void;
@@ -72,13 +70,8 @@ interface Props {
   selectedEntries: Array<TS.FileSystemEntry>;
   toggleUploadDialog: () => void;
   progress?: Array<any>;
-  setSearchQuery: (searchQuery: TS.SearchQuery) => void;
-  enterSearchMode: () => void;
-  exitSearchMode: () => void;
   goBack: () => void;
   goForward: () => void;
-  lastSearchTimestamp: number;
-  isSearchMode: boolean;
   openMoveCopyFilesDialog: () => void;
 }
 
@@ -97,11 +90,15 @@ function FolderContainer(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const { openedEntries } = useOpenedEntryContext();
+  const { setSearchQuery } = useLocationIndexContext();
   const {
     currentDirectoryEntries,
     currentDirectoryPath,
     currentDirectoryPerspective,
-    setCurrentDirectoryPerspective
+    setCurrentDirectoryPerspective,
+    enterSearchMode,
+    exitSearchMode,
+    isSearchMode
   } = useDirectoryContentContext();
 
   /**
@@ -136,9 +133,8 @@ function FolderContainer(props: Props) {
   }
 
   const showWelcomePanel =
-    !currentDirectoryPath &&
-    currentDirectoryEntries.length < 1 &&
-    !(props.isSearchMode && props.lastSearchTimestamp);
+    !currentDirectoryPath && currentDirectoryEntries.length < 1;
+  // && !(isSearchMode && props.lastSearchTimestamp);
 
   const openRenameEntryDialog = useCallback(
     () => setRenameEntryDialogOpened(true),
@@ -220,12 +216,12 @@ function FolderContainer(props: Props) {
   });
 
   const toggleSearchMode = () => {
-    if (props.isSearchMode) {
-      props.setSearchQuery({});
-      props.exitSearchMode();
+    if (isSearchMode) {
+      setSearchQuery({});
+      exitSearchMode();
     } else {
-      props.setSearchQuery({ textQuery: '' });
-      props.enterSearchMode();
+      setSearchQuery({ textQuery: '' });
+      enterSearchMode();
     }
   };
 
@@ -291,9 +287,9 @@ function FolderContainer(props: Props) {
             </IconButton>
           </Tooltip>
         )}
-        {props.isSearchMode ? (
+        {isSearchMode ? (
           /* todo rethink if open props is needed */
-          <SearchBox open={props.isSearchMode} />
+          <SearchBox open={isSearchMode} />
         ) : (
           <>
             <div
@@ -404,9 +400,7 @@ function mapStateToProps(state) {
     maxSearchResults: getMaxSearchResults(state),
     isDesktopMode: getDesktopMode(state),
     progress: getProgress(state),
-    defaultPerspective: getDefaultPerspective(state),
-    lastSearchTimestamp: getLastSearchTimestamp(state),
-    isSearchMode: isSearchMode(state)
+    defaultPerspective: getDefaultPerspective(state)
   };
 }
 
@@ -415,10 +409,7 @@ function mapActionCreatorsToProps(dispatch) {
     {
       toggleUploadDialog: AppActions.toggleUploadDialog,
       reflectCreateEntry: AppActions.reflectCreateEntry,
-      setSelectedEntries: AppActions.setSelectedEntries,
-      enterSearchMode: AppActions.enterSearchMode,
-      exitSearchMode: AppActions.exitSearchMode,
-      setSearchQuery: LocationIndexActions.setSearchQuery
+      setSelectedEntries: AppActions.setSelectedEntries
     },
     dispatch
   );
@@ -428,9 +419,7 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   nextProp.drawerOpened === prevProp.drawerOpened &&
   nextProp.isDesktopMode === prevProp.isDesktopMode &&
   /* this props is set before currentDirectoryEntries is loaded and will reload FolderContainer */
-  JSON.stringify(nextProp.progress) === JSON.stringify(prevProp.progress) &&
-  nextProp.lastSearchTimestamp === prevProp.lastSearchTimestamp &&
-  nextProp.isSearchMode === prevProp.isSearchMode;
+  JSON.stringify(nextProp.progress) === JSON.stringify(prevProp.progress);
 
 export default connect(
   mapStateToProps,

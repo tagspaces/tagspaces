@@ -101,7 +101,6 @@ function LocationView(props: Props) {
     } else {
       // this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
       dispatch(AppActions.setSelectedEntries([]));
-      dispatch(AppActions.exitSearchMode());
       openLocation(location);
       if (hideDrawer) {
         hideDrawer();

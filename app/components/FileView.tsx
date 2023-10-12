@@ -17,14 +17,12 @@
  */
 
 import React, { MutableRefObject } from 'react';
-import { useSelector } from 'react-redux';
 import { rgbToHex, useTheme } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
 import { OpenedEntry } from '-/reducers/app';
 import useEventListener from '-/utils/useEventListener';
-import { getSearchQuery } from '-/reducers/location-index';
-import { TS } from '-/tagspaces.namespace';
 import { useTranslation } from 'react-i18next';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 
 interface Props {
   openedFile: OpenedEntry;
@@ -39,7 +37,6 @@ interface Props {
 function FileView(props: Props) {
   const { i18n } = useTranslation();
   const theme = useTheme();
-  const searchQuery = useSelector(getSearchQuery);
   const {
     openedFile,
     fileViewer,
@@ -49,6 +46,8 @@ function FileView(props: Props) {
     height,
     eventID
   } = props; // .openedFiles[0];
+
+  const { searchQuery } = useLocationIndexContext();
 
   useEventListener('toggle-resume', () => {
     if (

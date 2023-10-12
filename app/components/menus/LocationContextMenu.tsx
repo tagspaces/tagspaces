@@ -36,12 +36,11 @@ import { OpenNewWindowIcon, CloseIcon } from '-/components/CommonIcons';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
 import { actions as LocationActions } from '-/reducers/locations';
-import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 
 interface Props {
   setEditLocationDialogOpened: (open: boolean) => void;
@@ -65,11 +64,8 @@ function LocationContextMenu(props: Props) {
     locationDirectoryContextMenuAnchorEl,
     setLocationDirectoryContextMenuAnchorEl
   } = useCurrentLocationContext();
+  const { createLocationIndex } = useLocationIndexContext();
   const dispatch: AppDispatch = useDispatch();
-
-  const createLocationIndex = location => {
-    dispatch(LocationIndexActions.createLocationIndex(location));
-  };
 
   const moveLocationUp = locationId => {
     dispatch(LocationActions.moveLocationUp(locationId));

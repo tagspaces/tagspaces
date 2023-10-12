@@ -16,39 +16,11 @@
  *
  */
 
-import React, { useEffect, useState } from 'react';
-import {
-  getBackupFileLocation,
-  extractContainingDirectoryPath
-} from '@tagspaces/tagspaces-common/paths';
-import Tooltip from '-/components/Tooltip';
-import {
-  getLastSearchTimestamp,
-  isSearchMode,
-  OpenedEntry
-} from '-/reducers/app';
-import PlatformIO from '-/services/platform-facade';
-import { TS } from '-/tagspaces.namespace';
-import { format, formatDistanceToNow } from 'date-fns';
-import DeleteIcon from '@mui/icons-material/Delete';
-import PreviewIcon from '@mui/icons-material/Preview';
-import RestoreIcon from '@mui/icons-material/SettingsBackupRestore';
-import IconButton from '@mui/material/IconButton';
+import React from 'react';
+
 import AppConfig from '-/AppConfig';
-import {
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TablePagination,
-  TableRow
-} from '@mui/material';
+
 import { Pro } from '-/pro';
-import FilePreviewDialog from '-/components/dialogs/FilePreviewDialog';
-import { useTranslation } from 'react-i18next';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { PerspectiveIDs } from '-/perspectives';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useSelector } from 'react-redux';
@@ -162,8 +134,6 @@ function RenderPerspective(props: Props) {
     currentDirectoryPerspective
   } = useDirectoryContentContext();
 
-  const searchMode = useSelector(isSearchMode);
-  const lastSearchTimestamp = useSelector(getLastSearchTimestamp);
   const defaultPerspective = useSelector(getDefaultPerspective);
 
   let currentPerspective =
@@ -174,9 +144,7 @@ function RenderPerspective(props: Props) {
   }
 
   const showWelcomePanel =
-    !currentDirectoryPath &&
-    currentDirectoryEntries.length < 1 &&
-    !(searchMode && lastSearchTimestamp);
+    !currentDirectoryPath && currentDirectoryEntries.length < 1;
 
   if (showWelcomePanel) {
     return AppConfig.showWelcomePanel ? <WelcomePanelAsync /> : null;
@@ -188,25 +156,18 @@ function RenderPerspective(props: Props) {
   }
   if (Pro && currentPerspective === PerspectiveIDs.GALLERY) {
     return (
-      <GalleryPerspectiveAsync
-        directoryContent={currentDirectoryEntries}
-        lastSearchTimestamp={lastSearchTimestamp}
-      />
+      <GalleryPerspectiveAsync directoryContent={currentDirectoryEntries} />
     );
   }
   if (Pro && currentPerspective === PerspectiveIDs.MAPIQUE) {
     return (
-      <MapiquePerspectiveAsync
-        directoryContent={currentDirectoryEntries}
-        lastSearchTimestamp={lastSearchTimestamp}
-      />
+      <MapiquePerspectiveAsync directoryContent={currentDirectoryEntries} />
     );
   }
   if (Pro && currentPerspective === PerspectiveIDs.KANBAN) {
     return (
       <KanBanPerspectiveAsync
         directoryContent={currentDirectoryEntries}
-        lastSearchTimestamp={lastSearchTimestamp}
         openRenameEntryDialog={openRenameEntryDialog}
       />
     );

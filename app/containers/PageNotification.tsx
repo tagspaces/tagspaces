@@ -30,15 +30,12 @@ import {
   AppDispatch,
   isUpdateAvailable
 } from '../reducers/app';
-import {
-  actions as LocationIndexActions,
-  isIndexing
-} from '../reducers/location-index';
 import { Pro } from '../pro';
 import Links from '-/content/links';
 import { openURLExternally } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 
 const TSNotification = styled(Snackbar)(({ theme }) => {
   return {
@@ -60,8 +57,7 @@ function PageNotification() {
     showNotification,
     hideNotifications
   } = useNotificationContext();
-
-  const indexing = useSelector(isIndexing);
+  const { isIndexing, cancelDirectoryIndexing } = useLocationIndexContext();
   const updateAvailable = useSelector(isUpdateAvailable);
   const lastPublishedVersion = useSelector(getLastPublishedVersion);
 
@@ -125,7 +121,7 @@ function PageNotification() {
       )}
       <TSNotification
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        open={indexing}
+        open={isIndexing}
         autoHideDuration={undefined}
         message="Indexing"
         action={[
@@ -133,9 +129,7 @@ function PageNotification() {
             key="cancelIndexButton"
             color="secondary"
             size="small"
-            onClick={() =>
-              dispatch(LocationIndexActions.cancelDirectoryIndexing())
-            }
+            onClick={() => cancelDirectoryIndexing()}
             data-tid="cancelDirectoryIndexing"
           >
             {t('core:cancelIndexing')}
@@ -177,11 +171,5 @@ function PageNotification() {
     </>
   );
 }
-
-/*const areEqual = (prevProp, nextProp) =>
-  JSON.stringify(nextProp.notificationStatus) ===
-    JSON.stringify(prevProp.notificationStatus) &&
-  nextProp.isIndexing === prevProp.isIndexing &&
-  nextProp.isUpdateAvailable === prevProp.isUpdateAvailable;*/
 
 export default PageNotification;
