@@ -162,6 +162,9 @@ export const DirectoryContentContextProvider = ({
     TS.FileSystemEntry[]
   >([]);
   const isSearchMode = useRef<boolean>(false);
+  /**
+   * if search is performed = timestamp otherwise undefined
+   */
   const lastSearchTimestamp = useRef<number>(undefined);
   const directoryMeta = useRef<TS.FileSystemEntryMeta>({ id: getUuid() });
   /**

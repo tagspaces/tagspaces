@@ -155,21 +155,14 @@ function RenderPerspective(props: Props) {
     );
   }
   if (Pro && currentPerspective === PerspectiveIDs.GALLERY) {
-    return (
-      <GalleryPerspectiveAsync directoryContent={currentDirectoryEntries} />
-    );
+    return <GalleryPerspectiveAsync />;
   }
   if (Pro && currentPerspective === PerspectiveIDs.MAPIQUE) {
-    return (
-      <MapiquePerspectiveAsync directoryContent={currentDirectoryEntries} />
-    );
+    return <MapiquePerspectiveAsync />;
   }
   if (Pro && currentPerspective === PerspectiveIDs.KANBAN) {
     return (
-      <KanBanPerspectiveAsync
-        directoryContent={currentDirectoryEntries}
-        openRenameEntryDialog={openRenameEntryDialog}
-      />
+      <KanBanPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />
     );
   }
 

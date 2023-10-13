@@ -97,7 +97,6 @@ function FolderContainer(props: Props) {
     currentDirectoryPerspective,
     setCurrentDirectoryPerspective,
     enterSearchMode,
-    exitSearchMode,
     isSearchMode
   } = useDirectoryContentContext();
 
@@ -215,14 +214,9 @@ function FolderContainer(props: Props) {
     );
   });
 
-  const toggleSearchMode = () => {
-    if (isSearchMode) {
-      setSearchQuery({});
-      exitSearchMode();
-    } else {
-      setSearchQuery({ textQuery: '' });
-      enterSearchMode();
-    }
+  const openSearchMode = () => {
+    setSearchQuery({ textQuery: '' });
+    enterSearchMode();
   };
 
   const openSearchKeyBinding = AppConfig.isElectron
@@ -325,7 +319,7 @@ function FolderContainer(props: Props) {
               }}
             /> */}
             <Tooltip title={t('core:searchTitle') + openSearchKeyBinding}>
-              <IconButton data-tid="toggleSearch" onClick={toggleSearchMode}>
+              <IconButton data-tid="toggleSearch" onClick={openSearchMode}>
                 <SearchIcon />
               </IconButton>
             </Tooltip>

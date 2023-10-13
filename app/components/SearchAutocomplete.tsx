@@ -97,7 +97,8 @@ function SearchAutocomplete(props: Props) {
   const {
     watchForChanges,
     currentDirectoryPath,
-    exitSearchMode
+    exitSearchMode,
+    openCurrentDirectory
   } = useDirectoryContentContext();
   const {
     searchQuery,
@@ -441,6 +442,7 @@ function SearchAutocomplete(props: Props) {
     setSearchQuery({});
     exitSearchMode();
     watchForChanges();
+    openCurrentDirectory();
   };
 
   function removeActionsFromQuery(

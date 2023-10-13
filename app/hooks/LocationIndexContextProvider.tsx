@@ -42,6 +42,8 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 type LocationIndexContextData = {
+  /*index: [];
+  indexLoadedOn: number;*/
   searchQuery: TS.SearchQuery;
   isIndexing: boolean;
   cancelDirectoryIndexing: () => void;
