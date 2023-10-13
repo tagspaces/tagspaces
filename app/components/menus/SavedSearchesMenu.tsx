@@ -25,6 +25,7 @@ import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import { AppDispatch } from '-/reducers/app';
 import { useTranslation } from 'react-i18next';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
   open: boolean;
@@ -35,7 +36,7 @@ interface Props {
 function SavedSearchesMenu(props: Props) {
   const { open, onClose, anchorEl } = props;
   const { t } = useTranslation();
-  const { setSearchQuery } = useLocationIndexContext();
+  const { setSearchQuery } = useDirectoryContentContext();
   const searches = useSelector(state => getSearches(state));
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
 

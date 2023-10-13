@@ -33,6 +33,7 @@ import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 const isTagLibraryReadOnly =
   window.ExtTagLibrary && window.ExtTagLibrary.length > 0;
@@ -59,7 +60,7 @@ function TagMenu(props: Props) {
   const { t } = useTranslation();
   const { addTags } = useTaggingActionsContext();
   const { readOnlyMode } = useCurrentLocationContext();
-  const { setSearchQuery } = useLocationIndexContext();
+  const { setSearchQuery } = useDirectoryContentContext();
   const maxSearchResults: number = useSelector(getMaxSearchResults);
   const selectedEntries = useSelector(getSelectedEntries);
 

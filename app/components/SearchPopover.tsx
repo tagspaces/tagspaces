@@ -49,7 +49,6 @@ import { getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
 import Links from '-/content/links';
-import GlobalSearch from '-/services/search-index';
 import {
   CreateFileIcon,
   FolderIcon,
@@ -91,9 +90,11 @@ function SearchPopover(props: Props) {
   const {
     openCurrentDirectory,
     currentDirectoryPath,
+    searchQuery,
+    setSearchQuery,
     exitSearchMode
   } = useDirectoryContentContext();
-  const { searchQuery, setSearchQuery, isIndexing } = useLocationIndexContext();
+  const { getIndex, isIndexing } = useLocationIndexContext();
   const [, forceUpdate] = useReducer(x => x + 1, 0);
   const maxSearchResults = useSelector(getMaxSearchResults);
   const searches = useSelector(getSearches);
@@ -484,9 +485,7 @@ function SearchPopover(props: Props) {
     props.onClose();
   };
 
-  const indexStatus = GlobalSearch.getInstance().getIndex()
-    ? GlobalSearch.getInstance().getIndex().length + ' indexed entries'
-    : '';
+  const indexStatus = getIndex() ? getIndex().length + ' indexed entries' : '';
   return (
     <SidePanel
       style={{

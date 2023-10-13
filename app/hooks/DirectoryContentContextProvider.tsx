@@ -57,7 +57,6 @@ import { updateHistory } from '-/utils/dom';
 import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import { enhanceEntry, getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { Pro } from '-/pro';
 import useFirstRender from '-/utils/useFirstRender';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 
@@ -76,7 +75,9 @@ type DirectoryContentContextData = {
   currentDirectoryDirs: TS.OrderVisibilitySettings[];
   //isMetaLoaded: boolean;
   isMetaFolderExist: boolean;
+  searchQuery: TS.SearchQuery;
   isSearchMode: boolean;
+  setSearchQuery: (sQuery: TS.SearchQuery) => void;
   loadParentDirectoryContent: () => void;
   loadDirectoryContent: (
     directoryPath: string,
@@ -100,7 +101,6 @@ type DirectoryContentContextData = {
   updateCurrentDirEntries: (dirEntries: TS.FileSystemEntry[]) => void;
   updateThumbnailUrl: (filePath: string, thumbUrl: string) => void;
   setDirectoryMeta: (meta: TS.FileSystemEntryMeta) => void;
-  watchForChanges: (location?: TS.Location) => void;
   getEnhancedDir: (entry: TS.FileSystemEntry) => Promise<TS.FileSystemEntry>;
   setSearchResults: (entries: TS.FileSystemEntry[]) => void;
   appendSearchResults: (entries: TS.FileSystemEntry[]) => void;
@@ -119,7 +119,9 @@ export const DirectoryContentContext = createContext<
   currentDirectoryDirs: [],
   //isMetaLoaded: undefined,
   isMetaFolderExist: false,
+  searchQuery: {},
   isSearchMode: false,
+  setSearchQuery: () => {},
   loadParentDirectoryContent: () => {},
   loadDirectoryContent: () => Promise.resolve(false),
   enhanceDirectoryContent: () => {},
@@ -133,7 +135,6 @@ export const DirectoryContentContext = createContext<
   updateCurrentDirEntries: () => {},
   updateThumbnailUrl: () => {},
   setDirectoryMeta: () => {},
-  watchForChanges: () => {},
   getEnhancedDir: () => Promise.resolve(undefined),
   setSearchResults: () => {},
   appendSearchResults: () => {},
@@ -161,6 +162,7 @@ export const DirectoryContentContextProvider = ({
   const [currentDirectoryEntries, setCurrentDirectoryEntries] = useState<
     TS.FileSystemEntry[]
   >([]);
+  const searchQuery = useRef<TS.SearchQuery>({});
   const isSearchMode = useRef<boolean>(false);
   /**
    * if search is performed = timestamp otherwise undefined
@@ -184,15 +186,9 @@ export const DirectoryContentContextProvider = ({
   useEffect(() => {
     if (currentLocation) {
       loadDirectoryContent(PlatformIO.getLocationPath(currentLocation), true);
-      if (currentLocation.type !== locationType.TYPE_CLOUD) {
-        watchForChanges(currentLocation);
-      }
     } else {
       clearDirectoryContent();
       exitSearchMode();
-      if (Pro && Pro.Watcher) {
-        Pro.Watcher.stopWatching();
-      }
     }
   }, [currentLocation]);
 
@@ -690,20 +686,12 @@ export const DirectoryContentContextProvider = ({
     isMetaLoaded.current = true;
   }
 
-  function watchForChanges(location?: TS.Location) {
-    if (location === undefined) {
-      location = currentLocation;
-    }
-    if (Pro && Pro.Watcher && location && location.watchForChanges) {
-      const depth =
-        currentPerspective.current === PerspectiveIDs.KANBAN ? 3 : 1;
-      Pro.Watcher.watchFolder(
-        PlatformIO.getLocationPath(location),
-        dispatch,
-        loadDirectoryContent,
-        depth
-      );
-    }
+  function setSearchQuery(sQuery: TS.SearchQuery) {
+    searchQuery.current = sQuery;
+    forceUpdate();
+    /*if (Object.keys(searchQuery).length === 0) {
+     //exitSearchMode();
+   }*/
   }
 
   const context = useMemo(() => {
@@ -715,7 +703,9 @@ export const DirectoryContentContextProvider = ({
       currentDirectoryFiles: currentDirectoryFiles.current,
       currentDirectoryDirs: currentDirectoryDirs.current,
       isMetaFolderExist: isMetaFolderExist.current,
+      searchQuery: searchQuery.current,
       isSearchMode: isSearchMode.current,
+      setSearchQuery,
       loadDirectoryContent,
       loadParentDirectoryContent,
       enhanceDirectoryContent,
@@ -729,7 +719,6 @@ export const DirectoryContentContextProvider = ({
       updateCurrentDirEntries,
       updateThumbnailUrl,
       setDirectoryMeta,
-      watchForChanges,
       getEnhancedDir,
       setSearchResults,
       appendSearchResults,
@@ -746,7 +735,8 @@ export const DirectoryContentContextProvider = ({
     currentDirectoryFiles.current,
     currentDirectoryDirs.current,
     updateCurrentDirEntries,
-    isSearchMode.current
+    isSearchMode.current,
+    searchQuery.current
   ]);
 
   return (

@@ -40,7 +40,7 @@ import FileUploadContainer, {
   FileUploadContainerRef
 } from '-/components/FileUploadContainer';
 import { TS } from '-/tagspaces.namespace';
-import { getRelativeEntryPath } from '-/services/utils-io';
+import { getRelativeEntryPath, toFsEntry } from '-/services/utils-io';
 import { PerspectiveIDs } from '-/perspectives';
 import PlatformFacade from '-/services/platform-facade';
 import { getDirectoryMenuItems } from '-/perspectives/common/DirectoryMenuItems';
@@ -52,6 +52,7 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 
 interface Props {
   open: boolean;
@@ -60,7 +61,6 @@ interface Props {
   anchorEl: Element;
   directoryPath: string;
   openAddRemoveTagsDialog?: () => void;
-  reflectCreateEntry?: (path: string, isFile: boolean) => void;
   switchPerspective?: (perspectiveId: string) => void;
   perspectiveMode?: boolean;
   openRenameDirectoryDialog: () => void;
@@ -80,6 +80,7 @@ function DirectoryMenu(props: Props) {
     setCurrentDirectoryPerspective
   } = useDirectoryContentContext();
   const { reloadDirectory } = useIOActionsContext();
+  const { reflectCreateEntry } = useLocationIndexContext();
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
   const {
     open,
@@ -102,10 +103,6 @@ function DirectoryMenu(props: Props) {
 
   const toggleCreateDirectoryDialog = () => {
     dispatch(AppActions.toggleCreateDirectoryDialog());
-  };
-
-  const reflectCreateEntry = (path, isFile) => {
-    dispatch(AppActions.reflectCreateEntry(path, isFile));
   };
 
   const toggleNewFileDialog = () => {
@@ -330,7 +327,8 @@ Do you want to continue?`)
           'default',
           true
         );
-        reflectCreateEntry(newFilePath, true);
+        reflectCreateEntry(toFsEntry(newFilePath, true));
+        dispatch(AppActions.reflectCreateEntry(newFilePath, true));
         return true;
       })
       .catch(error => {

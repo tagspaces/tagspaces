@@ -38,7 +38,8 @@ import {
   copyFilesPromise,
   getThumbPath,
   loadFileMetaDataPromise,
-  renameFilesPromise
+  renameFilesPromise,
+  toFsEntry
 } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { Progress } from 'aws-sdk/clients/s3';
@@ -50,6 +51,7 @@ import {
   loadJSONString
 } from '@tagspaces/tagspaces-common/utils-io';
 import { useMetaLoaderContext } from '-/hooks/useMetaLoaderContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 
 type extractOptions = {
   EXIFGeo?: boolean;
@@ -127,6 +129,11 @@ export const IOActionsContextProvider = ({
     currentDirectoryPath,
     loadDirectoryContent
   } = useDirectoryContentContext();
+  const {
+    reflectDeleteEntry,
+    reflectCreateEntry,
+    reflectDeleteEntries
+  } = useLocationIndexContext();
 
   function extractContent(
     options: extractOptions = {
@@ -166,6 +173,7 @@ export const IOActionsContextProvider = ({
       )
         .then(() => {
           console.log('Moving dir from ' + path + ' to ' + targetPath);
+          reflectDeleteEntry(path);
           dispatch(AppActions.reflectDeleteEntry(path));
           return true;
         })
@@ -192,6 +200,7 @@ export const IOActionsContextProvider = ({
       .then(() => {
         showNotification(t('core:filesMovedSuccessful'));
         // moved files should be added to the index, if the target dir in index
+        reflectDeleteEntries(paths);
         dispatch(AppActions.reflectDeleteEntries(paths));
 
         const moveMetaJobs = [];
@@ -384,6 +393,7 @@ export const IOActionsContextProvider = ({
         });
       })
       .then((fsEntry: TS.FileSystemEntry) => {
+        reflectCreateEntry(fsEntry);
         dispatch(AppActions.reflectCreateEntryObj(fsEntry));
         return fsEntry;
       });

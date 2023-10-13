@@ -73,7 +73,6 @@ const StyledBreadcrumbs = styled(Breadcrumbs)(({ theme }) => {
 interface Props {
   switchPerspective: (perspectiveId: string) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
-  reflectCreateEntry: (path: string, isFile: boolean) => void;
   openRenameDirectoryDialog: () => void;
   openMoveCopyFilesDialog: () => void;
   isDesktopMode: boolean;
@@ -96,7 +95,6 @@ function PathBreadcrumbs(props: Props) {
 
   const {
     setSelectedEntries,
-    reflectCreateEntry,
     openRenameDirectoryDialog,
     openMoveCopyFilesDialog,
     isDesktopMode
@@ -248,7 +246,6 @@ function PathBreadcrumbs(props: Props) {
         directoryPath={currentDirectoryPath}
         openRenameDirectoryDialog={openRenameDirectoryDialog}
         openMoveCopyFilesDialog={openMoveCopyFilesDialog}
-        reflectCreateEntry={reflectCreateEntry}
       />
     </>
   );

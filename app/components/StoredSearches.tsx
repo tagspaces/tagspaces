@@ -74,7 +74,7 @@ const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 
 function StoredSearches(props: Props) {
   const { t } = useTranslation();
-  const { setSearchQuery } = useLocationIndexContext();
+  const { setSearchQuery } = useDirectoryContentContext();
   const [saveSearchDialogOpened, setSaveSearchDialogOpened] = useState<
     TS.SearchQuery
   >(undefined);

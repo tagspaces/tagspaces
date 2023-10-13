@@ -59,7 +59,6 @@ import RenderPerspective from '-/components/RenderPerspective';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 
 interface Props {
-  reflectCreateEntry: (path: string, isFile: boolean) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   isDesktopMode: boolean;
   toggleDrawer?: () => void;
@@ -81,7 +80,6 @@ function FolderContainer(props: Props) {
     toggleProTeaser,
     isDesktopMode,
     setSelectedEntries,
-    reflectCreateEntry,
     defaultPerspective,
     goBack,
     goForward
@@ -90,8 +88,8 @@ function FolderContainer(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const { openedEntries } = useOpenedEntryContext();
-  const { setSearchQuery } = useLocationIndexContext();
   const {
+    setSearchQuery,
     currentDirectoryEntries,
     currentDirectoryPath,
     currentDirectoryPerspective,
@@ -341,7 +339,6 @@ function FolderContainer(props: Props) {
             <PathBreadcrumbs
               switchPerspective={switchPerspective}
               setSelectedEntries={setSelectedEntries}
-              reflectCreateEntry={reflectCreateEntry}
               isDesktopMode={isDesktopMode}
               openRenameDirectoryDialog={() => setRenameEntryDialogOpened(true)}
               openMoveCopyFilesDialog={props.openMoveCopyFilesDialog}
@@ -402,7 +399,6 @@ function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
       toggleUploadDialog: AppActions.toggleUploadDialog,
-      reflectCreateEntry: AppActions.reflectCreateEntry,
       setSelectedEntries: AppActions.setSelectedEntries
     },
     dispatch

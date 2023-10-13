@@ -44,7 +44,8 @@ import {
   getRelativeEntryPath,
   loadJSONFile,
   openedToFsEntry,
-  openURLExternally
+  openURLExternally,
+  toFsEntry
 } from '-/services/utils-io';
 import {
   actions as SettingsActions,
@@ -62,7 +63,6 @@ import {
   getMetaFileLocationForFile,
   normalizePath
 } from '@tagspaces/tagspaces-common/paths';
-import GlobalSearch from '-/services/search-index';
 import {
   formatDateTime4Tag,
   locationType
@@ -74,6 +74,7 @@ import useFirstRender from '-/utils/useFirstRender';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 
 type OpenedEntryContextData = {
   openedEntries: OpenedEntry[];
@@ -149,6 +150,7 @@ export const OpenedEntryContextProvider = ({
   } = useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
   const { openLocation, currentLocation } = useCurrentLocationContext();
+  const { reflectCreateEntry } = useLocationIndexContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const lastSelectedEntry: TS.FileSystemEntry = useSelector(
     getLastSelectedEntry
@@ -854,6 +856,7 @@ export const OpenedEntryContextProvider = ({
         '.txt';
       PlatformIO.saveFilePromise({ path: filePath }, '', true)
         .then(() => {
+          reflectCreateEntry(toFsEntry(filePath, true));
           dispatch(AppActions.reflectCreateEntry(filePath, true));
           showNotification(t('core:fileCreateSuccessfully'), 'info', true);
           openEntry(filePath);
@@ -903,6 +906,7 @@ export const OpenedEntryContextProvider = ({
     }
     PlatformIO.saveFilePromise({ path: filePath }, fileContent, false)
       .then((fsEntry: TS.FileSystemEntry) => {
+        reflectCreateEntry(toFsEntry(filePath, true));
         dispatch(AppActions.reflectCreateEntry(filePath, true));
         openFsEntry(fsEntry);
 

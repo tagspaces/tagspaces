@@ -29,11 +29,15 @@ import {
   getThumbFileLocationForFile
 } from '@tagspaces/tagspaces-common/paths';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import GlobalSearch from '-/services/search-index';
 import { getUseTrashCan } from '-/reducers/settings';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { deleteFilesPromise, renameFilesPromise } from '-/services/utils-io';
+import {
+  deleteFilesPromise,
+  renameFilesPromise,
+  toFsEntry
+} from '-/services/utils-io';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 
 type FsActionsContextData = {
   renameDirectory: (
@@ -72,6 +76,11 @@ export const FsActionsContextProvider = ({
     currentDirectoryPath,
     loadParentDirectoryContent
   } = useDirectoryContentContext();
+  const {
+    reflectDeleteEntry,
+    reflectRenameEntry,
+    reflectCreateEntry
+  } = useLocationIndexContext();
   const { showNotification } = useNotificationContext();
   const dispatch: AppDispatch = useDispatch();
   const useTrashCan = useSelector(getUseTrashCan);
@@ -82,11 +91,9 @@ export const FsActionsContextProvider = ({
         if (currentDirectoryPath === directoryPath) {
           loadDirectoryContent(newDirPath, true);
           reflectRenameDirectory(directoryPath, newDirPath);
-          GlobalSearch.getInstance().reflectRenameEntry(
-            directoryPath,
-            newDirPath
-          );
+          reflectRenameEntry(directoryPath, newDirPath);
         } else {
+          reflectRenameEntry(directoryPath, newDirPath);
           dispatch(AppActions.reflectRenameEntry(directoryPath, newDirPath));
         }
 
@@ -123,6 +130,7 @@ export const FsActionsContextProvider = ({
         }
         console.log(`Creating directory ${directoryPath} successful.`);
         if (reflect) {
+          reflectCreateEntry(toFsEntry(directoryPath, false));
           dispatch(AppActions.reflectCreateEntry(directoryPath, false));
         }
         showNotification(
@@ -155,10 +163,11 @@ export const FsActionsContextProvider = ({
       .then(() => {
         if (directoryPath === currentDirectoryPath) {
           loadParentDirectoryContent();
-          GlobalSearch.getInstance().reflectDeleteEntry(directoryPath);
+          reflectDeleteEntry(directoryPath);
           // close opened entries in deleted dir
           reflectDeleteDirectory(directoryPath);
         } else {
+          reflectDeleteEntry(directoryPath);
           dispatch(AppActions.reflectDeleteEntry(directoryPath));
         }
         showNotification(
@@ -225,6 +234,7 @@ export const FsActionsContextProvider = ({
           ]
         ])
           .then(() => {
+            reflectRenameEntry(filePath, newFilePathFromPromise);
             dispatch(
               AppActions.reflectRenameEntry(filePath, newFilePathFromPromise)
             );
@@ -237,6 +247,7 @@ export const FsActionsContextProvider = ({
             return true;
           })
           .catch(err => {
+            reflectRenameEntry(filePath, newFilePathFromPromise);
             dispatch(
               AppActions.reflectRenameEntry(filePath, newFilePathFromPromise)
             );
@@ -265,6 +276,7 @@ export const FsActionsContextProvider = ({
     return PlatformIO.deleteFilePromise(filePath, useTrashCan)
       .then(() => {
         // TODO close file opener if this file is opened
+        reflectDeleteEntry(filePath);
         dispatch(AppActions.reflectDeleteEntry(filePath));
         showNotification(
           `Deleting file ${filePath} successful.`,

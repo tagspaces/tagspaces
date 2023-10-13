@@ -1,4 +1,5 @@
-/**
+/*
+/!**
  * TagSpaces - universal file and folder organizer
  * Copyright (C) 2020-present TagSpaces UG (haftungsbeschraenkt)
  *
@@ -14,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- */
+ *!/
 
 import {
   extractFileName,
@@ -43,10 +44,10 @@ const GlobalSearch = (function() {
         index = i;
       },
       getIndex: () => index,
-      /*setResults: function(r) {
+      /!*setResults: function(r) {
         results = r;
       },
-      getResults: () => results,*/
+      getResults: () => results,*!/
       reflectDeleteEntry: (path: string) => {
         if (!index || index.length < 1) {
           return;
@@ -145,3 +146,4 @@ const GlobalSearch = (function() {
   };
 })();
 export default GlobalSearch;
+*/

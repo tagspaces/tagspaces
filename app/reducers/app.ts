@@ -50,7 +50,6 @@ import {
   setTagLibrary
 } from '-/services/taglibrary-utils';
 import { getProTeaserSlideIndex } from '-/content/ProTeaserSlides';
-import GlobalSearch from '-/services/search-index';
 import { extensionsFound } from '-/extension-config';
 
 import { ThunkDispatch } from 'redux-thunk';
@@ -448,109 +447,12 @@ export default (state: any = initialState, action: any) => {
         progressDialogOpened: !state.progressDialogOpened
       };
     }
-    /*case types.SET_SEARCH_RESULTS: {
-      GlobalSearch.getInstance().setResults(action.searchResults);
-      return {
-        ...state,
-        lastSearchTimestamp: new Date().getTime(),
-        //isLoading: false,
-        selectedEntries: []
-      };
-    }
-    case types.EXIT_SEARCH_MODE: {
-      GlobalSearch.getInstance().setResults([]);
-      return {
-        ...state,
-        searchMode: false,
-        lastSearchTimestamp: undefined,
-        searchFilter: undefined,
-        //isLoading: false,
-        selectedEntries: []
-      };
-    }
-    case types.ENTER_SEARCH_MODE: {
-      GlobalSearch.getInstance().setResults([]);
-      return {
-        ...state,
-        searchMode: true,
-        searchFilter: undefined
-        //isLoading: false
-      };
-    }*/
-    /*case types.APPEND_SEARCH_RESULTS: {
-      // const newDirEntries = [...state.currentDirectoryEntries];
-      for (let i = 0; i < action.searchResults.length; i += 1) {
-        const index = GlobalSearch.getInstance()
-          .getResults()
-          .findIndex(entry => entry.path === action.searchResults[i].path);
-        if (index === -1) {
-          GlobalSearch.getInstance().setResults([
-            ...GlobalSearch.getInstance().getResults(),
-            action.searchResults[i]
-          ]);
-        }
-      }
-      return {
-        ...state,
-        lastSearchTimestamp: new Date().getTime()
-        // currentDirectoryEntries: newDirEntries,
-        //isLoading: false
-      };
-    }*/
     case types.SET_SEARCH_FILTER: {
       return {
         ...state,
         searchFilter: action.searchFilter
       };
     }
-    /*case types.SET_NOTIFICATION: {
-      return {
-        ...state,
-        notificationStatus: {
-          visible: action.visible,
-          text: action.text,
-          tid: action.tid,
-          notificationType: action.notificationType,
-          autohide: action.autohide
-        }
-      };
-    }*/
-    /*case types.SET_GENERATING_THUMBNAILS: {
-      if (action.isGeneratingThumbs !== state.isGeneratingThumbs) {
-        return {
-          ...state,
-          isGeneratingThumbs: action.isGeneratingThumbs
-        };
-      }
-      return state;
-    }*/
-    /*case types.UPDATE_THUMB_URL: {
-      const dirEntries = state.currentDirectoryEntries.map(entry => {
-        if (entry.path === action.filePath) {
-          return { ...entry, thumbPath: action.thumbUrl };
-        }
-        return entry;
-      });
-      return {
-        ...state,
-        currentDirectoryEntries: dirEntries
-      };
-    }*/
-    /*case types.UPDATE_THUMB_URLS: {
-      const dirEntries = [...state.currentDirectoryEntries];
-      for (let i = 0; i < dirEntries.length; i++) {
-        const entry = dirEntries[i];
-        const tmbURLs: any[] = action.tmbURLs;
-        const tmbUrl = tmbURLs.find(tmbUrl => tmbUrl.filePath == entry.path);
-        if (!tmbUrl) continue;
-        dirEntries[i] = { ...entry };
-        dirEntries[i].thumbPath = tmbUrl.tmbPath;
-      }
-      return {
-        ...state,
-        currentDirectoryEntries: dirEntries
-      };
-    }*/
     case types.REFLECT_DELETE_ENTRY: {
       /*const newDirectoryEntries = state.currentDirectoryEntries.filter(
         entry => entry.path !== action.path
@@ -1096,96 +998,18 @@ export const actions = {
   showInFileManager: (filePath: string) => () => {
     PlatformIO.showInFileManager(filePath);
   },
-  /*setSearchResults: (searchResults: Array<any> | []) => ({
-    type: types.SET_SEARCH_RESULTS,
-    searchResults
-  }),*/
-  /*exitSearchMode: () => (dispatch: (action) => void, getState: () => any) => {
-    const { searchMode } = getState().app;
-    if (searchMode) {
-      dispatch(actions.exitSearchModeInt());
-    }
-  },
-  exitSearchModeInt: () => ({
-    type: types.EXIT_SEARCH_MODE
-  }),
-  enterSearchMode: () => (dispatch: (action) => void, getState: () => any) => {
-    const { searchMode } = getState().app;
-    if (!searchMode) {
-      dispatch(actions.enterSearchModeInt());
-    }
-  },
-  enterSearchModeInt: () => ({
-    type: types.ENTER_SEARCH_MODE
-  }),*/
-  /*appendSearchResults: (searchResults: Array<any> | []) => ({
-    type: types.APPEND_SEARCH_RESULTS,
-    searchResults
-  }),*/
   setSearchFilter: (searchFilter: string) => ({
     type: types.SET_SEARCH_FILTER,
     searchFilter
   }),
-  /*setCurrentLocationId: (locationId: string | null) => ({
-    type: types.SET_CURRENLOCATIONID,
-    locationId
-  }),
-  setCurrentLocation: (location: TS.Location) => ({
-    type: types.SET_CURRENT_LOCATION,
-    location
-  }),*/
-
-  /*showNotification: (
-    text: string,
-    notificationType = 'default',
-    autohide = true,
-    tid = 'notificationTID'
-  ) => ({
-    type: types.SET_NOTIFICATION,
-    visible: true,
-    text,
-    notificationType,
-    autohide,
-    tid
-  }),
-  hideNotifications: (excludeTypes = []) => (
-    dispatch: (action) => void,
-    getState: () => any
-  ) => {
-    const { notificationStatus } = getState().app;
-    if (
-      !excludeTypes.some(type => type === notificationStatus.notificationType)
-    ) {
-      dispatch(actions.hideNotificationsInt());
-    }
-  },
-  hideNotificationsInt: () => ({
-    type: types.SET_NOTIFICATION,
-    visible: false,
-    text: null,
-    notificationType: 'default',
-    autohide: true
-  }),*/
-  /*setReadOnlyMode: (isReadOnlyMode: boolean) => ({
-    type: types.SET_READONLYMODE,
-    isReadOnlyMode
-  }),*/
-  reflectDeleteEntryInt: (path: string) => ({
+  reflectDeleteEntry: (path: string) => ({
     type: types.REFLECT_DELETE_ENTRY,
     path
   }),
-  reflectDeleteEntriesInt: (paths: string[]) => ({
+  reflectDeleteEntries: (paths: string[]) => ({
     type: types.REFLECT_DELETE_ENTRIES,
     paths
   }),
-  reflectDeleteEntry: (path: string) => (dispatch: (action) => void) => {
-    dispatch(actions.reflectDeleteEntryInt(path));
-    GlobalSearch.getInstance().reflectDeleteEntry(path);
-  },
-  reflectDeleteEntries: (paths: string[]) => (dispatch: (action) => void) => {
-    dispatch(actions.reflectDeleteEntriesInt(paths));
-    GlobalSearch.getInstance().reflectDeleteEntries(paths);
-  },
   reflectCreateEntryInt: (newEntry: TS.FileSystemEntry) => ({
     type: types.REFLECT_CREATE_ENTRY,
     newEntry
@@ -1210,7 +1034,7 @@ export const actions = {
   ) => {
     dispatch(actions.setSelectedEntries([newEntry]));
     dispatch(actions.reflectCreateEntryInt(newEntry));
-    GlobalSearch.getInstance().reflectCreateEntry(newEntry);
+    //GlobalSearch.getInstance().reflectCreateEntry(newEntry);
   },
   reflectRenameEntryInt: (path: string, newPath: string) => ({
     type: types.REFLECT_RENAME_ENTRY,
@@ -1220,53 +1044,10 @@ export const actions = {
   reflectRenameEntry: (path: string, newPath: string) => (
     dispatch: (action) => void
   ) => {
-    /*const { searchMode } = getState().app;
-    if (searchMode) {
-      const results = GlobalSearch.getInstance()
-        .getResults()
-        .map((fsEntry: TS.FileSystemEntry) => {
-          if (fsEntry.path === path) {
-            return {
-              ...fsEntry,
-              path: newPath,
-              name: extractFileName(newPath, PlatformIO.getDirSeparator())
-            };
-          }
-          return fsEntry;
-        });
-      GlobalSearch.getInstance().setResults(results);
-    }*/
     dispatch(actions.reflectRenameEntryInt(path, newPath));
-    GlobalSearch.getInstance().reflectRenameEntry(path, newPath);
+    // GlobalSearch.getInstance().reflectRenameEntry(path, newPath);
     dispatch(actions.setSelectedEntries([]));
   },
-  /**
-   * TODO include path in entry => only one entry parameter
-   * @param path
-   * @param entry
-   */
-  /*updateCurrentDirEntry: (path: string, entry: any) => (
-    dispatch: (action) => void,
-    getState: () => any
-  ) => {
-    const { searchMode } = getState().app;
-    if (searchMode) {
-      const results = updateFsEntries(GlobalSearch.getInstance().getResults(), [
-        { ...entry, path }
-      ]);
-      GlobalSearch.getInstance().setResults(results);
-    } else {
-      dispatch(actions.updateCurrentDirEntryInt(path, entry));
-    }
-  },*/
-  /*updateCurrentDirEntryInt: (path: string, entry: any) => ({
-    type: types.UPDATE_CURRENTDIR_ENTRY,
-    entry: { ...entry, path }
-  }),*/
-  /*updateCurrentDirEntries: (dirEntries: TS.FileSystemEntry[]) => ({
-    type: types.UPDATE_CURRENTDIR_ENTRIES,
-    dirEntries
-  }),*/
   reflectEditedEntryPaths: (editedEntryPaths: Array<TS.EditedEntryPath>) => ({
     type: types.REFLECT_EDITED_ENTRY_PATHS,
     editedEntryPaths

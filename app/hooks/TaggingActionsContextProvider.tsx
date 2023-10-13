@@ -50,13 +50,12 @@ import {
   extractTags
 } from '@tagspaces/tagspaces-common/paths';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import GlobalSearch from '-/services/search-index';
 import { getLocations } from '-/reducers/locations';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useFsActionsContext } from '-/hooks/useFsActionsContext';
-import AppConfig from '-/AppConfig';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 
 type TaggingActionsContextData = {
   addTags: (
@@ -97,6 +96,7 @@ export const TaggingActionsContextProvider = ({
   const { openedEntries, updateOpenedFile } = useOpenedEntryContext();
   const { updateCurrentDirEntry } = useDirectoryContentContext();
   const { currentLocation } = useCurrentLocationContext();
+  const { getIndex, indexUpdateSidecarTags } = useLocationIndexContext();
   const { renameFile } = useFsActionsContext();
   const { showNotification } = useNotificationContext();
   const dispatch: AppDispatch = useDispatch();
@@ -757,15 +757,12 @@ export const TaggingActionsContextProvider = ({
   }
 
   function collectTagsFromLocation(tagGroup: TS.TagGroup) {
-    if (GlobalSearch.getInstance().getIndex().length < 1) {
+    if (getIndex().length < 1) {
       showNotification('Please index location first', 'error', true);
       return true;
     }
 
-    const uniqueTags = collectTagsFromIndex(
-      GlobalSearch.getInstance().getIndex(),
-      tagGroup
-    );
+    const uniqueTags = collectTagsFromIndex(getIndex(), tagGroup);
     if (uniqueTags.length > 0) {
       const changedTagGroup = {
         ...tagGroup,
@@ -816,7 +813,7 @@ export const TaggingActionsContextProvider = ({
       updateCurrentDirEntry(path, { tags });
 
       if (updateIndex) {
-        GlobalSearch.getInstance().reflectUpdateSidecarTags(path, tags);
+        indexUpdateSidecarTags(path, tags);
       }
     };
   }, [updateCurrentDirEntry]);

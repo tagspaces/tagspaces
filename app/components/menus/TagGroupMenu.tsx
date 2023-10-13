@@ -38,6 +38,7 @@ import InfoIcon from '-/components/InfoIcon';
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
   classes?: any;
@@ -71,7 +72,7 @@ function TagGroupMenu(props: Props) {
   const { t } = useTranslation();
 
   const { collectTagsFromLocation } = useTaggingActionsContext();
-  const { setSearchQuery } = useLocationIndexContext();
+  const { setSearchQuery } = useDirectoryContentContext();
   const dispatch: AppDispatch = useDispatch();
   const maxSearchResults = useSelector(getMaxSearchResults);
 

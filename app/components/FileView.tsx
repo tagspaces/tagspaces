@@ -22,7 +22,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { OpenedEntry } from '-/reducers/app';
 import useEventListener from '-/utils/useEventListener';
 import { useTranslation } from 'react-i18next';
-import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
   openedFile: OpenedEntry;
@@ -47,7 +47,7 @@ function FileView(props: Props) {
     eventID
   } = props; // .openedFiles[0];
 
-  const { searchQuery } = useLocationIndexContext();
+  const { searchQuery } = useDirectoryContentContext();
 
   useEventListener('toggle-resume', () => {
     if (

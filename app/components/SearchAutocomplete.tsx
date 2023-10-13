@@ -95,15 +95,15 @@ function SearchAutocomplete(props: Props) {
     openLocationById
   } = useCurrentLocationContext();
   const {
-    watchForChanges,
     currentDirectoryPath,
     exitSearchMode,
-    openCurrentDirectory
+    openCurrentDirectory,
+    searchQuery,
+    setSearchQuery
   } = useDirectoryContentContext();
   const {
-    searchQuery,
+    watchForChanges,
     isIndexing,
-    setSearchQuery,
     searchAllLocations,
     searchLocationIndex
   } = useLocationIndexContext();

@@ -80,10 +80,8 @@ function MainToolbar(props: Props) {
   const { openEntry } = useOpenedEntryContext();
   const {
     loadParentDirectoryContent,
-    currentDirectoryPath,
-    openCurrentDirectory
+    currentDirectoryPath
   } = useDirectoryContentContext();
-  const { searchQuery } = useLocationIndexContext();
   const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
     getSelectedEntries
   );

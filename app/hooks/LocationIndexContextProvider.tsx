@@ -16,19 +16,12 @@
  *
  */
 
-import React, {
-  createContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState
-} from 'react';
+import React, { createContext, useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch } from '-/reducers/app';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useTranslation } from 'react-i18next';
 import { TS } from '-/tagspaces.namespace';
-import { createDirectoryIndex } from '-/services/utils-io';
-import GlobalSearch from '-/services/search-index';
+import { createDirectoryIndex, toFsEntry } from '-/services/utils-io';
 import { getEnableWS } from '-/reducers/settings';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import PlatformIO from '-/services/platform-facade';
@@ -37,34 +30,57 @@ import { getLocations } from '-/reducers/locations';
 import AppConfig from '-/AppConfig';
 import { hasIndex, loadIndex } from '@tagspaces/tagspaces-platforms/indexer';
 import Search from '-/services/search';
-import { getThumbFileLocationForFile } from '@tagspaces/tagspaces-common/paths';
+import {
+  extractFileExtension,
+  extractFileName,
+  extractTagsAsObjects,
+  getThumbFileLocationForFile
+} from '@tagspaces/tagspaces-common/paths';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { Pro } from '-/pro';
+import { PerspectiveIDs } from '-/perspectives';
 
 type LocationIndexContextData = {
-  /*index: [];
-  indexLoadedOn: number;*/
-  searchQuery: TS.SearchQuery;
+  index: TS.FileSystemEntry[];
+  indexLoadedOn: number;
   isIndexing: boolean;
+  getIndex: () => TS.FileSystemEntry[];
   cancelDirectoryIndexing: () => void;
-  setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   createLocationIndex: (location: TS.Location) => Promise<boolean>;
   createLocationsIndexes: (extractText?: boolean) => Promise<boolean>;
   clearDirectoryIndex: () => void;
   searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
   searchAllLocations: (searchQuery: TS.SearchQuery) => void;
+  setIndex: (i: TS.FileSystemEntry[]) => void;
+  reflectDeleteEntry: (path: string) => void;
+  reflectDeleteEntries: (paths: string[]) => void;
+  reflectCreateEntry: (newEntry: TS.FileSystemEntry) => void;
+  reflectRenameEntry: (path: string, newPath: string) => void;
+  indexUpdateSidecarTags: (path: string, tags: Array<TS.Tag>) => void;
+  reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
+  watchForChanges: () => void;
 };
 
 export const LocationIndexContext = createContext<LocationIndexContextData>({
-  searchQuery: {},
+  index: [],
+  indexLoadedOn: undefined,
   isIndexing: false,
+  getIndex: undefined,
   cancelDirectoryIndexing: () => {},
-  setSearchQuery: () => {},
   createLocationIndex: () => Promise.resolve(false),
   createLocationsIndexes: () => Promise.resolve(false),
   clearDirectoryIndex: () => {},
   searchLocationIndex: () => {},
-  searchAllLocations: () => {}
+  searchAllLocations: () => {},
+  setIndex: () => {},
+  reflectDeleteEntry: () => {},
+  reflectDeleteEntries: () => {},
+  reflectCreateEntry: () => {},
+  reflectRenameEntry: () => {},
+  indexUpdateSidecarTags: () => {},
+  reflectUpdateSidecarMeta: () => {},
+  watchForChanges: () => {}
 });
 
 export type LocationIndexContextProviderProps = {
@@ -75,35 +91,170 @@ export const LocationIndexContextProvider = ({
   children
 }: LocationIndexContextProviderProps) => {
   const { t } = useTranslation();
+  const dispatch: AppDispatch = useDispatch();
 
   const { currentLocation } = useCurrentLocationContext();
   const {
     setSearchResults,
-    appendSearchResults
+    appendSearchResults,
+    loadDirectoryContent,
+    currentDirectoryPerspective
   } = useDirectoryContentContext();
   const { showNotification, hideNotifications } = useNotificationContext();
 
   const enableWS = useSelector(getEnableWS);
   const allLocations = useSelector(getLocations);
 
-  const [searchQuery, setSearchQueryInt] = useState<TS.SearchQuery>({});
   const isIndexing = useRef<boolean>(false);
   const lastError = useRef(undefined);
+  const index = useRef<TS.FileSystemEntry[]>(undefined);
+  const indexLoadedOn = useRef<number>(undefined);
 
   useEffect(() => {
     clearDirectoryIndex();
+    if (currentLocation) {
+      watchForChanges();
+    } else {
+      if (Pro && Pro.Watcher) {
+        Pro.Watcher.stopWatching();
+      }
+    }
   }, [currentLocation]);
+
+  function setIndex(i) {
+    index.current = i;
+    if (index.current && index.current.length > 0) {
+      indexLoadedOn.current = new Date().getTime();
+    } else {
+      indexLoadedOn.current = undefined;
+    }
+  }
+
+  function getIndex() {
+    return index.current;
+  }
+
+  function watchForChanges() {
+    if (
+      Pro &&
+      Pro.Watcher &&
+      currentLocation &&
+      currentLocation.watchForChanges &&
+      currentLocation.type !== locationType.TYPE_CLOUD
+    ) {
+      function deleteEntry(path: string) {
+        reflectDeleteEntry(path);
+        dispatch(AppActions.reflectDeleteEntry(path));
+      }
+      function createEntry(path: string, isFile: boolean) {
+        reflectCreateEntry(toFsEntry(path, isFile));
+        dispatch(AppActions.reflectCreateEntry(path, isFile));
+      }
+      const depth =
+        currentDirectoryPerspective === PerspectiveIDs.KANBAN ? 3 : 1;
+      Pro.Watcher.watchFolder(
+        PlatformIO.getLocationPath(currentLocation),
+        deleteEntry,
+        createEntry,
+        loadDirectoryContent,
+        depth
+      );
+    }
+  }
+
+  function reflectDeleteEntry(path: string) {
+    if (!index.current || index.current.length < 1) {
+      return;
+    }
+    for (let i = 0; i < index.current.length; i += 1) {
+      if (index.current[i].path === path) {
+        index.current = index.current.splice(i, 1);
+        i -= 1;
+      }
+    }
+  }
+
+  function reflectDeleteEntries(paths: string[]) {
+    if (!index.current || index.current.length < 1) {
+      return;
+    }
+    for (let i = 0; i < index.current.length; i += 1) {
+      if (paths.some(path => index.current[i].path === path)) {
+        index.current = index.current.splice(i, 1);
+        i -= 1;
+      }
+    }
+  }
+
+  function reflectCreateEntry(newEntry: TS.FileSystemEntry) {
+    if (!index.current || index.current.length < 1) {
+      return;
+    }
+    let entryFound = index.current.some(entry => entry.path === newEntry.path);
+    if (!entryFound) {
+      index.current = [...index.current, newEntry];
+    }
+    // else todo update index entry ?
+  }
+
+  function reflectRenameEntry(path: string, newPath: string) {
+    if (!index.current || index.current.length < 1) {
+      return;
+    }
+    for (let i = 0; i < index.current.length; i += 1) {
+      if (index.current[i].path === path) {
+        index.current[i].path = newPath;
+        index.current[i].name = extractFileName(
+          newPath,
+          PlatformIO.getDirSeparator()
+        );
+        index.current[i].extension = extractFileExtension(
+          newPath,
+          PlatformIO.getDirSeparator()
+        );
+        index.current[i].tags = [
+          ...index.current[i].tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
+          ...extractTagsAsObjects(
+            newPath,
+            AppConfig.tagDelimiter,
+            PlatformIO.getDirSeparator()
+          )
+        ];
+      }
+    }
+  }
+
+  function indexUpdateSidecarTags(path: string, tags: Array<TS.Tag>) {
+    if (!index.current || index.current.length < 1) {
+      return;
+    }
+    for (let i = 0; i < index.current.length; i += 1) {
+      if (index.current[i].path === path) {
+        index.current[i].tags = [
+          ...index.current[i].tags.filter(tag => tag.type === 'plain'),
+          ...tags
+        ];
+      }
+    }
+  }
+
+  function reflectUpdateSidecarMeta(path: string, entryMeta: Object) {
+    if (!index.current || index.current.length < 1) {
+      return;
+    }
+    for (let i = 0; i < index.current.length; i += 1) {
+      if (index.current[i].path === path) {
+        index.current[i] = {
+          ...index.current[i],
+          ...entryMeta
+        };
+      }
+    }
+  }
 
   function cancelDirectoryIndexing() {
     window.walkCanceled = true;
     isIndexing.current = false;
-  }
-
-  function setSearchQuery(searchQuery: TS.SearchQuery) {
-    setSearchQueryInt(searchQuery);
-    /*if (Object.keys(searchQuery).length === 0) {
-     //exitSearchMode();
-   }*/
   }
 
   function createDirIndex(
@@ -123,7 +274,7 @@ export const LocationIndexContextProvider = ({
       .then(directoryIndex => {
         if (isCurrentLocation) {
           // Load index only if current location
-          GlobalSearch.getInstance().setIndex(directoryIndex);
+          setIndex(directoryIndex);
         }
         isIndexing.current = false;
         /* if (Pro && Pro.Indexer) {
@@ -223,8 +374,7 @@ export const LocationIndexContextProvider = ({
 
   function clearDirectoryIndex() {
     isIndexing.current = false;
-    GlobalSearch.getInstance().setIndex([]);
-    GlobalSearch.getInstance().setIndexLoadedOn(undefined);
+    setIndex([]);
   }
 
   function searchLocationIndex(searchQuery: TS.SearchQuery) {
@@ -245,11 +395,11 @@ export const LocationIndexContextProvider = ({
     const isCloudLocation = currentLocation.type === locationType.TYPE_CLOUD;
     showNotification(t('core:searching'), 'default', false, 'TIDSearching');
     setTimeout(async () => {
-      const index = GlobalSearch.getInstance().getIndex();
+      const index = getIndex();
       // Workaround used to show the start search notification
       const currentTime = new Date().getTime();
-      const indexAge = GlobalSearch.getInstance().getIndexLoadedOn()
-        ? currentTime - GlobalSearch.getInstance().getIndexLoadedOn()
+      const indexAge = indexLoadedOn.current
+        ? currentTime - indexLoadedOn.current
         : 0;
       const maxIndexAge = currentLocation.maxIndexAge
         ? currentLocation.maxIndexAge
@@ -271,11 +421,7 @@ export const LocationIndexContextProvider = ({
           currentLocation.ignorePatternPaths,
           enableWS
         );
-        GlobalSearch.getInstance().setIndex(newIndex);
-
-        if (newIndex && newIndex.length > 0) {
-          GlobalSearch.getInstance().setIndexLoadedOn(new Date().getTime());
-        }
+        setIndex(newIndex);
       } else if (isCloudLocation || !index || index.length === 0) {
         const newIndex = await loadIndex(
           {
@@ -286,12 +432,9 @@ export const LocationIndexContextProvider = ({
           PlatformIO.getDirSeparator(),
           PlatformIO.loadTextFilePromise
         );
-        GlobalSearch.getInstance().setIndex(newIndex);
+        setIndex(newIndex);
       }
-      Search.searchLocationIndex(
-        GlobalSearch.getInstance().getIndex(),
-        searchQuery
-      )
+      Search.searchLocationIndex(getIndex(), searchQuery)
         .then(searchResults => {
           if (isCloudLocation) {
             searchResults.forEach((entry: TS.FileSystemEntry) => {
@@ -494,17 +637,26 @@ export const LocationIndexContextProvider = ({
 
   const context = useMemo(() => {
     return {
-      searchQuery,
+      index: index.current,
+      indexLoadedOn: indexLoadedOn.current,
       isIndexing: isIndexing.current,
+      watchForChanges,
       cancelDirectoryIndexing,
-      setSearchQuery,
       createLocationIndex,
       createLocationsIndexes,
       clearDirectoryIndex,
       searchLocationIndex,
-      searchAllLocations
+      searchAllLocations,
+      setIndex,
+      getIndex,
+      reflectDeleteEntry,
+      reflectDeleteEntries,
+      reflectCreateEntry,
+      reflectRenameEntry,
+      indexUpdateSidecarTags,
+      reflectUpdateSidecarMeta
     };
-  }, [searchQuery, isIndexing.current]);
+  }, [currentLocation, index, isIndexing.current]);
 
   return (
     <LocationIndexContext.Provider value={context}>

@@ -20,8 +20,8 @@ import { getLocations } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-facade';
 import { Pro } from '-/pro';
 import { useTranslation } from 'react-i18next';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 
 interface Props {
   setTargetDir: (dirPath: string) => void;
@@ -30,7 +30,7 @@ interface Props {
 function DirectoryListView(props: Props) {
   const { currentDirectoryPath, setTargetDir } = props;
   const { t } = useTranslation();
-  const { watchForChanges } = useDirectoryContentContext();
+  const { watchForChanges } = useLocationIndexContext();
   const { currentLocation } = useCurrentLocationContext();
   const locations: Array<TS.Location> = useSelector(getLocations);
   const showUnixHiddenEntries: boolean = useSelector(getShowUnixHiddenEntries);
