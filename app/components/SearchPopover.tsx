@@ -19,7 +19,7 @@
 import React, { useReducer, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
-import DateFnsUtils from '@date-io/date-fns';
+/*import DateFnsUtils from '@date-io/date-fns';*/
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -934,14 +934,14 @@ function SearchPopover(props: Props) {
           <ProTooltip tooltip={t('enterTimePeriodTooltip')}>
             <LocalizationProvider
               dateAdapter={AdapterDateFns}
-              utils={DateFnsUtils}
+              /*utils={DateFnsUtils}*/
             >
               <Box position="relative" display="inline-flex">
                 <DatePicker
                   label={t('enterTagTimePeriodFrom')}
                   disabled={isIndexing || !Pro}
                   inputFormat="yyyy-MM-dd"
-                  value={tagTimePeriodFrom}
+                  value={new Date(tagTimePeriodFrom)}
                   onChange={(fromDataTime: Date) => {
                     if (fromDataTime) {
                       setSearchQuery({
@@ -957,7 +957,7 @@ function SearchPopover(props: Props) {
                   label={t('enterTagTimePeriodTo')}
                   disabled={isIndexing || !Pro}
                   inputFormat="yyyy-MM-dd"
-                  value={tagTimePeriodTo}
+                  value={new Date(tagTimePeriodTo)}
                   onChange={(toDataTime: Date) => {
                     if (toDataTime) {
                       setSearchQuery({

@@ -54,10 +54,7 @@ function MoveOrCopyFilesDialog(props: Props) {
 
   const theme = useTheme();
 
-  const {
-    loadDirectoryContent,
-    currentDirectoryPath
-  } = useDirectoryContentContext();
+  const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
   // const dispatch: AppDispatch = useDispatch();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -89,7 +86,7 @@ function MoveOrCopyFilesDialog(props: Props) {
       }
     }
     Promise.all(promises)
-      .then(() => loadDirectoryContent(currentDirectoryPath, true))
+      .then(() => openDirectory(currentDirectoryPath))
       .catch(error => {
         console.log('promises', error);
       });

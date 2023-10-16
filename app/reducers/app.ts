@@ -992,12 +992,12 @@ export const actions = {
   tagLibraryChanged: () => ({
     type: types.SET_TAG_LIBRARY_CHANGED
   }),
-  openDirectory: (directoryPath: string) => () => {
+  /*openDirectory: (directoryPath: string) => () => {
     PlatformIO.openDirectory(directoryPath);
-  },
-  showInFileManager: (filePath: string) => () => {
+  },*/
+  /*showInFileManager: (filePath: string) => () => {
     PlatformIO.showInFileManager(filePath);
-  },
+  },*/
   setSearchFilter: (searchFilter: string) => ({
     type: types.SET_SEARCH_FILTER,
     searchFilter

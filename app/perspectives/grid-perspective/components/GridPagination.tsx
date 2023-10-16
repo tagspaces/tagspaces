@@ -137,7 +137,7 @@ function GridPagination(props: Props) {
   const { readOnlyMode, currentLocation } = useCurrentLocationContext();
   const {
     currentDirectoryEntries,
-    loadDirectoryContent
+    openDirectory
   } = useDirectoryContentContext();
   const { page, pageFiles, setCurrentPage } = usePaginationContext();
   if (!showDirectories) {
@@ -388,7 +388,7 @@ function GridPagination(props: Props) {
                 currentDirectoryEntries,
                 openEntry,
                 openFileNatively,
-                loadDirectoryContent,
+                openDirectory,
                 setFileContextMenuAnchorEl,
                 setDirContextMenuAnchorEl,
                 showNotification,
@@ -412,7 +412,7 @@ function GridPagination(props: Props) {
               currentDirectoryEntries,
               openEntry,
               openFileNatively,
-              loadDirectoryContent,
+              openDirectory,
               setFileContextMenuAnchorEl,
               setDirContextMenuAnchorEl,
               showNotification,

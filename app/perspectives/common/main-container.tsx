@@ -55,7 +55,7 @@ export const renderCell = (
   directoryContent,
   openEntry,
   openFileNatively,
-  loadDirectoryContent,
+  openDirectory,
   setFileContextMenuAnchorEl,
   setDirContextMenuAnchorEl,
   showNotification: (
@@ -134,7 +134,7 @@ export const renderCell = (
       openEntry(fsEntry.path);
     } else {
       console.log('Handle Grid cell db click, selected path : ', fsEntry.path);
-      loadDirectoryContent(fsEntry.path, true);
+      openDirectory(fsEntry.path, true);
     }
   };
 

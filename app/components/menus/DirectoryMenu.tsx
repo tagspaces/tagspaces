@@ -76,7 +76,7 @@ function DirectoryMenu(props: Props) {
   const { currentLocation, readOnlyMode } = useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
   const {
-    loadDirectoryContent,
+    openDirectory,
     setCurrentDirectoryPerspective
   } = useDirectoryContentContext();
   const { reloadDirectory } = useIOActionsContext();
@@ -156,8 +156,8 @@ function DirectoryMenu(props: Props) {
     setIsCreateDirectoryDialogOpened
   ] = useState(false);*/
 
-  function openDirectory() {
-    return loadDirectoryContent(directoryPath, true);
+  function openDir() {
+    return openDirectory(directoryPath);
   }
 
   function showProperties() {
@@ -228,7 +228,7 @@ function DirectoryMenu(props: Props) {
   }
 
   function showInFileManager() {
-    dispatch(AppActions.openDirectory(directoryPath));
+    PlatformIO.openDirectory(directoryPath);
   }
 
   function openInNewWindow() {
@@ -270,7 +270,6 @@ Do you want to continue?`)
       };
       Pro.MacTagsImport.importTags(directoryPath, entryCallback)
         .then(() => {
-          // loadDirectoryContent(currentDirectoryPath); // TODO after first import tags is not imported without reloadDirContent
           toggleProgressDialog();
           console.log('Import tags succeeded ' + directoryPath);
           showNotification(
@@ -406,7 +405,7 @@ Do you want to continue?`)
     readOnlyMode,
     onClose,
     t,
-    openDirectory,
+    openDir,
     reloadDirectory,
     openRenameDirectoryDialog,
     openMoveCopyFilesDialog,

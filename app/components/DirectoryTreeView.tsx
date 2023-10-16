@@ -47,7 +47,7 @@ export interface DirectoryTreeViewRef {
 const DirectoryTreeView = forwardRef(
   (props: Props, ref: Ref<DirectoryTreeViewRef>) => {
     const { classes, location, handleFileMoveDrop } = props;
-    const { loadDirectoryContent } = useDirectoryContentContext();
+    const { openDirectory } = useDirectoryContentContext();
     const { changeLocation } = useCurrentLocationContext();
 
     const [data, setData] = useState(undefined);
@@ -168,8 +168,7 @@ const DirectoryTreeView = forwardRef(
           .then(() => {
             loadSubDirectories(subDir);
             changeLocation(subDir);
-            loadDirectoryContent(subDir.path, true);
-            return true;
+            return openDirectory(subDir.path);
           })
           .catch(error => {
             console.log('enableObjectStoreSupport', error);
@@ -178,7 +177,7 @@ const DirectoryTreeView = forwardRef(
         PlatformIO.disableObjectStoreSupport();
         loadSubDirectories(subDir);
         changeLocation(subDir);
-        loadDirectoryContent(subDir.path, true);
+        openDirectory(subDir.path);
       }
     };
 

@@ -59,6 +59,7 @@ import { enhanceEntry, getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import useFirstRender from '-/utils/useFirstRender';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { loadCurrentDirMeta } from '-/services/meta-loader';
 
 type DirectoryContentContextData = {
   currentDirectoryEntries: TS.FileSystemEntry[];
@@ -82,7 +83,7 @@ type DirectoryContentContextData = {
   loadDirectoryContent: (
     directoryPath: string,
     loadDirMeta?: boolean
-  ) => Promise<boolean>;
+  ) => Promise<TS.FileSystemEntry[]>;
   enhanceDirectoryContent: (
     dirEntries,
     isCloudLocation,
@@ -91,6 +92,7 @@ type DirectoryContentContextData = {
     getDirMeta?: boolean,
     generateThumbnails?: boolean
   ) => any;
+  openDirectory: (dirPath: string) => Promise<boolean>;
   openCurrentDirectory: () => Promise<boolean>;
   clearDirectoryContent: () => void;
   setCurrentDirectoryPerspective: (perspective: string) => void;
@@ -101,7 +103,6 @@ type DirectoryContentContextData = {
   updateCurrentDirEntries: (dirEntries: TS.FileSystemEntry[]) => void;
   updateThumbnailUrl: (filePath: string, thumbUrl: string) => void;
   setDirectoryMeta: (meta: TS.FileSystemEntryMeta) => void;
-  getEnhancedDir: (entry: TS.FileSystemEntry) => Promise<TS.FileSystemEntry>;
   setSearchResults: (entries: TS.FileSystemEntry[]) => void;
   appendSearchResults: (entries: TS.FileSystemEntry[]) => void;
   enterSearchMode: () => void;
@@ -123,9 +124,10 @@ export const DirectoryContentContext = createContext<
   isSearchMode: false,
   setSearchQuery: () => {},
   loadParentDirectoryContent: () => {},
-  loadDirectoryContent: () => Promise.resolve(false),
+  loadDirectoryContent: undefined,
   enhanceDirectoryContent: () => {},
-  openCurrentDirectory: () => Promise.resolve(false),
+  openDirectory: undefined,
+  openCurrentDirectory: undefined,
   clearDirectoryContent: () => {},
   setCurrentDirectoryPerspective: () => {},
   setCurrentDirectoryColor: () => {},
@@ -135,7 +137,6 @@ export const DirectoryContentContext = createContext<
   updateCurrentDirEntries: () => {},
   updateThumbnailUrl: () => {},
   setDirectoryMeta: () => {},
-  getEnhancedDir: () => Promise.resolve(undefined),
   setSearchResults: () => {},
   appendSearchResults: () => {},
   enterSearchMode: () => {},
@@ -185,7 +186,7 @@ export const DirectoryContentContextProvider = ({
 
   useEffect(() => {
     if (currentLocation) {
-      loadDirectoryContent(PlatformIO.getLocationPath(currentLocation), true);
+      openDirectory(PlatformIO.getLocationPath(currentLocation));
     } else {
       clearDirectoryContent();
       exitSearchMode();
@@ -288,7 +289,7 @@ export const DirectoryContentContextProvider = ({
       );
       // console.log('parentDirectory: ' + parentDirectory  + ' - currentLocationPath: ' + currentLocationPath);
       if (parentDirectory.includes(currentLocationPath)) {
-        loadDirectoryContent(parentDirectory, true);
+        openDirectory(parentDirectory);
       } else {
         showNotification(t('core:parentDirNotInLocation'), 'warning', true);
         // dispatch(actions.setIsLoading(false));
@@ -334,17 +335,24 @@ export const DirectoryContentContextProvider = ({
     return entries2;
   };
 
-  const updateCurrentDirEntries = useMemo(() => {
-    return (dirEntries: TS.FileSystemEntry[]) => {
-      if (currentDirectoryEntries && currentDirectoryEntries.length > 0) {
-        setCurrentDirectoryEntries(
-          getMergedEntries(currentDirectoryEntries, dirEntries)
-        );
-      } else {
-        setCurrentDirectoryEntries(dirEntries);
+  function updateCurrentDirEntries(
+    dirEntries: TS.FileSystemEntry[],
+    currentDirEntries?: TS.FileSystemEntry[]
+  ) {
+    if (dirEntries) {
+      const entries = dirEntries.filter(e => e !== undefined);
+      if (entries.length > 0) {
+        const currDirEntries = currentDirEntries
+          ? currentDirEntries
+          : currentDirectoryEntries;
+        if (currDirEntries && currDirEntries.length > 0) {
+          setCurrentDirectoryEntries(getMergedEntries(currDirEntries, entries));
+        } else {
+          setCurrentDirectoryEntries(entries);
+        }
       }
-    };
-  }, [currentDirectoryEntries]);
+    }
+  }
 
   function updateThumbnailUrl(filePath: string, thumbUrl: string) {
     const dirEntries = currentDirectoryEntries.map(entry => {
@@ -356,59 +364,10 @@ export const DirectoryContentContextProvider = ({
     setCurrentDirectoryEntries(dirEntries);
   }
 
-  /*const getEnhancedDirs: Promise<TS.FileSystemEntry>[] = useMemo(() => {
-    return currentDirectoryEntries
-      .filter(entry => !entry.isFile)
-      .map(entry => getEnhancedDir(entry));
-  }, [currentDirectoryEntries]);*/
-
-  const getEnhancedDir = (
-    entry: TS.FileSystemEntry
-  ): Promise<TS.FileSystemEntry> => {
-    if (!entry) {
-      return Promise.resolve(undefined);
-    }
-    if (entry.isFile) {
-      return Promise.reject(
-        new Error('getEnhancedDir accept dir only:' + entry.path)
-      );
-    }
-    if (entry.name === AppConfig.metaFolder) {
-      return Promise.resolve(undefined);
-    }
-    return PlatformIO.listMetaDirectoryPromise(entry.path).then(meta => {
-      const metaFilePath = getMetaFileLocationForDir(
-        entry.path,
-        PlatformIO.getDirSeparator()
-      );
-      const thumbDirPath = getThumbFileLocationForDirectory(
-        entry.path,
-        PlatformIO.getDirSeparator()
-      );
-      let enhancedEntry;
-      if (meta.some(metaFile => thumbDirPath.endsWith(metaFile.path))) {
-        const thumbPath =
-          PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()
-            ? PlatformIO.getURLforPath(thumbDirPath)
-            : thumbDirPath;
-        enhancedEntry = { ...entry, thumbPath };
-      }
-      if (
-        meta.some(metaFile => metaFilePath.endsWith(metaFile.path)) &&
-        entry.path.indexOf(
-          AppConfig.metaFolder + PlatformIO.getDirSeparator()
-        ) === -1
-      ) {
-        return getMetaForEntry(enhancedEntry || entry, metaFilePath);
-      }
-      return enhancedEntry;
-    });
-  };
-
   function loadDirectoryContent(
     directoryPath: string,
     loadDirMeta = false
-  ): Promise<boolean> {
+  ): Promise<TS.FileSystemEntry[]> {
     // console.debug('loadDirectoryContent:' + directoryPath);
     window.walkCanceled = false;
 
@@ -456,7 +415,7 @@ export const DirectoryContentContextProvider = ({
   function loadDirectoryContentInt(
     directoryPath: string,
     fsEntryMeta?: TS.FileSystemEntryMeta
-  ): Promise<boolean> {
+  ): Promise<TS.FileSystemEntry[]> {
     showNotification(t('core:loading'), 'info', false);
     const resultsLimit = {
       maxLoops:
@@ -492,7 +451,7 @@ export const DirectoryContentContextProvider = ({
             fsEntryMeta ? fsEntryMeta.perspective : undefined
           )
         );*/
-        return true;
+        return [];
       })
       .catch(error => {
         // console.timeEnd('listDirectoryPromise');
@@ -512,7 +471,21 @@ export const DirectoryContentContextProvider = ({
 
   function openCurrentDirectory(): Promise<boolean> {
     if (currentDirectoryPath.current) {
-      return loadDirectoryContent(currentDirectoryPath.current, true);
+      return openDirectory(currentDirectoryPath.current);
+    }
+    return Promise.resolve(false);
+  }
+
+  function openDirectory(dirPath: string): Promise<boolean> {
+    if (dirPath) {
+      return loadDirectoryContent(dirPath, true).then(dirEntries => {
+        if (dirEntries) {
+          return loadCurrentDirMeta(dirPath, dirEntries).then(entries => {
+            updateCurrentDirEntries(entries, dirEntries);
+            return true;
+          });
+        }
+      });
     }
     return Promise.resolve(false);
   }
@@ -521,7 +494,7 @@ export const DirectoryContentContextProvider = ({
     directoryPath: string,
     dirEntries: TS.FileSystemEntry[],
     dirMeta?: TS.FileSystemEntryMeta
-  ): boolean {
+  ): TS.FileSystemEntry[] {
     hideNotifications(['error']);
 
     if (dirMeta) {
@@ -562,10 +535,10 @@ export const DirectoryContentContextProvider = ({
     } else {
       currentDirectoryPath.current = directoryPath;
     }
-    return true;
+    return directoryContent;
   }
 
-  function loadDirectoryFailure(error?: any): boolean {
+  function loadDirectoryFailure(error?: any) {
     console.error('Error loading directory: ', error);
     //hideNotifications();
 
@@ -575,7 +548,7 @@ export const DirectoryContentContextProvider = ({
       false
     );
     closeAllLocations();
-    return false;
+    return [];
   }
 
   function setCurrentDirectoryColor(color: string) {
@@ -709,6 +682,7 @@ export const DirectoryContentContextProvider = ({
       loadDirectoryContent,
       loadParentDirectoryContent,
       enhanceDirectoryContent,
+      openDirectory,
       openCurrentDirectory,
       clearDirectoryContent,
       setCurrentDirectoryPerspective,
@@ -719,7 +693,6 @@ export const DirectoryContentContextProvider = ({
       updateCurrentDirEntries,
       updateThumbnailUrl,
       setDirectoryMeta,
-      getEnhancedDir,
       setSearchResults,
       appendSearchResults,
       enterSearchMode,
@@ -734,7 +707,6 @@ export const DirectoryContentContextProvider = ({
     isMetaFolderExist.current,
     currentDirectoryFiles.current,
     currentDirectoryDirs.current,
-    updateCurrentDirEntries,
     isSearchMode.current,
     searchQuery.current
   ]);

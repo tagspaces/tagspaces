@@ -39,10 +39,12 @@ import { Pro } from '-/pro';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { getPersistTagsInSidecarFile } from '-/reducers/settings';
 
 type CurrentLocationContextData = {
   currentLocation: TS.Location;
   readOnlyMode: boolean;
+  persistTagsInSidecarFile: boolean;
   changeLocation: (location: TS.Location) => void;
   editLocation: (location: TS.Location, openAfterEdit?: boolean) => void;
   addLocation: (
@@ -69,6 +71,7 @@ export const CurrentLocationContext = createContext<CurrentLocationContextData>(
   {
     currentLocation: undefined,
     readOnlyMode: false,
+    persistTagsInSidecarFile: true,
     changeLocation: () => {},
     editLocation: () => {},
     addLocation: () => {},
@@ -110,6 +113,9 @@ export const CurrentLocationContextProvider = ({
 
   const locations: TS.Location[] = useSelector(getLocations);
   const defaultLocationId = useSelector(getDefaultLocationId);
+  const settingsPersistTagsInSidecarFile: boolean = useSelector(
+    getPersistTagsInSidecarFile
+  );
 
   useEffect(() => {
     if (!currentLocation && defaultLocationId && defaultLocationId.length > 0) {
@@ -228,6 +234,15 @@ export const CurrentLocationContextProvider = ({
     [currentLocation]
   );
 
+  const persistTagsInSidecarFile: boolean = useMemo(() => {
+    const locationPersistTagsInSidecarFile =
+      currentLocation && currentLocation.persistTagsInSidecarFile;
+    if (locationPersistTagsInSidecarFile !== undefined) {
+      return locationPersistTagsInSidecarFile;
+    }
+    return settingsPersistTagsInSidecarFile;
+  }, [currentLocation]);
+
   function changeLocation(location: TS.Location) {
     if (!currentLocation || location.uuid !== currentLocation.uuid) {
       setCurrentLocation(location);
@@ -293,13 +308,6 @@ export const CurrentLocationContextProvider = ({
           );
           //dispatch(AppActions.setReadOnlyMode(location.isReadOnly || false));
           changeLocation(location);
-          /*if (!skipInitialDirList) {
-            loadDirectoryContent(
-              PlatformIO.getLocationPath(location),
-              false,
-              true
-            );
-          }*/
           return true;
         })
         .catch(e => {
@@ -320,10 +328,6 @@ export const CurrentLocationContextProvider = ({
       }
       //dispatch(AppActions.setReadOnlyMode(location.isReadOnly || false));
       changeLocation(location);
-      /*if (!skipInitialDirList) {
-        loadDirectoryContent(PlatformIO.getLocationPath(location), true, true);
-      }*/
-      // watchForChanges(location);
     }
   }
 
@@ -361,6 +365,7 @@ export const CurrentLocationContextProvider = ({
     return {
       currentLocation,
       readOnlyMode,
+      persistTagsInSidecarFile,
       changeLocation,
       addLocation,
       addLocations,

@@ -34,7 +34,9 @@ function DirectoryListView(props: Props) {
   const { currentLocation } = useCurrentLocationContext();
   const locations: Array<TS.Location> = useSelector(getLocations);
   const showUnixHiddenEntries: boolean = useSelector(getShowUnixHiddenEntries);
-  const chosenLocationId = useRef<string>(currentLocation.uuid);
+  const chosenLocationId = useRef<string>(
+    currentLocation ? currentLocation.uuid : undefined
+  );
   const chosenDirectory = useRef<string>(currentDirectoryPath);
   const [directoryContent, setDirectoryContent] = useState<
     TS.FileSystemEntry[]
@@ -46,7 +48,9 @@ function DirectoryListView(props: Props) {
     );
     if (chosenLocation) {
       const path =
-        chosenLocation.uuid === currentLocation.uuid && currentDirectoryPath
+        currentLocation &&
+        chosenLocation.uuid === currentLocation.uuid &&
+        currentDirectoryPath
           ? currentDirectoryPath
           : chosenLocation.path;
       listDirectory(path);

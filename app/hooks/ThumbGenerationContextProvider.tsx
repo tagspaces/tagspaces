@@ -16,13 +16,7 @@
  *
  */
 
-import React, {
-  createContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState
-} from 'react';
+import React, { createContext, useEffect, useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import {
   getEnableWS,
@@ -45,7 +39,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useMetaLoaderContext } from '-/hooks/useMetaLoaderContext';
+import { loadCurrentDirMeta } from '-/services/meta-loader';
 
 type ThumbGenerationContextData = {
   generateThumbnails: (dirEntries: TS.FileSystemEntry[]) => void;
@@ -67,11 +61,11 @@ export const ThumbGenerationContextProvider = ({
   const {
     currentDirectoryPath,
     currentDirectoryEntries,
-    isMetaFolderExist
+    isMetaFolderExist,
+    updateCurrentDirEntries
   } = useDirectoryContentContext();
   const { currentLocation } = useCurrentLocationContext();
   const { pageFiles } = usePaginationContext();
-  const { loadCurrentDirMeta } = useMetaLoaderContext();
   const { setGeneratingThumbs } = useNotificationContext();
   const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);
   const enableWS = useSelector(getEnableWS);
@@ -112,9 +106,11 @@ export const ThumbGenerationContextProvider = ({
       generateThumbnails(entries).then(() => {
         if (!isMetaFolderExist) {
           // initial thumbnail generation without .ts folder
-          loadCurrentDirMeta(pageFiles).then(() =>
-            console.debug('meta loaded')
-          );
+          loadCurrentDirMeta(
+            currentDirectoryPath,
+            currentDirectoryEntries,
+            pageFiles
+          ).then(entries => updateCurrentDirEntries(entries));
           /*PlatformIO.listMetaDirectoryPromise(currentDirectoryPath)
             .then(meta => {
               const thumbs = getThumbs(meta);

@@ -72,7 +72,7 @@ export const FsActionsContextProvider = ({
     reflectDeleteDirectory
   } = useOpenedEntryContext();
   const {
-    loadDirectoryContent,
+    openDirectory,
     currentDirectoryPath,
     loadParentDirectoryContent
   } = useDirectoryContentContext();
@@ -89,9 +89,10 @@ export const FsActionsContextProvider = ({
     return PlatformIO.renameDirectoryPromise(directoryPath, newDirectoryName)
       .then(newDirPath => {
         if (currentDirectoryPath === directoryPath) {
-          loadDirectoryContent(newDirPath, true);
-          reflectRenameDirectory(directoryPath, newDirPath);
-          reflectRenameEntry(directoryPath, newDirPath);
+          openDirectory(newDirPath).then(() => {
+            reflectRenameDirectory(directoryPath, newDirPath);
+            reflectRenameEntry(directoryPath, newDirPath);
+          });
         } else {
           reflectRenameEntry(directoryPath, newDirPath);
           dispatch(AppActions.reflectRenameEntry(directoryPath, newDirPath));

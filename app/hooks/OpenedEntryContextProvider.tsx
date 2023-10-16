@@ -143,7 +143,7 @@ export const OpenedEntryContextProvider = ({
   const {
     currentDirectoryEntries,
     currentDirectoryPath,
-    loadDirectoryContent,
+    openDirectory,
     setCurrentDirectoryColor,
     setCurrentDirectoryPerspective,
     updateCurrentDirEntry
@@ -557,7 +557,7 @@ export const OpenedEntryContextProvider = ({
         return;
       }
       if (!lastSelectedEntry.isFile) {
-        loadDirectoryContent(lastSelectedEntry.path, false);
+        openDirectory(lastSelectedEntry.path); //, false);
         return;
       }
     }
@@ -719,7 +719,7 @@ export const OpenedEntryContextProvider = ({
               openFsEntry(fsEntry);
               setEntryInFullWidth(options.fullWidth);
             } else {
-              loadDirectoryContent(fsEntry.path, true);
+              openDirectory(fsEntry.path);
             }
             return true;
           })
@@ -763,9 +763,9 @@ export const OpenedEntryContextProvider = ({
                   locationPath.length > 0
                     ? locationPath + '/' + newRelDir
                     : directoryPath;
-                loadDirectoryContent(dirFullPath, true);
+                openDirectory(dirFullPath);
               } else {
-                loadDirectoryContent(locationPath, true);
+                openDirectory(locationPath);
               }
 
               if (entryPath) {
@@ -796,9 +796,9 @@ export const OpenedEntryContextProvider = ({
                 }
                 const dirFullPath =
                   locationPath + PlatformIO.getDirSeparator() + directoryPath;
-                loadDirectoryContent(dirFullPath, true);
+                openDirectory(dirFullPath);
               } else {
-                loadDirectoryContent(locationPath, true);
+                openDirectory(locationPath);
               }
 
               if (entryPath && entryPath.length > 0) {

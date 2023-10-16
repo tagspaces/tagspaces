@@ -175,7 +175,7 @@ function EntryContainerMenu(props: Props) {
       if (openedEntry.isFile) {
         dispatch(AppActions.openFileNatively(openedEntry.path));
       } else {
-        dispatch(AppActions.openDirectory(openedEntry.path));
+        PlatformIO.openDirectory(openedEntry.path);
       }
     }
     handleClose();

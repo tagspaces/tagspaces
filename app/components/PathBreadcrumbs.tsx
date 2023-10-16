@@ -81,10 +81,7 @@ interface Props {
 function PathBreadcrumbs(props: Props) {
   const { t } = useTranslation();
   //const dispatch: AppDispatch = useDispatch();
-  const {
-    loadDirectoryContent,
-    currentDirectoryPath
-  } = useDirectoryContentContext();
+  const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
   const { currentLocation } = useCurrentLocationContext();
   let pathParts: Array<string> = [];
 
@@ -183,7 +180,7 @@ function PathBreadcrumbs(props: Props) {
               href="#"
               label={folderName}
               icon={index === 0 && locationTypeIcon}
-              onClick={() => loadDirectoryContent(pathPart, true)}
+              onClick={() => openDirectory(pathPart)}
             />
           </Tooltip>
         );

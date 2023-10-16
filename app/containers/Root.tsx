@@ -28,15 +28,11 @@ import TsAuth from '-/containers/TsAuth';
 import init from '-/services/i18nInit';
 import { FsActionsContextProvider } from '-/hooks/FsActionsContextProvider';
 import { OpenedEntryContextProvider } from '-/hooks/OpenedEntryContextProvider';
-import {
-  DirectoryContentContext,
-  DirectoryContentContextProvider
-} from '-/hooks/DirectoryContentContextProvider';
+import { DirectoryContentContextProvider } from '-/hooks/DirectoryContentContextProvider';
 import { CurrentLocationContextProvider } from '-/hooks/CurrentLocationContextProvider';
 import { NotificationContextProvider } from '-/hooks/NotificationContextProvider';
 import { IOActionsContextProvider } from '-/hooks/IOActionsContextProvider';
 import { TaggingActionsContextProvider } from '-/hooks/TaggingActionsContextProvider';
-import { MetaLoaderContextProvider } from '-/hooks/MetaLoaderContextProvider';
 import { LocationIndexContextProvider } from '-/hooks/LocationIndexContextProvider';
 
 type RootType = {
@@ -61,17 +57,15 @@ export default function Root({ store, persistor }: RootType) {
         <CurrentLocationContextProvider>
           <DirectoryContentContextProvider>
             <LocationIndexContextProvider>
-              <MetaLoaderContextProvider>
-                <OpenedEntryContextProvider>
-                  <FsActionsContextProvider>
-                    <IOActionsContextProvider>
-                      <TaggingActionsContextProvider>
-                        <MainPage />
-                      </TaggingActionsContextProvider>
-                    </IOActionsContextProvider>
-                  </FsActionsContextProvider>
-                </OpenedEntryContextProvider>
-              </MetaLoaderContextProvider>
+              <OpenedEntryContextProvider>
+                <FsActionsContextProvider>
+                  <IOActionsContextProvider>
+                    <TaggingActionsContextProvider>
+                      <MainPage />
+                    </TaggingActionsContextProvider>
+                  </IOActionsContextProvider>
+                </FsActionsContextProvider>
+              </OpenedEntryContextProvider>
             </LocationIndexContextProvider>
           </DirectoryContentContextProvider>
         </CurrentLocationContextProvider>

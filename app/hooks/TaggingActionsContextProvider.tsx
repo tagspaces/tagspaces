@@ -95,7 +95,7 @@ export const TaggingActionsContextProvider = ({
   const { t } = useTranslation();
   const { openedEntries, updateOpenedFile } = useOpenedEntryContext();
   const { updateCurrentDirEntry } = useDirectoryContentContext();
-  const { currentLocation } = useCurrentLocationContext();
+  const { persistTagsInSidecarFile } = useCurrentLocationContext();
   const { getIndex, indexUpdateSidecarTags } = useLocationIndexContext();
   const { renameFile } = useFsActionsContext();
   const { showNotification } = useNotificationContext();
@@ -107,21 +107,6 @@ export const TaggingActionsContextProvider = ({
   const tagDelimiter: string = useSelector(getTagDelimiter);
   const prefixTagContainer: boolean = useSelector(getPrefixTagContainer);
   const locations: TS.Location[] = useSelector(getLocations);
-  const settingsPersistTagsInSidecarFile: boolean = useSelector(
-    getPersistTagsInSidecarFile
-  );
-
-  const persistTagsInSidecarFile = useMemo(() => {
-    const locationPersistTagsInSidecarFile =
-      currentLocation && currentLocation.persistTagsInSidecarFile;
-    if (locationPersistTagsInSidecarFile !== undefined) {
-      return locationPersistTagsInSidecarFile;
-    }
-    /*if (AppConfig.useSidecarsForFileTaggingDisableSetting) {
-      return AppConfig.useSidecarsForFileTagging;
-    }*/
-    return settingsPersistTagsInSidecarFile;
-  }, [currentLocation]);
 
   function addTags(
     paths: Array<string>,
@@ -406,7 +391,7 @@ export const TaggingActionsContextProvider = ({
 
     function getNonExistingTags(
       newTagsArray: Array<TS.Tag>,
-      fileTagsArray: Array<string>,
+      fileTagsArray: string[],
       sideCarTagsArray: Array<TS.Tag>
     ) {
       const newTags = [];

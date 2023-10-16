@@ -50,8 +50,8 @@ import {
   enhanceEntry,
   loadJSONString
 } from '@tagspaces/tagspaces-common/utils-io';
-import { useMetaLoaderContext } from '-/hooks/useMetaLoaderContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { loadCurrentDirMeta } from '-/services/meta-loader';
 
 type extractOptions = {
   EXIFGeo?: boolean;
@@ -123,11 +123,10 @@ export const IOActionsContextProvider = ({
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const { showNotification, hideNotifications } = useNotificationContext();
-  const { loadCurrentDirMeta } = useMetaLoaderContext();
   const {
     currentDirectoryEntries,
     currentDirectoryPath,
-    loadDirectoryContent
+    openDirectory
   } = useDirectoryContentContext();
   const {
     reflectDeleteEntry,
@@ -756,14 +755,7 @@ export const IOActionsContextProvider = ({
   }
 
   function reloadDirectory(directoryPath?: string) {
-    return loadDirectoryContent(
-      directoryPath ? directoryPath : currentDirectoryPath,
-      true
-    ).then(success => {
-      if (success) {
-        return loadCurrentDirMeta();
-      }
-    });
+    return openDirectory(directoryPath ? directoryPath : currentDirectoryPath);
   }
 
   const context = useMemo(() => {

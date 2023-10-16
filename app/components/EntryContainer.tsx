@@ -94,10 +94,7 @@ function EntryContainer() {
     switchLocationTypeByID,
     switchCurrentLocationType
   } = useCurrentLocationContext();
-  const {
-    loadDirectoryContent,
-    currentDirectoryPath
-  } = useDirectoryContentContext();
+  const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
   const tabIndex = useSelector(getEntryContainerTab);
   const fileEditHistoryKey = useSelector(
@@ -548,7 +545,7 @@ function EntryContainer() {
                 entryProp.path
               );
               if (currentDirectoryPath === openedFileDir) {
-                loadDirectoryContent(openedFileDir, true);
+                openDirectory(openedFileDir);
                 /*
                   updateOpenedFile(openedFile.path, {
                     ...openedFile,

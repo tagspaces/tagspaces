@@ -21,8 +21,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { defaultSettings } from '-/perspectives/grid-perspective';
 import { useSortedDirContext } from '-/perspectives/grid-perspective/hooks/useSortedDirContext';
 import { TS } from '-/tagspaces.namespace';
-import { useSelector } from 'react-redux';
-import { useMetaLoaderContext } from '-/hooks/useMetaLoaderContext';
+import { loadCurrentDirMeta } from '-/services/meta-loader';
 
 type PaginationContextData = {
   page: number;
@@ -46,9 +45,9 @@ export const PaginationContextProvider = ({
   const initPage = 1;
   const {
     currentDirectoryPath,
-    isMetaFolderExist
+    currentDirectoryEntries,
+    updateCurrentDirEntries
   } = useDirectoryContentContext();
-  const { loadCurrentDirMeta } = useMetaLoaderContext();
   const { settings, sortedDirContent } = useSortedDirContext();
 
   const [page, setPage] = useState<number>(initPage);
@@ -60,10 +59,12 @@ export const PaginationContextProvider = ({
     if (page !== initPage) {
       setPage(initPage);
     }
-    if (isMetaFolderExist) {
-      loadCurrentDirMeta(pageFiles).then(() => console.debug('meta loaded'));
-    }
-  }, [currentDirectoryPath, isMetaFolderExist]);
+    /*if (isMetaFolderExist) {
+      loadCurrentDirMeta(currentDirectoryPath, pageFiles).then(() =>
+        console.debug('meta loaded')
+      );
+    }*/
+  }, [currentDirectoryPath]); //, isMetaFolderExist]);
 
   const pageFiles: TS.FileSystemEntry[] = useMemo(() => {
     return getPageFiles(page, sortedDirContent);
@@ -85,7 +86,14 @@ export const PaginationContextProvider = ({
 
   function setCurrentPage(currentPage: number) {
     setPage(currentPage);
-    return loadCurrentDirMeta(getPageFiles(currentPage, sortedDirContent));
+    return loadCurrentDirMeta(
+      currentDirectoryPath,
+      currentDirectoryEntries,
+      getPageFiles(currentPage, sortedDirContent)
+    ).then(entries => {
+      updateCurrentDirEntries(entries);
+      return true;
+    });
   }
 
   const context = useMemo(() => {

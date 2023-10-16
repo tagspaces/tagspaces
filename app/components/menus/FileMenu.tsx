@@ -111,7 +111,7 @@ function FileMenu(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const { openEntry } = useOpenedEntryContext();
-  const { loadDirectoryContent } = useDirectoryContentContext();
+  const { openDirectory } = useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
   const { currentLocation, readOnlyMode } = useCurrentLocationContext();
   const locations: Array<TS.Location> = useSelector(getLocations);
@@ -258,7 +258,7 @@ function FileMenu(props: Props) {
           if (onDuplicateFile) {
             onDuplicateFile(dirPath);
           } else {
-            loadDirectoryContent(dirPath, true);
+            openDirectory(dirPath);
           }
           return true;
         })
@@ -275,7 +275,7 @@ function FileMenu(props: Props) {
         selectedFilePath,
         PlatformIO.getDirSeparator()
       );
-      return loadDirectoryContent(parentFolder, true);
+      return openDirectory(parentFolder);
     }
   }
 
@@ -373,7 +373,7 @@ function FileMenu(props: Props) {
         onClick={() => {
           onClose();
           if (selectedFilePath) {
-            dispatch(AppActions.showInFileManager(selectedFilePath));
+            PlatformIO.showInFileManager(selectedFilePath);
           }
         }}
       >
