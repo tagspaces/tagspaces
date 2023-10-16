@@ -28,9 +28,6 @@ import Pagination from '@mui/material/Pagination';
 import AppConfig from '-/AppConfig';
 import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
 import {
-  getCurrentDirectoryColor,
-  getCurrentDirectoryTags,
-  getCurrentDirectoryDescription,
   getLastBackgroundImageChange,
   getLastThumbnailImageChange,
   getLastSelectedEntryPath
@@ -65,7 +62,6 @@ interface Props {
   layoutType: string;
   showTags: boolean;
   desktopMode: boolean;
-  currentDirectoryDescription: string;
   thumbnailMode: string;
   entrySize: string;
   files: Array<TS.FileSystemEntry>;
@@ -79,8 +75,6 @@ interface Props {
     handleGridCellDblClick,
     isLast?: boolean
   ) => void;
-  currentDirectoryColor: string;
-  currentDirectoryTags: Array<TS.Tag>;
   gridPageLimit: number;
   currentDirectoryPath: string;
   onContextMenu: (event: React.MouseEvent<HTMLDivElement>) => void;
@@ -114,9 +108,6 @@ function GridPagination(props: Props) {
     singleClickAction,
     getCellContent,
     desktopMode,
-    currentDirectoryColor,
-    currentDirectoryTags,
-    currentDirectoryDescription,
     currentDirectoryPath,
     lastThumbnailImageChange,
     openRenameEntryDialog,
@@ -137,7 +128,8 @@ function GridPagination(props: Props) {
   const { readOnlyMode, currentLocation } = useCurrentLocationContext();
   const {
     currentDirectoryEntries,
-    openDirectory
+    openDirectory,
+    directoryMeta
   } = useDirectoryContentContext();
   const { page, pageFiles, setCurrentPage } = usePaginationContext();
   if (!showDirectories) {
@@ -196,7 +188,7 @@ function GridPagination(props: Props) {
     PlatformIO.getDirSeparator()
   );
 
-  const dirColor = currentDirectoryColor || 'transparent';
+  const dirColor = directoryMeta.color || 'transparent';
 
   let folderSummary =
     (directories.length > 0 ? directories.length + ' folder(s) and ' : '') +
@@ -205,15 +197,6 @@ function GridPagination(props: Props) {
   if (selectedEntries && selectedEntries.length > 0) {
     folderSummary = selectedEntries.length + ' entries selected';
   }
-
-  /* let descriptionHTML = '';
-  if (showDescription && currentDirectoryDescription) {
-    descriptionHTML = convertMarkDown(
-      currentDirectoryDescription,
-      props.currentDirectoryPath
-    );
-  }
-  */
 
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions,jsx-a11y/no-static-element-interactions
@@ -250,13 +233,12 @@ function GridPagination(props: Props) {
                   marginTop: 0,
                   marginBottom: 0,
                   height:
-                    !showDescription && currentDirectoryDescription ? 150 : 110,
+                    !showDescription && directoryMeta.description ? 150 : 110,
                   position: 'relative'
                 }}
               >
                 {((folderName && folderName.length > 0) ||
-                  (currentDirectoryTags &&
-                    currentDirectoryTags.length > 0)) && (
+                  (directoryMeta && directoryMeta.tags.length > 0)) && (
                   <Box
                     style={{
                       display: 'flex',
@@ -286,13 +268,13 @@ function GridPagination(props: Props) {
                     </Tooltip>
                     {showTags ? (
                       <span style={{ paddingLeft: 5 }}>
-                        {currentDirectoryTags &&
-                          currentDirectoryTags.map((tag: TS.Tag) => {
+                        {directoryMeta &&
+                          directoryMeta.tags.map((tag: TS.Tag) => {
                             return <TagContainer tag={tag} tagMode="display" />;
                           })}
                       </span>
                     ) : (
-                      <TagsPreview tags={currentDirectoryTags} />
+                      <TagsPreview tags={directoryMeta.tags} />
                     )}
                   </Box>
                 )}
@@ -315,7 +297,7 @@ function GridPagination(props: Props) {
                   >
                     {folderSummary}
                   </Typography>
-                  {!showDescription && currentDirectoryDescription && (
+                  {!showDescription && directoryMeta.description && (
                     <Typography
                       style={{
                         fontSize: '0.8rem',
@@ -324,7 +306,7 @@ function GridPagination(props: Props) {
                         overflowY: 'auto'
                       }}
                     >
-                      {getDescriptionPreview(currentDirectoryDescription, 200)}
+                      {getDescriptionPreview(directoryMeta.description, 200)}
                     </Typography>
                   )}
                 </Box>
@@ -347,7 +329,7 @@ function GridPagination(props: Props) {
               </div>
             </Grid>
           )}
-          {showDescription && currentDirectoryDescription && (
+          {showDescription && directoryMeta.description && (
             <Grid
               item
               xs={12}
@@ -361,7 +343,7 @@ function GridPagination(props: Props) {
               }}
             >
               <MilkdownEditor
-                content={currentDirectoryDescription}
+                content={directoryMeta.description}
                 readOnly={true}
                 dark={theme.palette.mode === 'dark'}
                 currentFolder={currentDirectoryPath}
@@ -423,7 +405,7 @@ function GridPagination(props: Props) {
           )}
           {pageFiles.length < 1 && directories.length < 1 && (
             <div style={{ textAlign: 'center' }}>
-              {!showDescription && currentDirectoryDescription && (
+              {!showDescription && directoryMeta.description && (
                 <div style={{ position: 'relative', marginBottom: 150 }}>
                   <EntryIcon isFile={false} />
                 </div>
@@ -442,7 +424,7 @@ function GridPagination(props: Props) {
           )}
           {pageFiles.length < 1 && directories.length >= 1 && !showDirectories && (
             <div style={{ textAlign: 'center' }}>
-              {!showDescription && currentDirectoryDescription && (
+              {!showDescription && directoryMeta.description && (
                 <div style={{ position: 'relative', marginBottom: 150 }}>
                   <EntryIcon isFile={false} />
                 </div>
@@ -501,9 +483,6 @@ function GridPagination(props: Props) {
 
 function mapStateToProps(state) {
   return {
-    currentDirectoryColor: getCurrentDirectoryColor(state),
-    currentDirectoryTags: getCurrentDirectoryTags(state),
-    currentDirectoryDescription: getCurrentDirectoryDescription(state),
     lastBackgroundImageChange: getLastBackgroundImageChange(state),
     lastThumbnailImageChange: getLastThumbnailImageChange(state),
     lastSelectedEntryPath: getLastSelectedEntryPath(state)
@@ -524,15 +503,11 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   nextProp.thumbnailMode === prevProp.thumbnailMode &&
   nextProp.entrySize === prevProp.entrySize &&
   nextProp.gridPageLimit === prevProp.gridPageLimit &&
-  nextProp.currentDirectoryDescription ===
-    prevProp.currentDirectoryDescription &&
   JSON.stringify(nextProp.files) === JSON.stringify(prevProp.files) &&
   JSON.stringify(nextProp.directories) ===
     JSON.stringify(prevProp.directories) &&
   JSON.stringify(nextProp.settings) === JSON.stringify(prevProp.settings) &&
   JSON.stringify(nextProp.selectedEntries) ===
-    JSON.stringify(prevProp.selectedEntries) &&
-  JSON.stringify(nextProp.currentDirectoryColor) ===
-    JSON.stringify(prevProp.currentDirectoryColor);
+    JSON.stringify(prevProp.selectedEntries);
 
 export default connect(mapStateToProps)(React.memo(GridPagination, areEqual));

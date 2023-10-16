@@ -189,9 +189,9 @@ export const initialState = {
   isUpdateAvailable: false,
   //currentLocationId: null,
   //currentDirectoryPath: '',
-  currentDirectoryColor: '',
-  currentDirectoryDescription: '',
-  currentDirectoryTags: [],
+  //currentDirectoryColor: '',
+  //currentDirectoryDescription: '',
+  //currentDirectoryTags: [],
   //currentDirectoryEntries: [],
   //isReadOnlyMode: false,
   searchResults: [],
@@ -1084,12 +1084,12 @@ export const getLastThumbnailImageChange = (state: any) =>
   state.app.lastThumbnailImageChange;
 export const currentUser = (state: any) => state.app.user;
 export const getEditedEntryPaths = (state: any) => state.app.editedEntryPaths;
-export const getCurrentDirectoryColor = (state: any) =>
+/*export const getCurrentDirectoryColor = (state: any) =>
   state.app.currentDirectoryColor;
 export const getCurrentDirectoryDescription = (state: any) =>
   state.app.currentDirectoryDescription;
 export const getCurrentDirectoryTags = (state: any) =>
-  state.app.currentDirectoryTags;
+  state.app.currentDirectoryTags;*/
 export const getProgress = (state: any) => state.app.progress;
 export const isUpdateAvailable = (state: any) => state.app.isUpdateAvailable;
 export const isUpdateInProgress = (state: any) => state.app.isUpdateInProgress;

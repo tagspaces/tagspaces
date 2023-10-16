@@ -221,7 +221,11 @@ function EntryProperties(props: Props) {
   } = useOpenedEntryContext();
   const { renameDirectory, renameFile } = useFsActionsContext();
   const { addTags, removeTags, removeAllTags } = useTaggingActionsContext();
-  const { updateThumbnailUrl } = useDirectoryContentContext();
+  const {
+    currentDirectoryPath,
+    updateThumbnailUrl,
+    setDirectoryMeta
+  } = useDirectoryContentContext();
   const {
     switchLocationTypeByID,
     switchCurrentLocationType,
@@ -463,7 +467,10 @@ function EntryProperties(props: Props) {
     switchLocationTypeByID(openedEntry.locationId).then(currentLocationId => {
       Pro.MetaOperations.saveFsEntryMeta(currentEntry.current.path, { color })
         .then(entryMeta => {
-          // if (props.entryPath === props.currentDirectoryPath) {
+          if (currentEntry.current.path === currentDirectoryPath) {
+            setDirectoryMeta(entryMeta);
+          }
+          // for KanBan
           props.setLastBackgroundColorChange(
             currentEntry.current.path,
             new Date().getTime()

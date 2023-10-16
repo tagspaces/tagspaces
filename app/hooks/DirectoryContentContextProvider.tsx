@@ -657,6 +657,7 @@ export const DirectoryContentContextProvider = ({
   function setDirectoryMeta(meta: TS.FileSystemEntryMeta) {
     directoryMeta.current = meta;
     isMetaLoaded.current = true;
+    forceUpdate();
   }
 
   function setSearchQuery(sQuery: TS.SearchQuery) {
