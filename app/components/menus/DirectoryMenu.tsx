@@ -33,7 +33,6 @@ import PlatformIO from '-/services/platform-facade';
 import {
   actions as AppActions,
   AppDispatch,
-  getLastSelectedEntryPath,
   getSelectedEntries
 } from '-/reducers/app';
 import FileUploadContainer, {
@@ -77,6 +76,7 @@ function DirectoryMenu(props: Props) {
   const { showNotification } = useNotificationContext();
   const {
     openDirectory,
+    currentDirectoryPath,
     setCurrentDirectoryPerspective
   } = useDirectoryContentContext();
   const { reloadDirectory } = useIOActionsContext();
@@ -86,7 +86,6 @@ function DirectoryMenu(props: Props) {
     open,
     onClose,
     anchorEl,
-    directoryPath,
     mouseX,
     mouseY,
     openAddRemoveTagsDialog,
@@ -95,6 +94,7 @@ function DirectoryMenu(props: Props) {
     switchPerspective,
     perspectiveMode
   } = props;
+  const directoryPath = props.directoryPath || currentDirectoryPath;
   const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
     getSelectedEntries
   );
