@@ -74,7 +74,6 @@ interface Props {
   switchPerspective: (perspectiveId: string) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
   openRenameDirectoryDialog: () => void;
-  openMoveCopyFilesDialog: () => void;
   isDesktopMode: boolean;
 }
 
@@ -93,7 +92,6 @@ function PathBreadcrumbs(props: Props) {
   const {
     setSelectedEntries,
     openRenameDirectoryDialog,
-    openMoveCopyFilesDialog,
     isDesktopMode
   } = props;
 
@@ -242,7 +240,6 @@ function PathBreadcrumbs(props: Props) {
         perspectiveMode={false}
         directoryPath={currentDirectoryPath}
         openRenameDirectoryDialog={openRenameDirectoryDialog}
-        openMoveCopyFilesDialog={openMoveCopyFilesDialog}
       />
     </>
   );

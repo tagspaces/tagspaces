@@ -238,7 +238,9 @@ function GridPagination(props: Props) {
                 }}
               >
                 {((folderName && folderName.length > 0) ||
-                  (directoryMeta && directoryMeta.tags.length > 0)) && (
+                  (directoryMeta &&
+                    directoryMeta.tags &&
+                    directoryMeta.tags.length > 0)) && (
                   <Box
                     style={{
                       display: 'flex',
@@ -269,6 +271,7 @@ function GridPagination(props: Props) {
                     {showTags ? (
                       <span style={{ paddingLeft: 5 }}>
                         {directoryMeta &&
+                          directoryMeta.tags &&
                           directoryMeta.tags.map((tag: TS.Tag) => {
                             return <TagContainer tag={tag} tagMode="display" />;
                           })}

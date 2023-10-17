@@ -522,7 +522,6 @@ export const DirectoryContentContextProvider = ({
     );
 
     isSearchMode.current = false;
-    setCurrentDirectoryEntries(directoryContent);
 
     if (
       currentDirectoryPath.current &&
@@ -535,6 +534,7 @@ export const DirectoryContentContextProvider = ({
     } else {
       currentDirectoryPath.current = directoryPath;
     }
+    setCurrentDirectoryEntries(directoryContent);
     return directoryContent;
   }
 
@@ -705,7 +705,7 @@ export const DirectoryContentContextProvider = ({
     currentDirectoryPath.current,
     directoryMeta.current,
     currentPerspective.current,
-    isMetaFolderExist.current,
+    //isMetaFolderExist.current,
     currentDirectoryFiles.current,
     currentDirectoryDirs.current,
     isSearchMode.current,

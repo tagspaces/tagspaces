@@ -558,9 +558,9 @@ function MainPage(props: Props) {
           drawerOpened={drawerOpened}
           goBack={goBack}
           goForward={goForward}
-          openMoveCopyFilesDialog={() =>
+          /*openMoveCopyFilesDialog={() =>
             setMoveCopyDialogOpened(props.selectedEntries)
-          }
+          }*/
         />
         {isFileOpened && (
           <DescriptionContextProvider>

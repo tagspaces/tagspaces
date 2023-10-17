@@ -63,7 +63,7 @@ interface Props {
   switchPerspective?: (perspectiveId: string) => void;
   perspectiveMode?: boolean;
   openRenameDirectoryDialog: () => void;
-  openMoveCopyFilesDialog: () => void;
+  openMoveCopyFilesDialog?: () => void;
   mouseX?: number;
   mouseY?: number;
 }
@@ -126,29 +126,32 @@ function DirectoryMenu(props: Props) {
   };
 
   function generateFolderLink() {
-    const entryFromIndex = selectedEntries[0]['locationID'];
-    const locationID = entryFromIndex
-      ? selectedEntries[0]['locationID']
-      : currentLocation.uuid;
-    const entryPath = selectedEntries[0].path;
+    let locationID = currentLocation.uuid;
+    let entryPath = currentDirectoryPath;
+    if (selectedEntries && selectedEntries.length > 0) {
+      if (selectedEntries[0]['locationID']) {
+        locationID = selectedEntries[0]['locationID'];
+      }
+      entryPath = selectedEntries[0].path;
+    }
     const tmpLoc = locations.find(location => location.uuid === locationID);
     const relativePath = getRelativeEntryPath(tmpLoc, entryPath);
     return generateSharingLink(locationID, undefined, relativePath);
   }
 
   function copySharingLink() {
-    if (selectedEntries && selectedEntries.length === 1) {
-      const sharingLink = generateFolderLink();
-      navigator.clipboard
-        .writeText(sharingLink)
-        .then(() => {
-          showNotification(t('core:sharingLinkCopied'));
-          return true;
-        })
-        .catch(() => {
-          showNotification(t('core:sharingLinkFailed'));
-        });
-    }
+    //if (selectedEntries && selectedEntries.length === 1) {
+    const sharingLink = generateFolderLink();
+    navigator.clipboard
+      .writeText(sharingLink)
+      .then(() => {
+        showNotification(t('core:sharingLinkCopied'));
+        return true;
+      })
+      .catch(() => {
+        showNotification(t('core:sharingLinkFailed'));
+      });
+    //}
   }
 
   /*  const [
@@ -233,12 +236,12 @@ function DirectoryMenu(props: Props) {
 
   function openInNewWindow() {
     // onClose();
-    if (selectedEntries && selectedEntries.length === 1) {
-      const sharingLink = generateFolderLink();
-      const newInstanceLink =
-        window.location.href.split('?')[0] + '?' + sharingLink.split('?')[1];
-      PlatformIO.createNewInstance(newInstanceLink);
-    }
+    //if (selectedEntries && selectedEntries.length === 1) {
+    const sharingLink = generateFolderLink();
+    const newInstanceLink =
+      window.location.href.split('?')[0] + '?' + sharingLink.split('?')[1];
+    PlatformIO.createNewInstance(newInstanceLink);
+    //}
   }
 
   function addExistingFile() {

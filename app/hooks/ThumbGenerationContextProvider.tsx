@@ -77,9 +77,6 @@ export const ThumbGenerationContextProvider = ({
     setGeneratingThumbs(isGen);
   }
 
-  const entries =
-    pageFiles && pageFiles.length > 0 ? pageFiles : currentDirectoryEntries;
-
   const supportedImgsWS = [
     'jpg',
     'jpeg',
@@ -97,6 +94,8 @@ export const ThumbGenerationContextProvider = ({
   ];
 
   useEffect(() => {
+    const entries =
+      pageFiles && pageFiles.length > 0 ? pageFiles : currentDirectoryEntries;
     if (
       entries &&
       entries.length > 0 &&
@@ -124,7 +123,7 @@ export const ThumbGenerationContextProvider = ({
         return true;
       });
     }
-  }, [currentDirectoryPath, isMetaFolderExist]);
+  }, [currentDirectoryEntries, isMetaFolderExist]);
 
   function genThumbnailsEnabled(): boolean {
     if (

@@ -71,7 +71,6 @@ interface Props {
   progress?: Array<any>;
   goBack: () => void;
   goForward: () => void;
-  openMoveCopyFilesDialog: () => void;
 }
 
 function FolderContainer(props: Props) {
@@ -341,7 +340,6 @@ function FolderContainer(props: Props) {
               setSelectedEntries={setSelectedEntries}
               isDesktopMode={isDesktopMode}
               openRenameDirectoryDialog={() => setRenameEntryDialogOpened(true)}
-              openMoveCopyFilesDialog={props.openMoveCopyFilesDialog}
             />
           </>
         )}
