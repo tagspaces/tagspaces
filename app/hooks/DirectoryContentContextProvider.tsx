@@ -661,11 +661,13 @@ export const DirectoryContentContextProvider = ({
   }
 
   function setSearchQuery(sQuery: TS.SearchQuery) {
-    searchQuery.current = sQuery;
-    forceUpdate();
-    /*if (Object.keys(searchQuery).length === 0) {
-     //exitSearchMode();
-   }*/
+    if (Object.keys(searchQuery).length === 0) {
+      exitSearchMode();
+    } else {
+      isSearchMode.current = true;
+      searchQuery.current = sQuery;
+      forceUpdate();
+    }
   }
 
   const context = useMemo(() => {
