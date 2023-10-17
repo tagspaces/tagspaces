@@ -71,23 +71,25 @@ function Revisions() {
   }, [openedEntries]);
 
   function loadHistoryItems(openedFile: OpenedEntry) {
-    Pro.MetaOperations.getMetadataID(openedFile.path, openedFile.uuid).then(
-      id => {
-        openedFile.uuid = id;
-        const backupFilePath = getBackupFileLocation(
-          openedFile.path,
-          openedFile.uuid,
-          PlatformIO.getDirSeparator()
-        );
-        const backupPath = extractContainingDirectoryPath(
-          backupFilePath,
-          PlatformIO.getDirSeparator()
-        );
-        PlatformIO.listDirectoryPromise(backupPath, []).then(h =>
-          setRows(h.sort((a, b) => (a.lmdt < b.lmdt ? 1 : -1)))
-        );
-      }
-    );
+    if (Pro) {
+      Pro.MetaOperations.getMetadataID(openedFile.path, openedFile.uuid).then(
+        id => {
+          openedFile.uuid = id;
+          const backupFilePath = getBackupFileLocation(
+            openedFile.path,
+            openedFile.uuid,
+            PlatformIO.getDirSeparator()
+          );
+          const backupPath = extractContainingDirectoryPath(
+            backupFilePath,
+            PlatformIO.getDirSeparator()
+          );
+          PlatformIO.listDirectoryPromise(backupPath, []).then(h =>
+            setRows(h.sort((a, b) => (a.lmdt < b.lmdt ? 1 : -1)))
+          );
+        }
+      );
+    }
   }
 
   const handleChangePage = (_event: unknown, newPage: number) => {
