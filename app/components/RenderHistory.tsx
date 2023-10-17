@@ -76,7 +76,7 @@ function RenderHistory(props: Props) {
                   onClick={() =>
                     Pro.history.openItem(
                       item,
-                      currentLocation.uuid,
+                      currentLocation && currentLocation.uuid,
                       openLinkDispatch,
                       openLocationById,
                       openEntry

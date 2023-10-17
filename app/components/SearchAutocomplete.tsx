@@ -1003,7 +1003,7 @@ function SearchAutocomplete(props: Props) {
             };
             Pro.history.openItem(
               item,
-              currentLocation.uuid,
+              currentLocation && currentLocation.uuid,
               openLinkDispatch,
               openLocationById,
               openEntry
@@ -1023,7 +1023,7 @@ function SearchAutocomplete(props: Props) {
             };
             Pro.history.openItem(
               item,
-              currentLocation.uuid,
+              currentLocation && currentLocation.uuid,
               openLinkDispatch,
               openLocationById,
               openEntry

@@ -321,7 +321,14 @@ export const OpenedEntryContextProvider = ({
           if (params.has('tsepath')) {
             const entryPath = params.get('tsepath');
             if (openedFile.isFile) {
-              sharingLink.current = generateSharingLink(locationId, entryPath);
+              const dirPath = params.has('tsdpath')
+                ? params.get('tsdpath')
+                : undefined;
+              sharingLink.current = generateSharingLink(
+                locationId,
+                entryPath,
+                dirPath
+              );
             } else {
               sharingLink.current = generateSharingLink(
                 locationId,
@@ -329,6 +336,12 @@ export const OpenedEntryContextProvider = ({
                 entryPath
               );
             }
+          } else if (params.has('tsdpath')) {
+            sharingLink.current = generateSharingLink(
+              locationId,
+              undefined,
+              params.get('tsdpath')
+            );
           } else {
             sharingLink.current = generateSharingLink(locationId);
           }
@@ -729,8 +742,12 @@ export const OpenedEntryContextProvider = ({
           });
       } else if (lid && lid.length > 0) {
         const locationId = decodeURIComponent(lid);
-        const directoryPath = dPath && decodeURIComponent(dPath);
+        let directoryPath = dPath && decodeURIComponent(dPath);
         const entryPath = ePath && decodeURIComponent(ePath);
+        // fix for created bookmarks files without to have tsdpath in url
+        if (!directoryPath) {
+          directoryPath = extractContainingDirectoryPath(entryPath);
+        }
         // Check for relative paths
         const targetLocation: TS.Location = locations.find(
           location => location.uuid === locationId
@@ -739,12 +756,11 @@ export const OpenedEntryContextProvider = ({
           let openLocationTimer = 1000;
           const isCloudLocation =
             targetLocation.type === locationType.TYPE_CLOUD;
-          let skipListingLocation = directoryPath && directoryPath.length > 0;
           if (
             !currentLocation ||
             targetLocation.uuid !== currentLocation.uuid
           ) {
-            openLocation(targetLocation, skipListingLocation);
+            openLocation(targetLocation, true);
           } else {
             openLocationTimer = 0;
           }

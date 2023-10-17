@@ -40,17 +40,11 @@ import {
   extractTagsAsObjects,
   extractParentDirectoryPath,
   getMetaFileLocationForDir,
-  getThumbFileLocationForDirectory,
   normalizePath,
   getMetaDirectoryPath
 } from '@tagspaces/tagspaces-common/paths';
 import PlatformIO from '-/services/platform-facade';
-import {
-  getMetaForEntry,
-  loadJSONFile,
-  merge,
-  updateFsEntries
-} from '-/services/utils-io';
+import { loadJSONFile, merge, updateFsEntries } from '-/services/utils-io';
 import AppConfig from '-/AppConfig';
 import { PerspectiveIDs } from '-/perspectives';
 import { updateHistory } from '-/utils/dom';
@@ -152,7 +146,11 @@ export const DirectoryContentContextProvider = ({
 }: DirectoryContentContextProviderProps) => {
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
-  const { closeAllLocations, currentLocation } = useCurrentLocationContext();
+  const {
+    closeAllLocations,
+    currentLocation,
+    skipInitialDirList
+  } = useCurrentLocationContext();
   const { showNotification, hideNotifications } = useNotificationContext();
   const selectedEntries = useSelector(getSelectedEntries);
   //const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);
@@ -186,7 +184,9 @@ export const DirectoryContentContextProvider = ({
 
   useEffect(() => {
     if (currentLocation) {
-      openDirectory(PlatformIO.getLocationPath(currentLocation));
+      if (!skipInitialDirList) {
+        openDirectory(PlatformIO.getLocationPath(currentLocation));
+      }
     } else {
       clearDirectoryContent();
       exitSearchMode();

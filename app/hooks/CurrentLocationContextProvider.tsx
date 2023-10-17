@@ -44,6 +44,7 @@ import { getPersistTagsInSidecarFile } from '-/reducers/settings';
 type CurrentLocationContextData = {
   currentLocation: TS.Location;
   readOnlyMode: boolean;
+  skipInitialDirList: boolean;
   persistTagsInSidecarFile: boolean;
   changeLocation: (location: TS.Location) => void;
   editLocation: (location: TS.Location, openAfterEdit?: boolean) => void;
@@ -71,6 +72,7 @@ export const CurrentLocationContext = createContext<CurrentLocationContextData>(
   {
     currentLocation: undefined,
     readOnlyMode: false,
+    skipInitialDirList: false,
     persistTagsInSidecarFile: true,
     changeLocation: () => {},
     editLocation: () => {},
@@ -106,6 +108,7 @@ export const CurrentLocationContextProvider = ({
     undefined
   );
   const selectedLocation = useRef<TS.Location>(undefined);
+  const skipInitialDirList = useRef<boolean>(false);
   const [
     locationDirectoryContextMenuAnchorEl,
     setLocationDirectoryContextMenuAnchorEl
@@ -287,17 +290,21 @@ export const CurrentLocationContextProvider = ({
     return setLocationType(currentLocation);
   }
 
-  function openLocationById(locationId: string, skipInitialDirList?: boolean) {
+  function openLocationById(locationId: string, skipInitDirList?: boolean) {
     const location = locations.find(location => location.uuid === locationId);
     if (location) {
-      openLocation(location, skipInitialDirList);
+      openLocation(location, skipInitDirList);
     }
   }
 
-  function openLocation(location: TS.Location, skipInitialDirList?: boolean) {
+  function openLocation(
+    location: TS.Location,
+    skipInitDirList: boolean = false
+  ) {
     if (Pro && Pro.Watcher) {
       Pro.Watcher.stopWatching();
     }
+    skipInitialDirList.current = skipInitDirList;
     if (location.type === locationType.TYPE_CLOUD) {
       PlatformIO.enableObjectStoreSupport(location)
         .then(() => {
@@ -365,6 +372,7 @@ export const CurrentLocationContextProvider = ({
     return {
       currentLocation,
       readOnlyMode,
+      skipInitialDirList: skipInitialDirList.current,
       persistTagsInSidecarFile,
       changeLocation,
       addLocation,
@@ -383,7 +391,11 @@ export const CurrentLocationContextProvider = ({
       setSelectedLocation,
       getLocationPosition
     };
-  }, [currentLocation, locationDirectoryContextMenuAnchorEl]);
+  }, [
+    currentLocation,
+    skipInitialDirList.current,
+    locationDirectoryContextMenuAnchorEl
+  ]);
 
   return (
     <CurrentLocationContext.Provider value={context}>
