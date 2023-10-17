@@ -32,12 +32,13 @@ import CollectTagsIcon from '@mui/icons-material/Voicemail';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { getMaxSearchResults } from '-/reducers/settings';
-import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import InfoIcon from '-/components/InfoIcon';
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
   classes?: any;
@@ -71,6 +72,7 @@ function TagGroupMenu(props: Props) {
   const { t } = useTranslation();
 
   const { collectTagsFromLocation } = useTaggingActionsContext();
+  const { setSearchQuery } = useDirectoryContentContext();
   const dispatch: AppDispatch = useDispatch();
   const maxSearchResults = useSelector(getMaxSearchResults);
 
@@ -108,13 +110,11 @@ function TagGroupMenu(props: Props) {
   function showFilesWithTags() {
     if (selectedTagGroupEntry) {
       // openSearchPanel();
-      dispatch(
-        LocationIndexActions.setSearchQuery({
-          tagsOR: selectedTagGroupEntry.children,
-          maxSearchResults: maxSearchResults,
-          executeSearch: true
-        })
-      );
+      setSearchQuery({
+        tagsOR: selectedTagGroupEntry.children,
+        maxSearchResults: maxSearchResults,
+        executeSearch: true
+      });
     }
     handleCloseTagGroupMenu();
   }

@@ -16,8 +16,8 @@
  *
  */
 
-import React, { useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import Tooltip from '-/components/Tooltip';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -29,16 +29,10 @@ import { LocalLocationIcon, CloudLocationIcon } from '-/components/CommonIcons';
 import DefaultLocationIcon from '@mui/icons-material/Highlight';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
-import {
-  actions as AppActions,
-  AppDispatch,
-  getCurrentLocationId,
-  isReadOnlyMode
-} from '../reducers/app';
+import { actions as AppActions, AppDispatch } from '../reducers/app';
 import PlatformIO from '../services/platform-facade';
 import TargetMoveFileBox from './TargetMoveFileBox';
 import DragItemTypes from './DragItemTypes';
-import IOActions from '../reducers/io-actions';
 import DirectoryTreeView, {
   DirectoryTreeViewRef
 } from '-/components/DirectoryTreeView';
@@ -46,35 +40,44 @@ import LocationContextMenu from '-/components/menus/LocationContextMenu';
 import { TS } from '-/tagspaces.namespace';
 import { classes, SidePanel } from '-/components/SidePanels.css';
 import { useTranslation } from 'react-i18next';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 
 interface Props {
   location: TS.Location;
   hideDrawer?: () => void;
   setEditLocationDialogOpened: (open: boolean) => void;
   setDeleteLocationDialogOpened: (open: boolean) => void;
-  selectedLocation: TS.Location;
-  setSelectedLocation: (loc: TS.Location) => void;
 }
 
 function LocationView(props: Props) {
   const { t } = useTranslation();
-  const directoryTreeRef = useRef<DirectoryTreeViewRef>(null);
-  const [
+
+  const { moveFiles, uploadFiles } = useIOActionsContext();
+  const {
+    openLocation,
+    currentLocation,
+    readOnlyMode,
+    setSelectedLocation,
     locationDirectoryContextMenuAnchorEl,
     setLocationDirectoryContextMenuAnchorEl
-  ] = useState<null | HTMLElement>(null);
+  } = useCurrentLocationContext();
+  const { reloadDirectory } = useIOActionsContext();
+  const { showNotification } = useNotificationContext();
+  const directoryTreeRef = useRef<DirectoryTreeViewRef>(null);
+  /*  const [
+    locationDirectoryContextMenuAnchorEl,
+    setLocationDirectoryContextMenuAnchorEl
+  ] = useState<null | HTMLElement>(null);*/
 
   const dispatch: AppDispatch = useDispatch();
-  const currentLocationId: string = useSelector(getCurrentLocationId);
-  const readOnlyMode = useSelector(isReadOnlyMode);
 
   const {
     location,
     hideDrawer,
-    setSelectedLocation,
     setEditLocationDialogOpened,
-    setDeleteLocationDialogOpened,
-    selectedLocation
+    setDeleteLocationDialogOpened
   } = props;
   const isCloudLocation = location.type === locationType.TYPE_CLOUD;
 
@@ -89,21 +92,13 @@ function LocationView(props: Props) {
   };
 
   const handleLocationClick = () => {
-    if (location.uuid === currentLocationId) {
+    if (currentLocation && location.uuid === currentLocation.uuid) {
       // the same location click
-
-      dispatch(
-        AppActions.loadDirectoryContent(
-          PlatformIO.getLocationPath(location),
-          true,
-          true
-        )
-      );
+      reloadDirectory(PlatformIO.getLocationPath(location));
     } else {
       // this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
       dispatch(AppActions.setSelectedEntries([]));
-      dispatch(AppActions.exitSearchMode());
-      dispatch(AppActions.openLocation(location));
+      openLocation(location);
       if (hideDrawer) {
         hideDrawer();
       }
@@ -114,11 +109,11 @@ function LocationView(props: Props) {
     directoryTreeRef.current.closeLocation();
   };
 
-  const handleLocationContextMenuClick = (event: any) => {
+  const handleLocationContextMenuClick = (event: any, chosenLocation) => {
     event.preventDefault();
     event.stopPropagation();
+    setSelectedLocation(chosenLocation);
     setLocationDirectoryContextMenuAnchorEl(event.currentTarget);
-    setSelectedLocation(location);
   };
 
   const onUploadProgress = (progress, response) => {
@@ -143,33 +138,15 @@ function LocationView(props: Props) {
         arrPath.push(path);
       }
       if (readOnlyMode) {
-        dispatch(
-          AppActions.showNotification(
-            t('core:dndDisabledReadOnlyMode'),
-            'error',
-            true
-          )
-        );
+        showNotification(t('core:dndDisabledReadOnlyMode'), 'error', true);
         return;
       }
       if (!AppConfig.isWin && !path.startsWith('/')) {
-        dispatch(
-          AppActions.showNotification(
-            t('Moving file not possible'),
-            'error',
-            true
-          )
-        );
+        showNotification(t('Moving file not possible'), 'error', true);
         return;
       }
       if (AppConfig.isWin && !path.substr(1).startsWith(':')) {
-        dispatch(
-          AppActions.showNotification(
-            t('Moving file not possible'),
-            'error',
-            true
-          )
-        );
+        showNotification(t('Moving file not possible'), 'error', true);
         return;
       }
       let targetPath = item.path;
@@ -187,9 +164,7 @@ function LocationView(props: Props) {
             .then(() => {
               dispatch(AppActions.resetProgress());
               dispatch(AppActions.toggleUploadDialog());
-              dispatch(
-                IOActions.uploadFiles(arrPath, targetPath, onUploadProgress)
-              )
+              uploadFiles(arrPath, targetPath, onUploadProgress)
                 .then((fsEntries: Array<TS.FileSystemEntry>) => {
                   dispatch(AppActions.reflectCreateEntries(fsEntries));
                   return true;
@@ -204,7 +179,7 @@ function LocationView(props: Props) {
             });
         } else if (targetLocation.type === locationType.TYPE_LOCAL) {
           PlatformIO.disableObjectStoreSupport();
-          dispatch(IOActions.moveFiles(arrPath, targetPath));
+          moveFiles(arrPath, targetPath);
         }
         dispatch(AppActions.setSelectedEntries([]));
       }
@@ -253,25 +228,18 @@ function LocationView(props: Props) {
         <LocationContextMenu
           setEditLocationDialogOpened={setEditLocationDialogOpened}
           setDeleteLocationDialogOpened={setDeleteLocationDialogOpened}
-          selectedLocation={selectedLocation}
-          locationDirectoryContextMenuAnchorEl={
-            locationDirectoryContextMenuAnchorEl
-          }
-          setLocationDirectoryContextMenuAnchorEl={
-            setLocationDirectoryContextMenuAnchorEl
-          }
           closeLocationTree={closeLocationTree}
         />
       )}
       <ListItem
         data-tid={'location_' + location.name.replace(/ /g, '_')}
         className={
-          currentLocationId === location.uuid
+          currentLocation && currentLocation.uuid === location.uuid
             ? classes.listItemSelected
             : classes.listItem
         }
         onClick={handleLocationClick}
-        onContextMenu={event => handleLocationContextMenuClick(event)}
+        onContextMenu={event => handleLocationContextMenuClick(event, location)}
       >
         <ListItemIcon
           // onClick={(e) => {
@@ -320,8 +288,10 @@ function LocationView(props: Props) {
             aria-haspopup="true"
             edge="end"
             data-tid={'locationMoreButton_' + location.name}
-            onClick={event => handleLocationContextMenuClick(event)}
-            onContextMenu={event => handleLocationContextMenuClick(event)}
+            onClick={event => handleLocationContextMenuClick(event, location)}
+            onContextMenu={event =>
+              handleLocationContextMenuClick(event, location)
+            }
             size="large"
           >
             {location.isDefault && (
@@ -344,4 +314,4 @@ function LocationView(props: Props) {
   );
 }
 
-export default React.memo(LocationView);
+export default LocationView;

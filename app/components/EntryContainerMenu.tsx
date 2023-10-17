@@ -16,8 +16,6 @@ import {
 import {
   actions as AppActions,
   AppDispatch,
-  isReadOnlyMode,
-  NotificationTypes,
   OpenedEntry
 } from '-/reducers/app';
 import { useDispatch, useSelector } from 'react-redux';
@@ -38,6 +36,9 @@ import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { isDesktopMode } from '-/reducers/settings';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useFsActionsContext } from '-/hooks/useFsActionsContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 interface Props {
   anchorEl: null | HTMLElement;
@@ -61,8 +62,10 @@ function EntryContainerMenu(props: Props) {
   } = props;
   const { t } = useTranslation();
   // const theme = useTheme();
-  const { toggleEntryFullWidth } = useOpenedEntryContext();
-  const readOnlyMode = useSelector(isReadOnlyMode);
+  const { toggleEntryFullWidth, openLink } = useOpenedEntryContext();
+  const { readOnlyMode } = useCurrentLocationContext();
+  const { deleteFile } = useFsActionsContext();
+  const { showNotification } = useNotificationContext();
   const desktopMode = useSelector(isDesktopMode);
   const dispatch: AppDispatch = useDispatch();
 
@@ -115,12 +118,7 @@ function EntryContainerMenu(props: Props) {
         downloadCordova(openedEntry.url, entryName);
       } else {
         console.log('Can only download HTTP/HTTPS URIs');
-        dispatch(
-          AppActions.showNotification(
-            t('core:cantDownloadLocalFile'),
-            NotificationTypes.default
-          )
-        );
+        showNotification(t('core:cantDownloadLocalFile'));
       }
     } else {
       const downloadLink = document.getElementById('downloadFile');
@@ -155,9 +153,9 @@ function EntryContainerMenu(props: Props) {
 
   const navigateToFolder = () => {
     if (openedEntry.isFile) {
-      dispatch(AppActions.openLink(sharingParentFolderLink));
+      openLink(sharingParentFolderLink);
     } else {
-      dispatch(AppActions.openLink(sharingLink));
+      openLink(sharingLink);
     }
     handleClose();
   };
@@ -177,7 +175,7 @@ function EntryContainerMenu(props: Props) {
       if (openedEntry.isFile) {
         dispatch(AppActions.openFileNatively(openedEntry.path));
       } else {
-        dispatch(AppActions.openDirectory(openedEntry.path));
+        PlatformIO.openDirectory(openedEntry.path);
       }
     }
     handleClose();
@@ -483,9 +481,7 @@ function EntryContainerMenu(props: Props) {
           }
           confirmCallback={result => {
             if (result) {
-              dispatch(
-                AppActions.deleteFile(openedEntry.path, openedEntry.uuid)
-              );
+              return deleteFile(openedEntry.path, openedEntry.uuid);
             }
           }}
           cancelDialogTID="cancelSaveBeforeCloseDialog"

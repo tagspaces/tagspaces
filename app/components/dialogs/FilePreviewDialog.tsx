@@ -38,6 +38,7 @@ import useEventListener from '-/utils/useEventListener';
 import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
 import { actions as LocationActions } from '-/reducers/locations';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   open: boolean;
@@ -47,7 +48,11 @@ interface Props {
 
 function FilePreviewDialog(props: Props) {
   const { open = false, onClose, fsEntry } = props;
-  const dispatch: AppDispatch = useDispatch();
+  //const dispatch: AppDispatch = useDispatch();
+  const {
+    switchLocationTypeByID,
+    switchCurrentLocationType
+  } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const currentTheme = useSelector(getCurrentTheme);
   const fileViewer: MutableRefObject<HTMLIFrameElement> = useRef<
@@ -106,9 +111,7 @@ function FilePreviewDialog(props: Props) {
           fileViewer.current.contentWindow.setTheme(currentTheme);
         }*/
 
-        dispatch(
-          LocationActions.switchLocationType(openedFile.locationId)
-        ).then((currentLocationId: string) => {
+        switchLocationTypeByID(openedFile.locationId).then(() => {
           PlatformIO.loadTextFilePromise(
             textFilePath,
             data.preview ? data.preview : false
@@ -147,19 +150,11 @@ function FilePreviewDialog(props: Props) {
                   currentTheme
                 );
               }
-              if (currentLocationId) {
-                dispatch(
-                  AppActions.switchCurrentLocationType(currentLocationId)
-                );
-              }
+              return switchCurrentLocationType();
             })
             .catch(err => {
               console.warn('Error loading text content ' + err);
-              if (currentLocationId) {
-                dispatch(
-                  AppActions.switchCurrentLocationType(currentLocationId)
-                );
-              }
+              return switchCurrentLocationType();
             });
         });
         break;

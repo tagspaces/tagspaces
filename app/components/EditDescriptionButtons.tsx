@@ -5,10 +5,9 @@ import { ProTooltip } from '-/components/HelperComponents';
 import { Pro } from '-/pro';
 import { convertMarkDown } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
-import { getDirectoryPath } from '-/reducers/app';
 import { useDescriptionContext } from '-/hooks/useDescriptionContext';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 const PREFIX = 'EditDescriptionButtons';
 
@@ -41,13 +40,13 @@ const EditDescriptionButtons: React.FC<Props> = ({
   setEditMode
 }) => {
   const { t } = useTranslation();
-  const currentFolder = useSelector(getDirectoryPath);
   const {
     description,
     isSaveDescriptionConfirmOpened,
     setSaveDescriptionConfirmOpened,
     saveDescription
   } = useDescriptionContext();
+  const { currentDirectoryPath } = useDirectoryContentContext();
   const [isDescriptionChanged, descriptionChanged] = useState<boolean>(false);
 
   React.useImperativeHandle(buttonsRef, () => ({
@@ -64,12 +63,12 @@ const EditDescriptionButtons: React.FC<Props> = ({
 
   const printHTML = () => {
     const sanitizedDescription = description
-      ? convertMarkDown(description, currentFolder)
+      ? convertMarkDown(description, currentDirectoryPath)
       : t('core:addMarkdownDescription');
 
     const printWin = window.open('', 'PRINT', 'height=400,width=600');
     printWin.document.write(
-      '<html><head><title>' + currentFolder + ' description</title>'
+      '<html><head><title>' + currentDirectoryPath + ' description</title>'
     );
     printWin.document.write('</head><body >');
     printWin.document.write(sanitizedDescription);

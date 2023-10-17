@@ -3,11 +3,11 @@ import { styled, useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { MilkdownEditor, MilkdownRef } from '@tagspaces/tagspaces-md';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
-import { getDirectoryPath, OpenedEntry } from '-/reducers/app';
+import { OpenedEntry } from '-/reducers/app';
 import { useDescriptionContext } from '-/hooks/useDescriptionContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import EditDescriptionButtons from '-/components/EditDescriptionButtons';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 const PREFIX = 'EditDescription';
 
@@ -29,11 +29,11 @@ function EditDescription() {
   const { t } = useTranslation();
   const theme = useTheme();
   const { openedEntries } = useOpenedEntryContext();
-  const openedFile: OpenedEntry = openedEntries[0];
-  const currentFolder = useSelector(getDirectoryPath);
-  const fileDescriptionRef = useRef<MilkdownRef>(null);
+  const { currentDirectoryPath } = useDirectoryContentContext();
   const { description, setDescription } = useDescriptionContext();
 
+  const openedFile: OpenedEntry = openedEntries[0];
+  const fileDescriptionRef = useRef<MilkdownRef>(null);
   const [editMode, setEditMode] = useState<boolean>(false);
   const descriptionFocus = useRef<boolean>(false);
   const descriptionButtonsRef = useRef(null);
@@ -124,7 +124,7 @@ function EditDescription() {
               readOnly={!editMode}
               lightMode={false}
               excludePlugins={!editMode ? ['menu', 'upload'] : []}
-              currentFolder={currentFolder}
+              currentFolder={currentDirectoryPath}
             />
           </>
         )}

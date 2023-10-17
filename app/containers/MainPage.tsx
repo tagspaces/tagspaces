@@ -19,9 +19,7 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { bindActionCreators } from 'redux';
-import { connect, useSelector } from 'react-redux';
-//import { translate } from 'react-i18next';
-//import { initReactI18next } from 'react-i18next';
+import { connect } from 'react-redux';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import Drawer from '@mui/material/Drawer';
 import { HotKeys } from 'react-hotkeys';
@@ -45,7 +43,6 @@ import {
 } from '../reducers/settings';
 import {
   actions as AppActions,
-  isGeneratingThumbs,
   isAboutDialogOpened,
   isOnboardingDialogOpened,
   isKeysDialogOpened,
@@ -62,7 +59,6 @@ import {
   isNewFileDialogOpened,
   isSettingsDialogOpened,
   isOpenLinkDialogOpened,
-  isReadOnlyMode,
   isProgressOpened,
   isDeleteMultipleEntriesDialogOpened,
   isImportKanBanDialogOpened,
@@ -76,7 +72,6 @@ import TargetFileBox from '../components/TargetFileBox';
 import LoadingLazy from '../components/LoadingLazy';
 import withDnDContext from '-/containers/withDnDContext';
 import CustomDragLayer from '-/components/CustomDragLayer';
-import IOActions from '-/reducers/io-actions';
 import FileUploadDialog from '-/components/dialogs/FileUploadDialog';
 import ProgressDialog from '-/components/dialogs/ProgressDialog';
 import useEventListener from '-/utils/useEventListener';
@@ -84,7 +79,6 @@ import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { TS } from '-/tagspaces.namespace';
 import PageNotification from '-/containers/PageNotification';
 import listen from '-/containers/RendererListener';
-import { actions as LocationIndexActions } from '-/reducers/location-index';
 import MoveOrCopyFilesDialog from '-/components/dialogs/MoveOrCopyFilesDialog';
 import { Pro } from '-/pro';
 import NewFileDialog from '-/components/dialogs/NewFileDialog';
@@ -92,9 +86,9 @@ import IsTruncatedConfirmDialog from '-/components/dialogs/IsTruncatedConfirmDia
 import { styled, useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { DescriptionContextProvider } from '-/hooks/DescriptionContextProvider';
-import { TaggingActionsContextProvider } from '-/hooks/TaggingActionsContextProvider';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useFsActionsContext } from '-/hooks/useFsActionsContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 const drawerWidth = 320;
 const body = document.getElementsByTagName('body')[0];
@@ -139,9 +133,6 @@ interface Props {
   isFirstRun: boolean;
   setFirstRun: (isFirstRun: boolean) => void;
   isDesktopMode: boolean;
-  isGeneratingThumbs: boolean;
-  // setGeneratingThumbnails: (isGenerating: boolean) => void;
-  isReadOnlyMode: boolean;
   isSettingsDialogOpened: boolean;
   isNewEntryDialogOpened: boolean;
   isNewFileDialogOpened: boolean;
@@ -164,9 +155,7 @@ interface Props {
   isEditTagDialogOpened: boolean;
   keyBindings: any;
   toggleEditTagDialog: (tag: TS.Tag) => void;
-  loadParentDirectoryContent: () => void;
-  openLink: (linkURL: string, options?: any) => void;
-  saveFile: () => void; // needed by electron-menus
+  //saveFile: () => void; // needed by electron-menus
   setZoomResetApp: () => void; // needed by electron-menus
   setZoomInApp: () => void; // needed by electron-menus
   setZoomOutApp: () => void; // needed by electron-menus
@@ -199,25 +188,13 @@ interface Props {
   isTagLibraryPanelOpened: boolean;
   isSearchPanelOpened: boolean;
   isHelpFeedbackPanelOpened: boolean;
-  showNotification: (
-    text: string,
-    notificationType?: string,
-    autohide?: boolean
-  ) => void;
   reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => void;
-  uploadFilesAPI: (
-    files: Array<File>,
-    destination: string,
-    onUploadProgress?: (progress: Progress, response: any) => void
-  ) => any;
   onUploadProgress: (progress: Progress, response: any) => void;
   isDeleteMultipleEntriesDialogOpened: boolean;
   isImportKanBanDialogOpened: boolean;
   toggleDeleteMultipleEntriesDialog: () => void;
   selectedEntries: Array<any>;
-  deleteFile: (path: string, uuid: string) => void;
   user: CognitoUserInterface;
-  setSearchQuery: (searchQuery: TS.SearchQuery) => void;
 }
 
 const CreateEditLocationDialog = React.lazy(() =>
@@ -341,6 +318,7 @@ function MainPage(props: Props) {
   const { t } = useTranslation();
   const { deleteDirectory } = useFsActionsContext();
   const {
+    openLink,
     openedEntries,
     isEntryInFullWidth,
     openFsEntry,
@@ -348,6 +326,14 @@ function MainPage(props: Props) {
     openNextFile,
     openPrevFile
   } = useOpenedEntryContext();
+
+  const { deleteFile } = useFsActionsContext();
+
+  const {
+    loadParentDirectoryContent,
+    enterSearchMode,
+    exitSearchMode
+  } = useDirectoryContentContext();
   const theme = useTheme();
   const percent = useRef<number | undefined>(undefined);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
@@ -392,7 +378,7 @@ function MainPage(props: Props) {
     window.addEventListener(
       'popstate',
       () => {
-        props.openLink(window.location.href, { fullWidth: false });
+        openLink(window.location.href, { fullWidth: false });
       },
       { once: true }
     );
@@ -406,7 +392,7 @@ function MainPage(props: Props) {
     window.addEventListener(
       'popstate',
       () => {
-        props.openLink(window.location.href, { fullWidth: false });
+        openLink(window.location.href, { fullWidth: false });
         // console.log(
         //   '>>> last href: ' + decodeURIComponent(window.location.href)
         // );
@@ -472,7 +458,7 @@ function MainPage(props: Props) {
   };
 
   const keyBindingHandlers = {
-    openParentDirectory: props.loadParentDirectoryContent,
+    openParentDirectory: loadParentDirectoryContent,
     toggleShowHiddenEntries: props.toggleShowUnixHiddenEntries,
     showLocationManager: () => {
       props.openLocationManagerPanel();
@@ -482,8 +468,8 @@ function MainPage(props: Props) {
       props.openTagLibraryPanel();
       setDrawerOpened(true);
     },
-    openSearch: () => props.setSearchQuery({ textQuery: '' }), // props.openSearchPanel,
-    closeSearch: () => props.setSearchQuery({}),
+    openSearch: () => enterSearchMode(),
+    closeSearch: () => exitSearchMode(),
     showHelp: () => {
       props.openHelpFeedbackPanel();
       setDrawerOpened(true);
@@ -517,8 +503,7 @@ function MainPage(props: Props) {
     toggleOpenLinkDialog,
     toggleProTeaser,
     setFirstRun,
-    mainSplitSize,
-    openLink
+    mainSplitSize
   } = props;
   const { FILE } = NativeTypes;
 
@@ -573,9 +558,9 @@ function MainPage(props: Props) {
           drawerOpened={drawerOpened}
           goBack={goBack}
           goForward={goForward}
-          openMoveCopyFilesDialog={() =>
+          /*openMoveCopyFilesDialog={() =>
             setMoveCopyDialogOpened(props.selectedEntries)
-          }
+          }*/
         />
         {isFileOpened && (
           <DescriptionContextProvider>
@@ -593,167 +578,165 @@ function MainPage(props: Props) {
         keyMap={keyMap}
         style={{ height: '100%' }}
       >
-        <TaggingActionsContextProvider>
-          <MoveOrCopyFilesDialog
-            open={moveCopyDialogOpened !== undefined}
-            onClose={() => {
-              setMoveCopyDialogOpened(undefined);
+        <MoveOrCopyFilesDialog
+          open={moveCopyDialogOpened !== undefined}
+          onClose={() => {
+            setMoveCopyDialogOpened(undefined);
+          }}
+          selectedFiles={moveCopyDialogOpened}
+        />
+        {props.isLocationDialogOpened && (
+          <CreateEditLocationDialogAsync
+            open={props.isLocationDialogOpened}
+            onClose={toggleLocationDialog}
+          />
+        )}
+        {props.isAboutDialogOpened && (
+          <AboutDialogAsync
+            open={props.isAboutDialogOpened}
+            toggleLicenseDialog={toggleLicenseDialog}
+            toggleThirdPartyLibsDialog={toggleThirdPartyLibsDialog}
+            onClose={toggleAboutDialog}
+          />
+        )}
+        {props.isKeysDialogOpened && (
+          <KeyboardDialogAsync
+            open={props.isKeysDialogOpened}
+            onClose={toggleKeysDialog}
+          />
+        )}
+        {props.isLicenseDialogOpened && (
+          <LicenseDialogAsync
+            open={props.isLicenseDialogOpened}
+            onClose={(event, reason) => {
+              if (reason === 'backdropClick' || reason === 'escapeKeyDown') {
+                return true;
+              }
+              setFirstRun(false);
+              toggleLicenseDialog();
             }}
-            selectedFiles={moveCopyDialogOpened}
           />
-          {props.isLocationDialogOpened && (
-            <CreateEditLocationDialogAsync
-              open={props.isLocationDialogOpened}
-              onClose={toggleLocationDialog}
-            />
-          )}
-          {props.isAboutDialogOpened && (
-            <AboutDialogAsync
-              open={props.isAboutDialogOpened}
-              toggleLicenseDialog={toggleLicenseDialog}
-              toggleThirdPartyLibsDialog={toggleThirdPartyLibsDialog}
-              onClose={toggleAboutDialog}
-            />
-          )}
-          {props.isKeysDialogOpened && (
-            <KeyboardDialogAsync
-              open={props.isKeysDialogOpened}
-              onClose={toggleKeysDialog}
-            />
-          )}
-          {props.isLicenseDialogOpened && (
-            <LicenseDialogAsync
-              open={props.isLicenseDialogOpened}
-              onClose={(event, reason) => {
-                if (reason === 'backdropClick' || reason === 'escapeKeyDown') {
-                  return true;
-                }
-                setFirstRun(false);
-                toggleLicenseDialog();
-              }}
-            />
-          )}
-          {props.isOnboardingDialogOpened && (
-            <OnboardingDialogAsync
-              open={props.isOnboardingDialogOpened}
-              onClose={toggleOnboardingDialog}
-            />
-          )}
-          {props.isThirdPartyLibsDialogOpened && (
-            <ThirdPartyLibsDialogAsync
-              open={props.isThirdPartyLibsDialogOpened}
-              onClose={toggleThirdPartyLibsDialog}
-            />
-          )}
-          {props.isEditTagDialogOpened && (
-            <EditEntryTagDialogAsync
-              open={props.isEditTagDialogOpened}
-              onClose={() => toggleEditTagDialog(undefined)}
-            />
-          )}
-          {props.isOpenLinkDialogOpened && (
-            <OpenLinkDialogAsync
-              open={props.isOpenLinkDialogOpened}
-              onClose={toggleOpenLinkDialog}
-              openLink={openLink}
-            />
-          )}
-          {props.isProTeaserVisible && (
-            <ProTeaserDialogAsync
-              open={props.isProTeaserVisible}
-              onClose={toggleProTeaser}
-            />
-          )}
-          {props.isUploadProgressDialogOpened !== undefined && (
-            <FileUploadDialog
-              open={true}
-              onClose={toggleUploadDialog}
-              title={props.isUploadProgressDialogOpened}
-            />
-          )}
-          {props.isTruncatedConfirmDialogOpened && (
-            <IsTruncatedConfirmDialog
-              open={true}
-              onClose={props.toggleTruncatedConfirmDialog}
-            />
-          )}
-          {props.isProgressDialogOpened && (
-            <ProgressDialog
-              open={props.isProgressDialogOpened}
-              onClose={toggleProgressDialog}
-            />
-          )}
-          {props.isCreateDirectoryOpened !== null && (
-            <CreateDirectoryDialog
-              open={true}
-              onClose={toggleCreateDirectoryDialog}
-              selectedDirectoryPath={props.isCreateDirectoryOpened?.rootDirPath}
-              callback={props.isCreateDirectoryOpened?.callback}
-              reflect={props.isCreateDirectoryOpened?.reflect}
-            />
-          )}
-          <NewEntryDialog
-            open={props.isNewEntryDialogOpened}
-            onClose={toggleNewEntryDialog}
+        )}
+        {props.isOnboardingDialogOpened && (
+          <OnboardingDialogAsync
+            open={props.isOnboardingDialogOpened}
+            onClose={toggleOnboardingDialog}
           />
-          {props.isNewFileDialogOpened && (
-            <NewFileDialog
-              open={props.isNewFileDialogOpened}
-              onClose={toggleNewFileDialog}
-            />
-          )}
-          <SettingsDialog
-            open={props.isSettingsDialogOpened}
-            onClose={toggleSettingsDialog}
+        )}
+        {props.isThirdPartyLibsDialogOpened && (
+          <ThirdPartyLibsDialogAsync
+            open={props.isThirdPartyLibsDialogOpened}
+            onClose={toggleThirdPartyLibsDialog}
           />
-          {KanBanImportDialog && props.selectedEntries[0] && (
-            <KanBanImportDialog
-              open={props.isImportKanBanDialogOpened}
-              onClose={props.toggleImportKanBanDialog}
-            />
-          )}
-          {props.isDeleteMultipleEntriesDialogOpened && (
-            <ConfirmDialog
-              open={props.isDeleteMultipleEntriesDialogOpened}
-              onClose={() => props.toggleDeleteMultipleEntriesDialog()}
-              title={t('core:deleteConfirmationTitle')}
-              content={t('core:deleteConfirmationContent')}
-              list={props.selectedEntries.map(fsEntry => fsEntry.name)}
-              confirmCallback={result => {
-                if (result && props.selectedEntries) {
-                  const deletePromises = props.selectedEntries.map(fsEntry => {
-                    if (fsEntry.isFile) {
-                      return props.deleteFile(fsEntry.path, fsEntry.uuid);
-                    }
-                    return deleteDirectory(fsEntry.path);
+        )}
+        {props.isEditTagDialogOpened && (
+          <EditEntryTagDialogAsync
+            open={props.isEditTagDialogOpened}
+            onClose={() => toggleEditTagDialog(undefined)}
+          />
+        )}
+        {props.isOpenLinkDialogOpened && (
+          <OpenLinkDialogAsync
+            open={props.isOpenLinkDialogOpened}
+            onClose={toggleOpenLinkDialog}
+          />
+        )}
+        {props.isProTeaserVisible && (
+          <ProTeaserDialogAsync
+            open={props.isProTeaserVisible}
+            onClose={toggleProTeaser}
+          />
+        )}
+        {props.isUploadProgressDialogOpened !== undefined && (
+          <FileUploadDialog
+            open={true}
+            onClose={toggleUploadDialog}
+            title={props.isUploadProgressDialogOpened}
+          />
+        )}
+        {props.isTruncatedConfirmDialogOpened && (
+          <IsTruncatedConfirmDialog
+            open={true}
+            onClose={props.toggleTruncatedConfirmDialog}
+          />
+        )}
+        {props.isProgressDialogOpened && (
+          <ProgressDialog
+            open={props.isProgressDialogOpened}
+            onClose={toggleProgressDialog}
+          />
+        )}
+        {props.isCreateDirectoryOpened !== null && (
+          <CreateDirectoryDialog
+            open={true}
+            onClose={toggleCreateDirectoryDialog}
+            selectedDirectoryPath={props.isCreateDirectoryOpened?.rootDirPath}
+            callback={props.isCreateDirectoryOpened?.callback}
+            reflect={props.isCreateDirectoryOpened?.reflect}
+          />
+        )}
+        <NewEntryDialog
+          open={props.isNewEntryDialogOpened}
+          onClose={toggleNewEntryDialog}
+        />
+        {props.isNewFileDialogOpened && (
+          <NewFileDialog
+            open={props.isNewFileDialogOpened}
+            onClose={toggleNewFileDialog}
+          />
+        )}
+        <SettingsDialog
+          open={props.isSettingsDialogOpened}
+          onClose={toggleSettingsDialog}
+        />
+        {KanBanImportDialog && props.selectedEntries[0] && (
+          <KanBanImportDialog
+            open={props.isImportKanBanDialogOpened}
+            onClose={props.toggleImportKanBanDialog}
+          />
+        )}
+        {props.isDeleteMultipleEntriesDialogOpened && (
+          <ConfirmDialog
+            open={props.isDeleteMultipleEntriesDialogOpened}
+            onClose={() => props.toggleDeleteMultipleEntriesDialog()}
+            title={t('core:deleteConfirmationTitle')}
+            content={t('core:deleteConfirmationContent')}
+            list={props.selectedEntries.map(fsEntry => fsEntry.name)}
+            confirmCallback={result => {
+              if (result && props.selectedEntries) {
+                const deletePromises = props.selectedEntries.map(fsEntry => {
+                  if (fsEntry.isFile) {
+                    return deleteFile(fsEntry.path, fsEntry.uuid);
+                  }
+                  return deleteDirectory(fsEntry.path);
+                });
+                Promise.all(deletePromises)
+                  .then(delResult => {
+                    // console.debug(delResult);
+                    if (delResult.some(del => del)) {
+                      props.setSelectedEntries([]);
+                    } // TODO else { remove only deleted from setSelectedEntries}
+                    return true;
+                  })
+                  .catch(err => {
+                    console.warn('Deleting file failed', err);
                   });
-                  Promise.all(deletePromises)
-                    .then(delResult => {
-                      // console.debug(delResult);
-                      if (delResult.some(del => del)) {
-                        props.setSelectedEntries([]);
-                      } // TODO else { remove only deleted from setSelectedEntries}
-                      return true;
-                    })
-                    .catch(err => {
-                      console.warn('Deleting file failed', err);
-                    });
-                }
-              }}
-              cancelDialogTID="cancelDeleteFileDialog"
-              confirmDialogTID="confirmDeleteFileDialog"
-              confirmDialogContentTID="confirmDeleteDialogContent"
-            />
-          )}
-          <PageNotification />
-          <div
-            style={{
-              backgroundColor: theme.palette.background.default,
-              height: '100%'
+              }
             }}
-          >
-            <style>
-              {`
+            cancelDialogTID="cancelDeleteFileDialog"
+            confirmDialogTID="confirmDeleteFileDialog"
+            confirmDialogContentTID="confirmDeleteDialogContent"
+          />
+        )}
+        <PageNotification />
+        <div
+          style={{
+            backgroundColor: theme.palette.background.default,
+            height: '100%'
+          }}
+        >
+          <style>
+            {`
               body { background-color: ${
                 theme.palette.background.default
               } !important;}
@@ -779,44 +762,43 @@ function MainPage(props: Props) {
                 flex-direction: column;
               }
           `}
-            </style>
-            {props.isDesktopMode || (AppConfig.isAmplify && !props.user) ? (
-              <TargetFileBox
-                accepts={[FILE]}
-                setMoveCopyDialogOpened={setMoveCopyDialogOpened}
+          </style>
+          {props.isDesktopMode || (AppConfig.isAmplify && !props.user) ? (
+            <TargetFileBox
+              accepts={[FILE]}
+              setMoveCopyDialogOpened={setMoveCopyDialogOpened}
+            >
+              <CustomDragLayer />
+              <Drawer variant="persistent" anchor="left" open={drawerOpened}>
+                <MobileNavigation width={drawerWidth} />
+              </Drawer>
+              <main
+                className={clsx(classes.content, {
+                  [classes.contentShift]: !drawerOpened
+                })}
               >
-                <CustomDragLayer />
-                <Drawer variant="persistent" anchor="left" open={drawerOpened}>
-                  <MobileNavigation width={drawerWidth} />
-                </Drawer>
-                <main
-                  className={clsx(classes.content, {
-                    [classes.contentShift]: !drawerOpened
-                  })}
-                >
-                  {renderContainers()}
-                </main>
-              </TargetFileBox>
-            ) : (
-              <>
-                <SwipeableDrawer
-                  open={drawerOpened}
-                  onClose={() => setDrawerOpened(false)}
-                  onOpen={() => setDrawerOpened(true)}
-                  hysteresis={0.1}
-                  disableBackdropTransition={!AppConfig.isIOS}
-                  disableDiscovery={AppConfig.isIOS}
-                >
-                  <MobileNavigation
-                    width={drawerWidth}
-                    hideDrawer={() => setDrawerOpened(false)}
-                  />
-                </SwipeableDrawer>
                 {renderContainers()}
-              </>
-            )}
-          </div>
-        </TaggingActionsContextProvider>
+              </main>
+            </TargetFileBox>
+          ) : (
+            <>
+              <SwipeableDrawer
+                open={drawerOpened}
+                onClose={() => setDrawerOpened(false)}
+                onOpen={() => setDrawerOpened(true)}
+                hysteresis={0.1}
+                disableBackdropTransition={!AppConfig.isIOS}
+                disableDiscovery={AppConfig.isIOS}
+              >
+                <MobileNavigation
+                  width={drawerWidth}
+                  hideDrawer={() => setDrawerOpened(false)}
+                />
+              </SwipeableDrawer>
+              {renderContainers()}
+            </>
+          )}
+        </div>
       </HotKeys>
     </Root>
   );
@@ -840,8 +822,6 @@ function mapStateToProps(state) {
     isOpenLinkDialogOpened: isOpenLinkDialogOpened(state),
     isProTeaserVisible: isProTeaserVisible(state),
     isProgressDialogOpened: isProgressOpened(state),
-    isReadOnlyMode: isReadOnlyMode(state),
-    isGeneratingThumbs: isGeneratingThumbs(state),
     isDesktopMode: getDesktopMode(state),
     keyBindings: getKeyBindingObject(state),
     mainSplitSize: getMainVerticalSplitSize(state),
@@ -861,7 +841,6 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      loadParentDirectoryContent: AppActions.loadParentDirectoryContent,
       toggleCreateDirectoryDialog: AppActions.toggleCreateDirectoryDialog,
       toggleUploadDialog: AppActions.toggleUploadDialog,
       toggleProgressDialog: AppActions.toggleProgressDialog,
@@ -869,8 +848,7 @@ function mapDispatchToProps(dispatch) {
       toggleEditTagDialog: AppActions.toggleEditTagDialog,
       toggleTruncatedConfirmDialog: AppActions.toggleTruncatedConfirmDialog,
       onUploadProgress: AppActions.onUploadProgress,
-      saveFile: AppActions.saveFile,
-      openLink: AppActions.openLink,
+      //saveFile: AppActions.saveFile,
       setZoomResetApp: SettingsActions.setZoomResetApp,
       setZoomInApp: SettingsActions.setZoomInApp,
       setZoomOutApp: SettingsActions.setZoomOutApp,
@@ -890,7 +868,6 @@ function mapDispatchToProps(dispatch) {
       setSelectedEntries: AppActions.setSelectedEntries,
       toggleShowUnixHiddenEntries: SettingsActions.toggleShowUnixHiddenEntries,
       setMainVerticalSplitSize: SettingsActions.setMainVerticalSplitSize,
-      showNotification: AppActions.showNotification,
       reflectCreateEntries: AppActions.reflectCreateEntries,
       openLocationManagerPanel: AppActions.openLocationManagerPanel,
       openTagLibraryPanel: AppActions.openTagLibraryPanel,
@@ -900,9 +877,6 @@ function mapDispatchToProps(dispatch) {
       toggleDeleteMultipleEntriesDialog:
         AppActions.toggleDeleteMultipleEntriesDialog,
       setFirstRun: SettingsActions.setFirstRun,
-      uploadFilesAPI: IOActions.uploadFilesAPI,
-      deleteFile: AppActions.deleteFile,
-      setSearchQuery: LocationIndexActions.setSearchQuery,
       addExtensions: AppActions.addExtensions,
       addSupportedFileTypes: SettingsActions.addSupportedFileTypes
     },
@@ -932,7 +906,6 @@ const areEqual = (prevProp, nextProp) =>
   nextProp.isOpenLinkDialogOpened === prevProp.isOpenLinkDialogOpened &&
   nextProp.isProTeaserVisible === prevProp.isProTeaserVisible &&
   nextProp.isProgressDialogOpened === prevProp.isProgressDialogOpened &&
-  nextProp.isReadOnlyMode === prevProp.isReadOnlyMode &&
   nextProp.isSearchPanelOpened === prevProp.isSearchPanelOpened &&
   nextProp.isSettingsDialogOpened === prevProp.isSettingsDialogOpened &&
   nextProp.isTagLibraryPanelOpened === prevProp.isTagLibraryPanelOpened &&

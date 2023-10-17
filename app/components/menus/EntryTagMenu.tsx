@@ -27,16 +27,14 @@ import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ConfirmDialog from '../dialogs/ConfirmDialog';
-import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { getMaxSearchResults } from '-/reducers/settings';
-import {
-  actions as AppActions,
-  AppDispatch,
-  isReadOnlyMode
-} from '-/reducers/app';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
   open: boolean;
@@ -60,15 +58,12 @@ function EntryTagMenu(props: Props) {
   const removeTagsProps = props.removeTags;
   const { t } = useTranslation();
 
+  const { setSearchQuery } = useDirectoryContentContext();
   const { removeTags } = useTaggingActionsContext();
+  const { readOnlyMode } = useCurrentLocationContext();
   const [isDeleteTagDialogOpened, setIsDeleteTagDialogOpened] = useState(false);
   const dispatch: AppDispatch = useDispatch();
   const maxSearchResults: number = useSelector(getMaxSearchResults);
-  const readOnlyMode = useSelector(isReadOnlyMode);
-
-  const setSearchQuery = searchQuery => {
-    dispatch(LocationIndexActions.setSearchQuery(searchQuery));
-  };
 
   const toggleEditTagDialog = tag => {
     dispatch(AppActions.toggleEditTagDialog(tag));

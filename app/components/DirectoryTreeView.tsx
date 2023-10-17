@@ -28,6 +28,8 @@ import TargetTableMoveFileBox from '-/components/TargetTableMoveFileBox';
 import { TS } from '-/tagspaces.namespace';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { getShowUnixHiddenEntries } from '-/reducers/settings';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
   classes: any;
@@ -45,6 +47,9 @@ export interface DirectoryTreeViewRef {
 const DirectoryTreeView = forwardRef(
   (props: Props, ref: Ref<DirectoryTreeViewRef>) => {
     const { classes, location, handleFileMoveDrop } = props;
+    const { openDirectory } = useDirectoryContentContext();
+    const { changeLocation } = useCurrentLocationContext();
+
     const [data, setData] = useState(undefined);
     const [isExpanded, setExpanded] = useState(false);
     const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
@@ -162,9 +167,8 @@ const DirectoryTreeView = forwardRef(
         PlatformIO.enableObjectStoreSupport(subDir)
           .then(() => {
             loadSubDirectories(subDir);
-            dispatch(AppActions.changeLocation(subDir));
-            dispatch(AppActions.loadDirectoryContent(subDir.path, true, true));
-            return true;
+            changeLocation(subDir);
+            return openDirectory(subDir.path);
           })
           .catch(error => {
             console.log('enableObjectStoreSupport', error);
@@ -172,8 +176,8 @@ const DirectoryTreeView = forwardRef(
       } else if (subDir.type === locationType.TYPE_LOCAL) {
         PlatformIO.disableObjectStoreSupport();
         loadSubDirectories(subDir);
-        dispatch(AppActions.changeLocation(subDir));
-        dispatch(AppActions.loadDirectoryContent(subDir.path, true, true));
+        changeLocation(subDir);
+        openDirectory(subDir.path);
       }
     };
 

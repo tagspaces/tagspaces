@@ -18,22 +18,17 @@
 
 import React, { createContext, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import {
-  getDirectoryContent,
-  getDirectoryMeta,
-  getEditedEntryPaths,
-  getLastSearchTimestamp,
-  getSearchFilter
-} from '-/reducers/app';
+import { getSearchFilter } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
-import GlobalSearch from '-/services/search-index';
 import { sortByCriteria } from '@tagspaces/tagspaces-common/misc';
 import { Pro } from '-/pro';
 import { PerspectiveIDs } from '-/perspectives';
 import { defaultSettings } from '-/perspectives/grid-perspective';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 type SortedDirContextData = {
-  sortedDirContent: Array<TS.FileSystemEntry>;
+  sortedDirContent: TS.FileSystemEntry[];
+  settings: TS.FolderSettings;
   sortBy: string;
   orderBy: null | boolean;
   setSortBy: (sort: string) => void;
@@ -42,8 +37,9 @@ type SortedDirContextData = {
 
 export const SortedDirContext = createContext<SortedDirContextData>({
   sortedDirContent: undefined,
-  sortBy: defaultSettings.sortBy,
-  orderBy: defaultSettings.orderBy,
+  settings: undefined,
+  sortBy: undefined,
+  orderBy: undefined,
   setSortBy: () => {},
   setOrderBy: () => {}
 });
@@ -55,16 +51,17 @@ export type SortedDirContextProviderProps = {
 export const SortedDirContextProvider = ({
   children
 }: SortedDirContextProviderProps) => {
-  const directoryContent: Array<TS.FileSystemEntry> = useSelector(
-    getDirectoryContent
-  );
-  const lastSearchTimestamp = useSelector(getLastSearchTimestamp);
+  const {
+    currentDirectoryEntries,
+    directoryMeta,
+    currentDirectoryPerspective
+  } = useDirectoryContentContext();
   const searchFilter: string = useSelector(getSearchFilter);
-  const directoryMeta: TS.FileSystemEntryMeta = useSelector(getDirectoryMeta);
-  const editedEntryPaths: Array<TS.EditedEntryPath> = useSelector(
-    getEditedEntryPaths
-  );
-  const settings = getSettings();
+
+  const settings: TS.FolderSettings = useMemo(() => {
+    return getSettings(directoryMeta, currentDirectoryPerspective);
+  }, [directoryMeta, currentDirectoryPerspective]);
+
   const [sortBy, setSortBy] = useState<string>(
     settings && settings.sortBy ? settings.sortBy : defaultSettings.sortBy
   );
@@ -74,71 +71,65 @@ export const SortedDirContextProvider = ({
       : defaultSettings.orderBy
   );
 
-  function getSettings(): TS.FolderSettings {
+  function getSettings(
+    meta,
+    perspective = PerspectiveIDs.GRID
+  ): TS.FolderSettings {
+    if (perspective === PerspectiveIDs.UNSPECIFIED) {
+      perspective = PerspectiveIDs.GRID;
+    }
     if (
       Pro &&
-      directoryMeta &&
-      directoryMeta.perspectiveSettings &&
-      directoryMeta.perspectiveSettings[PerspectiveIDs.GRID]
+      meta &&
+      meta.perspectiveSettings &&
+      meta.perspectiveSettings[perspective]
     ) {
-      return directoryMeta.perspectiveSettings[PerspectiveIDs.GRID];
+      return meta.perspectiveSettings[perspective];
     } else {
       // loading settings for not Pro
       return JSON.parse(localStorage.getItem(defaultSettings.settingsKey));
     }
   }
 
-  function getSortedDirContent() {
+  const sortedDirContent = useMemo(() => {
     if (searchFilter) {
-      if (lastSearchTimestamp) {
+      /*if (lastSearchTimestamp) {
         return GlobalSearch.getInstance()
           .getResults()
           .filter(entry =>
             entry.name.toLowerCase().includes(searchFilter.toLowerCase())
           );
-      } else {
-        return sortByCriteria(directoryContent, sortBy, orderBy).filter(entry =>
-          entry.name.toLowerCase().includes(searchFilter.toLowerCase())
-        );
-      }
+      } else {*/
+      return sortByCriteria(
+        currentDirectoryEntries,
+        sortBy,
+        orderBy
+      ).filter(entry =>
+        entry.name.toLowerCase().includes(searchFilter.toLowerCase())
+      );
     }
-    if (lastSearchTimestamp) {
-      if (sortBy === 'byRelevance') {
-        // initial search results is sorted by relevance
-        if (orderBy) {
-          return GlobalSearch.getInstance().getResults();
-        } else {
-          return [...GlobalSearch.getInstance().getResults()].reverse();
-        }
+    if (sortBy === 'byRelevance') {
+      // initial search results is sorted by relevance
+      if (orderBy) {
+        return currentDirectoryEntries;
       } else {
-        return sortByCriteria(
-          GlobalSearch.getInstance().getResults(),
-          sortBy,
-          orderBy
-        );
+        return [...currentDirectoryEntries].reverse();
       }
     }
     // not in search mode
-    return sortByCriteria(directoryContent, sortBy, orderBy);
-  }
+    return sortByCriteria(currentDirectoryEntries, sortBy, orderBy).map(o => o);
+  }, [currentDirectoryEntries, searchFilter, sortBy, orderBy]);
 
   const context = useMemo(() => {
     return {
-      sortedDirContent: getSortedDirContent(),
+      sortedDirContent,
+      settings,
       sortBy,
       orderBy,
       setSortBy,
       setOrderBy
     };
-  }, [
-    directoryContent,
-    lastSearchTimestamp,
-    directoryMeta,
-    searchFilter,
-    editedEntryPaths,
-    sortBy,
-    orderBy
-  ]);
+  }, [sortedDirContent, settings, sortBy, orderBy]);
 
   return (
     <SortedDirContext.Provider value={context}>

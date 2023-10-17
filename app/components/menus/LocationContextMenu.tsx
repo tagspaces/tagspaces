@@ -17,7 +17,7 @@
  */
 
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { generateSharingLink } from '@tagspaces/tagspaces-common/paths';
 import ListItemText from '@mui/material/ListItemText';
@@ -35,43 +35,37 @@ import OpenFolderNativelyIcon from '@mui/icons-material/Launch';
 import { OpenNewWindowIcon, CloseIcon } from '-/components/CommonIcons';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
-import {
-  actions as LocationActions,
-  getLocationPosition
-} from '-/reducers/locations';
-import { actions as LocationIndexActions } from '-/reducers/location-index';
+import { actions as LocationActions } from '-/reducers/locations';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
 import { useTranslation } from 'react-i18next';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 
 interface Props {
   setEditLocationDialogOpened: (open: boolean) => void;
   setDeleteLocationDialogOpened: (open: boolean) => void;
-  selectedLocation: TS.Location;
   closeLocationTree: () => void;
-  locationDirectoryContextMenuAnchorEl: HTMLElement;
-  setLocationDirectoryContextMenuAnchorEl: (el: HTMLElement) => void;
 }
 
 function LocationContextMenu(props: Props) {
   const {
-    selectedLocation,
     setEditLocationDialogOpened,
     setDeleteLocationDialogOpened,
-    setLocationDirectoryContextMenuAnchorEl,
-    closeLocationTree,
-    locationDirectoryContextMenuAnchorEl
+    closeLocationTree
   } = props;
   const { t } = useTranslation();
-  const dispatch: AppDispatch = useDispatch();
-  const locationPosition = useSelector(state =>
-    getLocationPosition(state, selectedLocation.uuid)
-  );
 
-  const createLocationIndex = location => {
-    dispatch(LocationIndexActions.createLocationIndex(location));
-  };
+  const {
+    addLocation,
+    closeLocation,
+    getLocationPosition,
+    selectedLocation,
+    locationDirectoryContextMenuAnchorEl,
+    setLocationDirectoryContextMenuAnchorEl
+  } = useCurrentLocationContext();
+  const { createLocationIndex } = useLocationIndexContext();
+  const dispatch: AppDispatch = useDispatch();
 
   const moveLocationUp = locationId => {
     dispatch(LocationActions.moveLocationUp(locationId));
@@ -79,20 +73,6 @@ function LocationContextMenu(props: Props) {
 
   const moveLocationDown = locationId => {
     dispatch(LocationActions.moveLocationDown(locationId));
-  };
-
-  const showInFileManager = path => {
-    dispatch(AppActions.showInFileManager(path));
-  };
-
-  const closeLocation = locationId => {
-    dispatch(AppActions.closeLocation(locationId));
-  };
-
-  const addLocation = (location, openAfterCreate, locationPosition) => {
-    dispatch(
-      LocationActions.addLocation(location, openAfterCreate, locationPosition)
-    );
   };
 
   const indexLocation = () => {
@@ -106,6 +86,7 @@ function LocationContextMenu(props: Props) {
   };
 
   const duplicateLocation = () => {
+    const locationPosition = getLocationPosition(selectedLocation.uuid);
     addLocation(
       {
         ...selectedLocation,
@@ -140,7 +121,7 @@ function LocationContextMenu(props: Props) {
 
   const showInFileManagerInt = () => {
     setLocationDirectoryContextMenuAnchorEl(null);
-    showInFileManager(PlatformIO.getLocationPath(selectedLocation));
+    PlatformIO.showInFileManager(PlatformIO.getLocationPath(selectedLocation));
   };
 
   const closeLocationInt = () => {

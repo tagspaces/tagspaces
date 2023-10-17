@@ -36,18 +36,12 @@ import {
 import AppConfig from '-/AppConfig';
 import { Pro } from '-/pro';
 import { ProTooltip } from '-/components/HelperComponents';
-import {
-  actions as LocationIndexActions,
-  getSearchQuery
-} from '-/reducers/location-index';
 import { getKeyBindingObject } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import {
   actions as AppActions,
   AppDispatch,
-  getDirectoryPath,
-  getSelectedEntries,
-  isReadOnlyMode
+  getSelectedEntries
 } from '-/reducers/app';
 import {
   classes,
@@ -55,6 +49,9 @@ import {
 } from '-/perspectives/grid-perspective/components/styles.css';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 
 interface Props {
   prefixDataTID?: string;
@@ -81,17 +78,19 @@ function MainToolbar(props: Props) {
 
   const { t } = useTranslation();
   const { openEntry } = useOpenedEntryContext();
+  const {
+    loadParentDirectoryContent,
+    currentDirectoryPath
+  } = useDirectoryContentContext();
   const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
     getSelectedEntries
   );
-  const searchQuery: TS.SearchQuery = useSelector(getSearchQuery);
   const keyBindings = useSelector(getKeyBindingObject);
   const dispatch: AppDispatch = useDispatch();
-  const readOnlyMode = useSelector(isReadOnlyMode);
-  const directoryPath = useSelector(getDirectoryPath);
+  const { readOnlyMode } = useCurrentLocationContext();
 
   function showProperties() {
-    return openEntry(directoryPath, true);
+    return openEntry(currentDirectoryPath, true);
   }
 
   return (
@@ -112,12 +111,11 @@ function MainToolbar(props: Props) {
             aria-label={t('core:navigateToParentDirectory')}
             data-tid={prefixDataTID + 'PerspectiveOnBackButton'}
             onClick={() => {
-              if (searchQuery && Object.keys(searchQuery).length > 0) {
+              /*if (searchQuery && Object.keys(searchQuery).length > 0) {
                 dispatch(LocationIndexActions.setSearchQuery({}));
-                dispatch(AppActions.openCurrentDirectory());
-              } else {
-                dispatch(AppActions.loadParentDirectoryContent());
-              }
+                openCurrentDirectory();
+              } else {*/
+              loadParentDirectoryContent();
             }}
             size="large"
           >

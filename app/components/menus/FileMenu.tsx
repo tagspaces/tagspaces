@@ -52,11 +52,7 @@ import {
 } from '-/services/utils-io';
 import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
-import {
-  actions as AppActions,
-  AppDispatch,
-  isReadOnlyMode
-} from '-/reducers/app';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useSelector, useDispatch } from 'react-redux';
 import { supportedImgs } from '-/services/thumbsgenerator';
 import { getPrefixTagContainer } from '-/reducers/settings';
@@ -65,10 +61,13 @@ import {
   DeleteIcon,
   LinkIcon
 } from '-/components/CommonIcons';
-import { getCurrentLocation, getLocations } from '-/reducers/locations';
+import { getLocations } from '-/reducers/locations';
 import PropertiesIcon from '@mui/icons-material/Info';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 interface Props {
   anchorEl: Element;
@@ -112,9 +111,10 @@ function FileMenu(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const { openEntry } = useOpenedEntryContext();
-  const currentLocation: TS.Location = useSelector(getCurrentLocation);
+  const { openDirectory } = useDirectoryContentContext();
+  const { showNotification } = useNotificationContext();
+  const { currentLocation, readOnlyMode } = useCurrentLocationContext();
   const locations: Array<TS.Location> = useSelector(getLocations);
-  const readOnlyMode = useSelector(isReadOnlyMode);
   const prefixTagContainer = useSelector(getPrefixTagContainer);
 
   function generateFileLink() {
@@ -142,11 +142,11 @@ function FileMenu(props: Props) {
       navigator.clipboard
         .writeText(sharingLink)
         .then(() => {
-          dispatch(AppActions.showNotification(t('core:sharingLinkCopied')));
+          showNotification(t('core:sharingLinkCopied'));
           return true;
         })
         .catch(() => {
-          dispatch(AppActions.showNotification(t('core:sharingLinkFailed')));
+          showNotification(t('core:sharingLinkFailed'));
         });
     }
   }
@@ -175,13 +175,11 @@ function FileMenu(props: Props) {
     onClose();
     setFolderThumbnailPromise(selectedFilePath, t)
       .then((directoryPath: string) => {
-        dispatch(
-          AppActions.showNotification('Thumbnail created for: ' + directoryPath)
-        );
+        showNotification('Thumbnail created for: ' + directoryPath);
         return true;
       })
       .catch(error => {
-        dispatch(AppActions.showNotification('Thumbnail creation failed.'));
+        showNotification('Thumbnail creation failed.');
         console.warn(
           'Error setting Thumb for entry: ' + selectedFilePath,
           error
@@ -207,15 +205,11 @@ function FileMenu(props: Props) {
         dispatch(
           AppActions.setLastBackgroundImageChange(path, new Date().getTime())
         );
-        dispatch(
-          AppActions.showNotification(
-            'Background created for: ' + directoryPath
-          )
-        );
+        showNotification('Background created for: ' + directoryPath);
         return true;
       })
       .catch(error => {
-        dispatch(AppActions.showNotification('Background creation failed.'));
+        showNotification('Background creation failed.');
         console.warn(
           'Error setting Background for entry: ' + selectedFilePath,
           error
@@ -264,14 +258,12 @@ function FileMenu(props: Props) {
           if (onDuplicateFile) {
             onDuplicateFile(dirPath);
           } else {
-            dispatch(AppActions.loadDirectoryContent(dirPath, true, true));
+            openDirectory(dirPath);
           }
           return true;
         })
         .catch(error => {
-          dispatch(
-            AppActions.showNotification('Error creating duplicate: ', error)
-          );
+          showNotification('Error creating duplicate: ', error);
         });
     }
   }
@@ -283,10 +275,7 @@ function FileMenu(props: Props) {
         selectedFilePath,
         PlatformIO.getDirSeparator()
       );
-      dispatch(AppActions.exitSearchMode());
-      return dispatch(
-        AppActions.loadDirectoryContent(parentFolder, false, true)
-      );
+      return openDirectory(parentFolder);
     }
   }
 
@@ -384,7 +373,7 @@ function FileMenu(props: Props) {
         onClick={() => {
           onClose();
           if (selectedFilePath) {
-            dispatch(AppActions.showInFileManager(selectedFilePath));
+            PlatformIO.showInFileManager(selectedFilePath);
           }
         }}
       >

@@ -25,24 +25,26 @@ import ArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import ArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { useTranslation } from 'react-i18next';
 import { useSortedDirContext } from '-/perspectives/grid-perspective/hooks/useSortedDirContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
   open: boolean;
   onClose: () => void;
   anchorEl: Element;
   handleSortBy: (sortType: string) => void;
-  searchModeEnabled: boolean;
 }
 
 function SortingMenu(props: Props) {
-  const { open, onClose, handleSortBy, anchorEl, searchModeEnabled } = props;
+  const { open, onClose, handleSortBy, anchorEl } = props;
 
   const { t } = useTranslation();
   const { sortBy, orderBy } = useSortedDirContext();
+  const { isSearchMode } = useDirectoryContentContext();
   return (
     <Menu anchorEl={anchorEl} open={open} onClose={onClose}>
       {/* <ListSubHeader>Sort by</ListSubHeader> */}
-      {searchModeEnabled && (
+      {isSearchMode && (
         <MenuItem
           data-tid="gridPerspectiveSortByRelevance"
           onClick={() => {

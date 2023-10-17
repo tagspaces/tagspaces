@@ -28,6 +28,12 @@ import TsAuth from '-/containers/TsAuth';
 import init from '-/services/i18nInit';
 import { FsActionsContextProvider } from '-/hooks/FsActionsContextProvider';
 import { OpenedEntryContextProvider } from '-/hooks/OpenedEntryContextProvider';
+import { DirectoryContentContextProvider } from '-/hooks/DirectoryContentContextProvider';
+import { CurrentLocationContextProvider } from '-/hooks/CurrentLocationContextProvider';
+import { NotificationContextProvider } from '-/hooks/NotificationContextProvider';
+import { IOActionsContextProvider } from '-/hooks/IOActionsContextProvider';
+import { TaggingActionsContextProvider } from '-/hooks/TaggingActionsContextProvider';
+import { LocationIndexContextProvider } from '-/hooks/LocationIndexContextProvider';
 
 type RootType = {
   store: Store<{}>;
@@ -47,11 +53,23 @@ export default function Root({ store, persistor }: RootType) {
 
   let appContent = (
     <App>
-      <OpenedEntryContextProvider>
-        <FsActionsContextProvider>
-          <MainPage />
-        </FsActionsContextProvider>
-      </OpenedEntryContextProvider>
+      <NotificationContextProvider>
+        <CurrentLocationContextProvider>
+          <DirectoryContentContextProvider>
+            <LocationIndexContextProvider>
+              <OpenedEntryContextProvider>
+                <FsActionsContextProvider>
+                  <IOActionsContextProvider>
+                    <TaggingActionsContextProvider>
+                      <MainPage />
+                    </TaggingActionsContextProvider>
+                  </IOActionsContextProvider>
+                </FsActionsContextProvider>
+              </OpenedEntryContextProvider>
+            </LocationIndexContextProvider>
+          </DirectoryContentContextProvider>
+        </CurrentLocationContextProvider>
+      </NotificationContextProvider>
     </App>
   );
 

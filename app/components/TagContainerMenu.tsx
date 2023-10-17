@@ -20,8 +20,8 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import RemoveTagIcon from '@mui/icons-material/Close';
-import { isReadOnlyMode } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 interface Props {
   tag: TS.Tag;
@@ -31,7 +31,7 @@ interface Props {
 }
 
 function TagContainerMenu(props: Props) {
-  const readOnlyMode = useSelector(isReadOnlyMode);
+  const { readOnlyMode } = useCurrentLocationContext();
   const { deleteIcon, tag, handleRemoveTag, tagMode } = props;
   if (readOnlyMode) {
     return <div style={{ width: 10 }} />;

@@ -27,6 +27,7 @@ import TagContainer from '-/components/TagContainer';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { getAllTags } from '-/services/taglibrary-utils';
 import { Box } from '@mui/material';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 /*const styles: any = (theme: any) => ({
   root: {
@@ -75,7 +76,6 @@ interface Props {
   handleChange?: (param1: any, param2: any, param3?: any) => void;
   // allTags?: TS.Tag[];
   tagMode?: 'default' | 'display' | 'remove';
-  isReadOnlyMode?: boolean;
   placeholderText?: string;
   selectedEntryPath?: string;
   autoFocus?: boolean;
@@ -83,6 +83,7 @@ interface Props {
 }
 
 function TagsSelect(props: Props) {
+  const { readOnlyMode } = useCurrentLocationContext();
   const [tagMenuAnchorEl, setTagMenuAnchorEl] = useState<null | HTMLElement>(
     null
   );
@@ -98,8 +99,7 @@ function TagsSelect(props: Props) {
     selectedEntryPath,
     autoFocus = false,
     tags = [],
-    tagMode,
-    isReadOnlyMode
+    tagMode
   } = props;
 
   function handleTagChange(
@@ -107,7 +107,7 @@ function TagsSelect(props: Props) {
     selectedTags: Array<TS.Tag>,
     reason: string
   ) {
-    if (!isReadOnlyMode) {
+    if (!readOnlyMode) {
       if (reason === 'selectOption') {
         props.handleChange(props.tagSearchType, selectedTags, reason);
       } else if (reason === 'createOption') {
@@ -183,9 +183,9 @@ function TagsSelect(props: Props) {
     <Box sx={{ flexGrow: 1 }}>
       <Autocomplete
         data-tid={props.dataTid}
-        disabled={isReadOnlyMode}
+        disabled={readOnlyMode}
         multiple
-        options={!props.isReadOnlyMode ? allTags.current : []}
+        options={!readOnlyMode ? allTags.current : []}
         getOptionLabel={(option: TS.Tag) => option.title}
         freeSolo
         autoSelect
@@ -197,7 +197,6 @@ function TagsSelect(props: Props) {
           value.map((option: TS.Tag, index: number) => (
             <TagContainer
               key={selectedEntryPath + option + index}
-              isReadOnlyMode={isReadOnlyMode}
               tag={option}
               tagMode={tagMode}
               handleTagMenu={handleTagMenu}
@@ -207,11 +206,7 @@ function TagsSelect(props: Props) {
         }
         renderOption={(props, option) => (
           <Box component="li" {...props}>
-            <TagContainer
-              isReadOnlyMode={true}
-              tag={option}
-              tagMode={tagMode}
-            />
+            <TagContainer tag={option} tagMode={tagMode} />
           </Box>
         )}
         renderInput={params => (

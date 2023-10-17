@@ -25,12 +25,10 @@ import Box from '@mui/material/Box';
 import {
   actions as AppActions,
   AppDispatch,
-  isReadOnlyMode,
   OpenedEntry
 } from '-/reducers/app';
 import Revisions from '-/components/Revisions';
 import EntryProperties from '-/components/EntryProperties';
-import { TS } from '-/tagspaces.namespace';
 import {
   actions as SettingsActions,
   getEntryContainerTab,
@@ -124,7 +122,6 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   const { t } = useTranslation();
   const theme = useTheme();
   const tabIndex = useSelector(getEntryContainerTab);
-  const readOnlyMode = useSelector(isReadOnlyMode);
   const tileServer = useSelector(getMapTileServer);
   const desktopMode = useSelector(isDesktopMode);
   const dispatch: AppDispatch = useDispatch();
@@ -154,9 +151,6 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   }
 
   // Create functions that dispatch actions
-  const handleRenameFile = (filePath: string, newFilePath: string) =>
-    dispatch(AppActions.renameFile(filePath, newFilePath));
-
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     dispatch(SettingsActions.setEntryContainerTab(newValue));
     openPanel();
@@ -225,12 +219,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
         </StyledTabs>
       </Box>
       <TsTabPanel value={selectedTabIndex} index={0}>
-        <EntryProperties
-          key={openedFile.path}
-          renameFile={handleRenameFile}
-          isReadOnlyMode={readOnlyMode}
-          tileServer={tileServer}
-        />
+        <EntryProperties key={openedFile.path} tileServer={tileServer} />
       </TsTabPanel>
       <TsTabPanel value={selectedTabIndex} index={1}>
         <EditDescription />

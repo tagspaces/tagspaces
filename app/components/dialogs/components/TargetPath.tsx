@@ -17,17 +17,16 @@
  */
 
 import React from 'react';
-import { useSelector } from 'react-redux';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-import { getCurrentLocation } from '-/reducers/locations';
 import { InfoIcon } from '-/components/CommonIcons';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
 import { useTranslation } from 'react-i18next';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 function TargetPath() {
   const { t } = useTranslation();
-  const currentLocation = useSelector(getCurrentLocation);
+  const { currentLocation } = useCurrentLocationContext();
   const { targetDirectoryPath } = useTargetPathContext();
 
   return (

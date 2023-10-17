@@ -27,18 +27,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   actions as AppActions,
   AppDispatch,
-  getDirectoryContent,
-  getDirectoryPath,
   getEditedEntryPaths,
   getLastSelectedEntry,
-  getOpenLink,
-  isSearchMode,
   OpenedEntry
 } from '-/reducers/app';
 import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
 import {
+  enhanceOpenedEntry,
   findExtensionsForEntry,
   getAllPropertiesPromise,
   getCleanLocationPath,
@@ -46,14 +43,16 @@ import {
   getPrevFile,
   getRelativeEntryPath,
   loadJSONFile,
-  openURLExternally
+  openedToFsEntry,
+  openURLExternally,
+  toFsEntry
 } from '-/services/utils-io';
 import {
   actions as SettingsActions,
   getNewHTMLFileContent,
   getSupportedFileTypes
 } from '-/reducers/settings';
-import { getCurrentLocation, getLocations } from '-/reducers/locations';
+import { getLocations } from '-/reducers/locations';
 import { clearURLParam, getURLParameter, updateHistory } from '-/utils/dom';
 import {
   cleanRootPath,
@@ -64,7 +63,6 @@ import {
   getMetaFileLocationForFile,
   normalizePath
 } from '@tagspaces/tagspaces-common/paths';
-import GlobalSearch from '-/services/search-index';
 import {
   formatDateTime4Tag,
   locationType
@@ -73,6 +71,10 @@ import { useTranslation } from 'react-i18next';
 import versionMeta from '-/version.json';
 import AppConfig from '-/AppConfig';
 import useFirstRender from '-/utils/useFirstRender';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 
 type OpenedEntryContextData = {
   openedEntries: OpenedEntry[];
@@ -137,15 +139,23 @@ export const OpenedEntryContextProvider = ({
 }: OpenedEntryContextProviderProps) => {
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
+
+  const {
+    currentDirectoryEntries,
+    currentDirectoryPath,
+    openDirectory,
+    setCurrentDirectoryColor,
+    setCurrentDirectoryPerspective,
+    updateCurrentDirEntry
+  } = useDirectoryContentContext();
+  const { showNotification } = useNotificationContext();
+  const { openLocation, currentLocation } = useCurrentLocationContext();
+  const { reflectCreateEntry } = useLocationIndexContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
-  const searchMode = useSelector(isSearchMode);
-  const currentDirectoryEntries = useSelector(getDirectoryContent);
   const lastSelectedEntry: TS.FileSystemEntry = useSelector(
     getLastSelectedEntry
   );
   const locations: TS.Location[] = useSelector(getLocations);
-  const currentLocation: TS.Location = useSelector(getCurrentLocation);
-  const currentDirectoryPath = useSelector(getDirectoryPath);
   const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
   const fileOpenHistory = useSelector(
     (state: any) => state.settings[historyKeys.fileOpenKey]
@@ -154,7 +164,7 @@ export const OpenedEntryContextProvider = ({
     (state: any) => state.settings[historyKeys.folderOpenKey]
   );
   const newHTMLFileContent = useSelector(getNewHTMLFileContent);
-  const initOpenLink = useSelector(getOpenLink);
+  //const initOpenLink = useSelector(getOpenLink);
   const editedEntryPaths = useSelector(getEditedEntryPaths);
   /*  const checkForUpdates = useSelector(getCheckForUpdateOnStartup);
   const firstRun = useSelector(isFirstRun);
@@ -163,16 +173,68 @@ export const OpenedEntryContextProvider = ({
   const [isEntryInFullWidth, setEntryInFullWidth] = useState(false);
   const sharingLink = useRef<string>(undefined);
   const sharingParentFolderLink = useRef<string>(undefined);
+  const havePrevOpenedFile = React.useRef<boolean>(false);
   const firstRender = useFirstRender();
 
   /**
    * Handle openLink from initApp
    */
   useEffect(() => {
-    if (initOpenLink && initOpenLink.url) {
-      openLink(initOpenLink.url, initOpenLink.options);
+    if (firstRender && openedEntries.length === 0) {
+      const lid = getURLParameter('tslid');
+      const dPath = getURLParameter('tsdpath');
+      const ePath = getURLParameter('tsepath');
+      const cmdOpen = getURLParameter('cmdopen');
+      if (lid || dPath || ePath) {
+        // openDefaultLocation = false;
+        setTimeout(() => {
+          openLink(window.location.href);
+        }, 1000);
+      } else if (cmdOpen) {
+        // openDefaultLocation = false;
+        setTimeout(() => {
+          openLink(
+            // window.location.href.split('?')[0] +
+            'ts://?cmdopen=' + cmdOpen,
+            { fullWidth: true }
+          );
+        }, 1000);
+      }
     }
-  }, [initOpenLink]);
+    /*if (initOpenLink && initOpenLink.url) {
+      openLink(initOpenLink.url, initOpenLink.options);
+    }*/
+  }, []);
+
+  useEffect(() => {
+    if (
+      !firstRender &&
+      havePrevOpenedFile.current
+      // && selectedEntries.length < 2
+    ) {
+      if (openedEntries.length > 0) {
+        const openedFile = openedEntries[0];
+        if (openedFile.path === currentDirectoryPath) {
+          if (openedFile.color) {
+            setCurrentDirectoryColor(openedFile.color);
+          } else if (openedFile.color === undefined) {
+            setCurrentDirectoryColor(undefined);
+          }
+          if (openedFile.perspective) {
+            setCurrentDirectoryPerspective(openedFile.perspective);
+          }
+        } else {
+          // update openedFile meta in grid perspective list (like description)
+          const currentEntry: OpenedEntry = enhanceOpenedEntry(
+            openedFile,
+            AppConfig.tagDelimiter
+          );
+          updateCurrentDirEntry(openedFile.path, openedToFsEntry(currentEntry));
+        }
+      }
+    }
+    havePrevOpenedFile.current = openedEntries.length > 0;
+  }, [openedEntries]);
 
   /**
    * HANDLE REFLECT_RENAME_ENTRY
@@ -259,7 +321,14 @@ export const OpenedEntryContextProvider = ({
           if (params.has('tsepath')) {
             const entryPath = params.get('tsepath');
             if (openedFile.isFile) {
-              sharingLink.current = generateSharingLink(locationId, entryPath);
+              const dirPath = params.has('tsdpath')
+                ? params.get('tsdpath')
+                : undefined;
+              sharingLink.current = generateSharingLink(
+                locationId,
+                entryPath,
+                dirPath
+              );
             } else {
               sharingLink.current = generateSharingLink(
                 locationId,
@@ -267,6 +336,12 @@ export const OpenedEntryContextProvider = ({
                 entryPath
               );
             }
+          } else if (params.has('tsdpath')) {
+            sharingLink.current = generateSharingLink(
+              locationId,
+              undefined,
+              params.get('tsdpath')
+            );
           } else {
             sharingLink.current = generateSharingLink(locationId);
           }
@@ -495,9 +570,7 @@ export const OpenedEntryContextProvider = ({
         return;
       }
       if (!lastSelectedEntry.isFile) {
-        dispatch(
-          AppActions.loadDirectoryContent(lastSelectedEntry.path, false)
-        );
+        openDirectory(lastSelectedEntry.path); //, false);
         return;
       }
     }
@@ -517,12 +590,10 @@ export const OpenedEntryContextProvider = ({
               : undefined
         }; // false };
         addToEntryContainer(entryForOpening);
-        dispatch(
-          AppActions.showNotification(
-            `You can't open another file, because '${openFile.path}' is opened for editing`,
-            'default',
-            true
-          )
+        showNotification(
+          `You can't open another file, because '${openFile.path}' is opened for editing`,
+          'default',
+          true
         );
         return false;
       }
@@ -619,9 +690,7 @@ export const OpenedEntryContextProvider = ({
     const nextFile = getNextFile(
       path,
       lastSelectedEntry ? lastSelectedEntry.path : undefined,
-      searchMode
-        ? GlobalSearch.getInstance().getResults()
-        : currentDirectoryEntries
+      currentDirectoryEntries
     );
     if (nextFile !== undefined) {
       openFsEntry(nextFile);
@@ -635,9 +704,7 @@ export const OpenedEntryContextProvider = ({
     const prevFile = getPrevFile(
       path,
       lastSelectedEntry ? lastSelectedEntry.path : undefined,
-      searchMode
-        ? GlobalSearch.getInstance().getResults()
-        : currentDirectoryEntries
+      currentDirectoryEntries
     );
     if (prevFile !== undefined) {
       openFsEntry(prevFile);
@@ -665,26 +732,22 @@ export const OpenedEntryContextProvider = ({
               openFsEntry(fsEntry);
               setEntryInFullWidth(options.fullWidth);
             } else {
-              dispatch(
-                AppActions.loadDirectoryContent(fsEntry.path, false, true)
-              );
+              openDirectory(fsEntry.path);
             }
             return true;
           })
           .catch(err => {
             // console.log('Error opening from cmd ' + JSON.stringify(err));
-            dispatch(
-              AppActions.showNotification(
-                t('Missing file or folder'),
-                'warning',
-                true
-              )
-            );
+            showNotification(t('Missing file or folder'), 'warning', true);
           });
       } else if (lid && lid.length > 0) {
         const locationId = decodeURIComponent(lid);
-        const directoryPath = dPath && decodeURIComponent(dPath);
+        let directoryPath = dPath && decodeURIComponent(dPath);
         const entryPath = ePath && decodeURIComponent(ePath);
+        // fix for created bookmarks files without to have tsdpath in url
+        if (!directoryPath) {
+          directoryPath = extractContainingDirectoryPath(entryPath);
+        }
         // Check for relative paths
         const targetLocation: TS.Location = locations.find(
           location => location.uuid === locationId
@@ -693,14 +756,11 @@ export const OpenedEntryContextProvider = ({
           let openLocationTimer = 1000;
           const isCloudLocation =
             targetLocation.type === locationType.TYPE_CLOUD;
-          let skipListingLocation = directoryPath && directoryPath.length > 0;
           if (
             !currentLocation ||
             targetLocation.uuid !== currentLocation.uuid
           ) {
-            dispatch(
-              AppActions.openLocation(targetLocation, skipListingLocation)
-            );
+            openLocation(targetLocation, true);
           } else {
             openLocationTimer = 0;
           }
@@ -719,13 +779,9 @@ export const OpenedEntryContextProvider = ({
                   locationPath.length > 0
                     ? locationPath + '/' + newRelDir
                     : directoryPath;
-                dispatch(
-                  AppActions.loadDirectoryContent(dirFullPath, false, true)
-                );
+                openDirectory(dirFullPath);
               } else {
-                dispatch(
-                  AppActions.loadDirectoryContent(locationPath, false, true)
-                );
+                openDirectory(locationPath);
               }
 
               if (entryPath) {
@@ -740,13 +796,7 @@ export const OpenedEntryContextProvider = ({
                     return true;
                   })
                   .catch(() =>
-                    dispatch(
-                      AppActions.showNotification(
-                        t('core:invalidLink'),
-                        'warning',
-                        true
-                      )
-                    )
+                    showNotification(t('core:invalidLink'), 'warning', true)
                   );
               }
               // });
@@ -757,35 +807,19 @@ export const OpenedEntryContextProvider = ({
                   directoryPath.includes('../') ||
                   directoryPath.includes('..\\')
                 ) {
-                  dispatch(
-                    AppActions.showNotification(
-                      t('core:invalidLink'),
-                      'warning',
-                      true
-                    )
-                  );
+                  showNotification(t('core:invalidLink'), 'warning', true);
                   return true;
                 }
                 const dirFullPath =
                   locationPath + PlatformIO.getDirSeparator() + directoryPath;
-                dispatch(
-                  AppActions.loadDirectoryContent(dirFullPath, false, true)
-                );
+                openDirectory(dirFullPath);
               } else {
-                dispatch(
-                  AppActions.loadDirectoryContent(locationPath, false, true)
-                );
+                openDirectory(locationPath);
               }
 
               if (entryPath && entryPath.length > 0) {
                 if (entryPath.includes('../') || entryPath.includes('..\\')) {
-                  dispatch(
-                    AppActions.showNotification(
-                      t('core:invalidLink'),
-                      'warning',
-                      true
-                    )
-                  );
+                  showNotification(t('core:invalidLink'), 'warning', true);
                   return true;
                 }
                 const entryFullPath =
@@ -801,21 +835,13 @@ export const OpenedEntryContextProvider = ({
                     return true;
                   })
                   .catch(() =>
-                    dispatch(
-                      AppActions.showNotification(
-                        t('core:invalidLink'),
-                        'warning',
-                        true
-                      )
-                    )
+                    showNotification(t('core:invalidLink'), 'warning', true)
                   );
               }
             }
           }, openLocationTimer);
         } else {
-          dispatch(
-            AppActions.showNotification(t('core:invalidLink'), 'warning', true)
-          );
+          showNotification(t('core:invalidLink'), 'warning', true);
         }
       } else if (decodedURI.endsWith(location.pathname)) {
         return true;
@@ -846,31 +872,18 @@ export const OpenedEntryContextProvider = ({
         '.txt';
       PlatformIO.saveFilePromise({ path: filePath }, '', true)
         .then(() => {
+          reflectCreateEntry(toFsEntry(filePath, true));
           dispatch(AppActions.reflectCreateEntry(filePath, true));
-          dispatch(
-            AppActions.showNotification(
-              t('core:fileCreateSuccessfully'),
-              'info',
-              true
-            )
-          );
+          showNotification(t('core:fileCreateSuccessfully'), 'info', true);
           openEntry(filePath);
           return true;
         })
         .catch(err => {
           console.warn('File creation failed with ' + err);
-          dispatch(
-            AppActions.showNotification(
-              t('core:errorCreatingFile'),
-              'warning',
-              true
-            )
-          );
+          showNotification(t('core:errorCreatingFile'), 'warning', true);
         });
     } else {
-      dispatch(
-        AppActions.showNotification(t('core:firstOpenaFolder'), 'warning', true)
-      );
+      showNotification(t('core:firstOpenaFolder'), 'warning', true);
     }
   }
 
@@ -909,27 +922,20 @@ export const OpenedEntryContextProvider = ({
     }
     PlatformIO.saveFilePromise({ path: filePath }, fileContent, false)
       .then((fsEntry: TS.FileSystemEntry) => {
+        reflectCreateEntry(toFsEntry(filePath, true));
         dispatch(AppActions.reflectCreateEntry(filePath, true));
         openFsEntry(fsEntry);
 
         // dispatch(actions.setSelectedEntries([fsEntry]));
-        dispatch(
-          AppActions.showNotification(
-            `File '${fileNameAndExt}' created.`,
-            'default',
-            true
-          )
-        );
+        showNotification(`File '${fileNameAndExt}' created.`, 'default', true);
         return true;
       })
       .catch(error => {
         console.warn('Error creating file: ' + error);
-        dispatch(
-          AppActions.showNotification(
-            `Error creating file '${fileNameAndExt}'`,
-            'error',
-            true
-          )
+        showNotification(
+          `Error creating file '${fileNameAndExt}'`,
+          'error',
+          true
         );
       });
   }

@@ -24,14 +24,13 @@ import settings from './settings';
 import app from './app';
 import locations from './locations';
 import taglibrary from './taglibrary';
-import locationIndex from './location-index';
 import searches from './searches';
 
 const externalLocations = window.ExtLocations || false;
 // const externalTagLibrary = window.ExtTagLibrary || false;
 const externalSearches = window.ExtSearches || false;
 
-const blacklist = ['app', 'locationIndex'];
+const blacklist = ['app'];
 if (
   !AppConfig.saveLocationsInBrowser &&
   (externalLocations || AppConfig.isWeb)
@@ -112,8 +111,7 @@ const rootReducer = persistCombineReducers(rootPersistConfig, {
   app,
   locations: externalLocations ? () => externalLocations : locations,
   taglibrary, // externalTagLibrary ? () => externalTagLibrary : taglibrary,
-  searches: externalSearches ? () => externalSearches : searches,
-  locationIndex
+  searches: externalSearches ? () => externalSearches : searches
 });
 
 export default rootReducer;

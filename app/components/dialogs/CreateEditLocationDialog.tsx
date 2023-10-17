@@ -61,15 +61,10 @@ import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import InfoIcon from '-/components/InfoIcon';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
-import { actions as LocationActions, getLocations } from '-/reducers/locations';
-import {
-  NotificationTypes,
-  actions as AppActions,
-  AppDispatch
-} from '-/reducers/app';
+import { getLocations } from '-/reducers/locations';
+import { AppDispatch } from '-/reducers/app';
 import { getPersistTagsInSidecarFile, isDevMode } from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import { actions as LocationIndexActions } from '-/reducers/location-index';
 import PlatformIO from '-/services/platform-facade';
 import WebdavForm from '-/components/dialogs/WebdavForm';
 import { useTheme } from '@mui/material/styles';
@@ -79,6 +74,9 @@ import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { ExpandIcon } from '-/components/CommonIcons';
 import MaxLoopsSelect from '-/components/dialogs/MaxLoopsSelect';
 import { useTranslation } from 'react-i18next';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 
 const PREFIX = 'CreateEditLocationDialog';
 
@@ -94,7 +92,7 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 interface Props {
-  location?: TS.Location;
+  /*location?: TS.Location;*/
   open: boolean;
   onClose: () => void;
   classes: any;
@@ -103,13 +101,16 @@ interface Props {
 
 function CreateEditLocationDialog(props: Props) {
   const { t } = useTranslation();
-  const dispatch: AppDispatch = useDispatch();
+
+  const { showNotification } = useNotificationContext();
+  const { createLocationIndex } = useLocationIndexContext();
+  const { addLocation, selectedLocation } = useCurrentLocationContext();
   const isPersistTagsInSidecar = useSelector(getPersistTagsInSidecarFile);
   const locations: Array<TS.Location> = useSelector(getLocations);
   const devMode: boolean = useSelector(isDevMode);
   const IgnorePatternDialog =
     Pro && Pro.UI ? Pro.UI.IgnorePatternDialog : false;
-  const { location } = props;
+  /*const { location } = props;*/
   const [showSecretAccessKey, setShowSecretAccessKey] = useState<boolean>(
     false
   );
@@ -117,82 +118,96 @@ function CreateEditLocationDialog(props: Props) {
   const [errorTextPath, setErrorTextPath] = useState<boolean>(false);
   const [errorTextName, setErrorTextName] = useState<boolean>(false);
   const [name, setName] = useState<string>(
-    location && location.name ? location.name : ''
+    selectedLocation && selectedLocation.name ? selectedLocation.name : ''
   );
   const [username, setUserName] = useState<string>(
-    location && location.username ? location.username : ''
+    selectedLocation && selectedLocation.username
+      ? selectedLocation.username
+      : ''
   );
   const [password, setPassword] = useState<string>(
-    location && location.password ? location.password : ''
+    selectedLocation && selectedLocation.password
+      ? selectedLocation.password
+      : ''
   );
   let defaultIndexAge = AppConfig.maxIndexAge;
-  if (location && location.maxIndexAge && location.maxIndexAge > 0) {
-    const maxIndexAsString = location.maxIndexAge + '';
+  if (
+    selectedLocation &&
+    selectedLocation.maxIndexAge &&
+    selectedLocation.maxIndexAge > 0
+  ) {
+    const maxIndexAsString = selectedLocation.maxIndexAge + '';
     defaultIndexAge = parseInt(maxIndexAsString, 10);
   }
   const [maxIndexAge, setMaxIndexAge] = useState<number>(defaultIndexAge);
 
   let defaultMaxLoops = AppConfig.maxLoops;
-  if (location && location.maxLoops && location.maxLoops > 0) {
-    const maxLoopsAsString = location.maxLoops + '';
+  if (
+    selectedLocation &&
+    selectedLocation.maxLoops &&
+    selectedLocation.maxLoops > 0
+  ) {
+    const maxLoopsAsString = selectedLocation.maxLoops + '';
     defaultMaxLoops = parseInt(maxLoopsAsString, 10);
   }
   const [maxLoops, setMaxLoops] = useState<number>(defaultMaxLoops);
   const [storeName, setStoreName] = useState<string>(
-    location && location.name ? location.name : ''
+    selectedLocation && selectedLocation.name ? selectedLocation.name : ''
   );
   const [path, setPath] = useState<string>(
-    location && (location.path || location.paths)
-      ? location.path || location.paths[0]
+    selectedLocation && (selectedLocation.path || selectedLocation.paths)
+      ? selectedLocation.path || selectedLocation.paths[0]
       : ''
   );
   const [storePath, setStorePath] = useState<string>(
-    location && (location.path || location.paths)
-      ? location.path || location.paths[0]
+    selectedLocation && (selectedLocation.path || selectedLocation.paths)
+      ? selectedLocation.path || selectedLocation.paths[0]
       : ''
   );
   const [endpointURL, setEndpointURL] = useState<string>(
-    location ? location.endpointURL : ''
+    selectedLocation ? selectedLocation.endpointURL : ''
   );
   const [authType, setAuthType] = useState<string>('password');
   const [isDefault, setIsDefault] = useState<boolean>(
-    location ? location.isDefault : false
+    selectedLocation ? selectedLocation.isDefault : false
   );
   const [isReadOnly, setIsReadOnly] = useState<boolean>(
-    location ? location.isReadOnly : false
+    selectedLocation ? selectedLocation.isReadOnly : false
   );
   const [watchForChanges, setWatchForChanges] = useState<boolean>(
-    location ? location.watchForChanges : false
+    selectedLocation ? selectedLocation.watchForChanges : false
   );
   const [disableIndexing, setIndexDisable] = useState<boolean>(
-    location ? location.disableIndexing : false
+    selectedLocation ? selectedLocation.disableIndexing : false
   );
   const [fullTextIndex, setFullTextIndex] = useState<boolean>(
-    location ? location.fullTextIndex : false
+    selectedLocation ? selectedLocation.fullTextIndex : false
   );
   const [accessKeyId, setAccessKeyId] = useState<string>(
-    location ? location.accessKeyId : ''
+    selectedLocation ? selectedLocation.accessKeyId : ''
   );
   const [secretAccessKey, setSecretAccessKey] = useState<string>(
-    location ? location.secretAccessKey : ''
+    selectedLocation ? selectedLocation.secretAccessKey : ''
   );
   const [sessionToken, setSessionToken] = useState<string>(
-    location ? location.sessionToken : undefined
+    selectedLocation ? selectedLocation.sessionToken : undefined
   );
   const [bucketName, setBucketName] = useState<string>(
-    location ? location.bucketName : ''
+    selectedLocation ? selectedLocation.bucketName : ''
   );
   const [persistTagsInSidecarFile, setPersistTagsInSidecarFile] = useState<
     boolean | null
   >(
-    location && location.persistTagsInSidecarFile !== undefined
-      ? location.persistTagsInSidecarFile
+    selectedLocation && selectedLocation.persistTagsInSidecarFile !== undefined
+      ? selectedLocation.persistTagsInSidecarFile
       : null // props.isPersistTagsInSidecar
   );
-  const [region, setRegion] = useState<string>(location ? location.region : '');
+  const [region, setRegion] = useState<string>(
+    selectedLocation ? selectedLocation.region : ''
+  );
   let defaultType;
-  if (location) {
-    defaultType = location.type;
+  if (selectedLocation) {
+    defaultType = selectedLocation.type;
   } else if (AppConfig.isWeb) {
     defaultType = locationType.TYPE_CLOUD;
   } else {
@@ -200,7 +215,7 @@ function CreateEditLocationDialog(props: Props) {
   }
   const [type, setType] = useState<string>(defaultType);
   const [newuuid, setNewUuid] = useState<string>(
-    location ? location.uuid : getUuid()
+    selectedLocation ? selectedLocation.uuid : getUuid()
   );
   const [cloudErrorTextName, setCloudErrorTextName] = useState<boolean>(false);
   const [webdavErrorUrl, setWebdavErrorUrl] = useState<boolean>(false);
@@ -212,7 +227,7 @@ function CreateEditLocationDialog(props: Props) {
   >(false);
 
   const [ignorePatternPaths, setIgnorePatternPaths] = useState<Array<string>>(
-    location ? location.ignorePatternPaths : undefined
+    selectedLocation ? selectedLocation.ignorePatternPaths : undefined
   );
 
   const [isIgnorePatternDialogOpen, setIgnorePatternDialogOpen] = useState<
@@ -270,12 +285,7 @@ function CreateEditLocationDialog(props: Props) {
     if (!locations.some(ln => ln.uuid === newId)) {
       setNewUuid(newId);
     } else {
-      dispatch(
-        AppActions.showNotification(
-          'Location with this ID already exists',
-          NotificationTypes.error
-        )
-      );
+      showNotification('Location with this ID already exists', 'error');
     }
   }
   /**
@@ -364,7 +374,7 @@ function CreateEditLocationDialog(props: Props) {
       let loc;
       if (type === locationType.TYPE_LOCAL) {
         loc = {
-          uuid: props.location ? props.location.uuid : newuuid,
+          uuid: selectedLocation ? selectedLocation.uuid : newuuid,
           type,
           name,
           path,
@@ -379,7 +389,7 @@ function CreateEditLocationDialog(props: Props) {
         };
       } else if (type === locationType.TYPE_WEBDAV) {
         loc = {
-          uuid: props.location ? props.location.uuid : newuuid,
+          uuid: selectedLocation ? selectedLocation.uuid : newuuid,
           type,
           authType,
           name,
@@ -397,7 +407,7 @@ function CreateEditLocationDialog(props: Props) {
         };
       } else if (type === locationType.TYPE_CLOUD) {
         loc = {
-          uuid: props.location ? props.location.uuid : newuuid,
+          uuid: selectedLocation ? selectedLocation.uuid : newuuid,
           type,
           name: storeName,
           path: storePath,
@@ -423,8 +433,8 @@ function CreateEditLocationDialog(props: Props) {
         loc = { ...loc, persistTagsInSidecarFile };
       }
 
-      if (!props.location) {
-        dispatch(LocationActions.addLocation(loc));
+      if (!selectedLocation) {
+        addLocation(loc);
       } else if (props.editLocation) {
         loc.newuuid = newuuid;
         props.editLocation(loc);
@@ -507,11 +517,11 @@ function CreateEditLocationDialog(props: Props) {
   }
 
   const currentTagsSetting =
-    props.location && props.location.persistTagsInSidecarFile !== null
-      ? location.persistTagsInSidecarFile
+    selectedLocation && selectedLocation.persistTagsInSidecarFile !== null
+      ? selectedLocation.persistTagsInSidecarFile
       : isPersistTagsInSidecar;
 
-  const disableLocationTypeSwitch: boolean = props.location !== undefined;
+  const disableLocationTypeSwitch: boolean = selectedLocation !== undefined;
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -534,7 +544,7 @@ function CreateEditLocationDialog(props: Props) {
       }}
     >
       <DialogTitle>
-        {props.location
+        {selectedLocation
           ? t('core:editLocationTitle')
           : t('core:createLocationTitle')}
         <DialogCloseButton
@@ -625,7 +635,7 @@ function CreateEditLocationDialog(props: Props) {
                   </>
                 }
               />
-              {isFullTextIndexConfirmDialogOpened && location && (
+              {isFullTextIndexConfirmDialogOpened && selectedLocation && (
                 <ConfirmDialog
                   open={isFullTextIndexConfirmDialogOpened}
                   onClose={() => {
@@ -635,9 +645,7 @@ function CreateEditLocationDialog(props: Props) {
                   content={t('core:fullTextIndexRegenerate')}
                   confirmCallback={result => {
                     if (result) {
-                      dispatch(
-                        LocationIndexActions.createLocationIndex(location)
-                      );
+                      createLocationIndex(selectedLocation);
                     } else {
                       setFullTextIndexConfirmDialogOpened(false);
                     }
@@ -972,7 +980,7 @@ function CreateEditLocationDialog(props: Props) {
                     onClose={() => setIgnorePatternDialogOpen(false)}
                     ignorePatternPaths={ignorePatternPaths}
                     setIgnorePatternPaths={setIgnorePatternPaths}
-                    locationPath={PlatformIO.getLocationPath(location)}
+                    locationPath={PlatformIO.getLocationPath(selectedLocation)}
                   />
                 )}
               </>

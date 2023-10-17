@@ -18,8 +18,8 @@
 
 import React from 'react';
 import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { emphasize, styled, Theme } from '@mui/material/styles';
+import { useDispatch, useSelector } from 'react-redux';
+import { styled } from '@mui/material/styles';
 import Snackbar from '@mui/material/Snackbar';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
@@ -27,36 +27,15 @@ import CloseIcon from '@mui/icons-material/Close';
 import { getLastPublishedVersion } from '-/reducers/settings';
 import {
   actions as AppActions,
-  getNotificationStatus,
-  isGeneratingThumbs,
+  AppDispatch,
   isUpdateAvailable
 } from '../reducers/app';
-import {
-  actions as LocationIndexActions,
-  isIndexing
-} from '../reducers/location-index';
 import { Pro } from '../pro';
 import Links from '-/content/links';
 import { openURLExternally } from '-/services/utils-io';
-import Chip from '@mui/material/Chip';
 import { useTranslation } from 'react-i18next';
-
-interface Props {
-  notificationStatus: any;
-  isIndexing: boolean;
-  isGeneratingThumbs: boolean;
-  showNotification: (
-    text: string,
-    notificationType?: string,
-    autohide?: boolean
-  ) => void;
-  hideNotifications: () => void;
-  cancelDirectoryIndexing: () => void;
-  isUpdateAvailable: boolean;
-  lastPublishedVersion: string;
-  setUpdateAvailable: (isUpdateAvailable: boolean) => void;
-  setGeneratingThumbnails: (isGenerating: boolean) => void;
-}
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 
 const TSNotification = styled(Snackbar)(({ theme }) => {
   return {
@@ -68,10 +47,22 @@ const TSNotification = styled(Snackbar)(({ theme }) => {
   };
 }) as typeof Snackbar;
 
-function PageNotification(props: Props) {
+function PageNotification() {
   const { t } = useTranslation();
+  const dispatch: AppDispatch = useDispatch();
+  const {
+    isGeneratingThumbs,
+    setGeneratingThumbs,
+    notificationStatus,
+    showNotification,
+    hideNotifications
+  } = useNotificationContext();
+  const { isIndexing, cancelDirectoryIndexing } = useLocationIndexContext();
+  const updateAvailable = useSelector(isUpdateAvailable);
+  const lastPublishedVersion = useSelector(getLastPublishedVersion);
+
   const skipRelease = () => {
-    props.setUpdateAvailable(false);
+    dispatch(AppActions.setUpdateAvailable(false));
   };
 
   const openChangelogPage = () => {
@@ -80,39 +71,39 @@ function PageNotification(props: Props) {
 
   const getLatestVersion = () => {
     if (Pro) {
-      props.showNotification(t('core:getLatestVersionPro'), 'default', false);
+      showNotification(t('core:getLatestVersionPro'), 'default', false);
     } else {
       openURLExternally(Links.links.downloadURL, true);
     }
-    props.setUpdateAvailable(false);
+    dispatch(AppActions.setUpdateAvailable(false));
   };
 
   return (
     <>
       <TSNotification
-        data-tid={props.notificationStatus.tid}
+        data-tid={notificationStatus.tid}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        open={props.notificationStatus.visible}
-        onClose={() => props.hideNotifications()}
-        autoHideDuration={props.notificationStatus.autohide ? 3000 : undefined}
-        message={props.notificationStatus.text}
+        open={notificationStatus.visible}
+        onClose={() => hideNotifications()}
+        autoHideDuration={notificationStatus.autohide ? 3000 : undefined}
+        message={notificationStatus.text}
         action={[
           <IconButton
-            data-tid={'close' + props.notificationStatus.tid}
+            data-tid={'close' + notificationStatus.tid}
             key="close"
             aria-label={t('core:closeButton')}
             color="inherit"
-            onClick={() => props.hideNotifications()}
+            onClick={() => hideNotifications()}
             size="large"
           >
             <CloseIcon />
           </IconButton>
         ]}
       />
-      {props.isGeneratingThumbs && (
+      {isGeneratingThumbs && (
         <TSNotification
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-          open={props.isGeneratingThumbs}
+          open={isGeneratingThumbs}
           autoHideDuration={undefined}
           message={t('core:loadingOrGeneratingThumbnails')}
           action={[
@@ -120,7 +111,7 @@ function PageNotification(props: Props) {
               key="closeButton"
               aria-label={t('core:closeButton')}
               color="inherit"
-              onClick={() => props.setGeneratingThumbnails(false)}
+              onClick={() => setGeneratingThumbs(false)}
               size="large"
             >
               <CloseIcon />
@@ -130,7 +121,7 @@ function PageNotification(props: Props) {
       )}
       <TSNotification
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        open={props.isIndexing}
+        open={isIndexing}
         autoHideDuration={undefined}
         message="Indexing"
         action={[
@@ -138,7 +129,7 @@ function PageNotification(props: Props) {
             key="cancelIndexButton"
             color="secondary"
             size="small"
-            onClick={props.cancelDirectoryIndexing}
+            onClick={() => cancelDirectoryIndexing()}
             data-tid="cancelDirectoryIndexing"
           >
             {t('core:cancelIndexing')}
@@ -147,9 +138,9 @@ function PageNotification(props: Props) {
       />
       <TSNotification
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        open={props.isUpdateAvailable}
+        open={updateAvailable}
         autoHideDuration={undefined}
-        message={'Version ' + props.lastPublishedVersion + ' available.'}
+        message={'Version ' + lastPublishedVersion + ' available.'}
         action={[
           <Button
             key="laterButton"
@@ -181,37 +172,4 @@ function PageNotification(props: Props) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    notificationStatus: getNotificationStatus(state),
-    isIndexing: isIndexing(state),
-    isUpdateAvailable: isUpdateAvailable(state),
-    lastPublishedVersion: getLastPublishedVersion(state),
-    isGeneratingThumbs: isGeneratingThumbs(state)
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      showNotification: AppActions.showNotification,
-      hideNotifications: AppActions.hideNotifications,
-      cancelDirectoryIndexing: LocationIndexActions.cancelDirectoryIndexing,
-      setUpdateAvailable: AppActions.setUpdateAvailable,
-      setGeneratingThumbnails: AppActions.setGeneratingThumbnails
-    },
-    dispatch
-  );
-}
-
-const areEqual = (prevProp, nextProp) =>
-  JSON.stringify(nextProp.notificationStatus) ===
-    JSON.stringify(prevProp.notificationStatus) &&
-  nextProp.isIndexing === prevProp.isIndexing &&
-  nextProp.isGeneratingThumbs === prevProp.isGeneratingThumbs &&
-  nextProp.isUpdateAvailable === prevProp.isUpdateAvailable;
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(React.memo(PageNotification, areEqual));
+export default PageNotification;

@@ -40,12 +40,7 @@ import DraggablePaper from '-/components/DraggablePaper';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import AppConfig from '-/AppConfig';
 import { useTranslation } from 'react-i18next';
-import {
-  actions as AppActions,
-  AppDispatch,
-  getDirectoryPath
-} from '-/reducers/app';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
   open: boolean;
@@ -58,9 +53,10 @@ function MoveOrCopyFilesDialog(props: Props) {
   const { t } = useTranslation();
 
   const theme = useTheme();
-  const dispatch: AppDispatch = useDispatch();
+
+  const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
+  // const dispatch: AppDispatch = useDispatch();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
-  const directoryPath = useSelector(getDirectoryPath);
 
   const handleMoveCopyFiles = (files: Array<File>, move = false) => {
     const promises = [];
@@ -69,7 +65,7 @@ function MoveOrCopyFilesDialog(props: Props) {
         promises.push(
           PlatformIO.renameFilePromise(
             file.path,
-            directoryPath + AppConfig.dirSeparator + file.name
+            currentDirectoryPath + AppConfig.dirSeparator + file.name
           )
             .then(() => true)
             .catch(error => {
@@ -80,7 +76,7 @@ function MoveOrCopyFilesDialog(props: Props) {
         promises.push(
           PlatformIO.copyFilePromise(
             file.path,
-            directoryPath + AppConfig.dirSeparator + file.name
+            currentDirectoryPath + AppConfig.dirSeparator + file.name
           )
             .then(() => true)
             .catch(error => {
@@ -90,9 +86,7 @@ function MoveOrCopyFilesDialog(props: Props) {
       }
     }
     Promise.all(promises)
-      .then(() =>
-        dispatch(AppActions.loadDirectoryContent(directoryPath, true, true))
-      )
+      .then(() => openDirectory(currentDirectoryPath))
       .catch(error => {
         console.log('promises', error);
       });

@@ -35,15 +35,18 @@ import {
   AppDispatch,
   getExtensions
 } from '-/reducers/app';
-import IOActions from '-/reducers/io-actions';
 import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import InfoIcon from '-/components/InfoIcon';
 import { useTranslation } from 'react-i18next';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 
 function SettingsExtensions() {
   const { t } = useTranslation();
+  const { switchCurrentLocationType } = useCurrentLocationContext();
+  const { uploadFilesAPI } = useIOActionsContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [removeExtDialogOpened, setRemoveExtDialogOpened] = useState<
     TS.Extension
@@ -66,14 +69,7 @@ function SettingsExtensions() {
       PlatformIO.disableWebdavSupport();
       const destinationPath =
         dataDir + PlatformIO.getDirSeparator() + 'tsplugins';
-      dispatch(
-        IOActions.uploadFilesAPI(
-          files,
-          destinationPath,
-          onUploadProgress,
-          false
-        )
-      )
+      uploadFilesAPI(files, destinationPath, onUploadProgress, false)
         .then((fsEntries: Array<TS.FileSystemEntry>) => {
           const targetPath =
             destinationPath +
@@ -87,12 +83,12 @@ function SettingsExtensions() {
           return Promise.all(promises).then(paths => {
             PlatformIO.loadExtensions();
             paths.forEach(path => PlatformIO.deleteFilePromise(path));
-            return dispatch(AppActions.switchCurrentLocationType());
+            return switchCurrentLocationType();
           });
         })
         .catch(error => {
           console.log('uploadFiles', error);
-          return dispatch(AppActions.switchCurrentLocationType());
+          return switchCurrentLocationType();
         });
     });
   };

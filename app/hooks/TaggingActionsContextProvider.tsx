@@ -18,11 +18,7 @@
 
 import React, { createContext, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  actions as AppActions,
-  AppDispatch,
-  isPersistTagsInSidecarFile
-} from '-/reducers/app';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import mgrs from 'mgrs';
 import { Pro } from '-/pro';
 import { useTranslation } from 'react-i18next';
@@ -34,6 +30,7 @@ import { isGeoTag } from '-/utils/geo';
 import {
   getAddTagsToLibrary,
   getGeoTaggingFormat,
+  getPersistTagsInSidecarFile,
   getPrefixTagContainer,
   getTagColor,
   getTagDelimiter,
@@ -53,8 +50,12 @@ import {
   extractTags
 } from '@tagspaces/tagspaces-common/paths';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import GlobalSearch from '-/services/search-index';
 import { getLocations } from '-/reducers/locations';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useFsActionsContext } from '-/hooks/useFsActionsContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 
 type TaggingActionsContextData = {
   addTags: (
@@ -93,14 +94,16 @@ export const TaggingActionsContextProvider = ({
 }: TaggingActionsContextProviderProps) => {
   const { t } = useTranslation();
   const { openedEntries, updateOpenedFile } = useOpenedEntryContext();
+  const { updateCurrentDirEntry } = useDirectoryContentContext();
+  const { persistTagsInSidecarFile } = useCurrentLocationContext();
+  const { getIndex, indexUpdateSidecarTags } = useLocationIndexContext();
+  const { renameFile } = useFsActionsContext();
+  const { showNotification } = useNotificationContext();
   const dispatch: AppDispatch = useDispatch();
   const geoTaggingFormat = useSelector(getGeoTaggingFormat);
   const addTagsToLibrary = useSelector(getAddTagsToLibrary);
   const tagBackgroundColor: string = useSelector(getTagColor);
   const tagTextColor: string = useSelector(getTagTextColor);
-  const persistTagsInSidecarFile: boolean = useSelector(
-    isPersistTagsInSidecarFile
-  );
   const tagDelimiter: string = useSelector(getTagDelimiter);
   const prefixTagContainer: boolean = useSelector(getPrefixTagContainer);
   const locations: TS.Location[] = useSelector(getLocations);
@@ -136,10 +139,8 @@ export const TaggingActionsContextProvider = ({
             tag.title = defaultTagLocation;
             dispatch(AppActions.toggleEditTagDialog(tag));
           } else {
-            dispatch(
-              AppActions.showNotification(
-                t('core:thisFunctionalityIsAvailableInPro' as any) as string
-              )
+            showNotification(
+              t('core:thisFunctionalityIsAvailableInPro' as any) as string
             );
           }
         } else if (tag.functionality === 'dateTagging') {
@@ -149,10 +150,8 @@ export const TaggingActionsContextProvider = ({
             tag.title = formatDateTime4Tag(new Date(), true); // defaultTagDate;
             dispatch(AppActions.toggleEditTagDialog(tag));
           } else {
-            dispatch(
-              AppActions.showNotification(
-                t('core:thisFunctionalityIsAvailableInPro' as any) as string
-              )
+            showNotification(
+              t('core:thisFunctionalityIsAvailableInPro' as any) as string
             );
           }
         } else {
@@ -286,9 +285,7 @@ export const TaggingActionsContextProvider = ({
           return saveMetaDataPromise(path, updatedFsEntryMeta)
             .then(() => {
               // TODO rethink this updateCurrentDirEntry and not need for KanBan
-              dispatch(
-                AppActions.reflectUpdateSidecarTags(path, newTags, updateIndex)
-              );
+              reflectUpdateSidecarTags(path, newTags, updateIndex);
               updateOpenedFile(path, {
                 id: 'opened_entry_id',
                 tags: newTags
@@ -297,12 +294,10 @@ export const TaggingActionsContextProvider = ({
             })
             .catch(err => {
               console.warn('Error adding tags for ' + path + ' with ' + err);
-              dispatch(
-                AppActions.showNotification(
-                  t('core:addingTagsFailed' as any) as string,
-                  'error',
-                  true
-                )
+              showNotification(
+                t('core:addingTagsFailed' as any) as string,
+                'error',
+                true
               );
               return false;
             });
@@ -312,19 +307,15 @@ export const TaggingActionsContextProvider = ({
         return saveMetaDataPromise(path, newFsEntryMeta)
           .then(() => {
             // TODO rethink this updateCurrentDirEntry and not need for KanBan
-            dispatch(
-              AppActions.reflectUpdateSidecarTags(path, tags, updateIndex)
-            );
+            reflectUpdateSidecarTags(path, tags, updateIndex);
             return updateOpenedFile(path, { id: '', tags }); //, changed: true });
           })
           .catch(error => {
             console.warn('Error adding tags for ' + path + ' with ' + error);
-            dispatch(
-              AppActions.showNotification(
-                t('core:addingTagsFailed' as any) as string,
-                'error',
-                true
-              )
+            showNotification(
+              t('core:addingTagsFailed' as any) as string,
+              'error',
+              true
             );
             return true;
           });
@@ -361,7 +352,7 @@ export const TaggingActionsContextProvider = ({
             tagDelimiter,
             prefixTagContainer
           );
-        return dispatch(AppActions.renameFile(path, newFilePath));
+        return renameFile(path, newFilePath);
       }
     } else {
       // Handling tags in filename by no sidecar
@@ -393,14 +384,14 @@ export const TaggingActionsContextProvider = ({
           prefixTagContainer
         );
       if (path !== newFilePath) {
-        return dispatch(AppActions.renameFile(path, newFilePath));
+        return renameFile(path, newFilePath);
       }
     }
     return Promise.resolve(false);
 
     function getNonExistingTags(
       newTagsArray: Array<TS.Tag>,
-      fileTagsArray: Array<string>,
+      fileTagsArray: string[],
       sideCarTagsArray: Array<TS.Tag>
     ) {
       const newTags = [];
@@ -491,11 +482,9 @@ export const TaggingActionsContextProvider = ({
         prefixTagContainer
       );
       if (newFileName !== fileName) {
-        await dispatch(
-          AppActions.renameFile(
-            path,
-            containingDirectoryPath + PlatformIO.getDirSeparator() + newFileName
-          )
+        await renameFile(
+          path,
+          containingDirectoryPath + PlatformIO.getDirSeparator() + newFileName
         );
       }
     } else {
@@ -538,19 +527,15 @@ export const TaggingActionsContextProvider = ({
                 tags: newTagsArray
               });
               // TODO rethink this updateCurrentDirEntry and not need for KanBan
-              dispatch(
-                AppActions.reflectUpdateSidecarTags(path, newTagsArray, true)
-              );
+              reflectUpdateSidecarTags(path, newTagsArray, true);
               return true;
             })
             .catch(err => {
               console.warn('Error adding tags for ' + path + ' with ' + err);
-              dispatch(
-                AppActions.showNotification(
-                  t('core:addingTagsFailed' as any) as string,
-                  'error',
-                  true
-                )
+              showNotification(
+                t('core:addingTagsFailed' as any) as string,
+                'error',
+                true
               );
             });
           return true;
@@ -571,19 +556,15 @@ export const TaggingActionsContextProvider = ({
                 tags: fsEntryMeta.tags
               });
               // TODO rethink this updateCurrentDirEntry and not need for KanBan
-              dispatch(
-                AppActions.reflectUpdateSidecarTags(path, fsEntryMeta.tags)
-              );
+              reflectUpdateSidecarTags(path, fsEntryMeta.tags);
               return true;
             })
             .catch(err => {
               console.warn('Error adding tags for ' + path + ' with ' + err);
-              dispatch(
-                AppActions.showNotification(
-                  t('core:addingTagsFailed' as any) as string,
-                  'error',
-                  true
-                )
+              showNotification(
+                t('core:addingTagsFailed' as any) as string,
+                'error',
+                true
               );
             });
         });
@@ -680,19 +661,17 @@ export const TaggingActionsContextProvider = ({
         };
         return saveMetaDataPromise(path, updatedFsEntryMeta)
           .then(() => {
-            dispatch(AppActions.reflectUpdateSidecarTags(newFilePath, newTags));
+            reflectUpdateSidecarTags(newFilePath, newTags);
             return true;
           })
           .catch(err => {
             console.warn(
               'Removing sidecar tags failed ' + path + ' with ' + err
             );
-            dispatch(
-              AppActions.showNotification(
-                t('core:removingSidecarTagsFailed' as any) as string,
-                'error',
-                true
-              )
+            showNotification(
+              t('core:removingSidecarTagsFailed' as any) as string,
+              'error',
+              true
             );
             return false;
           });
@@ -744,9 +723,7 @@ export const TaggingActionsContextProvider = ({
               prefixTagContainer
             );
           if (path !== newFilePath) {
-            const success = await dispatch(
-              AppActions.renameFile(path, newFilePath)
-            );
+            const success = await renameFile(path, newFilePath);
             if (!success) {
               reject(new Error('Error renaming file'));
               return;
@@ -765,21 +742,12 @@ export const TaggingActionsContextProvider = ({
   }
 
   function collectTagsFromLocation(tagGroup: TS.TagGroup) {
-    if (GlobalSearch.getInstance().getIndex().length < 1) {
-      dispatch(
-        AppActions.showNotification(
-          'Please index location first',
-          'error',
-          true
-        )
-      );
+    if (getIndex().length < 1) {
+      showNotification('Please index location first', 'error', true);
       return true;
     }
 
-    const uniqueTags = collectTagsFromIndex(
-      GlobalSearch.getInstance().getIndex(),
-      tagGroup
-    );
+    const uniqueTags = collectTagsFromIndex(getIndex(), tagGroup);
     if (uniqueTags.length > 0) {
       const changedTagGroup = {
         ...tagGroup,
@@ -818,6 +786,23 @@ export const TaggingActionsContextProvider = ({
     return uniqueTags;
   }
 
+  const reflectUpdateSidecarTags = useMemo(() => {
+    return (path: string, tags: Array<TS.Tag>, updateIndex = true) => {
+      // to reload cell in KanBan if add/remove sidecar tags
+      // @ts-ignore
+      const action: TS.EditedEntryAction = `edit${tags
+        .map(tag => tag.title)
+        .join()}`;
+      dispatch(AppActions.reflectEditedEntryPaths([{ action, path }])); //[{ [path]: tags }]));
+      // @ts-ignore
+      updateCurrentDirEntry(path, { tags });
+
+      if (updateIndex) {
+        indexUpdateSidecarTags(path, tags);
+      }
+    };
+  }, [updateCurrentDirEntry]);
+
   const context = useMemo(() => {
     return {
       addTags,
@@ -828,7 +813,12 @@ export const TaggingActionsContextProvider = ({
       removeAllTags,
       collectTagsFromLocation
     };
-  }, [openedEntries, persistTagsInSidecarFile, addTagsToLibrary]);
+  }, [
+    openedEntries,
+    persistTagsInSidecarFile,
+    addTagsToLibrary,
+    reflectUpdateSidecarTags
+  ]);
 
   return (
     <TaggingActionsContext.Provider value={context}>

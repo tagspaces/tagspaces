@@ -36,15 +36,14 @@ import AppConfig from '-/AppConfig';
 import {
   actions as AppActions,
   AppDispatch,
-  getDirectoryPath,
   getLastSelectedEntry
 } from '-/reducers/app';
 import PlatformIO from '-/services/platform-facade';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { dirNameValidation, fileNameValidation } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useFsActionsContext } from '-/hooks/useFsActionsContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
   open: boolean;
@@ -54,16 +53,11 @@ interface Props {
 function RenameEntryDialog(props: Props) {
   const { open, onClose } = props;
   const { t } = useTranslation();
-  const { renameDirectory } = useFsActionsContext();
-  const currentDirectoryPath = useSelector(getDirectoryPath);
+  const { renameDirectory, renameFile } = useFsActionsContext();
+  const { currentDirectoryPath } = useDirectoryContentContext();
   const [inputError, setInputError] = useState<boolean>(false);
   const disableConfirmButton = useRef<boolean>(true);
   const lastSelectedEntry = useSelector(getLastSelectedEntry);
-  const dispatch: AppDispatch = useDispatch();
-
-  const renameFile = (source, target) => {
-    dispatch(AppActions.renameFile(source, target));
-  };
 
   let defaultName = '';
   let originPath;
@@ -144,6 +138,7 @@ function RenameEntryDialog(props: Props) {
 
   const onConfirm = () => {
     if (!disableConfirmButton.current) {
+      onClose();
       if (isFile) {
         const fileDirectory = extractContainingDirectoryPath(
           lastSelectedEntry.path,
@@ -151,11 +146,10 @@ function RenameEntryDialog(props: Props) {
         );
         const newFilePath =
           fileDirectory + PlatformIO.getDirSeparator() + name.current;
-        renameFile(originPath, newFilePath);
+        return renameFile(originPath, newFilePath);
       } else {
-        renameDirectory(originPath, name.current);
+        return renameDirectory(originPath, name.current);
       }
-      onClose();
     }
   };
 

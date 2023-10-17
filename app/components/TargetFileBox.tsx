@@ -23,15 +23,13 @@ import { useTranslation } from 'react-i18next';
 import AppConfig from '-/AppConfig';
 import PlatformIO from '-/services/platform-facade';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  actions as AppActions,
-  AppDispatch,
-  getDirectoryPath,
-  isReadOnlyMode
-} from '-/reducers/app';
-import IOActions from '-/reducers/io-actions';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { Identifier } from 'dnd-core';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 
 type DragItem = { files: File[]; items: DataTransferItemList };
 type DragProps = { isActive: boolean; handlerId: Identifier | null };
@@ -45,9 +43,11 @@ interface Props {
 function TargetFileBox(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
+  const { readOnlyMode } = useCurrentLocationContext();
+  const { currentDirectoryPath } = useDirectoryContentContext();
+  const { uploadFilesAPI } = useIOActionsContext();
+  const { showNotification } = useNotificationContext();
   const ref = useRef<HTMLDivElement>(null);
-  const readOnlyMode = useSelector(isReadOnlyMode);
-  const directoryPath = useSelector(getDirectoryPath);
   const { setMoveCopyDialogOpened } = props;
 
   const onUploadProgress = (progress, abort, fileName) => {
@@ -56,24 +56,16 @@ function TargetFileBox(props: Props) {
 
   const handleCopyFiles = (files: Array<File>) => {
     if (readOnlyMode) {
-      dispatch(
-        AppActions.showNotification(
-          t('core:dndDisabledReadOnlyMode'),
-          'error',
-          true
-        )
-      );
+      showNotification(t('core:dndDisabledReadOnlyMode'), 'error', true);
       return Promise.reject(t('core:dndDisabledReadOnlyMode'));
     }
     if (files) {
       console.log('Dropped files: ' + JSON.stringify(files));
-      if (!directoryPath) {
-        dispatch(
-          AppActions.showNotification(
-            'Importing files failed, because no folder is opened in TagSpaces!',
-            'error',
-            true
-          )
+      if (!currentDirectoryPath) {
+        showNotification(
+          'Importing files failed, because no folder is opened in TagSpaces!',
+          'error',
+          true
         );
         return Promise.reject(
           new Error(
@@ -83,9 +75,7 @@ function TargetFileBox(props: Props) {
       }
       dispatch(AppActions.resetProgress());
       dispatch(AppActions.toggleUploadDialog());
-      return dispatch(
-        IOActions.uploadFilesAPI(files, directoryPath, onUploadProgress)
-      )
+      return uploadFilesAPI(files, currentDirectoryPath, onUploadProgress)
         .then((fsEntries: Array<TS.FileSystemEntry>) => {
           dispatch(AppActions.reflectCreateEntries(fsEntries));
           return true;
@@ -118,7 +108,7 @@ function TargetFileBox(props: Props) {
         isActive: m.isOver({ shallow: true }) && m.canDrop()
       })
     }),
-    [directoryPath]
+    [currentDirectoryPath]
   );
 
   drop(ref);

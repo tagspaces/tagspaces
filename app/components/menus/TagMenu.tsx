@@ -26,17 +26,14 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { getMaxSearchResults } from '-/reducers/settings';
-import {
-  AppDispatch,
-  getSelectedEntries,
-  isReadOnlyMode
-} from '-/reducers/app';
+import { AppDispatch, getSelectedEntries } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { useTranslation } from 'react-i18next';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 const isTagLibraryReadOnly =
   window.ExtTagLibrary && window.ExtTagLibrary.length > 0;
@@ -61,21 +58,19 @@ function TagMenu(props: Props) {
   } = props;
 
   const { t } = useTranslation();
-  const dispatch: AppDispatch = useDispatch();
   const { addTags } = useTaggingActionsContext();
-  const readOnlyMode = useSelector(isReadOnlyMode);
+  const { readOnlyMode } = useCurrentLocationContext();
+  const { setSearchQuery } = useDirectoryContentContext();
   const maxSearchResults: number = useSelector(getMaxSearchResults);
   const selectedEntries = useSelector(getSelectedEntries);
 
   function showFilesWithThisTag() {
     if (selectedTag) {
-      dispatch(
-        LocationIndexActions.setSearchQuery({
-          tagsAND: [selectedTag],
-          maxSearchResults: maxSearchResults,
-          executeSearch: true
-        })
-      );
+      setSearchQuery({
+        tagsAND: [selectedTag],
+        maxSearchResults: maxSearchResults,
+        executeSearch: true
+      });
     }
     onClose();
   }

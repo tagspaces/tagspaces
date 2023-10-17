@@ -24,13 +24,7 @@ import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Grid from '@mui/material/Grid';
 import AppConfig from '-/AppConfig';
-import {
-  actions as AppActions,
-  AppDispatch,
-  NotificationTypes
-} from '-/reducers/app';
-import IOActions from '-/reducers/io-actions';
-import { TS } from '-/tagspaces.namespace';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import PlatformIO from '-/services/platform-facade';
 import Tooltip from '-/components/Tooltip';
 import TextField from '@mui/material/TextField';
@@ -40,6 +34,8 @@ import FileUploadContainer, {
   FileUploadContainerRef
 } from '-/components/FileUploadContainer';
 import { useTranslation } from 'react-i18next';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 const PREFIX = 'CreateDirectory';
 
@@ -62,6 +58,8 @@ interface Props {
 function CreateDirectory(props: Props) {
   const { onClose, tidPrefix } = props;
   const { t } = useTranslation();
+  const { downloadFile } = useIOActionsContext();
+  const { showNotification } = useNotificationContext();
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
   const dispatch: AppDispatch = useDispatch();
 
@@ -122,14 +120,12 @@ function CreateDirectory(props: Props) {
         if (PlatformIO.haveObjectStoreSupport() || AppConfig.isElectron) {
           dispatch(AppActions.resetProgress());
           dispatch(AppActions.toggleUploadDialog());
-          dispatch(
-            IOActions.downloadFile(
-              fileUrl.current,
-              targetDirectoryPath +
-                PlatformIO.getDirSeparator() +
-                decodeURIComponent(fileName),
-              onUploadProgress
-            )
+          downloadFile(
+            fileUrl.current,
+            targetDirectoryPath +
+              PlatformIO.getDirSeparator() +
+              decodeURIComponent(fileName),
+            onUploadProgress
           )
             .then(() => {
               if (PlatformIO.haveObjectStoreSupport()) {
@@ -142,13 +138,7 @@ function CreateDirectory(props: Props) {
               dispatch(
                 AppActions.setProgress(fileUrl.current, -1, t('core:errorCORS'))
               );
-              dispatch(
-                AppActions.showNotification(
-                  'downloadFile error' + e.message,
-                  NotificationTypes.error,
-                  true
-                )
-              );
+              showNotification('downloadFile error' + e.message, 'error', true);
             });
         } else {
           saveAs(fileUrl.current, decodeURIComponent(fileName));

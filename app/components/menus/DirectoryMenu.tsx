@@ -33,23 +33,25 @@ import PlatformIO from '-/services/platform-facade';
 import {
   actions as AppActions,
   AppDispatch,
-  getDirectoryPath,
-  getLastSelectedEntryPath,
-  getSelectedEntries,
-  isReadOnlyMode
+  getSelectedEntries
 } from '-/reducers/app';
 import FileUploadContainer, {
   FileUploadContainerRef
 } from '-/components/FileUploadContainer';
 import { TS } from '-/tagspaces.namespace';
-import { getRelativeEntryPath } from '-/services/utils-io';
+import { getRelativeEntryPath, toFsEntry } from '-/services/utils-io';
 import { PerspectiveIDs } from '-/perspectives';
 import PlatformFacade from '-/services/platform-facade';
 import { getDirectoryMenuItems } from '-/perspectives/common/DirectoryMenuItems';
-import { getCurrentLocation, getLocations } from '-/reducers/locations';
+import { getLocations } from '-/reducers/locations';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 
 interface Props {
   open: boolean;
@@ -58,11 +60,10 @@ interface Props {
   anchorEl: Element;
   directoryPath: string;
   openAddRemoveTagsDialog?: () => void;
-  reflectCreateEntry?: (path: string, isFile: boolean) => void;
   switchPerspective?: (perspectiveId: string) => void;
   perspectiveMode?: boolean;
   openRenameDirectoryDialog: () => void;
-  openMoveCopyFilesDialog: () => void;
+  openMoveCopyFilesDialog?: () => void;
   mouseX?: number;
   mouseY?: number;
 }
@@ -71,6 +72,15 @@ function DirectoryMenu(props: Props) {
   const { t } = useTranslation();
   const { openEntry } = useOpenedEntryContext();
   const { addTags } = useTaggingActionsContext();
+  const { currentLocation, readOnlyMode } = useCurrentLocationContext();
+  const { showNotification } = useNotificationContext();
+  const {
+    openDirectory,
+    currentDirectoryPath,
+    setCurrentDirectoryPerspective
+  } = useDirectoryContentContext();
+  const { reloadDirectory } = useIOActionsContext();
+  const { reflectCreateEntry } = useLocationIndexContext();
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
   const {
     open,
@@ -78,34 +88,21 @@ function DirectoryMenu(props: Props) {
     anchorEl,
     mouseX,
     mouseY,
-    directoryPath,
     openAddRemoveTagsDialog,
     openMoveCopyFilesDialog,
     openRenameDirectoryDialog,
-    switchPerspective
+    switchPerspective,
+    perspectiveMode
   } = props;
-  const currentLocation: TS.Location = useSelector(getCurrentLocation);
+  const directoryPath = props.directoryPath || currentDirectoryPath;
   const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
     getSelectedEntries
   );
   const locations: Array<TS.Location> = useSelector(getLocations);
-  const currentDirectoryPath = useSelector(getDirectoryPath);
-  const lastSelectedEntryPath = useSelector(getLastSelectedEntryPath);
-  const readOnlyMode = useSelector(isReadOnlyMode);
   const dispatch: AppDispatch = useDispatch();
-
-  const loadDirectoryContent = (path, generateThumbnails, loadDirMeta) => {
-    return dispatch(
-      AppActions.loadDirectoryContent(path, generateThumbnails, loadDirMeta)
-    );
-  };
 
   const toggleCreateDirectoryDialog = () => {
     dispatch(AppActions.toggleCreateDirectoryDialog());
-  };
-
-  const reflectCreateEntry = (path, isFile) => {
-    dispatch(AppActions.reflectCreateEntry(path, isFile));
   };
 
   const toggleNewFileDialog = () => {
@@ -124,42 +121,37 @@ function DirectoryMenu(props: Props) {
     dispatch(AppActions.setSelectedEntries(selectedEntries));
   };
 
-  const showNotification = (text, notificationType?, autohide?) => {
-    dispatch(AppActions.showNotification(text, notificationType, autohide));
-  };
-
   const toggleProTeaser = slidePage => {
     dispatch(AppActions.toggleProTeaser(slidePage));
   };
 
-  const setCurrentDirectoryPerspective = perspective => {
-    dispatch(AppActions.setCurrentDirectoryPerspective(perspective));
-  };
-
   function generateFolderLink() {
-    const entryFromIndex = selectedEntries[0]['locationID'];
-    const locationID = entryFromIndex
-      ? selectedEntries[0]['locationID']
-      : currentLocation.uuid;
-    const entryPath = selectedEntries[0].path;
+    let locationID = currentLocation.uuid;
+    let entryPath = currentDirectoryPath;
+    if (selectedEntries && selectedEntries.length > 0) {
+      if (selectedEntries[0]['locationID']) {
+        locationID = selectedEntries[0]['locationID'];
+      }
+      entryPath = selectedEntries[0].path;
+    }
     const tmpLoc = locations.find(location => location.uuid === locationID);
     const relativePath = getRelativeEntryPath(tmpLoc, entryPath);
     return generateSharingLink(locationID, undefined, relativePath);
   }
 
   function copySharingLink() {
-    if (selectedEntries && selectedEntries.length === 1) {
-      const sharingLink = generateFolderLink();
-      navigator.clipboard
-        .writeText(sharingLink)
-        .then(() => {
-          showNotification(t('core:sharingLinkCopied'));
-          return true;
-        })
-        .catch(() => {
-          showNotification(t('core:sharingLinkFailed'));
-        });
-    }
+    //if (selectedEntries && selectedEntries.length === 1) {
+    const sharingLink = generateFolderLink();
+    navigator.clipboard
+      .writeText(sharingLink)
+      .then(() => {
+        showNotification(t('core:sharingLinkCopied'));
+        return true;
+      })
+      .catch(() => {
+        showNotification(t('core:sharingLinkFailed'));
+      });
+    //}
   }
 
   /*  const [
@@ -167,12 +159,8 @@ function DirectoryMenu(props: Props) {
     setIsCreateDirectoryDialogOpened
   ] = useState(false);*/
 
-  function reloadDirectory() {
-    return loadDirectoryContent(directoryPath, true, true);
-  }
-
-  function openDirectory() {
-    return loadDirectoryContent(directoryPath, true, true);
+  function openDir() {
+    return openDirectory(directoryPath);
   }
 
   function showProperties() {
@@ -243,17 +231,17 @@ function DirectoryMenu(props: Props) {
   }
 
   function showInFileManager() {
-    dispatch(AppActions.openDirectory(directoryPath));
+    PlatformIO.openDirectory(directoryPath);
   }
 
   function openInNewWindow() {
     // onClose();
-    if (selectedEntries && selectedEntries.length === 1) {
-      const sharingLink = generateFolderLink();
-      const newInstanceLink =
-        window.location.href.split('?')[0] + '?' + sharingLink.split('?')[1];
-      PlatformIO.createNewInstance(newInstanceLink);
-    }
+    //if (selectedEntries && selectedEntries.length === 1) {
+    const sharingLink = generateFolderLink();
+    const newInstanceLink =
+      window.location.href.split('?')[0] + '?' + sharingLink.split('?')[1];
+    PlatformIO.createNewInstance(newInstanceLink);
+    //}
   }
 
   function addExistingFile() {
@@ -285,7 +273,6 @@ Do you want to continue?`)
       };
       Pro.MacTagsImport.importTags(directoryPath, entryCallback)
         .then(() => {
-          // loadDirectoryContent(directoryPath); // TODO after first import tags is not imported without reloadDirContent
           toggleProgressDialog();
           console.log('Import tags succeeded ' + directoryPath);
           showNotification(
@@ -342,7 +329,8 @@ Do you want to continue?`)
           'default',
           true
         );
-        reflectCreateEntry(newFilePath, true);
+        reflectCreateEntry(toFsEntry(newFilePath, true));
+        dispatch(AppActions.reflectCreateEntry(newFilePath, true));
         return true;
       })
       .catch(error => {
@@ -416,11 +404,11 @@ Do you want to continue?`)
   const menuItems = getDirectoryMenuItems(
     currentLocation,
     selectedEntries.length,
-    lastSelectedEntryPath !== currentDirectoryPath,
+    perspectiveMode, // lastSelectedEntryPath !== currentDirectoryPath,
     readOnlyMode,
     onClose,
     t,
-    openDirectory,
+    openDir,
     reloadDirectory,
     openRenameDirectoryDialog,
     openMoveCopyFilesDialog,

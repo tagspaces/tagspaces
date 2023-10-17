@@ -31,10 +31,6 @@ import ArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import Typography from '@mui/material/Typography';
 import ListItem from '@mui/material/ListItem';
 import {
-  actions as LocationIndexActions,
-  getSearchQuery
-} from '-/reducers/location-index';
-import {
   actions as SettingsActions,
   getFileEditHistory,
   getFileOpenHistory,
@@ -47,20 +43,17 @@ import { Pro } from '../pro';
 import { actions as SearchActions, getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
 import SearchMenu from '-/components/menus/SearchMenu';
-import { actions as AppActions } from '-/reducers/app';
 import HistoryMenu from '-/components/menus/HistoryMenu';
 import BookmarksMenu from '-/components/menus/BookmarksMenu';
 import { classes, SidePanel } from '-/components/SidePanels.css';
 import { useTranslation } from 'react-i18next';
 import RenderHistory from '-/components/RenderHistory';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 
 interface Props {
   style?: any;
-  searchQuery: TS.SearchQuery;
-  setSearchQuery: (searchQuery: TS.SearchQuery) => void;
   searches: Array<TS.SearchQuery>;
-  // searchLocationIndex: (searchQuery: TS.SearchQuery) => void;
-  // searchAllLocations: (searchQuery: TS.SearchQuery) => void;
   showUnixHiddenEntries: boolean;
   addSearches: (searches: Array<TS.SearchQuery>) => void;
   reduceHeightBy: number;
@@ -81,6 +74,7 @@ const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 
 function StoredSearches(props: Props) {
   const { t } = useTranslation();
+  const { setSearchQuery } = useDirectoryContentContext();
   const [saveSearchDialogOpened, setSaveSearchDialogOpened] = useState<
     TS.SearchQuery
   >(undefined);
@@ -135,9 +129,10 @@ function StoredSearches(props: Props) {
       return true;
     }
 
-    props.setSearchQuery({
+    setSearchQuery({
       ...savedSearch,
-      showUnixHiddenEntries: props.showUnixHiddenEntries
+      showUnixHiddenEntries: props.showUnixHiddenEntries,
+      executeSearch: true
     });
   };
 
@@ -531,7 +526,7 @@ function StoredSearches(props: Props) {
             onClose={(searchQuery: TS.SearchQuery) => {
               setSaveSearchDialogOpened(undefined);
               if (searchQuery) {
-                props.setSearchQuery({
+                setSearchQuery({
                   ...searchQuery,
                   showUnixHiddenEntries: props.showUnixHiddenEntries
                 });
@@ -583,7 +578,6 @@ function StoredSearches(props: Props) {
 
 function mapStateToProps(state) {
   return {
-    searchQuery: getSearchQuery(state),
     searches: getSearches(state),
     showUnixHiddenEntries: getShowUnixHiddenEntries(state),
     storedSearchesVisible: getStoredSearchesVisible(state),
@@ -598,7 +592,6 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
       addSearches: SearchActions.addSearches,
-      setSearchQuery: LocationIndexActions.setSearchQuery,
       setStoredSearchesVisible: SettingsActions.setStoredSearchesVisible,
       setShowBookmarks: SettingsActions.setShowBookmarks,
       setFileOpenHistory: SettingsActions.setFileOpenHistory,
@@ -616,7 +609,6 @@ const areEqual = (prevProp, nextProp) =>
   nextProp.folderOpenHistory === prevProp.folderOpenHistory &&
   nextProp.fileEditHistory === prevProp.fileEditHistory &&
   nextProp.indexing === prevProp.indexing &&
-  nextProp.searchQuery === prevProp.searchQuery &&
   nextProp.currentDirectory === prevProp.currentDirectory &&
   nextProp.indexedEntriesCount === prevProp.indexedEntriesCount &&
   JSON.stringify(nextProp.searches) === JSON.stringify(prevProp.searches);

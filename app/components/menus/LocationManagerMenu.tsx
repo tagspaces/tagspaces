@@ -32,13 +32,14 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useDispatch } from 'react-redux';
 import AppConfig from '-/AppConfig';
 import { Pro } from '../../pro';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
+import { AppDispatch } from '-/reducers/app';
 import Links from '-/content/links';
 import { ProLabel } from '-/components/HelperComponents';
-import { actions as LocationIndexActions } from '-/reducers/location-index';
 import { OpenLinkIcon, HelpIcon } from '-/components/CommonIcons';
 import { openURLExternally } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 
 interface Props {
   classes: any;
@@ -57,6 +58,9 @@ function LocationManagerMenu(props: Props) {
     toggleOpenLinkDialog
   } = props;
   const { t } = useTranslation();
+
+  const { createLocationsIndexes } = useLocationIndexContext();
+  const { closeAllLocations } = useCurrentLocationContext();
   const [
     locationManagerMenuAnchorEl,
     setLocationManagerMenuAnchorEl
@@ -153,7 +157,7 @@ function LocationManagerMenu(props: Props) {
       data-tid="locationManagerMenuCloseAll"
       onClick={() => {
         setLocationManagerMenuAnchorEl(null);
-        dispatch(AppActions.closeAllLocations());
+        closeAllLocations();
       }}
     >
       <ListItemIcon>
@@ -169,7 +173,7 @@ function LocationManagerMenu(props: Props) {
       data-tid="updateAllLocationIndexes"
       onClick={() => {
         setLocationManagerMenuAnchorEl(null);
-        dispatch(LocationIndexActions.createLocationsIndexes());
+        createLocationsIndexes();
       }}
     >
       <ListItemIcon>

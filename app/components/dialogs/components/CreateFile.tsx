@@ -18,20 +18,14 @@
 
 import React, { useReducer, useRef, useState } from 'react';
 import { styled } from '@mui/material/styles';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import AppConfig from '-/AppConfig';
-import {
-  actions as AppActions,
-  getDirectoryPath,
-  AppDispatch
-} from '-/reducers/app';
 import { getFirstRWLocation } from '-/reducers/locations';
-import { TS } from '-/tagspaces.namespace';
 import Tooltip from '-/components/Tooltip';
 import TextField from '@mui/material/TextField';
 import FormHelperText from '@mui/material/FormHelperText';
@@ -39,8 +33,9 @@ import { FormControl } from '@mui/material';
 import { fileNameValidation } from '-/services/utils-io';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
 import { useTranslation } from 'react-i18next';
-import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 const PREFIX = 'CreateFile';
 
@@ -65,10 +60,12 @@ function CreateFile(props: Props) {
   const { onClose, tidPrefix } = props;
   const { t } = useTranslation();
 
-  const dispatch: AppDispatch = useDispatch();
-  const firstRWLocation = useSelector(getFirstRWLocation);
-  const currentDirectoryPath: string | null = useSelector(getDirectoryPath);
+  //const dispatch: AppDispatch = useDispatch();
+  const { openLocation } = useCurrentLocationContext();
+  const { currentDirectoryPath } = useDirectoryContentContext();
   const { targetDirectoryPath } = useTargetPathContext();
+
+  const firstRWLocation = useSelector(getFirstRWLocation);
 
   const fileName = useRef<string>(
     'note' +
@@ -93,7 +90,7 @@ function CreateFile(props: Props) {
 
   function loadLocation() {
     if (!currentDirectoryPath && firstRWLocation) {
-      dispatch(AppActions.openLocation(firstRWLocation));
+      openLocation(firstRWLocation);
     }
   }
 

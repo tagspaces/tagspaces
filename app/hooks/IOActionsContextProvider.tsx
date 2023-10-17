@@ -1,6 +1,6 @@
 /**
  * TagSpaces - universal file and folder organizer
- * Copyright (C) 2017-present TagSpaces UG (haftungsbeschraenkt)
+ * Copyright (C) 2023-present TagSpaces UG (haftungsbeschraenkt)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License (version 3) as
@@ -16,68 +16,153 @@
  *
  */
 
-import { Progress } from 'aws-sdk/clients/s3';
+import React, { createContext, useMemo } from 'react';
+import { Pro } from '-/pro';
+import { useTranslation } from 'react-i18next';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 import {
-  enhanceEntry,
-  loadJSONString
-} from '@tagspaces/tagspaces-common/utils-io';
-import {
+  extractDirectoryName,
   extractFileName,
+  getBackupFileDir,
+  getMetaDirectoryPath,
   getMetaFileLocationForFile,
   getThumbFileLocationForFile,
-  getBackupFileDir,
-  normalizePath,
-  getMetaDirectoryPath,
-  extractDirectoryName,
-  joinPaths
+  joinPaths,
+  normalizePath
 } from '@tagspaces/tagspaces-common/paths';
-import AppConfig from '-/AppConfig';
-import { actions as AppActions } from './app';
+import PlatformIO from '-/services/platform-facade';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
+import { useDispatch } from 'react-redux';
 import {
   copyFilesPromise,
   getThumbPath,
   loadFileMetaDataPromise,
-  renameFilesPromise
+  renameFilesPromise,
+  toFsEntry
 } from '-/services/utils-io';
-import i18n from '../services/i18n';
-import { Pro } from '../pro';
-import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
+import { Progress } from 'aws-sdk/clients/s3';
+import AppConfig from '-/AppConfig';
 import { generateThumbnailPromise } from '-/services/thumbsgenerator';
 import { base64ToArrayBuffer } from '-/utils/dom';
+import {
+  enhanceEntry,
+  loadJSONString
+} from '@tagspaces/tagspaces-common/utils-io';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { loadCurrentDirMeta } from '-/services/meta-loader';
 
-const actions = {
-  extractContent: (
-    options: Object = {
+type extractOptions = {
+  EXIFGeo?: boolean;
+  EXIFDateTime?: boolean;
+  IPTCDescription?: boolean;
+  IPTCTags?: boolean;
+};
+type IOActionsContextData = {
+  extractContent: (options?: extractOptions, addTags?) => Promise<boolean>;
+  moveDirs: (
+    dirPaths: Array<string>,
+    targetPath: string,
+    onProgress?
+  ) => Promise<boolean>;
+  moveFiles: (
+    paths: Array<string>,
+    targetPath: string,
+    onProgress?
+  ) => Promise<boolean>;
+  copyDirs: (
+    dirPaths: Array<any>,
+    targetPath: string,
+    onProgress?
+  ) => Promise<boolean>;
+  copyFiles: (
+    paths: Array<string>,
+    targetPath: string,
+    onProgress?
+  ) => Promise<boolean>;
+  downloadFile: (
+    url: string,
+    targetPath: string,
+    onDownloadProgress?: (progress: Progress, abort, fileName?) => void
+  ) => Promise<TS.FileSystemEntry>;
+  uploadFilesAPI: (
+    files: Array<File>,
+    targetPath: string,
+    onUploadProgress?: (progress: Progress, abort, fileName?) => void,
+    uploadMeta?: boolean
+  ) => Promise<TS.FileSystemEntry[]>;
+  uploadFiles: (
+    paths: Array<string>,
+    targetPath: string,
+    onUploadProgress?: (progress: Progress, abort, fileName?) => void,
+    uploadMeta?: boolean
+  ) => Promise<TS.FileSystemEntry[]>;
+  reloadDirectory: (dirPath?: string) => Promise<boolean>;
+};
+
+export const IOActionsContext = createContext<IOActionsContextData>({
+  extractContent: () => Promise.resolve(false),
+  moveDirs: () => Promise.resolve(false),
+  moveFiles: () => Promise.resolve(false),
+  copyDirs: () => Promise.resolve(false),
+  copyFiles: () => Promise.resolve(false),
+  downloadFile: () => Promise.resolve(undefined),
+  uploadFilesAPI: () => Promise.resolve([]),
+  uploadFiles: () => Promise.resolve([]),
+  reloadDirectory: () => Promise.resolve(false)
+});
+
+export type IOActionsContextProviderProps = {
+  children: React.ReactNode;
+};
+
+export const IOActionsContextProvider = ({
+  children
+}: IOActionsContextProviderProps) => {
+  const { t } = useTranslation();
+  const dispatch: AppDispatch = useDispatch();
+  const { showNotification, hideNotifications } = useNotificationContext();
+  const {
+    currentDirectoryEntries,
+    currentDirectoryPath,
+    openDirectory
+  } = useDirectoryContentContext();
+  const {
+    reflectDeleteEntry,
+    reflectCreateEntry,
+    reflectDeleteEntries
+  } = useLocationIndexContext();
+
+  function extractContent(
+    options: extractOptions = {
       EXIFGeo: true,
       EXIFDateTime: true,
       IPTCDescription: true,
       IPTCTags: true
     },
     addTags?
-  ) => (dispatch: (actions: any) => void, getState: () => any) => {
-    const { currentDirectoryEntries } = getState().app;
+  ): Promise<boolean> {
     if (!Pro || !Pro.ContentExtractor) {
-      dispatch(
-        AppActions.showNotification(
-          i18n.t('core:thisFunctionalityIsAvailableInPro')
-        )
-      );
-      return false;
+      showNotification(t('core:thisFunctionalityIsAvailableInPro'));
+      return Promise.resolve(false);
     }
+    showNotification('Extracting content...', 'info', false);
     Pro.ContentExtractor.extractContent(
       currentDirectoryEntries,
-      dispatch,
-      AppActions,
       addTags,
       options
-    );
-  },
-  moveDirs: (
+    ).then(success => {
+      hideNotifications();
+      return success;
+    });
+  }
+
+  function moveDirs(
     dirPaths: Array<any>,
     targetPath: string,
     onProgress = undefined
-  ) => (dispatch: (actions: Object) => void) => {
+  ): Promise<boolean> {
     const promises = dirPaths.map(({ path, count }) => {
       const dirName = extractDirectoryName(path, PlatformIO.getDirSeparator());
       return PlatformIO.moveDirectoryPromise(
@@ -87,23 +172,23 @@ const actions = {
       )
         .then(() => {
           console.log('Moving dir from ' + path + ' to ' + targetPath);
+          reflectDeleteEntry(path);
           dispatch(AppActions.reflectDeleteEntry(path));
           return true;
         })
         .catch(err => {
           console.warn('Moving dirs failed ', err);
-          dispatch(
-            AppActions.showNotification(i18n.t('core:copyingFoldersFailed'))
-          );
+          showNotification(t('core:copyingFoldersFailed'));
         });
     });
     return Promise.all(promises).then(() => true);
-  },
-  moveFiles: (
+  }
+
+  function moveFiles(
     paths: Array<string>,
     targetPath: string,
     onProgress = undefined
-  ) => (dispatch: (actions: Object) => Promise<boolean>) => {
+  ): Promise<boolean> {
     const moveJobs = paths.map(path => [
       path,
       normalizePath(targetPath) +
@@ -112,10 +197,9 @@ const actions = {
     ]);
     return renameFilesPromise(moveJobs, onProgress)
       .then(() => {
-        dispatch(
-          AppActions.showNotification(i18n.t('core:filesMovedSuccessful'))
-        );
+        showNotification(t('core:filesMovedSuccessful'));
         // moved files should be added to the index, if the target dir in index
+        reflectDeleteEntries(paths);
         dispatch(AppActions.reflectDeleteEntries(paths));
 
         const moveMetaJobs = [];
@@ -187,17 +271,16 @@ const actions = {
       })
       .catch(err => {
         console.warn('Moving files failed with ' + err);
-        dispatch(
-          AppActions.showNotification(i18n.t('core:copyingFilesFailed'))
-        );
+        showNotification(t('core:copyingFilesFailed'));
         return false;
       });
-  },
-  copyDirs: (
+  }
+
+  function copyDirs(
     dirPaths: Array<any>,
     targetPath: string,
     onProgress = undefined
-  ) => (dispatch: (actions: Object) => void) => {
+  ): Promise<boolean> {
     const promises = dirPaths.map(({ path, count }) => {
       const dirName = extractDirectoryName(path, PlatformIO.getDirSeparator());
       return PlatformIO.copyDirectoryPromise(
@@ -211,76 +294,58 @@ const actions = {
         })
         .catch(err => {
           console.warn('Copy dirs failed ', err);
-          dispatch(
-            AppActions.showNotification(i18n.t('core:copyingFoldersFailed'))
-          );
+          showNotification(t('core:copyingFoldersFailed'));
         });
     });
     return Promise.all(promises).then(() => true);
-  },
-  copyFiles: (paths: Array<string>, targetPath: string, onProgress) => (
-    dispatch: (actions: Object) => void
-  ) => {
-    copyFilesPromise(paths, targetPath, onProgress)
+  }
+
+  function copyFiles(
+    paths: Array<string>,
+    targetPath: string,
+    onProgress
+  ): Promise<boolean> {
+    return copyFilesPromise(paths, targetPath, onProgress)
       .then(() => {
         // todo return only copied paths
-        dispatch(
-          AppActions.showNotification(i18n.t('core:filesCopiedSuccessful'))
-        );
+        showNotification(t('core:filesCopiedSuccessful'));
         const metaPaths = paths.flatMap(path => [
           getMetaFileLocationForFile(path, PlatformIO.getDirSeparator()),
           getThumbFileLocationForFile(path, PlatformIO.getDirSeparator(), false)
         ]);
 
-        /*const targetFiles: string[] = paths.map(
-          path =>
-            normalizePath(targetPath) +
-            PlatformIO.getDirSeparator() +
-            extractFileName(path, PlatformIO.getDirSeparator())
-        );*/
-
-        copyFilesPromise(
+        return copyFilesPromise(
           metaPaths,
           getMetaDirectoryPath(targetPath),
           onProgress
         )
           .then(() => {
             console.log('Copy meta and thumbs successful');
-            /*dispatch(
-              AppActions.reflectCreateEntries(
-                targetFiles.map(filePath => toFsEntry(filePath, true))
-              )
-            );*/
             return true;
           })
           .catch(err => {
-            /*dispatch(
-              AppActions.reflectCreateEntries(
-                targetFiles.map(filePath => toFsEntry(filePath, true))
-              )
-            );*/
             console.warn('At least one meta or thumb was not copied ' + err);
+            return true;
           });
-        return true;
       })
       .catch(err => {
         console.warn('Moving files failed with ' + err);
-        dispatch(
-          AppActions.showNotification(i18n.t('core:copyingFilesFailed'))
-        );
+        showNotification(t('core:copyingFilesFailed'));
+        return false;
       });
-  },
+  }
+
   /**
    * S3 TODO work for test files only
    * @param url
    * @param targetPath
    * @param onDownloadProgress
    */
-  downloadFile: (
+  function downloadFile(
     url: string,
     targetPath: string,
     onDownloadProgress?: (progress: Progress, abort, fileName?) => void
-  ) => (dispatch: (actions: Object) => TS.FileSystemEntry) => {
+  ): Promise<TS.FileSystemEntry> {
     function saveFile(response: Response): Promise<TS.FileSystemEntry> {
       if (AppConfig.isElectron && !PlatformIO.haveObjectStoreSupport()) {
         return PlatformIO.saveBinaryFilePromise(
@@ -327,11 +392,13 @@ const actions = {
         });
       })
       .then((fsEntry: TS.FileSystemEntry) => {
+        reflectCreateEntry(fsEntry);
         dispatch(AppActions.reflectCreateEntryObj(fsEntry));
         return fsEntry;
       });
     //.catch(e => console.log(e));
-  },
+  }
+
   /**
    * with HTML5 Files API
    * @param files
@@ -340,20 +407,18 @@ const actions = {
    * @param uploadMeta - try to upload meta and thumbs if available
    * reader.onload not work for multiple files https://stackoverflow.com/questions/56178918/react-upload-multiple-files-using-window-filereader
    */
-  uploadFilesAPI: (
+  function uploadFilesAPI(
     files: Array<File>,
     targetPath: string,
     onUploadProgress?: (progress: Progress, abort, fileName?) => void,
     uploadMeta = true
-  ) => (dispatch: (actions: Object) => Promise<Array<TS.FileSystemEntry>>) => {
+  ): Promise<TS.FileSystemEntry[]> {
     if (AppConfig.isElectron || AppConfig.isCordovaiOS) {
       const arrFiles = [];
       for (let i = 0; i < files.length; i += 1) {
         arrFiles.push(files[i].path);
       }
-      return dispatch(
-        actions.uploadFiles(arrFiles, targetPath, onUploadProgress, uploadMeta)
-      );
+      return uploadFiles(arrFiles, targetPath, onUploadProgress, uploadMeta);
     }
 
     return new Promise(async resolve => {
@@ -394,12 +459,10 @@ const actions = {
           fileTargetPath
         );
         if (entryProps) {
-          dispatch(
-            AppActions.showNotification(
-              'File with the same name already exist, importing skipped!',
-              'warning',
-              true
-            )
+          showNotification(
+            'File with the same name already exist, importing skipped!',
+            'warning',
+            true
           );
         } else {
           const result = event.currentTarget
@@ -442,13 +505,10 @@ const actions = {
                 fsEntry.thumbPath = PlatformIO.getURLforPath(thumbPath);
               }
               fsEntries.push(fsEntry);
-
-              dispatch(
-                AppActions.showNotification(
-                  'File ' + fileTargetPath + ' successfully imported.',
-                  'default',
-                  true
-                )
+              showNotification(
+                'File ' + fileTargetPath + ' successfully imported.',
+                'default',
+                true
               );
               // dispatch(AppActions.reflectCreateEntry(fileTargetPath, true));
             }
@@ -456,12 +516,10 @@ const actions = {
             console.error(
               'Uploading ' + fileTargetPath + ' failed with ' + error
             );
-            dispatch(
-              AppActions.showNotification(
-                'Importing file ' + fileTargetPath + ' failed.',
-                'error',
-                true
-              )
+            showNotification(
+              'Importing file ' + fileTargetPath + ' failed.',
+              'error',
+              true
             );
           }
         }
@@ -475,7 +533,7 @@ const actions = {
         }
       }
     });
-  },
+  }
 
   /**
    * use with Electron only!
@@ -484,13 +542,13 @@ const actions = {
    * @param onUploadProgress
    * @param uploadMeta
    */
-  uploadFiles: (
+  function uploadFiles(
     paths: Array<string>,
     targetPath: string,
     onUploadProgress?: (progress: Progress, response: any) => void,
     uploadMeta = true
-  ) => (dispatch: (actions: Object) => void) =>
-    new Promise((resolve, reject) => {
+  ): Promise<TS.FileSystemEntry[]> {
+    return new Promise((resolve, reject) => {
       function uploadFile(
         filePath: string,
         fileType: string,
@@ -499,12 +557,10 @@ const actions = {
         return PlatformIO.getPropertiesPromise(filePath)
           .then(entryProps => {
             if (entryProps) {
-              dispatch(
-                AppActions.showNotification(
-                  'File with the same name already exist, importing skipped!',
-                  'warning',
-                  true
-                )
+              showNotification(
+                'File with the same name already exist, importing skipped!',
+                'warning',
+                true
               );
               dispatch(AppActions.setProgress(filePath, -1, undefined));
             } else {
@@ -533,12 +589,10 @@ const actions = {
                 })
                 .catch(err => {
                   console.error('Importing file ' + filePath + ' failed ', err);
-                  dispatch(
-                    AppActions.showNotification(
-                      'Importing file ' + filePath + ' failed.',
-                      'error',
-                      true
-                    )
+                  showNotification(
+                    'Importing file ' + filePath + ' failed.',
+                    'error',
+                    true
                   );
                   return undefined;
                 });
@@ -631,15 +685,13 @@ const actions = {
           });
           if (arrFiles.length > 0) {
             const numberOfFile = arrFiles.length;
-            dispatch(
-              AppActions.showNotification(
-                numberOfFile + ' ' + 'file(s) successfully imported.',
-                // 'Files: ' +
-                //   arrFiles.map(file => file.name).toString() +
-                //   ' successfully imported.',
-                'default',
-                true
-              )
+            showNotification(
+              numberOfFile + ' ' + 'file(s) successfully imported.',
+              // 'Files: ' +
+              //   arrFiles.map(file => file.name).toString() +
+              //   ' successfully imported.',
+              'default',
+              true
             );
 
             // Enhance entries
@@ -699,7 +751,30 @@ const actions = {
           console.log('Error import fs: ' + err);
           reject(err);
         });
-    })
-};
+    });
+  }
 
-export default actions;
+  function reloadDirectory(directoryPath?: string) {
+    return openDirectory(directoryPath ? directoryPath : currentDirectoryPath);
+  }
+
+  const context = useMemo(() => {
+    return {
+      extractContent,
+      moveDirs,
+      moveFiles,
+      copyDirs,
+      copyFiles,
+      downloadFile,
+      uploadFilesAPI,
+      uploadFiles,
+      reloadDirectory
+    };
+  }, [currentDirectoryEntries]);
+
+  return (
+    <IOActionsContext.Provider value={context}>
+      {children}
+    </IOActionsContext.Provider>
+  );
+};

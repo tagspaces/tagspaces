@@ -29,17 +29,11 @@ import {
   extractShortDirectoryName
 } from '@tagspaces/tagspaces-common/paths';
 import DirectoryMenu from './menus/DirectoryMenu';
-import { TS } from '-/tagspaces.namespace';
 import { LocalLocationIcon, CloudLocationIcon } from '-/components/CommonIcons';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
-import { getCurrentLocation } from '-/reducers/locations';
-import {
-  actions as AppActions,
-  AppDispatch,
-  getDirectoryPath
-} from '-/reducers/app';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   const backgroundColor =
@@ -79,18 +73,16 @@ const StyledBreadcrumbs = styled(Breadcrumbs)(({ theme }) => {
 interface Props {
   switchPerspective: (perspectiveId: string) => void;
   setSelectedEntries: (selectedEntries: Array<Object>) => void;
-  reflectCreateEntry: (path: string, isFile: boolean) => void;
   openRenameDirectoryDialog: () => void;
-  openMoveCopyFilesDialog: () => void;
   isDesktopMode: boolean;
 }
 
 function PathBreadcrumbs(props: Props) {
   const { t } = useTranslation();
-  const dispatch: AppDispatch = useDispatch();
+  //const dispatch: AppDispatch = useDispatch();
+  const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
+  const { currentLocation } = useCurrentLocationContext();
   let pathParts: Array<string> = [];
-  const currentLocation = useSelector(getCurrentLocation);
-  const currentDirectoryPath = useSelector(getDirectoryPath);
 
   const [
     directoryContextMenuAnchorEl,
@@ -99,9 +91,7 @@ function PathBreadcrumbs(props: Props) {
 
   const {
     setSelectedEntries,
-    reflectCreateEntry,
     openRenameDirectoryDialog,
-    openMoveCopyFilesDialog,
     isDesktopMode
   } = props;
 
@@ -188,9 +178,7 @@ function PathBreadcrumbs(props: Props) {
               href="#"
               label={folderName}
               icon={index === 0 && locationTypeIcon}
-              onClick={() =>
-                dispatch(AppActions.loadDirectoryContent(pathPart, false, true))
-              }
+              onClick={() => openDirectory(pathPart)}
             />
           </Tooltip>
         );
@@ -249,10 +237,9 @@ function PathBreadcrumbs(props: Props) {
         open={Boolean(directoryContextMenuAnchorEl)}
         onClose={closeDirectoryMenu}
         anchorEl={directoryContextMenuAnchorEl}
+        perspectiveMode={false}
         directoryPath={currentDirectoryPath}
         openRenameDirectoryDialog={openRenameDirectoryDialog}
-        openMoveCopyFilesDialog={openMoveCopyFilesDialog}
-        reflectCreateEntry={reflectCreateEntry}
       />
     </>
   );

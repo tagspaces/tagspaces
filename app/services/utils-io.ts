@@ -69,102 +69,14 @@ import { base64ToArrayBuffer } from '-/utils/dom';
 import { Pro } from '-/pro';
 import { supportedFileTypes } from '-/extension-config';
 
-const supportedImgsWS = [
-  'jpg',
-  'jpeg',
-  'jif',
-  'jfif',
-  'png',
-  'gif',
-  'svg',
-  'tif',
-  'tiff',
-  'ico',
-  'webp',
-  'avif'
-  // 'bmp' currently electron main processed: https://github.com/lovell/sharp/issues/806
-];
-
-export function enhanceDirectoryContent(
-  dirEntries,
-  isCloudLocation,
-  showUnixHiddenEntries,
-  useGenerateThumbnails,
-  showDirs = true,
-  limit = undefined,
-  enableWS = true
-) {
-  const directoryContent = [];
-  const tmbGenerationPromises = [];
-  const tmbGenerationList = [];
-  const isWorkerAvailable = enableWS && PlatformIO.isWorkerAvailable();
-
-  dirEntries.map(entry => {
-    if (!showUnixHiddenEntries && entry.name.startsWith('.')) {
-      return true;
-    }
-
-    if (!showDirs && !entry.isFile) {
-      return true;
-    }
-
-    if (limit !== undefined && directoryContent.length >= limit) {
-      return true;
-    }
-
-    const enhancedEntry: TS.FileSystemEntry = enhanceEntry(
-      entry,
-      AppConfig.tagDelimiter,
-      PlatformIO.getDirSeparator()
-    );
-    directoryContent.push(enhancedEntry);
-    if (
-      // Enable thumb generation by
-      !AppConfig.isWeb && // not in webdav mode
-      !PlatformIO.haveObjectStoreSupport() && // not in object store mode
-      !PlatformIO.haveWebDavSupport() && // not in webdav mode
-      enhancedEntry.isFile && // only for files
-      useGenerateThumbnails // enabled in the settings
-    ) {
-      // const isPDF = enhancedEntry.path.endsWith('.pdf');
-      if (
-        isWorkerAvailable &&
-        supportedImgsWS.includes(enhancedEntry.extension)
-      ) {
-        // !isPDF) {
-        tmbGenerationList.push(enhancedEntry.path);
-      } else if (
-        supportedImgs.includes(enhancedEntry.extension) ||
-        supportedContainers.includes(enhancedEntry.extension) ||
-        supportedText.includes(enhancedEntry.extension) ||
-        supportedMisc.includes(enhancedEntry.extension) ||
-        supportedVideos.includes(enhancedEntry.extension)
-      ) {
-        tmbGenerationPromises.push(getThumbnailURLPromise(enhancedEntry.path));
-      } else {
-        console.log(
-          'Unsupported thumbgeneration ext:' + enhancedEntry.extension
-        );
-      }
-    }
-    return true;
-  });
-
-  return {
-    directoryContent,
-    tmbGenerationPromises,
-    tmbGenerationList
-  };
-}
-
-export async function getMetaForEntry(
+export function getMetaForEntry(
   entry: TS.FileSystemEntry,
   metaFilePath?: string
-): Promise<any> {
+): Promise<TS.FileSystemEntry> {
   if (entry.meta) {
     // && Object.keys(entry.meta).length > 0) {
     // entry is Enhanced
-    return { [entry.path]: { ...entry } };
+    return Promise.resolve(entry);
   }
   if (!metaFilePath) {
     if (entry.isFile) {
@@ -179,22 +91,22 @@ export async function getMetaForEntry(
       );
     }
   }
-  const meta: TS.FileSystemEntryMeta = await loadJSONFile(metaFilePath);
-  if (meta) {
-    const entryEnhanced = enhanceEntry(
-      {
-        ...entry,
-        meta: {
-          ...meta,
-          description: getDescriptionPreview(meta.description, 200)
-        }
-      },
-      AppConfig.tagDelimiter,
-      PlatformIO.getDirSeparator()
-    );
-    return { [entry.path]: entryEnhanced };
-  }
-  return Promise.resolve({ [entry.path]: undefined });
+  return loadJSONFile(metaFilePath).then((meta: TS.FileSystemEntryMeta) => {
+    if (meta) {
+      return enhanceEntry(
+        {
+          ...entry,
+          meta: {
+            ...meta,
+            description: getDescriptionPreview(meta.description, 200)
+          }
+        },
+        AppConfig.tagDelimiter,
+        PlatformIO.getDirSeparator()
+      );
+    }
+    return entry;
+  });
 }
 
 export function enhanceOpenedEntry(
@@ -232,7 +144,7 @@ export function enhanceOpenedEntry(
   return entry;
 }
 
-export function prepareDirectoryContent(
+/*export function prepareDirectoryContent(
   dirEntries,
   directoryPath,
   settings,
@@ -339,7 +251,7 @@ export function prepareDirectoryContent(
       dirEntryMeta
     )
   );
-}
+}*/
 
 export function orderDirectories(
   directories,
@@ -1597,10 +1509,13 @@ export function getFolderThumbPath(
   path: string,
   lastThumbnailImageChange: any
 ) {
-  return getThumbPath(
-    getThumbFileLocationForDirectory(path, PlatformIO.getDirSeparator()),
-    lastThumbnailImageChange
-  );
+  if (path) {
+    return getThumbPath(
+      getThumbFileLocationForDirectory(path, PlatformIO.getDirSeparator()),
+      lastThumbnailImageChange
+    );
+  }
+  return undefined;
 }
 
 export function getThumbPath(
@@ -1637,10 +1552,13 @@ export function getFolderBgndPath(
   path: string,
   lastBackgroundImageChange: any
 ) {
-  return getBgndPath(
-    getBgndFileLocationForDirectory(path, PlatformIO.getDirSeparator()),
-    lastBackgroundImageChange
-  );
+  if (path) {
+    return getBgndPath(
+      getBgndFileLocationForDirectory(path, PlatformIO.getDirSeparator()),
+      lastBackgroundImageChange
+    );
+  }
+  return undefined;
 }
 
 export function getBgndPath(bgndPath: string, lastBackgroundImageChange: any) {
@@ -1697,7 +1615,7 @@ export function getRelativeEntryPath(
 
 /**
  * @param entries
- * @param entriesChanges Array<TS.FileSystemEntry> but partly changes from FileSystemEntry model like { tags:[] } are acceptable
+ * @param entriesChanges Array<TS.FileSystemEntry> but partly changes from FileSystemEntry model like { path, tags:[] } are acceptable
  * return entries: Array<TS.FileSystemEntry> updated from
  */
 export function updateFsEntries(
@@ -1745,6 +1663,25 @@ export function toFsEntry(path: string, isFile: boolean): TS.FileSystemEntry {
   };
 }
 
+export function openedToFsEntry(openedEntry: OpenedEntry): TS.FileSystemEntry {
+  return {
+    uuid: getUuid(),
+    name: openedEntry.isFile
+      ? extractFileName(openedEntry.path, PlatformIO.getDirSeparator())
+      : extractDirectoryName(openedEntry.path, PlatformIO.getDirSeparator()),
+    isFile: openedEntry.isFile,
+    extension: extractFileExtension(
+      openedEntry.path,
+      PlatformIO.getDirSeparator()
+    ),
+    description: openedEntry.description,
+    tags: openedEntry.tags,
+    size: openedEntry.size,
+    lmdt: openedEntry.lmdt,
+    path: openedEntry.path
+  };
+}
+
 export function createFsEntryMeta(
   path: string,
   props: any = {}
@@ -1786,48 +1723,3 @@ export function openURLExternally(url: string, skipConfirmation = false) {
     PlatformIO.openUrl(url);
   }
 }
-
-/*export function getSharingLink(
-  openedFile: OpenedEntry,
-  locations: Array<TS.Location>
-) {
-  let sharingLink = '';
-  let sharingParentFolderLink = '';
-  if (window.location.href.indexOf('?') > 0) {
-    const sharingURL = new URL(window.location.href);
-    const params = new URLSearchParams(sharingURL.search);
-    if (params.has('tslid')) {
-      const locationId = params.get('tslid');
-      //if (params.has('tsdpath')) {
-      // const folderPath2 = params.get('tsdpath');
-      const folderLocation = locations.find(
-        location => location.uuid === locationId
-      );
-      const folderPath = extractContainingDirectoryPath(openedFile.path);
-      if (folderPath.indexOf(folderLocation.path) === 0) {
-        sharingParentFolderLink = generateSharingLink(
-          locationId,
-          undefined,
-          cleanRootPath(
-            folderPath,
-            folderLocation.path,
-            PlatformIO.getDirSeparator()
-          )
-        );
-      }
-
-      //}
-      if (params.has('tsepath')) {
-        const entryPath = params.get('tsepath');
-        if (openedFile.isFile) {
-          sharingLink = generateSharingLink(locationId, entryPath);
-        } else {
-          sharingLink = generateSharingLink(locationId, undefined, entryPath);
-        }
-      } else {
-        sharingLink = generateSharingLink(locationId);
-      }
-    }
-  }
-  return { sharingLink, sharingParentFolderLink };
-}*/

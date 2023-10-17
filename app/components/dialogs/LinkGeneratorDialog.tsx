@@ -36,6 +36,8 @@ import PlatformIO from '-/services/platform-facade';
 import { actions } from '-/reducers/app';
 import Links from '-/content/links';
 import { useTranslation } from 'react-i18next';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 const PREFIX = 'LinkGeneratorDialog';
 
@@ -56,10 +58,7 @@ interface Props {
   open: boolean;
   onClose: () => void;
   path: string;
-  // showNotification: (message: string) => void;
   locationId?: string;
-  switchLocationType?: (locationId: string) => Promise<string | null>;
-  switchCurrentLocationType?: (currentLocationId: string) => Promise<boolean>;
 }
 
 const QRTextField = TextField;
@@ -67,7 +66,11 @@ const QRTextField = TextField;
 function LinkGeneratorDialog(props: Props) {
   const { open, onClose, path } = props;
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const { showNotification } = useNotificationContext();
+  const {
+    switchLocationTypeByID,
+    switchCurrentLocationType
+  } = useCurrentLocationContext();
   const linkValidityDuration = useRef<number>(60 * 15);
   const signedLink = useRef<string>(undefined);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
@@ -79,22 +82,22 @@ function LinkGeneratorDialog(props: Props) {
   }, []);
 
   function setSignedLink() {
-    if (props.switchLocationType) {
-      props.switchLocationType(props.locationId).then(currentLocationId => {
-        signedLink.current = PlatformIO.getURLforPath(
-          path,
-          linkValidityDuration.current
-        );
-        forceUpdate();
-        props.switchCurrentLocationType(currentLocationId);
-      });
-    } else {
+    //if (switchLocationType) {
+    switchLocationTypeByID(props.locationId).then(currentLocationId => {
       signedLink.current = PlatformIO.getURLforPath(
         path,
         linkValidityDuration.current
       );
       forceUpdate();
-    }
+      return switchCurrentLocationType();
+    });
+    /*} else {
+      signedLink.current = PlatformIO.getURLforPath(
+        path,
+        linkValidityDuration.current
+      );
+      forceUpdate();
+    }*/
   }
 
   return (
@@ -146,9 +149,7 @@ function LinkGeneratorDialog(props: Props) {
                     navigator.clipboard
                       .writeText(signedLink.current)
                       .then(() => {
-                        dispatch(
-                          actions.showNotification(t('core:linkCopied'))
-                        );
+                        showNotification(t('core:linkCopied'));
                       });
                   }}
                   color="primary"

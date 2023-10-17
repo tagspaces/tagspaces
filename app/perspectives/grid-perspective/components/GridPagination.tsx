@@ -17,7 +17,7 @@
  */
 
 import React, { useEffect, useReducer, useRef } from 'react';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import Tooltip from '-/components/Tooltip';
@@ -25,33 +25,18 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 import Pagination from '@mui/material/Pagination';
-import { bindActionCreators } from 'redux';
 import AppConfig from '-/AppConfig';
+import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
 import {
-  getMetaFileLocationForDir,
-  getMetaFileLocationForFile,
-  getThumbFileLocationForDirectory,
-  getThumbFileLocationForFile,
-  extractDirectoryName
-} from '@tagspaces/tagspaces-common/paths';
-import {
-  actions as AppActions,
-  getCurrentDirectoryColor,
-  getIsMetaLoaded,
-  getCurrentDirectoryTags,
-  getCurrentDirectoryDescription,
   getLastBackgroundImageChange,
   getLastThumbnailImageChange,
-  getLastSelectedEntryPath,
-  getLastSearchTimestamp,
-  getDirectoryContent
+  getLastSelectedEntryPath
 } from '-/reducers/app';
 import EntryIcon from '-/components/EntryIcon';
 import TagsPreview from '-/components/TagsPreview';
 import TagContainer from '-/components/TagContainer';
 import { TS } from '-/tagspaces.namespace';
 import {
-  getMetaForEntry,
   getDescriptionPreview,
   getFolderThumbPath,
   getFolderBgndPath
@@ -60,24 +45,23 @@ import PlatformIO from '-/services/platform-facade';
 import { MilkdownEditor } from '@tagspaces/tagspaces-md';
 import { renderCell } from '-/perspectives/common/main-container';
 import { useTranslation } from 'react-i18next';
-import { getCurrentLocation } from '-/reducers/locations';
-import GlobalSearch from '-/services/search-index';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { usePaginationContext } from '-/hooks/usePaginationContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 interface Props {
-  isMetaLoaded: boolean;
-  setIsMetaLoaded: (isLoaded: boolean) => void;
   style?: any;
   // gridRef: Object;
   directories: Array<TS.FileSystemEntry>;
   showDirectories: boolean;
   showDetails: boolean;
   showDescription: boolean;
-  isReadOnlyMode: boolean;
   layoutType: string;
   showTags: boolean;
   desktopMode: boolean;
-  currentDirectoryDescription: string;
   thumbnailMode: string;
   entrySize: string;
   files: Array<TS.FileSystemEntry>;
@@ -91,15 +75,11 @@ interface Props {
     handleGridCellDblClick,
     isLast?: boolean
   ) => void;
-  currentDirectoryColor: string;
-  currentDirectoryTags: Array<TS.Tag>;
-  currentPage: number;
   gridPageLimit: number;
   currentDirectoryPath: string;
   onContextMenu: (event: React.MouseEvent<HTMLDivElement>) => void;
   openRenameEntryDialog: () => void;
   onClick: (event: React.MouseEvent<HTMLDivElement>) => void;
-  updateCurrentDirEntries: (dirEntries: TS.FileSystemEntry[]) => void;
   // eslint-disable-next-line react/no-unused-prop-types
   settings; // cache only
   // eslint-disable-next-line react/no-unused-prop-types
@@ -111,21 +91,9 @@ interface Props {
   singleClickAction: string;
   lastSelectedEntryPath: string;
   openFileNatively: (path?: string) => void;
-  loadDirectoryContent: (
-    path: string,
-    generateThumbnails: boolean,
-    loadDirMeta?: boolean
-  ) => void;
   setFileContextMenuAnchorEl: (HTMLElement) => void;
   setDirContextMenuAnchorEl: (HTMLElement) => void;
-  showNotification: (
-    text: string,
-    notificationType: string,
-    autohide: boolean
-  ) => void;
-  moveFiles: (files: Array<string>, destination: string) => Promise<boolean>;
   clearSelection: () => void;
-  lastSearchTimestamp: number;
 }
 
 function GridPagination(props: Props) {
@@ -139,36 +107,31 @@ function GridPagination(props: Props) {
     showTags,
     singleClickAction,
     getCellContent,
-    isReadOnlyMode,
     desktopMode,
-    currentDirectoryColor,
-    currentDirectoryTags,
-    currentDirectoryDescription,
     currentDirectoryPath,
     lastThumbnailImageChange,
     openRenameEntryDialog,
     lastSelectedEntryPath,
     lastBackgroundImageChange,
     openFileNatively,
-    loadDirectoryContent,
     setFileContextMenuAnchorEl,
     setDirContextMenuAnchorEl,
-    showNotification,
-    moveFiles,
     gridPageLimit,
-    currentPage,
     selectedEntries,
     setSelectedEntries,
     clearSelection,
-    files,
-    lastSearchTimestamp
+    files
   } = props;
   const { openEntry } = useOpenedEntryContext();
-
-  const directoryContent: Array<TS.FileSystemEntry> = useSelector(
-    getDirectoryContent
-  );
-  const currentLocation: TS.Location = useSelector(getCurrentLocation);
+  const { moveFiles } = useIOActionsContext();
+  const { showNotification } = useNotificationContext();
+  const { readOnlyMode, currentLocation } = useCurrentLocationContext();
+  const {
+    currentDirectoryEntries,
+    openDirectory,
+    directoryMeta
+  } = useDirectoryContentContext();
+  const { page, pageFiles, setCurrentPage } = usePaginationContext();
   if (!showDirectories) {
     directories = [];
   }
@@ -180,48 +143,16 @@ function GridPagination(props: Props) {
     : 10;
 
   const containerEl = useRef(null);
-  // const entriesUpdated = useRef([]);
-  const page = useRef<number>(currentPage);
-  const metaLoadedLock = useRef<boolean>(false); // TODO move this for all perspectives - not lock if you open folder with diff perspective now
   const folderTmbPath = useRef<string>(
     getFolderThumbPath(currentDirectoryPath, lastThumbnailImageChange)
   );
   const folderBgndPath = useRef<string>(
     getFolderBgndPath(currentDirectoryPath, lastBackgroundImageChange)
   );
-  // const [page, setPage] = useState(currentPage);
 
-  let pageFiles;
-  if (showPagination) {
-    const start = (page.current - 1) * gridPageLimit;
-    pageFiles = files.slice(start, start + gridPageLimit);
-  } else {
-    pageFiles = files;
-  }
   const [, forceUpdate] = useReducer(x => x + 1, 0);
 
-  useEffect(() => {
-    if (!props.isMetaLoaded && !metaLoadedLock.current) {
-      metaLoadedLock.current = true;
-      PlatformIO.listMetaDirectoryPromise(props.currentDirectoryPath)
-        .then(meta => {
-          metaLoadedLock.current = false;
-          props.setIsMetaLoaded(true);
-          // props.setMetaForCurrentDir(meta);
-          const dirEntriesPromises = getDirEntriesPromises();
-          const fileEntriesPromises = getFileEntriesPromises(meta);
-          const thumbs = getThumbs(meta);
-          updateEntries([
-            ...dirEntriesPromises,
-            ...fileEntriesPromises,
-            ...thumbs
-          ]);
-          return true;
-        })
-        .catch(ex => console.error(ex));
-    }
-  }, [page.current, props.isMetaLoaded, files]);
-
+  // TODO move in DirectoryContentContextProvider
   useEffect(() => {
     folderTmbPath.current = getFolderThumbPath(
       props.currentDirectoryPath,
@@ -239,151 +170,17 @@ function GridPagination(props: Props) {
   }, [props.currentDirectoryPath, props.lastBackgroundImageChange]);
 
   useEffect(() => {
-    page.current = currentPage;
-    /* if (page !== currentPage) {
-       setPage(props.currentPage);
-     } */
     if (containerEl && containerEl.current) {
       containerEl.current.scrollTop = 0;
     }
-  }, [
-    //props.currentLocationPath,
-    props.currentDirectoryPath,
-    lastSearchTimestamp
-  ]);
-
-  const setThumbs = (
-    entry: TS.FileSystemEntry,
-    meta: Array<any>
-  ): TS.FileSystemEntry => {
-    const thumbEntry = { ...entry };
-    let thumbPath = getThumbFileLocationForFile(
-      entry.path,
-      PlatformIO.getDirSeparator(),
-      false
-    );
-    if (thumbPath && meta.some(metaFile => thumbPath.endsWith(metaFile.path))) {
-      thumbEntry.thumbPath = thumbPath;
-      if (
-        PlatformIO.haveObjectStoreSupport() ||
-        PlatformIO.haveWebDavSupport()
-      ) {
-        if (thumbPath && thumbPath.startsWith('/')) {
-          thumbPath = thumbPath.substring(1);
-        }
-
-        thumbPath = PlatformIO.getURLforPath(thumbPath, 604800);
-        if (thumbPath) {
-          thumbEntry.thumbPath = thumbPath;
-        }
-      }
-    }
-    return thumbEntry;
-  };
-
-  const getThumbs = (meta: Array<any>): Promise<any>[] =>
-    pageFiles.map(entry =>
-      Promise.resolve({ [entry.path]: setThumbs(entry, meta) })
-    );
-
-  const getDirEntriesPromises = (): Promise<any>[] =>
-    directories.map(async entry => {
-      if (entry.name === AppConfig.metaFolder) {
-        return Promise.resolve({ [entry.path]: undefined });
-      }
-      const meta = await PlatformIO.listMetaDirectoryPromise(entry.path);
-      const metaFilePath = getMetaFileLocationForDir(
-        entry.path,
-        PlatformIO.getDirSeparator()
-      );
-      const thumbDirPath = getThumbFileLocationForDirectory(
-        entry.path,
-        PlatformIO.getDirSeparator()
-      );
-      let enhancedEntry;
-      if (meta.some(metaFile => thumbDirPath.endsWith(metaFile.path))) {
-        const thumbPath =
-          PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()
-            ? PlatformIO.getURLforPath(thumbDirPath)
-            : thumbDirPath;
-        enhancedEntry = { ...entry, thumbPath };
-      }
-      if (
-        meta.some(metaFile => metaFilePath.endsWith(metaFile.path)) &&
-        // !checkEntryExist(entry.path) &&
-        entry.path.indexOf(
-          AppConfig.metaFolder + PlatformIO.getDirSeparator()
-        ) === -1
-      ) {
-        return getMetaForEntry(enhancedEntry || entry, metaFilePath);
-      }
-      return Promise.resolve({ [entry.path]: enhancedEntry });
-    });
-
-  const getFileEntriesPromises = (meta: Array<any>): Promise<any>[] =>
-    pageFiles.map(entry => {
-      const metaFilePath = getMetaFileLocationForFile(
-        entry.path,
-        PlatformIO.getDirSeparator()
-      );
-      if (
-        // check if metaFilePath exist in listMetaDirectory content
-        meta.some(metaFile => metaFilePath.endsWith(metaFile.path)) &&
-        // !checkEntryExist(entry.path) &&
-        entry.path.indexOf(
-          AppConfig.metaFolder + PlatformIO.getDirSeparator()
-        ) === -1
-      ) {
-        return getMetaForEntry(entry, metaFilePath);
-      }
-      return Promise.resolve({ [entry.path]: undefined });
-    });
-
-  const updateEntries = metaPromises => {
-    const catchHandler = error => undefined;
-    Promise.all(metaPromises.map(promise => promise.catch(catchHandler)))
-      .then(entries => {
-        updateCurrentDirEntries(entries); // .filter(entry => entry !== undefined));
-        // entriesUpdated.current = entries;
-        return true;
-      })
-      .catch(err => {
-        console.error('err updateEntries:', err);
-      });
-  };
-
-  const updateCurrentDirEntries = entries => {
-    const entriesEnhanced = [];
-    entries.forEach(entry => {
-      if (entry) {
-        for (const [key, value] of Object.entries(entry)) {
-          if (value) {
-            // !checkEntryExist(key)) {
-            entriesEnhanced.push(value);
-          }
-        }
-      }
-    });
-    if (entriesEnhanced.length > 0) {
-      props.updateCurrentDirEntries(entriesEnhanced);
-    }
-  };
-
-  /* const checkEntryExist = path => {
-     const index = pageEntries.findIndex(
-       objUpdated => Object.keys(objUpdated).indexOf(path) > -1
-     );
-     return index > -1;
-   }; */
+  }, [currentDirectoryEntries]);
 
   const handleChange = (event, value) => {
-    // setPage(value);
-    page.current = value;
-    props.setIsMetaLoaded(false);
-    // forceUpdate();
-    if (containerEl && containerEl.current) {
-      containerEl.current.scrollTop = 0;
-    }
+    setCurrentPage(value).then(() => {
+      if (containerEl && containerEl.current) {
+        containerEl.current.scrollTop = 0;
+      }
+    });
   };
 
   const folderName = extractDirectoryName(
@@ -391,7 +188,7 @@ function GridPagination(props: Props) {
     PlatformIO.getDirSeparator()
   );
 
-  const dirColor = currentDirectoryColor || 'transparent';
+  const dirColor = directoryMeta.color || 'transparent';
 
   let folderSummary =
     (directories.length > 0 ? directories.length + ' folder(s) and ' : '') +
@@ -400,15 +197,6 @@ function GridPagination(props: Props) {
   if (selectedEntries && selectedEntries.length > 0) {
     folderSummary = selectedEntries.length + ' entries selected';
   }
-
-  /* let descriptionHTML = '';
-  if (showDescription && currentDirectoryDescription) {
-    descriptionHTML = convertMarkDown(
-      currentDirectoryDescription,
-      props.currentDirectoryPath
-    );
-  }
-  */
 
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions,jsx-a11y/no-static-element-interactions
@@ -445,13 +233,14 @@ function GridPagination(props: Props) {
                   marginTop: 0,
                   marginBottom: 0,
                   height:
-                    !showDescription && currentDirectoryDescription ? 150 : 110,
+                    !showDescription && directoryMeta.description ? 150 : 110,
                   position: 'relative'
                 }}
               >
                 {((folderName && folderName.length > 0) ||
-                  (currentDirectoryTags &&
-                    currentDirectoryTags.length > 0)) && (
+                  (directoryMeta &&
+                    directoryMeta.tags &&
+                    directoryMeta.tags.length > 0)) && (
                   <Box
                     style={{
                       display: 'flex',
@@ -481,19 +270,14 @@ function GridPagination(props: Props) {
                     </Tooltip>
                     {showTags ? (
                       <span style={{ paddingLeft: 5 }}>
-                        {currentDirectoryTags &&
-                          currentDirectoryTags.map((tag: TS.Tag) => {
-                            return (
-                              <TagContainer
-                                isReadOnlyMode
-                                tag={tag}
-                                tagMode="display"
-                              />
-                            );
+                        {directoryMeta &&
+                          directoryMeta.tags &&
+                          directoryMeta.tags.map((tag: TS.Tag) => {
+                            return <TagContainer tag={tag} tagMode="display" />;
                           })}
                       </span>
                     ) : (
-                      <TagsPreview tags={currentDirectoryTags} />
+                      <TagsPreview tags={directoryMeta.tags} />
                     )}
                   </Box>
                 )}
@@ -516,7 +300,7 @@ function GridPagination(props: Props) {
                   >
                     {folderSummary}
                   </Typography>
-                  {!showDescription && currentDirectoryDescription && (
+                  {!showDescription && directoryMeta.description && (
                     <Typography
                       style={{
                         fontSize: '0.8rem',
@@ -525,7 +309,7 @@ function GridPagination(props: Props) {
                         overflowY: 'auto'
                       }}
                     >
-                      {getDescriptionPreview(currentDirectoryDescription, 200)}
+                      {getDescriptionPreview(directoryMeta.description, 200)}
                     </Typography>
                   )}
                 </Box>
@@ -548,7 +332,7 @@ function GridPagination(props: Props) {
               </div>
             </Grid>
           )}
-          {showDescription && currentDirectoryDescription && (
+          {showDescription && directoryMeta.description && (
             <Grid
               item
               xs={12}
@@ -562,7 +346,7 @@ function GridPagination(props: Props) {
               }}
             >
               <MilkdownEditor
-                content={currentDirectoryDescription}
+                content={directoryMeta.description}
                 readOnly={true}
                 dark={theme.palette.mode === 'dark'}
                 currentFolder={currentDirectoryPath}
@@ -572,26 +356,24 @@ function GridPagination(props: Props) {
           )}
         </Grid>
         <div style={style} data-tid="perspectiveGridFileTable">
-          {page.current === 1 &&
+          {page === 1 &&
             directories.map((entry, index) =>
               renderCell(
                 entry,
                 index,
                 getCellContent,
                 showDirectories,
-                isReadOnlyMode,
+                readOnlyMode,
                 desktopMode,
                 singleClickAction,
                 currentLocation,
                 selectedEntries,
                 setSelectedEntries,
                 lastSelectedEntryPath,
-                lastSearchTimestamp
-                  ? GlobalSearch.getInstance().getResults()
-                  : directoryContent,
+                currentDirectoryEntries,
                 openEntry,
                 openFileNatively,
-                loadDirectoryContent,
+                openDirectory,
                 setFileContextMenuAnchorEl,
                 setDirContextMenuAnchorEl,
                 showNotification,
@@ -605,19 +387,17 @@ function GridPagination(props: Props) {
               index,
               getCellContent,
               showDirectories,
-              isReadOnlyMode,
+              readOnlyMode,
               desktopMode,
               singleClickAction,
               currentLocation,
               selectedEntries,
               setSelectedEntries,
               lastSelectedEntryPath,
-              lastSearchTimestamp
-                ? GlobalSearch.getInstance().getResults()
-                : directoryContent,
+              currentDirectoryEntries,
               openEntry,
               openFileNatively,
-              loadDirectoryContent,
+              openDirectory,
               setFileContextMenuAnchorEl,
               setDirContextMenuAnchorEl,
               showNotification,
@@ -628,7 +408,7 @@ function GridPagination(props: Props) {
           )}
           {pageFiles.length < 1 && directories.length < 1 && (
             <div style={{ textAlign: 'center' }}>
-              {!showDescription && currentDirectoryDescription && (
+              {!showDescription && directoryMeta.description && (
                 <div style={{ position: 'relative', marginBottom: 150 }}>
                   <EntryIcon isFile={false} />
                 </div>
@@ -647,7 +427,7 @@ function GridPagination(props: Props) {
           )}
           {pageFiles.length < 1 && directories.length >= 1 && !showDirectories && (
             <div style={{ textAlign: 'center' }}>
-              {!showDescription && currentDirectoryDescription && (
+              {!showDescription && directoryMeta.description && (
                 <div style={{ position: 'relative', marginBottom: 150 }}>
                   <EntryIcon isFile={false} />
                 </div>
@@ -680,7 +460,7 @@ function GridPagination(props: Props) {
                 padding: 3
               }}
               count={paginationCount}
-              page={page.current}
+              page={page}
               onChange={handleChange}
             />
           </Tooltip>
@@ -706,28 +486,10 @@ function GridPagination(props: Props) {
 
 function mapStateToProps(state) {
   return {
-    currentDirectoryColor: getCurrentDirectoryColor(state),
-    lastSearchTimestamp: getLastSearchTimestamp(state),
-    // searchResultCount: getSearchResultCount(state),
-    // pageEntries: getPageEntries(state),
-    currentDirectoryTags: getCurrentDirectoryTags(state),
-    isMetaLoaded: getIsMetaLoaded(state),
-    currentDirectoryDescription: getCurrentDirectoryDescription(state),
     lastBackgroundImageChange: getLastBackgroundImageChange(state),
     lastThumbnailImageChange: getLastThumbnailImageChange(state),
     lastSelectedEntryPath: getLastSelectedEntryPath(state)
   };
-}
-
-function mapActionCreatorsToProps(dispatch) {
-  return bindActionCreators(
-    {
-      updateCurrentDirEntries: AppActions.updateCurrentDirEntries,
-      setIsMetaLoaded: AppActions.setIsMetaLoaded,
-      loadDirectoryContent: AppActions.loadDirectoryContent
-    },
-    dispatch
-  );
 }
 
 const areEqual = (prevProp: Props, nextProp: Props) =>
@@ -737,7 +499,6 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   JSON.stringify(nextProp.lastThumbnailImageChange) ===
     JSON.stringify(prevProp.lastThumbnailImageChange) &&
   nextProp.currentDirectoryPath === prevProp.currentDirectoryPath &&
-  nextProp.isMetaLoaded === prevProp.isMetaLoaded &&
   nextProp.showDirectories === prevProp.showDirectories &&
   nextProp.showDetails === prevProp.showDetails &&
   nextProp.showDescription === prevProp.showDescription &&
@@ -745,19 +506,11 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
   nextProp.thumbnailMode === prevProp.thumbnailMode &&
   nextProp.entrySize === prevProp.entrySize &&
   nextProp.gridPageLimit === prevProp.gridPageLimit &&
-  nextProp.lastSearchTimestamp === prevProp.lastSearchTimestamp &&
-  nextProp.currentDirectoryDescription ===
-    prevProp.currentDirectoryDescription &&
   JSON.stringify(nextProp.files) === JSON.stringify(prevProp.files) &&
   JSON.stringify(nextProp.directories) ===
     JSON.stringify(prevProp.directories) &&
   JSON.stringify(nextProp.settings) === JSON.stringify(prevProp.settings) &&
   JSON.stringify(nextProp.selectedEntries) ===
-    JSON.stringify(prevProp.selectedEntries) &&
-  JSON.stringify(nextProp.currentDirectoryColor) ===
-    JSON.stringify(prevProp.currentDirectoryColor);
+    JSON.stringify(prevProp.selectedEntries);
 
-export default connect(
-  mapStateToProps,
-  mapActionCreatorsToProps
-)(React.memo(GridPagination, areEqual));
+export default connect(mapStateToProps)(React.memo(GridPagination, areEqual));
