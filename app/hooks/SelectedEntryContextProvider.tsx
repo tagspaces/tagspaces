@@ -16,15 +16,8 @@
  *
  */
 
-import React, {
-  createContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState
-} from 'react';
+import React, { createContext, useEffect, useMemo, useState } from 'react';
 import { TS } from '-/tagspaces.namespace';
-import PlatformIO from '-/services/platform-facade';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import useFirstRender from '-/utils/useFirstRender';
 
@@ -66,6 +59,11 @@ export const SelectedEntryContextProvider = ({
     }
     return undefined;
   }*/
+  /*const setSelectedEntries = (entries: TS.FileSystemEntry[]) => {
+    if (JSON.stringify(selectedEntries) !== JSON.stringify(entries)) {
+      setSelectedEntriesInt(entries);
+    }
+  };*/
 
   const lastSelectedEntryPath = useMemo(() => {
     if (selectedEntries && selectedEntries.length > 0) {

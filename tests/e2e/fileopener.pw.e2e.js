@@ -148,9 +148,14 @@ test.describe('TST08 - File folder properties', () => {
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
 
     // open fileProperties
-    await clickOn(getGridFileSelector(fileName));
+    await openContextEntryMenu(
+      getGridFileSelector(fileName),
+      'showPropertiesTID'
+    );
+    //await clickOn(getGridFileSelector(fileName));
+
     //Toggle Properties
-    await clickOn('[data-tid=detailsTabTID]');
+    //await clickOn('[data-tid=detailsTabTID]');
 
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
       add: true,

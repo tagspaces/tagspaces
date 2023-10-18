@@ -40,7 +40,6 @@ import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { getPersistTagsInSidecarFile } from '-/reducers/settings';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 type CurrentLocationContextData = {
   currentLocation: TS.Location;
@@ -244,7 +243,7 @@ export const CurrentLocationContextProvider = ({
       return locationPersistTagsInSidecarFile;
     }
     return settingsPersistTagsInSidecarFile;
-  }, [currentLocation]);
+  }, [currentLocation, settingsPersistTagsInSidecarFile]);
 
   function changeLocation(location: TS.Location) {
     if (!currentLocation || location.uuid !== currentLocation.uuid) {
@@ -391,6 +390,7 @@ export const CurrentLocationContextProvider = ({
     };
   }, [
     currentLocation,
+    persistTagsInSidecarFile,
     skipInitialDirList.current,
     locationDirectoryContextMenuAnchorEl
   ]);

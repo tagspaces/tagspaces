@@ -535,31 +535,31 @@ export default (state: any = initialState, action: any) => {
       };
     }
     case types.REFLECT_CREATE_ENTRIES: {
-      if (
+      /*if (
         action.fsEntries.length > 0 &&
         extractParentDirectoryPath(
           action.fsEntries[0].path,
           PlatformIO.getDirSeparator()
         ).replace(/[/\\]/g, '') ===
           state.currentDirectoryPath.replace(/[/\\]/g, '')
-      ) {
-        const editedEntryPaths: Array<TS.EditedEntryPath> = action.fsEntries.map(
-          newEntry => ({
-            action: newEntry.isFile ? 'createFile' : 'createDir',
-            path: newEntry.path,
-            uuid: newEntry.uuid
-          })
-        );
-        return {
-          ...state,
-          editedEntryPaths
-          /*currentDirectoryEntries: [
+      ) {*/
+      const editedEntryPaths: Array<TS.EditedEntryPath> = action.fsEntries.map(
+        newEntry => ({
+          action: newEntry.isFile ? 'createFile' : 'createDir',
+          path: newEntry.path,
+          uuid: newEntry.uuid
+        })
+      );
+      return {
+        ...state,
+        editedEntryPaths
+        /*currentDirectoryEntries: [
             ...state.currentDirectoryEntries,
             ...action.fsEntries
           ]*/
-        };
-      }
-      return state;
+      };
+      /*}
+      return state;*/
     }
     case types.REFLECT_RENAME_ENTRY: {
       /*const extractedTags = extractTagsAsObjects(

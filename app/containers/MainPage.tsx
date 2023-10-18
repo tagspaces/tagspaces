@@ -329,7 +329,8 @@ function MainPage(props: Props) {
   const {
     loadParentDirectoryContent,
     enterSearchMode,
-    exitSearchMode
+    exitSearchMode,
+    setSearchQuery
   } = useDirectoryContentContext();
   const theme = useTheme();
   const percent = useRef<number | undefined>(undefined);
@@ -408,7 +409,8 @@ function MainPage(props: Props) {
       goForward,
       openFsEntry,
       openNextFile,
-      openPrevFile
+      openPrevFile,
+      setSearchQuery
     });
   }, []);
 

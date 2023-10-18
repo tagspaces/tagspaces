@@ -281,16 +281,23 @@ export const DirectoryContentContextProvider = ({
     if (isSearchMode.current) {
       exitSearchMode();
     }
-    const currentLocationPath = normalizePath(currentLocation.path);
+    const currentLocationPath = normalizePath(
+      PlatformIO.getLocationPath(currentLocation)
+    );
 
     // dispatch(actions.setIsLoading(true));
 
-    if (currentDirectoryPath.current) {
+    if (currentDirectoryPath.current !== undefined) {
       const parentDirectory = extractParentDirectoryPath(
         currentDirectoryPath.current,
         PlatformIO.getDirSeparator()
       );
-      // console.log('parentDirectory: ' + parentDirectory  + ' - currentLocationPath: ' + currentLocationPath);
+      console.log(
+        'parentDirectory: ' +
+          parentDirectory +
+          ' - currentLocationPath: ' +
+          currentLocationPath
+      );
       if (parentDirectory.includes(currentLocationPath)) {
         openDirectory(parentDirectory);
       } else {
@@ -526,7 +533,7 @@ export const DirectoryContentContextProvider = ({
 
     isSearchMode.current = false;
 
-    if (
+    /*if (
       currentDirectoryPath.current &&
       currentDirectoryPath.current.startsWith('./')
     ) {
@@ -534,9 +541,9 @@ export const DirectoryContentContextProvider = ({
       currentDirectoryPath.current = PlatformIO.resolveFilePath(
         currentDirectoryPath.current
       );
-    } else {
-      currentDirectoryPath.current = directoryPath;
-    }
+    } else {*/
+    currentDirectoryPath.current = directoryPath;
+    //}
     setCurrentDirectoryEntries(directoryContent);
     return directoryContent;
   }
@@ -639,6 +646,13 @@ export const DirectoryContentContextProvider = ({
     reload: boolean = true
   ) {
     currentPerspective.current = perspective;
+    setSelectedEntries([]);
+    /*if (PerspectiveIDs.KANBAN === perspective) {
+      // many items can't be selected in KanBan
+      if (selectedEntries.length > 1) {
+        setSelectedEntries([selectedEntries[selectedEntries.length - 1]]);
+      }
+    }*/
     if (reload) {
       forceUpdate();
     }
