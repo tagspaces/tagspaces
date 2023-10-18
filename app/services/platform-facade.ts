@@ -63,7 +63,7 @@ import {
   platformOpenDirectory,
   platformShowInFileManager,
   platformOpenFile,
-  platformResolveFilePath,
+  // platformResolveFilePath,
   platformOpenUrl,
   platformSelectFileDialog,
   platformSelectDirectoryDialog,
@@ -527,8 +527,9 @@ export default class PlatformFacade {
     }
   };
 
+  /*  @deprecated not work in S3 use getLocationPath instead
   static resolveFilePath = (filePath: string): string =>
-    platformResolveFilePath(filePath);
+    platformResolveFilePath(filePath);*/
 
   static openUrl = (url: string): void => platformOpenUrl(url);
 

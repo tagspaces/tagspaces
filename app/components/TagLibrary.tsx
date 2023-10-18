@@ -41,15 +41,11 @@ import {
   getTagGroupCollapsed,
   getTagTextColor
 } from '../reducers/settings';
-import {
-  AppDispatch,
-  getSelectedEntries,
-  isTagLibraryChanged
-} from '-/reducers/app';
+import { AppDispatch, isTagLibraryChanged } from '-/reducers/app';
 import SmartTags from '../reducers/smart-tags';
 import EditTagDialog from '-/components/dialogs/EditTagDialog';
 import { TS } from '-/tagspaces.namespace';
-import { actions as LocationActions, getLocations } from '-/reducers/locations';
+import { getLocations } from '-/reducers/locations';
 import { Pro } from '-/pro';
 import TagGroupTitleDnD from '-/components/TagGroupTitleDnD';
 import {
@@ -72,9 +68,9 @@ import {
 import useFirstRender from '-/utils/useFirstRender';
 import { classes, SidePanel } from '-/components/SidePanels.css';
 import { useTranslation } from 'react-i18next';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 interface Props {
   style?: any;
@@ -84,6 +80,7 @@ interface Props {
 function TagLibrary(props: Props) {
   const { t } = useTranslation();
   const { addTags } = useTaggingActionsContext();
+  const { selectedEntries } = useSelectedEntriesContext();
   const {
     switchLocationTypeByID,
     switchCurrentLocationType,
@@ -92,9 +89,6 @@ function TagLibrary(props: Props) {
   const dispatch: AppDispatch = useDispatch();
   const tagBackgroundColor = useSelector(getTagColor);
   const tagTextColor = useSelector(getTagTextColor);
-  const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
-    getSelectedEntries
-  );
   const tagGroupCollapsed: Array<string> = useSelector(getTagGroupCollapsed);
   const locations: Array<TS.Location> = useSelector(getLocations);
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
@@ -314,7 +308,6 @@ function TagLibrary(props: Props) {
                           tagGroups
                         )
                       }*/
-                      selectedEntries={selectedEntries}
                     />
                   );
                 }

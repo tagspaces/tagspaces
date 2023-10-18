@@ -29,8 +29,7 @@ import AppConfig from '-/AppConfig';
 import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
 import {
   getLastBackgroundImageChange,
-  getLastThumbnailImageChange,
-  getLastSelectedEntryPath
+  getLastThumbnailImageChange
 } from '-/reducers/app';
 import EntryIcon from '-/components/EntryIcon';
 import TagsPreview from '-/components/TagsPreview';
@@ -51,6 +50,8 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { usePaginationContext } from '-/hooks/usePaginationContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useFsActionsContext } from '-/hooks/useFsActionsContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 interface Props {
   style?: any;
@@ -89,8 +90,6 @@ interface Props {
   lastThumbnailImageChange: any;
   setSelectedEntries: (selectedEntries: Array<TS.FileSystemEntry>) => void;
   singleClickAction: string;
-  lastSelectedEntryPath: string;
-  openFileNatively: (path?: string) => void;
   setFileContextMenuAnchorEl: (HTMLElement) => void;
   setDirContextMenuAnchorEl: (HTMLElement) => void;
   clearSelection: () => void;
@@ -111,9 +110,7 @@ function GridPagination(props: Props) {
     currentDirectoryPath,
     lastThumbnailImageChange,
     openRenameEntryDialog,
-    lastSelectedEntryPath,
     lastBackgroundImageChange,
-    openFileNatively,
     setFileContextMenuAnchorEl,
     setDirContextMenuAnchorEl,
     gridPageLimit,
@@ -122,8 +119,10 @@ function GridPagination(props: Props) {
     clearSelection,
     files
   } = props;
+  const { lastSelectedEntryPath } = useSelectedEntriesContext();
   const { openEntry } = useOpenedEntryContext();
   const { moveFiles } = useIOActionsContext();
+  const { openFileNatively } = useFsActionsContext();
   const { showNotification } = useNotificationContext();
   const { readOnlyMode, currentLocation } = useCurrentLocationContext();
   const {
@@ -487,8 +486,7 @@ function GridPagination(props: Props) {
 function mapStateToProps(state) {
   return {
     lastBackgroundImageChange: getLastBackgroundImageChange(state),
-    lastThumbnailImageChange: getLastThumbnailImageChange(state),
-    lastSelectedEntryPath: getLastSelectedEntryPath(state)
+    lastThumbnailImageChange: getLastThumbnailImageChange(state)
   };
 }
 

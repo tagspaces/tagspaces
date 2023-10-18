@@ -51,7 +51,7 @@ import {
   loadJSONString
 } from '@tagspaces/tagspaces-common/utils-io';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
-import { loadCurrentDirMeta } from '-/services/meta-loader';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 type extractOptions = {
   EXIFGeo?: boolean;
@@ -98,7 +98,7 @@ type IOActionsContextData = {
     onUploadProgress?: (progress: Progress, abort, fileName?) => void,
     uploadMeta?: boolean
   ) => Promise<TS.FileSystemEntry[]>;
-  reloadDirectory: (dirPath?: string) => Promise<boolean>;
+  //reloadDirectory: (dirPath?: string) => Promise<boolean>;
 };
 
 export const IOActionsContext = createContext<IOActionsContextData>({
@@ -109,8 +109,8 @@ export const IOActionsContext = createContext<IOActionsContextData>({
   copyFiles: () => Promise.resolve(false),
   downloadFile: () => Promise.resolve(undefined),
   uploadFilesAPI: () => Promise.resolve([]),
-  uploadFiles: () => Promise.resolve([]),
-  reloadDirectory: () => Promise.resolve(false)
+  uploadFiles: () => Promise.resolve([])
+  //reloadDirectory: () => Promise.resolve(false)
 });
 
 export type IOActionsContextProviderProps = {
@@ -126,8 +126,10 @@ export const IOActionsContextProvider = ({
   const {
     currentDirectoryEntries,
     currentDirectoryPath,
-    openDirectory
+    openDirectory,
+    addDirectoryEntries
   } = useDirectoryContentContext();
+  const { setSelectedEntries } = useSelectedEntriesContext();
   const {
     reflectDeleteEntry,
     reflectCreateEntry,
@@ -393,7 +395,10 @@ export const IOActionsContextProvider = ({
       })
       .then((fsEntry: TS.FileSystemEntry) => {
         reflectCreateEntry(fsEntry);
-        dispatch(AppActions.reflectCreateEntryObj(fsEntry));
+        addDirectoryEntries([fsEntry]);
+        dispatch(AppActions.reflectCreateEntries([fsEntry]));
+        setSelectedEntries([fsEntry]);
+
         return fsEntry;
       });
     //.catch(e => console.log(e));
@@ -754,9 +759,11 @@ export const IOActionsContextProvider = ({
     });
   }
 
-  function reloadDirectory(directoryPath?: string) {
-    return openDirectory(directoryPath ? directoryPath : currentDirectoryPath);
-  }
+  /*function reloadDirectory(directoryPath?: string) {
+    return openDirectory(
+      directoryPath === undefined ? currentDirectoryPath : directoryPath
+    );
+  }*/
 
   const context = useMemo(() => {
     return {
@@ -767,8 +774,7 @@ export const IOActionsContextProvider = ({
       copyFiles,
       downloadFile,
       uploadFilesAPI,
-      uploadFiles,
-      reloadDirectory
+      uploadFiles
     };
   }, [currentDirectoryEntries]);
 

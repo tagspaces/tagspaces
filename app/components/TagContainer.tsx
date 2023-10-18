@@ -29,6 +29,7 @@ import { isDateTimeTag, convertToDateTime, convertToDate } from '-/utils/dates';
 import { TS } from '-/tagspaces.namespace';
 import { getTagColors } from '-/services/taglibrary-utils';
 import TagContainerMenu from '-/components/TagContainerMenu';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 interface Props {
   tag: TS.Tag;
@@ -50,7 +51,6 @@ interface Props {
     fromTagGroupId: TS.Uuid,
     toTagGroupId: TS.Uuid
   ) => void;
-  selectedEntries?: Array<TS.FileSystemEntry>;
   reorderTags?: boolean;
 }
 
@@ -63,12 +63,12 @@ function TagContainer(props: Props) {
     entryPath,
     handleRemoveTag,
     handleTagMenu,
-    selectedEntries,
     addTags,
     tagMode
   } = props;
   let { title } = tag;
 
+  const { selectedEntries } = useSelectedEntriesContext();
   const defaultBackgroundColor = useSelector(getTagColor);
   const defaultTextColor = useSelector(getTagTextColor);
 

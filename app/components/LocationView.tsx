@@ -43,6 +43,8 @@ import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 interface Props {
   location: TS.Location;
@@ -63,7 +65,12 @@ function LocationView(props: Props) {
     locationDirectoryContextMenuAnchorEl,
     setLocationDirectoryContextMenuAnchorEl
   } = useCurrentLocationContext();
-  const { reloadDirectory } = useIOActionsContext();
+  const { setSelectedEntries } = useSelectedEntriesContext();
+  const {
+    currentDirectoryPath,
+    addDirectoryEntries,
+    openDirectory
+  } = useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
   const directoryTreeRef = useRef<DirectoryTreeViewRef>(null);
   /*  const [
@@ -94,10 +101,10 @@ function LocationView(props: Props) {
   const handleLocationClick = () => {
     if (currentLocation && location.uuid === currentLocation.uuid) {
       // the same location click
-      reloadDirectory(PlatformIO.getLocationPath(location));
+      openDirectory(PlatformIO.getLocationPath(location));
     } else {
       // this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
-      dispatch(AppActions.setSelectedEntries([]));
+      setSelectedEntries([]);
       openLocation(location);
       if (hideDrawer) {
         hideDrawer();
@@ -166,7 +173,11 @@ function LocationView(props: Props) {
               dispatch(AppActions.toggleUploadDialog());
               uploadFiles(arrPath, targetPath, onUploadProgress)
                 .then((fsEntries: Array<TS.FileSystemEntry>) => {
-                  dispatch(AppActions.reflectCreateEntries(fsEntries));
+                  if (targetPath === currentDirectoryPath) {
+                    addDirectoryEntries(fsEntries);
+                    dispatch(AppActions.reflectCreateEntries(fsEntries));
+                    setSelectedEntries(fsEntries);
+                  }
                   return true;
                 })
                 .catch(error => {
@@ -181,7 +192,7 @@ function LocationView(props: Props) {
           PlatformIO.disableObjectStoreSupport();
           moveFiles(arrPath, targetPath);
         }
-        dispatch(AppActions.setSelectedEntries([]));
+        setSelectedEntries([]);
       }
     }
   };

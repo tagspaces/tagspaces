@@ -201,7 +201,6 @@ interface Props {
     folderPath: string,
     lastBackgroundColorChange: number
   ) => void;
-  setSelectedEntries: (selectedEntries: Array<TS.FileSystemEntry>) => void;
 }
 
 const defaultBackgrounds = [
@@ -1393,8 +1392,7 @@ function mapStateToProps(state) {
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
-      setLastBackgroundColorChange: AppActions.setLastBackgroundColorChange,
-      setSelectedEntries: AppActions.setSelectedEntries
+      setLastBackgroundColorChange: AppActions.setLastBackgroundColorChange
     },
     dispatch
   );

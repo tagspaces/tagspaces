@@ -29,7 +29,10 @@ import {
   getThumbFileLocationForFile
 } from '@tagspaces/tagspaces-common/paths';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { getUseTrashCan } from '-/reducers/settings';
+import {
+  getUseTrashCan,
+  getWarningOpeningFilesExternally
+} from '-/reducers/settings';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import {
   deleteFilesPromise,
@@ -38,6 +41,7 @@ import {
 } from '-/services/utils-io';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 type FsActionsContextData = {
   renameDirectory: (
@@ -48,6 +52,7 @@ type FsActionsContextData = {
   deleteDirectory: (directoryPath: string) => Promise<boolean>;
   renameFile: (filePath: string, newFilePath: string) => Promise<boolean>;
   deleteFile: (filePath: string, uuid: string) => Promise<boolean>;
+  openFileNatively: (selectedFile?: string) => void;
 };
 
 export const FsActionsContext = createContext<FsActionsContextData>({
@@ -55,7 +60,8 @@ export const FsActionsContext = createContext<FsActionsContextData>({
   createDirectory: () => Promise.resolve(false),
   deleteDirectory: () => Promise.resolve(false),
   renameFile: () => Promise.resolve(false),
-  deleteFile: () => Promise.resolve(false)
+  deleteFile: () => Promise.resolve(false),
+  openFileNatively: undefined
 });
 
 export type FsActionsContextProviderProps = {
@@ -66,6 +72,7 @@ export const FsActionsContextProvider = ({
   children
 }: FsActionsContextProviderProps) => {
   const { t } = useTranslation();
+  const { setSelectedEntries, selectedEntries } = useSelectedEntriesContext();
   const {
     openedEntries,
     reflectRenameDirectory,
@@ -84,6 +91,9 @@ export const FsActionsContextProvider = ({
   const { showNotification } = useNotificationContext();
   const dispatch: AppDispatch = useDispatch();
   const useTrashCan = useSelector(getUseTrashCan);
+  const warningOpeningFilesExternally = useSelector(
+    getWarningOpeningFilesExternally
+  );
 
   function renameDirectory(directoryPath: string, newDirectoryName: string) {
     return PlatformIO.renameDirectoryPromise(directoryPath, newDirectoryName)
@@ -97,6 +107,7 @@ export const FsActionsContextProvider = ({
           reflectRenameEntry(directoryPath, newDirPath);
           dispatch(AppActions.reflectRenameEntry(directoryPath, newDirPath));
         }
+        setSelectedEntries([]);
 
         showNotification(
           `Renaming directory ${extractDirectoryName(
@@ -239,6 +250,7 @@ export const FsActionsContextProvider = ({
             dispatch(
               AppActions.reflectRenameEntry(filePath, newFilePathFromPromise)
             );
+            setSelectedEntries([]);
             console.info(
               'Renaming meta file and thumb successful from ' +
                 filePath +
@@ -252,6 +264,7 @@ export const FsActionsContextProvider = ({
             dispatch(
               AppActions.reflectRenameEntry(filePath, newFilePathFromPromise)
             );
+            setSelectedEntries([]);
             console.warn(
               'Renaming meta file and thumb failed from ' +
                 filePath +
@@ -333,13 +346,30 @@ export const FsActionsContextProvider = ({
       });
   }
 
+  function openFileNatively(selectedFile?: string) {
+    // todo reload selectedEntries or find better place for this function
+    if (selectedFile === undefined) {
+      if (selectedEntries && selectedEntries.length > 0) {
+        const fsEntry = selectedEntries[selectedEntries.length - 1];
+        if (fsEntry.isFile) {
+          PlatformIO.openFile(fsEntry.path, warningOpeningFilesExternally);
+        } else {
+          PlatformIO.openDirectory(fsEntry.path);
+        }
+      }
+    } else {
+      PlatformIO.openFile(selectedFile, warningOpeningFilesExternally);
+    }
+  }
+
   const context = useMemo(() => {
     return {
       renameDirectory,
       createDirectory,
       deleteDirectory,
       renameFile,
-      deleteFile
+      deleteFile,
+      openFileNatively
     };
   }, [openedEntries]);
 

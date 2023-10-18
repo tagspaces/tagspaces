@@ -28,7 +28,6 @@ import {
   actions as AppActions,
   AppDispatch,
   getEditedEntryPaths,
-  getLastSelectedEntry,
   OpenedEntry
 } from '-/reducers/app';
 import { Pro } from '-/pro';
@@ -75,6 +74,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 type OpenedEntryContextData = {
   openedEntries: OpenedEntry[];
@@ -148,13 +148,12 @@ export const OpenedEntryContextProvider = ({
     setCurrentDirectoryPerspective,
     updateCurrentDirEntry
   } = useDirectoryContentContext();
+
+  const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
   const { showNotification } = useNotificationContext();
   const { openLocation, currentLocation } = useCurrentLocationContext();
   const { reflectCreateEntry } = useLocationIndexContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
-  const lastSelectedEntry: TS.FileSystemEntry = useSelector(
-    getLastSelectedEntry
-  );
   const locations: TS.Location[] = useSelector(getLocations);
   const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
   const fileOpenHistory = useSelector(
@@ -206,7 +205,7 @@ export const OpenedEntryContextProvider = ({
     }*/
   }, []);
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (
       !firstRender &&
       havePrevOpenedFile.current
@@ -234,7 +233,7 @@ export const OpenedEntryContextProvider = ({
       }
     }
     havePrevOpenedFile.current = openedEntries.length > 0;
-  }, [openedEntries]);
+  }, [openedEntries]);*/
 
   /**
    * HANDLE REFLECT_RENAME_ENTRY
@@ -566,11 +565,12 @@ export const OpenedEntryContextProvider = ({
   function openFsEntry(fsEntry?: TS.FileSystemEntry, showDetails = false) {
     dispatch(SettingsActions.setShowDetails(showDetails));
     if (fsEntry === undefined) {
-      if (lastSelectedEntry === undefined) {
-        return;
-      }
-      if (!lastSelectedEntry.isFile) {
-        openDirectory(lastSelectedEntry.path); //, false);
+      if (selectedEntries && selectedEntries.length > 0) {
+        const lastSelectedEntry = selectedEntries[selectedEntries.length - 1];
+        if (!lastSelectedEntry.isFile) {
+          return openDirectory(lastSelectedEntry.path); //, false);
+        }
+      } else {
         return;
       }
     }
@@ -689,13 +689,15 @@ export const OpenedEntryContextProvider = ({
   function openNextFile(path?: string) {
     const nextFile = getNextFile(
       path,
-      lastSelectedEntry ? lastSelectedEntry.path : undefined,
+      selectedEntries && selectedEntries.length > 0
+        ? selectedEntries[selectedEntries.length - 1].path
+        : undefined,
       currentDirectoryEntries
     );
     if (nextFile !== undefined) {
       openFsEntry(nextFile);
       // dispatch(actions.setLastSelectedEntry(nextFile.path));
-      dispatch(AppActions.setSelectedEntries([nextFile]));
+      setSelectedEntries([nextFile]);
       return nextFile;
     }
   }
@@ -703,13 +705,15 @@ export const OpenedEntryContextProvider = ({
   function openPrevFile(path?: string) {
     const prevFile = getPrevFile(
       path,
-      lastSelectedEntry ? lastSelectedEntry.path : undefined,
+      selectedEntries && selectedEntries.length > 0
+        ? selectedEntries[selectedEntries.length - 1].path
+        : undefined,
       currentDirectoryEntries
     );
     if (prevFile !== undefined) {
       openFsEntry(prevFile);
       // dispatch(actions.setLastSelectedEntry(prevFile.path));
-      dispatch(AppActions.setSelectedEntries([prevFile]));
+      setSelectedEntries([prevFile]);
     }
   }
 

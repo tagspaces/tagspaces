@@ -17,7 +17,7 @@
  */
 
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import ShowEntriesWithTagIcon from '@mui/icons-material/SearchOutlined';
 import ApplyTagIcon from '@mui/icons-material/LocalOfferOutlined';
 import Edit from '@mui/icons-material/Edit';
@@ -27,13 +27,12 @@ import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { getMaxSearchResults } from '-/reducers/settings';
-import { AppDispatch, getSelectedEntries } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 const isTagLibraryReadOnly =
   window.ExtTagLibrary && window.ExtTagLibrary.length > 0;
@@ -58,11 +57,11 @@ function TagMenu(props: Props) {
   } = props;
 
   const { t } = useTranslation();
+  const { selectedEntries } = useSelectedEntriesContext();
   const { addTags } = useTaggingActionsContext();
   const { readOnlyMode } = useCurrentLocationContext();
   const { setSearchQuery } = useDirectoryContentContext();
   const maxSearchResults: number = useSelector(getMaxSearchResults);
-  const selectedEntries = useSelector(getSelectedEntries);
 
   function showFilesWithThisTag() {
     if (selectedTag) {

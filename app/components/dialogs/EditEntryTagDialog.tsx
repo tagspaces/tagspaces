@@ -37,7 +37,7 @@ import Dialog from '@mui/material/Dialog';
 import EditIcon from '@mui/icons-material/Edit';
 import { isGeoTag } from '-/utils/geo';
 import { Pro } from '-/pro';
-import { getSelectedEntries, getSelectedTag } from '-/reducers/app';
+import { getSelectedTag } from '-/reducers/app';
 import { isDateTimeTag } from '-/utils/dates';
 import { TS } from '-/tagspaces.namespace';
 import useValidation from '-/utils/useValidation';
@@ -51,7 +51,6 @@ import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 interface Props {
   open: boolean;
   onClose: () => void;
-  selectedEntries: Array<TS.FileSystemEntry>;
   selectedTag: TS.Tag;
   tileServer: TS.MapTileServer;
   geoTaggingFormat: string;
@@ -258,7 +257,6 @@ function EditEntryTagDialog(props: Props) {
 function mapStateToProps(state) {
   return {
     selectedTag: getSelectedTag(state),
-    selectedEntries: getSelectedEntries(state),
     tileServer: getMapTileServer(state),
     geoTaggingFormat: state.settings.geoTaggingFormat
   };

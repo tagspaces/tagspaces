@@ -29,8 +29,7 @@ import { locationType } from '@tagspaces/tagspaces-common/misc';
 import {
   actions as AppActions,
   AppDispatch,
-  getEditedEntryPaths,
-  getSelectedEntries
+  getEditedEntryPaths
 } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { useTranslation } from 'react-i18next';
@@ -54,6 +53,7 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import useFirstRender from '-/utils/useFirstRender';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { loadCurrentDirMeta } from '-/services/meta-loader';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 type DirectoryContentContextData = {
   currentDirectoryEntries: TS.FileSystemEntry[];
@@ -72,6 +72,7 @@ type DirectoryContentContextData = {
   isMetaFolderExist: boolean;
   searchQuery: TS.SearchQuery;
   isSearchMode: boolean;
+  addDirectoryEntries: (entries: TS.FileSystemEntry[]) => void;
   setSearchQuery: (sQuery: TS.SearchQuery) => void;
   loadParentDirectoryContent: () => void;
   loadDirectoryContent: (
@@ -116,6 +117,7 @@ export const DirectoryContentContext = createContext<
   isMetaFolderExist: false,
   searchQuery: {},
   isSearchMode: false,
+  addDirectoryEntries: undefined,
   setSearchQuery: () => {},
   loadParentDirectoryContent: () => {},
   loadDirectoryContent: undefined,
@@ -152,7 +154,8 @@ export const DirectoryContentContextProvider = ({
     skipInitialDirList
   } = useCurrentLocationContext();
   const { showNotification, hideNotifications } = useNotificationContext();
-  const selectedEntries = useSelector(getSelectedEntries);
+
+  const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
   //const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
   const editedEntryPaths = useSelector(getEditedEntryPaths);
@@ -278,16 +281,23 @@ export const DirectoryContentContextProvider = ({
     if (isSearchMode.current) {
       exitSearchMode();
     }
-    const currentLocationPath = normalizePath(currentLocation.path);
+    const currentLocationPath = normalizePath(
+      PlatformIO.getLocationPath(currentLocation)
+    );
 
     // dispatch(actions.setIsLoading(true));
 
-    if (currentDirectoryPath.current) {
+    if (currentDirectoryPath.current !== undefined) {
       const parentDirectory = extractParentDirectoryPath(
         currentDirectoryPath.current,
         PlatformIO.getDirSeparator()
       );
-      // console.log('parentDirectory: ' + parentDirectory  + ' - currentLocationPath: ' + currentLocationPath);
+      console.log(
+        'parentDirectory: ' +
+          parentDirectory +
+          ' - currentLocationPath: ' +
+          currentLocationPath
+      );
       if (parentDirectory.includes(currentLocationPath)) {
         openDirectory(parentDirectory);
       } else {
@@ -374,7 +384,7 @@ export const DirectoryContentContextProvider = ({
     // dispatch(actions.setIsLoading(true));
 
     if (selectedEntries.length > 0) {
-      dispatch(AppActions.setSelectedEntries([]));
+      setSelectedEntries([]);
     }
     if (loadDirMeta) {
       const metaDirectory = getMetaDirectoryPath(directoryPath);
@@ -477,7 +487,7 @@ export const DirectoryContentContextProvider = ({
   }
 
   function openDirectory(dirPath: string): Promise<boolean> {
-    if (dirPath) {
+    if (dirPath !== undefined) {
       return loadDirectoryContent(dirPath, true).then(dirEntries => {
         if (dirEntries) {
           return loadCurrentDirMeta(dirPath, dirEntries).then(entries => {
@@ -523,7 +533,7 @@ export const DirectoryContentContextProvider = ({
 
     isSearchMode.current = false;
 
-    if (
+    /*if (
       currentDirectoryPath.current &&
       currentDirectoryPath.current.startsWith('./')
     ) {
@@ -531,9 +541,9 @@ export const DirectoryContentContextProvider = ({
       currentDirectoryPath.current = PlatformIO.resolveFilePath(
         currentDirectoryPath.current
       );
-    } else {
-      currentDirectoryPath.current = directoryPath;
-    }
+    } else {*/
+    currentDirectoryPath.current = directoryPath;
+    //}
     setCurrentDirectoryEntries(directoryContent);
     return directoryContent;
   }
@@ -636,6 +646,13 @@ export const DirectoryContentContextProvider = ({
     reload: boolean = true
   ) {
     currentPerspective.current = perspective;
+    setSelectedEntries([]);
+    /*if (PerspectiveIDs.KANBAN === perspective) {
+      // many items can't be selected in KanBan
+      if (selectedEntries.length > 1) {
+        setSelectedEntries([selectedEntries[selectedEntries.length - 1]]);
+      }
+    }*/
     if (reload) {
       forceUpdate();
     }
@@ -652,6 +669,10 @@ export const DirectoryContentContextProvider = ({
 
   function setCurrentDirectoryFiles(files: TS.OrderVisibilitySettings[]) {
     currentDirectoryFiles.current = files;
+  }
+
+  function addDirectoryEntries(entries: TS.FileSystemEntry[]) {
+    setCurrentDirectoryEntries([...currentDirectoryEntries, ...entries]);
   }
 
   function setDirectoryMeta(meta: TS.FileSystemEntryMeta) {
@@ -681,6 +702,8 @@ export const DirectoryContentContextProvider = ({
       isMetaFolderExist: isMetaFolderExist.current,
       searchQuery: searchQuery.current,
       isSearchMode: isSearchMode.current,
+      setCurrentDirectoryEntries,
+      updateCurrentDirEntry,
       setSearchQuery,
       loadDirectoryContent,
       loadParentDirectoryContent,
@@ -692,7 +715,7 @@ export const DirectoryContentContextProvider = ({
       setCurrentDirectoryColor,
       setCurrentDirectoryDirs,
       setCurrentDirectoryFiles,
-      updateCurrentDirEntry,
+      addDirectoryEntries,
       updateCurrentDirEntries,
       updateThumbnailUrl,
       setDirectoryMeta,

@@ -17,11 +17,7 @@ import PlatformIO from '-/services/platform-facade';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import {
-  actions as AppActions,
-  AppDispatch,
-  getSelectedEntries
-} from '-/reducers/app';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import DirectoryListView from '-/components/DirectoryListView';
 import AppConfig from '-/AppConfig';
@@ -34,6 +30,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 interface Props {
   open: boolean;
@@ -47,10 +44,8 @@ function MoveCopyFilesDialog(props: Props) {
   const dispatch: AppDispatch = useDispatch();
   const { currentDirectoryPath } = useDirectoryContentContext();
   const { copyFiles, copyDirs, moveFiles, moveDirs } = useIOActionsContext();
+  const { selectedEntries } = useSelectedEntriesContext();
 
-  const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
-    getSelectedEntries
-  );
   const [targetPath, setTargetPath] = useState(
     currentDirectoryPath ? currentDirectoryPath : ''
   );

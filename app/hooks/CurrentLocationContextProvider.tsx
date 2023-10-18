@@ -103,7 +103,6 @@ export const CurrentLocationContextProvider = ({
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
   const { showNotification } = useNotificationContext();
-
   const [currentLocation, setCurrentLocation] = useState<TS.Location>(
     undefined
   );
@@ -244,7 +243,7 @@ export const CurrentLocationContextProvider = ({
       return locationPersistTagsInSidecarFile;
     }
     return settingsPersistTagsInSidecarFile;
-  }, [currentLocation]);
+  }, [currentLocation, settingsPersistTagsInSidecarFile]);
 
   function changeLocation(location: TS.Location) {
     if (!currentLocation || location.uuid !== currentLocation.uuid) {
@@ -344,7 +343,6 @@ export const CurrentLocationContextProvider = ({
         if (location.uuid === locationId) {
           // location needed evtl. to unwatch many loc. root folders if available
           setCurrentLocation(undefined);
-          dispatch(AppActions.setSelectedEntries([]));
         }
         clearAllURLParams();
         return true;
@@ -355,7 +353,6 @@ export const CurrentLocationContextProvider = ({
   function closeAllLocations() {
     // location needed evtl. to unwatch many loc. root folders if available
     setCurrentLocation(undefined);
-    dispatch(AppActions.setSelectedEntries([]));
     clearAllURLParams();
     return true;
   }
@@ -393,6 +390,7 @@ export const CurrentLocationContextProvider = ({
     };
   }, [
     currentLocation,
+    persistTagsInSidecarFile,
     skipInitialDirList.current,
     locationDirectoryContextMenuAnchorEl
   ]);

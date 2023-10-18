@@ -30,11 +30,7 @@ import {
 } from '@tagspaces/tagspaces-common/paths';
 import { Pro } from '-/pro';
 import PlatformIO from '-/services/platform-facade';
-import {
-  actions as AppActions,
-  AppDispatch,
-  getSelectedEntries
-} from '-/reducers/app';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import FileUploadContainer, {
   FileUploadContainerRef
 } from '-/components/FileUploadContainer';
@@ -52,6 +48,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 interface Props {
   open: boolean;
@@ -71,15 +68,16 @@ interface Props {
 function DirectoryMenu(props: Props) {
   const { t } = useTranslation();
   const { openEntry } = useOpenedEntryContext();
+  const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
   const { addTags } = useTaggingActionsContext();
   const { currentLocation, readOnlyMode } = useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
   const {
     openDirectory,
     currentDirectoryPath,
-    setCurrentDirectoryPerspective
+    setCurrentDirectoryPerspective,
+    openCurrentDirectory
   } = useDirectoryContentContext();
-  const { reloadDirectory } = useIOActionsContext();
   const { reflectCreateEntry } = useLocationIndexContext();
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
   const {
@@ -95,9 +93,6 @@ function DirectoryMenu(props: Props) {
     perspectiveMode
   } = props;
   const directoryPath = props.directoryPath || currentDirectoryPath;
-  const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
-    getSelectedEntries
-  );
   const locations: Array<TS.Location> = useSelector(getLocations);
   const dispatch: AppDispatch = useDispatch();
 
@@ -115,10 +110,6 @@ function DirectoryMenu(props: Props) {
 
   const toggleDeleteMultipleEntriesDialog = () => {
     dispatch(AppActions.toggleDeleteMultipleEntriesDialog());
-  };
-
-  const setSelectedEntries = selectedEntries => {
-    dispatch(AppActions.setSelectedEntries(selectedEntries));
   };
 
   const toggleProTeaser = slidePage => {
@@ -409,7 +400,7 @@ Do you want to continue?`)
     onClose,
     t,
     openDir,
-    reloadDirectory,
+    openCurrentDirectory,
     openRenameDirectoryDialog,
     openMoveCopyFilesDialog,
     showDeleteDirectoryDialog,

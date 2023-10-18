@@ -17,7 +17,6 @@
  */
 
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import DialogActions from '@mui/material/DialogActions';
@@ -41,19 +40,21 @@ import { TS } from '-/tagspaces.namespace';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { AppDispatch } from '-/reducers/app';
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 interface Props {
   open: boolean;
-  selectedEntries: Array<any>;
   onClose: (clearSelection?: boolean) => void;
+  selected?: TS.FileSystemEntry[];
 }
 
 function AddRemoveTagsDialog(props: Props) {
   const { t } = useTranslation();
 
+  const { selectedEntries } = useSelectedEntriesContext();
+  const selected = props.selected ? props.selected : selectedEntries;
   const { addTags, removeTags, removeAllTags } = useTaggingActionsContext();
   const [newlyAddedTags, setNewlyAddedTags] = useState<Array<TS.Tag>>([]);
 
@@ -78,9 +79,9 @@ function AddRemoveTagsDialog(props: Props) {
   };
 
   const addTagsAction = () => {
-    if (props.selectedEntries && props.selectedEntries.length > 0) {
+    if (selected && selected.length > 0) {
       addTags(
-        selectedEntries.map(entry => entry.path),
+        selected.map(entry => entry.path),
         newlyAddedTags
       );
     }
@@ -88,10 +89,9 @@ function AddRemoveTagsDialog(props: Props) {
   };
 
   const removeTagsAction = () => {
-    const { selectedEntries } = props;
-    if (selectedEntries && selectedEntries.length > 0) {
+    if (selected && selected.length > 0) {
       removeTags(
-        selectedEntries.map(entry => entry.path),
+        selected.map(entry => entry.path),
         newlyAddedTags
       );
     }
@@ -99,16 +99,15 @@ function AddRemoveTagsDialog(props: Props) {
   };
 
   const removeAllTagsAction = () => {
-    const { selectedEntries } = props;
-    if (selectedEntries && selectedEntries.length > 0) {
-      removeAllTags(selectedEntries.map(entry => entry.path));
+    if (selected && selected.length > 0) {
+      removeAllTags(selected.map(entry => entry.path));
     }
     onCloseDialog(true);
   };
 
-  const { open, selectedEntries = [] } = props;
+  const { open } = props;
   const disabledButtons =
-    !newlyAddedTags || newlyAddedTags.length < 1 || selectedEntries.length < 1;
+    !newlyAddedTags || newlyAddedTags.length < 1 || selected.length < 1;
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -147,8 +146,8 @@ function AddRemoveTagsDialog(props: Props) {
           {t('selectedFilesAndFolders')}
         </Typography>
         <List dense style={{ width: 550, marginLeft: -15 }}>
-          {selectedEntries.length > 0 &&
-            selectedEntries.map(entry => (
+          {selected.length > 0 &&
+            selected.map(entry => (
               <ListItem key={entry.path} title={entry.path}>
                 <ListItemIcon>
                   {entry.isFile ? <FileIcon /> : <FolderIcon />}
@@ -179,7 +178,7 @@ function AddRemoveTagsDialog(props: Props) {
         </Button>
         <Button
           data-tid="cleanTagsMultipleEntries"
-          disabled={selectedEntries.length < 1}
+          disabled={selected.length < 1}
           color="primary"
           onClick={removeAllTagsAction}
         >

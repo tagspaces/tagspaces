@@ -92,10 +92,8 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 interface Props {
-  /*location?: TS.Location;*/
   open: boolean;
   onClose: () => void;
-  classes: any;
   editLocation?: (location: TS.Location) => void;
 }
 

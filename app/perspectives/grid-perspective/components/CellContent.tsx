@@ -66,6 +66,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 const maxDescriptionPreviewLength = 100;
 
@@ -76,7 +77,6 @@ interface Props {
   entrySize: string;
   style?: any;
   thumbnailMode: any;
-  selectedEntries: Array<TS.FileSystemEntry>;
   selectEntry: (fsEntry: TS.FileSystemEntry) => void;
   deselectEntry: (fsEntry: TS.FileSystemEntry) => void;
   showTags: boolean;
@@ -94,7 +94,6 @@ function CellContent(props: Props) {
     fsEntry,
     entrySize,
     thumbnailMode,
-    selectedEntries,
     handleTagMenu,
     layoutType,
     handleGridContextMenu,
@@ -109,6 +108,7 @@ function CellContent(props: Props) {
 
   const { t } = useTranslation();
   const theme = useTheme();
+  const { selectedEntries } = useSelectedEntriesContext();
   const { addTags, editTagForEntry } = useTaggingActionsContext();
   const { readOnlyMode } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
@@ -521,7 +521,6 @@ function CellContent(props: Props) {
           entryPath={entryPath}
           addTags={handleAddTags}
           handleTagMenu={handleTagMenu}
-          selectedEntries={selectedEntries}
         />
       ) : (
         <TagContainerDnd
@@ -543,7 +542,7 @@ function CellContent(props: Props) {
       }
       return tagContainer;
     });
-  }, [entryTags, readOnlyMode, reorderTags, entryPath, selectedEntries]);
+  }, [entryTags, readOnlyMode, reorderTags, entryPath]);
 
   let entryHeight = 130;
   if (entrySize === 'small') {
