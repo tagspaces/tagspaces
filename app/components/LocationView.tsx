@@ -68,9 +68,9 @@ function LocationView(props: Props) {
   const { setSelectedEntries } = useSelectedEntriesContext();
   const {
     currentDirectoryPath,
-    addDirectoryEntries
+    addDirectoryEntries,
+    openDirectory
   } = useDirectoryContentContext();
-  const { reloadDirectory } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
   const directoryTreeRef = useRef<DirectoryTreeViewRef>(null);
   /*  const [
@@ -101,7 +101,7 @@ function LocationView(props: Props) {
   const handleLocationClick = () => {
     if (currentLocation && location.uuid === currentLocation.uuid) {
       // the same location click
-      reloadDirectory(PlatformIO.getLocationPath(location));
+      openDirectory(PlatformIO.getLocationPath(location));
     } else {
       // this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
       setSelectedEntries([]);

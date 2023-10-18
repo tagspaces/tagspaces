@@ -75,9 +75,9 @@ function DirectoryMenu(props: Props) {
   const {
     openDirectory,
     currentDirectoryPath,
-    setCurrentDirectoryPerspective
+    setCurrentDirectoryPerspective,
+    openCurrentDirectory
   } = useDirectoryContentContext();
-  const { reloadDirectory } = useIOActionsContext();
   const { reflectCreateEntry } = useLocationIndexContext();
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
   const {
@@ -400,7 +400,7 @@ Do you want to continue?`)
     onClose,
     t,
     openDir,
-    reloadDirectory,
+    openCurrentDirectory,
     openRenameDirectoryDialog,
     openMoveCopyFilesDialog,
     showDeleteDirectoryDialog,

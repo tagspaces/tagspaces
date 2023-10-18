@@ -480,7 +480,7 @@ export const DirectoryContentContextProvider = ({
   }
 
   function openDirectory(dirPath: string): Promise<boolean> {
-    if (dirPath) {
+    if (dirPath !== undefined) {
       return loadDirectoryContent(dirPath, true).then(dirEntries => {
         if (dirEntries) {
           return loadCurrentDirMeta(dirPath, dirEntries).then(entries => {
