@@ -55,7 +55,10 @@ import { TS } from '-/tagspaces.namespace';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useSelector, useDispatch } from 'react-redux';
 import { supportedImgs } from '-/services/thumbsgenerator';
-import { getPrefixTagContainer } from '-/reducers/settings';
+import {
+  getPrefixTagContainer,
+  getWarningOpeningFilesExternally
+} from '-/reducers/settings';
 import {
   OpenNewWindowIcon,
   DeleteIcon,
@@ -68,6 +71,7 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 interface Props {
   anchorEl: Element;
@@ -80,9 +84,7 @@ interface Props {
   openMoveCopyFilesDialog: () => void;
   openShareFilesDialog?: () => void;
   openAddRemoveTagsDialog: () => void;
-  openFileNatively: (path: string) => void;
   selectedFilePath?: string;
-  selectedEntries: Array<any>;
   reorderTop?: () => void;
   reorderBottom?: () => void;
   onDuplicateFile?: (fileDirPath: string) => void;
@@ -96,8 +98,6 @@ function FileMenu(props: Props) {
     openShareFilesDialog,
     openAddRemoveTagsDialog,
     onDuplicateFile,
-    selectedEntries,
-    openFileNatively,
     reorderTop,
     reorderBottom,
     anchorEl,
@@ -110,22 +110,27 @@ function FileMenu(props: Props) {
 
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
+  const { selectedEntries } = useSelectedEntriesContext();
   const { openEntry } = useOpenedEntryContext();
   const { openDirectory } = useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
   const { currentLocation, readOnlyMode } = useCurrentLocationContext();
   const locations: Array<TS.Location> = useSelector(getLocations);
   const prefixTagContainer = useSelector(getPrefixTagContainer);
+  const warningOpeningFilesExternally = useSelector(
+    getWarningOpeningFilesExternally
+  );
 
   function generateFileLink() {
-    const entryFromIndex = selectedEntries[0].locationID;
+    /*const entryFromIndex = selectedEntries[0].locationID;
     const locationID = entryFromIndex
       ? selectedEntries[0].locationID
-      : currentLocation.uuid;
+      : currentLocation.uuid;*/
     const entryPath = selectedEntries[0].path;
-    const tmpLoc = locations.find(location => location.uuid === locationID);
-    const relativePath = getRelativeEntryPath(tmpLoc, entryPath);
-    return generateSharingLink(locationID, relativePath);
+    /*const tmpLoc = locations.find(
+      location => location.uuid === locationID);*/
+    const relativePath = getRelativeEntryPath(currentLocation, entryPath);
+    return generateSharingLink(currentLocation.uuid, relativePath);
   }
 
   function showProperties() {
@@ -356,7 +361,11 @@ function FileMenu(props: Props) {
         onClick={() => {
           onClose();
           if (selectedFilePath) {
-            openFileNatively(selectedFilePath);
+            PlatformIO.openFile(
+              selectedFilePath,
+              warningOpeningFilesExternally
+            );
+            // openFileNatively(selectedFilePath);
           }
         }}
       >

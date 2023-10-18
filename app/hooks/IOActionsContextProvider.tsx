@@ -51,7 +51,7 @@ import {
   loadJSONString
 } from '@tagspaces/tagspaces-common/utils-io';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
-import { loadCurrentDirMeta } from '-/services/meta-loader';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 type extractOptions = {
   EXIFGeo?: boolean;
@@ -126,8 +126,10 @@ export const IOActionsContextProvider = ({
   const {
     currentDirectoryEntries,
     currentDirectoryPath,
-    openDirectory
+    openDirectory,
+    addDirectoryEntries
   } = useDirectoryContentContext();
+  const { setSelectedEntries } = useSelectedEntriesContext();
   const {
     reflectDeleteEntry,
     reflectCreateEntry,
@@ -393,7 +395,10 @@ export const IOActionsContextProvider = ({
       })
       .then((fsEntry: TS.FileSystemEntry) => {
         reflectCreateEntry(fsEntry);
-        dispatch(AppActions.reflectCreateEntryObj(fsEntry));
+        addDirectoryEntries([fsEntry]);
+        dispatch(AppActions.reflectCreateEntries([fsEntry]));
+        setSelectedEntries([fsEntry]);
+
         return fsEntry;
       });
     //.catch(e => console.log(e));

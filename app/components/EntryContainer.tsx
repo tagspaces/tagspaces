@@ -68,6 +68,7 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { toFsEntry } from '-/services/utils-io';
 
 //const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
 // const bufferedSplitResize = buffer({
@@ -983,7 +984,9 @@ function EntryContainer() {
         <AddRemoveTagsDialog
           open={isEditTagsModalOpened}
           onClose={() => setEditTagsModalOpened(false)}
-          selectedEntries={openedFile ? [openedFile] : []}
+          selected={
+            openedFile ? [toFsEntry(openedFile.path, openedFile.isFile)] : []
+          }
         />
       )}
       <ResolveConflictDialog

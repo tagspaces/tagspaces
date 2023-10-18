@@ -82,8 +82,8 @@ export const types = {
   SET_SEARCH_FILTER: 'APP/SET_SEARCH_FILTER',
   SET_NEW_VERSION_AVAILABLE: 'APP/SET_NEW_VERSION_AVAILABLE',
   SET_CURRENLOCATIONID: 'APP/SET_CURRENLOCATIONID',
-  SET_LAST_SELECTED_ENTRY: 'APP/SET_LAST_SELECTED_ENTRY',
-  SET_SELECTED_ENTRIES: 'APP/SET_SELECTED_ENTRIES',
+  //SET_LAST_SELECTED_ENTRY: 'APP/SET_LAST_SELECTED_ENTRY',
+  //SET_SELECTED_ENTRIES: 'APP/SET_SELECTED_ENTRIES',
   SET_TAG_LIBRARY_CHANGED: 'APP/SET_TAG_LIBRARY_CHANGED',
   SET_FILEDRAGGED: 'APP/SET_FILEDRAGGED',
   TOGGLE_EDIT_TAG_DIALOG: 'APP/TOGGLE_EDIT_TAG_DIALOG',
@@ -216,7 +216,7 @@ export const initialState = {
   createDirectoryDialogOpened: null,
   importKanBanDialogOpened: false,
   // lastSelectedEntry: null,
-  selectedEntries: [],
+  //selectedEntries: [],
   tagLibraryChanged: false,
   isEntryInFullWidth: false,
   //isGeneratingThumbs: false,
@@ -303,7 +303,7 @@ export default (state: any = initialState, action: any) => {
       }
       return state;
     }
-    case types.SET_SELECTED_ENTRIES: {
+    /*case types.SET_SELECTED_ENTRIES: {
       if (
         JSON.stringify(action.selectedEntries) !==
         JSON.stringify(state.selectedEntries)
@@ -311,7 +311,7 @@ export default (state: any = initialState, action: any) => {
         return { ...state, selectedEntries: action.selectedEntries };
       }
       return state;
-    }
+    }*/
     case types.SET_TAG_LIBRARY_CHANGED: {
       return { ...state, tagLibraryChanged: !state.tagLibraryChanged };
     }
@@ -535,7 +535,7 @@ export default (state: any = initialState, action: any) => {
       };
     }
     case types.REFLECT_CREATE_ENTRIES: {
-      /*if (
+      if (
         action.fsEntries.length > 0 &&
         extractParentDirectoryPath(
           action.fsEntries[0].path,
@@ -552,13 +552,13 @@ export default (state: any = initialState, action: any) => {
         );
         return {
           ...state,
-          editedEntryPaths,
-          currentDirectoryEntries: [
+          editedEntryPaths
+          /*currentDirectoryEntries: [
             ...state.currentDirectoryEntries,
             ...action.fsEntries
-          ]
+          ]*/
         };
-      }*/
+      }
       return state;
     }
     case types.REFLECT_RENAME_ENTRY: {
@@ -968,7 +968,7 @@ export const actions = {
   openTagLibraryPanel: () => ({ type: types.OPEN_TAGLIBRARY_PANEL }),
   openSearchPanel: () => ({ type: types.OPEN_SEARCH_PANEL }),
   openHelpFeedbackPanel: () => ({ type: types.OPEN_HELPFEEDBACK_PANEL }),
-  setSelectedEntries: (selectedEntries: Array<TS.FileSystemEntry>) => (
+  /*setSelectedEntries: (selectedEntries: Array<TS.FileSystemEntry>) => (
     dispatch: (action) => void
   ) => {
     // const { openedFiles } = getState().app;
@@ -976,11 +976,11 @@ export const actions = {
     // if (openedFiles.length === 0 || !openedFiles[0].editMode) {
     dispatch(actions.setSelectedEntriesInt(selectedEntries));
     // }
-  },
-  setSelectedEntriesInt: (selectedEntries: Array<TS.FileSystemEntry>) => ({
+  },*/
+  /*setSelectedEntriesInt: (selectedEntries: Array<TS.FileSystemEntry>) => ({
     type: types.SET_SELECTED_ENTRIES,
     selectedEntries
-  }),
+  }),*/
   addTag: (tag: any, parentTagGroupUuid: TS.Uuid) => (
     dispatch: (action) => void,
     getState: () => any
@@ -1014,45 +1014,45 @@ export const actions = {
     type: types.REFLECT_CREATE_ENTRY,
     newEntry
   }),
-  reflectCreateEntriesInt: (fsEntries: Array<TS.FileSystemEntry>) => ({
+  reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => ({
     type: types.REFLECT_CREATE_ENTRIES,
     fsEntries
   }),
-  reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => (
+  /*reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => (
     dispatch: (action) => void
   ) => {
     dispatch(actions.reflectCreateEntriesInt(fsEntries));
     dispatch(actions.setSelectedEntries(fsEntries));
-  },
+  },*/
   reflectCreateEntry: (path: string, isFile: boolean) => (
     dispatch: (action) => void
   ) => {
-    dispatch(actions.reflectCreateEntryObj(toFsEntry(path, isFile)));
+    dispatch(actions.reflectCreateEntries([toFsEntry(path, isFile)]));
   },
-  reflectCreateEntryObj: (newEntry: TS.FileSystemEntry) => (
+  /*reflectCreateEntryObj: (newEntry: TS.FileSystemEntry) => (
     dispatch: (action) => void
   ) => {
     dispatch(actions.setSelectedEntries([newEntry]));
     dispatch(actions.reflectCreateEntryInt(newEntry));
     //GlobalSearch.getInstance().reflectCreateEntry(newEntry);
-  },
-  reflectRenameEntryInt: (path: string, newPath: string) => ({
+  },*/
+  reflectRenameEntry: (path: string, newPath: string) => ({
     type: types.REFLECT_RENAME_ENTRY,
     path,
     newPath
   }),
-  reflectRenameEntry: (path: string, newPath: string) => (
+  /*reflectRenameEntry: (path: string, newPath: string) => (
     dispatch: (action) => void
   ) => {
     dispatch(actions.reflectRenameEntryInt(path, newPath));
     // GlobalSearch.getInstance().reflectRenameEntry(path, newPath);
     dispatch(actions.setSelectedEntries([]));
-  },
+  },*/
   reflectEditedEntryPaths: (editedEntryPaths: Array<TS.EditedEntryPath>) => ({
     type: types.REFLECT_EDITED_ENTRY_PATHS,
     editedEntryPaths
-  }),
-  openFileNatively: (selectedFile?: string) => (
+  })
+  /*openFileNatively: (selectedFile: string) => (
     dispatch: (action) => void,
     getState: () => any
   ) => {
@@ -1072,7 +1072,7 @@ export const actions = {
       const { warningOpeningFilesExternally } = getState().settings;
       PlatformIO.openFile(selectedFile, warningOpeningFilesExternally);
     }
-  }
+  }*/
 };
 
 // Selectors
@@ -1094,7 +1094,7 @@ export const getProgress = (state: any) => state.app.progress;
 export const isUpdateAvailable = (state: any) => state.app.isUpdateAvailable;
 export const isUpdateInProgress = (state: any) => state.app.isUpdateInProgress;
 export const isOnline = (state: any) => state.app.isOnline;
-export const getLastSelectedEntry = (state: any) => {
+/*export const getLastSelectedEntry = (state: any) => {
   const { selectedEntries } = state.app;
   if (selectedEntries && selectedEntries.length > 0) {
     return selectedEntries[selectedEntries.length - 1];
@@ -1107,13 +1107,13 @@ export const getLastSelectedEntryPath = (state: any) => {
     return selectedEntries[selectedEntries.length - 1].path;
   }
   return undefined;
-};
+};*/
 export const getSelectedTag = (state: any) => state.app.tag;
 export const isTagLibraryChanged = (state: any) => state.app.tagLibraryChanged;
-export const getSelectedEntries = (state: any) =>
-  state.app.selectedEntries ? state.app.selectedEntries : [];
-export const getSelectedEntriesLength = (state: any) =>
-  state.app.selectedEntries ? state.app.selectedEntries.length : 0;
+/*export const getSelectedEntries = (state: any) =>
+  state.app.selectedEntries ? state.app.selectedEntries : [];*/
+/*export const getSelectedEntriesLength = (state: any) =>
+  state.app.selectedEntries ? state.app.selectedEntries.length : 0;*/
 export const getExtensions = (state: any) => state.app.extensions;
 // export const getDirectoryMeta = (state: any) => state.app.directoryMeta;
 // export const isGeneratingThumbs = (state: any) => state.app.isGeneratingThumbs;

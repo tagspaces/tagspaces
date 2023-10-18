@@ -76,7 +76,6 @@ interface Props {
   entrySize: string;
   style?: any;
   thumbnailMode: any;
-  selectedEntries: Array<TS.FileSystemEntry>;
   selectEntry: (fsEntry: TS.FileSystemEntry) => void;
   deselectEntry: (fsEntry: TS.FileSystemEntry) => void;
   showTags: boolean;
@@ -94,7 +93,6 @@ function CellContent(props: Props) {
     fsEntry,
     entrySize,
     thumbnailMode,
-    selectedEntries,
     handleTagMenu,
     layoutType,
     handleGridContextMenu,
@@ -521,7 +519,6 @@ function CellContent(props: Props) {
           entryPath={entryPath}
           addTags={handleAddTags}
           handleTagMenu={handleTagMenu}
-          selectedEntries={selectedEntries}
         />
       ) : (
         <TagContainerDnd
@@ -532,7 +529,6 @@ function CellContent(props: Props) {
           addTags={handleAddTags}
           addTag={handleAddTag}
           handleTagMenu={handleTagMenu}
-          selectedEntries={selectedEntries}
           editTagForEntry={handleEditTag}
           reorderTags={reorderTags}
         />
@@ -543,7 +539,7 @@ function CellContent(props: Props) {
       }
       return tagContainer;
     });
-  }, [entryTags, readOnlyMode, reorderTags, entryPath, selectedEntries]);
+  }, [entryTags, readOnlyMode, reorderTags, entryPath]);
 
   let entryHeight = 130;
   if (entrySize === 'small') {

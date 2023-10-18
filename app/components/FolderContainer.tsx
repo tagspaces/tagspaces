@@ -34,11 +34,7 @@ import {
   getDesktopMode,
   getDefaultPerspective
 } from '-/reducers/settings';
-import {
-  actions as AppActions,
-  getSelectedEntries,
-  getProgress
-} from '../reducers/app';
+import { actions as AppActions, getProgress } from '../reducers/app';
 import {
   GoBackIcon,
   GoForwardIcon,
@@ -59,14 +55,12 @@ import RenderPerspective from '-/components/RenderPerspective';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 
 interface Props {
-  setSelectedEntries: (selectedEntries: Array<Object>) => void;
   isDesktopMode: boolean;
   toggleDrawer?: () => void;
   toggleProTeaser: (slidePage?: string) => void;
   drawerOpened: boolean;
   maxSearchResults: number;
   defaultPerspective: string;
-  selectedEntries: Array<TS.FileSystemEntry>;
   toggleUploadDialog: () => void;
   progress?: Array<any>;
   goBack: () => void;
@@ -78,7 +72,6 @@ function FolderContainer(props: Props) {
     toggleDrawer,
     toggleProTeaser,
     isDesktopMode,
-    setSelectedEntries,
     defaultPerspective,
     goBack,
     goForward
@@ -337,7 +330,6 @@ function FolderContainer(props: Props) {
             )}
             <PathBreadcrumbs
               switchPerspective={switchPerspective}
-              setSelectedEntries={setSelectedEntries}
               isDesktopMode={isDesktopMode}
               openRenameDirectoryDialog={() => setRenameEntryDialogOpened(true)}
             />
@@ -385,7 +377,6 @@ function FolderContainer(props: Props) {
 
 function mapStateToProps(state) {
   return {
-    selectedEntries: getSelectedEntries(state),
     maxSearchResults: getMaxSearchResults(state),
     isDesktopMode: getDesktopMode(state),
     progress: getProgress(state),
@@ -396,8 +387,7 @@ function mapStateToProps(state) {
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
-      toggleUploadDialog: AppActions.toggleUploadDialog,
-      setSelectedEntries: AppActions.setSelectedEntries
+      toggleUploadDialog: AppActions.toggleUploadDialog
     },
     dispatch
   );

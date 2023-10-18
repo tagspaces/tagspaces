@@ -38,11 +38,7 @@ import { Pro } from '-/pro';
 import { ProTooltip } from '-/components/HelperComponents';
 import { getKeyBindingObject } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
-import {
-  actions as AppActions,
-  AppDispatch,
-  getSelectedEntries
-} from '-/reducers/app';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import {
   classes,
   GridStyles
@@ -52,6 +48,7 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 interface Props {
   prefixDataTID?: string;
@@ -82,9 +79,7 @@ function MainToolbar(props: Props) {
     loadParentDirectoryContent,
     currentDirectoryPath
   } = useDirectoryContentContext();
-  const selectedEntries: Array<TS.FileSystemEntry> = useSelector(
-    getSelectedEntries
-  );
+  const { selectedEntries } = useSelectedEntriesContext();
   const keyBindings = useSelector(getKeyBindingObject);
   const dispatch: AppDispatch = useDispatch();
   const { readOnlyMode } = useCurrentLocationContext();

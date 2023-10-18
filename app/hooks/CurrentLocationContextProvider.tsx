@@ -40,6 +40,7 @@ import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { getPersistTagsInSidecarFile } from '-/reducers/settings';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 type CurrentLocationContextData = {
   currentLocation: TS.Location;
@@ -103,7 +104,6 @@ export const CurrentLocationContextProvider = ({
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
   const { showNotification } = useNotificationContext();
-
   const [currentLocation, setCurrentLocation] = useState<TS.Location>(
     undefined
   );
@@ -344,7 +344,6 @@ export const CurrentLocationContextProvider = ({
         if (location.uuid === locationId) {
           // location needed evtl. to unwatch many loc. root folders if available
           setCurrentLocation(undefined);
-          dispatch(AppActions.setSelectedEntries([]));
         }
         clearAllURLParams();
         return true;
@@ -355,7 +354,6 @@ export const CurrentLocationContextProvider = ({
   function closeAllLocations() {
     // location needed evtl. to unwatch many loc. root folders if available
     setCurrentLocation(undefined);
-    dispatch(AppActions.setSelectedEntries([]));
     clearAllURLParams();
     return true;
   }

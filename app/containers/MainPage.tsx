@@ -62,7 +62,6 @@ import {
   isProgressOpened,
   isDeleteMultipleEntriesDialogOpened,
   isImportKanBanDialogOpened,
-  getSelectedEntries,
   currentUser,
   isLocationDialogOpened,
   isProTeaserVisible,
@@ -89,6 +88,7 @@ import { DescriptionContextProvider } from '-/hooks/DescriptionContextProvider';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useFsActionsContext } from '-/hooks/useFsActionsContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 const drawerWidth = 320;
 const body = document.getElementsByTagName('body')[0];
@@ -172,7 +172,7 @@ interface Props {
   toggleOnboardingDialog: () => void; // needed by electron-menus
   toggleProTeaser: () => void; // needed by electron-menus
   // setLastSelectedEntry: (path: string) => void; // needed by electron-menus
-  setSelectedEntries: (selectedEntries: Array<Object>) => void; // needed by electron-menus
+  // setSelectedEntries: (selectedEntries: Array<Object>) => void; // needed by electron-menus
   openLocationManagerPanel: () => void;
   openTagLibraryPanel: () => void;
   // openSearchPanel: () => void;
@@ -188,12 +188,10 @@ interface Props {
   isTagLibraryPanelOpened: boolean;
   isSearchPanelOpened: boolean;
   isHelpFeedbackPanelOpened: boolean;
-  reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => void;
   onUploadProgress: (progress: Progress, response: any) => void;
   isDeleteMultipleEntriesDialogOpened: boolean;
   isImportKanBanDialogOpened: boolean;
   toggleDeleteMultipleEntriesDialog: () => void;
-  selectedEntries: Array<any>;
   user: CognitoUserInterface;
 }
 
@@ -316,7 +314,8 @@ function ProTeaserDialogAsync(props) {
 
 function MainPage(props: Props) {
   const { t } = useTranslation();
-  const { deleteDirectory } = useFsActionsContext();
+  const { deleteDirectory, deleteFile } = useFsActionsContext();
+  const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
   const {
     openLink,
     openedEntries,
@@ -326,8 +325,6 @@ function MainPage(props: Props) {
     openNextFile,
     openPrevFile
   } = useOpenedEntryContext();
-
-  const { deleteFile } = useFsActionsContext();
 
   const {
     loadParentDirectoryContent,
@@ -689,7 +686,7 @@ function MainPage(props: Props) {
           open={props.isSettingsDialogOpened}
           onClose={toggleSettingsDialog}
         />
-        {KanBanImportDialog && props.selectedEntries[0] && (
+        {KanBanImportDialog && selectedEntries[0] && (
           <KanBanImportDialog
             open={props.isImportKanBanDialogOpened}
             onClose={props.toggleImportKanBanDialog}
@@ -701,10 +698,10 @@ function MainPage(props: Props) {
             onClose={() => props.toggleDeleteMultipleEntriesDialog()}
             title={t('core:deleteConfirmationTitle')}
             content={t('core:deleteConfirmationContent')}
-            list={props.selectedEntries.map(fsEntry => fsEntry.name)}
+            list={selectedEntries.map(fsEntry => fsEntry.name)}
             confirmCallback={result => {
-              if (result && props.selectedEntries) {
-                const deletePromises = props.selectedEntries.map(fsEntry => {
+              if (result && selectedEntries) {
+                const deletePromises = selectedEntries.map(fsEntry => {
                   if (fsEntry.isFile) {
                     return deleteFile(fsEntry.path, fsEntry.uuid);
                   }
@@ -714,7 +711,7 @@ function MainPage(props: Props) {
                   .then(delResult => {
                     // console.debug(delResult);
                     if (delResult.some(del => del)) {
-                      props.setSelectedEntries([]);
+                      setSelectedEntries([]);
                     } // TODO else { remove only deleted from setSelectedEntries}
                     return true;
                   })
@@ -833,7 +830,6 @@ function mapStateToProps(state) {
       state
     ),
     isImportKanBanDialogOpened: isImportKanBanDialogOpened(state),
-    selectedEntries: getSelectedEntries(state),
     user: currentUser(state)
   };
 }
@@ -865,10 +861,8 @@ function mapDispatchToProps(dispatch) {
       toggleOnboardingDialog: AppActions.toggleOnboardingDialog,
       toggleOpenLinkDialog: AppActions.toggleOpenLinkDialog,
       toggleProTeaser: AppActions.toggleProTeaser,
-      setSelectedEntries: AppActions.setSelectedEntries,
       toggleShowUnixHiddenEntries: SettingsActions.toggleShowUnixHiddenEntries,
       setMainVerticalSplitSize: SettingsActions.setMainVerticalSplitSize,
-      reflectCreateEntries: AppActions.reflectCreateEntries,
       openLocationManagerPanel: AppActions.openLocationManagerPanel,
       openTagLibraryPanel: AppActions.openTagLibraryPanel,
       // openSearchPanel: AppActions.openSearchPanel,
@@ -915,9 +909,7 @@ const areEqual = (prevProp, nextProp) =>
     prevProp.isThirdPartyLibsDialogOpened &&
   nextProp.isUploadProgressDialogOpened ===
     prevProp.isUploadProgressDialogOpened &&
-  nextProp.isImportKanBanDialogOpened === prevProp.isImportKanBanDialogOpened &&
-  JSON.stringify(nextProp.selectedEntries) ===
-    JSON.stringify(prevProp.selectedEntries);
+  nextProp.isImportKanBanDialogOpened === prevProp.isImportKanBanDialogOpened;
 
 export default withDnDContext(
   connect(mapStateToProps, mapDispatchToProps)(React.memo(MainPage, areEqual)) //translate(['core'], { wait: true })(React.memo(MainPage, areEqual)))

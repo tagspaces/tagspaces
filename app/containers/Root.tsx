@@ -34,6 +34,10 @@ import { NotificationContextProvider } from '-/hooks/NotificationContextProvider
 import { IOActionsContextProvider } from '-/hooks/IOActionsContextProvider';
 import { TaggingActionsContextProvider } from '-/hooks/TaggingActionsContextProvider';
 import { LocationIndexContextProvider } from '-/hooks/LocationIndexContextProvider';
+import {
+  SelectedEntryContext,
+  SelectedEntryContextProvider
+} from '-/hooks/SelectedEntryContextProvider';
 
 type RootType = {
   store: Store<{}>;
@@ -55,19 +59,21 @@ export default function Root({ store, persistor }: RootType) {
     <App>
       <NotificationContextProvider>
         <CurrentLocationContextProvider>
-          <DirectoryContentContextProvider>
-            <LocationIndexContextProvider>
-              <OpenedEntryContextProvider>
-                <FsActionsContextProvider>
-                  <IOActionsContextProvider>
-                    <TaggingActionsContextProvider>
-                      <MainPage />
-                    </TaggingActionsContextProvider>
-                  </IOActionsContextProvider>
-                </FsActionsContextProvider>
-              </OpenedEntryContextProvider>
-            </LocationIndexContextProvider>
-          </DirectoryContentContextProvider>
+          <SelectedEntryContextProvider>
+            <DirectoryContentContextProvider>
+              <LocationIndexContextProvider>
+                <OpenedEntryContextProvider>
+                  <FsActionsContextProvider>
+                    <IOActionsContextProvider>
+                      <TaggingActionsContextProvider>
+                        <MainPage />
+                      </TaggingActionsContextProvider>
+                    </IOActionsContextProvider>
+                  </FsActionsContextProvider>
+                </OpenedEntryContextProvider>
+              </LocationIndexContextProvider>
+            </DirectoryContentContextProvider>
+          </SelectedEntryContextProvider>
         </CurrentLocationContextProvider>
       </NotificationContextProvider>
     </App>

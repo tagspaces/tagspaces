@@ -13,12 +13,8 @@ import {
   MenuList,
   Divider
 } from '@mui/material';
-import {
-  actions as AppActions,
-  AppDispatch,
-  OpenedEntry
-} from '-/reducers/app';
-import { useDispatch, useSelector } from 'react-redux';
+import { OpenedEntry } from '-/reducers/app';
+import { useSelector } from 'react-redux';
 import AppConfig from '-/AppConfig';
 import {
   DeleteIcon,
@@ -33,7 +29,10 @@ import OpenNativelyIcon from '@mui/icons-material/Launch';
 import FullScreenIcon from '@mui/icons-material/ZoomOutMap';
 import FileDownloadIcon from '@mui/icons-material/AssignmentReturned';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
-import { isDesktopMode } from '-/reducers/settings';
+import {
+  getWarningOpeningFilesExternally,
+  isDesktopMode
+} from '-/reducers/settings';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -67,7 +66,9 @@ function EntryContainerMenu(props: Props) {
   const { deleteFile } = useFsActionsContext();
   const { showNotification } = useNotificationContext();
   const desktopMode = useSelector(isDesktopMode);
-  const dispatch: AppDispatch = useDispatch();
+  const warningOpeningFilesExternally = useSelector(
+    getWarningOpeningFilesExternally
+  );
 
   const [isDeleteEntryModalOpened, setDeleteEntryModalOpened] = useState<
     boolean
@@ -173,7 +174,8 @@ function EntryContainerMenu(props: Props) {
   const openNatively = () => {
     if (openedEntry.path) {
       if (openedEntry.isFile) {
-        dispatch(AppActions.openFileNatively(openedEntry.path));
+        PlatformIO.openFile(openedEntry.path, warningOpeningFilesExternally);
+        //dispatch(AppActions.openFileNatively(openedEntry.path));
       } else {
         PlatformIO.openDirectory(openedEntry.path);
       }

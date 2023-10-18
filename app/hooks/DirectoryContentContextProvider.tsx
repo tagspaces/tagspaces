@@ -29,8 +29,7 @@ import { locationType } from '@tagspaces/tagspaces-common/misc';
 import {
   actions as AppActions,
   AppDispatch,
-  getEditedEntryPaths,
-  getSelectedEntries
+  getEditedEntryPaths
 } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { useTranslation } from 'react-i18next';
@@ -54,6 +53,7 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import useFirstRender from '-/utils/useFirstRender';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { loadCurrentDirMeta } from '-/services/meta-loader';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 type DirectoryContentContextData = {
   currentDirectoryEntries: TS.FileSystemEntry[];
@@ -72,6 +72,7 @@ type DirectoryContentContextData = {
   isMetaFolderExist: boolean;
   searchQuery: TS.SearchQuery;
   isSearchMode: boolean;
+  addDirectoryEntries: (entries: TS.FileSystemEntry[]) => void;
   setSearchQuery: (sQuery: TS.SearchQuery) => void;
   loadParentDirectoryContent: () => void;
   loadDirectoryContent: (
@@ -116,6 +117,7 @@ export const DirectoryContentContext = createContext<
   isMetaFolderExist: false,
   searchQuery: {},
   isSearchMode: false,
+  addDirectoryEntries: undefined,
   setSearchQuery: () => {},
   loadParentDirectoryContent: () => {},
   loadDirectoryContent: undefined,
@@ -152,7 +154,8 @@ export const DirectoryContentContextProvider = ({
     skipInitialDirList
   } = useCurrentLocationContext();
   const { showNotification, hideNotifications } = useNotificationContext();
-  const selectedEntries = useSelector(getSelectedEntries);
+
+  const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
   //const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
   const editedEntryPaths = useSelector(getEditedEntryPaths);
@@ -374,7 +377,7 @@ export const DirectoryContentContextProvider = ({
     // dispatch(actions.setIsLoading(true));
 
     if (selectedEntries.length > 0) {
-      dispatch(AppActions.setSelectedEntries([]));
+      setSelectedEntries([]);
     }
     if (loadDirMeta) {
       const metaDirectory = getMetaDirectoryPath(directoryPath);
@@ -654,6 +657,10 @@ export const DirectoryContentContextProvider = ({
     currentDirectoryFiles.current = files;
   }
 
+  function addDirectoryEntries(entries: TS.FileSystemEntry[]) {
+    setCurrentDirectoryEntries([...currentDirectoryEntries, ...entries]);
+  }
+
   function setDirectoryMeta(meta: TS.FileSystemEntryMeta) {
     directoryMeta.current = meta;
     isMetaLoaded.current = true;
@@ -681,6 +688,8 @@ export const DirectoryContentContextProvider = ({
       isMetaFolderExist: isMetaFolderExist.current,
       searchQuery: searchQuery.current,
       isSearchMode: isSearchMode.current,
+      setCurrentDirectoryEntries,
+      updateCurrentDirEntry,
       setSearchQuery,
       loadDirectoryContent,
       loadParentDirectoryContent,
@@ -692,7 +701,7 @@ export const DirectoryContentContextProvider = ({
       setCurrentDirectoryColor,
       setCurrentDirectoryDirs,
       setCurrentDirectoryFiles,
-      updateCurrentDirEntry,
+      addDirectoryEntries,
       updateCurrentDirEntries,
       updateThumbnailUrl,
       setDirectoryMeta,

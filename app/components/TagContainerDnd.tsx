@@ -32,6 +32,7 @@ import DragItemTypes from './DragItemTypes';
 import TagContainer from './TagContainer';
 import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 const boxSource = {
   // Expected the drag source specification to only have some of the following keys: canDrag, beginDrag, isDragging, endDrag
@@ -214,7 +215,6 @@ interface Props {
   connectDropTarget: ConnectDropTarget;
   connectDragPreview?: ConnectDragPreview;
   deleteIcon?: Object;
-  selectedEntries: Array<TS.FileSystemEntry>;
   tagContainerRef?: MutableRefObject<HTMLSpanElement>;
   reorderTags?: boolean;
 }
@@ -226,7 +226,6 @@ const TagContainerDnd = (props: Props) => {
     entryPath,
     handleTagMenu,
     deleteIcon,
-    selectedEntries,
     isDragging,
     connectDragSource,
     connectDropTarget,
@@ -256,7 +255,6 @@ const TagContainerDnd = (props: Props) => {
           tagMode={tagMode}
           entryPath={entryPath}
           isDragging={isDragging}
-          selectedEntries={selectedEntries}
           reorderTags={reorderTags}
         />
       </span>

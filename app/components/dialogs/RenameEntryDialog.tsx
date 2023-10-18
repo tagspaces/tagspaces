@@ -33,17 +33,13 @@ import {
 } from '@tagspaces/tagspaces-common/paths';
 import DraggablePaper from '-/components/DraggablePaper';
 import AppConfig from '-/AppConfig';
-import {
-  actions as AppActions,
-  AppDispatch,
-  getLastSelectedEntry
-} from '-/reducers/app';
 import PlatformIO from '-/services/platform-facade';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { dirNameValidation, fileNameValidation } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
 import { useFsActionsContext } from '-/hooks/useFsActionsContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 interface Props {
   open: boolean;
@@ -55,9 +51,10 @@ function RenameEntryDialog(props: Props) {
   const { t } = useTranslation();
   const { renameDirectory, renameFile } = useFsActionsContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
+  const { selectedEntries } = useSelectedEntriesContext();
+  const lastSelectedEntry = selectedEntries[selectedEntries.length - 1];
   const [inputError, setInputError] = useState<boolean>(false);
   const disableConfirmButton = useRef<boolean>(true);
-  const lastSelectedEntry = useSelector(getLastSelectedEntry);
 
   let defaultName = '';
   let originPath;

@@ -34,6 +34,7 @@ import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 type DescriptionContextData = {
   description: string;
@@ -59,7 +60,7 @@ export const DescriptionContextProvider = ({
   children
 }: DescriptionContextProviderProps) => {
   const { t } = useTranslation();
-  const dispatch: AppDispatch = useDispatch();
+  const { setSelectedEntries } = useSelectedEntriesContext();
   const {
     openedEntries,
     addToEntryContainer,
@@ -89,7 +90,7 @@ export const DescriptionContextProvider = ({
       ) {
         // handle not saved changes
         addToEntryContainer({ ...openedFile.current, editMode: false });
-        dispatch(AppActions.setSelectedEntries([]));
+        setSelectedEntries([]);
         saveDescriptionConfirmOpened(true);
       } else {
         openedFile.current = openedEntries[0];

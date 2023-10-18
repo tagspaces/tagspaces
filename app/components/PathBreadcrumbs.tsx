@@ -34,6 +34,7 @@ import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   const backgroundColor =
@@ -72,16 +73,15 @@ const StyledBreadcrumbs = styled(Breadcrumbs)(({ theme }) => {
 
 interface Props {
   switchPerspective: (perspectiveId: string) => void;
-  setSelectedEntries: (selectedEntries: Array<Object>) => void;
   openRenameDirectoryDialog: () => void;
   isDesktopMode: boolean;
 }
 
 function PathBreadcrumbs(props: Props) {
   const { t } = useTranslation();
-  //const dispatch: AppDispatch = useDispatch();
   const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
   const { currentLocation } = useCurrentLocationContext();
+  const { setSelectedEntries } = useSelectedEntriesContext();
   let pathParts: Array<string> = [];
 
   const [
@@ -89,11 +89,7 @@ function PathBreadcrumbs(props: Props) {
     setDirectoryContextMenuAnchorEl
   ] = useState<null | HTMLElement>(null);
 
-  const {
-    setSelectedEntries,
-    openRenameDirectoryDialog,
-    isDesktopMode
-  } = props;
+  const { openRenameDirectoryDialog, isDesktopMode } = props;
 
   const openDirectoryMenu = (event: React.MouseEvent<Element, MouseEvent>) => {
     event.preventDefault();
