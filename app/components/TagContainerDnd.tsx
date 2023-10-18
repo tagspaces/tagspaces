@@ -32,7 +32,6 @@ import DragItemTypes from './DragItemTypes';
 import TagContainer from './TagContainer';
 import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 const boxSource = {
   // Expected the drag source specification to only have some of the following keys: canDrag, beginDrag, isDragging, endDrag
@@ -215,6 +214,7 @@ interface Props {
   connectDropTarget: ConnectDropTarget;
   connectDragPreview?: ConnectDragPreview;
   deleteIcon?: Object;
+  selectedEntries: Array<TS.FileSystemEntry>;
   tagContainerRef?: MutableRefObject<HTMLSpanElement>;
   reorderTags?: boolean;
 }
@@ -232,12 +232,24 @@ const TagContainerDnd = (props: Props) => {
     addTags,
     tagMode,
     tagContainerRef,
-    reorderTags
+    reorderTags,
+    connectDragPreview
   } = props;
+
+  /* const [{ opacity }, dragRef] = useDrag(
+    () => ({
+      type: DragItemTypes.TAG,
+      item: { text },
+      collect: monitor => ({
+        opacity: monitor.isDragging() ? 0.5 : 1
+      })
+    }),
+    []
+  );*/
 
   // Use empty image as a drag preview so browsers don't draw it
   // and we can draw whatever we want on the custom drag layer instead.
-  props.connectDragPreview(getEmptyImage(), {
+  connectDragPreview(getEmptyImage(), {
     // IE fallback: specify that we'd rather screenshot the node
     // when it already knows it's being dragged so we can hide it with CSS.
     captureDraggingState: true

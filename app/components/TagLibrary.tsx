@@ -80,6 +80,7 @@ interface Props {
 function TagLibrary(props: Props) {
   const { t } = useTranslation();
   const { addTags } = useTaggingActionsContext();
+  const { selectedEntries } = useSelectedEntriesContext();
   const {
     switchLocationTypeByID,
     switchCurrentLocationType,
@@ -347,6 +348,7 @@ function TagLibrary(props: Props) {
                         )
                       )
                     }
+                    selectedEntries={selectedEntries}
                   />
                 );
               })}

@@ -227,8 +227,14 @@ test.describe('TST08 - File folder properties', () => {
       8000,
       '[data-tid=perspectiveGridFileTable]'
     );
-    await clickOn(getGridFileSelector('sample[' + tagName + '].txt'));
-    await clickOn('[data-tid=detailsTabTID]');
+
+    await openContextEntryMenu(
+      getGridFileSelector('sample[' + tagName + '].txt'),
+      'showPropertiesTID'
+    );
+
+    //await clickOn(getGridFileSelector('sample[' + tagName + '].txt'));
+    //await clickOn('[data-tid=detailsTabTID]');
 
     const propsTags = await getPropertiesTags();
     expect(propsTags).toContain(tagName);

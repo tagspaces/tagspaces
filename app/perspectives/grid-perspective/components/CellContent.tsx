@@ -66,6 +66,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 const maxDescriptionPreviewLength = 100;
 
@@ -107,6 +108,7 @@ function CellContent(props: Props) {
 
   const { t } = useTranslation();
   const theme = useTheme();
+  const { selectedEntries } = useSelectedEntriesContext();
   const { addTags, editTagForEntry } = useTaggingActionsContext();
   const { readOnlyMode } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
@@ -529,6 +531,7 @@ function CellContent(props: Props) {
           addTags={handleAddTags}
           addTag={handleAddTag}
           handleTagMenu={handleTagMenu}
+          selectedEntries={selectedEntries}
           editTagForEntry={handleEditTag}
           reorderTags={reorderTags}
         />
