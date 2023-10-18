@@ -504,7 +504,7 @@ export const IOActionsContextProvider = ({
                   return undefined;
                 })
                 .catch(err => {
-                  console.error('error generateThumbnail:', err);
+                  console.log('error generateThumbnail:', err);
                 });
               if (thumbPath) {
                 fsEntry.thumbPath = PlatformIO.getURLforPath(thumbPath);
@@ -518,7 +518,7 @@ export const IOActionsContextProvider = ({
               // dispatch(AppActions.reflectCreateEntry(fileTargetPath, true));
             }
           } catch (error) {
-            console.error(
+            console.log(
               'Uploading ' + fileTargetPath + ' failed with ' + error
             );
             showNotification(
@@ -593,7 +593,7 @@ export const IOActionsContextProvider = ({
                   return fsEntry;
                 })
                 .catch(err => {
-                  console.error('Importing file ' + filePath + ' failed ', err);
+                  console.log('Importing file ' + filePath + ' failed ', err);
                   showNotification(
                     'Importing file ' + filePath + ' failed.',
                     'error',
@@ -605,7 +605,7 @@ export const IOActionsContextProvider = ({
             return undefined;
           })
           .catch(err => {
-            console.error('Error getting properties', err);
+            console.log('Error getting properties', err);
           });
       }
 

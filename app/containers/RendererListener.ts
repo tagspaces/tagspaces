@@ -85,7 +85,7 @@ export default function listen(props) {
               document.exitFullscreen();
             }
           } catch (e) {
-            console.error('Failed to exit fullscreen mode:', e);
+            console.log('Failed to exit fullscreen mode:', e);
           }
           break;
         }

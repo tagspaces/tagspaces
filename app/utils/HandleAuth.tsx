@@ -52,7 +52,7 @@ function HandleAuth(props: Props) {
               return true;
             })
             .catch(e => {
-              console.error(e);
+              console.log(e);
             });
           props.initApp();
         }
@@ -113,7 +113,7 @@ function HandleAuth(props: Props) {
         return undefined;
       })
       .catch(e => {
-        console.error(e);
+        console.log(e);
       });
 
   return null;

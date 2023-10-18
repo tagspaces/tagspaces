@@ -326,7 +326,7 @@ Do you want to continue?`)
       })
       .catch(error => {
         // TODO showAlertDialog("Saving " + filePath + " failed.");
-        console.error('Save to file ' + newFilePath + ' failed ' + error);
+        console.log('Save to file ' + newFilePath + ' failed ' + error);
         showNotification(
           'Importing file ' + newFilePath + ' failed.',
           'error',

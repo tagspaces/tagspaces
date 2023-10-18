@@ -171,7 +171,7 @@ function TagLibrary(props: Props) {
           return true;
         })
         .catch(err => {
-          console.error(err);
+          console.log(err);
         })
     );
   };

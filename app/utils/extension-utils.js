@@ -11,7 +11,7 @@ function getExtensions(directoryPath, isExternal = false) {
     const extPath = path.join(directoryPath, '@tagspaces', 'extensions');
     fs.readdir(extPath, { withFileTypes: true }, (err, files) => {
       if (err) {
-        console.error('Error reading directory:', err);
+        console.log('Error reading directory:', err);
         reject(err);
         return;
       }

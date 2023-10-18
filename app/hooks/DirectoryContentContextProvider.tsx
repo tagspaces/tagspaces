@@ -549,7 +549,7 @@ export const DirectoryContentContextProvider = ({
   }
 
   function loadDirectoryFailure(error?: any) {
-    console.error('Error loading directory: ', error);
+    console.log('Error loading directory: ', error);
     //hideNotifications();
 
     showNotification(

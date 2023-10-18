@@ -471,7 +471,7 @@ async function persistIndex(param: string | any, directoryIndex: any) {
       return true;
     })
     .catch(err => {
-      console.error('Error saving the index for ' + folderIndexPath, err);
+      console.log('Error saving the index for ' + folderIndexPath, err);
     });
 }
 
@@ -541,7 +541,7 @@ export function createDirectoryIndex(
       })
     )
     .catch(err => {
-      console.error('Error creating index: ', err);
+      console.log('Error creating index: ', err);
     });
 }
 
@@ -1270,13 +1270,13 @@ export function setFolderBackgroundPromise(
             return directoryPath;
           })
           .catch(error => {
-            console.error('Save to file failed ', error);
+            console.log('Save to file failed ', error);
             return Promise.reject(error);
           });
       }
     })
     .catch(error => {
-      console.error('Background generation failed ', error);
+      console.log('Background generation failed ', error);
       return Promise.reject(error);
     });
 }
@@ -1690,7 +1690,7 @@ export function createFsEntryMeta(
   return saveMetaDataPromise(path, newFsEntryMeta)
     .then(() => newFsEntryMeta.id)
     .catch(error => {
-      console.error(
+      console.log(
         'Error saveMetaDataPromise for ' +
           path +
           ' orphan id: ' +

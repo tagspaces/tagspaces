@@ -185,7 +185,7 @@ function EntryContainer() {
           // @ts-ignore
           fileViewer.current.contentWindow.enterFullscreen();
         } catch (ex) {
-          console.error('err:', ex);
+          console.log('err:', ex);
         }
       }
     } else {
@@ -200,7 +200,7 @@ function EntryContainer() {
           // @ts-ignore
           fileViewer.current.contentWindow.exitFullscreen();
         } catch (ex) {
-          console.error('err:', ex);
+          console.log('err:', ex);
         }
       }
     }
@@ -583,7 +583,7 @@ function EntryContainer() {
       try {
         await PlatformIO.copyFilePromiseOverwrite(fileOpen.path, targetPath); // todo test what happened if remove await?
       } catch (error) {
-        console.error('copyFilePromiseOverwrite', error);
+        console.log('copyFilePromiseOverwrite', error);
       }
     }
     return PlatformIO.saveTextFilePromise(

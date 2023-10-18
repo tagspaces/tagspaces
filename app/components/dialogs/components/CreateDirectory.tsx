@@ -146,7 +146,7 @@ function CreateDirectory(props: Props) {
         onClose();
       } catch (ex) {
         setInvalidURL(true);
-        console.error('downloadURL', ex);
+        console.log('downloadURL', ex);
       }
     }
   }

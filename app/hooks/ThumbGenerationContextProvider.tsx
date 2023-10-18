@@ -116,7 +116,7 @@ export const ThumbGenerationContextProvider = ({
               return updateEntries(thumbs);
             })
             .catch(ex => {
-              console.error(ex);
+              console.log(ex);
               return false;
             });*/
         }
@@ -195,7 +195,7 @@ export const ThumbGenerationContextProvider = ({
         )
         .catch(e => {
           // WS error handle let process thumbgeneration in Main process Generator
-          console.error('createThumbnailsInWorker', e);
+          console.log('createThumbnailsInWorker', e);
           return thumbnailMainGeneration([
             ...workerEntries,
             ...mainEntries
@@ -222,7 +222,7 @@ export const ThumbGenerationContextProvider = ({
         return true;
       })
       .catch(e => {
-        console.error('thumbnailMainGeneration', e);
+        console.log('thumbnailMainGeneration', e);
         return false;
       });
   }

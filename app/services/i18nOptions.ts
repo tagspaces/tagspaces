@@ -35,7 +35,7 @@ async function loadLocales(options, url: string, payload, callback) {
     const locale = await import('../locales/' + url + '/core.json');
     callback(null, { status: 200, data: locale });
   } catch (e) {
-    console.error(`Unable to load locale at ${url}\n`, e);
+    console.log(`Unable to load locale at ${url}\n`, e);
     callback(null, { status: 200, data: defaultLanguage });
   }
 

@@ -794,7 +794,7 @@ export const actions = {
         setTagLibrary(taglibrary);
         dispatch(tagLibraryActions.deleteAll());
       } catch (e) {
-        console.error('migrate TagLibrary failed', e);
+        console.log('migrate TagLibrary failed', e);
       }
     }
 

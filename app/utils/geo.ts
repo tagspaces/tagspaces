@@ -30,7 +30,7 @@ export function parseGeoLocation(code: string): any {
       const [lng, lat] = mgrs.toPoint(code);
       return { lat, lng };
     } catch (e) {
-      console.error('parseGeoLocation', e);
+      console.log('parseGeoLocation', e);
     }
   }
   return undefined;

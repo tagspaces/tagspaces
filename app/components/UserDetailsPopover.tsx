@@ -177,7 +177,7 @@ function UserDetailsPopover(props: Props) {
                       await Auth.setPreferredMFA(cognitoUser, 'NOMFA');
                       signOut();
                     } catch (error) {
-                      console.error(error);
+                      console.log(error);
                     }
                   }}
                   size="small"

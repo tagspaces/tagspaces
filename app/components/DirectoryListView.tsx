@@ -119,7 +119,7 @@ function DirectoryListView(props: Props) {
         return true;
       })
       .catch(error => {
-        console.error('listDirectoryPromise', error);
+        console.log('listDirectoryPromise', error);
       });
   }
 

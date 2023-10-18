@@ -34,7 +34,7 @@ export function loadCurrentDirMeta(
       ]);
     })
     .catch(ex => {
-      console.error(ex);
+      console.log(ex);
       return undefined;
     });
 }
@@ -46,7 +46,7 @@ function getEntries(metaPromises): Promise<TS.FileSystemEntry[]> {
       return entries;
     })
     .catch(err => {
-      console.error('err updateEntries:', err);
+      console.log('err updateEntries:', err);
       return undefined;
     });
 }

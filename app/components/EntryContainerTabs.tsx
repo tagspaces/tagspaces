@@ -154,7 +154,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     dispatch(SettingsActions.setEntryContainerTab(newValue));
     openPanel();
-    console.error('tab changed to:' + newValue);
+    console.log('tab changed to:' + newValue);
   };
   const handleTabClick = (event: React.SyntheticEvent) => {
     if (
@@ -164,7 +164,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
       // when selected tab is clicked...
       dispatch(SettingsActions.setEntryContainerTab(undefined));
       toggleProperties();
-      console.error('tab click:' + tabIndex);
+      console.log('tab click:' + tabIndex);
     }
   };
 

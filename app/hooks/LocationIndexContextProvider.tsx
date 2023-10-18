@@ -463,7 +463,7 @@ export const LocationIndexContextProvider = ({
         .catch(err => {
           setSearchResults([]);
           // dispatch(AppActions.hideNotifications());
-          console.error('Searching Index failed: ', err);
+          console.log('Searching Index failed: ', err);
           showNotification(
             t('core:searchingFailed') + ' ' + err.message,
             'warning',
@@ -587,7 +587,7 @@ export const LocationIndexContextProvider = ({
               if (isCloudLocation) {
                 PlatformIO.disableObjectStoreSupport();
               }
-              console.error('Searching Index failed: ', e);
+              console.log('Searching Index failed: ', e);
               setSearchResults([]);
               // dispatch(AppActions.hideNotifications());
               showNotification(

@@ -542,7 +542,7 @@ export const OpenedEntryContextProvider = ({
           return true;
         })
         .catch(err => {
-          console.error('updateOpenedFile ' + entryPath + ' not exist ' + err);
+          console.log('updateOpenedFile ' + entryPath + ' not exist ' + err);
           return Promise.resolve(false);
         });
     }
@@ -860,7 +860,7 @@ export const OpenedEntryContextProvider = ({
         console.log('Not supported URL format: ' + decodedURI);
       }
     } catch (e) {
-      console.error('OpenLink:', e);
+      console.log('OpenLink:', e);
     }
   }
 

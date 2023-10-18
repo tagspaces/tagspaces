@@ -174,7 +174,7 @@ export const CurrentLocationContextProvider = ({
         }
         return true;
       })
-      .catch(ex => console.error(ex));
+      .catch(ex => console.log(ex));
   }
 
   function addLocation(

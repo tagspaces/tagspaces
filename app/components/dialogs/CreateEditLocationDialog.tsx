@@ -437,7 +437,7 @@ function CreateEditLocationDialog(props: Props) {
         loc.newuuid = newuuid;
         props.editLocation(loc);
       } else {
-        console.error('No addLocation or editLocation props exist');
+        console.log('No addLocation or editLocation props exist');
       }
       onClose();
       // this.props.resetState('createLocationDialogKey');

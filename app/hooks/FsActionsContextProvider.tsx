@@ -276,7 +276,7 @@ export const FsActionsContextProvider = ({
           });
       })
       .catch(error => {
-        console.error(`Error while renaming file ${filePath}`, error);
+        console.log(`Error while renaming file ${filePath}`, error);
         showNotification(
           `Error while renaming file ${filePath}`,
           'error',
