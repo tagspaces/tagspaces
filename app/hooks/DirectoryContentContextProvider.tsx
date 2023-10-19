@@ -77,7 +77,8 @@ type DirectoryContentContextData = {
   loadParentDirectoryContent: () => void;
   loadDirectoryContent: (
     directoryPath: string,
-    loadDirMeta?: boolean
+    loadDirMeta?: boolean,
+    showHiddenEntries?: boolean
   ) => Promise<TS.FileSystemEntry[]>;
   enhanceDirectoryContent: (
     dirEntries,
@@ -87,8 +88,11 @@ type DirectoryContentContextData = {
     getDirMeta?: boolean,
     generateThumbnails?: boolean
   ) => any;
-  openDirectory: (dirPath: string) => Promise<boolean>;
-  openCurrentDirectory: () => Promise<boolean>;
+  openDirectory: (
+    dirPath: string,
+    showHiddenEntries?: boolean
+  ) => Promise<boolean>;
+  openCurrentDirectory: (showHiddenEntries?: boolean) => Promise<boolean>;
   clearDirectoryContent: () => void;
   setCurrentDirectoryPerspective: (perspective: string) => void;
   setCurrentDirectoryColor: (color: string) => void;
@@ -169,7 +173,7 @@ export const DirectoryContentContextProvider = ({
   /**
    * if search is performed = timestamp otherwise undefined
    */
-  const lastSearchTimestamp = useRef<number>(undefined);
+  // const lastSearchTimestamp = useRef<number>(undefined);
   const directoryMeta = useRef<TS.FileSystemEntryMeta>({ id: getUuid() });
   /**
    * isMetaLoaded boolean if thumbs and description from meta are loaded
@@ -376,7 +380,8 @@ export const DirectoryContentContextProvider = ({
 
   function loadDirectoryContent(
     directoryPath: string,
-    loadDirMeta = false
+    loadDirMeta = false,
+    showHiddenEntries = undefined
   ): Promise<TS.FileSystemEntry[]> {
     // console.debug('loadDirectoryContent:' + directoryPath);
     window.walkCanceled = false;
@@ -400,8 +405,8 @@ export const DirectoryContentContextProvider = ({
               isMetaLoaded.current = true;
               return loadDirectoryContentInt(
                 directoryPath,
-                fsEntryMeta
-                // description: getDescriptionPreview(fsEntryMeta.description, 200)
+                fsEntryMeta,
+                showHiddenEntries
               );
             })
             .catch(err => {
@@ -409,22 +414,35 @@ export const DirectoryContentContextProvider = ({
                 'Error loading meta of:' + directoryPath + ' ' + err
               );
               isMetaLoaded.current = false;
-              return loadDirectoryContentInt(directoryPath);
+              return loadDirectoryContentInt(
+                directoryPath,
+                undefined,
+                showHiddenEntries
+              );
             });
         } else {
           isMetaFolderExist.current = false;
-          return loadDirectoryContentInt(directoryPath);
+          return loadDirectoryContentInt(
+            directoryPath,
+            undefined,
+            showHiddenEntries
+          );
         }
       });
     } else {
       isMetaLoaded.current = false;
-      return loadDirectoryContentInt(directoryPath);
+      return loadDirectoryContentInt(
+        directoryPath,
+        undefined,
+        showHiddenEntries
+      );
     }
   }
 
   function loadDirectoryContentInt(
     directoryPath: string,
-    fsEntryMeta?: TS.FileSystemEntryMeta
+    fsEntryMeta?: TS.FileSystemEntryMeta,
+    showHiddenEntries = undefined
   ): Promise<TS.FileSystemEntry[]> {
     showNotification(t('core:loading'), 'info', false);
     const resultsLimit = {
@@ -454,7 +472,12 @@ export const DirectoryContentContextProvider = ({
         updateHistory(currentLocation, directoryPath);
         if (results !== undefined) {
           // console.debug('app listDirectoryPromise resolved:' + results.length);
-          return loadDirectorySuccess(directoryPath, results, fsEntryMeta);
+          return loadDirectorySuccess(
+            directoryPath,
+            results,
+            fsEntryMeta,
+            showHiddenEntries
+          );
         }
         /*dispatch(
           AppActions.updateCurrentDirectoryPerspective(
@@ -479,23 +502,30 @@ export const DirectoryContentContextProvider = ({
     setCurrentDirectoryEntries([]);
   }
 
-  function openCurrentDirectory(): Promise<boolean> {
+  function openCurrentDirectory(
+    showHiddenEntries = undefined
+  ): Promise<boolean> {
     if (currentDirectoryPath.current) {
-      return openDirectory(currentDirectoryPath.current);
+      return openDirectory(currentDirectoryPath.current, showHiddenEntries);
     }
     return Promise.resolve(false);
   }
 
-  function openDirectory(dirPath: string): Promise<boolean> {
+  function openDirectory(
+    dirPath: string,
+    showHiddenEntries = undefined
+  ): Promise<boolean> {
     if (dirPath !== undefined) {
-      return loadDirectoryContent(dirPath, true).then(dirEntries => {
-        if (dirEntries) {
-          return loadCurrentDirMeta(dirPath, dirEntries).then(entries => {
-            updateCurrentDirEntries(entries, dirEntries);
-            return true;
-          });
+      return loadDirectoryContent(dirPath, true, showHiddenEntries).then(
+        dirEntries => {
+          if (dirEntries) {
+            return loadCurrentDirMeta(dirPath, dirEntries).then(entries => {
+              updateCurrentDirEntries(entries, dirEntries);
+              return true;
+            });
+          }
         }
-      });
+      );
     }
     return Promise.resolve(false);
   }
@@ -503,7 +533,8 @@ export const DirectoryContentContextProvider = ({
   function loadDirectorySuccess(
     directoryPath: string,
     dirEntries: TS.FileSystemEntry[],
-    dirMeta?: TS.FileSystemEntryMeta
+    dirMeta?: TS.FileSystemEntryMeta,
+    showHiddenEntries = undefined
   ): TS.FileSystemEntry[] {
     hideNotifications(['error']);
 
@@ -528,7 +559,9 @@ export const DirectoryContentContextProvider = ({
     const directoryContent = enhanceDirectoryContent(
       dirEntries,
       currentLocation && currentLocation.type === locationType.TYPE_CLOUD,
-      true
+      true,
+      undefined,
+      showHiddenEntries
     );
 
     isSearchMode.current = false;
@@ -567,79 +600,44 @@ export const DirectoryContentContextProvider = ({
     }
   }
 
-  function enhanceDirectoryContent(
-    dirEntries,
-    isCloudLocation,
-    showDirs = true,
-    limit = undefined
-  ) {
-    const directoryContent = [];
-    dirEntries.map(entry => {
-      if (!showUnixHiddenEntries && entry.name.startsWith('.')) {
-        return true;
-      }
-
-      if (!showDirs && !entry.isFile) {
-        return true;
-      }
-
-      if (limit !== undefined && directoryContent.length >= limit) {
-        return true;
-      }
-
-      /*if (getDirMeta && !entry.isFile) {
-        dirsMetaPromises.push(getEnhancedDir(entry));
-      }*/
-
-      const enhancedEntry: TS.FileSystemEntry = enhanceEntry(
-        entry,
-        AppConfig.tagDelimiter,
-        PlatformIO.getDirSeparator()
-      );
-      directoryContent.push(enhancedEntry);
-      /*if (
-        // Enable thumb generation by
-        generateThumbnails &&
-        !AppConfig.isWeb && // not in webdav mode
-        !PlatformIO.haveObjectStoreSupport() && // not in object store mode
-        !PlatformIO.haveWebDavSupport() && // not in webdav mode
-        enhancedEntry.isFile && // only for files
-        genThumbnails() // enabled in the settings
-      ) {
-        // const isPDF = enhancedEntry.path.endsWith('.pdf');
-        if (
-          isWorkerAvailable &&
-          supportedImgsWS.includes(enhancedEntry.extension)
-        ) {
-          // !isPDF) {
-          tmbGenerationList.push(enhancedEntry.path);
-        } else if (
-          supportedImgs.includes(enhancedEntry.extension) ||
-          supportedContainers.includes(enhancedEntry.extension) ||
-          supportedText.includes(enhancedEntry.extension) ||
-          supportedMisc.includes(enhancedEntry.extension) ||
-          supportedVideos.includes(enhancedEntry.extension)
-        ) {
-          tmbGenerationPromises.push(
-            getThumbnailURLPromise(enhancedEntry.path)
-          );
-        } else {
-          console.log(
-            'Unsupported thumbgeneration ext:' + enhancedEntry.extension
-          );
+  const enhanceDirectoryContent = useMemo(() => {
+    return (
+      dirEntries,
+      isCloudLocation,
+      showDirs = true,
+      limit = undefined,
+      showHiddenEntries = undefined
+    ) => {
+      const directoryContent = [];
+      const showHidden =
+        showHiddenEntries !== undefined
+          ? showHiddenEntries
+          : showUnixHiddenEntries;
+      dirEntries.map(entry => {
+        if (!showHidden && entry.name.startsWith('.')) {
+          return true;
         }
-      }*/
-      return true;
-    });
 
-    return directoryContent;
-    /*return {
-      directoryContent,
-      tmbGenerationPromises,
-      tmbGenerationList,
-      dirsMetaPromises
-    };*/
-  }
+        if (!showDirs && !entry.isFile) {
+          return true;
+        }
+
+        if (limit !== undefined && directoryContent.length >= limit) {
+          return true;
+        }
+
+        const enhancedEntry: TS.FileSystemEntry = enhanceEntry(
+          entry,
+          AppConfig.tagDelimiter,
+          PlatformIO.getDirSeparator()
+        );
+        directoryContent.push(enhancedEntry);
+        return true;
+      });
+
+      return directoryContent;
+    };
+  }, [showUnixHiddenEntries]);
 
   function setCurrentDirectoryPerspective(
     perspective: string,

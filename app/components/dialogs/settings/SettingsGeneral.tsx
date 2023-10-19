@@ -49,6 +49,7 @@ import { PerspectiveIDs } from '-/perspectives';
 import { AppDispatch } from '-/reducers/app';
 import { styled } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 const PREFIX = 'SettingsGeneral';
 
@@ -78,6 +79,7 @@ const Root = styled('div')(({ theme }) => ({
 
 function SettingsGeneral() {
   const { i18n, t } = useTranslation();
+  const { openCurrentDirectory } = useDirectoryContentContext();
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
   const [displayTextColorPicker, setDisplayTextColorPicker] = useState<boolean>(
     false
@@ -402,9 +404,10 @@ function SettingsGeneral() {
           <ListItemText primary={t('core:showUnixHiddenFiles')} />
           <Switch
             data-tid="settingsSetShowUnixHiddenEntries"
-            onClick={() =>
-              dispatch(SettingsActions.toggleShowUnixHiddenEntries())
-            }
+            onClick={() => {
+              dispatch(SettingsActions.toggleShowUnixHiddenEntries());
+              openCurrentDirectory(!settings.showUnixHiddenEntries);
+            }}
             checked={settings.showUnixHiddenEntries}
           />
         </ListItem>

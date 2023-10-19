@@ -700,8 +700,8 @@ export async function expectMetaFilesExist(
   subFolder = undefined
 ) {
   await checkSettings('[data-tid=settingsSetShowUnixHiddenEntries]', true);
-  await clickOn('[data-tid=folderContainerOpenDirMenu]');
-  await clickOn('[data-tid=reloadDirectory]');
+  //await clickOn('[data-tid=folderContainerOpenDirMenu]');
+  //await clickOn('[data-tid=reloadDirectory]');
   if (exist || (await isDisplayed(getGridFileSelector(AppConfig.metaFolder)))) {
     await global.client.dblclick(getGridFileSelector(AppConfig.metaFolder));
     if (subFolder) {
