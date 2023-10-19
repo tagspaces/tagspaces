@@ -73,6 +73,7 @@ type DirectoryContentContextData = {
   searchQuery: TS.SearchQuery;
   isSearchMode: boolean;
   addDirectoryEntries: (entries: TS.FileSystemEntry[]) => void;
+  removeDirectoryEntries: (entryPaths: string[]) => void;
   setSearchQuery: (sQuery: TS.SearchQuery) => void;
   loadParentDirectoryContent: () => void;
   loadDirectoryContent: (
@@ -122,6 +123,7 @@ export const DirectoryContentContext = createContext<
   searchQuery: {},
   isSearchMode: false,
   addDirectoryEntries: undefined,
+  removeDirectoryEntries: undefined,
   setSearchQuery: () => {},
   loadParentDirectoryContent: () => {},
   loadDirectoryContent: undefined,
@@ -243,17 +245,13 @@ export const DirectoryContentContextProvider = ({
           setCurrentDirectoryEntries(newDirectoryEntries);
           //}
         }
-      } else if (action === 'delete') {
+      } /*else if (action === 'delete') {
         const filePath = editedEntryPaths[0].path;
         const newDirectoryEntries = currentDirectoryEntries.filter(
           entry => entry.path !== filePath
         );
-
-        /*if (searchMode.current) {
-          GlobalSearch.getInstance().setResults(newDirectoryEntries);
-        } else {*/
         setCurrentDirectoryEntries(newDirectoryEntries);
-      }
+      }*/
     }
   }, [editedEntryPaths]);
 
@@ -669,9 +667,20 @@ export const DirectoryContentContextProvider = ({
     currentDirectoryFiles.current = files;
   }
 
-  function addDirectoryEntries(entries: TS.FileSystemEntry[]) {
-    setCurrentDirectoryEntries([...currentDirectoryEntries, ...entries]);
-  }
+  const addDirectoryEntries = useMemo(() => {
+    return (entries: TS.FileSystemEntry[]) => {
+      setCurrentDirectoryEntries([...currentDirectoryEntries, ...entries]);
+    };
+  }, [currentDirectoryEntries]);
+
+  const removeDirectoryEntries = useMemo(() => {
+    return (entryPaths: string[]) => {
+      const entries = currentDirectoryEntries.filter(
+        entry => !entryPaths.includes(entry.path)
+      );
+      setCurrentDirectoryEntries(entries);
+    };
+  }, [currentDirectoryEntries]);
 
   function setDirectoryMeta(meta: TS.FileSystemEntryMeta) {
     directoryMeta.current = meta;
@@ -714,6 +723,7 @@ export const DirectoryContentContextProvider = ({
       setCurrentDirectoryDirs,
       setCurrentDirectoryFiles,
       addDirectoryEntries,
+      removeDirectoryEntries,
       updateCurrentDirEntries,
       updateThumbnailUrl,
       setDirectoryMeta,

@@ -84,7 +84,7 @@ export async function setInputValue(selector, value) {
  * @param delay
  * @returns {Promise<*>}
  */
-export async function setInputKeys(tid, value, delay = 50) {
+export async function setInputKeys(tid, value, delay = 0) {
   // global.client.keyboard.type('[data-tid=' + tid + '] input', value, { delay: 100 });
   const oldValue = await global.client.inputValue(
     '[data-tid=' + tid + '] input'
@@ -102,7 +102,7 @@ export async function setInputKeys(tid, value, delay = 50) {
  * @param delay
  * @returns {Promise<*>} oldValue
  */
-export async function typeInputValue(inputSelector, value, delay = 50) {
+export async function typeInputValue(inputSelector, value, delay = 0) {
   const oldValue = await global.client.inputValue(inputSelector);
   await global.client.type(inputSelector, value, {
     delay

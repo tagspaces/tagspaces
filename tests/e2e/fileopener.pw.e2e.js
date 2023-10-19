@@ -180,6 +180,7 @@ test.describe('TST08 - File folder properties', () => {
         : [propsNewFileName + '.json', propsNewFileName + '.jpg']; // check meta and thumbnail renamed
     await expectMetaFilesExist(arrayMeta);
 
+    await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
     //turn fileName back
     /*await clickOn('[data-tid=startRenameEntryTID]');
     await setInputValue('[data-tid=fileNameProperties] input', propsFileName);
@@ -212,6 +213,7 @@ test.describe('TST08 - File folder properties', () => {
     //Toggle Properties
     await clickOn('[data-tid=detailsTabTID]');
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
+    await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
   });
 
   test('TST0810 - Tag file drag&drop in file opener [web,minio,electron]', async () => {
@@ -343,6 +345,7 @@ test.describe('TST08 - File folder properties', () => {
     await expectElementExist(getGridFileSelector(fileName), false, 5000);
 
     await expectMetaFilesExist(arrayMeta, false);
+    await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
   });
 
   test('TST0813a - Delete file and check revisions deleted [web,minio,electron,_pro]', async () => {

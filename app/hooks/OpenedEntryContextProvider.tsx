@@ -34,7 +34,6 @@ import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
 import {
-  enhanceOpenedEntry,
   findExtensionsForEntry,
   getAllPropertiesPromise,
   getCleanLocationPath,
@@ -42,7 +41,6 @@ import {
   getPrevFile,
   getRelativeEntryPath,
   loadJSONFile,
-  openedToFsEntry,
   openURLExternally,
   toFsEntry
 } from '-/services/utils-io';
@@ -105,6 +103,7 @@ type OpenedEntryContextData = {
   createFile: () => void;
   reflectRenameDirectory: (directoryPath: string, newDirPath: string) => void;
   reflectDeleteDirectory: (directoryPath: string) => void;
+  reflectDeleteFile: (filePath: string) => void;
 };
 
 export const OpenedEntryContext = createContext<OpenedEntryContextData>({
@@ -127,7 +126,8 @@ export const OpenedEntryContext = createContext<OpenedEntryContextData>({
   createFile: () => {},
   createFileAdvanced: () => {},
   reflectRenameDirectory: () => {},
-  reflectDeleteDirectory: () => {}
+  reflectDeleteDirectory: undefined,
+  reflectDeleteFile: undefined
 });
 
 export type OpenedEntryContextProviderProps = {
@@ -144,9 +144,7 @@ export const OpenedEntryContextProvider = ({
     currentDirectoryEntries,
     currentDirectoryPath,
     openDirectory,
-    setCurrentDirectoryColor,
-    setCurrentDirectoryPerspective,
-    updateCurrentDirEntry
+    addDirectoryEntries
   } = useDirectoryContentContext();
 
   const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
@@ -172,7 +170,7 @@ export const OpenedEntryContextProvider = ({
   const [isEntryInFullWidth, setEntryInFullWidth] = useState(false);
   const sharingLink = useRef<string>(undefined);
   const sharingParentFolderLink = useRef<string>(undefined);
-  const havePrevOpenedFile = React.useRef<boolean>(false);
+  //const havePrevOpenedFile = React.useRef<boolean>(false);
   const firstRender = useFirstRender();
 
   /**
@@ -278,7 +276,7 @@ export const OpenedEntryContextProvider = ({
           setSharedLinks(newEntries[0]);
           setOpenedEntries(newEntries);
         }
-      } else if (action === 'delete') {
+      } /*else if (action === 'delete') {
         const filePath = editedEntryPaths[0].path;
         if (
           openedEntries &&
@@ -287,7 +285,7 @@ export const OpenedEntryContextProvider = ({
         ) {
           closeAllFiles();
         }
-      }
+      }*/
     }
   }, [editedEntryPaths]);
 
@@ -926,11 +924,11 @@ export const OpenedEntryContextProvider = ({
     }
     PlatformIO.saveFilePromise({ path: filePath }, fileContent, false)
       .then((fsEntry: TS.FileSystemEntry) => {
-        reflectCreateEntry(toFsEntry(filePath, true));
+        addDirectoryEntries([fsEntry]);
+        reflectCreateEntry(fsEntry); // toFsEntry(filePath, true);
         dispatch(AppActions.reflectCreateEntry(filePath, true));
         openFsEntry(fsEntry);
-
-        // dispatch(actions.setSelectedEntries([fsEntry]));
+        setSelectedEntries([fsEntry]);
         showNotification(`File '${fileNameAndExt}' created.`, 'default', true);
         return true;
       })
@@ -970,6 +968,16 @@ export const OpenedEntryContextProvider = ({
     }
   }
 
+  function reflectDeleteFile(filePath) {
+    if (
+      openedEntries &&
+      openedEntries.length > 0 &&
+      openedEntries.some(file => file.path === filePath)
+    ) {
+      closeAllFiles();
+    }
+  }
+
   const context = useMemo(() => {
     return {
       openedEntries,
@@ -991,7 +999,8 @@ export const OpenedEntryContextProvider = ({
       createFile,
       createFileAdvanced,
       reflectRenameDirectory,
-      reflectDeleteDirectory
+      reflectDeleteDirectory,
+      reflectDeleteFile
     };
   }, [
     openedEntries,
