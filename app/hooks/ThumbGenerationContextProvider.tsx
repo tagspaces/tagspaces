@@ -94,36 +94,38 @@ export const ThumbGenerationContextProvider = ({
   ];
 
   useEffect(() => {
-    const entries =
-      pageFiles && pageFiles.length > 0 ? pageFiles : currentDirectoryEntries;
-    if (
-      entries &&
-      entries.length > 0 &&
-      genThumbnailsEnabled() &&
-      isGeneratingThumbs.current === false
-    ) {
-      generateThumbnails(entries).then(() => {
-        if (!isMetaFolderExist) {
-          // initial thumbnail generation without .ts folder
-          loadCurrentDirMeta(
-            currentDirectoryPath,
-            currentDirectoryEntries,
-            pageFiles
-          ).then(entries => updateCurrentDirEntries(entries));
-          /*PlatformIO.listMetaDirectoryPromise(currentDirectoryPath)
-            .then(meta => {
-              const thumbs = getThumbs(meta);
-              return updateEntries(thumbs);
-            })
-            .catch(ex => {
-              console.log(ex);
-              return false;
-            });*/
-        }
-        return true;
-      });
+    if (currentDirectoryPath !== undefined) {
+      const entries =
+        pageFiles && pageFiles.length > 0 ? pageFiles : currentDirectoryEntries;
+      if (
+        entries &&
+        entries.length > 0 &&
+        genThumbnailsEnabled() &&
+        isGeneratingThumbs.current === false
+      ) {
+        generateThumbnails(entries).then(() => {
+          if (!isMetaFolderExist) {
+            // initial thumbnail generation without .ts folder
+            loadCurrentDirMeta(
+              currentDirectoryPath,
+              currentDirectoryEntries,
+              pageFiles
+            ).then(entries => updateCurrentDirEntries(entries));
+            /*PlatformIO.listMetaDirectoryPromise(currentDirectoryPath)
+              .then(meta => {
+                const thumbs = getThumbs(meta);
+                return updateEntries(thumbs);
+              })
+              .catch(ex => {
+                console.log(ex);
+                return false;
+              });*/
+          }
+          return true;
+        });
+      }
     }
-  }, [currentDirectoryEntries, isMetaFolderExist]);
+  }, [currentDirectoryPath, isMetaFolderExist]);
 
   function genThumbnailsEnabled(): boolean {
     if (
