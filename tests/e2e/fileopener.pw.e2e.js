@@ -195,23 +195,26 @@ test.describe('TST08 - File folder properties', () => {
   test.skip('TST0806 - Download file [manual]', async () => {});
 
   test('TST0808 - Add and remove tags to a file (file names) [web,minio,electron]', async () => {
-    // await searchEngine('bmp');
     // open fileProperties
-    await clickOn(selectorFile);
-    //Toggle Properties
-    //await clickOn('[data-tid=fileContainerToggleProperties]');
-    await clickOn('[data-tid=detailsTabTID]');
+    const fileName = 'sample.svg';
+    await openContextEntryMenu(
+      getGridFileSelector(fileName),
+      'showPropertiesTID'
+    );
+    /*await clickOn(selectorFile);
+    await clickOn('[data-tid=detailsTabTID]');*/
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
   });
 
   test('TST0809 - Add and remove tag to a file (sidecar files) [web,minio,electron]', async () => {
     // global.client.setDefaultTimeout(300000);
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
-    // await searchEngine('bmp');
     // open fileProperties
-    await clickOn(selectorFile);
-    //Toggle Properties
-    await clickOn('[data-tid=detailsTabTID]');
+    const fileName = 'sample.bmp';
+    await openContextEntryMenu(
+      getGridFileSelector(fileName),
+      'showPropertiesTID'
+    );
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
   });

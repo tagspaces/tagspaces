@@ -45,14 +45,14 @@ import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 interface Props {
   setEditLocationDialogOpened: (open: boolean) => void;
   setDeleteLocationDialogOpened: (open: boolean) => void;
-  closeLocationTree: () => void;
+  //closeLocationTree: () => void;
 }
 
 function LocationContextMenu(props: Props) {
   const {
     setEditLocationDialogOpened,
-    setDeleteLocationDialogOpened,
-    closeLocationTree
+    setDeleteLocationDialogOpened
+    //closeLocationTree
   } = props;
   const { t } = useTranslation();
 
@@ -128,7 +128,7 @@ function LocationContextMenu(props: Props) {
     setLocationDirectoryContextMenuAnchorEl(null);
     if (selectedLocation && selectedLocation.uuid) {
       closeLocation(selectedLocation.uuid);
-      closeLocationTree();
+      //closeLocationTree();
     }
   };
 

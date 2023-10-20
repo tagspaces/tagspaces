@@ -53,7 +53,7 @@ const DirectoryTreeView = forwardRef(
     const [data, setData] = useState(undefined);
     const [isExpanded, setExpanded] = useState(false);
     const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
-    const dispatch: AppDispatch = useDispatch();
+    //const dispatch: AppDispatch = useDispatch();
 
     useImperativeHandle(ref, () => ({
       changeLocation(location: TS.Location) {

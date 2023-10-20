@@ -62,7 +62,6 @@ function LocationView(props: Props) {
     currentLocation,
     readOnlyMode,
     setSelectedLocation,
-    locationDirectoryContextMenuAnchorEl,
     setLocationDirectoryContextMenuAnchorEl
   } = useCurrentLocationContext();
   const { setSelectedEntries } = useSelectedEntriesContext();
@@ -73,10 +72,6 @@ function LocationView(props: Props) {
   } = useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
   const directoryTreeRef = useRef<DirectoryTreeViewRef>(null);
-  /*  const [
-    locationDirectoryContextMenuAnchorEl,
-    setLocationDirectoryContextMenuAnchorEl
-  ] = useState<null | HTMLElement>(null);*/
 
   const dispatch: AppDispatch = useDispatch();
 
@@ -112,9 +107,9 @@ function LocationView(props: Props) {
     }
   };
 
-  const closeLocationTree = () => {
+  /*const closeLocationTree = () => {
     directoryTreeRef.current.closeLocation();
-  };
+  };*/
 
   const handleLocationContextMenuClick = (event: any, chosenLocation) => {
     event.preventDefault();
@@ -235,13 +230,13 @@ function LocationView(props: Props) {
   return (
     /* <div key={location.uuid}> */
     <SidePanel>
-      {locationDirectoryContextMenuAnchorEl && (
+      {/*{locationDirectoryContextMenuAnchorEl && (
         <LocationContextMenu
           setEditLocationDialogOpened={setEditLocationDialogOpened}
           setDeleteLocationDialogOpened={setDeleteLocationDialogOpened}
           closeLocationTree={closeLocationTree}
         />
-      )}
+      )}*/}
       <ListItem
         data-tid={'location_' + location.name.replace(/ /g, '_')}
         className={

@@ -32,6 +32,7 @@ import PlatformIO from '-/services/platform-facade';
 import { classes, SidePanel } from '-/components/SidePanels.css';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import LocationContextMenu from '-/components/menus/LocationContextMenu';
 
 const CreateEditLocationDialog = React.lazy(() =>
   import(
@@ -65,7 +66,8 @@ function LocationManager(props: Props) {
   const {
     addLocations,
     editLocation,
-    selectedLocation
+    selectedLocation,
+    locationDirectoryContextMenuAnchorEl
   } = useCurrentLocationContext();
   const locations: Array<TS.Location> = useSelector(getLocations);
   // const loading: boolean = useSelector(isLoading);
@@ -161,6 +163,12 @@ function LocationManager(props: Props) {
         }
         toggleOpenLinkDialog={() => dispatch(AppActions.toggleOpenLinkDialog())}
       />
+      {locationDirectoryContextMenuAnchorEl && (
+        <LocationContextMenu
+          setEditLocationDialogOpened={setEditLocationDialogOpened}
+          setDeleteLocationDialogOpened={setDeleteLocationDialogOpened}
+        />
+      )}
       <List
         className={classes.locationListArea}
         data-tid="locationList"

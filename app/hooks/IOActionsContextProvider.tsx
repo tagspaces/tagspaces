@@ -314,6 +314,7 @@ export const IOActionsContextProvider = ({
           if (reflect) {
             // close file opener if this file is opened
             reflectDeleteFile(filePath);
+            removeDirectoryEntries([filePath]);
             dispatch(AppActions.reflectDeleteEntry(filePath));
           }
           // change index
@@ -385,6 +386,7 @@ export const IOActionsContextProvider = ({
         onProgress
       )
         .then(() => {
+          removeDirectoryEntries([path]);
           console.log('Moving dir from ' + path + ' to ' + targetPath);
           reflectDeleteEntry(path);
           dispatch(AppActions.reflectDeleteEntry(path));
@@ -411,6 +413,7 @@ export const IOActionsContextProvider = ({
     ]);
     return renameFilesPromise(moveJobs, onProgress)
       .then(() => {
+        removeDirectoryEntries(paths);
         showNotification(t('core:filesMovedSuccessful'));
         // moved files should be added to the index, if the target dir in index
         reflectDeleteEntries(paths);
