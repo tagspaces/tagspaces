@@ -1552,7 +1552,7 @@ export function getFolderBgndPath(
   path: string,
   lastBackgroundImageChange: any
 ) {
-  if (path) {
+  if (path !== undefined) {
     return getBgndPath(
       getBgndFileLocationForDirectory(path, PlatformIO.getDirSeparator()),
       lastBackgroundImageChange

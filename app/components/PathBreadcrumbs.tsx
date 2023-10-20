@@ -180,29 +180,25 @@ function PathBreadcrumbs(props: Props) {
         );
       });
     }
-    if (currentDirectoryPath) {
-      const curDirBreadcrumb = (
-        <Tooltip
-          key={currentDirectoryPath}
-          title={
-            t('core:openDirectoryMenu') + ' - ' + (currentDirectoryPath || '')
-          }
-        >
-          <StyledBreadcrumb
-            data-tid="folderContainerOpenDirMenu"
-            label={currentFolderName}
-            icon={currentFolderChipIcon}
-            deleteIcon={<ExpandMoreIcon />}
-            onDelete={openDirectoryMenu}
-            onClick={openDirectoryMenu}
-            onContextMenu={openDirectoryMenu}
-            style={{ marginRight: 2 }}
-          />
-        </Tooltip>
-      );
-      breadcrumbs = [...breadcrumbs, curDirBreadcrumb];
-    }
-    return breadcrumbs;
+    const curDirBreadcrumb = (
+      <Tooltip
+        title={
+          t('core:openDirectoryMenu') + ' - ' + (currentDirectoryPath || '')
+        }
+      >
+        <StyledBreadcrumb
+          data-tid="folderContainerOpenDirMenu"
+          label={currentFolderName}
+          icon={currentFolderChipIcon}
+          deleteIcon={<ExpandMoreIcon />}
+          onDelete={openDirectoryMenu}
+          onClick={openDirectoryMenu}
+          onContextMenu={openDirectoryMenu}
+          style={{ marginRight: 2 }}
+        />
+      </Tooltip>
+    );
+    return [...breadcrumbs, curDirBreadcrumb];
   }
 
   return (
