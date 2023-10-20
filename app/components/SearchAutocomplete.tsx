@@ -189,6 +189,10 @@ function SearchAutocomplete(props: Props) {
   }*/
 
   useEffect(() => {
+    processSearchQuery();
+  }, [searchQuery]);
+
+  function processSearchQuery() {
     if (Object.keys(searchQuery).length > 0) {
       let emptySearch = true;
       const actions: SearchOptionType[] = [];
@@ -200,7 +204,9 @@ function SearchAutocomplete(props: Props) {
 
           actions.push({
             action: SearchQueryComposition.TAG_AND.shortName,
-            label: SearchQueryComposition.TAG_AND.shortName + tag.title
+            label: SearchQueryComposition.TAG_AND.shortName + tag.title,
+            color: tag.color,
+            textcolor: tag.textcolor
           });
         });
         emptySearch = false;
@@ -210,7 +216,9 @@ function SearchAutocomplete(props: Props) {
           // textQueryMask.current += ' |' + tag.title;
           actions.push({
             action: SearchQueryComposition.TAG_OR.shortName,
-            label: SearchQueryComposition.TAG_OR.shortName + tag.title
+            label: SearchQueryComposition.TAG_OR.shortName + tag.title,
+            color: tag.color,
+            textcolor: tag.textcolor
           });
         });
         emptySearch = false;
@@ -220,7 +228,9 @@ function SearchAutocomplete(props: Props) {
           // textQueryMask.current += ' -' + tag.title;
           actions.push({
             action: SearchQueryComposition.TAG_NOT.shortName,
-            label: SearchQueryComposition.TAG_NOT.shortName + tag.title
+            label: SearchQueryComposition.TAG_NOT.shortName + tag.title,
+            color: tag.color,
+            textcolor: tag.textcolor
           });
         });
         emptySearch = false;
@@ -316,7 +326,7 @@ function SearchAutocomplete(props: Props) {
       if (!emptySearch) {
         if (actions.length > 0) {
           actionValues.current = execActions(
-            actions,
+            actions, // todo set tag in actions
             actionValues.current,
             false
           );
@@ -338,8 +348,7 @@ function SearchAutocomplete(props: Props) {
         clearSearch();
       }*/
     }
-  }, [searchQuery]);
-
+  }
   /*function getInputValue() {
     const txtQuery = removeActionsFromQuery(
       inputValue.current.trim(),

@@ -74,7 +74,7 @@ const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 
 function StoredSearches(props: Props) {
   const { t } = useTranslation();
-  const { setSearchQuery } = useDirectoryContentContext();
+  const { setSearchQuery, findFromSavedSearch } = useDirectoryContentContext();
   const [saveSearchDialogOpened, setSaveSearchDialogOpened] = useState<
     TS.SearchQuery
   >(undefined);
@@ -121,19 +121,6 @@ function StoredSearches(props: Props) {
       return true;
     }
     setSaveSearchDialogOpened(savedSearch);
-  };
-
-  const handleSavedSearchClick = (uuid: string) => {
-    const savedSearch = props.searches.find(search => search.uuid === uuid);
-    if (!savedSearch) {
-      return true;
-    }
-
-    setSearchQuery({
-      ...savedSearch,
-      showUnixHiddenEntries: props.showUnixHiddenEntries,
-      executeSearch: true
-    });
   };
 
   function handleFileInputChange(selection: any) {
@@ -275,7 +262,7 @@ function StoredSearches(props: Props) {
                     fontWeight: 'normal',
                     justifyContent: 'start'
                   }}
-                  onClick={() => handleSavedSearchClick(search.uuid)}
+                  onClick={() => findFromSavedSearch(search.uuid)}
                 >
                   <SearchIcon />
                   &nbsp;
