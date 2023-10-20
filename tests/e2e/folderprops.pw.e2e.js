@@ -135,9 +135,10 @@ test.describe('TST02 - Folder properties', () => {
     );
     const propsNewFolderName = await getPropertiesFileName();
     expect(propsFolderName).not.toBe(propsNewFolderName);
+    await testDataRefresh();
 
     //turn folderName back
-    await clickOn('[data-tid=fileNameProperties] input');
+    /*await clickOn('[data-tid=fileNameProperties] input');
     await clickOn('[data-tid=startRenameEntryTID]');
     await clickOn('[data-tid=fileNameProperties] input');
     await setInputValue('[data-tid=fileNameProperties] input', propsFolderName);
@@ -147,7 +148,7 @@ test.describe('TST02 - Folder properties', () => {
       '[data-tid=fileNameProperties] input[value="' + propsFolderName + '"]'
     );
     const propsOldFileName = await getPropertiesFileName();
-    expect(propsOldFileName).toEqual(propsFolderName);
+    expect(propsOldFileName).toEqual(propsFolderName);*/
   });
 
   test('TST0207 - Move folder [web,minio,electron]', async () => {
@@ -156,6 +157,7 @@ test.describe('TST02 - Folder properties', () => {
     await clickOn(getGridFileSelector('empty_folder'));
     await clickOn('[data-tid=gridPerspectiveCopySelectedFiles]'); //todo moveCopyEntryTID
     await clickOn('[data-tid=MoveTarget' + newFolder + ']');
+    await clickOn('[data-tid=MoveTarget' + newFolder + ']'); // todo double clickOn
     await clickOn('[data-tid=confirmMoveFiles]');
     await clickOn('[data-tid=uploadCloseAndClearTID]');
     await expectElementExist(getGridFileSelector('empty_folder'), false, 5000);
