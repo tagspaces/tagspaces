@@ -863,7 +863,7 @@ export const OpenedEntryContextProvider = ({
   }
 
   function createFile() {
-    if (currentDirectoryPath) {
+    if (currentDirectoryPath !== undefined) {
       const filePath =
         currentDirectoryPath +
         PlatformIO.getDirSeparator() +

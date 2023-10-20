@@ -47,13 +47,19 @@ import { loadJSONFile, merge, updateFsEntries } from '-/services/utils-io';
 import AppConfig from '-/AppConfig';
 import { PerspectiveIDs } from '-/perspectives';
 import { updateHistory } from '-/utils/dom';
-import { getShowUnixHiddenEntries } from '-/reducers/settings';
+import {
+  getShowUnixHiddenEntries,
+  getTagColor,
+  getTagTextColor
+} from '-/reducers/settings';
 import { enhanceEntry, getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import useFirstRender from '-/utils/useFirstRender';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { loadCurrentDirMeta } from '-/services/meta-loader';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { getSearches } from '-/reducers/searches';
+import { getTagColors } from '-/services/taglibrary-utils';
 
 type DirectoryContentContextData = {
   currentDirectoryEntries: TS.FileSystemEntry[];
@@ -107,6 +113,7 @@ type DirectoryContentContextData = {
   appendSearchResults: (entries: TS.FileSystemEntry[]) => void;
   enterSearchMode: () => void;
   exitSearchMode: () => void;
+  findFromSavedSearch: (uuid: string) => void;
 };
 
 export const DirectoryContentContext = createContext<
@@ -142,7 +149,8 @@ export const DirectoryContentContext = createContext<
   setSearchResults: () => {},
   appendSearchResults: () => {},
   enterSearchMode: () => {},
-  exitSearchMode: () => {}
+  exitSearchMode: () => {},
+  findFromSavedSearch: () => {}
 });
 
 export type DirectoryContentContextProviderProps = {
@@ -165,6 +173,9 @@ export const DirectoryContentContextProvider = ({
   //const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
   const editedEntryPaths = useSelector(getEditedEntryPaths);
+  const searches = useSelector(getSearches);
+  const defaultBackgroundColor = useSelector(getTagColor);
+  const defaultTextColor = useSelector(getTagTextColor);
   //const enableWS = useSelector(getEnableWS);
 
   const [currentDirectoryEntries, setCurrentDirectoryEntries] = useState<
@@ -503,7 +514,7 @@ export const DirectoryContentContextProvider = ({
   function openCurrentDirectory(
     showHiddenEntries = undefined
   ): Promise<boolean> {
-    if (currentDirectoryPath.current) {
+    if (currentDirectoryPath.current !== undefined) {
       return openDirectory(currentDirectoryPath.current, showHiddenEntries);
     }
     return Promise.resolve(false);
@@ -698,6 +709,42 @@ export const DirectoryContentContextProvider = ({
     }
   }
 
+  function updateTagColors(tags: TS.Tag[]) {
+    return tags.map(tag => {
+      const tagColors = getTagColors(
+        tag.title,
+        defaultTextColor,
+        defaultBackgroundColor
+      );
+      return {
+        ...tag,
+        ...tagColors
+      };
+    });
+  }
+
+  function findFromSavedSearch(uuid: string) {
+    const savedSearch = searches.find(search => search.uuid === uuid);
+    if (!savedSearch) {
+      return true;
+    }
+
+    setSearchQuery({
+      ...savedSearch,
+      ...(savedSearch.tagsAND && {
+        tagsAND: updateTagColors(savedSearch.tagsAND)
+      }),
+      ...(savedSearch.tagsNOT && {
+        tagsNOT: updateTagColors(savedSearch.tagsNOT)
+      }),
+      ...(savedSearch.tagsOR && {
+        tagsOR: updateTagColors(savedSearch.tagsOR)
+      }),
+      showUnixHiddenEntries,
+      executeSearch: true
+    });
+  }
+
   const context = useMemo(() => {
     return {
       currentDirectoryEntries: currentDirectoryEntries,
@@ -730,7 +777,8 @@ export const DirectoryContentContextProvider = ({
       setSearchResults,
       appendSearchResults,
       enterSearchMode,
-      exitSearchMode
+      exitSearchMode,
+      findFromSavedSearch
     };
   }, [
     currentLocation,

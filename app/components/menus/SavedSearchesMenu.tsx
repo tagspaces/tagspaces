@@ -36,28 +36,15 @@ interface Props {
 function SavedSearchesMenu(props: Props) {
   const { open, onClose, anchorEl } = props;
   const { t } = useTranslation();
-  const { setSearchQuery } = useDirectoryContentContext();
+  const { findFromSavedSearch } = useDirectoryContentContext();
   const searches = useSelector(state => getSearches(state));
-  const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
-
-  const handleSavedSearchClick = (uuid: string) => {
-    const savedSearch = searches.find(search => search.uuid === uuid);
-    if (!savedSearch) {
-      return true;
-    }
-
-    setSearchQuery({
-      ...savedSearch,
-      showUnixHiddenEntries: showUnixHiddenEntries
-    });
-  };
 
   const menuItems = searches.length ? (
     searches.map(search => (
       <MenuItem
         key={search.uuid}
         onClick={() => {
-          handleSavedSearchClick(search.uuid);
+          findFromSavedSearch(search.uuid);
           onClose();
         }}
       >
