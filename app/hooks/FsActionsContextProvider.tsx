@@ -22,23 +22,14 @@ import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useTranslation } from 'react-i18next';
 import PlatformIO from '-/services/platform-facade';
 import {
-  extractContainingDirectoryPath,
   extractDirectoryName,
-  getBackupFileLocation,
   getMetaFileLocationForFile,
   getThumbFileLocationForFile
 } from '@tagspaces/tagspaces-common/paths';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import {
-  getUseTrashCan,
-  getWarningOpeningFilesExternally
-} from '-/reducers/settings';
+import { getWarningOpeningFilesExternally } from '-/reducers/settings';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import {
-  deleteFilesPromise,
-  renameFilesPromise,
-  toFsEntry
-} from '-/services/utils-io';
+import { renameFilesPromise } from '-/services/utils-io';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
@@ -48,19 +39,13 @@ type FsActionsContextData = {
     directoryPath: string,
     newDirectoryName: string
   ) => Promise<string>;
-  createDirectory: (directoryPath: string, reflect?) => Promise<boolean>;
-  deleteDirectory: (directoryPath: string) => Promise<boolean>;
   renameFile: (filePath: string, newFilePath: string) => Promise<boolean>;
-  deleteFile: (filePath: string, uuid: string) => Promise<boolean>;
   openFileNatively: (selectedFile?: string) => void;
 };
 
 export const FsActionsContext = createContext<FsActionsContextData>({
   renameDirectory: () => Promise.resolve(''),
-  createDirectory: () => Promise.resolve(false),
-  deleteDirectory: () => Promise.resolve(false),
   renameFile: () => Promise.resolve(false),
-  deleteFile: () => Promise.resolve(false),
   openFileNatively: undefined
 });
 
@@ -73,24 +58,11 @@ export const FsActionsContextProvider = ({
 }: FsActionsContextProviderProps) => {
   const { t } = useTranslation();
   const { setSelectedEntries, selectedEntries } = useSelectedEntriesContext();
-  const {
-    openedEntries,
-    reflectRenameDirectory,
-    reflectDeleteDirectory
-  } = useOpenedEntryContext();
-  const {
-    openDirectory,
-    currentDirectoryPath,
-    loadParentDirectoryContent
-  } = useDirectoryContentContext();
-  const {
-    reflectDeleteEntry,
-    reflectRenameEntry,
-    reflectCreateEntry
-  } = useLocationIndexContext();
+  const { openedEntries, reflectRenameDirectory } = useOpenedEntryContext();
+  const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
+  const { reflectRenameEntry } = useLocationIndexContext();
   const { showNotification } = useNotificationContext();
   const dispatch: AppDispatch = useDispatch();
-  const useTrashCan = useSelector(getUseTrashCan);
   const warningOpeningFilesExternally = useSelector(
     getWarningOpeningFilesExternally
   );
@@ -130,90 +102,6 @@ export const FsActionsContextProvider = ({
           true
         );
         throw error;
-      });
-  }
-
-  function createDirectory(directoryPath: string, reflect = true) {
-    return PlatformIO.createDirectoryPromise(directoryPath)
-      .then(result => {
-        if (result !== undefined && result.dirPath !== undefined) {
-          // eslint-disable-next-line no-param-reassign
-          directoryPath = result.dirPath;
-        }
-        console.log(`Creating directory ${directoryPath} successful.`);
-        if (reflect) {
-          reflectCreateEntry(toFsEntry(directoryPath, false));
-          dispatch(AppActions.reflectCreateEntry(directoryPath, false));
-        }
-        showNotification(
-          `Creating directory ${extractDirectoryName(
-            directoryPath,
-            PlatformIO.getDirSeparator()
-          )} successful.`,
-          'default',
-          true
-        );
-        return true;
-      })
-      .catch(error => {
-        console.warn('Error creating directory: ' + error);
-        showNotification(
-          `Error creating directory '${extractDirectoryName(
-            directoryPath,
-            PlatformIO.getDirSeparator()
-          )}'`,
-          'error',
-          true
-        );
-        return false;
-        // dispatch stopLoadingAnimation
-      });
-  }
-
-  function deleteDirectory(directoryPath: string) {
-    return PlatformIO.deleteDirectoryPromise(directoryPath, useTrashCan)
-      .then(() => {
-        if (directoryPath === currentDirectoryPath) {
-          loadParentDirectoryContent();
-          reflectDeleteEntry(directoryPath);
-          // close opened entries in deleted dir
-          reflectDeleteDirectory(directoryPath);
-        } else {
-          reflectDeleteEntry(directoryPath);
-          dispatch(AppActions.reflectDeleteEntry(directoryPath));
-        }
-        showNotification(
-          t(
-            'deletingDirectorySuccessfull' as any,
-            {
-              dirPath: extractDirectoryName(
-                directoryPath,
-                PlatformIO.getDirSeparator()
-              )
-            } as any
-          ) as string,
-          'default',
-          true
-        );
-        return true;
-      })
-      .catch(error => {
-        console.warn('Error while deleting directory: ' + error);
-        showNotification(
-          t(
-            'errorDeletingDirectoryAlert' as any,
-            {
-              dirPath: extractDirectoryName(
-                directoryPath,
-                PlatformIO.getDirSeparator()
-              )
-            } as any
-          ) as string,
-          'error',
-          true
-        );
-        return false;
-        // dispatch stopLoadingAnimation
       });
   }
 
@@ -286,66 +174,6 @@ export const FsActionsContextProvider = ({
       });
   }
 
-  function deleteFile(filePath: string, uuid: string): Promise<boolean> {
-    return PlatformIO.deleteFilePromise(filePath, useTrashCan)
-      .then(() => {
-        // TODO close file opener if this file is opened
-        reflectDeleteEntry(filePath);
-        dispatch(AppActions.reflectDeleteEntry(filePath));
-        showNotification(
-          `Deleting file ${filePath} successful.`,
-          'default',
-          true
-        );
-        // Delete revisions
-        const backupFilePath = getBackupFileLocation(
-          filePath,
-          uuid,
-          PlatformIO.getDirSeparator()
-        );
-        const backupPath = extractContainingDirectoryPath(
-          backupFilePath,
-          PlatformIO.getDirSeparator()
-        );
-        PlatformIO.deleteDirectoryPromise(backupPath)
-          .then(() => {
-            console.log('Cleaning revisions successful for ' + filePath);
-            return true;
-          })
-          .catch(err => {
-            console.warn('Cleaning revisions failed ', err);
-          });
-        // Delete sidecar file and thumb
-        deleteFilesPromise([
-          getMetaFileLocationForFile(filePath, PlatformIO.getDirSeparator()),
-          getThumbFileLocationForFile(
-            filePath,
-            PlatformIO.getDirSeparator(),
-            false
-          )
-        ])
-          .then(() => {
-            console.log(
-              'Cleaning meta file and thumb successful for ' + filePath
-            );
-            return true;
-          })
-          .catch(err => {
-            console.warn('Cleaning meta file and thumb failed with ' + err);
-          });
-        return true;
-      })
-      .catch(error => {
-        console.warn('Error while deleting file: ' + error);
-        showNotification(
-          `Error while deleting file ${filePath}`,
-          'error',
-          true
-        );
-        return false;
-      });
-  }
-
   function openFileNatively(selectedFile?: string) {
     // todo reload selectedEntries or find better place for this function
     if (selectedFile === undefined) {
@@ -365,10 +193,7 @@ export const FsActionsContextProvider = ({
   const context = useMemo(() => {
     return {
       renameDirectory,
-      createDirectory,
-      deleteDirectory,
       renameFile,
-      deleteFile,
       openFileNatively
     };
   }, [openedEntries]);

@@ -17,7 +17,6 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
@@ -30,8 +29,8 @@ import { joinPaths } from '@tagspaces/tagspaces-common/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import PlatformIO from '-/services/platform-facade';
 import { useTranslation } from 'react-i18next';
-import { useFsActionsContext } from '-/hooks/useFsActionsContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 
 interface Props {
   open: boolean;
@@ -43,7 +42,7 @@ interface Props {
 
 function CreateDirectoryDialog(props: Props) {
   const { t } = useTranslation();
-  const { createDirectory } = useFsActionsContext();
+  const { createDirectory } = useIOActionsContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
 
   const [inputError, setInputError] = useState(false);

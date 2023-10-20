@@ -200,16 +200,18 @@ function DirectoryMenu(props: Props) {
   }
 
   function showDeleteDirectoryDialog() {
-    setSelectedEntries([
-      {
-        isFile: false,
-        name: directoryPath,
-        path: directoryPath,
-        tags: [],
-        size: 0,
-        lmdt: 0
-      }
-    ]);
+    if (!selectedEntries.some(entry => entry.path === directoryPath)) {
+      setSelectedEntries([
+        {
+          isFile: false,
+          name: directoryPath,
+          path: directoryPath,
+          tags: [],
+          size: 0,
+          lmdt: 0
+        }
+      ]);
+    }
     toggleDeleteMultipleEntriesDialog();
   }
 

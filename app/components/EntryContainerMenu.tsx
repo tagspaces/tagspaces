@@ -36,8 +36,8 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useFsActionsContext } from '-/hooks/useFsActionsContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 
 interface Props {
   anchorEl: null | HTMLElement;
@@ -63,7 +63,7 @@ function EntryContainerMenu(props: Props) {
   // const theme = useTheme();
   const { toggleEntryFullWidth, openLink } = useOpenedEntryContext();
   const { readOnlyMode } = useCurrentLocationContext();
-  const { deleteFile } = useFsActionsContext();
+  const { deleteFile } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
   const desktopMode = useSelector(isDesktopMode);
   const warningOpeningFilesExternally = useSelector(

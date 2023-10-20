@@ -86,9 +86,12 @@ import { styled, useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { DescriptionContextProvider } from '-/hooks/DescriptionContextProvider';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { useFsActionsContext } from '-/hooks/useFsActionsContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
+import PlatformIO from '-/services/platform-facade';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 const drawerWidth = 320;
 const body = document.getElementsByTagName('body')[0];
@@ -314,8 +317,8 @@ function ProTeaserDialogAsync(props) {
 
 function MainPage(props: Props) {
   const { t } = useTranslation();
-  const { deleteDirectory, deleteFile } = useFsActionsContext();
-  const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
+  const { deleteEntries } = useIOActionsContext();
+  const { selectedEntries } = useSelectedEntriesContext();
   const {
     openLink,
     openedEntries,
@@ -332,6 +335,7 @@ function MainPage(props: Props) {
     exitSearchMode,
     setSearchQuery
   } = useDirectoryContentContext();
+  const { showNotification } = useNotificationContext();
   const theme = useTheme();
   const percent = useRef<number | undefined>(undefined);
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
@@ -703,23 +707,20 @@ function MainPage(props: Props) {
             list={selectedEntries.map(fsEntry => fsEntry.name)}
             confirmCallback={result => {
               if (result && selectedEntries) {
-                const deletePromises = selectedEntries.map(fsEntry => {
-                  if (fsEntry.isFile) {
-                    return deleteFile(fsEntry.path, fsEntry.uuid);
-                  }
-                  return deleteDirectory(fsEntry.path);
-                });
-                Promise.all(deletePromises)
-                  .then(delResult => {
-                    // console.debug(delResult);
-                    if (delResult.some(del => del)) {
-                      setSelectedEntries([]);
-                    } // TODO else { remove only deleted from setSelectedEntries}
-                    return true;
-                  })
-                  .catch(err => {
-                    console.warn('Deleting file failed', err);
-                  });
+                deleteEntries(selectedEntries).then(
+                  success =>
+                    success &&
+                    selectedEntries.length > 1 &&
+                    showNotification(
+                      t('core:deletingEntriesSuccessful', {
+                        dirPath: selectedEntries
+                          .map(fsEntry => fsEntry.name)
+                          .toString()
+                      }),
+                      'default',
+                      true
+                    )
+                );
               }
             }}
             cancelDialogTID="cancelDeleteFileDialog"
