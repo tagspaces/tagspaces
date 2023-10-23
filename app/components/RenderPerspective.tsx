@@ -39,11 +39,11 @@ function GridPerspectiveAsync(props) {
   return (
     <React.Suspense fallback={<LoadingLazy />}>
       <SortedDirContextProvider>
-        <PaginationContextProvider>
-          <ThumbGenerationContextProvider>
+        <ThumbGenerationContextProvider>
+          <PaginationContextProvider>
             <GridPerspective {...props} />
-          </ThumbGenerationContextProvider>
-        </PaginationContextProvider>
+          </PaginationContextProvider>
+        </ThumbGenerationContextProvider>
       </SortedDirContextProvider>
     </React.Suspense>
   );

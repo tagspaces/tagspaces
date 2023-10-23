@@ -42,12 +42,12 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { loadCurrentDirMeta } from '-/services/meta-loader';
 
 type ThumbGenerationContextData = {
-  generateThumbnails: (dirEntries: TS.FileSystemEntry[]) => void;
+  generateThumbnails: (dirEntries: TS.FileSystemEntry[]) => Promise<boolean>;
 };
 
 export const ThumbGenerationContext = createContext<ThumbGenerationContextData>(
   {
-    generateThumbnails: () => {}
+    generateThumbnails: undefined
   }
 );
 
@@ -100,7 +100,6 @@ export const ThumbGenerationContextProvider = ({
       if (
         entries &&
         entries.length > 0 &&
-        genThumbnailsEnabled() &&
         isGeneratingThumbs.current === false
       ) {
         generateThumbnails(entries).then(() => {
@@ -154,8 +153,8 @@ export const ThumbGenerationContextProvider = ({
     if (
       AppConfig.isWeb || // not in web mode
       PlatformIO.haveObjectStoreSupport() || // not in object store mode
-      PlatformIO.haveWebDavSupport() // not in webdav mode
-      // genThumbnails() // enabled in the settings
+      PlatformIO.haveWebDavSupport() || // not in webdav mode
+      !genThumbnailsEnabled() // enabled in the settings
     ) {
       return Promise.resolve(false);
     }
