@@ -547,11 +547,18 @@ async function createAppWindow() {
     mainWindow = null;
   });
 
-  mainWindow.webContents.on('crashed', () => {
-    pm2.stopAll();
-    globalShortcut.unregisterAll();
-    app.quit();
-  });
+  mainWindow.webContents.on(
+    'render-process-gone',
+    (_, { reason, exitCode }) => {
+      /*console.error(
+        `[web ui] render-process-gone: ${reason}, code: ${exitCode}`
+      );*/
+      // 'crashed'
+      pm2.stopAll();
+      globalShortcut.unregisterAll();
+      app.quit();
+    }
+  );
 }
 
 app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required'); // Fix broken autoplay functionality in the av player
