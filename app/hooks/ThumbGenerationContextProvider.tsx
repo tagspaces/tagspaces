@@ -207,7 +207,7 @@ export const ThumbGenerationContextProvider = ({
   }
 
   function thumbnailMainGeneration(mainEntries: string[]): Promise<boolean> {
-    const maxExecutionTime = 3000;
+    const maxExecutionTime = 9000;
     const promises = mainEntries.map(tmbPath =>
       getThumbnailURLPromise(tmbPath)
     );
