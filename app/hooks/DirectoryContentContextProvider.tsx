@@ -75,7 +75,7 @@ type DirectoryContentContextData = {
    */
   currentDirectoryDirs: TS.OrderVisibilitySettings[];
   //isMetaLoaded: boolean;
-  isMetaFolderExist: boolean;
+  //isMetaFolderExist: boolean;
   searchQuery: TS.SearchQuery;
   isSearchMode: boolean;
   addDirectoryEntries: (entries: TS.FileSystemEntry[]) => void;
@@ -126,7 +126,7 @@ export const DirectoryContentContext = createContext<
   currentDirectoryFiles: [],
   currentDirectoryDirs: [],
   //isMetaLoaded: undefined,
-  isMetaFolderExist: false,
+  //isMetaFolderExist: false,
   searchQuery: {},
   isSearchMode: false,
   addDirectoryEntries: undefined,
@@ -194,7 +194,7 @@ export const DirectoryContentContextProvider = ({
    * undefined means no .ts folder exist
    */
   const isMetaLoaded = useRef<boolean>(undefined);
-  const isMetaFolderExist = useRef<boolean>(undefined);
+  //const isMetaFolderExist = useRef<boolean>(undefined);
   const currentDirectoryPath = useRef<string>(undefined);
   const currentPerspective = useRef<string>(PerspectiveIDs.UNSPECIFIED);
   const currentDirectoryFiles = useRef<TS.OrderVisibilitySettings[]>([]);
@@ -404,7 +404,7 @@ export const DirectoryContentContextProvider = ({
       const metaDirectory = getMetaDirectoryPath(directoryPath);
       return PlatformIO.checkDirExist(metaDirectory).then(exist => {
         if (exist) {
-          isMetaFolderExist.current = true;
+          //isMetaFolderExist.current = true;
           const metaFilePath = getMetaFileLocationForDir(
             directoryPath,
             PlatformIO.getDirSeparator()
@@ -430,7 +430,7 @@ export const DirectoryContentContextProvider = ({
               );
             });
         } else {
-          isMetaFolderExist.current = false;
+          //isMetaFolderExist.current = false;
           return loadDirectoryContentInt(
             directoryPath,
             undefined,
@@ -753,7 +753,7 @@ export const DirectoryContentContextProvider = ({
       currentDirectoryPath: currentDirectoryPath.current,
       currentDirectoryFiles: currentDirectoryFiles.current,
       currentDirectoryDirs: currentDirectoryDirs.current,
-      isMetaFolderExist: isMetaFolderExist.current,
+      //isMetaFolderExist: isMetaFolderExist.current,
       searchQuery: searchQuery.current,
       isSearchMode: isSearchMode.current,
       setCurrentDirectoryEntries,

@@ -61,7 +61,6 @@ export const ThumbGenerationContextProvider = ({
   const {
     currentDirectoryPath,
     currentDirectoryEntries,
-    isMetaFolderExist,
     updateCurrentDirEntries
   } = useDirectoryContentContext();
   const { currentLocation } = useCurrentLocationContext();
