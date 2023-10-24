@@ -107,8 +107,7 @@ export const ThumbGenerationContextProvider = ({
             // initial thumbnail generation without .ts folder
             loadCurrentDirMeta(
               currentDirectoryPath,
-              currentDirectoryEntries,
-              pageFiles
+              currentDirectoryEntries
             ).then(entries => updateCurrentDirEntries(entries));
             /*PlatformIO.listMetaDirectoryPromise(currentDirectoryPath)
               .then(meta => {
@@ -212,20 +211,33 @@ export const ThumbGenerationContextProvider = ({
         return true;
       });
     }
+    setGenThumbs(false);
     return Promise.resolve(false);
   }
 
   function thumbnailMainGeneration(mainEntries: string[]): Promise<boolean> {
-    return Promise.all(
-      mainEntries.map(tmbPath => getThumbnailURLPromise(tmbPath))
-    )
-      .then(() => {
-        return true;
-      })
-      .catch(e => {
-        console.log('thumbnailMainGeneration', e);
-        return false;
-      });
+    const maxExecutionTime = 5000;
+    const timeoutPromise = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        reject(
+          new Error('Maximum execution time exceeded:' + maxExecutionTime)
+        );
+      }, maxExecutionTime);
+    });
+    const promises = mainEntries.map(tmbPath =>
+      getThumbnailURLPromise(tmbPath)
+    );
+    return (
+      Promise.race([Promise.allSettled(promises), timeoutPromise])
+        //return Promise.allSettled(promises)
+        .then(() => {
+          return true;
+        })
+        .catch(e => {
+          console.log('thumbnailMainGeneration', e);
+          return false;
+        })
+    );
   }
 
   const context = useMemo(() => {
