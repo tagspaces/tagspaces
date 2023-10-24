@@ -584,9 +584,9 @@ export const DirectoryContentContextProvider = ({
         currentDirectoryPath.current
       );
     } else {*/
-    currentDirectoryPath.current = directoryPath;
     //}
     setCurrentDirectoryEntries(directoryContent);
+    currentDirectoryPath.current = directoryPath;
     return directoryContent;
   }
 

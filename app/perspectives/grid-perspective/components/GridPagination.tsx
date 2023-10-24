@@ -175,11 +175,10 @@ function GridPagination(props: Props) {
   }, [currentDirectoryEntries]);
 
   const handleChange = (event, value) => {
-    setCurrentPage(value).then(() => {
-      if (containerEl && containerEl.current) {
-        containerEl.current.scrollTop = 0;
-      }
-    });
+    setCurrentPage(value);
+    if (containerEl && containerEl.current) {
+      containerEl.current.scrollTop = 0;
+    }
   };
 
   const folderName = extractDirectoryName(

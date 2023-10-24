@@ -22,18 +22,17 @@ import { defaultSettings } from '-/perspectives/grid-perspective';
 import { useSortedDirContext } from '-/perspectives/grid-perspective/hooks/useSortedDirContext';
 import { TS } from '-/tagspaces.namespace';
 import { loadCurrentDirMeta } from '-/services/meta-loader';
-import { useThumbGenerationContext } from '-/hooks/useThumbGenerationContext';
 
 type PaginationContextData = {
   page: number;
   pageFiles: TS.FileSystemEntry[];
-  setCurrentPage: (page: number) => Promise<boolean>;
+  setCurrentPage: (page: number) => void;
 };
 
 export const PaginationContext = createContext<PaginationContextData>({
   page: 1,
   pageFiles: [],
-  setCurrentPage: () => Promise.resolve(false)
+  setCurrentPage: undefined
 });
 
 export type PaginationContextProviderProps = {
@@ -49,7 +48,6 @@ export const PaginationContextProvider = ({
     currentDirectoryEntries,
     updateCurrentDirEntries
   } = useDirectoryContentContext();
-  const { generateThumbnails } = useThumbGenerationContext();
   const { settings, sortedDirContent } = useSortedDirContext();
 
   const [page, setPage] = useState<number>(initPage);
@@ -88,7 +86,7 @@ export const PaginationContextProvider = ({
 
   function setCurrentPage(currentPage: number) {
     setPage(currentPage);
-    const entries = getPageFiles(currentPage, sortedDirContent);
+    /*const entries = getPageFiles(currentPage, sortedDirContent);
     return generateThumbnails(entries).then(() => {
       return loadCurrentDirMeta(
         currentDirectoryPath,
@@ -98,7 +96,7 @@ export const PaginationContextProvider = ({
         updateCurrentDirEntries(entries);
         return true;
       });
-    });
+    });*/
   }
 
   const context = useMemo(() => {
