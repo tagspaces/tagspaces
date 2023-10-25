@@ -148,7 +148,11 @@ export const IOActionsContextProvider = ({
     deleteFilePromise,
     deleteDirectoryPromise
   } = usePlatformFacadeContext();
-  const { reflectDeleteDirectory, reflectDeleteFile } = useOpenedEntryContext();
+  const {
+    openedEntries,
+    reflectDeleteDirectory,
+    reflectDeleteFile
+  } = useOpenedEntryContext();
   const {
     currentDirectoryEntries,
     currentDirectoryPath,
@@ -1003,7 +1007,7 @@ export const IOActionsContextProvider = ({
       uploadFilesAPI,
       uploadFiles
     };
-  }, [currentDirectoryEntries]);
+  }, [currentDirectoryEntries, openedEntries]);
 
   return (
     <IOActionsContext.Provider value={context}>
