@@ -59,7 +59,6 @@ type LocationIndexContextData = {
   reflectRenameEntry: (path: string, newPath: string) => void;
   indexUpdateSidecarTags: (path: string, tags: Array<TS.Tag>) => void;
   reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
-  watchForChanges: () => void;
 };
 
 export const LocationIndexContext = createContext<LocationIndexContextData>({
@@ -79,8 +78,7 @@ export const LocationIndexContext = createContext<LocationIndexContextData>({
   reflectCreateEntry: () => {},
   reflectRenameEntry: () => {},
   indexUpdateSidecarTags: () => {},
-  reflectUpdateSidecarMeta: () => {},
-  watchForChanges: () => {}
+  reflectUpdateSidecarMeta: () => {}
 });
 
 export type LocationIndexContextProviderProps = {
@@ -98,7 +96,9 @@ export const LocationIndexContextProvider = ({
     setSearchResults,
     appendSearchResults,
     loadDirectoryContent,
-    currentDirectoryPerspective
+    currentDirectoryPerspective,
+    addDirectoryEntries,
+    removeDirectoryEntries
   } = useDirectoryContentContext();
   const { showNotification, hideNotifications } = useNotificationContext();
 
@@ -112,13 +112,6 @@ export const LocationIndexContextProvider = ({
 
   useEffect(() => {
     clearDirectoryIndex();
-    if (currentLocation) {
-      watchForChanges();
-    } else {
-      if (Pro && Pro.Watcher) {
-        Pro.Watcher.stopWatching();
-      }
-    }
   }, [currentLocation]);
 
   function setIndex(i) {
@@ -134,32 +127,16 @@ export const LocationIndexContextProvider = ({
     return index.current;
   }
 
-  function watchForChanges() {
-    if (
-      Pro &&
-      Pro.Watcher &&
-      currentLocation &&
-      currentLocation.watchForChanges &&
-      currentLocation.type !== locationType.TYPE_CLOUD
-    ) {
-      function deleteEntry(path: string) {
-        reflectDeleteEntry(path);
-        dispatch(AppActions.reflectDeleteEntry(path));
-      }
-      function createEntry(path: string, isFile: boolean) {
-        reflectCreateEntry(toFsEntry(path, isFile));
-        dispatch(AppActions.reflectCreateEntry(path, isFile));
-      }
-      const depth =
-        currentDirectoryPerspective === PerspectiveIDs.KANBAN ? 3 : 1;
-      Pro.Watcher.watchFolder(
-        PlatformIO.getLocationPath(currentLocation),
-        deleteEntry,
-        createEntry,
-        loadDirectoryContent,
-        depth
-      );
-    }
+  function deleteEntry(path: string) {
+    removeDirectoryEntries([path]);
+    reflectDeleteEntry(path);
+    dispatch(AppActions.reflectDeleteEntry(path));
+  }
+  function createEntry(path: string, isFile: boolean) {
+    const entry = toFsEntry(path, isFile);
+    addDirectoryEntries([entry]);
+    reflectCreateEntry(entry);
+    dispatch(AppActions.reflectCreateEntry(path, isFile));
   }
 
   function reflectDeleteEntry(path: string) {
@@ -640,7 +617,6 @@ export const LocationIndexContextProvider = ({
       index: index.current,
       indexLoadedOn: indexLoadedOn.current,
       isIndexing: isIndexing.current,
-      watchForChanges,
       cancelDirectoryIndexing,
       createLocationIndex,
       createLocationsIndexes,
@@ -656,7 +632,13 @@ export const LocationIndexContextProvider = ({
       indexUpdateSidecarTags,
       reflectUpdateSidecarMeta
     };
-  }, [currentLocation, index, isIndexing.current]);
+  }, [
+    currentLocation,
+    index,
+    isIndexing.current,
+    addDirectoryEntries,
+    removeDirectoryEntries
+  ]);
 
   return (
     <LocationIndexContext.Provider value={context}>

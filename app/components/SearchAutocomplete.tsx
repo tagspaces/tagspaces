@@ -102,7 +102,7 @@ function SearchAutocomplete(props: Props) {
     setSearchQuery
   } = useDirectoryContentContext();
   const {
-    watchForChanges,
+    // watchForChanges,
     isIndexing,
     searchAllLocations,
     searchLocationIndex
@@ -450,7 +450,7 @@ function SearchAutocomplete(props: Props) {
     resetValues([]);
     setSearchQuery({});
     exitSearchMode();
-    watchForChanges();
+    // watchForChanges();
     openCurrentDirectory();
   };
 

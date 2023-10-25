@@ -49,6 +49,7 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 
 interface Props {
   open: boolean;
@@ -79,6 +80,7 @@ function DirectoryMenu(props: Props) {
     openCurrentDirectory
   } = useDirectoryContentContext();
   const { reflectCreateEntry } = useLocationIndexContext();
+  const { copyFilePromise, renameFilePromise } = usePlatformFacadeContext();
   const fileUploadContainerRef = useRef<FileUploadContainerRef>(null);
   const {
     open,
@@ -315,7 +317,7 @@ Do you want to continue?`)
     const newFilePath =
       normalizePath(directoryPath) + PlatformIO.getDirSeparator() + fileName;
 
-    PlatformIO.renameFilePromise(filePath, newFilePath)
+    renameFilePromise(filePath, newFilePath)
       .then(() => {
         showNotification(
           'File ' + newFilePath + ' successfully imported.',
@@ -368,7 +370,7 @@ Do you want to continue?`)
       PlatformIO.getDirSeparator()
     );
 
-    PlatformIO.copyFilePromise(
+    copyFilePromise(
       getThumbFileLocationForDirectory(
         directoryPath,
         PlatformIO.getDirSeparator()

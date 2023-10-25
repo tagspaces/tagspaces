@@ -73,6 +73,7 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 
 type OpenedEntryContextData = {
   openedEntries: OpenedEntry[];
@@ -151,6 +152,8 @@ export const OpenedEntryContextProvider = ({
   const { showNotification } = useNotificationContext();
   const { openLocation, currentLocation } = useCurrentLocationContext();
   const { reflectCreateEntry } = useLocationIndexContext();
+  const { saveFilePromise } = usePlatformFacadeContext();
+
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const locations: TS.Location[] = useSelector(getLocations);
   const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
@@ -872,7 +875,7 @@ export const OpenedEntryContextProvider = ({
         formatDateTime4Tag(new Date(), true) +
         AppConfig.endTagContainer +
         '.txt';
-      PlatformIO.saveFilePromise({ path: filePath }, '', true)
+      saveFilePromise({ path: filePath }, '', true)
         .then(() => {
           reflectCreateEntry(toFsEntry(filePath, true));
           dispatch(AppActions.reflectCreateEntry(filePath, true));
@@ -922,7 +925,7 @@ export const OpenedEntryContextProvider = ({
     } else if (fileType === 'md') {
       fileContent = content + ' \n\n' + creationMeta + '\n';
     }
-    PlatformIO.saveFilePromise({ path: filePath }, fileContent, false)
+    saveFilePromise({ path: filePath }, fileContent, false)
       .then((fsEntry: TS.FileSystemEntry) => {
         addDirectoryEntries([fsEntry]);
         reflectCreateEntry(fsEntry); // toFsEntry(filePath, true);

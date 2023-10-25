@@ -256,7 +256,7 @@ test.describe('TST08 - File folder properties', () => {
    * Description is Pro feature (if no Pro editDescription button is disabled)
    */
   test('TST3001 - Description for files [web,minio,electron,_pro]', async () => {
-    const desc = 'testDecr';
+    const desc = 'testDescription';
     const fileSelector = getGridFileSelector('sample.pdf');
     // open fileProperties
     await clickOn(fileSelector);
@@ -269,7 +269,9 @@ test.describe('TST08 - File folder properties', () => {
     const editor = await global.client.waitForSelector(
       '[data-tid=descriptionTID] [contenteditable=true]'
     );
-    await editor.type(desc);
+    await editor.type(desc, {
+      delay: 0
+    });
 
     await clickOn('[data-tid=editDescriptionTID]');
     await expectElementExist(

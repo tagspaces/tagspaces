@@ -17,24 +17,9 @@
  */
 
 import AppConfig from '-/AppConfig';
-import {
-  extractFileExtension,
-  extractFileName,
-  getMetaFileLocationForFile,
-  getThumbFileLocationForFile,
-  extractParentDirectoryPath,
-  extractTagsAsObjects,
-  extractContainingDirectoryPath,
-  getBackupFileLocation
-} from '@tagspaces/tagspaces-common/paths';
-import { getURLParameter, clearAllURLParams } from '-/utils/dom';
+import { getURLParameter } from '-/utils/dom';
 import PlatformIO from '../services/platform-facade';
-import {
-  deleteFilesPromise,
-  renameFilesPromise,
-  mergeByProp,
-  toFsEntry
-} from '-/services/utils-io';
+import { mergeByProp, toFsEntry } from '-/services/utils-io';
 import i18n from '../services/i18n';
 import { actions as tagLibraryActions } from './taglibrary';
 import {

@@ -47,11 +47,9 @@ import PlatformIO from '-/services/platform-facade';
 import {
   generateFileName,
   setFolderBackgroundPromise,
-  setFolderThumbnailPromise,
   getRelativeEntryPath
 } from '-/services/utils-io';
 import { Pro } from '-/pro';
-import { TS } from '-/tagspaces.namespace';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useSelector, useDispatch } from 'react-redux';
 import { supportedImgs } from '-/services/thumbsgenerator';
@@ -64,7 +62,6 @@ import {
   DeleteIcon,
   LinkIcon
 } from '-/components/CommonIcons';
-import { getLocations } from '-/reducers/locations';
 import PropertiesIcon from '@mui/icons-material/Info';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
@@ -72,6 +69,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 
 interface Props {
   anchorEl: Element;
@@ -114,8 +112,12 @@ function FileMenu(props: Props) {
   const { openEntry } = useOpenedEntryContext();
   const { openDirectory } = useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
+  const {
+    copyFilePromise,
+    setFolderThumbnailPromise
+  } = usePlatformFacadeContext();
   const { currentLocation, readOnlyMode } = useCurrentLocationContext();
-  const locations: Array<TS.Location> = useSelector(getLocations);
+  //const locations: Array<TS.Location> = useSelector(getLocations);
   const prefixTagContainer = useSelector(getPrefixTagContainer);
   const warningOpeningFilesExternally = useSelector(
     getWarningOpeningFilesExternally
@@ -178,7 +180,7 @@ function FileMenu(props: Props) {
 
   function setFolderThumbnail() {
     onClose();
-    setFolderThumbnailPromise(selectedFilePath, t)
+    setFolderThumbnailPromise(selectedFilePath)
       .then((directoryPath: string) => {
         showNotification('Thumbnail created for: ' + directoryPath);
         return true;
@@ -258,12 +260,12 @@ function FileMenu(props: Props) {
           prefixTagContainer
         );
 
-      PlatformIO.copyFilePromise(selectedFilePath, newFilePath)
+      copyFilePromise(selectedFilePath, newFilePath)
         .then(() => {
           if (onDuplicateFile) {
             onDuplicateFile(dirPath);
           } else {
-            openDirectory(dirPath);
+            return openDirectory(dirPath);
           }
           return true;
         })

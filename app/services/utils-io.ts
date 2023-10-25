@@ -582,34 +582,6 @@ export function saveAsTextFile(blob: any, filename: string) {
   saveAs(blob, filename);
 }
 
-export function deleteFilesPromise(filePathList: Array<string>) {
-  const fileDeletionPromises = [];
-  filePathList.forEach(filePath => {
-    fileDeletionPromises.push(PlatformIO.deleteFilePromise(filePath));
-  });
-  return Promise.all(fileDeletionPromises);
-}
-
-export function renameFilesPromise(
-  renameJobs: Array<Array<string>>,
-  onProgress = undefined
-) {
-  return Promise.all(
-    renameJobs.map(async renameJob => {
-      try {
-        return await PlatformIO.renameFilePromise(
-          renameJob[0],
-          renameJob[1],
-          onProgress
-        );
-      } catch (err) {
-        console.warn('Error rename file:', err);
-        return false;
-      }
-    })
-  );
-}
-
 /*function getCommonFolder(paths: Array<string>) {
   const rootFolders = paths.map(p =>
     extractContainingDirectoryPath(p, PlatformIO.getDirSeparator())
@@ -620,45 +592,6 @@ export function renameFilesPromise(
   }
   return false;
 }*/
-
-function trackProgress(promises, abortSignal, progress) {
-  // const total = promises.length;
-  let completed = 0;
-  let aborted = false;
-
-  // Create an array of promises that resolve when the original promises resolve
-  const progressPromises = promises.map(({ promise, path }) =>
-    promise
-      .then(() => {
-        if (!aborted) {
-          completed++;
-          // console.log(`Progress: ${completed}/${total}`);
-          if (progress) {
-            progress(completed, path);
-          }
-        }
-      })
-      .catch(err => {
-        completed++;
-        if (progress) {
-          progress(completed, path);
-        }
-        console.warn('Promise ' + path + ' error:', err);
-      })
-  );
-
-  // Use Promise.race() to wait for all progress promises to resolve
-  return Promise.race(progressPromises)
-    .then(() => Promise.all(promises))
-    .catch(err => {
-      if (abortSignal.aborted) {
-        aborted = true;
-        console.warn('Promise execution aborted');
-      } else {
-        throw err;
-      }
-    });
-}
 
 export function isFulfilled<T>(
   result: PromiseSettledResult<T>
@@ -733,41 +666,6 @@ export function checkDirsExistPromise(
   return Promise.allSettled(progressPromises).then(results => {
     return getFulfilledResults(results).filter(r => r);
   });
-}
-
-export function copyFilesPromise(
-  paths: Array<string>,
-  targetPath: string,
-  onProgress = undefined
-) {
-  const controller = new AbortController();
-  const signal = controller.signal;
-
-  const ioJobPromises = paths.map(path => {
-    const targetFile =
-      normalizePath(targetPath) +
-      PlatformIO.getDirSeparator() +
-      extractFileName(path, PlatformIO.getDirSeparator());
-    return {
-      promise: PlatformIO.copyFilePromiseOverwrite(path, targetFile),
-      path: path
-    };
-  });
-  const progress = (completed, path) => {
-    const progress = {
-      loaded: completed, //processedSize,
-      total: ioJobPromises.length,
-      key: targetPath
-    };
-    onProgress(
-      progress,
-      () => {
-        controller.abort();
-      },
-      path
-    );
-  };
-  return trackProgress(ioJobPromises, signal, progress);
 }
 
 export async function loadSubFolders(path: string, loadHidden = false) {
@@ -1213,33 +1111,6 @@ export async function saveMetaDataPromise(
     );
   }
   return Promise.reject(new Error('file not found' + path));
-}
-
-/**
- * @param filePath
- * return Promise<directoryPath> of directory in order to open Folder properties next
- * @param t translation
- */
-export function setFolderThumbnailPromise(
-  filePath: string,
-  t
-): Promise<string> {
-  const directoryPath = extractContainingDirectoryPath(
-    filePath,
-    PlatformIO.getDirSeparator()
-  );
-  const directoryName = extractDirectoryName(
-    directoryPath,
-    PlatformIO.getDirSeparator()
-  );
-  return PlatformIO.copyFilePromise(
-    getThumbFileLocationForFile(filePath, PlatformIO.getDirSeparator(), false),
-    getThumbFileLocationForDirectory(
-      directoryPath,
-      PlatformIO.getDirSeparator()
-    ),
-    t('core:thumbAlreadyExists', { directoryName })
-  ).then(() => directoryPath);
 }
 
 /**

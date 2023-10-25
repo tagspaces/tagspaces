@@ -29,10 +29,10 @@ import {
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { getWarningOpeningFilesExternally } from '-/reducers/settings';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { renameFilesPromise } from '-/services/utils-io';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 
 type FsActionsContextData = {
   renameDirectory: (
@@ -62,13 +62,18 @@ export const FsActionsContextProvider = ({
   const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
   const { reflectRenameEntry } = useLocationIndexContext();
   const { showNotification } = useNotificationContext();
+  const {
+    renameFilePromise,
+    renameFilesPromise,
+    renameDirectoryPromise
+  } = usePlatformFacadeContext();
   const dispatch: AppDispatch = useDispatch();
   const warningOpeningFilesExternally = useSelector(
     getWarningOpeningFilesExternally
   );
 
   function renameDirectory(directoryPath: string, newDirectoryName: string) {
-    return PlatformIO.renameDirectoryPromise(directoryPath, newDirectoryName)
+    return renameDirectoryPromise(directoryPath, newDirectoryName)
       .then(newDirPath => {
         if (currentDirectoryPath === directoryPath) {
           openDirectory(newDirPath).then(() => {
@@ -106,7 +111,7 @@ export const FsActionsContextProvider = ({
   }
 
   function renameFile(filePath: string, newFilePath: string): Promise<boolean> {
-    return PlatformIO.renameFilePromise(filePath, newFilePath)
+    return renameFilePromise(filePath, newFilePath)
       .then(result => {
         const newFilePathFromPromise = result[1];
         console.info('File renamed ' + filePath + ' to ' + newFilePath);

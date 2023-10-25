@@ -69,6 +69,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { toFsEntry } from '-/services/utils-io';
+import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 
 //const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
 // const bufferedSplitResize = buffer({
@@ -96,6 +97,11 @@ function EntryContainer() {
     switchCurrentLocationType
   } = useCurrentLocationContext();
   const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
+  const {
+    copyFilePromiseOverwrite,
+    copyFilePromise,
+    saveTextFilePromise
+  } = usePlatformFacadeContext();
   const { showNotification } = useNotificationContext();
   const tabIndex = useSelector(getEntryContainerTab);
   const fileEditHistoryKey = useSelector(
@@ -534,7 +540,7 @@ function EntryContainer() {
 
   const saveAs = (newFilePath: string): Promise<boolean> => {
     return switchLocationTypeByID(openedFile.locationId).then(() =>
-      PlatformIO.copyFilePromise(openedFile.path, newFilePath).then(() =>
+      copyFilePromise(openedFile.path, newFilePath).then(() =>
         PlatformIO.getPropertiesPromise(newFilePath).then(
           (entryProp: TS.FileSystemEntry) =>
             save({
@@ -581,12 +587,12 @@ function EntryContainer() {
         PlatformIO.getDirSeparator()
       );
       try {
-        await PlatformIO.copyFilePromiseOverwrite(fileOpen.path, targetPath); // todo test what happened if remove await?
+        await copyFilePromiseOverwrite(fileOpen.path, targetPath); // todo test what happened if remove await?
       } catch (error) {
         console.log('copyFilePromiseOverwrite', error);
       }
     }
-    return PlatformIO.saveTextFilePromise(
+    return saveTextFilePromise(
       { path: fileOpen.path, lmdt: fileOpen.lmdt },
       textContent,
       true

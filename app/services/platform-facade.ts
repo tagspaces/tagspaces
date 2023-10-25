@@ -80,7 +80,6 @@ import {
 } from '@tagspaces/tagspaces-platforms/platform-io';
 import { cleanTrailingDirSeparator } from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
-import { Pro } from '../pro';
 import { TS } from '-/tagspaces.namespace';
 import settings from '-/settings';
 
@@ -256,59 +255,9 @@ export default class PlatformFacade {
   static checkFileExist = (file: string): Promise<boolean> =>
     platformCheckFileExist(file);
 
-  static ignoreByWatcher = (...paths) => {
-    if (Pro && Pro.Watcher && Pro.Watcher.isWatching()) {
-      for (let i = 0; i < paths.length; i += 1) {
-        Pro.Watcher.addToIgnored(paths[i]);
-      }
-    }
-  };
-
-  static deignoreByWatcher = (...paths) => {
-    if (Pro && Pro.Watcher && Pro.Watcher.isWatching()) {
-      for (let i = 0; i < paths.length; i += 1) {
-        Pro.Watcher.removeFromIgnored(paths[i]);
-      }
-    }
-  };
-
   static createDirectoryPromise = (dirPath: string): Promise<any> => {
-    PlatformFacade.ignoreByWatcher(dirPath);
-
-    return platformCreateDirectoryPromise(dirPath).then(result => {
-      PlatformFacade.deignoreByWatcher(dirPath);
-      return result;
-    });
-  };
-
-  static copyFilePromise = async (
-    sourceFilePath: string,
-    targetFilePath: string,
-    confirmMessage: string = 'File ' +
-      targetFilePath +
-      ' exist do you want to override it?'
-  ): Promise<any> => {
-    const isTargetExist = await PlatformFacade.getPropertiesPromise(
-      targetFilePath
-    ); // TODO rethink to create PlatformIO.isExistSync function
-    if (isTargetExist) {
-      // eslint-disable-next-line no-alert
-      const confirmOverwrite = window && window.confirm(confirmMessage);
-      if (confirmOverwrite === true) {
-        return PlatformFacade.copyFilePromiseOverwrite(
-          sourceFilePath,
-          targetFilePath
-        );
-      }
-      // eslint-disable-next-line prefer-promise-reject-errors
-      return Promise.reject(
-        'File "' + targetFilePath + '" exists. Copying failed.'
-      );
-    }
-    return PlatformFacade.copyFilePromiseOverwrite(
-      sourceFilePath,
-      targetFilePath
-    );
+    //PlatformFacade.ignoreByWatcher(dirPath);
+    return platformCreateDirectoryPromise(dirPath);
   };
 
   /**
@@ -319,14 +268,8 @@ export default class PlatformFacade {
     sourceFilePath: string,
     targetFilePath: string
   ): Promise<any> => {
-    PlatformFacade.ignoreByWatcher(targetFilePath);
-
-    return platformCopyFilePromise(sourceFilePath, targetFilePath).then(
-      result => {
-        PlatformFacade.deignoreByWatcher(targetFilePath);
-        return result;
-      }
-    );
+    //PlatformFacade.ignoreByWatcher(targetFilePath);
+    return platformCopyFilePromise(sourceFilePath, targetFilePath);
   };
 
   static renameFilePromise = (
@@ -334,26 +277,16 @@ export default class PlatformFacade {
     newFilePath: string,
     onProgress = undefined
   ): Promise<any> => {
-    PlatformFacade.ignoreByWatcher(filePath, newFilePath);
-
-    return platformRenameFilePromise(filePath, newFilePath, onProgress).then(
-      result => {
-        PlatformFacade.deignoreByWatcher(filePath, newFilePath);
-        return result;
-      }
-    );
+    //PlatformFacade.ignoreByWatcher(filePath, newFilePath);
+    return platformRenameFilePromise(filePath, newFilePath, onProgress);
   };
 
   static renameDirectoryPromise = (
     dirPath: string,
     newDirName: string
   ): Promise<any> => {
-    PlatformFacade.ignoreByWatcher(dirPath, newDirName);
-
-    return platformRenameDirectoryPromise(dirPath, newDirName).then(result => {
-      PlatformFacade.deignoreByWatcher(dirPath, newDirName);
-      return result;
-    });
+    // PlatformFacade.ignoreByWatcher(dirPath, newDirName);
+    return platformRenameDirectoryPromise(dirPath, newDirName);
   };
 
   static copyDirectoryPromise = (
@@ -361,14 +294,8 @@ export default class PlatformFacade {
     newDirPath: string,
     onProgress = undefined
   ): Promise<any> => {
-    PlatformFacade.ignoreByWatcher(param.path, newDirPath);
-
-    return platformCopyDirectoryPromise(param, newDirPath, onProgress).then(
-      result => {
-        PlatformFacade.deignoreByWatcher(param.path, newDirPath);
-        return result;
-      }
-    );
+    //PlatformFacade.ignoreByWatcher(param.path, newDirPath);
+    return platformCopyDirectoryPromise(param, newDirPath, onProgress);
   };
 
   static moveDirectoryPromise = (
@@ -376,14 +303,8 @@ export default class PlatformFacade {
     newDirPath: string,
     onProgress = undefined
   ): Promise<any> => {
-    PlatformFacade.ignoreByWatcher(param.path, newDirPath);
-
-    return platformMoveDirectoryPromise(param, newDirPath, onProgress).then(
-      result => {
-        PlatformFacade.deignoreByWatcher(param.path, newDirPath);
-        return result;
-      }
-    );
+    //PlatformFacade.ignoreByWatcher(param.path, newDirPath);
+    return platformMoveDirectoryPromise(param, newDirPath, onProgress);
   };
 
   static loadTextFilePromise = (
@@ -412,50 +333,17 @@ export default class PlatformFacade {
     content: any,
     overwrite: boolean
   ): Promise<any> => {
-    PlatformFacade.ignoreByWatcher(param.path);
-
-    return platformSaveFilePromise(param, content, overwrite).then(result => {
-      PlatformFacade.deignoreByWatcher(param.path);
-      return result;
-    });
+    //PlatformFacade.ignoreByWatcher(param.path);
+    return platformSaveFilePromise(param, content, overwrite);
   };
-
-  /**
-   * @deprecated use saveTextFilePromise instead
-   * @param param
-   * @param content
-   * @param overwrite
-   */
-  /*static saveTextFilePlatform = (
-    param: any,
-    content: string,
-    overwrite: boolean
-  ): Promise<any> => {
-    PlatformFacade.ignoreByWatcher(param.path);
-
-    return PlatformFacade.saveTextFilePromise(
-      param,
-      content,
-      overwrite
-    ).then(result => {
-      PlatformFacade.deignoreByWatcher(param.path);
-      return result;
-    });
-  };*/
 
   static saveTextFilePromise = (
     param: any,
     content: string,
     overwrite: boolean
   ): Promise<any> => {
-    PlatformFacade.ignoreByWatcher(param.path);
-
-    return platformSaveTextFilePromise(param, content, overwrite).then(
-      result => {
-        PlatformFacade.deignoreByWatcher(param.path);
-        return result;
-      }
-    );
+    //PlatformFacade.ignoreByWatcher(param.path);
+    return platformSaveTextFilePromise(param, content, overwrite);
   };
 
   static saveBinaryFilePromise = (
@@ -467,41 +355,30 @@ export default class PlatformFacade {
       response: any // AWS.Response<AWS.S3.PutObjectOutput, AWS.AWSError>
     ) => void
   ): Promise<TS.FileSystemEntry> => {
-    PlatformFacade.ignoreByWatcher(param.path);
+    //PlatformFacade.ignoreByWatcher(param.path);
 
     return platformSaveBinaryFilePromise(
       param,
       content,
       overwrite,
       onUploadProgress
-    ).then(succeeded => {
-      PlatformFacade.deignoreByWatcher(param.path);
-      return succeeded;
-    });
+    );
   };
 
   static deleteFilePromise = (
     path: string,
     useTrash?: boolean
   ): Promise<any> => {
-    PlatformFacade.ignoreByWatcher(path);
-
-    return platformDeleteFilePromise(path, useTrash).then(result => {
-      PlatformFacade.deignoreByWatcher(path);
-      return result;
-    });
+    //PlatformFacade.ignoreByWatcher(path);
+    return platformDeleteFilePromise(path, useTrash);
   };
 
   static deleteDirectoryPromise = (
     path: string,
     useTrash?: boolean
   ): Promise<any> => {
-    PlatformFacade.ignoreByWatcher(path);
-
-    return platformDeleteDirectoryPromise(path, useTrash).then(result => {
-      PlatformFacade.deignoreByWatcher(path);
-      return result;
-    });
+    //PlatformFacade.ignoreByWatcher(path);
+    return platformDeleteDirectoryPromise(path, useTrash);
   };
 
   static openDirectory = (dirPath: string): void =>
