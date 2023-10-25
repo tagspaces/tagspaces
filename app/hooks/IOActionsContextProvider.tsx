@@ -148,11 +148,7 @@ export const IOActionsContextProvider = ({
     deleteFilePromise,
     deleteDirectoryPromise
   } = usePlatformFacadeContext();
-  const {
-    openedEntries,
-    reflectDeleteDirectory,
-    reflectDeleteFile
-  } = useOpenedEntryContext();
+  const { reflectDeleteDirectory, reflectDeleteFile } = useOpenedEntryContext();
   const {
     currentDirectoryEntries,
     currentDirectoryPath,
@@ -270,7 +266,7 @@ export const IOActionsContextProvider = ({
           return false;
         });
     };
-  }, [currentDirectoryEntries]);
+  }, [currentDirectoryEntries, reflectDeleteFile, reflectDeleteDirectory]);
 
   const deleteDirectory = useMemo(() => {
     return (directoryPath: string, reflect = true) =>
@@ -321,7 +317,7 @@ export const IOActionsContextProvider = ({
           return false;
           // dispatch stopLoadingAnimation
         });
-  }, [currentDirectoryEntries, useTrashCan]);
+  }, [currentDirectoryEntries, useTrashCan, reflectDeleteDirectory]);
 
   const deleteFile = useMemo(() => {
     return (filePath: string, uuid: string, reflect = true) =>
@@ -387,7 +383,7 @@ export const IOActionsContextProvider = ({
           );
           return false;
         });
-  }, [currentDirectoryEntries, useTrashCan]);
+  }, [currentDirectoryEntries, useTrashCan, reflectDeleteFile]);
 
   function moveDirs(
     dirPaths: Array<any>,
@@ -1007,7 +1003,7 @@ export const IOActionsContextProvider = ({
       uploadFilesAPI,
       uploadFiles
     };
-  }, [currentDirectoryEntries, openedEntries]);
+  }, [createDirectory, deleteEntries, deleteDirectory, deleteFile]);
 
   return (
     <IOActionsContext.Provider value={context}>

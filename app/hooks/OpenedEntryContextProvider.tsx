@@ -955,31 +955,35 @@ export const OpenedEntryContextProvider = ({
     }
   }
 
-  function reflectDeleteDirectory(directoryPath) {
-    if (
-      openedEntries &&
-      openedEntries.length > 0 &&
-      openedEntries.some(
-        file =>
-          extractContainingDirectoryPath(
-            file.path,
-            PlatformIO.getDirSeparator()
-          ) === directoryPath
-      )
-    ) {
-      closeAllFiles();
-    }
-  }
+  const reflectDeleteDirectory = useMemo(() => {
+    return (directoryPath: string) => {
+      if (
+        openedEntries &&
+        openedEntries.length > 0 &&
+        openedEntries.some(
+          file => file.path.startsWith(directoryPath)
+          /*extractContainingDirectoryPath(
+              file.path,
+              PlatformIO.getDirSeparator()
+            ) === directoryPath */
+        )
+      ) {
+        closeAllFiles();
+      }
+    };
+  }, [openedEntries]);
 
-  function reflectDeleteFile(filePath) {
-    if (
-      openedEntries &&
-      openedEntries.length > 0 &&
-      openedEntries.some(file => file.path === filePath)
-    ) {
-      closeAllFiles();
-    }
-  }
+  const reflectDeleteFile = useMemo(() => {
+    return (filePath: string) => {
+      if (
+        openedEntries &&
+        openedEntries.length > 0 &&
+        openedEntries.some(file => file.path === filePath)
+      ) {
+        closeAllFiles();
+      }
+    };
+  }, [openedEntries]);
 
   const context = useMemo(() => {
     return {
