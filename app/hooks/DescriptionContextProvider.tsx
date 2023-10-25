@@ -35,6 +35,7 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 
 type DescriptionContextData = {
   description: string;
@@ -72,6 +73,7 @@ export const DescriptionContextProvider = ({
     switchCurrentLocationType,
     readOnlyMode
   } = useCurrentLocationContext();
+  const { updateCurrentDirEntry } = useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
   const openedFile = useRef<OpenedEntry>(openedEntries[0]);
   const isChanged = useRef<boolean>(false);
@@ -143,6 +145,10 @@ export const DescriptionContextProvider = ({
     return Pro.MetaOperations.saveFsEntryMeta(openedFile.current.path, {
       description: openedFile.current.description
     }).then(entryMeta => {
+      // @ts-ignore
+      updateCurrentDirEntry(openedFile.current.path, {
+        description: entryMeta.description
+      });
       openedFile.current.description = undefined;
       isChanged.current = false;
       return updateOpenedFile(openedFile.current.path, entryMeta);
