@@ -41,6 +41,7 @@ import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import AppConfig from '-/AppConfig';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 
 interface Props {
   open: boolean;
@@ -54,6 +55,7 @@ function MoveOrCopyFilesDialog(props: Props) {
 
   const theme = useTheme();
 
+  const { copyFilePromise, renameFilePromise } = usePlatformFacadeContext();
   const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
   // const dispatch: AppDispatch = useDispatch();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -63,7 +65,7 @@ function MoveOrCopyFilesDialog(props: Props) {
     for (const file of files) {
       if (move) {
         promises.push(
-          PlatformIO.renameFilePromise(
+          renameFilePromise(
             file.path,
             currentDirectoryPath + AppConfig.dirSeparator + file.name
           )
@@ -74,7 +76,7 @@ function MoveOrCopyFilesDialog(props: Props) {
         );
       } else {
         promises.push(
-          PlatformIO.copyFilePromise(
+          copyFilePromise(
             file.path,
             currentDirectoryPath + AppConfig.dirSeparator + file.name
           )

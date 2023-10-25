@@ -40,6 +40,7 @@ import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { getPersistTagsInSidecarFile } from '-/reducers/settings';
+import { useFSWatcherContext } from '-/hooks/useFSWatcherContext';
 
 type CurrentLocationContextData = {
   currentLocation: TS.Location;
@@ -215,6 +216,7 @@ export const CurrentLocationContextProvider = ({
       // disableWebdavSupport to revoke cached object
       PlatformIO.disableWebdavSupport();
     }
+    setCurrentLocation(location);
     if (openAfterEdit) {
       /*
        * check if location uuid is changed
@@ -300,9 +302,7 @@ export const CurrentLocationContextProvider = ({
     location: TS.Location,
     skipInitDirList: boolean = false
   ) {
-    if (Pro && Pro.Watcher) {
-      Pro.Watcher.stopWatching();
-    }
+    // stopWatching();
     skipInitialDirList.current = skipInitDirList;
     if (location.type === locationType.TYPE_CLOUD) {
       PlatformIO.enableObjectStoreSupport(location)

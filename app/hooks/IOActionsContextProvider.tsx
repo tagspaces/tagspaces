@@ -37,11 +37,8 @@ import PlatformIO from '-/services/platform-facade';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  copyFilesPromise,
-  deleteFilesPromise,
   getThumbPath,
   loadFileMetaDataPromise,
-  renameFilesPromise,
   toFsEntry
 } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
@@ -57,6 +54,7 @@ import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { getUseTrashCan } from '-/reducers/settings';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 
 type extractOptions = {
   EXIFGeo?: boolean;
@@ -136,6 +134,20 @@ export const IOActionsContextProvider = ({
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const { showNotification, hideNotifications } = useNotificationContext();
+  const {
+    copyFilesWithProgress,
+    deleteFilesPromise
+  } = usePlatformFacadeContext();
+  const {
+    createDirectoryPromise,
+    renameFilesPromise,
+    copyDirectoryPromise,
+    moveDirectoryPromise,
+    saveFilePromise,
+    saveBinaryFilePromise,
+    deleteFilePromise,
+    deleteDirectoryPromise
+  } = usePlatformFacadeContext();
   const { reflectDeleteDirectory, reflectDeleteFile } = useOpenedEntryContext();
   const {
     currentDirectoryEntries,
@@ -178,7 +190,7 @@ export const IOActionsContextProvider = ({
 
   const createDirectory = useMemo(() => {
     return (directoryPath: string, reflect = true) =>
-      PlatformIO.createDirectoryPromise(directoryPath)
+      createDirectoryPromise(directoryPath)
         .then(result => {
           if (result !== undefined && result.dirPath !== undefined) {
             // eslint-disable-next-line no-param-reassign
@@ -258,7 +270,7 @@ export const IOActionsContextProvider = ({
 
   const deleteDirectory = useMemo(() => {
     return (directoryPath: string, reflect = true) =>
-      PlatformIO.deleteDirectoryPromise(directoryPath, useTrashCan)
+      deleteDirectoryPromise(directoryPath, useTrashCan)
         .then(() => {
           if (reflect) {
             if (directoryPath === currentDirectoryPath) {
@@ -309,7 +321,7 @@ export const IOActionsContextProvider = ({
 
   const deleteFile = useMemo(() => {
     return (filePath: string, uuid: string, reflect = true) =>
-      PlatformIO.deleteFilePromise(filePath, useTrashCan)
+      deleteFilePromise(filePath, useTrashCan)
         .then(() => {
           if (reflect) {
             // close file opener if this file is opened
@@ -380,7 +392,7 @@ export const IOActionsContextProvider = ({
   ): Promise<boolean> {
     const promises = dirPaths.map(({ path, count }) => {
       const dirName = extractDirectoryName(path, PlatformIO.getDirSeparator());
-      return PlatformIO.moveDirectoryPromise(
+      return moveDirectoryPromise(
         { path: path, total: count },
         joinPaths(PlatformIO.getDirSeparator(), targetPath, dirName),
         onProgress
@@ -500,7 +512,7 @@ export const IOActionsContextProvider = ({
   ): Promise<boolean> {
     const promises = dirPaths.map(({ path, count }) => {
       const dirName = extractDirectoryName(path, PlatformIO.getDirSeparator());
-      return PlatformIO.copyDirectoryPromise(
+      return copyDirectoryPromise(
         { path: path, total: count },
         joinPaths(PlatformIO.getDirSeparator(), targetPath, dirName),
         onProgress
@@ -522,7 +534,7 @@ export const IOActionsContextProvider = ({
     targetPath: string,
     onProgress
   ): Promise<boolean> {
-    return copyFilesPromise(paths, targetPath, onProgress)
+    return copyFilesWithProgress(paths, targetPath, onProgress)
       .then(() => {
         // todo return only copied paths
         showNotification(t('core:filesCopiedSuccessful'));
@@ -531,7 +543,7 @@ export const IOActionsContextProvider = ({
           getThumbFileLocationForFile(path, PlatformIO.getDirSeparator(), false)
         ]);
 
-        return copyFilesPromise(
+        return copyFilesWithProgress(
           metaPaths,
           getMetaDirectoryPath(targetPath),
           onProgress
@@ -565,7 +577,7 @@ export const IOActionsContextProvider = ({
   ): Promise<TS.FileSystemEntry> {
     function saveFile(response: Response): Promise<TS.FileSystemEntry> {
       if (AppConfig.isElectron && !PlatformIO.haveObjectStoreSupport()) {
-        return PlatformIO.saveBinaryFilePromise(
+        return saveBinaryFilePromise(
           { path: targetPath },
           response.body,
           true,
@@ -573,11 +585,7 @@ export const IOActionsContextProvider = ({
         );
       }
       return response.arrayBuffer().then(arrayBuffer => {
-        return PlatformIO.saveFilePromise(
-          { path: targetPath },
-          arrayBuffer,
-          true
-        );
+        return saveFilePromise({ path: targetPath }, arrayBuffer, true);
       });
     }
     return fetch(url)
@@ -590,7 +598,7 @@ export const IOActionsContextProvider = ({
           if (dataURL && dataURL.length > 6) {
             const baseString = dataURL.split(',').pop();
             const fileContent = base64ToArrayBuffer(baseString);
-            return PlatformIO.saveBinaryFilePromise(
+            return saveBinaryFilePromise(
               {
                 path: getThumbFileLocationForFile(
                   targetPath,
@@ -689,7 +697,7 @@ export const IOActionsContextProvider = ({
             ? event.currentTarget.result
             : event.target.result;
           try {
-            const fsEntry: TS.FileSystemEntry = await PlatformIO.saveBinaryFilePromise(
+            const fsEntry: TS.FileSystemEntry = await saveBinaryFilePromise(
               { path: fileTargetPath },
               new Uint8Array(result),
               true,
@@ -785,7 +793,7 @@ export const IOActionsContextProvider = ({
               dispatch(AppActions.setProgress(filePath, -1, undefined));
             } else {
               // dispatch(AppActions.setProgress(filePath, progress));
-              return PlatformIO.saveBinaryFilePromise(
+              return saveBinaryFilePromise(
                 { path: filePath },
                 fileContent,
                 true,

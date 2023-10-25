@@ -45,6 +45,7 @@ import { Pro } from '-/pro';
 import FilePreviewDialog from '-/components/dialogs/FilePreviewDialog';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 
 const initialRowsPerPage = 10;
 
@@ -52,6 +53,7 @@ function Revisions() {
   const { t } = useTranslation();
   // const dispatch: AppDispatch = useDispatch();
   const { openedEntries, updateOpenedFile } = useOpenedEntryContext();
+  const { copyFilePromiseOverwrite } = usePlatformFacadeContext();
   const [rows, setRows] = useState<Array<TS.FileSystemEntry>>([]);
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(
@@ -125,18 +127,14 @@ function Revisions() {
       openedFile.uuid,
       PlatformIO.getDirSeparator()
     );
-    return PlatformIO.copyFilePromiseOverwrite(
-      openedFile.path,
-      targetPath
-    ).then(() =>
-      PlatformIO.copyFilePromiseOverwrite(revisionPath, openedFile.path).then(
-        () =>
-          updateOpenedFile(openedFile.path, {
-            id: '',
-            ...openedFile,
-            editMode: false,
-            shouldReload: !openedFile.shouldReload
-          })
+    return copyFilePromiseOverwrite(openedFile.path, targetPath).then(() =>
+      copyFilePromiseOverwrite(revisionPath, openedFile.path).then(() =>
+        updateOpenedFile(openedFile.path, {
+          id: '',
+          ...openedFile,
+          editMode: false,
+          shouldReload: !openedFile.shouldReload
+        })
       )
     );
   }

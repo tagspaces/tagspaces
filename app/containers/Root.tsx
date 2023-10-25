@@ -38,6 +38,8 @@ import {
   SelectedEntryContext,
   SelectedEntryContextProvider
 } from '-/hooks/SelectedEntryContextProvider';
+import { FSWatcherContextProvider } from '-/hooks/FSWatcherContextProvider';
+import { PlatformFacadeContextProvider } from '-/hooks/PlatformFacadeContextProvider';
 
 type RootType = {
   store: Store<{}>;
@@ -61,17 +63,21 @@ export default function Root({ store, persistor }: RootType) {
         <CurrentLocationContextProvider>
           <SelectedEntryContextProvider>
             <DirectoryContentContextProvider>
-              <LocationIndexContextProvider>
-                <OpenedEntryContextProvider>
-                  <FsActionsContextProvider>
-                    <IOActionsContextProvider>
-                      <TaggingActionsContextProvider>
-                        <MainPage />
-                      </TaggingActionsContextProvider>
-                    </IOActionsContextProvider>
-                  </FsActionsContextProvider>
-                </OpenedEntryContextProvider>
-              </LocationIndexContextProvider>
+              <FSWatcherContextProvider>
+                <PlatformFacadeContextProvider>
+                  <LocationIndexContextProvider>
+                    <OpenedEntryContextProvider>
+                      <FsActionsContextProvider>
+                        <IOActionsContextProvider>
+                          <TaggingActionsContextProvider>
+                            <MainPage />
+                          </TaggingActionsContextProvider>
+                        </IOActionsContextProvider>
+                      </FsActionsContextProvider>
+                    </OpenedEntryContextProvider>
+                  </LocationIndexContextProvider>
+                </PlatformFacadeContextProvider>
+              </FSWatcherContextProvider>
             </DirectoryContentContextProvider>
           </SelectedEntryContextProvider>
         </CurrentLocationContextProvider>
