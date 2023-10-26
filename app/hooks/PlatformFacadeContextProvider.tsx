@@ -30,6 +30,8 @@ import {
 } from '@tagspaces/tagspaces-common/paths';
 import PlatformIO from '-/services/platform-facade';
 import { useTranslation } from 'react-i18next';
+import { actions as AppActions, AppDispatch } from '-/reducers/app';
+import { useDispatch } from 'react-redux';
 
 type PlatformFacadeContextData = {
   createDirectoryPromise: (path: string) => Promise<any>;
@@ -121,6 +123,7 @@ export const PlatformFacadeContextProvider = ({
   const { ignoreByWatcher, deignoreByWatcher, ignored } = useFSWatcherContext();
 
   const { t } = useTranslation();
+  const dispatch: AppDispatch = useDispatch();
 
   /*function enableObjectStoreSupport(objectStoreConfig: any): Promise<any> {
     return platformEnableObjectStoreSupport(objectStoreConfig);
@@ -172,18 +175,25 @@ export const PlatformFacadeContextProvider = ({
       directoryPath,
       PlatformIO.getDirSeparator()
     );
+    const sourceThumbPath = getThumbFileLocationForFile(
+      filePath,
+      PlatformIO.getDirSeparator(),
+      false
+    );
+
+    const destThumbPath = getThumbFileLocationForDirectory(
+      directoryPath,
+      PlatformIO.getDirSeparator()
+    );
+
     return copyFilePromise(
-      getThumbFileLocationForFile(
-        filePath,
-        PlatformIO.getDirSeparator(),
-        false
-      ),
-      getThumbFileLocationForDirectory(
-        directoryPath,
-        PlatformIO.getDirSeparator()
-      ),
+      sourceThumbPath,
+      destThumbPath,
       t('core:thumbAlreadyExists', { directoryName })
-    ).then(() => directoryPath);
+    ).then(() => {
+      dispatch(AppActions.setLastThumbnailImageChange(destThumbPath));
+      return directoryPath;
+    });
   }
 
   function copyFilePromise(
