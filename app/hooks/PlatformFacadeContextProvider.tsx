@@ -120,7 +120,12 @@ export type PlatformFacadeContextProviderProps = {
 export const PlatformFacadeContextProvider = ({
   children
 }: PlatformFacadeContextProviderProps) => {
-  const { ignoreByWatcher, deignoreByWatcher, ignored } = useFSWatcherContext();
+  const {
+    ignoreByWatcher,
+    deignoreByWatcher,
+    ignored,
+    watcher
+  } = useFSWatcherContext();
 
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
@@ -488,7 +493,7 @@ export const PlatformFacadeContextProvider = ({
       deleteDirectoryPromise,
       setFolderThumbnailPromise
     };
-  }, [ignored]);
+  }, [watcher, ignored]);
 
   return (
     <PlatformFacadeContext.Provider value={context}>

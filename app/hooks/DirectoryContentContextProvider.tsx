@@ -34,6 +34,7 @@ import {
 import { TS } from '-/tagspaces.namespace';
 import { useTranslation } from 'react-i18next';
 import {
+  extractContainingDirectoryPath,
   extractFileName,
   extractFileExtension,
   extractTagsAsObjects,
@@ -686,10 +687,20 @@ export const DirectoryContentContextProvider = ({
 
   const removeDirectoryEntries = useMemo(() => {
     return (entryPaths: string[]) => {
-      const entries = currentDirectoryEntries.filter(
-        entry => !entryPaths.includes(entry.path)
-      );
-      setCurrentDirectoryEntries(entries);
+      if (entryPaths.some(ePath => ePath === currentDirectoryPath.current)) {
+        //handle currentDirectoryPath deleted
+        return openDirectory(
+          extractContainingDirectoryPath(
+            currentDirectoryPath.current,
+            PlatformIO.getDirSeparator()
+          )
+        );
+      } else {
+        const entries = currentDirectoryEntries.filter(
+          entry => !entryPaths.includes(entry.path)
+        );
+        setCurrentDirectoryEntries(entries);
+      }
     };
   }, [currentDirectoryEntries]);
 
