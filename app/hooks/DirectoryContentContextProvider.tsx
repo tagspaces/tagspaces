@@ -269,6 +269,7 @@ export const DirectoryContentContextProvider = ({
 
   function exitSearchMode() {
     isSearchMode.current = false;
+    dispatch(AppActions.setSearchFilter(undefined));
     forceUpdate();
   }
 
