@@ -122,6 +122,7 @@ function GridPerspective(props: Props) {
   // const selectedEntry = useRef<FileSystemEntry>(undefined);
   const selectedEntryPath = useRef<string>(undefined);
   const selectedTag = useRef<TS.Tag | null>(null);
+  const perspectiveMode = useRef<boolean>(true);
   const [
     fileContextMenuAnchorEl,
     setFileContextMenuAnchorEl
@@ -514,6 +515,7 @@ function GridPerspective(props: Props) {
     if (selectedEntries.length > 0) {
       handleSetSelectedEntries([]);
     }
+    perspectiveMode.current = false;
     setDirContextMenuAnchorEl(event.currentTarget);
   };
 
@@ -774,14 +776,17 @@ function GridPerspective(props: Props) {
       {/* {Boolean(dirContextMenuAnchorEl) && ( // todo move dialogs from DirectoryMenu */}
       <DirectoryMenu
         open={Boolean(dirContextMenuAnchorEl)}
-        onClose={() => setDirContextMenuAnchorEl(null)}
+        onClose={() => {
+          setDirContextMenuAnchorEl(null);
+          perspectiveMode.current = true;
+        }}
         anchorEl={dirContextMenuAnchorEl}
         mouseX={mouseX}
         mouseY={mouseY}
         directoryPath={lastSelectedEntryPath}
         openRenameDirectoryDialog={openRenameEntryDialog}
         openMoveCopyFilesDialog={openMoveCopyFilesDialog}
-        perspectiveMode={false}
+        perspectiveMode={perspectiveMode.current}
         openAddRemoveTagsDialog={openAddRemoveTagsDialog}
       />
       {/* {Boolean(tagContextMenuAnchorEl) && ( // TODO EntryTagMenu is used in TagSelect we cannot move confirm dialog from menu */}
