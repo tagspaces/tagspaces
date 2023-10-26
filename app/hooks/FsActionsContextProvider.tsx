@@ -33,6 +33,7 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
+import { useFSWatcherContext } from '-/hooks/useFSWatcherContext';
 
 type FsActionsContextData = {
   renameDirectory: (
@@ -62,6 +63,7 @@ export const FsActionsContextProvider = ({
   const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
   const { reflectRenameEntry } = useLocationIndexContext();
   const { showNotification } = useNotificationContext();
+  const { watcher } = useFSWatcherContext();
   const {
     renameFilePromise,
     renameFilesPromise,
@@ -201,7 +203,7 @@ export const FsActionsContextProvider = ({
       renameFile,
       openFileNatively
     };
-  }, [openedEntries]);
+  }, [openedEntries, watcher]);
 
   return (
     <FsActionsContext.Provider value={context}>

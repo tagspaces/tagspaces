@@ -71,6 +71,7 @@ export const FSWatcherContextProvider = ({
   const { currentLocation } = useCurrentLocationContext();
   const {
     loadDirectoryContent,
+    currentDirectoryPath,
     currentDirectoryPerspective,
     addDirectoryEntries,
     removeDirectoryEntries
@@ -98,7 +99,7 @@ export const FSWatcherContextProvider = ({
 
   useEffect(() => {
     watchForEvents();
-  }, [addDirectoryEntries, removeDirectoryEntries]);
+  }, [addDirectoryEntries, removeDirectoryEntries, ignored.current]);
 
   function watchForEvents() {
     if (watcher !== undefined) {
@@ -132,7 +133,10 @@ export const FSWatcherContextProvider = ({
     }
     const pathParts = path.split(PlatformIO.getDirSeparator());
     for (let i = 0; i < ignored.current.length; i++) {
-      if (path.startsWith(ignored[i]) || pathParts.includes(ignored[i])) {
+      if (
+        path.startsWith(ignored.current[i]) ||
+        pathParts.includes(ignored.current[i])
+      ) {
         // ignored.current.splice(i, 1);
         return;
       }
@@ -155,7 +159,13 @@ export const FSWatcherContextProvider = ({
       case 'add':
         if (!path.includes(AppConfig.metaFolder)) {
           const entry = toFsEntry(path, true);
-          addDirectoryEntries([entry]);
+          const dirPath = extractContainingDirectoryPath(
+            path,
+            PlatformIO.getDirSeparator()
+          );
+          if (currentDirectoryPath === dirPath) {
+            addDirectoryEntries([entry]);
+          }
           reflectCreateEntry(entry);
           dispatch(AppActions.reflectCreateEntry(path, true));
         }
@@ -163,7 +173,13 @@ export const FSWatcherContextProvider = ({
       case 'addDir':
         if (!path.includes(AppConfig.metaFolder)) {
           const entry = toFsEntry(path, false);
-          addDirectoryEntries([entry]);
+          const dirPath = extractContainingDirectoryPath(
+            path,
+            PlatformIO.getDirSeparator()
+          );
+          if (currentDirectoryPath === dirPath) {
+            addDirectoryEntries([entry]);
+          }
           reflectCreateEntry(entry);
           dispatch(AppActions.reflectCreateEntry(path, false));
         }
@@ -234,8 +250,10 @@ export const FSWatcherContextProvider = ({
   function removeFromIgnored(path: string) {
     setTimeout(() => {
       for (let i = 0; i < ignored.current.length; i++) {
-        const pathParts = ignored[i].split(PlatformIO.getDirSeparator());
-        if (path.startsWith(ignored[i]) || pathParts.includes(path)) {
+        const pathParts = ignored.current[i].split(
+          PlatformIO.getDirSeparator()
+        );
+        if (path.startsWith(ignored.current[i]) || pathParts.includes(path)) {
           ignored.current.splice(i, 1);
         }
       }
@@ -243,7 +261,7 @@ export const FSWatcherContextProvider = ({
       if (index > -1) {
         ignored.current.splice(index, 1);
       }*/
-    }, 1000);
+    }, 2000);
   }
 
   function ignoreByWatcher(...paths) {
