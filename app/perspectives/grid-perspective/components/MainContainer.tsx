@@ -781,7 +781,7 @@ function GridPerspective(props: Props) {
         directoryPath={lastSelectedEntryPath}
         openRenameDirectoryDialog={openRenameEntryDialog}
         openMoveCopyFilesDialog={openMoveCopyFilesDialog}
-        perspectiveMode={true}
+        perspectiveMode={false}
         openAddRemoveTagsDialog={openAddRemoveTagsDialog}
       />
       {/* {Boolean(tagContextMenuAnchorEl) && ( // TODO EntryTagMenu is used in TagSelect we cannot move confirm dialog from menu */}
