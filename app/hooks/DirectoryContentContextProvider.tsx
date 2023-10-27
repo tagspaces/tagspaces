@@ -61,6 +61,9 @@ import { loadCurrentDirMeta } from '-/services/meta-loader';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { getSearches } from '-/reducers/searches';
 import { getTagColors } from '-/services/taglibrary-utils';
+import { defaultTitle } from '-/services/search';
+import { Pro } from '-/pro';
+import { historyKeys } from '../../extensions/tagspacespro/modules/history';
 
 type DirectoryContentContextData = {
   currentDirectoryEntries: TS.FileSystemEntry[];
@@ -177,6 +180,10 @@ export const DirectoryContentContextProvider = ({
   const searches = useSelector(getSearches);
   const defaultBackgroundColor = useSelector(getTagColor);
   const defaultTextColor = useSelector(getTagTextColor);
+  const searchHistoryKey = useSelector(
+    (state: any) => state.settings[historyKeys.searchHistoryKey]
+  );
+
   //const enableWS = useSelector(getEnableWS);
 
   const [currentDirectoryEntries, setCurrentDirectoryEntries] = useState<
@@ -717,6 +724,27 @@ export const DirectoryContentContextProvider = ({
     } else {
       isSearchMode.current = true;
       searchQuery.current = sQuery;
+      const searchTitle = defaultTitle(sQuery);
+      if (searchTitle.length > 0 && Pro && Pro.history) {
+        const historyKeys = Pro.history.historyKeys;
+        if (currentLocation) {
+          Pro.history.saveHistory(
+            historyKeys.searchHistoryKey,
+            {
+              path:
+                searchTitle +
+                ' ' +
+                (currentLocation.path
+                  ? currentLocation.path
+                  : currentLocation.name),
+              url: '/',
+              lid: currentLocation.uuid,
+              searchQuery: sQuery
+            },
+            searchHistoryKey
+          );
+        }
+      }
       forceUpdate();
     }
   }
