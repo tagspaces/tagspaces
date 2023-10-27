@@ -22,11 +22,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-import {
-  actions as AppActions,
-  AppDispatch,
-  OpenedEntry
-} from '-/reducers/app';
+import { AppDispatch, OpenedEntry } from '-/reducers/app';
 import Revisions from '-/components/Revisions';
 import EntryProperties from '-/components/EntryProperties';
 import {
