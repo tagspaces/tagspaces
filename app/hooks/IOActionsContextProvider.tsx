@@ -240,9 +240,11 @@ export const IOActionsContextProvider = ({
       return Promise.all(deletePromises)
         .then(delResult => {
           const notDeletedEntries = [];
+          const deletedEntries = [];
           for (let i = 0; i < delResult.length; i++) {
             const entry = entries[i];
             if (delResult[i]) {
+              deletedEntries.push(entry.path);
               // reflect opened entry
               if (entry.isFile) {
                 reflectDeleteFile(entry.path);
@@ -253,6 +255,7 @@ export const IOActionsContextProvider = ({
               notDeletedEntries.push(entry);
             }
           }
+          dispatch(AppActions.reflectDeleteEntries(deletedEntries));
           removeDirectoryEntries(
             entries
               .filter(e => !notDeletedEntries.some(n => n.path === e.path))
