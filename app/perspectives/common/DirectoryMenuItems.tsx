@@ -1,5 +1,6 @@
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
+import AudioFileIcon from '@mui/icons-material/AudioFile';
 import OpenFolderIcon from '@mui/icons-material/SubdirectoryArrowLeft';
 import MoveCopy from '@mui/icons-material/FileCopy';
 import ListItemText from '@mui/material/ListItemText';
@@ -41,6 +42,7 @@ export function getDirectoryMenuItems(
   showDeleteDirectoryDialog?: () => void,
   showInFileManager?: () => void,
   createNewFile?: () => void,
+  createNewAudio?: () => void,
   showCreateDirectoryDialog?: () => void,
   addExistingFile?: () => void,
   setFolderThumbnail?: () => void,
@@ -207,6 +209,23 @@ export function getDirectoryMenuItems(
             <NewFileIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:newFileNote')} />
+        </MenuItem>
+      );
+    }
+    if (Pro && createNewAudio) {
+      menuItems.push(
+        <MenuItem
+          key="createNewAudio"
+          data-tid="createNewAudioTID"
+          onClick={() => {
+            onClose();
+            createNewAudio();
+          }}
+        >
+          <ListItemIcon>
+            <AudioFileIcon />
+          </ListItemIcon>
+          <ListItemText primary={t('core:newAudioFile')} />
         </MenuItem>
       );
     }

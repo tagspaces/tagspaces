@@ -224,6 +224,10 @@ function DirectoryMenu(props: Props) {
     toggleNewFileDialog();
   }
 
+  function createNewAudio() {
+    dispatch(AppActions.toggleNewAudioDialog());
+  }
+
   function showInFileManager() {
     PlatformIO.openDirectory(directoryPath);
   }
@@ -409,6 +413,7 @@ Do you want to continue?`)
     showDeleteDirectoryDialog,
     showInFileManager,
     createNewFile,
+    createNewAudio,
     toggleCreateDirectoryDialog,
     addExistingFile,
     setFolderThumbnail,
