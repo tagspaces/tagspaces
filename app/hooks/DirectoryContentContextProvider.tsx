@@ -63,7 +63,6 @@ import { getSearches } from '-/reducers/searches';
 import { getTagColors } from '-/services/taglibrary-utils';
 import { defaultTitle } from '-/services/search';
 import { Pro } from '-/pro';
-import { historyKeys } from '../../extensions/tagspacespro/modules/history';
 
 type DirectoryContentContextData = {
   currentDirectoryEntries: TS.FileSystemEntry[];
@@ -180,8 +179,8 @@ export const DirectoryContentContextProvider = ({
   const searches = useSelector(getSearches);
   const defaultBackgroundColor = useSelector(getTagColor);
   const defaultTextColor = useSelector(getTagTextColor);
-  const searchHistoryKey = useSelector(
-    (state: any) => state.settings[historyKeys.searchHistoryKey]
+  const searchHistoryKey = useSelector((state: any) =>
+    Pro ? state.settings[Pro.history.historyKeys.searchHistoryKey] : undefined
   );
 
   //const enableWS = useSelector(getEnableWS);
