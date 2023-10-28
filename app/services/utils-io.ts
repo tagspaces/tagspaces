@@ -43,28 +43,16 @@ import {
   extractDirectoryName,
   extractFileName,
   normalizePath,
-  getThumbFileLocationForFile,
   getThumbFileLocationForDirectory,
   getBgndFileLocationForDirectory,
-  cleanFrontDirSeparator,
-  generateSharingLink,
-  cleanRootPath
+  cleanFrontDirSeparator
 } from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
 import PlatformIO from './platform-facade';
 import versionMeta from '../version.json';
-import { OpenedEntry, actions as AppActions } from '-/reducers/app';
-import { getLocation } from '-/reducers/locations';
+import { OpenedEntry } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
-import {
-  getThumbnailURLPromise,
-  supportedContainers,
-  supportedImgs,
-  supportedText,
-  supportedVideos,
-  supportedMisc,
-  generateImageThumbnail
-} from '-/services/thumbsgenerator';
+import { generateImageThumbnail } from '-/services/thumbsgenerator';
 import { base64ToArrayBuffer } from '-/utils/dom';
 import { Pro } from '-/pro';
 import { supportedFileTypes } from '-/extension-config';

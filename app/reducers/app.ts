@@ -84,6 +84,7 @@ export const types = {
   TOGGLE_CREATE_DIRECTORY_DIALOG: 'APP/TOGGLE_CREATE_DIRECTORY_DIALOG',
   TOGGLE_NEW_ENTRY_DIALOG: 'APP/TOGGLE_NEW_ENTRY_DIALOG',
   TOGGLE_NEW_FILE_DIALOG: 'APP/TOGGLE_NEW_FILE_DIALOG',
+  TOGGLE_NEW_AUDIO_DIALOG: 'APP/TOGGLE_NEW_AUDIO_DIALOG',
   TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG:
     'APP/TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG',
   TOGGLE_IMPORT_KANBAN_DIALOG: 'APP/TOGGLE_IMPORT_KANBAN_DIALOG',
@@ -195,6 +196,7 @@ export const initialState = {
   keysDialogOpened: false,
   isNewEntryDialogOpened: false,
   isNewFileDialogOpened: false,
+  isNewAudioDialogOpened: false,
   licenseDialogOpened: false,
   thirdPartyLibsDialogOpened: false,
   settingsDialogOpened: false,
@@ -351,6 +353,12 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         isNewFileDialogOpened: !state.isNewFileDialogOpened
+      };
+    }
+    case types.TOGGLE_NEW_AUDIO_DIALOG: {
+      return {
+        ...state,
+        isNewAudioDialogOpened: !state.isNewAudioDialogOpened
       };
     }
     case types.TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG: {
@@ -926,6 +934,7 @@ export const actions = {
   }),
   toggleNewEntryDialog: () => ({ type: types.TOGGLE_NEW_ENTRY_DIALOG }),
   toggleNewFileDialog: () => ({ type: types.TOGGLE_NEW_FILE_DIALOG }),
+  toggleNewAudioDialog: () => ({ type: types.TOGGLE_NEW_AUDIO_DIALOG }),
   toggleDeleteMultipleEntriesDialog: () => ({
     type: types.TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG
   }),
@@ -1123,6 +1132,8 @@ export const isNewEntryDialogOpened = (state: any) =>
   state.app.isNewEntryDialogOpened;
 export const isNewFileDialogOpened = (state: any) =>
   state.app.isNewFileDialogOpened;
+export const isNewAudioDialogOpened = (state: any) =>
+  state.app.isNewAudioDialogOpened;
 export const isDeleteMultipleEntriesDialogOpened = (state: any) =>
   state.app.deleteMultipleEntriesDialogOpened;
 export const isImportKanBanDialogOpened = (state: any) =>

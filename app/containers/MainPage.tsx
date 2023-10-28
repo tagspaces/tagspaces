@@ -65,7 +65,8 @@ import {
   currentUser,
   isLocationDialogOpened,
   isProTeaserVisible,
-  isTruncatedConfirmDialogOpened
+  isTruncatedConfirmDialogOpened,
+  isNewAudioDialogOpened
 } from '../reducers/app';
 import TargetFileBox from '../components/TargetFileBox';
 import LoadingLazy from '../components/LoadingLazy';
@@ -92,6 +93,7 @@ import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
 import PlatformIO from '-/services/platform-facade';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import NewAudioDialog from '-/components/dialogs/NewAudioDialog';
 
 const drawerWidth = 320;
 const body = document.getElementsByTagName('body')[0];
@@ -139,6 +141,7 @@ interface Props {
   isSettingsDialogOpened: boolean;
   isNewEntryDialogOpened: boolean;
   isNewFileDialogOpened: boolean;
+  isNewAudioDialogOpened: boolean;
   isCreateDirectoryOpened: any;
   toggleCreateDirectoryDialog: () => void;
   isAboutDialogOpened: boolean;
@@ -164,6 +167,7 @@ interface Props {
   setZoomOutApp: () => void; // needed by electron-menus
   toggleNewEntryDialog: () => void; // needed by electron-menus
   toggleNewFileDialog: () => void; // needed by electron-menus
+  toggleNewAudioDialog: () => void; // needed by electron-menus
   showCreateDirectoryDialog: () => void; // needed by electron-menus
   toggleSettingsDialog: () => void; // needed by electron-menus
   toggleKeysDialog: () => void; // needed by electron-menus
@@ -500,6 +504,7 @@ function MainPage(props: Props) {
     toggleCreateDirectoryDialog,
     toggleNewEntryDialog,
     toggleNewFileDialog,
+    toggleNewAudioDialog,
     toggleUploadDialog,
     toggleProgressDialog,
     toggleEditTagDialog,
@@ -688,6 +693,12 @@ function MainPage(props: Props) {
             onClose={toggleNewFileDialog}
           />
         )}
+        {props.isNewAudioDialogOpened && (
+          <NewAudioDialog
+            open={props.isNewAudioDialogOpened}
+            onClose={toggleNewAudioDialog}
+          />
+        )}
         <SettingsDialog
           open={props.isSettingsDialogOpened}
           onClose={toggleSettingsDialog}
@@ -810,6 +821,7 @@ function mapStateToProps(state) {
     isCreateDirectoryOpened: isCreateDirectoryOpened(state),
     isNewEntryDialogOpened: isNewEntryDialogOpened(state),
     isNewFileDialogOpened: isNewFileDialogOpened(state),
+    isNewAudioDialogOpened: isNewAudioDialogOpened(state),
     isSettingsDialogOpened: isSettingsDialogOpened(state),
     isAboutDialogOpened: isAboutDialogOpened(state),
     isLocationDialogOpened: isLocationDialogOpened(state),
@@ -853,6 +865,7 @@ function mapDispatchToProps(dispatch) {
       setZoomOutApp: SettingsActions.setZoomOutApp,
       toggleNewEntryDialog: AppActions.toggleNewEntryDialog,
       toggleNewFileDialog: AppActions.toggleNewFileDialog,
+      toggleNewAudioDialog: AppActions.toggleNewAudioDialog,
       showCreateDirectoryDialog: AppActions.showCreateDirectoryDialog,
       toggleSettingsDialog: AppActions.toggleSettingsDialog,
       toggleKeysDialog: AppActions.toggleKeysDialog,
@@ -889,6 +902,7 @@ const areEqual = (prevProp, nextProp) =>
     JSON.stringify(prevProp.isCreateDirectoryOpened) &&
   nextProp.isNewEntryDialogOpened === prevProp.isNewEntryDialogOpened &&
   nextProp.isNewFileDialogOpened === prevProp.isNewFileDialogOpened &&
+  nextProp.isNewAudioDialogOpened === prevProp.isNewAudioDialogOpened &&
   nextProp.isDeleteMultipleEntriesDialogOpened ===
     prevProp.isDeleteMultipleEntriesDialogOpened &&
   nextProp.isDesktopMode === prevProp.isDesktopMode &&
