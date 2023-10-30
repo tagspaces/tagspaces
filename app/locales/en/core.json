@@ -806,5 +806,11 @@
   "details": "Details",
   "editDisabled": "Editing the description is disabled while editing the current file",
   "togglePreviewSize": "Toggle file preview size",
+  "newAudioRecording": "New Audio Recording",
+  "audioRecorder": "Audio Recorder",
+  "startRecording": "Start recording",
+  "pauseRecording": "Pause recording",
+  "resumeRecording": "Resume recording",
+  "stopRecording": "Stop recording",
   "-": "-"
 }

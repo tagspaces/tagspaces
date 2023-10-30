@@ -25,7 +25,6 @@ import DraggablePaper from '-/components/DraggablePaper';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import TargetPath from '-/components/dialogs/components/TargetPath';
 import { TargetPathContextProvider } from '-/components/dialogs/hooks/TargetPathContextProvider';
 import { useTranslation } from 'react-i18next';
 import { Pro } from '-/pro';
@@ -55,7 +54,7 @@ function NewAudioDialog(props: Props) {
         scroll="paper"
       >
         <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-          {t('core:createAudio')}
+          {t('core:audioRecorder')}
           <DialogCloseButton testId="closeCreateDialogTID" onClose={onClose} />
         </DialogTitle>
         <DialogContent
@@ -68,7 +67,6 @@ function NewAudioDialog(props: Props) {
           data-tid="keyboardShortCutsDialog"
         >
           <CreateAudio onClose={onClose} />
-          <TargetPath />
         </DialogContent>
       </Dialog>
     </TargetPathContextProvider>

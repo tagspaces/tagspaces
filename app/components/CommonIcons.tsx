@@ -111,3 +111,19 @@ export { default as MoreMenuIcon } from '@mui/icons-material/MoreVert';
 export { default as RevisionIcon } from '@mui/icons-material/Restore';
 
 export { default as DescriptionIcon } from '@mui/icons-material/Subject';
+
+export { default as AudioRecordIcon } from '@mui/icons-material/KeyboardVoice';
+
+export { default as NewFileIcon } from '@mui/icons-material/InsertDriveFile';
+
+export { default as NewFolderIcon } from '@mui/icons-material/CreateNewFolder';
+
+export { default as AddExistingFileIcon } from '@mui/icons-material/ExitToApp';
+
+export { default as RecordIcon } from '@mui/icons-material/FiberManualRecord';
+
+export { default as StopIcon } from '@mui/icons-material/Stop';
+
+export { default as PauseIcon } from '@mui/icons-material/Pause';
+
+export { default as SaveIcon } from '@mui/icons-material/Save';

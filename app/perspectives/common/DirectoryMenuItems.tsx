@@ -1,6 +1,6 @@
+import React from 'react';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import AudioFileIcon from '@mui/icons-material/AudioFile';
 import OpenFolderIcon from '@mui/icons-material/SubdirectoryArrowLeft';
 import MoveCopy from '@mui/icons-material/FileCopy';
 import ListItemText from '@mui/material/ListItemText';
@@ -10,9 +10,6 @@ import AppConfig from '-/AppConfig';
 import OpenFolderNativelyIcon from '@mui/icons-material/Launch';
 import AddRemoveTags from '@mui/icons-material/Loyalty';
 import Divider from '@mui/material/Divider';
-import NewFileIcon from '@mui/icons-material/InsertDriveFile';
-import NewFolderIcon from '@mui/icons-material/CreateNewFolder';
-import AddExistingFileIcon from '@mui/icons-material/ExitToApp';
 import { Pro } from '-/pro';
 import ImageIcon from '@mui/icons-material/Image';
 import ImportTagsIcon from '@mui/icons-material/FindInPage';
@@ -23,9 +20,12 @@ import {
   ReloadIcon,
   OpenNewWindowIcon,
   DeleteIcon,
-  LinkIcon
+  LinkIcon,
+  AudioRecordIcon,
+  NewFileIcon,
+  NewFolderIcon,
+  AddExistingFileIcon
 } from '-/components/CommonIcons';
-import React from 'react';
 import { TS } from '-/tagspaces.namespace';
 
 export function getDirectoryMenuItems(
@@ -223,9 +223,16 @@ export function getDirectoryMenuItems(
           }}
         >
           <ListItemIcon>
-            <AudioFileIcon />
+            <AudioRecordIcon />
           </ListItemIcon>
-          <ListItemText primary={t('core:newAudioFile')} />
+          <ListItemText
+            primary={
+              <>
+                {t('core:newAudioRecording')}
+                {Pro ? <BetaLabel /> : <ProLabel />}
+              </>
+            }
+          />
         </MenuItem>
       );
     }

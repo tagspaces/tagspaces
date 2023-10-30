@@ -30,8 +30,6 @@ import fscreen from 'fscreen';
 import Button from '@mui/material/Button';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Tooltip from '-/components/Tooltip';
-import EditIcon from '@mui/icons-material/Edit';
-import SaveIcon from '@mui/icons-material/Save';
 import Box from '@mui/material/Box';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import { CancelIcon, CloseEditIcon } from '-/components/CommonIcons';
@@ -70,6 +68,7 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { toFsEntry } from '-/services/utils-io';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
+import { SaveIcon, EditIcon } from '-/components/CommonIcons';
 
 //const defaultSplitSize = '7.86%'; // '7.2%'; // 103;
 // const bufferedSplitResize = buffer({
