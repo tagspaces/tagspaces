@@ -32,14 +32,14 @@ import AppConfig from '-/AppConfig';
 import {
   getMaxSearchResults,
   getDesktopMode,
-  getDefaultPerspective
+  getDefaultPerspective,
 } from '-/reducers/settings';
 import { actions as AppActions, getProgress } from '../reducers/app';
 import {
   GoBackIcon,
   GoForwardIcon,
   MainMenuIcon,
-  SearchIcon
+  SearchIcon,
 } from './CommonIcons';
 import { Pro } from '../pro';
 import RenameEntryDialog from '-/components/dialogs/RenameEntryDialog';
@@ -74,7 +74,7 @@ function FolderContainer(props: Props) {
     isDesktopMode,
     defaultPerspective,
     goBack,
-    goForward
+    goForward,
   } = props;
 
   const { t } = useTranslation();
@@ -87,7 +87,7 @@ function FolderContainer(props: Props) {
     currentDirectoryPerspective,
     setCurrentDirectoryPerspective,
     enterSearchMode,
-    isSearchMode
+    isSearchMode,
   } = useDirectoryContentContext();
 
   /**
@@ -110,9 +110,8 @@ function FolderContainer(props: Props) {
     }
   }, [props.editedEntryPaths]);*/
 
-  const [isRenameEntryDialogOpened, setRenameEntryDialogOpened] = useState<
-    boolean
-  >(false);
+  const [isRenameEntryDialogOpened, setRenameEntryDialogOpened] =
+    useState<boolean>(false);
 
   let currentPerspective =
     currentDirectoryPerspective || defaultPerspective || PerspectiveIDs.GRID;
@@ -127,7 +126,7 @@ function FolderContainer(props: Props) {
 
   const openRenameEntryDialog = useCallback(
     () => setRenameEntryDialogOpened(true),
-    []
+    [],
   );
 
   function CircularProgressWithLabel(prop) {
@@ -158,7 +157,8 @@ function FolderContainer(props: Props) {
 
   const getProgressValue = () => {
     const objProgress = props.progress.find(
-      fileProgress => fileProgress.progress < 100 && fileProgress.progress > -1
+      (fileProgress) =>
+        fileProgress.progress < 100 && fileProgress.progress > -1,
     );
     if (objProgress !== undefined) {
       return objProgress.progress;
@@ -183,7 +183,7 @@ function FolderContainer(props: Props) {
   };
 
   const perspectiveToggleButtons = [];
-  AvailablePerspectives.forEach(perspective => {
+  AvailablePerspectives.forEach((perspective) => {
     perspectiveToggleButtons.push(
       <ToggleButton
         value={perspective.id}
@@ -200,7 +200,7 @@ function FolderContainer(props: Props) {
         >
           <div style={{ display: 'flex' }}>{perspective.icon}</div>
         </Tooltip>
-      </ToggleButton>
+      </ToggleButton>,
     );
   });
 
@@ -224,7 +224,7 @@ function FolderContainer(props: Props) {
         backgroundColor: theme.palette.background.default,
         display: 'flex',
         flexDirection: 'column',
-        position: 'relative'
+        position: 'relative',
       }}
       data-tid="folderContainerTID"
     >
@@ -234,7 +234,7 @@ function FolderContainer(props: Props) {
           paddingRight: 5,
           display: 'flex',
           alignItems: 'center',
-          minHeight: 50
+          minHeight: 50,
         }}
       >
         <IconButton
@@ -280,7 +280,7 @@ function FolderContainer(props: Props) {
               style={{
                 flex: '1 1 1%',
                 display: 'flex',
-                flexDirection: 'column'
+                flexDirection: 'column',
               }}
             />
             {/* <MainSearchField
@@ -322,7 +322,7 @@ function FolderContainer(props: Props) {
                 style={{
                   position: 'relative',
                   padding: '8px 12px 6px 8px',
-                  margin: '0'
+                  margin: '0',
                 }}
               >
                 <CircularProgressWithLabel value={getProgressValue()} />
@@ -339,7 +339,7 @@ function FolderContainer(props: Props) {
       <div
         style={{
           minHeight: '100%',
-          width: '100%'
+          width: '100%',
         }}
       >
         {/*<LoadingAnimation />*/}
@@ -365,7 +365,7 @@ function FolderContainer(props: Props) {
             zIndex: 1000,
             opacity: 0.9,
             position: 'absolute',
-            backgroundColor: theme.palette.background.default
+            backgroundColor: theme.palette.background.default,
           }}
         >
           {perspectiveToggleButtons}
@@ -380,16 +380,16 @@ function mapStateToProps(state) {
     maxSearchResults: getMaxSearchResults(state),
     isDesktopMode: getDesktopMode(state),
     progress: getProgress(state),
-    defaultPerspective: getDefaultPerspective(state)
+    defaultPerspective: getDefaultPerspective(state),
   };
 }
 
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
-      toggleUploadDialog: AppActions.toggleUploadDialog
+      toggleUploadDialog: AppActions.toggleUploadDialog,
     },
-    dispatch
+    dispatch,
   );
 }
 
@@ -401,8 +401,8 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
 
 export default connect(
   mapStateToProps,
-  mapActionCreatorsToProps
+  mapActionCreatorsToProps,
 )(
   // @ts-ignore
-  React.memo(FolderContainer, areEqual)
+  React.memo(FolderContainer, areEqual),
 );

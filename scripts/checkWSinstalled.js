@@ -73,11 +73,11 @@ if (platform === 'node') {
     !dirExist(dir) ||
     !isInstalled(
       '@tagspaces/extensions',
-      packageJson.nodeDependencies['@tagspaces/extensions']
+      packageJson.nodeDependencies['@tagspaces/extensions'],
     ) ||
     !isInstalled(
       '@tagspaces/tagspaces-ws',
-      packageJson.nodeDependencies['@tagspaces/tagspaces-ws']
+      packageJson.nodeDependencies['@tagspaces/tagspaces-ws'],
     ) ||
     !isInstalled('sharp', packageJson.nodeDependencies['sharp'])
   ) {
@@ -88,7 +88,7 @@ if (platform === 'node') {
     !dirExist(dir) ||
     !isInstalled(
       '@tagspaces/extensions',
-      packageJson.webDependencies['@tagspaces/extensions']
+      packageJson.webDependencies['@tagspaces/extensions'],
     ) ||
     isInstalled('@tagspaces/tagspaces-ws')
   ) {

@@ -21,7 +21,7 @@ import { useSelector } from 'react-redux';
 import {
   getEnableWS,
   getShowUnixHiddenEntries,
-  getUseGenerateThumbnails
+  getUseGenerateThumbnails,
 } from '-/reducers/settings';
 import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
@@ -32,7 +32,7 @@ import {
   supportedImgs,
   supportedMisc,
   supportedText,
-  supportedVideos
+  supportedVideos,
 } from '-/services/thumbsgenerator';
 import { usePaginationContext } from '-/hooks/usePaginationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
@@ -47,8 +47,8 @@ type ThumbGenerationContextData = {
 
 export const ThumbGenerationContext = createContext<ThumbGenerationContextData>(
   {
-    generateThumbnails: undefined
-  }
+    generateThumbnails: undefined,
+  },
 );
 
 export type ThumbGenerationContextProviderProps = {
@@ -56,12 +56,12 @@ export type ThumbGenerationContextProviderProps = {
 };
 
 export const ThumbGenerationContextProvider = ({
-  children
+  children,
 }: ThumbGenerationContextProviderProps) => {
   const {
     currentDirectoryPath,
     currentDirectoryEntries,
-    updateCurrentDirEntries
+    updateCurrentDirEntries,
   } = useDirectoryContentContext();
   const { currentLocation } = useCurrentLocationContext();
   const { pageFiles, page } = usePaginationContext();
@@ -88,7 +88,7 @@ export const ThumbGenerationContextProvider = ({
     'tiff',
     'ico',
     'webp',
-    'avif'
+    'avif',
     // 'bmp' currently electron main processed: https://github.com/lovell/sharp/issues/806
   ];
 
@@ -107,8 +107,8 @@ export const ThumbGenerationContextProvider = ({
           loadCurrentDirMeta(
             currentDirectoryPath,
             currentDirectoryEntries,
-            entries.filter(entry => entry.isFile)
-          ).then(entries => updateCurrentDirEntries(entries));
+            entries.filter((entry) => entry.isFile),
+          ).then((entries) => updateCurrentDirEntries(entries));
           // }
           return true;
         });
@@ -120,10 +120,10 @@ export const ThumbGenerationContextProvider = ({
     if (
       !currentDirectoryPath ||
       currentDirectoryPath.endsWith(
-        AppConfig.dirSeparator + AppConfig.metaFolder
+        AppConfig.dirSeparator + AppConfig.metaFolder,
       ) ||
       currentDirectoryPath.endsWith(
-        AppConfig.dirSeparator + AppConfig.metaFolder + AppConfig.dirSeparator
+        AppConfig.dirSeparator + AppConfig.metaFolder + AppConfig.dirSeparator,
       )
     ) {
       return false; // dont generate thumbnails in meta folder
@@ -138,7 +138,7 @@ export const ThumbGenerationContextProvider = ({
   }
 
   function generateThumbnails(
-    dirEntries: TS.FileSystemEntry[]
+    dirEntries: TS.FileSystemEntry[],
   ): Promise<boolean> {
     if (
       AppConfig.isWeb || // not in web mode
@@ -152,7 +152,7 @@ export const ThumbGenerationContextProvider = ({
     const isWorkerAvailable = enableWS && PlatformIO.isWorkerAvailable();
     const workerEntries: string[] = [];
     const mainEntries: string[] = [];
-    dirEntries.map(entry => {
+    dirEntries.map((entry) => {
       if (!entry.isFile) {
         return true;
       }
@@ -182,14 +182,14 @@ export const ThumbGenerationContextProvider = ({
           thumbnailMainGeneration(mainEntries).then(() => {
             setGenThumbs(false);
             return true;
-          })
+          }),
         )
-        .catch(e => {
+        .catch((e) => {
           // WS error handle let process thumbgeneration in Main process Generator
           console.log('createThumbnailsInWorker', e);
           return thumbnailMainGeneration([
             ...workerEntries,
-            ...mainEntries
+            ...mainEntries,
           ]).then(() => {
             setGenThumbs(false);
             return true;
@@ -208,14 +208,14 @@ export const ThumbGenerationContextProvider = ({
 
   function thumbnailMainGeneration(mainEntries: string[]): Promise<boolean> {
     const maxExecutionTime = 9000;
-    const promises = mainEntries.map(tmbPath =>
-      getThumbnailURLPromise(tmbPath)
+    const promises = mainEntries.map((tmbPath) =>
+      getThumbnailURLPromise(tmbPath),
     );
-    const promisesWithTimeout = promises.map(promise => {
+    const promisesWithTimeout = promises.map((promise) => {
       const timeoutPromise = new Promise((resolve, reject) => {
         setTimeout(() => {
           reject(
-            new Error('Maximum execution time exceeded' + maxExecutionTime)
+            new Error('Maximum execution time exceeded' + maxExecutionTime),
           );
         }, maxExecutionTime);
       });
@@ -227,7 +227,7 @@ export const ThumbGenerationContextProvider = ({
       .then(() => {
         return true;
       })
-      .catch(e => {
+      .catch((e) => {
         console.log('thumbnailMainGeneration', e);
         return false;
       });
@@ -235,7 +235,7 @@ export const ThumbGenerationContextProvider = ({
 
   const context = useMemo(() => {
     return {
-      generateThumbnails
+      generateThumbnails,
     };
   }, []);
 

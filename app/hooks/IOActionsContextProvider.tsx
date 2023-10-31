@@ -31,7 +31,7 @@ import {
   getMetaFileLocationForFile,
   getThumbFileLocationForFile,
   joinPaths,
-  normalizePath
+  normalizePath,
 } from '@tagspaces/tagspaces-common/paths';
 import PlatformIO from '-/services/platform-facade';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
@@ -39,7 +39,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   getThumbPath,
   loadFileMetaDataPromise,
-  toFsEntry
+  toFsEntry,
 } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { Progress } from 'aws-sdk/clients/s3';
@@ -48,7 +48,7 @@ import { generateThumbnailPromise } from '-/services/thumbsgenerator';
 import { base64ToArrayBuffer } from '-/utils/dom';
 import {
   enhanceEntry,
-  loadJSONString
+  loadJSONString,
 } from '@tagspaces/tagspaces-common/utils-io';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
@@ -71,39 +71,39 @@ type IOActionsContextData = {
   moveDirs: (
     dirPaths: Array<string>,
     targetPath: string,
-    onProgress?
+    onProgress?,
   ) => Promise<boolean>;
   moveFiles: (
     paths: Array<string>,
     targetPath: string,
-    onProgress?
+    onProgress?,
   ) => Promise<boolean>;
   copyDirs: (
     dirPaths: Array<any>,
     targetPath: string,
-    onProgress?
+    onProgress?,
   ) => Promise<boolean>;
   copyFiles: (
     paths: Array<string>,
     targetPath: string,
-    onProgress?
+    onProgress?,
   ) => Promise<boolean>;
   downloadFile: (
     url: string,
     targetPath: string,
-    onDownloadProgress?: (progress: Progress, abort, fileName?) => void
+    onDownloadProgress?: (progress: Progress, abort, fileName?) => void,
   ) => Promise<TS.FileSystemEntry>;
   uploadFilesAPI: (
     files: Array<File>,
     targetPath: string,
     onUploadProgress?: (progress: Progress, abort, fileName?) => void,
-    uploadMeta?: boolean
+    uploadMeta?: boolean,
   ) => Promise<TS.FileSystemEntry[]>;
   uploadFiles: (
     paths: Array<string>,
     targetPath: string,
     onUploadProgress?: (progress: Progress, abort, fileName?) => void,
-    uploadMeta?: boolean
+    uploadMeta?: boolean,
   ) => Promise<TS.FileSystemEntry[]>;
   //reloadDirectory: (dirPath?: string) => Promise<boolean>;
 };
@@ -120,7 +120,7 @@ export const IOActionsContext = createContext<IOActionsContextData>({
   copyFiles: () => Promise.resolve(false),
   downloadFile: () => Promise.resolve(undefined),
   uploadFilesAPI: () => Promise.resolve([]),
-  uploadFiles: () => Promise.resolve([])
+  uploadFiles: () => Promise.resolve([]),
   //reloadDirectory: () => Promise.resolve(false)
 });
 
@@ -129,15 +129,13 @@ export type IOActionsContextProviderProps = {
 };
 
 export const IOActionsContextProvider = ({
-  children
+  children,
 }: IOActionsContextProviderProps) => {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const { showNotification, hideNotifications } = useNotificationContext();
-  const {
-    copyFilesWithProgress,
-    deleteFilesPromise
-  } = usePlatformFacadeContext();
+  const { copyFilesWithProgress, deleteFilesPromise } =
+    usePlatformFacadeContext();
   const {
     createDirectoryPromise,
     renameFilesPromise,
@@ -146,7 +144,7 @@ export const IOActionsContextProvider = ({
     saveFilePromise,
     saveBinaryFilePromise,
     deleteFilePromise,
-    deleteDirectoryPromise
+    deleteDirectoryPromise,
   } = usePlatformFacadeContext();
   const { reflectDeleteDirectory, reflectDeleteFile } = useOpenedEntryContext();
   const {
@@ -154,14 +152,11 @@ export const IOActionsContextProvider = ({
     currentDirectoryPath,
     loadParentDirectoryContent,
     addDirectoryEntries,
-    removeDirectoryEntries
+    removeDirectoryEntries,
   } = useDirectoryContentContext();
   const { setSelectedEntries } = useSelectedEntriesContext();
-  const {
-    reflectDeleteEntry,
-    reflectCreateEntry,
-    reflectDeleteEntries
-  } = useLocationIndexContext();
+  const { reflectDeleteEntry, reflectCreateEntry, reflectDeleteEntries } =
+    useLocationIndexContext();
   const useTrashCan = useSelector(getUseTrashCan);
 
   function extractContent(
@@ -169,9 +164,9 @@ export const IOActionsContextProvider = ({
       EXIFGeo: true,
       EXIFDateTime: true,
       IPTCDescription: true,
-      IPTCTags: true
+      IPTCTags: true,
     },
-    addTags?
+    addTags?,
   ): Promise<boolean> {
     if (!Pro || !Pro.ContentExtractor) {
       showNotification(t('core:thisFunctionalityIsAvailableInPro'));
@@ -181,8 +176,8 @@ export const IOActionsContextProvider = ({
     Pro.ContentExtractor.extractContent(
       currentDirectoryEntries,
       addTags,
-      options
-    ).then(success => {
+      options,
+    ).then((success) => {
       hideNotifications();
       return success;
     });
@@ -191,7 +186,7 @@ export const IOActionsContextProvider = ({
   const createDirectory = useMemo(() => {
     return (directoryPath: string, reflect = true) =>
       createDirectoryPromise(directoryPath)
-        .then(result => {
+        .then((result) => {
           if (result !== undefined && result.dirPath !== undefined) {
             // eslint-disable-next-line no-param-reassign
             directoryPath = result.dirPath;
@@ -207,22 +202,22 @@ export const IOActionsContextProvider = ({
           showNotification(
             `Creating directory ${extractDirectoryName(
               directoryPath,
-              PlatformIO.getDirSeparator()
+              PlatformIO.getDirSeparator(),
             )} successful.`,
             'default',
-            true
+            true,
           );
           return true;
         })
-        .catch(error => {
+        .catch((error) => {
           console.warn('Error creating directory: ' + error);
           showNotification(
             `Error creating directory '${extractDirectoryName(
               directoryPath,
-              PlatformIO.getDirSeparator()
+              PlatformIO.getDirSeparator(),
             )}'`,
             'error',
-            true
+            true,
           );
           return false;
           // dispatch stopLoadingAnimation
@@ -231,14 +226,14 @@ export const IOActionsContextProvider = ({
 
   const deleteEntries = useMemo(() => {
     return (entries: TS.FileSystemEntry[]) => {
-      const deletePromises = entries.map(fsEntry => {
+      const deletePromises = entries.map((fsEntry) => {
         if (fsEntry.isFile) {
           return deleteFile(fsEntry.path, fsEntry.uuid, false);
         }
         return deleteDirectory(fsEntry.path, false);
       });
       return Promise.all(deletePromises)
-        .then(delResult => {
+        .then((delResult) => {
           const notDeletedEntries = [];
           const deletedEntries = [];
           for (let i = 0; i < delResult.length; i++) {
@@ -258,13 +253,13 @@ export const IOActionsContextProvider = ({
           dispatch(AppActions.reflectDeleteEntries(deletedEntries));
           removeDirectoryEntries(
             entries
-              .filter(e => !notDeletedEntries.some(n => n.path === e.path))
-              .map(e => e.path)
+              .filter((e) => !notDeletedEntries.some((n) => n.path === e.path))
+              .map((e) => e.path),
           );
           setSelectedEntries(notDeletedEntries);
           return true;
         })
-        .catch(err => {
+        .catch((err) => {
           console.warn('Deleting file failed', err);
           return false;
         });
@@ -293,16 +288,16 @@ export const IOActionsContextProvider = ({
               {
                 dirPath: extractDirectoryName(
                   directoryPath,
-                  PlatformIO.getDirSeparator()
-                )
-              } as any
+                  PlatformIO.getDirSeparator(),
+                ),
+              } as any,
             ) as string,
             'default',
-            true
+            true,
           );
           return true;
         })
-        .catch(error => {
+        .catch((error) => {
           console.warn('Error while deleting directory: ' + error);
           showNotification(
             t(
@@ -310,12 +305,12 @@ export const IOActionsContextProvider = ({
               {
                 dirPath: extractDirectoryName(
                   directoryPath,
-                  PlatformIO.getDirSeparator()
-                )
-              } as any
+                  PlatformIO.getDirSeparator(),
+                ),
+              } as any,
             ) as string,
             'error',
-            true
+            true,
           );
           return false;
           // dispatch stopLoadingAnimation
@@ -337,24 +332,24 @@ export const IOActionsContextProvider = ({
           showNotification(
             `Deleting file ${filePath} successful.`,
             'default',
-            true
+            true,
           );
           // Delete revisions
           const backupFilePath = getBackupFileLocation(
             filePath,
             uuid,
-            PlatformIO.getDirSeparator()
+            PlatformIO.getDirSeparator(),
           );
           const backupPath = extractContainingDirectoryPath(
             backupFilePath,
-            PlatformIO.getDirSeparator()
+            PlatformIO.getDirSeparator(),
           );
           PlatformIO.deleteDirectoryPromise(backupPath)
             .then(() => {
               console.log('Cleaning revisions successful for ' + filePath);
               return true;
             })
-            .catch(err => {
+            .catch((err) => {
               console.warn('Cleaning revisions failed ', err);
             });
           // Delete sidecar file and thumb
@@ -363,26 +358,26 @@ export const IOActionsContextProvider = ({
             getThumbFileLocationForFile(
               filePath,
               PlatformIO.getDirSeparator(),
-              false
-            )
+              false,
+            ),
           ])
             .then(() => {
               console.log(
-                'Cleaning meta file and thumb successful for ' + filePath
+                'Cleaning meta file and thumb successful for ' + filePath,
               );
               return true;
             })
-            .catch(err => {
+            .catch((err) => {
               console.warn('Cleaning meta file and thumb failed with ' + err);
             });
           return true;
         })
-        .catch(error => {
+        .catch((error) => {
           console.warn('Error while deleting file: ' + error);
           showNotification(
             `Error while deleting file ${filePath}`,
             'error',
-            true
+            true,
           );
           return false;
         });
@@ -391,14 +386,14 @@ export const IOActionsContextProvider = ({
   function moveDirs(
     dirPaths: Array<any>,
     targetPath: string,
-    onProgress = undefined
+    onProgress = undefined,
   ): Promise<boolean> {
     const promises = dirPaths.map(({ path, count }) => {
       const dirName = extractDirectoryName(path, PlatformIO.getDirSeparator());
       return moveDirectoryPromise(
         { path: path, total: count },
         joinPaths(PlatformIO.getDirSeparator(), targetPath, dirName),
-        onProgress
+        onProgress,
       )
         .then(() => {
           removeDirectoryEntries([path]);
@@ -407,7 +402,7 @@ export const IOActionsContextProvider = ({
           dispatch(AppActions.reflectDeleteEntry(path));
           return true;
         })
-        .catch(err => {
+        .catch((err) => {
           console.warn('Moving dirs failed ', err);
           showNotification(t('core:copyingFoldersFailed'));
         });
@@ -418,13 +413,13 @@ export const IOActionsContextProvider = ({
   function moveFiles(
     paths: Array<string>,
     targetPath: string,
-    onProgress = undefined
+    onProgress = undefined,
   ): Promise<boolean> {
-    const moveJobs = paths.map(path => [
+    const moveJobs = paths.map((path) => [
       path,
       normalizePath(targetPath) +
         PlatformIO.getDirSeparator() +
-        extractFileName(path, PlatformIO.getDirSeparator())
+        extractFileName(path, PlatformIO.getDirSeparator()),
     ]);
     return renameFilesPromise(moveJobs, onProgress)
       .then(() => {
@@ -435,7 +430,7 @@ export const IOActionsContextProvider = ({
         dispatch(AppActions.reflectDeleteEntries(paths));
 
         const moveMetaJobs = [];
-        moveJobs.map(job => {
+        moveJobs.map((job) => {
           // Move revisions
           loadFileMetaDataPromise(job[0])
             .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
@@ -443,51 +438,51 @@ export const IOActionsContextProvider = ({
                 const backupDir = getBackupFileDir(
                   job[0],
                   fsEntryMeta.id,
-                  PlatformIO.getDirSeparator()
+                  PlatformIO.getDirSeparator(),
                 );
                 const newBackupDir = getBackupFileDir(
                   job[1],
                   fsEntryMeta.id,
-                  PlatformIO.getDirSeparator()
+                  PlatformIO.getDirSeparator(),
                 );
                 return PlatformIO.moveDirectoryPromise(
                   { path: backupDir },
-                  newBackupDir
+                  newBackupDir,
                 )
                   .then(() => {
                     console.log(
                       'Moving revisions successful from ' +
                         backupDir +
                         ' to ' +
-                        newBackupDir
+                        newBackupDir,
                     );
                     return true;
                   })
-                  .catch(err => {
+                  .catch((err) => {
                     console.warn('Moving revisions failed ', err);
                   });
               }
             })
-            .catch(err => {
+            .catch((err) => {
               console.warn('loadFileMetaDataPromise', err);
             });
 
           // move meta
           moveMetaJobs.push([
             getMetaFileLocationForFile(job[0], PlatformIO.getDirSeparator()),
-            getMetaFileLocationForFile(job[1], PlatformIO.getDirSeparator())
+            getMetaFileLocationForFile(job[1], PlatformIO.getDirSeparator()),
           ]);
           moveMetaJobs.push([
             getThumbFileLocationForFile(
               job[0],
               PlatformIO.getDirSeparator(),
-              false
+              false,
             ),
             getThumbFileLocationForFile(
               job[1],
               PlatformIO.getDirSeparator(),
-              false
-            )
+              false,
+            ),
           ]);
           return true;
         });
@@ -496,12 +491,12 @@ export const IOActionsContextProvider = ({
             console.log('Moving meta and thumbs successful');
             return true;
           })
-          .catch(err => {
+          .catch((err) => {
             console.warn('At least one meta or thumb was not moved ' + err);
           });
         return true;
       })
-      .catch(err => {
+      .catch((err) => {
         console.warn('Moving files failed with ' + err);
         showNotification(t('core:copyingFilesFailed'));
         return false;
@@ -511,20 +506,20 @@ export const IOActionsContextProvider = ({
   function copyDirs(
     dirPaths: Array<any>,
     targetPath: string,
-    onProgress = undefined
+    onProgress = undefined,
   ): Promise<boolean> {
     const promises = dirPaths.map(({ path, count }) => {
       const dirName = extractDirectoryName(path, PlatformIO.getDirSeparator());
       return copyDirectoryPromise(
         { path: path, total: count },
         joinPaths(PlatformIO.getDirSeparator(), targetPath, dirName),
-        onProgress
+        onProgress,
       )
         .then(() => {
           console.log('Copy dir from ' + path + ' to ' + targetPath);
           return true;
         })
-        .catch(err => {
+        .catch((err) => {
           console.warn('Copy dirs failed ', err);
           showNotification(t('core:copyingFoldersFailed'));
         });
@@ -535,32 +530,36 @@ export const IOActionsContextProvider = ({
   function copyFiles(
     paths: Array<string>,
     targetPath: string,
-    onProgress
+    onProgress,
   ): Promise<boolean> {
     return copyFilesWithProgress(paths, targetPath, onProgress)
       .then(() => {
         // todo return only copied paths
         showNotification(t('core:filesCopiedSuccessful'));
-        const metaPaths = paths.flatMap(path => [
+        const metaPaths = paths.flatMap((path) => [
           getMetaFileLocationForFile(path, PlatformIO.getDirSeparator()),
-          getThumbFileLocationForFile(path, PlatformIO.getDirSeparator(), false)
+          getThumbFileLocationForFile(
+            path,
+            PlatformIO.getDirSeparator(),
+            false,
+          ),
         ]);
 
         return copyFilesWithProgress(
           metaPaths,
           getMetaDirectoryPath(targetPath),
-          onProgress
+          onProgress,
         )
           .then(() => {
             console.log('Copy meta and thumbs successful');
             return true;
           })
-          .catch(err => {
+          .catch((err) => {
             console.warn('At least one meta or thumb was not copied ' + err);
             return true;
           });
       })
-      .catch(err => {
+      .catch((err) => {
         console.warn('Moving files failed with ' + err);
         showNotification(t('core:copyingFilesFailed'));
         return false;
@@ -576,7 +575,7 @@ export const IOActionsContextProvider = ({
   function downloadFile(
     url: string,
     targetPath: string,
-    onDownloadProgress?: (progress: Progress, abort, fileName?) => void
+    onDownloadProgress?: (progress: Progress, abort, fileName?) => void,
   ): Promise<TS.FileSystemEntry> {
     function saveFile(response: Response): Promise<TS.FileSystemEntry> {
       if (AppConfig.isElectron && !PlatformIO.haveObjectStoreSupport()) {
@@ -584,20 +583,20 @@ export const IOActionsContextProvider = ({
           { path: targetPath },
           response.body,
           true,
-          onDownloadProgress
+          onDownloadProgress,
         );
       }
-      return response.arrayBuffer().then(arrayBuffer => {
+      return response.arrayBuffer().then((arrayBuffer) => {
         return saveFilePromise({ path: targetPath }, arrayBuffer, true);
       });
     }
     return fetch(url)
-      .then(response => saveFile(response))
+      .then((response) => saveFile(response))
       .then((fsEntry: TS.FileSystemEntry) => {
         return generateThumbnailPromise(
           PlatformIO.haveObjectStoreSupport() ? url : fsEntry.path,
-          fsEntry.size
-        ).then(dataURL => {
+          fsEntry.size,
+        ).then((dataURL) => {
           if (dataURL && dataURL.length > 6) {
             const baseString = dataURL.split(',').pop();
             const fileContent = base64ToArrayBuffer(baseString);
@@ -606,14 +605,14 @@ export const IOActionsContextProvider = ({
                 path: getThumbFileLocationForFile(
                   targetPath,
                   PlatformIO.getDirSeparator(),
-                  false
-                )
+                  false,
+                ),
               },
               fileContent,
-              true
+              true,
             ).then((thumb: TS.FileSystemEntry) => ({
               ...fsEntry,
-              thumbPath: getThumbPath(thumb.path)
+              thumbPath: getThumbPath(thumb.path),
             }));
           }
           return fsEntry;
@@ -642,7 +641,7 @@ export const IOActionsContextProvider = ({
     files: Array<File>,
     targetPath: string,
     onUploadProgress?: (progress: Progress, abort, fileName?) => void,
-    uploadMeta = true
+    uploadMeta = true,
   ): Promise<TS.FileSystemEntry[]> {
     if (AppConfig.isElectron || AppConfig.isCordovaiOS) {
       const arrFiles = [];
@@ -652,7 +651,7 @@ export const IOActionsContextProvider = ({
       return uploadFiles(arrFiles, targetPath, onUploadProgress, uploadMeta);
     }
 
-    return new Promise(async resolve => {
+    return new Promise(async (resolve) => {
       const fsEntries = [];
       // -> cannot upload meta data (for every upload in web browser its need to have <input> element)
       await setupReader(0);
@@ -686,14 +685,13 @@ export const IOActionsContextProvider = ({
       }
 
       async function readerLoaded(event, index, fileTargetPath) {
-        const entryProps = await PlatformIO.getPropertiesPromise(
-          fileTargetPath
-        );
+        const entryProps =
+          await PlatformIO.getPropertiesPromise(fileTargetPath);
         if (entryProps) {
           showNotification(
             'File with the same name already exist, importing skipped!',
             'warning',
-            true
+            true,
           );
         } else {
           const result = event.currentTarget
@@ -704,32 +702,32 @@ export const IOActionsContextProvider = ({
               { path: fileTargetPath },
               new Uint8Array(result),
               true,
-              onUploadProgress
+              onUploadProgress,
             );
             if (fsEntry) {
               // Generate Thumbnail
               const thumbPath = await generateThumbnailPromise(
                 PlatformIO.getURLforPath(fileTargetPath),
-                fsEntry.size
+                fsEntry.size,
               )
-                .then(dataURL => {
+                .then((dataURL) => {
                   if (dataURL && dataURL.length > 6) {
                     const baseString = dataURL.split(',').pop();
                     const fileContent = base64ToArrayBuffer(baseString);
                     const thumbPath = getThumbFileLocationForFile(
                       fileTargetPath,
                       PlatformIO.getDirSeparator(),
-                      false
+                      false,
                     );
                     return PlatformIO.saveBinaryFilePromise(
                       { path: thumbPath },
                       fileContent,
-                      true
+                      true,
                     ).then(() => thumbPath);
                   }
                   return undefined;
                 })
-                .catch(err => {
+                .catch((err) => {
                   console.log('error generateThumbnail:', err);
                 });
               if (thumbPath) {
@@ -739,18 +737,18 @@ export const IOActionsContextProvider = ({
               showNotification(
                 'File ' + fileTargetPath + ' successfully imported.',
                 'default',
-                true
+                true,
               );
               // dispatch(AppActions.reflectCreateEntry(fileTargetPath, true));
             }
           } catch (error) {
             console.log(
-              'Uploading ' + fileTargetPath + ' failed with ' + error
+              'Uploading ' + fileTargetPath + ' failed with ' + error,
             );
             showNotification(
               'Importing file ' + fileTargetPath + ' failed.',
               'error',
-              true
+              true,
             );
           }
         }
@@ -777,21 +775,21 @@ export const IOActionsContextProvider = ({
     paths: Array<string>,
     targetPath: string,
     onUploadProgress?: (progress: Progress, response: any) => void,
-    uploadMeta = true
+    uploadMeta = true,
   ): Promise<TS.FileSystemEntry[]> {
     return new Promise((resolve, reject) => {
       function uploadFile(
         filePath: string,
         fileType: string,
-        fileContent: any
+        fileContent: any,
       ) {
         return PlatformIO.getPropertiesPromise(filePath)
-          .then(entryProps => {
+          .then((entryProps) => {
             if (entryProps) {
               showNotification(
                 'File with the same name already exist, importing skipped!',
                 'warning',
-                true
+                true,
               );
               dispatch(AppActions.setProgress(filePath, -1, undefined));
             } else {
@@ -800,7 +798,7 @@ export const IOActionsContextProvider = ({
                 { path: filePath },
                 fileContent,
                 true,
-                onUploadProgress
+                onUploadProgress,
               )
                 .then((fsEntry: TS.FileSystemEntry) => {
                   // handle meta files
@@ -818,25 +816,25 @@ export const IOActionsContextProvider = ({
 
                   return fsEntry;
                 })
-                .catch(err => {
+                .catch((err) => {
                   console.log('Importing file ' + filePath + ' failed ', err);
                   showNotification(
                     'Importing file ' + filePath + ' failed.',
                     'error',
-                    true
+                    true,
                   );
                   return undefined;
                 });
             }
             return undefined;
           })
-          .catch(err => {
+          .catch((err) => {
             console.log('Error getting properties', err);
           });
       }
 
       const uploadJobs = [];
-      paths.map(path => {
+      paths.map((path) => {
         let target =
           normalizePath(targetPath) +
           AppConfig.dirSeparator +
@@ -854,18 +852,18 @@ export const IOActionsContextProvider = ({
           uploadJobs.push([
             getMetaFileLocationForFile(path, AppConfig.dirSeparator),
             getMetaFileLocationForFile(target, AppConfig.dirSeparator),
-            'meta'
+            'meta',
           ]);
           uploadJobs.push([
             getThumbFileLocationForFile(path, AppConfig.dirSeparator),
             getThumbFileLocationForFile(target, AppConfig.dirSeparator),
             'thumb',
-            path
+            path,
           ]);
         }
         return true;
       });
-      const jobsPromises = uploadJobs.map(job => {
+      const jobsPromises = uploadJobs.map((job) => {
         // console.log("Selected File: "+JSON.stringify(selection.currentTarget.files[0]));
         // const file = selection.currentTarget.files[0];
         const filePath = job[1];
@@ -875,11 +873,11 @@ export const IOActionsContextProvider = ({
         if (AppConfig.isElectron) {
           // for AWS location getFileContentPromise cannot load with io-objectore
           return PlatformIO.getLocalFileContentPromise(job[0])
-            .then(fileContent => uploadFile(filePath, fileType, fileContent))
-            .catch(err => {
+            .then((fileContent) => uploadFile(filePath, fileType, fileContent))
+            .catch((err) => {
               // console.log('Error getting file:' + job[0] + ' ' + err);
               if (fileType === 'thumb' && job[3]) {
-                return generateThumbnailPromise(job[3], 0).then(dataURL => {
+                return generateThumbnailPromise(job[3], 0).then((dataURL) => {
                   if (dataURL && dataURL.length > 6) {
                     const baseString = dataURL.split(',').pop();
                     const fileContent = base64ToArrayBuffer(baseString);
@@ -894,12 +892,12 @@ export const IOActionsContextProvider = ({
         return undefined;
       });
       Promise.allSettled(jobsPromises)
-        .then(filesProm => {
+        .then((filesProm) => {
           const arrFiles: Array<TS.FileSystemEntry> = [];
           const arrMeta: Array<TS.FileSystemEntry> = [];
           const arrThumb: Array<TS.FileSystemEntry> = [];
 
-          filesProm.map(result => {
+          filesProm.map((result) => {
             if (result.status !== 'rejected') {
               const file = result.value;
               if (file) {
@@ -922,7 +920,7 @@ export const IOActionsContextProvider = ({
               //   arrFiles.map(file => file.name).toString() +
               //   ' successfully imported.',
               'default',
-              true
+              true,
             );
 
             // Enhance entries
@@ -930,7 +928,7 @@ export const IOActionsContextProvider = ({
               arrFiles.map((file: TS.FileSystemEntry) => {
                 const metaFilePath = getMetaFileLocationForFile(
                   file.path,
-                  AppConfig.dirSeparator
+                  AppConfig.dirSeparator,
                 );
                 if (metaFilePath !== undefined) {
                   for (let i = 0; i < arrMeta.length; i += 1) {
@@ -946,7 +944,7 @@ export const IOActionsContextProvider = ({
                 }
                 const thumbFilePath = getThumbFileLocationForFile(
                   file.path,
-                  AppConfig.dirSeparator
+                  AppConfig.dirSeparator,
                 );
                 if (thumbFilePath !== undefined) {
                   for (let i = 0; i < arrThumb.length; i += 1) {
@@ -957,7 +955,7 @@ export const IOActionsContextProvider = ({
                     ) {
                       // eslint-disable-next-line no-param-reassign
                       file.thumbPath = PlatformIO.getURLforPath(
-                        thumbFile.thumbPath
+                        thumbFile.thumbPath,
                       );
                     }
                   }
@@ -966,11 +964,11 @@ export const IOActionsContextProvider = ({
                   return enhanceEntry(
                     file,
                     AppConfig.tagDelimiter,
-                    PlatformIO.getDirSeparator()
+                    PlatformIO.getDirSeparator(),
                   );
                 }
                 return file;
-              })
+              }),
             );
           } else {
             // eslint-disable-next-line prefer-promise-reject-errors
@@ -978,7 +976,7 @@ export const IOActionsContextProvider = ({
           }
           return true;
         })
-        .catch(err => {
+        .catch((err) => {
           console.log('Error import fs: ' + err);
           reject(err);
         });
@@ -1004,7 +1002,7 @@ export const IOActionsContextProvider = ({
       copyFiles,
       downloadFile,
       uploadFilesAPI,
-      uploadFiles
+      uploadFiles,
     };
   }, [createDirectory, deleteEntries, deleteDirectory, deleteFile]);
 

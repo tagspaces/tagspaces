@@ -6,7 +6,7 @@ import {
   defaultLocationPath,
   defaultLocationName,
   createPwMinioLocation,
-  createPwLocation
+  createPwLocation,
 } from './location.helpers';
 import {
   reloadDirectory,
@@ -16,7 +16,7 @@ import {
   expectElementExist,
   takeScreenshot,
   selectorFile,
-  setInputKeys
+  setInputKeys,
 } from './general.helpers';
 import { openContextEntryMenu, renameFolder } from './test-utils';
 import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
@@ -65,7 +65,7 @@ test.describe('TST01 - Folder management', () => {
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
       false,
-      5000
+      5000,
     );
   });
 
@@ -77,7 +77,7 @@ test.describe('TST01 - Folder management', () => {
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
       false,
-      5000
+      5000,
     );
   });
 
@@ -89,17 +89,17 @@ test.describe('TST01 - Folder management', () => {
     await expectElementExist(
       '[data-tid=fsEntryName_' + newDirectoryName + ']',
       true,
-      5000
+      5000,
     );
     // cleanup
     await global.client.dblclick(
-      '[data-tid=fsEntryName_' + newDirectoryName + ']'
+      '[data-tid=fsEntryName_' + newDirectoryName + ']',
     );
     await deleteDirectory();
     await expectElementExist(
       '[data-tid=fsEntryName_' + newDirectoryName + ']',
       false,
-      5000
+      5000,
     );
   });
 
@@ -112,13 +112,13 @@ test.describe('TST01 - Folder management', () => {
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
       false,
-      5000
+      5000,
     );
   });
 
   test('TST0105 - Open subfolder [web,minio,electron]', async () => {
     await global.client.dblclick(
-      '[data-tid=fsEntryName_' + emptyFolderName + ']'
+      '[data-tid=fsEntryName_' + emptyFolderName + ']',
     );
     await expectElementExist(selectorFile, false, 5000);
   });
@@ -126,17 +126,17 @@ test.describe('TST01 - Folder management', () => {
   test('TST0106 - Show folder tags [web,minio,electron]', async () => {
     await openContextEntryMenu(
       '[data-tid=fsEntryName_empty_folder]',
-      'showProperties'
+      'showProperties',
     );
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
       add: true,
-      remove: false
+      remove: false,
     });
     await expectElementExist('[data-tid=tagContainer_test-tag1]', true, 5000);
     await expectElementExist('[data-tid=tagContainer_test-tag2]', true, 5000);
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
       add: false,
-      remove: true
+      remove: true,
     });
     await expectElementExist('[data-tid=tagContainer_test-tag1]', false, 5000);
     await expectElementExist('[data-tid=tagContainer_test-tag2]', false, 5000);
@@ -148,7 +148,7 @@ test.describe('TST01 - Folder management', () => {
     await createFile('file_to_move.txt', 'testing file content');
     await openContextEntryMenu(
       '[data-tid=fsEntryName_empty_folder]',
-      'fileMenuMoveCopyDirectoryTID'
+      'fileMenuMoveCopyDirectoryTID',
     );
     await clickOn('[data-tid=newSubdirectoryTID]');
     const folderToMove = 'folder_to_move';
@@ -161,7 +161,7 @@ test.describe('TST01 - Folder management', () => {
     await expectElementExist(
       '[data-tid=fsEntryName_empty_folder]',
       false,
-      5000
+      5000,
     );
     await global.client.dblclick('[data-tid=fsEntryName_' + folderToMove + ']');
     await expectElementExist('[data-tid=fsEntryName_empty_folder]', true, 5000);
@@ -172,7 +172,7 @@ test.describe('TST01 - Folder management', () => {
     await createFile('file_to_copy.txt', 'testing file content');
     await openContextEntryMenu(
       '[data-tid=fsEntryName_empty_folder]',
-      'fileMenuMoveCopyDirectoryTID'
+      'fileMenuMoveCopyDirectoryTID',
     );
     await clickOn('[data-tid=newSubdirectoryTID]');
     const folderToCopy = 'folder_to_copy';
@@ -197,7 +197,7 @@ test.describe('TST01 - Folder management', () => {
   test('TST0111 - Open folder properties [web,minio,electron]', async () => {
     await openContextEntryMenu(
       '[data-tid=fsEntryName_empty_folder]',
-      'showProperties'
+      'showProperties',
     );
     await expectElementExist('[data-tid=OpenedTIDempty_folder]', true, 5000);
     /*const divElement = await global.client.$(
@@ -210,13 +210,13 @@ test.describe('TST01 - Folder management', () => {
   test('TST0112 - Delete non empty folder by disabled trashcan [web,minio,electron]', async () => {
     await openContextEntryMenu(
       '[data-tid=fsEntryName_empty_folder]',
-      'deleteDirectory'
+      'deleteDirectory',
     );
     await clickOn('[data-tid=confirmDeleteFileDialog]');
     await expectElementExist(
       '[data-tid=fsEntryName_empty_folder]',
       false,
-      5000
+      5000,
     );
   });
 
@@ -232,7 +232,7 @@ test.describe('TST01 - Folder management', () => {
     await expectElementExist(
       '[data-tid=gridPerspectiveToggleShowDirectories]',
       true,
-      5000
+      5000,
     );
     await clickOn('[data-tid=closePerspectiveSettingsTID]');
   });
@@ -244,7 +244,7 @@ test.describe('TST01 - Folder management', () => {
     await expectElementExist(
       '[data-tid=listPerspectiveOptionsMenu]',
       true,
-      5000
+      5000,
     );
   });
 
@@ -254,7 +254,7 @@ test.describe('TST01 - Folder management', () => {
     await expectElementExist(
       '[data-tid=perspectiveGalleryToolbar]',
       true,
-      5000
+      5000,
     );
     await expectElementExist('[data-tid=perspectiveGalleryHelp]', true, 5000);
   });
@@ -265,7 +265,7 @@ test.describe('TST01 - Folder management', () => {
     await expectElementExist(
       '[data-tid=perspectiveMapiqueToolbar]',
       true,
-      5000
+      5000,
     );
     await expectElementExist('[data-tid=perspectiveMapiqueHelp]', true, 5000);
   });
@@ -276,7 +276,7 @@ test.describe('TST01 - Folder management', () => {
     await expectElementExist(
       '[data-tid=kanbanSettingsDialogOpenTID]',
       true,
-      5000
+      5000,
     );
   });
 });

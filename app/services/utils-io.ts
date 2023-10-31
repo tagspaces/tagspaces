@@ -21,16 +21,16 @@ import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import {
   loadIndex,
-  enhanceDirectoryIndex
+  enhanceDirectoryIndex,
 } from '@tagspaces/tagspaces-platforms/indexer';
 import {
   enhanceEntry,
-  loadJSONString
+  loadJSONString,
 } from '@tagspaces/tagspaces-common/utils-io';
 import { saveAs } from 'file-saver';
 import {
   locationType,
-  prepareTagForExport
+  prepareTagForExport,
 } from '@tagspaces/tagspaces-common/misc';
 import {
   extractTagsAsObjects,
@@ -45,7 +45,7 @@ import {
   normalizePath,
   getThumbFileLocationForDirectory,
   getBgndFileLocationForDirectory,
-  cleanFrontDirSeparator
+  cleanFrontDirSeparator,
 } from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
 import PlatformIO from './platform-facade';
@@ -59,7 +59,7 @@ import { supportedFileTypes } from '-/extension-config';
 
 export function getMetaForEntry(
   entry: TS.FileSystemEntry,
-  metaFilePath?: string
+  metaFilePath?: string,
 ): Promise<TS.FileSystemEntry> {
   if (entry.meta) {
     // && Object.keys(entry.meta).length > 0) {
@@ -70,12 +70,12 @@ export function getMetaForEntry(
     if (entry.isFile) {
       metaFilePath = getMetaFileLocationForFile(
         entry.path,
-        PlatformIO.getDirSeparator()
+        PlatformIO.getDirSeparator(),
       );
     } else {
       metaFilePath = getMetaFileLocationForDir(
         entry.path,
-        PlatformIO.getDirSeparator()
+        PlatformIO.getDirSeparator(),
       );
     }
   }
@@ -86,11 +86,11 @@ export function getMetaForEntry(
           ...entry,
           meta: {
             ...meta,
-            description: getDescriptionPreview(meta.description, 200)
-          }
+            description: getDescriptionPreview(meta.description, 200),
+          },
         },
         AppConfig.tagDelimiter,
-        PlatformIO.getDirSeparator()
+        PlatformIO.getDirSeparator(),
       );
     }
     return entry;
@@ -99,34 +99,35 @@ export function getMetaForEntry(
 
 export function enhanceOpenedEntry(
   entry: OpenedEntry,
-  tagDelimiter
+  tagDelimiter,
 ): OpenedEntry {
   if (entry.isFile) {
     const fineNameTags = extractTagsAsObjects(
       entry.path,
       tagDelimiter,
-      PlatformIO.getDirSeparator()
+      PlatformIO.getDirSeparator(),
     );
     if (fineNameTags.length > 0) {
       if (entry.tags && entry.tags.length > 0) {
         const uniqueTags = entry.tags.filter(
-          tag => fineNameTags.findIndex(obj => obj.title === tag.title) === -1
+          (tag) =>
+            fineNameTags.findIndex((obj) => obj.title === tag.title) === -1,
         );
         return {
           ...entry,
-          tags: [...uniqueTags, ...fineNameTags]
+          tags: [...uniqueTags, ...fineNameTags],
         };
       }
       return {
         ...entry,
-        tags: fineNameTags
+        tags: fineNameTags,
       };
     }
   } else {
     // ignore wrong size from fs.stats for directories
     return {
       ...entry,
-      size: undefined
+      size: undefined,
     };
   }
   return entry;
@@ -243,7 +244,7 @@ export function enhanceOpenedEntry(
 
 export function orderDirectories(
   directories,
-  metaArray: Array<TS.OrderVisibilitySettings>
+  metaArray: Array<TS.OrderVisibilitySettings>,
 ) {
   // if (sortBy === 'custom') {
   try {
@@ -251,11 +252,11 @@ export function orderDirectories(
       const arrLength = directories.length;
       return directories.sort((a, b) => {
         let indexA = metaArray.findIndex(
-          meta => meta.name === a.name
+          (meta) => meta.name === a.name,
           // meta => meta.path === Object.keys(a)[0]
         );
         let indexB = metaArray.findIndex(
-          meta => meta.name === b.name
+          (meta) => meta.name === b.name,
           // meta => meta.path === Object.keys(b)[0]
         );
         // set new dirs last
@@ -277,12 +278,12 @@ export function orderDirectories(
 
 export function orderByMetaArray(
   arr,
-  metaArray: Array<TS.OrderVisibilitySettings>
+  metaArray: Array<TS.OrderVisibilitySettings>,
 ) {
   const arrLength = arr.length;
   return arr.sort((a, b) => {
-    let indexA = metaArray.findIndex(metaFiles => metaFiles.name === a.name);
-    let indexB = metaArray.findIndex(metaFiles => metaFiles.name === b.name);
+    let indexA = metaArray.findIndex((metaFiles) => metaFiles.name === a.name);
+    let indexB = metaArray.findIndex((metaFiles) => metaFiles.name === b.name);
     // set new files last; dirs first
     if (indexA === -1) {
       indexA = !a.isFile ? arrLength * -1 : arrLength;
@@ -296,7 +297,7 @@ export function orderByMetaArray(
 
 export function findExtensionPathForId(
   extensionId: string,
-  extensionExternalPath = undefined
+  extensionExternalPath = undefined,
 ): string {
   if (extensionExternalPath) {
     return extensionExternalPath + '/' + extensionId;
@@ -311,11 +312,11 @@ export function findExtensionsForEntry(
   uuid: string,
   supportedFileTypes: Array<any>,
   entryPath: string,
-  isFile = true
+  isFile = true,
 ): OpenedEntry {
   const fileExtension = extractFileExtension(
     entryPath,
-    PlatformIO.getDirSeparator()
+    PlatformIO.getDirSeparator(),
   ).toLowerCase();
   const viewingExtensionPath = isFile
     ? findExtensionPathForId('@tagspaces/extensions/text-viewer')
@@ -329,9 +330,9 @@ export function findExtensionsForEntry(
     // changed: false,
     locationId: undefined,
     lmdt: 0,
-    size: 0
+    size: 0,
   };
-  supportedFileTypes.map(fileType => {
+  supportedFileTypes.map((fileType) => {
     if (fileType.viewer && fileType.type.toLowerCase() === fileExtension) {
       fileForOpening.viewingExtensionId = fileType.viewer;
       if (fileType.color) {
@@ -339,13 +340,13 @@ export function findExtensionsForEntry(
       }
       fileForOpening.viewingExtensionPath = findExtensionPathForId(
         fileType.viewer,
-        fileType.extensionExternalPath
+        fileType.extensionExternalPath,
       );
       if (fileType.editor && fileType.editor.length > 0) {
         fileForOpening.editingExtensionId = fileType.editor;
         fileForOpening.editingExtensionPath = findExtensionPathForId(
           fileType.editor,
-          fileType.extensionExternalPath
+          fileType.extensionExternalPath,
         );
       }
     }
@@ -357,10 +358,10 @@ export function findExtensionsForEntry(
 export function getNextFile(
   pivotFilePath?: string,
   lastSelectedEntry?: string,
-  currentDirectoryEntries?: Array<TS.FileSystemEntry>
+  currentDirectoryEntries?: Array<TS.FileSystemEntry>,
 ): TS.FileSystemEntry {
   const currentEntries = currentDirectoryEntries
-    ? currentDirectoryEntries.filter(entry => entry.isFile)
+    ? currentDirectoryEntries.filter((entry) => entry.isFile)
     : [];
   let filePath = pivotFilePath;
   if (!filePath) {
@@ -394,10 +395,10 @@ export function getNextFile(
 export function getPrevFile(
   pivotFilePath?: string,
   lastSelectedEntry?: string,
-  currentDirectoryEntries?: Array<TS.FileSystemEntry>
+  currentDirectoryEntries?: Array<TS.FileSystemEntry>,
 ): TS.FileSystemEntry {
   const currentEntries = currentDirectoryEntries
-    ? currentDirectoryEntries.filter(entry => entry.isFile)
+    ? currentDirectoryEntries.filter((entry) => entry.isFile)
     : [];
   let filePath = pivotFilePath;
   if (!filePath) {
@@ -450,15 +451,15 @@ async function persistIndex(param: string | any, directoryIndex: any) {
   return PlatformIO.saveTextFilePromise(
     { ...param, path: folderIndexPath },
     JSON.stringify(directoryIndex), // relativeIndex),
-    true
+    true,
   )
     .then(() => {
       console.log(
-        'Index persisted for: ' + directoryPath + ' to ' + folderIndexPath
+        'Index persisted for: ' + directoryPath + ' to ' + folderIndexPath,
       );
       return true;
     })
-    .catch(err => {
+    .catch((err) => {
       console.log('Error saving the index for ' + folderIndexPath, err);
     });
 }
@@ -467,7 +468,7 @@ export function createDirectoryIndex(
   param: string | any,
   extractText = false,
   ignorePatterns: Array<string> = [],
-  enableWS = true
+  enableWS = true,
   // disableIndexing = true,
 ): Promise<Array<TS.FileSystemEntry>> {
   if (Pro && Pro.Watcher) {
@@ -492,8 +493,8 @@ export function createDirectoryIndex(
     return PlatformIO.createDirectoryIndexInWorker(
       dirPath,
       extractText,
-      ignorePatterns
-    ).then(succeeded => {
+      ignorePatterns,
+    ).then((succeeded) => {
       if (succeeded) {
         return loadIndex({ path: dirPath, locationID });
       }
@@ -517,18 +518,18 @@ export function createDirectoryIndex(
     mode,
     ignorePatterns,
     listDirectoryPromise,
-    loadTextFilePromise
+    loadTextFilePromise,
   )
-    .then(directoryIndex =>
-      persistIndex(param, directoryIndex).then(success => {
+    .then((directoryIndex) =>
+      persistIndex(param, directoryIndex).then((success) => {
         if (success) {
           console.log('Index generated in folder: ' + directoryPath);
           return enhanceDirectoryIndex(param, directoryIndex, locationID);
         }
         return undefined;
-      })
+      }),
     )
-    .catch(err => {
+    .catch((err) => {
       console.log('Error creating index: ', err);
     });
 }
@@ -537,7 +538,7 @@ export function createDirectoryIndex(
  *  get full entry properties - with full description
  */
 export async function getAllPropertiesPromise(
-  entryPath: string
+  entryPath: string,
 ): Promise<TS.FileSystemEntry> {
   const entryProps = await PlatformIO.getPropertiesPromise(entryPath);
   let metaFilePath;
@@ -553,7 +554,7 @@ export async function getAllPropertiesPromise(
     return enhanceEntry(
       entryProps,
       AppConfig.tagDelimiter,
-      PlatformIO.getDirSeparator()
+      PlatformIO.getDirSeparator(),
     );
   }
   console.warn('Error getting props for ' + entryPath);
@@ -582,21 +583,21 @@ export function saveAsTextFile(blob: any, filename: string) {
 }*/
 
 export function isFulfilled<T>(
-  result: PromiseSettledResult<T>
+  result: PromiseSettledResult<T>,
 ): result is PromiseFulfilledResult<T> {
   return result.status === 'fulfilled';
 }
 
 export function isRejected<T>(
-  result: PromiseSettledResult<T>
+  result: PromiseSettledResult<T>,
 ): result is PromiseRejectedResult {
   return result.status === 'rejected';
 }
 
 export function getFulfilledResults<T>(
-  results: Array<PromiseSettledResult<T>>
+  results: Array<PromiseSettledResult<T>>,
 ) {
-  return results.filter(isFulfilled).map(result => result.value);
+  return results.filter(isFulfilled).map((result) => result.value);
 }
 
 interface FileExistenceCheck {
@@ -606,9 +607,9 @@ interface FileExistenceCheck {
 
 export function checkFilesExistPromise(
   paths: string[],
-  targetPath: string
+  targetPath: string,
 ): Promise<Array<string>> {
-  const promises: FileExistenceCheck[] = paths.map(path => {
+  const promises: FileExistenceCheck[] = paths.map((path) => {
     const targetFile =
       normalizePath(targetPath) +
       PlatformIO.getDirSeparator() +
@@ -618,23 +619,23 @@ export function checkFilesExistPromise(
   const progressPromises: Array<Promise<string>> = promises.map(
     ({ promise, path }) =>
       promise
-        .then(exists => (exists ? path : ''))
-        .catch(err => {
+        .then((exists) => (exists ? path : ''))
+        .catch((err) => {
           console.warn(`Promise ${path} error:`, err);
           return '';
-        })
+        }),
   );
 
-  return Promise.allSettled(progressPromises).then(results => {
-    return getFulfilledResults(results).filter(r => r);
+  return Promise.allSettled(progressPromises).then((results) => {
+    return getFulfilledResults(results).filter((r) => r);
   });
 }
 
 export function checkDirsExistPromise(
   paths: string[],
-  targetPath: string
+  targetPath: string,
 ): Promise<Array<string>> {
-  const promises: FileExistenceCheck[] = paths.map(path => {
+  const promises: FileExistenceCheck[] = paths.map((path) => {
     const targetDir =
       normalizePath(targetPath) +
       PlatformIO.getDirSeparator() +
@@ -644,15 +645,15 @@ export function checkDirsExistPromise(
   const progressPromises: Array<Promise<string>> = promises.map(
     ({ promise, path }) =>
       promise
-        .then(exists => (exists ? path : ''))
-        .catch(err => {
+        .then((exists) => (exists ? path : ''))
+        .catch((err) => {
           console.warn(`Promise ${path} error:`, err);
           return '';
-        })
+        }),
   );
 
-  return Promise.allSettled(progressPromises).then(results => {
-    return getFulfilledResults(results).filter(r => r);
+  return Promise.allSettled(progressPromises).then((results) => {
+    return getFulfilledResults(results).filter((r) => r);
   });
 }
 
@@ -662,7 +663,7 @@ export async function loadSubFolders(path: string, loadHidden = false) {
   let i = 0;
   let isHidden = false;
   if (folderContent !== undefined) {
-    folderContent.map(entry => {
+    folderContent.map((entry) => {
       if (!entry.isFile) {
         isHidden = entry.name.startsWith('.');
         if (isHidden) {
@@ -675,7 +676,7 @@ export async function loadSubFolders(path: string, loadHidden = false) {
               lmdt: entry.lmdt,
               meta: entry.meta,
               path: entry.path,
-              tags: entry.tags
+              tags: entry.tags,
             });
           } else {
             // do nothing
@@ -689,7 +690,7 @@ export async function loadSubFolders(path: string, loadHidden = false) {
             lmdt: entry.lmdt,
             meta: entry.meta,
             path: entry.path,
-            tags: entry.tags
+            tags: entry.tags,
           });
         }
       }
@@ -703,7 +704,7 @@ export function generateFileName(
   fileName: string,
   tags: string[],
   tagDelimiter: string,
-  prefixTagContainer = AppConfig.prefixTagContainer
+  prefixTagContainer = AppConfig.prefixTagContainer,
 ) {
   let tagsString = '';
   // Creating the string will all the tags by more that 0 tags
@@ -740,7 +741,7 @@ export function generateFileName(
       newFileName =
         cleanFileName(
           fileName.substring(0, lastDotPosition),
-          prefixTagContainer
+          prefixTagContainer,
         ) +
         (tagsString ? prefixTagContainer + tagsString : '') +
         '.' +
@@ -751,7 +752,7 @@ export function generateFileName(
     newFileName =
       cleanFileName(
         fileName.substring(0, beginTagContainer),
-        prefixTagContainer
+        prefixTagContainer,
       ) +
       (tagsString ? prefixTagContainer + tagsString : '') +
       fileName.substring(endTagContainer + 1, fileName.length).trim();
@@ -775,20 +776,17 @@ function cleanFileName(fileName, prefixTagContainer) {
 
 export function parseNewTags(tagsInput: string, tagGroup: TS.TagGroup) {
   if (tagGroup) {
-    let tags = tagsInput
-      .split(' ')
-      .join(',')
-      .split(','); // handle spaces around commas
+    let tags = tagsInput.split(' ').join(',').split(','); // handle spaces around commas
     tags = [...new Set(tags)]; // remove duplicates
-    tags = tags.filter(tag => tag && tag.length > 0); // zero length tags
+    tags = tags.filter((tag) => tag && tag.length > 0); // zero length tags
 
     const taggroupTags = tagGroup.children;
-    taggroupTags.forEach(tag => {
+    taggroupTags.forEach((tag) => {
       // filter out duplicated tags
-      tags = tags.filter(t => t !== tag.title);
+      tags = tags.filter((t) => t !== tag.title);
     });
     return taggroupTags.concat(
-      tags.map(tagTitle => {
+      tags.map((tagTitle) => {
         const tag: TS.Tag = {
           type: taggroupTags.length > 0 ? taggroupTags[0].type : 'sidecar',
           title: tagTitle.trim(),
@@ -798,31 +796,31 @@ export function parseNewTags(tagsInput: string, tagGroup: TS.TagGroup) {
           color: tagGroup.color,
           textcolor: tagGroup.textcolor,
           style: taggroupTags.length > 0 ? taggroupTags[0].style : '',
-          modified_date: new Date().getTime()
+          modified_date: new Date().getTime(),
         };
         return tag;
-      })
+      }),
     );
   }
 }
 
 export async function loadLocationDataPromise(
   path: string,
-  metaFile = AppConfig.folderLocationsFile
+  metaFile = AppConfig.folderLocationsFile,
 ): Promise<TS.FileSystemEntryMeta> {
   const entryProperties = await PlatformIO.getPropertiesPromise(path);
   if (!entryProperties.isFile) {
     const metaFilePath = getMetaFileLocationForDir(
       path,
       PlatformIO.getDirSeparator(),
-      metaFile
+      metaFile,
     );
     let metaData;
     try {
       metaData = await loadJSONFile(metaFilePath);
       metaData = {
         ...metaData,
-        description: getDescriptionPreview(metaData.description, 200)
+        description: getDescriptionPreview(metaData.description, 200),
       };
     } catch (e) {
       console.debug('cannot load json:' + metaFilePath, e);
@@ -839,9 +837,9 @@ export async function loadLocationDataPromise(
  */
 export function loadMetaDataPromise(
   path: string,
-  fullDescription = false
+  fullDescription = false,
 ): Promise<TS.FileSystemEntryMeta> {
-  return PlatformIO.getPropertiesPromise(path).then(entryProperties => {
+  return PlatformIO.getPropertiesPromise(path).then((entryProperties) => {
     if (entryProperties) {
       if (entryProperties.isFile) {
         return loadFileMetaDataPromise(path, fullDescription);
@@ -854,13 +852,13 @@ export function loadMetaDataPromise(
 
 export function loadFileMetaDataPromise(
   path: string,
-  fullDescription = false
+  fullDescription = false,
 ): Promise<TS.FileSystemEntryMeta> {
   const metaFilePath = getMetaFileLocationForFile(
     path,
-    PlatformIO.getDirSeparator()
+    PlatformIO.getDirSeparator(),
   );
-  return loadJSONFile(metaFilePath).then(metaData => {
+  return loadJSONFile(metaFilePath).then((metaData) => {
     if (!metaData) {
       throw new Error('loadFileMetaDataPromise ' + metaFilePath + ' not exist');
     }
@@ -874,20 +872,20 @@ export function loadFileMetaDataPromise(
       tags: metaData.tags || [],
       appName: metaData.appName || '',
       appVersion: metaData.appVersion || '',
-      lastUpdated: metaData.lastUpdated || ''
+      lastUpdated: metaData.lastUpdated || '',
     };
   });
 }
 
 export function loadDirMetaDataPromise(
   path: string,
-  fullDescription = false
+  fullDescription = false,
 ): Promise<TS.FileSystemEntryMeta> {
   const metaDirPath = getMetaFileLocationForDir(
     path,
-    PlatformIO.getDirSeparator()
+    PlatformIO.getDirSeparator(),
   );
-  return loadJSONFile(metaDirPath).then(metaData => {
+  return loadJSONFile(metaDirPath).then((metaData) => {
     if (!metaData) {
       throw new Error('loadDirMetaDataPromise ' + metaDirPath + ' not exist');
     }
@@ -903,13 +901,13 @@ export function loadDirMetaDataPromise(
       tags: metaData.tags || [],
       appName: metaData.appName || '',
       appVersion: metaData.appVersion || '',
-      lastUpdated: metaData.lastUpdated || ''
+      lastUpdated: metaData.lastUpdated || '',
     };
   });
 }
 
 export function cleanMetaData(
-  metaData: TS.FileSystemEntryMeta
+  metaData: TS.FileSystemEntryMeta,
 ): TS.FileSystemEntryMeta {
   const cleanedMeta: any = {};
   if (metaData.id) {
@@ -993,7 +991,7 @@ export function cleanMetaData(
   }
   if (metaData.tags && metaData.tags.length > 0) {
     cleanedMeta.tags = [];
-    metaData.tags.forEach(tag => {
+    metaData.tags.forEach((tag) => {
       const cleanedTag = prepareTagForExport(tag);
       if (cleanedTag.title) {
         cleanedMeta.tags.push(cleanedTag);
@@ -1005,7 +1003,7 @@ export function cleanMetaData(
 
 export async function saveLocationDataPromise(
   path: string,
-  metaData: any
+  metaData: any,
 ): Promise<any> {
   const entryProperties = await PlatformIO.getPropertiesPromise(path);
   if (entryProperties) {
@@ -1015,11 +1013,10 @@ export async function saveLocationDataPromise(
       // todo not need to check if folder exist first createDirectoryPromise() recursively will skip creation of existing folders https://nodejs.org/api/fs.html#fs_fs_mkdir_path_options_callback
       const metaDirectoryPath = getMetaDirectoryPath(
         path,
-        PlatformIO.getDirSeparator()
+        PlatformIO.getDirSeparator(),
       );
-      const metaDirectoryProperties = await PlatformIO.getPropertiesPromise(
-        metaDirectoryPath
-      );
+      const metaDirectoryProperties =
+        await PlatformIO.getPropertiesPromise(metaDirectoryPath);
       if (!metaDirectoryProperties) {
         await PlatformIO.createDirectoryPromise(metaDirectoryPath);
       }
@@ -1027,19 +1024,19 @@ export async function saveLocationDataPromise(
       metaFilePath = getMetaFileLocationForDir(
         path,
         PlatformIO.getDirSeparator(),
-        AppConfig.folderLocationsFile
+        AppConfig.folderLocationsFile,
       );
     }
     const content = JSON.stringify({
       ...metaData,
       appName: versionMeta.name,
       appVersion: versionMeta.version,
-      lastUpdated: new Date().toJSON()
+      lastUpdated: new Date().toJSON(),
     });
     return PlatformIO.saveTextFilePromise(
       { path: metaFilePath },
       content,
-      true
+      true,
     );
   }
   return Promise.reject(new Error('file not found' + path));
@@ -1047,7 +1044,7 @@ export async function saveLocationDataPromise(
 
 export async function saveMetaDataPromise(
   path: string,
-  metaData: any
+  metaData: any,
 ): Promise<any> {
   const entryProperties = await PlatformIO.getPropertiesPromise(path);
   const cleanedMetaData = cleanMetaData(metaData);
@@ -1056,12 +1053,12 @@ export async function saveMetaDataPromise(
     if (entryProperties.isFile) {
       metaFilePath = getMetaFileLocationForFile(
         path,
-        PlatformIO.getDirSeparator()
+        PlatformIO.getDirSeparator(),
       );
       // check and create meta folder if not exist
       const metaFolder = getMetaDirectoryPath(
         extractContainingDirectoryPath(path, PlatformIO.getDirSeparator()),
-        PlatformIO.getDirSeparator()
+        PlatformIO.getDirSeparator(),
       );
       const metaExist = await PlatformIO.getPropertiesPromise(metaFolder);
       if (!metaExist) {
@@ -1072,11 +1069,10 @@ export async function saveMetaDataPromise(
       // todo not need to check if folder exist first createDirectoryPromise() recursively will skip creation of existing folders https://nodejs.org/api/fs.html#fs_fs_mkdir_path_options_callback
       const metaDirectoryPath = getMetaDirectoryPath(
         path,
-        PlatformIO.getDirSeparator()
+        PlatformIO.getDirSeparator(),
       );
-      const metaDirectoryProperties = await PlatformIO.getPropertiesPromise(
-        metaDirectoryPath
-      );
+      const metaDirectoryProperties =
+        await PlatformIO.getPropertiesPromise(metaDirectoryPath);
       if (!metaDirectoryProperties) {
         await PlatformIO.createDirectoryPromise(metaDirectoryPath);
       }
@@ -1088,14 +1084,14 @@ export async function saveMetaDataPromise(
 
       metaFilePath = getMetaFileLocationForDir(
         path,
-        PlatformIO.getDirSeparator()
+        PlatformIO.getDirSeparator(),
       );
     }
     const content = JSON.stringify(mergeFsEntryMeta(cleanedMetaData));
     return PlatformIO.saveTextFilePromise(
       { path: metaFilePath },
       content,
-      true
+      true,
     );
   }
   return Promise.reject(new Error('file not found' + path));
@@ -1108,33 +1104,33 @@ export async function saveMetaDataPromise(
  */
 export function setFolderBackgroundPromise(
   filePath: string,
-  directoryPath: string
+  directoryPath: string,
 ): Promise<string> {
   const folderBgndPath = getBgndFileLocationForDirectory(
     directoryPath,
-    PlatformIO.getDirSeparator()
+    PlatformIO.getDirSeparator(),
   );
 
   return generateImageThumbnail(filePath, AppConfig.maxBgndSize) // 4K -> 3840, 2K -> 2560
-    .then(base64Image => {
+    .then((base64Image) => {
       if (base64Image) {
         const data = base64ToArrayBuffer(base64Image.split(',').pop());
         return PlatformIO.saveBinaryFilePromise(
           { path: folderBgndPath },
           data,
-          true
+          true,
         )
           .then(() => {
             // props.setLastBackgroundImageChange(new Date().getTime());
             return directoryPath;
           })
-          .catch(error => {
+          .catch((error) => {
             console.log('Save to file failed ', error);
             return Promise.reject(error);
           });
       }
     })
-    .catch(error => {
+    .catch((error) => {
       console.log('Background generation failed ', error);
       return Promise.reject(error);
     });
@@ -1151,14 +1147,14 @@ export function findBackgroundColorForFolder(fsEntry: TS.FileSystemEntry) {
 
 export function findColorForEntry(
   fsEntry: TS.FileSystemEntry,
-  supportedFileTypes: Array<any>
+  supportedFileTypes: Array<any>,
 ): string {
   if (!fsEntry.isFile) {
     return 'gray'; // AppConfig.defaultFolderColor;
   }
   if (fsEntry.extension !== undefined) {
     const fileType = supportedFileTypes.find(
-      type => type.type.toLowerCase() === fsEntry.extension.toLowerCase()
+      (type) => type.type.toLowerCase() === fsEntry.extension.toLowerCase(),
     );
 
     if (fileType && fileType.color) {
@@ -1170,7 +1166,7 @@ export function findColorForEntry(
 
 export function loadFileContentPromise(
   fullPath: string,
-  type: string
+  type: string,
 ): Promise<any> {
   return new Promise((resolve, reject) => {
     const xhr: any = new XMLHttpRequest();
@@ -1199,7 +1195,7 @@ export function getDescriptionPreview(mdContent, maxLength = 200) {
     .replace(
       /\[(.*?)\]\(.*?\)/g, // remove link href, also dataurls
       // /\(data:([\w\/\+]+);(charset=[\w-]+|base64).*,([a-zA-Z0-9+/]+={0,2})\)/g,
-      ''
+      '',
     )
     .replace(/<[^>]*>/g, '') // remove html
     .replace(/\*|~|#|_/g, '');
@@ -1255,7 +1251,7 @@ export function convertMarkDown(mdContent: string, directoryPath: string) {
     breaks: false,
     smartLists: true,
     smartypants: false,
-    xhtml: true
+    xhtml: true,
   });
 
   return marked.parse(DOMPurify.sanitize(mdContent));
@@ -1307,7 +1303,7 @@ export function normalizeUrl(url: string) {
  */
 export function mergeByProp(a, b, prop) {
   const reduced = a.filter(
-    aitem => !b.find(bitem => aitem[prop] === bitem[prop])
+    (aitem) => !b.find((bitem) => aitem[prop] === bitem[prop]),
   );
   return reduced.concat(b);
 }
@@ -1322,10 +1318,10 @@ export function updateByProp(a, b, prop) {
   const commonResults = [];
   const uniqueResults = [];
   for (const el of a) {
-    const commonB = b.find(bitem => bitem[prop] === el[prop]);
+    const commonB = b.find((bitem) => bitem[prop] === el[prop]);
     if (commonB) {
       const common = {};
-      Object.keys(el).forEach(function(key) {
+      Object.keys(el).forEach(function (key) {
         common[key] = el[key] || commonB[key];
       });
       commonResults.push(common);
@@ -1334,7 +1330,7 @@ export function updateByProp(a, b, prop) {
     }
   }
   const uniqueB = b.filter(
-    bitem => !a.find(aitem => bitem[prop] === aitem[prop])
+    (bitem) => !a.find((aitem) => bitem[prop] === aitem[prop]),
   );
   return [...commonResults, ...uniqueResults, ...uniqueB];
 }
@@ -1349,8 +1345,8 @@ export const merge = (a, b) => {
   return Object.fromEntries(
     Object.entries(allKeys).map(([k, v]) => [
       k,
-      v && Array.isArray(v) ? mergeTags(v, b[k]) : v || b[k]
-    ])
+      v && Array.isArray(v) ? mergeTags(v, b[k]) : v || b[k],
+    ]),
   );
 };
 
@@ -1359,19 +1355,19 @@ function mergeTags(oldTagsArray: Array<TS.Tag>, newTagsArray: Array<TS.Tag>) {
     return oldTagsArray;
   }
   const uniqueTags = newTagsArray.filter(
-    newTag => !oldTagsArray.some(oldTag => oldTag.title === newTag.title)
+    (newTag) => !oldTagsArray.some((oldTag) => oldTag.title === newTag.title),
   );
   return [...oldTagsArray, ...uniqueTags];
 }
 
 export function getFolderThumbPath(
   path: string,
-  lastThumbnailImageChange: any
+  lastThumbnailImageChange: any,
 ) {
   if (path) {
     return getThumbPath(
       getThumbFileLocationForDirectory(path, PlatformIO.getDirSeparator()),
-      lastThumbnailImageChange
+      lastThumbnailImageChange,
     );
   }
   return undefined;
@@ -1379,7 +1375,7 @@ export function getFolderThumbPath(
 
 export function getThumbPath(
   thumbPath: string,
-  lastThumbnailImageChange?: any
+  lastThumbnailImageChange?: any,
 ) {
   if (!thumbPath) {
     return undefined;
@@ -1409,12 +1405,12 @@ function isSignedURL(signedUrl) {
 
 export function getFolderBgndPath(
   path: string,
-  lastBackgroundImageChange: any
+  lastBackgroundImageChange: any,
 ) {
   if (path !== undefined) {
     return getBgndPath(
       getBgndFileLocationForDirectory(path, PlatformIO.getDirSeparator()),
-      lastBackgroundImageChange
+      lastBackgroundImageChange,
     );
   }
   return undefined;
@@ -1459,7 +1455,7 @@ export function getCleanLocationPath(location: TS.Location): string {
 
 export function getRelativeEntryPath(
   location: TS.Location,
-  entryPath: string
+  entryPath: string,
 ): string {
   const entryPathCleaned = cleanTrailingDirSeparator(entryPath);
   // const isCloudLocation = location.type === locationType.TYPE_CLOUD;
@@ -1479,17 +1475,17 @@ export function getRelativeEntryPath(
  */
 export function updateFsEntries(
   entries: Array<TS.FileSystemEntry>,
-  entriesChanges: Array<any>
+  entriesChanges: Array<any>,
 ): Array<TS.FileSystemEntry> {
-  return entries.map(entry => {
-    const entryUpdated = entriesChanges.find(e => e.path === entry.path);
+  return entries.map((entry) => {
+    const entryUpdated = entriesChanges.find((e) => e.path === entry.path);
     if (!entryUpdated) {
       return entry;
     }
 
     return {
       ...entry,
-      ...entryUpdated
+      ...entryUpdated,
     };
   });
 }
@@ -1502,7 +1498,7 @@ export function mergeFsEntryMeta(props: any = {}): TS.FileSystemEntryMeta {
     lastUpdated: new Date().getTime(),
     tags: [],
     ...props,
-    id: props.id || getUuid()
+    id: props.id || getUuid(),
   };
 }
 
@@ -1518,7 +1514,7 @@ export function toFsEntry(path: string, isFile: boolean): TS.FileSystemEntry {
     tags: [],
     size: 0,
     lmdt: new Date().getTime(),
-    path
+    path,
   };
 }
 
@@ -1531,43 +1527,43 @@ export function openedToFsEntry(openedEntry: OpenedEntry): TS.FileSystemEntry {
     isFile: openedEntry.isFile,
     extension: extractFileExtension(
       openedEntry.path,
-      PlatformIO.getDirSeparator()
+      PlatformIO.getDirSeparator(),
     ),
     description: openedEntry.description,
     tags: openedEntry.tags,
     size: openedEntry.size,
     lmdt: openedEntry.lmdt,
-    path: openedEntry.path
+    path: openedEntry.path,
   };
 }
 
 export function createFsEntryMeta(
   path: string,
-  props: any = {}
+  props: any = {},
 ): Promise<string> {
   const newFsEntryMeta: TS.FileSystemEntryMeta = mergeFsEntryMeta(props);
   return saveMetaDataPromise(path, newFsEntryMeta)
     .then(() => newFsEntryMeta.id)
-    .catch(error => {
+    .catch((error) => {
       console.log(
         'Error saveMetaDataPromise for ' +
           path +
           ' orphan id: ' +
           newFsEntryMeta.id,
-        error
+        error,
       );
       return newFsEntryMeta.id;
     });
 }
 export function getDefaultViewer(fileType) {
-  const type = supportedFileTypes.find(fType => fType.type === fileType);
+  const type = supportedFileTypes.find((fType) => fType.type === fileType);
   if (type) {
     return type.viewer;
   }
   return undefined;
 }
 export function getDefaultEditor(fileType) {
-  const type = supportedFileTypes.find(fType => fType.type === fileType);
+  const type = supportedFileTypes.find((fType) => fType.type === fileType);
   if (type) {
     return type.editor;
   }

@@ -21,7 +21,7 @@ import React, {
   useEffect,
   useMemo,
   useRef,
-  useState
+  useState,
 } from 'react';
 import { FSWatcher } from 'chokidar';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -29,7 +29,7 @@ import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
 import {
   extractContainingDirectoryPath,
-  getFileLocationFromMetaFile
+  getFileLocationFromMetaFile,
 } from '@tagspaces/tagspaces-common/paths';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { PerspectiveIDs } from '-/perspectives';
@@ -58,7 +58,7 @@ export const FSWatcherContext = createContext<FSWatcherContextData>({
   addToIgnored: undefined,
   removeFromIgnored: undefined,
   ignoreByWatcher: undefined,
-  deignoreByWatcher: undefined
+  deignoreByWatcher: undefined,
 });
 
 export type FSWatcherContextProviderProps = {
@@ -66,7 +66,7 @@ export type FSWatcherContextProviderProps = {
 };
 
 export const FSWatcherContextProvider = ({
-  children
+  children,
 }: FSWatcherContextProviderProps) => {
   const { currentLocation } = useCurrentLocationContext();
   const {
@@ -74,7 +74,7 @@ export const FSWatcherContextProvider = ({
     currentDirectoryPath,
     currentDirectoryPerspective,
     addDirectoryEntries,
-    removeDirectoryEntries
+    removeDirectoryEntries,
   } = useDirectoryContentContext();
   const { reflectDeleteEntry, reflectCreateEntry } = useLocationIndexContext();
   const [watcher, setWatcher] = useState<FSWatcher>(undefined);
@@ -90,7 +90,7 @@ export const FSWatcherContextProvider = ({
       const depth =
         currentDirectoryPerspective === PerspectiveIDs.KANBAN ? 3 : 1;
       setWatcher(
-        watchFolder(PlatformIO.getLocationPath(currentLocation), depth)
+        watchFolder(PlatformIO.getLocationPath(currentLocation), depth),
       );
     } else {
       stopWatching();
@@ -121,7 +121,7 @@ export const FSWatcherContextProvider = ({
       //  /(^|[\/\\])\../.test(path) || path.includes('.ts'), // ignoring .dotfiles // ignoring .ts folder
       // (stats && stats.isDirectory()),  // ignoring directories
       ignoreInitial: true,
-      depth
+      depth,
     });
   }
 
@@ -161,7 +161,7 @@ export const FSWatcherContextProvider = ({
           const entry = toFsEntry(path, true);
           const dirPath = extractContainingDirectoryPath(
             path,
-            PlatformIO.getDirSeparator()
+            PlatformIO.getDirSeparator(),
           );
           if (currentDirectoryPath === dirPath) {
             addDirectoryEntries([entry]);
@@ -175,7 +175,7 @@ export const FSWatcherContextProvider = ({
           const entry = toFsEntry(path, false);
           const dirPath = extractContainingDirectoryPath(
             path,
-            PlatformIO.getDirSeparator()
+            PlatformIO.getDirSeparator(),
           );
           if (currentDirectoryPath === dirPath) {
             addDirectoryEntries([entry]);
@@ -192,29 +192,29 @@ export const FSWatcherContextProvider = ({
           if (path.endsWith(AppConfig.metaFileExt)) {
             const directoryPath = getFileLocationFromMetaFile(
               path,
-              PlatformIO.getDirSeparator()
+              PlatformIO.getDirSeparator(),
             );
             loadDirectoryContent(
               extractContainingDirectoryPath(
                 directoryPath,
-                PlatformIO.getDirSeparator()
+                PlatformIO.getDirSeparator(),
               ),
               false,
-              true
+              true,
             );
           }
           if (path.endsWith(AppConfig.metaFolderFile)) {
             const directoryPath = getFileLocationFromMetaFile(
               path,
-              PlatformIO.getDirSeparator()
+              PlatformIO.getDirSeparator(),
             );
             loadDirectoryContent(
               extractContainingDirectoryPath(
                 directoryPath,
-                PlatformIO.getDirSeparator()
+                PlatformIO.getDirSeparator(),
               ),
               false,
-              true
+              true,
             );
           }
         }
@@ -251,7 +251,7 @@ export const FSWatcherContextProvider = ({
     setTimeout(() => {
       for (let i = 0; i < ignored.current.length; i++) {
         const pathParts = ignored.current[i].split(
-          PlatformIO.getDirSeparator()
+          PlatformIO.getDirSeparator(),
         );
         if (path.startsWith(ignored.current[i]) || pathParts.includes(path)) {
           ignored.current.splice(i, 1);
@@ -289,7 +289,7 @@ export const FSWatcherContextProvider = ({
       addToIgnored,
       removeFromIgnored,
       ignoreByWatcher,
-      deignoreByWatcher
+      deignoreByWatcher,
     };
   }, [watcher, ignored.current]);
 

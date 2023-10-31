@@ -19,12 +19,12 @@
 import React from 'react';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 
-export const ParentFolderIcon = props => (
+export const ParentFolderIcon = (props) => (
   <KeyboardReturnIcon style={{ transform: 'rotate(90deg)' }} />
   // <ParentFolder {...props} />
 );
 
-export const NavigateToFolderIcon = props => <KeyboardReturnIcon />;
+export const NavigateToFolderIcon = (props) => <KeyboardReturnIcon />;
 
 export { default as InfoTooltipIcon } from '@mui/icons-material/InfoOutlined';
 

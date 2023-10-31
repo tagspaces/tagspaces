@@ -26,7 +26,7 @@ import ExpandMoreIcon from '@mui/icons-material/MoreVert';
 import PlatformIO from '../services/platform-facade';
 import {
   normalizePath,
-  extractShortDirectoryName
+  extractShortDirectoryName,
 } from '@tagspaces/tagspaces-common/paths';
 import DirectoryMenu from './menus/DirectoryMenu';
 import { LocalLocationIcon, CloudLocationIcon } from '-/components/CommonIcons';
@@ -47,15 +47,15 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
     color: theme.palette.text.primary,
     fontWeight: theme.typography.fontWeightRegular,
     '&:hover, &:focus': {
-      backgroundColor: emphasize(backgroundColor, 0.06)
+      backgroundColor: emphasize(backgroundColor, 0.06),
     },
     '&:active': {
       boxShadow: theme.shadows[1],
-      backgroundColor: emphasize(backgroundColor, 0.12)
+      backgroundColor: emphasize(backgroundColor, 0.12),
     },
     '& ol': {
-      flexWrap: 'nowrap'
-    }
+      flexWrap: 'nowrap',
+    },
   };
 }) as typeof Chip; // TypeScript only: need a type cast here because https://github.com/Microsoft/TypeScript/issues/26591
 
@@ -66,8 +66,8 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
 const StyledBreadcrumbs = styled(Breadcrumbs)(({ theme }) => {
   return {
     '& ol': {
-      flexWrap: 'nowrap'
-    }
+      flexWrap: 'nowrap',
+    },
   };
 }) as typeof Breadcrumbs; // TypeScript only: need a type cast here because https://github.com/Microsoft/TypeScript/issues/26591
 
@@ -84,10 +84,8 @@ function PathBreadcrumbs(props: Props) {
   const { setSelectedEntries } = useSelectedEntriesContext();
   let pathParts: Array<string> = [];
 
-  const [
-    directoryContextMenuAnchorEl,
-    setDirectoryContextMenuAnchorEl
-  ] = useState<null | HTMLElement>(null);
+  const [directoryContextMenuAnchorEl, setDirectoryContextMenuAnchorEl] =
+    useState<null | HTMLElement>(null);
 
   const { openRenameDirectoryDialog, isDesktopMode } = props;
 
@@ -135,11 +133,11 @@ function PathBreadcrumbs(props: Props) {
         normalizedCurrentPath
           .substring(PlatformIO.haveObjectStoreSupport() ? 2 : 1)
           .split('/')
-          .join(PlatformIO.getDirSeparator())
+          .join(PlatformIO.getDirSeparator()),
       ); // TODO: optimization needed
       normalizedCurrentPath = normalizedCurrentPath.substring(
         0,
-        normalizedCurrentPath.lastIndexOf('/')
+        normalizedCurrentPath.lastIndexOf('/'),
       );
     }
 
@@ -153,7 +151,7 @@ function PathBreadcrumbs(props: Props) {
 
   let currentFolderName = extractShortDirectoryName(
     normalizePath(normalizedCurrentDirPath),
-    '/'
+    '/',
   );
   if (currentLocation && (!currentFolderName || currentFolderName === '/')) {
     currentFolderName = currentLocation.name;
@@ -165,7 +163,7 @@ function PathBreadcrumbs(props: Props) {
       breadcrumbs = pathParts.map((pathPart, index) => {
         const folderName = extractShortDirectoryName(
           pathPart,
-          PlatformIO.getDirSeparator()
+          PlatformIO.getDirSeparator(),
         );
         return (
           <Tooltip key={pathPart} title={t('core:navigateTo') + ' ' + pathPart}>
@@ -206,7 +204,7 @@ function PathBreadcrumbs(props: Props) {
       <StyledBreadcrumbs
         style={{
           overflowX: 'scroll',
-          marginTop: 8
+          marginTop: 8,
         }}
         maxItems={isDesktopMode ? 2 : 1}
         itemsAfterCollapse={isDesktopMode ? 1 : 1}
@@ -216,7 +214,7 @@ function PathBreadcrumbs(props: Props) {
           <span
             style={{
               marginLeft: -4,
-              marginRight: -5
+              marginRight: -5,
             }}
           >
             {'›'}

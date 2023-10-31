@@ -112,112 +112,112 @@ export default {
   supportedLanguages: [
     {
       iso: 'en',
-      title: 'English'
+      title: 'English',
     },
     {
       iso: 'de_DE',
-      title: 'Deutsch (German)'
+      title: 'Deutsch (German)',
     },
     {
       iso: 'it',
-      title: 'Italiano (Italian)'
+      title: 'Italiano (Italian)',
     },
     {
       iso: 'zh_CN',
-      title: '中国的 (Chinese)'
+      title: '中国的 (Chinese)',
     },
     {
       iso: 'bg',
-      title: 'Български (Bulgarian)'
+      title: 'Български (Bulgarian)',
     },
     {
       iso: 'ja',
-      title: '日本の (Japanese)'
+      title: '日本の (Japanese)',
     },
     {
       iso: 'pt_BR',
-      title: 'Português (Brazil)'
+      title: 'Português (Brazil)',
     },
     {
       iso: 'pt_PT',
-      title: 'Português (Portugal)'
+      title: 'Português (Portugal)',
     },
     {
       iso: 'fr',
-      title: 'Français (French)'
+      title: 'Français (French)',
     },
     {
       iso: 'sk_SK',
-      title: 'Slovenský (Slovak)'
+      title: 'Slovenský (Slovak)',
     },
     {
       iso: 'es',
-      title: 'Español (Spanish)'
+      title: 'Español (Spanish)',
     },
     {
       iso: 'uk',
-      title: 'Український (Ukrainian)'
+      title: 'Український (Ukrainian)',
     },
     {
       iso: 'ru',
-      title: 'Русский (Russian)'
+      title: 'Русский (Russian)',
     },
     {
       iso: 'tr',
-      title: 'Türk (Turkish)'
+      title: 'Türk (Turkish)',
     },
     {
       iso: 'cs',
-      title: 'Čeština (Czech)'
+      title: 'Čeština (Czech)',
     },
     {
       iso: 'ca',
-      title: 'Catalan (Català)'
+      title: 'Catalan (Català)',
     },
     {
       iso: 'ko',
-      title: '한국의 (Korean)'
+      title: '한국의 (Korean)',
     },
     {
       iso: 'el',
-      title: 'ελληνικά (Greek)'
+      title: 'ελληνικά (Greek)',
     },
     {
       iso: 'sv',
-      title: 'svenska (Swedish)'
+      title: 'svenska (Swedish)',
     },
     {
       iso: 'nl_NL',
-      title: 'Nederlands (Dutch)'
+      title: 'Nederlands (Dutch)',
     },
     {
       iso: 'zh_TW',
-      title: '台灣 (Chinese Taiwan)'
+      title: '台灣 (Chinese Taiwan)',
     },
     {
       iso: 'hu',
-      title: 'Magyar (Hungarian)'
+      title: 'Magyar (Hungarian)',
     },
     {
       iso: 'id_ID',
-      title: 'bahasa Indonesia (Indonesian)'
+      title: 'bahasa Indonesia (Indonesian)',
     },
     {
       iso: 'hy',
-      title: 'հայերեն (Armenian)'
+      title: 'հայերեն (Armenian)',
     },
     {
       iso: 'nb',
-      title: 'Bokmål (Norwegian)'
+      title: 'Bokmål (Norwegian)',
     },
     {
       iso: 'fr_CA',
-      title: 'français canadien (Canadian French)'
+      title: 'français canadien (Canadian French)',
     },
     {
       iso: 'zh_HK',
-      title: '漢語 (Chinese Hong Kong)'
-    }
+      title: '漢語 (Chinese Hong Kong)',
+    },
   ],
   keyBindings: keyBindings(AppConfig.isMacLike),
   supportedFileTypes: supportedFileTypes,
@@ -228,14 +228,14 @@ export default {
       name: 'Standard',
       serverURL: 'https://{s}.tile.osm.org/{z}/{x}/{y}.png',
       serverInfo:
-        '<b>Leaflet</b> | Map data: &copy; <b>https://openstreetmap.org/copyright</b> contributors, <b>CC-BY-SA</b>, Imagery © <b>Mapbox</b>'
+        '<b>Leaflet</b> | Map data: &copy; <b>https://openstreetmap.org/copyright</b> contributors, <b>CC-BY-SA</b>, Imagery © <b>Mapbox</b>',
     },
     {
       uuid: getUuid(),
       name: 'Topographic',
       serverURL: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
       serverInfo:
-        '<b>Leaflet</b> | Map data: &copy; <b>https://openstreetmap.org/copyright</b> contributors, SRTM | Map style: &copy; <b>https://opentopomap.org</b> - OpenTopoMap (<b>https://creativecommons.org/licenses/by-sa/3.0/</b> - CC-BY-SA'
-    }
-  ]
+        '<b>Leaflet</b> | Map data: &copy; <b>https://openstreetmap.org/copyright</b> contributors, SRTM | Map style: &copy; <b>https://opentopomap.org</b> - OpenTopoMap (<b>https://creativecommons.org/licenses/by-sa/3.0/</b> - CC-BY-SA',
+    },
+  ],
 };

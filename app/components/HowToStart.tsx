@@ -21,7 +21,7 @@ import { useTranslation } from 'react-i18next';
   }
 });*/
 
-const selectByTID: any = tid =>
+const selectByTID: any = (tid) =>
   document.querySelector('[data-tid="' + tid + '"]');
 
 function clearHighlights() {
@@ -51,7 +51,7 @@ function HowToStart() {
           features of this application. We suggest that first-time users utilize
           this walk-through.
         </>
-      )
+      ),
     },
     {
       label: 'Location Manager',
@@ -72,7 +72,7 @@ function HowToStart() {
       action: () => {
         selectByTID('locationManager').click();
         selectByTID('locationList').classList.add('highlighterOn');
-      }
+      },
     },
     {
       label: 'Creating a Location',
@@ -92,7 +92,7 @@ function HowToStart() {
       ),
       action: () => {
         selectByTID('createNewFileTID').classList.add('highlighterOn');
-      }
+      },
     },
     {
       label: 'Tag Library',
@@ -115,7 +115,7 @@ function HowToStart() {
           selectByTID('tagLibrary').classList.add('highlighterOn');
           selectByTID('tagLibraryTagGroupList').classList.add('highlighterOn');
         }, 2000);
-      }
+      },
     },
     {
       label: 'Quick access section',
@@ -152,7 +152,7 @@ function HowToStart() {
           selectByTID('quickAccessButton').classList.add('highlighterOn');
           selectByTID('quickAccessArea').classList.add('highlighterOn');
         }, 2000);
-      }
+      },
     },
     {
       label: 'Perspectives Switcher',
@@ -189,9 +189,9 @@ function HowToStart() {
       ),
       action: () => {
         selectByTID('floatingPerspectiveSwitcher').classList.add(
-          'highlighterOn'
+          'highlighterOn',
         );
-      }
+      },
     },
     {
       label: 'Creating files',
@@ -222,7 +222,7 @@ function HowToStart() {
       ),
       action: () => {
         selectByTID('createNewFileTID').classList.add('highlighterOn');
-      }
+      },
     },
     {
       label: 'App Settings',
@@ -243,7 +243,7 @@ function HowToStart() {
       action: () => {
         selectByTID('locationManager').click();
         selectByTID('settings').classList.add('highlighterOn');
-      }
+      },
     },
     {
       label: 'Start using TagSpaces',
@@ -257,8 +257,8 @@ function HowToStart() {
         selectByTID('createNewFileTID').classList.add('highlighterOn');
         selectByTID('locationList').classList.add('highlighterOn');
         selectByTID('locationManager').click();
-      }
-    }
+      },
+    },
   ];
 
   function SlideButton(props) {
@@ -284,7 +284,7 @@ function HowToStart() {
     if (steps[nextStep] && steps[nextStep].action) {
       steps[nextStep].action();
     }
-    setActiveStep(nextActiveStep => nextActiveStep + 1);
+    setActiveStep((nextActiveStep) => nextActiveStep + 1);
   };
 
   const handleBack = () => {
@@ -293,7 +293,7 @@ function HowToStart() {
     if (steps[prevStep] && steps[prevStep].action) {
       steps[prevStep].action();
     }
-    setActiveStep(prevActiveStep => prevActiveStep - 1);
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
   const handleReset = () => {
@@ -322,7 +322,7 @@ function HowToStart() {
           color: theme.palette.text.primary,
           textTransform: 'uppercase',
           textAlign: 'center',
-          paddingTop: 20
+          paddingTop: 20,
         }}
         noWrap
       >

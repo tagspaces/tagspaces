@@ -37,7 +37,7 @@ import {
   getFolderOpenHistory,
   getShowBookmarks,
   getShowUnixHiddenEntries,
-  getStoredSearchesVisible
+  getStoredSearchesVisible,
 } from '-/reducers/settings';
 import { Pro } from '../pro';
 import { actions as SearchActions, getSearches } from '-/reducers/searches';
@@ -75,32 +75,23 @@ const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 function StoredSearches(props: Props) {
   const { t } = useTranslation();
   const { setSearchQuery, findFromSavedSearch } = useDirectoryContentContext();
-  const [saveSearchDialogOpened, setSaveSearchDialogOpened] = useState<
-    TS.SearchQuery
-  >(undefined);
-  const [
-    searchMenuAnchorEl,
-    setSearchMenuAnchorEl
-  ] = useState<null | HTMLElement>(null);
-  const [
-    historyMenuAnchorEl,
-    setHistoryMenuAnchorEl
-  ] = useState<null | HTMLElement>(null);
+  const [saveSearchDialogOpened, setSaveSearchDialogOpened] =
+    useState<TS.SearchQuery>(undefined);
+  const [searchMenuAnchorEl, setSearchMenuAnchorEl] =
+    useState<null | HTMLElement>(null);
+  const [historyMenuAnchorEl, setHistoryMenuAnchorEl] =
+    useState<null | HTMLElement>(null);
 
-  const [
-    bookmarksMenuAnchorEl,
-    setBookmarksMenuAnchorEl
-  ] = useState<null | HTMLElement>(null);
+  const [bookmarksMenuAnchorEl, setBookmarksMenuAnchorEl] =
+    useState<null | HTMLElement>(null);
 
-  const [
-    isExportSearchesDialogOpened,
-    setExportSearchesDialogOpened
-  ] = useState<boolean>(false);
+  const [isExportSearchesDialogOpened, setExportSearchesDialogOpened] =
+    useState<boolean>(false);
 
   const [importFile, setImportFile] = useState<File>(undefined);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const menuHistoryKey = useRef<string>(undefined);
-  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const ExportSearchesDialog =
     Pro && Pro.UI ? Pro.UI.ExportSearchesDialog : false;
@@ -116,7 +107,7 @@ function StoredSearches(props: Props) {
   };
 
   const editSearch = (uuid: string) => {
-    const savedSearch = props.searches.find(search => search.uuid === uuid);
+    const savedSearch = props.searches.find((search) => search.uuid === uuid);
     if (!savedSearch) {
       return true;
     }
@@ -166,7 +157,7 @@ function StoredSearches(props: Props) {
         flexDirection: 'column',
         borderRadius: 5,
         marginLeft: 5,
-        marginRight: 0
+        marginRight: 0,
       }}
     >
       <div className={classes.toolbar}>
@@ -184,7 +175,7 @@ function StoredSearches(props: Props) {
           marginTop: 0,
           height: 'calc(100% - ' + reduceHeightBy + 'px)',
           overflowY: 'auto',
-          overflowX: 'hidden'
+          overflowX: 'hidden',
         }}
       >
         <Grid container direction="row">
@@ -249,7 +240,7 @@ function StoredSearches(props: Props) {
           )}
         </Grid>
         {props.storedSearchesVisible &&
-          props.searches.map(search => (
+          props.searches.map((search) => (
             <ListItem dense style={{ paddingLeft: 0 }} key={search.uuid}>
               <Grid item xs={10} style={{ width: 250 }}>
                 <Button
@@ -260,7 +251,7 @@ function StoredSearches(props: Props) {
                   style={{
                     textTransform: 'none',
                     fontWeight: 'normal',
-                    justifyContent: 'start'
+                    justifyContent: 'start',
                   }}
                   onClick={() => findFromSavedSearch(search.uuid)}
                 >
@@ -271,7 +262,7 @@ function StoredSearches(props: Props) {
                       whiteSpace: 'nowrap',
                       textOverflow: 'ellipsis',
                       overflow: 'hidden',
-                      maxWidth: 220
+                      maxWidth: 220,
                     }}
                   >
                     {search.title}
@@ -515,7 +506,7 @@ function StoredSearches(props: Props) {
               if (searchQuery) {
                 setSearchQuery({
                   ...searchQuery,
-                  showUnixHiddenEntries: props.showUnixHiddenEntries
+                  showUnixHiddenEntries: props.showUnixHiddenEntries,
                 });
 
                 /* if (searchQuery.searchBoxing === 'global') {
@@ -571,7 +562,7 @@ function mapStateToProps(state) {
     showBookmarks: getShowBookmarks(state),
     fileOpenHistory: getFileOpenHistory(state),
     folderOpenHistory: getFolderOpenHistory(state),
-    fileEditHistory: getFileEditHistory(state)
+    fileEditHistory: getFileEditHistory(state),
   };
 }
 
@@ -583,9 +574,9 @@ function mapDispatchToProps(dispatch) {
       setShowBookmarks: SettingsActions.setShowBookmarks,
       setFileOpenHistory: SettingsActions.setFileOpenHistory,
       setFolderOpenHistory: SettingsActions.setFolderOpenHistory,
-      setFileEditHistory: SettingsActions.setFileEditHistory
+      setFileEditHistory: SettingsActions.setFileEditHistory,
     },
-    dispatch
+    dispatch,
   );
 }
 
@@ -603,5 +594,5 @@ const areEqual = (prevProp, nextProp) =>
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(React.memo(StoredSearches, areEqual));

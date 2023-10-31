@@ -37,7 +37,7 @@ import { useTranslation } from 'react-i18next';
 const PREFIX = 'KeyboardDialog';
 
 const classes = {
-  shortcutKey: `${PREFIX}-shortcutKey`
+  shortcutKey: `${PREFIX}-shortcutKey`,
 };
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
@@ -46,8 +46,8 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
     font: 'Console',
     fontFamily: 'monospace',
     padding: '5px',
-    borderRadius: '5px'
-  }
+    borderRadius: '5px',
+  },
 }));
 
 interface Props {
@@ -78,12 +78,12 @@ function KeyboardDialog(props: Props) {
         data-tid="keyboardShortCutsDialog"
         style={{
           minWidth: 350,
-          overflow: 'auto'
+          overflow: 'auto',
         }}
       >
         <List dense={false}>
           {keyBindings &&
-            Object.keys(keyBindings).map(shortcutKey => (
+            Object.keys(keyBindings).map((shortcutKey) => (
               <ListItem key={shortcutKey}>
                 <ListItemText primary={t('core:' + shortcutKey)} />
                 <ListItemSecondaryAction className={classes.shortcutKey}>

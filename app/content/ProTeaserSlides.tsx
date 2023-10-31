@@ -20,14 +20,14 @@ export const slidesNames = [
   'revisions',
   'search',
   'folderColor',
-  'enterprise'
+  'enterprise',
 ];
 
 export function getProTeaserSlideIndex(slideName: string): number {
   if (!slideName) {
     return -1;
   }
-  return slidesNames.findIndex(key => key === slideName);
+  return slidesNames.findIndex((key) => key === slideName);
 }
 
 export function getProTeaserSlides(t) {
@@ -52,7 +52,7 @@ export function getProTeaserSlides(t) {
       </>
     ),
     pictureURL: ProTeaserImage,
-    pictureHeight: 150
+    pictureHeight: 150,
   };
   slidesEN[slidesNames[1]] = {
     title: 'TagSpaces Pro - Kanban Perspectives',
@@ -71,7 +71,7 @@ export function getProTeaserSlides(t) {
     ctaTitle: t('showMeMore'),
     pictureURL: KanbanImage,
     pictureShadow: true,
-    pictureHeight: 300
+    pictureHeight: 300,
   };
   slidesEN[slidesNames[2]] = {
     title: 'TagSpaces Pro - Gallery Perspectives',
@@ -88,7 +88,7 @@ export function getProTeaserSlides(t) {
     ctaTitle: t('showMeMore'),
     pictureURL: GalleryImage,
     pictureShadow: true,
-    pictureHeight: 300
+    pictureHeight: 300,
   };
   slidesEN[slidesNames[3]] = {
     title: 'TagSpaces Pro - Mapique Perspective & Geo tagging',
@@ -112,7 +112,7 @@ export function getProTeaserSlides(t) {
     ctaTitle: t('showMeMore'),
     pictureURL: MapImage,
     pictureShadow: true,
-    pictureHeight: 300
+    pictureHeight: 300,
   };
   slidesEN[slidesNames[4]] = {
     title: 'Annotate and link your files and folders',
@@ -139,13 +139,13 @@ export function getProTeaserSlides(t) {
       <>
         You can also set a <b>custom thumbnail</b> for every file or folder,
         allowing you to emphasize visually its content.
-      </>
+      </>,
     ],
     ctaURL: Links.links.productProFileFolderMeta,
     ctaTitle: t('showMeMore'),
     pictureURL: EntryDescription,
     pictureShadow: true,
-    pictureHeight: 300
+    pictureHeight: 300,
   };
   slidesEN[slidesNames[5]] = {
     title: 'Revisions and auto-save for editable files',
@@ -170,7 +170,7 @@ export function getProTeaserSlides(t) {
     ctaTitle: t('showMeMore'),
     pictureURL: RevisionsAutosave,
     pictureShadow: true,
-    pictureHeight: 400
+    pictureHeight: 400,
   };
   slidesEN[slidesNames[6]] = {
     title: 'Extended Search',
@@ -196,12 +196,12 @@ export function getProTeaserSlides(t) {
         archives, bookmarks, ebooks, ...
       </>,
       <>Filter for files, folders or untagged files</>,
-      <>Filter by size and date</>
+      <>Filter by size and date</>,
     ],
     ctaURL: Links.links.productProAdvancedSearch,
     ctaTitle: t('showMeMore'),
     pictureURL: SearchImage,
-    pictureHeight: 150
+    pictureHeight: 150,
   };
   slidesEN[slidesNames[7]] = {
     title: 'Folders with custom backgrounds',
@@ -219,7 +219,7 @@ export function getProTeaserSlides(t) {
     ctaTitle: t('showMeMore'),
     pictureURL: CustomFolderColor,
     pictureShadow: true,
-    pictureHeight: 300
+    pictureHeight: 300,
   };
   slidesEN[slidesNames[8]] = {
     title: 'TagSpaces Web Pro & Enterprise',
@@ -246,12 +246,12 @@ export function getProTeaserSlides(t) {
       <>
         Development of custom <b>file viewers</b> or <b>perspectives</b>
       </>,
-      <>Premium technical support</>
+      <>Premium technical support</>,
     ],
     ctaURL: Links.links.emailContact,
     ctaTitle: t('contactUs'),
     pictureURL: EnterpriseImage,
-    pictureHeight: 200
+    pictureHeight: 200,
   };
   return slidesEN;
 }

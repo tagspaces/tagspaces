@@ -53,7 +53,7 @@ function TagMenu(props: Props) {
     showEditTagDialog,
     showDeleteTagDialog,
     anchorEl,
-    open
+    open,
   } = props;
 
   const { t } = useTranslation();
@@ -68,7 +68,7 @@ function TagMenu(props: Props) {
       setSearchQuery({
         tagsAND: [selectedTag],
         maxSearchResults: maxSearchResults,
-        executeSearch: true
+        executeSearch: true,
       });
     }
     onClose();
@@ -85,7 +85,7 @@ function TagMenu(props: Props) {
   }
 
   function applyTag() {
-    const selectedEntryPaths = selectedEntries.map(entry => entry.path);
+    const selectedEntryPaths = selectedEntries.map((entry) => entry.path);
     addTags(selectedEntryPaths, [selectedTag]);
     onClose();
   }

@@ -29,7 +29,7 @@ import Dialog from '@mui/material/Dialog';
 import {
   extractContainingDirectoryPath,
   extractDirectoryName,
-  extractFileName
+  extractFileName,
 } from '@tagspaces/tagspaces-common/paths';
 import DraggablePaper from '-/components/DraggablePaper';
 import AppConfig from '-/AppConfig';
@@ -64,12 +64,12 @@ function RenameEntryDialog(props: Props) {
     if (isFile) {
       defaultName = extractFileName(
         lastSelectedEntry.path,
-        PlatformIO.getDirSeparator()
+        PlatformIO.getDirSeparator(),
       );
     } else {
       defaultName = extractDirectoryName(
         lastSelectedEntry.path,
-        PlatformIO.getDirSeparator()
+        PlatformIO.getDirSeparator(),
       );
     }
     originPath = lastSelectedEntry.path;
@@ -77,7 +77,7 @@ function RenameEntryDialog(props: Props) {
     isFile = false;
     defaultName = extractDirectoryName(
       currentDirectoryPath,
-      PlatformIO.getDirSeparator()
+      PlatformIO.getDirSeparator(),
     );
     originPath = currentDirectoryPath;
   } else {
@@ -90,9 +90,9 @@ function RenameEntryDialog(props: Props) {
   const name = useRef<string>(defaultName);
 
   // eslint-disable-next-line no-unused-vars
-  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
 
-  const onInputFocus = event => {
+  const onInputFocus = (event) => {
     if (name.current) {
       event.preventDefault();
       const { target } = event;
@@ -139,7 +139,7 @@ function RenameEntryDialog(props: Props) {
       if (isFile) {
         const fileDirectory = extractContainingDirectoryPath(
           lastSelectedEntry.path,
-          PlatformIO.getDirSeparator()
+          PlatformIO.getDirSeparator(),
         );
         const newFilePath =
           fileDirectory + PlatformIO.getDirSeparator() + name.current;
@@ -158,7 +158,7 @@ function RenameEntryDialog(props: Props) {
       scroll="paper"
       aria-labelledby="draggable-dialog-title"
       PaperComponent={DraggablePaper}
-      onKeyDown={event => {
+      onKeyDown={(event) => {
         if (event.key === 'Enter' || event.keyCode === 13) {
           event.preventDefault();
           event.stopPropagation();
@@ -182,7 +182,7 @@ function RenameEntryDialog(props: Props) {
             name="entryName"
             label={t(
               'core:' +
-                (isFile ? 'renameNewFileName' : 'createNewDirectoryTitleName')
+                (isFile ? 'renameNewFileName' : 'createNewDirectoryTitleName'),
             )}
             onChange={handleInputChange}
             onFocus={onInputFocus}

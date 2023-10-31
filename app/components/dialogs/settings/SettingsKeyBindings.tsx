@@ -28,7 +28,7 @@ import PlatformIO from '-/services/platform-facade';
 import {
   actions as SettingsActions,
   getKeyBindings,
-  isGlobalKeyBindingEnabled
+  isGlobalKeyBindingEnabled,
 } from '-/reducers/settings';
 import DefaultSettings from '-/reducers/settings-default';
 import { AppDispatch } from '-/reducers/app';
@@ -37,14 +37,14 @@ import { useTranslation } from 'react-i18next';
 const PREFIX = 'SettingsKeyBindings';
 
 const classes = {
-  keyBinding: `${PREFIX}-keyBinding`
+  keyBinding: `${PREFIX}-keyBinding`,
 };
 
 const Root = styled('form')(({ theme }) => ({
   [`& .${classes.keyBinding}`]: {
     marginTop: 10,
-    marginBottom: 10
-  }
+    marginBottom: 10,
+  },
 }));
 
 function SettingsKeyBindings() {
@@ -57,7 +57,7 @@ function SettingsKeyBindings() {
     dispatch(SettingsActions.setKeyBinding(kbName, kbCommand));
   };
 
-  const setGlobalKeyBinding = value => {
+  const setGlobalKeyBinding = (value) => {
     dispatch(SettingsActions.setGlobalKeyBinding(value));
     PlatformIO.setGlobalShortcuts(value);
   };
@@ -73,9 +73,9 @@ function SettingsKeyBindings() {
           checked={globalKeyBindingEnabled}
         />
       </ListItem>
-      {keyBindings.map(keyBinding => {
+      {keyBindings.map((keyBinding) => {
         const defaultBinding = DefaultSettings.keyBindings.filter(
-          kb => kb.name === keyBinding.name
+          (kb) => kb.name === keyBinding.name,
         )[0];
         return (
           <TextField
@@ -83,7 +83,9 @@ function SettingsKeyBindings() {
             key={keyBinding.name}
             InputLabelProps={{ shrink: true }}
             fullWidth
-            onBlur={event => setKeyBinding(keyBinding.name, event.target.value)}
+            onBlur={(event) =>
+              setKeyBinding(keyBinding.name, event.target.value)
+            }
             label={t('core:' + keyBinding.name)}
             placeholder={
               'suggested binding: ' +

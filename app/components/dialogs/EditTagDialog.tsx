@@ -43,14 +43,13 @@ interface Props {
 function EditTagDialog(props: Props) {
   const { t } = useTranslation();
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
-  const [displayTextColorPicker, setDisplayTextColorPicker] = useState<boolean>(
-    false
-  );
+  const [displayTextColorPicker, setDisplayTextColorPicker] =
+    useState<boolean>(false);
   const [inputError, setInputError] = useState<boolean>(false);
   const [title, setTitle] = useState<string>(props.selectedTag.title);
   const [color, setColor] = useState<string>(props.selectedTag.color);
   const [textcolor, setTextcolor] = useState<string>(
-    props.selectedTag.textcolor
+    props.selectedTag.textcolor,
   );
 
   useEffect(() => {
@@ -87,10 +86,10 @@ function EditTagDialog(props: Props) {
           ...props.selectedTag,
           title,
           color,
-          textcolor
+          textcolor,
         },
         props.selectedTagGroupEntry.uuid,
-        props.selectedTag.title
+        props.selectedTag.title,
       );
       props.onClose();
     }
@@ -106,7 +105,7 @@ function EditTagDialog(props: Props) {
       borderStyle: 'solid',
       borderColor: 'gray',
       padding: '5px',
-      background: color
+      background: color,
     },
     textcolor: {
       width: '100%',
@@ -116,12 +115,12 @@ function EditTagDialog(props: Props) {
       borderStyle: 'solid',
       borderColor: 'gray',
       padding: '5px',
-      background: textcolor
+      background: textcolor,
     },
     helpText: {
       marginBottom: '5px',
-      fontSize: '1rem'
-    }
+      fontSize: '1rem',
+    },
   };
 
   // const theme = useTheme();
@@ -133,7 +132,7 @@ function EditTagDialog(props: Props) {
       onClose={onClose}
       keepMounted
       scroll="paper"
-      onKeyDown={event => {
+      onKeyDown={(event) => {
         if (event.key === 'Enter' || event.keyCode === 13) {
           event.preventDefault();
           event.stopPropagation();
@@ -161,7 +160,7 @@ function EditTagDialog(props: Props) {
                 fontSize: 12,
                 position: 'relative',
                 bottom: 20,
-                color: '#808080'
+                color: '#808080',
               }}
             >
               <span className="text" style={{ fontWeight: 600 }}>
@@ -170,7 +169,7 @@ function EditTagDialog(props: Props) {
               <time>
                 {format(
                   new Date(props.selectedTag.modified_date),
-                  'yyyy-MM-dd'
+                  'yyyy-MM-dd',
                 )}
               </time>
             </div>
@@ -209,7 +208,7 @@ function EditTagDialog(props: Props) {
           {displayColorPicker && (
             <ColorPickerDialog
               open={displayColorPicker}
-              setColor={value => setColor(value)}
+              setColor={(value) => setColor(value)}
               onClose={() => setDisplayColorPicker(!displayColorPicker)}
               color={color}
             />
@@ -232,7 +231,7 @@ function EditTagDialog(props: Props) {
           {displayTextColorPicker && (
             <ColorPickerDialog
               open={displayTextColorPicker}
-              setColor={txtcolor => setTextcolor(txtcolor)}
+              setColor={(txtcolor) => setTextcolor(txtcolor)}
               onClose={() => setDisplayTextColorPicker(!displayTextColorPicker)}
               color={textcolor}
             />

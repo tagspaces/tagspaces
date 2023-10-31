@@ -50,32 +50,38 @@ function ImportExportTagGroupsDialog(props: Props) {
   const { t } = useTranslation();
   const selectedAll = useRef(true);
   const [tagGroupList, setTagGroupList] = useState<Array<any>>(
-    props.tagGroups.map(entry => ({ ...entry, selected: selectedAll.current }))
+    props.tagGroups.map((entry) => ({
+      ...entry,
+      selected: selectedAll.current,
+    })),
   );
 
   const handleToggleSelectAll = () => {
     selectedAll.current = !selectedAll.current;
     setTagGroupList(
-      tagGroupList.map(entry => ({ ...entry, selected: selectedAll.current }))
+      tagGroupList.map((entry) => ({
+        ...entry,
+        selected: selectedAll.current,
+      })),
     );
   };
 
-  const isSelected = () => tagGroupList.some(n => n.selected === true);
+  const isSelected = () => tagGroupList.some((n) => n.selected === true);
 
   const handleTagGroup = (tagGroup: any, checked: boolean, index) => {
     setTagGroupList([
       ...tagGroupList.slice(0, index),
       {
         ...tagGroupList[index],
-        selected: !checked
+        selected: !checked,
       },
-      ...tagGroupList.slice(index + 1)
+      ...tagGroupList.slice(index + 1),
     ]);
   };
 
   const onConfirm = () => {
     const { showNotification } = props;
-    const groupList = tagGroupList.filter(tagGroup => tagGroup.selected);
+    const groupList = tagGroupList.filter((tagGroup) => tagGroup.selected);
     props.onClose();
     if (props.dialogModeImport) {
       props.importTagGroups(groupList);
@@ -99,7 +105,7 @@ function ImportExportTagGroupsDialog(props: Props) {
               <Checkbox
                 id={tagGroup.uuid || tagGroup.key}
                 checked={tagGroup.selected}
-                onClick={e => handleTagGroup(e, tagGroup.selected, index)}
+                onClick={(e) => handleTagGroup(e, tagGroup.selected, index)}
                 // onChange={e => handleChange(e)}
                 value={tagGroup.title}
                 name={tagGroup.title}

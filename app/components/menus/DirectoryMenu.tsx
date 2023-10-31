@@ -26,13 +26,13 @@ import {
   extractDirectoryName,
   getThumbFileLocationForDirectory,
   normalizePath,
-  generateSharingLink
+  generateSharingLink,
 } from '@tagspaces/tagspaces-common/paths';
 import { Pro } from '-/pro';
 import PlatformIO from '-/services/platform-facade';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import FileUploadContainer, {
-  FileUploadContainerRef
+  FileUploadContainerRef,
 } from '-/components/FileUploadContainer';
 import { TS } from '-/tagspaces.namespace';
 import { getRelativeEntryPath, toFsEntry } from '-/services/utils-io';
@@ -76,7 +76,7 @@ function DirectoryMenu(props: Props) {
     openDirectory,
     currentDirectoryPath,
     setCurrentDirectoryPerspective,
-    openCurrentDirectory
+    openCurrentDirectory,
   } = useDirectoryContentContext();
   const { reflectCreateEntry } = useLocationIndexContext();
   const { copyFilePromise, renameFilePromise } = usePlatformFacadeContext();
@@ -91,7 +91,7 @@ function DirectoryMenu(props: Props) {
     openMoveCopyFilesDialog,
     openRenameDirectoryDialog,
     switchPerspective,
-    perspectiveMode
+    perspectiveMode,
   } = props;
   const directoryPath = props.directoryPath || currentDirectoryPath;
   const locations: Array<TS.Location> = useSelector(getLocations);
@@ -113,7 +113,7 @@ function DirectoryMenu(props: Props) {
     dispatch(AppActions.toggleDeleteMultipleEntriesDialog());
   };
 
-  const toggleProTeaser = slidePage => {
+  const toggleProTeaser = (slidePage) => {
     dispatch(AppActions.toggleProTeaser(slidePage));
   };
 
@@ -126,7 +126,7 @@ function DirectoryMenu(props: Props) {
       }
       entryPath = selectedEntries[0].path;
     }
-    const tmpLoc = locations.find(location => location.uuid === locationID);
+    const tmpLoc = locations.find((location) => location.uuid === locationID);
     const relativePath = getRelativeEntryPath(tmpLoc, entryPath);
     return generateSharingLink(locationID, undefined, relativePath);
   }
@@ -201,7 +201,7 @@ function DirectoryMenu(props: Props) {
   }
 
   function showDeleteDirectoryDialog() {
-    if (!selectedEntries.some(entry => entry.path === directoryPath)) {
+    if (!selectedEntries.some((entry) => entry.path === directoryPath)) {
       setSelectedEntries([
         {
           isFile: false,
@@ -209,8 +209,8 @@ function DirectoryMenu(props: Props) {
           path: directoryPath,
           tags: [],
           size: 0,
-          lmdt: 0
-        }
+          lmdt: 0,
+        },
       ]);
     }
     toggleDeleteMultipleEntriesDialog();
@@ -257,15 +257,15 @@ Do you want to continue?`)
       }
       toggleProgressDialog();
 
-      const entryCallback = entry => {
+      const entryCallback = (entry) => {
         PlatformFacade.readMacOSTags(entry.path)
-          .then(tags => {
+          .then((tags) => {
             if (tags.length > 0) {
               addTags([entry.path], tags, true);
             }
             return tags;
           })
-          .catch(err => {
+          .catch((err) => {
             console.warn('Error creating tags: ' + err);
           });
       };
@@ -276,11 +276,11 @@ Do you want to continue?`)
           showNotification(
             'Tags from ' + directoryPath + ' are imported successfully.',
             'default',
-            true
+            true,
           );
           return true;
         })
-        .catch(err => {
+        .catch((err) => {
           console.warn('Error importing tags: ' + err);
           toggleProgressDialog();
         });
@@ -288,7 +288,7 @@ Do you want to continue?`)
       showNotification(
         t('core:thisFunctionalityIsAvailableInPro'),
         'default',
-        true
+        true,
       );
       return true;
     }
@@ -301,12 +301,12 @@ Do you want to continue?`)
   function onCameraSuccess(imageURL) {
     window.resolveLocalFileSystemURL(
       imageURL,
-      fp => {
+      (fp) => {
         moveFile(fp.nativeURL);
       },
       () => {
         console.log('Failed to get filesystem url');
-      }
+      },
     );
   }
 
@@ -325,19 +325,19 @@ Do you want to continue?`)
         showNotification(
           'File ' + newFilePath + ' successfully imported.',
           'default',
-          true
+          true,
         );
         reflectCreateEntry(toFsEntry(newFilePath, true));
         dispatch(AppActions.reflectCreateEntry(newFilePath, true));
         return true;
       })
-      .catch(error => {
+      .catch((error) => {
         // TODO showAlertDialog("Saving " + filePath + " failed.");
         console.log('Save to file ' + newFilePath + ' failed ' + error);
         showNotification(
           'Importing file ' + newFilePath + ' failed.',
           'error',
-          true
+          true,
         );
         return true;
       });
@@ -359,40 +359,40 @@ Do you want to continue?`)
       destinationType: Camera.DestinationType.FILE_URI, // DATA_URL, // Return base64 encoded string
       // encodingType: Camera.EncodingType.JPEG,
       // @ts-ignore
-      mediaType: Camera.MediaType.PICTURE // ALLMEDIA
+      mediaType: Camera.MediaType.PICTURE, // ALLMEDIA
     });
   }
 
   function setFolderThumbnail() {
     const parentDirectoryPath = extractContainingDirectoryPath(
       directoryPath,
-      PlatformIO.getDirSeparator()
+      PlatformIO.getDirSeparator(),
     );
     const parentDirectoryName = extractDirectoryName(
       parentDirectoryPath,
-      PlatformIO.getDirSeparator()
+      PlatformIO.getDirSeparator(),
     );
 
     copyFilePromise(
       getThumbFileLocationForDirectory(
         directoryPath,
-        PlatformIO.getDirSeparator()
+        PlatformIO.getDirSeparator(),
       ),
       getThumbFileLocationForDirectory(
         parentDirectoryPath,
-        PlatformIO.getDirSeparator()
+        PlatformIO.getDirSeparator(),
       ),
-      t('core:thumbAlreadyExists', { directoryName: parentDirectoryName })
+      t('core:thumbAlreadyExists', { directoryName: parentDirectoryName }),
     )
       .then(() => {
         showNotification(
           'Thumbnail created for: ' + parentDirectoryPath,
           'default',
-          true
+          true,
         );
         return true;
       })
-      .catch(error => {
+      .catch((error) => {
         showNotification('Thumbnail creation failed.', 'default', true);
         console.warn('Error setting Thumb for entry: ' + directoryPath, error);
         return true;
@@ -423,7 +423,7 @@ Do you want to continue?`)
     showProperties,
     cameraTakePicture,
     openAddRemoveTagsDialog,
-    openInNewWindow
+    openInNewWindow,
   );
 
   return (

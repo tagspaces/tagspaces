@@ -50,7 +50,7 @@ function BookmarksMenu(props: Props) {
         <ReloadIcon />
       </ListItemIcon>
       <ListItemText primary={<>{t('core:refresh')}</>} />
-    </MenuItem>
+    </MenuItem>,
   );
   menuItems.push(
     <MenuItem
@@ -66,7 +66,7 @@ function BookmarksMenu(props: Props) {
         <DeleteIcon />
       </ListItemIcon>
       <ListItemText primary={<>{t('core:deleteBookmarks')}</>} />
-    </MenuItem>
+    </MenuItem>,
   );
 
   return (

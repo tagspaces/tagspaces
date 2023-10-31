@@ -12,7 +12,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 const PREFIX = 'EditDescription';
 
 const classes = {
-  mdHelpers: `${PREFIX}-mdHelpers`
+  mdHelpers: `${PREFIX}-mdHelpers`,
 };
 
 const EditDescriptionRoot = styled('div')(({ theme }) => ({
@@ -21,8 +21,8 @@ const EditDescriptionRoot = styled('div')(({ theme }) => ({
     borderRadius: '0.25rem',
     paddingLeft: '0.25rem',
     paddingRight: '0.25rem',
-    backgroundColor: '#bcc0c561'
-  }
+    backgroundColor: '#bcc0c561',
+  },
 }));
 
 function EditDescription() {
@@ -51,7 +51,7 @@ function EditDescription() {
 
   const milkdownOnFocus = React.useCallback(
     () => (descriptionFocus.current = true),
-    []
+    [],
   );
   const milkdownListener = React.useCallback((markdown: string) => {
     if (descriptionFocus.current && markdown !== description) {
@@ -86,7 +86,7 @@ function EditDescription() {
           borderRadius: 5,
           height: 'calc(100% - 40px)',
           width: 'calc(100% - 8px)',
-          overflowY: 'auto'
+          overflowY: 'auto',
         }}
       >
         {noDescription && !editMode ? (
@@ -95,13 +95,13 @@ function EditDescription() {
             style={{
               color: theme.palette.text.primary,
               padding: 10,
-              lineHeight: 4
+              lineHeight: 4,
             }}
           >
             {t(
               openedFile.editMode
                 ? 'core:editDisabled'
-                : 'core:addMarkdownDescription'
+                : 'core:addMarkdownDescription',
             )}
           </Typography>
         ) : (
@@ -133,7 +133,7 @@ function EditDescription() {
         <Typography
           variant="caption"
           style={{
-            color: theme.palette.text.primary
+            color: theme.palette.text.primary,
           }}
         >
           Markdown help: <i className={classes.mdHelpers}>_italic_</i>{' '}

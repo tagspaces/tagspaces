@@ -21,7 +21,7 @@ import React, {
   useEffect,
   useMemo,
   ChangeEvent,
-  useRef
+  useRef,
 } from 'react';
 import { styled } from '@mui/material/styles';
 import { connect } from 'react-redux';
@@ -65,7 +65,7 @@ function EditEntryTagDialog(props: Props) {
   const { editTagForEntry } = useTaggingActionsContext();
   const [showAdvancedMode, setShowAdvancedMode] = useState<boolean>(false);
   const [title, setTitle] = useState(
-    props.selectedTag && props.selectedTag.title
+    props.selectedTag && props.selectedTag.title,
   );
   const titleRef = useRef<HTMLInputElement>(null);
   const isShowDatePeriodEditor = useMemo(() => {
@@ -86,7 +86,7 @@ function EditEntryTagDialog(props: Props) {
     return DateTagEditor && showDatePeriodEditor;
   }, []);
   const [editDisabled, setEditDisabled] = useState<boolean>(
-    isShowDatePeriodEditor
+    isShowDatePeriodEditor,
   );
   const { setError, haveError } = useValidation();
   const { onClose, open } = props;
@@ -137,7 +137,7 @@ function EditEntryTagDialog(props: Props) {
       <DialogContent
         data-tid="editEntryTagDialog"
         style={{
-          overflow: 'auto'
+          overflow: 'auto',
         }}
       >
         <FormControl fullWidth={true} error={haveError('tag')}>
@@ -159,7 +159,7 @@ function EditEntryTagDialog(props: Props) {
             InputProps={{
               endAdornment: (
                 <EditIcon onClick={() => setEditDisabled(!editDisabled)} />
-              )
+              ),
             }}
           />
           {haveError('tag') && (
@@ -192,7 +192,7 @@ function EditEntryTagDialog(props: Props) {
     return (
       <DialogActions
         style={{
-          justifyContent: 'space-between'
+          justifyContent: 'space-between',
         }}
       >
         {GeoTagEditor && isGeoTag(title) ? (
@@ -235,9 +235,9 @@ function EditEntryTagDialog(props: Props) {
       style={{
         minWidth: 400,
         height: '100%',
-        marginBottom: 30
+        marginBottom: 30,
       }}
-      onKeyDown={event => {
+      onKeyDown={(event) => {
         if (event.key === 'Enter' || event.keyCode === 13) {
           event.preventDefault();
           event.stopPropagation();
@@ -258,7 +258,7 @@ function mapStateToProps(state) {
   return {
     selectedTag: getSelectedTag(state),
     tileServer: getMapTileServer(state),
-    geoTaggingFormat: state.settings.geoTaggingFormat
+    geoTaggingFormat: state.settings.geoTaggingFormat,
   };
 }
 
@@ -266,5 +266,5 @@ const areEqual = (prevProp, nextProp) =>
   JSON.stringify(nextProp.selectedTag) === JSON.stringify(prevProp.selectedTag);
 
 export default connect(mapStateToProps)(
-  React.memo(EditEntryTagDialog, areEqual)
+  React.memo(EditEntryTagDialog, areEqual),
 );

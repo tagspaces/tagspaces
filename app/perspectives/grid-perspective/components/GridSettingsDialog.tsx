@@ -33,7 +33,7 @@ import {
   Button,
   FormHelperText,
   Typography,
-  TextField
+  TextField,
 } from '@mui/material';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -118,13 +118,13 @@ function GridSettingsDialog(props: Props) {
     toggleThumbnailsMode,
     changeEntrySize,
     changeSingleClickAction,
-    openHelpWebPage
+    openHelpWebPage,
   } = props;
 
   let newGridPageLimit = gridPageLimit;
 
   const handleGridPaginationLimit = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const { target } = event;
     const { value, name } = target;
@@ -263,7 +263,7 @@ function GridSettingsDialog(props: Props) {
           data-tid="sortByMenuTID"
           title={t('core:sortBy')}
           aria-label={t('core:sortBy')}
-          onClick={e => {
+          onClick={(e) => {
             props.handleSortingMenu(e);
           }}
         >

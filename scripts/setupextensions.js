@@ -103,8 +103,8 @@ const extensionList = [
   {
     package: '@tagspaces/extensions',
     path: 'extensions',
-    url: 'https://github.com/tagspaces/tagspaces-extensions'
-  }
+    url: 'https://github.com/tagspaces/tagspaces-extensions',
+  },
 ];
 
 sh.rm('-rf', '~/.config/yarn/link/@tagspaces');
@@ -115,7 +115,7 @@ if (!sh.test('-d', extensionDir)) {
 
 sh.cd(extensionDir);
 
-extensionList.forEach(extension => {
+extensionList.forEach((extension) => {
   if (sh.test('-d', extension.path)) {
     sh.cd(extension.path);
     sh.exec('git checkout ' + extensionBranch);
@@ -130,7 +130,7 @@ extensionList.forEach(extension => {
 });
 
 sh.cd('../app');
-extensionList.forEach(extension => {
+extensionList.forEach((extension) => {
   sh.exec('yarn link ' + extension.package);
 });
 sh.cd('..');

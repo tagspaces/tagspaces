@@ -21,14 +21,14 @@ import {
   AmplifyAuthenticator,
   AmplifySignIn,
   AmplifySignUp,
-  AmplifyTotpSetup
+  AmplifyTotpSetup,
 } from '@aws-amplify/ui-react';
 import { Amplify } from 'aws-amplify';
 import HandleAuth from '-/utils/HandleAuth';
 import LogoIcon from '-/assets/images/icon100x100.svg';
 import { useTranslation } from 'react-i18next';
 
-const TsAuth: React.FC<any> = props => {
+const TsAuth: React.FC<any> = (props) => {
   const { t } = useTranslation();
   let awsconfig;
   try {
@@ -37,7 +37,7 @@ const TsAuth: React.FC<any> = props => {
   } catch (e) {
     if (e && e.code && e.code === 'MODULE_NOT_FOUND') {
       console.debug(
-        'Auth functionality not available aws-exports.js is missing. Are you sure that you have run "amplitude init"?'
+        'Auth functionality not available aws-exports.js is missing. Are you sure that you have run "amplitude init"?',
       );
       return props.children;
     }
@@ -55,7 +55,7 @@ const TsAuth: React.FC<any> = props => {
             // @ts-ignore
             '--amplify-primary-color': '#1dd19f',
             '--amplify-primary-tint': '#1dd19f',
-            '--amplify-primary-shade': '#4A5568'
+            '--amplify-primary-shade': '#4A5568',
           }}
         >
           <AmplifyTotpSetup
@@ -72,14 +72,14 @@ const TsAuth: React.FC<any> = props => {
                 type: 'email',
                 label: 'Email',
                 placeholder: 'Enter your email',
-                required: true
+                required: true,
               },
               {
                 type: 'password',
                 label: 'Password',
                 placeholder: 'Enter your password',
-                required: true
-              }
+                required: true,
+              },
             ]}
           />
           <AmplifySignIn

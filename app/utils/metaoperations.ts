@@ -1,14 +1,14 @@
 import {
   loadMetaDataPromise,
   mergeFsEntryMeta,
-  saveMetaDataPromise
+  saveMetaDataPromise,
 } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 
 // eslint-disable-next-line import/prefer-default-export
 export function savePerspective(
   path: string,
-  perspective: string
+  perspective: string,
 ): Promise<TS.FileSystemEntryMeta> {
   return new Promise((resolve, reject) => {
     loadMetaDataPromise(path)
@@ -17,7 +17,7 @@ export function savePerspective(
         if (perspective && perspective !== 'unspecified') {
           updatedFsEntryMeta = {
             ...fsEntryMeta,
-            perspective
+            perspective,
           };
         } else {
           const { perspective: remove, ...rest } = fsEntryMeta;
@@ -28,9 +28,9 @@ export function savePerspective(
             resolve(updatedFsEntryMeta);
             return true;
           })
-          .catch(err => {
+          .catch((err) => {
             console.warn(
-              'Error adding perspective for ' + path + ' with ' + err
+              'Error adding perspective for ' + path + ' with ' + err,
             );
             reject();
           });
@@ -38,16 +38,16 @@ export function savePerspective(
       })
       .catch(() => {
         const newFsEntryMeta: TS.FileSystemEntryMeta = mergeFsEntryMeta({
-          perspective
+          perspective,
         });
         saveMetaDataPromise(path, newFsEntryMeta)
           .then(() => {
             resolve(newFsEntryMeta);
             return true;
           })
-          .catch(error => {
+          .catch((error) => {
             console.warn(
-              'Error adding perspective for ' + path + ' with ' + error
+              'Error adding perspective for ' + path + ' with ' + error,
             );
             reject();
           });

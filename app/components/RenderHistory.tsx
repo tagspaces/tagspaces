@@ -27,7 +27,7 @@ import { Pro } from '-/pro';
 import BookmarkTwoToneIcon from '@mui/icons-material/BookmarkTwoTone';
 import {
   extractDirectoryName,
-  extractFileName
+  extractFileName,
 } from '@tagspaces/tagspaces-common/paths';
 import IconButton from '@mui/material/IconButton';
 import { RemoveIcon, HistoryIcon } from '-/components/CommonIcons';
@@ -50,12 +50,12 @@ function RenderHistory(props: Props) {
   const { openLocationById, currentLocation } = useCurrentLocationContext();
   const { historyKey, items, update, maxItems, showDelete = true } = props;
 
-  const openLinkDispatch = link => openLink(link, { fullWidth: false });
+  const openLinkDispatch = (link) => openLink(link, { fullWidth: false });
 
   return (
     <>
       {items &&
-        items.slice(0, maxItems || items.length).map(item => {
+        items.slice(0, maxItems || items.length).map((item) => {
           const itemName = item.path.endsWith(PlatformIO.getDirSeparator())
             ? extractDirectoryName(item.path, PlatformIO.getDirSeparator())
             : extractFileName(item.path, PlatformIO.getDirSeparator());
@@ -71,7 +71,7 @@ function RenderHistory(props: Props) {
                   style={{
                     textTransform: 'none',
                     fontWeight: 'normal',
-                    justifyContent: 'start'
+                    justifyContent: 'start',
                   }}
                   onClick={() =>
                     Pro.history.openItem(
@@ -79,7 +79,7 @@ function RenderHistory(props: Props) {
                       currentLocation && currentLocation.uuid,
                       openLinkDispatch,
                       openLocationById,
-                      openEntry
+                      openEntry,
                     )
                   }
                 >
@@ -110,7 +110,7 @@ function RenderHistory(props: Props) {
                       whiteSpace: 'nowrap',
                       textOverflow: 'ellipsis',
                       overflow: 'hidden',
-                      maxWidth: 220
+                      maxWidth: 220,
                     }}
                   >
                     {itemName}

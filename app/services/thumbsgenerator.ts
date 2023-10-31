@@ -23,7 +23,7 @@ import {
   extractFileName,
   normalizePath,
   getMetaDirectoryPath,
-  encodeFileName
+  encodeFileName,
 } from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
 import { base64ToArrayBuffer } from '-/utils/dom';
@@ -60,7 +60,7 @@ export const supportedContainers = [
   'odg',
   'ods',
   'odt',
-  'pdf'
+  'pdf',
 ];
 export const supportedText = [
   'txt',
@@ -84,7 +84,7 @@ export const supportedText = [
   'rb',
   'ini',
   'sh',
-  'sql'
+  'sql',
   // 'mhtml'
 ];
 export const supportedVideos = [
@@ -94,7 +94,7 @@ export const supportedVideos = [
   'm4v',
   'mkv',
   'lrv',
-  '3gp'
+  '3gp',
   // '3g2'
 ];
 const maxFileSize = 30 * 1024 * 1024; // 30 MB
@@ -108,12 +108,12 @@ function saveThumbnailPromise(filePath, dataURL) {
   const content = base64ToArrayBuffer(baseString);
   return PlatformIO.saveBinaryFilePromise({ path: filePath }, content, true)
     .then(() => filePath)
-    .catch(error => {
+    .catch((error) => {
       console.warn(
         'Saving thumbnail for ' +
           filePath +
           ' failed with ' +
-          JSON.stringify(error)
+          JSON.stringify(error),
       );
       return Promise.reject(new Error('Saving tmb failed for: ' + filePath));
     });
@@ -122,11 +122,11 @@ function saveThumbnailPromise(filePath, dataURL) {
 function getThumbFileLocation(filePath: string) {
   const containingFolder = extractContainingDirectoryPath(
     filePath,
-    PlatformIO.getDirSeparator()
+    PlatformIO.getDirSeparator(),
   );
   const metaFolder = getMetaDirectoryPath(
     containingFolder,
-    PlatformIO.getDirSeparator()
+    PlatformIO.getDirSeparator(),
   );
   return (
     metaFolder +
@@ -137,13 +137,13 @@ function getThumbFileLocation(filePath: string) {
 }
 
 export function getThumbnailURLPromise(
-  filePath: string
+  filePath: string,
 ): Promise<{ filePath: string; tmbPath?: string }> {
   return PlatformIO.getPropertiesPromise(filePath)
-    .then(origStats => {
+    .then((origStats) => {
       const thumbFilePath = getThumbFileLocation(filePath);
       return PlatformIO.getPropertiesPromise(thumbFilePath)
-        .then(stats => {
+        .then((stats) => {
           if (stats) {
             // Thumbnail exists
             if (origStats.lmdt > stats.lmdt) {
@@ -152,10 +152,10 @@ export function getThumbnailURLPromise(
                 filePath,
                 origStats.size,
                 thumbFilePath,
-                origStats.isFile
+                origStats.isFile,
               )
-                .then(tmbPath => ({ filePath, tmbPath }))
-                .catch(err => {
+                .then((tmbPath) => ({ filePath, tmbPath }))
+                .catch((err) => {
                   console.warn('Thumb generation failed ' + err);
                   return Promise.resolve({ filePath, tmbPath: thumbFilePath });
                 });
@@ -169,21 +169,21 @@ export function getThumbnailURLPromise(
               filePath,
               origStats.size,
               thumbFilePath,
-              origStats.isFile
+              origStats.isFile,
             )
-              .then(tmbPath => ({ filePath, tmbPath }))
-              .catch(err => {
+              .then((tmbPath) => ({ filePath, tmbPath }))
+              .catch((err) => {
                 console.warn('Thumb generation failed ' + err);
                 return Promise.resolve({ filePath });
               });
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.warn('Error getting tmb properties ' + err);
           return Promise.resolve({ filePath });
         });
     })
-    .catch(err => {
+    .catch((err) => {
       console.warn('Error getting file properties ' + err);
       return Promise.resolve({ filePath });
     });
@@ -217,11 +217,11 @@ export function createThumbnailPromise(
   filePath: string,
   fileSize: number,
   thumbFilePath: string,
-  isFile: boolean
+  isFile: boolean,
 ): Promise<string | undefined> {
   const metaDirectory = extractContainingDirectoryPath(
     thumbFilePath,
-    PlatformIO.getDirSeparator()
+    PlatformIO.getDirSeparator(),
   );
   const fileDirectory = isFile
     ? extractContainingDirectoryPath(filePath, PlatformIO.getDirSeparator())
@@ -230,7 +230,7 @@ export function createThumbnailPromise(
   if (normalizedFileDirectory.endsWith(AppConfig.metaFolder)) {
     return Promise.resolve(undefined); // prevent creating thumbs in meta/.ts folder
   }
-  return PlatformIO.checkDirExist(metaDirectory).then(exist => {
+  return PlatformIO.checkDirExist(metaDirectory).then((exist) => {
     if (!exist) {
       return PlatformIO.createDirectoryPromise(metaDirectory).then(() => {
         return createThumbnailSavePromise(filePath, fileSize, thumbFilePath);
@@ -244,21 +244,21 @@ export function createThumbnailPromise(
 function createThumbnailSavePromise(
   filePath: string,
   fileSize: number,
-  thumbFilePath: string
+  thumbFilePath: string,
 ): Promise<string | undefined> {
   return generateThumbnailPromise(filePath, fileSize)
-    .then(dataURL => {
+    .then((dataURL) => {
       if (dataURL && dataURL.length) {
         return saveThumbnailPromise(thumbFilePath, dataURL)
           .then(() => thumbFilePath)
-          .catch(err => {
+          .catch((err) => {
             console.warn('Thumb saving failed ' + err + ' for ' + filePath);
             return Promise.resolve(undefined);
           });
       }
       return undefined; // thumbFilePath;
     })
-    .catch(err => {
+    .catch((err) => {
       console.warn('Thumb generation failed ' + err + ' for ' + filePath);
       return Promise.resolve(undefined);
     });
@@ -270,7 +270,7 @@ function createThumbnailSavePromise(
 export function generateThumbnailPromise(fileURL: string, fileSize: number) {
   const ext = extractFileExtension(
     fileURL,
-    PlatformIO.getDirSeparator()
+    PlatformIO.getDirSeparator(),
   ).toLowerCase();
 
   const fileURLEscaped = /^https?:\/\//.test(fileURL)
@@ -310,14 +310,14 @@ export function generateThumbnailPromise(fileURL: string, fileSize: number) {
       return Pro.ThumbsGenerator.generateZipContainerImageThumbnail(
         fileURLEscaped,
         maxSize,
-        supportedImgs
+        supportedImgs,
       );
     }
   } else if (supportedVideos.indexOf(ext) >= 0) {
     if (Pro) {
       return Pro.ThumbsGenerator.generateVideoThumbnail(
         fileURLEscaped,
-        maxSize
+        maxSize,
       );
     }
     return generateVideoThumbnail(fileURLEscaped);
@@ -331,9 +331,9 @@ function generateDefaultThumbnail() {
 
 export function generateImageThumbnail(
   fileURL: string,
-  maxTmbSize?: number
+  maxTmbSize?: number,
 ): Promise<string> {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     try {
       let canvas: HTMLCanvasElement = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
@@ -409,7 +409,7 @@ export function generateImageThumbnail(
         // });
       };
       img.src = fileURL;
-      img.onerror = err => {
+      img.onerror = (err) => {
         console.warn(`Error loading: ${fileURL} for tmb gen`, err);
         resolve('');
       };
@@ -421,7 +421,7 @@ export function generateImageThumbnail(
 }
 
 function generateVideoThumbnail(fileURL): Promise<string> {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     try {
       let canvas: HTMLCanvasElement = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
@@ -443,7 +443,7 @@ function generateVideoThumbnail(fileURL): Promise<string> {
       video.onseeked = () => {
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         const dataurl = canvas.toDataURL(AppConfig.thumbType);
-        img.onerror = err => {
+        img.onerror = (err) => {
           console.warn(`Error loading: ${fileURL} for tmb gen with: ${err} `);
           resolve('');
         };
@@ -452,7 +452,7 @@ function generateVideoThumbnail(fileURL): Promise<string> {
         canvas = null;
         video = null;
       };
-      video.onerror = err => {
+      video.onerror = (err) => {
         console.warn(`Error opening: ${fileURL} for tmb gen with: ${err} `);
         resolve('');
       };

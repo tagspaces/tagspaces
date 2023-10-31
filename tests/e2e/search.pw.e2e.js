@@ -7,7 +7,7 @@ import {
   getGridFileSelector,
   selectorFile,
   setSettings,
-  takeScreenshot
+  takeScreenshot,
 } from './general.helpers';
 import {
   checkFileExist,
@@ -15,7 +15,7 @@ import {
   startTestingApp,
   stopApp,
   testDataRefresh,
-  writeFile
+  writeFile,
 } from './hook';
 import {
   closeFileProperties,
@@ -24,7 +24,7 @@ import {
   createPwMinioLocation,
   defaultLocationName,
   defaultLocationPath,
-  getPwLocationTid
+  getPwLocationTid,
 } from './location.helpers';
 import {
   emptyFolderName,
@@ -32,7 +32,7 @@ import {
   testFilename,
   addRemoveTagsInSearchResults,
   createSavedSearch,
-  addSearchCommand
+  addSearchCommand,
 } from './search.helpers';
 import { clearDataStorage } from './welcome.helpers';
 import { openContextEntryMenu } from './test-utils';
@@ -55,11 +55,11 @@ test.afterEach(async ({ page }, testInfo) => {
   if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
     const localStorage = await global.client.evaluate(() =>
-      JSON.stringify(window.localStorage)
+      JSON.stringify(window.localStorage),
     );
     writeFile(
       testInfo.outputPath(testInfo.title + '_localstorage.json'),
-      localStorage
+      localStorage,
     );
   }
   await clearDataStorage();
@@ -80,7 +80,7 @@ test.beforeEach(async () => {
 test.describe('TST06 - Test Search in file structure:', () => {
   test('TST0601 - Search in current location [web,electron]', async () => {
     await global.client.dblclick(
-      '[data-tid=fsEntryName_' + emptyFolderName + ']'
+      '[data-tid=fsEntryName_' + emptyFolderName + ']',
     );
 
     await searchEngine(testFilename); //, { reindexing: true });
@@ -139,7 +139,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     const searchQuery = 'jpg'; //'sample_exif.jpg';
     await addSearchCommand(searchQuery, true);
     await global.client.waitForSelector('img[alt=thumbnail]', {
-      visible: true
+      visible: true,
     });
     const imageLocator = global.client.locator('img[alt=thumbnail]');
     const imageCount = await imageLocator.count();
@@ -179,7 +179,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await clickOn('#textQuery-option-0');
     await expectElementExist(
       '[data-tid=OpenedTID' + dataTidFormat(file) + ']',
-      true
+      true,
     );
   });
 
@@ -187,7 +187,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     const bookmarkFileTitle = 'sample.txt';
     await openContextEntryMenu(
       getGridFileSelector(bookmarkFileTitle),
-      'fileMenuOpenFile'
+      'fileMenuOpenFile',
     );
 
     // Create
@@ -198,7 +198,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await clickOn('#textQuery-option-0');
     await expectElementExist(
       '[data-tid=OpenedTID' + dataTidFormat(bookmarkFileTitle) + ']',
-      true
+      true,
     );
   });
 
@@ -235,7 +235,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
 
     await expectElementSelected(
       'sample' + ' ' + tags1.join(' ') + '.' + file1,
-      false
+      false,
     );
 
     const file2 = 'jpg';
@@ -244,7 +244,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
 
     await expectElementSelected(
       'sample' + ' ' + tags2.join(' ') + '.' + file2,
-      false
+      false,
     );
 
     const file3 = 'gif';
@@ -253,7 +253,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
 
     await expectElementSelected(
       'sample' + ' ' + tags3.join(' ') + '.' + file3,
-      false
+      false,
     );
 
     function getFileName(fileExt, tags) {
@@ -290,7 +290,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await expectElementExist(
       getGridFileSelector('empty_file.html'),
       true,
-      5000
+      5000,
     );
     //await openLocationMenu(defaultLocationName);
     //await clickOn('[data-tid=indexLocation]');
@@ -302,7 +302,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await expectElementExist(
       getGridFileSelector('empty_file.html'),
       true,
-      5000
+      5000,
     );
   });
 
@@ -358,7 +358,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await expectElementExist(
       getGridFileSelector('empty_file.html'),
       true,
-      5000
+      5000,
     );
     await clickOn('#clearSearchID');
 
@@ -373,7 +373,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     //await global.client.dblclick('[data-tid=fsEntryName_empty_folder]');
     await openContextEntryMenu(
       getGridFileSelector('empty_folder'),
-      'openDirectory'
+      'openDirectory',
     );
     await addSearchCommand('sc:', false);
     await clickOn('#textQuery-option-1');
@@ -413,13 +413,13 @@ test.describe('TST06 - Test Search in file structure:', () => {
   test('TST0646 - Open directory from search results [web,electron]', async () => {
     await createFile(
       'text_file.txt',
-      'testing open subfolder from search results'
+      'testing open subfolder from search results',
     );
     await addSearchCommand('empty_folder', true);
     await expectElementExist(getGridFileSelector('empty_folder'), true, 5000);
     await openContextEntryMenu(
       getGridFileSelector('empty_folder'),
-      'openDirectory'
+      'openDirectory',
     );
     await expectElementExist(getGridFileSelector('text_file.txt'), true, 5000);
   });

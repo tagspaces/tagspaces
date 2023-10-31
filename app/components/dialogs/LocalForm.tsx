@@ -45,19 +45,19 @@ function LocalForm(props: Props) {
 
   const openDirectory = () => {
     PlatformIO.selectDirectoryDialog()
-      .then(selectedPaths => {
+      .then((selectedPaths) => {
         const selectedPath = decodeURI(selectedPaths[0]);
         setPath(selectedPath);
         if (name.length < 1 && selectedPath.length > 0) {
           const dirName = extractDirectoryName(
             selectedPath,
-            PlatformIO.getDirSeparator()
+            PlatformIO.getDirSeparator(),
           );
           setName(dirName.charAt(0).toUpperCase() + dirName.slice(1));
         }
         return true;
       })
-      .catch(err => {
+      .catch((err) => {
         console.log('selectDirectoryDialog failed with: ' + err);
       });
   };
@@ -72,7 +72,7 @@ function LocalForm(props: Props) {
             margin="dense"
             name="name"
             inputProps={{ autoCorrect: 'off' }}
-            onChange={event => setName(event.target.value)}
+            onChange={(event) => setName(event.target.value)}
             value={name}
             data-tid="locationName"
             fullWidth={true}
@@ -90,7 +90,7 @@ function LocalForm(props: Props) {
             fullWidth={true}
             inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
             data-tid="locationPath"
-            onChange={event => setPath(event.target.value)}
+            onChange={(event) => setPath(event.target.value)}
             value={path}
             // placeholder="Enter a folder path or select it with the button on the right"
             InputProps={{
@@ -100,7 +100,7 @@ function LocalForm(props: Props) {
                     <FolderIcon />
                   </IconButton>
                 </InputAdornment>
-              )
+              ),
             }}
             label={t('core:createLocationPath')}
           />

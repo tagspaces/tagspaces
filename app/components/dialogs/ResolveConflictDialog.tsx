@@ -30,7 +30,7 @@ import { OpenedEntry } from '-/reducers/app';
 import {
   extractContainingDirectoryPath,
   extractFileExtension,
-  extractFileName
+  extractFileName,
 } from '@tagspaces/tagspaces-common/paths';
 import PlatformFacade from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
@@ -75,7 +75,7 @@ function ResolveConflictDialog(props: Props) {
       <DialogContent
         style={{
           overflow: 'auto',
-          minWidth: 400
+          minWidth: 400,
         }}
       >
         {isSaveAs ? (
@@ -118,7 +118,7 @@ function ResolveConflictDialog(props: Props) {
                   .saveAs(
                     extractContainingDirectoryPath(props.file.path) +
                       PlatformFacade.getDirSeparator() +
-                      copyFileName.current
+                      copyFileName.current,
                   )
                   .then(() => {
                     onClose();

@@ -48,7 +48,7 @@ function ProgressDialog(props: Props) {
         style={{
           marginLeft: 'auto',
           marginRight: 'auto',
-          flexGrow: 1
+          flexGrow: 1,
         }}
       >
         <CircularProgress size={24} />

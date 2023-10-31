@@ -39,7 +39,7 @@ import {
   getDesktopMode,
   getKeyBindingObject,
   getMainVerticalSplitSize,
-  actions as SettingsActions
+  actions as SettingsActions,
 } from '../reducers/settings';
 import {
   actions as AppActions,
@@ -66,7 +66,7 @@ import {
   isLocationDialogOpened,
   isProTeaserVisible,
   isTruncatedConfirmDialogOpened,
-  isNewAudioDialogOpened
+  isNewAudioDialogOpened,
 } from '../reducers/app';
 import TargetFileBox from '../components/TargetFileBox';
 import LoadingLazy from '../components/LoadingLazy';
@@ -99,7 +99,7 @@ const drawerWidth = 320;
 const body = document.getElementsByTagName('body')[0];
 const bufferedLeftSplitResize = buffer({
   timeout: 300,
-  id: 'buffered-leftsplit-resize'
+  id: 'buffered-leftsplit-resize',
 });
 
 const KanBanImportDialog = Pro && Pro.UI ? Pro.UI.KanBanImportDialog : false;
@@ -108,7 +108,7 @@ const PREFIX = 'MainPage';
 
 const classes = {
   content: `${PREFIX}-content`,
-  contentShift: `${PREFIX}-contentShift`
+  contentShift: `${PREFIX}-contentShift`,
 };
 
 const Root = styled('div')(({ theme }) => ({
@@ -120,18 +120,18 @@ const Root = styled('div')(({ theme }) => ({
     paddingLeft: drawerWidth,
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen
-    })
+      duration: theme.transitions.duration.leavingScreen,
+    }),
   },
   [`& .${classes.contentShift}`]: {
     height: '100%',
     padding: 0,
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen
+      duration: theme.transitions.duration.enteringScreen,
     }),
-    marginLeft: 0
-  }
+    marginLeft: 0,
+  },
 }));
 
 interface Props {
@@ -202,10 +202,11 @@ interface Props {
   user: CognitoUserInterface;
 }
 
-const CreateEditLocationDialog = React.lazy(() =>
-  import(
-    /* webpackChunkName: "CreateEditLocationDialog" */ '../components/dialogs/CreateEditLocationDialog'
-  )
+const CreateEditLocationDialog = React.lazy(
+  () =>
+    import(
+      /* webpackChunkName: "CreateEditLocationDialog" */ '../components/dialogs/CreateEditLocationDialog'
+    ),
 );
 function CreateEditLocationDialogAsync(props) {
   return (
@@ -215,10 +216,11 @@ function CreateEditLocationDialogAsync(props) {
   );
 }
 
-const AboutDialog = React.lazy(() =>
-  import(
-    /* webpackChunkName: "AboutDialog" */ '../components/dialogs/AboutDialog'
-  )
+const AboutDialog = React.lazy(
+  () =>
+    import(
+      /* webpackChunkName: "AboutDialog" */ '../components/dialogs/AboutDialog'
+    ),
 );
 function AboutDialogAsync(props) {
   return (
@@ -228,10 +230,11 @@ function AboutDialogAsync(props) {
   );
 }
 
-const LicenseDialog = React.lazy(() =>
-  import(
-    /* webpackChunkName: "LicenseDialog" */ '../components/dialogs/LicenseDialog'
-  )
+const LicenseDialog = React.lazy(
+  () =>
+    import(
+      /* webpackChunkName: "LicenseDialog" */ '../components/dialogs/LicenseDialog'
+    ),
 );
 function LicenseDialogAsync(props) {
   return (
@@ -241,10 +244,11 @@ function LicenseDialogAsync(props) {
   );
 }
 
-const KeyboardDialog = React.lazy(() =>
-  import(
-    /* webpackChunkName: "KeyboardDialog" */ '../components/dialogs/KeyboardDialog'
-  )
+const KeyboardDialog = React.lazy(
+  () =>
+    import(
+      /* webpackChunkName: "KeyboardDialog" */ '../components/dialogs/KeyboardDialog'
+    ),
 );
 function KeyboardDialogAsync(props) {
   return (
@@ -254,10 +258,11 @@ function KeyboardDialogAsync(props) {
   );
 }
 
-const ThirdPartyLibsDialog = React.lazy(() =>
-  import(
-    /* webpackChunkName: "ThirdPartyLibsDialog" */ '../components/dialogs/ThirdPartyLibsDialog'
-  )
+const ThirdPartyLibsDialog = React.lazy(
+  () =>
+    import(
+      /* webpackChunkName: "ThirdPartyLibsDialog" */ '../components/dialogs/ThirdPartyLibsDialog'
+    ),
 );
 function ThirdPartyLibsDialogAsync(props) {
   return (
@@ -267,10 +272,11 @@ function ThirdPartyLibsDialogAsync(props) {
   );
 }
 
-const OnboardingDialog = React.lazy(() =>
-  import(
-    /* webpackChunkName: "OnboardingDialog" */ '../components/dialogs/OnboardingDialog'
-  )
+const OnboardingDialog = React.lazy(
+  () =>
+    import(
+      /* webpackChunkName: "OnboardingDialog" */ '../components/dialogs/OnboardingDialog'
+    ),
 );
 function OnboardingDialogAsync(props) {
   return (
@@ -280,10 +286,11 @@ function OnboardingDialogAsync(props) {
   );
 }
 
-const EditEntryTagDialog = React.lazy(() =>
-  import(
-    /* webpackChunkName: "EditEntryTagDialog" */ '../components/dialogs/EditEntryTagDialog'
-  )
+const EditEntryTagDialog = React.lazy(
+  () =>
+    import(
+      /* webpackChunkName: "EditEntryTagDialog" */ '../components/dialogs/EditEntryTagDialog'
+    ),
 );
 function EditEntryTagDialogAsync(props) {
   return (
@@ -293,10 +300,11 @@ function EditEntryTagDialogAsync(props) {
   );
 }
 
-const OpenLinkDialog = React.lazy(() =>
-  import(
-    /* webpackChunkName: "OpenLinkDialog" */ '../components/dialogs/OpenLinkDialog'
-  )
+const OpenLinkDialog = React.lazy(
+  () =>
+    import(
+      /* webpackChunkName: "OpenLinkDialog" */ '../components/dialogs/OpenLinkDialog'
+    ),
 );
 function OpenLinkDialogAsync(props) {
   return (
@@ -306,10 +314,11 @@ function OpenLinkDialogAsync(props) {
   );
 }
 
-const ProTeaserDialog = React.lazy(() =>
-  import(
-    /* webpackChunkName: "ProTeaserDialog" */ '../components/dialogs/ProTeaserDialog'
-  )
+const ProTeaserDialog = React.lazy(
+  () =>
+    import(
+      /* webpackChunkName: "ProTeaserDialog" */ '../components/dialogs/ProTeaserDialog'
+    ),
 );
 function ProTeaserDialogAsync(props) {
   return (
@@ -330,19 +339,19 @@ function MainPage(props: Props) {
     openFsEntry,
     setEntryInFullWidth,
     openNextFile,
-    openPrevFile
+    openPrevFile,
   } = useOpenedEntryContext();
 
   const {
     loadParentDirectoryContent,
     enterSearchMode,
     exitSearchMode,
-    setSearchQuery
+    setSearchQuery,
   } = useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
   const theme = useTheme();
   const percent = useRef<number | undefined>(undefined);
-  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const width =
     window.innerWidth ||
@@ -354,15 +363,14 @@ function MainPage(props: Props) {
     body.clientHeight;
   const [dimensions, setDimensions] = useState<any>({
     width,
-    height
+    height,
   });
 
   const [drawerOpened, setDrawerOpened] = useState<boolean>(true);
-  const [moveCopyDialogOpened, setMoveCopyDialogOpened] = useState<any>(
-    undefined
-  );
+  const [moveCopyDialogOpened, setMoveCopyDialogOpened] =
+    useState<any>(undefined);
 
-  useEventListener('message', e => {
+  useEventListener('message', (e) => {
     if (typeof e.data === 'string') {
       // console.log(e.data);
       try {
@@ -373,7 +381,7 @@ function MainPage(props: Props) {
       } catch (ex) {
         console.debug(
           'useEventListener message:' + e.data + ' parse error:',
-          ex
+          ex,
         );
       }
     }
@@ -386,7 +394,7 @@ function MainPage(props: Props) {
       () => {
         openLink(window.location.href, { fullWidth: false });
       },
-      { once: true }
+      { once: true },
     );
   }
 
@@ -403,7 +411,7 @@ function MainPage(props: Props) {
         //   '>>> last href: ' + decodeURIComponent(window.location.href)
         // );
       },
-      { once: true }
+      { once: true },
     );
   }
 
@@ -418,7 +426,7 @@ function MainPage(props: Props) {
       openFsEntry,
       openNextFile,
       openPrevFile,
-      setSearchQuery
+      setSearchQuery,
     });
   }, []);
 
@@ -461,7 +469,7 @@ function MainPage(props: Props) {
   };
 
   const toggleDrawer = () => {
-    setDrawerOpened(prevOpen => !prevOpen);
+    setDrawerOpened((prevOpen) => !prevOpen);
   };
 
   const keyBindingHandlers = {
@@ -480,7 +488,7 @@ function MainPage(props: Props) {
     showHelp: () => {
       props.openHelpFeedbackPanel();
       setDrawerOpened(true);
-    }
+    },
   };
 
   const keyMap = {
@@ -490,7 +498,7 @@ function MainPage(props: Props) {
     showTagLibrary: props.keyBindings.showTagLibrary,
     openSearch: props.keyBindings.openSearch,
     closeSearch: props.keyBindings.Escape,
-    showHelp: props.keyBindings.showHelp
+    showHelp: props.keyBindings.showHelp,
   };
 
   const {
@@ -511,7 +519,7 @@ function MainPage(props: Props) {
     toggleOpenLinkDialog,
     toggleProTeaser,
     setFirstRun,
-    mainSplitSize
+    mainSplitSize,
   } = props;
   const { FILE } = NativeTypes;
 
@@ -539,7 +547,7 @@ function MainPage(props: Props) {
       percent.current = undefined;
       initialPrimarySize = '100%';
       minSecondarySize = '0%';
-      renderSplitter = function() {
+      renderSplitter = function () {
         return null;
       };
     }
@@ -547,7 +555,7 @@ function MainPage(props: Props) {
       percent.current = undefined;
       initialPrimarySize = '0%';
       minPrimarySize = '0%';
-      renderSplitter = function() {
+      renderSplitter = function () {
         return null;
       };
     }
@@ -715,22 +723,22 @@ function MainPage(props: Props) {
             onClose={() => props.toggleDeleteMultipleEntriesDialog()}
             title={t('core:deleteConfirmationTitle')}
             content={t('core:deleteConfirmationContent')}
-            list={selectedEntries.map(fsEntry => fsEntry.name)}
-            confirmCallback={result => {
+            list={selectedEntries.map((fsEntry) => fsEntry.name)}
+            confirmCallback={(result) => {
               if (result && selectedEntries) {
                 deleteEntries(selectedEntries).then(
-                  success =>
+                  (success) =>
                     success &&
                     selectedEntries.length > 1 &&
                     showNotification(
                       t('core:deletingEntriesSuccessful', {
                         dirPath: selectedEntries
-                          .map(fsEntry => fsEntry.name)
-                          .toString()
+                          .map((fsEntry) => fsEntry.name)
+                          .toString(),
                       }),
                       'default',
-                      true
-                    )
+                      true,
+                    ),
                 );
               }
             }}
@@ -743,7 +751,7 @@ function MainPage(props: Props) {
         <div
           style={{
             backgroundColor: theme.palette.background.default,
-            height: '100%'
+            height: '100%',
           }}
         >
           <style>
@@ -785,7 +793,7 @@ function MainPage(props: Props) {
               </Drawer>
               <main
                 className={clsx(classes.content, {
-                  [classes.contentShift]: !drawerOpened
+                  [classes.contentShift]: !drawerOpened,
                 })}
               >
                 {renderContainers()}
@@ -841,11 +849,10 @@ function mapStateToProps(state) {
     isTagLibraryPanelOpened: isTagLibraryPanelOpened(state),
     isSearchPanelOpened: isSearchPanelOpened(state),
     isHelpFeedbackPanelOpened: isHelpFeedbackPanelOpened(state),
-    isDeleteMultipleEntriesDialogOpened: isDeleteMultipleEntriesDialogOpened(
-      state
-    ),
+    isDeleteMultipleEntriesDialogOpened:
+      isDeleteMultipleEntriesDialogOpened(state),
     isImportKanBanDialogOpened: isImportKanBanDialogOpened(state),
-    user: currentUser(state)
+    user: currentUser(state),
   };
 }
 
@@ -888,9 +895,9 @@ function mapDispatchToProps(dispatch) {
         AppActions.toggleDeleteMultipleEntriesDialog,
       setFirstRun: SettingsActions.setFirstRun,
       addExtensions: AppActions.addExtensions,
-      addSupportedFileTypes: SettingsActions.addSupportedFileTypes
+      addSupportedFileTypes: SettingsActions.addSupportedFileTypes,
     },
-    dispatch
+    dispatch,
   );
 }
 
@@ -929,5 +936,5 @@ const areEqual = (prevProp, nextProp) =>
   nextProp.isImportKanBanDialogOpened === prevProp.isImportKanBanDialogOpened;
 
 export default withDnDContext(
-  connect(mapStateToProps, mapDispatchToProps)(React.memo(MainPage, areEqual)) //translate(['core'], { wait: true })(React.memo(MainPage, areEqual)))
+  connect(mapStateToProps, mapDispatchToProps)(React.memo(MainPage, areEqual)), //translate(['core'], { wait: true })(React.memo(MainPage, areEqual)))
 );

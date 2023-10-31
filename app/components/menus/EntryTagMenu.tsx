@@ -53,7 +53,7 @@ function EntryTagMenu(props: Props) {
     anchorEl,
     selectedTag,
     currentEntryPath,
-    setIsAddTagDialogOpened
+    setIsAddTagDialogOpened,
   } = props;
   const removeTagsProps = props.removeTags;
   const { t } = useTranslation();
@@ -65,7 +65,7 @@ function EntryTagMenu(props: Props) {
   const dispatch: AppDispatch = useDispatch();
   const maxSearchResults: number = useSelector(getMaxSearchResults);
 
-  const toggleEditTagDialog = tag => {
+  const toggleEditTagDialog = (tag) => {
     dispatch(AppActions.toggleEditTagDialog(tag));
   };
 
@@ -91,7 +91,7 @@ function EntryTagMenu(props: Props) {
       setSearchQuery({
         tagsAND: [selectedTag],
         maxSearchResults: maxSearchResults,
-        executeSearch: true
+        executeSearch: true,
       });
     }
     onClose();
@@ -106,7 +106,7 @@ function EntryTagMenu(props: Props) {
       removeTagsProps([currentEntryPath], [selectedTag]);
     } else {
       removeTags([currentEntryPath], [selectedTag]).then(() =>
-        handleCloseDialogs()
+        handleCloseDialogs(),
       );
     }
   }
@@ -121,7 +121,7 @@ function EntryTagMenu(props: Props) {
         <ShowEntriesWithTagIcon />
       </ListItemIcon>
       <ListItemText primary={t('core:showFilesWithThisTag')} />
-    </MenuItem>
+    </MenuItem>,
   ];
   if (!readOnlyMode) {
     if (setIsAddTagDialogOpened) {
@@ -135,7 +135,7 @@ function EntryTagMenu(props: Props) {
             <AddIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:addTagToTagGroup')} />
-        </MenuItem>
+        </MenuItem>,
       );
     }
     menuItems.push(
@@ -148,7 +148,7 @@ function EntryTagMenu(props: Props) {
           <EditIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:editTagTitle')} />
-      </MenuItem>
+      </MenuItem>,
     );
     menuItems.push(
       <MenuItem
@@ -160,7 +160,7 @@ function EntryTagMenu(props: Props) {
           <DeleteIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:removeTag')} />
-      </MenuItem>
+      </MenuItem>,
     );
   }
 
@@ -174,7 +174,7 @@ function EntryTagMenu(props: Props) {
         onClose={handleCloseDialogs}
         title={t('core:removeTag')}
         content={t('core:removeTagTooltip')}
-        confirmCallback={result => {
+        confirmCallback={(result) => {
           if (result) {
             confirmRemoveTag();
           }

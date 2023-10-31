@@ -24,7 +24,7 @@ AppConfig.editableFiles = [
   'rb',
   'ini',
   'sh',
-  'sql'
+  'sql',
 ];
 AppConfig.autoSaveInterval = 40000;
 AppConfig.maxLoops = 2;

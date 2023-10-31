@@ -26,7 +26,7 @@ import {
   IconButton,
   InputAdornment,
   MenuItem,
-  Select
+  Select,
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
@@ -67,7 +67,7 @@ function WebdavForm(props: Props) {
     authType,
     setAuthType,
     secretAccessKey,
-    setSecretAccessKey
+    setSecretAccessKey,
   } = props;
   const { t } = useTranslation();
 
@@ -75,7 +75,7 @@ function WebdavForm(props: Props) {
     None: 'none',
     Basic: 'password',
     Digest: 'digest',
-    Token: 'token'
+    Token: 'token',
   };
 
   return (
@@ -87,7 +87,7 @@ function WebdavForm(props: Props) {
             margin="dense"
             name="name"
             inputProps={{ autoCorrect: 'off' }}
-            onChange={event => setName(event.target.value)}
+            onChange={(event) => setName(event.target.value)}
             value={name}
             label={t('core:createLocationName')}
             data-tid="locationName"
@@ -107,7 +107,7 @@ function WebdavForm(props: Props) {
               setAuthType(event.target.value)
             }
           >
-            {Object.keys(AuthTypes).map(auth => (
+            {Object.keys(AuthTypes).map((auth) => (
               <MenuItem key={auth} value={AuthTypes[auth]}>
                 {auth}
               </MenuItem>
@@ -125,7 +125,7 @@ function WebdavForm(props: Props) {
                 fullWidth={true}
                 data-tid="userNameIdTID"
                 inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
-                onChange={event => setUserName(event.target.value)}
+                onChange={(event) => setUserName(event.target.value)}
                 label={t('core:userName')}
                 value={userName}
               />
@@ -140,7 +140,7 @@ function WebdavForm(props: Props) {
                 fullWidth={true}
                 data-tid="passwordTID"
                 inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
-                onChange={event => setPassword(event.target.value)}
+                onChange={(event) => setPassword(event.target.value)}
                 value={password}
                 label={t('core:password')}
                 InputProps={{
@@ -154,7 +154,7 @@ function WebdavForm(props: Props) {
                         {showPassword ? <Visibility /> : <VisibilityOff />}
                       </IconButton>
                     </InputAdornment>
-                  )
+                  ),
                 }}
               />
             </FormControl>
@@ -171,7 +171,7 @@ function WebdavForm(props: Props) {
               fullWidth={true}
               data-tid="webDavToken"
               inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
-              onChange={event => setSecretAccessKey(event.target.value)}
+              onChange={(event) => setSecretAccessKey(event.target.value)}
               value={secretAccessKey}
               label={t('core:webDavToken')}
               InputProps={{
@@ -185,7 +185,7 @@ function WebdavForm(props: Props) {
                       {showPassword ? <Visibility /> : <VisibilityOff />}
                     </IconButton>
                   </InputAdornment>
-                )
+                ),
               }}
             />
           </FormControl>
@@ -199,7 +199,7 @@ function WebdavForm(props: Props) {
             fullWidth={true}
             data-tid="endpointURL"
             placeholder={t('webdavServiceURL')}
-            onChange={event => setEndpointURL(event.target.value)}
+            onChange={(event) => setEndpointURL(event.target.value)}
             value={endpointURL}
             label={t('core:endpointURL')}
           />

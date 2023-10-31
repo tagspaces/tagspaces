@@ -14,7 +14,7 @@ export async function clearStorage() {
   });
   // Execute JavaScript to clear cookies.
   await global.client.evaluate(() => {
-    document.cookie.split(';').forEach(function(c) {
+    document.cookie.split(';').forEach(function (c) {
       document.cookie = c
         .replace(/^ +/, '')
         .replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/');

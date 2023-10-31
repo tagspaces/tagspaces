@@ -6,7 +6,7 @@ import {
   defaultLocationPath,
   defaultLocationName,
   createPwMinioLocation,
-  createPwLocation
+  createPwLocation,
 } from './location.helpers';
 import {
   clickOn,
@@ -15,7 +15,7 @@ import {
   getGridFileSelector,
   rightClickOn,
   setInputKeys,
-  takeScreenshot
+  takeScreenshot,
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { createSavedSearch, searchEngine } from './search.helpers';
@@ -60,21 +60,21 @@ test.describe('TST09 - Quick access', () => {
     await clickOn('[data-tid=quickAccessButton]');
     // await clickOn('[data-tid=storedSearchesVisibleTID]');
     await expectElementExist(
-      '[data-tid=StoredSearchTID' + storedSearchTitle + ']'
+      '[data-tid=StoredSearchTID' + storedSearchTitle + ']',
     );
     // Rename
     await clickOn('[data-tid=editSearchTID]');
     await setInputKeys('savedSearchTID', 'Renamed');
     await clickOn('[data-tid=confirmSavedSearchTID]');
     await expectElementExist(
-      '[data-tid=StoredSearchTID' + storedSearchTitle + 'Renamed]'
+      '[data-tid=StoredSearchTID' + storedSearchTitle + 'Renamed]',
     );
     //Delete
     await clickOn('[data-tid=editSearchTID]');
     await clickOn('[data-tid=deleteSavedSearchTID]');
     await expectElementExist(
       '[data-tid=StoredSearchTID' + storedSearchTitle + 'Renamed]',
-      false
+      false,
     );
   });
 
@@ -86,7 +86,7 @@ test.describe('TST09 - Quick access', () => {
     await clickOn('[data-tid=quickAccessButton]');
     // await clickOn('[data-tid=storedSearchesVisibleTID]');
     await expectElementExist(
-      '[data-tid=StoredSearchTID' + storedSearchTitle + ']'
+      '[data-tid=StoredSearchTID' + storedSearchTitle + ']',
     );
     // Execute
     await clickOn('[data-tid=StoredSearchTID' + storedSearchTitle + ']');
@@ -97,7 +97,7 @@ test.describe('TST09 - Quick access', () => {
     await clickOn('[data-tid=deleteSavedSearchTID]');
     await expectElementExist(
       '[data-tid=StoredSearchTID' + storedSearchTitle + ']',
-      false
+      false,
     );
   });
 
@@ -106,7 +106,7 @@ test.describe('TST09 - Quick access', () => {
     const bookmarkFileTid = dataTidFormat(bookmarkFileTitle);
     await openContextEntryMenu(
       getGridFileSelector(bookmarkFileTitle), // todo rethink selector here contain dot
-      'fileMenuOpenFile'
+      'fileMenuOpenFile',
     );
 
     // Create
@@ -116,7 +116,7 @@ test.describe('TST09 - Quick access', () => {
     // Open
     await clickOn('[data-tid=quickAccessButton]');
     await expectElementExist(
-      '[data-tid=tsBookmarksTID' + bookmarkFileTid + ']'
+      '[data-tid=tsBookmarksTID' + bookmarkFileTid + ']',
     );
     await clickOn('[data-tid=tsBookmarksTID' + bookmarkFileTid + ']');
     await expectElementExist('[data-tid=OpenedTID' + bookmarkFileTid + ']');
@@ -131,7 +131,7 @@ test.describe('TST09 - Quick access', () => {
 
     await expectElementExist(
       '[data-tid=tsBookmarksTID' + bookmarkFileTid + ']',
-      false
+      false,
     );
   });
 
@@ -161,7 +161,7 @@ test.describe('TST09 - Quick access', () => {
 
     await expectElementExist(
       '[data-tid=tsBookmarksTID' + testFolder + ']',
-      false
+      false,
     );
   });
 
@@ -171,7 +171,7 @@ test.describe('TST09 - Quick access', () => {
     for (let i = 0; i < bookmarks.length; i++) {
       await openContextEntryMenu(
         getGridFileSelector(bookmarks[i]),
-        'fileMenuOpenFile'
+        'fileMenuOpenFile',
       );
 
       // Create
@@ -182,7 +182,7 @@ test.describe('TST09 - Quick access', () => {
       await clickOn('[data-tid=refreshBookmarksTID]');
 
       await expectElementExist(
-        '[data-tid=tsBookmarksTID' + dataTidFormat(bookmarks[i]) + ']'
+        '[data-tid=tsBookmarksTID' + dataTidFormat(bookmarks[i]) + ']',
       );
     }
 
@@ -192,7 +192,7 @@ test.describe('TST09 - Quick access', () => {
     for (let i = 0; i < bookmarks.length; i++) {
       await expectElementExist(
         '[data-tid=tsBookmarksTID' + dataTidFormat(bookmarks[i]) + ']',
-        false
+        false,
       );
     }
   });
@@ -202,7 +202,7 @@ test.describe('TST09 - Quick access', () => {
     const fileTid = dataTidFormat(fileTitle);
     await openContextEntryMenu(
       getGridFileSelector(fileTitle),
-      'fileMenuOpenFile'
+      'fileMenuOpenFile',
     );
     await clickOn('[data-tid=fileContainerCloseOpenedFile]');
 
@@ -210,7 +210,7 @@ test.describe('TST09 - Quick access', () => {
     await clickOn('[data-tid=quickAccessButton]');
     await clickOn('[data-tid=fileOpenHistoryTID]');
     await expectElementExist(
-      '[data-tid=tsLastOpenedFilesHistoryTID' + fileTid + ']'
+      '[data-tid=tsLastOpenedFilesHistoryTID' + fileTid + ']',
     );
     await clickOn('[data-tid=tsLastOpenedFilesHistoryTID' + fileTid + ']');
     await expectElementExist('[data-tid=OpenedTID' + fileTid + ']');
@@ -220,7 +220,7 @@ test.describe('TST09 - Quick access', () => {
     await clickOn('[data-tid=clearHistoryTID]');
     await expectElementExist(
       '[data-tid=tsLastOpenedFilesHistoryTID' + fileTid + ']',
-      false
+      false,
     );
   });
 
@@ -234,14 +234,14 @@ test.describe('TST09 - Quick access', () => {
       const fileTid = dataTidFormat(files[i]);
       await openContextEntryMenu(
         getGridFileSelector(files[i]),
-        'fileMenuOpenFile'
+        'fileMenuOpenFile',
       );
       await clickOn('[data-tid=fileContainerCloseOpenedFile]');
       // Refresh opened files
       await clickOn('[data-tid=fileOpenMenuTID]');
       await clickOn('[data-tid=refreshHistoryTID]');
       await expectElementExist(
-        '[data-tid=tsLastOpenedFilesHistoryTID' + fileTid + ']'
+        '[data-tid=tsLastOpenedFilesHistoryTID' + fileTid + ']',
       );
     }
 
@@ -251,7 +251,7 @@ test.describe('TST09 - Quick access', () => {
     for (let i = 0; i < files.length; i++) {
       await expectElementExist(
         '[data-tid=tsLastOpenedFilesHistoryTID' + dataTidFormat(files[i]) + ']',
-        false
+        false,
       );
     }
   });
@@ -262,7 +262,7 @@ test.describe('TST09 - Quick access', () => {
     const fileTid = dataTidFormat(fileTitle);
     await openContextEntryMenu(
       getGridFileSelector(fileTitle),
-      'fileMenuOpenFile'
+      'fileMenuOpenFile',
     );
     await clickOn('[data-tid=fileContainerEditFile]');
 
@@ -272,7 +272,7 @@ test.describe('TST09 - Quick access', () => {
     await clickOn('[data-tid=quickAccessButton]');
     await clickOn('[data-tid=fileEditHistoryTID]');
     await expectElementExist(
-      '[data-tid=tsLastOpenedFilesHistoryTID' + fileTid + ']'
+      '[data-tid=tsLastOpenedFilesHistoryTID' + fileTid + ']',
     );
     await clickOn('[data-tid=tsLastOpenedFilesHistoryTID' + fileTid + ']');
     await expectElementExist('[data-tid=OpenedTID' + fileTid + ']');
@@ -282,7 +282,7 @@ test.describe('TST09 - Quick access', () => {
     await clickOn('[data-tid=clearHistoryTID]');
     await expectElementExist(
       '[data-tid=tsLastOpenedFilesHistoryTID' + fileTid + ']',
-      false
+      false,
     );
   });
 
@@ -301,13 +301,13 @@ test.describe('TST09 - Quick access', () => {
     await expectElementExist(
       '[data-tid=tsLastOpenedFoldersHistoryTID' + testFolder + ']',
       true,
-      10000
+      10000,
     );
     await clickOn('[data-tid=tsLastOpenedFoldersHistoryTID' + testFolder + ']');
     await expectElementExist(
       '[data-tid=OpenedTID' + testFolder + ']',
       true,
-      10000
+      10000,
     );
 
     //Delete
@@ -316,7 +316,7 @@ test.describe('TST09 - Quick access', () => {
     await expectElementExist(
       '[data-tid=tsLastOpenedFoldersHistoryTID' + testFolder + ']',
       false,
-      10000
+      10000,
     );
   });
 
@@ -342,15 +342,15 @@ test.describe('TST09 - Quick access', () => {
       await expectElementExist(
         '[data-tid=tsLastOpenedFoldersHistoryTID' + testFolder + ']',
         true,
-        10000
+        10000,
       );
       await clickOn(
-        '[data-tid=tsLastOpenedFoldersHistoryTID' + testFolder + ']'
+        '[data-tid=tsLastOpenedFoldersHistoryTID' + testFolder + ']',
       );
       await expectElementExist(
         '[data-tid=OpenedTID' + testFolder + ']',
         true,
-        10000
+        10000,
       );
     }
 
@@ -361,7 +361,7 @@ test.describe('TST09 - Quick access', () => {
       await expectElementExist(
         '[data-tid=tsLastOpenedFoldersHistoryTID' + folders[i] + ']',
         false,
-        10000
+        10000,
       );
     }
   });
@@ -373,7 +373,7 @@ test.describe('TST09 - Quick access', () => {
     await expectElementExist(
       '[data-tid=tsLastOpenedFoldersHistoryTID]',
       false,
-      10000
+      10000,
     );
   });
 });

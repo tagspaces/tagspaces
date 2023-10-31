@@ -20,7 +20,7 @@ import { styled } from '@mui/material/styles';
 
 const PREFIX = 'DnD';
 export const classes = {
-  dropzone: `${PREFIX}-dropzone`
+  dropzone: `${PREFIX}-dropzone`,
 };
 
 export const DnD = styled('div')(({ theme }) => ({
@@ -40,6 +40,6 @@ export const DnD = styled('div')(({ theme }) => ({
     textAlign: 'center',
     fontSize: '40px',
     fontWeight: 'bold',
-    color: 'white'
-  }
+    color: 'white',
+  },
 }));

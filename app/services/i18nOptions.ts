@@ -427,8 +427,8 @@ const options: InitOptions = {
   backend: {
     loadPath: '{{lng}}',
     // parse: data => data, // comment to have working i18n switch
-    request: loadLocales // comment to have working i18n switch
-  } // as HttpBackendOptions
+    request: loadLocales, // comment to have working i18n switch
+  }, // as HttpBackendOptions
   // getAsync: true,
   // debug: true,
   /* interpolation: {

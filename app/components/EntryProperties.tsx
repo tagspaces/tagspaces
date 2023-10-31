@@ -21,7 +21,7 @@ import React, {
   useEffect,
   useReducer,
   useRef,
-  useState
+  useState,
 } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import { getBgndFileLocationForDirectory } from '@tagspaces/tagspaces-common/paths';
@@ -33,7 +33,7 @@ import {
   TextField,
   inputBaseClasses,
   Button,
-  InputAdornment
+  InputAdornment,
 } from '@mui/material';
 import QRCodeIcon from '@mui/icons-material/QrCode';
 import Tooltip from '-/components/Tooltip';
@@ -47,7 +47,7 @@ import {
   LayerGroup,
   Marker,
   Popup,
-  TileLayer
+  TileLayer,
 } from 'react-leaflet';
 import { ButtonGroup, IconButton } from '@mui/material';
 import { formatBytes } from '@tagspaces/tagspaces-common/misc';
@@ -56,7 +56,7 @@ import {
   getThumbFileLocationForFile,
   getThumbFileLocationForDirectory,
   extractFileName,
-  extractDirectoryName
+  extractDirectoryName,
 } from '@tagspaces/tagspaces-common/paths';
 import TagDropContainer from './TagDropContainer';
 import MoveCopyFilesDialog from './dialogs/MoveCopyFilesDialog';
@@ -64,7 +64,7 @@ import {
   enhanceOpenedEntry,
   fileNameValidation,
   dirNameValidation,
-  normalizeUrl
+  normalizeUrl,
 } from '-/services/utils-io';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { parseGeoLocation } from '-/utils/geo';
@@ -77,7 +77,7 @@ import { getTagDelimiter } from '-/reducers/settings';
 import {
   getLastBackgroundImageChange,
   getLastThumbnailImageChange,
-  OpenedEntry
+  OpenedEntry,
 } from '-/reducers/app';
 import { savePerspective } from '-/utils/metaoperations';
 import MarkerIcon from '-/assets/icons/marker-icon.png';
@@ -117,7 +117,7 @@ const classes = {
   actionPlaceholder: `${PREFIX}-actionPlaceholder`,
   button: `${PREFIX}-button`,
   mdHelpers: `${PREFIX}-mdHelpers`,
-  formControl: `${PREFIX}-formControl`
+  formControl: `${PREFIX}-formControl`,
 };
 
 const Root = styled('div')(({ theme }) => ({
@@ -130,58 +130,59 @@ const Root = styled('div')(({ theme }) => ({
     padding: '5px 5px 2px 2px',
     margin: 6,
     clear: 'both',
-    boxShadow: '0 1px 1px 0 rgba(0,0,0,0.16),0 1px 1px 0 rgba(239,239,239,0.12)'
+    boxShadow:
+      '0 1px 1px 0 rgba(0,0,0,0.16),0 1px 1px 0 rgba(239,239,239,0.12)',
   },
 
   [`& .${classes.editTagsButton}`]: {
     float: 'right',
-    margin: '0 0 10px 0'
+    margin: '0 0 10px 0',
   },
 
   [`& .${classes.textField}`]: {
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
-    width: '100vh'
+    width: '100vh',
   },
 
   [`& .${classes.dropText}`]: {
     display: 'flex',
     width: '100%',
     padding: '20px',
-    color: '#728496'
+    color: '#728496',
   },
 
   [`& .${classes.propertyName}`]: {
-    marginTop: 10
+    marginTop: 10,
   },
 
   [`& .${classes.actionPlaceholder}`]: {
-    textAlign: 'end'
+    textAlign: 'end',
   },
 
   [`& .${classes.button}`]: {
     position: 'relative',
     padding: '8px 12px 6px 8px',
-    margin: '0'
+    margin: '0',
   },
 
   [`& .${classes.mdHelpers}`]: {
     borderRadius: '0.25rem',
     paddingLeft: '0.25rem',
     paddingRight: '0.25rem',
-    backgroundColor: '#bcc0c561'
+    backgroundColor: '#bcc0c561',
   },
   [`& .${classes.formControl}`]: {
     marginLeft: theme.spacing(0),
-    width: '100%'
-  }
+    width: '100%',
+  },
 }));
 
 const ThumbnailTextField = styled(TextField)(({ theme }) => ({
   //[`& .MuiInputBase-root}`]: {
   [`& .${inputBaseClasses.root}`]: {
-    height: 220
-  }
+    height: 220,
+  },
 }));
 
 const ThumbnailChooserDialog =
@@ -199,7 +200,7 @@ interface Props {
   lastThumbnailImageChange: any;
   setLastBackgroundColorChange: (
     folderPath: string,
-    lastBackgroundColorChange: number
+    lastBackgroundColorChange: number,
   ) => void;
 }
 
@@ -207,29 +208,20 @@ const defaultBackgrounds = [
   'linear-gradient(43deg, rgb(65, 88, 208) 0%, rgb(200, 80, 190) 45%, rgb(255, 204, 112) 100%)',
   'linear-gradient( 102deg,  rgba(253,189,85,1) 8%, rgba(249,131,255,1) 100% )',
   'radial-gradient( circle farthest-corner at 1.4% 2.8%,  rgba(240,249,249,1) 0%, rgba(182,199,226,1) 100% )',
-  'linear-gradient( 110deg,  rgba(48,207,208,1) 11.2%, rgba(51,8,103,1) 90% )'
+  'linear-gradient( 110deg,  rgba(48,207,208,1) 11.2%, rgba(51,8,103,1) 90% )',
 ];
 
 function EntryProperties(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
-  const {
-    openedEntries,
-    updateOpenedFile,
-    sharingLink
-  } = useOpenedEntryContext();
+  const { openedEntries, updateOpenedFile, sharingLink } =
+    useOpenedEntryContext();
   const { renameDirectory, renameFile } = useFsActionsContext();
   const { addTags, removeTags, removeAllTags } = useTaggingActionsContext();
-  const {
-    currentDirectoryPath,
-    updateThumbnailUrl,
-    setDirectoryMeta
-  } = useDirectoryContentContext();
-  const {
-    switchLocationTypeByID,
-    switchCurrentLocationType,
-    readOnlyMode
-  } = useCurrentLocationContext();
+  const { currentDirectoryPath, updateThumbnailUrl, setDirectoryMeta } =
+    useDirectoryContentContext();
+  const { switchLocationTypeByID, switchCurrentLocationType, readOnlyMode } =
+    useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
 
   const fileNameRef = useRef<HTMLInputElement>(null);
@@ -250,31 +242,24 @@ function EntryProperties(props: Props) {
     : extractDirectoryName(openedEntry.path, PlatformIO.getDirSeparator());
 
   const currentEntry = useRef<OpenedEntry>(
-    enhanceOpenedEntry(openedEntry, props.tagDelimiter)
+    enhanceOpenedEntry(openedEntry, props.tagDelimiter),
   );
   const [editName, setEditName] = useState<string>(undefined);
-  const [isMoveCopyFilesDialogOpened, setMoveCopyFilesDialogOpened] = useState<
-    boolean
-  >(false);
-  const [
-    isConfirmResetColorDialogOpened,
-    setConfirmResetColorDialogOpened
-  ] = useState<boolean>(false);
-  const [
-    isFileThumbChooseDialogOpened,
-    setFileThumbChooseDialogOpened
-  ] = useState<boolean>(false);
-  const [showSharingLinkDialog, setShowSharingLinkDialog] = useState<boolean>(
-    false
-  );
-  const [isBgndImgChooseDialogOpened, setBgndImgChooseDialogOpened] = useState<
-    boolean
-  >(false);
+  const [isMoveCopyFilesDialogOpened, setMoveCopyFilesDialogOpened] =
+    useState<boolean>(false);
+  const [isConfirmResetColorDialogOpened, setConfirmResetColorDialogOpened] =
+    useState<boolean>(false);
+  const [isFileThumbChooseDialogOpened, setFileThumbChooseDialogOpened] =
+    useState<boolean>(false);
+  const [showSharingLinkDialog, setShowSharingLinkDialog] =
+    useState<boolean>(false);
+  const [isBgndImgChooseDialogOpened, setBgndImgChooseDialogOpened] =
+    useState<boolean>(false);
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
   const bgndUrl = useRef<string>(getBgndUrl());
   const thumbUrl = useRef<string>(getThumbUrl());
   const dirProps = useRef<TS.DirProp>();
-  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
   const firstRender = useFirstRender();
 
   useEffect(() => {
@@ -285,7 +270,7 @@ function EntryProperties(props: Props) {
           currentEntry.current.size = dProps.totalSize;
           forceUpdate();
         })
-        .catch(ex => console.debug('getDirProperties:', ex.message));
+        .catch((ex) => console.debug('getDirProperties:', ex.message));
     }
   }, []);
 
@@ -318,7 +303,7 @@ function EntryProperties(props: Props) {
       // update description
       currentEntry.current = enhanceOpenedEntry(
         openedEntry,
-        props.tagDelimiter
+        props.tagDelimiter,
       );
       forceUpdate();
       // currentEntry.current.description = editDescription.current;
@@ -332,27 +317,29 @@ function EntryProperties(props: Props) {
     if (editName !== undefined) {
       const path = extractContainingDirectoryPath(
         currentEntry.current.path,
-        PlatformIO.getDirSeparator()
+        PlatformIO.getDirSeparator(),
       );
       const nextPath = path + PlatformIO.getDirSeparator() + editName;
 
-      switchLocationTypeByID(openedEntry.locationId).then(currentLocationId => {
-        if (currentEntry.current.isFile) {
-          renameFile(currentEntry.current.path, nextPath)
-            .then(() => switchCurrentLocationType())
-            .catch(() => {
-              switchCurrentLocationType();
-              fileNameRef.current.value = entryName;
-            });
-        } else {
-          renameDirectory(currentEntry.current.path, editName)
-            .then(newDirPath => switchCurrentLocationType())
-            .catch(() => {
-              switchCurrentLocationType();
-              fileNameRef.current.value = entryName;
-            });
-        }
-      });
+      switchLocationTypeByID(openedEntry.locationId).then(
+        (currentLocationId) => {
+          if (currentEntry.current.isFile) {
+            renameFile(currentEntry.current.path, nextPath)
+              .then(() => switchCurrentLocationType())
+              .catch(() => {
+                switchCurrentLocationType();
+                fileNameRef.current.value = entryName;
+              });
+          } else {
+            renameDirectory(currentEntry.current.path, editName)
+              .then((newDirPath) => switchCurrentLocationType())
+              .catch(() => {
+                switchCurrentLocationType();
+                fileNameRef.current.value = entryName;
+              });
+          }
+        },
+      );
 
       setEditName(undefined);
     }
@@ -404,14 +391,14 @@ function EntryProperties(props: Props) {
   const setThumb = (filePath, thumbFilePath) => {
     if (filePath !== undefined) {
       return switchLocationTypeByID(openedEntry.locationId).then(
-        currentLocationId => {
+        (currentLocationId) => {
           if (
             PlatformIO.haveObjectStoreSupport() ||
             PlatformIO.haveWebDavSupport()
           ) {
             updateThumbnailUrl(
               currentEntry.current.path,
-              PlatformIO.getURLforPath(thumbFilePath)
+              PlatformIO.getURLforPath(thumbFilePath),
             );
             return true;
           }
@@ -419,23 +406,23 @@ function EntryProperties(props: Props) {
           .then(objUrl => {*/
           updateThumbnailUrl(
             currentEntry.current.path,
-            thumbFilePath
+            thumbFilePath,
             // objUrl.tmbPath
             /*(props.lastThumbnailImageChange
                   ? '?' + props.lastThumbnailImageChange
                   : '')*/
           );
           return switchCurrentLocationType();
-        }
+        },
       );
     } else {
       // reset Thumbnail
       return getThumbnailURLPromise(currentEntry.current.path)
-        .then(objUrl => {
+        .then((objUrl) => {
           updateThumbnailUrl(currentEntry.current.path, objUrl.tmbPath);
           return true;
         })
-        .catch(err => {
+        .catch((err) => {
           console.warn('Error getThumbnailURLPromise ' + err);
           showNotification('Error reset Thumbnail');
         });
@@ -457,26 +444,26 @@ function EntryProperties(props: Props) {
     setDisplayColorPicker(!displayColorPicker);
   };
 
-  const handleChangeColor = color => {
+  const handleChangeColor = (color) => {
     if (color === 'transparent0') {
       // eslint-disable-next-line no-param-reassign
       color = 'transparent';
     }
     currentEntry.current.color = color;
-    switchLocationTypeByID(openedEntry.locationId).then(currentLocationId => {
+    switchLocationTypeByID(openedEntry.locationId).then((currentLocationId) => {
       Pro.MetaOperations.saveFsEntryMeta(currentEntry.current.path, { color })
-        .then(entryMeta => {
+        .then((entryMeta) => {
           if (currentEntry.current.path === currentDirectoryPath) {
             setDirectoryMeta(entryMeta);
           }
           // for KanBan
           props.setLastBackgroundColorChange(
             currentEntry.current.path,
-            new Date().getTime()
+            new Date().getTime(),
           );
           // todo handle LastBackgroundColorChange and skip updateOpenedFile
           updateOpenedFile(currentEntry.current.path, entryMeta).then(() =>
-            switchCurrentLocationType()
+            switchCurrentLocationType(),
           );
 
           /* } else {
@@ -484,7 +471,7 @@ function EntryProperties(props: Props) {
           } */
           return true;
         })
-        .catch(error => {
+        .catch((error) => {
           switchCurrentLocationType();
           console.warn('Error saving color for folder ' + error);
           showNotification(t('Error saving color for folder'));
@@ -522,26 +509,26 @@ function EntryProperties(props: Props) {
   };*/
 
   const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
-    switchLocationTypeByID(openedEntry.locationId).then(currentLocationId => {
+    switchLocationTypeByID(openedEntry.locationId).then((currentLocationId) => {
       if (action === 'remove-value') {
         if (!value) {
           // no tags left in the select element
           removeAllTags([currentEntry.current.path]).then(() => {
             updateOpenedFile(currentEntry.current.path, {
               id: '',
-              tags: []
+              tags: [],
             }).then(() => {
               switchCurrentLocationType();
             });
           });
         } else {
           removeTags([currentEntry.current.path], value).then(() =>
-            switchCurrentLocationType()
+            switchCurrentLocationType(),
           );
         }
       } else if (action === 'clear') {
         removeAllTags([currentEntry.current.path]).then(() =>
-          switchCurrentLocationType()
+          switchCurrentLocationType(),
         );
       } else {
         // create-option or select-option
@@ -549,13 +536,13 @@ function EntryProperties(props: Props) {
           currentEntry.current.tags === undefined
             ? value
             : value.filter(
-                tag =>
+                (tag) =>
                   !currentEntry.current.tags.some(
-                    obj => obj.title === tag.title
-                  )
+                    (obj) => obj.title === tag.title,
+                  ),
               );
         return addTags([currentEntry.current.path], tags).then(() =>
-          switchCurrentLocationType()
+          switchCurrentLocationType(),
         );
       }
     });
@@ -573,7 +560,7 @@ function EntryProperties(props: Props) {
     if (!currentEntry.current.isFile) {
       const bgndPath = getBgndFileLocationForDirectory(
         currentEntry.current.path,
-        PlatformIO.getDirSeparator()
+        PlatformIO.getDirSeparator(),
       );
       if (bgndPath !== undefined) {
         if (
@@ -600,12 +587,12 @@ function EntryProperties(props: Props) {
       return getThumbFileLocationForFile(
         currentEntry.current.path,
         PlatformIO.getDirSeparator(),
-        false
+        false,
       );
     }
     return getThumbFileLocationForDirectory(
       currentEntry.current.path,
-      PlatformIO.getDirSeparator()
+      PlatformIO.getDirSeparator(),
     );
   }
 
@@ -646,7 +633,7 @@ function EntryProperties(props: Props) {
         updateOpenedFile(currentEntry.current.path, entryMeta);
         return true;
       })
-      .catch(error => {
+      .catch((error) => {
         console.warn('Error saving perspective for folder ' + error);
         showNotification(t('Error saving perspective for folder'));
       });
@@ -669,7 +656,7 @@ function EntryProperties(props: Props) {
     shadowSize: [41, 41], // size of the shadow
     iconAnchor: [12, 41], // point of the icon which will correspond to marker's location
     shadowAnchor: [5, 41], // the same for the shadow
-    popupAnchor: [1, -34] // point from which the popup should open relative to the iconAnchor
+    popupAnchor: [1, -34], // point from which the popup should open relative to the iconAnchor
   });
 
   function getGeoLocation(tags: Array<TS.Tag>) {
@@ -739,7 +726,7 @@ function EntryProperties(props: Props) {
                     </div>
                   )}
                 </InputAdornment>
-              )
+              ),
             }}
             margin="dense"
             name="name"
@@ -752,7 +739,7 @@ function EntryProperties(props: Props) {
                 activateEditNameField();
               }
             }}
-            onKeyDown={event => {
+            onKeyDown={(event) => {
               if (event.key === 'Enter' && !fileNameError.current) {
                 renameEntry();
               }
@@ -765,7 +752,7 @@ function EntryProperties(props: Props) {
                 'core:' +
                   (currentEntry.current.isFile
                     ? 'fileNameHelp'
-                    : 'directoryNameHelp')
+                    : 'directoryNameHelp'),
               )}
             </FormHelperText>
           )}
@@ -799,7 +786,7 @@ function EntryProperties(props: Props) {
                 margin: 2,
                 marginTop: 8,
                 borderRadius: 5,
-                border: '1px solid rgba(0, 0, 0, 0.38)'
+                border: '1px solid rgba(0, 0, 0, 0.38)',
               }}
               doubleClickZoom={true}
               keyboard={false}
@@ -846,7 +833,7 @@ function EntryProperties(props: Props) {
                               '#map=14/' +
                               geoLocation.lat +
                               '/' +
-                              geoLocation.lng
+                              geoLocation.lng,
                           );
                         }}
                         title="Open in OpenStreetMap"
@@ -869,7 +856,7 @@ function EntryProperties(props: Props) {
                               geoLocation.lat +
                               ',' +
                               geoLocation.lng +
-                              '&z=15'
+                              '&z=15',
                           );
                         }}
                       >
@@ -894,7 +881,7 @@ function EntryProperties(props: Props) {
               value={ldtm}
               label={t('core:fileLDTM')}
               InputProps={{
-                readOnly: true
+                readOnly: true,
               }}
             />
           </Grid>
@@ -922,12 +909,12 @@ function EntryProperties(props: Props) {
                     : t(
                         PlatformIO.haveObjectStoreSupport()
                           ? 'core:notAvailable'
-                          : 'core:counting'
+                          : 'core:counting',
                       )
                 }
                 label={t('core:fileSize')}
                 InputProps={{
-                  readOnly: true
+                  readOnly: true,
                 }}
               />
             </Tooltip>
@@ -973,7 +960,7 @@ function EntryProperties(props: Props) {
                         </Button>
                       )}
                   </InputAdornment>
-                )
+                ),
               }}
             />
           </FormControl>
@@ -1015,9 +1002,8 @@ function EntryProperties(props: Props) {
                         data-tid="copyLinkToClipboardTID"
                         color="primary"
                         onClick={() => {
-                          const promise = navigator.clipboard.writeText(
-                            sharingLink
-                          );
+                          const promise =
+                            navigator.clipboard.writeText(sharingLink);
                           showNotification(t('core:linkCopied'));
                         }}
                       >
@@ -1025,7 +1011,7 @@ function EntryProperties(props: Props) {
                       </Button>
                     </Tooltip>
                   </InputAdornment>
-                )
+                ),
               }}
             />
           </Grid>
@@ -1059,7 +1045,7 @@ function EntryProperties(props: Props) {
                           <span
                             style={{
                               overflow: 'hidden',
-                              textOverflow: 'ellipsis'
+                              textOverflow: 'ellipsis',
                             }}
                           >
                             {t('core:generateDownloadLink')}
@@ -1067,7 +1053,7 @@ function EntryProperties(props: Props) {
                         </Button>
                       </Tooltip>
                     </InputAdornment>
-                  )
+                  ),
                 }}
               />
             </Grid>
@@ -1095,7 +1081,7 @@ function EntryProperties(props: Props) {
                   {t('core:backgroundColor')}
                   <InfoIcon
                     tooltip={t(
-                      'The background color will not be visible if you have set a background image'
+                      'The background color will not be visible if you have set a background image',
                     )}
                   />
                 </>
@@ -1111,7 +1097,7 @@ function EntryProperties(props: Props) {
                         fullWidth
                         style={{
                           width: 100,
-                          background: currentEntry.current.color
+                          background: currentEntry.current.color,
                         }}
                         onClick={toggleBackgroundColorPicker}
                       >
@@ -1131,7 +1117,7 @@ function EntryProperties(props: Props) {
                             aria-label="fingerprint"
                             onClick={() => handleChangeColor(background)}
                             style={{
-                              backgroundImage: background
+                              backgroundImage: background,
                             }}
                           >
                             <SetBackgroundIcon />
@@ -1159,7 +1145,7 @@ function EntryProperties(props: Props) {
                       )}
                     </Stack>
                   </InputAdornment>
-                )
+                ),
               }}
             />
           </Grid>
@@ -1211,14 +1197,14 @@ function EntryProperties(props: Props) {
                           borderRadius: 8,
                           minHeight: 150,
                           minWidth: 150,
-                          marginBottom: 5
+                          marginBottom: 5,
                         }}
                         onClick={toggleThumbFilesDialog}
                       />
                       {/* </ProTooltip> */}
                     </Stack>
                   </InputAdornment>
-                )
+                ),
               }}
             />
           </Grid>
@@ -1269,14 +1255,14 @@ function EntryProperties(props: Props) {
                             borderRadius: 8,
                             minHeight: 150,
                             minWidth: 150,
-                            marginBottom: 5
+                            marginBottom: 5,
                           }}
                           onClick={toggleBgndImgDialog}
                         />
                         {/* </ProTooltip> */}
                       </Stack>
                     </InputAdornment>
-                  )
+                  ),
                 }}
               />
             </Grid>
@@ -1292,7 +1278,7 @@ function EntryProperties(props: Props) {
           }}
           title={t('core:confirm')}
           content={t('core:confirmResetColor')}
-          confirmCallback={result => {
+          confirmCallback={(result) => {
             if (result) {
               handleChangeColor('transparent');
             } else {
@@ -1314,8 +1300,8 @@ function EntryProperties(props: Props) {
               ...currentEntry.current,
               isFile: currentEntry.current.isFile,
               name: entryName,
-              tags: []
-            }
+              tags: [],
+            },
           ]}
         />
       )}
@@ -1385,16 +1371,16 @@ function mapStateToProps(state) {
     tagDelimiter: getTagDelimiter(state),
     lastBackgroundImageChange: getLastBackgroundImageChange(state),
     lastThumbnailImageChange: getLastThumbnailImageChange(state),
-    locations: getLocations(state)
+    locations: getLocations(state),
   };
 }
 
 function mapActionCreatorsToProps(dispatch) {
   return bindActionCreators(
     {
-      setLastBackgroundColorChange: AppActions.setLastBackgroundColorChange
+      setLastBackgroundColorChange: AppActions.setLastBackgroundColorChange,
     },
-    dispatch
+    dispatch,
   );
 }
 
@@ -1406,8 +1392,8 @@ const areEqual = (prevProp: Props, nextProp: Props) =>
 
 export default connect(
   mapStateToProps,
-  mapActionCreatorsToProps
+  mapActionCreatorsToProps,
 )(
   // @ts-ignore
-  React.memo(EntryProperties, areEqual)
+  React.memo(EntryProperties, areEqual),
 );

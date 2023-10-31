@@ -67,7 +67,7 @@ function TagGroupMenu(props: Props) {
     anchorEl,
     showCreateTagsDialog,
     showEditTagGroupDialog,
-    showDeleteTagGroupDialog
+    showDeleteTagGroupDialog,
   } = props;
   const { t } = useTranslation();
 
@@ -113,7 +113,7 @@ function TagGroupMenu(props: Props) {
       setSearchQuery({
         tagsOR: selectedTagGroupEntry.children,
         maxSearchResults: maxSearchResults,
-        executeSearch: true
+        executeSearch: true,
       });
     }
     handleCloseTagGroupMenu();

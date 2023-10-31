@@ -26,13 +26,13 @@ import {
   actions as SettingsActions,
   getCheckForUpdateOnStartup,
   isFirstRun,
-  isGlobalKeyBindingEnabled
+  isGlobalKeyBindingEnabled,
 } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import {
   addTag,
   getTagLibrary,
-  setTagLibrary
+  setTagLibrary,
 } from '-/services/taglibrary-utils';
 import { getProTeaserSlideIndex } from '-/content/ProTeaserSlides';
 import { extensionsFound } from '-/extension-config';
@@ -111,7 +111,7 @@ export const types = {
   // SET_ISLOADING: 'APP/SET_ISLOADING',
   ADD_EXTENSIONS: 'APP/ADD_EXTENSIONS',
   REMOVE_EXTENSIONS: 'APP/REMOVE_EXTENSIONS',
-  UPDATE_EXTENSION: 'APP/UPDATE_EXTENSION'
+  UPDATE_EXTENSION: 'APP/UPDATE_EXTENSION',
 };
 
 export type OpenedEntry = {
@@ -185,7 +185,7 @@ export const initialState = {
     visible: false,
     text: 'Test',
     notificationType: '',
-    autohide: false
+    autohide: false,
   },
   editTagDialogOpened: false,
   aboutDialogOpened: false,
@@ -216,9 +216,9 @@ export const initialState = {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         associateSoftwareToken: () => {},
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        verifySoftwareToken: () => {}
+        verifySoftwareToken: () => {},
       }
-    : undefined
+    : undefined,
 };
 
 // The state described here will not be persisted
@@ -230,8 +230,8 @@ export default (state: any = initialState, action: any) => {
         ...state,
         lastBackgroundImageChange: {
           folderPath: action.folderPath,
-          dt: action.lastBackgroundImageChange
-        }
+          dt: action.lastBackgroundImageChange,
+        },
       };
     }
     case types.LAST_BACKGROUND_COLOR_CHANGE: {
@@ -239,8 +239,8 @@ export default (state: any = initialState, action: any) => {
         ...state,
         lastBackgroundColorChange: {
           folderPath: action.folderPath,
-          dt: action.lastBackgroundColorChange
-        }
+          dt: action.lastBackgroundColorChange,
+        },
       };
     }
     case types.LAST_THUMBNAIL_IMAGE_CHANGE: {
@@ -248,8 +248,8 @@ export default (state: any = initialState, action: any) => {
         ...state,
         lastThumbnailImageChange: {
           thumbPath: action.thumbPath,
-          dt: action.lastThumbnailImageChange
-        }
+          dt: action.lastThumbnailImageChange,
+        },
       };
     }
     case types.LOGIN_SUCCESS: {
@@ -267,10 +267,10 @@ export default (state: any = initialState, action: any) => {
           path: action.path,
           filePath: action.filePath,
           progress: action.progress,
-          abort: action.abort
-        }
+          abort: action.abort,
+        },
       ];
-      state.progress.map(fileProgress => {
+      state.progress.map((fileProgress) => {
         if (fileProgress.path !== action.path) {
           arrProgress.push(fileProgress);
         }
@@ -285,7 +285,7 @@ export default (state: any = initialState, action: any) => {
       if (action.isUpdateAvailable !== state.isUpdateAvailable) {
         return {
           ...state,
-          isUpdateAvailable: action.isUpdateAvailable
+          isUpdateAvailable: action.isUpdateAvailable,
         };
       }
       return state;
@@ -306,7 +306,7 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         tag: action.tag,
-        editTagDialogOpened: !state.editTagDialogOpened
+        editTagDialogOpened: !state.editTagDialogOpened,
       };
     }
     case types.TOGGLE_ABOUT_DIALOG: {
@@ -318,13 +318,13 @@ export default (state: any = initialState, action: any) => {
     case types.TOGGLE_ONBOARDING_DIALOG: {
       return {
         ...state,
-        onboardingDialogOpened: !state.onboardingDialogOpened
+        onboardingDialogOpened: !state.onboardingDialogOpened,
       };
     }
     case types.TOGGLE_OPENLINK_DIALOG: {
       return {
         ...state,
-        openLinkDialogOpened: !state.openLinkDialogOpened
+        openLinkDialogOpened: !state.openLinkDialogOpened,
       };
     }
     case types.TOGGLE_OPEN_PRO_TEASER_DIALOG: {
@@ -337,7 +337,7 @@ export default (state: any = initialState, action: any) => {
       }
       return {
         ...state,
-        proTeaserIndex: index
+        proTeaserIndex: index,
       };
     }
     case types.TOGGLE_KEYBOARD_DIALOG: {
@@ -346,31 +346,32 @@ export default (state: any = initialState, action: any) => {
     case types.TOGGLE_NEW_ENTRY_DIALOG: {
       return {
         ...state,
-        isNewEntryDialogOpened: !state.isNewEntryDialogOpened
+        isNewEntryDialogOpened: !state.isNewEntryDialogOpened,
       };
     }
     case types.TOGGLE_NEW_FILE_DIALOG: {
       return {
         ...state,
-        isNewFileDialogOpened: !state.isNewFileDialogOpened
+        isNewFileDialogOpened: !state.isNewFileDialogOpened,
       };
     }
     case types.TOGGLE_NEW_AUDIO_DIALOG: {
       return {
         ...state,
-        isNewAudioDialogOpened: !state.isNewAudioDialogOpened
+        isNewAudioDialogOpened: !state.isNewAudioDialogOpened,
       };
     }
     case types.TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG: {
       return {
         ...state,
-        deleteMultipleEntriesDialogOpened: !state.deleteMultipleEntriesDialogOpened
+        deleteMultipleEntriesDialogOpened:
+          !state.deleteMultipleEntriesDialogOpened,
       };
     }
     case types.TOGGLE_IMPORT_KANBAN_DIALOG: {
       return {
         ...state,
-        importKanBanDialogOpened: !state.importKanBanDialogOpened
+        importKanBanDialogOpened: !state.importKanBanDialogOpened,
       };
     }
     case types.TOGGLE_LICENSE_DIALOG: {
@@ -379,7 +380,7 @@ export default (state: any = initialState, action: any) => {
     case types.TOGGLE_THIRD_PARTY_LIBS_DIALOG: {
       return {
         ...state,
-        thirdPartyLibsDialogOpened: !state.thirdPartyLibsDialogOpened
+        thirdPartyLibsDialogOpened: !state.thirdPartyLibsDialogOpened,
       };
     }
     case types.TOGGLE_SETTINGS_DIALOG: {
@@ -390,7 +391,7 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         createDirectoryDialogOpened:
-          state.createDirectoryDialogOpened !== null ? null : action.props
+          state.createDirectoryDialogOpened !== null ? null : action.props,
       };
     }
     case types.TOGGLE_UPLOAD_DIALOG: {
@@ -400,7 +401,7 @@ export default (state: any = initialState, action: any) => {
         ...state,
         // progress: (state.uploadDialogOpened ? state.progress : []),
         uploadDialogOpened:
-          state.uploadDialogOpened === undefined ? action.title : undefined
+          state.uploadDialogOpened === undefined ? action.title : undefined,
       };
       //}
       // return state;
@@ -408,7 +409,7 @@ export default (state: any = initialState, action: any) => {
     case types.TOGGLE_TRUNCATED_DIALOG: {
       return {
         ...state,
-        isTruncatedConfirmDialogOpened: !state.isTruncatedConfirmDialogOpened
+        isTruncatedConfirmDialogOpened: !state.isTruncatedConfirmDialogOpened,
       };
     }
     /* case types.SET_CURRENT_DIRECTORY_DIRS: {
@@ -429,7 +430,7 @@ export default (state: any = initialState, action: any) => {
       return {
         ...state,
         progress: [],
-        uploadDialogOpened: undefined
+        uploadDialogOpened: undefined,
       };
       // }
       // return state;
@@ -437,13 +438,13 @@ export default (state: any = initialState, action: any) => {
     case types.TOGGLE_PROGRESS_DIALOG: {
       return {
         ...state,
-        progressDialogOpened: !state.progressDialogOpened
+        progressDialogOpened: !state.progressDialogOpened,
       };
     }
     case types.SET_SEARCH_FILTER: {
       return {
         ...state,
-        searchFilter: action.searchFilter
+        searchFilter: action.searchFilter,
       };
     }
     case types.REFLECT_DELETE_ENTRY: {
@@ -463,16 +464,16 @@ export default (state: any = initialState, action: any) => {
       }*/
       return {
         ...state,
-        editedEntryPaths
+        editedEntryPaths,
       };
     }
     case types.REFLECT_DELETE_ENTRIES: {
       /*const newDirectoryEntries = state.currentDirectoryEntries.filter(
         entry => !action.paths.some(path => path === entry.path)
       );*/
-      const editedEntryPaths = action.paths.map(path => ({
+      const editedEntryPaths = action.paths.map((path) => ({
         action: 'delete',
-        path: path
+        path: path,
       }));
       // check if currentDirectoryEntries or openedFiles changed
       /*if (state.currentDirectoryEntries.length > newDirectoryEntries.length) {
@@ -484,7 +485,7 @@ export default (state: any = initialState, action: any) => {
       }*/
       return {
         ...state,
-        editedEntryPaths
+        editedEntryPaths,
       };
     }
     case types.REFLECT_CREATE_ENTRY: {
@@ -501,8 +502,8 @@ export default (state: any = initialState, action: any) => {
         {
           action: newEntry.isFile ? 'createFile' : 'createDir',
           path: newEntry.path,
-          uuid: newEntry.uuid
-        }
+          uuid: newEntry.uuid,
+        },
       ];
       // clean all dir separators to have platform independent path match
       /*if (
@@ -524,7 +525,7 @@ export default (state: any = initialState, action: any) => {
       }*/
       return {
         ...state,
-        editedEntryPaths
+        editedEntryPaths,
       };
     }
     case types.REFLECT_CREATE_ENTRIES: {
@@ -537,15 +538,15 @@ export default (state: any = initialState, action: any) => {
           state.currentDirectoryPath.replace(/[/\\]/g, '')
       ) {*/
       const editedEntryPaths: Array<TS.EditedEntryPath> = action.fsEntries.map(
-        newEntry => ({
+        (newEntry) => ({
           action: newEntry.isFile ? 'createFile' : 'createDir',
           path: newEntry.path,
-          uuid: newEntry.uuid
-        })
+          uuid: newEntry.uuid,
+        }),
       );
       return {
         ...state,
-        editedEntryPaths
+        editedEntryPaths,
         /*currentDirectoryEntries: [
             ...state.currentDirectoryEntries,
             ...action.fsEntries
@@ -563,12 +564,12 @@ export default (state: any = initialState, action: any) => {
 
       const editedEntryPaths = [
         { action: 'rename', path: action.path },
-        { action: 'rename', path: action.newPath }
+        { action: 'rename', path: action.newPath },
       ];
 
       return {
         ...state,
-        editedEntryPaths
+        editedEntryPaths,
         /*currentDirectoryEntries: state.currentDirectoryEntries.map(entry => {
           if (entry.path !== action.path) {
             return entry;
@@ -626,7 +627,7 @@ export default (state: any = initialState, action: any) => {
     case types.REFLECT_EDITED_ENTRY_PATHS: {
       return {
         ...state,
-        editedEntryPaths: action.editedEntryPaths // .map(path => ({ action: 'edit', path }))
+        editedEntryPaths: action.editedEntryPaths, // .map(path => ({ action: 'edit', path }))
       };
     }
     /*case types.UPDATE_CURRENTDIR_ENTRY: {
@@ -646,7 +647,7 @@ export default (state: any = initialState, action: any) => {
         locationManagerPanelOpened: true,
         tagLibraryPanelOpened: false,
         searchPanelOpened: false,
-        helpFeedbackPanelOpened: false
+        helpFeedbackPanelOpened: false,
       };
     }
     case types.OPEN_TAGLIBRARY_PANEL: {
@@ -655,7 +656,7 @@ export default (state: any = initialState, action: any) => {
         locationManagerPanelOpened: false,
         tagLibraryPanelOpened: true,
         searchPanelOpened: false,
-        helpFeedbackPanelOpened: false
+        helpFeedbackPanelOpened: false,
       };
     }
     case types.OPEN_SEARCH_PANEL: {
@@ -664,7 +665,7 @@ export default (state: any = initialState, action: any) => {
         locationManagerPanelOpened: false,
         tagLibraryPanelOpened: false,
         searchPanelOpened: true,
-        helpFeedbackPanelOpened: false
+        helpFeedbackPanelOpened: false,
       };
     }
     case types.OPEN_HELPFEEDBACK_PANEL: {
@@ -673,23 +674,23 @@ export default (state: any = initialState, action: any) => {
         locationManagerPanelOpened: false,
         tagLibraryPanelOpened: false,
         searchPanelOpened: false,
-        helpFeedbackPanelOpened: true
+        helpFeedbackPanelOpened: true,
       };
     }
     case types.ADD_EXTENSIONS: {
       const extensions = mergeByProp(
         state.extensions,
         action.extensions,
-        'extensionId'
+        'extensionId',
       );
       return {
         ...state,
-        extensions: extensions.map(ext => {
+        extensions: extensions.map((ext) => {
           if (action.enabledExtensions.includes(ext.extensionId)) {
             return { ...ext, extensionEnabled: true };
           }
           return ext;
-        })
+        }),
       };
     }
     case types.UPDATE_EXTENSION: {
@@ -698,16 +699,16 @@ export default (state: any = initialState, action: any) => {
         extensions: mergeByProp(
           state.extensions,
           [action.extension],
-          'extensionId'
-        ) // updateExtensions(state.extensions, action.extension)
+          'extensionId',
+        ), // updateExtensions(state.extensions, action.extension)
       };
     }
     case types.REMOVE_EXTENSIONS: {
       return {
         ...state,
         extensions: state.extensions.filter(
-          ext => ext.extensionId !== action.extensionId
-        )
+          (ext) => ext.extensionId !== action.extensionId,
+        ),
       };
     }
     default: {
@@ -730,38 +731,39 @@ function disableBackGestureMac() {
 }
 
 export const actions = {
-  addExtensions: (extensions: Array<TS.Extension>) => (
-    dispatch: (action) => void,
-    getState: () => any
-  ) => {
-    const { settings } = getState();
-    dispatch(actions.addExtensionsInt(extensions, settings.enabledExtensions));
-  },
+  addExtensions:
+    (extensions: Array<TS.Extension>) =>
+    (dispatch: (action) => void, getState: () => any) => {
+      const { settings } = getState();
+      dispatch(
+        actions.addExtensionsInt(extensions, settings.enabledExtensions),
+      );
+    },
   addExtensionsInt: (
     extensions: Array<TS.Extension>,
-    enabledExtensions: Array<string>
+    enabledExtensions: Array<string>,
   ) => ({
     type: types.ADD_EXTENSIONS,
     extensions,
-    enabledExtensions
+    enabledExtensions,
   }),
   removeExtension: (extensionId: string) => ({
     type: types.REMOVE_EXTENSIONS,
-    extensionId
+    extensionId,
   }),
   updateExtension: (extension: TS.Extension) => ({
     type: types.UPDATE_EXTENSION,
-    extension
+    extension,
   }),
   setLastBackgroundImageChange: (folderPath, lastBackgroundImageChange) => ({
     type: types.LAST_BACKGROUND_IMAGE_CHANGE,
     folderPath,
-    lastBackgroundImageChange
+    lastBackgroundImageChange,
   }),
   setLastBackgroundColorChange: (folderPath, lastBackgroundColorChange) => ({
     type: types.LAST_BACKGROUND_COLOR_CHANGE,
     folderPath,
-    lastBackgroundColorChange
+    lastBackgroundColorChange,
   }),
   /**
    * @param thumbPath
@@ -770,9 +772,9 @@ export const actions = {
   setLastThumbnailImageChange: (thumbPath, lastThumbnailImageChange?) => ({
     type: types.LAST_THUMBNAIL_IMAGE_CHANGE,
     thumbPath,
-    lastThumbnailImageChange: lastThumbnailImageChange || new Date().getTime()
+    lastThumbnailImageChange: lastThumbnailImageChange || new Date().getTime(),
   }),
-  loggedIn: user => ({ type: types.LOGIN_SUCCESS, user }),
+  loggedIn: (user) => ({ type: types.LOGIN_SUCCESS, user }),
   /*openLink: (url: string, options = { fullWidth: true }) => ({
     type: types.OPEN_LINK,
     url,
@@ -854,33 +856,31 @@ export const actions = {
   goOffline: () => ({ type: types.DEVICE_OFFLINE }),
   setUpdateAvailable: (isUpdateAvailable: boolean) => ({
     type: types.SET_NEW_VERSION_AVAILABLE,
-    isUpdateAvailable
+    isUpdateAvailable,
   }),
   setProgress: (path, progress, abort?, filePath = undefined) => ({
     type: types.PROGRESS,
     path,
     filePath,
     progress,
-    abort
+    abort,
   }),
   resetProgress: () => ({ type: types.RESET_PROGRESS }),
-  onUploadProgress: (progress, abort, fileName = undefined) => (
-    dispatch: (action) => void
-  ) => {
-    const progressPercentage = Math.round(
-      (progress.loaded / progress.total) * 100
-    );
-    console.log(progressPercentage);
+  onUploadProgress:
+    (progress, abort, fileName = undefined) =>
+    (dispatch: (action) => void) => {
+      const progressPercentage = Math.round(
+        (progress.loaded / progress.total) * 100,
+      );
+      console.log(progressPercentage);
 
-    dispatch(
-      actions.setProgress(progress.key, progressPercentage, abort, fileName)
-    );
-  },
-  showCreateDirectoryDialog: () => (
-    dispatch: (action) => void,
-    getState: () => any
-  ) => {
-    /* const { app } = getState();
+      dispatch(
+        actions.setProgress(progress.key, progressPercentage, abort, fileName),
+      );
+    },
+  showCreateDirectoryDialog:
+    () => (dispatch: (action) => void, getState: () => any) => {
+      /* const { app } = getState();
     if (!app.currentDirectoryPath) {
       dispatch(
         actions.showNotification(
@@ -890,14 +890,12 @@ export const actions = {
         )
       );
     } else {*/
-    dispatch(actions.toggleCreateDirectoryDialog());
-    //}
-  },
-  showCreateFileDialog: () => (
-    dispatch: (action) => void,
-    getState: () => any
-  ) => {
-    /*const { app } = getState();
+      dispatch(actions.toggleCreateDirectoryDialog());
+      //}
+    },
+  showCreateFileDialog:
+    () => (dispatch: (action) => void, getState: () => any) => {
+      /*const { app } = getState();
     if (!app.currentDirectoryPath) {
       dispatch(
         actions.showNotification(
@@ -907,12 +905,12 @@ export const actions = {
         )
       );
     } else {*/
-    dispatch(actions.toggleNewEntryDialog());
-    // }
-  },
+      dispatch(actions.toggleNewEntryDialog());
+      // }
+    },
   toggleEditTagDialog: (tag: TS.Tag) => ({
     type: types.TOGGLE_EDIT_TAG_DIALOG,
-    tag
+    tag,
   }),
   toggleAboutDialog: () => ({ type: types.TOGGLE_ABOUT_DIALOG }),
   toggleLocationDialog: () => ({ type: types.TOGGLE_LOCATION_DIALOG }),
@@ -921,42 +919,42 @@ export const actions = {
   toggleOpenLinkDialog: () => ({ type: types.TOGGLE_OPENLINK_DIALOG }),
   toggleProTeaser: (slidePage?: string) => ({
     type: types.TOGGLE_OPEN_PRO_TEASER_DIALOG,
-    proTeaserPage: slidePage
+    proTeaserPage: slidePage,
   }),
   toggleLicenseDialog: () => ({ type: types.TOGGLE_LICENSE_DIALOG }),
   toggleThirdPartyLibsDialog: () => ({
-    type: types.TOGGLE_THIRD_PARTY_LIBS_DIALOG
+    type: types.TOGGLE_THIRD_PARTY_LIBS_DIALOG,
   }),
   toggleSettingsDialog: () => ({ type: types.TOGGLE_SETTINGS_DIALOG }),
   toggleCreateDirectoryDialog: (props = undefined) => ({
     type: types.TOGGLE_CREATE_DIRECTORY_DIALOG,
-    props
+    props,
   }),
   toggleNewEntryDialog: () => ({ type: types.TOGGLE_NEW_ENTRY_DIALOG }),
   toggleNewFileDialog: () => ({ type: types.TOGGLE_NEW_FILE_DIALOG }),
   toggleNewAudioDialog: () => ({ type: types.TOGGLE_NEW_AUDIO_DIALOG }),
   toggleDeleteMultipleEntriesDialog: () => ({
-    type: types.TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG
+    type: types.TOGGLE_DELETE_MULTIPLE_ENTRIES_DIALOG,
   }),
   toggleImportKanBanDialog: () => ({
-    type: types.TOGGLE_IMPORT_KANBAN_DIALOG
+    type: types.TOGGLE_IMPORT_KANBAN_DIALOG,
   }),
   toggleUploadDialog: (title = '') => ({
     type: types.TOGGLE_UPLOAD_DIALOG,
-    title
+    title,
   }),
   toggleTruncatedConfirmDialog: () => ({
-    type: types.TOGGLE_TRUNCATED_DIALOG
+    type: types.TOGGLE_TRUNCATED_DIALOG,
   }),
   /*setCurrentDirectoryDirs: dirs => ({
     type: types.SET_CURRENT_DIRECTORY_DIRS,
     dirs
   }),*/
   clearUploadDialog: () => ({
-    type: types.CLEAR_UPLOAD_DIALOG
+    type: types.CLEAR_UPLOAD_DIALOG,
   }),
   toggleProgressDialog: () => ({
-    type: types.TOGGLE_PROGRESS_DIALOG
+    type: types.TOGGLE_PROGRESS_DIALOG,
   }),
   openLocationManagerPanel: () => ({ type: types.OPEN_LOCATIONMANAGER_PANEL }),
   openTagLibraryPanel: () => ({ type: types.OPEN_TAGLIBRARY_PANEL }),
@@ -975,16 +973,15 @@ export const actions = {
     type: types.SET_SELECTED_ENTRIES,
     selectedEntries
   }),*/
-  addTag: (tag: any, parentTagGroupUuid: TS.Uuid) => (
-    dispatch: (action) => void,
-    getState: () => any
-  ) => {
-    const { locations } = getState();
-    addTag(tag, parentTagGroupUuid, getTagLibrary(), locations);
-    dispatch(actions.tagLibraryChanged());
-  },
+  addTag:
+    (tag: any, parentTagGroupUuid: TS.Uuid) =>
+    (dispatch: (action) => void, getState: () => any) => {
+      const { locations } = getState();
+      addTag(tag, parentTagGroupUuid, getTagLibrary(), locations);
+      dispatch(actions.tagLibraryChanged());
+    },
   tagLibraryChanged: () => ({
-    type: types.SET_TAG_LIBRARY_CHANGED
+    type: types.SET_TAG_LIBRARY_CHANGED,
   }),
   /*openDirectory: (directoryPath: string) => () => {
     PlatformIO.openDirectory(directoryPath);
@@ -994,23 +991,23 @@ export const actions = {
   },*/
   setSearchFilter: (searchFilter: string) => ({
     type: types.SET_SEARCH_FILTER,
-    searchFilter
+    searchFilter,
   }),
   reflectDeleteEntry: (path: string) => ({
     type: types.REFLECT_DELETE_ENTRY,
-    path
+    path,
   }),
   reflectDeleteEntries: (paths: string[]) => ({
     type: types.REFLECT_DELETE_ENTRIES,
-    paths
+    paths,
   }),
   reflectCreateEntryInt: (newEntry: TS.FileSystemEntry) => ({
     type: types.REFLECT_CREATE_ENTRY,
-    newEntry
+    newEntry,
   }),
   reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => ({
     type: types.REFLECT_CREATE_ENTRIES,
-    fsEntries
+    fsEntries,
   }),
   /*reflectCreateEntries: (fsEntries: Array<TS.FileSystemEntry>) => (
     dispatch: (action) => void
@@ -1018,11 +1015,10 @@ export const actions = {
     dispatch(actions.reflectCreateEntriesInt(fsEntries));
     dispatch(actions.setSelectedEntries(fsEntries));
   },*/
-  reflectCreateEntry: (path: string, isFile: boolean) => (
-    dispatch: (action) => void
-  ) => {
-    dispatch(actions.reflectCreateEntries([toFsEntry(path, isFile)]));
-  },
+  reflectCreateEntry:
+    (path: string, isFile: boolean) => (dispatch: (action) => void) => {
+      dispatch(actions.reflectCreateEntries([toFsEntry(path, isFile)]));
+    },
   /*reflectCreateEntryObj: (newEntry: TS.FileSystemEntry) => (
     dispatch: (action) => void
   ) => {
@@ -1033,7 +1029,7 @@ export const actions = {
   reflectRenameEntry: (path: string, newPath: string) => ({
     type: types.REFLECT_RENAME_ENTRY,
     path,
-    newPath
+    newPath,
   }),
   /*reflectRenameEntry: (path: string, newPath: string) => (
     dispatch: (action) => void
@@ -1044,8 +1040,8 @@ export const actions = {
   },*/
   reflectEditedEntryPaths: (editedEntryPaths: Array<TS.EditedEntryPath>) => ({
     type: types.REFLECT_EDITED_ENTRY_PATHS,
-    editedEntryPaths
-  })
+    editedEntryPaths,
+  }),
   /*openFileNatively: (selectedFile: string) => (
     dispatch: (action) => void,
     getState: () => any

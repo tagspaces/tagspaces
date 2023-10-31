@@ -25,7 +25,7 @@ import Tooltip from '-/components/Tooltip';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import {
   checkDirsExistPromise,
-  checkFilesExistPromise
+  checkFilesExistPromise,
 } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
@@ -47,23 +47,27 @@ function MoveCopyFilesDialog(props: Props) {
   const { selectedEntries } = useSelectedEntriesContext();
 
   const [targetPath, setTargetPath] = useState(
-    currentDirectoryPath ? currentDirectoryPath : ''
+    currentDirectoryPath ? currentDirectoryPath : '',
   );
   const isCopy = useRef<boolean>(true);
   const [entriesExistPath, setEntriesExistPath] = useState<string[]>(undefined);
   const dirProp = useRef({});
 
-  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
   const { open, entries, onClose } = props;
 
   let allEntries = entries && entries.length > 0 ? entries : selectedEntries;
 
   const selectedFiles = allEntries
-    ? allEntries.filter(fsEntry => fsEntry.isFile).map(fsentry => fsentry.path)
+    ? allEntries
+        .filter((fsEntry) => fsEntry.isFile)
+        .map((fsentry) => fsentry.path)
     : [];
 
   const selectedDirs = allEntries
-    ? allEntries.filter(fsEntry => !fsEntry.isFile).map(fsentry => fsentry.path)
+    ? allEntries
+        .filter((fsEntry) => !fsEntry.isFile)
+        .map((fsentry) => fsentry.path)
     : [];
 
   useEffect(() => {
@@ -74,9 +78,9 @@ function MoveCopyFilesDialog(props: Props) {
       !PlatformIO.haveObjectStoreSupport() &&
       !PlatformIO.haveWebDavSupport()
     ) {
-      const promises = selectedDirs.map(dirPath => {
+      const promises = selectedDirs.map((dirPath) => {
         try {
-          return PlatformIO.getDirProperties(dirPath).then(prop => {
+          return PlatformIO.getDirProperties(dirPath).then((prop) => {
             dirProp.current[dirPath] = prop;
             return true;
           });
@@ -101,7 +105,7 @@ function MoveCopyFilesDialog(props: Props) {
   }*/
 
   function getEntriesCount(dirPaths): Array<any> {
-    return dirPaths.map(path => {
+    return dirPaths.map((path) => {
       const currDirProp = dirProp.current[path];
       let count = 0;
       if (currDirProp) {
@@ -117,13 +121,13 @@ function MoveCopyFilesDialog(props: Props) {
 
   function handleCopyMove(copy = true) {
     if (selectedFiles.length > 0) {
-      checkFilesExistPromise(selectedFiles, targetPath).then(exist =>
-        handleEntryExist(copy, exist)
+      checkFilesExistPromise(selectedFiles, targetPath).then((exist) =>
+        handleEntryExist(copy, exist),
       );
     }
     if (selectedDirs.length > 0) {
-      checkDirsExistPromise(selectedDirs, targetPath).then(exist =>
-        handleEntryExist(copy, exist)
+      checkDirsExistPromise(selectedDirs, targetPath).then((exist) =>
+        handleEntryExist(copy, exist),
       );
     }
   }
@@ -214,11 +218,11 @@ function MoveCopyFilesDialog(props: Props) {
             width: 550,
             maxHeight: 200,
             marginLeft: -15,
-            marginBottom: 20
+            marginBottom: 20,
           }}
         >
           {allEntries.length > 0 &&
-            allEntries.map(entry => (
+            allEntries.map((entry) => (
               <ListItem title={entry.path} key={entry.path}>
                 <ListItemIcon>
                   {entry.isFile ? <FileIcon /> : <FolderIcon />}
@@ -282,7 +286,7 @@ function MoveCopyFilesDialog(props: Props) {
             formatFileExist(entriesExistPath) +
             ' exist do you want to override it?'
           }
-          confirmCallback={result => {
+          confirmCallback={(result) => {
             if (result) {
               if (isCopy.current) {
                 handleCopyFiles();

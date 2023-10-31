@@ -30,7 +30,7 @@ type SelectedEntryContextData = {
 export const SelectedEntryContext = createContext<SelectedEntryContextData>({
   selectedEntries: undefined,
   lastSelectedEntryPath: undefined,
-  setSelectedEntries: undefined
+  setSelectedEntries: undefined,
 });
 
 export type SelectedEntryContextProviderProps = {
@@ -38,11 +38,11 @@ export type SelectedEntryContextProviderProps = {
 };
 
 export const SelectedEntryContextProvider = ({
-  children
+  children,
 }: SelectedEntryContextProviderProps) => {
   const { currentLocation } = useCurrentLocationContext();
   const [selectedEntries, setSelectedEntries] = useState<TS.FileSystemEntry[]>(
-    []
+    [],
   );
   const firstRender = useFirstRender();
 
@@ -81,7 +81,7 @@ export const SelectedEntryContextProvider = ({
       selectedEntries,
       //lastSelectedEntry: lastSelectedEntry.current,
       lastSelectedEntryPath,
-      setSelectedEntries
+      setSelectedEntries,
     };
   }, [selectedEntries]);
 

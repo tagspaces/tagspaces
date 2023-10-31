@@ -26,7 +26,7 @@ export default merge(baseConfig, {
   output: {
     path: path.join(__dirname, '..', 'app/dist'),
     publicPath: './dist/',
-    filename: 'renderer.prod.js'
+    filename: 'renderer.prod.js',
   },
 
   module: {
@@ -38,81 +38,81 @@ export default merge(baseConfig, {
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
-              publicPath: './'
-            }
+              publicPath: './',
+            },
           },
           {
             loader: 'css-loader',
             options: {
-              sourceMap: true
-            }
-          }
-        ]
+              sourceMap: true,
+            },
+          },
+        ],
       },
       // Pipe other styles through css modules and append to style.css
       {
         test: /^((?!\.global).)*\.css$/,
         use: [
           {
-            loader: MiniCssExtractPlugin.loader
+            loader: MiniCssExtractPlugin.loader,
           },
           {
             loader: 'css-loader',
             options: {
               modules: {
-                localIdentName: '[name]__[local]__[hash:base64:5]'
+                localIdentName: '[name]__[local]__[hash:base64:5]',
               },
-              sourceMap: true
-            }
-          }
-        ]
+              sourceMap: true,
+            },
+          },
+        ],
       },
       // Add SASS support  - compile all .global.scss files and pipe it to style.css
       {
         test: /\.global\.(scss|sass)$/,
         use: [
           {
-            loader: MiniCssExtractPlugin.loader
+            loader: MiniCssExtractPlugin.loader,
           },
           {
             loader: 'css-loader',
             options: {
               sourceMap: true,
-              importLoaders: 1
-            }
+              importLoaders: 1,
+            },
           },
           {
             loader: 'sass-loader',
             options: {
-              sourceMap: true
-            }
-          }
-        ]
+              sourceMap: true,
+            },
+          },
+        ],
       },
       // Add SASS support  - compile all other .scss files and pipe it to style.css
       {
         test: /^((?!\.global).)*\.(scss|sass)$/,
         use: [
           {
-            loader: MiniCssExtractPlugin.loader
+            loader: MiniCssExtractPlugin.loader,
           },
           {
             loader: 'css-loader',
             options: {
               modules: {
-                localIdentName: '[name]__[local]__[hash:base64:5]'
+                localIdentName: '[name]__[local]__[hash:base64:5]',
               },
               importLoaders: 1,
-              sourceMap: true
-            }
+              sourceMap: true,
+            },
           },
           {
             loader: 'sass-loader',
             options: {
-              sourceMap: true
-            }
-          }
-        ]
+              sourceMap: true,
+            },
+          },
+        ],
       },
       // WOFF Font
       {
@@ -121,10 +121,10 @@ export default merge(baseConfig, {
           loader: 'url-loader',
           options: {
             limit: 10000,
-            mimetype: 'application/font-woff'
-          }
+            mimetype: 'application/font-woff',
+          },
         },
-        type: 'javascript/auto'
+        type: 'javascript/auto',
       },
       // WOFF2 Font
       {
@@ -133,10 +133,10 @@ export default merge(baseConfig, {
           loader: 'url-loader',
           options: {
             limit: 10000,
-            mimetype: 'application/font-woff'
-          }
+            mimetype: 'application/font-woff',
+          },
         },
-        type: 'javascript/auto'
+        type: 'javascript/auto',
       },
       // TTF Font
       {
@@ -145,16 +145,16 @@ export default merge(baseConfig, {
           loader: 'url-loader',
           options: {
             limit: 10000,
-            mimetype: 'application/octet-stream'
-          }
+            mimetype: 'application/octet-stream',
+          },
         },
-        type: 'javascript/auto'
+        type: 'javascript/auto',
       },
       // EOT Font
       {
         test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
         use: 'file-loader',
-        type: 'javascript/auto'
+        type: 'javascript/auto',
       },
       // SVG Font
       {
@@ -163,23 +163,23 @@ export default merge(baseConfig, {
           loader: 'url-loader',
           options: {
             limit: 10000,
-            mimetype: 'image/svg+xml'
-          }
+            mimetype: 'image/svg+xml',
+          },
         },
-        type: 'javascript/auto'
+        type: 'javascript/auto',
       },
       // Text files
       {
         test: /\.(txt)$/,
         use: 'raw-loader',
-        type: 'javascript/auto'
+        type: 'javascript/auto',
       },
       // Common Image Formats
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
-        type: 'asset/resource'
-      }
-    ]
+        type: 'asset/resource',
+      },
+    ],
   },
 
   optimization: {
@@ -188,7 +188,7 @@ export default merge(baseConfig, {
       : [
           // For webpack@5 you can use the `...` syntax to extend existing minimizers (i.e. `terser-webpack-plugin`), uncomment the next line
           `...`,
-          new CssMinimizerPlugin()
+          new CssMinimizerPlugin(),
           /*new OptimizeCSSAssetsPlugin({
             cssProcessorOptions: {
               map: {
@@ -197,7 +197,7 @@ export default merge(baseConfig, {
               }
             }
           })*/
-        ]
+        ],
   },
 
   plugins: [
@@ -211,7 +211,7 @@ export default merge(baseConfig, {
      * development checks
      */
     new webpack.EnvironmentPlugin({
-      NODE_ENV: 'production'
+      NODE_ENV: 'production',
     }),
 
     /* new webpack.NormalModuleReplacementPlugin(
@@ -235,13 +235,13 @@ export default merge(baseConfig, {
     ), */
 
     new MiniCssExtractPlugin({
-      filename: 'style.css'
+      filename: 'style.css',
     }),
 
     new BundleAnalyzerPlugin({
       analyzerMode:
         process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
-      openAnalyzer: process.env.OPEN_ANALYZER === 'true'
-    })
-  ]
+      openAnalyzer: process.env.OPEN_ANALYZER === 'true',
+    }),
+  ],
 });

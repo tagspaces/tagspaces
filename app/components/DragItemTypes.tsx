@@ -19,5 +19,5 @@
 export default {
   TAG: 'tag',
   TAG_GROUP: 'tag_group',
-  FILE: 'file_move'
+  FILE: 'file_move',
 };

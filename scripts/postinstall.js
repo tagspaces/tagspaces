@@ -95,7 +95,7 @@ if (install) {
   }
   if (shell.exec(cmd).code !== 0) {
     shell.echo(
-      'Error: Install ' + process.env.PD_PLATFORM + ' platform failed'
+      'Error: Install ' + process.env.PD_PLATFORM + ' platform failed',
     );
     shell.exit(1);
   }
@@ -106,7 +106,7 @@ if (install) {
     projectDir,
     'node_modules',
     '@tagspaces',
-    'tagspaces-platforms'
+    'tagspaces-platforms',
   );
   const cmd2 =
     'npx @tagspaces/dynamic-packages-loading ' +

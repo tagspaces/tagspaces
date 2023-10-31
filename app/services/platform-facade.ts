@@ -76,7 +76,7 @@ import {
   platformRemoveExtension,
   platformGetUserDataDir,
   platformUnZip,
-  platformDirProperties
+  platformDirProperties,
 } from '@tagspaces/tagspaces-platforms/platform-io';
 import { cleanTrailingDirSeparator } from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
@@ -114,11 +114,11 @@ export default class PlatformFacade {
     platformSetLanguage(language);
   };
 
-  static setZoomFactorElectron = zoomLevel => {
+  static setZoomFactorElectron = (zoomLevel) => {
     platformSetZoomFactorElectron(zoomLevel);
   };
 
-  static setGlobalShortcuts = globalShortcutsEnabled => {
+  static setGlobalShortcuts = (globalShortcutsEnabled) => {
     platformSetGlobalShortcuts(globalShortcutsEnabled);
   };
 
@@ -189,7 +189,7 @@ export default class PlatformFacade {
   static createDirectoryIndexInWorker = (
     directoryPath: string,
     extractText: boolean,
-    ignorePatterns: Array<string>
+    ignorePatterns: Array<string>,
   ): Promise<any> => {
     if (!PlatformFacade.isWorkerAvailable()) {
       return Promise.reject(new Error('no Worker Available!'));
@@ -199,12 +199,12 @@ export default class PlatformFacade {
       directoryPath,
       extractText,
       ignorePatterns,
-      settings.getUsedWsPort()
+      settings.getUsedWsPort(),
     );
   };
 
   static createThumbnailsInWorker = (
-    tmbGenerationList: Array<string>
+    tmbGenerationList: Array<string>,
   ): Promise<any> => {
     if (!PlatformFacade.isWorkerAvailable()) {
       return Promise.reject(new Error('no Worker Available!'));
@@ -212,7 +212,7 @@ export default class PlatformFacade {
     return platformCreateThumbnailsInWorker(
       token,
       tmbGenerationList,
-      settings.getUsedWsPort()
+      settings.getUsedWsPort(),
     );
   };
 
@@ -227,13 +227,13 @@ export default class PlatformFacade {
     path: string,
     mode = ['extractThumbPath'],
     ignorePatterns: Array<string> = [],
-    resultsLimit: any = {}
+    resultsLimit: any = {},
   ): Promise<Array<any>> =>
     platformListDirectoryPromise(
       cleanTrailingDirSeparator(path),
       mode,
       ignorePatterns,
-      resultsLimit
+      resultsLimit,
     );
 
   static listMetaDirectoryPromise = (path: string): Promise<Array<any>> =>
@@ -242,7 +242,7 @@ export default class PlatformFacade {
   static listObjectStoreDir = (
     param: Object,
     mode = ['extractThumbPath'],
-    ignorePatterns: Array<string> = []
+    ignorePatterns: Array<string> = [],
   ): Promise<Array<any>> =>
     platformListObjectStoreDir(param, mode, ignorePatterns);
 
@@ -266,7 +266,7 @@ export default class PlatformFacade {
    */
   static copyFilePromiseOverwrite = (
     sourceFilePath: string,
-    targetFilePath: string
+    targetFilePath: string,
   ): Promise<any> => {
     //PlatformFacade.ignoreByWatcher(targetFilePath);
     return platformCopyFilePromise(sourceFilePath, targetFilePath);
@@ -275,7 +275,7 @@ export default class PlatformFacade {
   static renameFilePromise = (
     filePath: string,
     newFilePath: string,
-    onProgress = undefined
+    onProgress = undefined,
   ): Promise<any> => {
     //PlatformFacade.ignoreByWatcher(filePath, newFilePath);
     return platformRenameFilePromise(filePath, newFilePath, onProgress);
@@ -283,7 +283,7 @@ export default class PlatformFacade {
 
   static renameDirectoryPromise = (
     dirPath: string,
-    newDirName: string
+    newDirName: string,
   ): Promise<any> => {
     // PlatformFacade.ignoreByWatcher(dirPath, newDirName);
     return platformRenameDirectoryPromise(dirPath, newDirName);
@@ -292,7 +292,7 @@ export default class PlatformFacade {
   static copyDirectoryPromise = (
     param: any,
     newDirPath: string,
-    onProgress = undefined
+    onProgress = undefined,
   ): Promise<any> => {
     //PlatformFacade.ignoreByWatcher(param.path, newDirPath);
     return platformCopyDirectoryPromise(param, newDirPath, onProgress);
@@ -301,7 +301,7 @@ export default class PlatformFacade {
   static moveDirectoryPromise = (
     param: any,
     newDirPath: string,
-    onProgress = undefined
+    onProgress = undefined,
   ): Promise<any> => {
     //PlatformFacade.ignoreByWatcher(param.path, newDirPath);
     return platformMoveDirectoryPromise(param, newDirPath, onProgress);
@@ -309,7 +309,7 @@ export default class PlatformFacade {
 
   static loadTextFilePromise = (
     filePath: string,
-    isPreview?: boolean
+    isPreview?: boolean,
   ): Promise<any> => {
     let path = filePath;
     try {
@@ -320,18 +320,18 @@ export default class PlatformFacade {
 
   static getFileContentPromise = (
     filePath: string,
-    type?: string
+    type?: string,
   ): Promise<any> => platformGetFileContentPromise(filePath, type);
 
   static getLocalFileContentPromise = (
     filePath: string,
-    type?: string
+    type?: string,
   ): Promise<any> => platformGetLocalFileContentPromise(filePath, type);
 
   static saveFilePromise = (
     param: any,
     content: any,
-    overwrite: boolean
+    overwrite: boolean,
   ): Promise<any> => {
     //PlatformFacade.ignoreByWatcher(param.path);
     return platformSaveFilePromise(param, content, overwrite);
@@ -340,7 +340,7 @@ export default class PlatformFacade {
   static saveTextFilePromise = (
     param: any,
     content: string,
-    overwrite: boolean
+    overwrite: boolean,
   ): Promise<any> => {
     //PlatformFacade.ignoreByWatcher(param.path);
     return platformSaveTextFilePromise(param, content, overwrite);
@@ -352,8 +352,8 @@ export default class PlatformFacade {
     overwrite: boolean,
     onUploadProgress?: (
       progress: any, // ManagedUpload.Progress,
-      response: any // AWS.Response<AWS.S3.PutObjectOutput, AWS.AWSError>
-    ) => void
+      response: any, // AWS.Response<AWS.S3.PutObjectOutput, AWS.AWSError>
+    ) => void,
   ): Promise<TS.FileSystemEntry> => {
     //PlatformFacade.ignoreByWatcher(param.path);
 
@@ -361,13 +361,13 @@ export default class PlatformFacade {
       param,
       content,
       overwrite,
-      onUploadProgress
+      onUploadProgress,
     );
   };
 
   static deleteFilePromise = (
     path: string,
-    useTrash?: boolean
+    useTrash?: boolean,
   ): Promise<any> => {
     //PlatformFacade.ignoreByWatcher(path);
     return platformDeleteFilePromise(path, useTrash);
@@ -375,7 +375,7 @@ export default class PlatformFacade {
 
   static deleteDirectoryPromise = (
     path: string,
-    useTrash?: boolean
+    useTrash?: boolean,
   ): Promise<any> => {
     //PlatformFacade.ignoreByWatcher(path);
     return platformDeleteDirectoryPromise(path, useTrash);
@@ -389,7 +389,7 @@ export default class PlatformFacade {
 
   static openFile = (
     filePath: string,
-    warningOpeningFilesExternally: boolean
+    warningOpeningFilesExternally: boolean,
   ): void => {
     if (
       !warningOpeningFilesExternally ||
@@ -397,7 +397,7 @@ export default class PlatformFacade {
       confirm(
         'Do you really want to open "' +
           filePath +
-          '"? Execution of some files can be potentially dangerous!'
+          '"? Execution of some files can be potentially dangerous!',
       )
     ) {
       platformOpenFile(filePath);
@@ -424,14 +424,14 @@ export default class PlatformFacade {
     mode: string[],
     ignorePatterns: Array<string>,
     listDirectoryPromise,
-    loadTextFilePromise
+    loadTextFilePromise,
   ) {
     return platformCreateIndex(
       param,
       mode,
       ignorePatterns,
       listDirectoryPromise,
-      loadTextFilePromise
+      loadTextFilePromise,
     );
   }
 

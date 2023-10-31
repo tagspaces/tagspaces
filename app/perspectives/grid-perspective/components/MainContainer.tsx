@@ -73,27 +73,16 @@ function GridPerspective(props: Props) {
   const { openRenameEntryDialog } = props;
 
   const { openEntry, openPrevFile, openNextFile } = useOpenedEntryContext();
-  const {
-    directoryMeta,
-    currentDirectoryPath,
-    setDirectoryMeta
-  } = useDirectoryContentContext();
+  const { directoryMeta, currentDirectoryPath, setDirectoryMeta } =
+    useDirectoryContentContext();
   const { openFileNatively } = useFsActionsContext();
   const dispatch: AppDispatch = useDispatch();
 
-  const {
-    sortedDirContent,
-    sortBy,
-    orderBy,
-    setSortBy,
-    setOrderBy
-  } = useSortedDirContext();
+  const { sortedDirContent, sortBy, orderBy, setSortBy, setOrderBy } =
+    useSortedDirContext();
   const desktopMode = useSelector(getDesktopMode);
-  const {
-    selectedEntries,
-    setSelectedEntries,
-    lastSelectedEntryPath
-  } = useSelectedEntriesContext();
+  const { selectedEntries, setSelectedEntries, lastSelectedEntryPath } =
+    useSelectedEntriesContext();
   const keyBindings = useSelector(getKeyBindingObject);
   //const searchFilter: string = useSelector(getSearchFilter);
   /*const editedEntryPaths: Array<TS.EditedEntryPath> = useSelector(
@@ -104,7 +93,7 @@ function GridPerspective(props: Props) {
   const handleSetSelectedEntries = (entries: Array<TS.FileSystemEntry>) => {
     const selected = showDirectories.current
       ? entries
-      : entries.filter(entry => entry.isFile);
+      : entries.filter((entry) => entry.isFile);
     setSelectedEntries(selected);
   };
 
@@ -123,29 +112,18 @@ function GridPerspective(props: Props) {
   const selectedEntryPath = useRef<string>(undefined);
   const selectedTag = useRef<TS.Tag | null>(null);
   const perspectiveMode = useRef<boolean>(true);
-  const [
-    fileContextMenuAnchorEl,
-    setFileContextMenuAnchorEl
-  ] = useState<null | HTMLElement>(null);
-  const [
-    dirContextMenuAnchorEl,
-    setDirContextMenuAnchorEl
-  ] = useState<null | HTMLElement>(null);
-  const [
-    tagContextMenuAnchorEl,
-    setTagContextMenuAnchorEl
-  ] = useState<null | HTMLElement>(null);
-  const [
-    sortingContextMenuAnchorEl,
-    setSortingContextMenuAnchorEl
-  ] = useState<null | HTMLElement>(null);
-  const [
-    optionsContextMenuAnchorEl,
-    setOptionsContextMenuAnchorEl
-  ] = useState<null | HTMLElement>(null);
-  const [isAddTagDialogOpened, setIsAddTagDialogOpened] = useState<TS.Tag>(
-    undefined
-  );
+  const [fileContextMenuAnchorEl, setFileContextMenuAnchorEl] =
+    useState<null | HTMLElement>(null);
+  const [dirContextMenuAnchorEl, setDirContextMenuAnchorEl] =
+    useState<null | HTMLElement>(null);
+  const [tagContextMenuAnchorEl, setTagContextMenuAnchorEl] =
+    useState<null | HTMLElement>(null);
+  const [sortingContextMenuAnchorEl, setSortingContextMenuAnchorEl] =
+    useState<null | HTMLElement>(null);
+  const [optionsContextMenuAnchorEl, setOptionsContextMenuAnchorEl] =
+    useState<null | HTMLElement>(null);
+  const [isAddTagDialogOpened, setIsAddTagDialogOpened] =
+    useState<TS.Tag>(undefined);
   /*const sortBy = useRef<string>(
     settings && settings.sortBy ? settings.sortBy : defaultSettings.sortBy
   );
@@ -157,70 +135,64 @@ function GridPerspective(props: Props) {
   const layoutType = useRef<string>(
     settings && settings.layoutType
       ? settings.layoutType
-      : defaultSettings.layoutType
+      : defaultSettings.layoutType,
   );
   const singleClickAction = useRef<string>(
     settings && settings.singleClickAction
       ? settings.singleClickAction
-      : defaultSettings.singleClickAction
+      : defaultSettings.singleClickAction,
   );
   const entrySize = useRef<string>(
     settings && settings.entrySize
       ? settings.entrySize
-      : defaultSettings.entrySize
+      : defaultSettings.entrySize,
   );
   const thumbnailMode = useRef<string>(
     settings && settings.thumbnailMode
       ? settings.thumbnailMode
-      : defaultSettings.thumbnailMode
+      : defaultSettings.thumbnailMode,
   );
   const showDirectories = useRef<boolean>(
     settings && typeof settings.showDirectories !== 'undefined'
       ? settings.showDirectories
-      : defaultSettings.showDirectories
+      : defaultSettings.showDirectories,
   );
   const showDetails = useRef<boolean>(
     settings && typeof settings.showDetails !== 'undefined'
       ? settings.showDetails
-      : defaultSettings.showDetails
+      : defaultSettings.showDetails,
   );
   const showDescription = useRef<boolean>(
     settings && typeof settings.showDescription !== 'undefined'
       ? settings.showDescription
-      : defaultSettings.showDescription
+      : defaultSettings.showDescription,
   );
   const showEntriesDescription = useRef<boolean>(
     settings && typeof settings.showEntriesDescription !== 'undefined'
       ? settings.showEntriesDescription
-      : defaultSettings.showEntriesDescription
+      : defaultSettings.showEntriesDescription,
   );
   const showTags = useRef<boolean>(
     settings && typeof settings.showTags !== 'undefined'
       ? settings.showTags
-      : defaultSettings.showTags
+      : defaultSettings.showTags,
   );
-  const [
-    isMoveCopyFilesDialogOpened,
-    setIsMoveCopyFilesDialogOpened
-  ] = useState<boolean>(false);
-  const [isShareFilesDialogOpened, setIsShareFilesDialogOpened] = useState<
-    boolean
-  >(false);
-  const [
-    isAddRemoveTagsDialogOpened,
-    setIsAddRemoveTagsDialogOpened
-  ] = useState<boolean>(false);
-  const [isGridSettingsDialogOpened, setIsGridSettingsDialogOpened] = useState<
-    boolean
-  >(false);
+  const [isMoveCopyFilesDialogOpened, setIsMoveCopyFilesDialogOpened] =
+    useState<boolean>(false);
+  const [isShareFilesDialogOpened, setIsShareFilesDialogOpened] =
+    useState<boolean>(false);
+  const [isAddRemoveTagsDialogOpened, setIsAddRemoveTagsDialogOpened] =
+    useState<boolean>(false);
+  const [isGridSettingsDialogOpened, setIsGridSettingsDialogOpened] =
+    useState<boolean>(false);
   const gridPageLimit = useRef<number>(
     settings && settings.gridPageLimit
       ? settings.gridPageLimit
-      : defaultSettings.gridPageLimit
+      : defaultSettings.gridPageLimit,
   );
   // true: save in default settings; false: save per folder settings; undefined - dont save changes
   const isDefaultSetting = useRef<boolean>(undefined);
-  const [ignored, forceUpdate] = useReducer(x => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const firstRender = useFirstRender();
 
   useEffect(() => {
@@ -257,12 +229,12 @@ function GridPerspective(props: Props) {
       setOrderBy(
         perspectiveSettings && perspectiveSettings.orderBy !== undefined
           ? perspectiveSettings.orderBy
-          : defaultSettings.orderBy
+          : defaultSettings.orderBy,
       );
       setSortBy(
         perspectiveSettings && perspectiveSettings.sortBy !== undefined
           ? perspectiveSettings.sortBy
-          : defaultSettings.sortBy
+          : defaultSettings.sortBy,
       );
       singleClickAction.current =
         perspectiveSettings &&
@@ -299,20 +271,20 @@ function GridPerspective(props: Props) {
         singleClickAction: singleClickAction.current,
         entrySize: entrySize.current,
         thumbnailMode: thumbnailMode.current,
-        gridPageLimit: gridPageLimit.current
+        gridPageLimit: gridPageLimit.current,
       };
       if (Pro && !isDefaultSetting.current) {
         Pro.MetaOperations.savePerspectiveSettings(
           currentDirectoryPath,
           PerspectiveIDs.GRID,
-          perspectiveSettings
+          perspectiveSettings,
         ).then((fsEntryMeta: TS.FileSystemEntryMeta) => {
           setDirectoryMeta(fsEntryMeta);
         });
       } else {
         localStorage.setItem(
           defaultSettings.settingsKey,
-          JSON.stringify(perspectiveSettings)
+          JSON.stringify(perspectiveSettings),
         );
         forceUpdate();
       }
@@ -331,7 +303,7 @@ function GridPerspective(props: Props) {
     singleClickAction.current,
     entrySize.current,
     thumbnailMode.current,
-    gridPageLimit.current
+    gridPageLimit.current,
   ]);
 
   /*if ( // for debugging skip first re-renders
@@ -345,7 +317,7 @@ function GridPerspective(props: Props) {
     if (selectedEntries && selectedEntries.length > 0) {
       try {
         const firstSelectedElement = document.querySelector(
-          '[data-entry-id="' + selectedEntries[0].uuid + '"]'
+          '[data-entry-id="' + selectedEntries[0].uuid + '"]',
         );
         if (
           isObj(firstSelectedElement) &&
@@ -369,7 +341,7 @@ function GridPerspective(props: Props) {
     // forceUpdate();
   };
 
-  const handleSortBy = handleSort => {
+  const handleSortBy = (handleSort) => {
     if (sortBy !== handleSort) {
       setSortBy(handleSort);
     } else {
@@ -379,7 +351,7 @@ function GridPerspective(props: Props) {
     setSortingContextMenuAnchorEl(null);
   };
 
-  const handleSortingMenu = event => {
+  const handleSortingMenu = (event) => {
     const anchor = event ? event.currentTarget : null;
     setSortingContextMenuAnchorEl(anchor);
   };
@@ -442,13 +414,13 @@ function GridPerspective(props: Props) {
     return thumbMode;
   };
 
-  const changeEntrySize = size => {
+  const changeEntrySize = (size) => {
     closeOptionsMenu();
     entrySize.current = size;
     // forceUpdate();
   };
 
-  const changeSingleClickAction = singleClick => {
+  const changeSingleClickAction = (singleClick) => {
     closeOptionsMenu();
     singleClickAction.current = singleClick;
     // forceUpdate();
@@ -467,7 +439,7 @@ function GridPerspective(props: Props) {
   const handleTagMenu = (
     event: React.ChangeEvent<HTMLInputElement>,
     tag: TS.Tag,
-    entryPath: string
+    entryPath: string,
   ) => {
     event.preventDefault();
     event.stopPropagation();
@@ -505,7 +477,7 @@ function GridPerspective(props: Props) {
     addRemoveTags: keyBindings.addRemoveTags,
     renameFile: keyBindings.renameFile,
     openEntry: keyBindings.openEntry,
-    openFileExternally: keyBindings.openFileExternally
+    openFileExternally: keyBindings.openFileExternally,
   };
 
   const onContextMenu = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -543,17 +515,17 @@ function GridPerspective(props: Props) {
     renameFile: () => {
       openRenameEntryDialog();
     },
-    openEntry: e => {
+    openEntry: (e) => {
       e.preventDefault();
       openEntry();
     },
     openFileExternally: () => {
       openFileNatively();
-    }
+    },
   };
 
-  const sortedDirectories = sortedDirContent.filter(entry => !entry.isFile);
-  const sortedFiles = sortedDirContent.filter(entry => entry.isFile);
+  const sortedDirectories = sortedDirContent.filter((entry) => !entry.isFile);
+  const sortedFiles = sortedDirContent.filter((entry) => entry.isFile);
   /*const locationPath = currentLocation
     ? PlatformIO.getLocationPath(currentLocation)
     : '';*/
@@ -572,16 +544,16 @@ function GridPerspective(props: Props) {
     index: number,
     handleGridContextMenu: (
       event: React.MouseEvent<HTMLDivElement>,
-      fsEntry: TS.FileSystemEntry
+      fsEntry: TS.FileSystemEntry,
     ) => void,
     handleGridCellClick,
     handleGridCellDblClick,
-    isLast?: boolean
+    isLast?: boolean,
   ) => {
     let selected = false;
     if (
       selectedEntries &&
-      selectedEntries.some(entry => entry.path === fsEntry.path)
+      selectedEntries.some((entry) => entry.path === fsEntry.path)
     ) {
       selected = true;
     }
@@ -591,7 +563,7 @@ function GridPerspective(props: Props) {
 
     const deselectEntry = (fsEntry: TS.FileSystemEntry) => {
       const newSelection = selectedEntries.filter(
-        data => data.path !== fsEntry.path
+        (data) => data.path !== fsEntry.path,
       );
       handleSetSelectedEntries(newSelection);
     };
@@ -616,7 +588,7 @@ function GridPerspective(props: Props) {
           showTags={showTags.current}
           handleGridContextMenu={(
             event: React.MouseEvent<HTMLDivElement>,
-            fsEntry: TS.FileSystemEntry
+            fsEntry: TS.FileSystemEntry,
           ) => {
             setMouseX(event.clientX);
             setMouseY(event.clientY);
@@ -632,7 +604,7 @@ function GridPerspective(props: Props) {
   return (
     <div
       style={{
-        height: '100%' // 'calc(100% - 47px)'
+        height: '100%', // 'calc(100% - 47px)'
       }}
       data-tid={defaultSettings.testID}
     >
@@ -662,7 +634,7 @@ function GridPerspective(props: Props) {
             padding: 5,
             paddingBottom: 70,
             gridTemplateColumns:
-              'repeat(auto-fit,minmax(' + entryWidth + 'px,1fr))'
+              'repeat(auto-fit,minmax(' + entryWidth + 'px,1fr))',
           }}
           directories={sortedDirectories}
           showDetails={showDetails.current}
@@ -704,7 +676,7 @@ function GridPerspective(props: Props) {
       {isGridSettingsDialogOpened && (
         <GridSettingsDialog
           open={isGridSettingsDialogOpened}
-          onClose={isDefault => {
+          onClose={(isDefault) => {
             setIsGridSettingsDialogOpened(false);
             isDefaultSetting.current = isDefault;
           }}
@@ -732,7 +704,7 @@ function GridPerspective(props: Props) {
           resetLocalSettings={() => {
             Pro.MetaOperations.savePerspectiveSettings(
               currentDirectoryPath,
-              PerspectiveIDs.GRID
+              PerspectiveIDs.GRID,
             ).then((fsEntryMeta: TS.FileSystemEntryMeta) => {
               setDirectoryMeta(fsEntryMeta);
               setIsGridSettingsDialogOpened(false);

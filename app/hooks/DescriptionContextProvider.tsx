@@ -21,13 +21,13 @@ import React, {
   useEffect,
   useMemo,
   useRef,
-  useState
+  useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   actions as AppActions,
   AppDispatch,
-  OpenedEntry
+  OpenedEntry,
 } from '-/reducers/app';
 import { Pro } from '-/pro';
 import { useTranslation } from 'react-i18next';
@@ -50,7 +50,7 @@ export const DescriptionContext = createContext<DescriptionContextData>({
   isSaveDescriptionConfirmOpened: false,
   setSaveDescriptionConfirmOpened: () => {},
   setDescription: () => {},
-  saveDescription: () => {}
+  saveDescription: () => {},
 });
 
 export type DescriptionContextProviderProps = {
@@ -58,7 +58,7 @@ export type DescriptionContextProviderProps = {
 };
 
 export const DescriptionContextProvider = ({
-  children
+  children,
 }: DescriptionContextProviderProps) => {
   const { t } = useTranslation();
   const { setSelectedEntries } = useSelectedEntriesContext();
@@ -66,21 +66,16 @@ export const DescriptionContextProvider = ({
     openedEntries,
     addToEntryContainer,
     updateOpenedFile,
-    reloadOpenedFile
+    reloadOpenedFile,
   } = useOpenedEntryContext();
-  const {
-    switchLocationTypeByID,
-    switchCurrentLocationType,
-    readOnlyMode
-  } = useCurrentLocationContext();
+  const { switchLocationTypeByID, switchCurrentLocationType, readOnlyMode } =
+    useCurrentLocationContext();
   const { updateCurrentDirEntry } = useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
   const openedFile = useRef<OpenedEntry>(openedEntries[0]);
   const isChanged = useRef<boolean>(false);
-  const [
-    isSaveDescriptionConfirmOpened,
-    saveDescriptionConfirmOpened
-  ] = useState<boolean>(false);
+  const [isSaveDescriptionConfirmOpened, saveDescriptionConfirmOpened] =
+    useState<boolean>(false);
 
   useEffect(() => {
     if (openedEntries && openedEntries.length > 0) {
@@ -119,22 +114,22 @@ export const DescriptionContextProvider = ({
       //setDescriptionChanged(false);
       if (openedFile.current.locationId) {
         switchLocationTypeByID(openedFile.current.locationId).then(
-          currentLocationId => {
+          (currentLocationId) => {
             saveMetaData()
               .then(() => switchCurrentLocationType())
-              .catch(error => {
+              .catch((error) => {
                 console.warn('Error saving description ' + error);
                 switchCurrentLocationType().then(() =>
-                  showNotification(t('Error saving description'))
+                  showNotification(t('Error saving description')),
                 );
               });
-          }
+          },
         );
       } else {
         console.debug(
           'openedFile:' +
             openedFile.current.path +
-            ' dont have locationId! Current Location can be changed. Trying to save opened file in current location'
+            ' dont have locationId! Current Location can be changed. Trying to save opened file in current location',
         );
         saveMetaData();
       }
@@ -143,11 +138,11 @@ export const DescriptionContextProvider = ({
 
   function saveMetaData() {
     return Pro.MetaOperations.saveFsEntryMeta(openedFile.current.path, {
-      description: openedFile.current.description
-    }).then(entryMeta => {
+      description: openedFile.current.description,
+    }).then((entryMeta) => {
       // @ts-ignore
       updateCurrentDirEntry(openedFile.current.path, {
-        description: entryMeta.description
+        description: entryMeta.description,
       });
       openedFile.current.description = undefined;
       isChanged.current = false;
@@ -174,7 +169,7 @@ export const DescriptionContextProvider = ({
       isSaveDescriptionConfirmOpened,
       setSaveDescriptionConfirmOpened,
       setDescription,
-      saveDescription
+      saveDescription,
     };
   }, [openedFile.current, isSaveDescriptionConfirmOpened]);
 

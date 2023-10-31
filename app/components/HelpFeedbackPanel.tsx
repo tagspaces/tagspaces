@@ -61,7 +61,7 @@ function HelpFeedbackPanel(props: Props) {
     toggleKeysDialog,
     toggleOnboardingDialog,
     toggleProTeaser,
-    reduceHeightBy
+    reduceHeightBy,
   } = props;
 
   return (
@@ -69,7 +69,7 @@ function HelpFeedbackPanel(props: Props) {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        marginLeft: 5
+        marginLeft: 5,
       }}
     >
       <div className={classes.toolbar}>
@@ -88,7 +88,7 @@ function HelpFeedbackPanel(props: Props) {
         style={{
           height: 'calc(100% - ' + reduceHeightBy + 'px)',
           overflowY: 'auto',
-          marginRight: 5
+          marginRight: 5,
         }}
       >
         <ListItem

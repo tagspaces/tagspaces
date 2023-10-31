@@ -22,7 +22,7 @@ import {
   extractTitle,
   extractFileExtension,
   extractFileName,
-  extractDirectoryName
+  extractDirectoryName,
 } from '@tagspaces/tagspaces-common/paths';
 import Tooltip from '-/components/Tooltip';
 import PlatformIO from '-/services/platform-facade';
@@ -50,7 +50,7 @@ const FileBadge = styled('span')(({ theme }) => ({
   textShadow: '1px 1px #8f8f8f',
   fontSize: 13,
   marginLeft: 3,
-  borderRadius: 3
+  borderRadius: 3,
 }));
 
 interface Props {
@@ -63,16 +63,13 @@ function EntryContainerTitle(props: Props) {
   const { isFileChanged, reloadDocument, toggleFullScreen } = props;
   const { t } = useTranslation();
   const theme = useTheme();
-  const {
-    openedEntries,
-    sharingLink,
-    sharingParentFolderLink
-  } = useOpenedEntryContext();
+  const { openedEntries, sharingLink, sharingParentFolderLink } =
+    useOpenedEntryContext();
   const { showNotification } = useNotificationContext();
   const openedFile = openedEntries[0];
   const locations = useSelector(getLocations);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const haveBookmark =
     Pro && Pro.bookmarks && Pro.bookmarks.haveBookmark(openedFile.path);
@@ -89,7 +86,7 @@ function EntryContainerTitle(props: Props) {
       showNotification(
         t('core:toggleBookmark') +
           ' - ' +
-          t('thisFunctionalityIsAvailableInPro')
+          t('thisFunctionalityIsAvailableInPro'),
       );
     }
   };
@@ -98,7 +95,7 @@ function EntryContainerTitle(props: Props) {
     ? extractTitle(
         openedFile.path,
         !openedFile.isFile,
-        PlatformIO.getDirSeparator()
+        PlatformIO.getDirSeparator(),
       )
     : '';
 
@@ -109,13 +106,13 @@ function EntryContainerTitle(props: Props) {
     } else {
       fileName = extractDirectoryName(
         openedFile.path,
-        PlatformIO.getDirSeparator()
+        PlatformIO.getDirSeparator(),
       );
     }
   }
   if (!fileName) {
     const currentLocation = locations.find(
-      location => location.uuid === openedFile.locationId
+      (location) => location.uuid === openedFile.locationId,
     );
     if (currentLocation) {
       fileName = currentLocation.name;
@@ -132,7 +129,7 @@ function EntryContainerTitle(props: Props) {
         flexDirection: 'row',
         flex: '1 1',
         overflowX: 'auto',
-        overflowY: 'hidden'
+        overflowY: 'hidden',
       }}
     >
       {openedFile.isFile ? (
@@ -142,7 +139,7 @@ function EntryContainerTitle(props: Props) {
               <span
                 style={{
                   color: theme.palette.text.primary,
-                  margin: 3
+                  margin: 3,
                 }}
               >
                 {String.fromCharCode(0x25cf)}
@@ -166,11 +163,16 @@ function EntryContainerTitle(props: Props) {
               display: 'flex',
               alignItems: 'center',
               textTransform: 'uppercase',
-              paddingLeft: 10
+              paddingLeft: 10,
             }}
           >
-            {//'.' +
-            extractFileExtension(openedFile.path, PlatformIO.getDirSeparator())}
+            {
+              //'.' +
+              extractFileExtension(
+                openedFile.path,
+                PlatformIO.getDirSeparator(),
+              )
+            }
             <MoreMenuIcon style={{ fontSize: 20 }} />
           </FileBadge>
         </>
@@ -189,7 +191,7 @@ function EntryContainerTitle(props: Props) {
             backgroundColor: AppConfig.defaultFolderColor,
             display: 'flex',
             alignItems: 'center',
-            paddingLeft: 10
+            paddingLeft: 10,
           }}
         >
           <FolderIcon style={{ fontSize: 20 }} />
@@ -206,7 +208,7 @@ function EntryContainerTitle(props: Props) {
             marginLeft: 5,
             maxHeight: 40,
             overflowY: 'auto',
-            overflowX: 'hidden'
+            overflowX: 'hidden',
           }}
         >
           {fileTitle}
@@ -222,13 +224,13 @@ function EntryContainerTitle(props: Props) {
           {haveBookmark ? (
             <BookmarkIcon
               style={{
-                color: theme.palette.primary.main
+                color: theme.palette.primary.main,
               }}
             />
           ) : (
             <BookmarkAddIcon
               style={{
-                color: theme.palette.text.secondary
+                color: theme.palette.text.secondary,
               }}
             />
           )}

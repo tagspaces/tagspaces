@@ -49,7 +49,7 @@ import {
   isSearchPanelOpened,
   isHelpFeedbackPanelOpened,
   AppDispatch,
-  currentUser
+  currentUser,
 } from '../reducers/app';
 import { actions as SettingsActions } from '-/reducers/settings';
 import StoredSearches from '-/components/StoredSearches';
@@ -63,18 +63,18 @@ const PREFIX = 'MobileNavigation';
 
 const classes = {
   button: `${PREFIX}-button`,
-  selectedButton: `${PREFIX}-selectedButton`
+  selectedButton: `${PREFIX}-selectedButton`,
 };
 
 const Root = styled(Box)(({ theme }) => ({
   [`& .${classes.button}`]: {
     position: 'relative',
     padding: '11px', // '8px 12px 6px 8px',
-    margin: '0'
+    margin: '0',
   },
   [`& .${classes.selectedButton}`]: {
-    backgroundColor: theme.palette.primary.light
-  }
+    backgroundColor: theme.palette.primary.light,
+  },
 }));
 
 interface Props {
@@ -87,12 +87,12 @@ function MobileNavigation(props: Props) {
   const dispatch: AppDispatch = useDispatch();
 
   const isLocationManagerPanelOpenedSelector = useSelector(
-    isLocationManagerPanelOpened
+    isLocationManagerPanelOpened,
   );
   const isTagLibraryPanelOpenedSelector = useSelector(isTagLibraryPanelOpened);
   const isSearchPanelOpenedSelector = useSelector(isSearchPanelOpened);
   const isHelpFeedbackPanelOpenedSelector = useSelector(
-    isHelpFeedbackPanelOpened
+    isHelpFeedbackPanelOpened,
   );
   const cognitoUser: CognitoUserInterface = useSelector(currentUser);
 
@@ -128,13 +128,13 @@ function MobileNavigation(props: Props) {
         height: '100%',
         overflow: 'hidden',
         width: width || 320,
-        maxWidth: width || 320
+        maxWidth: width || 320,
       }}
     >
       <Box
         style={{
           overflow: 'hidden',
-          height: showProTeaser ? 'calc(100% - 220px)' : 'calc(100% - 55px)'
+          height: showProTeaser ? 'calc(100% - 220px)' : 'calc(100% - 55px)',
         }}
       >
         <CustomLogo />
@@ -145,7 +145,7 @@ function MobileNavigation(props: Props) {
             display: 'block',
             whiteSpace: 'nowrap',
             marginBottom: 10,
-            marginLeft: 15
+            marginLeft: 15,
           }}
         >
           <Tooltip title={t('core:createFileTitle')}>
@@ -165,7 +165,7 @@ function MobileNavigation(props: Props) {
                 style={{
                   maxWidth: 180,
                   textOverflow: 'ellipsis',
-                  overflow: 'hidden'
+                  overflow: 'hidden',
                 }}
               >
                 {t('core:create')}
@@ -186,7 +186,7 @@ function MobileNavigation(props: Props) {
                   style={{
                     maxWidth: 180,
                     textOverflow: 'ellipsis',
-                    overflow: 'hidden'
+                    overflow: 'hidden',
                   }}
                 >
                   {t('core:newWindow')}
@@ -213,7 +213,7 @@ function MobileNavigation(props: Props) {
       </Box>
       <Box
         style={{
-          textAlign: 'center'
+          textAlign: 'center',
         }}
       >
         {showProTeaser && (
@@ -313,11 +313,11 @@ function MobileNavigation(props: Props) {
               onClose={() => setAnchorUser(null)}
               anchorOrigin={{
                 vertical: 'top',
-                horizontal: 'center'
+                horizontal: 'center',
               }}
               transformOrigin={{
                 vertical: 'bottom',
-                horizontal: 'center'
+                horizontal: 'center',
               }}
             >
               <UserDetailsPopover onClose={() => setAnchorUser(null)} />

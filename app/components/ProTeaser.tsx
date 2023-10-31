@@ -46,7 +46,7 @@ function ProTeaser(props: Props) {
         style={{
           padding: 5,
           paddingBottom: 0,
-          textAlign: 'center'
+          textAlign: 'center',
         }}
       >
         <Typography color="textSecondary" variant="caption">
@@ -55,7 +55,7 @@ function ProTeaser(props: Props) {
             style={{ right: 5, marginTop: -10, position: 'absolute' }}
             size="small"
             aria-label="close"
-            onClick={event => {
+            onClick={(event) => {
               event.preventDefault();
               event.stopPropagation();
               setShowTeaserBanner(false);
@@ -73,7 +73,7 @@ function ProTeaser(props: Props) {
         style={{
           flexDirection: 'row',
           justifyContent: 'center',
-          marginTop: -10
+          marginTop: -10,
         }}
       >
         <Button

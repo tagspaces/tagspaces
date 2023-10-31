@@ -85,7 +85,7 @@ interface Props {
 function TagsSelect(props: Props) {
   const { readOnlyMode } = useCurrentLocationContext();
   const [tagMenuAnchorEl, setTagMenuAnchorEl] = useState<null | HTMLElement>(
-    null
+    null,
   );
 
   const [selectedTag, setSelectedTag] = useState(undefined);
@@ -99,13 +99,13 @@ function TagsSelect(props: Props) {
     selectedEntryPath,
     autoFocus = false,
     tags = [],
-    tagMode
+    tagMode,
   } = props;
 
   function handleTagChange(
     event: Object,
     selectedTags: Array<TS.Tag>,
-    reason: string
+    reason: string,
   ) {
     if (!readOnlyMode) {
       if (reason === 'selectOption') {
@@ -113,20 +113,17 @@ function TagsSelect(props: Props) {
       } else if (reason === 'createOption') {
         if (selectedTags && selectedTags.length) {
           const tagsInput = '' + selectedTags[selectedTags.length - 1];
-          let tags = tagsInput
-            .split(' ')
-            .join(',')
-            .split(','); // handle spaces around commas
+          let tags = tagsInput.split(' ').join(',').split(','); // handle spaces around commas
           tags = [...new Set(tags)]; // remove duplicates
-          tags = tags.filter(tag => tag && tag.length > 0); // zero length tags
+          tags = tags.filter((tag) => tag && tag.length > 0); // zero length tags
 
           const newTags = [];
-          tags.map(tag => {
+          tags.map((tag) => {
             const newTag: TS.Tag = {
               id: getUuid(),
               title: '' + tag,
               color: defaultBackgroundColor,
-              textcolor: defaultTextColor
+              textcolor: defaultTextColor,
             };
             if (isValidNewOption(newTag.title, selectedTags)) {
               newTags.push(newTag);
@@ -154,7 +151,7 @@ function TagsSelect(props: Props) {
       !trimmedInput.includes(' ') &&
       !trimmedInput.includes('#') &&
       !trimmedInput.includes(',') &&
-      !selectOptions.find(option => option.title === inputValue)
+      !selectOptions.find((option) => option.title === inputValue)
     );
   }
 
@@ -209,7 +206,7 @@ function TagsSelect(props: Props) {
             <TagContainer tag={option} tagMode={tagMode} />
           </Box>
         )}
-        renderInput={params => (
+        renderInput={(params) => (
           <TextField
             {...params}
             // variant="filled"

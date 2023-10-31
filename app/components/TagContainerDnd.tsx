@@ -22,7 +22,7 @@ import {
   DropTarget,
   ConnectDragPreview,
   ConnectDragSource,
-  ConnectDropTarget
+  ConnectDropTarget,
 } from 'react-dnd';
 
 import { getEmptyImage } from 'react-dnd-html5-backend';
@@ -41,7 +41,7 @@ const boxSource = {
       index: props.index,
       // tagTitle: props.tag.title,
       tag: props.tag,
-      ...(props.tagGroup ? { sourceTagGroupId: props.tagGroup.uuid } : {})
+      ...(props.tagGroup ? { sourceTagGroupId: props.tagGroup.uuid } : {}),
     };
   },
 
@@ -61,7 +61,7 @@ const boxSource = {
         props.moveTag(
           item.tag.title,
           item.sourceTagGroupId,
-          dropResult.tagGroupId
+          dropResult.tagGroupId,
         );
       } else if (props.addTag) {
         // add from file DnD to tagGroup
@@ -70,16 +70,20 @@ const boxSource = {
     } else if (dropResult && dropResult.entryPath && props.addTags) {
       // console.log(`Dropped item: ${item.tag.title} onto file: ${dropResult.entryPath}!`);
       if (
-        props.selectedEntries.some(entry => entry.path === dropResult.entryPath)
+        props.selectedEntries.some(
+          (entry) => entry.path === dropResult.entryPath,
+        )
       ) {
         const selectedEntryPaths = [];
-        props.selectedEntries.map(entry => selectedEntryPaths.push(entry.path));
+        props.selectedEntries.map((entry) =>
+          selectedEntryPaths.push(entry.path),
+        );
         props.addTags(selectedEntryPaths, [item.tag]);
       } else {
         props.addTags([dropResult.entryPath], [item.tag]);
       }
     }
-  }
+  },
 };
 
 const boxTarget = {
@@ -163,7 +167,7 @@ const boxTarget = {
         const extractedTags = extractTags(
           props.entryPath,
           AppConfig.tagDelimiter,
-          PlatformIO.getDirSeparator()
+          PlatformIO.getDirSeparator(),
         );
         if (
           extractedTags.length > 0 &&
@@ -180,7 +184,7 @@ const boxTarget = {
 
       dragItem.index = hoverIndex;
     }
-  }
+  },
 };
 
 interface Props {
@@ -191,7 +195,7 @@ interface Props {
     event: Object,
     tag: TS.Tag,
     param: any,
-    haveSelectedEntries: boolean
+    haveSelectedEntries: boolean,
   ) => void;
   handleRemoveTag?: (event: Object, tag: TS.Tag) => void;
   isDragging?: boolean;
@@ -202,12 +206,12 @@ interface Props {
   moveTag?: (
     tagTitle: string,
     fromTagGroupId: TS.Uuid,
-    toTagGroupId: TS.Uuid
+    toTagGroupId: TS.Uuid,
   ) => void;
   changeTagOrder?: (
     tagGroupUuid: TS.Uuid,
     fromIndex: number,
-    toIndex: number
+    toIndex: number,
   ) => void;
   editTagForEntry?: (path: string, tag: TS.Tag) => void;
   connectDragSource?: ConnectDragSource;
@@ -233,7 +237,7 @@ const TagContainerDnd = (props: Props) => {
     tagMode,
     tagContainerRef,
     reorderTags,
-    connectDragPreview
+    connectDragPreview,
   } = props;
 
   /* const [{ opacity }, dragRef] = useDrag(
@@ -252,7 +256,7 @@ const TagContainerDnd = (props: Props) => {
   connectDragPreview(getEmptyImage(), {
     // IE fallback: specify that we'd rather screenshot the node
     // when it already knows it's being dragged so we can hide it with CSS.
-    captureDraggingState: true
+    captureDraggingState: true,
   });
 
   return connectDropTarget(
@@ -269,8 +273,8 @@ const TagContainerDnd = (props: Props) => {
           isDragging={isDragging}
           reorderTags={reorderTags}
         />
-      </span>
-    )
+      </span>,
+    ),
   );
 };
 
@@ -284,17 +288,17 @@ const collectSource = (connect, monitor) => ({
   // You can ask the monitor about the current drag preview
   connectDragPreview: connect.dragPreview(),
   // You can ask the monitor about the current drag state:
-  isDragging: monitor.isDragging()
+  isDragging: monitor.isDragging(),
 });
 
 const collectTarget = (connect, monitor) => ({
   connectDropTarget: connect.dropTarget(),
   isOver: monitor.isOver(),
-  canDrop: monitor.canDrop()
+  canDrop: monitor.canDrop(),
 });
 
 export default DragSource(
   DragItemTypes.TAG,
   boxSource,
-  collectSource
+  collectSource,
 )(DropTarget(DragItemTypes.TAG, boxTarget, collectTarget)(TagContainerDnd));

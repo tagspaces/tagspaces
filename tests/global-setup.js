@@ -1,4 +1,4 @@
-module.exports = async function() {
+module.exports = async function () {
   // await globalSetup();
 
   // copy extconfig
@@ -9,7 +9,7 @@ module.exports = async function() {
     __dirname,
     '..',
     'scripts',
-    'extconfig-with-welcome.js'
+    'extconfig-with-welcome.js',
   );
   let destDir = path.join(__dirname, '..', 'app', 'extconfig.js');
 

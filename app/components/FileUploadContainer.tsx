@@ -40,10 +40,8 @@ const FileUploadContainer = forwardRef(
     const { id, directoryPath } = props;
     const { uploadFilesAPI } = useIOActionsContext();
     const { setSelectedEntries } = useSelectedEntriesContext();
-    const {
-      currentDirectoryPath,
-      addDirectoryEntries
-    } = useDirectoryContentContext();
+    const { currentDirectoryPath, addDirectoryEntries } =
+      useDirectoryContentContext();
 
     const onUploadProgress = (progress, abort, fileName) => {
       dispatch(AppActions.onUploadProgress(progress, abort, fileName));
@@ -80,7 +78,7 @@ const FileUploadContainer = forwardRef(
         } else { */
         fileInput.current.click();
         // }
-      }
+      },
     }));
 
     /* if (AppConfig.isCordovaAndroid) {
@@ -97,7 +95,7 @@ const FileUploadContainer = forwardRef(
       uploadFilesAPI(
         Array.from(selection.currentTarget.files),
         directoryPath,
-        onUploadProgress
+        onUploadProgress,
       )
         .then((fsEntries: Array<TS.FileSystemEntry>) => {
           if (directoryPath === currentDirectoryPath) {
@@ -107,7 +105,7 @@ const FileUploadContainer = forwardRef(
           }
           return true;
         })
-        .catch(error => {
+        .catch((error) => {
           console.log('uploadFiles', error);
         });
     }
@@ -123,7 +121,7 @@ const FileUploadContainer = forwardRef(
         onChange={handleFileInputChange}
       />
     );
-  }
+  },
 );
 
 export default FileUploadContainer;

@@ -40,7 +40,7 @@ import {
   LocalLocationIcon,
   OpenLinkIcon,
   KeyShortcutsIcon,
-  HelpIcon
+  HelpIcon,
 } from '-/components/CommonIcons';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { getDesktopMode } from '-/reducers/settings';
@@ -58,25 +58,25 @@ const PREFIX = 'WelcomePanel';
 const classes = {
   listItem: `${PREFIX}-listItem`,
   recentTitle: `${PREFIX}-recentTitle`,
-  noRecentItems: `${PREFIX}-noRecentItems`
+  noRecentItems: `${PREFIX}-noRecentItems`,
 };
 
 const Root = styled('div')(({ theme }) => ({
   [`& .${classes.listItem}`]: {
     color: theme.palette.text.primary,
     textTransform: 'uppercase',
-    marginTop: 10
+    marginTop: 10,
   },
   [`& .${classes.recentTitle}`]: {
     color: theme.palette.text.primary,
     textTransform: 'uppercase',
-    textAlign: 'center'
+    textAlign: 'center',
   },
   [`& .${classes.noRecentItems}`]: {
     color: theme.palette.text.primary,
     padding: 30,
-    alignSelf: 'center'
-  }
+    alignSelf: 'center',
+  },
 }));
 
 function WelcomePanel() {
@@ -94,7 +94,7 @@ function WelcomePanel() {
   const toggleKeysDialogDispatch = () =>
     dispatch(AppActions.toggleKeysDialog());
 
-  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
   const fileOpenHistoryItems: Array<TS.HistoryItem> = Pro
@@ -123,7 +123,7 @@ function WelcomePanel() {
         <Typography
           variant="inherit"
           style={{
-            paddingTop: 20
+            paddingTop: 20,
           }}
           className={classes.recentTitle}
           noWrap
@@ -197,7 +197,7 @@ function WelcomePanel() {
           // @ts-ignore
           overflowY: 'overlay',
           overflowX: 'hidden',
-          backgroundColor: theme.palette.background.default
+          backgroundColor: theme.palette.background.default,
         }}
       >
         <div
@@ -352,7 +352,7 @@ function WelcomePanel() {
         overflow: 'hidden',
         position: 'relative',
         paddingLeft: 20,
-        height: '100%'
+        height: '100%',
       }}
     >
       <div
@@ -365,13 +365,13 @@ function WelcomePanel() {
           left: 0,
           top: 0,
           width: '100%',
-          height: '100%'
+          height: '100%',
         }}
       />
       <Grid
         style={{
           position: 'relative',
-          height: '100%'
+          height: '100%',
         }}
         container
         spacing={3}
@@ -393,7 +393,7 @@ function WelcomePanel() {
                 // @ts-ignore
                 overflowY: 'overlay',
                 height: 'calc(100% - 50px)',
-                backgroundColor: theme.palette.background.default
+                backgroundColor: theme.palette.background.default,
               }}
             >
               <HowToStart />
@@ -410,7 +410,7 @@ function WelcomePanel() {
                 // @ts-ignore
                 overflowY: 'overlay',
                 height: 'calc(100% - 50px)',
-                backgroundColor: theme.palette.background.default
+                backgroundColor: theme.palette.background.default,
               }}
             >
               {renderRecentItems()}

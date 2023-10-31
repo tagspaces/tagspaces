@@ -24,7 +24,7 @@ import {
   AudioRecordIcon,
   NewFileIcon,
   NewFolderIcon,
-  AddExistingFileIcon
+  AddExistingFileIcon,
 } from '-/components/CommonIcons';
 import { TS } from '-/tagspaces.namespace';
 
@@ -52,7 +52,7 @@ export function getDirectoryMenuItems(
   showProperties?: () => void,
   cameraTakePicture?: () => void,
   showAddRemoveTagsDialog?: () => void,
-  openInNewWindow?: () => void
+  openInNewWindow?: () => void,
 ) {
   const menuItems = [];
   if (selectedEntriesLength < 2) {
@@ -71,7 +71,7 @@ export function getDirectoryMenuItems(
               <OpenFolderIcon />
             </ListItemIcon>
             <ListItemText primary={t('core:openDirectory')} />
-          </MenuItem>
+          </MenuItem>,
         );
       }
       if (openInNewWindow) {
@@ -88,7 +88,7 @@ export function getDirectoryMenuItems(
               <OpenNewWindowIcon />
             </ListItemIcon>
             <ListItemText primary={t('core:openInWindow')} />
-          </MenuItem>
+          </MenuItem>,
         );
       }
     } else if (reloadDirectory) {
@@ -105,7 +105,7 @@ export function getDirectoryMenuItems(
             <ReloadIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:reloadDirectory')} />
-        </MenuItem>
+        </MenuItem>,
       );
     }
     if (!isReadOnlyMode && showRenameDirectoryDialog) {
@@ -122,7 +122,7 @@ export function getDirectoryMenuItems(
             <RenameFolderIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:renameDirectory')} />
-        </MenuItem>
+        </MenuItem>,
       );
     }
   }
@@ -146,7 +146,7 @@ export function getDirectoryMenuItems(
           <MoveCopy />
         </ListItemIcon>
         <ListItemText primary={t('core:moveCopyDirectory')} />
-      </MenuItem>
+      </MenuItem>,
     );
   }
 
@@ -164,7 +164,7 @@ export function getDirectoryMenuItems(
           <DeleteIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:deleteDirectory')} />
-      </MenuItem>
+      </MenuItem>,
     );
   }
 
@@ -190,7 +190,7 @@ export function getDirectoryMenuItems(
           <OpenFolderNativelyIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:showInFileManager')} />
-      </MenuItem>
+      </MenuItem>,
     );
   }
   if (!isReadOnlyMode && !perspectiveMode) {
@@ -209,7 +209,7 @@ export function getDirectoryMenuItems(
             <NewFileIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:newFileNote')} />
-        </MenuItem>
+        </MenuItem>,
       );
     }
     if (Pro && createNewAudio) {
@@ -233,7 +233,7 @@ export function getDirectoryMenuItems(
               </>
             }
           />
-        </MenuItem>
+        </MenuItem>,
       );
     }
     if (showCreateDirectoryDialog) {
@@ -250,7 +250,7 @@ export function getDirectoryMenuItems(
             <NewFolderIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:newSubdirectory')} />
-        </MenuItem>
+        </MenuItem>,
       );
     }
     if (addExistingFile) {
@@ -267,7 +267,7 @@ export function getDirectoryMenuItems(
             <AddExistingFileIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:addFiles')} />
-        </MenuItem>
+        </MenuItem>,
       );
     }
   }
@@ -291,7 +291,7 @@ export function getDirectoryMenuItems(
           <ImageIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:setAsParentFolderThumbnail')} />
-      </MenuItem>
+      </MenuItem>,
     );
   }
   if (selectedEntriesLength === 1 && copySharingLink) {
@@ -308,7 +308,7 @@ export function getDirectoryMenuItems(
           <LinkIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:copySharingLink')} />
-      </MenuItem>
+      </MenuItem>,
     );
   }
 
@@ -326,7 +326,7 @@ export function getDirectoryMenuItems(
           <AddRemoveTags />
         </ListItemIcon>
         <ListItemText primary={t('core:addRemoveTags')} />
-      </MenuItem>
+      </MenuItem>,
     );
   }
 
@@ -356,7 +356,7 @@ export function getDirectoryMenuItems(
             </>
           }
         />
-      </MenuItem>
+      </MenuItem>,
     );
   }
 
@@ -375,12 +375,12 @@ export function getDirectoryMenuItems(
           <AddExistingFileIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:cameraTakePicture')} />
-      </MenuItem>
+      </MenuItem>,
     );
   }
   if (!perspectiveMode && switchPerspective) {
     menuItems.push(<Divider key="divider2" />);
-    AvailablePerspectives.forEach(perspective => {
+    AvailablePerspectives.forEach((perspective) => {
       let badge = <></>;
       if (!Pro && perspective.pro) {
         badge = <ProLabel />;
@@ -409,7 +409,7 @@ export function getDirectoryMenuItems(
               </>
             }
           />
-        </MenuItem>
+        </MenuItem>,
       );
     });
   }
@@ -429,7 +429,7 @@ export function getDirectoryMenuItems(
           <PropertiesIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:directoryPropertiesTitle')} />
-      </MenuItem>
+      </MenuItem>,
     );
   }
   return menuItems;

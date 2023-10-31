@@ -26,7 +26,7 @@ export const types = {
   EDIT_SEARCH: 'SEARCH/EDIT_SEARCH',
   MOVE_UP_SEARCH: 'SEARCH/MOVE_UP_SEARCH',
   MOVE_DOWN_SEARCH: 'SEARCH/MOVE_DOWN_SEARCH',
-  REMOVE_SEARCH: 'SEARCH/REMOVE_SEARCH'
+  REMOVE_SEARCH: 'SEARCH/REMOVE_SEARCH',
 };
 
 export default (state: Array<TS.SearchQuery> = initialState, action: any) => {
@@ -36,14 +36,14 @@ export default (state: Array<TS.SearchQuery> = initialState, action: any) => {
       return [
         ...state,
         {
-          ...search
+          ...search,
           // creationDate: new Date().getTime()
-        }
+        },
       ];
     }
     case types.EDIT_SEARCH: {
       const indexForEditing = state.findIndex(
-        search => search.uuid === action.search.uuid
+        (search) => search.uuid === action.search.uuid,
       );
 
       if (indexForEditing >= 0) {
@@ -51,16 +51,16 @@ export default (state: Array<TS.SearchQuery> = initialState, action: any) => {
           ...state.slice(0, indexForEditing),
           {
             // ...state[indexForEditing],
-            ...action.search
+            ...action.search,
           },
-          ...state.slice(indexForEditing + 1)
+          ...state.slice(indexForEditing + 1),
         ];
       }
       return state;
     }
     case types.MOVE_UP_SEARCH: {
       const indexForUpdating = state.findIndex(
-        search => search.uuid === action.uuid
+        (search) => search.uuid === action.uuid,
       );
 
       if (indexForUpdating > 0) {
@@ -71,7 +71,7 @@ export default (state: Array<TS.SearchQuery> = initialState, action: any) => {
     }
     case types.MOVE_DOWN_SEARCH: {
       const indexForUpdating = state.findIndex(
-        search => search.uuid === action.uuid
+        (search) => search.uuid === action.uuid,
       );
 
       if (indexForUpdating >= 0 && indexForUpdating < state.length - 1) {
@@ -82,13 +82,13 @@ export default (state: Array<TS.SearchQuery> = initialState, action: any) => {
     }
     case types.REMOVE_SEARCH: {
       const indexForRemoving = state.findIndex(
-        search => search.uuid === action.uuid
+        (search) => search.uuid === action.uuid,
       );
 
       if (indexForRemoving >= 0) {
         return [
           ...state.slice(0, indexForRemoving),
-          ...state.slice(indexForRemoving + 1)
+          ...state.slice(indexForRemoving + 1),
         ];
       }
       return state;
@@ -102,37 +102,36 @@ export default (state: Array<TS.SearchQuery> = initialState, action: any) => {
 export const actions = {
   addSearch: (search: TS.SearchQuery) => ({
     type: types.ADD_SEARCH,
-    search
+    search,
   }),
-  addSearches: (arrSearches: Array<TS.SearchQuery>, override = true) => (
-    dispatch: (actions: Object) => void,
-    getState: () => any
-  ) => {
-    arrSearches.forEach((newSearch: TS.SearchQuery) => {
-      const { searches } = getState();
-      const searchExist: boolean = searches.some(
-        location => location.uuid === newSearch.uuid
-      );
-      if (!searchExist) {
-        dispatch(actions.addSearch(newSearch));
-      } else if (override) {
-        dispatch(actions.editSearch(newSearch));
-      }
-    });
-  },
+  addSearches:
+    (arrSearches: Array<TS.SearchQuery>, override = true) =>
+    (dispatch: (actions: Object) => void, getState: () => any) => {
+      arrSearches.forEach((newSearch: TS.SearchQuery) => {
+        const { searches } = getState();
+        const searchExist: boolean = searches.some(
+          (location) => location.uuid === newSearch.uuid,
+        );
+        if (!searchExist) {
+          dispatch(actions.addSearch(newSearch));
+        } else if (override) {
+          dispatch(actions.editSearch(newSearch));
+        }
+      });
+    },
   moveSearchUp: (uuid: string) => ({ type: types.MOVE_UP_SEARCH, uuid }),
   moveSearchDown: (uuid: string) => ({
     type: types.MOVE_DOWN_SEARCH,
-    uuid
+    uuid,
   }),
   editSearch: (search: TS.SearchQuery) => ({
     type: types.EDIT_SEARCH,
-    search
+    search,
   }),
   removeSearch: (uuid: string) => ({
     type: types.REMOVE_SEARCH,
-    uuid
-  })
+    uuid,
+  }),
   /* getSearch: (uuid: string) => (
       dispatch: (actions: Object) => void,
       getState: () => any

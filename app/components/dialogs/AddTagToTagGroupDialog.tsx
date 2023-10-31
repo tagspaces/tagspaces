@@ -77,7 +77,7 @@ function AddTagToTagGroupDialog(props: Props) {
       // fullScreen={fullScreen}
       keepMounted
       scroll="paper"
-      onKeyDown={event => {
+      onKeyDown={(event) => {
         if (event.key === 'Enter' || event.keyCode === 13) {
           event.preventDefault();
           event.stopPropagation();
@@ -102,7 +102,7 @@ function AddTagToTagGroupDialog(props: Props) {
             onChange={handleTagGroupChange}
             input={<Input id="addTagToTagGroupInput" />}
           >
-            {getTagLibrary().map(tg => (
+            {getTagLibrary().map((tg) => (
               <MenuItem value={tg.uuid}>{tg.title}</MenuItem>
             ))}
           </Select>

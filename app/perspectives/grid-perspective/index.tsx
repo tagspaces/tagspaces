@@ -28,5 +28,5 @@ export const defaultSettings = {
   showDescription: false,
   showEntriesDescription: true,
   showTags: true,
-  gridPageLimit: 100
+  gridPageLimit: 100,
 };

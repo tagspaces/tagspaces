@@ -78,14 +78,14 @@ function CreateDirectoryDialog(props: Props) {
         selectedDirectoryPath !== undefined
           ? selectedDirectoryPath
           : currentDirectoryPath,
-        name
+        name,
       );
       createDirectory(dirPath, reflect !== undefined ? reflect : true).then(
         () => {
           if (props.callback) {
             props.callback(dirPath);
           }
-        }
+        },
       );
       resetState();
       props.onClose();
@@ -112,7 +112,7 @@ function CreateDirectoryDialog(props: Props) {
       // fullScreen={fullScreen}
       keepMounted
       scroll="paper"
-      onKeyDown={event => {
+      onKeyDown={(event) => {
         if (event.key === 'Enter' || event.keyCode === 13) {
           event.preventDefault();
           event.stopPropagation();
@@ -135,7 +135,7 @@ function CreateDirectoryDialog(props: Props) {
             autoFocus
             name="name"
             label={t('core:createNewDirectoryTitleName')}
-            onChange={event => {
+            onChange={(event) => {
               const { target } = event;
               setName(target.value);
             }}

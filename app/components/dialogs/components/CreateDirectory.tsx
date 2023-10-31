@@ -31,7 +31,7 @@ import TextField from '@mui/material/TextField';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
 import Typography from '@mui/material/Typography';
 import FileUploadContainer, {
-  FileUploadContainerRef
+  FileUploadContainerRef,
 } from '-/components/FileUploadContainer';
 import { useTranslation } from 'react-i18next';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
@@ -40,14 +40,14 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 const PREFIX = 'CreateDirectory';
 
 const classes = {
-  createButton: `${PREFIX}-createButton`
+  createButton: `${PREFIX}-createButton`,
 };
 
 const Root = styled('div')(() => ({
   [`& .${classes.createButton}`]: {
     width: '100%',
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
 }));
 
 interface Props {
@@ -125,7 +125,7 @@ function CreateDirectory(props: Props) {
             targetDirectoryPath +
               PlatformIO.getDirSeparator() +
               decodeURIComponent(fileName),
-            onUploadProgress
+            onUploadProgress,
           )
             .then(() => {
               if (PlatformIO.haveObjectStoreSupport()) {
@@ -133,10 +133,14 @@ function CreateDirectory(props: Props) {
                 dispatch(AppActions.setProgress(fileUrl.current, 100));
               }
             })
-            .catch(e => {
+            .catch((e) => {
               console.log('downloadFile error:', e);
               dispatch(
-                AppActions.setProgress(fileUrl.current, -1, t('core:errorCORS'))
+                AppActions.setProgress(
+                  fileUrl.current,
+                  -1,
+                  t('core:errorCORS'),
+                ),
               );
               showNotification('downloadFile error' + e.message, 'error', true);
             });
@@ -212,7 +216,7 @@ function CreateDirectory(props: Props) {
           name="name"
           fullWidth={true}
           data-tid={tid('newUrlTID')}
-          onKeyDown={event => {
+          onKeyDown={(event) => {
             if (event.key === 'Enter') {
               downloadURL();
             }
@@ -224,7 +228,7 @@ function CreateDirectory(props: Props) {
         <ButtonGroup
           style={{
             textAlign: 'center',
-            width: '100%'
+            width: '100%',
           }}
         >
           <Button

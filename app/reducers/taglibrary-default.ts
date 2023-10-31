@@ -28,29 +28,29 @@ export default [
       {
         title: 'done',
         color: '#008000',
-        textcolor: '#ffffff'
+        textcolor: '#ffffff',
       },
       {
         title: 'next',
         color: '#008000',
-        textcolor: '#ffffff'
+        textcolor: '#ffffff',
       },
       {
         title: 'maybe',
         color: '#008000',
-        textcolor: '#ffffff'
+        textcolor: '#ffffff',
       },
       {
         title: 'waiting',
         color: '#008000',
-        textcolor: '#ffffff'
+        textcolor: '#ffffff',
       },
       {
         title: 'todo',
         color: '#008000',
-        textcolor: '#ffffff'
-      }
-    ]
+        textcolor: '#ffffff',
+      },
+    ],
   },
   {
     title: 'Common Tags',
@@ -61,19 +61,19 @@ export default [
       {
         title: 'book',
         color: '#008000',
-        textcolor: '#ffffff'
+        textcolor: '#ffffff',
       },
       {
         title: 'paper',
         color: '#008000',
-        textcolor: '#ffffff'
+        textcolor: '#ffffff',
       },
       {
         title: 'article',
         color: '#008000',
-        textcolor: '#ffffff'
-      }
-    ]
+        textcolor: '#ffffff',
+      },
+    ],
   },
   {
     title: 'Priorities',
@@ -84,19 +84,19 @@ export default [
       {
         title: 'high',
         color: '#ff7537',
-        textcolor: '#ffffff'
+        textcolor: '#ffffff',
       },
       {
         title: 'medium',
         color: '#ffad46',
-        textcolor: '#ffffff'
+        textcolor: '#ffffff',
       },
       {
         title: 'low',
         color: '#7bd148',
-        textcolor: '#ffffff'
-      }
-    ]
+        textcolor: '#ffffff',
+      },
+    ],
   },
   {
     title: 'Ratings',
@@ -107,28 +107,28 @@ export default [
       {
         title: '1star',
         color: '#ffcc24',
-        textcolor: '#ffffff'
+        textcolor: '#ffffff',
       },
       {
         title: '2star',
         color: '#ffcc24',
-        textcolor: '#ffffff'
+        textcolor: '#ffffff',
       },
       {
         title: '3star',
         color: '#ffcc24',
-        textcolor: '#ffffff'
+        textcolor: '#ffffff',
       },
       {
         title: '4star',
         color: '#ffcc24',
-        textcolor: '#ffffff'
+        textcolor: '#ffffff',
       },
       {
         title: '5star',
         color: '#ffcc24',
-        textcolor: '#ffffff'
-      }
-    ]
-  }
+        textcolor: '#ffffff',
+      },
+    ],
+  },
 ] as any;

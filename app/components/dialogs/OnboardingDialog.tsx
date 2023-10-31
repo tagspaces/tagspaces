@@ -37,7 +37,7 @@ import NewLook from '-/assets/images/desktop.svg';
 import {
   getCurrentTheme,
   getPersistTagsInSidecarFile,
-  actions as SettingsActions
+  actions as SettingsActions,
 } from '-/reducers/settings';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import Links from '-/content/links';
@@ -80,14 +80,14 @@ function OnboardingDialog(props: Props) {
     }
   }, []);*/
 
-  const setPersistTagsInSidecarFile = isPersistTagsInSidecar => {
+  const setPersistTagsInSidecarFile = (isPersistTagsInSidecar) => {
     dispatch(
-      SettingsActions.setPersistTagsInSidecarFile(isPersistTagsInSidecar)
+      SettingsActions.setPersistTagsInSidecarFile(isPersistTagsInSidecar),
     );
   };
   //const maxSteps = 4;
 
-  const setCurrentTheme = theme => {
+  const setCurrentTheme = (theme) => {
     dispatch(SettingsActions.setCurrentTheme(theme));
   };
 
@@ -112,7 +112,7 @@ function OnboardingDialog(props: Props) {
       <DialogContent
         style={{
           marginTop: 20,
-          overflowY: 'auto'
+          overflowY: 'auto',
         }}
       >
         <style>
@@ -133,7 +133,7 @@ function OnboardingDialog(props: Props) {
           slidesPerView={1}
           navigation="true"
           pagination={{
-            clickable: true
+            clickable: true,
           }}
           modules={[Pagination, Navigation]}
         >
@@ -142,7 +142,7 @@ function OnboardingDialog(props: Props) {
               style={{
                 textAlign: 'center',
                 overflowX: 'hidden',
-                padding: 50
+                padding: 50,
               }}
             >
               <Typography variant="h5">
@@ -172,7 +172,7 @@ function OnboardingDialog(props: Props) {
             <div
               style={{
                 textAlign: 'center',
-                padding: 50
+                padding: 50,
               }}
             >
               <Typography variant="h5">
@@ -246,7 +246,7 @@ function OnboardingDialog(props: Props) {
             <div
               style={{
                 textAlign: 'center',
-                padding: 50
+                padding: 50,
               }}
             >
               <Typography variant="h5">
@@ -281,7 +281,7 @@ function OnboardingDialog(props: Props) {
             <div
               style={{
                 textAlign: 'center',
-                padding: 50
+                padding: 50,
               }}
             >
               <Typography variant="h5">

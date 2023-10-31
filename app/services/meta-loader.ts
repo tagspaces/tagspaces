@@ -5,47 +5,47 @@ import {
   getMetaFileLocationForDir,
   getMetaFileLocationForFile,
   getThumbFileLocationForDirectory,
-  getThumbFileLocationForFile
+  getThumbFileLocationForFile,
 } from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
 
 export function loadCurrentDirMeta(
   directoryPath: string,
   dirEntries: TS.FileSystemEntry[],
-  pageFiles?: TS.FileSystemEntry[]
+  pageFiles?: TS.FileSystemEntry[],
 ): Promise<TS.FileSystemEntry[]> {
   return PlatformIO.listMetaDirectoryPromise(directoryPath)
-    .then(meta => {
+    .then((meta) => {
       //metaLoadedLock.current = false;
       //props.setIsMetaLoaded(true);
       // props.setMetaForCurrentDir(meta);
       const dirEntriesPromises = dirEntries
-        .filter(entry => !entry.isFile)
-        .map(entry => getEnhancedDir(entry));
+        .filter((entry) => !entry.isFile)
+        .map((entry) => getEnhancedDir(entry));
       const files = pageFiles
         ? pageFiles
-        : dirEntries.filter(entry => entry.isFile);
+        : dirEntries.filter((entry) => entry.isFile);
       const fileEntriesPromises = getFileEntriesPromises(files, meta);
       const thumbs = getThumbs(files, meta);
       return getEntries([
         ...dirEntriesPromises,
         ...fileEntriesPromises,
-        ...thumbs
+        ...thumbs,
       ]);
     })
-    .catch(ex => {
+    .catch((ex) => {
       console.log(ex);
       return undefined;
     });
 }
 
 function getEntries(metaPromises): Promise<TS.FileSystemEntry[]> {
-  const catchHandler = error => undefined;
-  return Promise.all(metaPromises.map(promise => promise.catch(catchHandler)))
+  const catchHandler = (error) => undefined;
+  return Promise.all(metaPromises.map((promise) => promise.catch(catchHandler)))
     .then((entries: TS.FileSystemEntry[]) => {
       return entries;
     })
-    .catch(err => {
+    .catch((err) => {
       console.log('err updateEntries:', err);
       return undefined;
     });
@@ -53,25 +53,22 @@ function getEntries(metaPromises): Promise<TS.FileSystemEntry[]> {
 
 function getFileEntriesPromises(
   pageFiles: TS.FileSystemEntry[],
-  meta: Array<any>
+  meta: Array<any>,
 ): Promise<TS.FileSystemEntry>[] {
-  return pageFiles.map(entry => {
+  return pageFiles.map((entry) => {
     const metaFilePath = getMetaFileLocationForFile(
       entry.path,
-      PlatformIO.getDirSeparator()
+      PlatformIO.getDirSeparator(),
     );
     if (
       // check if metaFilePath exist in listMetaDirectory content
-      meta.some(metaFile => metaFilePath.endsWith(metaFile.path)) &&
+      meta.some((metaFile) => metaFilePath.endsWith(metaFile.path)) &&
       // !checkEntryExist(entry.path) &&
       entry.path.indexOf(
-        AppConfig.metaFolder + PlatformIO.getDirSeparator()
+        AppConfig.metaFolder + PlatformIO.getDirSeparator(),
       ) === -1
     ) {
-      return getMetaForEntry(
-        entry,
-        metaFilePath
-      ); /*Promise.resolve({
+      return getMetaForEntry(entry, metaFilePath); /*Promise.resolve({
           [entry.path]: getMetaForEntry(entry, metaFilePath)
         });*/
     }
@@ -81,22 +78,24 @@ function getFileEntriesPromises(
 
 function getThumbs(
   pageFiles: TS.FileSystemEntry[],
-  meta: Array<any>
+  meta: Array<any>,
 ): Promise<TS.FileSystemEntry>[] {
-  return pageFiles.map(entry => Promise.resolve(setThumbForEntry(entry, meta)));
+  return pageFiles.map((entry) =>
+    Promise.resolve(setThumbForEntry(entry, meta)),
+  );
 }
 
 function setThumbForEntry(
   entry: TS.FileSystemEntry,
-  meta: Array<any>
+  meta: Array<any>,
 ): TS.FileSystemEntry {
   const thumbEntry = { ...entry };
   let thumbPath = getThumbFileLocationForFile(
     entry.path,
     PlatformIO.getDirSeparator(),
-    false
+    false,
   );
-  if (thumbPath && meta.some(metaFile => thumbPath.endsWith(metaFile.path))) {
+  if (thumbPath && meta.some((metaFile) => thumbPath.endsWith(metaFile.path))) {
     thumbEntry.thumbPath = thumbPath;
     if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
       if (thumbPath && thumbPath.startsWith('/')) {
@@ -113,30 +112,30 @@ function setThumbForEntry(
 }
 
 export function getEnhancedDir(
-  entry: TS.FileSystemEntry
+  entry: TS.FileSystemEntry,
 ): Promise<TS.FileSystemEntry> {
   if (!entry) {
     return Promise.resolve(undefined);
   }
   if (entry.isFile) {
     return Promise.reject(
-      new Error('getEnhancedDir accept dir only:' + entry.path)
+      new Error('getEnhancedDir accept dir only:' + entry.path),
     );
   }
   if (entry.name === AppConfig.metaFolder) {
     return Promise.resolve(undefined);
   }
-  return PlatformIO.listMetaDirectoryPromise(entry.path).then(meta => {
+  return PlatformIO.listMetaDirectoryPromise(entry.path).then((meta) => {
     const metaFilePath = getMetaFileLocationForDir(
       entry.path,
-      PlatformIO.getDirSeparator()
+      PlatformIO.getDirSeparator(),
     );
     const thumbDirPath = getThumbFileLocationForDirectory(
       entry.path,
-      PlatformIO.getDirSeparator()
+      PlatformIO.getDirSeparator(),
     );
     let enhancedEntry;
-    if (meta.some(metaFile => thumbDirPath.endsWith(metaFile.path))) {
+    if (meta.some((metaFile) => thumbDirPath.endsWith(metaFile.path))) {
       const thumbPath =
         PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()
           ? PlatformIO.getURLforPath(thumbDirPath)
@@ -144,9 +143,9 @@ export function getEnhancedDir(
       enhancedEntry = { ...entry, thumbPath };
     }
     if (
-      meta.some(metaFile => metaFilePath.endsWith(metaFile.path)) &&
+      meta.some((metaFile) => metaFilePath.endsWith(metaFile.path)) &&
       entry.path.indexOf(
-        AppConfig.metaFolder + PlatformIO.getDirSeparator()
+        AppConfig.metaFolder + PlatformIO.getDirSeparator(),
       ) === -1
     ) {
       return getMetaForEntry(enhancedEntry || entry, metaFilePath);

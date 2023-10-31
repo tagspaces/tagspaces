@@ -41,7 +41,7 @@ export const SortedDirContext = createContext<SortedDirContextData>({
   sortBy: undefined,
   orderBy: undefined,
   setSortBy: () => {},
-  setOrderBy: () => {}
+  setOrderBy: () => {},
 });
 
 export type SortedDirContextProviderProps = {
@@ -49,12 +49,12 @@ export type SortedDirContextProviderProps = {
 };
 
 export const SortedDirContextProvider = ({
-  children
+  children,
 }: SortedDirContextProviderProps) => {
   const {
     currentDirectoryEntries,
     directoryMeta,
-    currentDirectoryPerspective
+    currentDirectoryPerspective,
   } = useDirectoryContentContext();
   const searchFilter: string = useSelector(getSearchFilter);
 
@@ -63,17 +63,17 @@ export const SortedDirContextProvider = ({
   }, [directoryMeta, currentDirectoryPerspective]);
 
   const [sortBy, setSortBy] = useState<string>(
-    settings && settings.sortBy ? settings.sortBy : defaultSettings.sortBy
+    settings && settings.sortBy ? settings.sortBy : defaultSettings.sortBy,
   );
   const [orderBy, setOrderBy] = useState<null | boolean>(
     settings && typeof settings.orderBy !== 'undefined'
       ? settings.orderBy
-      : defaultSettings.orderBy
+      : defaultSettings.orderBy,
   );
 
   function getSettings(
     meta,
-    perspective = PerspectiveIDs.GRID
+    perspective = PerspectiveIDs.GRID,
   ): TS.FolderSettings {
     if (perspective === PerspectiveIDs.UNSPECIFIED) {
       perspective = PerspectiveIDs.GRID;
@@ -100,12 +100,9 @@ export const SortedDirContextProvider = ({
             entry.name.toLowerCase().includes(searchFilter.toLowerCase())
           );
       } else {*/
-      return sortByCriteria(
-        currentDirectoryEntries,
-        sortBy,
-        orderBy
-      ).filter(entry =>
-        entry.name.toLowerCase().includes(searchFilter.toLowerCase())
+      return sortByCriteria(currentDirectoryEntries, sortBy, orderBy).filter(
+        (entry) =>
+          entry.name.toLowerCase().includes(searchFilter.toLowerCase()),
       );
     }
     if (sortBy === 'byRelevance') {
@@ -117,7 +114,9 @@ export const SortedDirContextProvider = ({
       }
     }
     // not in search mode
-    return sortByCriteria(currentDirectoryEntries, sortBy, orderBy).map(o => o);
+    return sortByCriteria(currentDirectoryEntries, sortBy, orderBy).map(
+      (o) => o,
+    );
   }, [currentDirectoryEntries, searchFilter, sortBy, orderBy]);
 
   const context = useMemo(() => {
@@ -127,7 +126,7 @@ export const SortedDirContextProvider = ({
       sortBy,
       orderBy,
       setSortBy,
-      setOrderBy
+      setOrderBy,
     };
   }, [sortedDirContent, settings, sortBy, orderBy]);
 

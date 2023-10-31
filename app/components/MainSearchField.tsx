@@ -23,12 +23,12 @@ import TextField from '@mui/material/TextField';
 const MainSearchField = styled(TextField)(({ theme }) => ({
   overflow: 'hidden',
   '& input': {
-    padding: 6
+    padding: 6,
   },
   '& .MuiInputBase-root': {
     borderRadius: 7,
     paddingRight: 5,
-    paddingLeft: 5
+    paddingLeft: 5,
   },
   '& .Mui-focused': {
     color:
@@ -38,7 +38,7 @@ const MainSearchField = styled(TextField)(({ theme }) => ({
     backgroundColor:
       theme.palette.mode === 'light'
         ? theme.palette.grey[200]
-        : theme.palette.grey[900]
+        : theme.palette.grey[900],
     // backgroundColor: 'gray',
     // outline: '2px solid red',
     // border: 'none',
@@ -49,9 +49,9 @@ const MainSearchField = styled(TextField)(({ theme }) => ({
   //   boxShadow: '0 0 0 4px rgba(21, 156, 228, 0.4)'
   // },
   '&:hover': {
-    backgroundColor: theme.palette.background.paper
+    backgroundColor: theme.palette.background.paper,
     // boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`
-  }
+  },
   // '&:active': {
   //   backgroundColor: theme.palette.background.paper
   // }

@@ -30,7 +30,7 @@ import {
   getDefaultEditor,
   getDefaultViewer,
   mergeByProp,
-  updateByProp
+  updateByProp,
 } from '-/services/utils-io';
 
 export const types = {
@@ -98,7 +98,7 @@ export const types = {
   SET_SHOW_BOOKMARKS: 'SET_SHOW_BOOKMARKS',
   SET_FILE_OPEN_HISTORY: 'SET_FILE_OPEN_HISTORY',
   SET_FOLDER_OPEN_HISTORY: 'SET_FOLDER_OPEN_HISTORY',
-  SET_FILE_EDIT_HISTORY: 'SET_FILE_EDIT_HISTORY'
+  SET_FILE_EDIT_HISTORY: 'SET_FILE_EDIT_HISTORY',
 };
 
 export default (state: any = defaultSettings, action: any) => {
@@ -107,11 +107,11 @@ export default (state: any = defaultSettings, action: any) => {
       // const currentVersion = semver.coerce(versionMeta.version);
       // console.log('---->' + currentVersion);
 
-      const mergedKeyBindings = defaultSettings.keyBindings.map(x =>
+      const mergedKeyBindings = defaultSettings.keyBindings.map((x) =>
         Object.assign(
           x,
-          state.keyBindings.find(y => y.name === x.name)
-        )
+          state.keyBindings.find((y) => y.name === x.name),
+        ),
       );
       return {
         ...defaultSettings,
@@ -127,13 +127,13 @@ export default (state: any = defaultSettings, action: any) => {
         supportedLanguages: defaultSettings.supportedLanguages, // taking always the languages from default settings
         keyBindings: [
           // ...defaultSettings.keyBindings, // use to reset to the default key bindings
-          ...mergedKeyBindings
+          ...mergedKeyBindings,
         ],
         supportedFileTypes: mergeByProp(
           defaultSettings.supportedFileTypes,
           state.supportedFileTypes,
-          'type'
-        )
+          'type',
+        ),
       };
     }
     case types.TOGGLE_SHOWUNIXHIDDENENTRIES: {
@@ -175,7 +175,7 @@ export default (state: any = defaultSettings, action: any) => {
     case types.WARNING_OPENING_FILES_EXTERNALLY: {
       return {
         ...state,
-        warningOpeningFilesExternally: action.warningOpeningFilesExternally
+        warningOpeningFilesExternally: action.warningOpeningFilesExternally,
       };
     }
     case types.SET_SAVE_TAGS_IN_LOCATION: {
@@ -232,7 +232,7 @@ export default (state: any = defaultSettings, action: any) => {
     case types.SET_PERSISTTAGSINSIDECARFILE: {
       return {
         ...state,
-        persistTagsInSidecarFile: action.persistTagsInSidecarFile
+        persistTagsInSidecarFile: action.persistTagsInSidecarFile,
       };
     }
     case types.SET_ADDTAGSTOLIBRARY: {
@@ -254,7 +254,7 @@ export default (state: any = defaultSettings, action: any) => {
       return {
         ...state,
         //isLoading: true,
-        email: action.email
+        email: action.email,
       };
     }
     case types.SET_TAGCOLOR: {
@@ -302,8 +302,8 @@ export default (state: any = defaultSettings, action: any) => {
           keyBindings: [
             ...state.keyBindings.slice(0, indexForEditing),
             { name: action.keyBindingName, command: action.keyBindingCommand },
-            ...state.keyBindings.slice(indexForEditing + 1)
-          ]
+            ...state.keyBindings.slice(indexForEditing + 1),
+          ],
         };
       }
       return state;
@@ -311,7 +311,7 @@ export default (state: any = defaultSettings, action: any) => {
     case types.SET_GLOBAL_KEYBINDING: {
       return {
         ...state,
-        enableGlobalKeyboardShortcuts: action.enableGlobalKeyboardShortcuts
+        enableGlobalKeyboardShortcuts: action.enableGlobalKeyboardShortcuts,
       };
     }
     case types.SET_ZOOM_RESET: {
@@ -345,7 +345,7 @@ export default (state: any = defaultSettings, action: any) => {
     case types.SET_SUPPORTED_FILE_TYPES: {
       return {
         ...state,
-        supportedFileTypes: action.supportedFileTypes
+        supportedFileTypes: action.supportedFileTypes,
       };
     }
     case types.ADD_SUPPORTED_FILE_TYPES: {
@@ -354,8 +354,8 @@ export default (state: any = defaultSettings, action: any) => {
         supportedFileTypes: updateByProp(
           state.supportedFileTypes,
           action.supportedFileTypes,
-          'type'
-        )
+          'type',
+        ),
       };
     }
     case types.ENABLE_EXTENSION: {
@@ -369,21 +369,21 @@ export default (state: any = defaultSettings, action: any) => {
         }
       } else {
         enabledExtensions = state.enabledExtensions.filter(
-          extensionId => extensionId === action.extensionId
+          (extensionId) => extensionId === action.extensionId,
         );
         supportedFileTypes = state.supportedFileTypes.filter(
-          fType =>
+          (fType) =>
             !(
               fType.viewer === action.extensionId &&
               fType.editor === action.extensionId
-            )
+            ),
         );
       }
 
       return {
         ...state,
         enabledExtensions: enabledExtensions,
-        ...(supportedFileTypes && { supportedFileTypes: supportedFileTypes })
+        ...(supportedFileTypes && { supportedFileTypes: supportedFileTypes }),
       };
     }
     case types.REMOVE_SUPPORTED_FILE_TYPES: {
@@ -391,64 +391,64 @@ export default (state: any = defaultSettings, action: any) => {
         (fType: TS.FileTypes) => ({
           ...fType,
           ...(fType.viewer === action.extensionId && {
-            viewer: getDefaultViewer(fType.type)
+            viewer: getDefaultViewer(fType.type),
           }),
           ...(fType.editor === action.extensionId && {
-            editor: getDefaultEditor(fType.type)
-          })
-        })
+            editor: getDefaultEditor(fType.type),
+          }),
+        }),
       );
       return {
         ...state,
-        supportedFileTypes: supportedFileTypes
+        supportedFileTypes: supportedFileTypes,
       };
     }
     case types.SET_ENTRY_PROPERTIES_SPLIT_SIZE: {
       return {
         ...state,
-        entrySplitSize: action.entrySplitSize
+        entrySplitSize: action.entrySplitSize,
       };
     }
     case types.SET_MAIN_VSPLIT_SIZE: {
       return {
         ...state,
-        mainVSplitSize: action.mainVSplitSize
+        mainVSplitSize: action.mainVSplitSize,
       };
     }
     case types.SET_LAST_PUBLISHED_VERSION: {
       return {
         ...state,
-        lastPublishedVersion: action.lastPublishedVersion
+        lastPublishedVersion: action.lastPublishedVersion,
       };
     }
     case types.SET_STORED_SEARCHES_VISIBLE: {
       return {
         ...state,
-        storedSearchesVisible: action.storedSearchesVisible
+        storedSearchesVisible: action.storedSearchesVisible,
       };
     }
     case types.SET_SHOW_BOOKMARKS: {
       return {
         ...state,
-        showBookmarks: action.showBookmarks
+        showBookmarks: action.showBookmarks,
       };
     }
     case types.SET_FILE_OPEN_HISTORY: {
       return {
         ...state,
-        fileOpenHistory: action.fileOpenHistory
+        fileOpenHistory: action.fileOpenHistory,
       };
     }
     case types.SET_FOLDER_OPEN_HISTORY: {
       return {
         ...state,
-        folderOpenHistory: action.folderOpenHistory
+        folderOpenHistory: action.folderOpenHistory,
       };
     }
     case types.SET_FILE_EDIT_HISTORY: {
       return {
         ...state,
-        fileEditHistory: action.fileEditHistory
+        fileEditHistory: action.fileEditHistory,
       };
     }
     case types.TOGGLE_TAGGROUP: {
@@ -456,7 +456,7 @@ export default (state: any = defaultSettings, action: any) => {
       if (state.tagGroupCollapsed) {
         if (state.tagGroupCollapsed.includes(action.uuid)) {
           tagGroupCollapsed = state.tagGroupCollapsed.filter(
-            tagGroupUUID => tagGroupUUID !== action.uuid
+            (tagGroupUUID) => tagGroupUUID !== action.uuid,
           );
         } else {
           tagGroupCollapsed = [...state.tagGroupCollapsed, action.uuid];
@@ -466,7 +466,7 @@ export default (state: any = defaultSettings, action: any) => {
       }
       return {
         ...state,
-        tagGroupCollapsed
+        tagGroupCollapsed,
       };
     }
     case types.ADD_MAPTILE_SERVER: {
@@ -474,17 +474,17 @@ export default (state: any = defaultSettings, action: any) => {
       if (action.isDefault) {
         mapTileServers = [
           { ...action.tileServer, uuid: getUuid() },
-          ...state.mapTileServers
+          ...state.mapTileServers,
         ];
       } else {
         mapTileServers = [
           ...state.mapTileServers,
-          { ...action.tileServer, uuid: getUuid() }
+          { ...action.tileServer, uuid: getUuid() },
         ];
       }
       return {
         ...state,
-        mapTileServers
+        mapTileServers,
       };
     }
     case types.EDIT_MAPTILE_SERVER: {
@@ -493,30 +493,30 @@ export default (state: any = defaultSettings, action: any) => {
         mapTileServers = [
           action.tileServer,
           ...state.mapTileServers.filter(
-            tileServer => tileServer.uuid !== action.tileServer.uuid
-          )
+            (tileServer) => tileServer.uuid !== action.tileServer.uuid,
+          ),
         ];
       } else {
         mapTileServers = [
           ...state.mapTileServers.filter(
-            tileServer => tileServer.uuid !== action.tileServer.uuid
+            (tileServer) => tileServer.uuid !== action.tileServer.uuid,
           ),
-          action.tileServer
+          action.tileServer,
         ];
       }
 
       return {
         ...state,
-        mapTileServers
+        mapTileServers,
       };
     }
     case types.DELETE_MAPTILE_SERVER: {
       const mapTileServers = state.mapTileServers.filter(
-        tileServer => tileServer.uuid !== action.uuid
+        (tileServer) => tileServer.uuid !== action.uuid,
       );
       return {
         ...state,
-        mapTileServers
+        mapTileServers,
       };
     }
     default: {
@@ -529,69 +529,69 @@ export const actions = {
   addTileServers: (tileServer: TS.MapTileServer, isDefault = false) => ({
     type: types.ADD_MAPTILE_SERVER,
     tileServer,
-    isDefault
+    isDefault,
   }),
   editTileServers: (tileServer: TS.MapTileServer, isDefault = false) => ({
     type: types.EDIT_MAPTILE_SERVER,
     tileServer,
-    isDefault
+    isDefault,
   }),
   deleteTileServer: (uuid: string) => ({
     type: types.DELETE_MAPTILE_SERVER,
-    uuid
+    uuid,
   }),
   toggleTagGroup: (tagGroupUUID: string) => ({
     type: types.TOGGLE_TAGGROUP,
-    uuid: tagGroupUUID
+    uuid: tagGroupUUID,
   }),
   setTagDelimiter: (delimiter: string) => ({
     type: types.SET_TAG_DELIMITER,
-    delimiter
+    delimiter,
   }),
   setMaxSearchResult: (maxSearchResult: number) => ({
     type: types.SET_MAX_SEARCH_RESULT,
-    maxSearchResult
+    maxSearchResult,
   }),
   setDesktopMode: (desktopMode: boolean) => ({
     type: types.SET_DESKTOPMODE,
-    desktopMode
+    desktopMode,
   }),
   setDevMode: (devMode: boolean) => ({
     type: types.SET_DEVMODE,
-    devMode
+    devMode,
   }),
   setEnableWS: (enableWS: boolean) => ({
     type: types.SET_ENABLE_WS,
-    enableWS
+    enableWS,
   }),
   setWarningOpeningFilesExternally: (
-    warningOpeningFilesExternally: boolean
+    warningOpeningFilesExternally: boolean,
   ) => ({
     type: types.WARNING_OPENING_FILES_EXTERNALLY,
-    warningOpeningFilesExternally
+    warningOpeningFilesExternally,
   }),
   setSaveTagInLocation: (saveTagInLocation: boolean) => ({
     type: types.SET_SAVE_TAGS_IN_LOCATION,
-    saveTagInLocation
+    saveTagInLocation,
   }),
   toggleShowUnixHiddenEntries: () => ({
-    type: types.TOGGLE_SHOWUNIXHIDDENENTRIES
+    type: types.TOGGLE_SHOWUNIXHIDDENENTRIES,
   }),
   setEntryContainerTab: (tabIndex: number) => ({
     type: types.SET_ENTRY_CONTAINER_TAB,
-    entryContainerTab: tabIndex
+    entryContainerTab: tabIndex,
   }),
   setShowDetails: (showDetails: boolean) => ({
     type: types.SET_SHOW_DETAILS,
-    showDetails: showDetails
+    showDetails: showDetails,
   }),
   setCheckForUpdates: (checkForUpdates: boolean) => ({
     type: types.SET_CHECKFORUPDATES,
-    checkForUpdates
+    checkForUpdates,
   }),
   reorderTags: (reorderTags: boolean) => ({
     type: types.SET_REORDER_TAGS,
-    reorderTags
+    reorderTags,
   }),
   /*setLanguage: (language: string) => (dispatch: (action) => void) => {
     return i18n.changeLanguage(language).then(() => {
@@ -600,75 +600,75 @@ export const actions = {
   },*/
   setLanguage: (language: string) => ({
     type: types.SET_LANGUAGE,
-    language
+    language,
   }),
   setUseDefaultLocation: (useDefaultLocation: boolean) => ({
     type: types.SET_USEDEFAULTLOCATION,
-    useDefaultLocation
+    useDefaultLocation,
   }),
   setDefaultPerspective: (defaultPerspective: string) => ({
     type: types.SET_DEFAULTPERSPECTIVE,
-    defaultPerspective
+    defaultPerspective,
   }),
   setColoredFileExtension: (coloredFileExtension: boolean) => ({
     type: types.SET_COLOREDFILEEXTENSION,
-    coloredFileExtension
+    coloredFileExtension,
   }),
   setShowTagAreaOnStartup: (showTagAreaOnStartup: boolean) => ({
     type: types.SET_SHOWTAGAREAONSTARTUP,
-    showTagAreaOnStartup
+    showTagAreaOnStartup,
   }),
   setLoadsLocationMetaData: (loadsLocationMetaData: boolean) => ({
     type: types.SET_LOADSLOCATIONMETADATA,
-    loadsLocationMetaData
+    loadsLocationMetaData,
   }),
   setSearchInSubfolders: (searchInSubfolders: boolean) => ({
     type: types.SET_SEARCHINSUBFOLDERS,
-    searchInSubfolders
+    searchInSubfolders,
   }),
   setWatchCurrentDirectory: (watchCurrentDirectory: boolean) => ({
     type: types.SET_WATCHCURRENTDIRECTORY,
-    watchCurrentDirectory
+    watchCurrentDirectory,
   }),
   setCalculateTags: (calculateTags: boolean) => ({
     type: types.SET_CALCULATETAGS,
-    calculateTags
+    calculateTags,
   }),
   setUseTrashCan: (useTrashCan: boolean) => ({
     type: types.SET_USETRASHCAN,
-    useTrashCan
+    useTrashCan,
   }),
   setPersistTagsInSidecarFile: (persistTagsInSidecarFile: boolean) => ({
     type: types.SET_PERSISTTAGSINSIDECARFILE,
-    persistTagsInSidecarFile
+    persistTagsInSidecarFile,
   }),
   setAddTagsToLibrary: (addTagsToLibrary: boolean) => ({
     type: types.SET_ADDTAGSTOLIBRARY,
-    addTagsToLibrary
+    addTagsToLibrary,
   }),
   setRevisionsEnabled: (enabled: boolean) => ({
     type: types.SET_REVISIONS_ENABLED,
-    enabled
+    enabled,
   }),
   setPrefixTagContainer: (prefixTagContainer: boolean) => ({
     type: types.SET_PREFIX_TAG_CONTAINER,
-    prefixTagContainer
+    prefixTagContainer,
   }),
   setUseGenerateThumbnails: (useGenerateThumbnails: boolean) => ({
     type: types.SET_USEGENERATETHUMBNAILS,
-    useGenerateThumbnails
+    useGenerateThumbnails,
   }),
   setUseTextExtraction: (useTextExtraction: boolean) => ({
     type: types.SET_USETEXTEXTRACTION,
-    useTextExtraction
+    useTextExtraction,
   }),
   setAppDataPath: (path: string) => ({
     type: types.SET_APPDATAPATH,
-    path
+    path,
   }),
   setContentHash: (contentHash: string) => ({
     type: types.SET_CONTENTHASH,
-    contentHash
+    contentHash,
   }),
   setEmail: (email: string) => ({ type: types.SET_EMAIL, email }),
   setZoomRestoreApp: () => ({ type: types.SET_ZOOM_RESTORE }),
@@ -677,131 +677,136 @@ export const actions = {
   setZoomOutApp: () => ({ type: types.SET_ZOOM_OUT }),
   setTagColor: (tagColor: string) => ({
     type: types.SET_TAGCOLOR,
-    tagColor
+    tagColor,
   }),
   setTagTextColor: (tagTextColor: string) => ({
     type: types.SET_TAGTEXTCOLOR,
-    tagTextColor
+    tagTextColor,
   }),
   setCurrentTheme: (currentTheme: string) => ({
     type: types.SET_CURRENTTHEME,
-    currentTheme
+    currentTheme,
   }),
   setCurrentRegularTheme: (currentRegularTheme: string) => ({
     type: types.SET_CURRENT_REGULAR_THEME,
-    currentRegularTheme
+    currentRegularTheme,
   }),
   setCurrentDarkTheme: (currentDarkTheme: string) => ({
     type: types.SET_CURRENT_DARK_THEME,
-    currentDarkTheme
+    currentDarkTheme,
   }),
   setGeoTaggingFormat: (geoTaggingFormat: string) => ({
     type: types.SET_GEO_TAGGING_FORMAT,
-    geoTaggingFormat
+    geoTaggingFormat,
   }),
   setHistory: (key: string, value: number) => ({
     type: types.SET_HISTORY,
     key,
-    value
+    value,
   }),
   switchTheme: () => ({ type: types.SWITCH_THEME }),
   setKeyBinding: (keyBindingName: string, keyBindingCommand: string) => ({
     type: types.SET_KEYBINDING,
     keyBindingName,
-    keyBindingCommand
+    keyBindingCommand,
   }),
   setGlobalKeyBinding: (enableGlobalKeyboardShortcuts: boolean) => ({
     type: types.SET_GLOBAL_KEYBINDING,
-    enableGlobalKeyboardShortcuts
+    enableGlobalKeyboardShortcuts,
   }),
   addSupportedFileTypes: (
     supportedFileTypes: Array<TS.FileTypes>,
-    override = false
+    override = false,
   ) => ({
     type: types.ADD_SUPPORTED_FILE_TYPES,
     supportedFileTypes,
-    override
+    override,
   }),
   removeSupportedFileTypes: (extensionId: string) => ({
     type: types.REMOVE_SUPPORTED_FILE_TYPES,
-    extensionId
+    extensionId,
   }),
   enableExtension: (extensionId: string, enabled: boolean) => ({
     type: types.ENABLE_EXTENSION,
     extensionId,
-    enabled
+    enabled,
   }),
   setSupportedFileTypes: (supportedFileTypes: []) => ({
     type: types.SET_SUPPORTED_FILE_TYPES,
-    supportedFileTypes
+    supportedFileTypes,
   }),
   setEntryPropertiesSplitSize: (entrySplitSize: string) => ({
     type: types.SET_ENTRY_PROPERTIES_SPLIT_SIZE,
-    entrySplitSize
+    entrySplitSize,
   }),
   setMainVerticalSplitSize: (mainVSplitSize: string) => ({
     type: types.SET_MAIN_VSPLIT_SIZE,
-    mainVSplitSize
+    mainVSplitSize,
   }),
   setFirstRun: (firstRun: boolean) => ({
     type: types.SET_FIRST_RUN,
-    firstRun
+    firstRun,
   }),
   upgradeSettings: () => ({
-    type: types.UPGRADE_SETTINGS
+    type: types.UPGRADE_SETTINGS,
   }),
   setLastPublishedVersion: (lastPublishedVersion: string) => ({
     type: types.SET_LAST_PUBLISHED_VERSION,
-    lastPublishedVersion
+    lastPublishedVersion,
   }),
   setStoredSearchesVisible: (storedSearchesVisible: boolean) => ({
     type: types.SET_STORED_SEARCHES_VISIBLE,
-    storedSearchesVisible
+    storedSearchesVisible,
   }),
   setShowBookmarks: (showBookmarks: boolean) => ({
     type: types.SET_SHOW_BOOKMARKS,
-    showBookmarks
+    showBookmarks,
   }),
   setFileOpenHistory: (fileOpenHistory: boolean) => ({
     type: types.SET_FILE_OPEN_HISTORY,
-    fileOpenHistory
+    fileOpenHistory,
   }),
   setFolderOpenHistory: (folderOpenHistory: boolean) => ({
     type: types.SET_FOLDER_OPEN_HISTORY,
-    folderOpenHistory
+    folderOpenHistory,
   }),
   setFileEditHistory: (fileEditHistory: boolean) => ({
     type: types.SET_FILE_EDIT_HISTORY,
-    fileEditHistory
+    fileEditHistory,
   }),
-  checkForUpdate: () => (
-    dispatch: (actions: Object) => void
-    // getState: () => any
-  ) => {
-    // const { settings } = getState();
-    getLastVersionPromise()
-      .then(lastVersion => {
-        console.log('Last version on server: ' + lastVersion);
-        const newVersion = semver.coerce(lastVersion); // lastVersion '3.0.5' ;
-        const currentVersion = semver.coerce(versionMeta.version);
-        // const lastPublishedVersion = semver.coerce(settings.lastPublishedVersion);
-        if (semver.valid(newVersion) && semver.gt(newVersion, currentVersion)) {
-          console.log('New version available: ' + newVersion.version + '!');
-          dispatch(actions.setLastPublishedVersion(newVersion.version));
-          // if (semver.gt(newVersion, lastPublishedVersion)) {
-          dispatch(AppActions.setUpdateAvailable(true));
-          // }
-        } else {
-          console.log(
-            'Current version: ' + versionMeta.version + ' is up to date'
-          );
-        }
-        return true;
-      })
-      .catch(error => {
-        console.warn('Error while checking for update: ' + error);
-      });
-  }
+  checkForUpdate:
+    () =>
+    (
+      dispatch: (actions: Object) => void,
+      // getState: () => any
+    ) => {
+      // const { settings } = getState();
+      getLastVersionPromise()
+        .then((lastVersion) => {
+          console.log('Last version on server: ' + lastVersion);
+          const newVersion = semver.coerce(lastVersion); // lastVersion '3.0.5' ;
+          const currentVersion = semver.coerce(versionMeta.version);
+          // const lastPublishedVersion = semver.coerce(settings.lastPublishedVersion);
+          if (
+            semver.valid(newVersion) &&
+            semver.gt(newVersion, currentVersion)
+          ) {
+            console.log('New version available: ' + newVersion.version + '!');
+            dispatch(actions.setLastPublishedVersion(newVersion.version));
+            // if (semver.gt(newVersion, lastPublishedVersion)) {
+            dispatch(AppActions.setUpdateAvailable(true));
+            // }
+          } else {
+            console.log(
+              'Current version: ' + versionMeta.version + ' is up to date',
+            );
+          }
+          return true;
+        })
+        .catch((error) => {
+          console.warn('Error while checking for update: ' + error);
+        });
+    },
 };
 
 /**
@@ -916,7 +921,7 @@ export const getKeyBindingObject = (state: any) =>
   generateKeyBindingObject(state.settings.keyBindings);
 export const getSupportedFileTypes = (state: any) =>
   state.settings.supportedFileTypes.sort((a, b) =>
-    a.type > b.type ? 1 : a.type < b.type ? -1 : 0
+    a.type > b.type ? 1 : a.type < b.type ? -1 : 0,
   );
 export const getTagColor = (state: any) => state.settings.tagBackgroundColor;
 export const getTagTextColor = (state: any) => state.settings.tagTextColor;

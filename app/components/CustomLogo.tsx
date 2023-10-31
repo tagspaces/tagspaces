@@ -42,8 +42,8 @@ const StyledAppVersionBadge = styled(Badge)(({ theme }) => ({
     backgroundColor:
       theme.palette.mode === 'light'
         ? theme.palette.grey[200]
-        : theme.palette.grey[900]
-  }
+        : theme.palette.grey[900],
+  },
 }));
 
 function CustomLogo() {
@@ -73,7 +73,7 @@ function CustomLogo() {
         >
           <img
             style={{
-              width: 40
+              width: 40,
             }}
             src={LogoIcon}
             alt="TagSpaces Logo"

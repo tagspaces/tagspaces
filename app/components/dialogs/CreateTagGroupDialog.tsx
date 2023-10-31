@@ -53,9 +53,8 @@ function CreateTagGroupDialog(props: Props) {
   const saveTagsInLocation = useSelector(getSaveTagInLocation);
 
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
-  const [displayTextColorPicker, setDisplayTextColorPicker] = useState<boolean>(
-    false
-  );
+  const [displayTextColorPicker, setDisplayTextColorPicker] =
+    useState<boolean>(false);
   const [inputError, setInputError] = useState<boolean>(false);
 
   const title = useRef<string>('');
@@ -64,12 +63,12 @@ function CreateTagGroupDialog(props: Props) {
   const textcolor = useRef<string>(props.textcolor);
   const locationId = useRef<string>(defaultTagGroupLocation);
   // eslint-disable-next-line no-unused-vars
-  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const { open, onClose, createTagGroup } = props;
 
   const handleTagGroupTitleChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const { target } = event;
     const { value, name } = target;
@@ -113,7 +112,7 @@ function CreateTagGroupDialog(props: Props) {
         color: color.current,
         textcolor: textcolor.current,
         locationId: lId,
-        children: []
+        children: [],
       });
       onClose();
     }
@@ -143,7 +142,7 @@ function CreateTagGroupDialog(props: Props) {
       borderWidth: 1,
       borderStyle: 'solid',
       borderColor: 'gray',
-      background: color.current
+      background: color.current,
     },
     textcolor: {
       width: '100%',
@@ -152,20 +151,20 @@ function CreateTagGroupDialog(props: Props) {
       borderWidth: 1,
       borderStyle: 'solid',
       borderColor: 'gray',
-      background: textcolor.current
+      background: textcolor.current,
     },
     swatch: {
       padding: '5px',
       borderRadius: '1px',
       boxShadow: '0 0 0 1px rgba(0,0,0,.1)',
       display: 'inline-block',
-      cursor: 'pointer'
+      cursor: 'pointer',
     },
     helpText: {
       marginTop: '15px',
       marginBottom: '5px',
-      fontSize: '1rem'
-    }
+      fontSize: '1rem',
+    },
   };
 
   // const theme = useTheme();
@@ -177,7 +176,7 @@ function CreateTagGroupDialog(props: Props) {
       // fullScreen={fullScreen}
       keepMounted
       scroll="paper"
-      onKeyDown={event => {
+      onKeyDown={(event) => {
         if (event.key === 'Enter' || event.keyCode === 13) {
           event.preventDefault();
           event.stopPropagation();
@@ -228,7 +227,7 @@ function CreateTagGroupDialog(props: Props) {
               >
                 {t('tagLibrary')}
               </MenuItem>
-              {locations.map(location => (
+              {locations.map((location) => (
                 <MenuItem
                   key={location.uuid}
                   value={location.uuid}

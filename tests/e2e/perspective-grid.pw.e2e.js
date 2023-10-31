@@ -7,7 +7,7 @@ import {
   defaultLocationName,
   deleteFileFromMenu,
   createPwMinioLocation,
-  createPwLocation
+  createPwLocation,
 } from './location.helpers';
 import {
   clickOn,
@@ -23,12 +23,12 @@ import {
   selectRowFiles,
   setInputKeys,
   setSettings,
-  takeScreenshot
+  takeScreenshot,
 } from './general.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 import {
   AddRemovePropertiesTags,
-  getPropertiesFileName
+  getPropertiesFileName,
 } from './file.properties.helpers';
 import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage } from './welcome.helpers';
@@ -114,7 +114,7 @@ test.describe('TST50 - Perspective Grid', () => {
       await expectElementExist(
         '[data-tid=tagContainer_' + tags[i] + ']',
         true,
-        5000
+        5000,
       );
       // const selectBox = await global.client.$('[data-tid=perspectiveGridFileTable]');
       /* await expectTagsExistBySelector(
@@ -133,7 +133,7 @@ test.describe('TST50 - Perspective Grid', () => {
       await expectElementExist(
         '[data-tid=tagContainer_' + tags[i] + ']',
         false,
-        5000
+        5000,
       );
       /*await expectTagsExistBySelector(
         '[data-entry-id="' + selectedIds[i] + '"]',
@@ -160,7 +160,7 @@ test.describe('TST50 - Perspective Grid', () => {
       await expectElementExist(
         '[data-tid=tagMoreButton_' + tags[i] + ']',
         false,
-        5000
+        5000,
       );
     }
     /* for (let i = 0; i < selectedIds.length; i++) {
@@ -182,7 +182,7 @@ test.describe('TST50 - Perspective Grid', () => {
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
       add: true,
-      remove: false
+      remove: false,
     });
     // open Copy/Move File Dialog
     await clickOn('[data-tid=gridPerspectiveCopySelectedFiles]');
@@ -217,7 +217,7 @@ test.describe('TST50 - Perspective Grid', () => {
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
       add: true,
-      remove: false
+      remove: false,
     });
     // open Copy/Move File Dialog
     await clickOn('[data-tid=gridPerspectiveCopySelectedFiles]');
@@ -255,7 +255,7 @@ test.describe('TST50 - Perspective Grid', () => {
       await expectElementExist(
         '[data-entry-id="' + selectedIds[i] + '"]',
         false,
-        5000
+        5000,
       );
     }
   });

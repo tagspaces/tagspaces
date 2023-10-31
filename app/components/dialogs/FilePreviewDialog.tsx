@@ -27,7 +27,7 @@ import DraggablePaper from '-/components/DraggablePaper';
 import {
   actions as AppActions,
   AppDispatch,
-  OpenedEntry
+  OpenedEntry,
 } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { findExtensionsForEntry } from '-/services/utils-io';
@@ -49,18 +49,14 @@ interface Props {
 function FilePreviewDialog(props: Props) {
   const { open = false, onClose, fsEntry } = props;
   //const dispatch: AppDispatch = useDispatch();
-  const {
-    switchLocationTypeByID,
-    switchCurrentLocationType
-  } = useCurrentLocationContext();
+  const { switchLocationTypeByID, switchCurrentLocationType } =
+    useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const currentTheme = useSelector(getCurrentTheme);
-  const fileViewer: MutableRefObject<HTMLIFrameElement> = useRef<
-    HTMLIFrameElement
-  >(null);
-  const fileViewerContainer: MutableRefObject<HTMLDivElement> = useRef<
-    HTMLDivElement
-  >(null);
+  const fileViewer: MutableRefObject<HTMLIFrameElement> =
+    useRef<HTMLIFrameElement>(null);
+  const fileViewerContainer: MutableRefObject<HTMLDivElement> =
+    useRef<HTMLDivElement>(null);
   const eventID = useRef<string>(getUuid());
 
   const openedFile: OpenedEntry = fsEntry
@@ -68,11 +64,11 @@ function FilePreviewDialog(props: Props) {
         fsEntry.uuid,
         supportedFileTypes,
         fsEntry.path,
-        fsEntry.isFile
+        fsEntry.isFile,
       )
     : undefined;
 
-  useEventListener('message', e => {
+  useEventListener('message', (e) => {
     if (typeof e.data === 'string') {
       try {
         const dataObj = JSON.parse(e.data);
@@ -82,7 +78,7 @@ function FilePreviewDialog(props: Props) {
       } catch (ex) {
         console.debug(
           'useEventListener message:' + e.data + ' parse error:',
-          ex
+          ex,
         );
       }
     }
@@ -114,23 +110,23 @@ function FilePreviewDialog(props: Props) {
         switchLocationTypeByID(openedFile.locationId).then(() => {
           PlatformIO.loadTextFilePromise(
             textFilePath,
-            data.preview ? data.preview : false
+            data.preview ? data.preview : false,
           )
-            .then(content => {
+            .then((content) => {
               const UTF8_BOM = '\ufeff';
               if (content.indexOf(UTF8_BOM) === 0) {
                 content = content.substr(1);
               }
               let fileDirectory = extractContainingDirectoryPath(
                 textFilePath,
-                PlatformIO.getDirSeparator()
+                PlatformIO.getDirSeparator(),
               );
               if (AppConfig.isWeb) {
                 fileDirectory =
                   extractContainingDirectoryPath(
                     // eslint-disable-next-line no-restricted-globals
                     location.href,
-                    PlatformIO.getDirSeparator()
+                    PlatformIO.getDirSeparator(),
                   ) +
                   '/' +
                   fileDirectory;
@@ -147,12 +143,12 @@ function FilePreviewDialog(props: Props) {
                   content,
                   fileDirectory,
                   !openedFile.editMode,
-                  currentTheme
+                  currentTheme,
                 );
               }
               return switchCurrentLocationType();
             })
-            .catch(err => {
+            .catch((err) => {
               console.warn('Error loading text content ' + err);
               return switchCurrentLocationType();
             });
@@ -192,7 +188,7 @@ function FilePreviewDialog(props: Props) {
           marginRight: 'auto',
           overflowY: 'hidden',
           width: '90%',
-          flexGrow: 1
+          flexGrow: 1,
         }}
       >
         <p>{fsEntry.path}</p>

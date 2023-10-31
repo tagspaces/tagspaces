@@ -32,14 +32,14 @@ const styles: any = () => ({
     backgroundColor: '#1dd19f40',
     zIndex: 1,
     border: '3px dashed white',
-    display: 'flex'
-  }
+    display: 'flex',
+  },
 });
 
 const boxTarget = {
   drop(props, monitor) {
     return props.onDrop(props, monitor);
-  }
+  },
 };
 
 interface Props {
@@ -58,23 +58,21 @@ const TargetMoveFileBox = (props: Props) => {
   const dragContent =
     canDrop && isOver ? (
       <DnD className={classes.dropzone} /> /* {t('core:releaseToMoveDrop')} */
-    ) : (
-      undefined
-    );
+    ) : undefined;
   return connectDropTarget(
     <div>
       {dragContent}
       {children}
-    </div>
+    </div>,
   );
 };
 
 export default DropTarget(
-  props => props.accepts,
+  (props) => props.accepts,
   boxTarget,
   (connect, monitor) => ({
     connectDropTarget: connect.dropTarget(),
     isOver: monitor.isOver(),
-    canDrop: monitor.canDrop()
-  })
+    canDrop: monitor.canDrop(),
+  }),
 )(TargetMoveFileBox);

@@ -40,14 +40,14 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 const PREFIX = 'CreateFile';
 
 const classes = {
-  createButton: `${PREFIX}-createButton`
+  createButton: `${PREFIX}-createButton`,
 };
 
 const StyledGrid = styled(Grid)(() => ({
   [`& .${classes.createButton}`]: {
     width: '100%',
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
 }));
 
 interface Props {
@@ -71,12 +71,12 @@ function CreateFile(props: Props) {
     'note' +
       AppConfig.beginTagContainer +
       formatDateTime4Tag(new Date(), true) +
-      AppConfig.endTagContainer
+      AppConfig.endTagContainer,
   );
   const [inputError, setInputError] = useState<boolean>(false);
 
   const { createFileAdvanced } = useOpenedEntryContext();
-  const [ignored, forceUpdate] = useReducer(x => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const fileContent = '';
 
   const noSuitableLocation = !targetDirectoryPath;
@@ -101,7 +101,7 @@ function CreateFile(props: Props) {
         targetDirectoryPath,
         fileName.current,
         fileContent,
-        'html'
+        'html',
       );
       onClose();
     }
@@ -114,7 +114,7 @@ function CreateFile(props: Props) {
         targetDirectoryPath,
         fileName.current,
         fileContent,
-        'txt'
+        'txt',
       );
       onClose();
     }
@@ -127,13 +127,13 @@ function CreateFile(props: Props) {
         targetDirectoryPath,
         fileName.current,
         fileContent,
-        'md'
+        'md',
       );
       onClose();
     }
   }
 
-  const onInputFocus = event => {
+  const onInputFocus = (event) => {
     if (fileName.current) {
       event.preventDefault();
       const { target } = event;
@@ -180,7 +180,7 @@ function CreateFile(props: Props) {
             label={t('core:newFileName')}
             onChange={handleInputChange}
             onFocus={onInputFocus}
-            onKeyDown={event => {
+            onKeyDown={(event) => {
               if (event.key === 'Enter' || event.keyCode === 13) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -201,7 +201,7 @@ function CreateFile(props: Props) {
         <ButtonGroup
           style={{
             textAlign: 'center',
-            width: '100%'
+            width: '100%',
           }}
         >
           <Button

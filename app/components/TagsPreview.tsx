@@ -40,7 +40,7 @@ function TagsPreview(props: Props) {
     return <></>;
   }
   let tagNames = t('core:searchTags') + ': ';
-  tags.forEach(tag => {
+  tags.forEach((tag) => {
     tagNames = tagNames + tag.title + ' ';
   });
 
@@ -53,7 +53,7 @@ function TagsPreview(props: Props) {
     const tagColors = getTagColors(
       tags[0].title,
       defaultTextColor,
-      defaultBackgroundColor
+      defaultBackgroundColor,
     );
     firstTagColor = tagColors.color;
     firstTagTextColor = tagColors.textcolor;
@@ -69,7 +69,7 @@ function TagsPreview(props: Props) {
       const tag2Colors = getTagColors(
         tags[1].title,
         defaultTextColor,
-        defaultBackgroundColor
+        defaultBackgroundColor,
       );
       secondTagColor = tag2Colors.color;
     }
@@ -89,7 +89,7 @@ function TagsPreview(props: Props) {
           fontSize: 11,
           lineHeight: '16px',
           color: firstTagTextColor || defaultTextColor, //tag1Colors.textcolor ,
-          textAlign: 'center'
+          textAlign: 'center',
         }}
       >
         {moreThanOne ? tags.length : '1'}

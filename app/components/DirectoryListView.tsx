@@ -34,7 +34,7 @@ function DirectoryListView(props: Props) {
   const locations: Array<TS.Location> = useSelector(getLocations);
   const showUnixHiddenEntries: boolean = useSelector(getShowUnixHiddenEntries);
   const chosenLocationId = useRef<string>(
-    currentLocation ? currentLocation.uuid : undefined
+    currentLocation ? currentLocation.uuid : undefined,
   );
   const chosenDirectory = useRef<string>(currentDirectoryPath);
   const [directoryContent, setDirectoryContent] = useState<
@@ -43,7 +43,7 @@ function DirectoryListView(props: Props) {
 
   useEffect(() => {
     const chosenLocation = locations.find(
-      location => location.uuid === chosenLocationId.current
+      (location) => location.uuid === chosenLocationId.current,
     );
     if (chosenLocation) {
       const path =
@@ -61,7 +61,7 @@ function DirectoryListView(props: Props) {
   const handleLocationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     chosenLocationId.current = event.target.value;
     const chosenLocation = locations.find(
-      location => location.uuid === chosenLocationId.current
+      (location) => location.uuid === chosenLocationId.current,
     );
     if (chosenLocation) {
       listDirectory(chosenLocation.path);
@@ -71,7 +71,7 @@ function DirectoryListView(props: Props) {
 
   function getDirLocations() {
     const chosenLocation = locations.find(
-      location => location.uuid === chosenLocationId.current
+      (location) => location.uuid === chosenLocationId.current,
     );
     if (chosenLocation.type !== locationType.TYPE_LOCAL) {
       return null;
@@ -83,7 +83,7 @@ function DirectoryListView(props: Props) {
         value={chosenLocationId.current}
       >
         {locations
-          .filter(loc => loc.type === locationType.TYPE_LOCAL)
+          .filter((loc) => loc.type === locationType.TYPE_LOCAL)
           .map((location: TS.Location) => (
             <MenuItem key={location.uuid} value={location.uuid}>
               <span style={{ width: '100%' }}>{location.name}</span>
@@ -98,33 +98,33 @@ function DirectoryListView(props: Props) {
     PlatformIO.listDirectoryPromise(
       directoryPath,
       [], // mode,
-      []
+      [],
     )
-      .then(results => {
+      .then((results) => {
         if (results !== undefined) {
           setDirectoryContent(
-            results.filter(entry => {
+            results.filter((entry) => {
               return (
                 !entry.isFile &&
                 entry.name !== AppConfig.metaFolder &&
                 !entry.name.endsWith('/' + AppConfig.metaFolder) &&
                 !(!showUnixHiddenEntries && entry.name.startsWith('.'))
               );
-            })
+            }),
             // .sort((a, b) => b.name - a.name)
           );
           // props.setTargetDir(directoryPath);
         }
         return true;
       })
-      .catch(error => {
+      .catch((error) => {
         console.log('listDirectoryPromise', error);
       });
   }
 
   function getFolderContent() {
     if (directoryContent && directoryContent.length > 0) {
-      return directoryContent.map(entry => (
+      return directoryContent.map((entry) => (
         <ListItem
           key={entry.path}
           data-tid={'MoveTarget' + entry.name}
@@ -178,13 +178,13 @@ function DirectoryListView(props: Props) {
           dispatch(
             AppActions.toggleCreateDirectoryDialog({
               rootDirPath: chosenDirectory.current,
-              callback: newDirPath => {
+              callback: (newDirPath) => {
                 listDirectory(chosenDirectory.current);
                 setTargetDir(newDirPath);
                 //watchForChanges();
               },
-              reflect: false
-            })
+              reflect: false,
+            }),
           );
         }}
       >
@@ -195,7 +195,7 @@ function DirectoryListView(props: Props) {
         style={{
           borderRadius: 5,
           maxHeight: 300,
-          overflowY: 'auto'
+          overflowY: 'auto',
         }}
       >
         {getFolderContent()}

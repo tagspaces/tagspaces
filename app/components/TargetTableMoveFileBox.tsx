@@ -22,7 +22,7 @@ import { DropTarget } from 'react-dnd';
 const boxTarget = {
   drop(props, monitor) {
     return props.onDrop(props, monitor);
-  }
+  },
 };
 
 interface Props {
@@ -44,11 +44,11 @@ const TargetTableMoveFileBox = (props: Props) => {
 };
 
 export default DropTarget(
-  props => props.accepts,
+  (props) => props.accepts,
   boxTarget,
   (connect, monitor) => ({
     connectDropTarget: connect.dropTarget(),
     isOver: monitor.isOver(),
-    canDrop: monitor.canDrop()
-  })
+    canDrop: monitor.canDrop(),
+  }),
 )(TargetTableMoveFileBox);

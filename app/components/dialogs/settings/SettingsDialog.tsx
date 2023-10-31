@@ -44,14 +44,14 @@ import { useTranslation } from 'react-i18next';
 const PREFIX = 'SettingsDialog';
 
 const classes = {
-  mainContent: `${PREFIX}-mainContent`
+  mainContent: `${PREFIX}-mainContent`,
 };
 
 const StyledDialog = styled(Dialog)(() => ({
   [`& .${classes.mainContent}`]: {
     overflowY: 'auto',
-    overflowX: 'hidden'
-  }
+    overflowX: 'hidden',
+  },
 }));
 
 interface Props {
@@ -63,10 +63,8 @@ interface Props {
 function SettingsDialog(props: Props) {
   const { t } = useTranslation();
   const [currentTab, setCurrentTab] = useState<number>(0);
-  const [
-    isResetSettingsDialogOpened,
-    setIsResetSettingsDialogOpened
-  ] = useState<boolean>(false);
+  const [isResetSettingsDialogOpened, setIsResetSettingsDialogOpened] =
+    useState<boolean>(false);
 
   const handleTabClick = (event, tab) => {
     setCurrentTab(tab);
@@ -118,7 +116,7 @@ function SettingsDialog(props: Props) {
           }}
           title="Confirm"
           content={t('core:confirmResetSettings')}
-          confirmCallback={result => {
+          confirmCallback={(result) => {
             if (result) {
               clearAllURLParams();
               localStorage.clear();
@@ -155,7 +153,7 @@ function SettingsDialog(props: Props) {
     <DialogActions
       style={{
         justifyContent: 'space-between',
-        padding: fullScreen ? '10px 30px 30px 30px' : undefined
+        padding: fullScreen ? '10px 30px 30px 30px' : undefined,
       }}
     >
       <Button

@@ -6,7 +6,7 @@ jsDAV.createServer(
   {
     node: './web',
     authBackend: jsDAVAuthBackendFile.new('./scripts/jsdavauth'),
-    realm: 'jdavtest'
+    realm: 'jdavtest',
   },
-  8000
+  8000,
 );

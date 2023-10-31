@@ -30,7 +30,7 @@ import DropDownIcon from '@mui/icons-material/ArrowDropDownOutlined';
 import { actions as AppActions, AppDispatch } from '../reducers/app';
 import {
   getMaxSearchResults,
-  getShowUnixHiddenEntries
+  getShowUnixHiddenEntries,
 } from '-/reducers/settings';
 import { FileTypeGroups, haveSearchFilters } from '-/services/search';
 import { TS } from '-/tagspaces.namespace';
@@ -51,7 +51,7 @@ import {
   ScopeType,
   SearchActions,
   SearchOptionType,
-  SearchQueryComposition
+  SearchQueryComposition,
 } from '-/components/SearchOptions';
 import { getLocations } from '-/reducers/locations';
 import CloseIcon from '@mui/icons-material/Close';
@@ -92,20 +92,20 @@ function SearchAutocomplete(props: Props) {
     currentLocation,
     changeLocationByID,
     switchLocationTypeByID,
-    openLocationById
+    openLocationById,
   } = useCurrentLocationContext();
   const {
     currentDirectoryPath,
     exitSearchMode,
     openCurrentDirectory,
     searchQuery,
-    setSearchQuery
+    setSearchQuery,
   } = useDirectoryContentContext();
   const {
     // watchForChanges,
     isIndexing,
     searchAllLocations,
-    searchLocationIndex
+    searchLocationIndex,
   } = useLocationIndexContext();
   const dispatch: AppDispatch = useDispatch();
   const maxSearchResults = useSelector(getMaxSearchResults);
@@ -117,17 +117,15 @@ function SearchAutocomplete(props: Props) {
 
   const { setTextQuery, textQuery, open, setAnchorSearch } = props;
   // const [, forceUpdate] = useReducer(x => x + 1, 0);
-  const [
-    openSavedSearches,
-    setOpenSavedSearches
-  ] = useState<null | HTMLElement>(null);
+  const [openSavedSearches, setOpenSavedSearches] =
+    useState<null | HTMLElement>(null);
   const searchOptions = useRef<Array<SearchOptionType>>(getSearchOptions());
   const currentOptions = useRef<string>(undefined);
   // const textQueryMask = useRef<string>('');
   const fileTypes = useRef<Array<string>>(
-    searchQuery.fileTypes ? searchQuery.fileTypes : FileTypeGroups.any
+    searchQuery.fileTypes ? searchQuery.fileTypes : FileTypeGroups.any,
   );
-  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
 
   /*function parseSearchQuery(textQuery: string) {
     if (textQuery) {
@@ -137,34 +135,34 @@ function SearchAutocomplete(props: Props) {
   }*/
 
   const actionValues = useRef<Array<SearchOptionType>>(
-    [] //parseSearchQuery(textQueryMask.current)
+    [], //parseSearchQuery(textQueryMask.current)
   );
   const [searchBoxing, setSearchBoxing] = useState<ScopeType>(
-    searchQuery.searchBoxing || 'location'
+    searchQuery.searchBoxing || 'location',
   );
 
   const searchType = useRef<'fuzzy' | 'semistrict' | 'strict'>(
-    searchQuery.searchType ? searchQuery.searchType : 'fuzzy'
+    searchQuery.searchType ? searchQuery.searchType : 'fuzzy',
   );
   const lastModified = useRef<string>(
-    searchQuery.lastModified ? searchQuery.lastModified : ''
+    searchQuery.lastModified ? searchQuery.lastModified : '',
   );
   const tagTimePeriod = useRef<string>('');
   const tagTimePeriodHelper = useRef<string>(' ');
   const tagTimePeriodFrom = useRef<number | null>(
-    searchQuery.tagTimePeriodFrom ? searchQuery.tagTimePeriodFrom : null
+    searchQuery.tagTimePeriodFrom ? searchQuery.tagTimePeriodFrom : null,
   );
   const tagTimePeriodTo = useRef<number | null>(
-    searchQuery.tagTimePeriodTo ? searchQuery.tagTimePeriodTo : null
+    searchQuery.tagTimePeriodTo ? searchQuery.tagTimePeriodTo : null,
   );
   const [tagPlaceLat, setTagPlaceLat] = useState<number | null>(null);
   const [tagPlaceLong, setTagPlaceLong] = useState<number | null>(null);
   // const [tagPlaceRadius, setTagPlaceRadius] = useState<number>(0);
   const forceIndexing = useRef<boolean>(
-    searchQuery.forceIndexing ? searchQuery.forceIndexing : false
+    searchQuery.forceIndexing ? searchQuery.forceIndexing : false,
   );
   const fileSize = useRef<string>(
-    searchQuery.fileSize ? searchQuery.fileSize : ''
+    searchQuery.fileSize ? searchQuery.fileSize : '',
   );
 
   // const mainSearchField = useRef<HTMLInputElement>(null);
@@ -199,38 +197,38 @@ function SearchAutocomplete(props: Props) {
       // textQueryMask.current = '';
 
       if (searchQuery.tagsAND && searchQuery.tagsAND.length > 0) {
-        searchQuery.tagsAND.forEach(tag => {
+        searchQuery.tagsAND.forEach((tag) => {
           // textQueryMask.current += ' +' + tag.title;
 
           actions.push({
             action: SearchQueryComposition.TAG_AND.shortName,
             label: SearchQueryComposition.TAG_AND.shortName + tag.title,
             color: tag.color,
-            textcolor: tag.textcolor
+            textcolor: tag.textcolor,
           });
         });
         emptySearch = false;
       }
       if (searchQuery.tagsOR && searchQuery.tagsOR.length > 0) {
-        searchQuery.tagsOR.forEach(tag => {
+        searchQuery.tagsOR.forEach((tag) => {
           // textQueryMask.current += ' |' + tag.title;
           actions.push({
             action: SearchQueryComposition.TAG_OR.shortName,
             label: SearchQueryComposition.TAG_OR.shortName + tag.title,
             color: tag.color,
-            textcolor: tag.textcolor
+            textcolor: tag.textcolor,
           });
         });
         emptySearch = false;
       }
       if (searchQuery.tagsNOT && searchQuery.tagsNOT.length > 0) {
-        searchQuery.tagsNOT.forEach(tag => {
+        searchQuery.tagsNOT.forEach((tag) => {
           // textQueryMask.current += ' -' + tag.title;
           actions.push({
             action: SearchQueryComposition.TAG_NOT.shortName,
             label: SearchQueryComposition.TAG_NOT.shortName + tag.title,
             color: tag.color,
-            textcolor: tag.textcolor
+            textcolor: tag.textcolor,
           });
         });
         emptySearch = false;
@@ -255,7 +253,7 @@ function SearchAutocomplete(props: Props) {
           label:
             SearchQueryComposition.SCOPE.fullName +
             ' ' +
-            searchQuery.searchBoxing
+            searchQuery.searchBoxing,
         });
       }
       if (
@@ -276,7 +274,7 @@ function SearchAutocomplete(props: Props) {
           label:
             SearchQueryComposition.TYPE.fullName +
             ' ' +
-            (keyFileType ? t('core:' + keyFileType) : searchQuery.fileTypes)
+            (keyFileType ? t('core:' + keyFileType) : searchQuery.fileTypes),
         });
       }
       if (searchQuery.searchType) {
@@ -287,7 +285,7 @@ function SearchAutocomplete(props: Props) {
           label:
             SearchQueryComposition.ACCURACY.fullName +
             ' ' +
-            t('core:' + searchQuery.searchType)
+            t('core:' + searchQuery.searchType),
         });
       }
       if (searchQuery.lastModified) {
@@ -298,7 +296,7 @@ function SearchAutocomplete(props: Props) {
           label:
             SearchQueryComposition.LAST_MODIFIED.fullName +
             ' ' +
-            t('core:' + searchQuery.lastModified)
+            t('core:' + searchQuery.lastModified),
         });
       }
       if (searchQuery.tagTimePeriodFrom) {
@@ -320,7 +318,7 @@ function SearchAutocomplete(props: Props) {
           label:
             SearchQueryComposition.SIZE.fullName +
             ' ' +
-            t('core:' + searchQuery.fileSize)
+            t('core:' + searchQuery.fileSize),
         });
       }
       if (!emptySearch) {
@@ -328,7 +326,7 @@ function SearchAutocomplete(props: Props) {
           actionValues.current = execActions(
             actions, // todo set tag in actions
             actionValues.current,
-            false
+            false,
           );
           isOpen.current = false;
           forceUpdate();
@@ -336,7 +334,7 @@ function SearchAutocomplete(props: Props) {
         if (searchQuery.executeSearch) {
           const sQuery = {
             ...searchQuery,
-            textQuery: txtQuery
+            textQuery: txtQuery,
           };
           if (searchBoxing === 'global') {
             searchAllLocations(sQuery);
@@ -374,7 +372,7 @@ function SearchAutocomplete(props: Props) {
     executeSearch();
   };
 
-  const onKeyDownHandler = event => {
+  const onKeyDownHandler = (event) => {
     if (event.key === 'Enter' || event.keyCode === 13) {
       if (!isOpen.current) {
         executeSearch();
@@ -404,29 +402,29 @@ function SearchAutocomplete(props: Props) {
   function resetValues(exceptions: Array<SearchOptionType>) {
     setTextQuery('');
     if (
-      !exceptions.some(action =>
-        isAction(action.action, SearchQueryComposition.SCOPE)
+      !exceptions.some((action) =>
+        isAction(action.action, SearchQueryComposition.SCOPE),
       )
     ) {
       setSearchBoxing('location');
     }
     if (
-      !exceptions.some(action =>
-        isAction(action.action, SearchQueryComposition.ACCURACY)
+      !exceptions.some((action) =>
+        isAction(action.action, SearchQueryComposition.ACCURACY),
       )
     ) {
       searchType.current = 'fuzzy';
     }
     if (
-      !exceptions.some(action =>
-        isAction(action.action, SearchQueryComposition.TYPE)
+      !exceptions.some((action) =>
+        isAction(action.action, SearchQueryComposition.TYPE),
       )
     ) {
       fileTypes.current = FileTypeGroups.any;
     }
     if (
-      !exceptions.some(action =>
-        isAction(action.action, SearchQueryComposition.LAST_MODIFIED)
+      !exceptions.some((action) =>
+        isAction(action.action, SearchQueryComposition.LAST_MODIFIED),
       )
     ) {
       lastModified.current = '';
@@ -439,8 +437,8 @@ function SearchAutocomplete(props: Props) {
     setTagPlaceLong(null);
     forceIndexing.current = false;
     if (
-      !exceptions.some(action =>
-        isAction(action.action, SearchQueryComposition.SIZE)
+      !exceptions.some((action) =>
+        isAction(action.action, SearchQueryComposition.SIZE),
       )
     ) {
       fileSize.current = '';
@@ -456,12 +454,12 @@ function SearchAutocomplete(props: Props) {
 
   function removeActionsFromQuery(
     query: string,
-    actions: Array<SearchOptionType>
+    actions: Array<SearchOptionType>,
   ) {
     if (actions && actions.length > 0) {
       const queryArr = query
         .split(' ')
-        .filter(q => actions.some(action => q !== action.label));
+        .filter((q) => actions.some((action) => q !== action.label));
       return queryArr.join(' ');
     }
     return query;
@@ -490,7 +488,7 @@ function SearchAutocomplete(props: Props) {
   };*/
 
   const handleOpenSavedSearches = (
-    event: React.MouseEvent<HTMLButtonElement>
+    event: React.MouseEvent<HTMLButtonElement>,
   ) => {
     setOpenSavedSearches(event.currentTarget);
   };
@@ -541,18 +539,18 @@ function SearchAutocomplete(props: Props) {
 
   function getTags(
     actions: Array<SearchOptionType>,
-    action: ActionType
+    action: ActionType,
   ): TS.Tag[] {
     if (actions.length > 0) {
-      const actionsArr = actions.filter(a => isAction(a.action, action));
+      const actionsArr = actions.filter((a) => isAction(a.action, action));
       if (actionsArr.length > 0) {
-        return actionsArr.map(a => ({
+        return actionsArr.map((a) => ({
           title:
             a.label.indexOf(action.shortName) === 0
               ? a.label.substring(action.shortName.length)
               : action.fullName && a.label.indexOf(action.fullName) === 0
               ? a.label.substring(action.fullName.length)
-              : a.label
+              : a.label,
         }));
       }
     }
@@ -561,8 +559,8 @@ function SearchAutocomplete(props: Props) {
 
   const executeSearch = () => {
     if (
-      actionValues.current.some(action =>
-        isAction(action.action, SearchActions.FILTER)
+      actionValues.current.some((action) =>
+        isAction(action.action, SearchActions.FILTER),
       )
     ) {
       // don't execute search on search filter
@@ -578,12 +576,12 @@ function SearchAutocomplete(props: Props) {
     }
     const tagsAND = getTags(
       actionValues.current,
-      SearchQueryComposition.TAG_AND
+      SearchQueryComposition.TAG_AND,
     );
     const tagsOR = getTags(actionValues.current, SearchQueryComposition.TAG_OR);
     const tagsNOT = getTags(
       actionValues.current,
-      SearchQueryComposition.TAG_NOT
+      SearchQueryComposition.TAG_NOT,
     );
     // const tagsAND = parseTextQuery(textQuery.current, '+');
     // query = removeTagsFromQuery(tagsAND, query, '+');
@@ -612,7 +610,7 @@ function SearchAutocomplete(props: Props) {
       currentDirectory: currentDirectoryPath,
       forceIndexing: forceIndexing.current,
       showUnixHiddenEntries: showUnixHiddenEntries,
-      executeSearch: true
+      executeSearch: true,
     };
     if (!haveSearchFilters(sQuery)) {
       clearSearch();
@@ -646,7 +644,7 @@ function SearchAutocomplete(props: Props) {
 
   function getHistoryOptions(
     items: TS.HistoryItem[],
-    group: string
+    group: string,
   ): SearchOptionType[] {
     if (!items) {
       return [];
@@ -655,14 +653,14 @@ function SearchAutocomplete(props: Props) {
       id: item.lid,
       descr: formatDistanceToNow(item.creationTimeStamp, {
         includeSeconds: true,
-        addSuffix: true
+        addSuffix: true,
         // locale: https://date-fns.org/v2.29.3/docs/formatDistanceToNow#usage
       }),
       action: ExecActions.OPEN_HISTORY,
       fullName: item.url,
       label: item.path,
       group: group,
-      ...(item.searchQuery && { searchQuery: item.searchQuery })
+      ...(item.searchQuery && { searchQuery: item.searchQuery }),
     }));
   }
 
@@ -671,13 +669,13 @@ function SearchAutocomplete(props: Props) {
     if (isAction(action, SearchActions.LOCATION)) {
       if (currentOptions.current !== action) {
         currentOptions.current = action;
-        searchOptions.current = locations.map(location => {
+        searchOptions.current = locations.map((location) => {
           return {
             id: location.uuid,
             descr: location.path,
             action: ExecActions.OPEN_LOCATION,
             label: location.name,
-            filter
+            filter,
           };
         });
         optionsChanged = true;
@@ -700,9 +698,9 @@ function SearchAutocomplete(props: Props) {
           ...getHistoryOptions(fileOpenHistoryItems, t('core:fileOpenHistory')),
           ...getHistoryOptions(
             folderOpenHistoryItems,
-            t('core:folderOpenHistory')
+            t('core:folderOpenHistory'),
           ),
-          ...getHistoryOptions(fileEditHistoryItems, t('core:fileEditHistory'))
+          ...getHistoryOptions(fileEditHistoryItems, t('core:fileEditHistory')),
         ];
       }
     } else if (isAction(action, SearchActions.BOOK)) {
@@ -713,7 +711,7 @@ function SearchAutocomplete(props: Props) {
 
         function getOptions(
           items: TS.BookmarkItem[],
-          group: string
+          group: string,
         ): SearchOptionType[] {
           if (!items) {
             return [];
@@ -726,13 +724,13 @@ function SearchAutocomplete(props: Props) {
             fullName: item.url,
             label: item.path,
             group: group,
-            filter
+            filter,
           }));
         }
 
         searchOptions.current = getOptions(
           bookmarks,
-          t('core:searchBookmarks')
+          t('core:searchBookmarks'),
         );
       }
     } else if (isAction(action, SearchActions.SEARCH_HISTORY)) {
@@ -741,7 +739,7 @@ function SearchAutocomplete(props: Props) {
         : [];
       searchOptions.current = getHistoryOptions(
         searchHistoryItems,
-        t('core:searchHistory')
+        t('core:searchHistory'),
       );
     } else if (isAction(action, SearchActions.SEARCH)) {
       if (currentOptions.current !== action) {
@@ -749,7 +747,7 @@ function SearchAutocomplete(props: Props) {
 
         function getOptions(
           items: TS.SearchQuery[],
-          group: string
+          group: string,
         ): SearchOptionType[] {
           if (!items) {
             return [];
@@ -760,13 +758,13 @@ function SearchAutocomplete(props: Props) {
             label: item.title,
             fullName: JSON.stringify(item),
             group: group,
-            filter
+            filter,
           }));
         }
 
         searchOptions.current = getOptions(
           searches,
-          t('core:savedSearchesTitle')
+          t('core:savedSearchesTitle'),
         );
       }
     } else if (
@@ -792,7 +790,7 @@ function SearchAutocomplete(props: Props) {
             color: tag.color,
             textcolor: tag.textcolor,
             group: tagGroups[j].title,
-            filter
+            filter,
           });
         });
       }
@@ -808,7 +806,7 @@ function SearchAutocomplete(props: Props) {
             action: ExecActions.TYPE_SEARCH,
             label: t('core:' + key),
             descr: value.join(', '),
-            filter
+            filter,
           });
         });
         searchOptions.current = options;
@@ -837,7 +835,7 @@ function SearchAutocomplete(props: Props) {
             action: ExecActions.SIZE_SEARCH,
             label: t('core:' + key),
             descr: descr,
-            filter
+            filter,
           });
         });
         searchOptions.current = options;
@@ -856,7 +854,7 @@ function SearchAutocomplete(props: Props) {
             id: key,
             action: ExecActions.LAST_MODIFIED_SEARCH,
             label: t('core:' + key),
-            filter
+            filter,
           });
         });
         searchOptions.current = options;
@@ -872,7 +870,7 @@ function SearchAutocomplete(props: Props) {
             id: key,
             action: ExecActions.SCOPE_SEARCH,
             label: t('core:' + key),
-            filter
+            filter,
           });
         });
         searchOptions.current = options;
@@ -890,7 +888,7 @@ function SearchAutocomplete(props: Props) {
             id: key,
             action: ExecActions.ACCURACY_SEARCH,
             label: t('core:' + key),
-            filter
+            filter,
           });
         });
         searchOptions.current = options;
@@ -901,7 +899,7 @@ function SearchAutocomplete(props: Props) {
       const execActionsArr = Object.values(ExecActions);
       if (execActionsArr.includes(action)) {
         searchOptions.current = getSearchOptions().filter(
-          option => option.group === 'query'
+          (option) => option.group === 'query',
         );
         optionsChanged = true;
       } else {
@@ -919,13 +917,13 @@ function SearchAutocomplete(props: Props) {
     options: Array<any>,
     previousActions = [],
     hasOptionsChanged = false,
-    unique = false
+    unique = false,
   ) {
     const actions: Array<SearchOptionType> = [];
 
     function setActionLabel(key: ActionType, option: SearchOptionType): string {
       if (actions.length > 0) {
-        const action = actions.find(a => a.action === key.fullName); //[actions.length - 1];
+        const action = actions.find((a) => a.action === key.fullName); //[actions.length - 1];
         if (isAction(action.action, key)) {
           action.label = action.action + option.label;
           action.fullName = action.action + option.label;
@@ -944,15 +942,15 @@ function SearchAutocomplete(props: Props) {
         option = {
           label: options[i],
           fullName: action,
-          action: action
+          action: action,
         };
       }
       const prevAction = previousActions.find(
-        obj =>
+        (obj) =>
           obj.action === option.action &&
           (unique ||
             obj.label === option.label ||
-            (obj.fullName && obj.fullName === option.fullName))
+            (obj.fullName && obj.fullName === option.fullName)),
       );
       if (!prevAction) {
         if (isAction(option.action, SearchActions.LOCATION)) {
@@ -1008,14 +1006,14 @@ function SearchAutocomplete(props: Props) {
               path: option.label,
               url: option.fullName,
               lid: option.id,
-              creationTimeStamp: 0
+              creationTimeStamp: 0,
             };
             Pro.history.openItem(
               item,
               currentLocation && currentLocation.uuid,
               openLinkDispatch,
               openLocationById,
-              openEntry
+              openEntry,
             );
           }
           searchOptions.current = getSearchOptions();
@@ -1028,14 +1026,14 @@ function SearchAutocomplete(props: Props) {
               path: option.label,
               url: option.fullName,
               lid: undefined,
-              creationTimeStamp: 0
+              creationTimeStamp: 0,
             };
             Pro.history.openItem(
               item,
               currentLocation && currentLocation.uuid,
               openLinkDispatch,
               openLocationById,
-              openEntry
+              openEntry,
             );
           }
           searchOptions.current = getSearchOptions();
@@ -1072,7 +1070,7 @@ function SearchAutocomplete(props: Props) {
 
             let prevAction;
             if (unique) {
-              prevAction = actions.find(a => a.action === searchAction);
+              prevAction = actions.find((a) => a.action === searchAction);
             }
             if (!prevAction) {
               prevAction = actions[actions.length - 1];
@@ -1084,22 +1082,22 @@ function SearchAutocomplete(props: Props) {
           }
           const tagsAND = getTags(
             actionValues.current,
-            SearchQueryComposition.TAG_AND
+            SearchQueryComposition.TAG_AND,
           );
           const tagsOR = getTags(
             actionValues.current,
-            SearchQueryComposition.TAG_OR
+            SearchQueryComposition.TAG_OR,
           );
           const tagsNOT = getTags(
             actionValues.current,
-            SearchQueryComposition.TAG_NOT
+            SearchQueryComposition.TAG_NOT,
           );
           setSearchQuery({
             ...searchQuery,
             tagsAND,
             tagsOR,
             tagsNOT,
-            executeSearch: false
+            executeSearch: false,
           });
           setTextQuery('');
           if (hasOptionsChanged) {
@@ -1117,7 +1115,7 @@ function SearchAutocomplete(props: Props) {
             setSearchQuery({
               ...searchQuery,
               fileTypes: fileTypes.current,
-              executeSearch: false
+              executeSearch: false,
             });
           }
           if (hasOptionsChanged) {
@@ -1136,7 +1134,7 @@ function SearchAutocomplete(props: Props) {
             setSearchQuery({
               ...searchQuery,
               fileSize: id,
-              executeSearch: false
+              executeSearch: false,
             });
           }
           if (hasOptionsChanged) {
@@ -1153,14 +1151,14 @@ function SearchAutocomplete(props: Props) {
         } else if (option.action === ExecActions.LAST_MODIFIED_SEARCH) {
           const id = setActionLabel(
             SearchQueryComposition.LAST_MODIFIED,
-            option
+            option,
           );
           if (id) {
             lastModified.current = id;
             setSearchQuery({
               ...searchQuery,
               lastModified: id,
-              executeSearch: false
+              executeSearch: false,
             });
           }
           if (hasOptionsChanged) {
@@ -1179,7 +1177,7 @@ function SearchAutocomplete(props: Props) {
             setSearchQuery({
               ...searchQuery,
               searchBoxing: scope[id],
-              executeSearch: false
+              executeSearch: false,
             });
           }
           if (hasOptionsChanged) {
@@ -1197,7 +1195,7 @@ function SearchAutocomplete(props: Props) {
             setSearchQuery({
               ...searchQuery,
               searchType: accuracy[id],
-              executeSearch: false
+              executeSearch: false,
             });
           }
           if (hasOptionsChanged) {
@@ -1211,7 +1209,7 @@ function SearchAutocomplete(props: Props) {
           const pAction = actions[actions.length - 1];
           if (pAction && isAction(pAction.action, SearchActions.FILTER)) {
             const filterArr = options.filter(
-              o => !(typeof o === 'object') && o.action === undefined
+              (o) => !(typeof o === 'object') && o.action === undefined,
             );
             if (filterArr.length > 0) {
               dispatch(AppActions.setSearchFilter(filterArr.join(' ')));
@@ -1235,10 +1233,10 @@ function SearchAutocomplete(props: Props) {
       actionValues.current = execActions(
         [...actionValues.current, ...valueArr],
         actionValues.current,
-        true
+        true,
       );
       const inputArr = valueArr.filter(
-        action => !actionValues.current.some(v => v.label === action)
+        (action) => !actionValues.current.some((v) => v.label === action),
       );
       setTextQuery(inputArr.join(' '));
       //textQuery.current += ' ' + inputValue.current;
@@ -1282,7 +1280,7 @@ function SearchAutocomplete(props: Props) {
           if (action) {
             actions.push({
               label: option,
-              action: toExecAction(action)
+              action: toExecAction(action),
             });
           } else {
             actions.push(option);
@@ -1296,7 +1294,7 @@ function SearchAutocomplete(props: Props) {
       forceUpdate();
     } else if (reason === 'remove-value') {
       actionValues.current = actionValues.current.filter(
-        v => !(selected.includes(v.label) || selected.includes(v.fullName))
+        (v) => !(selected.includes(v.label) || selected.includes(v.fullName)),
       );
       resetActions(actionValues.current);
       forceUpdate();
@@ -1336,7 +1334,7 @@ function SearchAutocomplete(props: Props) {
     } else {
       actionValues.current = execActions(actions, [], false);
       searchOptions.current = getSearchOptions().filter(
-        option => option.group === 'query'
+        (option) => option.group === 'query',
       );
       currentOptions.current = undefined;
     }
@@ -1447,7 +1445,7 @@ function SearchAutocomplete(props: Props) {
           width: '100%',
           whiteSpace: 'nowrap',
           display: 'flex',
-          alignItems: 'center'
+          alignItems: 'center',
         }}
       >
         <style>
@@ -1470,8 +1468,8 @@ function SearchAutocomplete(props: Props) {
           autoComplete
           handleHomeEndKeys
           /*defaultValue={['one']}*/
-          value={actionValues.current.map(v =>
-            v.fullName ? v.fullName : v.label
+          value={actionValues.current.map((v) =>
+            v.fullName ? v.fullName : v.label,
           )}
           onChange={handleChange}
           inputValue={textQuery}
@@ -1480,7 +1478,7 @@ function SearchAutocomplete(props: Props) {
           /*onOpen={handleOpen}
           onClose={handleClose}*/
           filterOptions={(options: Array<SearchOptionType>, state: any) => {
-            const filteredOptions = options.filter(option => {
+            const filteredOptions = options.filter((option) => {
               if (option.filter === false) {
                 return true;
               }
@@ -1495,10 +1493,10 @@ function SearchAutocomplete(props: Props) {
             }
             return filteredOptions;
           }}
-          renderTags={value =>
+          renderTags={(value) =>
             value.map((option, index: number) => {
               const action = actionValues.current.find(
-                a => a.fullName === option || a.label === option
+                (a) => a.fullName === option || a.label === option,
               );
               return (
                 <Box
@@ -1517,8 +1515,8 @@ function SearchAutocomplete(props: Props) {
                       action.color && {
                         color: action.textcolor,
                         backgroundColor: action.color,
-                        border: 'none'
-                      })
+                        border: 'none',
+                      }),
                   }}
                 >
                   {isAction(action.action, SearchQueryComposition.TAG_AND) ||
@@ -1528,7 +1526,7 @@ function SearchAutocomplete(props: Props) {
                       style={{
                         fontSize: 13,
                         fontWeight: 'bold',
-                        display: 'inline'
+                        display: 'inline',
                       }}
                     >
                       {option}
@@ -1542,7 +1540,7 @@ function SearchAutocomplete(props: Props) {
                       size="small"
                       style={{
                         backgroundColor: 'transparent',
-                        padding: 0
+                        padding: 0,
                       }}
                       endIcon={<ArrowDropDownIcon />}
                     >
@@ -1553,7 +1551,7 @@ function SearchAutocomplete(props: Props) {
                   {!isAction(action.action, SearchQueryComposition.SCOPE) &&
                     !isAction(
                       action.action,
-                      SearchQueryComposition.ACCURACY
+                      SearchQueryComposition.ACCURACY,
                     ) && (
                       <IconButton
                         onClick={() => {
@@ -1575,15 +1573,15 @@ function SearchAutocomplete(props: Props) {
             setInputValue(newInputValue);
           }}*/
           options={searchOptions.current}
-          groupBy={option => option.group}
-          renderGroup={params => (
+          groupBy={(option) => option.group}
+          renderGroup={(params) => (
             <li key={params.key}>
               <div
                 style={{
                   position: 'sticky',
                   top: '-8px',
                   padding: '4px 10px',
-                  backgroundColor: theme.palette.background.default
+                  backgroundColor: theme.palette.background.default,
                 }}
               >
                 {t(params.group)}
@@ -1608,7 +1606,7 @@ function SearchAutocomplete(props: Props) {
                     paddingBottom: 0,
                     paddingRight: 5,
                     paddingLeft: 5,
-                    borderRadius: 5
+                    borderRadius: 5,
                   }}
                 >
                   {option.label}
@@ -1627,11 +1625,11 @@ function SearchAutocomplete(props: Props) {
           sx={{ width: 'calc(100% - 80px)' }}
           onKeyDown={onKeyDownHandler}
           disableClearable={true}
-          renderInput={params => {
+          renderInput={(params) => {
             if (params.InputProps.endAdornment) {
               params.InputProps.endAdornment = [
                 params.InputProps.endAdornment,
-                endAdornment
+                endAdornment,
               ];
             } else {
               params.InputProps.endAdornment = [endAdornment];
@@ -1679,7 +1677,7 @@ function SearchAutocomplete(props: Props) {
             style={{
               marginRight: 10,
               marginLeft: 10,
-              marginTop: 3
+              marginTop: 3,
             }}
             color="primary"
             onClick={clickSearchButton}

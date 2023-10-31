@@ -31,7 +31,7 @@ import ExportIcon from '@mui/icons-material/AssignmentReturn';
 import {
   ParentFolderIcon,
   FolderPropertiesIcon,
-  PerspectiveSettingsIcon
+  PerspectiveSettingsIcon,
 } from '-/components/CommonIcons';
 import AppConfig from '-/AppConfig';
 import { Pro } from '-/pro';
@@ -41,7 +41,7 @@ import { TS } from '-/tagspaces.namespace';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import {
   classes,
-  GridStyles
+  GridStyles,
 } from '-/perspectives/grid-perspective/components/styles.css';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
@@ -70,15 +70,13 @@ function MainToolbar(props: Props) {
     handleSortingMenu,
     handleExportCsvMenu,
     openSettings,
-    openShareFilesDialog
+    openShareFilesDialog,
   } = props;
 
   const { t } = useTranslation();
   const { openEntry } = useOpenedEntryContext();
-  const {
-    loadParentDirectoryContent,
-    currentDirectoryPath
-  } = useDirectoryContentContext();
+  const { loadParentDirectoryContent, currentDirectoryPath } =
+    useDirectoryContentContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const keyBindings = useSelector(getKeyBindingObject);
   const dispatch: AppDispatch = useDispatch();
@@ -224,7 +222,7 @@ function MainToolbar(props: Props) {
             // title={t('core:sort')}
             aria-label={t('core:sort')}
             data-tid={prefixDataTID + 'PerspectiveSortMenu'}
-            onClick={e => {
+            onClick={(e) => {
               handleSortingMenu(e);
             }}
             size="large"
@@ -233,7 +231,7 @@ function MainToolbar(props: Props) {
           </IconButton>
         </Tooltip>
         {Pro &&
-        !AppConfig.isCordovaAndroid && ( // https://trello.com/c/z6ESlqxz/697-exports-to-json-or-csv-do-not-work-on-android
+          !AppConfig.isCordovaAndroid && ( // https://trello.com/c/z6ESlqxz/697-exports-to-json-or-csv-do-not-work-on-android
             <Tooltip title={t('core:exportCsv')}>
               <IconButton
                 data-tid={prefixDataTID + 'PerspectiveExportCsvMenuTID'}

@@ -65,15 +65,15 @@ function IsTruncatedConfirmDialog(props: Props) {
       editLocation(
         {
           ...currentLocation,
-          maxLoops: parseInt(loops, 10)
+          maxLoops: parseInt(loops, 10),
         },
-        false
+        false,
       );
       onClose();
       if (currentLocation.type === locationType.TYPE_CLOUD) {
         PlatformIO.enableObjectStoreSupport(currentLocation)
           .then(() => openDirectory(currentDirectoryPath))
-          .catch(error => {
+          .catch((error) => {
             console.log('enableObjectStoreSupport', error);
           });
       }

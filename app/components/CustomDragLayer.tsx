@@ -11,17 +11,17 @@ const layerStyles: React.CSSProperties = {
   left: 0,
   top: 0,
   width: '100%',
-  height: '100%'
+  height: '100%',
 };
 
 function getItemStyles(
   initialOffset: XYCoord | null,
   currentOffset: XYCoord | null,
-  clientOffset: XYCoord | null
+  clientOffset: XYCoord | null,
 ) {
   if (!initialOffset || !currentOffset) {
     return {
-      display: 'none'
+      display: 'none',
     };
   }
 
@@ -30,27 +30,27 @@ function getItemStyles(
   const transform = `translate(${x}px, ${y}px)`;
   return {
     transform,
-    WebkitTransform: transform
+    WebkitTransform: transform,
   };
 }
 
 export interface CustomDragLayerProps {}
 
-const CustomDragLayer: React.FC<CustomDragLayerProps> = props => {
+const CustomDragLayer: React.FC<CustomDragLayerProps> = (props) => {
   const {
     itemType,
     isDragging,
     item,
     initialOffset,
     currentOffset,
-    clientOffset
-  } = useDragLayer(monitor => ({
+    clientOffset,
+  } = useDragLayer((monitor) => ({
     item: monitor.getItem(),
     itemType: monitor.getItemType(),
     initialOffset: monitor.getInitialSourceClientOffset(),
     currentOffset: monitor.getSourceClientOffset(),
     clientOffset: monitor.getClientOffset(),
-    isDragging: monitor.isDragging()
+    isDragging: monitor.isDragging(),
   }));
 
   function renderItem() {

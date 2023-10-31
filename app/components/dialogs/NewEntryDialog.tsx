@@ -65,7 +65,7 @@ function NewEntryDialog(props: Props) {
             minWidth: 200,
             minHeight: 300,
             marginBottom: 20,
-            overflow: 'overlay'
+            overflow: 'overlay',
           }}
           data-tid="keyboardShortCutsDialog"
         >

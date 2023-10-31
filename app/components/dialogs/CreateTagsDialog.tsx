@@ -88,7 +88,7 @@ function CreateTagsDialog(props: Props) {
       // fullScreen={fullScreen}
       keepMounted
       scroll="paper"
-      onKeyDown={event => {
+      onKeyDown={(event) => {
         if (event.key === 'Enter' || event.keyCode === 13) {
           event.preventDefault();
           event.stopPropagation();

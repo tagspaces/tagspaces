@@ -26,7 +26,7 @@ export async function takeScreenshot(testInfo, title = 'failure') {
   testInfo.attachments.push({
     name: 'screenshot',
     path: sPath,
-    contentType: 'image/png'
+    contentType: 'image/png',
   });
   return await global.client.screenshot({ path: sPath });
 }
@@ -57,7 +57,7 @@ export async function rightClickOn(selector) {
 export async function waitUntilClassChanged(selector, className) {
   const element = await global.client.$(selector);
   await element.waitUntil(
-    async function() {
+    async function () {
       const newClassName = await this.getAttribute('class');
       return newClassName !== className;
     },
@@ -68,8 +68,8 @@ export async function waitUntilClassChanged(selector, className) {
         selector +
         ' className:' +
         className +
-        ' to changed after 5s'
-    }
+        ' to changed after 5s',
+    },
   );
   return await element.getAttribute('class');
 }
@@ -87,10 +87,10 @@ export async function setInputValue(selector, value) {
 export async function setInputKeys(tid, value, delay = 0) {
   // global.client.keyboard.type('[data-tid=' + tid + '] input', value, { delay: 100 });
   const oldValue = await global.client.inputValue(
-    '[data-tid=' + tid + '] input'
+    '[data-tid=' + tid + '] input',
   );
   await global.client.type('[data-tid=' + tid + '] input', value, {
-    delay
+    delay,
   });
   return oldValue;
 }
@@ -105,7 +105,7 @@ export async function setInputKeys(tid, value, delay = 0) {
 export async function typeInputValue(inputSelector, value, delay = 0) {
   const oldValue = await global.client.inputValue(inputSelector);
   await global.client.type(inputSelector, value, {
-    delay
+    delay,
   });
   return oldValue;
 }
@@ -189,7 +189,7 @@ export async function getGridFileName(fileIndex) {
       return fileName + '.' + fileExt.toLowerCase();
     }
     console.log(
-      "Can't find getGridFileName:" + fileIndex + ' filesList is empty'
+      "Can't find getGridFileName:" + fileIndex + ' filesList is empty',
     );
   } catch (e) {
     console.log("Can't find getGridFileName:" + fileIndex, e);
@@ -201,15 +201,15 @@ export async function getRevision(revIndex) {
   try {
     return await global.client.$$eval(
       'table[data-tid=tableRevisionsTID] tbody tr',
-      rows => {
+      (rows) => {
         if (rows.length > 0) {
           return {
             id: rows[0].getAttribute('data-tid'),
-            file: rows[0].querySelector('th').innerText
+            file: rows[0].querySelector('th').innerText,
           };
         }
         return undefined;
-      }
+      },
     );
   } catch (e) {
     console.log("Can't find getRevision:" + revIndex, e);
@@ -233,12 +233,12 @@ export async function isElementDisplayed(
   element,
   selector,
   displayed = true,
-  timeout = 500
+  timeout = 500,
 ) {
   try {
     const el = await element.waitForSelector(selector, {
       timeout,
-      state: displayed ? 'visible' : 'detached'
+      state: displayed ? 'visible' : 'detached',
     });
     if (!displayed) {
       if (el === null) {
@@ -265,14 +265,14 @@ export async function isDisplayed(
   selector,
   displayed = true,
   timeout = 1500,
-  parentSelector = undefined
+  parentSelector = undefined,
 ) {
   try {
     const parentEl = parentSelector ? parentSelector : global.client;
     const el = await parentEl.waitForSelector(selector, {
       timeout,
       // strict: true,
-      state: displayed ? 'attached' : 'detached' //'visible' : 'hidden' //'detached'
+      state: displayed ? 'attached' : 'detached', //'visible' : 'hidden' //'detached'
     });
     if (!displayed) {
       if (el === null) {
@@ -287,7 +287,7 @@ export async function isDisplayed(
         'ms exceeded. isDisplayed:' +
         selector +
         ' displayed:' +
-        displayed
+        displayed,
       // error
     );
   }
@@ -340,8 +340,8 @@ export async function expectAudioPlay() {
       {
         message: 'progress of file is not greater that 0', // custom error message
         // Poll for 10 seconds; defaults to 5 seconds. Pass 0 to disable timeout.
-        timeout: 10000
-      }
+        timeout: 10000,
+      },
     )
     .toBe(true);
 }
@@ -349,7 +349,7 @@ export async function expectAudioPlay() {
 export async function expectElementSelected(
   selector,
   isSelected = true,
-  timeout = 2000
+  timeout = 2000,
 ) {
   await expectElementExist(
     '[data-tid="fsEntryName_' +
@@ -358,7 +358,7 @@ export async function expectElementSelected(
       (isSelected ? 'CheckCircleIcon' : 'RadioButtonUncheckedIcon') +
       '"]',
     true,
-    timeout
+    timeout,
   );
 }
 
@@ -366,13 +366,13 @@ export async function expectElementExist(
   selector,
   exist = true,
   timeout = 2000,
-  parentSelector = undefined
+  parentSelector = undefined,
 ) {
   let displayed;
   if (parentSelector) {
     const parentElement = await global.client.waitForSelector(parentSelector, {
       timeout,
-      state: 'visible'
+      state: 'visible',
     });
     displayed = await isDisplayed(selector, exist, timeout, parentElement);
   } else {
@@ -384,11 +384,11 @@ export async function expectElementExist(
 export async function createLocation(
   locationPath,
   locationName,
-  isDefault = false
+  isDefault = false,
 ) {
   // locationPerspective = locationPerspective || 'Grid';
   const locationManagerMenu = await global.client.$(
-    '[data-tid=locationManagerPanel]'
+    '[data-tid=locationManagerPanel]',
   );
   await locationManagerMenu.click();
   const elem = await global.client.$('[data-tid=createNewLocation]');
@@ -396,27 +396,27 @@ export async function createLocation(
   const lPath = await global.client.$('[data-tid=locationPath]');
   await lPath.click();
   const locationPathInput = await global.client.$(
-    '[data-tid=locationPath] input'
+    '[data-tid=locationPath] input',
   );
   await locationPathInput.keys(locationPath || defaultLocationPath);
   // keys is workarround for not working setValue await global.client.$('[data-tid=locationPath] input').setValue(locationPath || defaultLocationPath);
   const lName = await global.client.$('[data-tid=locationName]');
   await lName.click();
   const locationNameInput = await global.client.$(
-    '[data-tid=locationName] input'
+    '[data-tid=locationName] input',
   );
   locationNameInput.keys(
-    locationName || 'Test Location' + new Date().getTime()
+    locationName || 'Test Location' + new Date().getTime(),
   );
   if (isDefault) {
     await delay(1000);
     const locationIsDefault = await global.client.$(
-      '[data-tid=locationIsDefault]'
+      '[data-tid=locationIsDefault]',
     );
     await locationIsDefault.click();
   }
   const confirmLocationCreation = await global.client.$(
-    '[data-tid=confirmLocationCreation]'
+    '[data-tid=confirmLocationCreation]',
   );
   await confirmLocationCreation.waitForDisplayed();
   await confirmLocationCreation.click();
@@ -425,17 +425,17 @@ export async function createLocation(
 export async function setGridOptions(
   perspective = 'list',
   showDirectories = true,
-  entrySize = undefined
+  entrySize = undefined,
 ) {
   // open Option menu
   await clickOn('[data-tid=' + perspective + 'PerspectiveOptionsMenu]');
   if (showDirectories) {
     await global.client.check(
-      '[data-tid=gridPerspectiveToggleShowDirectories] input'
+      '[data-tid=gridPerspectiveToggleShowDirectories] input',
     );
   } else {
     await global.client.uncheck(
-      '[data-tid=gridPerspectiveToggleShowDirectories] input'
+      '[data-tid=gridPerspectiveToggleShowDirectories] input',
     );
   }
 
@@ -470,7 +470,7 @@ export async function selectFilesByID(arrEntryIds = []) {
   await clickOn('[data-tid=openListPerspective]');
   for (let i = 0; i < arrEntryIds.length; i++) {
     await clickOn(
-      'div[data-entry-id="' + arrEntryIds[i] + '"] div[data-tid=rowCellTID]'
+      'div[data-entry-id="' + arrEntryIds[i] + '"] div[data-tid=rowCellTID]',
     );
     /* let entry = await global.client.$(
       '[data-entry-id="' + arrEntryIds[i] + '"]'
@@ -506,7 +506,7 @@ export async function selectRowFiles(arrIndex = []) {
         // const classNotSelected = await parent.getAttribute('class');
         // const elNotSelected = await parent.$('//*[@class="' + classNotSelected + '"]');
         await clickOn(
-          'div[data-entry-id="' + id + '"] div[data-tid=rowCellTID]'
+          'div[data-entry-id="' + id + '"] div[data-tid=rowCellTID]',
         );
         // filesList[index].click();
         // const selector = '//*[@class="' + classNotSelected + '"]';
@@ -523,7 +523,7 @@ export async function selectRowFiles(arrIndex = []) {
             filesList.length +
             ' with index:' +
             index +
-            ' not exist'
+            ' not exist',
         );
       }
     }
@@ -566,8 +566,8 @@ export async function holdDownKey(character) {
     {
       type: 'key',
       id: 'keyboard',
-      actions: [{ type: 'keyDown', value: character }]
-    }
+      actions: [{ type: 'keyDown', value: character }],
+    },
   ]);
 }
 
@@ -576,8 +576,8 @@ export async function releaseKey(character) {
     {
       type: 'key',
       id: 'keyboard',
-      actions: [{ type: 'keyUp', value: character }]
-    }
+      actions: [{ type: 'keyUp', value: character }],
+    },
   ]);
 }
 
@@ -672,7 +672,7 @@ export async function expectTagsExistBySelector(
   selector,
   arrTagNames,
   exist = true,
-  timeout = 500
+  timeout = 500,
 ) {
   const gridElement = await global.client.waitForSelector(selector);
   await expectTagsExist(gridElement, arrTagNames, exist);
@@ -697,7 +697,7 @@ export async function expectTagsExist(gridElement, arrTagNames, exist = true) {
 export async function expectMetaFilesExist(
   arrMetaFiles,
   exist = true,
-  subFolder = undefined
+  subFolder = undefined,
 ) {
   await checkSettings('[data-tid=settingsSetShowUnixHiddenEntries]', true);
   //await clickOn('[data-tid=folderContainerOpenDirMenu]');
@@ -717,7 +717,7 @@ export async function expectMetaFilesExist(
       await expectElementExist(
         getGridFileSelector(arrMetaFiles[i]),
         exist,
-        10000
+        10000,
       );
     }
     await clickOn('[data-tid=gridPerspectiveOnBackButton]');
@@ -728,7 +728,7 @@ export async function expectMetaFilesExist(
     await expectElementExist(
       getGridFileSelector(AppConfig.metaFolder),
       true,
-      10000
+      10000,
     );
     await checkSettings('[data-tid=settingsSetShowUnixHiddenEntries]', false);
   }
@@ -742,7 +742,7 @@ export async function writeTextInIframeInput(txt) {
 
 export async function expectFileContain(
   txtToContain = 'etete&5435',
-  timeout = 10000
+  timeout = 10000,
 ) {
   await expect
     .poll(
@@ -754,8 +754,8 @@ export async function expectFileContain(
       {
         message: 'make sure bodyTxt contain ' + txtToContain, // custom error message
         // Poll for 10 seconds; defaults to 5 seconds. Pass 0 to disable timeout.
-        timeout: timeout
-      }
+        timeout: timeout,
+      },
     )
     .toBe(true);
 }
@@ -768,7 +768,7 @@ export async function expectFileContain(
  */
 export async function waitForNotification(
   tid = 'notificationTID',
-  forceClose = true
+  forceClose = true,
 ) {
   // await expectElementExist('[data-tid=' + tid + ']', true, 8000);
   // const notificationTID = await global.client.$('[data-tid=' + tid + ']');
@@ -814,7 +814,7 @@ export async function setSettings(selector, click = false) {
 export async function checkSettings(
   selector,
   isChecked = true,
-  tabSelector = '[data-tid=generalSettingsDialog]'
+  tabSelector = '[data-tid=generalSettingsDialog]',
 ) {
   await clickOn('[data-tid=settings]');
   await clickOn(tabSelector);
@@ -964,7 +964,7 @@ export async function openCloseAboutDialog(title) {
   // // should eventually equals('About HTML Viewer');
   // expect(getTitle).toBe(title);
   const closeAboutDialogButton = await global.client.$(
-    '#closeAboutDialogButton'
+    '#closeAboutDialogButton',
   );
   await closeAboutDialogButton.waitForDisplayed();
   await closeAboutDialogButton.click();

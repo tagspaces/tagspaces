@@ -59,7 +59,7 @@ export function ProSign() {
               fontSize: 10,
               borderRadius: 4,
               backgroundColor: '#1dd19f',
-              padding: 3
+              padding: 3,
             }}
           >
             PRO

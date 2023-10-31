@@ -33,9 +33,9 @@ const pwConfig = {
     ? [['html', { open: 'never' }], ['github'], ['list', { printSteps: true }]]
     : [
         ['html', { open: 'never' }],
-        ['list', { printSteps: true }]
+        ['list', { printSteps: true }],
       ],
-  workers: 1
+  workers: 1,
 };
 
 export default pwConfig;

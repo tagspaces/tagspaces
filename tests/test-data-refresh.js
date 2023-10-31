@@ -6,7 +6,7 @@ const src = pathLib.join(
   __dirname,
   'testdata',
   'file-structure',
-  'supported-filestypes'
+  'supported-filestypes',
 );
 const dst = pathLib.join(__dirname, 'testdata-tmp', 'file-structure');
 

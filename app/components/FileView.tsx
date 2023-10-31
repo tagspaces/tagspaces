@@ -44,7 +44,7 @@ function FileView(props: Props) {
     fileViewerContainer,
     toggleFullScreen,
     height,
-    eventID
+    eventID,
   } = props; // .openedFiles[0];
 
   const { searchQuery } = useDirectoryContentContext();
@@ -76,17 +76,17 @@ function FileView(props: Props) {
     const extPrimaryColor =
       '&primecolor=' +
       encodeURIComponent(
-        primaryColor.startsWith('#') ? primaryColor : rgbToHex(primaryColor)
+        primaryColor.startsWith('#') ? primaryColor : rgbToHex(primaryColor),
       );
     const extTextColor =
       '&textcolor=' +
       encodeURIComponent(
-        textColor.startsWith('#') ? textColor : rgbToHex(textColor)
+        textColor.startsWith('#') ? textColor : rgbToHex(textColor),
       );
     const extBgndColor =
       '&bgndcolor=' +
       encodeURIComponent(
-        bgndColor.startsWith('#') ? bgndColor : rgbToHex(bgndColor)
+        bgndColor.startsWith('#') ? bgndColor : rgbToHex(bgndColor),
       );
 
     const event = eventID ? '&eventID=' + eventID : '';
@@ -137,7 +137,7 @@ function FileView(props: Props) {
         height: height || '100%',
         display: 'flex',
         flex: '1 1 100%',
-        backgroundColor: theme.palette.background.default
+        backgroundColor: theme.palette.background.default,
       }}
     >
       {isFullscreen && (
@@ -149,7 +149,7 @@ function FileView(props: Props) {
             top: 20,
             right: 20,
             zIndex: 10000,
-            color: theme.palette.primary.main
+            color: theme.palette.primary.main,
           }}
           onClick={toggleFullScreen}
         >
@@ -165,7 +165,7 @@ function FileView(props: Props) {
             width: '100%',
             height: '100%',
             zIndex: 3,
-            border: 0
+            border: 0,
           }}
           src={fileOpenerURL}
           allowFullScreen

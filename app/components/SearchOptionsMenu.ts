@@ -2,7 +2,7 @@ import { Pro } from '-/pro';
 import {
   SearchActions,
   SearchOptionType,
-  SearchQueryComposition
+  SearchQueryComposition,
 } from '-/components/SearchOptions';
 
 export function getSearchOptions(): Array<SearchOptionType> {
@@ -14,7 +14,7 @@ export function getSearchOptions(): Array<SearchOptionType> {
     fullName: SearchActions.LOCATION.fullName,
     action: SearchActions.LOCATION.shortName,
     descr: 'find and open a location',
-    group: 'actions'
+    group: 'actions',
   });
   options.push({
     id: SearchActions.FILTER.shortName,
@@ -22,7 +22,7 @@ export function getSearchOptions(): Array<SearchOptionType> {
     fullName: SearchActions.FILTER.fullName,
     action: SearchActions.FILTER.shortName,
     descr: 'filter the entries from the current folder',
-    group: 'actions'
+    group: 'actions',
   });
   if (Pro) {
     options.push({
@@ -31,7 +31,7 @@ export function getSearchOptions(): Array<SearchOptionType> {
       fullName: SearchActions.HISTORY.fullName,
       action: SearchActions.HISTORY.shortName,
       descr: 'find recently used files and folders',
-      group: 'actions'
+      group: 'actions',
     });
   }
   if (Pro) {
@@ -41,7 +41,7 @@ export function getSearchOptions(): Array<SearchOptionType> {
       fullName: SearchActions.BOOK.fullName,
       action: SearchActions.BOOK.shortName,
       descr: 'find bookmarks',
-      group: 'actions'
+      group: 'actions',
     });
   }
 
@@ -52,7 +52,7 @@ export function getSearchOptions(): Array<SearchOptionType> {
       fullName: SearchActions.SEARCH.fullName,
       action: SearchActions.SEARCH.shortName,
       descr: 'find and execute saved search queries',
-      group: 'actions'
+      group: 'actions',
     });
   }
   if (Pro) {
@@ -62,7 +62,7 @@ export function getSearchOptions(): Array<SearchOptionType> {
       fullName: SearchActions.SEARCH_HISTORY.fullName,
       action: SearchActions.SEARCH_HISTORY.shortName,
       descr: 'Execute search queries from history',
-      group: 'actions'
+      group: 'actions',
     });
   }
   options.push({
@@ -71,7 +71,7 @@ export function getSearchOptions(): Array<SearchOptionType> {
     action: SearchQueryComposition.TAG_AND.shortName,
     descr:
       'entries should have this tag to be included in the results (logical AND)',
-    group: 'query'
+    group: 'query',
   });
   options.push({
     id: SearchQueryComposition.TAG_NOT.shortName,
@@ -79,7 +79,7 @@ export function getSearchOptions(): Array<SearchOptionType> {
     action: SearchQueryComposition.TAG_NOT.shortName,
     descr:
       'entries should not have this tag to be included in the results (logical NOT)',
-    group: 'query'
+    group: 'query',
   });
   options.push({
     id: SearchQueryComposition.TAG_OR.shortName,
@@ -87,7 +87,7 @@ export function getSearchOptions(): Array<SearchOptionType> {
     action: SearchQueryComposition.TAG_OR.shortName,
     descr:
       'allows searching for entries having one tag or another (logical OR)',
-    group: 'query'
+    group: 'query',
   });
   if (Pro) {
     options.push({
@@ -96,7 +96,7 @@ export function getSearchOptions(): Array<SearchOptionType> {
       fullName: SearchQueryComposition.TYPE.fullName,
       action: SearchQueryComposition.TYPE.shortName,
       descr: 'filter by file type: document, video, files, folders',
-      group: 'query'
+      group: 'query',
     });
   }
 
@@ -107,7 +107,7 @@ export function getSearchOptions(): Array<SearchOptionType> {
       fullName: SearchQueryComposition.SIZE.fullName,
       action: SearchQueryComposition.SIZE.shortName,
       descr: 'list sizes from advanced search',
-      group: 'query'
+      group: 'query',
     });
   }
 
@@ -118,7 +118,7 @@ export function getSearchOptions(): Array<SearchOptionType> {
       fullName: SearchQueryComposition.LAST_MODIFIED.fullName,
       action: SearchQueryComposition.LAST_MODIFIED.shortName,
       descr: 'list last modified options from advanced search',
-      group: 'query'
+      group: 'query',
     });
   }
 
@@ -128,7 +128,7 @@ export function getSearchOptions(): Array<SearchOptionType> {
     fullName: SearchQueryComposition.SCOPE.fullName,
     action: SearchQueryComposition.SCOPE.shortName,
     descr: 'scope of the search: location, folder, global',
-    group: 'query'
+    group: 'query',
   });
   options.push({
     id: SearchQueryComposition.ACCURACY.shortName,
@@ -136,7 +136,7 @@ export function getSearchOptions(): Array<SearchOptionType> {
     fullName: SearchQueryComposition.ACCURACY.fullName,
     action: SearchQueryComposition.ACCURACY.shortName,
     descr: 'accuracy: fuzzy, semi strict, strict',
-    group: 'query'
+    group: 'query',
   });
   return options;
 }

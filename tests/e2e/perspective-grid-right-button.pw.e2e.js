@@ -9,7 +9,7 @@ import {
   renameFileFromMenu,
   deleteFileFromMenu,
   createPwMinioLocation,
-  createPwLocation
+  createPwLocation,
 } from './location.helpers';
 import { searchEngine } from './search.helpers';
 import { openContextEntryMenu, toContainTID } from './test-utils';
@@ -29,7 +29,7 @@ import {
   setGridOptions,
   showFilesWithTag,
   frameLocator,
-  takeScreenshot
+  takeScreenshot,
 } from './general.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
@@ -71,7 +71,7 @@ test.describe('TST50** - Right button on a file', () => {
     // await searchEngine('txt');
     await openContextEntryMenu(
       getGridFileSelector('sample.txt'), // perspectiveGridTable + firstFile,
-      'fileMenuOpenFile'
+      'fileMenuOpenFile',
     );
     // await takeScreenshot('fileMenuOpenFile');
     await expect
@@ -84,8 +84,8 @@ test.describe('TST50** - Right button on a file', () => {
         {
           message: 'make sure bodyTxt contain etete&5435', // custom error message
           // Poll for 10 seconds; defaults to 5 seconds. Pass 0 to disable timeout.
-          timeout: 10000
-        }
+          timeout: 10000,
+        },
       )
       .toBe(true);
     // await takeScreenshot('bodyTxt_fileMenuOpenFile');
@@ -121,7 +121,7 @@ test.describe('TST50** - Right button on a file', () => {
     const sampleFileName = 'sample.txt';
     const oldName = await renameFileFromMenu(
       newFileName,
-      getGridFileSelector(sampleFileName)
+      getGridFileSelector(sampleFileName),
     );
     expect(oldName).toBe(sampleFileName);
 
@@ -134,7 +134,7 @@ test.describe('TST50** - Right button on a file', () => {
     // rename back to oldName
     const fileName = await renameFileFromMenu(
       oldName,
-      getGridFileSelector(newFileName + fileExtension)
+      getGridFileSelector(newFileName + fileExtension),
     );
     expect(fileName).toBe(newFileName + fileExtension);
   });
@@ -164,7 +164,7 @@ test.describe('TST50** - Right button on a file', () => {
       '[data-tid=tagContainer_' + testTagName + ']',
       true,
       8000,
-      '[data-tid=perspectiveGridFileTable]'
+      '[data-tid=perspectiveGridFileTable]',
     );
     // await expectTagsExistBySelector(selectorFile, [testTagName], true);
 
@@ -183,7 +183,7 @@ test.describe('TST50** - Right button on a file', () => {
       '[data-tid=tagContainer_' + testTagName + 'Edited]',
       true,
       8000,
-      '[data-tid=perspectiveGridFileTable]'
+      '[data-tid=perspectiveGridFileTable]',
     );
     await testDataRefresh();
     // cleanup
@@ -214,7 +214,7 @@ test.describe('TST50** - Right button on a file', () => {
       '[data-tid=tagContainer_' + testTagName + ']',
       true,
       8000,
-      '[data-tid=perspectiveGridFileTable]'
+      '[data-tid=perspectiveGridFileTable]',
     );
     // await expectTagsExistBySelector(selectorFile, [testTagName], true);
 
@@ -223,7 +223,7 @@ test.describe('TST50** - Right button on a file', () => {
       '[data-tid=tagContainer_' + testTagName + ']',
       false,
       8000,
-      '[data-tid=perspectiveGridFileTable]'
+      '[data-tid=perspectiveGridFileTable]',
     );
     // await expectTagsExistBySelector(selectorFile, [testTagName], false);
   });
@@ -252,7 +252,7 @@ test.describe('TST50** - Right button on a file', () => {
     await expectElementExist(
       '[data-tid=tagMoreButton_' + testTagName + ']',
       false,
-      5000
+      5000,
     );
 
     /* const classNotSelected = await getGridCellClass(0);
@@ -283,7 +283,7 @@ test.describe('TST50** - Right button on a file', () => {
     await AddRemoveTagsToSelectedFiles('grid', tags, true);
 
     let gridElement = await global.client.waitForSelector(
-      getGridFileSelector(generateFileName(fileName, fileExt, tags, ' '))
+      getGridFileSelector(generateFileName(fileName, fileExt, tags, ' ')),
     );
     gridElement = await gridElement.$('..');
     for (let i = 0; i < tags.length; i++) {
@@ -297,7 +297,7 @@ test.describe('TST50** - Right button on a file', () => {
     for (let i = 0; i < tags.length; i++) {
       await expectElementExist(
         '[data-tid=tagContainer_' + tags[i] + ']',
-        false
+        false,
       );
     }
     /*gridElement = await global.client.waitForSelector(
@@ -359,7 +359,7 @@ test.describe('TST50** - Right button on a file', () => {
     //await global.client.dblclick(selectorFolder);
     await openContextEntryMenu(
       getGridFileSelector(folderName),
-      'openDirectory'
+      'openDirectory',
     );
     await expectElementExist(getGridFileSelector(fileName), true);
 
@@ -378,7 +378,7 @@ test.describe('TST50** - Right button on a file', () => {
     // await global.client.dblclick(selectorFolder);
     await openContextEntryMenu(
       getGridFileSelector(folderName),
-      'openDirectory'
+      'openDirectory',
     );
     await expectElementExist(selectorFile, true);
     await deleteFileFromMenu();
@@ -425,7 +425,7 @@ test.describe('TST50** - Right button on a file', () => {
 
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
-      false
+      false,
     );
     // dir back to check if parent folder exist
     // await clickOn('[data-tid=gridPerspectiveOnBackButton]');
@@ -499,13 +499,13 @@ test.describe('TST50** - Right button on a file', () => {
       // '[data-tid=' + gridDefaultSettings.testID + ']',
       '[data-tid=gridPerspectiveContainer]',
       true,
-      5000
+      5000,
     );
     await clickOn('[data-tid=openListPerspective]'); // openListPerspective
     await expectElementExist(
       // '[data-tid=' + listDefaultSettings.testID + ']',
       '[data-tid=listPerspectiveContainer]',
-      true
+      true,
     );
   });
 

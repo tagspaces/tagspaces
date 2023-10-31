@@ -16,7 +16,7 @@ function getExtensions(directoryPath, isExternal = false) {
         return;
       }
       // Filter subdirectories
-      const subDirectories = files.filter(file => file.isDirectory());
+      const subDirectories = files.filter((file) => file.isDirectory());
 
       resolve(processDirs(directoryPath, subDirectories, isExternal));
     });
@@ -26,13 +26,13 @@ function getExtensions(directoryPath, isExternal = false) {
 function processDirs(directoryPath, dirs, isExternal = false) {
   const supportedFileTypes = [];
 
-  const extensions = dirs.map(dir => {
+  const extensions = dirs.map((dir) => {
     const pluginJsonPath = path.join(
       directoryPath,
       '@tagspaces',
       'extensions',
       dir.name,
-      'package.json'
+      'package.json',
     );
     try {
       const packageJsonContent = fs.readFileSync(pluginJsonPath);
@@ -55,28 +55,28 @@ function processDirs(directoryPath, dirs, isExternal = false) {
           (buildFolder ? '/' + buildFolder : '');
 
         if (fileTypes) {
-          fileTypes.forEach(fileType => {
+          fileTypes.forEach((fileType) => {
             if (fileType.ext) {
               const supportTypes = fileType.types ? fileType.types : types;
-              const supportedTypes = supportTypes.map(type => ({
+              const supportedTypes = supportTypes.map((type) => ({
                 [type]: extensionId,
-                ...(isExternal && { extensionExternalPath: directoryPath })
+                ...(isExternal && { extensionExternalPath: directoryPath }),
               }));
 
               const existingItemIndex = supportedFileTypes.findIndex(
-                item => item.type === fileType.ext
+                (item) => item.type === fileType.ext,
               );
               if (existingItemIndex !== -1) {
                 // If an item with the same id already exists, update its properties
                 supportedFileTypes[existingItemIndex] = {
                   ...supportedFileTypes[existingItemIndex],
-                  ...supportedTypes.reduce((a, b) => ({ ...a, ...b }))
+                  ...supportedTypes.reduce((a, b) => ({ ...a, ...b })),
                 };
               } else {
                 supportedFileTypes.push({
                   type: fileType.ext,
                   color: fileType.color ? fileType.color : color,
-                  ...supportedTypes.reduce((a, b) => ({ ...a, ...b }))
+                  ...supportedTypes.reduce((a, b) => ({ ...a, ...b })),
                 });
               }
             }
@@ -89,19 +89,19 @@ function processDirs(directoryPath, dirs, isExternal = false) {
           ...(isExternal && { extensionExternal: true }),
           extensionEnabled: enabled !== undefined ? enabled : !isExternal,
           version: version,
-          ...props
+          ...props,
         };
       }
     } catch (ex) {
       console.debug(
-        'generateExtensionsConfig: ' + dir.name + ' error:' + ex.message
+        'generateExtensionsConfig: ' + dir.name + ' error:' + ex.message,
       );
     }
     return undefined;
   });
   return {
-    extensions: extensions.filter(ex => ex),
-    supportedFileTypes: supportedFileTypes
+    extensions: extensions.filter((ex) => ex),
+    supportedFileTypes: supportedFileTypes,
   };
 }
 

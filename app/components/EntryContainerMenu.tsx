@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
   baseName,
   extractFileName,
-  extractDirectoryName
+  extractDirectoryName,
 } from '@tagspaces/tagspaces-common/paths';
 import PlatformIO from '-/services/platform-facade';
 import {
@@ -11,7 +11,7 @@ import {
   Menu,
   MenuItem,
   MenuList,
-  Divider
+  Divider,
 } from '@mui/material';
 import { OpenedEntry } from '-/reducers/app';
 import { useSelector } from 'react-redux';
@@ -22,7 +22,7 @@ import {
   NavigateToFolderIcon,
   OpenNewWindowIcon,
   ParentFolderIcon,
-  ReloadIcon
+  ReloadIcon,
 } from '-/components/CommonIcons';
 import ExpandIcon from '@mui/icons-material/SettingsEthernet';
 import OpenNativelyIcon from '@mui/icons-material/Launch';
@@ -31,7 +31,7 @@ import FileDownloadIcon from '@mui/icons-material/AssignmentReturned';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import {
   getWarningOpeningFilesExternally,
-  isDesktopMode
+  isDesktopMode,
 } from '-/reducers/settings';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
@@ -57,7 +57,7 @@ function EntryContainerMenu(props: Props) {
     toggleFullScreen,
     sharingLink,
     sharingParentFolderLink,
-    reloadDocument
+    reloadDocument,
   } = props;
   const { t } = useTranslation();
   // const theme = useTheme();
@@ -67,17 +67,16 @@ function EntryContainerMenu(props: Props) {
   const { showNotification } = useNotificationContext();
   const desktopMode = useSelector(isDesktopMode);
   const warningOpeningFilesExternally = useSelector(
-    getWarningOpeningFilesExternally
+    getWarningOpeningFilesExternally,
   );
 
-  const [isDeleteEntryModalOpened, setDeleteEntryModalOpened] = useState<
-    boolean
-  >(false);
+  const [isDeleteEntryModalOpened, setDeleteEntryModalOpened] =
+    useState<boolean>(false);
 
   const downloadCordova = (uri, filename) => {
     const { Downloader } = window.plugins;
 
-    const downloadSuccessCallback = result => {
+    const downloadSuccessCallback = (result) => {
       // result is an object
       /* {
         path: "file:///storage/sdcard0/documents/My Pdf.pdf", // Returns full file path
@@ -87,7 +86,7 @@ function EntryContainerMenu(props: Props) {
       console.log(result.file); // My Pdf.pdf
     };
 
-    const downloadErrorCallback = error => {
+    const downloadErrorCallback = (error) => {
       console.log(error);
     };
 
@@ -97,20 +96,20 @@ function EntryContainerMenu(props: Props) {
       path: filename, // The File Name with extension
       description: 'The file is downloading', // Download description Notification String
       visible: true, // This download is visible and shows in the notifications while in progress and after completion.
-      folder: 'documents' // Folder to save the downloaded file, if not exist it will be created
+      folder: 'documents', // Folder to save the downloaded file, if not exist it will be created
     };
 
     Downloader.download(
       options,
       downloadSuccessCallback,
-      downloadErrorCallback
+      downloadErrorCallback,
     );
   };
 
   function downloadFile() {
     const entryName = `${baseName(
       openedEntry.path,
-      PlatformIO.getDirSeparator()
+      PlatformIO.getDirSeparator(),
     )}`;
     const fileName = extractFileName(entryName, PlatformIO.getDirSeparator());
 
@@ -199,7 +198,7 @@ function EntryContainerMenu(props: Props) {
           <ReloadIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:reloadFile')} />
-      </MenuItem>
+      </MenuItem>,
     );
     menuItems.push(
       <MenuItem
@@ -212,7 +211,7 @@ function EntryContainerMenu(props: Props) {
           <FileDownloadIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:downloadFile')} />
-      </MenuItem>
+      </MenuItem>,
     );
     menuItems.push(<Divider key={'divider1'} />);
     menuItems.push(
@@ -229,7 +228,7 @@ function EntryContainerMenu(props: Props) {
           <FullScreenIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:switchToFullscreen')} />
-      </MenuItem>
+      </MenuItem>,
     );
     if (desktopMode) {
       menuItems.push(
@@ -246,7 +245,7 @@ function EntryContainerMenu(props: Props) {
             <ExpandIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:openInFullWidth')} />
-        </MenuItem>
+        </MenuItem>,
       );
     }
     if (!readOnlyMode) {
@@ -265,7 +264,7 @@ function EntryContainerMenu(props: Props) {
             <DeleteIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:deleteEntry')} />
-        </MenuItem>
+        </MenuItem>,
       );
     }
     menuItems.push(<Divider key={'divider2'} />);
@@ -280,7 +279,7 @@ function EntryContainerMenu(props: Props) {
           <ParentFolderIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:navigateToParentDirectory')} />
-      </MenuItem>
+      </MenuItem>,
     );
     if (!AppConfig.isCordova) {
       menuItems.push(
@@ -294,7 +293,7 @@ function EntryContainerMenu(props: Props) {
             <OpenNewWindowIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:openInWindow')} />
-        </MenuItem>
+        </MenuItem>,
       );
     }
     if (AppConfig.isCordova) {
@@ -309,7 +308,7 @@ function EntryContainerMenu(props: Props) {
             <LinkIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:shareFile')} />
-        </MenuItem>
+        </MenuItem>,
       );
     }
     if (
@@ -330,7 +329,7 @@ function EntryContainerMenu(props: Props) {
             <OpenNativelyIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:openFileExternally')} />
-        </MenuItem>
+        </MenuItem>,
       );
     }
   } else {
@@ -349,7 +348,7 @@ function EntryContainerMenu(props: Props) {
           <ReloadIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:reloadDirectory')} />
-      </MenuItem>
+      </MenuItem>,
     );
     menuItems.push(<Divider key={'divider6'} />);
     menuItems.push(
@@ -363,7 +362,7 @@ function EntryContainerMenu(props: Props) {
           <NavigateToFolderIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:openInMainArea')} />
-      </MenuItem>
+      </MenuItem>,
     );
     if (!AppConfig.isCordova) {
       menuItems.push(
@@ -377,7 +376,7 @@ function EntryContainerMenu(props: Props) {
             <OpenNewWindowIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:openInWindow')} />
-        </MenuItem>
+        </MenuItem>,
       );
     }
     if (
@@ -398,7 +397,7 @@ function EntryContainerMenu(props: Props) {
             <OpenNativelyIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:openDirectoryExternally')} />
-        </MenuItem>
+        </MenuItem>,
       );
     }
     if (desktopMode) {
@@ -416,7 +415,7 @@ function EntryContainerMenu(props: Props) {
             <ExpandIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:openInFullWidth')} />
-        </MenuItem>
+        </MenuItem>,
       );
     }
     if (!readOnlyMode) {
@@ -435,7 +434,7 @@ function EntryContainerMenu(props: Props) {
             <DeleteIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:deleteDirectory')} />
-        </MenuItem>
+        </MenuItem>,
       );
     }
   }
@@ -449,11 +448,11 @@ function EntryContainerMenu(props: Props) {
         onClose={handleClose}
         anchorOrigin={{
           vertical: 'bottom',
-          horizontal: 'left'
+          horizontal: 'left',
         }}
         transformOrigin={{
           vertical: 'top',
-          horizontal: 'left'
+          horizontal: 'left',
         }}
       >
         <MenuList>{menuItems}</MenuList>
@@ -476,12 +475,12 @@ function EntryContainerMenu(props: Props) {
                   dirPath: openedEntry.path
                     ? extractDirectoryName(
                         openedEntry.path,
-                        PlatformIO.getDirSeparator()
+                        PlatformIO.getDirSeparator(),
                       )
-                    : ''
+                    : '',
                 })
           }
-          confirmCallback={result => {
+          confirmCallback={(result) => {
             if (result) {
               return deleteFile(openedEntry.path, openedEntry.uuid);
             }

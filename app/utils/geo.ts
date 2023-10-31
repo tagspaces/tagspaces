@@ -47,7 +47,7 @@ export function isPlusCode(plusCode: string): boolean {
   }
   const upperCasedPlusCode = plusCode.toUpperCase(); // needed only lowercased index
   return /(^|\s)([23456789C][23456789CFGHJMPQRV][23456789CFGHJMPQRVWX]{6}\+[23456789CFGHJMPQRVWX]{2,3})(\s|$)/.test(
-    upperCasedPlusCode
+    upperCasedPlusCode,
   );
 }
 
@@ -57,7 +57,8 @@ export function isMgrsString(c) {
     return false;
   }
   const coord = c.replace(/\s+/g, '');
-  const MGRS = /^(\d{1,2})([C-HJ-NP-X])\s*([A-HJ-NP-Z])([A-HJ-NP-V])\s*(\d{1,5}\s*\d{1,5})$/i;
+  const MGRS =
+    /^(\d{1,2})([C-HJ-NP-X])\s*([A-HJ-NP-Z])([A-HJ-NP-V])\s*(\d{1,5}\s*\d{1,5})$/i;
   return MGRS.test(coord);
 }
 
@@ -66,12 +67,12 @@ export function isMgrsString(c) {
  * @param latLongInput
  */
 export function parseLatLon(
-  latLongInput: string
+  latLongInput: string,
 ): { lat: number; lon: number } | false {
   const cleanedInput = latLongInput.replace(/\s+/g, ''); // cleaning spaces
   if (
     !/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$/.test(
-      cleanedInput
+      cleanedInput,
     )
   ) {
     return false;
@@ -82,7 +83,7 @@ export function parseLatLon(
   if (!isNaN(lat) && !isNaN(lon)) {
     return {
       lat,
-      lon
+      lon,
     };
   }
   return false;

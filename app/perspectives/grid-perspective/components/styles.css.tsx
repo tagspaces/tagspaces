@@ -32,7 +32,7 @@ export const classes = {
   gridSizeDate: `${PREFIX}-gridSizeDate`,
   gridDetails: `${PREFIX}-gridDetails`,
   gridFolder: `${PREFIX}-gridFolder`,
-  topToolbar: `${PREFIX}-topToolbar`
+  topToolbar: `${PREFIX}-topToolbar`,
 };
 
 export const GridStyles = styled('div')(({ theme }) => ({
@@ -48,7 +48,7 @@ export const GridStyles = styled('div')(({ theme }) => ({
     marginTop: 1,
     marginLeft: 2,
     marginBottom: 1,
-    marginRight: 1
+    marginRight: 1,
   },
   [`& .${classes.rowCell}`]: {
     boxShadow: 'none',
@@ -58,25 +58,25 @@ export const GridStyles = styled('div')(({ theme }) => ({
     borderBottom: '1px solid ' + theme.palette.divider,
     margin: 0,
     marginTop: 0,
-    marginBottom: 0
+    marginBottom: 0,
   },
   [`& .${classes.rowHover}`]: {
     '&:hover': {
-      backgroundColor: theme.palette.divider + ' !important'
-    }
+      backgroundColor: theme.palette.divider + ' !important',
+    },
   },
   [`& .${classes.selectedGridCell}`]: {
     border: '2px solid' + theme.palette.primary.main,
-    backgroundColor: theme.palette.primary.light + ' !important'
+    backgroundColor: theme.palette.primary.light + ' !important',
   },
   [`& .${classes.selectedRowCell}`]: {
-    border: '1px solid' + theme.palette.primary.main + ' !important'
+    border: '1px solid' + theme.palette.primary.main + ' !important',
   },
   [`& .${classes.gridCellThumb}`]: {
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'center',
     borderRadius: 5,
-    marginBottom: 5
+    marginBottom: 5,
   },
   [`& .${classes.gridCellTitle}`]: {
     padding: '0px 5px 0 5px',
@@ -85,7 +85,7 @@ export const GridStyles = styled('div')(({ theme }) => ({
     WebkitLineClamp: 2,
     WebkitBoxOrient: 'vertical',
     textOverflow: 'ellipsis',
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   [`& .${classes.gridCellTags}`]: {
     padding: 0,
@@ -93,7 +93,7 @@ export const GridStyles = styled('div')(({ theme }) => ({
     height: 100,
     overflowY: 'auto',
     overflowX: 'hidden',
-    position: 'relative'
+    position: 'relative',
   },
   [`& .${classes.gridCellDescription}`]: {
     padding: 2,
@@ -102,7 +102,7 @@ export const GridStyles = styled('div')(({ theme }) => ({
     borderRadius: 5,
     opacity: 0.6,
     wordBreak: 'break-word',
-    display: 'block'
+    display: 'block',
   },
   [`& .${classes.gridFileExtension}`]: {
     paddingTop: 1,
@@ -116,25 +116,25 @@ export const GridStyles = styled('div')(({ theme }) => ({
     height: 16,
     color: 'white',
     borderRadius: 3,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   [`& .${classes.gridSizeDate}`]: {
     overflow: 'hidden',
     whiteSpace: 'nowrap',
     marginRight: 5,
     marginLeft: 'auto',
-    paddingTop: 12
+    paddingTop: 12,
   },
   [`& .${classes.gridDetails}`]: {
     display: 'flex',
-    whiteSpace: 'nowrap'
+    whiteSpace: 'nowrap',
   },
   [`& .${classes.gridFolder}`]: {
     color: 'white',
     padding: 5,
     minHeight: 15,
     height: 20,
-    borderRadius: 3
+    borderRadius: 3,
   },
   [`& .${classes.topToolbar}`]: {
     paddingLeft: 5,
@@ -153,6 +153,6 @@ export const GridStyles = styled('div')(({ theme }) => ({
     // borderBottom: '1px solid ' + theme.palette.divider,
     width: 'calc(100% - 10px)',
     overflowX: 'auto',
-    overflowY: 'hidden'
-  }
+    overflowY: 'hidden',
+  },
 }));

@@ -6,7 +6,8 @@ import fse from 'fs-extra';
 // Spectron API https://github.com/electron/spectron
 // Webdriver.io http://webdriver.io/api.html
 
-export const delay = time => new Promise(resolve => setTimeout(resolve, time));
+export const delay = (time) =>
+  new Promise((resolve) => setTimeout(resolve, time));
 
 /**
  * Returns a random integer between min (inclusive) and max (inclusive)
@@ -59,7 +60,7 @@ export async function clearLocalStorage() {
     windowHandle.history.pushState('', title, windowHandle.location.pathname);
   } else {
     await global.app.webContents.executeJavaScript(
-      "window.history.pushState('', document.title, window.location.pathname);localStorage.clear()"
+      "window.history.pushState('', document.title, window.location.pathname);localStorage.clear()",
     );
     global.app.webContents.reload();
   }
@@ -74,14 +75,14 @@ export async function copyExtConfig(extconfig = 'extconfig-with-welcome.js') {
     '..',
     '..',
     'scripts',
-    global.isWeb ? 'web' + extconfig : extconfig
+    global.isWeb ? 'web' + extconfig : extconfig,
   );
   const destDir = pathLib.join(
     __dirname,
     '..',
     '..',
     global.isWeb ? 'web' : 'app',
-    'extconfig.js'
+    'extconfig.js',
   );
   await fse.copy(srcDir, destDir);
 }
@@ -93,8 +94,8 @@ export async function removeExtConfig() {
       '..',
       '..',
       global.isWeb ? 'web' : 'app',
-      'extconfig.js'
-    )
+      'extconfig.js',
+    ),
   );
 }
 
@@ -110,7 +111,7 @@ export async function startTestingApp(extconfig) {
     '--no-sandbox',
     '--disable-dev-shm-usage',
     '--disable-extensions',
-    '--window-size=1920,1080'
+    '--window-size=1920,1080',
   ];
   if (global.isHeadlessMode) {
     chromeDriverArgs.push('--headless');
@@ -120,11 +121,11 @@ export async function startTestingApp(extconfig) {
     const { webkit, chromium } = require('playwright');
     global.app = await chromium.launch({
       headless: global.isHeadlessMode,
-      slowMo: 50
+      slowMo: 50,
     }); //browser
 
     global.context = await global.app.newContext({
-      viewport: { width: 1920, height: 1080 }
+      viewport: { width: 1920, height: 1080 },
     });
 
     global.client = await global.context.newPage(); //page
@@ -145,14 +146,14 @@ export async function startTestingApp(extconfig) {
         // '--enable-logging', // after enabling cmd windows appears in Windows
         '--ignore-certificate-errors',
         '--ignore-ssl-errors',
-        '--disable-dev-shm-usage'
+        '--disable-dev-shm-usage',
       ],
       bypassCSP: true,
       env: {
         ELECTRON_ENABLE_LOGGING: true,
-        ELECTRON_ENABLE_STACK_DUMPING: true
+        ELECTRON_ENABLE_STACK_DUMPING: true,
         // NODE_ENV: 'test'
-      }
+      },
     });
 
     // Get the Electron context.
@@ -187,7 +188,7 @@ export async function testDataRefresh() {
     '..',
     'testdata',
     'file-structure',
-    'supported-filestypes'
+    'supported-filestypes',
   );
   const dst = pathLib.join(__dirname, '..', 'testdata-tmp', 'file-structure');
 
@@ -199,7 +200,7 @@ export async function testDataRefresh() {
 export async function createFile(
   fileName = 'empty_file.html',
   fileContent = undefined,
-  rootFolder = 'empty_folder'
+  rootFolder = 'empty_folder',
 ) {
   const filePath = pathLib.join(
     __dirname,
@@ -208,7 +209,7 @@ export async function createFile(
     'file-structure',
     'supported-filestypes',
     rootFolder,
-    fileName
+    fileName,
   );
 
   try {

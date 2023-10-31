@@ -92,7 +92,7 @@ function OpenLinkDialog(props: Props) {
       onClose={onClose}
       style={{ minWidth: 300 }}
       // fullScreen={fullScreen}
-      onKeyDown={event => {
+      onKeyDown={(event) => {
         if (event.key === 'Enter' || event.keyCode === 13) {
           event.preventDefault();
           event.stopPropagation();
@@ -112,7 +112,7 @@ function OpenLinkDialog(props: Props) {
             autoFocus
             name="name"
             label={t('core:link')}
-            onChange={event => {
+            onChange={(event) => {
               const { target } = event;
               setLinkURL(target.value);
             }}
@@ -123,7 +123,7 @@ function OpenLinkDialog(props: Props) {
                 <InputAdornment position="start">
                   <InfoIcon tooltip="TagSpace links begin with ts://? and are used for internal sharing of files and folders" />
                 </InputAdornment>
-              )
+              ),
             }}
           />
         </FormControl>

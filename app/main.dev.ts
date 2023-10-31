@@ -22,7 +22,7 @@ import {
   dialog,
   globalShortcut,
   ipcMain,
-  shell
+  shell,
 } from 'electron';
 import windowStateKeeper from 'electron-window-state';
 import path from 'path';
@@ -46,7 +46,7 @@ contextMenu({
   showInspectElement: false,
   showSearchWithGoogle: false,
   showLookUpSelection: false,
-  showServices: false
+  showServices: false,
 });
 
 const isMac = process.platform === 'darwin';
@@ -69,9 +69,9 @@ if (process.env.NODE_ENV === 'production') {
     fs.mkdirSync(dir, { recursive: true });
   }
   const logFile = fs.createWriteStream(path.join(dir, 'log.txt'), {
-    flags: 'a' // 'w'
+    flags: 'a', // 'w'
   });
-  console.error = function(d, ex) {
+  console.error = function (d, ex) {
     logFile.write(d + '\n');
     if (ex) {
       logFile.write(ex.stack + '\n');
@@ -155,18 +155,18 @@ const installExtensions = () => {
   const {
     default: installExtension,
     REACT_DEVELOPER_TOOLS,
-    REDUX_DEVTOOLS
+    REDUX_DEVTOOLS,
   } = require('electron-devtools-installer'); // eslint-disable-line
 
   // const forceDownload = !!process.env.UPGRADE_EXTENSIONS; // temp fix for electron-devtools-installer issue
   const extensions = [REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS];
   const extOptions = {
     loadExtensionOptions: { allowFileAccess: true },
-    forceDownload: false
+    forceDownload: false,
   };
 
   return Promise.all(
-    extensions.map(async name => await installExtension(name.id, extOptions))
+    extensions.map(async (name) => await installExtension(name.id, extOptions)),
   ).catch(console.log);
 };
 
@@ -334,7 +334,7 @@ function reloadApp() {
 function createNewWindowInstance(url?) {
   const mainWindowState = windowStateKeeper({
     defaultWidth: 1280,
-    defaultHeight: 800
+    defaultHeight: 800,
   });
 
   const mainWindowInstance = new BrowserWindow({
@@ -346,8 +346,8 @@ function createNewWindowInstance(url?) {
       spellcheck: true,
       nodeIntegration: true,
       webviewTag: true,
-      contextIsolation: false
-    }
+      contextIsolation: false,
+    },
   });
 
   mainWindowInstance.setMenuBarVisibility(false);
@@ -382,10 +382,10 @@ function buildTrayMenu(i18n) {
       toggleNewFileDialog: newTextFile,
       openNextFile: getNextFile,
       openPrevFile: getPreviousFile,
-      quitApp: reloadApp
+      quitApp: reloadApp,
     },
     i18n,
-    isMac
+    isMac,
   );
 }
 
@@ -416,9 +416,9 @@ function buildAppMenu(i18n) {
       toggleLicenseDialog,
       toggleThirdPartyLibsDialog,
       toggleAboutDialog,
-      createNewWindowInstance
+      createNewWindowInstance,
     },
-    i18n
+    i18n,
   );
 }
 
@@ -430,7 +430,7 @@ async function startWS() {
     if (devMode || testMode) {
       filepath = path.join(
         __dirname,
-        'node_modules/@tagspaces/tagspaces-ws/build'
+        'node_modules/@tagspaces/tagspaces-ws/build',
       );
       script = 'index.js';
       envPath = path.join(__dirname, '.env');
@@ -450,7 +450,7 @@ async function startWS() {
               script, // Script to be run
               cwd: filepath, // './node_modules/tagspaces-ws', // './process1', cwd: '/path/to/npm/module/',
               args: ['-p', freePort, '-k', properties.get('KEY')],
-              restartAt: []
+              restartAt: [],
               // log: path.join(process.cwd(), 'thumbGen.log')
             },
             (err, pid) => {
@@ -464,16 +464,16 @@ async function startWS() {
                 usedWsPort = freePort;
                 if (mainWindow) {
                   mainWindow.webContents.send('start_ws', {
-                    port: freePort
+                    port: freePort,
                   });
                 }
                 resolve(
-                  `Starting ${pid.name} on ${pid.cwd} - pid (${pid.child.pid})`
+                  `Starting ${pid.name} on ${pid.cwd} - pid (${pid.child.pid})`,
                 );
               }
-            }
+            },
           );
-        }
+        },
       );
     });
     console.debug(results);
@@ -495,7 +495,7 @@ async function createAppWindow() {
 
   const mainWindowState = windowStateKeeper({
     defaultWidth: 1280,
-    defaultHeight: 800
+    defaultHeight: 800,
   });
 
   mainWindow = new BrowserWindow({
@@ -509,8 +509,8 @@ async function createAppWindow() {
       spellcheck: true,
       nodeIntegration: true,
       webviewTag: true,
-      contextIsolation: false
-    }
+      contextIsolation: false,
+    },
   });
 
   const winUserAgent =
@@ -519,14 +519,14 @@ async function createAppWindow() {
 
   await mainWindow.loadURL(
     mainHTML + startupParameter,
-    testWinOnUnix ? { userAgent: winUserAgent } : {}
+    testWinOnUnix ? { userAgent: winUserAgent } : {},
   );
   mainWindow.setMenuBarVisibility(false);
   mainWindow.setAutoHideMenuBar(true);
   mainWindowState.manage(mainWindow);
 
   mainWindow.webContents.send('start_ws', {
-    port: usedWsPort
+    port: usedWsPort,
   });
 
   mainWindow.webContents.on('did-finish-load', () => {
@@ -557,7 +557,7 @@ async function createAppWindow() {
       pm2.stopAll();
       globalShortcut.unregisterAll();
       app.quit();
-    }
+    },
   );
 }
 
@@ -594,7 +594,7 @@ app.on('ready', async () => {
     console.log('buildMenus', ex);
   }
 
-  i18n.on('languageChanged', lng => {
+  i18n.on('languageChanged', (lng) => {
     try {
       console.log('languageChanged:' + lng);
       buildAppMenu(i18n);
@@ -623,12 +623,12 @@ app.on('ready', async () => {
         if (mainWindow) {
           mainWindow.webContents.send('set_extensions', {
             extensions,
-            supportedFileTypes
+            supportedFileTypes,
           });
           // mainWindow.webContents.send('set_supported_file_types', supportedFileTypes);
         }
       })
-      .catch(err => console.error('load-extensions', err));
+      .catch((err) => console.error('load-extensions', err));
   });
 
   ipcMain.on('remove-extension', (e, extensionId) => {
@@ -640,11 +640,11 @@ app.on('ready', async () => {
           'tsplugins',
           extBuildIndex > -1
             ? extensionId.substring(0, extBuildIndex)
-            : extensionId
+            : extensionId,
         ),
         {
-          recursive: true
-        }
+          recursive: true,
+        },
       );
     } catch (e) {
       console.debug(e);
@@ -668,7 +668,7 @@ app.on('ready', async () => {
       downloadsFolder: app.getPath('downloads'),
       musicFolder: app.getPath('music'),
       picturesFolder: app.getPath('pictures'),
-      videosFolder: app.getPath('videos')
+      videosFolder: app.getPath('videos'),
     };
     if (isMac) {
       paths.iCloudFolder =
@@ -677,7 +677,7 @@ app.on('ready', async () => {
     return paths;
   });
 
-  ipcMain.on('get-user-home-path', event => {
+  ipcMain.on('get-user-home-path', (event) => {
     event.returnValue = app.getPath('home');
   });
 
@@ -689,7 +689,7 @@ app.on('ready', async () => {
 
   ipcMain.handle('select-directory-dialog', async () => {
     const options = {
-      properties: ['openDirectory', 'createDirectory']
+      properties: ['openDirectory', 'createDirectory'],
     };
     // @ts-ignore
     const resultObject = await dialog.showOpenDialog(options);
@@ -703,17 +703,17 @@ app.on('ready', async () => {
 
   // end electron-io
 
-  ipcMain.on('app-data-path-request', event => {
+  ipcMain.on('app-data-path-request', (event) => {
     event.returnValue = app.getPath('appData'); // eslint-disable-line
   });
 
-  ipcMain.on('app-version-request', event => {
+  ipcMain.on('app-version-request', (event) => {
     event.returnValue = app.getVersion(); // eslint-disable-line
   });
 
   ipcMain.handle('move-to-trash', async (event, files) => {
     const result = [];
-    files.forEach(fullPath => {
+    files.forEach((fullPath) => {
       // console.debug('Trash:' + fullPath);
       result.push(shell.trashItem(fullPath));
     });
@@ -768,7 +768,7 @@ app.on('ready', async () => {
     app.quit();
   });
 
-  process.on('uncaughtException', error => {
+  process.on('uncaughtException', (error) => {
     if (error.stack) {
       console.error('error:', error.stack);
       throw new Error(error.stack);

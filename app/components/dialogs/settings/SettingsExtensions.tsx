@@ -33,7 +33,7 @@ import { actions as SettingsActions, isDevMode } from '-/reducers/settings';
 import {
   actions as AppActions,
   AppDispatch,
-  getExtensions
+  getExtensions,
 } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import PlatformIO from '-/services/platform-facade';
@@ -48,9 +48,8 @@ function SettingsExtensions() {
   const { switchCurrentLocationType } = useCurrentLocationContext();
   const { uploadFilesAPI } = useIOActionsContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [removeExtDialogOpened, setRemoveExtDialogOpened] = useState<
-    TS.Extension
-  >(undefined);
+  const [removeExtDialogOpened, setRemoveExtDialogOpened] =
+    useState<TS.Extension>(undefined);
 
   const extension = useSelector(getExtensions);
   const devMode = useSelector(isDevMode);
@@ -62,7 +61,7 @@ function SettingsExtensions() {
 
   const handleFileInputChange = (selection: any) => {
     const files: File[] = Array.from(selection.currentTarget.files);
-    PlatformIO.getUserDataDir().then(dataDir => {
+    PlatformIO.getUserDataDir().then((dataDir) => {
       dispatch(AppActions.resetProgress());
       dispatch(AppActions.toggleUploadDialog());
       PlatformIO.disableObjectStoreSupport();
@@ -77,16 +76,16 @@ function SettingsExtensions() {
             '@tagspaces' +
             PlatformIO.getDirSeparator() +
             'extensions';
-          const promises = fsEntries.map(fsEntry =>
-            PlatformIO.unZip(fsEntry.path, targetPath)
+          const promises = fsEntries.map((fsEntry) =>
+            PlatformIO.unZip(fsEntry.path, targetPath),
           );
-          return Promise.all(promises).then(paths => {
+          return Promise.all(promises).then((paths) => {
             PlatformIO.loadExtensions();
-            paths.forEach(path => PlatformIO.deleteFilePromise(path));
+            paths.forEach((path) => PlatformIO.deleteFilePromise(path));
             return switchCurrentLocationType();
           });
         })
-        .catch(error => {
+        .catch((error) => {
           console.log('uploadFiles', error);
           return switchCurrentLocationType();
         });
@@ -110,8 +109,8 @@ function SettingsExtensions() {
           <List>
             {extension &&
               extension
-                .filter(ext => !ext.extensionExternal)
-                .map(ext => (
+                .filter((ext) => !ext.extensionExternal)
+                .map((ext) => (
                   <ListItem key={ext.extensionId} disablePadding>
                     {ext.extensionName} ({ext.version})
                   </ListItem>
@@ -134,8 +133,8 @@ function SettingsExtensions() {
           <List>
             {extension &&
               extension
-                .filter(ext => ext.extensionExternal)
-                .map(ext => (
+                .filter((ext) => ext.extensionExternal)
+                .map((ext) => (
                   <ListItem key={ext.extensionId} disablePadding>
                     {ext.extensionName} ({ext.version})
                     <Switch
@@ -147,33 +146,33 @@ function SettingsExtensions() {
                           dispatch(
                             AppActions.updateExtension({
                               ...ext,
-                              extensionEnabled: true
-                            })
+                              extensionEnabled: true,
+                            }),
                           );
                           dispatch(
                             SettingsActions.enableExtension(
                               ext.extensionId,
-                              true
-                            )
+                              true,
+                            ),
                           );
                           PlatformIO.loadExtensions();
                         } else {
                           dispatch(
                             AppActions.updateExtension({
                               ...ext,
-                              extensionEnabled: false
-                            })
+                              extensionEnabled: false,
+                            }),
                           );
                           dispatch(
                             SettingsActions.enableExtension(
                               ext.extensionId,
-                              false
-                            )
+                              false,
+                            ),
                           );
                           dispatch(
                             SettingsActions.removeSupportedFileTypes(
-                              ext.extensionId
-                            )
+                              ext.extensionId,
+                            ),
                           );
                         }
                       }}
@@ -200,17 +199,17 @@ function SettingsExtensions() {
             content={t('core:removeExtensionTooltip', {
               extensionName: removeExtDialogOpened
                 ? removeExtDialogOpened.extensionName
-                : ''
+                : '',
             })}
-            confirmCallback={result => {
+            confirmCallback={(result) => {
               if (result) {
                 dispatch(
-                  AppActions.removeExtension(removeExtDialogOpened.extensionId)
+                  AppActions.removeExtension(removeExtDialogOpened.extensionId),
                 );
                 dispatch(
                   SettingsActions.removeSupportedFileTypes(
-                    removeExtDialogOpened.extensionId
-                  )
+                    removeExtDialogOpened.extensionId,
+                  ),
                 );
                 PlatformIO.removeExtension(removeExtDialogOpened.extensionId);
               }
@@ -220,7 +219,7 @@ function SettingsExtensions() {
             confirmDialogContentTID="confirmRemoveExtDialogContentTID"
           />
           {extension &&
-            extension.filter(ext => ext.extensionExternal).length < 1 && (
+            extension.filter((ext) => ext.extensionExternal).length < 1 && (
               <Typography variant="subtitle1">No extensions found</Typography>
             )}
           {devMode && (

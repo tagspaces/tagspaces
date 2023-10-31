@@ -37,7 +37,7 @@ export function clearURLParam(paramName) {
 export function updateHistory(
   newLocation: TS.Location,
   newDirectoryPath: string,
-  newEntryPath?: string
+  newEntryPath?: string,
 ) {
   const currentHref = new URL(window.location.href);
   const params = new URLSearchParams(currentHref.search);

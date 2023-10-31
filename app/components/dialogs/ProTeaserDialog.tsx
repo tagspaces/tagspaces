@@ -65,14 +65,14 @@ function Slide(props: SlideProps) {
     videoURL,
     videoPosterUrl,
     pictureHeight,
-    pictureShadow
+    pictureShadow,
   } = props;
   return (
     <swiper-slide>
       <div
         style={{
           padding: 50,
-          textAlign: 'left'
+          textAlign: 'left',
         }}
       >
         <Typography
@@ -85,7 +85,7 @@ function Slide(props: SlideProps) {
           <Typography variant="subtitle1">{description}</Typography>
         )}
         {items &&
-          items.map(item => (
+          items.map((item) => (
             <Typography variant="subtitle1">&#x2605;&nbsp;{item}</Typography>
           ))}
         <Typography variant="subtitle1">&nbsp;</Typography>
@@ -106,7 +106,7 @@ function Slide(props: SlideProps) {
                   boxShadow: pictureShadow
                     ? '2px 2px 13px 0 rgb(0 0 0 / 75%'
                     : 'none',
-                  maxWidth: '95%'
+                  maxWidth: '95%',
                 }}
                 src={pictureURL}
                 alt=""
@@ -182,7 +182,7 @@ function ProTeaserDialog(props: Props) {
       <DialogContent
         style={{
           paddingBottom: 0,
-          overflowY: 'auto'
+          overflowY: 'auto',
         }}
       >
         <style>
@@ -205,7 +205,7 @@ function ProTeaserDialog(props: Props) {
           navigation={true}
           /*scrollbar={true}*/
           pagination={{
-            clickable: true
+            clickable: true,
           }}
           cssMode={false}
           /*keyboard={{

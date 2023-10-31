@@ -44,10 +44,8 @@ function LocationMenu(props: Props) {
   const { openLocation, currentLocation } = useCurrentLocationContext();
   //const dispatch: AppDispatch = useDispatch();
   const locations: Array<TS.Location> = useSelector(getLocations);
-  const [
-    locationChooserMenuAnchorEl,
-    setLocationChooserMenuAnchorEl
-  ] = useState<null | HTMLElement>(null);
+  const [locationChooserMenuAnchorEl, setLocationChooserMenuAnchorEl] =
+    useState<null | HTMLElement>(null);
 
   const locationIcon =
     currentLocation && currentLocation.type === locationType.TYPE_CLOUD ? (
@@ -59,7 +57,7 @@ function LocationMenu(props: Props) {
   return (
     <div
       style={{
-        backgroundColor: theme.palette.background.default
+        backgroundColor: theme.palette.background.default,
       }}
     >
       <Tooltip
@@ -72,11 +70,13 @@ function LocationMenu(props: Props) {
         <IconButton
           data-tid="folderContainerLocationChooser"
           id="locationMenuButton"
-          onClick={event => setLocationChooserMenuAnchorEl(event.currentTarget)}
+          onClick={(event) =>
+            setLocationChooserMenuAnchorEl(event.currentTarget)
+          }
           style={{
             padding: 5,
             fontSize: theme.typography.fontSize,
-            borderRadius: 10
+            borderRadius: 10,
           }}
           size="large"
         >
@@ -93,13 +93,13 @@ function LocationMenu(props: Props) {
           PaperProps={{
             style: {
               maxHeight: 48 * 6.5,
-              width: 300
-            }
+              width: 300,
+            },
           }}
         >
           <ListSubHeader
             style={{
-              backgroundColor: theme.palette.background.default
+              backgroundColor: theme.palette.background.default,
             }}
           >
             {t('core:chooseLocation')}

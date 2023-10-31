@@ -67,29 +67,29 @@ function MoveOrCopyFilesDialog(props: Props) {
         promises.push(
           renameFilePromise(
             file.path,
-            currentDirectoryPath + AppConfig.dirSeparator + file.name
+            currentDirectoryPath + AppConfig.dirSeparator + file.name,
           )
             .then(() => true)
-            .catch(error => {
+            .catch((error) => {
               console.log('renameFilePromise', error);
-            })
+            }),
         );
       } else {
         promises.push(
           copyFilePromise(
             file.path,
-            currentDirectoryPath + AppConfig.dirSeparator + file.name
+            currentDirectoryPath + AppConfig.dirSeparator + file.name,
           )
             .then(() => true)
-            .catch(error => {
+            .catch((error) => {
               console.log('copyFilePromise', error);
-            })
+            }),
         );
       }
     }
     Promise.all(promises)
       .then(() => openDirectory(currentDirectoryPath))
-      .catch(error => {
+      .catch((error) => {
         console.log('promises', error);
       });
   };
@@ -114,7 +114,7 @@ function MoveOrCopyFilesDialog(props: Props) {
       <DialogContent
         style={{
           overflowX: 'hidden',
-          overflowY: 'auto'
+          overflowY: 'auto',
         }}
       >
         <Typography variant="subtitle2">{t('selectedFiles')}</Typography>

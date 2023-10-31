@@ -30,10 +30,11 @@ import { SortedDirContextProvider } from '-/perspectives/grid-perspective/hooks/
 import { PaginationContextProvider } from '-/hooks/PaginationContextProvider';
 import { ThumbGenerationContextProvider } from '-/hooks/ThumbGenerationContextProvider';
 
-const GridPerspective = React.lazy(() =>
-  import(
-    /* webpackChunkName: "GridPerspective" */ '../perspectives/grid-perspective'
-  )
+const GridPerspective = React.lazy(
+  () =>
+    import(
+      /* webpackChunkName: "GridPerspective" */ '../perspectives/grid-perspective'
+    ),
 );
 function GridPerspectiveAsync(props) {
   return (
@@ -49,8 +50,9 @@ function GridPerspectiveAsync(props) {
   );
 }
 
-const ListPerspective = React.lazy(() =>
-  import(/* webpackChunkName: "ListPerspective" */ '../perspectives/list')
+const ListPerspective = React.lazy(
+  () =>
+    import(/* webpackChunkName: "ListPerspective" */ '../perspectives/list'),
 );
 function ListPerspectiveAsync(props) {
   return (
@@ -111,8 +113,8 @@ function KanBanPerspectiveAsync(props) {
   );
 }
 
-const WelcomePanel = React.lazy(() =>
-  import(/* webpackChunkName: "WelcomePanel" */ './WelcomePanel')
+const WelcomePanel = React.lazy(
+  () => import(/* webpackChunkName: "WelcomePanel" */ './WelcomePanel'),
 );
 function WelcomePanelAsync(props) {
   return (
@@ -131,7 +133,7 @@ function RenderPerspective(props: Props) {
   const {
     currentDirectoryEntries,
     currentDirectoryPath,
-    currentDirectoryPerspective
+    currentDirectoryPerspective,
   } = useDirectoryContentContext();
 
   const defaultPerspective = useSelector(getDefaultPerspective);

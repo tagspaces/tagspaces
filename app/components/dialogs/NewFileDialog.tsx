@@ -61,7 +61,7 @@ function NewFileDialog(props: Props) {
             minWidth: 200,
             minHeight: 200,
             marginBottom: 20,
-            overflow: 'overlay'
+            overflow: 'overlay',
           }}
           data-tid="keyboardShortCutsDialog"
         >

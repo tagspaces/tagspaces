@@ -15,7 +15,7 @@ export default function useValidation() {
         setErrorInput([...errorInput, errorKey]);
       }
     } else if (errorInput.indexOf(errorKey) > -1) {
-      setErrorInput(errorInput.filter(err => err !== errorKey));
+      setErrorInput(errorInput.filter((err) => err !== errorKey));
     }
   };
 
@@ -25,7 +25,7 @@ export default function useValidation() {
    */
   const haveError = (errorKey?: string): boolean => {
     if (errorKey) {
-      return errorInput.some(err => err === errorKey);
+      return errorInput.some((err) => err === errorKey);
     }
     return errorInput.length > 0;
   };

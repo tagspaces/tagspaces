@@ -37,7 +37,7 @@ function DialogCloseButton(props: Props) {
       style={{
         position: 'absolute',
         right: 5,
-        top: 5
+        top: 5,
       }}
       data-tid={testId && testId}
       onClick={onClose}

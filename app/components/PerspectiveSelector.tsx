@@ -53,10 +53,10 @@ function PerspectiveSelector(props: Props) {
         </ListItemIcon>
         <ListItemText>{t('core:unspecified')}</ListItemText>
       </div>
-    </MenuItem>
+    </MenuItem>,
   );
 
-  AvailablePerspectives.forEach(perspective => {
+  AvailablePerspectives.forEach((perspective) => {
     let includePerspective = true;
     if (!Pro && perspective.pro === true) {
       includePerspective = false;
@@ -73,7 +73,7 @@ function PerspectiveSelector(props: Props) {
               {perspective.beta && <BetaLabel />}
             </ListItemText>
           </div>
-        </MenuItem>
+        </MenuItem>,
       );
     }
   });

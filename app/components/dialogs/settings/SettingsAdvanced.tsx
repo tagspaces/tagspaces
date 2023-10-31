@@ -36,7 +36,7 @@ import {
   actions as SettingsActions,
   getSettings,
   getMapTileServers,
-  isDevMode
+  isDevMode,
 } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import MapTileServerDialog from '-/components/dialogs/settings/MapTileServerDialog';
@@ -56,24 +56,24 @@ const classes = {
   root: `${PREFIX}-root`,
   listItem: `${PREFIX}-listItem`,
   pro: `${PREFIX}-pro`,
-  colorChooserButton: `${PREFIX}-colorChooserButton`
+  colorChooserButton: `${PREFIX}-colorChooserButton`,
 };
 
 const Root = styled('div')(({ theme }) => ({
   [`& .${classes.root}`]: {
-    overflowX: 'hidden'
+    overflowX: 'hidden',
   },
   [`& .${classes.listItem}`]: {
     paddingLeft: 0,
-    paddingRight: 0
+    paddingRight: 0,
   },
   [`& .${classes.pro}`]: {
-    backgroundColor: '#1DD19F'
+    backgroundColor: '#1DD19F',
   },
   [`& .${classes.colorChooserButton}`]: {
     minHeight: 30,
-    border: '1px solid lightgray'
-  }
+    border: '1px solid lightgray',
+  },
 }));
 
 interface Props {
@@ -101,34 +101,34 @@ function SettingsAdvanced(props: Props) {
 
   const geoTaggingFormatDisabled = AppConfig.geoTaggingFormat !== undefined;
 
-  const setDesktopMode = desktopMode =>
+  const setDesktopMode = (desktopMode) =>
     dispatch(SettingsActions.setDesktopMode(desktopMode));
 
-  const setDevMode = devMode => dispatch(SettingsActions.setDevMode(devMode));
+  const setDevMode = (devMode) => dispatch(SettingsActions.setDevMode(devMode));
 
-  const setEnableWS = enableWS =>
+  const setEnableWS = (enableWS) =>
     dispatch(SettingsActions.setEnableWS(enableWS));
 
-  const setWarningOpeningFilesExternally = warningOpeningFilesExternally =>
+  const setWarningOpeningFilesExternally = (warningOpeningFilesExternally) =>
     dispatch(
       SettingsActions.setWarningOpeningFilesExternally(
-        warningOpeningFilesExternally
-      )
+        warningOpeningFilesExternally,
+      ),
     );
 
-  const setSaveTagInLocation = saveTagInLocation =>
+  const setSaveTagInLocation = (saveTagInLocation) =>
     dispatch(SettingsActions.setSaveTagInLocation(saveTagInLocation));
 
-  const setRevisionsEnabled = enabled =>
+  const setRevisionsEnabled = (enabled) =>
     dispatch(SettingsActions.setRevisionsEnabled(enabled));
 
-  const setGeoTaggingFormat = geoTaggingFormat =>
+  const setGeoTaggingFormat = (geoTaggingFormat) =>
     dispatch(SettingsActions.setGeoTaggingFormat(geoTaggingFormat));
 
   const setHistory = (key, value) =>
     dispatch(SettingsActions.setHistory(key, value));
 
-  const setPrefixTagContainer = prefix =>
+  const setPrefixTagContainer = (prefix) =>
     dispatch(SettingsActions.setPrefixTagContainer(prefix));
 
   return (
@@ -185,7 +185,7 @@ function SettingsAdvanced(props: Props) {
             data-tid="warningOpeningFilesExternally"
             onClick={() =>
               setWarningOpeningFilesExternally(
-                !settings.warningOpeningFilesExternally
+                !settings.warningOpeningFilesExternally,
               )
             }
             checked={settings.warningOpeningFilesExternally}
@@ -197,7 +197,7 @@ function SettingsAdvanced(props: Props) {
             style={{ maxWidth: '100px' }}
             data-tid="prefixTagContainerTID"
             value={settings.prefixTagContainer}
-            onChange={event => setPrefixTagContainer(event.target.value)}
+            onChange={(event) => setPrefixTagContainer(event.target.value)}
           />
         </ListItem>
         {Pro && (
@@ -220,7 +220,7 @@ function SettingsAdvanced(props: Props) {
                 data-tid="fileOpenTID"
                 title={t('core:fileOpenHistoryTitle')}
                 value={settings[historyKeys.fileOpenKey]}
-                onChange={event =>
+                onChange={(event) =>
                   setHistory(historyKeys.fileOpenKey, event.target.value)
                 }
                 input={<Input id="fileOpenSelector" />}
@@ -329,7 +329,7 @@ function SettingsAdvanced(props: Props) {
               }}
               title="Confirm"
               content={t('core:confirm' + confirmDialogKey + 'Deletion')}
-              confirmCallback={result => {
+              confirmCallback={(result) => {
                 if (result) {
                   Pro.history.delAllHistory(confirmDialogKey);
                 }
@@ -394,7 +394,7 @@ function SettingsAdvanced(props: Props) {
             onChange={(event: any) => setGeoTaggingFormat(event.target.value)}
             input={<Input id="geoTaggingFormatSelector" />}
           >
-            {settings.supportedGeoTagging.map(geoTagging => (
+            {settings.supportedGeoTagging.map((geoTagging) => (
               <MenuItem key={geoTagging} value={geoTagging}>
                 {geoTagging.toUpperCase()}
               </MenuItem>
@@ -406,7 +406,7 @@ function SettingsAdvanced(props: Props) {
           <ListItemSecondaryAction style={{ right: 0 }}>
             <Button
               color="primary"
-              onClick={event => handleEditTileServerClick(event, {}, true)}
+              onClick={(event) => handleEditTileServerClick(event, {}, true)}
             >
               {t('tileServerDialogAdd')}
             </Button>
@@ -417,7 +417,7 @@ function SettingsAdvanced(props: Props) {
             padding: 5,
             paddingLeft: 10,
             backgroundColor: '#d3d3d34a',
-            borderRadius: 10
+            borderRadius: 10,
           }}
           dense
         >
@@ -443,7 +443,7 @@ function SettingsAdvanced(props: Props) {
                     aria-haspopup="true"
                     edge="end"
                     data-tid={'tileServerEdit_' + tileServer.name}
-                    onClick={event =>
+                    onClick={(event) =>
                       handleEditTileServerClick(event, tileServer, index === 0)
                     }
                     size="large"

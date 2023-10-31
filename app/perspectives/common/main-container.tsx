@@ -8,22 +8,22 @@ import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
 import TagDropContainer from '-/components/TagDropContainer';
 
-export const fileOperationsEnabled = selectedEntries => {
+export const fileOperationsEnabled = (selectedEntries) => {
   let selectionContainsDirectories = false;
   if (selectedEntries && selectedEntries.length > 0) {
     selectionContainsDirectories = selectedEntries.some(
-      entry => entry !== undefined && !entry.isFile
+      (entry) => entry !== undefined && !entry.isFile,
     );
     return !selectionContainsDirectories;
   }
   return false;
 };
 
-export const folderOperationsEnabled = selectedEntries => {
+export const folderOperationsEnabled = (selectedEntries) => {
   let selectionContainsFiles = false;
   if (selectedEntries && selectedEntries.length > 0) {
     selectionContainsFiles = selectedEntries.some(
-      entry => entry !== undefined && entry.isFile
+      (entry) => entry !== undefined && entry.isFile,
     );
   }
   return !selectionContainsFiles;
@@ -38,11 +38,11 @@ export const renderCell = (
     index: number,
     handleGridContextMenu: (
       event: React.MouseEvent<HTMLDivElement>,
-      fsEntry: TS.FileSystemEntry
+      fsEntry: TS.FileSystemEntry,
     ) => void,
     handleGridCellClick,
     handleGridCellDblClick,
-    isLast?: boolean
+    isLast?: boolean,
   ) => any,
   showDirectories: boolean,
   isReadOnlyMode: boolean,
@@ -61,11 +61,11 @@ export const renderCell = (
   showNotification: (
     text: string,
     notificationType: string,
-    autohide: boolean
+    autohide: boolean,
   ) => void,
   moveFiles: (files: Array<string>, destination: string) => Promise<boolean>,
   clearSelection: () => void,
-  isLast?: boolean
+  isLast?: boolean,
 ) => {
   if (!fsEntry.isFile && !showDirectories) {
     return;
@@ -77,7 +77,7 @@ export const renderCell = (
     // setMouseX(event.clientX);
     // setMouseY(event.clientY);
     const isEntryExist = selectedEntries.some(
-      entry => entry.uuid === fsEntry.uuid
+      (entry) => entry.uuid === fsEntry.uuid,
     );
     if (fsEntry.isFile) {
       if (!desktopMode) {
@@ -100,8 +100,8 @@ export const renderCell = (
       } else if (isEntryExist) {
         // update selected entry
         setSelectedEntries([
-          ...selectedEntries.filter(entry => entry.uuid !== fsEntry.uuid),
-          fsEntry
+          ...selectedEntries.filter((entry) => entry.uuid !== fsEntry.uuid),
+          fsEntry,
         ]);
       } else {
         setSelectedEntries([fsEntry]);
@@ -116,8 +116,8 @@ export const renderCell = (
       } else if (isEntryExist) {
         // update selected entry
         setSelectedEntries([
-          ...selectedEntries.filter(entry => entry.uuid !== fsEntry.uuid),
-          fsEntry
+          ...selectedEntries.filter((entry) => entry.uuid !== fsEntry.uuid),
+          fsEntry,
         ]);
       } else {
         setSelectedEntries([fsEntry]);
@@ -146,7 +146,7 @@ export const renderCell = (
           openLocation(fsEntry);
           return true;
         })
-        .catch(error => {
+        .catch((error) => {
           console.log('enableObjectStoreSupport', error);
         });
     } else if (currentLocation.type === locationType.TYPE_WEBDAV) {
@@ -171,11 +171,11 @@ export const renderCell = (
       let lastSelectedIndex;
       if (lastSelectedEntryPath) {
         lastSelectedIndex = directoryContent.findIndex(
-          entry => entry.path === lastSelectedEntryPath
+          (entry) => entry.path === lastSelectedEntryPath,
         );
       }
       const currentSelectedIndex = directoryContent.findIndex(
-        entry => entry.path === fsEntry.path
+        (entry) => entry.path === fsEntry.path,
       );
       if (lastSelectedIndex < 0) {
         lastSelectedIndex = currentSelectedIndex;
@@ -186,7 +186,7 @@ export const renderCell = (
       if (currentSelectedIndex > lastSelectedIndex) {
         entriesToSelect = directoryContent.slice(
           lastSelectedIndex,
-          currentSelectedIndex + 1
+          currentSelectedIndex + 1,
         );
       } else if (currentSelectedIndex < lastSelectedIndex) {
         entriesToSelect = directoryContent
@@ -200,11 +200,11 @@ export const renderCell = (
     } else if (event.type === 'drag') {
       if (
         selectedEntries &&
-        selectedEntries.some(entry => entry.path === fsEntry.path)
+        selectedEntries.some((entry) => entry.path === fsEntry.path)
       ) {
       } else {
         const currentSelectedEntry = directoryContent.find(
-          entry => entry.path === fsEntry.path
+          (entry) => entry.path === fsEntry.path,
         );
         if (currentSelectedEntry) {
           // in KanBan directoryContent not content dragging entry from subfolder
@@ -214,10 +214,10 @@ export const renderCell = (
     } else if (selectHelperKey) {
       if (
         selectedEntries &&
-        selectedEntries.some(entry => entry.path === fsEntry.path)
+        selectedEntries.some((entry) => entry.path === fsEntry.path)
       ) {
         setSelectedEntries(
-          selectedEntries.filter(entry => entry.path !== fsEntry.path)
+          selectedEntries.filter((entry) => entry.path !== fsEntry.path),
         ); // deselect selected entry
       } else {
         setSelectedEntries([...selectedEntries, fsEntry]);
@@ -239,7 +239,7 @@ export const renderCell = (
       showNotification(
         'Importing files is disabled because the location is in read-only mode.',
         'error',
-        true
+        true,
       ); //i18n.t('core:dndDisabledReadOnlyMode')
       return;
     }
@@ -248,9 +248,9 @@ export const renderCell = (
       let arrPath;
       if (mItem.selectedEntries && mItem.selectedEntries.length > 0) {
         const arrSelected = mItem.selectedEntries
-          .map(entry => entry.path)
+          .map((entry) => entry.path)
           // remove target folder selection
-          .filter(epath => epath !== item.path);
+          .filter((epath) => epath !== item.path);
         if (arrSelected.length > 0) {
           arrPath = arrSelected;
         } else {
@@ -277,7 +277,7 @@ export const renderCell = (
           handleGridContextMenu,
           handleGridCellClick,
           handleGridCellDblClick,
-          isLast
+          isLast,
         )}
       </FileSourceDnd>
     );
@@ -286,7 +286,7 @@ export const renderCell = (
   return (
     <div
       style={{
-        position: 'relative'
+        position: 'relative',
       }}
       key={key}
     >
@@ -302,7 +302,7 @@ export const renderCell = (
           handleGridContextMenu,
           handleGridCellClick,
           handleGridCellDblClick,
-          isLast
+          isLast,
         )}
       </TargetMoveFileBox>
     </div>
@@ -313,7 +313,7 @@ export const renderCellPlaceholder = () => {
   return (
     <div
       style={{
-        position: 'relative'
+        position: 'relative',
       }}
     >
       <TagDropContainer entryPath="">

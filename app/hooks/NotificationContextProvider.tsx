@@ -32,7 +32,7 @@ type NotificationContextData = {
     text: string,
     notificationType?: 'default' | 'info' | 'warning' | 'error',
     autohide?: boolean,
-    tid?: string
+    tid?: string,
   ) => void;
   hideNotifications: (excludeTypes?: string[]) => void;
   isGeneratingThumbs: boolean;
@@ -45,7 +45,7 @@ export const NotificationContext = createContext<NotificationContextData>({
   showNotification: () => {},
   hideNotifications: () => {},
   isGeneratingThumbs: false,
-  setGeneratingThumbs: () => {}
+  setGeneratingThumbs: () => {},
   //NotificationTypes: 'default'
 });
 
@@ -54,13 +54,13 @@ export type NotificationContextProviderProps = {
 };
 
 export const NotificationContextProvider = ({
-  children
+  children,
 }: NotificationContextProviderProps) => {
   const [notificationStatus, setNotificationStatus] = useState<any>({
     visible: false,
     text: null,
     notificationType: 'default',
-    autohide: true
+    autohide: true,
   });
   const [isGeneratingThumbs, setGeneratingThumbs] = useState<boolean>(false);
 
@@ -68,26 +68,26 @@ export const NotificationContextProvider = ({
     text: string,
     notificationType = 'default',
     autohide = true,
-    tid = 'notificationTID'
+    tid = 'notificationTID',
   ) {
     setNotificationStatus({
       visible: true,
       text,
       tid,
       notificationType,
-      autohide
+      autohide,
     });
   }
 
   function hideNotifications(excludeTypes = []) {
     if (
-      !excludeTypes.some(type => type === notificationStatus.notificationType)
+      !excludeTypes.some((type) => type === notificationStatus.notificationType)
     ) {
       setNotificationStatus({
         visible: false,
         text: null,
         notificationType: 'default',
-        autohide: true
+        autohide: true,
       });
     }
   }
@@ -102,7 +102,7 @@ export const NotificationContextProvider = ({
       isGeneratingThumbs,
       setGeneratingThumbs,
       showNotification,
-      hideNotifications
+      hideNotifications,
     };
   }, [notificationStatus, isGeneratingThumbs]);
 

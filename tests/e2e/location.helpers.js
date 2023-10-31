@@ -9,7 +9,7 @@ import {
   selectorFile,
   setInputKeys,
   takeScreenshot,
-  waitForNotification
+  waitForNotification,
 } from './general.helpers';
 
 export const defaultLocationPath =
@@ -24,7 +24,7 @@ export const minioEndpointURL = 'http://127.0.0.1:9000';
 export async function createPwMinioLocation(
   locationPath,
   locationName,
-  isDefault = false
+  isDefault = false,
 ) {
   const lastLocationTID = await getPwLocationTid(-1);
   // Check if location not exist (from extconfig.js)
@@ -39,13 +39,13 @@ export async function createPwMinioLocation(
     // SET LOCATION NAME
     await global.client.fill(
       '[data-tid=locationName] input',
-      locationName || 'Test Location' + new Date().getTime()
+      locationName || 'Test Location' + new Date().getTime(),
     );
     await global.client.fill('[data-tid=locationPath] input', locationPath);
     await global.client.fill('[data-tid=accessKeyId] input', minioAccessKey);
     await global.client.fill(
       '[data-tid=secretAccessKey] input',
-      minioSecretAccessKey
+      minioSecretAccessKey,
     );
     await global.client.fill('[data-tid=bucketName] input', locationName);
     await global.client.fill('[data-tid=endpointURL] input', minioEndpointURL);
@@ -61,7 +61,7 @@ export async function createPwMinioLocation(
 export async function createPwLocation(
   locationPath,
   locationName,
-  isDefault = false
+  isDefault = false,
 ) {
   const lastLocationTID = await getPwLocationTid(-1);
   // Check if location not exist (from extconfig.js)
@@ -73,7 +73,7 @@ export async function createPwLocation(
     await setInputKeys(
       'locationName',
       locationName || 'Test Location' + new Date().getTime(),
-      20
+      20,
     );
 
     if (isDefault) {
@@ -127,7 +127,7 @@ export async function closeLocation(locationName = undefined) {
 export async function openLocation(locationName) {
   await delay(500);
   const lName = await global.client.$(
-    '[data-tid=location_' + locationName || defaultLocationName + ']'
+    '[data-tid=location_' + locationName || defaultLocationName + ']',
   );
   // await delay(1500);
   await lName.waitForDisplayed();
@@ -161,7 +161,7 @@ export async function checkForIdExist(tid) {
 export async function renameFileFromMenu(newFileName, selector = selectorFile) {
   await openContextEntryMenu(selector, 'fileMenuRenameFile');
   const fileName = await global.client.inputValue(
-    '[data-tid=renameEntryDialogInput] input'
+    '[data-tid=renameEntryDialogInput] input',
   );
 
   await setInputKeys('renameEntryDialogInput', newFileName);
@@ -184,7 +184,7 @@ export async function getFirstFileName() {
   let fileName;
   await openContextEntryMenu(selectorFile, 'fileMenuRenameFile');
   const renameFileDialogInput = await global.client.$(
-    '[data-tid=renameEntryDialogInput] input'
+    '[data-tid=renameEntryDialogInput] input',
   );
   await renameFileDialogInput.waitForDisplayed({ timeout: 5000 });
   fileName = await renameFileDialogInput.getValue();
@@ -240,7 +240,7 @@ export async function getLocationTid(locationIndex) {
     '//!*[@data-tid="locationList"]/div'
   );*/
   const locationList = await global.client.$$(
-    '[data-tid=locationTitleElement]'
+    '[data-tid=locationTitleElement]',
   );
   const location =
     locationIndex < 0
@@ -262,14 +262,14 @@ export async function getPwLocationTid(locationIndex) {
   try {
     await global.client.waitForSelector('[data-tid=locationTitleElement]', {
       // state: 'attached',
-      timeout: 4000
+      timeout: 4000,
     });
   } catch (error) {
     console.log("The element didn't appear.");
     return undefined;
   }
   const locationList = await global.client.$$(
-    '[data-tid=locationTitleElement]'
+    '[data-tid=locationTitleElement]',
   );
   const location =
     locationIndex < 0

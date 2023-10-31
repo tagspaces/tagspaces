@@ -26,7 +26,7 @@ function EntryContainerNav(props: Props) {
         right: 0,
         backgroundColor: theme.palette.background.default,
         display: 'flex',
-        alignItems: 'center'
+        alignItems: 'center',
       }}
     >
       {isFile && (

@@ -55,7 +55,7 @@ function MapTileServerDialog(props: Props) {
       {t(
         props.tileServer.uuid
           ? 'core:tileServerDialogEdit'
-          : 'core:tileServerDialogAdd'
+          : 'core:tileServerDialogAdd',
       )}
       <DialogCloseButton testId="closeMapTileServerTID" onClose={onClose} />
     </DialogTitle>
@@ -79,10 +79,10 @@ function MapTileServerDialog(props: Props) {
               uuid: props.tileServer.uuid,
               name: name.current,
               serverInfo: serverInfo.current,
-              serverURL: serverURL.current
+              serverURL: serverURL.current,
             },
-            isDefault.current
-          )
+            isDefault.current,
+          ),
         );
       } else {
         dispatch(
@@ -91,10 +91,10 @@ function MapTileServerDialog(props: Props) {
               uuid: props.tileServer.uuid,
               name: name.current,
               serverInfo: serverInfo.current,
-              serverURL: serverURL.current
+              serverURL: serverURL.current,
             },
-            isDefault.current
-          )
+            isDefault.current,
+          ),
         );
       }
       props.onClose();
@@ -111,7 +111,7 @@ function MapTileServerDialog(props: Props) {
           autoFocus
           name="name"
           label={t('core:tileServerNameTitle')}
-          onChange={event => {
+          onChange={(event) => {
             const { target } = event;
             name.current = target.value;
             validateForm();
@@ -126,7 +126,7 @@ function MapTileServerDialog(props: Props) {
           margin="dense"
           name="serverURL"
           label={t('core:tileServerUrlTitle')}
-          onChange={event => {
+          onChange={(event) => {
             const { target } = event;
             serverURL.current = target.value;
           }}
@@ -141,7 +141,7 @@ function MapTileServerDialog(props: Props) {
           margin="dense"
           name="serverInfo"
           label={t('core:tileServerInfoTitle')}
-          onChange={event => {
+          onChange={(event) => {
             const { target } = event;
             serverInfo.current = target.value;
           }}
@@ -165,13 +165,13 @@ function MapTileServerDialog(props: Props) {
   const renderActions = () => (
     <DialogActions
       style={{
-        justifyContent: props.tileServer.uuid ? 'space-between' : 'flex-end'
+        justifyContent: props.tileServer.uuid ? 'space-between' : 'flex-end',
       }}
     >
       {props.tileServer.uuid && (
         <Button
           style={{
-            marginLeft: 10
+            marginLeft: 10,
           }}
           data-tid="deleteTileServerTID"
           onClick={() => {

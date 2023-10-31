@@ -48,7 +48,7 @@ export const FileTypeGroups = {
     'dng',
     'psd',
     'avif',
-    'nef'
+    'nef',
   ],
   notes: ['md', 'mdown', 'txt', 'html'],
   documents: [
@@ -64,7 +64,7 @@ export const FileTypeGroups = {
     'numbers',
     'potx',
     'sldx',
-    'dotx'
+    'dotx',
   ],
   audio: ['ogg', 'mp3', 'wav', 'wave', 'flac', 'acc'],
   video: ['ogv', 'mp4', 'webm', 'm4v', 'mkv', 'avi', '3gp', '3g2'],
@@ -74,7 +74,7 @@ export const FileTypeGroups = {
   emails: ['eml', 'msg'],
   folders: ['folders'],
   files: ['files'],
-  untagged: ['untagged']
+  untagged: ['untagged'],
 };
 
 export function haveSearchFilters(searchQuery: TS.SearchQuery) {
@@ -100,13 +100,13 @@ export function defaultTitle(searchQuery: TS.SearchQuery) {
     title += searchQuery.textQuery;
   }
   if (searchQuery.tagsAND && searchQuery.tagsAND.length > 0) {
-    title += searchQuery.tagsAND.map(tag => ' +' + tag.title);
+    title += searchQuery.tagsAND.map((tag) => ' +' + tag.title);
   }
   if (searchQuery.tagsNOT && searchQuery.tagsNOT.length > 0) {
-    title += searchQuery.tagsNOT.map(tag => ' -' + tag.title);
+    title += searchQuery.tagsNOT.map((tag) => ' -' + tag.title);
   }
   if (searchQuery.tagsOR && searchQuery.tagsOR.length > 0) {
-    title += searchQuery.tagsOR.map(tag => ' |' + tag.title);
+    title += searchQuery.tagsOR.map((tag) => ' |' + tag.title);
   }
   return title.trim();
 }
@@ -159,25 +159,25 @@ const fuseOptions = {
   keys: [
     {
       name: 'name',
-      weight: 0.3
+      weight: 0.3,
     },
     {
       name: 'description',
-      weight: 0.2
+      weight: 0.2,
     },
     {
       name: 'textContent',
-      weight: 0.2
+      weight: 0.2,
     },
     {
       name: 'tags',
-      weight: 0.2
+      weight: 0.2,
     },
     {
       name: 'path', // TODO ignore .ts folder, should not be in the index
-      weight: 0.1
-    }
-  ]
+      weight: 0.1,
+    },
+  ],
 };
 
 // Constructs the string for the JMESPath search query.  We first filter for all ORTags, then continuously pipe the result in to the
@@ -194,7 +194,7 @@ function constructjmespathQuery(searchQuery: TS.SearchQuery): string {
 
     if (ORtagsExist) {
       jmespathQuery += ' tags[? ';
-      searchQuery.tagsOR.forEach(tag => {
+      searchQuery.tagsOR.forEach((tag) => {
         const cleanedTagTitle = tag.title.trim().toLowerCase();
         if (cleanedTagTitle.length > 0) {
           jmespathQuery += "title=='" + cleanedTagTitle + "' || ";
@@ -211,7 +211,7 @@ function constructjmespathQuery(searchQuery: TS.SearchQuery): string {
       } else {
         jmespathQuery += ' tags[? ';
       }
-      searchQuery.tagsAND.forEach(tag => {
+      searchQuery.tagsAND.forEach((tag) => {
         const cleanedTagTitle = tag.title.trim().toLowerCase();
         if (cleanedTagTitle.length > 0) {
           jmespathQuery += "title=='" + cleanedTagTitle + "']] | [? tags[? ";
@@ -230,7 +230,7 @@ function constructjmespathQuery(searchQuery: TS.SearchQuery): string {
       } else {
         jmespathQuery += '!(tags[? ';
       }
-      searchQuery.tagsNOT.forEach(tag => {
+      searchQuery.tagsNOT.forEach((tag) => {
         const cleanedTagTitle = tag.title.trim().toLowerCase();
         if (cleanedTagTitle.length > 0) {
           jmespathQuery += "title=='" + cleanedTagTitle + "'])] | [?!(tags[? ";
@@ -267,7 +267,7 @@ function constructjmespathQuery(searchQuery: TS.SearchQuery): string {
 
 function prepareIndex(
   index: Array<TS.FileSystemEntry>,
-  showUnixHiddenEntries: boolean
+  showUnixHiddenEntries: boolean,
 ) {
   console.time('PreparingIndex');
   let filteredIndex = [];
@@ -275,7 +275,7 @@ function prepareIndex(
     filteredIndex = index;
   } else {
     filteredIndex = index.filter(
-      (entry: TS.FileSystemEntry) => !entry.name.startsWith('.')
+      (entry: TS.FileSystemEntry) => !entry.name.startsWith('.'),
     );
   }
   const enhancedIndex = filteredIndex.map((entry: any) => {
@@ -286,9 +286,9 @@ function prepareIndex(
     let toTime = null;
     let enhancedTags: Array<TS.Tag> = [];
     if (tags && tags.length) {
-      enhancedTags = tags.map(tag => {
+      enhancedTags = tags.map((tag) => {
         const enhancedTag: TS.Tag = {
-          ...tag
+          ...tag,
         };
         try {
           const location = parseGeoLocation(tag.title);
@@ -306,7 +306,7 @@ function prepareIndex(
           }
         } catch (e) {
           console.warn(
-            'Error parsing tag ' + JSON.stringify(tag) + ' from ' + entry.path
+            'Error parsing tag ' + JSON.stringify(tag) + ' from ' + entry.path,
           );
         }
         return enhancedTag;
@@ -314,7 +314,7 @@ function prepareIndex(
     }
     const enhancedEntry = {
       ...entry,
-      tags: enhancedTags
+      tags: enhancedTags,
     };
     if (lat) {
       enhancedEntry.lat = lat;
@@ -337,7 +337,7 @@ function prepareIndex(
 function setOriginTitle(results: Array<Object>) {
   return results.map((entry: any) => {
     if (entry.tags && entry.tags.length) {
-      entry.tags.map(tag => {
+      entry.tags.map((tag) => {
         if (tag.originTitle) {
           tag.title = tag.originTitle;
         }
@@ -351,7 +351,7 @@ function setOriginTitle(results: Array<Object>) {
 export default class Search {
   static searchLocationIndex = (
     locationContent: Array<TS.FileSystemEntry>,
-    searchQuery: TS.SearchQuery
+    searchQuery: TS.SearchQuery,
   ): Promise<Array<TS.FileSystemEntry> | []> =>
     new Promise((resolve, reject) => {
       console.time('searchtime');
@@ -361,14 +361,14 @@ export default class Search {
       const jmespathQuery = constructjmespathQuery(searchQuery);
       let results = prepareIndex(
         locationContent,
-        searchQuery.showUnixHiddenEntries
+        searchQuery.showUnixHiddenEntries,
       );
       let searched = false;
 
       // Limiting the search to current folder only (with sub-folders)
       if (searchQuery.searchBoxing === 'folder') {
-        results = results.filter(entry =>
-          isPathStartsWith(entry.path, searchQuery.currentDirectory)
+        results = results.filter((entry) =>
+          isPathStartsWith(entry.path, searchQuery.currentDirectory),
         );
       }
 
@@ -396,7 +396,7 @@ export default class Search {
           searchQuery.searchType &&
           searchQuery.searchType.includes('strict')
         ) {
-          results = results.filter(entry => {
+          results = results.filter((entry) => {
             const ignoreCase = searchQuery.searchType === 'semistrict';
             const textQuery = ignoreCase
               ? searchQuery.textQuery.toLowerCase()

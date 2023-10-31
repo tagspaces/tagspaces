@@ -8,7 +8,7 @@ export const editedGroupName = 'testGroup';
 
 export async function createTagGroup(tagGroupName, locationName = undefined) {
   const tagGroup = await global.client.$(
-    '[data-tid=tagLibraryMoreButton_' + tagGroupName + ']'
+    '[data-tid=tagLibraryMoreButton_' + tagGroupName + ']',
   );
   if (!tagGroup) {
     await clickOn('[data-tid=tagLibraryMenu]');

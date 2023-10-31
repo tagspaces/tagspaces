@@ -37,14 +37,14 @@ function TagGroupContainer(props: Props) {
         handlerId: monitor.getHandlerId(),
         isActive,
         canDrop: monitor.canDrop(),
-        tagGroupId: props.taggroup.uuid
+        tagGroupId: props.taggroup.uuid,
       };
     },
     drop() {
       return {
-        tagGroupId: collectedProps.tagGroupId
+        tagGroupId: collectedProps.tagGroupId,
       };
-    }
+    },
   });
 
   drop(ref);
@@ -70,7 +70,7 @@ function TagGroupContainer(props: Props) {
         borderRadius: 5,
         minHeight: 20,
         border,
-        backgroundColor
+        backgroundColor,
       }}
       data-tid={'tagGroupContainer_' + props.taggroup.title}
     >

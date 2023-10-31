@@ -37,10 +37,10 @@ function SavedSearchesMenu(props: Props) {
   const { open, onClose, anchorEl } = props;
   const { t } = useTranslation();
   const { findFromSavedSearch } = useDirectoryContentContext();
-  const searches = useSelector(state => getSearches(state));
+  const searches = useSelector((state) => getSearches(state));
 
   const menuItems = searches.length ? (
-    searches.map(search => (
+    searches.map((search) => (
       <MenuItem
         key={search.uuid}
         onClick={() => {
@@ -63,7 +63,7 @@ function SavedSearchesMenu(props: Props) {
         onClose={onClose}
         id="search-menu"
         MenuListProps={{
-          'aria-labelledby': 'basic-button'
+          'aria-labelledby': 'basic-button',
         }}
         // onClick={() => setOpenSavedSearches(null)}
         PaperProps={{
@@ -76,7 +76,7 @@ function SavedSearchesMenu(props: Props) {
               width: 32,
               height: 32,
               ml: -0.5,
-              mr: 1
+              mr: 1,
             },
             '&:before': {
               content: '""',
@@ -88,9 +88,9 @@ function SavedSearchesMenu(props: Props) {
               height: 10,
               bgcolor: 'background.paper',
               transform: 'translateY(-50%) rotate(45deg)',
-              zIndex: 0
-            }
-          }
+              zIndex: 0,
+            },
+          },
         }}
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}

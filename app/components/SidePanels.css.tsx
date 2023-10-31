@@ -30,7 +30,7 @@ export const classes = {
   toolbar: `${PREFIX}-toolbar`,
   formControl: `${PREFIX}-formControl`,
   mainActionButton: `${PREFIX}-mainActionButton`,
-  leftIcon: `${PREFIX}-leftIcon`
+  leftIcon: `${PREFIX}-leftIcon`,
 };
 
 export const SidePanel = styled('div')(({ theme }) => ({
@@ -38,18 +38,18 @@ export const SidePanel = styled('div')(({ theme }) => ({
   paddingLeft: 5,
   paddingRight: 0,
   [`& .${classes.fontIcon}`]: {
-    color: theme.palette.text.primary
+    color: theme.palette.text.primary,
   },
   [`& .${classes.header}`]: {
-    color: theme.palette.text.primary
+    color: theme.palette.text.primary,
   },
   [`& .${classes.icon}`]: {
-    margin: theme.spacing(1)
+    margin: theme.spacing(1),
   },
   [`& .${classes.locationListArea}`]: {
     paddingTop: 0,
     marginTop: 0,
-    overflowY: 'auto'
+    overflowY: 'auto',
   },
   [`& .${classes.listItem}`]: {
     paddingLeft: 0,
@@ -57,7 +57,7 @@ export const SidePanel = styled('div')(({ theme }) => ({
     paddingBottom: 2,
     paddingRight: 0,
     borderRadius: 5,
-    backgroundColor: 'transparent'
+    backgroundColor: 'transparent',
   },
   [`& .${classes.listItemSelected}`]: {
     paddingLeft: 0,
@@ -65,27 +65,27 @@ export const SidePanel = styled('div')(({ theme }) => ({
     paddingTop: 2,
     paddingBottom: 2,
     borderRadius: 5,
-    backgroundColor: theme.palette.primary.light
+    backgroundColor: theme.palette.primary.light,
   },
   [`& .${classes.panelTitle}`]: {
     textTransform: 'uppercase',
     flex: 1,
     paddingLeft: 7,
-    paddingTop: 12
+    paddingTop: 12,
   },
   [`& .${classes.toolbar}`]: {
-    display: 'flex'
+    display: 'flex',
   },
   [`& .${classes.formControl}`]: {
     width: '100%',
-    marginBottom: 10
+    marginBottom: 10,
   },
   [`& .${classes.mainActionButton}`]: {
     marginTop: 10,
     marginLeft: 0,
-    paddingLeft: 8
+    paddingLeft: 8,
   },
   [`& .${classes.leftIcon}`]: {
-    marginRight: theme.spacing(1)
-  }
+    marginRight: theme.spacing(1),
+  },
 }));

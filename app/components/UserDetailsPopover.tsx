@@ -41,7 +41,7 @@ const classes = {
   panelTitle: `${PREFIX}-panelTitle`,
   header: `${PREFIX}-header`,
   mainActionButton: `${PREFIX}-mainActionButton`,
-  leftIcon: `${PREFIX}-leftIcon`
+  leftIcon: `${PREFIX}-leftIcon`,
 };
 
 const Root = styled('div')(({ theme }) => ({
@@ -49,19 +49,19 @@ const Root = styled('div')(({ theme }) => ({
     textTransform: 'uppercase',
     flex: 1,
     paddingLeft: 7,
-    paddingTop: 12
+    paddingTop: 12,
   },
   [`& .${classes.header}`]: {
-    color: theme.palette.text.primary
+    color: theme.palette.text.primary,
   },
   [`& .${classes.mainActionButton}`]: {
     marginTop: 10,
     marginLeft: 0,
-    paddingLeft: 8
+    paddingLeft: 8,
   },
   [`& .${classes.leftIcon}`]: {
-    marginRight: theme.spacing(1)
-  }
+    marginRight: theme.spacing(1),
+  },
 }));
 
 interface Props {
@@ -101,7 +101,7 @@ function UserDetailsPopover(props: Props) {
     <Root
       style={{
         maxWidth: 400,
-        height: '100%'
+        height: '100%',
       }}
     >
       <Typography
@@ -117,9 +117,9 @@ function UserDetailsPopover(props: Props) {
               variant="rounded"
               style={{
                 color: theme.palette.getContrastText(
-                  theme.palette.primary.light
+                  theme.palette.primary.light,
                 ),
-                backgroundColor: theme.palette.primary.light
+                backgroundColor: theme.palette.primary.light,
               }}
             >
               {initials}
@@ -133,7 +133,7 @@ function UserDetailsPopover(props: Props) {
           <Box
             style={{
               width: '100%',
-              textAlign: 'center'
+              textAlign: 'center',
             }}
           >
             {isSetupTOTPOpened && (
@@ -141,7 +141,7 @@ function UserDetailsPopover(props: Props) {
                 open={isSetupTOTPOpened}
                 onClose={() => setSetupTOTPOpened(false)}
                 user={cognitoUser}
-                confirmCallback={result => {
+                confirmCallback={(result) => {
                   if (result) {
                     window.location.reload(); // TODO SOFTWARE_TOKEN_MFA is not refreshed in signed user without window.reload()
                   }
@@ -195,7 +195,7 @@ function UserDetailsPopover(props: Props) {
           style={{
             width: '100%',
             textAlign: 'center',
-            marginBottom: 10
+            marginBottom: 10,
           }}
         >
           <Button

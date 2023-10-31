@@ -38,7 +38,7 @@ import {
   actions as SettingsActions,
   getPersistTagsInSidecarFile,
   //getCurrentLanguage,
-  getSettings
+  getSettings,
 } from '-/reducers/settings';
 import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
 import PerspectiveSelector from '-/components/PerspectiveSelector';
@@ -57,33 +57,32 @@ const classes = {
   root: `${PREFIX}-root`,
   listItem: `${PREFIX}-listItem`,
   pro: `${PREFIX}-pro`,
-  colorChooserButton: `${PREFIX}-colorChooserButton`
+  colorChooserButton: `${PREFIX}-colorChooserButton`,
 };
 
 const Root = styled('div')(({ theme }) => ({
   [`& .${classes.root}`]: {
-    overflowX: 'hidden'
+    overflowX: 'hidden',
   },
   [`& .${classes.listItem}`]: {
     paddingLeft: 0,
-    paddingRight: 0
+    paddingRight: 0,
   },
   [`& .${classes.pro}`]: {
-    backgroundColor: '#1DD19F'
+    backgroundColor: '#1DD19F',
   },
   [`& .${classes.colorChooserButton}`]: {
     minHeight: 30,
-    border: '1px solid lightgray'
-  }
+    border: '1px solid lightgray',
+  },
 }));
 
 function SettingsGeneral() {
   const { i18n, t } = useTranslation();
   const { openCurrentDirectory } = useDirectoryContentContext();
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
-  const [displayTextColorPicker, setDisplayTextColorPicker] = useState<boolean>(
-    false
-  );
+  const [displayTextColorPicker, setDisplayTextColorPicker] =
+    useState<boolean>(false);
   const dispatch: AppDispatch = useDispatch();
   const settings = useSelector(getSettings);
   const persistTagsInSidecarFile = useSelector(getPersistTagsInSidecarFile);
@@ -104,7 +103,7 @@ function SettingsGeneral() {
     this.props.setTagDelimiter(event.target.value);
   }; */
 
-  const handleMaxSearchResult = event => {
+  const handleMaxSearchResult = (event) => {
     dispatch(SettingsActions.setMaxSearchResult(event.target.value));
   };
 
@@ -135,7 +134,7 @@ function SettingsGeneral() {
             }}
             input={<Input id="languageSelector" />}
           >
-            {settings.supportedLanguages.map(language => (
+            {settings.supportedLanguages.map((language) => (
               <MenuItem key={language.iso} value={language.iso}>
                 {language.title}
               </MenuItem>
@@ -152,7 +151,7 @@ function SettingsGeneral() {
             }
             input={<Input id="themeSelector" />}
           >
-            {settings.supportedThemes.map(theme => (
+            {settings.supportedThemes.map((theme) => (
               <MenuItem key={theme} value={theme}>
                 {theme === 'light' && t('core:regularScheme')}
                 {theme === 'dark' && t('core:darkScheme')}
@@ -168,12 +167,12 @@ function SettingsGeneral() {
             value={settings.currentRegularTheme}
             onChange={(event: any) =>
               dispatch(
-                SettingsActions.setCurrentRegularTheme(event.target.value)
+                SettingsActions.setCurrentRegularTheme(event.target.value),
               )
             }
             input={<Input id="themeRegularSelector" />}
           >
-            {settings.supportedRegularThemes.map(theme => (
+            {settings.supportedRegularThemes.map((theme) => (
               <MenuItem key={theme} value={theme}>
                 {theme.charAt(0).toUpperCase() + theme.slice(1)}
               </MenuItem>
@@ -190,7 +189,7 @@ function SettingsGeneral() {
             }
             input={<Input id="themeDarkSelector" />}
           >
-            {settings.supportedDarkThemes.map(theme => (
+            {settings.supportedDarkThemes.map((theme) => (
               <MenuItem key={theme} value={theme}>
                 {theme.charAt(0).toUpperCase() + theme.slice(1)}
               </MenuItem>
@@ -277,7 +276,7 @@ function SettingsGeneral() {
             data-tid="settingsSetCheckForUpdates"
             onClick={() =>
               dispatch(
-                SettingsActions.setCheckForUpdates(!settings.checkForUpdates)
+                SettingsActions.setCheckForUpdates(!settings.checkForUpdates),
               )
             }
             checked={settings.checkForUpdates}
@@ -306,7 +305,7 @@ function SettingsGeneral() {
             data-tid="settingsSetAddTagsToLibrary"
             onClick={() =>
               dispatch(
-                SettingsActions.setAddTagsToLibrary(!settings.addTagsToLibrary)
+                SettingsActions.setAddTagsToLibrary(!settings.addTagsToLibrary),
               )
             }
             checked={settings.addTagsToLibrary}
@@ -320,8 +319,8 @@ function SettingsGeneral() {
             onClick={() =>
               dispatch(
                 SettingsActions.setUseGenerateThumbnails(
-                  !settings.useGenerateThumbnails
-                )
+                  !settings.useGenerateThumbnails,
+                ),
               )
             }
             checked={
@@ -339,7 +338,7 @@ function SettingsGeneral() {
               className={classes.colorChooserButton}
               size="small"
               style={{
-                backgroundColor: settings.tagBackgroundColor
+                backgroundColor: settings.tagBackgroundColor,
               }}
               onClick={toggleDefaultTagBackgroundColorPicker}
             >
@@ -349,7 +348,7 @@ function SettingsGeneral() {
           {displayColorPicker && (
             <ColorPickerDialog
               open={displayColorPicker}
-              setColor={color => {
+              setColor={(color) => {
                 dispatch(SettingsActions.setTagColor(color));
               }}
               onClose={toggleDefaultTagBackgroundColorPicker}
@@ -373,7 +372,7 @@ function SettingsGeneral() {
           {displayTextColorPicker && (
             <ColorPickerDialog
               open={displayTextColorPicker}
-              setColor={color => {
+              setColor={(color) => {
                 dispatch(SettingsActions.setTagTextColor(color));
               }}
               onClose={toggleDefaultTagTextColorPicker}

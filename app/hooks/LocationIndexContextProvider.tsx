@@ -34,7 +34,7 @@ import {
   extractFileExtension,
   extractFileName,
   extractTagsAsObjects,
-  getThumbFileLocationForFile
+  getThumbFileLocationForFile,
 } from '@tagspaces/tagspaces-common/paths';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
@@ -78,7 +78,7 @@ export const LocationIndexContext = createContext<LocationIndexContextData>({
   reflectCreateEntry: () => {},
   reflectRenameEntry: () => {},
   indexUpdateSidecarTags: () => {},
-  reflectUpdateSidecarMeta: () => {}
+  reflectUpdateSidecarMeta: () => {},
 });
 
 export type LocationIndexContextProviderProps = {
@@ -86,7 +86,7 @@ export type LocationIndexContextProviderProps = {
 };
 
 export const LocationIndexContextProvider = ({
-  children
+  children,
 }: LocationIndexContextProviderProps) => {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
@@ -98,7 +98,7 @@ export const LocationIndexContextProvider = ({
     loadDirectoryContent,
     currentDirectoryPerspective,
     addDirectoryEntries,
-    removeDirectoryEntries
+    removeDirectoryEntries,
   } = useDirectoryContentContext();
   const { showNotification, hideNotifications } = useNotificationContext();
 
@@ -156,7 +156,7 @@ export const LocationIndexContextProvider = ({
       return;
     }
     for (let i = 0; i < index.current.length; i += 1) {
-      if (paths.some(path => index.current[i].path === path)) {
+      if (paths.some((path) => index.current[i].path === path)) {
         index.current = index.current.splice(i, 1);
         i -= 1;
       }
@@ -167,7 +167,9 @@ export const LocationIndexContextProvider = ({
     if (!index.current || index.current.length < 1) {
       return;
     }
-    let entryFound = index.current.some(entry => entry.path === newEntry.path);
+    let entryFound = index.current.some(
+      (entry) => entry.path === newEntry.path,
+    );
     if (!entryFound) {
       index.current = [...index.current, newEntry];
     }
@@ -183,19 +185,19 @@ export const LocationIndexContextProvider = ({
         index.current[i].path = newPath;
         index.current[i].name = extractFileName(
           newPath,
-          PlatformIO.getDirSeparator()
+          PlatformIO.getDirSeparator(),
         );
         index.current[i].extension = extractFileExtension(
           newPath,
-          PlatformIO.getDirSeparator()
+          PlatformIO.getDirSeparator(),
         );
         index.current[i].tags = [
-          ...index.current[i].tags.filter(tag => tag.type === 'sidecar'), // add only sidecar tags
+          ...index.current[i].tags.filter((tag) => tag.type === 'sidecar'), // add only sidecar tags
           ...extractTagsAsObjects(
             newPath,
             AppConfig.tagDelimiter,
-            PlatformIO.getDirSeparator()
-          )
+            PlatformIO.getDirSeparator(),
+          ),
         ];
       }
     }
@@ -208,8 +210,8 @@ export const LocationIndexContextProvider = ({
     for (let i = 0; i < index.current.length; i += 1) {
       if (index.current[i].path === path) {
         index.current[i].tags = [
-          ...index.current[i].tags.filter(tag => tag.type === 'plain'),
-          ...tags
+          ...index.current[i].tags.filter((tag) => tag.type === 'plain'),
+          ...tags,
         ];
       }
     }
@@ -223,7 +225,7 @@ export const LocationIndexContextProvider = ({
       if (index.current[i].path === path) {
         index.current[i] = {
           ...index.current[i],
-          ...entryMeta
+          ...entryMeta,
         };
       }
     }
@@ -239,16 +241,16 @@ export const LocationIndexContextProvider = ({
     extractText: boolean,
     isCurrentLocation = true,
     locationID: string = undefined,
-    ignorePatterns: Array<string> = []
+    ignorePatterns: Array<string> = [],
   ): Promise<boolean> {
     isIndexing.current = true;
     return createDirectoryIndex(
       { path: directoryPath, locationID },
       extractText,
       ignorePatterns,
-      enableWS
+      enableWS,
     )
-      .then(directoryIndex => {
+      .then((directoryIndex) => {
         if (isCurrentLocation) {
           // Load index only if current location
           setIndex(directoryIndex);
@@ -263,7 +265,7 @@ export const LocationIndexContextProvider = ({
         } */
         return true;
       })
-      .catch(err => {
+      .catch((err) => {
         isIndexing.current = false;
         lastError.current = err;
         return false;
@@ -281,8 +283,8 @@ export const LocationIndexContextProvider = ({
               PlatformIO.getLocationPath(location),
               location.fullTextIndex,
               isCurrentLocation,
-              location.uuid
-            )
+              location.uuid,
+            ),
           )
           .catch(() => {
             PlatformIO.disableObjectStoreSupport();
@@ -294,7 +296,7 @@ export const LocationIndexContextProvider = ({
           PlatformIO.getLocationPath(location),
           location.fullTextIndex,
           isCurrentLocation,
-          location.uuid
+          location.uuid,
         );
       } else if (location.type === locationType.TYPE_LOCAL) {
         PlatformIO.disableObjectStoreSupport();
@@ -302,7 +304,7 @@ export const LocationIndexContextProvider = ({
           PlatformIO.getLocationPath(location),
           location.fullTextIndex,
           isCurrentLocation,
-          location.uuid
+          location.uuid,
         );
       }
     }
@@ -318,7 +320,7 @@ export const LocationIndexContextProvider = ({
           { path: nextPath, location: location.uuid },
           extractText,
           location.ignorePatternPaths,
-          enableWS
+          enableWS,
         )
           /* .then(directoryIndex => {
           if (Pro && Pro.Indexer) {
@@ -330,7 +332,7 @@ export const LocationIndexContextProvider = ({
           }
           return true;
         }) */
-          .catch(err => {
+          .catch((err) => {
             isIndexing.current = false;
             lastError.current = err;
           })
@@ -338,12 +340,12 @@ export const LocationIndexContextProvider = ({
     });
 
     return Promise.all(promises)
-      .then(e => {
+      .then((e) => {
         isIndexing.current = false;
         console.log('Resolution is complete!', e);
         return true;
       })
-      .catch(e => {
+      .catch((e) => {
         console.warn('Resolution is failed!', e);
         return false;
       });
@@ -392,11 +394,11 @@ export const LocationIndexContextProvider = ({
           {
             path: currentPath,
             locationID: currentLocation.uuid,
-            ...(isCloudLocation && { bucketName: currentLocation.bucketName })
+            ...(isCloudLocation && { bucketName: currentLocation.bucketName }),
           },
           currentLocation.fullTextIndex,
           currentLocation.ignorePatternPaths,
-          enableWS
+          enableWS,
         );
         setIndex(newIndex);
       } else if (isCloudLocation || !index || index.length === 0) {
@@ -404,15 +406,15 @@ export const LocationIndexContextProvider = ({
           {
             path: PlatformIO.getLocationPath(currentLocation),
             locationID: currentLocation.uuid,
-            ...(isCloudLocation && { bucketName: currentLocation.bucketName })
+            ...(isCloudLocation && { bucketName: currentLocation.bucketName }),
           },
           PlatformIO.getDirSeparator(),
-          PlatformIO.loadTextFilePromise
+          PlatformIO.loadTextFilePromise,
         );
         setIndex(newIndex);
       }
       Search.searchLocationIndex(getIndex(), searchQuery)
-        .then(searchResults => {
+        .then((searchResults) => {
           if (isCloudLocation) {
             searchResults.forEach((entry: TS.FileSystemEntry) => {
               if (
@@ -427,8 +429,8 @@ export const LocationIndexContextProvider = ({
                 entry.thumbPath = PlatformIO.getURLforPath(
                   getThumbFileLocationForFile(
                     thumbPath,
-                    PlatformIO.getDirSeparator()
-                  )
+                    PlatformIO.getDirSeparator(),
+                  ),
                 );
               }
             });
@@ -437,14 +439,14 @@ export const LocationIndexContextProvider = ({
           hideNotifications();
           return true;
         })
-        .catch(err => {
+        .catch((err) => {
           setSearchResults([]);
           // dispatch(AppActions.hideNotifications());
           console.log('Searching Index failed: ', err);
           showNotification(
             t('core:searchingFailed') + ' ' + err.message,
             'warning',
-            true
+            true,
           );
         });
     }, 50);
@@ -480,7 +482,7 @@ export const LocationIndexContextProvider = ({
             t('core:searching') + ' ' + location.name,
             'default',
             true,
-            'TIDSearching'
+            'TIDSearching',
           );
           if (isCloudLocation) {
             await PlatformIO.enableObjectStoreSupport(location);
@@ -488,7 +490,7 @@ export const LocationIndexContextProvider = ({
           // if (Pro && Pro.Indexer && Pro.Indexer.hasIndex) {
           indexExist = await hasIndex(
             nextPath,
-            PlatformIO.getPropertiesPromise
+            PlatformIO.getPropertiesPromise,
           ); // , PlatformIO.getDirSeparator());
 
           if (
@@ -500,11 +502,11 @@ export const LocationIndexContextProvider = ({
               {
                 path: nextPath,
                 locationID: location.uuid,
-                ...(isCloudLocation && { bucketName: location.bucketName })
+                ...(isCloudLocation && { bucketName: location.bucketName }),
               },
               location.fullTextIndex,
               location.ignorePatternPaths,
-              enableWS
+              enableWS,
             );
             /* if (Pro && Pro.Indexer && Pro.Indexer.persistIndex) {
               Pro.Indexer.persistIndex(
@@ -521,11 +523,11 @@ export const LocationIndexContextProvider = ({
                 path: nextPath,
                 locationID: location.uuid,
                 ...(isCloudLocation && {
-                  bucketName: currentLocation.bucketName
-                })
+                  bucketName: currentLocation.bucketName,
+                }),
               },
               PlatformIO.getDirSeparator(),
-              PlatformIO.loadTextFilePromise
+              PlatformIO.loadTextFilePromise,
             );
           }
           return Search.searchLocationIndex(directoryIndex, searchQuery)
@@ -534,7 +536,7 @@ export const LocationIndexContextProvider = ({
               if (isCloudLocation) {
                 enhancedSearchResult = searchResults
                   // Excluding s3 folders from global search
-                  .filter(entry => entry && entry.isFile)
+                  .filter((entry) => entry && entry.isFile)
                   .map((entry: TS.FileSystemEntry) => {
                     const cleanedPath = entry.path.startsWith('/')
                       ? entry.path.substr(1)
@@ -560,7 +562,7 @@ export const LocationIndexContextProvider = ({
               }
               return true;
             })
-            .catch(e => {
+            .catch((e) => {
               if (isCloudLocation) {
                 PlatformIO.disableObjectStoreSupport();
               }
@@ -570,11 +572,11 @@ export const LocationIndexContextProvider = ({
               showNotification(
                 t('core:searchingFailed') + ' ' + e.message,
                 'warning',
-                true
+                true,
               );
             });
         }),
-      Promise.resolve()
+      Promise.resolve(),
     );
 
     result
@@ -586,7 +588,7 @@ export const LocationIndexContextProvider = ({
               searchResultCount +
               ' entries are listed.',
             'default',
-            true
+            true,
           );
         } else {
           showNotification(t('Global search completed'), 'default', true);
@@ -600,7 +602,7 @@ export const LocationIndexContextProvider = ({
         }
         return true;
       })
-      .catch(e => {
+      .catch((e) => {
         if (
           currentLocation &&
           currentLocation.type === locationType.TYPE_CLOUD
@@ -630,14 +632,14 @@ export const LocationIndexContextProvider = ({
       reflectCreateEntry,
       reflectRenameEntry,
       indexUpdateSidecarTags,
-      reflectUpdateSidecarMeta
+      reflectUpdateSidecarMeta,
     };
   }, [
     currentLocation,
     index,
     isIndexing.current,
     addDirectoryEntries,
-    removeDirectoryEntries
+    removeDirectoryEntries,
   ]);
 
   return (

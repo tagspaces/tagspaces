@@ -51,7 +51,7 @@ const presetColors = [
   '#cca6ac',
   '#f691b2',
   '#cd74e6',
-  '#a47ae2'
+  '#a47ae2',
 ];
 
 interface Props {
@@ -87,7 +87,7 @@ function ColorPickerDialog(props: Props) {
       onClose={onClose}
       keepMounted
       scroll="paper"
-      onKeyDown={event => {
+      onKeyDown={(event) => {
         if (event.key === 'Enter' || event.keyCode === 13) {
           event.preventDefault();
           event.stopPropagation();
@@ -104,14 +104,14 @@ function ColorPickerDialog(props: Props) {
         style={{
           marginLeft: 'auto',
           marginRight: 'auto',
-          overflowX: 'hidden'
+          overflowX: 'hidden',
         }}
       >
         <SketchPicker
           style={{
             padding: '0 !important',
             boxShadow: 'none !important',
-            backgroundColor: 'transparent !important'
+            backgroundColor: 'transparent !important',
           }}
           name="color"
           presetColors={props.presetColors ? props.presetColors : presetColors}

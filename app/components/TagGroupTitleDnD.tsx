@@ -26,7 +26,7 @@ import {
   ConnectDragSource,
   ConnectDropTarget,
   DragSource,
-  DropTarget
+  DropTarget,
 } from 'react-dnd';
 import Grid from '@mui/material/Grid';
 import { TS } from '-/tagspaces.namespace';
@@ -38,7 +38,7 @@ interface Props {
   tagGroup: TS.TagGroup;
   handleTagGroupMenu: (
     event: React.ChangeEvent<HTMLInputElement>,
-    tagGroup: TS.TagGroup
+    tagGroup: TS.TagGroup,
   ) => void;
   toggleTagGroup: (uuid: string) => void;
   moveTagGroup: (tagGroupUuid: TS.Uuid, position: number) => void;
@@ -57,7 +57,7 @@ function TagGroupTitleDnD(props: Props) {
   function getLocationName(locationId: string) {
     if (locationId) {
       const location: TS.Location = props.locations.find(
-        l => l.uuid === locationId
+        (l) => l.uuid === locationId,
       );
       if (location) {
         return ' (' + location.name + ')';
@@ -66,12 +66,8 @@ function TagGroupTitleDnD(props: Props) {
     return '';
   }
 
-  const {
-    tagGroup,
-    handleTagGroupMenu,
-    connectDropTarget,
-    connectDragSource
-  } = props;
+  const { tagGroup, handleTagGroupMenu, connectDropTarget, connectDragSource } =
+    props;
 
   const tagGroupTitle = (
     <div>
@@ -125,7 +121,7 @@ function TagGroupTitleDnD(props: Props) {
                     whiteSpace: 'nowrap',
                     textAlign: 'center',
                     backgroundColor: '#bbbbbb',
-                    borderRadius: 10
+                    borderRadius: 10,
                   }}
                 >
                   {tagGroup.children.length}
@@ -164,7 +160,7 @@ const boxSource = {
   endDrag(props, monitor) {
     const item = monitor.getItem();
     const dropResult = monitor.getDropResult();
-  } */
+  } */,
 };
 
 /**
@@ -177,7 +173,7 @@ const collectSource = (connect, monitor) => ({
   // You can ask the monitor about the current drag preview
   connectDragPreview: connect.dragPreview(),
   // You can ask the monitor about the current drag state:
-  isDragging: monitor.isDragging()
+  isDragging: monitor.isDragging(),
 });
 
 const boxTarget = {
@@ -200,22 +196,22 @@ const boxTarget = {
     // but it's good here for the sake of performance
     // to avoid expensive index searches.
     dragItem.index = hoverIndex;
-  }
+  },
 };
 const collectTarget = (connect, monitor) => ({
   connectDropTarget: connect.dropTarget(),
   isOver: monitor.isOver(),
-  canDrop: monitor.canDrop()
+  canDrop: monitor.canDrop(),
 });
 
 export default DragSource(
   DragItemTypes.TAG_GROUP,
   boxSource,
-  collectSource
+  collectSource,
 )(
   DropTarget(
     DragItemTypes.TAG_GROUP,
     boxTarget,
-    collectTarget
-  )(TagGroupTitleDnD)
+    collectTarget,
+  )(TagGroupTitleDnD),
 );

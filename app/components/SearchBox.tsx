@@ -30,11 +30,11 @@ interface Props {
 function SearchBox(props: Props) {
   const { searchQuery } = useDirectoryContentContext();
   const [anchorSearch, setAnchorSearch] = useState<HTMLButtonElement | null>(
-    null
+    null,
   );
 
   const [textQuery, setTextQuery] = useState<string>(
-    searchQuery.textQuery || ''
+    searchQuery.textQuery || '',
   );
 
   return (
@@ -53,17 +53,17 @@ function SearchBox(props: Props) {
             onClose={() => setAnchorSearch(null)}
             anchorOrigin={{
               vertical: 'bottom',
-              horizontal: 'right'
+              horizontal: 'right',
             }}
             PaperProps={{
               style: {
                 overflow: 'hidden',
-                height: 720
-              }
+                height: 720,
+              },
             }}
             transformOrigin={{
               vertical: 'top',
-              horizontal: 'right'
+              horizontal: 'right',
             }}
           >
             <SearchPopover

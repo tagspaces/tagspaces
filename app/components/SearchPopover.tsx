@@ -40,7 +40,7 @@ import { mergeWithExtractedTags } from '@tagspaces/tagspaces-common/misc';
 import TagsSelect from './TagsSelect';
 import {
   getMaxSearchResults,
-  getShowUnixHiddenEntries
+  getShowUnixHiddenEntries,
 } from '-/reducers/settings';
 import { FileTypeGroups, haveSearchFilters } from '-/services/search';
 import { Pro } from '../pro';
@@ -65,7 +65,7 @@ import {
   AudioIcon,
   VideoIcon,
   ArchiveIcon,
-  CloseIcon
+  CloseIcon,
 } from '-/components/CommonIcons';
 import { openURLExternally } from '-/services/utils-io';
 import { useTheme } from '@mui/material/styles';
@@ -92,17 +92,17 @@ function SearchPopover(props: Props) {
     currentDirectoryPath,
     searchQuery,
     setSearchQuery,
-    exitSearchMode
+    exitSearchMode,
   } = useDirectoryContentContext();
   const { getIndex, isIndexing } = useLocationIndexContext();
-  const [, forceUpdate] = useReducer(x => x + 1, 0);
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
   const maxSearchResults = useSelector(getMaxSearchResults);
   const searches = useSelector(getSearches);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
   // const textQuery = useRef<string>(searchQuery.textQuery);
   // const tagsAND = useRef<Array<TS.Tag>>(searchQuery.tagsAND);
   const fileTypes = useRef<Array<string>>(
-    searchQuery.fileTypes ? searchQuery.fileTypes : FileTypeGroups.any
+    searchQuery.fileTypes ? searchQuery.fileTypes : FileTypeGroups.any,
   );
 
   const searchBoxing = searchQuery.searchBoxing
@@ -111,11 +111,10 @@ function SearchPopover(props: Props) {
   // useRef<'fuzzy' | 'semistrict' | 'strict'>(
   const searchType = searchQuery.searchType ? searchQuery.searchType : 'fuzzy';
   const lastModified = useRef<string>(
-    searchQuery.lastModified ? searchQuery.lastModified : ''
+    searchQuery.lastModified ? searchQuery.lastModified : '',
   );
-  const [saveSearchDialogOpened, setSaveSearchDialogOpened] = useState<
-    TS.SearchQuery
-  >(undefined);
+  const [saveSearchDialogOpened, setSaveSearchDialogOpened] =
+    useState<TS.SearchQuery>(undefined);
   // const tagTimePeriod = useRef<string>('');
   // const tagTimePeriodHelper = useRef<string>(' ');
   const [tagPlace, setTagPlace] = useState<string>(' ');
@@ -130,10 +129,10 @@ function SearchPopover(props: Props) {
   const [tagPlaceLong, setTagPlaceLong] = useState<number | null>(null);
   // const [tagPlaceRadius, setTagPlaceRadius] = useState<number>(0);
   const forceIndexing = useRef<boolean>(
-    searchQuery.forceIndexing ? searchQuery.forceIndexing : false
+    searchQuery.forceIndexing ? searchQuery.forceIndexing : false,
   );
   const fileSize = useRef<string>(
-    searchQuery.fileSize ? searchQuery.fileSize : ''
+    searchQuery.fileSize ? searchQuery.fileSize : '',
   );
 
   /*useEffect(() => {
@@ -152,7 +151,7 @@ function SearchPopover(props: Props) {
         searchBoxing: searchBoxing,
         fileTypes: types,
         showUnixHiddenEntries,
-        executeSearch: false
+        executeSearch: false,
       });
     }
   };
@@ -169,13 +168,13 @@ function SearchPopover(props: Props) {
         searchBoxing: searchBoxing,
         fileSize: value,
         showUnixHiddenEntries,
-        executeSearch: false
+        executeSearch: false,
       });
     }
   };
 
   const handleLastModifiedChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const { target } = event;
     const { value, name } = target;
@@ -187,18 +186,18 @@ function SearchPopover(props: Props) {
         searchBoxing: searchBoxing,
         lastModified: value,
         showUnixHiddenEntries,
-        executeSearch: false
+        executeSearch: false,
       });
     }
   };
 
   const handleSavedSearchChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const { target } = event;
     const { value } = target;
 
-    const savedSearch = searches.find(search => search.uuid === value);
+    const savedSearch = searches.find((search) => search.uuid === value);
     if (!savedSearch) {
       return true;
     }
@@ -230,14 +229,14 @@ function SearchPopover(props: Props) {
       ...savedSearch,
       tagTimePeriodFrom: savedSearch.tagTimePeriodFrom,
       tagTimePeriodTo: savedSearch.tagTimePeriodTo,
-      showUnixHiddenEntries
+      showUnixHiddenEntries,
     });
   };
 
   function removeTags(tagsArray, removeTagsArray) {
     // eslint-disable-next-line react/no-access-state-in-setstate
-    return tagsArray.filter(tag =>
-      removeTagsArray.some(valueTag => valueTag.title !== tag.title)
+    return tagsArray.filter((tag) =>
+      removeTagsArray.some((valueTag) => valueTag.title !== tag.title),
     );
   }
 
@@ -247,17 +246,17 @@ function SearchPopover(props: Props) {
       if (name === 'tagsAND') {
         searchQuery = {
           ...searchQuery,
-          tagsAND: removeTags(searchQuery.tagsAND, value)
+          tagsAND: removeTags(searchQuery.tagsAND, value),
         };
       } else if (name === 'tagsNOT') {
         searchQuery = {
           ...searchQuery,
-          tagsNOT: removeTags(searchQuery.tagsNOT, value)
+          tagsNOT: removeTags(searchQuery.tagsNOT, value),
         };
       } else if (name === 'tagsOR') {
         searchQuery = {
           ...searchQuery,
-          tagsOR: removeTags(searchQuery.tagsOR, value)
+          tagsOR: removeTags(searchQuery.tagsOR, value),
         };
       }
     } else {
@@ -277,12 +276,12 @@ function SearchPopover(props: Props) {
         ...searchQuery,
         searchBoxing: searchBoxing,
         showUnixHiddenEntries,
-        executeSearch: false
+        executeSearch: false,
       });
     }
   };
 
-  const handleSearchTermChange = event => {
+  const handleSearchTermChange = (event) => {
     const { target } = event;
     const { value } = target;
     props.setTextQuery(value);
@@ -311,7 +310,7 @@ function SearchPopover(props: Props) {
     forceUpdate();
   };*/
 
-  const handlePlaceChange = event => {
+  const handlePlaceChange = (event) => {
     const { target } = event;
     const { value } = target;
     let lat = null;
@@ -340,7 +339,7 @@ function SearchPopover(props: Props) {
     setTagPlaceHelper(tagPHelper);
   };
 
-  const startSearch = event => {
+  const startSearch = (event) => {
     if (event.key === 'Enter' || event.keyCode === 13) {
       if (props.hideDrawer) {
         props.hideDrawer();
@@ -376,17 +375,17 @@ function SearchPopover(props: Props) {
     const tagsAND = mergeWithExtractedTags(
       props.textQuery,
       searchQuery.tagsAND,
-      '+'
+      '+',
     );
     const tagsOR = mergeWithExtractedTags(
       props.textQuery,
       searchQuery.tagsOR,
-      '|'
+      '|',
     );
     const tagsNOT = mergeWithExtractedTags(
       props.textQuery,
       searchQuery.tagsNOT,
-      '-'
+      '-',
     );
     setSaveSearchDialogOpened({
       uuid: isNew ? undefined : searchQuery.uuid,
@@ -407,19 +406,19 @@ function SearchPopover(props: Props) {
       // tagPlaceRadius,
       maxSearchResults: maxSearchResults,
       currentDirectory: currentDirectoryPath,
-      forceIndexing: forceIndexing.current
+      forceIndexing: forceIndexing.current,
     });
   };
 
   const switchSearchBoxing = (
     event: React.MouseEvent<HTMLElement>,
-    boxing: 'location' | 'folder' | 'global'
+    boxing: 'location' | 'folder' | 'global',
   ) => {
     if (boxing !== null) {
       setSearchQuery({
         ...searchQuery,
         searchBoxing: boxing,
-        executeSearch: false
+        executeSearch: false,
       });
 
       /*searchBoxing.current = boxing;
@@ -429,13 +428,13 @@ function SearchPopover(props: Props) {
 
   const switchSearchType = (
     event: React.MouseEvent<HTMLElement>,
-    type: 'fuzzy' | 'semistrict' | 'strict'
+    type: 'fuzzy' | 'semistrict' | 'strict',
   ) => {
     if (type !== null) {
       setSearchQuery({
         ...searchQuery,
         searchType: type,
-        executeSearch: false
+        executeSearch: false,
       });
 
       /*searchType.current = type;
@@ -447,17 +446,17 @@ function SearchPopover(props: Props) {
     const tagsAND = mergeWithExtractedTags(
       props.textQuery,
       searchQuery.tagsAND,
-      '+'
+      '+',
     );
     const tagsOR = mergeWithExtractedTags(
       props.textQuery,
       searchQuery.tagsOR,
-      '|'
+      '|',
     );
     const tagsNOT = mergeWithExtractedTags(
       props.textQuery,
       searchQuery.tagsNOT,
-      '-'
+      '-',
     );
     const query: TS.SearchQuery = {
       textQuery: props.textQuery,
@@ -478,7 +477,7 @@ function SearchPopover(props: Props) {
       currentDirectory: currentDirectoryPath,
       forceIndexing: forceIndexing.current,
       showUnixHiddenEntries,
-      executeSearch: true
+      executeSearch: true,
     };
     console.log('Search object: ' + JSON.stringify(searchQuery));
     setSearchQuery(query);
@@ -490,7 +489,7 @@ function SearchPopover(props: Props) {
     <SidePanel
       style={{
         maxWidth: 400,
-        height: '100%'
+        height: '100%',
       }}
     >
       <div className={classes.toolbar}>
@@ -523,7 +522,7 @@ function SearchPopover(props: Props) {
           maxHeight: 'calc(100% - 90px)',
           overflowX: 'hidden',
           overflowY: 'auto',
-          scrollbarGutter: 'stable'
+          scrollbarGutter: 'stable',
         }}
         data-tid="searchAdvancedTID"
       >
@@ -560,7 +559,7 @@ function SearchPopover(props: Props) {
                   {searches.length < 1 && (
                     <MenuItem>{t('noSavedSearches')}</MenuItem>
                   )}
-                  {searches.map(search => (
+                  {searches.map((search) => (
                     <MenuItem key={search.uuid} value={search.uuid}>
                       <span style={{ width: '100%' }}>{search.title}</span>
                     </MenuItem>
@@ -573,7 +572,7 @@ function SearchPopover(props: Props) {
             <ButtonGroup
               style={{
                 textAlign: 'center',
-                width: '100%'
+                width: '100%',
               }}
             >
               {searchQuery.uuid && (
@@ -947,11 +946,11 @@ function SearchPopover(props: Props) {
                       setSearchQuery({
                         ...searchQuery,
                         tagTimePeriodFrom: fromDataTime.getTime(),
-                        executeSearch: false
+                        executeSearch: false,
                       });
                     }
                   }}
-                  renderInput={params => <TextField {...params} />}
+                  renderInput={(params) => <TextField {...params} />}
                 />
                 <DatePicker
                   label={t('enterTagTimePeriodTo')}
@@ -963,11 +962,11 @@ function SearchPopover(props: Props) {
                       setSearchQuery({
                         ...searchQuery,
                         tagTimePeriodTo: toDataTime.getTime(),
-                        executeSearch: false
+                        executeSearch: false,
                       });
                     }
                   }}
-                  renderInput={params => (
+                  renderInput={(params) => (
                     <TextField style={{ marginLeft: 5 }} {...params} />
                   )}
                 />
@@ -1025,7 +1024,7 @@ function SearchPopover(props: Props) {
         style={{
           display: 'flex',
           justifyContent: 'space-between',
-          padding: 5
+          padding: 5,
         }}
       >
         <Button
@@ -1066,7 +1065,7 @@ function SearchPopover(props: Props) {
             if (searchQuery) {
               setSearchQuery({
                 ...searchQuery,
-                showUnixHiddenEntries
+                showUnixHiddenEntries,
               });
             }
           }}

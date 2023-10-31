@@ -32,18 +32,18 @@ const boxSource = {
     // console.log('beginDrag', props);
     const entryPath = props.children.props.entryPath;
     const selectedEntries = props.children.props.selectedEntries;
-    if (!selectedEntries.some(entry => entry.path === entryPath)) {
+    if (!selectedEntries.some((entry) => entry.path === entryPath)) {
       return {
         path: entryPath,
-        selectedEntries: [{ path: entryPath }]
+        selectedEntries: [{ path: entryPath }],
       };
     } else {
       return {
         path: entryPath,
-        selectedEntries: selectedEntries
+        selectedEntries: selectedEntries,
       };
     }
-  }
+  },
 
   /* endDrag(props, monitor) {
       const item = monitor.getItem();
@@ -68,7 +68,7 @@ const FileSourceDnd = (props: Props) => {
   props.connectDragPreview(getEmptyImage(), {
     // IE fallback: specify that we'd rather screenshot the node
     // when it already knows it's being dragged so we can hide it with CSS.
-    captureDraggingState: true
+    captureDraggingState: true,
   });
   // }
 
@@ -85,11 +85,11 @@ const collect = (connect, monitor) => ({
   // You can ask the monitor about the current drag preview
   connectDragPreview: connect.dragPreview(),
   // You can ask the monitor about the current drag state:
-  isDragging: monitor.isDragging()
+  isDragging: monitor.isDragging(),
 });
 
 export default DragSource(
   DragItemTypes.FILE,
   boxSource,
-  collect
+  collect,
 )(FileSourceDnd);

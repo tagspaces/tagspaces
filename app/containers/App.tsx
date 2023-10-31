@@ -22,14 +22,14 @@ import { I18nextProvider, useTranslation } from 'react-i18next'; // as we build 
 import {
   createTheme,
   ThemeProvider,
-  StyledEngineProvider
+  StyledEngineProvider,
 } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import AppConfig from '-/AppConfig';
 import {
   getCurrentTheme,
   getDefaultRegularTheme,
-  getDefaultDarkTheme
+  getDefaultDarkTheme,
 } from '-/reducers/settings';
 
 declare module '@mui/material/styles' {
@@ -44,13 +44,13 @@ const legacyTheme = createTheme({
     primary: {
       light: AppConfig.lightThemeLightColor,
       main: AppConfig.lightThemeMainColor,
-      dark: AppConfig.lightThemeMainColor
+      dark: AppConfig.lightThemeMainColor,
     },
     secondary: {
-      main: AppConfig.lightThemeMainColor
+      main: AppConfig.lightThemeMainColor,
     },
-    divider: '#ddd'
-  }
+    divider: '#ddd',
+  },
 });
 
 const newlightTheme = createTheme({
@@ -59,13 +59,13 @@ const newlightTheme = createTheme({
     primary: {
       light: '#a6def4',
       main: '#3bc8ff',
-      dark: '#3bc8ff'
+      dark: '#3bc8ff',
     },
     secondary: {
-      main: '#3bc8ff'
+      main: '#3bc8ff',
     },
-    divider: '#ddd'
-  }
+    divider: '#ddd',
+  },
 });
 
 // https://mui.com/material-ui/customization/dark-mode/
@@ -75,13 +75,13 @@ const darklegacyTheme = createTheme({
     primary: {
       light: AppConfig.darkThemeLightColor,
       main: AppConfig.darkThemeMainColor,
-      dark: AppConfig.darkThemeMainColor
+      dark: AppConfig.darkThemeMainColor,
     },
     secondary: {
-      main: AppConfig.darkThemeMainColor
+      main: AppConfig.darkThemeMainColor,
     },
-    divider: '#555'
-  }
+    divider: '#555',
+  },
 });
 
 const darkblueTheme = createTheme({
@@ -90,16 +90,16 @@ const darkblueTheme = createTheme({
     primary: {
       light: '#a6def4',
       main: '#3bc8ff',
-      dark: '#3bc8ff'
+      dark: '#3bc8ff',
     },
     secondary: {
-      main: '#3bc8ff'
+      main: '#3bc8ff',
     },
     background: {
-      default: '#001E3C'
+      default: '#001E3C',
     },
-    divider: '#555'
-  }
+    divider: '#555',
+  },
 });
 
 const draculaTheme = createTheme({
@@ -108,19 +108,19 @@ const draculaTheme = createTheme({
     primary: {
       light: '#503d50',
       main: '#BD93F9',
-      dark: '#BD93F9'
+      dark: '#BD93F9',
     },
     secondary: {
-      main: '#BD93F9'
+      main: '#BD93F9',
     },
     divider: '#555',
     background: {
-      default: '#282A36'
+      default: '#282A36',
     },
     text: {
-      primary: '#f8f8f2'
-    }
-  }
+      primary: '#f8f8f2',
+    },
+  },
 });
 
 interface Props {

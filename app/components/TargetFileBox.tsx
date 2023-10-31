@@ -48,10 +48,8 @@ function TargetFileBox(props: Props) {
   const { uploadFilesAPI } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
   const { setSelectedEntries } = useSelectedEntriesContext();
-  const {
-    currentDirectoryPath,
-    addDirectoryEntries
-  } = useDirectoryContentContext();
+  const { currentDirectoryPath, addDirectoryEntries } =
+    useDirectoryContentContext();
   const ref = useRef<HTMLDivElement>(null);
   const { setMoveCopyDialogOpened } = props;
 
@@ -70,12 +68,12 @@ function TargetFileBox(props: Props) {
         showNotification(
           'Importing files failed, because no folder is opened in TagSpaces!',
           'error',
-          true
+          true,
         );
         return Promise.reject(
           new Error(
-            'Importing files failed, because no folder is opened in TagSpaces!'
-          )
+            'Importing files failed, because no folder is opened in TagSpaces!',
+          ),
         );
       }
       dispatch(AppActions.resetProgress());
@@ -87,7 +85,7 @@ function TargetFileBox(props: Props) {
           setSelectedEntries(fsEntries);
           return true;
         })
-        .catch(error => {
+        .catch((error) => {
           console.log('uploadFiles', error);
         });
     }
@@ -112,10 +110,10 @@ function TargetFileBox(props: Props) {
       },
       collect: (m: DropTargetMonitor) => ({
         handlerId: m.getHandlerId(),
-        isActive: m.isOver({ shallow: true }) && m.canDrop()
-      })
+        isActive: m.isOver({ shallow: true }) && m.canDrop(),
+      }),
     }),
-    [currentDirectoryPath]
+    [currentDirectoryPath],
   );
 
   drop(ref);
@@ -124,9 +122,7 @@ function TargetFileBox(props: Props) {
   const { children } = props;
   const dragContent = isActive ? (
     <div className={classes.dropzone}>{t('core:releaseToDrop')}</div>
-  ) : (
-    undefined
-  );
+  ) : undefined;
   return (
     <DnD ref={ref} style={{ height: '100%' }}>
       {dragContent}

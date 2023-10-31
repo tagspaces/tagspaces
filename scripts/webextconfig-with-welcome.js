@@ -16,8 +16,8 @@ window.ExtLocations = [
     isReadOnly: false, // if true the user interface of the application turns to read-only mode
     disableIndexing: false, // if true the search index will be persisted and loaded by default on location opening
     fullTextIndex: false, // activated the full-text search for TXT, MD and HTML files
-    watchForChanges: false // activates the watching for changed files in the current location
-  }
+    watchForChanges: false, // activates the watching for changed files in the current location
+  },
 ];
 /*window.ExtSearches = [
   {

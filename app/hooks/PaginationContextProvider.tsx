@@ -32,7 +32,7 @@ type PaginationContextData = {
 export const PaginationContext = createContext<PaginationContextData>({
   page: 1,
   pageFiles: [],
-  setCurrentPage: undefined
+  setCurrentPage: undefined,
 });
 
 export type PaginationContextProviderProps = {
@@ -40,13 +40,13 @@ export type PaginationContextProviderProps = {
 };
 
 export const PaginationContextProvider = ({
-  children
+  children,
 }: PaginationContextProviderProps) => {
   const initPage = 1;
   const {
     currentDirectoryPath,
     currentDirectoryEntries,
-    updateCurrentDirEntries
+    updateCurrentDirEntries,
   } = useDirectoryContentContext();
   const { settings, sortedDirContent } = useSortedDirContext();
 
@@ -75,7 +75,7 @@ export const PaginationContextProvider = ({
       settings && settings.gridPageLimit
         ? settings.gridPageLimit
         : defaultSettings.gridPageLimit;
-    const files = dirContent.filter(entry => entry && entry.isFile);
+    const files = dirContent.filter((entry) => entry && entry.isFile);
     const showPagination = gridPageLimit && files.length > gridPageLimit;
     if (showPagination) {
       const start = (currentPage - 1) * gridPageLimit;
@@ -103,7 +103,7 @@ export const PaginationContextProvider = ({
     return {
       page,
       pageFiles,
-      setCurrentPage
+      setCurrentPage,
     };
   }, [page, pageFiles, currentDirectoryPath]);
 

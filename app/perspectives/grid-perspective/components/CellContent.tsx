@@ -29,17 +29,17 @@ import IconButton from '@mui/material/IconButton';
 import { SelectedIcon, UnSelectedIcon } from '-/components/CommonIcons';
 import {
   formatFileSize,
-  formatDateTime
+  formatDateTime,
 } from '@tagspaces/tagspaces-common/misc';
 import {
   extractTagsAsObjects,
-  extractTitle
+  extractTitle,
 } from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
 import {
   findBackgroundColorForFolder,
   findColorForEntry,
-  getDescriptionPreview
+  getDescriptionPreview,
 } from '-/services/utils-io';
 import TagContainerDnd from '-/components/TagContainerDnd';
 import TagContainer from '-/components/TagContainer';
@@ -50,18 +50,18 @@ import { TS } from '-/tagspaces.namespace';
 import {
   actions as AppActions,
   AppDispatch,
-  getLastThumbnailImageChange
+  getLastThumbnailImageChange,
 } from '-/reducers/app';
 import { FolderIcon } from '-/components/CommonIcons';
 import { dataTidFormat } from '-/services/test';
 import {
   getSupportedFileTypes,
   isDesktopMode,
-  isReorderTags
+  isReorderTags,
 } from '-/reducers/settings';
 import {
   classes,
-  GridStyles
+  GridStyles,
 } from '-/perspectives/grid-perspective/components/styles.css';
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
@@ -103,7 +103,7 @@ function CellContent(props: Props) {
     showTags,
     selectEntry,
     deselectEntry,
-    isLast
+    isLast,
   } = props;
 
   const { t } = useTranslation();
@@ -125,7 +125,7 @@ function CellContent(props: Props) {
   const handleAddTags = (
     paths: Array<string>,
     tags: Array<TS.Tag>,
-    updateIndex?
+    updateIndex?,
   ) => {
     addTags(paths, tags, updateIndex);
   };
@@ -136,13 +136,13 @@ function CellContent(props: Props) {
 
   // remove isNewFile on Cell click it will open file in editMode
   const fSystemEntry: TS.FileSystemEntry = (({ isNewFile, ...o }) => o)(
-    fsEntry
+    fsEntry,
   );
 
   const entryTitle = extractTitle(
     fSystemEntry.name,
     !fSystemEntry.isFile,
-    PlatformIO.getDirSeparator()
+    PlatformIO.getDirSeparator(),
   );
 
   let description;
@@ -151,7 +151,7 @@ function CellContent(props: Props) {
     if (description && description.length > maxDescriptionPreviewLength) {
       description = getDescriptionPreview(
         description,
-        maxDescriptionPreviewLength
+        maxDescriptionPreviewLength,
       );
     }
 
@@ -162,7 +162,7 @@ function CellContent(props: Props) {
 
   const fileSystemEntryColor = findColorForEntry(
     fSystemEntry,
-    supportedFileTypes
+    supportedFileTypes,
   );
   const fileSystemEntryBgColor = findBackgroundColorForFolder(fSystemEntry);
 
@@ -171,15 +171,15 @@ function CellContent(props: Props) {
     fileNameTags = extractTagsAsObjects(
       fSystemEntry.name,
       AppConfig.tagDelimiter,
-      PlatformIO.getDirSeparator()
+      PlatformIO.getDirSeparator(),
     );
   }
 
   const fileSystemEntryTags = fSystemEntry.tags ? fSystemEntry.tags : [];
-  const sideCarTagsTitles = fileSystemEntryTags.map(tag => tag.title);
+  const sideCarTagsTitles = fileSystemEntryTags.map((tag) => tag.title);
   const entryTags = [
     ...fileSystemEntryTags,
-    ...fileNameTags.filter(tag => !sideCarTagsTitles.includes(tag.title))
+    ...fileNameTags.filter((tag) => !sideCarTagsTitles.includes(tag.title)),
   ];
 
   const entrySizeFormatted =
@@ -201,7 +201,7 @@ function CellContent(props: Props) {
 
   let tagTitles = '';
   if (entryTags) {
-    entryTags.map(tag => {
+    entryTags.map((tag) => {
       tagTitles += tag.title + ', ';
       return true;
     });
@@ -219,7 +219,7 @@ function CellContent(props: Props) {
         data-tid={'fsEntryName_' + dataTidFormat(fSystemEntry.name)}
         style={{
           background: fileSystemEntryBgColor,
-          borderRadius: 5
+          borderRadius: 5,
           // opacity: fileSystemEntry.isIgnored ? 0.3 : 1
         }}
       >
@@ -227,7 +227,7 @@ function CellContent(props: Props) {
           className={classes.gridCellThumb}
           style={{
             position: 'relative',
-            height: 150
+            height: 150,
           }}
         >
           {fSystemEntry.thumbPath ? (
@@ -245,13 +245,13 @@ function CellContent(props: Props) {
                   : '')
               }
               // @ts-ignore
-              onError={i => (i.target.style.display = 'none')}
+              onError={(i) => (i.target.style.display = 'none')}
               loading="lazy"
               style={{
                 objectFit: thumbnailMode,
                 position: 'absolute',
                 width: '100%',
-                height: 150
+                height: 150,
               }}
             />
           ) : (
@@ -264,17 +264,17 @@ function CellContent(props: Props) {
             <IconButton
               style={{
                 opacity: selected ? 1 : 0.5,
-                padding: desktopMode ? 5 : 8
+                padding: desktopMode ? 5 : 8,
               }}
-              onMouseLeave={e => {
+              onMouseLeave={(e) => {
                 //@ts-ignore
                 e.target.style.opacity = selected ? 1 : 0.5;
               }}
-              onMouseOver={e => {
+              onMouseOver={(e) => {
                 //@ts-ignore
                 e.target.style.opacity = 1;
               }}
-              onClick={e => {
+              onClick={(e) => {
                 e.stopPropagation();
                 if (selected) {
                   deselectEntry(fSystemEntry);
@@ -288,7 +288,7 @@ function CellContent(props: Props) {
                   style={{
                     opacity: 1,
                     borderRadius: 15,
-                    backgroundColor: '#d7d7d7'
+                    backgroundColor: '#d7d7d7',
                   }}
                 />
               ) : (
@@ -296,7 +296,7 @@ function CellContent(props: Props) {
                   style={{
                     opacity: 0.7,
                     borderRadius: 15,
-                    backgroundColor: 'd7d7d7'
+                    backgroundColor: 'd7d7d7',
                   }}
                 />
               )}
@@ -326,7 +326,7 @@ function CellContent(props: Props) {
                 backgroundColor: fileSystemEntryColor,
                 textShadow: '1px 1px #8f8f8f',
                 textOverflow: 'unset',
-                maxWidth: fSystemEntry.isFile ? 50 : 100
+                maxWidth: fSystemEntry.isFile ? 50 : 100,
               }}
               noWrap={true}
               variant="button"
@@ -379,7 +379,7 @@ function CellContent(props: Props) {
             padding: 3,
             marginRight: 5,
             textAlign: 'left',
-            display: 'flex'
+            display: 'flex',
           }}
         >
           <div
@@ -399,10 +399,10 @@ function CellContent(props: Props) {
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               backgroundColor: fileSystemEntryColor,
-              alignItems: 'center'
+              alignItems: 'center',
             }}
             role="button"
-            onClick={e => {
+            onClick={(e) => {
               e.stopPropagation();
               if (selected) {
                 deselectEntry(fSystemEntry);
@@ -418,7 +418,7 @@ function CellContent(props: Props) {
                   width: '100%',
                   marginTop: isSmall ? 0 : 10,
                   textShadow: '1px 1px #8f8f8f',
-                  overflowWrap: 'anywhere'
+                  overflowWrap: 'anywhere',
                 }}
               >
                 {fSystemEntry.extension}
@@ -434,7 +434,7 @@ function CellContent(props: Props) {
             xs
             zeroMinWidth
             style={{
-              display: 'flex'
+              display: 'flex',
             }}
           >
             <Typography style={{ wordBreak: 'break-all', alignSelf: 'center' }}>
@@ -455,7 +455,7 @@ function CellContent(props: Props) {
             {showTags && entryTags ? renderTags : tagPlaceholder}
             <Typography
               style={{
-                color: 'gray'
+                color: 'gray',
               }}
               variant="body2"
             >
@@ -493,14 +493,14 @@ function CellContent(props: Props) {
                   : '')
               }
               // @ts-ignore
-              onError={i => (i.target.style.display = 'none')}
+              onError={(i) => (i.target.style.display = 'none')}
               loading="lazy"
               style={{
                 objectFit: thumbnailMode,
                 paddingRight: 4,
                 paddingTop: 4,
                 height: tmbSize,
-                width: tmbSize
+                width: tmbSize,
               }}
             />
           </Grid>
@@ -562,24 +562,24 @@ function CellContent(props: Props) {
           layoutType === 'grid' && classes.gridCell,
           layoutType === 'row' && classes.rowCell,
           selected && layoutType === 'grid' && classes.selectedGridCell,
-          selected && layoutType === 'row' && classes.selectedRowCell
+          selected && layoutType === 'row' && classes.selectedRowCell,
         )}
         style={{
           minHeight: layoutType === 'row' ? entryHeight : 'auto',
           marginBottom: isLast ? 40 : 'auto',
-          backgroundColor: theme.palette.background.default
+          backgroundColor: theme.palette.background.default,
         }}
-        onContextMenu={event => handleGridContextMenu(event, fSystemEntry)}
-        onDoubleClick={event => {
+        onContextMenu={(event) => handleGridContextMenu(event, fSystemEntry)}
+        onDoubleClick={(event) => {
           handleGridCellDblClick(event, fSystemEntry);
         }}
-        onClick={event => {
+        onClick={(event) => {
           event.stopPropagation();
           AppConfig.isCordovaiOS // TODO DoubleClick not fired in Cordova IOS
             ? handleGridCellDblClick(event, fSystemEntry)
             : handleGridCellClick(event, fSystemEntry);
         }}
-        onDrag={event => {
+        onDrag={(event) => {
           handleGridCellClick(event, fSystemEntry);
         }}
       >

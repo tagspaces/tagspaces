@@ -25,7 +25,7 @@ export default function SplitButton(props: Props) {
   const { options, selected, onChange } = props;
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef<HTMLDivElement>(null);
-  const sel = options.findIndex(option => option.key === selected);
+  const sel = options.findIndex((option) => option.key === selected);
   const [selectedIndex, setSelectedIndex] = React.useState(sel);
 
   const handleClick = () => {
@@ -34,7 +34,7 @@ export default function SplitButton(props: Props) {
 
   const handleMenuItemClick = (
     event: React.MouseEvent<HTMLLIElement, MouseEvent>,
-    index: number
+    index: number,
   ) => {
     setSelectedIndex(index);
     onChange(options[index].key);
@@ -42,7 +42,7 @@ export default function SplitButton(props: Props) {
   };
 
   const handleToggle = () => {
-    setOpen(prevOpen => !prevOpen);
+    setOpen((prevOpen) => !prevOpen);
   };
 
   const handleClose = (event: React.MouseEvent<Document, MouseEvent>) => {
@@ -90,7 +90,7 @@ export default function SplitButton(props: Props) {
               {...TransitionProps}
               style={{
                 transformOrigin:
-                  placement === 'bottom' ? 'center top' : 'center bottom'
+                  placement === 'bottom' ? 'center top' : 'center bottom',
               }}
             >
               <Paper>
@@ -101,7 +101,7 @@ export default function SplitButton(props: Props) {
                       key={option.key}
                       disabled={index === 2}
                       selected={index === selectedIndex}
-                      onClick={event => handleMenuItemClick(event, index)}
+                      onClick={(event) => handleMenuItemClick(event, index)}
                     >
                       {option.value}
                     </MenuItem>

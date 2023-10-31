@@ -34,7 +34,7 @@ import PlatformIO from '../services/platform-facade';
 import TargetMoveFileBox from './TargetMoveFileBox';
 import DragItemTypes from './DragItemTypes';
 import DirectoryTreeView, {
-  DirectoryTreeViewRef
+  DirectoryTreeViewRef,
 } from '-/components/DirectoryTreeView';
 import LocationContextMenu from '-/components/menus/LocationContextMenu';
 import { TS } from '-/tagspaces.namespace';
@@ -62,14 +62,11 @@ function LocationView(props: Props) {
     currentLocation,
     readOnlyMode,
     setSelectedLocation,
-    setLocationDirectoryContextMenuAnchorEl
+    setLocationDirectoryContextMenuAnchorEl,
   } = useCurrentLocationContext();
   const { setSelectedEntries } = useSelectedEntriesContext();
-  const {
-    currentDirectoryPath,
-    addDirectoryEntries,
-    openDirectory
-  } = useDirectoryContentContext();
+  const { currentDirectoryPath, addDirectoryEntries, openDirectory } =
+    useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
   const directoryTreeRef = useRef<DirectoryTreeViewRef>(null);
 
@@ -79,12 +76,12 @@ function LocationView(props: Props) {
     location,
     hideDrawer,
     setEditLocationDialogOpened,
-    setDeleteLocationDialogOpened
+    setDeleteLocationDialogOpened,
   } = props;
   const isCloudLocation = location.type === locationType.TYPE_CLOUD;
 
   const handleLocationIconClick = (
-    event: React.MouseEvent<HTMLSpanElement, MouseEvent>
+    event: React.MouseEvent<HTMLSpanElement, MouseEvent>,
   ) => {
     event.preventDefault();
     event.stopPropagation();
@@ -132,7 +129,7 @@ function LocationView(props: Props) {
       const { path, selectedEntries } = monitor.getItem();
       const arrPath = [];
       if (selectedEntries && selectedEntries.length > 0) {
-        selectedEntries.map(entry => {
+        selectedEntries.map((entry) => {
           arrPath.push(entry.path);
           return true;
         });
@@ -175,12 +172,12 @@ function LocationView(props: Props) {
                   }
                   return true;
                 })
-                .catch(error => {
+                .catch((error) => {
                   console.log('uploadFiles', error);
                 });
               return true;
             })
-            .catch(error => {
+            .catch((error) => {
               console.log('enableObjectStoreSupport', error);
             });
         } else if (targetLocation.type === locationType.TYPE_LOCAL) {
@@ -208,14 +205,14 @@ function LocationView(props: Props) {
           whiteSpace: 'nowrap',
           overflow: 'hidden',
           textOverflow: 'ellipsis',
-          maxWidth: 240
+          maxWidth: 240,
         }}
       >
         <Typography
           variant="inherit"
           style={{
             paddingLeft: 5,
-            paddingRight: 5
+            paddingRight: 5,
           }}
           className={classes.header}
           data-tid="locationTitleElement"
@@ -245,7 +242,9 @@ function LocationView(props: Props) {
             : classes.listItem
         }
         onClick={handleLocationClick}
-        onContextMenu={event => handleLocationContextMenuClick(event, location)}
+        onContextMenu={(event) =>
+          handleLocationContextMenuClick(event, location)
+        }
       >
         <ListItemIcon
           // onClick={(e) => {
@@ -254,7 +253,7 @@ function LocationView(props: Props) {
           // }}
           style={{
             minWidth: 'auto',
-            cursor: 'pointer'
+            cursor: 'pointer',
           }}
           onClick={handleLocationIconClick}
         >
@@ -262,14 +261,14 @@ function LocationView(props: Props) {
             {isCloudLocation ? (
               <CloudLocationIcon
                 style={{
-                  cursor: 'pointer'
+                  cursor: 'pointer',
                 }}
                 className={classes.icon}
               />
             ) : (
               <LocalLocationIcon
                 style={{
-                  cursor: 'pointer'
+                  cursor: 'pointer',
                 }}
                 className={classes.icon}
               />
@@ -294,8 +293,8 @@ function LocationView(props: Props) {
             aria-haspopup="true"
             edge="end"
             data-tid={'locationMoreButton_' + location.name}
-            onClick={event => handleLocationContextMenuClick(event, location)}
-            onContextMenu={event =>
+            onClick={(event) => handleLocationContextMenuClick(event, location)}
+            onContextMenu={(event) =>
               handleLocationContextMenuClick(event, location)
             }
             size="large"

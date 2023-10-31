@@ -9,7 +9,7 @@ getExtensions(directoryPath)
   .then(({ extensions, supportedFileTypes }) => {
     writeExtensions(extensions, supportedFileTypes);
   })
-  .catch(err => {
+  .catch((err) => {
     console.error('getExtensions error:', err);
     writeExtensions([], []);
   });

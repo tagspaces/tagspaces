@@ -57,7 +57,7 @@ function TagLibraryMenu(props: Props) {
   // const [tagGroups, setTagGroups] = useState(null);
   const [
     isImportExportTagGroupDialogOpened,
-    setIsImportExportTagGroupDialogOpened
+    setIsImportExportTagGroupDialogOpened,
   ] = useState(false);
   const [dialogModeImport, setDialogModeImport] = useState(false);
 

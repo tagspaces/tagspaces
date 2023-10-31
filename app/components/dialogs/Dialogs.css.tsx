@@ -22,6 +22,6 @@ export default (theme: any) => ({
     maxHeight: '100%',
     padding: 5,
     overflowY: 'hidden',
-    backgroundColor: theme.palette.background.default
-  }
+    backgroundColor: theme.palette.background.default,
+  },
 });

@@ -12,7 +12,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 const PREFIX = 'EditDescriptionButtons';
 
 const classes = {
-  button: `${PREFIX}-button`
+  button: `${PREFIX}-button`,
 };
 
 const Root = styled('span')(({ theme }) => ({
@@ -20,8 +20,8 @@ const Root = styled('span')(({ theme }) => ({
   [`& .${classes.button}`]: {
     position: 'relative',
     padding: '4px 10px 4px 10px',
-    margin: '0'
-  }
+    margin: '0',
+  },
 }));
 
 export interface DescriptionChangedRef {
@@ -37,22 +37,22 @@ type Props = {
 const EditDescriptionButtons: React.FC<Props> = ({
   buttonsRef,
   editMode,
-  setEditMode
+  setEditMode,
 }) => {
   const { t } = useTranslation();
   const {
     description,
     isSaveDescriptionConfirmOpened,
     setSaveDescriptionConfirmOpened,
-    saveDescription
+    saveDescription,
   } = useDescriptionContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
   const [isDescriptionChanged, descriptionChanged] = useState<boolean>(false);
 
   React.useImperativeHandle(buttonsRef, () => ({
-    setDescriptionChanged: changed => {
+    setDescriptionChanged: (changed) => {
       descriptionChanged(changed);
-    }
+    },
   }));
 
   useEffect(() => {
@@ -68,7 +68,7 @@ const EditDescriptionButtons: React.FC<Props> = ({
 
     const printWin = window.open('', 'PRINT', 'height=400,width=600');
     printWin.document.write(
-      '<html><head><title>' + currentDirectoryPath + ' description</title>'
+      '<html><head><title>' + currentDirectoryPath + ' description</title>',
     );
     printWin.document.write('</head><body >');
     printWin.document.write(sanitizedDescription);
@@ -120,7 +120,7 @@ const EditDescriptionButtons: React.FC<Props> = ({
         }}
         title={t('core:confirm')}
         content={t('core:saveFileBeforeClosingFile')}
-        confirmCallback={result => {
+        confirmCallback={(result) => {
           if (result) {
             saveDescription();
           } else {

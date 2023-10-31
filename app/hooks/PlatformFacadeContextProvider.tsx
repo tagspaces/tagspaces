@@ -26,7 +26,7 @@ import {
   extractFileName,
   getThumbFileLocationForDirectory,
   getThumbFileLocationForFile,
-  normalizePath
+  normalizePath,
 } from '@tagspaces/tagspaces-common/paths';
 import PlatformIO from '-/services/platform-facade';
 import { useTranslation } from 'react-i18next';
@@ -38,46 +38,46 @@ type PlatformFacadeContextData = {
   copyFilePromise: (
     sourceFilePath: string,
     targetFilePath: string,
-    confirmMessage?: string
+    confirmMessage?: string,
   ) => Promise<any>;
   copyFilesWithProgress: (
     paths: Array<string>,
     targetPath: string,
-    onProgress?
+    onProgress?,
   ) => Promise<any>;
   copyFilePromiseOverwrite: (
     sourceFilePath: string,
-    targetFilePath: string
+    targetFilePath: string,
   ) => Promise<any>;
   renameFilePromise: (
     filePath: string,
     newFilePath: string,
-    onProgress?
+    onProgress?,
   ) => Promise<any>;
   renameFilesPromise: (
     renameJobs: Array<Array<string>>,
-    onProgress?
+    onProgress?,
   ) => Promise<any>;
   renameDirectoryPromise: (dirPath: string, newDirName: string) => Promise<any>;
   copyDirectoryPromise: (
     param: any,
     newDirPath: string,
-    onProgress?
+    onProgress?,
   ) => Promise<any>;
   moveDirectoryPromise: (
     param: any,
     newDirPath: string,
-    onProgress?
+    onProgress?,
   ) => Promise<any>;
   saveFilePromise: (
     param: any,
     content: any,
-    overwrite: boolean
+    overwrite: boolean,
   ) => Promise<any>;
   saveTextFilePromise: (
     param: any,
     content: string,
-    overwrite: boolean
+    overwrite: boolean,
   ) => Promise<any>;
   saveBinaryFilePromise: (
     param: any,
@@ -85,8 +85,8 @@ type PlatformFacadeContextData = {
     overwrite: boolean,
     onUploadProgress?: (
       progress: any, // ManagedUpload.Progress,
-      response: any // AWS.Response<AWS.S3.PutObjectOutput, AWS.AWSError>
-    ) => void
+      response: any, // AWS.Response<AWS.S3.PutObjectOutput, AWS.AWSError>
+    ) => void,
   ) => Promise<TS.FileSystemEntry>;
   deleteFilePromise: (path: string, useTrash?: boolean) => Promise<any>;
   deleteFilesPromise: (filePathList: Array<string>) => Promise<any>;
@@ -110,7 +110,7 @@ export const PlatformFacadeContext = createContext<PlatformFacadeContextData>({
   deleteFilePromise: undefined,
   deleteFilesPromise: undefined,
   deleteDirectoryPromise: undefined,
-  setFolderThumbnailPromise: undefined
+  setFolderThumbnailPromise: undefined,
 });
 
 export type PlatformFacadeContextProviderProps = {
@@ -118,14 +118,10 @@ export type PlatformFacadeContextProviderProps = {
 };
 
 export const PlatformFacadeContextProvider = ({
-  children
+  children,
 }: PlatformFacadeContextProviderProps) => {
-  const {
-    ignoreByWatcher,
-    deignoreByWatcher,
-    ignored,
-    watcher
-  } = useFSWatcherContext();
+  const { ignoreByWatcher, deignoreByWatcher, ignored, watcher } =
+    useFSWatcherContext();
 
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
@@ -161,7 +157,7 @@ export const PlatformFacadeContextProvider = ({
   function createDirectoryPromise(path: string): Promise<any> {
     ignoreByWatcher(path);
 
-    return PlatformFacade.createDirectoryPromise(path).then(result => {
+    return PlatformFacade.createDirectoryPromise(path).then((result) => {
       deignoreByWatcher(path);
       return result;
     });
@@ -174,27 +170,27 @@ export const PlatformFacadeContextProvider = ({
   function setFolderThumbnailPromise(filePath: string): Promise<string> {
     const directoryPath = extractContainingDirectoryPath(
       filePath,
-      PlatformIO.getDirSeparator()
+      PlatformIO.getDirSeparator(),
     );
     const directoryName = extractDirectoryName(
       directoryPath,
-      PlatformIO.getDirSeparator()
+      PlatformIO.getDirSeparator(),
     );
     const sourceThumbPath = getThumbFileLocationForFile(
       filePath,
       PlatformIO.getDirSeparator(),
-      false
+      false,
     );
 
     const destThumbPath = getThumbFileLocationForDirectory(
       directoryPath,
-      PlatformIO.getDirSeparator()
+      PlatformIO.getDirSeparator(),
     );
 
     return copyFilePromise(
       sourceThumbPath,
       destThumbPath,
-      t('core:thumbAlreadyExists', { directoryName })
+      t('core:thumbAlreadyExists', { directoryName }),
     ).then(() => {
       dispatch(AppActions.setLastThumbnailImageChange(destThumbPath));
       return directoryPath;
@@ -206,10 +202,10 @@ export const PlatformFacadeContextProvider = ({
     targetFilePath: string,
     confirmMessage: string = 'File ' +
       targetFilePath +
-      ' exist do you want to override it?'
+      ' exist do you want to override it?',
   ): Promise<any> {
     return PlatformFacade.getPropertiesPromise(targetFilePath).then(
-      isTargetExist => {
+      (isTargetExist) => {
         if (isTargetExist) {
           // eslint-disable-next-line no-alert
           const confirmOverwrite = window && window.confirm(confirmMessage);
@@ -218,44 +214,44 @@ export const PlatformFacadeContextProvider = ({
           }
           // eslint-disable-next-line prefer-promise-reject-errors
           return Promise.reject(
-            'File "' + targetFilePath + '" exists. Copying failed.'
+            'File "' + targetFilePath + '" exists. Copying failed.',
           );
         }
         return copyFilePromiseOverwrite(sourceFilePath, targetFilePath);
-      }
+      },
     );
   }
 
   function copyFilesWithProgress(
     paths: Array<string>,
     targetPath: string,
-    onProgress = undefined
+    onProgress = undefined,
   ) {
     const controller = new AbortController();
     const signal = controller.signal;
 
-    const ioJobPromises = paths.map(path => {
+    const ioJobPromises = paths.map((path) => {
       const targetFile =
         normalizePath(targetPath) +
         PlatformIO.getDirSeparator() +
         extractFileName(path, PlatformIO.getDirSeparator());
       return {
         promise: copyFilePromiseOverwrite(path, targetFile),
-        path: path
+        path: path,
       };
     });
     const progress = (completed, path) => {
       const progress = {
         loaded: completed, //processedSize,
         total: ioJobPromises.length,
-        key: targetPath
+        key: targetPath,
       };
       onProgress(
         progress,
         () => {
           controller.abort();
         },
-        path
+        path,
       );
     };
     return trackProgress(ioJobPromises, signal, progress);
@@ -278,19 +274,19 @@ export const PlatformFacadeContextProvider = ({
             }
           }
         })
-        .catch(err => {
+        .catch((err) => {
           completed++;
           if (progress) {
             progress(completed, path);
           }
           console.warn('Promise ' + path + ' error:', err);
-        })
+        }),
     );
 
     // Use Promise.race() to wait for all progress promises to resolve
     return Promise.race(progressPromises)
       .then(() => Promise.all(promises))
-      .catch(err => {
+      .catch((err) => {
         if (abortSignal.aborted) {
           aborted = true;
           console.warn('Promise execution aborted');
@@ -302,13 +298,13 @@ export const PlatformFacadeContextProvider = ({
 
   function copyFilePromiseOverwrite(
     sourceFilePath: string,
-    targetFilePath: string
+    targetFilePath: string,
   ): Promise<any> {
     ignoreByWatcher(targetFilePath);
     return PlatformFacade.copyFilePromiseOverwrite(
       sourceFilePath,
-      targetFilePath
-    ).then(result => {
+      targetFilePath,
+    ).then((result) => {
       deignoreByWatcher(targetFilePath);
       return result;
     });
@@ -317,14 +313,14 @@ export const PlatformFacadeContextProvider = ({
   function renameFilePromise(
     filePath: string,
     newFilePath: string,
-    onProgress = undefined
+    onProgress = undefined,
   ): Promise<any> {
     ignoreByWatcher(filePath, newFilePath);
     return PlatformFacade.renameFilePromise(
       filePath,
       newFilePath,
-      onProgress
-    ).then(result => {
+      onProgress,
+    ).then((result) => {
       deignoreByWatcher(filePath, newFilePath);
       return result;
     });
@@ -332,48 +328,48 @@ export const PlatformFacadeContextProvider = ({
 
   function renameFilesPromise(
     renameJobs: Array<Array<string>>,
-    onProgress = undefined
+    onProgress = undefined,
   ): Promise<any> {
     return Promise.all(
-      renameJobs.map(async renameJob => {
+      renameJobs.map(async (renameJob) => {
         try {
           return await PlatformIO.renameFilePromise(
             renameJob[0],
             renameJob[1],
-            onProgress
+            onProgress,
           );
         } catch (err) {
           console.warn('Error rename file:', err);
           return false;
         }
-      })
+      }),
     );
   }
 
   function renameDirectoryPromise(
     dirPath: string,
-    newDirName: string
+    newDirName: string,
   ): Promise<any> {
     ignoreByWatcher(dirPath, newDirName);
     return PlatformFacade.renameDirectoryPromise(dirPath, newDirName).then(
-      result => {
+      (result) => {
         deignoreByWatcher(dirPath, newDirName);
         return result;
-      }
+      },
     );
   }
 
   function copyDirectoryPromise(
     param: any,
     newDirPath: string,
-    onProgress = undefined
+    onProgress = undefined,
   ): Promise<any> {
     ignoreByWatcher(param.path, newDirPath);
     return PlatformFacade.copyDirectoryPromise(
       param,
       newDirPath,
-      onProgress
-    ).then(result => {
+      onProgress,
+    ).then((result) => {
       deignoreByWatcher(param.path, newDirPath);
       return result;
     });
@@ -382,14 +378,14 @@ export const PlatformFacadeContextProvider = ({
   function moveDirectoryPromise(
     param: any,
     newDirPath: string,
-    onProgress = undefined
+    onProgress = undefined,
   ): Promise<any> {
     ignoreByWatcher(param.path, newDirPath);
     return PlatformFacade.moveDirectoryPromise(
       param,
       newDirPath,
-      onProgress
-    ).then(result => {
+      onProgress,
+    ).then((result) => {
       deignoreByWatcher(param.path, newDirPath);
       return result;
     });
@@ -397,28 +393,28 @@ export const PlatformFacadeContextProvider = ({
   function saveFilePromise(
     param: any,
     content: any,
-    overwrite: boolean
+    overwrite: boolean,
   ): Promise<any> {
     ignoreByWatcher(param.path);
     return PlatformFacade.saveFilePromise(param, content, overwrite).then(
-      result => {
+      (result) => {
         deignoreByWatcher(param.path);
         return result;
-      }
+      },
     );
   }
 
   function saveTextFilePromise(
     param: any,
     content: string,
-    overwrite: boolean
+    overwrite: boolean,
   ): Promise<any> {
     ignoreByWatcher(param.path);
     return PlatformFacade.saveTextFilePromise(param, content, overwrite).then(
-      result => {
+      (result) => {
         deignoreByWatcher(param.path);
         return result;
-      }
+      },
     );
   }
 
@@ -428,16 +424,16 @@ export const PlatformFacadeContextProvider = ({
     overwrite: boolean,
     onUploadProgress?: (
       progress: any, // ManagedUpload.Progress,
-      response: any // AWS.Response<AWS.S3.PutObjectOutput, AWS.AWSError>
-    ) => void
+      response: any, // AWS.Response<AWS.S3.PutObjectOutput, AWS.AWSError>
+    ) => void,
   ): Promise<TS.FileSystemEntry> {
     ignoreByWatcher(param.path);
     return PlatformFacade.saveBinaryFilePromise(
       param,
       content,
       overwrite,
-      onUploadProgress
-    ).then(result => {
+      onUploadProgress,
+    ).then((result) => {
       deignoreByWatcher(param.path);
       return result;
     });
@@ -446,7 +442,7 @@ export const PlatformFacadeContextProvider = ({
   function deleteFilePromise(path: string, useTrash?: boolean): Promise<any> {
     ignoreByWatcher(path);
 
-    return PlatformFacade.deleteFilePromise(path, useTrash).then(result => {
+    return PlatformFacade.deleteFilePromise(path, useTrash).then((result) => {
       deignoreByWatcher(path);
       return result;
     });
@@ -454,7 +450,7 @@ export const PlatformFacadeContextProvider = ({
 
   function deleteFilesPromise(filePathList: Array<string>) {
     const fileDeletionPromises = [];
-    filePathList.forEach(filePath => {
+    filePathList.forEach((filePath) => {
       fileDeletionPromises.push(deleteFilePromise(filePath));
     });
     return Promise.all(fileDeletionPromises);
@@ -462,15 +458,15 @@ export const PlatformFacadeContextProvider = ({
 
   function deleteDirectoryPromise(
     path: string,
-    useTrash?: boolean
+    useTrash?: boolean,
   ): Promise<any> {
     ignoreByWatcher(path);
 
     return PlatformFacade.deleteDirectoryPromise(path, useTrash).then(
-      result => {
+      (result) => {
         deignoreByWatcher(path);
         return result;
-      }
+      },
     );
   }
 
@@ -491,7 +487,7 @@ export const PlatformFacadeContextProvider = ({
       deleteFilePromise,
       deleteFilesPromise,
       deleteDirectoryPromise,
-      setFolderThumbnailPromise
+      setFolderThumbnailPromise,
     };
   }, [watcher, ignored]);
 

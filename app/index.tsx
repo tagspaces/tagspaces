@@ -25,7 +25,7 @@ import './app.global.css';
 
 const { store, persistor } = configureStore({});
 
-document.addEventListener('contextmenu', event => event.preventDefault());
+document.addEventListener('contextmenu', (event) => event.preventDefault());
 
 if (process.env.NODE_ENV === 'production') {
   console.log = () => {};
@@ -36,7 +36,7 @@ if (process.env.NODE_ENV === 'production') {
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   /*<AppContainer>*/
-  <Root store={store} persistor={persistor} />
+  <Root store={store} persistor={persistor} />,
   /*</AppContainer>*/
 );
 

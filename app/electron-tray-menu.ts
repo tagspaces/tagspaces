@@ -47,51 +47,51 @@ export default function buildTrayIconMenu(mainPageProps: any, i18n, isMacLike) {
   const trayMenuTemplate = [
     {
       label: i18n.t('newWindow'),
-      click: () => mainPageProps.createNewWindowInstance()
+      click: () => mainPageProps.createNewWindowInstance(),
     },
     {
-      type: 'separator'
+      type: 'separator',
     },
     {
       label: i18n.t('showTagSpaces') + cKey + '+Shift+W',
-      click: mainPageProps.showTagSpaces
+      click: mainPageProps.showTagSpaces,
     },
     {
       label: i18n.t('showSearch') + cKey + '+Shift+F',
-      click: mainPageProps.openSearch
+      click: mainPageProps.openSearch,
     },
     {
-      type: 'separator'
+      type: 'separator',
     },
     {
       label: i18n.t('newFileNote') + cKey + '+Shift+N',
-      click: mainPageProps.toggleNewFileDialog
+      click: mainPageProps.toggleNewFileDialog,
     },
     {
-      type: 'separator'
+      type: 'separator',
     },
     {
       label: i18n.t('openNextFileTooltip') + cKey + '+Shift+D',
-      click: openNextFile
+      click: openNextFile,
     },
     {
       label: i18n.t('openPrevFileTooltip') + cKey + '+Shift+A',
-      click: openPrevFile
+      click: openPrevFile,
     },
     {
-      type: 'separator'
+      type: 'separator',
     },
     {
       label: i18n.t('pauseResumePlayback') + cKey + '+Shift+P',
-      click: playResumePlayback
+      click: playResumePlayback,
     },
     {
-      type: 'separator'
+      type: 'separator',
     },
     {
       label: i18n.t('quitTagSpaces') + cKey + '+Q',
-      click: quitApp
-    }
+      click: quitApp,
+    },
   ];
 
   let icon = nativeImage.createFromDataURL(icon2x);
@@ -100,7 +100,7 @@ export default function buildTrayIconMenu(mainPageProps: any, i18n, isMacLike) {
       icon = nativeImage.createFromDataURL(icon1x);
       icon.addRepresentation({
         scaleFactor: 2.0,
-        dataURL: icon2x
+        dataURL: icon2x,
       });
     }
     tray = new Tray(icon);

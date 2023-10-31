@@ -7,14 +7,14 @@ import {
   defaultLocationPath,
   defaultLocationName,
   createPwMinioLocation,
-  createPwLocation
+  createPwLocation,
 } from './location.helpers';
 import {
   clickOn,
   expectAudioPlay,
   getGridFileSelector,
   isDisplayed,
-  takeScreenshot
+  takeScreenshot,
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { openContextEntryMenu } from './test-utils';
@@ -50,7 +50,7 @@ test.describe('TST59 - Media player', () => {
   test('TST5901 - Play ogg file [web,minio,electron]', async () => {
     await openContextEntryMenu(
       getGridFileSelector('sample.ogg'),
-      'fileMenuOpenFile'
+      'fileMenuOpenFile',
     );
     await expectAudioPlay();
   });
@@ -58,7 +58,7 @@ test.describe('TST59 - Media player', () => {
   test('TST5902 - Play ogv file [web,minio,electron]', async () => {
     await openContextEntryMenu(
       getGridFileSelector('sample.ogv'),
-      'fileMenuOpenFile'
+      'fileMenuOpenFile',
     );
     await expectAudioPlay();
   });
@@ -66,7 +66,7 @@ test.describe('TST59 - Media player', () => {
   test('TST5903 - Open and close about dialog [web,minio,electron]', async () => {
     await openContextEntryMenu(
       getGridFileSelector('sample.mp4'),
-      'fileMenuOpenFile'
+      'fileMenuOpenFile',
     );
 
     // Access the iframe
@@ -80,7 +80,7 @@ test.describe('TST59 - Media player', () => {
       '[data-tid=AboutDialogTID]',
       true,
       2000,
-      frame
+      frame,
     );
     expect(aboutExists).toBeTruthy();
 
@@ -89,7 +89,7 @@ test.describe('TST59 - Media player', () => {
       '[data-tid=AboutDialogTID]',
       false,
       2000,
-      frame
+      frame,
     );
     // Expect that the element of AboutDialog not exist within the iframe
     expect(aboutNotExists).toBeTruthy();
@@ -98,7 +98,7 @@ test.describe('TST59 - Media player', () => {
   test('TST5904 - Play mp3 [web,minio,electron]', async () => {
     await openContextEntryMenu(
       getGridFileSelector('sample.mp3'),
-      'fileMenuOpenFile'
+      'fileMenuOpenFile',
     );
     await expectAudioPlay();
   });
@@ -109,7 +109,7 @@ test.describe('TST59 - Media player', () => {
   test('TST5905 - Play webm [web,minio,electron]', async () => {
     await openContextEntryMenu(
       getGridFileSelector('sample.webm'),
-      'fileMenuOpenFile'
+      'fileMenuOpenFile',
     );
 
     await expectAudioPlay();
@@ -127,7 +127,7 @@ test.describe('TST59 - Media player', () => {
   test('TST5906 - Play flac [web,minio,electron]', async () => {
     await openContextEntryMenu(
       getGridFileSelector('sample.flac'),
-      'fileMenuOpenFile'
+      'fileMenuOpenFile',
     );
     await expectAudioPlay();
   });

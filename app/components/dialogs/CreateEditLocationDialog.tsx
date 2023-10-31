@@ -51,7 +51,7 @@ import {
   AccordionSummary,
   InputLabel,
   MenuItem,
-  Select
+  Select,
 } from '@mui/material';
 import { Pro } from '-/pro';
 import ObjectStoreForm from './ObjectStoreForm';
@@ -81,14 +81,14 @@ import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 const PREFIX = 'CreateEditLocationDialog';
 
 const classes = {
-  formControl: `${PREFIX}-formControl`
+  formControl: `${PREFIX}-formControl`,
 };
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   [`& .${classes.formControl}`]: {
     marginLeft: theme.spacing(0),
-    width: '100%'
-  }
+    width: '100%',
+  },
 }));
 
 interface Props {
@@ -109,24 +109,23 @@ function CreateEditLocationDialog(props: Props) {
   const IgnorePatternDialog =
     Pro && Pro.UI ? Pro.UI.IgnorePatternDialog : false;
   /*const { location } = props;*/
-  const [showSecretAccessKey, setShowSecretAccessKey] = useState<boolean>(
-    false
-  );
+  const [showSecretAccessKey, setShowSecretAccessKey] =
+    useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [errorTextPath, setErrorTextPath] = useState<boolean>(false);
   const [errorTextName, setErrorTextName] = useState<boolean>(false);
   const [name, setName] = useState<string>(
-    selectedLocation && selectedLocation.name ? selectedLocation.name : ''
+    selectedLocation && selectedLocation.name ? selectedLocation.name : '',
   );
   const [username, setUserName] = useState<string>(
     selectedLocation && selectedLocation.username
       ? selectedLocation.username
-      : ''
+      : '',
   );
   const [password, setPassword] = useState<string>(
     selectedLocation && selectedLocation.password
       ? selectedLocation.password
-      : ''
+      : '',
   );
   let defaultIndexAge = AppConfig.maxIndexAge;
   if (
@@ -150,58 +149,58 @@ function CreateEditLocationDialog(props: Props) {
   }
   const [maxLoops, setMaxLoops] = useState<number>(defaultMaxLoops);
   const [storeName, setStoreName] = useState<string>(
-    selectedLocation && selectedLocation.name ? selectedLocation.name : ''
+    selectedLocation && selectedLocation.name ? selectedLocation.name : '',
   );
   const [path, setPath] = useState<string>(
     selectedLocation && (selectedLocation.path || selectedLocation.paths)
       ? selectedLocation.path || selectedLocation.paths[0]
-      : ''
+      : '',
   );
   const [storePath, setStorePath] = useState<string>(
     selectedLocation && (selectedLocation.path || selectedLocation.paths)
       ? selectedLocation.path || selectedLocation.paths[0]
-      : ''
+      : '',
   );
   const [endpointURL, setEndpointURL] = useState<string>(
-    selectedLocation ? selectedLocation.endpointURL : ''
+    selectedLocation ? selectedLocation.endpointURL : '',
   );
   const [authType, setAuthType] = useState<string>('password');
   const [isDefault, setIsDefault] = useState<boolean>(
-    selectedLocation ? selectedLocation.isDefault : false
+    selectedLocation ? selectedLocation.isDefault : false,
   );
   const [isReadOnly, setIsReadOnly] = useState<boolean>(
-    selectedLocation ? selectedLocation.isReadOnly : false
+    selectedLocation ? selectedLocation.isReadOnly : false,
   );
   const [watchForChanges, setWatchForChanges] = useState<boolean>(
-    selectedLocation ? selectedLocation.watchForChanges : false
+    selectedLocation ? selectedLocation.watchForChanges : false,
   );
   const [disableIndexing, setIndexDisable] = useState<boolean>(
-    selectedLocation ? selectedLocation.disableIndexing : false
+    selectedLocation ? selectedLocation.disableIndexing : false,
   );
   const [fullTextIndex, setFullTextIndex] = useState<boolean>(
-    selectedLocation ? selectedLocation.fullTextIndex : false
+    selectedLocation ? selectedLocation.fullTextIndex : false,
   );
   const [accessKeyId, setAccessKeyId] = useState<string>(
-    selectedLocation ? selectedLocation.accessKeyId : ''
+    selectedLocation ? selectedLocation.accessKeyId : '',
   );
   const [secretAccessKey, setSecretAccessKey] = useState<string>(
-    selectedLocation ? selectedLocation.secretAccessKey : ''
+    selectedLocation ? selectedLocation.secretAccessKey : '',
   );
   const [sessionToken, setSessionToken] = useState<string>(
-    selectedLocation ? selectedLocation.sessionToken : undefined
+    selectedLocation ? selectedLocation.sessionToken : undefined,
   );
   const [bucketName, setBucketName] = useState<string>(
-    selectedLocation ? selectedLocation.bucketName : ''
+    selectedLocation ? selectedLocation.bucketName : '',
   );
   const [persistTagsInSidecarFile, setPersistTagsInSidecarFile] = useState<
     boolean | null
   >(
     selectedLocation && selectedLocation.persistTagsInSidecarFile !== undefined
       ? selectedLocation.persistTagsInSidecarFile
-      : null // props.isPersistTagsInSidecar
+      : null, // props.isPersistTagsInSidecar
   );
   const [region, setRegion] = useState<string>(
-    selectedLocation ? selectedLocation.region : ''
+    selectedLocation ? selectedLocation.region : '',
   );
   let defaultType;
   if (selectedLocation) {
@@ -213,28 +212,25 @@ function CreateEditLocationDialog(props: Props) {
   }
   const [type, setType] = useState<string>(defaultType);
   const [newuuid, setNewUuid] = useState<string>(
-    selectedLocation ? selectedLocation.uuid : getUuid()
+    selectedLocation ? selectedLocation.uuid : getUuid(),
   );
   const [cloudErrorTextName, setCloudErrorTextName] = useState<boolean>(false);
   const [webdavErrorUrl, setWebdavErrorUrl] = useState<boolean>(false);
-  const [cloudErrorAccessKey, setCloudErrorAccessKey] = useState<boolean>(
-    false
-  );
-  const [cloudErrorSecretAccessKey, setCloudErrorSecretAccessKey] = useState<
-    boolean
-  >(false);
+  const [cloudErrorAccessKey, setCloudErrorAccessKey] =
+    useState<boolean>(false);
+  const [cloudErrorSecretAccessKey, setCloudErrorSecretAccessKey] =
+    useState<boolean>(false);
 
   const [ignorePatternPaths, setIgnorePatternPaths] = useState<Array<string>>(
-    selectedLocation ? selectedLocation.ignorePatternPaths : undefined
+    selectedLocation ? selectedLocation.ignorePatternPaths : undefined,
   );
 
-  const [isIgnorePatternDialogOpen, setIgnorePatternDialogOpen] = useState<
-    boolean
-  >(false);
+  const [isIgnorePatternDialogOpen, setIgnorePatternDialogOpen] =
+    useState<boolean>(false);
 
   const [
     isFullTextIndexConfirmDialogOpened,
-    setFullTextIndexConfirmDialogOpened
+    setFullTextIndexConfirmDialogOpened,
   ] = useState<boolean>(false);
 
   const firstRender = useFirstRender();
@@ -269,18 +265,18 @@ function CreateEditLocationDialog(props: Props) {
     loadLocationDataPromise(path, AppConfig.metaFolderFile)
       .then((meta: TS.FileSystemEntryMeta) => {
         if (meta && meta.id) {
-          if (!locations.some(ln => ln.uuid === meta.id)) {
+          if (!locations.some((ln) => ln.uuid === meta.id)) {
             setNewUuid(meta.id);
           }
         }
         return true;
       })
-      .catch(err => {
+      .catch((err) => {
         console.debug('no meta in location:' + path);
       });
   }
   function setNewLocationID(newId: string) {
-    if (!locations.some(ln => ln.uuid === newId)) {
+    if (!locations.some((ln) => ln.uuid === newId)) {
       setNewUuid(newId);
     } else {
       showNotification('Location with this ID already exists', 'error');
@@ -383,7 +379,7 @@ function CreateEditLocationDialog(props: Props) {
           fullTextIndex,
           watchForChanges,
           maxIndexAge,
-          ignorePatternPaths
+          ignorePatternPaths,
         };
       } else if (type === locationType.TYPE_WEBDAV) {
         loc = {
@@ -401,7 +397,7 @@ function CreateEditLocationDialog(props: Props) {
           fullTextIndex,
           watchForChanges,
           maxIndexAge,
-          ignorePatternPaths
+          ignorePatternPaths,
         };
       } else if (type === locationType.TYPE_CLOUD) {
         loc = {
@@ -423,7 +419,7 @@ function CreateEditLocationDialog(props: Props) {
           watchForChanges: false,
           maxIndexAge,
           maxLoops,
-          ignorePatternPaths
+          ignorePatternPaths,
         };
       }
       if (persistTagsInSidecarFile !== null) {
@@ -465,7 +461,7 @@ function CreateEditLocationDialog(props: Props) {
         region={region}
         endpointURL={endpointURL}
         setStoreName={setStoreName}
-        setStorePath={path => {
+        setStorePath={(path) => {
           setStorePath(path);
           setLocationId(path);
         }}
@@ -504,7 +500,7 @@ function CreateEditLocationDialog(props: Props) {
         errorTextPath={errorTextPath}
         errorTextName={errorTextName}
         setName={setName}
-        setPath={path => {
+        setPath={(path) => {
           setPath(path);
           setLocationId(path);
         }}
@@ -530,7 +526,7 @@ function CreateEditLocationDialog(props: Props) {
       fullScreen={fullScreen}
       keepMounted
       scroll="paper"
-      onKeyDown={event => {
+      onKeyDown={(event) => {
         if (event.key === 'Enter' || event.keyCode === 13) {
           event.preventDefault();
           event.stopPropagation();
@@ -554,7 +550,7 @@ function CreateEditLocationDialog(props: Props) {
         style={{
           overflow: 'auto',
           minHeight: 200,
-          padding: 8
+          padding: 8,
         }}
       >
         <Accordion defaultExpanded>
@@ -641,7 +637,7 @@ function CreateEditLocationDialog(props: Props) {
                   }}
                   title={t('core:confirm')}
                   content={t('core:fullTextIndexRegenerate')}
-                  confirmCallback={result => {
+                  confirmCallback={(result) => {
                     if (result) {
                       createLocationIndex(selectedLocation);
                     } else {
@@ -701,7 +697,7 @@ function CreateEditLocationDialog(props: Props) {
                   fullWidth={true}
                   data-tid="newuuid"
                   placeholder="Unique location identifier"
-                  onChange={event => setNewLocationID(event.target.value)}
+                  onChange={(event) => setNewLocationID(event.target.value)}
                   value={newuuid}
                   label={t('core:locationId')}
                   InputProps={{
@@ -711,7 +707,7 @@ function CreateEditLocationDialog(props: Props) {
                           <IconButton
                             onClick={() => {
                               const result = confirm(
-                                'Changing the identifier of a location, will invalidate all the internal sharing links (tslinks) leading to files and folders in this location. Do you want to continue?'
+                                'Changing the identifier of a location, will invalidate all the internal sharing links (tslinks) leading to files and folders in this location. Do you want to continue?',
                               );
                               if (result) {
                                 setNewLocationID(getUuid());
@@ -723,7 +719,7 @@ function CreateEditLocationDialog(props: Props) {
                           </IconButton>
                         </Tooltip>
                       </InputAdornment>
-                    )
+                    ),
                   }}
                 />
               </FormControl>
@@ -781,13 +777,13 @@ function CreateEditLocationDialog(props: Props) {
                     style={{
                       maxWidth: 70,
                       marginLeft: 15,
-                      marginBottom: 15
+                      marginBottom: 15,
                     }}
                     type="number"
                     data-tid="maxIndexAgeTID"
                     inputProps={{ min: 0 }}
                     value={maxIndexAge / (1000 * 60)}
-                    onChange={event => changeMaxIndexAge(event.target.value)}
+                    onChange={(event) => changeMaxIndexAge(event.target.value)}
                   />
                 }
                 label={
@@ -947,11 +943,11 @@ function CreateEditLocationDialog(props: Props) {
                     style={{
                       padding: 5,
                       backgroundColor: '#d3d3d34a',
-                      borderRadius: 10
+                      borderRadius: 10,
                     }}
                     dense
                   >
-                    {ignorePatternPaths.map(ignorePatternPath => (
+                    {ignorePatternPaths.map((ignorePatternPath) => (
                       <ListItem style={{ padding: 0 }}>
                         <ListItemText primary={ignorePatternPath} />
                         <ListItemIcon

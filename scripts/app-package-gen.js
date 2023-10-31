@@ -27,7 +27,7 @@ if (dependencies && Object.keys(dependencies).length) {
   console.log('Installing dependencies for ' + platform);
   fs.writeFileSync(
     'package.json',
-    JSON.stringify({ ...pkg, dependencies }, null, 2)
+    JSON.stringify({ ...pkg, dependencies }, null, 2),
   );
 } else {
   console.log('No specific dependencies on this platform: ' + platform);

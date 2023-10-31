@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import {
   AuthState,
   CognitoUserInterface,
-  onAuthUIStateChange
+  onAuthUIStateChange,
 } from '@aws-amplify/ui-components';
 import { API, Auth } from 'aws-amplify';
 import { bindActionCreators } from 'redux';
@@ -34,7 +34,7 @@ function HandleAuth(props: Props) {
         } catch (e) {
           if (e && e.code && e.code === 'MODULE_NOT_FOUND') {
             console.debug(
-              'graphql/queries is missing. You must run "amplify codegen" first'
+              'graphql/queries is missing. You must run "amplify codegen" first',
             );
           }
         }
@@ -44,14 +44,14 @@ function HandleAuth(props: Props) {
         // @ts-ignore
         if (username.current !== authData.username && queries) {
           fetchTenant()
-            .then(async tenant => {
+            .then(async (tenant) => {
               if (tenant) {
                 await saveLocations(tenant, queries.getExtconfig);
                 await addTagGroups(tenant, queries.tagGroupsByTenant);
               }
               return true;
             })
-            .catch(e => {
+            .catch((e) => {
               console.log(e);
             });
           props.initApp();
@@ -71,7 +71,7 @@ function HandleAuth(props: Props) {
     // @ts-ignore
     const { data } = await API.graphql({
       query,
-      variables: { id: tenant }
+      variables: { id: tenant },
     });
     if (data) {
       // console.log(data.getExtconfig.Locations.items);
@@ -90,13 +90,13 @@ function HandleAuth(props: Props) {
     // @ts-ignore
     const { data } = await API.graphql({
       query,
-      variables: { tenant }
+      variables: { tenant },
     });
     if (data && data.TagGroupsByTenant.items.length > 0) {
       const tagGroupsByTenant = data.TagGroupsByTenant.items[0];
       importTagGroups(
         JSON.parse(tagGroupsByTenant.tagGroups),
-        tagGroupsByTenant.replace
+        tagGroupsByTenant.replace,
       );
     }
   };
@@ -104,7 +104,7 @@ function HandleAuth(props: Props) {
   const fetchTenant = () =>
     // get the access token of the signed in user
     Auth.currentSession()
-      .then(session => {
+      .then((session) => {
         const accessToken = session.getAccessToken();
         const cognitogroups = accessToken.payload['cognito:groups'];
         if (cognitogroups) {
@@ -112,7 +112,7 @@ function HandleAuth(props: Props) {
         }
         return undefined;
       })
-      .catch(e => {
+      .catch((e) => {
         console.log(e);
       });
 
@@ -123,10 +123,10 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
       loggedIn: AppActions.loggedIn,
-      initApp: AppActions.initApp
+      initApp: AppActions.initApp,
       // importTagGroups: TagGroupActions.importTagGroups
     },
-    dispatch
+    dispatch,
   );
 }
 

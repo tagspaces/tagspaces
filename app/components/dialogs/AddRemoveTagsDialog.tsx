@@ -33,7 +33,7 @@ import DraggablePaper from '-/components/DraggablePaper';
 import TagsSelect from '../TagsSelect';
 import {
   extractFileName,
-  extractDirectoryName
+  extractDirectoryName,
 } from '@tagspaces/tagspaces-common/paths';
 import PlatformIO from '-/services/platform-facade';
 import { TS } from '-/tagspaces.namespace';
@@ -60,9 +60,9 @@ function AddRemoveTagsDialog(props: Props) {
 
   const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
     if (action === 'remove-value') {
-      const tagsToRemove: Array<string> = value.map(tag => tag.title);
+      const tagsToRemove: Array<string> = value.map((tag) => tag.title);
       setNewlyAddedTags(
-        newlyAddedTags.filter(tag => !tagsToRemove.includes(tag.title))
+        newlyAddedTags.filter((tag) => !tagsToRemove.includes(tag.title)),
       );
     } else {
       setNewlyAddedTags(value);
@@ -81,8 +81,8 @@ function AddRemoveTagsDialog(props: Props) {
   const addTagsAction = () => {
     if (selected && selected.length > 0) {
       addTags(
-        selected.map(entry => entry.path),
-        newlyAddedTags
+        selected.map((entry) => entry.path),
+        newlyAddedTags,
       );
     }
     onCloseDialog(true);
@@ -91,8 +91,8 @@ function AddRemoveTagsDialog(props: Props) {
   const removeTagsAction = () => {
     if (selected && selected.length > 0) {
       removeTags(
-        selected.map(entry => entry.path),
-        newlyAddedTags
+        selected.map((entry) => entry.path),
+        newlyAddedTags,
       );
     }
     onCloseDialog(true);
@@ -100,7 +100,7 @@ function AddRemoveTagsDialog(props: Props) {
 
   const removeAllTagsAction = () => {
     if (selected && selected.length > 0) {
-      removeAllTags(selected.map(entry => entry.path));
+      removeAllTags(selected.map((entry) => entry.path));
     }
     onCloseDialog(true);
   };
@@ -130,7 +130,7 @@ function AddRemoveTagsDialog(props: Props) {
           minHeight: 330,
           paddingTop: 10,
           overflowY: 'auto',
-          overflowX: 'hidden'
+          overflowX: 'hidden',
         }}
       >
         <TagsSelect
@@ -147,7 +147,7 @@ function AddRemoveTagsDialog(props: Props) {
         </Typography>
         <List dense style={{ width: 550, marginLeft: -15 }}>
           {selected.length > 0 &&
-            selected.map(entry => (
+            selected.map((entry) => (
               <ListItem key={entry.path} title={entry.path}>
                 <ListItemIcon>
                   {entry.isFile ? <FileIcon /> : <FolderIcon />}
@@ -156,11 +156,11 @@ function AddRemoveTagsDialog(props: Props) {
                   {entry.isFile
                     ? extractFileName(
                         entry.path || '',
-                        PlatformIO.getDirSeparator()
+                        PlatformIO.getDirSeparator(),
                       )
                     : extractDirectoryName(
                         entry.path || '',
-                        PlatformIO.getDirSeparator()
+                        PlatformIO.getDirSeparator(),
                       )}
                 </Typography>
               </ListItem>

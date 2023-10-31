@@ -6,13 +6,13 @@ import {
   startupLocation,
   getPwLocationTid,
   createPwMinioLocation,
-  createPwLocation
+  createPwLocation,
 } from './location.helpers';
 import {
   clickOn,
   expectElementExist,
   setInputKeys,
-  takeScreenshot
+  takeScreenshot,
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage } from './welcome.helpers';
@@ -62,7 +62,7 @@ test.describe('TST03 - Testing locations:', () => {
     await expectElementExist(
       '[data-tid=location_' + testLocationName + ']',
       true,
-      1500
+      1500,
     );
   });
 
@@ -80,7 +80,7 @@ test.describe('TST03 - Testing locations:', () => {
     //await locationList.waitForDisplayed();
     await expectElementExist(
       '[data-tid=location_' + testLocationName + ']',
-      false
+      false,
     );
   });
 
@@ -101,7 +101,7 @@ test.describe('TST03 - Testing locations:', () => {
     await expectElementExist(
       '[data-tid=location_' + newLocationName + ']',
       true,
-      5000
+      5000,
     );
   });
 

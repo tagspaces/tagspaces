@@ -5,7 +5,7 @@ const {
   baseName,
   extractFileExtension,
   getMetaDirectoryPath,
-  getMetaFileLocationForFile
+  getMetaFileLocationForFile,
 } = require('@tagspaces/tagspaces-common/paths');
 
 const dirSeparatorUnix = '/';
@@ -23,7 +23,7 @@ executeTests(
   '../remote.php/webdav/[20120125 89.4kg 19.5% 2.6kg]',
   '',
   '',
-  dirSeparatorUnix
+  dirSeparatorUnix,
 );
 
 function executeTests(dirPath, fileName, fileExtension, dirSeparator) {
@@ -38,7 +38,7 @@ function executeTests(dirPath, fileName, fileExtension, dirSeparator) {
     const name = baseName(filepath, dirSeparator);
     expect(
       name === fileName + (fileExtension ? '.' + fileExtension : '') ||
-        name === filepath
+        name === filepath,
     ).toBeTruthy();
   });
 
@@ -48,7 +48,7 @@ function executeTests(dirPath, fileName, fileExtension, dirSeparator) {
 
   test(platform + ' getMetaDirectoryPath ' + filepath, () => {
     expect(getMetaDirectoryPath(dirPath, dirSeparator)).toBe(
-      dirPath + dirSeparator + AppConfig.metaFolder
+      dirPath + dirSeparator + AppConfig.metaFolder,
     );
   });
 
@@ -60,7 +60,7 @@ function executeTests(dirPath, fileName, fileExtension, dirSeparator) {
         dirSeparator +
         fileName +
         (fileExtension ? '.' + fileExtension : '') +
-        AppConfig.metaFileExt
+        AppConfig.metaFileExt,
     );
   });
 }

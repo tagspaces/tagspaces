@@ -38,7 +38,7 @@ interface Props {
     event: Object,
     tag: TS.Tag,
     tagGroup: TS.TagGroup | string,
-    haveSelectedEntries: boolean
+    haveSelectedEntries: boolean,
   ) => void; // TODO refactor
   handleRemoveTag?: (event: Object, tags: Array<TS.Tag>) => void;
   isDragging?: boolean;
@@ -49,7 +49,7 @@ interface Props {
   moveTag?: (
     tagTitle: string,
     fromTagGroupId: TS.Uuid,
-    toTagGroupId: TS.Uuid
+    toTagGroupId: TS.Uuid,
   ) => void;
   reorderTags?: boolean;
 }
@@ -64,7 +64,7 @@ function TagContainer(props: Props) {
     handleRemoveTag,
     handleTagMenu,
     addTags,
-    tagMode
+    tagMode,
   } = props;
   let { title } = tag;
 
@@ -76,13 +76,13 @@ function TagContainer(props: Props) {
   let isGeoSmartTag = false;
   let textColor: string;
   let backgroundColor: string;
-  const isTagGeo = useMemo(() => !tagGroup && isGeoTag(title), [
-    title,
-    tagGroup
-  ]);
+  const isTagGeo = useMemo(
+    () => !tagGroup && isGeoTag(title),
+    [title, tagGroup],
+  );
   const isTagDate = useMemo(
     () => !isTagGeo && !tagGroup && isDateTimeTag(title),
-    [isTagGeo, title, tagGroup]
+    [isTagGeo, title, tagGroup],
   );
   if (tag.color && tag.textcolor) {
     textColor = tag.textcolor;
@@ -91,7 +91,7 @@ function TagContainer(props: Props) {
     const tagColors = getTagColors(
       title,
       defaultTextColor,
-      defaultBackgroundColor
+      defaultBackgroundColor,
     );
     textColor = tagColors.textcolor;
     backgroundColor = tagColors.color;
@@ -143,10 +143,10 @@ function TagContainer(props: Props) {
       role="presentation"
       data-tid={tid}
       key={tag.id || (tagGroup ? tagGroup.uuid : '') + tid} // don't set unique uuidv1() here - menu anchorEl needs to be the same for the same TagContainer key (or TagMenu will be displayed in top left corner)
-      onClick={event => {
+      onClick={(event) => {
         if (event.ctrlKey && addTags) {
           const selectedEntryPaths = [];
-          selectedEntries.map(entry => selectedEntryPaths.push(entry.path));
+          selectedEntries.map((entry) => selectedEntryPaths.push(entry.path));
           addTags(selectedEntryPaths, [tag]);
           // Removing tags doesn't seem to work correctly here, yet. Using sidecar tagging, but the removeTagsFromEntry function in tagging.actions.js
           // doesn't recignize it correctly, thinking it's a plain tag and thus tries to rename the files
@@ -159,33 +159,33 @@ function TagContainer(props: Props) {
             event,
             tag,
             entryPath || tagGroup,
-            selectedEntries && selectedEntries.length > 0
+            selectedEntries && selectedEntries.length > 0,
           );
         }
       }}
-      onContextMenu={event => {
+      onContextMenu={(event) => {
         if (handleTagMenu) {
           handleTagMenu(
             event,
             tag,
             entryPath || tagGroup,
-            selectedEntries && selectedEntries.length > 0
+            selectedEntries && selectedEntries.length > 0,
           );
         }
       }}
-      onDoubleClick={event => {
+      onDoubleClick={(event) => {
         if (handleTagMenu) {
           handleTagMenu(
             event,
             tag,
             entryPath || tagGroup,
-            selectedEntries && selectedEntries.length > 0
+            selectedEntries && selectedEntries.length > 0,
           );
         }
       }}
       style={{
         backgroundColor: 'transparent',
-        display: 'inline-block'
+        display: 'inline-block',
       }}
     >
       <Tooltip title={tagTitle}>
@@ -204,7 +204,7 @@ function TagContainer(props: Props) {
             paddingBottom: 0,
             paddingRight: 0,
             paddingLeft: 5,
-            borderRadius: 5
+            borderRadius: 5,
           }}
         >
           <span style={{ flexGrow: 1 }}>
@@ -215,7 +215,7 @@ function TagContainer(props: Props) {
                   height: 20,
                   marginBottom: -5,
                   marginLeft: -5,
-                  marginRight: 0
+                  marginRight: 0,
                 }}
               />
             )}
@@ -226,7 +226,7 @@ function TagContainer(props: Props) {
                   height: 20,
                   marginBottom: -5,
                   marginLeft: -5,
-                  marginRight: 0
+                  marginRight: 0,
                 }}
               />
             )}

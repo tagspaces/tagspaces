@@ -6,14 +6,14 @@ import {
   defaultLocationPath,
   defaultLocationName,
   createPwMinioLocation,
-  createPwLocation
+  createPwLocation,
 } from './location.helpers';
 import {
   clickOn,
   frameLocator,
   getGridFileSelector,
   isDisplayed,
-  takeScreenshot
+  takeScreenshot,
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { openContextEntryMenu, toContainTID } from './test-utils';
@@ -52,7 +52,7 @@ test.describe('TST69 - Markdown editor', () => {
   test('TST6901 - Open and render md file [web,minio,electron]', async () => {
     await openContextEntryMenu(
       getGridFileSelector('sample.md'),
-      'fileMenuOpenFile'
+      'fileMenuOpenFile',
     );
     await expect
       .poll(
@@ -64,8 +64,8 @@ test.describe('TST69 - Markdown editor', () => {
         {
           message: 'make sure bodyTxt contain etete&5435', // custom error message
           // Poll for 10 seconds; defaults to 5 seconds. Pass 0 to disable timeout.
-          timeout: 10000
-        }
+          timeout: 10000,
+        },
       )
       .toBe(true);
   });
@@ -73,7 +73,7 @@ test.describe('TST69 - Markdown editor', () => {
   test('TST6902 - Open settings [web,minio,electron]', async () => {
     await openContextEntryMenu(
       getGridFileSelector('sample.md'),
-      'fileMenuOpenFile'
+      'fileMenuOpenFile',
     );
 
     // Access the iframe
@@ -87,7 +87,7 @@ test.describe('TST69 - Markdown editor', () => {
       '#settings-dialog-title',
       true,
       2000,
-      frame
+      frame,
     );
     expect(settingsExists).toBeTruthy();
 
@@ -97,7 +97,7 @@ test.describe('TST69 - Markdown editor', () => {
       '#settings-dialog-title',
       false,
       2000,
-      frame
+      frame,
     );
     expect(settingsExists).toBeTruthy();
   });

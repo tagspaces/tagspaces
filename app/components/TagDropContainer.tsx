@@ -45,7 +45,7 @@ function TagDropContainer(props: Props) {
         isActive,
         canDrop: monitor.canDrop(),
         selectedEntries: props.selectedEntries,
-        entryPath: props.entryPath
+        entryPath: props.entryPath,
       };
     },
     drop(item: DragItem, monitor: DropTargetMonitor) {
@@ -53,9 +53,9 @@ function TagDropContainer(props: Props) {
       // console.log('DROP: ', monitor.canDrop());
       return {
         selectedEntries: collectedProps.selectedEntries,
-        entryPath: collectedProps.entryPath
+        entryPath: collectedProps.entryPath,
       };
-    }
+    },
   });
 
   drop(ref);
@@ -76,7 +76,7 @@ function TagDropContainer(props: Props) {
         border,
         backgroundColor,
         // paddingRight: 10,
-        borderRadius: 5
+        borderRadius: 5,
       }}
     >
       {props.children}

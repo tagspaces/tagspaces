@@ -28,7 +28,7 @@ type TargetPathContextData = {
 };
 
 export const TargetPathContext = createContext<TargetPathContextData>({
-  targetDirectoryPath: undefined
+  targetDirectoryPath: undefined,
 });
 
 export type TargetPathContextProviderProps = {
@@ -36,13 +36,11 @@ export type TargetPathContextProviderProps = {
 };
 
 export const TargetPathContextProvider = ({
-  children
+  children,
 }: TargetPathContextProviderProps) => {
   const { selectedEntries } = useSelectedEntriesContext();
-  const {
-    currentDirectoryPerspective,
-    currentDirectoryPath
-  } = useDirectoryContentContext();
+  const { currentDirectoryPerspective, currentDirectoryPath } =
+    useDirectoryContentContext();
 
   const firstRWLocation = useSelector(getFirstRWLocation);
 
@@ -61,13 +59,13 @@ export const TargetPathContextProvider = ({
       targetDirectoryPath = firstRWLocation.path;
     }
     return {
-      targetDirectoryPath
+      targetDirectoryPath,
     };
   }, [
     firstRWLocation,
     selectedEntries,
     currentDirectoryPath,
-    currentDirectoryPerspective
+    currentDirectoryPerspective,
   ]);
 
   return (

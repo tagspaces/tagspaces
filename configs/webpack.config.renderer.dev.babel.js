@@ -25,7 +25,7 @@ const publicPath = `http://localhost:${port}/dist`;
 const dll = path.join(__dirname, '..', 'dll');
 const manifest = path.resolve(dll, 'renderer.json');
 const requiredByDLLConfig = module.parent.filename.includes(
-  'webpack.config.renderer.dev.dll'
+  'webpack.config.renderer.dev.dll',
 );
 
 /**
@@ -34,8 +34,8 @@ const requiredByDLLConfig = module.parent.filename.includes(
 if (!requiredByDLLConfig && !(fs.existsSync(dll) && fs.existsSync(manifest))) {
   console.log(
     chalk.black.bgYellow.bold(
-      'The DLL files are missing. Sit back while we build them for you with "yarn build-dll"'
-    )
+      'The DLL files are missing. Sit back while we build them for you with "yarn build-dll"',
+    ),
   );
   execSync('npm run build-dll');
 }
@@ -52,12 +52,12 @@ export default merge(baseConfig, {
     // 'react-hot-loader/patch',
     `webpack-dev-server/client?http://localhost:${port}/`,
     'webpack/hot/only-dev-server',
-    require.resolve('../app/index.tsx')
+    require.resolve('../app/index.tsx'),
   ],
 
   output: {
     publicPath: `http://localhost:${port}/dist/`,
-    filename: 'renderer.dev.js'
+    filename: 'renderer.dev.js',
   },
 
   module: {
@@ -66,80 +66,80 @@ export default merge(baseConfig, {
         test: /\.global\.css$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: 'style-loader',
           },
           {
             loader: 'css-loader',
             options: {
-              sourceMap: true
-            }
-          }
-        ]
+              sourceMap: true,
+            },
+          },
+        ],
       },
       {
         test: /^((?!\.global).)*\.css$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: 'style-loader',
           },
           {
             loader: 'css-loader',
             options: {
               modules: {
-                localIdentName: '[name]__[local]__[hash:base64:5]'
+                localIdentName: '[name]__[local]__[hash:base64:5]',
               },
               sourceMap: true,
-              importLoaders: 1
-            }
-          }
-        ]
+              importLoaders: 1,
+            },
+          },
+        ],
       },
       // SASS support - compile all .global.scss files and pipe it to style.css
       {
         test: /\.global\.(scss|sass)$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: 'style-loader',
           },
           {
             loader: 'css-loader',
             options: {
-              sourceMap: true
-            }
+              sourceMap: true,
+            },
           },
           {
-            loader: 'sass-loader'
-          }
-        ]
+            loader: 'sass-loader',
+          },
+        ],
       },
       // SASS support - compile all other .scss files and pipe it to style.css
       {
         test: /^((?!\.global).)*\.(scss|sass)$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: 'style-loader',
           },
           {
             loader: 'css-loader',
             options: {
               modules: {
-                localIdentName: '[name]__[local]__[hash:base64:5]'
+                localIdentName: '[name]__[local]__[hash:base64:5]',
               },
               sourceMap: true,
-              importLoaders: 1
-            }
+              importLoaders: 1,
+            },
           },
           {
-            loader: 'sass-loader'
-          }
-        ]
+            loader: 'sass-loader',
+          },
+        ],
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
         type: 'asset/resource',
         generator: {
-          filename: 'fonts/[hash][ext][query]'
-        }
+          filename: 'fonts/[hash][ext][query]',
+        },
       },
       /*{
         test: /\.(eot|woff|ttf|svg|woff2)$/,
@@ -201,23 +201,23 @@ export default merge(baseConfig, {
           loader: 'url-loader',
           options: {
             limit: 10000,
-            mimetype: 'image/svg+xml'
-          }
+            mimetype: 'image/svg+xml',
+          },
         },
-        type: 'javascript/auto'
+        type: 'javascript/auto',
       },
       // Text files
       {
         test: /\.(txt)$/,
         use: 'raw-loader',
-        type: 'javascript/auto'
+        type: 'javascript/auto',
       },
       // Common Image Formats
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
-        type: 'asset/resource'
-      }
-    ]
+        type: 'asset/resource',
+      },
+    ],
   },
 
   plugins: [
@@ -226,11 +226,11 @@ export default merge(baseConfig, {
       : new webpack.DllReferencePlugin({
           context: path.join(__dirname, '..', 'dll'),
           manifest: require(manifest),
-          sourceType: 'var'
+          sourceType: 'var',
         }),
 
     new webpack.HotModuleReplacementPlugin({
-      multiStep: true
+      multiStep: true,
     }),
 
     /* new webpack.NormalModuleReplacementPlugin(
@@ -268,17 +268,17 @@ export default merge(baseConfig, {
      * 'staging', for example, by changing the ENV variables in the npm scripts
      */
     new webpack.EnvironmentPlugin({
-      NODE_ENV: 'development'
+      NODE_ENV: 'development',
     }),
 
     new webpack.LoaderOptionsPlugin({
-      debug: true
-    })
+      debug: true,
+    }),
   ],
 
   node: {
     __dirname: false,
-    __filename: false
+    __filename: false,
   },
 
   devServer: {
@@ -287,13 +287,13 @@ export default merge(baseConfig, {
     client: {
       overlay: {
         warnings: false,
-        errors: false
-      }
+        errors: false,
+      },
     },
     // noInfo: true,
     devMiddleware: {
       // index: true,
-      stats: 'errors-only'
+      stats: 'errors-only',
       // mimeTypes: { "text/html": ["phtml"] },
       // publicPath: "/publicPathForDevServe",
       // serverSideRender: true,
@@ -318,12 +318,12 @@ export default merge(baseConfig, {
       watch: {
         aggregateTimeout: 300,
         ignored: /node_modules/,
-        poll: 100
-      }
+        poll: 100,
+      },
     },
     historyApiFallback: {
       verbose: true,
-      disableDotRule: false
+      disableDotRule: false,
     },
     setupMiddlewares(middlewares, devServer) {
       if (process.env.START_HOT) {
@@ -331,12 +331,12 @@ export default merge(baseConfig, {
         spawn('npm', ['run', 'start-main-dev'], {
           shell: true,
           env: process.env,
-          stdio: 'inherit'
+          stdio: 'inherit',
         })
-          .on('close', code => process.exit(code))
-          .on('error', spawnError => console.error(spawnError));
+          .on('close', (code) => process.exit(code))
+          .on('error', (spawnError) => console.error(spawnError));
       }
       return middlewares;
-    }
-  }
+    },
+  },
 });

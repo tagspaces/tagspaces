@@ -24,7 +24,7 @@ import PlatformIO from '-/services/platform-facade';
 import {
   extractDirectoryName,
   getMetaFileLocationForFile,
-  getThumbFileLocationForFile
+  getThumbFileLocationForFile,
 } from '@tagspaces/tagspaces-common/paths';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { getWarningOpeningFilesExternally } from '-/reducers/settings';
@@ -38,7 +38,7 @@ import { useFSWatcherContext } from '-/hooks/useFSWatcherContext';
 type FsActionsContextData = {
   renameDirectory: (
     directoryPath: string,
-    newDirectoryName: string
+    newDirectoryName: string,
   ) => Promise<string>;
   renameFile: (filePath: string, newFilePath: string) => Promise<boolean>;
   openFileNatively: (selectedFile?: string) => void;
@@ -47,7 +47,7 @@ type FsActionsContextData = {
 export const FsActionsContext = createContext<FsActionsContextData>({
   renameDirectory: () => Promise.resolve(''),
   renameFile: () => Promise.resolve(false),
-  openFileNatively: undefined
+  openFileNatively: undefined,
 });
 
 export type FsActionsContextProviderProps = {
@@ -55,7 +55,7 @@ export type FsActionsContextProviderProps = {
 };
 
 export const FsActionsContextProvider = ({
-  children
+  children,
 }: FsActionsContextProviderProps) => {
   const { t } = useTranslation();
   const { setSelectedEntries, selectedEntries } = useSelectedEntriesContext();
@@ -64,19 +64,16 @@ export const FsActionsContextProvider = ({
   const { reflectRenameEntry } = useLocationIndexContext();
   const { showNotification } = useNotificationContext();
   const { watcher } = useFSWatcherContext();
-  const {
-    renameFilePromise,
-    renameFilesPromise,
-    renameDirectoryPromise
-  } = usePlatformFacadeContext();
+  const { renameFilePromise, renameFilesPromise, renameDirectoryPromise } =
+    usePlatformFacadeContext();
   const dispatch: AppDispatch = useDispatch();
   const warningOpeningFilesExternally = useSelector(
-    getWarningOpeningFilesExternally
+    getWarningOpeningFilesExternally,
   );
 
   function renameDirectory(directoryPath: string, newDirectoryName: string) {
     return renameDirectoryPromise(directoryPath, newDirectoryName)
-      .then(newDirPath => {
+      .then((newDirPath) => {
         if (currentDirectoryPath === directoryPath) {
           openDirectory(newDirPath).then(() => {
             reflectRenameDirectory(directoryPath, newDirPath);
@@ -91,22 +88,22 @@ export const FsActionsContextProvider = ({
         showNotification(
           `Renaming directory ${extractDirectoryName(
             directoryPath,
-            PlatformIO.getDirSeparator()
+            PlatformIO.getDirSeparator(),
           )} successful.`,
           'default',
-          true
+          true,
         );
         return newDirPath;
       })
-      .catch(error => {
+      .catch((error) => {
         console.warn('Error while renaming directory: ' + error);
         showNotification(
           `Error renaming directory '${extractDirectoryName(
             directoryPath,
-            PlatformIO.getDirSeparator()
+            PlatformIO.getDirSeparator(),
           )}'`,
           'error',
-          true
+          true,
         );
         throw error;
       });
@@ -114,7 +111,7 @@ export const FsActionsContextProvider = ({
 
   function renameFile(filePath: string, newFilePath: string): Promise<boolean> {
     return renameFilePromise(filePath, newFilePath)
-      .then(result => {
+      .then((result) => {
         const newFilePathFromPromise = result[1];
         console.info('File renamed ' + filePath + ' to ' + newFilePath);
         showNotification(t('core:renamingSuccessfully'), 'default', true);
@@ -124,40 +121,40 @@ export const FsActionsContextProvider = ({
             getMetaFileLocationForFile(filePath, PlatformIO.getDirSeparator()),
             getMetaFileLocationForFile(
               newFilePath,
-              PlatformIO.getDirSeparator()
-            )
+              PlatformIO.getDirSeparator(),
+            ),
           ],
           [
             getThumbFileLocationForFile(
               filePath,
               PlatformIO.getDirSeparator(),
-              false
+              false,
             ),
             getThumbFileLocationForFile(
               newFilePath,
               PlatformIO.getDirSeparator(),
-              false
-            )
-          ]
+              false,
+            ),
+          ],
         ])
           .then(() => {
             reflectRenameEntry(filePath, newFilePathFromPromise);
             dispatch(
-              AppActions.reflectRenameEntry(filePath, newFilePathFromPromise)
+              AppActions.reflectRenameEntry(filePath, newFilePathFromPromise),
             );
             setSelectedEntries([]);
             console.info(
               'Renaming meta file and thumb successful from ' +
                 filePath +
                 ' to:' +
-                newFilePath
+                newFilePath,
             );
             return true;
           })
-          .catch(err => {
+          .catch((err) => {
             reflectRenameEntry(filePath, newFilePathFromPromise);
             dispatch(
-              AppActions.reflectRenameEntry(filePath, newFilePathFromPromise)
+              AppActions.reflectRenameEntry(filePath, newFilePathFromPromise),
             );
             setSelectedEntries([]);
             console.warn(
@@ -165,17 +162,17 @@ export const FsActionsContextProvider = ({
                 filePath +
                 ' to:' +
                 newFilePath,
-              err
+              err,
             );
             return false;
           });
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(`Error while renaming file ${filePath}`, error);
         showNotification(
           `Error while renaming file ${filePath}`,
           'error',
-          true
+          true,
         );
         return false;
       });
@@ -201,7 +198,7 @@ export const FsActionsContextProvider = ({
     return {
       renameDirectory,
       renameFile,
-      openFileNatively
+      openFileNatively,
     };
   }, [openedEntries, watcher]);
 

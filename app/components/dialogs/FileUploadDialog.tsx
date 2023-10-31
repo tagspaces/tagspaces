@@ -34,7 +34,7 @@ import DraggablePaper from '-/components/DraggablePaper';
 import {
   actions as AppActions,
   AppDispatch,
-  getProgress
+  getProgress,
 } from '-/reducers/app';
 import { extractFileName } from '@tagspaces/tagspaces-common/paths';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
@@ -57,7 +57,7 @@ function FileUploadDialog(props: Props) {
   const {
     loadDirectoryContent,
     currentDirectoryPerspective,
-    currentDirectoryPath
+    currentDirectoryPath,
   } = useDirectoryContentContext();
   const { currentLocation } = useCurrentLocationContext();
   const progress = useSelector(getProgress);
@@ -81,7 +81,7 @@ function FileUploadDialog(props: Props) {
 
   const stopAll = () => {
     if (progress) {
-      progress.map(fileProgress => {
+      progress.map((fileProgress) => {
         const { abort } = fileProgress;
         if (abort !== undefined && typeof abort === 'function') {
           abort();
@@ -94,7 +94,7 @@ function FileUploadDialog(props: Props) {
   let haveProgress = false;
 
   function getTargetPath() {
-    const pathProgress = progress.find(fileProgress => fileProgress.path);
+    const pathProgress = progress.find((fileProgress) => fileProgress.path);
     if (pathProgress) {
       return pathProgress.path;
     }
@@ -163,14 +163,14 @@ function FileUploadDialog(props: Props) {
           marginLeft: 'auto',
           marginRight: 'auto',
           width: '90%',
-          flexGrow: 1
+          flexGrow: 1,
         }}
       >
         <p>{t('core:moveCopyToPath') + ': ' + getTargetURL()}</p>
         {progress &&
           progress
             .sort((a, b) => ('' + a.path).localeCompare(b.path))
-            .map(fileProgress => {
+            .map((fileProgress) => {
               const percentage = fileProgress.progress;
               const { path, filePath } = fileProgress;
               targetPath.current = path.split('?')[0];
@@ -194,14 +194,14 @@ function FileUploadDialog(props: Props) {
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      wordBreak: 'break-word'
+                      wordBreak: 'break-word',
                     }}
                   >
                     {filePath
                       ? filePath
                       : extractFileName(
                           targetPath.current,
-                          PlatformIO.getDirSeparator()
+                          PlatformIO.getDirSeparator(),
                         )}
                     {percentage === -1 && (
                       <Tooltip

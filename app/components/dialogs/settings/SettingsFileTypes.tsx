@@ -37,7 +37,7 @@ import Paper from '@mui/material/Paper';
 import {
   TableVirtuoso,
   TableComponents,
-  TableVirtuosoHandle
+  TableVirtuosoHandle,
 } from 'react-virtuoso';
 import Tooltip from '-/components/Tooltip';
 import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
@@ -46,7 +46,7 @@ import { TS } from '-/tagspaces.namespace';
 import {
   actions as SettingsActions,
   getSupportedFileTypes,
-  isDevMode
+  isDevMode,
 } from '-/reducers/settings';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import PlatformFacade from '-/services/platform-facade';
@@ -60,27 +60,27 @@ const PREFIX = 'SettingsFileTypes';
 const classes = {
   fileTypeColorDialog: `${PREFIX}-fileTypeColorDialog`,
   colorChooserButton: `${PREFIX}-colorChooserButton`,
-  fileExtRemove: `${PREFIX}-fileExtRemove`
+  fileExtRemove: `${PREFIX}-fileExtRemove`,
 };
 
 const Root = styled('div')(({ theme: any }) => ({
   [`& .${classes.fileTypeColorDialog}`]: {
     width: 60,
-    padding: '0 12px 0 0'
+    padding: '0 12px 0 0',
   },
 
   [`& .${classes.colorChooserButton}`]: {
     maxWidth: 30,
     width: 30,
-    border: '1px solid lightgray'
+    border: '1px solid lightgray',
   },
 
   [`& .${classes.fileExtRemove}`]: {
     height: '38px',
     cursor: 'pointer',
     marginLeft: 10,
-    padding: '0'
-  }
+    padding: '0',
+  },
 }));
 
 function SettingsFileTypes() {
@@ -89,15 +89,13 @@ function SettingsFileTypes() {
   const items = useRef<Array<TS.FileTypes>>(supportedFileTypes);
   const selectedItem = useRef<TS.FileTypes>(undefined);
   const isValidationInProgress = useRef<boolean>(false);
-  const [isConfirmDialogOpened, setIsConfirmDialogOpened] = useState<boolean>(
-    false
-  );
-  const [isColorPickerVisible, setColorPickerVisible] = useState<boolean>(
-    false
-  );
+  const [isConfirmDialogOpened, setIsConfirmDialogOpened] =
+    useState<boolean>(false);
+  const [isColorPickerVisible, setColorPickerVisible] =
+    useState<boolean>(false);
   const settingsFileTypeRef = useRef<TableVirtuosoHandle>(null);
 
-  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
   const firstRender = useFirstRender();
 
   const extensions = useSelector(getExtensions);
@@ -127,10 +125,10 @@ function SettingsFileTypes() {
   function scrollToItem(item: TS.FileTypes) {
     if (item) {
       const index = items.current.findIndex(
-        element => element.type === item.type
+        (element) => element.type === item.type,
       );
       if (index > -1) {
-        return setTimeout(function() {
+        return setTimeout(function () {
           scrollToIndex({ index: index });
         }, 50);
       }
@@ -142,7 +140,7 @@ function SettingsFileTypes() {
     if (settingsFileTypeRef.current) {
       settingsFileTypeRef.current.scrollToIndex({
         index,
-        align
+        align,
       });
     }
   }
@@ -151,7 +149,7 @@ function SettingsFileTypes() {
     fileType: TS.FileTypes,
     targetKey,
     targetValue,
-    disableSave = false
+    disableSave = false,
   ) => {
     let identifierKey;
     let identifierValue;
@@ -164,14 +162,14 @@ function SettingsFileTypes() {
     }
     let isSaveable = false;
     let hasViewer = false;
-    const modifiedItems = items.current.map(item => {
+    const modifiedItems = items.current.map((item) => {
       if (item[identifierKey] === identifierValue) {
         isSaveable =
           item.type !== '' || (targetKey === 'type' && targetValue !== '');
         hasViewer = item.viewer !== '';
         const itemUpdated = {
           ...item,
-          [targetKey]: targetValue
+          [targetKey]: targetValue,
         };
         selectedItem.current = itemUpdated;
         return itemUpdated;
@@ -190,7 +188,7 @@ function SettingsFileTypes() {
     }
   };
 
-  const saveFileTypes = newItems => {
+  const saveFileTypes = (newItems) => {
     isValidationInProgress.current = true;
 
     const isValid = validateSelectedFileTypes(newItems);
@@ -202,12 +200,12 @@ function SettingsFileTypes() {
     dispatch(SettingsActions.setSupportedFileTypes(newItems));
   };
 
-  const validateSelectedFileTypes = newItems => {
+  const validateSelectedFileTypes = (newItems) => {
     let isValid = true;
 
-    newItems.map(item => {
+    newItems.map((item) => {
       const hasDuplicates =
-        items.current.filter(targetItem => targetItem.type === item.type)
+        items.current.filter((targetItem) => targetItem.type === item.type)
           .length > 1;
 
       if (
@@ -222,7 +220,7 @@ function SettingsFileTypes() {
     return isValid;
   };
 
-  const openColorPicker = selected => {
+  const openColorPicker = (selected) => {
     setColorPickerVisible(true);
     selectedItem.current = selected;
     scrollToItem(selected);
@@ -233,11 +231,11 @@ function SettingsFileTypes() {
     // selectedItem.current = undefined;
   };
 
-  const handleChangeColor = color => {
+  const handleChangeColor = (color) => {
     updateItems(selectedItem.current, 'color', color);
   };
 
-  const sanitizeFileTypeInput = fileTypeInput =>
+  const sanitizeFileTypeInput = (fileTypeInput) =>
     fileTypeInput.replace(/[^a-zA-Z0-9 ]/g, '');
 
   interface ColumnData {
@@ -250,30 +248,30 @@ function SettingsFileTypes() {
     {
       width: 60,
       label: t('core:fileExtension'),
-      dataKey: 'type'
+      dataKey: 'type',
     },
     {
       width: 170,
       label: t('core:fileOpener'),
-      dataKey: 'viewer'
+      dataKey: 'viewer',
     },
     {
       width: 170,
       label: t('core:fileEditor'),
-      dataKey: 'editor'
+      dataKey: 'editor',
     },
     {
       width: 80,
       label: t('core:actions'),
-      dataKey: 'color'
-    }
+      dataKey: 'color',
+    },
   ];
 
   const VirtuosoTableComponents: TableComponents<TS.FileTypes> = {
     Scroller: React.forwardRef<HTMLDivElement>((props, ref) => (
       <TableContainer component={Paper} {...props} ref={ref} />
     )),
-    Table: props => (
+    Table: (props) => (
       <Table
         {...props}
         sx={{ borderCollapse: 'separate', tableLayout: 'fixed' }}
@@ -283,7 +281,7 @@ function SettingsFileTypes() {
     TableRow: ({ item: _item, ...props }) => <TableRow {...props} />,
     TableBody: React.forwardRef<HTMLTableSectionElement>((props, ref) => (
       <TableBody {...props} ref={ref} />
-    ))
+    )),
   };
 
   const onAddFileType = () => {
@@ -292,20 +290,20 @@ function SettingsFileTypes() {
       type: '',
       viewer: '',
       editor: '',
-      color: '#2196f3'
+      color: '#2196f3',
     };
     items.current = [defaultFileTypeObject, ...items.current];
     forceUpdate();
   };
 
-  const onRemoveItem = item => {
+  const onRemoveItem = (item) => {
     selectedItem.current = item;
     setIsConfirmDialogOpened(true);
   };
 
   const removeItem = (itemForRemoval: any) => {
     const filteredItems = items.current.filter(
-      item => item.type !== itemForRemoval.type
+      (item) => item.type !== itemForRemoval.type,
     );
     items.current = filteredItems;
     saveFileTypes(filteredItems);
@@ -314,7 +312,7 @@ function SettingsFileTypes() {
   function fixedHeaderContent() {
     return (
       <TableRow>
-        {columns.map(column => (
+        {columns.map((column) => (
           <TableCell
             key={column.dataKey}
             variant="head"
@@ -323,7 +321,7 @@ function SettingsFileTypes() {
               width: column.width,
               padding: 0,
               paddingLeft: 2,
-              backgroundColor: 'background.paper'
+              backgroundColor: 'background.paper',
             }}
           >
             {column.label}
@@ -340,8 +338,9 @@ function SettingsFileTypes() {
           <FormControl
             error={
               (isValidationInProgress.current && item.type === '') ||
-              items.current.filter(targetItem => targetItem.type === item.type)
-                .length > 1
+              items.current.filter(
+                (targetItem) => targetItem.type === item.type,
+              ).length > 1
             }
           >
             <Input
@@ -349,10 +348,10 @@ function SettingsFileTypes() {
               error={
                 (isValidationInProgress.current && item.type === '') ||
                 items.current.filter(
-                  targetItem => targetItem.type === item.type
+                  (targetItem) => targetItem.type === item.type,
                 ).length > 1
               }
-              onBlur={event => {
+              onBlur={(event) => {
                 const nextValue = event.target.value;
                 const withoutSpecialChars = sanitizeFileTypeInput(nextValue);
                 updateItems(item, 'type', withoutSpecialChars);
@@ -369,18 +368,18 @@ function SettingsFileTypes() {
               value={item.viewer}
               sx={{ width: 180 }}
               input={<Input id="" />}
-              onChange={event => {
+              onChange={(event) => {
                 const extension: TS.Extension = extensions.find(
-                  ext => ext.extensionId === event.target.value
+                  (ext) => ext.extensionId === event.target.value,
                 );
                 if (extension.extensionExternal) {
-                  PlatformFacade.getUserDataDir().then(dataDir => {
+                  PlatformFacade.getUserDataDir().then((dataDir) => {
                     const externalExtensionPath =
                       dataDir + PlatformFacade.getDirSeparator() + 'tsplugins';
                     updateItems(
                       item,
                       'extensionExternalPath',
-                      externalExtensionPath
+                      externalExtensionPath,
                     );
                   });
                 }
@@ -389,7 +388,7 @@ function SettingsFileTypes() {
             >
               <MenuItem value="" />
               {extensions.map(
-                extension =>
+                (extension) =>
                   (extension.extensionTypes.includes('viewer') ||
                     extension.extensionTypes.includes('editor')) && (
                     <MenuItem
@@ -398,7 +397,7 @@ function SettingsFileTypes() {
                     >
                       {extension.extensionName} ({extension.version})
                     </MenuItem>
-                  )
+                  ),
               )}
             </Select>
           </FormControl>
@@ -408,16 +407,18 @@ function SettingsFileTypes() {
             value={item.editor}
             input={<Input id="" />}
             sx={{ width: 180 }}
-            onChange={event => updateItems(item, 'editor', event.target.value)}
+            onChange={(event) =>
+              updateItems(item, 'editor', event.target.value)
+            }
           >
             <MenuItem value="">{t('clearEditor')}</MenuItem>
             {extensions
               .filter(
-                extension =>
+                (extension) =>
                   extension.extensionTypes &&
-                  extension.extensionTypes.includes('editor')
+                  extension.extensionTypes.includes('editor'),
               )
-              .map(extension => (
+              .map((extension) => (
                 <MenuItem
                   key={extension.extensionName}
                   value={extension.extensionId}
@@ -437,7 +438,7 @@ function SettingsFileTypes() {
                   backgroundColor: `${item.color}`,
                   minWidth: 50,
                   maxWidth: 50,
-                  cursor: 'pointer'
+                  cursor: 'pointer',
                 }}
                 onClick={() => {
                   openColorPicker(item);
@@ -470,7 +471,7 @@ function SettingsFileTypes() {
           height: 600,
           width: '100%',
           minWidth: 550,
-          overflow: 'hidden'
+          overflow: 'hidden',
         }}
       >
         <Button
@@ -488,7 +489,7 @@ function SettingsFileTypes() {
               selectedItem.current = undefined;
               items.current = defaultSupportedFileTypes;
               dispatch(
-                SettingsActions.setSupportedFileTypes(supportedFileTypes)
+                SettingsActions.setSupportedFileTypes(supportedFileTypes),
               );
             }}
             color="secondary"
@@ -505,7 +506,7 @@ function SettingsFileTypes() {
             }}
             title="Confirm"
             content={t('core:confirmFileTypeDeletion')}
-            confirmCallback={result => {
+            confirmCallback={(result) => {
               if (result) {
                 removeItem(selectedItem.current);
               }
@@ -519,7 +520,7 @@ function SettingsFileTypes() {
           style={{
             overflowX: 'hidden',
             height: 'calc(100% - 30px)',
-            overflowY: 'auto'
+            overflowY: 'auto',
           }}
           data={items.current}
           components={VirtuosoTableComponents}

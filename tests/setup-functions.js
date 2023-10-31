@@ -20,21 +20,21 @@ export async function startMinio() {
   const command = global.isWin ? winMinio : unixMinio;
   const minioProcess = await require('child_process').spawn(command, [
     'server',
-    pathLib.resolve(__dirname, './testdata-tmp/file-structure')
+    pathLib.resolve(__dirname, './testdata-tmp/file-structure'),
   ]);
 
-  minioProcess.on('exit', function(code) {
+  minioProcess.on('exit', function (code) {
     // console.log('exit here with code: ', code);
   });
   minioProcess.on('close', (code, signal) => {
     // console.log(`child process terminated due to receipt of signal ${signal}`);
   });
 
-  minioProcess.stdout.on('data', function(data) {
+  minioProcess.stdout.on('data', function (data) {
     // console.log('stdout: ' + data);
   });
 
-  minioProcess.stderr.on('data', function(data) {
+  minioProcess.stderr.on('data', function (data) {
     console.log('stderr: ' + data);
   });
   return minioProcess;
@@ -80,8 +80,8 @@ export async function startWebServer() {
 
   await app.use(
     serveStatic(pathLib.resolve(__dirname, '../web'), {
-      index: ['index.html']
-    })
+      index: ['index.html'],
+    }),
   );
   if (global.isMac) {
     //todo copyfiles do not work for MacOS

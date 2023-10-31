@@ -7,7 +7,7 @@ export const entry1 = {
   textConten: 'adsadas dasda',
   fromTime: '',
   toTime: '',
-  fileSize: 9
+  fileSize: 9,
 };
 
 export const entry2 = {
@@ -16,7 +16,7 @@ export const entry2 = {
   extension: 'jpg',
   tags: [{ title: 'tagTitle2' }],
   size: 222,
-  path: '/gg/'
+  path: '/gg/',
 };
 
 export const entry3 = {
@@ -24,5 +24,5 @@ export const entry3 = {
   description: 'test folder desciption',
   isDirectory: true,
   path: '/gg/',
-  tags: []
+  tags: [],
 };

@@ -16,7 +16,7 @@ window.ExtLocations = [
     isReadOnly: false, // if true the user interface of the application turns to read-only mode
     disableIndexing: false, // if true the search index will be persisted and loaded by default on location opening
     fullTextIndex: true, // activated the full-text search for TXT, MD and HTML files
-    watchForChanges: false // activates the watching for changed files in the current location
+    watchForChanges: false, // activates the watching for changed files in the current location
   },
   {
     uuid: '30565f09-c7fd-2333-fc67-a75db27rt5b1', // an unique id of the location
@@ -32,8 +32,8 @@ window.ExtLocations = [
     isReadOnly: false, // if true the user interface of the application turns to read-only mode
     disableIndexing: false, // if true the search index will be persisted and loaded by default on location opening
     fullTextIndex: true, // activated the full-text search for TXT, MD and HTML files
-    watchForChanges: false // activates the watching for changed files in the current location
-  }
+    watchForChanges: false, // activates the watching for changed files in the current location
+  },
 ];
 /*window.ExtSearches = [
   {

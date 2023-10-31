@@ -41,13 +41,13 @@ import {
   extractFileName,
   extractParentDirectoryPath,
   extractTags,
-  generateSharingLink
+  generateSharingLink,
 } from '@tagspaces/tagspaces-common/paths';
 import PlatformIO from '-/services/platform-facade';
 import {
   generateFileName,
   setFolderBackgroundPromise,
-  getRelativeEntryPath
+  getRelativeEntryPath,
 } from '-/services/utils-io';
 import { Pro } from '-/pro';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
@@ -55,12 +55,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { supportedImgs } from '-/services/thumbsgenerator';
 import {
   getPrefixTagContainer,
-  getWarningOpeningFilesExternally
+  getWarningOpeningFilesExternally,
 } from '-/reducers/settings';
 import {
   OpenNewWindowIcon,
   DeleteIcon,
-  LinkIcon
+  LinkIcon,
 } from '-/components/CommonIcons';
 import PropertiesIcon from '@mui/icons-material/Info';
 import { useTranslation } from 'react-i18next';
@@ -103,7 +103,7 @@ function FileMenu(props: Props) {
     mouseY,
     open,
     onClose,
-    selectedFilePath
+    selectedFilePath,
   } = props;
 
   const { t } = useTranslation();
@@ -112,15 +112,13 @@ function FileMenu(props: Props) {
   const { openEntry } = useOpenedEntryContext();
   const { openDirectory } = useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
-  const {
-    copyFilePromise,
-    setFolderThumbnailPromise
-  } = usePlatformFacadeContext();
+  const { copyFilePromise, setFolderThumbnailPromise } =
+    usePlatformFacadeContext();
   const { currentLocation, readOnlyMode } = useCurrentLocationContext();
   //const locations: Array<TS.Location> = useSelector(getLocations);
   const prefixTagContainer = useSelector(getPrefixTagContainer);
   const warningOpeningFilesExternally = useSelector(
-    getWarningOpeningFilesExternally
+    getWarningOpeningFilesExternally,
   );
 
   function generateFileLink() {
@@ -185,11 +183,11 @@ function FileMenu(props: Props) {
         showNotification('Thumbnail created for: ' + directoryPath);
         return true;
       })
-      .catch(error => {
+      .catch((error) => {
         showNotification('Thumbnail creation failed.');
         console.warn(
           'Error setting Thumb for entry: ' + selectedFilePath,
-          error
+          error,
         );
         return true;
       });
@@ -204,22 +202,22 @@ function FileMenu(props: Props) {
 
     const directoryPath = extractContainingDirectoryPath(
       selectedFilePath,
-      PlatformIO.getDirSeparator()
+      PlatformIO.getDirSeparator(),
     );
 
     setFolderBackgroundPromise(path, directoryPath)
       .then((directoryPath: string) => {
         dispatch(
-          AppActions.setLastBackgroundImageChange(path, new Date().getTime())
+          AppActions.setLastBackgroundImageChange(path, new Date().getTime()),
         );
         showNotification('Background created for: ' + directoryPath);
         return true;
       })
-      .catch(error => {
+      .catch((error) => {
         showNotification('Background creation failed.');
         console.warn(
           'Error setting Background for entry: ' + selectedFilePath,
-          error
+          error,
         );
         return true;
       });
@@ -235,18 +233,18 @@ function FileMenu(props: Props) {
     if (selectedFilePath) {
       const dirPath = extractContainingDirectoryPath(
         selectedFilePath,
-        PlatformIO.getDirSeparator()
+        PlatformIO.getDirSeparator(),
       );
 
       const fileName = extractFileName(
         selectedFilePath,
-        PlatformIO.getDirSeparator()
+        PlatformIO.getDirSeparator(),
       );
 
       const extractedTags = extractTags(
         selectedFilePath,
         AppConfig.tagDelimiter,
-        PlatformIO.getDirSeparator()
+        PlatformIO.getDirSeparator(),
       );
       extractedTags.push('copy');
       extractedTags.push(formatDateTime4Tag(new Date(), true));
@@ -257,7 +255,7 @@ function FileMenu(props: Props) {
           fileName,
           extractedTags,
           AppConfig.tagDelimiter,
-          prefixTagContainer
+          prefixTagContainer,
         );
 
       copyFilePromise(selectedFilePath, newFilePath)
@@ -269,7 +267,7 @@ function FileMenu(props: Props) {
           }
           return true;
         })
-        .catch(error => {
+        .catch((error) => {
           showNotification('Error creating duplicate: ', error);
         });
     }
@@ -280,7 +278,7 @@ function FileMenu(props: Props) {
     if (selectedFilePath) {
       const parentFolder = extractParentDirectoryPath(
         selectedFilePath,
-        PlatformIO.getDirSeparator()
+        PlatformIO.getDirSeparator(),
       );
       return openDirectory(parentFolder);
     }
@@ -306,8 +304,8 @@ function FileMenu(props: Props) {
   const menuItems = [];
 
   const pathLowerCase = selectedFilePath.toLowerCase();
-  const isImageFile = supportedImgs.some(ext =>
-    pathLowerCase.endsWith('.' + ext)
+  const isImageFile = supportedImgs.some((ext) =>
+    pathLowerCase.endsWith('.' + ext),
   );
 
   if (selectedEntries.length < 2) {
@@ -321,7 +319,7 @@ function FileMenu(props: Props) {
           <OpenFile />
         </ListItemIcon>
         <ListItemText primary={t('core:openFile')} />
-      </MenuItem>
+      </MenuItem>,
     );
     menuItems.push(
       <MenuItem
@@ -333,7 +331,7 @@ function FileMenu(props: Props) {
           <OpenNewWindowIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:openInWindow')} />
-      </MenuItem>
+      </MenuItem>,
     );
     menuItems.push(
       <MenuItem
@@ -345,7 +343,7 @@ function FileMenu(props: Props) {
           <ParentFolderIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:openParentFolder')} />
-      </MenuItem>
+      </MenuItem>,
     );
   }
   if (
@@ -365,7 +363,7 @@ function FileMenu(props: Props) {
           if (selectedFilePath) {
             PlatformIO.openFile(
               selectedFilePath,
-              warningOpeningFilesExternally
+              warningOpeningFilesExternally,
             );
             // openFileNatively(selectedFilePath);
           }
@@ -375,7 +373,7 @@ function FileMenu(props: Props) {
           <OpenFileNatively />
         </ListItemIcon>
         <ListItemText primary={t('core:openFileNatively')} />
-      </MenuItem>
+      </MenuItem>,
     );
     menuItems.push(
       <MenuItem
@@ -392,7 +390,7 @@ function FileMenu(props: Props) {
           <OpenFolderInternally />
         </ListItemIcon>
         <ListItemText primary={t('core:showInFileManager')} />
-      </MenuItem>
+      </MenuItem>,
     );
     menuItems.push(<Divider key="fmDivider" />);
   }
@@ -407,7 +405,7 @@ function FileMenu(props: Props) {
           <AddRemoveTags />
         </ListItemIcon>
         <ListItemText primary={t('core:addRemoveTags')} />
-      </MenuItem>
+      </MenuItem>,
     );
     if (reorderTop) {
       menuItems.push(
@@ -423,7 +421,7 @@ function FileMenu(props: Props) {
             <MoveToTopIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:moveToTop')} />
-        </MenuItem>
+        </MenuItem>,
       );
     }
     if (reorderBottom) {
@@ -440,7 +438,7 @@ function FileMenu(props: Props) {
             <MoveToBottomIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:moveToBottom')} />
-        </MenuItem>
+        </MenuItem>,
       );
     }
     menuItems.push(<Divider key="fmDivider1" />);
@@ -454,7 +452,7 @@ function FileMenu(props: Props) {
           <RenameFile />
         </ListItemIcon>
         <ListItemText primary={t('core:renameFile')} />
-      </MenuItem>
+      </MenuItem>,
     );
     if (selectedEntries.length < 2) {
       menuItems.push(
@@ -467,7 +465,7 @@ function FileMenu(props: Props) {
             <DuplicateFile />
           </ListItemIcon>
           <ListItemText primary={t('core:duplicateFile')} />
-        </MenuItem>
+        </MenuItem>,
       );
     }
 
@@ -482,7 +480,7 @@ function FileMenu(props: Props) {
             <ShareIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:shareFiles')} />
-        </MenuItem>
+        </MenuItem>,
       );
     }
     menuItems.push(
@@ -495,7 +493,7 @@ function FileMenu(props: Props) {
           <MoveCopy />
         </ListItemIcon>
         <ListItemText primary={t('core:moveCopyFile')} />
-      </MenuItem>
+      </MenuItem>,
     );
     menuItems.push(
       <MenuItem
@@ -507,7 +505,7 @@ function FileMenu(props: Props) {
           <DeleteIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:deleteEntry')} />
-      </MenuItem>
+      </MenuItem>,
     );
     menuItems.push(<Divider key="fmDivider2" />);
     if (Pro && selectedEntries.length < 2) {
@@ -521,7 +519,7 @@ function FileMenu(props: Props) {
             <ImageIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:setAsThumbnail')} />
-        </MenuItem>
+        </MenuItem>,
       );
       if (isImageFile) {
         menuItems.push(
@@ -534,7 +532,7 @@ function FileMenu(props: Props) {
               <ImageIcon />
             </ListItemIcon>
             <ListItemText primary={t('core:setAsBackground')} />
-          </MenuItem>
+          </MenuItem>,
         );
       }
     }
@@ -551,7 +549,7 @@ function FileMenu(props: Props) {
           <LinkIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:copySharingLink')} />
-      </MenuItem>
+      </MenuItem>,
     );
   }
 
@@ -567,7 +565,7 @@ function FileMenu(props: Props) {
           <PropertiesIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:filePropertiesTitle')} />
-      </MenuItem>
+      </MenuItem>,
     );
   }
 

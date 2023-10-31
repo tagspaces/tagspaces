@@ -66,7 +66,7 @@ function GridOptionsMenu(props: Props) {
     entrySize,
     singleClickAction,
     openHelpWebPage,
-    openSettings
+    openSettings,
   } = props;
 
   const { t } = useTranslation();

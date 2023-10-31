@@ -23,8 +23,8 @@ export async function closeWelcomePlaywright() {
       '[data-tid=closeOnboardingDialog]',
       {
         timeout: 3000,
-        state: 'visible'
-      }
+        state: 'visible',
+      },
     );
     if (el) {
       await el.click();

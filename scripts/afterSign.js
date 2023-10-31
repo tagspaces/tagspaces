@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 var electron_notarize = require('electron-notarize');
 
-module.exports = async function(params) {
+module.exports = async function (params) {
   if (process.platform !== 'darwin') {
     return;
   }
@@ -17,7 +17,7 @@ module.exports = async function(params) {
 
   let appPath = path.join(
     params.appOutDir,
-    `${params.packager.appInfo.productFilename}.app`
+    `${params.packager.appInfo.productFilename}.app`,
   );
   if (!fs.existsSync(appPath)) {
     console.log('skip');
@@ -31,7 +31,7 @@ module.exports = async function(params) {
       appBundleId: appId,
       appPath: appPath,
       appleId: process.env.APPLE_ID,
-      appleIdPassword: process.env.APPLE_ID_PASSWORD
+      appleIdPassword: process.env.APPLE_ID_PASSWORD,
     });
   } catch (error) {
     console.error(error);

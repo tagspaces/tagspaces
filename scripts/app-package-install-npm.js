@@ -60,7 +60,7 @@ if (dependenciesObj && Object.keys(dependenciesObj).length) {
         '..',
         'app',
         'node_modules',
-        dep
+        dep,
       );
       if (!fs.existsSync(packagePath)) {
         npmInstall = true;
@@ -82,7 +82,7 @@ if (dependenciesObj && Object.keys(dependenciesObj).length) {
   }
   // npmArgs.push('--no-save --force');
   if (npmInstall && npmArgs.length > 0) {
-    npm.load(er => {
+    npm.load((er) => {
       if (er) {
         console.log('err:', er);
         return; // handlError(er)
@@ -104,8 +104,8 @@ if (dependenciesObj && Object.keys(dependenciesObj).length) {
             '@tagspaces',
             'extensions',
             'md-editor',
-            'node_modules'
-          )
+            'node_modules',
+          ),
         );
         fs.removeSync(
           path.join(
@@ -116,8 +116,8 @@ if (dependenciesObj && Object.keys(dependenciesObj).length) {
             '@tagspaces',
             'extensions',
             'md-editor',
-            'src'
-          )
+            'src',
+          ),
         );
         /* npm.commands.dedupe([], (er) => {
           if (er) {
@@ -125,13 +125,13 @@ if (dependenciesObj && Object.keys(dependenciesObj).length) {
           }
         }); */
       });
-      npm.on('log', message => {
+      npm.on('log', (message) => {
         console.log('npm:' + message);
       });
     });
   } else {
     console.log(
-      'Installing dependencies for ' + platform + ' are already installed.'
+      'Installing dependencies for ' + platform + ' are already installed.',
     );
   }
 } else {

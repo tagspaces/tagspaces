@@ -8,7 +8,7 @@ import {
   expectMetaFilesExist,
   getGridFileSelector,
   setInputValue,
-  takeScreenshot
+  takeScreenshot,
 } from './general.helpers';
 import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
@@ -16,7 +16,7 @@ import {
   createPwLocation,
   createPwMinioLocation,
   defaultLocationName,
-  defaultLocationPath
+  defaultLocationPath,
 } from './location.helpers';
 import {
   addTags,
@@ -26,7 +26,7 @@ import {
   newTagName,
   tagMenu,
   testGroup,
-  testTagName
+  testTagName,
 } from './tag.helpers';
 
 test.beforeAll(async () => {
@@ -56,7 +56,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     await createTagGroup(testGroup);
     await expectElementExist(
       '[data-tid=tagLibraryTagGroupTitle_' + testGroup + ']',
-      true
+      true,
     );
   });
 
@@ -64,14 +64,14 @@ test.describe('TST04 - Testing the tag library:', () => {
     await createTagGroup(testGroup);
     await expectElementExist(
       '[data-tid=tagLibraryTagGroupTitle_' + testGroup + ']',
-      true
+      true,
     );
     await clickOn('[data-tid=tagLibraryMoreButton_' + testGroup + ']');
     await clickOn('[data-tid=deleteTagGroup]');
     await clickOn('[data-tid=confirmDeleteTagGroupDialog]');
     await expectElementExist(
       '[data-tid=tagLibraryTagGroupTitle_' + testGroup + ']',
-      false
+      false,
     );
   });
 
@@ -83,7 +83,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     await clickOn('[data-tid=editTagGroupConfirmButton]');
     await expectElementExist(
       '[data-tid=tagLibraryTagGroupTitle_' + editedGroupName + ']',
-      true
+      true,
     );
   });
 
@@ -93,11 +93,11 @@ test.describe('TST04 - Testing the tag library:', () => {
     await clickOn('[data-tid=editTagGroup]');
     await clickOn('[data-tid=editTagGroupBackgroundColor]');
     const inputElem = await global.client.$(
-      '//*[@data-tid="colorPickerDialogContent"]/div/div[3]/div[1]/div/input'
+      '//*[@data-tid="colorPickerDialogContent"]/div/div[3]/div[1]/div/input',
     );
     await setInputValue(
       '//*[@data-tid="colorPickerDialogContent"]/div/div[3]/div[1]/div/input',
-      '000000'
+      '000000',
     );
     await clickOn('[data-tid=colorPickerConfirm]');
     await clickOn('[data-tid=editTagGroupSwitch]');
@@ -105,7 +105,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     await clickOn('[data-tid=tagLibraryMoreButton_' + testGroup + ']');
     await clickOn('[data-tid=editTagGroup]');
     const colorElem = await global.client.$(
-      '[data-tid=editTagGroupBackgroundColor]'
+      '[data-tid=editTagGroupBackgroundColor]',
     );
     let colorStyle = await colorElem.getAttribute('style');
 
@@ -121,7 +121,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     await addTags([newTagName]);
     await expectElementExist(
       '[data-tid=tagContainer_' + newTagName + ']',
-      true
+      true,
     );
   });
 
@@ -134,7 +134,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     for (let i = 0; i < arrTags.length; i++) {
       await expectElementExist(
         '[data-tid=tagContainer_' + arrTags[i] + ']',
-        true
+        true,
       );
     }
   });
@@ -145,7 +145,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     await clickOn('[data-tid=editTagConfirm]');
     await expectElementExist(
       '[data-tid=tagContainer_' + testTagName + ']',
-      true
+      true,
     );
   });
 
@@ -167,11 +167,11 @@ test.describe('TST04 - Testing the tag library:', () => {
     await clickOn('[data-tid=settings]');
     await clickOn('[data-tid=settingsToggleDefaultTagBackgroundColor]');
     const inputElem = await global.client.$(
-      '//*[@data-tid="colorPickerDialogContent"]/div/div[3]/div[1]/div/input'
+      '//*[@data-tid="colorPickerDialogContent"]/div/div[3]/div[1]/div/input',
     );
     await setInputValue(
       '//*[@data-tid="colorPickerDialogContent"]/div/div[3]/div[1]/div/input',
-      '000000'
+      '000000',
     );
     await clickOn('[data-tid=colorPickerConfirm]');
     await clickOn('[data-tid=closeSettingsDialog]');
@@ -179,7 +179,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     await clickOn('[data-tid=createNewTagGroup]');
 
     const colorElem = await global.client.$(
-      '[data-tid=createTagGroupBackgroundColor]'
+      '[data-tid=createTagGroupBackgroundColor]',
     );
     let colorStyle = await colorElem.getAttribute('style');
     const rgb2hex = require('rgb2hex');
@@ -266,7 +266,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     await checkSettings(
       '[data-tid=saveTagInLocationTID]',
       true,
-      '[data-tid=advancedSettingsDialogTID]'
+      '[data-tid=advancedSettingsDialogTID]',
     );
     await createTagGroup(testGroup, defaultLocationName);
     await clickOn('[data-tid=locationManager]');
@@ -281,7 +281,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     await checkSettings(
       '[data-tid=saveTagInLocationTID]',
       true,
-      '[data-tid=advancedSettingsDialogTID]'
+      '[data-tid=advancedSettingsDialogTID]',
     );
     await clickOn('[data-tid=locationManager]');
     if (global.isMinio) {
@@ -303,17 +303,17 @@ test.describe('TST04 - Testing the tag library:', () => {
       '[data-tid=tagContainer_' + tagName + ']',
       true,
       3000,
-      '[data-tid=tagGroupContainer_' + sourceTagGroup + ']'
+      '[data-tid=tagGroupContainer_' + sourceTagGroup + ']',
     );
     await dnd(
       '[data-tid=tagContainer_' + tagName + ']',
-      '[data-tid=tagGroupContainer_' + destinationTagGroup + ']'
+      '[data-tid=tagGroupContainer_' + destinationTagGroup + ']',
     );
     await expectElementExist(
       '[data-tid=tagContainer_' + tagName + ']',
       true,
       3000,
-      '[data-tid=tagGroupContainer_' + destinationTagGroup + ']'
+      '[data-tid=tagGroupContainer_' + destinationTagGroup + ']',
     );
   });
 });

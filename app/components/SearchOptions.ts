@@ -17,35 +17,35 @@ export type ActionType = { shortName: string; fullName?: string };
 
 export const SearchQueryComposition = {
   TAG_AND: {
-    shortName: '+'
+    shortName: '+',
   },
   TAG_NOT: {
-    shortName: '-'
+    shortName: '-',
     // fullName: '—'
   },
   TAG_OR: {
-    shortName: '|'
+    shortName: '|',
   },
   TYPE: {
     shortName: 't:',
-    fullName: 'type:'
+    fullName: 'type:',
   },
   SIZE: {
     shortName: 'si:',
-    fullName: 'size:'
+    fullName: 'size:',
   },
   LAST_MODIFIED: {
     shortName: 'lm:',
-    fullName: 'modified:'
+    fullName: 'modified:',
   },
   SCOPE: {
     shortName: 'sc:',
-    fullName: 'scope:'
+    fullName: 'scope:',
   },
   ACCURACY: {
     shortName: 'a:',
-    fullName: 'accuracy:'
-  }
+    fullName: 'accuracy:',
+  },
 };
 
 /*export const searchMode = {
@@ -57,28 +57,28 @@ export const SearchQueryComposition = {
 export const SearchActions = {
   LOCATION: {
     shortName: 'l:',
-    fullName: 'locations'
+    fullName: 'locations',
   },
   FILTER: {
     shortName: 'f:',
-    fullName: 'filter'
+    fullName: 'filter',
   },
   HISTORY: {
     shortName: 'h:',
-    fullName: 'history'
+    fullName: 'history',
   },
   BOOK: {
     shortName: 'b:',
-    fullName: 'bookmarks'
+    fullName: 'bookmarks',
   },
   SEARCH: {
     shortName: 'q:',
-    fullName: 'search-queries'
+    fullName: 'search-queries',
   },
   SEARCH_HISTORY: {
     shortName: 's:',
-    fullName: 'search-history'
-  }
+    fullName: 'search-history',
+  },
 };
 
 /*export const SearchCommandFullNames = {
@@ -106,7 +106,7 @@ export const ExecActions = {
   SIZE_SEARCH: 'size_search',
   LAST_MODIFIED_SEARCH: 'last_modified_search',
   SCOPE_SEARCH: 'scope_search',
-  ACCURACY_SEARCH: 'accuracy_search'
+  ACCURACY_SEARCH: 'accuracy_search',
 };
 
 export const FileSize = {
@@ -116,7 +116,7 @@ export const FileSize = {
   sizeSmall: 1000000, // 1MB
   sizeMedium: 50000000, // 50 mB
   sizeLarge: 1000000000, // 1GB
-  sizeHuge: 1000000001 // over 1GB
+  sizeHuge: 1000000001, // over 1GB
 };
 
 export const LastModified = {
@@ -126,18 +126,18 @@ export const LastModified = {
   past30Days: 2592000000, // 30 days
   past6Months: 15778476000, // 6 months
   pastYear: 31556952000, // 1 year
-  moreThanYear: 31556952001 // over 1 year
+  moreThanYear: 31556952001, // over 1 year
 };
 export const scope = {
   location: 'location',
   folder: 'folder',
-  global: 'global'
+  global: 'global',
 };
 
 export const accuracy = {
   fuzzy: 'fuzzy',
   semistrict: 'semistrict',
-  strict: 'strict'
+  strict: 'strict',
 };
 
 export type ScopeType = 'location' | 'folder' | 'global';
@@ -164,12 +164,12 @@ export function isAction(action: string, actionType: ActionType): boolean {
 export function findAction(option: string, equal = false): string {
   const actions: Array<ActionType> = [
     ...Object.values(SearchQueryComposition),
-    ...Object.values(SearchActions)
+    ...Object.values(SearchActions),
   ];
-  let action = actions.find(a =>
+  let action = actions.find((a) =>
     equal
       ? option === a.shortName || option === a.fullName
-      : option.startsWith(a.shortName) || option.startsWith(a.fullName)
+      : option.startsWith(a.shortName) || option.startsWith(a.fullName),
   );
   if (action) {
     return action.fullName ? action.fullName : action.shortName;

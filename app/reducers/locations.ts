@@ -18,7 +18,7 @@
 
 import {
   immutablySwapItems,
-  locationType
+  locationType,
 } from '@tagspaces/tagspaces-common/misc';
 import { actions as AppActions } from '-/reducers/app';
 import PlatformIO from '-/services/platform-facade';
@@ -37,7 +37,7 @@ export const types = {
   MOVE_UP_LOCATION: 'APP/MOVE_UP_LOCATION',
   MOVE_DOWN_LOCATION: 'APP/MOVE_DOWN_LOCATION',
   EDIT_LOCATION: 'APP/EDIT_LOCATION',
-  REMOVE_LOCATION: 'APP/REMOVE_LOCATION'
+  REMOVE_LOCATION: 'APP/REMOVE_LOCATION',
 };
 
 export const initialState = [];
@@ -46,13 +46,13 @@ export default (state: Array<TS.Location> = initialState, action: any) => {
   switch (action.type) {
     case types.ADD_LOCATION: {
       const locations = action.location.isDefault
-        ? state.map(location => ({ ...location, isDefault: false }))
+        ? state.map((location) => ({ ...location, isDefault: false }))
         : [...state];
 
       const newLocation = {
         ...action.location,
         uuid: action.location.uuid || getUuid(),
-        creationDate: new Date().toJSON()
+        creationDate: new Date().toJSON(),
       };
       if (action.locationPosition) {
         locations.splice(action.locationPosition, 0, newLocation);
@@ -83,9 +83,9 @@ export default (state: Array<TS.Location> = initialState, action: any) => {
               action.location.newuuid !== undefined
                 ? action.location.newuuid
                 : action.location.uuid,
-            persistTagsInSidecarFile: action.location.persistTagsInSidecarFile
+            persistTagsInSidecarFile: action.location.persistTagsInSidecarFile,
           },
-          ...state.slice(indexForEditing + 1)
+          ...state.slice(indexForEditing + 1),
         ];
       }
       return state;
@@ -141,7 +141,7 @@ export default (state: Array<TS.Location> = initialState, action: any) => {
       if (indexForRemoving >= 0) {
         return [
           ...state.slice(0, indexForRemoving),
-          ...state.slice(indexForRemoving + 1)
+          ...state.slice(indexForRemoving + 1),
         ];
         // return state.filter( (item, index) => index !== indexForRemoving);
       }
@@ -156,21 +156,21 @@ export default (state: Array<TS.Location> = initialState, action: any) => {
 export const actions = {
   createLocation: (
     location: TS.Location,
-    locationPosition: number = undefined
+    locationPosition: number = undefined,
   ) => ({
     type: types.ADD_LOCATION,
     location,
-    locationPosition
+    locationPosition,
   }),
   moveLocation: (uuid: string, position: number) => ({
     type: types.MOVE_LOCATION,
     uuid,
-    position
+    position,
   }),
   moveLocationUp: (uuid: string) => ({ type: types.MOVE_UP_LOCATION, uuid }),
   moveLocationDown: (uuid: string) => ({
     type: types.MOVE_DOWN_LOCATION,
-    uuid
+    uuid,
   }),
   /*editLocation: (location: TS.Location, openAfterEdit = true) => (
     dispatch: (actions: Object) => void
@@ -216,7 +216,7 @@ export const actions = {
   },*/
   changeLocation: (location: TS.Location) => ({
     type: types.EDIT_LOCATION,
-    location
+    location,
   }),
   /*removeLocation: (location: TS.Location) => (
     dispatch: (actions: Object) => void
@@ -226,26 +226,26 @@ export const actions = {
   },*/
   deleteLocation: (location: TS.Location) => ({
     type: types.REMOVE_LOCATION,
-    location
-  })
+    location,
+  }),
 };
 
 // Selectors
 export const getLocations = (state: any): Array<TS.Location> => state.locations;
 export const getLocation = (
   state: any,
-  locationId: string
+  locationId: string,
 ): TS.Location | null =>
-  state.locations.find(location => location.uuid === locationId);
+  state.locations.find((location) => location.uuid === locationId);
 /*export const getLocationPosition = (state: any, locationId: string): number =>
   state.locations.findIndex(location => location.uuid === locationId);*/
 export const getLocationByPath = (
   state: any,
-  path: string
+  path: string,
 ): TS.Location | null =>
-  state.locations.find(location => location.path === path);
+  state.locations.find((location) => location.path === path);
 export const getDefaultLocationId = (state: any): string | undefined => {
-  let foundLocation = state.locations.find(location => location.isDefault);
+  let foundLocation = state.locations.find((location) => location.isDefault);
   return foundLocation ? foundLocation.uuid : undefined;
 };
 /*export const getCurrentLocation = (state: any): TS.Location | undefined => {
@@ -256,10 +256,10 @@ export const getDefaultLocationId = (state: any): string | undefined => {
 };*/
 export const getFirstRWLocation = (state: any): TS.Location | undefined => {
   let foundLocation = state.locations.find(
-    location => location.isDefault && !location.isReadOnly
+    (location) => location.isDefault && !location.isReadOnly,
   );
   if (!foundLocation) {
-    foundLocation = state.locations.find(location => !location.isReadOnly);
+    foundLocation = state.locations.find((location) => !location.isReadOnly);
   }
   return foundLocation;
 };

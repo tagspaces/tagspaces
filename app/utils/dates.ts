@@ -38,84 +38,84 @@ export function isDateTimeTag(tagDate: string): boolean {
 /** Returns true if string is this format: 2015 */
 export function isYear(tagDate: string): boolean {
   return /(^|\s)([0123][0123456789][0123456789][0123456789])(\s|$)/.test(
-    tagDate
+    tagDate,
   );
 }
 
 /** Returns true if string is this format: 2015-2017 */
 export function isYearPeriod(tagDate: string): boolean {
   return /(^|\s)([0123][0123456789][0123456789][0123456789]-[0123][0123456789][0123456789][0123456789])(\s|$)/.test(
-    tagDate
+    tagDate,
   );
 }
 
 /** Returns true if string is this format: 201512 */
 export function isYearMonth(tagDate: string): boolean {
   return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789])(\s|$)/.test(
-    tagDate
+    tagDate,
   );
 }
 
 /** Returns true if string is this format: 201512-201604 */
 export function isYearMonthPeriod(tagDate: string): boolean {
   return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789]-[0123][0123456789][0123456789][0123456789][01][0123456789])(\s|$)/.test(
-    tagDate
+    tagDate,
   );
 }
 
 /** Returns true if string is this format: 20151223 */
 export function isYearMonthDay(tagDate: string): boolean {
   return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789])(\s|$)/.test(
-    tagDate
+    tagDate,
   );
 }
 
 /** Returns true if string is this format: 20151223-20160223 */
 export function isYearMonthDayPeriod(tagDate: string): boolean {
   return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789]-[0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789])(\s|$)/.test(
-    tagDate
+    tagDate,
   );
 }
 
 /** Returns true if string is this format: 20151223~01 */
 export function isYearMonthDayHour(tagDate: string): boolean {
   return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789][~T][0123456][0123456789])(\s|$)/.test(
-    tagDate
+    tagDate,
   );
 }
 
 /** Returns true if string is this format: 20190712~17-20190712~17 */
 export function isYearMonthDayHourPeriod(tagDate: string): boolean {
   return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789][~T][0123456][0123456789]-[0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789][~T][0123456][0123456789])(\s|$)/.test(
-    tagDate
+    tagDate,
   );
 }
 
 /** Returns true if string is this format: 20151223~0112 or 20151223T0112 */
 export function isYearMonthDayHourMin(tagDate: string): boolean {
   return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789][~T][0123456][0123456789][0123456][0123456789])(\s|$)/.test(
-    tagDate
+    tagDate,
   );
 }
 
 /** Returns true if string is this format: 20190712~1740-20190712~1740 */
 export function isYearMonthDayHourMinPeriod(tagDate: string): boolean {
   return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789][~T][0123456][0123456789][0123456][0123456789]-[0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789][~T][0123456][0123456789][0123456][0123456789])(\s|$)/.test(
-    tagDate
+    tagDate,
   );
 }
 
 /** Returns true if string is this format: 20151223~011358 */
 export function isYearMonthDayHourMinSec(tagDate: string): boolean {
   return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789][~T][0123456][0123456789][0123456][0123456789][0123456][0123456789])(\s|$)/.test(
-    tagDate
+    tagDate,
   );
 }
 
 /** Returns true if string is this format: 20190712~174031-20190712~174031 */
 export function isYearMonthDayHourMinSecPeriod(tagDate: string): boolean {
   return /(^|\s)([0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789][~T][0123456][0123456789][0123456][0123456789][0123456][0123456789]-[0123][0123456789][0123456789][0123456789][01][0123456789][0123][0123456789][~T][0123456][0123456789][0123456][0123456789][0123456][0123456789])(\s|$)/.test(
-    tagDate
+    tagDate,
   );
 }
 
@@ -127,16 +127,17 @@ export function getDaysInMonth(year: number, month: number): number {
 export const msInDay = 1000 * 60 * 60 * 24;
 
 /** Extract the time period from string e.g. 201901 -> fromDate: 2019-01-01 00:00:00, toDate; 2019-01-31 23:59:59 */
-export function extractTimePeriod(
-  value: string
-): { fromDateTime: Date | null; toDateTime: Date | null } {
+export function extractTimePeriod(value: string): {
+  fromDateTime: Date | null;
+  toDateTime: Date | null;
+} {
   let fromDateTime = null;
   let toDateTime = null;
   if (value.length && !/(^|\s)([0123456789])(\s|$)/.test(value.substr(0, 1))) {
     return {
       // Return if the first char is not a number, ignoring values starting with letters
       fromDateTime,
-      toDateTime
+      toDateTime,
     };
   }
   try {
@@ -158,7 +159,7 @@ export function extractTimePeriod(
           month +
           '-' +
           getDaysInMonth(parseInt(year, 10), parseInt(month, 10)) +
-          ' 23:59:59.999'
+          ' 23:59:59.999',
       );
     } else if (isYearMonthPeriod(value)) {
       const fromYear = value.substring(0, 4);
@@ -172,7 +173,7 @@ export function extractTimePeriod(
           toMonth +
           '-' +
           getDaysInMonth(parseInt(toYear, 10), parseInt(toMonth, 10)) +
-          ' 23:59:59.999'
+          ' 23:59:59.999',
       );
     } else if (isYearMonthDayPeriod(value)) {
       const fromYear = value.substring(0, 4);
@@ -183,7 +184,7 @@ export function extractTimePeriod(
       const toDay = value.substring(15, 17);
       fromDateTime = new Date(fromYear + '-' + fromMonth + '-' + fromDay);
       toDateTime = new Date(
-        toYear + '-' + toMonth + '-' + toDay + ' 23:59:59.999'
+        toYear + '-' + toMonth + '-' + toDay + ' 23:59:59.999',
       );
     } else if (isYearMonthDay(value)) {
       const year = value.substring(0, 4);
@@ -197,10 +198,10 @@ export function extractTimePeriod(
       const day = value.substring(6, 8);
       const hour = value.substring(9, 11);
       fromDateTime = new Date(
-        year + '-' + month + '-' + day + ' ' + hour + ':00:00'
+        year + '-' + month + '-' + day + ' ' + hour + ':00:00',
       );
       toDateTime = new Date(
-        year + '-' + month + '-' + day + ' ' + hour + ':59:59.999'
+        year + '-' + month + '-' + day + ' ' + hour + ':59:59.999',
       );
     } else if (isYearMonthDayHourPeriod(value)) {
       const fromYear = value.substring(0, 4);
@@ -212,10 +213,10 @@ export function extractTimePeriod(
       const toDay = value.substring(18, 20);
       const toHour = value.substring(21, 23);
       fromDateTime = new Date(
-        fromYear + '-' + fromMonth + '-' + fromDay + ' ' + fromHour + ':00:00'
+        fromYear + '-' + fromMonth + '-' + fromDay + ' ' + fromHour + ':00:00',
       );
       toDateTime = new Date(
-        toYear + '-' + toMonth + '-' + toDay + ' ' + toHour + ':59:59.999'
+        toYear + '-' + toMonth + '-' + toDay + ' ' + toHour + ':59:59.999',
       );
     } else if (isYearMonthDayHourMin(value)) {
       const year = value.substring(0, 4);
@@ -224,10 +225,10 @@ export function extractTimePeriod(
       const hour = value.substring(9, 11);
       const min = value.substring(11, 13);
       fromDateTime = new Date(
-        year + '-' + month + '-' + day + ' ' + hour + ':' + min + ':00'
+        year + '-' + month + '-' + day + ' ' + hour + ':' + min + ':00',
       );
       toDateTime = new Date(
-        year + '-' + month + '-' + day + ' ' + hour + ':' + min + ':59.999'
+        year + '-' + month + '-' + day + ' ' + hour + ':' + min + ':59.999',
       );
     } else if (isYearMonthDayHourMinPeriod(value)) {
       const fromYear = value.substring(0, 4);
@@ -250,7 +251,7 @@ export function extractTimePeriod(
           fromHour +
           ':' +
           fromMin +
-          ':00'
+          ':00',
       );
       toDateTime = new Date(
         toYear +
@@ -262,7 +263,7 @@ export function extractTimePeriod(
           toHour +
           ':' +
           toMin +
-          ':59.999'
+          ':59.999',
       );
     } else if (isYearMonthDayHourMinSec(value)) {
       const year = value.substring(0, 4);
@@ -272,7 +273,7 @@ export function extractTimePeriod(
       const min = value.substring(11, 13);
       const sec = value.substring(13, 15);
       fromDateTime = new Date(
-        year + '-' + month + '-' + day + ' ' + hour + ':' + min + ':' + sec
+        year + '-' + month + '-' + day + ' ' + hour + ':' + min + ':' + sec,
       );
       toDateTime = new Date(
         year +
@@ -286,7 +287,7 @@ export function extractTimePeriod(
           min +
           ':' +
           sec +
-          '.999'
+          '.999',
       );
     } else if (isYearMonthDayHourMinSecPeriod(value)) {
       const fromYear = value.substring(0, 4);
@@ -312,7 +313,7 @@ export function extractTimePeriod(
           ':' +
           fromMin +
           ':' +
-          fromSec
+          fromSec,
       );
       toDateTime = new Date(
         toYear +
@@ -326,7 +327,7 @@ export function extractTimePeriod(
           toMin +
           ':' +
           toSec +
-          '.999'
+          '.999',
       );
     }
   } catch (err) {
@@ -334,7 +335,7 @@ export function extractTimePeriod(
   }
   return {
     fromDateTime,
-    toDateTime
+    toDateTime,
   };
 }
 
@@ -392,7 +393,7 @@ export function parseDate(date: string) {
 export function parseFullDate(date: string) {
   // validate year as 4 digits, month as 01-12, and day as 01-31
   const parsedDate = date.match(
-    /^(\d{4})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])$/
+    /^(\d{4})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])$/,
   );
   if (parsedDate) {
     // make a date
@@ -489,9 +490,12 @@ export function convertToDate(date: string) {
 }
 
 export function convertToDateTime(dateTime: string) {
-  const dateTimeRegExp = /^\d\d\d\d-(00|[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9])$/g;
-  const dateTimeWinRegExp = /^(([0-1]?[0-9])|([2][0-3]))!([0-5]?[0-9])(!([0-5]?[0-9]))?$/g;
-  const dateTimeWin1RegExp = /^(([0-1]?[0-9])|([2][0-3]))[~T]([0-5]?[0-9])(!([0-5]?[0-9]))?$/g;
+  const dateTimeRegExp =
+    /^\d\d\d\d-(00|[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9])$/g;
+  const dateTimeWinRegExp =
+    /^(([0-1]?[0-9])|([2][0-3]))!([0-5]?[0-9])(!([0-5]?[0-9]))?$/g;
+  const dateTimeWin1RegExp =
+    /^(([0-1]?[0-9])|([2][0-3]))[~T]([0-5]?[0-9])(!([0-5]?[0-9]))?$/g;
   if (
     dateTime.match(dateTimeRegExp) ||
     dateTime.match(dateTimeWinRegExp) ||
@@ -555,7 +559,8 @@ export function convertToDateTime(dateTime: string) {
 }
 
 export function convertToDateRange(dateRange: string) {
-  const dateRangeRegExp = /^([0]?[1-9]|[1|2][0-9]|[3][0|1])[-]([0]?[1-9]|[1][0-2])$/g;
+  const dateRangeRegExp =
+    /^([0]?[1-9]|[1|2][0-9]|[3][0|1])[-]([0]?[1-9]|[1][0-2])$/g;
   if (dateRange.match(dateRangeRegExp) || dateRange.search('-')) {
     const range = dateRange.split('-');
     if (parseInt(range[0], 10) && parseInt(range[1], 10)) {

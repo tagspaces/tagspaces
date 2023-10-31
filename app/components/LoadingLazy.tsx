@@ -27,7 +27,7 @@ function LoadingLazy() {
         width: 0,
         height: 0,
         backgroundColor: 'transparent',
-        padding: 0
+        padding: 0,
       }}
     >
       ...

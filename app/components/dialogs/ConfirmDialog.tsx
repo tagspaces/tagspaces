@@ -74,7 +74,7 @@ function ConfirmDialog(props: Props) {
           {props.content}
           {props.list && (
             <List dense>
-              {props.list.map(listItem => (
+              {props.list.map((listItem) => (
                 <ListItem key={listItem.toString()}>
                   <ListItemIcon>
                     <BulletIcon />
@@ -110,7 +110,7 @@ ConfirmDialog.defaultProps = {
   cancelDialogTID: 'confirmDialogCancelButton',
   confirmDialogTID: 'confirmDialogOkButton',
   confirmDialogContentTID: 'confirmDialogContentTID',
-  list: []
+  list: [],
 };
 
 export default ConfirmDialog;

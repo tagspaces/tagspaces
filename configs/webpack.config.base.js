@@ -11,11 +11,11 @@ export default {
   // externals: [...Object.keys(dependencies || {})],
   externals: [
     {
-      fsevents: "require('fsevents')"
+      fsevents: "require('fsevents')",
     },
     {
-      fswin: "require('fswin')"
-    }
+      fswin: "require('fswin')",
+    },
   ],
 
   module: {
@@ -28,26 +28,26 @@ export default {
           {
             loader: 'babel-loader',
             options: {
-              cacheDirectory: true
-            }
+              cacheDirectory: true,
+            },
           },
           {
             loader: 'ts-loader',
             options: {
               transpileOnly: true,
-              experimentalWatchApi: true
-            }
-          }
-        ]
-      }
-    ]
+              experimentalWatchApi: true,
+            },
+          },
+        ],
+      },
+    ],
   },
 
   output: {
     path: path.join(__dirname, '..', 'app'),
     // https://github.com/webpack/webpack/issues/1114
     libraryTarget: 'commonjs2',
-    pathinfo: false
+    pathinfo: false,
   },
 
   /**
@@ -55,28 +55,28 @@ export default {
    */
   resolve: {
     extensions: ['.mjs', '.js', '.ts', '.tsx', '.json'],
-    modules: [path.join(__dirname, '..', 'app'), 'node_modules']
+    modules: [path.join(__dirname, '..', 'app'), 'node_modules'],
   },
 
   cache: {
     type: 'filesystem',
     buildDependencies: {
-      config: [__filename]
-    }
+      config: [__filename],
+    },
   },
 
   plugins: [
     new webpack.EnvironmentPlugin({
-      NODE_ENV: 'production'
+      NODE_ENV: 'production',
     }),
     new Dotenv({
       path: path.join(
         __dirname,
         '..',
         'node_modules',
-        '@tagspaces/tagspaces-common/default.env'
-      )
-    })
+        '@tagspaces/tagspaces-common/default.env',
+      ),
+    }),
     // new webpack.NamedModulesPlugin()
-  ]
+  ],
 };

@@ -42,9 +42,9 @@ function TagContainerMenu(props: Props) {
         data-tid={'tagRemoveButton_' + tag.title.replace(/ /g, '_')}
         style={{
           color: tag.textcolor,
-          fontSize: 20
+          fontSize: 20,
         }}
-        onClick={event => handleRemoveTag(event, [tag])}
+        onClick={(event) => handleRemoveTag(event, [tag])}
       />
     )
   ) : (
@@ -55,7 +55,7 @@ function TagContainerMenu(props: Props) {
         marginLeft: -5,
         marginRight: -5,
         height: 20,
-        top: 0
+        top: 0,
       }}
     />
   );

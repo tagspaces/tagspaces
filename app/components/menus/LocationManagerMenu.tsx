@@ -55,16 +55,14 @@ function LocationManagerMenu(props: Props) {
     exportLocations,
     importLocations,
     showCreateLocationDialog,
-    toggleOpenLinkDialog
+    toggleOpenLinkDialog,
   } = props;
   const { t } = useTranslation();
 
   const { createLocationsIndexes } = useLocationIndexContext();
   const { closeAllLocations } = useCurrentLocationContext();
-  const [
-    locationManagerMenuAnchorEl,
-    setLocationManagerMenuAnchorEl
-  ] = useState<null | HTMLElement>(null);
+  const [locationManagerMenuAnchorEl, setLocationManagerMenuAnchorEl] =
+    useState<null | HTMLElement>(null);
   const dispatch: AppDispatch = useDispatch();
   const menuItems = [];
   if (!AppConfig.locationsReadOnly) {
@@ -81,7 +79,7 @@ function LocationManagerMenu(props: Props) {
           <CreateLocationIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:createLocationTitle')} />
-      </MenuItem>
+      </MenuItem>,
     );
   }
 
@@ -98,7 +96,7 @@ function LocationManagerMenu(props: Props) {
         <OpenLinkIcon />
       </ListItemIcon>
       <ListItemText primary={t('core:openLink')} />
-    </MenuItem>
+    </MenuItem>,
   );
 
   if (!AppConfig.locationsReadOnly) {
@@ -124,7 +122,7 @@ function LocationManagerMenu(props: Props) {
             </>
           }
         />
-      </MenuItem>
+      </MenuItem>,
     );
     menuItems.push(
       <MenuItem
@@ -147,7 +145,7 @@ function LocationManagerMenu(props: Props) {
             </>
           }
         />
-      </MenuItem>
+      </MenuItem>,
     );
   }
 
@@ -164,7 +162,7 @@ function LocationManagerMenu(props: Props) {
         <CloseIcon />
       </ListItemIcon>
       <ListItemText primary={t('core:closeAllLocations')} />
-    </MenuItem>
+    </MenuItem>,
   );
 
   menuItems.push(
@@ -180,7 +178,7 @@ function LocationManagerMenu(props: Props) {
         <UpdateIndexIcon />
       </ListItemIcon>
       <ListItemText primary={t('core:updateAllLocationIndexes')} />
-    </MenuItem>
+    </MenuItem>,
   );
 
   menuItems.push(
@@ -196,7 +194,7 @@ function LocationManagerMenu(props: Props) {
         <HelpIcon />
       </ListItemIcon>
       <ListItemText primary={t('core:help')} />
-    </MenuItem>
+    </MenuItem>,
   );
 
   return (
@@ -210,7 +208,9 @@ function LocationManagerMenu(props: Props) {
         </Typography>
         <IconButton
           data-tid="locationManagerMenu"
-          onClick={event => setLocationManagerMenuAnchorEl(event.currentTarget)}
+          onClick={(event) =>
+            setLocationManagerMenuAnchorEl(event.currentTarget)
+          }
           size="large"
         >
           <MoreVertIcon />

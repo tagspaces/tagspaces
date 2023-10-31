@@ -53,18 +53,17 @@ function EditTagGroupDialog(props: Props) {
   const locations: Array<TS.Location> = useSelector(getLocations);
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
-  const [displayTextColorPicker, setDisplayTextColorPicker] = useState<boolean>(
-    false
-  );
+  const [displayTextColorPicker, setDisplayTextColorPicker] =
+    useState<boolean>(false);
   const [inputError, setInputError] = useState<boolean>(false);
   const [applyChanges, setApplyChanges] = useState<boolean>(false);
   const [locationId, setLocationId] = useState<string>(
-    selectedTagGroupEntry.locationId ?? defaultTagGroupLocation
+    selectedTagGroupEntry.locationId ?? defaultTagGroupLocation,
   );
   const [title, setTitle] = useState<string>(selectedTagGroupEntry.title);
   const [color, setColor] = useState<string>(selectedTagGroupEntry.color);
   const [textcolor, setTextcolor] = useState<string>(
-    selectedTagGroupEntry.textcolor
+    selectedTagGroupEntry.textcolor,
   );
 
   useEffect(() => {
@@ -72,7 +71,7 @@ function EditTagGroupDialog(props: Props) {
   }, [title]);
 
   const handleTagGroupTitleChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const { target } = event;
     const { value, name } = target;
@@ -100,12 +99,12 @@ function EditTagGroupDialog(props: Props) {
     if (selectedTagGroupEntry && selectedTagGroupEntry.children) {
       if (Pro && locationId !== selectedTagGroupEntry.locationId) {
         const location: TS.Location = locations.find(
-          l => l.uuid === selectedTagGroupEntry.locationId
+          (l) => l.uuid === selectedTagGroupEntry.locationId,
         );
         if (location) {
           Pro.MetaOperations.removeTagGroup(
             location.path,
-            selectedTagGroupEntry.uuid
+            selectedTagGroupEntry.uuid,
           );
         }
       }
@@ -115,12 +114,12 @@ function EditTagGroupDialog(props: Props) {
         color,
         textcolor,
         locationId,
-        children: selectedTagGroupEntry.children.map(tag => ({
+        children: selectedTagGroupEntry.children.map((tag) => ({
           ...tag,
           color: applyChanges ? color : tag.color,
           textcolor: applyChanges ? textcolor : tag.textcolor,
-          style: tag.style
-        }))
+          style: tag.style,
+        })),
       });
       onClose();
     }
@@ -143,7 +142,7 @@ function EditTagGroupDialog(props: Props) {
         borderStyle: 'solid',
         borderColor: 'gray',
         padding: '5px',
-        background: color
+        background: color,
       },
       textcolor: {
         width: '100%',
@@ -153,13 +152,13 @@ function EditTagGroupDialog(props: Props) {
         borderStyle: 'solid',
         borderColor: 'gray',
         padding: '5px',
-        background: textcolor
+        background: textcolor,
       },
       helpText: {
         marginTop: '15px',
         marginBottom: '5px',
-        fontSize: '1rem'
-      }
+        fontSize: '1rem',
+      },
     };
 
     return (
@@ -202,7 +201,7 @@ function EditTagGroupDialog(props: Props) {
               >
                 {t('core:tagLibrary')}
               </MenuItem>
-              {locations.map(location => (
+              {locations.map((location) => (
                 <MenuItem key={location.uuid} value={location.uuid}>
                   {t('core:location') + ': ' + location.name}
                 </MenuItem>
@@ -226,7 +225,7 @@ function EditTagGroupDialog(props: Props) {
           {displayColorPicker && (
             <ColorPickerDialog
               open={displayColorPicker}
-              setColor={value => setColor(value)}
+              setColor={(value) => setColor(value)}
               onClose={() => setDisplayColorPicker(false)}
               color={color}
             />
@@ -249,7 +248,7 @@ function EditTagGroupDialog(props: Props) {
           {displayTextColorPicker && (
             <ColorPickerDialog
               open={displayTextColorPicker}
-              setColor={txtcolor => setTextcolor(txtcolor)}
+              setColor={(txtcolor) => setTextcolor(txtcolor)}
               onClose={() => setDisplayTextColorPicker(!displayTextColorPicker)}
               color={textcolor}
             />
@@ -291,7 +290,7 @@ function EditTagGroupDialog(props: Props) {
       open={open}
       // fullScreen={fullScreen}
       onClose={onClose}
-      onKeyDown={event => {
+      onKeyDown={(event) => {
         if (event.key === 'Enter' || event.keyCode === 13) {
           event.preventDefault();
           event.stopPropagation();

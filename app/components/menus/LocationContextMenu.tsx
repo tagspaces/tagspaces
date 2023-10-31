@@ -51,7 +51,7 @@ interface Props {
 function LocationContextMenu(props: Props) {
   const {
     setEditLocationDialogOpened,
-    setDeleteLocationDialogOpened
+    setDeleteLocationDialogOpened,
     //closeLocationTree
   } = props;
   const { t } = useTranslation();
@@ -62,16 +62,16 @@ function LocationContextMenu(props: Props) {
     getLocationPosition,
     selectedLocation,
     locationDirectoryContextMenuAnchorEl,
-    setLocationDirectoryContextMenuAnchorEl
+    setLocationDirectoryContextMenuAnchorEl,
   } = useCurrentLocationContext();
   const { createLocationIndex } = useLocationIndexContext();
   const dispatch: AppDispatch = useDispatch();
 
-  const moveLocationUp = locationId => {
+  const moveLocationUp = (locationId) => {
     dispatch(LocationActions.moveLocationUp(locationId));
   };
 
-  const moveLocationDown = locationId => {
+  const moveLocationDown = (locationId) => {
     dispatch(LocationActions.moveLocationDown(locationId));
   };
 
@@ -92,10 +92,10 @@ function LocationContextMenu(props: Props) {
         ...selectedLocation,
         uuid: getUuid(),
         name: selectedLocation.name + ' (copy)',
-        isDefault: false
+        isDefault: false,
       },
       false,
-      locationPosition + 1
+      locationPosition + 1,
     );
     setLocationDirectoryContextMenuAnchorEl(null);
   };
@@ -136,7 +136,7 @@ function LocationContextMenu(props: Props) {
     setLocationDirectoryContextMenuAnchorEl(null);
     const sharingLink = generateSharingLink(selectedLocation.uuid);
     PlatformIO.createNewInstance(
-      window.location.href.split('?')[0] + '?' + sharingLink.split('?')[1]
+      window.location.href.split('?')[0] + '?' + sharingLink.split('?')[1],
     );
   };
 
@@ -152,7 +152,7 @@ function LocationContextMenu(props: Props) {
           <EditIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:editLocationTitle')} />
-      </MenuItem>
+      </MenuItem>,
     );
   }
   menuItems.push(
@@ -165,7 +165,7 @@ function LocationContextMenu(props: Props) {
         <OpenNewWindowIcon />
       </ListItemIcon>
       <ListItemText primary={t('core:openInWindow')} />
-    </MenuItem>
+    </MenuItem>,
   );
   if (selectedLocation.type === locationType.TYPE_LOCAL) {
     menuItems.push(
@@ -178,7 +178,7 @@ function LocationContextMenu(props: Props) {
           <OpenFolderNativelyIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:showInFileManager')} />
-      </MenuItem>
+      </MenuItem>,
     );
   }
   menuItems.push(<Divider />);
@@ -192,7 +192,7 @@ function LocationContextMenu(props: Props) {
         <ContentCopyIcon />
       </ListItemIcon>
       <ListItemText primary={t('core:duplicateLocationTitle')} />
-    </MenuItem>
+    </MenuItem>,
   );
   menuItems.push(
     <MenuItem
@@ -204,7 +204,7 @@ function LocationContextMenu(props: Props) {
         <RefreshIcon />
       </ListItemIcon>
       <ListItemText primary={t('core:indexLocation')} />
-    </MenuItem>
+    </MenuItem>,
   );
   if (!AppConfig.locationsReadOnly) {
     menuItems.push(<Divider />);
@@ -218,7 +218,7 @@ function LocationContextMenu(props: Props) {
           <ArrowUpwardIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:moveUp')} />
-      </MenuItem>
+      </MenuItem>,
     );
     menuItems.push(
       <MenuItem
@@ -230,7 +230,7 @@ function LocationContextMenu(props: Props) {
           <ArrowDownwardIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:moveDown')} />
-      </MenuItem>
+      </MenuItem>,
     );
     menuItems.push(<Divider />);
     menuItems.push(
@@ -243,7 +243,7 @@ function LocationContextMenu(props: Props) {
           <DeleteIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:removeLocation')} />
-      </MenuItem>
+      </MenuItem>,
     );
   }
   menuItems.push(
@@ -256,7 +256,7 @@ function LocationContextMenu(props: Props) {
         <CloseIcon />
       </ListItemIcon>
       <ListItemText primary={t('core:closeLocation')} />
-    </MenuItem>
+    </MenuItem>,
   );
 
   return (

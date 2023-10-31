@@ -36,7 +36,7 @@ import { TaggingActionsContextProvider } from '-/hooks/TaggingActionsContextProv
 import { LocationIndexContextProvider } from '-/hooks/LocationIndexContextProvider';
 import {
   SelectedEntryContext,
-  SelectedEntryContextProvider
+  SelectedEntryContextProvider,
 } from '-/hooks/SelectedEntryContextProvider';
 import { FSWatcherContextProvider } from '-/hooks/FSWatcherContextProvider';
 import { PlatformFacadeContextProvider } from '-/hooks/PlatformFacadeContextProvider';

@@ -2,11 +2,11 @@ import { clickOn, isDisplayed, setInputKeys } from './general.helpers';
 import {
   cleanFileName,
   extractFileExtension,
-  extractTagsAsObjects
+  extractTagsAsObjects,
 } from '@tagspaces/tagspaces-common/paths';
 import {
   dirSeparator,
-  tagDelimiter
+  tagDelimiter,
 } from '@tagspaces/tagspaces-common/AppConfig';
 import { sortByCriteria } from '@tagspaces/tagspaces-common/misc';
 
@@ -21,7 +21,7 @@ import { sortByCriteria } from '@tagspaces/tagspaces-common/misc';
 export async function AddRemoveTagsToSelectedFiles(
   perspective = 'grid',
   tagNames = ['test-tag'], // TODO fix camelCase tag name
-  addTag = true
+  addTag = true,
 ) {
   await clickOn('[data-tid=' + perspective + 'PerspectiveAddRemoveTags]');
 
@@ -53,11 +53,11 @@ export async function getDirEntries(sortCriteria, sortAsc) {
     '..',
     'testdata-tmp',
     'file-structure',
-    'supported-filestypes'
+    'supported-filestypes',
   );
   const dirEntries = (await fs.readdir(testDir, { withFileTypes: true }))
-    .filter(item => !item.isDirectory() && !item.name.startsWith('.'))
-    .map(item => {
+    .filter((item) => !item.isDirectory() && !item.name.startsWith('.'))
+    .map((item) => {
       const entryPath = testDir + dirSeparator + item.name;
       const stats = fs.statSync(entryPath);
       return {
@@ -66,7 +66,7 @@ export async function getDirEntries(sortCriteria, sortAsc) {
         size: stats.size,
         lmdt: stats.mtime.getTime ? stats.mtime.getTime() : stats.mtime,
         extension: extractFileExtension(item.name, dirSeparator),
-        tags: extractTagsAsObjects(item.name, tagDelimiter, dirSeparator)
+        tags: extractTagsAsObjects(item.name, tagDelimiter, dirSeparator),
       };
     });
   return sortByCriteria(dirEntries, sortCriteria, sortAsc);

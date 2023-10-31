@@ -6,7 +6,7 @@ const propertiesReader = require('properties-reader');
 const propsPath = pathLib.join(__dirname, '..', 'app', '.env');
 if (!fs.existsSync(propsPath)) {
   throw new Error(
-    propsPath + ' file not exist! Please create it and add property KEY=xxx'
+    propsPath + ' file not exist! Please create it and add property KEY=xxx',
   );
 }
 const properties = propertiesReader(propsPath);
@@ -18,7 +18,7 @@ const content = '{"jwt":"' + token + '"}';
 
 fs.outputFileSync(
   pathLib.join(__dirname, '../app/config/config.json'),
-  content
+  content,
 );
 /* fs.writeFile(
   pathLib.join(__dirname, '../app/config/config.json'),

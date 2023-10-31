@@ -28,7 +28,7 @@ import { getLastPublishedVersion } from '-/reducers/settings';
 import {
   actions as AppActions,
   AppDispatch,
-  isUpdateAvailable
+  isUpdateAvailable,
 } from '../reducers/app';
 import { Pro } from '../pro';
 import Links from '-/content/links';
@@ -41,9 +41,9 @@ const TSNotification = styled(Snackbar)(({ theme }) => {
   return {
     root: {
       '& .MuiSnackbarContent-root': {
-        borderRadius: 10
-      }
-    }
+        borderRadius: 10,
+      },
+    },
   };
 }) as typeof Snackbar;
 
@@ -55,7 +55,7 @@ function PageNotification() {
     setGeneratingThumbs,
     notificationStatus,
     showNotification,
-    hideNotifications
+    hideNotifications,
   } = useNotificationContext();
   const { isIndexing, cancelDirectoryIndexing } = useLocationIndexContext();
   const updateAvailable = useSelector(isUpdateAvailable);
@@ -97,7 +97,7 @@ function PageNotification() {
             size="large"
           >
             <CloseIcon />
-          </IconButton>
+          </IconButton>,
         ]}
       />
       {isGeneratingThumbs && (
@@ -115,7 +115,7 @@ function PageNotification() {
               size="large"
             >
               <CloseIcon />
-            </IconButton>
+            </IconButton>,
           ]}
         />
       )}
@@ -133,7 +133,7 @@ function PageNotification() {
             data-tid="cancelDirectoryIndexing"
           >
             {t('core:cancelIndexing')}
-          </Button>
+          </Button>,
         ]}
       />
       <TSNotification
@@ -165,7 +165,7 @@ function PageNotification() {
             onClick={getLatestVersion}
           >
             {t('core:getItNow')}
-          </Button>
+          </Button>,
         ]}
       />
     </>

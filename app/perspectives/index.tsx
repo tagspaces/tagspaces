@@ -29,7 +29,7 @@ export const PerspectiveIDs = {
   GALLERY: 'gallery',
   // TREEVIZ: 'treeviz',
   MAPIQUE: 'mapique',
-  KANBAN: 'kanban'
+  KANBAN: 'kanban',
   // WIKI: 'wiki'
 };
 
@@ -39,7 +39,7 @@ export const GridPerspectiveMeta = {
   pro: false,
   beta: false,
   icon: <GridPerspectiveIcon />,
-  title: 'Grid Perspective'
+  title: 'Grid Perspective',
 };
 
 export const ListPerspectiveMeta = {
@@ -48,7 +48,7 @@ export const ListPerspectiveMeta = {
   pro: false,
   beta: false,
   icon: <ListPerspectiveIcon />,
-  title: 'List Perspective'
+  title: 'List Perspective',
 };
 
 export const MapiquePerspectiveMeta = {
@@ -57,7 +57,7 @@ export const MapiquePerspectiveMeta = {
   pro: true,
   beta: false,
   icon: <MapiquePerspectiveIcon />,
-  title: 'Mapique Perspective'
+  title: 'Mapique Perspective',
 };
 
 export const KanbanPerspectiveMeta = {
@@ -66,7 +66,7 @@ export const KanbanPerspectiveMeta = {
   pro: true,
   beta: true,
   icon: <KanbanPerspectiveIcon />,
-  title: 'Kanban Perspective'
+  title: 'Kanban Perspective',
 };
 
 export { KanbanPerspectiveIcon };
@@ -77,7 +77,7 @@ export const GalleryPerspectiveMeta = {
   pro: true,
   beta: false,
   icon: <GalleryPerspectiveIcon />,
-  title: 'Gallery Perspective'
+  title: 'Gallery Perspective',
 };
 
 export const AvailablePerspectives = [];

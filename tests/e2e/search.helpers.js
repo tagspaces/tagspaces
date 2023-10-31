@@ -10,7 +10,7 @@ import {
   setInputKeys,
   setInputValue,
   typeInputValue,
-  waitForNotification
+  waitForNotification,
 } from './general.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 import { findAction } from '../../app/components/SearchOptions';
@@ -27,7 +27,7 @@ export const firstTagButton = '/tbody/tr[1]/td[3]/button[1]';
 export async function addSearchCommand(
   command,
   executeSearch = true,
-  forceOpenMenu = false
+  forceOpenMenu = false,
 ) {
   if (!(await isDisplayed('#textQuery'))) {
     await clickOn('[data-tid=toggleSearch]');
@@ -56,7 +56,7 @@ export async function addSearchCommand(
 export async function searchEngine(
   filename,
   options = {},
-  executeSearch = true
+  executeSearch = true,
 ) {
   if (!(await isDisplayed('#textQuery'))) {
     await clickOn('[data-tid=toggleSearch]');
@@ -107,10 +107,10 @@ export async function createSavedSearch(searchQuery) {
 }
 
 export async function addRemoveTagsInSearchResults(
-  tags = ['test-tag3', 'test-tag4']
+  tags = ['test-tag3', 'test-tag4'],
 ) {
   await global.client.dblclick(
-    '[data-tid=fsEntryName_' + emptyFolderName + ']'
+    '[data-tid=fsEntryName_' + emptyFolderName + ']',
   );
   await searchEngine(testFilename); //, { reindexing: true });
   // expected current filename
@@ -124,7 +124,7 @@ export async function addRemoveTagsInSearchResults(
     await expectElementExist(
       '[data-tid=tagContainer_' + tags[i] + ']',
       true,
-      5000
+      5000,
     );
   }
   if (await isDisabled('[data-tid=listPerspectiveAddRemoveTags]')) {
@@ -137,7 +137,7 @@ export async function addRemoveTagsInSearchResults(
     await expectElementExist(
       '[data-tid=tagContainer_' + tags[i] + ']',
       false,
-      5000
+      5000,
     );
     /*await expectElementExist(
       selectorFile + '[' + (i + 1) + ']//div[@id="gridCellTags"]//button[1]',

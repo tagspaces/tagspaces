@@ -4,7 +4,7 @@ import {
   extend,
   formatDateTime4Tag,
   immutablySwapItems,
-  prepareTagGroupForExport
+  prepareTagGroupForExport,
 } from '@tagspaces/tagspaces-common/misc';
 import versionMeta from '-/version.json';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
@@ -26,7 +26,7 @@ export function getTagLibrary(): Array<TS.TagGroup> {
 }
 
 export function setTagLibrary(
-  tagGroups: Array<TS.TagGroup>
+  tagGroups: Array<TS.TagGroup>,
 ): Array<TS.TagGroup> {
   if (tagGroups && tagGroups.length > 0) {
     localStorage.setItem(tagLibraryKey, JSON.stringify(tagGroups));
@@ -39,32 +39,32 @@ export function getAllTags(tagGroups?: Array<TS.TagGroup>) {
     tagGroups = getTagLibrary();
   }
   const uniqueTags: TS.Tag[] = [];
-  tagGroups.forEach(tagGroup => {
-    tagGroup.children.forEach(tag => {
-      const found = uniqueTags.find(uTag => uTag.title === tag.title);
+  tagGroups.forEach((tagGroup) => {
+    tagGroup.children.forEach((tag) => {
+      const found = uniqueTags.find((uTag) => uTag.title === tag.title);
       if (!found) {
         uniqueTags.push(tag);
       }
     });
   });
   return uniqueTags.sort((a, b) =>
-    a.title > b.title ? 1 : a.title < b.title ? -1 : 0
+    a.title > b.title ? 1 : a.title < b.title ? -1 : 0,
   );
 }
 
 export function removeTagGroup(
   parentTagGroupUuid: TS.Uuid,
   tagGroups: Array<TS.TagGroup>,
-  locations: Array<TS.Location>
+  locations: Array<TS.Location>,
 ): Array<TS.TagGroup> {
   const indexForRemoving = tagGroups.findIndex(
-    t => t.uuid === parentTagGroupUuid
+    (t) => t.uuid === parentTagGroupUuid,
   );
   if (indexForRemoving >= 0) {
     const tagGroup: TS.TagGroup = tagGroups[indexForRemoving];
     if (Pro && tagGroup && tagGroup.locationId) {
       const location: TS.Location = locations.find(
-        l => l.uuid === tagGroup.locationId
+        (l) => l.uuid === tagGroup.locationId,
       );
       if (location) {
         Pro.MetaOperations.removeTagGroup(location.path, parentTagGroupUuid);
@@ -73,7 +73,7 @@ export function removeTagGroup(
 
     return setTagLibrary([
       ...tagGroups.slice(0, indexForRemoving),
-      ...tagGroups.slice(indexForRemoving + 1)
+      ...tagGroups.slice(indexForRemoving + 1),
     ]);
   }
 
@@ -82,15 +82,15 @@ export function removeTagGroup(
 
 export function moveTagGroupUp(
   parentTagGroupUuid: TS.Uuid,
-  tagGroups: Array<TS.TagGroup>
+  tagGroups: Array<TS.TagGroup>,
 ): Array<TS.TagGroup> {
   let indexForUpdating = tagGroups.findIndex(
-    t => t.uuid === parentTagGroupUuid
+    (t) => t.uuid === parentTagGroupUuid,
   );
   if (indexForUpdating > 0) {
     const secondIndex = indexForUpdating - 1;
     return setTagLibrary(
-      immutablySwapItems(tagGroups, indexForUpdating, secondIndex)
+      immutablySwapItems(tagGroups, indexForUpdating, secondIndex),
     );
   }
   return tagGroups;
@@ -98,15 +98,15 @@ export function moveTagGroupUp(
 
 export function moveTagGroupDown(
   parentTagGroupUuid: TS.Uuid,
-  tagGroups: Array<TS.TagGroup>
+  tagGroups: Array<TS.TagGroup>,
 ): Array<TS.TagGroup> {
   let indexForUpdating = tagGroups.findIndex(
-    t => t.uuid === parentTagGroupUuid
+    (t) => t.uuid === parentTagGroupUuid,
   );
   if (indexForUpdating >= 0 && indexForUpdating < tagGroups.length - 1) {
     const secondIndex = indexForUpdating + 1;
     return setTagLibrary(
-      immutablySwapItems(tagGroups, indexForUpdating, secondIndex)
+      immutablySwapItems(tagGroups, indexForUpdating, secondIndex),
     );
   }
   return tagGroups;
@@ -115,9 +115,9 @@ export function moveTagGroupDown(
 export function moveTagGroup(
   tagGroupUuid: TS.Uuid,
   position: number,
-  tagGroups: Array<TS.TagGroup>
+  tagGroups: Array<TS.TagGroup>,
 ): Array<TS.TagGroup> {
-  let indexForUpdating = tagGroups.findIndex(t => t.uuid === tagGroupUuid);
+  let indexForUpdating = tagGroups.findIndex((t) => t.uuid === tagGroupUuid);
   if (indexForUpdating > -1 && indexForUpdating !== position) {
     const tagGroupsReturn = Array.from(tagGroups);
     const [removed] = tagGroupsReturn.splice(indexForUpdating, 1);
@@ -129,10 +129,10 @@ export function moveTagGroup(
 
 export function sortTagGroup(
   parentTagGroupUuid: TS.Uuid,
-  tagGroups: Array<TS.TagGroup>
+  tagGroups: Array<TS.TagGroup>,
 ): Array<TS.TagGroup> {
   let indexForUpdating = tagGroups.findIndex(
-    t => t.uuid === parentTagGroupUuid
+    (t) => t.uuid === parentTagGroupUuid,
   );
   if (indexForUpdating > -1) {
     return setTagLibrary([
@@ -140,10 +140,10 @@ export function sortTagGroup(
       {
         ...tagGroups[indexForUpdating],
         children: tagGroups[indexForUpdating].children.sort((a, b) =>
-          a.title > b.title ? 1 : a.title < b.title ? -1 : 0
-        )
+          a.title > b.title ? 1 : a.title < b.title ? -1 : 0,
+        ),
       },
-      ...tagGroups.slice(indexForUpdating + 1)
+      ...tagGroups.slice(indexForUpdating + 1),
     ]);
   }
   return tagGroups;
@@ -152,7 +152,7 @@ export function sortTagGroup(
 export function importTagGroups(
   newEntries: Array<TS.TagGroup>,
   tagGroups: Array<TS.TagGroup>,
-  replace = false
+  replace = false,
 ): Array<TS.TagGroup> {
   const arr = replace ? [] : [...tagGroups];
   // console.log(arr);
@@ -167,10 +167,10 @@ export function importTagGroups(
           title: newTg.title,
           // @ts-ignore
           uuid: newTg.key,
-          children: newTg.children
+          children: newTg.children,
         };
         const tagsArr = [];
-        newTg.children.forEach(tag => {
+        newTg.children.forEach((tag) => {
           tagsArr.push(tag);
           newTg.children = tagsArr;
           arr.push(newTg);
@@ -178,12 +178,12 @@ export function importTagGroups(
       }
     });
   } else {
-    newEntries.forEach(tagGroup => {
-      const index = arr.findIndex(obj => obj.uuid === tagGroup.uuid);
+    newEntries.forEach((tagGroup) => {
+      const index = arr.findIndex((obj) => obj.uuid === tagGroup.uuid);
       if (index > -1) {
-        tagGroup.children.forEach(tag => {
+        tagGroup.children.forEach((tag) => {
           const stateTag = arr[index].children.find(
-            obj => obj.title === tag.title
+            (obj) => obj.title === tag.title,
           );
           if (stateTag === undefined) {
             arr[index].children.push(tag);
@@ -203,7 +203,7 @@ export function importTagGroups(
 
 export function exportTagGroups(
   entry: Array<TS.TagGroup>,
-  settingsVersion = 3
+  settingsVersion = 3,
 ) {
   const tagLibrary = entry;
   const jsonFormat =
@@ -215,7 +215,7 @@ export function exportTagGroups(
     settingsVersion +
     ', "tagGroups": ';
   const allTagGroups = [];
-  tagLibrary.forEach(value => {
+  tagLibrary.forEach((value) => {
     const preparedTagGroup = prepareTagGroupForExport(value);
     if (preparedTagGroup.title && preparedTagGroup.uuid) {
       allTagGroups.push(preparedTagGroup);
@@ -225,8 +225,8 @@ export function exportTagGroups(
   const blob = new Blob(
     [jsonFormat + JSON.stringify(allTagGroups, null, 2) + '}'],
     {
-      type: 'application/json'
-    }
+      type: 'application/json',
+    },
   );
   const dateTimeTag = formatDateTime4Tag(new Date(), true);
   saveAsTextFile(blob, 'tag-library [tagspaces ' + dateTimeTag + '].json');
@@ -236,12 +236,12 @@ export function exportTagGroups(
 export function createTagGroup(
   entry: TS.TagGroup,
   tagGroups: Array<TS.TagGroup>,
-  location?: TS.Location
+  location?: TS.Location,
 ): Array<TS.TagGroup> {
   const newEntry = {
     ...entry,
     created_date: new Date().getTime(),
-    modified_date: new Date().getTime()
+    modified_date: new Date().getTime(),
   };
   if (Pro && location) {
     Pro.MetaOperations.createTagGroup(location.path, newEntry);
@@ -254,10 +254,10 @@ export function editTag(
   parentTagGroupUuid: TS.Uuid,
   origTitle: string,
   tagGroups: Array<TS.TagGroup>,
-  locations: Array<TS.Location>
+  locations: Array<TS.Location>,
 ): Array<TS.TagGroup> {
   const indexForEditing = tagGroups.findIndex(
-    t => t.uuid === parentTagGroupUuid
+    (t) => t.uuid === parentTagGroupUuid,
   );
 
   if (indexForEditing > -1) {
@@ -265,17 +265,17 @@ export function editTag(
     const newTagGroup: TS.TagGroup = {
       ...tagGroup,
       modified_date: new Date().getTime(),
-      children: tagGroup.children.map(t => {
+      children: tagGroup.children.map((t) => {
         if (t.title === origTitle) {
           return tag;
         }
         return t;
-      })
+      }),
     };
 
     if (Pro && tagGroup && tagGroup.locationId) {
       const location: TS.Location = locations.find(
-        l => l.uuid === tagGroup.locationId
+        (l) => l.uuid === tagGroup.locationId,
       );
       if (location) {
         Pro.MetaOperations.editTagGroup(location.path, newTagGroup, true);
@@ -290,7 +290,7 @@ export function moveTag(
   tagTitle: string,
   fromTagGroupId: TS.Uuid,
   toTagGroupId: TS.Uuid,
-  tagGroups: Array<TS.TagGroup>
+  tagGroups: Array<TS.TagGroup>,
 ) {
   let tagIndexForRemoving = -1;
   let indexFromGroup = -1;
@@ -305,20 +305,22 @@ export function moveTag(
   });
   if (indexFromGroup >= 0 && tagGroups[indexFromGroup].children) {
     tagIndexForRemoving = tagGroups[indexFromGroup].children.findIndex(
-      tag => tag.title === tagTitle
+      (tag) => tag.title === tagTitle,
     );
   }
   if (indexToGroup >= 0 && indexToGroup >= 0 && tagIndexForRemoving >= 0) {
     const newTagLibrary = [...tagGroups];
     const tag = { ...tagGroups[indexFromGroup].children[tagIndexForRemoving] };
     const found = newTagLibrary[indexToGroup].children.find(
-      t => t.title === tag.title
+      (t) => t.title === tag.title,
     );
     if (!found) {
       newTagLibrary[indexToGroup].children.push(tag);
       newTagLibrary[indexFromGroup].children = [
         ...newTagLibrary[indexFromGroup].children.slice(0, tagIndexForRemoving),
-        ...newTagLibrary[indexFromGroup].children.slice(tagIndexForRemoving + 1)
+        ...newTagLibrary[indexFromGroup].children.slice(
+          tagIndexForRemoving + 1,
+        ),
       ];
       return setTagLibrary(newTagLibrary);
     }
@@ -331,10 +333,10 @@ export function changeTagOrder(
   tagGroupUuid: TS.Uuid,
   fromIndex: number,
   toIndex: number,
-  tagGroups: Array<TS.TagGroup>
+  tagGroups: Array<TS.TagGroup>,
 ) {
   const indexFromGroup = tagGroups.findIndex(
-    tagGroup => tagGroup.uuid === tagGroupUuid
+    (tagGroup) => tagGroup.uuid === tagGroupUuid,
   );
 
   if (indexFromGroup > -1) {
@@ -342,10 +344,10 @@ export function changeTagOrder(
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment#swapping_variables
     [
       newTagLibrary[indexFromGroup].children[fromIndex],
-      newTagLibrary[indexFromGroup].children[toIndex]
+      newTagLibrary[indexFromGroup].children[toIndex],
     ] = [
       newTagLibrary[indexFromGroup].children[toIndex],
-      newTagLibrary[indexFromGroup].children[fromIndex]
+      newTagLibrary[indexFromGroup].children[fromIndex],
     ];
 
     return setTagLibrary(newTagLibrary);
@@ -356,16 +358,16 @@ export function changeTagOrder(
 export function editTagGroup(
   entry: TS.TagGroup,
   tagGroups: Array<TS.TagGroup>,
-  locations: Array<TS.Location>
+  locations: Array<TS.Location>,
 ) {
   const editedTagGroup = {
     ...entry,
-    modified_date: new Date().getTime()
+    modified_date: new Date().getTime(),
   };
 
   if (Pro && entry.locationId) {
     const location: TS.Location = locations.find(
-      l => l.uuid === entry.locationId
+      (l) => l.uuid === entry.locationId,
     );
     if (location) {
       Pro.MetaOperations.editTagGroup(location.path, editedTagGroup);
@@ -378,14 +380,14 @@ export function deleteTag(
   tagTitle: string,
   parentTagGroupUuid: TS.Uuid,
   tagGroups: Array<TS.TagGroup>,
-  locations: Array<TS.Location>
+  locations: Array<TS.Location>,
 ) {
   const tagGroup: TS.TagGroup = tagGroups.find(
-    t => t.uuid === parentTagGroupUuid
+    (t) => t.uuid === parentTagGroupUuid,
   );
 
   const tagIndexForRemoving = tagGroup.children.findIndex(
-    tag => tag.title === tagTitle
+    (tag) => tag.title === tagTitle,
   );
   if (tagIndexForRemoving >= 0) {
     const editedTagGroup: TS.TagGroup = {
@@ -393,13 +395,13 @@ export function deleteTag(
       modified_date: new Date().getTime(),
       children: [
         ...tagGroup.children.slice(0, tagIndexForRemoving),
-        ...tagGroup.children.slice(tagIndexForRemoving + 1)
-      ]
+        ...tagGroup.children.slice(tagIndexForRemoving + 1),
+      ],
     };
 
     if (Pro && tagGroup.locationId) {
       const location: TS.Location = locations.find(
-        l => l.uuid === tagGroup.locationId
+        (l) => l.uuid === tagGroup.locationId,
       );
       if (location) {
         Pro.MetaOperations.editTagGroup(location.path, editedTagGroup, true);
@@ -414,24 +416,24 @@ export function addTag(
   tag: any,
   parentTagGroupUuid: TS.Uuid,
   tagGroups: Array<TS.TagGroup>,
-  locations: Array<TS.Location>
+  locations: Array<TS.Location>,
 ) {
   //  const { tagTextColor, tagBackgroundColor } = settings;
   let tagGroupsReturn = tagGroups;
   const tagGroup: TS.TagGroup = tagGroups.find(
-    t => t.uuid === parentTagGroupUuid
+    (t) => t.uuid === parentTagGroupUuid,
   );
 
   let newTags: Array<TS.Tag>;
   if (typeof tag === 'object' && tag !== null) {
-    if (tagGroup.children.some(t => t.title === tag.title)) {
+    if (tagGroup.children.some((t) => t.title === tag.title)) {
       // tag exist
       return;
     }
     const tagObject: TS.Tag = {
       ...tag,
       textcolor: tag.textcolor, // || tagTextColor,
-      color: tag.color // || tagBackgroundColor
+      color: tag.color, // || tagBackgroundColor
     };
     newTags = [tagObject];
     tagGroupsReturn = addTagInt(tagObject, parentTagGroupUuid, tagGroups);
@@ -439,7 +441,7 @@ export function addTag(
     const newTagGroup = {
       ...tagGroup,
       color: tagGroup.color, // ? tagGroup.color : tagBackgroundColor,
-      textcolor: tagGroup.textcolor // ? tagGroup.textcolor : tagTextColor
+      textcolor: tagGroup.textcolor, // ? tagGroup.textcolor : tagTextColor
     };
     newTags = parseNewTags(tag, newTagGroup);
     tagGroupsReturn = addTags(newTags, newTagGroup, tagGroups);
@@ -448,7 +450,7 @@ export function addTag(
   if (Pro && tagGroup && tagGroup.locationId) {
     // const { locations } = getState();
     const location: TS.Location = locations.find(
-      l => l.uuid === tagGroup.locationId
+      (l) => l.uuid === tagGroup.locationId,
     );
     if (location) {
       tagGroup.children = newTags;
@@ -461,17 +463,17 @@ export function addTag(
 export function mergeTagGroup(
   entry: TS.TagGroup,
   tagGroups: Array<TS.TagGroup>,
-  locations?: Array<TS.Location>
+  locations?: Array<TS.Location>,
 ) {
   if (Pro && entry.locationId && locations) {
     const location: TS.Location = locations.find(
-      l => l.uuid === entry.locationId
+      (l) => l.uuid === entry.locationId,
     );
     if (location) {
       Pro.MetaOperations.mergeTagGroup(location.path, entry);
     }
   }
-  const indexForEditing = tagGroups.findIndex(obj => obj.uuid === entry.uuid);
+  const indexForEditing = tagGroups.findIndex((obj) => obj.uuid === entry.uuid);
   if (indexForEditing > -1) {
     const tags = [...tagGroups[indexForEditing].children, ...entry.children];
     tags.splice(0, tags.length - AppConfig.maxCollectedTag);
@@ -482,9 +484,9 @@ export function mergeTagGroup(
         title: entry.title,
         children: tags,
         created_date: entry.created_date,
-        modified_date: new Date().getTime()
+        modified_date: new Date().getTime(),
       },
-      ...tagGroups.slice(indexForEditing + 1)
+      ...tagGroups.slice(indexForEditing + 1),
     ]);
   }
   return setTagLibrary([
@@ -496,25 +498,25 @@ export function mergeTagGroup(
       textcolor: entry.textcolor,
       children: entry.children,
       created_date: new Date().getTime(),
-      modified_date: new Date().getTime()
-    }
+      modified_date: new Date().getTime(),
+    },
   ]);
 }
 
 function addTags(
   tags: Array<TS.Tag>,
   tagGroup: TS.TagGroup,
-  tagGroups: Array<TS.TagGroup>
+  tagGroups: Array<TS.TagGroup>,
 ) {
-  let indexForEditing = tagGroups.findIndex(tg => tg.uuid === tagGroup.uuid);
+  let indexForEditing = tagGroups.findIndex((tg) => tg.uuid === tagGroup.uuid);
   if (indexForEditing >= 0) {
     return setTagLibrary([
       ...tagGroups.slice(0, indexForEditing),
       {
         ...tagGroups[indexForEditing],
-        children: tags
+        children: tags,
       },
-      ...tagGroups.slice(indexForEditing + 1)
+      ...tagGroups.slice(indexForEditing + 1),
     ]);
   }
   return tagGroups;
@@ -523,22 +525,22 @@ function addTags(
 function addTagInt(
   newTag: TS.Tag,
   parentTagGroupUuid: TS.Uuid,
-  tagGroups: Array<TS.TagGroup>
+  tagGroups: Array<TS.TagGroup>,
 ) {
   let indexForEditing = tagGroups.findIndex(
-    tagGroup => tagGroup.uuid === parentTagGroupUuid
+    (tagGroup) => tagGroup.uuid === parentTagGroupUuid,
   );
 
   if (indexForEditing >= 0) {
     const taggroupTags = tagGroups[indexForEditing].children;
-    if (!taggroupTags.some(tag => tag.title === newTag.title)) {
+    if (!taggroupTags.some((tag) => tag.title === newTag.title)) {
       return setTagLibrary([
         ...tagGroups.slice(0, indexForEditing),
         {
           ...tagGroups[indexForEditing],
-          children: [...taggroupTags, newTag]
+          children: [...taggroupTags, newTag],
         },
-        ...tagGroups.slice(indexForEditing + 1)
+        ...tagGroups.slice(indexForEditing + 1),
       ]);
     }
   }
@@ -547,22 +549,22 @@ function addTagInt(
 
 function updateTagGroup(
   entry: TS.TagGroup,
-  tagGroups: Array<TS.TagGroup>
+  tagGroups: Array<TS.TagGroup>,
 ): Array<TS.TagGroup> {
   let indexForEditing = tagGroups.findIndex(
-    tagGroup => tagGroup.uuid === entry.uuid
+    (tagGroup) => tagGroup.uuid === entry.uuid,
   );
 
   if (indexForEditing >= 0) {
     const modifiedEntry = {
       ...entry,
       ...(!entry.created_date && { created_date: new Date().getTime() }),
-      ...(!entry.modified_date && { modified_date: new Date().getTime() })
+      ...(!entry.modified_date && { modified_date: new Date().getTime() }),
     };
     return setTagLibrary([
       ...tagGroups.slice(0, indexForEditing),
       modifiedEntry,
-      ...tagGroups.slice(indexForEditing + 1)
+      ...tagGroups.slice(indexForEditing + 1),
     ]);
   }
   return tagGroups;
@@ -574,11 +576,11 @@ function updateTagGroup(
 export const getTagColors = (
   tagTitle: string,
   defaultTextColor: string,
-  defaultBackgroundColor: string
+  defaultBackgroundColor: string,
 ) => {
   const tagColors = {
     textcolor: defaultTextColor,
-    color: defaultBackgroundColor
+    color: defaultBackgroundColor,
   };
   getAllTags().forEach((tag: TS.Tag) => {
     if (tag.title === tagTitle) {

@@ -7,7 +7,7 @@ import {
   defaultLocationPath,
   defaultLocationName,
   createPwMinioLocation,
-  createPwLocation
+  createPwLocation,
 } from './location.helpers';
 import {
   reloadDirectory,
@@ -25,7 +25,7 @@ import {
   createTxtFile,
   expectMetaFilesExist,
   getGridFileSelector,
-  isDisplayed
+  isDisplayed,
 } from './general.helpers';
 import { searchEngine } from './search.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
@@ -74,7 +74,7 @@ test.describe('TST51 - Perspective Grid', () => {
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
       true,
-      2000
+      2000,
     );
     await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
     // create new file
@@ -89,7 +89,7 @@ test.describe('TST51 - Perspective Grid', () => {
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
       false,
-      2000
+      2000,
     );
     // await takeScreenshot('TST0501 after deleteDirectory');
   });
@@ -99,7 +99,7 @@ test.describe('TST51 - Perspective Grid', () => {
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
       true,
-      2000
+      2000,
     );
     await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
 
@@ -114,7 +114,7 @@ test.describe('TST51 - Perspective Grid', () => {
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
       false,
-      2000
+      2000,
     );
     // await takeScreenshot('TST0502 after deleteDirectory');
   });
@@ -124,7 +124,7 @@ test.describe('TST51 - Perspective Grid', () => {
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
       true,
-      2000
+      2000,
     );
     await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
 
@@ -139,15 +139,15 @@ test.describe('TST51 - Perspective Grid', () => {
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
       false,
-      2000
+      2000,
     );
     // await takeScreenshot('TST0503 after deleteDirectory');
   });
 
   test('TST0510 - Generate thumbnail from Images [electron]', async () => {
     const metaFiles = AppConfig.ThumbGenSupportedFileTypes.image
-      .filter(ext => ext !== 'ico' && ext !== 'tiff' && ext !== 'tif') // ico file thumbnail generation not work TODO in not PRO version tiff tif is not generated in tests environment only
-      .map(imgExt => 'sample.' + imgExt + '.jpg');
+      .filter((ext) => ext !== 'ico' && ext !== 'tiff' && ext !== 'tif') // ico file thumbnail generation not work TODO in not PRO version tiff tif is not generated in tests environment only
+      .map((imgExt) => 'sample.' + imgExt + '.jpg');
 
     await expectMetaFilesExist(metaFiles);
   });
@@ -165,14 +165,14 @@ test.describe('TST51 - Perspective Grid', () => {
       '#exifTableBody tr:has(th:has-text("GPSLatitude")) td',
       true,
       5000,
-      frame
+      frame,
     );
     expect(latExists).toBeTruthy();
   });
 
   test('TST0511 - Generate thumbnail from Videos [electron]', async () => {
     const metaFiles = AppConfig.ThumbGenSupportedFileTypes.video.map(
-      imgExt => 'sample.' + imgExt + '.jpg'
+      (imgExt) => 'sample.' + imgExt + '.jpg',
     );
     await expectMetaFilesExist(metaFiles);
   });
@@ -185,7 +185,7 @@ test.describe('TST51 - Perspective Grid', () => {
     await expectMetaFilesExist([
       'sample.odt.jpg',
       'sample.ods.jpg',
-      'sample.epub.jpg'
+      'sample.epub.jpg',
     ]);
   });
 

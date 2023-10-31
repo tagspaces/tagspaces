@@ -66,7 +66,7 @@ function AboutDialog(props: Props) {
       openURLExternally(Links.links.downloadURL, true);
     } else {
       getLastVersionPromise()
-        .then(lastVersion => {
+        .then((lastVersion) => {
           console.log('Last version on server: ' + lastVersion);
           const cleanedLastVersion = semver.coerce(lastVersion);
           // const cleanedCurrentVersion = '3.0.2'
@@ -82,7 +82,7 @@ function AboutDialog(props: Props) {
           }
           return true;
         })
-        .catch(error => {
+        .catch((error) => {
           console.warn('Error while checking for update: ' + error);
         });
     }

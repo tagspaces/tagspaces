@@ -64,7 +64,7 @@ const DirectoryTreeView = forwardRef(
             .then(() => {
               loadSubDirectories(location);
             })
-            .catch(error => {
+            .catch((error) => {
               console.log('enableObjectStoreSupport', error);
             });
         } else if (location.type === locationType.TYPE_WEBDAV) {
@@ -81,7 +81,7 @@ const DirectoryTreeView = forwardRef(
         if (isExpanded) {
           setExpanded(false);
         }
-      }
+      },
       /* removeLocation() {
         setData(undefined);
       } */
@@ -105,7 +105,7 @@ const DirectoryTreeView = forwardRef(
     </td>
   ); */
 
-    const renderBodyRow = props => {
+    const renderBodyRow = (props) => {
       if (AppConfig.isElectron || location.type !== locationType.TYPE_CLOUD) {
         // DnD to S3 location is not permitted in web browser without <input> element
         return (
@@ -120,7 +120,7 @@ const DirectoryTreeView = forwardRef(
       return <tr {...props} />;
     };
 
-    const renderNameColumnAction = field => {
+    const renderNameColumnAction = (field) => {
       const children = (
         <span style={{ fontSize: 15 }} title={field}>
           <FolderIcon
@@ -128,7 +128,7 @@ const DirectoryTreeView = forwardRef(
               marginTop: 0,
               marginLeft: 3,
               marginRight: 6,
-              marginBottom: -8
+              marginBottom: -8,
             }}
             className={classes.icon}
           />
@@ -137,7 +137,7 @@ const DirectoryTreeView = forwardRef(
       );
       return {
         children,
-        props: {}
+        props: {},
       };
     };
 
@@ -147,7 +147,7 @@ const DirectoryTreeView = forwardRef(
     }, */
       onClick: () => {
         onRowClick(record);
-      }
+      },
       /* onDoubleClick: (e) => {
       this.onRowClick(record, index, e);
     } */
@@ -161,7 +161,7 @@ const DirectoryTreeView = forwardRef(
       }
     };
 
-    const onRowClick = subDir => {
+    const onRowClick = (subDir) => {
       if (subDir.type === locationType.TYPE_CLOUD) {
         PlatformIO.enableObjectStoreSupport(subDir)
           .then(() => {
@@ -169,7 +169,7 @@ const DirectoryTreeView = forwardRef(
             changeLocation(subDir);
             return openDirectory(subDir.path);
           })
-          .catch(error => {
+          .catch((error) => {
             console.log('enableObjectStoreSupport', error);
           });
       } else if (subDir.type === locationType.TYPE_LOCAL) {
@@ -187,8 +187,8 @@ const DirectoryTreeView = forwardRef(
         key: 'name',
         width: '80%',
         render: renderNameColumnAction,
-        onCell: handleCellClick
-      }
+        onCell: handleCellClick,
+      },
     ];
 
     const loadSubDirectories = (location: TS.Location) => {
@@ -198,15 +198,15 @@ const DirectoryTreeView = forwardRef(
         ...(location.region && { region: location.region }),
         ...(location.endpointURL && { endpointURL: location.endpointURL }),
         ...(location.secretAccessKey && {
-          secretAccessKey: location.secretAccessKey
+          secretAccessKey: location.secretAccessKey,
         }),
         uuid: location.uuid,
         name: location.name,
         type: location.type,
-        path: PlatformIO.getLocationPath(location)
+        path: PlatformIO.getLocationPath(location),
       };
       getDirectoriesTree(subFolder)
-        .then(children => {
+        .then((children) => {
           if (children instanceof Array) {
             if (location.uuid) {
               const dirsTree = {}; // this.state.dirs; (uncomment to allow open multiple Locations folders) //TODO set settings for this
@@ -232,7 +232,7 @@ const DirectoryTreeView = forwardRef(
           }
           return true;
         })
-        .catch(error => {
+        .catch((error) => {
           console.log('loadSubDirectories', error);
         });
     };
@@ -254,11 +254,11 @@ const DirectoryTreeView = forwardRef(
       // const { settings } = getState();
       new Promise((resolve, reject) => {
         PlatformIO.listDirectoryPromise(subFolder.path, [])
-          .then(dirEntries => {
+          .then((dirEntries) => {
             if (dirEntries !== undefined) {
               // console.debug('listDirectoryPromise resolved:' + dirEntries.length);
               const directoryContent = [];
-              dirEntries.map(entry => {
+              dirEntries.map((entry) => {
                 if (
                   entry.name === AppConfig.metaFolder ||
                   entry.name.endsWith('/' + AppConfig.metaFolder) ||
@@ -294,7 +294,7 @@ const DirectoryTreeView = forwardRef(
               resolve(directoryContent);
             }
           })
-          .catch(error => {
+          .catch((error) => {
             console.debug('getDirectoriesTree', error);
             reject();
           });
@@ -323,8 +323,8 @@ const DirectoryTreeView = forwardRef(
               {
                 depth: 0,
                 element: arrSubDirs[a],
-                propPath: ''
-              }
+                propPath: '',
+              },
             ];
             let stackItem = 0;
             let current;
@@ -368,7 +368,7 @@ const DirectoryTreeView = forwardRef(
                     element: children[i],
                     depth: depth + 1,
                     propPath:
-                      (stackPath ? stackPath + '.' : '') + i + '.children'
+                      (stackPath ? stackPath + '.' : '') + i + '.children',
                   });
                 }
               }
@@ -386,7 +386,7 @@ const DirectoryTreeView = forwardRef(
           // className={classes.locationListArea}
           components={{
             // header: { cell: this.renderHeaderRow },
-            body: { row: renderBodyRow }
+            body: { row: renderBodyRow },
           }}
           showHeader={false}
           // className="table"
@@ -401,13 +401,13 @@ const DirectoryTreeView = forwardRef(
           onRow={(record, index) => ({
             index,
             location: record,
-            handleFileMoveDrop: handleFileMoveDrop
+            handleFileMoveDrop: handleFileMoveDrop,
           })}
         />
       );
     }
     return null;
-  }
+  },
 );
 
 export default DirectoryTreeView;

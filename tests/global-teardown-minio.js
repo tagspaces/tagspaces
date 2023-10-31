@@ -1,5 +1,5 @@
 import { stopMinio } from './setup-functions';
 
-module.exports = function() {
+module.exports = function () {
   stopMinio(global.minio);
 };

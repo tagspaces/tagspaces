@@ -25,7 +25,7 @@ export async function checkFilenameForExist(filename, selector) {
   // selector is current selector location for element in perspectiveGridTable or perspectiveListTable (full xpath path to element)
 
   const file = await global.client.$(
-    selector || perspectiveGridTable + firstFileName
+    selector || perspectiveGridTable + firstFileName,
   );
   const fileTxt = await file.getText();
   expect(fileTxt).toBe(filename);
@@ -33,7 +33,7 @@ export async function checkFilenameForExist(filename, selector) {
 
 export function toContainTID(text, tids = ['etete&5435']) {
   let pass = false;
-  tids.forEach(tid => {
+  tids.forEach((tid) => {
     pass = text.indexOf(tid) !== -1;
   });
   return pass;

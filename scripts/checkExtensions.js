@@ -10,8 +10,8 @@ if (!fs.existsSync(path.resolve(__dirname, '../app/node_modules'))) {
     'yarn',
     ['--cwd', path.resolve(__dirname, '../app'), 'install'],
     {
-      stdio: 'inherit'
-    }
+      stdio: 'inherit',
+    },
   );
   console.log(result);
 }

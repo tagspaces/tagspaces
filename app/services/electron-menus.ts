@@ -31,31 +31,31 @@ export default function buildDesktopMenu(props: any, i18n) {
         {
           label: i18n.t('newWindow'),
           accelerator: '',
-          click: () => props.createNewWindowInstance()
+          click: () => props.createNewWindowInstance(),
         },
         {
-          type: 'separator'
+          type: 'separator',
         },
         {
           label: i18n.t('newFileNote'),
           accelerator: 'CommandOrControl+Shift+n',
-          click: props.toggleNewFileDialog
+          click: props.toggleNewFileDialog,
         },
         {
           label: i18n.t('createDirectory'),
           accelerator: '',
-          click: props.showCreateDirectoryDialog
+          click: props.showCreateDirectoryDialog,
         },
         {
-          type: 'separator'
+          type: 'separator',
         },
         {
           label: i18n.t('openLink'),
           accelerator: 'CmdOrCtrl+o',
-          click: props.toggleOpenLinkDialog
+          click: props.toggleOpenLinkDialog,
         },
         {
-          type: 'separator'
+          type: 'separator',
         },
         {
           label: i18n.t('print'),
@@ -64,17 +64,17 @@ export default function buildDesktopMenu(props: any, i18n) {
             if (focusedWindow.webContents && focusedWindow.webContents.print) {
               focusedWindow.webContents.print();
             }
-          }
+          },
         },
         {
-          type: 'separator'
+          type: 'separator',
         },
         {
           label: i18n.t('exitApp'),
           accelerator: 'CmdOrCtrl+q',
-          click: quitApp // PlatformIO.quitApp
-        }
-      ]
+          click: quitApp, // PlatformIO.quitApp
+        },
+      ],
     },
     {
       label: i18n.t('edit'),
@@ -82,52 +82,52 @@ export default function buildDesktopMenu(props: any, i18n) {
         {
           label: i18n.t('undo'),
           accelerator: 'CmdOrCtrl+z',
-          role: 'undo'
+          role: 'undo',
         },
         {
           label: i18n.t('redo'),
           accelerator: 'Shift+CmdOrCtrl+z',
-          role: 'redo'
+          role: 'redo',
         },
         {
-          type: 'separator'
+          type: 'separator',
         },
         {
           label: i18n.t('cut'),
           accelerator: 'CmdOrCtrl+x',
-          role: 'cut'
+          role: 'cut',
         },
         {
           label: i18n.t('copy'),
           accelerator: 'CmdOrCtrl+c',
-          role: 'copy'
+          role: 'copy',
         },
         {
           label: i18n.t('paste'),
           accelerator: 'CmdOrCtrl+v',
-          role: 'paste'
+          role: 'paste',
         },
         {
           label: i18n.t('selectAll'),
           accelerator: 'CmdOrCtrl+a',
-          role: 'selectall'
-        }
-      ]
+          role: 'selectall',
+        },
+      ],
     },
     {
       label: i18n.t('view'),
       submenu: [
         {
           label: i18n.t('showLocationManager'),
-          click: props.openLocationManagerPanel
+          click: props.openLocationManagerPanel,
         },
         {
           label: i18n.t('showTagLibrary'),
-          click: props.openTagLibraryPanel
+          click: props.openTagLibraryPanel,
         },
         {
           label: i18n.t('showSearch'),
-          click: props.openSearch
+          click: props.openSearch,
         },
         {
           label: i18n.t('showDevTools'),
@@ -135,45 +135,45 @@ export default function buildDesktopMenu(props: any, i18n) {
             if (focusedWindow) {
               focusedWindow.toggleDevTools();
             }
-          }
+          },
         },
         {
           label: i18n.t('reloadApplication'),
           accelerator: 'CmdOrCtrl+Shift+R',
           click: (item, focusedWindow) => {
             focusedWindow.webContents.reload();
-          }
+          },
         },
         {
-          type: 'separator'
+          type: 'separator',
         },
         {
           label: i18n.t('goback'),
           accelerator: 'Alt+Left',
-          click: props.goBack
+          click: props.goBack,
         },
         {
           label: i18n.t('goforward'),
           accelerator: 'Alt+Right',
-          click: props.goForward
+          click: props.goForward,
         },
         {
-          type: 'separator'
+          type: 'separator',
         },
         {
           label: i18n.t('zoomReset'),
           accelerator: 'CmdOrCtrl+0',
-          click: props.setZoomResetApp
+          click: props.setZoomResetApp,
         },
         {
           label: i18n.t('zoomIn'),
           accelerator: 'CmdOrCtrl+Shift+Plus',
-          click: props.setZoomInApp
+          click: props.setZoomInApp,
         },
         {
           label: i18n.t('zoomOut'),
           accelerator: 'CmdOrCtrl+-',
-          click: props.setZoomOutApp
+          click: props.setZoomOutApp,
         },
         {
           label: i18n.t('toggleFullScreen'),
@@ -186,16 +186,16 @@ export default function buildDesktopMenu(props: any, i18n) {
             } else {
               focusedWindow.setFullScreen(true);
             }
-          }
+          },
         },
         {
-          type: 'separator'
+          type: 'separator',
         },
         {
           label: i18n.t('settings'),
-          click: props.toggleSettingsDialog
-        }
-      ]
+          click: props.toggleSettingsDialog,
+        },
+      ],
     },
     {
       label: '&' + i18n.t('help'),
@@ -203,81 +203,81 @@ export default function buildDesktopMenu(props: any, i18n) {
         {
           label: '&' + i18n.t('documentation'),
           accelerator: 'F1',
-          click: props.openHelpFeedbackPanel
+          click: props.openHelpFeedbackPanel,
         },
         {
           label: '&' + i18n.t('shortcutKeys'),
-          click: props.toggleKeysDialog
+          click: props.toggleKeysDialog,
         },
         {
           label: 'Welcome Wizzard',
-          click: props.toggleOnboardingDialog
+          click: props.toggleOnboardingDialog,
         },
         {
           label: '&' + i18n.t('whatsNew'),
           click: () => {
             shell.openExternal(Links.links.changelogURL);
-          }
+          },
         },
         {
           label: '&' + i18n.t('followOnTwitter'),
           click: () => {
             shell.openExternal(Links.links.twitter);
-          }
+          },
         },
         {
-          type: 'separator'
+          type: 'separator',
         },
         {
           label: '&' + i18n.t('suggestNewFeatures'),
           click: () => {
             shell.openExternal(Links.links.suggestFeature);
-          }
+          },
         },
         {
           label: '&' + i18n.t('reportIssues'),
           click: () => {
             shell.openExternal(Links.links.reportIssue);
-          }
+          },
         },
         {
-          type: 'separator'
+          type: 'separator',
         },
         {
           label: i18n.t('webClipperChrome'),
           click: () => {
             shell.openExternal(Links.links.webClipperChrome);
-          }
+          },
         },
         {
           label: i18n.t('webClipperFirefox'),
           click: () => {
             shell.openExternal(Links.links.webClipperFirefox);
-          }
+          },
         },
         {
-          type: 'separator'
+          type: 'separator',
         },
         {
           label: '&' + i18n.t('license'),
-          click: props.toggleLicenseDialog
+          click: props.toggleLicenseDialog,
         },
         {
           label: i18n.t('cancelSubscription'),
           click: () => {
             shell.openExternal(Links.links.cancelSubscription);
-          }
+          },
         },
         {
           label: '&' + i18n.t('thirdPartyLibs'),
-          click: props.toggleThirdPartyLibsDialog
+          click: props.toggleThirdPartyLibsDialog,
         },
         {
           label: '&' + i18n.t('aboutTagSpaces'),
-          click: props.toggleAboutDialog
-        }
-      ]
-    }
+          click: props.toggleAboutDialog,
+        },
+      ],
+    },
   ];
   // PlatformIO.initMainMenu(templateDefault);
 

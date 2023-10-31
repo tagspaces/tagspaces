@@ -21,14 +21,14 @@ import React, {
   useEffect,
   useMemo,
   useRef,
-  useState
+  useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   actions as AppActions,
   AppDispatch,
   getEditedEntryPaths,
-  OpenedEntry
+  OpenedEntry,
 } from '-/reducers/app';
 import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
@@ -42,12 +42,12 @@ import {
   getRelativeEntryPath,
   loadJSONFile,
   openURLExternally,
-  toFsEntry
+  toFsEntry,
 } from '-/services/utils-io';
 import {
   actions as SettingsActions,
   getNewHTMLFileContent,
-  getSupportedFileTypes
+  getSupportedFileTypes,
 } from '-/reducers/settings';
 import { getLocations } from '-/reducers/locations';
 import { clearURLParam, getURLParameter, updateHistory } from '-/utils/dom';
@@ -58,11 +58,11 @@ import {
   generateSharingLink,
   getMetaFileLocationForDir,
   getMetaFileLocationForFile,
-  normalizePath
+  normalizePath,
 } from '@tagspaces/tagspaces-common/paths';
 import {
   formatDateTime4Tag,
-  locationType
+  locationType,
 } from '@tagspaces/tagspaces-common/misc';
 import { useTranslation } from 'react-i18next';
 import versionMeta from '-/version.json';
@@ -87,7 +87,7 @@ type OpenedEntryContextData = {
   reloadOpenedFile: () => void;
   updateOpenedFile: (
     entryPath: string,
-    fsEntryMeta: TS.FileSystemEntryMeta
+    fsEntryMeta: TS.FileSystemEntryMeta,
   ) => Promise<boolean>;
   openEntry: (path?: string, showDetails?) => void;
   openFsEntry: (fsEntry?: TS.FileSystemEntry, showDetails?) => void;
@@ -99,7 +99,7 @@ type OpenedEntryContextData = {
     targetPath: string,
     fileName: string,
     content: string,
-    fileType: 'md' | 'txt' | 'html'
+    fileType: 'md' | 'txt' | 'html',
   ) => void;
   createFile: () => void;
   reflectRenameDirectory: (directoryPath: string, newDirPath: string) => void;
@@ -128,7 +128,7 @@ export const OpenedEntryContext = createContext<OpenedEntryContextData>({
   createFileAdvanced: () => {},
   reflectRenameDirectory: () => {},
   reflectDeleteDirectory: undefined,
-  reflectDeleteFile: undefined
+  reflectDeleteFile: undefined,
 });
 
 export type OpenedEntryContextProviderProps = {
@@ -136,7 +136,7 @@ export type OpenedEntryContextProviderProps = {
 };
 
 export const OpenedEntryContextProvider = ({
-  children
+  children,
 }: OpenedEntryContextProviderProps) => {
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
@@ -145,7 +145,7 @@ export const OpenedEntryContextProvider = ({
     currentDirectoryEntries,
     currentDirectoryPath,
     openDirectory,
-    addDirectoryEntries
+    addDirectoryEntries,
   } = useDirectoryContentContext();
 
   const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
@@ -158,10 +158,10 @@ export const OpenedEntryContextProvider = ({
   const locations: TS.Location[] = useSelector(getLocations);
   const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
   const fileOpenHistory = useSelector(
-    (state: any) => state.settings[historyKeys.fileOpenKey]
+    (state: any) => state.settings[historyKeys.fileOpenKey],
   );
   const folderOpenHistory = useSelector(
-    (state: any) => state.settings[historyKeys.folderOpenKey]
+    (state: any) => state.settings[historyKeys.folderOpenKey],
   );
   const newHTMLFileContent = useSelector(getNewHTMLFileContent);
   //const initOpenLink = useSelector(getOpenLink);
@@ -196,7 +196,7 @@ export const OpenedEntryContextProvider = ({
           openLink(
             // window.location.href.split('?')[0] +
             'ts://?cmdopen=' + cmdOpen,
-            { fullWidth: true }
+            { fullWidth: true },
           );
         }, 1000);
       }
@@ -249,14 +249,14 @@ export const OpenedEntryContextProvider = ({
         const oldFilePath = editedEntryPaths[0].path;
         const newFilePath = editedEntryPaths[1].path;
 
-        if (openedEntries.some(entry => entry.path === oldFilePath)) {
+        if (openedEntries.some((entry) => entry.path === oldFilePath)) {
           const extractedTags = extractTagsAsObjects(
             newFilePath,
             AppConfig.tagDelimiter,
-            PlatformIO.getDirSeparator()
+            PlatformIO.getDirSeparator(),
           );
 
-          const newEntries = openedEntries.map(entry => {
+          const newEntries = openedEntries.map((entry) => {
             if (entry.path !== oldFilePath) {
               return entry;
             }
@@ -264,15 +264,15 @@ export const OpenedEntryContextProvider = ({
             // const { url, ...rest } = entry;
             const sidecarTags =
               entry.tags && entry.tags.length > 0
-                ? entry.tags.filter(tag => tag.type !== 'plain')
+                ? entry.tags.filter((tag) => tag.type !== 'plain')
                 : [];
             return {
               ...entry,
               path: newFilePath, // TODO handle change extension case
               tags: [
                 ...sidecarTags, // add only sidecar tags
-                ...fileNameTags
-              ]
+                ...fileNameTags,
+              ],
               // shouldReload: true
             };
           });
@@ -302,7 +302,7 @@ export const OpenedEntryContextProvider = ({
           //if (params.has('tsdpath')) {
           // const folderPath2 = params.get('tsdpath');
           const folderLocation = locations.find(
-            location => location.uuid === locationId
+            (location) => location.uuid === locationId,
           );
           const folderPath = extractContainingDirectoryPath(openedFile.path);
           if (folderPath.indexOf(folderLocation.path) === 0) {
@@ -312,8 +312,8 @@ export const OpenedEntryContextProvider = ({
               cleanRootPath(
                 folderPath,
                 folderLocation.path,
-                PlatformIO.getDirSeparator()
-              )
+                PlatformIO.getDirSeparator(),
+              ),
             );
           }
 
@@ -327,20 +327,20 @@ export const OpenedEntryContextProvider = ({
               sharingLink.current = generateSharingLink(
                 locationId,
                 entryPath,
-                dirPath
+                dirPath,
               );
             } else {
               sharingLink.current = generateSharingLink(
                 locationId,
                 undefined,
-                entryPath
+                entryPath,
               );
             }
           } else if (params.has('tsdpath')) {
             sharingLink.current = generateSharingLink(
               locationId,
               undefined,
-              params.get('tsdpath')
+              params.get('tsdpath'),
             );
           } else {
             sharingLink.current = generateSharingLink(locationId);
@@ -434,7 +434,7 @@ export const OpenedEntryContextProvider = ({
   function reflectUpdateOpenedFileContent(entryPath: string) {
     if (openedEntries && openedEntries.length > 0) {
       const openedFile: OpenedEntry = openedEntries.find(
-        obj => obj.path === entryPath
+        (obj) => obj.path === entryPath,
       );
       if (openedFile) {
         openedFile.shouldReload = true;
@@ -449,33 +449,33 @@ export const OpenedEntryContextProvider = ({
       const metaFilePath = openedFile.isFile
         ? getMetaFileLocationForFile(
             openedFile.path,
-            PlatformIO.getDirSeparator()
+            PlatformIO.getDirSeparator(),
           )
         : getMetaFileLocationForDir(
             openedFile.path,
-            PlatformIO.getDirSeparator()
+            PlatformIO.getDirSeparator(),
           );
       try {
         return loadJSONFile(metaFilePath)
-          .then(fsEntryMeta => {
+          .then((fsEntryMeta) => {
             return updateOpenedFile(openedFile.path, {
               ...fsEntryMeta,
               editMode: false,
-              shouldReload: !openedFile.shouldReload
+              shouldReload: !openedFile.shouldReload,
             });
           })
           .catch(() =>
             updateOpenedFile(openedFile.path, {
               ...openedFile,
               editMode: false,
-              shouldReload: !openedFile.shouldReload
-            })
+              shouldReload: !openedFile.shouldReload,
+            }),
           );
       } catch (e) {
         return updateOpenedFile(openedFile.path, {
           ...openedFile,
           editMode: false,
-          shouldReload: !openedFile.shouldReload
+          shouldReload: !openedFile.shouldReload,
         });
       }
     }
@@ -484,19 +484,19 @@ export const OpenedEntryContextProvider = ({
 
   function updateOpenedFile(
     entryPath: string,
-    fsEntryMeta: TS.FileSystemEntryMeta
+    fsEntryMeta: TS.FileSystemEntryMeta,
   ): Promise<boolean> {
     if (
       openedEntries &&
       openedEntries.length > 0 &&
-      openedEntries.some(obj => obj.path === entryPath)
+      openedEntries.some((obj) => obj.path === entryPath)
     ) {
       return PlatformIO.getPropertiesPromise(entryPath)
-        .then(entryProps => {
+        .then((entryProps) => {
           if (entryProps) {
             let entryForOpening: OpenedEntry;
             const entryExist = openedEntries.find(
-              obj => obj.path === entryPath
+              (obj) => obj.path === entryPath,
             );
 
             if (!entryExist) {
@@ -504,7 +504,7 @@ export const OpenedEntryContextProvider = ({
                 fsEntryMeta.id, //|| fsEntryMeta.uuid,
                 supportedFileTypes,
                 entryPath,
-                entryProps.isFile
+                entryProps.isFile,
               );
             } else {
               entryForOpening = { ...entryExist };
@@ -542,7 +542,7 @@ export const OpenedEntryContextProvider = ({
           }
           return true;
         })
-        .catch(err => {
+        .catch((err) => {
           console.log('updateOpenedFile ' + entryPath + ' not exist ' + err);
           return Promise.resolve(false);
         });
@@ -556,10 +556,10 @@ export const OpenedEntryContextProvider = ({
     }
     return getAllPropertiesPromise(path)
       .then((fsEntry: TS.FileSystemEntry) => openFsEntry(fsEntry, showDetails))
-      .catch(error =>
+      .catch((error) =>
         console.warn(
-          'Error getting properties for entry: ' + path + ' - ' + error
-        )
+          'Error getting properties for entry: ' + path + ' - ' + error,
+        ),
       );
   }
 
@@ -588,13 +588,13 @@ export const OpenedEntryContextProvider = ({
           shouldReload:
             openFile.shouldReload !== undefined
               ? !openFile.shouldReload
-              : undefined
+              : undefined,
         }; // false };
         addToEntryContainer(entryForOpening);
         showNotification(
           `You can't open another file, because '${openFile.path}' is opened for editing`,
           'default',
-          true
+          true,
         );
         return false;
       }
@@ -604,7 +604,7 @@ export const OpenedEntryContextProvider = ({
       fsEntry.uuid,
       supportedFileTypes,
       fsEntry.path,
-      fsEntry.isFile
+      fsEntry.isFile,
     );
     if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
       const cleanedPath = fsEntry.path.startsWith('/')
@@ -655,7 +655,7 @@ export const OpenedEntryContextProvider = ({
       if (Pro) {
         const relEntryPath = getRelativeEntryPath(
           currentLocation,
-          fsEntry.path
+          fsEntry.path,
         );
         const historyKeys = Pro.history.historyKeys;
         if (fsEntry.isFile) {
@@ -664,9 +664,9 @@ export const OpenedEntryContextProvider = ({
             {
               path: fsEntry.path,
               url: generateSharingLink(currentLocation.uuid, relEntryPath),
-              lid: currentLocation.uuid
+              lid: currentLocation.uuid,
             },
-            fileOpenHistory
+            fileOpenHistory,
           );
         } else {
           Pro.history.saveHistory(
@@ -676,11 +676,11 @@ export const OpenedEntryContextProvider = ({
               url: generateSharingLink(
                 currentLocation.uuid,
                 relEntryPath,
-                relEntryPath
+                relEntryPath,
               ),
-              lid: currentLocation.uuid
+              lid: currentLocation.uuid,
             },
-            folderOpenHistory
+            folderOpenHistory,
           );
         }
       }
@@ -693,7 +693,7 @@ export const OpenedEntryContextProvider = ({
       selectedEntries && selectedEntries.length > 0
         ? selectedEntries[selectedEntries.length - 1].path
         : undefined,
-      currentDirectoryEntries
+      currentDirectoryEntries,
     );
     if (nextFile !== undefined) {
       openFsEntry(nextFile);
@@ -709,7 +709,7 @@ export const OpenedEntryContextProvider = ({
       selectedEntries && selectedEntries.length > 0
         ? selectedEntries[selectedEntries.length - 1].path
         : undefined,
-      currentDirectoryEntries
+      currentDirectoryEntries,
     );
     if (prevFile !== undefined) {
       openFsEntry(prevFile);
@@ -741,7 +741,7 @@ export const OpenedEntryContextProvider = ({
             }
             return true;
           })
-          .catch(err => {
+          .catch((err) => {
             // console.log('Error opening from cmd ' + JSON.stringify(err));
             showNotification(t('Missing file or folder'), 'warning', true);
           });
@@ -755,7 +755,7 @@ export const OpenedEntryContextProvider = ({
         }
         // Check for relative paths
         const targetLocation: TS.Location = locations.find(
-          location => location.uuid === locationId
+          (location) => location.uuid === locationId,
         );
         if (targetLocation) {
           let openLocationTimer = 1000;
@@ -778,7 +778,7 @@ export const OpenedEntryContextProvider = ({
               if (directoryPath && directoryPath.length > 0) {
                 const newRelDir = getRelativeEntryPath(
                   targetLocation,
-                  directoryPath
+                  directoryPath,
                 );
                 const dirFullPath =
                   locationPath.length > 0
@@ -801,7 +801,7 @@ export const OpenedEntryContextProvider = ({
                     return true;
                   })
                   .catch(() =>
-                    showNotification(t('core:invalidLink'), 'warning', true)
+                    showNotification(t('core:invalidLink'), 'warning', true),
                   );
               }
               // });
@@ -840,7 +840,7 @@ export const OpenedEntryContextProvider = ({
                     return true;
                   })
                   .catch(() =>
-                    showNotification(t('core:invalidLink'), 'warning', true)
+                    showNotification(t('core:invalidLink'), 'warning', true),
                   );
               }
             }
@@ -883,7 +883,7 @@ export const OpenedEntryContextProvider = ({
           openEntry(filePath);
           return true;
         })
-        .catch(err => {
+        .catch((err) => {
           console.warn('File creation failed with ' + err);
           showNotification(t('core:errorCreatingFile'), 'warning', true);
         });
@@ -896,7 +896,7 @@ export const OpenedEntryContextProvider = ({
     targetPath: string,
     fileName: string,
     content: string,
-    fileType: 'md' | 'txt' | 'html'
+    fileType: 'md' | 'txt' | 'html',
   ) {
     const creationDate = new Date().toISOString();
     const fileNameAndExt = fileName + '.' + fileType;
@@ -935,12 +935,12 @@ export const OpenedEntryContextProvider = ({
         showNotification(`File '${fileNameAndExt}' created.`, 'default', true);
         return true;
       })
-      .catch(error => {
+      .catch((error) => {
         console.warn('Error creating file: ' + error);
         showNotification(
           `Error creating file '${fileNameAndExt}'`,
           'error',
-          true
+          true,
         );
       });
   }
@@ -961,7 +961,7 @@ export const OpenedEntryContextProvider = ({
         openedEntries &&
         openedEntries.length > 0 &&
         openedEntries.some(
-          file => file.path.startsWith(directoryPath)
+          (file) => file.path.startsWith(directoryPath),
           /*extractContainingDirectoryPath(
               file.path,
               PlatformIO.getDirSeparator()
@@ -978,7 +978,7 @@ export const OpenedEntryContextProvider = ({
       if (
         openedEntries &&
         openedEntries.length > 0 &&
-        openedEntries.some(file => file.path === filePath)
+        openedEntries.some((file) => file.path === filePath)
       ) {
         closeAllFiles();
       }
@@ -1007,7 +1007,7 @@ export const OpenedEntryContextProvider = ({
       createFileAdvanced,
       reflectRenameDirectory,
       reflectDeleteDirectory,
-      reflectDeleteFile
+      reflectDeleteFile,
     };
   }, [
     openedEntries,
@@ -1015,7 +1015,7 @@ export const OpenedEntryContextProvider = ({
     currentLocation,
     currentDirectoryPath,
     fileOpenHistory,
-    folderOpenHistory
+    folderOpenHistory,
   ]);
 
   return (

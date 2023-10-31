@@ -21,7 +21,7 @@ import React, {
   useEffect,
   useMemo,
   useRef,
-  useState
+  useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
@@ -30,7 +30,7 @@ import { useTranslation } from 'react-i18next';
 import {
   actions as LocationActions,
   getDefaultLocationId,
-  getLocations
+  getLocations,
 } from '-/reducers/locations';
 import PlatformIO from '-/services/platform-facade';
 import { setLocationType } from '-/services/utils-io';
@@ -52,7 +52,7 @@ type CurrentLocationContextData = {
   addLocation: (
     location: TS.Location,
     openAfterCreate?: boolean,
-    locationPosition?: number
+    locationPosition?: number,
   ) => void;
   addLocations: (arrLocations: Array<TS.Location>, override?: boolean) => void;
   openLocation: (location: TS.Location, skipInitialDirList?: boolean) => void;
@@ -90,8 +90,8 @@ export const CurrentLocationContext = createContext<CurrentLocationContextData>(
     setSelectedLocation: () => {},
     getLocationPosition: () => 0,
     locationDirectoryContextMenuAnchorEl: undefined,
-    setLocationDirectoryContextMenuAnchorEl: () => {}
-  }
+    setLocationDirectoryContextMenuAnchorEl: () => {},
+  },
 );
 
 export type CurrentLocationContextProviderProps = {
@@ -99,25 +99,24 @@ export type CurrentLocationContextProviderProps = {
 };
 
 export const CurrentLocationContextProvider = ({
-  children
+  children,
 }: CurrentLocationContextProviderProps) => {
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
   const { showNotification } = useNotificationContext();
-  const [currentLocation, setCurrentLocation] = useState<TS.Location>(
-    undefined
-  );
+  const [currentLocation, setCurrentLocation] =
+    useState<TS.Location>(undefined);
   const selectedLocation = useRef<TS.Location>(undefined);
   const skipInitialDirList = useRef<boolean>(false);
   const [
     locationDirectoryContextMenuAnchorEl,
-    setLocationDirectoryContextMenuAnchorEl
+    setLocationDirectoryContextMenuAnchorEl,
   ] = useState<null | HTMLElement>(null);
 
   const locations: TS.Location[] = useSelector(getLocations);
   const defaultLocationId = useSelector(getDefaultLocationId);
   const settingsPersistTagsInSidecarFile: boolean = useSelector(
-    getPersistTagsInSidecarFile
+    getPersistTagsInSidecarFile,
   );
 
   useEffect(() => {
@@ -141,7 +140,7 @@ export const CurrentLocationContextProvider = ({
       // check if current location exist (or is removed)
       if (currentLocation) {
         const location = locations.find(
-          location => location.uuid === currentLocation.uuid
+          (location) => location.uuid === currentLocation.uuid,
         );
         if (!location) {
           closeLocation(currentLocation.uuid);
@@ -156,9 +155,9 @@ export const CurrentLocationContextProvider = ({
 
   function setDefaultLocations() {
     PlatformIO.getDevicePaths()
-      .then(devicePaths => {
+      .then((devicePaths) => {
         if (devicePaths) {
-          Object.keys(devicePaths).forEach(key => {
+          Object.keys(devicePaths).forEach((key) => {
             addLocation(
               {
                 uuid: getUuid(),
@@ -167,21 +166,21 @@ export const CurrentLocationContextProvider = ({
                 path: devicePaths[key] as string,
                 isDefault: false, // AppConfig.isWeb && devicePaths[key] === '/files/', // Used for the web ts demo
                 isReadOnly: false,
-                disableIndexing: false
+                disableIndexing: false,
               },
-              false
+              false,
             );
           });
         }
         return true;
       })
-      .catch(ex => console.log(ex));
+      .catch((ex) => console.log(ex));
   }
 
   function addLocation(
     location: TS.Location,
     openAfterCreate = true,
-    locationPosition: number = undefined
+    locationPosition: number = undefined,
   ) {
     dispatch(LocationActions.createLocation(location, locationPosition));
     if (openAfterCreate) {
@@ -195,7 +194,7 @@ export const CurrentLocationContextProvider = ({
   function addLocations(arrLocations: Array<TS.Location>, override = true) {
     arrLocations.forEach((newLocation: TS.Location, idx, array) => {
       const locationExist: boolean = locations.some(
-        location => location.uuid === newLocation.uuid
+        (location) => location.uuid === newLocation.uuid,
       );
       const isLast = idx === array.length - 1;
       if (!locationExist) {
@@ -235,7 +234,7 @@ export const CurrentLocationContextProvider = ({
 
   const readOnlyMode: boolean = useMemo(
     () => currentLocation && currentLocation.isReadOnly,
-    [currentLocation]
+    [currentLocation],
   );
 
   const persistTagsInSidecarFile: boolean = useMemo(() => {
@@ -255,7 +254,9 @@ export const CurrentLocationContextProvider = ({
 
   function changeLocationByID(locationId: string) {
     if (!currentLocation || locationId !== currentLocation.uuid) {
-      const location = locations.find(location => location.uuid === locationId);
+      const location = locations.find(
+        (location) => location.uuid === locationId,
+      );
       if (location) {
         setCurrentLocation(location);
       }
@@ -263,7 +264,7 @@ export const CurrentLocationContextProvider = ({
   }
 
   function switchLocationTypeByID(locationId: string) {
-    const location = locations.find(location => location.uuid === locationId);
+    const location = locations.find((location) => location.uuid === locationId);
     return switchLocationType(location);
   }
 
@@ -292,7 +293,7 @@ export const CurrentLocationContextProvider = ({
   }
 
   function openLocationById(locationId: string, skipInitDirList?: boolean) {
-    const location = locations.find(location => location.uuid === locationId);
+    const location = locations.find((location) => location.uuid === locationId);
     if (location) {
       openLocation(location, skipInitDirList);
     }
@@ -300,7 +301,7 @@ export const CurrentLocationContextProvider = ({
 
   function openLocation(
     location: TS.Location,
-    skipInitDirList: boolean = false
+    skipInitDirList: boolean = false,
   ) {
     // stopWatching();
     skipInitialDirList.current = skipInitDirList;
@@ -310,18 +311,18 @@ export const CurrentLocationContextProvider = ({
           showNotification(
             t('core:connectedtoObjectStore' as any) as string,
             'default',
-            true
+            true,
           );
           //dispatch(AppActions.setReadOnlyMode(location.isReadOnly || false));
           changeLocation(location);
           return true;
         })
-        .catch(e => {
+        .catch((e) => {
           console.log('connectedtoObjectStoreFailed', e);
           showNotification(
             t('core:connectedtoObjectStoreFailed' as any) as string,
             'warning',
-            true
+            true,
           );
           PlatformIO.disableObjectStoreSupport();
         });
@@ -339,7 +340,7 @@ export const CurrentLocationContextProvider = ({
 
   function closeLocation(locationId: string) {
     if (currentLocation && currentLocation.uuid === locationId) {
-      locations.map(location => {
+      locations.map((location) => {
         if (location.uuid === locationId) {
           // location needed evtl. to unwatch many loc. root folders if available
           setCurrentLocation(undefined);
@@ -358,7 +359,7 @@ export const CurrentLocationContextProvider = ({
   }
 
   function getLocationPosition(locationId: string): number {
-    return locations.findIndex(location => location.uuid === locationId);
+    return locations.findIndex((location) => location.uuid === locationId);
   }
 
   function isCurrentLocation(uuid: string) {
@@ -386,13 +387,13 @@ export const CurrentLocationContextProvider = ({
       locationDirectoryContextMenuAnchorEl,
       setLocationDirectoryContextMenuAnchorEl,
       setSelectedLocation,
-      getLocationPosition
+      getLocationPosition,
     };
   }, [
     currentLocation,
     persistTagsInSidecarFile,
     skipInitialDirList.current,
-    locationDirectoryContextMenuAnchorEl
+    locationDirectoryContextMenuAnchorEl,
   ]);
 
   return (

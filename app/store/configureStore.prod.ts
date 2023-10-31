@@ -24,7 +24,7 @@ import onlineListener from '../services/onlineListener';
 import PlatformIO from '-/services/platform-facade';
 
 const enhancer = compose(
-  applyMiddleware(thunk) // , router)
+  applyMiddleware(thunk), // , router)
   // autoRehydrate()
 );
 

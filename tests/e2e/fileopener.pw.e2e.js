@@ -3,7 +3,7 @@ import {
   createPwMinioLocation,
   createPwLocation,
   defaultLocationName,
-  defaultLocationPath
+  defaultLocationPath,
 } from './location.helpers';
 import {
   checkSettings,
@@ -22,12 +22,12 @@ import {
   setSettings,
   takeScreenshot,
   waitForNotification,
-  writeTextInIframeInput
+  writeTextInIframeInput,
 } from './general.helpers';
 import {
   AddRemovePropertiesTags,
   getPropertiesFileName,
-  getPropertiesTags
+  getPropertiesTags,
 } from './file.properties.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
@@ -132,7 +132,7 @@ test.describe('TST08 - File folder properties', () => {
     await clickOn('[data-tid=propsActionsMenuTID]');
     await clickOn('[data-tid=openInFullWidthTID]');
     const folderSelector = await global.client.$(
-      '[data-tid=folderContainerTID]'
+      '[data-tid=folderContainerTID]',
     ); //.isHidden();
     expect(await folderSelector.isHidden()).toBe(true);
     await clickOn('[data-tid=propsActionsMenuTID]');
@@ -150,7 +150,7 @@ test.describe('TST08 - File folder properties', () => {
     // open fileProperties
     await openContextEntryMenu(
       getGridFileSelector(fileName),
-      'showPropertiesTID'
+      'showPropertiesTID',
     );
     //await clickOn(getGridFileSelector(fileName));
 
@@ -159,7 +159,7 @@ test.describe('TST08 - File folder properties', () => {
 
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
       add: true,
-      remove: false
+      remove: false,
     });
     const propsFileName = await getPropertiesFileName();
     expect(propsFileName).toBe(fileName);
@@ -169,7 +169,7 @@ test.describe('TST08 - File folder properties', () => {
     await clickOn('[data-tid=confirmRenameEntryTID]');
 
     await global.client.waitForSelector(
-      '[data-tid=fileNameProperties] input[value="' + newTitle + '"]'
+      '[data-tid=fileNameProperties] input[value="' + newTitle + '"]',
     );
     const propsNewFileName = await getPropertiesFileName();
     expect(propsNewFileName).toBe(newTitle);
@@ -199,7 +199,7 @@ test.describe('TST08 - File folder properties', () => {
     const fileName = 'sample.svg';
     await openContextEntryMenu(
       getGridFileSelector(fileName),
-      'showPropertiesTID'
+      'showPropertiesTID',
     );
     /*await clickOn(selectorFile);
     await clickOn('[data-tid=detailsTabTID]');*/
@@ -213,7 +213,7 @@ test.describe('TST08 - File folder properties', () => {
     const fileName = 'sample.bmp';
     await openContextEntryMenu(
       getGridFileSelector(fileName),
-      'showPropertiesTID'
+      'showPropertiesTID',
     );
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2']);
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
@@ -224,18 +224,18 @@ test.describe('TST08 - File folder properties', () => {
     await clickOn('[data-tid=tagLibrary]');
     await dnd(
       '[data-tid=tagContainer_' + tagName + ']',
-      getGridFileSelector('sample.txt')
+      getGridFileSelector('sample.txt'),
     );
     await expectElementExist(
       '[data-tid=tagContainer_' + tagName + ']',
       true,
       8000,
-      '[data-tid=perspectiveGridFileTable]'
+      '[data-tid=perspectiveGridFileTable]',
     );
 
     await openContextEntryMenu(
       getGridFileSelector('sample[' + tagName + '].txt'),
-      'showPropertiesTID'
+      'showPropertiesTID',
     );
 
     //await clickOn(getGridFileSelector('sample[' + tagName + '].txt'));
@@ -267,10 +267,10 @@ test.describe('TST08 - File folder properties', () => {
     await clickOn('[data-tid=descriptionTID]');
 
     const editor = await global.client.waitForSelector(
-      '[data-tid=descriptionTID] [contenteditable=true]'
+      '[data-tid=descriptionTID] [contenteditable=true]',
     );
     await editor.type(desc, {
-      delay: 0
+      delay: 0,
     });
 
     await clickOn('[data-tid=editDescriptionTID]');
@@ -278,7 +278,7 @@ test.describe('TST08 - File folder properties', () => {
       '[data-tid=gridCellDescription]',
       true,
       10000,
-      fileSelector
+      fileSelector,
     );
   });
 
@@ -319,14 +319,14 @@ test.describe('TST08 - File folder properties', () => {
     await createFile(fileName, svg);
     await openContextEntryMenu(
       getGridFileSelector('empty_folder'),
-      'showProperties'
+      'showProperties',
     );
     await global.client.dblclick(getGridFileSelector('empty_folder'));
     await expectElementExist(getGridFileSelector(fileName));
     //await clickOn(getGridFileSelector(fileName));
     await openContextEntryMenu(
       getGridFileSelector(fileName),
-      'showPropertiesTID' //'fileMenuOpenFile'
+      'showPropertiesTID', //'fileMenuOpenFile'
     );
 
     //Toggle Properties
@@ -335,7 +335,7 @@ test.describe('TST08 - File folder properties', () => {
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
       add: true,
-      remove: false
+      remove: false,
     });
     const arrayMeta =
       global.isWeb || global.isMinio
@@ -419,7 +419,7 @@ test.describe('TST08 - File folder properties', () => {
     await clickOn('[data-tid=detailsTabTID]');
 
     const sharingLink = await global.client.$(
-      '[data-tid=sharingLinkTID] input'
+      '[data-tid=sharingLinkTID] input',
     );
     const sharingLinkValue = await sharingLink.getAttribute('value');
 
@@ -432,7 +432,7 @@ test.describe('TST08 - File folder properties', () => {
     await expectElementExist(
       '[data-tid=OpenedTID' + dataTidFormat(fileName) + ']',
       true,
-      5000
+      5000,
     );
   });
 });

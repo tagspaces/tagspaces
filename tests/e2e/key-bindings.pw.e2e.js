@@ -8,7 +8,7 @@ import {
   expectElementExist,
   selectorFile,
   setInputValue,
-  takeScreenshot
+  takeScreenshot,
 } from './general.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage } from './welcome.helpers';

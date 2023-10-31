@@ -2,47 +2,47 @@ export default function keyBindings(isMacLike) {
   return [
     {
       name: 'selectAll',
-      command: (isMacLike ? 'command' : 'ctrl') + '+a'
+      command: (isMacLike ? 'command' : 'ctrl') + '+a',
     },
     {
       name: 'closeViewer',
-      command: (isMacLike ? 'command' : 'ctrl') + '+w'
+      command: (isMacLike ? 'command' : 'ctrl') + '+w',
     },
     {
       name: 'saveDocument',
-      command: (isMacLike ? 'command' : 'ctrl') + '+s'
+      command: (isMacLike ? 'command' : 'ctrl') + '+s',
     },
     {
       name: 'reloadDocument',
-      command: (isMacLike ? 'command' : 'ctrl') + '+r'
+      command: (isMacLike ? 'command' : 'ctrl') + '+r',
     },
     {
       name: 'editDocument',
-      command: (isMacLike ? 'command' : 'ctrl') + '+e'
+      command: (isMacLike ? 'command' : 'ctrl') + '+e',
     },
     {
       name: 'deleteDocument',
-      command: 'del'
+      command: 'del',
     },
     {
       name: 'showLocationManager',
-      command: (isMacLike ? 'command' : 'ctrl') + '+1'
+      command: (isMacLike ? 'command' : 'ctrl') + '+1',
     },
     {
       name: 'showTagLibrary',
-      command: (isMacLike ? 'command' : 'ctrl') + '+2'
+      command: (isMacLike ? 'command' : 'ctrl') + '+2',
     },
     {
       name: 'showSearch',
-      command: (isMacLike ? 'command' : 'ctrl') + '+3'
+      command: (isMacLike ? 'command' : 'ctrl') + '+3',
     },
     {
       name: 'toggleShowHiddenEntries',
-      command: (isMacLike ? 'command' : 'ctrl') + '+h'
+      command: (isMacLike ? 'command' : 'ctrl') + '+h',
     },
     {
       name: 'addRemoveTags',
-      command: (isMacLike ? 'command' : 'ctrl') + '+t'
+      command: (isMacLike ? 'command' : 'ctrl') + '+t',
     },
     /* {
     name: 'propertiesDocument',
@@ -50,19 +50,19 @@ export default function keyBindings(isMacLike) {
   }, */
     {
       name: 'nextDocument',
-      command: 'down'
+      command: 'down',
     },
     {
       name: 'prevDocument',
-      command: 'up'
+      command: 'up',
     },
     {
       name: 'Escape',
-      command: 'Escape'
+      command: 'Escape',
     },
     {
       name: 'showHelp',
-      command: 'f1'
+      command: 'f1',
     },
     // {
     //   name: 'reloadApplication',
@@ -70,7 +70,7 @@ export default function keyBindings(isMacLike) {
     // },
     {
       name: 'toggleFullScreen',
-      command: 'f11'
+      command: 'f11',
     },
     // {
     //   name: 'openDevTools',
@@ -78,31 +78,31 @@ export default function keyBindings(isMacLike) {
     // },
     {
       name: 'openSearch',
-      command: (isMacLike ? 'command' : 'ctrl') + '+f'
+      command: (isMacLike ? 'command' : 'ctrl') + '+f',
     },
     {
       name: 'renameFile',
-      command: 'f2'
+      command: 'f2',
     },
     {
       name: 'openEntry',
-      command: 'alt+enter'
+      command: 'alt+enter',
     },
     {
       name: 'openParentDirectory',
-      command: 'backspace'
+      command: 'backspace',
     },
     {
       name: 'openFileExternally',
-      command: (isMacLike ? 'command' : 'ctrl') + '+enter'
+      command: (isMacLike ? 'command' : 'ctrl') + '+enter',
     },
     {
       name: 'zoomIn',
-      command: (isMacLike ? 'command' : 'ctrl') + '+shift+'
+      command: (isMacLike ? 'command' : 'ctrl') + '+shift+',
     },
     {
       name: 'zoomOut',
-      command: (isMacLike ? 'command' : 'ctrl') + '+-'
-    }
+      command: (isMacLike ? 'command' : 'ctrl') + '+-',
+    },
   ];
 }

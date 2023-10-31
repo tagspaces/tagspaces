@@ -29,12 +29,12 @@ import {
   actions as SettingsActions,
   getEntryContainerTab,
   getMapTileServer,
-  isDesktopMode
+  isDesktopMode,
 } from '-/reducers/settings';
 import {
   FolderPropertiesIcon,
   DescriptionIcon,
-  RevisionIcon
+  RevisionIcon,
 } from '-/components/CommonIcons';
 import EditDescription from '-/components/EditDescription';
 import { useTranslation } from 'react-i18next';
@@ -57,13 +57,13 @@ const StyledTabs = styled((props: StyledTabsProps) => (
   '& .MuiTabs-indicator': {
     display: 'flex',
     justifyContent: 'center',
-    backgroundColor: 'transparent'
+    backgroundColor: 'transparent',
   },
   '& .MuiTabs-indicatorSpan': {
     maxWidth: 40,
     width: '100%',
-    backgroundColor: theme.palette.text.primary //theme.palette.background.default //'#635ee7',
-  }
+    backgroundColor: theme.palette.text.primary, //theme.palette.background.default //'#635ee7',
+  },
 }));
 
 interface StyledTabProps {
@@ -80,13 +80,13 @@ const StyledTab = styled((props: StyledTabProps) => (
   fontSize: theme.typography.pxToRem(15),
   marginRight: theme.spacing(1),
   minHeight: 50,
-  maxHeight: 50
+  maxHeight: 50,
 }));
 
 function a11yProps(index: number) {
   return {
     id: `tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`
+    'aria-controls': `simple-tabpanel-${index}`,
   };
 }
 
@@ -112,7 +112,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     toggleProperties,
     marginRight,
     isEditable,
-    isPanelOpened
+    isPanelOpened,
   } = props;
 
   const { t } = useTranslation();
@@ -138,7 +138,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
           overflowX: 'hidden',
           paddingTop: 5,
           paddingLeft: 10,
-          paddingRight: 10
+          paddingRight: 10,
         }}
       >
         {value === index && children}
@@ -180,7 +180,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
           openedFile.isFile && !isPanelOpened
             ? '1px solid ' + theme.palette.divider
             : 'none',
-        minHeight: 53
+        minHeight: 53,
       }}
     >
       <Box sx={{ ...(marginRight && { marginRight }) }}>

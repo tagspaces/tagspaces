@@ -34,10 +34,11 @@ import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import LocationContextMenu from '-/components/menus/LocationContextMenu';
 
-const CreateEditLocationDialog = React.lazy(() =>
-  import(
-    /* webpackChunkName: "CreateEditLocationDialog" */ './dialogs/CreateEditLocationDialog'
-  )
+const CreateEditLocationDialog = React.lazy(
+  () =>
+    import(
+      /* webpackChunkName: "CreateEditLocationDialog" */ './dialogs/CreateEditLocationDialog'
+    ),
 );
 function CreateEditLocationDialogAsync(props) {
   return (
@@ -67,24 +68,19 @@ function LocationManager(props: Props) {
     addLocations,
     editLocation,
     selectedLocation,
-    locationDirectoryContextMenuAnchorEl
+    locationDirectoryContextMenuAnchorEl,
   } = useCurrentLocationContext();
   const locations: Array<TS.Location> = useSelector(getLocations);
   // const loading: boolean = useSelector(isLoading);
   //const language: string = useSelector(getCurrentLanguage);
   const fileInputRef = useRef<HTMLInputElement>(null);
   //const selectedLocation = useRef<TS.Location>(null);
-  const [isEditLocationDialogOpened, setEditLocationDialogOpened] = useState<
-    boolean
-  >(false);
-  const [
-    isDeleteLocationDialogOpened,
-    setDeleteLocationDialogOpened
-  ] = useState<boolean>(false);
-  const [
-    isExportLocationsDialogOpened,
-    setExportLocationsDialogOpened
-  ] = useState<boolean>(false);
+  const [isEditLocationDialogOpened, setEditLocationDialogOpened] =
+    useState<boolean>(false);
+  const [isDeleteLocationDialogOpened, setDeleteLocationDialogOpened] =
+    useState<boolean>(false);
+  const [isExportLocationsDialogOpened, setExportLocationsDialogOpened] =
+    useState<boolean>(false);
   const [importFile, setImportFile] = useState<File>(undefined);
 
   const ExportLocationsDialog =
@@ -103,14 +99,17 @@ function LocationManager(props: Props) {
     target.value = null;
   }
 
-  const onDragEnd = result => {
+  const onDragEnd = (result) => {
     // dropped outside the list
     if (!result.destination) {
       return;
     }
 
     dispatch(
-      LocationActions.moveLocation(result.draggableId, result.destination.index)
+      LocationActions.moveLocation(
+        result.draggableId,
+        result.destination.index,
+      ),
     );
   };
 
@@ -119,15 +118,16 @@ function LocationManager(props: Props) {
     <SidePanel
       style={{
         display: show ? 'flex' : 'none',
-        flexDirection: 'column'
+        flexDirection: 'column',
       }}
     >
-      {//loading &&
-      (PlatformIO.haveObjectStoreSupport() ||
-        PlatformIO.haveWebDavSupport()) && (
-        <>
-          <style>
-            {`
+      {
+        //loading &&
+        (PlatformIO.haveObjectStoreSupport() ||
+          PlatformIO.haveWebDavSupport()) && (
+          <>
+            <style>
+              {`
                 @keyframes hide {
                   to {
                       width: 0;
@@ -135,22 +135,23 @@ function LocationManager(props: Props) {
                 }
               }
             `}
-          </style>
-          <div
-            style={{
-              position: 'absolute',
-              zIndex: 1000,
-              height: 'calc(100% - 180px)',
-              width: 310,
-              backdropFilter: 'grayscale(1)',
-              animation: 'hide 1ms linear 5s 1 forwards'
-              // backgroundColor: 'red'
-              // backdropFilter: 'blur(2px)',
-              // backgroundColor: '#fafafaAA' // red: '#eb585882' '#d9d9d980'
-            }}
-          />
-        </>
-      )}
+            </style>
+            <div
+              style={{
+                position: 'absolute',
+                zIndex: 1000,
+                height: 'calc(100% - 180px)',
+                width: 310,
+                backdropFilter: 'grayscale(1)',
+                animation: 'hide 1ms linear 5s 1 forwards',
+                // backgroundColor: 'red'
+                // backdropFilter: 'blur(2px)',
+                // backgroundColor: '#fafafaAA' // red: '#eb585882' '#d9d9d980'
+              }}
+            />
+          </>
+        )
+      }
       <LocationManagerMenu
         importLocations={() => {
           fileInputRef.current.click();
@@ -175,7 +176,7 @@ function LocationManager(props: Props) {
         style={{
           height: 'calc(100% - ' + reduceHeightBy + 'px)',
           borderRadius: 5,
-          overflowY: 'auto'
+          overflowY: 'auto',
         }}
       >
         <DragDropContext onDragEnd={onDragEnd}>
@@ -236,7 +237,7 @@ function LocationManager(props: Props) {
           open={isEditLocationDialogOpened}
           onClose={() => setEditLocationDialogOpened(false)}
           /*location={selectedLocation.current}*/
-          editLocation={location => editLocation(location)}
+          editLocation={(location) => editLocation(location)}
         />
       )}
       {isDeleteLocationDialogOpened && (
@@ -245,9 +246,9 @@ function LocationManager(props: Props) {
           onClose={() => setDeleteLocationDialogOpened(false)}
           title={t('core:deleteLocationTitleAlert')}
           content={t('core:deleteLocationContentAlert', {
-            locationName: selectedLocation ? selectedLocation.name : ''
+            locationName: selectedLocation ? selectedLocation.name : '',
           })}
-          confirmCallback={result => {
+          confirmCallback={(result) => {
             if (result && selectedLocation) {
               dispatch(LocationActions.deleteLocation(selectedLocation));
             }
@@ -260,7 +261,7 @@ function LocationManager(props: Props) {
         <ExportLocationsDialog
           open={isExportLocationsDialogOpened}
           onClose={() => setExportLocationsDialogOpened(false)}
-          locations={locations.filter(location => !location.isNotEditable)}
+          locations={locations.filter((location) => !location.isNotEditable)}
         />
       )}
       {ImportLocationsDialog && importFile && (
@@ -268,7 +269,7 @@ function LocationManager(props: Props) {
           open={Boolean(importFile)}
           onClose={() => setImportFile(undefined)}
           importFile={importFile}
-          addLocations={loc => addLocations(loc)}
+          addLocations={(loc) => addLocations(loc)}
           locations={locations}
         />
       )}

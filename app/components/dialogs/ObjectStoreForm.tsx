@@ -73,7 +73,7 @@ export const regions = [
   'me-south-1',
   // 'cn-north-1',
   // 'cn-northwest-1',
-  'sa-east-1'
+  'sa-east-1',
 ];
 
 interface Props {
@@ -127,7 +127,7 @@ function ObjectStoreForm(props: Props) {
     setSessionToken,
     setBucketName,
     setEndpointURL,
-    setRegion
+    setRegion,
   } = props;
   const { t } = useTranslation();
 
@@ -154,7 +154,7 @@ function ObjectStoreForm(props: Props) {
             inputProps={{ autoCorrect: 'off' }}
             fullWidth={true}
             data-tid="locationName"
-            onChange={event => setStoreName(event.target.value)}
+            onChange={(event) => setStoreName(event.target.value)}
             value={storeName}
             label={t('core:createLocationName')}
           />
@@ -171,7 +171,7 @@ function ObjectStoreForm(props: Props) {
             fullWidth={true}
             inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
             data-tid="locationPath"
-            onChange={event => setStorePath(event.target.value)}
+            onChange={(event) => setStorePath(event.target.value)}
             value={storePath}
             label={t('core:createLocationPath')}
           />
@@ -189,7 +189,7 @@ function ObjectStoreForm(props: Props) {
             fullWidth={true}
             data-tid="accessKeyId"
             inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
-            onChange={event => setAccessKeyId(event.target.value)}
+            onChange={(event) => setAccessKeyId(event.target.value)}
             value={accessKeyId}
             label={t('core:accessKeyId')}
           />
@@ -208,7 +208,7 @@ function ObjectStoreForm(props: Props) {
             fullWidth={true}
             data-tid="secretAccessKey"
             inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
-            onChange={event => setSecretAccessKey(event.target.value)}
+            onChange={(event) => setSecretAccessKey(event.target.value)}
             value={secretAccessKey}
             label={t('core:secretAccessKey')}
             InputProps={{
@@ -222,7 +222,7 @@ function ObjectStoreForm(props: Props) {
                     {showSecretAccessKey ? <Visibility /> : <VisibilityOff />}
                   </IconButton>
                 </InputAdornment>
-              )
+              ),
             }}
           />
           {/* {state.cloudErrorSecretAccessKey && (
@@ -240,7 +240,7 @@ function ObjectStoreForm(props: Props) {
             fullWidth={true}
             data-tid="sessionTokenTID"
             inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
-            onChange={event => setSessionToken(event.target.value)}
+            onChange={(event) => setSessionToken(event.target.value)}
             value={sessionToken}
             label={t('core:sessionToken')}
           />
@@ -254,7 +254,7 @@ function ObjectStoreForm(props: Props) {
             fullWidth={true}
             data-tid="bucketName"
             inputProps={{ autoCorrect: 'off', autoCapitalize: 'none' }}
-            onChange={event => setBucketName(event.target.value)}
+            onChange={(event) => setBucketName(event.target.value)}
             value={bucketName}
             label={t('core:bucketName')}
           />
@@ -273,7 +273,7 @@ function ObjectStoreForm(props: Props) {
             fullWidth={true}
             data-tid="endpointURL"
             placeholder={t('s3serviceURL')}
-            onChange={event => setEndpointURL(event.target.value)}
+            onChange={(event) => setEndpointURL(event.target.value)}
             value={endpointURL}
             label={t('core:endpointURL')}
           />
@@ -291,7 +291,7 @@ function ObjectStoreForm(props: Props) {
             onChange={handleRegionChange}
             onInputChange={handleRegionChange}
             placeholder={t('core:regionSearch')}
-            renderInput={params => (
+            renderInput={(params) => (
               <TextField
                 {...params}
                 label={t('core:regionSearch')}

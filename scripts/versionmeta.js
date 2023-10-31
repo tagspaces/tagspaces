@@ -23,8 +23,8 @@ sh.exec(
         version +
         '", "name": "' +
         productName +
-        '"}'
+        '"}',
     ).to('app/version.json');
     // sh.sed('-i', 'BUILD_VERSION', 'v0.1.2', file);
-  }
+  },
 );

@@ -19,7 +19,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   getBackupFileLocation,
-  extractContainingDirectoryPath
+  extractContainingDirectoryPath,
 } from '@tagspaces/tagspaces-common/paths';
 import Tooltip from '-/components/Tooltip';
 import { OpenedEntry } from '-/reducers/app';
@@ -39,7 +39,7 @@ import {
   TableContainer,
   TableHead,
   TablePagination,
-  TableRow
+  TableRow,
 } from '@mui/material';
 import { Pro } from '-/pro';
 import FilePreviewDialog from '-/components/dialogs/FilePreviewDialog';
@@ -56,9 +56,8 @@ function Revisions() {
   const { copyFilePromiseOverwrite } = usePlatformFacadeContext();
   const [rows, setRows] = useState<Array<TS.FileSystemEntry>>([]);
   const [page, setPage] = useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState<number>(
-    initialRowsPerPage
-  );
+  const [rowsPerPage, setRowsPerPage] =
+    React.useState<number>(initialRowsPerPage);
   const [previewDialogEntry, setPreviewDialogEntry] = useState<
     TS.FileSystemEntry | undefined
   >(undefined);
@@ -75,21 +74,21 @@ function Revisions() {
   function loadHistoryItems(openedFile: OpenedEntry) {
     if (Pro) {
       Pro.MetaOperations.getMetadataID(openedFile.path, openedFile.uuid).then(
-        id => {
+        (id) => {
           openedFile.uuid = id;
           const backupFilePath = getBackupFileLocation(
             openedFile.path,
             openedFile.uuid,
-            PlatformIO.getDirSeparator()
+            PlatformIO.getDirSeparator(),
           );
           const backupPath = extractContainingDirectoryPath(
             backupFilePath,
-            PlatformIO.getDirSeparator()
+            PlatformIO.getDirSeparator(),
           );
-          PlatformIO.listDirectoryPromise(backupPath, []).then(h =>
-            setRows(h.sort((a, b) => (a.lmdt < b.lmdt ? 1 : -1)))
+          PlatformIO.listDirectoryPromise(backupPath, []).then((h) =>
+            setRows(h.sort((a, b) => (a.lmdt < b.lmdt ? 1 : -1))),
           );
-        }
+        },
       );
     }
   }
@@ -99,7 +98,7 @@ function Revisions() {
   };
 
   const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
@@ -107,14 +106,14 @@ function Revisions() {
 
   function deleteRevision(path) {
     PlatformIO.deleteFilePromise(path, true).then(() =>
-      loadHistoryItems(openedEntries[0])
+      loadHistoryItems(openedEntries[0]),
     );
   }
 
   function deleteRevisions() {
     if (rows.length > 0) {
-      const promises = rows.map(row =>
-        PlatformIO.deleteFilePromise(row.path, true)
+      const promises = rows.map((row) =>
+        PlatformIO.deleteFilePromise(row.path, true),
       );
       Promise.all(promises).then(() => loadHistoryItems(openedEntries[0]));
     }
@@ -125,7 +124,7 @@ function Revisions() {
     const targetPath = getBackupFileLocation(
       openedFile.path,
       openedFile.uuid,
-      PlatformIO.getDirSeparator()
+      PlatformIO.getDirSeparator(),
     );
     return copyFilePromiseOverwrite(openedFile.path, targetPath).then(() =>
       copyFilePromiseOverwrite(revisionPath, openedFile.path).then(() =>
@@ -133,9 +132,9 @@ function Revisions() {
           id: '',
           ...openedFile,
           editMode: false,
-          shouldReload: !openedFile.shouldReload
-        })
-      )
+          shouldReload: !openedFile.shouldReload,
+        }),
+      ),
     );
   }
   function titleFormat(lmdt) {
@@ -146,7 +145,7 @@ function Revisions() {
     return lmdt
       ? formatDistanceToNow(lmdt, {
           includeSeconds: true,
-          addSuffix: true
+          addSuffix: true,
           // locale: https://date-fns.org/v2.29.3/docs/formatDistanceToNow#usage
         })
       : '';
@@ -154,7 +153,7 @@ function Revisions() {
 
   const paginatedRows = React.useMemo(
     () => rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-    [rows, page, rowsPerPage]
+    [rows, page, rowsPerPage],
   );
 
   return (
@@ -176,7 +175,7 @@ function Revisions() {
         component={Paper}
         sx={{
           maxHeight: '100%',
-          overflowY: 'auto'
+          overflowY: 'auto',
         }}
       >
         <Table
@@ -195,7 +194,7 @@ function Revisions() {
                     aria-label="delete all revisions"
                     onClick={() =>
                       confirm(
-                        'The all revisions will be deleted. Do you want to continue?'
+                        'The all revisions will be deleted. Do you want to continue?',
                       ) && deleteRevisions()
                     }
                     data-tid="deleteRevisionsTID"
@@ -210,7 +209,7 @@ function Revisions() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {paginatedRows.map(row => (
+            {paginatedRows.map((row) => (
               <TableRow
                 data-tid={openedEntries[0].uuid}
                 key={row.path}

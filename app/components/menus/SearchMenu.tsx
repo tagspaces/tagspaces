@@ -62,7 +62,7 @@ function SearchMenu(props: Props) {
           </>
         }
       />
-    </MenuItem>
+    </MenuItem>,
   );
   menuItems.push(
     <MenuItem
@@ -85,7 +85,7 @@ function SearchMenu(props: Props) {
           </>
         }
       />
-    </MenuItem>
+    </MenuItem>,
   );
   menuItems.push(
     <MenuItem
@@ -100,7 +100,7 @@ function SearchMenu(props: Props) {
         <HelpIcon />
       </ListItemIcon>
       <ListItemText primary={t('core:help')} />
-    </MenuItem>
+    </MenuItem>,
   );
 
   return (
