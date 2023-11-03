@@ -174,6 +174,7 @@ function StoredSearches(props: Props) {
           paddingTop: 0,
           marginTop: 0,
           height: 'calc(100% - ' + reduceHeightBy + 'px)',
+          width: 305,
           overflowY: 'auto',
           overflowX: 'hidden',
         }}

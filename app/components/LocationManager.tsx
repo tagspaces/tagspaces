@@ -54,13 +54,6 @@ interface Props {
   show: boolean;
 }
 
-type SubFolder = {
-  uuid: string;
-  name: string;
-  path: string;
-  children?: Array<SubFolder>;
-};
-
 function LocationManager(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
@@ -140,7 +133,7 @@ function LocationManager(props: Props) {
               style={{
                 position: 'absolute',
                 zIndex: 1000,
-                height: 'calc(100% - 180px)',
+                height: 'calc(100% - 150px)',
                 width: 310,
                 backdropFilter: 'grayscale(1)',
                 animation: 'hide 1ms linear 5s 1 forwards',
@@ -175,6 +168,7 @@ function LocationManager(props: Props) {
         data-tid="locationList"
         style={{
           height: 'calc(100% - ' + reduceHeightBy + 'px)',
+          width: 310,
           borderRadius: 5,
           overflowY: 'auto',
         }}

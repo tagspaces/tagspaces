@@ -42,11 +42,20 @@ function NewAudioDialog(props: Props) {
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+
+  function intOnClose(event?: any, reason?: any) {
+    if (reason === 'escapeKeyDown' || reason === 'backdropClick') {
+      confirm(t('confirmDialogClosing')) && onClose();
+    } else {
+      onClose();
+    }
+  }
+
   return (
     <TargetPathContextProvider>
       <Dialog
         open={open}
-        onClose={onClose}
+        onClose={intOnClose}
         fullScreen={fullScreen}
         keepMounted
         aria-labelledby="draggable-dialog-title"
@@ -55,7 +64,12 @@ function NewAudioDialog(props: Props) {
       >
         <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
           {t('core:audioRecorder')}
-          <DialogCloseButton testId="closeCreateDialogTID" onClose={onClose} />
+          <DialogCloseButton
+            testId="closeCreateDialogTID"
+            onClose={() => {
+              intOnClose(undefined, 'escapeKeyDown');
+            }}
+          />
         </DialogTitle>
         <DialogContent
           style={{
@@ -66,7 +80,7 @@ function NewAudioDialog(props: Props) {
           }}
           data-tid="keyboardShortCutsDialog"
         >
-          <CreateAudio onClose={onClose} />
+          <CreateAudio onClose={intOnClose} />
         </DialogContent>
       </Dialog>
     </TargetPathContextProvider>

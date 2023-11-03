@@ -539,6 +539,7 @@ function TagLibrary(props: Props) {
           marginTop: 0,
           borderRadius: 5,
           height: 'calc(100% - ' + reduceHeightBy + 'px)',
+          width: 310,
           overflowY: 'auto',
         }}
         data-tid="tagLibraryTagGroupList"

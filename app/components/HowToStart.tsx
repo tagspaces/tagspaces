@@ -339,7 +339,7 @@ function HowToStart() {
               <Box sx={{ mb: 2 }}>
                 <div>
                   <Button
-                    variant="contained"
+                    // variant="contained"
                     onClick={handleNext}
                     sx={{ mt: 1, mr: 1 }}
                   >

@@ -806,11 +806,13 @@
   "details": "Details",
   "editDisabled": "Editing the description is disabled while editing the current file",
   "togglePreviewSize": "Toggle file preview size",
-  "newAudioRecording": "New Audio Recording",
+  "newAudioRecording": "Record Audio",
   "audioRecorder": "Audio Recorder",
-  "startRecording": "Start recording",
-  "pauseRecording": "Pause recording",
-  "resumeRecording": "Resume recording",
-  "stopRecording": "Stop recording",
+  "startRecording": "Start Recording",
+  "pauseRecording": "Pause Recording",
+  "resumeRecording": "Resume Recording",
+  "stopRecording": "Stop and save recording",
+  "createNewFile": "Create New File",
+  "confirmDialogClosing": "Do you want to close this dialog?",
   "-": "-"
 }
