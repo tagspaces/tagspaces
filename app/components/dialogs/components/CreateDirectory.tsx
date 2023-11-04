@@ -196,6 +196,20 @@ function CreateDirectory(props: Props) {
         </Button>
       </Grid>
       <Grid style={{ marginTop: 20 }} item xs={12}>
+        <Button
+          variant="outlined"
+          onClick={() => {
+            onClose();
+            dispatch(AppActions.toggleNewAudioDialog());
+          }}
+          className={classes.createButton}
+          data-tid={tid('newSubDirTID')}
+          disabled={noSuitableLocation}
+        >
+          {t('core:newAudioRecording')}
+        </Button>
+      </Grid>
+      <Grid style={{ marginTop: 20 }} item xs={12}>
         <Tooltip title={t('core:addFilesTitle')}>
           <Button
             variant="outlined"

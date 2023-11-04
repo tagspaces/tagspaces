@@ -21,7 +21,6 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import CreateLocationIcon from '@mui/icons-material/CreateNewFolder';
 import ExportImportIcon from '@mui/icons-material/SwapHoriz';
 import CloseIcon from '@mui/icons-material/Close';
 import UpdateIndexIcon from '@mui/icons-material/Update';
@@ -35,7 +34,11 @@ import { Pro } from '../../pro';
 import { AppDispatch } from '-/reducers/app';
 import Links from '-/content/links';
 import { ProLabel } from '-/components/HelperComponents';
-import { OpenLinkIcon, HelpIcon } from '-/components/CommonIcons';
+import {
+  OpenLinkIcon,
+  HelpIcon,
+  LocalLocationIcon,
+} from '-/components/CommonIcons';
 import { openURLExternally } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -76,7 +79,7 @@ function LocationManagerMenu(props: Props) {
         }}
       >
         <ListItemIcon>
-          <CreateLocationIcon />
+          <LocalLocationIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:createLocationTitle')} />
       </MenuItem>,

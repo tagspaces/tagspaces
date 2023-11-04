@@ -17,7 +17,6 @@
  */
 
 import React from 'react';
-
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import CardActions from '@mui/material/CardActions';
@@ -25,7 +24,7 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
 import ProTeaserImage from '-/assets/images/pro-teaser.svg';
-import ProTextLogo from '-/assets/images/text-logo-pro.svg';
+import ProTextLogo from '-/assets/images/text-logo.svg';
 import Links from '-/content/links';
 import { openURLExternally } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
@@ -65,7 +64,8 @@ function ProTeaser(props: Props) {
           </IconButton>
         </Typography>
         <br />
-        <img style={{ height: 35 }} src={ProTextLogo} alt="" />
+        <b>TagSpaces Pro</b>
+        {/* <img style={{ height: 35 }} src={ProTextLogo} alt="" /> */}
         <br />
         <img style={{ maxHeight: 60 }} src={ProTeaserImage} alt="" />
       </CardContent>

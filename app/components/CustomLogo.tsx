@@ -23,7 +23,7 @@ import Box from '@mui/material/Box';
 import Tooltip from '-/components/Tooltip';
 import AppConfig from '-/AppConfig';
 import { Pro } from '../pro';
-import TextLogoIcon from '../assets/images/text-logo-pro.svg';
+import TextLogoIcon from '../assets/images/text-logo.svg';
 import WebLogoIcon from '../assets/images/text-logo-web.svg';
 import LogoIcon from '../assets/images/icon100x100.svg';
 import versionMeta from '../version.json';
@@ -34,9 +34,10 @@ import { Typography } from '@mui/material';
 function CustomLogo() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const tsType = Pro ? 'PRO' : 'LITE';
 
   const logo = useMemo(() => {
-    let customLogo = TextLogoIcon; //Pro ? Pro.TextLogoIcon : TextLogoIcon;
+    let customLogo = TextLogoIcon;
     if (AppConfig.isWeb) {
       customLogo = WebLogoIcon;
     }
@@ -47,15 +48,16 @@ function CustomLogo() {
   }, []);
 
   return (
-    <Box style={{ width: '100%', textAlign: 'center', marginBottom: 5 }}>
+    <Box
+      onClick={() => dispatch(actions.toggleAboutDialog())}
+      style={{ width: '100%', textAlign: 'center' }}
+    >
       <Tooltip title={t('core:aboutTitle')}>
-        <IconButton
-          onClick={() => dispatch(actions.toggleAboutDialog())}
-          style={{ padding: 0, height: 30 }}
-        >
+        <IconButton style={{ padding: 0 }}>
           <img
             style={{
               width: 30,
+              height: 30,
             }}
             src={LogoIcon}
             alt="TagSpaces Logo"
@@ -66,10 +68,9 @@ function CustomLogo() {
         <IconButton
           style={{ height: 40, padding: 0 }}
           data-tid="aboutTagSpaces"
-          onClick={() => dispatch(actions.toggleAboutDialog())}
         >
           <img
-            style={{ maxHeight: 40, maxWidth: 200 }}
+            style={{ maxHeight: 26, maxWidth: 200 }}
             src={logo}
             alt="TagSpaces"
           />
@@ -77,11 +78,28 @@ function CustomLogo() {
       </Tooltip>
       <sup>
         <Typography
-          style={{ display: 'inline', fontSize: 'small', marginLeft: 0 }}
+          style={{
+            display: 'inline',
+            fontSize: 'small',
+            marginLeft: 3,
+            lineHeight: '40px',
+          }}
         >
           {'v' + versionMeta.version}
         </Typography>
       </sup>
+      <sub>
+        <Typography
+          style={{
+            display: 'inline',
+            fontSize: 'small',
+            marginLeft: -30,
+            lineHeight: '40px',
+          }}
+        >
+          {tsType}
+        </Typography>
+      </sub>
     </Box>
   );
 }
