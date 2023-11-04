@@ -212,11 +212,12 @@ export function getDirectoryMenuItems(
         </MenuItem>,
       );
     }
-    if (Pro && createNewAudio) {
+    if (createNewAudio) {
       menuItems.push(
         <MenuItem
           key="createNewAudio"
           data-tid="createNewAudioTID"
+          disabled={!Pro}
           onClick={() => {
             onClose();
             createNewAudio();

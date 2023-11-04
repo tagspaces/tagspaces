@@ -36,6 +36,8 @@ import FileUploadContainer, {
 import { useTranslation } from 'react-i18next';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { Pro } from '-/pro';
+import { BetaLabel, ProLabel } from '-/components/HelperComponents';
 
 const PREFIX = 'CreateDirectory';
 
@@ -198,15 +200,16 @@ function CreateDirectory(props: Props) {
       <Grid style={{ marginTop: 20 }} item xs={12}>
         <Button
           variant="outlined"
+          disabled={!Pro || noSuitableLocation}
           onClick={() => {
             onClose();
             dispatch(AppActions.toggleNewAudioDialog());
           }}
           className={classes.createButton}
           data-tid={tid('newSubDirTID')}
-          disabled={noSuitableLocation}
         >
           {t('core:newAudioRecording')}
+          {Pro ? <BetaLabel /> : <ProLabel />}
         </Button>
       </Grid>
       <Grid style={{ marginTop: 20 }} item xs={12}>

@@ -287,6 +287,7 @@ function MobileNavigation(props: Props) {
                     <MenuItem
                       key="createNewAudio"
                       data-tid="createNewAudioTID"
+                      disabled={!Pro}
                       onClick={() => {
                         dispatch(AppActions.toggleNewAudioDialog());
                         setOpenCreateMenu(false);
