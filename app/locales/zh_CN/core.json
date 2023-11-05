@@ -40,6 +40,7 @@
   "deleteDirectoryContentConfirm": "您要刪除資料夾 '{{dirPath}}' 嗎？",
   "errorDeletingDirectoryAlert": "刪除 '{{dirPath}}' 失敗。資料夾可能不是空的。",
   "deletingDirectorySuccessfull": "資料夾 '{{dirPath}}' 刪除成功。",
+  "deletingEntriesSuccessful": "Entries '{{dirPath}}' successfully deleted.",
   "filePropertiesDescription": "描述",
   "directoryPropertiesTitle": "資料夾詳細資訊",
   "filePropertiesTitle": "檔案詳細訊息",
@@ -805,5 +806,13 @@
   "details": "詳細資訊",
   "editDisabled": "編輯當前檔案時禁用編輯說明",
   "togglePreviewSize": "切換為檔案預覽",
+  "newAudioRecording": "Record Audio",
+  "audioRecorder": "Audio Recorder",
+  "startRecording": "Start Recording",
+  "pauseRecording": "Pause Recording",
+  "resumeRecording": "Resume Recording",
+  "stopRecording": "Stop and save recording",
+  "createNewFile": "Create New File",
+  "confirmDialogClosing": "Do you want to close this dialog?",
   "-": "-"
 }

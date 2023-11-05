@@ -40,6 +40,7 @@
   "deleteDirectoryContentConfirm": "Do you want to delete the folder '{{dirPath}}' ?",
   "errorDeletingDirectoryAlert": "Deleting '{{dirPath}}' failed. Folder probably not empty.",
   "deletingDirectorySuccessfull": "Folder '{{dirPath}}' successfully deleted.",
+  "deletingEntriesSuccessful": "Entries '{{dirPath}}' successfully deleted.",
   "filePropertiesDescription": "Descrição",
   "directoryPropertiesTitle": "Folder Details",
   "filePropertiesTitle": "File Details",
@@ -805,5 +806,13 @@
   "details": "Details",
   "editDisabled": "Editing the description is disabled while editing the current file",
   "togglePreviewSize": "Toggle file preview size",
+  "newAudioRecording": "Record Audio",
+  "audioRecorder": "Audio Recorder",
+  "startRecording": "Start Recording",
+  "pauseRecording": "Pause Recording",
+  "resumeRecording": "Resume Recording",
+  "stopRecording": "Stop and save recording",
+  "createNewFile": "Create New File",
+  "confirmDialogClosing": "Do you want to close this dialog?",
   "-": "-"
 }

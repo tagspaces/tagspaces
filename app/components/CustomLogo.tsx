@@ -38,9 +38,9 @@ function CustomLogo() {
 
   const logo = useMemo(() => {
     let customLogo = TextLogoIcon;
-    if (AppConfig.isWeb) {
-      customLogo = WebLogoIcon;
-    }
+    // if (AppConfig.isWeb) {
+    //   customLogo = WebLogoIcon;
+    // }
     if (AppConfig.customLogo) {
       customLogo = AppConfig.customLogo;
     }
