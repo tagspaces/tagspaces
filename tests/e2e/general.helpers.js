@@ -272,7 +272,7 @@ export async function isDisplayed(
     const el = await parentEl.waitForSelector(selector, {
       timeout,
       // strict: true,
-      state: displayed ? 'attached' : 'detached', //'visible' : 'hidden' //'detached'
+      state: displayed ? 'attached' : 'detached', // 'visible' : 'hidden' //
     });
     if (!displayed) {
       if (el === null) {

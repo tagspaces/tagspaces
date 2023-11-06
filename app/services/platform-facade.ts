@@ -230,7 +230,7 @@ export default class PlatformFacade {
     resultsLimit: any = {},
   ): Promise<Array<any>> =>
     platformListDirectoryPromise(
-      cleanTrailingDirSeparator(path),
+      path, // cleanTrailingDirSeparator(path),
       mode,
       ignorePatterns,
       resultsLimit,

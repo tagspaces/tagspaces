@@ -42,6 +42,7 @@ test.afterEach(async ({ page }, testInfo) => {
 
 test.beforeEach(async () => {
   await closeWelcomePlaywright();
+  await clickOn('[data-tid=locationManager]');
   if (global.isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
   } else {

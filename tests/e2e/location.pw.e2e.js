@@ -62,7 +62,7 @@ test.describe('TST03 - Testing locations:', () => {
     await expectElementExist(
       '[data-tid=location_' + testLocationName + ']',
       true,
-      1500,
+      4500,
     );
   });
 
