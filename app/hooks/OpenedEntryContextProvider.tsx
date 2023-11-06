@@ -102,7 +102,7 @@ type OpenedEntryContextData = {
     fileType: 'md' | 'txt' | 'html',
   ) => void;
   createFile: () => void;
-  reflectRenameDirectory: (directoryPath: string, newDirPath: string) => void;
+  reflectRenameOpenedEntry: (entryPath: string, newEntryPath: string) => void;
   reflectDeleteDirectory: (directoryPath: string) => void;
   reflectDeleteFile: (filePath: string) => void;
 };
@@ -126,7 +126,7 @@ export const OpenedEntryContext = createContext<OpenedEntryContextData>({
   openLink: () => {},
   createFile: () => {},
   createFileAdvanced: () => {},
-  reflectRenameDirectory: () => {},
+  reflectRenameOpenedEntry: () => {},
   reflectDeleteDirectory: undefined,
   reflectDeleteFile: undefined,
 });
@@ -945,12 +945,13 @@ export const OpenedEntryContextProvider = ({
       });
   }
 
-  function reflectRenameDirectory(directoryPath, newDirPath) {
+  function reflectRenameOpenedEntry(entryPath, newEntryPath) {
     if (openedEntries && openedEntries.length > 0) {
-      if (openedEntries[0].path === directoryPath) {
-        const openedFile = openedEntries[0];
-        openedFile.path = newDirPath;
-        addToEntryContainer(openedFile);
+      if (openedEntries[0].path === entryPath) {
+        if (currentLocation) {
+          updateHistory(currentLocation, currentDirectoryPath, newEntryPath);
+        }
+        addToEntryContainer({ ...openedEntries[0], path: newEntryPath });
       }
     }
   }
@@ -1005,7 +1006,7 @@ export const OpenedEntryContextProvider = ({
       openLink,
       createFile,
       createFileAdvanced,
-      reflectRenameDirectory,
+      reflectRenameOpenedEntry,
       reflectDeleteDirectory,
       reflectDeleteFile,
     };

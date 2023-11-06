@@ -146,7 +146,11 @@ export const IOActionsContextProvider = ({
     deleteFilePromise,
     deleteDirectoryPromise,
   } = usePlatformFacadeContext();
-  const { reflectDeleteDirectory, reflectDeleteFile } = useOpenedEntryContext();
+  const {
+    reflectDeleteDirectory,
+    reflectDeleteFile,
+    reflectRenameOpenedEntry,
+  } = useOpenedEntryContext();
   const {
     currentDirectoryEntries,
     currentDirectoryPath,
@@ -395,8 +399,9 @@ export const IOActionsContextProvider = ({
         joinPaths(PlatformIO.getDirSeparator(), targetPath, dirName),
         onProgress,
       )
-        .then(() => {
+        .then((newDirPath) => {
           removeDirectoryEntries([path]);
+          reflectRenameOpenedEntry(path, newDirPath);
           console.log('Moving dir from ' + path + ' to ' + targetPath);
           reflectDeleteEntry(path);
           dispatch(AppActions.reflectDeleteEntry(path));
@@ -424,6 +429,10 @@ export const IOActionsContextProvider = ({
     return renameFilesPromise(moveJobs, onProgress)
       .then(() => {
         removeDirectoryEntries(paths);
+        for (let i = 0; i < moveJobs.length; i++) {
+          const [srcPath, destPath] = moveJobs[i];
+          reflectRenameOpenedEntry(srcPath, destPath);
+        }
         showNotification(t('core:filesMovedSuccessful'));
         // moved files should be added to the index, if the target dir in index
         reflectDeleteEntries(paths);
