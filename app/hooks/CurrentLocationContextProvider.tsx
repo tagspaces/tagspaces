@@ -24,7 +24,7 @@ import React, {
   useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
+import { AppDispatch } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { useTranslation } from 'react-i18next';
 import {
@@ -35,12 +35,10 @@ import {
 import PlatformIO from '-/services/platform-facade';
 import { setLocationType } from '-/services/utils-io';
 import { clearAllURLParams, getURLParameter } from '-/utils/dom';
-import { Pro } from '-/pro';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { getPersistTagsInSidecarFile } from '-/reducers/settings';
-import { useFSWatcherContext } from '-/hooks/useFSWatcherContext';
 
 type CurrentLocationContextData = {
   currentLocation: TS.Location;
