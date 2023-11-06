@@ -93,10 +93,11 @@ export async function searchEngine(
  * @returns {Promise<void>}
  */
 export async function createSavedSearch(searchQuery) {
-  if (!(await isDisplayed('#textQuery'))) {
-    await clickOn('[data-tid=toggleSearch]');
-  }
-  await typeInputValue('#textQuery', searchQuery.textQuery);
+  //if (!(await global.client.$('#textQuery'))) {
+  // await isDisplayed('#textQuery', false)) {
+  await clickOn('[data-tid=toggleSearch]');
+  // }
+  await typeInputValue('#textQuery', searchQuery.textQuery, 10);
   await clickOn('#searchButton');
   await clickOn('[data-tid=advancedSearch]');
   await clickOn('[data-tid=addSearchBtnTID]');
