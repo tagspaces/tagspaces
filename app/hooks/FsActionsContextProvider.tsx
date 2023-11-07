@@ -59,7 +59,7 @@ export const FsActionsContextProvider = ({
 }: FsActionsContextProviderProps) => {
   const { t } = useTranslation();
   const { setSelectedEntries, selectedEntries } = useSelectedEntriesContext();
-  const { openedEntries, reflectRenameDirectory } = useOpenedEntryContext();
+  const { openedEntries, reflectRenameOpenedEntry } = useOpenedEntryContext();
   const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
   const { reflectRenameEntry } = useLocationIndexContext();
   const { showNotification } = useNotificationContext();
@@ -76,7 +76,7 @@ export const FsActionsContextProvider = ({
       .then((newDirPath) => {
         if (currentDirectoryPath === directoryPath) {
           openDirectory(newDirPath).then(() => {
-            reflectRenameDirectory(directoryPath, newDirPath);
+            reflectRenameOpenedEntry(directoryPath, newDirPath);
             reflectRenameEntry(directoryPath, newDirPath);
           });
         } else {
