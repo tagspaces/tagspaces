@@ -5908,16 +5908,16 @@ SOFTWARE.
 
 The following NPM packages may be included in this product:
 
- - @mui/base@5.0.0-beta.22
- - @mui/core-downloads-tracker@5.14.16
+ - @mui/base@5.0.0-beta.23
+ - @mui/core-downloads-tracker@5.14.17
  - @mui/icons-material@5.14.16
- - @mui/lab@5.0.0-alpha.151
- - @mui/material@5.14.16
- - @mui/private-theming@5.14.16
- - @mui/styled-engine@5.14.16
- - @mui/system@5.14.16
+ - @mui/lab@5.0.0-alpha.152
+ - @mui/material@5.14.17
+ - @mui/private-theming@5.14.17
+ - @mui/styled-engine@5.14.17
+ - @mui/system@5.14.17
  - @mui/types@7.2.8
- - @mui/utils@5.14.16
+ - @mui/utils@5.14.17
 
 These packages each contain the following license and notice below:
 
@@ -5945,12 +5945,11 @@ SOFTWARE.
 
 -----------
 
-The following NPM packages may be included in this product:
+The following NPM package may be included in this product:
 
  - @mui/x-date-pickers@5.0.20
- - @mui/x-tree-view@6.0.0-alpha.1
 
-These packages each contain the following license and notice below:
+This package contains the following license and notice below:
 
 MIT License
 
@@ -6499,9 +6498,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 The following NPM packages may be included in this product:
 
- - @tagspaces/tagspaces-common@3.0.17
+ - @tagspaces/tagspaces-common@3.0.21
  - @tagspaces/tagspaces-md@3.0.20
- - @tagspaces/tagspaces-platforms@3.0.18
+ - @tagspaces/tagspaces-platforms@3.0.21
 
 These packages each contain the following license and notice below:
 
@@ -6580,16 +6579,16 @@ MIT License
 The following NPM packages may be included in this product:
 
  - @types/d3-scale-chromatic@3.0.1
- - @types/d3-scale@4.0.6
+ - @types/d3-scale@4.0.7
  - @types/d3-time@3.0.2
- - @types/debug@4.1.10
- - @types/dompurify@3.0.4
- - @types/hoist-non-react-statics@3.3.4
- - @types/istanbul-lib-coverage@2.0.5
- - @types/istanbul-lib-report@3.0.2
- - @types/istanbul-reports@3.0.3
- - @types/katex@0.16.5
- - @types/lodash.debounce@4.0.8
+ - @types/debug@4.1.11
+ - @types/dompurify@3.0.5
+ - @types/hoist-non-react-statics@3.3.5
+ - @types/istanbul-lib-coverage@2.0.6
+ - @types/istanbul-lib-report@3.0.3
+ - @types/istanbul-reports@3.0.4
+ - @types/katex@0.16.6
+ - @types/lodash.debounce@4.0.9
  - @types/lodash@4.14.200
  - @types/mdast@3.0.14
  - @types/ms@0.7.33
@@ -6598,9 +6597,9 @@ The following NPM packages may be included in this product:
  - @types/parse-json@4.0.1
  - @types/prop-types@15.7.9
  - @types/react-dom@18.2.14
- - @types/react-redux@7.1.28
+ - @types/react-redux@7.1.29
  - @types/react-transition-group@4.4.8
- - @types/react@18.2.33
+ - @types/react@18.2.36
  - @types/scheduler@0.16.5
  - @types/stack-utils@2.0.2
  - @types/trusted-types@2.0.5
@@ -6609,7 +6608,7 @@ The following NPM packages may be included in this product:
  - @types/yargs-parser@21.0.2
  - @types/yargs@15.0.17
  - @types/yargs@16.0.7
- - @types/yargs@17.0.29
+ - @types/yargs@17.0.30
 
 These packages each contain the following license and notice below:
 
@@ -7365,7 +7364,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 The following NPM package may be included in this product:
 
- - async@3.2.4
+ - async@3.2.5
 
 This package contains the following license and notice below:
 
@@ -7633,7 +7632,7 @@ Apache License
 
 The following NPM package may be included in this product:
 
- - aws-sdk@2.1484.0
+ - aws-sdk@2.1489.0
 
 This package contains the following license and notice below:
 
@@ -8729,7 +8728,7 @@ THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - caniuse-lite@1.0.30001559
+ - caniuse-lite@1.0.30001561
 
 This package contains the following license and notice below:
 
@@ -12044,7 +12043,7 @@ THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - electron-to-chromium@1.4.571
+ - electron-to-chromium@1.4.577
 
 This package contains the following license and notice below:
 
@@ -12511,7 +12510,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The following NPM package may be included in this product:
 
- - envinfo@7.10.0
+ - envinfo@7.11.0
 
 This package contains the following license and notice below:
 
@@ -16467,7 +16466,7 @@ THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - mermaid@10.6.0
+ - mermaid@10.6.1
 
 This package contains the following license and notice below:
 
@@ -23337,7 +23336,7 @@ The following NPM packages may be included in this product:
  - prosemirror-schema-list@1.3.0
  - prosemirror-state@1.4.3
  - prosemirror-transform@1.8.0
- - prosemirror-view@1.32.2
+ - prosemirror-view@1.32.3
 
 These packages each contain the following license and notice below:
 
@@ -23728,7 +23727,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 The following NPM package may be included in this product:
 
- - rc-util@5.38.0
+ - rc-util@5.38.1
 
 This package contains the following license and notice below:
 
@@ -23759,7 +23758,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - rc-virtual-list@3.11.2
+ - rc-virtual-list@3.11.3
 
 This package contains the following license and notice below:
 
@@ -26140,7 +26139,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - terser@5.23.0
+ - terser@5.24.0
 
 This package contains the following license and notice below:
 
@@ -26989,7 +26988,7 @@ THE SOFTWARE.
 The following NPM packages may be included in this product:
 
  - universalify@0.1.2
- - universalify@2.0.0
+ - universalify@2.0.1
 
 These packages each contain the following license and notice below:
 
@@ -28025,7 +28024,7 @@ THIS SOFTWARE.
 
 The following NPM package may be included in this product:
 
- - yaml@2.3.3
+ - yaml@2.3.4
 
 This package contains the following license and notice below:
 
