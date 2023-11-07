@@ -242,8 +242,6 @@ function EntryContainerTitle(props: Props) {
         handleClose={() => setAnchorEl(null)}
         openedEntry={openedFile}
         reloadDocument={reloadDocument}
-        sharingLink={sharingLink}
-        sharingParentFolderLink={sharingParentFolderLink}
         toggleFullScreen={toggleFullScreen}
       />
     </Box>

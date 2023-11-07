@@ -45,8 +45,6 @@ interface Props {
   openedEntry: OpenedEntry;
   toggleFullScreen: () => void;
   reloadDocument: () => void;
-  sharingLink: string;
-  sharingParentFolderLink: string;
 }
 
 function EntryContainerMenu(props: Props) {
@@ -55,13 +53,16 @@ function EntryContainerMenu(props: Props) {
     handleClose,
     openedEntry,
     toggleFullScreen,
-    sharingLink,
-    sharingParentFolderLink,
     reloadDocument,
   } = props;
   const { t } = useTranslation();
   // const theme = useTheme();
-  const { toggleEntryFullWidth, openLink } = useOpenedEntryContext();
+  const {
+    toggleEntryFullWidth,
+    openLink,
+    sharingLink,
+    sharingParentFolderLink,
+  } = useOpenedEntryContext();
   const { readOnlyMode } = useCurrentLocationContext();
   const { deleteFile } = useIOActionsContext();
   const { showNotification } = useNotificationContext();

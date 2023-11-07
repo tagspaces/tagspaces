@@ -53,6 +53,7 @@ import { getLocations } from '-/reducers/locations';
 import { clearURLParam, getURLParameter, updateHistory } from '-/utils/dom';
 import {
   cleanRootPath,
+  cleanTrailingDirSeparator,
   extractContainingDirectoryPath,
   extractTagsAsObjects,
   generateSharingLink,
@@ -305,7 +306,11 @@ export const OpenedEntryContextProvider = ({
             (location) => location.uuid === locationId,
           );
           const folderPath = extractContainingDirectoryPath(openedFile.path);
-          if (folderPath.indexOf(folderLocation.path) === 0) {
+          if (
+            folderPath.indexOf(
+              cleanTrailingDirSeparator(folderLocation.path),
+            ) === 0
+          ) {
             sharingParentFolderLink.current = generateSharingLink(
               locationId,
               undefined,
@@ -750,7 +755,7 @@ export const OpenedEntryContextProvider = ({
         let directoryPath = dPath && decodeURIComponent(dPath);
         const entryPath = ePath && decodeURIComponent(ePath);
         // fix for created bookmarks files without to have tsdpath in url
-        if (!directoryPath) {
+        if (!directoryPath && entryPath) {
           directoryPath = extractContainingDirectoryPath(entryPath);
         }
         // Check for relative paths
