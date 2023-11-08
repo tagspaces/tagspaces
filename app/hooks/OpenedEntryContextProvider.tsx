@@ -96,6 +96,8 @@ type OpenedEntryContextData = {
   openPrevFile: (path?: string) => void;
   toggleEntryFullWidth: () => void;
   openLink: (url: string, options?) => void;
+  goForward: () => void;
+  goBack: () => void;
   createFileAdvanced: (
     targetPath: string,
     fileName: string,
@@ -125,6 +127,8 @@ export const OpenedEntryContext = createContext<OpenedEntryContextData>({
   openPrevFile: () => {},
   toggleEntryFullWidth: () => {},
   openLink: () => {},
+  goForward: () => {},
+  goBack: () => {},
   createFile: () => {},
   createFileAdvanced: () => {},
   reflectRenameOpenedEntry: () => {},
@@ -727,6 +731,34 @@ export const OpenedEntryContextProvider = ({
     setEntryInFullWidth(!isEntryInFullWidth);
   }
 
+  function goForward() {
+    window.history.forward();
+    window.addEventListener(
+      'popstate',
+      () => {
+        openLink(window.location.href, { fullWidth: false });
+      },
+      { once: true },
+    );
+  }
+
+  function goBack() {
+    // console.log(
+    //   '>>> current href: ' + decodeURIComponent(window.location.href)
+    // );
+    window.history.back(); // window.history.go(-1);
+    window.addEventListener(
+      'popstate',
+      () => {
+        openLink(window.location.href, { fullWidth: false });
+        // console.log(
+        //   '>>> last href: ' + decodeURIComponent(window.location.href)
+        // );
+      },
+      { once: true },
+    );
+  }
+
   function openLink(url: string, options = { fullWidth: true }) {
     try {
       const decodedURI = decodeURI(url);
@@ -1008,6 +1040,8 @@ export const OpenedEntryContextProvider = ({
       openNextFile,
       openPrevFile,
       toggleEntryFullWidth,
+      goForward,
+      goBack,
       openLink,
       createFile,
       createFileAdvanced,

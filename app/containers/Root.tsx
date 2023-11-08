@@ -40,6 +40,7 @@ import {
 } from '-/hooks/SelectedEntryContextProvider';
 import { FSWatcherContextProvider } from '-/hooks/FSWatcherContextProvider';
 import { PlatformFacadeContextProvider } from '-/hooks/PlatformFacadeContextProvider';
+import { RendererListenerContextProvider } from '-/hooks/RendererListenerContextProvider';
 
 type RootType = {
   store: Store<{}>;
@@ -70,7 +71,9 @@ export default function Root({ store, persistor }: RootType) {
                       <FsActionsContextProvider>
                         <IOActionsContextProvider>
                           <TaggingActionsContextProvider>
-                            <MainPage />
+                            <RendererListenerContextProvider>
+                              <MainPage />
+                            </RendererListenerContextProvider>
                           </TaggingActionsContextProvider>
                         </IOActionsContextProvider>
                       </FsActionsContextProvider>
