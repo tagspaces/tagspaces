@@ -95,10 +95,14 @@ export async function searchEngine(
 export async function createSavedSearch(searchQuery) {
   //if (!(await global.client.$('#textQuery'))) {
   // await isDisplayed('#textQuery', false)) {
+  await global.client.waitForTimeout(1000); // todo remove timeout (toggleSearch and advancedSearch is not click)
   await clickOn('[data-tid=toggleSearch]');
-  // }
-  await typeInputValue('#textQuery', searchQuery.textQuery, 10);
-  await clickOn('#searchButton');
+  await clickOn('[data-tid=advancedSearch]');
+
+  await typeInputValue('#searchTerm', searchQuery.textQuery, 0);
+  //await typeInputValue('#textQuery', searchQuery.textQuery, 10);
+  //await clickOn('#searchButton');
+  await clickOn('#searchButtonAdvTID');
   await clickOn('[data-tid=advancedSearch]');
   await clickOn('[data-tid=addSearchBtnTID]');
   await global.client.dblclick('[data-tid=savedSearchTID]');
