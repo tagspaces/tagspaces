@@ -78,7 +78,6 @@ import useEventListener from '-/utils/useEventListener';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { TS } from '-/tagspaces.namespace';
 import PageNotification from '-/containers/PageNotification';
-import listen from '-/containers/RendererListener';
 import MoveOrCopyFilesDialog from '-/components/dialogs/MoveOrCopyFilesDialog';
 import { Pro } from '-/pro';
 import NewFileDialog from '-/components/dialogs/NewFileDialog';
@@ -90,8 +89,6 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
-import PlatformIO from '-/services/platform-facade';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import NewAudioDialog from '-/components/dialogs/NewAudioDialog';
 
@@ -161,14 +158,9 @@ interface Props {
   isEditTagDialogOpened: boolean;
   keyBindings: any;
   toggleEditTagDialog: (tag: TS.Tag) => void;
-  //saveFile: () => void; // needed by electron-menus
-  setZoomResetApp: () => void; // needed by electron-menus
-  setZoomInApp: () => void; // needed by electron-menus
-  setZoomOutApp: () => void; // needed by electron-menus
   toggleNewEntryDialog: () => void; // needed by electron-menus
   toggleNewFileDialog: () => void; // needed by electron-menus
   toggleNewAudioDialog: () => void; // needed by electron-menus
-  showCreateDirectoryDialog: () => void; // needed by electron-menus
   toggleSettingsDialog: () => void; // needed by electron-menus
   toggleKeysDialog: () => void; // needed by electron-menus
   toggleLicenseDialog: () => void; // needed by electron-menus
@@ -336,18 +328,13 @@ function MainPage(props: Props) {
     openLink,
     openedEntries,
     isEntryInFullWidth,
-    openFsEntry,
+    goForward,
+    goBack,
     setEntryInFullWidth,
-    openNextFile,
-    openPrevFile,
   } = useOpenedEntryContext();
 
-  const {
-    loadParentDirectoryContent,
-    enterSearchMode,
-    exitSearchMode,
-    setSearchQuery,
-  } = useDirectoryContentContext();
+  const { loadParentDirectoryContent, enterSearchMode, exitSearchMode } =
+    useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
   const theme = useTheme();
   const percent = useRef<number | undefined>(undefined);
@@ -387,39 +374,11 @@ function MainPage(props: Props) {
     }
   });
 
-  function goForward() {
-    window.history.forward();
-    window.addEventListener(
-      'popstate',
-      () => {
-        openLink(window.location.href, { fullWidth: false });
-      },
-      { once: true },
-    );
-  }
-
-  function goBack() {
-    // console.log(
-    //   '>>> current href: ' + decodeURIComponent(window.location.href)
-    // );
-    window.history.back(); // window.history.go(-1);
-    window.addEventListener(
-      'popstate',
-      () => {
-        openLink(window.location.href, { fullWidth: false });
-        // console.log(
-        //   '>>> last href: ' + decodeURIComponent(window.location.href)
-        // );
-      },
-      { once: true },
-    );
-  }
-
   useEffect(() => {
     if (!AppConfig.isCordova) {
       updateDimensions();
     }
-    listen({
+    /*listen({
       ...props,
       goBack,
       goForward,
@@ -427,7 +386,7 @@ function MainPage(props: Props) {
       openNextFile,
       openPrevFile,
       setSearchQuery,
-    });
+    });*/
   }, []);
 
   useEffect(() => {
@@ -866,14 +825,9 @@ function mapDispatchToProps(dispatch) {
       toggleEditTagDialog: AppActions.toggleEditTagDialog,
       toggleTruncatedConfirmDialog: AppActions.toggleTruncatedConfirmDialog,
       onUploadProgress: AppActions.onUploadProgress,
-      //saveFile: AppActions.saveFile,
-      setZoomResetApp: SettingsActions.setZoomResetApp,
-      setZoomInApp: SettingsActions.setZoomInApp,
-      setZoomOutApp: SettingsActions.setZoomOutApp,
       toggleNewEntryDialog: AppActions.toggleNewEntryDialog,
       toggleNewFileDialog: AppActions.toggleNewFileDialog,
       toggleNewAudioDialog: AppActions.toggleNewAudioDialog,
-      showCreateDirectoryDialog: AppActions.showCreateDirectoryDialog,
       toggleSettingsDialog: AppActions.toggleSettingsDialog,
       toggleKeysDialog: AppActions.toggleKeysDialog,
       toggleLicenseDialog: AppActions.toggleLicenseDialog,
@@ -894,8 +848,6 @@ function mapDispatchToProps(dispatch) {
       toggleDeleteMultipleEntriesDialog:
         AppActions.toggleDeleteMultipleEntriesDialog,
       setFirstRun: SettingsActions.setFirstRun,
-      addExtensions: AppActions.addExtensions,
-      addSupportedFileTypes: SettingsActions.addSupportedFileTypes,
     },
     dispatch,
   );
