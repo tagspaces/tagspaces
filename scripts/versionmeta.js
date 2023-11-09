@@ -1,5 +1,5 @@
 const sh = require('shelljs');
-const { version, productName } = require('../app/package.json');
+const { version, productName } = require('../release/app/package.json');
 
 if (!sh.which('git')) {
   sh.echo('Sorry, this script requires git');
@@ -24,7 +24,7 @@ sh.exec(
         '", "name": "' +
         productName +
         '"}',
-    ).to('app/version.json');
+    ).to('src/renderer/version.json');
     // sh.sed('-i', 'BUILD_VERSION', 'v0.1.2', file);
   },
 );

@@ -1,35 +1,36 @@
 {
   "compilerOptions": {
-    "allowJs": true,
-    "target": "esnext", // es5
-    "baseUrl": "./",
-    "rootDir": "./",
+    "incremental": true,
+    "target": "es2022",
+    "module": "commonjs",
+    "lib": ["dom", "dom.iterable", "es2022"],
     "jsx": "react-jsx",
-    "module": "esnext", // esnext, commonjs
+    //"strict": true,
+    "sourceMap": true,
     "moduleResolution": "node",
-    "noUnusedLocals": false,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    //"strict": true,
-    //"forceConsistentCasingInFileNames": true,
-    //"noFallthroughCasesInSwitch": true,
-    "pretty": true,
-    "sourceMap": true,
-    "skipLibCheck": true,
     "resolveJsonModule": true,
+    "allowJs": true,
+    "outDir": ".erb/dll",
+
+    "noUnusedLocals": false,
+    "pretty": true,
+    "skipLibCheck": true,
     "isolatedModules": true,
-    //"noEmit": true,
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "baseUrl": "./",
     "paths": {
-      "-/*": ["app/*"]
+      "-/*": ["src/renderer/*"],
+      "assets/*": ["assets/*"]
     }
   },
   "include": [
-    "app/**/*.ts",
-    "app/**/*.tsx",
+    "src/renderer/**/*.ts",
+    "src/renderer/**/*.tsx",
     "extensions/tagspacespro/**/*.ts",
     "extensions/tagspacespro/**/*.tsx"
-  ]
+  ],
+  "exclude": ["test", "release/build", "release/app/dist", ".erb/dll"]
   // "exclude": [
   //  "node_modules",
   //  "**/node_modules/*",
