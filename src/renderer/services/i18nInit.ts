@@ -17,7 +17,7 @@
  */
 
 import i18n from 'i18next';
-import i18nOptions from '-/services/i18nOptions';
+import i18nOptions from './i18nOptions';
 import HttpBackend, { HttpBackendOptions } from 'i18next-http-backend';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';

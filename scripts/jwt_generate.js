@@ -3,7 +3,7 @@ const fs = require('fs-extra');
 const pathLib = require('path');
 const propertiesReader = require('properties-reader');
 
-const propsPath = pathLib.join(__dirname, '..', 'src', 'renderer', '.env');
+const propsPath = pathLib.join(__dirname, '..', 'assets', '.env');
 if (!fs.existsSync(propsPath)) {
   throw new Error(
     propsPath + ' file not exist! Please create it and add property KEY=xxx',

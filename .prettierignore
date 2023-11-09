@@ -3,12 +3,12 @@ builds
 cordova
 web
 web/files
-app/node_modules
-app/version.json
-app/tagspaces.namespace.d.ts
+release/app/node_modules
+src/node_modules
+src/renderer/version.json
+src/renderer/tagspaces.namespace.d.ts
 flow-typed
-app/dist
-app/main.prod.js
+release/app/dist
 extensions/extensions/*
 extensions/_extensions/*
 extensions/.ts/*
@@ -30,7 +30,7 @@ extensions/media-player/build/*
 extensions/pdf-viewer/generic/build/*
 extensions/text-editor-react/build/*
 extensions/md-editor/build/*
-dll
+.erb
 app/utils/js-webdav-client.js
 coverage
 tests/testdata

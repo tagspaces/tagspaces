@@ -16,8 +16,8 @@
  *
  */
 import { InitOptions } from 'i18next';
-import enUs from '-/locales/en_US/core.json';
-import en from '-/locales/en/core.json';
+import enUs from '../locales/en_US/core.json';
+import en from '../locales/en/core.json';
 
 let defaultLanguage: any = enUs;
 if (

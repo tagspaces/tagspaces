@@ -59,13 +59,13 @@ const configuration: webpack.Configuration = {
     modules: [webpackPaths.srcPath, 'node_modules'],
     // There is no need to add aliases here, the paths in tsconfig get mirrored
     plugins: [new TsconfigPathsPlugins()],
-    alias: {
+    /* alias: {
       // Your custom aliases here
       // __dirname will stands for your root directory level
       // path.resolve will concatenate your project folder location with the aliased folder
       '-': path.resolve(__dirname, '../../src/renderer/'),
       assets: path.resolve(__dirname, '../../assets/'),
-    },
+    },*/
   },
 
   plugins: [
