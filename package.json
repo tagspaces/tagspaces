@@ -141,7 +141,7 @@
     "test-refresh-data": "rimraf tests/testdata-tmp && shx mkdir -p tests/testdata-tmp/file-structure && shx cp -rL tests/testdata/file-structure tests/testdata-tmp && npx playwright install --with-deps",
     "test-unit": "npx playwright test --config ./playwright.unit.js",
     "test-watch": "npm run test --watch",
-    "third-party": "npx generate-license-file --input package.json --output app/third-party.txt --overwrite",
+    "third-party": "npx generate-license-file --input package.json --output src/renderer/third-party.txt --overwrite",
     "type-check": "tsc --noEmit",
     "update-changelog": "git log v5.4.6..HEAD --no-merges --format=%B > CHANGELOG.TXT",
     "update-changelog-pro": "cd extensions/tagspacespro && git log v5.4.6..HEAD --no-merges --format=%B > ../../CHANGELOG-PRO.TXT",
