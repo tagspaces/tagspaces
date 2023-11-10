@@ -34,10 +34,7 @@ import { NotificationContextProvider } from '-/hooks/NotificationContextProvider
 import { IOActionsContextProvider } from '-/hooks/IOActionsContextProvider';
 import { TaggingActionsContextProvider } from '-/hooks/TaggingActionsContextProvider';
 import { LocationIndexContextProvider } from '-/hooks/LocationIndexContextProvider';
-import {
-  SelectedEntryContext,
-  SelectedEntryContextProvider,
-} from '-/hooks/SelectedEntryContextProvider';
+import { SelectedEntryContextProvider } from '-/hooks/SelectedEntryContextProvider';
 import { FSWatcherContextProvider } from '-/hooks/FSWatcherContextProvider';
 import { PlatformFacadeContextProvider } from '-/hooks/PlatformFacadeContextProvider';
 import { RendererListenerContextProvider } from '-/hooks/RendererListenerContextProvider';
@@ -69,13 +66,13 @@ export default function Root({ store, persistor }: RootType) {
                   <LocationIndexContextProvider>
                     <OpenedEntryContextProvider>
                       <FsActionsContextProvider>
-                        <IOActionsContextProvider>
-                          <TaggingActionsContextProvider>
+                        <TaggingActionsContextProvider>
+                          <IOActionsContextProvider>
                             <RendererListenerContextProvider>
                               <MainPage />
                             </RendererListenerContextProvider>
-                          </TaggingActionsContextProvider>
-                        </IOActionsContextProvider>
+                          </IOActionsContextProvider>
+                        </TaggingActionsContextProvider>
                       </FsActionsContextProvider>
                     </OpenedEntryContextProvider>
                   </LocationIndexContextProvider>

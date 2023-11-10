@@ -55,6 +55,7 @@ import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { getUseTrashCan } from '-/reducers/settings';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
+import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 
 type extractOptions = {
   EXIFGeo?: boolean;
@@ -63,7 +64,7 @@ type extractOptions = {
   IPTCTags?: boolean;
 };
 type IOActionsContextData = {
-  extractContent: (options?: extractOptions, addTags?) => Promise<boolean>;
+  extractContent: (options?: extractOptions) => Promise<boolean>;
   createDirectory: (directoryPath: string, reflect?) => Promise<boolean>;
   deleteEntries: (entries: TS.FileSystemEntry[]) => Promise<boolean>;
   deleteDirectory: (directoryPath: string, reflect?) => Promise<boolean>;
@@ -109,7 +110,7 @@ type IOActionsContextData = {
 };
 
 export const IOActionsContext = createContext<IOActionsContextData>({
-  extractContent: () => Promise.resolve(false),
+  extractContent: undefined,
   createDirectory: undefined,
   deleteEntries: undefined,
   deleteDirectory: undefined,
@@ -134,6 +135,7 @@ export const IOActionsContextProvider = ({
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const { showNotification, hideNotifications } = useNotificationContext();
+  const { addTags } = useTaggingActionsContext();
   const { copyFilesWithProgress, deleteFilesPromise } =
     usePlatformFacadeContext();
   const {
@@ -170,7 +172,6 @@ export const IOActionsContextProvider = ({
       IPTCDescription: true,
       IPTCTags: true,
     },
-    addTags?,
   ): Promise<boolean> {
     if (!Pro || !Pro.ContentExtractor) {
       showNotification(t('core:thisFunctionalityIsAvailableInPro'));
