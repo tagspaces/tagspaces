@@ -305,7 +305,7 @@ export function findExtensionPathForId(
   if (AppConfig.isWeb) {
     return 'modules/' + extensionId;
   }
-  return 'node_modules/' + extensionId;
+  return 'modules/' + extensionId;
 }
 
 export function findExtensionsForEntry(

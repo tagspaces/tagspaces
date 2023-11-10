@@ -15,33 +15,6 @@
     />
     <!-- script type="text/javascript" src="./node_modules/@tagspaces/pro/extconfig.template.js"></script-->
     <script type="text/javascript" src="./extconfig.js"></script>
-    <script type="text/javascript">
-      {
-        if (!process.env.HOT) {
-          const link = document.createElement('link');
-          link.rel = 'stylesheet';
-          link.href = './dist/style.css';
-          document.getElementsByTagName('head')[0].appendChild(link);
-        }
-
-        if (process.env.NODE_ENV === 'development') {
-          const script = document.createElement('script');
-          script.src = '../dll/renderer.dev.dll.js';
-          script.type = 'text/javascript';
-          script.defer = true;
-          document.getElementsByTagName('head')[0].appendChild(script);
-        }
-
-        const port = process.env.PORT || 1212;
-        const bundleScript = document.createElement('script');
-        bundleScript.src = process.env.HOT
-          ? 'http://localhost:' + port + '/dist/renderer.dev.js'
-          : './dist/renderer.prod.js';
-        bundleScript.type = 'text/javascript';
-        bundleScript.defer = true;
-        document.getElementsByTagName('head')[0].appendChild(bundleScript);
-      }
-    </script>
   </head>
   <body
     style="overflow: hidden; margin: 0; padding: 0; background-color: rgb(88, 88, 88);"

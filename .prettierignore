@@ -1,4 +1,5 @@
 node_modules
+public/modules
 builds
 cordova
 web
@@ -38,7 +39,6 @@ tests/testdata-tmp
 tests/file-structure
 tests/bin
 .ycache
-app/aws-exports.js
-app/config/config.json
-app/*.main.prod.js
-app/extension-config.ts
+src/renderer/aws-exports.js
+src/renderer/config/config.json
+src/renderer/extension-config.ts

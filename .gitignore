@@ -63,6 +63,7 @@ extensions
 
 test/file-structure
 
+public/modules
 src/renderer/version.json
 src/renderer/THIRD-PARTY.html
 src/renderer/THIRD-PARTY.txt
@@ -76,7 +77,7 @@ CHANGELOG-PRO.TXT
 
 web/dist
 web/files
-web/node_modules
+web/modules
 web/LICENSE.txt
 web/third-party.txt
 web/sw-config.js

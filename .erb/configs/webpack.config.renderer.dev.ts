@@ -158,7 +158,7 @@ const configuration: webpack.Configuration = {
 
     new HtmlWebpackPlugin({
       filename: path.join('index.html'),
-      template: path.join(webpackPaths.srcRendererPath, 'index.ejs'),
+      template: path.join(webpackPaths.srcRendererPath, 'appd.html'),
       minify: {
         collapseWhitespace: true,
         removeAttributeQuotes: true,
@@ -179,13 +179,41 @@ const configuration: webpack.Configuration = {
   devServer: {
     port,
     compress: true,
+    client: {
+      overlay: {
+        warnings: false,
+        errors: false,
+      },
+      logging: 'verbose'
+    },
+    // noInfo: true,
+    devMiddleware: {
+      // index: true,
+      stats: 'errors-only',
+      // mimeTypes: { "text/html": ["phtml"] },
+      // publicPath: "/publicPathForDevServe",
+      // serverSideRender: true,
+      // writeToDisk: true,
+    },
+    // inline: true,
+    // lazy: false,
     hot: true,
     headers: { 'Access-Control-Allow-Origin': '*' },
     static: {
-      publicPath: '/',
+      // directory: webpackPaths.distRendererPath, //'src/renderer/'),
+      publicPath: '/', //`http://localhost:${port}/renderer`, //'/', //'/src/renderer',//'/release/app/dist',  //'/assets',
+      //staticOptions: {},
+      //serveIndex: true,
+      //watch: true
+      /*watch: {
+        aggregateTimeout: 300,
+        ignored: /node_modules/,
+        poll: 100,
+      },*/
     },
     historyApiFallback: {
       verbose: true,
+      disableDotRule: false,
     },
     setupMiddlewares(middlewares) {
       console.log('Starting preload.js builder...');
