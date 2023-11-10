@@ -278,6 +278,7 @@ function createNewWindowInstance(url?) {
     width: mainWindowState.width,
     height: mainWindowState.height,
     webPreferences: {
+      webSecurity: false, // todo https://www.electronjs.org/docs/latest/tutorial/security#6-do-not-disable-websecurity
       spellcheck: true,
       nodeIntegration: true,
       webviewTag: true,
@@ -390,6 +391,7 @@ const createWindow = async () => {
     height: mainWindowState.height,
     icon: getAssetPath('icon.png'),
     webPreferences: {
+      webSecurity: false, // todo https://www.electronjs.org/docs/latest/tutorial/security#6-do-not-disable-websecurity
       spellcheck: true,
       nodeIntegration: true,
       webviewTag: true,
