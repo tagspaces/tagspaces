@@ -42,3 +42,6 @@ app/aws-exports.js
 app/config/config.json
 app/*.main.prod.js
 app/extension-config.ts
+public
+release
+src
