@@ -278,7 +278,7 @@ function createNewWindowInstance(url?) {
     width: mainWindowState.width,
     height: mainWindowState.height,
     webPreferences: {
-      webSecurity: false, // todo https://www.electronjs.org/docs/latest/tutorial/security#6-do-not-disable-websecurity
+      //webSecurity: false, // todo https://www.electronjs.org/docs/latest/tutorial/security#6-do-not-disable-websecurity
       spellcheck: true,
       nodeIntegration: true,
       webviewTag: true,
@@ -295,71 +295,80 @@ function createNewWindowInstance(url?) {
   }
 }
 
-const RESOURCES_PATH = app.isPackaged
+/*const RESOURCES_PATH = app.isPackaged
   ? path.join(process.resourcesPath, 'assets')
   : path.join(__dirname, '../../assets');
 
 const getAssetPath = (...paths: string[]): string => {
   return path.join(RESOURCES_PATH, ...paths);
-};
+};*/
 
-async function startWS() {
+function startWS() {
   try {
     let filepath;
     let script;
-    //let envPath;
-    if (isDebug || testMode) {
+    let envPath;
+    if (app.isPackaged) {
+      filepath = path.join(__dirname, '../../..'); //process.resourcesPath;
+      script = 'app.asar/node_modules/@tagspaces/tagspaces-ws/build/index.js'; //app.asar/
+      envPath = path.join(filepath, 'app.asar/.env');
+    } else {
       filepath = path.join(
         __dirname,
         '../node_modules/@tagspaces/tagspaces-ws/build',
       );
       script = 'index.js';
-      //envPath = path.join(__dirname, '.env');
-    } else {
-      filepath = process.resourcesPath;
-      script = 'app.asar/node_modules/@tagspaces/tagspaces-ws/build/index.js';
-      //envPath = path.join(process.resourcesPath, 'app.asar/.env');
+      envPath = path.join(__dirname, '../../release/app/.env');
     }
-    const properties = propertiesReader(getAssetPath('.env')); //envPath);
+    const properties = propertiesReader(envPath); //getAssetPath('.env')
+    //console.debug(JSON.stringify(properties.get('KEY')));
 
-    const results = await new Promise((resolve, reject) => {
+    const results = new Promise((resolve, reject) => {
       findFreePorts(1, { startPort: settings.getInitWsPort() }).then(
         ([freePort]) => {
-          pm2.start(
-            {
-              name: 'Tagspaces WS',
-              script, // Script to be run
-              cwd: filepath, // './node_modules/tagspaces-ws', // './process1', cwd: '/path/to/npm/module/',
-              args: ['-p', freePort, '-k', properties.get('KEY')],
-              restartAt: [],
-              // log: path.join(process.cwd(), 'thumbGen.log')
-            },
-            (err, pid) => {
-              if (err && pid) {
-                if (pid && pid.name) console.error(pid.name, err, pid);
-                else console.error(err, pid);
-                reject(err);
-              } else if (err) {
-                reject(err);
-              } else {
-                usedWsPort = freePort;
-                if (mainWindow) {
-                  mainWindow.webContents.send('start_ws', {
-                    port: freePort,
-                  });
+          try {
+            pm2.start(
+              {
+                name: 'Tagspaces WS',
+                script, // Script to be run
+                cwd: filepath, // './node_modules/tagspaces-ws', // './process1', cwd: '/path/to/npm/module/',
+                args: ['-p', freePort, '-k', properties.get('KEY')],
+                restartAt: [],
+                // log: path.join(process.cwd(), 'thumbGen.log')
+              },
+              (err, pid) => {
+                if (err && pid) {
+                  if (pid && pid.name) console.error(pid.name, err, pid);
+                  else console.error(err, pid);
+                  reject(err);
+                } else if (err) {
+                  reject(err);
+                } else {
+                  usedWsPort = freePort;
+                  if (mainWindow) {
+                    mainWindow.webContents.send('start_ws', {
+                      port: freePort,
+                    });
+                    console.debug('start_ws:' + freePort);
+                  }
+                  resolve(
+                    `Starting ${pid.name} on ${pid.cwd} - pid (${pid.child.pid})`,
+                  );
                 }
-                resolve(
-                  `Starting ${pid.name} on ${pid.cwd} - pid (${pid.child.pid})`,
-                );
-              }
-            },
-          );
+              },
+            );
+          } catch (e) {
+            console.error('pm2.start err:', e);
+            reject(e);
+          }
         },
       );
     });
-    console.debug(results);
+    results
+      .then((results) => console.debug(results))
+      .catch((err) => console.error('pm2.start err:', err));
   } catch (ex) {
-    console.error('pm2.start Exception:', ex);
+    console.error('pm2.start Exception __dirname:' + __dirname, ex);
   }
 }
 
@@ -389,9 +398,9 @@ const createWindow = async () => {
     y: mainWindowState.y,
     width: mainWindowState.width,
     height: mainWindowState.height,
-    icon: getAssetPath('icon.png'),
+    //icon: getAssetPath('icon.png'),
     webPreferences: {
-      webSecurity: false, // todo https://www.electronjs.org/docs/latest/tutorial/security#6-do-not-disable-websecurity
+      //webSecurity: false, // todo https://www.electronjs.org/docs/latest/tutorial/security#6-do-not-disable-websecurity
       spellcheck: true,
       nodeIntegration: true,
       webviewTag: true,
@@ -413,6 +422,14 @@ const createWindow = async () => {
 
   mainWindow.webContents.send('start_ws', {
     port: usedWsPort,
+  });
+
+  mainWindow.webContents.on('before-input-event', (_, input) => {
+    if (input.type === 'keyDown' && input.key === 'F12') {
+      mainWindow.webContents.isDevToolsOpened()
+        ? mainWindow.webContents.closeDevTools()
+        : mainWindow.webContents.openDevTools({ mode: 'right' });
+    }
   });
 
   mainWindow.on('ready-to-show', () => {
@@ -476,6 +493,16 @@ app.on('window-all-closed', () => {
 app.on('quit', () => {
   pm2.stopAll();
   globalShortcut.unregisterAll();
+});
+
+app.on('web-contents-created', (event, contents) => {
+  contents.on('will-navigate', (event, navigationUrl) => {
+    const parsedUrl = new URL(navigationUrl);
+
+    if (parsedUrl.origin !== 'file://') {
+      event.preventDefault();
+    }
+  });
 });
 
 startWS();

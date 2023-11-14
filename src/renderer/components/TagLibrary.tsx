@@ -94,9 +94,8 @@ function TagLibrary(props: Props) {
   const toggleTagGroupDispatch = (uuid) =>
     dispatch(SettingsActions.toggleTagGroup(uuid));
 
-  const [tagGroups, setTagGroups] = useState<Array<TS.TagGroup>>(
-    getTagLibrary(),
-  );
+  const [tagGroups, setTagGroups] =
+    useState<Array<TS.TagGroup>>(getTagLibrary());
   // const tagLibrary: Array<TS.TagGroup> = getTagLibrary();
   const tagContainerRef = useRef<HTMLSpanElement>(null);
   const [tagGroupMenuAnchorEl, setTagGroupMenuAnchorEl] =

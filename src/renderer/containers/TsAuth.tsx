@@ -25,7 +25,7 @@ import {
 } from '@aws-amplify/ui-react';
 import { Amplify } from 'aws-amplify';
 import HandleAuth from '-/utils/HandleAuth';
-import LogoIcon from 'assets/images/icon100x100.svg';
+import LogoIcon from '-/assets/images/icon100x100.svg';
 import { useTranslation } from 'react-i18next';
 
 const TsAuth: React.FC<any> = (props) => {

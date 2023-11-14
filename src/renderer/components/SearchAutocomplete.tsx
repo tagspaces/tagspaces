@@ -549,8 +549,8 @@ function SearchAutocomplete(props: Props) {
             a.label.indexOf(action.shortName) === 0
               ? a.label.substring(action.shortName.length)
               : action.fullName && a.label.indexOf(action.fullName) === 0
-              ? a.label.substring(action.fullName.length)
-              : a.label,
+                ? a.label.substring(action.fullName.length)
+                : a.label,
         }));
       }
     }
@@ -1065,8 +1065,8 @@ function SearchAutocomplete(props: Props) {
               option.action === ExecActions.TAG_SEARCH_AND
                 ? SearchQueryComposition.TAG_AND.shortName
                 : option.action === ExecActions.TAG_SEARCH_NOT
-                ? SearchQueryComposition.TAG_NOT.shortName
-                : SearchQueryComposition.TAG_OR.shortName;
+                  ? SearchQueryComposition.TAG_NOT.shortName
+                  : SearchQueryComposition.TAG_OR.shortName;
 
             let prevAction;
             if (unique) {

@@ -30,10 +30,10 @@ import FormControl from '@mui/material/FormControl';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Dialog from '@mui/material/Dialog';
-import BrowserExtension from 'assets/images/collectcontent.svg';
-import WizardFinished from 'assets/images/computer-desk.svg';
-import ChooseTagging from 'assets/images/abacus.svg';
-import NewLook from 'assets/images/desktop.svg';
+import BrowserExtension from '-/assets/images/collectcontent.svg';
+import WizardFinished from '-/assets/images/computer-desk.svg';
+import ChooseTagging from '-/assets/images/abacus.svg';
+import NewLook from '-/assets/images/desktop.svg';
 import {
   getCurrentTheme,
   getPersistTagsInSidecarFile,

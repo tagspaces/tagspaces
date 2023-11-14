@@ -305,7 +305,9 @@ export function findExtensionPathForId(
   if (AppConfig.isWeb) {
     return 'modules/' + extensionId;
   }
-  return 'modules/' + extensionId;
+  return process.env.NODE_ENV === 'development'
+    ? 'modules/' + extensionId
+    : '../../node_modules/' + extensionId;
 }
 
 export function findExtensionsForEntry(

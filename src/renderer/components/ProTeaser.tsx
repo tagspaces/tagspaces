@@ -23,7 +23,7 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
-import ProTeaserImage from 'assets/images/pro-teaser.svg';
+import ProTeaserImage from '-/assets/images/pro-teaser.svg';
 import Links from '-/content/links';
 import { openURLExternally } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';

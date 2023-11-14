@@ -33,8 +33,8 @@ import IssueIcon from '@mui/icons-material/BugReport';
 import TranslationIcon from '@mui/icons-material/Translate';
 import NewFeatureIcon from '@mui/icons-material/Gesture';
 import TwitterIcon from '@mui/icons-material/Twitter';
-import WelcomeBackground from 'assets/images/background.png';
-import WelcomeLogo from 'assets/images/welcome-logo.png';
+import WelcomeBackground from '-/assets/images/background.png';
+import WelcomeLogo from '-/assets/images/welcome-logo.png';
 import {
   CreateFileIcon,
   LocalLocationIcon,

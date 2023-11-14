@@ -1,13 +1,13 @@
 import Links from '-/content/links';
-import ProTeaserImage from 'assets/images/pro-teaser.svg';
-import KanbanImage from 'assets/images/kanban-perspective.jpg';
-import GalleryImage from 'assets/images/gallery-perspective.jpg';
-import MapImage from 'assets/images/mapique-perspective.jpg';
-import EntryDescription from 'assets/images/entry-description.jpg';
-import SearchImage from 'assets/images/search-undraw.svg';
-import CustomFolderColor from 'assets/images/custom-folder-color.jpg';
-import RevisionsAutosave from 'assets/images/revisions-autosave.png';
-import EnterpriseImage from 'assets/images/world-undraw.svg';
+import ProTeaserImage from '-/assets/images/pro-teaser.svg';
+import KanbanImage from '-/assets/images/kanban-perspective.jpg';
+import GalleryImage from '-/assets/images/gallery-perspective.jpg';
+import MapImage from '-/assets/images/mapique-perspective.jpg';
+import EntryDescription from '-/assets/images/entry-description.jpg';
+import SearchImage from '-/assets/images/search-undraw.svg';
+import CustomFolderColor from '-/assets/images/custom-folder-color.jpg';
+import RevisionsAutosave from '-/assets/images/revisions-autosave.png';
+import EnterpriseImage from '-/assets/images/world-undraw.svg';
 import { PerspectiveIDs } from '-/perspectives';
 import React from 'react';
 

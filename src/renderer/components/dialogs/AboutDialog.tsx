@@ -27,7 +27,7 @@ import Tooltip from '-/components/Tooltip';
 import Dialog from '@mui/material/Dialog';
 import semver from 'semver';
 import DraggablePaper from '-/components/DraggablePaper';
-import LogoIcon from 'assets/images/icon100x100.svg';
+import LogoIcon from '-/assets/images/icon100x100.svg';
 import versionMeta from '-/version.json';
 import { Pro } from '-/pro';
 import { getLastVersionPromise } from '-/reducers/settings';

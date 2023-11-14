@@ -1,22 +1,11 @@
 {
+  "productName": "TagSpaces",
   "appId": "org.tagspaces.desktopapp",
   "asar": true,
-  "asarUnpack": "**/node_modules/sharp/**/*",
-  "afterSign": "scripts/afterSign.js",
+  "asarUnpack": ["**\\*.{node,dll}", "**/node_modules/sharp/**/*"],
+  "afterSign": ".erb/scripts/notarize.js",
   "includeSubNodeModules": true,
-  "files": [
-    "dist/",
-    "node_modules/",
-    "config/",
-    ".env",
-    "app.html",
-    "main.prod.js",
-    "main.prod.js.map",
-    "third-party.txt",
-    "LICENSE.txt",
-    "version.json",
-    "package.json"
-  ],
+  "files": ["dist/", "node_modules/", "package.json", ".env", "extconfig.js"],
   "copyright": "Copyright © 2023 TagSpaces UG (haftungsbeschraenkt)",
   "artifactName": "${name}-${os}-${arch}-${version}.${ext}",
   "dmg": {
@@ -30,8 +19,8 @@
     "target": ["zip", "dmg"],
     "hardenedRuntime": true,
     "gatekeeperAssess": false,
-    "entitlements": "resources/entitlements.mac.plist",
-    "entitlementsInherit": "resources/entitlements.mac.plist",
+    "entitlements": "assets/entitlements.mac.plist",
+    "entitlementsInherit": "assets/entitlements.mac.plist",
     "notarize": {},
     "icon": "resources/icon.icns"
   },
@@ -47,7 +36,9 @@
     "include": "resources/installer.nsh"
   },
   "directories": {
-    "buildResources": "resources",
+    "app": "release/app",
+    "buildResources": "assets",
     "output": "../builds"
-  }
+  },
+  "extraResources": ["./assets/**"]
 }
