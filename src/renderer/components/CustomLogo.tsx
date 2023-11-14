@@ -79,7 +79,7 @@ function CustomLogo() {
         <Typography
           style={{
             display: 'inline',
-            fontSize: 'small',
+            fontSize: '10px',
             marginLeft: 3,
             lineHeight: '40px',
           }}
@@ -91,8 +91,8 @@ function CustomLogo() {
         <Typography
           style={{
             display: 'inline',
-            fontSize: 'small',
-            marginLeft: -30,
+            fontSize: '10px',
+            marginLeft: -25,
             lineHeight: '40px',
           }}
         >

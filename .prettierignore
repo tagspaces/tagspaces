@@ -43,3 +43,6 @@ tests/bin
 src/renderer/aws-exports.js
 src/renderer/config/config.json
 src/renderer/extension-config.ts
+public
+release
+src
