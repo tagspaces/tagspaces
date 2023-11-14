@@ -6,11 +6,11 @@ cordova
 web
 web/files
 release/app/node_modules
+release/app/dist
 src/node_modules
 src/renderer/version.json
 src/renderer/tagspaces.namespace.d.ts
 flow-typed
-release/app/dist
 extensions/extensions/*
 extensions/_extensions/*
 extensions/.ts/*
@@ -43,6 +43,3 @@ tests/bin
 src/renderer/aws-exports.js
 src/renderer/config/config.json
 src/renderer/extension-config.ts
-public
-release
-src
