@@ -44,7 +44,7 @@ import {
 } from '-/components/CommonIcons';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { getDesktopMode } from '-/reducers/settings';
-import Links from '-/content/links';
+import Links from 'assets/links';
 import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
 import HowToStart from '-/components/HowToStart';

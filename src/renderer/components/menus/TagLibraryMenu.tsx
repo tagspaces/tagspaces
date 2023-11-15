@@ -29,7 +29,7 @@ import ReloadIcon from '@mui/icons-material/Sync';
 import AppConfig from '-/AppConfig';
 import ImportExportTagGroupsDialog from '../dialogs/ImportExportTagGroupsDialog';
 import { TS } from '-/tagspaces.namespace';
-import Links from '-/content/links';
+import Links from 'assets/links';
 import { ProLabel, ProTooltip } from '-/components/HelperComponents';
 import { Pro } from '-/pro';
 import { openURLExternally } from '-/services/utils-io';

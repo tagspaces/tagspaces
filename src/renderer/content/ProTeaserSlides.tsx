@@ -1,4 +1,4 @@
-import Links from '-/content/links';
+import Links from 'assets/links';
 import ProTeaserImage from '-/assets/images/pro-teaser.svg';
 import KanbanImage from '-/assets/images/kanban-perspective.jpg';
 import GalleryImage from '-/assets/images/gallery-perspective.jpg';

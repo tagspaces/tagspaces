@@ -37,7 +37,7 @@ import TwitterIcon from '@mui/icons-material/Twitter';
 import ForumIcon from '@mui/icons-material/Forum';
 import ProTeaserIcon from '@mui/icons-material/FlightTakeoff';
 import { KeyShortcutsIcon, HelpIcon } from '-/components/CommonIcons';
-import Links from '-/content/links';
+import Links from 'assets/links';
 import { Pro } from '-/pro';
 import { openURLExternally } from '-/services/utils-io';
 import { classes, SidePanel } from '-/components/SidePanels.css';

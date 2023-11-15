@@ -32,11 +32,10 @@ import versionMeta from '-/version.json';
 import { Pro } from '-/pro';
 import { getLastVersionPromise } from '-/reducers/settings';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import Links from '-/content/links';
+import Links from 'assets/links';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import AppConfig from '-/AppConfig';
-import { Fullscreen } from '@mui/icons-material';
 import { openURLExternally } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
 

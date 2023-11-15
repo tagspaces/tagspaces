@@ -22,13 +22,14 @@ import log from 'electron-log';
 import pm2 from '@elife/pm2';
 import propertiesReader from 'properties-reader';
 import fs from 'fs-extra';
-import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import windowStateKeeper from 'electron-window-state';
 import findFreePorts from 'find-free-ports';
 import settings from '../renderer/settings';
 import { getExtensions } from '../renderer/utils/extension-utils';
 import i18nInit from '../renderer/services/i18nInit';
+import buildTrayIconMenu from './electron-tray-menu';
+import buildDesktopMenu from './electron-menus';
 
 class AppUpdater {
   constructor() {
@@ -295,6 +296,56 @@ function createNewWindowInstance(url?) {
   }
 }
 
+function buildTrayMenu(i18n) {
+  buildTrayIconMenu(
+    {
+      showTagSpaces,
+      resumePlayback,
+      createNewWindowInstance,
+      openSearch: showSearch,
+      toggleNewFileDialog: newTextFile,
+      openNextFile: getNextFile,
+      openPrevFile: getPreviousFile,
+      quitApp: reloadApp,
+    },
+    i18n,
+    process.platform === 'darwin',
+  );
+}
+
+function buildAppMenu(i18n) {
+  buildDesktopMenu(
+    {
+      showTagSpaces,
+      openSearch: showSearch,
+      toggleNewFileDialog: newTextFile,
+      openNextFile: getNextFile,
+      openPrevFile: getPreviousFile,
+      quitApp: reloadApp,
+      showCreateDirectoryDialog,
+      toggleOpenLinkDialog,
+      openLocationManagerPanel,
+      openTagLibraryPanel,
+      goBack,
+      goForward,
+      setZoomResetApp,
+      setZoomInApp,
+      setZoomOutApp,
+      exitFullscreen,
+      toggleSettingsDialog,
+      openHelpFeedbackPanel,
+      toggleKeysDialog,
+      toggleOnboardingDialog,
+      openURLExternally,
+      toggleLicenseDialog,
+      toggleThirdPartyLibsDialog,
+      toggleAboutDialog,
+      createNewWindowInstance,
+    },
+    i18n,
+  );
+}
+
 /*const RESOURCES_PATH = app.isPackaged
   ? path.join(process.resourcesPath, 'assets')
   : path.join(__dirname, '../../assets');
@@ -372,7 +423,7 @@ function startWS() {
   }
 }
 
-const createWindow = async () => {
+const createWindow = async (i18n) => {
   let startupParameter = '';
   if (startupFilePath) {
     if (startupFilePath.startsWith('./') || startupFilePath.startsWith('.\\')) {
@@ -460,8 +511,12 @@ const createWindow = async () => {
     },
   );
 
-  const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
+  try {
+    buildAppMenu(i18n);
+    buildTrayMenu(i18n);
+  } catch (ex) {
+    console.log('buildMenus', ex);
+  }
 
   // Open urls in the user's browser
   mainWindow.webContents.setWindowOpenHandler((edata) => {
@@ -511,18 +566,18 @@ app
   .whenReady()
   .then(() => {
     return i18nInit().then((i18n) => {
-      createWindow();
+      createWindow(i18n);
       app.on('activate', () => {
         // On macOS it's common to re-create a window in the app when the
         // dock icon is clicked and there are no other windows open.
-        if (mainWindow === null) createWindow();
+        if (mainWindow === null) createWindow(i18n);
       });
 
       i18n.on('languageChanged', (lng) => {
         try {
           console.log('languageChanged:' + lng);
-          //buildAppMenu(i18n);
-          //buildTrayMenu(i18n);
+          buildAppMenu(i18n);
+          buildTrayMenu(i18n);
         } catch (ex) {
           console.log('languageChanged', ex);
         }

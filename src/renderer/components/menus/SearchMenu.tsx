@@ -24,7 +24,7 @@ import MenuItem from '@mui/material/MenuItem';
 import HelpIcon from '@mui/icons-material/Help';
 import ExportImportIcon from '@mui/icons-material/SwapHoriz';
 import { Pro } from '../../pro';
-import Links from '-/content/links';
+import Links from 'assets/links';
 import { ProLabel } from '-/components/HelperComponents';
 import { openURLExternally } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';

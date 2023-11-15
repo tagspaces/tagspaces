@@ -7,7 +7,7 @@ import StepLabel from '@mui/material/StepLabel';
 import StepContent from '@mui/material/StepContent';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import Links from '-/content/links';
+import Links from 'assets/links';
 import { ProSign } from '-/components/HelperComponents';
 import { openURLExternally } from '-/services/utils-io';
 import { useTheme } from '@mui/material/styles';

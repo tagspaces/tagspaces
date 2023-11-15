@@ -20,7 +20,7 @@ import semver from 'semver';
 import AppConfig from '-/AppConfig';
 import defaultSettings from './settings-default';
 import PlatformIO from '-/services/platform-facade';
-import Links from '-/content/links';
+import Links from 'assets/links';
 import versionMeta from '-/version.json';
 import { actions as AppActions } from './app';
 import { TS } from '-/tagspaces.namespace';

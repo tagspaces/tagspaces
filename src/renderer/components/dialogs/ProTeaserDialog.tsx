@@ -28,7 +28,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { getProTeaserIndex } from '-/reducers/app';
 import { useSelector } from 'react-redux';
 import { getProTeaserSlides } from '-/content/ProTeaserSlides';
-import Links from '-/content/links';
+import Links from 'assets/links';
 import { openURLExternally } from '-/services/utils-io';
 import { register } from 'swiper/element/bundle';
 import { Navigation, Pagination } from 'swiper/modules';

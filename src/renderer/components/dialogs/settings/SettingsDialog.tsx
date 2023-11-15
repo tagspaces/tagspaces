@@ -36,7 +36,7 @@ import SettingsFileTypes from '../settings/SettingsFileTypes';
 import { clearAllURLParams } from '-/utils/dom';
 import SettingsAdvanced from '-/components/dialogs/settings/SettingsAdvanced';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import Links from '-/content/links';
+import Links from 'assets/links';
 import SettingsExtensions from '-/components/dialogs/settings/SettingsExtensions';
 import { openURLExternally } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';

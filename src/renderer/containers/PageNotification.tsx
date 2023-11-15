@@ -31,7 +31,7 @@ import {
   isUpdateAvailable,
 } from '../reducers/app';
 import { Pro } from '../pro';
-import Links from '-/content/links';
+import Links from 'assets/links';
 import { openURLExternally } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
 import { useNotificationContext } from '-/hooks/useNotificationContext';

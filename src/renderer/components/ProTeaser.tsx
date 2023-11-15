@@ -24,7 +24,7 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
 import ProTeaserImage from '-/assets/images/pro-teaser.svg';
-import Links from '-/content/links';
+import Links from 'assets/links';
 import { openURLExternally } from '-/services/utils-io';
 import { useTranslation } from 'react-i18next';
 

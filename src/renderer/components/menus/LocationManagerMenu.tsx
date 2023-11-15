@@ -32,7 +32,7 @@ import { useDispatch } from 'react-redux';
 import AppConfig from '-/AppConfig';
 import { Pro } from '../../pro';
 import { AppDispatch } from '-/reducers/app';
-import Links from '-/content/links';
+import Links from 'assets/links';
 import { ProLabel } from '-/components/HelperComponents';
 import {
   OpenLinkIcon,

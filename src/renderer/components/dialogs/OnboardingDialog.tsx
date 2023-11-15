@@ -40,7 +40,7 @@ import {
   actions as SettingsActions,
 } from '-/reducers/settings';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
-import Links from '-/content/links';
+import Links from 'assets/links';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { openURLExternally } from '-/services/utils-io';

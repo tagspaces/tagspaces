@@ -48,7 +48,7 @@ import { parseGeoLocation, parseLatLon } from '-/utils/geo';
 import { getSearches } from '-/reducers/searches';
 import { TS } from '-/tagspaces.namespace';
 import { ProLabel, BetaLabel, ProTooltip } from '-/components/HelperComponents';
-import Links from '-/content/links';
+import Links from 'assets/links';
 import {
   CreateFileIcon,
   FolderIcon,
