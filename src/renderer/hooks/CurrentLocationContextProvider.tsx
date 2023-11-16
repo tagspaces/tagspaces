@@ -271,16 +271,18 @@ export const CurrentLocationContextProvider = ({
    * return Promise<currentLocationId> if location is changed or null if location and type is changed
    */
   function switchLocationType(location: TS.Location) {
-    if (currentLocation === undefined) {
-      return setLocationType(location).then(() => null);
-    }
-    if (location.uuid !== currentLocation.uuid) {
-      if (location.type !== currentLocation.type) {
+    if (location !== undefined) {
+      if (currentLocation === undefined) {
         return setLocationType(location).then(() => null);
-      } else {
-        // handle the same location type but different location
-        // dispatch(actions.setCurrentLocationId(location.uuid));
-        return setLocationType(location).then(() => currentLocation.uuid);
+      }
+      if (location.uuid !== currentLocation.uuid) {
+        if (location.type !== currentLocation.type) {
+          return setLocationType(location).then(() => null);
+        } else {
+          // handle the same location type but different location
+          // dispatch(actions.setCurrentLocationId(location.uuid));
+          return setLocationType(location).then(() => currentLocation.uuid);
+        }
       }
     }
     return Promise.resolve(null);

@@ -24,21 +24,16 @@ import Dialog from '@mui/material/Dialog';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
 import DraggablePaper from '-/components/DraggablePaper';
-import {
-  actions as AppActions,
-  AppDispatch,
-  OpenedEntry,
-} from '-/reducers/app';
+import { OpenedEntry } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
-import { findExtensionsForEntry } from '-/services/utils-io';
 import { getCurrentTheme, getSupportedFileTypes } from '-/reducers/settings';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import FileView from '-/components/FileView';
 import useEventListener from '-/utils/useEventListener';
 import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
-import { actions as LocationActions } from '-/reducers/locations';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 interface Props {
   open: boolean;
@@ -51,7 +46,8 @@ function FilePreviewDialog(props: Props) {
   //const dispatch: AppDispatch = useDispatch();
   const { switchLocationTypeByID, switchCurrentLocationType } =
     useCurrentLocationContext();
-  const supportedFileTypes = useSelector(getSupportedFileTypes);
+  const { openedEntries } = useOpenedEntryContext();
+  // const supportedFileTypes = useSelector(getSupportedFileTypes);
   const currentTheme = useSelector(getCurrentTheme);
   const fileViewer: MutableRefObject<HTMLIFrameElement> =
     useRef<HTMLIFrameElement>(null);
@@ -59,14 +55,17 @@ function FilePreviewDialog(props: Props) {
     useRef<HTMLDivElement>(null);
   const eventID = useRef<string>(getUuid());
 
-  const openedFile: OpenedEntry = fsEntry
-    ? findExtensionsForEntry(
-        fsEntry.uuid,
-        supportedFileTypes,
-        fsEntry.path,
-        fsEntry.isFile,
-      )
-    : undefined;
+  const openedEntry: OpenedEntry = openedEntries[0];
+  const openedFile: OpenedEntry =
+    fsEntry && openedEntry
+      ? {
+          ...openedEntry,
+          ...(fsEntry.uuid && { uuid: fsEntry.uuid }),
+          path: fsEntry.path,
+          isFile: fsEntry.isFile,
+          editMode: false,
+        }
+      : undefined;
 
   useEventListener('message', (e) => {
     if (typeof e.data === 'string') {
