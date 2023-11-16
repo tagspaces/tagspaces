@@ -63,6 +63,7 @@ function FilePreviewDialog(props: Props) {
           ...(fsEntry.uuid && { uuid: fsEntry.uuid }),
           path: fsEntry.path,
           isFile: fsEntry.isFile,
+          editMode: false,
         }
       : undefined;
 
