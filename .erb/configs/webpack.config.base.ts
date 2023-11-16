@@ -6,19 +6,32 @@ import webpack from 'webpack';
 const Dotenv = require('dotenv-webpack');
 import TsconfigPathsPlugins from 'tsconfig-paths-webpack-plugin';
 import webpackPaths from './webpack.paths';
-//import { dependencies as externals } from '../../release/app/package.json';
+import { dependencies as externals } from '../../release/app/package.json';
 import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
 import path = require('path');
 
 const configuration: webpack.Configuration = {
-  // externals: [...Object.keys(externals || {})],
+  // packages that is not included in the bundle
   externals: [
+    ...Object.keys(externals || {}),
     {
       fsevents: "require('fsevents')",
     },
     {
       fswin: "require('fswin')",
     },
+    /*{
+      fs: "require('fs')",
+    },
+    {
+      'fs-extra': "require('fs-extra')",
+    },
+    {
+      'graceful-fs': "require('graceful-fs')",
+    },
+    {
+      'child-process': "require('child-process')",
+    },*/
   ],
 
   stats: 'errors-only',
@@ -33,7 +46,7 @@ const configuration: webpack.Configuration = {
           options: {
             // Remove this line to enable type checking in webpack builds
             transpileOnly: true,
-            experimentalWatchApi: true,
+            // experimentalWatchApi: true,
             compilerOptions: {
               module: 'esnext',
             },
@@ -59,13 +72,6 @@ const configuration: webpack.Configuration = {
     modules: [webpackPaths.srcPath, 'node_modules'],
     // There is no need to add aliases here, the paths in tsconfig get mirrored
     plugins: [new TsconfigPathsPlugins()],
-    /* alias: {
-      // Your custom aliases here
-      // __dirname will stands for your root directory level
-      // path.resolve will concatenate your project folder location with the aliased folder
-      '-': path.resolve(__dirname, '../../src/renderer/'),
-      assets: path.resolve(__dirname, '../../assets/'),
-    },*/
   },
 
   plugins: [

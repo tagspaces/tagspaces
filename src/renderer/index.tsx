@@ -17,7 +17,7 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import Root from './containers/Root';
+// import Root from './containers/Root';
 import configureStore from './store/configureStore';
 import './app.global.css';
 
@@ -33,6 +33,8 @@ if (process.env.NODE_ENV === 'production') {
 
 const container = document.getElementById('root') as HTMLElement;
 const root = createRoot(container);
+// https://github.com/electron-react-boilerplate/electron-react-boilerplate/issues/2395#issuecomment-651328378
+const Root = require('./containers/Root').default;
 root.render(<Root store={store} persistor={persistor} />);
 
 /*// calling IPC exposed from preload script

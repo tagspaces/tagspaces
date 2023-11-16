@@ -42,6 +42,10 @@ class AppUpdater {
 let mainWindow: BrowserWindow | null = null;
 let usedWsPort = undefined;
 
+function getUsedWsPort() {
+  return usedWsPort;
+}
+
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
@@ -279,7 +283,7 @@ function createNewWindowInstance(url?) {
     width: mainWindowState.width,
     height: mainWindowState.height,
     webPreferences: {
-      //webSecurity: false, // todo https://www.electronjs.org/docs/latest/tutorial/security#6-do-not-disable-websecurity
+      webSecurity: app.isPackaged, // todo https://www.electronjs.org/docs/latest/tutorial/security#6-do-not-disable-websecurity
       spellcheck: true,
       nodeIntegration: true,
       webviewTag: true,
@@ -451,7 +455,7 @@ const createWindow = async (i18n) => {
     height: mainWindowState.height,
     //icon: getAssetPath('icon.png'),
     webPreferences: {
-      //webSecurity: false, // todo https://www.electronjs.org/docs/latest/tutorial/security#6-do-not-disable-websecurity
+      webSecurity: app.isPackaged, // todo https://www.electronjs.org/docs/latest/tutorial/security#6-do-not-disable-websecurity
       spellcheck: true,
       nodeIntegration: true,
       webviewTag: true,
@@ -466,14 +470,16 @@ const createWindow = async (i18n) => {
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36';
   const testWinOnUnix = false; // set to true to simulate windows os, useful for testing s3 handling
 
-  mainWindow.loadURL(
-    resolveHtmlPath('index.html') + startupParameter,
-    testWinOnUnix ? { userAgent: winUserAgent } : {},
-  );
-
-  mainWindow.webContents.send('start_ws', {
-    port: usedWsPort,
-  });
+  mainWindow
+    .loadURL(
+      resolveHtmlPath('index.html') + startupParameter,
+      testWinOnUnix ? { userAgent: winUserAgent } : {},
+    )
+    .then(() => {
+      mainWindow.webContents.send('start_ws', {
+        port: getUsedWsPort(),
+      });
+    });
 
   mainWindow.webContents.on('before-input-event', (_, input) => {
     if (input.type === 'keyDown' && input.key === 'F12') {

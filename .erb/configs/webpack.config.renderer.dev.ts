@@ -39,7 +39,7 @@ if (
 }
 
 const configuration: webpack.Configuration = {
-  devtool: 'inline-source-map',
+  devtool: 'eval-source-map', //'inline-source-map',
 
   mode: 'development',
 
@@ -179,24 +179,18 @@ const configuration: webpack.Configuration = {
   devServer: {
     port,
     compress: true,
+    allowedHosts: 'auto',
     client: {
+      reconnect: true,
       overlay: {
         warnings: false,
         errors: false,
       },
-      logging: 'verbose'
+      logging: 'verbose',
     },
-    // noInfo: true,
     devMiddleware: {
-      // index: true,
       stats: 'errors-only',
-      // mimeTypes: { "text/html": ["phtml"] },
-      // publicPath: "/publicPathForDevServe",
-      // serverSideRender: true,
-      // writeToDisk: true,
     },
-    // inline: true,
-    // lazy: false,
     hot: true,
     headers: { 'Access-Control-Allow-Origin': '*' },
     static: {
