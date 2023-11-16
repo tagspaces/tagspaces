@@ -305,6 +305,9 @@ export function findExtensionPathForId(
   if (AppConfig.isWeb) {
     return 'modules/' + extensionId;
   }
+  if (AppConfig.isCordova) {
+    return 'node_modules/' + extensionId;
+  }
   return process.env.NODE_ENV === 'development'
     ? 'modules/' + extensionId
     : '../../node_modules/' + extensionId;

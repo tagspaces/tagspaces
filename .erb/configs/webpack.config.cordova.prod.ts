@@ -4,30 +4,31 @@
 
 import path from 'path';
 import webpack from 'webpack';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import merge from 'webpack-merge';
 import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
 import baseConfig from './webpack.config.base';
+import webpackPaths from './webpack.paths';
 // import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 
-const targetPlatform = 'cordova-io'; // electron-io | webdav-io | cordova-io | process.env.APP_TARGET ||
-
 // CheckNodeEnv('production');
-export default merge(baseConfig, {
-  devtool: 'source-map', // 'inline-source-map',
+const configuration: webpack.Configuration = {
+  devtool: 'source-map',
 
   mode: 'production',
 
   target: 'web',
 
-  entry: path.join(__dirname, '..', 'app/index'),
+  //entry: path.join(__dirname, '..', 'app/index'),
+  entry: path.join(webpackPaths.srcRendererPath, 'index.tsx'),
   // entry: ['babel-polyfill', './app/index'],
 
   output: {
     libraryTarget: 'window', // 'window', // 'commonjs2',
-    path: path.join(__dirname, '../cordova/www/dist'),
+    path: path.join(__dirname, '../../cordova/www/dist'),
     publicPath: './dist/',
     filename: 'bundle.js',
   },
@@ -124,15 +125,22 @@ export default merge(baseConfig, {
       },
       // WOFF Font
       {
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'fonts/[hash][ext][query]',
+        },
+      },
+      /*{
         test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
         use: {
           loader: 'url-loader',
           options: {
             limit: 10000,
-            mimetype: 'application/font-woff',
-          },
+            mimetype: 'application/font-woff'
+          }
         },
-        type: 'javascript/auto',
+        type: 'javascript/auto'
       },
       // WOFF2 Font
       {
@@ -141,10 +149,10 @@ export default merge(baseConfig, {
           loader: 'url-loader',
           options: {
             limit: 10000,
-            mimetype: 'application/font-woff',
-          },
+            mimetype: 'application/font-woff'
+          }
         },
-        type: 'javascript/auto',
+        type: 'javascript/auto'
       },
       // TTF Font
       {
@@ -153,19 +161,19 @@ export default merge(baseConfig, {
           loader: 'url-loader',
           options: {
             limit: 10000,
-            mimetype: 'application/octet-stream',
-          },
+            mimetype: 'application/octet-stream'
+          }
         },
-        type: 'javascript/auto',
+        type: 'javascript/auto'
       },
       // EOT Font
       {
         test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
         use: 'file-loader',
-        type: 'javascript/auto',
-      },
+        type: 'javascript/auto'
+      },*/
       // SVG Font
-      {
+      /*{
         test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
         use: {
           loader: 'url-loader',
@@ -175,13 +183,8 @@ export default merge(baseConfig, {
           },
         },
         type: 'javascript/auto',
-      },
-      // Text files
-      {
-        test: /\.(txt)$/,
-        use: 'raw-loader',
-        type: 'javascript/auto',
-      },
+      },*/
+
       // Common Image Formats
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
@@ -193,6 +196,31 @@ export default merge(baseConfig, {
         resolve: {
           fullySpecified: false,
         },
+      },
+      // Text files
+      {
+        test: /\.(txt)$/,
+        use: 'raw-loader',
+        type: 'javascript/auto',
+      },
+      // SVG
+      {
+        test: /\.svg$/,
+        use: [
+          {
+            loader: '@svgr/webpack',
+            options: {
+              prettier: false,
+              svgo: false,
+              svgoConfig: {
+                plugins: [{ removeViewBox: false }],
+              },
+              titleProp: true,
+              ref: true,
+            },
+          },
+          'file-loader',
+        ],
       },
     ],
   },
@@ -216,18 +244,6 @@ export default merge(baseConfig, {
   },
 
   plugins: [
-    /**
-     * Create global constants which can be configured at compile time.
-     *
-     * Useful for allowing different behaviour between development builds and
-     * release builds
-     *
-     * NODE_ENV should be production so that modules do not perform certain
-     * development checks
-     */
-    new webpack.EnvironmentPlugin({
-      NODE_ENV: 'production',
-    }),
     new NodePolyfillPlugin(),
 
     new MiniCssExtractPlugin({
@@ -244,6 +260,19 @@ export default merge(baseConfig, {
       }
     ), */
 
+    new HtmlWebpackPlugin({
+      filename: path.join('index.html'),
+      template: path.join(webpackPaths.srcRendererPath, 'appd.html'),
+      minify: {
+        collapseWhitespace: true,
+        removeAttributeQuotes: true,
+        removeComments: true,
+      },
+      isBrowser: false,
+      env: process.env.NODE_ENV,
+      isDevelopment: process.env.NODE_ENV !== 'production',
+      nodeModules: webpackPaths.appNodeModulesPath,
+    }),
     /* new webpack.NormalModuleReplacementPlugin(
       /(.*)_PDFDISTLIB_(\.*)/,
       resource => {
@@ -260,4 +289,6 @@ export default merge(baseConfig, {
       openAnalyzer: process.env.OPEN_ANALYZER === 'true',
     }),
   ],
-});
+};
+
+export default merge(baseConfig, configuration);
