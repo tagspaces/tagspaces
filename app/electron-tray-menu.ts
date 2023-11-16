@@ -98,7 +98,7 @@ export default function buildTrayIconMenu(mainPageProps: any, i18n, isMacLike) {
 
   let icon = nativeImage.createFromDataURL(icon2xWhite);
   if (!tray) {
-    if (process.platform === 'darwin') {
+    if (process.platform === 'darwin' || process.platform === 'win32') {
       icon = nativeImage.createFromDataURL(icon1x);
       icon.addRepresentation({
         scaleFactor: 2.0,
