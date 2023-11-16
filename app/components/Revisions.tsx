@@ -46,12 +46,15 @@ import FilePreviewDialog from '-/components/dialogs/FilePreviewDialog';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 const initialRowsPerPage = 10;
 
 function Revisions() {
   const { t } = useTranslation();
   // const dispatch: AppDispatch = useDispatch();
+  const { switchLocationTypeByID, switchCurrentLocationType } =
+    useCurrentLocationContext();
   const { openedEntries, updateOpenedFile } = useOpenedEntryContext();
   const { copyFilePromiseOverwrite } = usePlatformFacadeContext();
   const [rows, setRows] = useState<Array<TS.FileSystemEntry>>([]);
@@ -85,9 +88,16 @@ function Revisions() {
             backupFilePath,
             PlatformIO.getDirSeparator(),
           );
-          PlatformIO.listDirectoryPromise(backupPath, []).then((h) =>
-            setRows(h.sort((a, b) => (a.lmdt < b.lmdt ? 1 : -1))),
-          );
+          switchLocationTypeByID(openedFile.locationId)
+            .then(() => {
+              PlatformIO.listDirectoryPromise(backupPath, []).then((h) => {
+                setRows(h.sort((a, b) => (a.lmdt < b.lmdt ? 1 : -1)));
+                return switchCurrentLocationType();
+              });
+            })
+            .catch(() => {
+              return switchCurrentLocationType();
+            });
         },
       );
     }

@@ -120,7 +120,7 @@ export type OpenedEntry = {
   url?: string;
   size: number;
   lmdt: number;
-  locationId: string;
+  locationId?: string;
   viewingExtensionPath: string;
   viewingExtensionId: string;
   editingExtensionPath?: string;

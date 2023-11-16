@@ -308,51 +308,64 @@ export function findExtensionPathForId(
   return 'node_modules/' + extensionId;
 }
 
+export function addExtensionsForEntry(
+  openedEntry: OpenedEntry,
+  supportedFileTypes: Array<TS.FileTypes>,
+): OpenedEntry {
+  const fileExtension = extractFileExtension(
+    openedEntry.path,
+    PlatformIO.getDirSeparator(),
+  ).toLowerCase();
+
+  const fileForOpening = { ...openedEntry };
+  const fileType: TS.FileTypes = supportedFileTypes.find(
+    (fileType) =>
+      fileType.viewer && fileType.type.toLowerCase() === fileExtension,
+  );
+  if (fileType) {
+    fileForOpening.viewingExtensionId = fileType.viewer;
+    if (fileType.color) {
+      fileForOpening.color = fileType.color;
+    }
+    fileForOpening.viewingExtensionPath = findExtensionPathForId(
+      fileType.viewer,
+      //fileType.extensionExternalPath,
+    );
+    if (fileType.editor && fileType.editor.length > 0) {
+      fileForOpening.editingExtensionId = fileType.editor;
+      fileForOpening.editingExtensionPath = findExtensionPathForId(
+        fileType.editor,
+        //fileType.extensionExternalPath,
+      );
+    }
+  } else {
+    fileForOpening.viewingExtensionPath = openedEntry.isFile
+      ? findExtensionPathForId('@tagspaces/extensions/text-viewer')
+      : 'about:blank';
+  }
+  return fileForOpening;
+}
+
 export function findExtensionsForEntry(
   uuid: string,
   supportedFileTypes: Array<any>,
   entryPath: string,
   isFile = true,
 ): OpenedEntry {
-  const fileExtension = extractFileExtension(
-    entryPath,
-    PlatformIO.getDirSeparator(),
-  ).toLowerCase();
-  const viewingExtensionPath = isFile
-    ? findExtensionPathForId('@tagspaces/extensions/text-viewer')
-    : 'about:blank';
-  const fileForOpening: OpenedEntry = {
-    uuid: uuid,
-    path: entryPath,
-    viewingExtensionPath,
-    viewingExtensionId: '',
-    isFile,
-    // changed: false,
-    locationId: undefined,
-    lmdt: 0,
-    size: 0,
-  };
-  supportedFileTypes.map((fileType) => {
-    if (fileType.viewer && fileType.type.toLowerCase() === fileExtension) {
-      fileForOpening.viewingExtensionId = fileType.viewer;
-      if (fileType.color) {
-        fileForOpening.color = fileType.color;
-      }
-      fileForOpening.viewingExtensionPath = findExtensionPathForId(
-        fileType.viewer,
-        fileType.extensionExternalPath,
-      );
-      if (fileType.editor && fileType.editor.length > 0) {
-        fileForOpening.editingExtensionId = fileType.editor;
-        fileForOpening.editingExtensionPath = findExtensionPathForId(
-          fileType.editor,
-          fileType.extensionExternalPath,
-        );
-      }
-    }
-    return true;
-  });
-  return fileForOpening;
+  return addExtensionsForEntry(
+    {
+      ...(uuid && { uuid: uuid }),
+      path: entryPath,
+      viewingExtensionPath: 'about:blank',
+      viewingExtensionId: '',
+      isFile,
+      // changed: false,
+      // locationId: undefined,
+      lmdt: 0,
+      size: 0,
+    },
+    supportedFileTypes,
+  );
 }
 
 export function getNextFile(
