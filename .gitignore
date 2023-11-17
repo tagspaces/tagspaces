@@ -65,8 +65,7 @@ test/file-structure
 
 public/modules
 src/renderer/version.json
-src/renderer/THIRD-PARTY.html
-src/renderer/THIRD-PARTY.txt
+src/renderer/third-party.txt
 
 scripts/setuppro.js
 scripts/enablepro.js
