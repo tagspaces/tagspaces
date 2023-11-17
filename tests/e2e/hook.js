@@ -138,7 +138,16 @@ export async function startTestingApp(extconfig) {
     // Launch Electron app.
     global.app = await electron.launch({
       args: [
-        pathLib.join(__dirname, '..', '..', 'app', 'main.prod.js'),
+        pathLib.join(
+          __dirname,
+          '..',
+          '..',
+          'release',
+          'app',
+          'dist',
+          'main',
+          'main.js',
+        ),
         // `--user-data-dir=${tempDir.path}`,
         '--integration-testing',
         '--no-sandbox',

@@ -20,7 +20,7 @@ import {
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { createSavedSearch, searchEngine } from './search.helpers';
 import { openContextEntryMenu } from './test-utils';
-import { dataTidFormat } from '../../app/services/test';
+import { dataTidFormat } from '../../src/renderer/services/test';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 
 test.beforeAll(async () => {

@@ -3,8 +3,8 @@ import path from 'path';
 import { expect } from '@playwright/test';
 import { delay } from './hook';
 import { firstFile, toContainTID } from './test-utils';
-import AppConfig from '../../app/AppConfig';
-import { dataTidFormat } from '../../app/services/test';
+import AppConfig from '../../src/renderer/AppConfig';
+import { dataTidFormat } from '../../src/renderer/services/test';
 
 export const defaultLocationPath =
   './testdata-tmp/file-structure/supported-filestypes';

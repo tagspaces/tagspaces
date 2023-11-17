@@ -13,7 +13,7 @@ import {
   waitForNotification,
 } from './general.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
-import { findAction } from '../../app/components/SearchOptions';
+import { findAction } from '../../src/renderer/components/SearchOptions';
 
 export const regexQuery = '!"#$%&\'()*+,-./@:;<=>[\\]^_`{|}~';
 export const searchTag = 'tag1';

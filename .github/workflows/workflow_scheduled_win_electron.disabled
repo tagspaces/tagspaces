@@ -32,7 +32,7 @@ jobs:
         run: npm run test-unit
       - name: Run Electron tests
         run: |
-          npm run build-main
+          npm run build:main
           npm run build-e2e
           npm run test-playwright
       - uses: IgnusG/jest-report-action@v2.3.3
@@ -76,7 +76,7 @@ jobs:
 #      - name: Run Electron tests
 #        run: |
 #          yarn install-ext
-#          yarn build-main
+#          yarn build:main
 #          yarn build-e2e
 #          yarn test-playwright
 #      - uses: actions/upload-artifact@v2
@@ -126,7 +126,7 @@ jobs:
 #      - name: Run Electron tests
 #        run: |
 #          yarn install-ext
-#          yarn build-main
+#          yarn build:main
 #          yarn build-e2e
 #          yarn test-e2e-electron-minio
 #      - uses: actions/upload-artifact@v2
@@ -176,7 +176,7 @@ jobs:
 #      - name: Run Electron tests
 #        run: |
 #          yarn install-ext
-#          yarn build-main
+#          yarn build:main
 #          yarn build-e2e
 #          yarn test-e2e-web
 #      - uses: actions/upload-artifact@v2
