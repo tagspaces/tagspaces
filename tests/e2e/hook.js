@@ -81,7 +81,7 @@ export async function copyExtConfig(extconfig = 'extconfig-with-welcome.js') {
     __dirname,
     '..',
     '..',
-    global.isWeb ? 'web' : 'app',
+    global.isWeb ? 'web' : 'release/app/dist/renderer',
     'extconfig.js',
   );
   await fse.copy(srcDir, destDir);
@@ -93,7 +93,7 @@ export async function removeExtConfig() {
       __dirname,
       '..',
       '..',
-      global.isWeb ? 'web' : 'app',
+      global.isWeb ? 'web' : 'release/app/dist/renderer',
       'extconfig.js',
     ),
   );
