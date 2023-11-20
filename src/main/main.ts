@@ -373,7 +373,7 @@ function startWS() {
         '../node_modules/@tagspaces/tagspaces-ws/build',
       );
       script = 'index.js';
-      envPath = path.join(__dirname, '../../release/app/.env');
+      envPath = path.join(__dirname, '../.env');
     }
     const properties = propertiesReader(envPath); //getAssetPath('.env')
     //console.debug(JSON.stringify(properties.get('KEY')));
