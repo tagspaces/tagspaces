@@ -125,3 +125,4 @@ playwright-report/*
 deploy.sh
 
 docker/*.zip
+app/version.json

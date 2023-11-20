@@ -21,14 +21,7 @@ export function resolveHtmlPath(htmlFileName: string) {
  */
 export function checkVersionJson() {
   const version = path.resolve(webpackPaths.srcRendererPath, 'version.json');
-  if (!fs.existsSync(version)) {
-    console.log(
-      chalk.black.bgYellow.bold(
-        'The version.json files are missing. Sit back while we build them for you with "npm run version-meta"',
-      ),
-    );
-    execSync('npm run version-meta');
-  }
+  execSync('npm run version-meta');
 }
 
 /**
