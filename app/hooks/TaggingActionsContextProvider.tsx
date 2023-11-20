@@ -94,7 +94,8 @@ export const TaggingActionsContextProvider = ({
 }: TaggingActionsContextProviderProps) => {
   const { t } = useTranslation();
   const { openedEntries, updateOpenedFile } = useOpenedEntryContext();
-  const { updateCurrentDirEntry } = useDirectoryContentContext();
+  const { updateCurrentDirEntry, openCurrentDirectory } =
+    useDirectoryContentContext();
   const { persistTagsInSidecarFile } = useCurrentLocationContext();
   const { getIndex, indexUpdateSidecarTags } = useLocationIndexContext();
   const { renameFile } = useFsActionsContext();
@@ -166,8 +167,9 @@ export const TaggingActionsContextProvider = ({
     });
 
     if (processedTags.length > 0) {
+      const isOne = paths.length === 1;
       const promises = paths.map((path) =>
-        addTagsToEntry(path, processedTags, updateIndex),
+        addTagsToEntry(path, processedTags, updateIndex, isOne),
       );
 
       if (addTagsToLibrary) {
@@ -207,7 +209,12 @@ export const TaggingActionsContextProvider = ({
           dispatch(AppActions.tagLibraryChanged());
         }
       }
-      return Promise.all(promises).then(() => true);
+      return Promise.all(promises).then(() => {
+        if (!isOne) {
+          return openCurrentDirectory();
+        }
+        return true;
+      });
     }
     return Promise.resolve(false);
   }
@@ -258,6 +265,7 @@ export const TaggingActionsContextProvider = ({
     path: string,
     tags: Array<TS.Tag>,
     updateIndex = true,
+    reflect: boolean = true,
   ): Promise<boolean> {
     const entryProperties = await PlatformIO.getPropertiesPromise(path);
     let fsEntryMeta;
@@ -353,7 +361,7 @@ export const TaggingActionsContextProvider = ({
             tagDelimiter,
             prefixTagContainer,
           );
-        return renameFile(path, newFilePath);
+        return renameFile(path, newFilePath, reflect);
       }
     } else {
       // Handling tags in filename by no sidecar
@@ -385,7 +393,7 @@ export const TaggingActionsContextProvider = ({
           prefixTagContainer,
         );
       if (path !== newFilePath) {
-        return renameFile(path, newFilePath);
+        return renameFile(path, newFilePath, reflect);
       }
     }
     return Promise.resolve(false);
@@ -611,17 +619,27 @@ export const TaggingActionsContextProvider = ({
     paths: Array<string>,
     tags?: Array<TS.Tag>,
   ): Promise<boolean> {
-    const promises = paths.map((path) => removeTagsFromEntry(path, tags));
-    return Promise.all(promises).then(() => true);
+    const isOne = paths.length === 1;
+    const promises = paths.map((path) =>
+      removeTagsFromEntry(path, tags, isOne),
+    );
+    return Promise.all(promises).then(() => {
+      if (!isOne) {
+        return openCurrentDirectory();
+      }
+      return true;
+    });
   }
 
   /**
    * @param path
    * @param tags? if undefined will remove all tags
+   * @param reflect
    */
   function removeTagsFromEntry(
     path: string,
     tags?: Array<TS.Tag>,
+    reflect: boolean = true,
   ): Promise<boolean> {
     const tagTitlesForRemoving = tags
       ? tags.map((tag) => tag.title)
@@ -731,7 +749,7 @@ export const TaggingActionsContextProvider = ({
               prefixTagContainer,
             );
           if (path !== newFilePath) {
-            const success = await renameFile(path, newFilePath);
+            const success = await renameFile(path, newFilePath, reflect);
             if (!success) {
               reject(new Error('Error renaming file'));
               return;

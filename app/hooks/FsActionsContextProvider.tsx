@@ -40,7 +40,11 @@ type FsActionsContextData = {
     directoryPath: string,
     newDirectoryName: string,
   ) => Promise<string>;
-  renameFile: (filePath: string, newFilePath: string) => Promise<boolean>;
+  renameFile: (
+    filePath: string,
+    newFilePath: string,
+    reflect?: boolean,
+  ) => Promise<boolean>;
   openFileNatively: (selectedFile?: string) => void;
 };
 
@@ -109,7 +113,11 @@ export const FsActionsContextProvider = ({
       });
   }
 
-  function renameFile(filePath: string, newFilePath: string): Promise<boolean> {
+  function renameFile(
+    filePath: string,
+    newFilePath: string,
+    reflect: boolean = true,
+  ): Promise<boolean> {
     return renameFilePromise(filePath, newFilePath)
       .then((result) => {
         const newFilePathFromPromise = result[1];
@@ -138,10 +146,12 @@ export const FsActionsContextProvider = ({
           ],
         ])
           .then(() => {
-            reflectRenameEntry(filePath, newFilePathFromPromise);
-            dispatch(
-              AppActions.reflectRenameEntry(filePath, newFilePathFromPromise),
-            );
+            if (reflect) {
+              reflectRenameEntry(filePath, newFilePathFromPromise);
+              dispatch(
+                AppActions.reflectRenameEntry(filePath, newFilePathFromPromise),
+              );
+            }
             setSelectedEntries([]);
             console.info(
               'Renaming meta file and thumb successful from ' +
@@ -152,11 +162,13 @@ export const FsActionsContextProvider = ({
             return true;
           })
           .catch((err) => {
-            reflectRenameEntry(filePath, newFilePathFromPromise);
-            dispatch(
-              AppActions.reflectRenameEntry(filePath, newFilePathFromPromise),
-            );
-            setSelectedEntries([]);
+            if (reflect) {
+              reflectRenameEntry(filePath, newFilePathFromPromise);
+              dispatch(
+                AppActions.reflectRenameEntry(filePath, newFilePathFromPromise),
+              );
+            }
+            // setSelectedEntries([]);
             console.warn(
               'Renaming meta file and thumb failed from ' +
                 filePath +

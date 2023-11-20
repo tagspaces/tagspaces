@@ -43,11 +43,7 @@ export const PaginationContextProvider = ({
   children,
 }: PaginationContextProviderProps) => {
   const initPage = 1;
-  const {
-    currentDirectoryPath,
-    currentDirectoryEntries,
-    updateCurrentDirEntries,
-  } = useDirectoryContentContext();
+  const { currentDirectoryPath } = useDirectoryContentContext();
   const { settings, sortedDirContent } = useSortedDirContext();
 
   const [page, setPage] = useState<number>(initPage);
