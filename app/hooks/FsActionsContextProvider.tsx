@@ -64,7 +64,8 @@ export const FsActionsContextProvider = ({
   const { t } = useTranslation();
   const { setSelectedEntries, selectedEntries } = useSelectedEntriesContext();
   const { openedEntries, reflectRenameOpenedEntry } = useOpenedEntryContext();
-  const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
+  const { openDirectory, currentDirectoryPath, reflectRenameEntries } =
+    useDirectoryContentContext();
   const { reflectRenameEntry } = useLocationIndexContext();
   const { showNotification } = useNotificationContext();
   const { watcher } = useFSWatcherContext();
@@ -84,6 +85,7 @@ export const FsActionsContextProvider = ({
             reflectRenameEntry(directoryPath, newDirPath);
           });
         } else {
+          reflectRenameEntries([[directoryPath, newDirPath]]);
           reflectRenameEntry(directoryPath, newDirPath);
           dispatch(AppActions.reflectRenameEntry(directoryPath, newDirPath));
         }
@@ -147,6 +149,7 @@ export const FsActionsContextProvider = ({
         ])
           .then(() => {
             if (reflect) {
+              reflectRenameEntries([[filePath, newFilePathFromPromise]]);
               reflectRenameEntry(filePath, newFilePathFromPromise);
               dispatch(
                 AppActions.reflectRenameEntry(filePath, newFilePathFromPromise),
@@ -163,6 +166,7 @@ export const FsActionsContextProvider = ({
           })
           .catch((err) => {
             if (reflect) {
+              reflectRenameEntries([[filePath, newFilePathFromPromise]]);
               reflectRenameEntry(filePath, newFilePathFromPromise);
               dispatch(
                 AppActions.reflectRenameEntry(filePath, newFilePathFromPromise),

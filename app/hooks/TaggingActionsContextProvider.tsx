@@ -772,7 +772,7 @@ export const TaggingActionsContextProvider = ({
               reject(new Error('Error renaming file'));
               return;
             }
-            reflectRenameOpenedEntry(path, newFilePath);
+            reflectRenameOpenedEntry(path, newFilePath, true);
           }
           resolve(newFilePath);
         } else {
