@@ -105,7 +105,11 @@ type OpenedEntryContextData = {
     fileType: 'md' | 'txt' | 'html',
   ) => void;
   createFile: () => void;
-  reflectRenameOpenedEntry: (entryPath: string, newEntryPath: string) => void;
+  reflectRenameOpenedEntry: (
+    entryPath: string,
+    newEntryPath: string,
+    reload?: boolean,
+  ) => void;
   reflectDeleteDirectory: (directoryPath: string) => void;
   reflectDeleteFile: (filePath: string) => void;
 };
@@ -982,13 +986,17 @@ export const OpenedEntryContextProvider = ({
       });
   }
 
-  function reflectRenameOpenedEntry(entryPath, newEntryPath) {
+  function reflectRenameOpenedEntry(entryPath, newEntryPath, reload = false) {
     if (openedEntries && openedEntries.length > 0) {
       if (openedEntries[0].path === entryPath) {
         if (currentLocation) {
           updateHistory(currentLocation, currentDirectoryPath, newEntryPath);
         }
-        addToEntryContainer({ ...openedEntries[0], path: newEntryPath });
+        if (reload) {
+          openEntry(newEntryPath);
+        } else {
+          addToEntryContainer({ ...openedEntries[0], path: newEntryPath });
+        }
       }
     }
   }

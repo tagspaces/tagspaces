@@ -83,6 +83,7 @@ type DirectoryContentContextData = {
   isSearchMode: boolean;
   addDirectoryEntries: (entries: TS.FileSystemEntry[]) => void;
   removeDirectoryEntries: (entryPaths: string[]) => void;
+  reflectRenameEntries: (paths: Array<string[]>) => Promise<boolean>;
   setSearchQuery: (sQuery: TS.SearchQuery) => void;
   loadParentDirectoryContent: () => void;
   loadDirectoryContent: (
@@ -133,6 +134,7 @@ export const DirectoryContentContext =
     isSearchMode: false,
     addDirectoryEntries: undefined,
     removeDirectoryEntries: undefined,
+    reflectRenameEntries: undefined,
     setSearchQuery: () => {},
     loadParentDirectoryContent: () => {},
     loadDirectoryContent: undefined,
@@ -219,7 +221,7 @@ export const DirectoryContentContextProvider = ({
   /**
    * HANDLE REFLECT_RENAME_ENTRY
    */
-  useEffect(() => {
+  /*useEffect(() => {
     if (!firstRender && editedEntryPaths && editedEntryPaths.length > 0) {
       let action;
       for (const editedEntryPath of editedEntryPaths) {
@@ -255,23 +257,84 @@ export const DirectoryContentContextProvider = ({
           const newDirectoryEntries = currentDirectoryEntries.map((entry) =>
             entry.path === oldFilePath ? newEntry : entry,
           );
-          /*if (searchMode.current) {
+          /!*if (searchMode.current) {
             GlobalSearch.getInstance().setResults(newDirectoryEntries);
-          } else {*/
+          } else {*!/
           setCurrentDirectoryEntries(newDirectoryEntries);
           // setSelectedEntries newEntry to scroll into it
           setSelectedEntries([newEntry]);
           //}
         }
-      } /*else if (action === 'delete') {
-        const filePath = editedEntryPaths[0].path;
-        const newDirectoryEntries = currentDirectoryEntries.filter(
-          entry => entry.path !== filePath
-        );
-        setCurrentDirectoryEntries(newDirectoryEntries);
-      }*/
+      }
     }
-  }, [editedEntryPaths]);
+  }, [editedEntryPaths]);*/
+
+  function reflectRenameEntries(paths: Array<string[]>): Promise<boolean> {
+    const metaChanged = [];
+    const newEntries = paths
+      .map((path) => {
+        if (path[0] === path[1]) {
+          metaChanged.push(
+            currentDirectoryEntries.find((e) => e.path === path[0]),
+          );
+          return undefined;
+        }
+        return reflectRenameEntry(path[0], path[1]);
+      })
+      .filter((item) => item !== undefined);
+    if (newEntries.length > 0) {
+      const newDirectoryEntries = currentDirectoryEntries.map((entry) => {
+        const newEntry = newEntries.find(
+          (nEntry) => nEntry && nEntry.uuid === entry.uuid,
+        );
+        if (newEntry) {
+          return newEntry;
+        }
+        return entry;
+      });
+      setCurrentDirectoryEntries(newDirectoryEntries);
+      setSelectedEntries(newEntries);
+    }
+
+    if (metaChanged.length > 0) {
+      return loadCurrentDirMeta(currentDirectoryPath.current, metaChanged).then(
+        (entries) => {
+          updateCurrentDirEntries(entries);
+          return true;
+        },
+      );
+    }
+    return Promise.resolve(true);
+  }
+
+  function reflectRenameEntry(oldPath, newPath): TS.FileSystemEntry {
+    if (oldPath !== newPath) {
+      const entry = currentDirectoryEntries.find((e) => e.path === oldPath);
+      if (entry) {
+        const fileNameTags = entry.isFile
+          ? extractTagsAsObjects(
+              newPath,
+              AppConfig.tagDelimiter,
+              PlatformIO.getDirSeparator(),
+            )
+          : []; // dirs dont have tags in filename
+        return {
+          ...entry,
+          path: newPath,
+          name: extractFileName(newPath, PlatformIO.getDirSeparator()),
+          extension: extractFileExtension(
+            newPath,
+            PlatformIO.getDirSeparator(),
+          ),
+          tags: [
+            ...entry.tags.filter((tag) => tag.type !== 'plain'), //'sidecar'), // add only sidecar tags
+            ...fileNameTags,
+          ],
+        };
+      }
+    }
+    return undefined;
+  }
 
   function exitSearchMode() {
     isSearchMode.current = false;
@@ -358,7 +421,7 @@ export const DirectoryContentContextProvider = ({
             (prevValue, currentValue) =>
               merge(currentValue, prevValue) as TS.FileSystemEntry,
           );
-          return merge(updatedEntry, currentEntry);
+          return merge(updatedEntry, { ...currentEntry, tags: [] });
         }
         return currentEntry;
       });
@@ -810,6 +873,7 @@ export const DirectoryContentContextProvider = ({
       setCurrentDirectoryFiles,
       addDirectoryEntries,
       removeDirectoryEntries,
+      reflectRenameEntries,
       updateCurrentDirEntries,
       updateThumbnailUrl,
       setDirectoryMeta,

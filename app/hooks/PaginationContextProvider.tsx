@@ -21,7 +21,6 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { defaultSettings } from '-/perspectives/grid-perspective';
 import { useSortedDirContext } from '-/perspectives/grid-perspective/hooks/useSortedDirContext';
 import { TS } from '-/tagspaces.namespace';
-import { loadCurrentDirMeta } from '-/services/meta-loader';
 
 type PaginationContextData = {
   page: number;
