@@ -259,6 +259,8 @@ export const DirectoryContentContextProvider = ({
             GlobalSearch.getInstance().setResults(newDirectoryEntries);
           } else {*/
           setCurrentDirectoryEntries(newDirectoryEntries);
+          // setSelectedEntries newEntry to scroll into it
+          setSelectedEntries([newEntry]);
           //}
         }
       } /*else if (action === 'delete') {
