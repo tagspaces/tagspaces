@@ -142,7 +142,7 @@ export const FsActionsContextProvider = ({
             dispatch(
               AppActions.reflectRenameEntry(filePath, newFilePathFromPromise),
             );
-            setSelectedEntries([]);
+            // setSelectedEntries([]);
             console.info(
               'Renaming meta file and thumb successful from ' +
                 filePath +
