@@ -269,69 +269,65 @@ export const DirectoryContentContextProvider = ({
     }
   }, [editedEntryPaths]);*/
 
-  function reflectRenameEntries(paths: Array<string[]>): Promise<boolean> {
-    const metaChanged = [];
-    const newEntries = paths
-      .map((path) => {
-        if (path[0] === path[1]) {
-          metaChanged.push(
-            currentDirectoryEntries.find((e) => e.path === path[0]),
+  const reflectRenameEntries = useMemo(() => {
+    return (paths: Array<string[]>): Promise<boolean> => {
+      const metaChanged = [];
+      const newEntries = paths
+        .map((path) => {
+          const entry = currentDirectoryEntries.find((e) => e.path === path[0]);
+          if (path[0] === path[1]) {
+            metaChanged.push(entry);
+            return undefined;
+          }
+          return getNewEntry(entry, path[1]);
+        })
+        .filter((item) => item !== undefined);
+      if (newEntries.length > 0) {
+        const newDirectoryEntries = currentDirectoryEntries.map((entry) => {
+          const newEntry = newEntries.find(
+            (nEntry) => nEntry && nEntry.uuid === entry.uuid,
           );
-          return undefined;
-        }
-        return reflectRenameEntry(path[0], path[1]);
-      })
-      .filter((item) => item !== undefined);
-    if (newEntries.length > 0) {
-      const newDirectoryEntries = currentDirectoryEntries.map((entry) => {
-        const newEntry = newEntries.find(
-          (nEntry) => nEntry && nEntry.uuid === entry.uuid,
-        );
-        if (newEntry) {
-          return newEntry;
-        }
-        return entry;
-      });
-      setCurrentDirectoryEntries(newDirectoryEntries);
-      setSelectedEntries(newEntries);
-    }
+          if (newEntry) {
+            return newEntry;
+          }
+          return entry;
+        });
+        setCurrentDirectoryEntries(newDirectoryEntries);
+        setSelectedEntries(newEntries);
+      }
 
-    if (metaChanged.length > 0) {
-      return loadCurrentDirMeta(currentDirectoryPath.current, metaChanged).then(
-        (entries) => {
+      if (metaChanged.length > 0) {
+        return loadCurrentDirMeta(
+          currentDirectoryPath.current,
+          metaChanged,
+        ).then((entries) => {
           updateCurrentDirEntries(entries);
           return true;
-        },
-      );
-    }
-    return Promise.resolve(true);
-  }
-
-  function reflectRenameEntry(oldPath, newPath): TS.FileSystemEntry {
-    if (oldPath !== newPath) {
-      const entry = currentDirectoryEntries.find((e) => e.path === oldPath);
-      if (entry) {
-        const fileNameTags = entry.isFile
-          ? extractTagsAsObjects(
-              newPath,
-              AppConfig.tagDelimiter,
-              PlatformIO.getDirSeparator(),
-            )
-          : []; // dirs dont have tags in filename
-        return {
-          ...entry,
-          path: newPath,
-          name: extractFileName(newPath, PlatformIO.getDirSeparator()),
-          extension: extractFileExtension(
-            newPath,
-            PlatformIO.getDirSeparator(),
-          ),
-          tags: [
-            ...entry.tags.filter((tag) => tag.type !== 'plain'), //'sidecar'), // add only sidecar tags
-            ...fileNameTags,
-          ],
-        };
+        });
       }
+      return Promise.resolve(true);
+    };
+  }, [currentDirectoryEntries]);
+
+  function getNewEntry(entry: TS.FileSystemEntry, newPath): TS.FileSystemEntry {
+    if (entry) {
+      const fileNameTags = entry.isFile
+        ? extractTagsAsObjects(
+            newPath,
+            AppConfig.tagDelimiter,
+            PlatformIO.getDirSeparator(),
+          )
+        : []; // dirs dont have tags in filename
+      return {
+        ...entry,
+        path: newPath,
+        name: extractFileName(newPath, PlatformIO.getDirSeparator()),
+        extension: extractFileExtension(newPath, PlatformIO.getDirSeparator()),
+        tags: [
+          ...entry.tags.filter((tag) => tag.type !== 'plain'), //'sidecar'), // add only sidecar tags
+          ...fileNameTags,
+        ],
+      };
     }
     return undefined;
   }
