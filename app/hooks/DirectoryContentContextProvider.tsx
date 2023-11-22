@@ -44,7 +44,12 @@ import {
   getMetaDirectoryPath,
 } from '@tagspaces/tagspaces-common/paths';
 import PlatformIO from '-/services/platform-facade';
-import { loadJSONFile, merge, updateFsEntries } from '-/services/utils-io';
+import {
+  getMetaForEntry,
+  loadJSONFile,
+  merge,
+  updateFsEntries,
+} from '-/services/utils-io';
 import AppConfig from '-/AppConfig';
 import { PerspectiveIDs } from '-/perspectives';
 import { updateHistory } from '-/utils/dom';
@@ -297,12 +302,11 @@ export const DirectoryContentContextProvider = ({
       }
 
       if (metaChanged.length > 0) {
-        return loadCurrentDirMeta(
-          currentDirectoryPath.current,
-          metaChanged,
-        ).then((entries) => {
+        const enhancedEntriesPromises = metaChanged.map((entry) =>
+          getMetaForEntry(entry),
+        );
+        Promise.all(enhancedEntriesPromises).then((entries) => {
           updateCurrentDirEntries(entries);
-          return true;
         });
       }
       return Promise.resolve(true);
