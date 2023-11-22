@@ -89,7 +89,7 @@ function setThumbForEntry(
   entry: TS.FileSystemEntry,
   meta: Array<any>,
 ): TS.FileSystemEntry {
-  const thumbEntry = { ...entry };
+  const thumbEntry = { ...entry, tags: [] };
   let thumbPath = getThumbFileLocationForFile(
     entry.path,
     PlatformIO.getDirSeparator(),

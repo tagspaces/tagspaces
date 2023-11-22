@@ -61,11 +61,11 @@ export function getMetaForEntry(
   entry: TS.FileSystemEntry,
   metaFilePath?: string,
 ): Promise<TS.FileSystemEntry> {
-  if (entry.meta) {
-    // && Object.keys(entry.meta).length > 0) {
-    // entry is Enhanced
-    return Promise.resolve(entry);
-  }
+  //if (entry.meta) {
+  // && Object.keys(entry.meta).length > 0) {
+  // entry is Enhanced
+  //  return Promise.resolve(entry);
+  //}
   if (!metaFilePath) {
     if (entry.isFile) {
       metaFilePath = getMetaFileLocationForFile(

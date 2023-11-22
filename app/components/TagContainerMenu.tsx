@@ -44,7 +44,9 @@ function TagContainerMenu(props: Props) {
           color: tag.textcolor,
           fontSize: 20,
         }}
-        onClick={(event) => handleRemoveTag(event, [tag])}
+        onClick={(event) =>
+          handleRemoveTag ? handleRemoveTag(event, [tag]) : false
+        }
       />
     )
   ) : (
