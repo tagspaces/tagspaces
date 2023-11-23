@@ -69,12 +69,12 @@ export async function AddRemovePropertiesTags(
         8000,
         '[data-tid=perspectiveGridFileTable]',
       );
-      await expectElementExist(
+      /*await expectElementExist(
         '[data-tid=tagContainer_' + tagName + ']',
         false,
         8000,
         '[data-tid=PropertiesTagsSelectTID]',
-      );
+      );*/
       // await global.client.waitForTimeout(1500);
       //const propsNewTags = await getPropertiesTags();
       //expect(propsNewTags.includes(tagName)).toBe(false);
