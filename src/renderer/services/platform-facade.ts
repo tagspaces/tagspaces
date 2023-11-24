@@ -25,22 +25,13 @@ import {
   platformDisableObjectStoreSupport,
   platformEnableWebdavSupport,
   platformDisableWebdavSupport,
-  platformWatchDirectory,
   platformGetLocationPath,
   platformSetLanguage,
-  platformIsWorkerAvailable,
-  platformReadMacOSTags,
-  platformWatchFolder,
-  platformTiffJs,
   platformSetZoomFactorElectron,
   platformSetGlobalShortcuts,
   platformShowMainWindow,
   platformQuitApp,
-  platformFocusWindow,
   platformGetDevicePaths,
-  platformCreateDirectoryTree,
-  platformCreateDirectoryIndexInWorker,
-  platformCreateThumbnailsInWorker,
   platformGetURLforPath,
   platformListDirectoryPromise,
   platformListMetaDirectoryPromise,
@@ -49,7 +40,6 @@ import {
   platformGetPropertiesPromise,
   platformLoadTextFilePromise,
   platformGetFileContentPromise,
-  platformGetLocalFileContentPromise,
   platformSaveTextFilePromise,
   platformSaveBinaryFilePromise,
   platformCreateDirectoryPromise,
@@ -60,25 +50,13 @@ import {
   platformCopyDirectoryPromise,
   platformDeleteFilePromise,
   platformDeleteDirectoryPromise,
-  platformOpenDirectory,
-  platformShowInFileManager,
-  platformOpenFile,
-  // platformResolveFilePath,
-  platformOpenUrl,
-  platformSelectFileDialog,
   platformSelectDirectoryDialog,
   platformShareFiles,
   platformCreateIndex,
   platformCreateNewInstance,
   platformCheckFileExist,
   platformCheckDirExist,
-  platformLoadExtensions,
-  platformRemoveExtension,
-  platformGetUserDataDir,
-  platformUnZip,
-  platformDirProperties,
 } from '@tagspaces/tagspaces-platforms/platform-io';
-import { cleanTrailingDirSeparator } from '@tagspaces/tagspaces-common/paths';
 import AppConfig from '-/AppConfig';
 import { TS } from '-/tagspaces.namespace';
 import settings from '-/settings';
@@ -107,26 +85,43 @@ export default class PlatformFacade {
 
   static getDirSeparator = (): string => platformGetDirSeparator();
 
+  /**
+   * todo rethink this use node path module
+   * @param location
+   */
   static getLocationPath = (location: TS.Location): string =>
     platformGetLocationPath(location);
 
   static setLanguage = (language: string): void => {
-    platformSetLanguage(language);
+    if (AppConfig.isElectron) {
+      window.electronIO.ipcRenderer.sendMessage('set-language', language);
+    }
   };
 
   static setZoomFactorElectron = (zoomLevel) => {
-    platformSetZoomFactorElectron(zoomLevel);
+    if (AppConfig.isElectron) {
+      window.electronIO.ipcRenderer.sendMessage('setZoomFactor', zoomLevel);
+    }
   };
 
   static setGlobalShortcuts = (globalShortcutsEnabled) => {
-    platformSetGlobalShortcuts(globalShortcutsEnabled);
+    if (AppConfig.isElectron) {
+      window.electronIO.ipcRenderer.sendMessage(
+        'global-shortcuts-enabled',
+        globalShortcutsEnabled,
+      );
+    }
   };
 
-  static showMainWindow = (): void => platformShowMainWindow();
+  static showMainWindow = (): void => {
+    if (AppConfig.isElectron) {
+      window.electronIO.ipcRenderer.sendMessage('show-main-window');
+    }
+  };
 
   static createNewInstance = (url?: string): void => {
     if (AppConfig.isElectron) {
-      platformCreateNewInstance(url);
+      window.electronIO.ipcRenderer.sendMessage('create-new-window', url);
     } else {
       if (url) {
         window.open(url, '_blank');
@@ -136,84 +131,141 @@ export default class PlatformFacade {
     }
   };
 
-  static quitApp = (): void => platformQuitApp();
+  static quitApp = (): void => {
+    if (AppConfig.isElectron) {
+      window.electronIO.ipcRenderer.sendMessage('quitApp');
+    } else {
+      platformQuitApp();
+    }
+  };
 
-  static watchDirectory = (dirPath: string, listener): void =>
-    platformWatchDirectory(dirPath, listener);
+  /*static watchDirectory = (dirPath: string, listener): void =>
+    platformWatchDirectory(dirPath, listener);*/
 
-  static focusWindow = (): void => platformFocusWindow();
+  static focusWindow = (): void => {
+    if (AppConfig.isElectron) {
+      window.electronIO.ipcRenderer.sendMessage('focus-window');
+    }
+  };
 
-  static getDevicePaths = (): Promise<any> => platformGetDevicePaths();
+  static getDevicePaths = (): Promise<any> => {
+    if (AppConfig.isElectron) {
+      return window.electronIO.ipcRenderer.invoke('getDevicePaths');
+    }
+    return platformGetDevicePaths();
+  };
 
-  /* static getAppDataPath = (): string => nativeAPI.getAppDataPath();
-
-  static getUserHomePath = (): string => nativeAPI.getUserHomePath(); */
-
+  /**
+   * ObjectStore and webDav only
+   * @param path
+   * @param expirationInSeconds
+   */
   static getURLforPath = (path: string, expirationInSeconds?: number): string =>
     platformGetURLforPath(path, expirationInSeconds);
 
-  static createDirectoryTree = (directoryPath: string): Object =>
-    platformCreateDirectoryTree(directoryPath);
-
+  /**
+   * needs to run in init this function always return false first time
+   */
   static isWorkerAvailable = (): boolean => {
     if (token !== undefined) {
       return token !== 'not';
     }
-    try {
-      // eslint-disable-next-line global-require
-      const config = require('-/config/config.json');
-      if (platformIsWorkerAvailable(settings.getUsedWsPort())) {
-        token = config.jwt;
-      }
-    } catch (e) {
-      if (e && e.code && e.code === 'MODULE_NOT_FOUND') {
-        console.debug('jwt token not available');
-        token = 'not';
+    if (AppConfig.isElectron) {
+      try {
+        fetch('http://127.0.0.1:' + settings.getUsedWsPort(), {
+          method: 'HEAD',
+        }).then((res) => {
+          if (res.status === 200) {
+            const config = require('-/config/config.json');
+            token = config.jwt;
+            return true;
+          }
+        });
+      } catch (e) {
+        if (e && e.code && e.code === 'MODULE_NOT_FOUND') {
+          console.debug('jwt token not available');
+          token = 'not';
+        }
+        console.debug('isWorkerAvailable:', e);
       }
     }
     return false;
   };
 
   static readMacOSTags = (filename: string): Promise<TS.Tag[]> => {
-    return platformReadMacOSTags(filename);
+    if (AppConfig.isElectron) {
+      return window.electronIO.ipcRenderer.invoke('readMacOSTags', filename);
+    }
+    return Promise.resolve(undefined);
   };
 
   static watchFolder = (locationPath, options) => {
-    return platformWatchFolder(locationPath, options);
+    if (AppConfig.isElectron) {
+      window.electronIO.ipcRenderer.sendMessage(
+        'watchFolder',
+        locationPath,
+        options,
+      );
+    }
   };
 
-  static tiffJs = () => {
+  /*static watchForEvents = (listener) => {
+    if (AppConfig.isElectron) {
+      window.electronIO.ipcRenderer.sendMessage(
+        'watchForEvents',
+        listener
+      );
+    }
+  };*/
+
+  /*static tiffJs = () => {
     return platformTiffJs();
-  };
+  };*/
 
   static createDirectoryIndexInWorker = (
     directoryPath: string,
     extractText: boolean,
     ignorePatterns: Array<string>,
   ): Promise<any> => {
-    if (!PlatformFacade.isWorkerAvailable()) {
-      return Promise.reject(new Error('no Worker Available!'));
+    if (AppConfig.isElectron) {
+      if (!PlatformFacade.isWorkerAvailable()) {
+        return Promise.reject(new Error('no Worker Available!'));
+      }
+      const payload = JSON.stringify({
+        directoryPath,
+        extractText,
+        ignorePatterns,
+      });
+      return window.electronIO.ipcRenderer.invoke(
+        'postRequest',
+        payload,
+        '/thumb-gen',
+        token,
+        settings.getUsedWsPort(),
+      );
     }
-    return platformCreateDirectoryIndexInWorker(
-      token,
-      directoryPath,
-      extractText,
-      ignorePatterns,
-      settings.getUsedWsPort(),
+    return Promise.reject(
+      new Error('createDirectoryIndexInWorker not Electron!'),
     );
   };
 
   static createThumbnailsInWorker = (
     tmbGenerationList: Array<string>,
   ): Promise<any> => {
-    if (!PlatformFacade.isWorkerAvailable()) {
-      return Promise.reject(new Error('no Worker Available!'));
+    if (AppConfig.isElectron) {
+      if (!PlatformFacade.isWorkerAvailable()) {
+        return Promise.reject(new Error('no Worker Available!'));
+      }
+      const payload = JSON.stringify(tmbGenerationList);
+      return window.electronIO.ipcRenderer.invoke(
+        'postRequest',
+        payload,
+        '/thumb-gen',
+        token,
+        settings.getUsedWsPort(),
+      );
     }
-    return platformCreateThumbnailsInWorker(
-      token,
-      tmbGenerationList,
-      settings.getUsedWsPort(),
-    );
+    return Promise.reject(new Error('createThumbnailsInWorker not Electron!'));
   };
 
   /**
@@ -228,16 +280,33 @@ export default class PlatformFacade {
     mode = ['extractThumbPath'],
     ignorePatterns: Array<string> = [],
     resultsLimit: any = {},
-  ): Promise<Array<any>> =>
-    platformListDirectoryPromise(
+  ): Promise<Array<any>> => {
+    if (AppConfig.isElectron) {
+      return window.electronIO.ipcRenderer.invoke(
+        'listDirectoryPromise',
+        path,
+        mode,
+        ignorePatterns,
+        resultsLimit,
+      );
+    }
+    return platformListDirectoryPromise(
       path, // cleanTrailingDirSeparator(path),
       mode,
       ignorePatterns,
       resultsLimit,
     );
+  };
 
-  static listMetaDirectoryPromise = (path: string): Promise<Array<any>> =>
+  static listMetaDirectoryPromise = (path: string): Promise<Array<any>> => {
+    if (AppConfig.isElectron) {
+      return window.electronIO.ipcRenderer.invoke(
+        'listMetaDirectoryPromise',
+        path,
+      );
+    }
     platformListMetaDirectoryPromise(path);
+  };
 
   static listObjectStoreDir = (
     param: Object,
@@ -246,17 +315,34 @@ export default class PlatformFacade {
   ): Promise<Array<any>> =>
     platformListObjectStoreDir(param, mode, ignorePatterns);
 
-  static getPropertiesPromise = (path: string): Promise<any> =>
-    platformGetPropertiesPromise(path);
+  static getPropertiesPromise = (path: string): Promise<any> => {
+    if (AppConfig.isElectron) {
+      return window.electronIO.ipcRenderer.invoke('getPropertiesPromise', path);
+    }
+    return platformGetPropertiesPromise(path);
+  };
 
-  static checkDirExist = (dir: string): Promise<boolean> =>
-    platformCheckDirExist(dir);
+  static checkDirExist = (dir: string): Promise<boolean> => {
+    if (AppConfig.isElectron) {
+      return window.electronIO.ipcRenderer.invoke('checkDirExist', dir);
+    }
+    return platformCheckDirExist(dir);
+  };
 
-  static checkFileExist = (file: string): Promise<boolean> =>
+  static checkFileExist = (file: string): Promise<boolean> => {
+    if (AppConfig.isElectron) {
+      return window.electronIO.ipcRenderer.invoke('checkFileExist', file);
+    }
     platformCheckFileExist(file);
+  };
 
   static createDirectoryPromise = (dirPath: string): Promise<any> => {
-    //PlatformFacade.ignoreByWatcher(dirPath);
+    if (AppConfig.isElectron) {
+      return window.electronIO.ipcRenderer.invoke(
+        'createDirectoryPromise',
+        dirPath,
+      );
+    }
     return platformCreateDirectoryPromise(dirPath);
   };
 
@@ -268,7 +354,13 @@ export default class PlatformFacade {
     sourceFilePath: string,
     targetFilePath: string,
   ): Promise<any> => {
-    //PlatformFacade.ignoreByWatcher(targetFilePath);
+    if (AppConfig.isElectron) {
+      return window.electronIO.ipcRenderer.invoke(
+        'copyFilePromiseOverwrite',
+        sourceFilePath,
+        targetFilePath,
+      );
+    }
     return platformCopyFilePromise(sourceFilePath, targetFilePath);
   };
 
@@ -277,7 +369,14 @@ export default class PlatformFacade {
     newFilePath: string,
     onProgress = undefined,
   ): Promise<any> => {
-    //PlatformFacade.ignoreByWatcher(filePath, newFilePath);
+    if (AppConfig.isElectron) {
+      return window.electronIO.ipcRenderer.invoke(
+        'renameFilePromise',
+        filePath,
+        newFilePath,
+        onProgress,
+      );
+    }
     return platformRenameFilePromise(filePath, newFilePath, onProgress);
   };
 
@@ -285,7 +384,13 @@ export default class PlatformFacade {
     dirPath: string,
     newDirName: string,
   ): Promise<any> => {
-    // PlatformFacade.ignoreByWatcher(dirPath, newDirName);
+    if (AppConfig.isElectron) {
+      return window.electronIO.ipcRenderer.invoke(
+        'renameDirectoryPromise',
+        dirPath,
+        newDirName,
+      );
+    }
     return platformRenameDirectoryPromise(dirPath, newDirName);
   };
 
@@ -294,7 +399,14 @@ export default class PlatformFacade {
     newDirPath: string,
     onProgress = undefined,
   ): Promise<any> => {
-    //PlatformFacade.ignoreByWatcher(param.path, newDirPath);
+    if (AppConfig.isElectron) {
+      return window.electronIO.ipcRenderer.invoke(
+        'copyDirectoryPromise',
+        param,
+        newDirPath,
+        onProgress,
+      );
+    }
     return platformCopyDirectoryPromise(param, newDirPath, onProgress);
   };
 
@@ -303,7 +415,14 @@ export default class PlatformFacade {
     newDirPath: string,
     onProgress = undefined,
   ): Promise<any> => {
-    //PlatformFacade.ignoreByWatcher(param.path, newDirPath);
+    if (AppConfig.isElectron) {
+      return window.electronIO.ipcRenderer.invoke(
+        'moveDirectoryPromise',
+        param,
+        newDirPath,
+        onProgress,
+      );
+    }
     return platformMoveDirectoryPromise(param, newDirPath, onProgress);
   };
 
@@ -315,25 +434,54 @@ export default class PlatformFacade {
     try {
       path = decodeURIComponent(filePath);
     } catch (ex) {}
+    if (AppConfig.isElectron) {
+      return window.electronIO.ipcRenderer.invoke(
+        'loadTextFilePromise',
+        path,
+        isPreview,
+      );
+    }
     return platformLoadTextFilePromise(path, isPreview);
   };
 
   static getFileContentPromise = (
     filePath: string,
     type?: string,
-  ): Promise<any> => platformGetFileContentPromise(filePath, type);
+  ): Promise<any> => {
+    if (AppConfig.isElectron) {
+      return window.electronIO.ipcRenderer.invoke(
+        'getFileContentPromise',
+        filePath,
+        type,
+      );
+    }
+    return platformGetFileContentPromise(filePath, type);
+  };
 
   static getLocalFileContentPromise = (
     filePath: string,
     type?: string,
-  ): Promise<any> => platformGetLocalFileContentPromise(filePath, type);
+  ): Promise<any> => {
+    return window.electronIO.ipcRenderer.invoke(
+      'getLocalFileContentPromise',
+      filePath,
+      type,
+    );
+  };
 
   static saveFilePromise = (
     param: any,
     content: any,
     overwrite: boolean,
   ): Promise<any> => {
-    //PlatformFacade.ignoreByWatcher(param.path);
+    if (AppConfig.isElectron) {
+      return window.electronIO.ipcRenderer.invoke(
+        'saveFilePromise',
+        param,
+        content,
+        overwrite,
+      );
+    }
     return platformSaveFilePromise(param, content, overwrite);
   };
 
@@ -342,7 +490,14 @@ export default class PlatformFacade {
     content: string,
     overwrite: boolean,
   ): Promise<any> => {
-    //PlatformFacade.ignoreByWatcher(param.path);
+    if (AppConfig.isElectron) {
+      return window.electronIO.ipcRenderer.invoke(
+        'saveTextFilePromise',
+        param,
+        content,
+        overwrite,
+      );
+    }
     return platformSaveTextFilePromise(param, content, overwrite);
   };
 
@@ -355,7 +510,15 @@ export default class PlatformFacade {
       response: any, // AWS.Response<AWS.S3.PutObjectOutput, AWS.AWSError>
     ) => void,
   ): Promise<TS.FileSystemEntry> => {
-    //PlatformFacade.ignoreByWatcher(param.path);
+    if (AppConfig.isElectron) {
+      return window.electronIO.ipcRenderer.invoke(
+        'saveBinaryFilePromise',
+        param,
+        content,
+        overwrite,
+        onUploadProgress,
+      );
+    }
 
     return platformSaveBinaryFilePromise(
       param,
@@ -369,23 +532,37 @@ export default class PlatformFacade {
     path: string,
     useTrash?: boolean,
   ): Promise<any> => {
-    //PlatformFacade.ignoreByWatcher(path);
-    return platformDeleteFilePromise(path, useTrash);
+    if (AppConfig.isElectron) {
+      return window.electronIO.ipcRenderer.invoke(
+        'deleteFilePromise',
+        path,
+        useTrash,
+      );
+    }
+    return platformDeleteFilePromise(path);
   };
 
   static deleteDirectoryPromise = (
     path: string,
     useTrash?: boolean,
   ): Promise<any> => {
-    //PlatformFacade.ignoreByWatcher(path);
+    if (AppConfig.isElectron) {
+      return window.electronIO.ipcRenderer.invoke(
+        'deleteDirectoryPromise',
+        path,
+        useTrash,
+      );
+    }
     return platformDeleteDirectoryPromise(path, useTrash);
   };
 
-  static openDirectory = (dirPath: string): void =>
-    platformOpenDirectory(dirPath);
-
-  static showInFileManager = (dirPath: string): void =>
-    platformShowInFileManager(dirPath);
+  static openDirectory = (dirPath: string): void => {
+    if (AppConfig.isElectron) {
+      window.electronIO.ipcRenderer.sendMessage('openDirectory', dirPath);
+    } else {
+      console.error('Is supported only in Electron');
+    }
+  };
 
   static openFile = (
     filePath: string,
@@ -400,7 +577,11 @@ export default class PlatformFacade {
           '"? Execution of some files can be potentially dangerous!',
       )
     ) {
-      platformOpenFile(filePath);
+      if (AppConfig.isElectron) {
+        window.electronIO.ipcRenderer.sendMessage('openFile', filePath);
+      } else {
+        console.error('Is supported only in Electron');
+      }
     }
   };
 
@@ -408,50 +589,91 @@ export default class PlatformFacade {
   static resolveFilePath = (filePath: string): string =>
     platformResolveFilePath(filePath);*/
 
-  static openUrl = (url: string): void => platformOpenUrl(url);
+  static openUrl = (url: string): void => {
+    if (AppConfig.isElectron) {
+      window.electronIO.ipcRenderer.sendMessage('openUrl', url);
+    } else {
+      console.error('Is supported only in Electron');
+    }
+  };
 
-  static selectFileDialog = (): Promise<any> => platformSelectFileDialog();
+  static selectDirectoryDialog = (): Promise<any> => {
+    if (AppConfig.isElectron) {
+      return window.electronIO.ipcRenderer.invoke('selectDirectoryDialog');
+    }
+    return platformSelectDirectoryDialog();
+  };
 
-  static selectDirectoryDialog = (): Promise<any> =>
-    platformSelectDirectoryDialog();
-
+  /**
+   * cordova only
+   * @param files
+   */
   static shareFiles = (files: Array<string>): void => {
     platformShareFiles(files);
   };
 
   static createIndex(
     param: any,
-    mode: string[],
-    ignorePatterns: Array<string>,
     listDirectoryPromise,
     loadTextFilePromise,
+    mode: string[],
+    ignorePatterns: Array<string>,
   ) {
     return platformCreateIndex(
       param,
-      mode,
-      ignorePatterns,
       listDirectoryPromise,
       loadTextFilePromise,
+      mode,
+      ignorePatterns,
     );
   }
 
+  /**
+   *  Load extensions is supported only on Electron
+   */
   static loadExtensions() {
-    return platformLoadExtensions();
+    if (AppConfig.isElectron) {
+      window.electronIO.ipcRenderer.sendMessage('load-extensions');
+    }
   }
 
   static removeExtension(extensionId: string) {
-    return platformRemoveExtension(extensionId);
+    if (AppConfig.isElectron) {
+      window.electronIO.ipcRenderer.sendMessage('removeExtension', extensionId);
+    } else {
+      console.error('remove extensions is supported only on Electron.');
+    }
   }
 
   static getUserDataDir(): Promise<string> {
-    return platformGetUserDataDir();
+    if (AppConfig.isElectron) {
+      return window.electronIO.ipcRenderer.invoke('getUserDataDir');
+    } else {
+      return Promise.reject('getUserDataDir is supported only on Electron.');
+    }
   }
 
   static unZip(filePath, targetPath): Promise<string> {
-    return platformUnZip(filePath, targetPath);
+    if (AppConfig.isElectron) {
+      return window.electronIO.ipcRenderer.invoke(
+        'unZip',
+        filePath,
+        targetPath,
+      );
+    } else {
+      console.log('UnZip is supported only on Electron.');
+    }
   }
 
-  static getDirProperties(filePath): Promise<TS.DirProp> {
-    return platformDirProperties(filePath);
+  static getDirProperties(path): Promise<TS.DirProp> {
+    if (AppConfig.isElectron) {
+      return window.electronIO.ipcRenderer.invoke('getDirProperties', path);
+    } else {
+      return Promise.reject(
+        new Error(
+          'platformDirProperties is supported on Electron local storage.',
+        ),
+      );
+    }
   }
 }

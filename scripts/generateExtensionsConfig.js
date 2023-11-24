@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { getExtensions } = require('../src/renderer/utils/extension-utils');
+const { getExtensions } = require('../src/main/extension-utils');
 // const os = require('os');
 
 let directoryPath = path.join(

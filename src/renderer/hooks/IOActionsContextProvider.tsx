@@ -95,7 +95,7 @@ type IOActionsContextData = {
     onDownloadProgress?: (progress: Progress, abort, fileName?) => void,
   ) => Promise<TS.FileSystemEntry>;
   uploadFilesAPI: (
-    files: Array<File>,
+    files: Array<any>,
     targetPath: string,
     onUploadProgress?: (progress: Progress, abort, fileName?) => void,
     uploadMeta?: boolean,
@@ -648,7 +648,7 @@ export const IOActionsContextProvider = ({
    * reader.onload not work for multiple files https://stackoverflow.com/questions/56178918/react-upload-multiple-files-using-window-filereader
    */
   function uploadFilesAPI(
-    files: Array<File>,
+    files: Array<any>,
     targetPath: string,
     onUploadProgress?: (progress: Progress, abort, fileName?) => void,
     uploadMeta = true,

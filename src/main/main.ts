@@ -26,10 +26,11 @@ import { resolveHtmlPath } from './util';
 import windowStateKeeper from 'electron-window-state';
 import findFreePorts from 'find-free-ports';
 import settings from '../renderer/settings';
-import { getExtensions } from '../renderer/utils/extension-utils';
+import { getExtensions } from './extension-utils';
 import i18nInit from '../renderer/services/i18nInit';
 import buildTrayIconMenu from './electron-tray-menu';
 import buildDesktopMenu from './electron-menus';
+import loadMainEvents from './mainEvents';
 
 class AppUpdater {
   constructor() {
@@ -283,11 +284,11 @@ function createNewWindowInstance(url?) {
     width: mainWindowState.width,
     height: mainWindowState.height,
     webPreferences: {
-      webSecurity: app.isPackaged, // todo https://www.electronjs.org/docs/latest/tutorial/security#6-do-not-disable-websecurity
+      //webSecurity: app.isPackaged, // todo https://www.electronjs.org/docs/latest/tutorial/security#6-do-not-disable-websecurity
       spellcheck: true,
-      nodeIntegration: true,
+      //nodeIntegration: true,
       webviewTag: true,
-      contextIsolation: false,
+      //contextIsolation: false,
     },
   });
 
@@ -455,11 +456,11 @@ const createWindow = async (i18n) => {
     height: mainWindowState.height,
     //icon: getAssetPath('icon.png'),
     webPreferences: {
-      webSecurity: app.isPackaged, // todo https://www.electronjs.org/docs/latest/tutorial/security#6-do-not-disable-websecurity
+      //webSecurity: app.isPackaged, // todo https://www.electronjs.org/docs/latest/tutorial/security#6-do-not-disable-websecurity
       spellcheck: true,
-      nodeIntegration: true,
+      //nodeIntegration: true,
       webviewTag: true,
-      contextIsolation: false,
+      //contextIsolation: false,
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
@@ -602,6 +603,8 @@ app
         createNewWindowInstance(url);
       });
 
+      loadMainEvents();
+
       ipcMain.on('load-extensions', () => {
         getExtensions(path.join(app.getPath('userData'), 'tsplugins'), true)
           .then(({ extensions, supportedFileTypes }) => {
@@ -616,51 +619,10 @@ app
           .catch((err) => console.error('load-extensions', err));
       });
 
-      ipcMain.on('remove-extension', (e, extensionId) => {
-        try {
-          const extBuildIndex = extensionId.indexOf('/build');
-          fs.rmSync(
-            path.join(
-              app.getPath('userData'),
-              'tsplugins',
-              extBuildIndex > -1
-                ? extensionId.substring(0, extBuildIndex)
-                : extensionId,
-            ),
-            {
-              recursive: true,
-            },
-          );
-        } catch (e) {
-          console.debug(e);
-        }
-      });
-
-      ipcMain.handle('get-user-data', () => {
-        return app.getPath('userData');
-      });
-
       ipcMain.on('focus-window', () => {
         if (mainWindow) {
           mainWindow.focus();
         }
-      });
-
-      ipcMain.handle('get-device-paths', () => {
-        const paths: any = {
-          desktopFolder: app.getPath('desktop'),
-          documentsFolder: app.getPath('documents'),
-          downloadsFolder: app.getPath('downloads'),
-          musicFolder: app.getPath('music'),
-          picturesFolder: app.getPath('pictures'),
-          videosFolder: app.getPath('videos'),
-        };
-        if (process.platform === 'darwin') {
-          paths.iCloudFolder =
-            app.getPath('home') +
-            '/Library/Mobile Documents/com~apple~CloudDocs';
-        }
-        return paths;
       });
 
       ipcMain.on('get-user-home-path', (event) => {
@@ -673,20 +635,6 @@ app
         }
       });
 
-      ipcMain.handle('select-directory-dialog', async () => {
-        const options = {
-          properties: ['openDirectory', 'createDirectory'],
-        };
-        // @ts-ignore
-        const resultObject = await dialog.showOpenDialog(options);
-
-        if (resultObject.filePaths && resultObject.filePaths.length) {
-          // alert(JSON.stringify(resultObject.filePaths));
-          return resultObject.filePaths;
-        }
-        return false;
-      });
-
       // end electron-io
 
       ipcMain.on('app-data-path-request', (event) => {
@@ -697,7 +645,7 @@ app
         event.returnValue = app.getVersion(); // eslint-disable-line
       });
 
-      ipcMain.handle('move-to-trash', async (event, files) => {
+      /*ipcMain.handle('move-to-trash', async (event, files) => {
         const result = [];
         files.forEach((fullPath) => {
           // console.debug('Trash:' + fullPath);
@@ -711,24 +659,14 @@ app
           console.error('moveToTrash ' + JSON.stringify(files) + 'error:', err);
         }
         return ret;
-      });
-
-      /* ipcMain.on('move-to-trash', async (event, files) => {
-        const result = [];
-        files.forEach(fullPath => {
-          console.debug('Trash:' + fullPath);
-          result.push(shell.trashItem(fullPath));
-        });
-        try {
-          event.returnValue = await Promise.all(result);
-        } catch (err) {
-          console.error('moveToTrash error:', err);
-          event.returnValue = undefined;
-        }
-      }); */
+      });*/
 
       ipcMain.on('set-language', (e, language) => {
         i18n.changeLanguage(language);
+      });
+
+      ipcMain.on('setZoomFactor', (event, zoomLevel) => {
+        mainWindow.webContents.setZoomFactor(zoomLevel);
       });
 
       ipcMain.on('global-shortcuts-enabled', (e, globalShortcutsEnabled) => {
@@ -748,11 +686,6 @@ app
       });
 
       ipcMain.on('relaunch-app', reloadApp);
-
-      ipcMain.on('quit-application', () => {
-        globalShortcut.unregisterAll();
-        app.quit();
-      });
 
       process.on('uncaughtException', (error) => {
         if (error.stack) {

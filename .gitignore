@@ -83,6 +83,7 @@ web/sw-config.js
 web/EULA.txt
 
 .env
+src/.env
 src/renderer/config
 src/renderer/extconfig*
 web/extconfig*

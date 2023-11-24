@@ -5,6 +5,7 @@ import webpackPaths from '../../.erb/configs/webpack.paths';
 import fs from 'fs';
 import chalk from 'chalk';
 import { execSync } from 'child_process';
+import http from 'http';
 
 export function resolveHtmlPath(htmlFileName: string) {
   if (process.env.NODE_ENV === 'development') {
@@ -56,8 +57,108 @@ export function generateJWT() {
     console.log(
       chalk.red.bgWhiteBright.bold("Don't forget to change this KEY!"),
     );
-    execSync('echo "KEY=testDevKey" > ' + env);
+    execSync('echo KEY=testDevKey > ' + env);
   }
 
   execSync('npm run generate-jwt');
+}
+
+/**
+ * @param payload: string
+ * @param endpoint: string
+ * @param token: string
+ * @param wsPort: number
+ */
+export function postRequest(payload, endpoint, token, wsPort) {
+  return new Promise((resolve, reject) => {
+    const option = {
+      hostname: '127.0.0.1',
+      port: wsPort,
+      method: 'POST',
+      path: endpoint,
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(payload, 'utf8'),
+      },
+    };
+    const reqPost = http
+      .request(option, (resp) => {
+        // .get('http://127.0.0.1:8888/thumb-gen?' + search.toString(), resp => {
+        let data = '';
+
+        // A chunk of data has been received.
+        resp.on('data', (chunk) => {
+          data += chunk;
+        });
+
+        // The whole response has been received. Print out the result.
+        resp.on('end', () => {
+          if (data) {
+            try {
+              resolve(JSON.parse(data));
+            } catch (ex) {
+              reject(ex);
+            }
+          } else {
+            reject(new Error('Error: no data'));
+          }
+        });
+      })
+      .on('error', (err) => {
+        console.log('Error: ' + err.message);
+        reject(err);
+      });
+    reqPost.write(payload);
+    reqPost.end();
+  });
+}
+
+/**
+ * @param filename
+ * @returns {Promise<TS.Tag[]>}
+ */
+export function readMacOSTags(filename) {
+  const cmdArr = [
+    'mdls',
+    '-raw',
+    '-name',
+    'kMDItemUserTags',
+    '"' + filename + '"',
+  ];
+  const cmd = cmdArr.join(' ');
+
+  return new Promise((resolve, reject) => {
+    const foundTags = [];
+    const { exec } = require('child_process');
+    exec(cmd, (error, stdout, stderr) => {
+      if (error) {
+        console.error(error);
+        reject(error);
+      }
+      if (stderr) {
+        console.log(stderr);
+        reject(stderr);
+      }
+      if (stdout && stdout !== '(null)') {
+        stdout
+          .toString()
+          .replace(/^\(|\)$/g, '')
+          .split(',')
+          .map((item) => {
+            const newTag = {
+              // id: uuidv1(),
+              title: item.trim(),
+            };
+            foundTags.push(newTag);
+            return newTag;
+          });
+
+        resolve(foundTags);
+        // console.log('Tags in file "' + filename + '": ' + JSON.stringify(foundTags));
+      } else {
+        resolve(foundTags);
+      }
+    });
+  });
 }

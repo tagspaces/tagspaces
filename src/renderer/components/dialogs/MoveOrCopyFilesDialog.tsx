@@ -27,7 +27,6 @@ import Paper from '@mui/material/Paper';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import PlatformIO from '-/services/platform-facade';
 import FileIcon from '@mui/icons-material/InsertDriveFileOutlined';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -46,7 +45,7 @@ import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 interface Props {
   open: boolean;
   onClose: (clearSelection?: boolean) => void;
-  selectedFiles: Array<File>;
+  selectedFiles: Array<any>;
 }
 
 function MoveOrCopyFilesDialog(props: Props) {
@@ -60,7 +59,7 @@ function MoveOrCopyFilesDialog(props: Props) {
   // const dispatch: AppDispatch = useDispatch();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
-  const handleMoveCopyFiles = (files: Array<File>, move = false) => {
+  const handleMoveCopyFiles = (files: Array<any>, move = false) => {
     const promises = [];
     for (const file of files) {
       if (move) {
@@ -121,7 +120,7 @@ function MoveOrCopyFilesDialog(props: Props) {
         <List dense style={{ width: 550, marginLeft: -15 }}>
           {props.selectedFiles &&
             props.selectedFiles.length > 0 &&
-            props.selectedFiles.map((file: File) => (
+            props.selectedFiles.map((file) => (
               <ListItem title={file.path} key={file.path}>
                 <ListItemIcon>
                   <FileIcon />

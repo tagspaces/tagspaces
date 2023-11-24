@@ -263,7 +263,11 @@ function EntryProperties(props: Props) {
   const firstRender = useFirstRender();
 
   useEffect(() => {
-    if (!currentEntry.current.isFile) {
+    if (
+      !currentEntry.current.isFile &&
+      !PlatformIO.haveObjectStoreSupport() &&
+      !PlatformIO.haveWebDavSupport()
+    ) {
       PlatformIO.getDirProperties(currentEntry.current.path)
         .then((dProps: TS.DirProp) => {
           dirProps.current = dProps;

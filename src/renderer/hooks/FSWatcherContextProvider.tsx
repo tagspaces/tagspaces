@@ -23,7 +23,6 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { FSWatcher } from 'chokidar';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
@@ -40,7 +39,7 @@ import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useDispatch } from 'react-redux';
 
 type FSWatcherContextData = {
-  watcher: FSWatcher;
+  // watcher: FSWatcher;
   ignored: string[];
   stopWatching: () => void;
   isWatching: () => void;
@@ -51,7 +50,7 @@ type FSWatcherContextData = {
 };
 
 export const FSWatcherContext = createContext<FSWatcherContextData>({
-  watcher: undefined,
+  // watcher: undefined,
   ignored: undefined,
   stopWatching: undefined,
   isWatching: undefined,
@@ -77,7 +76,7 @@ export const FSWatcherContextProvider = ({
     removeDirectoryEntries,
   } = useDirectoryContentContext();
   const { reflectDeleteEntry, reflectCreateEntry } = useLocationIndexContext();
-  const [watcher, setWatcher] = useState<FSWatcher>(undefined);
+  //const [watcher, setWatcher] = useState<FSWatcher>(undefined);
   const ignored = useRef<string[]>([]);
   const dispatch: AppDispatch = useDispatch();
 
@@ -89,32 +88,32 @@ export const FSWatcherContextProvider = ({
     ) {
       const depth =
         currentDirectoryPerspective === PerspectiveIDs.KANBAN ? 3 : 1;
-      setWatcher(
-        watchFolder(PlatformIO.getLocationPath(currentLocation), depth),
-      );
+
+      watchFolder(PlatformIO.getLocationPath(currentLocation), depth);
     } else {
       stopWatching();
     }
   }, [currentLocation]);
 
   useEffect(() => {
-    watchForEvents();
+    // watchForEvents(listener);
   }, [addDirectoryEntries, removeDirectoryEntries, ignored.current]);
 
-  function watchForEvents() {
+  /* todo impl in main
+  function watchForEvents(listener) {
     if (watcher !== undefined) {
       // To remove the listener
       watcher.removeAllListeners();
       watcher.on('all', listener);
-    } /*else {
+    } /!*else {
       console.log('Indexing not supported on this platform');
-    }*/
-  }
+    }*!/
+  }*/
 
   function watchFolder(locationPath, depth) {
     console.log('Start watching: ' + locationPath);
     stopWatching();
-    return PlatformIO.watchFolder(locationPath, {
+    PlatformIO.watchFolder(locationPath, {
       ignored: (path, stats) =>
         (/(^|[\/\\])\../.test(path) && !path.includes('.ts')) || // ignoring .dotfiles but not dirs like .ts
         (path.includes('.ts') && path.includes('tsi.json')), // ignoring .ts/tsi.json folder
@@ -230,14 +229,14 @@ export const FSWatcherContextProvider = ({
   };
 
   function stopWatching() {
-    if (watcher && watcher.close) {
+    /*if (watcher && watcher.close) {
       watcher.close();
       setWatcher(undefined);
-    }
+    }*/
   }
 
   function isWatching() {
-    return watcher !== undefined; //&& !watcher.closed;
+    return false; //watcher !== undefined; //&& !watcher.closed;
   }
 
   function addToIgnored(path: string) {
@@ -282,7 +281,6 @@ export const FSWatcherContextProvider = ({
 
   const context = useMemo(() => {
     return {
-      watcher,
       ignored: ignored.current,
       stopWatching,
       isWatching,
@@ -291,7 +289,7 @@ export const FSWatcherContextProvider = ({
       ignoreByWatcher,
       deignoreByWatcher,
     };
-  }, [watcher, ignored.current]);
+  }, [ignored.current]);
 
   return (
     <FSWatcherContext.Provider value={context}>

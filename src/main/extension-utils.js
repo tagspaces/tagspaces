@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 /**
+ * todo move in common-node
  * @param directoryPath
  * @param isExternal
  * @returns {Promise<{ extensions, supportedFileTypes }>}

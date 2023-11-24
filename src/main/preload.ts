@@ -2,7 +2,46 @@
 /* eslint no-unused-vars: off */
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 
-export type Channels = 'ipc-example';
+export type Channels =
+  | 'set-language'
+  | 'setZoomFactor'
+  | 'global-shortcuts-enabled'
+  | 'show-main-window'
+  | 'create-new-window'
+  | 'quitApp'
+  | 'focus-window'
+  | 'getDevicePaths'
+  | 'readMacOSTags'
+  | 'watchFolder'
+  | 'postRequest'
+  | 'listDirectoryPromise'
+  | 'listMetaDirectoryPromise'
+  | 'getPropertiesPromise'
+  | 'checkDirExist'
+  | 'checkFileExist'
+  | 'createDirectoryPromise'
+  | 'copyFilePromiseOverwrite'
+  | 'renameFilePromise'
+  | 'renameDirectoryPromise'
+  | 'copyDirectoryPromise'
+  | 'moveDirectoryPromise'
+  | 'loadTextFilePromise'
+  | 'getFileContentPromise'
+  | 'getLocalFileContentPromise'
+  | 'saveFilePromise'
+  | 'saveTextFilePromise'
+  | 'saveBinaryFilePromise'
+  | 'deleteFilePromise'
+  | 'deleteDirectoryPromise'
+  | 'openDirectory'
+  | 'openFile'
+  | 'openUrl'
+  | 'selectDirectoryDialog'
+  | 'load-extensions'
+  | 'removeExtension'
+  | 'getUserDataDir'
+  | 'unZip'
+  | 'getDirProperties';
 
 const electronHandler = {
   ipcRenderer: {
@@ -21,9 +60,11 @@ const electronHandler = {
     once(channel: Channels, func: (...args: unknown[]) => void) {
       ipcRenderer.once(channel, (_event, ...args) => func(...args));
     },
+    invoke(command: Channels, ...args: unknown[]) {
+      return ipcRenderer.invoke(command, ...args);
+    },
   },
 };
 
-contextBridge.exposeInMainWorld('electron', electronHandler);
-
+contextBridge.exposeInMainWorld('electronIO', electronHandler);
 export type ElectronHandler = typeof electronHandler;

@@ -28,6 +28,7 @@ extensions/rtf-viewer/libs/*
 extensions/3d-viewer/libs/*
 extensions/slides-viewer/libs/*
 extensions/spreadsheet-viewer/libs/*
+extensions/image-viewer/libs/*
 extensions/media-player/build/*
 extensions/pdf-viewer/generic/build/*
 extensions/text-editor-react/build/*

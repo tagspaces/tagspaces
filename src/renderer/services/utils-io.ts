@@ -533,10 +533,10 @@ export function createDirectoryIndex(
   }
   return PlatformIO.createIndex(
     param,
-    mode,
-    ignorePatterns,
     listDirectoryPromise,
     loadTextFilePromise,
+    mode,
+    ignorePatterns,
   )
     .then((directoryIndex) =>
       persistIndex(param, directoryIndex).then((success) => {

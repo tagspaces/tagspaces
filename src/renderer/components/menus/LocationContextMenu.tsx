@@ -121,7 +121,7 @@ function LocationContextMenu(props: Props) {
 
   const showInFileManagerInt = () => {
     setLocationDirectoryContextMenuAnchorEl(null);
-    PlatformIO.showInFileManager(PlatformIO.getLocationPath(selectedLocation));
+    PlatformIO.openDirectory(PlatformIO.getLocationPath(selectedLocation));
   };
 
   const closeLocationInt = () => {

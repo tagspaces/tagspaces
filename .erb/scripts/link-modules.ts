@@ -20,11 +20,19 @@ const targetEnv = path.join(srcPath, '.env');
 const appEnv = path.join(appPath, '.env');
 
 if (!fs.existsSync(targetEnv) && fs.existsSync(appEnv)) {
-  fs.symlinkSync(appEnv, targetEnv, 'junction');
+  try {
+    fs.symlinkSync(appEnv, targetEnv, 'file');
+  } catch (e){
+    console.log(appEnv+' exist');
+  }
 }
 
 const distEnv = path.join(distPath, '.env');
 
 if (!fs.existsSync(distEnv) && fs.existsSync(appEnv)) {
-  fs.symlinkSync(appEnv, distEnv, 'junction');
+  try {
+  fs.symlinkSync(appEnv, distEnv, 'file');
+  } catch (e){
+    console.log(distEnv+' exist');
+  }
 }

@@ -382,7 +382,7 @@ function FileMenu(props: Props) {
         onClick={() => {
           onClose();
           if (selectedFilePath) {
-            PlatformIO.showInFileManager(selectedFilePath);
+            PlatformIO.openDirectory(selectedFilePath);
           }
         }}
       >
