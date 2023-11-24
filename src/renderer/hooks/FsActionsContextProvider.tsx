@@ -26,7 +26,6 @@ import {
   getMetaFileLocationForFile,
   getThumbFileLocationForFile,
 } from '@tagspaces/tagspaces-common/paths';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { getWarningOpeningFilesExternally } from '-/reducers/settings';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
@@ -40,7 +39,11 @@ type FsActionsContextData = {
     directoryPath: string,
     newDirectoryName: string,
   ) => Promise<string>;
-  renameFile: (filePath: string, newFilePath: string) => Promise<boolean>;
+  renameFile: (
+    filePath: string,
+    newFilePath: string,
+    reflect?: boolean,
+  ) => Promise<boolean>;
   openFileNatively: (selectedFile?: string) => void;
 };
 
@@ -59,8 +62,8 @@ export const FsActionsContextProvider = ({
 }: FsActionsContextProviderProps) => {
   const { t } = useTranslation();
   const { setSelectedEntries, selectedEntries } = useSelectedEntriesContext();
-  const { openedEntries, reflectRenameOpenedEntry } = useOpenedEntryContext();
-  const { openDirectory, currentDirectoryPath } = useDirectoryContentContext();
+  const { openDirectory, currentDirectoryPath, reflectRenameEntries } =
+    useDirectoryContentContext();
   const { reflectRenameEntry } = useLocationIndexContext();
   const { showNotification } = useNotificationContext();
   //const { watcher } = useFSWatcherContext();
@@ -71,112 +74,143 @@ export const FsActionsContextProvider = ({
     getWarningOpeningFilesExternally,
   );
 
-  function renameDirectory(directoryPath: string, newDirectoryName: string) {
-    return renameDirectoryPromise(directoryPath, newDirectoryName)
-      .then((newDirPath) => {
-        if (currentDirectoryPath === directoryPath) {
-          openDirectory(newDirPath).then(() => {
-            reflectRenameOpenedEntry(directoryPath, newDirPath);
-            reflectRenameEntry(directoryPath, newDirPath);
-          });
-        } else {
-          reflectRenameEntry(directoryPath, newDirPath);
-          dispatch(AppActions.reflectRenameEntry(directoryPath, newDirPath));
-        }
-        setSelectedEntries([]);
+  const renameDirectory = useMemo(() => {
+    return (directoryPath: string, newDirectoryName: string): Promise<string> =>
+      renameDirectoryPromise(directoryPath, newDirectoryName)
+        .then((newDirPath) => {
+          if (currentDirectoryPath === directoryPath) {
+            openDirectory(newDirPath).then(() => {
+              //reflectRenameOpenedEntry(directoryPath, newDirPath);
+              reflectRenameEntry(directoryPath, newDirPath);
+            });
+          } else {
+            reflectRenameEntries([[directoryPath, newDirPath]]).then(() => {
+              reflectRenameEntry(directoryPath, newDirPath);
+              dispatch(
+                AppActions.reflectRenameEntry(directoryPath, newDirPath),
+              );
+            });
+          }
+          setSelectedEntries([]);
 
-        showNotification(
-          `Renaming directory ${extractDirectoryName(
-            directoryPath,
-            PlatformIO.getDirSeparator(),
-          )} successful.`,
-          'default',
-          true,
-        );
-        return newDirPath;
-      })
-      .catch((error) => {
-        console.warn('Error while renaming directory: ' + error);
-        showNotification(
-          `Error renaming directory '${extractDirectoryName(
-            directoryPath,
-            PlatformIO.getDirSeparator(),
-          )}'`,
-          'error',
-          true,
-        );
-        throw error;
-      });
-  }
+          showNotification(
+            `Renaming directory ${extractDirectoryName(
+              directoryPath,
+              PlatformIO.getDirSeparator(),
+            )} successful.`,
+            'default',
+            true,
+          );
+          return newDirPath;
+        })
+        .catch((error) => {
+          console.warn('Error while renaming directory: ' + error);
+          showNotification(
+            `Error renaming directory '${extractDirectoryName(
+              directoryPath,
+              PlatformIO.getDirSeparator(),
+            )}'`,
+            'error',
+            true,
+          );
+          throw error;
+        });
+  }, [reflectRenameEntries]);
 
-  function renameFile(filePath: string, newFilePath: string): Promise<boolean> {
-    return renameFilePromise(filePath, newFilePath)
-      .then((result) => {
-        const newFilePathFromPromise = result[1];
-        console.info('File renamed ' + filePath + ' to ' + newFilePath);
-        showNotification(t('core:renamingSuccessfully'), 'default', true);
-        // Update sidecar file and thumb
-        return renameFilesPromise([
-          [
-            getMetaFileLocationForFile(filePath, PlatformIO.getDirSeparator()),
-            getMetaFileLocationForFile(
-              newFilePath,
-              PlatformIO.getDirSeparator(),
-            ),
-          ],
-          [
-            getThumbFileLocationForFile(
-              filePath,
-              PlatformIO.getDirSeparator(),
-              false,
-            ),
-            getThumbFileLocationForFile(
-              newFilePath,
-              PlatformIO.getDirSeparator(),
-              false,
-            ),
-          ],
-        ])
-          .then(() => {
-            reflectRenameEntry(filePath, newFilePathFromPromise);
-            dispatch(
-              AppActions.reflectRenameEntry(filePath, newFilePathFromPromise),
-            );
-            // setSelectedEntries([]);
-            console.info(
-              'Renaming meta file and thumb successful from ' +
-                filePath +
-                ' to:' +
+  const renameFile = useMemo(() => {
+    return (
+      filePath: string,
+      newFilePath: string,
+      reflect: boolean = true,
+    ): Promise<boolean> =>
+      renameFilePromise(filePath, newFilePath)
+        .then((result) => {
+          const newFilePathFromPromise = result[1];
+          console.info('File renamed ' + filePath + ' to ' + newFilePath);
+          showNotification(t('core:renamingSuccessfully'), 'default', true);
+          // Update sidecar file and thumb
+          return renameFilesPromise([
+            [
+              getMetaFileLocationForFile(
+                filePath,
+                PlatformIO.getDirSeparator(),
+              ),
+              getMetaFileLocationForFile(
                 newFilePath,
-            );
-            return true;
-          })
-          .catch((err) => {
-            reflectRenameEntry(filePath, newFilePathFromPromise);
-            dispatch(
-              AppActions.reflectRenameEntry(filePath, newFilePathFromPromise),
-            );
-            setSelectedEntries([]);
-            console.warn(
-              'Renaming meta file and thumb failed from ' +
-                filePath +
-                ' to:' +
+                PlatformIO.getDirSeparator(),
+              ),
+            ],
+            [
+              getThumbFileLocationForFile(
+                filePath,
+                PlatformIO.getDirSeparator(),
+                false,
+              ),
+              getThumbFileLocationForFile(
                 newFilePath,
-              err,
-            );
-            return false;
-          });
-      })
-      .catch((error) => {
-        console.log(`Error while renaming file ${filePath}`, error);
-        showNotification(
-          `Error while renaming file ${filePath}`,
-          'error',
-          true,
-        );
-        return false;
-      });
-  }
+                PlatformIO.getDirSeparator(),
+                false,
+              ),
+            ],
+          ])
+            .then(() => {
+              if (reflect) {
+                reflectRenameEntries([[filePath, newFilePathFromPromise]]).then(
+                  () => {
+                    reflectRenameEntry(filePath, newFilePathFromPromise);
+                    dispatch(
+                      AppActions.reflectRenameEntry(
+                        filePath,
+                        newFilePathFromPromise,
+                      ),
+                    );
+                  },
+                );
+              }
+              // setSelectedEntries([]);
+              console.info(
+                'Renaming meta file and thumb successful from ' +
+                  filePath +
+                  ' to:' +
+                  newFilePath,
+              );
+              return true;
+            })
+            .catch((err) => {
+              if (reflect) {
+                reflectRenameEntries([[filePath, newFilePathFromPromise]]).then(
+                  () => {
+                    reflectRenameEntry(filePath, newFilePathFromPromise);
+                    dispatch(
+                      AppActions.reflectRenameEntry(
+                        filePath,
+                        newFilePathFromPromise,
+                      ),
+                    );
+                  },
+                );
+              }
+              // setSelectedEntries([]);
+              console.warn(
+                'Renaming meta file and thumb failed from ' +
+                  filePath +
+                  ' to:' +
+                  newFilePath,
+                err,
+              );
+              return false;
+            });
+        })
+        .catch((error) => {
+          console.log(`Error while renaming file ${filePath}`, error);
+          showNotification(
+            `Error while renaming file ${filePath}`,
+            'error',
+            true,
+          );
+          return false;
+        });
+  }, [reflectRenameEntries]);
 
   function openFileNatively(selectedFile?: string) {
     // todo reload selectedEntries or find better place for this function
@@ -200,7 +234,7 @@ export const FsActionsContextProvider = ({
       renameFile,
       openFileNatively,
     };
-  }, [openedEntries]); //watcher
+  }, [renameDirectory, renameFile]); //, watcher
 
   return (
     <FsActionsContext.Provider value={context}>

@@ -235,7 +235,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
 
     await expectElementSelected(
       'sample' + ' ' + tags1.join(' ') + '.' + file1,
-      false,
+      true,
     );
 
     const file2 = 'jpg';
@@ -244,7 +244,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
 
     await expectElementSelected(
       'sample' + ' ' + tags2.join(' ') + '.' + file2,
-      false,
+      true,
     );
 
     const file3 = 'gif';
@@ -253,7 +253,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
 
     await expectElementSelected(
       'sample' + ' ' + tags3.join(' ') + '.' + file3,
-      false,
+      true,
     );
 
     function getFileName(fileExt, tags) {
