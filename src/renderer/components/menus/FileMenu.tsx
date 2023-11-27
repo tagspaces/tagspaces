@@ -114,7 +114,8 @@ function FileMenu(props: Props) {
   const { showNotification } = useNotificationContext();
   const { copyFilePromise, setFolderThumbnailPromise } =
     usePlatformFacadeContext();
-  const { currentLocation, readOnlyMode } = useCurrentLocationContext();
+  const { currentLocation, readOnlyMode, currentLocationPath } =
+    useCurrentLocationContext();
   //const locations: Array<TS.Location> = useSelector(getLocations);
   const prefixTagContainer = useSelector(getPrefixTagContainer);
   const warningOpeningFilesExternally = useSelector(
@@ -129,7 +130,7 @@ function FileMenu(props: Props) {
     const entryPath = selectedEntries[0].path;
     /*const tmpLoc = locations.find(
       location => location.uuid === locationID);*/
-    const relativePath = getRelativeEntryPath(currentLocation, entryPath);
+    const relativePath = getRelativeEntryPath(currentLocationPath, entryPath);
     return generateSharingLink(currentLocation.uuid, relativePath);
   }
 

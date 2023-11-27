@@ -526,9 +526,7 @@ function GridPerspective(props: Props) {
 
   const sortedDirectories = sortedDirContent.filter((entry) => !entry.isFile);
   const sortedFiles = sortedDirContent.filter((entry) => entry.isFile);
-  /*const locationPath = currentLocation
-    ? PlatformIO.getLocationPath(currentLocation)
-    : '';*/
+
   let entryWidth = 200;
   if (entrySize.current === 'small') {
     entryWidth = 150;

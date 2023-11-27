@@ -125,34 +125,6 @@ export const PlatformFacadeContextProvider = ({
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
 
-  /*function enableObjectStoreSupport(objectStoreConfig: any): Promise<any> {
-    return platformEnableObjectStoreSupport(objectStoreConfig);
-  }
-  function disableObjectStoreSupport() {
-    platformDisableObjectStoreSupport();
-  }
-  function enableWebdavSupport(webDavConfig: any) {
-    platformEnableWebdavSupport(webDavConfig);
-  }
-  function disableWebdavSupport() {
-    platformDisableWebdavSupport();
-  }
-  function haveObjectStoreSupport(): boolean {
-    return platformHaveObjectStoreSupport();
-  }
-  function haveWebDavSupport(): boolean {
-    return platformHaveWebDavSupport();
-  }
-  function isMinio(): boolean {
-    return platformIsMinio();
-  }
-  function getDirSeparator(): string {
-    return platformGetDirSeparator();
-  }
-  function getLocationPath(location: TS.Location): string {
-    return platformGetLocationPath(location);
-  }*/
-
   function createDirectoryPromise(path: string): Promise<any> {
     ignoreByWatcher(path);
 

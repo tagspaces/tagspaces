@@ -3,6 +3,7 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 
 export type Channels =
+  | 'resolveRelativePaths'
   | 'set-language'
   | 'setZoomFactor'
   | 'global-shortcuts-enabled'

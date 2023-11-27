@@ -60,6 +60,7 @@ function LocationView(props: Props) {
   const {
     openLocation,
     currentLocation,
+    currentLocationPath,
     readOnlyMode,
     setSelectedLocation,
     setLocationDirectoryContextMenuAnchorEl,
@@ -93,7 +94,7 @@ function LocationView(props: Props) {
   const handleLocationClick = () => {
     if (currentLocation && location.uuid === currentLocation.uuid) {
       // the same location click
-      openDirectory(PlatformIO.getLocationPath(location));
+      openDirectory(currentLocationPath); //PlatformIO.getLocationPath(location));
     } else {
       // this.directoryTreeRef[location.uuid].loadSubDir(location, 1);
       setSelectedEntries([]);
@@ -189,7 +190,7 @@ function LocationView(props: Props) {
     }
   };
 
-  let locationNameTitle = PlatformIO.getLocationPath(location);
+  let locationNameTitle = currentLocationPath; //PlatformIO.getLocationPath(location);
   if (isCloudLocation && location.bucketName) {
     if (location.endpointURL) {
       locationNameTitle = location.endpointURL + ' - ' + location.bucketName;
@@ -281,7 +282,7 @@ function LocationView(props: Props) {
           <TargetMoveFileBox
             accepts={[DragItemTypes.FILE]}
             onDrop={handleFileMoveDrop}
-            path={PlatformIO.getLocationPath(location)}
+            path={currentLocationPath} //PlatformIO.getLocationPath(location)}
             location={location}
           >
             {LocationTitle}

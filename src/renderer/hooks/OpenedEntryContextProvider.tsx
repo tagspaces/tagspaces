@@ -36,7 +36,6 @@ import PlatformIO from '-/services/platform-facade';
 import {
   findExtensionsForEntry,
   getAllPropertiesPromise,
-  getCleanLocationPath,
   getNextFile,
   getPrevFile,
   getRelativeEntryPath,
@@ -151,6 +150,12 @@ export const OpenedEntryContextProvider = ({
   const { t } = useTranslation();
 
   const {
+    openLocation,
+    currentLocation,
+    getLocationPath,
+    currentLocationPath,
+  } = useCurrentLocationContext();
+  const {
     currentDirectoryEntries,
     currentDirectoryPath,
     openDirectory,
@@ -159,7 +164,6 @@ export const OpenedEntryContextProvider = ({
 
   const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
   const { showNotification } = useNotificationContext();
-  const { openLocation, currentLocation } = useCurrentLocationContext();
   const { reflectCreateEntry } = useLocationIndexContext();
   const { saveFilePromise } = usePlatformFacadeContext();
 
@@ -658,7 +662,11 @@ export const OpenedEntryContextProvider = ({
 
     if (currentLocation) {
       entryForOpening.locationId = currentLocation.uuid;
-      updateHistory(currentLocation, currentDirectoryPath, fsEntry.path);
+      updateHistory(
+        { ...currentLocation, path: currentLocationPath },
+        currentDirectoryPath,
+        fsEntry.path,
+      );
     }
 
     addToEntryContainer(entryForOpening);
@@ -667,7 +675,7 @@ export const OpenedEntryContextProvider = ({
     if (currentLocation) {
       if (Pro) {
         const relEntryPath = getRelativeEntryPath(
-          currentLocation,
+          currentLocationPath,
           fsEntry.path,
         );
         const historyKeys = Pro.history.historyKeys;
@@ -810,82 +818,81 @@ export const OpenedEntryContextProvider = ({
           } else {
             openLocationTimer = 0;
           }
-          const locationPath = getCleanLocationPath(targetLocation);
+          getLocationPath(targetLocation).then((path) => {
+            const locationPath: string = cleanTrailingDirSeparator(path);
 
-          // setTimeout is needed for case of a location switch, if no location swith the timer is 0
-          setTimeout(() => {
-            if (isCloudLocation) {
-              // PlatformIO.enableObjectStoreSupport(targetLocation).then(() => {
-              if (directoryPath && directoryPath.length > 0) {
-                const newRelDir = getRelativeEntryPath(
-                  targetLocation,
-                  directoryPath,
-                );
-                const dirFullPath =
-                  locationPath.length > 0
-                    ? locationPath + '/' + newRelDir
-                    : directoryPath;
-                openDirectory(dirFullPath);
-              } else {
-                openDirectory(locationPath);
-              }
-
-              if (entryPath) {
-                getAllPropertiesPromise(entryPath)
-                  .then((fsEntry: TS.FileSystemEntry) => {
-                    if (fsEntry) {
-                      openFsEntry(fsEntry);
-                      if (options.fullWidth) {
-                        setEntryInFullWidth(true);
-                      }
-                    }
-                    return true;
-                  })
-                  .catch(() =>
-                    showNotification(t('core:invalidLink'), 'warning', true),
-                  );
-              }
-              // });
-            } else {
-              // local files case
-              if (directoryPath && directoryPath.length > 0) {
-                if (
-                  directoryPath.includes('../') ||
-                  directoryPath.includes('..\\')
-                ) {
-                  showNotification(t('core:invalidLink'), 'warning', true);
-                  return true;
+            // setTimeout is needed for case of a location switch, if no location swith the timer is 0
+            setTimeout(() => {
+              if (isCloudLocation) {
+                // PlatformIO.enableObjectStoreSupport(targetLocation).then(() => {
+                if (directoryPath && directoryPath.length > 0) {
+                  const newRelDir = getRelativeEntryPath(path, directoryPath);
+                  const dirFullPath =
+                    locationPath.length > 0
+                      ? locationPath + '/' + newRelDir
+                      : directoryPath;
+                  openDirectory(dirFullPath);
+                } else {
+                  openDirectory(locationPath);
                 }
-                const dirFullPath =
-                  locationPath + PlatformIO.getDirSeparator() + directoryPath;
-                openDirectory(dirFullPath);
-              } else {
-                openDirectory(locationPath);
-              }
 
-              if (entryPath && entryPath.length > 0) {
-                if (entryPath.includes('../') || entryPath.includes('..\\')) {
-                  showNotification(t('core:invalidLink'), 'warning', true);
-                  return true;
-                }
-                const entryFullPath =
-                  locationPath + PlatformIO.getDirSeparator() + entryPath;
-                getAllPropertiesPromise(entryFullPath)
-                  .then((fsEntry: TS.FileSystemEntry) => {
-                    if (fsEntry) {
-                      openFsEntry(fsEntry);
-                      if (options.fullWidth) {
-                        setEntryInFullWidth(true);
+                if (entryPath) {
+                  getAllPropertiesPromise(entryPath)
+                    .then((fsEntry: TS.FileSystemEntry) => {
+                      if (fsEntry) {
+                        openFsEntry(fsEntry);
+                        if (options.fullWidth) {
+                          setEntryInFullWidth(true);
+                        }
                       }
-                    }
+                      return true;
+                    })
+                    .catch(() =>
+                      showNotification(t('core:invalidLink'), 'warning', true),
+                    );
+                }
+                // });
+              } else {
+                // local files case
+                if (directoryPath && directoryPath.length > 0) {
+                  if (
+                    directoryPath.includes('../') ||
+                    directoryPath.includes('..\\')
+                  ) {
+                    showNotification(t('core:invalidLink'), 'warning', true);
                     return true;
-                  })
-                  .catch(() =>
-                    showNotification(t('core:invalidLink'), 'warning', true),
-                  );
+                  }
+                  const dirFullPath =
+                    locationPath + PlatformIO.getDirSeparator() + directoryPath;
+                  openDirectory(dirFullPath);
+                } else {
+                  openDirectory(locationPath);
+                }
+
+                if (entryPath && entryPath.length > 0) {
+                  if (entryPath.includes('../') || entryPath.includes('..\\')) {
+                    showNotification(t('core:invalidLink'), 'warning', true);
+                    return true;
+                  }
+                  const entryFullPath =
+                    locationPath + PlatformIO.getDirSeparator() + entryPath;
+                  getAllPropertiesPromise(entryFullPath)
+                    .then((fsEntry: TS.FileSystemEntry) => {
+                      if (fsEntry) {
+                        openFsEntry(fsEntry);
+                        if (options.fullWidth) {
+                          setEntryInFullWidth(true);
+                        }
+                      }
+                      return true;
+                    })
+                    .catch(() =>
+                      showNotification(t('core:invalidLink'), 'warning', true),
+                    );
+                }
               }
-            }
-          }, openLocationTimer);
+            }, openLocationTimer);
+          });
         } else {
           showNotification(t('core:invalidLink'), 'warning', true);
         }
@@ -990,7 +997,11 @@ export const OpenedEntryContextProvider = ({
     if (openedEntries && openedEntries.length > 0) {
       if (openedEntries[0].path === entryPath) {
         if (currentLocation) {
-          updateHistory(currentLocation, currentDirectoryPath, newEntryPath);
+          updateHistory(
+            { ...currentLocation, path: currentLocationPath },
+            currentDirectoryPath,
+            newEntryPath,
+          );
         }
         if (reload) {
           openEntry(newEntryPath);

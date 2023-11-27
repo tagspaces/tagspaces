@@ -38,8 +38,6 @@ import {
 } from '@tagspaces/tagspaces-common/paths';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { Pro } from '-/pro';
-import { PerspectiveIDs } from '-/perspectives';
 
 type LocationIndexContextData = {
   index: TS.FileSystemEntry[];
@@ -91,12 +89,10 @@ export const LocationIndexContextProvider = ({
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
 
-  const { currentLocation } = useCurrentLocationContext();
+  const { currentLocation, getLocationPath } = useCurrentLocationContext();
   const {
     setSearchResults,
     appendSearchResults,
-    loadDirectoryContent,
-    currentDirectoryPerspective,
     addDirectoryEntries,
     removeDirectoryEntries,
   } = useDirectoryContentContext();
@@ -276,53 +272,59 @@ export const LocationIndexContextProvider = ({
     if (location) {
       const isCurrentLocation =
         currentLocation && currentLocation.uuid === location.uuid;
-      if (location.type === locationType.TYPE_CLOUD) {
-        return PlatformIO.enableObjectStoreSupport(location)
-          .then(() =>
-            createDirIndex(
-              PlatformIO.getLocationPath(location),
-              location.fullTextIndex,
-              isCurrentLocation,
-              location.uuid,
-            ),
-          )
-          .catch(() => {
-            PlatformIO.disableObjectStoreSupport();
-            return false;
-          });
-      } else if (location.type === locationType.TYPE_WEBDAV) {
-        PlatformIO.enableWebdavSupport(location);
-        return createDirIndex(
-          PlatformIO.getLocationPath(location),
-          location.fullTextIndex,
-          isCurrentLocation,
-          location.uuid,
-        );
-      } else if (location.type === locationType.TYPE_LOCAL) {
-        PlatformIO.disableObjectStoreSupport();
-        return createDirIndex(
-          PlatformIO.getLocationPath(location),
-          location.fullTextIndex,
-          isCurrentLocation,
-          location.uuid,
-        );
-      }
+      getLocationPath(location).then((locationPath) => {
+        if (location.type === locationType.TYPE_CLOUD) {
+          return PlatformIO.enableObjectStoreSupport(location)
+            .then(() =>
+              createDirIndex(
+                locationPath,
+                location.fullTextIndex,
+                isCurrentLocation,
+                location.uuid,
+              ),
+            )
+            .catch(() => {
+              PlatformIO.disableObjectStoreSupport();
+              return false;
+            });
+        } else if (location.type === locationType.TYPE_WEBDAV) {
+          PlatformIO.enableWebdavSupport(location);
+          return createDirIndex(
+            locationPath,
+            location.fullTextIndex,
+            isCurrentLocation,
+            location.uuid,
+          );
+        } else if (location.type === locationType.TYPE_LOCAL) {
+          PlatformIO.disableObjectStoreSupport();
+          return createDirIndex(
+            locationPath,
+            location.fullTextIndex,
+            isCurrentLocation,
+            location.uuid,
+          );
+        }
+      });
     }
     return Promise.resolve(false);
   }
 
   function createLocationsIndexes(extractText = true): Promise<boolean> {
     isIndexing.current = true;
-    const promises = allLocations.map((location: TS.Location) => {
-      const nextPath = PlatformIO.getLocationPath(location);
-      return (
+    const promises = allLocations.map((location: TS.Location) =>
+      getLocationPath(location).then((locationPath) =>
         createDirectoryIndex(
-          { path: nextPath, location: location.uuid },
+          { path: locationPath, location: location.uuid },
           extractText,
           location.ignorePatternPaths,
           enableWS,
-        )
-          /* .then(directoryIndex => {
+        ).catch((err) => {
+          isIndexing.current = false;
+          lastError.current = err;
+        }),
+      ),
+    );
+    /* .then(directoryIndex => {
           if (Pro && Pro.Indexer) {
             Pro.Indexer.persistIndex(
               nextPath,
@@ -332,12 +334,6 @@ export const LocationIndexContextProvider = ({
           }
           return true;
         }) */
-          .catch((err) => {
-            isIndexing.current = false;
-            lastError.current = err;
-          })
-      );
-    });
 
     return Promise.all(promises)
       .then((e) => {
@@ -383,12 +379,13 @@ export const LocationIndexContextProvider = ({
       const maxIndexAge = currentLocation.maxIndexAge
         ? currentLocation.maxIndexAge
         : AppConfig.maxIndexAge;
+
+      const currentPath = await getLocationPath(currentLocation);
       if (
         searchQuery.forceIndexing ||
         (!currentLocation.disableIndexing &&
           (!index || index.length < 1 || indexAge > maxIndexAge))
       ) {
-        const currentPath = PlatformIO.getLocationPath(currentLocation);
         console.log('Start creating index for : ' + currentPath);
         const newIndex = await createDirectoryIndex(
           {
@@ -404,7 +401,7 @@ export const LocationIndexContextProvider = ({
       } else if (isCloudLocation || !index || index.length === 0) {
         const newIndex = await loadIndex(
           {
-            path: PlatformIO.getLocationPath(currentLocation),
+            path: currentPath,
             locationID: currentLocation.uuid,
             ...(isCloudLocation && { bucketName: currentLocation.bucketName }),
           },
@@ -473,7 +470,7 @@ export const LocationIndexContextProvider = ({
             maxSearchResultReached = true;
             return Promise.resolve();
           }
-          const nextPath = PlatformIO.getLocationPath(location);
+          const nextPath = await getLocationPath(location);
           let directoryIndex = [];
           let indexExist = false;
           const isCloudLocation = location.type === locationType.TYPE_CLOUD;

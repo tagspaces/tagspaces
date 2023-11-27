@@ -42,9 +42,11 @@ import { getPersistTagsInSidecarFile } from '-/reducers/settings';
 
 type CurrentLocationContextData = {
   currentLocation: TS.Location;
+  currentLocationPath: string;
   readOnlyMode: boolean;
   skipInitialDirList: boolean;
   persistTagsInSidecarFile: boolean;
+  getLocationPath: (location: TS.Location) => Promise<string>;
   changeLocation: (location: TS.Location) => void;
   editLocation: (location: TS.Location, openAfterEdit?: boolean) => void;
   addLocation: (
@@ -70,9 +72,11 @@ type CurrentLocationContextData = {
 export const CurrentLocationContext = createContext<CurrentLocationContextData>(
   {
     currentLocation: undefined,
+    currentLocationPath: undefined,
     readOnlyMode: false,
     skipInitialDirList: false,
     persistTagsInSidecarFile: true,
+    getLocationPath: undefined,
     changeLocation: () => {},
     editLocation: () => {},
     addLocation: () => {},
@@ -104,6 +108,7 @@ export const CurrentLocationContextProvider = ({
   const { showNotification } = useNotificationContext();
   const [currentLocation, setCurrentLocation] =
     useState<TS.Location>(undefined);
+  const currentLocationPath = useRef<string>('');
   const selectedLocation = useRef<TS.Location>(undefined);
   const skipInitialDirList = useRef<boolean>(false);
   const [
@@ -131,6 +136,14 @@ export const CurrentLocationContextProvider = ({
   }, []);
 
   useEffect(() => {
+    if (currentLocation) {
+      getLocationPath(currentLocation).then(
+        (path) => (currentLocationPath.current = path),
+      );
+    }
+  }, [currentLocation]);
+
+  useEffect(() => {
     if (locations.length < 1) {
       // init locations
       setDefaultLocations();
@@ -146,6 +159,27 @@ export const CurrentLocationContextProvider = ({
       }
     }
   }, [locations]);
+
+  function getLocationPath(location: TS.Location): Promise<string> {
+    let locationPath = '';
+    if (location) {
+      if (location.path) {
+        locationPath = location.path;
+      }
+      if (location.paths && location.paths[0]) {
+        // eslint-disable-next-line prefer-destructuring
+        locationPath = location.paths[0];
+      }
+
+      if (locationPath && locationPath.startsWith('./')) {
+        // TODO test relative path (Directory Back) with other platforms
+        // relative paths
+        return window.electronIO.ipcRenderer.invoke('resolveRelativePaths');
+      }
+    }
+
+    return Promise.resolve(locationPath);
+  }
 
   function setSelectedLocation(location: TS.Location) {
     selectedLocation.current = location;
@@ -369,9 +403,11 @@ export const CurrentLocationContextProvider = ({
   const context = useMemo(() => {
     return {
       currentLocation,
+      currentLocationPath: currentLocationPath.current,
       readOnlyMode,
       skipInitialDirList: skipInitialDirList.current,
       persistTagsInSidecarFile,
+      getLocationPath,
       changeLocation,
       addLocation,
       addLocations,
@@ -391,6 +427,7 @@ export const CurrentLocationContextProvider = ({
     };
   }, [
     currentLocation,
+    currentLocationPath.current,
     persistTagsInSidecarFile,
     skipInitialDirList.current,
     locationDirectoryContextMenuAnchorEl,

@@ -25,11 +25,6 @@ import {
   platformDisableObjectStoreSupport,
   platformEnableWebdavSupport,
   platformDisableWebdavSupport,
-  platformGetLocationPath,
-  platformSetLanguage,
-  platformSetZoomFactorElectron,
-  platformSetGlobalShortcuts,
-  platformShowMainWindow,
   platformQuitApp,
   platformGetDevicePaths,
   platformGetURLforPath,
@@ -89,8 +84,7 @@ export default class PlatformFacade {
    * todo rethink this use node path module
    * @param location
    */
-  static getLocationPath = (location: TS.Location): string =>
-    platformGetLocationPath(location);
+  // static getLocationPath = (location: TS.Location): string => platformGetLocationPath(location);
 
   static setLanguage = (language: string): void => {
     if (AppConfig.isElectron) {
@@ -584,10 +578,6 @@ export default class PlatformFacade {
       }
     }
   };
-
-  /*  @deprecated not work in S3 use getLocationPath instead
-  static resolveFilePath = (filePath: string): string =>
-    platformResolveFilePath(filePath);*/
 
   static openUrl = (url: string): void => {
     if (AppConfig.isElectron) {

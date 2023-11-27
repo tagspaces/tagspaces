@@ -63,6 +63,7 @@ function LocationContextMenu(props: Props) {
     selectedLocation,
     locationDirectoryContextMenuAnchorEl,
     setLocationDirectoryContextMenuAnchorEl,
+    getLocationPath,
   } = useCurrentLocationContext();
   const { createLocationIndex } = useLocationIndexContext();
   const dispatch: AppDispatch = useDispatch();
@@ -121,7 +122,9 @@ function LocationContextMenu(props: Props) {
 
   const showInFileManagerInt = () => {
     setLocationDirectoryContextMenuAnchorEl(null);
-    PlatformIO.openDirectory(PlatformIO.getLocationPath(selectedLocation));
+    getLocationPath(selectedLocation).then((path) =>
+      PlatformIO.openDirectory(path),
+    );
   };
 
   const closeLocationInt = () => {

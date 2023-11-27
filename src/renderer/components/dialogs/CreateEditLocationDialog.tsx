@@ -974,7 +974,7 @@ function CreateEditLocationDialog(props: Props) {
                     onClose={() => setIgnorePatternDialogOpen(false)}
                     ignorePatternPaths={ignorePatternPaths}
                     setIgnorePatternPaths={setIgnorePatternPaths}
-                    locationPath={PlatformIO.getLocationPath(selectedLocation)}
+                    location={selectedLocation}
                   />
                 )}
               </>

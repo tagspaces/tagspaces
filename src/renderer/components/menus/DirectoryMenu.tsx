@@ -70,7 +70,8 @@ function DirectoryMenu(props: Props) {
   const { openEntry } = useOpenedEntryContext();
   const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
   const { addTags } = useTaggingActionsContext();
-  const { currentLocation, readOnlyMode } = useCurrentLocationContext();
+  const { currentLocation, readOnlyMode, getLocationPath } =
+    useCurrentLocationContext();
   const { showNotification } = useNotificationContext();
   const {
     openDirectory,
@@ -117,7 +118,7 @@ function DirectoryMenu(props: Props) {
     dispatch(AppActions.toggleProTeaser(slidePage));
   };
 
-  function generateFolderLink() {
+  function generateFolderLink(): Promise<string> {
     let locationID = currentLocation.uuid;
     let entryPath = currentDirectoryPath;
     if (selectedEntries && selectedEntries.length > 0) {
@@ -127,23 +128,25 @@ function DirectoryMenu(props: Props) {
       entryPath = selectedEntries[0].path;
     }
     const tmpLoc = locations.find((location) => location.uuid === locationID);
-    const relativePath = getRelativeEntryPath(tmpLoc, entryPath);
-    return generateSharingLink(locationID, undefined, relativePath);
+    return getLocationPath(tmpLoc).then((locationPath) => {
+      const relativePath = getRelativeEntryPath(locationPath, entryPath);
+      return generateSharingLink(locationID, undefined, relativePath);
+    });
   }
 
   function copySharingLink() {
     //if (selectedEntries && selectedEntries.length === 1) {
-    const sharingLink = generateFolderLink();
-    navigator.clipboard
-      .writeText(sharingLink)
-      .then(() => {
-        showNotification(t('core:sharingLinkCopied'));
-        return true;
-      })
-      .catch(() => {
-        showNotification(t('core:sharingLinkFailed'));
-      });
-    //}
+    generateFolderLink().then((sharingLink) =>
+      navigator.clipboard
+        .writeText(sharingLink)
+        .then(() => {
+          showNotification(t('core:sharingLinkCopied'));
+          return true;
+        })
+        .catch(() => {
+          showNotification(t('core:sharingLinkFailed'));
+        }),
+    );
   }
 
   /*  const [
@@ -233,13 +236,11 @@ function DirectoryMenu(props: Props) {
   }
 
   function openInNewWindow() {
-    // onClose();
-    //if (selectedEntries && selectedEntries.length === 1) {
-    const sharingLink = generateFolderLink();
-    const newInstanceLink =
-      window.location.href.split('?')[0] + '?' + sharingLink.split('?')[1];
-    PlatformIO.createNewInstance(newInstanceLink);
-    //}
+    generateFolderLink().then((sharingLink) => {
+      const newInstanceLink =
+        window.location.href.split('?')[0] + '?' + sharingLink.split('?')[1];
+      PlatformIO.createNewInstance(newInstanceLink);
+    });
   }
 
   function addExistingFile() {

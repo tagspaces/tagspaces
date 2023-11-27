@@ -171,8 +171,12 @@ export const DirectoryContentContextProvider = ({
 }: DirectoryContentContextProviderProps) => {
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
-  const { closeAllLocations, currentLocation, skipInitialDirList } =
-    useCurrentLocationContext();
+  const {
+    closeAllLocations,
+    currentLocation,
+    skipInitialDirList,
+    currentLocationPath,
+  } = useCurrentLocationContext();
   const { showNotification, hideNotifications } = useNotificationContext();
 
   const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
@@ -215,7 +219,7 @@ export const DirectoryContentContextProvider = ({
   useEffect(() => {
     if (currentLocation) {
       if (!skipInitialDirList) {
-        openDirectory(PlatformIO.getLocationPath(currentLocation));
+        openDirectory(currentLocationPath);
       }
     } else {
       clearDirectoryContent();
@@ -365,9 +369,9 @@ export const DirectoryContentContextProvider = ({
     if (isSearchMode.current) {
       exitSearchMode();
     }
-    const currentLocationPath = normalizePath(
+    /*const currentLocationPath = normalizePath(
       PlatformIO.getLocationPath(currentLocation),
-    );
+    );*/
 
     // dispatch(actions.setIsLoading(true));
 
@@ -549,7 +553,10 @@ export const DirectoryContentContextProvider = ({
           //OPEN ISTRUNCATED dialog
           dispatch(AppActions.toggleTruncatedConfirmDialog());
         }
-        updateHistory(currentLocation, directoryPath);
+        updateHistory(
+          { ...currentLocation, path: currentLocationPath },
+          directoryPath,
+        );
         if (results !== undefined) {
           // console.debug('app listDirectoryPromise resolved:' + results.length);
           return loadDirectorySuccess(

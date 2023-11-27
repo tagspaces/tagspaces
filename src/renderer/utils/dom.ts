@@ -58,7 +58,10 @@ export function updateHistory(
     }
 
     if (newDirectoryPath && newDirectoryPath.length > 0) {
-      const newRelDir = getRelativeEntryPath(newLocation, newDirectoryPath);
+      const newRelDir = getRelativeEntryPath(
+        newLocation.path,
+        newDirectoryPath,
+      );
       if (newRelDir) {
         const newEncRelDir = encodeURIComponent(newRelDir);
         urlParams += '&tsdpath=' + newEncRelDir;
@@ -67,7 +70,7 @@ export function updateHistory(
     }
 
     if (newEntryPath && newEntryPath.length > 0) {
-      const entryRelPath = getRelativeEntryPath(newLocation, newEntryPath);
+      const entryRelPath = getRelativeEntryPath(newLocation.path, newEntryPath);
       if (entryRelPath) {
         const newEncEntryPath = encodeURIComponent(entryRelPath);
         urlParams += '&tsepath=' + newEncEntryPath;

@@ -47,7 +47,7 @@ const DirectoryTreeView = forwardRef(
   (props: Props, ref: Ref<DirectoryTreeViewRef>) => {
     const { classes, location, handleFileMoveDrop } = props;
     const { openDirectory } = useDirectoryContentContext();
-    const { changeLocation } = useCurrentLocationContext();
+    const { changeLocation, currentLocationPath } = useCurrentLocationContext();
 
     const [data, setData] = useState(undefined);
     const [isExpanded, setExpanded] = useState(false);
@@ -203,7 +203,7 @@ const DirectoryTreeView = forwardRef(
         uuid: location.uuid,
         name: location.name,
         type: location.type,
-        path: PlatformIO.getLocationPath(location),
+        path: currentLocationPath, //PlatformIO.getLocationPath(location),
       };
       getDirectoriesTree(subFolder)
         .then((children) => {

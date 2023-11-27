@@ -1465,23 +1465,24 @@ export function setLocationType(location: TS.Location): Promise<boolean> {
   return Promise.resolve(false);
 }
 
-export function getCleanLocationPath(location: TS.Location): string {
+/*export function getCleanLocationPath(location: TS.Location): string {
   let locationPath = PlatformIO.getLocationPath(location);
   locationPath = cleanTrailingDirSeparator(locationPath);
   return locationPath;
-}
+}*/
 
 export function getRelativeEntryPath(
-  location: TS.Location,
+  currentLocationPath: string,
   entryPath: string,
 ): string {
   const entryPathCleaned = cleanTrailingDirSeparator(entryPath);
+  const currentPathCleaned = cleanTrailingDirSeparator(currentLocationPath);
   // const isCloudLocation = location.type === locationType.TYPE_CLOUD;
-  const currentLocationPath = getCleanLocationPath(location);
+  // const currentLocationPath = getCleanLocationPath(location);
   // let relEntryPath = isCloudLocation
   //   ? entryPathCleaned
   //   : entryPathCleaned.replace(currentLocationPath, '');
-  let relEntryPath = entryPathCleaned.replace(currentLocationPath, '');
+  let relEntryPath = entryPathCleaned.replace(currentPathCleaned, '');
   relEntryPath = cleanFrontDirSeparator(relEntryPath);
   return relEntryPath;
 }

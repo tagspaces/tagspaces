@@ -67,7 +67,7 @@ export type FSWatcherContextProviderProps = {
 export const FSWatcherContextProvider = ({
   children,
 }: FSWatcherContextProviderProps) => {
-  const { currentLocation } = useCurrentLocationContext();
+  const { currentLocation, currentLocationPath } = useCurrentLocationContext();
   const {
     loadDirectoryContent,
     currentDirectoryPath,
@@ -89,7 +89,7 @@ export const FSWatcherContextProvider = ({
       const depth =
         currentDirectoryPerspective === PerspectiveIDs.KANBAN ? 3 : 1;
 
-      watchFolder(PlatformIO.getLocationPath(currentLocation), depth);
+      watchFolder(currentLocationPath, depth);
     } else {
       stopWatching();
     }

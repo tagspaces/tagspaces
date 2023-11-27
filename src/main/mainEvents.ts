@@ -28,6 +28,9 @@ import { postRequest, readMacOSTags } from './util';
 let watcher: FSWatcher = undefined;
 
 export default function loadMainEvents() {
+  ipcMain.handle('resolveRelativePaths', (event, relativePath) => {
+    return path.resolve(relativePath);
+  });
   ipcMain.on('quitApp', () => {
     globalShortcut.unregisterAll();
     app.quit();
