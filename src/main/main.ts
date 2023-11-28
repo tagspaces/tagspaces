@@ -9,23 +9,15 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import {
-  app,
-  BrowserWindow,
-  shell,
-  ipcMain,
-  globalShortcut,
-  dialog,
-} from 'electron';
+import { app, BrowserWindow, shell, ipcMain, globalShortcut } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import pm2 from '@elife/pm2';
 import propertiesReader from 'properties-reader';
-import fs from 'fs-extra';
 import { resolveHtmlPath } from './util';
 import windowStateKeeper from 'electron-window-state';
 import findFreePorts from 'find-free-ports';
-import settings from '../renderer/settings';
+import settings from './settings';
 import { getExtensions } from './extension-utils';
 import i18nInit from '../renderer/services/i18nInit';
 import buildTrayIconMenu from './electron-tray-menu';
@@ -41,11 +33,11 @@ class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
-let usedWsPort = undefined;
+/*let usedWsPort = undefined;
 
 function getUsedWsPort() {
   return usedWsPort;
-}
+}*/
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -400,7 +392,8 @@ function startWS() {
                 } else if (err) {
                   reject(err);
                 } else {
-                  usedWsPort = freePort;
+                  settings.setUsedWsPort(freePort);
+                  // usedWsPort = freePort;
                   if (mainWindow) {
                     mainWindow.webContents.send('start_ws', {
                       port: freePort,
@@ -471,16 +464,15 @@ const createWindow = async (i18n) => {
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36';
   const testWinOnUnix = false; // set to true to simulate windows os, useful for testing s3 handling
 
-  mainWindow
-    .loadURL(
-      resolveHtmlPath('index.html') + startupParameter,
-      testWinOnUnix ? { userAgent: winUserAgent } : {},
-    )
-    .then(() => {
+  mainWindow.loadURL(
+    resolveHtmlPath('index.html') + startupParameter,
+    testWinOnUnix ? { userAgent: winUserAgent } : {},
+  );
+  /*.then(() => {
       mainWindow.webContents.send('start_ws', {
         port: getUsedWsPort(),
       });
-    });
+    });*/
 
   mainWindow.webContents.on('before-input-event', (_, input) => {
     if (input.type === 'keyDown' && input.key === 'F12') {

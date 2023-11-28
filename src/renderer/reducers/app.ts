@@ -819,6 +819,11 @@ export const actions = {
         return true;
       });
     }
+    PlatformIO.isWorkerAvailable().then((workerAvailable) =>
+      workerAvailable
+        ? console.log('Worker is available in renderer thread')
+        : console.log('Worker is not available in renderer thread'),
+    );
 
     // let openDefaultLocation = true;
     /*const lid = getURLParameter('tslid');

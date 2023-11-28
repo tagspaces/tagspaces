@@ -45,6 +45,6 @@ tests/file-structure
 tests/bin
 .ycache
 src/renderer/aws-exports.js
-src/renderer/config/config.json
+src/main/config/config.json
 src/renderer/extension-config.ts
 app/version.json

@@ -46,8 +46,8 @@ export interface DirectoryTreeViewRef {
 const DirectoryTreeView = forwardRef(
   (props: Props, ref: Ref<DirectoryTreeViewRef>) => {
     const { classes, location, handleFileMoveDrop } = props;
-    const { openDirectory } = useDirectoryContentContext();
-    const { changeLocation, currentLocationPath } = useCurrentLocationContext();
+    const { openDirectory, currentLocationPath } = useDirectoryContentContext();
+    const { changeLocation } = useCurrentLocationContext();
 
     const [data, setData] = useState(undefined);
     const [isExpanded, setExpanded] = useState(false);

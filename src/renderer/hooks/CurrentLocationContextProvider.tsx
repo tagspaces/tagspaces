@@ -42,7 +42,6 @@ import { getPersistTagsInSidecarFile } from '-/reducers/settings';
 
 type CurrentLocationContextData = {
   currentLocation: TS.Location;
-  currentLocationPath: string;
   readOnlyMode: boolean;
   skipInitialDirList: boolean;
   persistTagsInSidecarFile: boolean;
@@ -72,7 +71,6 @@ type CurrentLocationContextData = {
 export const CurrentLocationContext = createContext<CurrentLocationContextData>(
   {
     currentLocation: undefined,
-    currentLocationPath: undefined,
     readOnlyMode: false,
     skipInitialDirList: false,
     persistTagsInSidecarFile: true,
@@ -108,7 +106,6 @@ export const CurrentLocationContextProvider = ({
   const { showNotification } = useNotificationContext();
   const [currentLocation, setCurrentLocation] =
     useState<TS.Location>(undefined);
-  const currentLocationPath = useRef<string>('');
   const selectedLocation = useRef<TS.Location>(undefined);
   const skipInitialDirList = useRef<boolean>(false);
   const [
@@ -134,14 +131,6 @@ export const CurrentLocationContextProvider = ({
       }
     }
   }, []);
-
-  useEffect(() => {
-    if (currentLocation) {
-      getLocationPath(currentLocation).then(
-        (path) => (currentLocationPath.current = path),
-      );
-    }
-  }, [currentLocation]);
 
   useEffect(() => {
     if (locations.length < 1) {
@@ -403,7 +392,6 @@ export const CurrentLocationContextProvider = ({
   const context = useMemo(() => {
     return {
       currentLocation,
-      currentLocationPath: currentLocationPath.current,
       readOnlyMode,
       skipInitialDirList: skipInitialDirList.current,
       persistTagsInSidecarFile,
@@ -427,7 +415,6 @@ export const CurrentLocationContextProvider = ({
     };
   }, [
     currentLocation,
-    currentLocationPath.current,
     persistTagsInSidecarFile,
     skipInitialDirList.current,
     locationDirectoryContextMenuAnchorEl,

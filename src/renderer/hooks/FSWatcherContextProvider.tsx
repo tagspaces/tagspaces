@@ -67,10 +67,11 @@ export type FSWatcherContextProviderProps = {
 export const FSWatcherContextProvider = ({
   children,
 }: FSWatcherContextProviderProps) => {
-  const { currentLocation, currentLocationPath } = useCurrentLocationContext();
+  const { currentLocation } = useCurrentLocationContext();
   const {
     loadDirectoryContent,
     currentDirectoryPath,
+    currentLocationPath,
     currentDirectoryPerspective,
     addDirectoryEntries,
     removeDirectoryEntries,

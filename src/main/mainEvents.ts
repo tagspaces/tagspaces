@@ -23,11 +23,15 @@ import {
 import fs from 'fs-extra';
 import path from 'path';
 import chokidar, { FSWatcher } from 'chokidar';
-import { postRequest, readMacOSTags } from './util';
+import { isWorkerAvailable, postRequest, readMacOSTags } from './util';
 
 let watcher: FSWatcher = undefined;
 
 export default function loadMainEvents() {
+  ipcMain.handle('isWorkerAvailable', async () => {
+    const results = await isWorkerAvailable();
+    return results;
+  });
   ipcMain.handle('resolveRelativePaths', (event, relativePath) => {
     return path.resolve(relativePath);
   });
@@ -69,13 +73,10 @@ export default function loadMainEvents() {
     //const chokidar = require('chokidar');
     watcher = chokidar.watch(locationPath, options);
   });
-  ipcMain.handle(
-    'postRequest',
-    async (event, payload, endpoint, token, wsPort) => {
-      const result = await postRequest(payload, endpoint, token, wsPort);
-      return result;
-    },
-  );
+  ipcMain.handle('postRequest', async (event, payload, endpoint) => {
+    const result = await postRequest(payload, endpoint);
+    return result;
+  });
   ipcMain.handle(
     'listDirectoryPromise',
     async (event, path, mode, ignorePatterns, resultsLimit) => {

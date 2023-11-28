@@ -17,7 +17,7 @@ const token = jwt.sign(payload, properties.get('KEY'));
 const content = '{"jwt":"' + token + '"}';
 
 fs.outputFileSync(
-  pathLib.join(__dirname, '../src/renderer/config/config.json'),
+  pathLib.join(__dirname, '../src/main/config/config.json'),
   content,
 );
 /* fs.writeFile(

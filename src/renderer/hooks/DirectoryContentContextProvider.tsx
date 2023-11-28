@@ -40,7 +40,6 @@ import {
   extractTagsAsObjects,
   extractParentDirectoryPath,
   getMetaFileLocationForDir,
-  normalizePath,
   getMetaDirectoryPath,
 } from '@tagspaces/tagspaces-common/paths';
 import PlatformIO from '-/services/platform-facade';
@@ -60,7 +59,6 @@ import {
 } from '-/reducers/settings';
 import { enhanceEntry, getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import useFirstRender from '-/utils/useFirstRender';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { loadCurrentDirMeta } from '-/services/meta-loader';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
@@ -70,6 +68,7 @@ import { defaultTitle } from '-/services/search';
 import { Pro } from '-/pro';
 
 type DirectoryContentContextData = {
+  currentLocationPath: string;
   currentDirectoryEntries: TS.FileSystemEntry[];
   directoryMeta: TS.FileSystemEntryMeta;
   currentDirectoryPerspective: string;
@@ -127,6 +126,7 @@ type DirectoryContentContextData = {
 
 export const DirectoryContentContext =
   createContext<DirectoryContentContextData>({
+    currentLocationPath: undefined,
     currentDirectoryEntries: [],
     directoryMeta: undefined,
     currentDirectoryPerspective: undefined,
@@ -175,8 +175,11 @@ export const DirectoryContentContextProvider = ({
     closeAllLocations,
     currentLocation,
     skipInitialDirList,
-    currentLocationPath,
+    getLocationPath,
   } = useCurrentLocationContext();
+
+  const currentLocationPath = useRef<string>('');
+
   const { showNotification, hideNotifications } = useNotificationContext();
 
   const { selectedEntries, setSelectedEntries } = useSelectedEntriesContext();
@@ -213,15 +216,19 @@ export const DirectoryContentContextProvider = ({
   const currentPerspective = useRef<string>(PerspectiveIDs.UNSPECIFIED);
   const currentDirectoryFiles = useRef<TS.OrderVisibilitySettings[]>([]);
   const currentDirectoryDirs = useRef<TS.OrderVisibilitySettings[]>([]);
-  const firstRender = useFirstRender();
+  // const firstRender = useFirstRender();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {
     if (currentLocation) {
-      if (!skipInitialDirList) {
-        openDirectory(currentLocationPath);
-      }
+      getLocationPath(currentLocation).then((locationPath) => {
+        currentLocationPath.current = locationPath;
+        if (!skipInitialDirList) {
+          return openDirectory(locationPath);
+        }
+      });
     } else {
+      currentLocationPath.current = '';
       clearDirectoryContent();
       exitSearchMode();
     }
@@ -369,9 +376,6 @@ export const DirectoryContentContextProvider = ({
     if (isSearchMode.current) {
       exitSearchMode();
     }
-    /*const currentLocationPath = normalizePath(
-      PlatformIO.getLocationPath(currentLocation),
-    );*/
 
     // dispatch(actions.setIsLoading(true));
 
@@ -384,9 +388,9 @@ export const DirectoryContentContextProvider = ({
         'parentDirectory: ' +
           parentDirectory +
           ' - currentLocationPath: ' +
-          currentLocationPath,
+          currentLocationPath.current,
       );
-      if (parentDirectory.includes(currentLocationPath)) {
+      if (parentDirectory.includes(currentLocationPath.current)) {
         openDirectory(parentDirectory);
       } else {
         showNotification(t('core:parentDirNotInLocation'), 'warning', true);
@@ -554,7 +558,7 @@ export const DirectoryContentContextProvider = ({
           dispatch(AppActions.toggleTruncatedConfirmDialog());
         }
         updateHistory(
-          { ...currentLocation, path: currentLocationPath },
+          { ...currentLocation, path: currentLocationPath.current },
           directoryPath,
         );
         if (results !== undefined) {
@@ -856,6 +860,7 @@ export const DirectoryContentContextProvider = ({
 
   const context = useMemo(() => {
     return {
+      currentLocationPath: currentLocationPath.current,
       currentDirectoryEntries: currentDirectoryEntries,
       directoryMeta: directoryMeta.current,
       currentDirectoryPerspective: currentPerspective.current,
@@ -892,6 +897,7 @@ export const DirectoryContentContextProvider = ({
     };
   }, [
     currentLocation,
+    currentLocationPath.current,
     currentDirectoryEntries,
     currentDirectoryPath.current,
     directoryMeta.current,

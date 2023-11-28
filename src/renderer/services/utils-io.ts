@@ -488,7 +488,8 @@ export function createDirectoryIndex(
   ignorePatterns: Array<string> = [],
   enableWS = true,
   // disableIndexing = true,
-): Promise<Array<TS.FileSystemEntry>> {
+) {
+  //: Promise<TS.FileSystemEntry[]> {
   if (Pro && Pro.Watcher) {
     Pro.Watcher.stopWatching();
   }
@@ -504,8 +505,8 @@ export function createDirectoryIndex(
   if (
     enableWS &&
     !PlatformIO.haveObjectStoreSupport() &&
-    !PlatformIO.haveWebDavSupport() &&
-    PlatformIO.isWorkerAvailable()
+    !PlatformIO.haveWebDavSupport()
+    // PlatformIO.isWorkerAvailable()
   ) {
     // Start indexing in worker if not in the object store mode
     return PlatformIO.createDirectoryIndexInWorker(
@@ -516,7 +517,7 @@ export function createDirectoryIndex(
       if (succeeded) {
         return loadIndex({ path: dirPath, locationID });
       }
-      return undefined;
+      return undefined; // todo create index not in worker
     });
   }
 

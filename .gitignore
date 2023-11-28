@@ -84,7 +84,7 @@ web/EULA.txt
 
 .env
 src/.env
-src/renderer/config
+src/main/config
 src/renderer/extconfig*
 web/extconfig*
 !web/extconfig.tmpl.js

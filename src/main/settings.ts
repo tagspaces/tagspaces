@@ -17,6 +17,7 @@
  */
 class SettingsSingleton {
   private usedWsPort?: number;
+  private token?: string;
 
   getInitWsPort(): number {
     return 49352;
@@ -28,6 +29,14 @@ class SettingsSingleton {
 
   setUsedWsPort(port: number): void {
     this.usedWsPort = port;
+  }
+
+  getToken(): string | undefined {
+    return this.token;
+  }
+
+  setToken(token: string): void {
+    this.token = token;
   }
 }
 

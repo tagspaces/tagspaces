@@ -149,7 +149,19 @@ export const ThumbGenerationContextProvider = ({
       return Promise.resolve(false);
     }
 
-    const isWorkerAvailable = enableWS && PlatformIO.isWorkerAvailable();
+    if (AppConfig.isElectron) {
+      return PlatformIO.isWorkerAvailable().then((isWorkerAvailable) =>
+        generateThumbnails2(dirEntries, isWorkerAvailable),
+      );
+    }
+    return generateThumbnails2(dirEntries, false);
+  }
+
+  function generateThumbnails2(
+    dirEntries: TS.FileSystemEntry[],
+    isWorkerAvailable,
+  ): Promise<boolean> {
+    // const isWorkerAvailable = enableWS && PlatformIO.isWorkerAvailable();
     const workerEntries: string[] = [];
     const mainEntries: string[] = [];
     dirEntries.map((entry) => {
@@ -159,7 +171,11 @@ export const ThumbGenerationContextProvider = ({
       if (!showUnixHiddenEntries && entry.name.startsWith('.')) {
         return true;
       }
-      if (isWorkerAvailable && supportedImgsWS.includes(entry.extension)) {
+      if (
+        isWorkerAvailable &&
+        enableWS &&
+        supportedImgsWS.includes(entry.extension)
+      ) {
         workerEntries.push(entry.path);
       } else if (
         supportedImgs.includes(entry.extension) ||
@@ -202,6 +218,7 @@ export const ThumbGenerationContextProvider = ({
         return true;
       });
     }
+
     setGenThumbs(false);
     return Promise.resolve(false);
   }

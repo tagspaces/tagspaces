@@ -60,14 +60,17 @@ function LocationView(props: Props) {
   const {
     openLocation,
     currentLocation,
-    currentLocationPath,
     readOnlyMode,
     setSelectedLocation,
     setLocationDirectoryContextMenuAnchorEl,
   } = useCurrentLocationContext();
   const { setSelectedEntries } = useSelectedEntriesContext();
-  const { currentDirectoryPath, addDirectoryEntries, openDirectory } =
-    useDirectoryContentContext();
+  const {
+    currentDirectoryPath,
+    currentLocationPath,
+    addDirectoryEntries,
+    openDirectory,
+  } = useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
   const directoryTreeRef = useRef<DirectoryTreeViewRef>(null);
 

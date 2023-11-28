@@ -110,12 +110,11 @@ function FileMenu(props: Props) {
   const dispatch: AppDispatch = useDispatch();
   const { selectedEntries } = useSelectedEntriesContext();
   const { openEntry } = useOpenedEntryContext();
-  const { openDirectory } = useDirectoryContentContext();
+  const { openDirectory, currentLocationPath } = useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
   const { copyFilePromise, setFolderThumbnailPromise } =
     usePlatformFacadeContext();
-  const { currentLocation, readOnlyMode, currentLocationPath } =
-    useCurrentLocationContext();
+  const { currentLocation, readOnlyMode } = useCurrentLocationContext();
   //const locations: Array<TS.Location> = useSelector(getLocations);
   const prefixTagContainer = useSelector(getPrefixTagContainer);
   const warningOpeningFilesExternally = useSelector(

@@ -48,15 +48,11 @@ import {
   platformSelectDirectoryDialog,
   platformShareFiles,
   platformCreateIndex,
-  platformCreateNewInstance,
   platformCheckFileExist,
   platformCheckDirExist,
 } from '@tagspaces/tagspaces-platforms/platform-io';
 import AppConfig from '-/AppConfig';
 import { TS } from '-/tagspaces.namespace';
-import settings from '-/settings';
-
-let token: string;
 
 export default class PlatformFacade {
   static enableObjectStoreSupport = (objectStoreConfig: any): Promise<any> =>
@@ -160,30 +156,11 @@ export default class PlatformFacade {
   /**
    * needs to run in init this function always return false first time
    */
-  static isWorkerAvailable = (): boolean => {
-    if (token !== undefined) {
-      return token !== 'not';
-    }
+  static isWorkerAvailable = (): Promise<boolean> => {
     if (AppConfig.isElectron) {
-      try {
-        fetch('http://127.0.0.1:' + settings.getUsedWsPort(), {
-          method: 'HEAD',
-        }).then((res) => {
-          if (res.status === 200) {
-            const config = require('-/config/config.json');
-            token = config.jwt;
-            return true;
-          }
-        });
-      } catch (e) {
-        if (e && e.code && e.code === 'MODULE_NOT_FOUND') {
-          console.debug('jwt token not available');
-          token = 'not';
-        }
-        console.debug('isWorkerAvailable:', e);
-      }
+      return window.electronIO.ipcRenderer.invoke('isWorkerAvailable');
     }
-    return false;
+    return Promise.resolve(false);
   };
 
   static readMacOSTags = (filename: string): Promise<TS.Tag[]> => {
@@ -222,9 +199,6 @@ export default class PlatformFacade {
     ignorePatterns: Array<string>,
   ): Promise<any> => {
     if (AppConfig.isElectron) {
-      if (!PlatformFacade.isWorkerAvailable()) {
-        return Promise.reject(new Error('no Worker Available!'));
-      }
       const payload = JSON.stringify({
         directoryPath,
         extractText,
@@ -234,8 +208,6 @@ export default class PlatformFacade {
         'postRequest',
         payload,
         '/thumb-gen',
-        token,
-        settings.getUsedWsPort(),
       );
     }
     return Promise.reject(
@@ -247,16 +219,11 @@ export default class PlatformFacade {
     tmbGenerationList: Array<string>,
   ): Promise<any> => {
     if (AppConfig.isElectron) {
-      if (!PlatformFacade.isWorkerAvailable()) {
-        return Promise.reject(new Error('no Worker Available!'));
-      }
       const payload = JSON.stringify(tmbGenerationList);
       return window.electronIO.ipcRenderer.invoke(
         'postRequest',
         payload,
         '/thumb-gen',
-        token,
-        settings.getUsedWsPort(),
       );
     }
     return Promise.reject(new Error('createThumbnailsInWorker not Electron!'));

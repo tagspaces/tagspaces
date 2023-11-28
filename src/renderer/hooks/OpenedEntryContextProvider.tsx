@@ -149,15 +149,12 @@ export const OpenedEntryContextProvider = ({
   const dispatch: AppDispatch = useDispatch();
   const { t } = useTranslation();
 
-  const {
-    openLocation,
-    currentLocation,
-    getLocationPath,
-    currentLocationPath,
-  } = useCurrentLocationContext();
+  const { openLocation, currentLocation, getLocationPath } =
+    useCurrentLocationContext();
   const {
     currentDirectoryEntries,
     currentDirectoryPath,
+    currentLocationPath,
     openDirectory,
     addDirectoryEntries,
   } = useDirectoryContentContext();

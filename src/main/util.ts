@@ -6,6 +6,8 @@ import fs from 'fs';
 import chalk from 'chalk';
 import { execSync } from 'child_process';
 import http from 'http';
+import settings from './settings';
+import config from './config/config.json';
 
 export function resolveHtmlPath(htmlFileName: string) {
   if (process.env.NODE_ENV === 'development') {
@@ -66,51 +68,54 @@ export function generateJWT() {
 /**
  * @param payload: string
  * @param endpoint: string
- * @param token: string
- * @param wsPort: number
  */
-export function postRequest(payload, endpoint, token, wsPort) {
-  return new Promise((resolve, reject) => {
-    const option = {
-      hostname: '127.0.0.1',
-      port: wsPort,
-      method: 'POST',
-      path: endpoint,
-      headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(payload, 'utf8'),
-      },
-    };
-    const reqPost = http
-      .request(option, (resp) => {
-        // .get('http://127.0.0.1:8888/thumb-gen?' + search.toString(), resp => {
-        let data = '';
+export function postRequest(payload, endpoint) {
+  return isWorkerAvailable().then((workerAvailable) => {
+    if (!workerAvailable) {
+      return Promise.reject(new Error('no Worker Available!'));
+    }
+    return new Promise((resolve, reject) => {
+      const option = {
+        hostname: '127.0.0.1',
+        port: settings.getUsedWsPort(),
+        method: 'POST',
+        path: endpoint,
+        headers: {
+          Authorization: 'Bearer ' + settings.getToken(),
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(payload, 'utf8'),
+        },
+      };
+      const reqPost = http
+        .request(option, (resp) => {
+          // .get('http://127.0.0.1:8888/thumb-gen?' + search.toString(), resp => {
+          let data = '';
 
-        // A chunk of data has been received.
-        resp.on('data', (chunk) => {
-          data += chunk;
-        });
+          // A chunk of data has been received.
+          resp.on('data', (chunk) => {
+            data += chunk;
+          });
 
-        // The whole response has been received. Print out the result.
-        resp.on('end', () => {
-          if (data) {
-            try {
-              resolve(JSON.parse(data));
-            } catch (ex) {
-              reject(ex);
+          // The whole response has been received. Print out the result.
+          resp.on('end', () => {
+            if (data) {
+              try {
+                resolve(JSON.parse(data));
+              } catch (ex) {
+                reject(ex);
+              }
+            } else {
+              reject(new Error('Error: no data'));
             }
-          } else {
-            reject(new Error('Error: no data'));
-          }
+          });
+        })
+        .on('error', (err) => {
+          console.log('Error: ' + err.message);
+          reject(err);
         });
-      })
-      .on('error', (err) => {
-        console.log('Error: ' + err.message);
-        reject(err);
-      });
-    reqPost.write(payload);
-    reqPost.end();
+      reqPost.write(payload);
+      reqPost.end();
+    });
   });
 }
 
@@ -161,4 +166,35 @@ export function readMacOSTags(filename) {
       }
     });
   });
+}
+
+/**
+ * needs to run in init this function always return false first time
+ */
+export function isWorkerAvailable(): Promise<boolean> {
+  if (settings.getToken() !== undefined) {
+    return Promise.resolve(settings.getToken() !== 'not');
+  }
+  try {
+    fetch('http://127.0.0.1:' + settings.getUsedWsPort(), {
+      method: 'HEAD',
+    }).then((res) => {
+      if (res.status === 200) {
+        if (config && config.jwt) {
+          settings.setToken(config.jwt);
+          return true;
+        } else {
+          console.error('jwt token not generated');
+          settings.setToken('not');
+        }
+      }
+    });
+  } catch (e) {
+    if (e && e.code && e.code === 'MODULE_NOT_FOUND') {
+      console.error('WS error MODULE_NOT_FOUND');
+      settings.setToken('not');
+    }
+    console.debug('isWorkerAvailable:', e);
+  }
+  return Promise.resolve(false);
 }

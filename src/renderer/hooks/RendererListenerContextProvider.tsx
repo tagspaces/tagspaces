@@ -22,7 +22,6 @@ import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import AppConfig from '-/AppConfig';
-import settings from '-/settings';
 import { actions as SettingsActions } from '-/reducers/settings';
 
 type RendererListenerContextData = {};
@@ -169,11 +168,11 @@ export const RendererListenerContextProvider = ({
         //console.debug('supportedFileTypes', supportedFileTypes);
       });
 
-      ipcRenderer.on('start_ws', (event, arg) => {
+      /*ipcRenderer.on('start_ws', (event, arg) => {
         const { port } = arg;
         console.debug('RendererListener start_ws port:' + port);
         settings.setUsedWsPort(port);
-      });
+      });*/
     }
     return () => {
       destroy(ipcRenderer);
