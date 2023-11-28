@@ -87,14 +87,16 @@ export const FSWatcherContextProvider = ({
       currentLocation.watchForChanges &&
       currentLocation.type !== locationType.TYPE_CLOUD
     ) {
-      const depth =
-        currentDirectoryPerspective === PerspectiveIDs.KANBAN ? 3 : 1;
+      if (currentLocationPath.length > 0) {
+        const depth =
+          currentDirectoryPerspective === PerspectiveIDs.KANBAN ? 3 : 1;
 
-      watchFolder(currentLocationPath, depth);
+        watchFolder(currentLocationPath, depth);
+      }
     } else {
       stopWatching();
     }
-  }, [currentLocation]);
+  }, [currentLocation, currentLocationPath]);
 
   useEffect(() => {
     // watchForEvents(listener);

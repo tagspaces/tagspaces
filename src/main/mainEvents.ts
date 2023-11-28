@@ -25,7 +25,7 @@ import path from 'path';
 import chokidar, { FSWatcher } from 'chokidar';
 import { isWorkerAvailable, postRequest, readMacOSTags } from './util';
 
-let watcher: FSWatcher = undefined;
+let watcher: FSWatcher;
 
 export default function loadMainEvents() {
   ipcMain.handle('isWorkerAvailable', async () => {
