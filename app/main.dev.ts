@@ -689,7 +689,11 @@ app.on('ready', async () => {
 
   ipcMain.handle('select-directory-dialog', async () => {
     const options = {
-      properties: ['openDirectory', 'createDirectory'],
+      title: 'Select Files and Directories to Ignore',
+      // defaultPath: '/path/to/default/folder',
+      buttonLabel: 'Select to ignore',
+      properties: ['openDirectory', 'createDirectory', 'openFile'],
+      filters: [],
     };
     // @ts-ignore
     const resultObject = await dialog.showOpenDialog(options);
