@@ -32,7 +32,7 @@ import {
 import { openContextEntryMenu } from './test-utils';
 import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage } from './welcome.helpers';
-import { dataTidFormat } from '../../app/services/test';
+import { dataTidFormat } from '../../src/renderer/services/test';
 
 test.beforeAll(async () => {
   await startTestingApp('extconfig.js');

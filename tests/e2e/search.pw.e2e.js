@@ -36,7 +36,7 @@ import {
 } from './search.helpers';
 import { clearDataStorage } from './welcome.helpers';
 import { openContextEntryMenu } from './test-utils';
-import { dataTidFormat } from '../../app/services/test';
+import { dataTidFormat } from '../../src/renderer/services/test';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
 
 test.beforeAll(async () => {

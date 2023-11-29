@@ -85,7 +85,7 @@ export async function startWebServer() {
   );
   if (global.isMac) {
     //todo copyfiles do not work for MacOS
-    await app.use(serveStatic('../app'));
+    // await app.use(serveStatic('../app'));
   }
   app.server = app.listen(port);
   console.log('Webserver listining on http://127.0.0.1:' + port);

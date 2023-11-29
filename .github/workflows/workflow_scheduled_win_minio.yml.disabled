@@ -44,7 +44,7 @@ jobs:
       - name: Run Electron tests
         run: |
           yarn install-ext-node
-          yarn build-main
+          yarn build:main
           yarn build-e2e
           yarn test-e2e-electron-minio
       - uses: IgnusG/jest-report-action@v2.3.3

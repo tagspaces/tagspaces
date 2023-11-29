@@ -2,7 +2,7 @@
  * Copyright (c) 2016-present - TagSpaces UG (Haftungsbeschraenkt). All rights reserved.
  */
 import { expect, test } from '@playwright/test';
-import AppConfig from '../../app/AppConfig';
+import AppConfig from '../../src/renderer/AppConfig';
 import {
   defaultLocationPath,
   defaultLocationName,
@@ -10,8 +10,6 @@ import {
   createPwLocation,
 } from './location.helpers';
 import {
-  reloadDirectory,
-  tsFolder,
   createNewDirectory,
   newHTMLFile,
   newMDFile,
@@ -20,14 +18,12 @@ import {
   clickOn,
   expectElementExist,
   selectorFile,
-  setSettings,
   takeScreenshot,
   createTxtFile,
   expectMetaFilesExist,
   getGridFileSelector,
   isDisplayed,
 } from './general.helpers';
-import { searchEngine } from './search.helpers';
 import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage } from './welcome.helpers';
 

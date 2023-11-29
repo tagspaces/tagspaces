@@ -1,9 +1,15 @@
 const fs = require('fs');
 const path = require('path');
-const { getExtensions } = require('../app/utils/extension-utils');
+const { getExtensions } = require('../src/main/extension-utils');
 // const os = require('os');
 
-let directoryPath = path.join(__dirname, '..', 'app', 'node_modules');
+let directoryPath = path.join(
+  __dirname,
+  '..',
+  'release',
+  'app',
+  'node_modules',
+);
 
 getExtensions(directoryPath)
   .then(({ extensions, supportedFileTypes }) => {
@@ -23,7 +29,13 @@ function writeExtensions(extensions, supportedFileTypes) {
     'export const supportedFileTypes = ' +
     JSON.stringify(supportedFileTypes, null, 2) +
     ';';
-  let outputFile = path.join(__dirname, '..', 'app', 'extension-config.ts');
+  let outputFile = path.join(
+    __dirname,
+    '..',
+    'src',
+    'renderer',
+    'extension-config.ts',
+  );
 
   fs.writeFile(outputFile, generated, 'utf8', () => {
     console.log('Successfully generated:' + outputFile);

@@ -11,7 +11,12 @@ module.exports = async function () {
     'scripts',
     'extconfig-with-welcome.js',
   );
-  let destDir = path.join(__dirname, '..', 'app', 'extconfig.js');
+  let destDir = path.join(
+    __dirname,
+    '..',
+    'release/app/dist/renderer',
+    'extconfig.js',
+  );
 
   fse.copySync(srcDir, destDir);
 };

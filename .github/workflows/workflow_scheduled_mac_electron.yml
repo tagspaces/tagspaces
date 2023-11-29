@@ -32,7 +32,7 @@ jobs:
         run: npm run test-unit
       - name: Run Electron tests
         run: |
-          npm run build-main
+          npm run build:main
           npm run build-e2e
           npm run test-playwright
       - uses: actions/upload-artifact@v3

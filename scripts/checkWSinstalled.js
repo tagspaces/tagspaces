@@ -4,14 +4,16 @@ const path = require('path');
 const fs = require('fs-extra');
 // const shell = require('shelljs');
 const childProcess = require('child_process');
-const packageJson = require('../app/package.json');
+const packageJson = require('../release/app/package.json');
 
 function isInstalled(packageName, checkVersion = undefined) {
   try {
     const packageVersions =
       packageName + (checkVersion ? '@' + checkVersion : '');
     const versions = childProcess
-      .execSync('npm list --depth=0 --prefix ' + path.join(__dirname, '../app'))
+      .execSync(
+        'npm list --depth=0 --prefix ' + path.join(__dirname, '../release/app'),
+      )
       //.execSync('npm view ' + packageName + ' version')
       .toString();
     if (versions.indexOf(packageVersions) > 0) {
@@ -61,7 +63,7 @@ function dirExist(dir) {
 
 let platform = 'node';
 let installCmd;
-const dir = path.join(__dirname, '../app/node_modules');
+const dir = path.join(__dirname, '../release/app/node_modules');
 
 if (process.env.PD_PLATFORM) {
   platform = process.env.PD_PLATFORM;

@@ -16,8 +16,9 @@ build/Release
 .eslintcache
 
 # Dependency directory
+# https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
 node_modules
-app/node_modules
+src/renderer/node_modules
 
 # OSX
 .DS_Store
@@ -27,14 +28,16 @@ flow-typed/npm/*
 !flow-typed/npm/module_vx.x.x.js
 
 # App packaged
-release
-app/main.prod.js
-app/main.prod.js.map
-app/bundle.js
-app/bundle.js.map
-app/style.css
-app/style.css.map
-app/package-lock.json
+release/app/dist
+release/build
+.erb/dll
+src/renderer/main.prod.js
+src/renderer/main.prod.js.map
+src/renderer/bundle.js
+src/renderer/bundle.js.map
+src/renderer/style.css
+src/renderer/style.css.map
+src/renderer/package-lock.json
 dist
 dll
 main.js
@@ -58,13 +61,11 @@ cordova/plugins/**/*
 
 extensions
 
-app/yarn.lock
-
 test/file-structure
 
-app/version.json
-app/THIRD-PARTY.html
-app/THIRD-PARTY.txt
+public/modules
+src/renderer/version.json
+src/renderer/third-party.txt
 
 scripts/setuppro.js
 scripts/enablepro.js
@@ -75,15 +76,16 @@ CHANGELOG-PRO.TXT
 
 web/dist
 web/files
-web/node_modules
+web/modules
 web/LICENSE.txt
 web/third-party.txt
 web/sw-config.js
 web/EULA.txt
 
 .env
-app/config
-app/extconfig*
+src/.env
+src/main/config
+src/renderer/extconfig*
 web/extconfig*
 !web/extconfig.tmpl.js
 cordova/www/extconfig.js
@@ -109,9 +111,9 @@ builds/*
 web/sw-con
 .ycache/*
 
-/app/aws-exports.js
-/app/graphql/*
-/app/models/*
+/src/renderer/aws-exports.js
+/src/renderer/graphql/*
+/src/renderer/models/*
 cordova/platforms/ios/www/yarn.lock
 cordova/platforms/ios/www/package.json
 junit.xml
@@ -119,9 +121,10 @@ test-reports/*
 test-results/*
 playwright-report/*
 
-/app/**main.prod.js**
+/src/renderer/**main.prod.js**
 
 deploy.sh
 
 docker/*.zip
+app/version.json
 tx
