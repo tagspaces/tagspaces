@@ -69,4 +69,9 @@ const electronHandler = {
 };
 
 contextBridge.exposeInMainWorld('electronIO', electronHandler);
+/*contextBridge.exposeInMainWorld('versions', {
+  node: () => process.versions.node,
+  chrome: () => process.versions.chrome,
+  electron: () => process.versions.electron
+})*/
 export type ElectronHandler = typeof electronHandler;

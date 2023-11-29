@@ -39,6 +39,7 @@ import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { getPersistTagsInSidecarFile } from '-/reducers/settings';
+import AppConfig from '../AppConfig';
 
 type CurrentLocationContextData = {
   currentLocation: TS.Location;
@@ -160,7 +161,11 @@ export const CurrentLocationContextProvider = ({
         locationPath = location.paths[0];
       }
 
-      if (locationPath && locationPath.startsWith('./')) {
+      if (
+        locationPath &&
+        locationPath.startsWith('.' + AppConfig.dirSeparator) &&
+        AppConfig.isElectron
+      ) {
         // TODO test relative path (Directory Back) with other platforms
         // relative paths
         return window.electronIO.ipcRenderer.invoke('resolveRelativePaths');

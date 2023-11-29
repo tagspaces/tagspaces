@@ -22,10 +22,10 @@ import {
 } from '@tagspaces/tagspaces-common-node/io-node';
 import fs from 'fs-extra';
 import path from 'path';
-import chokidar, { FSWatcher } from 'chokidar';
+// import chokidar, { FSWatcher } from 'chokidar';
 import { isWorkerAvailable, postRequest, readMacOSTags } from './util';
 
-let watcher: FSWatcher;
+//let watcher: FSWatcher;
 
 export default function loadMainEvents() {
   ipcMain.handle('isWorkerAvailable', async () => {
@@ -69,10 +69,10 @@ export default function loadMainEvents() {
     const results = await readMacOSTags(filename);
     return results;
   });
-  ipcMain.on('watchFolder', (event, locationPath, options) => {
+  /*ipcMain.on('watchFolder', (event, locationPath, options) => {
     //const chokidar = require('chokidar');
     watcher = chokidar.watch(locationPath, options);
-  });
+  });*/
   ipcMain.handle('postRequest', async (event, payload, endpoint) => {
     const result = await postRequest(payload, endpoint);
     return result;

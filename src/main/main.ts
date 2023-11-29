@@ -449,14 +449,16 @@ const createWindow = async (i18n) => {
     height: mainWindowState.height,
     //icon: getAssetPath('icon.png'),
     webPreferences: {
+      //nodeIntegrationInSubFrames: true,
       //webSecurity: app.isPackaged, // todo https://www.electronjs.org/docs/latest/tutorial/security#6-do-not-disable-websecurity
       spellcheck: true,
       //nodeIntegration: true,
       webviewTag: true,
       //contextIsolation: false,
-      preload: app.isPackaged
-        ? path.join(__dirname, 'preload.js')
-        : path.join(__dirname, '../../.erb/dll/preload.js'),
+      preload:
+        app.isPackaged || !isDebug
+          ? path.join(__dirname, 'preload.js')
+          : path.join(__dirname, '../../.erb/dll/preload.js'),
     },
   });
 

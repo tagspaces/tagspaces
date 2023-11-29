@@ -18,12 +18,12 @@ const configuration: webpack.Configuration = {
   // packages that is not included in the bundle
   externals: [
     ...Object.keys(externals || {}),
-    {
+    /*{
       fsevents: "require('fsevents')",
     },
     {
       fswin: "require('fswin')",
-    },
+    },*/
     /*{
       fs: "require('fs')",
     },
@@ -66,6 +66,7 @@ const configuration: webpack.Configuration = {
     library: {
       type: 'commonjs2',
     },
+    // globalObject: 'this',
   },
 
   /**
