@@ -1,38 +1,64 @@
 import fs from 'fs';
 import webpackPaths from '../configs/webpack.paths';
-import path from "path";
+import path from 'path';
 
-const { srcNodeModulesPath, appNodeModulesPath, appPath, srcPath, distPath } = webpackPaths;
+const { srcNodeModulesPath, appNodeModulesPath, appPath, srcPath, distPath } =
+  webpackPaths;
 
-if (!fs.existsSync(srcNodeModulesPath) && fs.existsSync(appNodeModulesPath)) {
+try {
+  if (fs.existsSync(srcNodeModulesPath)) {
+    fs.unlinkSync(srcNodeModulesPath);
+  }
+} catch (err) {
+  console.error('Error removing file:' + srcNodeModulesPath, err);
+}
+if (fs.existsSync(appNodeModulesPath)) {
   fs.symlinkSync(appNodeModulesPath, srcNodeModulesPath, 'junction');
 }
 
 const targetNodeModules = path.join(distPath, 'node_modules');
-
-if (!fs.existsSync(targetNodeModules) && fs.existsSync(appNodeModulesPath)) {
+try {
+  if (fs.existsSync(targetNodeModules)) {
+    fs.unlinkSync(targetNodeModules);
+  }
+} catch (err) {
+  console.error('Error removing file:' + targetNodeModules, err);
+}
+if (fs.existsSync(appNodeModulesPath)) {
   fs.symlinkSync(appNodeModulesPath, targetNodeModules, 'junction');
 }
 
 ////////link .env
-
 const targetEnv = path.join(srcPath, '.env');
 const appEnv = path.join(appPath, '.env');
 
-if (!fs.existsSync(targetEnv) && fs.existsSync(appEnv)) {
+try {
+  if (fs.existsSync(targetEnv)) {
+    fs.unlinkSync(targetEnv);
+  }
+} catch (err) {
+  console.error('Error removing file:' + targetEnv, err);
+}
+if (fs.existsSync(appEnv)) {
   try {
     fs.symlinkSync(appEnv, targetEnv, 'file');
-  } catch (e){
-    console.log(appEnv+' exist');
+  } catch (e) {
+    console.log(appEnv + ' exist');
   }
 }
 
 const distEnv = path.join(distPath, '.env');
-
-if (!fs.existsSync(distEnv) && fs.existsSync(appEnv)) {
+try {
+  if (fs.existsSync(distEnv)) {
+    fs.unlinkSync(distEnv);
+  }
+} catch (err) {
+  console.error('Error removing file:' + distEnv, err);
+}
+if (fs.existsSync(appEnv)) {
   try {
-  fs.symlinkSync(appEnv, distEnv, 'file');
-  } catch (e){
-    console.log(distEnv+' exist');
+    fs.symlinkSync(appEnv, distEnv, 'file');
+  } catch (e) {
+    console.log(distEnv + ' exist');
   }
 }

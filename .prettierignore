@@ -36,7 +36,6 @@ extensions/md-editor/build/*
 .erb/dll
 .erb/img
 .erb/mocks
-.erb/scripts
 app/utils/js-webdav-client.js
 coverage
 tests/testdata

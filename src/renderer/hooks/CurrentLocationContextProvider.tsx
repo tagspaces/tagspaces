@@ -168,7 +168,10 @@ export const CurrentLocationContextProvider = ({
       ) {
         // TODO test relative path (Directory Back) with other platforms
         // relative paths
-        return window.electronIO.ipcRenderer.invoke('resolveRelativePaths');
+        return window.electronIO.ipcRenderer.invoke(
+          'resolveRelativePaths',
+          locationPath,
+        );
       }
     }
 
