@@ -1,7 +1,10 @@
 const fs = require('fs-extra');
 const pathLib = require('path');
 
-fs.outputFileSync(pathLib.join(__dirname, '../app/.env'), 'KEY=e2eTestKey');
+fs.outputFileSync(
+  pathLib.join(__dirname, '../release/app/.env'),
+  'KEY=e2eTestKey',
+);
 
 /* const sh = require('shelljs');
 const path = require('path');
