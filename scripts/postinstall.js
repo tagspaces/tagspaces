@@ -41,13 +41,16 @@ if (!process.env.PD_PLATFORM) {
 }
 let install = false;
 if (process.env.PD_PLATFORM === 'electron') {
-  if (!isInstalled('@tagspaces/tagspaces-common-electron')) {
+  if (
+    isInstalled('@tagspaces/tagspaces-common-node') ||
+    isInstalled('@tagspaces/tagspaces-common-cordova')
+  ) {
+    //!isInstalled('@tagspaces/tagspaces-common-electron')) {
     install = true;
   }
 } else if (process.env.PD_PLATFORM === 'node') {
   if (
-    !isInstalled('@tagspaces/tagspaces-common-node') ||
-    isInstalled('@tagspaces/tagspaces-common-electron')
+    !isInstalled('@tagspaces/tagspaces-common-node') // || isInstalled('@tagspaces/tagspaces-common-electron')
   ) {
     install = true;
   }

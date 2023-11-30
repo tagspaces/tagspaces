@@ -515,7 +515,11 @@ export function createDirectoryIndex(
       ignorePatterns,
     ).then((result) => {
       if (result && result.success) {
-        return loadIndex({ path: dirPath, locationID });
+        return loadIndex(
+          { path: dirPath, locationID },
+          PlatformIO.getDirSeparator(),
+          PlatformIO.loadTextFilePromise,
+        );
       } else if (result && result.error) {
         console.error('createDirectoryIndexInWorker failed:' + result.error);
       } else {

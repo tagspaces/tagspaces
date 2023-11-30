@@ -3,7 +3,7 @@
  * @deprecated (replaced by @tagspaces/dynamic-packages-loading)
  * write the package.json file from package-template.json
  */
-const fs = require('fs-extra');
+/*const fs = require('fs-extra');
 const path = require('path');
 const pkg = require('../app/package.json');
 const pkgTemplate = require('../app/package-template.json');
@@ -32,4 +32,4 @@ if (dependencies && Object.keys(dependencies).length) {
 } else {
   console.log('No specific dependencies on this platform: ' + platform);
   fs.removeSync(path.join(__dirname, '..', 'app', 'node_modules'));
-}
+}*/

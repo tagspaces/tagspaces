@@ -1,3 +1,4 @@
+/*
 #! /usr/bin/env node
 
 const fs = require('fs-extra');
@@ -11,7 +12,7 @@ if (process.env.PD_PLATFORM) {
   platform = process.env.PD_PLATFORM;
 }
 
-/* function checkSharpPlatform(targetPlatform, arch) {
+/!* function checkSharpPlatform(targetPlatform, arch) {
   try {
     let shrapPath = require.resolve('sharp');
     shrapPath = path.join(
@@ -31,16 +32,16 @@ if (process.env.PD_PLATFORM) {
     return false;
   }
 }
-*/
+*!/
 
 if (process.env.TARGET_PLATFORM && process.env.TARGET_ARCH) {
   process.argv.push('--platform=' + process.env.TARGET_PLATFORM);
   process.argv.push('--arch=' + process.env.TARGET_ARCH);
-  /* if (
+  /!* if (
     !checkSharpPlatform(process.env.TARGET_PLATFORM, process.env.TARGET_ARCH)
   ) {
      fs.removeSync(path.join(__dirname, '..', 'node_modules'));
-  } */
+  } *!/
 }
 
 const dependencies = platform + 'Dependencies';
@@ -119,11 +120,11 @@ if (dependenciesObj && Object.keys(dependenciesObj).length) {
             'src',
           ),
         );
-        /* npm.commands.dedupe([], (er) => {
+        /!* npm.commands.dedupe([], (er) => {
           if (er) {
             console.log("err:", er);
           }
-        }); */
+        }); *!/
       });
       npm.on('log', (message) => {
         console.log('npm:' + message);
@@ -137,7 +138,7 @@ if (dependenciesObj && Object.keys(dependenciesObj).length) {
 } else {
   console.log('No specific dependencies on this platform: ' + platform);
   // fs.removeSync(path.join(__dirname, '..', 'node_modules'));
-  /* const dir = path.join(__dirname, 'node_modules');
+  /!* const dir = path.join(__dirname, 'node_modules');
   fs.readdir(dir, (err, files) => {
     if (err) {
       console.log(err);
@@ -155,5 +156,6 @@ if (dependenciesObj && Object.keys(dependenciesObj).length) {
         }
       }
     });
-  }); */
+  }); *!/
 }
+*/
