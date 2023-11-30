@@ -7,7 +7,6 @@ import chalk from 'chalk';
 import { execSync } from 'child_process';
 import http from 'http';
 import settings from './settings';
-import config from './config/config.json';
 
 export function resolveHtmlPath(htmlFileName: string) {
   if (process.env.NODE_ENV === 'development') {
@@ -180,6 +179,7 @@ export function isWorkerAvailable(): Promise<boolean> {
       method: 'HEAD',
     }).then((res) => {
       if (res.status === 200) {
+        const config = require('./config/config.json');
         if (config && config.jwt) {
           settings.setToken(config.jwt);
           return true;
