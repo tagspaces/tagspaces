@@ -132,7 +132,7 @@
     "start-main-dev": "cross-env HOT=1 NODE_ENV=development electron ./app/main.dev.babel.js",
     "start-renderer-dev": "cross-env NODE_ENV=development webpack-dev-server --config configs/webpack.config.renderer.dev.babel.js",
     "test-playwright": "npm run test-refresh-data && cross-env npx playwright test --config ./playwright.config.js -g '^(?!.*\\b_pro\\b).*\\belectron\\b.*'",
-    "test-playwright-pro": "npm run test-refresh-data && cross-env npx playwright test --config ./playwright.config.js -g '/\\bTST5016\\b/'",
+    "test-playwright-pro": "npm run test-refresh-data && cross-env npx playwright test --config ./playwright.config.js -g '/\\belectron\\b/'",
     "test-playwright-web": "npm run test-refresh-data && cross-env npx playwright test --config ./playwright.config.web.js -g '/\\bweb\\b/'",
     "test-pw-web-browsers": "npm run test-refresh-data && cross-env DEBUG=pw:api npx playwright test --config ./playwright.config.web.browsers.js -g '/\\bweb\\b/'",
     "test-playwright-web-headless": "npm run test-refresh-data && cross-env HEADLESS_MODE=true npx playwright test --config ./playwright.config.web.js -g '/\\bweb\\b/'",

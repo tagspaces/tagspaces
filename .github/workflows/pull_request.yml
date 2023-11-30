@@ -78,7 +78,7 @@ jobs:
       - name: Checkout TagspacesPro
         uses: actions/checkout@v2
         with:
-          ref: Migrate-to-a-newer-react-electron-boilerplate
+          ref: develop
           repository: tagspaces/tagspacespro
           token: ${{ secrets.CHECKOUT_TSPRO  }}
           path: extensions/tagspacespro
