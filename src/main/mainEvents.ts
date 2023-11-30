@@ -74,8 +74,13 @@ export default function loadMainEvents() {
     watcher = chokidar.watch(locationPath, options);
   });*/
   ipcMain.handle('postRequest', async (event, payload, endpoint) => {
-    const result = await postRequest(payload, endpoint);
-    return result;
+    try {
+      const result = await postRequest(payload, endpoint);
+      return result;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
   });
   ipcMain.handle(
     'listDirectoryPromise',

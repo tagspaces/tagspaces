@@ -513,9 +513,13 @@ export function createDirectoryIndex(
       dirPath,
       extractText,
       ignorePatterns,
-    ).then((succeeded) => {
-      if (succeeded) {
+    ).then((result) => {
+      if (result && result.success) {
         return loadIndex({ path: dirPath, locationID });
+      } else if (result && result.error) {
+        console.error('createDirectoryIndexInWorker failed:' + result.error);
+      } else {
+        console.error('createDirectoryIndexInWorker failed: unknown error');
       }
       return undefined; // todo create index not in worker
     });

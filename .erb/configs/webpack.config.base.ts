@@ -18,9 +18,10 @@ const configuration: webpack.Configuration = {
   // packages that is not included in the bundle
   externals: [
     ...Object.keys(externals || {}),
-    /*{
+    {
       fsevents: "require('fsevents')",
     },
+    /*
     {
       fswin: "require('fswin')",
     },*/

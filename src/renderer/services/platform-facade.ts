@@ -207,7 +207,7 @@ export default class PlatformFacade {
       return window.electronIO.ipcRenderer.invoke(
         'postRequest',
         payload,
-        '/thumb-gen',
+        '/indexer',
       );
     }
     return Promise.reject(
