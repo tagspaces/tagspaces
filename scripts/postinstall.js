@@ -42,6 +42,8 @@ if (!process.env.PD_PLATFORM) {
 let install = false;
 if (process.env.PD_PLATFORM === 'electron') {
   if (
+    !isInstalled('@tagspaces/tagspaces-common-aws') ||
+    !isInstalled('@tagspaces/tagspaces-common-webdav') ||
     isInstalled('@tagspaces/tagspaces-common-node') ||
     isInstalled('@tagspaces/tagspaces-common-cordova')
   ) {

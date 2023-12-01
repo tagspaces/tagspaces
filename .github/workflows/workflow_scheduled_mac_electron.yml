@@ -25,14 +25,12 @@ jobs:
       - name: Running npm install, prettier and type checks
         run: |
           npm install
-          npm run prepare-node
           npm run prettier-check
           npm run type-check
       - name: Run Unit tests
         run: npm run test-unit
       - name: Run Electron tests
         run: |
-          npm run build:main
           npm run build-e2e
           npm run test-playwright
       - uses: actions/upload-artifact@v3

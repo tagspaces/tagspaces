@@ -25,7 +25,13 @@ try {
   console.error('Error removing file:' + targetNodeModules, err);
 }
 if (fs.existsSync(appNodeModulesPath)) {
-  fs.symlinkSync(appNodeModulesPath, targetNodeModules, 'junction');
+  try {
+    fs.symlinkSync(appNodeModulesPath, targetNodeModules, 'junction');
+  } catch (err) {
+    console.error(
+      'Error creating link target:' + targetNodeModules + ':' + err.message,
+    );
+  }
 }
 
 ////////link .env
