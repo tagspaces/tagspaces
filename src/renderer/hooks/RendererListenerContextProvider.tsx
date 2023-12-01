@@ -23,6 +23,7 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import AppConfig from '-/AppConfig';
 import { actions as SettingsActions } from '-/reducers/settings';
+import { Extensions } from '../../main/types';
 
 type RendererListenerContextData = {};
 
@@ -33,6 +34,11 @@ export type RendererListenerContextProviderProps = {
   children: React.ReactNode;
 };
 
+/**
+ * @deprecated find better places for this
+ * @param children
+ * @constructor
+ */
 export const RendererListenerContextProvider = ({
   children,
 }: RendererListenerContextProviderProps) => {
@@ -42,13 +48,13 @@ export const RendererListenerContextProvider = ({
     useOpenedEntryContext();
 
   useEffect(() => {
-    let ipcRenderer;
-    if (AppConfig.isElectron && window.require) {
-      const electron = window.require('electron');
-      ({ ipcRenderer } = electron);
-      destroy(ipcRenderer);
+    if (AppConfig.isElectron) {
+      //const electron = window.require('electron');
+      //({ ipcRenderer } = electron);
 
-      ipcRenderer.on('cmd', (event, arg) => {
+      destroy();
+
+      window.electronIO.ipcRenderer.on('cmd', (arg) => {
         // console.log('Global events: ' + arg);
         switch (arg) {
           case 'new-text-file':
@@ -154,13 +160,13 @@ export const RendererListenerContextProvider = ({
         props.openURLExternally(url, skipConfirm);
       });*/
 
-      ipcRenderer.on('play-pause', (event, arg) => {
+      window.electronIO.ipcRenderer.on('play-pause', () => {
         // Create the event.
         const audioEvent = new CustomEvent('toggle-resume', { detail: '' });
         window.dispatchEvent(audioEvent);
       });
 
-      ipcRenderer.on('set_extensions', (event, arg) => {
+      window.electronIO.ipcRenderer.on('set_extensions', (arg: Extensions) => {
         const { extensions, supportedFileTypes } = arg;
         dispatch(AppActions.addExtensions(extensions));
         dispatch(SettingsActions.addSupportedFileTypes(supportedFileTypes));
@@ -175,16 +181,16 @@ export const RendererListenerContextProvider = ({
       });*/
     }
     return () => {
-      destroy(ipcRenderer);
+      destroy();
     };
   }, [openNextFile, openPrevFile]);
 
-  function destroy(ipcRenderer) {
-    if (ipcRenderer) {
-      ipcRenderer.removeAllListeners('cmd');
-      ipcRenderer.removeAllListeners('play-pause');
-      ipcRenderer.removeAllListeners('set_extensions');
-      ipcRenderer.removeAllListeners('start_ws');
+  function destroy() {
+    if (window.electronIO.ipcRenderer) {
+      window.electronIO.ipcRenderer.removeAllListeners('cmd');
+      window.electronIO.ipcRenderer.removeAllListeners('play-pause');
+      window.electronIO.ipcRenderer.removeAllListeners('set_extensions');
+      window.electronIO.ipcRenderer.removeAllListeners('start_ws');
     }
   }
 

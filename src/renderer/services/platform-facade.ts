@@ -170,12 +170,12 @@ export default class PlatformFacade {
     return Promise.resolve(undefined);
   };
 
-  static watchFolder = (locationPath, options) => {
+  static watchFolder = (locationPath, depth) => {
     if (AppConfig.isElectron) {
       window.electronIO.ipcRenderer.sendMessage(
         'watchFolder',
         locationPath,
-        options,
+        depth,
       );
     }
   };

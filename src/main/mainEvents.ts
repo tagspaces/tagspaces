@@ -24,6 +24,7 @@ import fs from 'fs-extra';
 import path from 'path';
 // import chokidar, { FSWatcher } from 'chokidar';
 import { isWorkerAvailable, postRequest, readMacOSTags } from './util';
+import { watchFolder } from './chokidarWatcher';
 
 //let watcher: FSWatcher;
 
@@ -69,10 +70,6 @@ export default function loadMainEvents() {
     const results = await readMacOSTags(filename);
     return results;
   });
-  /*ipcMain.on('watchFolder', (event, locationPath, options) => {
-    //const chokidar = require('chokidar');
-    watcher = chokidar.watch(locationPath, options);
-  });*/
   ipcMain.handle('postRequest', async (event, payload, endpoint) => {
     try {
       const result = await postRequest(payload, endpoint);

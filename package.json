@@ -47,7 +47,7 @@
     "browserslist:update": "npx browserslist@latest --update-db",
     "bs": "npm run build && npm run run-electron",
     "run-electron": "npx electron ./release/app/dist/main/main.js",
-    "prebuild": "rimraf release/app/dist && npm run prepare-node && npm run generate-extensions && node -r ts-node/register ./.erb/scripts/link-modules.ts",
+    "prebuild": "rimraf release/app/dist && npm run prepare-node && npm run generate-extensions",
     "bump-version": "cd release/app && yarn version && cd .. && npm run version-meta",
     "clean": "npx rimraf node_modules && npx rimraf src/renderer/dist",
     "clean-maps": "rimraf app/dist/**/*.map && rimraf web/dist/**/*.map",

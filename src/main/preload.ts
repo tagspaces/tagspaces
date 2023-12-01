@@ -43,7 +43,11 @@ export type Channels =
   | 'removeExtension'
   | 'getUserDataDir'
   | 'unZip'
-  | 'getDirProperties';
+  | 'getDirProperties'
+  | 'folderChanged'
+  | 'set_extensions'
+  | 'play-pause'
+  | 'cmd';
 
 const electronHandler = {
   ipcRenderer: {
@@ -64,6 +68,9 @@ const electronHandler = {
     },
     invoke(command: Channels, ...args: unknown[]) {
       return ipcRenderer.invoke(command, ...args);
+    },
+    removeAllListeners(channel: string) {
+      ipcRenderer.removeAllListeners(channel);
     },
   },
 };

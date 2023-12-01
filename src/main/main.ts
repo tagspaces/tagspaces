@@ -23,6 +23,8 @@ import i18nInit from '../renderer/services/i18nInit';
 import buildTrayIconMenu from './electron-tray-menu';
 import buildDesktopMenu from './electron-menus';
 import loadMainEvents from './mainEvents';
+import { watchFolder } from './chokidarWatcher';
+import { Extensions } from './types';
 
 class AppUpdater {
   constructor() {
@@ -599,14 +601,22 @@ app
 
       loadMainEvents();
 
+      ipcMain.on('watchFolder', (e, path: string, depth) => {
+        //locationPath, options) => {
+
+        watchFolder(mainWindow, e, path, depth);
+        //watcher = chokidar.watch(locationPath, options);
+      });
+
       ipcMain.on('load-extensions', () => {
         getExtensions(path.join(app.getPath('userData'), 'tsplugins'), true)
           .then(({ extensions, supportedFileTypes }) => {
             if (mainWindow) {
-              mainWindow.webContents.send('set_extensions', {
+              const setExtensions: Extensions = {
                 extensions,
                 supportedFileTypes,
-              });
+              };
+              mainWindow.webContents.send('set_extensions', setExtensions);
               // mainWindow.webContents.send('set_supported_file_types', supportedFileTypes);
             }
           })
