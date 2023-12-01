@@ -34,7 +34,7 @@ import { createFile, startTestingApp, stopApp, testDataRefresh } from './hook';
 import { clearDataStorage } from './welcome.helpers';
 import { dataTidFormat } from '../../src/renderer/services/test';
 
-test.beforeAll(async () => {
+/*test.beforeAll(async () => {
   await startTestingApp('extconfig.js');
   // await clearDataStorage();
 });
@@ -42,17 +42,19 @@ test.beforeAll(async () => {
 test.afterAll(async () => {
   await stopApp();
   // await testDataRefresh();
-});
+});*/
 
 test.afterEach(async ({ page }, testInfo) => {
   if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
   }
   await clearDataStorage();
+  await stopApp();
   await testDataRefresh();
 });
 
 test.beforeEach(async () => {
+  await startTestingApp('extconfig.js');
   if (global.isMinio) {
     await createPwMinioLocation('', defaultLocationName, true);
   } else {
