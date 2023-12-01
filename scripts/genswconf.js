@@ -1,5 +1,5 @@
 const sh = require('shelljs');
-const { version } = require('../app/package.json');
+const { version } = require('../release/app/package.json');
 
 const FILES_TO_CACHE = ['offline.html'];
 
