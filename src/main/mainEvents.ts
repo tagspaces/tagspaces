@@ -4,7 +4,7 @@ import {
   listDirectoryPromise,
   listMetaDirectoryPromise,
   createDirectoryPromise,
-  copyFilePromiseOverwrite,
+  copyFilePromise,
   renameFilePromise,
   renameDirectoryPromise,
   copyDirectoryPromise,
@@ -114,10 +114,7 @@ export default function loadMainEvents() {
   ipcMain.handle(
     'copyFilePromiseOverwrite',
     async (event, sourceFilePath, targetFilePath) => {
-      const result = await copyFilePromiseOverwrite(
-        sourceFilePath,
-        targetFilePath,
-      );
+      const result = await copyFilePromise(sourceFilePath, targetFilePath);
       return result;
     },
   );
