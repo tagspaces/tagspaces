@@ -35,7 +35,7 @@
     "build-e2e": "node scripts/setup-tests.js && cross-env E2E_BUILD=true NODE_ENV=test npm run build",
     "build-e2e-dev": "ts-node ./.erb/scripts/clean.js && npm run prepare-node && cross-env E2E_BUILD=true concurrently \"npm run build:main\" \"npm run build:renderer\" \"npm run build:web\"",
     "build-e2e-web": "node scripts/setup-tests.js && cross-env E2E_BUILD=true NODE_ENV=test && npm run prepare-web-pro && npm run build:web",
-    "postinstall": "ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps && node -r ts-node/register ./.erb/scripts/link-modules.ts && npm run prepare-node && npm run build:dll",
+    "postinstall": "ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps && npm run prepare-node && node -r ts-node/register ./.erb/scripts/link-modules.ts && npm run build:dll",
     "lint": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx",
     "package": "ts-node ./.erb/scripts/clean.js && npm run build && electron-builder build --publish never && npm run build:dll",
     "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir release/app",
