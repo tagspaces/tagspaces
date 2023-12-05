@@ -53,6 +53,7 @@ import {
 } from '@tagspaces/tagspaces-platforms/platform-io';
 import AppConfig from '-/AppConfig';
 import { TS } from '-/tagspaces.namespace';
+import { Pro } from '-/pro';
 
 export default class PlatformFacade {
   static enableObjectStoreSupport = (objectStoreConfig: any): Promise<any> =>
@@ -171,7 +172,7 @@ export default class PlatformFacade {
   };
 
   static watchFolder = (locationPath, depth) => {
-    if (AppConfig.isElectron) {
+    if (AppConfig.isElectron && Pro) {
       window.electronIO.ipcRenderer.sendMessage(
         'watchFolder',
         locationPath,
