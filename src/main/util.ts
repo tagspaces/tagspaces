@@ -1,6 +1,7 @@
 /* eslint import/prefer-default-export: off */
 import { URL } from 'url';
 import path from 'path';
+import { BrowserWindow } from 'electron';
 import webpackPaths from '../../.erb/configs/webpack.paths';
 import fs from 'fs';
 import chalk from 'chalk';
@@ -197,4 +198,40 @@ export function isWorkerAvailable(): Promise<boolean> {
     console.debug('isWorkerAvailable:', e);
   }
   return Promise.resolve(false);
+}
+
+export function newProgress(key, total) {
+  return {
+    loaded: 0,
+    total: total,
+    key,
+  };
+}
+export function getOnProgress(key, progress) {
+  const controller = new AbortController();
+  const signal = controller.signal;
+
+  progress[key].abort = () => {
+    controller.abort();
+    //reject(new Error('Promise aborted'));
+  };
+  signal.addEventListener('abort', progress[key].abort);
+  const onProgress = (newProgress, abortFunc, fileName) => {
+    signal.removeEventListener('abort', progress[key].abort);
+    progress[key].abort = () => {
+      if (abortFunc) {
+        abortFunc();
+      }
+      controller.abort();
+      //reject(new Error('Promise aborted'));
+    };
+    signal.addEventListener('abort', progress[key].abort);
+    try {
+      const mainWindow = BrowserWindow.getFocusedWindow();
+      mainWindow.webContents.send('progress', fileName, newProgress);
+    } catch (ex) {
+      console.error(ex);
+    }
+  };
+  return onProgress;
 }

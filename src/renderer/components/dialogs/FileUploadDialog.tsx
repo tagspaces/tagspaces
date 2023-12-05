@@ -16,7 +16,7 @@
  *
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -64,6 +64,20 @@ function FileUploadDialog(props: Props) {
 
   const targetPath = React.useRef<string>(getTargetPath());
 
+  useEffect(() => {
+    window.electronIO.ipcRenderer.on('progress', (fileName, newProgress) => {
+      /*const { path, filePath, loaded, total, key } = newProgress;
+      const progressPercentage = Math.round(
+        (loaded / total) * 100,
+      );*/
+      dispatch(AppActions.onUploadProgress(newProgress, undefined));
+    });
+
+    return () => {
+      window.electronIO.ipcRenderer.removeAllListeners('progress');
+    };
+  }, []);
+
   function LinearProgressWithLabel(prop) {
     return (
       <Box display="flex" alignItems="center">
@@ -81,13 +95,14 @@ function FileUploadDialog(props: Props) {
 
   const stopAll = () => {
     if (progress) {
-      progress.map((fileProgress) => {
+      return PlatformIO.uploadAbort();
+      /*progress.map((fileProgress) => {
         const { abort } = fileProgress;
         if (abort !== undefined && typeof abort === 'function') {
           abort();
         }
         return true;
-      });
+      });*/
     }
   };
 

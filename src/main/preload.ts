@@ -47,7 +47,9 @@ export type Channels =
   | 'folderChanged'
   | 'set_extensions'
   | 'play-pause'
-  | 'cmd';
+  | 'cmd'
+  | 'progress'
+  | 'uploadAbort';
 
 const electronHandler = {
   ipcRenderer: {

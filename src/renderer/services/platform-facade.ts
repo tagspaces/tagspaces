@@ -356,6 +356,13 @@ export default class PlatformFacade {
     return platformRenameDirectoryPromise(dirPath, newDirName);
   };
 
+  static uploadAbort = (path?: string): Promise<any> => {
+    if (AppConfig.isElectron) {
+      return window.electronIO.ipcRenderer.invoke('uploadAbort', path);
+    }
+    return Promise.resolve(false);
+  };
+
   static copyDirectoryPromise = (
     param: any,
     newDirPath: string,
@@ -366,7 +373,7 @@ export default class PlatformFacade {
         'copyDirectoryPromise',
         param,
         newDirPath,
-        onProgress,
+        onProgress !== undefined,
       );
     }
     return platformCopyDirectoryPromise(param, newDirPath, onProgress);
@@ -382,7 +389,7 @@ export default class PlatformFacade {
         'moveDirectoryPromise',
         param,
         newDirPath,
-        onProgress,
+        onProgress !== undefined,
       );
     }
     return platformMoveDirectoryPromise(param, newDirPath, onProgress);
