@@ -147,40 +147,6 @@ export default function loadMainEvents() {
           'moveDirectoryPromise',
           param.total,
         );
-        /*const promise = new Promise((resolve, reject) => {
-          const controller = new AbortController();
-          const signal = controller.signal;
-          progress['moveDirectoryPromise'] = newProgress(
-            'moveDirectoryPromise',
-            param.total,
-            controller,
-          );
-          progress['moveDirectoryPromise'].abort = () => {
-            controller.abort();
-            reject(new Error('Promise aborted'));
-          };
-          signal.addEventListener('abort', progress['moveDirectoryPromise'].abort);
-          const onProgress = (newProgress, abortFunc, fileName) => {
-            signal.removeEventListener('abort', progress['moveDirectoryPromise'].abort);
-            progress['moveDirectoryPromise'].abort = () => {
-              if (abortFunc) {
-                abortFunc();
-              }
-              controller.abort();
-              reject(new Error('Promise aborted'));
-            };
-            signal.addEventListener('abort', progress['moveDirectoryPromise'].abort);
-            try {
-              const mainWindow = BrowserWindow.getFocusedWindow();
-              mainWindow.webContents.send('progress', fileName, newProgress);
-            } catch (ex) {
-              console.error(ex);
-            }
-          };
-          moveDirectoryPromise(param, newDirPath, onProgress)
-            .then((result) => resolve(result))
-            .catch((e) => reject(e));
-        }); */
         const result = await copyDirectoryPromise(
           param,
           newDirPath,
@@ -214,40 +180,6 @@ export default function loadMainEvents() {
           'moveDirectoryPromise',
           param.total,
         );
-        /*const promise = new Promise((resolve, reject) => {
-          const controller = new AbortController();
-          const signal = controller.signal;
-          progress['moveDirectoryPromise'] = newProgress(
-            'moveDirectoryPromise',
-            param.total,
-            controller,
-          );
-          progress['moveDirectoryPromise'].abort = () => {
-            controller.abort();
-            reject(new Error('Promise aborted'));
-          };
-          signal.addEventListener('abort', progress['moveDirectoryPromise'].abort);
-          const onProgress = (newProgress, abortFunc, fileName) => {
-            signal.removeEventListener('abort', progress['moveDirectoryPromise'].abort);
-            progress['moveDirectoryPromise'].abort = () => {
-              if (abortFunc) {
-                abortFunc();
-              }
-              controller.abort();
-              reject(new Error('Promise aborted'));
-            };
-            signal.addEventListener('abort', progress['moveDirectoryPromise'].abort);
-            try {
-              const mainWindow = BrowserWindow.getFocusedWindow();
-              mainWindow.webContents.send('progress', fileName, newProgress);
-            } catch (ex) {
-              console.error(ex);
-            }
-          };
-          moveDirectoryPromise(param, newDirPath, onProgress)
-            .then((result) => resolve(result))
-            .catch((e) => reject(e));
-        }); */
         const result = await moveDirectoryPromise(
           param,
           newDirPath,
