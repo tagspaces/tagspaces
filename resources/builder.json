@@ -20,7 +20,6 @@
     "gatekeeperAssess": false,
     "entitlements": "assets/entitlements.mac.plist",
     "entitlementsInherit": "assets/entitlements.mac.plist",
-    "notarize": {},
     "icon": "resources/icon.icns"
   },
   "linux": {
