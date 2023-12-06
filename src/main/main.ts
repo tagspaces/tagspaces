@@ -13,6 +13,7 @@ import { app, BrowserWindow, shell, ipcMain, globalShortcut } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import pm2 from '@elife/pm2';
+import prcs from 'process';
 import propertiesReader from 'properties-reader';
 import { resolveHtmlPath } from './util';
 import windowStateKeeper from 'electron-window-state';
@@ -308,7 +309,7 @@ function buildTrayMenu(i18n) {
       quitApp: reloadApp,
     },
     i18n,
-    process.platform === 'darwin',
+    prcs.platform === 'darwin',
   );
 }
 
@@ -541,7 +542,7 @@ app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required'); // 
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
-  if (process.platform !== 'darwin') {
+  if (prcs.platform !== 'darwin') {
     pm2.stopAll();
     globalShortcut.unregisterAll();
     app.quit();
