@@ -86,7 +86,7 @@
     "package-mac": "npm run install-ext-node-mac && ts-node ./.erb/scripts/clean.js && npm run build && electron-builder --mac --x64 --config resources/builder.json",
     "package-mac-arm64": "npm run install-ext-node-mac-arm64 && ts-node ./.erb/scripts/clean.js && npm run build && electron-builder --mac --arm64 --config resources/builder.json",
     "package-mac-arm64-pro": "npm run install-ext-node-mac-arm64 && ts-node ./.erb/scripts/clean.js && npm run build && electron-builder --mac --arm64 --config extensions/tagspacespro/resources/builder-pro.json",
-    "package-mac-pro": "npm run install-ext-node-mac && ts-node ./.erb/scripts/clean.js && npm run build && electron-builder build --mac --x64 --config extensions/tagspacespro/resources/builder-pro.json --publish never && npm run build:dll",
+    "package-mac-pro": "npm run install-ext-node-mac && ts-node ./.erb/scripts/clean.js && npm run build && electron-builder --mac --x64 --config extensions/tagspacespro/resources/builder-pro.json",
     "package-mac-pro-dev": "npx cross-env DEBUG_PROD=true && npm run package-mac-pro",
     "package-pro": "rimraf app/node_modules && node scripts/enablepro.js && npm run install-ext-node && npm run build && npm run package-web-pro && npm run clean-maps && npm run package-win-pro && npm run package-linux-pro && npm run package-web-pro && npm run package-mac-pro",
     "package-web": "npm run prepare-web && zip -r ../builds/tagspaces-web.zip web -xi web/files/**\\* ",
