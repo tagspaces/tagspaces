@@ -1,5 +1,4 @@
 {
-  "productName": "TagSpaces",
   "appId": "org.tagspaces.desktopapp",
   "asar": true,
   "asarUnpack": ["**\\*.{node,dll}", "**/node_modules/sharp/**/*"],
