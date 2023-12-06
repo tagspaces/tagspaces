@@ -44,24 +44,24 @@ function getUsedWsPort() {
   return usedWsPort;
 }*/
 
-if (process.env.NODE_ENV === 'production') {
+if (prcs.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
 }
 
 const isDebug =
-  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
+  prcs.env.NODE_ENV === 'development' || prcs.env.DEBUG_PROD === 'true';
 
 if (isDebug) {
   require('electron-debug')();
 }
 
-const testMode = process.env.NODE_ENV === 'test';
+const testMode = prcs.env.NODE_ENV === 'test';
 
 let startupFilePath;
 let portableMode;
 
-process.argv.forEach((arg, count) => {
+prcs.argv.forEach((arg, count) => {
   console.log('Opening file: ' + arg);
   if (
     arg.toLowerCase() === '-d' ||
@@ -71,7 +71,7 @@ process.argv.forEach((arg, count) => {
   ) {
     // debugMode = true;
   } else if (arg.toLowerCase() === '-p' || arg.toLowerCase() === '--portable') {
-    app.setPath('userData', process.cwd() + '/tsprofile'); // making the app portable
+    app.setPath('userData', prcs.cwd() + '/tsprofile'); // making the app portable
     portableMode = true;
   } else if (testMode || isDebug) {
     // ignoring the spectron testing
@@ -97,7 +97,7 @@ process.argv.forEach((arg, count) => {
 
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
-  const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
+  const forceDownload = !!prcs.env.UPGRADE_EXTENSIONS;
   const extensions = ['REACT_DEVELOPER_TOOLS'];
 
   return installer
@@ -362,7 +362,7 @@ function startWS() {
     let script;
     let envPath;
     if (app.isPackaged) {
-      filepath = path.join(__dirname, '../../..'); //process.resourcesPath;
+      filepath = prcs.resourcesPath; // path.join(__dirname, '../../..');
       script = 'app.asar/node_modules/@tagspaces/tagspaces-ws/build/index.js'; //app.asar/
       envPath = path.join(filepath, 'app.asar/.env');
     } else {
@@ -493,7 +493,7 @@ const createWindow = async (i18n) => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
-    if (process.env.START_MINIMIZED) {
+    if (prcs.env.START_MINIMIZED) {
       mainWindow.minimize();
     } else {
       mainWindow.show();
@@ -694,7 +694,7 @@ app
 
       ipcMain.on('relaunch-app', reloadApp);
 
-      process.on('uncaughtException', (error) => {
+      prcs.on('uncaughtException', (error) => {
         if (error.stack) {
           console.error('error:', error.stack);
           throw new Error(error.stack);
