@@ -115,7 +115,7 @@ export const IOActionsContext = createContext<IOActionsContextData>({
   deleteEntries: undefined,
   deleteDirectory: undefined,
   deleteFile: undefined,
-  moveDirs: () => Promise.resolve(false),
+  moveDirs: undefined,
   moveFiles: () => Promise.resolve(false),
   copyDirs: () => Promise.resolve(false),
   copyFiles: () => Promise.resolve(false),

@@ -23,10 +23,17 @@ import {
 import fs from 'fs-extra';
 import path from 'path';
 // import chokidar, { FSWatcher } from 'chokidar';
-import { isWorkerAvailable, postRequest, readMacOSTags } from './util';
-import { watchFolder } from './chokidarWatcher';
+import {
+  getOnProgress,
+  isWorkerAvailable,
+  newProgress,
+  postRequest,
+  readMacOSTags,
+} from './util';
+import { stopWatching, watchFolder } from './chokidarWatcher';
 
 //let watcher: FSWatcher;
+const progress = {};
 
 export default function loadMainEvents() {
   ipcMain.handle('isWorkerAvailable', async () => {
@@ -134,16 +141,55 @@ export default function loadMainEvents() {
   );
   ipcMain.handle(
     'copyDirectoryPromise',
-    async (event, param, newDirPath, onProgress) => {
-      const result = await copyDirectoryPromise(param, newDirPath, onProgress);
-      return result;
+    async (event, param, newDirPath, withProgress) => {
+      if (withProgress) {
+        progress['copyDirectoryPromise'] = newProgress(
+          'moveDirectoryPromise',
+          param.total,
+        );
+        const result = await copyDirectoryPromise(
+          param,
+          newDirPath,
+          getOnProgress('copyDirectoryPromise', progress),
+        );
+        return result;
+      } else {
+        const result = await copyDirectoryPromise(param, newDirPath);
+        return result;
+      }
     },
   );
+  ipcMain.handle('uploadAbort', async (event, path) => {
+    if (path && progress[path] && progress[path].abort) {
+      progress[path].abort();
+    } else {
+      // stop all
+      Object.keys(progress).forEach((key) => {
+        if (progress[key] && progress[key].abort) {
+          progress[key].abort();
+        }
+      });
+    }
+    return true;
+  });
   ipcMain.handle(
     'moveDirectoryPromise',
-    async (event, param, newDirPath, onProgress) => {
-      const result = await moveDirectoryPromise(param, newDirPath, onProgress);
-      return result;
+    async (event, param, newDirPath, withProgress) => {
+      if (withProgress) {
+        progress['moveDirectoryPromise'] = newProgress(
+          'moveDirectoryPromise',
+          param.total,
+        );
+        const result = await moveDirectoryPromise(
+          param,
+          newDirPath,
+          getOnProgress('moveDirectoryPromise', progress),
+        );
+        return result;
+      } else {
+        const result = await moveDirectoryPromise(param, newDirPath);
+        return result;
+      }
     },
   );
   ipcMain.handle('loadTextFilePromise', async (event, path, isPreview) => {

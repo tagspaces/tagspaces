@@ -53,6 +53,7 @@ import {
 } from '@tagspaces/tagspaces-platforms/platform-io';
 import AppConfig from '-/AppConfig';
 import { TS } from '-/tagspaces.namespace';
+import { Pro } from '-/pro';
 
 export default class PlatformFacade {
   static enableObjectStoreSupport = (objectStoreConfig: any): Promise<any> =>
@@ -171,7 +172,7 @@ export default class PlatformFacade {
   };
 
   static watchFolder = (locationPath, depth) => {
-    if (AppConfig.isElectron) {
+    if (AppConfig.isElectron && Pro) {
       window.electronIO.ipcRenderer.sendMessage(
         'watchFolder',
         locationPath,
@@ -355,6 +356,13 @@ export default class PlatformFacade {
     return platformRenameDirectoryPromise(dirPath, newDirName);
   };
 
+  static uploadAbort = (path?: string): Promise<any> => {
+    if (AppConfig.isElectron) {
+      return window.electronIO.ipcRenderer.invoke('uploadAbort', path);
+    }
+    return Promise.resolve(false);
+  };
+
   static copyDirectoryPromise = (
     param: any,
     newDirPath: string,
@@ -365,7 +373,7 @@ export default class PlatformFacade {
         'copyDirectoryPromise',
         param,
         newDirPath,
-        onProgress,
+        onProgress !== undefined,
       );
     }
     return platformCopyDirectoryPromise(param, newDirPath, onProgress);
@@ -381,7 +389,7 @@ export default class PlatformFacade {
         'moveDirectoryPromise',
         param,
         newDirPath,
-        onProgress,
+        onProgress !== undefined,
       );
     }
     return platformMoveDirectoryPromise(param, newDirPath, onProgress);
