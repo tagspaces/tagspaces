@@ -35,6 +35,8 @@ class AppUpdater {
   }
 }
 
+let isMacLike = prcs.platform === 'darwin';
+
 let mainWindow: BrowserWindow | null = null;
 /*let usedWsPort = undefined;
 
@@ -309,7 +311,7 @@ function buildTrayMenu(i18n) {
       quitApp: reloadApp,
     },
     i18n,
-    prcs.platform === 'darwin',
+    isMacLike,
   );
 }
 
@@ -542,7 +544,7 @@ app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required'); // 
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
-  if (prcs.platform !== 'darwin') {
+  if (isMacLike) {
     pm2.stopAll();
     globalShortcut.unregisterAll();
     app.quit();

@@ -17,7 +17,6 @@
  */
 
 import { app, Menu, nativeImage, Tray } from 'electron';
-import prcs from 'process';
 
 let tray = null;
 
@@ -101,7 +100,7 @@ export default function buildTrayIconMenu(mainPageProps: any, i18n, isMacLike) {
 
   if (!tray) {
     let icon;
-    if (prcs.platform === 'darwin') {
+    if (isMacLike) {
       icon = nativeImage.createFromDataURL(icon1xMac);
       icon.addRepresentation({
         scaleFactor: 2.0,
