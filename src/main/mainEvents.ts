@@ -30,7 +30,6 @@ import {
   postRequest,
   readMacOSTags,
 } from './util';
-import { stopWatching, watchFolder } from './chokidarWatcher';
 
 //let watcher: FSWatcher;
 const progress = {};
