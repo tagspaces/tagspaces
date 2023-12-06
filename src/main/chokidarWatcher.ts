@@ -1,5 +1,6 @@
 import { BrowserWindow } from 'electron';
 import Chokidar = require('chokidar');
+import prcs from 'process';
 
 let watcher;
 
@@ -29,56 +30,28 @@ export function watchFolder(
   depth,
 ) {
   console.log('Start watching: ' + path);
-  stopWatching();
-  watcher = Chokidar.watch(path, {
-    ignored: (
-      path, //, stats) =>
-    ) =>
-      (/(^|[\/\\])\../.test(path) && !path.includes('.ts')) || // ignoring .dotfiles but not dirs like .ts
-      (path.includes('.ts') && path.includes('tsi.json')), // ignoring .ts/tsi.json folder
-    //  /(^|[\/\\])\../.test(path) || path.includes('.ts'), // ignoring .dotfiles // ignoring .ts folder
-    // (stats && stats.isDirectory()),  // ignoring directories
-    ignoreInitial: true,
-    depth,
-  });
+  if (prcs.env.NODE_ENV === 'development') {
+    // TODO chokidar do not work in package https://github.com/electron/forge/issues/2594
+    stopWatching();
+    watcher = Chokidar.watch(path, {
+      ignored: (
+        path, //, stats) =>
+      ) =>
+        (/(^|[\/\\])\../.test(path) && !path.includes('.ts')) || // ignoring .dotfiles but not dirs like .ts
+        (path.includes('.ts') && path.includes('tsi.json')), // ignoring .ts/tsi.json folder
+      //  /(^|[\/\\])\../.test(path) || path.includes('.ts'), // ignoring .dotfiles // ignoring .ts folder
+      // (stats && stats.isDirectory()),  // ignoring directories
+      ignoreInitial: true,
+      depth,
+    });
 
-  watcher.on('all', (event, path) =>
-    sendMessage(mainWindow, 'folderChanged', {
-      path,
-      eventName: event,
-    }),
-  );
-  /*watcher
-    .on('add', (path) =>
+    watcher.on('all', (event, path) =>
       sendMessage(mainWindow, 'folderChanged', {
         path,
-        eventName: 'add',
+        eventName: event,
       }),
-    )
-    .on('change', (path) =>
-      sendMessage(mainWindow, 'folderChanged', {
-        path,
-        eventName: 'change',
-      }),
-    )
-    .on('unlink', (path) =>
-      sendMessage(mainWindow, 'folderChanged', {
-        path,
-        eventName: 'unlink',
-      }),
-    )
-    .on('addDir', (path) =>
-      sendMessage(mainWindow, 'folderChanged', {
-        path,
-        eventName: 'addDir',
-      }),
-    )
-    .on('unlinkDir', (path) =>
-      sendMessage(mainWindow, 'folderChanged', {
-        path,
-        eventName: 'unlinkDir',
-      }),
-    );*/
+    );
+  }
 }
 
 /*export function watchFile(
