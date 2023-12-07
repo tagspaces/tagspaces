@@ -42,6 +42,7 @@ import { PerspectiveIDs } from '-/perspectives';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import AppConfig from '-/AppConfig';
 
 interface Props {
   open: boolean;
@@ -65,17 +66,19 @@ function FileUploadDialog(props: Props) {
   const targetPath = React.useRef<string>(getTargetPath());
 
   useEffect(() => {
-    window.electronIO.ipcRenderer.on('progress', (fileName, newProgress) => {
-      /*const { path, filePath, loaded, total, key } = newProgress;
-      const progressPercentage = Math.round(
-        (loaded / total) * 100,
-      );*/
-      dispatch(AppActions.onUploadProgress(newProgress, undefined));
-    });
+    if (AppConfig.isElectron) {
+      window.electronIO.ipcRenderer.on('progress', (fileName, newProgress) => {
+        /*const { path, filePath, loaded, total, key } = newProgress;
+        const progressPercentage = Math.round(
+          (loaded / total) * 100,
+        );*/
+        dispatch(AppActions.onUploadProgress(newProgress, undefined));
+      });
 
-    return () => {
-      window.electronIO.ipcRenderer.removeAllListeners('progress');
-    };
+      return () => {
+        window.electronIO.ipcRenderer.removeAllListeners('progress');
+      };
+    }
   }, []);
 
   function LinearProgressWithLabel(prop) {

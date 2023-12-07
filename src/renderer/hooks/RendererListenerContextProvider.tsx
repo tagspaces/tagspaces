@@ -179,10 +179,10 @@ export const RendererListenerContextProvider = ({
         console.debug('RendererListener start_ws port:' + port);
         settings.setUsedWsPort(port);
       });*/
+      return () => {
+        destroy();
+      };
     }
-    return () => {
-      destroy();
-    };
   }, [openNextFile, openPrevFile]);
 
   function destroy() {
