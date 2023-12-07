@@ -50,7 +50,7 @@
     "prebuild": "rimraf release/app/dist && npm run prepare-node && npm run generate-extensions",
     "bump-version": "cd release/app && yarn version && cd .. && npm run version-meta",
     "clean": "npx rimraf node_modules && npx rimraf src/renderer/dist",
-    "clean-maps": "rimraf app/dist/**/*.map && rimraf web/dist/**/*.map",
+    "clean-maps": "rimraf release/app/dist/**/*.map && rimraf web/dist/**/*.map",
     "clean-pro": "npm run clean-maps",
     "cordova-add-android": "cd cordova && cordova platform add android@9.1.0 && cd ..",
     "cordova-add-ios": "cd cordova && cordova platform add ios && cd ..",
