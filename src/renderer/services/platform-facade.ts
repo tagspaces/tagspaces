@@ -158,21 +158,34 @@ export default class PlatformFacade {
    * needs to run in init this function always return false first time
    */
   static isWorkerAvailable = (): Promise<boolean> => {
-    if (AppConfig.isElectron) {
+    if (
+      AppConfig.isElectron &&
+      !platformHaveObjectStoreSupport() &&
+      !platformHaveWebDavSupport()
+    ) {
       return window.electronIO.ipcRenderer.invoke('isWorkerAvailable');
     }
     return Promise.resolve(false);
   };
 
   static readMacOSTags = (filename: string): Promise<TS.Tag[]> => {
-    if (AppConfig.isElectron) {
+    if (
+      AppConfig.isElectron &&
+      !platformHaveObjectStoreSupport() &&
+      !platformHaveWebDavSupport()
+    ) {
       return window.electronIO.ipcRenderer.invoke('readMacOSTags', filename);
     }
     return Promise.resolve(undefined);
   };
 
   static watchFolder = (locationPath, depth) => {
-    if (AppConfig.isElectron && Pro) {
+    if (
+      AppConfig.isElectron &&
+      Pro &&
+      !platformHaveObjectStoreSupport() &&
+      !platformHaveWebDavSupport()
+    ) {
       window.electronIO.ipcRenderer.sendMessage(
         'watchFolder',
         locationPath,
@@ -199,7 +212,11 @@ export default class PlatformFacade {
     extractText: boolean,
     ignorePatterns: Array<string>,
   ): Promise<any> => {
-    if (AppConfig.isElectron) {
+    if (
+      AppConfig.isElectron &&
+      !platformHaveObjectStoreSupport() &&
+      !platformHaveWebDavSupport()
+    ) {
       const payload = JSON.stringify({
         directoryPath,
         extractText,
@@ -219,7 +236,11 @@ export default class PlatformFacade {
   static createThumbnailsInWorker = (
     tmbGenerationList: Array<string>,
   ): Promise<any> => {
-    if (AppConfig.isElectron) {
+    if (
+      AppConfig.isElectron &&
+      !platformHaveObjectStoreSupport() &&
+      !platformHaveWebDavSupport()
+    ) {
       const payload = JSON.stringify(tmbGenerationList);
       return window.electronIO.ipcRenderer.invoke(
         'postRequest',
@@ -265,13 +286,17 @@ export default class PlatformFacade {
   };
 
   static listMetaDirectoryPromise = (path: string): Promise<Array<any>> => {
-    if (AppConfig.isElectron) {
+    if (
+      AppConfig.isElectron &&
+      !platformHaveObjectStoreSupport() &&
+      !platformHaveWebDavSupport()
+    ) {
       return window.electronIO.ipcRenderer.invoke(
         'listMetaDirectoryPromise',
         path,
       );
     }
-    platformListMetaDirectoryPromise(path);
+    return platformListMetaDirectoryPromise(path);
   };
 
   static listObjectStoreDir = (
@@ -282,28 +307,44 @@ export default class PlatformFacade {
     platformListObjectStoreDir(param, mode, ignorePatterns);
 
   static getPropertiesPromise = (path: string): Promise<any> => {
-    if (AppConfig.isElectron) {
+    if (
+      AppConfig.isElectron &&
+      !platformHaveObjectStoreSupport() &&
+      !platformHaveWebDavSupport()
+    ) {
       return window.electronIO.ipcRenderer.invoke('getPropertiesPromise', path);
     }
     return platformGetPropertiesPromise(path);
   };
 
   static checkDirExist = (dir: string): Promise<boolean> => {
-    if (AppConfig.isElectron) {
+    if (
+      AppConfig.isElectron &&
+      !platformHaveObjectStoreSupport() &&
+      !platformHaveWebDavSupport()
+    ) {
       return window.electronIO.ipcRenderer.invoke('checkDirExist', dir);
     }
     return platformCheckDirExist(dir);
   };
 
   static checkFileExist = (file: string): Promise<boolean> => {
-    if (AppConfig.isElectron) {
+    if (
+      AppConfig.isElectron &&
+      !platformHaveObjectStoreSupport() &&
+      !platformHaveWebDavSupport()
+    ) {
       return window.electronIO.ipcRenderer.invoke('checkFileExist', file);
     }
-    platformCheckFileExist(file);
+    return platformCheckFileExist(file);
   };
 
   static createDirectoryPromise = (dirPath: string): Promise<any> => {
-    if (AppConfig.isElectron) {
+    if (
+      AppConfig.isElectron &&
+      !platformHaveObjectStoreSupport() &&
+      !platformHaveWebDavSupport()
+    ) {
       return window.electronIO.ipcRenderer.invoke(
         'createDirectoryPromise',
         dirPath,
@@ -320,7 +361,11 @@ export default class PlatformFacade {
     sourceFilePath: string,
     targetFilePath: string,
   ): Promise<any> => {
-    if (AppConfig.isElectron) {
+    if (
+      AppConfig.isElectron &&
+      !platformHaveObjectStoreSupport() &&
+      !platformHaveWebDavSupport()
+    ) {
       return window.electronIO.ipcRenderer.invoke(
         'copyFilePromiseOverwrite',
         sourceFilePath,
@@ -335,7 +380,11 @@ export default class PlatformFacade {
     newFilePath: string,
     onProgress = undefined,
   ): Promise<any> => {
-    if (AppConfig.isElectron) {
+    if (
+      AppConfig.isElectron &&
+      !platformHaveObjectStoreSupport() &&
+      !platformHaveWebDavSupport()
+    ) {
       return window.electronIO.ipcRenderer.invoke(
         'renameFilePromise',
         filePath,
@@ -350,7 +399,11 @@ export default class PlatformFacade {
     dirPath: string,
     newDirName: string,
   ): Promise<any> => {
-    if (AppConfig.isElectron) {
+    if (
+      AppConfig.isElectron &&
+      !platformHaveObjectStoreSupport() &&
+      !platformHaveWebDavSupport()
+    ) {
       return window.electronIO.ipcRenderer.invoke(
         'renameDirectoryPromise',
         dirPath,
@@ -361,7 +414,11 @@ export default class PlatformFacade {
   };
 
   static uploadAbort = (path?: string): Promise<any> => {
-    if (AppConfig.isElectron) {
+    if (
+      AppConfig.isElectron &&
+      !platformHaveObjectStoreSupport() &&
+      !platformHaveWebDavSupport()
+    ) {
       return window.electronIO.ipcRenderer.invoke('uploadAbort', path);
     }
     return Promise.resolve(false);
@@ -372,7 +429,11 @@ export default class PlatformFacade {
     newDirPath: string,
     onProgress = undefined,
   ): Promise<any> => {
-    if (AppConfig.isElectron) {
+    if (
+      AppConfig.isElectron &&
+      !platformHaveObjectStoreSupport() &&
+      !platformHaveWebDavSupport()
+    ) {
       return window.electronIO.ipcRenderer.invoke(
         'copyDirectoryPromise',
         param,
@@ -388,7 +449,11 @@ export default class PlatformFacade {
     newDirPath: string,
     onProgress = undefined,
   ): Promise<any> => {
-    if (AppConfig.isElectron) {
+    if (
+      AppConfig.isElectron &&
+      !platformHaveObjectStoreSupport() &&
+      !platformHaveWebDavSupport()
+    ) {
       return window.electronIO.ipcRenderer.invoke(
         'moveDirectoryPromise',
         param,
@@ -407,7 +472,11 @@ export default class PlatformFacade {
     try {
       path = decodeURIComponent(filePath);
     } catch (ex) {}
-    if (AppConfig.isElectron) {
+    if (
+      AppConfig.isElectron &&
+      !platformHaveObjectStoreSupport() &&
+      !platformHaveWebDavSupport()
+    ) {
       return window.electronIO.ipcRenderer.invoke(
         'loadTextFilePromise',
         path,
@@ -421,7 +490,11 @@ export default class PlatformFacade {
     filePath: string,
     type?: string,
   ): Promise<any> => {
-    if (AppConfig.isElectron) {
+    if (
+      AppConfig.isElectron &&
+      !platformHaveObjectStoreSupport() &&
+      !platformHaveWebDavSupport()
+    ) {
       return window.electronIO.ipcRenderer.invoke(
         'getFileContentPromise',
         filePath,
@@ -447,7 +520,11 @@ export default class PlatformFacade {
     content: any,
     overwrite: boolean,
   ): Promise<any> => {
-    if (AppConfig.isElectron) {
+    if (
+      AppConfig.isElectron &&
+      !platformHaveObjectStoreSupport() &&
+      !platformHaveWebDavSupport()
+    ) {
       return window.electronIO.ipcRenderer.invoke(
         'saveFilePromise',
         param,
@@ -463,7 +540,11 @@ export default class PlatformFacade {
     content: string,
     overwrite: boolean,
   ): Promise<any> => {
-    if (AppConfig.isElectron) {
+    if (
+      AppConfig.isElectron &&
+      !platformHaveObjectStoreSupport() &&
+      !platformHaveWebDavSupport()
+    ) {
       return window.electronIO.ipcRenderer.invoke(
         'saveTextFilePromise',
         param,
@@ -483,7 +564,11 @@ export default class PlatformFacade {
       response: any, // AWS.Response<AWS.S3.PutObjectOutput, AWS.AWSError>
     ) => void,
   ): Promise<TS.FileSystemEntry> => {
-    if (AppConfig.isElectron) {
+    if (
+      AppConfig.isElectron &&
+      !platformHaveObjectStoreSupport() &&
+      !platformHaveWebDavSupport()
+    ) {
       return window.electronIO.ipcRenderer.invoke(
         'saveBinaryFilePromise',
         param,
@@ -505,7 +590,11 @@ export default class PlatformFacade {
     path: string,
     useTrash?: boolean,
   ): Promise<any> => {
-    if (AppConfig.isElectron) {
+    if (
+      AppConfig.isElectron &&
+      !platformHaveObjectStoreSupport() &&
+      !platformHaveWebDavSupport()
+    ) {
       return window.electronIO.ipcRenderer.invoke(
         'deleteFilePromise',
         path,
@@ -519,7 +608,11 @@ export default class PlatformFacade {
     path: string,
     useTrash?: boolean,
   ): Promise<any> => {
-    if (AppConfig.isElectron) {
+    if (
+      AppConfig.isElectron &&
+      !platformHaveObjectStoreSupport() &&
+      !platformHaveWebDavSupport()
+    ) {
       return window.electronIO.ipcRenderer.invoke(
         'deleteDirectoryPromise',
         path,
@@ -567,7 +660,11 @@ export default class PlatformFacade {
   };
 
   static selectDirectoryDialog = (): Promise<any> => {
-    if (AppConfig.isElectron) {
+    if (
+      AppConfig.isElectron &&
+      !platformHaveObjectStoreSupport() &&
+      !platformHaveWebDavSupport()
+    ) {
       return window.electronIO.ipcRenderer.invoke('selectDirectoryDialog');
     }
     return platformSelectDirectoryDialog();
