@@ -243,7 +243,11 @@ export default class PlatformFacade {
     ignorePatterns: Array<string> = [],
     resultsLimit: any = {},
   ): Promise<Array<any>> => {
-    if (AppConfig.isElectron) {
+    if (
+      AppConfig.isElectron &&
+      !platformHaveObjectStoreSupport() &&
+      !platformHaveWebDavSupport()
+    ) {
       return window.electronIO.ipcRenderer.invoke(
         'listDirectoryPromise',
         path,
