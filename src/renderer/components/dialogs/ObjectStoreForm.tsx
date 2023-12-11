@@ -290,11 +290,11 @@ function ObjectStoreForm(props: Props) {
             freeSolo
             onChange={handleRegionChange}
             onInputChange={handleRegionChange}
-            placeholder={t('core:regionSearch')}
             renderInput={(params) => (
               <TextField
                 {...params}
                 label={t('core:regionSearch')}
+                placeholder={t('core:regionSearch')}
                 margin="normal"
               />
             )}

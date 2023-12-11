@@ -259,14 +259,12 @@ function MoveCopyFilesDialog(props: Props) {
         <Button data-tid="closeMoveCopyDialog" onClick={() => onClose()}>
           {t('core:cancel')}
         </Button>
-        <Tooltip
-          title={t(AppConfig.isAndroid ? 'core:platformImplMissing' : '')}
-        >
+        {(!AppConfig.isAndroid || selectedDirs.length === 0) && (
           <Button
             data-tid="confirmMoveFiles"
             disabled={
               !targetPath ||
-              AppConfig.isAndroid ||
+              // AppConfig.isAndroid ||
               targetPath === currentDirectoryPath
             }
             onClick={() => handleCopyMove(false)}
@@ -275,7 +273,7 @@ function MoveCopyFilesDialog(props: Props) {
           >
             {t('core:moveEntriesButton')}
           </Button>
-        </Tooltip>
+        )}
         <ConfirmDialog
           open={entriesExistPath !== undefined}
           onClose={() => {
