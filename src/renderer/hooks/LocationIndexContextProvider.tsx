@@ -28,7 +28,7 @@ import PlatformIO from '-/services/platform-facade';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { getLocations } from '-/reducers/locations';
 import AppConfig from '-/AppConfig';
-import { hasIndex, loadIndex } from '@tagspaces/tagspaces-platforms/indexer';
+import { hasIndex, loadIndex } from '@tagspaces/tagspaces-indexer';
 import Search from '-/services/search';
 import {
   extractFileExtension,

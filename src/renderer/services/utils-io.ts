@@ -19,10 +19,7 @@
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
-import {
-  loadIndex,
-  enhanceDirectoryIndex,
-} from '@tagspaces/tagspaces-platforms/indexer';
+import { loadIndex, enhanceDirectoryIndex } from '@tagspaces/tagspaces-indexer';
 import {
   enhanceEntry,
   loadJSONString,

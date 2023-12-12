@@ -9,7 +9,7 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import merge from 'webpack-merge';
-import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
+//import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
 import baseConfig from './webpack.config.base';
 import webpackPaths from './webpack.paths';
 // import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
@@ -246,7 +246,7 @@ const configuration: webpack.Configuration = {
   },
 
   plugins: [
-    new NodePolyfillPlugin(),
+    //new NodePolyfillPlugin(),
 
     new MiniCssExtractPlugin({
       filename: 'style.css',

@@ -236,3 +236,22 @@ export function getOnProgress(key, progress) {
   };
   return onProgress;
 }
+
+export function stringifyMaxDepth(obj, depth = 1) {
+  // recursion limited by depth arg
+  if (!obj || typeof obj !== 'object') return JSON.stringify(obj);
+
+  let curDepthResult = '"<?>"'; // too deep
+  if (depth > 0) {
+    curDepthResult = Object.keys(obj)
+      .map((key) => {
+        let val = stringifyMaxDepth(obj[key], depth - 1);
+        if (val === undefined) val = 'null';
+        return `"${key}": ${val}`;
+      })
+      .join(', ');
+    curDepthResult = `{${curDepthResult}}`;
+  }
+
+  return JSON.stringify(JSON.parse(curDepthResult));
+}

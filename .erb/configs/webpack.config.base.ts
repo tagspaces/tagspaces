@@ -7,7 +7,7 @@ const Dotenv = require('dotenv-webpack');
 import TsconfigPathsPlugins from 'tsconfig-paths-webpack-plugin';
 import webpackPaths from './webpack.paths';
 import { dependencies as externals } from '../../release/app/package.json';
-import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
+//import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
 import path = require('path');
 import { checkThirdPartyTxt, checkVersionJson } from '../../src/main/util';
 
@@ -93,7 +93,7 @@ const configuration: webpack.Configuration = {
         '@tagspaces/tagspaces-common/default.env',
       ),
     }),
-    new NodePolyfillPlugin(),
+    //new NodePolyfillPlugin(),
   ],
 };
 

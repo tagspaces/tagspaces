@@ -86,15 +86,15 @@ shell.exec('npm -v');
  * If the installed tagspaces-platforms changed (with deleted node_modules) npm install will not update it -> change version or delete the tagspaces-platforms folder
  * @type {string}
  */
-
+/*
 if (install) {
   const cmd =
     'npm run-script --prefix ./node_modules/@tagspaces/tagspaces-platforms install';
   // 'npm install @tagspaces/tagspaces-platforms@' + // --force --foreground-scripts
-  /*stripFromStart(
+  /!*stripFromStart(
       packageJson.dependencies['@tagspaces/tagspaces-platforms'],
       '^'
-    );*/
+    );*!/
   if (!fs.existsSync('./node_modules/@tagspaces/tagspaces-platforms')) {
     shell.exec('npm install');
   }
@@ -126,81 +126,4 @@ if (install) {
     shell.exit(1);
   }
   // }
-}
-
-/*function stripFromStart(input, character) {
-  if (input.startsWith(character)) {
-    return input.substr(character.length);
-  }
-  return input;
 }*/
-
-/* if (process.env.PD_PLATFORM === 'electron') {
-  if (!isInstalled('@tagspaces/tagspaces-common-electron')) {
-    npm.load(er => {
-      if (er) {
-        console.log('err:', er);
-        return;
-      }
-      npm.commands.run(['postinstall-electron'], err => {
-        if (err) {
-          console.log('err:', err);
-        }
-      });
-      npm.on('log', message => {
-        console.log('npm:' + message);
-      });
-    });
-  }
-} else if (process.env.PD_PLATFORM === 'node') {
-  if (!isInstalled('@tagspaces/tagspaces-common-node') || isInstalled('@tagspaces/tagspaces-common-electron')) {
-    npm.load(er => {
-      if (er) {
-        console.log('err:', er);
-        return;
-      }
-      npm.commands.run(['postinstall-node'], err => {
-        if (err) {
-          console.log('err:', err);
-        }
-      });
-      npm.on('log', message => {
-        console.log('npm:' + message);
-      });
-    });
-  }
-} else if (process.env.PD_PLATFORM === 'web') {
-  if (!isInstalled('@tagspaces/tagspaces-common-aws')) {
-    npm.load(er => {
-      if (er) {
-        console.log('err:', er);
-        return;
-      }
-      npm.commands.run(['postinstall-web'], err => {
-        if (err) {
-          console.log('err:', err);
-        }
-      });
-      npm.on('log', message => {
-        console.log('npm:' + message);
-      });
-    });
-  }
-} else if (process.env.PD_PLATFORM === 'cordova') {
-  if (!isInstalled('@tagspaces-common-cordova')) {
-    npm.load(er => {
-      if (er) {
-        console.log('err:', er);
-        return;
-      }
-      npm.commands.run(['postinstall-cordova'], err => {
-        if (err) {
-          console.log('err:', err);
-        }
-      });
-      npm.on('log', message => {
-        console.log('npm:' + message);
-      });
-    });
-  }
-} */
