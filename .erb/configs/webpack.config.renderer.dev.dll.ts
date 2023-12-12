@@ -33,7 +33,10 @@ const configuration: webpack.Configuration = {
   module: require('./webpack.config.renderer.dev').default.module,
 
   entry: {
-    renderer: Object.keys(dependencies || {}),
+    renderer: [
+      ...Object.keys(dependencies || {}),
+      '@tagspaces/tagspaces-common-aws/io-objectstore',
+    ].filter((key) => key !== '@tagspaces/tagspaces-common-aws'),
   },
 
   output: {

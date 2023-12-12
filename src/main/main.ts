@@ -494,7 +494,7 @@ const createWindow = async (i18n) => {
       throw new Error('"mainWindow" is not defined');
     }
 
-    console.log('prosess:' + stringifyMaxDepth(process, 3));
+    //console.log('prosess:' + stringifyMaxDepth(process, 3));
     if (prcs.env.START_MINIMIZED) {
       mainWindow.minimize();
     } else {

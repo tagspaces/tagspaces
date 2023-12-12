@@ -56,8 +56,8 @@ const configuration: webpack.Configuration = {
 
   /*resolve: {
     fallback: {
-      stream: 'stream-browserify'
-    }
+      stream: false,
+    },
   },*/
 
   output: {

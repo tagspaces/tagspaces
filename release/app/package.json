@@ -23,8 +23,6 @@
   "nodeDependencies": {
     "@tagspaces/tagspaces-common": "4.0.3",
     "@tagspaces/tagspaces-common-node": "4.0.3",
-    "@tagspaces/tagspaces-common-webdav": "4.0.3",
-    "@tagspaces/tagspaces-common-aws": "4.0.3",
     "@tagspaces/tagspaces-ws": "4.0.3",
     "@tagspaces/extensions": "1.0.90",
     "sharp": "0.31.3",
