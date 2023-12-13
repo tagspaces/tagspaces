@@ -32,7 +32,7 @@
   "nsis": {
     "oneClick": false,
     "allowToChangeInstallationDirectory": true,
-    "license": "app/LICENSE.txt",
+    "license": "src/renderer/LICENSE.txt",
     "include": "resources/installer.nsh"
   },
   "directories": {
