@@ -5,6 +5,7 @@ import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import chalk from 'chalk';
 import { merge } from 'webpack-merge';
+//import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
 import { execSync, spawn } from 'child_process';
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import baseConfig from './webpack.config.base';
@@ -52,6 +53,12 @@ const configuration: webpack.Configuration = {
     'webpack/hot/only-dev-server',
     path.join(webpackPaths.srcRendererPath, 'index.tsx'),
   ],
+
+  /*resolve: {
+    fallback: {
+      stream: false,
+    },
+  },*/
 
   output: {
     path: webpackPaths.distRendererPath,
@@ -124,6 +131,7 @@ const configuration: webpack.Configuration = {
     ],
   },
   plugins: [
+    //new NodePolyfillPlugin(),
     ...(skipDLLs
       ? []
       : [

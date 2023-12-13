@@ -15,7 +15,7 @@ import log from 'electron-log';
 import pm2 from '@elife/pm2';
 import prcs from 'process';
 import propertiesReader from 'properties-reader';
-import { resolveHtmlPath } from './util';
+import { resolveHtmlPath, stringifyMaxDepth } from './util';
 import windowStateKeeper from 'electron-window-state';
 import findFreePorts from 'find-free-ports';
 import settings from './settings';
@@ -493,6 +493,8 @@ const createWindow = async (i18n) => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
+
+    //console.log('prosess:' + stringifyMaxDepth(process, 3));
     if (prcs.env.START_MINIMIZED) {
       mainWindow.minimize();
     } else {
