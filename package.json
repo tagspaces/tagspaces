@@ -137,6 +137,7 @@
     "test-watch": "npm run test --watch",
     "third-party": "npx generate-license-file --input package.json --output src/renderer/third-party.txt --overwrite",
     "type-check": "tsc --noEmit",
+    "type-build": "tsc --build --clean",
     "update-changelog": "git log v5.5.2..HEAD --no-merges --format=%B > CHANGELOG.TXT",
     "update-changelog-pro": "cd extensions/tagspacespro && git log v5.5.2..HEAD --no-merges --format=%B > ../../CHANGELOG-PRO.TXT",
     "update-i18n": "./tx pull -a -f",
