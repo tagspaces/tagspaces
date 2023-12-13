@@ -22,8 +22,8 @@
   },
   "nodeDependencies": {
     "@tagspaces/tagspaces-common": "4.0.3",
-    "@tagspaces/tagspaces-common-node": "4.0.3",
-    "@tagspaces/tagspaces-ws": "4.0.3",
+    "@tagspaces/tagspaces-common-node": "4.0.6",
+    "@tagspaces/tagspaces-ws": "4.0.7",
     "@tagspaces/extensions": "1.0.90",
     "sharp": "0.31.3",
     "@elife/pm2": "3.6.1",
