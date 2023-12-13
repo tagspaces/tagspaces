@@ -19,7 +19,11 @@
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
-import { loadIndex, enhanceDirectoryIndex } from '@tagspaces/tagspaces-indexer';
+import {
+  createIndex,
+  loadIndex,
+  enhanceDirectoryIndex,
+} from '@tagspaces/tagspaces-indexer';
 import {
   enhanceEntry,
   loadJSONString,
@@ -537,7 +541,7 @@ export function createDirectoryIndex(
   if (extractText) {
     mode.push('extractTextContent');
   }
-  return PlatformIO.createIndex(
+  return createIndex(
     param,
     listDirectoryPromise,
     loadTextFilePromise,

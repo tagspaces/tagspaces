@@ -29,7 +29,6 @@ export type Channels =
   | 'moveDirectoryPromise'
   | 'loadTextFilePromise'
   | 'getFileContentPromise'
-  | 'getLocalFileContentPromise'
   | 'saveFilePromise'
   | 'saveTextFilePromise'
   | 'saveBinaryFilePromise'

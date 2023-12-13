@@ -11,7 +11,6 @@ import {
   moveDirectoryPromise,
   loadTextFilePromise,
   getFileContentPromise,
-  getLocalFileContentPromise,
   saveFilePromise,
   saveTextFilePromise,
   saveBinaryFilePromise,
@@ -199,13 +198,6 @@ export default function loadMainEvents() {
     const result = await getFileContentPromise(filePath, type);
     return result;
   });
-  ipcMain.handle(
-    'getLocalFileContentPromise',
-    async (event, filePath, type) => {
-      const result = await getLocalFileContentPromise(filePath, type);
-      return result;
-    },
-  );
   ipcMain.handle(
     'saveFilePromise',
     async (event, param, content, overwrite) => {

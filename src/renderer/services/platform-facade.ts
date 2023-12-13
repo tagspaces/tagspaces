@@ -16,72 +16,66 @@
  *
  */
 
-import {
-  platformHaveObjectStoreSupport,
-  platformHaveWebDavSupport,
-  platformIsMinio,
-  platformGetDirSeparator,
-  platformEnableObjectStoreSupport,
-  platformDisableObjectStoreSupport,
-  platformEnableWebdavSupport,
-  platformDisableWebdavSupport,
-  platformQuitApp,
-  platformGetDevicePaths,
-  platformGetURLforPath,
-  platformListDirectoryPromise,
-  platformListMetaDirectoryPromise,
-  platformListObjectStoreDir,
-  platformSaveFilePromise,
-  platformGetPropertiesPromise,
-  platformLoadTextFilePromise,
-  platformGetFileContentPromise,
-  platformSaveTextFilePromise,
-  platformSaveBinaryFilePromise,
-  platformCreateDirectoryPromise,
-  platformCopyFilePromise,
-  platformRenameFilePromise,
-  platformRenameDirectoryPromise,
-  platformMoveDirectoryPromise,
-  platformCopyDirectoryPromise,
-  platformDeleteFilePromise,
-  platformDeleteDirectoryPromise,
-  platformSelectDirectoryDialog,
-  platformShareFiles,
-  platformCreateIndex,
-  platformCheckFileExist,
-  platformCheckDirExist,
-} from '@tagspaces/tagspaces-platforms/platform-io';
+import * as cordovaIO from '@tagspaces/tagspaces-common-cordova';
 import AppConfig from '-/AppConfig';
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
 
+let objectStoreAPI, webDavAPI;
+
 export default class PlatformFacade {
-  static enableObjectStoreSupport = (objectStoreConfig: any): Promise<any> =>
-    platformEnableObjectStoreSupport(objectStoreConfig);
-
-  static disableObjectStoreSupport = (): void =>
-    platformDisableObjectStoreSupport();
-
-  static enableWebdavSupport = (webDavConfig: any): void => {
-    platformEnableWebdavSupport(webDavConfig);
+  static enableObjectStoreSupport = (objectStoreConfig: any): Promise<any> => {
+    // DisableWebdavSupport
+    webDavAPI = undefined;
+    return new Promise((resolve, reject) => {
+      if (
+        objectStoreAPI !== undefined &&
+        objectStoreAPI.config().bucketName === objectStoreConfig.bucketName &&
+        objectStoreAPI.config().secretAccessKey ===
+          objectStoreConfig.secretAccessKey &&
+        objectStoreAPI.config().region === objectStoreConfig.region &&
+        objectStoreAPI.config().endpointURL === objectStoreConfig.endpointURL &&
+        objectStoreAPI.config().accessKeyId === objectStoreConfig.accessKeyId
+      ) {
+        resolve(true);
+      } else {
+        objectStoreAPI = require('@tagspaces/tagspaces-common-aws/io-objectstore');
+        objectStoreAPI.configure(objectStoreConfig);
+        resolve(true);
+      }
+    });
   };
 
-  static disableWebdavSupport = (): void => platformDisableWebdavSupport();
+  static disableObjectStoreSupport = (): void => (objectStoreAPI = undefined);
 
-  static haveObjectStoreSupport = (): boolean =>
-    platformHaveObjectStoreSupport();
+  static enableWebdavSupport = (webDavConfig: any): void => {
+    objectStoreAPI = undefined;
+    if (
+      webDavAPI === undefined ||
+      webDavAPI.username !== webDavConfig.username ||
+      webDavAPI.password !== webDavConfig.password ||
+      webDavAPI.port !== webDavConfig.port
+    ) {
+      //webDavAPI = require("@tagspaces/tagspaces-common-webdav/io-webdav");
+      //webDavAPI.configure(webDavConfig);
+    }
+  };
 
-  static haveWebDavSupport = (): boolean => platformHaveWebDavSupport();
+  static disableWebdavSupport = (): void => (webDavAPI = undefined);
 
-  static isMinio = (): boolean => platformIsMinio();
+  static haveObjectStoreSupport = (): boolean => objectStoreAPI !== undefined;
 
-  static getDirSeparator = (): string => platformGetDirSeparator();
+  static haveWebDavSupport = (): boolean => webDavAPI !== undefined;
 
-  /**
-   * todo rethink this use node path module
-   * @param location
-   */
-  // static getLocationPath = (location: TS.Location): string => platformGetLocationPath(location);
+  static isMinio = (): boolean =>
+    objectStoreAPI !== undefined && objectStoreAPI.config().endpointURL;
+
+  static getDirSeparator = (): string => {
+    // TODO rethink usage for S3 on Win
+    return objectStoreAPI !== undefined || webDavAPI !== undefined
+      ? '/'
+      : AppConfig.dirSeparator;
+  };
 
   static setLanguage = (language: string): void => {
     if (AppConfig.isElectron) {
@@ -125,9 +119,9 @@ export default class PlatformFacade {
   static quitApp = (): void => {
     if (AppConfig.isElectron) {
       window.electronIO.ipcRenderer.sendMessage('quitApp');
-    } else {
+    } /*else {
       platformQuitApp();
-    }
+    }*/
   };
 
   /*static watchDirectory = (dirPath: string, listener): void =>
@@ -142,8 +136,12 @@ export default class PlatformFacade {
   static getDevicePaths = (): Promise<any> => {
     if (AppConfig.isElectron) {
       return window.electronIO.ipcRenderer.invoke('getDevicePaths');
+    } else if (AppConfig.isCordova) {
+      return cordovaIO.getDevicePaths();
+    } else {
+      console.log('getDevicePaths not supported');
+      return Promise.resolve(undefined);
     }
-    return platformGetDevicePaths();
   };
 
   /**
@@ -151,8 +149,21 @@ export default class PlatformFacade {
    * @param path
    * @param expirationInSeconds
    */
-  static getURLforPath = (path: string, expirationInSeconds?: number): string =>
-    platformGetURLforPath(path, expirationInSeconds);
+  static getURLforPath = (
+    path: string,
+    expirationInSeconds?: number,
+  ): string => {
+    if (objectStoreAPI) {
+      const param = {
+        path,
+        bucketName: objectStoreAPI.config().bucketName,
+      };
+      return objectStoreAPI.getURLforPath(param, expirationInSeconds);
+    } else if (webDavAPI) {
+      return webDavAPI.getURLforPath(path);
+    }
+    return undefined;
+  };
 
   /**
    * needs to run in init this function always return false first time
@@ -160,8 +171,8 @@ export default class PlatformFacade {
   static isWorkerAvailable = (): Promise<boolean> => {
     if (
       AppConfig.isElectron &&
-      !platformHaveObjectStoreSupport() &&
-      !platformHaveWebDavSupport()
+      objectStoreAPI === undefined &&
+      webDavAPI === undefined
     ) {
       return window.electronIO.ipcRenderer.invoke('isWorkerAvailable');
     }
@@ -171,8 +182,8 @@ export default class PlatformFacade {
   static readMacOSTags = (filename: string): Promise<TS.Tag[]> => {
     if (
       AppConfig.isElectron &&
-      !platformHaveObjectStoreSupport() &&
-      !platformHaveWebDavSupport()
+      objectStoreAPI === undefined &&
+      webDavAPI === undefined
     ) {
       return window.electronIO.ipcRenderer.invoke('readMacOSTags', filename);
     }
@@ -183,8 +194,8 @@ export default class PlatformFacade {
     if (
       AppConfig.isElectron &&
       Pro &&
-      !platformHaveObjectStoreSupport() &&
-      !platformHaveWebDavSupport()
+      objectStoreAPI === undefined &&
+      webDavAPI === undefined
     ) {
       window.electronIO.ipcRenderer.sendMessage(
         'watchFolder',
@@ -193,15 +204,6 @@ export default class PlatformFacade {
       );
     }
   };
-
-  /*static watchForEvents = (listener) => {
-    if (AppConfig.isElectron) {
-      window.electronIO.ipcRenderer.sendMessage(
-        'watchForEvents',
-        listener
-      );
-    }
-  };*/
 
   /*static tiffJs = () => {
     return platformTiffJs();
@@ -214,8 +216,8 @@ export default class PlatformFacade {
   ): Promise<any> => {
     if (
       AppConfig.isElectron &&
-      !platformHaveObjectStoreSupport() &&
-      !platformHaveWebDavSupport()
+      objectStoreAPI === undefined &&
+      webDavAPI === undefined
     ) {
       const payload = JSON.stringify({
         directoryPath,
@@ -238,8 +240,8 @@ export default class PlatformFacade {
   ): Promise<any> => {
     if (
       AppConfig.isElectron &&
-      !platformHaveObjectStoreSupport() &&
-      !platformHaveWebDavSupport()
+      objectStoreAPI === undefined &&
+      webDavAPI === undefined
     ) {
       const payload = JSON.stringify(tmbGenerationList);
       return window.electronIO.ipcRenderer.invoke(
@@ -264,11 +266,20 @@ export default class PlatformFacade {
     ignorePatterns: Array<string> = [],
     resultsLimit: any = {},
   ): Promise<Array<any>> => {
-    if (
-      AppConfig.isElectron &&
-      !platformHaveObjectStoreSupport() &&
-      !platformHaveWebDavSupport()
-    ) {
+    if (objectStoreAPI) {
+      const param = {
+        path,
+        bucketName: objectStoreAPI.config().bucketName,
+      };
+      return objectStoreAPI.listDirectoryPromise(
+        param,
+        mode,
+        ignorePatterns,
+        resultsLimit,
+      );
+    } else if (webDavAPI) {
+      return webDavAPI.listDirectoryPromise(path, mode, ignorePatterns);
+    } else if (AppConfig.isElectron) {
       return window.electronIO.ipcRenderer.invoke(
         'listDirectoryPromise',
         path,
@@ -276,81 +287,121 @@ export default class PlatformFacade {
         ignorePatterns,
         resultsLimit,
       );
+    } else if (AppConfig.isCordova) {
+      return cordovaIO.listDirectoryPromise(path, mode, ignorePatterns);
     }
-    return platformListDirectoryPromise(
-      path, // cleanTrailingDirSeparator(path),
-      mode,
-      ignorePatterns,
-      resultsLimit,
-    );
+
+    return Promise.reject(new Error('listDirectoryPromise not implemented!'));
   };
 
   static listMetaDirectoryPromise = (path: string): Promise<Array<any>> => {
-    if (
-      AppConfig.isElectron &&
-      !platformHaveObjectStoreSupport() &&
-      !platformHaveWebDavSupport()
-    ) {
+    if (objectStoreAPI) {
+      const param = {
+        path,
+        bucketName: objectStoreAPI.config().bucketName,
+      };
+      return objectStoreAPI.listMetaDirectoryPromise(param);
+    } else if (webDavAPI) {
+      return webDavAPI.listMetaDirectoryPromise(path);
+    } else if (AppConfig.isElectron) {
       return window.electronIO.ipcRenderer.invoke(
         'listMetaDirectoryPromise',
         path,
       );
+    } else if (AppConfig.isCordova) {
+      return cordovaIO.listMetaDirectoryPromise(path);
     }
-    return platformListMetaDirectoryPromise(path);
+
+    return Promise.reject(
+      new Error('listMetaDirectoryPromise not implemented!'),
+    );
   };
 
   static listObjectStoreDir = (
     param: Object,
     mode = ['extractThumbPath'],
     ignorePatterns: Array<string> = [],
-  ): Promise<Array<any>> =>
-    platformListObjectStoreDir(param, mode, ignorePatterns);
+  ): Promise<Array<any>> => {
+    if (objectStoreAPI) {
+      return objectStoreAPI.listDirectoryPromise(param, mode, ignorePatterns);
+    } else {
+      return Promise.reject(
+        new Error('platformListObjectStoreDir: no objectStoreAPI'),
+      );
+    }
+  };
 
   static getPropertiesPromise = (path: string): Promise<any> => {
-    if (
-      AppConfig.isElectron &&
-      !platformHaveObjectStoreSupport() &&
-      !platformHaveWebDavSupport()
-    ) {
+    if (objectStoreAPI) {
+      const param = {
+        path,
+        bucketName: objectStoreAPI.config().bucketName,
+      };
+      return objectStoreAPI.getPropertiesPromise(param);
+    } else if (webDavAPI) {
+      return webDavAPI.getPropertiesPromise(path);
+    } else if (AppConfig.isElectron) {
       return window.electronIO.ipcRenderer.invoke('getPropertiesPromise', path);
+    } else if (AppConfig.isCordova) {
+      return cordovaIO.getPropertiesPromise(path);
     }
-    return platformGetPropertiesPromise(path);
+    return Promise.reject(new Error('getPropertiesPromise: not implemented'));
   };
 
   static checkDirExist = (dir: string): Promise<boolean> => {
-    if (
-      AppConfig.isElectron &&
-      !platformHaveObjectStoreSupport() &&
-      !platformHaveWebDavSupport()
-    ) {
+    if (objectStoreAPI) {
+      return objectStoreAPI
+        .getPropertiesPromise(dir)
+        .then((stats) => stats && !stats.isFile);
+    } else if (webDavAPI) {
+      return webDavAPI
+        .getPropertiesPromise(dir)
+        .then((stats) => stats && !stats.isFile);
+    } else if (AppConfig.isElectron) {
       return window.electronIO.ipcRenderer.invoke('checkDirExist', dir);
+    } else if (AppConfig.isCordova) {
+      // In cordova this check is too expensive for dirs like /.ts
+      return cordovaIO.checkDirExist(dir);
     }
-    return platformCheckDirExist(dir);
+    return Promise.reject(new Error('checkDirExist: not implemented'));
   };
 
   static checkFileExist = (file: string): Promise<boolean> => {
-    if (
-      AppConfig.isElectron &&
-      !platformHaveObjectStoreSupport() &&
-      !platformHaveWebDavSupport()
-    ) {
+    if (objectStoreAPI) {
+      return objectStoreAPI
+        .getPropertiesPromise(file)
+        .then((stats) => stats && stats.isFile);
+    } else if (webDavAPI) {
+      return webDavAPI
+        .getPropertiesPromise(file)
+        .then((stats) => stats && stats.isFile);
+    } else if (AppConfig.isElectron) {
       return window.electronIO.ipcRenderer.invoke('checkFileExist', file);
+    } else if (AppConfig.isCordova) {
+      return cordovaIO.checkFileExist(file);
     }
-    return platformCheckFileExist(file);
+
+    return Promise.reject(new Error('checkFileExist: not implemented'));
   };
 
   static createDirectoryPromise = (dirPath: string): Promise<any> => {
-    if (
-      AppConfig.isElectron &&
-      !platformHaveObjectStoreSupport() &&
-      !platformHaveWebDavSupport()
-    ) {
+    if (objectStoreAPI) {
+      const param = {
+        path: dirPath,
+        bucketName: objectStoreAPI.config().bucketName,
+      };
+      return objectStoreAPI.createDirectoryPromise(param);
+    } else if (webDavAPI) {
+      return webDavAPI.createDirectoryPromise(dirPath);
+    } else if (AppConfig.isElectron) {
       return window.electronIO.ipcRenderer.invoke(
         'createDirectoryPromise',
         dirPath,
       );
+    } else if (AppConfig.isCordova) {
+      return cordovaIO.createDirectoryPromise(dirPath);
     }
-    return platformCreateDirectoryPromise(dirPath);
+    return Promise.reject(new Error('createDirectoryPromise: not implemented'));
   };
 
   /**
@@ -361,18 +412,24 @@ export default class PlatformFacade {
     sourceFilePath: string,
     targetFilePath: string,
   ): Promise<any> => {
-    if (
-      AppConfig.isElectron &&
-      !platformHaveObjectStoreSupport() &&
-      !platformHaveWebDavSupport()
-    ) {
+    if (objectStoreAPI) {
+      const param = {
+        path: sourceFilePath,
+        bucketName: objectStoreAPI.config().bucketName,
+      };
+      return objectStoreAPI.copyFilePromise(param, targetFilePath);
+    } else if (webDavAPI) {
+      return webDavAPI.copyFilePromise(sourceFilePath, targetFilePath);
+    } else if (AppConfig.isElectron) {
       return window.electronIO.ipcRenderer.invoke(
         'copyFilePromiseOverwrite',
         sourceFilePath,
         targetFilePath,
       );
+    } else if (AppConfig.isCordova) {
+      return cordovaIO.copyFilePromise(sourceFilePath, targetFilePath);
     }
-    return platformCopyFilePromise(sourceFilePath, targetFilePath);
+    return Promise.reject(new Error('createDirectoryPromise: not implemented'));
   };
 
   static renameFilePromise = (
@@ -380,45 +437,54 @@ export default class PlatformFacade {
     newFilePath: string,
     onProgress = undefined,
   ): Promise<any> => {
-    if (
-      AppConfig.isElectron &&
-      !platformHaveObjectStoreSupport() &&
-      !platformHaveWebDavSupport()
-    ) {
+    if (objectStoreAPI) {
+      const param = {
+        path: filePath,
+        bucketName: objectStoreAPI.config().bucketName,
+      };
+      return objectStoreAPI.renameFilePromise(param, newFilePath, onProgress);
+      // .then(result => result);
+    } else if (webDavAPI) {
+      return webDavAPI.renameFilePromise(filePath, newFilePath, onProgress);
+    } else if (AppConfig.isElectron) {
       return window.electronIO.ipcRenderer.invoke(
         'renameFilePromise',
         filePath,
         newFilePath,
         onProgress,
       );
+    } else if (AppConfig.isCordova) {
+      return cordovaIO.renameFilePromise(filePath, newFilePath, onProgress);
     }
-    return platformRenameFilePromise(filePath, newFilePath, onProgress);
+    return Promise.reject(new Error('renameFilePromise: not implemented'));
   };
 
   static renameDirectoryPromise = (
     dirPath: string,
     newDirName: string,
   ): Promise<any> => {
-    if (
-      AppConfig.isElectron &&
-      !platformHaveObjectStoreSupport() &&
-      !platformHaveWebDavSupport()
-    ) {
+    if (objectStoreAPI) {
+      const param = {
+        path: dirPath,
+        bucketName: objectStoreAPI.config().bucketName,
+      };
+      return objectStoreAPI.renameDirectoryPromise(param, newDirName);
+    } else if (webDavAPI) {
+      return webDavAPI.renameDirectoryPromise(dirPath, newDirName);
+    } else if (AppConfig.isElectron) {
       return window.electronIO.ipcRenderer.invoke(
         'renameDirectoryPromise',
         dirPath,
         newDirName,
       );
+    } else if (AppConfig.isCordova) {
+      return cordovaIO.renameDirectoryPromise(dirPath, newDirName);
     }
-    return platformRenameDirectoryPromise(dirPath, newDirName);
+    return Promise.reject(new Error('renameDirectoryPromise: not implemented'));
   };
 
   static uploadAbort = (path?: string): Promise<any> => {
-    if (
-      AppConfig.isElectron &&
-      !platformHaveObjectStoreSupport() &&
-      !platformHaveWebDavSupport()
-    ) {
+    if (AppConfig.isElectron && !objectStoreAPI && !webDavAPI) {
       return window.electronIO.ipcRenderer.invoke('uploadAbort', path);
     }
     return Promise.resolve(false);
@@ -429,19 +495,29 @@ export default class PlatformFacade {
     newDirPath: string,
     onProgress = undefined,
   ): Promise<any> => {
-    if (
-      AppConfig.isElectron &&
-      !platformHaveObjectStoreSupport() &&
-      !platformHaveWebDavSupport()
-    ) {
+    if (objectStoreAPI) {
+      const params = {
+        ...param,
+        bucketName: objectStoreAPI.config().bucketName,
+      };
+      return objectStoreAPI.copyDirectoryPromise(
+        params,
+        newDirPath,
+        onProgress,
+      );
+    } else if (webDavAPI) {
+      return webDavAPI.copyDirectoryPromise(param, newDirPath, onProgress);
+    } else if (AppConfig.isElectron) {
       return window.electronIO.ipcRenderer.invoke(
         'copyDirectoryPromise',
         param,
         newDirPath,
         onProgress !== undefined,
       );
+    } else if (AppConfig.isCordova) {
+      return cordovaIO.copyDirectoryPromise(param, newDirPath, onProgress);
     }
-    return platformCopyDirectoryPromise(param, newDirPath, onProgress);
+    return Promise.reject(new Error('copyDirectoryPromise: not implemented'));
   };
 
   static moveDirectoryPromise = (
@@ -449,19 +525,28 @@ export default class PlatformFacade {
     newDirPath: string,
     onProgress = undefined,
   ): Promise<any> => {
-    if (
-      AppConfig.isElectron &&
-      !platformHaveObjectStoreSupport() &&
-      !platformHaveWebDavSupport()
-    ) {
+    if (objectStoreAPI) {
+      return objectStoreAPI.moveDirectoryPromise(
+        {
+          ...param,
+          bucketName: objectStoreAPI.config().bucketName,
+        },
+        newDirPath,
+        onProgress,
+      );
+    } else if (webDavAPI) {
+      return webDavAPI.moveDirectoryPromise(param, newDirPath, onProgress);
+    } else if (AppConfig.isElectron) {
       return window.electronIO.ipcRenderer.invoke(
         'moveDirectoryPromise',
         param,
         newDirPath,
         onProgress !== undefined,
       );
+    } else if (AppConfig.isCordova) {
+      return cordovaIO.moveDirectoryPromise(param, newDirPath, onProgress);
     }
-    return platformMoveDirectoryPromise(param, newDirPath, onProgress);
+    return Promise.reject(new Error('moveDirectoryPromise: not implemented'));
   };
 
   static loadTextFilePromise = (
@@ -472,36 +557,48 @@ export default class PlatformFacade {
     try {
       path = decodeURIComponent(filePath);
     } catch (ex) {}
-    if (
-      AppConfig.isElectron &&
-      !platformHaveObjectStoreSupport() &&
-      !platformHaveWebDavSupport()
-    ) {
+    if (objectStoreAPI) {
+      const param = {
+        path: filePath,
+        bucketName: objectStoreAPI.config().bucketName,
+      };
+      return objectStoreAPI.loadTextFilePromise(param, isPreview);
+    } else if (webDavAPI) {
+      return webDavAPI.loadTextFilePromise(filePath, isPreview);
+    } else if (AppConfig.isElectron) {
       return window.electronIO.ipcRenderer.invoke(
         'loadTextFilePromise',
         path,
         isPreview,
       );
+    } else if (AppConfig.isCordova) {
+      return cordovaIO.loadTextFilePromise(filePath, isPreview);
     }
-    return platformLoadTextFilePromise(path, isPreview);
+    return Promise.reject(new Error('loadTextFilePromise: not implemented'));
   };
 
   static getFileContentPromise = (
     filePath: string,
     type?: string,
   ): Promise<any> => {
-    if (
-      AppConfig.isElectron &&
-      !platformHaveObjectStoreSupport() &&
-      !platformHaveWebDavSupport()
-    ) {
+    if (objectStoreAPI) {
+      const param = {
+        path: filePath,
+        bucketName: objectStoreAPI.config().bucketName,
+      };
+      return objectStoreAPI.getFileContentPromise(param, type);
+    } else if (webDavAPI) {
+      return webDavAPI.getFileContentPromise(filePath, type);
+    } else if (AppConfig.isElectron) {
       return window.electronIO.ipcRenderer.invoke(
         'getFileContentPromise',
         filePath,
         type,
       );
+    } else if (AppConfig.isCordova) {
+      return cordovaIO.getFileContentPromise(filePath, type);
     }
-    return platformGetFileContentPromise(filePath, type);
+    return Promise.reject(new Error('getFileContentPromise: not implemented'));
   };
 
   static getLocalFileContentPromise = (
@@ -509,7 +606,7 @@ export default class PlatformFacade {
     type?: string,
   ): Promise<any> => {
     return window.electronIO.ipcRenderer.invoke(
-      'getLocalFileContentPromise',
+      'getFileContentPromise',
       filePath,
       type,
     );
@@ -520,19 +617,28 @@ export default class PlatformFacade {
     content: any,
     overwrite: boolean,
   ): Promise<any> => {
-    if (
-      AppConfig.isElectron &&
-      !platformHaveObjectStoreSupport() &&
-      !platformHaveWebDavSupport()
-    ) {
+    if (objectStoreAPI) {
+      return objectStoreAPI.saveFilePromise(
+        {
+          ...param,
+          bucketName: objectStoreAPI.config().bucketName,
+        },
+        content,
+        overwrite,
+      );
+    } else if (webDavAPI) {
+      return webDavAPI.saveFilePromise(param, content, overwrite);
+    } else if (AppConfig.isElectron) {
       return window.electronIO.ipcRenderer.invoke(
         'saveFilePromise',
         param,
         content,
         overwrite,
       );
+    } else if (AppConfig.isCordova) {
+      return cordovaIO.saveFilePromise(param, content, overwrite);
     }
-    return platformSaveFilePromise(param, content, overwrite);
+    return Promise.reject(new Error('saveFilePromise: not implemented'));
   };
 
   static saveTextFilePromise = (
@@ -540,19 +646,28 @@ export default class PlatformFacade {
     content: string,
     overwrite: boolean,
   ): Promise<any> => {
-    if (
-      AppConfig.isElectron &&
-      !platformHaveObjectStoreSupport() &&
-      !platformHaveWebDavSupport()
-    ) {
+    if (objectStoreAPI) {
+      return objectStoreAPI.saveTextFilePromise(
+        {
+          ...param,
+          bucketName: objectStoreAPI.config().bucketName,
+        },
+        content,
+        overwrite,
+      );
+    } else if (webDavAPI) {
+      return webDavAPI.saveTextFilePromise(param, content, overwrite);
+    } else if (AppConfig.isElectron) {
       return window.electronIO.ipcRenderer.invoke(
         'saveTextFilePromise',
         param,
         content,
         overwrite,
       );
+    } else if (AppConfig.isCordova) {
+      return cordovaIO.saveTextFilePromise(param, content, overwrite);
     }
-    return platformSaveTextFilePromise(param, content, overwrite);
+    return Promise.reject(new Error('saveTextFilePromise: not implemented'));
   };
 
   static saveBinaryFilePromise = (
@@ -564,11 +679,24 @@ export default class PlatformFacade {
       response: any, // AWS.Response<AWS.S3.PutObjectOutput, AWS.AWSError>
     ) => void,
   ): Promise<TS.FileSystemEntry> => {
-    if (
-      AppConfig.isElectron &&
-      !platformHaveObjectStoreSupport() &&
-      !platformHaveWebDavSupport()
-    ) {
+    if (objectStoreAPI) {
+      return objectStoreAPI.saveBinaryFilePromise(
+        {
+          ...param,
+          bucketName: objectStoreAPI.config().bucketName,
+        },
+        content,
+        overwrite,
+        onUploadProgress,
+      );
+    } else if (webDavAPI) {
+      return webDavAPI.saveBinaryFilePromise(
+        param,
+        content,
+        overwrite,
+        onUploadProgress,
+      );
+    } else if (AppConfig.isElectron) {
       return window.electronIO.ipcRenderer.invoke(
         'saveBinaryFilePromise',
         param,
@@ -576,50 +704,68 @@ export default class PlatformFacade {
         overwrite,
         onUploadProgress,
       );
+    } else if (AppConfig.isCordova) {
+      return cordovaIO
+        .saveBinaryFilePromise(param, content, overwrite)
+        .then((succeeded) => {
+          if (succeeded && onUploadProgress) {
+            onUploadProgress(
+              { key: param.path, loaded: 1, total: 1 },
+              undefined,
+            );
+          }
+          return succeeded;
+        });
     }
-
-    return platformSaveBinaryFilePromise(
-      param,
-      content,
-      overwrite,
-      onUploadProgress,
-    );
+    return Promise.reject(new Error('saveBinaryFilePromise: not implemented'));
   };
 
   static deleteFilePromise = (
     path: string,
     useTrash?: boolean,
   ): Promise<any> => {
-    if (
-      AppConfig.isElectron &&
-      !platformHaveObjectStoreSupport() &&
-      !platformHaveWebDavSupport()
-    ) {
+    if (objectStoreAPI) {
+      const param = {
+        path,
+        bucketName: objectStoreAPI.config().bucketName,
+      };
+      return objectStoreAPI.deleteFilePromise(param);
+    } else if (webDavAPI) {
+      return webDavAPI.deleteFilePromise(path);
+    } else if (AppConfig.isElectron) {
       return window.electronIO.ipcRenderer.invoke(
         'deleteFilePromise',
         path,
         useTrash,
       );
+    } else if (AppConfig.isCordova) {
+      return cordovaIO.saveTextFilePromise(path);
     }
-    return platformDeleteFilePromise(path);
+    return Promise.reject(new Error('deleteFilePromise: not implemented'));
   };
 
   static deleteDirectoryPromise = (
     path: string,
     useTrash?: boolean,
   ): Promise<any> => {
-    if (
-      AppConfig.isElectron &&
-      !platformHaveObjectStoreSupport() &&
-      !platformHaveWebDavSupport()
-    ) {
+    if (objectStoreAPI) {
+      const param = {
+        path,
+        bucketName: objectStoreAPI.config().bucketName,
+      };
+      return objectStoreAPI.deleteDirectoryPromise(param);
+    } else if (webDavAPI) {
+      return webDavAPI.deleteDirectoryPromise(path);
+    } else if (AppConfig.isElectron) {
       return window.electronIO.ipcRenderer.invoke(
         'deleteDirectoryPromise',
         path,
         useTrash,
       );
+    } else if (AppConfig.isCordova) {
+      return cordovaIO.deleteDirectoryPromise(path);
     }
-    return platformDeleteDirectoryPromise(path, useTrash);
+    return Promise.reject(new Error('deleteDirectoryPromise: not implemented'));
   };
 
   static openDirectory = (dirPath: string): void => {
@@ -660,14 +806,12 @@ export default class PlatformFacade {
   };
 
   static selectDirectoryDialog = (): Promise<any> => {
-    if (
-      AppConfig.isElectron &&
-      !platformHaveObjectStoreSupport() &&
-      !platformHaveWebDavSupport()
-    ) {
+    if (AppConfig.isElectron && !objectStoreAPI && !webDavAPI) {
       return window.electronIO.ipcRenderer.invoke('selectDirectoryDialog');
+    } else if (AppConfig.isCordova) {
+      return cordovaIO.selectDirectoryDialog();
     }
-    return platformSelectDirectoryDialog();
+    return Promise.reject(new Error('selectDirectoryDialog: not implemented'));
   };
 
   /**
@@ -675,24 +819,12 @@ export default class PlatformFacade {
    * @param files
    */
   static shareFiles = (files: Array<string>): void => {
-    platformShareFiles(files);
+    if (AppConfig.isCordova) {
+      cordovaIO.shareFiles(files);
+    } else {
+      console.log('shareFiles is implemented in Cordova only.');
+    }
   };
-
-  static createIndex(
-    param: any,
-    listDirectoryPromise,
-    loadTextFilePromise,
-    mode: string[],
-    ignorePatterns: Array<string>,
-  ) {
-    return platformCreateIndex(
-      param,
-      listDirectoryPromise,
-      loadTextFilePromise,
-      mode,
-      ignorePatterns,
-    );
-  }
 
   /**
    *  Load extensions is supported only on Electron
