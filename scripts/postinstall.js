@@ -35,7 +35,7 @@ function isInstalled(npmPackage) {
   }
 }
 
-if (!process.env.PD_PLATFORM) {
+/*if (!process.env.PD_PLATFORM) {
   console.log('PD_PLATFORM environment variable is not set');
   shell.exit(1);
 }
@@ -80,20 +80,20 @@ if (process.env.PD_PLATFORM === 'electron') {
     install = true;
   }
 }
-shell.exec('npm -v');
+shell.exec('npm -v');*/
 
 /**
  * If the installed tagspaces-platforms changed (with deleted node_modules) npm install will not update it -> change version or delete the tagspaces-platforms folder
  * @type {string}
  */
-if (install) {
+/*if (install) {
   const cmd =
     'npm run-script --prefix ./node_modules/@tagspaces/tagspaces-platforms install';
   // 'npm install @tagspaces/tagspaces-platforms@' + // --force --foreground-scripts
-  /*stripFromStart(
+  /!*stripFromStart(
       packageJson.dependencies['@tagspaces/tagspaces-platforms'],
       '^'
-    );*/
+    );*!/
   if (!fs.existsSync('./node_modules/@tagspaces/tagspaces-platforms')) {
     shell.exec('npm install');
   }
@@ -105,7 +105,7 @@ if (install) {
   }
   // fix: npm postinstall and install scripts not runs automatically after 'npm install' with npm v8
   // if (process.platform === 'win32') {
-  /*const projectDir = pathLib.join(__dirname, '..');
+  const projectDir = pathLib.join(__dirname, '..');
   const platformDir = pathLib.join(
     projectDir,
     'node_modules',
@@ -123,6 +123,6 @@ if (install) {
   if (shell.exec(cmd2).code !== 0) {
     shell.echo('Error: PostInstall ' + process.env.PD_PLATFORM + ' platform');
     shell.exit(1);
-  }*/
+  }
   // }
-}
+}*/

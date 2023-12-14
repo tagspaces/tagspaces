@@ -1,6 +1,5 @@
 import { BrowserWindow } from 'electron';
 import Chokidar = require('chokidar');
-import prcs from 'process';
 
 let watcher;
 
@@ -30,7 +29,7 @@ export function watchFolder(
   depth,
 ) {
   console.log('Start watching: ' + path);
-  if (prcs.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === 'development') {
     // TODO chokidar do not work in package https://github.com/electron/forge/issues/2594
     stopWatching();
     watcher = Chokidar.watch(path, {

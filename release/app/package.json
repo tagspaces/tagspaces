@@ -16,12 +16,7 @@
     "postinstall": "npm run rebuild && npm run link-modules",
     "link-modules": "node -r ts-node/register ../../.erb/scripts/link-modules.ts"
   },
-  "dependencies": {},
-  "webDependencies": {
-    "@tagspaces/extensions": "1.0.90"
-  },
-  "nodeDependencies": {
-    "@tagspaces/tagspaces-common": "4.0.3",
+  "dependencies": {
     "@tagspaces/tagspaces-common-node": "4.0.6",
     "@tagspaces/tagspaces-ws": "4.0.7",
     "@tagspaces/extensions": "1.0.90",

@@ -11,7 +11,6 @@ import {
   moveDirectoryPromise,
   loadTextFilePromise,
   getFileContentPromise,
-  getLocalFileContentPromise,
   saveFilePromise,
   saveTextFilePromise,
   saveBinaryFilePromise,
@@ -22,7 +21,6 @@ import {
 } from '@tagspaces/tagspaces-common-node/io-node';
 import fs from 'fs-extra';
 import path from 'path';
-import prcs from 'process';
 import {
   getOnProgress,
   isWorkerAvailable,
@@ -55,7 +53,7 @@ export default function loadMainEvents() {
       picturesFolder: app.getPath('pictures'),
       videosFolder: app.getPath('videos'),
     };
-    if (prcs.platform === 'darwin') {
+    if (process.platform === 'darwin') {
       paths.iCloudFolder =
         app.getPath('home') + '/Library/Mobile Documents/com~apple~CloudDocs';
     }
@@ -199,13 +197,6 @@ export default function loadMainEvents() {
     const result = await getFileContentPromise(filePath, type);
     return result;
   });
-  ipcMain.handle(
-    'getLocalFileContentPromise',
-    async (event, filePath, type) => {
-      const result = await getLocalFileContentPromise(filePath, type);
-      return result;
-    },
-  );
   ipcMain.handle(
     'saveFilePromise',
     async (event, param, content, overwrite) => {

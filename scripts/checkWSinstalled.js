@@ -75,13 +75,13 @@ if (platform === 'node') {
     !dirExist(dir) ||
     !isInstalled(
       '@tagspaces/extensions',
-      packageJson.nodeDependencies['@tagspaces/extensions'],
+      packageJson.dependencies['@tagspaces/extensions'],
     ) ||
     !isInstalled(
       '@tagspaces/tagspaces-ws',
-      packageJson.nodeDependencies['@tagspaces/tagspaces-ws'],
+      packageJson.dependencies['@tagspaces/tagspaces-ws'],
     ) ||
-    !isInstalled('sharp', packageJson.nodeDependencies['sharp'])
+    !isInstalled('sharp', packageJson.dependencies['sharp'])
   ) {
     installCmd = 'npm run-script install-ext-node';
   }
@@ -90,7 +90,7 @@ if (platform === 'node') {
     !dirExist(dir) ||
     !isInstalled(
       '@tagspaces/extensions',
-      packageJson.webDependencies['@tagspaces/extensions'],
+      packageJson.dependencies['@tagspaces/extensions'],
     ) ||
     isInstalled('@tagspaces/tagspaces-ws')
   ) {

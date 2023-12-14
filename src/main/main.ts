@@ -13,7 +13,6 @@ import { app, BrowserWindow, shell, ipcMain, globalShortcut } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import pm2 from '@elife/pm2';
-import prcs from 'process';
 import propertiesReader from 'properties-reader';
 import { resolveHtmlPath, stringifyMaxDepth } from './util';
 import windowStateKeeper from 'electron-window-state';
@@ -35,7 +34,7 @@ class AppUpdater {
   }
 }
 
-let isMacLike = prcs.platform === 'darwin';
+let isMacLike = process.platform === 'darwin';
 
 let mainWindow: BrowserWindow | null = null;
 /*let usedWsPort = undefined;
@@ -44,24 +43,24 @@ function getUsedWsPort() {
   return usedWsPort;
 }*/
 
-if (prcs.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
 }
 
 const isDebug =
-  prcs.env.NODE_ENV === 'development' || prcs.env.DEBUG_PROD === 'true';
+  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
 if (isDebug) {
   require('electron-debug')();
 }
 
-const testMode = prcs.env.NODE_ENV === 'test';
+const testMode = process.env.NODE_ENV === 'test';
 
 let startupFilePath;
 let portableMode;
 
-prcs.argv.forEach((arg, count) => {
+process.argv.forEach((arg, count) => {
   console.log('Opening file: ' + arg);
   if (
     arg.toLowerCase() === '-d' ||
@@ -71,7 +70,7 @@ prcs.argv.forEach((arg, count) => {
   ) {
     // debugMode = true;
   } else if (arg.toLowerCase() === '-p' || arg.toLowerCase() === '--portable') {
-    app.setPath('userData', prcs.cwd() + '/tsprofile'); // making the app portable
+    app.setPath('userData', process.cwd() + '/tsprofile'); // making the app portable
     portableMode = true;
   } else if (testMode || isDebug) {
     // ignoring the spectron testing
@@ -97,7 +96,7 @@ prcs.argv.forEach((arg, count) => {
 
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
-  const forceDownload = !!prcs.env.UPGRADE_EXTENSIONS;
+  const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
   const extensions = ['REACT_DEVELOPER_TOOLS'];
 
   return installer
@@ -281,11 +280,12 @@ function createNewWindowInstance(url?) {
     width: mainWindowState.width,
     height: mainWindowState.height,
     webPreferences: {
-      //webSecurity: app.isPackaged, // todo https://www.electronjs.org/docs/latest/tutorial/security#6-do-not-disable-websecurity
       spellcheck: true,
-      //nodeIntegration: true,
       webviewTag: true,
-      //contextIsolation: false,
+      preload:
+        app.isPackaged || !isDebug
+          ? path.join(__dirname, 'preload.js')
+          : path.join(__dirname, '../../.erb/dll/preload.js'),
     },
   });
 
@@ -362,7 +362,7 @@ function startWS() {
     let script;
     let envPath;
     if (app.isPackaged) {
-      filepath = prcs.resourcesPath; // path.join(__dirname, '../../..');
+      filepath = process.resourcesPath; // path.join(__dirname, '../../..');
       script = 'app.asar/node_modules/@tagspaces/tagspaces-ws/build/index.js'; //app.asar/
       envPath = path.join(filepath, 'app.asar/.env');
     } else {
@@ -495,7 +495,7 @@ const createWindow = async (i18n) => {
     }
 
     //console.log('prosess:' + stringifyMaxDepth(process, 3));
-    if (prcs.env.START_MINIMIZED) {
+    if (process.env.START_MINIMIZED) {
       mainWindow.minimize();
     } else {
       mainWindow.show();
@@ -696,7 +696,7 @@ app
 
       ipcMain.on('relaunch-app', reloadApp);
 
-      prcs.on('uncaughtException', (error) => {
+      process.on('uncaughtException', (error) => {
         if (error.stack) {
           console.error('error:', error.stack);
           throw new Error(error.stack);
