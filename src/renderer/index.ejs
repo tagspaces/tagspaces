@@ -4,14 +4,14 @@
     <title>TagSpaces Desktop</title>
     <meta
       http-equiv="Content-Security-Policy"
-      content="connect-src files: *; default-src 'self' ; object-src 'none' ; script-src 'self' 'unsafe-inline' ;  style-src 'self' 'unsafe-inline' data:  blob: ; media-src * blob: ; img-src * blob: data: content:;"
-    />
-    <meta charset="utf-8" />
-    <meta name="format-detection" content="telephone=yes" />
-    <meta name="msapplication-tap-highlight" content="no" />
+      content="<%= csp %>"
+    >
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=yes">
+    <meta name="msapplication-tap-highlight" content="no">
     <meta
       name="viewport"
-      content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width"
+      content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no"
     />
     <script type="text/javascript" src="./extconfig.js"></script>
   </head>
@@ -88,4 +88,3 @@
     </div>
   </body>
 </html>
-

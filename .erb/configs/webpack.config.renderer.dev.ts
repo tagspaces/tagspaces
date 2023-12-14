@@ -168,7 +168,10 @@ const configuration: webpack.Configuration = {
 
     new HtmlWebpackPlugin({
       filename: path.join('index.html'),
-      template: path.join(webpackPaths.srcRendererPath, 'appd.html'),
+      template: path.join(webpackPaths.srcRendererPath, 'index.ejs'),
+      templateParameters: {
+        csp: "connect-src files: *; default-src 'self' ; object-src 'none' ; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline' data:  blob: ; media-src * blob: ; img-src * blob: data: content:;",
+      },
       minify: {
         collapseWhitespace: true,
         removeAttributeQuotes: true,
