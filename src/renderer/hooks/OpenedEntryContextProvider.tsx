@@ -1025,7 +1025,7 @@ export const OpenedEntryContextProvider = ({
         closeAllFiles();
       }
     };
-  }, [openedEntries]);
+  }, [openedEntries, isEntryInFullWidth]);
 
   const reflectDeleteFile = useMemo(() => {
     return (filePath: string) => {
@@ -1037,7 +1037,7 @@ export const OpenedEntryContextProvider = ({
         closeAllFiles();
       }
     };
-  }, [openedEntries]);
+  }, [openedEntries, isEntryInFullWidth]);
 
   const context = useMemo(() => {
     return {
