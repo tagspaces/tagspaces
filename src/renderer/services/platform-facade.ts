@@ -323,7 +323,11 @@ export default class PlatformFacade {
     ignorePatterns: Array<string> = [],
   ): Promise<Array<any>> => {
     if (objectStoreAPI) {
-      return objectStoreAPI.listDirectoryPromise(param, mode, ignorePatterns);
+      return objectStoreAPI.listDirectoryPromise(
+        { ...param, bucketName: objectStoreAPI.config().bucketName },
+        mode,
+        ignorePatterns,
+      );
     } else {
       return Promise.reject(
         new Error('platformListObjectStoreDir: no objectStoreAPI'),
@@ -351,7 +355,10 @@ export default class PlatformFacade {
   static checkDirExist = (dir: string): Promise<boolean> => {
     if (objectStoreAPI) {
       return objectStoreAPI
-        .getPropertiesPromise(dir)
+        .getPropertiesPromise({
+          path: dir,
+          bucketName: objectStoreAPI.config().bucketName,
+        })
         .then((stats) => stats && !stats.isFile);
     } else if (webDavAPI) {
       return webDavAPI
@@ -369,7 +376,10 @@ export default class PlatformFacade {
   static checkFileExist = (file: string): Promise<boolean> => {
     if (objectStoreAPI) {
       return objectStoreAPI
-        .getPropertiesPromise(file)
+        .getPropertiesPromise({
+          path: file,
+          bucketName: objectStoreAPI.config().bucketName,
+        })
         .then((stats) => stats && stats.isFile);
     } else if (webDavAPI) {
       return webDavAPI
