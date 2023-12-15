@@ -404,6 +404,11 @@ export const DirectoryContentContextProvider = ({
 
   const updateCurrentDirEntry = useMemo(() => {
     return (path: string, entry: any) => {
+      if (path === currentDirectoryPath.current) {
+        directoryMeta.current = directoryMeta.current
+          ? { ...directoryMeta.current, ...entry }
+          : entry;
+      }
       const entryUpdated = { ...entry, ...(!entry.path && { path: path }) };
       /*if (searchMode.current) {
         const results = updateFsEntries(
@@ -501,7 +506,7 @@ export const DirectoryContentContextProvider = ({
               console.debug(
                 'Error loading meta of:' + directoryPath + ' ' + err,
               );
-              isMetaLoaded.current = false;
+              isMetaLoaded.current = true;
               return loadDirectoryContentInt(
                 directoryPath,
                 undefined,
@@ -645,6 +650,7 @@ export const DirectoryContentContextProvider = ({
         }
       }
     } else {
+      directoryMeta.current = undefined;
       currentPerspective.current = PerspectiveIDs.UNSPECIFIED;
     }
     const directoryContent = enhanceDirectoryContent(

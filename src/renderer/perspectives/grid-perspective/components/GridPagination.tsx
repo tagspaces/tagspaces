@@ -183,7 +183,8 @@ function GridPagination(props: Props) {
     PlatformIO.getDirSeparator(),
   );
 
-  const dirColor = directoryMeta.color || 'transparent';
+  const dirColor =
+    directoryMeta && directoryMeta.color ? directoryMeta.color : 'transparent';
 
   let folderSummary =
     (directories.length > 0 ? directories.length + ' folder(s) and ' : '') +
@@ -228,7 +229,11 @@ function GridPagination(props: Props) {
                   marginTop: 0,
                   marginBottom: 0,
                   height:
-                    !showDescription && directoryMeta.description ? 150 : 110,
+                    !showDescription &&
+                    directoryMeta &&
+                    directoryMeta.description
+                      ? 150
+                      : 110,
                   position: 'relative',
                 }}
               >
@@ -295,18 +300,20 @@ function GridPagination(props: Props) {
                   >
                     {folderSummary}
                   </Typography>
-                  {!showDescription && directoryMeta.description && (
-                    <Typography
-                      style={{
-                        fontSize: '0.8rem',
-                        wordBreak: 'break-all',
-                        height: 45,
-                        overflowY: 'auto',
-                      }}
-                    >
-                      {getDescriptionPreview(directoryMeta.description, 200)}
-                    </Typography>
-                  )}
+                  {!showDescription &&
+                    directoryMeta &&
+                    directoryMeta.description && (
+                      <Typography
+                        style={{
+                          fontSize: '0.8rem',
+                          wordBreak: 'break-all',
+                          height: 45,
+                          overflowY: 'auto',
+                        }}
+                      >
+                        {getDescriptionPreview(directoryMeta.description, 200)}
+                      </Typography>
+                    )}
                 </Box>
                 {/* <Tooltip title={t('core:thumbnail')}> */}
                 <div
@@ -403,11 +410,13 @@ function GridPagination(props: Props) {
           )}
           {pageFiles.length < 1 && directories.length < 1 && (
             <div style={{ textAlign: 'center' }}>
-              {!showDescription && directoryMeta.description && (
-                <div style={{ position: 'relative', marginBottom: 150 }}>
-                  <EntryIcon isFile={false} />
-                </div>
-              )}
+              {!showDescription &&
+                directoryMeta &&
+                directoryMeta.description && (
+                  <div style={{ position: 'relative', marginBottom: 150 }}>
+                    <EntryIcon isFile={false} />
+                  </div>
+                )}
               <Typography
                 style={{ padding: 15, color: theme.palette.text.secondary }}
               >
@@ -424,11 +433,13 @@ function GridPagination(props: Props) {
             directories.length >= 1 &&
             !showDirectories && (
               <div style={{ textAlign: 'center' }}>
-                {!showDescription && directoryMeta.description && (
-                  <div style={{ position: 'relative', marginBottom: 150 }}>
-                    <EntryIcon isFile={false} />
-                  </div>
-                )}
+                {!showDescription &&
+                  directoryMeta &&
+                  directoryMeta.description && (
+                    <div style={{ position: 'relative', marginBottom: 150 }}>
+                      <EntryIcon isFile={false} />
+                    </div>
+                  )}
                 <Typography
                   style={{ padding: 15, color: theme.palette.text.secondary }}
                 >
