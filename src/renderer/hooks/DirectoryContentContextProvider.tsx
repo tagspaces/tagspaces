@@ -316,9 +316,17 @@ export const DirectoryContentContextProvider = ({
         const enhancedEntriesPromises = metaChanged.map((entry) =>
           getMetaForEntry(entry),
         );
-        Promise.all(enhancedEntriesPromises).then((entries) => {
+        Promise.allSettled(enhancedEntriesPromises).then((results) => {
+          const entries = results
+            .filter(({ status }) => status === 'fulfilled')
+            .map(
+              (p) => (p as PromiseFulfilledResult<TS.FileSystemEntry>).value,
+            );
           updateCurrentDirEntries(entries);
         });
+        /* Promise.all(enhancedEntriesPromises).then((entries) => {
+          updateCurrentDirEntries(entries);
+        });*/
       }
       return Promise.resolve(true);
     };

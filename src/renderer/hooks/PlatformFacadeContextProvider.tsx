@@ -28,7 +28,6 @@ import {
   getThumbFileLocationForFile,
   normalizePath,
 } from '@tagspaces/tagspaces-common/paths';
-import PlatformIO from '-/services/platform-facade';
 import { useTranslation } from 'react-i18next';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useDispatch } from 'react-redux';
@@ -141,21 +140,21 @@ export const PlatformFacadeContextProvider = ({
   function setFolderThumbnailPromise(filePath: string): Promise<string> {
     const directoryPath = extractContainingDirectoryPath(
       filePath,
-      PlatformIO.getDirSeparator(),
+      PlatformFacade.getDirSeparator(),
     );
     const directoryName = extractDirectoryName(
       directoryPath,
-      PlatformIO.getDirSeparator(),
+      PlatformFacade.getDirSeparator(),
     );
     const sourceThumbPath = getThumbFileLocationForFile(
       filePath,
-      PlatformIO.getDirSeparator(),
+      PlatformFacade.getDirSeparator(),
       false,
     );
 
     const destThumbPath = getThumbFileLocationForDirectory(
       directoryPath,
-      PlatformIO.getDirSeparator(),
+      PlatformFacade.getDirSeparator(),
     );
 
     return copyFilePromise(
@@ -204,8 +203,8 @@ export const PlatformFacadeContextProvider = ({
     const ioJobPromises = paths.map((path) => {
       const targetFile =
         normalizePath(targetPath) +
-        PlatformIO.getDirSeparator() +
-        extractFileName(path, PlatformIO.getDirSeparator());
+        PlatformFacade.getDirSeparator() +
+        extractFileName(path, PlatformFacade.getDirSeparator());
       return {
         promise: copyFilePromiseOverwrite(path, targetFile),
         path: path,
@@ -304,7 +303,7 @@ export const PlatformFacadeContextProvider = ({
     return Promise.all(
       renameJobs.map(async (renameJob) => {
         try {
-          return await PlatformIO.renameFilePromise(
+          return await PlatformFacade.renameFilePromise(
             renameJob[0],
             renameJob[1],
             onProgress,
