@@ -210,7 +210,7 @@ function FolderContainer(props: Props) {
   };
 
   const openSearchKeyBinding = AppConfig.isElectron
-    ? ' (' + (AppConfig.isMaclike ? '⌘' : 'Ctrl') + '+Shift+F)'
+    ? ' (' + (AppConfig.isMacLike ? '⌘' : 'Ctrl') + '+Shift+F)'
     : '';
   // keyBindings['openSearch'].toUpperCase()
 

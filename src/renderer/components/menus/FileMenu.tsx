@@ -49,6 +49,7 @@ import {
   setFolderBackgroundPromise,
   getRelativeEntryPath,
 } from '-/services/utils-io';
+import { getKeyBindingObject } from '-/reducers/settings';
 import { Pro } from '-/pro';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useSelector, useDispatch } from 'react-redux';
@@ -70,6 +71,7 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
+import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
 
 interface Props {
   anchorEl: Element;
@@ -106,6 +108,7 @@ function FileMenu(props: Props) {
     selectedFilePath,
   } = props;
 
+  const keyBindings = useSelector(getKeyBindingObject);
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const { selectedEntries } = useSelectedEntriesContext();
@@ -405,6 +408,7 @@ function FileMenu(props: Props) {
           <AddRemoveTags />
         </ListItemIcon>
         <ListItemText primary={t('core:addRemoveTags')} />
+        <MenuKeyBinding keyBinding={keyBindings['addRemoveTags']} />
       </MenuItem>,
     );
     if (reorderTop) {
@@ -452,6 +456,7 @@ function FileMenu(props: Props) {
           <RenameFile />
         </ListItemIcon>
         <ListItemText primary={t('core:renameFile')} />
+        <MenuKeyBinding keyBinding={keyBindings['renameFile']} />
       </MenuItem>,
     );
     if (selectedEntries.length < 2) {

@@ -30,7 +30,9 @@ const icon2xWhite =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACoAAAAqCAYAAADFw8lbAAAACXBIWXMAAACjAAAAowHwx5rOAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAA+FJREFUWIW1mV2IVVUUx/93ZjLTCDM0sDIqKY2G7AMq+0ChlCh8GAkCwUj7xPKhD4ueBgp6KRA0iKSggsAHw/BxqCfJIEoxMjKRKCU11KwpR7vdXw9rTnPuae919pm75w+HuXPOXmv/zt5rr732vS1AU6B+SdskrcrlsC+Xo5JakrYqI6Q0NaBvSXo0t9PcoK9LejqzT0l5QTdKejmjvy61Mi2mJyS9LYvPkL6T9Feir0WSZvzvLtDrNQS0iet9oK+Bv69CTnqd+uWSPpKlo5B2SFonqVO615K0QNLtkmYm99TDSC4BRp2RHAHOr9jcAOwptRkDXkwZ0clCLgZOOZC7gQsrNrOAnyvtOuN/H5sK0GuBow7kPuDigN2TkfYd4Ps60KYxeoWkEUmXRp4flMXtqcCzhRGbImYHvI6bgM6VQc6PPD8s6T5JR0v3zit9PhCxQ9IhSW2398TpnkX3IqjqOLCoYtMPbAfeAwaA2cAvgWkHWF839SmQM4BdDuRvwM0Bu82lNjuAC4BbgP2l++eAYaDVK+h04FMH8k/gzoDdcKDtbuASbHRvBO7FRjkp4XuQA+MjEdNZYEXA7jbH5hvgMqfPO4jk5phBH/Ch02EbeMixfxb4J2J7BBgM2NyKhVFQsY42xwywBbDOsS2uIeBMxMdJ4K5S28XACafPQ6EOXnMMAF5IgCxmZRnxUToDrAKuw99AfgKuqjrfUAM5nAi5EfgEyxiDwOGIv7bzIoy/wEKgK48+wkReC2lLIuTDTMTnF8Ac4GrggOM7pGPA9YXfcjx5NeUHpNWUS7GKqKwfgGuw1PR5IuSvWKX1n28B92OpJqaPsVRVBzmbeEV1BMudM4HPaiBPYIury3+fpKckTXN22YskTXf3YdNJSWsljQWezZO0S9JKWWET02lJKyTtDe3104BtNW/5JRZrKTG61BlZbw2MAnfH/BYf+oF3amC/BS5PAJ2Dv9JjkPd4fsv/tAjv0WX9iBXOMYfrsWS+BJgH7E2AHMPWiTsAoZsb8KfoGHBTwG41E2lpFKsD5gO/O77OAg/UQcZABawB/nY6+AOrfor2D2IlWxViP3GdA1amQHqgGncS26vBpmwIy68pU1xWG9sYkiDrQIsVfLqmw7XAXODrBpCrm0CmgAorv447HXeA57HjsVdkF20fbwqZCipsz62eyat6FStEskM2ARVwJXb+now6dB/gphRUNIvFsp7rBXIyoMJicaQB5Cu9Qk4WVNjRd2cC5HAOyF5AhdUH7zqQb+aC7BVUWH3wRgByU07IHKDF9VIJcivd33xkuXJ9hy9Jz0galBXi2X9l+xc7opIKau8a2gAAAABJRU5ErkJggg==';
 
 export default function buildTrayIconMenu(mainPageProps: any, i18n, isMacLike) {
-  const cKey = isMacLike ? ' -  ⌘' : ' - Ctrl';
+  const cKey = isMacLike ? '  -  ⌘' : 'Ctrl';
+  const sKey = isMacLike ? '⇧' : 'Shift';
+  const pKey = isMacLike ? ' ' : ' + ';
 
   function openNextFile() {
     mainPageProps.openNextFile();
@@ -57,43 +59,44 @@ export default function buildTrayIconMenu(mainPageProps: any, i18n, isMacLike) {
       type: 'separator',
     },
     {
-      label: i18n.t('showTagSpaces') + cKey + '+Shift+W',
+      label: i18n.t('showTagSpaces') + cKey + pKey + sKey + pKey + 'W',
+      accelerator: 'Terd',
       click: mainPageProps.showTagSpaces,
     },
     {
-      label: i18n.t('showSearch') + cKey + '+Shift+F',
+      label: i18n.t('showSearch') + cKey + pKey + sKey + pKey + 'F',
       click: mainPageProps.openSearch,
     },
     {
       type: 'separator',
     },
     {
-      label: i18n.t('newFileNote') + cKey + '+Shift+N',
+      label: i18n.t('newFileNote') + cKey + pKey + sKey + pKey + 'N',
       click: mainPageProps.toggleNewFileDialog,
     },
     {
       type: 'separator',
     },
     {
-      label: i18n.t('openNextFileTooltip') + cKey + '+Shift+D',
+      label: i18n.t('openNextFileTooltip') + cKey + pKey + sKey + pKey + 'D',
       click: openNextFile,
     },
     {
-      label: i18n.t('openPrevFileTooltip') + cKey + '+Shift+A',
+      label: i18n.t('openPrevFileTooltip') + cKey + pKey + sKey + pKey + 'A',
       click: openPrevFile,
     },
     {
       type: 'separator',
     },
     {
-      label: i18n.t('pauseResumePlayback') + cKey + '+Shift+P',
+      label: i18n.t('pauseResumePlayback') + cKey + pKey + sKey + pKey + 'P',
       click: playResumePlayback,
     },
     {
       type: 'separator',
     },
     {
-      label: i18n.t('quitTagSpaces') + cKey + '+Q',
+      label: i18n.t('quitTagSpaces') + cKey + pKey + 'Q',
       click: quitApp,
     },
   ];

@@ -96,7 +96,10 @@ function MainToolbar(props: Props) {
           title={
             t('core:navigateToParentDirectory') +
             ' (' +
-            keyBindings['openParentDirectory'].toUpperCase() +
+            keyBindings['openParentDirectory']
+              .replace('command', '⌘')
+              .replace('+', ' + ')
+              .toUpperCase() +
             ')'
           }
         >
@@ -119,7 +122,10 @@ function MainToolbar(props: Props) {
           title={
             t('core:toggleSelectAllFiles') +
             ' (' +
-            keyBindings['selectAll'].toUpperCase() +
+            keyBindings['selectAll']
+              .replace('command', '⌘')
+              .replace('+', ' + ')
+              .toUpperCase() +
             ')'
           }
         >
@@ -146,7 +152,10 @@ function MainToolbar(props: Props) {
             title={
               t('core:tagSelectedEntries') +
               ' (' +
-              keyBindings['addRemoveTags'].toUpperCase() +
+              keyBindings['addRemoveTags']
+                .replace('command', '⌘')
+                .replace('+', ' + ')
+                .toUpperCase() +
               ')'
             }
           >

@@ -747,7 +747,7 @@ function EntryContainer() {
               title={
                 t('core:saveFile') +
                 ' (' +
-                (AppConfig.isMaclike ? '⌘' : 'CTRL') +
+                (AppConfig.isMacLike ? '⌘' : 'CTRL') +
                 ' + S)'
               }
             >
