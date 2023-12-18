@@ -94,6 +94,10 @@ process.argv.forEach((arg, count) => {
   }
 });
 
+// if (isDebug) {
+//   app.commandLine.appendSwitch('--allow-file-access-from-files');
+// }
+
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
@@ -281,7 +285,7 @@ function createNewWindowInstance(url?) {
     height: mainWindowState.height,
     webPreferences: {
       spellcheck: true,
-      webviewTag: true,
+      // webviewTag: true,
       preload:
         app.isPackaged || !isDebug
           ? path.join(__dirname, 'preload.js')
@@ -458,7 +462,7 @@ const createWindow = async (i18n) => {
       //webSecurity: app.isPackaged, // todo https://www.electronjs.org/docs/latest/tutorial/security#6-do-not-disable-websecurity
       spellcheck: true,
       //nodeIntegration: true,
-      webviewTag: true,
+      //webviewTag: true,
       //contextIsolation: false,
       preload:
         app.isPackaged || !isDebug
