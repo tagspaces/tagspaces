@@ -35,15 +35,16 @@ import { useTranslation } from 'react-i18next';
 import AppConfig from '-/AppConfig';
 
 export function adjustKeyBinding(keyBinding: string) {
-  let adjKB = keyBinding;
+  let adjKB = keyBinding.toLowerCase();
   if (AppConfig.isMacLike) {
     adjKB = adjKB
-      .replace('+', ' ')
-      .replace('command', '⌘')
-      .replace('shift', '')
+      .replaceAll('+', ' ')
+      .replaceAll('command', '⌘')
+      .replaceAll('shift', '⇧')
+      .replaceAll('backspace', '⌫')
       .toUpperCase();
   } else {
-    adjKB = adjKB.replace('+', ' + ').toUpperCase();
+    adjKB = adjKB.replaceAll('+', ' + ').toUpperCase();
   }
   return adjKB;
 }

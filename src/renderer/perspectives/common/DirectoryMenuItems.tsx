@@ -169,6 +169,7 @@ export function getDirectoryMenuItems(
           <DeleteIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:deleteDirectory')} />
+        <MenuKeyBinding keyBinding={keyBindings['deleteDocument']} />
       </MenuItem>,
     );
   }
@@ -332,6 +333,7 @@ export function getDirectoryMenuItems(
           <AddRemoveTags />
         </ListItemIcon>
         <ListItemText primary={t('core:addRemoveTags')} />
+        <MenuKeyBinding keyBinding={keyBindings['addRemoveTags']} />
       </MenuItem>,
     );
   }

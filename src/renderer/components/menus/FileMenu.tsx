@@ -510,6 +510,7 @@ function FileMenu(props: Props) {
           <DeleteIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:deleteEntry')} />
+        <MenuKeyBinding keyBinding={keyBindings['deleteDocument']} />
       </MenuItem>,
     );
     menuItems.push(<Divider key="fmDivider2" />);

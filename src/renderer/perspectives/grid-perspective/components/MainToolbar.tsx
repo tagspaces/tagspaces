@@ -49,6 +49,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { adjustKeyBinding } from '-/components/dialogs/KeyboardDialog';
 
 interface Props {
   prefixDataTID?: string;
@@ -96,10 +97,7 @@ function MainToolbar(props: Props) {
           title={
             t('core:navigateToParentDirectory') +
             ' (' +
-            keyBindings['openParentDirectory']
-              .replace('command', '⌘')
-              .replace('+', ' + ')
-              .toUpperCase() +
+            adjustKeyBinding(keyBindings['openParentDirectory']) +
             ')'
           }
         >
@@ -122,10 +120,7 @@ function MainToolbar(props: Props) {
           title={
             t('core:toggleSelectAllFiles') +
             ' (' +
-            keyBindings['selectAll']
-              .replace('command', '⌘')
-              .replace('+', ' + ')
-              .toUpperCase() +
+            adjustKeyBinding(keyBindings['selectAll']) +
             ')'
           }
         >
@@ -152,10 +147,7 @@ function MainToolbar(props: Props) {
             title={
               t('core:tagSelectedEntries') +
               ' (' +
-              keyBindings['addRemoveTags']
-                .replace('command', '⌘')
-                .replace('+', ' + ')
-                .toUpperCase() +
+              adjustKeyBinding(keyBindings['addRemoveTags']) +
               ')'
             }
           >

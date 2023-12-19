@@ -53,6 +53,7 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import RenderPerspective from '-/components/RenderPerspective';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { adjustKeyBinding } from '-/components/dialogs/KeyboardDialog';
 
 interface Props {
   isDesktopMode: boolean;
@@ -210,7 +211,11 @@ function FolderContainer(props: Props) {
   };
 
   const openSearchKeyBinding = AppConfig.isElectron
-    ? ' (' + (AppConfig.isMacLike ? '⌘' : 'Ctrl') + '+Shift+F)'
+    ? ' (' +
+      adjustKeyBinding(
+        AppConfig.isMacLike ? 'Command+Shift+F' : 'Ctrl+Shift+F',
+      ) +
+      ')'
     : '';
   // keyBindings['openSearch'].toUpperCase()
 
