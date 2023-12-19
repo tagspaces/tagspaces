@@ -21,7 +21,7 @@ div[tabindex='-1']:focus {
 html,
 body {
   overscroll-behavior-x: none;
-  height: 100vh;
+  height: 100%;
   position: absolute;
   top: 0;
   right: 0;

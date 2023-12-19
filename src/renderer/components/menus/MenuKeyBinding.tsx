@@ -18,29 +18,21 @@
 
 import React from 'react';
 import Typography from '@mui/material/Typography';
-import AppConfig from '-/AppConfig';
+import { adjustKeyBinding } from '-/components/dialogs/KeyboardDialog';
 
 interface Props {
   keyBinding?: string;
 }
 
 function MenuKeyBinding(props: Props) {
-  let adjKB = props.keyBinding;
-  if (AppConfig.isMacLike) {
-    adjKB = adjKB
-      .replace('+', ' ')
-      .replace('command', '⌘')
-      .replace('shift', '');
-  } else {
-    adjKB = adjKB.replace('+', ' + ');
-  }
+  let keyBinding = props.keyBinding;
   return (
     <Typography
       variant="body2"
       color="text.secondary"
       style={{ textTransform: 'uppercase' }}
     >
-      {adjKB}
+      {adjustKeyBinding(keyBinding)}
     </Typography>
   );
 }

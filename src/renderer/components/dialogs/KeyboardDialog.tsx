@@ -17,7 +17,6 @@
  */
 
 import React from 'react';
-import { styled } from '@mui/material/styles';
 import { useSelector } from 'react-redux';
 import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
@@ -33,22 +32,21 @@ import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTranslation } from 'react-i18next';
+import AppConfig from '-/AppConfig';
 
-const PREFIX = 'KeyboardDialog';
-
-const classes = {
-  shortcutKey: `${PREFIX}-shortcutKey`,
-};
-
-const StyledDialog = styled(Dialog)(({ theme }) => ({
-  [`& .${classes.shortcutKey}`]: {
-    backgroundColor: theme.palette.primary.main,
-    font: 'Console',
-    fontFamily: 'monospace',
-    padding: '5px',
-    borderRadius: '5px',
-  },
-}));
+export function adjustKeyBinding(keyBinding: string) {
+  let adjKB = keyBinding;
+  if (AppConfig.isMacLike) {
+    adjKB = adjKB
+      .replace('+', ' ')
+      .replace('command', '⌘')
+      .replace('shift', '')
+      .toUpperCase();
+  } else {
+    adjKB = adjKB.replace('+', ' + ').toUpperCase();
+  }
+  return adjKB;
+}
 
 interface Props {
   open: boolean;
@@ -63,7 +61,7 @@ function KeyboardDialog(props: Props) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   return (
-    <StyledDialog
+    <Dialog
       open={open}
       onClose={onClose}
       fullScreen={fullScreen}
@@ -86,8 +84,17 @@ function KeyboardDialog(props: Props) {
             Object.keys(keyBindings).map((shortcutKey) => (
               <ListItem key={shortcutKey}>
                 <ListItemText primary={t('core:' + shortcutKey)} />
-                <ListItemSecondaryAction className={classes.shortcutKey}>
-                  {keyBindings[shortcutKey].toUpperCase()}
+                <ListItemSecondaryAction
+                  style={{
+                    backgroundColor: 'gray',
+                    color: 'white',
+                    font: 'Console',
+                    fontFamily: 'monospace',
+                    padding: '5px',
+                    borderRadius: '5px',
+                  }}
+                >
+                  {adjustKeyBinding(keyBindings[shortcutKey])}
                 </ListItemSecondaryAction>
               </ListItem>
             ))}
@@ -105,7 +112,7 @@ function KeyboardDialog(props: Props) {
           {t('core:ok')}
         </Button>
       </DialogActions>
-    </StyledDialog>
+    </Dialog>
   );
 }
 

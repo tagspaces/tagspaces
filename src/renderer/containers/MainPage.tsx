@@ -715,6 +715,7 @@ function MainPage(props: Props) {
         >
           <style>
             {`
+              html { zoom: 0.9 }
               body { background-color: ${
                 theme.palette.background.default
               } !important;}
