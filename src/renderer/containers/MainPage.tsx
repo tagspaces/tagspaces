@@ -478,8 +478,11 @@ function MainPage(props: Props) {
     toggleOpenLinkDialog,
     toggleProTeaser,
     setFirstRun,
+    isDesktopMode,
     mainSplitSize,
   } = props;
+
+  const zoomFactor = AppConfig.isMacLike && isDesktopMode ? 0.9 : 1;
   const { FILE } = NativeTypes;
 
   const isFileOpened = openedEntries.length > 0;
@@ -715,7 +718,11 @@ function MainPage(props: Props) {
         >
           <style>
             {`
-              html { zoom: 0.9 }
+              html { 
+                zoom: ${zoomFactor}; 
+                -moz-transform: scale(${zoomFactor}); 
+                -moz-transform-origin: 0 0;
+              }
               body { background-color: ${
                 theme.palette.background.default
               } !important;}
@@ -742,7 +749,7 @@ function MainPage(props: Props) {
               }
           `}
           </style>
-          {props.isDesktopMode || (AppConfig.isAmplify && !props.user) ? (
+          {isDesktopMode || (AppConfig.isAmplify && !props.user) ? (
             <TargetFileBox
               accepts={[FILE]}
               setMoveCopyDialogOpened={setMoveCopyDialogOpened}
