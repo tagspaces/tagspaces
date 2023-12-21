@@ -111,7 +111,7 @@ const installExtensions = async () => {
     .catch(console.log);
 };
 
-function showTagSpaces() {
+function showApp() {
   if (mainWindow) {
     if (mainWindow.isMinimized()) {
       mainWindow.restore();
@@ -122,152 +122,148 @@ function showTagSpaces() {
 
 function openLocationManagerPanel() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'open-location-manager-panel');
   }
 }
 function openTagLibraryPanel() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'open-tag-library-panel');
   }
 }
 function goBack() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'go-back');
   }
 }
 function goForward() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'go-forward');
   }
 }
 function setZoomResetApp() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'set-zoom-reset-app');
   }
 }
 function setZoomInApp() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'set-zoom-in-app');
   }
 }
 function setZoomOutApp() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'set-zoom-out-app');
   }
 }
 function exitFullscreen() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'exit-fullscreen');
   }
 }
 function toggleSettingsDialog() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'toggle-settings-dialog');
   }
 }
 function openHelpFeedbackPanel() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'open-help-feedback-panel');
   }
 }
 function toggleKeysDialog() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'toggle-keys-dialog');
   }
 }
 function toggleOnboardingDialog() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'toggle-onboarding-dialog');
   }
 }
 function openURLExternally(data) {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('open-url-externally', data);
   }
 }
 function toggleLicenseDialog() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'toggle-license-dialog');
   }
 }
 function toggleThirdPartyLibsDialog() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'toggle-third-party-libs-dialog');
   }
 }
 function toggleAboutDialog() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'toggle-about-dialog');
   }
 }
 function showSearch() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'open-search');
   }
 }
 
 function newTextFile() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'new-text-file');
   }
 }
 
 function getNextFile() {
   if (mainWindow) {
-    // showTagSpaces();
     mainWindow.webContents.send('cmd', 'next-file');
   }
 }
 
 function getPreviousFile() {
   if (mainWindow) {
-    // showTagSpaces();
     mainWindow.webContents.send('cmd', 'previous-file');
   }
 }
 
 function showCreateDirectoryDialog() {
   if (mainWindow) {
-    // showTagSpaces();
     mainWindow.webContents.send('cmd', 'show-create-directory-dialog');
   }
 }
 
 function toggleOpenLinkDialog() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'toggle-open-link-dialog');
   }
 }
 
 function resumePlayback() {
   if (mainWindow) {
-    // showTagSpaces();
     mainWindow.webContents.send('play-pause', true);
   }
 }
 
 function reloadApp() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.loadURL(resolveHtmlPath('index.html'));
   }
 }
@@ -305,7 +301,7 @@ function createNewWindowInstance(url?) {
 function buildTrayMenu(i18n) {
   buildTrayIconMenu(
     {
-      showTagSpaces,
+      showTagSpaces: showApp,
       resumePlayback,
       createNewWindowInstance,
       openSearch: showSearch,
@@ -322,7 +318,7 @@ function buildTrayMenu(i18n) {
 function buildAppMenu(i18n) {
   buildDesktopMenu(
     {
-      showTagSpaces,
+      showTagSpaces: showApp,
       openSearch: showSearch,
       toggleNewFileDialog: newTextFile,
       openNextFile: getNextFile,
@@ -692,7 +688,7 @@ app
           globalShortcut.register('MediaNextTrack', getNextFile);
           globalShortcut.register('CommandOrControl+Shift+A', getPreviousFile);
           globalShortcut.register('MediaPreviousTrack', getPreviousFile);
-          globalShortcut.register('CommandOrControl+Shift+W', showTagSpaces);
+          globalShortcut.register('CommandOrControl+Shift+W', showApp);
         } else {
           globalShortcut.unregisterAll();
         }

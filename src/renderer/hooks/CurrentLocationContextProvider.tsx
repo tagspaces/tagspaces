@@ -40,6 +40,7 @@ import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { getPersistTagsInSidecarFile } from '-/reducers/settings';
 import AppConfig from '../AppConfig';
+import versionMeta from '-/version.json';
 
 type CurrentLocationContextData = {
   currentLocation: TS.Location;
@@ -278,6 +279,9 @@ export const CurrentLocationContextProvider = ({
 
   function changeLocation(location: TS.Location) {
     if (!currentLocation || location.uuid !== currentLocation.uuid) {
+      if (location && location.name) {
+        document.title = location.name + ' | ' + versionMeta.name;
+      }
       setCurrentLocation(location);
     }
   }
@@ -378,6 +382,7 @@ export const CurrentLocationContextProvider = ({
           setCurrentLocation(undefined);
         }
         clearAllURLParams();
+        document.title = versionMeta.name;
         return true;
       });
     }
@@ -387,6 +392,7 @@ export const CurrentLocationContextProvider = ({
     // location needed evtl. to unwatch many loc. root folders if available
     setCurrentLocation(undefined);
     clearAllURLParams();
+    document.title = versionMeta.name;
     return true;
   }
 

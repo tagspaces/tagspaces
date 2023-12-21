@@ -68,7 +68,8 @@ function SettingsKeyBindings() {
       <Typography variant="body2">
         The following key names can be used for defining key bindings:{' '}
         <Typography variant="overline">
-          ctrl, command, alt, option, shift, space
+          ctrl, command, alt, option, shift, space, backspace, escape, enter,
+          up, down, left, right
         </Typography>{' '}
         plus letters and digits from your keyboard.
       </Typography>
