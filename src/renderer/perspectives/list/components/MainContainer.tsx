@@ -473,8 +473,10 @@ function ListPerspective(props: Props) {
     deleteDocument: keyBindings.deleteDocument,
     addRemoveTags: keyBindings.addRemoveTags,
     renameFile: keyBindings.renameFile,
+    duplicateFile: keyBindings.duplicateFile,
     copyMoveSelectedEntries: keyBindings.copyMoveSelectedEntries,
     openEntry: keyBindings.openEntry,
+    openEntryDetails: keyBindings.openEntryDetails,
     openFileExternally: keyBindings.openFileExternally,
   };
 

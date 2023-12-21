@@ -483,7 +483,7 @@ function GridPerspective(props: Props) {
     duplicateFile: keyBindings.duplicateFile,
     copyMoveSelectedEntries: keyBindings.copyMoveSelectedEntries,
     openEntry: keyBindings.openEntry,
-    openEntryProperties: keyBindings.openEntryProperties,
+    openEntryDetails: keyBindings.openEntryDetails,
     openFileExternally: keyBindings.openFileExternally,
   };
 
