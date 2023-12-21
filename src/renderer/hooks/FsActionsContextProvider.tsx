@@ -23,10 +23,19 @@ import { useTranslation } from 'react-i18next';
 import PlatformIO from '-/services/platform-facade';
 import {
   extractDirectoryName,
+  extractContainingDirectoryPath,
   getMetaFileLocationForFile,
   getThumbFileLocationForFile,
+  extractFileName,
+  extractTags,
 } from '@tagspaces/tagspaces-common/paths';
-import { getWarningOpeningFilesExternally } from '-/reducers/settings';
+import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
+import { generateFileName } from '-/services/utils-io';
+import AppConfig from '-/AppConfig';
+import {
+  getPrefixTagContainer,
+  getWarningOpeningFilesExternally,
+} from '-/reducers/settings';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
@@ -45,12 +54,14 @@ type FsActionsContextData = {
     reflect?: boolean,
   ) => Promise<boolean>;
   openFileNatively: (selectedFile?: string) => void;
+  duplicateFile: (selectedFilePath: string) => void;
 };
 
 export const FsActionsContext = createContext<FsActionsContextData>({
   renameDirectory: () => Promise.resolve(''),
   renameFile: () => Promise.resolve(false),
   openFileNatively: undefined,
+  duplicateFile: undefined,
 });
 
 export type FsActionsContextProviderProps = {
@@ -67,12 +78,17 @@ export const FsActionsContextProvider = ({
   const { reflectRenameEntry } = useLocationIndexContext();
   const { showNotification } = useNotificationContext();
   //const { watcher } = useFSWatcherContext();
-  const { renameFilePromise, renameFilesPromise, renameDirectoryPromise } =
-    usePlatformFacadeContext();
+  const {
+    copyFilePromise,
+    renameFilePromise,
+    renameFilesPromise,
+    renameDirectoryPromise,
+  } = usePlatformFacadeContext();
   const dispatch: AppDispatch = useDispatch();
   const warningOpeningFilesExternally = useSelector(
     getWarningOpeningFilesExternally,
   );
+  const prefixTagContainer = useSelector(getPrefixTagContainer);
 
   const renameDirectory = useMemo(() => {
     return (directoryPath: string, newDirectoryName: string): Promise<string> =>
@@ -228,11 +244,57 @@ export const FsActionsContextProvider = ({
     }
   }
 
+  function duplicateFile(selectedFilePath: string) {
+    if (selectedFilePath) {
+      const dirPath = extractContainingDirectoryPath(
+        selectedFilePath,
+        PlatformIO.getDirSeparator(),
+      );
+
+      const fileName = extractFileName(
+        selectedFilePath,
+        PlatformIO.getDirSeparator(),
+      );
+
+      const extractedTags = extractTags(
+        selectedFilePath,
+        AppConfig.tagDelimiter,
+        PlatformIO.getDirSeparator(),
+      );
+      extractedTags.push('copy');
+      extractedTags.push(formatDateTime4Tag(new Date(), true));
+
+      const newFilePath =
+        (dirPath ? dirPath + PlatformIO.getDirSeparator() : '') +
+        generateFileName(
+          fileName,
+          extractedTags,
+          AppConfig.tagDelimiter,
+          prefixTagContainer,
+        );
+
+      copyFilePromise(selectedFilePath, newFilePath)
+        .then(() => {
+          // if (onDuplicateFile) {
+          //  onDuplicateFile(dirPath);
+          // } else {
+          return openDirectory(dirPath);
+          // }
+          // return true;
+        })
+        .catch((error) => {
+          showNotification('Error creating duplicate: ', error);
+        });
+    }
+    showNotification('Unanble to duplicate, no file selected');
+  }
+
   const context = useMemo(() => {
     return {
       renameDirectory,
       renameFile,
       openFileNatively,
+      duplicateFile,
     };
   }, [renameDirectory, renameFile]); //, watcher
 

@@ -33,6 +33,7 @@ import {
 import DefaultSettings from '-/reducers/settings-default';
 import { AppDispatch } from '-/reducers/app';
 import { useTranslation } from 'react-i18next';
+import Typography from '@mui/material/Typography';
 
 const PREFIX = 'SettingsKeyBindings';
 
@@ -64,6 +65,13 @@ function SettingsKeyBindings() {
 
   return (
     <Root className={classes.keyBinding} noValidate autoComplete="off">
+      <Typography variant="body2">
+        The following key names can be used for defining key bindings:{' '}
+        <Typography variant="overline">
+          ctrl, command, alt, option, shift, space
+        </Typography>{' '}
+        plus letters and digits from your keyboard.
+      </Typography>
       <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
         <ListItemText primary={t('core:enableGlobalKeyboardShortcuts')} />
         <Switch

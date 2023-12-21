@@ -73,9 +73,13 @@ function ListPerspective(props: Props) {
   const { openRenameEntryDialog } = props;
 
   const { openEntry, openPrevFile, openNextFile } = useOpenedEntryContext();
-  const { directoryMeta, currentDirectoryPath, setDirectoryMeta } =
-    useDirectoryContentContext();
-  const { openFileNatively } = useFsActionsContext();
+  const {
+    directoryMeta,
+    openDirectory,
+    currentDirectoryPath,
+    setDirectoryMeta,
+  } = useDirectoryContentContext();
+  const { openFileNatively, duplicateFile } = useFsActionsContext();
   const dispatch: AppDispatch = useDispatch();
 
   const { sortedDirContent, sortBy, orderBy, setSortBy, setOrderBy } =
@@ -469,6 +473,7 @@ function ListPerspective(props: Props) {
     deleteDocument: keyBindings.deleteDocument,
     addRemoveTags: keyBindings.addRemoveTags,
     renameFile: keyBindings.renameFile,
+    copyMoveSelectedEntries: keyBindings.copyMoveSelectedEntries,
     openEntry: keyBindings.openEntry,
     openFileExternally: keyBindings.openFileExternally,
   };
@@ -506,14 +511,48 @@ function ListPerspective(props: Props) {
       }
     },
     renameFile: () => {
-      openRenameEntryDialog();
+      if (selectedEntries && selectedEntries.length === 1) {
+        openRenameEntryDialog();
+      }
+    },
+    copyMoveSelectedEntries: () => {
+      if (selectedEntries && selectedEntries.length > 0) {
+        openMoveCopyFilesDialog();
+      }
     },
     openEntry: (e) => {
-      e.preventDefault();
-      openEntry();
+      // e.preventDefault();
+      if (selectedEntries && selectedEntries.length === 1) {
+        const entry = selectedEntries[0];
+        if (entry.isFile) {
+          openEntry(entry.path, false);
+        } else {
+          openDirectory(entry.path);
+        }
+      }
     },
     openFileExternally: () => {
-      openFileNatively();
+      if (selectedEntries && selectedEntries.length === 1) {
+        const entry = selectedEntries[0];
+        openFileNatively(entry.path);
+      }
+      // if (lastSelectedEntryPath) {
+      //   openFileNatively(lastSelectedEntryPath);
+      // } else if (currentDirectoryPath) {
+      //   openFileNatively(currentDirectoryPath);
+      // }
+    },
+    openEntryDetails: () => {
+      if (selectedEntries && selectedEntries.length === 1) {
+        const entry = selectedEntries[0];
+        openEntry(entry.path, true);
+      }
+    },
+    duplicateFile: () => {
+      if (selectedEntries && selectedEntries.length === 1) {
+        const entry = selectedEntries[0];
+        duplicateFile(entry.path);
+      }
     },
   };
 

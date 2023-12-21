@@ -40,6 +40,7 @@ export function adjustKeyBinding(keyBinding: string) {
     adjKB = adjKB
       .replaceAll('+', ' ')
       .replaceAll('command', '⌘')
+      .replaceAll('option', '⌥')
       .replaceAll('shift', '⇧')
       .replaceAll('backspace', '⌫')
       .toUpperCase();

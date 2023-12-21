@@ -165,7 +165,14 @@ function MainToolbar(props: Props) {
           </Tooltip>
         )}
         {!readOnlyMode && (
-          <Tooltip title={t('core:copyMoveSelectedEntries')}>
+          <Tooltip
+            title={
+              t('core:copyMoveSelectedEntries') +
+              ' (' +
+              adjustKeyBinding(keyBindings['copyMoveSelectedEntries']) +
+              ')'
+            }
+          >
             <span>
               <IconButton
                 aria-label={t('core:copyMoveSelectedEntries')}

@@ -75,6 +75,7 @@ export function getDirectoryMenuItems(
               <OpenFolderIcon />
             </ListItemIcon>
             <ListItemText primary={t('core:openDirectory')} />
+            <MenuKeyBinding keyBinding={keyBindings['openEntry']} />
           </MenuItem>,
         );
       }
@@ -151,6 +152,7 @@ export function getDirectoryMenuItems(
           <MoveCopy />
         </ListItemIcon>
         <ListItemText primary={t('core:moveCopyDirectory')} />
+        <MenuKeyBinding keyBinding={keyBindings['copyMoveSelectedEntries']} />
       </MenuItem>,
     );
   }
@@ -196,6 +198,7 @@ export function getDirectoryMenuItems(
           <OpenFolderNativelyIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:showInFileManager')} />
+        <MenuKeyBinding keyBinding={keyBindings['openFileExternally']} />
       </MenuItem>,
     );
   }
@@ -437,6 +440,7 @@ export function getDirectoryMenuItems(
           <PropertiesIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:directoryPropertiesTitle')} />
+        <MenuKeyBinding keyBinding={keyBindings['openEntryDetails']} />
       </MenuItem>,
     );
   }
