@@ -1178,7 +1178,7 @@ export function findColorForEntry(
   supportedFileTypes: Array<any>,
 ): string {
   if (!fsEntry.isFile) {
-    return 'gray'; // AppConfig.defaultFolderColor;
+    return AppConfig.defaultFolderColor;
   }
   if (fsEntry.extension !== undefined) {
     const fileType = supportedFileTypes.find(
