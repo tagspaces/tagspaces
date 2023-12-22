@@ -42,9 +42,10 @@ The native Windows, Linux and Mac OS versions of TagSpaces are built with [Elect
 
 ## Repository Directory Structure
 
-    ./app................ contains the application core
-    ./app/locales........ contains the language files needed for the application internationalization
-    ./app/node_modules... contains the TagSpaces extension modules
+    ./src/renderer................ contains the application core
+    ./src/main........ contains code needed for Electron platform
+    ./src/renderer/locales........ contains the language files needed for the application internationalization
+    ./src/node_modules... contains the TagSpaces extension modules
     ./cordova............ contains the code needed for running the Android version
     ./dll................ contains the files needed for live reload in development mode
     ./docker............. files needed for the creation of a docker container
