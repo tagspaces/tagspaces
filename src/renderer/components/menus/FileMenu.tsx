@@ -116,8 +116,7 @@ function FileMenu(props: Props) {
   const { openEntry } = useOpenedEntryContext();
   const { openDirectory, currentLocationPath } = useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
-  const { copyFilePromise, setFolderThumbnailPromise } =
-    usePlatformFacadeContext();
+  const { setFolderThumbnailPromise } = usePlatformFacadeContext();
   const { currentLocation, readOnlyMode } = useCurrentLocationContext();
   //const locations: Array<TS.Location> = useSelector(getLocations);
   const { openFileNatively, duplicateFile } = useFsActionsContext();

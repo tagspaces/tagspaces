@@ -203,7 +203,10 @@ export default function buildDesktopMenu(props: any, i18n) {
         {
           label: '&' + i18n.t('documentation'),
           accelerator: 'F1',
-          click: props.openHelpFeedbackPanel,
+          click: () => {
+            shell.openExternal(Links.documentationLinks.general);
+          },
+          //props.openHelpFeedbackPanel,
         },
         {
           label: '&' + i18n.t('shortcutKeys'),

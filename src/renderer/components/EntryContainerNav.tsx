@@ -1,10 +1,11 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useTheme } from '@mui/material/styles';
-import { IconButton, Tooltip } from '@mui/material';
+import { IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import PrevDocumentIcon from '@mui/icons-material/KeyboardArrowUp';
 import NextDocumentIcon from '@mui/icons-material/KeyboardArrowDown';
+import Tooltip from '-/components/Tooltip';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { getKeyBindingObject } from '-/reducers/settings';
@@ -36,12 +37,8 @@ function EntryContainerNav(props: Props) {
       {isFile && (
         <>
           <Tooltip
-            title={
-              t('core:openPrevFileTooltip') +
-              ' (' +
-              adjustKeyBinding(keyBindings['prevDocument']) +
-              ')'
-            }
+            title={t('core:openPrevFileTooltip')}
+            keyBinding={keyBindings['prevDocument']}
           >
             <IconButton
               aria-label={t('core:openPrevFileTooltip')}
@@ -53,12 +50,8 @@ function EntryContainerNav(props: Props) {
             </IconButton>
           </Tooltip>
           <Tooltip
-            title={
-              t('core:openNextFileTooltip') +
-              ' (' +
-              adjustKeyBinding(keyBindings['nextDocument']) +
-              ')'
-            }
+            title={t('core:openNextFileTooltip')}
+            keyBinding={keyBindings['nextDocument']}
           >
             <IconButton
               aria-label={t('core:openNextFileTooltip')}
@@ -72,12 +65,8 @@ function EntryContainerNav(props: Props) {
         </>
       )}
       <Tooltip
-        title={
-          t('core:closeEntry') +
-          ' (' +
-          adjustKeyBinding(keyBindings['closeViewer']) +
-          ')'
-        }
+        title={t('core:closeEntry')}
+        keyBinding={keyBindings['closeViewer']}
       >
         <IconButton
           onClick={startClosingEntry}

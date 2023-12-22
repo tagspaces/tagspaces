@@ -37,7 +37,6 @@ import AppConfig from '-/AppConfig';
 import { Pro } from '-/pro';
 import { ProTooltip } from '-/components/HelperComponents';
 import { getKeyBindingObject } from '-/reducers/settings';
-import { TS } from '-/tagspaces.namespace';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import {
   classes,
@@ -47,9 +46,7 @@ import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
-import { adjustKeyBinding } from '-/components/dialogs/KeyboardDialog';
 
 interface Props {
   prefixDataTID?: string;
@@ -94,12 +91,8 @@ function MainToolbar(props: Props) {
         data-tid={prefixDataTID + 'perspectiveToolbar'}
       >
         <Tooltip
-          title={
-            t('core:navigateToParentDirectory') +
-            ' (' +
-            adjustKeyBinding(keyBindings['openParentDirectory']) +
-            ')'
-          }
+          title={t('core:navigateToParentDirectory')}
+          keyBinding={keyBindings['openParentDirectory']}
         >
           <IconButton
             aria-label={t('core:navigateToParentDirectory')}
@@ -117,12 +110,8 @@ function MainToolbar(props: Props) {
           </IconButton>
         </Tooltip>
         <Tooltip
-          title={
-            t('core:toggleSelectAllFiles') +
-            ' (' +
-            adjustKeyBinding(keyBindings['selectAll']) +
-            ')'
-          }
+          title={t('core:toggleSelectAllFiles')}
+          keyBinding={keyBindings['selectAll']}
         >
           <IconButton
             data-tid={prefixDataTID + 'PerspectiveSelectAllFiles'}
@@ -144,12 +133,8 @@ function MainToolbar(props: Props) {
         </Tooltip>
         {!readOnlyMode && (
           <Tooltip
-            title={
-              t('core:tagSelectedEntries') +
-              ' (' +
-              adjustKeyBinding(keyBindings['addRemoveTags']) +
-              ')'
-            }
+            title={t('core:tagSelectedEntries')}
+            keyBinding={keyBindings['addRemoveTags']}
           >
             <span>
               <IconButton
@@ -166,12 +151,8 @@ function MainToolbar(props: Props) {
         )}
         {!readOnlyMode && (
           <Tooltip
-            title={
-              t('core:copyMoveSelectedEntries') +
-              ' (' +
-              adjustKeyBinding(keyBindings['copyMoveSelectedEntries']) +
-              ')'
-            }
+            title={t('core:copyMoveSelectedEntries')}
+            keyBinding={keyBindings['copyMoveSelectedEntries']}
           >
             <span>
               <IconButton
@@ -188,12 +169,8 @@ function MainToolbar(props: Props) {
         )}
         {!readOnlyMode && (
           <Tooltip
-            title={
-              t('core:deleteSelectedEntries') +
-              ' (' +
-              keyBindings['deleteDocument'].toUpperCase() +
-              ')'
-            }
+            title={t('core:deleteSelectedEntries')}
+            keyBinding={keyBindings['deleteDocument']}
           >
             <span>
               <IconButton

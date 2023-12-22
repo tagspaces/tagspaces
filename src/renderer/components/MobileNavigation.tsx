@@ -31,16 +31,13 @@ import ThemingIcon from '@mui/icons-material/InvertColors';
 import TagLibraryIcon from '@mui/icons-material/LocalOfferOutlined';
 import RecentThingsIcon from '@mui/icons-material/BookmarksOutlined';
 import HelpIcon from '@mui/icons-material/HelpOutline';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { Divider } from '@mui/material';
 import {
   OpenNewWindowIcon,
-  LinkIcon,
   AudioRecordIcon,
   NewFileIcon,
   NewFolderIcon,
   LocalLocationIcon,
-  AddExistingFileIcon,
 } from '-/components/CommonIcons';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -77,6 +74,7 @@ import UserDetailsPopover from '-/components/UserDetailsPopover';
 import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
 import { useTranslation } from 'react-i18next';
+import { getKeyBindingObject } from '-/reducers/settings';
 
 const PREFIX = 'MobileNavigation';
 
@@ -88,7 +86,7 @@ const classes = {
 const Root = styled(Box)(({ theme }) => ({
   [`& .${classes.button}`]: {
     position: 'relative',
-    padding: '11px', // '8px 12px 6px 8px',
+    // padding: '8px', // '8px 12px 6px 8px',
     margin: '0',
   },
   [`& .${classes.selectedButton}`]: {
@@ -105,6 +103,7 @@ function MobileNavigation(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
 
+  const keyBindings = useSelector(getKeyBindingObject);
   const isLocationManagerPanelOpenedSelector = useSelector(
     isLocationManagerPanelOpened,
   );
@@ -372,9 +371,13 @@ function MobileNavigation(props: Props) {
           </IconButton>
         </Tooltip>
         <ToggleButtonGroup exclusive>
-          <Tooltip title={t('core:locationManager')}>
+          <Tooltip
+            title={t('core:locationManager')}
+            keyBinding={keyBindings['showLocationManager']}
+          >
             <ToggleButton
               onClick={openLocationManagerPanel}
+              size="small"
               className={
                 isLocationManagerPanelOpenedSelector
                   ? classNames(classes.button, classes.selectedButton)
@@ -386,10 +389,14 @@ function MobileNavigation(props: Props) {
               <LocalLocationIcon />
             </ToggleButton>
           </Tooltip>
-          <Tooltip title={t('core:tagLibrary')}>
+          <Tooltip
+            title={t('core:tagLibrary')}
+            keyBinding={keyBindings['showTagLibrary']}
+          >
             <ToggleButton
               data-tid="tagLibrary"
               onClick={openTagLibraryPanel}
+              size="small"
               className={
                 isTagLibraryPanelOpenedSelector
                   ? classNames(classes.button, classes.selectedButton)
@@ -403,6 +410,7 @@ function MobileNavigation(props: Props) {
           <Tooltip title={t('core:quickAccess')}>
             <ToggleButton
               data-tid="quickAccessButton"
+              size="small"
               onClick={openSearchPanel}
               className={
                 isSearchPanelOpenedSelector
@@ -418,6 +426,7 @@ function MobileNavigation(props: Props) {
             <ToggleButton
               data-tid="helpFeedback"
               onClick={openHelpFeedbackPanel}
+              size="small"
               className={
                 isHelpFeedbackPanelOpenedSelector
                   ? classNames(classes.button, classes.selectedButton)
