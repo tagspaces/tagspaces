@@ -42,12 +42,15 @@ export function adjustKeyBinding(keyBinding: string) {
       .replaceAll('+', ' ')
       .replaceAll('command', '⌘')
       .replaceAll('option', '⌥')
-      .replaceAll('shift', '⇧')
-      .replaceAll('backspace', '⌫')
-      .toUpperCase();
+      .replaceAll('shift', '⇧');
   } else {
-    adjKB = adjKB.replaceAll('+', ' + ').toUpperCase();
+    adjKB = adjKB.replaceAll('+', ' + ');
   }
+  adjKB = adjKB
+    .replaceAll('down', '▼')
+    .replaceAll('up', '▲')
+    .replaceAll('backspace', '⌫')
+    .toUpperCase();
   return adjKB;
 }
 
