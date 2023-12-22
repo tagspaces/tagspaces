@@ -47,7 +47,7 @@ export default function loadMainEvents() {
         if (wsc) {
           wsc.close();
         }
-        wsc = new WebSocket('ws://127.0.0.1:' + wssPort);
+        wsc = new WebSocket('ws://127.0.0.1:' + wssPort.port);
         wsc.on('message', function message(data) {
           console.log('received: %s', data);
           //const mainWindow = BrowserWindow.getFocusedWindow();
