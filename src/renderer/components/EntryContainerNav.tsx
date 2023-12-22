@@ -9,11 +9,11 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 
 interface Props {
   isFile: boolean;
-  startClosingFile: (event) => void;
+  startClosingEntry: (event) => void;
 }
 
 function EntryContainerNav(props: Props) {
-  const { isFile, startClosingFile } = props;
+  const { isFile, startClosingEntry } = props;
   const { t } = useTranslation();
   const { openNextFile, openPrevFile } = useOpenedEntryContext();
   const theme = useTheme();
@@ -55,7 +55,7 @@ function EntryContainerNav(props: Props) {
       )}
       <Tooltip title={t('core:closeEntry')}>
         <IconButton
-          onClick={startClosingFile}
+          onClick={startClosingEntry}
           aria-label={t('core:closeEntry')}
           data-tid="fileContainerCloseOpenedFile"
           size="large"

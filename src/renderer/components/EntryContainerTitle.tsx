@@ -57,10 +57,12 @@ interface Props {
   isFileChanged: boolean;
   toggleFullScreen: () => void;
   reloadDocument: () => void;
+  startClosingEntry: (event) => void;
 }
 
 function EntryContainerTitle(props: Props) {
-  const { isFileChanged, reloadDocument, toggleFullScreen } = props;
+  const { isFileChanged, reloadDocument, toggleFullScreen, startClosingEntry } =
+    props;
   const { t } = useTranslation();
   const theme = useTheme();
   const { openedEntries, sharingLink, sharingParentFolderLink } =
@@ -239,6 +241,7 @@ function EntryContainerTitle(props: Props) {
       <TagsPreview tags={openedFile.tags} />
       <EntryContainerMenu
         anchorEl={anchorEl}
+        startClosingEntry={startClosingEntry}
         handleClose={() => setAnchorEl(null)}
         openedEntry={openedFile}
         reloadDocument={reloadDocument}

@@ -48,10 +48,6 @@ export default function keyBindings(isMacLike) {
       name: 'addRemoveTags',
       command: (isMacLike ? 'command' : 'ctrl') + '+t',
     },
-    /* {
-    name: 'propertiesDocument',
-    command: 'alt+enter',
-  }, */
     {
       name: 'nextDocument',
       command: 'down',
@@ -74,12 +70,12 @@ export default function keyBindings(isMacLike) {
     // },
     {
       name: 'toggleFullScreen',
-      command: 'f11',
+      command: isMacLike ? 'command+f11' : 'f11',
     },
-    // {
-    //   name: 'openDevTools',
-    //   command: 'f10'
-    // },
+    {
+      name: 'openInFullWidth',
+      command: 'f10',
+    },
     {
       name: 'openSearch',
       command: (isMacLike ? 'command' : 'ctrl') + '+f',

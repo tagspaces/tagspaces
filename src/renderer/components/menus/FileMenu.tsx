@@ -541,19 +541,17 @@ function FileMenu(props: Props) {
   }
 
   return (
-    <div style={{ overflowY: 'hidden' }}>
-      <Menu
-        anchorEl={anchorEl}
-        anchorReference={mouseY && mouseX ? 'anchorPosition' : undefined}
-        anchorPosition={
-          mouseY && mouseX ? { top: mouseY, left: mouseX } : undefined
-        }
-        open={open}
-        onClose={onClose}
-      >
-        {menuItems}
-      </Menu>
-    </div>
+    <Menu
+      anchorEl={anchorEl}
+      anchorReference={mouseY && mouseX ? 'anchorPosition' : undefined}
+      anchorPosition={
+        mouseY && mouseX ? { top: mouseY, left: mouseX } : undefined
+      }
+      open={open}
+      onClose={onClose}
+    >
+      {menuItems}
+    </Menu>
   );
 }
 

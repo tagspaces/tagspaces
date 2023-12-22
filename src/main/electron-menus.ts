@@ -139,7 +139,7 @@ export default function buildDesktopMenu(props: any, i18n) {
         },
         {
           label: i18n.t('reloadApplication'),
-          accelerator: 'CmdOrCtrl+Shift+R',
+          accelerator: 'Alt+Shift+R',
           click: (item, focusedWindow) => {
             focusedWindow.webContents.reload();
           },
