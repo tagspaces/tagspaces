@@ -131,7 +131,7 @@ function MainToolbar(props: Props) {
             <FolderPropertiesIcon />
           </IconButton>
         </Tooltip>
-        <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+        <Box sx={{ display: selectedEntries.length < 1 ? 'none' : 'flex' }}>
           {!readOnlyMode && (
             <Tooltip
               title={t('core:tagSelectedEntries')}
@@ -141,7 +141,6 @@ function MainToolbar(props: Props) {
                 <IconButton
                   aria-label={t('core:tagSelectedEntries')}
                   data-tid={prefixDataTID + 'PerspectiveAddRemoveTags'}
-                  disabled={selectedEntries.length < 1}
                   onClick={openAddRemoveTagsDialog}
                   size="large"
                 >
@@ -159,7 +158,6 @@ function MainToolbar(props: Props) {
                 <IconButton
                   aria-label={t('core:copyMoveSelectedEntries')}
                   data-tid={prefixDataTID + 'PerspectiveCopySelectedFiles'}
-                  disabled={selectedEntries.length < 1}
                   onClick={openMoveCopyFilesDialog}
                   size="large"
                 >
@@ -168,42 +166,41 @@ function MainToolbar(props: Props) {
               </span>
             </Tooltip>
           )}
+          {!readOnlyMode && (
+            <Tooltip
+              title={t('core:deleteSelectedEntries')}
+              keyBinding={keyBindings['deleteDocument']}
+            >
+              <span>
+                <IconButton
+                  aria-label={t('core:deleteSelectedEntries')}
+                  data-tid={prefixDataTID + 'PerspectiveDeleteMultipleFiles'}
+                  onClick={() =>
+                    dispatch(AppActions.toggleDeleteMultipleEntriesDialog())
+                  }
+                  size="large"
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </span>
+            </Tooltip>
+          )}
+          {openShareFilesDialog && (
+            <ProTooltip tooltip={t('core:shareFiles')}>
+              <span>
+                <IconButton
+                  aria-label={t('core:shareFiles')}
+                  data-tid={prefixDataTID + 'PerspectiveShareFiles'}
+                  onClick={openShareFilesDialog}
+                  disabled={selectedEntries.length < 1}
+                  size="large"
+                >
+                  <ShareIcon />
+                </IconButton>
+              </span>
+            </ProTooltip>
+          )}
         </Box>
-        {!readOnlyMode && (
-          <Tooltip
-            title={t('core:deleteSelectedEntries')}
-            keyBinding={keyBindings['deleteDocument']}
-          >
-            <span>
-              <IconButton
-                aria-label={t('core:deleteSelectedEntries')}
-                data-tid={prefixDataTID + 'PerspectiveDeleteMultipleFiles'}
-                onClick={() =>
-                  dispatch(AppActions.toggleDeleteMultipleEntriesDialog())
-                }
-                disabled={selectedEntries.length < 1}
-                size="large"
-              >
-                <DeleteIcon />
-              </IconButton>
-            </span>
-          </Tooltip>
-        )}
-        {openShareFilesDialog && (
-          <ProTooltip tooltip={t('core:shareFiles')}>
-            <span>
-              <IconButton
-                aria-label={t('core:shareFiles')}
-                data-tid={prefixDataTID + 'PerspectiveShareFiles'}
-                onClick={openShareFilesDialog}
-                disabled={selectedEntries.length < 1}
-                size="large"
-              >
-                <ShareIcon />
-              </IconButton>
-            </span>
-          </ProTooltip>
-        )}
         <Tooltip title={t('core:sort')}>
           <IconButton
             // title={t('core:sort')}
