@@ -7,6 +7,6 @@
     <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
     <false/>
     <key>com.apple.security.cs.allow-jit</key>
-    <false/>
+    <true/>
   </dict>
 </plist>
