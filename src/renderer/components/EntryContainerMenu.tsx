@@ -468,6 +468,10 @@ function EntryContainerMenu(props: Props) {
     </MenuItem>,
   );
 
+  const entryName = openedEntry.path
+    ? extractDirectoryName(openedEntry.path, PlatformIO.getDirSeparator())
+    : '';
+
   return (
     <>
       <Menu
@@ -501,14 +505,10 @@ function EntryContainerMenu(props: Props) {
             openedEntry.isFile
               ? t('core:doYouWantToDeleteFile')
               : t('core:deleteDirectoryContentConfirm', {
-                  dirPath: openedEntry.path
-                    ? extractDirectoryName(
-                        openedEntry.path,
-                        PlatformIO.getDirSeparator(),
-                      )
-                    : '',
+                  dirPath: entryName,
                 })
           }
+          list={openedEntry.isFile && [entryName]}
           confirmCallback={(result) => {
             if (result) {
               return deleteFile(openedEntry.path, openedEntry.uuid);

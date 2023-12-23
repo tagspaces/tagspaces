@@ -842,6 +842,7 @@ function EntryContainer() {
         nextDocument: openNextFileAction,
         prevDocument: openPrevFileAction,
         reloadDocument: reloadDocument,
+        deleteDocument: () => {}, // TODO move delete functionality from entry container menu
         openInFullWidth: toggleEntryFullWidth,
         toggleFullScreen,
       }}
@@ -852,6 +853,7 @@ function EntryContainer() {
         nextDocument: keyBindings.nextDocument,
         prevDocument: keyBindings.prevDocument,
         reloadDocument: keyBindings.reloadDocument,
+        deleteDocument: keyBindings.deleteDocument,
         openInFullWidth: keyBindings.openInFullWidth,
         toggleFullScreen: keyBindings.toggleFullScreen,
       }}
