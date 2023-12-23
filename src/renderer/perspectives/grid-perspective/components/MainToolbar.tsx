@@ -47,6 +47,7 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import Box from '@mui/material/Box';
 
 interface Props {
   prefixDataTID?: string;
@@ -131,42 +132,44 @@ function MainToolbar(props: Props) {
             <FolderPropertiesIcon />
           </IconButton>
         </Tooltip>
-        {!readOnlyMode && (
-          <Tooltip
-            title={t('core:tagSelectedEntries')}
-            keyBinding={keyBindings['addRemoveTags']}
-          >
-            <span>
-              <IconButton
-                aria-label={t('core:tagSelectedEntries')}
-                data-tid={prefixDataTID + 'PerspectiveAddRemoveTags'}
-                disabled={selectedEntries.length < 1}
-                onClick={openAddRemoveTagsDialog}
-                size="large"
-              >
-                <TagIcon />
-              </IconButton>
-            </span>
-          </Tooltip>
-        )}
-        {!readOnlyMode && (
-          <Tooltip
-            title={t('core:copyMoveSelectedEntries')}
-            keyBinding={keyBindings['copyMoveSelectedEntries']}
-          >
-            <span>
-              <IconButton
-                aria-label={t('core:copyMoveSelectedEntries')}
-                data-tid={prefixDataTID + 'PerspectiveCopySelectedFiles'}
-                disabled={selectedEntries.length < 1}
-                onClick={openMoveCopyFilesDialog}
-                size="large"
-              >
-                <CopyIcon />
-              </IconButton>
-            </span>
-          </Tooltip>
-        )}
+        <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+          {!readOnlyMode && (
+            <Tooltip
+              title={t('core:tagSelectedEntries')}
+              keyBinding={keyBindings['addRemoveTags']}
+            >
+              <span>
+                <IconButton
+                  aria-label={t('core:tagSelectedEntries')}
+                  data-tid={prefixDataTID + 'PerspectiveAddRemoveTags'}
+                  disabled={selectedEntries.length < 1}
+                  onClick={openAddRemoveTagsDialog}
+                  size="large"
+                >
+                  <TagIcon />
+                </IconButton>
+              </span>
+            </Tooltip>
+          )}
+          {!readOnlyMode && (
+            <Tooltip
+              title={t('core:copyMoveSelectedEntries')}
+              keyBinding={keyBindings['copyMoveSelectedEntries']}
+            >
+              <span>
+                <IconButton
+                  aria-label={t('core:copyMoveSelectedEntries')}
+                  data-tid={prefixDataTID + 'PerspectiveCopySelectedFiles'}
+                  disabled={selectedEntries.length < 1}
+                  onClick={openMoveCopyFilesDialog}
+                  size="large"
+                >
+                  <CopyIcon />
+                </IconButton>
+              </span>
+            </Tooltip>
+          )}
+        </Box>
         {!readOnlyMode && (
           <Tooltip
             title={t('core:deleteSelectedEntries')}
@@ -228,15 +231,18 @@ function MainToolbar(props: Props) {
               </IconButton>
             </Tooltip>
           )}
-        <Tooltip title={t('core:perspectiveSettingsTitle')}>
-          <IconButton
-            data-tid={prefixDataTID + 'PerspectiveOptionsMenu'}
-            onClick={openSettings}
-            size="large"
-          >
-            <PerspectiveSettingsIcon />
-          </IconButton>
-        </Tooltip>
+        <Box sx={{ flexGrow: 1 }} />
+        <Box sx={{ display: 'flex' }}>
+          <Tooltip title={t('core:perspectiveSettingsTitle')}>
+            <IconButton
+              data-tid={prefixDataTID + 'PerspectiveOptionsMenu'}
+              onClick={openSettings}
+              size="large"
+            >
+              <PerspectiveSettingsIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
       </Toolbar>
     </GridStyles>
   );
