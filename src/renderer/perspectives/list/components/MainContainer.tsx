@@ -478,6 +478,7 @@ function ListPerspective(props: Props) {
     openEntry: keyBindings.openEntry,
     openEntryDetails: keyBindings.openEntryDetails,
     openFileExternally: keyBindings.openFileExternally,
+    reloadDocument: keyBindings.reloadDocument,
   };
 
   const onContextMenu = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -555,6 +556,9 @@ function ListPerspective(props: Props) {
         const entry = selectedEntries[0];
         duplicateFile(entry.path);
       }
+    },
+    reloadDocument: () => {
+      openDirectory(currentDirectoryPath);
     },
   };
 

@@ -110,6 +110,7 @@ export function getDirectoryMenuItems(
             <ReloadIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:reloadDirectory')} />
+          <MenuKeyBinding keyBinding={keyBindings['reloadDocument']} />
         </MenuItem>,
       );
     }
