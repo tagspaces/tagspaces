@@ -41,14 +41,14 @@ interface Props {
 }
 
 function TooltipTS(props: Props) {
-  const { title, placement, keyBinding } = props;
+  const { title, placement, keyBinding, children } = props;
   let tooltipText = title;
   if (keyBinding) {
     tooltipText = title + ' (' + adjustKeyBinding(keyBinding) + ')';
   }
   return (
     <Tooltip
-      {...props}
+      children={children}
       arrow
       title={tooltipText}
       disableInteractive
