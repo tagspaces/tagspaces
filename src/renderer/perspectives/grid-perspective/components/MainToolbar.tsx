@@ -18,7 +18,7 @@
 
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import Toolbar from '@mui/material/Toolbar';
+import { Toolbar, Box } from '@mui/material/';
 import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import SortingIcon from '@mui/icons-material/SwapVerticalCircle';
@@ -47,7 +47,6 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
-import Box from '@mui/material/Box';
 
 interface Props {
   prefixDataTID?: string;

@@ -38,9 +38,9 @@ import {
   NewFileIcon,
   NewFolderIcon,
   LocalLocationIcon,
+  SettingsIcon,
 } from '-/components/CommonIcons';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import SettingsIcon from '@mui/icons-material/Settings';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
 import Popover from '@mui/material/Popover';
 import { Pro } from '-/pro';
