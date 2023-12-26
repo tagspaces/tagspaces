@@ -85,9 +85,8 @@ const classes = {
 
 const Root = styled(Box)(({ theme }) => ({
   [`& .${classes.button}`]: {
-    position: 'relative',
-    // padding: '8px', // '8px 12px 6px 8px',
-    margin: '0',
+    padding: 8,
+    margin: 0,
   },
   [`& .${classes.selectedButton}`]: {
     backgroundColor: theme.palette.primary.light,
@@ -371,72 +370,72 @@ function MobileNavigation(props: Props) {
           </IconButton>
         </Tooltip>
         <ToggleButtonGroup exclusive>
-          <Tooltip
-            title={t('core:locationManager')}
-            keyBinding={keyBindings['showLocationManager']}
+          <ToggleButton
+            onClick={openLocationManagerPanel}
+            size="small"
+            className={
+              isLocationManagerPanelOpenedSelector
+                ? classNames(classes.button, classes.selectedButton)
+                : classes.button
+            }
+            data-tid="locationManager"
+            value="check"
           >
-            <ToggleButton
-              onClick={openLocationManagerPanel}
-              size="small"
-              className={
-                isLocationManagerPanelOpenedSelector
-                  ? classNames(classes.button, classes.selectedButton)
-                  : classes.button
-              }
-              data-tid="locationManager"
-              value="check"
+            <Tooltip
+              title={t('core:locationManager')}
+              keyBinding={keyBindings['showLocationManager']}
             >
               <LocalLocationIcon />
-            </ToggleButton>
-          </Tooltip>
-          <Tooltip
-            title={t('core:tagLibrary')}
-            keyBinding={keyBindings['showTagLibrary']}
+            </Tooltip>
+          </ToggleButton>
+          <ToggleButton
+            data-tid="tagLibrary"
+            onClick={openTagLibraryPanel}
+            size="small"
+            className={
+              isTagLibraryPanelOpenedSelector
+                ? classNames(classes.button, classes.selectedButton)
+                : classes.button
+            }
+            value="check"
           >
-            <ToggleButton
-              data-tid="tagLibrary"
-              onClick={openTagLibraryPanel}
-              size="small"
-              className={
-                isTagLibraryPanelOpenedSelector
-                  ? classNames(classes.button, classes.selectedButton)
-                  : classes.button
-              }
-              value="check"
+            <Tooltip
+              title={t('core:tagLibrary')}
+              keyBinding={keyBindings['showTagLibrary']}
             >
               <TagLibraryIcon />
-            </ToggleButton>
-          </Tooltip>
-          <Tooltip title={t('core:quickAccess')}>
-            <ToggleButton
-              data-tid="quickAccessButton"
-              size="small"
-              onClick={openSearchPanel}
-              className={
-                isSearchPanelOpenedSelector
-                  ? classNames(classes.button, classes.selectedButton)
-                  : classes.button
-              }
-              value="check"
-            >
+            </Tooltip>
+          </ToggleButton>
+          <ToggleButton
+            data-tid="quickAccessButton"
+            size="small"
+            onClick={openSearchPanel}
+            className={
+              isSearchPanelOpenedSelector
+                ? classNames(classes.button, classes.selectedButton)
+                : classes.button
+            }
+            value="check"
+          >
+            <Tooltip title={t('core:quickAccess')}>
               <RecentThingsIcon />
-            </ToggleButton>
-          </Tooltip>
-          <Tooltip title={t('core:helpFeedback')}>
-            <ToggleButton
-              data-tid="helpFeedback"
-              onClick={openHelpFeedbackPanel}
-              size="small"
-              className={
-                isHelpFeedbackPanelOpenedSelector
-                  ? classNames(classes.button, classes.selectedButton)
-                  : classes.button
-              }
-              value="check"
-            >
+            </Tooltip>
+          </ToggleButton>
+          <ToggleButton
+            data-tid="helpFeedback"
+            onClick={openHelpFeedbackPanel}
+            size="small"
+            className={
+              isHelpFeedbackPanelOpenedSelector
+                ? classNames(classes.button, classes.selectedButton)
+                : classes.button
+            }
+            value="check"
+          >
+            <Tooltip title={t('core:helpFeedback')}>
               <HelpIcon />
-            </ToggleButton>
-          </Tooltip>
+            </Tooltip>
+          </ToggleButton>
         </ToggleButtonGroup>
         {cognitoUser ? (
           <>
