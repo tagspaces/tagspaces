@@ -18,14 +18,12 @@
 
 import React, { useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useTheme } from '@mui/material/styles';
+import { useTheme, styled } from '@mui/material/styles';
 import classNames from 'classnames';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import Tooltip from '-/components/Tooltip';
-import FolderOpenIcon from '@mui/icons-material/FolderOpen';
-import IconButton from '@mui/material/IconButton';
 import { SelectedIcon, UnSelectedIcon } from '-/components/CommonIcons';
 import {
   formatFileSize,
@@ -45,7 +43,6 @@ import TagContainerDnd from '-/components/TagContainerDnd';
 import TagContainer from '-/components/TagContainer';
 import TagsPreview from '-/components/TagsPreview';
 import PlatformIO from '-/services/platform-facade';
-import EntryIcon from '-/components/EntryIcon';
 import { TS } from '-/tagspaces.namespace';
 import {
   actions as AppActions,
@@ -53,49 +50,82 @@ import {
   getLastThumbnailImageChange,
 } from '-/reducers/app';
 import { FolderIcon } from '-/components/CommonIcons';
-import { dataTidFormat } from '-/services/test';
-import {
-  getSupportedFileTypes,
-  isDesktopMode,
-  isReorderTags,
-} from '-/reducers/settings';
-import {
-  classes,
-  GridStyles,
-} from '-/perspectives/grid-perspective/components/styles.css';
+import { EntrySizes } from '-/components/ZoomComponent';
+import { getSupportedFileTypes, isReorderTags } from '-/reducers/settings';
+import { defaultSettings } from '../index';
 import { useTranslation } from 'react-i18next';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
-const maxDescriptionPreviewLength = 100;
+const PREFIX = 'RowStyles';
+export const classes = {
+  rowCell: `${PREFIX}-rowCell`,
+  rowHover: `${PREFIX}-rowHover`,
+  selectedRowCell: `${PREFIX}-selectedRowCell`,
+};
+
+export const RowPaper = styled(Paper)(({ theme }) => ({
+  [`& .${classes.rowCell}`]: {
+    boxShadow: 'none',
+    borderLeft: '1px solid transparent',
+    borderRight: '1px solid transparent',
+    borderTop: '1px solid transparent',
+    borderBottom: '1px solid ' + theme.palette.divider,
+    margin: 0,
+    marginTop: 0,
+    marginBottom: 0,
+  },
+  [`& .${classes.rowHover}`]: {
+    '&:hover': {
+      backgroundColor: theme.palette.divider + ' !important',
+    },
+  },
+  [`& .${classes.selectedRowCell}`]: {
+    border: '1px solid' + theme.palette.primary.main + ' !important',
+  },
+}));
 
 interface Props {
   selected: boolean;
   isLast?: boolean;
   fsEntry: TS.FileSystemEntry;
-  entrySize: string;
+  entrySize: EntrySizes;
   style?: any;
   thumbnailMode: any;
   selectEntry: (fsEntry: TS.FileSystemEntry) => void;
   deselectEntry: (fsEntry: TS.FileSystemEntry) => void;
   showTags: boolean;
   handleTagMenu: (event: Object, tag: TS.Tag, entryPath: string) => void;
-  layoutType: string;
   handleGridContextMenu: (event: Object, fsEntry: TS.FileSystemEntry) => void;
   handleGridCellDblClick: (event: Object, fsEntry: TS.FileSystemEntry) => void;
   handleGridCellClick: (event: Object, fsEntry: TS.FileSystemEntry) => void;
   showEntriesDescription?: boolean;
 }
 
-function CellContent(props: Props) {
+export function calculateEntryHeight(entrySize: EntrySizes) {
+  let entryHeight = 200;
+  if (entrySize === EntrySizes.tiny) {
+    entryHeight = 50;
+  } else if (entrySize === EntrySizes.small) {
+    entryHeight = 70;
+  } else if (entrySize === EntrySizes.normal) {
+    entryHeight = 90;
+  } else if (entrySize === EntrySizes.big) {
+    entryHeight = 120;
+  } else if (entrySize === EntrySizes.huge) {
+    entryHeight = 150;
+  }
+  return entryHeight;
+}
+
+function RowCell(props: Props) {
   const {
     selected,
     fsEntry,
     entrySize,
     thumbnailMode,
     handleTagMenu,
-    layoutType,
     handleGridContextMenu,
     handleGridCellDblClick,
     handleGridCellClick,
@@ -114,8 +144,6 @@ function CellContent(props: Props) {
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const reorderTags: boolean = useSelector(isReorderTags);
   const lastThumbnailImageChange = useSelector(getLastThumbnailImageChange);
-  const desktopMode = useSelector(isDesktopMode);
-
   const dispatch: AppDispatch = useDispatch();
 
   // You can use the dispatch function to dispatch actions
@@ -148,14 +176,17 @@ function CellContent(props: Props) {
   let description;
   if (showEntriesDescription) {
     description = fSystemEntry.description;
-    if (description && description.length > maxDescriptionPreviewLength) {
+    if (
+      description &&
+      description.length > defaultSettings.maxDescriptionPreviewLength
+    ) {
       description = getDescriptionPreview(
         description,
-        maxDescriptionPreviewLength,
+        defaultSettings.maxDescriptionPreviewLength,
       );
     }
 
-    if (description && layoutType === 'row' && fSystemEntry.isFile) {
+    if (description && fSystemEntry.isFile) {
       description = ' | ' + description;
     }
   }
@@ -189,16 +220,6 @@ function CellContent(props: Props) {
     fSystemEntry.lmdt &&
     formatDateTime(fSystemEntry.lmdt, true);
 
-  let tmbSize = 85;
-  const isSmall = entrySize === 'small';
-  if (isSmall) {
-    tmbSize = 30;
-  } else if (entrySize === 'normal') {
-    tmbSize = 70;
-  } else if (entrySize === 'big') {
-    tmbSize = 100;
-  }
-
   let tagTitles = '';
   if (entryTags) {
     entryTags.map((tag) => {
@@ -213,158 +234,76 @@ function CellContent(props: Props) {
     return url.indexOf('?') > 0 ? '&' : '?';
   }
 
-  function renderGridCell() {
-    return (
-      <div
-        data-tid={'fsEntryName_' + dataTidFormat(fSystemEntry.name)}
-        style={{
-          background: fileSystemEntryBgColor,
-          borderRadius: 5,
-          // opacity: fileSystemEntry.isIgnored ? 0.3 : 1
-        }}
-      >
-        <div
-          className={classes.gridCellThumb}
-          style={{
-            position: 'relative',
-            height: 150,
-          }}
-        >
-          {fSystemEntry.thumbPath ? (
-            <img
-              alt="thumbnail"
-              className={classes.gridCellThumb}
-              src={
-                fSystemEntry.thumbPath +
-                (lastThumbnailImageChange &&
-                lastThumbnailImageChange.thumbPath === fSystemEntry.thumbPath &&
-                !PlatformIO.haveObjectStoreSupport() &&
-                !PlatformIO.haveWebDavSupport()
-                  ? urlGetDelim(fSystemEntry.thumbPath) +
-                    lastThumbnailImageChange.dt
-                  : '')
-              }
-              // @ts-ignore
-              onError={(i) => (i.target.style.display = 'none')}
-              loading="lazy"
-              style={{
-                objectFit: thumbnailMode,
-                position: 'absolute',
-                width: '100%',
-                height: 150,
-              }}
-            />
-          ) : (
-            <EntryIcon
-              isFile={fSystemEntry.isFile}
-              fileExtension={fSystemEntry.extension}
-            />
-          )}
-          <div id="gridCellTags" className={classes.gridCellTags}>
-            <IconButton
-              style={{
-                opacity: selected ? 1 : 0.5,
-                padding: desktopMode ? 5 : 8,
-              }}
-              onMouseLeave={(e) => {
-                //@ts-ignore
-                e.target.style.opacity = selected ? 1 : 0.5;
-              }}
-              onMouseOver={(e) => {
-                //@ts-ignore
-                e.target.style.opacity = 1;
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                if (selected) {
-                  deselectEntry(fSystemEntry);
-                } else {
-                  selectEntry(fSystemEntry);
-                }
-              }}
-            >
-              {selected ? (
-                <SelectedIcon
-                  style={{
-                    opacity: 1,
-                    borderRadius: 15,
-                    backgroundColor: '#d7d7d7',
-                  }}
-                />
-              ) : (
-                <UnSelectedIcon
-                  style={{
-                    opacity: 0.7,
-                    borderRadius: 15,
-                    backgroundColor: 'd7d7d7',
-                  }}
-                />
-              )}
-            </IconButton>
-            {showTags && entryTags ? renderTags : tagPlaceholder}
-          </div>
-          {description && (
-            <Tooltip title={t('core:entryDescription')}>
-              <Typography
-                data-tid="gridCellDescription"
-                className={classes.gridCellDescription}
-                variant="caption"
-              >
-                {description}
-              </Typography>
-            </Tooltip>
-          )}
-        </div>
-        <Typography className={classes.gridCellTitle} variant="body1">
-          {entryTitle}
-        </Typography>
-        <div className={classes.gridDetails}>
-          <Tooltip title={fSystemEntry.path}>
-            <Typography
-              className={classes.gridFileExtension}
-              style={{
-                backgroundColor: fileSystemEntryColor,
-                textShadow: '1px 1px #8f8f8f',
-                textOverflow: 'unset',
-                maxWidth: fSystemEntry.isFile ? 50 : 100,
-              }}
-              noWrap={true}
-              variant="button"
-            >
-              {fSystemEntry.isFile ? (
-                fSystemEntry.extension
-              ) : (
-                <FolderOpenIcon />
-              )}
-            </Typography>
-          </Tooltip>
-          {fSystemEntry.isFile && fSystemEntry.lmdt && (
-            <Typography className={classes.gridSizeDate} variant="caption">
-              <Tooltip
-                title={
-                  t('core:modifiedDate') +
-                  ': ' +
-                  formatDateTime(fSystemEntry.lmdt, true)
-                }
-              >
-                <span>{formatDateTime(fSystemEntry.lmdt, false)}</span>
-              </Tooltip>
-              <Tooltip title={fSystemEntry.size + ' ' + t('core:sizeInBytes')}>
-                <span>{' | ' + formatFileSize(fSystemEntry.size)}</span>
-              </Tooltip>
-            </Typography>
-          )}
-        </div>
-      </div>
-    );
-  }
+  const entryPath = fSystemEntry.path;
 
-  function renderRowCell() {
-    const backgroundColor = selected
-      ? theme.palette.primary.light
-      : fileSystemEntryBgColor;
+  const renderTags = useMemo(() => {
+    let sideCarLength = 0;
+    return entryTags.map((tag: TS.Tag, index) => {
+      const tagContainer = readOnlyMode ? (
+        <TagContainer
+          tag={tag}
+          key={entryPath + tag.title}
+          entryPath={entryPath}
+          addTags={handleAddTags}
+          handleTagMenu={handleTagMenu}
+        />
+      ) : (
+        <TagContainerDnd
+          tag={tag}
+          index={tag.type === 'sidecar' ? index : index - sideCarLength}
+          key={entryPath + tag.title}
+          entryPath={entryPath}
+          addTags={handleAddTags}
+          addTag={handleAddTag}
+          handleTagMenu={handleTagMenu}
+          selectedEntries={selectedEntries}
+          editTagForEntry={handleEditTag}
+          reorderTags={reorderTags}
+        />
+      );
 
-    return (
+      if (tag.type === 'sidecar') {
+        sideCarLength = index + 1;
+      }
+      return tagContainer;
+    });
+  }, [entryTags, readOnlyMode, reorderTags, entryPath]);
+
+  const entryHeight = calculateEntryHeight(entrySize);
+  const isSmall =
+    entrySize === EntrySizes.tiny || entrySize === EntrySizes.small;
+
+  const backgroundColor = selected
+    ? theme.palette.primary.light
+    : fileSystemEntryBgColor;
+
+  return (
+    <RowPaper
+      elevation={2}
+      data-entry-id={fSystemEntry.uuid}
+      className={classNames(
+        classes.rowCell,
+        selected && classes.selectedRowCell,
+      )}
+      style={{
+        minHeight: entryHeight,
+        marginBottom: isLast ? 40 : 'auto',
+        backgroundColor: theme.palette.background.default,
+      }}
+      onContextMenu={(event) => handleGridContextMenu(event, fSystemEntry)}
+      onDoubleClick={(event) => {
+        handleGridCellDblClick(event, fSystemEntry);
+      }}
+      onClick={(event) => {
+        event.stopPropagation();
+        AppConfig.isCordovaiOS // TODO DoubleClick not fired in Cordova IOS
+          ? handleGridCellDblClick(event, fSystemEntry)
+          : handleGridCellClick(event, fSystemEntry);
+      }}
+      onDrag={(event) => {
+        handleGridCellClick(event, fSystemEntry);
+      }}
+    >
       <Grid
         container
         wrap="nowrap"
@@ -481,7 +420,6 @@ function CellContent(props: Props) {
           <Grid item style={{ display: 'flex', alignItems: 'center' }}>
             <img
               alt="thumbnail"
-              className={classes.gridCellThumb}
               src={
                 fSystemEntry.thumbPath +
                 (lastThumbnailImageChange &&
@@ -496,98 +434,22 @@ function CellContent(props: Props) {
               onError={(i) => (i.target.style.display = 'none')}
               loading="lazy"
               style={{
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center',
+                borderRadius: 5,
+                marginBottom: 5,
                 objectFit: thumbnailMode,
                 paddingRight: 4,
                 paddingTop: 4,
-                height: tmbSize,
-                width: tmbSize,
+                height: entryHeight,
+                width: entryHeight,
               }}
             />
           </Grid>
         )}
       </Grid>
-    );
-  }
-
-  const entryPath = fSystemEntry.path;
-
-  const renderTags = useMemo(() => {
-    let sideCarLength = 0;
-    return entryTags.map((tag: TS.Tag, index) => {
-      const tagContainer = readOnlyMode ? (
-        <TagContainer
-          tag={tag}
-          key={entryPath + tag.title}
-          entryPath={entryPath}
-          addTags={handleAddTags}
-          handleTagMenu={handleTagMenu}
-        />
-      ) : (
-        <TagContainerDnd
-          tag={tag}
-          index={tag.type === 'sidecar' ? index : index - sideCarLength}
-          key={entryPath + tag.title}
-          entryPath={entryPath}
-          addTags={handleAddTags}
-          addTag={handleAddTag}
-          handleTagMenu={handleTagMenu}
-          selectedEntries={selectedEntries}
-          editTagForEntry={handleEditTag}
-          reorderTags={reorderTags}
-        />
-      );
-
-      if (tag.type === 'sidecar') {
-        sideCarLength = index + 1;
-      }
-      return tagContainer;
-    });
-  }, [entryTags, readOnlyMode, reorderTags, entryPath]);
-
-  let entryHeight = 130;
-  if (entrySize === 'small') {
-    entryHeight = 35;
-  } else if (entrySize === 'normal') {
-    entryHeight = 70;
-  } else if (entrySize === 'big') {
-    entryHeight = 100;
-  }
-
-  return (
-    <GridStyles>
-      <Paper
-        elevation={2}
-        data-entry-id={fSystemEntry.uuid}
-        className={classNames(
-          layoutType === 'grid' && classes.gridCell,
-          layoutType === 'row' && classes.rowCell,
-          selected && layoutType === 'grid' && classes.selectedGridCell,
-          selected && layoutType === 'row' && classes.selectedRowCell,
-        )}
-        style={{
-          minHeight: layoutType === 'row' ? entryHeight : 'auto',
-          marginBottom: isLast ? 40 : 'auto',
-          backgroundColor: theme.palette.background.default,
-        }}
-        onContextMenu={(event) => handleGridContextMenu(event, fSystemEntry)}
-        onDoubleClick={(event) => {
-          handleGridCellDblClick(event, fSystemEntry);
-        }}
-        onClick={(event) => {
-          event.stopPropagation();
-          AppConfig.isCordovaiOS // TODO DoubleClick not fired in Cordova IOS
-            ? handleGridCellDblClick(event, fSystemEntry)
-            : handleGridCellClick(event, fSystemEntry);
-        }}
-        onDrag={(event) => {
-          handleGridCellClick(event, fSystemEntry);
-        }}
-      >
-        {layoutType === 'grid' && renderGridCell()}
-        {layoutType === 'row' && renderRowCell()}
-      </Paper>
-    </GridStyles>
+    </RowPaper>
   );
 }
 
-export default CellContent;
+export default RowCell;

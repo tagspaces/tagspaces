@@ -29,14 +29,15 @@ import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
 import MoveCopyFilesDialog from '-/components/dialogs/MoveCopyFilesDialog';
 import TagDropContainer from '-/components/TagDropContainer';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import CellContent from './CellContent';
-import MainToolbar from './MainToolbar';
-import SortingMenu from './SortingMenu';
-import GridOptionsMenu from './GridOptionsMenu';
+import GridCell, { calculateEntryWitdth } from './GridCell';
+import MainToolbar from '-/perspectives/grid-perspective/components/MainToolbar';
+import SortingMenu from '-/perspectives/grid-perspective/components/SortingMenu';
+import GridOptionsMenu from '-/perspectives/grid-perspective/components/GridOptionsMenu';
 import PlatformIO from '-/services/platform-facade';
 import GridPagination from '-/perspectives/grid-perspective/components/GridPagination';
 import GridSettingsDialog from '-/perspectives/grid-perspective/components/GridSettingsDialog';
 import AddTagToTagGroupDialog from '-/components/dialogs/AddTagToTagGroupDialog';
+import { EntrySizes } from '-/components/ZoomComponent';
 import { TS } from '-/tagspaces.namespace';
 import { Pro } from '-/pro';
 import Links from 'assets/links';
@@ -88,10 +89,6 @@ function GridPerspective(props: Props) {
   const { selectedEntries, setSelectedEntries, lastSelectedEntryPath } =
     useSelectedEntriesContext();
   const keyBindings = useSelector(getKeyBindingObject);
-  //const searchFilter: string = useSelector(getSearchFilter);
-  /*const editedEntryPaths: Array<TS.EditedEntryPath> = useSelector(
-    getEditedEntryPaths
-  );*/
 
   // Create functions that dispatch actions
   const handleSetSelectedEntries = (entries: Array<TS.FileSystemEntry>) => {
@@ -128,25 +125,12 @@ function GridPerspective(props: Props) {
     useState<null | HTMLElement>(null);
   const [isAddTagDialogOpened, setIsAddTagDialogOpened] =
     useState<TS.Tag>(undefined);
-  /*const sortBy = useRef<string>(
-    settings && settings.sortBy ? settings.sortBy : defaultSettings.sortBy
-  );
-  const orderBy = useRef<null | boolean>(
-    settings && typeof settings.orderBy !== 'undefined'
-      ? settings.orderBy
-      : defaultSettings.orderBy
-  );*/
-  const layoutType = useRef<string>(
-    settings && settings.layoutType
-      ? settings.layoutType
-      : defaultSettings.layoutType,
-  );
   const singleClickAction = useRef<string>(
     settings && settings.singleClickAction
       ? settings.singleClickAction
       : defaultSettings.singleClickAction,
   );
-  const entrySize = useRef<string>(
+  const entrySize = useRef<EntrySizes>(
     settings && settings.entrySize
       ? settings.entrySize
       : defaultSettings.entrySize,
@@ -229,7 +213,6 @@ function GridPerspective(props: Props) {
         perspectiveSettings && perspectiveSettings.showTags !== undefined
           ? perspectiveSettings.showTags
           : defaultSettings.showTags;
-      layoutType.current = defaultSettings.layoutType;
       setOrderBy(
         perspectiveSettings && perspectiveSettings.orderBy !== undefined
           ? perspectiveSettings.orderBy
@@ -269,7 +252,6 @@ function GridPerspective(props: Props) {
         showEntriesDescription: showEntriesDescription.current,
         showDetails: showDetails.current,
         showTags: showTags.current,
-        layoutType: layoutType.current,
         orderBy: orderBy,
         sortBy: sortBy,
         singleClickAction: singleClickAction.current,
@@ -301,7 +283,6 @@ function GridPerspective(props: Props) {
     showEntriesDescription.current,
     showDetails.current,
     showTags.current,
-    layoutType.current,
     orderBy,
     sortBy,
     singleClickAction.current,
@@ -309,13 +290,6 @@ function GridPerspective(props: Props) {
     thumbnailMode.current,
     gridPageLimit.current,
   ]);
-
-  /*if ( // for debugging skip first re-renders
-    directoryContent.length > 0 &&
-    !directoryContent[0].path.startsWith(currentDirectoryPath)
-  ) {
-    return null;
-  }*/
 
   const makeFirstSelectedEntryVisible = () => {
     if (selectedEntries && selectedEntries.length > 0) {
@@ -334,11 +308,6 @@ function GridPerspective(props: Props) {
       }
     }
   };
-
-  /*const handleLayoutSwitch = (type: string) => {
-    layoutType.current = type;
-    // forceUpdate();
-  };*/
 
   const handleGridPageLimit = (limit: number) => {
     gridPageLimit.current = limit;
@@ -546,11 +515,6 @@ function GridPerspective(props: Props) {
         const entry = selectedEntries[0];
         openFileNatively(entry.path);
       }
-      // if (lastSelectedEntryPath) {
-      //   openFileNatively(lastSelectedEntryPath);
-      // } else if (currentDirectoryPath) {
-      //   openFileNatively(currentDirectoryPath);
-      // }
     },
     openEntryDetails: () => {
       if (selectedEntries && selectedEntries.length === 1) {
@@ -571,15 +535,6 @@ function GridPerspective(props: Props) {
 
   const sortedDirectories = sortedDirContent.filter((entry) => !entry.isFile);
   const sortedFiles = sortedDirContent.filter((entry) => entry.isFile);
-
-  let entryWidth = 200;
-  if (entrySize.current === 'small') {
-    entryWidth = 150;
-  } else if (entrySize.current === 'normal') {
-    entryWidth = 200;
-  } else if (entrySize.current === 'big') {
-    entryWidth = 300;
-  }
 
   const getCellContent = (
     fsEntry: TS.FileSystemEntry,
@@ -617,7 +572,7 @@ function GridPerspective(props: Props) {
           selectedEntries.length > 0 ? selectedEntries : [fsEntry]
         }
       >
-        <CellContent
+        <GridCell
           selected={selected}
           fsEntry={fsEntry}
           showEntriesDescription={showEntriesDescription.current}
@@ -627,7 +582,6 @@ function GridPerspective(props: Props) {
           selectEntry={selectEntry}
           deselectEntry={deselectEntry}
           handleTagMenu={handleTagMenu}
-          layoutType={layoutType.current}
           showTags={showTags.current}
           handleGridContextMenu={(
             event: React.MouseEvent<HTMLDivElement>,
@@ -658,6 +612,8 @@ function GridPerspective(props: Props) {
         openMoveCopyFilesDialog={openMoveCopyFilesDialog}
         handleSortingMenu={handleSortingMenu}
         handleExportCsvMenu={handleExportCsvMenu}
+        changeEntrySize={changeEntrySize}
+        entrySize={entrySize.current}
         openSettings={openSettings}
         openShareFilesDialog={
           PlatformIO.haveObjectStoreSupport() ? openShareFilesDialog : undefined
@@ -677,13 +633,14 @@ function GridPerspective(props: Props) {
             padding: 5,
             paddingBottom: 70,
             gridTemplateColumns:
-              'repeat(auto-fit,minmax(' + entryWidth + 'px,1fr))',
+              'repeat(auto-fit,minmax(' +
+              calculateEntryWitdth(entrySize.current) +
+              'px,1fr))',
           }}
           directories={sortedDirectories}
           showDetails={showDetails.current}
           showDescription={showDescription.current}
           showDirectories={showDirectories.current}
-          layoutType={layoutType.current}
           desktopMode={desktopMode}
           openRenameEntryDialog={openRenameEntryDialog}
           showTags={showTags.current}
@@ -788,7 +745,6 @@ function GridPerspective(props: Props) {
           }
         />
       )}
-      {/* {Boolean(dirContextMenuAnchorEl) && ( // todo move dialogs from DirectoryMenu */}
       <DirectoryMenu
         open={Boolean(dirContextMenuAnchorEl)}
         onClose={() => {

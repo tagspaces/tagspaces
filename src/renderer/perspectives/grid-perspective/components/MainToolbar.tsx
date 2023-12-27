@@ -17,8 +17,9 @@
  */
 
 import React from 'react';
+import { alpha, useTheme } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
-import { Toolbar, Box } from '@mui/material/';
+import { Toolbar, Box, Divider } from '@mui/material/';
 import Tooltip from '-/components/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import SortingIcon from '@mui/icons-material/SwapVerticalCircle';
@@ -36,12 +37,9 @@ import {
 import AppConfig from '-/AppConfig';
 import { Pro } from '-/pro';
 import { ProTooltip } from '-/components/HelperComponents';
+import ZoomSlider, { EntrySizes } from '-/components/ZoomComponent';
 import { getKeyBindingObject } from '-/reducers/settings';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import {
-  classes,
-  GridStyles,
-} from '-/perspectives/grid-perspective/components/styles.css';
 import { useTranslation } from 'react-i18next';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
@@ -54,6 +52,8 @@ interface Props {
   openAddRemoveTagsDialog: () => void;
   openMoveCopyFilesDialog: () => void;
   handleSortingMenu: (event: Object) => void;
+  changeEntrySize: (entrySize: EntrySizes) => void;
+  entrySize: EntrySizes;
   handleExportCsvMenu: () => void;
   openSettings: () => void;
   openShareFilesDialog?: () => void;
@@ -69,9 +69,12 @@ function MainToolbar(props: Props) {
     handleExportCsvMenu,
     openSettings,
     openShareFilesDialog,
+    entrySize,
+    changeEntrySize,
   } = props;
 
   const { t } = useTranslation();
+  const theme = useTheme();
   const { openEntry } = useOpenedEntryContext();
   const { loadParentDirectoryContent, currentDirectoryPath } =
     useDirectoryContentContext();
@@ -85,162 +88,180 @@ function MainToolbar(props: Props) {
   }
 
   return (
-    <GridStyles>
-      <Toolbar
-        className={classes.topToolbar}
-        data-tid={prefixDataTID + 'perspectiveToolbar'}
+    <Toolbar
+      style={{
+        paddingLeft: 5,
+        paddingRight: 5,
+        minHeight: 40,
+        height: 53,
+        position: 'absolute',
+        zIndex: 1,
+        background:
+          'linear-gradient(0deg, ' +
+          alpha(theme.palette.background.default, 0.67) +
+          ' 0%, ' +
+          theme.palette.background.default +
+          ' 99%)',
+        backdropFilter: 'blur(5px)',
+        // borderBottom: '1px solid ' + theme.palette.divider,
+        width: 'calc(100% - 10px)',
+        overflowX: 'auto',
+        overflowY: 'hidden',
+      }}
+      data-tid={prefixDataTID + 'perspectiveToolbar'}
+    >
+      <Tooltip
+        title={t('core:navigateToParentDirectory')}
+        keyBinding={keyBindings['openParentDirectory']}
       >
-        <Tooltip
-          title={t('core:navigateToParentDirectory')}
-          keyBinding={keyBindings['openParentDirectory']}
+        <IconButton
+          aria-label={t('core:navigateToParentDirectory')}
+          data-tid={prefixDataTID + 'PerspectiveOnBackButton'}
+          onClick={() => {
+            loadParentDirectoryContent();
+          }}
+          size="large"
         >
-          <IconButton
-            aria-label={t('core:navigateToParentDirectory')}
-            data-tid={prefixDataTID + 'PerspectiveOnBackButton'}
-            onClick={() => {
-              /*if (searchQuery && Object.keys(searchQuery).length > 0) {
-                dispatch(LocationIndexActions.setSearchQuery({}));
-                openCurrentDirectory();
-              } else {*/
-              loadParentDirectoryContent();
-            }}
-            size="large"
-          >
-            <ParentFolderIcon />
-          </IconButton>
-        </Tooltip>
-        <Tooltip
-          title={t('core:toggleSelectAllFiles')}
-          keyBinding={keyBindings['selectAll']}
+          <ParentFolderIcon />
+        </IconButton>
+      </Tooltip>
+      <Tooltip
+        title={t('core:toggleSelectAllFiles')}
+        keyBinding={keyBindings['selectAll']}
+      >
+        <IconButton
+          data-tid={prefixDataTID + 'PerspectiveSelectAllFiles'}
+          onClick={toggleSelectAllFiles}
+          size="large"
         >
-          <IconButton
-            data-tid={prefixDataTID + 'PerspectiveSelectAllFiles'}
-            onClick={toggleSelectAllFiles}
-            size="large"
+          {selectedEntries.length > 1 ? <SelectedIcon /> : <UnSelectedIcon />}
+        </IconButton>
+      </Tooltip>
+      <Tooltip title={t('core:directoryPropertiesTitle')}>
+        <IconButton
+          aria-label={t('core:directoryPropertiesTitle')}
+          data-tid="openFolderProperties"
+          onClick={showProperties}
+          size="large"
+        >
+          <FolderPropertiesIcon />
+        </IconButton>
+      </Tooltip>
+      <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
+      <Box sx={{ display: selectedEntries.length < 1 ? 'none' : 'flex' }}>
+        {!readOnlyMode && (
+          <Tooltip
+            title={t('core:tagSelectedEntries')}
+            keyBinding={keyBindings['addRemoveTags']}
           >
-            {selectedEntries.length > 1 ? <SelectedIcon /> : <UnSelectedIcon />}
-          </IconButton>
-        </Tooltip>
-        <Tooltip title={t('core:directoryPropertiesTitle')}>
-          <IconButton
-            aria-label={t('core:directoryPropertiesTitle')}
-            data-tid="openFolderProperties"
-            onClick={showProperties}
-            size="large"
-          >
-            <FolderPropertiesIcon />
-          </IconButton>
-        </Tooltip>
-        <Box sx={{ display: selectedEntries.length < 1 ? 'none' : 'flex' }}>
-          {!readOnlyMode && (
-            <Tooltip
-              title={t('core:tagSelectedEntries')}
-              keyBinding={keyBindings['addRemoveTags']}
-            >
-              <span>
-                <IconButton
-                  aria-label={t('core:tagSelectedEntries')}
-                  data-tid={prefixDataTID + 'PerspectiveAddRemoveTags'}
-                  onClick={openAddRemoveTagsDialog}
-                  size="large"
-                >
-                  <TagIcon />
-                </IconButton>
-              </span>
-            </Tooltip>
-          )}
-          {!readOnlyMode && (
-            <Tooltip
-              title={t('core:copyMoveSelectedEntries')}
-              keyBinding={keyBindings['copyMoveSelectedEntries']}
-            >
-              <span>
-                <IconButton
-                  aria-label={t('core:copyMoveSelectedEntries')}
-                  data-tid={prefixDataTID + 'PerspectiveCopySelectedFiles'}
-                  onClick={openMoveCopyFilesDialog}
-                  size="large"
-                >
-                  <CopyIcon />
-                </IconButton>
-              </span>
-            </Tooltip>
-          )}
-          {!readOnlyMode && (
-            <Tooltip
-              title={t('core:deleteSelectedEntries')}
-              keyBinding={keyBindings['deleteDocument']}
-            >
-              <span>
-                <IconButton
-                  aria-label={t('core:deleteSelectedEntries')}
-                  data-tid={prefixDataTID + 'PerspectiveDeleteMultipleFiles'}
-                  onClick={() =>
-                    dispatch(AppActions.toggleDeleteMultipleEntriesDialog())
-                  }
-                  size="large"
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </span>
-            </Tooltip>
-          )}
-          {openShareFilesDialog && (
-            <ProTooltip tooltip={t('core:shareFiles')}>
-              <span>
-                <IconButton
-                  aria-label={t('core:shareFiles')}
-                  data-tid={prefixDataTID + 'PerspectiveShareFiles'}
-                  onClick={openShareFilesDialog}
-                  disabled={selectedEntries.length < 1}
-                  size="large"
-                >
-                  <ShareIcon />
-                </IconButton>
-              </span>
-            </ProTooltip>
-          )}
-        </Box>
-        <Tooltip title={t('core:sort')}>
-          <IconButton
-            // title={t('core:sort')}
-            aria-label={t('core:sort')}
-            data-tid={prefixDataTID + 'PerspectiveSortMenu'}
-            onClick={(e) => {
-              handleSortingMenu(e);
-            }}
-            size="large"
-          >
-            <SortingIcon />
-          </IconButton>
-        </Tooltip>
-        {Pro &&
-          !AppConfig.isCordovaAndroid && ( // https://trello.com/c/z6ESlqxz/697-exports-to-json-or-csv-do-not-work-on-android
-            <Tooltip title={t('core:exportCsv')}>
+            <span>
               <IconButton
-                data-tid={prefixDataTID + 'PerspectiveExportCsvMenuTID'}
-                onClick={handleExportCsvMenu}
-                style={{ transform: 'scale(-1, 1)' }}
+                aria-label={t('core:tagSelectedEntries')}
+                data-tid={prefixDataTID + 'PerspectiveAddRemoveTags'}
+                onClick={openAddRemoveTagsDialog}
                 size="large"
               >
-                <ExportIcon />
+                <TagIcon />
               </IconButton>
-            </Tooltip>
-          )}
-        <Box sx={{ flexGrow: 1 }} />
-        <Box sx={{ display: 'flex' }}>
-          <Tooltip title={t('core:perspectiveSettingsTitle')}>
+            </span>
+          </Tooltip>
+        )}
+        {!readOnlyMode && (
+          <Tooltip
+            title={t('core:copyMoveSelectedEntries')}
+            keyBinding={keyBindings['copyMoveSelectedEntries']}
+          >
+            <span>
+              <IconButton
+                aria-label={t('core:copyMoveSelectedEntries')}
+                data-tid={prefixDataTID + 'PerspectiveCopySelectedFiles'}
+                onClick={openMoveCopyFilesDialog}
+                size="large"
+              >
+                <CopyIcon />
+              </IconButton>
+            </span>
+          </Tooltip>
+        )}
+        {!readOnlyMode && (
+          <Tooltip
+            title={t('core:deleteSelectedEntries')}
+            keyBinding={keyBindings['deleteDocument']}
+          >
+            <span>
+              <IconButton
+                aria-label={t('core:deleteSelectedEntries')}
+                data-tid={prefixDataTID + 'PerspectiveDeleteMultipleFiles'}
+                onClick={() =>
+                  dispatch(AppActions.toggleDeleteMultipleEntriesDialog())
+                }
+                size="large"
+              >
+                <DeleteIcon />
+              </IconButton>
+            </span>
+          </Tooltip>
+        )}
+        {openShareFilesDialog && (
+          <ProTooltip tooltip={t('core:shareFiles')}>
+            <span>
+              <IconButton
+                aria-label={t('core:shareFiles')}
+                data-tid={prefixDataTID + 'PerspectiveShareFiles'}
+                onClick={openShareFilesDialog}
+                disabled={selectedEntries.length < 1}
+                size="large"
+              >
+                <ShareIcon />
+              </IconButton>
+            </span>
+          </ProTooltip>
+        )}
+        <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
+      </Box>
+      <Tooltip title={t('core:sort')}>
+        <IconButton
+          aria-label={t('core:sort')}
+          data-tid={prefixDataTID + 'PerspectiveSortMenu'}
+          onClick={(e) => {
+            handleSortingMenu(e);
+          }}
+          size="large"
+        >
+          <SortingIcon />
+        </IconButton>
+      </Tooltip>
+      {Pro &&
+        !AppConfig.isCordovaAndroid && ( // SaveAs do not worlk on Android
+          <Tooltip title={t('core:exportCsv')}>
             <IconButton
-              data-tid={prefixDataTID + 'PerspectiveOptionsMenu'}
-              onClick={openSettings}
+              data-tid={prefixDataTID + 'PerspectiveExportCsvMenuTID'}
+              onClick={handleExportCsvMenu}
+              style={{ transform: 'scale(-1, 1)' }}
               size="large"
             >
-              <PerspectiveSettingsIcon />
+              <ExportIcon />
             </IconButton>
           </Tooltip>
-        </Box>
-      </Toolbar>
-    </GridStyles>
+        )}
+      <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
+      <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
+        <ZoomSlider entrySize={entrySize} changeEntrySize={changeEntrySize} />
+        <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
+      </Box>
+      <Box sx={{ flexGrow: 1 }} />
+      <Box sx={{ display: 'flex' }}>
+        <Tooltip title={t('core:perspectiveSettingsTitle')}>
+          <IconButton
+            data-tid={prefixDataTID + 'PerspectiveOptionsMenu'}
+            onClick={openSettings}
+            size="large"
+          >
+            <PerspectiveSettingsIcon />
+          </IconButton>
+        </Tooltip>
+      </Box>
+    </Toolbar>
   );
 }
 

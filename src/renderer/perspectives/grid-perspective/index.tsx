@@ -1,6 +1,6 @@
 import React from 'react';
-
 export { default } from './components/MainContainer';
+import { EntrySizes } from '-/components/ZoomComponent';
 
 // interface PerspectiveSettings {
 //   settingsKey: string;
@@ -21,7 +21,7 @@ export const defaultSettings = {
   sortBy: 'byName',
   layoutType: 'grid', // list grid
   singleClickAction: 'openInternal', // openInternal openExternal
-  entrySize: 'small', // small, normal, big
+  entrySize: EntrySizes.small,
   thumbnailMode: 'contain', // cover contain
   showDirectories: true,
   showDetails: true,
@@ -29,4 +29,5 @@ export const defaultSettings = {
   showEntriesDescription: true,
   showTags: true,
   gridPageLimit: 100,
+  maxDescriptionPreviewLength: 100,
 };
