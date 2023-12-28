@@ -570,10 +570,6 @@ export const DirectoryContentContextProvider = ({
           //OPEN ISTRUNCATED dialog
           dispatch(AppActions.toggleTruncatedConfirmDialog());
         }
-        updateHistory(
-          { ...currentLocation, path: currentLocationPath.current },
-          directoryPath,
-        );
         if (results !== undefined) {
           // console.debug('app listDirectoryPromise resolved:' + results.length);
           return loadDirectorySuccess(
@@ -683,6 +679,10 @@ export const DirectoryContentContextProvider = ({
     //}
     setCurrentDirectoryEntries(directoryContent);
     currentDirectoryPath.current = directoryPath;
+    updateHistory(
+      { ...currentLocation, path: currentLocationPath.current },
+      directoryPath,
+    );
     return directoryContent;
   }
 
