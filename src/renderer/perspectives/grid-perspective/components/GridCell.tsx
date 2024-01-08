@@ -443,7 +443,7 @@ function GridCell(props: Props) {
                 />
               )}
             </IconButton>
-            {showTags && entryTags && entrySize !== EntrySizes.tiny ? (
+            {showTags && entryTags && !isSmall ? (
               renderTags
             ) : (
               <TagsPreview tags={entryTags} />

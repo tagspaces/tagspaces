@@ -17,6 +17,7 @@
  */
 
 import * as React from 'react';
+import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import ZoomOutIcon from '@mui/icons-material/RemoveCircleOutline';
 import ZoomInIcon from '@mui/icons-material/ControlPoint';
@@ -52,6 +53,7 @@ function mapEntrySizeToPercent(entrySize: EntrySizes) {
 
 export default function ZoomComponent(props: Props) {
   const { changeEntrySize, entrySize } = props;
+  const theme = useTheme();
   const entrySizePercent = mapEntrySizeToPercent(entrySize);
 
   function zoomIn() {
@@ -87,7 +89,10 @@ export default function ZoomComponent(props: Props) {
       <IconButton onClick={zoomOut}>
         <ZoomOutIcon />
       </IconButton>
-      <Typography variant="overline" style={{ marginTop: 4 }}>
+      <Typography
+        variant="overline"
+        style={{ color: theme.palette.text.primary, marginTop: 4 }}
+      >
         {entrySizePercent}
       </Typography>
       <IconButton onClick={zoomIn}>

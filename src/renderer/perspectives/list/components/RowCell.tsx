@@ -106,7 +106,7 @@ interface Props {
 export function calculateEntryHeight(entrySize: EntrySizes) {
   let entryHeight = 200;
   if (entrySize === EntrySizes.tiny) {
-    entryHeight = 50;
+    entryHeight = 30;
   } else if (entrySize === EntrySizes.small) {
     entryHeight = 70;
   } else if (entrySize === EntrySizes.normal) {
