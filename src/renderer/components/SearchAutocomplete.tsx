@@ -116,27 +116,15 @@ function SearchAutocomplete(props: Props) {
   const openLinkDispatch = (link, options) => openLink(link, options);
 
   const { setTextQuery, textQuery, open, setAnchorSearch } = props;
-  // const [, forceUpdate] = useReducer(x => x + 1, 0);
   const [openSavedSearches, setOpenSavedSearches] =
     useState<null | HTMLElement>(null);
   const searchOptions = useRef<Array<SearchOptionType>>(getSearchOptions());
   const currentOptions = useRef<string>(undefined);
-  // const textQueryMask = useRef<string>('');
   const fileTypes = useRef<Array<string>>(
     searchQuery.fileTypes ? searchQuery.fileTypes : FileTypeGroups.any,
   );
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
-
-  /*function parseSearchQuery(textQuery: string) {
-    if (textQuery) {
-      return execActions(textQuery.split(' '), []);
-    }
-    return [];
-  }*/
-
-  const actionValues = useRef<Array<SearchOptionType>>(
-    [], //parseSearchQuery(textQueryMask.current)
-  );
+  const actionValues = useRef<Array<SearchOptionType>>([]);
   const [searchBoxing, setSearchBoxing] = useState<ScopeType>(
     searchQuery.searchBoxing || 'location',
   );
@@ -171,21 +159,6 @@ function SearchAutocomplete(props: Props) {
   // const firstRender = useFirstRender();
   const historyKeys = Pro && Pro.history ? Pro.history.historyKeys : {};
 
-  /*useEffect(() => {
-    if (!firstRender) {
-      if (!searchMode) {
-        clearSearch();
-      }
-    }
-  }, [searchMode]);*/
-
-  /* let searchBoxingName = t('location');
-  if (searchBoxing === 'global') {
-    searchBoxingName = t('globalSearch');
-  } else if (searchBoxing === 'folder') {
-    searchBoxingName = t('folder');
-  }*/
-
   useEffect(() => {
     processSearchQuery();
   }, [searchQuery]);
@@ -194,12 +167,9 @@ function SearchAutocomplete(props: Props) {
     if (Object.keys(searchQuery).length > 0) {
       let emptySearch = true;
       const actions: SearchOptionType[] = [];
-      // textQueryMask.current = '';
 
       if (searchQuery.tagsAND && searchQuery.tagsAND.length > 0) {
         searchQuery.tagsAND.forEach((tag) => {
-          // textQueryMask.current += ' +' + tag.title;
-
           actions.push({
             action: SearchQueryComposition.TAG_AND.shortName,
             label: SearchQueryComposition.TAG_AND.shortName + tag.title,
@@ -211,7 +181,6 @@ function SearchAutocomplete(props: Props) {
       }
       if (searchQuery.tagsOR && searchQuery.tagsOR.length > 0) {
         searchQuery.tagsOR.forEach((tag) => {
-          // textQueryMask.current += ' |' + tag.title;
           actions.push({
             action: SearchQueryComposition.TAG_OR.shortName,
             label: SearchQueryComposition.TAG_OR.shortName + tag.title,
@@ -223,7 +192,6 @@ function SearchAutocomplete(props: Props) {
       }
       if (searchQuery.tagsNOT && searchQuery.tagsNOT.length > 0) {
         searchQuery.tagsNOT.forEach((tag) => {
-          // textQueryMask.current += ' -' + tag.title;
           actions.push({
             action: SearchQueryComposition.TAG_NOT.shortName,
             label: SearchQueryComposition.TAG_NOT.shortName + tag.title,
@@ -234,7 +202,6 @@ function SearchAutocomplete(props: Props) {
         emptySearch = false;
       }
 
-      // inputValue.current = getInputValue();
       let txtQuery = '';
       if (searchQuery.textQuery) {
         setTextQuery(searchQuery.textQuery);
@@ -342,31 +309,9 @@ function SearchAutocomplete(props: Props) {
             searchLocationIndex(sQuery);
           }
         }
-      } /*else {
-        clearSearch();
-      }*/
+      }
     }
   }
-  /*function getInputValue() {
-    const txtQuery = removeActionsFromQuery(
-      inputValue.current.trim(),
-      actionValues.current
-    );
-    // txtQuery = removeAllTagsFromSearchQuery(txtQuery);
-    if (txtQuery) {
-      return txtQuery;
-    }
-    return '';
-  }*/
-  /*const toggleSearchBoxing = () => {
-    if (searchBoxing === 'location') {
-      setSearchBoxing('folder');
-    } else if (searchBoxing === 'folder' && Pro) {
-      setSearchBoxing('global');
-    } else {
-      setSearchBoxing('location');
-    }
-  };*/
 
   const clickSearchButton = () => {
     executeSearch();
@@ -448,7 +393,6 @@ function SearchAutocomplete(props: Props) {
     resetValues([]);
     setSearchQuery({});
     exitSearchMode();
-    // watchForChanges();
     openCurrentDirectory();
   };
 
@@ -465,35 +409,11 @@ function SearchAutocomplete(props: Props) {
     return query;
   }
 
-  /*const removeTagsFromQuery = (
-    tags: Array<TS.Tag>,
-    query: string,
-    identifier: string
-  ) => {
-    if (tags) {
-      let newQuery = query
-        .trim()
-        .replace(
-          new RegExp(escapeRegExp(identifier) + '\\s+', 'g'),
-          identifier
-        );
-      tags.forEach(tag => {
-        newQuery = newQuery.replace(identifier + tag.title, '');
-      });
-
-      return newQuery.trim();
-    }
-
-    return query;
-  };*/
-
   const handleOpenSavedSearches = (
     event: React.MouseEvent<HTMLButtonElement>,
   ) => {
     setOpenSavedSearches(event.currentTarget);
   };
-
-  // const classes = useStyles();
 
   function HelpTooltip(hClasses) {
     return (
@@ -583,14 +503,6 @@ function SearchAutocomplete(props: Props) {
       actionValues.current,
       SearchQueryComposition.TAG_NOT,
     );
-    // const tagsAND = parseTextQuery(textQuery.current, '+');
-    // query = removeTagsFromQuery(tagsAND, query, '+');
-    // const tagsOR = parseTextQuery(textQuery.current, '|');
-    // query = removeTagsFromQuery(tagsOR, query, '|');
-    // const tagsNOT = parseTextQuery(textQuery.current, '-');
-    // query = removeTagsFromQuery(tagsNOT, query, '-');
-    // query = removeActionsFromQuery(query, actionValues.current);
-
     const sQuery: TS.SearchQuery = {
       textQuery: textQuery,
       tagsAND,
@@ -619,28 +531,6 @@ function SearchAutocomplete(props: Props) {
       setSearchQuery(sQuery);
     }
   };
-
-  /*function parseOptions(options: Array<any>) {
-
-    const parsed = [];
-    let prevAction;
-    for (let i = 0; i < options.length; i++) {
-      const option = options[i];
-      let label, action;
-      if (typeof option === 'object') {
-        label = option.label;
-        action = option.label;
-      } else {
-        label = option;
-        action = Object.values(SearchActions).find(a => option.startsWith(a));
-      }
-      if (!action) {
-        parsed.push(option);
-      }
-      prevAction = action;
-    }
-    return parsed;
-  }*/
 
   function getHistoryOptions(
     items: TS.HistoryItem[],
@@ -772,11 +662,6 @@ function SearchAutocomplete(props: Props) {
       isAction(action, SearchQueryComposition.TAG_OR) ||
       isAction(action, SearchQueryComposition.TAG_NOT)
     ) {
-      /*if (
-        currentOptions.current !== SearchQueryComposition.TAG_AND ||
-        currentOptions.current !== SearchQueryComposition.TAG_OR ||
-        currentOptions.current !== SearchQueryComposition.TAG_NOT
-      ) {*/
       currentOptions.current = action;
       const searchAction = toExecAction(action);
       const tagGroups = getTagLibrary();
@@ -1227,7 +1112,6 @@ function SearchAutocomplete(props: Props) {
   }
 
   function handleInputChange(event: any, value: string, reason: string) {
-    // handleChange(event, value.split(' '), 'createOption');
     if (reason === 'input') {
       const valueArr = value.split(' ');
       actionValues.current = execActions(
@@ -1239,17 +1123,10 @@ function SearchAutocomplete(props: Props) {
         (action) => !actionValues.current.some((v) => v.label === action),
       );
       setTextQuery(inputArr.join(' '));
-      //textQuery.current += ' ' + inputValue.current;
       forceUpdate();
     } else if (reason === 'clear') {
       clearSearch();
     } else if (reason === 'reset') {
-      /*if (event.type === 'keydown' || event.type === 'click') {
-        // textQuery.current += ' ' + inputValue.current;
-        props.setTextQuery('');
-      } else if (event.type === 'blur') {
-      }*/
-      // executeSearch();
     }
   }
 
@@ -1298,31 +1175,7 @@ function SearchAutocomplete(props: Props) {
       );
       resetActions(actionValues.current);
       forceUpdate();
-      // reset default search filters
-      /*for (let i = 0; i < selected.length; i++) {
-        const action = findAction(selected[i]);
-        if (isAction(action, SearchQueryComposition.TYPE)) {
-          fileTypes.current = [];
-        } else if (isAction(action, SearchQueryComposition.SIZE)) {
-          fileSize.current = '';
-        }
-      }
-
-      if (actionValues.current.length === 0) {
-        searchOptions.current = SearchOptions;
-        currentOptions.current = undefined;
-        // textQuery.current = ''; todo remove tagsAnd from search query
-      } else {
-        const prevAction =
-          actionValues.current[actionValues.current.length - 1];
-        changeOptions(toExecAction(prevAction.action));
-        // textQuery.current = actionValues.current.map(v => v.label).join(' ');
-      }
-      // executeSearch();
-      isOpen.current = true;*/
-    } /*else if (reason === 'clear') {
-      props.setSearchQuery({});
-    }*/
+    }
   }
 
   function resetActions(actions: Array<SearchOptionType>) {
@@ -1340,63 +1193,9 @@ function SearchAutocomplete(props: Props) {
     }
   }
 
-  /*const handleOpen = React.useCallback(() => {
-    isOpen.current = true;
-  }, []);
-
-  const handleClose = React.useCallback(() => {
-    isOpen.current = false;
-  }, []);*/
-
   if (!open) {
     return null;
   }
-
-  // const startAdornment = (
-  //   <IconButton size="small" edge="end" onClick={clickSearchButton}>
-  //     <SearchIcon />
-  //   </IconButton>
-  // );
-
-  /*const startAdornment = isDesktop ? (
-    <>
-      <Tooltip
-        classes={{ tooltip: classes.customWidth }}
-        title={
-          <span style={{ fontSize: 14 }}>
-            {t('searchScope')}:
-            <br />
-            &bull; {t('location')} - {t('searchPlaceholder')}
-            <br />
-            &bull; {t('folder')} -{' '}
-            {t('searchCurrentFolderWithSubFolders')}
-            <br />
-            &bull; {t('globalSearch')} -{' '}
-            {t('searchInAllLocationTooltip')} ({t('betaStatus')})
-            <br />
-          </span>
-        }
-      >
-        <Typography
-          variant="overline"
-          display="block"
-          onClick={toggleSearchBoxing}
-          style={{
-            border: '1px solid gray',
-            borderRadius: 5,
-            lineHeight: 'inherit',
-            paddingLeft: 3,
-            paddingRight: 3
-          }}
-        >
-          {searchBoxingName}
-        </Typography>
-      </Tooltip>
-      <HelpTooltip classes={classes} />
-    </>
-  ) : (
-    <HelpTooltip classes={classes} />
-  );*/
 
   const endAdornment = (
     <>
@@ -1461,13 +1260,10 @@ function SearchAutocomplete(props: Props) {
         <Autocomplete
           id="textQuery"
           multiple
-          /*autoFocus*/
-          /*openOnFocus*/
           freeSolo
           autoSelect
           autoComplete
           handleHomeEndKeys
-          /*defaultValue={['one']}*/
           value={actionValues.current.map((v) =>
             v.fullName ? v.fullName : v.label,
           )}
@@ -1475,8 +1271,6 @@ function SearchAutocomplete(props: Props) {
           inputValue={textQuery}
           onInputChange={handleInputChange}
           open={isOpen.current}
-          /*onOpen={handleOpen}
-          onClose={handleClose}*/
           filterOptions={(options: Array<SearchOptionType>, state: any) => {
             const filteredOptions = options.filter((option) => {
               if (option.filter === false) {
@@ -1506,10 +1300,12 @@ function SearchAutocomplete(props: Props) {
                     minHeight: 0,
                     minWidth: 0,
                     margin: 2,
+                    marginLeft: 1,
+                    marginTop: 3,
                     paddingTop: 0,
                     paddingBottom: 0,
                     paddingRight: 0,
-                    paddingLeft: 5,
+                    paddingLeft: 4,
                     borderRadius: 5,
                     ...(action &&
                       action.color && {
@@ -1540,9 +1336,16 @@ function SearchAutocomplete(props: Props) {
                       size="small"
                       style={{
                         backgroundColor: 'transparent',
+                        textTransform: 'lowercase',
                         padding: 0,
+                        margin: 0,
                       }}
-                      endIcon={<ArrowDropDownIcon />}
+                      endIcon={
+                        <ArrowDropDownIcon
+                          style={{ marginLeft: -10 }}
+                          fontSize="small"
+                        />
+                      }
                     >
                       {option}
                     </Button>
@@ -1557,21 +1360,21 @@ function SearchAutocomplete(props: Props) {
                         onClick={() => {
                           handleChange(null, [option], 'remove-value');
                         }}
-                        style={{ padding: 0, margin: 0 }}
+                        style={{
+                          padding: 0,
+                          margin: 0,
+                          textTransform: 'lowercase',
+                        }}
                         data-tid={dataTidFormat('close' + option)}
                         size="small"
                       >
-                        <CloseIcon />
+                        <CloseIcon fontSize="small" />
                       </IconButton>
                     )}
                 </Box>
               );
             })
           }
-          /*inputValue={inputValue}
-          onInputChange={(event, newInputValue) => {
-            setInputValue(newInputValue);
-          }}*/
           options={searchOptions.current}
           groupBy={(option) => option.group}
           renderGroup={(params) => (
@@ -1579,8 +1382,8 @@ function SearchAutocomplete(props: Props) {
               <div
                 style={{
                   position: 'sticky',
-                  top: '-8px',
-                  padding: '4px 10px',
+                  top: 0,
+                  padding: '10px 10px',
                   backgroundColor: theme.palette.background.default,
                 }}
               >
@@ -1619,9 +1422,6 @@ function SearchAutocomplete(props: Props) {
               )}
             </Box>
           )}
-          /*getOptionLabel={(option: SearchOptionType) =>
-            option.label + ': ' + option.descr
-          }*/
           sx={{ width: 'calc(100% - 80px)' }}
           onKeyDown={onKeyDownHandler}
           disableClearable={true}
@@ -1637,7 +1437,7 @@ function SearchAutocomplete(props: Props) {
             return (
               <TextField
                 {...params}
-                /*style={{ padding: 3, borderRadius: 7 }}*/
+                style={{ overflow: 'auto', maxHeight: 40 }}
                 onBlur={() => {
                   isOpen.current = false;
                   forceUpdate();
@@ -1647,19 +1447,7 @@ function SearchAutocomplete(props: Props) {
                   forceUpdate();
                 }}
                 fullWidth
-                /*id="textQuery"
-              name="textQuery"*/
-                // label={t('core:searchTitle')}
-                /*defaultValue={textQuery.current}*/
-                /*onChange={event => {
-                textQuery.current = event.target.value;
-              }}*/
-                /*style={{
-        width: 'calc(100% - 80px)'
-      }}*/
-                /*inputRef={mainSearchField}*/
                 autoFocus
-                /*onKeyDown={startSearch}*/
                 placeholder={t('core:searchTitle')}
                 size="small"
                 margin="dense"
