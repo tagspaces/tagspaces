@@ -108,7 +108,8 @@ export const CurrentLocationContextProvider = ({
   const { showNotification } = useNotificationContext();
   const [currentLocation, setCurrentLocation] =
     useState<TS.Location>(undefined);
-  const selectedLocation = useRef<TS.Location>(undefined);
+  const [selectedLocation, setSelectedLocation] =
+    useState<TS.Location>(undefined);
   const skipInitialDirList = useRef<boolean>(false);
   const [
     locationDirectoryContextMenuAnchorEl,
@@ -178,10 +179,6 @@ export const CurrentLocationContextProvider = ({
     }
 
     return Promise.resolve(locationPath);
-  }
-
-  function setSelectedLocation(location: TS.Location) {
-    selectedLocation.current = location;
   }
 
   function setDefaultLocations() {
@@ -422,14 +419,15 @@ export const CurrentLocationContextProvider = ({
       switchLocationTypeByID,
       changeLocationByID,
       openLocationById,
-      selectedLocation: selectedLocation.current,
+      selectedLocation,
+      setSelectedLocation,
       locationDirectoryContextMenuAnchorEl,
       setLocationDirectoryContextMenuAnchorEl,
-      setSelectedLocation,
       getLocationPosition,
     };
   }, [
     currentLocation,
+    selectedLocation,
     persistTagsInSidecarFile,
     skipInitialDirList.current,
     locationDirectoryContextMenuAnchorEl,
