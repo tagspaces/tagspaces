@@ -491,7 +491,7 @@ function MainPage(props: Props) {
     percent.current = p;
     if (p !== undefined) {
       bufferedLeftSplitResize(() => {
-        if (props.mainSplitSize !== p + '%') {
+        if (mainSplitSize !== p + '%') {
           props.setMainVerticalSplitSize(p + '%');
         }
       });
@@ -499,7 +499,7 @@ function MainPage(props: Props) {
     forceUpdate();
   };
 
-  const renderContainers = () => {
+  function renderContainers() {
     let initialPrimarySize = mainSplitSize;
     let minPrimarySize = '250px';
     let minSecondarySize = '250px';
@@ -547,7 +547,7 @@ function MainPage(props: Props) {
         )}
       </Split>
     );
-  };
+  }
 
   return (
     <Root>
@@ -718,9 +718,9 @@ function MainPage(props: Props) {
         >
           <style>
             {`
-              html { 
-                zoom: ${zoomFactor}; 
-                -moz-transform: scale(${zoomFactor}); 
+              html {
+                zoom: ${zoomFactor};
+                -moz-transform: scale(${zoomFactor});
                 -moz-transform-origin: 0 0;
               }
               body { background-color: ${
@@ -893,7 +893,8 @@ const areEqual = (prevProp, nextProp) =>
     prevProp.isThirdPartyLibsDialogOpened &&
   nextProp.isUploadProgressDialogOpened ===
     prevProp.isUploadProgressDialogOpened &&
-  nextProp.isImportKanBanDialogOpened === prevProp.isImportKanBanDialogOpened;
+  nextProp.isImportKanBanDialogOpened === prevProp.isImportKanBanDialogOpened &&
+  nextProp.mainSplitSize === prevProp.mainSplitSize;
 
 export default withDnDContext(
   connect(mapStateToProps, mapDispatchToProps)(React.memo(MainPage, areEqual)), //translate(['core'], { wait: true })(React.memo(MainPage, areEqual)))
