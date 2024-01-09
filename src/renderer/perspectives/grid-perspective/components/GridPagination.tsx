@@ -334,7 +334,7 @@ function GridPagination(props: Props) {
               </div>
             </Grid>
           )}
-          {showDescription && directoryMeta.description && (
+          {showDescription && directoryMeta && directoryMeta.description && (
             <Grid
               item
               xs={12}
