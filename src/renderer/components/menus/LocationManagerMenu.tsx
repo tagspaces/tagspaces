@@ -28,10 +28,8 @@ import classNames from 'classnames';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { useDispatch } from 'react-redux';
 import AppConfig from '-/AppConfig';
 import { Pro } from '../../pro';
-import { AppDispatch } from '-/reducers/app';
 import Links from 'assets/links';
 import { ProLabel } from '-/components/HelperComponents';
 import {
@@ -66,7 +64,6 @@ function LocationManagerMenu(props: Props) {
   const { closeAllLocations } = useCurrentLocationContext();
   const [locationManagerMenuAnchorEl, setLocationManagerMenuAnchorEl] =
     useState<null | HTMLElement>(null);
-  const dispatch: AppDispatch = useDispatch();
   const menuItems = [];
   if (!AppConfig.locationsReadOnly) {
     menuItems.push(
