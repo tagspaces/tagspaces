@@ -75,6 +75,7 @@ import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
 import { useTranslation } from 'react-i18next';
 import { getKeyBindingObject } from '-/reducers/settings';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 const PREFIX = 'MobileNavigation';
 
@@ -102,6 +103,7 @@ function MobileNavigation(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
 
+  const { setSelectedLocation } = useCurrentLocationContext();
   const keyBindings = useSelector(getKeyBindingObject);
   const isLocationManagerPanelOpenedSelector = useSelector(
     isLocationManagerPanelOpened,
@@ -311,6 +313,7 @@ function MobileNavigation(props: Props) {
                       key="createNewLocationTID"
                       ata-tid="createNewFolderTID"
                       onClick={() => {
+                        setSelectedLocation(undefined);
                         dispatch(AppActions.toggleLocationDialog());
                         setOpenCreateMenu(false);
                         if (hideDrawer) {
