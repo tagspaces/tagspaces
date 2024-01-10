@@ -167,7 +167,7 @@ function MobileNavigation(props: Props) {
       <Box
         style={{
           overflow: 'hidden',
-          height: showProTeaser ? 'calc(100% - 220px)' : 'calc(100% - 55px)',
+          // height: showProTeaser ? 'calc(100% - 220px)' : 'calc(100% - 55px)',
         }}
       >
         <Box>
@@ -350,7 +350,10 @@ function MobileNavigation(props: Props) {
       </Box>
       <Box
         style={{
-          textAlign: 'center',
+          position: 'fixed',
+          bottom: 5,
+          left: 5,
+          minWidth: 300,
         }}
       >
         {showProTeaser && (
