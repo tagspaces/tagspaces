@@ -269,6 +269,11 @@ function reloadApp() {
 }
 
 function createNewWindowInstance(url?) {
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow(appI18N);
+    return;
+  }
+
   const mainWindowState = windowStateKeeper({
     defaultWidth: 1280,
     defaultHeight: 800,
@@ -544,12 +549,20 @@ app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required'); // 
  */
 
 app.on('window-all-closed', () => {
-  // Respect the OSX convention of having the application in memory even
+  // Respect the macOS convention of having the application in memory even
   // after all windows have been closed
-  if (isMacLike) {
-    pm2.stopAll();
-    globalShortcut.unregisterAll();
+  if (!isMacLike) {
+    // pm2.stopAll();
+    // globalShortcut.unregisterAll();
     app.quit();
+  }
+});
+
+app.on('activate', function () {
+  // On macOS it's common to re-create a window in the app when the
+  // dock icon is clicked and there are no other windows open.
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow(appI18N);
   }
 });
 
@@ -570,10 +583,13 @@ app.on('web-contents-created', (event, contents) => {
 
 startWS();
 
+let appI18N;
+
 app
   .whenReady()
   .then(() => {
     return i18nInit().then((i18n) => {
+      appI18N = i18n;
       createWindow(i18n);
       app.on('activate', () => {
         // On macOS it's common to re-create a window in the app when the
@@ -644,8 +660,6 @@ app
         }
       });
 
-      // end electron-io
-
       ipcMain.on('app-data-path-request', (event) => {
         event.returnValue = app.getPath('appData'); // eslint-disable-line
       });
@@ -653,22 +667,6 @@ app
       ipcMain.on('app-version-request', (event) => {
         event.returnValue = app.getVersion(); // eslint-disable-line
       });
-
-      /*ipcMain.handle('move-to-trash', async (event, files) => {
-        const result = [];
-        files.forEach((fullPath) => {
-          // console.debug('Trash:' + fullPath);
-          result.push(shell.trashItem(fullPath));
-        });
-
-        let ret;
-        try {
-          ret = await Promise.all(result);
-        } catch (err) {
-          console.error('moveToTrash ' + JSON.stringify(files) + 'error:', err);
-        }
-        return ret;
-      });*/
 
       ipcMain.on('set-language', (e, language) => {
         i18n.changeLanguage(language);
