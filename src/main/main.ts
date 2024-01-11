@@ -516,9 +516,9 @@ const createWindow = async (i18n) => {
       throw new Error('"mainWindow" is not defined');
     }
 
-    if (isMacLike) {
-      mainWindow.webContents.setZoomFactor(0.9);
-    }
+    // if (isMacLike) {
+    //   mainWindow.webContents.setZoomFactor(0.9);
+    // }
   });
 
   mainWindow.on('closed', () => {
