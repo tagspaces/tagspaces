@@ -482,7 +482,6 @@ function MainPage(props: Props) {
     mainSplitSize,
   } = props;
 
-  const zoomFactor = AppConfig.isMacLike && isDesktopMode ? 0.9 : 1;
   const { FILE } = NativeTypes;
 
   const isFileOpened = openedEntries.length > 0;
@@ -718,11 +717,6 @@ function MainPage(props: Props) {
         >
           <style>
             {`
-              html {
-                zoom: ${zoomFactor};
-                -moz-transform: scale(${zoomFactor});
-                -moz-transform-origin: 0 0;
-              }
               body { background-color: ${
                 theme.palette.background.default
               } !important;}
