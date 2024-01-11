@@ -1382,7 +1382,7 @@ function SearchAutocomplete(props: Props) {
               <div
                 style={{
                   position: 'sticky',
-                  top: 0,
+                  top: -8,
                   padding: '10px 10px',
                   backgroundColor: theme.palette.background.default,
                 }}
