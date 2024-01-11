@@ -23,17 +23,20 @@ import {
   OpenNewWindowIcon,
   ParentFolderIcon,
   ReloadIcon,
+  CloseIcon,
 } from '-/components/CommonIcons';
 import ExpandIcon from '@mui/icons-material/SettingsEthernet';
 import OpenNativelyIcon from '@mui/icons-material/Launch';
 import FullScreenIcon from '@mui/icons-material/ZoomOutMap';
 import FileDownloadIcon from '@mui/icons-material/AssignmentReturned';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
 import {
   getWarningOpeningFilesExternally,
   isDesktopMode,
 } from '-/reducers/settings';
 import { useTranslation } from 'react-i18next';
+import { getKeyBindingObject } from '-/reducers/settings';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
@@ -43,6 +46,7 @@ interface Props {
   anchorEl: null | HTMLElement;
   handleClose: () => void;
   openedEntry: OpenedEntry;
+  startClosingEntry: (event) => void;
   toggleFullScreen: () => void;
   reloadDocument: () => void;
 }
@@ -54,6 +58,7 @@ function EntryContainerMenu(props: Props) {
     openedEntry,
     toggleFullScreen,
     reloadDocument,
+    startClosingEntry,
   } = props;
   const { t } = useTranslation();
   // const theme = useTheme();
@@ -63,6 +68,7 @@ function EntryContainerMenu(props: Props) {
     sharingLink,
     sharingParentFolderLink,
   } = useOpenedEntryContext();
+  const keyBindings = useSelector(getKeyBindingObject);
   const { readOnlyMode } = useCurrentLocationContext();
   const { deleteFile } = useIOActionsContext();
   const { showNotification } = useNotificationContext();
@@ -199,6 +205,7 @@ function EntryContainerMenu(props: Props) {
           <ReloadIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:reloadFile')} />
+        <MenuKeyBinding keyBinding={keyBindings['reloadDocument']} />
       </MenuItem>,
     );
     menuItems.push(
@@ -229,6 +236,7 @@ function EntryContainerMenu(props: Props) {
           <FullScreenIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:switchToFullscreen')} />
+        <MenuKeyBinding keyBinding={keyBindings['toggleFullScreen']} />
       </MenuItem>,
     );
     if (desktopMode) {
@@ -246,6 +254,7 @@ function EntryContainerMenu(props: Props) {
             <ExpandIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:openInFullWidth')} />
+          <MenuKeyBinding keyBinding={keyBindings['openInFullWidth']} />
         </MenuItem>,
       );
     }
@@ -349,6 +358,7 @@ function EntryContainerMenu(props: Props) {
           <ReloadIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:reloadDirectory')} />
+        <MenuKeyBinding keyBinding={keyBindings['reloadDocument']} />
       </MenuItem>,
     );
     menuItems.push(<Divider key={'divider6'} />);
@@ -416,6 +426,7 @@ function EntryContainerMenu(props: Props) {
             <ExpandIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:openInFullWidth')} />
+          <MenuKeyBinding keyBinding={keyBindings['openInFullWidth']} />
         </MenuItem>,
       );
     }
@@ -435,10 +446,31 @@ function EntryContainerMenu(props: Props) {
             <DeleteIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:deleteDirectory')} />
+          {/* <MenuKeyBinding keyBinding={keyBindings['deleteDocument']} /> */}
         </MenuItem>,
       );
     }
   }
+
+  menuItems.push(<Divider key={'divider5'} />);
+  menuItems.push(
+    <MenuItem
+      key={'openDirectoryExternallyKey'}
+      data-tid="closeEntryTID"
+      aria-label={t('core:closeEntry')}
+      onClick={startClosingEntry}
+    >
+      <ListItemIcon>
+        <CloseIcon />
+      </ListItemIcon>
+      <ListItemText primary={t('core:closeEntry')} />
+      <MenuKeyBinding keyBinding={keyBindings['closeViewer']} />
+    </MenuItem>,
+  );
+
+  const entryName = openedEntry.path
+    ? extractDirectoryName(openedEntry.path, PlatformIO.getDirSeparator())
+    : '';
 
   return (
     <>
@@ -456,7 +488,7 @@ function EntryContainerMenu(props: Props) {
           horizontal: 'left',
         }}
       >
-        <MenuList>{menuItems}</MenuList>
+        <MenuList sx={{ minWidth: 300 }}>{menuItems}</MenuList>
       </Menu>
       {isDeleteEntryModalOpened && (
         <ConfirmDialog
@@ -473,14 +505,10 @@ function EntryContainerMenu(props: Props) {
             openedEntry.isFile
               ? t('core:doYouWantToDeleteFile')
               : t('core:deleteDirectoryContentConfirm', {
-                  dirPath: openedEntry.path
-                    ? extractDirectoryName(
-                        openedEntry.path,
-                        PlatformIO.getDirSeparator(),
-                      )
-                    : '',
+                  dirPath: entryName,
                 })
           }
+          list={openedEntry.isFile && [entryName]}
           confirmCallback={(result) => {
             if (result) {
               return deleteFile(openedEntry.path, openedEntry.uuid);

@@ -28,5 +28,6 @@ AppConfig.editableFiles = [
 ];
 AppConfig.autoSaveInterval = 40000;
 AppConfig.maxLoops = 2;
+AppConfig.defaultFolderColor = 'gray';
 
 export default AppConfig;

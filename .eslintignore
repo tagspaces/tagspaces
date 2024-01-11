@@ -22,9 +22,6 @@ node_modules
 release/app/dist
 release/build
 .erb/dll
-app/style.css
-app/style.css.map
-app/node_modules
 
 .idea
 npm-debug.log.*

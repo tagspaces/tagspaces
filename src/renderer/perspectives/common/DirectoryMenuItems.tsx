@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import OpenFolderIcon from '@mui/icons-material/SubdirectoryArrowLeft';
@@ -26,6 +27,8 @@ import {
   NewFolderIcon,
   AddExistingFileIcon,
 } from '-/components/CommonIcons';
+import { getKeyBindingObject } from '-/reducers/settings';
+import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
 import { TS } from '-/tagspaces.namespace';
 
 export function getDirectoryMenuItems(
@@ -54,6 +57,7 @@ export function getDirectoryMenuItems(
   showAddRemoveTagsDialog?: () => void,
   openInNewWindow?: () => void,
 ) {
+  const keyBindings = useSelector(getKeyBindingObject);
   const menuItems = [];
   if (selectedEntriesLength < 2) {
     if (perspectiveMode) {
@@ -71,6 +75,7 @@ export function getDirectoryMenuItems(
               <OpenFolderIcon />
             </ListItemIcon>
             <ListItemText primary={t('core:openDirectory')} />
+            <MenuKeyBinding keyBinding={keyBindings['openEntry']} />
           </MenuItem>,
         );
       }
@@ -105,6 +110,7 @@ export function getDirectoryMenuItems(
             <ReloadIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:reloadDirectory')} />
+          <MenuKeyBinding keyBinding={keyBindings['reloadDocument']} />
         </MenuItem>,
       );
     }
@@ -122,6 +128,7 @@ export function getDirectoryMenuItems(
             <RenameFolderIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:renameDirectory')} />
+          <MenuKeyBinding keyBinding={keyBindings['renameFile']} />
         </MenuItem>,
       );
     }
@@ -146,6 +153,7 @@ export function getDirectoryMenuItems(
           <MoveCopy />
         </ListItemIcon>
         <ListItemText primary={t('core:moveCopyDirectory')} />
+        <MenuKeyBinding keyBinding={keyBindings['copyMoveSelectedEntries']} />
       </MenuItem>,
     );
   }
@@ -164,6 +172,7 @@ export function getDirectoryMenuItems(
           <DeleteIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:deleteDirectory')} />
+        <MenuKeyBinding keyBinding={keyBindings['deleteDocument']} />
       </MenuItem>,
     );
   }
@@ -190,6 +199,7 @@ export function getDirectoryMenuItems(
           <OpenFolderNativelyIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:showInFileManager')} />
+        <MenuKeyBinding keyBinding={keyBindings['openFileExternally']} />
       </MenuItem>,
     );
   }
@@ -327,6 +337,7 @@ export function getDirectoryMenuItems(
           <AddRemoveTags />
         </ListItemIcon>
         <ListItemText primary={t('core:addRemoveTags')} />
+        <MenuKeyBinding keyBinding={keyBindings['addRemoveTags']} />
       </MenuItem>,
     );
   }
@@ -430,6 +441,7 @@ export function getDirectoryMenuItems(
           <PropertiesIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:directoryPropertiesTitle')} />
+        <MenuKeyBinding keyBinding={keyBindings['openEntryDetails']} />
       </MenuItem>,
     );
   }

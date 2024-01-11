@@ -49,6 +49,7 @@ import {
   setFolderBackgroundPromise,
   getRelativeEntryPath,
 } from '-/services/utils-io';
+import { getKeyBindingObject } from '-/reducers/settings';
 import { Pro } from '-/pro';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { useSelector, useDispatch } from 'react-redux';
@@ -70,6 +71,8 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
+import { useFsActionsContext } from '-/hooks/useFsActionsContext';
+import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
 
 interface Props {
   anchorEl: Element;
@@ -106,16 +109,17 @@ function FileMenu(props: Props) {
     selectedFilePath,
   } = props;
 
+  const keyBindings = useSelector(getKeyBindingObject);
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const { selectedEntries } = useSelectedEntriesContext();
   const { openEntry } = useOpenedEntryContext();
   const { openDirectory, currentLocationPath } = useDirectoryContentContext();
   const { showNotification } = useNotificationContext();
-  const { copyFilePromise, setFolderThumbnailPromise } =
-    usePlatformFacadeContext();
+  const { setFolderThumbnailPromise } = usePlatformFacadeContext();
   const { currentLocation, readOnlyMode } = useCurrentLocationContext();
   //const locations: Array<TS.Location> = useSelector(getLocations);
+  const { openFileNatively, duplicateFile } = useFsActionsContext();
   const prefixTagContainer = useSelector(getPrefixTagContainer);
   const warningOpeningFilesExternally = useSelector(
     getWarningOpeningFilesExternally,
@@ -228,49 +232,9 @@ function FileMenu(props: Props) {
     openAddRemoveTagsDialog();
   }
 
-  function duplicateFile() {
+  function duplicateFileHandler() {
     onClose();
-    if (selectedFilePath) {
-      const dirPath = extractContainingDirectoryPath(
-        selectedFilePath,
-        PlatformIO.getDirSeparator(),
-      );
-
-      const fileName = extractFileName(
-        selectedFilePath,
-        PlatformIO.getDirSeparator(),
-      );
-
-      const extractedTags = extractTags(
-        selectedFilePath,
-        AppConfig.tagDelimiter,
-        PlatformIO.getDirSeparator(),
-      );
-      extractedTags.push('copy');
-      extractedTags.push(formatDateTime4Tag(new Date(), true));
-
-      const newFilePath =
-        (dirPath ? dirPath + PlatformIO.getDirSeparator() : '') +
-        generateFileName(
-          fileName,
-          extractedTags,
-          AppConfig.tagDelimiter,
-          prefixTagContainer,
-        );
-
-      copyFilePromise(selectedFilePath, newFilePath)
-        .then(() => {
-          if (onDuplicateFile) {
-            onDuplicateFile(dirPath);
-          } else {
-            return openDirectory(dirPath);
-          }
-          return true;
-        })
-        .catch((error) => {
-          showNotification('Error creating duplicate: ', error);
-        });
-    }
+    duplicateFile(selectedFilePath);
   }
 
   function openParentFolderInternally() {
@@ -301,6 +265,13 @@ function FileMenu(props: Props) {
     }
   }
 
+  function openFileNativelyHandler() {
+    onClose();
+    if (selectedFilePath) {
+      openFileNatively(selectedFilePath);
+    }
+  }
+
   const menuItems = [];
 
   const pathLowerCase = selectedFilePath.toLowerCase();
@@ -319,6 +290,7 @@ function FileMenu(props: Props) {
           <OpenFile />
         </ListItemIcon>
         <ListItemText primary={t('core:openFile')} />
+        <MenuKeyBinding keyBinding={keyBindings['openEntry']} />
       </MenuItem>,
     );
     menuItems.push(
@@ -358,21 +330,13 @@ function FileMenu(props: Props) {
       <MenuItem
         key="fileMenuOpenFileNatively"
         data-tid="fileMenuOpenFileNatively"
-        onClick={() => {
-          onClose();
-          if (selectedFilePath) {
-            PlatformIO.openFile(
-              selectedFilePath,
-              warningOpeningFilesExternally,
-            );
-            // openFileNatively(selectedFilePath);
-          }
-        }}
+        onClick={openFileNativelyHandler}
       >
         <ListItemIcon>
           <OpenFileNatively />
         </ListItemIcon>
         <ListItemText primary={t('core:openFileNatively')} />
+        <MenuKeyBinding keyBinding={keyBindings['openFileExternally']} />
       </MenuItem>,
     );
     menuItems.push(
@@ -405,6 +369,7 @@ function FileMenu(props: Props) {
           <AddRemoveTags />
         </ListItemIcon>
         <ListItemText primary={t('core:addRemoveTags')} />
+        <MenuKeyBinding keyBinding={keyBindings['addRemoveTags']} />
       </MenuItem>,
     );
     if (reorderTop) {
@@ -452,6 +417,7 @@ function FileMenu(props: Props) {
           <RenameFile />
         </ListItemIcon>
         <ListItemText primary={t('core:renameFile')} />
+        <MenuKeyBinding keyBinding={keyBindings['renameFile']} />
       </MenuItem>,
     );
     if (selectedEntries.length < 2) {
@@ -459,12 +425,13 @@ function FileMenu(props: Props) {
         <MenuItem
           key="fileMenuDuplicateFile"
           data-tid="fileMenuDuplicateFileTID"
-          onClick={duplicateFile}
+          onClick={duplicateFileHandler}
         >
           <ListItemIcon>
             <DuplicateFile />
           </ListItemIcon>
           <ListItemText primary={t('core:duplicateFile')} />
+          <MenuKeyBinding keyBinding={keyBindings['duplicateFile']} />
         </MenuItem>,
       );
     }
@@ -493,6 +460,7 @@ function FileMenu(props: Props) {
           <MoveCopy />
         </ListItemIcon>
         <ListItemText primary={t('core:moveCopyFile')} />
+        <MenuKeyBinding keyBinding={keyBindings['copyMoveSelectedEntries']} />
       </MenuItem>,
     );
     menuItems.push(
@@ -505,6 +473,7 @@ function FileMenu(props: Props) {
           <DeleteIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:deleteEntry')} />
+        <MenuKeyBinding keyBinding={keyBindings['deleteDocument']} />
       </MenuItem>,
     );
     menuItems.push(<Divider key="fmDivider2" />);
@@ -565,24 +534,23 @@ function FileMenu(props: Props) {
           <PropertiesIcon />
         </ListItemIcon>
         <ListItemText primary={t('core:filePropertiesTitle')} />
+        <MenuKeyBinding keyBinding={keyBindings['openEntryDetails']} />
       </MenuItem>,
     );
   }
 
   return (
-    <div style={{ overflowY: 'hidden' }}>
-      <Menu
-        anchorEl={anchorEl}
-        anchorReference={mouseY && mouseX ? 'anchorPosition' : undefined}
-        anchorPosition={
-          mouseY && mouseX ? { top: mouseY, left: mouseX } : undefined
-        }
-        open={open}
-        onClose={onClose}
-      >
-        {menuItems}
-      </Menu>
-    </div>
+    <Menu
+      anchorEl={anchorEl}
+      anchorReference={mouseY && mouseX ? 'anchorPosition' : undefined}
+      anchorPosition={
+        mouseY && mouseX ? { top: mouseY, left: mouseX } : undefined
+      }
+      open={open}
+      onClose={onClose}
+    >
+      {menuItems}
+    </Menu>
   );
 }
 

@@ -22,7 +22,11 @@ export default function keyBindings(isMacLike) {
     },
     {
       name: 'deleteDocument',
-      command: 'del',
+      command: isMacLike ? 'f8' : 'del',
+    },
+    {
+      name: 'copyMoveSelectedEntries',
+      command: 'f6',
     },
     {
       name: 'showLocationManager',
@@ -44,10 +48,6 @@ export default function keyBindings(isMacLike) {
       name: 'addRemoveTags',
       command: (isMacLike ? 'command' : 'ctrl') + '+t',
     },
-    /* {
-    name: 'propertiesDocument',
-    command: 'alt+enter',
-  }, */
     {
       name: 'nextDocument',
       command: 'down',
@@ -58,7 +58,7 @@ export default function keyBindings(isMacLike) {
     },
     {
       name: 'Escape',
-      command: 'Escape',
+      command: 'escape',
     },
     {
       name: 'showHelp',
@@ -70,12 +70,12 @@ export default function keyBindings(isMacLike) {
     // },
     {
       name: 'toggleFullScreen',
-      command: 'f11',
+      command: isMacLike ? 'command+f11' : 'f11',
     },
-    // {
-    //   name: 'openDevTools',
-    //   command: 'f10'
-    // },
+    {
+      name: 'openInFullWidth',
+      command: 'f10',
+    },
     {
       name: 'openSearch',
       command: (isMacLike ? 'command' : 'ctrl') + '+f',
@@ -85,16 +85,24 @@ export default function keyBindings(isMacLike) {
       command: 'f2',
     },
     {
-      name: 'openEntry',
-      command: 'alt+enter',
+      name: 'duplicateFile',
+      command: (isMacLike ? 'option' : 'alt') + '+d',
     },
     {
-      name: 'openParentDirectory',
-      command: 'backspace',
+      name: 'openEntry',
+      command: 'enter',
+    },
+    {
+      name: 'openEntryDetails',
+      command: (isMacLike ? 'command' : 'ctrl') + '+o',
     },
     {
       name: 'openFileExternally',
       command: (isMacLike ? 'command' : 'ctrl') + '+enter',
+    },
+    {
+      name: 'openParentDirectory',
+      command: 'backspace',
     },
     {
       name: 'zoomIn',

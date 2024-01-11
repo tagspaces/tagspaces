@@ -106,7 +106,6 @@ type IOActionsContextData = {
     onUploadProgress?: (progress: Progress, abort, fileName?) => void,
     uploadMeta?: boolean,
   ) => Promise<TS.FileSystemEntry[]>;
-  //reloadDirectory: (dirPath?: string) => Promise<boolean>;
 };
 
 export const IOActionsContext = createContext<IOActionsContextData>({
@@ -122,7 +121,6 @@ export const IOActionsContext = createContext<IOActionsContextData>({
   downloadFile: () => Promise.resolve(undefined),
   uploadFilesAPI: () => Promise.resolve([]),
   uploadFiles: () => Promise.resolve([]),
-  //reloadDirectory: () => Promise.resolve(false)
 });
 
 export type IOActionsContextProviderProps = {
@@ -992,12 +990,6 @@ export const IOActionsContextProvider = ({
         });
     });
   }
-
-  /*function reloadDirectory(directoryPath?: string) {
-    return openDirectory(
-      directoryPath === undefined ? currentDirectoryPath : directoryPath
-    );
-  }*/
 
   const context = useMemo(() => {
     return {

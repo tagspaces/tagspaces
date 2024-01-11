@@ -51,7 +51,7 @@ const isDebug =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
 if (isDebug) {
-  require('electron-debug')();
+  require('electron-debug')({ showDevTools: false });
 }
 
 const testMode = process.env.NODE_ENV === 'test';
@@ -93,6 +93,10 @@ process.argv.forEach((arg, count) => {
   }
 });
 
+// if (isDebug) {
+//   app.commandLine.appendSwitch('--allow-file-access-from-files');
+// }
+
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
@@ -106,7 +110,7 @@ const installExtensions = async () => {
     .catch(console.log);
 };
 
-function showTagSpaces() {
+function showApp() {
   if (mainWindow) {
     if (mainWindow.isMinimized()) {
       mainWindow.restore();
@@ -117,157 +121,158 @@ function showTagSpaces() {
 
 function openLocationManagerPanel() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'open-location-manager-panel');
   }
 }
 function openTagLibraryPanel() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'open-tag-library-panel');
   }
 }
 function goBack() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'go-back');
   }
 }
 function goForward() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'go-forward');
   }
 }
 function setZoomResetApp() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'set-zoom-reset-app');
   }
 }
 function setZoomInApp() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'set-zoom-in-app');
   }
 }
 function setZoomOutApp() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'set-zoom-out-app');
   }
 }
 function exitFullscreen() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'exit-fullscreen');
   }
 }
 function toggleSettingsDialog() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'toggle-settings-dialog');
   }
 }
 function openHelpFeedbackPanel() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'open-help-feedback-panel');
   }
 }
 function toggleKeysDialog() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'toggle-keys-dialog');
   }
 }
 function toggleOnboardingDialog() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'toggle-onboarding-dialog');
   }
 }
 function openURLExternally(data) {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('open-url-externally', data);
   }
 }
 function toggleLicenseDialog() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'toggle-license-dialog');
   }
 }
 function toggleThirdPartyLibsDialog() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'toggle-third-party-libs-dialog');
   }
 }
 function toggleAboutDialog() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'toggle-about-dialog');
   }
 }
 function showSearch() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'open-search');
   }
 }
 
 function newTextFile() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'new-text-file');
   }
 }
 
 function getNextFile() {
   if (mainWindow) {
-    // showTagSpaces();
     mainWindow.webContents.send('cmd', 'next-file');
   }
 }
 
 function getPreviousFile() {
   if (mainWindow) {
-    // showTagSpaces();
     mainWindow.webContents.send('cmd', 'previous-file');
   }
 }
 
 function showCreateDirectoryDialog() {
   if (mainWindow) {
-    // showTagSpaces();
     mainWindow.webContents.send('cmd', 'show-create-directory-dialog');
   }
 }
 
 function toggleOpenLinkDialog() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.webContents.send('cmd', 'toggle-open-link-dialog');
   }
 }
 
 function resumePlayback() {
   if (mainWindow) {
-    // showTagSpaces();
     mainWindow.webContents.send('play-pause', true);
   }
 }
 
 function reloadApp() {
   if (mainWindow) {
-    showTagSpaces();
+    showApp();
     mainWindow.loadURL(resolveHtmlPath('index.html'));
   }
 }
 
 function createNewWindowInstance(url?) {
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow(appI18N);
+    return;
+  }
+
   const mainWindowState = windowStateKeeper({
     defaultWidth: 1280,
     defaultHeight: 800,
@@ -280,7 +285,7 @@ function createNewWindowInstance(url?) {
     height: mainWindowState.height,
     webPreferences: {
       spellcheck: true,
-      webviewTag: true,
+      // webviewTag: true,
       preload:
         app.isPackaged || !isDebug
           ? path.join(__dirname, 'preload.js')
@@ -300,7 +305,7 @@ function createNewWindowInstance(url?) {
 function buildTrayMenu(i18n) {
   buildTrayIconMenu(
     {
-      showTagSpaces,
+      showTagSpaces: showApp,
       resumePlayback,
       createNewWindowInstance,
       openSearch: showSearch,
@@ -317,7 +322,7 @@ function buildTrayMenu(i18n) {
 function buildAppMenu(i18n) {
   buildDesktopMenu(
     {
-      showTagSpaces,
+      showTagSpaces: showApp,
       openSearch: showSearch,
       toggleNewFileDialog: newTextFile,
       openNextFile: getNextFile,
@@ -458,7 +463,7 @@ const createWindow = async (i18n) => {
       //webSecurity: app.isPackaged, // todo https://www.electronjs.org/docs/latest/tutorial/security#6-do-not-disable-websecurity
       spellcheck: true,
       //nodeIntegration: true,
-      webviewTag: true,
+      //webviewTag: true,
       //contextIsolation: false,
       preload:
         app.isPackaged || !isDebug
@@ -482,6 +487,10 @@ const createWindow = async (i18n) => {
     });*/
 
   mainWindow.webContents.on('before-input-event', (_, input) => {
+    if (!mainWindow) {
+      throw new Error('"mainWindow" is not defined');
+    }
+
     if (input.type === 'keyDown' && input.key === 'F12') {
       mainWindow.webContents.isDevToolsOpened()
         ? mainWindow.webContents.closeDevTools()
@@ -499,6 +508,16 @@ const createWindow = async (i18n) => {
       mainWindow.minimize();
     } else {
       mainWindow.show();
+    }
+  });
+
+  mainWindow.on('show', () => {
+    if (!mainWindow) {
+      throw new Error('"mainWindow" is not defined');
+    }
+
+    if (isMacLike) {
+      mainWindow.webContents.setZoomFactor(0.9);
     }
   });
 
@@ -544,12 +563,20 @@ app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required'); // 
  */
 
 app.on('window-all-closed', () => {
-  // Respect the OSX convention of having the application in memory even
+  // Respect the macOS convention of having the application in memory even
   // after all windows have been closed
-  if (isMacLike) {
-    pm2.stopAll();
-    globalShortcut.unregisterAll();
+  if (!isMacLike) {
+    // pm2.stopAll();
+    // globalShortcut.unregisterAll();
     app.quit();
+  }
+});
+
+app.on('activate', function () {
+  // On macOS it's common to re-create a window in the app when the
+  // dock icon is clicked and there are no other windows open.
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow(appI18N);
   }
 });
 
@@ -570,10 +597,13 @@ app.on('web-contents-created', (event, contents) => {
 
 startWS(isDebug ? 2000 : undefined);
 
+let appI18N;
+
 app
   .whenReady()
   .then(() => {
     return i18nInit().then((i18n) => {
+      appI18N = i18n;
       createWindow(i18n);
       app.on('activate', () => {
         // On macOS it's common to re-create a window in the app when the
@@ -637,8 +667,6 @@ app
         }
       });
 
-      // end electron-io
-
       ipcMain.on('app-data-path-request', (event) => {
         event.returnValue = app.getPath('appData'); // eslint-disable-line
       });
@@ -646,22 +674,6 @@ app
       ipcMain.on('app-version-request', (event) => {
         event.returnValue = app.getVersion(); // eslint-disable-line
       });
-
-      /*ipcMain.handle('move-to-trash', async (event, files) => {
-        const result = [];
-        files.forEach((fullPath) => {
-          // console.debug('Trash:' + fullPath);
-          result.push(shell.trashItem(fullPath));
-        });
-
-        let ret;
-        try {
-          ret = await Promise.all(result);
-        } catch (err) {
-          console.error('moveToTrash ' + JSON.stringify(files) + 'error:', err);
-        }
-        return ret;
-      });*/
 
       ipcMain.on('set-language', (e, language) => {
         i18n.changeLanguage(language);
@@ -681,7 +693,7 @@ app
           globalShortcut.register('MediaNextTrack', getNextFile);
           globalShortcut.register('CommandOrControl+Shift+A', getPreviousFile);
           globalShortcut.register('MediaPreviousTrack', getPreviousFile);
-          globalShortcut.register('CommandOrControl+Shift+W', showTagSpaces);
+          globalShortcut.register('CommandOrControl+Shift+W', showApp);
         } else {
           globalShortcut.unregisterAll();
         }

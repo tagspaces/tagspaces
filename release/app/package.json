@@ -1,7 +1,7 @@
 {
   "name": "tagspaces",
   "productName": "TagSpaces",
-  "version": "5.7.1",
+  "version": "5.7.2",
   "description": "Offline file organizer and browser with tagging support.",
   "homepage": "https://www.tagspaces.org",
   "author": {
@@ -19,8 +19,8 @@
   "dependencies": {
     "@elife/pm2": "3.6.1",
     "@tagspaces/extensions": "1.0.90",
-    "@tagspaces/tagspaces-common-node": "4.0.6",
-    "@tagspaces/tagspaces-ws": "4.0.7",
+    "@tagspaces/tagspaces-common-node": "4.0.9",
+    "@tagspaces/tagspaces-ws": "4.0.9",
     "sharp": "0.31.3",
     "ws": "8.15.1"
   }

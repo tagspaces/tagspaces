@@ -61,13 +61,14 @@ function LocationManager(props: Props) {
     addLocations,
     editLocation,
     selectedLocation,
+    setSelectedLocation,
     locationDirectoryContextMenuAnchorEl,
   } = useCurrentLocationContext();
+
   const locations: Array<TS.Location> = useSelector(getLocations);
   // const loading: boolean = useSelector(isLoading);
   //const language: string = useSelector(getCurrentLanguage);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  //const selectedLocation = useRef<TS.Location>(null);
   const [isEditLocationDialogOpened, setEditLocationDialogOpened] =
     useState<boolean>(false);
   const [isDeleteLocationDialogOpened, setDeleteLocationDialogOpened] =
@@ -82,9 +83,6 @@ function LocationManager(props: Props) {
   const ImportLocationsDialog =
     Pro && Pro.UI ? Pro.UI.ImportLocationsDialog : false;
 
-  /*function setSelectedLocation(location: TS.Location) {
-    selectedLocation.current = location;
-  }*/
   function handleFileInputChange(selection: any) {
     const target = selection.currentTarget;
     const file = target.files[0];
@@ -152,9 +150,10 @@ function LocationManager(props: Props) {
         // importLocations={() => setImportLocationsDialogOpened(true)}
         exportLocations={() => setExportLocationsDialogOpened(true)}
         classes={classes}
-        showCreateLocationDialog={() =>
-          dispatch(AppActions.toggleLocationDialog())
-        }
+        showCreateLocationDialog={() => {
+          setSelectedLocation(undefined);
+          dispatch(AppActions.toggleLocationDialog());
+        }}
         toggleOpenLinkDialog={() => dispatch(AppActions.toggleOpenLinkDialog())}
       />
       {locationDirectoryContextMenuAnchorEl && (
@@ -206,8 +205,6 @@ function LocationManager(props: Props) {
                           setDeleteLocationDialogOpened={
                             setDeleteLocationDialogOpened
                           }
-                          /*selectedLocation={selectedLocation.current}
-                          setSelectedLocation={setSelectedLocation}*/
                         />
                       </div>
                     )}
@@ -230,7 +227,6 @@ function LocationManager(props: Props) {
         <CreateEditLocationDialogAsync
           open={isEditLocationDialogOpened}
           onClose={() => setEditLocationDialogOpened(false)}
-          /*location={selectedLocation.current}*/
           editLocation={(location) => editLocation(location)}
         />
       )}

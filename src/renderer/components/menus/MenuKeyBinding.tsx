@@ -17,44 +17,24 @@
  */
 
 import React from 'react';
-import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 import { adjustKeyBinding } from '-/components/dialogs/KeyboardDialog';
 
 interface Props {
-  title: any;
   keyBinding?: string;
-  children: any;
-  classes?: any;
-  placement?:
-    | 'bottom-end'
-    | 'bottom-start'
-    | 'bottom'
-    | 'left-end'
-    | 'left-start'
-    | 'left'
-    | 'right-end'
-    | 'right-start'
-    | 'right'
-    | 'top-end'
-    | 'top-start'
-    | 'top';
 }
 
-function TooltipTS(props: Props) {
-  const { title, placement, keyBinding, children } = props;
-  let tooltipText = title;
-  if (keyBinding) {
-    tooltipText = title + ' (' + adjustKeyBinding(keyBinding) + ')';
-  }
+function MenuKeyBinding(props: Props) {
+  let keyBinding = props.keyBinding;
   return (
-    <Tooltip
-      children={children}
-      arrow
-      title={tooltipText}
-      disableInteractive
-      placement="top"
-    />
+    <Typography
+      variant="body2"
+      color="text.secondary"
+      style={{ textTransform: 'uppercase' }}
+    >
+      {adjustKeyBinding(keyBinding)}
+    </Typography>
   );
 }
 
-export default TooltipTS;
+export default MenuKeyBinding;

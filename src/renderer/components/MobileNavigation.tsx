@@ -31,19 +31,16 @@ import ThemingIcon from '@mui/icons-material/InvertColors';
 import TagLibraryIcon from '@mui/icons-material/LocalOfferOutlined';
 import RecentThingsIcon from '@mui/icons-material/BookmarksOutlined';
 import HelpIcon from '@mui/icons-material/HelpOutline';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { Divider } from '@mui/material';
 import {
   OpenNewWindowIcon,
-  LinkIcon,
   AudioRecordIcon,
   NewFileIcon,
   NewFolderIcon,
   LocalLocationIcon,
-  AddExistingFileIcon,
+  SettingsIcon,
 } from '-/components/CommonIcons';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import SettingsIcon from '@mui/icons-material/Settings';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
 import Popover from '@mui/material/Popover';
 import { Pro } from '-/pro';
@@ -77,6 +74,8 @@ import UserDetailsPopover from '-/components/UserDetailsPopover';
 import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
 import { useTranslation } from 'react-i18next';
+import { getKeyBindingObject } from '-/reducers/settings';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 const PREFIX = 'MobileNavigation';
 
@@ -87,9 +86,8 @@ const classes = {
 
 const Root = styled(Box)(({ theme }) => ({
   [`& .${classes.button}`]: {
-    position: 'relative',
-    padding: '11px', // '8px 12px 6px 8px',
-    margin: '0',
+    padding: 8,
+    margin: 0,
   },
   [`& .${classes.selectedButton}`]: {
     backgroundColor: theme.palette.primary.light,
@@ -105,6 +103,8 @@ function MobileNavigation(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
 
+  const { setSelectedLocation } = useCurrentLocationContext();
+  const keyBindings = useSelector(getKeyBindingObject);
   const isLocationManagerPanelOpenedSelector = useSelector(
     isLocationManagerPanelOpened,
   );
@@ -313,6 +313,7 @@ function MobileNavigation(props: Props) {
                       key="createNewLocationTID"
                       ata-tid="createNewFolderTID"
                       onClick={() => {
+                        setSelectedLocation(undefined);
                         dispatch(AppActions.toggleLocationDialog());
                         setOpenCreateMenu(false);
                         if (hideDrawer) {
@@ -372,62 +373,72 @@ function MobileNavigation(props: Props) {
           </IconButton>
         </Tooltip>
         <ToggleButtonGroup exclusive>
-          <Tooltip title={t('core:locationManager')}>
-            <ToggleButton
-              onClick={openLocationManagerPanel}
-              className={
-                isLocationManagerPanelOpenedSelector
-                  ? classNames(classes.button, classes.selectedButton)
-                  : classes.button
-              }
-              data-tid="locationManager"
-              value="check"
+          <ToggleButton
+            onClick={openLocationManagerPanel}
+            size="small"
+            className={
+              isLocationManagerPanelOpenedSelector
+                ? classNames(classes.button, classes.selectedButton)
+                : classes.button
+            }
+            data-tid="locationManager"
+            value="check"
+          >
+            <Tooltip
+              title={t('core:locationManager')}
+              keyBinding={keyBindings['showLocationManager']}
             >
               <LocalLocationIcon />
-            </ToggleButton>
-          </Tooltip>
-          <Tooltip title={t('core:tagLibrary')}>
-            <ToggleButton
-              data-tid="tagLibrary"
-              onClick={openTagLibraryPanel}
-              className={
-                isTagLibraryPanelOpenedSelector
-                  ? classNames(classes.button, classes.selectedButton)
-                  : classes.button
-              }
-              value="check"
+            </Tooltip>
+          </ToggleButton>
+          <ToggleButton
+            data-tid="tagLibrary"
+            onClick={openTagLibraryPanel}
+            size="small"
+            className={
+              isTagLibraryPanelOpenedSelector
+                ? classNames(classes.button, classes.selectedButton)
+                : classes.button
+            }
+            value="check"
+          >
+            <Tooltip
+              title={t('core:tagLibrary')}
+              keyBinding={keyBindings['showTagLibrary']}
             >
               <TagLibraryIcon />
-            </ToggleButton>
-          </Tooltip>
-          <Tooltip title={t('core:quickAccess')}>
-            <ToggleButton
-              data-tid="quickAccessButton"
-              onClick={openSearchPanel}
-              className={
-                isSearchPanelOpenedSelector
-                  ? classNames(classes.button, classes.selectedButton)
-                  : classes.button
-              }
-              value="check"
-            >
+            </Tooltip>
+          </ToggleButton>
+          <ToggleButton
+            data-tid="quickAccessButton"
+            size="small"
+            onClick={openSearchPanel}
+            className={
+              isSearchPanelOpenedSelector
+                ? classNames(classes.button, classes.selectedButton)
+                : classes.button
+            }
+            value="check"
+          >
+            <Tooltip title={t('core:quickAccess')}>
               <RecentThingsIcon />
-            </ToggleButton>
-          </Tooltip>
-          <Tooltip title={t('core:helpFeedback')}>
-            <ToggleButton
-              data-tid="helpFeedback"
-              onClick={openHelpFeedbackPanel}
-              className={
-                isHelpFeedbackPanelOpenedSelector
-                  ? classNames(classes.button, classes.selectedButton)
-                  : classes.button
-              }
-              value="check"
-            >
+            </Tooltip>
+          </ToggleButton>
+          <ToggleButton
+            data-tid="helpFeedback"
+            onClick={openHelpFeedbackPanel}
+            size="small"
+            className={
+              isHelpFeedbackPanelOpenedSelector
+                ? classNames(classes.button, classes.selectedButton)
+                : classes.button
+            }
+            value="check"
+          >
+            <Tooltip title={t('core:helpFeedback')}>
               <HelpIcon />
-            </ToggleButton>
-          </Tooltip>
+            </Tooltip>
+          </ToggleButton>
         </ToggleButtonGroup>
         {cognitoUser ? (
           <>

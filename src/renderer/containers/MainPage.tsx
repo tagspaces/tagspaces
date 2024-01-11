@@ -478,8 +478,10 @@ function MainPage(props: Props) {
     toggleOpenLinkDialog,
     toggleProTeaser,
     setFirstRun,
+    isDesktopMode,
     mainSplitSize,
   } = props;
+
   const { FILE } = NativeTypes;
 
   const isFileOpened = openedEntries.length > 0;
@@ -488,7 +490,7 @@ function MainPage(props: Props) {
     percent.current = p;
     if (p !== undefined) {
       bufferedLeftSplitResize(() => {
-        if (props.mainSplitSize !== p + '%') {
+        if (mainSplitSize !== p + '%') {
           props.setMainVerticalSplitSize(p + '%');
         }
       });
@@ -496,7 +498,7 @@ function MainPage(props: Props) {
     forceUpdate();
   };
 
-  const renderContainers = () => {
+  function renderContainers() {
     let initialPrimarySize = mainSplitSize;
     let minPrimarySize = '250px';
     let minSecondarySize = '250px';
@@ -544,7 +546,7 @@ function MainPage(props: Props) {
         )}
       </Split>
     );
-  };
+  }
 
   return (
     <Root>
@@ -741,7 +743,7 @@ function MainPage(props: Props) {
               }
           `}
           </style>
-          {props.isDesktopMode || (AppConfig.isAmplify && !props.user) ? (
+          {isDesktopMode || (AppConfig.isAmplify && !props.user) ? (
             <TargetFileBox
               accepts={[FILE]}
               setMoveCopyDialogOpened={setMoveCopyDialogOpened}
@@ -885,7 +887,8 @@ const areEqual = (prevProp, nextProp) =>
     prevProp.isThirdPartyLibsDialogOpened &&
   nextProp.isUploadProgressDialogOpened ===
     prevProp.isUploadProgressDialogOpened &&
-  nextProp.isImportKanBanDialogOpened === prevProp.isImportKanBanDialogOpened;
+  nextProp.isImportKanBanDialogOpened === prevProp.isImportKanBanDialogOpened &&
+  nextProp.mainSplitSize === prevProp.mainSplitSize;
 
 export default withDnDContext(
   connect(mapStateToProps, mapDispatchToProps)(React.memo(MainPage, areEqual)), //translate(['core'], { wait: true })(React.memo(MainPage, areEqual)))

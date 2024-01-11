@@ -113,6 +113,20 @@ function KanBanPerspectiveAsync(props) {
   );
 }
 
+let TreeVizPerspective = React.Fragment;
+if (Pro && Pro.Perspectives && Pro.Perspectives.TreeVizPerspective) {
+  TreeVizPerspective = Pro.Perspectives.TreeVizPerspective;
+}
+function TreeVizPerspectiveAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <ThumbGenerationContextProvider>
+        <TreeVizPerspective {...props} />
+      </ThumbGenerationContextProvider>
+    </React.Suspense>
+  );
+}
+
 const WelcomePanel = React.lazy(
   () => import(/* webpackChunkName: "WelcomePanel" */ './WelcomePanel'),
 );
@@ -166,6 +180,9 @@ function RenderPerspective(props: Props) {
     return (
       <KanBanPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />
     );
+  }
+  if (Pro && currentPerspective === PerspectiveIDs.TREEVIZ) {
+    return <TreeVizPerspective />;
   }
 
   return <GridPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />;

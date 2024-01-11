@@ -46,8 +46,8 @@ export interface DirectoryTreeViewRef {
 const DirectoryTreeView = forwardRef(
   (props: Props, ref: Ref<DirectoryTreeViewRef>) => {
     const { classes, location, handleFileMoveDrop } = props;
-    const { openDirectory, currentLocationPath } = useDirectoryContentContext();
-    const { changeLocation } = useCurrentLocationContext();
+    const { openDirectory } = useDirectoryContentContext();
+    const { changeLocation, getLocationPath } = useCurrentLocationContext();
 
     const [data, setData] = useState(undefined);
     const [isExpanded, setExpanded] = useState(false);
@@ -192,49 +192,51 @@ const DirectoryTreeView = forwardRef(
     ];
 
     const loadSubDirectories = (location: TS.Location) => {
-      const subFolder = {
-        ...(location.accessKeyId && { accessKeyId: location.accessKeyId }),
-        ...(location.bucketName && { bucketName: location.bucketName }),
-        ...(location.region && { region: location.region }),
-        ...(location.endpointURL && { endpointURL: location.endpointURL }),
-        ...(location.secretAccessKey && {
-          secretAccessKey: location.secretAccessKey,
-        }),
-        uuid: location.uuid,
-        name: location.name,
-        type: location.type,
-        path: currentLocationPath, //PlatformIO.getLocationPath(location),
-      };
-      getDirectoriesTree(subFolder)
-        .then((children) => {
-          if (children instanceof Array) {
-            if (location.uuid) {
-              const dirsTree = {}; // this.state.dirs; (uncomment to allow open multiple Locations folders) //TODO set settings for this
-              if (location.path === undefined) {
-                // location
-                dirsTree[location.uuid] = children;
-              } else {
-                const dirsCopy = getMergedDirsCopy(location.path, children);
-                if (dirsCopy) {
-                  dirsTree[location.uuid] = dirsCopy;
+      getLocationPath(location).then((locationPath) => {
+        const subFolder = {
+          ...(location.accessKeyId && { accessKeyId: location.accessKeyId }),
+          ...(location.bucketName && { bucketName: location.bucketName }),
+          ...(location.region && { region: location.region }),
+          ...(location.endpointURL && { endpointURL: location.endpointURL }),
+          ...(location.secretAccessKey && {
+            secretAccessKey: location.secretAccessKey,
+          }),
+          uuid: location.uuid,
+          name: location.name,
+          type: location.type,
+          path: locationPath,
+        };
+        getDirectoriesTree(subFolder)
+          .then((children) => {
+            if (children instanceof Array) {
+              if (location.uuid) {
+                const dirsTree = {}; // this.state.dirs; (uncomment to allow open multiple Locations folders) //TODO set settings for this
+                if (location.path === undefined) {
+                  // location
+                  dirsTree[location.uuid] = children;
                 } else {
-                  // eslint-disable-next-line no-param-reassign
-                  location.children = children;
-                  dirsTree[location.uuid] = [location];
+                  const dirsCopy = getMergedDirsCopy(location.path, children);
+                  if (dirsCopy) {
+                    dirsTree[location.uuid] = dirsCopy;
+                  } else {
+                    // eslint-disable-next-line no-param-reassign
+                    location.children = children;
+                    dirsTree[location.uuid] = [location];
+                  }
                 }
+                setData(dirsTree);
+                setExpanded(true);
               }
-              setData(dirsTree);
-              setExpanded(true);
+            } else if (location.path === undefined) {
+              // if is Location
+              // setData({});
             }
-          } else if (location.path === undefined) {
-            // if is Location
-            // setData({});
-          }
-          return true;
-        })
-        .catch((error) => {
-          console.log('loadSubDirectories', error);
-        });
+            return true;
+          })
+          .catch((error) => {
+            console.log('loadSubDirectories', error);
+          });
+      });
     };
 
     type SubFolder = {

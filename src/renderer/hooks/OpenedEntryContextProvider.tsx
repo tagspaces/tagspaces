@@ -437,7 +437,11 @@ export const OpenedEntryContextProvider = ({
   }
 
   function closeAllFiles() {
-    document.title = 'TagSpaces'; // TODO move to AppConfig
+    const appName = versionMeta.name;
+    document.title = appName;
+    if (currentLocation) {
+      document.title = currentLocation.name + ' | ' + appName;
+    }
     clearURLParam('tsepath');
     closeOpenedEntries(); // [...openedEntries, fsEntry] // TODO uncomment for multiple file support
     if (isEntryInFullWidth) {
@@ -834,7 +838,10 @@ export const OpenedEntryContextProvider = ({
                 }
 
                 if (entryPath) {
-                  getAllPropertiesPromise(entryPath)
+                  getAllPropertiesPromise(
+                    (locationPath.length > 0 ? locationPath + '/' : '') +
+                      entryPath,
+                  )
                     .then((fsEntry: TS.FileSystemEntry) => {
                       if (fsEntry) {
                         openFsEntry(fsEntry);

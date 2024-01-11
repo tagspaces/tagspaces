@@ -40,6 +40,7 @@ import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { getPersistTagsInSidecarFile } from '-/reducers/settings';
 import AppConfig from '../AppConfig';
+import versionMeta from '-/version.json';
 
 type CurrentLocationContextData = {
   currentLocation: TS.Location;
@@ -107,7 +108,8 @@ export const CurrentLocationContextProvider = ({
   const { showNotification } = useNotificationContext();
   const [currentLocation, setCurrentLocation] =
     useState<TS.Location>(undefined);
-  const selectedLocation = useRef<TS.Location>(undefined);
+  const [selectedLocation, setSelectedLocation] =
+    useState<TS.Location>(undefined);
   const skipInitialDirList = useRef<boolean>(false);
   const [
     locationDirectoryContextMenuAnchorEl,
@@ -177,10 +179,6 @@ export const CurrentLocationContextProvider = ({
     }
 
     return Promise.resolve(locationPath);
-  }
-
-  function setSelectedLocation(location: TS.Location) {
-    selectedLocation.current = location;
   }
 
   function setDefaultLocations() {
@@ -278,6 +276,9 @@ export const CurrentLocationContextProvider = ({
 
   function changeLocation(location: TS.Location) {
     if (!currentLocation || location.uuid !== currentLocation.uuid) {
+      if (location && location.name) {
+        document.title = location.name + ' | ' + versionMeta.name;
+      }
       setCurrentLocation(location);
     }
   }
@@ -378,6 +379,7 @@ export const CurrentLocationContextProvider = ({
           setCurrentLocation(undefined);
         }
         clearAllURLParams();
+        document.title = versionMeta.name;
         return true;
       });
     }
@@ -387,6 +389,7 @@ export const CurrentLocationContextProvider = ({
     // location needed evtl. to unwatch many loc. root folders if available
     setCurrentLocation(undefined);
     clearAllURLParams();
+    document.title = versionMeta.name;
     return true;
   }
 
@@ -416,14 +419,15 @@ export const CurrentLocationContextProvider = ({
       switchLocationTypeByID,
       changeLocationByID,
       openLocationById,
-      selectedLocation: selectedLocation.current,
+      selectedLocation,
+      setSelectedLocation,
       locationDirectoryContextMenuAnchorEl,
       setLocationDirectoryContextMenuAnchorEl,
-      setSelectedLocation,
       getLocationPosition,
     };
   }, [
     currentLocation,
+    selectedLocation,
     persistTagsInSidecarFile,
     skipInitialDirList.current,
     locationDirectoryContextMenuAnchorEl,

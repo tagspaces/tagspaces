@@ -88,6 +88,7 @@ function EntryContainer() {
     openPrevFile,
     updateOpenedFile,
     reloadOpenedFile,
+    toggleEntryFullWidth,
   } = useOpenedEntryContext();
   const { saveDescription } = useDescriptionContext();
   const { readOnlyMode, switchLocationTypeByID, switchCurrentLocationType } =
@@ -457,7 +458,7 @@ function EntryContainer() {
     }
   };
 
-  const startClosingFile = (event) => {
+  const startClosingEntry = (event) => {
     if (event) {
       event.preventDefault(); // Let's stop this event.
       event.stopPropagation();
@@ -747,7 +748,7 @@ function EntryContainer() {
               title={
                 t('core:saveFile') +
                 ' (' +
-                (AppConfig.isMaclike ? '⌘' : 'CTRL') +
+                (AppConfig.isMacLike ? '⌘' : 'CTRL') +
                 ' + S)'
               }
             >
@@ -835,19 +836,25 @@ function EntryContainer() {
   return (
     <GlobalHotKeys
       handlers={{
-        closeViewer: startClosingFile,
+        closeViewer: startClosingEntry,
         saveDocument: startSavingFile,
         editDocument: editOpenedFile,
         nextDocument: openNextFileAction,
         prevDocument: openPrevFileAction,
+        reloadDocument: reloadDocument,
+        deleteDocument: () => {}, // TODO move delete functionality from entry container menu
+        openInFullWidth: toggleEntryFullWidth,
         toggleFullScreen,
       }}
       keyMap={{
-        nextDocument: keyBindings.nextDocument,
-        prevDocument: keyBindings.prevDocument,
         closeViewer: keyBindings.closeViewer,
         saveDocument: keyBindings.saveDocument,
         editDocument: keyBindings.editDocument,
+        nextDocument: keyBindings.nextDocument,
+        prevDocument: keyBindings.prevDocument,
+        reloadDocument: keyBindings.reloadDocument,
+        deleteDocument: keyBindings.deleteDocument,
+        openInFullWidth: keyBindings.openInFullWidth,
         toggleFullScreen: keyBindings.toggleFullScreen,
       }}
     >
@@ -882,10 +889,11 @@ function EntryContainer() {
               isFileChanged={fileChanged.current}
               reloadDocument={reloadDocument}
               toggleFullScreen={toggleFullScreen}
+              startClosingEntry={startClosingEntry}
             />
             <EntryContainerNav
               isFile={openedFile.isFile}
-              startClosingFile={startClosingFile}
+              startClosingEntry={startClosingEntry}
             />
           </Box>
           {tabs()}
