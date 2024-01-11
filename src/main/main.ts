@@ -487,6 +487,10 @@ const createWindow = async (i18n) => {
     });*/
 
   mainWindow.webContents.on('before-input-event', (_, input) => {
+    if (!mainWindow) {
+      throw new Error('"mainWindow" is not defined');
+    }
+
     if (input.type === 'keyDown' && input.key === 'F12') {
       mainWindow.webContents.isDevToolsOpened()
         ? mainWindow.webContents.closeDevTools()
@@ -504,6 +508,16 @@ const createWindow = async (i18n) => {
       mainWindow.minimize();
     } else {
       mainWindow.show();
+    }
+  });
+
+  mainWindow.on('show', () => {
+    if (!mainWindow) {
+      throw new Error('"mainWindow" is not defined');
+    }
+
+    if (isMacLike) {
+      mainWindow.webContents.setZoomFactor(0.9);
     }
   });
 
