@@ -638,7 +638,9 @@ app
 
       ipcMain.on('watchFolder', (e, path: string, depth) => {
         //locationPath, options) => {
-
+        if (!mainWindow) {
+          throw new Error('"mainWindow" is not defined');
+        }
         watchFolder(mainWindow, e, path, depth);
         //watcher = chokidar.watch(locationPath, options);
       });
@@ -687,6 +689,9 @@ app
       });
 
       ipcMain.on('setZoomFactor', (event, zoomLevel) => {
+        if (!mainWindow) {
+          throw new Error('"mainWindow" is not defined');
+        }
         mainWindow.webContents.setZoomFactor(zoomLevel);
       });
 
