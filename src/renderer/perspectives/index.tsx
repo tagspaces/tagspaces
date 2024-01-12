@@ -21,7 +21,7 @@ import MapiquePerspectiveIcon from '@mui/icons-material/Map';
 import GalleryPerspectiveIcon from '@mui/icons-material/Camera';
 import ListPerspectiveIcon from '@mui/icons-material/ViewList';
 import GridPerspectiveIcon from '@mui/icons-material/ViewModule';
-import FolderVizPerspectiveIcon from '@mui/icons-material/ForestRounded';
+import FolderVizPerspectiveIcon from '@mui/icons-material/Hub';
 
 export const PerspectiveIDs = {
   UNSPECIFIED: 'unspecified',
