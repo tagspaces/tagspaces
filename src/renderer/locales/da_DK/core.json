@@ -25,7 +25,7 @@
   "chooseTargetLocationAndPath": "Choose target location and path",
   "moveEntriesButton": "Move",
   "copyEntriesButton": "Kopier",
-  "editTagMasterName": "Name",
+  "sortByName": "Name",
   "addTagsToGroupTitle": "Tilføj mærker til mærkegruppen",
   "addTagsToGroupTags": "Tags",
   "addTagsToGroupTagsPlaceholder": "Comma separated list of tags",

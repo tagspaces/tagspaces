@@ -66,8 +66,8 @@ const Links = {
       'https://docs.tagspaces.org/perspectives/grid' + urlParams,
     mapiquePerspective:
       'https://docs.tagspaces.org/perspectives/mapique' + urlParams,
-    treevizPerspective:
-      'https://docs.tagspaces.org/perspectives/treeviz' + urlParams,
+    foldervizPerspective:
+      'https://docs.tagspaces.org/perspectives/folderviz' + urlParams,
     galleryPerspective:
       'https://docs.tagspaces.org/perspectives/gallery' + urlParams,
     kanbanPerspective:

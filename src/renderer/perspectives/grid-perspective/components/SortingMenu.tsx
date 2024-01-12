@@ -68,7 +68,7 @@ function SortingMenu(props: Props) {
           {sortBy === 'byName' &&
             (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
         </ListItemIcon>
-        <ListItemText primary={t('core:fileTitle')} />
+        <ListItemText primary={t('core:sortByName')} />
       </MenuItem>
       <MenuItem
         data-tid="gridPerspectiveSortBySize"

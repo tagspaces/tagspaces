@@ -113,6 +113,20 @@ function KanBanPerspectiveAsync(props) {
   );
 }
 
+let FolderVizPerspective = React.Fragment;
+if (Pro && Pro.Perspectives && Pro.Perspectives.FolderVizPerspective) {
+  FolderVizPerspective = Pro.Perspectives.FolderVizPerspective;
+}
+function FolderVizPerspectiveAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <ThumbGenerationContextProvider>
+        <FolderVizPerspective {...props} />
+      </ThumbGenerationContextProvider>
+    </React.Suspense>
+  );
+}
+
 const WelcomePanel = React.lazy(
   () => import(/* webpackChunkName: "WelcomePanel" */ './WelcomePanel'),
 );
@@ -166,6 +180,9 @@ function RenderPerspective(props: Props) {
     return (
       <KanBanPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />
     );
+  }
+  if (Pro && currentPerspective === PerspectiveIDs.FOLDERVIZ) {
+    return <FolderVizPerspectiveAsync />;
   }
 
   return <GridPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />;

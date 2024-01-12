@@ -16,13 +16,7 @@
  *
  */
 
-import React, {
-  createContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { createContext, useEffect, useMemo, useRef } from 'react';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import PlatformIO from '-/services/platform-facade';
 import AppConfig from '-/AppConfig';
@@ -80,6 +74,7 @@ export const FSWatcherContextProvider = ({
   const { reflectDeleteEntry, reflectCreateEntry } = useLocationIndexContext();
   //const [watcher, setWatcher] = useState<FSWatcher>(undefined);
   const ignored = useRef<string[]>([]);
+  const watchingFolderPath = useRef<string>(undefined);
   const dispatch: AppDispatch = useDispatch();
 
   useEffect(() => {
@@ -117,6 +112,7 @@ export const FSWatcherContextProvider = ({
   function watchFolder(locationPath, depth) {
     console.log('Start watching: ' + locationPath);
     stopWatching();
+    watchingFolderPath.current = locationPath;
     PlatformIO.watchFolder(locationPath, depth);
   }
 
@@ -240,6 +236,7 @@ export const FSWatcherContextProvider = ({
   }, [folderChanged]);
 
   function stopWatching() {
+    watchingFolderPath.current = undefined;
     /*if (watcher && watcher.close) {
       watcher.close();
       setWatcher(undefined);
@@ -247,7 +244,7 @@ export const FSWatcherContextProvider = ({
   }
 
   function isWatching() {
-    return false; //watcher !== undefined; //&& !watcher.closed;
+    return watchingFolderPath.current !== undefined; //watcher !== undefined; //&& !watcher.closed;
   }
 
   function addToIgnored(path: string) {

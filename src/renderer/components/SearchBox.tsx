@@ -55,10 +55,12 @@ function SearchBox(props: Props) {
               vertical: 'bottom',
               horizontal: 'right',
             }}
-            PaperProps={{
-              style: {
-                overflow: 'hidden',
-                height: 720,
+            slotProps={{
+              paper: {
+                style: {
+                  overflow: 'hidden',
+                  height: 720,
+                },
               },
             }}
             transformOrigin={{

@@ -1,3 +1,4 @@
+/*
 import { BrowserWindow } from 'electron';
 import Chokidar = require('chokidar');
 
@@ -53,7 +54,7 @@ export function watchFolder(
   }
 }
 
-/*export function watchFile(
+/!*export function watchFile(
   mainWindow: BrowserWindow,
   event: Electron.IpcMainEvent,
   message: Message
@@ -83,13 +84,13 @@ export function watchFolder(
         nameWatcher,
       })
     );
-}*/
+}*!/
 
 export interface Message {
   path: string;
   depth?: number;
 }
-
+*/
 export interface Changed {
   path: string;
   eventName: 'add' | 'change' | 'unlink' | 'addDir' | 'unlinkDir';

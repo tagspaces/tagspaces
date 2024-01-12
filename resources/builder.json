@@ -1,7 +1,11 @@
 {
   "appId": "org.tagspaces.desktopapp",
   "asar": true,
-  "asarUnpack": ["**\\*.{node,dll}", "**/node_modules/sharp/**/*"],
+  "asarUnpack": [
+    "**\\*.{node,dll}",
+    "**/node_modules/sharp/**/*",
+    "**/node_modules/@img/**/*"
+  ],
   "includeSubNodeModules": true,
   "files": ["dist/", "node_modules/", "package.json", ".env", "extconfig.js"],
   "copyright": "Copyright © 2023 TagSpaces UG (haftungsbeschraenkt)",

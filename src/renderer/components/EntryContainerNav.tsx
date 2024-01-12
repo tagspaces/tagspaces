@@ -29,6 +29,7 @@ function EntryContainerNav(props: Props) {
         zIndex: 1,
         position: 'absolute',
         right: 0,
+        top: 5,
         backgroundColor: theme.palette.background.default,
         display: 'flex',
         alignItems: 'center',
@@ -44,7 +45,7 @@ function EntryContainerNav(props: Props) {
               aria-label={t('core:openPrevFileTooltip')}
               data-tid="fileContainerPrevFile"
               onClick={() => openPrevFile()}
-              size="large"
+              // size="large"
             >
               <PrevDocumentIcon />
             </IconButton>
@@ -57,7 +58,7 @@ function EntryContainerNav(props: Props) {
               aria-label={t('core:openNextFileTooltip')}
               data-tid="fileContainerNextFile"
               onClick={() => openNextFile()}
-              size="large"
+              // size="large"
             >
               <NextDocumentIcon />
             </IconButton>
@@ -72,7 +73,7 @@ function EntryContainerNav(props: Props) {
           onClick={startClosingEntry}
           aria-label={t('core:closeEntry')}
           data-tid="fileContainerCloseOpenedFile"
-          size="large"
+          // size="large"
         >
           <CloseIcon />
         </IconButton>

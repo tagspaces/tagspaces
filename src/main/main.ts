@@ -23,7 +23,6 @@ import i18nInit from '../renderer/services/i18nInit';
 import buildTrayIconMenu from './electron-tray-menu';
 import buildDesktopMenu from './electron-menus';
 import loadMainEvents from './mainEvents';
-import { watchFolder } from './chokidarWatcher';
 import { Extensions } from './types';
 
 class AppUpdater {
@@ -269,6 +268,11 @@ function reloadApp() {
 }
 
 function createNewWindowInstance(url?) {
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow(appI18N);
+    return;
+  }
+
   const mainWindowState = windowStateKeeper({
     defaultWidth: 1280,
     defaultHeight: 800,
@@ -356,7 +360,7 @@ const getAssetPath = (...paths: string[]): string => {
   return path.join(RESOURCES_PATH, ...paths);
 };*/
 
-function startWS() {
+function startWS(port = undefined) {
   try {
     let filepath;
     let script;
@@ -378,7 +382,8 @@ function startWS() {
 
     const results = new Promise((resolve, reject) => {
       findFreePorts(1, { startPort: settings.getInitWsPort() }).then(
-        ([freePort]) => {
+        ([findPort]) => {
+          const freePort = port ? port : findPort;
           try {
             pm2.start(
               {
@@ -482,6 +487,10 @@ const createWindow = async (i18n) => {
     });*/
 
   mainWindow.webContents.on('before-input-event', (_, input) => {
+    if (!mainWindow) {
+      throw new Error('"mainWindow" is not defined');
+    }
+
     if (input.type === 'keyDown' && input.key === 'F12') {
       mainWindow.webContents.isDevToolsOpened()
         ? mainWindow.webContents.closeDevTools()
@@ -500,6 +509,16 @@ const createWindow = async (i18n) => {
     } else {
       mainWindow.show();
     }
+  });
+
+  mainWindow.on('show', () => {
+    if (!mainWindow) {
+      throw new Error('"mainWindow" is not defined');
+    }
+
+    // if (isMacLike) {
+    //   mainWindow.webContents.setZoomFactor(0.9);
+    // }
   });
 
   mainWindow.on('closed', () => {
@@ -544,12 +563,20 @@ app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required'); // 
  */
 
 app.on('window-all-closed', () => {
-  // Respect the OSX convention of having the application in memory even
+  // Respect the macOS convention of having the application in memory even
   // after all windows have been closed
-  if (isMacLike) {
-    pm2.stopAll();
-    globalShortcut.unregisterAll();
+  if (!isMacLike) {
+    // pm2.stopAll();
+    // globalShortcut.unregisterAll();
     app.quit();
+  }
+});
+
+app.on('activate', function () {
+  // On macOS it's common to re-create a window in the app when the
+  // dock icon is clicked and there are no other windows open.
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow(appI18N);
   }
 });
 
@@ -568,12 +595,15 @@ app.on('web-contents-created', (event, contents) => {
   });
 });
 
-startWS();
+startWS(isDebug ? 2000 : undefined);
+
+let appI18N;
 
 app
   .whenReady()
   .then(() => {
     return i18nInit().then((i18n) => {
+      appI18N = i18n;
       createWindow(i18n);
       app.on('activate', () => {
         // On macOS it's common to re-create a window in the app when the
@@ -606,13 +636,6 @@ app
 
       loadMainEvents();
 
-      ipcMain.on('watchFolder', (e, path: string, depth) => {
-        //locationPath, options) => {
-
-        watchFolder(mainWindow, e, path, depth);
-        //watcher = chokidar.watch(locationPath, options);
-      });
-
       ipcMain.on('load-extensions', () => {
         getExtensions(path.join(app.getPath('userData'), 'tsplugins'), true)
           .then(({ extensions, supportedFileTypes }) => {
@@ -644,8 +667,6 @@ app
         }
       });
 
-      // end electron-io
-
       ipcMain.on('app-data-path-request', (event) => {
         event.returnValue = app.getPath('appData'); // eslint-disable-line
       });
@@ -654,27 +675,14 @@ app
         event.returnValue = app.getVersion(); // eslint-disable-line
       });
 
-      /*ipcMain.handle('move-to-trash', async (event, files) => {
-        const result = [];
-        files.forEach((fullPath) => {
-          // console.debug('Trash:' + fullPath);
-          result.push(shell.trashItem(fullPath));
-        });
-
-        let ret;
-        try {
-          ret = await Promise.all(result);
-        } catch (err) {
-          console.error('moveToTrash ' + JSON.stringify(files) + 'error:', err);
-        }
-        return ret;
-      });*/
-
       ipcMain.on('set-language', (e, language) => {
         i18n.changeLanguage(language);
       });
 
       ipcMain.on('setZoomFactor', (event, zoomLevel) => {
+        if (!mainWindow) {
+          throw new Error('"mainWindow" is not defined');
+        }
         mainWindow.webContents.setZoomFactor(zoomLevel);
       });
 

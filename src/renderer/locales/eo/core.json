@@ -25,7 +25,7 @@
   "chooseTargetLocationAndPath": "Choose target location and path",
   "moveEntriesButton": "Move",
   "copyEntriesButton": "Copy",
-  "editTagMasterName": "Name",
+  "sortByName": "Name",
   "addTagsToGroupTitle": "Add tags to tag group",
   "addTagsToGroupTags": "Etikedoj",
   "addTagsToGroupTagsPlaceholder": "Comma separated list of tags",
