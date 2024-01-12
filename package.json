@@ -48,7 +48,7 @@
     "bs": "npm run build && npm run run-electron",
     "run-electron": "npx electron ./release/app/dist/main/main.js",
     "prebuild": "rimraf release/app/dist && npm run prepare-node && npm run generate-extensions",
-    "bump-version": "cd release/app && yarn version && cd .. && npm run version-meta",
+    "bump-version": "npm run third-party && cd release/app && yarn version && cd .. && npm run version-meta",
     "clean": "npx rimraf node_modules && npx rimraf src/renderer/dist",
     "clean-maps": "rimraf --glob release/app/dist/**/*.map && rimraf --glob web/dist/*.map",
     "clean-pro": "npm run clean-maps",
