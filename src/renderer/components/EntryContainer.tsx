@@ -879,7 +879,7 @@ function EntryContainer() {
               paddingLeft: 0,
               paddingRight: 50,
               paddingTop: 0,
-              minHeight: 50,
+              minHeight: 48,
               display: 'flex',
               flexDirection: 'row',
               justifyContent: 'flex-start',

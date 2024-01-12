@@ -180,7 +180,6 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
           openedFile.isFile && !isPanelOpened
             ? '1px solid ' + theme.palette.divider
             : 'none',
-        minHeight: 53,
       }}
     >
       <Box sx={{ ...(marginRight && { marginRight }) }}>
