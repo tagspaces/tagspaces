@@ -92,8 +92,6 @@ function MainToolbar(props: Props) {
       style={{
         paddingLeft: 5,
         paddingRight: 5,
-        minHeight: 40,
-        height: 53,
         position: 'absolute',
         zIndex: 1,
         background:
@@ -108,6 +106,7 @@ function MainToolbar(props: Props) {
         overflowX: 'auto',
         overflowY: 'hidden',
       }}
+      variant="dense"
       data-tid={prefixDataTID + 'perspectiveToolbar'}
     >
       <Tooltip
@@ -120,7 +119,7 @@ function MainToolbar(props: Props) {
           onClick={() => {
             loadParentDirectoryContent();
           }}
-          size="large"
+          // size="large"
         >
           <ParentFolderIcon />
         </IconButton>
@@ -132,7 +131,7 @@ function MainToolbar(props: Props) {
         <IconButton
           data-tid={prefixDataTID + 'PerspectiveSelectAllFiles'}
           onClick={toggleSelectAllFiles}
-          size="large"
+          // size="large"
         >
           {selectedEntries.length > 1 ? <SelectedIcon /> : <UnSelectedIcon />}
         </IconButton>
@@ -142,7 +141,7 @@ function MainToolbar(props: Props) {
           aria-label={t('core:directoryPropertiesTitle')}
           data-tid="openFolderProperties"
           onClick={showProperties}
-          size="large"
+          // size="large"
         >
           <FolderPropertiesIcon />
         </IconButton>
@@ -159,7 +158,7 @@ function MainToolbar(props: Props) {
                 aria-label={t('core:tagSelectedEntries')}
                 data-tid={prefixDataTID + 'PerspectiveAddRemoveTags'}
                 onClick={openAddRemoveTagsDialog}
-                size="large"
+                // size="large"
               >
                 <TagIcon />
               </IconButton>
@@ -176,7 +175,7 @@ function MainToolbar(props: Props) {
                 aria-label={t('core:copyMoveSelectedEntries')}
                 data-tid={prefixDataTID + 'PerspectiveCopySelectedFiles'}
                 onClick={openMoveCopyFilesDialog}
-                size="large"
+                // size="large"
               >
                 <CopyIcon />
               </IconButton>
@@ -195,7 +194,7 @@ function MainToolbar(props: Props) {
                 onClick={() =>
                   dispatch(AppActions.toggleDeleteMultipleEntriesDialog())
                 }
-                size="large"
+                // </span>size="large"
               >
                 <DeleteIcon />
               </IconButton>
@@ -210,7 +209,7 @@ function MainToolbar(props: Props) {
                 data-tid={prefixDataTID + 'PerspectiveShareFiles'}
                 onClick={openShareFilesDialog}
                 disabled={selectedEntries.length < 1}
-                size="large"
+                // size="large"
               >
                 <ShareIcon />
               </IconButton>
@@ -226,7 +225,7 @@ function MainToolbar(props: Props) {
           onClick={(e) => {
             handleSortingMenu(e);
           }}
-          size="large"
+          // size="large"
         >
           <SortingIcon />
         </IconButton>
@@ -238,7 +237,7 @@ function MainToolbar(props: Props) {
               data-tid={prefixDataTID + 'PerspectiveExportCsvMenuTID'}
               onClick={handleExportCsvMenu}
               style={{ transform: 'scale(-1, 1)' }}
-              size="large"
+              // size="large"
             >
               <ExportIcon />
             </IconButton>
@@ -255,7 +254,7 @@ function MainToolbar(props: Props) {
           <IconButton
             data-tid={prefixDataTID + 'PerspectiveOptionsMenu'}
             onClick={openSettings}
-            size="large"
+            // size="large"
           >
             <PerspectiveSettingsIcon />
           </IconButton>

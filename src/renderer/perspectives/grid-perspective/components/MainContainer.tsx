@@ -401,7 +401,7 @@ function GridPerspective(props: Props) {
 
   const openHelpWebPage = () => {
     closeOptionsMenu();
-    openURLExternally(Links.documentationLinks.defaultPerspective);
+    openURLExternally(Links.documentationLinks.defaultPerspective, true);
   };
 
   const openSettings = () => {
