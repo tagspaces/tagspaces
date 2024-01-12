@@ -113,15 +113,15 @@ function KanBanPerspectiveAsync(props) {
   );
 }
 
-let TreeVizPerspective = React.Fragment;
-if (Pro && Pro.Perspectives && Pro.Perspectives.TreeVizPerspective) {
-  TreeVizPerspective = Pro.Perspectives.TreeVizPerspective;
+let FolderVizPerspective = React.Fragment;
+if (Pro && Pro.Perspectives && Pro.Perspectives.FolderVizPerspective) {
+  FolderVizPerspective = Pro.Perspectives.FolderVizPerspective;
 }
-function TreeVizPerspectiveAsync(props) {
+function FolderVizPerspectiveAsync(props) {
   return (
     <React.Suspense fallback={<LoadingLazy />}>
       <ThumbGenerationContextProvider>
-        <TreeVizPerspective {...props} />
+        <FolderVizPerspective {...props} />
       </ThumbGenerationContextProvider>
     </React.Suspense>
   );
@@ -181,8 +181,8 @@ function RenderPerspective(props: Props) {
       <KanBanPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />
     );
   }
-  if (Pro && currentPerspective === PerspectiveIDs.TREEVIZ) {
-    return <TreeVizPerspective />;
+  if (Pro && currentPerspective === PerspectiveIDs.FOLDERVIZ) {
+    return <FolderVizPerspectiveAsync />;
   }
 
   return <GridPerspectiveAsync openRenameEntryDialog={openRenameEntryDialog} />;

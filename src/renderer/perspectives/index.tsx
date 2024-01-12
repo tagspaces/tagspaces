@@ -21,14 +21,14 @@ import MapiquePerspectiveIcon from '@mui/icons-material/Map';
 import GalleryPerspectiveIcon from '@mui/icons-material/Camera';
 import ListPerspectiveIcon from '@mui/icons-material/ViewList';
 import GridPerspectiveIcon from '@mui/icons-material/ViewModule';
-import TreeVizPerspectiveIcon from '@mui/icons-material/ForestRounded';
+import FolderVizPerspectiveIcon from '@mui/icons-material/ForestRounded';
 
 export const PerspectiveIDs = {
   UNSPECIFIED: 'unspecified',
   GRID: 'grid',
   LIST: 'list',
   GALLERY: 'gallery',
-  TREEVIZ: 'treeviz',
+  FOLDERVIZ: 'folderviz',
   MAPIQUE: 'mapique',
   KANBAN: 'kanban',
   // WIKI: 'wiki'
@@ -81,13 +81,13 @@ export const GalleryPerspectiveMeta = {
   title: 'Gallery Perspective',
 };
 
-export const TreeVizPerspectiveMeta = {
-  id: PerspectiveIDs.TREEVIZ,
-  key: 'openTreeVizPerspective',
+export const FolderVizPerspectiveMeta = {
+  id: PerspectiveIDs.FOLDERVIZ,
+  key: 'openFolderVizPerspective',
   pro: true,
   beta: true,
-  icon: <TreeVizPerspectiveIcon />,
-  title: 'TreeViz Perspective',
+  icon: <FolderVizPerspectiveIcon />,
+  title: 'FolderViz Perspective',
 };
 
 export const AvailablePerspectives = [];
@@ -96,5 +96,5 @@ AvailablePerspectives.push(ListPerspectiveMeta);
 AvailablePerspectives.push(GalleryPerspectiveMeta);
 AvailablePerspectives.push(MapiquePerspectiveMeta);
 AvailablePerspectives.push(KanbanPerspectiveMeta);
-AvailablePerspectives.push(TreeVizPerspectiveMeta);
+AvailablePerspectives.push(FolderVizPerspectiveMeta);
 // AvailablePerspectives.push(WikiPerspectiveMeta);
