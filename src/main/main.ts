@@ -23,7 +23,6 @@ import i18nInit from '../renderer/services/i18nInit';
 import buildTrayIconMenu from './electron-tray-menu';
 import buildDesktopMenu from './electron-menus';
 import loadMainEvents from './mainEvents';
-import { watchFolder } from './chokidarWatcher';
 import { Extensions } from './types';
 
 class AppUpdater {
@@ -361,7 +360,7 @@ const getAssetPath = (...paths: string[]): string => {
   return path.join(RESOURCES_PATH, ...paths);
 };*/
 
-function startWS() {
+function startWS(port = undefined) {
   try {
     let filepath;
     let script;
@@ -383,7 +382,8 @@ function startWS() {
 
     const results = new Promise((resolve, reject) => {
       findFreePorts(1, { startPort: settings.getInitWsPort() }).then(
-        ([freePort]) => {
+        ([findPort]) => {
+          const freePort = port ? port : findPort;
           try {
             pm2.start(
               {
@@ -595,7 +595,7 @@ app.on('web-contents-created', (event, contents) => {
   });
 });
 
-startWS();
+startWS(isDebug ? 2000 : undefined);
 
 let appI18N;
 
@@ -635,15 +635,6 @@ app
       });
 
       loadMainEvents();
-
-      ipcMain.on('watchFolder', (e, path: string, depth) => {
-        //locationPath, options) => {
-        if (!mainWindow) {
-          throw new Error('"mainWindow" is not defined');
-        }
-        watchFolder(mainWindow, e, path, depth);
-        //watcher = chokidar.watch(locationPath, options);
-      });
 
       ipcMain.on('load-extensions', () => {
         getExtensions(path.join(app.getPath('userData'), 'tsplugins'), true)

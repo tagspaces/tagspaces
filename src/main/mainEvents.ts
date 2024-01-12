@@ -1,4 +1,11 @@
-import { app, dialog, globalShortcut, ipcMain, shell } from 'electron';
+import {
+  app,
+  dialog,
+  globalShortcut,
+  ipcMain,
+  shell,
+  BrowserWindow,
+} from 'electron';
 import {
   getPropertiesPromise,
   listDirectoryPromise,
@@ -21,6 +28,7 @@ import {
 } from '@tagspaces/tagspaces-common-node/io-node';
 import fs from 'fs-extra';
 import path from 'path';
+import WebSocket from 'ws';
 import {
   getOnProgress,
   isWorkerAvailable,
@@ -31,8 +39,38 @@ import {
 
 //let watcher: FSWatcher;
 const progress = {};
+let wsc;
 
 export default function loadMainEvents() {
+  ipcMain.on('watchFolder', async (e, path: string, depth) => {
+    try {
+      const wssPort = await postRequest(
+        JSON.stringify({ path, depth }),
+        '/watch-folder',
+      );
+      if (!wssPort) {
+        console.error('error watchFolder wssPort');
+      } else {
+        if (wsc) {
+          wsc.close();
+        }
+        wsc = new WebSocket('ws://127.0.0.1:' + wssPort.port);
+        wsc.on('message', function message(data) {
+          console.log('received: %s', data);
+          const mainWindow = BrowserWindow.getAllWindows(); //getFocusedWindow();
+          if (mainWindow.length > 0) {
+            mainWindow.map((window) =>
+              window.webContents.send('folderChanged', JSON.parse(data)),
+            );
+          }
+        });
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    //watchFolder(mainWindow, e, path, depth);
+  });
   ipcMain.handle('isWorkerAvailable', async () => {
     const results = await isWorkerAvailable();
     return results;

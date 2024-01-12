@@ -19,9 +19,9 @@
   "dependencies": {
     "@elife/pm2": "3.6.1",
     "@tagspaces/extensions": "1.0.90",
-    "@tagspaces/tagspaces-common-node": "4.0.9",
-    "@tagspaces/tagspaces-ws": "4.0.9",
-    "chokidar": "3.5.3",
-    "sharp": "0.31.3"
+    "@tagspaces/tagspaces-common-node": "4.1.0",
+    "@tagspaces/tagspaces-ws": "4.1.1",
+    "sharp": "0.32.6",
+    "ws": "8.16.0"
   }
 }
