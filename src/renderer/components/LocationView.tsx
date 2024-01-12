@@ -152,10 +152,10 @@ function LocationView(props: Props) {
         showNotification(t('Moving file not possible'), 'error', true);
         return;
       }
-      let targetPath = item.path;
       const targetLocation = item.location;
+      let targetPath = targetLocation ? targetLocation.path : undefined;
       if (targetPath === undefined) {
-        targetPath = targetLocation.path;
+        targetPath = item.path;
       }
 
       if (monitor && targetPath !== undefined && targetLocation !== undefined) {
