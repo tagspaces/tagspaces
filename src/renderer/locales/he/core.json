@@ -24,7 +24,7 @@
   "moveCopyToPath": "Target path",
   "moveFilesButton": "Move File(s)",
   "copyFilesButton": "Copy File(s)",
-  "editTagMasterName": "Name",
+  "sortByName": "Name",
   "addTagsToGroupTitle": "Add tags to tag group",
   "addTagsToGroupTags": "Tags",
   "addTagsToGroupTagsPlaceholder": "Comma separated list of tags",

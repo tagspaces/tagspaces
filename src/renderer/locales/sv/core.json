@@ -25,7 +25,7 @@
   "chooseTargetLocationAndPath": "Choose target location and path",
   "moveEntriesButton": "Move",
   "copyEntriesButton": "Kopiera",
-  "editTagMasterName": "Namn",
+  "sortByName": "Namn",
   "addTagsToGroupTitle": "Lägg till taggar till taggrupp",
   "addTagsToGroupTags": "Taggar",
   "addTagsToGroupTagsPlaceholder": "Comma separated list of tags",

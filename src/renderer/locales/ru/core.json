@@ -25,7 +25,7 @@
   "chooseTargetLocationAndPath": "Choose target location and path",
   "moveEntriesButton": "Move",
   "copyEntriesButton": "Копировать",
-  "editTagMasterName": "Имя",
+  "sortByName": "Имя",
   "addTagsToGroupTitle": "Добавить теги в группу",
   "addTagsToGroupTags": "Теги",
   "addTagsToGroupTagsPlaceholder": "Список тегов, разделенных запятой",

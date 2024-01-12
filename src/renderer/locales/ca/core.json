@@ -25,7 +25,7 @@
   "chooseTargetLocationAndPath": "Choose target location and path",
   "moveEntriesButton": "Move",
   "copyEntriesButton": "Copy",
-  "editTagMasterName": "Nom",
+  "sortByName": "Nom",
   "addTagsToGroupTitle": "Afegeix etiquetes a un grup",
   "addTagsToGroupTags": "Etiquetes",
   "addTagsToGroupTagsPlaceholder": "Llista d'etiquetes separades per comes",

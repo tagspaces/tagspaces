@@ -17,7 +17,7 @@ export { default } from './components/MainContainer';
 export const defaultSettings = {
   testID: 'gridPerspectiveContainer',
   settingsKey: 'tsPerspectiveGrid',
-  orderBy: false,
+  orderBy: true,
   sortBy: 'byName',
   layoutType: 'grid', // list grid
   singleClickAction: 'openInternal', // openInternal openExternal

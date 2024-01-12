@@ -25,7 +25,7 @@
   "chooseTargetLocationAndPath": "選擇目標位置和路徑",
   "moveEntriesButton": "移動",
   "copyEntriesButton": "複製",
-  "editTagMasterName": "名稱",
+  "sortByName": "名稱",
   "addTagsToGroupTitle": "添加標籤到標籤組",
   "addTagsToGroupTags": "標籤",
   "addTagsToGroupTagsPlaceholder": "逗號分隔的標籤列表",

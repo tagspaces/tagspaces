@@ -25,7 +25,7 @@
   "chooseTargetLocationAndPath": "Choose target location and path",
   "moveEntriesButton": "Move",
   "copyEntriesButton": "복사",
-  "editTagMasterName": "이름",
+  "sortByName": "이름",
   "addTagsToGroupTitle": "태그를 태그 그룹에 추가하기",
   "addTagsToGroupTags": "태그",
   "addTagsToGroupTagsPlaceholder": "쉼표로 구분된 태그 리스트",

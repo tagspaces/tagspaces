@@ -25,7 +25,7 @@
   "chooseTargetLocationAndPath": "Choose target location and path",
   "moveEntriesButton": "Déplace",
   "copyEntriesButton": "Copier",
-  "editTagMasterName": "Name",
+  "sortByName": "Name",
   "addTagsToGroupTitle": "Add tags to tag group",
   "addTagsToGroupTags": "Tags",
   "addTagsToGroupTagsPlaceholder": "Comma separated list of tags",

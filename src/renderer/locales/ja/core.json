@@ -25,7 +25,7 @@
   "chooseTargetLocationAndPath": "ターゲットの場所とパスを選択する",
   "moveEntriesButton": "移動",
   "copyEntriesButton": "コピー",
-  "editTagMasterName": "名前",
+  "sortByName": "名前",
   "addTagsToGroupTitle": "タググループにタグを追加",
   "addTagsToGroupTags": "タグ",
   "addTagsToGroupTagsPlaceholder": "コンマ区切りタグリスト",
