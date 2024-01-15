@@ -195,6 +195,7 @@ function TagContainer(props: Props) {
             opacity: isDragging ? 0.5 : 1,
             fontSize: 13,
             textTransform: 'none',
+            textWrap: 'nowrap',
             color: textColor,
             backgroundColor,
             minHeight: 0,

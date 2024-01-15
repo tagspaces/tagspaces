@@ -286,7 +286,8 @@ function GridCell(props: Props) {
   ];
 
   const entryPath = fSystemEntry.path;
-  const isSmall = entrySize === EntrySizes.tiny; // || entrySize === EntrySizes.small;
+  const isSmall =
+    entrySize === EntrySizes.tiny || entrySize === EntrySizes.small;
 
   const renderTags = useMemo(() => {
     let sideCarLength = 0;
@@ -398,6 +399,9 @@ function GridCell(props: Props) {
             backgroundColor: fileSystemEntryColor,
             textShadow: '1px 1px #8f8f8f',
             textOverflow: 'unset',
+            height: 18,
+            marginTop: 4,
+            marginBottom: 4,
             maxWidth: fSystemEntry.isFile ? 50 : 100,
           }}
           noWrap={true}
@@ -407,11 +411,24 @@ function GridCell(props: Props) {
             selectEntry(fSystemEntry);
           }}
         >
-          {fSystemEntry.isFile ? fSystemEntry.extension : <FolderOpenIcon />}
+          {fSystemEntry.isFile ? (
+            fSystemEntry.extension
+          ) : (
+            <FolderOpenIcon style={{}} />
+          )}
         </Typography>
       </Tooltip>
     );
   }
+
+  const tmbImgSrc =
+    fSystemEntry.thumbPath +
+    (lastThumbnailImageChange &&
+    lastThumbnailImageChange.thumbPath === fSystemEntry.thumbPath &&
+    !PlatformIO.haveObjectStoreSupport() &&
+    !PlatformIO.haveWebDavSupport()
+      ? urlGetDelim(fSystemEntry.thumbPath) + lastThumbnailImageChange.dt
+      : '');
 
   return (
     <GridPaper
@@ -427,6 +444,8 @@ function GridCell(props: Props) {
         maxHeight: maxHeight,
         marginBottom: isLast ? 40 : 'auto',
         background: fileSystemEntryBgColor && theme.palette.background.default,
+        display: 'flex',
+        flexDirection: 'column',
       }}
       onContextMenu={(event) => handleGridContextMenu(event, fSystemEntry)}
       onDoubleClick={(event) => {
@@ -442,6 +461,54 @@ function GridCell(props: Props) {
         handleGridCellClick(event, fSystemEntry);
       }}
     >
+      <Box style={{ height: maxHeight - 70, position: 'relative' }}>
+        <Box style={{ position: 'absolute' }}>
+          {showTags && entryTags ? (
+            renderTags
+          ) : (
+            <TagsPreview tags={entryTags} />
+          )}
+        </Box>
+        {fSystemEntry.thumbPath ? (
+          <CardMedia
+            component="img"
+            loading="lazy"
+            // @ts-ignore
+            onError={(i) => (i.target.style.display = 'none')}
+            alt="green iguana"
+            height="auto"
+            src={tmbImgSrc}
+          />
+        ) : (
+          <Box style={{ width: '50%', height: 'auto', margin: '0 auto' }}>
+            <EntryIcon
+              isFile={fSystemEntry.isFile}
+              fileExtension={fSystemEntry.extension}
+            />
+          </Box>
+        )}
+      </Box>
+
+      <CardContent sx={{ padding: '5px', flexGrow: 1 }}>
+        {/* <img
+            alt="thumbnail"
+            style={{
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'center',
+              objectFit: thumbnailMode,
+              width: '100%',
+              height: '100%',
+            }}
+            src={tmbDataURL}
+            // @ts-ignore
+            onError={(i) => (i.target.style.display = 'none')}
+            loading="lazy"
+          /> */}
+        <Box style={{ textWrap: isSmall ? 'nowrap' : 'unset' }}>
+          {entryTitle}
+        </Box>
+        {/* <Box>{generateCardHeader()}</Box> */}
+      </CardContent>
       <CardHeader
         style={{ padding: 5 }}
         sx={{
@@ -452,63 +519,20 @@ function GridCell(props: Props) {
           '.MuiCardHeader-subheader': {
             fontSize: 12,
           },
-          // '.MuiCardHeader-header': {
-          //   fontSize: 12,
-          // },
         }}
-        title={entryTitle}
-        subheader={generateCardHeader()}
         action={
           <IconButton
             aria-label="entry context menu"
             size="small"
+            style={{ marginRight: 5 }}
             onClick={(event) => handleGridContextMenu(event, fSystemEntry)}
           >
             <MoreMenuIcon />
           </IconButton>
         }
+        subheader={generateCardHeader()}
         avatar={generateAvatar()}
       ></CardHeader>
-
-      <CardContent sx={{ width: 'auto', padding: 0, height: maxHeight - 30 }}>
-        {fSystemEntry.thumbPath ? (
-          <img
-            alt="thumbnail"
-            style={{
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'center',
-              objectFit: thumbnailMode,
-              width: '100%',
-              height: '100%',
-            }}
-            src={
-              fSystemEntry.thumbPath +
-              (lastThumbnailImageChange &&
-              lastThumbnailImageChange.thumbPath === fSystemEntry.thumbPath &&
-              !PlatformIO.haveObjectStoreSupport() &&
-              !PlatformIO.haveWebDavSupport()
-                ? urlGetDelim(fSystemEntry.thumbPath) +
-                  lastThumbnailImageChange.dt
-                : '')
-            }
-            // @ts-ignore
-            onError={(i) => (i.target.style.display = 'none')}
-            loading="lazy"
-          />
-        ) : (
-          <Box style={{ width: '50%', margin: '0 auto' }}>
-            <EntryIcon
-              isFile={fSystemEntry.isFile}
-              fileExtension={fSystemEntry.extension}
-            />
-          </Box>
-        )}
-        {showTags && entryTags && !isSmall ? (
-          renderTags
-        ) : (
-          <TagsPreview tags={entryTags} />
-        )}
-      </CardContent>
     </GridPaper>
   );
 }

@@ -267,14 +267,12 @@ function GridPagination(props: Props) {
                     </Tooltip>
                     {showTags ? (
                       <span style={{ paddingLeft: 5 }}>
-                        {directoryMeta &&
-                          directoryMeta.tags &&
-                          directoryMeta.tags.map((tag: TS.Tag) => {
-                            return <TagContainer tag={tag} tagMode="display" />;
-                          })}
+                        {directoryMeta?.tags?.map((tag: TS.Tag) => {
+                          return <TagContainer tag={tag} tagMode="display" />;
+                        })}
                       </span>
                     ) : (
-                      <TagsPreview tags={directoryMeta.tags} />
+                      <TagsPreview tags={directoryMeta?.tags} />
                     )}
                   </Box>
                 )}
