@@ -29,7 +29,8 @@ import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
 import MoveCopyFilesDialog from '-/components/dialogs/MoveCopyFilesDialog';
 import TagDropContainer from '-/components/TagDropContainer';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import CellContent from '-/perspectives/grid-perspective/components/CellContent';
+import RowCell from '-/perspectives/list/components/RowCell';
+import { EntrySizes } from '-/components/ZoomComponent';
 import MainToolbar from '-/perspectives/grid-perspective/components/MainToolbar';
 import SortingMenu from '-/perspectives/grid-perspective/components/SortingMenu';
 import GridOptionsMenu from '-/perspectives/grid-perspective/components/GridOptionsMenu';
@@ -136,17 +137,12 @@ function ListPerspective(props: Props) {
       ? settings.orderBy
       : defaultSettings.orderBy
   );*/
-  const layoutType = useRef<string>(
-    settings && settings.layoutType
-      ? settings.layoutType
-      : defaultSettings.layoutType,
-  );
   const singleClickAction = useRef<string>(
     settings && settings.singleClickAction
       ? settings.singleClickAction
       : defaultSettings.singleClickAction,
   );
-  const entrySize = useRef<string>(
+  const entrySize = useRef<EntrySizes>(
     settings && settings.entrySize
       ? settings.entrySize
       : defaultSettings.entrySize,
@@ -229,7 +225,6 @@ function ListPerspective(props: Props) {
         perspectiveSettings && perspectiveSettings.showTags !== undefined
           ? perspectiveSettings.showTags
           : defaultSettings.showTags;
-      layoutType.current = defaultSettings.layoutType;
       setOrderBy(
         perspectiveSettings && perspectiveSettings.orderBy !== undefined
           ? perspectiveSettings.orderBy
@@ -269,7 +264,6 @@ function ListPerspective(props: Props) {
         showEntriesDescription: showEntriesDescription.current,
         showDetails: showDetails.current,
         showTags: showTags.current,
-        layoutType: layoutType.current,
         orderBy: orderBy,
         sortBy: sortBy,
         singleClickAction: singleClickAction.current,
@@ -301,7 +295,6 @@ function ListPerspective(props: Props) {
     showEntriesDescription.current,
     showDetails.current,
     showTags.current,
-    layoutType.current,
     orderBy,
     sortBy,
     singleClickAction.current,
@@ -327,11 +320,6 @@ function ListPerspective(props: Props) {
       }
     }
   };
-
-  /*const handleLayoutSwitch = (type: string) => {
-    layoutType.current = type;
-    // forceUpdate();
-  };*/
 
   const handleGridPageLimit = (limit: number) => {
     gridPageLimit.current = limit;
@@ -539,11 +527,6 @@ function ListPerspective(props: Props) {
         const entry = selectedEntries[0];
         openFileNatively(entry.path);
       }
-      // if (lastSelectedEntryPath) {
-      //   openFileNatively(lastSelectedEntryPath);
-      // } else if (currentDirectoryPath) {
-      //   openFileNatively(currentDirectoryPath);
-      // }
     },
     openEntryDetails: () => {
       if (selectedEntries && selectedEntries.length === 1) {
@@ -610,7 +593,7 @@ function ListPerspective(props: Props) {
           selectedEntries.length > 0 ? selectedEntries : [fsEntry]
         }
       >
-        <CellContent
+        <RowCell
           selected={selected}
           fsEntry={fsEntry}
           showEntriesDescription={showEntriesDescription.current}
@@ -620,7 +603,6 @@ function ListPerspective(props: Props) {
           selectEntry={selectEntry}
           deselectEntry={deselectEntry}
           handleTagMenu={handleTagMenu}
-          layoutType={layoutType.current}
           showTags={showTags.current}
           handleGridContextMenu={(
             event: React.MouseEvent<HTMLDivElement>,
@@ -651,6 +633,8 @@ function ListPerspective(props: Props) {
         openMoveCopyFilesDialog={openMoveCopyFilesDialog}
         handleSortingMenu={handleSortingMenu}
         handleExportCsvMenu={handleExportCsvMenu}
+        changeEntrySize={changeEntrySize}
+        entrySize={entrySize.current}
         openSettings={openSettings}
         openShareFilesDialog={
           PlatformIO.haveObjectStoreSupport() ? openShareFilesDialog : undefined
@@ -674,7 +658,6 @@ function ListPerspective(props: Props) {
           showDetails={showDetails.current}
           showDescription={showDescription.current}
           showDirectories={showDirectories.current}
-          layoutType={layoutType.current}
           desktopMode={desktopMode}
           openRenameEntryDialog={openRenameEntryDialog}
           showTags={showTags.current}

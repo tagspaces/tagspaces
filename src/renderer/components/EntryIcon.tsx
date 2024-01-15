@@ -81,18 +81,10 @@ function EntryIcon(props: Props) {
 
   return (
     <svg
-      style={{
-        width: '60%',
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        height: 150,
-      }}
+      width="100%"
+      height="auto"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
-      width="24"
-      height="24"
       fill="#bbbbbb22"
     >
       {iconSVGPath}

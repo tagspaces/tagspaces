@@ -34,6 +34,7 @@ import {
   FormHelperText,
   Typography,
   TextField,
+  Box,
 } from '@mui/material';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -46,23 +47,7 @@ import { Pro } from '-/pro';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { useSortedDirContext } from '-/perspectives/grid-perspective/hooks/useSortedDirContext';
-
-/*const styles: any = {
-  root: {
-    overflowX: 'hidden'
-  },
-  listItem: {
-    paddingLeft: 0,
-    paddingRight: 0
-  },
-  pro: {
-    backgroundColor: '#1DD19F'
-  },
-  colorChooserButton: {
-    minHeight: 30,
-    border: '1px solid lightgray'
-  }
-};*/
+import ZoomComponent, { EntrySizes } from '-/components/ZoomComponent';
 
 interface Props {
   open: boolean;
@@ -82,14 +67,13 @@ interface Props {
   toggleThumbnailsMode: () => string;
   thumbnailMode: string;
   changeEntrySize: (entrySize: string) => void;
-  entrySize: string;
+  entrySize: EntrySizes;
   changeSingleClickAction: (actionType: string) => void;
   singleClickAction: string;
   openHelpWebPage: () => void;
   handleSortingMenu: (event) => void;
   isLocal: boolean;
   resetLocalSettings: () => void;
-  // setShowDirectories: (check: boolean) => void;
 }
 
 function GridSettingsDialog(props: Props) {
@@ -97,7 +81,7 @@ function GridSettingsDialog(props: Props) {
   const { sortBy, orderBy } = useSortedDirContext();
   const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
   const thumbnailMode = useRef<string>(props.thumbnailMode);
-  const entrySize = useRef<string>(props.entrySize);
+  const entrySize = useRef<EntrySizes>(props.entrySize);
   const singleClickAction = useRef<string>(props.singleClickAction);
 
   const theme = useTheme();
@@ -144,12 +128,12 @@ function GridSettingsDialog(props: Props) {
   }
 
   return (
-    <Dialog open={open} onClose={() => onClose()} keepMounted scroll="paper">
+    <Dialog open={open} onClose={onClose} keepMounted scroll="paper">
       <DialogTitle>
         {t('core:perspectiveSettingsTitle')}
         <DialogCloseButton
           testId="closePerspectiveSettingsTID"
-          onClose={() => onClose()}
+          onClose={onClose}
         />
       </DialogTitle>
       <DialogContent>
@@ -174,8 +158,27 @@ function GridSettingsDialog(props: Props) {
             </Button>
           </>
         )}
+        <Divider />
+        <Box style={{ display: 'flex' }}>
+          <ZoomComponent
+            entrySize={entrySize.current}
+            changeEntrySize={(eSize: EntrySizes) => {
+              changeEntrySize(eSize);
+              entrySize.current = eSize;
+              forceUpdate();
+            }}
+          />
+          <Typography
+            style={{ color: theme.palette.text.primary, alignSelf: 'center' }}
+            variant="body1"
+          >
+            {t('Size of the entries')}
+          </Typography>
+        </Box>
+        <Divider />
         <FormGroup>
           <FormControlLabel
+            // labelPlacement="start"
             control={
               <Switch
                 data-tid="gridPerspectiveToggleShowDirectories"
@@ -188,6 +191,7 @@ function GridSettingsDialog(props: Props) {
             label={t('core:showHideDirectories')}
           />
           <FormControlLabel
+            // labelPlacement="start"
             control={
               <Switch
                 data-tid="gridPerspectiveToggleShowTags"
@@ -200,6 +204,7 @@ function GridSettingsDialog(props: Props) {
             label={t('core:showTags')}
           />
           <FormControlLabel
+            // labelPlacement="start"
             control={
               <Switch
                 data-tid="gridPerspectiveToggleShowEntriesDescription"
@@ -277,14 +282,13 @@ function GridSettingsDialog(props: Props) {
             }
           />
         </MenuItem>
-        <Divider />
-        <MenuItem
+        {/* <MenuItem
           data-tid="gridPerspectiveEntrySizeSmall"
           title={t('core:entrySizeSmall')}
           aria-label={t('core:entrySizeSmall')}
           onClick={() => {
             changeEntrySize('small');
-            entrySize.current = 'small';
+            entrySize.current = EntrySizes.small;
             forceUpdate();
           }}
         >
@@ -303,7 +307,7 @@ function GridSettingsDialog(props: Props) {
           aria-label={t('core:entrySizeNormal')}
           onClick={() => {
             changeEntrySize('normal');
-            entrySize.current = 'normal';
+            entrySize.current = EntrySizes.normal;
             forceUpdate();
           }}
         >
@@ -322,7 +326,7 @@ function GridSettingsDialog(props: Props) {
           aria-label={t('core:entrySizeBig')}
           onClick={() => {
             changeEntrySize('big');
-            entrySize.current = 'big';
+            entrySize.current = EntrySizes.big;
             forceUpdate();
           }}
         >
@@ -334,7 +338,7 @@ function GridSettingsDialog(props: Props) {
             )}
           </ListItemIcon>
           <ListItemText primary={t('core:entrySizeBig')} />
-        </MenuItem>
+        </MenuItem> */}
         <Divider />
         <MenuItem
           data-tid="gridPerspectiveSingleClickOpenInternally"

@@ -85,7 +85,8 @@ export function updateHistory(
 
     if (diffLocation || diffEntryPath || diffFolderPath) {
       window.history.pushState(null, null, urlParams);
-      // console.log('>>> href updated with: ' + urlParams);
+      // console.log('>>> new href: ' + window.location.href);
+      // console.log('>>> url param: ' + urlParams);
     }
   }
 }

@@ -29,4 +29,5 @@ export const defaultSettings = {
   showEntriesDescription: true,
   showTags: true,
   gridPageLimit: 100,
+  maxDescriptionPreviewLength: 100,
 };

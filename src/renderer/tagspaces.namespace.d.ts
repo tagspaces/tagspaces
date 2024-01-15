@@ -233,7 +233,7 @@ export namespace TS {
     orderBy?: boolean;
     sortBy?: string;
     singleClickAction?: string;
-    entrySize?: string;
+    entrySize?: EntrySizes;
     thumbnailMode?: string;
     gridPageLimit?: number;
     // isLocal?: boolean;

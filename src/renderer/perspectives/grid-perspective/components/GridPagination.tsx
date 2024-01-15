@@ -60,7 +60,6 @@ interface Props {
   showDirectories: boolean;
   showDetails: boolean;
   showDescription: boolean;
-  layoutType: string;
   showTags: boolean;
   desktopMode: boolean;
   thumbnailMode: string;
@@ -498,7 +497,6 @@ function mapStateToProps(state) {
 }
 
 const areEqual = (prevProp: Props, nextProp: Props) =>
-  //  nextProp.theme === prevProp.theme &&
   JSON.stringify(nextProp.lastBackgroundImageChange) ===
     JSON.stringify(prevProp.lastBackgroundImageChange) &&
   JSON.stringify(nextProp.lastThumbnailImageChange) ===
