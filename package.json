@@ -162,7 +162,6 @@
     "@tagspaces/tagspaces-md": "4.0.3",
     "aws-amplify": "^4.3.8",
     "aws-sdk": "^2.1036.0",
-    "beautiful-react-hooks": "^5.0.1",
     "classnames": "^2.3.1",
     "clone": "^2.1.2",
     "coordinate-parser": "^1.0.7",
