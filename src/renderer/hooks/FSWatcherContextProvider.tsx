@@ -64,6 +64,7 @@ export const FSWatcherContextProvider = ({
 }: FSWatcherContextProviderProps) => {
   const { currentLocation } = useCurrentLocationContext();
   const {
+    currentDirectoryEntries,
     loadDirectoryContent,
     currentDirectoryPath,
     currentLocationPath,
@@ -142,10 +143,13 @@ export const FSWatcherContextProvider = ({
       switch (event) {
         case 'unlink':
         case 'unlinkDir':
-          if (!path.includes(AppConfig.metaFolder)) {
+          if (
+            //currentDirectoryEntries.some((entry) => path === entry.path) &&
+            !path.includes(AppConfig.metaFolder)
+          ) {
             removeDirectoryEntries([path]);
             reflectDeleteEntry(path);
-            dispatch(AppActions.reflectDeleteEntry(path));
+            //dispatch(AppActions.reflectDeleteEntry(path));
           }
           break;
         case 'add':
@@ -159,7 +163,7 @@ export const FSWatcherContextProvider = ({
               addDirectoryEntries([entry]);
             }
             reflectCreateEntry(entry);
-            dispatch(AppActions.reflectCreateEntry(path, true));
+            //dispatch(AppActions.reflectCreateEntry(path, true));
           }
           break;
         case 'addDir':
@@ -173,7 +177,7 @@ export const FSWatcherContextProvider = ({
               addDirectoryEntries([entry]);
             }
             reflectCreateEntry(entry);
-            dispatch(AppActions.reflectCreateEntry(path, false));
+            //dispatch(AppActions.reflectCreateEntry(path, false));
           }
           break;
         case 'change':
@@ -220,7 +224,12 @@ export const FSWatcherContextProvider = ({
           break;
       }
     };
-  }, [addDirectoryEntries, removeDirectoryEntries, ignored.current]);
+  }, [
+    currentDirectoryEntries,
+    addDirectoryEntries,
+    removeDirectoryEntries,
+    ignored.current,
+  ]);
 
   useEffect(() => {
     if (AppConfig.isElectron) {

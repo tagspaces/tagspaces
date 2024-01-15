@@ -791,10 +791,17 @@ export const DirectoryContentContextProvider = ({
           ),
         );
       } else {
-        const entries = currentDirectoryEntries.filter(
-          (entry) => !entryPaths.includes(entry.path),
+        const index = currentDirectoryEntries.findIndex((entry) =>
+          entryPaths.includes(entry.path),
         );
-        setCurrentDirectoryEntries(entries);
+        if (index > -1) {
+          // delete in place (for fs watcher events unlink/add in 20ms)
+          currentDirectoryEntries.splice(index, 1);
+          /*const entries = currentDirectoryEntries.filter(
+            (entry) => !entryPaths.includes(entry.path),
+          );*/
+          setCurrentDirectoryEntries([...currentDirectoryEntries]); //entries);
+        }
       }
     };
   }, [currentDirectoryEntries]);
