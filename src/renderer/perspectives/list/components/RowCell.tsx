@@ -95,6 +95,7 @@ interface Props {
   thumbnailMode: any;
   selectEntry: (fsEntry: TS.FileSystemEntry) => void;
   deselectEntry: (fsEntry: TS.FileSystemEntry) => void;
+  // selectionMode: boolean;
   showTags: boolean;
   handleTagMenu: (event: Object, tag: TS.Tag, entryPath: string) => void;
   handleGridContextMenu: (event: Object, fsEntry: TS.FileSystemEntry) => void;

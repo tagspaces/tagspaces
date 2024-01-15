@@ -29,7 +29,10 @@ import AddRemoveTagsDialog from '-/components/dialogs/AddRemoveTagsDialog';
 import MoveCopyFilesDialog from '-/components/dialogs/MoveCopyFilesDialog';
 import TagDropContainer from '-/components/TagDropContainer';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import GridCell, { calculateEntryWitdth } from './GridCell';
+import GridCell, {
+  calculateEntryHeight,
+  calculateEntryWitdth,
+} from './GridCell';
 import MainToolbar from '-/perspectives/grid-perspective/components/MainToolbar';
 import SortingMenu from '-/perspectives/grid-perspective/components/SortingMenu';
 import GridOptionsMenu from '-/perspectives/grid-perspective/components/GridOptionsMenu';
@@ -565,6 +568,8 @@ function GridPerspective(props: Props) {
       );
       handleSetSelectedEntries(newSelection);
     };
+
+    const selectionMode = selectedEntries.length > 0;
     return (
       <TagDropContainer
         entryPath={fsEntry.path} // TODO remove entryPath it is already included in selectedEntries
@@ -580,6 +585,7 @@ function GridPerspective(props: Props) {
           isLast={isLast}
           thumbnailMode={thumbnailMode.current}
           selectEntry={selectEntry}
+          selectionMode={selectionMode}
           deselectEntry={deselectEntry}
           handleTagMenu={handleTagMenu}
           showTags={showTags.current}
@@ -635,6 +641,10 @@ function GridPerspective(props: Props) {
             gridTemplateColumns:
               'repeat(auto-fit,minmax(' +
               calculateEntryWitdth(entrySize.current) +
+              'px,1fr))',
+            gridTemplateRows:
+              'repeat(auto-fit,minmax(' +
+              calculateEntryHeight(entrySize.current) +
               'px,1fr))',
           }}
           directories={sortedDirectories}

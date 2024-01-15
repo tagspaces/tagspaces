@@ -23,10 +23,20 @@ import { useTranslation } from 'react-i18next';
 import classNames from 'classnames';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
+import CardMedia from '@mui/material/CardMedia';
+import CardContent from '@mui/material/CardContent';
+import CardActions from '@mui/material/CardActions';
 import Tooltip from '-/components/Tooltip';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import IconButton from '@mui/material/IconButton';
-import { SelectedIcon, UnSelectedIcon } from '-/components/CommonIcons';
+import {
+  SelectedIcon,
+  UnSelectedIcon,
+  MoreMenuIcon,
+} from '-/components/CommonIcons';
 import {
   formatFileSize,
   formatDateTime,
@@ -105,7 +115,7 @@ export const classes = {
   gridCell: `${PREFIX}-gridCell`,
   selectedGridCell: `${PREFIX}-selectedGridCell`,
   gridCellTitle: `${PREFIX}-gridCellTitle`,
-  gridCellTags: `${PREFIX}-gridCellTags`,
+  // gridCellTags: `${PREFIX}-gridCellTags`,
   gridCellDescription: `${PREFIX}-gridCellDescription`,
   gridFileExtension: `${PREFIX}-gridFileExtension`,
   gridSizeDate: `${PREFIX}-gridSizeDate`,
@@ -113,7 +123,7 @@ export const classes = {
   gridFolder: `${PREFIX}-gridFolder`,
 };
 
-export const GridPaper = styled(Paper)(({ theme }) => ({
+export const GridPaper = styled(Card)(({ theme }) => ({
   [`& .${classes.gridCell}`]: {
     border: '2px solid transparent',
     marginTop: 1,
@@ -134,14 +144,14 @@ export const GridPaper = styled(Paper)(({ theme }) => ({
     textOverflow: 'ellipsis',
     overflow: 'hidden',
   },
-  [`& .${classes.gridCellTags}`]: {
-    padding: 0,
-    paddingTop: 2,
-    height: 100,
-    overflowY: 'auto',
-    overflowX: 'hidden',
-    position: 'relative',
-  },
+  // [`& .${classes.gridCellTags}`]: {
+  //   padding: 0,
+  //   paddingTop: 2,
+  //   height: 100,
+  //   overflowY: 'auto',
+  //   overflowX: 'hidden',
+  //   position: 'relative',
+  // },
   [`& .${classes.gridCellDescription}`]: {
     padding: 2,
     margin: 2,
@@ -158,30 +168,11 @@ export const GridPaper = styled(Paper)(({ theme }) => ({
     paddingRight: 3,
     fontSize: 13,
     marginRight: 5,
-    marginTop: 7,
     minWidth: 35,
     height: 16,
     color: 'white',
     borderRadius: 3,
     textAlign: 'center',
-  },
-  [`& .${classes.gridSizeDate}`]: {
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    marginRight: 5,
-    marginLeft: 'auto',
-    paddingTop: 12,
-  },
-  [`& .${classes.gridDetails}`]: {
-    display: 'flex',
-    whiteSpace: 'nowrap',
-  },
-  [`& .${classes.gridFolder}`]: {
-    color: 'white',
-    padding: 5,
-    minHeight: 15,
-    height: 20,
-    borderRadius: 3,
   },
 }));
 
@@ -194,6 +185,7 @@ interface Props {
   thumbnailMode: any;
   selectEntry: (fsEntry: TS.FileSystemEntry) => void;
   deselectEntry: (fsEntry: TS.FileSystemEntry) => void;
+  selectionMode: boolean;
   showTags: boolean;
   handleTagMenu: (event: Object, tag: TS.Tag, entryPath: string) => void;
   handleGridContextMenu: (event: Object, fsEntry: TS.FileSystemEntry) => void;
@@ -216,6 +208,7 @@ function GridCell(props: Props) {
     showTags,
     selectEntry,
     deselectEntry,
+    selectionMode,
     isLast,
   } = props;
 
@@ -293,8 +286,7 @@ function GridCell(props: Props) {
   ];
 
   const entryPath = fSystemEntry.path;
-  const isSmall =
-    entrySize === EntrySizes.tiny || entrySize === EntrySizes.small;
+  const isSmall = entrySize === EntrySizes.tiny; // || entrySize === EntrySizes.small;
 
   const renderTags = useMemo(() => {
     let sideCarLength = 0;
@@ -329,18 +321,112 @@ function GridCell(props: Props) {
     });
   }, [entryTags, readOnlyMode, reorderTags, entryPath]);
 
+  const maxHeight = calculateEntryHeight(entrySize);
+
+  function generateCardHeader() {
+    return (
+      !isSmall &&
+      fSystemEntry.isFile &&
+      fSystemEntry.lmdt && (
+        <>
+          <Tooltip
+            title={
+              t('core:modifiedDate') +
+              ': ' +
+              formatDateTime(fSystemEntry.lmdt, true)
+            }
+          >
+            {formatDateTime(fSystemEntry.lmdt, false)}
+          </Tooltip>
+          <Tooltip title={fSystemEntry.size + ' ' + t('core:sizeInBytes')}>
+            <span>{' | ' + formatFileSize(fSystemEntry.size)}</span>
+          </Tooltip>
+        </>
+      )
+    );
+  }
+
+  function generateAvatar() {
+    return selectionMode ? (
+      <IconButton
+        style={{
+          opacity: selected ? 1 : 0.5,
+          padding: desktopMode ? 5 : 8,
+        }}
+        size="small"
+        onMouseLeave={(e) => {
+          //@ts-ignore
+          e.target.style.opacity = selected ? 1 : 0.5;
+        }}
+        onMouseOver={(e) => {
+          //@ts-ignore
+          e.target.style.opacity = 1;
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (selected) {
+            deselectEntry(fSystemEntry);
+          } else {
+            selectEntry(fSystemEntry);
+          }
+        }}
+      >
+        {selected ? (
+          <SelectedIcon
+            style={{
+              opacity: 1,
+              borderRadius: 15,
+              backgroundColor: '#d7d7d7',
+            }}
+          />
+        ) : (
+          <UnSelectedIcon
+            style={{
+              opacity: 0.7,
+              borderRadius: 15,
+              backgroundColor: 'd7d7d7',
+            }}
+          />
+        )}
+      </IconButton>
+    ) : (
+      <Tooltip title={fSystemEntry.path}>
+        <Typography
+          className={classes.gridFileExtension}
+          style={{
+            display: 'inline',
+            backgroundColor: fileSystemEntryColor,
+            textShadow: '1px 1px #8f8f8f',
+            textOverflow: 'unset',
+            maxWidth: fSystemEntry.isFile ? 50 : 100,
+          }}
+          noWrap={true}
+          variant="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            selectEntry(fSystemEntry);
+          }}
+        >
+          {fSystemEntry.isFile ? fSystemEntry.extension : <FolderOpenIcon />}
+        </Typography>
+      </Tooltip>
+    );
+  }
+
   return (
     <GridPaper
-      elevation={1}
       data-entry-id={fSystemEntry.uuid}
-      className={classNames(
-        classes.gridCell,
-        selected && classes.selectedGridCell,
-      )}
+      data-tid={'fsEntryName_' + dataTidFormat(fSystemEntry.name)}
+      // className={classNames(
+      //   classes.gridCell,
+      //   selected && classes.selectedGridCell,
+      // )}
       style={{
-        height: calculateEntryHeight(entrySize),
+        height: maxHeight,
+        minHeight: maxHeight,
+        maxHeight: maxHeight,
         marginBottom: isLast ? 40 : 'auto',
-        backgroundColor: theme.palette.background.default,
+        background: fileSystemEntryBgColor && theme.palette.background.default,
       }}
       onContextMenu={(event) => handleGridContextMenu(event, fSystemEntry)}
       onDoubleClick={(event) => {
@@ -356,152 +442,73 @@ function GridCell(props: Props) {
         handleGridCellClick(event, fSystemEntry);
       }}
     >
-      <div
-        data-tid={'fsEntryName_' + dataTidFormat(fSystemEntry.name)}
-        style={{
-          background: fileSystemEntryBgColor,
-          borderRadius: 5,
+      <CardHeader
+        style={{ padding: 5 }}
+        sx={{
+          '.MuiCardHeader-avatar': {
+            margin: 0,
+            alignSelf: 'flex-start',
+          },
+          '.MuiCardHeader-subheader': {
+            fontSize: 12,
+          },
+          // '.MuiCardHeader-header': {
+          //   fontSize: 12,
+          // },
         }}
-      >
-        <div
-          style={{
-            position: 'relative',
-            height: '100%', //calculateEntryHeight(entrySize),
-            borderRadius: 5,
-            marginBottom: 5,
-          }}
-        >
-          {fSystemEntry.thumbPath ? (
-            <img
-              alt="thumbnail"
-              style={{
-                backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'center',
-                objectFit: thumbnailMode,
-                position: 'absolute',
-                width: '100%',
-                height: '100%',
-              }}
-              src={
-                fSystemEntry.thumbPath +
-                (lastThumbnailImageChange &&
-                lastThumbnailImageChange.thumbPath === fSystemEntry.thumbPath &&
-                !PlatformIO.haveObjectStoreSupport() &&
-                !PlatformIO.haveWebDavSupport()
-                  ? urlGetDelim(fSystemEntry.thumbPath) +
-                    lastThumbnailImageChange.dt
-                  : '')
-              }
-              // @ts-ignore
-              onError={(i) => (i.target.style.display = 'none')}
-              loading="lazy"
-            />
-          ) : (
+        title={entryTitle}
+        subheader={generateCardHeader()}
+        action={
+          <IconButton
+            aria-label="entry context menu"
+            size="small"
+            onClick={(event) => handleGridContextMenu(event, fSystemEntry)}
+          >
+            <MoreMenuIcon />
+          </IconButton>
+        }
+        avatar={generateAvatar()}
+      ></CardHeader>
+
+      <CardContent sx={{ width: 'auto', padding: 0, height: maxHeight - 30 }}>
+        {fSystemEntry.thumbPath ? (
+          <img
+            alt="thumbnail"
+            style={{
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'center',
+              objectFit: thumbnailMode,
+              width: '100%',
+              height: '100%',
+            }}
+            src={
+              fSystemEntry.thumbPath +
+              (lastThumbnailImageChange &&
+              lastThumbnailImageChange.thumbPath === fSystemEntry.thumbPath &&
+              !PlatformIO.haveObjectStoreSupport() &&
+              !PlatformIO.haveWebDavSupport()
+                ? urlGetDelim(fSystemEntry.thumbPath) +
+                  lastThumbnailImageChange.dt
+                : '')
+            }
+            // @ts-ignore
+            onError={(i) => (i.target.style.display = 'none')}
+            loading="lazy"
+          />
+        ) : (
+          <Box style={{ width: '50%', margin: '0 auto' }}>
             <EntryIcon
               isFile={fSystemEntry.isFile}
               fileExtension={fSystemEntry.extension}
             />
-          )}
-          <div id="gridCellTags" className={classes.gridCellTags}>
-            <IconButton
-              style={{
-                opacity: selected ? 1 : 0.5,
-                padding: desktopMode ? 5 : 8,
-              }}
-              onMouseLeave={(e) => {
-                //@ts-ignore
-                e.target.style.opacity = selected ? 1 : 0.5;
-              }}
-              onMouseOver={(e) => {
-                //@ts-ignore
-                e.target.style.opacity = 1;
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                if (selected) {
-                  deselectEntry(fSystemEntry);
-                } else {
-                  selectEntry(fSystemEntry);
-                }
-              }}
-            >
-              {selected ? (
-                <SelectedIcon
-                  style={{
-                    opacity: 1,
-                    borderRadius: 15,
-                    backgroundColor: '#d7d7d7',
-                  }}
-                />
-              ) : (
-                <UnSelectedIcon
-                  style={{
-                    opacity: 0.7,
-                    borderRadius: 15,
-                    backgroundColor: 'd7d7d7',
-                  }}
-                />
-              )}
-            </IconButton>
-            {showTags && entryTags && !isSmall ? (
-              renderTags
-            ) : (
-              <TagsPreview tags={entryTags} />
-            )}
-          </div>
-          {description && (
-            <Tooltip title={t('core:entryDescription')}>
-              <Typography
-                data-tid="gridCellDescription"
-                className={classes.gridCellDescription}
-                variant="caption"
-              >
-                {description}
-              </Typography>
-            </Tooltip>
-          )}
-        </div>
-        <Typography className={classes.gridCellTitle} variant="body1">
-          {entryTitle}
-        </Typography>
-        <div className={classes.gridDetails}>
-          <Tooltip title={fSystemEntry.path}>
-            <Typography
-              className={classes.gridFileExtension}
-              style={{
-                backgroundColor: fileSystemEntryColor,
-                textShadow: '1px 1px #8f8f8f',
-                textOverflow: 'unset',
-                maxWidth: fSystemEntry.isFile ? 50 : 100,
-              }}
-              noWrap={true}
-              variant="button"
-            >
-              {fSystemEntry.isFile ? (
-                fSystemEntry.extension
-              ) : (
-                <FolderOpenIcon />
-              )}
-            </Typography>
-          </Tooltip>
-          {!isSmall && fSystemEntry.isFile && fSystemEntry.lmdt && (
-            <Typography className={classes.gridSizeDate} variant="caption">
-              <Tooltip
-                title={
-                  t('core:modifiedDate') +
-                  ': ' +
-                  formatDateTime(fSystemEntry.lmdt, true)
-                }
-              >
-                <span>{formatDateTime(fSystemEntry.lmdt, false)}</span>
-              </Tooltip>
-              <Tooltip title={fSystemEntry.size + ' ' + t('core:sizeInBytes')}>
-                <span>{' | ' + formatFileSize(fSystemEntry.size)}</span>
-              </Tooltip>
-            </Typography>
-          )}
-        </div>
-      </div>
+          </Box>
+        )}
+        {showTags && entryTags && !isSmall ? (
+          renderTags
+        ) : (
+          <TagsPreview tags={entryTags} />
+        )}
+      </CardContent>
     </GridPaper>
   );
 }
