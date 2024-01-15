@@ -254,11 +254,9 @@ function GridPagination(props: Props) {
                       color: theme.palette.text.primary,
                     }}
                   >
-                    <Tooltip
-                      data-tid={'currentDir_' + folderName}
-                      title={t('core:renameDirectory')}
-                    >
+                    <Tooltip title={t('core:renameDirectory')}>
                       <ButtonBase
+                        data-tid={'currentDir_' + folderName}
                         style={{ fontSize: '1.5rem' }}
                         onClick={() => {
                           setSelectedEntries([]);
