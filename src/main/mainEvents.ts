@@ -251,7 +251,15 @@ export default function loadMainEvents() {
   );
   ipcMain.handle(
     'saveBinaryFilePromise',
-    async (event, param, content, overwrite, onUploadProgress) => {
+    async (event, param, content, overwrite, withProgress) => {
+      let onUploadProgress = undefined;
+      if (withProgress) {
+        progress['saveBinaryFilePromise'] = newProgress(
+          'saveBinaryFilePromise',
+          param.total,
+        );
+        onUploadProgress = getOnProgress('saveBinaryFilePromise', progress);
+      }
       const result = await saveBinaryFilePromise(
         param,
         content,
@@ -350,8 +358,12 @@ export default function loadMainEvents() {
   });
 
   ipcMain.handle('unZip', async (event, filePath, targetPath) => {
-    const result = await unZip(filePath, targetPath);
-    return result;
+    try {
+      const result = await unZip(filePath, targetPath);
+      return result;
+    } catch (ex) {
+      return false;
+    }
   });
 
   ipcMain.handle('getDirProperties', async (event, path) => {

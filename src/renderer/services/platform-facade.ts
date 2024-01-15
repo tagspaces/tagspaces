@@ -712,7 +712,7 @@ export default class PlatformFacade {
         param,
         content,
         overwrite,
-        onUploadProgress,
+        !!onUploadProgress,
       );
     } else if (AppConfig.isCordova) {
       return cordovaIO
