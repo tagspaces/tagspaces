@@ -144,7 +144,7 @@ export const FSWatcherContextProvider = ({
         case 'unlink':
         case 'unlinkDir':
           if (
-            currentDirectoryEntries.some((entry) => path === entry.path) &&
+            //currentDirectoryEntries.some((entry) => path === entry.path) &&
             !path.includes(AppConfig.metaFolder)
           ) {
             removeDirectoryEntries([path]);
@@ -153,10 +153,7 @@ export const FSWatcherContextProvider = ({
           }
           break;
         case 'add':
-          if (
-            currentDirectoryEntries.some((entry) => path === entry.path) &&
-            !path.includes(AppConfig.metaFolder)
-          ) {
+          if (!path.includes(AppConfig.metaFolder)) {
             const entry = toFsEntry(path, true);
             const dirPath = extractContainingDirectoryPath(
               path,
