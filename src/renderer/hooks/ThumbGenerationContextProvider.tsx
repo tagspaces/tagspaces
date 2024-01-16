@@ -98,8 +98,8 @@ export const ThumbGenerationContextProvider = ({
         pageFiles && pageFiles.length > 0 ? pageFiles : currentDirectoryEntries;
       if (
         entries &&
-        entries.length > 0 &&
-        isGeneratingThumbs.current === false
+        entries.length > 0
+        //&& isGeneratingThumbs.current === false
       ) {
         generateThumbnails(entries).then(() => {
           //if (!isMetaFolderExist) {
@@ -108,7 +108,9 @@ export const ThumbGenerationContextProvider = ({
             currentDirectoryPath,
             currentDirectoryEntries,
             entries.filter((entry) => entry.isFile),
-          ).then((entries) => updateCurrentDirEntries(entries));
+          ).then((entries) => {
+            updateCurrentDirEntries(entries);
+          });
           // }
           return true;
         });
