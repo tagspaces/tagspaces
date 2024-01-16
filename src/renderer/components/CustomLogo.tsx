@@ -47,9 +47,14 @@ function CustomLogo() {
   }, []);
 
   return (
-    <Box
+    <div
       onClick={() => dispatch(actions.toggleAboutDialog())}
-      style={{ width: '100%', textAlign: 'center' }}
+      style={{
+        width: '100%',
+        textAlign: 'center',
+        // @ts-ignore
+        WebkitAppRegion: 'drag',
+      }}
     >
       <Tooltip title={t('core:aboutTitle')}>
         <IconButton style={{ padding: 0 }}>
@@ -57,6 +62,8 @@ function CustomLogo() {
             style={{
               width: 30,
               height: 30,
+              // @ts-ignore
+              WebkitAppRegion: 'no-drag',
             }}
             src={LogoIcon}
             alt="TagSpaces Logo"
@@ -69,7 +76,12 @@ function CustomLogo() {
           data-tid="aboutTagSpaces"
         >
           <img
-            style={{ maxHeight: 26, maxWidth: 200 }}
+            style={{
+              maxHeight: 26,
+              maxWidth: 200,
+              // @ts-ignore
+              WebkitAppRegion: 'no-drag',
+            }}
             src={logo}
             alt="TagSpaces"
           />
@@ -82,6 +94,8 @@ function CustomLogo() {
             fontSize: '10px',
             marginLeft: 3,
             lineHeight: '40px',
+            // @ts-ignore
+            WebkitAppRegion: 'no-drag',
           }}
         >
           {'v' + versionMeta.version}
@@ -94,12 +108,14 @@ function CustomLogo() {
             fontSize: '10px',
             marginLeft: -25,
             lineHeight: '40px',
+            // @ts-ignore
+            WebkitAppRegion: 'no-drag',
           }}
         >
           {tsType}
         </Typography>
       </sub>
-    </Box>
+    </div>
   );
 }
 

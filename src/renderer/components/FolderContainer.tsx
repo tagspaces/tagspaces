@@ -240,14 +240,17 @@ function FolderContainer(props: Props) {
           display: 'flex',
           alignItems: 'center',
           minHeight: 50,
+          // @ts-ignore
+          WebkitAppRegion: 'drag',
         }}
       >
         <IconButton
           id="mobileMenuButton"
-          // style={{
-          //   transform: drawerOpened ? 'rotate(0deg)' : 'rotate(180deg)',
-          //   width: 50
-          // }}
+          style={{
+            // @ts-ignore
+            WebkitAppRegion: 'no-drag',
+            // transform: drawerOpened ? 'rotate(0deg)' : 'rotate(180deg)',
+          }}
           onClick={toggleDrawer}
         >
           <MainMenuIcon />
@@ -261,6 +264,10 @@ function FolderContainer(props: Props) {
             id="goBackButton"
             disabled={window.history.length < 2}
             onClick={goBack}
+            style={{
+              // @ts-ignore
+              WebkitAppRegion: 'no-drag',
+            }}
           >
             <GoBackIcon />
           </IconButton>
@@ -271,6 +278,10 @@ function FolderContainer(props: Props) {
               id="goForwardButton"
               disabled={window.history.length < 2}
               onClick={goForward}
+              style={{
+                // @ts-ignore
+                WebkitAppRegion: 'no-drag',
+              }}
             >
               <GoForwardIcon />
             </IconButton>
@@ -288,33 +299,15 @@ function FolderContainer(props: Props) {
                 flexDirection: 'column',
               }}
             />
-            {/* <MainSearchField
-              fullWidth
-              data-tid="toggleSearch"
-              defaultValue=""
-              variant="outlined"
-              size="small"
-              style={{
-                minWidth: 40,
-                width: isEntryOpened ? 40 : 220,
-                marginRight: 10
-              }}
-              onKeyDown={toggleSearchMode}
-              onClick={toggleSearchMode}
-              margin="dense"
-              placeholder={t('core:searchTitle') + openSearchKeyBinding}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start" style={{ marginRight: 0 }}>
-                    <IconButton size="small" edge="end">
-                      <SearchIcon />
-                    </IconButton>
-                  </InputAdornment>
-                )
-              }}
-            /> */}
             <Tooltip title={t('core:searchTitle') + openSearchKeyBinding}>
-              <IconButton data-tid="toggleSearch" onClick={openSearchMode}>
+              <IconButton
+                data-tid="toggleSearch"
+                onClick={openSearchMode}
+                style={{
+                  // @ts-ignore
+                  WebkitAppRegion: 'no-drag',
+                }}
+              >
                 <SearchIcon />
               </IconButton>
             </Tooltip>
@@ -328,6 +321,8 @@ function FolderContainer(props: Props) {
                   position: 'relative',
                   padding: '8px 12px 6px 8px',
                   margin: '0',
+                  // @ts-ignore
+                  WebkitAppRegion: 'no-drag',
                 }}
               >
                 <CircularProgressWithLabel value={getProgressValue()} />

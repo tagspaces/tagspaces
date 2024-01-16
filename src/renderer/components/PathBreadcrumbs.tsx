@@ -209,6 +209,8 @@ function PathBreadcrumbs(props: Props) {
         style={{
           overflowX: 'scroll',
           marginTop: 8,
+          // @ts-ignore
+          WebkitAppRegion: 'no-drag',
         }}
         maxItems={isDesktopMode ? 2 : 1}
         itemsAfterCollapse={isDesktopMode ? 1 : 1}

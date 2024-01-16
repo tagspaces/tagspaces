@@ -490,6 +490,8 @@ function SearchPopover(props: Props) {
       style={{
         maxWidth: 400,
         height: '100%',
+        // @ts-ignore
+        WebkitAppRegion: 'no-drag',
       }}
     >
       <div className={classes.toolbar}>

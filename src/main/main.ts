@@ -9,7 +9,14 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain, globalShortcut } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  shell,
+  ipcMain,
+  globalShortcut,
+  BrowserWindowConstructorOptions,
+} from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import pm2 from '@elife/pm2';
@@ -97,6 +104,26 @@ process.argv.forEach((arg, count) => {
 //   app.commandLine.appendSwitch('--allow-file-access-from-files');
 // }
 
+const browserWindowOptions: BrowserWindowConstructorOptions = {
+  show: false,
+  center: true,
+  autoHideMenuBar: true,
+  titleBarStyle: isMacLike ? 'hidden' : 'default',
+  trafficLightPosition: { x: 3, y: 3 },
+  webPreferences: {
+    spellcheck: true,
+    preload:
+      app.isPackaged || !isDebug
+        ? path.join(__dirname, 'preload.js')
+        : path.join(__dirname, '../../.erb/dll/preload.js'),
+  },
+};
+
+const defaultAppSize = {
+  defaultWidth: 1280,
+  defaultHeight: 800,
+};
+
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
@@ -125,96 +152,112 @@ function openLocationManagerPanel() {
     mainWindow.webContents.send('cmd', 'open-location-manager-panel');
   }
 }
+
 function openTagLibraryPanel() {
   if (mainWindow) {
     showApp();
     mainWindow.webContents.send('cmd', 'open-tag-library-panel');
   }
 }
+
 function goBack() {
   if (mainWindow) {
     showApp();
     mainWindow.webContents.send('cmd', 'go-back');
   }
 }
+
 function goForward() {
   if (mainWindow) {
     showApp();
     mainWindow.webContents.send('cmd', 'go-forward');
   }
 }
+
 function setZoomResetApp() {
   if (mainWindow) {
     showApp();
     mainWindow.webContents.send('cmd', 'set-zoom-reset-app');
   }
 }
+
 function setZoomInApp() {
   if (mainWindow) {
     showApp();
     mainWindow.webContents.send('cmd', 'set-zoom-in-app');
   }
 }
+
 function setZoomOutApp() {
   if (mainWindow) {
     showApp();
     mainWindow.webContents.send('cmd', 'set-zoom-out-app');
   }
 }
+
 function exitFullscreen() {
   if (mainWindow) {
     showApp();
     mainWindow.webContents.send('cmd', 'exit-fullscreen');
   }
 }
+
 function toggleSettingsDialog() {
   if (mainWindow) {
     showApp();
     mainWindow.webContents.send('cmd', 'toggle-settings-dialog');
   }
 }
+
 function openHelpFeedbackPanel() {
   if (mainWindow) {
     showApp();
     mainWindow.webContents.send('cmd', 'open-help-feedback-panel');
   }
 }
+
 function toggleKeysDialog() {
   if (mainWindow) {
     showApp();
     mainWindow.webContents.send('cmd', 'toggle-keys-dialog');
   }
 }
+
 function toggleOnboardingDialog() {
   if (mainWindow) {
     showApp();
     mainWindow.webContents.send('cmd', 'toggle-onboarding-dialog');
   }
 }
+
 function openURLExternally(data) {
   if (mainWindow) {
     showApp();
     mainWindow.webContents.send('open-url-externally', data);
   }
 }
+
 function toggleLicenseDialog() {
   if (mainWindow) {
     showApp();
     mainWindow.webContents.send('cmd', 'toggle-license-dialog');
   }
 }
+
 function toggleThirdPartyLibsDialog() {
   if (mainWindow) {
     showApp();
     mainWindow.webContents.send('cmd', 'toggle-third-party-libs-dialog');
   }
 }
+
 function toggleAboutDialog() {
   if (mainWindow) {
     showApp();
     mainWindow.webContents.send('cmd', 'toggle-about-dialog');
   }
 }
+
 function showSearch() {
   if (mainWindow) {
     showApp();
@@ -273,32 +316,24 @@ function createNewWindowInstance(url?) {
     return;
   }
 
-  const mainWindowState = windowStateKeeper({
-    defaultWidth: 1280,
-    defaultHeight: 800,
-  });
+  const mainWindowState = windowStateKeeper(defaultAppSize);
 
-  const mainWindowInstance = new BrowserWindow({
-    show: true,
-    center: true,
+  const newWindowInstance = new BrowserWindow({
+    ...browserWindowOptions,
     width: mainWindowState.width,
     height: mainWindowState.height,
-    webPreferences: {
-      spellcheck: true,
-      // webviewTag: true,
-      preload:
-        app.isPackaged || !isDebug
-          ? path.join(__dirname, 'preload.js')
-          : path.join(__dirname, '../../.erb/dll/preload.js'),
-    },
+    x: mainWindowState.x,
+    y: mainWindowState.y,
+    show: true,
+    center: true,
   });
 
-  mainWindowInstance.setMenuBarVisibility(false);
-  mainWindowInstance.setAutoHideMenuBar(true);
+  newWindowInstance.setMenuBarVisibility(false);
+
   if (url) {
-    mainWindowInstance.loadURL(url);
+    newWindowInstance.loadURL(url);
   } else {
-    mainWindowInstance.loadURL(resolveHtmlPath('index.html'));
+    newWindowInstance.loadURL(resolveHtmlPath('index.html'));
   }
 }
 
@@ -360,7 +395,8 @@ const getAssetPath = (...paths: string[]): string => {
   return path.join(RESOURCES_PATH, ...paths);
 };*/
 
-function startWS(port = undefined) {
+function startWS() {
+  const port = isDebug ? 2000 : undefined;
   try {
     let filepath;
     let script;
@@ -446,31 +482,15 @@ const createWindow = async (i18n) => {
     await installExtensions();
   }
 
-  const mainWindowState = windowStateKeeper({
-    defaultWidth: 1280,
-    defaultHeight: 800,
-  });
+  const mainWindowState = windowStateKeeper(defaultAppSize);
 
   mainWindow = new BrowserWindow({
-    show: false,
-    x: mainWindowState.x,
-    y: mainWindowState.y,
+    ...browserWindowOptions,
     width: mainWindowState.width,
     height: mainWindowState.height,
-    //icon: getAssetPath('icon.png'),
-    webPreferences: {
-      //nodeIntegrationInSubFrames: true,
-      //webSecurity: app.isPackaged, // todo https://www.electronjs.org/docs/latest/tutorial/security#6-do-not-disable-websecurity
-      spellcheck: true,
-      //nodeIntegration: true,
-      //webviewTag: true,
-      //contextIsolation: false,
-      preload:
-        app.isPackaged || !isDebug
-          ? path.join(__dirname, 'preload.js')
-          : path.join(__dirname, '../../.erb/dll/preload.js'),
-    },
   });
+
+  mainWindow.setMenuBarVisibility(false);
 
   const winUserAgent =
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36';
@@ -595,7 +615,7 @@ app.on('web-contents-created', (event, contents) => {
   });
 });
 
-startWS(isDebug ? 2000 : undefined);
+startWS();
 
 let appI18N;
 

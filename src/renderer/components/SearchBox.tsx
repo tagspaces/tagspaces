@@ -46,35 +46,37 @@ function SearchBox(props: Props) {
         setAnchorSearch={setAnchorSearch}
       />
       {props.open && (
-        <>
-          <Popover
-            open={Boolean(anchorSearch)}
-            anchorEl={anchorSearch}
-            onClose={() => setAnchorSearch(null)}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'right',
-            }}
-            slotProps={{
-              paper: {
-                style: {
-                  overflow: 'hidden',
-                  height: 720,
-                },
+        <Popover
+          open={Boolean(anchorSearch)}
+          anchorEl={anchorSearch}
+          onClose={() => setAnchorSearch(null)}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          slotProps={{
+            paper: {
+              style: {
+                overflow: 'hidden',
+                height: 720,
               },
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-          >
-            <SearchPopover
-              onClose={() => setAnchorSearch(null)}
-              textQuery={textQuery}
-              setTextQuery={setTextQuery}
-            />
-          </Popover>
-        </>
+            },
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          style={{
+            // @ts-ignore
+            WebkitAppRegion: 'no-drag',
+          }}
+        >
+          <SearchPopover
+            onClose={() => setAnchorSearch(null)}
+            textQuery={textQuery}
+            setTextQuery={setTextQuery}
+          />
+        </Popover>
       )}
     </>
   );

@@ -1245,6 +1245,8 @@ function SearchAutocomplete(props: Props) {
           whiteSpace: 'nowrap',
           display: 'flex',
           alignItems: 'center',
+          // @ts-ignore
+          WebkitAppRegion: 'no-drag',
         }}
       >
         <style>
