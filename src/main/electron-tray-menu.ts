@@ -18,7 +18,7 @@
 
 import { app, Menu, nativeImage, Tray } from 'electron';
 
-let tray = null;
+let tray;
 
 const icon1x =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABHNCSVQICAgIfAhkiAAABFdJREFUOI2N02tM1XUYB/Dv8/v9/4dzwCMplabOWNpmZqLLvCaXIQIKooydmJesF/Yml2vzTZsrXa+cZW65pmaAt1COdls0y9Yh3SQNSIxA9Jy4iMgB5CJyOHB+v9/TC8GhGev78tmzz/bs2ZcwRphZEpFm5lmVVTWlzTdb42zbihjDAIhHtrQ2yul0xC1cMHef9T+waZd/v/r94YJTz92912+ISIzsEAAiQGmtnoiNteKnTx3/WJCZxTAWd+VKXWnh0dMzBgYGlTPKIW3bZmMMhBAgAIaZtVbscjpgWRb+BQ5jhplj6ur83xUc9c7t6+tXRLA2b8zFKwteAgCEQmG4XE78eO4Cn/KWUuz48TAAxCMYEREzs+UPNJ0+XORd2tXVq4wx1sYN65CSvBhKadReCyBmXDTc7hi43THCsLl//2iQmWnXrl0EgBubb534otCb0dbWobTWVr4nC+krXgUA7D9wHO/t2IMTxd8CALTSD11ojWBer1fs3LlTt7YGDx34vNjT1Hwrwsx2Tk4a1mSl4lL7HTQORTA7fhquxk3ApElP3X+MoAeYGAHLysqkx+NRHXe69hw8VLzlhr9RMbOdvjIR+XmrEQwN4N2KagQjCtvmvYiijCQ43eMAAAMDYQgSYGYoo1j4fD4rJSVF9fb27SgsOrO95q/ripmt5MRFeGNTLtgYTHS5kDFjFmwA++sD+LglCCElKqtqUHq2DA6HbYQQiHW7NQFAOBzeevDwyU8vllcpZsgli+fTtq2bATBAAhjoBDX+jANRSdj3Zy0GLUL2UAT803l0hgZ0jCtKbt6wzr98+cJU2dfX/1bBkdOfXSyvMg6HLRYvnEdb334dRASAQEQY/OZNDP76IZZOiMYzCdnw11yHPHceEaW0I8ohN61f25CUuCiNiJqsnp67Hn+gCUIIzQx7fKwbUggYY4ZRwBmfgFDTL8Dl3Uho6cHMyikYMlrDsuWG/Ozm5KRFaUTUwMxS7t370amZM6cnNDTcfKGruyfiDzTJtmAHFrw8F0IQjGbUt8zBpPinca05iN2XpiA8pLSQQq5/bU1LWuqyFUTkH6kqASBmpubmW0cKj3618Vp9IALAnp8wG9u3b8EfJdWo+rIaExOnwtdajp6ufi1Jy3xP1u3M9KRUIqpjZouIFABIZhZer5eWLVty5mTxsbi2YOeStmCHagt2UP2Nv2nOs8/jdns7zjVeQHhoSBO09OStbl+dmZxGRLWjMQCwhntLJSUlcvLkJ9+5093bfez41++X/1alamsDMqIU3XOFYPqh2RiZl5vZmbUqZSUR1TyKPWjKcH+Nz+ez4ibEfhAKhXqczqi9vrJy3RhoESBio1nmrk3vyslekUFE1Y/DHoCjUF1RUWFHR0d/opTqdjmjCn44W2aElDI3J70nd+3KTCKq/C/sIXAEBRCpqGDbsqiImbukFGcYuJeXm76KiC6PhY0ZZrYAQCmVGQ5H0kbPxso/qONEyQ6APi8AAAAASUVORK5CYII=';
@@ -124,11 +124,6 @@ export default function buildTrayIconMenu(mainPageProps: any, i18n, isMacLike) {
 
   // @ts-ignore
   const contextMenu = Menu.buildFromTemplate(trayMenuTemplate);
-  tray.setToolTip('TagSpaces');
-  tray.setContextMenu(contextMenu);
-
-  // tray.on('click', () => {
-  //   tray.popUpContextMenu(contextMenu);
-  // })
-  // return tray;
+  tray?.setToolTip('TagSpaces');
+  tray?.setContextMenu(contextMenu);
 }

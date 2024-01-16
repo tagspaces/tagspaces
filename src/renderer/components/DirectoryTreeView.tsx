@@ -82,28 +82,7 @@ const DirectoryTreeView = forwardRef(
           setExpanded(false);
         }
       },
-      /* removeLocation() {
-        setData(undefined);
-      } */
     }));
-
-    /* const changeLocation = (location: Location) => {
-    const dirsTree = data;
-    dirsTree[location.uuid] = undefined;
-    setData(dirsTree);
-  }; */
-
-    /* const renderBodyCell = props => (
-    <td {...props}>
-      <TargetMoveFileBox
-        // @ts-ignore
-        accepts={[DragItemTypes.FILE]}
-        onDrop={props.handleFileMoveDrop}
-      >
-        {props.children}
-      </TargetMoveFileBox>
-    </td>
-  ); */
 
     const renderBodyRow = (props) => {
       if (AppConfig.isElectron || location.type !== locationType.TYPE_CLOUD) {

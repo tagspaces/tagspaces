@@ -72,7 +72,7 @@ export default function buildDesktopMenu(props: any, i18n) {
         {
           label: i18n.t('exitApp'),
           accelerator: 'CmdOrCtrl+q',
-          click: quitApp, // PlatformIO.quitApp
+          click: quitApp,
         },
       ],
     },
@@ -206,7 +206,6 @@ export default function buildDesktopMenu(props: any, i18n) {
           click: () => {
             shell.openExternal(Links.documentationLinks.general);
           },
-          //props.openHelpFeedbackPanel,
         },
         {
           label: '&' + i18n.t('shortcutKeys'),
@@ -282,7 +281,6 @@ export default function buildDesktopMenu(props: any, i18n) {
       ],
     },
   ];
-  // PlatformIO.initMainMenu(templateDefault);
 
   // @ts-ignore
   const defaultMenu = Menu.buildFromTemplate(templateDefault); // menuConfig);

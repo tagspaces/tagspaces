@@ -121,11 +121,6 @@ const classes = {
 };
 
 const Root = styled('div')(({ theme }) => ({
-  /*overflowY: 'auto',
-  overflowX: 'hidden',
-  flexGrow: 1,
-  height: '100%',*/
-
   [`& .${classes.tags}`]: {
     padding: '5px 5px 2px 2px',
     margin: 6,

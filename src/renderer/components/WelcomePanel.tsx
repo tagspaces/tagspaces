@@ -194,8 +194,7 @@ function WelcomePanel() {
           height: 'calc(100% - 70px)',
           marginTop: 15,
           marginBottom: 15,
-          // @ts-ignore
-          overflowY: 'overlay',
+          overflowY: 'auto',
           overflowX: 'hidden',
           backgroundColor: theme.palette.background.default,
         }}
@@ -390,8 +389,7 @@ function WelcomePanel() {
                 margin: 'auto',
                 marginTop: 15,
                 marginBottom: 15,
-                // @ts-ignore
-                overflowY: 'overlay',
+                overflowY: 'auto',
                 height: 'calc(100% - 50px)',
                 backgroundColor: theme.palette.background.default,
               }}
@@ -407,8 +405,7 @@ function WelcomePanel() {
                 margin: 'auto',
                 marginTop: 15,
                 marginBottom: 15,
-                // @ts-ignore
-                overflowY: 'overlay',
+                overflowY: 'auto',
                 height: 'calc(100% - 50px)',
                 backgroundColor: theme.palette.background.default,
               }}
