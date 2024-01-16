@@ -22,7 +22,6 @@ import React, {
   useMemo,
   useReducer,
   useRef,
-  useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
@@ -195,9 +194,7 @@ export const DirectoryContentContextProvider = ({
 
   //const enableWS = useSelector(getEnableWS);
 
-  const [currentDirectoryEntries, setCurrentDirectoryEntries] = useState<
-    TS.FileSystemEntry[]
-  >([]);
+  const currentDirectoryEntries = useRef<TS.FileSystemEntry[]>([]);
   const searchQuery = useRef<TS.SearchQuery>({});
   const isSearchMode = useRef<boolean>(false);
   /**
@@ -285,12 +282,21 @@ export const DirectoryContentContextProvider = ({
     }
   }, [editedEntryPaths]);*/
 
+  function setCurrentDirectoryEntries(dirEntries, reflect = true) {
+    currentDirectoryEntries.current = dirEntries;
+    if (reflect) {
+      forceUpdate();
+    }
+  }
+
   const reflectRenameEntries = useMemo(() => {
     return (paths: Array<string[]>): Promise<boolean> => {
       const metaChanged = [];
       const newEntries = paths
         .map((path) => {
-          const entry = currentDirectoryEntries.find((e) => e.path === path[0]);
+          const entry = currentDirectoryEntries.current.find(
+            (e) => e.path === path[0],
+          );
           if (path[0] === path[1]) {
             metaChanged.push(entry);
             return undefined;
@@ -299,15 +305,17 @@ export const DirectoryContentContextProvider = ({
         })
         .filter((item) => item !== undefined);
       if (newEntries.length > 0) {
-        const newDirectoryEntries = currentDirectoryEntries.map((entry) => {
-          const newEntry = newEntries.find(
-            (nEntry) => nEntry && nEntry.uuid === entry.uuid,
-          );
-          if (newEntry) {
-            return newEntry;
-          }
-          return entry;
-        });
+        const newDirectoryEntries = currentDirectoryEntries.current.map(
+          (entry) => {
+            const newEntry = newEntries.find(
+              (nEntry) => nEntry && nEntry.uuid === entry.uuid,
+            );
+            if (newEntry) {
+              return newEntry;
+            }
+            return entry;
+          },
+        );
         setCurrentDirectoryEntries(newDirectoryEntries);
         setSelectedEntries(newEntries);
       }
@@ -330,7 +338,7 @@ export const DirectoryContentContextProvider = ({
       }
       return Promise.resolve(true);
     };
-  }, [currentDirectoryEntries]);
+  }, [currentDirectoryEntries.current]);
 
   function getNewEntry(entry: TS.FileSystemEntry, newPath): TS.FileSystemEntry {
     if (entry) {
@@ -373,10 +381,15 @@ export const DirectoryContentContextProvider = ({
   function appendSearchResults(searchResults: TS.FileSystemEntry[]) {
     const newSearchResults = searchResults.filter(
       (result) =>
-        !currentDirectoryEntries.some((entry) => entry.path === result.path),
+        !currentDirectoryEntries.current.some(
+          (entry) => entry.path === result.path,
+        ),
     );
     if (newSearchResults.length > 0) {
-      setSearchResults([...currentDirectoryEntries, ...newSearchResults]);
+      setSearchResults([
+        ...currentDirectoryEntries.current,
+        ...newSearchResults,
+      ]);
     }
   }
 
@@ -426,10 +439,10 @@ export const DirectoryContentContextProvider = ({
         GlobalSearch.getInstance().setResults(results);
       } else {*/
       setCurrentDirectoryEntries(
-        updateFsEntries(currentDirectoryEntries, [entryUpdated]),
+        updateFsEntries(currentDirectoryEntries.current, [entryUpdated]),
       );
     };
-  }, [currentDirectoryEntries]);
+  }, [currentDirectoryEntries.current]);
 
   const getMergedEntries = (entries1, entries2) => {
     if (entries1 && entries1.length > 0) {
@@ -452,16 +465,22 @@ export const DirectoryContentContextProvider = ({
 
   function updateCurrentDirEntries(
     dirEntries: TS.FileSystemEntry[],
-    currentDirEntries?: TS.FileSystemEntry[],
+    //currentDirEntries?: TS.FileSystemEntry[],
   ) {
     if (dirEntries) {
       const entries = dirEntries.filter((e) => e !== undefined);
-      if (entries.length > 0) {
-        const currDirEntries = currentDirEntries
-          ? currentDirEntries
-          : currentDirectoryEntries;
-        if (currDirEntries && currDirEntries.length > 0) {
-          setCurrentDirectoryEntries(getMergedEntries(currDirEntries, entries));
+      if (
+        entries.length > 0 &&
+        entries[0].path.startsWith(currentDirectoryPath.current)
+      ) {
+        //const currDirEntries = currentDirEntries ? currentDirEntries : currentDirectoryEntries;
+        if (
+          currentDirectoryEntries.current &&
+          currentDirectoryEntries.current.length > 0
+        ) {
+          setCurrentDirectoryEntries(
+            getMergedEntries(currentDirectoryEntries.current, entries),
+          );
         } else {
           setCurrentDirectoryEntries(entries);
         }
@@ -470,7 +489,7 @@ export const DirectoryContentContextProvider = ({
   }
 
   function updateThumbnailUrl(filePath: string, thumbUrl: string) {
-    const dirEntries = currentDirectoryEntries.map((entry) => {
+    const dirEntries = currentDirectoryEntries.current.map((entry) => {
       if (entry.path === filePath) {
         return { ...entry, thumbPath: thumbUrl };
       }
@@ -619,8 +638,9 @@ export const DirectoryContentContextProvider = ({
       return loadDirectoryContent(dirPath, true, showHiddenEntries).then(
         (dirEntries) => {
           if (dirEntries) {
+            setCurrentDirectoryEntries(dirEntries, false);
             return loadCurrentDirMeta(dirPath, dirEntries).then((entries) => {
-              updateCurrentDirEntries(entries, dirEntries);
+              updateCurrentDirEntries(entries);
               return true;
             });
           }
@@ -776,9 +796,12 @@ export const DirectoryContentContextProvider = ({
 
   const addDirectoryEntries = useMemo(() => {
     return (entries: TS.FileSystemEntry[]) => {
-      setCurrentDirectoryEntries([...currentDirectoryEntries, ...entries]);
+      setCurrentDirectoryEntries([
+        ...currentDirectoryEntries.current,
+        ...entries,
+      ]);
     };
-  }, [currentDirectoryEntries]);
+  }, [currentDirectoryEntries.current]);
 
   const removeDirectoryEntries = useMemo(() => {
     return (entryPaths: string[]) => {
@@ -791,20 +814,20 @@ export const DirectoryContentContextProvider = ({
           ),
         );
       } else {
-        const index = currentDirectoryEntries.findIndex((entry) =>
+        const index = currentDirectoryEntries.current.findIndex((entry) =>
           entryPaths.includes(entry.path),
         );
         if (index > -1) {
           // delete in place (for fs watcher events unlink/add in 20ms)
-          currentDirectoryEntries.splice(index, 1);
+          currentDirectoryEntries.current.splice(index, 1);
           /*const entries = currentDirectoryEntries.filter(
             (entry) => !entryPaths.includes(entry.path),
           );*/
-          setCurrentDirectoryEntries([...currentDirectoryEntries]); //entries);
+          setCurrentDirectoryEntries([...currentDirectoryEntries.current]); //entries);
         }
       }
     };
-  }, [currentDirectoryEntries]);
+  }, [currentDirectoryEntries.current]);
 
   function setDirectoryMeta(meta: TS.FileSystemEntryMeta) {
     directoryMeta.current = meta;
@@ -882,7 +905,7 @@ export const DirectoryContentContextProvider = ({
   const context = useMemo(() => {
     return {
       currentLocationPath: currentLocationPath.current,
-      currentDirectoryEntries: currentDirectoryEntries,
+      currentDirectoryEntries: currentDirectoryEntries.current,
       directoryMeta: directoryMeta.current,
       currentDirectoryPerspective: currentPerspective.current,
       currentDirectoryPath: currentDirectoryPath.current,
@@ -919,7 +942,7 @@ export const DirectoryContentContextProvider = ({
   }, [
     currentLocation,
     currentLocationPath.current,
-    currentDirectoryEntries,
+    currentDirectoryEntries.current,
     currentDirectoryPath.current,
     directoryMeta.current,
     currentPerspective.current,
