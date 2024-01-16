@@ -110,70 +110,25 @@ export function calculateEntryHeight(entrySize: EntrySizes) {
   return entryHeight;
 }
 
-const PREFIX = 'GridStyles';
-export const classes = {
-  gridCell: `${PREFIX}-gridCell`,
-  selectedGridCell: `${PREFIX}-selectedGridCell`,
-  gridCellTitle: `${PREFIX}-gridCellTitle`,
-  // gridCellTags: `${PREFIX}-gridCellTags`,
-  gridCellDescription: `${PREFIX}-gridCellDescription`,
-  gridFileExtension: `${PREFIX}-gridFileExtension`,
-  gridSizeDate: `${PREFIX}-gridSizeDate`,
-  gridDetails: `${PREFIX}-gridDetails`,
-  gridFolder: `${PREFIX}-gridFolder`,
-};
-
 export const GridPaper = styled(Card)(({ theme }) => ({
-  [`& .${classes.gridCell}`]: {
-    border: '2px solid transparent',
-    marginTop: 1,
-    marginLeft: 2,
-    marginBottom: 1,
-    marginRight: 1,
-  },
-  [`& .${classes.selectedGridCell}`]: {
-    border: '2px solid' + theme.palette.primary.main,
-    backgroundColor: theme.palette.primary.light + ' !important',
-  },
-  [`& .${classes.gridCellTitle}`]: {
-    padding: '0px 5px 0 5px',
-    minHeight: 45,
-    display: '-webkit-box',
-    WebkitLineClamp: 2,
-    WebkitBoxOrient: 'vertical',
-    textOverflow: 'ellipsis',
-    overflow: 'hidden',
-  },
-  // [`& .${classes.gridCellTags}`]: {
-  //   padding: 0,
-  //   paddingTop: 2,
-  //   height: 100,
-  //   overflowY: 'auto',
-  //   overflowX: 'hidden',
-  //   position: 'relative',
+  // [`& .${classes.gridCellTitle}`]: {
+  //   padding: '0px 5px 0 5px',
+  //   minHeight: 45,
+  //   display: '-webkit-box',
+  //   WebkitLineClamp: 2,
+  //   WebkitBoxOrient: 'vertical',
+  //   textOverflow: 'ellipsis',
+  //   overflow: 'hidden',
   // },
-  [`& .${classes.gridCellDescription}`]: {
-    padding: 2,
-    margin: 2,
-    backgroundColor: theme.palette.background.paper,
-    borderRadius: 5,
-    opacity: 0.6,
-    wordBreak: 'break-word',
-    display: 'block',
-  },
-  [`& .${classes.gridFileExtension}`]: {
-    paddingTop: 1,
-    paddingBottom: 7,
-    paddingLeft: 3,
-    paddingRight: 3,
-    fontSize: 13,
-    marginRight: 5,
-    minWidth: 35,
-    height: 16,
-    color: 'white',
-    borderRadius: 3,
-    textAlign: 'center',
-  },
+  // [`& .${classes.gridCellDescription}`]: {
+  //   padding: 2,
+  //   margin: 2,
+  //   backgroundColor: theme.palette.background.paper,
+  //   borderRadius: 5,
+  //   opacity: 0.6,
+  //   wordBreak: 'break-word',
+  //   display: 'block',
+  // },
 }));
 
 interface Props {
@@ -393,8 +348,17 @@ function GridCell(props: Props) {
     ) : (
       <Tooltip title={fSystemEntry.path}>
         <Typography
-          className={classes.gridFileExtension}
           style={{
+            paddingTop: 1,
+            paddingBottom: 7,
+            paddingLeft: 3,
+            paddingRight: 3,
+            fontSize: 13,
+            marginRight: 5,
+            minWidth: 35,
+            color: 'white',
+            borderRadius: 3,
+            textAlign: 'center',
             display: 'inline',
             backgroundColor: fileSystemEntryColor,
             textShadow: '1px 1px #8f8f8f',
@@ -431,19 +395,19 @@ function GridCell(props: Props) {
       : '');
 
   return (
-    <GridPaper
+    <Card
       data-entry-id={fSystemEntry.uuid}
       data-tid={'fsEntryName_' + dataTidFormat(fSystemEntry.name)}
-      // className={classNames(
-      //   classes.gridCell,
-      //   selected && classes.selectedGridCell,
-      // )}
+      raised={selected}
       style={{
         height: maxHeight,
         minHeight: maxHeight,
         maxHeight: maxHeight,
         marginBottom: isLast ? 40 : 'auto',
         background: fileSystemEntryBgColor && theme.palette.background.default,
+        border:
+          '2px solid ' +
+          (selected ? theme.palette.primary.main : 'transparent'),
         display: 'flex',
         flexDirection: 'column',
       }}
@@ -478,6 +442,7 @@ function GridCell(props: Props) {
             alt="green iguana"
             height="auto"
             src={tmbImgSrc}
+            style={{ height: maxHeight - 70 }}
           />
         ) : (
           <Box style={{ width: '50%', height: 'auto', margin: '0 auto' }}>
@@ -490,23 +455,19 @@ function GridCell(props: Props) {
       </Box>
 
       <CardContent sx={{ padding: '5px', flexGrow: 1 }}>
-        {/* <img
-            alt="thumbnail"
+        <Tooltip title={entryTitle}>
+          <Box
             style={{
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'center',
-              objectFit: thumbnailMode,
-              width: '100%',
-              height: '100%',
+              // fontSize: 12,
+              // lineHeight: 12,
+              paddingRight: 4,
+              overflowX: 'clip',
+              textWrap: 'nowrap', // isSmall ? 'nowrap' : 'unset',
             }}
-            src={tmbDataURL}
-            // @ts-ignore
-            onError={(i) => (i.target.style.display = 'none')}
-            loading="lazy"
-          /> */}
-        <Box style={{ textWrap: isSmall ? 'nowrap' : 'unset' }}>
-          {entryTitle}
-        </Box>
+          >
+            {entryTitle}
+          </Box>
+        </Tooltip>
         {/* <Box>{generateCardHeader()}</Box> */}
       </CardContent>
       <CardHeader
@@ -533,7 +494,7 @@ function GridCell(props: Props) {
         subheader={generateCardHeader()}
         avatar={generateAvatar()}
       ></CardHeader>
-    </GridPaper>
+    </Card>
   );
 }
 
