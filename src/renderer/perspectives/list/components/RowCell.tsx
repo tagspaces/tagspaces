@@ -209,6 +209,7 @@ function RowCell(props: Props) {
       fSystemEntry.name,
       AppConfig.tagDelimiter,
       PlatformIO.getDirSeparator(),
+      PlatformIO.getDirSeparator(),
     );
   }
 
@@ -219,8 +220,10 @@ function RowCell(props: Props) {
     ...fileNameTags.filter((tag) => !sideCarTagsTitles.includes(tag.title)),
   ];
 
-  const entrySizeFormatted =
-    fSystemEntry.isFile && formatFileSize(fSystemEntry.size) + ' | ';
+  const entrySizeFormatted = fSystemEntry.isFile
+    ? formatFileSize(fSystemEntry.size) + ' | '
+    : '';
+
   const entryLMDTFormatted =
     fSystemEntry.isFile &&
     fSystemEntry.lmdt &&
@@ -276,59 +279,14 @@ function RowCell(props: Props) {
   }, [entryTags, readOnlyMode, reorderTags, entryPath]);
 
   function generateExtension() {
-    //   <div
-    //   data-tid="rowCellTID"
-    //   style={{
-    //     display: 'flex',
-    //     flexDirection: isSmall ? 'row' : 'column',
-    //     flex: 1,
-    //     padding: 4,
-    //     borderWidth: 1,
-    //     color: 'white',
-    //     textTransform: 'uppercase',
-    //     fontSize: 12,
-    //     fontWeight: 'bold',
-    //     borderRadius: 4,
-    //     textAlign: 'center',
-    //     overflow: 'hidden',
-    //     textOverflow: 'ellipsis',
-    //     backgroundColor: fileSystemEntryColor,
-    //     alignItems: 'center',
-    //   }}
-    //   role="button"
-    //   onClick={(e) => {
-    //     e.stopPropagation();
-    //     if (selected) {
-    //       deselectEntry(fSystemEntry);
-    //     } else {
-    //       selectEntry(fSystemEntry);
-    //     }
-    //   }}
-    // >
-    //   {selected ? <SelectedIcon /> : <UnSelectedIcon />}
-    //   {fSystemEntry.isFile ? (
-    //     <span
-    //       style={{
-    //         width: '100%',
-    //         marginTop: isSmall ? 0 : 10,
-    //         textShadow: '1px 1px #8f8f8f',
-    //         overflowWrap: 'anywhere',
-    //       }}
-    //     >
-    //       {fSystemEntry.extension}
-    //     </span>
-    //   ) : (
-    //     <FolderOutlineIcon style={{ margin: '0 auto' }} />
-    //   )}
-    // </div>
-
     return selectionMode ? (
       <IconButton
         style={{
-          minWidth: 35,
-          height: 40,
+          width: 35,
+          height: 35,
           padding: 4,
           paddingBottom: 2,
+          alignSelf: 'center',
         }}
         size="small"
         // onMouseLeave={(e) => {
@@ -399,8 +357,7 @@ function RowCell(props: Props) {
   }
 
   const entryHeight = calculateEntryHeight(entrySize);
-  const isSmall =
-    entrySize === EntrySizes.tiny || entrySize === EntrySizes.small;
+  const isSmall = entrySize === EntrySizes.tiny; // || entrySize === EntrySizes.small;
 
   const backgroundColor = selected
     ? theme.palette.primary.light
@@ -469,7 +426,12 @@ function RowCell(props: Props) {
                 textWrap: 'nowrap',
                 alignSelf: 'center',
               }}
-              title={fSystemEntry.name}
+              title={
+                fSystemEntry.name +
+                ' | ' +
+                entrySizeFormatted +
+                formatDateTime(fSystemEntry.lmdt, true)
+              }
             >
               <>{entryTitle}</>
               &nbsp;
